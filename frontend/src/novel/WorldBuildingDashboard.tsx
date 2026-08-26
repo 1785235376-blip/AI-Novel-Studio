@@ -15,6 +15,7 @@ export type WorldBuildingDashboardProps = {
   timeline?: RecordValue[];
   foreshadowing?: RecordValue[];
   locations?: RecordValue[];
+  chapters?: RecordValue[];
   loading?: boolean;
   errors?: Partial<Record<DashboardView, string>>;
   onOpen: (kind: StoryDatabaseKind, id?: string) => void;
@@ -30,7 +31,7 @@ const text = (value: unknown, fallback = "未填写") => typeof value === "strin
 const ids = (value: unknown) => Array.isArray(value) ? value.map(String) : [];
 
 export function WorldBuildingDashboard({
-  characters = [], relationships = [], timeline = [], foreshadowing = [], locations = [], loading = false, errors = {}, onOpen,
+  characters = [], relationships = [], timeline = [], foreshadowing = [], locations = [], chapters = [], loading = false, errors = {}, onOpen,
 }: WorldBuildingDashboardProps) {
   const [view, setView] = useState<DashboardView>("relationships");
   const characterNames = useMemo(() => new Map(characters.map((item) => [String(item.id), text(item.name || item.title, String(item.id))])), [characters]);
@@ -74,7 +75,7 @@ export function WorldBuildingDashboard({
         </div>
         </>
       ) : view === "timeline" ? (
-        <WorldTimelineView timeline={orderedTimeline} characters={characters} locations={locations} onOpen={(kind, id) => onOpen(kind, id)} />
+        <WorldTimelineView timeline={orderedTimeline} characters={characters} locations={locations} chapters={chapters} onOpen={(kind, id) => onOpen(kind, id)} />
       ) : (
         <div className="world-dashboard__threads" role="list">
           {foreshadowing.map((item) => {
