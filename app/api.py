@@ -2219,7 +2219,15 @@ def plugin_runtime_status():
     return {'execution_supported':False,'sandbox':'NOT_CONFIGURED','isolation':'DENY_ALL','reason':'plugin runtime execution is disabled until isolated worker is shipped'}
 @router.get("/release/readiness")
 def release_readiness():
-    return {'status':'READY_FOR_DESKTOP_ACCEPTANCE','checks':{'frontend_build':'PASS','backend_compile':'PASS','provider_tests':'PASS','plugin_runtime':'DEFERRED','agent_executor':'DEFERRED','real_provider_acceptance':'PENDING'},'ui_rebuild':'DEFERRED_UNTIL_FEATURE_FREEZE','next_actions':['desktop_manual_acceptance','real_provider_smoke','agent_executor_decision','plugin_sandbox_decision']}
+    from .dependencies import asset_provider_registry, packaged_bootstrap_registry
+    from .release_readiness import build_release_readiness
+    return build_release_readiness(
+        settings=settings,
+        credential_vault=credential_vault,
+        runtime=runtime,
+        image_registry=asset_provider_registry,
+        packaged_bootstrap=packaged_bootstrap_registry.current() is not None,
+    )
 
 
 @router.post("/plugins", status_code=201)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { KeyRound, RefreshCw, ShieldCheck, TestTube2, Trash2 } from 'lucide-react';
-import { api, type CredentialStatus } from '../api';
+import { AlertTriangle, CheckCircle2, KeyRound, RefreshCw, ShieldCheck, TestTube2, Trash2, XCircle } from 'lucide-react';
+import { api, type CredentialStatus, type ReleaseReadiness } from '../api';
 import { useStudio } from '../store';
 import { Badge, Button, Panel } from './primitives';
 import './AiControlCenter.css';
@@ -31,14 +31,19 @@ export function AiControlCenter() {
   const [harnessProcess, setHarnessProcess] = useState<{running:boolean;pid:number|null;last_action?:string;last_action_at?:string}>({running:false,pid:null});
   const [audit, setAudit] = useState<{at:string;novel_id:string;chapter:number;agent_id:string;scopes:string[];outcome:string}[]>([]);
   const [auditFilters, setAuditFilters] = useState({novel_id:'',agent_id:'',outcome:''});
+  const [readiness, setReadiness] = useState<ReleaseReadiness | null>(null);
+  const [readinessError, setReadinessError] = useState(false);
   const refresh = async () => {
+    setReadinessError(false);
+    const gateRequest=api.releaseReadiness().then(setReadiness).catch(()=>{setReadiness(null);setReadinessError(true)});
     const statuses = await Promise.all(providers.map(async p => [p.id, await api.credentialStatus(p.id)] as const));
     setCredentialStatuses(Object.fromEntries(statuses));
     const [text, health, prefs, harnessStatus, processStatus, accessAudit] = await Promise.all([api.textModels(), api.multimodalHealth(), api.userPreferences(), api.harnessStatus(), api.harnessProcess(), api.harnessAccessAudit(auditFilters)]);
     setModels(Array.isArray(text) ? text : (text as any).items || []); setMedia(health); setPreferences({...prefs,harness_enabled: prefs.harness_enabled ?? false}); setHarness(harnessStatus); setHarnessProcess(processStatus);
     setAudit(accessAudit.items || []);
+    await gateRequest;
   };
-  useEffect(() => { refresh().catch(() => setMessage('状态读取失败，请检查服务连接')); }, []);
+  useEffect(() => { refresh().catch(() => {setReadinessError(true);setMessage('状态读取失败，请检查服务连接')}); }, []);
   const save = async (id: string) => { if (!keys[id]) return; const status=await api.saveCredential(id, keys[id]); setKeys(v => ({ ...v, [id]: '' })); setCredentialStatuses(v => ({ ...v, [id]: status })); setMessage(status.persistent?`${id} 凭据已持久保存`:`${id} 凭据仅保存于当前进程`); };
   const test = async (id: string) => { const result = await api.testCredential(id); setStates(v => ({ ...v, [id]: result.reachable ? '可连接' : '不可达' })); };
   const remove = async (id: string) => { const status=await api.deleteCredential(id); setCredentialStatuses(v => ({ ...v, [id]: status })); setStates(v => ({ ...v, [id]: '凭据已删除' })); };
@@ -46,8 +51,23 @@ export function AiControlCenter() {
   const savePreference = async () => { const content=preferenceDraft.trim(); if (!content) return; const item=await api.saveUserPreference(`preference-${Date.now()}`,content); setPreferences(v=>({...v,items:[...v.items,item]})); setPreferenceDraft(''); };
   const startHarness = async () => { try { setHarnessProcess(await api.startHarness()); } catch { setMessage('Harness 未通过授权或就绪检查'); } };
   const stopHarness = async () => { try { setHarnessProcess(await api.stopHarness()); } catch { setMessage('Harness 停止失败'); } };
-  return <Panel title="AI 主控中心" actions={<Button title="刷新状态" aria-label="刷新状态" onClick={() => refresh()}><RefreshCw size={16} /></Button>} className="ai-control-center">
+  return <Panel title="AI 主控中心" actions={<Button title="刷新状态" aria-label="刷新状态" onClick={() => void refresh().catch(()=>setMessage('状态读取失败，请检查服务连接'))}><RefreshCw size={16} /></Button>} className="ai-control-center">
     <p className="novel-help">统一管理云端与本地模型的接入状态。凭据只进入运行时保险库，不写入小说、日志或 URL。</p>
+    <section className={`ai-control-center__readiness ai-control-center__readiness--${readiness?.status.toLowerCase() || 'loading'}`} aria-live="polite">
+      <div className="ai-control-center__readiness-head">
+        {readiness?.status==='READY'?<CheckCircle2 size={18}/>:readiness?.status==='BLOCKED'?<XCircle size={18}/>:<AlertTriangle size={18}/>}
+        <div><h3>发布就绪门禁</h3><span>{readinessError?'读取失败':readiness?.status==='READY'?'可以进入发布验收':readiness?.status==='BLOCKED'?'存在发布阻断项':readiness?.status==='DEGRADED'?'开发可用，尚未达到发布标准':'正在读取真实运行时状态'}</span></div>
+        <Badge tone={readiness?.status==='READY'?'success':readiness?.status==='BLOCKED'?'error':'warning'}>{readinessError?'未知':readiness?.status||'读取中'}</Badge>
+      </div>
+      {readiness&&<div className="ai-control-center__readiness-grid">
+        <div><span>凭据库</span><strong>{readiness.checks.vault.persistent?`${readiness.checks.vault.backend} · 持久化`:`${readiness.checks.vault.backend} · 仅当前进程`}</strong></div>
+        <div><span>Session 边界</span><strong>{readiness.checks.session_boundary.status==='PASS'?'有效':'不完整'}</strong></div>
+        <div><span>Provider</span><strong>{readiness.checks.providers.status==='PASS'?'全部就绪':'部分配置'}</strong></div>
+        <div><span>插件执行</span><strong>延期 · DENY_ALL</strong></div>
+      </div>}
+      {readiness?.blockers.length?<div className="ai-control-center__readiness-list"><strong>阻断</strong>{readiness.blockers.map(item=><code key={item}>{item}</code>)}</div>:null}
+      {readiness?.warnings.length?<div className="ai-control-center__readiness-list"><strong>警告</strong>{readiness.warnings.map(item=><code key={item}>{item}</code>)}</div>:null}
+    </section>
     <div className="ai-control-center__providers">{providers.map(p => {const status=credentialStatuses[p.id];const temporary=Boolean(status?.configured&&!status.persistent);return <article className="ai-control-center__provider" key={p.id}>
       <div className="ai-control-center__head"><KeyRound size={17} /><div><h3>{p.name}</h3><span>{p.roles}</span></div><Badge tone={temporary?'warning':status?.configured?'success':'neutral'}>{temporary?'仅当前进程':status?.configured?'已持久保存':'未配置'}</Badge></div>
       <div className="ai-control-center__actions"><input type="password" value={keys[p.id] || ''} onChange={e => setKeys(v => ({ ...v, [p.id]: e.target.value }))} placeholder="输入 API Key / Token" autoComplete="off" /><Button onClick={() => save(p.id)}>保存</Button><Button onClick={() => test(p.id)} title="测试连接" aria-label={`测试 ${p.name} 连接`}><TestTube2 size={15} /></Button>{status?.configured && <Button onClick={() => remove(p.id)} title="删除凭据" aria-label={`删除 ${p.name} 凭据`}><Trash2 size={15} /></Button>}</div>

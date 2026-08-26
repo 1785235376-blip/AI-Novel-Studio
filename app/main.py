@@ -134,6 +134,7 @@ async def collaboration_fail_closed(request,call_next):
             r"/api/workflows(?:/[^/]+(?:/runs)?)?",
             r"/api/workflow-runs/[^/]+(?:/(?:pause|resume|cancel|retry)|/nodes/[^/]+/approve)?",
             r"/api/release-gates(?:/[^/]+)?",
+            r"/api/release/readiness",
             r"/api/audit",
         ))
         if capability_route:

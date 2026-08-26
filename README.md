@@ -26,6 +26,12 @@ V1.0 Windows DesktopHost 正在开发验收中，尚未发布。当前已有内�
 
 本地默认 Ollama。`LLMProvider` 统一 `generate/stream/health_check/get_model_info/estimate_usage`；OpenAI Compatible 适配器可用于 OpenAI、DeepSeek、OpenRouter 类接口，Anthropic/Gemini 原生协议预留但尚未实现。
 
+### 凭据保险库与发布门禁
+
+`CREDENTIAL_VAULT_BACKEND` 可设为 `auto`、`windows`、`keyring` 或 `memory`；`CREDENTIAL_VAULT_SERVICE` 指定系统钥匙串 service 名，默认 `AI-Novel-Studio`。`CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK` 在开发环境可设为 `true`，packaged 构建必须为 `false`。`memory` 仅限当前进程，不跨重启，也不在多 worker 之间共享；只有 `windows` / `keyring` 提供跨进程持久凭据。所有凭据状态响应的 `secret` 恒为 `null`。
+
+`GET /api/release/readiness` 聚合凭据、Session 边界、Provider、packaged bootstrap 与插件隔离状态。packaged 环境中凭据不可持久、允许 memory fallback 或 bootstrap/Session 不完整时，门禁返回 `BLOCKED`。
+
 ## 备份、恢复、迁移
 
 运行 `scripts/backup.ps1` 生成含校验清单的备份；模型 blob 不复制。恢复使用 `scripts/restore.ps1 -BackupPath ...`，已有小说默认拒绝覆盖。4060→5080 使用 `scripts/migrate.ps1 -Destination ...`，新机器仅需重装模型并改 Profile。
