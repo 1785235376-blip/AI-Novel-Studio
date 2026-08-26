@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { KeyRound, RefreshCw, ShieldCheck, TestTube2, Trash2 } from 'lucide-react';
-import { api } from '../api';
+import { api, type CredentialStatus } from '../api';
 import { useStudio } from '../store';
 import { Badge, Button, Panel } from './primitives';
 import './AiControlCenter.css';
@@ -14,7 +14,7 @@ const providers: Provider[] = [
 ];
 
 export function AiControlCenter() {
-  const [configured, setConfigured] = useState<Record<string, boolean>>({});
+  const [credentialStatuses, setCredentialStatuses] = useState<Record<string, CredentialStatus>>({});
   const [keys, setKeys] = useState<Record<string, string>>({});
   const [states, setStates] = useState<Record<string, string>>({});
   const [models, setModels] = useState<any[]>([]);
@@ -32,27 +32,27 @@ export function AiControlCenter() {
   const [audit, setAudit] = useState<{at:string;novel_id:string;chapter:number;agent_id:string;scopes:string[];outcome:string}[]>([]);
   const [auditFilters, setAuditFilters] = useState({novel_id:'',agent_id:'',outcome:''});
   const refresh = async () => {
-    const statuses = await Promise.all(providers.map(async p => [p.id, (await api.credentialStatus(p.id)).configured] as const));
-    setConfigured(Object.fromEntries(statuses));
+    const statuses = await Promise.all(providers.map(async p => [p.id, await api.credentialStatus(p.id)] as const));
+    setCredentialStatuses(Object.fromEntries(statuses));
     const [text, health, prefs, harnessStatus, processStatus, accessAudit] = await Promise.all([api.textModels(), api.multimodalHealth(), api.userPreferences(), api.harnessStatus(), api.harnessProcess(), api.harnessAccessAudit(auditFilters)]);
     setModels(Array.isArray(text) ? text : (text as any).items || []); setMedia(health); setPreferences({...prefs,harness_enabled: prefs.harness_enabled ?? false}); setHarness(harnessStatus); setHarnessProcess(processStatus);
     setAudit(accessAudit.items || []);
   };
   useEffect(() => { refresh().catch(() => setMessage('状态读取失败，请检查服务连接')); }, []);
-  const save = async (id: string) => { if (!keys[id]) return; await api.saveCredential(id, keys[id]); setKeys(v => ({ ...v, [id]: '' })); setConfigured(v => ({ ...v, [id]: true })); setMessage(`${id} 凭据已保存`); };
+  const save = async (id: string) => { if (!keys[id]) return; const status=await api.saveCredential(id, keys[id]); setKeys(v => ({ ...v, [id]: '' })); setCredentialStatuses(v => ({ ...v, [id]: status })); setMessage(status.persistent?`${id} 凭据已持久保存`:`${id} 凭据仅保存于当前进程`); };
   const test = async (id: string) => { const result = await api.testCredential(id); setStates(v => ({ ...v, [id]: result.reachable ? '可连接' : '不可达' })); };
-  const remove = async (id: string) => { await api.deleteCredential(id); setConfigured(v => ({ ...v, [id]: false })); setStates(v => ({ ...v, [id]: '凭据已删除' })); };
+  const remove = async (id: string) => { const status=await api.deleteCredential(id); setCredentialStatuses(v => ({ ...v, [id]: status })); setStates(v => ({ ...v, [id]: '凭据已删除' })); };
   const ask = async () => { if (!question.trim() || !selection) return; setAsking(true); setAnswer(''); try { const result=await api.agentChat({message:question,provider_id:selection.providerId,model_id:selection.modelId}); setAnswer(result.message); } catch { setAnswer('主控模型当前不可用，请检查模型与凭据配置。'); } finally { setAsking(false); } };
   const savePreference = async () => { const content=preferenceDraft.trim(); if (!content) return; const item=await api.saveUserPreference(`preference-${Date.now()}`,content); setPreferences(v=>({...v,items:[...v.items,item]})); setPreferenceDraft(''); };
   const startHarness = async () => { try { setHarnessProcess(await api.startHarness()); } catch { setMessage('Harness 未通过授权或就绪检查'); } };
   const stopHarness = async () => { try { setHarnessProcess(await api.stopHarness()); } catch { setMessage('Harness 停止失败'); } };
   return <Panel title="AI 主控中心" actions={<Button title="刷新状态" aria-label="刷新状态" onClick={() => refresh()}><RefreshCw size={16} /></Button>} className="ai-control-center">
     <p className="novel-help">统一管理云端与本地模型的接入状态。凭据只进入运行时保险库，不写入小说、日志或 URL。</p>
-    <div className="ai-control-center__providers">{providers.map(p => <article className="ai-control-center__provider" key={p.id}>
-      <div className="ai-control-center__head"><KeyRound size={17} /><div><h3>{p.name}</h3><span>{p.roles}</span></div><Badge tone={configured[p.id] ? 'success' : 'neutral'}>{configured[p.id] ? '已配置' : '未配置'}</Badge></div>
-      <div className="ai-control-center__actions"><input type="password" value={keys[p.id] || ''} onChange={e => setKeys(v => ({ ...v, [p.id]: e.target.value }))} placeholder="输入 API Key / Token" autoComplete="off" /><Button onClick={() => save(p.id)}>保存</Button><Button onClick={() => test(p.id)} title="测试连接" aria-label={`测试 ${p.name} 连接`}><TestTube2 size={15} /></Button>{configured[p.id] && <Button onClick={() => remove(p.id)} title="删除凭据" aria-label={`删除 ${p.name} 凭据`}><Trash2 size={15} /></Button>}</div>
-      {states[p.id] && <small>{states[p.id]}</small>}
-    </article>)}</div>
+    <div className="ai-control-center__providers">{providers.map(p => {const status=credentialStatuses[p.id];const temporary=Boolean(status?.configured&&!status.persistent);return <article className="ai-control-center__provider" key={p.id}>
+      <div className="ai-control-center__head"><KeyRound size={17} /><div><h3>{p.name}</h3><span>{p.roles}</span></div><Badge tone={temporary?'warning':status?.configured?'success':'neutral'}>{temporary?'仅当前进程':status?.configured?'已持久保存':'未配置'}</Badge></div>
+      <div className="ai-control-center__actions"><input type="password" value={keys[p.id] || ''} onChange={e => setKeys(v => ({ ...v, [p.id]: e.target.value }))} placeholder="输入 API Key / Token" autoComplete="off" /><Button onClick={() => save(p.id)}>保存</Button><Button onClick={() => test(p.id)} title="测试连接" aria-label={`测试 ${p.name} 连接`}><TestTube2 size={15} /></Button>{status?.configured && <Button onClick={() => remove(p.id)} title="删除凭据" aria-label={`删除 ${p.name} 凭据`}><Trash2 size={15} /></Button>}</div>
+      {status?.degraded_reason&&<small role="status">系统凭据库不可用：{status.degraded_reason}。当前凭据不会跨进程保留。</small>}{states[p.id] && <small>{states[p.id]}</small>}
+    </article>})}</div>
     <section className="ai-control-center__status"><h3>能力状态</h3><p><ShieldCheck size={15} /> 主控问答：<strong>只读模式</strong></p><p>DeepSeek Harness：<strong>{harnessProcess.running ? `进程运行中（PID ${harnessProcess.pid}）` : harness.reachable ? (harness.compatible === false ? '版本不兼容' : '服务已连接') : '未运行'}</strong></p><div className="ai-control-center__harness-actions"><Button onClick={startHarness} disabled={harnessProcess.running || !preferences.harness_enabled || harness.compatible === false}>启动 Harness</Button><Button onClick={stopHarness} disabled={!harnessProcess.running}>停止 Harness</Button></div>{harnessProcess.last_action && <small>最近动作：{harnessProcess.last_action === 'started' ? '启动' : '停止'}{harnessProcess.last_action_at ? ` · ${new Date(harnessProcess.last_action_at).toLocaleString()}` : ''}</small>}<p>文本模型：{models.length ? `${models.filter(m => m.available).length} 个可用` : '未读取'}</p><p>图片 / 视觉 / 配音：{media ? '已读取运行时状态' : '未读取'}</p><p>视频：配置入口已保留，具体可用性取决于 Provider 健康检查。</p></section>
     <section className="ai-control-center__audit">
       <h3>最近 Harness 读取</h3>

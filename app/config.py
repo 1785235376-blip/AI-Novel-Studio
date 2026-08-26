@@ -36,6 +36,9 @@ class Settings:
     enable_packaged_runtime: bool = _bool("ENABLE_PACKAGED_RUNTIME", False)
     collaboration_dev_sessions_json: str = os.getenv("COLLABORATION_DEV_SESSIONS_JSON", "")
     outbound_loopback_allowlist: str = os.getenv("OUTBOUND_LOOPBACK_ALLOWLIST", "")
+    credential_vault_backend: str = os.getenv("CREDENTIAL_VAULT_BACKEND", "auto")
+    credential_vault_service: str = os.getenv("CREDENTIAL_VAULT_SERVICE", "AI-Novel-Studio")
+    credential_vault_allow_memory_fallback: bool = _bool("CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK", not _bool("ENABLE_PACKAGED_RUNTIME", False))
 
     def data_path(self) -> Path:
         return self.novel_data if self.novel_data.is_absolute() else self.root / self.novel_data

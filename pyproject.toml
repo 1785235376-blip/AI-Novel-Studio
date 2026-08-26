@@ -7,6 +7,7 @@ dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1", "psycopg[binary]>=3.2,<
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9"]
+vault = ["keyring>=25,<26"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
@@ -14,6 +15,8 @@ testpaths = ["tests"]
 markers = [
     "file_backend_only: validates File repository or filesystem-specific behavior and remains covered by the default/File full suite",
     "postgres_backend_only: validates real PostgreSQL behavior and remains covered by the PostgreSQL full suite",
+    "vault: validates credential vault behavior without requiring an operating-system keyring",
+    "vault_keyring_integration: optional manual integration test against the current operating-system keyring",
 ]
 
 [tool.setuptools.packages.find]

@@ -26,7 +26,7 @@ from .services.harness_context_adapter import harness_context_adapter
 from .services.harness_access_audit_service import harness_access_audit_service
 from .authorization import AuthorizationScope,ScopeKind,ModalityDomain,DomainRole,DomainRoleAssignment
 from .document import markdown_to_document
-from .credential_vault import credential_vault
+from .credential_vault import VaultUnavailableError, credential_vault
 from .asset_providers import DEFAULT_IMAGE_ENDPOINTS,DEFAULT_IMAGE_MODELS
 from .net_safety import OutboundURLRejected, validate_outbound_url
 from .asset_provider_config import load as load_asset_provider_config, save as save_asset_provider_config, delete as delete_asset_provider_config
@@ -700,7 +700,8 @@ def _credential_guard(provider: str, session_token: str | None):
 @router.get("/credentials/{provider}")
 def credential_status(provider: str, x_session_token: str | None = Header(None)):
     _credential_guard(provider, x_session_token)
-    return credential_vault.status(provider)
+    try:return credential_vault.status(provider)
+    except VaultUnavailableError as exc:raise HTTPException(503,{"code":exc.code,"message":"系统凭据库不可用"}) from exc
 
 @router.put("/credentials/{provider}")
 def credential_set(provider: str, body: CredentialIn, x_session_token: str | None = Header(None)):
@@ -708,13 +709,16 @@ def credential_set(provider: str, body: CredentialIn, x_session_token: str | Non
     _credential_guard(provider, x_session_token)
     try: credential_vault.set(provider, body.credential)
     except ValueError as exc: raise HTTPException(400, {"code": "INVALID_CREDENTIAL"}) from exc
+    except VaultUnavailableError as exc: raise HTTPException(503,{"code":exc.code,"message":"系统凭据库不可用"}) from exc
     refresh_asset_provider(provider)
     if provider == "openai": refresh_asset_provider("custom")
     return credential_vault.status(provider)
 
 @router.delete("/credentials/{provider}")
 def credential_delete(provider: str, x_session_token: str | None = Header(None)):
-    _credential_guard(provider, x_session_token); credential_vault.clear(provider)
+    _credential_guard(provider, x_session_token)
+    try:credential_vault.clear(provider)
+    except VaultUnavailableError as exc:raise HTTPException(503,{"code":exc.code,"message":"系统凭据库不可用"}) from exc
     refresh_asset_provider(provider)
     if provider == "openai": refresh_asset_provider("custom")
     return credential_vault.status(provider)

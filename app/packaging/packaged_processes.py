@@ -30,9 +30,9 @@ RUNTIME_INCOMPLETE = "应用运行组件不完整，请重新安装 AI-Novel-Stu
 DATABASE_INVALID = "本地数据库无法安全启动。你的作品数据未被删除，请使用恢复工具检查数据。"
 
 # Provider secrets are accepted only through the ephemeral DesktopHost control
-# channel.  Never inherit a developer/user API-key environment variable into
-# the packaged backend process, and never let the packaged vault select the
-# Windows persistent backend.
+# channel. Never inherit developer/user API-key environment variables into
+# the packaged backend. The backend persists only values explicitly handed
+# off by DesktopHost, using the operating-system vault with no memory fallback.
 PACKAGED_PROVIDER_SECRET_ENV_VARS = frozenset({
     "OPENAI_API_KEY",
     "DEEPSEEK_API_KEY",
@@ -330,7 +330,8 @@ class PackagedProcessFactory:
         ))
         for secret_name in PACKAGED_PROVIDER_SECRET_ENV_VARS:
             environment.pop(secret_name, None)
-        environment["CREDENTIAL_VAULT_BACKEND"] = "memory"
+        environment["CREDENTIAL_VAULT_BACKEND"] = "auto"
+        environment["CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK"] = "false"
         stream = log.open("ab")
         process = subprocess.Popen(
             [str(executable), "-I", "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", str(port), "--no-access-log"],

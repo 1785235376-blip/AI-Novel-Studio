@@ -165,5 +165,7 @@ def test_backend_process_group_can_receive_windows_break(tmp_path, monkeypatch):
 
     assert captured["creationflags"] == getattr(__import__("subprocess"), "CREATE_NEW_PROCESS_GROUP", 0)
     assert not captured["creationflags"] & getattr(__import__("subprocess"), "CREATE_NO_WINDOW", 0)
+    assert captured["env"]["CREDENTIAL_VAULT_BACKEND"] == "auto"
+    assert captured["env"]["CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK"] == "false"
     child["graceful"]()
     assert captured["signal"] == getattr(__import__("subprocess"), "CTRL_BREAK_EVENT", 1)
