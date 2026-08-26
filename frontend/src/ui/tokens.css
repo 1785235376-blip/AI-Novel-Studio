@@ -1,11 +1,11 @@
 :root {
   color-scheme:light;
-  --color-bg-app:#e9edf0;--color-bg-surface:#f8fafb;--color-bg-subtle:#eef2f4;--color-bg-elevated:#ffffff;
-  --color-text-primary:#172027;--color-text-secondary:#52616b;--color-text-muted:#788791;--color-text-inverse:#f8fafb;
-  --color-border-default:#d8e0e5;--color-border-strong:#b9c6ce;--color-border-focus:#087f8c;
-  --color-accent-primary:#087f8c;--color-accent-hover:#066b76;--color-accent-active:#055761;--color-accent-subtle:#dff3f4;
+  --color-bg-app:#e8f1f3;--color-bg-surface:#f8fbfc;--color-bg-subtle:#edf6f7;--color-bg-elevated:#ffffff;
+  --color-text-primary:#113056;--color-text-secondary:#3f5d70;--color-text-muted:#6d8791;--color-text-inverse:#f8fbfc;
+  --color-border-default:#c7dfe3;--color-border-strong:#9fc7ce;--color-border-focus:#113056;
+  --color-accent-primary:#113056;--color-accent-hover:#0b2747;--color-accent-active:#081d36;--color-accent-subtle:#d7f0f2;
   --color-status-success:#15803d;--color-status-warning:#b45309;--color-status-error:#b91c1c;--color-status-info:#0369a1;--color-status-bar:#c9d4da;--color-status-signal:#3cc6aa;
-  --color-selection-bg:#dce8ff;--color-selection-border:#7b9fe5;
+  --color-selection-bg:#c9e9ed;--color-selection-border:#91cfd5;
   --font-ui:"Segoe UI Variable","Segoe UI","Microsoft YaHei UI","Microsoft YaHei",sans-serif;--font-editor:"Noto Serif SC","Source Han Serif SC","Songti SC",Georgia,serif;--font-mono:"Cascadia Mono","SFMono-Regular",Consolas,monospace;
   --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;
   --radius-sm:3px;--radius-md:6px;--radius-lg:8px;--radius-round:999px;
