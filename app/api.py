@@ -757,7 +757,10 @@ def get_novel(nid:str): return guard(novel_service.get,nid)
 @router.put("/novels/{nid}")
 def update_novel(nid:str,body:NovelUpdate): return guard(novel_service.update,nid,body.model_dump(exclude_none=True))
 @router.delete("/novels/{nid}",status_code=204)
-def delete_novel(nid:str): guard(novel_service.delete,nid)
+def delete_novel(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    if settings.enable_collaboration_runtime:
+        _authorize_novel_project(nid,x_session_token,"domain.write")
+    guard(novel_service.delete,nid)
 @router.get("/novels/{nid}/chapters")
 def chapters(nid:str): return guard(chapter_service.list,nid)
 @router.get("/novels/{nid}/chapters/archived")
@@ -808,8 +811,13 @@ def restore_archived_chapter(chapter_id:str,expected_version:int|None=None,x_ses
     except VersionConflict as exc: raise HTTPException(409,{"code":"VERSION_CONFLICT","conflict":exc.as_dict()})
     except VersionConflict as exc: raise HTTPException(409,{"code":"VERSION_CONFLICT","conflict":exc.as_dict()})
 @router.delete("/chapters/{chapter_id}",status_code=204)
-def delete_chapter(chapter_id:str):
-    if settings.enable_collaboration_runtime:_collaboration_unavailable()
+def delete_chapter(chapter_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    if settings.enable_collaboration_runtime:
+        actor,scope,current=_collaboration_context(chapter_id,x_session_token,x_branch_id)
+        try: membership_authorization_service.require(actor,"domain.write",ModalityDomain.NOVEL,scope)
+        except PermissionError as exc: raise HTTPException(403,{"code":"FORBIDDEN","detail":str(exc)})
+        if not current.get("is_archived"):
+            raise HTTPException(409,{"code":"CHAPTER_ARCHIVE_REQUIRED","message":"永久删除前必须先归档章节。"})
     return guard(chapter_service.delete,chapter_id)
 @router.post("/chapters/{chapter_id}/duplicate",status_code=201)
 def duplicate_chapter(chapter_id:str):
@@ -963,12 +971,12 @@ def reject_pending(pid:str): return guard(canon_service.reject,pid)
 def export_novel(nid:str,format:str="json"):
     return guard(novel_service.export,nid,format)
 
-def _authorize_export_project(
+def _authorize_novel_project(
     novel_id: str,
-    branch_id: str | None,
     session_token: str | None,
     permission: str,
     *,
+    branch_id: str | None = None,
     conceal: bool = False,
 ):
     if not session_token:
@@ -980,11 +988,11 @@ def _authorize_export_project(
     try:
         workspace_id = collaboration_scope_service.repository.project_workspace(novel_id)
         if not workspace_id or actor.workspace_id != workspace_id:
-            raise PermissionError("export project is outside the actor workspace")
+            raise PermissionError("project is outside the actor workspace")
         if branch_id:
             branch = collaboration_scope_service.repository.get("branches", branch_id)
             if branch.get("workspace_id") != workspace_id or branch.get("project_id") != novel_id:
-                raise PermissionError("export branch does not contain the project")
+                raise PermissionError("project branch does not contain the project")
             scope = AuthorizationScope(
                 ScopeKind.BRANCH,
                 workspace_id,
@@ -1000,7 +1008,22 @@ def _authorize_export_project(
     except (KeyError, ValueError, PermissionError) as exc:
         if conceal:
             raise HTTPException(404, "export job not found") from exc
-        raise HTTPException(403, {"code": "EXPORT_SCOPE_FORBIDDEN"}) from exc
+        raise HTTPException(403, {"code": "PROJECT_SCOPE_FORBIDDEN"}) from exc
+
+def _authorize_export_project(
+    novel_id: str,
+    branch_id: str | None,
+    session_token: str | None,
+    permission: str,
+    *,
+    conceal: bool = False,
+):
+    try:
+        return _authorize_novel_project(novel_id,session_token,permission,branch_id=branch_id,conceal=conceal)
+    except HTTPException as exc:
+        if exc.status_code == 403 and isinstance(exc.detail,dict) and exc.detail.get("code") == "PROJECT_SCOPE_FORBIDDEN":
+            raise HTTPException(403,{"code":"EXPORT_SCOPE_FORBIDDEN"}) from exc
+        raise
 
 @router.post("/exports", status_code=202)
 def create_export(

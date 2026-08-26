@@ -64,9 +64,33 @@ def test_http_resolves_opaque_session_server_side_and_never_trusts_actor_payload
 def test_collaboration_mode_blocks_legacy_mutation_bypasses(monkeypatch):
     monkeypatch.setattr(api, "settings", SimpleNamespace(enable_collaboration_runtime=True))
     client = TestClient(app)
-    assert client.delete("/api/chapters/book:1").status_code == 501
+    assert client.delete("/api/chapters/book:1").status_code == 401
     assert client.post("/api/chapters/book:1/duplicate").status_code == 501
     assert client.post("/api/chapters/book:1/move", json={"direction": "up"}).status_code == 501
+
+
+def test_collaboration_mode_allows_authorized_project_delete(monkeypatch):
+    import app.main as main_module
+    resolver = TrustedSessionResolver()
+    resolver.register("owner", SessionContext("session", "client", "user", "workspace"))
+    deleted = []
+    scope_service = SimpleNamespace(
+        repository=SimpleNamespace(project_workspace=lambda project_id: "workspace"),
+        validate_scope=lambda scope: None,
+    )
+    collaboration_settings = SimpleNamespace(enable_collaboration_runtime=True, enable_packaged_runtime=False)
+    monkeypatch.setattr(main_module, "settings", collaboration_settings)
+    monkeypatch.setattr(api, "settings", collaboration_settings)
+    monkeypatch.setattr(main_module, "trusted_session_resolver", resolver)
+    monkeypatch.setattr(api, "trusted_session_resolver", resolver)
+    monkeypatch.setattr(api, "collaboration_scope_service", scope_service)
+    monkeypatch.setattr(api, "membership_authorization_service", AllowRead())
+    monkeypatch.setattr(api, "novel_service", SimpleNamespace(delete=lambda novel_id: deleted.append(novel_id)))
+
+    response = TestClient(app).delete("/api/novels/book", headers={"X-Session-Token": "owner"})
+
+    assert response.status_code == 204
+    assert deleted == ["book"]
 
 
 class GenerationJobs:

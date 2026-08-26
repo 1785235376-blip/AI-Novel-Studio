@@ -14,6 +14,7 @@ import {
   Scope,
   WorkspaceNavigationPath,
   api,
+  apiErrorView,
   createNovelKnowledgeReview,
   setCollaborationContext,
 } from "../api";
@@ -65,7 +66,10 @@ export function EntryExperience({
       await api.deleteNovel(deleteTarget.project_id);
       const navigation=await api.adminWorkspaceNavigation(workspace.id);
       setPaths(navigation.eligible_paths);setDeleteTarget(undefined);
-    }catch{setError("删除小说失败，请稍后重试。")}finally{setLoading(false)}
+    }catch(reason){
+      const view=apiErrorView(reason,"删除小说失败，请稍后重试。");
+      setError(view.code?`${view.message}（${view.code}）`:view.message);
+    }finally{setLoading(false)}
   }
 
   async function recover(value = token) {
@@ -243,12 +247,16 @@ export function EntryExperience({
         },
         report,
       });
-      report("章节已写入，正在建立整本资料审查任务…");
-      await createNovelKnowledgeReview(path.project_id);
-      report(
-        `已完成 ${plan.chapters.length}/${plan.chapters.length} 章，正在打开小说…`,
-      );
       localStorage.removeItem(recoveryKey);
+      report("章节已全部写入，正在建立整本资料审查任务…");
+      let reviewCreated=true;
+      try {
+        await createNovelKnowledgeReview(path.project_id);
+      } catch {
+        reviewCreated=false;
+        report("小说已导入；AI 资料审查任务暂未建立，可进入小说后重新发起审查。");
+      }
+      if(reviewCreated)report(`已完成 ${plan.chapters.length}/${plan.chapters.length} 章，正在打开小说…`);
       setPaths(navigation.eligible_paths);
       enter(path);
     } catch {

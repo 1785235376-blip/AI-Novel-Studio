@@ -37,7 +37,9 @@ def test_production_fail_closed_middleware_allows_only_exact_lifecycle_posts(mon
         assert client.patch(f"/api/chapters/project:1/{suffix}").status_code == 501
         assert client.post(f"/api/chapters/project:1/{suffix}/extra").status_code == 501
 
-    assert client.delete("/api/chapters/project:1").status_code == 501
+    response = client.delete("/api/chapters/project:1")
+    assert response.status_code == 401
+    assert response.json()["detail"]["code"] == "SESSION_REQUIRED"
     assert client.post("/api/chapters/project:1/unsupported").status_code == 501
 
 

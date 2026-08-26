@@ -3,6 +3,7 @@ import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,describe,expect,it,vi} from 'vitest';
 import {EntryExperience} from './EntryExperience';
 import {api} from '../api';
+import * as apiModule from '../api';
 
 afterEach(()=>{cleanup();vi.restoreAllMocks()});
 const workspace={id:'workspace-a',name:'作者空间'};
@@ -21,4 +22,23 @@ describe('EntryExperience',()=>{
   it('selects an authorized workspace, opens an existing novel, and exposes no internal ids',async()=>{packaged();const enter=vi.fn();render(<EntryExperience packagedHost initialToken="" onEnter={enter}/>);fireEvent.click(await screen.findByRole('button',{name:/个人创作/}));fireEvent.click(await screen.findByRole('button',{name:/作者空间/}));const card=await screen.findByRole('button',{name:/雾港来信.*打开小说/});fireEvent.click(card);expect(enter).toHaveBeenCalledWith('',expect.objectContaining({workspaceId:'workspace-a',projectId:'novel-a'}));expect(screen.queryByText(/workspace-a|story-a|branch-a/)).toBeNull()});
   it('creates and enters a novel after workspace resolution',async()=>{packaged();const enter=vi.fn();vi.spyOn(api,'adminCreateProject').mockResolvedValue({id:'novel-new',title:'新故事'} as any);vi.mocked(api.adminWorkspaceNavigation).mockResolvedValueOnce({workspace_id:workspace.id,eligible_paths:[],default_path:null}).mockResolvedValueOnce({workspace_id:workspace.id,eligible_paths:[{...novel,project_id:'novel-new',project_name:'新故事'}],default_path:null});render(<EntryExperience packagedHost initialToken="" onEnter={enter}/>);fireEvent.click(await screen.findByRole('button',{name:/个人创作/}));fireEvent.click(await screen.findByRole('button',{name:/作者空间/}));const input=await screen.findByLabelText('小说名称') as HTMLInputElement;expect(input.disabled).toBe(false);fireEvent.change(input,{target:{value:'新故事'}});fireEvent.keyDown(input,{key:'Enter'});await waitFor(()=>expect(api.adminCreateProject).toHaveBeenCalledWith('workspace-a','新故事'));await waitFor(()=>expect(enter).toHaveBeenCalledWith('',expect.objectContaining({projectId:'novel-new'})))});
   it('requires confirmation before deleting a novel and refreshes the library',async()=>{packaged();vi.spyOn(api,'deleteNovel').mockResolvedValue(undefined);render(<EntryExperience packagedHost initialToken="" onEnter={vi.fn()}/>);fireEvent.click(await screen.findByRole('button',{name:/个人创作/}));fireEvent.click(await screen.findByRole('button',{name:/作者空间/}));fireEvent.click(await screen.findByRole('button',{name:'删除小说雾港来信'}));expect(api.deleteNovel).not.toHaveBeenCalled();expect(screen.getByRole('alertdialog').textContent).toContain('无法撤销');vi.mocked(api.adminWorkspaceNavigation).mockResolvedValueOnce(navigation([]));fireEvent.click(screen.getByRole('button',{name:'永久删除小说'}));await waitFor(()=>expect(api.deleteNovel).toHaveBeenCalledWith('novel-a'));await waitFor(()=>expect(screen.getByText('还没有小说')).toBeTruthy())});
+  it('opens a committed import even when the optional AI knowledge review cannot be created',async()=>{
+    packaged();localStorage.clear();
+    const imported={...novel,project_id:'novel-imported',project_name:'导入小说'};
+    vi.spyOn(api,'importNovel').mockResolvedValue({preview:{title:'导入小说',chapter_count:1,word_count:1,warnings:[],chapters:[{number:1,title:'第一章',word_count:1}]},plan:{format:'txt',title:'导入小说',chapters:[{number:1,title:'第一章',content:'甲'}]}} as any);
+    vi.spyOn(api,'adminCreateProject').mockResolvedValue({id:'novel-imported',title:'导入小说'} as any);
+    vi.spyOn(api,'scopedCreateChapter').mockResolvedValue({id:'chapter-1',version:1} as any);
+    vi.spyOn(api,'saveChapter').mockResolvedValue({} as any);
+    vi.spyOn(apiModule,'createNovelKnowledgeReview').mockRejectedValue(new Error('provider unavailable'));
+    vi.mocked(api.adminWorkspaceNavigation).mockResolvedValueOnce(navigation()).mockResolvedValueOnce(navigation()).mockResolvedValueOnce(navigation([novel,imported]));
+    const enter=vi.fn();render(<EntryExperience packagedHost initialToken="" onEnter={enter}/>);
+    fireEvent.click(await screen.findByRole('button',{name:/个人创作/}));fireEvent.click(await screen.findByRole('button',{name:/作者空间/}));
+    const input=await screen.findByLabelText('选择要导入的小说文件') as HTMLInputElement;
+    const file=new File(['第一章\n甲'],'book.txt',{type:'text/plain'});Object.defineProperty(file,'text',{value:async()=>"第一章\n甲"});
+    fireEvent.change(input,{target:{files:[file]}});
+    fireEvent.click(await screen.findByRole('button',{name:'确认导入并打开'}));
+    await waitFor(()=>expect(enter).toHaveBeenCalledWith('',expect.objectContaining({projectId:'novel-imported'})));
+    expect(api.scopedCreateChapter).toHaveBeenCalledTimes(1);
+    expect(localStorage.length).toBe(0);
+  });
 });
