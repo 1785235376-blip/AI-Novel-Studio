@@ -1,0 +1,25 @@
+.world-relationship-graph{display:grid;gap:var(--space-3);padding:var(--space-4);border:var(--border-default);border-radius:var(--radius-lg);background:var(--color-bg-surface)}
+.world-relationship-graph__header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)}
+.world-relationship-graph__header h3,.world-relationship-graph__adjacency h4{margin:0;font-size:15px}
+.world-relationship-graph__header p{margin:var(--space-1) 0 0;color:var(--color-text-secondary);font-size:12px}
+.world-relationship-graph__layout{display:grid;grid-template-columns:minmax(360px,3fr) minmax(260px,2fr);gap:var(--space-3);min-width:0}
+.world-relationship-graph__canvas{position:relative;min-height:360px;overflow:hidden;border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-subtle)}
+.world-relationship-graph__canvas svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.world-relationship-graph__canvas line{stroke:var(--color-border-strong);stroke-width:.35;vector-effect:non-scaling-stroke}
+.world-relationship-graph__node{position:absolute;display:grid;gap:var(--space-1);width:112px;min-height:64px;padding:var(--space-2);transform:translate(-50%,-50%);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-surface);color:var(--color-text-primary);text-align:left}
+.world-relationship-graph__node:hover{border-color:var(--color-border-strong);background:var(--color-bg-elevated)}
+.world-relationship-graph__node strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.world-relationship-graph__node small,.world-relationship-graph__node span{overflow:hidden;color:var(--color-text-muted);font-size:11px;text-overflow:ellipsis;white-space:nowrap}
+.world-relationship-graph__adjacency{display:grid;align-content:start;gap:var(--space-2);min-width:0}
+.world-relationship-graph__adjacency ul{display:grid;margin:0;padding:0;list-style:none}
+.world-relationship-graph__adjacency li{border-bottom:var(--border-default)}
+.world-relationship-graph__adjacency li:last-child{border-bottom:0}
+.world-relationship-graph__adjacency li>button{display:grid;gap:var(--space-2);width:100%;padding:var(--space-3) 0;border:0;background:transparent;color:var(--color-text-primary);text-align:left}
+.world-relationship-graph__adjacency li>button:hover{background:var(--color-bg-subtle)}
+.world-relationship-graph__edge-title{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:var(--space-2)}
+.world-relationship-graph__edge-title strong{overflow-wrap:anywhere}
+.world-relationship-graph__edge-title>span{color:var(--color-text-secondary);font-size:11px}
+.world-relationship-graph__edge-meta{display:flex;align-items:center;gap:var(--space-2);color:var(--color-text-muted);font-size:11px}
+.world-relationship-graph__description,.world-relationship-graph__events,.world-relationship-graph__empty{margin:0;color:var(--color-text-secondary);font-size:12px;overflow-wrap:anywhere}
+.world-relationship-graph button:focus-visible{outline:2px solid var(--color-border-focus);outline-offset:2px}
+@media(max-width:900px){.world-relationship-graph__layout{grid-template-columns:1fr}.world-relationship-graph__canvas{min-height:320px}}

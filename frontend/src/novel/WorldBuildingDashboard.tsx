@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { AlertTriangle, GitBranch, ListTree, MapPin } from "lucide-react";
 import { Badge, Button, EmptyState, Spinner, StatusMessage } from "../ui/primitives";
 import type { StoryDatabaseKind } from "./StoryDatabase";
+import { WorldRelationshipGraph } from "./WorldRelationshipGraph";
+import { WorldTimelineView } from "./WorldTimelineView";
 import "./WorldBuildingDashboard.css";
 
 type RecordValue = Record<string, unknown>;
@@ -57,6 +59,8 @@ export function WorldBuildingDashboard({
       ) : !activeRows.length ? (
         <EmptyState title={`还没有${viewLabels[view]}数据`} detail={`前往“${viewLabels[view]}”录入真实资料后，这里会自动形成总览。`} />
       ) : view === "relationships" ? (
+        <>
+        <WorldRelationshipGraph characters={characters} relationships={relationships} timeline={timeline} onOpen={onOpen} />
         <div className="world-dashboard__network" role="list" aria-label="角色关系图">
           {relationships.map((item) => (
             <button key={String(item.id)} role="listitem" type="button" onClick={() => onOpen("relationships", String(item.id))}>
@@ -68,17 +72,9 @@ export function WorldBuildingDashboard({
             </button>
           ))}
         </div>
+        </>
       ) : view === "timeline" ? (
-        <ol className="world-dashboard__timeline">
-          {orderedTimeline.map((item) => {
-            const itemCharacters = ids(item.characters).map((id) => characterNames.get(id) || id);
-            return <li key={String(item.id)}><button type="button" onClick={() => onOpen("timeline", String(item.id))}>
-              <span className="world-dashboard__sequence">{Number(item.sequence || 0)}</span>
-              <span className="world-dashboard__event"><strong>{text(item.title || item.event, "未命名事件")}</strong><small>{text(item.time, "故事时间未填写")} · {item.location ? locationNames.get(String(item.location)) || String(item.location) : "未关联地点"}</small><small>{itemCharacters.length ? itemCharacters.join("、") : "未关联角色"}{item.chapter_id ? ` · ${String(item.chapter_id)}` : " · 未关联章节"}</small></span>
-              <Badge tone={item.status === "DISPUTED" ? "warning" : "neutral"}>{text(item.status, "未标记")}</Badge>
-            </button></li>;
-          })}
-        </ol>
+        <WorldTimelineView timeline={orderedTimeline} characters={characters} locations={locations} onOpen={(kind, id) => onOpen(kind, id)} />
       ) : (
         <div className="world-dashboard__threads" role="list">
           {foreshadowing.map((item) => {
