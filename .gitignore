@@ -3,6 +3,7 @@
 node_modules/
 frontend/dist/
 frontend/test-results*/
+*.tsbuildinfo
 desktop-host/**/bin/
 desktop-host/**/obj/
 tests/**/bin/
