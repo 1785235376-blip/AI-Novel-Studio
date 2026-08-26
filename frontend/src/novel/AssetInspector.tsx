@@ -26,7 +26,7 @@ export function AssetInspector({ asset, novelId }: { asset?: Asset; novelId?: st
     setPreviewUrl(""); setError("");
     if (!asset || !previewable) return () => { active = false; };
     setLoading(true);
-    api.assetDownload(asset.id).then((blob) => {
+    api.assetDownload(asset.id,asset.novel_id).then((blob) => {
       if (!active) return;
       objectUrl = URL.createObjectURL(blob); setPreviewUrl(objectUrl);
     }).catch(() => { if (active) setError("媒体预览读取失败，可尝试下载原始文件。"); })
@@ -37,7 +37,7 @@ export function AssetInspector({ asset, novelId }: { asset?: Asset; novelId?: st
     if (!asset) return;
     setError("");
     try {
-      const blob = await api.assetDownload(asset.id);
+      const blob = await api.assetDownload(asset.id,asset.novel_id);
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url; anchor.download = asset.filename.replace(/[\\/\r\n\0]/g, "_").slice(0, 255) || "asset";

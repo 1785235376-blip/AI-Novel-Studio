@@ -12,10 +12,11 @@ def test_asset_upload_list_metadata_and_download():
     repeated=client.post(f'/api/novels/{nid}/assets',headers={'Idempotency-Key':'asset-1'},json={'novel_id':nid,'filename':'cover.png','content_base64':encoded,'media_type':'image/png'})
     assert repeated.json()['id']==asset['id']
     assert client.get(f'/api/novels/{nid}/assets').json()[0]['id']==asset['id']
-    downloaded=client.get(f"/api/assets/{asset['id']}/download")
+    downloaded=client.get(f"/api/assets/{asset['id']}/download",params={'novel_id':nid})
     assert downloaded.status_code==200 and downloaded.content==raw and downloaded.headers['x-asset-sha256']==asset['sha256']
-    assert client.delete(f"/api/assets/{asset['id']}").json()['deleted'] is True
-    assert client.get(f"/api/assets/{asset['id']}").status_code==404
+    assert client.get(f"/api/assets/{asset['id']}/download",params={'novel_id':'another-novel'}).status_code==404
+    assert client.delete(f"/api/assets/{asset['id']}",params={'novel_id':nid}).json()['deleted'] is True
+    assert client.get(f"/api/assets/{asset['id']}",params={'novel_id':nid}).status_code==404
 
 def test_concurrent_asset_upload_with_same_key_is_single_resource():
     client=TestClient(app); nid=client.post('/api/novels',json={'title':f'asset-race-{uuid4()}'}).json()['id']

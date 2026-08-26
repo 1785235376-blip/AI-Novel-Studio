@@ -18,7 +18,7 @@ describe('ModuleWorkspaceRoutes',()=>{
     expect(host.textContent).toContain('视频');
     act(()=>root.unmount());
   });
-  it.each(['IMAGE','AUDIO'] as const)('does not mount %s project panels without a novel',module=>{
+  it.each(['IMAGE','VIDEO','AUDIO','WORKFLOW','ASSETS'] as const)('does not mount %s project panels without a novel',module=>{
     host=document.createElement('div');document.body.append(host);const root=createRoot(host);
     act(()=>root.render(<ModuleWorkspaceRoutes module={module} onModuleChange={vi.fn()} scope={{workspace:'w',project:'',storyline:'s',branch:'b'}} actor="author"/>));
     expect(host.textContent).toContain('请先打开小说项目');

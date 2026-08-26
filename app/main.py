@@ -17,6 +17,7 @@ from pathlib import Path
 import os
 import re
 import uuid
+import ipaddress
 
 from .api import router as api_router
 @asynccontextmanager
@@ -57,6 +58,12 @@ def _normalized_api_path(path: str) -> str:
 async def collaboration_fail_closed(request,call_next):
     packaged = bool(getattr(settings, "enable_packaged_runtime", False))
     collaboration = bool(getattr(settings, "enable_collaboration_runtime", False))
+    if not packaged and not collaboration:
+        remote_host=request.client.host if request.client else ''
+        try: local_client=ipaddress.ip_address(remote_host).is_loopback
+        except ValueError: local_client=remote_host=='testclient'
+        if not local_client:
+            return JSONResponse({"detail":{"code":"LOCAL_RUNTIME_LOOPBACK_REQUIRED"}},status_code=403)
     if packaged:
         path = request.url.path
         normalized_path = _normalized_api_path(path)
@@ -167,12 +174,30 @@ async def collaboration_fail_closed(request,call_next):
             re.fullmatch(r"/api/exports/[^/]+/(?:cancel|retry)",normalized_path) is not None and method=="POST" or
             re.fullmatch(r"/api/exports/[^/]+(?:/download)?",normalized_path) is not None and method=="GET" or
             re.fullmatch(r"/api/novels/[^/]+/export",normalized_path) is not None and method=="GET" or
+            re.fullmatch(r"/api/novels/[^/]+/assets",normalized_path) is not None and method in {"GET","POST"} or
+            re.fullmatch(r"/api/assets/[^/]+(?:/download)?",normalized_path) is not None and method in {"GET","DELETE"} or
+            normalized_path=="/api/asset-providers" and method=="GET" or
+            re.fullmatch(r"/api/asset-providers/[^/]+",normalized_path) is not None and method in {"PUT","DELETE"} or
+            normalized_path in {"/api/images/generate","/api/vision/analyze","/api/speech/synthesize"} and method=="POST" or
+            re.fullmatch(r"/api/novels/[^/]+/(?:image-generations|speech-generations)(?:/import)?",normalized_path) is not None and method in {"GET","POST"} or
             re.fullmatch(r"/api/novels/[^/]+/import/knowledge-base/review",normalized_path) is not None and method in {"GET","POST"} or
             re.fullmatch(r"/api/novels/[^/]+/import/knowledge-base/review/[^/]+",normalized_path) is not None and method in {"GET","PUT"} or
             re.fullmatch(r"/api/novels/[^/]+/import/knowledge-base/review/[^/]+/ai-analyze",normalized_path) is not None and method=="POST" or
             capability_route and method in {"GET","POST","PUT","PATCH","DELETE"}))
         if not allowed:
             return JSONResponse({"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}},status_code=501)
+        public_metadata = (
+            (normalized_path == "/health" and method in {"GET", "HEAD"})
+            or (normalized_path in {"/api/health", "/api/providers", "/api/models", "/api/text-models"} and method in {"GET", "HEAD"})
+        )
+        if not public_metadata:
+            token = request.headers.get("X-Session-Token")
+            if not token:
+                return JSONResponse({"detail": {"code": "SESSION_REQUIRED"}}, status_code=401)
+            try:
+                trusted_session_resolver.resolve(token)
+            except (KeyError, ValueError):
+                return JSONResponse({"detail": {"code": "INVALID_SESSION"}}, status_code=401)
     return await call_next(request)
 app.add_middleware(CORSMiddleware,allow_origins=[settings.frontend_origin],allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 app.include_router(api_router, prefix="/api")

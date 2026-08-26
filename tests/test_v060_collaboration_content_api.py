@@ -56,6 +56,26 @@ def test_production_fail_closed_middleware_allows_only_exact_archived_list_get(m
     assert client.post("/api/chapters/project:1/unsupported").status_code == 501
 
 
+def test_sensitive_collaboration_routes_require_session(monkeypatch):
+    import app.main as main_module
+    monkeypatch.setattr(main_module, "settings", SimpleNamespace(enable_collaboration_runtime=True,enable_packaged_runtime=False))
+    client = TestClient(main_module.app, raise_server_exceptions=False)
+    requests = [
+        ("put", "/api/chapters/project:1"),
+        ("post", "/api/generate/continue"),
+        ("post", "/api/agent/chat"),
+        ("post", "/api/exports"),
+        ("get", "/api/exports/job/download"),
+        ("post", "/api/harness/process/start"),
+        ("get", "/api/collaboration/admin/workspaces"),
+        ("get", "/api/assets/asset/download?novel_id=project"),
+    ]
+    for method,path in requests:
+        response=getattr(client,method)(path)
+        assert response.status_code==401,(method,path,response.status_code,response.text)
+        assert response.json()["detail"]["code"]=="SESSION_REQUIRED"
+
+
 class Sessions:
     def resolve(self, token):
         if token != "trusted":

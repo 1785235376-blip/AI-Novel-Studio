@@ -35,6 +35,7 @@ class Settings:
     enable_collaboration_runtime: bool = _bool("ENABLE_COLLABORATION_RUNTIME", False)
     enable_packaged_runtime: bool = _bool("ENABLE_PACKAGED_RUNTIME", False)
     collaboration_dev_sessions_json: str = os.getenv("COLLABORATION_DEV_SESSIONS_JSON", "")
+    outbound_loopback_allowlist: str = os.getenv("OUTBOUND_LOOPBACK_ALLOWLIST", "")
 
     def data_path(self) -> Path:
         return self.novel_data if self.novel_data.is_absolute() else self.root / self.novel_data

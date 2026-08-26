@@ -8,10 +8,12 @@ afterEach(()=>{cleanup();vi.restoreAllMocks()});
 
 it('exposes real task lifecycle and only renders URI after generation resolves', async()=>{
   vi.spyOn(api,'imageGenerations').mockResolvedValue({items:[]});
+  vi.spyOn(api,'assetProviders').mockResolvedValue({items:[{provider_id:'ddshub',default_model:'gpt-image-2',configured:true,registered:true}]});
   let resolve!: (value:any)=>void;
   vi.spyOn(api,'imageGenerate').mockImplementation(()=>new Promise(r=>{resolve=r}));
   const inspect=vi.fn();
   render(<ImageGenerationPanel novelId="n1" onInspect={inspect}/>);
+  await waitFor(()=>expect((screen.getByRole('button',{name:'生成图片'}) as HTMLButtonElement).disabled).toBe(false));
   fireEvent.click(screen.getByRole('button',{name:'生成图片'}));
   expect(screen.getByText('任务状态：执行中')).toBeTruthy();
   expect(screen.queryByAltText('生成结果')).toBeNull();
@@ -24,8 +26,10 @@ it('exposes real task lifecycle and only renders URI after generation resolves',
 
 it('marks failed requests without fabricating an image URI', async()=>{
   vi.spyOn(api,'imageGenerations').mockResolvedValue({items:[]});
+  vi.spyOn(api,'assetProviders').mockResolvedValue({items:[{provider_id:'ddshub',default_model:'gpt-image-2',configured:true,registered:true}]});
   vi.spyOn(api,'imageGenerate').mockRejectedValue(new Error('offline'));
   render(<ImageGenerationPanel novelId="n1"/>);
+  await waitFor(()=>expect((screen.getByRole('button',{name:'生成图片'}) as HTMLButtonElement).disabled).toBe(false));
   fireEvent.click(screen.getByRole('button',{name:'生成图片'}));
   await waitFor(()=>expect(screen.getByText('任务状态：失败 · 图片生成失败，请检查 Provider 配置。')).toBeTruthy());
   expect(screen.queryByAltText('生成结果')).toBeNull();

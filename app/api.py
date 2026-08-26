@@ -28,6 +28,7 @@ from .authorization import AuthorizationScope,ScopeKind,ModalityDomain,DomainRol
 from .document import markdown_to_document
 from .credential_vault import credential_vault
 from .asset_providers import DEFAULT_IMAGE_ENDPOINTS,DEFAULT_IMAGE_MODELS
+from .net_safety import OutboundURLRejected, validate_outbound_url
 from .asset_provider_config import load as load_asset_provider_config, save as save_asset_provider_config, delete as delete_asset_provider_config
 from .model_runtime import TextGenerationRequest, TextGenerationParameters, TextModelNodeInput, ModelRuntimeError
 from .asset_worker_config import load as load_asset_worker_config, save as save_asset_worker_config
@@ -1080,18 +1081,27 @@ def upload_asset(nid:str, body:AssetUploadIn, idempotency_key: str | None = Head
 def list_assets(nid:str,kind:str|None=None,character_id:str|None=None,scene_id:str|None=None):
     items=asset_library_service.list(nid)
     return [item for item in items if (not kind or item.get('kind')==kind) and (not character_id or item.get('character_id')==character_id) and (not scene_id or item.get('scene_id')==scene_id)]
+def _scoped_asset(asset_id:str,novel_id:str):
+    asset=asset_library_service.get(asset_id)
+    if not hmac.compare_digest(str(asset.get('novel_id') or ''),str(novel_id)):
+        raise FileNotFoundError(asset_id)
+    return asset
+def _authorize_asset_project(novel_id:str,session_token:str|None,branch_id:str|None,permission:str):
+    if not settings.enable_collaboration_runtime:return
+    if not branch_id:raise HTTPException(400,{"code":"BRANCH_SCOPE_REQUIRED"})
+    _adaptation_context(novel_id,branch_id,session_token,permission)
 @router.get("/assets/{asset_id}")
-def get_asset(asset_id:str):
-    try: return asset_library_service.get(asset_id)
+def get_asset(asset_id:str,novel_id:str=Query(min_length=1),x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    try: _authorize_asset_project(novel_id,x_session_token,x_branch_id,"domain.read"); return _scoped_asset(asset_id,novel_id)
     except FileNotFoundError: raise HTTPException(404, "asset not found")
 @router.get("/assets/{asset_id}/download")
-def download_asset(asset_id:str):
+def download_asset(asset_id:str,novel_id:str=Query(min_length=1),x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     try:
-        meta=asset_library_service.get(asset_id); return Response(asset_library_service.content(asset_id), media_type=meta["media_type"], headers={"Content-Disposition": _export_content_disposition(meta["filename"]), "X-Asset-SHA256": meta["sha256"]})
+        _authorize_asset_project(novel_id,x_session_token,x_branch_id,"domain.read");meta=_scoped_asset(asset_id,novel_id); return Response(asset_library_service.content(asset_id), media_type=meta["media_type"], headers={"Content-Disposition": _export_content_disposition(meta["filename"]), "X-Asset-SHA256": meta["sha256"]})
     except FileNotFoundError: raise HTTPException(404, "asset not found")
 @router.delete("/assets/{asset_id}")
-def delete_asset(asset_id:str):
-    try: return asset_library_service.delete(asset_id)
+def delete_asset(asset_id:str,novel_id:str=Query(min_length=1),x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    try: _authorize_asset_project(novel_id,x_session_token,x_branch_id,"domain.write");_scoped_asset(asset_id,novel_id); return asset_library_service.delete(asset_id)
     except FileNotFoundError: raise HTTPException(404, "asset not found")
 @router.post("/novels/import")
 def import_novel(body:ImportIn,idempotency_key:str|None=Header(None,alias="Idempotency-Key")):
@@ -1420,7 +1430,8 @@ def video_provider_credential_status(provider_id:str):
 def multimodal_health():
     from .dependencies import asset_provider_registry
     image_ids=list(asset_provider_registry._providers.keys())
-    return {'image_providers':[{"id":pid,"registered":True} for pid in image_ids],"vision_credentials":credential_vault.has('openai'),"speech_credentials":credential_vault.has('openai'),"video_provider_configs":len(_video_provider_configs)}
+    vision=[{'id':pid,'configured':bool(endpoint and credential_vault.has(pid))} for pid,endpoint in DEFAULT_IMAGE_ENDPOINTS.items() if pid!='custom']
+    return {'image_providers':[{"id":pid,"registered":True} for pid in image_ids],"vision_providers":vision,"vision_credentials":any(item['configured'] for item in vision),"speech_credentials":any(item['configured'] for item in vision),"video_provider_configs":len(_video_provider_configs)}
 @router.get("/video-callback/security")
 def video_callback_security(): return {"configured":bool(os.getenv('VIDEO_CALLBACK_TOKEN','').strip()),"header":"X-Video-Callback-Token","secret_exposed":False}
 @router.post("/vision/analyze")
@@ -1430,10 +1441,12 @@ def vision_analyze(body:VisionAnalyzeIn):
     endpoint=DEFAULT_IMAGE_ENDPOINTS.get(body.provider_id,'')
     secret=credential_vault.resolve(body.provider_id)
     if not endpoint or not secret: raise HTTPException(503,'vision provider is not configured')
+    try: safe_image_url=validate_outbound_url(body.image_url)
+    except OutboundURLRejected as exc: raise HTTPException(400,{'code':'OUTBOUND_URL_REJECTED','message':str(exc)})
     try:
         import httpx
-        result=OpenAICompatibleVisionProvider(httpx,secret,endpoint).analyze(VisionRequest(body.provider_id,body.model_id,body.prompt,body.image_url))
-        payload={'provider_id':result.provider_id,'model_id':result.model_id,'text':result.text,'image_url':body.image_url,'prompt':body.prompt,'character_id':body.character_id,'scene_id':body.scene_id}
+        result=OpenAICompatibleVisionProvider(httpx,secret,endpoint).analyze(VisionRequest(body.provider_id,body.model_id,body.prompt,safe_image_url))
+        payload={'provider_id':result.provider_id,'model_id':result.model_id,'text':result.text,'image_url':safe_image_url,'prompt':body.prompt,'character_id':body.character_id,'scene_id':body.scene_id}
         if body.novel_id:
             from .dependencies import repositories
             novel=repositories.novels.get(body.novel_id); memories=list(novel.get('visual_memories',[])); memories.append({**payload,'created_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}); repositories.novels.update(body.novel_id,{**novel,'visual_memories':memories[-50:]})

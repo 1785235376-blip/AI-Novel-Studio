@@ -17,7 +17,7 @@ it("renders authenticated image preview and exact asset metadata", async () => {
   expect((await screen.findByAltText("角色参考.png")).getAttribute("src")).toBe("blob:asset-preview");
   expect(screen.getByText("2.0 KiB")).toBeTruthy();
   expect(screen.getByText("asset-1")).toBeTruthy();
-  await waitFor(() => expect(api.assetDownload).toHaveBeenCalledWith("asset-1"));
+  await waitFor(() => expect(api.assetDownload).toHaveBeenCalledWith("asset-1","novel-1"));
 });
 
 it("keeps an honest empty state before selection", () => {

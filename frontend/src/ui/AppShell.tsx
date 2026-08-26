@@ -23,6 +23,15 @@ export interface ScopeLabels {
   storyline: string;
   branch: string;
 }
+export function moduleForTaskSource(source:string):StudioModule{
+  if(source==='image')return 'IMAGE';
+  if(source==='audio'||source==='speech'||source==='audiobook')return 'AUDIO';
+  if(source==='video'||source==='motion'||source==='screenplay')return 'VIDEO';
+  if(source==='plugin')return 'PLUGIN';
+  if(source==='asset'||source==='assets')return 'ASSETS';
+  if(source==='control'||source==='provider'||source==='model')return 'CONTROL';
+  return 'WORKFLOW';
+}
 
 export function ModuleSwitcher({
   value,
@@ -448,15 +457,8 @@ export function AppShell({
                       className="task-inspector__row"
                       key={`${source}-${failure.id}`}
                       onClick={() => {
-                        const target =
-                          source === "image"
-                            ? "IMAGE"
-                            : source === "audio" || source === "speech" || source === "audiobook"
-                              ? "AUDIO"
-                              : source === "workflow" || source === "agent"
-                                ? "WORKFLOW"
-                                : "VIDEO";
-                        onModuleChange(target as StudioModule);
+                        const target=moduleForTaskSource(source);
+                        onModuleChange(target);
                         requestAnimationFrame(() =>
                           requestFailedTaskFocus(source, failure.id),
                         );

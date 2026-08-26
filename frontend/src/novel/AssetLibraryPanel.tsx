@@ -204,7 +204,7 @@ function AssetCard({
     setPreviewLoading(true);
     setPreviewUrl("");
     void api
-      .assetDownload(asset.id)
+      .assetDownload(asset.id,asset.novel_id)
       .then((blob) => {
         if (!active) return;
         try {
@@ -232,7 +232,7 @@ function AssetCard({
   async function download() {
     setDownloadError(undefined);
     try {
-      const blob = await api.assetDownload(asset.id);
+      const blob = await api.assetDownload(asset.id,asset.novel_id);
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url;

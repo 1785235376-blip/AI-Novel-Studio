@@ -270,7 +270,7 @@ class ScreenplayService:
         task=next((r for r in screenplay.get('motion_tasks',[]) if r['id']==task_id),None)
         if task is None: raise KeyError(task_id)
         result=task.get('result') or {}
-        asset_id=result.get('asset_id'); return {'novel_id':novel_id,'screenplay_id':screenplay_id,'task_id':task_id,'asset_id':asset_id,'download_path':f'/api/assets/{asset_id}/download' if asset_id else None,'url':result.get('url'),'kind':result.get('kind','VIDEO'),'provider_id':result.get('provider_id'),'model_id':result.get('model_id')}
+        asset_id=result.get('asset_id'); return {'novel_id':novel_id,'screenplay_id':screenplay_id,'task_id':task_id,'asset_id':asset_id,'download_path':f'/api/assets/{asset_id}/download?novel_id={novel_id}' if asset_id else None,'url':result.get('url'),'kind':result.get('kind','VIDEO'),'provider_id':result.get('provider_id'),'model_id':result.get('model_id')}
     def import_motion_asset_reference(self,novel_id,screenplay_id,task_id):
         ref=self.motion_asset_reference(novel_id,screenplay_id,task_id)
         if not ref.get('url'): raise ValueError('motion result does not have a downloadable URL')

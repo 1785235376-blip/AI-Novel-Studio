@@ -2,10 +2,16 @@
 import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { AppShell, ModuleSwitcher } from "./AppShell";
+import { AppShell, ModuleSwitcher, moduleForTaskSource } from "./AppShell";
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 let host: HTMLDivElement;
 afterEach(() => host?.remove());
+it('maps every published task family without sending unknown failures to video',()=>{
+  expect(moduleForTaskSource('plugin')).toBe('PLUGIN');
+  expect(moduleForTaskSource('assets')).toBe('ASSETS');
+  expect(moduleForTaskSource('provider')).toBe('CONTROL');
+  expect(moduleForTaskSource('unknown')).toBe('WORKFLOW');
+});
 describe("ModuleSwitcher", () => {
   it("uses one accessible tab contract for every module", () => {
     host = document.createElement("div");
