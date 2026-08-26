@@ -32,6 +32,7 @@ from .net_safety import OutboundURLRejected, validate_outbound_url
 from .asset_provider_config import load as load_asset_provider_config, save as save_asset_provider_config, delete as delete_asset_provider_config
 from .model_runtime import TextGenerationRequest, TextGenerationParameters, TextModelNodeInput, ModelRuntimeError
 from .asset_worker_config import load as load_asset_worker_config, save as save_asset_worker_config
+from .audio_production_store import audio_production_store
 from .services.export_job_service import (
     ExportJobNotCancellable,
     ExportJobNotRetryable,
@@ -137,6 +138,39 @@ class AssetUploadIn(BaseModel): novel_id:str; filename:str; content_base64:str; 
 class VisionAnalyzeIn(BaseModel): provider_id:str="openai"; model_id:str="gpt-4o-mini"; prompt:str; image_url:str; novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None
 class ImageGenerateIn(BaseModel): provider_id:str="ddshub"; model_id:str="gpt-image-2"; prompt:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None; constraints:dict[str,object]={}
 class SpeechSynthesizeIn(BaseModel): provider_id:str="openai"; model_id:str="gpt-4o-mini-tts"; voice:str="alloy"; text:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; chapter_id:str|None=None; emotion:str="neutral"
+class AudiobookJobIn(BaseModel):
+    provider_id:str="openai"
+    model_id:str="gpt-4o-mini-tts"
+    voice:str="alloy"
+    emotion:str="neutral"
+    character_id:str|None=None
+    speech_rate:float=Field(default=1.0,ge=0.5,le=2.0)
+    pause_ms:int=Field(default=280,ge=0,le=3000)
+class VoiceBindingIn(BaseModel):
+    character_id:str=Field(min_length=1,max_length=160)
+    provider_id:str="openai"
+    model_id:str="gpt-4o-mini-tts"
+    voice:str=Field(default="alloy",min_length=1,max_length=120)
+    emotion:str=Field(default="neutral",max_length=80)
+class PronunciationEntryIn(BaseModel):
+    term:str=Field(min_length=1,max_length=160)
+    pronunciation:str=Field(min_length=1,max_length=240)
+class AudioProductionSettingsIn(BaseModel):
+    voice_bindings:list[VoiceBindingIn]=Field(default_factory=list)
+    pronunciation_dictionary:list[PronunciationEntryIn]=Field(default_factory=list)
+
+def _spoken_chapter_text(text:str)->str:
+    return re.sub(r"\A\s*#{1,6}\s+[^\r\n]*(?:\r?\n)+","",text).strip()
+
+def _estimated_subtitle_segments(text:str,speech_rate:float=1.0,pause_ms:int=280)->list[dict]:
+    spoken_text=_spoken_chapter_text(text)
+    parts=[part.strip() for part in re.split(r"(?<=[。！？!?；;])|\n+",spoken_text) if part.strip()]
+    cursor=0;segments=[]
+    for index,part in enumerate(parts,1):
+        units=len(re.sub(r"\s+","",part));duration=max(600,round(units*180/max(0.5,speech_rate)))
+        segments.append({'id':f'segment-{index:04d}','text':part,'subtitle':part,'start_ms':cursor,'end_ms':cursor+duration})
+        cursor+=duration+pause_ms
+    return segments
 class AssetWorkerConfigIn(BaseModel): limit:int|None=None; interval_seconds:float|None=None; timeout_seconds:int|None=None; execute:bool|None=None
 class RenameIn(BaseModel): title:str; version:int
 class MoveIn(BaseModel): direction:str
@@ -384,6 +418,10 @@ def guard(fn,*args):
     except FileNotFoundError as exc:raise HTTPException(404,f"Not found: {exc}")
     except FileExistsError as exc:raise HTTPException(409,f"Already exists: {exc}")
     except (ValueError,KeyError) as exc:raise HTTPException(400,str(exc))
+
+def _authorize_media_novel(novel_id:str,session_token:str|None,permission:str):
+    if settings.enable_collaboration_runtime:
+        _authorize_novel_project(novel_id,session_token,permission)
 
 def capability_guard(fn,*args,**kwargs):
     """Map capability-service failures to the shared API error contract."""
@@ -1535,9 +1573,11 @@ def transition_suggestion(nid:str,screenplay_id:str,transition_id:str):return gu
 def motion_prompt(nid:str,screenplay_id:str,transition_id:str):return guard(screenplay_service.motion_prompt,nid,screenplay_id,transition_id)
 class MotionPromptIn(BaseModel): motion_prompt:str=Field(min_length=1,max_length=10000)
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt")
-def save_motion_prompt(nid:str,screenplay_id:str,transition_id:str,body:MotionPromptIn):return guard(screenplay_service.save_motion_prompt,nid,screenplay_id,transition_id,body.motion_prompt)
+def save_motion_prompt(nid:str,screenplay_id:str,transition_id:str,body:MotionPromptIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.save_motion_prompt,nid,screenplay_id,transition_id,body.motion_prompt)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks",status_code=201)
-def create_motion_tasks(nid:str,screenplay_id:str):return guard(screenplay_service.create_motion_tasks,nid,screenplay_id)
+def create_motion_tasks(nid:str,screenplay_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.create_motion_tasks,nid,screenplay_id)
 @router.get("/video-providers")
 def video_providers():
     items=[]
@@ -1546,11 +1586,13 @@ def video_providers():
         if provider_id=='deterministic': continue
         requires=bool(config.get('requires_credential',True));configured=bool(config.get('enabled') and config.get('endpoint') and (not requires or credential_vault.has(provider_id)))
         registered=provider_id in screenplay_service.video_providers;adapter=screenplay_service.video_providers.get(provider_id);reachable=bool(registered and adapter and adapter.health_check())
-        items.append({"id":provider_id,"display_name":config.get('display_name') or provider_id,"endpoint":config.get('endpoint',''),"model":config.get('model_id',''),"local":bool(config.get('local')),"requires_credential":requires,"credential_configured":not requires or credential_vault.has(provider_id),"available":configured and reachable,"registered":registered,"reachable":reachable,"mode":"http","health":"READY" if configured and reachable else "NOT_CONFIGURED"})
+        capabilities=adapter.capabilities() if adapter and hasattr(adapter,'capabilities') else {}
+        items.append({"id":provider_id,"display_name":config.get('display_name') or provider_id,"endpoint":config.get('endpoint',''),"model":config.get('model_id',''),"local":bool(config.get('local')),"requires_credential":requires,"credential_configured":not requires or credential_vault.has(provider_id),"available":configured and reachable,"registered":registered,"reachable":reachable,"capabilities":capabilities,"mode":"http","health":"READY" if configured and reachable else "NOT_CONFIGURED"})
     for provider_id,config in _video_provider_configs.items():
         if provider_id in VIDEO_PROVIDER_CATALOG: continue
         requires=bool(config.get('requires_credential',True));configured=bool(config.get('enabled') and config.get('endpoint') and (not requires or credential_vault.has(provider_id)));registered=provider_id in screenplay_service.video_providers;adapter=screenplay_service.video_providers.get(provider_id);reachable=bool(registered and adapter and adapter.health_check())
-        items.append({"id":provider_id,"display_name":config.get('display_name') or provider_id,"endpoint":config.get('endpoint',''),"model":config.get('model_id',''),"local":bool(config.get('local')),"requires_credential":requires,"credential_configured":not requires or credential_vault.has(provider_id),"available":configured and reachable,"registered":registered,"reachable":reachable,"mode":"http","health":"READY" if configured and reachable else "NOT_CONFIGURED"})
+        capabilities=adapter.capabilities() if adapter and hasattr(adapter,'capabilities') else {}
+        items.append({"id":provider_id,"display_name":config.get('display_name') or provider_id,"endpoint":config.get('endpoint',''),"model":config.get('model_id',''),"local":bool(config.get('local')),"requires_credential":requires,"credential_configured":not requires or credential_vault.has(provider_id),"available":configured and reachable,"registered":registered,"reachable":reachable,"capabilities":capabilities,"mode":"http","health":"READY" if configured and reachable else "NOT_CONFIGURED"})
     items.sort(key=lambda item:(not item['local'],not item['available'],item['display_name']))
     return {"items":items,"routing_policy":"LOCAL_FIRST"}
 class VideoProviderConfigIn(BaseModel):
@@ -1650,20 +1692,22 @@ def generate_image(body:ImageGenerateIn):
         novel=repositories.novels.get(body.novel_id); rows=list(novel.get('image_generations',[])); rows.append({**payload,'asset_uri':'inline://generated-image'} if result.asset_uri.startswith('data:') else payload); repositories.novels.update(body.novel_id,{**novel,'image_generations':rows[-50:]})
     return payload
 @router.post("/speech/synthesize")
-def synthesize_speech(body:SpeechSynthesizeIn):
+def synthesize_speech(body:SpeechSynthesizeIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write")
     from .asset_providers import OpenAICompatibleSpeechProvider,SpeechRequest
     from .dependencies import credential_vault
-    endpoint=DEFAULT_IMAGE_ENDPOINTS.get(body.provider_id,''); secret=credential_vault.resolve(body.provider_id)
-    if not endpoint or not secret: raise HTTPException(503,'speech provider is not configured')
+    saved=load_asset_provider_config(); config={**IMAGE_PROVIDER_CATALOG.get(body.provider_id,{}),**(saved.get(body.provider_id) or {})}; endpoint=str(config.get('endpoint') or DEFAULT_IMAGE_ENDPOINTS.get(body.provider_id,'')).rstrip('/'); requires_credential=bool(config.get('requires_credential',True)); secret=credential_vault.resolve(body.provider_id) if requires_credential else 'local-provider'
+    if not endpoint or not secret: raise HTTPException(503,{'code':'SPEECH_PROVIDER_UNAVAILABLE','message':'语音 Provider 未配置'})
     try:
         import httpx
         result=OpenAICompatibleSpeechProvider(httpx,secret,endpoint).synthesize(SpeechRequest(body.provider_id,body.model_id,body.voice,f"[emotion:{body.emotion}] {body.text}"))
         payload={'provider_id':result.provider_id,'model_id':result.model_id,'voice':body.voice,'emotion':body.emotion,'audio_uri':result.audio_uri,'character_id':body.character_id,'chapter_id':body.chapter_id,'text':body.text,'created_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}
         if body.novel_id:
             from .dependencies import repositories
-            novel=repositories.novels.get(body.novel_id); rows=list(novel.get('speech_generations',[])); rows.append(payload); repositories.novels.update(body.novel_id,{**novel,'speech_generations':rows[-50:]})
+            repositories.novels.get(body.novel_id); state=audio_production_store.load(body.novel_id); state['generations'].append(payload); audio_production_store.save(body.novel_id,state)
         return payload
-    except ValueError: raise HTTPException(502,{'code':'SPEECH_SYNTHESIS_FAILED','message':'语音合成失败'})
+    except HTTPException: raise
+    except Exception: raise HTTPException(502,{'code':'SPEECH_SYNTHESIS_FAILED','message':'语音合成失败'})
 @router.get("/novels/{nid}/image-generations")
 def list_image_generations(nid:str,character_id:str|None=None,scene_id:str|None=None):
     from .dependencies import repositories
@@ -1672,12 +1716,25 @@ def list_image_generations(nid:str,character_id:str|None=None,scene_id:str|None=
 @router.get("/novels/{nid}/speech-generations")
 def list_speech_generations(nid:str,character_id:str|None=None):
     from .dependencies import repositories
-    novel=repositories.novels.get(nid); items=[item for item in novel.get('speech_generations',[]) if not character_id or item.get('character_id')==character_id]
+    repositories.novels.get(nid); items=[item for item in audio_production_store.load(nid)['generations'] if not character_id or item.get('character_id')==character_id]
     return {'novel_id':nid,'items':items[-50:]}
-@router.get("/novels/{nid}/audiobook/manifest")
-def audiobook_manifest(nid:str):
+@router.get("/novels/{nid}/audio-production/settings")
+def audio_production_settings(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.read")
     from .dependencies import repositories
-    chapters=repositories.chapters.list(nid); novel=repositories.novels.get(nid); speeches=list(novel.get('speech_generations',[]))
+    repositories.novels.get(nid); state=audio_production_store.load(nid)
+    return {'novel_id':nid,'voice_bindings':state['voice_bindings'],'pronunciation_dictionary':state['pronunciation_dictionary']}
+@router.put("/novels/{nid}/audio-production/settings")
+def audio_production_settings_update(nid:str,body:AudioProductionSettingsIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write")
+    from .dependencies import repositories
+    repositories.novels.get(nid); payload=body.model_dump(); state=audio_production_store.load(nid); state.update(payload); audio_production_store.save(nid,state)
+    return {'novel_id':nid,**payload}
+@router.get("/novels/{nid}/audiobook/manifest")
+def audiobook_manifest(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.read")
+    from .dependencies import repositories
+    chapters=repositories.chapters.list(nid); novel=repositories.novels.get(nid); speeches=audio_production_store.load(nid)['generations']
     items=[]
     for chapter in chapters:
         text=str(chapter.get('content','')).strip()
@@ -1685,47 +1742,79 @@ def audiobook_manifest(nid:str):
         items.append({'chapter_id':chapter.get('id'),'title':chapter.get('title',''),'text_length':len(text),'audio_count':len(chapter_speeches),'audio':chapter_speeches})
     return {'novel_id':nid,'title':novel.get('title',''),'chapters':items,'total_chapters':len(items),'ready_chapters':sum(1 for item in items if item['audio_count']>0)}
 @router.get("/novels/{nid}/audiobook/mix-plan")
-def audiobook_mix_plan(nid:str,chapter_id:str|None=None):
+def audiobook_mix_plan(nid:str,chapter_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.read")
     from .dependencies import repositories
-    novel=repositories.novels.get(nid); rows=[item for item in novel.get('speech_generations',[]) if not chapter_id or item.get('chapter_id')==chapter_id]
+    repositories.novels.get(nid); rows=[item for item in audio_production_store.load(nid)['generations'] if not chapter_id or item.get('chapter_id')==chapter_id]
     tracks={}
     for item in rows:
         key=item.get('character_id') or 'narrator'; tracks.setdefault(key,[]).append({'audio_uri':item.get('audio_uri'),'voice':item.get('voice'),'emotion':item.get('emotion','neutral'),'created_at':item.get('created_at')})
     return {'novel_id':nid,'chapter_id':chapter_id,'tracks':[{'track_id':key,'clips':clips} for key,clips in tracks.items()],'mix_status':'PLAN_ONLY'}
 @router.post("/novels/{nid}/audiobook/chapters/{chapter_id}/queue",status_code=202)
-def queue_audiobook_chapter(nid:str,chapter_id:str,voice:str='alloy'):
+def queue_audiobook_chapter(nid:str,chapter_id:str,body:AudiobookJobIn|None=None,voice:str='alloy',x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write")
     from .dependencies import repositories
-    novel=repositories.novels.get(nid); chapters=repositories.chapters.list(nid); chapter=next((item for item in chapters if item.get('id')==chapter_id),None)
+    repositories.novels.get(nid); state=audio_production_store.load(nid); chapters=repositories.chapters.list(nid); chapter=next((item for item in chapters if item.get('id')==chapter_id),None)
     if chapter is None: raise HTTPException(404,'chapter not found')
-    jobs=list(novel.get('audiobook_jobs',[])); job={'id':f'audio-{chapter_id}','chapter_id':chapter_id,'voice':voice,'status':'QUEUED','text_length':len(str(chapter.get('content',''))),'created_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}; jobs=[item for item in jobs if item.get('chapter_id')!=chapter_id]; jobs.append(job); repositories.novels.update(nid,{**novel,'audiobook_jobs':jobs[-200:]}); return job
+    config=(body or AudiobookJobIn(voice=voice)).model_dump(); now=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()
+    bindings=state['voice_bindings']; binding=next((item for item in bindings if config.get('character_id') and item.get('character_id')==config['character_id']),None)
+    if binding: config={**config,**binding,'character_id':config['character_id']}
+    text=_spoken_chapter_text(str(chapter.get('content','')));segments=_estimated_subtitle_segments(text,float(config.get('speech_rate') or 1),int(config.get('pause_ms') or 0));estimated_duration=segments[-1]['end_ms'] if segments else 0
+    jobs=state['jobs']; job={'id':f"audio-{__import__('uuid').uuid4()}",'chapter_id':chapter_id,**config,'status':'QUEUED','attempt':0,'text_length':len(text),'segments':segments,'timing_status':'ESTIMATED','estimated_duration_ms':estimated_duration,'created_at':now,'updated_at':now,'error':None,'error_code':None}
+    jobs.append(job); state['jobs']=jobs; audio_production_store.save(nid,state); return job
 @router.get("/novels/{nid}/audiobook/jobs")
-def list_audiobook_jobs(nid:str):
+def list_audiobook_jobs(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.read")
     from .dependencies import repositories
-    novel=repositories.novels.get(nid); jobs=list(novel.get('audiobook_jobs',[])); return {'novel_id':nid,'items':jobs,'total':len(jobs)}
+    repositories.novels.get(nid); jobs=audio_production_store.load(nid)['jobs']; return {'novel_id':nid,'items':jobs,'total':len(jobs)}
 @router.post("/novels/{nid}/audiobook/jobs/{job_id}/retry")
-def retry_audiobook_job(nid:str,job_id:str):
+def retry_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write")
     from .dependencies import repositories
-    novel=repositories.novels.get(nid); jobs=list(novel.get('audiobook_jobs',[])); index=next((i for i,item in enumerate(jobs) if item.get('id')==job_id),None)
+    repositories.novels.get(nid); state=audio_production_store.load(nid); jobs=state['jobs']; index=next((i for i,item in enumerate(jobs) if item.get('id')==job_id),None)
     if index is None: raise HTTPException(404,'audiobook job not found')
-    jobs[index]={**jobs[index],'status':'QUEUED','error':None,'retry_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}; repositories.novels.update(nid,{**novel,'audiobook_jobs':jobs}); return jobs[index]
+    if jobs[index].get('status') not in {'FAILED','CANCELLED'}: raise HTTPException(409,{'code':'AUDIOBOOK_JOB_NOT_RETRYABLE','message':'只有失败或已取消任务可以重试'})
+    now=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); jobs[index]={**jobs[index],'status':'QUEUED','error':None,'error_code':None,'retry_at':now,'updated_at':now}; state['jobs']=jobs; audio_production_store.save(nid,state); return jobs[index]
+@router.post("/novels/{nid}/audiobook/jobs/{job_id}/cancel")
+def cancel_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write")
+    from .dependencies import repositories
+    repositories.novels.get(nid); state=audio_production_store.load(nid); jobs=state['jobs']; index=next((i for i,item in enumerate(jobs) if item.get('id')==job_id),None)
+    if index is None: raise HTTPException(404,'audiobook job not found')
+    if jobs[index].get('status') not in {'QUEUED','RUNNING'}: raise HTTPException(409,{'code':'AUDIOBOOK_JOB_NOT_CANCELLABLE','message':'当前任务不能取消'})
+    now=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); jobs[index]={**jobs[index],'status':'CANCELLED','cancelled_at':now,'updated_at':now}; state['jobs']=jobs; audio_production_store.save(nid,state); return jobs[index]
 @router.post("/novels/{nid}/audiobook/jobs/{job_id}/execute")
-def execute_audiobook_job(nid:str,job_id:str):
+def execute_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write")
     from .dependencies import repositories,credential_vault
     from .asset_providers import OpenAICompatibleSpeechProvider,SpeechRequest
-    novel=repositories.novels.get(nid); jobs=list(novel.get('audiobook_jobs',[])); index=next((i for i,item in enumerate(jobs) if item.get('id')==job_id),None)
+    repositories.novels.get(nid); state=audio_production_store.load(nid); jobs=state['jobs']; index=next((i for i,item in enumerate(jobs) if item.get('id')==job_id),None)
     if index is None: raise HTTPException(404,'audiobook job not found')
-    job=jobs[index]; chapter=next((item for item in repositories.chapters.list(nid) if item.get('id')==job.get('chapter_id')),None)
+    job=jobs[index]
+    if job.get('status')!='QUEUED': raise HTTPException(409,{'code':'AUDIOBOOK_JOB_NOT_EXECUTABLE','message':'只有排队中的任务可以执行'})
+    chapter=next((item for item in repositories.chapters.list(nid) if item.get('id')==job.get('chapter_id')),None)
     if chapter is None: raise HTTPException(404,'chapter not found')
-    secret=credential_vault.resolve('openai')
-    if not secret: raise HTTPException(503,'speech provider is not configured')
+    provider_id=str(job.get('provider_id') or 'openai'); saved=load_asset_provider_config(); config={**IMAGE_PROVIDER_CATALOG.get(provider_id,{}),**(saved.get(provider_id) or {})}; endpoint=str(config.get('endpoint') or DEFAULT_IMAGE_ENDPOINTS.get(provider_id,'')).rstrip('/'); requires_credential=bool(config.get('requires_credential',True)); secret=credential_vault.resolve(provider_id) if requires_credential else 'local-provider'
+    now=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); jobs[index]={**job,'status':'RUNNING','attempt':int(job.get('attempt') or 0)+1,'started_at':now,'updated_at':now}; state['jobs']=jobs; audio_production_store.save(nid,state); job=jobs[index]
+    if not endpoint or not secret:
+        jobs[index]={**job,'status':'FAILED','error':'语音 Provider 未配置','error_code':'SPEECH_PROVIDER_UNAVAILABLE','updated_at':now}; state['jobs']=jobs; audio_production_store.save(nid,state); raise HTTPException(503,{'code':'SPEECH_PROVIDER_UNAVAILABLE','message':'语音 Provider 未配置'})
     try:
         import httpx
-        result=OpenAICompatibleSpeechProvider(httpx,secret,DEFAULT_IMAGE_ENDPOINTS['openai']).synthesize(SpeechRequest('openai','gpt-4o-mini-tts',job.get('voice','alloy'),str(chapter.get('content',''))))
-        speech={'provider_id':'openai','model_id':'gpt-4o-mini-tts','voice':job.get('voice','alloy'),'audio_uri':result.audio_uri,'chapter_id':job['chapter_id'],'text':str(chapter.get('content','')),'created_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}; rows=list(novel.get('speech_generations',[])); rows.append(speech); jobs[index]={**job,'status':'SUCCEEDED','audio_uri':result.audio_uri,'completed_at':speech['created_at']}; repositories.novels.update(nid,{**novel,'speech_generations':rows[-50:],'audiobook_jobs':jobs}); return jobs[index]
-    except Exception as exc:
-        jobs[index]={**job,'status':'FAILED','error':str(exc)}; repositories.novels.update(nid,{**novel,'audiobook_jobs':jobs}); raise HTTPException(502,str(exc))
+        text=_spoken_chapter_text(str(chapter.get('content',''))); dictionary=state['pronunciation_dictionary']
+        for entry in dictionary: text=text.replace(str(entry.get('term','')),str(entry.get('pronunciation','')))
+        prompt=f"[emotion:{job.get('emotion','neutral')}] {text}"; result=OpenAICompatibleSpeechProvider(httpx,secret,endpoint).synthesize(SpeechRequest(provider_id,str(job.get('model_id') or 'gpt-4o-mini-tts'),str(job.get('voice') or 'alloy'),prompt))
+        latest=audio_production_store.load(nid); latest_index=next((i for i,item in enumerate(latest['jobs']) if item.get('id')==job_id),None)
+        if latest_index is not None and latest['jobs'][latest_index].get('status')=='CANCELLED': return latest['jobs'][latest_index]
+        state=latest; jobs=state['jobs']; index=latest_index if latest_index is not None else index
+        completed=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); speech={'provider_id':provider_id,'model_id':job.get('model_id'),'voice':job.get('voice'),'emotion':job.get('emotion','neutral'),'audio_uri':result.audio_uri,'character_id':job.get('character_id'),'chapter_id':job['chapter_id'],'text':str(chapter.get('content','')),'created_at':completed}; state['generations'].append(speech); jobs[index]={**job,'status':'SUCCEEDED','audio_uri':result.audio_uri,'completed_at':completed,'updated_at':completed,'error':None,'error_code':None}; state['jobs']=jobs; audio_production_store.save(nid,state); return jobs[index]
+    except Exception:
+        latest=audio_production_store.load(nid); latest_index=next((i for i,item in enumerate(latest['jobs']) if item.get('id')==job_id),None)
+        if latest_index is not None and latest['jobs'][latest_index].get('status')=='CANCELLED': return latest['jobs'][latest_index]
+        state=latest; jobs=state['jobs']; index=latest_index if latest_index is not None else index
+        failed=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); jobs[index]={**job,'status':'FAILED','error':'语音服务请求失败','error_code':'SPEECH_SYNTHESIS_FAILED','updated_at':failed}; state['jobs']=jobs; audio_production_store.save(nid,state); raise HTTPException(502,{'code':'SPEECH_SYNTHESIS_FAILED','message':'语音服务请求失败'})
 @router.post("/novels/{nid}/speech-generations/import",status_code=202)
-def import_generated_speech(nid:str,body:dict):
+def import_generated_speech(nid:str,body:dict,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write")
     import base64
     from .net_safety import fetch_outbound_bytes,OutboundURLRejected
     url=str(body.get('audio_uri','')).strip()
@@ -1773,16 +1862,26 @@ class MotionTaskStatusIn(BaseModel): status:str=Field(pattern="^(PENDING|CANCELL
 class MotionFramesIn(BaseModel): start_frame:str|None=None; end_frame:str|None=None; constraints:dict[str,object]={}
 class MotionProviderIn(BaseModel): provider_id:str=Field(min_length=1); model_id:str='video-placeholder'
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}")
-def update_motion_task(nid:str,screenplay_id:str,task_id:str,body:MotionTaskStatusIn):return guard(screenplay_service.update_motion_task,nid,screenplay_id,task_id,body.status)
+def update_motion_task(nid:str,screenplay_id:str,task_id:str,body:MotionTaskStatusIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.update_motion_task,nid,screenplay_id,task_id,body.status)
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frames")
-def update_motion_frames(nid:str,screenplay_id:str,task_id:str,body:MotionFramesIn):
+def update_motion_frames(nid:str,screenplay_id:str,task_id:str,body:MotionFramesIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write")
     result=guard(screenplay_service.update_motion_frames,nid,screenplay_id,task_id,body.start_frame,body.end_frame)
     if isinstance(result,dict) and body.constraints: result={**result,"constraints":body.constraints}
     return result
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/provider")
-def update_motion_provider(nid:str,screenplay_id:str,task_id:str,body:MotionProviderIn):return guard(screenplay_service.update_motion_provider,nid,screenplay_id,task_id,body.provider_id,body.model_id)
+def update_motion_provider(nid:str,screenplay_id:str,task_id:str,body:MotionProviderIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.update_motion_provider,nid,screenplay_id,task_id,body.provider_id,body.model_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/execute")
-def execute_motion_task(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.execute_motion_task,nid,screenplay_id,task_id)
+def execute_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.execute_motion_task,nid,screenplay_id,task_id)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/cancel")
+def cancel_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.cancel_motion_task,nid,screenplay_id,task_id)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/retry")
+def retry_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.retry_motion_task,nid,screenplay_id,task_id)
 class MotionResultIn(BaseModel):
     url:str=Field(min_length=1,max_length=4000)
     media_type:str='video/mp4'
@@ -1798,7 +1897,8 @@ class MotionResultIn(BaseModel):
         return value
 class MotionCallbackIn(BaseModel): status:str; progress:int=Field(default=0,ge=0,le=100); url:str|None=None; error:str|None=None
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result")
-def attach_motion_result(nid:str,screenplay_id:str,task_id:str,body:MotionResultIn):return guard(screenplay_service.attach_motion_result,nid,screenplay_id,task_id,body.url,body.media_type)
+def attach_motion_result(nid:str,screenplay_id:str,task_id:str,body:MotionResultIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.attach_motion_result,nid,screenplay_id,task_id,body.url,body.media_type)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/callback")
 def motion_callback(nid:str,screenplay_id:str,task_id:str,body:MotionCallbackIn,x_video_callback_token:str|None=Header(None)):
     expected=os.getenv('VIDEO_CALLBACK_TOKEN','').strip()
@@ -1807,25 +1907,31 @@ def motion_callback(nid:str,screenplay_id:str,task_id:str,body:MotionCallbackIn,
     return guard(screenplay_service.motion_callback,nid,screenplay_id,task_id,body.status,body.progress,body.url,body.error)
 class RemoteMotionTaskIn(BaseModel): remote_task_id:str=Field(min_length=1,max_length=400)
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/remote-id")
-def set_remote_motion_task_id(nid:str,screenplay_id:str,task_id:str,body:RemoteMotionTaskIn):return guard(screenplay_service.set_remote_motion_task_id,nid,screenplay_id,task_id,body.remote_task_id)
+def set_remote_motion_task_id(nid:str,screenplay_id:str,task_id:str,body:RemoteMotionTaskIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.set_remote_motion_task_id,nid,screenplay_id,task_id,body.remote_task_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/sync")
-def sync_motion_task(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.sync_motion_task,nid,screenplay_id,task_id)
+def sync_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.sync_motion_task,nid,screenplay_id,task_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result-history")
 def motion_result_history(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.motion_result_history,nid,screenplay_id,task_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/asset-reference")
 def motion_asset_reference(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.motion_asset_reference,nid,screenplay_id,task_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset",status_code=202)
-def import_motion_asset(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.import_motion_asset_reference,nid,screenplay_id,task_id)
+def import_motion_asset(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.import_motion_asset_reference,nid,screenplay_id,task_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset")
 def motion_asset_import_status(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.motion_asset_import_status,nid,screenplay_id,task_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets")
 def list_motion_asset_imports(nid:str,screenplay_id:str):return guard(screenplay_service.list_motion_asset_imports,nid,screenplay_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets/retry")
-def retry_failed_motion_asset_imports(nid:str,screenplay_id:str):return guard(screenplay_service.retry_failed_motion_asset_imports,nid,screenplay_id)
+def retry_failed_motion_asset_imports(nid:str,screenplay_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.retry_failed_motion_asset_imports,nid,screenplay_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/download",status_code=202)
-def download_motion_asset(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.download_motion_asset,nid,screenplay_id,task_id,asset_library_service)
+def download_motion_asset(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.download_motion_asset,nid,screenplay_id,task_id,asset_library_service)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/retry")
-def retry_motion_asset_import(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.retry_motion_asset_import,nid,screenplay_id,task_id)
+def retry_motion_asset_import(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.retry_motion_asset_import,nid,screenplay_id,task_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frame-history")
 def motion_frame_history(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.motion_frame_history,nid,screenplay_id,task_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/visual-continuity")

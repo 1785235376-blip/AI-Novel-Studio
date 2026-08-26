@@ -183,6 +183,11 @@ async def collaboration_fail_closed(request,call_next):
             re.fullmatch(r"/api/asset-providers/[^/]+",normalized_path) is not None and method in {"PUT","DELETE"} or
             normalized_path in {"/api/images/generate","/api/vision/analyze","/api/speech/synthesize"} and method=="POST" or
             re.fullmatch(r"/api/novels/[^/]+/(?:image-generations|speech-generations)(?:/import)?",normalized_path) is not None and method in {"GET","POST"} or
+            re.fullmatch(r"/api/novels/[^/]+/audio-production/settings",normalized_path) is not None and method in {"GET","PUT"} or
+            re.fullmatch(r"/api/novels/[^/]+/audiobook/(?:manifest|mix-plan|jobs)",normalized_path) is not None and method=="GET" or
+            re.fullmatch(r"/api/novels/[^/]+/audiobook/chapters/[^/]+/queue",normalized_path) is not None and method=="POST" or
+            re.fullmatch(r"/api/novels/[^/]+/audiobook/jobs/[^/]+/(?:execute|retry|cancel)",normalized_path) is not None and method=="POST" or
+            re.fullmatch(r"/api/novels/[^/]+/screenplays/[^/]+/motion-tasks/[^/]+/(?:execute|cancel|retry)",normalized_path) is not None and method=="POST" or
             re.fullmatch(r"/api/novels/[^/]+/import/knowledge-base/review",normalized_path) is not None and method in {"GET","POST"} or
             re.fullmatch(r"/api/novels/[^/]+/import/knowledge-base/review/[^/]+",normalized_path) is not None and method in {"GET","PUT"} or
             re.fullmatch(r"/api/novels/[^/]+/import/knowledge-base/review/[^/]+/ai-analyze",normalized_path) is not None and method=="POST" or

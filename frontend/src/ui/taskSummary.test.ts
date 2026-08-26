@@ -7,11 +7,13 @@ describe("task summary", () => {
     expect(normalizeTaskLifecycle("GENERATING")).toBe("running");
     expect(normalizeTaskLifecycle("COMPLETED")).toBe("succeeded");
     expect(normalizeTaskLifecycle("FAILED")).toBe("failed");
+    expect(normalizeTaskLifecycle("CANCELLED")).toBe("cancelled");
     expect(normalizeTaskLifecycle("QUEUED")).toBe("queued");
   });
   it("summarizes and merges tasks", () => {
     expect(summarizeTasks([{ status: "queued" }, { status: "RUNNING" }, { id: "img-1", status: "FAILED", error: "超时" }])).toMatchObject({ total: 3, queued: 1, running: 1, succeeded: 0, failed: 1, failures: [{ id: "img-1", error: "超时" }] });
     expect(mergeTaskSummaries(summarizeTasks([{ status: "DONE" }]), summarizeTasks([{ status: "ERROR" }]))).toMatchObject({ total: 2, succeeded: 1, failed: 1 });
+    expect(summarizeTasks([{status:"CANCELLED"}])).toMatchObject({cancelled:1,failed:0,failures:[]});
   });
   it("publishes a source summary", () => {
     const received: any[] = [];

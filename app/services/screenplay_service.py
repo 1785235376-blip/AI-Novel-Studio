@@ -184,6 +184,8 @@ class ScreenplayService:
         if index is None: raise KeyError(task_id)
         current=rows[index].get('status','PENDING'); allowed={'PENDING':{'CANCELLED'},'RUNNING':{'CANCELLED'},'FAILED':{'PENDING','CANCELLED'},'CANCELLED':{'PENDING'},'SUCCEEDED':set()}
         if status!=current and status not in allowed.get(current,set()): raise ValueError(f'invalid motion task transition: {current} -> {status}')
+        if status == 'CANCELLED' and status != current: return self.cancel_motion_task(novel_id,screenplay_id,task_id)
+        if status == 'PENDING' and status != current: return self.retry_motion_task(novel_id,screenplay_id,task_id)
         rows[index]={**rows[index],'status':status,'updated_at':utc()}
         return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
     def update_motion_frames(self,novel_id,screenplay_id,task_id,start_frame=None,end_frame=None):
@@ -218,18 +220,63 @@ class ScreenplayService:
         require_motion_frames(task)
         provider_id=task.get('provider_id') or 'deterministic'; model_id=task.get('model_id') or 'video-placeholder'; provider=self.video_providers.get(provider_id)
         if provider is None: raise ValueError(f'video provider is not configured: {provider_id}')
-        generated=provider.generate(VideoGenerationRequest(provider_id,model_id,task.get('prompt',''),task['start_frame'],task['end_frame'],task_id)); asynchronous=provider_id!='deterministic' and not str(generated.video_uri).lower().startswith(('http://','https://')); result={'kind':'VIDEO','task_id':task_id,'prompt':task.get('prompt',''),'asset_id':f"motion-{task_id}",'url':None if asynchronous else generated.video_uri,'provider_id':generated.provider_id,'model_id':generated.model_id,'created_at':utc()}
-        rows[index]={**task,'status':'RUNNING' if asynchronous else 'SUCCEEDED','progress':0 if asynchronous else 100,'remote_task_id':generated.video_uri if asynchronous else task.get('remote_task_id'),'result':result,'updated_at':utc()}
-        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+        started=utc(); history=list(task.get('history',[])); history.append({'status':'RUNNING','phase':'SUBMITTING','at':started,'error':None})
+        submission_key=task.get('submission_key') or task_id
+        rows[index]={**task,'status':'RUNNING','progress':0,'error':None,'attempts':int(task.get('attempts',0))+1,'submission_key':submission_key,'history':history,'updated_at':started}
+        screenplay=self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':started})
+        try:
+            generated=provider.generate(VideoGenerationRequest(provider_id,model_id,task.get('prompt',''),task['start_frame'],task['end_frame'],task_id,submission_key))
+        except Exception as exc:
+            failed_at=utc(); message=f'{type(exc).__name__}: {str(exc)}'[:1000]; history.append({'status':'FAILED','phase':'SUBMITTING','at':failed_at,'error':message})
+            rows=list(screenplay.get('motion_tasks',[])); rows[index]={**rows[index],'status':'FAILED','error':message,'history':history,'updated_at':failed_at}
+            self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':failed_at})
+            raise
+        status=str(generated.status or ('SUCCEEDED' if generated.video_uri else 'RUNNING')).upper()
+        if status not in {'PENDING','RUNNING','SUCCEEDED'}: status='RUNNING'
+        if generated.video_uri: status='SUCCEEDED'
+        result={'kind':'VIDEO','task_id':task_id,'prompt':task.get('prompt',''),'asset_id':f"motion-{task_id}",'url':generated.video_uri,'provider_id':generated.provider_id,'model_id':generated.model_id,'created_at':utc()}
+        completed=utc(); history.append({'status':status,'phase':'SUBMITTED','at':completed,'error':None})
+        asset_import={'task_id':task_id,'url':generated.video_uri,'filename':f'motion-{task_id}.mp4','import_status':'READY_TO_IMPORT','created_at':completed} if generated.video_uri else rows[index].get('asset_import')
+        rows=list(screenplay.get('motion_tasks',[])); rows[index]={**rows[index],'status':status,'progress':100 if status=='SUCCEEDED' else 0,'remote_task_id':generated.remote_task_id,'result':result,'asset_import':asset_import,'history':history,'updated_at':completed}
+        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':completed})
+    def cancel_motion_task(self,novel_id,screenplay_id,task_id):
+        screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+        if screenplay is None: raise KeyError(screenplay_id)
+        rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
+        if index is None: raise KeyError(task_id)
+        task=rows[index]; status=task.get('status','PENDING')
+        if status in {'SUCCEEDED','FAILED','CANCELLED'}: raise ValueError(f'motion task cannot be cancelled from {status}')
+        remote=task.get('remote_task_id'); provider=self.video_providers.get(task.get('provider_id',''))
+        if remote:
+            if not provider or not hasattr(provider,'cancel'): raise ValueError('video provider does not support cancellation')
+            provider.cancel(remote)
+        stamp=utc(); history=list(task.get('history',[])); history.append({'status':'CANCELLED','phase':'CANCELLED','at':stamp,'error':None})
+        rows[index]={**task,'status':'CANCELLED','error':None,'history':history,'updated_at':stamp}
+        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':stamp})
+    def retry_motion_task(self,novel_id,screenplay_id,task_id):
+        screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+        if screenplay is None: raise KeyError(screenplay_id)
+        rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
+        if index is None: raise KeyError(task_id)
+        task=rows[index]; status=task.get('status')
+        if status not in {'FAILED','CANCELLED'}: raise ValueError(f'motion task cannot be retried from {status}')
+        stamp=utc(); history=list(task.get('history',[])); history.append({'status':'PENDING','phase':'RETRY_QUEUED','at':stamp,'error':None})
+        results=list(task.get('result_history',[])); previous=task.get('result')
+        if previous: results.append({**previous,'replaced_at':stamp})
+        next_attempt=int(task.get('attempts',0))+1
+        rows[index]={**task,'status':'PENDING','progress':0,'error':None,'remote_task_id':None,'submission_key':f'{task_id}:attempt:{next_attempt}','result':None,'asset_import':None,'result_history':results[-10:],'history':history,'updated_at':stamp}
+        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':stamp})
     def attach_motion_result(self,novel_id,screenplay_id,task_id,url,media_type='video/mp4'):
         screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
         rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
         if index is None: raise KeyError(task_id)
-        result={**rows[index].get('result',{}),'url':str(url).strip(),'media_type':media_type,'attached_at':utc()}
+        if rows[index].get('status') == 'CANCELLED': raise ValueError('cancelled motion task cannot accept a result')
+        stamp=utc(); result={**rows[index].get('result',{}),'url':str(url).strip(),'media_type':media_type,'attached_at':stamp}
         history=list(rows[index].get('result_history',[])); previous=rows[index].get('result');
-        if previous: history.append({**previous,'replaced_at':utc()})
-        rows[index]={**rows[index],'status':'SUCCEEDED','result':result,'result_history':history[-10:],'updated_at':utc()}
+        if previous: history.append({**previous,'replaced_at':stamp})
+        asset_import={'task_id':task_id,'url':result['url'],'filename':f'motion-{task_id}.mp4','import_status':'READY_TO_IMPORT','created_at':stamp}
+        rows[index]={**rows[index],'status':'SUCCEEDED','progress':100,'result':result,'asset_import':asset_import,'result_history':history[-10:],'updated_at':stamp}
         return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
     def motion_callback(self,novel_id,screenplay_id,task_id,status,progress=0,url=None,error=None):
         screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
@@ -237,8 +284,18 @@ class ScreenplayService:
         rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
         if index is None: raise KeyError(task_id)
         if status not in {'PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'}: raise ValueError('invalid motion callback status')
-        row=rows[index]; updated={**row,'status':status,'progress':max(0,min(100,int(progress))),'error':error,'updated_at':utc()}
-        if url: updated['result']={**row.get('result',{}),'url':url,'media_type':'video/mp4','attached_at':utc()}
+        row=rows[index]; current=row.get('status','PENDING')
+        if current in {'SUCCEEDED','FAILED','CANCELLED'} and status != current: raise ValueError(f'terminal motion task cannot transition: {current} -> {status}')
+        allowed={'PENDING':{'PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'},'RUNNING':{'RUNNING','SUCCEEDED','FAILED','CANCELLED'}}
+        if current not in {'SUCCEEDED','FAILED','CANCELLED'} and status not in allowed.get(current,set()): raise ValueError(f'invalid motion callback transition: {current} -> {status}')
+        if status=='SUCCEEDED' and not (url or (row.get('result') or {}).get('url')): raise ValueError('successful motion callback requires a video URL')
+        stamp=utc(); history=list(row.get('history',[])); history.append({'status':status,'phase':'PROVIDER_UPDATE','at':stamp,'error':error})
+        updated={**row,'status':status,'progress':100 if status=='SUCCEEDED' else max(0,min(100,int(progress))),'error':error,'history':history,'updated_at':stamp}
+        if url:
+            previous=row.get('result'); result={**(previous or {}),'url':url,'media_type':'video/mp4','attached_at':stamp}; result_history=list(row.get('result_history',[]))
+            if previous and previous.get('url') and previous.get('url') != url: result_history.append({**previous,'replaced_at':stamp})
+            updated['result']=result; updated['result_history']=result_history[-10:]
+            updated['asset_import']={'task_id':task_id,'url':url,'filename':f'motion-{task_id}.mp4','import_status':'READY_TO_IMPORT','created_at':stamp}
         rows[index]=updated
         return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
     def sync_motion_provider_status(self,novel_id,screenplay_id,task_id,remote_task_id,provider):

@@ -89,38 +89,58 @@ class VideoGenerationRequest:
     start_frame: str
     end_frame: str
     task_id: str
+    idempotency_key: str | None = None
 
 @dataclass(frozen=True)
 class VideoGenerationResult:
     provider_id: str
     model_id: str
-    video_uri: str
+    video_uri: str | None = None
+    remote_task_id: str | None = None
+    status: str = "RUNNING"
 
 class VideoProvider(Protocol):
     def generate(self, request: VideoGenerationRequest) -> VideoGenerationResult: ...
     def health_check(self) -> bool: ...
+    def capabilities(self) -> dict[str, bool]: ...
 
 class DeterministicVideoProvider:
     def health_check(self) -> bool: return True
+    def capabilities(self) -> dict[str, bool]:
+        return {"text_to_video": True, "image_to_video": True, "start_frame": True, "end_frame": True, "polling": False, "cancellation": False}
     def generate(self, request: VideoGenerationRequest) -> VideoGenerationResult:
-        return VideoGenerationResult(request.provider_id, request.model_id, f"placeholder://video/{request.task_id}")
+        return VideoGenerationResult(request.provider_id, request.model_id, f"placeholder://video/{request.task_id}", status="SUCCEEDED")
 
 class HttpVideoProvider:
     def __init__(self,transport,endpoint,api_key,default_model=''):
         if not endpoint: raise ValueError('video provider endpoint is required')
         self.transport=transport; self.endpoint=endpoint.rstrip('/'); self.api_key=api_key;self.default_model=default_model
     def _headers(self): return {'Authorization':f'Bearer {self.api_key}'} if self.api_key else {}
+    def capabilities(self) -> dict[str, bool]:
+        return {"text_to_video": True, "image_to_video": True, "start_frame": True, "end_frame": True, "polling": True, "cancellation": True}
     def health_check(self):
-        try:return self.transport.get(self.endpoint,headers=self._headers(),timeout=1.5).status_code<500
+        try:return self.transport.get(self.endpoint,headers=self._headers(),timeout=1.5).status_code<400
         except Exception:return False
+    def status(self) -> dict:
+        reachable=self.health_check()
+        return {"reachable":reachable,"default_model":self.default_model,"capabilities":self.capabilities()}
     def get_status(self,remote_task_id):
-        response=self.transport.get(self.endpoint+'/videos/'+str(remote_task_id),headers=self._headers())
+        response=self.transport.get(self.endpoint+'/videos/'+str(remote_task_id),headers=self._headers(),timeout=15)
         response.raise_for_status(); data=response.json(); return {'status':data.get('status','UNKNOWN'),'progress':int(data.get('progress',0) or 0),'url':data.get('url') or data.get('video_url'),'error':data.get('error')}
+    def cancel(self,remote_task_id):
+        response=self.transport.post(self.endpoint+'/videos/'+str(remote_task_id)+'/cancel',headers=self._headers(),json={},timeout=30)
+        response.raise_for_status()
+        try:data=response.json()
+        except Exception:data={}
+        return {'status':str(data.get('status') or 'CANCELLED').upper()}
     def generate(self,request:VideoGenerationRequest)->VideoGenerationResult:
-        response=self.transport.post(self.endpoint+'/videos',headers=self._headers(),json={'model':request.model_id,'prompt':request.prompt,'start_frame':request.start_frame,'end_frame':request.end_frame,'task_id':request.task_id})
-        response.raise_for_status(); data=response.json(); uri=data.get('url') or data.get('video_url') or data.get('id')
-        if not uri: raise ValueError('video provider response missing url or task id')
-        return VideoGenerationResult(request.provider_id,request.model_id,uri)
+        headers={**self._headers(),'Idempotency-Key':request.idempotency_key or request.task_id}
+        response=self.transport.post(self.endpoint+'/videos',headers=headers,json={'model':request.model_id,'prompt':request.prompt,'start_frame':request.start_frame,'end_frame':request.end_frame,'task_id':request.task_id},timeout=30)
+        response.raise_for_status(); data=response.json(); uri=data.get('url') or data.get('video_url'); remote=data.get('id') or data.get('task_id')
+        if not uri and not remote: raise ValueError('video provider response missing url or task id')
+        status=str(data.get('status') or ('SUCCEEDED' if uri else 'RUNNING')).upper()
+        status={'COMPLETED':'SUCCEEDED','COMPLETE':'SUCCEEDED','IN_PROGRESS':'RUNNING','QUEUED':'PENDING'}.get(status,status)
+        return VideoGenerationResult(request.provider_id,request.model_id,uri,str(remote) if remote else None,status)
 
 class AssetProviderRegistry:
     def __init__(self): self._providers: dict[str, AssetProvider] = {}

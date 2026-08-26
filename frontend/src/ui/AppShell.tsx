@@ -369,7 +369,7 @@ export function AppShell({
           <span aria-label="跨模块任务摘要">
             {" "}
             · 任务 {taskTotal.running} 运行 / {taskTotal.failed} 失败 /{" "}
-            {taskTotal.queued} 排队
+            {taskTotal.cancelled} 取消 / {taskTotal.queued} 排队
           </span>
         ) : null}
         {taskTotal.failed > 0 ? (

@@ -16,7 +16,7 @@ it("publishes speech lifecycle and a minimal inspector contract",async()=>{
   render(<SpeechSynthesisPanel novelId="novel-1" onInspect={inspect}/>);
   fireEvent.click(screen.getByRole("button",{name:"生成语音"}));
   expect(await screen.findByLabelText("当前语音生成结果")).toBeTruthy();
-  await waitFor(()=>expect(inspect).toHaveBeenLastCalledWith(expect.objectContaining({kind:"speech",id:"speech-task",status:"SUCCEEDED",audioUri:"https://example.test/voice.mp3"})));
+  await waitFor(()=>expect(inspect).toHaveBeenLastCalledWith(expect.objectContaining({kind:"speech",id:expect.stringMatching(/^speech-/),status:"SUCCEEDED",audioUri:"https://example.test/voice.mp3"})));
   expect(inspect.mock.calls.at(-1)?.[0]).not.toHaveProperty("text");
   expect(summaries.at(-1)).toMatchObject({source:"speech",summary:{succeeded:1}});
   window.removeEventListener(TASK_SUMMARY_EVENT,listener);

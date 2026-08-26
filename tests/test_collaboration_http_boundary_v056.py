@@ -69,6 +69,25 @@ def test_collaboration_mode_blocks_legacy_mutation_bypasses(monkeypatch):
     assert client.post("/api/chapters/book:1/move", json={"direction": "up"}).status_code == 501
 
 
+def test_multimodal_production_routes_reach_the_session_boundary(monkeypatch):
+    import app.main as main_module
+    collaboration_settings = SimpleNamespace(enable_collaboration_runtime=True, enable_packaged_runtime=False)
+    monkeypatch.setattr(main_module,"settings",collaboration_settings)
+    monkeypatch.setattr(api,"settings",collaboration_settings)
+    client=TestClient(app)
+    paths=(
+        ("get","/api/novels/book/audio-production/settings"),
+        ("post","/api/novels/book/audiobook/chapters/chapter/queue"),
+        ("post","/api/novels/book/audiobook/jobs/job/cancel"),
+        ("post","/api/novels/book/screenplays/screenplay/motion-tasks/task/execute"),
+        ("post","/api/novels/book/screenplays/screenplay/motion-tasks/task/retry"),
+    )
+    for method,path in paths:
+        response=getattr(client,method)(path)
+        assert response.status_code==401
+        assert response.json()["detail"]["code"]=="SESSION_REQUIRED"
+
+
 def test_collaboration_mode_allows_authorized_project_delete(monkeypatch):
     import app.main as main_module
     resolver = TrustedSessionResolver()
