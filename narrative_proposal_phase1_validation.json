@@ -1,0 +1,18 @@
+{
+  "version": "0.5.5",
+  "phase": "1",
+  "status": "PASS",
+  "proposal_types": 8,
+  "proposal_statuses": ["PENDING", "ACCEPTED", "REJECTED"],
+  "accept_time_revalidation": "PASS",
+  "atomic_apply": "PASS",
+  "writer_context_isolation": "PASS",
+  "context_policy_source_added": false,
+  "narrative_rules": 4,
+  "continuity_rules": 8,
+  "context_policy_backend_parity": "MATCH",
+  "narrative_context_backend_parity": "MATCH",
+  "narrative_rule_backend_parity": "MATCH",
+  "continuity_backend_parity": "MATCH",
+  "full_regression": {"passed": 137, "skipped": 9, "failed": 0}
+}

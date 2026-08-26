@@ -1,0 +1,2 @@
+{"manifest_version":"0.1.0","models":[{"provider":"ollama","model_name":"qwen2.5:7b-instruct-q4_K_M","quantization":"Q4_K_M","purpose":["utility","writer","reviewer"],"context_length":8192,"install_source":"ollama","required":true,"optional":false},{"provider":"ollama","model_name":"nomic-embed-text","quantization":"provider-default","purpose":["embedding"],"context_length":8192,"install_source":"ollama","required":false,"optional":true}]}
+

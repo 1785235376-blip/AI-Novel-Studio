@@ -1,0 +1,7 @@
+{
+  "file_api": "REAL_VERIFIED",
+  "postgresql_api": "REAL_VERIFIED",
+  "api_backend_parity": "MATCH",
+  "project_isolation": "PASS",
+  "pending_no_mutation": "PASS"
+}

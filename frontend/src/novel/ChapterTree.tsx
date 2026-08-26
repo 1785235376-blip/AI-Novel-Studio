@@ -1,0 +1,32 @@
+import {useEffect, useId, useRef, useState} from 'react';
+import {GripVertical, MoreHorizontal, Pencil} from 'lucide-react';
+import {Badge, Button, EmptyState, IconButton, Panel} from '../ui/primitives';
+import './novel.css';
+
+export type ChapterTreeItem={id:string;title:string;number?:number;status?:string;wordCount?:number;version?:number};
+export type ChapterTreeProps={chapters:ChapterTreeItem[];selectedId?:string;loading?:boolean;error?:string|null;creating?:boolean;reordering?:boolean;onSelect:(id:string)=>void;onCreate:(title:string)=>Promise<void>|void;onRename?:(id:string,title:string)=>Promise<void>|void;onReorder?:(sourceId:string,targetId:string)=>Promise<void>|void;onArchive?:(chapter:ChapterTreeItem)=>Promise<void>|void;onRestore?:(chapter:ChapterTreeItem)=>Promise<void>|void;archived?:ChapterTreeItem[];message?:string};
+
+export function CreateChapterDialog({open,pending=false,onSubmit,onClose}:{open:boolean;pending?:boolean;onSubmit:(title:string)=>Promise<void>|void;onClose:()=>void}){
+ const input=useRef<HTMLInputElement>(null),[title,setTitle]=useState(''),id=useId();
+ useEffect(()=>{if(open){setTitle('');input.current?.focus()}},[open]);
+ if(!open)return null;
+ return <div className="novel-dialog-backdrop" role="presentation"><section className="novel-dialog" role="dialog" aria-modal="true" aria-labelledby={id}>
+  <h2 id={id}>新建章节</h2><form onSubmit={async e=>{e.preventDefault();if(title.trim())await onSubmit(title.trim())}}><label>章节标题<input ref={input} value={title} disabled={pending} onChange={e=>setTitle(e.target.value)}/></label><div className="novel-actions"><Button type="button" onClick={onClose} disabled={pending}>取消</Button><Button variant="primary" type="submit" disabled={pending}>创建章节</Button></div></form>
+ </section></div>;
+}
+
+export function ChapterTree({chapters,selectedId,loading=false,error,creating=false,reordering=false,onSelect,onCreate,onRename,onReorder,onArchive,onRestore,archived=[],message}:ChapterTreeProps){
+ const [createOpen,setCreateOpen]=useState(false),[renameId,setRenameId]=useState<string>(),[rename,setRename]=useState(''),[archiveTarget,setArchiveTarget]=useState<ChapterTreeItem>(),[dragId,setDragId]=useState<string>();
+ useEffect(()=>{if(!archiveTarget)return;const onKey=(event:KeyboardEvent)=>{if(event.key==='Escape'){event.preventDefault();setArchiveTarget(undefined)}};document.addEventListener('keydown',onKey);return()=>document.removeEventListener('keydown',onKey)},[archiveTarget]);
+ const beginRename=(c:ChapterTreeItem)=>{setRenameId(c.id);setRename(c.title)};
+ const commitRename=async()=>{if(renameId&&rename.trim()){await onRename?.(renameId,rename.trim());setRenameId(undefined)}};
+ return <Panel className="novel-chapter-tree" title="作品结构" actions={<Button onClick={()=>setCreateOpen(true)}>新建章节</Button>}>
+  {(message||reordering)&&<p role="status">{reordering?'正在保存章节顺序…':message}</p>}
+  {loading?<p role="status">正在加载章节</p>:error?<div className="novel-error" role="alert">无法加载章节：{error}</div>:chapters.length===0?<EmptyState title="还没有章节" detail="正文目录中还没有章节。创建新章节开始写作，或从已移出章节中恢复。"/>:<nav aria-label="章节列表"><ol>{chapters.map(c=><li key={c.id} draggable={!!onReorder&&!reordering} onDragStart={event=>{setDragId(c.id);event.dataTransfer.effectAllowed='move'}} onDragEnd={()=>setDragId(undefined)} onDragOver={event=>{if(dragId&&dragId!==c.id){event.preventDefault();event.dataTransfer.dropEffect='move'}}} onDrop={event=>{event.preventDefault();const source=dragId;setDragId(undefined);if(source&&source!==c.id)void onReorder?.(source,c.id)}}><div className={`${c.id===selectedId?'novel-tree-row is-selected':'novel-tree-row'}${dragId===c.id?' is-dragging':''}`}>
+   {renameId===c.id?<form className="novel-tree-rename" onSubmit={e=>{e.preventDefault();void commitRename()}}><input aria-label="章节标题" autoFocus value={rename} onChange={e=>setRename(e.target.value)}/><Button type="submit">保存</Button><Button type="button" onClick={()=>setRenameId(undefined)}>取消</Button></form>:<>{onReorder&&<span className="novel-tree-drag" title="拖拽调整章节顺序"><GripVertical aria-hidden="true"/></span>}<button className="novel-tree-select" aria-current={c.id===selectedId?'page':undefined} onClick={()=>onSelect(c.id)}><span className="novel-tree-title" title={c.title}>{c.number!==undefined?`${c.number}. `:''}{c.title}</span>{c.status&&<Badge>{c.status}</Badge>}</button><span className="novel-tree-actions">{onRename&&<IconButton label={`重命名${c.title}`} title={`重命名${c.title}`} onClick={()=>beginRename(c)}><Pencil aria-hidden="true"/></IconButton>}{onArchive&&<IconButton label={`更多章节操作${c.title}`} title={`更多章节操作${c.title}`} onClick={()=>setArchiveTarget(c)}><MoreHorizontal aria-hidden="true"/></IconButton>}</span></>}
+  </div></li>)}</ol></nav>}
+  {onRestore&&<section aria-labelledby="archived-heading" className="novel-archive-entry"><h3 id="archived-heading">已移出章节</h3>{archived.length===0?<p>目前没有已移出章节。</p>:<ul>{archived.map(c=><li key={c.id}><span className="novel-archive-title" title={c.title}>{c.number!==undefined?`${c.number}. `:''}{c.title}</span><Button variant="ghost" onClick={()=>onRestore(c)}>恢复到正文目录</Button></li>)}</ul>}</section>}
+  <CreateChapterDialog open={createOpen} pending={creating} onClose={()=>setCreateOpen(false)} onSubmit={async t=>{await onCreate(t);setCreateOpen(false)}}/>
+  {archiveTarget&&<div className="novel-dialog-backdrop" role="presentation"><section className="novel-dialog" role="dialog" aria-modal="true" aria-labelledby="archive-heading"><h2 id="archive-heading">将“{archiveTarget.title}”移出正文目录？</h2><p>章节正文、版本历史和相关资料都会保留，之后可以从“已移出章节”中恢复。</p><div className="novel-actions"><Button onClick={()=>setArchiveTarget(undefined)}>取消</Button><Button variant="primary" onClick={async()=>{await onArchive?.(archiveTarget);setArchiveTarget(undefined)}}>移出正文目录</Button></div></section></div>}
+ </Panel>;
+}

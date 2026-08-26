@@ -1,0 +1,41 @@
+{
+  "status": "MATCH",
+  "novel_id": "sample_novel",
+  "checks": {
+    "characters": {
+      "file": 4,
+      "postgres": 4,
+      "match": true
+    },
+    "locations": {
+      "file": 3,
+      "postgres": 3,
+      "match": true
+    },
+    "timeline_events": {
+      "file": 3,
+      "postgres": 3,
+      "match": true
+    },
+    "secrets": {
+      "file": 2,
+      "postgres": 2,
+      "match": true
+    },
+    "foreshadowing": {
+      "file": 3,
+      "postgres": 3,
+      "match": true
+    },
+    "story_states": {
+      "file": 1,
+      "postgres": 1,
+      "match": true
+    },
+    "chapter_summaries": {
+      "file": 2,
+      "postgres": 2,
+      "match": true
+    }
+  }
+}

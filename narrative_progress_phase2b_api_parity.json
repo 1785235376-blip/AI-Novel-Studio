@@ -1,0 +1,1 @@
+{"run_id":"2026-08-09-real-verification","file_api":"REAL_VERIFIED","postgres_api":"REAL_VERIFIED","mystery_api":"MATCH","character_goal_api":"MATCH","chapter_progress_api":"MATCH","state_view_api":"MATCH","illegal_transition_behavior":"MATCH","project_isolation":"PASS","provenance":"MATCH","overall_api_backend_parity":"MATCH"}

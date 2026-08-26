@@ -1,0 +1,54 @@
+{
+  "version": "V0.5.4 Phase 2A.2",
+  "status": "PASS",
+  "narrative_rules": {
+    "count": 2,
+    "order": ["FORESHADOWING_OVERDUE", "THREAD_STALE"]
+  },
+  "continuity_rules": {
+    "count": 8,
+    "regression": "PASS"
+  },
+  "narrative_finding_api": {
+    "expectation": "PASS",
+    "checks": "PASS",
+    "list": "PASS",
+    "detail": "PASS",
+    "resolve": "PASS",
+    "project_isolation": "PASS",
+    "no_expectation_guard": "PASS"
+  },
+  "api_backend_parity": {
+    "file_runtime": "REAL VERIFIED",
+    "postgres_runtime": "REAL VERIFIED",
+    "expectation": "MATCH",
+    "checks": "MATCH",
+    "finding_list": "MATCH",
+    "finding_detail": "MATCH",
+    "resolve": "MATCH",
+    "lifecycle": "MATCH",
+    "project_isolation": "MATCH",
+    "overall": "MATCH"
+  },
+  "finding_identity": {
+    "id_stability": "PASS",
+    "fingerprint_stability": "PASS",
+    "idempotency": "PASS",
+    "lifecycle": "OPEN -> RESOLVED -> OPEN"
+  },
+  "provenance": {
+    "evidence": "MATCH",
+    "chapter_version": "MATCH"
+  },
+  "safety": {
+    "authoritative_narrative_mutation": "NONE",
+    "narrative_findings_in_writer_context": "DISABLED",
+    "writer_agent_behavior": "UNCHANGED",
+    "context_pack": "MATCH"
+  },
+  "regression": {
+    "passed": 99,
+    "skipped": 9,
+    "failed": 0
+  }
+}

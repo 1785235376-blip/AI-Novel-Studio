@@ -1,0 +1,31 @@
+/* Novel sidebar: chapter scrolling and feature navigation are independent. */
+.app-shell{height:100%;min-height:0}
+.app-shell .workspace-body{height:auto;min-height:0}
+.app-shell .workspace-sidebar{height:100%;min-height:0}
+.app-shell .workspace-sidebar--novel{position:relative;display:flex;flex-direction:column;min-height:0;overflow:visible}
+.app-shell .workspace-sidebar--novel>.sidebar-layout{position:relative;display:flex;flex:1 1 auto;flex-direction:column;min-height:0;height:0;overflow:visible}
+.sidebar-chapter-scroll{flex:1 1 auto;min-height:0;height:auto;overflow-x:hidden;overflow-y:auto;padding-right:var(--space-1);padding-bottom:calc(var(--control-height-lg) + var(--space-8));scrollbar-color:var(--color-border-strong) transparent;scrollbar-width:thin}
+.sidebar-chapter-scroll>.novel-chapter-tree{min-height:min-content}
+.feature-launcher{position:absolute;left:0;right:0;bottom:0;z-index:var(--z-dropdown);margin:0;padding-top:var(--space-3);border-top:var(--border-default);background:var(--color-bg-surface)}
+.feature-launcher>.ui-tooltip,.feature-launcher>.ui-tooltip>span:first-child{display:block;width:100%}
+.feature-launcher__toggle{width:100%;min-height:var(--control-height-lg);display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:var(--space-2);text-align:left}
+.feature-launcher__toggle svg{width:var(--icon-sm);height:var(--icon-sm)}
+.app-shell .tree nav.feature-launcher__overlay{position:absolute;left:0;right:0;bottom:calc(100% + var(--space-2));z-index:var(--z-overlay);display:flex;flex-direction:column;max-height:min(55vh,calc(100vh - var(--layout-header-height) - var(--layout-context-height) - var(--layout-status-height) - var(--space-12) - var(--control-height-lg) - var(--space-8)));margin:0;padding:0;overflow:hidden;border:var(--border-strong);border-radius:var(--radius-lg);background:var(--color-bg-elevated);box-shadow:var(--shadow-floating);text-transform:none}
+.feature-launcher__header{display:grid;gap:var(--space-1);padding:var(--space-3);border-bottom:var(--border-default);background:var(--color-bg-subtle)}
+.feature-launcher__header strong{font-size:13px}
+.feature-launcher__header span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--color-text-muted)}
+.feature-launcher__scroll{min-height:0;overflow-x:hidden;overflow-y:auto;padding:var(--space-2);scrollbar-color:var(--color-border-strong) transparent;scrollbar-width:thin}
+.feature-group+.feature-group{border-top:var(--border-default)}
+.app-shell .tree .feature-group{border-bottom:0}
+.app-shell .tree .feature-group__header{width:100%;min-height:var(--control-height-md);display:grid!important;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:var(--space-2);padding:var(--space-2)!important;border:0;border-radius:var(--radius-md);background:transparent;text-align:left;color:var(--color-text-secondary)!important;font-size:12px!important;letter-spacing:normal}
+.feature-group__header:hover,.feature-group__header:focus-visible{background:var(--color-bg-subtle)!important;color:var(--color-text-primary)!important}
+.feature-group__label{min-width:0;display:flex;align-items:center;gap:var(--space-2);font-weight:600}
+.feature-group__label span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.feature-group__header svg,.feature-item svg{flex:none;width:var(--icon-sm);height:var(--icon-sm)}
+.feature-group__header>.ui-badge{justify-self:end}
+.feature-group__items{display:grid;gap:var(--space-1);padding:0 0 var(--space-2) var(--space-6)}
+.app-shell .tree .feature-item{width:100%;min-height:var(--control-height-md);display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2)!important;border:0;border-radius:var(--radius-md);background:transparent;text-align:left;font-size:12px!important}
+.feature-item span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app-shell .tree .feature-item:hover{background:var(--color-bg-subtle)!important}
+.app-shell .tree .feature-item.is-active{color:var(--color-accent-primary)!important;background:var(--color-accent-subtle)!important;font-weight:600}
+@media(max-width:1100px){.feature-launcher__header span{display:none}.feature-group__items{padding-left:var(--space-4)}}

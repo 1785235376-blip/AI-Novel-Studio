@@ -1,0 +1,16 @@
+version: 0.1.0
+status: blueprint
+inputs: [novel_id, chapter_number, instruction, creation_profile]
+steps:
+  - load_story_state
+  - build_context_pack
+  - plot_planner
+  - writer
+  - parallel_review: [world, character, timeline, secret, continuity]
+  - conditional_revision
+  - editor
+  - atomic_markdown_save
+  - chapter_summary
+  - pending_canon
+outputs: [chapter_path, issues, pending_canon_id, usage, cost]
+

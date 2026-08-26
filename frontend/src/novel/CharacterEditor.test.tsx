@@ -1,0 +1,4 @@
+// @vitest-environment jsdom
+import {cleanup,fireEvent,render,screen} from '@testing-library/react';import {afterEach,describe,expect,it,vi} from 'vitest';import {CharacterEditor} from './StoryDatabase';
+afterEach(cleanup);
+describe('character editor',()=>{it('creates a structured character record',()=>{const onSave=vi.fn();render(<CharacterEditor onSave={onSave}/>);fireEvent.change(screen.getByLabelText('姓名'),{target:{value:'林海'}});fireEvent.change(screen.getByLabelText('身份 / 定位'),{target:{value:'船医'}});fireEvent.change(screen.getByLabelText('性格'),{target:{value:'谨慎而固执'}});fireEvent.change(screen.getByLabelText('当前目标'),{target:{value:'找到失踪船员'}});fireEvent.change(screen.getByLabelText('当前位置'),{target:{value:'雾港'}});fireEvent.click(screen.getByRole('button',{name:'保存人物'}));expect(onSave).toHaveBeenCalledWith(expect.objectContaining({id:'林海',name:'林海',role:'船医',personality:'谨慎而固执',goal:'找到失踪船员',current_location:'雾港',status:'ALIVE'}));});});

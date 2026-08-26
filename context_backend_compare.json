@@ -1,0 +1,25 @@
+{
+  "status": "MATCH",
+  "inputs": {
+    "novel_id": "sample_novel",
+    "chapter_id": "sample_novel:2",
+    "instruction": "Continue validation scene",
+    "provider_mode": "CLOUD",
+    "cloud": true
+  },
+  "raw_sources_equal": true,
+  "serialized_sources_equal": true,
+  "context_pack_equal": true,
+  "datasets": {
+    "characters": true,
+    "locations": true,
+    "timeline": true,
+    "secrets": true,
+    "foreshadowing": true,
+    "canon": true,
+    "summaries": true,
+    "story_state": true,
+    "style_profile": true
+  },
+  "differences": []
+}

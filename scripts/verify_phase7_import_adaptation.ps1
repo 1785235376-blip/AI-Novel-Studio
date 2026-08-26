@@ -1,0 +1,5 @@
+param([switch]$SkipBuild)
+$ErrorActionPreference='Stop';$root=Split-Path -Parent $PSScriptRoot;$python=Join-Path $root '.venv\Scripts\python.exe';$frontend=Join-Path $root 'frontend';$baseTemp=Join-Path $root '.pytest-tmp-phase7-import-adaptation'
+Write-Host 'Phase 7 import and adaptation backend acceptance';& $python -m pytest 'tests/test_phase7_novel_import.py' 'tests/test_phase7_adaptation.py' 'tests/test_phase7_adaptation_authorization.py' -q --basetemp $baseTemp;if($LASTEXITCODE -ne 0){throw 'Phase 7 backend acceptance failed'}
+Push-Location $frontend;try{Write-Host 'Phase 7 import and adaptation frontend acceptance';& npm test -- --run 'src/novel/importRecovery.test.ts' 'src/novel/EntryExperience.test.tsx';if($LASTEXITCODE -ne 0){throw 'Phase 7 frontend acceptance failed'};& npm run lint;if($LASTEXITCODE -ne 0){throw 'UI design token acceptance failed'};if(-not $SkipBuild){& npm run build;if($LASTEXITCODE -ne 0){throw 'Frontend production build failed'}}}finally{Pop-Location}
+Write-Host 'PHASE 7 IMPORT AND ADAPTATION ACCEPTANCE: PASS'

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <AssemblyName>AI-Novel-Studio.DesktopHost.TestHarness</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseAppHost>true</UseAppHost>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\desktop-host\AI.NovelStudio.DesktopHost\AI.NovelStudio.DesktopHost.csproj" />
+  </ItemGroup>
+</Project>

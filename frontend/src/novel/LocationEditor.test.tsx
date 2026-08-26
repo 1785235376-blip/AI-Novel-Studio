@@ -1,0 +1,3 @@
+// @vitest-environment jsdom
+import {cleanup,fireEvent,render,screen} from '@testing-library/react';import {afterEach,describe,expect,it,vi} from 'vitest';import {LocationEditor} from './StoryDatabase';afterEach(cleanup);
+describe('location editor',()=>{it('creates a structured location',()=>{const onSave=vi.fn();render(<LocationEditor onSave={onSave}/>);fireEvent.change(screen.getByLabelText('地点名称'),{target:{value:'雾港'}});fireEvent.change(screen.getByLabelText('地点类型'),{target:{value:'港口城市'}});fireEvent.change(screen.getByLabelText('特殊规则'),{target:{value:'午夜后禁止鸣笛'}});fireEvent.click(screen.getByRole('button',{name:'保存地点'}));expect(onSave).toHaveBeenCalledWith(expect.objectContaining({id:'雾港',name:'雾港',location_type:'港口城市',rules:'午夜后禁止鸣笛',status:'ACTIVE'}));});});

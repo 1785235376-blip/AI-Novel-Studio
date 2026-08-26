@@ -1,0 +1,46 @@
+name: ai-novel-studio
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ai-novel-studio-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ai_novel_studio}
+      POSTGRES_USER: ${POSTGRES_USER:-novel_studio}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-54329}:5432"
+    volumes:
+      - novel_postgres_data:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-novel_studio} -d ${POSTGRES_DB:-ai_novel_studio}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  service:
+    build: .
+    container_name: ai-novel-studio-service
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./novel_data:/app/novel_data
+      - ./prompts:/app/prompts:ro
+      - ./workflows:/app/workflows:ro
+      - ./logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+  frontend:
+    build: ./frontend
+    container_name: ai-novel-studio-frontend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      - service
+volumes:
+  novel_postgres_data:
+    name: ai-novel-studio-postgres-data

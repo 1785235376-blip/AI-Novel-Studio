@@ -1,0 +1,14 @@
+.generation-workflow{display:grid;gap:var(--space-3);padding:var(--space-3) 0;border-top:var(--border-default);border-bottom:var(--border-default)}
+.generation-workflow__header,.generation-workflow__header>div,.generation-workflow__copy,.generation-workflow__copy>span{display:flex;align-items:center;gap:var(--space-2)}
+.generation-workflow__header{justify-content:space-between}.generation-workflow__header>div{min-width:0;flex-wrap:wrap}.generation-workflow__header span{font-size:11px;color:var(--color-text-muted)}
+.generation-workflow__steps{display:grid;gap:0;margin:0;padding:0;list-style:none}
+.generation-workflow__step{position:relative;display:grid;grid-template-columns:24px minmax(0,1fr);gap:var(--space-2);min-height:52px;color:var(--color-text-muted)}
+.generation-workflow__step:not(:last-child)::after{content:"";position:absolute;left:11px;top:24px;bottom:0;border-left:var(--border-default)}
+.generation-workflow__marker{position:relative;z-index:1;display:grid;place-items:center;width:24px;height:24px;border-radius:var(--radius-round);background:var(--color-bg-surface)}
+.generation-workflow__marker svg{width:var(--icon-sm);height:var(--icon-sm)}
+.generation-workflow__copy{display:grid;align-content:start;gap:var(--space-1);padding:2px 0 var(--space-3)}.generation-workflow__copy>span{justify-content:space-between}.generation-workflow__copy strong{font-size:12px;color:var(--color-text-secondary)}.generation-workflow__copy small{font-size:11px;color:var(--color-text-muted)}
+.generation-workflow__step.is-complete .generation-workflow__marker{color:var(--color-status-success)}.generation-workflow__step.is-active .generation-workflow__marker{color:var(--color-accent-primary)}.generation-workflow__step.is-active .generation-workflow__marker svg{animation:generation-workflow-spin 900ms linear infinite}.generation-workflow__step.is-failed .generation-workflow__marker{color:var(--color-status-error)}
+.generation-workflow__failure{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);width:100%}.generation-workflow__failure>span{min-width:0}.generation-workflow__failure .ui-button{flex:none}.generation-workflow__failure svg{width:var(--icon-sm);height:var(--icon-sm)}
+@keyframes generation-workflow-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.generation-workflow__step.is-active .generation-workflow__marker svg{animation:none}}
+@media(max-width:700px){.generation-workflow__failure{align-items:stretch;flex-direction:column}.generation-workflow__failure .ui-button{width:100%}}

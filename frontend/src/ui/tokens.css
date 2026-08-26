@@ -1,0 +1,18 @@
+:root {
+  color-scheme:light;
+  --color-bg-app:#e9edf0;--color-bg-surface:#f8fafb;--color-bg-subtle:#eef2f4;--color-bg-elevated:#ffffff;
+  --color-text-primary:#172027;--color-text-secondary:#52616b;--color-text-muted:#788791;--color-text-inverse:#f8fafb;
+  --color-border-default:#d8e0e5;--color-border-strong:#b9c6ce;--color-border-focus:#087f8c;
+  --color-accent-primary:#087f8c;--color-accent-hover:#066b76;--color-accent-active:#055761;--color-accent-subtle:#dff3f4;
+  --color-status-success:#15803d;--color-status-warning:#b45309;--color-status-error:#b91c1c;--color-status-info:#0369a1;--color-status-bar:#c9d4da;--color-status-signal:#3cc6aa;
+  --color-selection-bg:#dce8ff;--color-selection-border:#7b9fe5;
+  --font-ui:"Segoe UI Variable","Segoe UI","Microsoft YaHei UI","Microsoft YaHei",sans-serif;--font-editor:"Noto Serif SC","Source Han Serif SC","Songti SC",Georgia,serif;--font-mono:"Cascadia Mono","SFMono-Regular",Consolas,monospace;
+  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;
+  --radius-sm:3px;--radius-md:6px;--radius-lg:8px;--radius-round:999px;
+  --border-default:1px solid var(--color-border-default);--border-strong:1px solid var(--color-border-strong);
+  --shadow-floating:0 8px 24px rgb(23 32 39 / 12%);--shadow-dialog:0 20px 56px rgb(23 32 39 / 20%);
+  --layout-header-height:56px;--layout-context-height:44px;--layout-sidebar-width:248px;--layout-inspector-width:340px;--layout-inspector-min:280px;--layout-inspector-max:480px;--layout-status-height:32px;--layout-workspace-min:480px;--layout-content-gap:12px;
+  --z-dropdown:40;--z-overlay:80;--z-dialog:100;--motion-fast:120ms;--motion-standard:180ms;
+  --icon-xs:12px;--icon-sm:16px;--icon-md:20px;--icon-lg:24px;
+  --control-height-sm:28px;--control-height-md:34px;--control-height-lg:40px;--focus-ring:0 0 0 3px rgb(49 95 189 / 20%);--motion-slow:260ms;--ease-standard:cubic-bezier(.2,.8,.2,1);
+}

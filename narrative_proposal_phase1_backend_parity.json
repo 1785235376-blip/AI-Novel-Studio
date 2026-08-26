@@ -1,0 +1,9 @@
+{
+  "file": "REAL_VERIFIED",
+  "postgresql": "REAL_VERIFIED",
+  "backend_parity": "MATCH",
+  "fingerprint_idempotency": "PASS",
+  "accept_idempotency": "PASS",
+  "forced_failure": "PASS",
+  "rollback": "PASS"
+}

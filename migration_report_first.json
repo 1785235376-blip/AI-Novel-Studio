@@ -1,0 +1,202 @@
+{
+  "imported": [
+    {
+      "table": "locations",
+      "source_id": "old-port",
+      "target_id": "75a9a825-3085-44b7-89da-ae73507db321",
+      "reason": "created"
+    },
+    {
+      "table": "locations",
+      "source_id": "archive",
+      "target_id": "81eb1065-9595-49d0-b4b1-7d5fe9d49657",
+      "reason": "created"
+    },
+    {
+      "table": "locations",
+      "source_id": "lighthouse",
+      "target_id": "ccd5f9a7-10ac-4d0f-a706-fcd051075b99",
+      "reason": "created"
+    },
+    {
+      "table": "characters",
+      "source_id": "lin-hai",
+      "target_id": "7e8e28f3-18bb-42eb-bf4b-8515e31018cc",
+      "reason": "created"
+    },
+    {
+      "table": "characters",
+      "source_id": "captain-shen",
+      "target_id": "c08ab17f-bede-44ba-8b5c-68347da50742",
+      "reason": "created"
+    },
+    {
+      "table": "characters",
+      "source_id": "su-yan",
+      "target_id": "d79a0234-434b-4f80-ae3f-bf864c10810b",
+      "reason": "created"
+    },
+    {
+      "table": "characters",
+      "source_id": "zhou-qi",
+      "target_id": "653ae28e-d298-4824-be33-e8841abf2640",
+      "reason": "created"
+    },
+    {
+      "table": "timeline_events",
+      "source_id": "accident",
+      "target_id": "9bc7dba0-7a83-5167-b1ff-24eabffab751",
+      "reason": "created"
+    },
+    {
+      "table": "timeline_events",
+      "source_id": "return",
+      "target_id": "7e4023ff-89be-53c8-9eef-41dfad844c43",
+      "reason": "created"
+    },
+    {
+      "table": "timeline_events",
+      "source_id": "meeting",
+      "target_id": "db676beb-d67f-5b49-a42d-91c5d7ae68d6",
+      "reason": "created"
+    },
+    {
+      "table": "secrets",
+      "source_id": "captain-identity",
+      "target_id": "d95e063f-fdd4-5183-8809-328c241dea56",
+      "reason": "created"
+    },
+    {
+      "table": "secrets",
+      "source_id": "agency-coverup",
+      "target_id": "11e03352-b9de-5b67-a7ae-b0070ddd8264",
+      "reason": "created"
+    },
+    {
+      "table": "foreshadowing",
+      "source_id": "rust-key",
+      "target_id": "b04bec5d-36de-58bc-8e5f-ae192ecf9105",
+      "reason": "created"
+    },
+    {
+      "table": "foreshadowing",
+      "source_id": "missing-log",
+      "target_id": "506da650-2ddd-567a-8e39-f4d8d070a52e",
+      "reason": "created"
+    },
+    {
+      "table": "foreshadowing",
+      "source_id": "bell-three",
+      "target_id": "e5aa1d62-3ef8-559e-a172-c0c869a53868",
+      "reason": "created"
+    }
+  ],
+  "updated": [
+    {
+      "table": "novels",
+      "source_id": "sample_novel",
+      "target_id": "fced7a5a-889a-417e-a52e-79f66d045a96",
+      "reason": "metadata/style/secret mapping synchronized"
+    }
+  ],
+  "skipped": [
+    {
+      "table": "story_states",
+      "source_id": "sample_novel:3",
+      "target_id": "28fb5b76-67bf-4614-8802-971f25e8692d",
+      "reason": "unchanged"
+    },
+    {
+      "table": "chapters",
+      "source_id": "sample_novel:1",
+      "target_id": "99424f69-7572-40c5-b07f-2af2aa4d70a2",
+      "reason": "unchanged"
+    },
+    {
+      "table": "chapter_summaries",
+      "source_id": "sample_novel:1",
+      "target_id": "454ebbb1-86fd-4898-b2ef-2634fe154652",
+      "reason": "unchanged"
+    },
+    {
+      "table": "chapters",
+      "source_id": "sample_novel:2",
+      "target_id": "6d93006d-d5c0-4fb4-9911-c7e6d73a9c75",
+      "reason": "unchanged"
+    },
+    {
+      "table": "chapter_summaries",
+      "source_id": "sample_novel:2",
+      "target_id": "e498ae22-2f60-4ff7-8caf-feb151d66467",
+      "reason": "unchanged"
+    }
+  ],
+  "conflicts": [],
+  "failed": [],
+  "summary": {
+    "chapter_summaries": {
+      "imported": 0,
+      "updated": 0,
+      "skipped": 2,
+      "conflicts": 0,
+      "failed": 0
+    },
+    "chapters": {
+      "imported": 0,
+      "updated": 0,
+      "skipped": 2,
+      "conflicts": 0,
+      "failed": 0
+    },
+    "characters": {
+      "imported": 4,
+      "updated": 0,
+      "skipped": 0,
+      "conflicts": 0,
+      "failed": 0
+    },
+    "foreshadowing": {
+      "imported": 3,
+      "updated": 0,
+      "skipped": 0,
+      "conflicts": 0,
+      "failed": 0
+    },
+    "locations": {
+      "imported": 3,
+      "updated": 0,
+      "skipped": 0,
+      "conflicts": 0,
+      "failed": 0
+    },
+    "novels": {
+      "imported": 0,
+      "updated": 1,
+      "skipped": 0,
+      "conflicts": 0,
+      "failed": 0
+    },
+    "secrets": {
+      "imported": 2,
+      "updated": 0,
+      "skipped": 0,
+      "conflicts": 0,
+      "failed": 0
+    },
+    "story_states": {
+      "imported": 0,
+      "updated": 0,
+      "skipped": 1,
+      "conflicts": 0,
+      "failed": 0
+    },
+    "timeline_events": {
+      "imported": 3,
+      "updated": 0,
+      "skipped": 0,
+      "conflicts": 0,
+      "failed": 0
+    }
+  },
+  "timestamp": "2026-08-09T02:23:04.698632+00:00"
+}

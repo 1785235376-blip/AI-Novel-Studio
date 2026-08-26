@@ -1,0 +1,79 @@
+{
+  "timestamp": "2026-08-09T02:01:17.764746+00:00",
+  "status": "REAL VERIFIED",
+  "database": "PostgreSQL 16 Alpine",
+  "health_check": "healthy",
+  "migrations": {
+    "001": "REAL VERIFIED",
+    "002": "REAL VERIFIED",
+    "003": "REAL VERIFIED"
+  },
+  "schema_versions": [
+    "0.1.0",
+    "0.2.0",
+    "0.4.0"
+  ],
+  "tables": {
+    "count": 17,
+    "names": [
+      "canon_entries",
+      "canon_revisions",
+      "chapter_summaries",
+      "chapter_versions",
+      "chapters",
+      "characters",
+      "cloud_requests",
+      "foreshadowing",
+      "generation_jobs",
+      "locations",
+      "novels",
+      "organizations",
+      "pending_canon",
+      "schema_versions",
+      "secrets",
+      "story_states",
+      "timeline_events"
+    ]
+  },
+  "indexes": {
+    "count": 30,
+    "names": [
+      "canon_entries_novel_id_entity_type_entity_id_fact_key_key",
+      "canon_entries_pkey",
+      "canon_revisions_pkey",
+      "chapter_summaries_pkey",
+      "chapter_versions_chapter_id_version_key",
+      "chapter_versions_pkey",
+      "chapters_novel_id_chapter_number_key",
+      "chapters_pkey",
+      "characters_novel_id_slug_key",
+      "characters_pkey",
+      "cloud_requests_pkey",
+      "foreshadowing_pkey",
+      "generation_jobs_pkey",
+      "idx_canon_novel",
+      "idx_cloud_cost",
+      "idx_generation_jobs_novel_status",
+      "idx_pending_status",
+      "idx_timeline_novel",
+      "locations_novel_id_slug_key",
+      "locations_pkey",
+      "novels_pkey",
+      "novels_slug_key",
+      "organizations_novel_id_slug_key",
+      "organizations_pkey",
+      "pending_canon_pkey",
+      "schema_versions_pkey",
+      "secrets_pkey",
+      "story_states_novel_id_chapter_number_key",
+      "story_states_pkey",
+      "timeline_events_pkey"
+    ]
+  },
+  "constraints": {
+    "CHECK": 110,
+    "FOREIGN KEY": 20,
+    "PRIMARY KEY": 17,
+    "UNIQUE": 8
+  }
+}

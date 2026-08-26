@@ -1,0 +1,17 @@
+BEGIN;
+ALTER TABLE timeline_events ADD COLUMN IF NOT EXISTS project_id TEXT;
+ALTER TABLE timeline_events ADD COLUMN IF NOT EXISTS payload JSONB NOT NULL DEFAULT '{}';
+ALTER TABLE timeline_events ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT now();
+CREATE INDEX IF NOT EXISTS idx_timeline_events_project ON timeline_events(project_id);
+CREATE TABLE IF NOT EXISTS character_location_states (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, character_id TEXT NOT NULL, payload JSONB NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS idx_location_states_character ON character_location_states(project_id, character_id);
+CREATE TABLE IF NOT EXISTS relationship_states (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, source_character_id TEXT NOT NULL, target_character_id TEXT NOT NULL, payload JSONB NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS idx_relationship_states_pair ON relationship_states(project_id, source_character_id, target_character_id);
+CREATE TABLE IF NOT EXISTS canon_dependencies (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, source_canon_id TEXT NOT NULL, target_canon_id TEXT NOT NULL, payload JSONB NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS character_knowledge (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, character_id TEXT NOT NULL, payload JSONB NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now());
+CREATE INDEX IF NOT EXISTS idx_character_knowledge_character ON character_knowledge(project_id, character_id);
+CREATE TABLE IF NOT EXISTS continuity_findings (id TEXT PRIMARY KEY, project_id TEXT NOT NULL, fingerprint TEXT NOT NULL, finding_type TEXT NOT NULL, payload JSONB NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT now(), UNIQUE(project_id, fingerprint));
+CREATE INDEX IF NOT EXISTS idx_continuity_findings_project ON continuity_findings(project_id);
+CREATE TABLE IF NOT EXISTS continuity_finding_evidence (finding_id TEXT NOT NULL REFERENCES continuity_findings(id) ON DELETE CASCADE, evidence_id TEXT NOT NULL, PRIMARY KEY(finding_id, evidence_id));
+INSERT INTO schema_versions(version) VALUES ('0.5.3-continuity-foundations') ON CONFLICT (version) DO NOTHING;
+COMMIT;

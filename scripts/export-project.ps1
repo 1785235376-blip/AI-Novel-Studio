@@ -1,0 +1,3 @@
+param([Parameter(Mandatory)][string]$NovelId,[string]$Destination)
+. $PSScriptRoot/common.ps1
+$root=Get-ProjectRoot; $src=Join-Path $root "novel_data/novels/$NovelId"; if(-not(Test-Path $src)){throw "Novel does not exist: $NovelId"}; if(-not$Destination){$Destination=Join-Path $root "novel_data/novels/$NovelId/exports/$NovelId-portable"}; New-Item -ItemType Directory $Destination -Force|Out-Null; Copy-Item $src (Join-Path $Destination 'novel') -Recurse -Force -Exclude exports; [ordered]@{format='ai-novel-portable';version='0.1.0';app_version=(Get-ReleaseVersion $root);novel_id=$NovelId;exported_at=(Get-Date).ToUniversalTime().ToString('o')}|ConvertTo-Json|Set-Content (Join-Path $Destination 'project.json') -Encoding utf8

@@ -1,0 +1,7 @@
+{
+  "migration": "REAL_VERIFIED",
+  "migration_number": "011",
+  "table": "narrative_change_proposals",
+  "typed_columns": "PASS",
+  "project_fingerprint_unique": "PASS"
+}

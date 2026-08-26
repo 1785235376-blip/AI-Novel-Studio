@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Novel Studio UI"
+  short_description: "Apply the frozen AI-Novel-Studio UI system"
+  default_prompt: "Use $ai-novel-studio-ui to implement this frontend change within DS-v1.0."

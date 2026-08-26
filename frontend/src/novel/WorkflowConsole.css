@@ -1,0 +1,8 @@
+.workflow-console,.agent-queue-console{display:grid;gap:var(--space-3)}
+.workflow-console>section{display:grid;gap:var(--space-2);padding:var(--space-3);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-subtle)}
+.workflow-console>section h4{margin:0;font-size:13px}.workflow-console>section label{display:grid;gap:var(--space-1);font-size:12px;color:var(--color-text-secondary)}
+.workflow-console>p,.agent-queue-console>p,.agent-queue-console__list>p{display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;margin:0;padding:var(--space-2) 0;border-top:var(--border-default);font-size:12px;color:var(--color-text-secondary)}
+.agent-queue-console__list{display:grid;min-width:0}.workflow-console>section:focus,.agent-queue-console__list:focus,.agent-queue-console__list>p:focus{outline:2px solid var(--color-accent-primary);outline-offset:2px}
+.workflow-console>p .ui-button,.agent-queue-console__list>p .ui-button{margin-left:auto}
+.agent-queue-console__list>p .ui-button~.ui-button{margin-left:0}
+@media(max-width:720px){.workflow-console>p,.agent-queue-console__list>p{align-items:stretch;flex-direction:column}.workflow-console>p .ui-button,.agent-queue-console__list>p .ui-button{width:100%;margin-left:0}}

@@ -1,0 +1,12 @@
+.permission-management{display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-4);color:var(--color-text-primary);background:var(--color-bg-app);font-family:var(--font-ui)}
+.permission-management__heading{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)}
+.permission-management__heading h1{margin:0;font-size:18px}.permission-management__heading p{margin:var(--space-1) 0 0;color:var(--color-text-secondary)}
+.permission-list,.permission-explanations{display:flex;flex-direction:column;gap:var(--space-2);margin:var(--space-3) 0 0;padding:0;list-style:none}
+.permission-assignment,.permission-explanations li{padding:var(--space-3);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-subtle)}
+.permission-assignment__summary,.permission-assignment__actions{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-2)}
+.permission-metadata{display:flex;flex-wrap:wrap;gap:var(--space-4);margin:var(--space-2) 0}.permission-metadata div{display:flex;gap:var(--space-1)}.permission-metadata dt{color:var(--color-text-muted)}.permission-metadata dd{margin:0}
+.permission-assignment__actions{justify-content:flex-end}.permission-assignment__actions [role="alert"]{margin-right:auto;color:var(--color-status-warning)}
+.permission-explanations li>span{margin-left:var(--space-2);color:var(--color-text-muted)}.permission-explanations p{margin:var(--space-1) 0 0;color:var(--color-text-secondary)}
+.permission-grant{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-3);margin-top:var(--space-3)}.permission-grant label{display:flex;flex-direction:column;gap:var(--space-1);color:var(--color-text-secondary)}.permission-grant input,.permission-grant select{min-height:32px;padding:0 var(--space-2)}.permission-grant>.ui-button,.permission-grant>p{align-self:end;margin:0}
+.permission-state{padding:var(--space-4);font-family:var(--font-ui);color:var(--color-text-secondary)}.permission-state--denied,.permission-state--error{color:var(--color-status-error)}
+@media(max-width:1100px){.permission-grant{grid-template-columns:1fr}}

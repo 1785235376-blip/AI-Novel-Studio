@@ -1,0 +1,22 @@
+.ai-context-preview{display:grid;gap:var(--space-3);margin-top:var(--space-4);padding-top:var(--space-3);border-top:var(--border-default)}
+.ai-context-preview__header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3)}
+.ai-context-preview__header h3{margin:0;font-size:14px;color:var(--color-text-primary)}
+.ai-context-preview__header p{margin:var(--space-1) 0 0}
+.ai-context-preview__controls{display:flex;align-items:end;justify-content:space-between;gap:var(--space-2);flex-wrap:wrap}
+.ai-context-preview__controls label{display:grid;gap:var(--space-1);min-width:180px}
+.ai-context-preview__controls .ui-button{flex:none}
+.ai-context-preview__loading{display:flex;align-items:center;gap:var(--space-2);min-height:var(--control-height-md);color:var(--color-text-secondary);font-size:12px}
+.ai-context-preview__meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-2);margin:0}
+.ai-context-preview__meta div{display:grid;gap:var(--space-1);min-width:0;padding:var(--space-2);border:var(--border-default);border-radius:var(--radius-sm);background:var(--color-bg-subtle)}
+.ai-context-preview__meta dt{font-size:11px;color:var(--color-text-muted)}
+.ai-context-preview__meta dd{margin:0;min-width:0;overflow-wrap:anywhere;color:var(--color-text-primary);font-size:12px}
+.ai-context-preview__meta code{font-family:var(--font-mono);font-size:10px}
+.ai-context-preview__sources{display:grid;gap:var(--space-2);list-style:none;margin:0;padding:0}
+.ai-context-preview__source{display:grid;gap:var(--space-1);min-width:0;padding:var(--space-2) var(--space-3);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-surface)}
+.ai-context-preview__source-head{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2)}
+.ai-context-preview__source-head strong{min-width:0;color:var(--color-text-primary);font-size:12px}
+.ai-context-preview__source .novel-help{margin:0;overflow-wrap:anywhere}
+.ai-context-preview__source .ui-empty{max-width:none;margin:0;text-align:left}
+.ai-context-preview__source .ui-empty strong{font-size:12px;color:var(--color-text-secondary)}
+.ai-context-preview__source .ui-empty p{margin:var(--space-1) 0 0}
+@media(max-width:520px){.ai-context-preview__meta{grid-template-columns:minmax(0,1fr)}.ai-context-preview__controls{align-items:stretch}.ai-context-preview__controls label,.ai-context-preview__controls .ui-button{width:100%}}

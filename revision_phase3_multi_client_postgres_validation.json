@@ -1,0 +1,1 @@
+{"client_a":"REAL_VERIFIED","client_b":"REAL_VERIFIED","initial_shared_revision":"PASS","client_a_write":"PASS","client_a_new_revision":"PASS","client_b_stale_write":"REJECTED","stale_write_mutation":"NONE","client_b_refresh":"PASS","client_b_retry":"PASS","final_revision":"PASS","different_branch_independence":"PASS","optimistic_concurrency":"REAL_VERIFIED"}

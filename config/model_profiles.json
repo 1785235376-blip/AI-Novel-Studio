@@ -1,0 +1,9 @@
+{
+  "config_version": "0.1.0",
+  "profiles": {
+    "LOCAL_ONLY": {"utility":"local_utility","planner":"local_utility","writer":"local_writer","reviewer":"local_review","editor":"local_writer","archivist":"local_utility"},
+    "HYBRID": {"utility":"local_utility","planner":"cloud_planner","writer":"cloud_writer","reviewer":"local_review","editor":"cloud_editor_optional","archivist":"local_utility"},
+    "QUALITY": {"utility":"local_utility","planner":"cloud_planner","writer":"cloud_writer","reviewer":"cloud_review_with_local_canon","editor":"cloud_editor","archivist":"local_utility"}
+  }
+}
+

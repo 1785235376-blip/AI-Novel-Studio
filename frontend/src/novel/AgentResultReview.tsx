@@ -1,0 +1,8 @@
+import {Badge,Button,Panel} from '../ui/primitives';
+
+export type AgentReviewJob={id:string;agent_name:string;status:string;output_schema:string;requires_approval:boolean;result?:{structured_output?:{summary?:string;proposals?:unknown[];findings?:unknown[]}};review?:{decision:string;reviewed_by:string;note:string;applied:boolean};application?:{applied_by:string;actions:unknown[]}};
+
+export function AgentResultReview({job,reviewing=false,onAccept,onReject}:{job:AgentReviewJob;reviewing?:boolean;onAccept:(job:AgentReviewJob)=>Promise<void>|void;onReject:(job:AgentReviewJob)=>Promise<void>|void}){
+  const output=job.result?.structured_output;const pending=job.status==='COMPLETED';const decided=job.status==='ACCEPTED'||job.status==='REJECTED';
+  return <Panel title="Agent 结果审核"><section className="novel-draft-review" aria-labelledby="agent-result-title"><header><strong id="agent-result-title">{job.agent_name}</strong><Badge tone={job.status==='ACCEPTED'?'success':job.status==='REJECTED'?'warning':'info'}>{job.status}</Badge></header><p>{output?.summary||'暂无结构化结果摘要。'}</p><p className="novel-help">输出契约：{job.output_schema}</p><p className="novel-help">建议 {output?.proposals?.length||0} 项 · 检查结果 {output?.findings?.length||0} 项</p>{decided&&<p role="status">审核决定：{job.review?.decision}。{job.review?.applied?`已由 ${job.application?.applied_by||'作者'} 应用 ${job.application?.actions.length||0} 项受控修改。`:'当前仅记录作者决定，尚未写入项目。'}</p>}{pending&&<div className="novel-actions"><Button disabled={reviewing} onClick={()=>onReject(job)}>{reviewing?'正在处理…':'拒绝结果'}</Button><Button variant="primary" disabled={reviewing} onClick={()=>onAccept(job)}>{reviewing?'正在处理…':'采纳结果'}</Button></div>}</section></Panel>;
+}
