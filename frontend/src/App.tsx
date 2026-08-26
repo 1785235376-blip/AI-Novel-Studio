@@ -898,6 +898,16 @@ export default function App() {
               );
             }
           }}
+          onDelete={scope?undefined:async(c)=>{
+            try {
+              setShellMessage("");
+              await api.deleteChapter(c.id);
+              await Promise.all([chapters.refetch(),archived.refetch(),writingGoal.refetch()]);
+              setShellMessage(`已永久删除章节“${c.title}”。`);
+            } catch {
+              setShellMessage("永久删除章节失败，请稍后重试。");
+            }
+          }}
         />
       </div>
       <div className="novel-sidebar-heading novel-sidebar-heading--tools"><span>工作区</span><strong>创作工具</strong></div>

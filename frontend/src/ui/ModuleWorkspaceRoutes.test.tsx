@@ -4,12 +4,14 @@ import {createRoot} from 'react-dom/client';
 import {afterEach,describe,expect,it,vi} from 'vitest';
 import {ModuleWorkspaceRoutes} from './ModuleWorkspaceRoutes';
 import {STUDIO_MODULES} from './moduleRegistry';
+import {api} from '../api';
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT=true;
 let host:HTMLDivElement;
 afterEach(()=>host?.remove());
 
 describe('ModuleWorkspaceRoutes',()=>{
+  it('exposes media Provider configuration directly from the control workspace',async()=>{vi.spyOn(api,'assetProviders').mockResolvedValue({items:[]} as any);vi.spyOn(api,'videoProviders').mockResolvedValue({items:[]} as any);host=document.createElement('div');document.body.append(host);const root=createRoot(host);await act(async()=>root.render(<ModuleWorkspaceRoutes module="CONTROL" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author" novelId="novel-1"/>));const tab=[...host.querySelectorAll('button')].find(button=>button.textContent==='媒体 Provider')!;await act(async()=>{tab.click();await Promise.resolve()});expect(host.textContent).toContain('媒体 Provider');expect(host.querySelector('.media-provider-settings')).toBeTruthy();act(()=>root.unmount())});
   it('keeps the registered modules and renders the video workspace shell',()=>{
     expect(STUDIO_MODULES.map((item)=>item.id)).toEqual(['NOVEL','IMAGE','VIDEO','ASSETS','AUDIO','CONTROL','PLUGIN','WORKFLOW']);
     host=document.createElement('div');document.body.append(host);const root=createRoot(host);

@@ -5,6 +5,7 @@ import {
   BookOpen,
   LibraryBig,
   Plus,
+  Trash2,
   Users,
 } from "lucide-react";
 import {
@@ -16,7 +17,7 @@ import {
   createNovelKnowledgeReview,
   setCollaborationContext,
 } from "../api";
-import { Button, EmptyState, Panel } from "../ui/primitives";
+import { Button, EmptyState, IconButton, Panel } from "../ui/primitives";
 import {
   NovelImportPanel,
   type NovelImportPlan,
@@ -51,10 +52,21 @@ export function EntryExperience({
     [loading, setLoading] = useState(false),
     [ready, setReady] = useState(false),
     [error, setError] = useState(""),
+    [deleteTarget,setDeleteTarget]=useState<WorkspaceNavigationPath>(),
     [mode, setMode] = useState<EntryMode>(),
     [stage, setStage] = useState<PackagedStage>("LAUNCH");
   const projectTitleRef = useRef<HTMLInputElement>(null),
     personalCreateRef = useRef<Promise<AdminWorkspace | undefined>>();
+
+  async function deleteProject(){
+    if(!workspace||!deleteTarget)return;
+    setLoading(true);setError("");
+    try{
+      await api.deleteNovel(deleteTarget.project_id);
+      const navigation=await api.adminWorkspaceNavigation(workspace.id);
+      setPaths(navigation.eligible_paths);setDeleteTarget(undefined);
+    }catch{setError("删除小说失败，请稍后重试。")}finally{setLoading(false)}
+  }
 
   async function recover(value = token) {
     if (!value.trim() && !packagedHost) return;
@@ -414,21 +426,13 @@ export function EntryExperience({
             ) : !loading ? (
               <div className="novel-entry-grid" aria-label="已有小说">
                 {paths.map((path) => (
-                  <Button
+                  <article
                     className="novel-entry-card"
                     key={`${path.project_id}:${path.storyline_id}:${path.branch_id}`}
-                    onClick={() => enter(path)}
                   >
-                    <BookOpen aria-hidden="true" />
-                    <span>
-                      <strong>{path.project_name || "未命名小说"}</strong>
-                      <small>
-                        {path.storyline_name || "默认故事线"} ·{" "}
-                        {path.branch_name || "主分支"} · 打开小说
-                      </small>
-                    </span>
-                    <ArrowRight aria-hidden="true" />
-                  </Button>
+                    <button type="button" className="novel-entry-card__open" onClick={()=>enter(path)}><BookOpen aria-hidden="true" /><span><strong>{path.project_name || "未命名小说"}</strong><small>{path.storyline_name || "默认故事线"} ·{" "}{path.branch_name || "主分支"} · 打开小说</small></span><ArrowRight aria-hidden="true" /></button>
+                    <IconButton className="novel-entry-card__delete" label={`删除小说${path.project_name||"未命名小说"}`} onClick={()=>setDeleteTarget(path)}><Trash2 aria-hidden="true"/></IconButton>
+                  </article>
                 ))}
               </div>
             ) : null}
@@ -476,6 +480,7 @@ export function EntryExperience({
             <NovelImportPanel onConfirm={importProject} />
           </aside>
         </div>
+        {deleteTarget&&<div className="novel-dialog-backdrop" role="presentation"><section className="novel-dialog" role="alertdialog" aria-modal="true" aria-labelledby="delete-novel-heading"><h2 id="delete-novel-heading">永久删除“{deleteTarget.project_name||"未命名小说"}”？</h2><p>小说正文、资料库、生成记录和关联资产都将被永久删除，此操作无法撤销。</p><div className="novel-actions"><Button disabled={loading} onClick={()=>setDeleteTarget(undefined)}>取消</Button><Button variant="danger" loading={loading} onClick={()=>void deleteProject()}>永久删除小说</Button></div></section></div>}
       </main>
     );
   }

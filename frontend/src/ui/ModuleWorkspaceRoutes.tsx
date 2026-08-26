@@ -19,6 +19,7 @@ import {AudioTaskInspector, type AudioInspection} from '../novel/AudioTaskInspec
 import {PluginInspector, type PluginInspection} from '../novel/PluginInspector';
 import {CapabilityStatusCenter} from './CapabilityStatusCenter';
 import {AiControlCenter} from './AiControlCenter';
+import {MediaProviderSettings} from './MediaProviderSettings';
 import {MultimodalDirectorWorkspace} from '../novel/MultimodalDirectorWorkspace';
 import {EmptyState} from './primitives';
 
@@ -40,6 +41,10 @@ function WorkspaceInspector({ module, novelId }: { module: WorkspaceModule; nove
   };
   return <section className="workspace-inspector__empty" aria-label="工作区检查面板"><div className="workspace-inspector__eyebrow">Inspector</div><strong>{moduleLabels[module]}上下文</strong><p>当前关注：{context[module].focus}</p><dl className="workspace-inspector__facts"><div><dt>小说项目</dt><dd>{novelId || '未选择'}</dd></div><div><dt>工作区</dt><dd>{moduleLabels[module]}</dd></div><div><dt>运行状态</dt><dd><span className="ui-badge ui-badge--info">等待真实任务</span></dd></div></dl><div className="workspace-inspector__slot">{context[module].slot}</div></section>;
 }
+function ControlWorkspace(){
+  const [tab,setTab]=useState<'assistant'|'providers'>('assistant');
+  return <div className="control-workspace"><div className="control-workspace__tabs" role="tablist" aria-label="主控设置"><button type="button" role="tab" aria-selected={tab==='assistant'} onClick={()=>setTab('assistant')}>AI 主控</button><button type="button" role="tab" aria-selected={tab==='providers'} onClick={()=>setTab('providers')}>媒体 Provider</button></div>{tab==='assistant'?<AiControlCenter/>:<MediaProviderSettings/>}</div>;
+}
 export function ModuleWorkspaceRoutes({module,onModuleChange,scope,actor,novelId}:Props){
   const [selectedAsset,setSelectedAsset]=useState<Asset>();
   const [workflowInspection,setWorkflowInspection]=useState<WorkflowInspection>();
@@ -52,7 +57,7 @@ export function ModuleWorkspaceRoutes({module,onModuleChange,scope,actor,novelId
     case 'IMAGE': main=novelId?<><MultimodalDirectorWorkspace mode="image" novelId={novelId}/><VisualContextPanel novelId={novelId}/><VisionAnalysisPanel novelId={novelId}/><ImageGenerationPanel novelId={novelId} onInspect={setImageInspection}/></>:<EmptyState title="请先打开小说项目" detail="图片画布、参考图约束和生成任务需要绑定到一个小说项目。"/>; status='图片工作区'; break;
     case 'VIDEO': main=novelId?<><MultimodalDirectorWorkspace mode="video" novelId={novelId}/><ScreenplayPanel novelId={novelId} onInspect={setVideoInspection}/></>:<EmptyState title="请先打开小说项目" detail="视频导演台、剧本与镜头任务需要绑定到一个小说项目。"/>; status='视频工作区'; break;
     case 'AUDIO': main=novelId?<><SpeechSynthesisPanel novelId={novelId} onInspect={setAudioInspection}/><AudiobookManifestPanel novelId={novelId} onInspect={setAudioInspection}/></>:<EmptyState title="请先打开小说项目" detail="配音与有声书任务需要绑定到一个小说项目。"/>; status='声音工作区'; break;
-    case 'CONTROL': main=<AiControlCenter/>; status='AI 主控'; break;
+    case 'CONTROL': main=<ControlWorkspace/>; status='AI 主控'; break;
     case 'PLUGIN': main=<PluginManagerPanel onInspect={setPluginInspection}/>; status='插件管理'; break;
     case 'WORKFLOW': main=novelId?<><WorkflowPanel novelId={novelId} onInspect={setWorkflowInspection}/><AgentQueuePanel novelId={novelId} onInspect={setWorkflowInspection}/></>:<EmptyState title="请先打开小说项目" detail="工作流定义、运行记录与 Agent 队列需要绑定到一个小说项目。"/>; status='工作流'; break;
     case 'ASSETS': main=novelId?<AssetLibraryPanel novelId={novelId} selectedAssetId={selectedAsset?.id} onSelectAsset={setSelectedAsset}/>:<EmptyState title="请先打开小说项目" detail="资产库中的文件和引用关系按小说项目隔离。"/>; status='资产库'; break;
