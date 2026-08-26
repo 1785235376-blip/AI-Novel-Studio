@@ -951,6 +951,46 @@ def reject_pending(pid:str): return guard(canon_service.reject,pid)
 @router.get("/novels/{nid}/export")
 def export_novel(nid:str,format:str="json"):
     return guard(novel_service.export,nid,format)
+
+def _authorize_export_project(
+    novel_id: str,
+    branch_id: str | None,
+    session_token: str | None,
+    permission: str,
+    *,
+    conceal: bool = False,
+):
+    if not session_token:
+        raise HTTPException(401, {"code": "SESSION_REQUIRED"})
+    try:
+        actor = trusted_session_resolver.resolve(session_token)
+    except KeyError:
+        raise HTTPException(401, {"code": "INVALID_SESSION"})
+    try:
+        workspace_id = collaboration_scope_service.repository.project_workspace(novel_id)
+        if not workspace_id or actor.workspace_id != workspace_id:
+            raise PermissionError("export project is outside the actor workspace")
+        if branch_id:
+            branch = collaboration_scope_service.repository.get("branches", branch_id)
+            if branch.get("workspace_id") != workspace_id or branch.get("project_id") != novel_id:
+                raise PermissionError("export branch does not contain the project")
+            scope = AuthorizationScope(
+                ScopeKind.BRANCH,
+                workspace_id,
+                novel_id,
+                branch.get("storyline_id"),
+                branch_id,
+            )
+        else:
+            scope = AuthorizationScope(ScopeKind.PROJECT, workspace_id, novel_id)
+        collaboration_scope_service.validate_scope(scope)
+        membership_authorization_service.require(actor, permission, ModalityDomain.NOVEL, scope)
+        return actor, scope
+    except (KeyError, ValueError, PermissionError) as exc:
+        if conceal:
+            raise HTTPException(404, "export job not found") from exc
+        raise HTTPException(403, {"code": "EXPORT_SCOPE_FORBIDDEN"}) from exc
+
 @router.post("/exports", status_code=202)
 def create_export(
     body:ExportCreateIn,
@@ -963,7 +1003,20 @@ def create_export(
     try:
         requested_branch = branch_id or x_branch_id
         permission_context = {"mode": "local", "novel_id": novel_id}
-        if requested_branch:
+        if settings.enable_collaboration_runtime:
+            actor, scope = _authorize_export_project(
+                novel_id, requested_branch, x_session_token, "domain.read"
+            )
+            permission_context = {
+                "mode": "collaboration",
+                "novel_id": novel_id,
+                "branch_id": requested_branch,
+                "workspace_id": scope.workspace_id,
+                "storyline_id": scope.storyline_id,
+                "actor_id": actor.actor_id,
+                "permission": "domain.read",
+            }
+        elif requested_branch:
             actor, scope = _adaptation_context(novel_id, requested_branch, x_session_token, "domain.read")
             permission_context = {
                 "mode": "collaboration",
@@ -988,10 +1041,37 @@ def create_export(
     except FileNotFoundError: raise HTTPException(404, "novel not found")
     except ValueError as exc: raise HTTPException(400, str(exc))
 
+def _authorize_export_job(
+    job_id: str,
+    session_token: str | None,
+    permission: str,
+):
+    """Authorize an export record against its persisted project scope."""
+    if not settings.enable_collaboration_runtime:
+        return None
+    try:
+        job = export_job_service.get(job_id)
+    except (FileNotFoundError, ExportJobResultInvalid):
+        raise HTTPException(404, "export job not found")
+    permission_context = job.get("permission_context")
+    branch_id = permission_context.get("branch_id") if isinstance(permission_context, dict) else None
+    _authorize_export_project(
+        str(job.get("novel_id") or ""),
+        branch_id,
+        session_token,
+        permission,
+        conceal=True,
+    )
+    return job
+
 @router.post("/exports/{job_id}/cancel")
-def cancel_export(job_id: str):
+def cancel_export(
+    job_id: str,
+    x_session_token: str | None = Header(default=None, alias="X-Session-Token"),
+):
     """Cancel a queued/running export without exposing provider credentials."""
     try:
+        _authorize_export_job(job_id, x_session_token, "domain.write")
         return export_job_service.cancel(job_id)
     except FileNotFoundError:
         raise HTTPException(404, "export job not found")
@@ -1006,9 +1086,13 @@ def cancel_export(job_id: str):
         )
 
 @router.post("/exports/{job_id}/retry", status_code=202)
-def retry_export(job_id: str):
+def retry_export(
+    job_id: str,
+    x_session_token: str | None = Header(default=None, alias="X-Session-Token"),
+):
     """Start a new attempt for a failed/cancelled export."""
     try:
+        _authorize_export_job(job_id, x_session_token, "domain.write")
         return export_job_service.retry(job_id)
     except FileNotFoundError:
         raise HTTPException(404, "export job not found")
@@ -1036,8 +1120,12 @@ def _export_content_disposition(filename: str) -> str:
     return f"attachment; filename=\"{ascii_name}\"; filename*=UTF-8''{quote(filename, safe='')}"
 
 @router.get("/exports/{job_id}/download")
-def download_export(job_id:str):
+def download_export(
+    job_id:str,
+    x_session_token: str | None = Header(default=None, alias="X-Session-Token"),
+):
     try:
+        _authorize_export_job(job_id, x_session_token, "domain.read")
         payload = export_job_service.download(job_id)
         return Response(
             content=payload["content"],
@@ -1067,8 +1155,13 @@ def download_export(job_id:str):
         )
 
 @router.get("/exports/{job_id}")
-def get_export(job_id:str):
-    try: return export_job_service.get(job_id)
+def get_export(
+    job_id:str,
+    x_session_token: str | None = Header(default=None, alias="X-Session-Token"),
+):
+    try:
+        authorized_job = _authorize_export_job(job_id, x_session_token, "domain.read")
+        return authorized_job if authorized_job is not None else export_job_service.get(job_id)
     except FileNotFoundError: raise HTTPException(404, "export job not found")
 @router.post("/novels/{nid}/assets")
 def upload_asset(nid:str, body:AssetUploadIn, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):

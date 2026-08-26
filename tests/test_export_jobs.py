@@ -290,3 +290,151 @@ def test_export_lifecycle_routes_cancel_and_retry(monkeypatch):
     assert cancelled.json()["status"] == "cancelled"
     assert retried.status_code == 202
     assert retried.json()["retry_of"] == "job-1"
+
+
+class _ScopedExportService:
+    def __init__(self):
+        self.created_permission_context = None
+        self.job = {
+            "id": "job-1",
+            "novel_id": "project-b",
+            "status": "succeeded",
+            "permission_context": {"branch_id": "branch-b"},
+        }
+
+    def create(self, novel_id, format, idempotency_key=None, *, permission_context=None):
+        self.created_permission_context = permission_context
+        return {**self.job, "novel_id": novel_id, "format": format, "permission_context": permission_context}
+
+    def get(self, job_id):
+        if job_id != self.job["id"]:
+            raise FileNotFoundError(job_id)
+        return self.job
+
+    def download(self, job_id):
+        return {"content": b"fixture", "filename": "export.txt", "media_type": "text/plain"}
+
+    def cancel(self, job_id):
+        return {**self.job, "status": "cancelled"}
+
+    def retry(self, job_id):
+        return {**self.job, "id": "job-2", "retry_of": job_id, "status": "queued"}
+
+
+class _ExportScopes:
+    def __init__(self):
+        self.repository = self
+
+    def project_workspace(self, project_id):
+        return {"project-a": "workspace-a", "project-b": "workspace-b"}.get(project_id)
+
+    def get(self, collection, item_id):
+        assert collection == "branches"
+        if item_id != "branch-b":
+            raise KeyError(item_id)
+        return {
+            "id": "branch-b",
+            "workspace_id": "workspace-b",
+            "project_id": "project-b",
+            "storyline_id": "story-b",
+        }
+
+    def validate_scope(self, scope):
+        return scope
+
+
+class _ExportSessions:
+    def resolve(self, token):
+        from types import SimpleNamespace
+
+        workspaces = {"session-a": "workspace-a", "session-b": "workspace-b"}
+        if token not in workspaces:
+            raise KeyError(token)
+        return SimpleNamespace(actor_id=token, workspace_id=workspaces[token])
+
+
+class _ExportMembership:
+    def __init__(self, *, writable=True):
+        self.writable = writable
+        self.calls = []
+
+    def require(self, actor, permission, domain, scope):
+        self.calls.append((actor, permission, domain, scope))
+        if permission == "domain.write" and not self.writable:
+            raise PermissionError("read-only membership")
+
+
+def _collaboration_export_client(monkeypatch, *, writable=True):
+    from types import SimpleNamespace
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+    import app.api as api
+
+    membership = _ExportMembership(writable=writable)
+    monkeypatch.setattr(api, "settings", SimpleNamespace(enable_collaboration_runtime=True))
+    export_service = _ScopedExportService()
+    monkeypatch.setattr(api, "export_job_service", export_service)
+    monkeypatch.setattr(api, "novel_service", SimpleNamespace(get=lambda novel_id: {"id": novel_id}))
+    monkeypatch.setattr(api, "collaboration_scope_service", _ExportScopes())
+    monkeypatch.setattr(api, "trusted_session_resolver", _ExportSessions())
+    monkeypatch.setattr(api, "membership_authorization_service", membership)
+    local_app = FastAPI()
+    local_app.include_router(api.router, prefix="/api")
+    return TestClient(local_app), membership, export_service
+
+
+@pytest.mark.parametrize(
+    ("method", "path"),
+    [
+        ("get", "/api/exports/job-1"),
+        ("get", "/api/exports/job-1/download"),
+        ("post", "/api/exports/job-1/cancel"),
+        ("post", "/api/exports/job-1/retry"),
+    ],
+)
+def test_export_job_routes_hide_cross_project_jobs(monkeypatch, method, path):
+    client, membership, _ = _collaboration_export_client(monkeypatch)
+
+    response = getattr(client, method)(path, headers={"X-Session-Token": "session-a"})
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "export job not found"
+    assert membership.calls == []
+
+
+def test_export_job_routes_apply_read_and_write_membership(monkeypatch):
+    client, membership, _ = _collaboration_export_client(monkeypatch, writable=False)
+    headers = {"X-Session-Token": "session-b"}
+
+    downloaded = client.get("/api/exports/job-1/download", headers=headers)
+    cancelled = client.post("/api/exports/job-1/cancel", headers=headers)
+
+    assert downloaded.status_code == 200
+    assert downloaded.content == b"fixture"
+    assert cancelled.status_code == 404
+    assert [call[1] for call in membership.calls] == ["domain.read", "domain.write"]
+    assert all(call[3].project_id == "project-b" for call in membership.calls)
+    assert all(call[3].branch_id == "branch-b" for call in membership.calls)
+
+
+def test_create_export_requires_the_session_project_even_without_branch(monkeypatch):
+    client, membership, export_service = _collaboration_export_client(monkeypatch)
+
+    forbidden = client.post(
+        "/api/exports?novel_id=project-b",
+        headers={"X-Session-Token": "session-a"},
+        json={"format": "txt"},
+    )
+    allowed = client.post(
+        "/api/exports?novel_id=project-b",
+        headers={"X-Session-Token": "session-b"},
+        json={"format": "txt"},
+    )
+
+    assert forbidden.status_code == 403
+    assert forbidden.json()["detail"]["code"] == "EXPORT_SCOPE_FORBIDDEN"
+    assert allowed.status_code == 202
+    assert export_service.created_permission_context["mode"] == "collaboration"
+    assert export_service.created_permission_context["workspace_id"] == "workspace-b"
+    assert export_service.created_permission_context["branch_id"] is None
+    assert [call[1] for call in membership.calls] == ["domain.read"]
