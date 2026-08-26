@@ -35,6 +35,11 @@ body,
   height: 100%;
 }
 
+/* Keep the search label clear of the absolutely positioned search icon. */
+.global-search { padding-left: 36px; }
+.global-search > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.global-search kbd { flex: none; }
+
 .status-bar__action{border:1px solid color-mix(in srgb,var(--color-status-bar) 45%,transparent);border-radius:var(--radius-sm);padding:3px 7px;background:transparent;color:var(--color-status-bar);font:inherit;font-size:11px;cursor:pointer}
 .task-inspector-overlay{position:fixed;inset:0;z-index:var(--z-dialog);display:grid;place-items:center;background:var(--color-overlay)}.task-inspector{width:min(440px,calc(100vw - 32px));padding:16px;border:1px solid var(--color-border-strong);border-radius:var(--radius-lg);background:var(--color-bg-elevated);box-shadow:var(--shadow-dialog)}.task-inspector header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.task-inspector header button{border:1px solid var(--color-border-default);border-radius:var(--radius-sm);background:transparent;padding:4px 8px;cursor:pointer}.task-inspector__row{display:grid;grid-template-columns:1fr auto;gap:3px;padding:10px 0;border-top:1px solid var(--color-border-default)}.task-inspector__row small{grid-column:1/-1;color:var(--color-text-muted)}
 .task-inspector__row{display:grid;grid-template-columns:1fr auto;gap:3px;width:100%;padding:10px 0;border:0;border-top:1px solid var(--color-border-default);background:transparent;text-align:left;color:var(--color-text-primary);font:inherit;cursor:pointer}
