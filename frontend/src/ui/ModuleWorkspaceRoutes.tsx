@@ -20,15 +20,16 @@ import {PluginInspector, type PluginInspection} from '../novel/PluginInspector';
 import {CapabilityStatusCenter} from './CapabilityStatusCenter';
 import {AiControlCenter} from './AiControlCenter';
 import {MultimodalDirectorWorkspace} from '../novel/MultimodalDirectorWorkspace';
+import {EmptyState} from './primitives';
 
-interface Props {module: StudioModule; onModuleChange:(value:StudioModule)=>void; scope:ScopeLabels; actor:string; novelId?:string;}
-const moduleLabels: Record<StudioModule, string> = { NOVEL: '小说', IMAGE: '图片', VIDEO: '视频', AUDIO: '声音', CONTROL: '主控', PLUGIN: '插件', WORKFLOW: '工作流', ASSETS: '资产' };
-function WorkspaceRail({ module }: { module: StudioModule }) {
-  return <nav className="workspace-rail" aria-label={`${moduleLabels[module]}工作区导航`}><div className="workspace-rail__eyebrow">当前工作区</div><strong>{moduleLabels[module]}</strong><button className="is-active">工作区概览</button><button>最近编辑</button><button>待处理任务</button><div className="workspace-rail__future"><span>预留入口</span><small>AI Copilot</small><small>Provider 状态</small><small>审批队列</small></div></nav>;
+type WorkspaceModule=Exclude<StudioModule,'NOVEL'>;
+interface Props {module: WorkspaceModule; onModuleChange:(value:StudioModule)=>void; scope:ScopeLabels; actor:string; novelId?:string;}
+const moduleLabels: Record<WorkspaceModule, string> = { IMAGE: '图片', VIDEO: '视频', AUDIO: '声音', CONTROL: '主控', PLUGIN: '插件', WORKFLOW: '工作流', ASSETS: '资产' };
+function WorkspaceRail({ module }: { module: WorkspaceModule }) {
+  return <nav className="workspace-rail" aria-label={`${moduleLabels[module]}工作区导航`}><div className="workspace-rail__eyebrow">当前工作区</div><strong>{moduleLabels[module]}</strong><button className="is-active" aria-current="page">工作区概览</button><button disabled title="最近编辑尚未开放">最近编辑</button><button disabled title="待处理任务尚未开放">待处理任务</button><div className="workspace-rail__future"><span>预留入口</span><small>AI Copilot</small><small>Provider 状态</small><small>审批队列</small></div></nav>;
 }
-function WorkspaceInspector({ module, novelId }: { module: StudioModule; novelId?: string }) {
-  const context: Record<StudioModule, { focus: string; slot: string }> = {
-    NOVEL: { focus: '章节、Canon 与写作目标', slot: '预留：AI Context / 章节状态' },
+function WorkspaceInspector({ module, novelId }: { module: WorkspaceModule; novelId?: string }) {
+  const context: Record<WorkspaceModule, { focus: string; slot: string }> = {
     IMAGE: { focus: '参考图、构图与一致性约束', slot: '预留：图片任务 / 资产预览' },
     VIDEO: { focus: '当前镜头、转场与时间线轨道', slot: '预留：Motion Task / 视频预览' },
     AUDIO: { focus: '声音档案、对白与配音批次', slot: '预留：音频波形 / Provider 任务' },
@@ -48,15 +49,14 @@ export function ModuleWorkspaceRoutes({module,onModuleChange,scope,actor,novelId
   const [pluginInspection,setPluginInspection]=useState<PluginInspection>();
   let main:ReactNode; let status='工作区';
   switch(module){
-    case 'IMAGE': main=<><MultimodalDirectorWorkspace mode="image" novelId={novelId}/><VisualContextPanel novelId={novelId ?? ''}/><VisionAnalysisPanel novelId={novelId ?? ''}/><ImageGenerationPanel novelId={novelId ?? ''} onInspect={setImageInspection}/></>; status='图片工作区'; break;
+    case 'IMAGE': main=novelId?<><MultimodalDirectorWorkspace mode="image" novelId={novelId}/><VisualContextPanel novelId={novelId}/><VisionAnalysisPanel novelId={novelId}/><ImageGenerationPanel novelId={novelId} onInspect={setImageInspection}/></>:<EmptyState title="请先打开小说项目" detail="图片画布、参考图约束和生成任务需要绑定到一个小说项目。"/>; status='图片工作区'; break;
     case 'VIDEO': main=novelId?<><MultimodalDirectorWorkspace mode="video" novelId={novelId}/><ScreenplayPanel novelId={novelId} onInspect={setVideoInspection}/></>:<p className="novel-help">请先打开小说项目，再进入视频工作区。</p>; status='视频工作区'; break;
-    case 'AUDIO': main=<><SpeechSynthesisPanel novelId={novelId ?? ''} onInspect={setAudioInspection}/><AudiobookManifestPanel novelId={novelId ?? ''} onInspect={setAudioInspection}/></>; status='声音工作区'; break;
+    case 'AUDIO': main=novelId?<><SpeechSynthesisPanel novelId={novelId} onInspect={setAudioInspection}/><AudiobookManifestPanel novelId={novelId} onInspect={setAudioInspection}/></>:<EmptyState title="请先打开小说项目" detail="配音与有声书任务需要绑定到一个小说项目。"/>; status='声音工作区'; break;
     case 'CONTROL': main=<AiControlCenter/>; status='AI 主控'; break;
     case 'PLUGIN': main=<PluginManagerPanel onInspect={setPluginInspection}/>; status='插件管理'; break;
     case 'WORKFLOW': main=<><WorkflowPanel novelId={novelId ?? ''} onInspect={setWorkflowInspection}/><AgentQueuePanel novelId={novelId ?? ''} onInspect={setWorkflowInspection}/></>; status='工作流'; break;
     case 'ASSETS': main=<AssetLibraryPanel novelId={novelId ?? ''} selectedAssetId={selectedAsset?.id} onSelectAsset={setSelectedAsset}/>; status='资产库'; break;
-    default: main=<p className="novel-help">请选择一个工作区。</p>;
   }
   const inspector=module==='ASSETS'?<AssetInspector asset={selectedAsset} novelId={novelId}/>:module==='WORKFLOW'?<WorkflowInspector inspection={workflowInspection} novelId={novelId}/>:module==='IMAGE'?<ImageTaskInspector inspection={imageInspection} novelId={novelId}/>:module==='VIDEO'?<VideoTaskInspector inspection={videoInspection} novelId={novelId}/>:module==='AUDIO'?<AudioTaskInspector inspection={audioInspection} novelId={novelId}/>:module==='PLUGIN'?<PluginInspector inspection={pluginInspection}/>:<WorkspaceInspector module={module} novelId={novelId}/>;
-  return <AppShell module={module} onModuleChange={onModuleChange} scope={scope} actor={actor} sidebar={<WorkspaceRail module={module}/>} main={<><CapabilityStatusCenter module={module === 'NOVEL' ? 'WORKFLOW' : module} novelId={novelId}/>{main}</>} inspector={inspector} status={status}/>;
+  return <AppShell module={module} onModuleChange={onModuleChange} scope={scope} actor={actor} sidebar={<WorkspaceRail module={module}/>} main={<><CapabilityStatusCenter module={module} novelId={novelId}/>{main}</>} inspector={inspector} status={status}/>;
 }
