@@ -75,7 +75,7 @@ import DesignSystemFixture from "./ui/DesignSystemFixture";
 import { isPackagedDesktopHost } from "./packagedHost";
 import { generationRecovery } from "./generationRecovery";
 import { WorldBuildingDashboard } from "./novel/WorldBuildingDashboard";
-import { summarizeTasks } from "./ui/taskSummary";
+import { publishTaskSummary, summarizeTasks } from "./ui/taskSummary";
 import { StoryPlanningWorkspace } from "./novel/StoryPlanningWorkspace";
 import "./style.css";
 import "./ux.css";
@@ -210,6 +210,18 @@ export default function App() {
     queryFn: api.novels,
     enabled: !packagedHost && shouldLoadLocalNovels(s.sessionToken, s.scope),
   });
+  const mediaTasks = useQuery({
+    queryKey: ["media-tasks", s.novelId],
+    queryFn: () => api.mediaTasks(s.novelId),
+    enabled: !!s.novelId,
+    retry: false,
+    refetchInterval: 5000,
+  });
+  useEffect(() => {
+    if (!mediaTasks.data) return;
+    publishTaskSummary("audiobook", mediaTasks.data.audiobook || []);
+    publishTaskSummary("motion", mediaTasks.data.motion || []);
+  }, [mediaTasks.data, studioModule]);
   const chapters = useQuery({
     queryKey: ["chapters", namespace, s.novelId],
     queryFn: () =>

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   BringToFront,
   Eye,
@@ -14,6 +14,7 @@ import {
   ZoomOut,
 } from "lucide-react";
 import { Button } from "../ui/primitives";
+import { api } from "../api";
 import type {
   CanvasViewport,
   RefNode,
@@ -28,8 +29,72 @@ type Props = {
   redo: () => void;
   canUndo: boolean;
   canRedo: boolean;
+  novelId?: string;
 };
+function CanvasNodePreview({
+  node,
+  novelId,
+}: {
+  node: RefNode;
+  novelId?: string;
+}) {
+  const [assetUri, setAssetUri] = useState("");
+  const [status, setStatus] = useState<"loading" | "loaded" | "failed">(
+    "loading",
+  );
+  useEffect(() => {
+    if (!node.assetId || !novelId) return;
+    let active = true,
+      url = "";
+    setStatus("loading");
+    api
+      .assetDownload(node.assetId, novelId)
+      .then((blob) => {
+        if (!active) return;
+        url = URL.createObjectURL(blob);
+        setAssetUri(url);
+      })
+      .catch(() => active && setStatus("failed"));
+    return () => {
+      active = false;
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, [node.assetId, novelId]);
+  const src = safeImagePreviewUri(
+    assetUri || (node.assetId ? undefined : node.previewUri || node.uri),
+  );
+  return (
+    <div className="image-canvas__preview">
+      {src ? (
+        <img
+          src={src}
+          alt=""
+          draggable={false}
+          onLoad={() => setStatus("loaded")}
+          onError={() => setStatus("failed")}
+        />
+      ) : (
+        <span>{status === "failed" ? "预览失败" : "无安全预览"}</span>
+      )}
+      {src && status !== "loaded" && (
+        <span>{status === "failed" ? "预览失败" : "加载中"}</span>
+      )}
+    </div>
+  );
+}
 const clampZoom = (value: number) => Math.min(2.5, Math.max(0.35, value));
+export const safeImagePreviewUri = (value?: string) => {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  if (trimmed.startsWith("/") && !trimmed.startsWith("//")) return trimmed;
+  if (
+    /^https?:\/\//i.test(trimmed) ||
+    /^blob:/i.test(trimmed) ||
+    /^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(trimmed)
+  )
+    return trimmed;
+  return undefined;
+};
 
 export function ImageInfiniteCanvas({
   nodes,
@@ -40,6 +105,7 @@ export function ImageInfiniteCanvas({
   redo,
   canUndo,
   canRedo,
+  novelId,
 }: Props) {
   const [selected, setSelected] = useState<string[]>([]);
   const [marquee, setMarquee] = useState<{
@@ -293,7 +359,7 @@ export function ImageInfiniteCanvas({
                       (n) =>
                         n.x + 260 >= x1 &&
                         n.x <= x2 &&
-                        n.y + 58 >= y1 &&
+                        n.y + 156 >= y1 &&
                         n.y <= y2,
                     )
                     .map((n) => n.id),
@@ -366,8 +432,28 @@ export function ImageInfiniteCanvas({
                 drag.current = null;
               }}
             >
-              <span>{node.role}</span>
-              <strong>{node.uri}</strong>
+              <CanvasNodePreview node={node} novelId={novelId} />
+              <div className="image-canvas__node-copy">
+                <span>
+                  {node.role}
+                  {node.source === "asset"
+                    ? " · 资产"
+                    : node.source === "generation"
+                      ? " · 生成"
+                      : ""}
+                </span>
+                <strong>{node.filename || node.uri}</strong>
+                <small>
+                  {node.mediaType ||
+                    [node.providerId, node.modelId]
+                      .filter(Boolean)
+                      .join(" · ") ||
+                    "参考图片"}
+                  {typeof node.size === "number"
+                    ? ` · ${Math.max(1, Math.round(node.size / 1024))} KB`
+                    : ""}
+                </small>
+              </div>
               {node.locked && <Lock size={13} aria-label="已锁定" />}
             </article>
           ))}

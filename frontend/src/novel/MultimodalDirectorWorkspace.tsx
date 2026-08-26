@@ -12,6 +12,10 @@ import {
 } from "./useMultimodalWorkspacePersistence";
 import { ImageInfiniteCanvas } from "./ImageInfiniteCanvas";
 import { ConstraintImportPreview } from "./ConstraintImportPreview";
+import {
+  IMAGE_CANVAS_ADD_EVENT,
+  type ImageCanvasAddRequest,
+} from "./imageCanvasEvents";
 import "./MultimodalDirectorWorkspace.css";
 export type DirectorShot = {
   shot_id?: string;
@@ -203,6 +207,34 @@ export function MultimodalDirectorWorkspace({
       setUri("");
     }
   };
+  useEffect(() => {
+    if (mode !== "image") return;
+    const listener = (event: Event) => {
+      const detail = (event as CustomEvent<ImageCanvasAddRequest>).detail;
+      if (!detail?.uri || detail.novelId !== novelId) return;
+      setRefs((items) => [
+        ...items,
+        {
+          id: createCanvasNodeId(),
+          uri: detail.uri,
+          previewUri: detail.previewUri || detail.uri,
+          role: detail.role || "构图",
+          x: 24 + (items.length % 3) * 290,
+          y: 24 + Math.floor(items.length / 3) * 190,
+          z: items.length,
+          source: detail.source,
+          assetId: detail.assetId,
+          filename: detail.filename,
+          mediaType: detail.mediaType,
+          size: detail.size,
+          providerId: detail.providerId,
+          modelId: detail.modelId,
+        },
+      ]);
+    };
+    window.addEventListener(IMAGE_CANVAS_ADD_EVENT, listener);
+    return () => window.removeEventListener(IMAGE_CANVAS_ADD_EVENT, listener);
+  }, [mode, novelId, setRefs]);
   useEffect(() => {
     refs.forEach((ref) => {
       if (ref.role === "角色") bindings.add("characters", ref.uri);
@@ -460,6 +492,7 @@ export function MultimodalDirectorWorkspace({
           redo={persistence.redo}
           canUndo={persistence.canUndo}
           canRedo={persistence.canRedo}
+          novelId={novelId}
         />
       ) : (
         <div className="multimodal-director__stage">
@@ -656,6 +689,11 @@ export function MultimodalDirectorWorkspace({
                       x: 24 + (v.length % 3) * 290,
                       y: 24 + Math.floor(v.length / 3) * 96,
                       z: v.length,
+                      source: "asset",
+                      assetId: asset.id,
+                      filename: asset.filename,
+                      mediaType: asset.media_type,
+                      size: asset.size,
                     },
                   ])
                 }

@@ -158,6 +158,10 @@ class PronunciationEntryIn(BaseModel):
 class AudioProductionSettingsIn(BaseModel):
     voice_bindings:list[VoiceBindingIn]=Field(default_factory=list)
     pronunciation_dictionary:list[PronunciationEntryIn]=Field(default_factory=list)
+class AudiobookConsumeIn(BaseModel):
+    limit:int=Field(default=1,ge=1,le=20)
+    recover_stale:bool=True
+    stale_after_seconds:int=Field(default=900,ge=60,le=86400)
 
 def _spoken_chapter_text(text:str)->str:
     return re.sub(r"\A\s*#{1,6}\s+[^\r\n]*(?:\r?\n)+","",text).strip()
@@ -171,6 +175,19 @@ def _estimated_subtitle_segments(text:str,speech_rate:float=1.0,pause_ms:int=280
         segments.append({'id':f'segment-{index:04d}','text':part,'subtitle':part,'start_ms':cursor,'end_ms':cursor+duration})
         cursor+=duration+pause_ms
     return segments
+
+def _subtitle_timestamp(milliseconds:int,webvtt:bool=False)->str:
+    value=max(0,int(milliseconds));hours,remainder=divmod(value,3600000);minutes,remainder=divmod(remainder,60000);seconds,millis=divmod(remainder,1000)
+    separator='.' if webvtt else ','
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}{separator}{millis:03d}"
+
+def _render_subtitles(segments:list[dict],format:str)->str:
+    webvtt=format=='vtt';blocks=[]
+    for index,segment in enumerate(segments,1):
+        start=_subtitle_timestamp(segment.get('start_ms',0),webvtt);end=_subtitle_timestamp(segment.get('end_ms',0),webvtt);text=str(segment.get('subtitle') or segment.get('text') or '').strip()
+        blocks.append(f"{index}\n{start} --> {end}\n{text}")
+    content='\n\n'.join(blocks)
+    return f"WEBVTT\n\n{content}\n" if webvtt else f"{content}\n"
 class AssetWorkerConfigIn(BaseModel): limit:int|None=None; interval_seconds:float|None=None; timeout_seconds:int|None=None; execute:bool|None=None
 class RenameIn(BaseModel): title:str; version:int
 class MoveIn(BaseModel): direction:str
@@ -1734,12 +1751,14 @@ def audio_production_settings_update(nid:str,body:AudioProductionSettingsIn,x_se
 def audiobook_manifest(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     _authorize_media_novel(nid,x_session_token,"domain.read")
     from .dependencies import repositories
-    chapters=repositories.chapters.list(nid); novel=repositories.novels.get(nid); speeches=audio_production_store.load(nid)['generations']
+    chapters=repositories.chapters.list(nid); novel=repositories.novels.get(nid); production=audio_production_store.load(nid); speeches=production['generations']; jobs=production['jobs']
     items=[]
     for chapter in chapters:
         text=str(chapter.get('content','')).strip()
         chapter_speeches=[item for item in speeches if item.get('chapter_id')==chapter.get('id')]
-        items.append({'chapter_id':chapter.get('id'),'title':chapter.get('title',''),'text_length':len(text),'audio_count':len(chapter_speeches),'audio':chapter_speeches})
+        chapter_jobs=[job for job in jobs if job.get('chapter_id')==chapter.get('id')]; latest_job=chapter_jobs[-1] if chapter_jobs else None
+        production_status=str(latest_job.get('status')) if latest_job else ('SUCCEEDED' if chapter_speeches else 'NOT_QUEUED')
+        items.append({'chapter_id':chapter.get('id'),'title':chapter.get('title',''),'text_length':len(text),'audio_count':len(chapter_speeches),'audio':chapter_speeches,'production_status':production_status,'latest_job':latest_job})
     return {'novel_id':nid,'title':novel.get('title',''),'chapters':items,'total_chapters':len(items),'ready_chapters':sum(1 for item in items if item['audio_count']>0)}
 @router.get("/novels/{nid}/audiobook/mix-plan")
 def audiobook_mix_plan(nid:str,chapter_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
@@ -1767,6 +1786,29 @@ def list_audiobook_jobs(nid:str,x_session_token:str|None=Header(None,alias="X-Se
     _authorize_media_novel(nid,x_session_token,"domain.read")
     from .dependencies import repositories
     repositories.novels.get(nid); jobs=audio_production_store.load(nid)['jobs']; return {'novel_id':nid,'items':jobs,'total':len(jobs)}
+@router.get("/novels/{nid}/media-tasks")
+def list_media_tasks(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.read")
+    from .dependencies import repositories
+    repositories.novels.get(nid)
+    audiobook=list(audio_production_store.load(nid)['jobs'])
+    motion=[]
+    for screenplay in screenplay_service.list(nid):
+        for task in screenplay.get('motion_tasks',[]):
+            motion.append({**task,'screenplay_id':screenplay.get('id')})
+    return {'novel_id':nid,'audiobook':audiobook,'motion':motion}
+@router.get("/novels/{nid}/audiobook/jobs/{job_id}/subtitles.{format}")
+def audiobook_job_subtitles(nid:str,job_id:str,format:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.read")
+    from .dependencies import repositories
+    repositories.novels.get(nid)
+    if format not in {'srt','vtt'}: raise HTTPException(404,'subtitle format not found')
+    job=next((item for item in audio_production_store.load(nid)['jobs'] if item.get('id')==job_id),None)
+    if job is None: raise HTTPException(404,'audiobook job not found')
+    segments=list(job.get('segments') or [])
+    if not segments: raise HTTPException(409,{'code':'AUDIOBOOK_SUBTITLES_UNAVAILABLE','message':'该任务没有可导出的字幕分段'})
+    media_type='text/vtt' if format=='vtt' else 'application/x-subrip';filename=f"{job.get('chapter_id') or 'chapter'}-{job_id[-8:]}.{format}"
+    return Response(_render_subtitles(segments,format),media_type=f'{media_type}; charset=utf-8',headers={'Content-Disposition':f'attachment; filename="{filename}"'})
 @router.post("/novels/{nid}/audiobook/jobs/{job_id}/retry")
 def retry_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     _authorize_media_novel(nid,x_session_token,"domain.write")
@@ -1812,6 +1854,29 @@ def execute_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(Non
         if latest_index is not None and latest['jobs'][latest_index].get('status')=='CANCELLED': return latest['jobs'][latest_index]
         state=latest; jobs=state['jobs']; index=latest_index if latest_index is not None else index
         failed=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); jobs[index]={**job,'status':'FAILED','error':'语音服务请求失败','error_code':'SPEECH_SYNTHESIS_FAILED','updated_at':failed}; state['jobs']=jobs; audio_production_store.save(nid,state); raise HTTPException(502,{'code':'SPEECH_SYNTHESIS_FAILED','message':'语音服务请求失败'})
+@router.post("/novels/{nid}/audiobook/jobs/consume")
+def consume_audiobook_jobs(nid:str,body:AudiobookConsumeIn|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    _authorize_media_novel(nid,x_session_token,"domain.write")
+    from datetime import datetime,timezone,timedelta
+    from .dependencies import repositories
+    repositories.novels.get(nid); config=body or AudiobookConsumeIn(); state=audio_production_store.load(nid); now=datetime.now(timezone.utc); recovered=[]
+    if config.recover_stale:
+        cutoff=now-timedelta(seconds=config.stale_after_seconds)
+        for index,job in enumerate(state['jobs']):
+            if job.get('status')!='RUNNING': continue
+            try: updated=datetime.fromisoformat(str(job.get('updated_at') or job.get('started_at')).replace('Z','+00:00'))
+            except (TypeError,ValueError): continue
+            if updated<=cutoff:
+                state['jobs'][index]={**job,'status':'QUEUED','updated_at':now.isoformat(),'recovered_at':now.isoformat(),'recovery_count':int(job.get('recovery_count') or 0)+1,'error':None,'error_code':None}; recovered.append(str(job.get('id')))
+        if recovered: audio_production_store.save(nid,state)
+    queued=[str(job.get('id')) for job in audio_production_store.load(nid)['jobs'] if job.get('status')=='QUEUED'][:config.limit]; results=[]
+    for queued_id in queued:
+        try: execute_audiobook_job(nid,queued_id,x_session_token)
+        except HTTPException: pass
+        persisted=next(item for item in audio_production_store.load(nid)['jobs'] if item.get('id')==queued_id)
+        results.append({'id':queued_id,'status':persisted.get('status'),'error_code':persisted.get('error_code')})
+    remaining=sum(1 for job in audio_production_store.load(nid)['jobs'] if job.get('status')=='QUEUED')
+    return {'novel_id':nid,'requested':config.limit,'processed':len(results),'recovered':recovered,'results':results,'remaining_queued':remaining,'execution':'SYNCHRONOUS_USER_TRIGGERED'}
 @router.post("/novels/{nid}/speech-generations/import",status_code=202)
 def import_generated_speech(nid:str,body:dict,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     _authorize_media_novel(nid,x_session_token,"domain.write")

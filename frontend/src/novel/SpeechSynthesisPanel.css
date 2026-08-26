@@ -1,0 +1,7 @@
+.speech-production{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-3)}
+.speech-production>header,.speech-production>label:nth-of-type(3),.speech-production>.ui-status-message,.speech-production>audio,.speech-production>p,.speech-production>details{grid-column:1/-1}
+.speech-production>label{display:grid;align-content:start;gap:var(--space-1);min-width:0}
+.speech-production input,.speech-production select,.speech-production textarea{width:100%;min-width:0}
+.speech-production textarea{min-height:144px;resize:vertical}
+.speech-production>.ui-button{justify-self:start}
+@media(max-width:760px){.speech-production{grid-template-columns:minmax(0,1fr)}.speech-production>label{grid-column:1}}

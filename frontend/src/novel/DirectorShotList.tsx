@@ -5,6 +5,7 @@ import { api } from "../api";
 import { Button } from "../ui/primitives";
 import { DirectorVoiceToolbar } from "./DirectorVoiceToolbar";
 import { VideoTimeline } from "./VideoTimeline";
+import { MotionTaskWorkspace } from "./MotionTaskWorkspace";
 
 export function buildVoiceManifest(shots: DirectorShot[], batch: any[]) {
   return shots.map((shot) => {
@@ -372,6 +373,15 @@ export function DirectorShotList({
         <p className="novel-help" role="status">
           {taskMessage}
         </p>
+      )}
+      {novelId && screenplayIds.length === 1 && (
+        <MotionTaskWorkspace
+          novelId={novelId}
+          screenplayId={screenplayIds[0]!}
+          taskIds={shots
+            .map((shot) => shot.motion_task_id)
+            .filter((taskId): taskId is string => Boolean(taskId))}
+        />
       )}
       {drafts.length > 0 && (
         <details>

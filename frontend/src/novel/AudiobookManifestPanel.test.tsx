@@ -36,3 +36,31 @@ it("cancels a queued job and saves character voice and pronunciation settings",a
   fireEvent.click(screen.getByRole("button",{name:"保存角色声线"}));
   await waitFor(()=>expect(save).toHaveBeenCalledWith("novel-1",expect.objectContaining({voice_bindings:[expect.objectContaining({character_id:"character-1"})]})));
 });
+
+it("consumes the queue explicitly and shows truthful chapter status",async()=>{
+  vi.spyOn(api,"audiobookManifest").mockResolvedValue({ready_chapters:0,total_chapters:1,chapters:[{chapter_id:"chapter-3",title:"第三章",text_length:1200,audio_count:0,audio:[],production_status:"FAILED"}]});
+  vi.spyOn(api,"audiobookJobs").mockResolvedValue({items:[{id:"job-3",chapter_id:"chapter-3",status:"QUEUED",provider_id:"local",model_id:"tts",voice:"narrator",attempt:0,segments:[]}]});
+  vi.spyOn(api,"audiobookMixPlan").mockResolvedValue({tracks:[],mix_status:"EMPTY"});
+  vi.spyOn(api,"audioProductionSettings").mockResolvedValue({novel_id:"novel-1",voice_bindings:[],pronunciation_dictionary:[]});
+  const consume=vi.spyOn(api,"consumeAudiobookJobs").mockResolvedValue({processed:1,remaining_queued:0,recovered:[],results:[{id:"job-3",status:"FAILED",error_code:"SPEECH_PROVIDER_UNAVAILABLE"}],execution:"SYNCHRONOUS_USER_TRIGGERED"});
+  render(<AudiobookManifestPanel novelId="novel-1"/>);
+  fireEvent.click(await screen.findByRole("button",{name:"处理下一个"}));
+  await waitFor(()=>expect(consume).toHaveBeenCalledWith("novel-1",1));
+  expect(screen.getByText("失败")).toBeTruthy();
+  expect(screen.getByText(/不会在后台静默完成/)).toBeTruthy();
+});
+
+it("downloads persisted estimated subtitles",async()=>{
+  vi.spyOn(api,"audiobookManifest").mockResolvedValue({ready_chapters:0,total_chapters:0,chapters:[]});
+  vi.spyOn(api,"audiobookJobs").mockResolvedValue({items:[{id:"audio-12345678",chapter_id:"chapter-4",status:"QUEUED",provider_id:"local",model_id:"tts",voice:"narrator",attempt:0,segments:[{id:"segment-0001",start_ms:0,end_ms:800,subtitle:"台词"}]}]});
+  vi.spyOn(api,"audiobookMixPlan").mockResolvedValue({tracks:[],mix_status:"EMPTY"});
+  vi.spyOn(api,"audioProductionSettings").mockResolvedValue({novel_id:"novel-1",voice_bindings:[],pronunciation_dictionary:[]});
+  vi.spyOn(api,"audiobookSubtitles").mockResolvedValue(new Blob(["subtitle"]));
+  const createObjectURL=vi.fn(()=>"blob:subtitle"),revokeObjectURL=vi.fn();
+  Object.defineProperty(URL,"createObjectURL",{configurable:true,value:createObjectURL});Object.defineProperty(URL,"revokeObjectURL",{configurable:true,value:revokeObjectURL});
+  const click=vi.spyOn(HTMLAnchorElement.prototype,"click").mockImplementation(()=>undefined);
+  render(<AudiobookManifestPanel novelId="novel-1"/>);
+  fireEvent.click(await screen.findByRole("button",{name:"SRT"}));
+  await waitFor(()=>expect(api.audiobookSubtitles).toHaveBeenCalledWith("novel-1","audio-12345678","srt"));
+  expect(createObjectURL).toHaveBeenCalled();expect(click).toHaveBeenCalled();expect(revokeObjectURL).toHaveBeenCalledWith("blob:subtitle");
+});

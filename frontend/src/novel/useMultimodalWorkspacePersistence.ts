@@ -12,6 +12,14 @@ export type RefNode = {
   locked?: boolean;
   hidden?: boolean;
   groupId?: string;
+  previewUri?: string;
+  source?: "manual" | "asset" | "generation";
+  assetId?: string;
+  filename?: string;
+  mediaType?: string;
+  size?: number;
+  providerId?: string;
+  modelId?: string;
 };
 type LegacyRefNode = Omit<RefNode, "id" | "z"> & { id?: string; z?: number };
 type Snapshot = {

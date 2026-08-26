@@ -3,6 +3,7 @@ import {api} from '../api';
 import {Button,Panel,StatusMessage} from '../ui/primitives';
 import {FOCUS_FAILED_TASKS_EVENT,publishTaskSummary} from '../ui/taskSummary';
 import type {AudioInspection} from './AudioTaskInspector';
+import './SpeechSynthesisPanel.css';
 
 type SpeechTask={id:string;status:'QUEUED'|'RUNNING'|'SUCCEEDED'|'FAILED';audio_uri?:string;error?:string};
 
@@ -13,7 +14,7 @@ export function SpeechSynthesisPanel({novelId,characterId,onInspect}:{novelId?:s
   useEffect(()=>{publishTaskSummary('speech',task?[task]:[]);if(task)onInspect?.({kind:'speech',id:task.id,status:task.status,providerId,modelId,voice,emotion,audioUri:task.audio_uri,error:task.error,imported});},[task,providerId,modelId,voice,emotion,imported,onInspect]);
   useEffect(()=>{const listener=(event:Event)=>{const detail=(event as CustomEvent).detail;if(detail?.source==='speech'){onInspect?.(task?{kind:'speech',id:task.id,status:task.status,providerId,modelId,voice,emotion,audioUri:task.audio_uri,error:task.error,imported}:{kind:'speech',id:String(detail.taskId||'speech-task'),status:'FAILED',pendingRefresh:true});}};window.addEventListener(FOCUS_FAILED_TASKS_EVENT,listener);return()=>window.removeEventListener(FOCUS_FAILED_TASKS_EVENT,listener)},[task,providerId,modelId,voice,emotion,imported,onInspect]);
   async function synthesize(){const id=`speech-${Date.now()}`;setLoading(true);setError('');setImported(false);setUri('');setTask({id,status:'QUEUED'});try{setTask({id,status:'RUNNING'});const data=await api.speechSynthesize({provider_id:providerId,model_id:modelId,voice,emotion,text,novel_id:novelId,character_id:characterId});setUri(data.audio_uri);setTask({id,status:'SUCCEEDED',audio_uri:data.audio_uri})}catch{const message='语音合成失败，请检查 Provider 地址、凭据和模型。';setError(message);setTask({id,status:'FAILED',error:message})}finally{setLoading(false)}}
-  return <Panel title="声音合成">
+  return <Panel title="声音合成" className="speech-production">
     <label>Provider<input value={providerId} onChange={event=>setProviderId(event.target.value)} placeholder="openai"/></label>
     <label>模型<input value={modelId} onChange={event=>setModelId(event.target.value)} placeholder="gpt-4o-mini-tts"/></label>
     <label>朗读文本<textarea rows={8} value={text} onChange={event=>setText(event.target.value)}/></label>

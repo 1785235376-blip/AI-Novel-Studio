@@ -47,9 +47,11 @@ def client(monkeypatch):
 @pytest.mark.parametrize(
     ("method", "path", "payload"),
     [
+        ("get", "/api/novels/project-b/media-tasks", None),
         ("put", "/api/novels/project-b/audio-production/settings", {"voice_bindings": [], "pronunciation_dictionary": []}),
         ("post", "/api/novels/project-b/audiobook/chapters/chapter-1/queue", {}),
         ("post", "/api/novels/project-b/audiobook/jobs/audio-1/cancel", None),
+        ("post", "/api/novels/project-b/audiobook/jobs/consume", {"limit": 1}),
         ("post", "/api/speech/synthesize", {"novel_id": "project-b", "text": "hello"}),
         ("post", "/api/novels/project-b/speech-generations/import", {"audio_uri": "https://cdn.example/audio.mp3"}),
         ("post", "/api/novels/project-b/screenplays/sp-1/motion-tasks/task-1/execute", None),
@@ -67,10 +69,22 @@ def client(monkeypatch):
 def test_valid_session_cannot_mutate_media_in_another_project(monkeypatch, method, path, payload):
     api_client, membership = client(monkeypatch)
 
-    response = getattr(api_client, method)(
-        path,
+    kwargs = {"headers": {"X-Session-Token": "session-a"}}
+    if payload is not None:
+        kwargs["json"] = payload
+    response = getattr(api_client, method)(path, **kwargs)
+
+    assert response.status_code == 403
+    assert response.json()["detail"]["code"] == "PROJECT_SCOPE_FORBIDDEN"
+    assert membership.calls == []
+
+
+def test_valid_session_cannot_export_subtitles_from_another_project(monkeypatch):
+    api_client, membership = client(monkeypatch)
+
+    response = api_client.get(
+        "/api/novels/project-b/audiobook/jobs/audio-1/subtitles.srt",
         headers={"X-Session-Token": "session-a"},
-        json=payload,
     )
 
     assert response.status_code == 403

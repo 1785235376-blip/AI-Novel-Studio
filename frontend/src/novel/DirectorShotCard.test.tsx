@@ -25,10 +25,11 @@ describe('DirectorShotCard', () => {
     expect(screen.getByLabelText('镜头声音')).toBeTruthy();
     expect(screen.getByLabelText('镜头情绪')).toBeTruthy();
   });
-  it('updates task binding when the screenplay panel broadcasts a selection', async () => {
+  it('requires an explicit target shot before applying a broadcast task', async () => {
     const onChange = vi.fn();
     render(<DirectorShotCard shot={shot} index={0} profiles={[]} novelId="novel-1" onChange={onChange} />);
     window.dispatchEvent(new CustomEvent('multimodal-motion-binding', { detail: { novelId: 'novel-1', screenplay_id: 'script-1', motion_task_id: 'task-1' } }));
-    await waitFor(() => expect(onChange).toHaveBeenCalledWith(0, { screenplay_id: 'script-1', motion_task_id: 'task-1' }));
+    fireEvent.click(await screen.findByRole('button', { name: '绑定所选视频任务' }));
+    await waitFor(() => expect(onChange).toHaveBeenCalledWith(0, { screenplay_id: 'script-1', motion_task_id: 'task-1', binding_source: 'manual' }));
   });
 });

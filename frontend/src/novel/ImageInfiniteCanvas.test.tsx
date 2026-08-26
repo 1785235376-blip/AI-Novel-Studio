@@ -2,7 +2,10 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ImageInfiniteCanvas } from "./ImageInfiniteCanvas";
+import {
+  ImageInfiniteCanvas,
+  safeImagePreviewUri,
+} from "./ImageInfiniteCanvas";
 import type {
   CanvasViewport,
   RefNode,
@@ -70,5 +73,34 @@ describe("ImageInfiniteCanvas", () => {
     render(<Harness />);
     fireEvent.click(screen.getByLabelText("放大画布"));
     expect(screen.getByLabelText("画布缩放").textContent).toBe("115%");
+  });
+  it("renders only safe image preview schemes and reports failed loads", () => {
+    const nodes: RefNode[] = [
+      { ...initial[0], previewUri: "javascript:alert(1)" },
+      { ...initial[1], previewUri: "https://example.test/safe.png" },
+    ];
+    function PreviewHarness() {
+      const [value, setValue] = useState(nodes);
+      return (
+        <ImageInfiniteCanvas
+          nodes={value}
+          onChange={setValue}
+          viewport={{ x: 0, y: 0, zoom: 1 }}
+          onViewportChange={vi.fn()}
+          undo={vi.fn()}
+          redo={vi.fn()}
+          canUndo={false}
+          canRedo={false}
+        />
+      );
+    }
+    render(<PreviewHarness />);
+    expect(safeImagePreviewUri("javascript:alert(1)")).toBeUndefined();
+    expect(document.querySelector('img[src^="javascript:"]')).toBeNull();
+    const image = document.querySelector(
+      'img[src="https://example.test/safe.png"]',
+    )!;
+    fireEvent.error(image);
+    expect(screen.getByText("预览失败")).toBeTruthy();
   });
 });
