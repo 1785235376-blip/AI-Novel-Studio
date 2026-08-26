@@ -173,7 +173,9 @@ class ScreenplayService:
         if screenplay is None: raise KeyError(screenplay_id)
         tasks=list(screenplay.get('motion_tasks',[])); existing={task.get('transition_id') for task in tasks}
         for row in screenplay.get('transitions',[]):
-            if row.get('motion_prompt') and row.get('id') not in existing: tasks.append({'id':str(uuid4()),'transition_id':row['id'],'prompt':row['motion_prompt'],'provider_id':'deterministic','model_id':'video-placeholder','start_frame':None,'end_frame':None,'status':'PENDING','progress':0,'created_at':utc()})
+            if row.get('motion_prompt') and row.get('id') not in existing:
+                configured=next(((provider_id,getattr(provider,'default_model','')) for provider_id,provider in self.video_providers.items() if provider_id!='deterministic' and getattr(provider,'health_check',lambda:False)()),(None,None))
+                tasks.append({'id':str(uuid4()),'transition_id':row['id'],'prompt':row['motion_prompt'],'provider_id':configured[0],'model_id':configured[1],'start_frame':None,'end_frame':None,'status':'PENDING','progress':0,'error':None if configured[0] else 'VIDEO_PROVIDER_NOT_CONFIGURED','created_at':utc()})
         return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':tasks,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
     def update_motion_task(self,novel_id,screenplay_id,task_id,status):
         screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
@@ -214,7 +216,9 @@ class ScreenplayService:
         task=rows[index]
         if task.get('status')!='PENDING': raise ValueError('motion task must be PENDING before execution')
         require_motion_frames(task)
-        provider_id=task.get('provider_id') or 'deterministic'; model_id=task.get('model_id') or 'video-placeholder'; provider=self.video_providers.get(provider_id) or self.video_providers['deterministic']; generated=provider.generate(VideoGenerationRequest(provider_id,model_id,task.get('prompt',''),task['start_frame'],task['end_frame'],task_id)); asynchronous=provider_id!='deterministic' and not str(generated.video_uri).lower().startswith(('http://','https://')); result={'kind':'VIDEO','task_id':task_id,'prompt':task.get('prompt',''),'asset_id':f"motion-{task_id}",'url':None if asynchronous else generated.video_uri,'provider_id':generated.provider_id,'model_id':generated.model_id,'created_at':utc()}
+        provider_id=task.get('provider_id') or 'deterministic'; model_id=task.get('model_id') or 'video-placeholder'; provider=self.video_providers.get(provider_id)
+        if provider is None: raise ValueError(f'video provider is not configured: {provider_id}')
+        generated=provider.generate(VideoGenerationRequest(provider_id,model_id,task.get('prompt',''),task['start_frame'],task['end_frame'],task_id)); asynchronous=provider_id!='deterministic' and not str(generated.video_uri).lower().startswith(('http://','https://')); result={'kind':'VIDEO','task_id':task_id,'prompt':task.get('prompt',''),'asset_id':f"motion-{task_id}",'url':None if asynchronous else generated.video_uri,'provider_id':generated.provider_id,'model_id':generated.model_id,'created_at':utc()}
         rows[index]={**task,'status':'RUNNING' if asynchronous else 'SUCCEEDED','progress':0 if asynchronous else 100,'remote_task_id':generated.video_uri if asynchronous else task.get('remote_task_id'),'result':result,'updated_at':utc()}
         return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
     def attach_motion_result(self,novel_id,screenplay_id,task_id,url,media_type='video/mp4'):
@@ -385,8 +389,9 @@ class ScreenplayService:
         if screenplay is None: raise KeyError(screenplay_id)
         if screenplay.get("asset_status")!="APPROVED": raise ValueError("assets must be approved before generation")
         if screenplay.get("asset_tasks") is not None: return screenplay
-        default_provider="ddshub" if "ddshub" in self.asset_providers._providers else None
-        default_model="gpt-image-2" if default_provider else None
+        preferred=next(((provider_id,provider) for provider_id,provider in self.asset_providers._providers.items() if getattr(provider,'health_check',lambda:True)()),(None,None))
+        default_provider,provider=preferred
+        default_model=getattr(provider,"default_model",None) if provider else None
         tasks=[{"id":str(uuid4()),"asset_id":a["id"],"provider_id":default_provider,"model_id":default_model,"status":"PENDING","error":None,"attempts":0,"history":[{"status":"PENDING","at":utc()}]} for a in screenplay["asset_requirements"]]
         return self.novels.save_screenplay(novel_id,{**screenplay,"asset_tasks":tasks,"task_revision":1,"updated_at":utc()})
     def update_asset_task(self,novel_id,screenplay_id,task_id,payload):

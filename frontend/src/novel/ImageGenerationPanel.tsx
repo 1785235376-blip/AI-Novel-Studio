@@ -4,7 +4,7 @@ import {Button,Panel} from '../ui/primitives';
 import {FOCUS_FAILED_TASKS_EVENT,publishTaskSummary} from '../ui/taskSummary';
 import type {ImageInspection} from './ImageTaskInspector';
 
-type ImageProvider={provider_id:string;default_model:string;configured:boolean;registered:boolean};
+type ImageProvider={provider_id:string;display_name?:string;default_model:string;configured:boolean;registered:boolean;reachable?:boolean;local?:boolean};
 type ImageTask={id:string;status:'QUEUED'|'RUNNING'|'SUCCEEDED'|'FAILED';prompt:string;provider_id:string;model_id:string;asset_uri?:string;error?:string};
 
 export function ImageGenerationPanel({novelId,characterId,sceneId,onInspect}:{novelId?:string;characterId?:string;sceneId?:string;onInspect?:(inspection?:ImageInspection)=>void}){
@@ -13,7 +13,7 @@ export function ImageGenerationPanel({novelId,characterId,sceneId,onInspect}:{no
   const [providers,setProviders]=useState<ImageProvider[]>([]),[providerId,setProviderId]=useState(''),[modelId,setModelId]=useState(''),[task,setTask]=useState<ImageTask|null>(null);
   const generateButton=useRef<HTMLButtonElement>(null);
   useEffect(()=>{if(novelId)api.imageGenerations(novelId,characterId,sceneId).then(data=>setHistory(data.items||[])).catch(()=>setHistory([]));},[novelId,characterId,sceneId]);
-  useEffect(()=>{let active=true;api.assetProviders().then(data=>{if(!active)return;const items=data.items||[];setProviders(items);const preferred=items.find(item=>item.configured&&item.registered);if(preferred){setProviderId(preferred.provider_id);setModelId(preferred.default_model)}}).catch(()=>{if(active)setProviders([])});return()=>{active=false}},[]);
+  useEffect(()=>{let active=true;api.assetProviders().then(data=>{if(!active)return;const items=data.items||[];setProviders(items);const preferred=items.find(item=>item.configured&&item.registered&&item.reachable!==false);if(preferred){setProviderId(preferred.provider_id);setModelId(preferred.default_model)}}).catch(()=>{if(active)setProviders([])});return()=>{active=false}},[]);
   useEffect(()=>{publishTaskSummary('image',task?[task]:[])},[task]);
   useEffect(()=>{onInspect?.(task?{id:task.id,status:task.status,providerId:task.provider_id,modelId:task.model_id,assetUri:task.asset_uri,error:task.error,imported}:undefined)},[task,imported,onInspect]);
   useEffect(()=>{const listener=(event:Event)=>{const detail=(event as CustomEvent).detail;if(detail?.source==='image'&&(!detail.taskId||String(detail.taskId)===String(task?.id||'image-task')))requestAnimationFrame(()=>generateButton.current?.focus())};window.addEventListener(FOCUS_FAILED_TASKS_EVENT,listener);return()=>window.removeEventListener(FOCUS_FAILED_TASKS_EVENT,listener)},[task]);
@@ -23,9 +23,9 @@ export function ImageGenerationPanel({novelId,characterId,sceneId,onInspect}:{no
     try{setTask(current=>current?{...current,status:'RUNNING'}:current);const result=await api.imageGenerate({provider_id:requestProvider,model_id:requestModel,prompt:requestPrompt,novel_id:novelId,character_id:characterId,scene_id:sceneId});setUri(result.asset_uri);setTask(current=>current?{...current,status:'SUCCEEDED',asset_uri:result.asset_uri}:current)}
     catch{const message='图片生成失败，请检查 Provider 配置。';setError(message);setTask(current=>current?{...current,status:'FAILED',error:message}:current)}finally{setLoading(false)}
   }
-  const available=providers.some(item=>item.configured&&item.registered);
+  const available=providers.some(item=>item.configured&&item.registered&&item.reachable!==false);
   return <Panel title="图片生成">
-    <label>图片 Provider<select aria-label="图片 Provider" value={providerId} onChange={event=>{const next=providers.find(item=>item.provider_id===event.target.value);setProviderId(event.target.value);setModelId(next?.default_model||'')}}><option value="">选择已配置 Provider</option>{providers.map(item=><option key={item.provider_id} value={item.provider_id} disabled={!item.configured||!item.registered}>{item.provider_id}{item.configured&&item.registered?'':'（不可用）'}</option>)}</select></label>
+    <label>图片 Provider<select aria-label="图片 Provider" value={providerId} onChange={event=>{const next=providers.find(item=>item.provider_id===event.target.value);setProviderId(event.target.value);setModelId(next?.default_model||'')}}><option value="">选择已配置 Provider</option>{providers.map(item=><option key={item.provider_id} value={item.provider_id} disabled={!item.configured||!item.registered||item.reachable===false}>{item.display_name||item.provider_id}{item.local?' · 本地':''}{item.configured&&item.registered&&item.reachable!==false?'':'（不可用）'}</option>)}</select></label>
     <label>模型<input aria-label="图片模型" value={modelId} onChange={event=>setModelId(event.target.value)}/></label>
     <label>生成描述<textarea rows={5} value={prompt} onChange={event=>setPrompt(event.target.value)}/></label>
     <Button ref={generateButton} disabled={loading||!prompt.trim()||!providerId||!modelId.trim()} onClick={generate}>{loading?'生成中…':'生成图片'}</Button>

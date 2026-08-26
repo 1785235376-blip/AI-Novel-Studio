@@ -41,4 +41,21 @@ describe('NovelImportPanel',()=>{
     expect(host.textContent).toContain('尚未选择文件');expect(host.querySelector('.novel-import-preview')).toBeNull();
     act(()=>root.unmount());
   });
+
+  it('does not let delayed pending-review recovery replace a new file preview',async()=>{
+    let resolvePending!:(value:any)=>void;
+    vi.spyOn(api,'importReviewList').mockReturnValue(new Promise(resolve=>{resolvePending=resolve}) as any);
+    const preview={title:'刚选择的小说',chapter_count:1,word_count:1,warnings:[],chapters:[{number:1,title:'新章节',word_count:1}]};
+    const plan={format:'txt',title:'刚选择的小说',chapters:[{number:1,title:'新章节',content:'甲'}]};
+    vi.spyOn(api,'importNovel').mockResolvedValue({preview,plan} as any);
+    host=document.createElement('div');document.body.append(host);const root=createRoot(host);
+    await act(async()=>root.render(<NovelImportPanel novelId="novel-1"/>));
+    const input=host.querySelector<HTMLInputElement>('input[type=file]')!;
+    const file=new File(['甲'],'new.txt');Object.defineProperty(file,'text',{value:async()=>"甲"});
+    await act(async()=>{Object.defineProperty(input,'files',{configurable:true,value:[file]});input.dispatchEvent(new Event('change',{bubbles:true}));await Promise.resolve()});
+    await act(async()=>resolvePending({pending:{id:'old-review',novel_id:'novel-1',status:'PENDING',candidates:{characters:[{name:'旧候选'}]}}}));
+    expect(host.textContent).toContain('刚选择的小说');
+    expect(host.textContent).not.toContain('旧候选');
+    act(()=>root.unmount());
+  });
 });

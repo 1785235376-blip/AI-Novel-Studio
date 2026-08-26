@@ -27,7 +27,7 @@ from .services.harness_access_audit_service import harness_access_audit_service
 from .authorization import AuthorizationScope,ScopeKind,ModalityDomain,DomainRole,DomainRoleAssignment
 from .document import markdown_to_document
 from .credential_vault import VaultUnavailableError, credential_vault
-from .asset_providers import DEFAULT_IMAGE_ENDPOINTS,DEFAULT_IMAGE_MODELS
+from .asset_providers import DEFAULT_IMAGE_ENDPOINTS,DEFAULT_IMAGE_MODELS,IMAGE_PROVIDER_CATALOG
 from .net_safety import OutboundURLRejected, validate_outbound_url
 from .asset_provider_config import load as load_asset_provider_config, save as save_asset_provider_config, delete as delete_asset_provider_config
 from .model_runtime import TextGenerationRequest, TextGenerationParameters, TextModelNodeInput, ModelRuntimeError
@@ -125,7 +125,14 @@ class AgentChatIn(BaseModel):
     provider_id:str|None=None
     model_id:str|None=None
     context:dict[str,object]={}
-class AssetProviderConfigIn(BaseModel): endpoint:str; default_model:str=""
+class AssetProviderConfigIn(BaseModel):
+    endpoint:str
+    default_model:str=""
+    api_style:str="openai"
+    local:bool=False
+    enabled:bool=True
+    requires_credential:bool=True
+    display_name:str=""
 class AssetUploadIn(BaseModel): novel_id:str; filename:str; content_base64:str; media_type:str|None=None; kind:str="image"; character_id:str|None=None; scene_id:str|None=None
 class VisionAnalyzeIn(BaseModel): provider_id:str="openai"; model_id:str="gpt-4o-mini"; prompt:str; image_url:str; novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None
 class ImageGenerateIn(BaseModel): provider_id:str="ddshub"; model_id:str="gpt-image-2"; prompt:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None; constraints:dict[str,object]={}
@@ -661,20 +668,24 @@ def providers(): return runtime.provider_status()
 def asset_providers():
     from .dependencies import asset_provider_registry
     saved = load_asset_provider_config()
-    provider_ids = list(dict.fromkeys([*DEFAULT_IMAGE_ENDPOINTS, *saved]))
+    provider_ids = list(dict.fromkeys([*IMAGE_PROVIDER_CATALOG, *saved]))
     items = []
     for pid in provider_ids:
+        catalog=IMAGE_PROVIDER_CATALOG.get(pid,{})
         cfg = saved.get(pid) or {}
-        endpoint = cfg.get("endpoint", DEFAULT_IMAGE_ENDPOINTS.get(pid, ""))
-        model = cfg.get("default_model", DEFAULT_IMAGE_MODELS.get(pid, ""))
-        items.append({"provider_id":pid,"endpoint":endpoint,"default_model":model,"configured":credential_vault.has(pid) if pid!="custom" else credential_vault.has("openai"),"registered":pid in asset_provider_registry._providers,"secret":None})
-    return {"items":items}
+        effective={**catalog,**cfg};local=bool(effective.get("local"));requires_credential=bool(effective.get("requires_credential",True));enabled=bool(effective.get("enabled",True))
+        endpoint = effective.get("endpoint", "");model = effective.get("default_model", "")
+        configured=bool(enabled and endpoint and (not requires_credential or credential_vault.has(pid)) and (not local or bool(cfg)));registered=pid in asset_provider_registry._providers
+        adapter=asset_provider_registry._providers.get(pid);probe=getattr(adapter,'health_check',None);reachable=bool(registered and callable(probe) and probe())
+        items.append({"provider_id":pid,"display_name":effective.get("display_name") or pid,"endpoint":endpoint,"default_model":model,"api_style":effective.get("api_style","openai"),"local":local,"enabled":enabled,"requires_credential":requires_credential,"credential_configured":not requires_credential or credential_vault.has(pid),"configured":configured,"registered":registered,"reachable":reachable,"secret":None})
+    items.sort(key=lambda item:(not item["local"],not item["reachable"],item["display_name"]))
+    return {"items":items,"routing_policy":"LOCAL_FIRST"}
 
 @router.put("/asset-providers/{provider_id}")
 def asset_provider_config_set(provider_id: str, body: AssetProviderConfigIn):
     try:
-        result = save_asset_provider_config(provider_id, body.endpoint, body.default_model)
-        return {"provider_id": provider_id, **result, "registered": refresh_asset_provider(provider_id)}
+        result = save_asset_provider_config(provider_id, body.endpoint, body.default_model,api_style=body.api_style,local=body.local,enabled=body.enabled,requires_credential=body.requires_credential,display_name=body.display_name)
+        return {"provider_id": provider_id, **body.model_dump(), **result, "registered": refresh_asset_provider(provider_id)}
     except ValueError as exc:
         raise HTTPException(400, {"code": "INVALID_PROVIDER_CONFIG", "message": str(exc)}) from exc
 
@@ -686,7 +697,7 @@ def asset_provider_config_delete(provider_id: str):
     refresh_asset_provider(provider_id)
     return {"provider_id": provider_id, "deleted": deleted}
 def _credential_guard(provider: str, session_token: str | None):
-    if provider not in {"deepseek", "openai", "claude", "gemini", "ddshub", "custom"}:
+    if not re.fullmatch(r'[A-Za-z0-9_-]{1,64}', provider):
         raise HTTPException(400, {"code": "UNSUPPORTED_PROVIDER"})
     if settings.enable_packaged_runtime:
         if not session_token: raise HTTPException(401, {"code": "SESSION_REQUIRED"})
@@ -1278,6 +1289,34 @@ def list_import_knowledge_reviews(nid: str, status: str | None = Query(default=N
     except FileNotFoundError:
         raise HTTPException(404, "novel not found")
 
+@router.post("/novels/{nid}/knowledge-base/review", status_code=201)
+def create_novel_knowledge_review(nid: str):
+    try:
+        novel_service.get(nid)
+        chapters = chapter_service.list(nid)
+        if not any(str(item.get("content") or "").strip() for item in chapters):
+            raise HTTPException(409, {"code": "KNOWLEDGE_REVIEW_SOURCE_EMPTY", "message": "小说尚无可审查的章节正文"})
+        return import_review_service.ensure_pending(nid, {}, source_format="project", import_id=f"project:{nid}")
+    except HTTPException:
+        raise
+    except FileNotFoundError:
+        raise HTTPException(404, "novel not found")
+
+@router.post("/novels/{nid}/chapters/{chapter_id}/knowledge-base/review", status_code=201)
+def create_chapter_knowledge_review(nid: str, chapter_id: str):
+    try:
+        novel_service.get(nid)
+        chapter = chapter_service.get(chapter_id)
+        if chapter.get("novel_id") != nid:
+            raise HTTPException(404, "chapter not found")
+        if not str(chapter.get("content") or "").strip():
+            raise HTTPException(409, {"code": "KNOWLEDGE_REVIEW_SOURCE_EMPTY", "message": "当前章节尚无可审查的正文"})
+        return import_review_service.ensure_pending(nid, {}, source_format="chapter", import_id=chapter_id)
+    except HTTPException:
+        raise
+    except FileNotFoundError:
+        raise HTTPException(404, "chapter not found")
+
 @router.get("/novels/{nid}/import/knowledge-base/review/{review_id}")
 def get_import_knowledge_review(nid: str, review_id: str):
     try:
@@ -1353,6 +1392,10 @@ def ai_analyze_import_knowledge(nid: str, review_id: str, body: ImportAiReviewIn
         if review.get("status") != "PENDING":
             raise HTTPException(409, {"code": "IMPORT_REVIEW_COMPLETED"})
         chapters = novel_service.chapters.list(nid)[:200]
+        if review.get("source_format") == "chapter" and review.get("import_id"):
+            chapters = [item for item in chapters if item.get("id") == review.get("import_id")]
+            if not chapters:
+                raise HTTPException(404, {"code": "KNOWLEDGE_REVIEW_SOURCE_NOT_FOUND"})
         excerpts, remaining = [], 48000
         per_chapter = min(6000, max(240, 48000 // max(1, len(chapters))))
         for chapter in chapters:
@@ -1361,7 +1404,7 @@ def ai_analyze_import_knowledge(nid: str, review_id: str, body: ImportAiReviewIn
             remaining -= len(content)
         provider_id, model_id = body.provider_id or "deepseek", body.model_id or "deepseek-chat"
         prompt = (
-            "请阅读导入小说的章节节选，纠正本地提取结果。只输出 JSON，不要 Markdown。\n"
+            "请阅读小说项目的章节节选，提取并纠正资料库候选。只输出 JSON，不要 Markdown。\n"
             "JSON 顶层必须含 candidates，分组仅限 characters、locations、timeline_events、foreshadowing。"
             "人物和地点使用 name；时间线使用 title、sequence、description；伏笔使用 title、description。"
             "每项尽量提供 evidence 和 confidence；不确定或仅出现一次的普通词不要收录。\n\n"
@@ -1370,7 +1413,7 @@ def ai_analyze_import_knowledge(nid: str, review_id: str, body: ImportAiReviewIn
         request = TextGenerationRequest(provider_id=provider_id, model_id=model_id, prompt=prompt,
             system_instruction="你是小说导入资料库审查员。严格依据原文，不得臆造；只返回符合要求的 JSON。",
             parameters=TextGenerationParameters(temperature=0.1, max_output_tokens=5000),
-            metadata={"surface": "novel_import_review", "mode": "author_approval_required"})
+            metadata={"surface": "novel_knowledge_review", "mode": "author_approval_required", "source_format": review.get("source_format")})
         result = runtime.generation_runtime.text_node.execute(TextModelNodeInput(request))
         candidates = _import_ai_candidates(result.generated_text)
         analysis = {"source": "AI_REVIEW", "provider_id": result.response.provider_id, "model_id": result.response.model_id,
@@ -1474,14 +1517,21 @@ def save_motion_prompt(nid:str,screenplay_id:str,transition_id:str,body:MotionPr
 def create_motion_tasks(nid:str,screenplay_id:str):return guard(screenplay_service.create_motion_tasks,nid,screenplay_id)
 @router.get("/video-providers")
 def video_providers():
-    items=[{"id":"deterministic","model":"video-placeholder","available":True,"mode":"placeholder","health":"READY"}]
-    for provider_id,config in _video_provider_configs.items():
+    items=[]
+    for provider_id,base in VIDEO_PROVIDER_CATALOG.items():
+        config={**base,**(_video_provider_configs.get(provider_id) or {})}
         if provider_id=='deterministic': continue
-        configured=bool(config.get('enabled') and config.get('endpoint'))
-        items.append({"id":provider_id,"model":config.get('model_id',''),"available":configured,"mode":"http","health":"READY" if configured else "NOT_CONFIGURED"})
-    return {"items":items}
+        requires=bool(config.get('requires_credential',True));configured=bool(config.get('enabled') and config.get('endpoint') and (not requires or credential_vault.has(provider_id)))
+        registered=provider_id in screenplay_service.video_providers;adapter=screenplay_service.video_providers.get(provider_id);reachable=bool(registered and adapter and adapter.health_check())
+        items.append({"id":provider_id,"display_name":config.get('display_name') or provider_id,"endpoint":config.get('endpoint',''),"model":config.get('model_id',''),"local":bool(config.get('local')),"requires_credential":requires,"credential_configured":not requires or credential_vault.has(provider_id),"available":configured and reachable,"registered":registered,"reachable":reachable,"mode":"http","health":"READY" if configured and reachable else "NOT_CONFIGURED"})
+    for provider_id,config in _video_provider_configs.items():
+        if provider_id in VIDEO_PROVIDER_CATALOG: continue
+        requires=bool(config.get('requires_credential',True));configured=bool(config.get('enabled') and config.get('endpoint') and (not requires or credential_vault.has(provider_id)));registered=provider_id in screenplay_service.video_providers;adapter=screenplay_service.video_providers.get(provider_id);reachable=bool(registered and adapter and adapter.health_check())
+        items.append({"id":provider_id,"display_name":config.get('display_name') or provider_id,"endpoint":config.get('endpoint',''),"model":config.get('model_id',''),"local":bool(config.get('local')),"requires_credential":requires,"credential_configured":not requires or credential_vault.has(provider_id),"available":configured and reachable,"registered":registered,"reachable":reachable,"mode":"http","health":"READY" if configured and reachable else "NOT_CONFIGURED"})
+    items.sort(key=lambda item:(not item['local'],not item['available'],item['display_name']))
+    return {"items":items,"routing_policy":"LOCAL_FIRST"}
 class VideoProviderConfigIn(BaseModel):
-    endpoint:str=''; model_id:str='video-placeholder'; enabled:bool=True
+    endpoint:str=''; model_id:str='video-placeholder'; enabled:bool=True;local:bool=False;requires_credential:bool=True;display_name:str=''
     @field_validator('endpoint')
     @classmethod
     def validate_endpoint(cls,value):
@@ -1494,12 +1544,24 @@ class VideoProviderConfigIn(BaseModel):
         if not value.strip(): raise ValueError('model_id is required')
         return value.strip()
 _video_provider_configs:dict[str,dict]={}
+VIDEO_PROVIDER_CATALOG={
+    'local-video':{'display_name':'本地视频 API','endpoint':'http://127.0.0.1:8189','model_id':'','local':True,'requires_credential':False,'enabled':False},
+    'runway':{'display_name':'Runway','endpoint':'','model_id':'','local':False,'requires_credential':True,'enabled':False},
+    'kling':{'display_name':'可灵 / Kling','endpoint':'','model_id':'','local':False,'requires_credential':True,'enabled':False},
+    'minimax':{'display_name':'MiniMax / 海螺','endpoint':'','model_id':'','local':False,'requires_credential':True,'enabled':False},
+    'seedance':{'display_name':'Seedance / 即梦','endpoint':'','model_id':'','local':False,'requires_credential':True,'enabled':False},
+    'custom':{'display_name':'其他视频服务商','endpoint':'','model_id':'','local':False,'requires_credential':True,'enabled':False},
+}
 _video_provider_config_path=settings.data_path()/"video_providers.json"
 def _load_video_provider_configs():
     global _video_provider_configs
     try: _video_provider_configs=json.loads(_video_provider_config_path.read_text(encoding='utf-8'))
     except (FileNotFoundError,ValueError): _video_provider_configs={}
 _load_video_provider_configs()
+from .dependencies import refresh_video_provider
+for _video_id,_video_cfg in sorted(_video_provider_configs.items(),key=lambda item:(not bool(item[1].get('local')),item[0])):
+    if _video_cfg.get('enabled') and _video_cfg.get('endpoint'):
+        refresh_video_provider(_video_id,_video_cfg['endpoint'],_video_cfg.get('model_id','video-placeholder'),bool(_video_cfg.get('requires_credential',True)))
 @router.put("/video-providers/{provider_id}/config")
 def configure_video_provider(provider_id:str,body:VideoProviderConfigIn):
     _video_provider_configs[provider_id]={"provider_id":provider_id,**body.model_dump()}
@@ -1507,18 +1569,19 @@ def configure_video_provider(provider_id:str,body:VideoProviderConfigIn):
     from .dependencies import refresh_video_provider
     registered=False
     if body.enabled and provider_id!='deterministic':
-        registered=refresh_video_provider(provider_id,body.endpoint,body.model_id)
+        registered=refresh_video_provider(provider_id,body.endpoint,body.model_id,body.requires_credential)
     elif provider_id!='deterministic':
         from .dependencies import screenplay_service
         screenplay_service.video_providers.pop(provider_id,None)
     return {**_video_provider_configs[provider_id],"registered":registered}
 @router.get("/video-providers/{provider_id}/config")
-def get_video_provider_config(provider_id:str): return _video_provider_configs.get(provider_id,{"provider_id":provider_id,"endpoint":"","model_id":"video-placeholder","enabled":False})
+def get_video_provider_config(provider_id:str): return {"provider_id":provider_id,**VIDEO_PROVIDER_CATALOG.get(provider_id,{}),**_video_provider_configs.get(provider_id,{})}
 @router.get("/video-providers/{provider_id}/health")
 def video_provider_health(provider_id:str):
     if provider_id=='deterministic': return {"provider_id":provider_id,"health":"READY","available":True}
     config=_video_provider_configs.get(provider_id)
-    return {"provider_id":provider_id,"health":"READY" if config and config.get('enabled') and config.get('endpoint') else "NOT_CONFIGURED","available":bool(config and config.get('enabled') and config.get('endpoint'))}
+    config={**VIDEO_PROVIDER_CATALOG.get(provider_id,{}),**(_video_provider_configs.get(provider_id) or {})};registered=provider_id in screenplay_service.video_providers
+    return {"provider_id":provider_id,"health":"READY" if registered else "NOT_CONFIGURED","available":registered,"local":bool(config.get('local'))}
 @router.get("/video-providers/{provider_id}/credential-status")
 def video_provider_credential_status(provider_id:str):
     if provider_id=='deterministic': return {"provider_id":provider_id,"configured":True,"secret_exposed":False}
@@ -1558,9 +1621,10 @@ def generate_image(body:ImageGenerateIn):
         provider=asset_provider_registry.get(body.provider_id)
         result=provider.generate(AssetGenerationRequest(body.provider_id,body.model_id,body.prompt,str(__import__('uuid').uuid4())))
     except ValueError: raise HTTPException(503,{'code':'IMAGE_PROVIDER_UNAVAILABLE','message':'图片生成服务未配置或不可用'})
+    except Exception: raise HTTPException(502,{'code':'IMAGE_PROVIDER_REQUEST_FAILED','message':'图片服务请求失败，请检查地址、模型和服务状态'})
     payload={'provider_id':result.provider_id,'model_id':result.model_id,'asset_uri':result.asset_uri,'prompt':body.prompt,'constraints':body.constraints,'character_id':body.character_id,'scene_id':body.scene_id,'created_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}
     if body.novel_id:
-        novel=repositories.novels.get(body.novel_id); rows=list(novel.get('image_generations',[])); rows.append(payload); repositories.novels.update(body.novel_id,{**novel,'image_generations':rows[-50:]})
+        novel=repositories.novels.get(body.novel_id); rows=list(novel.get('image_generations',[])); rows.append({**payload,'asset_uri':'inline://generated-image'} if result.asset_uri.startswith('data:') else payload); repositories.novels.update(body.novel_id,{**novel,'image_generations':rows[-50:]})
     return payload
 @router.post("/speech/synthesize")
 def synthesize_speech(body:SpeechSynthesizeIn):
@@ -1660,8 +1724,14 @@ def import_generated_image(nid:str,body:dict):
     url=str(body.get('asset_uri','')).strip()
     if not url: raise HTTPException(400,'asset_uri is required')
     try:
-        data=fetch_outbound_bytes(url,asset_library_service.MAX_BYTES,30)
-        asset=asset_library_service.create(nid,str(body.get('filename') or 'generated-image.png'),base64.b64encode(data).decode('ascii'),'image/png','image',f"image-generation:{url}")
+        if url.startswith('data:image/'):
+            match=re.fullmatch(r'data:(image/[A-Za-z0-9.+-]+);base64,([A-Za-z0-9+/=\r\n]+)',url)
+            if not match: raise ValueError('invalid image data URI')
+            data=base64.b64decode(match.group(2),validate=True)
+            if not data or len(data)>asset_library_service.MAX_BYTES: raise ValueError('image data exceeds limit')
+        else:data=fetch_outbound_bytes(url,asset_library_service.MAX_BYTES,30)
+        source_key=hashlib.sha256(url.encode('utf-8')).hexdigest()
+        asset=asset_library_service.create(nid,str(body.get('filename') or 'generated-image.png'),base64.b64encode(data).decode('ascii'),'image/png','image',f"image-generation:{source_key}")
         links={key:body.get(key) for key in ('character_id','scene_id') if body.get(key)}
         if links:
             asset.update(links)

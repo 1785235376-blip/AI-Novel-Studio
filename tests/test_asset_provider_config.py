@@ -10,8 +10,14 @@ def test_save_and_load_uses_atomic_file(monkeypatch, tmp_path):
     monkeypatch.setenv("ASSET_PROVIDER_CONFIG_PATH", str(target))
     saved = config.save("studio", "https://example.test/v1/", "image-model")
     assert saved == {"endpoint": "https://example.test/v1", "default_model": "image-model"}
-    assert config.load()["studio"] == saved
-    assert json.loads(target.read_text(encoding="utf-8"))["studio"] == saved
+    loaded = config.load()["studio"]
+    assert {key: loaded[key] for key in saved} == saved
+    assert loaded["api_style"] == "openai"
+    assert loaded["requires_credential"] is True
+    persisted = json.loads(target.read_text(encoding="utf-8"))["studio"]
+    assert {key: persisted[key] for key in saved} == saved
+    assert persisted["api_style"] == "openai"
+    assert persisted["requires_credential"] is True
     assert not list(tmp_path.glob("*.tmp"))
 
 

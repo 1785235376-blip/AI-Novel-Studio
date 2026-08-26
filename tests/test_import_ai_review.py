@@ -77,3 +77,33 @@ def test_import_ai_review_keeps_local_draft_when_model_output_is_invalid(monkeyp
         assert persisted.get("analysis") is None
     finally:
         import_review_service.path = original_path
+
+
+def test_manual_chapter_can_create_scoped_ai_knowledge_review(monkeypatch, tmp_path):
+    original_path = import_review_service.path
+    import_review_service.path = tmp_path / "import_reviews.json"
+    captured = {}
+
+    def execute(value):
+        captured["prompt"] = value.request.prompt
+        text = json.dumps({"candidates": {"characters": [{"name": "手写人物"}]}}, ensure_ascii=False)
+        response = TextGenerationResponse(text, "completed", value.request.provider_id, value.request.model_id)
+        return TextModelNodeOutput(text, response, None)
+
+    monkeypatch.setattr(runtime.generation_runtime.text_node, "execute", execute)
+    try:
+        client = TestClient(app)
+        novel = client.post("/api/novels", json={"title": f"手写审查-{uuid4()}"}).json()
+        first = client.post(f"/api/novels/{novel['id']}/chapters", json={"title": "手写章", "content": "手写人物走进旧车站。"}).json()
+        client.post(f"/api/novels/{novel['id']}/chapters", json={"title": "不应读取", "content": "另一个人物在远方。"})
+        prepared = client.post(f"/api/novels/{novel['id']}/chapters/{first['id']}/knowledge-base/review")
+        assert prepared.status_code == 201
+        review = prepared.json()
+        assert review["source_format"] == "chapter"
+        result = client.post(f"/api/novels/{novel['id']}/import/knowledge-base/review/{review['id']}/ai-analyze", json={})
+        assert result.status_code == 200
+        assert result.json()["analysis"]["chapter_count"] == 1
+        assert "手写人物走进旧车站" in captured["prompt"]
+        assert "另一个人物在远方" not in captured["prompt"]
+    finally:
+        import_review_service.path = original_path

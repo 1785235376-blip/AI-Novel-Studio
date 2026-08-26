@@ -184,6 +184,8 @@ async def collaboration_fail_closed(request,call_next):
             re.fullmatch(r"/api/novels/[^/]+/import/knowledge-base/review",normalized_path) is not None and method in {"GET","POST"} or
             re.fullmatch(r"/api/novels/[^/]+/import/knowledge-base/review/[^/]+",normalized_path) is not None and method in {"GET","PUT"} or
             re.fullmatch(r"/api/novels/[^/]+/import/knowledge-base/review/[^/]+/ai-analyze",normalized_path) is not None and method=="POST" or
+            re.fullmatch(r"/api/novels/[^/]+/knowledge-base/review",normalized_path) is not None and method=="POST" or
+            re.fullmatch(r"/api/novels/[^/]+/chapters/[^/]+/knowledge-base/review",normalized_path) is not None and method=="POST" or
             capability_route and method in {"GET","POST","PUT","PATCH","DELETE"}))
         if not allowed:
             return JSONResponse({"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}},status_code=501)

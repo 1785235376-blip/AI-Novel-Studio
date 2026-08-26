@@ -69,6 +69,7 @@ import { CapabilityPlaceholder } from "./ui/CapabilityPlaceholder";
 import { CapabilityRoadmapPanel } from "./ui/CapabilityRoadmapPanel";
 import { FeatureLauncher } from "./ui/FeatureLauncher";
 import { AiControlCenter } from "./ui/AiControlCenter";
+import { MediaProviderSettings } from "./ui/MediaProviderSettings";
 import "./ui/capability.css";
 import DesignSystemFixture from "./ui/DesignSystemFixture";
 import { isPackagedDesktopHost } from "./packagedHost";
@@ -1211,9 +1212,9 @@ function Panel({
   if (type === "screenplay") return <ScreenplayPanel novelId={chapter?.novel_id} />;
   if (type === "assets") return <AssetLibraryPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
   if (type === "exports") return <ExportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
-  if (type === "knowledge") return <NovelImportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
+  if (type === "knowledge") return <NovelImportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} chapterId={chapter?.id} />;
   if (type === "research") return <CapabilityPlaceholder title="研究资料" service="Research Assistant" description="资料库、参考文献与研究笔记窗口已预留，暂不读取外部网络。" apiPrefix="/api/v1/research" />;
-  if (type === "settings") return <><AiControlCenter /><VideoProviderSettingsV2 /><VideoCallbackSecurityStatus /></>;
+  if (type === "settings") return <><AiControlCenter /><MediaProviderSettings /><VideoCallbackSecurityStatus /></>;
   if (type === "roadmap") return <CapabilityRoadmapPanel />;
   return (
     <CollaborationPanel type={type} scope={scope} chapterId={chapter?.id} />

@@ -13,6 +13,7 @@ import {
   Scope,
   WorkspaceNavigationPath,
   api,
+  createNovelKnowledgeReview,
   setCollaborationContext,
 } from "../api";
 import { Button, EmptyState, Panel } from "../ui/primitives";
@@ -230,6 +231,8 @@ export function EntryExperience({
         },
         report,
       });
+      report("章节已写入，正在建立整本资料审查任务…");
+      await createNovelKnowledgeReview(path.project_id);
       report(
         `已完成 ${plan.chapters.length}/${plan.chapters.length} 章，正在打开小说…`,
       );

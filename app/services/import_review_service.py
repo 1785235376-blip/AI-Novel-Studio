@@ -110,6 +110,7 @@ class ImportReviewService:
                     raw.get("novel_id") == novel_id
                     and raw.get("fingerprint") == fingerprint
                     and raw.get("status") == "PENDING"
+                    and (not import_id or raw.get("import_id") == import_id)
                 ):
                     return self._normalise(raw)
             review = {

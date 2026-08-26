@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Check, FileSearch, FileUp } from "lucide-react";
-import { aiAnalyzeImportReview, api, apiErrorView, type ImportReview, type Novel } from "../api";
+import { aiAnalyzeImportReview, api, apiErrorView, createChapterKnowledgeReview, createNovelKnowledgeReview, type ImportReview, type Novel } from "../api";
 import { Badge, Button, EmptyState, Panel } from "../ui/primitives";
 import "./NovelImportPanel.css";
 
@@ -31,7 +31,7 @@ export function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-export function NovelImportPanel({ onImported, onConfirm, novelId }: { onImported?: (novel: Novel) => void; onConfirm?: (source:NovelImportSource,preview:ImportPreview,plan:NovelImportPlan,report:(message:string)=>void)=>Promise<void>; novelId?:string }) {
+export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId }: { onImported?: (novel: Novel) => void; onConfirm?: (source:NovelImportSource,preview:ImportPreview,plan:NovelImportPlan,report:(message:string)=>void)=>Promise<void>; novelId?:string; chapterId?:string }) {
   const [source, setSource] = useState<NovelImportSource>();
   const [preview, setPreview] = useState<ImportPreview>();
   const [plan, setPlan] = useState<NovelImportPlan>();
@@ -44,6 +44,7 @@ export function NovelImportPanel({ onImported, onConfirm, novelId }: { onImporte
   const [aiReviewError,setAiReviewError]=useState<unknown>();
   const [stage,setStage]=useState<ImportStage>("SELECT");
   const confirmingRef=useRef(false);
+  const interactionRef=useRef(0);
   function reviewState(record:ImportReview):ReviewState{
     const candidates=(record.candidates||{}) as CandidateGroups;
     const selected=record.selected||Object.fromEntries(Object.entries(candidates).map(([kind,items])=>[kind,items.map(()=>false)]));
@@ -53,13 +54,14 @@ export function NovelImportPanel({ onImported, onConfirm, novelId }: { onImporte
     let active=true;
     setReview(undefined);
     if(!novelId){setPendingError(undefined);setPendingLoading(false);return()=>{active=false}};
-    setPendingLoading(true);setPendingError(undefined);
-    void api.importReviewList(novelId).then(result=>{if(active&&result.pending){setReview(current=>current||reviewState(result.pending!));setStage("REVIEW")}}).catch(reason=>{if(active)setPendingError(reason)}).finally(()=>{if(active)setPendingLoading(false)});
+    const interaction=interactionRef.current;setPendingLoading(true);setPendingError(undefined);
+    void api.importReviewList(novelId).then(result=>{if(active&&interaction===interactionRef.current&&result.pending){setReview(current=>current||reviewState(result.pending!));setStage("REVIEW")}}).catch(reason=>{if(active&&interaction===interactionRef.current)setPendingError(reason)}).finally(()=>{if(active)setPendingLoading(false)});
     return()=>{active=false};
   },[novelId]);
 
   async function choose(file?: File) {
     if (!file) return;
+    interactionRef.current+=1;
     const extension = file.name.split(".").pop()?.toLowerCase();
     const format: NovelImportSource["format"] | undefined = extension === "json" ? "json" : extension === "md" || extension === "markdown" ? "markdown" : extension === "txt" ? "txt" : extension === "docx" ? "docx" : extension === "pdf" ? "pdf" : undefined;
     if (!format) { resetSelection(); setError(new Error("仅支持 TXT、Markdown、JSON、Word (.docx) 和 PDF 文件。")); return; }
@@ -102,7 +104,16 @@ export function NovelImportPanel({ onImported, onConfirm, novelId }: { onImporte
   }
 
   function resetSelection(){
-    confirmingRef.current=false;setSource(undefined);setPreview(undefined);setPlan(undefined);setError(undefined);setStatus("");setStage("SELECT");
+    interactionRef.current+=1;confirmingRef.current=false;setSource(undefined);setPreview(undefined);setPlan(undefined);setError(undefined);setStatus("");setStage("SELECT");
+  }
+
+  async function prepareKnowledgeReview(scope:"chapter"|"project"){
+    if(!novelId)return;
+    interactionRef.current+=1;setBusy(true);setError(undefined);setAiReviewError(undefined);
+    try{
+      const record=scope==="chapter"&&chapterId?await createChapterKnowledgeReview(novelId,chapterId):await createNovelKnowledgeReview(novelId);
+      setReview(reviewState(record));setStage("REVIEW");setStatus(scope==="chapter"?"已建立当前章节审查任务，可调用 AI 提取资料候选。":"已建立整本小说审查任务，可调用 AI 提取资料候选。");
+    }catch(reason){setError(reason)}finally{setBusy(false)}
   }
 
   async function submitReview(decision:"ACCEPTED"|"REJECTED"|"SKIPPED") {
@@ -153,7 +164,8 @@ export function NovelImportPanel({ onImported, onConfirm, novelId }: { onImporte
     setReview(current=>current?{...current,selected:Object.fromEntries(Object.entries(current.candidates).map(([kind,items])=>[kind,items.map(()=>true)]))}:current);
   }
 
-  return <Panel title="导入小说">
+  return <Panel title={novelId?"资料提取与导入":"导入小说"}>
+    {novelId&&!review&&<section className="novel-knowledge-audit"><header><div><h3>从已写章节提取资料</h3><p>AI 只生成待审候选，不会直接改写人物、地点、时间线或伏笔。</p></div><div>{chapterId&&<Button type="button" variant="secondary" disabled={busy} onClick={()=>void prepareKnowledgeReview("chapter")}>审查当前章节</Button>}<Button type="button" variant="secondary" disabled={busy} onClick={()=>void prepareKnowledgeReview("project")}>审查整本小说</Button></div></header></section>}
     <ol className="novel-import-steps" aria-label="导入进度">
       <li className={stage==="SELECT"||stage==="PARSING"?"is-current":"is-complete"}><FileUp aria-hidden="true"/><span>选择文件</span></li>
       <li className={stage==="PREVIEW"||stage==="IMPORTING"?"is-current":stage==="REVIEW"?"is-complete":""}><FileSearch aria-hidden="true"/><span>检查章节</span></li>
@@ -202,7 +214,7 @@ function KnowledgeReviewPanel({review,busy,onAiReview,onToggle,onEdit,onSelectAl
     <p>勾选后接受的候选才会写入人物、地点、时间线和伏笔资料库；正文和章节版本不会被改写。</p>
     {review.reviewId&&<div className="novel-import-ai-review"><Button type="button" variant="secondary" onClick={onAiReview} disabled={busy}>{busy?'AI 正在阅读…':'AI 阅读审查'}</Button><p className="novel-help">点击后会把有限长度的章节片段发送给主控中配置的文本模型。AI 只更新候选草稿，仍需你确认。</p>{review.analysis?.source==='AI_REVIEW'&&<Badge tone="success">已由 AI 复核 · {review.analysis.model_id||'已配置模型'}</Badge>}</div>}
     <div className="novel-import-review-panel__actions"><Button type="button" variant="ghost" onClick={onSelectAll} disabled={busy}>全选候选</Button>{review.reviewId&&<Button type="button" variant="secondary" onClick={onSave} disabled={busy}>保存候选修改</Button>}<span className="novel-help" aria-live="polite">已选 {selectedCount} 项</span></div>
-    <div className="novel-import-review-panel__groups">{groups.map(([kind,items])=><fieldset key={kind}><legend>{labels[kind]||kind}</legend>{items.map((item,index)=>{const field='name' in item?'name':'title' in item?'title':'description';return <label key={`${kind}:${index}`}><input type="checkbox" checked={!!review.selected[kind]?.[index]} disabled={busy} onChange={()=>onToggle(kind,index)}/><input className="novel-import-candidate-title" aria-label={`${labels[kind]||kind}候选 ${index+1}`} value={String(item[field]||title(item,kind,index))} disabled={busy} onChange={event=>onEdit(kind,index,field,event.target.value)}/><small>{String(item.evidence||item.description||'')}</small></label>})}</fieldset>)}</div>
+    {groups.length?<div className="novel-import-review-panel__groups">{groups.map(([kind,items])=><fieldset key={kind}><legend>{labels[kind]||kind}</legend>{items.map((item,index)=>{const field='name' in item?'name':'title' in item?'title':'description';return <label key={`${kind}:${index}`}><input type="checkbox" checked={!!review.selected[kind]?.[index]} disabled={busy} onChange={()=>onToggle(kind,index)}/><input className="novel-import-candidate-title" aria-label={`${labels[kind]||kind}候选 ${index+1}`} value={String(item[field]||title(item,kind,index))} disabled={busy} onChange={event=>onEdit(kind,index,field,event.target.value)}/><small>{String(item.evidence||item.description||'')}</small></label>})}</fieldset>)}</div>:<p className="novel-import-review-panel__empty">当前还没有资料候选。点击“AI 阅读审查”后，模型会依据章节正文生成待确认项目。</p>}
     <p className="novel-help">服务归属：Novel Knowledge Base Review · API：<code>/api/v1/novels/{'{id}'}/import/knowledge-base/review</code></p>
     <footer className="novel-import-review-panel__footer"><Button type="button" variant="primary" disabled={busy||selectedCount===0} onClick={onAccept}>{busy?'处理中…':'接受选中并打开'}</Button><Button type="button" variant="danger" disabled={busy} onClick={onReject}>全部拒绝并打开</Button><Button type="button" variant="ghost" disabled={busy} onClick={onSkip}>标记跳过并打开</Button></footer>
   </section>;

@@ -21,7 +21,7 @@ from .collaboration_admin import CollaborationAdminService
 from .lore.memory_agent import MemoryAgentRunner
 from .agents import agent_runner
 from .runtime import runtime
-from .asset_providers import AssetProviderRegistry,DEFAULT_IMAGE_ENDPOINTS,HttpVideoProvider
+from .asset_providers import AssetProviderRegistry,DEFAULT_IMAGE_ENDPOINTS,IMAGE_PROVIDER_CATALOG,HttpVideoProvider,ComfyUIImageProvider,Automatic1111ImageProvider
 from .asset_providers import build_openai_compatible_from_vault
 from .asset_provider_config import load as load_asset_provider_config
 from .credential_vault import credential_vault
@@ -56,10 +56,17 @@ for _provider, _cfg in _saved_asset_configs.items():
         _models[_provider] = _cfg.get("default_model", "")
 for _provider,_endpoint in _endpoints.items():
     if not _endpoint: continue
+    _cfg=_saved_asset_configs.get(_provider) or IMAGE_PROVIDER_CATALOG.get(_provider,{})
+    if _cfg.get('local') and _provider not in _saved_asset_configs: continue
+    if _cfg.get('enabled') is False: continue
     try:
         import httpx
-        _vault_provider="openai" if _provider=="custom" else _provider
-        asset_provider_registry.register(_provider, build_openai_compatible_from_vault(httpx, _vault_provider, _endpoint, credential_vault))
+        _style=_cfg.get('api_style','openai')
+        if _style=='comfyui': _adapter=ComfyUIImageProvider(httpx,_endpoint)
+        elif _style=='automatic1111': _adapter=Automatic1111ImageProvider(httpx,_endpoint)
+        else: _adapter=build_openai_compatible_from_vault(httpx, _provider, _endpoint, credential_vault)
+        _adapter.default_model=_cfg.get('default_model','')
+        asset_provider_registry.register(_provider,_adapter)
     except (ImportError, ValueError):
         pass
 
@@ -67,31 +74,33 @@ def refresh_asset_provider(provider_id: str) -> bool:
     """Rebuild one image adapter after a runtime config or vault change."""
     saved = load_asset_provider_config()
     cfg = saved.get(provider_id) if isinstance(saved.get(provider_id), dict) else {}
-    endpoint = (cfg or {}).get("endpoint") or DEFAULT_IMAGE_ENDPOINTS.get(provider_id, "")
-    vault_provider = "openai" if provider_id == "custom" else provider_id
-    if not endpoint or not credential_vault.has(vault_provider):
+    catalog=IMAGE_PROVIDER_CATALOG.get(provider_id,{})
+    effective={**catalog,**cfg};endpoint=effective.get("endpoint","");style=effective.get("api_style","openai")
+    if not cfg and effective.get("local"): asset_provider_registry.unregister(provider_id);return False
+    legacy_vault_provider="openai" if provider_id=="custom" and cfg and "requires_credential" not in cfg else provider_id
+    if effective.get("enabled") is False or not endpoint or (effective.get("requires_credential",True) and not credential_vault.has(legacy_vault_provider)):
         asset_provider_registry.unregister(provider_id)
         return False
     try:
         import httpx
-        asset_provider_registry.register(
-            provider_id,
-            build_openai_compatible_from_vault(
-                httpx, vault_provider, endpoint, credential_vault,
-            ),
-        )
+        if style=="comfyui": adapter=ComfyUIImageProvider(httpx,endpoint)
+        elif style=="automatic1111": adapter=Automatic1111ImageProvider(httpx,endpoint)
+        else: adapter=build_openai_compatible_from_vault(httpx,legacy_vault_provider,endpoint,credential_vault)
+        adapter.default_model=effective.get("default_model","")
+        asset_provider_registry.register(provider_id,adapter)
     except (ImportError, ValueError):
         asset_provider_registry.unregister(provider_id)
         return False
     return True
 
 screenplay_service=ScreenplayService(repositories.novels,repositories.chapters,asset_provider_registry)
-def refresh_video_provider(provider_id: str, endpoint: str, model_id: str) -> bool:
-    if provider_id == 'deterministic' or not endpoint or not credential_vault.has(provider_id):
+def refresh_video_provider(provider_id: str, endpoint: str, model_id: str, requires_credential: bool = True) -> bool:
+    if provider_id == 'deterministic' or not endpoint or (requires_credential and not credential_vault.has(provider_id)):
         return False
     try:
         import httpx
-        screenplay_service.register_video_provider(provider_id, HttpVideoProvider(httpx, endpoint, credential_vault.resolve(provider_id)))
+        secret=credential_vault.resolve(provider_id) if requires_credential else None
+        screenplay_service.register_video_provider(provider_id, HttpVideoProvider(httpx, endpoint, secret, model_id))
         return True
     except (ImportError, ValueError):
         return False

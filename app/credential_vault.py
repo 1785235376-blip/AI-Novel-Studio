@@ -4,6 +4,7 @@ from __future__ import annotations
 import ctypes
 import importlib
 import os
+import re
 import sys
 import uuid
 from ctypes import wintypes
@@ -12,7 +13,7 @@ from typing import Literal, Protocol
 _TARGET_PREFIX = "AI-Novel-Studio/provider/"
 _CRED_TYPE_GENERIC = 1
 _CRED_PERSIST_LOCAL_MACHINE = 2
-SUPPORTED_PROVIDERS = frozenset({"deepseek", "openai", "claude", "gemini", "ddshub", "custom"})
+SUPPORTED_PROVIDERS = frozenset({"deepseek", "openai", "claude", "gemini", "ddshub", "siliconflow", "runway", "kling", "minimax", "seedance", "custom"})
 VaultBackendName = Literal["windows", "keyring", "memory"]
 
 
@@ -175,7 +176,8 @@ class CredentialVault:
         return MemoryBackend()
 
     def _validate_provider(self, provider: str) -> None:
-        if provider not in SUPPORTED_PROVIDERS: raise ValueError("unsupported provider")
+        if not isinstance(provider, str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,64}', provider):
+            raise ValueError("unsupported provider")
 
     def _degrade_after_failure(self, exc: VaultUnavailableError) -> MemoryBackend:
         backend=self._fallback(exc.code)

@@ -93,3 +93,14 @@ def test_unavailable_vault_is_a_stable_blocker():
     assert result["status"] == "BLOCKED"
     assert result["checks"]["vault"]["status"] == "FAIL"
     assert result["blockers"] == ["VAULT_UNAVAILABLE"]
+
+
+def test_reachable_keyless_local_image_provider_counts_as_configured():
+    local_provider = SimpleNamespace(health_check=lambda: True)
+    result = build_release_readiness(
+        settings=settings(allow_fallback=False), credential_vault=Vault(persistent=True),
+        runtime=runtime(), image_registry=SimpleNamespace(_providers={"comfyui": local_provider}),
+        packaged_bootstrap=False,
+    )
+    assert result["checks"]["providers"]["image"] == {"registered": 1, "configured": 1}
+    assert result["status"] == "READY"

@@ -27,10 +27,21 @@ def _provider_check(runtime: Any, credential_vault: Any, image_registry: Any) ->
     text_configured = any(item.configured for item in text_descriptors)
     text_reachable = any(item.configured and item.available for item in text_descriptors)
 
-    registered_image_ids = set(getattr(image_registry, "_providers", {}).keys())
+    registered_images = getattr(image_registry, "_providers", {})
+    registered_image_ids = set(registered_images.keys())
+    def image_ready(provider_id: str) -> bool:
+        adapter = registered_images[provider_id]
+        probe = getattr(adapter, "health_check", None)
+        if callable(probe):
+            try:
+                return bool(probe())
+            except Exception:
+                return False
+        return provider_id == "deterministic" or has_credential(provider_id)
+
     configured_image_ids = {
         provider_id for provider_id in registered_image_ids
-        if provider_id == "deterministic" or has_credential(provider_id)
+        if image_ready(provider_id)
     }
     vision_configured = any(has_credential(provider_id) for provider_id in ("openai", "ddshub", "custom"))
     speech_configured = any(has_credential(provider_id) for provider_id in ("openai", "custom"))
