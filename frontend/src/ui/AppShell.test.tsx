@@ -14,7 +14,7 @@ describe("ModuleSwitcher", () => {
       root = createRoot(host);
     act(() => root.render(<ModuleSwitcher value="NOVEL" onChange={change} />));
     const tabs = [...host.querySelectorAll('[role="tab"]')];
-    expect(tabs).toHaveLength(7);
+    expect(tabs).toHaveLength(8);
     expect(tabs[0].getAttribute("aria-selected")).toBe("true");
     expect(
       tabs.filter((tab) => tab.getAttribute("tabindex") === "0"),
@@ -333,7 +333,7 @@ describe("AppShell command actions", () => {
     ].find((button) => button.textContent?.includes("Provider 控制中心"))!;
     expect(provider.textContent).toContain("控制中心");
     act(() => provider.click());
-    expect(change).toHaveBeenCalledWith("PLUGIN");
+    expect(change).toHaveBeenCalledWith("CONTROL");
     expect(host.querySelector(".command-palette")).toBeNull();
     act(() => root.unmount());
   });

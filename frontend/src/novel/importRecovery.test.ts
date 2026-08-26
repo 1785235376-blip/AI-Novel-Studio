@@ -8,10 +8,11 @@ describe('collaboration import recovery',()=>{
     const recovery:ImportRecovery={nextIndex:0};const create=vi.fn(async(title:string)=>({id:title,version:1}));let fail=true;
     const save=vi.fn(async()=>{if(fail){fail=false;throw new Error('network')}});const persist=vi.fn();
     await expect(importChaptersWithRecovery({plan,recovery,persist,create,save})).rejects.toThrow('network');
-    expect(recovery.pending?.chapter.id).toBe('第一章');expect(recovery.nextIndex).toBe(0);
-    await importChaptersWithRecovery({plan,recovery,persist,create,save});
+    const checkpoint=persist.mock.calls.at(-1)?.[0] as ImportRecovery;
+    expect(checkpoint.pending?.chapter.id).toBe('第一章');expect(checkpoint.nextIndex).toBe(0);
+    const completed=await importChaptersWithRecovery({plan,recovery:checkpoint,persist,create,save});
     expect(create).toHaveBeenCalledTimes(2);expect(create.mock.calls.map(call=>call[0])).toEqual(['第一章','第二章']);
-    expect(recovery).toEqual({nextIndex:2});
+    expect(completed).toEqual({nextIndex:2});expect(recovery).toEqual({nextIndex:0});
   });
 
   it('skips chapters completed before recovery',async()=>{

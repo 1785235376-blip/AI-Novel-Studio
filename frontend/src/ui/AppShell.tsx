@@ -244,7 +244,7 @@ export function AppShell({
       id: "providers",
       label: "打开 Provider 控制中心",
       hint: "控制中心",
-      action: () => onModuleChange("PLUGIN"),
+      action: () => onModuleChange("CONTROL"),
     },
   ].filter(
     (item) =>

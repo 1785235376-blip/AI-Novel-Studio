@@ -793,47 +793,6 @@ export default function App() {
     );
   const scope = s.scope;
   if (studioModule !== "NOVEL") return <ModuleWorkspaceRoutes module={studioModule} onModuleChange={setStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={{workspace:scope?.workspaceName || "本机作品", project:scope?.projectName || "当前小说", storyline:scope?.storylineName || "默认故事线", branch:scope?.branchName || "主线"}} />;
-  const moduleShell = (status: React.ReactNode, main: React.ReactNode) => (
-    <AppShell module={studioModule} onModuleChange={setStudioModule}
-      scope={{workspace: scope?.workspaceName || "本机作品", project: scope?.projectName || "当前小说", storyline: scope?.storylineName || "默认故事线", branch: scope?.branchName || "主线"}}
-      actor={s.actor?.displayName || "本机作者"} sidebar={<></>} main={main} inspector={<></>} status={status} />
-  );
-  if ((studioModule as string) === "IMAGE")
-    return <AppShell module={studioModule} onModuleChange={setStudioModule} scope={{workspace:scope?.workspaceName||"本机作品",project:scope?.projectName||"当前小说",storyline:scope?.storylineName||"默认故事线",branch:scope?.branchName||"主线"}} actor={s.actor?.displayName||"本机作者"} sidebar={<></>} main={<><MultimodalDirectorWorkspace mode="image" novelId={s.novelId}/><VisualContextPanel novelId={s.novelId}/><VisionAnalysisPanel novelId={s.novelId}/><ImageGenerationPanel novelId={s.novelId}/></>} inspector={<></>} status={<>图片工作区</>} />;
-  if ((studioModule as string) === "VIDEO")
-    return <AppShell module={studioModule} onModuleChange={setStudioModule} scope={{workspace:scope?.workspaceName||"本机作品",project:scope?.projectName||"当前小说",storyline:scope?.storylineName||"默认故事线",branch:scope?.branchName||"主线"}} actor={s.actor?.displayName||"本机作者"} sidebar={<></>} main={s.novelId?<><MultimodalDirectorWorkspace mode="video" novelId={s.novelId}/><ScreenplayPanel novelId={s.novelId}/></>:<p className="novel-help">请先打开小说项目，再进入视频工作区。</p>} inspector={<></>} status={<>视频工作区</>} />;
-  if ((studioModule as string) === "AUDIO")
-    return <AppShell module={studioModule} onModuleChange={setStudioModule} scope={{workspace:scope?.workspaceName||"本机作品",project:scope?.projectName||"当前小说",storyline:scope?.storylineName||"默认故事线",branch:scope?.branchName||"主线"}} actor={s.actor?.displayName||"本机作者"} sidebar={<></>} main={<><SpeechSynthesisPanel novelId={s.novelId}/><AudiobookManifestPanel novelId={s.novelId}/></>} inspector={<></>} status={<>声音工作区</>} />;
-  if ((studioModule as string) === "PLUGIN")
-    return <AppShell module={studioModule} onModuleChange={setStudioModule} scope={{workspace:scope?.workspaceName||"本机作品",project:scope?.projectName||"当前小说",storyline:scope?.storylineName||"默认故事线",branch:scope?.branchName||"主线"}} actor={s.actor?.displayName||"本机作者"} sidebar={<></>} main={<PluginManagerPanel/>} inspector={<></>} status={<>插件管理</>} />;
-  if ((studioModule as string) === "WORKFLOW")
-    return <WorkflowWorkspaceRoute module={studioModule} onModuleChange={setStudioModule} scope={{workspace:scope?.workspaceName||"本机作品",project:scope?.projectName||"当前小说",storyline:scope?.storylineName||"默认故事线",branch:scope?.branchName||"主线"}} actor={s.actor?.displayName||"本机作者"} novelId={s.novelId}/>;
-  if ((studioModule as string) === "ASSETS")
-    return <AssetWorkspaceRoute module={studioModule} onModuleChange={setStudioModule} scope={{workspace:scope?.workspaceName||"本机作品",project:scope?.projectName||"当前小说",storyline:scope?.storylineName||"默认故事线",branch:scope?.branchName||"主线"}} actor={s.actor?.displayName||"本机作者"} novelId={s.novelId}/>;
-  if (studioModule !== "NOVEL")
-    return (
-      <DesignSystemFixture
-        initialModule={studioModule}
-        onModuleChange={setStudioModule}
-        runtimeScope={
-          scope
-            ? {
-                workspace: scope.workspaceName || "当前工作区",
-                project: scope.projectName || "当前小说",
-                storyline: scope.storylineName || "默认故事线",
-                branch: scope.branchName || "主分支",
-              }
-            : {
-                workspace: "本机作品",
-                project: "当前小说",
-                storyline: "默认故事线",
-                branch: "主线",
-              }
-        }
-        runtimeActor={s.actor?.displayName || "本机作者"}
-        runtimeStatus={<>保存：{saveStateLabel(saveState)}</>}
-      />
-    );
   const localNovelTitle =
     novels.data?.find((n) => n.id === s.novelId)?.title || "当前小说";
   const shellScope = scope

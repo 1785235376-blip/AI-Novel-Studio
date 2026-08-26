@@ -10,13 +10,14 @@ export async function importChaptersWithRecovery(options:{
   save:(chapter:{id:string;version:number},content:string)=>Promise<void>;
   report?:(message:string)=>void;
 }){
-  const {plan,recovery,persist,create,save,report}=options;
+  const {plan,persist,create,save,report}=options;
+  let recovery:ImportRecovery={...options.recovery,pending:options.recovery.pending?{...options.recovery.pending,chapter:{...options.recovery.pending.chapter}}:undefined};
   for(let index=recovery.nextIndex;index<plan.chapters.length;index++){
     const item=plan.chapters[index];report?.(`正在导入 ${index+1}/${plan.chapters.length}：${item.title}`);
     let chapter=recovery.pending?.index===index?recovery.pending.chapter:undefined;
-    if(!chapter){chapter=await create(item.title);recovery.pending={index,chapter};persist(recovery)}
+    if(!chapter){chapter=await create(item.title);recovery={...recovery,pending:{index,chapter}};persist(recovery)}
     if(item.content)await save(chapter,item.content);
-    recovery.nextIndex=index+1;delete recovery.pending;persist(recovery);
+    recovery={nextIndex:index+1};persist(recovery);
   }
   return recovery;
 }

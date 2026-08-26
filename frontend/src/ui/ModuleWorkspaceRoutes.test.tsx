@@ -11,7 +11,7 @@ afterEach(()=>host?.remove());
 
 describe('ModuleWorkspaceRoutes',()=>{
   it('keeps the registered modules and renders the video workspace shell',()=>{
-    expect(STUDIO_MODULES.map((item)=>item.id)).toEqual(['NOVEL','IMAGE','VIDEO','ASSETS','AUDIO','PLUGIN','WORKFLOW']);
+    expect(STUDIO_MODULES.map((item)=>item.id)).toEqual(['NOVEL','IMAGE','VIDEO','ASSETS','AUDIO','CONTROL','PLUGIN','WORKFLOW']);
     host=document.createElement('div');document.body.append(host);const root=createRoot(host);
     act(()=>root.render(<ModuleWorkspaceRoutes module="VIDEO" onModuleChange={vi.fn()} scope={{workspace:'w',project:'p',storyline:'s',branch:'b'}} actor="author"/>));
     expect(host.querySelector('.app-shell')?.getAttribute('data-module')).toBe('VIDEO');
