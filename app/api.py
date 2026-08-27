@@ -627,6 +627,8 @@ def agent_chat(body:AgentChatIn):
     request=TextGenerationRequest(provider_id=provider_id,model_id=model_id,prompt=prompt,
         system_instruction="你是 AI-Novel-Studio 的只读主控助手。只能回答问题、解释软件能力和提出建议，不得声称已经执行任何写入、删除、发布或外部操作。",
         parameters=TextGenerationParameters(temperature=0.2,max_output_tokens=1200),metadata={"surface":"control_center","mode":"read_only"})
+    if not runtime.packaged_author_route_ready(provider_id):
+        raise HTTPException(503,{"code":"TEXT_PROVIDER_NOT_CONFIGURED","message":"未配置可用文本模型，未调用 DeepSeek。","retryable":False})
     try:
         result=runtime.generation_runtime.text_node.execute(TextModelNodeInput(request))
     except ModelRuntimeError as exc:

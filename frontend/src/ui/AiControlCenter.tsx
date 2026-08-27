@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AlertTriangle, CheckCircle2, KeyRound, RefreshCw, ShieldCheck, TestTube2, Trash2, XCircle } from 'lucide-react';
-import { api, type CredentialStatus, type ReleaseReadiness } from '../api';
+import { api, ApiError, type CredentialStatus, type ReleaseReadiness } from '../api';
 import { useStudio } from '../store';
 import { Badge, Button, Panel } from './primitives';
 import './AiControlCenter.css';
@@ -47,7 +47,7 @@ export function AiControlCenter() {
   const save = async (id: string) => { if (!keys[id]) return; const status=await api.saveCredential(id, keys[id]); setKeys(v => ({ ...v, [id]: '' })); setCredentialStatuses(v => ({ ...v, [id]: status })); setMessage(status.persistent?`${id} 凭据已持久保存`:`${id} 凭据仅保存于当前进程`); };
   const test = async (id: string) => { const result = await api.testCredential(id); setStates(v => ({ ...v, [id]: result.reachable ? '可连接' : '不可达' })); };
   const remove = async (id: string) => { const status=await api.deleteCredential(id); setCredentialStatuses(v => ({ ...v, [id]: status })); setStates(v => ({ ...v, [id]: '凭据已删除' })); };
-  const ask = async () => { if (!question.trim() || !selection) return; setAsking(true); setAnswer(''); try { const result=await api.agentChat({message:question,provider_id:selection.providerId,model_id:selection.modelId}); setAnswer(result.message); } catch { setAnswer('主控模型当前不可用，请检查模型与凭据配置。'); } finally { setAsking(false); } };
+  const ask = async () => { if (!question.trim() || !selection) return; setAsking(true); setAnswer(''); try { const result=await api.agentChat({message:question,provider_id:selection.providerId,model_id:selection.modelId}); setAnswer(result.message); } catch (error) { setAnswer(error instanceof ApiError && error.problem.code === 'TEXT_PROVIDER_NOT_CONFIGURED' ? '未配置可用文本模型，未调用 DeepSeek，不能当作主控问答完成。' : '主控模型当前不可用，请检查模型与凭据配置。'); } finally { setAsking(false); } };
   const savePreference = async () => { const content=preferenceDraft.trim(); if (!content) return; const item=await api.saveUserPreference(`preference-${Date.now()}`,content); setPreferences(v=>({...v,items:[...v.items,item]})); setPreferenceDraft(''); };
   const startHarness = async () => { try { setHarnessProcess(await api.startHarness()); } catch { setMessage('Harness 未通过授权或就绪检查'); } };
   const stopHarness = async () => { try { setHarnessProcess(await api.stopHarness()); } catch { setMessage('Harness 停止失败'); } };

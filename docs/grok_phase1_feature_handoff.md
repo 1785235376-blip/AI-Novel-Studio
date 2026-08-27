@@ -48,6 +48,8 @@
 - `ENABLE_PACKAGED_RUNTIME` 时不得把 `MOCK_PROVIDER` 伪装成 DeepSeek。
 - 未配置文本模型：写作任务 `FAILED` + `TEXT_PROVIDER_NOT_CONFIGURED`，不能 accept，不能出现 mock 成稿「海风裹着雨水」。
 - 开发态 `MOCK_PROVIDER=true` 且非 packaged 时，现有测试/验收 mock 路径保持可用。
+- 打包运行时主控 `/api/agent/chat` 同样 fail-closed：未配置文本模型返回 `TEXT_PROVIDER_NOT_CONFIGURED`，不调用 mock。
+- Agent 活动中心筛选项包含 `VALIDATED`，不以成功态展示契约校验。
 
 ### 章节连续性扫描（本轮新增）
 
