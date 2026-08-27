@@ -94,6 +94,7 @@ export const api={
  adminWorkspaceNavigation:(workspaceId:string)=>call<WorkspaceNavigationContext>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/navigation`),
  adminProjects:(workspaceId:string)=>call<AdminProject[]>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/projects`),
  adminCreateProject:(workspaceId:string,title:string,genre='')=>call<AdminProject>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/projects`,{method:'POST',body:JSON.stringify({title,genre})}),
+ adminDeleteProject:(workspaceId:string,projectId:string)=>call<void>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/projects/${encodeURIComponent(projectId)}`,{method:'DELETE'}),
  adminStorylines:(workspaceId:string,projectId:string)=>call<AdminStoryline[]>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/projects/${encodeURIComponent(projectId)}/storylines`),
  adminCreateStoryline:(workspaceId:string,projectId:string,name:string)=>call<AdminStoryline>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/projects/${encodeURIComponent(projectId)}/storylines`,{method:'POST',body:JSON.stringify({name})}),
  adminBranches:(workspaceId:string,projectId:string,storylineId:string)=>call<AdminBranch[]>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/projects/${encodeURIComponent(projectId)}/storylines/${encodeURIComponent(storylineId)}/branches`),

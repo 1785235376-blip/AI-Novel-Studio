@@ -21,7 +21,7 @@ class Novels:
     def get(self, value): return {"id": value}
 
 
-def make_client(tmp_path, workspace_mutations=None):
+def make_client(tmp_path, workspace_mutations=None, path_mutations=None):
     scopes=CollaborationScopeService(FileScopeRepository(tmp_path),Novels())
     scopes.create_workspace(Workspace("w","Workspace"))
     identity=IdentityService(FileIdentityRepository(tmp_path),scopes)
@@ -34,7 +34,7 @@ def make_client(tmp_path, workspace_mutations=None):
     sessions=TrustedSessionResolver()
     for user in ("admin","lead","member"):
         sessions.register(user,SessionContext(f"s:{user}",f"c:{user}",user,"w"))
-    service=CollaborationAdminService(sessions=sessions,identity=identity,authorization=authorization,scopes=scopes,workspace_mutations=workspace_mutations)
+    service=CollaborationAdminService(sessions=sessions,identity=identity,authorization=authorization,scopes=scopes,workspace_mutations=workspace_mutations,path_mutations=path_mutations)
     app=FastAPI();app.state.scopes=scopes;app.include_router(create_collaboration_admin_router(service))
     return TestClient(app),authorization
 
@@ -48,6 +48,12 @@ class WorkspaceMutations:
         self.calls.append(("create",workspace_id,name,actor_id));return {"id":workspace_id,"name":name}
     def rename_workspace(self,workspace_id,name,actor_id):
         self.calls.append(("rename",workspace_id,name,actor_id));return {"id":workspace_id,"name":name}
+
+
+class ProjectMutations:
+    def __init__(self): self.calls=[]
+    def delete_project(self,workspace_id,project_id,actor):
+        self.calls.append((workspace_id,project_id,actor.actor_id))
 
 
 def test_trusted_actor_admin_boundary_and_workspace_discovery(tmp_path):
@@ -87,6 +93,25 @@ def test_empty_workspace_navigation_is_explicitly_empty(tmp_path):
     response=api.get("/api/collaboration/admin/workspaces/w/navigation",headers=h("admin"))
     assert response.status_code==200
     assert response.json()=={"workspace_id":"w","eligible_paths":[],"default_path":None}
+
+
+def test_project_delete_is_scoped_authorized_and_requires_session(tmp_path):
+    mutations=ProjectMutations();api,_=make_client(tmp_path,path_mutations=mutations)
+    api.app.state.scopes.link_project("w","project")
+    assert api.delete("/api/collaboration/admin/workspaces/w/projects/project").status_code==401
+    assert api.delete("/api/collaboration/admin/workspaces/w/projects/project",headers=h("member")).status_code==403
+    deleted=api.delete("/api/collaboration/admin/workspaces/w/projects/project",headers=h("admin"))
+    assert deleted.status_code==204
+    assert mutations.calls==[("w","project","admin")]
+
+
+def test_project_delete_rejects_workspace_path_mismatch(tmp_path):
+    mutations=ProjectMutations();api,_=make_client(tmp_path,path_mutations=mutations)
+    api.app.state.scopes.link_project("w","project")
+    response=api.delete("/api/collaboration/admin/workspaces/w/projects/other",headers=h("admin"))
+    assert response.status_code==404
+    assert response.json()["detail"]["code"]=="PROJECT_NOT_FOUND"
+    assert mutations.calls==[]
 
 
 def test_domain_lead_is_domain_scoped_and_cannot_grant_admin(tmp_path):

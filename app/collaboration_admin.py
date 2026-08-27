@@ -122,6 +122,20 @@ def create_collaboration_admin_router(
         if service.path_mutations is None: raise _error(501,"PATH_MUTATION_NOT_SUPPORTED")
         return service.path_mutations.create_project(w,body.title,body.genre,actor)
 
+    @router.delete("/workspaces/{w}/projects/{p}", status_code=204)
+    def delete_project(w: str, p: str, x_session_token: str | None = Header(None)):
+        actor = service.actor(x_session_token, w)
+        if service.scopes.repository.project_workspace(p) != w:
+            raise _error(404, "PROJECT_NOT_FOUND")
+        scope = AuthorizationScope(ScopeKind.PROJECT, w, p)
+        service.require_domain_manager(actor, ModalityDomain.NOVEL, scope)
+        if service.path_mutations is None:
+            raise _error(501, "PATH_MUTATION_NOT_SUPPORTED")
+        try:
+            service.path_mutations.delete_project(w, p, actor)
+        except (FileNotFoundError, KeyError) as exc:
+            raise _error(404, "PROJECT_NOT_FOUND") from exc
+
     @router.get("/workspaces/{w}/projects/{p}/storylines", response_model=list[StorylineAdminView])
     def storylines(w:str,p:str,x_session_token:str|None=Header(None)):
         service.actor(x_session_token,w)

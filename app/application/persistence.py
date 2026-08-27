@@ -224,6 +224,46 @@ class AtomicPathMutationPort:
             for p,v in before.items(): p.unlink(missing_ok=True) if v is None else atomic_write(p,v.decode("utf-8"))
             raise
 
+    def delete_project(self, workspace_id, project_id, actor):
+        from ..authorization import AuthorizationScope, ScopeKind
+        if self.scopes.project_workspace(project_id) != workspace_id:
+            raise KeyError(project_id)
+        scope = AuthorizationScope(ScopeKind.PROJECT, workspace_id, project_id)
+        event = self._event(actor, "PROJECT_DELETED", "Project", project_id, scope)
+        if self.postgres:
+            from ..repositories.postgres.models import NovelModel
+            with self.novels.database.session() as session:
+                novel = session.scalar(select(NovelModel).where(NovelModel.slug == project_id))
+                if novel is None:
+                    raise KeyError(project_id)
+                session.execute(text("DELETE FROM storyline_branches WHERE payload->>'project_id'=:p"), {"p": project_id})
+                session.execute(text("DELETE FROM storylines WHERE payload->>'project_id'=:p"), {"p": project_id})
+                session.execute(text("DELETE FROM project_workspaces WHERE project_id=:p AND workspace_id=:w"), {"p": project_id, "w": workspace_id})
+                session.delete(novel)
+                session.execute(text("INSERT INTO authorization_audit_events(id,payload) VALUES (:id,CAST(:v AS jsonb))"), {"id": event["id"], "v": json.dumps(event)})
+            return
+        novel_root = self.novels.backend.novels / project_id
+        if not novel_root.exists():
+            raise FileNotFoundError(project_id)
+        paths = [self.scopes.path, self.authorization.path]
+        before = {path: (path.read_bytes() if path.exists() else None) for path in paths}
+        backup = novel_root.with_name(f".{novel_root.name}.delete-backup-{uuid4()}")
+        try:
+            novel_root.rename(backup)
+            data = self.scopes._read()
+            data["project_workspaces"] = [row for row in data["project_workspaces"] if row["id"] != project_id]
+            data["storylines"] = [row for row in data["storylines"] if row.get("project_id") != project_id]
+            data["branches"] = [row for row in data["branches"] if row.get("project_id") != project_id]
+            self.scopes._write(data)
+            self.audit.append(event)
+            shutil.rmtree(backup)
+        except Exception:
+            if backup.exists() and not novel_root.exists():
+                backup.rename(novel_root)
+            for path, value in before.items():
+                path.unlink(missing_ok=True) if value is None else atomic_write(path, value.decode("utf-8"))
+            raise
+
     def _create_scope_item(self, kind, item, actor, scope):
         action="STORYLINE_CREATED" if kind=="storylines" else "BRANCH_CREATED";target=action.split("_")[0].title();event=self._event(actor,action,target,item["id"],scope)
         if self.postgres:

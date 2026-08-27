@@ -63,12 +63,17 @@ export function EntryExperience({
     if(!workspace||!deleteTarget)return;
     setLoading(true);setError("");
     try{
-      await api.deleteNovel(deleteTarget.project_id);
+      await api.adminDeleteProject(deleteTarget.workspace_id,deleteTarget.project_id);
       const navigation=await api.adminWorkspaceNavigation(workspace.id);
       setPaths(navigation.eligible_paths);setDeleteTarget(undefined);
     }catch(reason){
       const view=apiErrorView(reason,"删除小说失败，请稍后重试。");
-      setError(view.code?`${view.message}（${view.code}）`:view.message);
+      const friendly=view.code==='PROJECT_NOT_FOUND'
+        ?'这本小说已被删除，正在刷新列表。'
+        :view.code==='ADMIN_REQUIRED'||view.code==='DOMAIN_MANAGER_REQUIRED'
+          ?'你没有删除这本小说的权限。'
+          :view.message;
+      setError(friendly===view.code?friendly:view.code&&friendly===view.message?`${friendly}（${view.code}）`:friendly);
     }finally{setLoading(false)}
   }
 
