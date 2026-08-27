@@ -21,7 +21,7 @@ from .repositories import VersionConflict
 from .config import settings
 from .collaboration import RevisionConflict
 from .dependencies import novel_service,chapter_service,canon_service,context_service,agent_context_service,agent_job_service,adaptation_service,screenplay_service,asset_task_worker,asset_library_service,export_job_service,import_review_service,continuity_finding_service,narrative_state_service,narrative_finding_service,narrative_proposal_service,collaboration_scope_service,collaboration_application_service,collaboration_admin_service,authorization_service,trusted_session_resolver,membership_authorization_service,audit_service,refresh_asset_provider
-from .dependencies import memory_service, v1_capability_service, user_preference_service, harness_process_service
+from .dependencies import lore_service, memory_service, v1_capability_service, user_preference_service, harness_process_service
 from .services.harness_context_adapter import harness_context_adapter
 from .services.harness_access_audit_service import harness_access_audit_service
 from .authorization import AuthorizationScope,ScopeKind,ModalityDomain,DomainRole,DomainRoleAssignment
@@ -151,6 +151,7 @@ class AudioGenerateIn(BaseModel):
     source_audio_uri:str|None=None
     source_video_uri:str|None=None
     duration_seconds:float|None=Field(default=None,gt=0,le=600)
+    novel_id:str|None=None
     parameters:dict[str,object]=Field(default_factory=dict)
 class AudiobookJobIn(BaseModel):
     provider_id:str="auto"
@@ -1762,7 +1763,8 @@ def list_audio_providers():
     from .audio_providers import provider_catalog
     return {'domain':'AUDIO','routing_policy':'LOCAL_FIRST','items':provider_catalog()}
 @router.post("/audio/generate",status_code=202)
-def generate_audio(body:AudioGenerateIn):
+def generate_audio(body:AudioGenerateIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write")
     from .audio_providers import AudioGenerationRequest,resolve_provider
     from .dependencies import credential_vault
     try:

@@ -182,6 +182,15 @@ export function AppShell({
     return () => window.removeEventListener("keydown", close);
   }, [inspectorOpen]);
   useEffect(() => {
+    const compact = window.matchMedia?.("(max-width: 1100px)");
+    if (!compact) return;
+    const followViewport = (event: MediaQueryListEvent) => {
+      if (event.matches) setInspectorOpen(false);
+    };
+    compact.addEventListener?.("change", followViewport);
+    return () => compact.removeEventListener?.("change", followViewport);
+  }, []);
+  useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();

@@ -7,6 +7,7 @@ import {VisualContextPanel} from '../novel/VisualContextPanel';
 import {ScreenplayPanel} from '../novel/ScreenplayPanel';
 import {SpeechSynthesisPanel} from '../novel/SpeechSynthesisPanel';
 import {AudiobookManifestPanel} from '../novel/AudiobookManifestPanel';
+import {AudioGenerationPanel} from '../novel/AudioGenerationPanel';
 import {PluginManagerPanel} from '../novel/PluginManagerPanel';
 import {WorkflowPanel} from '../novel/WorkflowPanel';
 import {AgentQueuePanel} from '../novel/AgentQueuePanel';
@@ -56,7 +57,7 @@ export function ModuleWorkspaceRoutes({module,onModuleChange,scope,actor,novelId
   switch(module){
     case 'IMAGE': main=novelId?<><MultimodalDirectorWorkspace mode="image" novelId={novelId}/><VisualContextPanel novelId={novelId}/><VisionAnalysisPanel novelId={novelId}/><ImageGenerationPanel novelId={novelId} onInspect={setImageInspection}/></>:<EmptyState title="请先打开小说项目" detail="图片画布、参考图约束和生成任务需要绑定到一个小说项目。"/>; status='图片工作区'; break;
     case 'VIDEO': main=novelId?<><MultimodalDirectorWorkspace mode="video" novelId={novelId}/><ScreenplayPanel novelId={novelId} onInspect={setVideoInspection}/></>:<EmptyState title="请先打开小说项目" detail="视频导演台、剧本与镜头任务需要绑定到一个小说项目。"/>; status='视频工作区'; break;
-    case 'AUDIO': main=novelId?<><SpeechSynthesisPanel novelId={novelId} onInspect={setAudioInspection}/><AudiobookManifestPanel novelId={novelId} onInspect={setAudioInspection}/></>:<EmptyState title="请先打开小说项目" detail="配音与有声书任务需要绑定到一个小说项目。"/>; status='声音工作区'; break;
+    case 'AUDIO': main=novelId?<><AudioGenerationPanel novelId={novelId}/><SpeechSynthesisPanel novelId={novelId} onInspect={setAudioInspection}/><AudiobookManifestPanel novelId={novelId} onInspect={setAudioInspection}/></>:<EmptyState title="请先打开小说项目" detail="音效、音乐、配音与有声书任务需要绑定到一个小说项目。"/>; status='声音工作区'; break;
     case 'CONTROL': main=<ControlWorkspace/>; status='AI 主控'; break;
     case 'PLUGIN': main=<PluginManagerPanel onInspect={setPluginInspection}/>; status='插件管理'; break;
     case 'WORKFLOW': main=novelId?<><WorkflowPanel novelId={novelId} onInspect={setWorkflowInspection}/><AgentQueuePanel novelId={novelId} onInspect={setWorkflowInspection}/></>:<EmptyState title="请先打开小说项目" detail="工作流定义、运行记录与 Agent 队列需要绑定到一个小说项目。"/>; status='工作流'; break;

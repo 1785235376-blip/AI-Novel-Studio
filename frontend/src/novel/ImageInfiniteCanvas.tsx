@@ -20,6 +20,7 @@ import type {
   CanvasViewport,
   RefNode,
 } from "./useMultimodalWorkspacePersistence";
+import {publishImageCanvasSelection} from './imageCanvasEvents';
 
 type Props = {
   nodes: RefNode[];
@@ -136,6 +137,10 @@ export function ImageInfiniteCanvas({
     const nodeIds = new Set(nodes.map((node) => node.id));
     setSelected((ids) => ids.filter((id) => nodeIds.has(id)));
   }, [nodes]);
+  useEffect(()=>{
+    const images=selected.map(id=>nodes.find(node=>node.id===id)).filter(Boolean).map(node=>safeImagePreviewUri(node!.previewUri||node!.uri)).filter((value):value is string=>Boolean(value)&&!/^blob:/i.test(value!));
+    publishImageCanvasSelection(images.slice(0,5));
+  },[nodes,selected]);
   const patchSelected = (patch: Partial<RefNode>) =>
     onChange((items) =>
       items.map((item) =>

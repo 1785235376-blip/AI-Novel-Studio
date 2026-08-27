@@ -7,6 +7,7 @@ import {
 } from "../ui/taskSummary";
 import type { ImageInspection } from "./ImageTaskInspector";
 import { addImageToCanvas } from "./imageCanvasEvents";
+import {IMAGE_CANVAS_SELECTION_EVENT} from './imageCanvasEvents';
 import { safeImagePreviewUri } from "./ImageInfiniteCanvas";
 
 type ImageProvider = {
@@ -41,6 +42,7 @@ export function ImageGenerationPanel({
 }) {
   const [prompt, setPrompt] = useState("生成适合小说设定的角色或场景概念图。");
   const [referenceInput, setReferenceInput] = useState("");
+  const [canvasReferences,setCanvasReferences]=useState<string[]>([]);
   const [uri, setUri] = useState(""),
     [history, setHistory] = useState<any[]>([]),
     [loading, setLoading] = useState(false),
@@ -85,6 +87,7 @@ export function ImageGenerationPanel({
   useEffect(() => {
     publishTaskSummary("image", task ? [task] : []);
   }, [task]);
+  useEffect(()=>{const listener=(event:Event)=>{const images=(event as CustomEvent<{images?:string[]}>).detail?.images;setCanvasReferences(Array.isArray(images)?images:[])};window.addEventListener(IMAGE_CANVAS_SELECTION_EVENT,listener);return()=>window.removeEventListener(IMAGE_CANVAS_SELECTION_EVENT,listener)},[]);
   useEffect(() => {
     onInspect?.(
       task
@@ -179,6 +182,14 @@ export function ImageGenerationPanel({
   const previewUri = safeImagePreviewUri(uri);
   const references = referenceInput.split(/\r?\n/).map((value) => value.trim()).filter(Boolean);
   const referencesValid = references.length <= 5 && references.every((value) => /^https?:\/\//i.test(value) || /^data:image\//i.test(value));
+  useEffect(() => {
+    if (!references.length || providerId === "ddshub") return;
+    const ddshub = providers.find((item) => item.provider_id === "ddshub" && item.configured && item.registered && item.reachable !== false);
+    if (ddshub) {
+      setProviderId(ddshub.provider_id);
+      setModelId(ddshub.default_model);
+    }
+  }, [references.length, providerId, providers]);
   return (
     <Panel title="图片生成">
       <label>
@@ -241,6 +252,7 @@ export function ImageGenerationPanel({
           />
         </label>
         <p className="novel-help">填写后将调用 DDSHub 图片编辑接口；参考图用于角色、构图、服装或场景一致性约束。</p>
+        {canvasReferences.length>0&&<Button variant="ghost" onClick={()=>setReferenceInput(canvasReferences.join('\n'))}>使用画布所选（{canvasReferences.length}）</Button>}
         {references.length > 0 && !referencesValid && <p role="alert">仅支持 1–5 个 http(s) 或 data:image 地址。</p>}
       </details>
       <Button

@@ -89,6 +89,24 @@ describe("AppShell inspector recovery", () => {
     expect(restore.getAttribute("aria-label")).toBe("收起侧栏");
     act(() => root.unmount());
   });
+  it("collapses an open Inspector when the desktop window becomes compact", () => {
+    host = document.createElement("div");
+    document.body.append(host);
+    let viewportListener: ((event: MediaQueryListEvent) => void) | undefined;
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = vi.fn().mockReturnValue({
+      matches: false,
+      addEventListener: (_event: string, listener: (event: MediaQueryListEvent) => void) => { viewportListener = listener; },
+      removeEventListener: vi.fn(),
+    });
+    const root = createRoot(host);
+    act(() => root.render(<AppShell module="NOVEL" onModuleChange={vi.fn()} scope={{workspace:"w",project:"p",storyline:"s",branch:"b"}} actor="author" sidebar={<></>} main={<article>编辑器</article>} inspector={<section>AI 工作区</section>} status="已保存"/>));
+    expect(host.querySelector(".app-shell")?.classList.contains("is-inspector-collapsed")).toBe(false);
+    act(() => viewportListener?.({ matches: true } as MediaQueryListEvent));
+    expect(host.querySelector(".app-shell")?.classList.contains("is-inspector-collapsed")).toBe(true);
+    act(() => root.unmount());
+    window.matchMedia = originalMatchMedia;
+  });
 });
 describe("AppShell inspector sizing", () => {
   it("persists a bounded width after pointer resize", () => {

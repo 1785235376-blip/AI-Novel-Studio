@@ -13,8 +13,12 @@ export type ImageCanvasAddRequest = {
 };
 
 export const IMAGE_CANVAS_ADD_EVENT = "ai-novel-studio:image-canvas-add";
+export const IMAGE_CANVAS_SELECTION_EVENT = "ai-novel-studio:image-canvas-selection";
 export function addImageToCanvas(detail: ImageCanvasAddRequest) {
   window.dispatchEvent(
     new CustomEvent<ImageCanvasAddRequest>(IMAGE_CANVAS_ADD_EVENT, { detail }),
   );
+}
+export function publishImageCanvasSelection(images: string[]) {
+  window.dispatchEvent(new CustomEvent(IMAGE_CANVAS_SELECTION_EVENT,{detail:{images}}));
 }

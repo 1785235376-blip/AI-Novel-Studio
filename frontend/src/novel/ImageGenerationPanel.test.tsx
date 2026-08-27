@@ -9,7 +9,7 @@ import {
 import { ImageGenerationPanel } from "./ImageGenerationPanel";
 import { api } from "../api";
 import { vi, it, expect, afterEach } from "vitest";
-import { IMAGE_CANVAS_ADD_EVENT } from "./imageCanvasEvents";
+import { IMAGE_CANVAS_ADD_EVENT,IMAGE_CANVAS_SELECTION_EVENT } from "./imageCanvasEvents";
 
 afterEach(() => {
   cleanup();
@@ -164,4 +164,26 @@ it("uses DDSHub image edits when reference images are supplied", async () => {
   await waitFor(()=>expect(edit).toHaveBeenCalledWith(expect.objectContaining({provider_id:"ddshub",images:["https://example.test/a.png","https://example.test/b.png"]})));
   expect(generate).not.toHaveBeenCalled();
   expect(await screen.findByAltText("生成结果")).toBeTruthy();
+});
+
+it("switches from a local-first default to DDSHub when references are entered", async () => {
+  vi.spyOn(api, "imageGenerations").mockResolvedValue({ items: [] });
+  vi.spyOn(api, "assetProviders").mockResolvedValue({items:[
+    {provider_id:"local-comfyui",default_model:"flux",configured:true,registered:true,local:true},
+    {provider_id:"ddshub",default_model:"gpt-image-2",configured:true,registered:true},
+  ]});
+  render(<ImageGenerationPanel novelId="n1"/>);
+  fireEvent.click(await screen.findByText("多参考图融合"));
+  fireEvent.change(screen.getByLabelText("多参考图地址"),{target:{value:"https://example.test/reference.png"}});
+  await waitFor(()=>expect((screen.getByLabelText("图片 Provider") as HTMLSelectElement).value).toBe("ddshub"));
+  expect((screen.getByRole("button",{name:"融合参考图"}) as HTMLButtonElement).disabled).toBe(false);
+});
+
+it('can reuse selected infinite-canvas images as references',async()=>{
+  vi.spyOn(api,'imageGenerations').mockResolvedValue({items:[]});vi.spyOn(api,'assetProviders').mockResolvedValue({items:[{provider_id:'ddshub',default_model:'gpt-image-2',configured:true,registered:true}]});
+  render(<ImageGenerationPanel novelId="n1"/>);fireEvent.click(await screen.findByText('多参考图融合'));
+  window.dispatchEvent(new CustomEvent(IMAGE_CANVAS_SELECTION_EVENT,{detail:{images:['https://example.test/a.png','data:image/png;base64,YQ==']}}));
+  fireEvent.click(await screen.findByRole('button',{name:'使用画布所选（2）'}));
+  expect((screen.getByLabelText('多参考图地址') as HTMLTextAreaElement).value).toContain('https://example.test/a.png');
+  expect(screen.getByRole('button',{name:'融合参考图'})).toBeTruthy();
 });

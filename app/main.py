@@ -181,7 +181,7 @@ async def collaboration_fail_closed(request,call_next):
             re.fullmatch(r"/api/assets/[^/]+(?:/download)?",normalized_path) is not None and method in {"GET","DELETE"} or
             normalized_path=="/api/asset-providers" and method=="GET" or
             re.fullmatch(r"/api/asset-providers/[^/]+",normalized_path) is not None and method in {"PUT","DELETE"} or
-            normalized_path in {"/api/images/generate","/api/images/edits","/api/vision/analyze","/api/speech/synthesize"} and method=="POST" or
+            normalized_path in {"/api/images/generate","/api/images/edits","/api/audio/generate","/api/vision/analyze","/api/speech/synthesize"} and method=="POST" or
             re.fullmatch(r"/api/novels/[^/]+/(?:image-generations|speech-generations)(?:/import)?",normalized_path) is not None and method in {"GET","POST"} or
             re.fullmatch(r"/api/novels/[^/]+/audio-production/settings",normalized_path) is not None and method in {"GET","PUT"} or
             re.fullmatch(r"/api/novels/[^/]+/audiobook/(?:manifest|mix-plan|jobs)",normalized_path) is not None and method=="GET" or
