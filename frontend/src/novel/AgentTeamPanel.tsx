@@ -65,6 +65,7 @@ function AgentJobHistoryLegacy({
               {[
                 "QUEUED",
                 "WORKING",
+                "VALIDATED",
                 "COMPLETED",
                 "FAILED",
                 "CANCELLED",
@@ -186,6 +187,7 @@ export function AgentJobHistory({ novelId }: { novelId?: string }) {
               {[
                 "QUEUED",
                 "WORKING",
+                "VALIDATED",
                 "COMPLETED",
                 "FAILED",
                 "CANCELLED",
@@ -354,7 +356,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
   useEffect(() => {
     if (
       !job?.id ||
-      ["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED"].includes(
+      ["COMPLETED", "VALIDATED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED"].includes(
         job.status,
       )
     )
@@ -392,7 +394,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
     );
   const busy =
       job &&
-      !["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED"].includes(
+      !["COMPLETED", "VALIDATED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED"].includes(
         job.status,
       ),
     selected = query.data.agents.find((item) => item.id === agentId);
@@ -479,6 +481,11 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
               </Button>
             )}
           </div>
+          {job?.status === "VALIDATED" && (
+            <p className="novel-help" role="status">
+              状态 VALIDATED · 契约校验，未调用模型。空结果不是创作完成，因此没有审核或应用到正文入口。
+            </p>
+          )}
           {job?.error && (
             <p className="novel-error" role="alert">
               {job.error}
@@ -486,7 +493,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
           )}
         </section>
       </Panel>
-      {job?.status === "COMPLETED" && (
+      {job?.status === "COMPLETED" && job?.execution_mode !== "deterministic" && (
         <AgentResultReview
           job={job as AgentReviewJob}
           reviewing={review.isPending}

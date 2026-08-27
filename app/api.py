@@ -107,6 +107,29 @@ def normalize_world_rule_payload(payload: dict) -> dict:
     else: payload.pop("forbidden_terms", None)
     return payload
 
+def world_rule_violations(project_id: str, haystack: str, rules: list[dict]) -> list[dict]:
+    serialized = (haystack or "").casefold()
+    findings = []
+    for rule in rules:
+        payload = rule.get("payload") or rule
+        terms = payload.get("forbidden_terms") or payload.get("forbidden") or []
+        if isinstance(terms, str):
+            terms = [terms]
+        hits = [str(term) for term in terms if str(term) and str(term).casefold() in serialized]
+        if hits:
+            findings.append({
+                "id": f"WORLD_RULE:{rule.get('id', 'unknown')}",
+                "project_id": project_id,
+                "finding_type": "WORLD_RULE_VIOLATION",
+                "severity": "HIGH",
+                "description": f"内容触发世界规则：{payload.get('statement', '未命名规则')}",
+                "rule_id": rule.get("id"),
+                "subject_type": "WORLD_RULE",
+                "subject_id": rule.get("id"),
+                "evidence_ids": hits,
+            })
+    return findings
+
 def summarize_foreshadowing(rows: list[dict], chapter: int) -> dict:
     pending = [row for row in rows if row.get("status") in {"OPEN", "PLANTED"}]
     overdue = [row for row in pending if row.get("target_chapter") and int(row["target_chapter"]) <= chapter]
@@ -242,6 +265,7 @@ class TransitionIn(BaseModel): type:str="CUT"; duration_seconds:int=0; note:str=
 class AssetRequirementIn(BaseModel): kind:str="IMAGE"; description:str=""; status:str="PENDING"; notes:str=""
 class AssetTaskIn(BaseModel): status:str="PENDING"; provider_id:str|None=None; model_id:str|None=None; error:str|None=None
 class ContinuityCheckIn(BaseModel): events:list[dict]=[]; locations:list[dict]=[]; knowledge:list[dict]=[]; used_subject_ids:list[str]=[]; world_rules:list[dict]=[]
+class ContinuityScanChapterIn(BaseModel): chapter_id:str|None=None; chapter:int|None=Field(default=None,ge=1)
 class NarrativeThreadIn(BaseModel): id:str; title:str; description:str=""
 class NarrativeForeshadowingIn(BaseModel): id:str; title:str; thread_id:str|None=None
 class NarrativeTransitionIn(BaseModel): status:str; event_id:str; event_type:str; chapter_version_id:str; evidence_ids:list[str]=[]; payload:dict={};expected_revision:int|None=None
@@ -2144,16 +2168,130 @@ def continuity_checks(project_id:str, body:ContinuityCheckIn):
         return {"status":"DISABLED","findings":[]}
     from .lore.continuity import TimelineEvent, CharacterLocationState, CharacterKnowledge
     findings=continuity_finding_service.run_checks(project_id, events=[TimelineEvent.model_validate(x) for x in body.events], locations=[CharacterLocationState.model_validate(x) for x in body.locations], knowledge=[CharacterKnowledge.model_validate(x) for x in body.knowledge], used_subject_ids=set(body.used_subject_ids))
-    serialized=json.dumps([body.events,body.locations,body.knowledge],ensure_ascii=False).casefold()
-    for rule in body.world_rules:
-        payload=rule.get("payload") or rule
-        terms=payload.get("forbidden_terms") or payload.get("forbidden") or []
-        if isinstance(terms,str): terms=[terms]
-        hits=[str(term) for term in terms if str(term).casefold() in serialized]
-        if hits:
-            findings.append({"id":f"WORLD_RULE:{rule.get('id','unknown')}","project_id":project_id,"finding_type":"WORLD_RULE_VIOLATION","severity":"HIGH","description":f"内容触发世界规则：{payload.get('statement','未命名规则')}","rule_id":rule.get("id"),"subject_type":"WORLD_RULE","subject_id":rule.get("id"),"evidence_ids":hits})
+    serialized=json.dumps([body.events,body.locations,body.knowledge],ensure_ascii=False)
+    findings.extend(world_rule_violations(project_id, serialized, body.world_rules))
     normalized=[f.model_dump(mode="json") if hasattr(f,"model_dump") else f for f in findings]
     return {"status":"COMPLETED","findings":normalized}
+
+@router.post("/novels/{nid}/continuity/scan-chapter")
+def scan_chapter_continuity(nid:str, body:ContinuityScanChapterIn|None=None):
+    payload = body or ContinuityScanChapterIn()
+    try:
+        novel_service.get(nid)
+    except FileNotFoundError:
+        raise HTTPException(404, "novel not found")
+    chapters = chapter_service.list(nid)
+    if payload.chapter_id:
+        try:
+            chapter = chapter_service.get(payload.chapter_id)
+        except FileNotFoundError:
+            raise HTTPException(404, {"code": "CHAPTER_NOT_FOUND"})
+        if chapter.get("novel_id") != nid:
+            raise HTTPException(404, {"code": "CHAPTER_NOT_FOUND"})
+    elif payload.chapter is not None:
+        listed = next((item for item in chapters if item.get("number") == payload.chapter), None)
+        if listed is None:
+            raise HTTPException(404, {"code": "CHAPTER_NOT_FOUND"})
+        chapter = chapter_service.get(listed["id"])
+    else:
+        if not chapters:
+            raise HTTPException(400, {"code": "CHAPTER_REQUIRED", "message": "请先新建或选择一个章节"})
+        chapter = chapter_service.get(chapters[0]["id"])
+    draft = chapter.get("content") or ""
+    chapter_number = int(chapter.get("number") or 1)
+    characters = novel_service.data_set(nid, "characters")
+    locations = novel_service.data_set(nid, "locations")
+    timeline = novel_service.data_set(nid, "timeline")
+    foreshadowing_rows = novel_service.data_set(nid, "foreshadowing")
+    world_rules = [
+        row for row in lore_service.repository.list_proposals(nid)
+        if row.get("proposal_type") == "WORLD_RULE" and not row.get("deleted_at")
+    ]
+    from .review import deterministic_review
+    from .lore.continuity import TimelineEvent, CharacterLocationState
+    findings: list[dict] = []
+    findings.extend(world_rule_violations(nid, draft, world_rules))
+    for index, item in enumerate(deterministic_review(draft, {"characters": characters, "chapter": chapter_number})):
+        findings.append({
+            "id": f"CHARACTER:{index}:{item.get('code')}",
+            "project_id": nid,
+            "finding_type": "CHARACTER_CONSISTENCY",
+            "severity": item.get("severity", "ERROR"),
+            "description": item.get("message", ""),
+            "code": item.get("code"),
+            "subject_type": "CHARACTER",
+        })
+    engine_status = "DISABLED"
+    if settings.enable_continuity_rules:
+        engine_status = "COMPLETED"
+        events = []
+        for row in timeline:
+            start = row.get("start_time") or row.get("time") or None
+            end = row.get("end_time") or None
+            events.append(TimelineEvent.model_validate({
+                "id": str(row.get("id") or uuid.uuid4()),
+                "project_id": nid,
+                "event_type": row.get("event_type") or "STORY",
+                "title": row.get("title") or "untitled",
+                "description": row.get("description") or "",
+                "start_time": start or None,
+                "end_time": end or None,
+                "sequence_index": row.get("sequence"),
+                "location_id": row.get("location_id") or row.get("location") or None,
+                "certainty": "CONFIRMED" if row.get("status") in {"CONFIRMED", "ACTIVE"} else "UNKNOWN",
+                "source_chapter_version_id": row.get("chapter_id") or None,
+            }))
+        loc_by_name = {str(item.get("name")): item.get("id") for item in locations if item.get("name")}
+        location_states = []
+        for person in characters:
+            loc_name = person.get("current_location") or ""
+            loc_id = person.get("location_id") or loc_by_name.get(loc_name)
+            if not loc_id:
+                continue
+            location_states.append(CharacterLocationState.model_validate({
+                "id": f"loc-{person.get('id')}",
+                "project_id": nid,
+                "character_id": person.get("id") or person.get("name"),
+                "location_id": loc_id,
+                "state": "PRESENT",
+                "certainty": "ESTIMATED",
+            }))
+        used_subject_ids = {
+            str(person.get("id") or person.get("name"))
+            for person in characters
+            if person.get("name") and person["name"] in draft
+        }
+        engine_findings = continuity_finding_service.run_checks(
+            nid,
+            events=events,
+            locations=location_states,
+            knowledge=[],
+            used_subject_ids=used_subject_ids,
+        )
+        findings.extend(item.model_dump(mode="json") if hasattr(item, "model_dump") else item for item in engine_findings)
+    reminders = summarize_foreshadowing(foreshadowing_rows, chapter_number)
+    return {
+        "status": "COMPLETED",
+        "placeholder": False,
+        "engine_status": engine_status,
+        "execution_label": "契约校验，未调用模型",
+        "model_called": False,
+        "chapter": {
+            "id": chapter["id"],
+            "number": chapter_number,
+            "title": chapter.get("title"),
+            "word_count": chapter.get("word_count") or len(draft),
+        },
+        "scanned": {
+            "characters": len(characters),
+            "locations": len(locations),
+            "timeline": len(timeline),
+            "world_rules": len(world_rules),
+            "foreshadowing": len(foreshadowing_rows),
+        },
+        "findings": findings,
+        "foreshadowing": reminders,
+    }
 
 @router.post("/novels/{nid}/characters/consistency-check")
 def character_consistency_check(nid: str, body: CharacterConsistencyIn):

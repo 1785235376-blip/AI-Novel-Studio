@@ -26,6 +26,23 @@ def trusted_agent_headers():
 def create_agent_job(client,payload):
     return client.post('/api/agent-jobs',json=payload,headers=trusted_agent_headers())
 
+def complete_model_job(client, monkeypatch, nid, agent_id='planner'):
+    schema={
+        'planner':'story_plan_proposal','editor':'editor_revision_proposal','director':'direction_proposal',
+        'writer':'chapter_draft','continuity':'continuity_findings'
+    }.get(agent_id,'story_plan_proposal')
+    created=client.post('/api/agent-jobs',json={'agent_id':agent_id,'novel_id':nid,'chapter':1,'provider_id':'deepseek','model_id':'deepseek-chat','execution_mode':'model'}).json()
+    class Node:
+        def execute(self,_):
+            payload='{"schema":"%s","agent_id":"%s","summary":"model","proposals":[],"findings":[],"context_hash":"%s"}'%(schema,agent_id,created['context_hash'])
+            response=TextGenerationResponse(payload,'completed','deepseek','deepseek-chat')
+            return TextModelNodeOutput(payload,response,created['id'])
+    monkeypatch.setattr(agent_job_service.runtime,'prepare_text_route',lambda *_:Node())
+    executed=client.post(f"/api/agent-jobs/{created['id']}/execute").json()
+    assert executed['status']=='COMPLETED'
+    return created
+
+
 def test_agent_job_read_endpoints_require_trusted_session():
     client=TestClient(app)
     assert client.get('/api/agent-jobs').status_code==401
@@ -111,7 +128,8 @@ def test_agent_job_lifecycle_records_context_and_structured_output():
     client=TestClient(app);nid=setup_novel(client);created=create_agent_job(client,{'agent_id':'planner','novel_id':nid,'chapter':1,'instruction':'规划第二幕'}).json()
     assert created['status']=='QUEUED' and len(created['context_hash'])==64 and created['chapter_version']==1
     completed=client.post(f"/api/agent-jobs/{created['id']}/execute").json();stored=client.get(f"/api/agent-jobs/{created['id']}",headers=trusted_agent_headers()).json()
-    assert completed['status']=='COMPLETED' and stored['provider']=='deterministic-local'
+    assert completed['status']=='VALIDATED' and stored['provider']=='deterministic-local'
+    assert stored['execution_label']=='契约校验，未调用模型' and stored.get('model_called') is False
     output=stored['result']['structured_output'];assert output['schema']=='story_plan_proposal' and output['context_hash']==created['context_hash']
 
 
@@ -125,15 +143,15 @@ def test_completed_agent_job_cannot_execute_twice():
     assert client.post(f"/api/agent-jobs/{created['id']}/execute").status_code==400
 
 
-def test_agent_job_review_accepts_without_applying_output():
-    client=TestClient(app);nid=setup_novel(client);created=client.post('/api/agent-jobs',json={'agent_id':'planner','novel_id':nid,'chapter':1}).json();client.post(f"/api/agent-jobs/{created['id']}/execute")
+def test_agent_job_review_accepts_without_applying_output(monkeypatch):
+    client=TestClient(app);nid=setup_novel(client);created=complete_model_job(client,monkeypatch,nid)
     accepted=client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author-1','note':'方向可用'}).json()
     assert accepted['status']=='ACCEPTED' and accepted['review']['applied'] is False
     assert accepted['review']['reviewed_by']=='author-1' and len(accepted['review']['output_hash'])==64
 
 
-def test_agent_job_review_rejects_and_prevents_second_decision():
-    client=TestClient(app);nid=setup_novel(client);created=client.post('/api/agent-jobs',json={'agent_id':'editor','novel_id':nid,'chapter':1}).json();client.post(f"/api/agent-jobs/{created['id']}/execute")
+def test_agent_job_review_rejects_and_prevents_second_decision(monkeypatch):
+    client=TestClient(app);nid=setup_novel(client);created=complete_model_job(client,monkeypatch,nid,'planner')
     rejected=client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'REJECTED','reviewed_by':'author-1'}).json();assert rejected['status']=='REJECTED'
     assert client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author-1'}).status_code==400
 
@@ -143,8 +161,8 @@ def test_agent_job_cannot_be_reviewed_before_completion():
     assert client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author-1'}).status_code==400
 
 
-def test_accepted_agent_actions_apply_with_before_after_snapshots():
-    client=TestClient(app);nid=setup_novel(client);created=client.post('/api/agent-jobs',json={'agent_id':'planner','novel_id':nid,'chapter':1}).json();client.post(f"/api/agent-jobs/{created['id']}/execute")
+def test_accepted_agent_actions_apply_with_before_after_snapshots(monkeypatch):
+    client=TestClient(app);nid=setup_novel(client);created=complete_model_job(client,monkeypatch,nid)
     actions=[{'type':'outline.update','payload':{'theme':'信任','premise':'追查雾港','structure':'THREE_ACT','beginning':'抵达','middle':'背叛','ending':'公开真相','main_conflict':'真相与安全','climax':'灯塔','status':'ACTIVE'}},{'type':'volume.upsert','id':'fog','payload':{'title':'迷雾卷','sequence':1,'goal':'建立悬念','summary':'进入雾港','start_chapter':1,'end_chapter':8,'status':'WRITING'}},{'type':'scene.upsert','id':'arrival','payload':{'title':'抵达雾港','sequence':1,'volume_id':'fog','chapter_id':f'{nid}:1','location_id':'','characters':[],'purpose':'展示封锁','conflict':'证件失效','outcome':'潜入码头','status':'PLANNED'}}]
     client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author-1','actions':actions});applied=client.post(f"/api/agent-jobs/{created['id']}/apply",json={'applied_by':'author-1'}).json()
     assert applied['review']['applied'] is True and len(applied['application']['actions'])==3
@@ -152,10 +170,10 @@ def test_accepted_agent_actions_apply_with_before_after_snapshots():
     assert client.get(f'/api/novels/{nid}/volumes').json()[0]['id']=='fog' and client.get(f'/api/novels/{nid}/scenes').json()[0]['id']=='arrival'
 
 
-def test_agent_application_rejects_unknown_action_and_repeat_apply():
-    client=TestClient(app);nid=setup_novel(client);created=client.post('/api/agent-jobs',json={'agent_id':'planner','novel_id':nid,'chapter':1}).json();client.post(f"/api/agent-jobs/{created['id']}/execute");client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author','actions':[{'type':'chapter.overwrite','payload':{}}]})
+def test_agent_application_rejects_unknown_action_and_repeat_apply(monkeypatch):
+    client=TestClient(app);nid=setup_novel(client);created=complete_model_job(client,monkeypatch,nid);client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author','actions':[{'type':'chapter.overwrite','payload':{}}]})
     assert client.post(f"/api/agent-jobs/{created['id']}/apply",json={'applied_by':'author'}).status_code==400
-    second=client.post('/api/agent-jobs',json={'agent_id':'planner','novel_id':nid,'chapter':1}).json();client.post(f"/api/agent-jobs/{second['id']}/execute");client.post(f"/api/agent-jobs/{second['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author','actions':[]});assert client.post(f"/api/agent-jobs/{second['id']}/apply",json={'applied_by':'author'}).status_code==200;assert client.post(f"/api/agent-jobs/{second['id']}/apply",json={'applied_by':'author'}).status_code==400
+    second=complete_model_job(client,monkeypatch,nid);client.post(f"/api/agent-jobs/{second['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author','actions':[]});assert client.post(f"/api/agent-jobs/{second['id']}/apply",json={'applied_by':'author'}).status_code==200;assert client.post(f"/api/agent-jobs/{second['id']}/apply",json={'applied_by':'author'}).status_code==400
 
 
 def test_model_execution_uses_requested_route_and_validates_structure(monkeypatch):
@@ -186,9 +204,9 @@ def test_async_agent_job_completes_and_can_be_polled():
     client=TestClient(app);nid=setup_novel(client);created=client.post('/api/agent-jobs',json={'agent_id':'planner','novel_id':nid,'chapter':1}).json();client.post(f"/api/agent-jobs/{created['id']}/start")
     for _ in range(50):
         stored=client.get(f"/api/agent-jobs/{created['id']}",headers=trusted_agent_headers()).json()
-        if stored['status']=='COMPLETED':break
+        if stored['status'] in {'COMPLETED','VALIDATED'}:break
         time.sleep(.01)
-    assert stored['status']=='COMPLETED'
+    assert stored['status']=='VALIDATED'
 
 
 def test_agent_job_cancel_is_terminal_against_late_model_result(monkeypatch):

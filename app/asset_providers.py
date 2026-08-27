@@ -105,11 +105,17 @@ class VideoProvider(Protocol):
     def capabilities(self) -> dict[str, bool]: ...
 
 class DeterministicVideoProvider:
-    def health_check(self) -> bool: return True
+    """Honesty adapter: never emits a fake success URI.
+
+    DesktopHost Phase 1 requires unconfigured video providers to stay
+    ``VIDEO_PROVIDER_NOT_CONFIGURED`` / PENDING. A placeholder success would
+    fail the window gate.
+    """
+    def health_check(self) -> bool: return False
     def capabilities(self) -> dict[str, bool]:
-        return {"text_to_video": True, "image_to_video": True, "start_frame": True, "end_frame": True, "polling": False, "cancellation": False}
+        return {"text_to_video": False, "image_to_video": False, "start_frame": True, "end_frame": True, "polling": False, "cancellation": False}
     def generate(self, request: VideoGenerationRequest) -> VideoGenerationResult:
-        return VideoGenerationResult(request.provider_id, request.model_id, f"placeholder://video/{request.task_id}", status="SUCCEEDED")
+        raise ValueError("VIDEO_PROVIDER_NOT_CONFIGURED")
 
 class HttpVideoProvider:
     def __init__(self,transport,endpoint,api_key,default_model=''):

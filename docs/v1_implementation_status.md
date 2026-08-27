@@ -32,8 +32,8 @@
 
 ### P2：已预留，后续接入
 
-- Research Assistant、评论与通用工作流/DAG、插件与权限管理。
-- Character Evolution，以及 voice/audio/video/vision/embedding 运行时和 visual memory。
+- Research Assistant 本地 sidecar CRUD 已接入窗口（筛选/编辑/版本冲突/删除确认，不读取外部网络）；评论、真实插件执行和 DAG 运行时仍待增强。
+- Character Evolution 可手动记录到 sidecar，不会从正文自动抽取成长。voice/audio/video 窗口已挂接但 fail-closed；visual memory 未实现。
 - 资产实体关联、派生缩略图和压缩包安全限制（基础单文件大小、文件名和 MIME 校验已完成）。
 - Transition 的 camera motion、emotional reason、motion prompt 与连续性约束。
 - 独立 screenplay 实体、版本和审计存储，以及发布前文档/版本清理。
@@ -44,9 +44,9 @@
 
 | 窗口 | 服务归属 | 预留 API |
 | --- | --- | --- |
-| 项目概览 | Project Overview / workspace summary | `/api/v1/novels/{id}/overview`（待设计） |
-| 一致性检查 | Narrative Consistency Engine | `/api/v1/projects/{project_id}/continuity/*` |
-| 研究资料 | Research Assistant | `/api/v1/research` |
+| 项目概览 | Project Overview / workspace summary | `/api/v1/novels/{id}/overview`（已接入真实计数、待处理项、近期活动和写作目标；不是占位） |
+| 一致性检查 | Narrative Consistency Engine | `/api/v1/novels/{id}/continuity/scan-chapter`（主路径读当前章节正文+故事资料库；不依赖 `ENABLE_CONTINUITY_RULES`；JSON 粘贴仍在高级区。不是模型评审） |
+| 研究资料 | Research Assistant | `/api/v1/novels/{id}/research`（durable sidecar `v1_capabilities/research.json` 已接入窗口；不读取外部网络） |
 | 项目设置 | Provider / Plugin / Permission Manager | `/api/v1/providers`、`/api/v1/plugins` |
 | 导出中心中的 PDF | Document Export Service | `/api/v1/exports`（PDF 已接入；严格嵌入字体与行业排版仍受发行门禁约束） |
 | 能力路线图 | 多个待接入服务的统一导航 | 各卡片标注对应 `/api/v1` 前缀 |
