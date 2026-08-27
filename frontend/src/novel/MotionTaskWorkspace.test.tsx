@@ -27,6 +27,20 @@ describe("MotionTaskWorkspace", () => {
     expect(sortVideoProviders([cloud, local]).map((item) => item.id)).toEqual(["local", "cloud"]);
   });
 
+  it("shows VIDEO_PROVIDER_NOT_CONFIGURED and never renders placeholder video", async () => {
+    vi.mocked(api.videoProviders).mockResolvedValue({ items: [] });
+    vi.mocked(api.screenplays).mockResolvedValue([{ id: "sp", motion_tasks: [{
+      id: "task", status: "PENDING", error: "VIDEO_PROVIDER_NOT_CONFIGURED",
+      start_frame: "shot:from", end_frame: "shot:to",
+      result: { url: "placeholder://video/task" },
+    }] }]);
+    render(<MotionTaskWorkspace novelId="novel" screenplayId="sp" />);
+    expect(await screen.findByText(/VIDEO_PROVIDER_NOT_CONFIGURED/)).toBeTruthy();
+    expect((screen.getByRole("button", { name: "执行生成" }) as HTMLButtonElement).disabled).toBe(true);
+    expect(document.querySelector("video")).toBeNull();
+    expect(screen.getByText("尚无真实视频结果。")).toBeTruthy();
+  });
+
   it("shows real unavailability and does not enable execution", async () => {
     vi.mocked(api.screenplays).mockResolvedValue([{ id: "sp", motion_tasks: [{ id: "task", status: "PENDING", provider_id: "cloud", model_id: "cloud-model", start_frame: "https://a/start.png", end_frame: "https://a/end.png" }] }]);
     render(<MotionTaskWorkspace novelId="novel" screenplayId="sp" />);

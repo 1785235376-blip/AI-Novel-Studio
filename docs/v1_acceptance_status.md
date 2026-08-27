@@ -54,9 +54,9 @@
 
 | 窗口 | 归属服务 | 当前 API/状态 |
 | --- | --- | --- |
-| 项目概览 | Project Overview / workspace summary | `/api/v1/novels/{id}/overview`，待设计 |
+| 项目概览 | Project Overview / workspace summary | `/api/v1/novels/{id}/overview`，已接入真实计数/待处理项/近期活动/写作目标；DesktopHost 窗口项仍待 Windows 人工验收 |
 | 一致性检查 | Narrative Consistency Engine | `/api/v1/projects/{project_id}/continuity/*`，基础检查已存在，证据定位仍需补齐 |
-| 研究资料 | Research Assistant | `/api/v1/research`，预留 |
+| 研究资料 | Research Assistant | `/api/v1/novels/{id}/research`，sidecar CRUD 已接入；窗口级 DH-03/DH-04 仍待 DesktopHost 验收 |
 | 设置与插件 | Provider / Plugin / Permission Manager | `/api/v1/providers` 已有基础状态；插件权限管理预留 |
 | PDF 与标准影视导出 | Document Export Service | `/api/v1/exports` 已有异步生命周期；PDF 基础闭环已接入，行业标准排版仍待发行门禁 |
 | 角色成长与视觉记忆 | Character Evolution / Visual Memory | `/api/v1/characters/{id}/evolution`、`/api/v1/memory`，预留 |

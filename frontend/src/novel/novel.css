@@ -1,3 +1,7 @@
+.novel-overview-counts{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:var(--space-3);margin:var(--space-3) 0}
+.novel-overview-counts div{display:grid;gap:var(--space-1);padding:var(--space-3);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-subtle)}
+.novel-overview-counts dt{font-size:12px;color:var(--color-text-muted)}
+.novel-overview-counts dd{margin:0;font-size:20px;color:var(--color-text-primary)}
 .novel-chapter-tree{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--space-3)}.novel-story-database,.novel-ai-panel{display:grid;gap:var(--space-3)}
 .novel-chapter-tree ol{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:minmax(0,1fr);gap:var(--space-1)}.novel-record-list{list-style:none;padding:0;margin:0;display:grid;gap:var(--space-1)}
 .novel-tree-row{position:relative;display:flex;align-items:center;min-width:0;min-height:36px;border-left:3px solid transparent;border-radius:var(--radius-md)}.novel-tree-row.is-selected{border-left-color:var(--color-accent-primary);background:var(--color-accent-subtle)}.novel-tree-row.is-selected .novel-tree-title{font-weight:600}

@@ -98,7 +98,7 @@ export function MotionTaskWorkspace({ novelId, screenplayId, taskIds, onInspect 
             {providers.map((item) => <option key={item.id} value={item.id} disabled={!item.available}>{item.local ? "本地 · " : "云端 · "}{item.display_name || item.id}{item.available ? "" : "（不可用）"}</option>)}
           </select>
         </label>
-        {!provider?.available && <p role="alert">当前 Provider 未配置或不可达，执行已禁用。请先在 AI 主控的 Provider 设置中完成配置。</p>}
+        {!provider?.available && <p role="alert">{task.error === "VIDEO_PROVIDER_NOT_CONFIGURED" ? "VIDEO_PROVIDER_NOT_CONFIGURED · 未配置视频 Provider，任务保持 PENDING，不会出现 SUCCEEDED 或 placeholder://video/*。" : "当前 Provider 未配置或不可达，执行已禁用。请先在 AI 主控的 Provider 设置中完成配置。"}</p>}
         <div className="novel-split-fields">
           <label>起始帧 URL<input value={draft.start_frame} onChange={(event) => setFrames((current) => ({ ...current, [task.id]: { ...draft, start_frame: event.target.value } }))} /></label>
           <label>结束帧 URL<input value={draft.end_frame} onChange={(event) => setFrames((current) => ({ ...current, [task.id]: { ...draft, end_frame: event.target.value } }))} /></label>
@@ -110,8 +110,8 @@ export function MotionTaskWorkspace({ novelId, screenplayId, taskIds, onInspect 
         {task.remote_task_id && ["PENDING", "RUNNING"].includes(status) && <Button variant="ghost" disabled={busy[task.id]} onClick={() => void act(task.id, () => api.syncMotionTask(novelId, screenplayId, task.id), "已同步 Provider 状态。")}>立即同步</Button>}
         <progress aria-label={`任务 ${task.id} 进度`} max={100} value={Math.max(0, Math.min(100, Number(task.progress || 0)))} />
         <small>{Math.max(0, Math.min(100, Number(task.progress || 0)))}% · {task.model_id || "未选择模型"}</small>
-        {task.error && <p role="alert">{task.error}</p>}
-        {task.result?.url ? <video className="motion-runtime__video" controls src={task.result.url} aria-label={`任务 ${task.id} 视频结果`} /> : <p className="novel-help">尚无真实视频结果。</p>}
+        {task.error && task.error !== "VIDEO_PROVIDER_NOT_CONFIGURED" && <p role="alert">{task.error}</p>}
+        {task.result?.url && !String(task.result.url).toLowerCase().startsWith("placeholder://") ? <video className="motion-runtime__video" controls src={task.result.url} aria-label={`任务 ${task.id} 视频结果`} /> : <p className="novel-help">尚无真实视频结果。</p>}
         {status === "SUCCEEDED" && task.result?.url && <Button variant="primary" disabled={busy[task.id] || task.asset_import?.import_status === "COMPLETED"} onClick={() => void importAsset(task)}>{task.asset_import?.import_status === "COMPLETED" ? "已进入资产库" : "下载并导入资产库"}</Button>}
         <small>资产导入：{task.asset_import?.import_status || "NOT_REQUESTED"}{task.asset_import?.asset?.id ? ` · ${task.asset_import.asset.id}` : ""}</small>
         <Button variant="ghost" onClick={() => {

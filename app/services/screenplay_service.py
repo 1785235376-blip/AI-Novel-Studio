@@ -29,9 +29,17 @@ def validate_visual_continuity(shots: list[dict]) -> list[dict]:
             findings.append({'code':'EMOTION_DISCONTINUITY','severity':'WARNING','from_shot_id':previous.get('id'),'to_shot_id':current.get('id'),'message':'情绪发生跳变，建议补充动作或转场说明。'})
     return findings
 
+def is_traceable_frame(value) -> bool:
+    text=str(value or "").strip()
+    if not text: return False
+    lowered=text.lower()
+    if lowered.startswith("placeholder://"): return False
+    if lowered.startswith(("http://","https://","asset:","shot:","storyboard:")): return True
+    return False
+
 def require_motion_frames(task: dict) -> None:
-    if not task.get('start_frame') or not task.get('end_frame'):
-        raise ValueError('motion task requires start_frame and end_frame before execution')
+    if not is_traceable_frame(task.get("start_frame")) or not is_traceable_frame(task.get("end_frame")):
+        raise ValueError("motion task requires traceable start_frame and end_frame before execution")
 
 class ScreenplayService:
     def __init__(self,novels,chapters,asset_providers=None,video_providers=None):self.novels=novels;self.chapters=chapters;self.asset_providers=asset_providers or AssetProviderRegistry();self.video_providers=video_providers or {'deterministic':DeterministicVideoProvider()}
@@ -175,8 +183,24 @@ class ScreenplayService:
         for row in screenplay.get('transitions',[]):
             if row.get('motion_prompt') and row.get('id') not in existing:
                 configured=next(((provider_id,getattr(provider,'default_model','')) for provider_id,provider in self.video_providers.items() if provider_id!='deterministic' and getattr(provider,'health_check',lambda:False)()),(None,None))
-                tasks.append({'id':str(uuid4()),'transition_id':row['id'],'prompt':row['motion_prompt'],'provider_id':configured[0],'model_id':configured[1],'start_frame':None,'end_frame':None,'status':'PENDING','progress':0,'error':None if configured[0] else 'VIDEO_PROVIDER_NOT_CONFIGURED','created_at':utc()})
+                start_frame,end_frame=self._frames_for_transition(screenplay,row)
+                tasks.append({'id':str(uuid4()),'transition_id':row['id'],'prompt':row['motion_prompt'],'provider_id':configured[0],'model_id':configured[1],'start_frame':start_frame,'end_frame':end_frame,'status':'PENDING','progress':0,'error':None if configured[0] else 'VIDEO_PROVIDER_NOT_CONFIGURED','created_at':utc()})
         return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':tasks,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+    def _frames_for_transition(self,screenplay,transition):
+        from_id=str(transition.get('from_shot_id') or '')
+        to_id=str(transition.get('to_shot_id') or '')
+        shots={str(row.get('id')):row for row in screenplay.get('shots') or []}
+        cards={str(row.get('shot_id')):row for row in screenplay.get('storyboard') or []}
+        def ref(shot_id):
+            shot=shots.get(shot_id) or {}
+            card=cards.get(shot_id) or {}
+            for candidate in (shot.get('frame_asset_id'),shot.get('asset_id'),card.get('asset_id'),card.get('frame_asset_id')):
+                if candidate:
+                    text=str(candidate).strip()
+                    return text if is_traceable_frame(text) else f'asset:{text}'
+            return f'shot:{shot_id}' if shot_id else None
+        start,end=ref(from_id),ref(to_id)
+        return start,end
     def update_motion_task(self,novel_id,screenplay_id,task_id,status):
         screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
@@ -196,7 +220,7 @@ class ScreenplayService:
         def validate(value):
             if value is None or value == '': return value
             value=str(value).strip()
-            if not value.lower().startswith(('http://','https://')): raise ValueError('frame URL must use http or https')
+            if not is_traceable_frame(value): raise ValueError('frame must be an http(s) URL or a traceable asset/shot/storyboard reference')
             return value
         row=rows[index]; new_start=validate(start_frame) if start_frame is not None else row.get('start_frame'); new_end=validate(end_frame) if end_frame is not None else row.get('end_frame'); frame_history=list(row.get('frame_history',[]));
         if row.get('start_frame')!=new_start or row.get('end_frame')!=new_end: frame_history.append({'start_frame':row.get('start_frame'),'end_frame':row.get('end_frame'),'changed_at':utc()})
@@ -218,7 +242,13 @@ class ScreenplayService:
         task=rows[index]
         if task.get('status')!='PENDING': raise ValueError('motion task must be PENDING before execution')
         require_motion_frames(task)
-        provider_id=task.get('provider_id') or 'deterministic'; model_id=task.get('model_id') or 'video-placeholder'; provider=self.video_providers.get(provider_id)
+        provider_id=task.get('provider_id')
+        if not provider_id or provider_id=='deterministic':
+            failed_at=utc(); message='VIDEO_PROVIDER_NOT_CONFIGURED'
+            history=list(task.get('history',[])); history.append({'status':'PENDING','phase':'PROVIDER_MISSING','at':failed_at,'error':message})
+            rows[index]={**task,'status':'PENDING','progress':0,'error':message,'history':history,'updated_at':failed_at}
+            return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':failed_at})
+        model_id=task.get('model_id') or 'video-model'; provider=self.video_providers.get(provider_id)
         if provider is None: raise ValueError(f'video provider is not configured: {provider_id}')
         started=utc(); history=list(task.get('history',[])); history.append({'status':'RUNNING','phase':'SUBMITTING','at':started,'error':None})
         submission_key=task.get('submission_key') or task_id
@@ -232,6 +262,8 @@ class ScreenplayService:
             self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':failed_at})
             raise
         status=str(generated.status or ('SUCCEEDED' if generated.video_uri else 'RUNNING')).upper()
+        if str(generated.video_uri or '').lower().startswith('placeholder://'):
+            raise ValueError('placeholder video URI is not allowed')
         if status not in {'PENDING','RUNNING','SUCCEEDED'}: status='RUNNING'
         if generated.video_uri: status='SUCCEEDED'
         result={'kind':'VIDEO','task_id':task_id,'prompt':task.get('prompt',''),'asset_id':f"motion-{task_id}",'url':generated.video_uri,'provider_id':generated.provider_id,'model_id':generated.model_id,'created_at':utc()}
@@ -272,6 +304,7 @@ class ScreenplayService:
         rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
         if index is None: raise KeyError(task_id)
         if rows[index].get('status') == 'CANCELLED': raise ValueError('cancelled motion task cannot accept a result')
+        if str(url).lower().startswith('placeholder://'): raise ValueError('placeholder video URI is not allowed')
         stamp=utc(); result={**rows[index].get('result',{}),'url':str(url).strip(),'media_type':media_type,'attached_at':stamp}
         history=list(rows[index].get('result_history',[])); previous=rows[index].get('result');
         if previous: history.append({**previous,'replaced_at':stamp})
@@ -289,6 +322,7 @@ class ScreenplayService:
         allowed={'PENDING':{'PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'},'RUNNING':{'RUNNING','SUCCEEDED','FAILED','CANCELLED'}}
         if current not in {'SUCCEEDED','FAILED','CANCELLED'} and status not in allowed.get(current,set()): raise ValueError(f'invalid motion callback transition: {current} -> {status}')
         if status=='SUCCEEDED' and not (url or (row.get('result') or {}).get('url')): raise ValueError('successful motion callback requires a video URL')
+        if url and str(url).lower().startswith('placeholder://'): raise ValueError('placeholder video URI is not allowed')
         stamp=utc(); history=list(row.get('history',[])); history.append({'status':status,'phase':'PROVIDER_UPDATE','at':stamp,'error':error})
         updated={**row,'status':status,'progress':100 if status=='SUCCEEDED' else max(0,min(100,int(progress))),'error':error,'history':history,'updated_at':stamp}
         if url:

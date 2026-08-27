@@ -707,11 +707,14 @@ class V1CapabilityService:
         counts.update({
             "chapters": len(chapters), "assets": len(self.assets.list(novel_id)),
             "research": self.list_research(novel_id)["total"],
+            "world_rules": self._count_world_rules(novel_id),
             "character_evolution": self.list_character_evolution(novel_id)["total"],
             "visual_memory": self.list_visual_memory(novel_id)["total"],
             "workflows": self.list_workflows(novel_id)["total"],
         })
         word_count = sum(int(chapter.get("word_count", 0) or 0) for chapter in chapters)
+        if not word_count:
+            word_count = sum(len(str(chapter.get("content") or "").replace(" ", "")) for chapter in chapters)
         missing: list[str] = []
         if not chapters:
             missing.append("chapters")
@@ -723,15 +726,83 @@ class V1CapabilityService:
             outline = {}
         if not outline:
             missing.append("outline")
+        writing_goal = self._writing_goal(novel_id, chapters, word_count)
+        pending_items = self._pending_items(novel_id, missing, writing_goal)
         recent = self.list_audit(novel_id, 10)["items"]
         return {
             "novel": novel, "counts": counts,
             "content": {"word_count": word_count, "has_chapters": bool(chapters),
                         "latest_chapter": chapters[-1] if chapters else None},
+            "writing_goal": writing_goal,
+            "pending_items": pending_items,
             "readiness": {"state": "CONTENT_READY" if chapters else "NEEDS_CONTENT", "missing": missing,
                           "release_gate_required": True},
             "recent_activity": recent, "storage": self.storage_mode,
+            "placeholder": False,
         }
+
+    def bind_lore(self, lore_service) -> None:
+        self._lore = lore_service
+
+    def bind_continuity(self, continuity_finding_service) -> None:
+        self._continuity = continuity_finding_service
+
+    def _count_world_rules(self, novel_id: str) -> int:
+        lore = getattr(self, "_lore", None)
+        if lore is None:
+            try:
+                rows = list(self.novels.data_set(novel_id, "world_rules"))
+            except (AttributeError, KeyError, FileNotFoundError, TypeError):
+                rows = []
+            return len(rows)
+        try:
+            rows = lore.repository.list_proposals(novel_id)
+        except Exception:
+            return 0
+        return len([row for row in rows if row.get("proposal_type") == "WORLD_RULE" and not row.get("deleted_at")])
+
+    def _writing_goal(self, novel_id: str, chapters: list[dict[str, Any]], word_count: int) -> dict[str, Any]:
+        if hasattr(self.novels, "writing_goal"):
+            try:
+                return self.novels.writing_goal(novel_id)
+            except Exception:
+                pass
+        novel = self._require_novel(novel_id)
+        goal = novel.get("writing_goal") or {"target_words": 0, "target_chapters": 0, "deadline": ""}
+        target_words = int(goal.get("target_words") or 0)
+        target_chapters = int(goal.get("target_chapters") or 0)
+        return {
+            "target_words": target_words, "target_chapters": target_chapters,
+            "deadline": str(goal.get("deadline") or ""),
+            "current_words": word_count, "current_chapters": len(chapters),
+            "words_progress": round(min(word_count / target_words, 1), 4) if target_words else 0,
+            "chapters_progress": round(min(len(chapters) / target_chapters, 1), 4) if target_chapters else 0,
+        }
+
+    def _pending_items(self, novel_id: str, missing: list[str], writing_goal: dict[str, Any]) -> list[dict[str, Any]]:
+        items: list[dict[str, Any]] = [{"kind": "missing", "label": name} for name in missing]
+        if int(writing_goal.get("target_words") or 0) <= 0:
+            items.append({"kind": "writing_goal", "label": "未设置写作目标字数"})
+        lore = getattr(self, "_lore", None)
+        if lore is not None:
+            try:
+                pending_rules = [
+                    row for row in lore.repository.list_proposals(novel_id, "PENDING")
+                    if row.get("proposal_type") == "WORLD_RULE"
+                ]
+                if pending_rules:
+                    items.append({"kind": "world_rules", "label": f"{len(pending_rules)} 条待审核世界规则", "count": len(pending_rules)})
+            except Exception:
+                pass
+        continuity = getattr(self, "_continuity", None)
+        if continuity is not None:
+            try:
+                findings = [row for row in continuity.list_findings(novel_id) if str(row.get("status", "")).upper() not in {"RESOLVED", "ACCEPTED"}]
+                if findings:
+                    items.append({"kind": "continuity", "label": f"{len(findings)} 条未处理一致性问题", "count": len(findings)})
+            except Exception:
+                pass
+        return items
 
     def _release_checks(self, novel_id: str | None) -> list[dict[str, Any]]:
         version = {"version": "unknown", "channel": "development"}

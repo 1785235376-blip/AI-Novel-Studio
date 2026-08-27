@@ -65,8 +65,9 @@ import { NovelImportPanel } from "./novel/NovelImportPanel";
 import { AdaptationPanel } from "./novel/AdaptationPanel";
 import { ScreenplayPanel } from "./novel/ScreenplayPanel";
 import { ExportPanel } from "./novel/ExportPanel";
-import { CapabilityPlaceholder } from "./ui/CapabilityPlaceholder";
 import { CapabilityRoadmapPanel } from "./ui/CapabilityRoadmapPanel";
+import { NovelOverviewPanel } from "./novel/NovelOverviewPanel";
+import { ResearchPanel } from "./novel/ResearchPanel";
 import { FeatureLauncher } from "./ui/FeatureLauncher";
 import { AiControlCenter } from "./ui/AiControlCenter";
 import { MediaProviderSettings } from "./ui/MediaProviderSettings";
@@ -1226,7 +1227,7 @@ function Panel({
       </section>
     );
   if (type === "workflow") return <VisualWorkflowPanel scope={scope} />;
-  if (type === "overview") return <WritingGoalPanel novelId={novelId} />;
+  if (type === "overview") return <NovelOverviewPanel novelId={novelId} />;
   if (type === "check") return <ContinuityCheckPanel projectId={novelId} />;
   if (type === "diagnostics") return <RuntimeDiagnosticsPanel scope={scope} />;
   if (type === "agents") return <>{chapter&&<AgentActivityCenter novelId={chapter.novel_id} />}{chapter&&<AgentJobHistory novelId={chapter.novel_id} />}<AgentTeamPanel chapter={chapter} /></>;
@@ -1235,7 +1236,7 @@ function Panel({
   if (type === "assets") return <AssetLibraryPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
   if (type === "exports") return <ExportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
   if (type === "knowledge") return <NovelImportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} chapterId={chapter?.id} />;
-  if (type === "research") return <CapabilityPlaceholder title="研究资料" service="Research Assistant" description="资料库、参考文献与研究笔记窗口已预留，暂不读取外部网络。" apiPrefix="/api/v1/research" />;
+  if (type === "research") return <ResearchPanel novelId={novelId} />;
   if (type === "settings") return <><AiControlCenter /><MediaProviderSettings /><VideoCallbackSecurityStatus /></>;
   if (type === "roadmap") return <CapabilityRoadmapPanel />;
   return (
