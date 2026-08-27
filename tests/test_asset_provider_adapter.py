@@ -6,7 +6,7 @@ class Transport:
  def post(self,*args,**kwargs): self.args=args; self.kwargs=kwargs; return Response()
 def test_openai_compatible_adapter():
  t=Transport(); p=OpenAICompatibleImageProvider(t,'secret','https://api.test'); result=p.generate(AssetGenerationRequest('openai','image-1','a prompt','task'))
- assert result.asset_uri.endswith('.png'); assert t.kwargs['json']['model']=='image-1'; assert t.kwargs['headers']['Authorization']=='Bearer secret'
+ assert result.asset_uri.endswith('.png'); assert t.kwargs['json']['model']=='image-1'; assert t.kwargs['headers']['Authorization']=='Bearer secret'; assert t.kwargs['timeout']==180
 def test_vault_missing_credential_fails_closed():
  class Vault:
   def resolve(self,provider): return None

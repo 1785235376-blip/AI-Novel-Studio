@@ -159,7 +159,7 @@ class OpenAICompatibleImageProvider:
         try:return self.transport.get(self.endpoint+"/models",headers={"Authorization":f"Bearer {self.api_key}"},timeout=1.5).status_code<500
         except Exception:return False
     def generate(self, request: AssetGenerationRequest) -> AssetGenerationResult:
-        response=self.transport.post(self.endpoint+"/images/generations",headers={"Authorization":f"Bearer {self.api_key}"},json={"model":request.model_id,"prompt":request.prompt,"n":1})
+        response=self.transport.post(self.endpoint+"/images/generations",headers={"Authorization":f"Bearer {self.api_key}"},json={"model":request.model_id,"prompt":request.prompt,"n":1},timeout=180)
         response.raise_for_status(); data=response.json(); item=(data.get("data") or [{}])[0]; uri=item.get("url") or item.get("b64_json")
         if item.get("b64_json"): uri="data:image/png;base64,"+str(item["b64_json"])
         if not uri: raise ValueError("image provider response missing url")
