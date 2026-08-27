@@ -137,10 +137,19 @@ class AssetProviderConfigIn(BaseModel):
 class AssetUploadIn(BaseModel): novel_id:str; filename:str; content_base64:str; media_type:str|None=None; kind:str="image"; character_id:str|None=None; scene_id:str|None=None
 class VisionAnalyzeIn(BaseModel): provider_id:str="openai"; model_id:str="gpt-4o-mini"; prompt:str; image_url:str; novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None
 class ImageGenerateIn(BaseModel): provider_id:str="ddshub"; model_id:str="gpt-image-2"; prompt:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None; constraints:dict[str,object]={}
-class SpeechSynthesizeIn(BaseModel): provider_id:str="openai"; model_id:str="gpt-4o-mini-tts"; voice:str="alloy"; text:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; chapter_id:str|None=None; emotion:str="neutral"
+class SpeechSynthesizeIn(BaseModel): provider_id:str="auto"; model_id:str=""; voice:str="alloy"; text:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; chapter_id:str|None=None; emotion:str="neutral"
+class AudioGenerateIn(BaseModel):
+    provider_id:str="auto"
+    model_id:str=""
+    capability:str=Field(pattern="^(TEXT_TO_AUDIO|AUDIO_EDIT|VIDEO_TO_AUDIO|SFX|FOLEY|MUSIC)$")
+    prompt:str=Field(min_length=1)
+    source_audio_uri:str|None=None
+    source_video_uri:str|None=None
+    duration_seconds:float|None=Field(default=None,gt=0,le=600)
+    parameters:dict[str,object]=Field(default_factory=dict)
 class AudiobookJobIn(BaseModel):
-    provider_id:str="openai"
-    model_id:str="gpt-4o-mini-tts"
+    provider_id:str="auto"
+    model_id:str=""
     voice:str="alloy"
     emotion:str="neutral"
     character_id:str|None=None
@@ -1711,20 +1720,36 @@ def generate_image(body:ImageGenerateIn):
 @router.post("/speech/synthesize")
 def synthesize_speech(body:SpeechSynthesizeIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write")
-    from .asset_providers import OpenAICompatibleSpeechProvider,SpeechRequest
+    from .audio_providers import AudioGenerationRequest,resolve_provider
     from .dependencies import credential_vault
-    saved=load_asset_provider_config(); config={**IMAGE_PROVIDER_CATALOG.get(body.provider_id,{}),**(saved.get(body.provider_id) or {})}; endpoint=str(config.get('endpoint') or DEFAULT_IMAGE_ENDPOINTS.get(body.provider_id,'')).rstrip('/'); requires_credential=bool(config.get('requires_credential',True)); secret=credential_vault.resolve(body.provider_id) if requires_credential else 'local-provider'
-    if not endpoint or not secret: raise HTTPException(503,{'code':'SPEECH_PROVIDER_UNAVAILABLE','message':'语音 Provider 未配置'})
     try:
         import httpx
-        result=OpenAICompatibleSpeechProvider(httpx,secret,endpoint).synthesize(SpeechRequest(body.provider_id,body.model_id,body.voice,f"[emotion:{body.emotion}] {body.text}"))
+        provider_id,default_model,provider=resolve_provider(body.provider_id,'TTS',credential_vault,httpx);model_id=body.model_id.strip() or default_model
+        result=provider.generate(AudioGenerationRequest(provider_id,model_id,'TTS',f"[emotion:{body.emotion}] {body.text}",str(uuid.uuid4()),voice=body.voice))
         payload={'provider_id':result.provider_id,'model_id':result.model_id,'voice':body.voice,'emotion':body.emotion,'audio_uri':result.audio_uri,'character_id':body.character_id,'chapter_id':body.chapter_id,'text':body.text,'created_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}
         if body.novel_id:
             from .dependencies import repositories
             repositories.novels.get(body.novel_id); state=audio_production_store.load(body.novel_id); state['generations'].append(payload); audio_production_store.save(body.novel_id,state)
         return payload
+    except ValueError: raise HTTPException(503,{'code':'SPEECH_PROVIDER_UNAVAILABLE','message':'语音 Provider 未配置'})
     except HTTPException: raise
     except Exception: raise HTTPException(502,{'code':'SPEECH_SYNTHESIS_FAILED','message':'语音合成失败'})
+@router.get("/audio/providers")
+def list_audio_providers():
+    from .audio_providers import provider_catalog
+    return {'domain':'AUDIO','routing_policy':'LOCAL_FIRST','items':provider_catalog()}
+@router.post("/audio/generate",status_code=202)
+def generate_audio(body:AudioGenerateIn):
+    from .audio_providers import AudioGenerationRequest,resolve_provider
+    from .dependencies import credential_vault
+    try:
+        import httpx
+        provider_id,default_model,provider=resolve_provider(body.provider_id,body.capability,credential_vault,httpx)
+        model_id=body.model_id.strip() or default_model
+        result=provider.generate(AudioGenerationRequest(provider_id,model_id,body.capability,body.prompt,str(uuid.uuid4()),source_audio_uri=body.source_audio_uri,source_video_uri=body.source_video_uri,duration_seconds=body.duration_seconds,parameters=body.parameters))
+        return {'domain':'AUDIO','kind':body.capability,'provider_id':result.provider_id,'model_id':result.model_id,'audio_uri':result.audio_uri,'remote_task_id':result.remote_task_id,'status':result.status}
+    except ValueError as exc: raise HTTPException(503,{'code':'AUDIO_PROVIDER_UNAVAILABLE','message':str(exc)})
+    except Exception: raise HTTPException(502,{'code':'AUDIO_GENERATION_FAILED','message':'音频生成失败'})
 @router.get("/novels/{nid}/image-generations")
 def list_image_generations(nid:str,character_id:str|None=None,scene_id:str|None=None):
     from .dependencies import repositories
@@ -1829,26 +1854,27 @@ def cancel_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(None
 def execute_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     _authorize_media_novel(nid,x_session_token,"domain.write")
     from .dependencies import repositories,credential_vault
-    from .asset_providers import OpenAICompatibleSpeechProvider,SpeechRequest
+    from .audio_providers import AudioGenerationRequest,resolve_provider
     repositories.novels.get(nid); state=audio_production_store.load(nid); jobs=state['jobs']; index=next((i for i,item in enumerate(jobs) if item.get('id')==job_id),None)
     if index is None: raise HTTPException(404,'audiobook job not found')
     job=jobs[index]
     if job.get('status')!='QUEUED': raise HTTPException(409,{'code':'AUDIOBOOK_JOB_NOT_EXECUTABLE','message':'只有排队中的任务可以执行'})
     chapter=next((item for item in repositories.chapters.list(nid) if item.get('id')==job.get('chapter_id')),None)
     if chapter is None: raise HTTPException(404,'chapter not found')
-    provider_id=str(job.get('provider_id') or 'openai'); saved=load_asset_provider_config(); config={**IMAGE_PROVIDER_CATALOG.get(provider_id,{}),**(saved.get(provider_id) or {})}; endpoint=str(config.get('endpoint') or DEFAULT_IMAGE_ENDPOINTS.get(provider_id,'')).rstrip('/'); requires_credential=bool(config.get('requires_credential',True)); secret=credential_vault.resolve(provider_id) if requires_credential else 'local-provider'
+    provider_id=str(job.get('provider_id') or 'auto')
     now=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); jobs[index]={**job,'status':'RUNNING','attempt':int(job.get('attempt') or 0)+1,'started_at':now,'updated_at':now}; state['jobs']=jobs; audio_production_store.save(nid,state); job=jobs[index]
-    if not endpoint or not secret:
-        jobs[index]={**job,'status':'FAILED','error':'语音 Provider 未配置','error_code':'SPEECH_PROVIDER_UNAVAILABLE','updated_at':now}; state['jobs']=jobs; audio_production_store.save(nid,state); raise HTTPException(503,{'code':'SPEECH_PROVIDER_UNAVAILABLE','message':'语音 Provider 未配置'})
     try:
         import httpx
+        resolved_provider,default_model,provider=resolve_provider(provider_id,'TTS',credential_vault,httpx);model_id=str(job.get('model_id') or default_model)
         text=_spoken_chapter_text(str(chapter.get('content',''))); dictionary=state['pronunciation_dictionary']
         for entry in dictionary: text=text.replace(str(entry.get('term','')),str(entry.get('pronunciation','')))
-        prompt=f"[emotion:{job.get('emotion','neutral')}] {text}"; result=OpenAICompatibleSpeechProvider(httpx,secret,endpoint).synthesize(SpeechRequest(provider_id,str(job.get('model_id') or 'gpt-4o-mini-tts'),str(job.get('voice') or 'alloy'),prompt))
+        prompt=f"[emotion:{job.get('emotion','neutral')}] {text}"; result=provider.generate(AudioGenerationRequest(resolved_provider,model_id,'TTS',prompt,job_id,voice=str(job.get('voice') or 'alloy')))
         latest=audio_production_store.load(nid); latest_index=next((i for i,item in enumerate(latest['jobs']) if item.get('id')==job_id),None)
         if latest_index is not None and latest['jobs'][latest_index].get('status')=='CANCELLED': return latest['jobs'][latest_index]
         state=latest; jobs=state['jobs']; index=latest_index if latest_index is not None else index
-        completed=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); speech={'provider_id':provider_id,'model_id':job.get('model_id'),'voice':job.get('voice'),'emotion':job.get('emotion','neutral'),'audio_uri':result.audio_uri,'character_id':job.get('character_id'),'chapter_id':job['chapter_id'],'text':str(chapter.get('content','')),'created_at':completed}; state['generations'].append(speech); jobs[index]={**job,'status':'SUCCEEDED','audio_uri':result.audio_uri,'completed_at':completed,'updated_at':completed,'error':None,'error_code':None}; state['jobs']=jobs; audio_production_store.save(nid,state); return jobs[index]
+        completed=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); speech={'provider_id':resolved_provider,'model_id':model_id,'voice':job.get('voice'),'emotion':job.get('emotion','neutral'),'audio_uri':result.audio_uri,'character_id':job.get('character_id'),'chapter_id':job['chapter_id'],'text':str(chapter.get('content','')),'created_at':completed}; state['generations'].append(speech); jobs[index]={**job,'provider_id':resolved_provider,'model_id':model_id,'status':'SUCCEEDED','audio_uri':result.audio_uri,'completed_at':completed,'updated_at':completed,'error':None,'error_code':None}; state['jobs']=jobs; audio_production_store.save(nid,state); return jobs[index]
+    except ValueError:
+        latest=audio_production_store.load(nid);latest_index=next((i for i,item in enumerate(latest['jobs']) if item.get('id')==job_id),index);failed=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat();latest['jobs'][latest_index]={**job,'status':'FAILED','error':'语音 Provider 未配置','error_code':'SPEECH_PROVIDER_UNAVAILABLE','updated_at':failed};audio_production_store.save(nid,latest);raise HTTPException(503,{'code':'SPEECH_PROVIDER_UNAVAILABLE','message':'语音 Provider 未配置'})
     except Exception:
         latest=audio_production_store.load(nid); latest_index=next((i for i,item in enumerate(latest['jobs']) if item.get('id')==job_id),None)
         if latest_index is not None and latest['jobs'][latest_index].get('status')=='CANCELLED': return latest['jobs'][latest_index]

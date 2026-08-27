@@ -7,6 +7,7 @@ import {
   Lock,
   Redo2,
   SendToBack,
+  Trash2,
   Ungroup,
   Unlock,
   Undo2,
@@ -131,6 +132,10 @@ export function ImageInfiniteCanvas({
     () => nodes.filter((node) => !node.hidden).sort((a, b) => a.z - b.z),
     [nodes],
   );
+  useEffect(() => {
+    const nodeIds = new Set(nodes.map((node) => node.id));
+    setSelected((ids) => ids.filter((id) => nodeIds.has(id)));
+  }, [nodes]);
   const patchSelected = (patch: Partial<RefNode>) =>
     onChange((items) =>
       items.map((item) =>
@@ -289,6 +294,18 @@ export function ImageInfiniteCanvas({
             <Lock size={15} />
           )}
         </Button>
+        <Button
+          variant="ghost"
+          aria-label="删除所选节点"
+          disabled={
+            !selected.some(
+              (id) => !nodes.find((node) => node.id === id)?.locked,
+            )
+          }
+          onClick={removeSelected}
+        >
+          <Trash2 size={15} />
+        </Button>
       </header>
       <div
         className="image-canvas__viewport"
@@ -392,7 +409,9 @@ export function ImageInfiniteCanvas({
                       .map((item) => item.id)
                   : [node.id];
                 const ids = event.shiftKey
-                  ? Array.from(new Set([...selected, ...groupIds]))
+                  ? selected.includes(node.id)
+                    ? selected.filter((id) => !groupIds.includes(id))
+                    : Array.from(new Set([...selected, ...groupIds]))
                   : selected.includes(node.id)
                     ? selected
                     : groupIds;

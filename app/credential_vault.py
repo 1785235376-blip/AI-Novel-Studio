@@ -13,7 +13,7 @@ from typing import Literal, Protocol
 _TARGET_PREFIX = "AI-Novel-Studio/provider/"
 _CRED_TYPE_GENERIC = 1
 _CRED_PERSIST_LOCAL_MACHINE = 2
-SUPPORTED_PROVIDERS = frozenset({"deepseek", "openai", "claude", "gemini", "ddshub", "siliconflow", "runway", "kling", "minimax", "seedance", "custom"})
+SUPPORTED_PROVIDERS = frozenset({"deepseek", "openai", "claude", "gemini", "ddshub", "siliconflow", "aliyun-bailian", "runway", "kling", "minimax", "seedance", "custom"})
 VaultBackendName = Literal["windows", "keyring", "memory"]
 
 

@@ -317,9 +317,34 @@ export function DirectorShotList({
   };
   const splitShot = (index:number, at:number) => { const shot=shots[index]; const first={...shot,shot_id:`${shot.shot_id||`shot-${index+1}`}-a`,name:`${shot.name} A`,duration:`${at}s`}; const remaining=Math.max(0,(parseFloat(shot.duration)||0)-at); const second={...shot,shot_id:`${shot.shot_id||`shot-${index+1}`}-b`,name:`${shot.name} B`,duration:`${remaining.toFixed(1)}s`,dialogue:''}; onChange([...shots.slice(0,index),first,second,...shots.slice(index+1)]); };
   const mergeShots = (index:number) => { const first=shots[index], second=shots[index+1]; if(!second)return; onChange([...shots.slice(0,index),{...first,duration:`${(parseFloat(first.duration)||0)+(parseFloat(second.duration)||0)}s`,action:[first.action,second.action].filter(Boolean).join('；'),dialogue:[first.dialogue,second.dialogue].filter(Boolean).join(' ')},...shots.slice(index+2)]); };
+  const duplicateShot = (index: number) => {
+    const source = shots[index];
+    if (!source) return;
+    const baseId = source.shot_id || `shot-${index + 1}`;
+    let suffix = 2;
+    let shotId = `${baseId}-copy`;
+    while (shots.some((shot) => shot.shot_id === shotId)) {
+      shotId = `${baseId}-copy-${suffix}`;
+      suffix += 1;
+    }
+    const copy: DirectorShot = {
+      ...source,
+      shot_id: shotId,
+      name: `${source.name} 副本`,
+      motion_task_id: undefined,
+      binding_candidates: undefined,
+      binding_source: undefined,
+      constraint_status: undefined,
+    };
+    onChange([...shots.slice(0, index + 1), copy, ...shots.slice(index + 1)]);
+  };
+  const deleteShot = (index: number) => {
+    if (shots.length <= 1) return;
+    onChange(shots.filter((_, current) => current !== index));
+  };
   return (
     <div className="multimodal-director__shot-list">
-      <VideoTimeline shots={shots} onReorder={onChange} onDurationChange={(index, duration) => onChange(shots.map((shot, current) => current === index ? { ...shot, duration } : shot))} onTransitionChange={(index, transition) => onChange(shots.map((shot, current) => current === index ? { ...shot, transition } : shot))} onTransitionDurationChange={(index, duration) => onChange(shots.map((shot, current) => current === index ? { ...shot, transition_duration: duration } : shot))} onSubtitleChange={(index, subtitle) => onChange(shots.map((shot, current) => current === index ? { ...shot, subtitle } : shot))} onKeyframesChange={(index, keyframes) => onChange(shots.map((shot, current) => current === index ? { ...shot, keyframes } : shot))} onSplit={splitShot} onMerge={mergeShots} />
+      <VideoTimeline shots={shots} onReorder={onChange} onDurationChange={(index, duration) => onChange(shots.map((shot, current) => current === index ? { ...shot, duration } : shot))} onTransitionChange={(index, transition) => onChange(shots.map((shot, current) => current === index ? { ...shot, transition } : shot))} onTransitionDurationChange={(index, duration) => onChange(shots.map((shot, current) => current === index ? { ...shot, transition_duration: duration } : shot))} onSubtitleChange={(index, subtitle) => onChange(shots.map((shot, current) => current === index ? { ...shot, subtitle } : shot))} onKeyframesChange={(index, keyframes) => onChange(shots.map((shot, current) => current === index ? { ...shot, keyframes } : shot))} onSplit={splitShot} onMerge={mergeShots} onDuplicate={duplicateShot} onDelete={deleteShot} />
       <DirectorVoiceToolbar
         shots={shots}
         batch={batch}

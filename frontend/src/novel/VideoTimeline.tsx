@@ -68,6 +68,8 @@ export function VideoTimeline({
   onDurationChange,
   onSplit,
   onMerge,
+  onDuplicate,
+  onDelete,
   onTransitionChange,
   onTransitionDurationChange,
   onSubtitleChange,
@@ -78,6 +80,8 @@ export function VideoTimeline({
   onDurationChange?: (index: number, duration: string) => void;
   onSplit?: (index: number, at: number) => void;
   onMerge?: (index: number) => void;
+  onDuplicate?: (index: number) => void;
+  onDelete?: (index: number) => void;
   onTransitionChange?: (index: number, transition: string) => void;
   onTransitionDurationChange?: (index: number, duration: string) => void;
   onSubtitleChange?: (index: number, subtitle: string) => void;
@@ -152,6 +156,8 @@ export function VideoTimeline({
             <small>占用 {item.duration.toFixed(1)}s（镜头 {item.shotDuration.toFixed(1)}s + 转场 {item.transitionDuration.toFixed(1)}s）</small>
             <Button variant="ghost" disabled={item.shotDuration <= 0.2} aria-label={`拆分镜头 ${item.shot.name}`} onClick={() => onSplit?.(item.index, item.shotDuration / 2)}>拆分</Button>
             <Button variant="ghost" disabled={item.index === shots.length - 1} aria-label={`合并镜头 ${item.shot.name}`} onClick={() => onMerge?.(item.index)}>合并下一镜头</Button>
+            <Button variant="ghost" aria-label={`复制镜头 ${item.shot.name}`} onClick={() => onDuplicate?.(item.index)}>复制</Button>
+            <Button variant="ghost" disabled={shots.length <= 1} aria-label={`删除镜头 ${item.shot.name}`} onClick={() => onDelete?.(item.index)}>删除</Button>
             <Button
               variant="ghost"
               disabled={item.index === 0}

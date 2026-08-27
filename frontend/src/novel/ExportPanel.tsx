@@ -10,7 +10,7 @@ const formats=[
   {id:'markdown',label:'Markdown',detail:'保留章节结构与标题层级',available:true,icon:FileText},
   {id:'json',label:'项目 JSON',detail:'完整项目数据交换格式',available:true,icon:PackageCheck},
   {id:'docx',label:'Word 文档',detail:'基础 OOXML 文稿；模板与目录增强待接入',available:true,icon:FileText},
-  {id:'pdf',label:'PDF 文档',detail:'预留：分页、字体嵌入与打印版式',available:false,icon:FileText},
+  {id:'pdf',label:'PDF 文档',detail:'本地确定性分页与中文字体回退；正式发行可配置嵌入字体',available:true,icon:FileText},
   {id:'epub',label:'EPUB 电子书',detail:'基础 EPUB 3 导航与章节；封面资源待接入',available:true,icon:FileArchive},
   {id:'screenplay',label:'影视剧本预览',detail:'确定性 Markdown 预览；标准排版仍待接入',available:true,icon:FileText},
   {id:'shot-list',label:'镜头表 CSV',detail:'确定性镜头字段导出；对白扩展待接入',available:true,icon:FileArchive},

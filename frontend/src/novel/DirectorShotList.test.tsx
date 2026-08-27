@@ -1,11 +1,12 @@
 // @vitest-environment jsdom
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { DirectorShotList, buildVoiceManifest, buildMotionBatchCsv } from './DirectorShotList';
 
 vi.mock('../api', () => ({ api: { synthesizeDirectorShotDialogue: vi.fn() } }));
 describe('DirectorShotList', () => {
   beforeEach(() => { localStorage.clear(); });
+  afterEach(cleanup);
   it('updates the matching shot without mutating other shots', () => {
     const onChange = vi.fn();
     render(<DirectorShotList shots={[{ shot_id: 'a', name: '一', duration: '2s', camera: '', action: '' }, { shot_id: 'b', name: '二', duration: '2s', camera: '', action: '' }]} profiles={[]} onChange={onChange} />);
@@ -29,5 +30,23 @@ describe('DirectorShotList', () => {
     expect(confirm).toHaveBeenCalled();
     expect(localStorage.getItem('multimodal-motion-batch-draft:workspace')).toContain('s1');
     confirm.mockRestore();
+  });
+  it('duplicates a shot with a unique id and clears task bindings', () => {
+    const onChange = vi.fn();
+    render(<DirectorShotList shots={[{ shot_id: 's1', name: '镜头', duration: '2s', camera: '', action: '', motion_task_id: 'task-1', constraint_status: 'confirmed' }]} profiles={[]} onChange={onChange} />);
+    fireEvent.click(screen.getByLabelText('复制镜头 镜头'));
+    expect(onChange).toHaveBeenCalledWith([
+      expect.objectContaining({ shot_id: 's1' }),
+      expect.objectContaining({ shot_id: 's1-copy', name: '镜头 副本', motion_task_id: undefined, constraint_status: undefined }),
+    ]);
+  });
+  it('deletes a shot but keeps the final timeline clip', () => {
+    const onChange = vi.fn();
+    const { rerender } = render(<DirectorShotList shots={[{ shot_id: 's1', name: '一', duration: '2s', camera: '', action: '' }, { shot_id: 's2', name: '二', duration: '2s', camera: '', action: '' }]} profiles={[]} onChange={onChange} />);
+    fireEvent.click(screen.getByLabelText('删除镜头 一'));
+    expect(onChange).toHaveBeenCalledWith([expect.objectContaining({ shot_id: 's2' })]);
+    onChange.mockClear();
+    rerender(<DirectorShotList shots={[{ shot_id: 's1', name: '一', duration: '2s', camera: '', action: '' }]} profiles={[]} onChange={onChange} />);
+    expect((screen.getByLabelText('删除镜头 一') as HTMLButtonElement).disabled).toBe(true);
   });
 });

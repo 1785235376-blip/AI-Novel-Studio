@@ -14,7 +14,7 @@ type ImportPreview = {
 };
 type Candidate = Record<string, unknown>;
 type CandidateGroups = Record<string, Candidate[]>;
-type ReviewState = {novel:Novel; candidates:CandidateGroups; selected:Record<string,boolean[]>; reviewId?:string; analysis?:ImportReview['analysis']};
+type ReviewState = {novel:Novel; candidates:CandidateGroups; selected:Record<string,boolean[]>; reviewId?:string; analysis?:ImportReview['analysis']; scope:'chapter'|'project'; chapterId?:string};
 type ImportStage="SELECT"|"PARSING"|"PREVIEW"|"IMPORTING"|"REVIEW";
 export type NovelImportSource={format:"txt"|"markdown"|"json"|"docx"|"word"|"pdf";content:string;contentBase64?:string;name:string};
 export type NovelImportPlan={format:string;title:string;chapters:{number:number;title:string;content:string}[]};
@@ -31,7 +31,7 @@ export function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId }: { onImported?: (novel: Novel) => void; onConfirm?: (source:NovelImportSource,preview:ImportPreview,plan:NovelImportPlan,report:(message:string)=>void)=>Promise<void>; novelId?:string; chapterId?:string }) {
+export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId, novelTitle }: { onImported?: (novel: Novel) => void; onConfirm?: (source:NovelImportSource,preview:ImportPreview,plan:NovelImportPlan,report:(message:string)=>void)=>Promise<void>; novelId?:string; chapterId?:string; novelTitle?:string }) {
   const [source, setSource] = useState<NovelImportSource>();
   const [preview, setPreview] = useState<ImportPreview>();
   const [plan, setPlan] = useState<NovelImportPlan>();
@@ -45,10 +45,10 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId }: 
   const [stage,setStage]=useState<ImportStage>("SELECT");
   const confirmingRef=useRef(false);
   const interactionRef=useRef(0);
-  function reviewState(record:ImportReview):ReviewState{
+  function reviewState(record:ImportReview, fallbackTitle=preview?.title, fallbackScope:ReviewState['scope']='project'):ReviewState{
     const candidates=(record.candidates||{}) as CandidateGroups;
     const selected=record.selected||Object.fromEntries(Object.entries(candidates).map(([kind,items])=>[kind,items.map(()=>false)]));
-    return {novel:{id:record.novel_id,title:'当前小说',genre:'',chapter_count:0,word_count:0,status:'ACTIVE'},candidates,selected,reviewId:record.id,analysis:record.analysis};
+    return {novel:{id:record.novel_id,title:record.title||fallbackTitle||novelTitle||'当前小说',genre:'',chapter_count:0,word_count:0,status:'ACTIVE'},candidates,selected,reviewId:record.id,analysis:record.analysis,scope:(record.scope==='chapter'||record.scope==='project'?record.scope:fallbackScope),chapterId:record.chapter_id||chapterId};
   }
   useEffect(()=>{
     let active=true;
@@ -92,7 +92,14 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId }: 
         const candidates=(persisted?.candidates || result.preview?.knowledge_base?.candidates || {}) as CandidateGroups;
         const groups=(persisted?.selected || Object.fromEntries(Object.entries(candidates).filter(([,items])=>Array.isArray(items)&&items.length).map(([kind,items])=>[kind,items.map(()=>false)]))) as Record<string,boolean[]>;
         if(result.novel && Object.keys(groups).length) {
-          setReview({novel:result.novel,candidates,selected:groups,reviewId:persisted?.id});
+          setReview({
+            novel:result.novel,
+            candidates,
+            selected:groups,
+            reviewId:persisted?.id,
+            scope:persisted?.scope==="chapter"?"chapter":"project",
+            chapterId:persisted?.chapter_id||undefined,
+          });
           setStage("REVIEW");
           setStatus("小说已导入，知识库候选等待审核。正文不会因审核操作被改写。");
         } else if(result.novel) onImported?.(result.novel);
@@ -112,7 +119,7 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId }: 
     interactionRef.current+=1;setBusy(true);setError(undefined);setAiReviewError(undefined);
     try{
       const record=scope==="chapter"&&chapterId?await createChapterKnowledgeReview(novelId,chapterId):await createNovelKnowledgeReview(novelId);
-      setReview(reviewState(record));setStage("REVIEW");setStatus(scope==="chapter"?"已建立当前章节审查任务，可调用 AI 提取资料候选。":"已建立整本小说审查任务，可调用 AI 提取资料候选。");
+      setReview(reviewState(record, undefined, scope));setStage("REVIEW");setStatus(scope==="chapter"?"已建立当前章节审查任务，可调用 AI 提取资料候选。":"已建立整本小说审查任务，可调用 AI 提取资料候选。");
     }catch(reason){setError(reason)}finally{setBusy(false)}
   }
 
@@ -128,7 +135,11 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId }: 
   }
 
   function toggleCandidate(kind:string,index:number) {
-    setReview(current=>current?{...current,selected:{...current.selected,[kind]:current.selected[kind].map((value,itemIndex)=>itemIndex===index?!value:value)}}:current);
+    setReview(current=>{
+      if(!current)return current;
+      const values=current.selected[kind]||current.candidates[kind].map(()=>false);
+      return {...current,selected:{...current.selected,[kind]:values.map((value,itemIndex)=>itemIndex===index?!value:value)}};
+    });
   }
 
   function editCandidate(kind:string,index:number,field:string,value:string) {
@@ -145,7 +156,7 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId }: 
     setBusy(true);setError(undefined);
     try{
       const saved=await api.updateImportReview(review.novel.id,review.reviewId,review.candidates,review.selected);
-      setReview({...review,...reviewState(saved),novel:review.novel});
+      setReview({...review,...reviewState(saved, review.novel.title, review.scope),novel:review.novel});
       setStatus("候选修改与勾选状态已保存，可稍后继续审核。");
     }catch(reason){setError(reason)}finally{setBusy(false)}
   }
@@ -155,7 +166,7 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId }: 
     setBusy(true);setError(undefined);setAiReviewError(undefined);setStatus("AI 正在阅读章节并复核资料库候选…");
     try{
       const result=await aiAnalyzeImportReview(review.novel.id,review.reviewId);
-      setReview({...review,...reviewState(result.review),novel:review.novel});
+      setReview({...review,...reviewState(result.review, review.novel.title, review.scope),novel:review.novel});
       setStatus(`AI 已审查 ${result.analysis.chapter_count||0} 个章节片段，请逐项确认后再写入资料库。`);
     }catch(reason){setAiReviewError(reason);setStatus("AI 审查未完成，已保留原有本地分析候选。")}finally{setBusy(false)}
   }
@@ -210,7 +221,7 @@ function KnowledgeReviewPanel({review,busy,onAiReview,onToggle,onEdit,onSelectAl
   const selectedCount=Object.values(review.selected).reduce((total,items)=>total+items.filter(Boolean).length,0);
   function title(item:Candidate,kind:string,index:number){return String(item.name||item.title||item.description||`${labels[kind]||kind} ${index+1}`)}
   return <section className="novel-import-review-panel" aria-labelledby="novel-import-review-panel-title">
-    <header><div><strong id="novel-import-review-panel-title">知识库候选审核</strong><p className="novel-help">项目“{review.novel.title}” · 共 {groups.reduce((sum,[,items])=>sum+items.length,0)} 项候选</p></div><Badge tone="warning">等待作者决定</Badge></header>
+    <header><div><strong id="novel-import-review-panel-title">知识库候选审核</strong><p className="novel-help">{review.scope==='chapter'?'当前章节':'整本小说'} · 项目“{review.novel.title}” · 共 {groups.reduce((sum,[,items])=>sum+items.length,0)} 项候选</p></div><Badge tone="warning">等待作者决定</Badge></header>
     <p>勾选后接受的候选才会写入人物、地点、时间线和伏笔资料库；正文和章节版本不会被改写。</p>
     {review.reviewId&&<div className="novel-import-ai-review"><Button type="button" variant="secondary" onClick={onAiReview} disabled={busy}>{busy?'AI 正在阅读…':'AI 阅读审查'}</Button><p className="novel-help">点击后会把有限长度的章节片段发送给主控中配置的文本模型。AI 只更新候选草稿，仍需你确认。</p>{review.analysis?.source==='AI_REVIEW'&&<Badge tone="success">已由 AI 复核 · {review.analysis.model_id||'已配置模型'}</Badge>}</div>}
     <div className="novel-import-review-panel__actions"><Button type="button" variant="ghost" onClick={onSelectAll} disabled={busy}>全选候选</Button>{review.reviewId&&<Button type="button" variant="secondary" onClick={onSave} disabled={busy}>保存候选修改</Button>}<span className="novel-help" aria-live="polite">已选 {selectedCount} 项</span></div>

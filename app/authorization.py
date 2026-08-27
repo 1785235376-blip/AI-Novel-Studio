@@ -19,6 +19,7 @@ class ModalityDomain(StrEnum):
     NOVEL = "NOVEL"
     IMAGE = "IMAGE"
     VIDEO = "VIDEO"
+    AUDIO = "AUDIO"
 
 
 class ScopeKind(StrEnum):

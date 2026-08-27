@@ -61,6 +61,15 @@ describe("ImageInfiniteCanvas", () => {
     fireEvent.keyDown(screen.getByLabelText("图片无限画布"), { key: "Delete" });
     expect(screen.getByText("角色 · ref://one")).toBeTruthy();
   });
+  it("deletes selected unlocked nodes from the visible toolbar control", () => {
+    render(<Harness />);
+    const remove = screen.getByLabelText("删除所选节点");
+    expect((remove as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByText("角色 · ref://one"));
+    expect((remove as HTMLButtonElement).disabled).toBe(false);
+    fireEvent.click(remove);
+    expect(screen.queryByText("角色 · ref://one")).toBeNull();
+  });
   it("hides and restores a node from the layer list", () => {
     render(<Harness />);
     expect(document.querySelector('[data-node-id="one"]')).toBeTruthy();
