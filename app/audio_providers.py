@@ -4,6 +4,8 @@ import os
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
+from .audio_provider_config import load as load_audio_provider_config
+
 
 AUDIO_PROVIDER_CATALOG: dict[str, dict[str, Any]] = {
     "dasheng-local": {
@@ -150,7 +152,12 @@ class HttpAudioProvider:
 
 def provider_catalog() -> list[dict[str, Any]]:
     rows = []
-    for provider_id, config in AUDIO_PROVIDER_CATALOG.items():
+    saved = load_audio_provider_config()
+    provider_ids = list(dict.fromkeys([*AUDIO_PROVIDER_CATALOG, *saved]))
+    for provider_id in provider_ids:
+        config = {**AUDIO_PROVIDER_CATALOG.get(provider_id, {"priority": 150}), **saved.get(provider_id, {})}
+        if not config.get("enabled", True):
+            continue
         endpoint = os.getenv(f"AUDIO_{provider_id.upper().replace('-', '_')}_ENDPOINT", config["endpoint"])
         rows.append({"provider_id": provider_id, **config, "endpoint": endpoint})
     return sorted(rows, key=lambda item: (item["priority"], item["provider_id"]))

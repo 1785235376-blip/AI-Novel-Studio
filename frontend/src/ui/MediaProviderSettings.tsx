@@ -9,7 +9,8 @@ import {
 import { Badge, Button, Panel } from "./primitives";
 import "./MediaProviderSettings.css";
 
-type Mode = "image" | "video";
+type Mode = "image" | "video" | "audio";
+type AudioProviderStatus = Awaited<ReturnType<typeof api.audioProviders>>["items"][number];
 type Draft = {
   id: string;
   displayName: string;
@@ -20,9 +21,10 @@ type Draft = {
   enabled: boolean;
   apiStyle: "openai" | "comfyui" | "automatic1111";
   credentialConfigured: boolean;
+  capabilities: string[];
 };
 type FieldErrors = Partial<
-  Record<"id" | "endpoint" | "model" | "credential", string>
+  Record<"id" | "endpoint" | "model" | "credential" | "capabilities", string>
 >;
 const emptyDraft: Draft = {
   id: "custom",
@@ -34,12 +36,20 @@ const emptyDraft: Draft = {
   enabled: true,
   apiStyle: "openai",
   credentialConfigured: false,
+  capabilities: ["TTS"],
 };
+
+const audioCapabilities = [
+  ["TTS", "语音合成"], ["TEXT_TO_AUDIO", "文本生成音频"], ["SFX", "音效"],
+  ["FOLEY", "拟音 / Foley"], ["MUSIC", "音乐"], ["AUDIO_EDIT", "音频编辑"],
+  ["VIDEO_TO_AUDIO", "视频同步音频"],
+] as const;
 
 export function MediaProviderSettings() {
   const [mode, setMode] = useState<Mode>("image");
   const [images, setImages] = useState<AssetProviderStatus[]>([]);
   const [videos, setVideos] = useState<VideoProviderStatus[]>([]);
+  const [audio, setAudio] = useState<AudioProviderStatus[]>([]);
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [credential, setCredential] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -48,19 +58,21 @@ export function MediaProviderSettings() {
     [message, setMessage] = useState("");
   const errorRef = useRef<HTMLDivElement>(null);
   async function refresh() {
-    const [imageResult, videoResult] = await Promise.all([
+    const [imageResult, videoResult, audioResult] = await Promise.all([
       api.assetProviders(),
       api.videoProviders(),
+      api.audioProviders(),
     ]);
     setImages(imageResult.items || []);
     setVideos(videoResult.items || []);
+    setAudio(audioResult.items || []);
   }
   useEffect(() => {
     void refresh().catch(() =>
       setError("Provider 状态读取失败，请检查本地服务。"),
     );
   }, []);
-  const rows = mode === "image" ? images : videos;
+  const rows = mode === "image" ? images : mode === "video" ? videos : audio;
   function select(id: string) {
     setCredential("");
     setFieldErrors({});
@@ -79,8 +91,9 @@ export function MediaProviderSettings() {
         enabled: item.enabled !== false,
         apiStyle: item.api_style || "openai",
         credentialConfigured: Boolean(item.credential_configured),
+        capabilities: [],
       });
-    } else {
+    } else if (mode === "video") {
       const item = videos.find((value) => value.id === id);
       if (!item) return;
       setDraft({
@@ -93,19 +106,24 @@ export function MediaProviderSettings() {
         enabled: true,
         apiStyle: "openai",
         credentialConfigured: item.credential_configured,
+        capabilities: [],
       });
+    } else {
+      const item = audio.find((value) => value.provider_id === id);
+      if (!item) return;
+      setDraft({id:item.provider_id,displayName:item.display_name||item.provider_id,endpoint:item.endpoint||"",model:item.default_model,local:Boolean(item.local),requiresCredential:item.requires_credential!==false,enabled:item.enabled!==false,apiStyle:"openai",credentialConfigured:Boolean(item.credential_configured),capabilities:item.capabilities||["TTS"]});
     }
   }
   useEffect(() => {
-    const first = mode === "image" ? images[0] : videos[0];
+    const first = mode === "image" ? images[0] : mode === "video" ? videos[0] : audio[0];
     if (first)
       select(
         mode === "image"
           ? (first as AssetProviderStatus).provider_id
-          : (first as VideoProviderStatus).id,
+          : mode === "video" ? (first as VideoProviderStatus).id : (first as AudioProviderStatus).provider_id,
       );
     else setDraft(emptyDraft);
-  }, [mode, images.length, videos.length]);
+  }, [mode, images.length, videos.length, audio.length]);
   async function save(event: React.FormEvent) {
     event.preventDefault();
     setError("");
@@ -125,6 +143,8 @@ export function MediaProviderSettings() {
         mode === "image" && draft.apiStyle === "comfyui"
           ? "请填写 ComfyUI checkpoint 文件名。"
           : "请填写模型 ID。";
+    if (mode === "audio" && !draft.capabilities.length)
+      issues.capabilities = "至少选择一种声音能力。";
     if (
       draft.requiresCredential &&
       !draft.credentialConfigured &&
@@ -150,7 +170,7 @@ export function MediaProviderSettings() {
           requires_credential: draft.requiresCredential,
           display_name: draft.displayName,
         });
-      else
+      else if (mode === "video")
         await api.configureVideoProvider(draft.id, {
           endpoint: draft.endpoint,
           model_id: draft.model,
@@ -159,6 +179,7 @@ export function MediaProviderSettings() {
           requires_credential: draft.requiresCredential,
           display_name: draft.displayName,
         });
+      else await api.configureAudioProvider(draft.id,{endpoint:draft.endpoint,default_model:draft.model,display_name:draft.displayName,local:draft.local,enabled:draft.enabled,requires_credential:draft.requiresCredential,capabilities:draft.capabilities});
       setCredential("");
       setMessage("配置已保存，路由将优先选择可用的本地 Provider。");
       await refresh();
@@ -168,7 +189,7 @@ export function MediaProviderSettings() {
       setLoading(false);
     }
   }
-  function providerState(item: AssetProviderStatus | VideoProviderStatus) {
+  function providerState(item: AssetProviderStatus | VideoProviderStatus | AudioProviderStatus) {
     const configured =
       "configured" in item
         ? Boolean(item.configured)
@@ -214,10 +235,11 @@ export function MediaProviderSettings() {
         >
           视频
         </button>
+        <button role="tab" aria-selected={mode === "audio"} onClick={() => setMode("audio")}>声音</button>
       </div>
       <div className="media-provider-settings__layout">
         <nav
-          aria-label={`${mode === "image" ? "图片" : "视频"} Provider`}
+          aria-label={`${mode === "image" ? "图片" : mode === "video" ? "视频" : "声音"} Provider`}
           className="media-provider-settings__list"
         >
           {rows.map((item) => {
@@ -261,7 +283,7 @@ export function MediaProviderSettings() {
             onClick={() => {
               setCredential("");
               setFieldErrors({});
-              setDraft({ ...emptyDraft, id: `custom-${mode}` });
+              setDraft({ ...emptyDraft, id: `custom-${mode}`, capabilities: mode === "audio" ? ["TTS"] : [] });
             }}
           >
             + 其他服务商
@@ -410,6 +432,7 @@ export function MediaProviderSettings() {
               </select>
             </label>
           )}
+          {mode === "audio" && <fieldset className="media-provider-settings__capabilities" aria-describedby={fieldErrors.capabilities?"audio-capabilities-error":undefined}><legend>支持的声音能力</legend>{audioCapabilities.map(([value,label])=><label key={value}><input type="checkbox" checked={draft.capabilities.includes(value)} onChange={event=>{setFieldErrors(current=>({...current,capabilities:undefined}));setDraft(current=>({...current,capabilities:event.target.checked?[...current.capabilities,value]:current.capabilities.filter(item=>item!==value)}))}}/>{label}</label>)}{fieldErrors.capabilities&&<small id="audio-capabilities-error" className="media-provider-settings__field-error">{fieldErrors.capabilities}</small>}</fieldset>}
           <div className="media-provider-settings__checks">
             <label>
               <input

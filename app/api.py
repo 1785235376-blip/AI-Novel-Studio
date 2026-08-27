@@ -33,6 +33,7 @@ from .asset_provider_config import load as load_asset_provider_config, save as s
 from .model_runtime import TextGenerationRequest, TextGenerationParameters, TextModelNodeInput, ModelRuntimeError
 from .asset_worker_config import load as load_asset_worker_config, save as save_asset_worker_config
 from .audio_production_store import audio_production_store
+from .audio_provider_config import save as save_audio_provider_config, delete as delete_audio_provider_config
 from .services.export_job_service import (
     ExportJobNotCancellable,
     ExportJobNotRetryable,
@@ -153,6 +154,14 @@ class AudioGenerateIn(BaseModel):
     duration_seconds:float|None=Field(default=None,gt=0,le=600)
     novel_id:str|None=None
     parameters:dict[str,object]=Field(default_factory=dict)
+class AudioProviderConfigIn(BaseModel):
+    endpoint:str
+    default_model:str=Field(min_length=1,max_length=200)
+    display_name:str=""
+    local:bool=False
+    enabled:bool=True
+    requires_credential:bool=True
+    capabilities:list[str]=Field(min_length=1,max_length=7)
 class AudiobookJobIn(BaseModel):
     provider_id:str="auto"
     model_id:str=""
@@ -1761,7 +1770,20 @@ def synthesize_speech(body:SpeechSynthesizeIn,x_session_token:str|None=Header(No
 @router.get("/audio/providers")
 def list_audio_providers():
     from .audio_providers import provider_catalog
-    return {'domain':'AUDIO','routing_policy':'LOCAL_FIRST','items':provider_catalog()}
+    items=[]
+    for item in provider_catalog():
+        requires=bool(item.get('requires_credential',True));configured=not requires or credential_vault.has(item['provider_id'])
+        items.append({**item,'credential_configured':configured,'configured':bool(item.get('endpoint') and item.get('default_model') and configured),'secret':None})
+    return {'domain':'AUDIO','routing_policy':'LOCAL_FIRST','items':items}
+@router.put("/audio/providers/{provider_id}")
+def configure_audio_provider(provider_id:str,body:AudioProviderConfigIn):
+    try:return {'provider_id':provider_id,**save_audio_provider_config(provider_id,**body.model_dump()),'secret':None}
+    except ValueError as exc:raise HTTPException(400,{'code':'INVALID_AUDIO_PROVIDER_CONFIG','message':str(exc)}) from exc
+@router.delete("/audio/providers/{provider_id}")
+def remove_audio_provider(provider_id:str):
+    from .audio_providers import AUDIO_PROVIDER_CATALOG
+    if provider_id in AUDIO_PROVIDER_CATALOG:raise HTTPException(400,{'code':'DEFAULT_PROVIDER_CANNOT_BE_DELETED'})
+    return {'provider_id':provider_id,'deleted':delete_audio_provider_config(provider_id)}
 @router.post("/audio/generate",status_code=202)
 def generate_audio(body:AudioGenerateIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write")
