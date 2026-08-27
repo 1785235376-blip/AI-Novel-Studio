@@ -70,6 +70,9 @@ class JobManager:
             prompt=agent_runner.build_prompt(role,context,task+" "+job.instruction+style_instruction,job.source or ch["content"][-2000:]);router=runtime.router(job.profile,role);last=None
             if job.requested_provider and job.requested_model:router.routes[role]=[Route(job.requested_provider,job.requested_model)]
             for route in router.routes[role]:
+                if not runtime.packaged_author_route_ready(route.provider):
+                    last=ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION,"TEXT_PROVIDER_NOT_CONFIGURED",provider_id=route.provider)
+                    continue
                 try:
                     if self.snapshot_required:
                         snapshot=self.contexts.save_snapshot(job.chapter_id,ch.get("version",0),context,f"{role}:v1",route.model,actor_id=job.actor_id,session_id=job.session_id,scope_type=job.scope_type,scope_id=job.scope_id,generation_id=job.id,cloud=cloud)

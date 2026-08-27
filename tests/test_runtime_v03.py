@@ -35,3 +35,19 @@ def test_local_default_route_remains_mock_in_mock_mode():
     object.__setattr__(settings,"mock_provider",True)
     route=Runtime().router("LOCAL_ONLY","writer").routes["writer"]
     assert [(item.provider,item.model) for item in route]==[("mock","mock-writer")]
+
+def test_packaged_runtime_does_not_stand_in_mock_as_deepseek(monkeypatch):
+    previous_packaged=settings.enable_packaged_runtime
+    previous_mock=settings.mock_provider
+    object.__setattr__(settings,"enable_packaged_runtime",True)
+    object.__setattr__(settings,"mock_provider",True)
+    monkeypatch.delenv("DEEPSEEK_API_KEY",raising=False)
+    try:
+        value=Runtime()
+        assert all(not item["available"] for item in value.text_models() if item["provider_id"]=="deepseek")
+        assert value.packaged_author_route_ready("mock") is False
+        assert value.packaged_author_route_ready("deepseek") is False
+        assert [(item.provider,item.model) for item in value.router("LOCAL_ONLY","writer").routes["writer"]]==[("ollama",settings.local_model)]
+    finally:
+        object.__setattr__(settings,"enable_packaged_runtime",previous_packaged)
+        object.__setattr__(settings,"mock_provider",previous_mock)

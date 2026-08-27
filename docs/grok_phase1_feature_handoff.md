@@ -11,7 +11,7 @@
 2. **当前版本不是 V1.0。** 仍是 `0.7.0` beta。
 3. **不要用 Playwright / 后端 API / 启动截图替代窗口证据。**
 4. **不要修改、删除或跳过四个既有 Python 基线缺陷：** 并发生成幂等性、visual continuity scene jump、user preference 返回字段契约、world rule payload normalization。
-5. **不要进入第二阶段 / 不要扩多媒体范围。** 本分支只做作者侧诚实性：概览、研究资料、Agent `VALIDATED`、视频 fail-closed、章节连续性扫描、路线图诚实文案。
+5. **不要进入第二阶段 / 不要扩多媒体范围。** 本分支只做作者侧诚实性：概览、研究资料、Agent `VALIDATED`、视频 fail-closed、章节连续性扫描、路线图诚实文案、打包运行时写作 fail-closed。
 6. **确定性 Agent 不再是 `COMPLETED`。** 默认/deterministic 执行为 `VALIDATED`，文案「契约校验，未调用模型」，没有审核/应用到正文入口。
 7. **未配置视频 Provider 时不得出现 `SUCCEEDED` 或 `placeholder://video/*`。**
 8. **研究资料走 durable sidecar：** `v1_capabilities/research.json`。
@@ -43,6 +43,12 @@
 - `DeterministicVideoProvider`：`health_check=False`，`generate` 抛 `VIDEO_PROVIDER_NOT_CONFIGURED`。
 - Motion Task 保持 `PENDING`，拒绝 `placeholder://`。
 
+### 打包运行时写作 fail-closed（本轮补）
+
+- `ENABLE_PACKAGED_RUNTIME` 时不得把 `MOCK_PROVIDER` 伪装成 DeepSeek。
+- 未配置文本模型：写作任务 `FAILED` + `TEXT_PROVIDER_NOT_CONFIGURED`，不能 accept，不能出现 mock 成稿「海风裹着雨水」。
+- 开发态 `MOCK_PROVIDER=true` 且非 packaged 时，现有测试/验收 mock 路径保持可用。
+
 ### 章节连续性扫描（本轮新增）
 
 - `POST /api/novels/{id}/continuity/scan-chapter`
@@ -69,7 +75,8 @@
 | 测试 | 变化 |
 | --- | --- |
 | `tests/test_phase6_agent_jobs.py` | 默认 deterministic → `VALIDATED`；review/apply 走 `complete_model_job()` |
-| `tests/test_phase1_feature_closure.py` | overview / research / VALIDATED / motion PENDING / **scan-chapter** |
+| `tests/test_phase1_feature_closure.py` | overview / research / VALIDATED / motion PENDING / **scan-chapter** / **packaged TEXT_PROVIDER_NOT_CONFIGURED** |
+| `tests/test_runtime_v03.py` | 增加 packaged 不得把 mock 伪装成 DeepSeek |
 | `frontend/src/novel/NovelOverviewPanel.test.tsx` | 新增 |
 | `frontend/src/novel/ResearchPanel.test.tsx` | 新增 |
 | `frontend/src/novel/ContinuityCheckPanel.test.tsx` | 新增：主按钮扫描当前章节 |

@@ -1,9 +1,11 @@
 from uuid import uuid4
+import time
 
 from fastapi.testclient import TestClient
 
 from app.actor_context import SessionContext
 from app.asset_providers import DeterministicVideoProvider, VideoGenerationRequest
+from app.config import settings
 from app.dependencies import trusted_session_resolver, v1_capability_service
 from app.main import app
 from app.services.screenplay_service import is_traceable_frame, require_motion_frames
@@ -217,3 +219,34 @@ def test_scan_chapter_reports_engine_status_when_continuity_rules_enabled(monkey
     finally:
         object.__setattr__(settings, "enable_continuity_rules", False)
         continuity_finding_service.enabled = False
+
+
+def test_packaged_generation_fails_closed_without_text_provider():
+    from app import jobs as jobs_module
+    previous_packaged = settings.enable_packaged_runtime
+    previous_mock = settings.mock_provider
+    client = TestClient(app)
+    nid = client.post("/api/novels", json={"title": f"Write {uuid4()}"}).json()["id"]
+    chapter = client.post(f"/api/novels/{nid}/chapters", json={"title": "第一章", "content": "港口灯火。"}).json()
+    object.__setattr__(settings, "enable_packaged_runtime", True)
+    object.__setattr__(settings, "mock_provider", True)
+    try:
+        job = jobs_module.jobs.create(
+            "continue",
+            {"novel_id": nid, "chapter_id": chapter["id"], "instruction": "续写", "provider_id": "deepseek", "model_id": "deepseek-chat"},
+        )
+        for _ in range(160):
+            if job.status in jobs_module.JobManager.terminal:
+                break
+            time.sleep(0.05)
+        assert job.status == "FAILED"
+        assert job.error == "TEXT_PROVIDER_NOT_CONFIGURED"
+        assert "海风裹着雨水" not in (job.output or "")
+        try:
+            jobs_module.jobs.accept(job.id)
+            raise AssertionError("unconfigured text provider must not accept")
+        except ValueError as exc:
+            assert "completed drafts" in str(exc).casefold()
+    finally:
+        object.__setattr__(settings, "enable_packaged_runtime", previous_packaged)
+        object.__setattr__(settings, "mock_provider", previous_mock)

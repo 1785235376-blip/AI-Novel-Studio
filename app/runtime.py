@@ -23,8 +23,9 @@ class Runtime:
         self._sync_model("mock","mock-writer",display_name="内置测试写作模型",context_window=8192)
         deepseek=OpenAICompatibleTextProvider(CompatibleProviderConfig("deepseek",os.getenv("DEEPSEEK_BASE_URL","https://api.deepseek.com/v1"),"DEEPSEEK_API_KEY"))
         from .credential_vault import credential_vault
-        configured=settings.mock_provider or credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
-        deepseek_provider=LegacyTextProviderAdapter("deepseek",self.providers["mock"]) if settings.mock_provider else deepseek
+        mock_standin = bool(settings.mock_provider) and not bool(settings.enable_packaged_runtime)
+        configured=mock_standin or credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
+        deepseek_provider=LegacyTextProviderAdapter("deepseek",self.providers["mock"]) if mock_standin else deepseek
         self.provider_registry.register(ProviderDescriptor("deepseek","DeepSeek","remote",frozenset({Modality.TEXT}),configured,configured,"available" if configured else "not_configured"),deepseek_provider,replace=True)
         for model_id,display_name in (("deepseek-chat","DeepSeek Chat"),("deepseek-reasoner","DeepSeek Reasoner")):
             self.model_registry.register(ModelDescriptor(model_id,"deepseek",display_name,Modality.TEXT,frozenset({"generate","stream"}),streaming=True,enabled=True),replace=True)
@@ -68,7 +69,9 @@ class Runtime:
         if not provider_id:return False
         return any(item.provider_id==provider_id and item.provider_type=="remote" for item in self.provider_registry.descriptors())
     def router(self,profile:str,role:str)->ModelRouter:
-        local="mock" if settings.mock_provider else "ollama"; local_model="mock-writer" if local=="mock" else settings.local_model
+        packaged=bool(settings.enable_packaged_runtime)
+        local="mock" if settings.mock_provider and not packaged else "ollama"
+        local_model="mock-writer" if local=="mock" else settings.local_model
         cloud=os.getenv(f"CLOUD_{role.upper()}_PROVIDER") or os.getenv("DEFAULT_CLOUD_PROVIDER")
         cloud_model=os.getenv(f"CLOUD_{role.upper()}_MODEL") or ""
         routes=[]
@@ -88,4 +91,16 @@ class Runtime:
         if provider is not None:self.providers[provider_id]=provider
         self._sync_model(provider_id,model_id,configured_override=True if provider is not None else None)
         return self.generation_runtime.text_node
+    def packaged_author_route_ready(self, provider_id: str) -> bool:
+        """Packaged DesktopHost must not complete author text with mock or unconfigured DeepSeek."""
+        if not settings.enable_packaged_runtime:
+            return True
+        if provider_id == "mock":
+            return False
+        if provider_id == "deepseek":
+            from .credential_vault import credential_vault
+            return credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
+        provider = self.providers.get(provider_id)
+        health = getattr(provider, "health_check", None)
+        return bool(health()) if callable(health) else False
 runtime=Runtime()
