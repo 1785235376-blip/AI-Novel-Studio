@@ -137,6 +137,11 @@ class AssetProviderConfigIn(BaseModel):
 class AssetUploadIn(BaseModel): novel_id:str; filename:str; content_base64:str; media_type:str|None=None; kind:str="image"; character_id:str|None=None; scene_id:str|None=None
 class VisionAnalyzeIn(BaseModel): provider_id:str="openai"; model_id:str="gpt-4o-mini"; prompt:str; image_url:str; novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None
 class ImageGenerateIn(BaseModel): provider_id:str="ddshub"; model_id:str="gpt-image-2"; prompt:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None; constraints:dict[str,object]={}
+class ImageEditIn(ImageGenerateIn):
+    images:list[str]=Field(min_length=1,max_length=5)
+    size:str="auto"
+    quality:str="auto"
+    output_format:str="png"
 class SpeechSynthesizeIn(BaseModel): provider_id:str="auto"; model_id:str=""; voice:str="alloy"; text:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; chapter_id:str|None=None; emotion:str="neutral"
 class AudioGenerateIn(BaseModel):
     provider_id:str="auto"
@@ -1717,6 +1722,24 @@ def generate_image(body:ImageGenerateIn):
     if body.novel_id:
         novel=repositories.novels.get(body.novel_id); rows=list(novel.get('image_generations',[])); rows.append({**payload,'asset_uri':'inline://generated-image'} if result.asset_uri.startswith('data:') else payload); repositories.novels.update(body.novel_id,{**novel,'image_generations':rows[-50:]})
     return payload
+@router.post("/images/edits")
+def edit_image(body:ImageEditIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write")
+    from .dependencies import credential_vault
+    from .asset_providers import AssetGenerationRequest,OpenAICompatibleImageProvider
+    import httpx
+    if body.provider_id != "ddshub":
+        raise HTTPException(400,{"code":"IMAGE_EDIT_PROVIDER_UNSUPPORTED","message":"当前多参考图编辑仅支持 DDSHub OpenAI Image API。"})
+    if any(not (value.startswith("http://") or value.startswith("https://") or value.startswith("data:image/")) for value in body.images):
+        raise HTTPException(400,{"code":"IMAGE_REFERENCE_URI_UNSAFE","message":"参考图仅允许 http(s) 或 data:image URL。"})
+    config={**IMAGE_PROVIDER_CATALOG[body.provider_id],**(load_asset_provider_config().get(body.provider_id) or {})}
+    endpoint=str(config.get("endpoint") or "").rstrip("/"); secret=credential_vault.resolve(body.provider_id)
+    if not endpoint or not secret: raise HTTPException(503,{"code":"IMAGE_PROVIDER_UNAVAILABLE","message":"图片 Provider 未配置"})
+    try:
+        result=OpenAICompatibleImageProvider(httpx,secret,endpoint).edit(AssetGenerationRequest(body.provider_id,body.model_id,body.prompt,str(uuid.uuid4())),body.images,size=body.size,quality=body.quality,output_format=body.output_format)
+    except ValueError as exc: raise HTTPException(400,{"code":"IMAGE_EDIT_INVALID","message":str(exc)})
+    except Exception: raise HTTPException(502,{"code":"IMAGE_EDIT_FAILED","message":"图片编辑失败，请检查 Provider 或参考图。"})
+    return {"provider_id":result.provider_id,"model_id":result.model_id,"asset_uri":result.asset_uri,"prompt":body.prompt,"reference_count":len(body.images),"created_at":__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}
 @router.post("/speech/synthesize")
 def synthesize_speech(body:SpeechSynthesizeIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write")

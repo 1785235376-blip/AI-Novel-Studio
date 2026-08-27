@@ -164,6 +164,17 @@ class OpenAICompatibleImageProvider:
         if item.get("b64_json"): uri="data:image/png;base64,"+str(item["b64_json"])
         if not uri: raise ValueError("image provider response missing url")
         return AssetGenerationResult(request.provider_id,request.model_id,uri)
+    def edit(self, request: AssetGenerationRequest, images: list[str], **options: object) -> AssetGenerationResult:
+        if not images or len(images) > 5:
+            raise ValueError("between 1 and 5 reference images are required")
+        payload={"model":request.model_id,"prompt":request.prompt,"images":[{"image_url":value} for value in images],"n":1}
+        for key in ("size","quality","output_format","output_compression","background","moderation"):
+            if key in options and options[key] is not None: payload[key]=options[key]
+        response=self.transport.post(self.endpoint+"/images/edits",headers={"Authorization":f"Bearer {self.api_key}"},json=payload,timeout=180)
+        response.raise_for_status(); data=response.json(); item=(data.get("data") or [{}])[0]; uri=item.get("url") or item.get("b64_json")
+        if item.get("b64_json"): uri="data:image/png;base64,"+str(item["b64_json"])
+        if not uri: raise ValueError("image edit provider response missing url")
+        return AssetGenerationResult(request.provider_id,request.model_id,uri)
 
 class Automatic1111ImageProvider:
     def __init__(self, transport, endpoint: str): self.transport,self.endpoint=transport,endpoint.rstrip('/')

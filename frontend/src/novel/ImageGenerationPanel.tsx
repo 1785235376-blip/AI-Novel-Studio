@@ -40,6 +40,7 @@ export function ImageGenerationPanel({
   onInspect?: (inspection?: ImageInspection) => void;
 }) {
   const [prompt, setPrompt] = useState("生成适合小说设定的角色或场景概念图。");
+  const [referenceInput, setReferenceInput] = useState("");
   const [uri, setUri] = useState(""),
     [history, setHistory] = useState<any[]>([]),
     [loading, setLoading] = useState(false),
@@ -132,14 +133,28 @@ export function ImageGenerationPanel({
       setTask((current) =>
         current ? { ...current, status: "RUNNING" } : current,
       );
-      const result = await api.imageGenerate({
-        provider_id: requestProvider,
-        model_id: requestModel,
-        prompt: requestPrompt,
-        novel_id: novelId,
-        character_id: characterId,
-        scene_id: sceneId,
-      });
+      const references = referenceInput.split(/\r?\n/).map((value) => value.trim()).filter(Boolean);
+      const result = references.length
+        ? await api.imageEdit({
+            provider_id: requestProvider,
+            model_id: requestModel,
+            prompt: requestPrompt,
+            images: references,
+            size: "auto",
+            quality: "auto",
+            output_format: "png",
+            novel_id: novelId,
+            character_id: characterId,
+            scene_id: sceneId,
+          })
+        : await api.imageGenerate({
+            provider_id: requestProvider,
+            model_id: requestModel,
+            prompt: requestPrompt,
+            novel_id: novelId,
+            character_id: characterId,
+            scene_id: sceneId,
+          });
       setUri(result.asset_uri);
       setTask((current) =>
         current
@@ -147,7 +162,9 @@ export function ImageGenerationPanel({
           : current,
       );
     } catch {
-      const message = "图片生成失败，请检查 Provider 配置。";
+      const message = referenceInput.trim()
+        ? "参考图融合失败，请检查图片地址、数量和 Provider 配置。"
+        : "图片生成失败，请检查 Provider 配置。";
       setError(message);
       setTask((current) =>
         current ? { ...current, status: "FAILED", error: message } : current,
@@ -160,6 +177,8 @@ export function ImageGenerationPanel({
     (item) => item.configured && item.registered && item.reachable !== false,
   );
   const previewUri = safeImagePreviewUri(uri);
+  const references = referenceInput.split(/\r?\n/).map((value) => value.trim()).filter(Boolean);
+  const referencesValid = references.length <= 5 && references.every((value) => /^https?:\/\//i.test(value) || /^data:image\//i.test(value));
   return (
     <Panel title="图片生成">
       <label>
@@ -209,13 +228,29 @@ export function ImageGenerationPanel({
           onChange={(event) => setPrompt(event.target.value)}
         />
       </label>
+      <details>
+        <summary>多参考图融合{references.length ? `（${references.length}）` : ""}</summary>
+        <label>
+          参考图地址（每行一张，最多 5 张）
+          <textarea
+            aria-label="多参考图地址"
+            rows={4}
+            value={referenceInput}
+            placeholder="https://... 或 data:image/..."
+            onChange={(event) => setReferenceInput(event.target.value)}
+          />
+        </label>
+        <p className="novel-help">填写后将调用 DDSHub 图片编辑接口；参考图用于角色、构图、服装或场景一致性约束。</p>
+        {references.length > 0 && !referencesValid && <p role="alert">仅支持 1–5 个 http(s) 或 data:image 地址。</p>}
+      </details>
       <Button
         ref={generateButton}
-        disabled={loading || !prompt.trim() || !providerId || !modelId.trim()}
+        disabled={loading || !prompt.trim() || !providerId || !modelId.trim() || !referencesValid || (references.length > 0 && providerId !== "ddshub")}
         onClick={generate}
       >
-        {loading ? "生成中…" : "生成图片"}
+        {loading ? "生成中…" : references.length ? "融合参考图" : "生成图片"}
       </Button>
+      {references.length > 0 && providerId !== "ddshub" && <p role="alert">当前多参考图融合仅支持 DDSHub Provider。</p>}
       {!available && (
         <p className="novel-help">请先在主控中配置并连接图片 Provider。</p>
       )}

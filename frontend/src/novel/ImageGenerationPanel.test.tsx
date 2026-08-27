@@ -151,3 +151,17 @@ it("blocks an unsafe provider result from preview and canvas insertion", async (
   expect(screen.queryByAltText("生成结果")).toBeNull();
   expect((screen.getByRole("button", { name: "加入画布" }) as HTMLButtonElement).disabled).toBe(true);
 });
+
+it("uses DDSHub image edits when reference images are supplied", async () => {
+  vi.spyOn(api, "imageGenerations").mockResolvedValue({ items: [] });
+  vi.spyOn(api, "assetProviders").mockResolvedValue({items:[{provider_id:"ddshub",default_model:"gpt-image-2",configured:true,registered:true}]});
+  const generate=vi.spyOn(api,"imageGenerate");
+  const edit=vi.spyOn(api,"imageEdit").mockResolvedValue({provider_id:"ddshub",model_id:"gpt-image-2",asset_uri:"https://example.test/fused.png",prompt:"融合",reference_count:2});
+  render(<ImageGenerationPanel novelId="n1"/>);
+  fireEvent.click(await screen.findByText("多参考图融合"));
+  fireEvent.change(screen.getByLabelText("多参考图地址"),{target:{value:"https://example.test/a.png\nhttps://example.test/b.png"}});
+  fireEvent.click(screen.getByRole("button",{name:"融合参考图"}));
+  await waitFor(()=>expect(edit).toHaveBeenCalledWith(expect.objectContaining({provider_id:"ddshub",images:["https://example.test/a.png","https://example.test/b.png"]})));
+  expect(generate).not.toHaveBeenCalled();
+  expect(await screen.findByAltText("生成结果")).toBeTruthy();
+});
