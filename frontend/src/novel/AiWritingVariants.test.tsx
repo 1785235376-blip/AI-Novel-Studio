@@ -59,6 +59,12 @@ describe('AI writing variants',()=>{
     fireEvent.click(screen.getByRole('button',{name:'重新生成此候选'}));
     expect(onRetry).toHaveBeenCalledWith(timedOut);
   });
+  it('does not treat an unconfigured text provider as a ready draft',()=>{
+    const failed:AiVariantDraft={id:'unconfigured',variantIndex:1,status:'failed',output:'',error:'TEXT_PROVIDER_NOT_CONFIGURED'};
+    render(<AiWritingPanel {...base} variants={[failed]}/>);
+    expect(screen.getByText('未配置可用文本模型，未调用 DeepSeek，不能当作创作完成。')).toBeTruthy();
+    expect(screen.queryByRole('button',{name:'采用草稿'})).toBeNull();
+  });
   it('disables acceptance for a recovered stale candidate',()=>{
     const stale:AiVariantDraft={id:'stale',variantIndex:1,status:'ready',output:'保留的草稿',acceptBlocked:true,acceptBlockedReason:'正文已在生成期间发生变化，请先处理版本冲突。'};
     const onResolveConflict=vi.fn();render(<AiWritingPanel {...base} variants={[stale]} onResolveConflict={onResolveConflict}/>);

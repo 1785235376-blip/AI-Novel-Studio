@@ -20,7 +20,7 @@ class StructuredAgentOutput(BaseModel):
 
 
 class AgentJobService:
-    terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED"}
+    terminal={"COMPLETED","VALIDATED","FAILED","CANCELLED","ACCEPTED","REJECTED"}
     def __init__(self,generations,contexts,novels,runtime=None,agent_runner=None):self.generations,self.contexts,self.novels,self.runtime,self.agent_runner=generations,contexts,novels,runtime,agent_runner;self.lock=threading.RLock();self.cancellations={}
 
     def create(self,agent_id,novel_id,chapter_number,instruction="",target="local",provider=None,model=None,execution_mode="deterministic",timeout_seconds=120,retry_of=None):
@@ -69,12 +69,21 @@ class AgentJobService:
             if job["status"]!="QUEUED":raise ValueError("agent job is not queued")
             cancellation=self.cancellations.setdefault(jid,threading.Event());working={**job,"status":"WORKING","updated_at":utc()};self.generations.save(working)
         try:
-            if job.get("execution_mode","deterministic")=="model":output,provider,model=self._execute_model(job)
-            else:output={"schema":job["output_schema"],"agent_id":job["agent_id"],"summary":f"{job['agent_name']} 已完成结构化任务准备。","proposals":[],"findings":[],"context_hash":job["context_hash"]};provider,model=job.get("provider") or "deterministic-local",job.get("model") or "contract-validator-v1"
+            if job.get("execution_mode","deterministic")=="model":
+                output,provider,model=self._execute_model(job)
+                status="COMPLETED"
+                execution_label="真实模型执行"
+                model_called=True
+            else:
+                output={"schema":job["output_schema"],"agent_id":job["agent_id"],"summary":"契约校验通过，未调用模型，未生成可应用正文。","proposals":[],"findings":[],"context_hash":job["context_hash"]}
+                provider,model=job.get("provider") or "deterministic-local",job.get("model") or "contract-validator-v1"
+                status="VALIDATED"
+                execution_label="契约校验，未调用模型"
+                model_called=False
             with self.lock:
                 current=self.get(jid)
                 if current["status"] in {"CANCELLED","FAILED"}:return current
-                completed={**working,"status":"COMPLETED","result":{"structured_output":output},"provider":provider,"model":model,"fallback_used":False,"updated_at":utc()};self.generations.save(completed);return completed
+                completed={**working,"status":status,"execution_label":execution_label,"model_called":model_called,"result":{"structured_output":output,"empty":not output.get("proposals") and not output.get("findings")},"provider":provider,"model":model,"fallback_used":False,"updated_at":utc()};self.generations.save(completed);return completed
         except Exception as exc:
             code=exc.code.value if isinstance(exc,ModelRuntimeError) else ("INVALID_STRUCTURED_OUTPUT" if isinstance(exc,(ValueError,json.JSONDecodeError)) else "AGENT_EXECUTION_FAILED")
             with self.lock:
@@ -125,6 +134,8 @@ class AgentJobService:
 
     def review(self,jid,decision,reviewed_by,note="",actions=None):
         job=self.get(jid)
+        if job.get("execution_mode","deterministic")!="model" or job["status"]=="VALIDATED":
+            raise ValueError("deterministic agent jobs are validated only and have no review or apply path")
         if decision not in {"ACCEPTED","REJECTED"}:raise ValueError("invalid agent review decision")
         if job["status"]!="COMPLETED":raise ValueError("agent job is not awaiting review")
         output=(job.get("result") or {}).get("structured_output")
@@ -135,6 +146,8 @@ class AgentJobService:
 
     def apply(self,jid,applied_by):
         job=self.get(jid);review=job.get("review") or {}
+        if job.get("execution_mode","deterministic")!="model" or job["status"]=="VALIDATED":
+            raise ValueError("deterministic agent jobs are validated only and have no review or apply path")
         if job["status"]!="ACCEPTED" or review.get("decision")!="ACCEPTED":raise ValueError("agent job is not accepted")
         if review.get("applied"):raise ValueError("agent job is already applied")
         output=(job.get("result") or {}).get("structured_output");current_hash=hashlib.sha256(json.dumps(output,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()).hexdigest()

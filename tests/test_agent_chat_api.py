@@ -55,6 +55,20 @@ def test_agent_chat_rejects_empty_message():
     result = TestClient(app).post("/api/agent/chat", json={"message": ""})
     assert result.status_code == 422
 
+def test_packaged_agent_chat_fails_closed_without_text_provider(monkeypatch):
+    called = {"execute": False}
+
+    def execute(_value):
+        called["execute"] = True
+        raise AssertionError("packaged chat must not call a mock DeepSeek")
+
+    monkeypatch.setattr(runtime, "packaged_author_route_ready", lambda _provider: False)
+    monkeypatch.setattr(runtime.generation_runtime.text_node, "execute", execute)
+    result = TestClient(app).post("/api/agent/chat", json={"message": "下一步怎么做？", "provider_id": "deepseek", "model_id": "deepseek-chat"})
+    assert result.status_code == 503
+    assert result.json()["detail"]["code"] == "TEXT_PROVIDER_NOT_CONFIGURED"
+    assert called["execute"] is False
+
 def test_agent_chat_only_includes_preferences_after_explicit_consent(monkeypatch, tmp_path):
     service = user_preference_service
     original_path = service.path

@@ -136,8 +136,10 @@ v1_capability_service=V1CapabilityService(
 canon_service=CanonService(repositories.canon)
 generation_service=GenerationService(repositories.generations)
 lore_service=LoreService(repositories.lore)
+v1_capability_service.bind_lore(lore_service)
 continuity_repository=repositories.continuity
 continuity_finding_service=ContinuityFindingService(continuity_repository)
+v1_capability_service.bind_continuity(continuity_finding_service)
 narrative_state_service=NarrativeStateService(repositories.narrative,repositories.chapters,repositories.novels,repositories.lore)
 narrative_finding_service=NarrativeFindingService(repositories.narrative)
 narrative_proposal_service=NarrativeProposalService(repositories.narrative,narrative_state_service)

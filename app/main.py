@@ -123,6 +123,7 @@ async def collaboration_fail_closed(request,call_next):
             r"/api/novels/[^/]+/overview",
             r"/api/novels/[^/]+/research(?:/[^/]+)?",
             r"/api/research",
+            r"/api/novels/[^/]+/continuity/scan-chapter",
             r"/api/novels/[^/]+/character-evolution(?:/[^/]+)?",
             r"/api/novels/[^/]+/characters/[^/]+/evolution",
             r"/api/novels/[^/]+/visual-memory(?:/[^/]+)?",

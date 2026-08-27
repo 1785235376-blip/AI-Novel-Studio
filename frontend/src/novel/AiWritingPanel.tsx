@@ -60,7 +60,9 @@ export function lineDiff(original: string, generated: string): DiffLine[] {
   return result;
 }
 export const generationFailureMessage = (value?: string | null) =>
-  value === "请先在正文中选择需要改写的文字。" ||
+  value && value.includes("TEXT_PROVIDER_NOT_CONFIGURED")
+    ? "未配置可用文本模型，未调用 DeepSeek，不能当作创作完成。"
+    : value === "请先在正文中选择需要改写的文字。" ||
   value === "候选生成超时，请重新生成此候选。" ||
   value === "生成连接中断且恢复超时，请重试" ||
   value === "生成连接中断，恢复失败，请重试" ||

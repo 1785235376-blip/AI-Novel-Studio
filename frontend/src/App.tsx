@@ -65,8 +65,10 @@ import { NovelImportPanel } from "./novel/NovelImportPanel";
 import { AdaptationPanel } from "./novel/AdaptationPanel";
 import { ScreenplayPanel } from "./novel/ScreenplayPanel";
 import { ExportPanel } from "./novel/ExportPanel";
-import { CapabilityPlaceholder } from "./ui/CapabilityPlaceholder";
 import { CapabilityRoadmapPanel } from "./ui/CapabilityRoadmapPanel";
+import { NovelOverviewPanel } from "./novel/NovelOverviewPanel";
+import { ResearchPanel } from "./novel/ResearchPanel";
+import { ContinuityCheckPanel } from "./novel/ContinuityCheckPanel";
 import { FeatureLauncher } from "./ui/FeatureLauncher";
 import { AiControlCenter } from "./ui/AiControlCenter";
 import { MediaProviderSettings } from "./ui/MediaProviderSettings";
@@ -1171,19 +1173,6 @@ function WritingGoalPanel({ novelId }: { novelId: string }) {
   if (goal.isLoading) return <section className="panel"><p>正在加载写作目标…</p></section>;
   return <section className="panel writing-goal-panel"><h2>项目概览</h2><p>设置本小说的创作目标，进度会同步显示在编辑器顶部。</p><label>目标字数<input type="number" min={1} value={targetWords} onChange={(e) => setTargetWords(Number(e.target.value))} /></label><label>目标章节<input type="number" min={1} value={targetChapters} onChange={(e) => setTargetChapters(Number(e.target.value))} /></label><label>截止日期<input type="date" value={deadline ? deadline.slice(0, 10) : ""} onChange={(e) => setDeadline(e.target.value)} /></label><button className="primary" disabled={save.isPending || targetWords < 1 || targetChapters < 1} onClick={() => save.mutate()}>{save.isPending ? "保存中…" : "保存写作目标"}</button>{save.isSuccess && <small className="notice">目标已更新</small>}{save.error && <small className="notice">保存失败，请重试</small>}</section>;
 }
-function ContinuityCheckPanel({ projectId }: { projectId: string }) {
-  const rules = useQuery({ queryKey: ["world-rules", projectId, "APPROVED"], queryFn: () => api.worldRules(projectId, "APPROVED"), enabled: !!projectId });
-  const qc=useQueryClient();
-  const stored=useQuery({queryKey:["continuity-findings",projectId],queryFn:()=>api.continuityFindings(projectId),enabled:!!projectId});
-  const [facts, setFacts] = useState("{\n  \"events\": [],\n  \"locations\": [],\n  \"knowledge\": []\n}");
-  const [result, setResult] = useState<any>();
-  const [error, setError] = useState("");
-  const [filter,setFilter]=useState('ALL');
-  async function run() { try { setError(""); const parsed = JSON.parse(facts); setResult(await api.continuityCheck(projectId, { ...parsed, world_rules: rules.data?.items || [] })); qc.invalidateQueries({queryKey:["continuity-findings",projectId]}); } catch (reason) { setError(reason instanceof SyntaxError ? "事实 JSON 格式错误" : "检查失败，请稍后重试"); } }
-  const rows=[...(result?.findings||[]),...(stored.data||[])].filter((item,index,all)=>all.findIndex(other=>other.id===item.id)===index).filter(item=>filter==='ALL'||item.finding_type===filter);
-  const types=Array.from(new Set([...(result?.findings||[]),...(stored.data||[])].map(item=>item.finding_type).filter(Boolean)));
-  return <section className="panel"><h2>一致性检查</h2><p>检查人物、时间线和已批准世界规则。输入格式为 JSON。</p><textarea value={facts} onChange={e => setFacts(e.target.value)} rows={9} style={{ width: "100%" }} /><button className="primary" onClick={run} disabled={!projectId}>运行检查</button>{error && <p role="alert">{error}</p>}{(rules.isError||stored.isError)&&<p role="alert">问题清单加载失败，请稍后重试。</p>}<div><strong>问题清单</strong>{stored.isLoading&&<p role="status">正在加载历史问题…</p>}<select value={filter} onChange={e=>setFilter(e.target.value)}><option value="ALL">全部类型</option>{types.map(type=><option key={type} value={type}>{type}</option>)}</select>{!stored.isLoading&&!rows.length&&<p className="notice">暂无问题</p>}{rows.map((item:any)=><p key={item.id} className="notice">[{item.severity}] {item.description} {item.status==='RESOLVED'?<small>已处理</small>:<button onClick={async()=>{try{await api.resolveContinuityFinding(projectId,item.id);qc.invalidateQueries({queryKey:["continuity-findings",projectId]});setResult((old:any)=>old?{...old,findings:old.findings.map((x:any)=>x.id===item.id?{...x,status:'RESOLVED'}:x)}:old)}catch{setError('标记问题失败，请稍后重试')}}}>标记已处理</button>}</p>)}</div></section>;
-}
 function VideoProviderSettings(){const [provider,setProvider]=useState('custom');const [endpoint,setEndpoint]=useState('');const [model,setModel]=useState('');const [enabled,setEnabled]=useState(true);const [message,setMessage]=useState('');const [health,setHealth]=useState<any>();async function save(){await api.configureVideoProvider(provider,{endpoint,model_id:model||'video-model',enabled});setMessage('Provider 配置已保存');setHealth(await api.videoProviderHealth(provider))}return <section className="panel"><h2>视频 Provider 设置</h2><label>Provider ID<input value={provider} onChange={e=>setProvider(e.target.value)}/></label><label>Endpoint<input value={endpoint} onChange={e=>setEndpoint(e.target.value)} placeholder="https://…"/></label><label>Model<input value={model} onChange={e=>setModel(e.target.value)} placeholder="video-model"/></label><label><input type="checkbox" checked={enabled} onChange={e=>setEnabled(e.target.checked)}/>启用 Provider</label><button className="primary" onClick={save}>保存并检查</button>{message&&<p className="notice">{message}</p>}{health&&<p className="notice">状态：{health.health}</p>}</section>}
 function VideoProviderSettingsV2(){
  const [provider,setProvider]=useState('custom'); const [endpoint,setEndpoint]=useState(''); const [model,setModel]=useState(''); const [enabled,setEnabled]=useState(true); const [message,setMessage]=useState(''); const [health,setHealth]=useState<any>();
@@ -1226,8 +1215,8 @@ function Panel({
       </section>
     );
   if (type === "workflow") return <VisualWorkflowPanel scope={scope} />;
-  if (type === "overview") return <WritingGoalPanel novelId={novelId} />;
-  if (type === "check") return <ContinuityCheckPanel projectId={novelId} />;
+  if (type === "overview") return <NovelOverviewPanel novelId={novelId} />;
+  if (type === "check") return <ContinuityCheckPanel projectId={novelId} chapter={chapter} />;
   if (type === "diagnostics") return <RuntimeDiagnosticsPanel scope={scope} />;
   if (type === "agents") return <>{chapter&&<AgentActivityCenter novelId={chapter.novel_id} />}{chapter&&<AgentJobHistory novelId={chapter.novel_id} />}<AgentTeamPanel chapter={chapter} /></>;
   if (type === "adaptation") return <AdaptationPanel novelId={chapter?.novel_id} branchId={scope?.branchId} />;
@@ -1235,7 +1224,7 @@ function Panel({
   if (type === "assets") return <AssetLibraryPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
   if (type === "exports") return <ExportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
   if (type === "knowledge") return <NovelImportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} chapterId={chapter?.id} />;
-  if (type === "research") return <CapabilityPlaceholder title="研究资料" service="Research Assistant" description="资料库、参考文献与研究笔记窗口已预留，暂不读取外部网络。" apiPrefix="/api/v1/research" />;
+  if (type === "research") return <ResearchPanel novelId={novelId} />;
   if (type === "settings") return <><AiControlCenter /><MediaProviderSettings /><VideoCallbackSecurityStatus /></>;
   if (type === "roadmap") return <CapabilityRoadmapPanel />;
   return (
