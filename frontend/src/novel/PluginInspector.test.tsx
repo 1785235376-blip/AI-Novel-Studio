@@ -59,10 +59,8 @@ it("shows unverified publisher, declarative mode, and resource kinds", async () 
   render(<PluginInspector inspection={activeInspection}/>);
   expect(screen.getByText(/Acme Studio（未验证发布者）/)).toBeTruthy();
   expect(screen.getByText("declarative")).toBeTruthy();
-  expect(screen.getByText(/1 个 · 写作预设/)).toBeTruthy();
-  expect(screen.getByText("插件代码可执行")).toBeTruthy();
-  expect(screen.getByText("否")).toBeTruthy();
   expect(await screen.findByText("冷静叙述")).toBeTruthy();
+  expect(screen.getByText(/1 个 · 写作预设/)).toBeTruthy();
   expect(screen.getByText(/SHA-256 aaaaaaaaaaaa/)).toBeTruthy();
   expect(screen.queryByText(/已签名/)).toBeNull();
 });
@@ -121,4 +119,61 @@ it("keeps a legacy inspection payload compatible", () => {
   expect(screen.getAllByText(/代码执行：当前禁止/).length).toBeGreaterThan(0);
   expect(screen.getAllByText("DENY_ALL").length).toBeGreaterThan(0);
   expect(screen.getByText("清单未激活，声明式资源不可展示。")).toBeTruthy();
+});
+
+it("clears previous plugin resources immediately when switching selection", async () => {
+  const fetchResources = vi.spyOn(api, "pluginResources");
+  fetchResources.mockImplementation(async (id: string) => {
+    if (id === "alpha") {
+      return {
+        plugin_id: "alpha",
+        items: [{ resource_id: "resources:a.json", kind: "writing_presets", name: "Alpha 资源", summary: { name: "Alpha 资源" } }],
+        total: 1,
+        visible: true,
+        validated: true,
+        validation_status: "VALIDATED",
+        resource_count: 1,
+        resource_kinds: ["writing_presets"],
+        execution_supported: false,
+        isolation: "DENY_ALL",
+      };
+    }
+    return {
+      plugin_id: "beta",
+      items: [{ resource_id: "resources:b.json", kind: "export_profiles", name: "Beta 资源", summary: { name: "Beta 资源" } }],
+      total: 1,
+      visible: true,
+      validated: true,
+      validation_status: "VALIDATED",
+      resource_count: 1,
+      resource_kinds: ["export_profiles"],
+      execution_supported: false,
+      isolation: "DENY_ALL",
+    };
+  });
+  const { rerender } = render(<PluginInspector inspection={{ ...activeInspection, id: "alpha", name: "Alpha", resourceCount: 9 }}/>);
+  expect(await screen.findByText("Alpha 资源")).toBeTruthy();
+  rerender(<PluginInspector inspection={{ ...activeInspection, id: "beta", name: "Beta", resourceCount: 9 }}/>);
+  expect(screen.queryByText("Alpha 资源")).toBeNull();
+  expect(await screen.findByText("Beta 资源")).toBeTruthy();
+  expect(screen.queryByText(/9 个/)).toBeNull();
+});
+
+it("overrides stale sidecar resource counts with live catalog data", async () => {
+  vi.spyOn(api, "pluginResources").mockResolvedValue({
+    plugin_id: "story-tools",
+    items: [{ resource_id: "resources:preset.json", kind: "writing_presets", name: "仅一项", summary: { name: "仅一项" } }],
+    total: 1,
+    visible: true,
+    validated: true,
+    validation_status: "VALIDATED",
+    resource_count: 1,
+    resource_kinds: ["writing_presets"],
+    execution_supported: false,
+    isolation: "DENY_ALL",
+  });
+  render(<PluginInspector inspection={{ ...activeInspection, resourceCount: 8, resourceKinds: ["writing_presets", "workflow_templates"] }}/>);
+  expect(await screen.findByText("仅一项")).toBeTruthy();
+  expect(screen.getByText(/1 个 · 写作预设/)).toBeTruthy();
+  expect(screen.queryByText(/8 个/)).toBeNull();
 });

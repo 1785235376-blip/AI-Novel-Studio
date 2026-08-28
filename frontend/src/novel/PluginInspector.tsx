@@ -21,6 +21,7 @@ export type PluginInspection = {
   id: string;
   name: string;
   version?: string;
+  pluginVersion?: string;
   status?: string;
   description?: string;
   capabilities?: string[];
@@ -35,6 +36,9 @@ export type PluginInspection = {
   publisher?: string;
   resourceCount?: number;
   resourceKinds?: string[];
+  catalogValidated?: boolean;
+  catalogValidationStatus?: string;
+  catalogErrorCode?: string;
 };
 
 function shaShort(resource: PluginResourceSummary): string {
@@ -43,6 +47,7 @@ function shaShort(resource: PluginResourceSummary): string {
 
 export function PluginInspector({ inspection }: { inspection?: PluginInspection }) {
   const [resources, setResources] = useState<PluginResourceSummary[]>([]);
+  const [catalog, setCatalog] = useState<{ validated?: boolean; validation_status?: string; error_code?: string; status?: string; resource_count?: number; resource_kinds?: string[] }>();
   const [resourceError, setResourceError] = useState<string>();
   const [loading, setLoading] = useState(false);
   const [retry, setRetry] = useState(0);
@@ -51,21 +56,30 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
 
   useEffect(() => {
     let cancelled = false;
+    setResources([]);
+    setCatalog(undefined);
+    setResourceError(undefined);
     if (!inspection?.id || !active) {
-      setResources([]);
-      setResourceError(undefined);
       setLoading(false);
       return;
     }
     setLoading(true);
-    setResourceError(undefined);
     api.pluginResources(inspection.id).then((payload) => {
       if (cancelled) return;
-      setResources(payload.items || []);
+      setCatalog(payload);
+      setResources(payload.validated ? (payload.items || []) : (payload.validation_status === "PARTIAL" ? payload.items || [] : []));
+      if (payload.validation_status === "DRIFT" || payload.error_code === "PLUGIN_MANIFEST_DRIFT") {
+        setResourceError("清单与已审核身份不一致，未展示声明式资源。");
+      } else if (payload.validation_status === "DUPLICATE" || payload.error_code === "PLUGIN_ID_DUPLICATE") {
+        setResourceError("插件 ID 重复，未展示声明式资源。");
+      } else if (payload.validated !== true && payload.validation_status !== "PARTIAL") {
+        setResourceError(payload.items?.length ? undefined : "没有已通过现场校验的声明式资源。");
+      }
       setLoading(false);
     }).catch(() => {
       if (cancelled) return;
       setResources([]);
+      setCatalog({ validated: false, validation_status: "FAILED" });
       setResourceError("声明式资源摘要读取失败。未展示未验证内容。");
       setLoading(false);
     });
@@ -81,8 +95,16 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
     );
   }
 
-  const kinds = inspection.resourceKinds || [];
-  const count = inspection.resourceCount ?? resources.length;
+  const kinds = catalog?.resource_kinds?.length ? catalog.resource_kinds : (resources.map((item) => item.kind).filter(Boolean));
+  const count = catalog?.resource_count ?? resources.length;
+  const pluginVersion = inspection.pluginVersion || inspection.version;
+  const validationLabel = catalog?.validated === true && catalog.validation_status === "VALIDATED"
+    ? "已验证"
+    : catalog?.validation_status === "PARTIAL" ? "部分资源有效"
+      : catalog?.validation_status === "DRIFT" ? "Manifest 漂移"
+        : catalog?.validation_status === "DUPLICATE" ? "重复 ID"
+          : catalog?.validation_status === "REVIEW_REQUIRED" ? "待重新审核"
+            : active ? "未通过现场校验" : "清单未激活";
 
   return (
     <section className="plugin-inspector" aria-label="插件检查面板">
@@ -91,12 +113,12 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
         <Plug aria-hidden="true"/>
         <div>
           <strong>{inspection.name}</strong>
-          <span>{inspection.id}{inspection.version ? ` · v${inspection.version}` : ""}</span>
+          <span>{inspection.id}{pluginVersion ? ` · v${pluginVersion}` : ""}</span>
         </div>
         <Badge tone={active ? "success" : "warning"}>{active ? "清单已激活" : inspection.status || "待审核"}</Badge>
       </header>
       <div className="plugin-inspector__boundary">
-        <ShieldCheck aria-hidden="true" size={15}/>
+        <ShieldCheck aria-hidden="true" size={16}/>
         <span>代码执行：当前禁止 · 沙箱：{inspection.sandbox || "未读取"} · 隔离：{inspection.isolation || "DENY_ALL"}</span>
       </div>
       <dl className="plugin-inspector__facts">
@@ -108,7 +130,7 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
         <div><dt>请求权限</dt><dd>{inspection.requestedPermissions?.join("、") || "无"}</dd></div>
         <div><dt>已授予</dt><dd>{inspection.grantedPermissions?.join("、") || "无"}</dd></div>
         <div><dt>隔离策略</dt><dd>{inspection.isolation || "DENY_ALL"}</dd></div>
-        <div><dt>声明式资源</dt><dd>{count} 个{count ? ` · ${formatResourceKinds(kinds)}` : ""}</dd></div>
+        <div><dt>声明式资源</dt><dd>{count} 个{count ? ` · ${formatResourceKinds(kinds)}` : ""} · {validationLabel}</dd></div>
         <div><dt>插件代码可执行</dt><dd>否</dd></div>
       </dl>
       {inspection.description ? <p className="plugin-inspector__description">{inspection.description}</p> : null}
@@ -131,7 +153,7 @@ export function PluginInspector({ inspection }: { inspection?: PluginInspection 
               const digest = shaShort(resource);
               return (
                 <li key={resource.resource_id}>
-                  <KeyRound aria-hidden="true" size={13}/>
+                  <KeyRound aria-hidden="true" size={12}/>
                   <div>
                     <strong>{resource.summary?.name || resource.name || resource.resource_id}</strong>
                     <span>{KIND_LABEL[resource.kind] || resource.kind}{resource.schema_version ? ` · schema ${resource.schema_version}` : ""}{digest ? ` · SHA-256 ${digest}` : ""}{resource.validated ? " · 已校验" : ""}</span>

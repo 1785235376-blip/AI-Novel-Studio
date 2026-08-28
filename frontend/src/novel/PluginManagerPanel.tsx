@@ -33,17 +33,34 @@ export type DiscoveredPlugin = {
 export type RegisteredPlugin = {
   id: string;
   name: string;
-  version?: string;
+  version?: number | string;
+  plugin_version?: string;
   status?: string;
   description?: string;
   capabilities?: string[];
   requested_permissions?: string[];
   granted_permissions?: string[];
+  permission_review?: { reviewed_by?: string } | null;
   manifest_version?: string;
   host_api_version?: string;
   execution_mode?: string;
   publisher?: string;
   resources?: Array<{ kind?: string }>;
+  manifest_sha256?: string;
+};
+
+export type PluginCatalogSummary = {
+  plugin_id?: string;
+  items?: Array<{ kind?: string; resource_id?: string }>;
+  total?: number;
+  visible?: boolean;
+  validated?: boolean;
+  validation_status?: string;
+  status?: string;
+  error_code?: string;
+  invalid_resource_count?: number;
+  resource_count?: number;
+  resource_kinds?: string[];
 };
 
 export const KIND_LABEL: Record<string, string> = {
@@ -62,6 +79,7 @@ export function safePluginDirId(value?: string): string {
 }
 
 export function safePluginError(item: DiscoveredPlugin): string {
+  if (item.error_code === "PLUGIN_ID_DUPLICATE") return "插件 ID 重复，所有副本均不可注册。";
   const text = item.error || "";
   if (/traceback|file "|exception:|[A-Za-z]:[\\/]|stack/i.test(text)) {
     return "插件清单无效，未通过合同校验。";
@@ -96,12 +114,31 @@ const statusLabel = (status?: string) =>
   status === "MANIFEST_ACTIVE" ? "清单已激活"
     : status === "DISABLED" ? "已停用"
       : status === "PERMISSIONS_REVIEWED" ? "权限已审核"
-        : "待审核";
+        : status === "REVIEW_REQUIRED" ? "待重新审核"
+          : status === "MANIFEST_DRIFT" ? "Manifest 漂移"
+            : "待审核";
 
-function isReviewed(item: RegisteredPlugin): boolean {
-  const requested = item.requested_permissions || [];
-  const granted = item.granted_permissions || [];
-  return requested.length === granted.length && requested.every((permission) => granted.includes(permission));
+function hasHumanReview(item: RegisteredPlugin): boolean {
+  return Boolean(item.permission_review?.reviewed_by) || item.status === "PERMISSIONS_REVIEWED" || item.status === "MANIFEST_ACTIVE";
+}
+
+function uniqueDiscovery(items: DiscoveredPlugin[], pluginId: string): boolean {
+  const matches = items.filter((item) => item.manifest?.id === pluginId && !item.error_code);
+  return matches.length === 1;
+}
+
+export function liveResourceState(catalog?: PluginCatalogSummary, discovered = false, status?: string): { label: string; on: boolean } {
+  if (status === "REVIEW_REQUIRED") return { label: "待重新审核", on: false };
+  const code = catalog?.error_code || catalog?.status;
+  const validation = catalog?.validation_status;
+  if (code === "PLUGIN_ID_DUPLICATE" || validation === "DUPLICATE") return { label: "重复 ID", on: false };
+  if (code === "PLUGIN_MANIFEST_DRIFT" || validation === "DRIFT" || catalog?.status === "MANIFEST_DRIFT") return { label: "Manifest 漂移", on: false };
+  if (validation === "PARTIAL") return { label: "部分资源有效", on: false };
+  if (catalog?.validated === true && validation === "VALIDATED") return { label: "声明式资源已验证", on: true };
+  if (validation === "FAILED" || validation === "BUDGET") return { label: "资源验证失败", on: false };
+  if (!discovered) return { label: "未发现", on: false };
+  if (status === "MANIFEST_ACTIVE") return { label: "资源验证失败", on: false };
+  return { label: "未验证", on: false };
 }
 
 export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: PluginInspection) => void } = {}) {
@@ -109,6 +146,7 @@ export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: Pl
   const [registered, setRegistered] = useState<RegisteredPlugin[]>([]);
   const [health, setHealth] = useState<any>();
   const [runtime, setRuntime] = useState<any>();
+  const [catalogs, setCatalogs] = useState<Record<string, PluginCatalogSummary>>({});
   const [loading, setLoading] = useState(false);
   const [pending, setPending] = useState("");
   const [query, setQuery] = useState("");
@@ -128,6 +166,16 @@ export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: Pl
       setRegistered(current.items || []);
       setHealth(status);
       setRuntime(runtimeStatus);
+      const nextCatalogs: Record<string, PluginCatalogSummary> = {};
+      await Promise.all((current.items || []).map(async (plugin: RegisteredPlugin) => {
+        if (plugin.status !== "MANIFEST_ACTIVE") return;
+        try {
+          nextCatalogs[plugin.id] = await api.pluginResources(plugin.id);
+        } catch {
+          nextCatalogs[plugin.id] = { validated: false, items: [], validation_status: "FAILED" };
+        }
+      }));
+      setCatalogs(nextCatalogs);
     } catch {
       setMessage({ tone: "error", text: "插件状态读取失败，请检查本地服务后重新扫描。" });
     } finally {
@@ -162,30 +210,39 @@ export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: Pl
 
   const activeCount = registered.filter((item) => item.status === "MANIFEST_ACTIVE").length;
 
-  const inspect = (item: RegisteredPlugin) => onInspect?.({
-    id: item.id,
-    name: item.name,
-    version: item.version,
-    status: item.status,
-    description: item.description,
-    capabilities: item.capabilities,
-    requestedPermissions: item.requested_permissions,
-    grantedPermissions: item.granted_permissions,
-    executionSupported: false,
-    sandbox: runtime?.sandbox,
-    isolation: runtime?.isolation || "DENY_ALL",
-    manifestVersion: item.manifest_version || "1.0",
-    hostApiVersion: item.host_api_version || "1",
-    executionMode: item.execution_mode || "declarative",
-    publisher: item.publisher,
-    resourceCount: resourceCountOf(item),
-    resourceKinds: resourceKindsOf(item),
-  });
+  const inspect = (item: RegisteredPlugin) => {
+    const catalog = catalogs[item.id];
+    const liveCount = catalog?.resource_count ?? catalog?.items?.length;
+    const liveKinds = catalog?.resource_kinds?.length ? catalog.resource_kinds : (catalog?.items || []).map((entry) => entry.kind).filter((kind): kind is string => Boolean(kind));
+    onInspect?.({
+      id: item.id,
+      name: item.name,
+      version: item.plugin_version || (typeof item.version === "string" ? item.version : undefined),
+      pluginVersion: item.plugin_version,
+      status: item.status,
+      description: item.description,
+      capabilities: item.capabilities,
+      requestedPermissions: item.requested_permissions,
+      grantedPermissions: item.granted_permissions,
+      executionSupported: false,
+      sandbox: runtime?.sandbox,
+      isolation: runtime?.isolation || "DENY_ALL",
+      manifestVersion: item.manifest_version || "1.0",
+      hostApiVersion: item.host_api_version || "1",
+      executionMode: item.execution_mode || "declarative",
+      publisher: item.publisher,
+      resourceCount: typeof liveCount === "number" ? liveCount : resourceCountOf(item),
+      resourceKinds: liveKinds.length ? liveKinds : resourceKindsOf(item),
+      catalogValidated: catalog?.validated,
+      catalogValidationStatus: catalog?.validation_status,
+      catalogErrorCode: catalog?.error_code,
+    });
+  };
 
   return (
     <Panel title="插件治理" className="plugin-manager" actions={
       <Button variant="ghost" loading={loading} onClick={refresh}>
-        <RefreshCw aria-hidden="true" size={15}/>{loading ? "扫描中" : "重新扫描"}
+        <RefreshCw aria-hidden="true" size={16}/>{loading ? "扫描中" : "重新扫描"}
       </Button>
     }>
       <div className="plugin-manager__summary" aria-label="插件状态摘要">
@@ -214,7 +271,7 @@ export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: Pl
             <p>扫描本地插件目录并验证 manifest，注册不会自动授权。</p>
           </div>
           <label className="plugin-manager__search">
-            <Search aria-hidden="true" size={15}/>
+            <Search aria-hidden="true" size={16}/>
             <span className="sr-only">筛选本地插件</span>
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="筛选名称或 ID"/>
           </label>
@@ -233,7 +290,7 @@ export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: Pl
               return (
                 <article className="plugin-manager__row" key={`${dirId || "plugin"}-${index}`}>
                   <div className="plugin-manager__identity">
-                    <Plug aria-hidden="true" size={17}/>
+                    <Plug aria-hidden="true" size={16}/>
                     <div>
                       <strong>{manifest?.name || "无效插件"}</strong>
                       <span>{dirId || (manifest?.id ? manifest.id : "本地插件")}</span>
@@ -281,40 +338,49 @@ export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: Pl
           <div className="plugin-manager__rows">
             {registered.map((item) => {
               const requested = item.requested_permissions || [];
-              const reviewed = isReviewed(item);
+              const zeroPerms = requested.length === 0;
+              const granted = item.granted_permissions || [];
+              const grantsMatch = requested.length === granted.length && requested.every((permission) => granted.includes(permission));
+              const reviewed = !zeroPerms && hasHumanReview(item) && grantsMatch;
+              const canActivate = (zeroPerms || reviewed) && item.status !== "REVIEW_REQUIRED";
               const active = item.status === "MANIFEST_ACTIVE";
-              const kinds = resourceKindsOf(item);
-              const count = resourceCountOf(item);
+              const catalog = catalogs[item.id];
+              const discovered = uniqueDiscovery(items, item.id);
+              const resource = liveResourceState(catalog, discovered, item.status);
+              const kinds = (catalog?.resource_kinds && catalog.resource_kinds.length ? catalog.resource_kinds : undefined) || resourceKindsOf(catalog || item);
+              const count = catalog?.resource_count ?? catalog?.items?.length ?? (active ? resourceCountOf(item) : resourceCountOf(item));
+              const liveCount = catalog ? (catalog.resource_count ?? catalog.items?.length ?? 0) : count;
+              const pluginVersion = item.plugin_version || "";
               return (
                 <article className="plugin-manager__row plugin-manager__row--registered" key={item.id}>
                   <button type="button" className="plugin-manager__identity plugin-manager__identity--select" onClick={() => inspect(item)} aria-label={`检查插件 ${item.name}`}>
-                    {reviewed ? <ShieldCheck aria-hidden="true" size={17}/> : <CircleOff aria-hidden="true" size={17}/>}
+                    {reviewed || zeroPerms ? <ShieldCheck aria-hidden="true" size={16}/> : <CircleOff aria-hidden="true" size={16}/>}
                     <div>
                       <strong>{item.name}</strong>
-                      <span>{item.id}{item.version ? ` · v${item.version}` : ""}</span>
+                      <span>{item.id}{pluginVersion ? ` · v${pluginVersion}` : ""}</span>
                     </div>
                   </button>
-                  <Badge tone={active ? "success" : reviewed ? "info" : "warning"}>{statusLabel(item.status)}</Badge>
+                  <Badge tone={active ? "success" : reviewed || zeroPerms ? "info" : "warning"}>{statusLabel(item.status)}</Badge>
                   <div className="plugin-manager__lifecycle" aria-label="插件生命周期">
-                    <span className="is-on">已发现</span>
+                    <span className={discovered ? "is-on" : ""}>{discovered ? "已发现" : "未发现"}</span>
                     <span className="is-on">已注册</span>
-                    <span className={reviewed ? "is-on" : ""}>权限已审核</span>
+                    <span className={reviewed || zeroPerms ? "is-on" : ""}>{zeroPerms ? "无需权限" : "权限已审核"}</span>
                     <span className={active ? "is-on" : ""}>Manifest 已激活</span>
-                    <span className={active ? "is-on" : ""}>声明式资源已验证</span>
+                    <span className={resource.on ? "is-on" : ""}>{resource.label}</span>
                     <span>插件代码可执行：否</span>
                   </div>
                   <div className="plugin-manager__permissions">
                     <span>请求权限</span>
                     <strong>{requested.join("、") || "无"}</strong>
                     <span>{publisherLabel(item.publisher)}</span>
-                    <span>execution_mode={item.execution_mode || "declarative"} · {count} 个资源{count ? `（${formatResourceKinds(kinds)}）` : ""}</span>
+                    <span>execution_mode={item.execution_mode || "declarative"} · {catalog ? liveCount : resourceCountOf(item)} 个资源{liveCount || !catalog ? `（${formatResourceKinds(kinds)}）` : ""}</span>
                   </div>
-                  {!reviewed && (
+                  {!zeroPerms && !reviewed && item.status !== "REVIEW_REQUIRED" && (
                     <Button variant="ghost" loading={pending === `review:${item.id}`} onClick={() => runAction(`review:${item.id}`, `${item.name} 的权限已审核。`, () => api.setPluginPermissions(item.id, { granted_permissions: requested, reviewed_by: "local-user", note: "本地用户明确授权" }))}>
                       审核并授权
                     </Button>
                   )}
-                  {reviewed && !active && (
+                  {canActivate && !active && (
                     <Button loading={pending === `enable:${item.id}`} onClick={() => runAction(`enable:${item.id}`, `${item.name} 的清单已激活。`, () => api.enablePlugin(item.id))}>
                       激活清单
                     </Button>
