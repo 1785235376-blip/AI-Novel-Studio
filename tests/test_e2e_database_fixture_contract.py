@@ -17,6 +17,19 @@ SPEC.loader.exec_module(fixture)
 
 SAFE_NAME = "ai_novel_studio_e2e_run_42"
 SAFE_URL = f"postgresql+psycopg://e2e-user:TEST_ONLY_PASSWORD@127.0.0.1:5432/{SAFE_NAME}?sslmode=require"
+TARGET_OVERRIDE_QUERIES = [
+    "dbname=production",
+    "database=production",
+    "host=other-host",
+    "hostaddr=10.0.0.1",
+    "port=9999",
+    "user=other",
+    "password=other",
+    "service=production",
+    "servicefile=production.conf",
+    "%64bname=production",
+    "DbNaMe=production",
+]
 
 
 class FakeConnection:
@@ -62,6 +75,26 @@ def test_supported_schemes_preserve_safe_query(monkeypatch,tmp_path,url):
     assert target.database_name==SAFE_NAME
     assert target.target_url.startswith("postgresql://") and target.target_url.endswith("?sslmode=require")
     assert target.maintenance_url.endswith("/postgres?sslmode=require")
+
+
+@pytest.mark.parametrize("query",TARGET_OVERRIDE_QUERIES)
+@pytest.mark.parametrize("operation",["load","prepare","cleanup"])
+def test_target_override_queries_fail_before_every_connection(monkeypatch,tmp_path,query,operation):
+    isolate(monkeypatch,tmp_path);configure(monkeypatch,SAFE_URL.replace("sslmode=require",query));calls=[]
+    monkeypatch.setattr(fixture.psycopg,"connect",lambda *_a,**_k:calls.append(1))
+    action={"load":fixture.load_database_url,"prepare":fixture.prepare,"cleanup":fixture.cleanup}[operation]
+    with pytest.raises(fixture.E2EDatabaseContractError,match="^E2E_DATABASE_QUERY_OVERRIDE_FORBIDDEN$") as raised:action()
+    message=str(raised.value)
+    assert calls==[] and query not in message and SAFE_URL not in message
+    assert "TEST_ONLY_PASSWORD" not in message and "127.0.0.1" not in message
+
+
+@pytest.mark.parametrize("query",["sslmode=%","sslmode=%2","sslmode=%GG","sslmode=%FF"])
+def test_malformed_query_encoding_fails_before_connect(monkeypatch,tmp_path,query):
+    isolate(monkeypatch,tmp_path);configure(monkeypatch,SAFE_URL.replace("sslmode=require",query));calls=[]
+    monkeypatch.setattr(fixture.psycopg,"connect",lambda *_a,**_k:calls.append(1))
+    with pytest.raises(fixture.E2EDatabaseContractError,match="^E2E_DATABASE_URL_INVALID$") as raised:fixture.prepare()
+    assert calls==[] and query not in str(raised.value) and "TEST_ONLY_PASSWORD" not in str(raised.value)
 
 
 @pytest.mark.parametrize("url",[
@@ -132,3 +165,12 @@ def test_cleanup_cli_failure_is_nonzero_and_redacted(monkeypatch,tmp_path,capsys
     captured=capsys.readouterr()
     assert captured.out=="" and captured.err.strip()=="E2E_DATABASE_CLEANUP_FAILED"
     assert SAFE_URL not in captured.err and "TEST_ONLY_PASSWORD" not in captured.err
+
+
+def test_query_contract_cli_error_is_stable_and_redacted(monkeypatch,tmp_path,capsys):
+    isolate(monkeypatch,tmp_path);configure(monkeypatch,SAFE_URL.replace("sslmode=require","%64bname=production"))
+    calls=[];monkeypatch.setattr(fixture.psycopg,"connect",lambda *_a,**_k:calls.append(1))
+    assert fixture.main(["prepare"])==2
+    captured=capsys.readouterr()
+    assert captured.out=="" and captured.err.strip()=="E2E_DATABASE_QUERY_OVERRIDE_FORBIDDEN"
+    assert calls==[] and SAFE_URL not in captured.err and "TEST_ONLY_PASSWORD" not in captured.err

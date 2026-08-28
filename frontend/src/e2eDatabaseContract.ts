@@ -8,9 +8,32 @@ export interface E2EDatabaseContract {
 
 const PREFIX = 'ai_novel_studio_e2e_';
 const DATABASE_NAME = /^ai_novel_studio_e2e_[a-z0-9_-]{1,42}$/;
+const MALFORMED_PERCENT_ENCODING = /%(?![0-9a-f]{2})/i;
+const TARGET_OVERRIDE_QUERY_KEYS = new Set([
+  'dbname',
+  'database',
+  'host',
+  'hostaddr',
+  'port',
+  'user',
+  'password',
+  'service',
+  'servicefile',
+]);
 
 function contractError(code: string): never {
   throw new Error(code);
+}
+
+function validateQueryEncoding(query: string): void {
+  if (MALFORMED_PERCENT_ENCODING.test(query)) contractError('E2E_DATABASE_URL_INVALID');
+  try {
+    for (const pair of query.replace(/^\?/, '').split('&')) {
+      for (const component of pair.split('=', 2)) decodeURIComponent(component.replaceAll('+', ' '));
+    }
+  } catch {
+    contractError('E2E_DATABASE_URL_INVALID');
+  }
 }
 
 export function resolveE2EDatabaseContract(env: E2EEnvironment): E2EDatabaseContract {
@@ -30,6 +53,12 @@ export function resolveE2EDatabaseContract(env: E2EEnvironment): E2EDatabaseCont
   if (!parsed.hostname || parsed.hash || !parsed.pathname.startsWith('/') || parsed.pathname.slice(1).includes('/')) {
     contractError('E2E_DATABASE_URL_INVALID');
   }
+  validateQueryEncoding(parsed.search);
+  for (const key of parsed.searchParams.keys()) {
+    if (TARGET_OVERRIDE_QUERY_KEYS.has(key.toLowerCase())) {
+      contractError('E2E_DATABASE_QUERY_OVERRIDE_FORBIDDEN');
+    }
+  }
   const encodedName = parsed.pathname.slice(1);
   if (!encodedName || encodedName.includes('%')) contractError('E2E_DATABASE_NAME_UNSAFE');
   const databaseName = encodedName;
@@ -43,9 +72,11 @@ export function resolveE2EDatabaseContract(env: E2EEnvironment): E2EDatabaseCont
   return {databaseName, databaseUrl: parsed.toString(), confirmation: databaseName};
 }
 
-function withoutGenericDatabaseUrl(env: E2EEnvironment): Record<string, string | undefined> {
+function withoutDatabaseVariables(env: E2EEnvironment): Record<string, string | undefined> {
   const copy = {...env};
   delete copy.DATABASE_URL;
+  delete copy.E2E_DATABASE_URL;
+  delete copy.E2E_DATABASE_CONFIRM_DROP;
   return copy;
 }
 
@@ -54,7 +85,7 @@ export function buildFixtureEnvironment(
   contract: E2EDatabaseContract,
 ): Record<string, string | undefined> {
   return {
-    ...withoutGenericDatabaseUrl(env),
+    ...withoutDatabaseVariables(env),
     E2E_DATABASE_URL: contract.databaseUrl,
     E2E_DATABASE_CONFIRM_DROP: contract.confirmation,
   };
@@ -65,7 +96,11 @@ export function buildBackendEnvironment(
   contract: E2EDatabaseContract,
 ): Record<string, string | undefined> {
   return {
-    ...buildFixtureEnvironment(env, contract),
+    ...withoutDatabaseVariables(env),
     DATABASE_URL: contract.databaseUrl,
   };
+}
+
+export function buildFrontendEnvironment(env: E2EEnvironment): Record<string, string | undefined> {
+  return withoutDatabaseVariables(env);
 }

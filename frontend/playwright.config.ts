@@ -2,7 +2,7 @@ import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {defineConfig, devices} from '@playwright/test';
-import {buildBackendEnvironment, buildFixtureEnvironment, resolveE2EDatabaseContract} from './src/e2eDatabaseContract';
+import {buildBackendEnvironment, buildFixtureEnvironment, buildFrontendEnvironment, resolveE2EDatabaseContract} from './src/e2eDatabaseContract';
 
 const frontend = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(frontend, '..');
@@ -11,6 +11,7 @@ const fixture = path.join(root, 'tests', 'e2e', 'database_fixture.py');
 const databaseContract = resolveE2EDatabaseContract(process.env);
 const fixtureEnvironment = buildFixtureEnvironment(process.env, databaseContract);
 const backendEnvironment = buildBackendEnvironment(process.env, databaseContract);
+const frontendEnvironment = buildFrontendEnvironment(process.env);
 export const mockProviderForVerification = (value=process.env.REAL_PROVIDER_VERIFICATION) => value === 'true' ? 'false' : 'true';
 execFileSync(python, [fixture, 'prepare'], {stdio: 'inherit', env: fixtureEnvironment});
 
@@ -42,6 +43,7 @@ export default defineConfig({
     {
       command: `"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5173`,
       cwd: frontend,
+      env: frontendEnvironment,
       url: 'http://127.0.0.1:5173',
       timeout: 60_000,
       reuseExistingServer: false,

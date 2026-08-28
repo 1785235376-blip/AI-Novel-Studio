@@ -6,7 +6,7 @@ import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import parse_qsl, urlsplit, urlunsplit
 
 import psycopg
 from psycopg import sql
@@ -16,6 +16,18 @@ ROOT = Path(__file__).resolve().parents[2]
 DATABASE_PREFIX = "ai_novel_studio_e2e_"
 DATABASE_NAME = re.compile(r"ai_novel_studio_e2e_[a-z0-9_-]{1,42}")
 CLI_ACTIONS = ("prepare", "cleanup", "probe")
+MALFORMED_PERCENT_ENCODING = re.compile(r"%(?![0-9a-fA-F]{2})")
+TARGET_OVERRIDE_QUERY_KEYS = {
+    "dbname",
+    "database",
+    "host",
+    "hostaddr",
+    "port",
+    "user",
+    "password",
+    "service",
+    "servicefile",
+}
 
 
 class E2EDatabaseContractError(RuntimeError):
@@ -46,6 +58,14 @@ def load_database_url(*, require_confirmation: bool = True) -> E2EDatabaseTarget
         _contract_error("E2E_DATABASE_SCHEME_UNSUPPORTED")
     if not parsed.hostname or parsed.fragment:
         _contract_error("E2E_DATABASE_URL_INVALID")
+    if MALFORMED_PERCENT_ENCODING.search(parsed.query):
+        _contract_error("E2E_DATABASE_URL_INVALID")
+    try:
+        query_pairs = parse_qsl(parsed.query, keep_blank_values=True, strict_parsing=False, errors="strict")
+    except (TypeError, ValueError, UnicodeError):
+        _contract_error("E2E_DATABASE_URL_INVALID")
+    if any(key.lower() in TARGET_OVERRIDE_QUERY_KEYS for key, _value in query_pairs):
+        _contract_error("E2E_DATABASE_QUERY_OVERRIDE_FORBIDDEN")
     if not parsed.path.startswith("/") or "/" in parsed.path[1:] or "%" in parsed.path:
         _contract_error("E2E_DATABASE_NAME_UNSAFE")
     database_name = parsed.path[1:]
