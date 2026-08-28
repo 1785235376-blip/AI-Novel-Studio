@@ -57,7 +57,19 @@ Stable error codes:
 - `PLUGIN_RESOURCE_INVALID_JSON`
 - `PLUGIN_RESOURCE_SYMLINK_REJECTED`
 
-Messages are author-safe and user-readable. They do not include the failed path.
+## Catalog re-verification
+
+`GET /plugins/{plugin_id}/resources` is not a cache. Every read:
+
+- Resolves the plugin package by live scan of the plugins root
+- Requires the registered plugin to be `MANIFEST_ACTIVE`
+- Re-validates each resource path, type, size and SHA-256
+- Drops a single bad resource without hiding other plugins or other resources
+- Returns nothing for a missing directory or drifted hash
+- Never writes plugin files, fetches URLs, or follows escaped symlinks
+
+HTML and script-like strings in JSON are treated as plain data. Summary fields strip tags; the host never renders them as markup.
+
 
 ## Publisher trust
 

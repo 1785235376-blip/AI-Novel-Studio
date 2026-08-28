@@ -161,7 +161,8 @@ def verify_manifest_resources(plugin_root: Path, manifest: PluginManifestV1) -> 
     return verified
 
 
-def load_plugin_package(plugin_root: Path) -> tuple[PluginManifestV1, list[dict[str, Any]]]:
+def load_plugin_manifest(plugin_root: Path) -> PluginManifestV1:
+    """Load and parse manifest.json without verifying resource payloads."""
     manifest_path = plugin_root / "manifest.json"
     if manifest_path.is_symlink():
         raise PluginContractError(PLUGIN_RESOURCE_SYMLINK_REJECTED)
@@ -171,7 +172,11 @@ def load_plugin_package(plugin_root: Path) -> tuple[PluginManifestV1, list[dict[
         raise PluginContractError(PLUGIN_MANIFEST_INVALID)
     # Never execute, import, or evaluate strings inside the JSON document.
     del data
-    manifest = parse_plugin_manifest(parsed)
+    return parse_plugin_manifest(parsed)
+
+
+def load_plugin_package(plugin_root: Path) -> tuple[PluginManifestV1, list[dict[str, Any]]]:
+    manifest = load_plugin_manifest(plugin_root)
     verified = verify_manifest_resources(plugin_root, manifest)
     return manifest, verified
 

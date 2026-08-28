@@ -20,7 +20,19 @@ The runtime Pydantic model in `app/plugin_contracts.py` is the single source of 
 - Validate a versioned manifest
 - Verify declarative JSON resources (path, type, size, SHA-256)
 - Register a manifest, review requested permissions, and activate the **manifest**
-- List verified resource metadata later via the declarative catalog
+## Declarative catalog
+
+`DeclarativePluginCatalog` is a **read-only** view of resources that still pass live verification.
+
+- `GET /api/plugins/{plugin_id}/resources`
+- `GET /api/plugins/{plugin_id}/resources/{resource_id}`
+
+Responses may contain `plugin_id`, `resource_id`, `kind`, `name`, `description`, `schema_version`, `sha256`, `validated`, a plain-text `summary`, and the declarative JSON `data`. They never contain absolute paths, stacks, secrets, HTML, or executable entrypoints.
+
+Resources appear only when the plugin is `MANIFEST_ACTIVE`. Disabled, unreviewed, missing, or hash-drifted resources are omitted (fail-closed). Each request re-checks path, type, size and SHA-256; sidecar metadata is not a cache of file contents. JSON strings are data, never code.
+
+Catalog reads do not apply writing presets, execute workflow templates, or run export profiles.
+
 
 ## What v1 cannot do
 
