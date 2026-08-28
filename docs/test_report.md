@@ -120,3 +120,26 @@
 - GitHub Actions 仓库自有 CI（仓库无 `.github/workflows`）
 
 本轮不把未执行写成通过，也不把环境错误写成业务失败。V1.0 / DH-01–DH-08 / Release Gate 状态未改变。
+
+## Issue #14 Batch 2A（clean regression foundation, 2026-08-29）
+
+本段只记录 Batch 2A 真实执行。数量绑定到 SHA `d8174af8cb68c5e4edf920e6ccb45671f19ff3c9`。不是 V1.0 证明。逐项失败见 `docs/baseline_failure_registry.md`。
+
+| 字段 | 值 |
+| --- | --- |
+| 基线 | `origin/main` `d8174af8cb68c5e4edf920e6ccb45671f19ff3c9` |
+| 日期 | 2026-08-29 |
+| 环境 | Linux 隔离沙箱；Python 3.11.2；Node 22；`STORAGE_BACKEND=file` |
+| 安装 | `uv pip install -e .[dev]`（未安装 `.[vault]`） |
+| 隔离 | `.runtime/pytest-temp/batch2a-before` 与 `batch2a-after2` |
+| 未使用 | 用户 `.env`、用户数据库、真实 Provider 密钥、真实 PostgreSQL |
+
+| 检查 | 命令 | 退出码 | BEFORE | AFTER |
+| --- | --- | ---: | --- | --- |
+| 后端全量 | `python -m pytest -p no:cacheprovider --basetemp=<run-temp> -q -ra --tb=line` | 1 | 766 passed, 36 failed, 27 skipped, 0 xfail；23.41s | 798 passed, 4 failed, 27 skipped, 0 xfail；22.60s |
+| 前端 Vitest | `npx vitest run`（`frontend/`） | 0 | — | 376 passed / 89 files |
+| TypeScript | `npx tsc -b` | 1 | — | 三个既有 frontend 测试文件 unused `@ts-expect-error`；本批未改 frontend |
+| 前端 production build | `npx vite build` | 0 | — | 通过（`frontend/dist/`，不是安装包） |
+| 工作区 whitespace | `git diff --check HEAD` | 0 | — | 本批相对 HEAD 无新增空白问题 |
+
+AFTER 仅剩四个 `PRODUCT_BASELINE` 生产缺陷（本批明确未修）：并发生成幂等、visual continuity `TIME_JUMP_CUT`、user preference `harness_enabled`、world rule `forbidden_terms`。夹具失败、settings 顺序污染、Linux/Windows 平台误分类已从失败计数中移除。新 skip/xfail = 0。
