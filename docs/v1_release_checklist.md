@@ -51,7 +51,8 @@ This checklist records evidence requirements, not implementation inventory. Merg
 ## E. Credential And Provider Lifecycle
 
 - [ ] Reject unknown Provider IDs before any credential backend access and return the stable unsupported-Provider API contract.
-- [ ] Verify static and dynamically configured Provider registration across asset, audio, video, and text/runtime sources.
+- [ ] Verify compatibility for static Providers, including text/runtime and other static catalog or runtime-registry sources.
+- [ ] Verify dynamic persisted Provider lifecycle only for asset, audio, and video JSON sources; do not claim that this proves an equivalent dynamic persisted text/runtime configuration.
 - [ ] Clear credentials before deleting Provider configuration or its final registry source.
 - [ ] If credential cleanup fails, fail closed and retain Provider configuration and registry sources.
 - [ ] If the vault is degraded, reject persistent credential cleanup rather than reporting a memory-only clear as success.
@@ -84,11 +85,12 @@ This checklist records evidence requirements, not implementation inventory. Merg
 
 ### Video
 
-- [ ] Without a configured video Provider, fail closed with a stable configuration error.
-- [ ] Produce no successful `placeholder://` artifact.
+- [ ] Without a configured video Provider, keep the Motion Task at `PENDING` with `progress=0` and `error=VIDEO_PROVIDER_NOT_CONFIGURED` after creation and execution attempts.
+- [ ] Record an execution-attempt history entry with `status=PENDING` and `phase=PROVIDER_MISSING`; do not reinterpret this contract as `FAILED`, `SUCCEEDED`, active generation, or another terminal state.
+- [ ] Make no real video Provider request and produce no successful or `placeholder://` artifact.
 - [ ] Do not report a deterministic placeholder Provider as a healthy real Provider.
 - [ ] Require a saved non-empty Motion Prompt and valid, traceable first- and last-frame references.
-- [ ] Verify that UI and task state display the actual failure and never imply success.
+- [ ] Verify that UI and task state display the stable configuration error without implying success or active generation.
 
 ## H. Agent Honesty
 

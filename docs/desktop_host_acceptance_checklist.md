@@ -85,9 +85,15 @@ Record the window screenshot, novel ID, request ID, and a redacted response summ
 
 ## DH-03 - Research Records
 
-In the real window, exercise create, filter, edit, revision conflict/409, delete confirmation, delete, novel isolation, and path-safety behavior. Verify that provenance and list results report `external_fetch=false`; do not perform external fetching.
+### Real Window Evidence
 
-Research currently uses a durable sidecar. File and PostgreSQL profiles continue to use that sidecar boundary. Sidecar persistence tests do not prove PostgreSQL composition or runtime wiring; that evidence belongs to a separate integration gate.
+In the real window, exercise create, filter, edit, stale revision conflict/409, delete confirmation, delete, and novel isolation. Verify that provenance and list results report `external_fetch=false`. DH-04 separately verifies restart persistence.
+
+### Independent Service Contract Evidence
+
+Use isolated service or API contract evidence to verify that path traversal is rejected, the sidecar remains within its configured root, and no external fetching occurs. Confirm that File and PostgreSQL profiles continue to use the durable sidecar boundary. Sidecar contract evidence does not prove PostgreSQL composition or runtime wiring; that remains a separate integration gate.
+
+Service or API evidence supports non-window boundaries such as path safety, but cannot replace real-window evidence for CRUD, stale revision conflict/409, delete confirmation, deletion, or novel isolation. Do not present a path-safety service test as a DesktopHost window operation.
 
 ## DH-04 - Restart Persistence
 
@@ -114,10 +120,13 @@ From the real window, create and inspect the Motion Task:
 
 - Record the task and transition IDs.
 - Verify that the UI task list refreshes.
-- Verify that execution fails closed with a stable Provider-not-configured error.
-- Verify that no success status or `placeholder://` artifact appears.
+- Record the actual state immediately after task creation: `status=PENDING`, `progress=0`, and `error=VIDEO_PROVIDER_NOT_CONFIGURED`.
+- Attempt execution and record the resulting state. It must remain `PENDING` with `progress=0` and `error=VIDEO_PROVIDER_NOT_CONFIGURED`.
+- Verify that task history adds an entry with `status=PENDING` and `phase=PROVIDER_MISSING`.
+- Verify that the task does not enter `FAILED`, `SUCCEEDED`, or another terminal state.
+- Verify that no real video Provider request, successful artifact, or `placeholder://` artifact occurs.
 - Verify that a deterministic placeholder Provider is not described as a healthy real video Provider.
-- Record the actual terminal status without assuming success in advance.
+- Do not describe this error-bearing `PENDING` state as task success, active generation, or terminal failure.
 
 ## DH-07 - Single Instance And Resource Cleanup
 
