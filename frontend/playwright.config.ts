@@ -2,15 +2,17 @@ import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {defineConfig, devices} from '@playwright/test';
+import {buildBackendEnvironment, buildFixtureEnvironment, resolveE2EDatabaseContract} from './src/e2eDatabaseContract';
 
 const frontend = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(frontend, '..');
 const python = path.join(root, '.venv', 'Scripts', 'python.exe');
 const fixture = path.join(root, 'tests', 'e2e', 'database_fixture.py');
+const databaseContract = resolveE2EDatabaseContract(process.env);
+const fixtureEnvironment = buildFixtureEnvironment(process.env, databaseContract);
+const backendEnvironment = buildBackendEnvironment(process.env, databaseContract);
 export const mockProviderForVerification = (value=process.env.REAL_PROVIDER_VERIFICATION) => value === 'true' ? 'false' : 'true';
-execFileSync(python, [fixture, 'prepare'], {stdio: 'inherit'});
-const databaseUrl = execFileSync(python, [fixture, 'url'], {encoding: 'utf8'}).trim();
-process.env.E2E_DATABASE_URL = databaseUrl;
+execFileSync(python, [fixture, 'prepare'], {stdio: 'inherit', env: fixtureEnvironment});
 
 export default defineConfig({
   testDir: path.join(frontend, 'tests', 'e2e'),
@@ -32,7 +34,7 @@ export default defineConfig({
     {
       command: `"${python}" -m uvicorn app.main:app --host 127.0.0.1 --port 8000`,
       cwd: root,
-      env: {...process.env, STORAGE_BACKEND: 'postgres', DATABASE_URL: databaseUrl, MOCK_PROVIDER: mockProviderForVerification(), MOCK_STREAM_DELAY_MS: '0', FRONTEND_ORIGIN: 'http://127.0.0.1:5173', COLLABORATION_DEV_SESSIONS_JSON: JSON.stringify([{token:'e2e-admin-session',actor_id:'e2e-admin',workspace_id:'e2e-workspace-a',session_id:'e2e-session',client_id:'e2e-browser'}])},
+      env: {...backendEnvironment, STORAGE_BACKEND: 'postgres', MOCK_PROVIDER: mockProviderForVerification(), MOCK_STREAM_DELAY_MS: '0', FRONTEND_ORIGIN: 'http://127.0.0.1:5173', COLLABORATION_DEV_SESSIONS_JSON: JSON.stringify([{token:'e2e-admin-session',actor_id:'e2e-admin',workspace_id:'e2e-workspace-a',session_id:'e2e-session',client_id:'e2e-browser'}])},
       url: 'http://127.0.0.1:8000/api/health',
       timeout: 60_000,
       reuseExistingServer: false,
