@@ -8,12 +8,14 @@ import re
 import sys
 import uuid
 from ctypes import wintypes
-from typing import Literal, Protocol
+from typing import Callable, Literal, Protocol
+
+from .provider_support import STATIC_CREDENTIAL_PROVIDERS, provider_support_registry
 
 _TARGET_PREFIX = "AI-Novel-Studio/provider/"
 _CRED_TYPE_GENERIC = 1
 _CRED_PERSIST_LOCAL_MACHINE = 2
-SUPPORTED_PROVIDERS = frozenset({"deepseek", "openai", "claude", "gemini", "ddshub", "siliconflow", "aliyun-bailian", "runway", "kling", "minimax", "seedance", "custom"})
+SUPPORTED_PROVIDERS = STATIC_CREDENTIAL_PROVIDERS
 VaultBackendName = Literal["windows", "keyring", "memory"]
 
 
@@ -125,7 +127,10 @@ class KeyringBackend:
         except Exception as exc:
             errors=getattr(self.keyring,"errors",None)
             delete_error=getattr(errors,"PasswordDeleteError",None)
-            if delete_error and isinstance(exc,delete_error): return
+            if delete_error and isinstance(exc,delete_error):
+                try: missing=self.keyring.get_password(self.service,provider) is None
+                except Exception as verify_exc: raise VaultUnavailableError(self._code(verify_exc)) from exc
+                if missing:return
             raise VaultUnavailableError(self._code(exc)) from exc
 
     def probe(self) -> None:
@@ -133,9 +138,7 @@ class KeyringBackend:
         try:
             self.set(key,"1")
             if self.resolve(key)!="1": raise VaultUnavailableError("KEYRING_BACKEND_UNUSABLE")
-        finally:
-            try: self.clear(key)
-            except VaultUnavailableError: pass
+        finally: self.clear(key)
 
 
 def _env_bool(name: str, default: bool) -> bool:
@@ -145,7 +148,8 @@ def _env_bool(name: str, default: bool) -> bool:
 class CredentialVault:
     """Stores provider secrets without returning secret material from status()."""
     def __init__(self, *, backend: str | None = None, service_name: str | None = None,
-                 allow_memory_fallback: bool | None = None, backend_impl: VaultBackend | None = None):
+                 allow_memory_fallback: bool | None = None, backend_impl: VaultBackend | None = None,
+                 supports_provider: Callable[[str], bool] | None = None):
         requested=(backend or os.getenv("CREDENTIAL_VAULT_BACKEND","auto")).strip().lower()
         if requested not in {"auto","windows","keyring","memory"}: raise ValueError("unsupported credential vault backend")
         self.service_name=service_name or os.getenv("CREDENTIAL_VAULT_SERVICE","AI-Novel-Studio")
@@ -153,6 +157,7 @@ class CredentialVault:
         self.allow_memory_fallback=_env_bool("CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK",not packaged) if allow_memory_fallback is None else allow_memory_fallback
         self.degraded=False
         self.degraded_reason: str | None=None
+        self._supports_provider = supports_provider or SUPPORTED_PROVIDERS.__contains__
         if backend_impl is not None:
             self._active_backend=backend_impl
         else:
@@ -176,8 +181,21 @@ class CredentialVault:
         return MemoryBackend()
 
     def _validate_provider(self, provider: str) -> None:
-        if not isinstance(provider, str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,64}', provider):
+        if not isinstance(provider, str) or not re.fullmatch(r'[a-z0-9_-]{1,64}', provider):
             raise ValueError("unsupported provider")
+        try:
+            supported = bool(self._supports_provider(provider))
+        except Exception:
+            supported = False
+        if not supported:
+            raise ValueError("unsupported provider")
+
+    def supports_provider(self, provider: str) -> bool:
+        try:
+            self._validate_provider(provider)
+            return True
+        except ValueError:
+            return False
 
     def _degrade_after_failure(self, exc: VaultUnavailableError) -> MemoryBackend:
         backend=self._fallback(exc.code)
@@ -198,8 +216,9 @@ class CredentialVault:
 
     def clear(self, provider: str) -> None:
         self._validate_provider(provider)
-        try: self._active_backend.clear(provider)
-        except VaultUnavailableError as exc: self._degrade_after_failure(exc).clear(provider)
+        if self.degraded:
+            raise VaultUnavailableError(self.degraded_reason or "CREDENTIAL_VAULT_DEGRADED")
+        self._active_backend.clear(provider)
 
     def has(self, provider: str) -> bool: return self.resolve(provider) is not None
 
@@ -211,4 +230,4 @@ class CredentialVault:
                 "degraded_reason":self.degraded_reason,"secret":None}
 
 
-credential_vault = CredentialVault()
+credential_vault = CredentialVault(supports_provider=provider_support_registry.supports_provider)
