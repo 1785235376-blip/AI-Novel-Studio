@@ -287,3 +287,103 @@ it("uses live catalog resource counts instead of stale sidecar data", async () =
   expect(await screen.findByText(/1 个资源（写作预设）/)).toBeTruthy();
   expect(screen.queryByText(/3 个资源/)).toBeNull();
 });
+
+it("re-registers a REVIEW_REQUIRED plugin from the unique live manifest", async () => {
+  const live = {
+    id: "story-tools",
+    name: "故事工具",
+    version: "2.0.0",
+    requested_permissions: ["project.read"],
+  };
+  mockStatus([{
+    id: "story-tools",
+    name: "故事工具",
+    plugin_version: "1.0.0",
+    status: "REVIEW_REQUIRED",
+    requested_permissions: ["project.read"],
+    granted_permissions: ["project.read"],
+    permission_review: { reviewed_by: "old-user" },
+  }], [{ plugin_dir: "story-tools", manifest: live }]);
+  const register = vi.spyOn(api, "registerPlugin").mockResolvedValue({ status: "REGISTERED", granted_permissions: [], permission_review: null } as any);
+  const enable = vi.spyOn(api, "enablePlugin");
+  const review = vi.spyOn(api, "setPluginPermissions");
+  render(<PluginManagerPanel />);
+  fireEvent.click(await screen.findByRole("button", { name: "重新注册并重新审核" }));
+  await waitFor(() => expect(register).toHaveBeenCalledWith(expect.objectContaining({ id: "story-tools", version: "2.0.0" })));
+  expect(enable).not.toHaveBeenCalled();
+  expect(review).not.toHaveBeenCalled();
+  await waitFor(() => expect(api.discoverPlugins).toHaveBeenCalledTimes(2));
+});
+
+it("re-registers a drifted plugin from the unique live manifest", async () => {
+  const live = {
+    id: "story-tools",
+    name: "故事工具",
+    version: "3.0.0",
+    requested_permissions: [],
+  };
+  mockStatus([{
+    id: "story-tools",
+    name: "故事工具",
+    plugin_version: "1.0.0",
+    status: "MANIFEST_ACTIVE",
+    requested_permissions: [],
+    granted_permissions: [],
+  }], [{ plugin_dir: "story-tools", manifest: live }], {
+    items: [],
+    validated: false,
+    validation_status: "DRIFT",
+    status: "MANIFEST_DRIFT",
+    error_code: "PLUGIN_MANIFEST_DRIFT",
+    execution_supported: false,
+    isolation: "DENY_ALL",
+  });
+  const register = vi.spyOn(api, "registerPlugin").mockResolvedValue({ status: "REGISTERED", granted_permissions: [] } as any);
+  const enable = vi.spyOn(api, "enablePlugin");
+  render(<PluginManagerPanel />);
+  expect(await screen.findByText("Manifest 漂移")).toBeTruthy();
+  fireEvent.click(screen.getByRole("button", { name: "重新注册并重新审核" }));
+  await waitFor(() => expect(register).toHaveBeenCalledWith(expect.objectContaining({ id: "story-tools", version: "3.0.0" })));
+  expect(enable).not.toHaveBeenCalled();
+});
+
+it("does not offer re-register for duplicate or missing packages", async () => {
+  mockStatus([{
+    id: "story-tools",
+    name: "故事工具",
+    plugin_version: "1.0.0",
+    status: "MANIFEST_ACTIVE",
+    requested_permissions: [],
+    granted_permissions: [],
+  }], [{
+    plugin_dir: "copy-a",
+    error_code: "PLUGIN_ID_DUPLICATE",
+    error: "插件 ID 重复，所有副本均不可注册。",
+  }, {
+    plugin_dir: "copy-b",
+    error_code: "PLUGIN_ID_DUPLICATE",
+  }], {
+    items: [],
+    validated: false,
+    validation_status: "DUPLICATE",
+    error_code: "PLUGIN_ID_DUPLICATE",
+    execution_supported: false,
+    isolation: "DENY_ALL",
+  });
+  render(<PluginManagerPanel />);
+  expect(await screen.findByText("重复 ID")).toBeTruthy();
+  expect(screen.queryByRole("button", { name: "重新注册并重新审核" })).toBeNull();
+  cleanup();
+  mockStatus([{
+    id: "story-tools",
+    name: "故事工具",
+    plugin_version: "1.0.0",
+    status: "REVIEW_REQUIRED",
+    requested_permissions: ["project.read"],
+    granted_permissions: [],
+  }], []);
+  render(<PluginManagerPanel />);
+  expect(await screen.findByText("故事工具")).toBeTruthy();
+  expect(screen.queryByRole("button", { name: "重新注册并重新审核" })).toBeNull();
+  expect(screen.queryByRole("button", { name: "激活清单" })).toBeNull();
+});

@@ -123,8 +123,25 @@ function hasHumanReview(item: RegisteredPlugin): boolean {
 }
 
 function uniqueDiscovery(items: DiscoveredPlugin[], pluginId: string): boolean {
-  const matches = items.filter((item) => item.manifest?.id === pluginId && !item.error_code);
-  return matches.length === 1;
+  return uniqueLiveManifest(items, pluginId) != null;
+}
+
+export function uniqueLiveManifest(items: DiscoveredPlugin[], pluginId: string): PluginManifestSummary | undefined {
+  const matches = items.filter((item) => item.manifest?.id === pluginId && !item.error_code && item.manifest);
+  if (matches.length !== 1) return undefined;
+  return matches[0].manifest;
+}
+
+export function needsReregister(
+  item: RegisteredPlugin,
+  catalog: PluginCatalogSummary | undefined,
+  live?: PluginManifestSummary,
+): boolean {
+  if (!live) return false;
+  if (item.status === "REVIEW_REQUIRED") return true;
+  const code = catalog?.error_code || catalog?.status;
+  const validation = catalog?.validation_status;
+  return code === "PLUGIN_MANIFEST_DRIFT" || validation === "DRIFT" || catalog?.status === "MANIFEST_DRIFT";
 }
 
 export function liveResourceState(catalog?: PluginCatalogSummary, discovered = false, status?: string): { label: string; on: boolean } {
@@ -346,6 +363,8 @@ export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: Pl
               const active = item.status === "MANIFEST_ACTIVE";
               const catalog = catalogs[item.id];
               const discovered = uniqueDiscovery(items, item.id);
+              const liveManifest = uniqueLiveManifest(items, item.id);
+              const reregister = needsReregister(item, catalog, liveManifest);
               const resource = liveResourceState(catalog, discovered, item.status);
               const kinds = (catalog?.resource_kinds && catalog.resource_kinds.length ? catalog.resource_kinds : undefined) || resourceKindsOf(catalog || item);
               const count = catalog?.resource_count ?? catalog?.items?.length ?? (active ? resourceCountOf(item) : resourceCountOf(item));
@@ -375,12 +394,17 @@ export function PluginManagerPanel({ onInspect }: { onInspect?: (inspection?: Pl
                     <span>{publisherLabel(item.publisher)}</span>
                     <span>execution_mode={item.execution_mode || "declarative"} · {catalog ? liveCount : resourceCountOf(item)} 个资源{liveCount || !catalog ? `（${formatResourceKinds(kinds)}）` : ""}</span>
                   </div>
-                  {!zeroPerms && !reviewed && item.status !== "REVIEW_REQUIRED" && (
+                  {!reregister && !zeroPerms && !reviewed && item.status !== "REVIEW_REQUIRED" && (
                     <Button variant="ghost" loading={pending === `review:${item.id}`} onClick={() => runAction(`review:${item.id}`, `${item.name} 的权限已审核。`, () => api.setPluginPermissions(item.id, { granted_permissions: requested, reviewed_by: "local-user", note: "本地用户明确授权" }))}>
                       审核并授权
                     </Button>
                   )}
-                  {canActivate && !active && (
+                  {reregister && liveManifest && (
+                    <Button variant="ghost" loading={pending === `reregister:${item.id}`} onClick={() => runAction(`reregister:${item.id}`, `${item.name} 已重新注册，权限已清空，需重新审核。`, () => api.registerPlugin(liveManifest))}>
+                      重新注册并重新审核
+                    </Button>
+                  )}
+                  {!reregister && canActivate && !active && (
                     <Button loading={pending === `enable:${item.id}`} onClick={() => runAction(`enable:${item.id}`, `${item.name} 的清单已激活。`, () => api.enablePlugin(item.id))}>
                       激活清单
                     </Button>
