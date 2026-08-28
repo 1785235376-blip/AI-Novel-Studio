@@ -2,43 +2,102 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
+import sys
+from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import parse_qsl, urlsplit, urlunsplit
 
 import psycopg
+from psycopg import sql
 
 
 ROOT = Path(__file__).resolve().parents[2]
-E2E_DATABASE = "ai_novel_studio_e2e"
+DATABASE_PREFIX = "ai_novel_studio_e2e_"
+DATABASE_NAME = re.compile(r"ai_novel_studio_e2e_[a-z0-9_-]{1,42}")
+CLI_ACTIONS = ("prepare", "cleanup", "probe")
+MALFORMED_PERCENT_ENCODING = re.compile(r"%(?![0-9a-fA-F]{2})")
+TARGET_OVERRIDE_QUERY_KEYS = {
+    "dbname",
+    "database",
+    "host",
+    "hostaddr",
+    "port",
+    "user",
+    "password",
+    "service",
+    "servicefile",
+}
 
 
-def load_database_url() -> str:
-    value = os.getenv("DATABASE_URL", "")
+class E2EDatabaseContractError(RuntimeError):
+    pass
+
+
+@dataclass(frozen=True, repr=False)
+class E2EDatabaseTarget:
+    database_name: str
+    target_url: str
+    maintenance_url: str
+
+
+def _contract_error(code: str) -> None:
+    raise E2EDatabaseContractError(code)
+
+
+def load_database_url(*, require_confirmation: bool = True) -> E2EDatabaseTarget:
+    value = os.getenv("E2E_DATABASE_URL", "")
     if not value:
-        for line in (ROOT / ".env").read_text(encoding="utf-8").splitlines():
-            if line.startswith("DATABASE_URL="):
-                value = line.split("=", 1)[1].strip()
-                break
-    if not value:
-        raise RuntimeError("DATABASE_URL is not configured")
-    return value.replace("postgresql+psycopg://", "postgresql://", 1)
+        _contract_error("E2E_DATABASE_URL_REQUIRED")
+    try:
+        parsed = urlsplit(value)
+        parsed.port
+    except (TypeError, ValueError, UnicodeError):
+        _contract_error("E2E_DATABASE_URL_INVALID")
+    if parsed.scheme not in {"postgresql", "postgresql+psycopg"}:
+        _contract_error("E2E_DATABASE_SCHEME_UNSUPPORTED")
+    if not parsed.hostname or parsed.fragment:
+        _contract_error("E2E_DATABASE_URL_INVALID")
+    if MALFORMED_PERCENT_ENCODING.search(parsed.query):
+        _contract_error("E2E_DATABASE_URL_INVALID")
+    try:
+        query_pairs = parse_qsl(parsed.query, keep_blank_values=True, strict_parsing=False, errors="strict")
+    except (TypeError, ValueError, UnicodeError):
+        _contract_error("E2E_DATABASE_URL_INVALID")
+    if any(key.lower() in TARGET_OVERRIDE_QUERY_KEYS for key, _value in query_pairs):
+        _contract_error("E2E_DATABASE_QUERY_OVERRIDE_FORBIDDEN")
+    if not parsed.path.startswith("/") or "/" in parsed.path[1:] or "%" in parsed.path:
+        _contract_error("E2E_DATABASE_NAME_UNSAFE")
+    database_name = parsed.path[1:]
+    if not DATABASE_NAME.fullmatch(database_name) or database_name == DATABASE_PREFIX[:-1]:
+        _contract_error("E2E_DATABASE_NAME_UNSAFE")
+    if require_confirmation:
+        confirmation = os.getenv("E2E_DATABASE_CONFIRM_DROP", "")
+        if not confirmation:
+            _contract_error("E2E_DATABASE_CONFIRM_REQUIRED")
+        if confirmation != database_name:
+            _contract_error("E2E_DATABASE_CONFIRM_MISMATCH")
+    scheme = "postgresql"
+    target_url = urlunsplit((scheme, parsed.netloc, f"/{database_name}", parsed.query, ""))
+    maintenance_url = urlunsplit((scheme, parsed.netloc, "/postgres", parsed.query, ""))
+    return E2EDatabaseTarget(database_name, target_url, maintenance_url)
 
 
-def database_url(name: str) -> str:
-    base = load_database_url()
-    return base.rsplit("/", 1)[0] + "/" + name
+def _terminate(connection, database_name: str) -> None:
+    connection.execute(
+        "SELECT pg_terminate_backend(pid) FROM pg_stat_activity "
+        "WHERE datname = %s AND pid <> pg_backend_pid()",
+        (database_name,),
+    )
 
 
 def prepare() -> None:
-    admin_url = database_url("postgres")
-    with psycopg.connect(admin_url, autocommit=True) as connection:
-        connection.execute(
-            "SELECT pg_terminate_backend(pid) FROM pg_stat_activity "
-            "WHERE datname = %s AND pid <> pg_backend_pid()",
-            (E2E_DATABASE,),
-        )
-        connection.execute(f'DROP DATABASE IF EXISTS "{E2E_DATABASE}"')
-        connection.execute(f'CREATE DATABASE "{E2E_DATABASE}"')
-    with psycopg.connect(database_url(E2E_DATABASE), autocommit=True) as connection:
+    target = load_database_url()
+    with psycopg.connect(target.maintenance_url, autocommit=True) as connection:
+        _terminate(connection, target.database_name)
+        connection.execute(sql.SQL("DROP DATABASE IF EXISTS {}").format(sql.Identifier(target.database_name)))
+        connection.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(target.database_name)))
+    with psycopg.connect(target.target_url, autocommit=True) as connection:
         for migration in sorted((ROOT / "database" / "migrations").glob("*.sql")):
             connection.execute(migration.read_text(encoding="utf-8"))
         connection.execute("INSERT INTO workspaces(id,payload) VALUES ('e2e-workspace-a','{\"id\":\"e2e-workspace-a\",\"name\":\"E2E Workspace A\"}'::jsonb),('e2e-workspace-b','{\"id\":\"e2e-workspace-b\",\"name\":\"E2E Empty Workspace B\"}'::jsonb)")
@@ -51,12 +110,15 @@ def prepare() -> None:
 
 
 def cleanup() -> None:
-    with psycopg.connect(database_url(E2E_DATABASE), autocommit=True) as connection:
-        connection.execute("TRUNCATE TABLE novels CASCADE")
+    target = load_database_url()
+    with psycopg.connect(target.maintenance_url, autocommit=True) as connection:
+        _terminate(connection, target.database_name)
+        connection.execute(sql.SQL("DROP DATABASE IF EXISTS {}").format(sql.Identifier(target.database_name)))
 
 
 def probe(slug: str) -> None:
-    with psycopg.connect(database_url(E2E_DATABASE)) as connection:
+    target = load_database_url(require_confirmation=False)
+    with psycopg.connect(target.target_url) as connection:
         row = connection.execute(
             """
             SELECT n.slug,
@@ -81,16 +143,27 @@ def probe(slug: str) -> None:
     print("|".join(str(value) for value in row))
 
 
-if __name__ == "__main__":
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=("prepare", "cleanup", "url", "probe"))
+    parser.add_argument("action", choices=CLI_ACTIONS)
     parser.add_argument("--slug", default="")
-    args = parser.parse_args()
-    if args.action == "prepare":
-        prepare()
-    elif args.action == "cleanup":
-        cleanup()
-    elif args.action == "url":
-        print(database_url(E2E_DATABASE))
-    else:
-        probe(args.slug)
+    args = parser.parse_args(argv)
+    try:
+        if args.action == "prepare":
+            prepare()
+        elif args.action == "cleanup":
+            cleanup()
+        else:
+            probe(args.slug)
+    except E2EDatabaseContractError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+    except Exception:
+        code = f"E2E_DATABASE_{args.action.upper()}_FAILED"
+        print(code, file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
