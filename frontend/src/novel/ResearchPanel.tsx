@@ -9,18 +9,29 @@ type Draft = {
   title: string;
   source_type: (typeof SOURCE_TYPES)[number];
   status: "ACTIVE" | "ARCHIVED";
+  author: string;
+  url: string;
   tags: string;
   excerpt: string;
   notes: string;
 };
 
-const emptyDraft = (): Draft => ({ title: "", source_type: "NOTE", status: "ACTIVE", tags: "", excerpt: "", notes: "" });
+const emptyDraft = (): Draft => ({ title: "", source_type: "NOTE", status: "ACTIVE", author: "", url: "", tags: "", excerpt: "", notes: "" });
 
 function parseTags(value: string) {
   return value.split(/[,，]/).map((item) => item.trim()).filter(Boolean);
 }
 
+function isSupportedResearchUrl(value: string) {
+  return !value.trim() || /^https?:\/\//i.test(value.trim());
+}
+
 export function ResearchPanel({ novelId }: { novelId: string }) {
+  if (!novelId) return <EmptyState title="未选择小说" detail="研究资料按小说隔离，请先打开一部小说。" />;
+  return <ResearchPanelForNovel key={novelId} novelId={novelId} />;
+}
+
+function ResearchPanelForNovel({ novelId }: { novelId: string }) {
   const qc = useQueryClient();
   const [status, setStatus] = useState("");
   const [sourceType, setSourceType] = useState("");
@@ -40,6 +51,8 @@ export function ResearchPanel({ novelId }: { novelId: string }) {
     title: draft.title.trim(),
     source_type: draft.source_type,
     status: draft.status,
+    author: draft.author,
+    url: draft.url.trim(),
     tags: parseTags(draft.tags),
     excerpt: draft.excerpt,
     notes: draft.notes,
@@ -84,7 +97,13 @@ export function ResearchPanel({ novelId }: { novelId: string }) {
   });
   const items = query.data?.items || [];
   const filteredHint = useMemo(() => [status, sourceType, tag].filter(Boolean).join(" / ") || "未筛选", [status, sourceType, tag]);
-  if (!novelId) return <EmptyState title="未选择小说" detail="研究资料按小说隔离，请先打开一部小说。" />;
+  const submitDraft = () => {
+    if (!isSupportedResearchUrl(draft.url)) {
+      setMessage("来源网址仅支持 http/https；仅保存引用信息，不读取网址内容。");
+      return;
+    }
+    editingId ? save.mutate() : create.mutate();
+  };
   return (
     <Panel title="研究资料" actions={<Badge tone="info">{query.data?.storage || "durable_sidecar"}</Badge>}>
       <p className="novel-help">本地 sidecar（v1_capabilities/research.json），不读取外部网络。筛选：{filteredHint}</p>
@@ -116,6 +135,7 @@ export function ResearchPanel({ novelId }: { novelId: string }) {
                 <Badge>{item.status}</Badge>
               </header>
               <p className="novel-help">{item.source_type} · v{item.version} · {(item.tags || []).join("、") || "无标签"}</p>
+              {(item.author || item.url) && <p className="novel-help">{item.author && <>作者：{item.author}</>}{item.author && item.url && " · "}{item.url && <>来源网址：<span>{item.url}</span></>}</p>}
               <p>{item.excerpt || item.notes || "无摘要"}</p>
               <div className="novel-actions">
                 <Button onClick={() => {
@@ -125,6 +145,8 @@ export function ResearchPanel({ novelId }: { novelId: string }) {
                     title: item.title || "",
                     source_type: item.source_type || "NOTE",
                     status: item.status === "ARCHIVED" ? "ARCHIVED" : "ACTIVE",
+                    author: item.author || "",
+                    url: item.url || "",
                     tags: (item.tags || []).join(","),
                     excerpt: item.excerpt || "",
                     notes: item.notes || "",
@@ -145,7 +167,7 @@ export function ResearchPanel({ novelId }: { novelId: string }) {
           </div>
         </section>
       )}
-      <form className="novel-ai-panel" onSubmit={(event) => { event.preventDefault(); editingId ? save.mutate() : create.mutate(); }}>
+      <form className="novel-ai-panel" noValidate onSubmit={(event) => { event.preventDefault(); submitDraft(); }}>
         <h3>{editingId ? "编辑资料" : "新建资料"}</h3>
         <label>标题<input required value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} /></label>
         <label>来源类型
@@ -154,12 +176,15 @@ export function ResearchPanel({ novelId }: { novelId: string }) {
           </select>
         </label>
         <label>状态
-          <select value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value as Draft["status"] })}>
+          <select aria-label="资料状态" value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value as Draft["status"] })}>
             <option value="ACTIVE">ACTIVE</option>
             <option value="ARCHIVED">ARCHIVED</option>
           </select>
         </label>
-        <label>标签<input value={draft.tags} onChange={(e) => setDraft({ ...draft, tags: e.target.value })} placeholder="用逗号分隔，需唯一" /></label>
+        <label>作者<input value={draft.author} onChange={(e) => setDraft({ ...draft, author: e.target.value })} /></label>
+        <label>来源网址<input type="url" value={draft.url} onChange={(e) => setDraft({ ...draft, url: e.target.value })} /></label>
+        <p className="novel-help">仅保存引用信息，不读取网址内容。非空网址必须使用 http 或 https。</p>
+        <label>标签<input aria-label="资料标签" value={draft.tags} onChange={(e) => setDraft({ ...draft, tags: e.target.value })} placeholder="用逗号分隔，需唯一" /></label>
         <label>摘要<textarea value={draft.excerpt} onChange={(e) => setDraft({ ...draft, excerpt: e.target.value })} /></label>
         <label>笔记<textarea value={draft.notes} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} /></label>
         <div className="novel-actions">
