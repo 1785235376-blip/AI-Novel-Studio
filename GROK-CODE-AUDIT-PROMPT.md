@@ -32,12 +32,15 @@
 - 仅保存元数据但没有实际文件或模型执行
 - 状态标记完成但没有真实业务结果
 
-已知静态验证结果：
+已知静态验证结果（必须与基线绑定；不要把过期数量或过期构建哈希当成当前证据）：
 
-- 前端 `npm run build` 通过。
-- Python 核心模块 `py_compile` 通过。
-- Provider 回归测试 `tests/test_provider_retry.py` 为 3 passed。
-- 插件执行运行时当前明确关闭，禁止假设插件可执行。
-- 桌面端 UI 重构尚未开始，当前功能冻结后再进行。
+- 基线：`origin/main` `46bee8f4b57f0cc61d69746bf190a88a3fb3d733`，日期 2026-08-28，Linux 隔离沙箱，`STORAGE_BACKEND=file`，未配置真实 Provider，未连接用户数据库。
+- 前端 TypeScript：`npx tsc -b` exit 0。
+- 前端 Vitest：`npx vitest run` exit 0；本轮 376 passed / 89 files。该数量只对本轮 SHA/日期/环境有效。
+- 前端 production build：`npx vite build` exit 0。
+- 后端全量 pytest（`python -m pytest -p no:cacheprovider --basetemp=<repo>/.runtime/pytest-temp/safe-maint-20260828`）：exit 1；本轮 766 passed, 36 failed, 27 skipped, 0 xfail。分类见 `docs/test_report.md` 与 `docs/grok_safe_maintenance_audit_20260828.md`。
+- 版本一致性：`scripts/validate_release_version.py` exit 0；backend / frontend / environment / `release/version.json` 均为 `0.7.0` / `0.7.0 Beta`。
+- 插件执行运行时当前明确关闭。禁止假设插件可执行。Draft PR #12（declarative plugin SDK）未在本轮审核或合并。
+- 桌面端 UI 重构已经发生（见 `docs/frontend_ui_ux_refactor_report.md` 等）。这不是 DesktopHost 窗口验收。DH-01 至 DH-08 仍为 `NOT_RUN`，DesktopHost 门禁仍为 `BLOCKED`。
 
-请不要把构建通过等同于生产可用；重点指出真实 Provider、桌面运行和数据迁移方面的残余风险。
+请不要把构建通过等同于生产可用；不要把浏览器、API、Playwright 或启动日志冒充 DesktopHost 窗口业务证据。重点指出真实 Provider、桌面运行和数据迁移方面的残余风险。当前产品声明仍是 `0.7.0 Beta`，不是 V1.0 正式发行物。
