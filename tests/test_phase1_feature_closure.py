@@ -240,7 +240,15 @@ def test_packaged_generation_fails_closed_without_text_provider():
                 break
             time.sleep(0.05)
         assert job.status == "FAILED"
-        assert job.error == "TEXT_PROVIDER_NOT_CONFIGURED"
+        assert job.error_code == "TEXT_PROVIDER_NOT_CONFIGURED"
+        assert job.error == "未配置可用文本模型，请先在设置中配置文本 Provider。"
+        assert job.public()["error_code"] == "TEXT_PROVIDER_NOT_CONFIGURED"
+        object.__setattr__(settings, "enable_packaged_runtime", previous_packaged)
+        polled = client.get(f"/api/generation/{job.id}")
+        assert polled.status_code == 200
+        assert polled.json()["error_code"] == "TEXT_PROVIDER_NOT_CONFIGURED"
+        terminal = next(jobs_module.jobs.events(job.id))
+        assert '"error_code": "TEXT_PROVIDER_NOT_CONFIGURED"' in terminal
         assert "海风裹着雨水" not in (job.output or "")
         try:
             jobs_module.jobs.accept(job.id)
@@ -250,3 +258,78 @@ def test_packaged_generation_fails_closed_without_text_provider():
     finally:
         object.__setattr__(settings, "enable_packaged_runtime", previous_packaged)
         object.__setattr__(settings, "mock_provider", previous_mock)
+
+
+def test_generation_error_code_persists_and_defaults_to_none():
+    from app.jobs import Job, JobManager
+
+    class Persistence:
+        def __init__(self, rows=None):
+            self.rows = list(rows or [])
+
+        def save(self, item):
+            self.rows = [row for row in self.rows if row["id"] != item["id"]] + [dict(item)]
+
+        def load_all(self):
+            return [dict(row) for row in self.rows]
+
+    completed = Job("completed", "continue", "novel", "novel:1", "", "LOCAL_ONLY", status="COMPLETED")
+    cancelled = Job("cancelled", "continue", "novel", "novel:1", "", "LOCAL_ONLY", status="CANCELLED")
+    failed = Job(
+        "failed", "continue", "novel", "novel:1", "", "LOCAL_ONLY", status="FAILED",
+        error="未配置可用文本模型，请先在设置中配置文本 Provider。",
+        error_code="TEXT_PROVIDER_NOT_CONFIGURED",
+    )
+    persistence = Persistence([completed.public(), cancelled.public()])
+    persistence.save(failed.public())
+    reloaded = JobManager(
+        generations=persistence, chapters=object(), contexts=object(), canon=object(), memory_extractor=object()
+    )
+
+    assert reloaded.get("failed").error_code == "TEXT_PROVIDER_NOT_CONFIGURED"
+    assert reloaded.get("failed").public()["error_code"] == "TEXT_PROVIDER_NOT_CONFIGURED"
+    assert reloaded.get("completed").error_code is None
+    assert reloaded.get("cancelled").error_code is None
+
+    legacy = completed.public()
+    legacy.pop("error_code")
+    compatible = JobManager(
+        generations=Persistence([legacy]), chapters=object(), contexts=object(), canon=object(), memory_extractor=object()
+    )
+    assert compatible.get("completed").error_code is None
+
+
+def test_unknown_generation_failure_uses_stable_public_error_code():
+    from app.jobs import JobManager
+
+    class Persistence:
+        def __init__(self):
+            self.rows = []
+
+        def save(self, item):
+            self.rows = [row for row in self.rows if row["id"] != item["id"]] + [dict(item)]
+
+        def load_all(self):
+            return []
+
+    class Chapters:
+        def get(self, _chapter_id):
+            return {"version": 1, "content": "正文"}
+
+    class Contexts:
+        def for_chapter(self, *_args):
+            raise LookupError("internal implementation detail")
+
+    manager = JobManager(
+        generations=Persistence(), chapters=Chapters(), contexts=Contexts(), canon=object(), memory_extractor=object()
+    )
+    job = manager.create("continue", {"novel_id": "novel", "chapter_id": "novel:1", "profile": "LOCAL_ONLY"})
+    for _ in range(100):
+        if job.status in manager.terminal:
+            break
+        time.sleep(0.01)
+
+    assert job.status == "FAILED"
+    assert job.error_code == "GENERATION_FAILED"
+    assert job.error == "生成失败，请稍后重试"
+    assert job.public()["error_code"] == "GENERATION_FAILED"
