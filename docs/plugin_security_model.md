@@ -77,4 +77,4 @@ HTML and script-like strings in JSON are treated as plain data. Summary fields s
 
 ## Still out of scope
 
-Isolated worker, capability broker, plugin signatures, marketplace, Provider plugins, and any third-party code execution remain unimplemented. See the deferred worker design document in a later phase.
+Isolated worker, capability broker, plugin signatures, marketplace, Provider plugins, and any third-party code execution remain unimplemented. The design-only specification is [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md).

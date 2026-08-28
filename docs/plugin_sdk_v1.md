@@ -43,7 +43,7 @@ Catalog reads do not apply writing presets, execute workflow templates, or run e
 - Read Credential Vault secrets or novel body text
 - Fetch plugin URLs or inject UI into the WebView
 
-`MANIFEST_ACTIVE` means the manifest is enabled. It does not mean plugin code can run.
+The isolated worker, capability broker, signatures, and marketplace are **not implemented**. See [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md) for the design-only next step.
 
 ## Manifest fields
 
