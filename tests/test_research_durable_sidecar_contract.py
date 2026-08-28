@@ -28,13 +28,15 @@ def record(title="Archive", status="ACTIVE", source_type="ARCHIVE", tags=None):
     return ResearchRecordIn(title=title, status=status, source_type=source_type, tags=tags or ["port"], author="", citation="", url="", excerpt="", notes="", asset_ids=[])
 
 
-@pytest.mark.parametrize("profile", ["file", "postgres"])
-def test_research_durable_sidecar_boundary_contract(profile, tmp_path):
-    root = tmp_path / profile
+def test_research_durable_sidecar_boundary_contract(tmp_path):
+    root = tmp_path / "research-sidecar"
     service = V1CapabilityService(root, Novels(), object(), Assets())
     created = service.create_research("novel-a", record())
     assert service.storage_mode == "durable_sidecar"
-    assert service.list_research("novel-a", status="ACTIVE")["total"] == 1
+    assert created["provenance"]["external_fetch"] is False
+    active = service.list_research("novel-a", status="ACTIVE")
+    assert active["total"] == 1
+    assert active["external_fetch"] is False
     assert service.list_research("novel-a", source_type="ARCHIVE")["total"] == 1
     assert service.list_research("novel-a", tag="port")["total"] == 1
     assert service.list_research("novel-b")["items"] == []
