@@ -1,0 +1,130 @@
+{
+  "$defs": {
+    "PluginResourceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "writing_presets",
+            "workflow_templates",
+            "export_profiles"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "media_type": {
+          "default": "",
+          "maxLength": 120,
+          "title": "Media Type",
+          "type": "string"
+        },
+        "relative_path": {
+          "maxLength": 240,
+          "minLength": 1,
+          "title": "Relative Path",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "",
+          "maxLength": 40,
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-fA-F0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "relative_path",
+        "sha256"
+      ],
+      "title": "PluginResourceRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Declarative plugin manifest. Missing v1 fields receive safe defaults.",
+  "properties": {
+    "capabilities": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "description": {
+      "default": "",
+      "maxLength": 4000,
+      "title": "Description",
+      "type": "string"
+    },
+    "execution_mode": {
+      "const": "declarative",
+      "default": "declarative",
+      "title": "Execution Mode",
+      "type": "string"
+    },
+    "host_api_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Host Api Version",
+      "type": "string"
+    },
+    "id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{1,79}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "manifest_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Manifest Version",
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "publisher": {
+      "default": "",
+      "description": "Unverified publisher metadata; never a signature.",
+      "maxLength": 160,
+      "title": "Publisher",
+      "type": "string"
+    },
+    "requested_permissions": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 30,
+      "title": "Requested Permissions",
+      "type": "array"
+    },
+    "resources": {
+      "items": {
+        "$ref": "#/$defs/PluginResourceRef"
+      },
+      "maxItems": 100,
+      "title": "Resources",
+      "type": "array"
+    },
+    "version": {
+      "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][A-Za-z0-9.-]+)?$",
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "version"
+  ],
+  "title": "PluginManifestV1",
+  "type": "object"
+}

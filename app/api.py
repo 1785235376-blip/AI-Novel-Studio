@@ -42,6 +42,7 @@ from .services.export_job_service import (
     ExportJobResultInvalid,
     ExportJobUnavailable,
 )
+from .plugin_discovery import discover_installed_plugins
 from .services.v1_capability_service import (
     AssetDerivativeIn,
     CapabilityVersionConflict,
@@ -2812,15 +2813,7 @@ def list_plugins():
     return v1_capability_service.list_plugins()
 @router.get("/plugins/discover")
 def discover_plugins():
-    import json
-    root=settings.data_path()/"plugins"; items=[]
-    if root.exists():
-        for path in root.glob("*/manifest.json"):
-            try:
-                from .services.v1_capability_service import PluginManifestIn
-                items.append({"path":str(path.parent),"manifest":PluginManifestIn.model_validate(json.loads(path.read_text(encoding='utf-8'))).model_dump(mode='json')})
-            except Exception as exc: items.append({"path":str(path.parent),"error":str(exc)})
-    return {"items":items,"execution_supported":False}
+    return discover_installed_plugins(settings.data_path() / "plugins")
 @router.get("/plugins/runtime-status")
 def plugin_runtime_status():
     return {'execution_supported':False,'sandbox':'NOT_CONFIGURED','isolation':'DENY_ALL','reason':'plugin runtime execution is disabled until isolated worker is shipped'}

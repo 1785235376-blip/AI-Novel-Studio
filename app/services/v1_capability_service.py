@@ -10,6 +10,13 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from ..plugin_contracts import (
+    HOST_API_VERSION,
+    PLUGIN_CAPABILITIES,
+    PLUGIN_MANIFEST_VERSION,
+    PLUGIN_PERMISSIONS,
+    PluginManifestV1 as PluginManifestIn,
+)
 from ..idempotency import IdempotencyStore
 from ..storage import atomic_write
 
@@ -94,34 +101,6 @@ class AssetDerivativeIn(_StrictModel):
     derivative_type: Literal["THUMBNAIL", "CROP", "RESIZE", "FORMAT_CONVERSION", "COLOR_VARIANT", "OTHER"]
     parameters: dict[str, Any] = Field(default_factory=dict)
     note: str = Field(default="", max_length=4000)
-
-
-PLUGIN_CAPABILITIES = frozenset({"provider", "writing_tool", "multimodal_tool", "exporter", "workflow"})
-PLUGIN_PERMISSIONS = frozenset({
-    "network", "filesystem.read", "filesystem.write", "process",
-    "model.text", "model.image", "model.audio", "model.video", "project.read", "project.write",
-})
-
-
-class PluginManifestIn(_StrictModel):
-    id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{1,79}$")
-    name: str = Field(min_length=1, max_length=160)
-    version: str = Field(pattern=r"^\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?$")
-    description: str = Field(default="", max_length=4000)
-    capabilities: list[str] = Field(default_factory=list, max_length=20)
-    requested_permissions: list[str] = Field(default_factory=list, max_length=30)
-
-    @model_validator(mode="after")
-    def supported_contract(self):
-        unknown_capabilities = set(self.capabilities) - PLUGIN_CAPABILITIES
-        unknown_permissions = set(self.requested_permissions) - PLUGIN_PERMISSIONS
-        if unknown_capabilities:
-            raise ValueError(f"unsupported plugin capabilities: {sorted(unknown_capabilities)}")
-        if unknown_permissions:
-            raise ValueError(f"unsupported plugin permissions: {sorted(unknown_permissions)}")
-        self.capabilities = list(dict.fromkeys(self.capabilities))
-        self.requested_permissions = list(dict.fromkeys(self.requested_permissions))
-        return self
 
 
 class PluginPermissionIn(_StrictModel):
@@ -464,6 +443,9 @@ class V1CapabilityService:
         payload = {
             **body.model_dump(mode="json"), "granted_permissions": [], "status": "REGISTERED",
             "default_policy": "DENY", "execution_supported": False,
+            "publisher_verified": False, "publisher_trust": "unverified",
+            "manifest_version": getattr(body, "manifest_version", PLUGIN_MANIFEST_VERSION),
+            "host_api_version": getattr(body, "host_api_version", HOST_API_VERSION),
         }
         return self._create("plugins", payload, novel_id=None, action="PLUGIN_REGISTERED",
                             target_type="Plugin", idempotency_key=idempotency_key, item_id=body.id)
