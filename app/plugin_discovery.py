@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from .plugin_contracts import (
+    MAX_JSON_DEPTH,
     MAX_MANIFEST_BYTES,
     MAX_RESOURCE_BYTES,
     MAX_RESOURCE_COUNT,
@@ -106,6 +107,40 @@ def resolve_plugin_file(plugin_root: Path, relative_path: str) -> Path:
     return resolved
 
 
+def json_nesting_depth(value: Any, *, limit: int = MAX_JSON_DEPTH) -> int:
+    stack: list[tuple[Any, int]] = [(value, 1)]
+    deepest = 0
+    while stack:
+        current, depth = stack.pop()
+        if depth > limit:
+            return depth
+        deepest = max(deepest, depth)
+        if isinstance(current, dict):
+            stack.extend((item, depth + 1) for item in current.values())
+        elif isinstance(current, list):
+            stack.extend((item, depth + 1) for item in current)
+    return deepest
+
+
+def parse_declarative_json(data: bytes, *, max_depth: int | None = None) -> Any:
+    limit = MAX_JSON_DEPTH if max_depth is None else max_depth
+    try:
+        text = data.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise PluginContractError(PLUGIN_RESOURCE_INVALID_JSON) from exc
+    try:
+        parsed = json.loads(text)
+    except RecursionError as exc:
+        raise PluginContractError(PLUGIN_RESOURCE_INVALID_JSON) from exc
+    except (json.JSONDecodeError, ValueError) as exc:
+        raise PluginContractError(PLUGIN_RESOURCE_INVALID_JSON) from exc
+    if not isinstance(parsed, (dict, list)):
+        raise PluginContractError(PLUGIN_RESOURCE_INVALID_JSON)
+    if json_nesting_depth(parsed, limit=limit) > limit:
+        raise PluginContractError(PLUGIN_RESOURCE_INVALID_JSON)
+    return parsed
+
+
 def read_declarative_json(path: Path, *, max_bytes: int) -> tuple[bytes, Any]:
     try:
         size = path.stat().st_size
@@ -119,13 +154,50 @@ def read_declarative_json(path: Path, *, max_bytes: int) -> tuple[bytes, Any]:
         raise PluginContractError(PLUGIN_RESOURCE_PATH_INVALID) from exc
     if len(data) > max_bytes:
         raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
-    try:
-        parsed = json.loads(data.decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise PluginContractError(PLUGIN_RESOURCE_INVALID_JSON) from exc
-    if not isinstance(parsed, (dict, list)):
-        raise PluginContractError(PLUGIN_RESOURCE_INVALID_JSON)
+    parsed = parse_declarative_json(data)
     return data, parsed
+
+
+def preflight_resource_budget(
+    plugin_root: Path,
+    manifest: PluginManifestV1,
+    *,
+    max_file: int | None = None,
+    max_count: int | None = None,
+    max_total: int | None = None,
+) -> int:
+    """Stat resources before parsing JSON. Exceeding the budget fails the whole package."""
+    file_limit = MAX_RESOURCE_BYTES if max_file is None else max_file
+    count_limit = MAX_RESOURCE_COUNT if max_count is None else max_count
+    total_limit = MAX_TOTAL_RESOURCE_BYTES if max_total is None else max_total
+    if len(manifest.resources) > count_limit:
+        raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
+    total = 0
+    for resource in manifest.resources:
+        path = resolve_plugin_file(plugin_root, resource.relative_path)
+        try:
+            size = path.stat().st_size
+        except OSError as exc:
+            raise PluginContractError(PLUGIN_RESOURCE_PATH_INVALID) from exc
+        if size > file_limit:
+            raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
+        total += size
+        if total > total_limit:
+            raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
+    return total
+
+
+def verify_manifest_resources(plugin_root: Path, manifest: PluginManifestV1) -> list[dict[str, Any]]:
+    preflight_resource_budget(plugin_root, manifest)
+    verified: list[dict[str, Any]] = []
+    total = 0
+    for resource in manifest.resources:
+        item = verify_resource(plugin_root, resource)
+        total += int(item["size"])
+        if total > MAX_TOTAL_RESOURCE_BYTES:
+            raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
+        verified.append(item)
+    return verified
 
 
 def verify_resource(plugin_root: Path, resource: PluginResourceRef) -> dict[str, Any]:
@@ -148,20 +220,6 @@ def verify_resource(plugin_root: Path, resource: PluginResourceRef) -> dict[str,
         "size": len(data),
         "data": parsed,
     }
-
-
-def verify_manifest_resources(plugin_root: Path, manifest: PluginManifestV1) -> list[dict[str, Any]]:
-    if len(manifest.resources) > MAX_RESOURCE_COUNT:
-        raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
-    verified: list[dict[str, Any]] = []
-    total = 0
-    for resource in manifest.resources:
-        item = verify_resource(plugin_root, resource)
-        total += int(item["size"])
-        if total > MAX_TOTAL_RESOURCE_BYTES:
-            raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
-        verified.append(item)
-    return verified
 
 
 def load_plugin_manifest(plugin_root: Path) -> PluginManifestV1:

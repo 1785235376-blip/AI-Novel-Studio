@@ -167,6 +167,8 @@ def test_hash_drift_drops_resource_immediately(plugin_root):
     listed = client.get("/api/plugins/drift-pack/resources")
     assert listed.status_code == 200
     assert listed.json()["items"] == []
+    assert listed.json()["validated"] is False
+    assert listed.json()["validation_status"] == "FAILED"
     detail = client.get("/api/plugins/drift-pack/resources/resources:preset.json")
     assert detail.status_code == 404
     payload = detail.json()
@@ -198,6 +200,10 @@ def test_one_bad_resource_does_not_hide_others(plugin_root):
     items = client.get("/api/plugins/mixed-pack/resources").json()["items"]
     assert [item["resource_id"] for item in items] == ["resources:good.json"]
     assert client.get("/api/plugins/mixed-pack/resources/resources:bad.json").status_code == 404
+    listed = client.get("/api/plugins/mixed-pack/resources").json()
+    assert listed["validated"] is False
+    assert listed["validation_status"] == "PARTIAL"
+    assert listed["invalid_resource_count"] == 1
 
 
 def test_cross_plugin_isolation_and_same_resource_id(plugin_root):
@@ -230,7 +236,7 @@ def test_invalid_json_is_not_returned(plugin_root):
     listed = client.get("/api/plugins/json-pack/resources").json()
     assert listed["items"] == []
     detail = client.get("/api/plugins/json-pack/resources/resources:preset.json")
-    assert detail.status_code == 404
+    assert detail.status_code in {400, 404}
     assert "{" not in json.dumps(detail.json().get("data", ""))
 
 
@@ -525,3 +531,70 @@ def test_identity_change_requires_reregister_and_does_not_keep_activation(plugin
     assert body["plugin_version"] == "2.0.0"
     assert body["manifest_sha256"] != first["manifest_sha256"]
     assert client.get("/api/plugins/rebind-pack/resources").json()["items"] == []
+
+
+def test_catalog_total_budget_fail_closed(plugin_root, monkeypatch):
+    plugin = write_plugin(plugin_root, "budget-pack", resources=[
+        ("writing_presets", "resources/one.json", {"name": "one", "pad": "x" * 20}),
+        ("writing_presets", "resources/two.json", {"name": "two", "pad": "x" * 20}),
+    ])
+    client = _client()
+    _register(client, "budget-pack")
+    monkeypatch.setattr("app.plugin_discovery.MAX_TOTAL_RESOURCE_BYTES", 40)
+    listed = client.get("/api/plugins/budget-pack/resources")
+    assert listed.status_code == 200
+    body = listed.json()
+    assert body["items"] == []
+    assert body["validated"] is False
+    assert body["error_code"] == "PLUGIN_RESOURCE_TOO_LARGE"
+    assert body["validation_status"] == "BUDGET"
+    detail = client.get("/api/plugins/budget-pack/resources/resources:one.json")
+    assert detail.status_code in {400, 404}
+    assert str(plugin) not in listed.text + detail.text
+
+
+def test_deep_json_does_not_return_500(plugin_root, monkeypatch):
+    nested: dict = {"leaf": True}
+    for _ in range(12):
+        nested = {"child": nested}
+    write_plugin(plugin_root, "deep-pack", resources=[
+        ("writing_presets", "resources/preset.json", nested),
+    ])
+    client = _client()
+    _register(client, "deep-pack")
+    monkeypatch.setattr("app.plugin_discovery.MAX_JSON_DEPTH", 8)
+    listed = client.get("/api/plugins/deep-pack/resources")
+    assert listed.status_code == 200
+    body = listed.json()
+    assert body["validated"] is False
+    assert body["items"] == []
+    assert "Traceback" not in listed.text
+    detail = client.get("/api/plugins/deep-pack/resources/resources:preset.json")
+    assert detail.status_code != 500
+    assert detail.status_code in {400, 404}
+    assert detail.json()["detail"]["error_code"] == "PLUGIN_RESOURCE_INVALID_JSON"
+    assert str(plugin_root) not in listed.text + detail.text
+
+
+def test_recursion_error_is_normalized(plugin_root, monkeypatch):
+    write_plugin(plugin_root, "recur-pack", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "n"}),
+    ])
+    client = _client()
+    _register(client, "recur-pack")
+
+    def boom(*_args, **_kwargs):
+        raise RecursionError("artificial")
+
+    monkeypatch.setattr("app.plugin_discovery.json.loads", boom)
+    listed = client.get("/api/plugins/recur-pack/resources")
+    assert listed.status_code != 500
+    assert "artificial" not in listed.text
+    assert "Traceback" not in listed.text
+    if listed.status_code == 200:
+        assert listed.json()["validated"] is False
+        assert listed.json()["items"] == []
+    detail = client.get("/api/plugins/recur-pack/resources/resources:preset.json")
+    assert detail.status_code != 500
+    assert "artificial" not in detail.text
+    assert "Traceback" not in detail.text

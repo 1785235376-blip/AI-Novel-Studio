@@ -19,6 +19,7 @@ from .plugin_contracts import (
     PLUGIN_MANIFEST_DRIFT,
     PLUGIN_MANIFEST_INVALID,
     PLUGIN_RESOURCE_PATH_INVALID,
+    PLUGIN_RESOURCE_TOO_LARGE,
     PluginContractError,
     PluginManifestV1,
     resource_id_for,
@@ -26,6 +27,7 @@ from .plugin_contracts import (
 )
 from .plugin_discovery import (
     identity_matches,
+    preflight_resource_budget,
     sidecar_has_identity,
     unique_package_for_plugin_id,
     verify_resource,
@@ -183,18 +185,18 @@ def _is_active(plugin: dict[str, Any]) -> bool:
     return plugin.get("status") == ACTIVE_PLUGIN_STATUS and sidecar_has_identity(plugin)
 
 
-def _verify_live_resources(plugin_id: str, package_root: Path, manifest: PluginManifestV1) -> list[dict[str, Any]]:
+def _verify_live_resources(plugin_id: str, package_root: Path, manifest: PluginManifestV1) -> tuple[list[dict[str, Any]], int]:
     """Re-verify each resource independently. One failure cannot hide others."""
     items: list[dict[str, Any]] = []
+    invalid = 0
     for resource in manifest.resources:
         try:
             verified = verify_resource(package_root, resource)
-        except PluginContractError:
-            continue
-        except OSError:
+        except (PluginContractError, OSError, RecursionError, ValueError):
+            invalid += 1
             continue
         items.append(public_resource(plugin_id, verified, include_data=False))
-    return items
+    return items, invalid
 
 
 def list_plugin_resources(plugin_id: str) -> dict[str, Any]:
@@ -218,7 +220,31 @@ def list_plugin_resources(plugin_id: str) -> dict[str, Any]:
                 error_code=PLUGIN_MANIFEST_DRIFT, validation_status="DRIFT",
             )
         return _empty_catalog(plugin_id, visible=True, validation_status="MISSING")
-    items = _verify_live_resources(plugin_id, package_root, manifest)
+    try:
+        preflight_resource_budget(package_root, manifest)
+    except PluginContractError as exc:
+        return _empty_catalog(
+            plugin_id, visible=True, status=ACTIVE_PLUGIN_STATUS,
+            error_code=exc.code, validation_status="BUDGET",
+        )
+    items, invalid = _verify_live_resources(plugin_id, package_root, manifest)
+    if invalid:
+        status = "PARTIAL" if items else "FAILED"
+        return {
+            "plugin_id": plugin_id,
+            "items": items,
+            "total": len(items),
+            "visible": True,
+            "validated": False,
+            "validation_status": status,
+            "invalid_resource_count": invalid,
+            "execution_supported": False,
+            "isolation": "DENY_ALL",
+            "publisher_verified": False,
+            "resource_kinds": sorted({item["kind"] for item in items}),
+            "resource_count": len(items),
+            "status": ACTIVE_PLUGIN_STATUS,
+        }
     return {
         "plugin_id": plugin_id,
         "items": items,
@@ -246,8 +272,11 @@ def get_plugin_resource(plugin_id: str, resource_id: str) -> dict[str, Any]:
         raise FileNotFoundError(plugin_id)
     try:
         package_root, manifest = resolve_active_package(plugin)
+        preflight_resource_budget(package_root, manifest)
     except PluginContractError as exc:
         if exc.code in {PLUGIN_MANIFEST_DRIFT, PLUGIN_ID_DUPLICATE}:
+            raise
+        if exc.code == PLUGIN_RESOURCE_TOO_LARGE:
             raise
         raise FileNotFoundError(resource_id) from None
     target = next((resource for resource in manifest.resources

@@ -527,6 +527,8 @@ def plugin_catalog_guard(fn, *args, **kwargs):
     except PluginContractError as exc:
         if exc.code in {PLUGIN_MANIFEST_DRIFT, PLUGIN_ID_DUPLICATE}:
             status = 409
+        elif exc.code in {"PLUGIN_RESOURCE_TOO_LARGE", "PLUGIN_RESOURCE_INVALID_JSON"}:
+            status = 400
         elif exc.code.startswith("PLUGIN_RESOURCE_"):
             status = 404
         else:

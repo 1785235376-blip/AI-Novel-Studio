@@ -39,6 +39,7 @@ MAX_RESOURCE_BYTES = 1 * 1024 * 1024
 MAX_RESOURCE_COUNT = 100
 MAX_TOTAL_RESOURCE_BYTES = 10 * 1024 * 1024
 MAX_MANIFEST_BYTES = 256 * 1024
+MAX_JSON_DEPTH = 64
 
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?$")
 PLUGIN_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{1,79}$")
