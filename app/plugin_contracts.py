@@ -6,6 +6,7 @@ plugin module, evaluates JSON strings, starts a process, or reads secrets.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from typing import Any, Literal
@@ -46,6 +47,8 @@ PATH_COMPONENT_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$")
 
 PLUGIN_MANIFEST_INVALID = "PLUGIN_MANIFEST_INVALID"
 PLUGIN_MANIFEST_UNSUPPORTED_VERSION = "PLUGIN_MANIFEST_UNSUPPORTED_VERSION"
+PLUGIN_MANIFEST_DRIFT = "PLUGIN_MANIFEST_DRIFT"
+PLUGIN_ID_DUPLICATE = "PLUGIN_ID_DUPLICATE"
 PLUGIN_RESOURCE_PATH_INVALID = "PLUGIN_RESOURCE_PATH_INVALID"
 PLUGIN_RESOURCE_TYPE_UNSUPPORTED = "PLUGIN_RESOURCE_TYPE_UNSUPPORTED"
 PLUGIN_RESOURCE_TOO_LARGE = "PLUGIN_RESOURCE_TOO_LARGE"
@@ -56,6 +59,8 @@ PLUGIN_RESOURCE_SYMLINK_REJECTED = "PLUGIN_RESOURCE_SYMLINK_REJECTED"
 SAFE_ERROR_MESSAGES = {
     PLUGIN_MANIFEST_INVALID: "插件清单无效，未通过合同校验。",
     PLUGIN_MANIFEST_UNSUPPORTED_VERSION: "插件清单或宿主 API 版本不受支持。",
+    PLUGIN_MANIFEST_DRIFT: "插件清单与已审核身份不一致。",
+    PLUGIN_ID_DUPLICATE: "插件 ID 重复，所有副本均不可注册。",
     PLUGIN_RESOURCE_PATH_INVALID: "插件资源路径不合法。",
     PLUGIN_RESOURCE_TYPE_UNSUPPORTED: "插件资源类型不受支持。仅允许 JSON 声明式资源。",
     PLUGIN_RESOURCE_TOO_LARGE: "插件资源超出大小或数量限制。",
@@ -218,6 +223,20 @@ class PluginManifestV1(_StrictModel):
 
     def public_dump(self) -> dict[str, Any]:
         return self.model_dump(mode="json")
+
+    def canonical_json(self) -> bytes:
+        return canonical_json_bytes(self.public_dump())
+
+    def canonical_sha256(self) -> str:
+        return hashlib.sha256(self.canonical_json()).hexdigest()
+
+
+def canonical_json_bytes(value: Any) -> bytes:
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+
+def canonical_manifest_sha256(manifest: PluginManifestV1) -> str:
+    return manifest.canonical_sha256()
 
 
 PluginManifestIn = PluginManifestV1

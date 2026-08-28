@@ -19,6 +19,7 @@ from app.plugin_contracts import (
     PluginContractError,
     PluginManifestV1,
     canonical_manifest_schema,
+    canonical_manifest_sha256,
     parse_plugin_manifest,
     validate_declarative_relative_path,
 )
@@ -113,6 +114,16 @@ def test_publisher_is_unverified_metadata_not_a_signature():
     assert dumped["publisher"] == "Someone"
     assert "signed" not in json.dumps(dumped).casefold()
     assert dumped.get("publisher_verified") is None
+
+
+def test_canonical_manifest_hash_ignores_whitespace_and_key_order():
+    first = parse_plugin_manifest({
+        "version": "1.2.3", "id": "story-tools", "name": "故事工具",
+        "capabilities": ["writing_tool"], "requested_permissions": ["project.read"],
+    })
+    second = parse_plugin_manifest(json.loads('{"name":"故事工具","requested_permissions":["project.read"],"id":"story-tools","capabilities":["writing_tool"],"version":"1.2.3"}'))
+    assert canonical_manifest_sha256(first) == canonical_manifest_sha256(second)
+    assert first.canonical_json() == json.dumps(first.public_dump(), ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
 
 
 def test_legal_relative_resource_path():

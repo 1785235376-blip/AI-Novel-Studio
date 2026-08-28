@@ -16,6 +16,7 @@ from app.main import app
 from app.plugin_contracts import (
     MAX_RESOURCE_BYTES,
     MAX_RESOURCE_COUNT,
+    PLUGIN_ID_DUPLICATE,
     PLUGIN_MANIFEST_INVALID,
     PLUGIN_RESOURCE_HASH_MISMATCH,
     PLUGIN_RESOURCE_INVALID_JSON,
@@ -84,13 +85,17 @@ def write_plugin(root: Path, plugin_id: str, *, resources: list[tuple[str, str, 
 
 @pytest.fixture
 def plugin_root(tmp_path):
-    original = v1_capability_service.root
+    original_root = v1_capability_service.root
+    original_data = settings.novel_data
     object.__setattr__(settings, "novel_data", tmp_path)
     v1_capability_service.reconfigure_root(tmp_path)
     root = tmp_path / "plugins"
     root.mkdir()
-    yield root
-    v1_capability_service.reconfigure_root(original)
+    try:
+        yield root
+    finally:
+        object.__setattr__(settings, "novel_data", original_data)
+        v1_capability_service.reconfigure_root(original_root)
 
 
 def test_valid_relative_resource_is_verified(plugin_root, tmp_path):
@@ -254,19 +259,21 @@ def test_discover_api_hides_absolute_paths_and_raw_exceptions(plugin_root):
 
 
 def test_register_keeps_permissions_empty_and_activation_requires_review(plugin_root):
-    client = TestClient(app)
-    created = client.post("/api/plugins", json={
-        "id": f"plug-{uuid4().hex[:8]}",
+    plugin_id = f"plug-{uuid4().hex[:8]}"
+    write_plugin(plugin_root, plugin_id, manifest_extra={
         "name": "Demo",
-        "version": "1.0.0",
         "requested_permissions": ["project.read"],
         "capabilities": ["writing_tool"],
     })
+    client = TestClient(app)
+    created = client.post("/api/plugins", json=json.loads((plugin_root / plugin_id / "manifest.json").read_text(encoding="utf-8")))
     assert created.status_code == 201
     body = created.json()
     assert body["granted_permissions"] == []
     assert body["execution_supported"] is False
-    plugin_id = body["id"]
+    assert body["plugin_version"] == "1.0.0"
+    assert body["version"] == 1
+    assert body["manifest_sha256"]
     denied = client.post(f"/api/plugins/{plugin_id}/enable")
     assert denied.status_code == 400
     reviewed = client.put(f"/api/plugins/{plugin_id}/permissions", json={
@@ -278,6 +285,7 @@ def test_register_keeps_permissions_empty_and_activation_requires_review(plugin_
     assert enabled.status_code == 200
     assert enabled.json()["status"] == "MANIFEST_ACTIVE"
     assert enabled.json()["execution_supported"] is False
+    assert enabled.json()["plugin_version"] == "1.0.0"
 
 
 def test_release_readiness_plugin_runtime_stays_deferred(plugin_root):
@@ -341,3 +349,28 @@ def test_copied_example_discovers_without_path_leak(plugin_root):
     assert registered.status_code == 201
     assert registered.json()["granted_permissions"] == []
     assert registered.json()["execution_supported"] is False
+
+
+def test_duplicate_manifest_ids_are_not_registerable(plugin_root):
+    write_plugin(plugin_root, "copy-a", resources=[
+        ("writing_presets", "resources/preset.json", {"ok": True}),
+    ])
+    write_plugin(plugin_root, "copy-b", resources=[
+        ("writing_presets", "resources/preset.json", {"ok": True}),
+    ])
+    for name in ("copy-a", "copy-b"):
+        manifest = json.loads((plugin_root / name / "manifest.json").read_text(encoding="utf-8"))
+        manifest["id"] = "shared-tools"
+        (plugin_root / name / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    payload = discover_installed_plugins(plugin_root)
+    assert len(payload["items"]) == 2
+    for item in payload["items"]:
+        assert item["error_code"] == PLUGIN_ID_DUPLICATE
+        assert "manifest" not in item
+        assert "Traceback" not in json.dumps(item)
+        assert str(plugin_root) not in json.dumps(item)
+        assert ":\\" not in json.dumps(item)
+    client = TestClient(app)
+    discovered = client.get("/api/plugins/discover").json()
+    assert all(item.get("error_code") == PLUGIN_ID_DUPLICATE for item in discovered["items"])
+    assert str(plugin_root) not in json.dumps(discovered)

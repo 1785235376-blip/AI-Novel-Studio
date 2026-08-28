@@ -12,7 +12,7 @@ from app.config import settings
 from app.dependencies import v1_capability_service
 from app.main import app
 from app.plugin_catalog import plain_text
-from app.plugin_contracts import PLUGIN_RESOURCE_HASH_MISMATCH
+from app.plugin_contracts import PLUGIN_ID_DUPLICATE, PLUGIN_MANIFEST_DRIFT, PLUGIN_RESOURCE_HASH_MISMATCH
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -41,7 +41,8 @@ def _resource(kind: str, relative: str, data: bytes) -> dict:
 
 
 def write_plugin(root: Path, plugin_id: str, *, resources: list[tuple[str, str, dict]] | None = None,
-                 requested_permissions: list[str] | None = None) -> Path:
+                 requested_permissions: list[str] | None = None, version: str = "1.0.0",
+                 capabilities: list[str] | None = None) -> Path:
     plugin = root / plugin_id
     plugin.mkdir(parents=True, exist_ok=True)
     declared = []
@@ -51,8 +52,8 @@ def write_plugin(root: Path, plugin_id: str, *, resources: list[tuple[str, str, 
     manifest = {
         "id": plugin_id,
         "name": plugin_id,
-        "version": "1.0.0",
-        "capabilities": ["writing_tool"],
+        "version": version,
+        "capabilities": capabilities or ["writing_tool"],
         "requested_permissions": requested_permissions or [],
         "resources": declared,
     }
@@ -62,13 +63,17 @@ def write_plugin(root: Path, plugin_id: str, *, resources: list[tuple[str, str, 
 
 @pytest.fixture
 def plugin_root(tmp_path):
-    original = v1_capability_service.root
+    original_root = v1_capability_service.root
+    original_data = settings.novel_data
     object.__setattr__(settings, "novel_data", tmp_path)
     v1_capability_service.reconfigure_root(tmp_path)
     root = tmp_path / "plugins"
     root.mkdir()
-    yield root
-    v1_capability_service.reconfigure_root(original)
+    try:
+        yield root
+    finally:
+        object.__setattr__(settings, "novel_data", original_data)
+        v1_capability_service.reconfigure_root(original_root)
 
 
 def _client() -> TestClient:
@@ -187,11 +192,9 @@ def test_one_bad_resource_does_not_hide_others(plugin_root):
         ("writing_presets", "resources/good.json", {"name": "good"}),
         ("export_profiles", "resources/bad.json", {"name": "bad"}),
     ])
-    manifest = json.loads((plugin / "manifest.json").read_text(encoding="utf-8"))
-    manifest["resources"][1]["sha256"] = "0" * 64
-    (plugin / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
     client = _client()
     _register(client, "mixed-pack")
+    (plugin / "resources" / "bad.json").write_text('{"name":"tampered"}', encoding="utf-8")
     items = client.get("/api/plugins/mixed-pack/resources").json()["items"]
     assert [item["resource_id"] for item in items] == ["resources:good.json"]
     assert client.get("/api/plugins/mixed-pack/resources/resources:bad.json").status_code == 404
@@ -343,6 +346,7 @@ def test_missing_package_directory_returns_empty_not_cache(plugin_root):
     listed = client.get("/api/plugins/vanish-pack/resources")
     assert listed.status_code == 200
     assert listed.json()["items"] == []
+    assert listed.json()["validated"] is False
     assert client.get("/api/plugins/vanish-pack/resources/resources:preset.json").status_code == 404
 
 
@@ -375,3 +379,149 @@ def test_example_pack_catalog_roundtrip(plugin_root):
     assert detail.status_code == 200
     assert detail.json()["validated"] is True
     assert "宿主不会自动应用" in detail.json()["data"]["description"]
+
+
+def test_plugin_semver_is_independent_of_sidecar_revision(plugin_root):
+    write_plugin(plugin_root, "semver-pack", version="1.2.3", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "n"}),
+    ])
+    client = _client()
+    created = _register(client, "semver-pack")
+    assert created["version"] == 1
+    assert created["plugin_version"] == "1.2.3"
+    assert len(created["manifest_sha256"]) == 64
+    loaded = client.get("/api/plugins/semver-pack").json()
+    assert loaded["version"] == 2 or loaded["version"] >= 1
+    assert loaded["plugin_version"] == "1.2.3"
+    assert loaded["manifest_sha256"] == created["manifest_sha256"]
+
+
+def test_duplicate_plugin_id_is_not_trusted_by_catalog(plugin_root):
+    write_plugin(plugin_root, "dup-a", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "a"}),
+    ])
+    first = plugin_root / "dup-a" / "manifest.json"
+    manifest = json.loads(first.read_text(encoding="utf-8"))
+    manifest["id"] = "shared-pack"
+    first.write_text(json.dumps(manifest), encoding="utf-8")
+    client = _client()
+    created = client.post("/api/plugins", json=json.loads((plugin_root / "dup-a" / "manifest.json").read_text(encoding="utf-8")))
+    assert created.status_code == 201
+    enabled = client.post("/api/plugins/shared-pack/enable")
+    assert enabled.status_code == 200
+    write_plugin(plugin_root, "dup-b", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "b"}),
+    ])
+    second = plugin_root / "dup-b" / "manifest.json"
+    other = json.loads(second.read_text(encoding="utf-8"))
+    other["id"] = "shared-pack"
+    second.write_text(json.dumps(other), encoding="utf-8")
+    listed = client.get("/api/plugins/shared-pack/resources")
+    assert listed.status_code == 200
+    body = listed.json()
+    assert body["items"] == []
+    assert body["validated"] is False
+    assert body["error_code"] == PLUGIN_ID_DUPLICATE
+    detail = client.get("/api/plugins/shared-pack/resources/resources:preset.json")
+    assert detail.status_code == 409
+    assert detail.json()["detail"]["error_code"] == PLUGIN_ID_DUPLICATE
+    assert str(plugin_root) not in listed.text + detail.text
+    blocked = client.post("/api/plugins/shared-pack/enable")
+    assert blocked.status_code == 409
+    assert blocked.json()["detail"]["error_code"] == PLUGIN_ID_DUPLICATE
+
+
+def _rewrite_manifest(plugin: Path, **changes):
+    manifest = json.loads((plugin / "manifest.json").read_text(encoding="utf-8"))
+    manifest.update(changes)
+    (plugin / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+
+def test_manifest_field_changes_are_drift(plugin_root):
+    plugin = write_plugin(plugin_root, "drift-id", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "n"}),
+    ], requested_permissions=["project.read"])
+    client = _client()
+    _register(client, "drift-id")
+    for changes in (
+        {"version": "9.9.9"},
+        {"capabilities": ["exporter"]},
+        {"requested_permissions": ["project.read", "project.write"]},
+    ):
+        _rewrite_manifest(plugin, **changes)
+        listed = client.get("/api/plugins/drift-id/resources")
+        assert listed.status_code == 200
+        body = listed.json()
+        assert body["items"] == []
+        assert body["validated"] is False
+        assert body["status"] == "MANIFEST_DRIFT"
+        assert body["error_code"] == PLUGIN_MANIFEST_DRIFT
+        detail = client.get("/api/plugins/drift-id/resources/resources:preset.json")
+        assert detail.status_code == 409
+        assert detail.json()["detail"]["error_code"] == PLUGIN_MANIFEST_DRIFT
+        original = json.loads((plugin / "manifest.json").read_text(encoding="utf-8"))
+        original["version"] = "1.0.0"
+        original["capabilities"] = ["writing_tool"]
+        original["requested_permissions"] = ["project.read"]
+        (plugin / "manifest.json").write_text(json.dumps(original), encoding="utf-8")
+    resource_path = plugin / "resources" / "preset.json"
+    resource_path.write_text('{"name":"changed"}', encoding="utf-8")
+    digest = hashlib.sha256(resource_path.read_bytes()).hexdigest()
+    _rewrite_manifest(plugin, resources=[{
+        "kind": "writing_presets",
+        "relative_path": "resources/preset.json",
+        "sha256": digest,
+        "media_type": "application/json",
+        "schema_version": "1.0",
+    }])
+    listed = client.get("/api/plugins/drift-id/resources")
+    assert listed.json()["error_code"] == PLUGIN_MANIFEST_DRIFT
+    assert listed.json()["items"] == []
+
+
+def test_legacy_sidecar_without_identity_is_review_required(plugin_root):
+    write_plugin(plugin_root, "legacy-pack", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "n"}),
+    ])
+    client = _client()
+    created = _register(client, "legacy-pack")
+    sidecar = v1_capability_service.root / "v1_capabilities" / "plugins.json"
+    payload = json.loads(sidecar.read_text(encoding="utf-8"))
+    for item in payload["items"]:
+        item.pop("plugin_version", None)
+        item.pop("manifest_sha256", None)
+        item["status"] = "MANIFEST_ACTIVE"
+        item["granted_permissions"] = []
+    sidecar.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    loaded = client.get("/api/plugins/legacy-pack").json()
+    assert loaded["status"] == "REVIEW_REQUIRED"
+    listed = client.get("/api/plugins/legacy-pack/resources").json()
+    assert listed["items"] == []
+    assert listed["validated"] is False
+    assert listed["visible"] is False
+    assert client.get("/api/plugins/legacy-pack/resources/resources:preset.json").status_code == 404
+    enabled = client.post("/api/plugins/legacy-pack/enable")
+    assert enabled.status_code == 400
+    assert created["id"] == "legacy-pack"
+
+
+def test_identity_change_requires_reregister_and_does_not_keep_activation(plugin_root):
+    plugin = write_plugin(plugin_root, "rebind-pack", version="1.0.0", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "n"}),
+    ])
+    client = _client()
+    _register(client, "rebind-pack")
+    first = client.get("/api/plugins/rebind-pack").json()
+    assert first["status"] == "MANIFEST_ACTIVE"
+    _rewrite_manifest(plugin, version="2.0.0")
+    listed = client.get("/api/plugins/rebind-pack/resources").json()
+    assert listed["error_code"] == PLUGIN_MANIFEST_DRIFT
+    updated = json.loads((plugin / "manifest.json").read_text(encoding="utf-8"))
+    again = client.post("/api/plugins", json=updated)
+    assert again.status_code == 200 or again.status_code == 201
+    body = again.json()
+    assert body["status"] == "REGISTERED"
+    assert body["granted_permissions"] == []
+    assert body["plugin_version"] == "2.0.0"
+    assert body["manifest_sha256"] != first["manifest_sha256"]
+    assert client.get("/api/plugins/rebind-pack/resources").json()["items"] == []

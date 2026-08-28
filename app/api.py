@@ -44,7 +44,12 @@ from .services.export_job_service import (
 )
 from .plugin_discovery import discover_installed_plugins
 from .plugin_catalog import get_plugin_resource, list_plugin_resources
-from .plugin_contracts import PluginContractError, SAFE_ERROR_MESSAGES
+from .plugin_contracts import (
+    PLUGIN_ID_DUPLICATE,
+    PLUGIN_MANIFEST_DRIFT,
+    PluginContractError,
+    SAFE_ERROR_MESSAGES,
+)
 from .services.v1_capability_service import (
     AssetDerivativeIn,
     CapabilityVersionConflict,
@@ -497,6 +502,14 @@ def capability_guard(fn,*args,**kwargs):
     """Map capability-service failures to the shared API error contract."""
     try:
         return fn(*args,**kwargs)
+    except PluginContractError as exc:
+        status = 409 if exc.code in {PLUGIN_MANIFEST_DRIFT, PLUGIN_ID_DUPLICATE} else 400
+        raise HTTPException(status, {
+            "code": exc.code,
+            "error_code": exc.code,
+            "message": exc.message,
+            "error": SAFE_ERROR_MESSAGES.get(exc.code, exc.message),
+        }) from None
     except CapabilityVersionConflict as exc:
         raise HTTPException(409, {"code": "VERSION_CONFLICT", "current": exc.current}) from exc
     except FileNotFoundError as exc:
@@ -512,12 +525,24 @@ def plugin_catalog_guard(fn, *args, **kwargs):
     try:
         return fn(*args, **kwargs)
     except PluginContractError as exc:
-        status = 404 if exc.code.startswith("PLUGIN_RESOURCE_") else 400
+        if exc.code in {PLUGIN_MANIFEST_DRIFT, PLUGIN_ID_DUPLICATE}:
+            status = 409
+        elif exc.code.startswith("PLUGIN_RESOURCE_"):
+            status = 404
+        else:
+            status = 400
         raise HTTPException(status, {
             "code": exc.code,
             "error_code": exc.code,
             "message": exc.message,
             "error": SAFE_ERROR_MESSAGES.get(exc.code, exc.message),
+        }) from None
+    except RecursionError:
+        raise HTTPException(400, {
+            "code": "PLUGIN_RESOURCE_INVALID_JSON",
+            "error_code": "PLUGIN_RESOURCE_INVALID_JSON",
+            "message": SAFE_ERROR_MESSAGES.get("PLUGIN_RESOURCE_INVALID_JSON"),
+            "error": SAFE_ERROR_MESSAGES.get("PLUGIN_RESOURCE_INVALID_JSON"),
         }) from None
     except FileNotFoundError:
         raise HTTPException(404, {

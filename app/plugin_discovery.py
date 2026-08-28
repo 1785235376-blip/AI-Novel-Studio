@@ -18,6 +18,8 @@ from .plugin_contracts import (
     MAX_RESOURCE_BYTES,
     MAX_RESOURCE_COUNT,
     MAX_TOTAL_RESOURCE_BYTES,
+    PLUGIN_ID_DUPLICATE,
+    PLUGIN_MANIFEST_DRIFT,
     PLUGIN_MANIFEST_INVALID,
     PLUGIN_RESOURCE_HASH_MISMATCH,
     PLUGIN_RESOURCE_INVALID_JSON,
@@ -28,6 +30,7 @@ from .plugin_contracts import (
     PluginManifestV1,
     PluginResourceRef,
     SAFE_ERROR_MESSAGES,
+    canonical_manifest_sha256,
     parse_plugin_manifest,
     resource_id_for,
     safe_error,
@@ -200,6 +203,104 @@ def _public_item(plugin_dir: str, *, manifest: PluginManifestV1 | None = None,
     return item
 
 
+def identity_snapshot(manifest: PluginManifestV1) -> dict[str, Any]:
+    dump = manifest.public_dump()
+    return {
+        "plugin_version": dump["version"],
+        "manifest_sha256": canonical_manifest_sha256(manifest),
+        "capabilities": list(dump.get("capabilities") or []),
+        "requested_permissions": list(dump.get("requested_permissions") or []),
+        "resources": list(dump.get("resources") or []),
+    }
+
+
+def identity_matches(manifest: PluginManifestV1, sidecar: dict[str, Any]) -> bool:
+    if not sidecar.get("plugin_version") or not sidecar.get("manifest_sha256"):
+        return False
+    live = identity_snapshot(manifest)
+    if live["plugin_version"] != sidecar.get("plugin_version"):
+        return False
+    if live["manifest_sha256"] != sidecar.get("manifest_sha256"):
+        return False
+    if live["capabilities"] != list(sidecar.get("capabilities") or []):
+        return False
+    if live["requested_permissions"] != list(sidecar.get("requested_permissions") or []):
+        return False
+    if live["resources"] != list(sidecar.get("resources") or []):
+        return False
+    return True
+
+
+def sidecar_has_identity(sidecar: dict[str, Any]) -> bool:
+    version = sidecar.get("plugin_version")
+    digest = sidecar.get("manifest_sha256")
+    return isinstance(version, str) and bool(version) and isinstance(digest, str) and len(digest) == 64
+
+
+def iter_plugin_packages(root: Path) -> list[Path]:
+    configured = Path(root)
+    if not configured.exists():
+        return []
+    try:
+        resolved_root = configured.resolve()
+    except OSError:
+        return []
+    try:
+        candidates = sorted(configured.glob("*/manifest.json"))
+    except OSError:
+        return []
+    packages: list[Path] = []
+    for manifest_path in candidates:
+        package_root = manifest_path.parent
+        try:
+            if package_root.is_symlink():
+                resolved_package = package_root.resolve()
+                if not _is_within(resolved_root, resolved_package):
+                    continue
+            packages.append(package_root)
+        except OSError:
+            continue
+    return packages
+
+
+def load_declared_packages(root: Path) -> list[tuple[str, Path, PluginManifestV1 | None, str | None]]:
+    """Return (dir_id, path, manifest|None, error_code|None) for each candidate.
+
+    Identity is taken from the parsed manifest only. Resource bytes are verified
+    later so a single hash mismatch cannot hide a duplicate or drift check.
+    """
+    declared: list[tuple[str, Path, PluginManifestV1 | None, str | None]] = []
+    for package_root in iter_plugin_packages(root):
+        plugin_dir = safe_plugin_dir_id(package_root.name)
+        try:
+            manifest = load_plugin_manifest(package_root)
+            declared.append((plugin_dir, package_root, manifest, None))
+        except PluginContractError as exc:
+            declared.append((plugin_dir, package_root, None, exc.code))
+        except Exception:
+            declared.append((plugin_dir, package_root, None, PLUGIN_MANIFEST_INVALID))
+    return declared
+
+
+def packages_for_plugin_id(plugin_id: str, root: Path) -> list[tuple[Path, PluginManifestV1]]:
+    matches: list[tuple[Path, PluginManifestV1]] = []
+    for _dir_id, package_root, manifest, error_code in load_declared_packages(root):
+        if error_code or manifest is None:
+            continue
+        if manifest.id == plugin_id:
+            matches.append((package_root, manifest))
+    return matches
+
+
+def unique_package_for_plugin_id(plugin_id: str, root: Path) -> tuple[Path, PluginManifestV1]:
+    matches = packages_for_plugin_id(plugin_id, root)
+    if len(matches) > 1:
+        raise PluginContractError(PLUGIN_ID_DUPLICATE)
+    if len(matches) != 1:
+        raise PluginContractError(PLUGIN_MANIFEST_INVALID)
+    return matches[0]
+
+
 def discover_installed_plugins(root: Path) -> dict[str, Any]:
     """Scan one controlled plugins root. A single bad package cannot block others."""
     empty = {
@@ -211,32 +312,27 @@ def discover_installed_plugins(root: Path) -> dict[str, Any]:
     configured = Path(root)
     if not configured.exists():
         return empty
-    try:
-        resolved_root = configured.resolve()
-    except OSError:
-        return empty
-    if configured.is_symlink() and not _is_within(configured.parent.resolve(), resolved_root):
-        return empty
+    declared = load_declared_packages(configured)
+    counts: dict[str, int] = {}
+    for _dir_id, _path, manifest, error_code in declared:
+        if error_code or manifest is None:
+            continue
+        counts[manifest.id] = counts.get(manifest.id, 0) + 1
     items: list[dict[str, Any]] = []
-    try:
-        candidates = sorted(configured.glob("*/manifest.json"))
-    except OSError:
-        return empty
-    for manifest_path in candidates:
-        plugin_dir = safe_plugin_dir_id(manifest_path.parent.name)
+    for plugin_dir, _path, manifest, error_code in declared:
+        if manifest is not None and counts.get(manifest.id, 0) > 1:
+            items.append(_public_item(plugin_dir, error_code=PLUGIN_ID_DUPLICATE))
+            continue
+        if error_code:
+            items.append(_public_item(plugin_dir, error_code=error_code))
+            continue
         try:
-            package_root = manifest_path.parent
-            if package_root.is_symlink():
-                try:
-                    resolved_package = package_root.resolve()
-                except OSError as exc:
-                    raise PluginContractError(PLUGIN_RESOURCE_SYMLINK_REJECTED) from exc
-                if not _is_within(resolved_root, resolved_package):
-                    raise PluginContractError(PLUGIN_RESOURCE_SYMLINK_REJECTED)
-            manifest, _verified = load_plugin_package(package_root)
-            items.append(_public_item(plugin_dir, manifest=manifest))
+            verify_manifest_resources(_path, manifest)
         except PluginContractError as exc:
             items.append(_public_item(plugin_dir, error_code=exc.code))
+            continue
         except Exception:
             items.append(_public_item(plugin_dir, error_code=PLUGIN_MANIFEST_INVALID))
+            continue
+        items.append(_public_item(plugin_dir, manifest=manifest))
     return {**empty, "items": items, "total": len(items)}

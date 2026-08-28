@@ -14,16 +14,22 @@ from typing import Any
 
 from .config import settings
 from .plugin_contracts import (
+    PLUGIN_ID_DUPLICATE,
     PLUGIN_ID_RE,
+    PLUGIN_MANIFEST_DRIFT,
+    PLUGIN_MANIFEST_INVALID,
     PLUGIN_RESOURCE_PATH_INVALID,
     PluginContractError,
     PluginManifestV1,
     resource_id_for,
+    safe_error,
 )
 from .plugin_discovery import (
-    _is_within,
-    load_plugin_manifest,
+    identity_matches,
+    sidecar_has_identity,
+    unique_package_for_plugin_id,
     verify_resource,
+    verify_manifest_resources,
 )
 
 _HTML_TAG_RE = re.compile(r"<[^>]*>")
@@ -31,6 +37,8 @@ _RESOURCE_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,239}$")
 _UNSAFE_SCHEME_RE = re.compile(r"(javascript|data|vbscript)\s*:", re.IGNORECASE)
 
 ACTIVE_PLUGIN_STATUS = "MANIFEST_ACTIVE"
+REVIEW_REQUIRED_STATUS = "REVIEW_REQUIRED"
+MANIFEST_DRIFT_STATUS = "MANIFEST_DRIFT"
 
 
 def _plugins_root() -> Path:
@@ -40,6 +48,53 @@ def _plugins_root() -> Path:
 def _capability_service():
     from .dependencies import v1_capability_service
     return v1_capability_service
+
+
+def _empty_catalog(plugin_id: str, *, visible: bool = False, status: str | None = None,
+                   error_code: str | None = None, validation_status: str = "UNAVAILABLE") -> dict[str, Any]:
+    payload: dict[str, Any] = {
+        "plugin_id": plugin_id,
+        "items": [],
+        "total": 0,
+        "visible": visible,
+        "validated": False,
+        "validation_status": validation_status,
+        "invalid_resource_count": 0,
+        "execution_supported": False,
+        "isolation": "DENY_ALL",
+        "publisher_verified": False,
+    }
+    if status:
+        payload["status"] = status
+    if error_code:
+        payload.update(safe_error(error_code))
+    return payload
+
+
+def resolve_active_package(plugin: dict[str, Any]) -> tuple[Path, PluginManifestV1]:
+    plugin_id = _validate_plugin_id(str(plugin.get("id") or ""))
+    if not sidecar_has_identity(plugin) or plugin.get("status") == REVIEW_REQUIRED_STATUS:
+        raise PluginContractError(PLUGIN_MANIFEST_INVALID)
+    package_root, manifest = unique_package_for_plugin_id(plugin_id, _plugins_root())
+    if not identity_matches(manifest, plugin):
+        raise PluginContractError(PLUGIN_MANIFEST_DRIFT)
+    return package_root, manifest
+
+
+def assert_activation_identity(plugin: dict[str, Any]) -> None:
+    """Fail closed unless exactly one on-disk package matches the reviewed identity."""
+    package_root, manifest = resolve_active_package(plugin)
+    verify_manifest_resources(package_root, manifest)
+
+
+def find_plugin_package(plugin_id: str, root: Path | None = None) -> Path | None:
+    """Locate the unique package whose manifest id matches. Live scan; no path cache."""
+    plugin_id = _validate_plugin_id(plugin_id)
+    try:
+        package_root, _manifest = unique_package_for_plugin_id(plugin_id, root or _plugins_root())
+    except PluginContractError:
+        return None
+    return package_root
 
 
 def plain_text(value: Any, limit: int = 240) -> str:
@@ -120,52 +175,12 @@ def _validate_resource_id(resource_id: str) -> str:
     return resource_id
 
 
-def _iter_package_roots(root: Path) -> list[Path]:
-    if not root.exists():
-        return []
-    try:
-        resolved_root = root.resolve()
-    except OSError:
-        return []
-    try:
-        candidates = sorted(root.glob("*/manifest.json"))
-    except OSError:
-        return []
-    packages: list[Path] = []
-    for manifest_path in candidates:
-        package_root = manifest_path.parent
-        try:
-            if package_root.is_symlink():
-                resolved_package = package_root.resolve()
-                if not _is_within(resolved_root, resolved_package):
-                    continue
-            packages.append(package_root)
-        except OSError:
-            continue
-    return packages
-
-
-def find_plugin_package(plugin_id: str, root: Path | None = None) -> Path | None:
-    """Locate a package whose manifest id matches. Live scan; no path cache."""
-    plugin_id = _validate_plugin_id(plugin_id)
-    for package_root in _iter_package_roots(root or _plugins_root()):
-        try:
-            manifest = load_plugin_manifest(package_root)
-        except PluginContractError:
-            continue
-        except Exception:
-            continue
-        if manifest.id == plugin_id:
-            return package_root
-    return None
-
-
 def _registered_plugin(plugin_id: str) -> dict[str, Any]:
     return _capability_service().get_plugin(plugin_id)
 
 
 def _is_active(plugin: dict[str, Any]) -> bool:
-    return plugin.get("status") == ACTIVE_PLUGIN_STATUS
+    return plugin.get("status") == ACTIVE_PLUGIN_STATUS and sidecar_has_identity(plugin)
 
 
 def _verify_live_resources(plugin_id: str, package_root: Path, manifest: PluginManifestV1) -> list[dict[str, Any]]:
@@ -185,27 +200,24 @@ def _verify_live_resources(plugin_id: str, package_root: Path, manifest: PluginM
 def list_plugin_resources(plugin_id: str) -> dict[str, Any]:
     plugin_id = _validate_plugin_id(plugin_id)
     plugin = _registered_plugin(plugin_id)
-    empty = {
-        "plugin_id": plugin_id,
-        "items": [],
-        "total": 0,
-        "visible": False,
-        "validated": False,
-        "execution_supported": False,
-        "isolation": "DENY_ALL",
-        "publisher_verified": False,
-    }
+    if plugin.get("status") == REVIEW_REQUIRED_STATUS or not sidecar_has_identity(plugin):
+        return _empty_catalog(plugin_id, visible=False, status=REVIEW_REQUIRED_STATUS, validation_status="REVIEW_REQUIRED")
     if not _is_active(plugin):
-        return empty
-    package_root = find_plugin_package(plugin_id)
-    if package_root is None:
-        return {**empty, "visible": True}
+        return _empty_catalog(plugin_id, visible=False, status=str(plugin.get("status") or "REGISTERED"))
     try:
-        manifest = load_plugin_manifest(package_root)
-    except PluginContractError:
-        return {**empty, "visible": True}
-    if manifest.id != plugin_id:
-        return {**empty, "visible": True}
+        package_root, manifest = resolve_active_package(plugin)
+    except PluginContractError as exc:
+        if exc.code == PLUGIN_ID_DUPLICATE:
+            return _empty_catalog(
+                plugin_id, visible=True, status=PLUGIN_ID_DUPLICATE,
+                error_code=PLUGIN_ID_DUPLICATE, validation_status="DUPLICATE",
+            )
+        if exc.code == PLUGIN_MANIFEST_DRIFT:
+            return _empty_catalog(
+                plugin_id, visible=True, status=MANIFEST_DRIFT_STATUS,
+                error_code=PLUGIN_MANIFEST_DRIFT, validation_status="DRIFT",
+            )
+        return _empty_catalog(plugin_id, visible=True, validation_status="MISSING")
     items = _verify_live_resources(plugin_id, package_root, manifest)
     return {
         "plugin_id": plugin_id,
@@ -213,11 +225,14 @@ def list_plugin_resources(plugin_id: str) -> dict[str, Any]:
         "total": len(items),
         "visible": True,
         "validated": True,
+        "validation_status": "VALIDATED",
+        "invalid_resource_count": 0,
         "execution_supported": False,
         "isolation": "DENY_ALL",
         "publisher_verified": False,
         "resource_kinds": sorted({item["kind"] for item in items}),
         "resource_count": len(items),
+        "status": ACTIVE_PLUGIN_STATUS,
     }
 
 
@@ -225,25 +240,22 @@ def get_plugin_resource(plugin_id: str, resource_id: str) -> dict[str, Any]:
     plugin_id = _validate_plugin_id(plugin_id)
     resource_id = _validate_resource_id(resource_id)
     plugin = _registered_plugin(plugin_id)
+    if plugin.get("status") == REVIEW_REQUIRED_STATUS or not sidecar_has_identity(plugin):
+        raise FileNotFoundError(plugin_id)
     if not _is_active(plugin):
         raise FileNotFoundError(plugin_id)
-    package_root = find_plugin_package(plugin_id)
-    if package_root is None:
-        raise FileNotFoundError(resource_id)
     try:
-        manifest = load_plugin_manifest(package_root)
+        package_root, manifest = resolve_active_package(plugin)
     except PluginContractError as exc:
-        raise FileNotFoundError(resource_id) from exc
+        if exc.code in {PLUGIN_MANIFEST_DRIFT, PLUGIN_ID_DUPLICATE}:
+            raise
+        raise FileNotFoundError(resource_id) from None
     target = next((resource for resource in manifest.resources
                    if resource_id_for(resource.relative_path) == resource_id), None)
     if target is None:
         raise FileNotFoundError(resource_id)
-    try:
-        verified = verify_resource(package_root, target)
-    except PluginContractError:
-        raise
-    payload = public_resource(plugin_id, verified, include_data=True)
-    return payload
+    verified = verify_resource(package_root, target)
+    return public_resource(plugin_id, verified, include_data=True)
 
 
 class DeclarativePluginCatalog:
