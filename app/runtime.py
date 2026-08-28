@@ -22,23 +22,41 @@ class Runtime:
         self.provider_registry=ProviderRegistry();self.model_registry=ModelRegistry();self.generation_runtime=GenerationRuntime(self.provider_registry,self.model_registry)
         self._sync_model("mock","mock-writer",display_name="内置测试写作模型",context_window=8192)
         deepseek=OpenAICompatibleTextProvider(CompatibleProviderConfig("deepseek",os.getenv("DEEPSEEK_BASE_URL","https://api.deepseek.com/v1"),"DEEPSEEK_API_KEY"))
-        from .credential_vault import credential_vault
-        mock_standin = bool(settings.mock_provider) and not bool(settings.enable_packaged_runtime)
-        configured=mock_standin or credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
-        deepseek_provider=LegacyTextProviderAdapter("deepseek",self.providers["mock"]) if mock_standin else deepseek
-        self.provider_registry.register(ProviderDescriptor("deepseek","DeepSeek","remote",frozenset({Modality.TEXT}),configured,configured,"available" if configured else "not_configured"),deepseek_provider,replace=True)
+        self._deepseek_execution_mode = "mock_standin" if settings.mock_provider and not settings.enable_packaged_runtime else "real"
+        if self._deepseek_execution_mode == "mock_standin":
+            configured = True
+            available = self.providers["mock"].health_check()
+            self._deepseek_provider_adapter = LegacyTextProviderAdapter("deepseek", self.providers["mock"])
+            health_status = "mock_standin" if available else "mock_standin_unavailable"
+        else:
+            from .credential_vault import credential_vault
+            configured = credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
+            available = configured
+            self._deepseek_provider_adapter = deepseek
+            health_status = "available" if available else "not_configured"
+        self.provider_registry.register(ProviderDescriptor("deepseek","DeepSeek","remote",frozenset({Modality.TEXT}),configured,available,health_status),self._deepseek_provider_adapter,replace=True)
         for model_id,display_name in (("deepseek-chat","DeepSeek Chat"),("deepseek-reasoner","DeepSeek Reasoner")):
             self.model_registry.register(ModelDescriptor(model_id,"deepseek",display_name,Modality.TEXT,frozenset({"generate","stream"}),streaming=True,enabled=True),replace=True)
     def provider_status(self)->dict:
         result={}
         for name,p in self.providers.items():
             if name == "deepseek":
-                from .credential_vault import credential_vault
-                configured = credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
+                if self._deepseek_execution_mode == "mock_standin":
+                    configured = True
+                    available = self.providers["mock"].health_check()
+                    health_status = "mock_standin" if available else "mock_standin_unavailable"
+                    execution_mode = "mock_standin"
+                else:
+                    from .credential_vault import credential_vault
+                    configured = credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
+                    available = p.health_check() if configured else False
+                    health_status = "available" if available else ("not_configured" if not configured else "unavailable")
+                    execution_mode = "real"
             else:
                 configured=name in {"ollama","mock"} or bool(os.getenv(getattr(p,"api_key_env","")))
-            available=p.health_check() if configured else False
+                available=p.health_check() if configured else False
             item={"available":available,"configured":configured,"kind":"local" if name in {"ollama","mock"} else "cloud"}
+            if name == "deepseek": item["execution_mode"] = execution_mode
             if name=="ollama": item["models"]=p.list_models()
             result[name]=item
             if name == "deepseek":
@@ -47,8 +65,8 @@ class Runtime:
                     self.provider_registry.register(ProviderDescriptor(
                         current.provider_id, current.display_name, current.provider_type,
                         current.supported_modalities, configured, available,
-                        "available" if available else ("not_configured" if not configured else "unavailable")
-                    ), getattr(self.provider_registry, "_providers")[name], replace=True)
+                        health_status
+                    ), self._deepseek_provider_adapter, replace=True)
         result["anthropic"]={"available":False,"configured":bool(os.getenv("ANTHROPIC_API_KEY")),"kind":"cloud","status":"adapter_not_implemented"}
         result["gemini"]={"available":False,"configured":bool(os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")),"kind":"cloud","status":"adapter_not_implemented"}
         return result
