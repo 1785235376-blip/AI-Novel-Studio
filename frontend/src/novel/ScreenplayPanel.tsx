@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
 import { Badge, Button, EmptyState, Panel } from "../ui/primitives";
@@ -412,17 +412,75 @@ function Transition({
   const [d, setD] = useState(row);
   const [prompt, setPrompt] = useState(row.prompt || "");
   const [promptMeta, setPromptMeta] = useState<{template_version:string;generated_at:string}>();
-  const [promptError, setPromptError] = useState("");
+  const [transitionPromptError, setTransitionPromptError] = useState("");
+  const [suggestionError, setSuggestionError] = useState("");
+  const [motionPromptError, setMotionPromptError] = useState("");
   const [suggestion, setSuggestion] = useState<{suggested_type:string;reason:string}>();
   const [suggestionApplied,setSuggestionApplied]=useState(false);
-  const [motionPrompt,setMotionPrompt]=useState('');
+  const [motionPrompt,setMotionPrompt]=useState(() => String(row.motion_prompt || ""));
+  const [motionOperation,setMotionOperation]=useState<"generate"|"save"|null>(null);
+  const motionOperationRef=useRef<"generate"|"save"|null>(null);
+  const motionRequestRef=useRef(0);
+  const qc=useQueryClient();
+  useEffect(() => {
+    setMotionPrompt(String(row.motion_prompt || ""));
+    setMotionPromptError("");
+    motionRequestRef.current+=1;
+    motionOperationRef.current=null;
+    setMotionOperation(null);
+  }, [row.id, row.motion_prompt]);
   async function generatePrompt() {
     if (!novelId) return;
-    try { setPromptError(""); const result = await api.transitionPrompt(novelId, screenplayId || "", row.id); setPrompt(result.prompt); setPromptMeta({template_version:result.template_version,generated_at:result.generated_at}); }
-    catch { setPromptError("Prompt 生成失败，请确认剧本已保存。"); }
+    try { setTransitionPromptError(""); const result = await api.transitionPrompt(novelId, screenplayId || "", row.id); setPrompt(result.prompt); setPromptMeta({template_version:result.template_version,generated_at:result.generated_at}); }
+    catch { setTransitionPromptError("Prompt 生成失败，请确认剧本已保存。"); }
   }
-  async function suggest() { if (!novelId || !screenplayId) return; try { setSuggestion(await api.transitionSuggestion(novelId, screenplayId, row.id)); } catch { setPromptError("转场建议生成失败。"); } }
-  async function generateMotion(){if(!novelId||!screenplayId)return;try{const result=await api.motionPrompt(novelId,screenplayId,row.id);setMotionPrompt(result.motion_prompt)}catch{setPromptError('Motion Prompt 生成失败。')}}
+  async function suggest() {
+    if (!novelId || !screenplayId) return;
+    try { setSuggestionError(""); setSuggestion(await api.transitionSuggestion(novelId, screenplayId, row.id)); }
+    catch { setSuggestionError("转场建议生成失败。"); }
+  }
+  async function generateMotion() {
+    if (disabled || motionOperationRef.current) return;
+    if (!novelId || !screenplayId || !String(row.id || "").trim()) {
+      setMotionPromptError("Motion Prompt 生成失败。");
+      return;
+    }
+    const request=++motionRequestRef.current;
+    motionOperationRef.current="generate"; setMotionOperation("generate"); setMotionPromptError("");
+    try {
+      const result=await api.motionPrompt(novelId,screenplayId,row.id);
+      if (request !== motionRequestRef.current) return;
+      if (typeof result?.motion_prompt !== "string" || !result.motion_prompt.trim()) {
+        setMotionPromptError("Motion Prompt 生成失败：返回内容为空。");
+        return;
+      }
+      setMotionPrompt(result.motion_prompt);
+      setMotionPromptError("");
+    } catch {
+      if (request === motionRequestRef.current) setMotionPromptError("Motion Prompt 生成失败。");
+    } finally {
+      if (request === motionRequestRef.current) { motionOperationRef.current=null; setMotionOperation(null); }
+    }
+  }
+  async function saveMotion() {
+    if (disabled || motionOperationRef.current) return;
+    if (!novelId || !screenplayId || !String(row.id || "").trim() || !motionPrompt.trim()) {
+      setMotionPromptError("Motion Prompt 保存失败。");
+      return;
+    }
+    const request=++motionRequestRef.current;
+    motionOperationRef.current="save"; setMotionOperation("save"); setMotionPromptError("");
+    try {
+      await api.saveMotionPrompt(novelId,screenplayId,row.id,motionPrompt);
+      if (request === motionRequestRef.current) setMotionPromptError("");
+    } catch {
+      if (request === motionRequestRef.current) setMotionPromptError("Motion Prompt 保存失败。");
+      return;
+    } finally {
+      if (request === motionRequestRef.current) { motionOperationRef.current=null; setMotionOperation(null); }
+    }
+    void qc.invalidateQueries({queryKey:["screenplays",novelId]}).catch(() => undefined);
+  }
   return (
     <article>
       <header>
@@ -475,12 +533,15 @@ function Transition({
       )}
       <Button variant="ghost" onClick={generatePrompt}>生成 Transition Prompt</Button>
       <Button variant="ghost" onClick={suggest}>获取类型建议</Button>
-      <Button variant="ghost" onClick={generateMotion}>生成 Motion Prompt</Button>
+      <Button variant="ghost" disabled={disabled || motionOperation !== null} onClick={generateMotion}>生成 Motion Prompt</Button>
       {suggestion && <p className="novel-help">建议：{suggestion.suggested_type} · {suggestion.reason} <Button variant="ghost" disabled={disabled} onClick={()=>{setD({...d,type:suggestion.suggested_type});setSuggestionApplied(true)}}>采用建议</Button>{suggestionApplied&&<small> 已应用，点击保存转场后生效</small>}</p>}
-      {motionPrompt&&<><label>Motion Prompt<textarea value={motionPrompt} onChange={e=>setMotionPrompt(e.target.value)} rows={4}/></label>{!disabled&&<Button onClick={async()=>{if(novelId&&screenplayId){await api.saveMotionPrompt(novelId,screenplayId,row.id,motionPrompt)}}}>保存 Motion Prompt</Button>}</>}
+      <label>Motion Prompt<textarea readOnly={disabled} value={motionPrompt} onChange={e=>setMotionPrompt(e.target.value)} rows={4}/></label>
+      {!disabled&&<Button disabled={motionOperation !== null || !motionPrompt.trim()} onClick={saveMotion}>保存 Motion Prompt</Button>}
       {prompt && <><label>Transition Prompt<textarea disabled={disabled} value={prompt} onChange={(e)=>setPrompt(e.target.value)} rows={4}/></label>{promptMeta&&<small className="novel-help">模板 {promptMeta.template_version} · {new Date(promptMeta.generated_at).toLocaleString()}</small>}{!disabled&&<Button onClick={()=>save({type:d.type,duration_seconds:d.duration_seconds,note:d.note,prompt})}>保存 Prompt</Button>}</>}
       {row.prompt_history?.length>0&&<details><summary>Prompt 历史（{row.prompt_history.length}）</summary>{row.prompt_history.slice().reverse().map((item:any,index:number)=><p key={`${item.saved_at}-${index}`} className="novel-help">{new Date(item.saved_at).toLocaleString()} · {item.prompt} <Button variant="ghost" disabled={disabled} onClick={()=>setPrompt(item.prompt)}>恢复此版本</Button></p>)}</details>}
-      {promptError && <p role="alert">{promptError}</p>}
+      {transitionPromptError && <p role="alert">{transitionPromptError}</p>}
+      {suggestionError && <p role="alert">{suggestionError}</p>}
+      {motionPromptError && <p role="alert">{motionPromptError}</p>}
     </article>
   );
 }
