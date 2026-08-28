@@ -15,9 +15,12 @@ class SpyBackend(MemoryBackend):
     name="keyring"
     persistent=True
     def __init__(self):
-        super().__init__();self.calls=[];self.fail_clear=False
+        super().__init__();self.calls=[];self.fail_clear=False;self.fail_resolve=False
     def set(self,provider,secret):self.calls.append(("set",provider));super().set(provider,secret)
-    def resolve(self,provider):self.calls.append(("resolve",provider));return super().resolve(provider)
+    def resolve(self,provider):
+        self.calls.append(("resolve",provider))
+        if self.fail_resolve:raise VaultUnavailableError("TEST_RESOLVE_FAILED")
+        return super().resolve(provider)
     def clear(self,provider):
         self.calls.append(("clear",provider))
         if self.fail_clear:raise VaultUnavailableError("TEST_CLEAR_FAILED")
@@ -93,6 +96,34 @@ def test_last_source_clear_failure_keeps_config_and_registry(isolated_api,monkey
     assert vault.backend=="keyring" and vault._active_backend is backend
     assert "TEST_ONLY_SECRET" not in str(raised.value.detail)
     assert "TEST_ONLY_SECRET" not in caplog.text
+
+
+@pytest.mark.parametrize("domain",["asset","audio","video"])
+def test_degraded_vault_keeps_provider_config_and_registry(isolated_api,monkeypatch,caplog,domain):
+    api,registry,vault,backend=isolated_api;provider=f"degraded-{domain}";config={provider:{"endpoint":f"https://{domain}.example/v1"}}
+    delete_calls=[]
+    if domain=="asset":
+        monkeypatch.setattr(api,"load_asset_provider_config",lambda:config)
+        monkeypatch.setattr(api,"delete_asset_provider_config",lambda pid:delete_calls.append(pid) or bool(config.pop(pid,None)))
+        operation=lambda:api.asset_provider_config_delete(provider)
+    elif domain=="audio":
+        monkeypatch.setattr(api,"load_audio_provider_config",lambda:config)
+        monkeypatch.setattr(api,"delete_audio_provider_config",lambda pid:delete_calls.append(pid) or bool(config.pop(pid,None)))
+        operation=lambda:api.remove_audio_provider(provider)
+    else:
+        api._video_provider_configs.update(config)
+        operation=lambda:api.delete_video_provider_config(provider)
+    registry.replace_source(domain,config)
+    vault.set(provider,"TEST_ONLY_SECRET");backend.fail_resolve=True
+    assert vault.resolve(provider) is None
+    assert vault.degraded is True and vault.backend=="memory"
+    memory_clear_calls=[]
+    monkeypatch.setattr(vault._active_backend,"clear",lambda pid:memory_clear_calls.append(pid))
+    with pytest.raises(HTTPException) as raised:operation()
+    assert raised.value.status_code==503 and raised.value.detail["code"]=="TEST_RESOLVE_FAILED"
+    assert provider in config and provider in (api._video_provider_configs if domain=="video" else config)
+    assert registry.supports_provider(provider) and delete_calls==[] and memory_clear_calls==[]
+    assert "TEST_ONLY_SECRET" not in str(raised.value.detail) and "TEST_ONLY_SECRET" not in caplog.text
 
 
 def test_video_delete_clears_last_credential_and_restart_restores_source(isolated_api):

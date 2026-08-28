@@ -72,6 +72,19 @@ def test_keyring_delete_error_with_existing_record_fails_closed():
     assert raised.value.code=="KEYRING_BACKEND_UNUSABLE"
     assert fake.get_password("Studio Test","openai")=="TEST_ONLY_SECRET"
 
+def test_keyring_probe_fails_when_probe_record_cannot_be_deleted():
+    class PasswordDeleteError(Exception):pass
+    class FakeKeyring:
+        errors=type("Errors",(),{"PasswordDeleteError":PasswordDeleteError})
+        def __init__(self):self.data={}
+        def set_password(self,service,user,value):self.data[(service,user)]=value
+        def get_password(self,service,user):return self.data.get((service,user))
+        def delete_password(self,service,user):raise PasswordDeleteError()
+    fake=FakeKeyring();backend=KeyringBackend("Studio Probe",fake)
+    with pytest.raises(VaultUnavailableError) as raised:backend.probe()
+    assert raised.value.code=="KEYRING_BACKEND_UNUSABLE"
+    assert len(fake.data)==1
+
 def test_explicit_keyring_without_dependency_fails_closed(monkeypatch):
     def missing(_name):raise ImportError("missing")
     monkeypatch.setattr("app.credential_vault.importlib.import_module",missing)
@@ -138,6 +151,37 @@ def test_clear_failure_never_degrades_to_memory():
     assert backend.clear_calls==1
     assert vault.backend=="keyring" and vault._active_backend is backend
     assert vault.degraded is False
+
+def test_resolve_degradation_blocks_later_clear_without_touching_memory_backend(monkeypatch):
+    class PersistentSpy:
+        name="keyring";persistent=True
+        def __init__(self):self.data={};self.resolve_calls=0;self.clear_calls=0
+        def set(self,provider,secret):self.data[provider]=secret
+        def resolve(self,provider):self.resolve_calls+=1;raise VaultUnavailableError("KEYRING_PERMISSION_DENIED")
+        def clear(self,provider):self.clear_calls+=1
+    backend=PersistentSpy();vault=CredentialVault(backend_impl=backend,allow_memory_fallback=True)
+    vault.set("openai","TEST_ONLY_SECRET")
+    assert vault.resolve("openai") is None
+    assert vault.degraded is True and vault.backend=="memory"
+    memory_clear_calls=[]
+    monkeypatch.setattr(vault._active_backend,"clear",lambda provider:memory_clear_calls.append(provider))
+    with pytest.raises(VaultUnavailableError) as raised:vault.clear("openai")
+    assert raised.value.code=="KEYRING_PERMISSION_DENIED"
+    assert backend.resolve_calls==1 and backend.clear_calls==0 and memory_clear_calls==[]
+
+def test_set_degradation_blocks_later_clear_without_touching_memory_backend(monkeypatch):
+    class PersistentSpy:
+        name="keyring";persistent=True
+        def set(self,provider,secret):raise VaultUnavailableError("KEYRING_BACKEND_UNUSABLE")
+        def resolve(self,provider):return None
+        def clear(self,provider):raise AssertionError("persistent clear must not run after degradation")
+    vault=CredentialVault(backend_impl=PersistentSpy(),allow_memory_fallback=True)
+    vault.set("openai","TEST_ONLY_SECRET")
+    assert vault.degraded is True and vault.backend=="memory"
+    memory_clear_calls=[]
+    monkeypatch.setattr(vault._active_backend,"clear",lambda provider:memory_clear_calls.append(provider))
+    with pytest.raises(VaultUnavailableError) as raised:vault.clear("openai")
+    assert raised.value.code=="KEYRING_BACKEND_UNUSABLE" and memory_clear_calls==[]
 
 def test_canonical_ids_are_enforced_before_resolver_or_backend():
     class Spy(MemoryBackend):

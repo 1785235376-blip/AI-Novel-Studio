@@ -138,9 +138,7 @@ class KeyringBackend:
         try:
             self.set(key,"1")
             if self.resolve(key)!="1": raise VaultUnavailableError("KEYRING_BACKEND_UNUSABLE")
-        finally:
-            try: self.clear(key)
-            except VaultUnavailableError: pass
+        finally: self.clear(key)
 
 
 def _env_bool(name: str, default: bool) -> bool:
@@ -218,6 +216,8 @@ class CredentialVault:
 
     def clear(self, provider: str) -> None:
         self._validate_provider(provider)
+        if self.degraded:
+            raise VaultUnavailableError(self.degraded_reason or "CREDENTIAL_VAULT_DEGRADED")
         self._active_backend.clear(provider)
 
     def has(self, provider: str) -> bool: return self.resolve(provider) is not None
