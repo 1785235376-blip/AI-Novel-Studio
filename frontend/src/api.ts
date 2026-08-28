@@ -263,6 +263,8 @@ export const api={
    setPluginPermissions:(id:string,body:object)=>call<any>(`/api/plugins/${encodeURIComponent(id)}/permissions`,{method:'PUT',body:JSON.stringify(body)}),
    enablePlugin:(id:string)=>call<any>(`/api/plugins/${encodeURIComponent(id)}/enable`,{method:'POST'}),
    disablePlugin:(id:string)=>call<any>(`/api/plugins/${encodeURIComponent(id)}/disable`,{method:'POST'}),
+   pluginResources:(pluginId:string)=>call<{plugin_id:string;items:any[];total:number;visible:boolean;validated:boolean;execution_supported:boolean;isolation:string;resource_kinds?:string[];resource_count?:number}>(`/api/plugins/${encodeURIComponent(pluginId)}/resources`),
+   pluginResource:(pluginId:string,resourceId:string)=>call<any>(`/api/plugins/${encodeURIComponent(pluginId)}/resources/${encodeURIComponent(resourceId)}`),
    workflows:(novelId?:string)=>call<{items:any[]}>(`/api/workflows${novelId?`?novel_id=${encodeURIComponent(novelId)}`:''}`),
    createWorkflow:(body:object)=>call<any>('/api/workflows',{method:'POST',body:JSON.stringify(body)}),
    workflowRuns:(id:string)=>call<{items:any[]}>(`/api/workflows/${encodeURIComponent(id)}/runs`),
