@@ -22,8 +22,8 @@ repo=getattr(repositories.novels,"backend",None)
 def utc():return datetime.now(timezone.utc).isoformat()
 @dataclass
 class Job:
-    id:str;operation:str;novel_id:str;chapter_id:str;instruction:str;profile:str;source:str="";requested_provider:str|None=None;requested_model:str|None=None;style:str="";status:str="QUEUED";output:str="";error:str|None=None;provider:str|None=None;model:str|None=None;issues:list=field(default_factory=list);latency_ms:int=0;base_chapter_version:int|None=None;variant_group_id:str|None=None;variant_index:int|None=None;actor_id:str|None=None;session_id:str|None=None;client_id:str|None=None;workspace_id:str|None=None;scope:dict|None=None;scope_type:str|None=None;scope_id:str|None=None;correlation_id:str|None=None;context_snapshot_id:str|None=None;created_at:str=field(default_factory=utc);updated_at:str=field(default_factory=utc);cancelled:threading.Event=field(default_factory=threading.Event,repr=False);condition:threading.Condition=field(default_factory=threading.Condition,repr=False)
-    def public(self):return {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at")}
+    id:str;operation:str;novel_id:str;chapter_id:str;instruction:str;profile:str;source:str="";requested_provider:str|None=None;requested_model:str|None=None;style:str="";status:str="QUEUED";output:str="";error:str|None=None;error_code:str|None=None;provider:str|None=None;model:str|None=None;issues:list=field(default_factory=list);latency_ms:int=0;base_chapter_version:int|None=None;variant_group_id:str|None=None;variant_index:int|None=None;actor_id:str|None=None;session_id:str|None=None;client_id:str|None=None;workspace_id:str|None=None;scope:dict|None=None;scope_type:str|None=None;scope_id:str|None=None;correlation_id:str|None=None;context_snapshot_id:str|None=None;created_at:str=field(default_factory=utc);updated_at:str=field(default_factory=utc);cancelled:threading.Event=field(default_factory=threading.Event,repr=False);condition:threading.Condition=field(default_factory=threading.Condition,repr=False)
+    def public(self):return {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at")}
 class JobManager:
     terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED"}
     def __init__(self,generations=None,chapters=None,contexts=None,canon=None,memory_extractor=None,snapshot_required=None,collaboration_updates=None):
@@ -71,7 +71,7 @@ class JobManager:
             if job.requested_provider and job.requested_model:router.routes[role]=[Route(job.requested_provider,job.requested_model)]
             for route in router.routes[role]:
                 if not runtime.packaged_author_route_ready(route.provider):
-                    last=ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION,"TEXT_PROVIDER_NOT_CONFIGURED",provider_id=route.provider)
+                    last=ModelRuntimeError(RuntimeErrorCode.TEXT_PROVIDER_NOT_CONFIGURED,"未配置可用文本模型，请先在设置中配置文本 Provider。",provider_id=route.provider)
                     continue
                 try:
                     if self.snapshot_required:
@@ -92,8 +92,8 @@ class JobManager:
         except Exception as exc:
             if isinstance(exc,ModelRuntimeError):safe_error=exc.safe_message;error_code=exc.code.value
             elif isinstance(exc,RuntimeError) and "snapshot" in str(exc).casefold():safe_error=f"Context snapshot persistence failed: {exc}";error_code="CONTEXT_SNAPSHOT_FAILED"
-            else:safe_error="生成失败，请稍后重试";error_code=type(exc).__name__
-            job.latency_ms=int((time.monotonic()-started)*1000);job.status="FAILED";job.error=safe_error;self._emit(job);runtime_log.write(generation_id=job.id,novel_id=job.novel_id,chapter_id=job.chapter_id,status=job.status,error=error_code,latency_ms=job.latency_ms)
+            else:safe_error="生成失败，请稍后重试";error_code=RuntimeErrorCode.GENERATION_FAILED.value
+            job.latency_ms=int((time.monotonic()-started)*1000);job.status="FAILED";job.error=safe_error;job.error_code=error_code;self._emit(job);runtime_log.write(generation_id=job.id,novel_id=job.novel_id,chapter_id=job.chapter_id,status=job.status,error=error_code,latency_ms=job.latency_ms)
     def get(self,jid):
         if jid not in self.jobs:raise KeyError(jid)
         return self.jobs[jid]
@@ -112,7 +112,7 @@ class JobManager:
             with job.condition:
                 if len(job.output)==sent and job.status not in self.terminal:job.condition.wait(timeout=10)
                 chunk=job.output[sent:];sent=len(job.output);status=job.status
-            yield "data: "+json.dumps({"job_id":jid,"status":status,"chunk":chunk,"provider":job.provider,"model":job.model,"error":job.error},ensure_ascii=False)+"\n\n"
+            yield "data: "+json.dumps({"job_id":jid,"status":status,"chunk":chunk,"provider":job.provider,"model":job.model,"error":job.error,"error_code":job.error_code},ensure_ascii=False)+"\n\n"
             if status in self.terminal:return
     def accept(self,jid,accepted_output=None,actor=None,scope=None,expected_version=None):
         job=self.get(jid)

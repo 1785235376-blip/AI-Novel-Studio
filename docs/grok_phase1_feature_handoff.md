@@ -1,8 +1,8 @@
 # Grok P0 作者诚实性收口（给 Codex 合并进 main）
 
-> 日期：2026-08-28  
-> 分支：`grok-p0-author-honesty`（基于 `origin/main` @ `c74b51f`）  
-> 操作者：Grok  
+> 日期：2026-08-28
+> 分支：`grok-p0-author-honesty`（基于 `origin/main` @ `c74b51f`）
+> 操作者：Grok
 > 目的：把审计里的 P0 诚实性补丁接到 **最新 main**，明天 Codex 只做合并与总结。
 
 ## 先读这 9 行
