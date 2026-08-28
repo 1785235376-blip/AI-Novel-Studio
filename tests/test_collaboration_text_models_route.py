@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import pytest
 from fastapi.testclient import TestClient
 
 from app.config import settings
 from app.main import app
 from app.runtime import runtime
+from app.runtime_diagnostics import TextRuntimeDiagnosticsAdapter, TextRuntimeState
 
 
 def test_text_models_is_reachable_in_collaboration_mode(monkeypatch):
@@ -44,3 +46,43 @@ def test_collaboration_catalog_uses_mock_backed_deepseek_only_in_mock_mode(monke
     assert deepseek and all(item["available"] for item in deepseek)
     assert all(set(item) == {"provider_id", "model_id", "display_name", "available"} for item in deepseek)
     assert "api_key" not in response.text.casefold() and "authorization" not in response.text.casefold()
+
+
+def test_health_then_text_models_preserves_mock_standin_runtime(monkeypatch):
+    from app.credential_vault import credential_vault
+    from app.runtime import Runtime
+
+    previous = (settings.mock_provider, settings.enable_packaged_runtime, settings.mock_failure)
+    object.__setattr__(settings, "mock_provider", True)
+    object.__setattr__(settings, "enable_packaged_runtime", False)
+    object.__setattr__(settings, "mock_failure", "")
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    monkeypatch.setattr(credential_vault, "has", lambda *_a: pytest.fail("credential vault touched"))
+    monkeypatch.setattr(credential_vault, "resolve", lambda *_a: pytest.fail("credential vault touched"))
+    value = Runtime()
+    adapter = value.provider_registry.resolve("deepseek")
+    monkeypatch.setattr(runtime, "provider_status", value.provider_status)
+    monkeypatch.setattr(runtime, "text_models", value.text_models)
+
+    try:
+        client = TestClient(app)
+        health = client.get("/api/health")
+        models = client.get("/api/text-models")
+        diagnostics = TextRuntimeDiagnosticsAdapter(
+            value.provider_registry, value.model_registry,
+        ).diagnose("deepseek", "deepseek-chat")
+    finally:
+        object.__setattr__(settings, "mock_provider", previous[0])
+        object.__setattr__(settings, "enable_packaged_runtime", previous[1])
+        object.__setattr__(settings, "mock_failure", previous[2])
+
+    assert health.status_code == 200
+    deepseek_health = health.json()["providers"]["deepseek"]
+    assert deepseek_health["available"] is True
+    assert deepseek_health["execution_mode"] == "mock_standin"
+    assert models.status_code == 200
+    deepseek_models = [item for item in models.json()["items"] if item["provider_id"] == "deepseek"]
+    assert deepseek_models and all(item["available"] for item in deepseek_models)
+    assert all(set(item) == {"provider_id", "model_id", "display_name", "available"} for item in deepseek_models)
+    assert diagnostics.state is TextRuntimeState.READY
+    assert value.provider_registry.resolve("deepseek") is adapter
