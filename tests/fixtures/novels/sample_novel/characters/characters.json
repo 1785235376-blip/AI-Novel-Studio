@@ -1,0 +1,14 @@
+[
+  {
+    "id": "lin-hai",
+    "name": "林海",
+    "age": 31,
+    "status": "ALIVE"
+  },
+  {
+    "id": "captain-shen",
+    "name": "沈船长",
+    "age": 48,
+    "status": "ALIVE"
+  }
+]

@@ -93,6 +93,19 @@ class FakeJob:
     def simulate_owner_loss(self): self.terminate()
 
 
+class FakePortAllocator:
+    def reserve(self):
+        from app.packaging.windows_primitives import LoopbackPortReservations
+        return LoopbackPortReservations(
+            sockets={},
+            ports={
+                RuntimeRole.POSTGRESQL: 55101,
+                RuntimeRole.BACKEND: 55102,
+                RuntimeRole.FRONTEND: 55103,
+            },
+        )
+
+
 def _paths(tmp_path):
     return WindowsPackagingPaths.resolve(
         local_app_data=tmp_path/"LocalAppData",user_profile=tmp_path/"User"
@@ -103,7 +116,7 @@ def _lifecycle(tmp_path,fail_role=None):
     paths=_paths(tmp_path);events=[];inspector=FakeInspector();factory=FakeFactory(inspector,events,fail_role)
     job=FakeJob(factory.children);mutex=FakeMutex()
     lifecycle=RuntimeLifecycle(
-        paths=paths,mutex=mutex,job=job,port_allocator=DefaultPortAllocator(),
+        paths=paths,mutex=mutex,job=job,port_allocator=FakePortAllocator(),
         process_factory=factory,inspector=inspector,readiness_timeout_seconds=.1,
         shutdown_timeout_seconds=.1,
     )
@@ -148,14 +161,19 @@ def test_process_ownership_requires_all_identity_dimensions():
 
 
 def test_ports_are_loopback_only_unique_and_conflicts_fail_closed():
+    with pytest.raises(ValueError, match="127.0.0.1"):
+        reserve_loopback_ports(host="0.0.0.0")
+    if os.name != "nt":
+        with pytest.raises(AttributeError) as raised:
+            reserve_loopback_ports()
+        assert "SO_EXCLUSIVEADDRUSE" in str(raised.value)
+        return
     reservations=reserve_loopback_ports()
     try:
         assert len(set(reservations.ports.values()))==3
         for reserved in reservations.sockets.values():
             assert reserved.getsockname()[0]=="127.0.0.1"
     finally:reservations.close()
-    with pytest.raises(ValueError,match="127.0.0.1"):
-        reserve_loopback_ports(host="0.0.0.0")
     held=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     held.bind(("127.0.0.1",0));held.listen(1)
     try:

@@ -1,20 +1,84 @@
 from __future__ import annotations
 
 import os
+import sys
 from dataclasses import fields
+from pathlib import Path
 
 import pytest
+
+_TESTS_DIR = Path(__file__).resolve().parent
+if str(_TESTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_TESTS_DIR))
+
+from sample_novel_fixture import sample_novel_source as _sample_novel_source
+
+# Ordinary automated tests use an explicit memory vault. Tests that construct
+# their own CredentialVault(..., backend="keyring") keep the fail-closed contract.
+os.environ.setdefault("CREDENTIAL_VAULT_BACKEND", "memory")
+
+_PROVIDER_AND_DATABASE_ENV = (
+    "DEEPSEEK_API_KEY",
+    "OPENAI_API_KEY",
+    "OPENROUTER_API_KEY",
+    "ANTHROPIC_API_KEY",
+    "GEMINI_API_KEY",
+    "GOOGLE_API_KEY",
+    "XAI_API_KEY",
+    "DASHSCOPE_API_KEY",
+    "GROQ_API_KEY",
+    "MISTRAL_API_KEY",
+    "DATABASE_URL",
+    "TEST_POSTGRES_DATABASE_URL",
+    "E2E_DATABASE_URL",
+)
+
+
+def _reset_credential_singletons() -> None:
+    from app.credential_vault import MemoryBackend, credential_vault
+    from app.packaging.control_pipe import credential_store
+
+    backend = MemoryBackend()
+    credential_vault._active_backend = backend
+    credential_vault.backend = backend.name
+    credential_vault.degraded = False
+    credential_vault.degraded_reason = None
+    credential_store._values.clear()
+
+
+def _reset_runtime_singleton() -> None:
+    from app.runtime import runtime
+
+    runtime.__init__()
+
+
+@pytest.fixture
+def sample_novel_source() -> Path:
+    return _sample_novel_source()
 
 
 @pytest.fixture(autouse=True)
 def restore_global_settings():
-    """Keep tests that mutate the frozen settings singleton isolated."""
+    """Keep tests that mutate settings, env, vault, or runtime singletons isolated."""
     from app.config import settings
+    from app.main import app
 
-    original = {field.name: getattr(settings, field.name) for field in fields(settings)}
+    original_settings = {field.name: getattr(settings, field.name) for field in fields(settings)}
+    original_env = os.environ.copy()
+    for key in _PROVIDER_AND_DATABASE_ENV:
+        os.environ.pop(key, None)
+    os.environ["CREDENTIAL_VAULT_BACKEND"] = "memory"
+    _reset_credential_singletons()
+    _reset_runtime_singleton()
+    app.dependency_overrides.clear()
     yield
-    for name, value in original.items():
+    os.environ.clear()
+    os.environ.update(original_env)
+    for name, value in original_settings.items():
         object.__setattr__(settings, name, value)
+    _reset_credential_singletons()
+    _reset_runtime_singleton()
+    app.dependency_overrides.clear()
 
 
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:

@@ -6,6 +6,7 @@ from app import jobs as jobs_module
 from app.jobs import JobManager
 from app.config import settings
 from app.providers import MockProvider
+from sample_novel_fixture import install_sample_novel
 
 def wait(job):
     for _ in range(100):
@@ -13,7 +14,7 @@ def wait(job):
         time.sleep(.01)
 @pytest.mark.file_backend_only
 def test_generate_accept_requires_explicit_commit(tmp_path,monkeypatch):
-    source=Path(__file__).parents[1]/"novel_data"/"novels"/"sample_novel"; target=tmp_path/"novels"/"sample_novel"; shutil.copytree(source,target)
+    target=install_sample_novel(tmp_path)
     monkeypatch.setattr(jobs_module.repo,"data",tmp_path); monkeypatch.setattr(jobs_module.repo,"novels",tmp_path/"novels")
     object.__setattr__(settings,"mock_provider",True)
     jobs_module.runtime.providers["mock"] = MockProvider(delay_ms=0)
@@ -25,7 +26,7 @@ def test_generate_accept_requires_explicit_commit(tmp_path,monkeypatch):
     result=manager.accept(job.id); assert result["chapter"]["content"]!=before and result["pending_canon"]["status"]=="PENDING"
 @pytest.mark.file_backend_only
 def test_cancel_mock_job(tmp_path,monkeypatch):
-    source=Path(__file__).parents[1]/"novel_data"/"novels"/"sample_novel"; target=tmp_path/"novels"/"sample_novel"; shutil.copytree(source,target)
+    install_sample_novel(tmp_path)
     monkeypatch.setattr(jobs_module.repo,"data",tmp_path); monkeypatch.setattr(jobs_module.repo,"novels",tmp_path/"novels")
     object.__setattr__(settings,"mock_provider",True)
     jobs_module.runtime.providers["mock"] = MockProvider(delay_ms=0)
