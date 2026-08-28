@@ -59,6 +59,19 @@ def test_keyring_backend_uses_service_and_idempotent_delete():
     assert backend.resolve("openai")=="secret"
     backend.clear("openai");backend.clear("openai")
 
+def test_keyring_delete_error_with_existing_record_fails_closed():
+    class PasswordDeleteError(Exception):pass
+    class FakeKeyring:
+        errors=type("Errors",(),{"PasswordDeleteError":PasswordDeleteError})
+        def __init__(self):self.data={}
+        def set_password(self,service,user,value):self.data[(service,user)]=value
+        def get_password(self,service,user):return self.data.get((service,user))
+        def delete_password(self,service,user):raise PasswordDeleteError()
+    fake=FakeKeyring();backend=KeyringBackend("Studio Test",fake);backend.set("openai","TEST_ONLY_SECRET")
+    with pytest.raises(VaultUnavailableError) as raised:backend.clear("openai")
+    assert raised.value.code=="KEYRING_BACKEND_UNUSABLE"
+    assert fake.get_password("Studio Test","openai")=="TEST_ONLY_SECRET"
+
 def test_explicit_keyring_without_dependency_fails_closed(monkeypatch):
     def missing(_name):raise ImportError("missing")
     monkeypatch.setattr("app.credential_vault.importlib.import_module",missing)
@@ -111,6 +124,32 @@ def test_unknown_and_resolver_failure_never_touch_backend():
             with pytest.raises(ValueError):operation()
         assert vault.supports_provider("unknown-provider") is False
         assert backend.calls==[]
+
+def test_clear_failure_never_degrades_to_memory():
+    class PersistentSpy:
+        name="keyring";persistent=True
+        def __init__(self):self.clear_calls=0
+        def set(self,provider,secret):pass
+        def resolve(self,provider):return "configured"
+        def clear(self,provider):self.clear_calls+=1;raise VaultUnavailableError("KEYRING_BACKEND_UNUSABLE")
+    backend=PersistentSpy();vault=CredentialVault(backend_impl=backend,allow_memory_fallback=True)
+    with pytest.raises(VaultUnavailableError) as raised:vault.clear("openai")
+    assert raised.value.code=="KEYRING_BACKEND_UNUSABLE"
+    assert backend.clear_calls==1
+    assert vault.backend=="keyring" and vault._active_backend is backend
+    assert vault.degraded is False
+
+def test_canonical_ids_are_enforced_before_resolver_or_backend():
+    class Spy(MemoryBackend):
+        def __init__(self):super().__init__();self.calls=[]
+        def set(self,provider,secret):self.calls.append(("set",provider));super().set(provider,secret)
+    backend=Spy();vault=CredentialVault(backend_impl=backend,supports_provider=lambda _provider:True)
+    for rejected in ("Upper","x"*65,"bad.provider"):
+        with pytest.raises(ValueError):vault.set(rejected,"TEST_ONLY")
+    assert backend.calls==[]
+    vault.set("provider-one","FIRST");vault.set("provider_one","SECOND")
+    assert vault.resolve("provider-one")=="FIRST"
+    assert vault.resolve("provider_one")=="SECOND"
 
 def test_dynamic_registry_sources_and_canonical_boundaries():
     registry=ProviderSupportRegistry()

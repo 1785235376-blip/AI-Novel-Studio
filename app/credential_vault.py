@@ -127,7 +127,10 @@ class KeyringBackend:
         except Exception as exc:
             errors=getattr(self.keyring,"errors",None)
             delete_error=getattr(errors,"PasswordDeleteError",None)
-            if delete_error and isinstance(exc,delete_error): return
+            if delete_error and isinstance(exc,delete_error):
+                try: missing=self.keyring.get_password(self.service,provider) is None
+                except Exception as verify_exc: raise VaultUnavailableError(self._code(verify_exc)) from exc
+                if missing:return
             raise VaultUnavailableError(self._code(exc)) from exc
 
     def probe(self) -> None:
@@ -180,7 +183,7 @@ class CredentialVault:
         return MemoryBackend()
 
     def _validate_provider(self, provider: str) -> None:
-        if not isinstance(provider, str) or not re.fullmatch(r'[A-Za-z0-9_-]{1,64}', provider):
+        if not isinstance(provider, str) or not re.fullmatch(r'[a-z0-9_-]{1,64}', provider):
             raise ValueError("unsupported provider")
         try:
             supported = bool(self._supports_provider(provider))
@@ -215,8 +218,7 @@ class CredentialVault:
 
     def clear(self, provider: str) -> None:
         self._validate_provider(provider)
-        try: self._active_backend.clear(provider)
-        except VaultUnavailableError as exc: self._degrade_after_failure(exc).clear(provider)
+        self._active_backend.clear(provider)
 
     def has(self, provider: str) -> bool: return self.resolve(provider) is not None
 
