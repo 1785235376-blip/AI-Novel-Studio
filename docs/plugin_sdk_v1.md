@@ -31,7 +31,11 @@ Responses may contain `plugin_id`, `resource_id`, `kind`, `name`, `description`,
 
 `summary` fields are host-produced **plain text** (tags stripped). Raw `data` is untrusted JSON: string values may still contain HTML, URLs, or script-like text. Consumers must treat `data` as data only and must not render it as HTML, links, images, or scripts.
 
-Resources appear only when the plugin is `MANIFEST_ACTIVE` and the live catalog identity check passes. Disabled, unreviewed, missing, drifted, duplicate, or hash-failed packages omit resources (fail-closed). Each request re-checks path, type, size and SHA-256; sidecar metadata is not a cache of file contents.
+Resources appear only when the plugin is `MANIFEST_ACTIVE` and the live catalog identity check passes. Disabled, unreviewed, missing, drifted, or duplicate packages omit resources (fail-closed). Each request re-checks path, type, size and SHA-256; sidecar metadata is not a cache of file contents.
+
+A whole-package `BUDGET` failure (count, per-file size, or measurable total) hides every resource. A single missing, hash-mismatched, symlink, or invalid JSON resource does **not** hide siblings that still verify; the list is `PARTIAL` and a valid resource can still be read.
+
+Registration requires exactly one on-disk package whose canonical identity matches the submitted manifest. Duplicate IDs and identity drift fail closed with `PLUGIN_ID_DUPLICATE` / `PLUGIN_MANIFEST_DRIFT` before any sidecar write.
 
 Catalog reads do not apply writing presets, execute workflow templates, or run export profiles. This document does not claim DesktopHost DH-01–DH-08 or a V1.0 release.
 

@@ -50,12 +50,16 @@ Stable error codes:
 
 - `PLUGIN_MANIFEST_INVALID`
 - `PLUGIN_MANIFEST_UNSUPPORTED_VERSION`
+- `PLUGIN_MANIFEST_DRIFT`
+- `PLUGIN_ID_DUPLICATE`
 - `PLUGIN_RESOURCE_PATH_INVALID`
 - `PLUGIN_RESOURCE_TYPE_UNSUPPORTED`
 - `PLUGIN_RESOURCE_TOO_LARGE`
 - `PLUGIN_RESOURCE_HASH_MISMATCH`
 - `PLUGIN_RESOURCE_INVALID_JSON`
 - `PLUGIN_RESOURCE_SYMLINK_REJECTED`
+
+Duplicate plugin IDs fail closed on **discovery, registration, activation, and catalog reads**. Registration preflight runs before any sidecar, audit, or idempotency write: two or more live packages with the same `id` return HTTP 409 `PLUGIN_ID_DUPLICATE` and leave storage unchanged. The submitted manifest must match the unique on-disk canonical identity (`plugin_version`, `manifest_sha256`, capabilities, requested permissions, resources); a mismatch returns HTTP 409 `PLUGIN_MANIFEST_DRIFT` with no sidecar mutation.
 
 ## Catalog re-verification
 
@@ -64,8 +68,9 @@ Stable error codes:
 - Resolves the plugin package by live scan of the plugins root
 - Requires the registered plugin to be `MANIFEST_ACTIVE`
 - Re-validates each resource path, type, size and SHA-256
-- Drops a single bad resource without hiding other plugins or other resources
-- Returns nothing for a missing directory or drifted hash
+- Treats **package budget** (more than 100 resources, any file over 1 MiB, or more than 10 MiB measurable total) as a whole-package `BUDGET` failure before JSON is parsed
+- Treats a single missing file, path error, symlink/reparse, hash mismatch, or invalid JSON as a **per-resource** failure: siblings that still verify remain listed (`PARTIAL`), and a valid resource detail is not failed because an unrelated resource is missing
+- Returns nothing for a missing directory, duplicate id, or drifted identity
 - Never writes plugin files, fetches URLs, or follows escaped symlinks
 
 HTML and script-like strings in JSON are treated as plain data. Summary fields strip tags; the host never renders them as markup.
