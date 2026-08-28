@@ -27,11 +27,13 @@ The runtime Pydantic model in `app/plugin_contracts.py` is the single source of 
 - `GET /api/plugins/{plugin_id}/resources`
 - `GET /api/plugins/{plugin_id}/resources/{resource_id}`
 
-Responses may contain `plugin_id`, `resource_id`, `kind`, `name`, `description`, `schema_version`, `sha256`, `validated`, a plain-text `summary`, and the declarative JSON `data`. They never contain absolute paths, stacks, secrets, HTML, or executable entrypoints.
+Responses may contain `plugin_id`, `resource_id`, `kind`, `name`, `description`, `schema_version`, `sha256`, `validated`, a plain-text `summary`, and the declarative JSON `data`. They never contain absolute paths, stacks, secrets, or executable entrypoints.
 
-Resources appear only when the plugin is `MANIFEST_ACTIVE`. Disabled, unreviewed, missing, or hash-drifted resources are omitted (fail-closed). Each request re-checks path, type, size and SHA-256; sidecar metadata is not a cache of file contents. JSON strings are data, never code.
+`summary` fields are host-produced **plain text** (tags stripped). Raw `data` is untrusted JSON: string values may still contain HTML, URLs, or script-like text. Consumers must treat `data` as data only and must not render it as HTML, links, images, or scripts.
 
-Catalog reads do not apply writing presets, execute workflow templates, or run export profiles.
+Resources appear only when the plugin is `MANIFEST_ACTIVE` and the live catalog identity check passes. Disabled, unreviewed, missing, drifted, duplicate, or hash-failed packages omit resources (fail-closed). Each request re-checks path, type, size and SHA-256; sidecar metadata is not a cache of file contents.
+
+Catalog reads do not apply writing presets, execute workflow templates, or run export profiles. This document does not claim DesktopHost DH-01–DH-08 or a V1.0 release.
 
 
 ## What v1 cannot do

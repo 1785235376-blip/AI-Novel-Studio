@@ -89,17 +89,25 @@ Phase v1 of the broker, when implemented, should start with a deny-all table and
 
 ## 4. Scope
 
-Every job carries an immutable scope tuple. The worker cannot widen it.
+Every job carries an immutable **typed scope tuple**. The worker cannot widen it.
 
-| Axis | Meaning | Example |
-|---|---|---|
-| Workspace | Collaboration / packaged workspace | `ws_…` |
-| Project | Novel / project id | `novel_…` |
-| Storyline / branch | Optional narrative scope | `branch_…` |
-| Modality | Text, image, audio, video, export | `text` |
-| Resource | Optional chapter, asset, or export job | `chapter_…` |
+```
+Scope = {
+  workspace_id: WorkspaceId | null,
+  project_id: ProjectId,
+  storyline_id: StorylineId | null,
+  modality: Modality,
+  resource_id: ResourceId | null
+}
+```
 
-The broker compares the requested scope to the job's frozen scope with prefix rules. Cross-project reads are denied even if `project.read` was granted for another project.
+Authorization is exact equality on each identifier the job names:
+
+- `workspace_id`, `project_id`, `storyline_id`, and `resource_id` must match the frozen job scope **exactly**.
+- String prefix matching (`novel_` prefix, path prefixes, `startswith`) is forbidden.
+- A child resource (chapter, asset, export job) may be authorized only when the **host** proves the parent/child relation from its own database. The plugin cannot assert that relationship by encoding it in a string.
+
+Cross-project reads are denied even if `project.read` was granted for another project. Missing or extra tuple fields fail closed.
 
 ## 5. Host API version negotiation
 
@@ -187,7 +195,18 @@ Declarative resource limits from Contract v1 (1 MiB / file, 100 files, 10 MiB to
 The worker must not create children.
 
 - Linux: `PR_SET_NO_NEW_PRIVS`, seccomp / landlock denying `execve`, `execveat`, `fork`+`exec`
-- Windows: Job Object with `ACTIVE_PROCESS_LIMIT=1`, disable child processes
+- Windows: a Job Object with `ACTIVE_PROCESS_LIMIT=1` may **only** cap process lifetime, child creation, CPU, and memory. It is **not** a security sandbox.
+
+Before any third-party plugin code is executed on Windows, the host must place the worker in an AppContainer / Less-Privileged AppContainer (or an equivalent OS isolation boundary that has passed an independent security review). Default deny:
+
+- filesystem (except the virtual mounts in §7)
+- registry
+- network
+- other users' identity
+- Credential Manager / vault
+- process and thread handles of the host
+
+If those isolation primitives are unavailable or fail to apply, the host **fail-closes**: `execution_supported` stays `false`, no worker is spawned, and the job is refused.
 
 `os.system`, `subprocess`, `powershell`, `cmd`, `wmic`, `mshta`, and equivalent are policy-fail, not "unsupported". A violation quarantines the plugin.
 
