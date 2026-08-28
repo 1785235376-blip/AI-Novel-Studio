@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 from unittest.mock import patch
 
@@ -184,7 +185,12 @@ def test_missing_file_invalidates_catalog(plugin_root):
     _register(client, "gone-pack")
     (plugin / "resources" / "preset.json").unlink()
     listed = client.get("/api/plugins/gone-pack/resources")
-    assert listed.json()["items"] == []
+    body = listed.json()
+    assert body["items"] == []
+    assert body["validated"] is False
+    assert body["validation_status"] == "FAILED"
+    assert body["invalid_resource_count"] == 1
+    assert body.get("error_code") != "PLUGIN_RESOURCE_TOO_LARGE"
     detail = client.get("/api/plugins/gone-pack/resources/resources:preset.json")
     assert detail.status_code == 404
 
@@ -483,6 +489,249 @@ def test_manifest_field_changes_are_drift(plugin_root):
     listed = client.get("/api/plugins/drift-id/resources")
     assert listed.json()["error_code"] == PLUGIN_MANIFEST_DRIFT
     assert listed.json()["items"] == []
+
+
+def _sidecar_text() -> str:
+    path = v1_capability_service.root / "v1_capabilities" / "plugins.json"
+    return path.read_text(encoding="utf-8") if path.exists() else ""
+
+
+def _audit_actions() -> list[str]:
+    return [str(row.get("action")) for row in v1_capability_service._read("audit")]
+
+
+def test_duplicate_id_cannot_register_without_sidecar(plugin_root):
+    write_plugin(plugin_root, "copy-a", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "a"}),
+    ])
+    write_plugin(plugin_root, "copy-b", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "b"}),
+    ])
+    for name in ("copy-a", "copy-b"):
+        manifest = json.loads((plugin_root / name / "manifest.json").read_text(encoding="utf-8"))
+        manifest["id"] = "shared-pack"
+        (plugin_root / name / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    client = _client()
+    body = json.loads((plugin_root / "copy-a" / "manifest.json").read_text(encoding="utf-8"))
+    sidecar_before = _sidecar_text()
+    audit_before = _audit_actions()
+    created = client.post("/api/plugins", json=body, headers={"Idempotency-Key": "dup-register-1"})
+    assert created.status_code == 409
+    detail = created.json()["detail"]
+    assert detail["error_code"] == PLUGIN_ID_DUPLICATE
+    assert str(plugin_root) not in created.text
+    assert "Traceback" not in created.text
+    missing = client.get("/api/plugins/shared-pack")
+    assert missing.status_code == 404
+    assert _sidecar_text() == sidecar_before
+    assert _audit_actions() == audit_before
+
+
+def test_duplicate_after_register_does_not_mutate_sidecar(plugin_root):
+    write_plugin(plugin_root, "dup-a", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "a"}),
+    ])
+    first = plugin_root / "dup-a" / "manifest.json"
+    manifest = json.loads(first.read_text(encoding="utf-8"))
+    manifest["id"] = "shared-pack"
+    first.write_text(json.dumps(manifest), encoding="utf-8")
+    client = _client()
+    created = client.post("/api/plugins", json=json.loads(first.read_text(encoding="utf-8")))
+    assert created.status_code == 201, created.text
+    enabled = client.post("/api/plugins/shared-pack/enable")
+    assert enabled.status_code == 200, enabled.text
+    write_plugin(plugin_root, "dup-b", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "b"}),
+    ])
+    second = plugin_root / "dup-b" / "manifest.json"
+    other = json.loads(second.read_text(encoding="utf-8"))
+    other["id"] = "shared-pack"
+    second.write_text(json.dumps(other), encoding="utf-8")
+    before = client.get("/api/plugins/shared-pack").json()
+    sidecar_before = _sidecar_text()
+    audit_before = _audit_actions()
+    again = client.post("/api/plugins", json=json.loads(first.read_text(encoding="utf-8")))
+    assert again.status_code == 409
+    assert again.json()["detail"]["error_code"] == PLUGIN_ID_DUPLICATE
+    after = client.get("/api/plugins/shared-pack").json()
+    assert after["version"] == before["version"]
+    assert after["status"] == before["status"]
+    assert after["granted_permissions"] == before["granted_permissions"]
+    assert after.get("permission_review") == before.get("permission_review")
+    assert _sidecar_text() == sidecar_before
+    assert _audit_actions() == audit_before
+    assert created.json()["id"] == "shared-pack"
+
+
+def test_client_manifest_drift_is_rejected_without_sidecar_write(plugin_root):
+    write_plugin(plugin_root, "drift-reg", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "n"}),
+    ])
+    client = _client()
+    body = json.loads((plugin_root / "drift-reg" / "manifest.json").read_text(encoding="utf-8"))
+    body["version"] = "9.9.9"
+    sidecar_before = _sidecar_text()
+    audit_before = _audit_actions()
+    response = client.post("/api/plugins", json=body)
+    assert response.status_code == 409
+    assert response.json()["detail"]["error_code"] == PLUGIN_MANIFEST_DRIFT
+    assert str(plugin_root) not in response.text
+    assert client.get("/api/plugins/drift-reg").status_code == 404
+    assert _sidecar_text() == sidecar_before
+    assert _audit_actions() == audit_before
+
+
+def test_unique_matching_plugin_still_registers(plugin_root):
+    write_plugin(plugin_root, "solo-pack", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "n"}),
+    ])
+    client = _client()
+    created = _register(client, "solo-pack", enable=False, review=False)
+    assert created["id"] == "solo-pack"
+    assert created["status"] == "REGISTERED"
+    assert created["granted_permissions"] == []
+    loaded = client.get("/api/plugins/solo-pack").json()
+    assert loaded["plugin_version"] == "1.0.0"
+    assert loaded["execution_supported"] is False
+
+
+def _assert_partial_good(plugin_root, plugin_id: str, mutate, *, invalid=1):
+    client = _client()
+    _register(client, plugin_id)
+    mutate()
+    listed = client.get(f"/api/plugins/{plugin_id}/resources")
+    assert listed.status_code == 200
+    body = listed.json()
+    assert body["validated"] is False
+    assert body["validation_status"] == "PARTIAL"
+    assert body["invalid_resource_count"] == invalid
+    assert [item["resource_id"] for item in body["items"]] == ["resources:good.json"]
+    assert body["resource_count"] == 1
+    assert body["resource_kinds"] == ["writing_presets"]
+    assert str(plugin_root) not in listed.text
+    assert "Traceback" not in listed.text
+    good = client.get(f"/api/plugins/{plugin_id}/resources/resources:good.json")
+    assert good.status_code == 200
+    assert good.json()["data"]["name"] == "good"
+    assert str(plugin_root) not in good.text
+
+
+def test_good_plus_missing_is_partial_and_good_detail_ok(plugin_root):
+    plugin = write_plugin(plugin_root, "mix-missing", resources=[
+        ("writing_presets", "resources/good.json", {"name": "good"}),
+        ("export_profiles", "resources/gone.json", {"name": "gone"}),
+    ])
+    _assert_partial_good(plugin_root, "mix-missing", lambda: (plugin / "resources" / "gone.json").unlink())
+    bad = _client().get("/api/plugins/mix-missing/resources/resources:gone.json")
+    assert bad.status_code in {400, 404}
+    assert str(plugin) not in bad.text
+    assert "Traceback" not in bad.text
+
+
+def test_good_plus_symlink_invalid_is_partial(plugin_root, tmp_path):
+    plugin = write_plugin(plugin_root, "mix-link", resources=[
+        ("writing_presets", "resources/good.json", {"name": "good"}),
+        ("export_profiles", "resources/gone.json", {"name": "gone"}),
+    ])
+    outside = tmp_path / "outside.json"
+    outside.write_text('{"secret":"nope"}', encoding="utf-8")
+
+    def mutate():
+        target = plugin / "resources" / "gone.json"
+        target.unlink()
+        os.symlink(outside, target)
+
+    _assert_partial_good(plugin_root, "mix-link", mutate)
+
+
+def test_good_plus_hash_invalid_is_partial(plugin_root):
+    plugin = write_plugin(plugin_root, "mix-hash", resources=[
+        ("writing_presets", "resources/good.json", {"name": "good"}),
+        ("export_profiles", "resources/gone.json", {"name": "gone"}),
+    ])
+    _assert_partial_good(
+        plugin_root, "mix-hash",
+        lambda: (plugin / "resources" / "gone.json").write_text('{"name":"tampered"}', encoding="utf-8"),
+    )
+
+
+def test_good_plus_invalid_json_is_partial(plugin_root):
+    plugin = write_plugin(plugin_root, "mix-json", resources=[
+        ("writing_presets", "resources/good.json", {"name": "good"}),
+        ("export_profiles", "resources/gone.json", {"name": "gone"}),
+    ])
+    _assert_partial_good(
+        plugin_root, "mix-json",
+        lambda: (plugin / "resources" / "gone.json").write_text("{", encoding="utf-8"),
+    )
+
+
+def test_all_invalid_resources_are_failed_with_count(plugin_root):
+    plugin = write_plugin(plugin_root, "all-bad", resources=[
+        ("writing_presets", "resources/one.json", {"name": "one"}),
+        ("export_profiles", "resources/two.json", {"name": "two"}),
+    ])
+    client = _client()
+    _register(client, "all-bad")
+    (plugin / "resources" / "one.json").unlink()
+    (plugin / "resources" / "two.json").write_text('{"name":"tampered"}', encoding="utf-8")
+    listed = client.get("/api/plugins/all-bad/resources")
+    body = listed.json()
+    assert listed.status_code == 200
+    assert body["items"] == []
+    assert body["validated"] is False
+    assert body["validation_status"] == "FAILED"
+    assert body["invalid_resource_count"] == 2
+    assert str(plugin) not in listed.text
+
+
+def test_catalog_per_file_budget_fail_closed(plugin_root, monkeypatch):
+    plugin = write_plugin(plugin_root, "file-budget", resources=[
+        ("writing_presets", "resources/one.json", {"name": "one", "pad": "x" * 80}),
+        ("writing_presets", "resources/two.json", {"name": "two"}),
+    ])
+    client = _client()
+    _register(client, "file-budget")
+    monkeypatch.setattr("app.plugin_discovery.MAX_RESOURCE_BYTES", 40)
+    listed = client.get("/api/plugins/file-budget/resources")
+    body = listed.json()
+    assert listed.status_code == 200
+    assert body["items"] == []
+    assert body["validated"] is False
+    assert body["error_code"] == "PLUGIN_RESOURCE_TOO_LARGE"
+    assert body["validation_status"] == "BUDGET"
+    detail = client.get("/api/plugins/file-budget/resources/resources:two.json")
+    assert detail.status_code in {400, 404}
+    assert str(plugin) not in listed.text + detail.text
+
+
+def test_ten_thousand_layer_json_does_not_return_500(plugin_root):
+    plugin = write_plugin(plugin_root, "deep10k", resources=[
+        ("writing_presets", "resources/preset.json", {"name": "n"}),
+    ])
+    target = plugin / "resources" / "preset.json"
+    text = '{"leaf":true}'
+    for _ in range(10000):
+        text = '{"child":' + text + "}"
+    target.write_text(text, encoding="utf-8")
+    digest = hashlib.sha256(target.read_bytes()).hexdigest()
+    manifest = json.loads((plugin / "manifest.json").read_text(encoding="utf-8"))
+    manifest["resources"][0]["sha256"] = digest
+    (plugin / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    client = _client()
+    created = client.post("/api/plugins", json=json.loads((plugin / "manifest.json").read_text(encoding="utf-8")))
+    assert created.status_code in {201, 400, 409}
+    if created.status_code == 201:
+        enabled = client.post("/api/plugins/deep10k/enable")
+        assert enabled.status_code in {200, 400, 409}
+        listed = client.get("/api/plugins/deep10k/resources")
+        assert listed.status_code != 500
+        assert "Traceback" not in listed.text
+        assert "artificial" not in listed.text
+        detail = client.get("/api/plugins/deep10k/resources/resources:preset.json")
+        assert detail.status_code != 500
+        assert "Traceback" not in detail.text
+        assert str(plugin) not in listed.text + detail.text
 
 
 def test_legacy_sidecar_without_identity_is_review_required(plugin_root):

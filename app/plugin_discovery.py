@@ -166,7 +166,13 @@ def preflight_resource_budget(
     max_count: int | None = None,
     max_total: int | None = None,
 ) -> int:
-    """Stat resources before parsing JSON. Exceeding the budget fails the whole package."""
+    """Stat measurable resources before parsing JSON.
+
+    Only count, per-file size and total size may fail the whole package
+    (`PLUGIN_RESOURCE_TOO_LARGE`). Missing files, path errors, symlinks and
+    other per-resource faults are skipped here so catalog isolation can keep
+    valid siblings. Unmeasurable files contribute nothing to the total.
+    """
     file_limit = MAX_RESOURCE_BYTES if max_file is None else max_file
     count_limit = MAX_RESOURCE_COUNT if max_count is None else max_count
     total_limit = MAX_TOTAL_RESOURCE_BYTES if max_total is None else max_total
@@ -174,11 +180,11 @@ def preflight_resource_budget(
         raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
     total = 0
     for resource in manifest.resources:
-        path = resolve_plugin_file(plugin_root, resource.relative_path)
         try:
+            path = resolve_plugin_file(plugin_root, resource.relative_path)
             size = path.stat().st_size
-        except OSError as exc:
-            raise PluginContractError(PLUGIN_RESOURCE_PATH_INVALID) from exc
+        except (PluginContractError, OSError):
+            continue
         if size > file_limit:
             raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
         total += size
@@ -357,6 +363,14 @@ def unique_package_for_plugin_id(plugin_id: str, root: Path) -> tuple[Path, Plug
     if len(matches) != 1:
         raise PluginContractError(PLUGIN_MANIFEST_INVALID)
     return matches[0]
+
+
+def assert_registerable_package(plugin_id: str, client: PluginManifestV1, root: Path) -> tuple[Path, PluginManifestV1]:
+    """Fail closed before any sidecar write if the live package is not uniquely bound."""
+    package_root, live = unique_package_for_plugin_id(plugin_id, root)
+    if identity_snapshot(live) != identity_snapshot(client):
+        raise PluginContractError(PLUGIN_MANIFEST_DRIFT)
+    return package_root, live
 
 
 def discover_installed_plugins(root: Path) -> dict[str, Any]:

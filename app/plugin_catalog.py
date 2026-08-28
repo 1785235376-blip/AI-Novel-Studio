@@ -223,6 +223,8 @@ def list_plugin_resources(plugin_id: str) -> dict[str, Any]:
     try:
         preflight_resource_budget(package_root, manifest)
     except PluginContractError as exc:
+        if exc.code != PLUGIN_RESOURCE_TOO_LARGE:
+            raise
         return _empty_catalog(
             plugin_id, visible=True, status=ACTIVE_PLUGIN_STATUS,
             error_code=exc.code, validation_status="BUDGET",
@@ -272,13 +274,16 @@ def get_plugin_resource(plugin_id: str, resource_id: str) -> dict[str, Any]:
         raise FileNotFoundError(plugin_id)
     try:
         package_root, manifest = resolve_active_package(plugin)
-        preflight_resource_budget(package_root, manifest)
     except PluginContractError as exc:
         if exc.code in {PLUGIN_MANIFEST_DRIFT, PLUGIN_ID_DUPLICATE}:
             raise
+        raise FileNotFoundError(resource_id) from None
+    try:
+        preflight_resource_budget(package_root, manifest)
+    except PluginContractError as exc:
         if exc.code == PLUGIN_RESOURCE_TOO_LARGE:
             raise
-        raise FileNotFoundError(resource_id) from None
+        # Per-resource preflight faults must not hide an unrelated valid resource.
     target = next((resource for resource in manifest.resources
                    if resource_id_for(resource.relative_path) == resource_id), None)
     if target is None:

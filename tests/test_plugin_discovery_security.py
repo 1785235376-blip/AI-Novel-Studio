@@ -374,3 +374,15 @@ def test_duplicate_manifest_ids_are_not_registerable(plugin_root):
     discovered = client.get("/api/plugins/discover").json()
     assert all(item.get("error_code") == PLUGIN_ID_DUPLICATE for item in discovered["items"])
     assert str(plugin_root) not in json.dumps(discovered)
+    sidecar = v1_capability_service.root / "v1_capabilities" / "plugins.json"
+    before = sidecar.read_text(encoding="utf-8") if sidecar.exists() else ""
+    body = json.loads((plugin_root / "copy-a" / "manifest.json").read_text(encoding="utf-8"))
+    created = client.post("/api/plugins", json=body)
+    assert created.status_code == 409
+    assert created.json()["detail"]["error_code"] == PLUGIN_ID_DUPLICATE
+    assert str(plugin_root) not in created.text
+    assert "Traceback" not in created.text
+    missing = client.get("/api/plugins/shared-tools")
+    assert missing.status_code == 404
+    after = sidecar.read_text(encoding="utf-8") if sidecar.exists() else ""
+    assert after == before

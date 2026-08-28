@@ -18,9 +18,10 @@ from ..plugin_contracts import (
     PluginManifestV1 as PluginManifestIn,
     canonical_manifest_sha256,
 )
-from ..plugin_discovery import identity_snapshot, sidecar_has_identity
+from ..plugin_discovery import assert_registerable_package, identity_snapshot, sidecar_has_identity
 from ..idempotency import IdempotencyStore
 from ..storage import atomic_write
+from ..config import settings
 
 
 def _now() -> str:
@@ -475,6 +476,8 @@ class V1CapabilityService:
         }
 
     def register_plugin(self, body: PluginManifestIn, idempotency_key: str | None = None) -> dict[str, Any]:
+        # Live identity preflight happens before sidecar, audit, or idempotency writes.
+        assert_registerable_package(body.id, body, settings.data_path() / "plugins")
         payload = self._plugin_payload(body)
         existing = next((row for row in self._read("plugins") if row.get("id") == body.id and not row.get("deleted_at")), None)
         if existing is None:
