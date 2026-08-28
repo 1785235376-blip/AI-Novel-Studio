@@ -33,7 +33,9 @@ from .asset_provider_config import load as load_asset_provider_config, save as s
 from .model_runtime import TextGenerationRequest, TextGenerationParameters, TextModelNodeInput, ModelRuntimeError
 from .asset_worker_config import load as load_asset_worker_config, save as save_asset_worker_config
 from .audio_production_store import audio_production_store
-from .audio_provider_config import save as save_audio_provider_config, delete as delete_audio_provider_config
+from .audio_provider_config import load as load_audio_provider_config, save as save_audio_provider_config, delete as delete_audio_provider_config
+from .provider_support import is_canonical_provider_id, provider_support_registry
+from .storage import atomic_write
 from .services.export_job_service import (
     ExportJobNotCancellable,
     ExportJobNotRetryable,
@@ -780,9 +782,10 @@ def asset_providers():
         cfg = saved.get(pid) or {}
         effective={**catalog,**cfg};local=bool(effective.get("local"));requires_credential=bool(effective.get("requires_credential",True));enabled=bool(effective.get("enabled",True))
         endpoint = effective.get("endpoint", "");model = effective.get("default_model", "")
-        configured=bool(enabled and endpoint and (not requires_credential or credential_vault.has(pid)) and (not local or bool(cfg)));registered=pid in asset_provider_registry._providers
+        credential_configured=not requires_credential or (credential_vault.supports_provider(pid) and credential_vault.has(pid))
+        configured=bool(enabled and endpoint and credential_configured and (not local or bool(cfg)));registered=pid in asset_provider_registry._providers
         adapter=asset_provider_registry._providers.get(pid);probe=getattr(adapter,'health_check',None);reachable=bool(registered and callable(probe) and probe())
-        items.append({"provider_id":pid,"display_name":effective.get("display_name") or pid,"endpoint":endpoint,"default_model":model,"api_style":effective.get("api_style","openai"),"local":local,"enabled":enabled,"requires_credential":requires_credential,"credential_configured":not requires_credential or credential_vault.has(pid),"configured":configured,"registered":registered,"reachable":reachable,"secret":None})
+        items.append({"provider_id":pid,"display_name":effective.get("display_name") or pid,"endpoint":endpoint,"default_model":model,"api_style":effective.get("api_style","openai"),"local":local,"enabled":enabled,"requires_credential":requires_credential,"credential_configured":credential_configured,"configured":configured,"registered":registered,"reachable":reachable,"secret":None})
     items.sort(key=lambda item:(not item["local"],not item["reachable"],item["display_name"]))
     return {"items":items,"routing_policy":"LOCAL_FIRST"}
 
@@ -790,6 +793,7 @@ def asset_providers():
 def asset_provider_config_set(provider_id: str, body: AssetProviderConfigIn):
     try:
         result = save_asset_provider_config(provider_id, body.endpoint, body.default_model,api_style=body.api_style,local=body.local,enabled=body.enabled,requires_credential=body.requires_credential,display_name=body.display_name)
+        provider_support_registry.replace_source("asset", load_asset_provider_config())
         return {"provider_id": provider_id, **body.model_dump(), **result, "registered": refresh_asset_provider(provider_id)}
     except ValueError as exc:
         raise HTTPException(400, {"code": "INVALID_PROVIDER_CONFIG", "message": str(exc)}) from exc
@@ -798,12 +802,17 @@ def asset_provider_config_set(provider_id: str, body: AssetProviderConfigIn):
 def asset_provider_config_delete(provider_id: str):
     if provider_id in DEFAULT_IMAGE_ENDPOINTS:
         raise HTTPException(400, {"code": "DEFAULT_PROVIDER_CANNOT_BE_DELETED"})
+    from .dependencies import asset_provider_registry
+    asset_provider_registry.unregister(provider_id)
+    if credential_vault.supports_provider(provider_id) and provider_id in load_asset_provider_config() and not provider_support_registry.supports_after_removing("asset", provider_id):
+        try: credential_vault.clear(provider_id)
+        except VaultUnavailableError as exc: raise HTTPException(503,{"code":exc.code,"message":"系统凭据库不可用"}) from exc
     deleted = delete_asset_provider_config(provider_id)
-    refresh_asset_provider(provider_id)
+    if deleted: provider_support_registry.remove("asset", provider_id)
     return {"provider_id": provider_id, "deleted": deleted}
 def _credential_guard(provider: str, session_token: str | None):
-    if not re.fullmatch(r'[A-Za-z0-9_-]{1,64}', provider):
-        raise HTTPException(400, {"code": "UNSUPPORTED_PROVIDER"})
+    if not credential_vault.supports_provider(provider):
+        raise HTTPException(400, {"code": "UNSUPPORTED_PROVIDER", "message": "不支持的服务商"})
     if settings.enable_packaged_runtime:
         if not session_token: raise HTTPException(401, {"code": "SESSION_REQUIRED"})
         try: trusted_session_resolver.resolve(session_token)
@@ -821,8 +830,8 @@ def credential_status(provider: str, x_session_token: str | None = Header(None))
 
 @router.put("/credentials/{provider}")
 def credential_set(provider: str, body: CredentialIn, x_session_token: str | None = Header(None)):
-    if body.provider != provider: raise HTTPException(400, {"code": "PROVIDER_MISMATCH"})
     _credential_guard(provider, x_session_token)
+    if body.provider != provider: raise HTTPException(400, {"code": "PROVIDER_MISMATCH"})
     try: credential_vault.set(provider, body.credential)
     except ValueError as exc: raise HTTPException(400, {"code": "INVALID_CREDENTIAL"}) from exc
     except VaultUnavailableError as exc: raise HTTPException(503,{"code":exc.code,"message":"系统凭据库不可用"}) from exc
@@ -1651,15 +1660,15 @@ def video_providers():
     for provider_id,base in VIDEO_PROVIDER_CATALOG.items():
         config={**base,**(_video_provider_configs.get(provider_id) or {})}
         if provider_id=='deterministic': continue
-        requires=bool(config.get('requires_credential',True));configured=bool(config.get('enabled') and config.get('endpoint') and (not requires or credential_vault.has(provider_id)))
+        requires=bool(config.get('requires_credential',True));credential_configured=not requires or (credential_vault.supports_provider(provider_id) and credential_vault.has(provider_id));configured=bool(config.get('enabled') and config.get('endpoint') and credential_configured)
         registered=provider_id in screenplay_service.video_providers;adapter=screenplay_service.video_providers.get(provider_id);reachable=bool(registered and adapter and adapter.health_check())
         capabilities=adapter.capabilities() if adapter and hasattr(adapter,'capabilities') else {}
-        items.append({"id":provider_id,"display_name":config.get('display_name') or provider_id,"endpoint":config.get('endpoint',''),"model":config.get('model_id',''),"local":bool(config.get('local')),"requires_credential":requires,"credential_configured":not requires or credential_vault.has(provider_id),"available":configured and reachable,"registered":registered,"reachable":reachable,"capabilities":capabilities,"mode":"http","health":"READY" if configured and reachable else "NOT_CONFIGURED"})
+        items.append({"id":provider_id,"display_name":config.get('display_name') or provider_id,"endpoint":config.get('endpoint',''),"model":config.get('model_id',''),"local":bool(config.get('local')),"requires_credential":requires,"credential_configured":credential_configured,"available":configured and reachable,"registered":registered,"reachable":reachable,"capabilities":capabilities,"mode":"http","health":"READY" if configured and reachable else "NOT_CONFIGURED"})
     for provider_id,config in _video_provider_configs.items():
         if provider_id in VIDEO_PROVIDER_CATALOG: continue
-        requires=bool(config.get('requires_credential',True));configured=bool(config.get('enabled') and config.get('endpoint') and (not requires or credential_vault.has(provider_id)));registered=provider_id in screenplay_service.video_providers;adapter=screenplay_service.video_providers.get(provider_id);reachable=bool(registered and adapter and adapter.health_check())
+        requires=bool(config.get('requires_credential',True));credential_configured=not requires or (credential_vault.supports_provider(provider_id) and credential_vault.has(provider_id));configured=bool(config.get('enabled') and config.get('endpoint') and credential_configured);registered=provider_id in screenplay_service.video_providers;adapter=screenplay_service.video_providers.get(provider_id);reachable=bool(registered and adapter and adapter.health_check())
         capabilities=adapter.capabilities() if adapter and hasattr(adapter,'capabilities') else {}
-        items.append({"id":provider_id,"display_name":config.get('display_name') or provider_id,"endpoint":config.get('endpoint',''),"model":config.get('model_id',''),"local":bool(config.get('local')),"requires_credential":requires,"credential_configured":not requires or credential_vault.has(provider_id),"available":configured and reachable,"registered":registered,"reachable":reachable,"capabilities":capabilities,"mode":"http","health":"READY" if configured and reachable else "NOT_CONFIGURED"})
+        items.append({"id":provider_id,"display_name":config.get('display_name') or provider_id,"endpoint":config.get('endpoint',''),"model":config.get('model_id',''),"local":bool(config.get('local')),"requires_credential":requires,"credential_configured":credential_configured,"available":configured and reachable,"registered":registered,"reachable":reachable,"capabilities":capabilities,"mode":"http","health":"READY" if configured and reachable else "NOT_CONFIGURED"})
     items.sort(key=lambda item:(not item['local'],not item['available'],item['display_name']))
     return {"items":items,"routing_policy":"LOCAL_FIRST"}
 class VideoProviderConfigIn(BaseModel):
@@ -1690,14 +1699,19 @@ def _load_video_provider_configs():
     try: _video_provider_configs=json.loads(_video_provider_config_path.read_text(encoding='utf-8'))
     except (FileNotFoundError,ValueError): _video_provider_configs={}
 _load_video_provider_configs()
+provider_support_registry.replace_source("video", _video_provider_configs)
 from .dependencies import refresh_video_provider
 for _video_id,_video_cfg in sorted(_video_provider_configs.items(),key=lambda item:(not bool(item[1].get('local')),item[0])):
     if _video_cfg.get('enabled') and _video_cfg.get('endpoint'):
         refresh_video_provider(_video_id,_video_cfg['endpoint'],_video_cfg.get('model_id','video-placeholder'),bool(_video_cfg.get('requires_credential',True)))
 @router.put("/video-providers/{provider_id}/config")
 def configure_video_provider(provider_id:str,body:VideoProviderConfigIn):
-    _video_provider_configs[provider_id]={"provider_id":provider_id,**body.model_dump()}
-    _video_provider_config_path.parent.mkdir(parents=True,exist_ok=True); atomic_write(_video_provider_config_path,json.dumps(_video_provider_configs,ensure_ascii=False,indent=2))
+    if not is_canonical_provider_id(provider_id):
+        raise HTTPException(400,{'code':'INVALID_VIDEO_PROVIDER_CONFIG','message':'invalid video provider id'})
+    updated={**_video_provider_configs,provider_id:{"provider_id":provider_id,**body.model_dump()}}
+    _video_provider_config_path.parent.mkdir(parents=True,exist_ok=True); atomic_write(_video_provider_config_path,json.dumps(updated,ensure_ascii=False,indent=2))
+    _video_provider_configs.clear();_video_provider_configs.update(updated)
+    provider_support_registry.replace_source("video",_video_provider_configs)
     from .dependencies import refresh_video_provider
     registered=False
     if body.enabled and provider_id!='deterministic':
@@ -1706,6 +1720,21 @@ def configure_video_provider(provider_id:str,body:VideoProviderConfigIn):
         from .dependencies import screenplay_service
         screenplay_service.video_providers.pop(provider_id,None)
     return {**_video_provider_configs[provider_id],"registered":registered}
+@router.delete("/video-providers/{provider_id}/config")
+def delete_video_provider_config(provider_id:str):
+    if provider_id in VIDEO_PROVIDER_CATALOG:
+        raise HTTPException(400,{'code':'DEFAULT_PROVIDER_CANNOT_BE_DELETED'})
+    screenplay_service.video_providers.pop(provider_id,None)
+    if provider_id not in _video_provider_configs:
+        return {'provider_id':provider_id,'deleted':False}
+    if credential_vault.supports_provider(provider_id) and not provider_support_registry.supports_after_removing("video",provider_id):
+        try: credential_vault.clear(provider_id)
+        except VaultUnavailableError as exc: raise HTTPException(503,{'code':exc.code,'message':'系统凭据库不可用'}) from exc
+    updated=dict(_video_provider_configs);updated.pop(provider_id,None)
+    atomic_write(_video_provider_config_path,json.dumps(updated,ensure_ascii=False,indent=2))
+    _video_provider_configs.clear();_video_provider_configs.update(updated)
+    provider_support_registry.remove("video",provider_id)
+    return {'provider_id':provider_id,'deleted':True}
 @router.get("/video-providers/{provider_id}/config")
 def get_video_provider_config(provider_id:str): return {"provider_id":provider_id,**VIDEO_PROVIDER_CATALOG.get(provider_id,{}),**_video_provider_configs.get(provider_id,{})}
 @router.get("/video-providers/{provider_id}/health")
@@ -1798,18 +1827,26 @@ def list_audio_providers():
     from .audio_providers import provider_catalog
     items=[]
     for item in provider_catalog():
-        requires=bool(item.get('requires_credential',True));configured=not requires or credential_vault.has(item['provider_id'])
+        requires=bool(item.get('requires_credential',True));configured=not requires or (credential_vault.supports_provider(item['provider_id']) and credential_vault.has(item['provider_id']))
         items.append({**item,'credential_configured':configured,'configured':bool(item.get('endpoint') and item.get('default_model') and configured),'secret':None})
     return {'domain':'AUDIO','routing_policy':'LOCAL_FIRST','items':items}
 @router.put("/audio/providers/{provider_id}")
 def configure_audio_provider(provider_id:str,body:AudioProviderConfigIn):
-    try:return {'provider_id':provider_id,**save_audio_provider_config(provider_id,**body.model_dump()),'secret':None}
+    try:
+        result=save_audio_provider_config(provider_id,**body.model_dump())
+        provider_support_registry.replace_source("audio",load_audio_provider_config())
+        return {'provider_id':provider_id,**result,'secret':None}
     except ValueError as exc:raise HTTPException(400,{'code':'INVALID_AUDIO_PROVIDER_CONFIG','message':str(exc)}) from exc
 @router.delete("/audio/providers/{provider_id}")
 def remove_audio_provider(provider_id:str):
     from .audio_providers import AUDIO_PROVIDER_CATALOG
     if provider_id in AUDIO_PROVIDER_CATALOG:raise HTTPException(400,{'code':'DEFAULT_PROVIDER_CANNOT_BE_DELETED'})
-    return {'provider_id':provider_id,'deleted':delete_audio_provider_config(provider_id)}
+    if credential_vault.supports_provider(provider_id) and provider_id in load_audio_provider_config() and not provider_support_registry.supports_after_removing("audio",provider_id):
+        try: credential_vault.clear(provider_id)
+        except VaultUnavailableError as exc: raise HTTPException(503,{'code':exc.code,'message':'系统凭据库不可用'}) from exc
+    deleted=delete_audio_provider_config(provider_id)
+    if deleted:provider_support_registry.remove("audio",provider_id)
+    return {'provider_id':provider_id,'deleted':deleted}
 @router.post("/audio/generate",status_code=202)
 def generate_audio(body:AudioGenerateIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write")

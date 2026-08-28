@@ -10,7 +10,7 @@ def load()->dict:
     try: return json.loads(path.read_text(encoding='utf-8'))
     except (OSError,ValueError): return {}
 def save(provider_id:str,endpoint:str,default_model:str,*,api_style:str="openai",local:bool=False,enabled:bool=True,requires_credential:bool=True,display_name:str="")->dict:
-    if not provider_id or not re.fullmatch(r'[a-zA-Z0-9_-]{1,64}', provider_id): raise ValueError('invalid provider configuration')
+    if not provider_id or not re.fullmatch(r'[a-z0-9_-]{1,64}', provider_id): raise ValueError('invalid provider configuration')
     if not endpoint.startswith(('http://','https://')): raise ValueError('invalid provider configuration')
     if api_style not in {'openai','comfyui','automatic1111'}: raise ValueError('invalid provider configuration')
     data=load(); data[provider_id]={'endpoint':endpoint.rstrip('/'),'default_model':default_model.strip(),'api_style':api_style,'local':bool(local),'enabled':bool(enabled),'requires_credential':bool(requires_credential),'display_name':str(display_name or provider_id)[:120]}

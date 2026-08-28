@@ -22,7 +22,7 @@ def load() -> dict:
 
 def save(provider_id: str, *, endpoint: str, default_model: str, display_name: str, local: bool,
          enabled: bool, requires_credential: bool, capabilities: list[str]) -> dict:
-    if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", provider_id):
+    if not re.fullmatch(r"[a-z0-9_-]{1,64}", provider_id):
         raise ValueError("invalid audio provider id")
     if not endpoint.startswith(("http://", "https://")):
         raise ValueError("invalid audio provider endpoint")

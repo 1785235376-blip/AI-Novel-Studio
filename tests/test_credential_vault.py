@@ -1,4 +1,5 @@
-from app.credential_vault import CredentialVault, KeyringBackend, MemoryBackend, VaultUnavailableError
+from app.credential_vault import CredentialVault, KeyringBackend, MemoryBackend, SUPPORTED_PROVIDERS, VaultUnavailableError
+from app.provider_support import ProviderSupportRegistry
 import sys
 import os
 import uuid
@@ -82,6 +83,51 @@ def test_vault_rejects_invalid_or_unknown_credentials():
     try: vault.set("unknown", "x")
     except ValueError: pass
     else: raise AssertionError("unknown provider accepted")
+
+def test_static_provider_operations_remain_compatible():
+    vault=CredentialVault(backend="memory")
+    for provider in SUPPORTED_PROVIDERS:
+        assert vault.supports_provider(provider)
+        vault.set(provider,"TEST_ONLY")
+        assert vault.resolve(provider)=="TEST_ONLY"
+        assert vault.has(provider) is True
+        assert vault.status(provider)["secret"] is None
+        vault.clear(provider)
+
+def test_unknown_and_resolver_failure_never_touch_backend():
+    class Spy:
+        name="memory";persistent=False
+        def __init__(self):self.calls=[]
+        def set(self,*args):self.calls.append(("set",args))
+        def resolve(self,*args):self.calls.append(("resolve",args));return None
+        def clear(self,*args):self.calls.append(("clear",args))
+    for resolver in (lambda _provider:False,lambda _provider:(_ for _ in ()).throw(RuntimeError("resolver failed"))):
+        backend=Spy();vault=CredentialVault(backend_impl=backend,supports_provider=resolver)
+        for operation in (
+            lambda:vault.set("unknown-provider","TEST_ONLY"),
+            lambda:vault.resolve("unknown-provider"),lambda:vault.has("unknown-provider"),
+            lambda:vault.status("unknown-provider"),lambda:vault.clear("unknown-provider"),
+        ):
+            with pytest.raises(ValueError):operation()
+        assert vault.supports_provider("unknown-provider") is False
+        assert backend.calls==[]
+
+def test_dynamic_registry_sources_and_canonical_boundaries():
+    registry=ProviderSupportRegistry()
+    vault=CredentialVault(backend="memory",supports_provider=registry.supports_provider)
+    provider="x"*64
+    for rejected in ("", "x"*65, "Upper", "bad.provider"):
+        registry.register("asset","valid")
+        with pytest.raises(ValueError):vault.set(rejected,"TEST_ONLY")
+    assert not vault.supports_provider(provider)
+    registry.register("asset",provider);registry.register("audio",provider)
+    assert registry.sources_for(provider)==frozenset({"asset","audio"})
+    assert registry.supports_after_removing("asset",provider)
+    vault.set(provider,"TEST_ONLY");registry.remove("asset",provider)
+    assert vault.resolve(provider)=="TEST_ONLY"
+    assert not registry.supports_after_removing("audio",provider)
+    vault.clear(provider);registry.remove("audio",provider)
+    assert not vault.supports_provider(provider)
 
 @pytest.mark.skipif(sys.platform != "win32" or os.getenv("RUN_WINDOWS_CREDENTIAL_VAULT_INTEGRATION")!="1", reason="manual Windows Credential Manager integration only")
 def test_windows_credential_manager_round_trip():

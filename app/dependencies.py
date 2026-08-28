@@ -24,7 +24,9 @@ from .runtime import runtime
 from .asset_providers import AssetProviderRegistry,DEFAULT_IMAGE_ENDPOINTS,IMAGE_PROVIDER_CATALOG,HttpVideoProvider,ComfyUIImageProvider,Automatic1111ImageProvider
 from .asset_providers import build_openai_compatible_from_vault
 from .asset_provider_config import load as load_asset_provider_config
+from .audio_provider_config import load as load_audio_provider_config
 from .credential_vault import credential_vault
+from .provider_support import provider_support_registry
 from .visual_workflow import VisualTextWorkflowAdapter
 from .services.asset_task_worker import AssetTaskWorker
 from .services.asset_library_service import AssetLibraryService
@@ -48,6 +50,8 @@ adaptation_service=AdaptationService(repositories.novels,repositories.chapters,r
 asset_provider_registry=AssetProviderRegistry()
 _asset_endpoint=os.getenv("ASSET_OPENAI_ENDPOINT", "")
 _saved_asset_configs = load_asset_provider_config()
+provider_support_registry.replace_source("asset", _saved_asset_configs)
+provider_support_registry.replace_source("audio", load_audio_provider_config())
 _endpoints={**DEFAULT_IMAGE_ENDPOINTS,"openai":_asset_endpoint or DEFAULT_IMAGE_ENDPOINTS["openai"]}
 _models={"ddshub":"gpt-image-2","openai":"gpt-image-1","custom":""}
 for _provider, _cfg in _saved_asset_configs.items():
