@@ -10,7 +10,7 @@ Status: **contracts + pure policy**. This is not a plugin executor.
 | Worker process | NOT IMPLEMENTED in Phase 1. Phase 2A adds a **host-owned test worker only** — see [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md) |
 | Worker supervisor | NOT IMPLEMENTED in Phase 1. Phase 2A adds a prototype for the host-owned test worker only |
 | IPC | NOT IMPLEMENTED in Phase 1. Phase 2A adds bounded versioned stdio IPC for the test worker only |
-| Windows AppContainer / LPAC | NOT IMPLEMENTED |
+| Windows AppContainer / LPAC | Phase 2B ctypes AppContainer **prototype** only; real Windows proof REQUIRED / NOT RUN. LPAC = NOT IMPLEMENTED. `os_sandbox_ready` remains false. See [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md) |
 | OS sandbox ready | `false` / `NOT_CONFIGURED` |
 | Capability Broker runtime | NOT IMPLEMENTED |
 | Capability policy foundation | IMPLEMENTED (pure, fail-closed) |
@@ -25,7 +25,7 @@ Status: **contracts + pure policy**. This is not a plugin executor.
 
 Phase 1 freezes the Host → Broker → Supervisor → Worker vocabulary so a future isolated worker does not invent a second permission system. Shipping these modules does not enable execution.
 
-Related: [plugin_sdk_v1.md](plugin_sdk_v1.md), [plugin_security_model.md](plugin_security_model.md), [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md), [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md), [official_declarative_plugin_packs.md](official_declarative_plugin_packs.md).
+Related: [plugin_sdk_v1.md](plugin_sdk_v1.md), [plugin_security_model.md](plugin_security_model.md), [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md), [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md), [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md), [official_declarative_plugin_packs.md](official_declarative_plugin_packs.md).
 
 ## Implemented in Phase 1
 
