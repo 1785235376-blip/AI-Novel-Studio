@@ -1,15 +1,17 @@
 # Isolated Plugin Worker Runtime — Design Only
 
-Status: **design document** for the worker. Phase 1 **execution contracts and pure policy** are implemented; the worker itself is not.
+Status: **design document** for the *plugin* worker. Phase 1 **execution contracts and pure policy** are implemented. Phase 2A implemented a **host-owned test worker** (fixed argv, not plugin-replaceable) plus a supervisor prototype and bounded stdio IPC. That is not third-party plugin execution.
 
 | Claim | Value |
 |---|---|
 | Execution contracts + fail-closed policy | IMPLEMENTED (Phase 1) |
-| Worker process | NOT IMPLEMENTED |
+| Host-owned Test Worker + supervisor + IPC | IMPLEMENTED (Phase 2A prototype) |
+| Third-party plugin Worker | NOT IMPLEMENTED |
 | Plugin code execution | DISABLED |
 | `execution_supported` | `false` |
 | Isolation | `DENY_ALL` |
 | Sandbox | `NOT_CONFIGURED` |
+| AppContainer / LPAC | NOT IMPLEMENTED |
 | Marketplace | NOT IMPLEMENTED |
 | Plugin signatures | NOT IMPLEMENTED |
 | Provider plugins | NOT IMPLEMENTED |
@@ -18,7 +20,7 @@ Status: **design document** for the worker. Phase 1 **execution contracts and pu
 | Release claim | `0.7.0 Beta` |
 | Plugin runtime (release readiness) | `DEFERRED` |
 
-Phase 1 froze the typed contracts in `app/plugin_runtime_contracts.py` and the side-effect-free evaluator in `app/plugin_capability_policy.py`. See [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.md). Shipping those modules does not enable execution. Current v1 remains a declarative contract, validator, catalog, and governance UI.
+Phase 1 froze the typed contracts in `app/plugin_runtime_contracts.py` and the side-effect-free evaluator in `app/plugin_capability_policy.py`. See [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.md). Phase 2A is documented in [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md). Shipping those modules does not enable execution. Current v1 remains a declarative contract, validator, catalog, and governance UI.
 
 Related implemented surfaces: [plugin_sdk_v1.md](plugin_sdk_v1.md), [plugin_security_model.md](plugin_security_model.md).
 
@@ -333,9 +335,9 @@ None of those gates are open today.
 
 ## 18. Explicitly not implemented
 
-The following remain unimplemented after Phase 1:
+The following remain unimplemented for **plugin** execution after Phase 2A:
 
-- Worker process, supervisor, and IPC
+- Third-party plugin Worker (the host-owned **test** worker is a prototype only; see [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md))
 - Capability Broker **runtime** (the pure policy evaluator exists; it does not broker real capabilities)
 - Plugin signatures, publisher trust store, revocation
 - Marketplace, install, update, uninstall, online download
@@ -344,21 +346,24 @@ The following remain unimplemented after Phase 1:
 - Blender plugins
 - Any third-party Python / JavaScript / Shell / PowerShell / native code execution
 - Automatic permission grant
+- AppContainer / LPAC / Job Object security isolation
 - Changing `execution_supported` to `true`
 
 If a change to P1 / P1.5 would require `execution_supported = true`, that change is out of bounds and must be rejected.
 
+Phase 2A **did** implement: host-owned test worker, supervisor prototype, bounded versioned stdio IPC, handshake, job/attempt binding via Phase 1 `evaluate_late_result`, timeout, cancellation, crash detection, host-side IPC quota, and owned-process cleanup. It did **not** implement OS memory/CPU enforcement, real mounts, or a production execution API/UI.
+
 ## 19. Rollout sketch (future, not this PR)
 
 1. Keep Contract v1 + catalog + governance UI (done)
-2. Freeze execution contracts + fail-closed policy (Phase 1, this work)
-3. Implement supervisor + empty worker that only pings and exits
+2. Freeze execution contracts + fail-closed policy (Phase 1, done)
+3. Implement supervisor + empty **host-owned** worker that only pings and exits (Phase 2A prototype, done for the test worker; not a plugin worker)
 4. Add Capability Broker with deny-all runtime adapters
 5. Add signing and revocation **before** loading any plugin code
 6. Allow a single host-written conformance plugin under test flags
 7. Only then consider reviewed third-party declarative-plus-code packages
 
-Each step is a separate review. The worker described in this file is still step 0 of the process-isolation list.
+Each step is a separate review. The plugin worker described in this file is still blocked on steps 4–5 and on Windows AppContainer / LPAC (or an independently reviewed equivalent). Job Object is not that gate.
 
 ## 20. Current host invariants (must not regress)
 
