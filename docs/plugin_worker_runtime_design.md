@@ -1,9 +1,10 @@
 # Isolated Plugin Worker Runtime — Design Only
 
-Status: **design document**. Nothing described here is implemented.
+Status: **design document** for the worker. Phase 1 **execution contracts and pure policy** are implemented; the worker itself is not.
 
 | Claim | Value |
 |---|---|
+| Execution contracts + fail-closed policy | IMPLEMENTED (Phase 1) |
 | Worker process | NOT IMPLEMENTED |
 | Plugin code execution | DISABLED |
 | `execution_supported` | `false` |
@@ -17,7 +18,7 @@ Status: **design document**. Nothing described here is implemented.
 | Release claim | `0.7.0 Beta` |
 | Plugin runtime (release readiness) | `DEFERRED` |
 
-This document specifies how a future isolated worker **must** be built if plugin code execution is ever enabled. Shipping this file does not enable execution. Current v1 remains a declarative contract, validator, catalog, and governance UI.
+Phase 1 froze the typed contracts in `app/plugin_runtime_contracts.py` and the side-effect-free evaluator in `app/plugin_capability_policy.py`. See [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.md). Shipping those modules does not enable execution. Current v1 remains a declarative contract, validator, catalog, and governance UI.
 
 Related implemented surfaces: [plugin_sdk_v1.md](plugin_sdk_v1.md), [plugin_security_model.md](plugin_security_model.md).
 
@@ -332,10 +333,10 @@ None of those gates are open today.
 
 ## 18. Explicitly not implemented
 
-The following remain unimplemented after this document:
+The following remain unimplemented after Phase 1:
 
 - Worker process, supervisor, and IPC
-- Capability Broker runtime
+- Capability Broker **runtime** (the pure policy evaluator exists; it does not broker real capabilities)
 - Plugin signatures, publisher trust store, revocation
 - Marketplace, install, update, uninstall, online download
 - Provider plugins
@@ -349,14 +350,15 @@ If a change to P1 / P1.5 would require `execution_supported = true`, that change
 
 ## 19. Rollout sketch (future, not this PR)
 
-1. Keep Contract v1 + catalog + governance UI (done in this branch)
-2. Implement supervisor + empty worker that only pings and exits
-3. Add Capability Broker with deny-all
-4. Add signing and revocation **before** loading any plugin code
-5. Allow a single host-written conformance plugin under test flags
-6. Only then consider reviewed third-party declarative-plus-code packages
+1. Keep Contract v1 + catalog + governance UI (done)
+2. Freeze execution contracts + fail-closed policy (Phase 1, this work)
+3. Implement supervisor + empty worker that only pings and exits
+4. Add Capability Broker with deny-all runtime adapters
+5. Add signing and revocation **before** loading any plugin code
+6. Allow a single host-written conformance plugin under test flags
+7. Only then consider reviewed third-party declarative-plus-code packages
 
-Each step is a separate review. This file is step 0 of that list.
+Each step is a separate review. The worker described in this file is still step 0 of the process-isolation list.
 
 ## 20. Current host invariants (must not regress)
 
@@ -364,3 +366,4 @@ Each step is a separate review. This file is step 0 of that list.
 - Release readiness `plugin_runtime.status = DEFERRED`
 - Discover / catalog APIs never return absolute paths or raw exceptions
 - Activation of a manifest is not execution
+- Declarative packs stay data-only; they do not become executable because a runtime contract exists
