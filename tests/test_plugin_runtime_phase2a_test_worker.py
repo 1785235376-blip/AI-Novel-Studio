@@ -389,7 +389,11 @@ def test_no_network_vault_provider_or_plugin_package_loading(supervisor):
     assert "import subprocess" not in source
     assert "plugin_catalog" not in source
     assert HOST_TEST_WORKER_MODULE == "app.plugin_test_worker"
-    assert HOST_TEST_WORKER_ARGV == ("-u", "-m", "app.plugin_test_worker")
+    assert HOST_TEST_WORKER_ARGV == ("-I", "-S", "-u")
+    from app.plugin_worker_process import host_test_worker_argv, host_test_worker_bootstrap_path
+    argv = host_test_worker_argv()
+    assert argv[:3] == ("-I", "-S", "-u")
+    assert argv[3] == str(host_test_worker_bootstrap_path())
 
 
 def test_spawn_spec_is_frozen_not_a_command_runner():
@@ -412,6 +416,7 @@ def test_production_startup_does_not_import_or_spawn_test_worker():
         "import app.main\n"
         "assert 'app.plugin_test_worker_supervisor' not in sys.modules\n"
         "assert 'app.plugin_test_worker' not in sys.modules\n"
+        "assert 'app.plugin_test_worker_bootstrap' not in sys.modules\n"
         "from app.api import plugin_runtime_status\n"
         "status = plugin_runtime_status()\n"
         "assert status['execution_supported'] is False\n"
