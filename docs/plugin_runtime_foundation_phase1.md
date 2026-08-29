@@ -7,9 +7,9 @@ Status: **contracts + pure policy**. This is not a plugin executor.
 | Plugin code execution | DISABLED |
 | `execution_supported` | `false` |
 | Isolation | `DENY_ALL` |
-| Worker process | NOT IMPLEMENTED |
-| Worker supervisor | NOT IMPLEMENTED |
-| IPC | NOT IMPLEMENTED |
+| Worker process | NOT IMPLEMENTED in Phase 1. Phase 2A adds a **host-owned test worker only** — see [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md) |
+| Worker supervisor | NOT IMPLEMENTED in Phase 1. Phase 2A adds a prototype for the host-owned test worker only |
+| IPC | NOT IMPLEMENTED in Phase 1. Phase 2A adds bounded versioned stdio IPC for the test worker only |
 | Windows AppContainer / LPAC | NOT IMPLEMENTED |
 | OS sandbox ready | `false` / `NOT_CONFIGURED` |
 | Capability Broker runtime | NOT IMPLEMENTED |
@@ -25,7 +25,7 @@ Status: **contracts + pure policy**. This is not a plugin executor.
 
 Phase 1 freezes the Host → Broker → Supervisor → Worker vocabulary so a future isolated worker does not invent a second permission system. Shipping these modules does not enable execution.
 
-Related: [plugin_sdk_v1.md](plugin_sdk_v1.md), [plugin_security_model.md](plugin_security_model.md), [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md), [official_declarative_plugin_packs.md](official_declarative_plugin_packs.md).
+Related: [plugin_sdk_v1.md](plugin_sdk_v1.md), [plugin_security_model.md](plugin_security_model.md), [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md), [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md), [official_declarative_plugin_packs.md](official_declarative_plugin_packs.md).
 
 ## Implemented in Phase 1
 
@@ -49,9 +49,8 @@ These types are serializable, `extra=forbid`, and frozen. They reject secret-lik
 
 ## Not implemented
 
-- Worker process, supervisor, and IPC
+- Third-party plugin Worker, and any plugin Python / JavaScript / native / Shell / PowerShell execution
 - AppContainer / LPAC / Job Object enforcement
-- Plugin Python / JavaScript / native / Shell / PowerShell execution
 - Provider plugin, ComfyUI plugin, Blender plugin
 - Network broker, project data broker
 - Credential Vault resolver
@@ -59,6 +58,8 @@ These types are serializable, `extra=forbid`, and frozen. They reject secret-lik
 - Marketplace
 - Workflow / export execution
 - `POST /api/plugins/.../execute` and any Run Plugin UI
+
+Phase 2A added a **host-owned test worker** (fixed argv, not plugin-replaceable) plus a supervisor prototype and bounded IPC. That worker is not a plugin runtime. `execution_supported` remains `false`. See [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md).
 
 `GET /api/plugins/runtime-status` is unchanged: `execution_supported=false`, `sandbox=NOT_CONFIGURED`, `isolation=DENY_ALL`.
 
@@ -139,7 +140,7 @@ Suggested defaults from the worker design, still **not enforced by the OS**:
 | wall time | 15 s | `enforcement_implemented=false` |
 | CPU time | 5 s | false |
 | memory | 256 MiB | false |
-| output bytes | 1 MiB | false |
+| output bytes | 1 MiB | false (OS). Phase 2A host IPC quota is a separate, implemented supervisor limit — see [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md) |
 | temp bytes | 64 MiB | false |
 | process count | 1 | false (subprocess still PROHIBITED by policy) |
 | file count | 32 | false |
@@ -153,7 +154,7 @@ Suggested defaults from the worker design, still **not enforced by the OS**:
 | `/job/out` | quota-limited write |
 | `/tmp` | ephemeral |
 
-Forbidden targets: repository source, `.env`, credential vault, database data directory, other plugin packages, user home, host drive. Phase 1 does not create mounts and does not fake them.
+Path matching is **component-aware**: `/plugin` and `/plugin/foo` are in the virtual namespace; `/plugin-evil` is not. The same rule applies to `/job/in`, `/job/out`, and `/tmp`. `.` / `..` / empty segments are rejected. Forbidden targets: repository source, `.env`, credential vault, database data directory, other plugin packages, user home, host drive. Phase 1 does not create mounts and does not fake them. Phase 2A hardens the validator only; it still does not mount anything.
 
 ## Network and subprocess
 
@@ -207,4 +208,4 @@ No execution tables, no migrations, no Run Plugin button, no Worker monitor. Job
 
 ## Verification
 
-Targeted tests in `tests/test_plugin_runtime_foundation_phase1.py` plus existing plugin contract / discovery / catalog / official pack tests. Policy evaluation is monkeypatched to fail on `subprocess`, `socket`, `httpx`, and vault resolve.
+Targeted tests in `tests/test_plugin_runtime_foundation_phase1.py` plus existing plugin contract / discovery / catalog / official pack tests. Policy evaluation is monkeypatched to fail on `subprocess`, `socket`, `httpx`, and vault resolve. Phase 2A process-lifecycle coverage lives in `tests/test_plugin_runtime_phase2a_test_worker.py`.
