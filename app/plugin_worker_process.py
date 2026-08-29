@@ -1,8 +1,14 @@
 """OS process adapter for the frozen Host-owned Test Worker spawn spec.
 
-The only executable image is the current host interpreter. The only module
-is `app.plugin_test_worker`. There is no `command: str`, no argv from plugin
-data, and no generic runner. Windows vs POSIX differences stay here.
+The only executable image is the current host interpreter. The only entrypoint
+is the Host-owned bootstrap file resolved from this module's location. There
+is no `command: str`, no argv from plugin data, and no generic runner.
+
+Independent review of PR #24 found that copying `os.environ` (and inheriting
+PYTHONPATH) let attacker-controlled `sitecustomize` / stdlib shadows execute
+in the child. This adapter now uses isolated interpreter flags (`-I -S`) and
+an explicit environment allowlist. That is Python startup isolation, not an
+OS sandbox.
 """
 
 from __future__ import annotations
@@ -18,11 +24,67 @@ from typing import IO
 from app.plugin_worker_protocol import MAX_STDERR_BYTES
 
 HOST_TEST_WORKER_MODULE = "app.plugin_test_worker"
-HOST_TEST_WORKER_ARGV: tuple[str, ...] = ("-u", "-m", HOST_TEST_WORKER_MODULE)
+HOST_TEST_WORKER_BOOTSTRAP_NAME = "plugin_test_worker_bootstrap.py"
 
 _OWNED_PIDS: set[int] = set()
 _OWNED_LOCK = threading.Lock()
-_REPO_ROOT = str(Path(__file__).resolve().parents[1])
+
+_POSIX_ENV_ALLOWLIST = ("TMPDIR", "LANG", "LC_ALL", "LC_CTYPE", "TZ")
+_WINDOWS_ENV_ALLOWLIST = ("SYSTEMROOT", "WINDIR", "SYSTEMDRIVE", "TEMP", "TMP")
+
+
+def host_owned_root() -> Path:
+    """Application root derived from this Host-owned module, not cwd or env."""
+    return Path(__file__).resolve().parents[1]
+
+
+def host_test_worker_bootstrap_path() -> Path:
+    path = Path(__file__).resolve().parent / HOST_TEST_WORKER_BOOTSTRAP_NAME
+    if path.name != HOST_TEST_WORKER_BOOTSTRAP_NAME or not path.is_file():
+        raise RuntimeError("HOST_TEST_WORKER_BOOTSTRAP_INVALID")
+    return path
+
+
+def host_test_worker_argv() -> tuple[str, ...]:
+    """Frozen argv after the interpreter. Callers cannot replace these."""
+    return ("-I", "-S", "-u", str(host_test_worker_bootstrap_path()))
+
+
+# Import-time snapshot used by tests that assert the frozen flag prefix.
+HOST_TEST_WORKER_ARGV: tuple[str, ...] = ("-I", "-S", "-u")
+
+
+def build_host_test_worker_environment() -> dict[str, str]:
+    """Explicit allowlist. Parent PYTHON* variables are never copied."""
+    names = _WINDOWS_ENV_ALLOWLIST if os.name == "nt" else _POSIX_ENV_ALLOWLIST
+    env = _copy_allowlisted(os.environ, names)
+    leaked = [key for key in env if key.upper().startswith("PYTHON")]
+    if leaked:
+        raise RuntimeError("HOST_TEST_WORKER_PYTHON_ENV_FORBIDDEN")
+    return env
+
+
+def _copy_allowlisted(source: Mapping[str, str], names: tuple[str, ...]) -> dict[str, str]:
+    env: dict[str, str] = {}
+    if os.name == "nt":
+        lookup = {key.upper(): (key, value) for key, value in source.items()}
+        for name in names:
+            hit = lookup.get(name.upper())
+            if hit is None:
+                continue
+            key, value = hit
+            if key.upper().startswith("PYTHON"):
+                continue
+            env[key] = value
+        return env
+    for name in names:
+        value = source.get(name)
+        if value is None:
+            continue
+        if name.upper().startswith("PYTHON"):
+            continue
+        env[name] = value
+    return env
 
 
 class OwnedWorkerProcess:
@@ -68,17 +130,15 @@ def owned_alive_pids() -> tuple[int, ...]:
 
 def spawn_host_test_worker() -> OwnedWorkerProcess:
     """Start the frozen host-owned test worker. Not a generic command runner."""
-    env = os.environ.copy()
-    env["PYTHONUNBUFFERED"] = "1"
-    existing = env.get("PYTHONPATH", "")
-    env["PYTHONPATH"] = _REPO_ROOT if not existing else _REPO_ROOT + os.pathsep + existing
+    bootstrap = host_test_worker_bootstrap_path()
+    root = host_owned_root()
     popen_kwargs: dict[str, object] = {
-        "args": [sys.executable, *HOST_TEST_WORKER_ARGV],
+        "args": [sys.executable, *host_test_worker_argv()],
         "stdin": subprocess.PIPE,
         "stdout": subprocess.PIPE,
         "stderr": subprocess.PIPE,
-        "cwd": _REPO_ROOT,
-        "env": env,
+        "cwd": str(root),
+        "env": build_host_test_worker_environment(),
         "bufsize": 0,
     }
     if os.name == "posix":

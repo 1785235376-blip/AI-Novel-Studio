@@ -4,7 +4,10 @@ Fixed operations only. Not a plugin, not extensible, not a command runner.
 Does not read the database, vault, providers, plugin packages, or network.
 Does not eval/exec/import user modules. Child processes are prohibited.
 
-Run only via the frozen supervisor spawn: `python -u -m app.plugin_test_worker`.
+Run only via the frozen supervisor spawn:
+`python -I -S -u <absolute-host-owned-bootstrap>`.
+The bootstrap is `app/plugin_test_worker_bootstrap.py`. Do not launch this
+module through inherited PYTHONPATH or `python -m`.
 """
 
 from __future__ import annotations
