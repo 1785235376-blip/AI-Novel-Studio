@@ -111,6 +111,29 @@ def _normalize_key(key: str) -> str:
     return str(key).casefold().replace("-", "_")
 
 
+def is_allowed_virtual_mount_path(value: str) -> bool:
+    """True only for an exact declared mount or a child under that mount root.
+
+    Component-aware: `/plugin/foo` is in the virtual namespace; `/plugin-evil` is not.
+    `.` / `..` / empty segments are not treated as virtual-mount children.
+    """
+    if not value or "\\" in value or "\x00" in value:
+        return False
+    for root in ALLOWED_VIRTUAL_MOUNTS:
+        if value == root:
+            return True
+        prefix = root + "/"
+        if value.startswith(prefix):
+            rest = value[len(prefix):]
+            if not rest:
+                return False
+            parts = rest.split("/")
+            if any(part in ("", ".", "..") for part in parts):
+                return False
+            return True
+    return False
+
+
 def _looks_like_windows_abs(value: str) -> bool:
     if re.match(r"^[A-Za-z]:[\\/]", value):
         return True
@@ -122,11 +145,11 @@ def _looks_like_windows_abs(value: str) -> bool:
 
 
 def _looks_like_host_absolute_path(value: str) -> bool:
-    if value in ALLOWED_VIRTUAL_MOUNTS:
+    if is_allowed_virtual_mount_path(value):
         return False
     if _looks_like_windows_abs(value):
         return True
-    if value.startswith("/") and not value.startswith("/plugin") and value not in ALLOWED_VIRTUAL_MOUNTS:
+    if value.startswith("/"):
         return True
     return False
 
