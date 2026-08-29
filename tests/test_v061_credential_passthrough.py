@@ -4,13 +4,25 @@ import json
 import subprocess
 import sys
 
+import pytest
+
 from scripts import v061_acceptance_environment as acceptance
 
 
 SENTINEL = "TEST_ONLY_DEEPSEEK_SECRET_SENTINEL"
+# Synthetic URL used only to satisfy manifest composition. Tests never connect.
+SYNTHETIC_ACCEPTANCE_DATABASE_URL = (
+    "postgresql://batch2a:batch2a@127.0.0.1:1/ai_novel_studio_e2e_batch2a"
+)
 
 
-def test_parent_provider_secret_reaches_child_but_not_manifest(monkeypatch):
+@pytest.fixture
+def isolated_acceptance_manifest(monkeypatch):
+    monkeypatch.setattr(acceptance, "dotenv_values", lambda *_args, **_kwargs: {})
+    monkeypatch.setenv("DATABASE_URL", SYNTHETIC_ACCEPTANCE_DATABASE_URL)
+
+
+def test_parent_provider_secret_reaches_child_but_not_manifest(monkeypatch, isolated_acceptance_manifest):
     monkeypatch.setenv("DEEPSEEK_API_KEY", SENTINEL)
     monkeypatch.setenv("REAL_PROVIDER_VERIFICATION", "true")
     manifest = acceptance.build_manifest()
@@ -25,7 +37,7 @@ def test_parent_provider_secret_reaches_child_but_not_manifest(monkeypatch):
     assert "DEEPSEEK_API_KEY" not in manifest["environment"]
 
 
-def test_composed_environment_is_inherited_by_fastapi_style_python_child(monkeypatch):
+def test_composed_environment_is_inherited_by_fastapi_style_python_child(monkeypatch, isolated_acceptance_manifest):
     monkeypatch.setenv("DEEPSEEK_API_KEY", SENTINEL)
     monkeypatch.setenv("REAL_PROVIDER_VERIFICATION", "true")
     manifest = acceptance.build_manifest()
@@ -71,7 +83,7 @@ def test_missing_parent_secret_remains_absent_even_if_manifest_contains_stale_va
     assert "DEEPSEEK_API_KEY" not in child
 
 
-def test_mock_and_real_verification_modes_remain_isolated(monkeypatch):
+def test_mock_and_real_verification_modes_remain_isolated(monkeypatch, isolated_acceptance_manifest):
     monkeypatch.delenv("REAL_PROVIDER_VERIFICATION", raising=False)
     mock_manifest = acceptance.build_manifest()
     assert mock_manifest["environment"]["MOCK_PROVIDER"] == "true"
@@ -84,7 +96,7 @@ def test_mock_and_real_verification_modes_remain_isolated(monkeypatch):
     assert real_child["REAL_PROVIDER_VERIFICATION"] == "true"
 
 
-def test_all_approved_provider_secrets_are_process_only(monkeypatch):
+def test_all_approved_provider_secrets_are_process_only(monkeypatch, isolated_acceptance_manifest):
     for key in acceptance.PROVIDER_SECRET_ENVIRONMENT_KEYS:
         monkeypatch.setenv(key, f"{key}_SENTINEL")
     manifest = acceptance.build_manifest()

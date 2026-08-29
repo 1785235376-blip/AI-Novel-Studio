@@ -6,6 +6,7 @@ from app.config import Settings
 from app.repositories.factory import create_repository_bundle
 from app.repositories.chapter_repository import VersionConflict
 from app.services import NovelService,ChapterService,CanonService,ContextService,GenerationService
+from sample_novel_fixture import install_sample_novel
 
 @pytest.fixture
 def bundle(tmp_path):return create_repository_bundle(Settings(storage_backend="file",novel_data=tmp_path),tmp_path)
@@ -29,7 +30,7 @@ def test_generation_contract(bundle):
     jobs=GenerationService(bundle.generations);item={"id":"job-1","status":"QUEUED"};jobs.save(item);assert jobs.get("job-1")["status"]=="QUEUED";item["status"]="COMPLETED";jobs.save(item);assert jobs.load_all()[0]["status"]=="COMPLETED"
 
 def test_context_service_matches_legacy_shape(tmp_path):
-    source=Path(__file__).parents[1]/"novel_data/novels/sample_novel";shutil.copytree(source,tmp_path/"novels/sample_novel");bundle=create_repository_bundle(Settings(storage_backend="file",novel_data=tmp_path),tmp_path);context=ContextService(bundle.novels,bundle.chapters).build("sample_novel",3,"林海遇见沈船长",True)
+    install_sample_novel(tmp_path);bundle=create_repository_bundle(Settings(storage_backend="file",novel_data=tmp_path),tmp_path);context=ContextService(bundle.novels,bundle.chapters).build("sample_novel",3,"林海遇见沈船长",True)
     assert context["novel_id"]=="sample_novel" and context["chapter"]==3 and "privacy_omissions" in context and "forbidden_secrets" in context
 
 def test_factory_rejects_unimplemented_and_unknown():

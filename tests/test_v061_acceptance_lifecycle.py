@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+import os
 
 from scripts import v061_acceptance_supervisor as supervisor
 from scripts.v061_process_ownership import ProcessEvidence, process_identity
@@ -166,10 +167,19 @@ def final_termination(recorded, current, *, run="current", role="fastapi_listene
     return result, handle
 
 
+def assert_linux_process_identity_fail_closed(result, handle):
+    assert result.status == "UNKNOWN_IDENTITY_FAIL_CLOSED"
+    assert result.reason == "UNSUPPORTED_PLATFORM"
+    assert handle.terminated is False
+
+
 def test_final_boundary_valid_identity_terminates_same_handle():
     current = evidence(20, 10, port=59880)
     record = process_identity(run_id="current", role="fastapi_listener", evidence=current)
     result, handle = final_termination(record, current)
+    if os.name != "nt":
+        assert_linux_process_identity_fail_closed(result, handle)
+        return
     assert result.status == "TERMINATED"
     assert handle.terminated is True
     assert handle.closed is True
@@ -180,6 +190,9 @@ def test_toctou_pid_reuse_after_initial_validation_is_rejected():
     record = process_identity(run_id="current", role="fastapi_listener", evidence=original)
     replacement = ProcessEvidence(20, 99, NOW + timedelta(seconds=1), r"C:\unrelated\python.exe", ("unrelated.py",), 59880)
     result, handle = final_termination(record, replacement)
+    if os.name != "nt":
+        assert_linux_process_identity_fail_closed(result, handle)
+        return
     assert result.status in {"REJECTED_PID_REUSE", "REJECTED_IDENTITY_MISMATCH"}
     assert handle.terminated is False
 
@@ -189,6 +202,9 @@ def test_final_creation_time_mismatch_does_not_terminate():
     record = process_identity(run_id="current", role="fastapi_listener", evidence=original)
     changed = ProcessEvidence(20, 10, NOW + timedelta(seconds=1), original.executable, original.argv, 59880)
     result, handle = final_termination(record, changed)
+    if os.name != "nt":
+        assert_linux_process_identity_fail_closed(result, handle)
+        return
     assert result.status == "REJECTED_PID_REUSE"
     assert handle.terminated is False
 
@@ -197,6 +213,9 @@ def test_final_executable_mismatch_does_not_terminate():
     original = evidence(20, 10, port=59880)
     record = process_identity(run_id="current", role="fastapi_listener", evidence=original)
     result, handle = final_termination(record, evidence(20, 10, exe=r"C:\other\python.exe", port=59880))
+    if os.name != "nt":
+        assert_linux_process_identity_fail_closed(result, handle)
+        return
     assert result.reason == "EXECUTABLE_MISMATCH"
     assert handle.terminated is False
 
@@ -205,6 +224,9 @@ def test_final_argv_mismatch_does_not_terminate():
     original = evidence(20, 10, port=59880)
     record = process_identity(run_id="current", role="fastapi_listener", evidence=original)
     result, handle = final_termination(record, evidence(20, 10, argv=("other.py",), port=59880))
+    if os.name != "nt":
+        assert_linux_process_identity_fail_closed(result, handle)
+        return
     assert result.reason == "COMMAND_IDENTITY_MISMATCH"
     assert handle.terminated is False
 
@@ -213,6 +235,9 @@ def test_final_run_id_mismatch_does_not_terminate():
     current = evidence(20, 10, port=59880)
     record = process_identity(run_id="old", role="fastapi_listener", evidence=current)
     result, handle = final_termination(record, current, run="new")
+    if os.name != "nt":
+        assert_linux_process_identity_fail_closed(result, handle)
+        return
     assert result.reason == "RUN_ID_MISMATCH"
     assert handle.terminated is False
 
@@ -229,6 +254,9 @@ def test_final_parent_exited_child_identity_can_still_terminate():
     child = evidence(20, 10, port=59880)
     record = process_identity(run_id="current", role="fastapi_listener", evidence=child)
     result, handle = final_termination(record, child)
+    if os.name != "nt":
+        assert_linux_process_identity_fail_closed(result, handle)
+        return
     assert result.status == "TERMINATED"
     assert handle.terminated is True
 
@@ -245,4 +273,9 @@ def test_process_exiting_during_handle_termination_is_safe_success():
         expected_role="fastapi_listener",
         handle_factory=lambda pid: handle,
     )
+    if os.name != "nt":
+        assert result.status == "UNKNOWN_IDENTITY_FAIL_CLOSED"
+        assert result.reason == "UNSUPPORTED_PLATFORM"
+        assert handle.terminated is False
+        return
     assert result.status == "ALREADY_EXITED"

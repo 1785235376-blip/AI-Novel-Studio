@@ -15,6 +15,7 @@ from app.services import NovelService, ChapterService
 from app.services.context_snapshot_service import ContextSnapshotService
 from app.repository import FileRepository
 from app.repositories.file.lore import FileLoreRepository
+from sample_novel_fixture import install_sample_novel
 import pytest
 
 
@@ -42,8 +43,7 @@ def _wait_for_persisted_job(manager, job):
 
 
 def _manager(tmp_path, monkeypatch, provider):
-    source = Path(__file__).parents[1] / "novel_data" / "novels" / "sample_novel"
-    shutil.copytree(source, tmp_path / "novels" / "sample_novel")
+    install_sample_novel(tmp_path)
     monkeypatch.setattr(jobs_module.repo, "data", tmp_path)
     monkeypatch.setattr(jobs_module.repo, "novels", tmp_path / "novels")
     object.__setattr__(settings, "mock_provider", True)

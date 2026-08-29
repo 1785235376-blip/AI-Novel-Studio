@@ -24,7 +24,7 @@ from app.packaging.runtime_identity import (
     recover_stale_runtime_state,
     validate_process_ownership,
 )
-from app.packaging.runtime_lifecycle import DefaultPortAllocator, RuntimeLifecycle
+from app.packaging.runtime_lifecycle import RuntimeLifecycle
 from app.packaging.windows_primitives import (
     PortConflictError,
     SingleInstanceError,
@@ -93,6 +93,24 @@ class FakeJob:
     def simulate_owner_loss(self): self.terminate()
 
 
+class FakePortAllocator:
+    """Test-owned port numbers for lifecycle *order* tests.
+
+    Does not bind sockets, detect conflicts, or exercise reservation close.
+    Real exclusive loopback bind is covered only by the Windows-only test.
+    """
+    def reserve(self):
+        from app.packaging.windows_primitives import LoopbackPortReservations
+        return LoopbackPortReservations(
+            sockets={},
+            ports={
+                RuntimeRole.POSTGRESQL: 55101,
+                RuntimeRole.BACKEND: 55102,
+                RuntimeRole.FRONTEND: 55103,
+            },
+        )
+
+
 def _paths(tmp_path):
     return WindowsPackagingPaths.resolve(
         local_app_data=tmp_path/"LocalAppData",user_profile=tmp_path/"User"
@@ -103,7 +121,7 @@ def _lifecycle(tmp_path,fail_role=None):
     paths=_paths(tmp_path);events=[];inspector=FakeInspector();factory=FakeFactory(inspector,events,fail_role)
     job=FakeJob(factory.children);mutex=FakeMutex()
     lifecycle=RuntimeLifecycle(
-        paths=paths,mutex=mutex,job=job,port_allocator=DefaultPortAllocator(),
+        paths=paths,mutex=mutex,job=job,port_allocator=FakePortAllocator(),
         process_factory=factory,inspector=inspector,readiness_timeout_seconds=.1,
         shutdown_timeout_seconds=.1,
     )
@@ -147,23 +165,38 @@ def test_process_ownership_requires_all_identity_dimensions():
         validate_process_ownership(expected,wrong,runtime)
 
 
-def test_ports_are_loopback_only_unique_and_conflicts_fail_closed():
-    reservations=reserve_loopback_ports()
-    try:
-        assert len(set(reservations.ports.values()))==3
-        for reserved in reservations.sockets.values():
-            assert reserved.getsockname()[0]=="127.0.0.1"
-    finally:reservations.close()
-    with pytest.raises(ValueError,match="127.0.0.1"):
+def test_non_loopback_host_is_rejected():
+    with pytest.raises(ValueError, match="127.0.0.1"):
         reserve_loopback_ports(host="0.0.0.0")
-    held=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    held.bind(("127.0.0.1",0));held.listen(1)
+
+
+@pytest.mark.skipif(
+    os.name != "nt",
+    reason=(
+        "Windows exclusive loopback port reservation is not executed on this "
+        "platform. Missing socket.SO_EXCLUSIVEADDRUSE AttributeError on Linux "
+        "is an implementation accident, not a documented unsupported-platform contract."
+    ),
+)
+def test_windows_loopback_ports_are_unique_and_conflicts_fail_closed():
+    reservations = reserve_loopback_ports()
+    try:
+        assert len(set(reservations.ports.values())) == 3
+        for reserved in reservations.sockets.values():
+            assert reserved.getsockname()[0] == "127.0.0.1"
+    finally:
+        reservations.close()
+    held = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    held.bind(("127.0.0.1", 0))
+    held.listen(1)
     try:
         with pytest.raises(PortConflictError):
             reserve_loopback_ports(
-                roles=(RuntimeRole.BACKEND,),requested={RuntimeRole.BACKEND:held.getsockname()[1]}
+                roles=(RuntimeRole.BACKEND,),
+                requested={RuntimeRole.BACKEND: held.getsockname()[1]},
             )
-    finally:held.close()
+    finally:
+        held.close()
 
 
 def test_startup_and_shutdown_follow_required_order(tmp_path):

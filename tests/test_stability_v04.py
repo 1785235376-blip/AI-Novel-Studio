@@ -5,11 +5,12 @@ from app.document import markdown_to_document,document_to_markdown
 from app.repository import FileRepository
 from app.repositories.chapter_repository import ChapterRepository,VersionConflict
 from app.repositories.generation_repository import GenerationRepository
+from sample_novel_fixture import install_sample_novel
 
 def test_document_round_trip():
     source="# Heading\n\nParagraph\n\n```python\nprint(1)\n```";assert document_to_markdown(markdown_to_document(source))==source+"\n\n"
 def test_versions_conflict_and_restore(tmp_path):
-    shutil.copytree(Path(__file__).parents[1]/"novel_data/novels/sample_novel",tmp_path/"novels/sample_novel");repo=ChapterRepository(FileRepository(tmp_path));current=repo.get("sample_novel:1");saved=repo.save("sample_novel:1",current["document"],current["version"]);assert saved["version"]==2
+    install_sample_novel(tmp_path);repo=ChapterRepository(FileRepository(tmp_path));current=repo.get("sample_novel:1");saved=repo.save("sample_novel:1",current["document"],current["version"]);assert saved["version"]==2
     with pytest.raises(VersionConflict):repo.save("sample_novel:1",current["document"],current["version"])
     assert repo.restore("sample_novel:1",1,2)["version"]==3
 def test_job_repository_survives_new_instance(tmp_path):

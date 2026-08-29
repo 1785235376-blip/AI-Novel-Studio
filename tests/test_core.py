@@ -6,8 +6,9 @@ from app.review import deterministic_review
 from app.router import ModelRouter,Route
 from app.providers import LLMProvider,Generation,ProviderError
 from app.storage import atomic_write
+from sample_novel_fixture import sample_novel_data_root
 
-ROOT=Path(__file__).parents[1]/"novel_data"
+ROOT=sample_novel_data_root()
 
 def test_context_selects_relevant_characters():
     ctx=build_context(ROOT,"sample_novel",3,"林海在旧港遇到沈船长",False)

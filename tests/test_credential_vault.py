@@ -85,6 +85,20 @@ def test_keyring_probe_fails_when_probe_record_cannot_be_deleted():
     assert raised.value.code=="KEYRING_BACKEND_UNUSABLE"
     assert len(fake.data)==1
 
+def test_default_backend_request_is_auto_when_env_unset(monkeypatch):
+    monkeypatch.delenv("CREDENTIAL_VAULT_BACKEND", raising=False)
+    requested = {}
+
+    def fake_select(self, value):
+        requested["backend"] = value
+        from app.credential_vault import MemoryBackend
+        return MemoryBackend()
+
+    monkeypatch.setattr(CredentialVault, "_select_backend", fake_select)
+    vault = CredentialVault()
+    assert requested["backend"] == "auto"
+    assert vault.backend == "memory"
+
 def test_explicit_keyring_without_dependency_fails_closed(monkeypatch):
     def missing(_name):raise ImportError("missing")
     monkeypatch.setattr("app.credential_vault.importlib.import_module",missing)
