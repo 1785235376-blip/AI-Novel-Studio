@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "id": "dialogue-pass",
+  "name": "Dialogue Pass",
+  "description": "Declarative preset for a dialogue-forward pass. Host application is not implemented.",
+  "purpose": "Shape speech so subtext, status, and conflict carry more weight than exposition.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "dialogue_ratio",
+    "subtext_level",
+    "attribution_style"
+  ],
+  "writing_goals": [
+    "Let characters speak at cross-purposes",
+    "Reveal status through interruption, omission, and address",
+    "Keep exposition out of spoken lines unless a character would actually say it",
+    "Use beats and silence as pressure, not filler"
+  ],
+  "constraints": [
+    "Do not flatten all voices into one register",
+    "Do not use dialogue as a lore dump",
+    "Do not imitate a living author's speech patterns"
+  ],
+  "checklist": [
+    "Each speaker has a distinct aim",
+    "At least one line carries subtext",
+    "Attribution and beats support rhythm without crowding",
+    "The conversation changes a relationship or decision"
+  ],
+  "parameter_hints": {
+    "dialogue_ratio": {
+      "type": "range",
+      "min": 0.3,
+      "max": 0.8,
+      "default": 0.55
+    },
+    "subtext_level": {
+      "type": "enum",
+      "values": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "attribution_style": {
+      "type": "enum",
+      "values": [
+        "minimal",
+        "beat-led",
+        "explicit"
+      ],
+      "default": "beat-led"
+    }
+  }
+}

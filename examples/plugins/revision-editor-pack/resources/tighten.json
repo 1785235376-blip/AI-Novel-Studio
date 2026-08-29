@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "id": "tighten",
+  "name": "Tighten",
+  "description": "Declarative preset for cutting slack while preserving voice and necessary turns. Host application is not implemented.",
+  "purpose": "Remove repetition, throat-clearing, and process that does not change character or plot.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "cut_aggressiveness",
+    "voice_preserve"
+  ],
+  "writing_goals": [
+    "Cut restated information",
+    "Collapse process into summary where no character change occurs",
+    "Keep distinctive diction and load-bearing turns"
+  ],
+  "constraints": [
+    "Do not cut the cost of a decision",
+    "Do not homogenize sentence length into a monotone"
+  ],
+  "checklist": [
+    "No consecutive paragraphs make the same claim",
+    "Each remaining scene still has a job",
+    "Voice markers survive the cut"
+  ],
+  "parameter_hints": {
+    "cut_aggressiveness": {
+      "type": "enum",
+      "values": [
+        "light",
+        "moderate",
+        "severe"
+      ],
+      "default": "moderate"
+    },
+    "voice_preserve": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0",
+  "id": "relationship-planner",
+  "name": "Relationship Planner",
+  "description": "Map a load-bearing relationship's power, history, tension, and possible evolution. Field names are stable for future Canon mapping. This pack does not write canon, characters, locations, or factions. Workflow execution is not implemented.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "parties",
+      "title": "Parties",
+      "kind": "manual",
+      "intent": "Identify the people or factions in the bond.",
+      "inputs": [],
+      "outputs": [
+        "relationship.parties"
+      ]
+    },
+    {
+      "id": "relationship_type",
+      "title": "Relationship Type",
+      "kind": "manual",
+      "intent": "Kin, rival, debt, romance, command, or uneasy alliance.",
+      "inputs": [],
+      "outputs": [
+        "relationship.type"
+      ]
+    },
+    {
+      "id": "power_dynamic",
+      "title": "Power Dynamic",
+      "kind": "manual",
+      "intent": "Who can withhold what.",
+      "inputs": [],
+      "outputs": [
+        "relationship.power_dynamic"
+      ]
+    },
+    {
+      "id": "shared_history",
+      "title": "Shared History",
+      "kind": "manual",
+      "intent": "The few events that still charge the present.",
+      "inputs": [],
+      "outputs": [
+        "relationship.shared_history"
+      ]
+    },
+    {
+      "id": "current_tension",
+      "title": "Current Tension",
+      "kind": "manual",
+      "intent": "What is unspoken or unpaid now.",
+      "inputs": [],
+      "outputs": [
+        "relationship.current_tension"
+      ]
+    },
+    {
+      "id": "secret_or_debt",
+      "title": "Secret or Debt",
+      "kind": "manual",
+      "intent": "Information or obligation that could detonate.",
+      "inputs": [],
+      "outputs": [
+        "relationship.secret_or_debt"
+      ]
+    },
+    {
+      "id": "evolution_beats",
+      "title": "Evolution Beats",
+      "kind": "manual",
+      "intent": "Likely pressure points, not a locked script.",
+      "inputs": [],
+      "outputs": [
+        "relationship.evolution_beats"
+      ]
+    },
+    {
+      "id": "canon_review",
+      "title": "Canon Review",
+      "kind": "manual",
+      "intent": "Human review. This pack does not write relationship canon.",
+      "inputs": [],
+      "outputs": [
+        "relationship.canon_review",
+        "human_signoff"
+      ]
+    }
+  ],
+  "stable_domain": "relationship",
+  "writes_canon": false,
+  "runtime_binding": "not_implemented"
+}

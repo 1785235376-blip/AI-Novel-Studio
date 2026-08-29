@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "id": "scene-compression",
+  "name": "Scene Compression",
+  "description": "Declarative preset for folding novel scenes into fewer filmable events. Host application is not implemented.",
+  "purpose": "Keep the load-bearing turn while dropping travel and repeated talk.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "event_budget",
+    "witness_policy"
+  ],
+  "writing_goals": [
+    "Merge consecutive talks that share one conflict",
+    "Drop travel that does not change knowledge or alliance",
+    "Keep the irreversible choice"
+  ],
+  "constraints": [
+    "Do not compress by inventing a new plot device",
+    "Do not erase a character whose later function remains"
+  ],
+  "checklist": [
+    "The turn is still present",
+    "No essential witness was deleted silently"
+  ],
+  "parameter_hints": {
+    "event_budget": {
+      "type": "enum",
+      "values": [
+        "one-turn-per-scene",
+        "two-turns-per-scene"
+      ],
+      "default": "one-turn-per-scene"
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "manifest_version": "1.0",
+  "host_api_version": "1",
+  "id": "genre-fiction-pack",
+  "name": "Genre Fiction Pack",
+  "version": "1.0.0",
+  "description": "Official declarative genre presets using abstract narrative style. Does not imitate living authors. Host application is not implemented.",
+  "capabilities": [
+    "writing_tool"
+  ],
+  "requested_permissions": [],
+  "execution_mode": "declarative",
+  "publisher": "AI Novel Studio Official",
+  "resources": [
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/science-fiction.json",
+      "sha256": "afa06b481309cc1966e7445ada8a3192a06923b5ec374a9bd86f8431a922218c",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/fantasy.json",
+      "sha256": "aaa27cf0992fe411dc59edb4f9ad69f9d0030448644fe1a282be0692e391760b",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/mystery.json",
+      "sha256": "4614e61cc548a69e9b8101afc5f35407231142680c761d0df36ff5dc07b58f4f",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/thriller.json",
+      "sha256": "676af3a7231e1149a010bc190227d5eda58a2567b08c337de0aa69d14703ce6a",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/horror.json",
+      "sha256": "9bc4d964054ac9f07485831979320e228be968878148ea62d3d190ed5100a559",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/romance.json",
+      "sha256": "4b4774821422f07a34b3210394b3a8685c1ddd2cfc61b46a471c862da2d26159",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/historical-fiction.json",
+      "sha256": "f26a59b1121b0ed899e339687d965261d1fce6364dc5c8da5db1b54e890c983f",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "id": "emotional-scene",
+  "name": "Emotional Scene",
+  "description": "Declarative preset for interior change and relational rupture or repair. Host application is not implemented.",
+  "purpose": "Let feeling emerge from want, fear, and consequence rather than labels.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "interiority_depth",
+    "body_cue_level",
+    "relationship_focus"
+  ],
+  "writing_goals": [
+    "Name the want and the fear before the peak",
+    "Use body, gesture, and environment as evidence",
+    "Avoid summarizing the emotion the scene already shows",
+    "Leave a residual change in the relationship"
+  ],
+  "constraints": [
+    "Do not dump unprocessed trauma as spectacle",
+    "Do not resolve a long-running wound in a single unearned beat",
+    "Do not imitate a living author's sentimental register"
+  ],
+  "checklist": [
+    "The emotional stake is specific",
+    "A choice is made under feeling, not after it",
+    "Physical or environmental detail supports the peak",
+    "The aftermath is not identical to the start"
+  ],
+  "parameter_hints": {
+    "interiority_depth": {
+      "type": "enum",
+      "values": [
+        "light",
+        "medium",
+        "deep"
+      ],
+      "default": "medium"
+    },
+    "body_cue_level": {
+      "type": "enum",
+      "values": [
+        "sparse",
+        "moderate",
+        "dense"
+      ],
+      "default": "moderate"
+    },
+    "relationship_focus": {
+      "type": "enum",
+      "values": [
+        "self",
+        "dyad",
+        "group"
+      ],
+      "default": "dyad"
+    }
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "schema_version": "1.0",
+  "id": "character-builder",
+  "name": "Character Builder",
+  "description": "Collect role, want, fear, competence, voice, arc, and relationships as stable character fields. Field names are stable for future Canon mapping. This pack does not write canon, characters, locations, or factions. Workflow execution is not implemented.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "role",
+      "title": "Role",
+      "kind": "manual",
+      "intent": "Declare dramatic function: whose story this is and why they are necessary.",
+      "inputs": [],
+      "outputs": [
+        "character.role"
+      ]
+    },
+    {
+      "id": "goal",
+      "title": "Goal",
+      "kind": "manual",
+      "intent": "State a concrete near-term want.",
+      "inputs": [],
+      "outputs": [
+        "character.goal"
+      ]
+    },
+    {
+      "id": "motivation",
+      "title": "Motivation",
+      "kind": "manual",
+      "intent": "State why that want matters now.",
+      "inputs": [],
+      "outputs": [
+        "character.motivation"
+      ]
+    },
+    {
+      "id": "fear",
+      "title": "Fear",
+      "kind": "manual",
+      "intent": "Name the loss they will avoid even at high cost.",
+      "inputs": [],
+      "outputs": [
+        "character.fear"
+      ]
+    },
+    {
+      "id": "strength",
+      "title": "Strength",
+      "kind": "manual",
+      "intent": "Record a competence that can create both rescue and harm.",
+      "inputs": [],
+      "outputs": [
+        "character.strength"
+      ]
+    },
+    {
+      "id": "weakness",
+      "title": "Weakness",
+      "kind": "manual",
+      "intent": "Record a pattern that reliably causes error.",
+      "inputs": [],
+      "outputs": [
+        "character.weakness"
+      ]
+    },
+    {
+      "id": "backstory",
+      "title": "Backstory",
+      "kind": "manual",
+      "intent": "Keep only history that still charges present behavior.",
+      "inputs": [],
+      "outputs": [
+        "character.backstory"
+      ]
+    },
+    {
+      "id": "voice",
+      "title": "Voice",
+      "kind": "manual",
+      "intent": "Note diction, silence habits, and forbidden topics.",
+      "inputs": [],
+      "outputs": [
+        "character.voice"
+      ]
+    },
+    {
+      "id": "arc",
+      "title": "Arc",
+      "kind": "manual",
+      "intent": "Sketch start state and pressure toward change without locking an ending.",
+      "inputs": [],
+      "outputs": [
+        "character.arc"
+      ]
+    },
+    {
+      "id": "relationships",
+      "title": "Relationships",
+      "kind": "manual",
+      "intent": "List load-bearing bonds and debts.",
+      "inputs": [],
+      "outputs": [
+        "character.relationships"
+      ]
+    }
+  ],
+  "stable_domain": "character",
+  "writes_canon": false,
+  "runtime_binding": "not_implemented"
+}

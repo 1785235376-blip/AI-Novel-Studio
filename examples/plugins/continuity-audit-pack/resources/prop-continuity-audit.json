@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0",
+  "id": "prop-continuity-audit",
+  "name": "Prop Continuity Audit",
+  "description": "Track objects, letters, keys, weapons, and tokens: possession, damage, and last seen state. Continuity audits are declarative templates. They do not modify novel data or bypass Canon, Revision, or permission systems. Workflow execution is not implemented.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "collect_context",
+      "title": "Collect Context",
+      "kind": "manual",
+      "intent": "Gather established facts for this audit domain. Read-only.",
+      "inputs": [
+        "prop_id"
+      ],
+      "outputs": [
+        "last_seen_state",
+        "custodian"
+      ]
+    },
+    {
+      "id": "identify_constraints",
+      "title": "Identify Constraints",
+      "kind": "manual",
+      "intent": "List rules, dates, identities, or object states later text must honor.",
+      "inputs": [
+        "last_seen_state"
+      ],
+      "outputs": [
+        "unique_items",
+        "destruction_events"
+      ]
+    },
+    {
+      "id": "compare_current_content",
+      "title": "Compare Current Content",
+      "kind": "manual",
+      "intent": "Place the passage or chapter against those constraints.",
+      "inputs": [
+        "on_page_uses",
+        "custodian"
+      ],
+      "outputs": [
+        "prop_claims"
+      ]
+    },
+    {
+      "id": "detect_conflicts",
+      "title": "Detect Conflicts",
+      "kind": "manual",
+      "intent": "Record mismatches without rewriting the novel.",
+      "inputs": [
+        "prop_claims"
+      ],
+      "outputs": [
+        "duplication",
+        "resurrection",
+        "wrong_custodian"
+      ]
+    },
+    {
+      "id": "classify_severity",
+      "title": "Classify Severity",
+      "kind": "manual",
+      "intent": "Separate continuity breaks, ambiguities, and style-only notes.",
+      "inputs": [
+        "detected_conflicts"
+      ],
+      "outputs": [
+        "break",
+        "ambiguity",
+        "style"
+      ]
+    },
+    {
+      "id": "recommend_resolution",
+      "title": "Recommend Resolution",
+      "kind": "manual",
+      "intent": "Propose human-reviewable options. Do not apply a patch.",
+      "inputs": [
+        "classified_findings"
+      ],
+      "outputs": [
+        "options"
+      ]
+    },
+    {
+      "id": "human_review",
+      "title": "Human Review",
+      "kind": "manual",
+      "intent": "Require a person to accept, reject, or defer each finding.",
+      "inputs": [
+        "options"
+      ],
+      "outputs": [
+        "decision"
+      ]
+    }
+  ],
+  "audit_domain": "prop",
+  "writes_canon": false,
+  "writes_revision": false,
+  "permission_bypass": false,
+  "stable_domain": "prop"
+}

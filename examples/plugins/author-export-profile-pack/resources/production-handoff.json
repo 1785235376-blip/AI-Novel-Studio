@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "id": "production-handoff",
+  "name": "Production Handoff JSON",
+  "description": "Declarative production-facing bundle of story objects for later IMAGE, VIDEO, and canvas pipelines. EXPORT PROFILE EXECUTION = NOT IMPLEMENTED.",
+  "execution": "not_implemented",
+  "execution_supported": false,
+  "host_export_execution": "NOT_IMPLEMENTED",
+  "content_class": "declarative_data",
+  "format": "json",
+  "intended_use": "Handoff of characters, locations, open continuity, and shot intents. Not a media generator.",
+  "section_ordering": [
+    "project_meta",
+    "characters",
+    "locations",
+    "factions",
+    "open_continuity",
+    "scene_list",
+    "shot_intents",
+    "unresolved_risks"
+  ],
+  "metadata_inclusion": {
+    "title": true,
+    "source_novel_id": true,
+    "adaptation_notes": true,
+    "credentials": false,
+    "secrets": false,
+    "absolute_paths": false
+  },
+  "naming_convention": "{novel_slug}-production-handoff.json",
+  "structural_options": {
+    "schema_version": "1.0",
+    "pretty_print": true,
+    "include_prompt_text": true,
+    "include_binary_media": false
+  },
+  "compatibility_notes": [
+    "EXPORT PROFILE EXECUTION = NOT IMPLEMENTED.",
+    "Does not call image or video providers.",
+    "Does not include credentials, vault secrets, or absolute filesystem paths.",
+    "Intended as a future Narrative Production OS input, not a current runtime."
+  ]
+}

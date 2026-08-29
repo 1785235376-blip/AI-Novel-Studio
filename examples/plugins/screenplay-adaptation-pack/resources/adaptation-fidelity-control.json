@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "id": "adaptation-fidelity-control",
+  "name": "Adaptation Fidelity Control",
+  "description": "Declarative preset for what must be preserved versus what may change. Host application is not implemented.",
+  "purpose": "Declare sacred facts, compressible texture, and human-review requirements.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "fidelity",
+    "change_policy"
+  ],
+  "writing_goals": [
+    "List sacred facts, relationships, and ending conditions",
+    "List compressible texture",
+    "Record risks of a change to later continuity"
+  ],
+  "constraints": [
+    "Do not claim the host will generate a screenplay in this pack",
+    "Do not imitate a living screenwriter's voice"
+  ],
+  "checklist": [
+    "Preserve-list is specific",
+    "Change-list names the dramatic reason",
+    "Human review is required before any future application"
+  ],
+  "parameter_hints": {
+    "must_preserve": {
+      "type": "string",
+      "optional": true,
+      "intent": "Facts or turns that survive adaptation."
+    },
+    "may_change": {
+      "type": "string",
+      "optional": true,
+      "intent": "Texture that can move or drop."
+    }
+  }
+}

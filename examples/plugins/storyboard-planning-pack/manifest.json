@@ -1,0 +1,44 @@
+{
+  "manifest_version": "1.0",
+  "host_api_version": "1",
+  "id": "storyboard-planning-pack",
+  "name": "Storyboard Planning Pack",
+  "version": "1.0.0",
+  "description": "Official declarative shot, image-prompt, motion-prompt, and transition planning templates. Does not generate media, register providers, or execute motion prompts.",
+  "capabilities": [
+    "workflow"
+  ],
+  "requested_permissions": [],
+  "execution_mode": "declarative",
+  "publisher": "AI Novel Studio Official",
+  "resources": [
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/scene-to-shot-list.json",
+      "sha256": "0945bb4f18cda23a246d706eb501b05ee8d50748df82818be53cc8e1a34f19ca",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/image-prompt-preparation.json",
+      "sha256": "519fec5bf12d2ba39b0d04e7e715b02cec853175af62b36ddb354fd96ea36a40",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/motion-prompt-preparation.json",
+      "sha256": "08464303b636f18f77c07ec79b0eef6d787533ad50b923f278a5e01904eb84e5",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/transition-planning.json",
+      "sha256": "5d3e13596bcc6af431ad4888b35a1c47ec075fd7cbedb296e09888e9613562db",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    }
+  ]
+}

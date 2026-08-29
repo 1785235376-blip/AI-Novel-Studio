@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "id": "novel-to-beat-sheet",
+  "name": "Novel to Beat Sheet",
+  "description": "Declarative compression of a novel passage into an ordered beat sheet. Adaptation execution is not implemented.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "novel_passage",
+      "title": "Novel Passage",
+      "kind": "manual",
+      "intent": "Select the source passage. Do not fetch or mutate novel files here.",
+      "inputs": [
+        "adaptation.source_passage_ref"
+      ],
+      "outputs": [
+        "adaptation.passage_excerpt_note"
+      ]
+    },
+    {
+      "id": "narrative_intent",
+      "title": "Narrative Intent",
+      "kind": "manual",
+      "intent": "State what the passage must still mean after compression.",
+      "inputs": [],
+      "outputs": [
+        "adaptation.narrative_intent"
+      ]
+    },
+    {
+      "id": "essential_events",
+      "title": "Essential Events",
+      "kind": "manual",
+      "intent": "Keep only events the later film still requires.",
+      "inputs": [],
+      "outputs": [
+        "adaptation.essential_events"
+      ]
+    },
+    {
+      "id": "character_beats",
+      "title": "Character Beats",
+      "kind": "manual",
+      "intent": "Record recognitions, decisions, and relationship turns.",
+      "inputs": [],
+      "outputs": [
+        "adaptation.character_beats"
+      ]
+    },
+    {
+      "id": "conflict_beats",
+      "title": "Conflict Beats",
+      "kind": "manual",
+      "intent": "Record opposition moves that remain visible on screen.",
+      "inputs": [],
+      "outputs": [
+        "adaptation.conflict_beats"
+      ]
+    },
+    {
+      "id": "emotional_beats",
+      "title": "Emotional Beats",
+      "kind": "manual",
+      "intent": "Record feeling-turns that need a visual or spoken home.",
+      "inputs": [],
+      "outputs": [
+        "adaptation.emotional_beats"
+      ]
+    },
+    {
+      "id": "beat_sheet",
+      "title": "Beat Sheet",
+      "kind": "manual",
+      "intent": "Assemble an ordered beat list. Execution of adaptation is not implemented.",
+      "inputs": [],
+      "outputs": [
+        "adaptation.beat_sheet"
+      ]
+    }
+  ],
+  "adaptation_execution": "not_implemented"
+}

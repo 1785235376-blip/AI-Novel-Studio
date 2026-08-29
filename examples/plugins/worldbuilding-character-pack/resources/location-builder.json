@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0",
+  "id": "location-builder",
+  "name": "Location Builder",
+  "description": "Define a place's geography, function, access, and story use without writing canon. Field names are stable for future Canon mapping. This pack does not write canon, characters, locations, or factions. Workflow execution is not implemented.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "identity",
+      "title": "Identity",
+      "kind": "manual",
+      "intent": "Name the place and the scenes it is built to host.",
+      "inputs": [],
+      "outputs": [
+        "location.identity"
+      ]
+    },
+    {
+      "id": "geography",
+      "title": "Geography",
+      "kind": "manual",
+      "intent": "Record scale, climate, and position relative to other places.",
+      "inputs": [],
+      "outputs": [
+        "location.geography"
+      ]
+    },
+    {
+      "id": "function",
+      "title": "Function",
+      "kind": "manual",
+      "intent": "What people do here: home, market, fortress, ruin, workplace.",
+      "inputs": [],
+      "outputs": [
+        "location.function"
+      ]
+    },
+    {
+      "id": "atmosphere",
+      "title": "Atmosphere",
+      "kind": "manual",
+      "intent": "Sensory defaults and social temperature.",
+      "inputs": [],
+      "outputs": [
+        "location.atmosphere"
+      ]
+    },
+    {
+      "id": "access_rules",
+      "title": "Access Rules",
+      "kind": "manual",
+      "intent": "Who may enter, who is watched, what is forbidden.",
+      "inputs": [],
+      "outputs": [
+        "location.access_rules"
+      ]
+    },
+    {
+      "id": "connected_places",
+      "title": "Connected Places",
+      "kind": "manual",
+      "intent": "Routes, delays, and dependencies.",
+      "inputs": [],
+      "outputs": [
+        "location.connected_places"
+      ]
+    },
+    {
+      "id": "story_use",
+      "title": "Story Use",
+      "kind": "manual",
+      "intent": "Conflicts this place makes easier or harder.",
+      "inputs": [],
+      "outputs": [
+        "location.story_use"
+      ]
+    },
+    {
+      "id": "canon_review",
+      "title": "Canon Review",
+      "kind": "manual",
+      "intent": "Human review. This pack does not write location canon.",
+      "inputs": [],
+      "outputs": [
+        "location.canon_review",
+        "human_signoff"
+      ]
+    }
+  ],
+  "stable_domain": "location",
+  "writes_canon": false,
+  "runtime_binding": "not_implemented"
+}

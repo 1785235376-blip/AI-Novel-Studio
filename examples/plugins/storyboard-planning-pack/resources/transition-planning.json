@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "id": "transition-planning",
+  "name": "Transition Planning",
+  "description": "Declarative continuity planning across a cut. Does not render transitions or write media files.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "previous_shot",
+      "title": "Previous Shot",
+      "kind": "manual",
+      "intent": "Identify the outgoing shot.",
+      "inputs": [
+        "transition.previous_shot"
+      ],
+      "outputs": [
+        "transition.previous_shot_id"
+      ]
+    },
+    {
+      "id": "boundary_state",
+      "title": "Boundary State",
+      "kind": "manual",
+      "intent": "Last frame conditions: eyeline, motion, light, geography.",
+      "inputs": [],
+      "outputs": [
+        "transition.boundary_state"
+      ]
+    },
+    {
+      "id": "next_shot",
+      "title": "Next Shot",
+      "kind": "manual",
+      "intent": "Identify the incoming shot.",
+      "inputs": [
+        "transition.next_shot"
+      ],
+      "outputs": [
+        "transition.next_shot_id"
+      ]
+    },
+    {
+      "id": "continuity_risk",
+      "title": "Continuity Risk",
+      "kind": "manual",
+      "intent": "Jump cuts, costume breaks, axis breaks, time of day.",
+      "inputs": [],
+      "outputs": [
+        "transition.continuity_risk"
+      ]
+    },
+    {
+      "id": "transition_intent",
+      "title": "Transition Intent",
+      "kind": "manual",
+      "intent": "Why the cut or dissolve exists dramatically.",
+      "inputs": [],
+      "outputs": [
+        "transition.transition_intent"
+      ]
+    },
+    {
+      "id": "suggested_transition_type",
+      "title": "Suggested Transition Type",
+      "kind": "manual",
+      "intent": "Cut, dissolve, wipe, match, smash, fade as a suggestion only.",
+      "inputs": [],
+      "outputs": [
+        "transition.suggested_type"
+      ]
+    }
+  ],
+  "media_generation": "not_implemented",
+  "provider_registration": false,
+  "calls_image_model": false,
+  "calls_video_model": false,
+  "writes_media_files": false
+}

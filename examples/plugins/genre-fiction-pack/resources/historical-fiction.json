@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "id": "historical-fiction",
+  "name": "Historical Fiction",
+  "description": "Declarative historical-fiction preset. Period constraint and social texture; no living-author imitation.",
+  "purpose": "Let period institutions, material life, and speech limits shape what characters can do.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "pacing_tendency",
+    "description_tendency",
+    "dialogue_tendency"
+  ],
+  "writing_goals": [
+    "Anchor scenes in period-possible action and technology",
+    "Show class, gender, faith, or law as live constraints",
+    "Avoid modern slang and modern problem-solving shortcuts"
+  ],
+  "constraints": [
+    "Do not imitate a living author",
+    "Use abstract narrative style, not a named living voice",
+    "Tourist-guide exposition",
+    "Characters with unexplained modern ethics and no friction",
+    "Anachronistic tech or medicine used as a convenience"
+  ],
+  "checklist": [
+    "Dates, titles, and institutions stay internally consistent",
+    "Travel and communication delays are respected",
+    "Social penalties for transgression remain in force",
+    "No unexplained anachronism in tools or speech"
+  ],
+  "parameter_hints": {
+    "pacing_tendency": {
+      "type": "string",
+      "value": "social maneuver and delayed news; travel and letters take time"
+    },
+    "description_tendency": {
+      "type": "string",
+      "value": "material culture, labor, clothing, food, and public ritual"
+    },
+    "dialogue_tendency": {
+      "type": "string",
+      "value": "period-plausible register without pastiche overload"
+    }
+  },
+  "genre": "historical-fiction",
+  "narrative_priorities": [
+    "Anchor scenes in period-possible action and technology",
+    "Show class, gender, faith, or law as live constraints",
+    "Avoid modern slang and modern problem-solving shortcuts"
+  ],
+  "pacing_tendency": "social maneuver and delayed news; travel and letters take time",
+  "description_tendency": "material culture, labor, clothing, food, and public ritual",
+  "dialogue_tendency": "period-plausible register without pastiche overload",
+  "suspense_worldbuilding_emphasis": "worldbuilding is historical constraint; suspense from social exposure and delayed information",
+  "common_pitfalls": [
+    "Tourist-guide exposition",
+    "Characters with unexplained modern ethics and no friction",
+    "Anachronistic tech or medicine used as a convenience"
+  ],
+  "consistency_checklist": [
+    "Dates, titles, and institutions stay internally consistent",
+    "Travel and communication delays are respected",
+    "Social penalties for transgression remain in force",
+    "No unexplained anachronism in tools or speech"
+  ],
+  "style_notes": [
+    "Period texture without museum voice",
+    "Do not imitate a living historical novelist"
+  ]
+}

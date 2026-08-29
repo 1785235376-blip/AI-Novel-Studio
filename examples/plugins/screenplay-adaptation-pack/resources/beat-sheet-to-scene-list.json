@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "id": "beat-sheet-to-scene-list",
+  "name": "Beat Sheet to Scene List",
+  "description": "Declarative mapping from beats to scene goals, places, people, conflict, turn, and exit state. Not executed.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "beat",
+      "title": "Beat",
+      "kind": "manual",
+      "intent": "Take one beat as input. This pack does not run a node graph.",
+      "inputs": [
+        "scene.beat_ref"
+      ],
+      "outputs": [
+        "scene.beat_summary"
+      ]
+    },
+    {
+      "id": "scene_goal",
+      "title": "Scene Goal",
+      "kind": "manual",
+      "intent": "What must be true by the end of the scene.",
+      "inputs": [],
+      "outputs": [
+        "scene.goal"
+      ]
+    },
+    {
+      "id": "location",
+      "title": "Location",
+      "kind": "manual",
+      "intent": "Where the camera can actually be.",
+      "inputs": [],
+      "outputs": [
+        "scene.location"
+      ]
+    },
+    {
+      "id": "characters",
+      "title": "Characters",
+      "kind": "manual",
+      "intent": "Who must be present for the beat to land.",
+      "inputs": [],
+      "outputs": [
+        "scene.characters"
+      ]
+    },
+    {
+      "id": "conflict",
+      "title": "Conflict",
+      "kind": "manual",
+      "intent": "The visible opposition inside the scene.",
+      "inputs": [],
+      "outputs": [
+        "scene.conflict"
+      ]
+    },
+    {
+      "id": "turn",
+      "title": "Turn",
+      "kind": "manual",
+      "intent": "The change that justifies cutting elsewhere.",
+      "inputs": [],
+      "outputs": [
+        "scene.turn"
+      ]
+    },
+    {
+      "id": "exit_state",
+      "title": "Exit State",
+      "kind": "manual",
+      "intent": "Information, alliance, or geography after the cut.",
+      "inputs": [],
+      "outputs": [
+        "scene.exit_state"
+      ]
+    }
+  ],
+  "adaptation_execution": "not_implemented"
+}

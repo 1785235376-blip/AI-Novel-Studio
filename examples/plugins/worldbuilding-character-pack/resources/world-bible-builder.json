@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0",
+  "id": "world-bible-builder",
+  "name": "World Bible Builder",
+  "description": "Assemble a versionable world bible from concept through conflict sources, then human canon review. Field names are stable for future Canon mapping. This pack does not write canon, characters, locations, or factions. Workflow execution is not implemented.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "concept",
+      "title": "Concept",
+      "kind": "manual",
+      "intent": "State the world's core distinction and the stories it can support.",
+      "inputs": [],
+      "outputs": [
+        "world.concept",
+        "world.story_promise"
+      ]
+    },
+    {
+      "id": "rules",
+      "title": "Rules",
+      "kind": "manual",
+      "intent": "Record hard limits of physics, magic, or law.",
+      "inputs": [],
+      "outputs": [
+        "world.rules"
+      ]
+    },
+    {
+      "id": "geography",
+      "title": "Geography",
+      "kind": "manual",
+      "intent": "Name regions, routes, climates, and chokepoints.",
+      "inputs": [],
+      "outputs": [
+        "world.geography"
+      ]
+    },
+    {
+      "id": "history",
+      "title": "History",
+      "kind": "manual",
+      "intent": "List the few past events that still pressure the present.",
+      "inputs": [],
+      "outputs": [
+        "world.history"
+      ]
+    },
+    {
+      "id": "society",
+      "title": "Society",
+      "kind": "manual",
+      "intent": "Describe class, kinship, labor, and everyday constraint.",
+      "inputs": [],
+      "outputs": [
+        "world.society"
+      ]
+    },
+    {
+      "id": "technology_magic",
+      "title": "Technology / Magic",
+      "kind": "manual",
+      "intent": "Define tools of power and their costs.",
+      "inputs": [],
+      "outputs": [
+        "world.technology_magic"
+      ]
+    },
+    {
+      "id": "factions",
+      "title": "Factions",
+      "kind": "manual",
+      "intent": "Identify groups with incompatible goals.",
+      "inputs": [],
+      "outputs": [
+        "world.factions"
+      ]
+    },
+    {
+      "id": "conflict_sources",
+      "title": "Conflict Sources",
+      "kind": "manual",
+      "intent": "Name structural conflicts the plot can occupy.",
+      "inputs": [],
+      "outputs": [
+        "world.conflict_sources"
+      ]
+    },
+    {
+      "id": "canon_review",
+      "title": "Canon Review",
+      "kind": "manual",
+      "intent": "Human review before any future canon write.",
+      "inputs": [],
+      "outputs": [
+        "world.canon_review",
+        "human_signoff"
+      ]
+    }
+  ],
+  "stable_domain": "world",
+  "writes_canon": false,
+  "runtime_binding": "not_implemented"
+}

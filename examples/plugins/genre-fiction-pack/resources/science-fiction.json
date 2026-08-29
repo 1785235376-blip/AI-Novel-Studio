@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "id": "science-fiction",
+  "name": "Science Fiction",
+  "description": "Declarative science-fiction preset. Abstract technological speculation; no living-author imitation.",
+  "purpose": "Keep speculation causal: a changed condition must produce social, ethical, or survival consequences.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "pacing_tendency",
+    "description_tendency",
+    "dialogue_tendency"
+  ],
+  "writing_goals": [
+    "Make the novum alter daily life, not just scenery",
+    "Let method and constraint be visible enough to feel fair",
+    "Test characters against systems they cannot simply wish away"
+  ],
+  "constraints": [
+    "Do not imitate a living author",
+    "Use abstract narrative style, not a named living voice",
+    "Infodump before the human problem is live",
+    "Magic-wand technology with no cost",
+    "Society unchanged despite a civilization-scale invention"
+  ],
+  "checklist": [
+    "The governing constraint of the novum is stated",
+    "Later scenes still obey that constraint",
+    "Social effects match the scale of the invention",
+    "No unexplained exception for convenience"
+  ],
+  "parameter_hints": {
+    "pacing_tendency": {
+      "type": "string",
+      "value": "idea-then-consequence; allow explanation only when it changes a decision"
+    },
+    "description_tendency": {
+      "type": "string",
+      "value": "concrete artifacts and procedures over cosmic abstraction"
+    },
+    "dialogue_tendency": {
+      "type": "string",
+      "value": "competence and disagreement about method; avoid lecture unless a character is lecturing"
+    }
+  },
+  "genre": "science-fiction",
+  "narrative_priorities": [
+    "Make the novum alter daily life, not just scenery",
+    "Let method and constraint be visible enough to feel fair",
+    "Test characters against systems they cannot simply wish away"
+  ],
+  "pacing_tendency": "idea-then-consequence; allow explanation only when it changes a decision",
+  "description_tendency": "concrete artifacts and procedures over cosmic abstraction",
+  "dialogue_tendency": "competence and disagreement about method; avoid lecture unless a character is lecturing",
+  "suspense_worldbuilding_emphasis": "worldbuilding serves the problem; suspense comes from systems failing or being gamed",
+  "common_pitfalls": [
+    "Infodump before the human problem is live",
+    "Magic-wand technology with no cost",
+    "Society unchanged despite a civilization-scale invention"
+  ],
+  "consistency_checklist": [
+    "The governing constraint of the novum is stated",
+    "Later scenes still obey that constraint",
+    "Social effects match the scale of the invention",
+    "No unexplained exception for convenience"
+  ],
+  "style_notes": [
+    "Prefer cool precision and causal chains",
+    "Sense of wonder is earned by scale plus cost"
+  ]
+}

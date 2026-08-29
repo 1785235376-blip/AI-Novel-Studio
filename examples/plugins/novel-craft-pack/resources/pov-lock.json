@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "id": "pov-lock",
+  "name": "POV Lock",
+  "description": "Declarative preset that locks knowledge, diction, and perception to one viewpoint. Host application is not implemented.",
+  "purpose": "Prevent accidental head-hopping and knowledge leaks.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "pov",
+    "knowledge_boundary",
+    "free_indirect"
+  ],
+  "writing_goals": [
+    "Report only what the viewpoint can perceive or infer",
+    "Keep diction inside the viewpoint's lexicon",
+    "Mark any later POV shift as a hard scene break",
+    "Use free indirect style without borrowing other minds"
+  ],
+  "constraints": [
+    "Do not reveal off-stage facts the viewpoint cannot know",
+    "Do not narrate another character's private thought in the same paragraph",
+    "Do not treat omniscience as a default rescue"
+  ],
+  "checklist": [
+    "Viewpoint character is named or uniquely identified",
+    "No unsignaled head-hop occurs",
+    "Inferences are labeled as guesses when they are guesses",
+    "Scene breaks precede any POV change"
+  ],
+  "parameter_hints": {
+    "pov": {
+      "type": "enum",
+      "values": [
+        "first",
+        "second",
+        "third_limited"
+      ],
+      "default": "third_limited"
+    },
+    "knowledge_boundary": {
+      "type": "enum",
+      "values": [
+        "strict",
+        "inferred"
+      ],
+      "default": "strict"
+    },
+    "free_indirect": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

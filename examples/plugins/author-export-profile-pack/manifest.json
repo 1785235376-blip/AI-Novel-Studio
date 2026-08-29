@@ -1,0 +1,44 @@
+{
+  "manifest_version": "1.0",
+  "host_api_version": "1",
+  "id": "author-export-profile-pack",
+  "name": "Author Export Profile Pack",
+  "version": "1.0.0",
+  "description": "Official declarative export profiles for Novel Markdown, Manuscript Plain Text, Screenplay Outline JSON, and Production Handoff JSON. EXPORT PROFILE EXECUTION = NOT IMPLEMENTED.",
+  "capabilities": [
+    "exporter"
+  ],
+  "requested_permissions": [],
+  "execution_mode": "declarative",
+  "publisher": "AI Novel Studio Official",
+  "resources": [
+    {
+      "kind": "export_profiles",
+      "relative_path": "resources/novel-markdown.json",
+      "sha256": "333b6e0236d8d2c65bf3b3656ef602d578bb5e782171800250f923c01dac3ef9",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "export_profiles",
+      "relative_path": "resources/manuscript-plain-text.json",
+      "sha256": "f74e97f47f319063261f10796b092e5a48de1e8cd2643d19db49b29b06cd20e2",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "export_profiles",
+      "relative_path": "resources/screenplay-outline.json",
+      "sha256": "bdffff1c6de66f4fcd2abc64f5c0d39e0f5fe6945c07aa6fc16da7cdaeb01cc2",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "export_profiles",
+      "relative_path": "resources/production-handoff.json",
+      "sha256": "c29bf203399cc437b8c0dea9007abf993c3f9d8fcd34577d42dc6b8edfea71d0",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "manifest_version": "1.0",
+  "host_api_version": "1",
+  "id": "worldbuilding-character-pack",
+  "name": "Worldbuilding and Character Pack",
+  "version": "1.0.0",
+  "description": "Official declarative builders for world bible, character, faction, location, character arc, and relationship planning. JSON names are stable for future Canon mapping. This pack does not write canon.",
+  "capabilities": [
+    "workflow"
+  ],
+  "requested_permissions": [],
+  "execution_mode": "declarative",
+  "publisher": "AI Novel Studio Official",
+  "resources": [
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/world-bible-builder.json",
+      "sha256": "7c07e55e08bb0c79603c1bf7d4b1e9c1e5e5cc8eaf95f8041f5e12ff7eb87abf",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/character-builder.json",
+      "sha256": "b8bdbecbe7d6fcd6fabdbcb55cfb2c70757ed2f195ef85361810a731dfcf6259",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/faction-builder.json",
+      "sha256": "80754fd9710614018bad9d198482ea2af6cc2fce39041dfdb3d6e4dfccde56f4",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/location-builder.json",
+      "sha256": "12be008f24b95f65fa85782690c61fcfaddc900ba0f9b6286d71ee26fa83c325",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/character-arc-planner.json",
+      "sha256": "28d4d9e4c00866a495fdf7de8f33329da648fa9b2ec8fd40b8d5561fe60866fe",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/relationship-planner.json",
+      "sha256": "eca78b8943c2ec80721e901ff4727d5b005ac2e42a8fa2412bb91bb9f1c51bc1",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    }
+  ]
+}
