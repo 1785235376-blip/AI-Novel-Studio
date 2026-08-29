@@ -1,24 +1,26 @@
 # Issue #14 Batch 2A — clean regression reproducibility foundation
 
-This batch only repaired test reproducibility: fixtures, settings isolation, platform classification, optional-dependency classification, and the baseline-failure registry. It did not repair the four production logic defects and did not touch Draft PR #12.
+This batch only repaired test reproducibility: fixtures, settings isolation, platform classification, optional-dependency classification, and the baseline-failure registry. It did not repair the four production logic defects and did not modify PR #12 production code.
 
-| Field | Value |
-| --- | --- |
-| Issue | [#14](https://github.com/1785235376-blip/AI-Novel-Studio/issues/14) |
-| Base SHA | `origin/main` `d8174af8cb68c5e4edf920e6ccb45671f19ff3c9` |
-| Work branch | `fix/p0-clean-regression-foundation` |
-| Date | 2026-08-29 |
-| Operator | Grok (Issue #14 Batch 2A / 2A.1) |
-| Production code changes | 0 |
-| Frontend code changes | 0 |
-| Schema / migration changes | 0 |
-| PR #12 touched | NO |
-| New skip / xfail | Batch 2A: 0. Batch 2A.1: +1 skip (Windows exclusive ports off Windows), 0 xfail |
-| Assertions weakened | 0 |
-| Real PostgreSQL operations | 0 |
-| Real Provider requests | 0 |
-| Real credential access | 0 |
-| V1.0 / DH-01–DH-08 / Release | UNCHANGED / NOT_RUN / NOT EVALUATED |
+| Field | Historical Batch 2A / 2A.1 | Batch 2A.2 current-main integration |
+| --- | --- | --- |
+| Issue | [#14](https://github.com/1785235376-blip/AI-Novel-Studio/issues/14) | same |
+| Base SHA | `d8174af8cb68c5e4edf920e6ccb45671f19ff3c9` (historical; **not** current-main) | current-main `e4dd24a682d2338d3aaf9ffa6880cbb1e364e6ac` |
+| Work branch | `fix/p0-clean-regression-foundation` | same |
+| Pre-integration PR HEAD | `407b74a628db1ca26b7ced79647a563e64bc7cd7` | same |
+| Merge | n/a | `--no-ff` `b15b58a30f29f019c70cb33485619d78d59b8a3f` |
+| Date | 2026-08-29 | 2026-08-29 |
+| Operator | Grok (Issue #14 Batch 2A / 2A.1) | Grok Integration Worker (Batch 2A.2) |
+| Production code changes vs that base | 0 | 0 vs current-main |
+| Frontend code changes vs that base | 0 | 0 vs current-main |
+| Schema / migration changes vs that base | 0 | 0 vs current-main |
+| PR #12 | not rebased onto | already in shared history; not modified |
+| New skip / xfail | Batch 2A: 0. Batch 2A.1: +1 skip (Windows exclusive ports off Windows), 0 xfail | HEAD skip 28 vs main 27; 0 xfail |
+| Assertions weakened | 0 | 0 |
+| Real PostgreSQL operations | 0 | 0 |
+| Real Provider requests | 0 | 0 |
+| Real credential access | 0 | 0 |
+| V1.0 / DH-01–DH-08 / Release | UNCHANGED / NOT_RUN / NOT EVALUATED | same |
 
 ## Phase 0 baseline
 
@@ -101,7 +103,7 @@ Batch 2A.1:
 
 ## Phase 6 regression
 
-Batch 2A implementer AFTER was 798/4/27 on one run. That tuple is **not** the unique stable AFTER.
+Batch 2A implementer AFTER was 798/4/27 on one run. That tuple is **not** the unique stable AFTER. Those counts are bound to historical `d8174af`, not current-main.
 
 | Check | BEFORE (2A implementer) | Independent Reviewer HEAD | 2A.1 run 1 | 2A.1 run 2 | 2A.1 run 3 |
 | --- | --- | --- | --- | --- | --- |
@@ -114,7 +116,7 @@ Batch 2A implementer AFTER was 798/4/27 on one run. That tuple is **not** the un
 
 Named production defects (not repaired):
 
-1. `tests/test_generation_variants_phase3.py::test_generation_is_idempotent_under_concurrent_submission` — isolation 20/20 FAIL; aggregate flake
+1. `tests/test_generation_variants_phase3.py::test_generation_is_idempotent_under_concurrent_submission` — isolation-reproducible FAIL; aggregate flake
 2. `tests/test_p1_regression.py::test_visual_continuity_reports_scene_jumps`
 3. `tests/test_user_preference_service.py::test_preferences_are_explicit_and_separate`
 4. `tests/test_world_rule_payload.py::test_world_rule_payload_normalizes_terms`
@@ -137,7 +139,7 @@ Typecheck is **not** a stable baseline: Independent Reviewer clean worktree PASS
 1. `c87b1a3` test: isolate clean-clone fixtures and runtime settings
 2. `da6fb6c` docs: establish current-main failure registry
 3. `b711611` test: narrow vault isolation and classify Windows ports
-4. (this file) docs: reconcile independent review evidence
+4. `407b74a` docs: reconcile independent review evidence
 
 Draft PR #19 remains Draft. Do not merge. Do not close Issue #14.
 
@@ -148,13 +150,65 @@ Draft PR #19 remains Draft. Do not merge. Do not close Issue #14.
 - Recorded concurrent aggregate flake with three full-suite runs (not the best of N)
 - Distinguished Vite bundle vs canonical `tsc -b && vite build`
 
+## Batch 2A.2 current-main integration
+
+Fresh clean clone (not the dirty workspace that had untracked `frontend/package-lock.json`). Independent worktree at `e4dd24a`. Ordinary `git merge --no-ff origin/main`. No conflict. No rebase / amend / squash / force-push.
+
+`git diff --name-status origin/main...HEAD` after merge: tests, fixtures, and docs only. PR #12 production / frontend / schema / examples files are shared history, not PR #19 delta. PRODUCTION CODE CHANGES = 0 **versus current-main**.
+
+### Current-main BASE (`e4dd24a` independent worktree)
+
+Python 3.11.2; `uv pip install -e .[dev]`; not `.[vault]`; `STORAGE_BACKEND=file`; `env -i`; run-scoped TMP/basetemp; no user `.env`.
+
+| Check | Result |
+| --- | --- |
+| Backend full pytest | 868 passed, 36 failed, 27 skipped, 0 xfail; 25.50s; exit 1 |
+| Vitest | 394 passed / 89 files, exit 0 |
+| Typecheck `pnpm exec tsc -b` | exit 1 unused `@ts-expect-error` in `Editor.typography.test.ts:2,4`, `ChapterTree.css.test.ts:2,4`, `FeatureLauncher.css.test.ts:2,4` |
+| Vite bundle `pnpm exec vite build` | exit 0 |
+| Canonical `pnpm run build` | exit 1 (blocked by tsc) |
+| `git diff --check` | exit 0 |
+
+The 36 BASE failures are the same classified node IDs as historical `d8174af` BEFORE. PR #12 added 102 passing plugin tests (868 − 766 = 102). Concurrent generation passed this current-main aggregate (flake).
+
+### Integrated HEAD (merge `b15b58a`)
+
+| Check | Result |
+| --- | --- |
+| P1 vault/control-pipe/ports | 29 passed, 2 skipped, exit 0. Windows exclusive ports skipped with honest reason. Default auto vault test passed. |
+| Predecessor + 3 order targets | 4 passed |
+| Three targets ×10 | 10/10 |
+| Concurrent isolation ×20 | **1 pass / 19 fail** |
+| Plugin files | 102 passed |
+| Plugin + predecessor + targets ×5 | 5/5 |
+| Reverse order ×5 | 5/5 |
+| Backend full run 1 | 901 passed, 4 failed, 28 skipped, 0 xfail |
+| Backend full run 2 | 901 passed, 4 failed, 28 skipped, 0 xfail |
+| Backend full run 3 | 901 passed, 4 failed, 28 skipped, 0 xfail |
+| Vitest | 394 passed / 89 files, exit 0 |
+| Typecheck | exit 1, same unused `@ts-expect-error` |
+| Vite bundle | exit 0 |
+| Canonical build | exit 1 (blocked by tsc) |
+| Fixture JSON parse | 8/8 OK |
+| PR diff secret scan | 0 |
+| `git diff --check origin/main...HEAD` | exit 0 |
+
+All three integrated full runs failed the same four named production defects. `NEW FAILURES = 0`. Typecheck is **not** a stable baseline. Vite bundle PASS is not canonical production build PASS. Frontend was not modified by this PR.
+
+### Commits (Batch 2A.2)
+
+1. `b15b58a` merge: integrate current main into regression foundation
+2. (this file) docs: bind regression evidence to integrated current main
+
+Draft PR #19 remains Draft. Do not merge. Do not close Issue #14.
+
 ## Boundaries confirmed
 
-- PRODUCTION CODE CHANGES = 0
-- FRONTEND CODE CHANGES = 0
-- SCHEMA / MIGRATION CHANGES = 0
-- PR #12 CHANGES = 0 (this branch was not rebased onto the later PR #12 merge on `origin/main`)
-- NEW SKIPS = 1 (Windows exclusive ports, honest)
+- PRODUCTION CODE CHANGES = 0 versus current-main `e4dd24a`
+- FRONTEND CODE CHANGES = 0 versus current-main
+- SCHEMA / MIGRATION CHANGES = 0 versus current-main
+- PR #12 production files not re-introduced as PR #19 delta
+- NEW SKIPS = 1 on HEAD vs current-main (Windows exclusive ports, honest)
 - NEW XFAILS = 0
 - ASSERTION WEAKENING = 0
 - REAL POSTGRESQL OPERATIONS = 0

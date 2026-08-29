@@ -2,7 +2,8 @@
 
 覆盖 Context 人物选择、Cloud Secret 省略/脱敏、年龄冲突、死亡人物、Secret Leak、Provider 回退、原子写入和 Pending Canon 闭环。
 
-> 以下 V0.1–V0.4.8.1 段落是历史记录，不是 current `main` 的回归证明。当前结果见文末「Current main（safe maintenance 2026-08-28）」。
+> 以下 V0.1–V0.4.8.1 段落是历史记录，不是 current `main` 的回归证明。当前结果见文末「Current main（PR #12 merged, 2026-08-29）」；`d8174af` 段落是历史 Batch 2A 基线，不是当前 main。
+
 
 - PASS：全部 Python 文件 AST 语法校验。
 - PASS：Context 只选择本章相关人物。
@@ -176,3 +177,52 @@ AFTER 仅剩四个 `PRODUCT_BASELINE` 生产缺陷（本批明确未修）：并
 | Canonical build | `pnpm run build` = `tsc -b && vite build` | exit 1 | exit 0 |
 
 Typecheck 不是稳定基线。未改 frontend。Vite bundle PASS ≠ canonical production build PASS。未执行 Windows / PostgreSQL / Provider / DH-01–DH-08。V1.0 未发布。
+
+## Current main（PR #12 merged, 2026-08-29）
+
+本段是 **current-main**。绑定 SHA `e4dd24a682d2338d3aaf9ffa6880cbb1e364e6ac`。不要把上面绑定 `46bee8f` / `d8174af` 的数量称作当前 main。
+
+独立 worktree 验证：Python 3.11.2；`uv pip install -e .[dev]`（未装 `.[vault]`）；`STORAGE_BACKEND=file`；`env -i`；run-scoped TMP/basetemp；未读用户 `.env`。前端：仓库 `frontend/pnpm-lock.yaml`，pnpm `--ignore-workspace`（既有 `pnpm-workspace.yaml` 无 `packages` 字段）。
+
+| 检查 | 命令 | 退出码 | 结果 |
+| --- | --- | ---: | --- |
+| 后端全量 | isolated `python -m pytest -p no:cacheprovider --basetemp=<run-temp> -q -ra --tb=line tests` | 1 | 868 passed, 36 failed, 27 skipped, 0 xfail；25.50s |
+| 前端 Vitest | `pnpm --ignore-workspace exec vitest run` | 0 | 394 passed / 89 files |
+| Typecheck | `pnpm --ignore-workspace exec tsc -b` | 1 | unused `@ts-expect-error`：`Editor.typography.test.ts:2,4`、`ChapterTree.css.test.ts:2,4`、`FeatureLauncher.css.test.ts:2,4` |
+| Vite bundle | `pnpm --ignore-workspace exec vite build` | 0 | `frontend/dist/` Vite 打包，不是安装包 |
+| Canonical build | `pnpm --ignore-workspace run build`（`tsc -b && vite build`） | 1 | 被 tsc 挡住 |
+| whitespace | `git diff --check` | 0 | 干净 |
+
+868 − 766 = 102，对应 PR #12 三个 plugin 测试文件在本轮全部通过。36 个失败节点与历史 `d8174af` BEFORE 相同（夹具 / 顺序污染 / 平台 / 可选依赖 / DATABASE_URL 字符串 / 三个 PRODUCT_BASELINE）。并发生成幂等本轮聚合未列入 FAILED（flake）。Typecheck 不是稳定基线。Vite bundle PASS ≠ canonical production build PASS。
+
+## Issue #14 Batch 2A.2（current-main integration, 2026-08-29）
+
+把 Draft PR #19（`407b74a`）用普通 `--no-ff` merge 合入 current-main `e4dd24a`。Merge commit `b15b58a`。相对 current-main 的 PR delta 只有 tests / fixtures / docs。PRODUCTION / FRONTEND / SCHEMA = 0（以 `e4dd24a` 为基准）。未改四个生产缺陷，未改 PR #12 生产代码。
+
+| 字段 | 值 |
+| --- | --- |
+| Current-main | `e4dd24a682d2338d3aaf9ffa6880cbb1e364e6ac` |
+| Pre-integration PR HEAD | `407b74a628db1ca26b7ced79647a563e64bc7cd7` |
+| Merge | `b15b58a30f29f019c70cb33485619d78d59b8a3f` |
+| 环境 | 全新 clean clone + 独立 main worktree；Python 3.11.2；pnpm 9.15.0 |
+| 并发隔离 | 1 pass / 19 fail（20 次；不要挑最好结果） |
+| 污染 predecessor+targets | PASS；targets ×10 = 10/10 |
+| Plugin + conftest | 102 passed；正序 5/5；反序 5/5 |
+
+| 后端全量 | passed | failed | skipped | xfail |
+| --- | ---: | ---: | ---: | ---: |
+| Current-main BASE | 868 | 36 | 27 | 0 |
+| Integrated run 1 | 901 | 4 | 28 | 0 |
+| Integrated run 2 | 901 | 4 | 28 | 0 |
+| Integrated run 3 | 901 | 4 | 28 | 0 |
+
+三次集成全量失败节点相同：并发生成幂等、visual continuity、user preference、world rule。`NEW FAILURES = 0`。HEAD 比 main 多 1 个诚实 skip（Windows exclusive ports）。
+
+| 前端检查 | 口径 | Current-main | Integrated HEAD |
+| --- | --- | --- | --- |
+| Vitest | `pnpm exec vitest run` | 394 / 89，exit 0 | 394 / 89，exit 0 |
+| Typecheck | `tsc -b` | exit 1 unused `@ts-expect-error` | exit 1 同样三文件 |
+| Vite bundle | `vite build` | exit 0 | exit 0 |
+| Canonical build | `pnpm run build` = `tsc -b && vite build` | exit 1 | exit 1 |
+
+Typecheck 不是稳定基线。未改 frontend。未执行 Windows / 真 PostgreSQL / 真 Provider / DH-01–DH-08。V1.0 未发布。Draft PR #19 保持 Draft，不合并，不关 Issue #14。
