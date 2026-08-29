@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "id": "romance",
+  "name": "Romance",
+  "description": "Declarative romance preset. Desire, barrier, and earned intimacy; no living-author imitation.",
+  "purpose": "Make the central relationship the plot engine, with a barrier that only change can remove.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "pacing_tendency",
+    "description_tendency",
+    "dialogue_tendency"
+  ],
+  "writing_goals": [
+    "Give both (or all) partners interior wants that conflict",
+    "Put a specific barrier between them",
+    "Let intimacy be earned by risk and recognition, not proximity alone"
+  ],
+  "constraints": [
+    "Do not imitate a living author",
+    "Use abstract narrative style, not a named living voice",
+    "Conflict that could be solved by one honest sentence with no cost",
+    "A partner's personality reversing for the ending",
+    "Intimacy used as a pause button on plot"
+  ],
+  "checklist": [
+    "The barrier is named and remains until paid down",
+    "Each lead has agency in the turning scenes",
+    "Public consequences of the relationship are tracked",
+    "The ending state matches the promises the story made"
+  ],
+  "parameter_hints": {
+    "pacing_tendency": {
+      "type": "string",
+      "value": "attraction and retreat cycles; set-piece conversations carry turns"
+    },
+    "description_tendency": {
+      "type": "string",
+      "value": "body, space, and private ritual; public vs private settings matter"
+    },
+    "dialogue_tendency": {
+      "type": "string",
+      "value": "subtext-heavy; banter must still move the barrier"
+    }
+  },
+  "genre": "romance",
+  "narrative_priorities": [
+    "Give both (or all) partners interior wants that conflict",
+    "Put a specific barrier between them",
+    "Let intimacy be earned by risk and recognition, not proximity alone"
+  ],
+  "pacing_tendency": "attraction and retreat cycles; set-piece conversations carry turns",
+  "description_tendency": "body, space, and private ritual; public vs private settings matter",
+  "dialogue_tendency": "subtext-heavy; banter must still move the barrier",
+  "suspense_worldbuilding_emphasis": "emotional suspense over worldbuilding unless setting is the barrier",
+  "common_pitfalls": [
+    "Conflict that could be solved by one honest sentence with no cost",
+    "A partner's personality reversing for the ending",
+    "Intimacy used as a pause button on plot"
+  ],
+  "consistency_checklist": [
+    "The barrier is named and remains until paid down",
+    "Each lead has agency in the turning scenes",
+    "Public consequences of the relationship are tracked",
+    "The ending state matches the promises the story made"
+  ],
+  "style_notes": [
+    "Heat and humor must still reveal character",
+    "Do not imitate a living romance author"
+  ]
+}

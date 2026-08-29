@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "id": "developmental-edit",
+  "name": "Developmental Edit",
+  "description": "Declarative developmental-edit template. Workflow execution is not implemented and must not modify novel data.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "story_goal",
+      "title": "Story Goal",
+      "kind": "manual",
+      "intent": "Name the dramatic question the book is actually asking.",
+      "inputs": [],
+      "outputs": [
+        "dramatic_question"
+      ]
+    },
+    {
+      "id": "plot_structure",
+      "title": "Plot Structure",
+      "kind": "manual",
+      "intent": "Map major turns and test whether they escalate.",
+      "inputs": [],
+      "outputs": [
+        "turn_list",
+        "missing_turns"
+      ]
+    },
+    {
+      "id": "character_arc",
+      "title": "Character Arc",
+      "kind": "manual",
+      "intent": "Track starting state, pressure, and a candidate ending state.",
+      "inputs": [],
+      "outputs": [
+        "start_state",
+        "end_state_candidate"
+      ]
+    },
+    {
+      "id": "conflict",
+      "title": "Conflict",
+      "kind": "manual",
+      "intent": "Identify external opposition and internal contradiction.",
+      "inputs": [],
+      "outputs": [
+        "external_conflict",
+        "internal_conflict"
+      ]
+    },
+    {
+      "id": "stakes",
+      "title": "Stakes",
+      "kind": "manual",
+      "intent": "Make loss concrete for person, relationship, or world.",
+      "inputs": [],
+      "outputs": [
+        "personal_stakes",
+        "public_stakes"
+      ]
+    },
+    {
+      "id": "pacing",
+      "title": "Pacing",
+      "kind": "manual",
+      "intent": "Judge whether middle motion is delay or development.",
+      "inputs": [],
+      "outputs": [
+        "middle_risks"
+      ]
+    },
+    {
+      "id": "theme",
+      "title": "Theme",
+      "kind": "manual",
+      "intent": "Note recurring values without forcing a slogan.",
+      "inputs": [],
+      "outputs": [
+        "value_tensions"
+      ]
+    },
+    {
+      "id": "revision_plan",
+      "title": "Revision Plan",
+      "kind": "manual",
+      "intent": "Produce ordered human-approved revision intents. Do not apply them.",
+      "inputs": [],
+      "outputs": [
+        "ordered_intents",
+        "human_signoff"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "id": "suspense-build",
+  "name": "Suspense Build",
+  "description": "Declarative preset for withheld information and rising dread. Host application is not implemented.",
+  "purpose": "Delay the known outcome just long enough for the reader to feel the gap.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "information_split",
+    "clock",
+    "misdirection_budget"
+  ],
+  "writing_goals": [
+    "Give the reader a question they can hold",
+    "Advance the clock or constraint each beat",
+    "Plant a fair clue before the turn",
+    "Pay off tension with a change, not a fake-out reset"
+  ],
+  "constraints": [
+    "Do not withhold information the POV character already has without a stated reason",
+    "Do not invent last-second facts the text never prepared",
+    "Do not imitate a living thriller author's signature devices"
+  ],
+  "checklist": [
+    "A live dramatic question exists",
+    "A time, resource, or social clock is ticking",
+    "At least one fair clue is present",
+    "The release changes knowledge or danger"
+  ],
+  "parameter_hints": {
+    "information_split": {
+      "type": "enum",
+      "values": [
+        "reader_ahead",
+        "character_ahead",
+        "shared"
+      ],
+      "default": "reader_ahead"
+    },
+    "clock": {
+      "type": "enum",
+      "values": [
+        "explicit",
+        "implied",
+        "none"
+      ],
+      "default": "implied"
+    },
+    "misdirection_budget": {
+      "type": "enum",
+      "values": [
+        "light",
+        "moderate"
+      ],
+      "default": "light"
+    }
+  }
+}

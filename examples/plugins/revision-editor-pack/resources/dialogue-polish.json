@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "id": "dialogue-polish",
+  "name": "Dialogue Polish",
+  "description": "Declarative preset for speech, subtext, and voice distinction. Host application is not implemented.",
+  "purpose": "Clean dialogue for voice and load-bearing turns without turning talk into essay.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "tag_policy",
+    "subtext_level"
+  ],
+  "writing_goals": [
+    "Trim echoed replies",
+    "Replace on-the-nose statements with pressure",
+    "Differentiate diction"
+  ],
+  "constraints": [
+    "Do not make everyone witty",
+    "Do not hide plot-critical facts inside unreadable dialect"
+  ],
+  "checklist": [
+    "Speakers remain identifiable",
+    "At least one power shift survives",
+    "No line exists only to recap"
+  ],
+  "parameter_hints": {
+    "tag_policy": {
+      "type": "enum",
+      "values": [
+        "minimal",
+        "beat-led",
+        "explicit"
+      ],
+      "default": "beat-led"
+    },
+    "subtext_level": {
+      "type": "enum",
+      "values": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    }
+  }
+}

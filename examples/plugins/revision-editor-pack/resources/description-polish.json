@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "id": "description-polish",
+  "name": "Description Polish",
+  "description": "Declarative preset for replacing generic visual filler. Host application is not implemented.",
+  "purpose": "Keep filtered, useful, and possibly foreshadowing detail; drop duplicate images.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "density",
+    "filter"
+  ],
+  "writing_goals": [
+    "Cut duplicate images",
+    "Anchor space with one working detail",
+    "Let the viewpoint's job choose noticing"
+  ],
+  "constraints": [
+    "Do not add ornamental lists",
+    "Do not contradict established layout"
+  ],
+  "checklist": [
+    "The reader can still locate exits and bodies",
+    "Images do not repeat in adjacent paragraphs"
+  ],
+  "parameter_hints": {
+    "density": {
+      "type": "enum",
+      "values": [
+        "sparse",
+        "balanced",
+        "lush"
+      ],
+      "default": "balanced"
+    }
+  }
+}

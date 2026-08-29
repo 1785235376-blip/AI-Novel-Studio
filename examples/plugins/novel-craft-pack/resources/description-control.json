@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "id": "description-control",
+  "name": "Description Control",
+  "description": "Declarative preset for sensory economy and setting load. Host application is not implemented.",
+  "purpose": "Place description where it changes mood, information, or blocking, then stop.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "density",
+    "sensory_mix",
+    "filter"
+  ],
+  "writing_goals": [
+    "Prefer one decisive image over a catalog",
+    "Filter setting through the POV's current concern",
+    "Use sensory mix to mark place, not to decorate every paragraph",
+    "Cut description that does not alter action, mood, or knowledge"
+  ],
+  "constraints": [
+    "Do not inventory rooms unless the inventory is a clue or obstacle",
+    "Do not default to visual-only description",
+    "Do not paste travel-guide exposition into live scenes"
+  ],
+  "checklist": [
+    "Each descriptive beat has a job",
+    "At least two senses appear in a major setting entrance",
+    "POV bias is visible in what is noticed",
+    "No paragraph exists only as scenery"
+  ],
+  "parameter_hints": {
+    "density": {
+      "type": "enum",
+      "values": [
+        "sparse",
+        "balanced",
+        "lush"
+      ],
+      "default": "balanced"
+    },
+    "sensory_mix": {
+      "type": "enum",
+      "values": [
+        "visual-led",
+        "mixed",
+        "nonvisual-led"
+      ],
+      "default": "mixed"
+    },
+    "filter": {
+      "type": "enum",
+      "values": [
+        "objective",
+        "pov-biased"
+      ],
+      "default": "pov-biased"
+    }
+  }
+}

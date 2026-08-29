@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "id": "mystery",
+  "name": "Mystery",
+  "description": "Declarative mystery preset. Fair-play inquiry; no living-author imitation.",
+  "purpose": "Offer a solvable puzzle with planted clues, red herrings, and a motivated solution.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "pacing_tendency",
+    "description_tendency",
+    "dialogue_tendency"
+  ],
+  "writing_goals": [
+    "Define the crime, the question, and the investigator's method",
+    "Plant fair clues before the reveal",
+    "Make the solution rearrange known facts, not invent new ones"
+  ],
+  "constraints": [
+    "Do not imitate a living author",
+    "Use abstract narrative style, not a named living voice",
+    "Clues introduced in the last chapter",
+    "A culprit with no access, motive, or opportunity",
+    "A detective who knows more than the reader without a stated reason"
+  ],
+  "checklist": [
+    "Timeline of the crime can be reconstructed",
+    "Every major clue appears before the accusation",
+    "Means, motive, and opportunity survive review",
+    "Red herrings are explained, not abandoned"
+  ],
+  "parameter_hints": {
+    "pacing_tendency": {
+      "type": "string",
+      "value": "interview and discovery pulses; withhold the answer, not the evidence"
+    },
+    "description_tendency": {
+      "type": "string",
+      "value": "clue-bearing interiors, physical traces, and social rooms"
+    },
+    "dialogue_tendency": {
+      "type": "string",
+      "value": "questions with agendas; testimony that conceals by selection"
+    }
+  },
+  "genre": "mystery",
+  "narrative_priorities": [
+    "Define the crime, the question, and the investigator's method",
+    "Plant fair clues before the reveal",
+    "Make the solution rearrange known facts, not invent new ones"
+  ],
+  "pacing_tendency": "interview and discovery pulses; withhold the answer, not the evidence",
+  "description_tendency": "clue-bearing interiors, physical traces, and social rooms",
+  "dialogue_tendency": "questions with agendas; testimony that conceals by selection",
+  "suspense_worldbuilding_emphasis": "suspense over worldbuilding; setting is a closed system of alibis",
+  "common_pitfalls": [
+    "Clues introduced in the last chapter",
+    "A culprit with no access, motive, or opportunity",
+    "A detective who knows more than the reader without a stated reason"
+  ],
+  "consistency_checklist": [
+    "Timeline of the crime can be reconstructed",
+    "Every major clue appears before the accusation",
+    "Means, motive, and opportunity survive review",
+    "Red herrings are explained, not abandoned"
+  ],
+  "style_notes": [
+    "Clarity of evidence over baroque voice",
+    "Do not imitate a living detective novelist"
+  ]
+}

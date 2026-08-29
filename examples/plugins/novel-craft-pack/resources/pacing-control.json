@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "id": "pacing-control",
+  "name": "Pacing Control",
+  "description": "Declarative preset for scene-to-summary ratio and beat spacing. Host application is not implemented.",
+  "purpose": "Match narrative speed to the current dramatic job.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "scene_summary_ratio",
+    "beat_spacing",
+    "time_skip_policy"
+  ],
+  "writing_goals": [
+    "Expand turns, choices, and revelations",
+    "Compress travel, chores, and repeated procedure",
+    "Vary paragraph and sentence length with pressure",
+    "Announce time skips instead of smuggling them"
+  ],
+  "constraints": [
+    "Do not summarize a climax",
+    "Do not scene-play a logistics list",
+    "Do not skip a promised confrontation"
+  ],
+  "checklist": [
+    "High-stakes beats occupy more page than setup",
+    "Repeated actions are collapsed after the first occurrence",
+    "Time jumps are marked",
+    "The chapter ends on forward motion, not idle description"
+  ],
+  "parameter_hints": {
+    "scene_summary_ratio": {
+      "type": "enum",
+      "values": [
+        "scene-heavy",
+        "balanced",
+        "summary-heavy"
+      ],
+      "default": "balanced"
+    },
+    "beat_spacing": {
+      "type": "enum",
+      "values": [
+        "tight",
+        "medium",
+        "wide"
+      ],
+      "default": "medium"
+    },
+    "time_skip_policy": {
+      "type": "enum",
+      "values": [
+        "explicit",
+        "implied"
+      ],
+      "default": "explicit"
+    }
+  }
+}

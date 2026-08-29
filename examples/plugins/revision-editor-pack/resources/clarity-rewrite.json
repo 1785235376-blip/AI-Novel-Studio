@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "id": "clarity-rewrite",
+  "name": "Clarity Rewrite",
+  "description": "Declarative preset for ambiguous reference and causal gaps. Host application is not implemented.",
+  "purpose": "Repair who-did-what-when problems while keeping voice.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "pronoun_policy",
+    "causal_explicitness"
+  ],
+  "writing_goals": [
+    "Make pronoun and time references unambiguous",
+    "Show how B follows from A",
+    "Separate fact, inference, and lie"
+  ],
+  "constraints": [
+    "Do not over-explain subtext",
+    "Do not add omniscient captions to a limited POV"
+  ],
+  "checklist": [
+    "A cold reader can track who does what",
+    "Causal steps are present"
+  ],
+  "parameter_hints": {
+    "causal_explicitness": {
+      "type": "enum",
+      "values": [
+        "light",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    }
+  }
+}

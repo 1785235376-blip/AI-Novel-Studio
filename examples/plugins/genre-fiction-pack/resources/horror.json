@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "id": "horror",
+  "name": "Horror",
+  "description": "Declarative horror preset. Dread, taboo, and aftermath; no living-author imitation.",
+  "purpose": "Make fear specific: a rule of the world is wrong, and the cost of noticing it keeps rising.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "pacing_tendency",
+    "description_tendency",
+    "dialogue_tendency"
+  ],
+  "writing_goals": [
+    "Establish a baseline of safety before violating it",
+    "Reveal the threat through evidence and failed coping",
+    "Let isolation, guilt, or forbidden knowledge close exits"
+  ],
+  "constraints": [
+    "Do not imitate a living author",
+    "Use abstract narrative style, not a named living voice",
+    "Gore without a meaning or aftermath",
+    "Explaining the monster until it is safe",
+    "Comedy relief that dissolves the threat permanently"
+  ],
+  "checklist": [
+    "The threat's rule is stable once revealed",
+    "Safe spaces degrade or are lost",
+    "Witnesses pay a knowledge or sanity cost",
+    "The ending honors the established rule"
+  ],
+  "parameter_hints": {
+    "pacing_tendency": {
+      "type": "string",
+      "value": "slow contamination punctuated by shocks; never rush the first wrong detail"
+    },
+    "description_tendency": {
+      "type": "string",
+      "value": "sensory unease, bodily detail, spaces that stop feeling domestic"
+    },
+    "dialogue_tendency": {
+      "type": "string",
+      "value": "denial, bargaining, and statements that become untrue"
+    }
+  },
+  "genre": "horror",
+  "narrative_priorities": [
+    "Establish a baseline of safety before violating it",
+    "Reveal the threat through evidence and failed coping",
+    "Let isolation, guilt, or forbidden knowledge close exits"
+  ],
+  "pacing_tendency": "slow contamination punctuated by shocks; never rush the first wrong detail",
+  "description_tendency": "sensory unease, bodily detail, spaces that stop feeling domestic",
+  "dialogue_tendency": "denial, bargaining, and statements that become untrue",
+  "suspense_worldbuilding_emphasis": "the horror rule is the worldbuilding; suspense from approaching it",
+  "common_pitfalls": [
+    "Gore without a meaning or aftermath",
+    "Explaining the monster until it is safe",
+    "Comedy relief that dissolves the threat permanently"
+  ],
+  "consistency_checklist": [
+    "The threat's rule is stable once revealed",
+    "Safe spaces degrade or are lost",
+    "Witnesses pay a knowledge or sanity cost",
+    "The ending honors the established rule"
+  ],
+  "style_notes": [
+    "Dread before spectacle",
+    "Do not imitate a living horror stylist"
+  ]
+}

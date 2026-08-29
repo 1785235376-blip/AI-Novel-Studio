@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "id": "expand",
+  "name": "Expand",
+  "description": "Declarative preset for opening underwritten beats. Host application is not implemented.",
+  "purpose": "Restore motive, sensory presence, and causal steps where the draft is thin.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "expand_target",
+    "padding_guard"
+  ],
+  "writing_goals": [
+    "Add the missing reaction after a blow",
+    "Show the process that was only labeled",
+    "Give the opposing force a specific move"
+  ],
+  "constraints": [
+    "Do not pad with weather or wardrobe",
+    "Do not add subplots the structure cannot pay"
+  ],
+  "checklist": [
+    "The thin beat now has cause, attempt, and result",
+    "New sentences earn their keep"
+  ],
+  "parameter_hints": {
+    "expand_target": {
+      "type": "enum",
+      "values": [
+        "reaction",
+        "obstacle",
+        "setting",
+        "motive"
+      ],
+      "default": "reaction"
+    }
+  }
+}

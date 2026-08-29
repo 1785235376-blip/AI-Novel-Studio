@@ -1,0 +1,72 @@
+{
+  "manifest_version": "1.0",
+  "host_api_version": "1",
+  "id": "novel-craft-pack",
+  "name": "Novel Craft Pack",
+  "version": "1.0.0",
+  "description": "Official declarative writing presets for general novel craft. Presets are structured data, not prompt injectors. The host does not apply them automatically.",
+  "capabilities": [
+    "writing_tool"
+  ],
+  "requested_permissions": [],
+  "execution_mode": "declarative",
+  "publisher": "AI Novel Studio Official",
+  "resources": [
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/scene-draft.json",
+      "sha256": "339f1fb06b863ca761e14824ce535ceb3f178a54d3af9218eade83fb9fd10725",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/dialogue-pass.json",
+      "sha256": "8ec05929a71c78474579528ba596270cdb93150952eeb56b8a429fff62540004",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/action-scene.json",
+      "sha256": "301d73b6582eb86471ef63c17431e82fb1d589372e743893b354666b99d6221d",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/suspense-build.json",
+      "sha256": "ad98f94c939b66726a8885f3c15b221e3b898b9d4e6c85e737e9170f23944ba5",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/emotional-scene.json",
+      "sha256": "deb9ffeac8cf993ba9f3fa69ff8e5dce0429567e9eac057130fa509bfb7b8d4c",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/description-control.json",
+      "sha256": "c7ca550f9eb56d5b2f6dc42a71eb8ec2ce65be8b60db80ede06ce52ecfd7abdf",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/pov-lock.json",
+      "sha256": "3446d4c77ace8f325be3c633eb88123b35f97983691c94ea420c4f9e6ac7cccb",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/pacing-control.json",
+      "sha256": "3dab1c9ae0b8440bef1b652285061ce06676088ac9953eba7f4e3e89291ce136",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    }
+  ]
+}

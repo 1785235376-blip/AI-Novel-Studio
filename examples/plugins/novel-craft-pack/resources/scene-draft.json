@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "id": "scene-draft",
+  "name": "Scene Draft",
+  "description": "Declarative preset for drafting a complete scene around a clear goal, turn, and exit state. Host application is not implemented.",
+  "purpose": "Guide a first-pass scene draft that has a dramatic question, pressure, and a change of state.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "pov",
+    "tense",
+    "scene_goal",
+    "length_target"
+  ],
+  "writing_goals": [
+    "Open on a concrete situation rather than abstract summary",
+    "State or imply the scene goal through character action",
+    "Escalate pressure until a turn or decision",
+    "Exit with a changed relationship, knowledge, or location"
+  ],
+  "constraints": [
+    "Do not imitate a living author",
+    "Do not inject host prompts or executable instructions",
+    "Keep one primary POV unless a later preset unlocks a shift",
+    "Prefer scene-level causality over montage summary"
+  ],
+  "checklist": [
+    "Scene goal is identifiable",
+    "Obstacle or opposing force is present",
+    "A turn, reveal, or decision occurs",
+    "Exit state differs from entry state"
+  ],
+  "parameter_hints": {
+    "pov": {
+      "type": "enum",
+      "values": [
+        "first",
+        "third_limited",
+        "third_omniscient"
+      ],
+      "default": "third_limited"
+    },
+    "tense": {
+      "type": "enum",
+      "values": [
+        "past",
+        "present"
+      ],
+      "default": "past"
+    },
+    "length_target": {
+      "type": "enum",
+      "values": [
+        "short",
+        "standard",
+        "extended"
+      ],
+      "default": "standard"
+    }
+  }
+}

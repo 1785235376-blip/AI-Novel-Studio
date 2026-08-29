@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "id": "action-scene",
+  "name": "Action Scene",
+  "description": "Declarative preset for physical conflict and kinetic set-pieces. Host application is not implemented.",
+  "purpose": "Keep spatial causality, cost, and clarity in motion-heavy scenes.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "spatial_clarity",
+    "sentence_length",
+    "cost_visibility"
+  ],
+  "writing_goals": [
+    "Track who is where before introducing a new beat",
+    "Make each move change the tactical situation",
+    "Show cost on body, time, or resource",
+    "End on a new constraint, not a reset"
+  ],
+  "constraints": [
+    "Avoid choreography that cannot be visualized in space",
+    "Do not hide injuries or spent resources without a later payoff plan",
+    "Do not pause the fight for long internal essays"
+  ],
+  "checklist": [
+    "Geography of the fight is readable",
+    "Initiative shifts at least once",
+    "A resource is spent or a wound is taken",
+    "The victor or escape has a cost"
+  ],
+  "parameter_hints": {
+    "spatial_clarity": {
+      "type": "enum",
+      "values": [
+        "strict",
+        "impressionistic"
+      ],
+      "default": "strict"
+    },
+    "sentence_length": {
+      "type": "enum",
+      "values": [
+        "clipped",
+        "mixed",
+        "long"
+      ],
+      "default": "clipped"
+    },
+    "cost_visibility": {
+      "type": "enum",
+      "values": [
+        "immediate",
+        "delayed"
+      ],
+      "default": "immediate"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "id": "pacing-repair",
+  "name": "Pacing Repair",
+  "description": "Declarative preset for stalls, rushes, and missing sequel space. Host application is not implemented.",
+  "purpose": "Reallocate line-time so story speed matches dramatic importance.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "stall_policy",
+    "sequel_space"
+  ],
+  "writing_goals": [
+    "Identify stalls and rushes",
+    "Restore a breath after catastrophe",
+    "Protect irreversible choices from montage"
+  ],
+  "constraints": [
+    "Do not slow a chase with backstory",
+    "Do not skip grief or cost to keep a page-count"
+  ],
+  "checklist": [
+    "Each chapter still advances a question",
+    "Aftermath exists for major blows"
+  ],
+  "parameter_hints": {
+    "stall_policy": {
+      "type": "enum",
+      "values": [
+        "cut",
+        "compress",
+        "relocate"
+      ],
+      "default": "compress"
+    }
+  }
+}

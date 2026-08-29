@@ -1,0 +1,73 @@
+{
+  "manifest_version": "1.0",
+  "host_api_version": "1",
+  "id": "revision-editor-pack",
+  "name": "Revision Editor Pack",
+  "version": "1.0.0",
+  "description": "Official declarative revision presets and workflow templates. Chapter Revision and Developmental Edit are templates only; the host does not execute them.",
+  "capabilities": [
+    "writing_tool",
+    "workflow"
+  ],
+  "requested_permissions": [],
+  "execution_mode": "declarative",
+  "publisher": "AI Novel Studio Official",
+  "resources": [
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/tighten.json",
+      "sha256": "bd75546b04be41161d175a43a0fd9eed774e774123ecda27528c412e5ecacecf",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/expand.json",
+      "sha256": "fa24da365603538edca460c5e0d6007f8009999ede14ed7cd3e37393b6eac097",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/dialogue-polish.json",
+      "sha256": "43d49c6aa93bd0db5e12c7e13eb9d33fdc96ec4d6fdb09a12592ed5555ab38a7",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/description-polish.json",
+      "sha256": "32af3c5fb28d5420f1eee82591347c150d911a6d8f5d8eb6fd606b03f0af7624",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/pacing-repair.json",
+      "sha256": "8c7f9b7027b3749b3187110e3ae9a39ea75c8112ab114824cc8dd19a88f89fed",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/clarity-rewrite.json",
+      "sha256": "c2a3de15f12d0ae54036f65c0c4ff9ee26542248d8af4353b8593d8ac4a7f531",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/chapter-revision.json",
+      "sha256": "ef6833c069444fe28eef2754784d9e50fbf131dad65fa15555d1e7f72c0422cb",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/developmental-edit.json",
+      "sha256": "0915439f214c4f62562b7d77c6b367461ab307054355d4f555a41e2060339cb8",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    }
+  ]
+}

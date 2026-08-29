@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0",
+  "id": "chapter-revision",
+  "name": "Chapter Revision",
+  "description": "Declarative chapter revision template. Workflow execution is not implemented and must not modify novel data.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "draft",
+      "title": "Draft",
+      "kind": "manual",
+      "intent": "Establish the chapter's current job, viewpoint, and exit question.",
+      "inputs": [
+        "chapter_text_ref"
+      ],
+      "outputs": [
+        "chapter_goal",
+        "viewpoint",
+        "exit_question"
+      ]
+    },
+    {
+      "id": "structure_review",
+      "title": "Structure Review",
+      "kind": "manual",
+      "intent": "Check scene order, goal-conflict-turn, and ornamental beats.",
+      "inputs": [
+        "chapter_goal",
+        "scene_list"
+      ],
+      "outputs": [
+        "redundant_beats",
+        "missing_turns"
+      ]
+    },
+    {
+      "id": "character_motivation_review",
+      "title": "Character Motivation Review",
+      "kind": "manual",
+      "intent": "Verify action follows want, fear, and available knowledge.",
+      "inputs": [
+        "viewpoint",
+        "known_facts"
+      ],
+      "outputs": [
+        "motivation_gaps"
+      ]
+    },
+    {
+      "id": "continuity_review",
+      "title": "Continuity Review",
+      "kind": "manual",
+      "intent": "Flag contradictions with established facts. Do not silently rewrite canon.",
+      "inputs": [
+        "known_facts"
+      ],
+      "outputs": [
+        "continuity_conflicts"
+      ]
+    },
+    {
+      "id": "pacing_review",
+      "title": "Pacing Review",
+      "kind": "manual",
+      "intent": "Mark stalls, rushes, and missing sequel space.",
+      "inputs": [
+        "scene_list"
+      ],
+      "outputs": [
+        "stalls",
+        "rushes"
+      ]
+    },
+    {
+      "id": "dialogue_review",
+      "title": "Dialogue Review",
+      "kind": "manual",
+      "intent": "Test voice distinction, subtext, and load-bearing turns.",
+      "inputs": [
+        "chapter_text_ref"
+      ],
+      "outputs": [
+        "voice_issues"
+      ]
+    },
+    {
+      "id": "prose_polish",
+      "title": "Prose Polish",
+      "kind": "manual",
+      "intent": "Apply tighten and clarity notes without changing plot facts.",
+      "inputs": [
+        "line_notes"
+      ],
+      "outputs": [
+        "prose_intents"
+      ]
+    },
+    {
+      "id": "final_qc",
+      "title": "Final QC",
+      "kind": "manual",
+      "intent": "Human review of residual risks before any future application.",
+      "inputs": [
+        "all_findings"
+      ],
+      "outputs": [
+        "human_signoff"
+      ]
+    }
+  ]
+}

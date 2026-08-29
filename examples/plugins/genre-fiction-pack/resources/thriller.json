@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "id": "thriller",
+  "name": "Thriller",
+  "description": "Declarative thriller preset. Pursuit and countdown; no living-author imitation.",
+  "purpose": "Keep the protagonist under a closing clock with reversible but costly choices.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "pacing_tendency",
+    "description_tendency",
+    "dialogue_tendency"
+  ],
+  "writing_goals": [
+    "Put a deadline or pursuit on the page early",
+    "Escalate capability of the opposing force",
+    "Force trade-offs between safety, truth, and loyalty"
+  ],
+  "constraints": [
+    "Do not imitate a living author",
+    "Use abstract narrative style, not a named living voice",
+    "Villain incompetence used as pacing",
+    "Resetting danger after every set-piece",
+    "A conspiracy that exists only as atmosphere"
+  ],
+  "checklist": [
+    "The clock or pursuit never fully stops",
+    "Injuries and spent resources persist",
+    "Antagonist capability does not shrink without cause",
+    "Public and private stakes remain distinct"
+  ],
+  "parameter_hints": {
+    "pacing_tendency": {
+      "type": "string",
+      "value": "short beats, frequent reversals, limited downtime"
+    },
+    "description_tendency": {
+      "type": "string",
+      "value": "functional geography for chase and concealment"
+    },
+    "dialogue_tendency": {
+      "type": "string",
+      "value": "compressed, tactical, often interrupted"
+    }
+  },
+  "genre": "thriller",
+  "narrative_priorities": [
+    "Put a deadline or pursuit on the page early",
+    "Escalate capability of the opposing force",
+    "Force trade-offs between safety, truth, and loyalty"
+  ],
+  "pacing_tendency": "short beats, frequent reversals, limited downtime",
+  "description_tendency": "functional geography for chase and concealment",
+  "dialogue_tendency": "compressed, tactical, often interrupted",
+  "suspense_worldbuilding_emphasis": "suspense dominates; worldbuilding only as operational constraint",
+  "common_pitfalls": [
+    "Villain incompetence used as pacing",
+    "Resetting danger after every set-piece",
+    "A conspiracy that exists only as atmosphere"
+  ],
+  "consistency_checklist": [
+    "The clock or pursuit never fully stops",
+    "Injuries and spent resources persist",
+    "Antagonist capability does not shrink without cause",
+    "Public and private stakes remain distinct"
+  ],
+  "style_notes": [
+    "Kinetic clarity",
+    "Avoid living-author signature set-piece formulas"
+  ]
+}

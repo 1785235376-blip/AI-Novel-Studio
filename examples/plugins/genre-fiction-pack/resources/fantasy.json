@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "id": "fantasy",
+  "name": "Fantasy",
+  "description": "Declarative fantasy preset. Rule-bound wonder; no living-author imitation.",
+  "purpose": "Treat wonder as a system with prices, cultures, and political weight.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "pacing_tendency",
+    "description_tendency",
+    "dialogue_tendency"
+  ],
+  "writing_goals": [
+    "Establish what magic or myth can and cannot do",
+    "Let culture, ritual, and landscape carry history",
+    "Make power expensive in body, loyalty, or time"
+  ],
+  "constraints": [
+    "Do not imitate a living author",
+    "Use abstract narrative style, not a named living voice",
+    "Unpriced magic that solves the climax",
+    "Cultures as costume only",
+    "A map dump that never returns as plot"
+  ],
+  "checklist": [
+    "Magic or mythic rules are stable",
+    "Costs of power remain visible",
+    "Place names and factions stay consistent",
+    "Prophecy or omen, if used, has a fair reading"
+  ],
+  "parameter_hints": {
+    "pacing_tendency": {
+      "type": "string",
+      "value": "quest or pressure-wave; travel must change knowledge or allegiance"
+    },
+    "description_tendency": {
+      "type": "string",
+      "value": "tactile setting, named customs, weather and material culture"
+    },
+    "dialogue_tendency": {
+      "type": "string",
+      "value": "status-marked speech; oaths and bargains matter"
+    }
+  },
+  "genre": "fantasy",
+  "narrative_priorities": [
+    "Establish what magic or myth can and cannot do",
+    "Let culture, ritual, and landscape carry history",
+    "Make power expensive in body, loyalty, or time"
+  ],
+  "pacing_tendency": "quest or pressure-wave; travel must change knowledge or allegiance",
+  "description_tendency": "tactile setting, named customs, weather and material culture",
+  "dialogue_tendency": "status-marked speech; oaths and bargains matter",
+  "suspense_worldbuilding_emphasis": "worldbuilding is the source of both promise and taboo; suspense from broken bargains",
+  "common_pitfalls": [
+    "Unpriced magic that solves the climax",
+    "Cultures as costume only",
+    "A map dump that never returns as plot"
+  ],
+  "consistency_checklist": [
+    "Magic or mythic rules are stable",
+    "Costs of power remain visible",
+    "Place names and factions stay consistent",
+    "Prophecy or omen, if used, has a fair reading"
+  ],
+  "style_notes": [
+    "Prefer grounded wonder over ornamental archaism",
+    "Do not pastiche a living epic stylist"
+  ]
+}
