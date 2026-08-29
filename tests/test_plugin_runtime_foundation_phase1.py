@@ -13,10 +13,12 @@ from app.plugin_capability_policy import (
     REASON_CAPABILITY_NOT_APPROVED,
     REASON_EXECUTION_NOT_SUPPORTED,
     REASON_ILLEGAL_LIFECYCLE_TRANSITION,
+    REASON_JOB_ID_MISMATCH,
     REASON_JOB_OBJECT_IS_NOT_A_SANDBOX,
     REASON_MISSING_APPROVAL,
     REASON_OS_SANDBOX_NOT_READY,
     REASON_PACKAGE_UNTRUSTED,
+    REASON_PLUGIN_IDENTITY_MISMATCH,
     REASON_PREFIX_SCOPE_FORBIDDEN,
     REASON_RETRY_REQUIRES_NEW_ATTEMPT,
     REASON_SCOPE_MISMATCH,
@@ -61,6 +63,8 @@ from app.plugin_runtime_contracts import (
     TrustStatus,
     default_output_policy,
     dump_without_secrets,
+    inspect_forbidden_payload,
+    is_allowed_virtual_mount_path,
     new_credential_handle_id,
     new_execution_attempt_id,
     new_job_id,
@@ -585,3 +589,93 @@ def test_security_unknown_or_wildcard_capability_fail_closed(capability):
     decision = evaluate_capability_request(request, job=job, gate=open_gate())
     assert decision.decision is CapabilityVerdict.DENY
     assert decision.reason_code in {REASON_UNKNOWN_CAPABILITY, REASON_WILDCARD_SCOPE_FORBIDDEN}
+
+
+def test_wrong_plugin_id_is_denied():
+    job = make_job()
+    request = make_request(job, plugin_id="other-plugin-pack")
+    decision = evaluate_capability_request(request, job=job, gate=open_gate())
+    assert decision.decision is CapabilityVerdict.DENY
+    assert decision.reason_code == REASON_PLUGIN_IDENTITY_MISMATCH
+
+
+def test_wrong_plugin_version_is_denied():
+    job = make_job()
+    request = make_request(job, plugin_version="9.9.9")
+    decision = evaluate_capability_request(request, job=job, gate=open_gate())
+    assert decision.decision is CapabilityVerdict.DENY
+    assert decision.reason_code == REASON_PLUGIN_IDENTITY_MISMATCH
+
+
+def test_omitted_scope_field_is_not_a_wildcard():
+    job = make_job()
+    omitted = make_request(job, scope=make_scope(resource_id=None).public_dump())
+    decision = evaluate_capability_request(omitted, job=job, gate=open_gate())
+    assert decision.decision is CapabilityVerdict.DENY
+    assert decision.reason_code == REASON_SCOPE_MISMATCH
+    job_without = make_job(scope=ImmutableExecutionScope.parse({
+        "workspace_id": "ws-main",
+        "project_id": "proj-alpha",
+        "storyline_id": "story-1",
+        "modality": "NOVEL",
+    }))
+    extra = make_request(job_without, scope=make_scope().public_dump())
+    denied = evaluate_capability_request(extra, job=job_without, gate=open_gate())
+    assert denied.decision is CapabilityVerdict.DENY
+    assert denied.reason_code == REASON_SCOPE_MISMATCH
+
+
+def test_revoked_package_trust_is_denied():
+    gate = open_gate().model_copy(update={"package_trust": TrustStatus.REVOKED})
+    result = evaluate_execution_gate(gate)
+    assert result.allowed is False
+    assert "PACKAGE_REVOKED" in result.reason_codes
+    job = make_job()
+    decision = evaluate_capability_request(make_request(job), job=job, gate=gate)
+    assert decision.decision is CapabilityVerdict.DENY
+    assert decision.reason_code == "PACKAGE_REVOKED"
+
+
+def test_wrong_job_id_late_result_is_rejected():
+    job = make_job()
+    envelope = ExecutionResultEnvelope.parse({
+        "job_id": new_job_id(),
+        "execution_attempt_id": job.execution_attempt_id,
+        "produced_at": utcnow(),
+        "status": "SUCCEEDED",
+    })
+    rejected = evaluate_late_result(
+        envelope,
+        expected_job_id=job.job_id,
+        expected_attempt_id=job.execution_attempt_id,
+        current_lifecycle=ExecutionLifecycleState.RUNNING,
+    )
+    assert rejected.accepted is False
+    assert rejected.reason_code == REASON_JOB_ID_MISMATCH
+
+
+@pytest.mark.parametrize("value,allowed", [
+    ("/plugin", True),
+    ("/plugin/foo", True),
+    ("/job/in", True),
+    ("/job/in/input.json", True),
+    ("/job/out", True),
+    ("/tmp", True),
+    ("/tmp/cache", True),
+    ("/plugin-evil", False),
+    ("/plugin-evil/x", False),
+    ("/job/input", False),
+    ("/tmpfoo", False),
+    ("/plugin/../etc/passwd", False),
+    ("/job/in/../out", False),
+    ("/tmp/..", False),
+    ("/plugin/", False),
+    ("/etc/passwd", False),
+])
+def test_virtual_mount_paths_are_component_aware(value, allowed):
+    assert is_allowed_virtual_mount_path(value) is allowed
+    code = inspect_forbidden_payload(value)
+    if allowed:
+        assert code is None
+    else:
+        assert code == PLUGIN_RUNTIME_ABSOLUTE_PATH_FORBIDDEN
