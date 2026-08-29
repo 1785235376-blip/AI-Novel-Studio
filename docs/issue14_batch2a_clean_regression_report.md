@@ -8,12 +8,12 @@ This batch only repaired test reproducibility: fixtures, settings isolation, pla
 | Base SHA | `origin/main` `d8174af8cb68c5e4edf920e6ccb45671f19ff3c9` |
 | Work branch | `fix/p0-clean-regression-foundation` |
 | Date | 2026-08-29 |
-| Operator | Grok (Issue #14 Batch 2A) |
+| Operator | Grok (Issue #14 Batch 2A / 2A.1) |
 | Production code changes | 0 |
 | Frontend code changes | 0 |
 | Schema / migration changes | 0 |
 | PR #12 touched | NO |
-| New skip / xfail | 0 |
+| New skip / xfail | Batch 2A: 0. Batch 2A.1: +1 skip (Windows exclusive ports off Windows), 0 xfail |
 | Assertions weakened | 0 |
 | Real PostgreSQL operations | 0 |
 | Real Provider requests | 0 |
@@ -66,7 +66,7 @@ Predecessor: `tests/test_packaged_control_pipe.py::test_reader_accepts_all_suppo
 
 Leaked global vault credentials (`credential_vault.has("deepseek")`) into later `Runtime()` objects. Isolation passed; predecessor+target failed.
 
-Fix (tests only): autouse snapshot/restore of settings, env, memory vault, `credential_store`, and `Runtime.__init__()` on the existing singleton.
+Fix (tests only, Batch 2A.1): predecessor test injects an isolated `CredentialVault(backend="memory")` into `app.packaging.control_pipe.credential_vault`. Autouse no longer forces memory vault or replaces vault private state.
 
 Verification:
 
@@ -77,63 +77,84 @@ Verification:
 
 ## Phase 4 platform
 
-- Port reservation: Linux asserts fail-closed `AttributeError` for `SO_EXCLUSIVEADDRUSE`; Windows keeps exclusive-bind/conflict assertions
-- Lifecycle tests use a test-owned port allocator (mutex/job were already faked)
-- v0.6.1 process identity: Linux asserts `UNKNOWN_IDENTITY_FAIL_CLOSED` / `UNSUPPORTED_PLATFORM` and does not terminate; Windows original assertions retained
-- No new skip. Existing Windows-only skip count unchanged
+Batch 2A originally asserted Linux `AttributeError` for missing `SO_EXCLUSIVEADDRUSE` and counted that as PASS. Independent review: that exception is an implementation accident, not a documented contract, and over-claimed port reservation.
+
+Batch 2A.1:
+
+- Cross-platform: `test_non_loopback_host_is_rejected` (non-`127.0.0.1` host)
+- Windows-only (skipped on Linux): `test_windows_loopback_ports_are_unique_and_conflicts_fail_closed` — real loopback bind, unique ports, conflict fail-closed, reservation close
+- Linux did **not** verify Windows exclusive port reservation
+- `FakePortAllocator` (55101–55103, empty `sockets`) is only for lifecycle order tests; it does not bind, detect conflicts, or own socket lifetime
+- v0.6.1 process identity: Linux asserts `UNKNOWN_IDENTITY_FAIL_CLOSED` / `UNSUPPORTED_PLATFORM`; Windows assertions retained in source
+- DH-01–DH-08 / Windows named mutex / Job Object / Credential Manager = NOT_RUN
+- Honest +1 skip on Linux; no xfail added
 
 ## Phase 5 optional dependency and database
 
-- Ordinary tests explicitly use memory vault. Did not install `.[vault]`
+- Tests that need a process-local credential store inject memory vault through a narrow fixture. Did not install `.[vault]`
 - `test_credential_vault.py` keyring fail-closed tests still pass
+- `test_default_backend_request_is_auto_when_env_unset` covers `CredentialVault()` with env unset via a fake `_select_backend` (requested value `auto`; no real keyring / Credential Manager)
 - v061 credential-passthrough tests no longer read `.env`; they use a synthetic `DATABASE_URL` string and never connect
-- Real PostgreSQL tests remain skipped; skip count 27
+- Real PostgreSQL tests remain skipped
+- Linux skip count after 2A.1 = 28 (honest Windows port skip)
 - `.[dev]` vs vault extra mismatch recorded only; `pyproject.toml` not changed
 
 ## Phase 6 regression
 
-| Check | BEFORE | AFTER |
-| --- | --- | --- |
-| PASSED | 766 | 798 |
-| FAILED | 36 | 4 |
-| SKIPPED | 27 | 27 |
-| XFAIL | 0 | 0 |
-| NEW FAILURES | — | 0 |
-| FIXTURE remaining | 10 | 0 |
-| ORDER_CONTAMINATION remaining | 3 | 0 |
-| PLATFORM misclassification remaining | 15 | 0 |
-| PRODUCT_BASELINE | 4 named | 4 (all remaining AFTER failures) |
-| UNKNOWN | 0 | 0 |
+Batch 2A implementer AFTER was 798/4/27 on one run. That tuple is **not** the unique stable AFTER.
 
-AFTER remaining failures:
+| Check | BEFORE (2A implementer) | Independent Reviewer HEAD | 2A.1 run 1 | 2A.1 run 2 | 2A.1 run 3 |
+| --- | --- | --- | --- | --- | --- |
+| PASSED | 766 | 799 | 799 | 799 | 799 |
+| FAILED | 36 | 3 | 4 | 4 | 4 |
+| SKIPPED | 27 | 27 | 28 | 28 | 28 |
+| XFAIL | 0 | 0 | 0 | 0 | 0 |
 
-1. `tests/test_generation_variants_phase3.py::test_generation_is_idempotent_under_concurrent_submission`
+`NEW FAILURES = 0` means no new unclassified independent regression vs the 36 BEFORE entries plus the named concurrent defect.
+
+Named production defects (not repaired):
+
+1. `tests/test_generation_variants_phase3.py::test_generation_is_idempotent_under_concurrent_submission` — isolation 20/20 FAIL; aggregate flake
 2. `tests/test_p1_regression.py::test_visual_continuity_reports_scene_jumps`
 3. `tests/test_user_preference_service.py::test_preferences_are_explicit_and_separate`
 4. `tests/test_world_rule_payload.py::test_world_rule_payload_normalizes_terms`
 
-Frontend Vitest: 376 passed / 89 files, exit 0.
+Frontend (frozen `frontend/pnpm-lock.yaml`, pnpm 9.15.0, `--ignore-workspace` because existing `pnpm-workspace.yaml` has no `packages` field — pre-existing, not this PR):
 
-Typecheck: `npx tsc -b` exit 1 in this environment on unused `@ts-expect-error` in three existing frontend test files. This batch did not modify frontend. Production `npx vite build` exit 0.
+| Check | Meaning | 2A implementer | Independent Reviewer | Batch 2A.1 this session |
+| --- | --- | --- | --- | --- |
+| Vitest | `pnpm exec vitest run` | 376 passed / 89 files | 376 / 89, exit 0 | 376 / 89, exit 0 |
+| Typecheck | `tsc -b` (not Vite) | `npx tsc -b` exit 1 unused `@ts-expect-error` | exit 0 | exit 1 unused `@ts-expect-error` in `Editor.typography.test.ts:2,4`, `ChapterTree.css.test.ts:2,4`, `FeatureLauncher.css.test.ts:2,4` |
+| Vite bundle | `vite build` only | `npx vite build` exit 0 | exit 0 | exit 0 |
+| Canonical build | `pnpm run build` = `tsc -b && vite build` | not run under that name | exit 0 | exit 1 (blocked by tsc) |
 
-`git diff --check` on this worktree: exit 0.
+Typecheck is **not** a stable baseline: Independent Reviewer clean worktree PASS, implementer and this 2A.1 session FAIL on the same three unused `@ts-expect-error` directives. Frontend was not modified. Vite bundle PASS is not canonical production build PASS.
+
+`git diff --check` on 2A.1 test+docs diffs: exit 0.
 
 ## Phase 7 commits / PR
 
-Suggested commits (no amend / rebase / squash / force-push):
+1. `c87b1a3` test: isolate clean-clone fixtures and runtime settings
+2. `da6fb6c` docs: establish current-main failure registry
+3. `b711611` test: narrow vault isolation and classify Windows ports
+4. (this file) docs: reconcile independent review evidence
 
-1. `test: isolate clean-clone fixtures and runtime settings`
-2. `docs: establish current-main failure registry`
+Draft PR #19 remains Draft. Do not merge. Do not close Issue #14.
 
-Draft PR title: `test: make clean regression reproducible`.
+## Batch 2A.1 P1 corrections
+
+- Removed Linux `AttributeError` success assertion
+- Narrowed vault isolation; added default `auto` selector test
+- Recorded concurrent aggregate flake with three full-suite runs (not the best of N)
+- Distinguished Vite bundle vs canonical `tsc -b && vite build`
 
 ## Boundaries confirmed
 
 - PRODUCTION CODE CHANGES = 0
 - FRONTEND CODE CHANGES = 0
 - SCHEMA / MIGRATION CHANGES = 0
-- PR #12 CHANGES = 0
-- NEW SKIPS = 0
+- PR #12 CHANGES = 0 (this branch was not rebased onto the later PR #12 merge on `origin/main`)
+- NEW SKIPS = 1 (Windows exclusive ports, honest)
 - NEW XFAILS = 0
 - ASSERTION WEAKENING = 0
 - REAL POSTGRESQL OPERATIONS = 0
