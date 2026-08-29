@@ -2,7 +2,7 @@
 
 覆盖 Context 人物选择、Cloud Secret 省略/脱敏、年龄冲突、死亡人物、Secret Leak、Provider 回退、原子写入和 Pending Canon 闭环。
 
-> 以下 V0.1–V0.4.8.1 段落是历史记录，不是 current `main` 的回归证明。当前结果见文末「Current main（PR #12 merged, 2026-08-29）」；`d8174af` 段落是历史 Batch 2A 基线，不是当前 main。
+> 以下 V0.1–V0.4.8.1 段落是历史记录，不是 live `origin/main` 的回归证明。较新的绑定结果见文末 Batch 2A.2 快照与 Batch 2B-1 / 2B-1.1；不要把任何固定 SHA 永久称为 current-main。
 
 
 - PASS：全部 Python 文件 AST 语法校验。
@@ -50,7 +50,7 @@
 - PARTIAL：临时 Uvicorn HTTP 尝试超时，未作为通过证据。
 - NOT VERIFIED：PostgreSQL Repository/Runtime（本阶段明确不实现）。
 
-## Current main（safe maintenance 2026-08-28）
+## Historical snapshot（safe maintenance 2026-08-28, `46bee8f`）
 
 本段只记录本轮真实执行。数量绑定到基线 SHA、日期和环境，不能当作长期合同。
 
@@ -178,9 +178,9 @@ AFTER 仅剩四个 `PRODUCT_BASELINE` 生产缺陷（本批明确未修）：并
 
 Typecheck 不是稳定基线。未改 frontend。Vite bundle PASS ≠ canonical production build PASS。未执行 Windows / PostgreSQL / Provider / DH-01–DH-08。V1.0 未发布。
 
-## Current main（PR #12 merged, 2026-08-29）
+## Batch 2A.2 base snapshot（PR #12 merged, SHA `e4dd24a`, 2026-08-29）
 
-本段是 **current-main**。绑定 SHA `e4dd24a682d2338d3aaf9ffa6880cbb1e364e6ac`。不要把上面绑定 `46bee8f` / `d8174af` 的数量称作当前 main。
+本段是 **Batch 2A.2 工作起点快照**，绑定 SHA `e4dd24a682d2338d3aaf9ffa6880cbb1e364e6ac`。不要把上面绑定 `46bee8f` / `d8174af` 的数量称作该快照，也不要把本段称作 live current-main。
 
 独立 worktree 验证：Python 3.11.2；`uv pip install -e .[dev]`（未装 `.[vault]`）；`STORAGE_BACKEND=file`；`env -i`；run-scoped TMP/basetemp；未读用户 `.env`。前端：仓库 `frontend/pnpm-lock.yaml`，pnpm `--ignore-workspace`（既有 `pnpm-workspace.yaml` 无 `packages` 字段）。
 
@@ -195,13 +195,13 @@ Typecheck 不是稳定基线。未改 frontend。Vite bundle PASS ≠ canonical 
 
 868 − 766 = 102，对应 PR #12 三个 plugin 测试文件在本轮全部通过。36 个失败节点与历史 `d8174af` BEFORE 相同（夹具 / 顺序污染 / 平台 / 可选依赖 / DATABASE_URL 字符串 / 三个 PRODUCT_BASELINE）。并发生成幂等本轮聚合未列入 FAILED（flake）。Typecheck 不是稳定基线。Vite bundle PASS ≠ canonical production build PASS。
 
-## Issue #14 Batch 2A.2（current-main integration, 2026-08-29）
+## Issue #14 Batch 2A.2（integration onto `e4dd24a`, 2026-08-29）
 
-把 Draft PR #19（`407b74a`）用普通 `--no-ff` merge 合入 current-main `e4dd24a`。Merge commit `b15b58a`。相对 current-main 的 PR delta 只有 tests / fixtures / docs。PRODUCTION / FRONTEND / SCHEMA = 0（以 `e4dd24a` 为基准）。未改四个生产缺陷，未改 PR #12 生产代码。
+把 Draft PR #19（`407b74a`）用普通 `--no-ff` merge 合入当时的 Batch 2A.2 base `e4dd24a`。Merge commit `b15b58a`。相对该快照的 PR delta 只有 tests / fixtures / docs。PRODUCTION / FRONTEND / SCHEMA = 0（以 `e4dd24a` 为基准）。未改四个生产缺陷，未改 PR #12 生产代码。
 
 | 字段 | 值 |
 | --- | --- |
-| Current-main | `e4dd24a682d2338d3aaf9ffa6880cbb1e364e6ac` |
+| Batch 2A.2 base snapshot | `e4dd24a682d2338d3aaf9ffa6880cbb1e364e6ac` |
 | Pre-integration PR HEAD | `407b74a628db1ca26b7ced79647a563e64bc7cd7` |
 | Merge | `b15b58a30f29f019c70cb33485619d78d59b8a3f` |
 | 环境 | 全新 clean clone + 独立 main worktree；Python 3.11.2；pnpm 9.15.0 |
@@ -211,18 +211,78 @@ Typecheck 不是稳定基线。未改 frontend。Vite bundle PASS ≠ canonical 
 
 | 后端全量 | passed | failed | skipped | xfail |
 | --- | ---: | ---: | ---: | ---: |
-| Current-main BASE | 868 | 36 | 27 | 0 |
+| Batch 2A.2 base | 868 | 36 | 27 | 0 |
 | Integrated run 1 | 901 | 4 | 28 | 0 |
 | Integrated run 2 | 901 | 4 | 28 | 0 |
 | Integrated run 3 | 901 | 4 | 28 | 0 |
 
-三次集成全量失败节点相同：并发生成幂等、visual continuity、user preference、world rule。`NEW FAILURES = 0`。HEAD 比 main 多 1 个诚实 skip（Windows exclusive ports）。
+三次集成全量失败节点相同：并发生成幂等、visual continuity、user preference、world rule。`NEW FAILURES = 0`。HEAD 比该快照多 1 个诚实 skip（Windows exclusive ports）。
 
-| 前端检查 | 口径 | Current-main | Integrated HEAD |
+| 前端检查 | 口径 | Batch 2A.2 base `e4dd24a` | Integrated HEAD |
 | --- | --- | --- | --- |
 | Vitest | `pnpm exec vitest run` | 394 / 89，exit 0 | 394 / 89，exit 0 |
 | Typecheck | `tsc -b` | exit 1 unused `@ts-expect-error` | exit 1 同样三文件 |
 | Vite bundle | `vite build` | exit 0 | exit 0 |
 | Canonical build | `pnpm run build` = `tsc -b && vite build` | exit 1 | exit 1 |
 
-Typecheck 不是稳定基线。未改 frontend。未执行 Windows / 真 PostgreSQL / 真 Provider / DH-01–DH-08。V1.0 未发布。Draft PR #19 保持 Draft，不合并，不关 Issue #14。
+Typecheck 不是稳定基线。未改 frontend。未执行 Windows / 真 PostgreSQL / 真 Provider / DH-01–DH-08。V1.0 未发布。Draft PR #19 当时保持 Draft，不合并，不关 Issue #14。
+
+## Issue #14 Batch 2B-1 / 2B-1.1（generation idempotency, 2026-08-29）
+
+结论仍是 **TEST_STATE_CONTAMINATION_RECLASSIFIED**，不是生产竞态。未改生产代码。未改 frontend。未关 Issue #14。未改 Issue #20。Batch 2B-1.1 只校正文档锚点。
+
+快照：
+
+| Snapshot | SHA |
+| --- | --- |
+| Task base / post-PR-19 main at work start | `01cc304e3df5357160f3c98b2ef50b0d9ddf8d95` |
+| Implementation / evidence HEAD | `5e7ab893aa09db08d0d9566e65e0edeb0e3c46d7` |
+| First-review main (PR #21 merged) | `47906bdde775d4ab9c7a07449c1f60f0e4e5d300` |
+| First-review synthetic merge | `9f97c40c176bd5fd2a6f9a64bd4f4da7dd95ff2b` |
+| Correction-start main (PR #23 merged) | `bc49b5d05ee934d948ab8784d52ba4481134ec0d` |
+
+`bc49b5d` 只是本次文档校正开始时的 main snapshot，不是永久 current-main。`9f97c40` 不是 PR #23 之后的合并候选。
+
+根因：目标测试固定 `Idempotency-Key: generation-race-unique`，`app.api._idempotency_store` 在 import 时指向仓库 `novel_data/idempotency.json`。第一次独立进程写入成功缓存后，后续进程 `jobs.create==0` 被误判为失败。缓存命中且不再 create 是正确幂等行为。
+
+实现树（仅 `01cc304e` + `5e7ab89`）：
+
+| 检查 | 结果 |
+| --- | --- |
+| 原测试 20 次独立进程（修改前） | 1 PASS / 19 FAIL；FAIL 时键已存在且 `created_len=0` |
+| 全新 Store 并发 | 3×50、16×20、32×10 = 80/80 PASS |
+| 持久化重放 | 返回缓存；`jobs.create==0` |
+| 目标测试 20 次独立进程（隔离后，残留键仍在） | 20/20 PASS |
+| 100-round fresh-store stress | 100/100 PASS（suite 内） |
+| 后端全量 1 | 909 passed, 3 failed, 28 skipped, 0 xfail；27.14s |
+| 后端全量 2 | 909 passed, 3 failed, 28 skipped, 0 xfail；24.27s |
+| 算术 | 909 = 901 passing + 1 重分类并发节点 + 7 个新合同测试 |
+| 收集规模 | task base 933；implementation HEAD 940 |
+
+不要把 `909/3/28` 称作 PR #21、PR #23 或 live main 结果。该树上剩余三个 PRODUCT_BASELINE（未改）：visual continuity `TIME_JUMP_CUT`、user preference `harness_enabled`、world rule `forbidden_terms`。并发幂等节点不在 FAILED 集合。
+
+首次独立审查（仅 `9f97c40`，parents `47906bd` + `5e7ab89`，PR #23 之前）：
+
+| 检查 | 结果 |
+| --- | --- |
+| 后端全量 1 | 960 passed, 4 failed, 28 skipped, 0 xfail；27.42s |
+| 后端全量 2 | 960 passed, 4 failed, 28 skipped, 0 xfail；25.49s |
+| 收集规模 | first-review main 985；synthetic merge 992 |
+| PR #21 / PR #22 文件重叠 | 0 |
+| Plugin + idempotency 正序 / 反序 | 5/5 60 passed / 5/5 60 passed |
+| PR #22 可归因 NEW FAILURES / SKIPS / XFAILS | 0 / 0 / 0 |
+
+四个失败必须拆开：三个已知产品缺陷，加上 `tests/test_import_parsers.py::test_pdf_fallback_extracts_simple_literal_text`（`ENVIRONMENT-SENSITIVE BASELINE / INVESTIGATION REQUIRED`）。后者在 `01cc304e`、`47906bd`、`5e7ab89`、`9f97c40` 上相同出现，与残缺 PDF fixture 和审查环境中的 `pypdf` 行为有关；不是 PR #22 引入，不计入 PR #22 产品回归，本批未修、未开 Issue、不记录未证实的 pypdf 版本。不得写成四个剩余产品缺陷。PR #21 增加了 official declarative plugin pack 测试，因此不能要求该 merge 仍显示 `909/3/28`。
+
+PR #23 之后（校正开始快照 `bc49b5d`）：
+
+| 检查 | 结果 |
+| --- | --- |
+| PR #23 / PR #22 文件重叠 | 0 |
+| Runtime 交互 / 新 synthetic-merge 全量 | `PENDING NEW INDEPENDENT RE-REVIEW` |
+
+不得把 `960/4/28` 复制成 PR #23 后结果，也不得预测新计数。
+
+Frontend delta = 0。工具链不确定性归 [Issue #20](https://github.com/1785235376-blip/AI-Novel-Studio/issues/20)，本批不修。
+
+V1.0 / DH-01–DH-08 / 真 PostgreSQL / 真 Provider / Release = 未宣称通过。

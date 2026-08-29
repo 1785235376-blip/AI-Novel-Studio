@@ -1,8 +1,23 @@
-from fastapi.testclient import TestClient
 from concurrent.futures import ThreadPoolExecutor
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app.idempotency import IdempotencyStore
 from app.main import app
 
-def test_generation_is_idempotent_under_concurrent_submission(monkeypatch):
+
+@pytest.fixture
+def isolated_generation_idempotency_store(tmp_path, monkeypatch):
+    """Run-scoped store. Does not read or write repository novel_data."""
+    import app.api as api
+
+    store = IdempotencyStore(tmp_path / "idempotency.json")
+    monkeypatch.setattr(api, "_idempotency_store", store)
+    return store
+
+
+def test_generation_is_idempotent_under_concurrent_submission(monkeypatch, isolated_generation_idempotency_store):
     from app.api import jobs
     created=[]
     class Item:
