@@ -22,7 +22,7 @@ def _effective_transition_type(value) -> str:
     if value is None:
         return "CUT"
     text = str(value).strip()
-    if not text or text.casefold() == "none":
+    if not text:
         return "CUT"
     return text.upper()
 

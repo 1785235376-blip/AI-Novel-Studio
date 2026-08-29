@@ -36,7 +36,7 @@ def _codes(findings):
 
 
 def test_missing_none_and_blank_transition_mean_default_cut():
-    for transition in ("__missing__", None, "", "  ", "None", "none", " NONE "):
+    for transition in ("__missing__", None, "", "  "):
         findings = validate_visual_continuity(_pair(transition))
         assert findings == [_time_jump("s1", "s2")], transition
 
@@ -67,7 +67,8 @@ def test_missing_time_on_either_side_does_not_report_time_jump():
 
 
 def test_unknown_non_empty_transition_is_not_treated_as_cut():
-    assert validate_visual_continuity(_pair("CUSTOM")) == []
+    for transition in ("CUSTOM", "None", "none", " NONE "):
+        assert validate_visual_continuity(_pair(transition)) == [], transition
 
 
 def test_adjacent_pairs_emit_stable_ordered_findings():
