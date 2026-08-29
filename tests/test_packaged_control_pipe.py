@@ -2,6 +2,10 @@ import io
 import json
 import time
 
+import pytest
+
+from app.credential_vault import CredentialVault
+from app.packaging import control_pipe
 from app.packaging.control_pipe import (
     CREDENTIAL_PROTOCOL,
     PROTOCOL,
@@ -16,6 +20,24 @@ def wait_for_ping(reader, expected=1):
     while time.monotonic() < deadline and reader.ping_count < expected:
         time.sleep(0.01)
     return reader.ping_count
+
+
+@pytest.fixture
+def isolated_process_credential_store(monkeypatch):
+    """Inject a test-owned memory vault into the control-pipe module only.
+
+    Does not change production default vault selection and does not touch
+    real keyring or Windows Credential Manager.
+    """
+    vault = CredentialVault(backend="memory")
+    original_values = dict(credential_store._values)
+    monkeypatch.setattr(control_pipe, "credential_vault", vault)
+    credential_store._values.clear()
+    try:
+        yield vault
+    finally:
+        credential_store._values.clear()
+        credential_store._values.update(original_values)
 
 
 def test_runtime_bound_ping_is_accepted_without_response_or_logging():
@@ -97,7 +119,9 @@ def test_reader_start_status_reports_started(monkeypatch):
     assert status["start_result"] == "STARTED"
 
 
-def test_reader_accepts_all_supported_provider_credentials_and_clear_is_scoped():
+def test_reader_accepts_all_supported_provider_credentials_and_clear_is_scoped(
+    isolated_process_credential_store,
+):
     providers = ("deepseek", "openai", "claude", "gemini", "ddshub", "custom")
     frames = []
     for provider in providers:

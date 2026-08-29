@@ -13,10 +13,6 @@ if str(_TESTS_DIR) not in sys.path:
 
 from sample_novel_fixture import sample_novel_source as _sample_novel_source
 
-# Ordinary automated tests use an explicit memory vault. Tests that construct
-# their own CredentialVault(..., backend="keyring") keep the fail-closed contract.
-os.environ.setdefault("CREDENTIAL_VAULT_BACKEND", "memory")
-
 _PROVIDER_AND_DATABASE_ENV = (
     "DEEPSEEK_API_KEY",
     "OPENAI_API_KEY",
@@ -34,24 +30,6 @@ _PROVIDER_AND_DATABASE_ENV = (
 )
 
 
-def _reset_credential_singletons() -> None:
-    from app.credential_vault import MemoryBackend, credential_vault
-    from app.packaging.control_pipe import credential_store
-
-    backend = MemoryBackend()
-    credential_vault._active_backend = backend
-    credential_vault.backend = backend.name
-    credential_vault.degraded = False
-    credential_vault.degraded_reason = None
-    credential_store._values.clear()
-
-
-def _reset_runtime_singleton() -> None:
-    from app.runtime import runtime
-
-    runtime.__init__()
-
-
 @pytest.fixture
 def sample_novel_source() -> Path:
     return _sample_novel_source()
@@ -59,26 +37,42 @@ def sample_novel_source() -> Path:
 
 @pytest.fixture(autouse=True)
 def restore_global_settings():
-    """Keep tests that mutate settings, env, vault, or runtime singletons isolated."""
+    """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+
+    Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+    private state. Tests that need a process-local credential store inject an
+    explicit memory vault in a narrow fixture.
+    """
     from app.config import settings
     from app.main import app
+    from app.packaging.control_pipe import credential_store
+    from app.runtime import runtime
 
     original_settings = {field.name: getattr(settings, field.name) for field in fields(settings)}
-    original_env = os.environ.copy()
-    for key in _PROVIDER_AND_DATABASE_ENV:
-        os.environ.pop(key, None)
-    os.environ["CREDENTIAL_VAULT_BACKEND"] = "memory"
-    _reset_credential_singletons()
-    _reset_runtime_singleton()
-    app.dependency_overrides.clear()
-    yield
-    os.environ.clear()
-    os.environ.update(original_env)
-    for name, value in original_settings.items():
-        object.__setattr__(settings, name, value)
-    _reset_credential_singletons()
-    _reset_runtime_singleton()
-    app.dependency_overrides.clear()
+    original_overrides = app.dependency_overrides.copy()
+    original_runtime = {
+        key: (value.copy() if isinstance(value, dict) else value)
+        for key, value in runtime.__dict__.items()
+    }
+    original_store = dict(credential_store._values)
+    removed_env: dict[str, str] = {}
+    try:
+        for key in _PROVIDER_AND_DATABASE_ENV:
+            if key in os.environ:
+                removed_env[key] = os.environ.pop(key)
+        yield
+    finally:
+        for key in _PROVIDER_AND_DATABASE_ENV:
+            os.environ.pop(key, None)
+        os.environ.update(removed_env)
+        for name, value in original_settings.items():
+            object.__setattr__(settings, name, value)
+        app.dependency_overrides.clear()
+        app.dependency_overrides.update(original_overrides)
+        runtime.__dict__.clear()
+        runtime.__dict__.update(original_runtime)
+        credential_store._values.clear()
+        credential_store._values.update(original_store)
 
 
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
