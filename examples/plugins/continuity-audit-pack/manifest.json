@@ -1,0 +1,58 @@
+{
+  "manifest_version": "1.0",
+  "host_api_version": "1",
+  "id": "continuity-audit-pack",
+  "name": "Continuity Audit Pack",
+  "version": "1.0.0",
+  "description": "Official declarative continuity-audit workflow templates. They collect, compare, and classify; they do not modify novel data. Not executable.",
+  "capabilities": [
+    "workflow"
+  ],
+  "requested_permissions": [],
+  "execution_mode": "declarative",
+  "publisher": "AI Novel Studio Official",
+  "resources": [
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/character-continuity-audit.json",
+      "sha256": "36db0be167c20552a489a16311bed1638c1fb2b271f668ca653c5eacf925af37",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/timeline-audit.json",
+      "sha256": "6a41ab251a18ea57bc65812cf95fa0a4406effaf339b463471fb09a6b212e65d",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/world-rule-audit.json",
+      "sha256": "1de5f900e85408ccf55bb20e0b55c387ea105e5116f5bf4274e0b0232892665b",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/location-continuity-audit.json",
+      "sha256": "e1c8e0ccc2b5972b1b6557a6a9bd5231cc06a48905947743ca1caacabcb9b9c6",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/prop-continuity-audit.json",
+      "sha256": "433de7e86606658390654df54ffc905e1d5fb08f1491aade91dd6ea68f3345ba",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/foreshadowing-payoff-audit.json",
+      "sha256": "a21118af9ee919f0f466ee091f6139a9546f072a8d0b47a64f928492aaeb370b",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    }
+  ]
+}

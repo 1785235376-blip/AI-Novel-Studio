@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0",
+  "id": "faction-builder",
+  "name": "Faction Builder",
+  "description": "Define a faction's purpose, power, resources, and conflict posture without writing canon. Field names are stable for future Canon mapping. This pack does not write canon, characters, locations, or factions. Workflow execution is not implemented.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "identity",
+      "title": "Identity",
+      "kind": "manual",
+      "intent": "Name the faction and the story function it serves.",
+      "inputs": [],
+      "outputs": [
+        "faction.identity"
+      ]
+    },
+    {
+      "id": "purpose",
+      "title": "Purpose",
+      "kind": "manual",
+      "intent": "State the public mission and the private want.",
+      "inputs": [],
+      "outputs": [
+        "faction.purpose"
+      ]
+    },
+    {
+      "id": "power_base",
+      "title": "Power Base",
+      "kind": "manual",
+      "intent": "Record who they command and who they fear.",
+      "inputs": [],
+      "outputs": [
+        "faction.power_base"
+      ]
+    },
+    {
+      "id": "resources",
+      "title": "Resources",
+      "kind": "manual",
+      "intent": "List money, force, information, sacred objects, or legitimacy.",
+      "inputs": [],
+      "outputs": [
+        "faction.resources"
+      ]
+    },
+    {
+      "id": "internal_structure",
+      "title": "Internal Structure",
+      "kind": "manual",
+      "intent": "Note ranks, fractures, and succession risk.",
+      "inputs": [],
+      "outputs": [
+        "faction.internal_structure"
+      ]
+    },
+    {
+      "id": "external_relations",
+      "title": "External Relations",
+      "kind": "manual",
+      "intent": "Map allies, rivals, and dependents.",
+      "inputs": [],
+      "outputs": [
+        "faction.external_relations"
+      ]
+    },
+    {
+      "id": "conflict_posture",
+      "title": "Conflict Posture",
+      "kind": "manual",
+      "intent": "How they start, escalate, or avoid fights.",
+      "inputs": [],
+      "outputs": [
+        "faction.conflict_posture"
+      ]
+    },
+    {
+      "id": "canon_review",
+      "title": "Canon Review",
+      "kind": "manual",
+      "intent": "Human review. This pack does not write faction canon.",
+      "inputs": [],
+      "outputs": [
+        "faction.canon_review",
+        "human_signoff"
+      ]
+    }
+  ],
+  "stable_domain": "faction",
+  "writes_canon": false,
+  "runtime_binding": "not_implemented"
+}

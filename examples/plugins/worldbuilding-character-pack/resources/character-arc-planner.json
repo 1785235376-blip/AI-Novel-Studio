@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0",
+  "id": "character-arc-planner",
+  "name": "Character Arc Planner",
+  "description": "Plan a character's pressure curve from starting state to a candidate ending. Field names are stable for future Canon mapping. This pack does not write canon, characters, locations, or factions. Workflow execution is not implemented.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "starting_state",
+      "title": "Starting State",
+      "kind": "manual",
+      "intent": "Who they are and what they believe at first appearance.",
+      "inputs": [],
+      "outputs": [
+        "character_arc.starting_state"
+      ]
+    },
+    {
+      "id": "desire",
+      "title": "Desire",
+      "kind": "manual",
+      "intent": "The want they would admit.",
+      "inputs": [],
+      "outputs": [
+        "character_arc.desire"
+      ]
+    },
+    {
+      "id": "need",
+      "title": "Need",
+      "kind": "manual",
+      "intent": "The change they resist.",
+      "inputs": [],
+      "outputs": [
+        "character_arc.need"
+      ]
+    },
+    {
+      "id": "inciting_pressure",
+      "title": "Inciting Pressure",
+      "kind": "manual",
+      "intent": "The event that makes old tactics fail.",
+      "inputs": [],
+      "outputs": [
+        "character_arc.inciting_pressure"
+      ]
+    },
+    {
+      "id": "midpoint_shift",
+      "title": "Midpoint Shift",
+      "kind": "manual",
+      "intent": "A recognition or reversal that re-aims the want.",
+      "inputs": [],
+      "outputs": [
+        "character_arc.midpoint_shift"
+      ]
+    },
+    {
+      "id": "crisis",
+      "title": "Crisis",
+      "kind": "manual",
+      "intent": "The irreversible choice.",
+      "inputs": [],
+      "outputs": [
+        "character_arc.crisis"
+      ]
+    },
+    {
+      "id": "transformation",
+      "title": "Transformation",
+      "kind": "manual",
+      "intent": "What belief or method is abandoned.",
+      "inputs": [],
+      "outputs": [
+        "character_arc.transformation"
+      ]
+    },
+    {
+      "id": "ending_state",
+      "title": "Ending State",
+      "kind": "manual",
+      "intent": "Candidate ending, still human-editable.",
+      "inputs": [],
+      "outputs": [
+        "character_arc.ending_state"
+      ]
+    },
+    {
+      "id": "canon_review",
+      "title": "Canon Review",
+      "kind": "manual",
+      "intent": "Human review. This pack does not write character canon.",
+      "inputs": [],
+      "outputs": [
+        "character_arc.canon_review",
+        "human_signoff"
+      ]
+    }
+  ],
+  "stable_domain": "character_arc",
+  "writes_canon": false,
+  "runtime_binding": "not_implemented"
+}
