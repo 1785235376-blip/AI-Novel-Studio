@@ -1,6 +1,6 @@
 # Isolated Plugin Worker Runtime — Design Only
 
-Status: **design document** for the *plugin* worker. Phase 1 **execution contracts and pure policy** are implemented. Phase 2A implemented a **host-owned test worker** (fixed argv, not plugin-replaceable) plus a supervisor prototype and bounded stdio IPC. That is not third-party plugin execution.
+Status: **design document** for the *plugin* worker. Phase 1 **execution contracts and pure policy** are implemented. Phase 2A implemented a **host-owned test worker** plus a supervisor prototype and bounded stdio IPC. A follow-up correction isolated the worker Python startup (`-I -S`, environment allowlist, Host-owned bootstrap) after independent review found inherited `PYTHONPATH` could execute attacker `sitecustomize`. That is not third-party plugin execution and not an OS sandbox.
 
 | Claim | Value |
 |---|---|

@@ -12,6 +12,8 @@ Status: **host-owned test worker prototype**. This is not third-party plugin exe
 | Timeout / cancel / crash | IMPLEMENTED |
 | IPC output quota | IMPLEMENTED (host supervisor) |
 | Process / pipe cleanup | IMPLEMENTED (owned-PID registry) |
+| Python startup isolation | IMPLEMENTED (correction after independent review) |
+| `IMPORT ENVIRONMENT CORRECTION` | IMPLEMENTED |
 | Third-party plugin Worker | NOT IMPLEMENTED |
 | Third-party plugin code execution | DISABLED |
 | `execution_supported` | `false` |
@@ -46,7 +48,8 @@ Related: [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.
 |---|---|
 | Length-prefixed JSON IPC | `app/plugin_worker_protocol.py` |
 | Frozen spawn spec | `spawn_host_test_worker()` in `app/plugin_worker_process.py` |
-| Host-owned test worker | `python -u -m app.plugin_test_worker` |
+| Host-owned bootstrap | `app/plugin_test_worker_bootstrap.py` |
+| Host-owned test worker | `python -I -S -u <absolute-bootstrap>` → `app.plugin_test_worker` |
 | Supervisor prototype | `HostTestWorkerSupervisor` in `app/plugin_test_worker_supervisor.py` |
 | Component-aware virtual-mount path check | `is_allowed_virtual_mount_path` in `app/plugin_runtime_contracts.py` |
 
@@ -57,8 +60,10 @@ Related: [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.
 A repository-built, fixed implementation that the supervisor starts with a **closed argv**:
 
 ```
-[sys.executable, "-u", "-m", "app.plugin_test_worker"]
+[sys.executable, "-I", "-S", "-u", "<absolute-host-owned-bootstrap>"]
 ```
+
+The bootstrap path is resolved from `Path(__file__).resolve()` inside the Host production module `app/plugin_worker_process.py`. It is not taken from cwd, environment, CLI, or a plugin manifest.
 
 There is no `command: str`, no plugin-controlled executable path, no plugin-controlled module name, and no generic `run_command` / `execute_path` / `spawn` / `invoke_module` API.
 
@@ -80,9 +85,53 @@ The worker does not read the database, project content, vault, providers, plugin
 
 ## Spawn boundary
 
-`spawn_host_test_worker()` takes **no arguments**. The only image is the current host interpreter. The only module is `app.plugin_test_worker`. Plugin id, manifest, and resource JSON cannot choose the process.
+`spawn_host_test_worker()` takes **no arguments**. The only image is the current host interpreter. The only entrypoint is the Host-owned bootstrap file. Plugin id, manifest, and resource JSON cannot choose the process.
 
 POSIX adapter: `start_new_session=True` plus `killpg` on terminate. Windows adapter: `terminate()` then `kill()`. Ownership is tracked in an in-process PID registry; cleanup is ownership-aware and does not kill unrelated processes.
+
+## Python startup isolation
+
+**This was not true of the original Phase 2A spawn.** Independent review of PR #24 found that `spawn_host_test_worker()` copied `os.environ` and prepended the repo to inherited `PYTHONPATH`. Attacker-controlled `sitecustomize.py` and stdlib shadows (`json`, `uuid`, `queue`, `threading`) executed in the child. Prepending the repo was not enough: names the repository does not provide still resolved from inherited search paths.
+
+`IMPORT ENVIRONMENT CORRECTION = IMPLEMENTED`. The original spawn was **not** “always safe”.
+
+Host-owned now means all four:
+
+1. Host chooses the executable (`sys.executable`)
+2. Host chooses the bootstrap file (absolute path from this repository)
+3. Host controls the import path (isolated interpreter + explicit application root)
+4. Host validates imported `app.plugin_test_worker` and `app.plugin_worker_protocol` `__file__` with component-aware ancestry (`/repo-evil` is not inside `/repo`)
+
+### Interpreter flags (verified on CPython 3.11)
+
+| Flag | Role |
+|---|---|
+| `-I` | isolated mode: ignore `PYTHON*` environment, no user site, `safe_path` |
+| `-S` | do not auto-import `site`, so `sitecustomize` / `usercustomize` / `.pth` hooks do not run |
+| `-u` | unbuffered stdio (IPC) |
+
+This was verified on the Linux CPython 3.11 used here (`sys.flags.isolated=1`, `ignore_environment=1`, `no_site=1`). It is **not** an OS sandbox.
+
+### Environment allowlist
+
+The child does **not** inherit `os.environ`. `build_host_test_worker_environment()` copies only:
+
+| Platform | Keys |
+|---|---|
+| POSIX | `TMPDIR`, `LANG`, `LC_ALL`, `LC_CTYPE`, `TZ` (if present) |
+| Windows | `SYSTEMROOT`, `WINDIR`, `SYSTEMDRIVE`, `TEMP`, `TMP` (if present) |
+
+Every parent `PYTHON*` variable is dropped. `PATH` is not copied. The worker still must not create child processes.
+
+### What this is not
+
+- Not AppContainer / LPAC / Job Object
+- Not `os_sandbox_ready=true`
+- Not third-party plugin execution
+- Windows real-process validation of this correction: **REQUIRED / NOT RUN** on this Linux isolation host
+
+Tests live in `tests/test_plugin_runtime_phase2a_worker_isolation.py`.
+
 
 ## IPC transport
 
