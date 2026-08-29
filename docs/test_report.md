@@ -2,7 +2,7 @@
 
 覆盖 Context 人物选择、Cloud Secret 省略/脱敏、年龄冲突、死亡人物、Secret Leak、Provider 回退、原子写入和 Pending Canon 闭环。
 
-> 以下 V0.1–V0.4.8.1 段落是历史记录，不是 live `origin/main` 的回归证明。较新的绑定结果见文末 Batch 2A.2 快照与 Batch 2B-1 / 2B-1.1；不要把任何固定 SHA 永久称为 current-main。
+> 以下 V0.1–V0.4.8.1 段落是历史记录，不是 live `origin/main` 的回归证明。较新的绑定结果见文末 Batch 2A.2 快照、Batch 2B-1 / 2B-1.1 与 Batch 2B-2；不要把任何固定 SHA 永久称为 current-main。
 
 
 - PASS：全部 Python 文件 AST 语法校验。
@@ -286,3 +286,26 @@ PR #23 之后（校正开始快照 `bc49b5d`）：
 Frontend delta = 0。工具链不确定性归 [Issue #20](https://github.com/1785235376-blip/AI-Novel-Studio/issues/20)，本批不修。
 
 V1.0 / DH-01–DH-08 / 真 PostgreSQL / 真 Provider / Release = 未宣称通过。
+
+## Issue #14 Batch 2B-2 — visual continuity TIME_JUMP_CUT
+
+本段绑定任务基线 `9f210b7117c14d418a7f57d8976568cd5506125a`（PR #22 合并后的 main 快照）与实现 HEAD `47a080fae2c8e45d595c8ffe6a742492c77c5acd`。不是永久 current-main。证据见 `docs/issue14_batch2b2_visual_continuity_report.md`。
+
+根因：helper 只在 `transition.upper()=="CUT"` 时报告 `TIME_JUMP_CUT`；缺省 / 空 / `None` 本就是产品默认剪切。service 只把原始 shots 交给 helper，既没有 scene 的 time，也没有 `screenplay["transitions"]`。
+
+| 检查 | 结果 |
+| --- | --- |
+| 目标测试修改前 | FAIL；实得 `{LOCATION_JUMP, EMOTION_DISCONTINUITY}` |
+| 目标测试修改后 | PASS |
+| Helper 矩阵 / service 只读 enrichment | PASS |
+| 定向 50 次 | 50/50，每次 12 passed |
+| 后端全量 1 | 1024 passed, 2 failed, 28 skipped, 0 xfail；26.17s |
+| 后端全量 2 | 1024 passed, 2 failed, 28 skipped, 0 xfail；25.38s |
+| 收集规模 | 1054 |
+
+剩余产品失败两个（未改）：
+
+- `tests/test_user_preference_service.py::test_preferences_are_explicit_and_separate`
+- `tests/test_world_rule_payload.py::test_world_rule_payload_normalizes_terms`
+
+本环境未复现 PDF fallback。Issue #14 继续 OPEN。Issue #20 未改。Frontend / schema / migration = 0。V1.0 / DH / Release 未宣称通过。
