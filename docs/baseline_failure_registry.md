@@ -13,6 +13,7 @@ This registry records **named snapshots**. It does not permanently define “cur
 | First independent-review main snapshot | `47906bdde775d4ab9c7a07449c1f60f0e4e5d300` | Main after PR #21, when the first review ran |
 | First independent-review synthetic merge | `9f97c40c176bd5fd2a6f9a64bd4f4da7dd95ff2b` | `47906bd` + `5e7ab89`; pre-PR-23; not the later merge candidate |
 | Batch 2B-1.1 correction-start main snapshot | `bc49b5d05ee934d948ab8784d52ba4481134ec0d` | Main when Batch 2B-1.1 was authorized (PR #23 merged). Snapshot only. |
+| Batch 2B-2 task base / post-PR-22 main | `9f210b7117c14d418a7f57d8976568cd5506125a` | Live main after PR #22 merge. Snapshot only, not a permanent current-main definition. |
 
 | Field | Historical Batch 2A / 2A.1 | Batch 2A.2 base `e4dd24a` |
 | --- | --- | --- |
@@ -128,6 +129,36 @@ PR #21 added official declarative plugin-pack tests, so this merge collection is
 
 Do not copy `960/4/28` onto `bc49b5d`. `bc49b5d` is only the correction-start main snapshot.
 
+## Issue #14 Batch 2B-2 (visual continuity TIME_JUMP_CUT, 2026-08-29)
+
+See `docs/issue14_batch2b2_visual_continuity_report.md`. Counts below are snapshot-bound to task base `9f210b7` + this batch's implementation tree. Do not copy them onto later main.
+
+| Field | Value |
+| --- | --- |
+| Task base | `9f210b7117c14d418a7f57d8976568cd5506125a` |
+| Production/test implementation HEAD (2B-2) | `47a080fae2c8e45d595c8ffe6a742492c77c5acd` |
+| Independent-review PR HEAD | `9326a6fa96ad3bb7ae39c9338939868d3149d765` |
+| Reviewer verdict | `REQUEST_CHANGES` (only blocker: test-invented literal `"None"` CUT contract) |
+| Production/test implementation HEAD (2B-2.1) | `a9366053d1552ba69143b95ab222ced58e00f0bb` |
+| Target | `tests/test_p1_regression.py::test_visual_continuity_reports_scene_jumps` |
+| Before | FAIL; actual `{LOCATION_JUMP, EMOTION_DISCONTINUITY}`; expected also `TIME_JUMP_CUT` |
+| After | PASS |
+| Root cause | Helper required `transition.upper()=="CUT"`; missing transition key / Python `None` / blank-or-whitespace string is the product default CUT and was not reported |
+| Helper contract | missing transition key / Python `None` / blank-or-whitespace string → effective CUT. A non-empty string remains an explicit transition type; literal `"None"` is not auto-converted to CUT. |
+| Service contract | read-only scene fill + planned transition type; no screenplay write-back |
+| 2B-2 targeted 50-run (named snapshot) | 50/50; 12 passed each run; 0 failed |
+| 2B-2 backend full ×2 (named snapshot) | 1024 passed, 2 failed, 28 skipped, 0 xfail; do not copy onto 2B-2.1 |
+| 2B-2.1 targeted 50-run | 50/50; 12 passed each run; 0 failed (bound to `a936605`) |
+| 2B-2.1 backend full run 1 | 1024 passed, 2 failed, 28 skipped, 0 xfail; 26.58s |
+| 2B-2.1 backend full run 2 | 1024 passed, 2 failed, 28 skipped, 0 xfail; 25.23s |
+| Collection | 1054 |
+| Remaining PRODUCT_BASELINE | 2 (user preference, world rule) |
+| PDF fallback this environment | not reproduced on task base or HEAD |
+| Issue #14 | OPEN |
+| Issue #20 | UNCHANGED |
+
+`TIME_JUMP_CUT` disposition is `FIXED_BATCH_2B_2`. Historical 2B-1 counts above are unchanged. 2B-2.1 only removes the literal `"None"` special-case.
+
 ## Summary after Batch 2B-1
 
 | Classification | Batch 2A.2 integrated HEAD | Batch 2B-1 remaining | Disposition |
@@ -135,6 +166,14 @@ Do not copy `960/4/28` onto `bc49b5d`. `bc49b5d` is only the correction-start ma
 | TEST_STATE_CONTAMINATION | counted as PRODUCT_BASELINE (concurrent generation) | 0 | RECLASSIFIED_AND_FIXED (tests; run-scoped store) |
 | PRODUCT_BASELINE | 4 named | 3 named | REMAINS (not this batch) |
 | ENVIRONMENT-SENSITIVE BASELINE | not separately listed | PDF fallback (reviewer env) | INVESTIGATION REQUIRED; not PR #22 |
+| UNKNOWN | 0 | 0 | — |
+
+## Summary after Batch 2B-2
+
+| Classification | Batch 2B-1 remaining | Batch 2B-2 remaining | Disposition |
+| --- | --- | --- | --- |
+| PRODUCT_BASELINE | 3 named | 2 named | `TIME_JUMP_CUT` = `FIXED_BATCH_2B_2`; user preference and world rule remain |
+| ENVIRONMENT-SENSITIVE BASELINE | PDF fallback (reviewer env) | same; not reproduced on this Linux Python 3.11 tree | INVESTIGATION REQUIRED; not this PR |
 | UNKNOWN | 0 | 0 | — |
 
 ## Entries
@@ -181,11 +220,11 @@ The three remaining production defects were **not** repaired in Batch 2B-1.
 | Reproduces after predecessor | NOT_TESTED |
 | Platform | Cross-platform |
 | Severity | P1 |
-| Evidence | Isolation and aggregate FAIL on Batch 2A.2 base `e4dd24a` and all three integrated HEAD runs. Expected `TIME_JUMP_CUT` missing; actual `{LOCATION_JUMP, EMOTION_DISCONTINUITY}`. |
+| Evidence | Isolation and aggregate FAIL on Batch 2A.2 base `e4dd24a` and all three integrated HEAD runs. Expected `TIME_JUMP_CUT` missing; actual `{LOCATION_JUMP, EMOTION_DISCONTINUITY}`. Reproduced again on Batch 2B-2 task base `9f210b7` before the helper/service fix. |
 | Owner area | runtime |
-| Disposition | REMAINS |
-| Production change required | YES |
-| Notes | Visual continuity. Out of Batch 2A / 2A.2 scope. |
+| Disposition | FIXED_BATCH_2B_2 |
+| Production change required | YES (done in Batch 2B-2) |
+| Notes | missing transition key / Python `None` / blank-or-whitespace string → effective CUT. A non-empty string remains an explicit transition type; literal `"None"` is not auto-converted to CUT. `ScreenplayService.validate_visual_continuity()` builds a read-only scene/transition view and does not write shots back. 2B-2.1 (`a936605`) removed the test-invented literal `"None"` special-case after reviewer `REQUEST_CHANGES` on `9326a6f`. User preference and world-rule defects were not changed. |
 
 #### tests/test_user_preference_service.py::test_preferences_are_explicit_and_separate
 

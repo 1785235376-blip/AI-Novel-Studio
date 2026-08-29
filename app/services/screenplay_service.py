@@ -18,12 +18,44 @@ def suggest_transition_type(source: dict, target: dict) -> tuple[str, str]:
     if source.get('emotion') and target.get('emotion') and source.get('emotion') != target.get('emotion'): return 'MATCH','情绪或动作存在转折，建议用匹配转场强化连接。'
     return 'CUT','场景连续，直接剪切最简洁。'
 
+def _effective_transition_type(value) -> str:
+    if value is None:
+        return "CUT"
+    text = str(value).strip()
+    if not text:
+        return "CUT"
+    return text.upper()
+
+
+def _present_visual_field(value) -> bool:
+    return value is not None and str(value).strip() != ""
+
+
+def _visual_continuity_shots(screenplay: dict) -> list[dict]:
+    scenes = {row.get("id"): row for row in screenplay.get("scenes") or []}
+    view = []
+    for shot in screenplay.get("shots") or []:
+        row = dict(shot)
+        scene = scenes.get(shot.get("scene_id")) or {}
+        for key in ("time", "location", "emotion"):
+            if not _present_visual_field(row.get(key)) and _present_visual_field(scene.get(key)):
+                row[key] = scene[key]
+        view.append(row)
+    planned = screenplay.get("transitions") or []
+    by_pair = {(row.get("from_shot_id"), row.get("to_shot_id")): row for row in planned}
+    for previous, current in zip(view, view[1:]):
+        match = by_pair.get((previous.get("id"), current.get("id")))
+        if match is not None:
+            current["transition"] = match.get("type")
+    return view
+
+
 def validate_visual_continuity(shots: list[dict]) -> list[dict]:
     findings=[]
     for previous,current in zip(shots,shots[1:]):
         if previous.get('location') and current.get('location') and previous.get('location') != current.get('location') and not current.get('transition'):
             findings.append({'code':'LOCATION_JUMP','severity':'WARNING','from_shot_id':previous.get('id'),'to_shot_id':current.get('id'),'message':'相邻镜头地点发生变化，但未配置转场。'})
-        if previous.get('time') and current.get('time') and previous.get('time') != current.get('time') and str(current.get('transition','')).upper() == 'CUT':
+        if previous.get('time') and current.get('time') and previous.get('time') != current.get('time') and _effective_transition_type(current.get('transition')) == 'CUT':
             findings.append({'code':'TIME_JUMP_CUT','severity':'INFO','from_shot_id':previous.get('id'),'to_shot_id':current.get('id'),'message':'时间发生变化，当前使用直接剪切。'})
         if previous.get('emotion') and current.get('emotion') and previous.get('emotion') != current.get('emotion') and not current.get('action'):
             findings.append({'code':'EMOTION_DISCONTINUITY','severity':'WARNING','from_shot_id':previous.get('id'),'to_shot_id':current.get('id'),'message':'情绪发生跳变，建议补充动作或转场说明。'})
@@ -424,7 +456,7 @@ class ScreenplayService:
     def validate_visual_continuity(self,novel_id,screenplay_id):
         screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
-        return {'screenplay_id':screenplay_id,'findings':validate_visual_continuity(screenplay.get('shots',[]))}
+        return {'screenplay_id':screenplay_id,'findings':validate_visual_continuity(_visual_continuity_shots(screenplay))}
     def pipeline_status(self,novel_id,screenplay_id):
         screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
