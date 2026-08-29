@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "id": "scene-to-screenplay-outline",
+  "name": "Scene to Screenplay Outline",
+  "description": "Declarative outline of action, dialogue intent, picture, sound, and transition. Not a shooting-script generator.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "scene",
+      "title": "Scene",
+      "kind": "manual",
+      "intent": "Identify the scene being outlined.",
+      "inputs": [
+        "outline.scene_ref"
+      ],
+      "outputs": [
+        "outline.scene_summary"
+      ]
+    },
+    {
+      "id": "action",
+      "title": "Action",
+      "kind": "manual",
+      "intent": "Physical business that can be photographed.",
+      "inputs": [],
+      "outputs": [
+        "outline.action"
+      ]
+    },
+    {
+      "id": "dialogue_intent",
+      "title": "Dialogue Intent",
+      "kind": "manual",
+      "intent": "Why speech exists; not a finished script.",
+      "inputs": [],
+      "outputs": [
+        "outline.dialogue_intent"
+      ]
+    },
+    {
+      "id": "visual_information",
+      "title": "Visual Information",
+      "kind": "manual",
+      "intent": "What the frame must tell without talk.",
+      "inputs": [],
+      "outputs": [
+        "outline.visual_information"
+      ]
+    },
+    {
+      "id": "sound_information",
+      "title": "Sound Information",
+      "kind": "manual",
+      "intent": "Non-dialogue sound that carries meaning.",
+      "inputs": [],
+      "outputs": [
+        "outline.sound_information"
+      ]
+    },
+    {
+      "id": "transition_intent",
+      "title": "Transition Intent",
+      "kind": "manual",
+      "intent": "How this scene should leave the next one.",
+      "inputs": [],
+      "outputs": [
+        "outline.transition_intent"
+      ]
+    }
+  ],
+  "adaptation_execution": "not_implemented"
+}

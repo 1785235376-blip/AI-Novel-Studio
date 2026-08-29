@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "id": "image-prompt-preparation",
+  "name": "Image Prompt Preparation",
+  "description": "Declarative image-prompt structure. Does not call an image model or register a provider.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "shot",
+      "title": "Shot",
+      "kind": "manual",
+      "intent": "Select the shot this prompt would describe. No model is called.",
+      "inputs": [
+        "image.shot_ref"
+      ],
+      "outputs": [
+        "image.shot_id"
+      ]
+    },
+    {
+      "id": "subject",
+      "title": "Subject",
+      "kind": "manual",
+      "intent": "Primary figure or object.",
+      "inputs": [],
+      "outputs": [
+        "image.subject"
+      ]
+    },
+    {
+      "id": "environment",
+      "title": "Environment",
+      "kind": "manual",
+      "intent": "Place, time of day, weather.",
+      "inputs": [],
+      "outputs": [
+        "image.environment"
+      ]
+    },
+    {
+      "id": "composition",
+      "title": "Composition",
+      "kind": "manual",
+      "intent": "Lens-scale equivalent, balance, eyeline.",
+      "inputs": [],
+      "outputs": [
+        "image.composition"
+      ]
+    },
+    {
+      "id": "lighting",
+      "title": "Lighting",
+      "kind": "manual",
+      "intent": "Key, fill, practicals as text intent.",
+      "inputs": [],
+      "outputs": [
+        "image.lighting"
+      ]
+    },
+    {
+      "id": "style_intent",
+      "title": "Style Intent",
+      "kind": "manual",
+      "intent": "Abstract visual register. Do not name a living artist as a clone target.",
+      "inputs": [],
+      "outputs": [
+        "image.style_intent"
+      ]
+    },
+    {
+      "id": "continuity_references",
+      "title": "Continuity References",
+      "kind": "manual",
+      "intent": "Costume, face, and set notes to keep later frames consistent.",
+      "inputs": [],
+      "outputs": [
+        "image.continuity_references"
+      ]
+    },
+    {
+      "id": "negative_constraints",
+      "title": "Negative Constraints",
+      "kind": "manual",
+      "intent": "What must not appear. This is data, not a provider request.",
+      "inputs": [],
+      "outputs": [
+        "image.negative_constraints"
+      ]
+    }
+  ],
+  "media_generation": "not_implemented",
+  "provider_registration": false,
+  "calls_image_model": false,
+  "calls_video_model": false,
+  "writes_media_files": false
+}

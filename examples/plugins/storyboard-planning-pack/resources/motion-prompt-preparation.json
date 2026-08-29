@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "id": "motion-prompt-preparation",
+  "name": "Motion Prompt Preparation",
+  "description": "Declarative motion-prompt structure. Does not call a video model or execute motion.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "shot",
+      "title": "Shot",
+      "kind": "manual",
+      "intent": "Select the shot. Motion prompt execution is not implemented.",
+      "inputs": [
+        "motion.shot_ref"
+      ],
+      "outputs": [
+        "motion.shot_id"
+      ]
+    },
+    {
+      "id": "start_state",
+      "title": "Start State",
+      "kind": "manual",
+      "intent": "Pose, position, and light at frame start.",
+      "inputs": [],
+      "outputs": [
+        "motion.start_state"
+      ]
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "kind": "manual",
+      "intent": "The primary movement of the clip.",
+      "inputs": [],
+      "outputs": [
+        "motion.motion"
+      ]
+    },
+    {
+      "id": "camera_movement",
+      "title": "Camera Movement",
+      "kind": "manual",
+      "intent": "Static, pan, tilt, dolly, crane, handheld as intent.",
+      "inputs": [],
+      "outputs": [
+        "motion.camera_movement"
+      ]
+    },
+    {
+      "id": "subject_movement",
+      "title": "Subject Movement",
+      "kind": "manual",
+      "intent": "What the subject does.",
+      "inputs": [],
+      "outputs": [
+        "motion.subject_movement"
+      ]
+    },
+    {
+      "id": "environment_motion",
+      "title": "Environment Motion",
+      "kind": "manual",
+      "intent": "Wind, crowd, vehicles, weather.",
+      "inputs": [],
+      "outputs": [
+        "motion.environment_motion"
+      ]
+    },
+    {
+      "id": "end_state",
+      "title": "End State",
+      "kind": "manual",
+      "intent": "Pose and information at clip end.",
+      "inputs": [],
+      "outputs": [
+        "motion.end_state"
+      ]
+    },
+    {
+      "id": "continuity_constraints",
+      "title": "Continuity Constraints",
+      "kind": "manual",
+      "intent": "Matches that later shots must honor.",
+      "inputs": [],
+      "outputs": [
+        "motion.continuity_constraints"
+      ]
+    }
+  ],
+  "media_generation": "not_implemented",
+  "provider_registration": false,
+  "calls_image_model": false,
+  "calls_video_model": false,
+  "writes_media_files": false
+}

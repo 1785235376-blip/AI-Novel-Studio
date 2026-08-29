@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "id": "novel-markdown",
+  "name": "Novel Markdown",
+  "description": "Declarative Markdown manuscript layout for later host export work. EXPORT PROFILE EXECUTION = NOT IMPLEMENTED.",
+  "execution": "not_implemented",
+  "execution_supported": false,
+  "host_export_execution": "NOT_IMPLEMENTED",
+  "content_class": "declarative_data",
+  "format": "markdown",
+  "intended_use": "Human-readable draft sharing and future chapter export. Not executed by the current host.",
+  "section_ordering": [
+    "title_block",
+    "front_matter",
+    "volumes",
+    "chapters",
+    "end_notes"
+  ],
+  "metadata_inclusion": {
+    "title": true,
+    "author": true,
+    "revision_id": false,
+    "canon_ids": false,
+    "secrets": false
+  },
+  "naming_convention": "{novel_slug}/chapters/{chapter_index:04d}-{chapter_slug}.md",
+  "structural_options": {
+    "heading_style": "atx",
+    "scene_break": "* * *",
+    "include_chapter_summaries": false,
+    "inline_html": false
+  },
+  "compatibility_notes": [
+    "EXPORT PROFILE EXECUTION = NOT IMPLEMENTED.",
+    "Output is intended as UTF-8 Markdown, not as HTML injection.",
+    "Does not write the project database or touch the credential vault."
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "id": "screenplay-outline",
+  "name": "Screenplay Outline JSON",
+  "description": "Declarative JSON outline of scenes and beats for later production tools. EXPORT PROFILE EXECUTION = NOT IMPLEMENTED.",
+  "execution": "not_implemented",
+  "execution_supported": false,
+  "host_export_execution": "NOT_IMPLEMENTED",
+  "content_class": "declarative_data",
+  "format": "json",
+  "intended_use": "Machine-readable scene outline. Not a Fountain renderer and not executed now.",
+  "section_ordering": [
+    "project_meta",
+    "characters",
+    "locations",
+    "beats",
+    "scenes"
+  ],
+  "metadata_inclusion": {
+    "title": true,
+    "source_novel_id": true,
+    "revision_id": false,
+    "secrets": false
+  },
+  "naming_convention": "{novel_slug}-screenplay-outline.json",
+  "structural_options": {
+    "schema_version": "1.0",
+    "pretty_print": true,
+    "include_dialogue_text": false,
+    "include_dialogue_intent": true
+  },
+  "compatibility_notes": [
+    "EXPORT PROFILE EXECUTION = NOT IMPLEMENTED.",
+    "This is not a .fountain or PDF screenplay exporter.",
+    "JSON is data. Consumers must not treat string fields as HTML or script."
+  ]
+}

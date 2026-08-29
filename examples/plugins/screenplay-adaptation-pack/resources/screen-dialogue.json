@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "id": "screen-dialogue",
+  "name": "Screen Dialogue",
+  "description": "Declarative preset for actable speech. Host application and screenplay generation are not implemented.",
+  "purpose": "Write speech meant to be performed: short, actable, and free of novelistic interior caption.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "parentheticals",
+    "line_length"
+  ],
+  "writing_goals": [
+    "Cut lines that only repeat the picture",
+    "Give actors an action in the line",
+    "Keep subtext playable"
+  ],
+  "constraints": [
+    "Do not write novel interior as spoken text",
+    "Do not paste chapter dialogue unchanged"
+  ],
+  "checklist": [
+    "Each line could be interrupted",
+    "Character diction still differs",
+    "Plot facts that must be heard are heard once"
+  ],
+  "parameter_hints": {
+    "parentheticals": {
+      "type": "enum",
+      "values": [
+        "rare",
+        "none"
+      ],
+      "default": "rare"
+    }
+  }
+}

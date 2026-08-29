@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "id": "manuscript-plain-text",
+  "name": "Manuscript Plain Text",
+  "description": "Declarative plain-text manuscript layout without markup. EXPORT PROFILE EXECUTION = NOT IMPLEMENTED.",
+  "execution": "not_implemented",
+  "execution_supported": false,
+  "host_export_execution": "NOT_IMPLEMENTED",
+  "content_class": "declarative_data",
+  "format": "plain_text",
+  "intended_use": "Editor-neutral manuscript handoff. Not executed by the current host.",
+  "section_ordering": [
+    "title_block",
+    "chapters"
+  ],
+  "metadata_inclusion": {
+    "title": true,
+    "author": true,
+    "revision_id": false,
+    "word_count": false,
+    "secrets": false
+  },
+  "naming_convention": "{novel_slug}-manuscript.txt",
+  "structural_options": {
+    "encoding": "utf-8",
+    "line_endings": "lf",
+    "scene_break": "blank-line",
+    "wrap": "none",
+    "markup": "forbid"
+  },
+  "compatibility_notes": [
+    "EXPORT PROFILE EXECUTION = NOT IMPLEMENTED.",
+    "No Markdown, HTML, or rich text is intended.",
+    "Does not upload, email, or fetch remote locations."
+  ]
+}

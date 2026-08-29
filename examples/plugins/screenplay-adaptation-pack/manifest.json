@@ -1,0 +1,66 @@
+{
+  "manifest_version": "1.0",
+  "host_api_version": "1",
+  "id": "screenplay-adaptation-pack",
+  "name": "Screenplay Adaptation Pack",
+  "version": "1.0.0",
+  "description": "Official declarative novel-to-screen planning templates and writing presets. Novel-to-screenplay AI calls are not implemented.",
+  "capabilities": [
+    "writing_tool",
+    "workflow"
+  ],
+  "requested_permissions": [],
+  "execution_mode": "declarative",
+  "publisher": "AI Novel Studio Official",
+  "resources": [
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/novel-to-beat-sheet.json",
+      "sha256": "bdd360cd9a3624b827299ccef0b7c49f21063cc99578876753568acbacd6fb41",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/beat-sheet-to-scene-list.json",
+      "sha256": "3b65a2e31987f0f1df2f0365a2776f30acfbda9a7f5c4bba5ce2dd58d2ed424b",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/scene-to-screenplay-outline.json",
+      "sha256": "3aef25f72ad35c8a5e4370cfc686872e8bf944e667e394c156cda4bb9c30ce2f",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/screen-dialogue.json",
+      "sha256": "b5a755d08a7ef2101086cd33456fe7544429e86fcc60e3249b212d489cca9661",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/visual-action-description.json",
+      "sha256": "c7cb7c124b281f5849d7432d495cf342829c364f010f9deb5a05d800ed45c47f",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/scene-compression.json",
+      "sha256": "44dd69289eb32b6659cfeb5b7131c24bf23c26a9a88a2ce248f7a82ba527eafe",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/adaptation-fidelity-control.json",
+      "sha256": "d32975466e464088073633d5a17f6297cb66fbbafb9db84cc11201919470c6f5",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    }
+  ]
+}

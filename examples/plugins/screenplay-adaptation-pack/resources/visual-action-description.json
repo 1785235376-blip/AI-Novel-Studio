@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "id": "visual-action-description",
+  "name": "Visual Action Description",
+  "description": "Declarative preset for filmable action lines. Host application is not implemented.",
+  "purpose": "Describe only what a camera and microphone can take in.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "recommended_controls": [
+    "interiority_policy",
+    "verb_tense"
+  ],
+  "writing_goals": [
+    "Translate interior states into behavior",
+    "Keep action in present, concrete verbs"
+  ],
+  "constraints": [
+    "Do not narrate thoughts",
+    "Do not hide plot in unfilmable summary"
+  ],
+  "checklist": [
+    "A stranger could block the action from the paragraph",
+    "Sound is specified when meaning depends on it"
+  ],
+  "parameter_hints": {
+    "interiority_policy": {
+      "type": "enum",
+      "values": [
+        "forbid"
+      ],
+      "default": "forbid"
+    }
+  }
+}

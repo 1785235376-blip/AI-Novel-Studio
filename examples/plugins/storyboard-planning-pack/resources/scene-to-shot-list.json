@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0",
+  "id": "scene-to-shot-list",
+  "name": "Scene to Shot List",
+  "description": "Declarative shot planning from a scene goal. Does not generate images, video, or camera files.",
+  "execution": "not_supported",
+  "execution_supported": false,
+  "host_application": "not_implemented",
+  "content_class": "declarative_data",
+  "modifies_novel_data": false,
+  "requires_human_review": true,
+  "bypasses_canon_revision_permission": false,
+  "stages": [
+    {
+      "id": "scene_goal",
+      "title": "Scene Goal",
+      "kind": "manual",
+      "intent": "Restate the scene goal in visual terms.",
+      "inputs": [],
+      "outputs": [
+        "shotlist.scene_goal"
+      ]
+    },
+    {
+      "id": "visual_beat",
+      "title": "Visual Beat",
+      "kind": "manual",
+      "intent": "Name the picture-change that carries the turn.",
+      "inputs": [],
+      "outputs": [
+        "shotlist.visual_beat"
+      ]
+    },
+    {
+      "id": "shot",
+      "title": "Shot",
+      "kind": "manual",
+      "intent": "Declare a shot identity. No image is generated.",
+      "inputs": [],
+      "outputs": [
+        "shotlist.shot_id"
+      ]
+    },
+    {
+      "id": "framing",
+      "title": "Framing",
+      "kind": "manual",
+      "intent": "Wide, medium, close, insert, or other intended scale.",
+      "inputs": [],
+      "outputs": [
+        "shotlist.framing"
+      ]
+    },
+    {
+      "id": "camera_angle",
+      "title": "Camera Angle",
+      "kind": "manual",
+      "intent": "Eye-level, high, low, subjective, or overhead as intent.",
+      "inputs": [],
+      "outputs": [
+        "shotlist.camera_angle"
+      ]
+    },
+    {
+      "id": "subject",
+      "title": "Subject",
+      "kind": "manual",
+      "intent": "Who or what occupies the frame.",
+      "inputs": [],
+      "outputs": [
+        "shotlist.subject"
+      ]
+    },
+    {
+      "id": "action",
+      "title": "Action",
+      "kind": "manual",
+      "intent": "Motion inside the shot.",
+      "inputs": [],
+      "outputs": [
+        "shotlist.action"
+      ]
+    },
+    {
+      "id": "lighting",
+      "title": "Lighting",
+      "kind": "manual",
+      "intent": "Motivated light intent, not a render call.",
+      "inputs": [],
+      "outputs": [
+        "shotlist.lighting"
+      ]
+    },
+    {
+      "id": "duration_intent",
+      "title": "Duration Intent",
+      "kind": "manual",
+      "intent": "Relative length, not an encoded video.",
+      "inputs": [],
+      "outputs": [
+        "shotlist.duration_intent"
+      ]
+    }
+  ],
+  "media_generation": "not_implemented",
+  "provider_registration": false,
+  "calls_image_model": false,
+  "calls_video_model": false,
+  "writes_media_files": false
+}
