@@ -226,3 +226,25 @@ Typecheck 不是稳定基线。未改 frontend。Vite bundle PASS ≠ canonical 
 | Canonical build | `pnpm run build` = `tsc -b && vite build` | exit 1 | exit 1 |
 
 Typecheck 不是稳定基线。未改 frontend。未执行 Windows / 真 PostgreSQL / 真 Provider / DH-01–DH-08。V1.0 未发布。Draft PR #19 保持 Draft，不合并，不关 Issue #14。
+
+## Issue #14 Batch 2B-1（generation idempotency, 2026-08-29）
+
+本段绑定 base `01cc304e3df5357160f3c98b2ef50b0d9ddf8d95`（PR #19 已合并的 current-main）。结论是 **TEST_STATE_CONTAMINATION_RECLASSIFIED**，不是生产竞态。未改生产代码。未改 frontend。未关 Issue #14。未改 Issue #20。
+
+根因：目标测试固定 `Idempotency-Key: generation-race-unique`，`app.api._idempotency_store` 在 import 时指向仓库 `novel_data/idempotency.json`。第一次独立进程写入成功缓存后，后续进程 `jobs.create==0` 被误判为失败。缓存命中且不再 create 是正确幂等行为。
+
+| 检查 | 结果 |
+| --- | --- |
+| 原测试 20 次独立进程（修改前） | 1 PASS / 19 FAIL；FAIL 时键已存在且 `created_len=0` |
+| 全新 Store 并发 | 3×50、16×20、32×10 = 80/80 PASS |
+| 持久化重放 | 返回缓存；`jobs.create==0` |
+| 目标测试 20 次独立进程（隔离后，残留键仍在） | 20/20 PASS |
+| 100-round fresh-store stress | 100/100 PASS（suite 内） |
+| 后端全量 1 | 909 passed, 3 failed, 28 skipped, 0 xfail；27.14s |
+| 后端全量 2 | 909 passed, 3 failed, 28 skipped, 0 xfail；24.27s |
+
+剩余三个 PRODUCT_BASELINE（未改）：visual continuity `TIME_JUMP_CUT`、user preference `harness_enabled`、world rule `forbidden_terms`。并发幂等节点不再出现在 FAILED 集合。`NEW FAILURES = 0`。`NEW SKIPS = 0`。`NEW XFAILS = 0`。
+
+Frontend delta = 0。工具链不确定性归 [Issue #20](https://github.com/1785235376-blip/AI-Novel-Studio/issues/20)，本批不修。
+
+V1.0 / DH-01–DH-08 / 真 PostgreSQL / 真 Provider / Release = 未宣称通过。

@@ -2,7 +2,7 @@
 
 Living registry for file-backend pytest failures. This is not a V1.0 claim, not a DesktopHost DH-01–DH-08 PASS, and not a review of merged PR #12 production code.
 
-**Current-main** in this document means `origin/main` `e4dd24a682d2338d3aaf9ffa6880cbb1e364e6ac` (PR #12 already merged). The Batch 2A / 2A.1 counts bound to `d8174af8cb68c5e4edf920e6ccb45671f19ff3c9` are **historical** and must not be quoted as current-main without that SHA.
+**Current-main** in this document means `origin/main` `01cc304e3df5357160f3c98b2ef50b0d9ddf8d95` (PR #19 merged). Counts bound to `e4dd24a682d2338d3aaf9ffa6880cbb1e364e6ac` are Batch 2A.2 current-main-before-#19 and must not be quoted as post-#19 main without that SHA. Counts bound to `d8174af8cb68c5e4edf920e6ccb45671f19ff3c9` are **historical** Batch 2A / 2A.1.
 
 | Field | Historical Batch 2A / 2A.1 | Current-main Batch 2A.2 |
 | --- | --- | --- |
@@ -15,11 +15,11 @@ Living registry for file-backend pytest failures. This is not a V1.0 claim, not 
 | BEFORE / current-main BASE | 766 passed, 36 failed, 27 skipped, 0 xfail | 868 passed, 36 failed, 27 skipped, 0 xfail; 25.50s; exit 1 |
 | AFTER is not a single stable tuple | Concurrent generation is isolation-reproducible FAIL and aggregate-flake | same; do not treat 901/4 as the only integrated AFTER |
 
-Classifications: `PRODUCT_BASELINE` / `FIXTURE` / `ORDER_CONTAMINATION` / `PLATFORM` / `OPTIONAL_DEPENDENCY` / `DATABASE_REQUIRED` / `UNKNOWN`.
+Classifications: `PRODUCT_BASELINE` / `FIXTURE` / `ORDER_CONTAMINATION` / `PLATFORM` / `OPTIONAL_DEPENDENCY` / `DATABASE_REQUIRED` / `TEST_STATE_CONTAMINATION` / `UNKNOWN`.
 
 `UNKNOWN` is not used. Environment blockers are classified, not described as “blocked, therefore unclassifiable”.
 
-The four named production defects are `PRODUCT_BASELINE` and were **not** repaired in Batch 2A, 2A.1, or 2A.2.
+The four named failures classified as `PRODUCT_BASELINE` during Batch 2A / 2A.1 / 2A.2 were **not** repaired in those batches. Batch 2B-1 reclassified generation idempotency as `TEST_STATE_CONTAMINATION`. Three production defects remain.
 
 ## Current-main (`e4dd24a`) vs integrated HEAD
 
@@ -64,26 +64,57 @@ Plugin + conftest interaction (integrated HEAD): three plugin files 102 passed; 
 | PR #12 plugin tests | n/a | 102 passed, 0 failed | 102 passed, 0 failed | NO_INTERACTION_REGRESSION |
 | UNKNOWN | 0 | 0 | 0 | — |
 
-`tests/test_generation_variants_phase3.py::test_generation_is_idempotent_under_concurrent_submission` is a named production defect. It is isolation-reproducible (2A.2: 19/20 fail, 1/20 pass) and an aggregate flake. It is `PRODUCT_BASELINE`, not a new failure.
+`tests/test_generation_variants_phase3.py::test_generation_is_idempotent_under_concurrent_submission` was listed as a named production defect in Batch 2A.2. Batch 2B-1 reclassified it as `TEST_STATE_CONTAMINATION` (fixed idempotency key reused against durable `novel_data/idempotency.json`). It is not a production race and not an aggregate flake.
+
+## Issue #14 Batch 2B-1 (generation idempotency, 2026-08-29)
+
+Bound to base `01cc304e3df5357160f3c98b2ef50b0d9ddf8d95`. See `docs/issue14_batch2b1_generation_idempotency_report.md`.
+
+| Field | Value |
+| --- | --- |
+| Verdict | `TEST_STATE_CONTAMINATION_RECLASSIFIED` |
+| Production change required | NO |
+| Root cause | Fixed `Idempotency-Key: generation-race-unique` reused against process-import `IdempotencyStore` at `novel_data/idempotency.json` |
+| Original 20-run (unmodified test) | 1 PASS (key absent) / 19 FAIL (`created_len=0`, key present, cached `job_id=one-job`) |
+| Fresh-store concurrency | 3×50 + 16×20 + 32×10 = 80/80 PASS; same `job_id`; `jobs.create==1`; envelopes equal |
+| Persisted replay | cached body returned; `jobs.create==0` |
+| After isolation | original nodeid 20/20 independent pytest processes PASS even with leftover durable key |
+| Full run 1 | 909 passed, 3 failed, 28 skipped, 0 xfail |
+| Full run 2 | 909 passed, 3 failed, 28 skipped, 0 xfail |
+| Remaining PRODUCT_BASELINE | 3 (visual continuity, user preference, world rule) |
+| Issue #14 | OPEN |
+| Issue #20 | UNCHANGED |
+
+## Summary after Batch 2B-1
+
+| Classification | Batch 2A.2 integrated HEAD | Batch 2B-1 remaining | Disposition |
+| --- | --- | --- | --- |
+| TEST_STATE_CONTAMINATION | counted as PRODUCT_BASELINE (concurrent generation) | 0 | RECLASSIFIED_AND_FIXED (tests; run-scoped store) |
+| PRODUCT_BASELINE | 4 named | 3 named | REMAINS (not this batch) |
+| UNKNOWN | 0 | 0 | — |
 
 ## Entries
 
-### PRODUCT_BASELINE
+### TEST_STATE_CONTAMINATION
 
 #### tests/test_generation_variants_phase3.py::test_generation_is_idempotent_under_concurrent_submission
 
 | Field | Value |
 | --- | --- |
-| Classification | PRODUCT_BASELINE |
-| Reproduces alone | YES |
-| Reproduces after predecessor | NOT_TESTED |
+| Classification | TEST_STATE_CONTAMINATION |
+| Reproduces alone | YES on a reused durable store; NO on a run-scoped fresh store |
+| Reproduces after predecessor | N/A (store isolation, not order contamination) |
 | Platform | Cross-platform |
-| Severity | P0 |
-| Evidence | Isolation FAIL 19/20 in Batch 2A.2 (1 pass); 20/20 FAIL in Batch 2A.1 and Independent Reviewer (`len(created)==0` / concurrent `job_id` mismatch). Historical `d8174af` and current-main `e4dd24a` aggregates did not list it. Integrated HEAD three full aggregates FAIL. Command: `python -m pytest -p no:cacheprovider --tb=line tests/test_generation_variants_phase3.py::test_generation_is_idempotent_under_concurrent_submission` |
-| Owner area | runtime |
-| Disposition | REMAINS |
-| Production change required | YES |
-| Notes | Concurrent generation idempotency. Out of Batch 2A / 2A.1 / 2A.2 scope. Aggregate flake; isolation mostly FAIL. |
+| Severity | P0 (was mis-filed as production race) |
+| Evidence | Batch 2B-1 matrix A: run 1 key absent PASS `created=1`; runs 2–20 key present FAIL `created_len=0`. Fresh store 80/80 concurrent PASS. Replay `create=0` is correct idempotency. Isolation fixture: 20/20 independent pytest processes PASS against leftover `novel_data/idempotency.json`. |
+| Owner area | tests |
+| Disposition | FIXED_THIS_BATCH (tests) |
+| Production change required | NO |
+| Notes | Root cause = fixed idempotency key reused against durable cache. Not an aggregate flake. Not a production race. In-process `threading.Lock` already serializes `_cached_idempotent` / `_generate_once` / `_store_idempotent`. Packaged runtime launches uvicorn without `--workers` (single process). Do not call this a remaining production defect. |
+
+### PRODUCT_BASELINE
+
+The three remaining production defects were **not** repaired in Batch 2B-1.
 
 #### tests/test_p1_regression.py::test_visual_continuity_reports_scene_jumps
 
