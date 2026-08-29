@@ -98,3 +98,5 @@ See [plugin_security_model.md](plugin_security_model.md) for path, symlink, and 
 ## Example
 
 `examples/plugins/story-workflow-pack/` is a Contract/Validator sample. It does not execute workflows.
+
+Official declarative packs live under `examples/plugins/` and are documented in [official_declarative_plugin_packs.md](official_declarative_plugin_packs.md). They are catalog data, not executable tools.
