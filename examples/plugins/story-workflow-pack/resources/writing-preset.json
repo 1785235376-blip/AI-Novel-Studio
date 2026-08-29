@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "name": "角色对白节奏",
+  "description": "声明式写作预设，仅供合同与校验示例使用，宿主不会自动应用。",
+  "tone": "cinematic",
+  "dialogue_ratio": 0.45,
+  "pacing": "medium",
+  "notes": [
+    "保持对白短句",
+    "旁白用于场景转换"
+  ]
+}

@@ -10,8 +10,18 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from ..plugin_contracts import (
+    HOST_API_VERSION,
+    PLUGIN_CAPABILITIES,
+    PLUGIN_MANIFEST_VERSION,
+    PLUGIN_PERMISSIONS,
+    PluginManifestV1 as PluginManifestIn,
+    canonical_manifest_sha256,
+)
+from ..plugin_discovery import assert_registerable_package, identity_snapshot, sidecar_has_identity
 from ..idempotency import IdempotencyStore
 from ..storage import atomic_write
+from ..config import settings
 
 
 def _now() -> str:
@@ -94,34 +104,6 @@ class AssetDerivativeIn(_StrictModel):
     derivative_type: Literal["THUMBNAIL", "CROP", "RESIZE", "FORMAT_CONVERSION", "COLOR_VARIANT", "OTHER"]
     parameters: dict[str, Any] = Field(default_factory=dict)
     note: str = Field(default="", max_length=4000)
-
-
-PLUGIN_CAPABILITIES = frozenset({"provider", "writing_tool", "multimodal_tool", "exporter", "workflow"})
-PLUGIN_PERMISSIONS = frozenset({
-    "network", "filesystem.read", "filesystem.write", "process",
-    "model.text", "model.image", "model.audio", "model.video", "project.read", "project.write",
-})
-
-
-class PluginManifestIn(_StrictModel):
-    id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{1,79}$")
-    name: str = Field(min_length=1, max_length=160)
-    version: str = Field(pattern=r"^\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?$")
-    description: str = Field(default="", max_length=4000)
-    capabilities: list[str] = Field(default_factory=list, max_length=20)
-    requested_permissions: list[str] = Field(default_factory=list, max_length=30)
-
-    @model_validator(mode="after")
-    def supported_contract(self):
-        unknown_capabilities = set(self.capabilities) - PLUGIN_CAPABILITIES
-        unknown_permissions = set(self.requested_permissions) - PLUGIN_PERMISSIONS
-        if unknown_capabilities:
-            raise ValueError(f"unsupported plugin capabilities: {sorted(unknown_capabilities)}")
-        if unknown_permissions:
-            raise ValueError(f"unsupported plugin permissions: {sorted(unknown_permissions)}")
-        self.capabilities = list(dict.fromkeys(self.capabilities))
-        self.requested_permissions = list(dict.fromkeys(self.requested_permissions))
-        return self
 
 
 class PluginPermissionIn(_StrictModel):
@@ -451,44 +433,95 @@ class V1CapabilityService:
                             idempotency_key=idempotency_key)
 
     # Plugin manifest and permission manager -----------------------------
+    def _public_plugin(self, item: dict[str, Any]) -> dict[str, Any]:
+        public = self._public(item)
+        public["execution_supported"] = False
+        try:
+            public["version"] = int(public.get("version") or 1)
+        except (TypeError, ValueError):
+            public["version"] = 1
+        if not sidecar_has_identity(public):
+            public["status"] = "REVIEW_REQUIRED"
+            public["validated"] = False
+        return public
+
     def list_plugins(self) -> dict[str, Any]:
-        rows = [self._public(row) for row in self._read("plugins") if not row.get("deleted_at")]
+        rows = [self._public_plugin(row) for row in self._read("plugins") if not row.get("deleted_at")]
         rows.sort(key=lambda row: (str(row.get("name", "")).lower(), str(row.get("id", ""))))
         return {"items": rows, "total": len(rows), "default_policy": "DENY",
                 "execution_supported": False, "storage": self.storage_mode}
 
     def get_plugin(self, plugin_id: str) -> dict[str, Any]:
-        return self._get("plugins", plugin_id)
+        row = next((row for row in self._read("plugins") if row.get("id") == plugin_id and not row.get("deleted_at")), None)
+        if row is None:
+            raise FileNotFoundError(plugin_id)
+        return self._public_plugin(row)
+
+    def _plugin_payload(self, body: PluginManifestIn) -> dict[str, Any]:
+        dump = body.public_dump()
+        snapshot = identity_snapshot(body)
+        return {
+            **{key: value for key, value in dump.items() if key != "version"},
+            **snapshot,
+            "granted_permissions": [],
+            "status": "REGISTERED",
+            "default_policy": "DENY",
+            "execution_supported": False,
+            "publisher_verified": False,
+            "publisher_trust": "unverified",
+            "permission_review": None,
+            "manifest_version": getattr(body, "manifest_version", PLUGIN_MANIFEST_VERSION),
+            "host_api_version": getattr(body, "host_api_version", HOST_API_VERSION),
+            "manifest_sha256": canonical_manifest_sha256(body),
+        }
 
     def register_plugin(self, body: PluginManifestIn, idempotency_key: str | None = None) -> dict[str, Any]:
-        payload = {
-            **body.model_dump(mode="json"), "granted_permissions": [], "status": "REGISTERED",
-            "default_policy": "DENY", "execution_supported": False,
-        }
-        return self._create("plugins", payload, novel_id=None, action="PLUGIN_REGISTERED",
-                            target_type="Plugin", idempotency_key=idempotency_key, item_id=body.id)
+        # Live identity preflight happens before sidecar, audit, or idempotency writes.
+        assert_registerable_package(body.id, body, settings.data_path() / "plugins")
+        payload = self._plugin_payload(body)
+        existing = next((row for row in self._read("plugins") if row.get("id") == body.id and not row.get("deleted_at")), None)
+        if existing is None:
+            created = self._create("plugins", payload, novel_id=None, action="PLUGIN_REGISTERED",
+                                   target_type="Plugin", idempotency_key=idempotency_key, item_id=body.id)
+            return self._public_plugin(created)
+        public = self._public_plugin(existing)
+        if (sidecar_has_identity(existing)
+                and existing.get("manifest_sha256") == payload["manifest_sha256"]
+                and public.get("status") != "REVIEW_REQUIRED"):
+            return public
+        return self._public_plugin(self._update(
+            "plugins", body.id, payload, novel_id=None, expected_version=None,
+            action="PLUGIN_RE_REGISTERED", target_type="Plugin",
+        ))
 
     def set_plugin_permissions(self, plugin_id: str, body: PluginPermissionIn,
                                expected_version: int | None = None) -> dict[str, Any]:
         plugin = self.get_plugin(plugin_id)
+        if plugin.get("status") == "REVIEW_REQUIRED" or not sidecar_has_identity(plugin):
+            raise ValueError("plugin identity must be re-registered before permission review")
         requested = set(plugin.get("requested_permissions", []))
         granted = set(body.granted_permissions)
         if not granted.issubset(requested):
             raise ValueError("granted permissions must be requested by the plugin manifest")
         review = {"reviewed_by": body.reviewed_by, "note": body.note, "reviewed_at": _now()}
-        return self._update("plugins", plugin_id, {"granted_permissions": body.granted_permissions,
+        return self._public_plugin(self._update("plugins", plugin_id, {"granted_permissions": body.granted_permissions,
                             "permission_review": review, "status": "PERMISSIONS_REVIEWED"}, novel_id=None,
-                            expected_version=expected_version, action="PLUGIN_PERMISSIONS_REVIEWED", target_type="Plugin")
+                            expected_version=expected_version, action="PLUGIN_PERMISSIONS_REVIEWED", target_type="Plugin"))
 
     def set_plugin_enabled(self, plugin_id: str, enabled: bool, expected_version: int | None = None) -> dict[str, Any]:
         plugin = self.get_plugin(plugin_id)
-        if enabled and set(plugin.get("requested_permissions", [])) != set(plugin.get("granted_permissions", [])):
-            raise ValueError("all requested permissions must be reviewed and granted before activation")
+        if enabled:
+            if plugin.get("status") == "REVIEW_REQUIRED" or not sidecar_has_identity(plugin):
+                raise ValueError("plugin identity must be re-registered before activation")
+            if set(plugin.get("requested_permissions", [])) != set(plugin.get("granted_permissions", [])):
+                raise ValueError("all requested permissions must be reviewed and granted before activation")
+            from ..plugin_catalog import assert_activation_identity
+            assert_activation_identity(plugin)
         # Activation is manifest activation only.  V1 never executes arbitrary
         # plugin code from this endpoint.
-        return self._update("plugins", plugin_id, {"status": "MANIFEST_ACTIVE" if enabled else "DISABLED",
+        return self._public_plugin(self._update("plugins", plugin_id, {"status": "MANIFEST_ACTIVE" if enabled else "DISABLED",
                             "execution_supported": False}, novel_id=None, expected_version=expected_version,
-                            action="PLUGIN_MANIFEST_ACTIVATED" if enabled else "PLUGIN_DISABLED", target_type="Plugin")
+                            action="PLUGIN_MANIFEST_ACTIVATED" if enabled else "PLUGIN_DISABLED", target_type="Plugin"))
 
     # Durable local DAG ---------------------------------------------------
     @staticmethod

@@ -42,6 +42,14 @@ from .services.export_job_service import (
     ExportJobResultInvalid,
     ExportJobUnavailable,
 )
+from .plugin_discovery import discover_installed_plugins
+from .plugin_catalog import get_plugin_resource, list_plugin_resources
+from .plugin_contracts import (
+    PLUGIN_ID_DUPLICATE,
+    PLUGIN_MANIFEST_DRIFT,
+    PluginContractError,
+    SAFE_ERROR_MESSAGES,
+)
 from .services.v1_capability_service import (
     AssetDerivativeIn,
     CapabilityVersionConflict,
@@ -494,6 +502,14 @@ def capability_guard(fn,*args,**kwargs):
     """Map capability-service failures to the shared API error contract."""
     try:
         return fn(*args,**kwargs)
+    except PluginContractError as exc:
+        status = 409 if exc.code in {PLUGIN_MANIFEST_DRIFT, PLUGIN_ID_DUPLICATE} else 400
+        raise HTTPException(status, {
+            "code": exc.code,
+            "error_code": exc.code,
+            "message": exc.message,
+            "error": SAFE_ERROR_MESSAGES.get(exc.code, exc.message),
+        }) from None
     except CapabilityVersionConflict as exc:
         raise HTTPException(409, {"code": "VERSION_CONFLICT", "current": exc.current}) from exc
     except FileNotFoundError as exc:
@@ -502,6 +518,48 @@ def capability_guard(fn,*args,**kwargs):
         raise HTTPException(409, {"code": "ALREADY_EXISTS", "resource": str(exc)}) from exc
     except (ValueError, KeyError, TypeError) as exc:
         raise HTTPException(400, {"code": "INVALID_CAPABILITY_REQUEST", "message": str(exc)}) from exc
+
+
+def plugin_catalog_guard(fn, *args, **kwargs):
+    """Map catalog failures without leaking paths, stacks, or raw exceptions."""
+    try:
+        return fn(*args, **kwargs)
+    except PluginContractError as exc:
+        if exc.code in {PLUGIN_MANIFEST_DRIFT, PLUGIN_ID_DUPLICATE}:
+            status = 409
+        elif exc.code in {"PLUGIN_RESOURCE_TOO_LARGE", "PLUGIN_RESOURCE_INVALID_JSON"}:
+            status = 400
+        elif exc.code.startswith("PLUGIN_RESOURCE_"):
+            status = 404
+        else:
+            status = 400
+        raise HTTPException(status, {
+            "code": exc.code,
+            "error_code": exc.code,
+            "message": exc.message,
+            "error": SAFE_ERROR_MESSAGES.get(exc.code, exc.message),
+        }) from None
+    except RecursionError:
+        raise HTTPException(400, {
+            "code": "PLUGIN_RESOURCE_INVALID_JSON",
+            "error_code": "PLUGIN_RESOURCE_INVALID_JSON",
+            "message": SAFE_ERROR_MESSAGES.get("PLUGIN_RESOURCE_INVALID_JSON"),
+            "error": SAFE_ERROR_MESSAGES.get("PLUGIN_RESOURCE_INVALID_JSON"),
+        }) from None
+    except FileNotFoundError:
+        raise HTTPException(404, {
+            "code": "NOT_FOUND",
+            "error_code": "NOT_FOUND",
+            "message": "插件或声明式资源不可用。",
+            "error": "插件或声明式资源不可用。",
+        }) from None
+    except (ValueError, KeyError, TypeError):
+        raise HTTPException(400, {
+            "code": "INVALID_CAPABILITY_REQUEST",
+            "error_code": "INVALID_CAPABILITY_REQUEST",
+            "message": "插件资源请求无效。",
+            "error": "插件资源请求无效。",
+        }) from None
 def _legacy_revision_state(project_id,expected_revision):
     from .services.narrative_state_service import NarrativeStateService
     try:
@@ -2812,15 +2870,7 @@ def list_plugins():
     return v1_capability_service.list_plugins()
 @router.get("/plugins/discover")
 def discover_plugins():
-    import json
-    root=settings.data_path()/"plugins"; items=[]
-    if root.exists():
-        for path in root.glob("*/manifest.json"):
-            try:
-                from .services.v1_capability_service import PluginManifestIn
-                items.append({"path":str(path.parent),"manifest":PluginManifestIn.model_validate(json.loads(path.read_text(encoding='utf-8'))).model_dump(mode='json')})
-            except Exception as exc: items.append({"path":str(path.parent),"error":str(exc)})
-    return {"items":items,"execution_supported":False}
+    return discover_installed_plugins(settings.data_path() / "plugins")
 @router.get("/plugins/runtime-status")
 def plugin_runtime_status():
     return {'execution_supported':False,'sandbox':'NOT_CONFIGURED','isolation':'DENY_ALL','reason':'plugin runtime execution is disabled until isolated worker is shipped'}
@@ -2862,6 +2912,16 @@ def enable_plugin(plugin_id: str, expected_version: int | None = Query(default=N
 @router.post("/plugins/{plugin_id}/disable")
 def disable_plugin(plugin_id: str, expected_version: int | None = Query(default=None, ge=1)):
     return capability_guard(v1_capability_service.set_plugin_enabled, plugin_id, False, expected_version)
+
+
+@router.get("/plugins/{plugin_id}/resources")
+def list_declarative_plugin_resources(plugin_id: str):
+    return plugin_catalog_guard(list_plugin_resources, plugin_id)
+
+
+@router.get("/plugins/{plugin_id}/resources/{resource_id}")
+def get_declarative_plugin_resource(plugin_id: str, resource_id: str):
+    return plugin_catalog_guard(get_plugin_resource, plugin_id, resource_id)
 
 
 # Durable, deterministic workflow metadata engine.
