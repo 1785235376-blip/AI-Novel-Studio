@@ -18,6 +18,7 @@ import threading
 import time
 from dataclasses import dataclass, field
 from queue import Empty, Queue
+from subprocess import TimeoutExpired
 from typing import Any, IO, Literal
 
 from app.plugin_capability_policy import REASON_ACCEPTED, begin_retry, evaluate_late_result
@@ -124,6 +125,7 @@ class HostTestWorkerSupervisor:
 
     handshake_timeout_s: float = 2.0
     sandbox_handshake_timeout_s: float = 30.0
+    crash_exit_observation_timeout_s: float = 0.25
 
     def start_test_worker(self) -> WorkerSession:
         owned = spawn_host_test_worker()
@@ -352,13 +354,23 @@ class HostTestWorkerSupervisor:
         return self._outcome(session, accepted=False, reason=REASON_WORKER_TIMEOUT)
 
     def _on_crash(self, session: WorkerSession) -> HostTestJobOutcome:
-        exit_status = session.owned.poll()
+        exit_status = self._observe_exit_status(session.owned)
         with session._lock:
             session.lifecycle = ExecutionLifecycleState.FAILED
         self._kill(session)
         outcome = self._outcome(session, accepted=False, reason=REASON_WORKER_CRASH)
         outcome.worker_exit_status = exit_status
         return outcome
+
+    def _observe_exit_status(self, owned: OwnedWorkerProcess) -> int | None:
+        """Observe a natural child exit without delaying crash cleanup unboundedly."""
+        exit_status = owned.poll()
+        if exit_status is not None:
+            return exit_status
+        try:
+            return owned.wait(timeout=self.crash_exit_observation_timeout_s)
+        except TimeoutExpired:
+            return None
 
     def _fail(self, session: WorkerSession, reason: str, *, kill: bool) -> HostTestJobOutcome:
         with session._lock:
