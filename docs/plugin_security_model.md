@@ -68,7 +68,7 @@ Duplicate plugin IDs fail closed on **discovery, registration, activation, and c
 - Resolves the plugin package by live scan of the plugins root
 - Requires the registered plugin to be `MANIFEST_ACTIVE`
 - Re-validates each resource path, type, size and SHA-256
-- Treats **package budget** (more than 100 resources, any file over 1 MiB, or more than 10 MiB measurable total) as a whole-package `BUDGET` failure before JSON is parsed
+- Treats **package budget** (more than 100 resources, any file over 1 MiB, or more than 10 MiB **actual bytes read**) as a whole-package `BUDGET` failure before JSON is parsed. `stat` size is a fast reject only; the security boundary is a read-once snapshot. Hash-mismatched and invalid JSON payloads still count toward the 10 MiB total; missing, path, and symlink faults do not.
 - Treats a single missing file, path error, symlink/reparse, hash mismatch, or invalid JSON as a **per-resource** failure: siblings that still verify remain listed (`PARTIAL`), and a valid resource detail is not failed because an unrelated resource is missing
 - Returns nothing for a missing directory, duplicate id, or drifted identity
 - Never writes plugin files, fetches URLs, or follows escaped symlinks

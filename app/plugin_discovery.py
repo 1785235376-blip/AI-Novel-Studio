@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -141,19 +142,24 @@ def parse_declarative_json(data: bytes, *, max_depth: int | None = None) -> Any:
     return parsed
 
 
-def read_declarative_json(path: Path, *, max_bytes: int) -> tuple[bytes, Any]:
+def read_capped_bytes(path: Path, *, max_bytes: int) -> bytes:
+    """Read at most max_bytes from a regular file. Does not parse JSON."""
     try:
-        size = path.stat().st_size
-    except OSError as exc:
-        raise PluginContractError(PLUGIN_RESOURCE_PATH_INVALID) from exc
-    if size > max_bytes:
-        raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
-    try:
-        data = path.read_bytes()
+        if path.is_symlink():
+            raise PluginContractError(PLUGIN_RESOURCE_SYMLINK_REJECTED)
+        with path.open("rb") as handle:
+            data = handle.read(max_bytes + 1)
+    except PluginContractError:
+        raise
     except OSError as exc:
         raise PluginContractError(PLUGIN_RESOURCE_PATH_INVALID) from exc
     if len(data) > max_bytes:
         raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
+    return data
+
+
+def read_declarative_json(path: Path, *, max_bytes: int) -> tuple[bytes, Any]:
+    data = read_capped_bytes(path, max_bytes=max_bytes)
     parsed = parse_declarative_json(data)
     return data, parsed
 
@@ -166,12 +172,14 @@ def preflight_resource_budget(
     max_count: int | None = None,
     max_total: int | None = None,
 ) -> int:
-    """Stat measurable resources before parsing JSON.
+    """Stat measurable resources as a fast reject before the read-once snapshot.
 
     Only count, per-file size and total size may fail the whole package
     (`PLUGIN_RESOURCE_TOO_LARGE`). Missing files, path errors, symlinks and
     other per-resource faults are skipped here so catalog isolation can keep
     valid siblings. Unmeasurable files contribute nothing to the total.
+    Stat size is not the security boundary; `snapshot_manifest_resources`
+    re-reads actual bytes and accounts them before JSON is parsed.
     """
     file_limit = MAX_RESOURCE_BYTES if max_file is None else max_file
     count_limit = MAX_RESOURCE_COUNT if max_count is None else max_count
@@ -193,29 +201,86 @@ def preflight_resource_budget(
     return total
 
 
-def verify_manifest_resources(plugin_root: Path, manifest: PluginManifestV1) -> list[dict[str, Any]]:
-    preflight_resource_budget(plugin_root, manifest)
-    verified: list[dict[str, Any]] = []
+@dataclass(frozen=True, slots=True)
+class ResourceByteSnapshot:
+    """Bytes taken from one resource file, or the per-resource fault that blocked the read."""
+
+    resource: PluginResourceRef
+    data: bytes | None = None
+    error: PluginContractError | None = None
+
+
+def snapshot_resource_bytes(
+    plugin_root: Path,
+    resource: PluginResourceRef,
+    *,
+    max_file: int | None = None,
+) -> ResourceByteSnapshot:
+    """Resolve and read one resource once. Per-file over-budget fails the package."""
+    file_limit = MAX_RESOURCE_BYTES if max_file is None else max_file
+    try:
+        path = resolve_plugin_file(plugin_root, resource.relative_path)
+        if not path.is_file() or path.is_symlink():
+            raise PluginContractError(PLUGIN_RESOURCE_PATH_INVALID)
+        data = read_capped_bytes(path, max_bytes=file_limit)
+        return ResourceByteSnapshot(resource=resource, data=data)
+    except PluginContractError as exc:
+        if exc.code == PLUGIN_RESOURCE_TOO_LARGE:
+            raise
+        return ResourceByteSnapshot(resource=resource, error=exc)
+    except OSError:
+        return ResourceByteSnapshot(
+            resource=resource,
+            error=PluginContractError(PLUGIN_RESOURCE_PATH_INVALID),
+        )
+
+
+def snapshot_manifest_resources(
+    plugin_root: Path,
+    manifest: PluginManifestV1,
+    *,
+    max_file: int | None = None,
+    max_count: int | None = None,
+    max_total: int | None = None,
+) -> list[ResourceByteSnapshot]:
+    """Read each resource once and account actual bytes before any JSON parse.
+
+    Hash-mismatched and invalid JSON payloads still count. Unreadable files
+    (missing, path, symlink) do not. Exceeding the total raises
+    `PLUGIN_RESOURCE_TOO_LARGE` without parsing resource JSON.
+    """
+    file_limit = MAX_RESOURCE_BYTES if max_file is None else max_file
+    count_limit = MAX_RESOURCE_COUNT if max_count is None else max_count
+    total_limit = MAX_TOTAL_RESOURCE_BYTES if max_total is None else max_total
+    if len(manifest.resources) > count_limit:
+        raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
+    preflight_resource_budget(
+        plugin_root, manifest, max_file=file_limit, max_count=count_limit, max_total=total_limit,
+    )
+    snapshots: list[ResourceByteSnapshot] = []
     total = 0
     for resource in manifest.resources:
-        item = verify_resource(plugin_root, resource)
-        total += int(item["size"])
-        if total > MAX_TOTAL_RESOURCE_BYTES:
-            raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
-        verified.append(item)
-    return verified
+        snapshot = snapshot_resource_bytes(plugin_root, resource, max_file=file_limit)
+        if snapshot.data is not None:
+            total += len(snapshot.data)
+            if total > total_limit:
+                raise PluginContractError(PLUGIN_RESOURCE_TOO_LARGE)
+        snapshots.append(snapshot)
+    return snapshots
 
 
-def verify_resource(plugin_root: Path, resource: PluginResourceRef) -> dict[str, Any]:
-    path = resolve_plugin_file(plugin_root, resource.relative_path)
-    if not path.is_file() or path.is_symlink():
-        raise PluginContractError(PLUGIN_RESOURCE_PATH_INVALID)
-    data, parsed = read_declarative_json(path, max_bytes=MAX_RESOURCE_BYTES)
+def verify_resource_snapshot(snapshot: ResourceByteSnapshot) -> dict[str, Any]:
+    """Verify identity of already-read bytes. Call only after package budget passed."""
+    if snapshot.error is not None or snapshot.data is None:
+        raise snapshot.error or PluginContractError(PLUGIN_RESOURCE_PATH_INVALID)
+    resource = snapshot.resource
+    data = snapshot.data
     digest = hashlib.sha256(data).hexdigest()
     if digest != resource.sha256.lower():
         raise PluginContractError(PLUGIN_RESOURCE_HASH_MISMATCH)
     if resource.media_type and resource.media_type != "application/json":
         raise PluginContractError(PLUGIN_RESOURCE_TYPE_UNSUPPORTED)
+    parsed = parse_declarative_json(data)
     return {
         "resource_id": resource_id_for(resource.relative_path),
         "kind": resource.kind,
@@ -226,6 +291,16 @@ def verify_resource(plugin_root: Path, resource: PluginResourceRef) -> dict[str,
         "size": len(data),
         "data": parsed,
     }
+
+
+def verify_manifest_resources(plugin_root: Path, manifest: PluginManifestV1) -> list[dict[str, Any]]:
+    snapshots = snapshot_manifest_resources(plugin_root, manifest)
+    return [verify_resource_snapshot(snapshot) for snapshot in snapshots]
+
+
+def verify_resource(plugin_root: Path, resource: PluginResourceRef) -> dict[str, Any]:
+    snapshot = snapshot_resource_bytes(plugin_root, resource)
+    return verify_resource_snapshot(snapshot)
 
 
 def load_plugin_manifest(plugin_root: Path) -> PluginManifestV1:

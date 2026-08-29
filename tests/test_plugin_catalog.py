@@ -13,7 +13,13 @@ from app.config import settings
 from app.dependencies import v1_capability_service
 from app.main import app
 from app.plugin_catalog import plain_text
-from app.plugin_contracts import PLUGIN_ID_DUPLICATE, PLUGIN_MANIFEST_DRIFT, PLUGIN_RESOURCE_HASH_MISMATCH
+from app.plugin_contracts import (
+    MAX_RESOURCE_BYTES,
+    MAX_TOTAL_RESOURCE_BYTES,
+    PLUGIN_ID_DUPLICATE,
+    PLUGIN_MANIFEST_DRIFT,
+    PLUGIN_RESOURCE_HASH_MISMATCH,
+)
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -847,3 +853,115 @@ def test_recursion_error_is_normalized(plugin_root, monkeypatch):
     assert detail.status_code != 500
     assert "artificial" not in detail.text
     assert "Traceback" not in detail.text
+
+
+FAT_RESOURCE_SIZE = 980 * 1024
+FAT_RESOURCE_COUNT = 11
+
+
+def _payload_of_size(name: str, size: int, *, valid_json: bool = True) -> bytes:
+    if valid_json:
+        prefix = f'{{"name":"{name}","pad":"'
+        suffix = '"}'
+        pad = size - len(prefix) - len(suffix)
+        raw = (prefix + ("x" * pad) + suffix).encode("utf-8")
+    else:
+        raw = b"{" + (b"x" * (size - 1))
+    assert len(raw) == size
+    return raw
+
+
+def _swap_after_preflight(plugin: Path, files: dict[str, bytes], monkeypatch) -> None:
+    import app.plugin_discovery as discovery
+
+    original = discovery.preflight_resource_budget
+
+    def swapped(plugin_root, manifest, **kwargs):
+        total = original(plugin_root, manifest, **kwargs)
+        for name, payload in files.items():
+            (plugin / "resources" / name).write_bytes(payload)
+        return total
+
+    monkeypatch.setattr(discovery, "preflight_resource_budget", swapped)
+
+
+def _track_resource_parse_sizes(monkeypatch) -> list[int]:
+    import app.plugin_discovery as discovery
+
+    sizes: list[int] = []
+    original = discovery.parse_declarative_json
+
+    def counting(data, **kwargs):
+        sizes.append(len(data))
+        return original(data, **kwargs)
+
+    monkeypatch.setattr(discovery, "parse_declarative_json", counting)
+    return sizes
+
+
+def test_toctou_total_budget_uses_actual_read_bytes(plugin_root, monkeypatch):
+    names = [f"r{i:02d}.json" for i in range(FAT_RESOURCE_COUNT)]
+    plugin = write_plugin(plugin_root, "toctou-pack", resources=[
+        ("writing_presets", f"resources/{name}", {"name": name}) for name in names
+    ])
+    client = _client()
+    _register(client, "toctou-pack")
+    baseline = client.get("/api/plugins/toctou-pack/resources").json()
+    assert baseline["validation_status"] == "VALIDATED"
+    assert baseline["resource_count"] == FAT_RESOURCE_COUNT
+    assert baseline["execution_supported"] is False
+
+    fat = _payload_of_size("fat", FAT_RESOURCE_SIZE)
+    assert len(fat) <= MAX_RESOURCE_BYTES
+    assert FAT_RESOURCE_COUNT * len(fat) > MAX_TOTAL_RESOURCE_BYTES
+    _swap_after_preflight(plugin, {name: fat for name in names}, monkeypatch)
+    parse_sizes = _track_resource_parse_sizes(monkeypatch)
+
+    listed = client.get("/api/plugins/toctou-pack/resources")
+    body = listed.json()
+    assert listed.status_code == 200
+    assert body["items"] == []
+    assert body["validated"] is False
+    assert body["error_code"] == "PLUGIN_RESOURCE_TOO_LARGE"
+    assert body["validation_status"] == "BUDGET"
+    assert body["execution_supported"] is False
+    assert body["isolation"] == "DENY_ALL"
+    assert not any(size >= FAT_RESOURCE_SIZE for size in parse_sizes)
+    detail = client.get("/api/plugins/toctou-pack/resources/resources:r00.json")
+    assert detail.status_code in {400, 404}
+    assert detail.json()["detail"]["error_code"] == "PLUGIN_RESOURCE_TOO_LARGE"
+    assert not any(size >= FAT_RESOURCE_SIZE for size in parse_sizes)
+    assert str(plugin) not in listed.text + detail.text
+    assert "Traceback" not in listed.text + detail.text
+
+
+def test_invalid_payloads_count_toward_package_budget(plugin_root, monkeypatch):
+    names = [f"r{i:02d}.json" for i in range(FAT_RESOURCE_COUNT)]
+    plugin = write_plugin(plugin_root, "invalid-budget", resources=[
+        ("writing_presets", f"resources/{name}", {"name": name}) for name in names
+    ])
+    client = _client()
+    _register(client, "invalid-budget")
+    hash_names = names[:6]
+    json_names = names[6:]
+    replacements = {
+        **{name: _payload_of_size("hash", FAT_RESOURCE_SIZE, valid_json=True) for name in hash_names},
+        **{name: _payload_of_size("json", FAT_RESOURCE_SIZE, valid_json=False) for name in json_names},
+    }
+    assert sum(len(payload) for payload in replacements.values()) > MAX_TOTAL_RESOURCE_BYTES
+    _swap_after_preflight(plugin, replacements, monkeypatch)
+    parse_sizes = _track_resource_parse_sizes(monkeypatch)
+
+    listed = client.get("/api/plugins/invalid-budget/resources")
+    body = listed.json()
+    assert listed.status_code == 200
+    assert body["items"] == []
+    assert body["validated"] is False
+    assert body["error_code"] == "PLUGIN_RESOURCE_TOO_LARGE"
+    assert body["validation_status"] == "BUDGET"
+    assert not any(size >= FAT_RESOURCE_SIZE for size in parse_sizes)
+    detail = client.get("/api/plugins/invalid-budget/resources/resources:r00.json")
+    assert detail.status_code in {400, 404}
+    assert detail.json()["detail"]["error_code"] == "PLUGIN_RESOURCE_TOO_LARGE"
+    assert not any(size >= FAT_RESOURCE_SIZE for size in parse_sizes)
+    assert str(plugin) not in listed.text + detail.text

@@ -27,11 +27,11 @@ from .plugin_contracts import (
 )
 from .plugin_discovery import (
     identity_matches,
-    preflight_resource_budget,
     sidecar_has_identity,
+    snapshot_manifest_resources,
     unique_package_for_plugin_id,
-    verify_resource,
     verify_manifest_resources,
+    verify_resource_snapshot,
 )
 
 _HTML_TAG_RE = re.compile(r"<[^>]*>")
@@ -185,13 +185,13 @@ def _is_active(plugin: dict[str, Any]) -> bool:
     return plugin.get("status") == ACTIVE_PLUGIN_STATUS and sidecar_has_identity(plugin)
 
 
-def _verify_live_resources(plugin_id: str, package_root: Path, manifest: PluginManifestV1) -> tuple[list[dict[str, Any]], int]:
-    """Re-verify each resource independently. One failure cannot hide others."""
+def _verify_live_resources(plugin_id: str, snapshots) -> tuple[list[dict[str, Any]], int]:
+    """Re-verify each already-read snapshot independently. One failure cannot hide others."""
     items: list[dict[str, Any]] = []
     invalid = 0
-    for resource in manifest.resources:
+    for snapshot in snapshots:
         try:
-            verified = verify_resource(package_root, resource)
+            verified = verify_resource_snapshot(snapshot)
         except (PluginContractError, OSError, RecursionError, ValueError):
             invalid += 1
             continue
@@ -221,7 +221,7 @@ def list_plugin_resources(plugin_id: str) -> dict[str, Any]:
             )
         return _empty_catalog(plugin_id, visible=True, validation_status="MISSING")
     try:
-        preflight_resource_budget(package_root, manifest)
+        snapshots = snapshot_manifest_resources(package_root, manifest)
     except PluginContractError as exc:
         if exc.code != PLUGIN_RESOURCE_TOO_LARGE:
             raise
@@ -229,7 +229,7 @@ def list_plugin_resources(plugin_id: str) -> dict[str, Any]:
             plugin_id, visible=True, status=ACTIVE_PLUGIN_STATUS,
             error_code=exc.code, validation_status="BUDGET",
         )
-    items, invalid = _verify_live_resources(plugin_id, package_root, manifest)
+    items, invalid = _verify_live_resources(plugin_id, snapshots)
     if invalid:
         status = "PARTIAL" if items else "FAILED"
         return {
@@ -278,17 +278,12 @@ def get_plugin_resource(plugin_id: str, resource_id: str) -> dict[str, Any]:
         if exc.code in {PLUGIN_MANIFEST_DRIFT, PLUGIN_ID_DUPLICATE}:
             raise
         raise FileNotFoundError(resource_id) from None
-    try:
-        preflight_resource_budget(package_root, manifest)
-    except PluginContractError as exc:
-        if exc.code == PLUGIN_RESOURCE_TOO_LARGE:
-            raise
-        # Per-resource preflight faults must not hide an unrelated valid resource.
-    target = next((resource for resource in manifest.resources
-                   if resource_id_for(resource.relative_path) == resource_id), None)
+    snapshots = snapshot_manifest_resources(package_root, manifest)
+    target = next((snapshot for snapshot in snapshots
+                   if resource_id_for(snapshot.resource.relative_path) == resource_id), None)
     if target is None:
         raise FileNotFoundError(resource_id)
-    verified = verify_resource(package_root, target)
+    verified = verify_resource_snapshot(target)
     return public_resource(plugin_id, verified, include_data=True)
 
 

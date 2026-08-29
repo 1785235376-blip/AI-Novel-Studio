@@ -26,7 +26,13 @@ from app.plugin_contracts import (
     PLUGIN_RESOURCE_TYPE_UNSUPPORTED,
     PluginContractError,
 )
-from app.plugin_discovery import discover_installed_plugins, load_plugin_package, verify_resource
+from app.plugin_discovery import (
+    discover_installed_plugins,
+    load_plugin_manifest,
+    load_plugin_package,
+    verify_manifest_resources,
+    verify_resource,
+)
 from app.release_readiness import build_release_readiness
 from app.services.v1_capability_service import PluginManifestIn, PluginPermissionIn
 
@@ -201,6 +207,45 @@ def test_oversized_resource(plugin_root):
     with pytest.raises(PluginContractError) as caught:
         load_plugin_package(plugin)
     assert caught.value.code == PLUGIN_RESOURCE_TOO_LARGE
+
+
+def test_activation_snapshot_rejects_toctou_over_budget(plugin_root, monkeypatch):
+    import app.plugin_discovery as discovery
+    from app.plugin_contracts import MAX_TOTAL_RESOURCE_BYTES
+
+    names = [f"r{i:02d}.json" for i in range(11)]
+    plugin = write_plugin(plugin_root, "act-toctou", resources=[
+        ("writing_presets", f"resources/{name}", {"name": name}) for name in names
+    ])
+    manifest = load_plugin_manifest(plugin)
+    fat_size = 980 * 1024
+    prefix = b'{"name":"fat","pad":"'
+    suffix = b'"}'
+    fat = prefix + (b"x" * (fat_size - len(prefix) - len(suffix))) + suffix
+    assert len(fat) == fat_size
+    assert len(fat) <= MAX_RESOURCE_BYTES
+    assert 11 * len(fat) > MAX_TOTAL_RESOURCE_BYTES
+    original = discovery.preflight_resource_budget
+
+    def swapped(plugin_root, live_manifest, **kwargs):
+        total = original(plugin_root, live_manifest, **kwargs)
+        for name in names:
+            (plugin / "resources" / name).write_bytes(fat)
+        return total
+
+    monkeypatch.setattr(discovery, "preflight_resource_budget", swapped)
+    parse_sizes: list[int] = []
+    original_parse = discovery.parse_declarative_json
+
+    def counting(data, **kwargs):
+        parse_sizes.append(len(data))
+        return original_parse(data, **kwargs)
+
+    monkeypatch.setattr(discovery, "parse_declarative_json", counting)
+    with pytest.raises(PluginContractError) as caught:
+        verify_manifest_resources(plugin, manifest)
+    assert caught.value.code == PLUGIN_RESOURCE_TOO_LARGE
+    assert not any(size >= fat_size for size in parse_sizes)
 
 
 def test_resource_count_limit(plugin_root, monkeypatch):
