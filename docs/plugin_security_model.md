@@ -82,4 +82,4 @@ HTML and script-like strings in JSON are treated as plain data. Summary fields s
 
 ## Still out of scope
 
-Isolated worker, capability broker, plugin signatures, marketplace, Provider plugins, and any third-party code execution remain unimplemented. The design-only specification is [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md).
+Isolated worker, capability broker runtime, plugin signatures, marketplace, Provider plugins, and any third-party code execution remain unimplemented. Phase 1 added typed execution contracts and a pure fail-closed policy evaluator; it does not execute plugins. See [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.md) and [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md).

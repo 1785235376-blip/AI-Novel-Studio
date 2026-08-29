@@ -49,7 +49,7 @@ Catalog reads do not apply writing presets, execute workflow templates, or run e
 - Read Credential Vault secrets or novel body text
 - Fetch plugin URLs or inject UI into the WebView
 
-The isolated worker, capability broker, signatures, and marketplace are **not implemented**. See [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md) for the design-only next step.
+The isolated worker, capability broker runtime, signatures, and marketplace are **not implemented**. Phase 1 added fail-closed execution **contracts and pure policy** only (`execution_supported` remains `false`). See [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.md) and [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md).
 
 ## Manifest fields
 
