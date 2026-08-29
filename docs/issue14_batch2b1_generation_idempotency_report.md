@@ -2,15 +2,24 @@
 
 This is not a V1.0 claim, not a DesktopHost DH-01–DH-08 PASS, and not a Release decision.
 
+Batch 2B-1.1 is documentation-only. It rebinds evidence to reviewed snapshots. Production, tests, frontend, and schema are unchanged.
+
+| Snapshot | SHA | Meaning |
+| --- | --- | --- |
+| Batch 2B-1 task base / post-PR-19 main at work start | `01cc304e3df5357160f3c98b2ef50b0d9ddf8d95` | Tree used to implement tests and record `909/3/28` |
+| Batch 2B-1 implementation / evidence HEAD | `5e7ab893aa09db08d0d9566e65e0edeb0e3c46d7` | Tests+docs at first independent review. Not the final PR HEAD after later documentation commits. |
+| First independent-review main snapshot | `47906bdde775d4ab9c7a07449c1f60f0e4e5d300` | `origin/main` when PR #21 was already merged and the first review ran |
+| First independent-review synthetic merge | `9f97c40c176bd5fd2a6f9a64bd4f4da7dd95ff2b` | GitHub merge of `47906bd` + `5e7ab89`. Pre-PR-23. Do not treat as the post-PR-23 merge candidate. |
+| Batch 2B-1.1 correction-start main snapshot | `bc49b5d05ee934d948ab8784d52ba4481134ec0d` | Live `origin/main` when this documentation correction was authorized (PR #23 merged). Snapshot only, not a permanent current-main definition. |
+
 | Field | Value |
 | --- | --- |
-| Base main | `01cc304e3df5357160f3c98b2ef50b0d9ddf8d95` |
 | Work branch | `fix/p0-generation-idempotency-root-cause` |
-| HEAD SHA | branch tip at Draft PR open (see the PR) |
 | Related issue | #14 (remains OPEN) |
 | Frontend toolchain issue | #20 (UNCHANGED; not repaired in this batch) |
 | Verdict | `TEST_STATE_CONTAMINATION_RECLASSIFIED` |
 | Production change required | NO |
+| Post-PR-23 synthetic-merge verification | `PENDING NEW INDEPENDENT RE-REVIEW` |
 
 ## Root cause
 
@@ -29,7 +38,7 @@ Environment: Python 3.11.2; `uv pip install -e .[dev]` (not `.[vault]`); `STORAG
 | 1 | PASS | NO | YES | `created=1`, `job_id=one-job` |
 | 2–20 | FAIL | YES | YES | `created_len=0`; cached `job_id=one-job` |
 
-**1 PASS / 19 FAIL.** This matches Batch 2A.2 isolation. It is reuse of a durable key, not a race.
+**1 PASS / 19 FAIL.** This matches Batch 2A.2 isolation. It is reuse of a durable key, not a race. First request creates; later durable replays correctly create 0.
 
 ## Matrix B — fresh store concurrency
 
@@ -89,7 +98,9 @@ Fresh-store rounds all passed. The durable fixed key explains the 19 subsequent 
 
 The original concurrent nodeid still asserts three overlapping requests on a **fresh** store return the same `job_id` and `jobs.create == 1`. Replay is a separate contract.
 
-## Verification after the test change
+## Verification on the implementation tree
+
+Bound only to **task base `01cc304e` + implementation/evidence HEAD `5e7ab89`**. This is not a PR #21 result, not a PR #23 result, and not live main.
 
 | check | result |
 | --- | --- |
@@ -99,14 +110,53 @@ The original concurrent nodeid still asserts three overlapping requests on a **f
 | Original nodeid ×20 independent pytest processes | 20/20 PASS **with leftover durable key still present** |
 | Backend full run 1 | 909 passed, 3 failed, 28 skipped, 0 xfail; 27.14s; isolated `NOVEL_DATA_PATH` + basetemp |
 | Backend full run 2 | 909 passed, 3 failed, 28 skipped, 0 xfail; 24.27s; second isolated data root |
-| Remaining FAILED nodeids | `test_visual_continuity_reports_scene_jumps`; `test_preferences_are_explicit_and_separate`; `test_world_rule_payload_normalizes_terms` |
+| Remaining FAILED nodeids on this tree | `test_visual_continuity_reports_scene_jumps`; `test_preferences_are_explicit_and_separate`; `test_world_rule_payload_normalizes_terms` |
 | Concurrent nodeid in FAILED set | no |
 | NEW FAILURES / SKIPS / XFAILS | 0 / 0 / 0 |
 | `git diff --check` | 0 |
 | Secret / DSN / user-path scan of added lines | 0 |
 | Frontend delta | 0 (toolchain uncertainty remains Issue #20) |
 
-909 = previous integrated 901 passing + the previously failing concurrent nodeid now passing + 7 new contract tests.
+909 = previous 901 passing + the reclassified concurrent nodeid now passing + 7 new contract tests.
+
+Collection size on this tree: task base 933 tests collected; implementation HEAD 940 tests collected.
+
+## First independent-review snapshot (pre-PR-23)
+
+Bound only to first-review synthetic merge `9f97c40` (parents `47906bd` + `5e7ab89`). Recorded by the independent Reviewer. This merge object is **not** the post-PR-23 candidate.
+
+| check | result |
+| --- | --- |
+| Backend full run 1 | 960 passed, 4 failed, 28 skipped, 0 xfail; 27.42s |
+| Backend full run 2 | 960 passed, 4 failed, 28 skipped, 0 xfail; 25.49s |
+| Collection | first-review main `47906bd` 985; synthetic merge `9f97c40` 992 |
+| PR #21 / PR #22 file overlap | 0 |
+| Plugin + idempotency forward | 5/5; 60 passed |
+| Plugin + idempotency reverse | 5/5; 60 passed |
+| PR #22 attributable new failures / skips / xfails | 0 / 0 / 0 |
+
+The four FAILED node IDs on that tree were:
+
+1. `tests/test_p1_regression.py::test_visual_continuity_reports_scene_jumps` — known `PRODUCT_BASELINE`
+2. `tests/test_user_preference_service.py::test_preferences_are_explicit_and_separate` — known `PRODUCT_BASELINE`
+3. `tests/test_world_rule_payload.py::test_world_rule_payload_normalizes_terms` — known `PRODUCT_BASELINE`
+4. `tests/test_import_parsers.py::test_pdf_fallback_extracts_simple_literal_text` — `ENVIRONMENT-SENSITIVE BASELINE / INVESTIGATION REQUIRED`
+
+The PDF fallback failure reproduced on `01cc304e`, `47906bd`, `5e7ab89`, and `9f97c40`. It is associated with the truncated PDF fixture and `pypdf` behavior in the review environment. It is **not** introduced by PR #22, is **not** counted as a PR #22 product regression, was **not** repaired in this batch, and no Issue was opened for it. A specific `pypdf` version is not recorded here. Do not describe the four failures as four remaining product defects.
+
+PR #21 added official declarative plugin-pack tests, so first-review merge collection is larger than `909/3/28`. Do not require `9f97c40` to reprint the implementation-tree count.
+
+## After PR #23 (correction-start snapshot)
+
+Correction-start main snapshot = `bc49b5d` (merged PR #23, `feat: plugin runtime foundation phase 1`).
+
+| check | result |
+| --- | --- |
+| PR #23 / PR #22 file overlap | 0 |
+| PR #23 runtime interaction verification | `PENDING RE-REVIEW` |
+| Post-PR-23 synthetic-merge full suite | `PENDING NEW INDEPENDENT RE-REVIEW` |
+
+Do not copy `960/4/28` onto `bc49b5d` or onto any later documentation-correction HEAD. Do not predict a new count.
 
 ## Safety boundary
 
@@ -125,5 +175,7 @@ The original concurrent nodeid still asserts three overlapping requests on a **f
 - Issue #14 is not closed
 - Issue #20 is unchanged
 - The three remaining production defects are not fixed
+- The PDF fallback environment difference is not closed
 - V1.0 / DH-01–DH-08 / Windows / PostgreSQL / Provider / Release are not PASS
 - Draft PR is not Ready and is not merged
+- Post-PR-23 synthetic merge is not verified in this documentation batch
