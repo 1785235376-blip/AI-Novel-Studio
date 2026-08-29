@@ -417,6 +417,8 @@ def test_production_startup_does_not_import_or_spawn_test_worker():
         "assert 'app.plugin_test_worker_supervisor' not in sys.modules\n"
         "assert 'app.plugin_test_worker' not in sys.modules\n"
         "assert 'app.plugin_test_worker_bootstrap' not in sys.modules\n"
+        "assert 'app.plugin_worker_windows_sandbox' not in sys.modules\n"
+        "assert 'app.plugin_worker_windows_api' not in sys.modules\n"
         "from app.api import plugin_runtime_status\n"
         "status = plugin_runtime_status()\n"
         "assert status['execution_supported'] is False\n"
