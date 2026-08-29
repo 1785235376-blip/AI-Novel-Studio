@@ -1,0 +1,28 @@
+{
+  "manifest_version": "1.0",
+  "host_api_version": "1",
+  "id": "story-workflow-pack",
+  "name": "Story Workflow Pack",
+  "version": "1.0.0",
+  "description": "Declarative writing-preset and workflow-template example used to validate Plugin Contract v1. It does not execute workflows.",
+  "capabilities": ["writing_tool", "workflow"],
+  "requested_permissions": [],
+  "execution_mode": "declarative",
+  "publisher": "AI Novel Studio Examples",
+  "resources": [
+    {
+      "kind": "writing_presets",
+      "relative_path": "resources/writing-preset.json",
+      "sha256": "17634150f16664e5a0d05db41efa0f647863aa67357716616640669e38d85ae1",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    },
+    {
+      "kind": "workflow_templates",
+      "relative_path": "resources/workflow-template.json",
+      "sha256": "875c7ee73eb34cbb797f4b0847ee6749bcea4b101b30a89f2f2a57081af1665b",
+      "media_type": "application/json",
+      "schema_version": "1.0"
+    }
+  ]
+}

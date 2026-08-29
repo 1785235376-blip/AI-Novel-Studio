@@ -131,7 +131,7 @@ async def collaboration_fail_closed(request,call_next):
             r"/api/assets/[^/]+/derivatives",
             r"/api/novels/[^/]+/lore/(?:evidence|proposals(?:/[^/]+/(?:approve|reject|approve-memory))?)",
             r"/api/novels/[^/]+/(?:memories(?:/[^/]+/retract)?|characters/[^/]+/memories|memory-snapshots)",
-            r"/api/plugins(?:/[^/]+(?:/(?:permissions|enable|disable))?)?",
+            r"/api/plugins(?:/[^/]+(?:/(?:permissions|enable|disable|resources(?:/[^/]+)?))?)?",
             r"/api/workflows(?:/[^/]+(?:/runs)?)?",
             r"/api/workflow-runs/[^/]+(?:/(?:pause|resume|cancel|retry)|/nodes/[^/]+/approve)?",
             r"/api/release-gates(?:/[^/]+)?",

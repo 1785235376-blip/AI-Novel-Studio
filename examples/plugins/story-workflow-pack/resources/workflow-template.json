@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "name": "章节修订清单",
+  "description": "声明式工作流模板。本示例不会执行工作流节点，也不申请模型权限。",
+  "execution": "not_supported",
+  "steps": [
+    {
+      "id": "review",
+      "title": "人工审阅",
+      "kind": "manual"
+    },
+    {
+      "id": "mark-revisions",
+      "title": "标记修订",
+      "kind": "manual"
+    }
+  ]
+}
