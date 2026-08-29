@@ -289,18 +289,35 @@ V1.0 / DH-01–DH-08 / 真 PostgreSQL / 真 Provider / Release = 未宣称通过
 
 ## Issue #14 Batch 2B-2 — visual continuity TIME_JUMP_CUT
 
-本段绑定任务基线 `9f210b7117c14d418a7f57d8976568cd5506125a`（PR #22 合并后的 main 快照）与实现 HEAD `47a080fae2c8e45d595c8ffe6a742492c77c5acd`。不是永久 current-main。证据见 `docs/issue14_batch2b2_visual_continuity_report.md`。
+本段绑定任务基线 `9f210b7117c14d418a7f57d8976568cd5506125a`（PR #22 合并后的 main 快照）与 2B-2 实现 HEAD `47a080fae2c8e45d595c8ffe6a742492c77c5acd`。不是永久 current-main。证据见 `docs/issue14_batch2b2_visual_continuity_report.md`。
 
-根因：helper 只在 `transition.upper()=="CUT"` 时报告 `TIME_JUMP_CUT`；缺省 / 空 / `None` 本就是产品默认剪切。service 只把原始 shots 交给 helper，既没有 scene 的 time，也没有 `screenplay["transitions"]`。
+根因：helper 只在 `transition.upper()=="CUT"` 时报告 `TIME_JUMP_CUT`；缺失 transition、Python `None`、空字符串或纯空白字符串按默认 CUT 处理；任何其他非空字符串均保持显式转场类型语义，literal `"None"` 不自动转成 CUT。service 只把原始 shots 交给 helper，既没有 scene 的 time，也没有 `screenplay["transitions"]`。
+
+2B-2 具名快照（绑定 `47a080f`，不得复制到后续 SHA）：
 
 | 检查 | 结果 |
 | --- | --- |
 | 目标测试修改前 | FAIL；实得 `{LOCATION_JUMP, EMOTION_DISCONTINUITY}` |
 | 目标测试修改后 | PASS |
-| Helper 矩阵 / service 只读 enrichment | PASS |
 | 定向 50 次 | 50/50，每次 12 passed |
 | 后端全量 1 | 1024 passed, 2 failed, 28 skipped, 0 xfail；26.17s |
 | 后端全量 2 | 1024 passed, 2 failed, 28 skipped, 0 xfail；25.38s |
+| 收集规模 | 1054 |
+
+独立审查对象 `9326a6fa96ad3bb7ae39c9338939868d3149d765` 结论为 `REQUEST_CHANGES`。唯一阻断原因是 test-invented literal `"None"` CUT 合同。
+
+## Issue #14 Batch 2B-2.1 — default-CUT contract correction
+
+本段绑定修正实现 SHA `a9366053d1552ba69143b95ab222ced58e00f0bb`。删除 `text.casefold() == "none"` 特判。missing transition key / Python `None` / blank-or-whitespace string → effective CUT. A non-empty string remains an explicit transition type; literal `"None"` is not auto-converted to CUT.
+
+| 检查 | 结果 |
+| --- | --- |
+| 原始回归节点 | PASS |
+| Helper：缺失 / Python `None` / 空白 → CUT；literal `"None"` 不产生 `TIME_JUMP_CUT` | PASS |
+| 定向 4 文件 | 24 passed |
+| 定向 50 次 | 50/50，每次 12 passed |
+| 后端全量 1 | 1024 passed, 2 failed, 28 skipped, 0 xfail；26.58s |
+| 后端全量 2 | 1024 passed, 2 failed, 28 skipped, 0 xfail；25.23s |
 | 收集规模 | 1054 |
 
 剩余产品失败两个（未改）：
@@ -308,4 +325,4 @@ V1.0 / DH-01–DH-08 / 真 PostgreSQL / 真 Provider / Release = 未宣称通过
 - `tests/test_user_preference_service.py::test_preferences_are_explicit_and_separate`
 - `tests/test_world_rule_payload.py::test_world_rule_payload_normalizes_terms`
 
-本环境未复现 PDF fallback。Issue #14 继续 OPEN。Issue #20 未改。Frontend / schema / migration = 0。V1.0 / DH / Release 未宣称通过。
+NEW FAILURES / SKIPS / XFAILS = 0 / 0 / 0。本环境未复现 PDF fallback。Issue #14 继续 OPEN。Issue #20 未改。Frontend / schema / migration = 0。隔离边界由测试运行器提供 run-scoped `NOVEL_DATA_PATH` 与独立 `--basetemp`；测试文件自身不设置该环境变量。V1.0 / DH / Release 未宣称通过。
