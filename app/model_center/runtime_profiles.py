@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -22,11 +23,44 @@ EDITABLE_COMMON_FIELDS = (
 EDITABLE_LLAMA_FIELDS = EDITABLE_COMMON_FIELDS + (
     "model_path", "context_size", "gpu_layers", "threads", "batch_size", "extra_arguments",
 )
-EDITABLE_COMFY_FIELDS = EDITABLE_COMMON_FIELDS + ("installation_path",)
+EDITABLE_COMFY_FIELDS = (
+    "runtime_type", "management", "executable",
+    "base_url", "bind_address", "port", "health_endpoint",
+    "installation_path",
+)
 OUTPUT_CONFIGURATION_FIELDS = frozenset({
     "id", "capabilities", "status", "provider_adapter", "environment",
     "instance", "discovery",
 })
+PROFILE_ERROR_CODES = (
+    "RUNTIME_NOT_LOOPBACK_BOUND", "RUNTIME_HEALTH_ENDPOINT_INVALID",
+    "RUNTIME_PROTECTED_ARGUMENT", "RUNTIME_ARGUMENT_NOT_ALLOWED",
+    "RUNTIME_ARGV_NOT_ALLOWED", "RUNTIME_PATH_CONFLICT",
+    "RUNTIME_EXECUTABLE_NOT_ABSOLUTE",
+)
+
+
+def canonicalize_managed_executable(value: str) -> str:
+    """Identity of a managed executable: one absolute path, never PATH or cwd lookup."""
+    if not value:
+        return ""
+    path = Path(value)
+    if not path.is_absolute():
+        raise ValueError("RUNTIME_EXECUTABLE_NOT_ABSOLUTE")
+    resolved = path.resolve(strict=False)
+    if not resolved.is_absolute():
+        raise ValueError("RUNTIME_EXECUTABLE_NOT_ABSOLUTE")
+    return str(resolved)
+
+
+def managed_executable_file(value: str) -> Path:
+    canonical = canonicalize_managed_executable(value)
+    if not canonical:
+        raise ValueError("RUNTIME_EXECUTABLE_MISSING")
+    path = Path(canonical)
+    if not path.is_file():
+        raise ValueError("RUNTIME_EXECUTABLE_MISSING")
+    return path
 
 
 class RuntimeProfileBase(BaseModel):
@@ -37,6 +71,11 @@ class RuntimeProfileBase(BaseModel):
     bind_address: str = "127.0.0.1"
     port: int = Field(ge=1, le=65535)
     health_endpoint: str = "/health"
+
+    @field_validator("executable")
+    @classmethod
+    def absolute_executable(cls, value: str) -> str:
+        return canonicalize_managed_executable(value)
 
     @field_validator("bind_address")
     @classmethod
@@ -94,6 +133,23 @@ class ComfyUIRuntimeConfig(RuntimeProfileBase):
     management: Literal[RuntimeManagement.EXTERNAL] = RuntimeManagement.EXTERNAL
     installation_path: str = ""
 
+    @model_validator(mode="before")
+    @classmethod
+    def canonical_installation_path(cls, values):
+        if not isinstance(values, dict):
+            return values
+        install_supplied = "installation_path" in values and values["installation_path"] is not None
+        working_supplied = "working_directory" in values and values["working_directory"] is not None
+        install = str(values["installation_path"]) if install_supplied else None
+        working = str(values["working_directory"]) if working_supplied else None
+        if install_supplied and working_supplied and install != working:
+            raise ValueError("RUNTIME_PATH_CONFLICT")
+        canonical = install if install_supplied else (working if working_supplied else "")
+        values = dict(values)
+        values["installation_path"] = canonical
+        values["working_directory"] = canonical
+        return values
+
 
 RuntimeProfile = LlamaCppRuntimeConfig | ComfyUIRuntimeConfig
 
@@ -116,11 +172,7 @@ def profile_from_values(runtime: RuntimeDefinition, values: dict) -> RuntimeProf
             return ComfyUIRuntimeConfig.model_validate({"runtime_type": expected, **values})
     except ValueError as exc:
         message = str(exc)
-        for code in (
-            "RUNTIME_NOT_LOOPBACK_BOUND", "RUNTIME_HEALTH_ENDPOINT_INVALID",
-            "RUNTIME_PROTECTED_ARGUMENT", "RUNTIME_ARGUMENT_NOT_ALLOWED",
-            "RUNTIME_ARGV_NOT_ALLOWED",
-        ):
+        for code in PROFILE_ERROR_CODES:
             if code in message:
                 raise ValueError(code) from exc
         raise ValueError("RUNTIME_CONFIG_INVALID") from exc
@@ -151,7 +203,7 @@ def definition_from_profile(runtime: RuntimeDefinition, profile: RuntimeProfile)
         return RuntimeDefinition(**values)
     return RuntimeDefinition(**{
         **runtime.__dict__, **common,
-        "working_directory": profile.installation_path or profile.working_directory,
+        "working_directory": profile.installation_path,
         "launch_arguments": (), "extra_arguments": (),
     })
 

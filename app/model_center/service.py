@@ -21,7 +21,9 @@ from .domain import Capability, HardwareProfile, ModelComponentDefinition, Model
 from .runtime_profiles import (
     RuntimeLogSanitizer,
     argv_contains_wildcard_bind,
+    canonicalize_managed_executable,
     definition_from_profile,
+    managed_executable_file,
     profile_from_values,
     resynthesize_runtime_argv,
     synthesized_launch_arguments,
@@ -172,7 +174,12 @@ class RuntimeLifecycle:
         except ValueError:
             return False
     def discover(self, definition: RuntimeDefinition, probe_version: bool = False) -> dict[str, Any]:
-        executable = Path(definition.executable) if definition.executable else None
+        executable: Path | None = None
+        if definition.executable:
+            try:
+                executable = Path(canonicalize_managed_executable(definition.executable))
+            except ValueError:
+                executable = None
         path_ok = bool(executable and executable.is_file()) if definition.runtime_type == RuntimeType.LLAMA_CPP else bool(definition.working_directory and Path(definition.working_directory).is_dir())
         version = None
         if probe_version and executable and executable.is_file():
@@ -227,8 +234,7 @@ class RuntimeLifecycle:
         if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
         if definition.runtime_type != RuntimeType.LLAMA_CPP or definition.management != RuntimeManagement.MANAGED: raise ValueError("RUNTIME_EXTERNAL_ONLY")
         _safe_runtime_environment(definition.environment)
-        executable = Path(definition.executable)
-        if not executable.is_file(): raise ValueError("RUNTIME_EXECUTABLE_MISSING")
+        executable = managed_executable_file(definition.executable)
         with self._lock:
             current = self._owned.get(definition.id)
             if current and current.poll() is None: return self.instances[definition.id]
@@ -328,6 +334,11 @@ class ModelCenterService:
         for key in ("executable", "base_url", "bind_address", "working_directory", "health_endpoint", "model_path"):
             if key in filtered and not isinstance(filtered[key], str):
                 raise ValueError("invalid runtime configuration")
+        if filtered.get("executable"):
+            try:
+                filtered["executable"] = canonicalize_managed_executable(filtered["executable"])
+            except ValueError as exc:
+                raise ValueError("invalid runtime configuration") from exc
         if "port" in filtered and (not isinstance(filtered["port"], int) or not 1 <= filtered["port"] <= 65535):
             raise ValueError("invalid runtime configuration")
         filtered.pop("launch_arguments", None)

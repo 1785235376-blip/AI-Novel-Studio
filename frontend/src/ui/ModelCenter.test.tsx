@@ -119,6 +119,23 @@ describe('ModelCenter',()=>{
   expect(body.model_path).toBe('D:/models/qwen.gguf');
   expect(body.extra_arguments).toEqual([]);
  });
+ it('saves ComfyUI configuration with installation_path only',async()=>{
+  vi.spyOn(api,'modelCenterModels').mockResolvedValue({items:[]});
+  vi.spyOn(api,'modelCenterRuntimes').mockResolvedValue({items:[{id:'comfy',runtime_type:'COMFYUI',management:'EXTERNAL',base_url:'http://127.0.0.1:8188',status:'CONFIGURED',instance:null,discovery:{path_exists:true,executable_exists:false}}]});
+  vi.spyOn(api,'modelCenterPipelines').mockResolvedValue({items:[]});
+  vi.spyOn(api,'modelCenterHealth').mockResolvedValue({status:'READY',mutation_authorization:{can_mutate:true,mutation_auth_mode:'PACKAGED_BOOTSTRAP'}});
+  vi.spyOn(api,'modelCenterRuntimeConfiguration').mockResolvedValue({id:'comfy',runtime_type:'COMFYUI',management:'EXTERNAL',executable:'',installation_path:'D:/ComfyUI',base_url:'http://127.0.0.1:8188',bind_address:'127.0.0.1',port:8188,health_endpoint:'/system_stats'});
+  const update=vi.spyOn(api,'modelCenterUpdateRuntimeConfiguration').mockResolvedValue({id:'comfy',runtime_type:'COMFYUI',management:'EXTERNAL',executable:'',installation_path:'D:/ComfyUI',base_url:'http://127.0.0.1:8188',bind_address:'127.0.0.1',port:8188,health_endpoint:'/system_stats'});
+  host=document.createElement('div');document.body.append(host);root=createRoot(host);mounted=true;await act(async()=>{root.render(<ModelCenter/>);await Promise.resolve();await Promise.resolve()});
+  await act(async()=>{Array.from(host.querySelectorAll('button')).find(button=>button.textContent?.includes('Edit Configuration'))!.click();await Promise.resolve()});
+  expect((host.querySelector('input[value="D:/ComfyUI"]') as HTMLInputElement).value).toBe('D:/ComfyUI');
+  await act(async()=>{(host.querySelector('[role=dialog] button[type=submit]') as HTMLButtonElement).click();await Promise.resolve();await Promise.resolve()});
+  const body=update.mock.calls[0][1] as Record<string,unknown>;
+  expect(body.runtime_type).toBe('COMFYUI');
+  expect(body.installation_path).toBe('D:/ComfyUI');
+  expect(body).not.toHaveProperty('working_directory');
+  expect(body).not.toHaveProperty('launch_arguments');
+ });
  it('renders never-started diagnostics when log arrays are missing',async()=>{
   vi.spyOn(api,'modelCenterModels').mockResolvedValue({items:[]});
   vi.spyOn(api,'modelCenterRuntimes').mockResolvedValue({items:[{id:'llama',runtime_type:'LLAMA_CPP',management:'MANAGED',base_url:'http://127.0.0.1:8081',status:'CONFIGURED',instance:null,discovery:{path_exists:true,executable_exists:true}}]});

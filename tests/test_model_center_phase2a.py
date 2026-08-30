@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import socket
 import sys
 import threading
@@ -423,3 +424,57 @@ def test_never_started_logs_always_include_empty_arrays(tmp_path: Path):
     )
     assert logs.status_code == 200
     assert logs.json() == {"runtime_id": "llama-cpp-local", "stdout": [], "stderr": []}
+
+
+def test_relative_executable_cannot_use_path_lookup(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    (bin_dir / "llama-server.exe").write_bytes(b"runtime")
+    monkeypatch.setenv("PATH", str(bin_dir) + os.pathsep + os.environ.get("PATH", ""))
+    values = llama_values(tmp_path)
+    values["executable"] = "llama-server.exe"
+    with pytest.raises(ValueError, match="RUNTIME_EXECUTABLE_NOT_ABSOLUTE"):
+        create_default_model_center().configure_runtime_profile("llama-cpp-local", values)
+    definition = RuntimeDefinition(
+        "relative",
+        RuntimeType.LLAMA_CPP,
+        "llama-server.exe",
+        "http://127.0.0.1:19120",
+        "127.0.0.1",
+        19120,
+        management=RuntimeManagement.MANAGED,
+        model_path=str(tmp_path / "model.gguf"),
+    )
+    with pytest.raises(ValueError, match="RUNTIME_EXECUTABLE_NOT_ABSOLUTE"):
+        RuntimeLifecycle().start(definition)
+
+
+def test_comfy_configuration_uses_canonical_installation_path(tmp_path: Path):
+    client, _center = protected_client(tmp_path, "/api/model-center")
+    headers = {"X-Session-Token": "trusted"}
+    install = tmp_path / "comfy"
+    install.mkdir()
+    body = {
+        "runtime_type": "COMFYUI",
+        "management": "EXTERNAL",
+        "executable": "",
+        "installation_path": str(install),
+        "base_url": "http://127.0.0.1:8188",
+        "bind_address": "127.0.0.1",
+        "port": 8188,
+        "health_endpoint": "/system_stats",
+    }
+    saved = client.put("/api/model-center/runtimes/comfyui-local/configuration", headers=headers, json=body)
+    assert saved.status_code == 200
+    payload = saved.json()
+    assert payload["installation_path"] == str(install)
+    assert "working_directory" not in payload
+    assert "launch_arguments" not in payload
+    roundtrip = client.put("/api/model-center/runtimes/comfyui-local/configuration", headers=headers, json=payload)
+    assert roundtrip.status_code == 200
+    conflict = {**body, "working_directory": str(tmp_path / "other")}
+    rejected = client.put("/api/model-center/runtimes/comfyui-local/configuration", headers=headers, json=conflict)
+    assert rejected.status_code == 409
+    assert rejected.json()["detail"]["code"] == "RUNTIME_PATH_CONFLICT"
+    reread = client.get("/api/model-center/runtimes/comfyui-local/configuration", headers=headers)
+    assert reread.json()["installation_path"] == str(install)

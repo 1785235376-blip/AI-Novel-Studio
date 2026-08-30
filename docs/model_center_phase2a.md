@@ -6,7 +6,7 @@ Phase 2A closes the local runtime control plane without connecting runtimes to n
 
 Runtime configuration uses typed llama.cpp and ComfyUI profiles. llama.cpp launch arguments are always re-synthesized as an argv list from the typed profile on load and start; raw `launch_arguments` are not accepted, persisted, or treated as authoritative. Optional flags use a narrow allowlist. Model, host, port, and other protected values cannot be overridden by extra arguments. Shell execution is not used. GET `/configuration` returns only the editable DTO; Save submits an explicit allowlisted payload. Managed log responses always include `stdout` and `stderr` arrays, including before the first start.
 
-ComfyUI remains external-only. Model Center may configure its installation path and loopback endpoint, validate health, and inspect `/object_info`; it does not install, update, start, stop, or modify ComfyUI or its Custom Nodes.
+ComfyUI remains external-only. Its editable installation location is the single canonical field `installation_path`; a conflicting `working_directory` alias is rejected rather than silently preferred. Model Center may configure that path and loopback endpoint, validate health, and inspect `/object_info`; it does not install, update, start, stop, or modify ComfyUI or its Custom Nodes. Managed llama.cpp executables must be one absolute canonical path: discovery, version probe, and start use that same resolved file and never PATH lookup.
 
 Machine paths remain in the ignored runtime sidecar. Candidate profiles are validated and atomically persisted before the in-memory registry is updated.
 
