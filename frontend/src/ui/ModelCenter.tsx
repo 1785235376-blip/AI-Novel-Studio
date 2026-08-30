@@ -1,0 +1,21 @@
+import {useEffect,useState} from 'react';
+import {Play,RefreshCw,ShieldAlert,Square} from 'lucide-react';
+import {api,type ModelCenterModel,type ModelCenterPipeline,type ModelCenterRuntime} from '../api';
+import {Badge,Button,EmptyState,Panel,StatusMessage} from './primitives';
+import './ModelCenter.css';
+
+export function ModelCenter(){
+ const [models,setModels]=useState<ModelCenterModel[]>([]),[runtimes,setRuntimes]=useState<ModelCenterRuntime[]>([]),[pipelines,setPipelines]=useState<ModelCenterPipeline[]>([]),[loading,setLoading]=useState(true),[error,setError]=useState(''),[busy,setBusy]=useState('');
+ const refresh=async()=>{setError('');setLoading(true);try{const [m,r,p]=await Promise.all([api.modelCenterModels(),api.modelCenterRuntimes(),api.modelCenterPipelines()]);setModels(m.items);setRuntimes(r.items);setPipelines(p.items)}catch{setError('模型中心状态读取失败，请检查本地服务。')}finally{setLoading(false)}};
+ useEffect(()=>{void refresh()},[]);
+ const action=async(id:string,kind:'validate'|'start'|'stop')=>{setBusy(`${id}:${kind}`);setError('');try{if(kind==='validate')await api.modelCenterValidateRuntime(id);else if(kind==='start')await api.modelCenterStartRuntime(id);else await api.modelCenterStopRuntime(id);await refresh()}catch{setError('运行时操作未完成。请确认路径、localhost 绑定和运行时状态。')}finally{setBusy('')}};
+ const runtimeTone=(state?:string):'success'|'warning'|'error'|'neutral'=>state==='RUNNING'?'success':state==='STARTING'||state==='DEGRADED'?'warning':state==='FAILED'?'error':'neutral';
+ return <div className="model-center">
+  {error&&<StatusMessage tone="error">{error}</StatusMessage>}
+  <Panel title="Model Center" actions={<Button variant="ghost" onClick={()=>void refresh()} disabled={loading}><RefreshCw aria-hidden="true"/>刷新</Button>}>
+   {loading?<div role="status">正在读取模型注册表…</div>:!models.length?<EmptyState title="暂无模型" detail="注册本地模型后会显示在这里。"/>:<div className="model-center__models">{models.map(model=><article key={model.id}><header><div><strong>{model.display_name}</strong><small>{model.runtime_type}</small></div><Badge tone={model.status==='READY'?'success':model.status==='INCOMPATIBLE'?'error':'warning'}>{model.status}</Badge></header><div className="model-center__capabilities">{model.capabilities.map(item=><Badge key={item}>{item}</Badge>)}</div><dl><div><dt>验证</dt><dd>{model.verified?'Inference Verified':'未完成推理验证'}</dd></div><div><dt>硬件</dt><dd>{model.hardware_profile_details[0]?.gpu_name||'未记录'}</dd></div></dl></article>)}</div>}
+  </Panel>
+  <Panel title="Local Runtimes">{!loading&&!runtimes.length?<EmptyState title="暂无运行时" detail="配置本地运行时后会显示在这里。"/>:<div className="model-center__runtimes">{runtimes.map(runtime=>{const state=runtime.instance?.state||'STOPPED';const active=state==='STARTING'||state==='RUNNING'||state==='DEGRADED';return <article key={runtime.id}><header><div><strong>{runtime.id}</strong><small>{runtime.runtime_type} · {runtime.base_url}</small></div><Badge tone={runtimeTone(state)}>{state}</Badge></header>{runtime.discovery.security_warning&&<StatusMessage tone="warning"><ShieldAlert aria-hidden="true"/>仅允许绑定到 127.0.0.1</StatusMessage>}<div className="model-center__actions"><Button onClick={()=>void action(runtime.id,'validate')} disabled={!!busy||state==='STARTING'}>Validate</Button><Button onClick={()=>void action(runtime.id,'start')} disabled={!!busy||runtime.runtime_type==='COMFYUI'||active}><Play aria-hidden="true"/>Start</Button><Button variant="ghost" onClick={()=>void action(runtime.id,'stop')} disabled={!!busy||!active}><Square aria-hidden="true"/>Stop</Button></div></article>})}</div>}</Panel>
+  <Panel title="Pipelines">{pipelines.map(pipeline=><section className="model-center__pipeline" key={pipeline.id}><strong>{pipeline.id}</strong><ol>{pipeline.nodes.map(node=><li key={node.id}><span>{node.capability}</span><code>{node.model_id}</code></li>)}</ol></section>)}</Panel>
+ </div>
+}

@@ -1,0 +1,30 @@
+# Model Center Phase 1
+
+Model Center Phase 1 adds a local model and runtime foundation without replacing the existing Provider system.
+
+## Architecture
+
+- The Model Registry stores structured model identity, capabilities, format, status, components, hardware profiles, and validation provenance.
+- The Component Compatibility Graph matches family, variant, architecture, version, and explicit compatible model IDs. FLUX.2 Dev and Klein encoders are intentionally not interchangeable.
+- The Runtime Registry separates durable runtime definitions from in-memory runtime instances.
+- Runtime Discovery only inspects explicitly configured locations. Validation may run a bounded `--version` probe and a loopback health request.
+- Runtime Lifecycle manages llama.cpp processes started by this application. It tracks the exact process object, drains bounded stdout/stderr tails, detects crashes, and never kills by name or arbitrary PID.
+- ComfyUI is external-only in V1. Model Center checks its configured path and health but does not install, update, start, or stop it.
+- Hardware Profiles distinguish smoke, default, and verified maximum profiles.
+- Validation Provenance distinguishes file, hash, load, inference, and pipeline validation. Only successful inference or pipeline records qualify as verified.
+- The Pipeline Registry represents `LOCAL_VIDEO_PIPELINE_V1` as nodes, edges, contracts, capabilities, and hardware requirements.
+- The local Routing Foundation resolves capability to model, runtime, and Provider adapter. It does not replace existing Provider routing.
+
+## Persistence And Security
+
+Machine-specific runtime configuration is stored in the ignored `novel_data/model-center/runtime-config.json` sidecar with schema version 1. It is independent of File/PostgreSQL product data, excludes environment variables and secrets, and tolerates missing, corrupt, or unsupported files. PID, health, logs, and process state remain memory-only.
+
+Managed runtimes accept only `127.0.0.1`, `localhost`, or `::1` bindings and reject wildcard, LAN, and public addresses. ComfyUI remains externally owned.
+
+## V1 Limitations
+
+- No model download or model store.
+- No managed ComfyUI installation or updates.
+- No automatic Custom Node installation.
+- No automatic benchmark router.
+- No Dasheng, MiniMax H3, LTX2.5, or Qwen-Image provider integration.

@@ -21,6 +21,9 @@ export type AdminMember={user_id:string;display_name:string;membership_id:string
 export type PermissionExplanation={principal_id:string;permission:string;domain:string;allowed:boolean;sources:any[]};
 export type ApiProblem={status:number;code:string;message:string;details?:any;request_id?:string};
 export type TextModel={provider_id:string;model_id:string;display_name:string;available:boolean};
+export type ModelCenterModel={id:string;display_name:string;capabilities:string[];runtime_type:string;status:string;verified:boolean;hardware_profile_details:{id:string;gpu_name:string;profile_kind:string;benchmark:Record<string,unknown>}[]};
+export type ModelCenterRuntime={id:string;runtime_type:string;base_url:string;status:string;instance?:{state:string;process_id?:number|null}|null;discovery:{path_exists:boolean;executable_exists:boolean;security_warning?:string|null}};
+export type ModelCenterPipeline={id:string;nodes:{id:string;capability:string;model_id:string}[];edges:{from:string;to:string}[]};
 export type VisualWorkflowNode={stable_id:string;kind:string;label:string;summary:string;production_boundary:string;capabilities:string[];provider_id?:string;model_id?:string;available?:boolean};
 export type VisualTextWorkflow={workflow_contract_version:string;title:string;description:string;read_only:true;nodes:VisualWorkflowNode[];edges:{source:string;target:string;relationship:string}[]};
 export type TextRuntimeDiagnostics={diagnostics_contract_version:string;read_only:true;provider_id:string;model_id:string;state:'READY'|'NOT_CONFIGURED'|'UNAVAILABLE'|'MODEL_DISABLED'|'STREAMING_UNSUPPORTED';state_label:string;explanation:string;author_action:string;safe_capabilities:string[]};
@@ -87,6 +90,12 @@ export const createNovelKnowledgeReview=(novelId:string)=>call<ImportReview>(`/a
 export const createChapterKnowledgeReview=(novelId:string,chapterId:string)=>call<ImportReview>(`/api/novels/${encodeURIComponent(novelId)}/chapters/${encodeURIComponent(chapterId)}/knowledge-base/review`,{method:'POST'});
 export const api={
  releaseReadiness:()=>call<ReleaseReadiness>('/api/release/readiness'),
+ modelCenterModels:()=>call<{items:ModelCenterModel[]}>('/api/model-center/models'),
+ modelCenterRuntimes:()=>call<{items:ModelCenterRuntime[]}>('/api/model-center/runtimes'),
+ modelCenterPipelines:()=>call<{items:ModelCenterPipeline[]}>('/api/model-center/pipelines'),
+ modelCenterValidateRuntime:(id:string)=>call<any>(`/api/model-center/runtimes/${encodeURIComponent(id)}/validate`,{method:'POST',body:'{}'}),
+ modelCenterStartRuntime:(id:string)=>call<any>(`/api/model-center/runtimes/${encodeURIComponent(id)}/start`,{method:'POST',body:'{}'}),
+ modelCenterStopRuntime:(id:string)=>call<any>(`/api/model-center/runtimes/${encodeURIComponent(id)}/stop`,{method:'POST',body:'{}'}),
  packagedProvisionInitialWorkspace:()=>call<AdminWorkspace>('/api/packaged/initial-workspace',{method:'POST',body:JSON.stringify({})}),
  adminWorkspaces:()=>items(call<{items:AdminWorkspace[]}>('/api/collaboration/admin/workspaces')),
  adminCreateWorkspace:(workspaceId:string,name:string)=>call<AdminWorkspace>('/api/collaboration/admin/workspaces',{method:'POST',body:JSON.stringify({id:workspaceId,name})}),

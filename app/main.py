@@ -6,7 +6,8 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from . import __version__
 from .config import settings
-from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service
+from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service
+from .model_center.api import create_model_center_router
 from .collaboration_api import create_collaboration_router
 from .collaboration_admin import create_collaboration_admin_router
 from .packaging.bootstrap_api import create_packaged_bootstrap_router
@@ -24,6 +25,7 @@ from .api import router as api_router
 async def app_lifespan(_app):
     yield
     harness_process_service.stop()
+    model_center_service.lifecycle.stop_all()
 
 app=FastAPI(title="AI Novel Studio",version=__version__,lifespan=app_lifespan)
 _packaged_control_reader = start_packaged_control_reader()
@@ -137,6 +139,7 @@ async def collaboration_fail_closed(request,call_next):
             r"/api/release-gates(?:/[^/]+)?",
             r"/api/release/readiness",
             r"/api/audit",
+            r"/api/model-center/(?:models(?:/[^/]+)?|runtimes(?:/[^/]+(?:/(?:validate|start|stop))?)?|pipelines|health)",
         ))
         if capability_route:
             token = request.headers.get("X-Session-Token")
@@ -218,6 +221,8 @@ async def collaboration_fail_closed(request,call_next):
 app.add_middleware(CORSMiddleware,allow_origins=[settings.frontend_origin],allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 app.include_router(api_router, prefix="/api")
 app.include_router(api_router, prefix="/api/v1")
+app.include_router(create_model_center_router(model_center_service))
+app.include_router(create_model_center_router(model_center_service, prefix="/api/v1/model-center"))
 app.include_router(create_collaboration_router(collaboration_read_service))
 app.include_router(create_collaboration_router(collaboration_read_service, prefix="/api/v1/collaboration"))
 app.include_router(create_collaboration_admin_router(collaboration_admin_service))
