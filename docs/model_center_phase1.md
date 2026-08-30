@@ -21,6 +21,10 @@ Machine-specific runtime configuration is stored in the ignored `novel_data/mode
 
 Managed runtimes accept only resolved loopback bindings and reject wildcard, LAN, public, malformed, userinfo, and lookalike-host addresses. Runtime mutation endpoints require a trusted session in local, packaged, and collaboration modes. Managed children receive a minimal environment allowlist instead of the host environment; secret-like explicit variables are rejected. Bounded raw logs remain internal and are not included in general Model Center API responses. ComfyUI remains externally owned.
 
+## Runtime Control Authorization
+
+Validate, Start, and Stop are trusted desktop control operations. Packaged production uses the existing one-shot `LocalSessionBootstrap` exchange and its opaque session. Collaboration mode uses its existing trusted session. Default local browser mode is intentionally read-only unless a developer explicitly configures `COLLABORATION_DEV_SESSIONS_JSON` and supplies that session through the existing frontend collaboration context. Loopback origin or source IP alone never authorizes runtime mutation, and session tokens are not persisted in Model Center data or sidecars.
+
 ## V1 Limitations
 
 - No model download or model store.

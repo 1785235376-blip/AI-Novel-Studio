@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from collections.abc import Callable
+
+from fastapi import APIRouter, Header, HTTPException
 from pydantic import BaseModel, Field
 
 from .domain import serialize
@@ -16,7 +18,11 @@ class RuntimeConfigIn(BaseModel):
     launch_arguments: list[str] | None = None
 
 
-def create_model_center_router(service: ModelCenterService, prefix: str = "/api/model-center") -> APIRouter:
+def create_model_center_router(
+    service: ModelCenterService,
+    prefix: str = "/api/model-center",
+    mutation_authorization: Callable[[str | None], dict] | None = None,
+) -> APIRouter:
     router = APIRouter(prefix=prefix, tags=["model-center"])
 
     def runtime(runtime_id: str):
@@ -73,6 +79,11 @@ def create_model_center_router(service: ModelCenterService, prefix: str = "/api/
     def pipelines(): return {"items":[serialize(item) for item in service.pipelines.values()]}
 
     @router.get("/health")
-    def health(): return service.health()
+    def health(x_session_token: str | None = Header(default=None, alias="X-Session-Token")):
+        authorization = mutation_authorization(x_session_token) if mutation_authorization else {
+            "can_mutate": False,
+            "mutation_auth_mode": "TRUSTED_SESSION_REQUIRED",
+        }
+        return {**service.health(), "mutation_authorization": authorization}
 
     return router

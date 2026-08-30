@@ -21,6 +21,31 @@ import uuid
 import ipaddress
 
 from .api import router as api_router
+
+
+def _model_center_mutation_authorization(token: str | None) -> dict:
+    if settings.enable_packaged_runtime:
+        mode = "PACKAGED_BOOTSTRAP"
+        manager = packaged_bootstrap_registry.current()
+        try:
+            if manager is None or not token:
+                raise KeyError("missing packaged session")
+            manager.resolve_issued_session(token)
+            can_mutate = True
+        except (BootstrapDenied, KeyError, ValueError):
+            can_mutate = False
+    else:
+        mode = "TRUSTED_SESSION" if settings.enable_collaboration_runtime else "DEVELOPMENT_SESSION_REQUIRED"
+        try:
+            if not token:
+                raise KeyError("missing trusted session")
+            trusted_session_resolver.resolve(token)
+            can_mutate = True
+        except (KeyError, ValueError):
+            can_mutate = False
+    return {"can_mutate": can_mutate, "mutation_auth_mode": mode}
+
+
 @asynccontextmanager
 async def app_lifespan(_app):
     yield
@@ -234,8 +259,8 @@ async def collaboration_fail_closed(request,call_next):
 app.add_middleware(CORSMiddleware,allow_origins=[settings.frontend_origin],allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 app.include_router(api_router, prefix="/api")
 app.include_router(api_router, prefix="/api/v1")
-app.include_router(create_model_center_router(model_center_service))
-app.include_router(create_model_center_router(model_center_service, prefix="/api/v1/model-center"))
+app.include_router(create_model_center_router(model_center_service, mutation_authorization=_model_center_mutation_authorization))
+app.include_router(create_model_center_router(model_center_service, prefix="/api/v1/model-center", mutation_authorization=_model_center_mutation_authorization))
 app.include_router(create_collaboration_router(collaboration_read_service))
 app.include_router(create_collaboration_router(collaboration_read_service, prefix="/api/v1/collaboration"))
 app.include_router(create_collaboration_admin_router(collaboration_admin_service))

@@ -518,6 +518,27 @@ def test_model_center_api_lists_models_runtimes_pipeline_and_health():
     assert client.get("/api/v1/model-center/models").status_code == 200
 
 
+@pytest.mark.parametrize("prefix", ["/api/model-center", "/api/v1/model-center"])
+def test_default_local_health_declares_read_only_without_trusted_session(prefix: str):
+    client = TestClient(app)
+    authorization = client.get(f"{prefix}/health").json()["mutation_authorization"]
+    assert authorization == {
+        "can_mutate": False,
+        "mutation_auth_mode": "DEVELOPMENT_SESSION_REQUIRED",
+    }
+    assert client.get(f"{prefix}/models").status_code == 200
+    assert client.get(f"{prefix}/runtimes").status_code == 200
+
+
+@pytest.mark.parametrize("prefix", ["/api/model-center", "/api/v1/model-center"])
+def test_explicit_dev_session_enables_mutation_capability(prefix: str):
+    client = TestClient(app)
+    enabled = client.get(f"{prefix}/health", headers=auth_headers()).json()["mutation_authorization"]
+    invalid = client.get(f"{prefix}/health", headers={"X-Session-Token": "invalid"}).json()["mutation_authorization"]
+    assert enabled == {"can_mutate": True, "mutation_auth_mode": "DEVELOPMENT_SESSION_REQUIRED"}
+    assert invalid["can_mutate"] is False
+
+
 def test_model_center_api_rejects_non_loopback_configuration():
     client = TestClient(app)
     response = client.post(
@@ -571,6 +592,9 @@ def test_model_center_mutation_auth_applies_in_every_runtime_mode(prefix: str, m
         client = TestClient(app)
         assert client.post(f"{prefix}/runtimes/comfyui-local/start").status_code == 401
         assert client.post(f"{prefix}/runtimes/comfyui-local/start", headers=auth_headers()).status_code == 409
+        authorization = client.get(f"{prefix}/health", headers=auth_headers()).json()["mutation_authorization"]
+        assert authorization["can_mutate"] is True
+        assert authorization["mutation_auth_mode"] == ("PACKAGED_BOOTSTRAP" if mode == "packaged" else "TRUSTED_SESSION")
     finally:
         object.__setattr__(settings, "enable_collaboration_runtime", original[0])
         object.__setattr__(settings, "enable_packaged_runtime", original[1])
