@@ -3,9 +3,10 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from fastapi import APIRouter, Body, Header, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError, model_validator
 
 from .domain import serialize
+from .runtime_profiles import editable_configuration, mutation_payload
 from .service import ModelCenterService
 
 
@@ -15,7 +16,13 @@ class RuntimeConfigIn(BaseModel):
     base_url: str | None = None
     bind_address: str | None = None
     port: int | None = Field(default=None, ge=1, le=65535)
-    launch_arguments: list[str] | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def reject_raw_argv(cls, values):
+        if isinstance(values, dict) and "launch_arguments" in values:
+            raise ValueError("RUNTIME_ARGV_NOT_ALLOWED")
+        return values
 
 
 def create_model_center_router(
@@ -41,10 +48,21 @@ def create_model_center_router(
             raise HTTPException(401, {"code": "SESSION_REQUIRED"})
         return authorization
 
-    def trusted_runtime_definition(item):
-        value = serialize(item)
-        value.pop("environment", None)
-        return value
+    def log_envelope(runtime_id: str) -> dict:
+        logs = service.lifecycle.sanitized_logs(runtime_id)
+        return {
+            "runtime_id": runtime_id,
+            "stdout": list(logs.get("stdout") or []),
+            "stderr": list(logs.get("stderr") or []),
+        }
+
+    def config_error(exc: Exception) -> HTTPException:
+        if isinstance(exc, ValidationError):
+            message = str(exc)
+            if "RUNTIME_ARGV_NOT_ALLOWED" in message:
+                return HTTPException(409, {"code": "RUNTIME_ARGV_NOT_ALLOWED"})
+            return HTTPException(409, {"code": "RUNTIME_CONFIG_INVALID"})
+        return HTTPException(409, {"code": str(exc)})
 
     @router.get("/models")
     def models(): return {"items": [service.model(item.id) for item in service.models.values()]}
@@ -63,14 +81,16 @@ def create_model_center_router(
         item=runtime(runtime_id); return {**runtime_definition(item), "instance": serialize(service.lifecycle.refresh(item.id)) if item.id in service.lifecycle.instances else None, "discovery": service.lifecycle.discover(item)}
 
     @router.post("/runtimes/{runtime_id}/validate")
-    def validate_runtime(runtime_id: str, body: RuntimeConfigIn | None = None):
+    def validate_runtime(runtime_id: str, body: dict | None = Body(default=None)):
         item=runtime(runtime_id)
         if body:
-            values=body.model_dump(exclude_none=True)
             try:
+                if "launch_arguments" in body:
+                    raise ValueError("RUNTIME_ARGV_NOT_ALLOWED")
+                values=RuntimeConfigIn.model_validate(body).model_dump(exclude_none=True)
                 item=service.configure_runtime(runtime_id, values)
-            except ValueError as exc:
-                raise HTTPException(409, {"code": str(exc)}) from exc
+            except (ValueError, ValidationError) as exc:
+                raise config_error(exc) from exc
         return service.validate_runtime(runtime_id)
 
     @router.post("/runtimes/{runtime_id}/start")
@@ -87,13 +107,13 @@ def create_model_center_router(
     @router.get("/runtimes/{runtime_id}/configuration")
     def runtime_configuration(runtime_id: str, x_session_token: str | None = Header(default=None, alias="X-Session-Token")):
         require_control(x_session_token)
-        return trusted_runtime_definition(runtime(runtime_id))
+        return editable_configuration(runtime(runtime_id))
 
     @router.put("/runtimes/{runtime_id}/configuration")
     def update_runtime_configuration(runtime_id: str, body: dict = Body(...), x_session_token: str | None = Header(default=None, alias="X-Session-Token")):
         require_control(x_session_token)
         runtime(runtime_id)
-        try: return trusted_runtime_definition(service.configure_runtime_profile(runtime_id, body))
+        try: return editable_configuration(service.configure_runtime_profile(runtime_id, mutation_payload(body)))
         except ValueError as exc: raise HTTPException(409, {"code": str(exc)}) from exc
 
     @router.get("/runtimes/{runtime_id}/diagnostics")
@@ -104,7 +124,7 @@ def create_model_center_router(
     @router.get("/runtimes/{runtime_id}/logs")
     def runtime_logs(runtime_id: str, x_session_token: str | None = Header(default=None, alias="X-Session-Token")):
         require_control(x_session_token); runtime(runtime_id)
-        return {"runtime_id": runtime_id, **service.lifecycle.sanitized_logs(runtime_id)}
+        return log_envelope(runtime_id)
 
     @router.get("/runtimes/{runtime_id}/capabilities")
     def runtime_capabilities(runtime_id: str):

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import re
-from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -10,10 +9,23 @@ from .domain import RuntimeDefinition, RuntimeManagement, RuntimeType
 
 
 LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1"}
+WILDCARD_BIND_TOKENS = {"0.0.0.0", "::", "*"}
 LLAMA_SAFE_EXTRA_FLAGS = frozenset({"--no-mmap", "--mlock", "--flash-attn", "--no-webui", "--verbose"})
 PROTECTED_LLAMA_FLAGS = frozenset({
     "-m", "--model", "-c", "--ctx-size", "-ngl", "--gpu-layers", "--host", "--port",
     "-t", "--threads", "-b", "--batch-size",
+})
+EDITABLE_COMMON_FIELDS = (
+    "runtime_type", "management", "executable", "working_directory",
+    "base_url", "bind_address", "port", "health_endpoint",
+)
+EDITABLE_LLAMA_FIELDS = EDITABLE_COMMON_FIELDS + (
+    "model_path", "context_size", "gpu_layers", "threads", "batch_size", "extra_arguments",
+)
+EDITABLE_COMFY_FIELDS = EDITABLE_COMMON_FIELDS + ("installation_path",)
+OUTPUT_CONFIGURATION_FIELDS = frozenset({
+    "id", "capabilities", "status", "provider_adapter", "environment",
+    "instance", "discovery",
 })
 
 
@@ -86,11 +98,17 @@ class ComfyUIRuntimeConfig(RuntimeProfileBase):
 RuntimeProfile = LlamaCppRuntimeConfig | ComfyUIRuntimeConfig
 
 
+def _reject_raw_argv(values: dict) -> None:
+    if "launch_arguments" in values:
+        raise ValueError("RUNTIME_ARGV_NOT_ALLOWED")
+
+
 def profile_from_values(runtime: RuntimeDefinition, values: dict) -> RuntimeProfile:
     expected = runtime.runtime_type
     supplied = values.get("runtime_type", expected)
     if supplied != expected:
         raise ValueError("RUNTIME_TYPE_MISMATCH")
+    _reject_raw_argv(values)
     try:
         if expected == RuntimeType.LLAMA_CPP:
             return LlamaCppRuntimeConfig.model_validate({"runtime_type": expected, **values})
@@ -101,6 +119,7 @@ def profile_from_values(runtime: RuntimeDefinition, values: dict) -> RuntimeProf
         for code in (
             "RUNTIME_NOT_LOOPBACK_BOUND", "RUNTIME_HEALTH_ENDPOINT_INVALID",
             "RUNTIME_PROTECTED_ARGUMENT", "RUNTIME_ARGUMENT_NOT_ALLOWED",
+            "RUNTIME_ARGV_NOT_ALLOWED",
         ):
             if code in message:
                 raise ValueError(code) from exc
@@ -135,6 +154,106 @@ def definition_from_profile(runtime: RuntimeDefinition, profile: RuntimeProfile)
         "working_directory": profile.installation_path or profile.working_directory,
         "launch_arguments": (), "extra_arguments": (),
     })
+
+
+def editable_configuration(runtime: RuntimeDefinition) -> dict[str, Any]:
+    """Fields that may be GET and PUT. Raw argv, status, capabilities, and adapters are omitted."""
+    fields = EDITABLE_LLAMA_FIELDS if runtime.runtime_type == RuntimeType.LLAMA_CPP else EDITABLE_COMFY_FIELDS
+    payload: dict[str, Any] = {"id": runtime.id}
+    for name in fields:
+        if name == "installation_path":
+            payload[name] = runtime.working_directory
+        elif name == "extra_arguments":
+            payload[name] = list(runtime.extra_arguments)
+        else:
+            payload[name] = getattr(runtime, name)
+    return payload
+
+
+def mutation_payload(values: dict[str, Any]) -> dict[str, Any]:
+    _reject_raw_argv(values)
+    return {key: value for key, value in values.items() if key not in OUTPUT_CONFIGURATION_FIELDS}
+
+
+def profile_from_definition(runtime: RuntimeDefinition) -> RuntimeProfile:
+    if runtime.port is None:
+        raise ValueError("RUNTIME_PORT_REQUIRED")
+    values: dict[str, Any] = {
+        "executable": runtime.executable,
+        "working_directory": runtime.working_directory,
+        "base_url": runtime.base_url or f"http://127.0.0.1:{runtime.port}",
+        "bind_address": runtime.bind_address,
+        "port": runtime.port,
+        "health_endpoint": runtime.health_endpoint or "/health",
+        "management": runtime.management,
+    }
+    if runtime.runtime_type == RuntimeType.LLAMA_CPP:
+        values.update(
+            model_path=runtime.model_path,
+            context_size=runtime.context_size if runtime.context_size is not None else 8192,
+            gpu_layers=runtime.gpu_layers if runtime.gpu_layers is not None else 0,
+            threads=runtime.threads,
+            batch_size=runtime.batch_size,
+            extra_arguments=list(runtime.extra_arguments),
+        )
+    else:
+        values["installation_path"] = runtime.working_directory
+    return profile_from_values(runtime, values)
+
+
+def _host_is_non_loopback(host: str) -> bool:
+    return host in WILDCARD_BIND_TOKENS or host not in LOOPBACK_HOSTS
+
+
+def argv_contains_wildcard_bind(argv: tuple[str, ...] | list[str]) -> bool:
+    tokens = list(argv)
+    for index, token in enumerate(tokens):
+        if token in WILDCARD_BIND_TOKENS:
+            return True
+        if token.startswith("--host="):
+            if _host_is_non_loopback(token.split("=", 1)[1]):
+                return True
+        if token in {"--host", "-h"} and index + 1 < len(tokens) and _host_is_non_loopback(tokens[index + 1]):
+            return True
+    return False
+
+
+def protected_argv_matches_profile(argv: tuple[str, ...], profile: LlamaCppRuntimeConfig) -> bool:
+    mapping: dict[str, str] = {}
+    index = 0
+    while index < len(argv):
+        flag = argv[index]
+        if flag in {"--host", "--port", "--model"}:
+            if index + 1 >= len(argv):
+                return False
+            mapping[flag] = argv[index + 1]
+            index += 2
+            continue
+        index += 1
+    return (
+        mapping.get("--host") == profile.bind_address
+        and mapping.get("--port") == str(profile.port)
+        and mapping.get("--model") == profile.model_path
+        and mapping.get("--host") in LOOPBACK_HOSTS
+    )
+
+
+def synthesized_launch_arguments(runtime: RuntimeDefinition) -> tuple[str, ...]:
+    profile = profile_from_definition(runtime)
+    if not isinstance(profile, LlamaCppRuntimeConfig):
+        raise ValueError("RUNTIME_EXTERNAL_ONLY")
+    argv = profile.launch_arguments()
+    if argv_contains_wildcard_bind(argv) or not protected_argv_matches_profile(argv, profile):
+        raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
+    return argv
+
+
+def resynthesize_runtime_argv(runtime: RuntimeDefinition) -> RuntimeDefinition:
+    if runtime.runtime_type != RuntimeType.LLAMA_CPP:
+        return runtime.__class__(**{**runtime.__dict__, "launch_arguments": ()})
+    profile = profile_from_definition(runtime)
+    assert isinstance(profile, LlamaCppRuntimeConfig)
+    return definition_from_profile(runtime, profile)
 
 
 class RuntimeLogSanitizer:

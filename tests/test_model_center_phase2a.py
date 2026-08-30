@@ -100,10 +100,10 @@ def test_managed_start_rejects_port_conflict(tmp_path: Path):
     try:
         definition = RuntimeDefinition(
             "conflict", RuntimeType.LLAMA_CPP, sys.executable, f"http://127.0.0.1:{port}",
-            "127.0.0.1", port, launch_arguments=("-c", "pass"), management=RuntimeManagement.MANAGED,
+            "127.0.0.1", port, management=RuntimeManagement.MANAGED,
         )
         with pytest.raises(ValueError, match="PORT_IN_USE"):
-            RuntimeLifecycle().start(definition)
+            RuntimeLifecycle().start(definition, host_argv=("-c", "pass"))
     finally:
         listener.close()
 
@@ -205,3 +205,221 @@ def test_production_middleware_protects_new_control_reads(prefix: str, suffix: s
         assert client.get(f"{prefix}/runtimes/llama-cpp-local/{suffix}", headers={"X-Session-Token": token}).status_code == 200
     finally:
         trusted_session_resolver.revoke(token)
+
+
+class _CapturingPopen:
+    calls: list[list[str]] = []
+
+    def __init__(self, args, **_kwargs):
+        type(self).calls.append(list(args))
+        self.pid = 4242
+        self.stdout = None
+        self.stderr = None
+
+    def poll(self):
+        return None
+
+
+def _patch_popen(monkeypatch) -> type[_CapturingPopen]:
+    _CapturingPopen.calls = []
+    monkeypatch.setattr("app.model_center.service.subprocess.Popen", _CapturingPopen)
+    return _CapturingPopen
+
+
+def test_raw_launch_arguments_cannot_be_submitted_or_persisted(tmp_path: Path):
+    sidecar = tmp_path / "runtime-config.json"
+    center = create_default_model_center(sidecar)
+    values = llama_values(tmp_path)
+    values["launch_arguments"] = ["--host", "0.0.0.0", "--port", "8081"]
+    with pytest.raises(ValueError, match="RUNTIME_ARGV_NOT_ALLOWED"):
+        center.configure_runtime_profile("llama-cpp-local", values)
+    with pytest.raises(ValueError, match="RUNTIME_ARGV_NOT_ALLOWED"):
+        center.configure_runtime("llama-cpp-local", {"launch_arguments": ["--host", "0.0.0.0"]})
+    assert center.runtimes["llama-cpp-local"].bind_address == "127.0.0.1"
+    if sidecar.is_file():
+        persisted = json.loads(sidecar.read_text(encoding="utf-8"))
+        stored = persisted.get("runtimes", {}).get("llama-cpp-local", {})
+        assert "launch_arguments" not in stored
+        assert stored.get("bind_address", "127.0.0.1") != "0.0.0.0"
+
+
+def test_raw_launch_arguments_rejected_on_validate_and_put(tmp_path: Path):
+    client, center = protected_client(tmp_path, "/api/model-center")
+    headers = {"X-Session-Token": "trusted"}
+    validate = client.post(
+        "/api/model-center/runtimes/llama-cpp-local/validate",
+        headers=headers,
+        json={"launch_arguments": ["--host", "0.0.0.0"], "bind_address": "127.0.0.1", "base_url": "http://127.0.0.1:8081"},
+    )
+    assert validate.status_code == 409
+    assert validate.json()["detail"]["code"] == "RUNTIME_ARGV_NOT_ALLOWED"
+    put = client.put(
+        "/api/model-center/runtimes/llama-cpp-local/configuration",
+        headers=headers,
+        json={**llama_values(tmp_path), "launch_arguments": ["--host", "0.0.0.0"]},
+    )
+    assert put.status_code == 409
+    assert put.json()["detail"]["code"] == "RUNTIME_ARGV_NOT_ALLOWED"
+    assert "0.0.0.0" not in center.runtimes["llama-cpp-local"].launch_arguments
+
+
+def test_wildcard_bind_in_stale_argv_cannot_bypass_typed_bind(tmp_path: Path, monkeypatch):
+    captured = _patch_popen(monkeypatch)
+    executable = tmp_path / "llama-server.exe"
+    model = tmp_path / "model.gguf"
+    executable.write_bytes(b"runtime")
+    model.write_bytes(b"GGUF")
+    definition = RuntimeDefinition(
+        "llama-cpp-local",
+        RuntimeType.LLAMA_CPP,
+        str(executable),
+        "http://127.0.0.1:19101",
+        "127.0.0.1",
+        19101,
+        launch_arguments=("--host", "0.0.0.0", "--port", "19101"),
+        management=RuntimeManagement.MANAGED,
+        model_path=str(model),
+        extra_arguments=("--flash-attn",),
+    )
+    RuntimeLifecycle().start(definition)
+    argv = captured.calls[0]
+    assert "0.0.0.0" not in argv
+    assert argv[argv.index("--host") + 1] == "127.0.0.1"
+    assert argv[argv.index("--port") + 1] == "19101"
+    assert argv[argv.index("--model") + 1] == str(model)
+    assert "--flash-attn" in argv
+
+
+def test_stale_sidecar_raw_argv_cannot_reach_popen(tmp_path: Path, monkeypatch):
+    captured = _patch_popen(monkeypatch)
+    executable = tmp_path / "llama-server.exe"
+    model = tmp_path / "model.gguf"
+    executable.write_bytes(b"runtime")
+    model.write_bytes(b"GGUF")
+    sidecar = tmp_path / "runtime-config.json"
+    sidecar.write_text(json.dumps({
+        "schema_version": 1,
+        "runtimes": {
+            "llama-cpp-local": {
+                "executable": str(executable),
+                "model_path": str(model),
+                "working_directory": str(tmp_path),
+                "base_url": "http://127.0.0.1:19102",
+                "bind_address": "127.0.0.1",
+                "port": 19102,
+                "health_endpoint": "/v1/models",
+                "launch_arguments": ["--host", "0.0.0.0", "--port", "19102", "-c", "print('pwned')"],
+            }
+        },
+    }), encoding="utf-8")
+    center = create_default_model_center(sidecar)
+    stored = json.dumps(center.runtimes["llama-cpp-local"].launch_arguments)
+    assert "0.0.0.0" not in stored
+    assert "-c" not in center.runtimes["llama-cpp-local"].launch_arguments
+    center.lifecycle.start(center.runtimes["llama-cpp-local"])
+    argv = captured.calls[0]
+    assert "0.0.0.0" not in argv
+    assert "-c" not in argv
+    assert "pwned" not in argv
+    assert argv[argv.index("--host") + 1] == "127.0.0.1"
+
+
+def test_python_c_raw_argv_cannot_enter_managed_launch_path(tmp_path: Path, monkeypatch):
+    captured = _patch_popen(monkeypatch)
+    executable = tmp_path / "llama-server.exe"
+    model = tmp_path / "model.gguf"
+    executable.write_bytes(b"runtime")
+    model.write_bytes(b"GGUF")
+    definition = RuntimeDefinition(
+        "managed",
+        RuntimeType.LLAMA_CPP,
+        str(executable),
+        "http://127.0.0.1:19103",
+        "127.0.0.1",
+        19103,
+        launch_arguments=("-c", "import os;os.write(1,b'pwned')"),
+        management=RuntimeManagement.MANAGED,
+        model_path=str(model),
+    )
+    RuntimeLifecycle().start(definition)
+    argv = captured.calls[0]
+    assert "-c" not in argv
+    assert "pwned" not in " ".join(argv)
+    assert argv[0] == str(executable)
+    assert "--model" in argv
+
+
+def test_typed_allowed_runtime_profile_still_launches(tmp_path: Path, monkeypatch):
+    captured = _patch_popen(monkeypatch)
+    center = create_default_model_center()
+    configured = center.configure_runtime_profile("llama-cpp-local", llama_values(tmp_path, port=19104))
+    center.lifecycle.start(configured)
+    argv = captured.calls[0]
+    assert argv[0] == str(tmp_path / "llama-server.exe")
+    assert argv[argv.index("--host") + 1] == "127.0.0.1"
+    assert argv[argv.index("--port") + 1] == "19104"
+    assert "--flash-attn" in argv
+    assert "0.0.0.0" not in argv
+
+
+def test_host_argv_wildcard_bind_is_still_rejected(tmp_path: Path):
+    executable = tmp_path / "llama-server.exe"
+    executable.write_bytes(b"runtime")
+    definition = RuntimeDefinition(
+        "host-argv",
+        RuntimeType.LLAMA_CPP,
+        str(executable),
+        "http://127.0.0.1:19105",
+        "127.0.0.1",
+        19105,
+        management=RuntimeManagement.MANAGED,
+    )
+    with pytest.raises(ValueError, match="RUNTIME_NOT_LOOPBACK_BOUND"):
+        RuntimeLifecycle().start(definition, host_argv=("--host", "0.0.0.0", "--port", "19105"))
+
+
+def test_editable_configuration_get_put_roundtrip(tmp_path: Path):
+    client, _center = protected_client(tmp_path, "/api/model-center")
+    headers = {"X-Session-Token": "trusted"}
+    created = client.put(
+        "/api/model-center/runtimes/llama-cpp-local/configuration",
+        headers=headers,
+        json=llama_values(tmp_path),
+    )
+    assert created.status_code == 200
+    for leaked in ("launch_arguments", "capabilities", "status", "provider_adapter", "environment"):
+        assert leaked not in created.json()
+    editable = client.get("/api/model-center/runtimes/llama-cpp-local/configuration", headers=headers)
+    assert editable.status_code == 200
+    payload = editable.json()
+    for leaked in ("launch_arguments", "capabilities", "status", "provider_adapter", "environment"):
+        assert leaked not in payload
+    roundtrip = client.put(
+        "/api/model-center/runtimes/llama-cpp-local/configuration",
+        headers=headers,
+        json=payload,
+    )
+    assert roundtrip.status_code == 200
+    edited = {key: value for key, value in payload.items() if key != "id"}
+    edited["context_size"] = 4096
+    saved = client.put(
+        "/api/model-center/runtimes/llama-cpp-local/configuration",
+        headers=headers,
+        json=edited,
+    )
+    assert saved.status_code == 200
+    assert saved.json()["context_size"] == 4096
+    reread = client.get("/api/model-center/runtimes/llama-cpp-local/configuration", headers=headers)
+    assert reread.json()["context_size"] == 4096
+    assert "launch_arguments" not in reread.json()
+
+
+def test_never_started_logs_always_include_empty_arrays(tmp_path: Path):
+    client, center = protected_client(tmp_path, "/api/model-center")
+    assert center.lifecycle.sanitized_logs("llama-cpp-local") == {"stdout": [], "stderr": []}
+    logs = client.get(
+        "/api/model-center/runtimes/llama-cpp-local/logs",
+        headers={"X-Session-Token": "trusted"},
+    )
+    assert logs.status_code == 200
+    assert logs.json() == {"runtime_id": "llama-cpp-local", "stdout": [], "stderr": []}

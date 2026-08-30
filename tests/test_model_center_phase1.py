@@ -324,7 +324,7 @@ def test_managed_runtime_captures_bounded_logs_and_detects_crash():
         54321,
         launch_arguments=("-c", script),
     )
-    lifecycle.start(definition)
+    lifecycle.start(definition, host_argv=("-c", script))
     instance = wait_for_exit(lifecycle, "crashing")
     assert instance.error == "RUNTIME_EXITED:17"
     assert instance.health["exit_code"] == 17
@@ -347,7 +347,7 @@ def test_owned_runtime_can_be_stopped_without_killing_external_processes():
         54322,
         launch_arguments=("-c", "import time;time.sleep(30)"),
     )
-    started = lifecycle.start(definition)
+    started = lifecycle.start(definition, host_argv=("-c", "import time;time.sleep(30)"))
     assert started.process_id
     stopped = lifecycle.stop("sleeping")
     assert stopped.state == "STOPPED"
@@ -365,9 +365,9 @@ def test_double_start_is_idempotent_and_owns_one_process():
         54324,
         launch_arguments=("-c", "import time;time.sleep(30)"),
     )
-    first = lifecycle.start(definition)
+    first = lifecycle.start(definition, host_argv=("-c", "import time;time.sleep(30)"))
     try:
-        second = lifecycle.start(definition)
+        second = lifecycle.start(definition, host_argv=("-c", "import time;time.sleep(30)"))
         assert second.process_id == first.process_id
         assert len(lifecycle._owned) == 1
     finally:
@@ -388,7 +388,7 @@ def test_managed_runtime_does_not_inherit_host_secrets(monkeypatch):
         54325,
         launch_arguments=("-c", script),
     )
-    lifecycle.start(definition)
+    lifecycle.start(definition, host_argv=("-c", script))
     wait_for_exit(lifecycle, "isolated-env")
     deadline = time.monotonic() + 2
     while time.monotonic() < deadline and len(lifecycle.logs("isolated-env")["stdout"]) < 2:
@@ -419,7 +419,7 @@ def test_running_process_health_can_recover_after_initial_probe_failure(monkeypa
         54323,
         launch_arguments=("-c", "import time;time.sleep(30)"),
     )
-    lifecycle.start(definition)
+    lifecycle.start(definition, host_argv=("-c", "import time;time.sleep(30)"))
     try:
         assert lifecycle.health(definition).state == "FAILED"
 
@@ -607,9 +607,8 @@ def test_raw_runtime_logs_are_not_exposed_by_general_api(tmp_path: Path):
         "executable": sys.executable,
         "base_url": "http://127.0.0.1:54327",
         "port": 54327,
-        "launch_arguments": ["-c", f"print({secret!r})"],
     })
-    started = center.lifecycle.start(center.runtimes["llama-cpp-local"])
+    started = center.lifecycle.start(center.runtimes["llama-cpp-local"], host_argv=("-c", f"print({secret!r})"))
     assert secret not in json.dumps(started.__dict__)
     wait_for_exit(center.lifecycle, "llama-cpp-local")
     deadline = time.monotonic() + 2

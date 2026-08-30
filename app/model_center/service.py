@@ -18,7 +18,14 @@ from pathlib import Path
 from typing import Any
 
 from .domain import Capability, HardwareProfile, ModelComponentDefinition, ModelDefinition, ModelStatus, ModelValidationRecord, PipelineDefinition, RoutingDecision, RoutingPolicy, RuntimeCapabilitySnapshot, RuntimeDefinition, RuntimeInstance, RuntimeManagement, RuntimeState, RuntimeType, serialize
-from .runtime_profiles import RuntimeLogSanitizer, definition_from_profile, profile_from_values
+from .runtime_profiles import (
+    RuntimeLogSanitizer,
+    argv_contains_wildcard_bind,
+    definition_from_profile,
+    profile_from_values,
+    resynthesize_runtime_argv,
+    synthesized_launch_arguments,
+)
 
 
 class CompatibilityGraph:
@@ -93,8 +100,10 @@ class RuntimeLifecycle:
                 ).start()
 
     def logs(self, runtime_id: str) -> dict[str, list[str]]:
-        result: dict[str, list[str]] = {}
-        for name, lines in self._logs.get(runtime_id, {}).items():
+        stored = self._logs.get(runtime_id) or {}
+        result: dict[str, list[str]] = {"stdout": [], "stderr": []}
+        for name in ("stdout", "stderr"):
+            lines = stored.get(name) or ()
             selected: list[str] = []
             used = 0
             for line in reversed(lines):
@@ -106,7 +115,10 @@ class RuntimeLifecycle:
         return result
 
     def sanitized_logs(self, runtime_id: str) -> dict[str, list[str]]:
-        return {name: [RuntimeLogSanitizer.sanitize(line) for line in lines] for name, lines in self.logs(runtime_id).items()}
+        return {
+            name: [RuntimeLogSanitizer.sanitize(line) for line in lines]
+            for name, lines in self.logs(runtime_id).items()
+        }
 
     def refresh(self, runtime_id: str) -> RuntimeInstance | None:
         instance = self.instances.get(runtime_id)
@@ -211,7 +223,7 @@ class RuntimeLifecycle:
             instance.state = RuntimeState.FAILED if definition.id in self._owned else RuntimeState.STOPPED; instance.health = {"reachable": False}; instance.error = "RUNTIME_HEALTH_FAILED"; instance.safe_error_code = "HTTP_UNREACHABLE"
         if not instance.http_reachable: instance.last_failure = datetime.now(timezone.utc).isoformat()
         instance.last_health_check = datetime.now(timezone.utc).isoformat(); return instance
-    def start(self, definition: RuntimeDefinition) -> RuntimeInstance:
+    def start(self, definition: RuntimeDefinition, *, host_argv: tuple[str, ...] | None = None) -> RuntimeInstance:
         if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
         if definition.runtime_type != RuntimeType.LLAMA_CPP or definition.management != RuntimeManagement.MANAGED: raise ValueError("RUNTIME_EXTERNAL_ONLY")
         _safe_runtime_environment(definition.environment)
@@ -228,7 +240,10 @@ class RuntimeLifecycle:
                 raise ValueError("PORT_IN_USE") from exc
             finally:
                 probe.close()
-            args = [str(executable), *definition.launch_arguments]
+            argv = host_argv if host_argv is not None else synthesized_launch_arguments(definition)
+            if argv_contains_wildcard_bind(argv):
+                raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
+            args = [str(executable), *argv]
             try:
                 proc = subprocess.Popen(
                     args,
@@ -276,7 +291,6 @@ class ModelCenterService:
         "bind_address",
         "port",
         "working_directory",
-        "launch_arguments",
         "health_endpoint",
         "management", "model_path", "context_size", "gpu_layers", "threads", "batch_size", "extra_arguments",
     }
@@ -300,6 +314,7 @@ class ModelCenterService:
                     if runtime_id in candidates:
                         values = self._validated_persisted_values(values)
                         configured = replace(candidates[runtime_id], **values)
+                        configured = resynthesize_runtime_argv(configured)
                         if not self.lifecycle.is_local(configured):
                             raise ValueError("unsafe runtime configuration")
                         candidates[runtime_id] = configured
@@ -315,11 +330,7 @@ class ModelCenterService:
                 raise ValueError("invalid runtime configuration")
         if "port" in filtered and (not isinstance(filtered["port"], int) or not 1 <= filtered["port"] <= 65535):
             raise ValueError("invalid runtime configuration")
-        if "launch_arguments" in filtered:
-            arguments = filtered["launch_arguments"]
-            if not isinstance(arguments, list) or not all(isinstance(item, str) for item in arguments):
-                raise ValueError("invalid runtime configuration")
-            filtered["launch_arguments"] = tuple(arguments)
+        filtered.pop("launch_arguments", None)
         if "extra_arguments" in filtered:
             arguments = filtered["extra_arguments"]
             if not isinstance(arguments, list) or not all(isinstance(item, str) for item in arguments):
@@ -400,10 +411,12 @@ class ModelCenterService:
         )
     def configure_runtime(self, runtime_id: str, values: dict[str, Any]) -> RuntimeDefinition:
         with self._config_lock:
-            if "launch_arguments" in values: values["launch_arguments"]=tuple(values["launch_arguments"])
+            if "launch_arguments" in values:
+                raise ValueError("RUNTIME_ARGV_NOT_ALLOWED")
             if "environment" in values:
                 _safe_runtime_environment(values["environment"])
             configured = replace(self.runtimes[runtime_id], **values)
+            configured = resynthesize_runtime_argv(configured)
             if not self.lifecycle.is_local(configured):
                 raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
             candidates = {**self.runtimes, runtime_id: configured}
