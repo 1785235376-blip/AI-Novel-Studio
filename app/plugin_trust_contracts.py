@@ -29,6 +29,8 @@ SUPPORTED_POLICY_VERSIONS = frozenset({PLUGIN_SIGNATURE_POLICY_VERSION})
 SUPPORTED_EVIDENCE_VERSIONS = frozenset({"1"})
 DEFAULT_EVIDENCE_VERSION = "1"
 VERIFIED_REASON_CODES = frozenset({"VERIFICATION_EVIDENCE_VALID"})
+# Scheme identifier vocabulary only. This is not an Ed25519 (or any) crypto implementation.
+SUPPORTED_SIGNATURE_SCHEMES = frozenset({"ed25519-detached-v1"})
 EXECUTION_SUPPORTED: Literal[False] = False
 
 PLUGIN_TRUST_CONTRACT_INVALID = "PLUGIN_TRUST_CONTRACT_INVALID"
@@ -608,8 +610,8 @@ class PluginTrustDecision(StrictFrozen):
                 raise ValueError("VERIFIED decisions require signature metadata")
             if not self.verification_provenance.evidence_present:
                 raise ValueError("VERIFIED decisions require verification evidence")
-            if self.verification_provenance.verification_scheme == "none":
-                raise ValueError("VERIFIED decisions require a verification scheme")
+            if self.verification_provenance.verification_scheme not in SUPPORTED_SIGNATURE_SCHEMES:
+                raise ValueError("VERIFIED decisions require a supported verification scheme")
             if self.reason_code not in VERIFIED_REASON_CODES:
                 raise ValueError("VERIFIED reason_code is incompatible")
             if self.policy_version not in SUPPORTED_POLICY_VERSIONS:

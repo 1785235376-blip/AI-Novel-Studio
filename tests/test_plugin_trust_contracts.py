@@ -18,6 +18,7 @@ from app.plugin_trust_contracts import (
     PLUGIN_TRUST_UNKNOWN_FIELD,
     SUPPORTED_EVIDENCE_VERSIONS,
     SUPPORTED_POLICY_VERSIONS,
+    SUPPORTED_SIGNATURE_SCHEMES,
     VERIFIED_REASON_CODES,
     PluginPublisherIdentity,
     PluginRevocationRecord,
@@ -351,6 +352,65 @@ def test_verified_cannot_use_none_verification_scheme():
             verification_provenance=make_provenance(verification_scheme="none"),
         ))
     assert caught.value.code == PLUGIN_TRUST_CONTRACT_INVALID
+
+
+UNSUPPORTED_VERIFICATION_SCHEMES = ("rsa-pkcs1v15-v1", "unknown-v999")
+
+
+def _assert_unsupported_scheme_rejected(payload: dict) -> None:
+    with pytest.raises(PluginTrustContractError) as caught:
+        PluginTrustDecision.parse(payload)
+    assert caught.value.code == PLUGIN_TRUST_CONTRACT_INVALID
+    with pytest.raises(Exception):
+        PluginTrustDecision.model_validate(payload)
+
+
+@pytest.mark.parametrize("scheme", UNSUPPORTED_VERIFICATION_SCHEMES)
+def test_verified_rejects_unsupported_verification_scheme(scheme):
+    assert scheme not in SUPPORTED_SIGNATURE_SCHEMES
+    _assert_unsupported_scheme_rejected(make_verified_decision(
+        verification_provenance=make_provenance(verification_scheme=scheme),
+    ))
+
+
+@pytest.mark.parametrize("scheme", UNSUPPORTED_VERIFICATION_SCHEMES)
+def test_verified_rejects_unsupported_scheme_from_json(scheme):
+    payload = json.loads(json.dumps(make_verified_decision(
+        verification_provenance=make_provenance(verification_scheme=scheme),
+    )))
+    _assert_unsupported_scheme_rejected(payload)
+
+
+@pytest.mark.parametrize("scheme", UNSUPPORTED_VERIFICATION_SCHEMES)
+def test_serialized_unsupported_verified_cannot_round_trip(scheme):
+    verified = PluginTrustDecision.parse(make_verified_decision())
+    dumped = json.loads(verified.canonical_json())
+    dumped["verification_provenance"]["verification_scheme"] = scheme
+    _assert_unsupported_scheme_rejected(dumped)
+    with pytest.raises(PluginTrustContractError):
+        PluginTrustDecision.parse(json.loads(json.dumps(dumped)))
+
+
+def test_policy_and_contract_share_one_canonical_scheme_allowlist():
+    import app.plugin_signature_policy as policy
+    import app.plugin_trust_contracts as contracts
+    assert policy.SUPPORTED_SIGNATURE_SCHEMES is contracts.SUPPORTED_SIGNATURE_SCHEMES
+    allowlist = contracts.SUPPORTED_SIGNATURE_SCHEMES
+    assert isinstance(allowlist, frozenset)
+    assert allowlist
+    assert "ed25519-detached-v1" in allowlist
+    for scheme in UNSUPPORTED_VERIFICATION_SCHEMES:
+        assert scheme not in allowlist
+    assert "none" not in allowlist
+    source = (REPO / "app" / "plugin_signature_policy.py").read_text(encoding="utf-8")
+    assert "frozenset({\"ed25519-detached-v1\"})" not in source
+    for scheme in allowlist:
+        accepted = PluginTrustDecision.parse(make_verified_decision(
+            verification_provenance=make_provenance(verification_scheme=scheme),
+        ))
+        assert accepted.trust_state is PluginTrustState.VERIFIED
+        assert accepted.verification_provenance.verification_scheme == scheme
+        assert accepted.execution_supported is False
 
 
 def test_verified_digest_must_match_provenance():

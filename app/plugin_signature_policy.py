@@ -21,6 +21,7 @@ from app.plugin_trust_contracts import (
     PLUGIN_SIGNATURE_POLICY_VERSION,
     SUPPORTED_EVIDENCE_VERSIONS,
     SUPPORTED_POLICY_VERSIONS,
+    SUPPORTED_SIGNATURE_SCHEMES,
     PluginSignatureDescriptor,
     PluginTrustDecision,
     PluginTrustEvaluationInput,
@@ -32,9 +33,6 @@ from app.plugin_trust_contracts import (
     parse_trust_timestamp,
 )
 
-
-# Scheme identifier only. This module does not implement Ed25519 (or any) crypto.
-SUPPORTED_SIGNATURE_SCHEMES = frozenset({"ed25519-detached-v1"})
 
 REASON_SIGNATURE_MISSING = "SIGNATURE_MISSING"
 REASON_SIGNATURE_SCHEME_UNSUPPORTED = "SIGNATURE_SCHEME_UNSUPPORTED"

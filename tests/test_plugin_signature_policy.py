@@ -35,6 +35,7 @@ from app.plugin_trust_contracts import (
     PLUGIN_TRUST_CONTRACT_INVALID,
     SUPPORTED_EVIDENCE_VERSIONS,
     SUPPORTED_POLICY_VERSIONS,
+    SUPPORTED_SIGNATURE_SCHEMES as CONTRACT_SUPPORTED_SIGNATURE_SCHEMES,
     PluginTrustContractError,
     PluginTrustDecision,
     PluginTrustEvaluationInput,
@@ -152,6 +153,22 @@ def test_unsupported_signature_scheme():
     assert decision.trust_state is PluginTrustState.UNSUPPORTED
     assert decision.reason_code == REASON_SIGNATURE_SCHEME_UNSUPPORTED
     assert "ed25519-detached-v1" in SUPPORTED_SIGNATURE_SCHEMES
+
+
+@pytest.mark.parametrize("scheme", ["rsa-pkcs1v15-v1", "unknown-v999"])
+def test_evaluate_plugin_trust_unsupported_scheme_is_not_verified(scheme):
+    assert scheme not in SUPPORTED_SIGNATURE_SCHEMES
+    assert SUPPORTED_SIGNATURE_SCHEMES is CONTRACT_SUPPORTED_SIGNATURE_SCHEMES
+    decision = decide(
+        signature=signature(signature_scheme=scheme),
+        evidence=evidence(scheme=scheme),
+    )
+    assert decision.trust_state is PluginTrustState.UNSUPPORTED
+    assert decision.reason_code == REASON_SIGNATURE_SCHEME_UNSUPPORTED
+    assert decision.trust_state is not PluginTrustState.VERIFIED
+    assert decision.verified_manifest_digest is None
+    assert decision.execution_supported is False
+    assert decision.verification_provenance.verification_scheme == scheme
 
 
 def test_malformed_digest_is_rejected_before_policy():

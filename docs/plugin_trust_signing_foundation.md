@@ -98,8 +98,9 @@ hashlib / HMAC / Ed25519.
 
 `VERIFIED` is impossible unless every semantic prerequisite holds: publisher
 identity present, signature metadata present, verification evidence present,
-`verification_scheme != none`, a compatible `VERIFIED` reason code, supported
-policy version, and verified manifest/package digests identical to provenance.
+`verification_scheme` in the canonical supported-scheme allowlist, a compatible
+`VERIFIED` reason code, supported policy version, and verified manifest/package
+digests identical to provenance.
 
 Supported evidence versions: `1`. Supported policy versions: `trust.v1`.
 Unknown versions are not guessed compatible.
