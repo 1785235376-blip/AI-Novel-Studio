@@ -23,6 +23,12 @@ def create_model_center_router(service: ModelCenterService, prefix: str = "/api/
         try: return service.runtimes[runtime_id]
         except KeyError: raise HTTPException(404, {"code": "MODEL_CENTER_RUNTIME_NOT_FOUND"}) from None
 
+    def runtime_definition(item):
+        value = serialize(item)
+        for sensitive_field in ("environment", "executable", "working_directory", "launch_arguments"):
+            value.pop(sensitive_field, None)
+        return value
+
     @router.get("/models")
     def models(): return {"items": [service.model(item.id) for item in service.models.values()]}
 
@@ -33,11 +39,11 @@ def create_model_center_router(service: ModelCenterService, prefix: str = "/api/
 
     @router.get("/runtimes")
     def runtimes():
-        return {"items": [{**serialize(item), "instance": serialize(service.lifecycle.refresh(item.id)) if item.id in service.lifecycle.instances else None, "discovery": service.lifecycle.discover(item)} for item in service.runtimes.values()]}
+        return {"items": [{**runtime_definition(item), "instance": serialize(service.lifecycle.refresh(item.id)) if item.id in service.lifecycle.instances else None, "discovery": service.lifecycle.discover(item)} for item in service.runtimes.values()]}
 
     @router.get("/runtimes/{runtime_id}")
     def runtime_detail(runtime_id: str):
-        item=runtime(runtime_id); return {**serialize(item), "instance": serialize(service.lifecycle.refresh(item.id)) if item.id in service.lifecycle.instances else None, "discovery": service.lifecycle.discover(item)}
+        item=runtime(runtime_id); return {**runtime_definition(item), "instance": serialize(service.lifecycle.refresh(item.id)) if item.id in service.lifecycle.instances else None, "discovery": service.lifecycle.discover(item)}
 
     @router.post("/runtimes/{runtime_id}/validate")
     def validate_runtime(runtime_id: str, body: RuntimeConfigIn | None = None):
@@ -49,7 +55,8 @@ def create_model_center_router(service: ModelCenterService, prefix: str = "/api/
             except ValueError as exc:
                 raise HTTPException(409, {"code": str(exc)}) from exc
         instance=service.lifecycle.health(item); discovery=service.lifecycle.discover(item, probe_version=True)
-        return {"definition":serialize(item),"discovery":discovery,"instance":serialize(instance)}
+        service.set_runtime_version(runtime_id, discovery.get("version"))
+        return {"definition":runtime_definition(item),"discovery":discovery,"instance":serialize(instance)}
 
     @router.post("/runtimes/{runtime_id}/start")
     def start_runtime(runtime_id: str):

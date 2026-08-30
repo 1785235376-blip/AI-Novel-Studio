@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import hashlib
+import ipaddress
 import json
 import os
+import socket
 import subprocess
+import tempfile
 import threading
 import urllib.request
 from urllib.parse import urlsplit
@@ -21,7 +25,37 @@ class CompatibilityGraph:
         item = self.components.get(component_id)
         if item is None or model.id not in item.compatible_models: return False
         requirement = model.compatibility.get("components", {}).get(item.component_type, {})
-        return all(not requirement.get(key) or requirement[key] == getattr(item, key) for key in ("family", "variant", "architecture", "version"))
+        dimensions = ("family", "variant", "architecture", "version")
+        return all(requirement.get(key) and requirement[key] == getattr(item, key) for key in dimensions)
+
+
+class RuntimeProbeRedirectRejected(RuntimeError):
+    pass
+
+
+class _RejectRedirects(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise RuntimeProbeRedirectRejected("MODEL_CENTER_RUNTIME_REDIRECT_REJECTED")
+
+
+SAFE_RUNTIME_ENV_ALLOWLIST = frozenset({"PATH", "PATHEXT", "TEMP", "TMP", "SYSTEMROOT", "WINDIR"})
+SECRET_ENV_MARKERS = ("AUTH", "COOKIE", "CREDENTIAL", "DATABASE_URL", "KEY", "PASSWORD", "PRIVATE", "SECRET", "SESSION", "TOKEN")
+
+
+def _safe_runtime_environment(explicit: dict[str, str]) -> dict[str, str]:
+    rejected = [key for key in explicit if any(marker in key.upper() for marker in SECRET_ENV_MARKERS)]
+    if rejected:
+        raise ValueError("RUNTIME_ENVIRONMENT_SECRET_REJECTED")
+    inherited = {
+        key: value for key, value in os.environ.items()
+        if key.upper() in SAFE_RUNTIME_ENV_ALLOWLIST
+    }
+    inherited.update(explicit)
+    return inherited
+
+
+def _runtime_probe_opener():
+    return urllib.request.build_opener(urllib.request.ProxyHandler({}), _RejectRedirects())
 
 
 class RuntimeLifecycle:
@@ -31,6 +65,7 @@ class RuntimeLifecycle:
         self._logs: dict[str, dict[str, deque[str]]] = {}
         self._log_line_limit = log_line_limit
         self._lock = threading.Lock()
+        self._probe_open = _runtime_probe_opener().open
 
     def _drain(self, runtime_id: str, stream_name: str, stream: Any) -> None:
         logs = self._logs[runtime_id][stream_name]
@@ -72,18 +107,41 @@ class RuntimeLifecycle:
             instance.health = {
                 "reachable": False,
                 "exit_code": return_code,
-                "logs": self.logs(runtime_id),
             }
         return instance
     @staticmethod
-    def is_local(definition: RuntimeDefinition) -> bool:
-        if definition.bind_address not in {"127.0.0.1", "localhost", "::1"}:
+    def _is_loopback_host(host: str) -> bool:
+        if not host:
+            return False
+        if host.casefold() == "localhost":
+            try:
+                addresses = {
+                    item[4][0]
+                    for item in socket.getaddrinfo(host, None, type=socket.SOCK_STREAM)
+                }
+                return bool(addresses) and all(ipaddress.ip_address(value).is_loopback for value in addresses)
+            except (OSError, ValueError):
+                return False
+        try:
+            return ipaddress.ip_address(host).is_loopback
+        except ValueError:
+            return False
+
+    @classmethod
+    def is_local(cls, definition: RuntimeDefinition) -> bool:
+        if not cls._is_loopback_host(definition.bind_address):
             return False
         if not definition.base_url:
             return True
         try:
             parsed = urlsplit(definition.base_url)
-            return parsed.scheme in {"http", "https"} and parsed.hostname in {"127.0.0.1", "localhost", "::1"}
+            return (
+                parsed.scheme in {"http", "https"}
+                and parsed.username is None
+                and parsed.password is None
+                and cls._is_loopback_host(parsed.hostname or "")
+                and parsed.port is not None
+            )
         except ValueError:
             return False
     def discover(self, definition: RuntimeDefinition, probe_version: bool = False) -> dict[str, Any]:
@@ -95,6 +153,7 @@ class RuntimeLifecycle:
                 result = subprocess.run(
                     [str(executable), "--version"],
                     cwd=definition.working_directory or executable.parent,
+                    env=_safe_runtime_environment(definition.environment),
                     capture_output=True,
                     check=False,
                     timeout=5,
@@ -123,10 +182,12 @@ class RuntimeLifecycle:
         url = definition.base_url.rstrip("/") + (definition.health_endpoint or "/") if definition.base_url else ""
         try:
             if not self.is_local(definition): raise RuntimeError("RUNTIME_NOT_LOOPBACK_BOUND")
-            with urllib.request.urlopen(url, timeout=1.5) as response: ok = 200 <= response.status < 500
+            with self._probe_open(url, timeout=1.5) as response: ok = 200 <= response.status < 500
             instance.state = RuntimeState.RUNNING if ok else RuntimeState.DEGRADED; instance.health = {"reachable": ok, "url": url}
-        except Exception as exc:
-            instance.state = RuntimeState.FAILED if definition.id in self._owned else RuntimeState.STOPPED; instance.health = {"reachable": False}; instance.error = str(exc)
+        except RuntimeProbeRedirectRejected:
+            instance.state = RuntimeState.FAILED if definition.id in self._owned else RuntimeState.STOPPED; instance.health = {"reachable": False}; instance.error = "MODEL_CENTER_RUNTIME_REDIRECT_REJECTED"
+        except Exception:
+            instance.state = RuntimeState.FAILED if definition.id in self._owned else RuntimeState.STOPPED; instance.health = {"reachable": False}; instance.error = "RUNTIME_HEALTH_FAILED"
         instance.last_health_check = datetime.now(timezone.utc).isoformat(); return instance
     def start(self, definition: RuntimeDefinition) -> RuntimeInstance:
         if not self.is_local(definition): raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
@@ -137,14 +198,19 @@ class RuntimeLifecycle:
             current = self._owned.get(definition.id)
             if current and current.poll() is None: return self.instances[definition.id]
             args = [str(executable), *definition.launch_arguments]
-            proc = subprocess.Popen(
-                args,
-                cwd=definition.working_directory or executable.parent,
-                env={**os.environ, **definition.environment},
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
-            )
+            try:
+                proc = subprocess.Popen(
+                    args,
+                    cwd=definition.working_directory or executable.parent,
+                    env=_safe_runtime_environment(definition.environment),
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+                )
+            except (OSError, ValueError) as exc:
+                if isinstance(exc, ValueError) and str(exc) == "RUNTIME_ENVIRONMENT_SECRET_REJECTED":
+                    raise
+                raise ValueError("RUNTIME_START_FAILED") from exc
             self._owned[definition.id] = proc
             instance = RuntimeInstance(definition.id, proc.pid, RuntimeState.STARTING, definition.base_url, datetime.now(timezone.utc).isoformat())
             self.instances[definition.id] = instance
@@ -160,7 +226,7 @@ class RuntimeLifecycle:
                 except subprocess.TimeoutExpired: proc.kill(); proc.wait(timeout=2)
             self._owned.pop(runtime_id, None)
             instance = self.instances.setdefault(runtime_id, RuntimeInstance(runtime_id)); instance.process_id = None; instance.state = RuntimeState.STOPPED
-            instance.health = {"reachable": False, "logs": self.logs(runtime_id)}
+            instance.health = {"reachable": False}
             return instance
 
     def stop_all(self) -> None:
@@ -187,19 +253,94 @@ class ModelCenterService:
         self.models={x.id:x for x in models}; self.components={x.component_id:x for x in components}; self.profiles={x.id:x for x in profiles}; self.runtimes={x.id:x for x in runtimes}; self.pipelines={x.id:x for x in pipelines}; self.validations=validations; self.compatibility=CompatibilityGraph(components); self.lifecycle=RuntimeLifecycle()
         self.routing_policy = routing_policy
         self.config_path=config_path
+        self.runtime_versions: dict[str, str] = {}
+        self.current_hardware_profiles: dict[str, str] = {}
+        self._config_lock = threading.RLock()
         if config_path and config_path.is_file():
             try:
                 saved=json.loads(config_path.read_text(encoding="utf-8"))
+                if not isinstance(saved, dict) or not isinstance(saved.get("runtimes", {}), dict):
+                    raise ValueError("invalid runtime configuration")
                 if saved.get("schema_version", self.RUNTIME_CONFIG_SCHEMA_VERSION) != self.RUNTIME_CONFIG_SCHEMA_VERSION:
                     raise ValueError("unsupported runtime configuration schema")
+                candidates = dict(self.runtimes)
                 for runtime_id, values in saved.get("runtimes", {}).items():
-                    if runtime_id in self.runtimes:
-                        values = {key: value for key, value in values.items() if key in self.PERSISTED_RUNTIME_FIELDS}
-                        if "launch_arguments" in values: values["launch_arguments"]=tuple(values["launch_arguments"])
-                        self.runtimes[runtime_id]=replace(self.runtimes[runtime_id], **values)
+                    if runtime_id in candidates:
+                        values = self._validated_persisted_values(values)
+                        configured = replace(candidates[runtime_id], **values)
+                        if not self.lifecycle.is_local(configured):
+                            raise ValueError("unsafe runtime configuration")
+                        candidates[runtime_id] = configured
+                self.runtimes = candidates
             except (OSError, ValueError, TypeError, json.JSONDecodeError): pass
+
+    def _validated_persisted_values(self, values: Any) -> dict[str, Any]:
+        if not isinstance(values, dict):
+            raise ValueError("invalid runtime configuration")
+        filtered = {key: value for key, value in values.items() if key in self.PERSISTED_RUNTIME_FIELDS}
+        for key in ("executable", "base_url", "bind_address", "working_directory", "health_endpoint"):
+            if key in filtered and not isinstance(filtered[key], str):
+                raise ValueError("invalid runtime configuration")
+        if "port" in filtered and (not isinstance(filtered["port"], int) or not 1 <= filtered["port"] <= 65535):
+            raise ValueError("invalid runtime configuration")
+        if "launch_arguments" in filtered:
+            arguments = filtered["launch_arguments"]
+            if not isinstance(arguments, list) or not all(isinstance(item, str) for item in arguments):
+                raise ValueError("invalid runtime configuration")
+            filtered["launch_arguments"] = tuple(arguments)
+        return filtered
     def model(self, model_id: str) -> dict[str, Any]:
-        model=self.models[model_id]; value=serialize(model); value["verified"] = any(x.model_id==model_id and x.validation_type=="INFERENCE" and x.status=="PASS" for x in self.validations); value["hardware_profile_details"]=[serialize(self.profiles[x]) for x in model.hardware_profiles if x in self.profiles]; return value
+        model=self.models[model_id]; value=serialize(model)
+        eligible = [x for x in self.validations if x.model_id==model_id and x.validation_type in {"INFERENCE","PIPELINE"} and x.status=="PASS"]
+        value["historically_validated"] = bool(eligible)
+        value["verified"] = any(self._validation_is_current(model, record) for record in eligible)
+        value["hardware_profile_details"]=[serialize(self.profiles[x]) for x in model.hardware_profiles if x in self.profiles]
+        return value
+
+    def set_runtime_version(self, runtime_id: str, version: str | None) -> None:
+        if version:
+            self.runtime_versions[runtime_id] = version
+
+    def set_current_hardware_profile(self, model_id: str, profile_id: str) -> None:
+        if profile_id not in self.models[model_id].hardware_profiles:
+            raise ValueError("MODEL_CENTER_HARDWARE_PROFILE_MISMATCH")
+        self.current_hardware_profiles[model_id] = profile_id
+
+    def runtime_fingerprint(self, runtime_id: str, version: str | None = None) -> str | None:
+        runtime = self.runtimes[runtime_id]
+        runtime_version = version or self.runtime_versions.get(runtime_id)
+        if not runtime_version:
+            return None
+        executable = str(Path(runtime.executable).resolve()) if runtime.executable else ""
+        if runtime.runtime_type == RuntimeType.LLAMA_CPP and not executable:
+            return None
+        identity = {
+            "runtime_id": runtime.id,
+            "runtime_type": runtime.runtime_type,
+            "executable": executable,
+            "working_directory": str(Path(runtime.working_directory).resolve()) if runtime.working_directory else "",
+            "base_url": runtime.base_url,
+            "bind_address": runtime.bind_address,
+            "port": runtime.port,
+            "launch_arguments": runtime.launch_arguments,
+            "version": runtime_version,
+        }
+        payload = json.dumps(identity, sort_keys=True, separators=(",", ":"), default=str)
+        return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+    def _validation_is_current(self, model: ModelDefinition, record: ModelValidationRecord) -> bool:
+        model_hash = str(model.metadata.get("sha256") or "")
+        runtime_version = self.runtime_versions.get(record.runtime_id, "")
+        fingerprint = self.runtime_fingerprint(record.runtime_id, runtime_version) if record.runtime_id in self.runtimes else None
+        return bool(
+            model_hash
+            and record.hash == model_hash
+            and self.current_hardware_profiles.get(model.id) == record.hardware_profile_id
+            and runtime_version
+            and record.runtime_version == runtime_version
+            and fingerprint
+            and record.runtime_fingerprint == fingerprint
+        )
     def health(self) -> dict[str, Any]:
         return {"status":"READY","models":len(self.models),"ready_models":sum(x.status==ModelStatus.READY for x in self.models.values()),"runtimes":len(self.runtimes),"runtime_instances":[serialize(x) for x in self.lifecycle.instances.values()]}
     def route(self, capability: str) -> RoutingDecision:
@@ -219,16 +360,45 @@ class ModelCenterService:
             provider_adapter=runtime.provider_adapter,
         )
     def configure_runtime(self, runtime_id: str, values: dict[str, Any]) -> RuntimeDefinition:
-        if "launch_arguments" in values: values["launch_arguments"]=tuple(values["launch_arguments"])
-        configured = replace(self.runtimes[runtime_id], **values)
-        if not self.lifecycle.is_local(configured):
-            raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
-        self.runtimes[runtime_id] = configured
-        if self.config_path:
+        with self._config_lock:
+            if "launch_arguments" in values: values["launch_arguments"]=tuple(values["launch_arguments"])
+            if "environment" in values:
+                _safe_runtime_environment(values["environment"])
+            configured = replace(self.runtimes[runtime_id], **values)
+            if not self.lifecycle.is_local(configured):
+                raise ValueError("RUNTIME_NOT_LOOPBACK_BOUND")
+            candidates = {**self.runtimes, runtime_id: configured}
+            if self.config_path:
+                self._persist_runtimes(candidates)
+            self.runtimes = candidates
+            self.runtime_versions.pop(runtime_id, None)
+            return configured
+
+    def _persist_runtimes(self, runtimes: dict[str, RuntimeDefinition]) -> None:
+        assert self.config_path is not None
+        payload={"schema_version":self.RUNTIME_CONFIG_SCHEMA_VERSION,"runtimes":{key:{name:value for name,value in serialize(item).items() if name in self.PERSISTED_RUNTIME_FIELDS} for key,item in runtimes.items()}}
+        temporary_path: Path | None = None
+        try:
             self.config_path.parent.mkdir(parents=True, exist_ok=True)
-            payload={"schema_version":self.RUNTIME_CONFIG_SCHEMA_VERSION,"runtimes":{key:{name:value for name,value in serialize(item).items() if name in self.PERSISTED_RUNTIME_FIELDS} for key,item in self.runtimes.items()}}
-            temporary=self.config_path.with_suffix(".tmp"); temporary.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding="utf-8"); os.replace(temporary,self.config_path)
-        return self.runtimes[runtime_id]
+            with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=self.config_path.parent, prefix=f".{self.config_path.name}.", suffix=".tmp", delete=False) as temporary:
+                temporary_path = Path(temporary.name)
+                json.dump(payload, temporary, ensure_ascii=False, indent=2)
+                temporary.flush()
+                os.fsync(temporary.fileno())
+            os.replace(temporary_path, self.config_path)
+            temporary_path = None
+            try:
+                directory_fd = os.open(self.config_path.parent, os.O_RDONLY)
+                try: os.fsync(directory_fd)
+                finally: os.close(directory_fd)
+            except OSError:
+                pass
+        except OSError as exc:
+            raise ValueError("RUNTIME_CONFIG_WRITE_FAILED") from exc
+        finally:
+            if temporary_path is not None:
+                try: temporary_path.unlink()
+                except OSError: pass
 
 
 def create_default_model_center(config_path: Path | None = None) -> ModelCenterService:
@@ -248,13 +418,13 @@ def create_default_model_center(config_path: Path | None = None) -> ModelCenterS
     ]
     models=[
         ModelDefinition("qwen36-27b-q4km","Qwen3.6 27B Q4_K_M","QWEN3.6","27B","1",(Capability.TEXT,),RuntimeType.LLAMA_CPP,"GGUF","Q4_K_M","Q4",hardware_profiles=("qwen36-rtx5080-8k","qwen36-rtx5080-16k"),status=ModelStatus.READY,metadata={"role":"LOCAL_TEXT_DEFAULT","sha256":"65B753EA835627F7B511143C6CEB976525C7F21F5DF8C664BC0A9C23D1C49921"}),
-        ModelDefinition("flux2-klein-4b-fp8","FLUX.2 Klein 4B FP8","FLUX2","KLEIN","1",(Capability.IMAGE,),RuntimeType.COMFYUI,"SAFETENSORS",precision="FP8",components=("flux2-klein-qwen3-encoder",),hardware_profiles=("flux2-klein-rtx5080",),compatibility={"components":{"TEXT_ENCODER":{"family":"FLUX2","variant":"KLEIN","architecture":"QWEN3"}}},status=ModelStatus.READY),
-        ModelDefinition("flux2-dev","FLUX.2 Dev","FLUX2","DEV","1",(Capability.IMAGE,),RuntimeType.COMFYUI,"SAFETENSORS",components=("flux2-dev-mistral-encoder",),compatibility={"components":{"TEXT_ENCODER":{"family":"FLUX2","variant":"DEV","architecture":"MISTRAL"}}},status=ModelStatus.NOT_INSTALLED),
+        ModelDefinition("flux2-klein-4b-fp8","FLUX.2 Klein 4B FP8","FLUX2","KLEIN","1",(Capability.IMAGE,),RuntimeType.COMFYUI,"SAFETENSORS",precision="FP8",components=("flux2-klein-qwen3-encoder",),hardware_profiles=("flux2-klein-rtx5080",),compatibility={"components":{"TEXT_ENCODER":{"family":"FLUX2","variant":"KLEIN","architecture":"QWEN3","version":"1"}}},status=ModelStatus.READY),
+        ModelDefinition("flux2-dev","FLUX.2 Dev","FLUX2","DEV","1",(Capability.IMAGE,),RuntimeType.COMFYUI,"SAFETENSORS",components=("flux2-dev-mistral-encoder",),compatibility={"components":{"TEXT_ENCODER":{"family":"FLUX2","variant":"DEV","architecture":"MISTRAL","version":"1"}}},status=ModelStatus.NOT_INSTALLED),
         ModelDefinition("z-image-turbo-bf16","Z-Image Turbo BF16","ZIMAGE","TURBO","1",(Capability.IMAGE,),RuntimeType.COMFYUI,"SAFETENSORS",precision="BF16",hardware_profiles=("zimage-rtx5080",),status=ModelStatus.READY),
         ModelDefinition("wan22-ti2v-5b","Wan2.2 TI2V 5B","WAN2.2","TI2V-5B","1",(Capability.VIDEO,),RuntimeType.COMFYUI,"SAFETENSORS",precision="FP16",hardware_profiles=("wan22-smoke-rtx5080",),status=ModelStatus.READY,metadata={"role":"LOCAL_VIDEO_DRAFT"}),
         ModelDefinition("seedvr2-3b","SeedVR2 3B","SEEDVR2","3B","1",(Capability.RESTORATION,),RuntimeType.COMFYUI,"CHECKPOINT",status=ModelStatus.READY),
         ModelDefinition("seedvr2-7b-sharp","SeedVR2 7B Sharp","SEEDVR2","7B_SHARP","1",(Capability.RESTORATION,),RuntimeType.COMFYUI,"CHECKPOINT",status=ModelStatus.READY),
-        ModelDefinition("rife-49","RIFE 4.9","RIFE","4.9","4.9",(Capability.INTERPOLATION,),RuntimeType.COMFYUI,"CHECKPOINT",components=("rife-49-checkpoint",),hardware_profiles=("rife49-rtx5080",),status=ModelStatus.READY),
+        ModelDefinition("rife-49","RIFE 4.9","RIFE","4.9","4.9",(Capability.INTERPOLATION,),RuntimeType.COMFYUI,"CHECKPOINT",components=("rife-49-checkpoint",),hardware_profiles=("rife49-rtx5080",),compatibility={"components":{"CHECKPOINT":{"family":"RIFE","variant":"4.9","architecture":"RIFE49","version":"4.9"}}},status=ModelStatus.READY),
         ModelDefinition("rife-426","RIFE 4.26","RIFE","4.26","4.26",(Capability.INTERPOLATION,),RuntimeType.COMFYUI,"CHECKPOINT",status=ModelStatus.INCOMPATIBLE,metadata={"reason":"CHECKPOINT_ARCHITECTURE_MISMATCH"}),
         ModelDefinition("dasheng-audiogen","Dasheng AudioGen","DASHENG","DEFAULT","1",(Capability.AUDIO,),RuntimeType.CUSTOM_HTTP,"CHECKPOINT",status=ModelStatus.RUNTIME_REQUIRED),
         ModelDefinition("minimax-h3","MiniMax H3","MINIMAX","H3","1",(Capability.TTS,Capability.AUDIO),RuntimeType.CUSTOM_HTTP,"CHECKPOINT",status=ModelStatus.RUNTIME_REQUIRED,metadata={"license_status":"VALIDATION_REQUIRED"}),

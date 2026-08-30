@@ -78,7 +78,7 @@ class ModelValidationRecord:
     model_id: str; runtime_id: str; hardware_profile_id: str; validation_type: str
     status: str; timestamp: str; input_summary: str = ""; output_summary: str = ""
     benchmark: dict[str, Any] = field(default_factory=dict); error: str = ""; hash: str = ""
-    runtime_version: str = ""; gpu: str = ""
+    runtime_version: str = ""; runtime_fingerprint: str = ""; gpu: str = ""
 
     @classmethod
     def now(cls, **values: Any) -> "ModelValidationRecord":

@@ -1,15 +1,41 @@
 from __future__ import annotations
 
+import json
+import os
 from pathlib import Path
+import threading
 import sys
 import time
+from dataclasses import replace
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import pytest
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from app.actor_context import SessionContext
+from app.config import settings
+from app.dependencies import packaged_bootstrap_registry, trusted_session_resolver
 from app.main import app
-from app.model_center.domain import RuntimeDefinition, RuntimeType
+from app.model_center.api import create_model_center_router
+from app.model_center.domain import ModelValidationRecord, RuntimeDefinition, RuntimeType
 from app.model_center.service import RuntimeLifecycle, create_default_model_center
+
+
+TRUSTED_TOKEN = "model-center-security-test"
+
+
+@pytest.fixture(autouse=True)
+def trusted_model_center_session():
+    trusted_session_resolver.register(TRUSTED_TOKEN, SessionContext("model-center-test", "test-client", "local-author", "workspace-a"))
+    try:
+        yield
+    finally:
+        trusted_session_resolver.revoke(TRUSTED_TOKEN)
+
+
+def auth_headers():
+    return {"X-Session-Token": TRUSTED_TOKEN}
 
 
 def wait_for_exit(lifecycle: RuntimeLifecycle, runtime_id: str, timeout: float = 5):
@@ -22,12 +48,13 @@ def wait_for_exit(lifecycle: RuntimeLifecycle, runtime_id: str, timeout: float =
     raise AssertionError(f"runtime {runtime_id} did not exit")
 
 
-def test_registry_uses_structured_model_identity_and_verified_inference():
+def test_registry_uses_structured_model_identity_and_historical_inference():
     center=create_default_model_center(); model=center.model("qwen36-27b-q4km")
     assert model["family"] == "QWEN3.6"
     assert model["variant"] == "27B"
     assert model["quantization"] == "Q4_K_M"
-    assert model["verified"] is True
+    assert model["historically_validated"] is True
+    assert model["verified"] is False
 
 
 def test_flux_component_compatibility_is_variant_and_architecture_specific():
@@ -37,6 +64,26 @@ def test_flux_component_compatibility_is_variant_and_architecture_specific():
     assert not center.compatibility.compatible(klein,"flux2-dev-mistral-encoder")
     assert center.compatibility.compatible(dev,"flux2-dev-mistral-encoder")
     assert not center.compatibility.compatible(dev,"flux2-klein-qwen3-encoder")
+
+
+@pytest.mark.parametrize("missing", ["family", "variant", "architecture", "version"])
+def test_component_compatibility_requires_every_identity_dimension(missing: str):
+    center = create_default_model_center()
+    model = center.models["flux2-klein-4b-fp8"]
+    requirement = dict(model.compatibility["components"]["TEXT_ENCODER"])
+    requirement.pop(missing)
+    incomplete = replace(model, compatibility={"components": {"TEXT_ENCODER": requirement}})
+    assert not center.compatibility.compatible(incomplete, "flux2-klein-qwen3-encoder")
+    assert not center.compatibility.compatible(model, "unknown-component")
+
+
+def test_component_compatibility_rejects_explicit_model_with_architecture_mismatch():
+    center = create_default_model_center()
+    model = center.models["flux2-klein-4b-fp8"]
+    requirement = dict(model.compatibility["components"]["TEXT_ENCODER"])
+    requirement["architecture"] = "MISTRAL"
+    mismatched = replace(model, compatibility={"components": {"TEXT_ENCODER": requirement}})
+    assert not center.compatibility.compatible(mismatched, "flux2-klein-qwen3-encoder")
 
 
 def test_rife_426_remains_incompatible_without_fallback():
@@ -70,6 +117,70 @@ def test_local_routing_policy_resolves_model_runtime_and_provider_adapter():
     )
 
 
+def _currently_verified_center():
+    center = create_default_model_center()
+    center.configure_runtime("llama-cpp-local", {"executable": sys.executable})
+    center.set_runtime_version("llama-cpp-local", "runtime-v1")
+    center.set_current_hardware_profile("qwen36-27b-q4km", "qwen36-rtx5080-8k")
+    fingerprint = center.runtime_fingerprint("llama-cpp-local")
+    center.validations.append(ModelValidationRecord(
+        "qwen36-27b-q4km",
+        "llama-cpp-local",
+        "qwen36-rtx5080-8k",
+        "INFERENCE",
+        "PASS",
+        "2026-08-30T00:00:00+00:00",
+        hash=center.models["qwen36-27b-q4km"].metadata["sha256"],
+        runtime_version="runtime-v1",
+        runtime_fingerprint=fingerprint or "",
+        gpu="RTX 5080",
+    ))
+    return center
+
+
+def test_current_verification_requires_complete_matching_identity():
+    center = _currently_verified_center()
+    assert center.model("qwen36-27b-q4km")["verified"] is True
+
+
+def test_current_verification_invalidates_model_runtime_version_and_profile_changes(tmp_path: Path):
+    center = _currently_verified_center()
+    original_model = center.models["qwen36-27b-q4km"]
+    center.models[original_model.id] = replace(original_model, metadata={**original_model.metadata, "sha256": "changed"})
+    assert center.model(original_model.id)["verified"] is False
+    center.models[original_model.id] = original_model
+
+    center.set_runtime_version("llama-cpp-local", "runtime-v2")
+    assert center.model(original_model.id)["verified"] is False
+    center.set_runtime_version("llama-cpp-local", "runtime-v1")
+
+    center.set_current_hardware_profile("qwen36-27b-q4km", "qwen36-rtx5080-16k")
+    assert center.model(original_model.id)["verified"] is False
+    center.set_current_hardware_profile("qwen36-27b-q4km", "qwen36-rtx5080-8k")
+
+    other = tmp_path / "other-runtime.exe"
+    other.write_bytes(b"")
+    center.configure_runtime("llama-cpp-local", {"executable": str(other)})
+    center.set_runtime_version("llama-cpp-local", "runtime-v1")
+    assert center.model(original_model.id)["verified"] is False
+
+
+@pytest.mark.parametrize("validation_type", ["FILE", "HASH", "LOAD"])
+def test_non_inference_validation_never_marks_model_verified(validation_type: str):
+    center = _currently_verified_center()
+    center.validations = [replace(center.validations[-1], validation_type=validation_type)]
+    assert center.model("qwen36-27b-q4km")["verified"] is False
+
+
+@pytest.mark.parametrize("field", ["hash", "runtime_version", "runtime_fingerprint", "hardware_profile_id"])
+def test_incomplete_validation_identity_is_historical_only(field: str):
+    center = _currently_verified_center()
+    center.validations = [replace(center.validations[-1], **{field: ""})]
+    model = center.model("qwen36-27b-q4km")
+    assert model["historically_validated"] is True
+    assert model["verified"] is False
+
+
 def test_runtime_discovery_is_explicit_and_warns_on_non_loopback(tmp_path: Path):
     executable=tmp_path/"llama-server.exe"; executable.write_bytes(b"")
     lifecycle=RuntimeLifecycle(); definition=RuntimeDefinition("local",RuntimeType.LLAMA_CPP,str(executable),"http://0.0.0.0:8081","0.0.0.0")
@@ -79,7 +190,16 @@ def test_runtime_discovery_is_explicit_and_warns_on_non_loopback(tmp_path: Path)
     with pytest.raises(ValueError,match="RUNTIME_NOT_LOOPBACK_BOUND"): lifecycle.start(definition)
 
 
-@pytest.mark.parametrize("base_url", ["http://localhost.evil:8081", "http://192.168.1.20:8081"])
+@pytest.mark.parametrize("base_url", [
+    "http://localhost.evil:8081",
+    "http://127.0.0.1.evil:8081",
+    "http://192.168.1.20:8081",
+    "http://169.254.169.254:80",
+    "http://0.0.0.0:8081",
+    "http://[::]:8081",
+    "http://user@localhost:8081",
+    "http://localhost:not-a-port",
+])
 def test_runtime_rejects_lookalike_and_lan_urls(tmp_path: Path, base_url: str):
     executable = tmp_path / "llama-server.exe"
     executable.write_bytes(b"")
@@ -92,6 +212,89 @@ def test_runtime_rejects_lookalike_and_lan_urls(tmp_path: Path, base_url: str):
     )
     with pytest.raises(ValueError, match="RUNTIME_NOT_LOOPBACK_BOUND"):
         RuntimeLifecycle().start(definition)
+
+
+class _ProbeHandler(BaseHTTPRequestHandler):
+    status = 200
+    location = ""
+    hits: list[str] = []
+
+    def do_GET(self):
+        type(self).hits.append(self.path)
+        self.send_response(type(self).status)
+        if type(self).location:
+            self.send_header("Location", type(self).location)
+        self.end_headers()
+
+    def log_message(self, *_args):
+        pass
+
+
+def _serve(handler: type[BaseHTTPRequestHandler]):
+    server = HTTPServer(("127.0.0.1", 0), handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    return server
+
+
+def test_runtime_probe_allows_direct_loopback_and_ignores_proxy(monkeypatch):
+    class Direct(_ProbeHandler):
+        hits = []
+
+    server = _serve(Direct)
+    monkeypatch.setenv("HTTP_PROXY", "http://127.0.0.1:1")
+    monkeypatch.setenv("HTTPS_PROXY", "http://127.0.0.1:1")
+    try:
+        definition = RuntimeDefinition("direct", RuntimeType.COMFYUI, base_url=f"http://127.0.0.1:{server.server_port}", health_endpoint="/health")
+        assert RuntimeLifecycle().health(definition).state == "RUNNING"
+        assert Direct.hits == ["/health"]
+    finally:
+        server.shutdown()
+
+
+@pytest.mark.parametrize("target", [
+    "http://192.168.1.20/private",
+    "http://example.com/public",
+    "http://169.254.169.254/latest/meta-data",
+])
+@pytest.mark.parametrize("status", [301, 302, 303, 307, 308])
+def test_runtime_probe_rejects_redirect_without_requesting_target(target: str, status: int):
+    class Redirect(_ProbeHandler):
+        pass
+    Redirect.status = status
+    Redirect.location = target
+    Redirect.hits = []
+
+    server = _serve(Redirect)
+    try:
+        definition = RuntimeDefinition("redirect", RuntimeType.COMFYUI, base_url=f"http://127.0.0.1:{server.server_port}", health_endpoint="/health")
+        instance = RuntimeLifecycle().health(definition)
+        assert instance.error == "MODEL_CENTER_RUNTIME_REDIRECT_REJECTED"
+        assert Redirect.hits == ["/health"]
+    finally:
+        server.shutdown()
+
+
+def test_runtime_probe_rejects_redirect_even_when_target_is_loopback():
+    class Target(_ProbeHandler):
+        hits = []
+
+    target = _serve(Target)
+
+    class Redirect(_ProbeHandler):
+        status = 302
+        location = f"http://127.0.0.1:{target.server_port}/escaped"
+        hits = []
+
+    redirect = _serve(Redirect)
+    try:
+        definition = RuntimeDefinition("redirect", RuntimeType.COMFYUI, base_url=f"http://127.0.0.1:{redirect.server_port}", health_endpoint="/health")
+        instance = RuntimeLifecycle().health(definition)
+        assert instance.error == "MODEL_CENTER_RUNTIME_REDIRECT_REJECTED"
+        assert Target.hits == []
+    finally:
+        redirect.shutdown()
+        target.shutdown()
 
 
 def test_explicit_runtime_validation_can_probe_version():
@@ -151,6 +354,60 @@ def test_owned_runtime_can_be_stopped_without_killing_external_processes():
     assert stopped.process_id is None
 
 
+def test_double_start_is_idempotent_and_owns_one_process():
+    lifecycle = RuntimeLifecycle()
+    definition = RuntimeDefinition(
+        "single",
+        RuntimeType.LLAMA_CPP,
+        sys.executable,
+        "http://127.0.0.1:54324",
+        "127.0.0.1",
+        54324,
+        launch_arguments=("-c", "import time;time.sleep(30)"),
+    )
+    first = lifecycle.start(definition)
+    try:
+        second = lifecycle.start(definition)
+        assert second.process_id == first.process_id
+        assert len(lifecycle._owned) == 1
+    finally:
+        lifecycle.stop("single")
+
+
+def test_managed_runtime_does_not_inherit_host_secrets(monkeypatch):
+    secret = "super-secret-value"
+    monkeypatch.setenv("MODEL_CENTER_TEST_SECRET", secret)
+    lifecycle = RuntimeLifecycle()
+    script = "import os;print(os.getenv('MODEL_CENTER_TEST_SECRET','missing'));print(bool(os.getenv('PATH')))"
+    definition = RuntimeDefinition(
+        "isolated-env",
+        RuntimeType.LLAMA_CPP,
+        sys.executable,
+        "http://127.0.0.1:54325",
+        "127.0.0.1",
+        54325,
+        launch_arguments=("-c", script),
+    )
+    lifecycle.start(definition)
+    wait_for_exit(lifecycle, "isolated-env")
+    deadline = time.monotonic() + 2
+    while time.monotonic() < deadline and len(lifecycle.logs("isolated-env")["stdout"]) < 2:
+        time.sleep(0.02)
+    assert lifecycle.logs("isolated-env")["stdout"] == ["missing", "True"]
+
+
+def test_secret_like_explicit_runtime_environment_is_rejected():
+    definition = RuntimeDefinition(
+        "secret-env",
+        RuntimeType.LLAMA_CPP,
+        sys.executable,
+        "http://127.0.0.1:54326",
+        environment={"OPENAI_API_KEY": "secret"},
+    )
+    with pytest.raises(ValueError, match="RUNTIME_ENVIRONMENT_SECRET_REJECTED"):
+        RuntimeLifecycle().start(definition)
+
+
 def test_running_process_health_can_recover_after_initial_probe_failure(monkeypatch):
     lifecycle = RuntimeLifecycle()
     definition = RuntimeDefinition(
@@ -171,7 +428,7 @@ def test_running_process_health_can_recover_after_initial_probe_failure(monkeypa
             def __enter__(self): return self
             def __exit__(self, *_args): return None
 
-        monkeypatch.setattr("app.model_center.service.urllib.request.urlopen", lambda *_args, **_kwargs: HealthyResponse())
+        lifecycle._probe_open = lambda *_args, **_kwargs: HealthyResponse()
         assert lifecycle.health(definition).state == "RUNNING"
     finally:
         lifecycle.stop("recovering")
@@ -191,10 +448,10 @@ def test_comfyui_runtime_is_external_only(tmp_path: Path):
 
 def test_runtime_configuration_persists_but_instance_state_does_not(tmp_path: Path):
     path=tmp_path/"runtime-config.json"; center=create_default_model_center(path)
-    center.configure_runtime("llama-cpp-local",{"executable":str(tmp_path/"llama-server.exe"),"port":9090,"environment":{"SECRET":"not-persisted"}})
+    center.configure_runtime("llama-cpp-local",{"executable":str(tmp_path/"llama-server.exe"),"port":9090,"environment":{"CUDA_VISIBLE_DEVICES":"0"}})
     payload = path.read_text(encoding="utf-8")
     assert '"schema_version": 1' in payload
-    assert "SECRET" not in payload
+    assert "CUDA_VISIBLE_DEVICES" not in payload
     reloaded=create_default_model_center(path)
     assert reloaded.runtimes["llama-cpp-local"].port == 9090
     assert reloaded.lifecycle.instances == {}
@@ -207,6 +464,48 @@ def test_corrupt_or_unknown_runtime_configuration_falls_back_safely(tmp_path: Pa
     assert center.runtimes["llama-cpp-local"].port == 8081
     path.write_text("not-json", encoding="utf-8")
     assert create_default_model_center(path).runtimes["llama-cpp-local"].port == 8081
+    path.write_text('{"schema_version":1,"runtimes":{"llama-cpp-local":[]}}', encoding="utf-8")
+    assert create_default_model_center(path).runtimes["llama-cpp-local"].port == 8081
+    path.write_text('{"schema_version":1,"runtimes":{"llama-cpp-local":{"base_url":"http://0.0.0.0:8081"}}}', encoding="utf-8")
+    assert create_default_model_center(path).runtimes["llama-cpp-local"].base_url == "http://127.0.0.1:8081"
+
+
+def test_concurrent_runtime_configuration_keeps_disk_and_memory_consistent(tmp_path: Path):
+    path = tmp_path / "runtime-config.json"
+    center = create_default_model_center(path)
+    barrier = threading.Barrier(3)
+    errors: list[Exception] = []
+
+    def configure(port: int):
+        try:
+            barrier.wait()
+            center.configure_runtime("llama-cpp-local", {"port": port})
+        except Exception as exc:
+            errors.append(exc)
+
+    threads = [threading.Thread(target=configure, args=(port,)) for port in (9101, 9102)]
+    for thread in threads: thread.start()
+    barrier.wait()
+    for thread in threads: thread.join()
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert errors == []
+    assert payload["runtimes"]["llama-cpp-local"]["port"] == center.runtimes["llama-cpp-local"].port
+    assert not list(tmp_path.glob("*.tmp"))
+
+
+def test_failed_runtime_configuration_write_does_not_publish_memory_state(tmp_path: Path, monkeypatch):
+    path = tmp_path / "runtime-config.json"
+    center = create_default_model_center(path)
+    original = center.runtimes["llama-cpp-local"]
+
+    def fail_replace(*_args):
+        raise OSError("simulated write failure")
+
+    monkeypatch.setattr("app.model_center.service.os.replace", fail_replace)
+    with pytest.raises(ValueError, match="RUNTIME_CONFIG_WRITE_FAILED"):
+        center.configure_runtime("llama-cpp-local", {"port": 9199})
+    assert center.runtimes["llama-cpp-local"] == original
+    assert not list(tmp_path.glob("*.tmp"))
 
 
 def test_model_center_api_lists_models_runtimes_pipeline_and_health():
@@ -224,6 +523,7 @@ def test_model_center_api_rejects_non_loopback_configuration():
     response = client.post(
         "/api/model-center/runtimes/llama-cpp-local/validate",
         json={"bind_address": "0.0.0.0", "base_url": "http://0.0.0.0:8081"},
+        headers=auth_headers(),
     )
     assert response.status_code == 409
     assert response.json()["code"] == "RUNTIME_NOT_LOOPBACK_BOUND"
@@ -231,5 +531,73 @@ def test_model_center_api_rejects_non_loopback_configuration():
 
 def test_model_center_api_reports_start_stop_contract_errors():
     client = TestClient(app)
-    assert client.post("/api/model-center/runtimes/comfyui-local/start").json()["code"] == "RUNTIME_EXTERNAL_ONLY"
-    assert client.post("/api/model-center/runtimes/comfyui-local/stop").json()["code"] == "RUNTIME_NOT_OWNED"
+    assert client.post("/api/model-center/runtimes/comfyui-local/start", headers=auth_headers()).json()["code"] == "RUNTIME_EXTERNAL_ONLY"
+    assert client.post("/api/model-center/runtimes/comfyui-local/stop", headers=auth_headers()).json()["code"] == "RUNTIME_NOT_OWNED"
+
+
+@pytest.mark.parametrize("prefix", ["/api/model-center", "/api/v1/model-center"])
+@pytest.mark.parametrize("operation", ["validate", "start", "stop"])
+def test_model_center_mutations_require_trusted_session_in_local_mode(prefix: str, operation: str):
+    response = TestClient(app).post(f"{prefix}/runtimes/comfyui-local/{operation}", json={})
+    assert response.status_code == 401
+    assert response.json()["detail"]["code"] == "SESSION_REQUIRED"
+
+
+@pytest.mark.parametrize("prefix", ["/api/model-center", "/api/v1/model-center"])
+@pytest.mark.parametrize("operation", ["validate", "start", "stop"])
+def test_model_center_mutations_accept_registered_trusted_session(prefix: str, operation: str):
+    response = TestClient(app).post(
+        f"{prefix}/runtimes/comfyui-local/{operation}",
+        json={},
+        headers=auth_headers(),
+    )
+    assert response.status_code != 401
+
+
+@pytest.mark.parametrize("prefix", ["/api/model-center", "/api/v1/model-center"])
+@pytest.mark.parametrize("mode", ["collaboration", "packaged"])
+def test_model_center_mutation_auth_applies_in_every_runtime_mode(prefix: str, mode: str, monkeypatch):
+    original = (settings.enable_collaboration_runtime, settings.enable_packaged_runtime)
+
+    class PackagedManager:
+        def resolve_issued_session(self, token):
+            return trusted_session_resolver.resolve(token)
+
+    try:
+        object.__setattr__(settings, "enable_collaboration_runtime", True)
+        object.__setattr__(settings, "enable_packaged_runtime", mode == "packaged")
+        if mode == "packaged":
+            monkeypatch.setattr(packaged_bootstrap_registry, "current", lambda: PackagedManager())
+        client = TestClient(app)
+        assert client.post(f"{prefix}/runtimes/comfyui-local/start").status_code == 401
+        assert client.post(f"{prefix}/runtimes/comfyui-local/start", headers=auth_headers()).status_code == 409
+    finally:
+        object.__setattr__(settings, "enable_collaboration_runtime", original[0])
+        object.__setattr__(settings, "enable_packaged_runtime", original[1])
+
+
+def test_raw_runtime_logs_are_not_exposed_by_general_api(tmp_path: Path):
+    secret = "super-secret-value"
+    center = create_default_model_center()
+    center.configure_runtime("llama-cpp-local", {
+        "executable": sys.executable,
+        "base_url": "http://127.0.0.1:54327",
+        "port": 54327,
+        "launch_arguments": ["-c", f"print({secret!r})"],
+    })
+    started = center.lifecycle.start(center.runtimes["llama-cpp-local"])
+    assert secret not in json.dumps(started.__dict__)
+    wait_for_exit(center.lifecycle, "llama-cpp-local")
+    deadline = time.monotonic() + 2
+    while time.monotonic() < deadline and not center.lifecycle.logs("llama-cpp-local")["stdout"]:
+        time.sleep(0.02)
+    assert secret in center.lifecycle.logs("llama-cpp-local")["stdout"]
+
+    isolated_app = FastAPI()
+    isolated_app.include_router(create_model_center_router(center))
+    client = TestClient(isolated_app)
+    assert secret not in client.get("/api/model-center/runtimes").text
+    assert secret not in client.get("/api/model-center/runtimes/llama-cpp-local").text
+    stopped = client.post("/api/model-center/runtimes/llama-cpp-local/stop")
+    assert secret not in stopped.text
+    assert secret not in client.get("/api/model-center/health").text

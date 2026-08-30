@@ -60,6 +60,19 @@ def _normalized_api_path(path: str) -> str:
 async def collaboration_fail_closed(request,call_next):
     packaged = bool(getattr(settings, "enable_packaged_runtime", False))
     collaboration = bool(getattr(settings, "enable_collaboration_runtime", False))
+    normalized_request_path = _normalized_api_path(request.url.path)
+    model_center_mutation = request.method == "POST" and re.fullmatch(
+        r"/api/model-center/runtimes/[^/]+/(?:validate|start|stop)",
+        normalized_request_path,
+    ) is not None
+    if model_center_mutation and not packaged and not collaboration:
+        token = request.headers.get("X-Session-Token")
+        if not token:
+            return JSONResponse({"detail": {"code": "SESSION_REQUIRED"}}, status_code=401)
+        try:
+            trusted_session_resolver.resolve(token)
+        except (KeyError, ValueError):
+            return JSONResponse({"detail": {"code": "INVALID_SESSION"}}, status_code=401)
     if not packaged and not collaboration:
         remote_host=request.client.host if request.client else ''
         try: local_client=ipaddress.ip_address(remote_host).is_loopback
