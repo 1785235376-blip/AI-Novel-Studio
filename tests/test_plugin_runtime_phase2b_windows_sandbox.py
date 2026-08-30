@@ -19,6 +19,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pytest
+import ctypes
 
 from app.plugin_runtime_contracts import (
     new_execution_attempt_id,
@@ -249,7 +250,34 @@ def test_win32_module_refuses_to_construct_off_windows():
     if sys.platform != "win32":
         with pytest.raises(SandboxError) as caught:
             Win32()
-        assert caught.value.code == REASON_WINDOWS_SANDBOX_UNAVAILABLE
+            assert caught.value.code == REASON_WINDOWS_SANDBOX_UNAVAILABLE
+
+
+def test_windows_environment_block_is_sorted_validated_and_double_nul_terminated():
+    from app.plugin_worker_windows_api import Win32
+
+    api = Win32.__new__(Win32)
+    api.ctypes = ctypes
+    block = api._env_block({"TEMP": "t", "systemroot": "r", "WINDIR": "w"})
+    units = list(block)
+    text = "".join(units)
+    assert text.endswith("\0\0")
+    logical = [entry for entry in text.split("\0") if entry]
+    assert [entry.split("=", 1)[0].casefold() for entry in logical] == ["systemroot", "temp", "windir"]
+    assert units[-1] == "\0" and units[-2] == "\0"
+
+
+@pytest.mark.parametrize("env", [
+    {"": "x"}, {"A\0B": "x"}, {"A": "x\0y"},
+    {"A=B": "x"}, {"PYTHONPATH": "x"}, {"Path": "a", "PATH": "b"},
+])
+def test_windows_environment_block_rejects_invalid_entries(env):
+    from app.plugin_worker_windows_api import Win32
+
+    api = Win32.__new__(Win32)
+    api.ctypes = ctypes
+    with pytest.raises(ValueError):
+        api._env_block(env)
 
 
 @pytest.fixture

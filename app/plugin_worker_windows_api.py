@@ -548,7 +548,9 @@ class Win32:
                 ctypes.byref(pi),
             )
             if not ok:
-                raise SandboxError(REASON_SANDBOX_LAUNCH_FAILED, winerr=self._winerr())
+                # Capture immediately: any intervening Win32 call can overwrite it.
+                winerr = int(ctypes.get_last_error())
+                raise SandboxError(REASON_SANDBOX_LAUNCH_FAILED, winerr=winerr)
             for key in ("stdin_r", "stdout_w", "stderr_w"):
                 self.close_handle(pipes[key])
                 pipes.pop(key, None)
@@ -625,7 +627,32 @@ class Win32:
         return " ".join(parts)
 
     def _env_block(self, env: dict[str, str]) -> Any:
-        text = "".join(f"{key}={value}\0" for key, value in env.items()) + "\0"
+        """Build a validated, deterministic Unicode environment block.
+
+        Windows requires entries sorted case-insensitively and terminated by
+        an additional NUL.  ``create_unicode_buffer`` adds the final storage
+        terminator; the logical text therefore ends with exactly ``\\0\\0``.
+        """
+        entries: list[tuple[str, str]] = []
+        seen: set[str] = set()
+        for key, value in env.items():
+            if not isinstance(key, str) or not isinstance(value, str):
+                raise ValueError("INVALID_WINDOWS_ENV_ENTRY")
+            if not key or "\0" in key or "\0" in value:
+                raise ValueError("INVALID_WINDOWS_ENV_ENTRY")
+            # ``=X:`` drive-current-directory entries are valid Win32 pseudo
+            # variables; ordinary names may not contain '='.
+            if not key.startswith("=") and "=" in key:
+                raise ValueError("INVALID_WINDOWS_ENV_ENTRY")
+            if key.upper().startswith("PYTHON"):
+                raise ValueError("PYTHON_ENV_FORBIDDEN")
+            folded = key.casefold()
+            if folded in seen:
+                raise ValueError("DUPLICATE_WINDOWS_ENV_KEY")
+            seen.add(folded)
+            entries.append((key, value))
+        entries.sort(key=lambda item: item[0].casefold())
+        text = "".join(f"{key}={value}\0" for key, value in entries) + "\0"
         return self.ctypes.create_unicode_buffer(text)
 
     def wrap_process(self, proc_info: Any, pipes: dict[str, int]) -> WinProcess:
