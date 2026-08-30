@@ -6,7 +6,8 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from . import __version__
 from .config import settings
-from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service
+from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service
+from .model_center.api import create_model_center_router
 from .collaboration_api import create_collaboration_router
 from .collaboration_admin import create_collaboration_admin_router
 from .packaging.bootstrap_api import create_packaged_bootstrap_router
@@ -20,10 +21,36 @@ import uuid
 import ipaddress
 
 from .api import router as api_router
+
+
+def _model_center_mutation_authorization(token: str | None) -> dict:
+    if settings.enable_packaged_runtime:
+        mode = "PACKAGED_BOOTSTRAP"
+        manager = packaged_bootstrap_registry.current()
+        try:
+            if manager is None or not token:
+                raise KeyError("missing packaged session")
+            manager.resolve_issued_session(token)
+            can_mutate = True
+        except (BootstrapDenied, KeyError, ValueError):
+            can_mutate = False
+    else:
+        mode = "TRUSTED_SESSION" if settings.enable_collaboration_runtime else "DEVELOPMENT_SESSION_REQUIRED"
+        try:
+            if not token:
+                raise KeyError("missing trusted session")
+            trusted_session_resolver.resolve(token)
+            can_mutate = True
+        except (KeyError, ValueError):
+            can_mutate = False
+    return {"can_mutate": can_mutate, "mutation_auth_mode": mode}
+
+
 @asynccontextmanager
 async def app_lifespan(_app):
     yield
     harness_process_service.stop()
+    model_center_service.lifecycle.stop_all()
 
 app=FastAPI(title="AI Novel Studio",version=__version__,lifespan=app_lifespan)
 _packaged_control_reader = start_packaged_control_reader()
@@ -58,6 +85,19 @@ def _normalized_api_path(path: str) -> str:
 async def collaboration_fail_closed(request,call_next):
     packaged = bool(getattr(settings, "enable_packaged_runtime", False))
     collaboration = bool(getattr(settings, "enable_collaboration_runtime", False))
+    normalized_request_path = _normalized_api_path(request.url.path)
+    model_center_mutation = request.method == "POST" and re.fullmatch(
+        r"/api/model-center/runtimes/[^/]+/(?:validate|start|stop)",
+        normalized_request_path,
+    ) is not None
+    if model_center_mutation and not packaged and not collaboration:
+        token = request.headers.get("X-Session-Token")
+        if not token:
+            return JSONResponse({"detail": {"code": "SESSION_REQUIRED"}}, status_code=401)
+        try:
+            trusted_session_resolver.resolve(token)
+        except (KeyError, ValueError):
+            return JSONResponse({"detail": {"code": "INVALID_SESSION"}}, status_code=401)
     if not packaged and not collaboration:
         remote_host=request.client.host if request.client else ''
         try: local_client=ipaddress.ip_address(remote_host).is_loopback
@@ -137,6 +177,7 @@ async def collaboration_fail_closed(request,call_next):
             r"/api/release-gates(?:/[^/]+)?",
             r"/api/release/readiness",
             r"/api/audit",
+            r"/api/model-center/(?:models(?:/[^/]+)?|runtimes(?:/[^/]+(?:/(?:validate|start|stop))?)?|pipelines|health)",
         ))
         if capability_route:
             token = request.headers.get("X-Session-Token")
@@ -218,6 +259,8 @@ async def collaboration_fail_closed(request,call_next):
 app.add_middleware(CORSMiddleware,allow_origins=[settings.frontend_origin],allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 app.include_router(api_router, prefix="/api")
 app.include_router(api_router, prefix="/api/v1")
+app.include_router(create_model_center_router(model_center_service, mutation_authorization=_model_center_mutation_authorization))
+app.include_router(create_model_center_router(model_center_service, prefix="/api/v1/model-center", mutation_authorization=_model_center_mutation_authorization))
 app.include_router(create_collaboration_router(collaboration_read_service))
 app.include_router(create_collaboration_router(collaboration_read_service, prefix="/api/v1/collaboration"))
 app.include_router(create_collaboration_admin_router(collaboration_admin_service))

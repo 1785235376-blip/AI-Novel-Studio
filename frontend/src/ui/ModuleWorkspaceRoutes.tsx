@@ -21,6 +21,7 @@ import {PluginInspector, type PluginInspection} from '../novel/PluginInspector';
 import {CapabilityStatusCenter} from './CapabilityStatusCenter';
 import {AiControlCenter} from './AiControlCenter';
 import {MediaProviderSettings} from './MediaProviderSettings';
+import {ModelCenter} from './ModelCenter';
 import {MultimodalDirectorWorkspace} from '../novel/MultimodalDirectorWorkspace';
 import {EmptyState} from './primitives';
 
@@ -43,8 +44,8 @@ function WorkspaceInspector({ module, novelId }: { module: WorkspaceModule; nove
   return <section className="workspace-inspector__empty" aria-label="工作区检查面板"><div className="workspace-inspector__eyebrow">Inspector</div><strong>{moduleLabels[module]}上下文</strong><p>当前关注：{context[module].focus}</p><dl className="workspace-inspector__facts"><div><dt>小说项目</dt><dd>{novelId || '未选择'}</dd></div><div><dt>工作区</dt><dd>{moduleLabels[module]}</dd></div><div><dt>运行状态</dt><dd><span className="ui-badge ui-badge--info">等待真实任务</span></dd></div></dl><div className="workspace-inspector__slot">{context[module].slot}</div></section>;
 }
 function ControlWorkspace(){
-  const [tab,setTab]=useState<'assistant'|'providers'>('assistant');
-  return <div className="control-workspace"><div className="control-workspace__tabs" role="tablist" aria-label="主控设置"><button type="button" role="tab" aria-selected={tab==='assistant'} onClick={()=>setTab('assistant')}>AI 主控</button><button type="button" role="tab" aria-selected={tab==='providers'} onClick={()=>setTab('providers')}>媒体 Provider</button></div>{tab==='assistant'?<AiControlCenter/>:<MediaProviderSettings/>}</div>;
+  const [tab,setTab]=useState<'assistant'|'models'|'providers'>('assistant');
+  return <div className="control-workspace"><div className="control-workspace__tabs" role="tablist" aria-label="主控设置"><button type="button" role="tab" aria-selected={tab==='assistant'} onClick={()=>setTab('assistant')}>AI 主控</button><button type="button" role="tab" aria-selected={tab==='models'} onClick={()=>setTab('models')}>模型中心</button><button type="button" role="tab" aria-selected={tab==='providers'} onClick={()=>setTab('providers')}>媒体 Provider</button></div>{tab==='assistant'?<AiControlCenter/>:tab==='models'?<ModelCenter/>:<MediaProviderSettings/>}</div>;
 }
 export function ModuleWorkspaceRoutes({module,onModuleChange,scope,actor,novelId}:Props){
   const [selectedAsset,setSelectedAsset]=useState<Asset>();

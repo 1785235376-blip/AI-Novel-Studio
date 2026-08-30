@@ -42,9 +42,11 @@ from .packaging.bootstrap_api import PackagedBootstrapRegistry
 from .packaging.local_session_bootstrap import LocalSessionBootstrap, TrustedLocalIdentity
 from .packaging.initial_workspace import PackagedInitialWorkspaceProvisioner
 from .packaging.runtime_identity import RuntimeIdentity
+from .model_center import create_default_model_center
 import os
 import secrets
 repositories=create_repository_bundle()
+model_center_service=create_default_model_center(settings.data_path()/"model-center"/"runtime-config.json")
 novel_service=NovelService(repositories.novels,repositories.chapters)
 adaptation_service=AdaptationService(repositories.novels,repositories.chapters,runtime,agent_runner)
 asset_provider_registry=AssetProviderRegistry()

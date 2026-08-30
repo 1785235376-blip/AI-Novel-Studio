@@ -315,6 +315,20 @@ def test_production_fail_closed_middleware_allows_only_enabled_packaged_posts():
         )
         assert response.status_code == 200
         token = response.json()["session_token"]
+        for prefix in ("/api/model-center", "/api/v1/model-center"):
+            authorization = client.get(f"{prefix}/health", headers={"X-Session-Token": token}).json()["mutation_authorization"]
+            assert authorization == {"can_mutate": True, "mutation_auth_mode": "PACKAGED_BOOTSTRAP"}
+            for operation in ("validate", "start", "stop"):
+                assert client.post(
+                    f"{prefix}/runtimes/comfyui-local/{operation}",
+                    headers={"X-Session-Token": token},
+                    json={},
+                ).status_code != 401
+                assert client.post(
+                    f"{prefix}/runtimes/comfyui-local/{operation}",
+                    headers={"X-Session-Token": "random"},
+                    json={},
+                ).status_code == 401
         assert client.get("/api/asset-providers", headers={"X-Session-Token": token}).status_code == 200
         assert client.get("/api/asset-providers").status_code == 401
         assert client.get("/api/asset-providers", headers={"X-Session-Token": "invalid"}).status_code == 401
@@ -322,6 +336,16 @@ def test_production_fail_closed_middleware_allows_only_enabled_packaged_posts():
         assert client.get("/api/packaged/bootstrap").status_code == 501
         assert client.post("/api/packaged/initial-workspace", json={}).status_code == 401
         assert client.post("/api/packaged/not-bootstrap", json={}).status_code == 501
+
+        packaged_bootstrap_registry.clear()
+        replacement_runtime, _, replacement_manager, _ = build()
+        packaged_bootstrap_registry.configure(replacement_manager)
+        assert replacement_runtime.runtime_instance_id != runtime.runtime_instance_id
+        assert client.post(
+            "/api/model-center/runtimes/comfyui-local/start",
+            headers={"X-Session-Token": token},
+            json={},
+        ).status_code == 401
 
         object.__setattr__(settings, "enable_collaboration_runtime", False)
         assert client.get("/novels").status_code == 501
