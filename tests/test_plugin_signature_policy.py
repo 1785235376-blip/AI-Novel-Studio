@@ -15,6 +15,8 @@ from app.plugin_signature_policy import (
     REASON_EVIDENCE_PLUGIN_ID_MISMATCH,
     REASON_EVIDENCE_PLUGIN_VERSION_MISMATCH,
     REASON_EVIDENCE_EXPIRED,
+    REASON_EVIDENCE_VERSION_UNSUPPORTED,
+    REASON_POLICY_VERSION_UNSUPPORTED,
     REASON_KEY_REVOKED,
     REASON_PACKAGE_REVOKED,
     REASON_PUBLISHER_REVOKED,
@@ -30,6 +32,9 @@ from app.plugin_signature_policy import (
 from app.plugin_trust_contracts import (
     PLUGIN_DIGEST_MALFORMED,
     PLUGIN_SIGNATURE_POLICY_VERSION,
+    PLUGIN_TRUST_CONTRACT_INVALID,
+    SUPPORTED_EVIDENCE_VERSIONS,
+    SUPPORTED_POLICY_VERSIONS,
     PluginTrustContractError,
     PluginTrustDecision,
     PluginTrustEvaluationInput,
@@ -244,10 +249,60 @@ def test_signature_mismatch_outcome_is_invalid():
 
 
 def test_expired_evidence_is_expired_not_verified():
-    decision = decide(evidence=evidence(expires_at=EXPIRED_TIME))
+    decision = decide(evidence=evidence(
+        verified_at="2026-07-01T00:00:00Z",
+        expires_at=EXPIRED_TIME,
+    ))
     assert decision.trust_state is PluginTrustState.EXPIRED
     assert decision.reason_code == REASON_EVIDENCE_EXPIRED
     assert decision.verified_manifest_digest is None
+
+
+def test_unknown_evidence_version_never_verified():
+    decision = decide(evidence=evidence(evidence_version="999"))
+    assert decision.trust_state is PluginTrustState.UNSUPPORTED
+    assert decision.reason_code == REASON_EVIDENCE_VERSION_UNSUPPORTED
+    assert decision.trust_state is not PluginTrustState.VERIFIED
+    assert decision.verified_manifest_digest is None
+    assert decision.execution_supported is False
+    assert "999" not in SUPPORTED_EVIDENCE_VERSIONS
+
+
+def test_unknown_policy_version_never_verified():
+    decision = decide(evidence=evidence(policy_version="trust.v999"))
+    assert decision.trust_state is PluginTrustState.UNSUPPORTED
+    assert decision.reason_code == REASON_POLICY_VERSION_UNSUPPORTED
+    assert decision.trust_state is not PluginTrustState.VERIFIED
+    assert decision.verified_manifest_digest is None
+    assert decision.execution_supported is False
+    assert "trust.v999" not in SUPPORTED_POLICY_VERSIONS
+
+
+def test_supported_evidence_and_policy_version_can_verify():
+    decision = decide(evidence=evidence(
+        evidence_version="1",
+        policy_version=PLUGIN_SIGNATURE_POLICY_VERSION,
+    ))
+    assert "1" in SUPPORTED_EVIDENCE_VERSIONS
+    assert PLUGIN_SIGNATURE_POLICY_VERSION in SUPPORTED_POLICY_VERSIONS
+    assert decision.trust_state is PluginTrustState.VERIFIED
+    assert decision.reason_code == REASON_VERIFICATION_EVIDENCE_VALID
+    assert decision.execution_supported is False
+
+
+def test_verified_at_after_evaluated_at_never_verified():
+    with pytest.raises(PluginTrustContractError) as caught:
+        decide(evidence=evidence(verified_at="2026-08-30T17:00:00Z"))
+    assert caught.value.code == PLUGIN_TRUST_CONTRACT_INVALID
+
+
+def test_invalid_calendar_and_time_never_verified():
+    with pytest.raises(PluginTrustContractError) as calendar:
+        decide(evaluated_at="2026-99-99T99:99:99Z")
+    assert calendar.value.code == PLUGIN_TRUST_CONTRACT_INVALID
+    with pytest.raises(PluginTrustContractError) as clock:
+        decide(evidence=evidence(verified_at="2026-08-30T25:61:61Z"))
+    assert clock.value.code == PLUGIN_TRUST_CONTRACT_INVALID
 
 
 def test_unsigned_revoked_package_is_revoked_not_unverified():

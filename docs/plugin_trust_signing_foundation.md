@@ -92,7 +92,22 @@ hashlib / HMAC / Ed25519.
 | Evidence `outcome=MISMATCH` | `INVALID` / `SIGNATURE_MISMATCH` |
 | Revoked publisher / key / package | `REVOKED` |
 | Matching evidence past `expires_at` | `EXPIRED` |
+| Unknown `evidence_version` | `UNSUPPORTED` / `EVIDENCE_VERSION_UNSUPPORTED` (never `VERIFIED`) |
+| Unknown `policy_version` | `UNSUPPORTED` / `POLICY_VERSION_UNSUPPORTED` (never `VERIFIED`) |
 | Valid supported verification evidence | `VERIFIED` and `execution_supported=false` |
+
+`VERIFIED` is impossible unless every semantic prerequisite holds: publisher
+identity present, signature metadata present, verification evidence present,
+`verification_scheme != none`, a compatible `VERIFIED` reason code, supported
+policy version, and verified manifest/package digests identical to provenance.
+
+Supported evidence versions: `1`. Supported policy versions: `trust.v1`.
+Unknown versions are not guessed compatible.
+
+Timestamps are timezone-aware ISO-8601 values parsed as real datetimes, not
+regex-only. Invalid calendar dates and times fail closed. `verified_at` must
+not be after `evaluated_at`. If `expires_at` is set, `verified_at <= expires_at`.
+Ordering uses the contract timestamps only — never wall-clock `now`.
 
 Revocation is Host-owned policy input. This phase does not fetch a CRL or OCSP
 response. A future-dated `effective_at` is not yet active.

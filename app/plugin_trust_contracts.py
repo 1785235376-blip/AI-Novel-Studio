@@ -25,6 +25,10 @@ from app.plugin_contracts import PLUGIN_ID_RE, SEMVER_RE, SHA256_HEX_RE
 
 PLUGIN_TRUST_CONTRACT_VERSION = "trust.v1"
 PLUGIN_SIGNATURE_POLICY_VERSION = "trust.v1"
+SUPPORTED_POLICY_VERSIONS = frozenset({PLUGIN_SIGNATURE_POLICY_VERSION})
+SUPPORTED_EVIDENCE_VERSIONS = frozenset({"1"})
+DEFAULT_EVIDENCE_VERSION = "1"
+VERIFIED_REASON_CODES = frozenset({"VERIFICATION_EVIDENCE_VALID"})
 EXECUTION_SUPPORTED: Literal[False] = False
 
 PLUGIN_TRUST_CONTRACT_INVALID = "PLUGIN_TRUST_CONTRACT_INVALID"
@@ -170,8 +174,6 @@ def parse_trust_model(cls: type[BaseModel], payload: Any) -> Any:
         folded = text.casefold()
         if "extra inputs are not permitted" in folded:
             raise PluginTrustContractError(PLUGIN_TRUST_UNKNOWN_FIELD) from None
-        if "digest" in folded:
-            raise PluginTrustContractError(PLUGIN_DIGEST_MALFORMED) from None
         raise PluginTrustContractError(PLUGIN_TRUST_CONTRACT_INVALID) from None
 
 
@@ -207,9 +209,30 @@ def _require_publisher_id(value: str) -> str:
     return value
 
 
-def _require_timestamp(value: str) -> str:
-    if not ISO_TIMESTAMP_RE.fullmatch(value):
+def parse_trust_timestamp(value: str) -> datetime:
+    """Parse a timezone-aware ISO-8601 timestamp with a real calendar.
+
+    Regex shape is not enough: `2026-99-99T99:99:99Z` must fail.
+    Naive timestamps are rejected. Wall-clock `now` is never consulted.
+    """
+    if not isinstance(value, str) or not ISO_TIMESTAMP_RE.fullmatch(value):
         raise ValueError("timestamp must be ISO-8601")
+    text = value.replace("Z", "+00:00")
+    try:
+        parsed = datetime.fromisoformat(text)
+    except ValueError:
+        raise ValueError("timestamp must be a valid calendar datetime") from None
+    if parsed.tzinfo is None:
+        raise ValueError("timestamp must be timezone-aware")
+    return parsed
+
+
+def timestamp_not_after(left: str, right: str) -> bool:
+    return parse_trust_timestamp(left) <= parse_trust_timestamp(right)
+
+
+def _require_timestamp(value: str) -> str:
+    parse_trust_timestamp(value)
     return value
 
 
@@ -348,7 +371,7 @@ class PluginVerificationEvidence(StrictFrozen):
     outcome: VerificationOutcome
     verified_at: str
     policy_version: str = PLUGIN_SIGNATURE_POLICY_VERSION
-    evidence_version: str = "1"
+    evidence_version: str = DEFAULT_EVIDENCE_VERSION
     expires_at: str | None = None
 
     @field_validator("plugin_id")
@@ -406,6 +429,12 @@ class PluginVerificationEvidence(StrictFrozen):
         if not RECORD_VERSION_RE.fullmatch(value):
             raise ValueError("evidence_version is invalid")
         return value
+
+    @model_validator(mode="after")
+    def expiry_interval_is_ordered(self):
+        if self.expires_at is not None and not timestamp_not_after(self.verified_at, self.expires_at):
+            raise ValueError("verified_at must not be after expires_at")
+        return self
 
 
 class PluginRevocationRecord(StrictFrozen):
@@ -557,20 +586,45 @@ class PluginTrustDecision(StrictFrozen):
     def iso_time(cls, value: str) -> str:
         return _require_timestamp(value)
 
+    @field_validator("policy_version")
+    @classmethod
+    def valid_policy_version(cls, value: str) -> str:
+        if not RECORD_VERSION_RE.fullmatch(value):
+            raise ValueError("policy_version is invalid")
+        return value
+
     @model_validator(mode="after")
-    def fail_closed_execution_and_verified_digests(self):
+    def fail_closed_execution_and_verified_consistency(self):
         if self.execution_supported is not False:
             raise ValueError("execution_supported must remain false")
         if self.sandbox_ready or self.broker_ready or self.worker_ready:
             raise ValueError("trust must not claim sandbox, broker, or worker readiness")
+        if self.signature_metadata_present != self.verification_provenance.signature_metadata_present:
+            raise ValueError("signature metadata presence must match provenance")
         if self.trust_state is PluginTrustState.VERIFIED:
+            if self.publisher_id is None:
+                raise ValueError("VERIFIED decisions require publisher identity")
+            if not self.signature_metadata_present:
+                raise ValueError("VERIFIED decisions require signature metadata")
+            if not self.verification_provenance.evidence_present:
+                raise ValueError("VERIFIED decisions require verification evidence")
+            if self.verification_provenance.verification_scheme == "none":
+                raise ValueError("VERIFIED decisions require a verification scheme")
+            if self.reason_code not in VERIFIED_REASON_CODES:
+                raise ValueError("VERIFIED reason_code is incompatible")
+            if self.policy_version not in SUPPORTED_POLICY_VERSIONS:
+                raise ValueError("VERIFIED decisions require a supported policy version")
+            if self.verification_provenance.policy_version not in SUPPORTED_POLICY_VERSIONS:
+                raise ValueError("VERIFIED provenance requires a supported policy version")
             if not self.verified_manifest_digest or not self.verified_package_digest:
                 raise ValueError("VERIFIED decisions must bind verified digests")
+            if self.verified_manifest_digest != self.verification_provenance.manifest_digest:
+                raise ValueError("verified manifest digest must match provenance")
+            if self.verified_package_digest != self.verification_provenance.package_digest:
+                raise ValueError("verified package digest must match provenance")
         else:
             if self.verified_manifest_digest is not None or self.verified_package_digest is not None:
                 raise ValueError("unverified decisions must not populate verified_* digests")
-        if self.signature_metadata_present != self.verification_provenance.signature_metadata_present:
-            raise ValueError("signature metadata presence must match provenance")
         return self
 
 
@@ -612,6 +666,12 @@ class PluginTrustEvaluationInput(StrictFrozen):
                 cleaned.append(publisher_id)
                 seen.add(publisher_id)
         return tuple(cleaned)
+
+    @model_validator(mode="after")
+    def temporal_order_is_deterministic(self):
+        if self.evidence is not None and not timestamp_not_after(self.evidence.verified_at, self.evaluated_at):
+            raise ValueError("verified_at must not be after evaluated_at")
+        return self
 
 
 def dump_without_secrets(model: StrictFrozen) -> dict[str, Any]:

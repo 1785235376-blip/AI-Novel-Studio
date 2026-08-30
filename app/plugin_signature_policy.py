@@ -14,12 +14,13 @@ VERIFIED != SANDBOX READY
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
 from typing import Any, Literal
 
 from app.plugin_trust_contracts import (
     EXECUTION_SUPPORTED,
     PLUGIN_SIGNATURE_POLICY_VERSION,
+    SUPPORTED_EVIDENCE_VERSIONS,
+    SUPPORTED_POLICY_VERSIONS,
     PluginSignatureDescriptor,
     PluginTrustDecision,
     PluginTrustEvaluationInput,
@@ -28,6 +29,7 @@ from app.plugin_trust_contracts import (
     RevocationSubjectType,
     VerificationOutcome,
     VerificationProvenance,
+    parse_trust_timestamp,
 )
 
 
@@ -49,19 +51,13 @@ REASON_EVIDENCE_KEY_MISMATCH = "EVIDENCE_KEY_MISMATCH"
 REASON_EVIDENCE_SCHEME_MISMATCH = "EVIDENCE_SCHEME_MISMATCH"
 REASON_EVIDENCE_MISSING = "EVIDENCE_MISSING"
 REASON_EVIDENCE_EXPIRED = "EVIDENCE_EXPIRED"
+REASON_EVIDENCE_VERSION_UNSUPPORTED = "EVIDENCE_VERSION_UNSUPPORTED"
+REASON_POLICY_VERSION_UNSUPPORTED = "POLICY_VERSION_UNSUPPORTED"
 REASON_VERIFICATION_EVIDENCE_VALID = "VERIFICATION_EVIDENCE_VALID"
 
 
-def _parse_iso(value: str) -> datetime:
-    text = value.replace("Z", "+00:00")
-    parsed = datetime.fromisoformat(text)
-    if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=timezone.utc)
-    return parsed
-
-
 def _not_before(left: str, right: str) -> bool:
-    return _parse_iso(left) <= _parse_iso(right)
+    return parse_trust_timestamp(left) <= parse_trust_timestamp(right)
 
 
 def _package_subject_ids(
@@ -236,6 +232,21 @@ def evaluate_plugin_trust(
             inp,
             trust_state=PluginTrustState.UNVERIFIED,
             reason_code=REASON_EVIDENCE_MISSING,
+            scheme=inp.signature.signature_scheme,
+        )
+
+    if inp.evidence.evidence_version not in SUPPORTED_EVIDENCE_VERSIONS:
+        return _decision(
+            inp,
+            trust_state=PluginTrustState.UNSUPPORTED,
+            reason_code=REASON_EVIDENCE_VERSION_UNSUPPORTED,
+            scheme=inp.signature.signature_scheme,
+        )
+    if inp.evidence.policy_version not in SUPPORTED_POLICY_VERSIONS:
+        return _decision(
+            inp,
+            trust_state=PluginTrustState.UNSUPPORTED,
+            reason_code=REASON_POLICY_VERSION_UNSUPPORTED,
             scheme=inp.signature.signature_scheme,
         )
 
