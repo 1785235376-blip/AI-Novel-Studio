@@ -70,4 +70,31 @@ describe('ModelCenter',()=>{
   await act(async()=>{start.click();await Promise.resolve();await Promise.resolve()});
   expect(start.disabled).toBe(true);expect(host.textContent).toContain('受信任的桌面会话已失效');
  });
+ it('shows external runtime metadata without start or stop controls',async()=>{
+  vi.spyOn(api,'modelCenterModels').mockResolvedValue({items:[]});
+  vi.spyOn(api,'modelCenterRuntimes').mockResolvedValue({items:[{id:'comfy',runtime_type:'COMFYUI',management:'EXTERNAL',base_url:'http://127.0.0.1:8188',status:'CONFIGURED',instance:{state:'EXTERNAL',process_id:null,http_reachable:true},discovery:{path_exists:true,executable_exists:false}}]});
+  vi.spyOn(api,'modelCenterPipelines').mockResolvedValue({items:[]});
+  vi.spyOn(api,'modelCenterHealth').mockResolvedValue({status:'READY',mutation_authorization:{can_mutate:true,mutation_auth_mode:'PACKAGED_BOOTSTRAP'}});
+  host=document.createElement('div');document.body.append(host);root=createRoot(host);mounted=true;await act(async()=>{root.render(<ModelCenter/>);await Promise.resolve();await Promise.resolve()});
+  expect(host.textContent).toContain('COMFYUI · EXTERNAL');
+  expect(Array.from(host.querySelectorAll('button')).find(button=>button.textContent?.includes('Start'))?.disabled).toBe(true);
+  expect(Array.from(host.querySelectorAll('button')).find(button=>button.textContent?.includes('Stop'))?.disabled).toBe(true);
+ });
+ it('opens trusted typed configuration and advanced diagnostics',async()=>{
+  vi.spyOn(api,'modelCenterModels').mockResolvedValue({items:[]});
+  vi.spyOn(api,'modelCenterRuntimes').mockResolvedValue({items:[{id:'llama',runtime_type:'LLAMA_CPP',management:'MANAGED',base_url:'http://127.0.0.1:8081',status:'CONFIGURED',instance:null,discovery:{path_exists:true,executable_exists:true}}]});
+  vi.spyOn(api,'modelCenterPipelines').mockResolvedValue({items:[]});
+  vi.spyOn(api,'modelCenterHealth').mockResolvedValue({status:'READY',mutation_authorization:{can_mutate:true,mutation_auth_mode:'PACKAGED_BOOTSTRAP'}});
+  vi.spyOn(api,'modelCenterRuntimeConfiguration').mockResolvedValue({id:'llama',runtime_type:'LLAMA_CPP',management:'MANAGED',executable:'D:/runtime/llama.exe',working_directory:'D:/runtime',base_url:'http://127.0.0.1:8081',bind_address:'127.0.0.1',port:8081,health_endpoint:'/v1/models',model_path:'D:/models/qwen.gguf',context_size:8192,gpu_layers:40,threads:12,batch_size:512,extra_arguments:[]});
+  vi.spyOn(api,'modelCenterRuntimeDiagnostics').mockResolvedValue({runtime_id:'llama',management:'MANAGED',state:'RUNNING',process_alive:true,http_reachable:true,version:'b7000',latency_ms:4,safe_error_code:null,checks:[]});
+  vi.spyOn(api,'modelCenterRuntimeCapabilities').mockResolvedValue({runtime_id:'llama',runtime_version:'b7000',detected_at:'now',runtime_state:'RUNNING',capabilities:['TEXT'],available_models:['qwen.gguf'],adapters:['OPENAI_COMPATIBLE_TEXT'],node_classes:[],warnings:[]});
+  vi.spyOn(api,'modelCenterRuntimeLogs').mockResolvedValue({runtime_id:'llama',stdout:['ready'],stderr:[]});
+  host=document.createElement('div');document.body.append(host);root=createRoot(host);mounted=true;await act(async()=>{root.render(<ModelCenter/>);await Promise.resolve();await Promise.resolve()});
+  const buttons=Array.from(host.querySelectorAll('button'));
+  await act(async()=>{buttons.find(button=>button.textContent?.includes('Edit Configuration'))!.click();await Promise.resolve()});
+  expect(host.querySelector('[role=dialog]')).toBeTruthy();expect((host.querySelector('input[value="D:/models/qwen.gguf"]') as HTMLInputElement).value).toContain('qwen.gguf');
+  await act(async()=>{host.querySelector('[role=dialog] button')!.dispatchEvent(new MouseEvent('click',{bubbles:true}));await Promise.resolve()});
+  await act(async()=>{Array.from(host.querySelectorAll('button')).find(button=>button.textContent?.includes('View Diagnostics'))!.click();await Promise.resolve();await Promise.resolve()});
+  expect(host.textContent).toContain('Advanced Diagnostics');expect(host.textContent).toContain('b7000');expect(host.textContent).toContain('ready');
+ });
 });

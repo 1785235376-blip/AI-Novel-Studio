@@ -329,6 +329,15 @@ def test_production_fail_closed_middleware_allows_only_enabled_packaged_posts():
                     headers={"X-Session-Token": "random"},
                     json={},
                 ).status_code == 401
+            for protected in ("configuration", "diagnostics", "logs"):
+                assert client.get(
+                    f"{prefix}/runtimes/llama-cpp-local/{protected}",
+                    headers={"X-Session-Token": token},
+                ).status_code == 200
+                assert client.get(
+                    f"{prefix}/runtimes/llama-cpp-local/{protected}",
+                    headers={"X-Session-Token": "random"},
+                ).status_code == 401
         assert client.get("/api/asset-providers", headers={"X-Session-Token": token}).status_code == 200
         assert client.get("/api/asset-providers").status_code == 401
         assert client.get("/api/asset-providers", headers={"X-Session-Token": "invalid"}).status_code == 401
