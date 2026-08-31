@@ -120,7 +120,7 @@ class Runtime:
         if not identities_present or not self.provider_registry.contains(provider_id) or not self.model_registry.contains(provider_id, model_id):
             # A caller-provided adapter may be used as a non-authoritative,
             # in-memory compatibility node; it never enters the owner store.
-            if provider is not None and provider_id not in self.providers:
+            if provider is not None and provider_id not in self.providers and not hasattr(provider, "provider_id"):
                 ephemeral_providers = ProviderRegistry()
                 ephemeral_models = ModelRegistry()
                 adapter = provider if hasattr(provider, "stream_text") else LegacyTextProviderAdapter(provider_id, provider)
