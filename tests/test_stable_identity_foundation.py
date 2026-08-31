@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import multiprocessing as mp
 from pathlib import Path
 from uuid import UUID, uuid4
 
@@ -8,6 +9,7 @@ import pytest
 
 from app.model_runtime import ModelDescriptor, ModelRegistry, Modality, ProviderDescriptor, ProviderRegistry
 from app.model_center.service import create_default_model_center
+from app.runtime import Runtime
 from app.provider_runtime_v2_contracts import ExecutionNodeIdentity as ContractNodeIdentity
 from app.provider_runtime_v2_contracts import ModelIdentity as ContractModelIdentity
 from app.provider_runtime_v2_contracts import ProviderIdentity as ContractProviderIdentity
@@ -20,6 +22,7 @@ from app.stable_identity import (
     IdentityIntegrityError,
     IdentityMutationError,
     StableIdentityStore,
+    TrustedLegacySource,
 )
 
 
@@ -39,8 +42,9 @@ def test_owner_identity_is_created_once_and_survives_reload(tmp_path: Path):
 def test_legacy_backfill_is_persisted_and_idempotent(tmp_path: Path):
     store = StableIdentityStore(tmp_path / "identity.json")
     entries = [{"key": "legacy-provider", "display_name": "Legacy"}]
-    first = store.migrate("provider", entries)
-    second = StableIdentityStore(tmp_path / "identity.json").migrate("provider", entries)
+    source = TrustedLegacySource.from_entries(entries)
+    first = store.migrate("provider", entries, trusted_source=source)
+    second = StableIdentityStore(tmp_path / "identity.json").migrate("provider", entries, trusted_source=source)
     assert first == second
 
 
@@ -128,6 +132,118 @@ def test_taxonomy_ids_are_explicit_unique_and_stable():
     assert len(ids) == len(set(ids))
     assert all(item.taxonomy_id != UUID(int=0) for item in values)
     assert RUNTIME_FAMILIES["llama.cpp"].taxonomy_id == UUID("7c8b4e2a-1b0d-4d8f-9e64-0b5b3f0d1a11")
+
+
+def test_rename_preserves_id_and_delete_create_gets_new_id(tmp_path: Path):
+    store = StableIdentityStore(tmp_path / "identity.json")
+    original = store.create("provider", "old-name")
+    assert store.rename("provider", "old-name", "new-name") == original
+    assert store.get("provider", "old-name") is None
+    assert store.get("provider", "new-name") == original
+    store.delete("provider", "new-name")
+    assert store.create("provider", "new-name") != original
+
+
+def test_strict_store_rejects_duplicate_keys_unknown_content_and_bool_schema(tmp_path: Path):
+    path = tmp_path / "identity.json"
+    valid_entities = '"entities":{"provider":[],"model":[],"runtime":[],"execution_node":[]}'
+    for raw in (
+        '{"schema_version":1,"schema_version":1,' + valid_entities + '}',
+        '{"schema_version":true,' + valid_entities + '}',
+        '{"schema_version":1,"extra":1,' + valid_entities + '}',
+        '{"schema_version":1,"entities":{"provider":[],"model":[],"runtime":[],"execution_node":[],"other":[]}}',
+    ):
+        path.write_text(raw, encoding="utf-8")
+        with pytest.raises(IdentityIntegrityError):
+            StableIdentityStore(path).list("provider")
+    row = {"key": "x", "identity_id": str(uuid4()), "metadata": {}, "unknown": True}
+    payload = {"schema_version": 1, "entities": {name: [] for name in StableIdentityStore.KINDS}}
+    payload["entities"]["provider"] = [row]
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(IdentityIntegrityError):
+        StableIdentityStore(path).list("provider")
+
+
+def test_migration_requires_explicit_trusted_source(tmp_path: Path):
+    with pytest.raises(IdentityIntegrityError, match="TRUST_REQUIRED"):
+        StableIdentityStore(tmp_path / "identity.json").migrate("provider", [{"key": "x"}])
+
+
+def test_model_registry_uses_one_canonical_model_key(tmp_path: Path):
+    store = StableIdentityStore(tmp_path / "identity.json")
+    models = ModelRegistry(store)
+    models.register(ModelDescriptor("shared-model", "provider-a", "Shared", Modality.TEXT, frozenset()))
+    first = models.descriptors()[0].model_uuid
+    models.register(ModelDescriptor("shared-model", "provider-b", "Shared", Modality.TEXT, frozenset()), replace=True)
+    assert models.descriptors()[1].model_uuid == first
+    assert len(store.list("model")) == 1
+
+
+def _mp_get_or_create(path: str, kind: str, key: str, barrier, queue) -> None:
+    store = StableIdentityStore(path)
+    barrier.wait()
+    queue.put((kind, key, str(store.get_or_create(kind, key))))
+
+
+def test_real_multiprocess_same_key_and_lost_update_safety(tmp_path: Path):
+    path = str(tmp_path / "identity.json")
+    context = mp.get_context("spawn")
+    for keys in (("same", "same"), ("one", "two")):
+        barrier = context.Barrier(2)
+        queue = context.Queue()
+        processes = [context.Process(target=_mp_get_or_create, args=(path, "provider", key, barrier, queue)) for key in keys]
+        for process in processes: process.start()
+        for process in processes: process.join(20)
+        assert all(process.exitcode == 0 for process in processes)
+        values = [queue.get(timeout=2)[2] for _ in processes]
+        if keys[0] == keys[1]:
+            assert values[0] == values[1]
+        else:
+            assert {item["key"] for item in StableIdentityStore(path).list("provider")} >= set(keys)
+
+
+def test_real_multiprocess_mixed_kind_mutations_preserve_all_rows(tmp_path: Path):
+    path = str(tmp_path / "identity.json")
+    context = mp.get_context("spawn")
+    jobs = [("provider", "p"), ("model", "m"), ("runtime", "r"), ("execution_node", "local")]
+    barrier = context.Barrier(len(jobs))
+    queue = context.Queue()
+    processes = [context.Process(target=_mp_get_or_create, args=(path, kind, key, barrier, queue)) for kind, key in jobs]
+    for process in processes: process.start()
+    for process in processes: process.join(20)
+    assert all(process.exitcode == 0 for process in processes)
+    results = [queue.get(timeout=2) for _ in processes]
+    store = StableIdentityStore(path)
+    assert {(kind, key) for kind, key, _ in results} == set(jobs)
+    assert all(len(store.list(kind)) == 1 for kind, _ in jobs)
+
+
+def test_route_preparation_is_read_only_and_does_not_mint(tmp_path: Path):
+    store = StableIdentityStore(tmp_path / "identity.json")
+    runtime = Runtime(store)
+    before = store.path.read_bytes()
+    runtime.prepare_text_route("mock", "mock-writer")
+    runtime.prepare_text_route("mock", "mock-writer")
+    assert store.path.read_bytes() == before
+    with pytest.raises(Exception, match="尚未完成注册"):
+        runtime.prepare_text_route("missing-provider", "missing-model")
+    assert store.path.read_bytes() == before
+    store.delete("model", "mock-writer")
+    before_missing = store.path.read_bytes()
+    with pytest.raises(Exception, match="尚未完成注册"):
+        runtime.prepare_text_route("mock", "mock-writer")
+    assert store.path.read_bytes() == before_missing
+
+
+def test_runtime_identity_cannot_be_supplied_or_mutated_by_configuration(tmp_path: Path):
+    store = StableIdentityStore(tmp_path / "identity.json")
+    center = create_default_model_center(tmp_path / "runtime-config.json", identity_store=store)
+    original = center.runtimes["llama-cpp-local"].identity_id
+    with pytest.raises(ValueError, match="RUNTIME_ID_IMMUTABLE"):
+        center.configure_runtime("llama-cpp-local", {"identity_id": str(uuid4()), "port": 18082})
+    with pytest.raises(ValueError, match="RUNTIME_ID_IMMUTABLE"):
+        center.configure_runtime_profile("llama-cpp-local", {"runtime_uuid": "00000000-0000-0000-0000-000000000000"})
+    assert center.runtimes["llama-cpp-local"].identity_id == original
 
 
 @pytest.mark.parametrize(

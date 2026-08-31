@@ -7,22 +7,25 @@ from .model_runtime import (
     GenerationRuntime,
     LegacyTextProviderAdapter,
     ModelDescriptor,
+    ModelRuntimeError,
     ModelRegistry,
     Modality,
     ProviderDescriptor,
     ProviderRegistry,
+    RuntimeErrorCode,
 )
 from .openai_compatible import CompatibleProviderConfig,OpenAICompatibleTextProvider
-from .stable_identity import ExecutionNodeIdentityStore, StableIdentityStore
+from .stable_identity import ExecutionNodeIdentityStore, StableIdentityStore, canonical_identity_store_path
 
 class Runtime:
-    def __init__(self):
+    def __init__(self, identity_store: StableIdentityStore | None = None):
         self.providers={"ollama":OllamaProvider(settings.ollama_url),"mock":MockProvider(settings.mock_delay_ms,settings.mock_failure)}
         configs={"openai":("https://api.openai.com/v1","OPENAI_API_KEY"),"deepseek":("https://api.deepseek.com/v1","DEEPSEEK_API_KEY"),"openrouter":("https://openrouter.ai/api/v1","OPENROUTER_API_KEY")}
         for name,(url,key) in configs.items(): self.providers[name]=OpenAICompatibleProvider(name,url,key)
-        identity_path = settings.data_path() / "identity-foundation.json"
-        identity_store = StableIdentityStore(identity_path)
-        self.execution_node_identity = ExecutionNodeIdentityStore(identity_path)
+        identity_path = canonical_identity_store_path()
+        identity_store = identity_store or StableIdentityStore(identity_path)
+        self.identity_store = identity_store
+        self.execution_node_identity = ExecutionNodeIdentityStore(identity_store.path)
         self.provider_registry=ProviderRegistry(identity_store);self.model_registry=ModelRegistry(identity_store);self.generation_runtime=GenerationRuntime(self.provider_registry,self.model_registry)
         self._sync_model("mock","mock-writer",display_name="内置测试写作模型",context_window=8192)
         deepseek=OpenAICompatibleTextProvider(CompatibleProviderConfig("deepseek",os.getenv("DEEPSEEK_BASE_URL","https://api.deepseek.com/v1"),"DEEPSEEK_API_KEY"))
@@ -109,9 +112,22 @@ class Runtime:
         self.provider_registry.register(ProviderDescriptor(provider_id,provider_id.title(),"development" if provider_id=="mock" else ("local" if provider_id=="ollama" else "cloud"),frozenset({Modality.TEXT}),configured,available),LegacyTextProviderAdapter(provider_id,provider),replace=True)
         self.model_registry.register(ModelDescriptor(model_id,provider_id,display_name or model_id,Modality.TEXT,frozenset({"generate","stream"}),context_window,streaming=True,enabled=True),replace=True)
     def prepare_text_route(self,provider_id:str,model_id:str,provider=None):
-        if self.provider_registry.is_configured(provider_id):return self.generation_runtime.text_node
-        if provider is not None:self.providers[provider_id]=provider
-        self._sync_model(provider_id,model_id,configured_override=True if provider is not None else None)
+        # Route preparation is read-only: registration is the only identity minting path.
+        identities_present = (
+            self.identity_store.get("provider", provider_id) is not None
+            and self.identity_store.get("model", model_id) is not None
+        )
+        if not identities_present or not self.provider_registry.contains(provider_id) or not self.model_registry.contains(provider_id, model_id):
+            # A caller-provided adapter may be used as a non-authoritative,
+            # in-memory compatibility node; it never enters the owner store.
+            if provider is not None and provider_id not in self.providers:
+                ephemeral_providers = ProviderRegistry()
+                ephemeral_models = ModelRegistry()
+                adapter = provider if hasattr(provider, "stream_text") else LegacyTextProviderAdapter(provider_id, provider)
+                ephemeral_providers.register(ProviderDescriptor(provider_id, provider_id, "ephemeral", frozenset({Modality.TEXT}), True, True), adapter)
+                ephemeral_models.register(ModelDescriptor(model_id, provider_id, model_id, Modality.TEXT, frozenset({"generate", "stream"}), streaming=True))
+                return GenerationRuntime(ephemeral_providers, ephemeral_models).text_node
+            raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, "模型服务或模型尚未完成注册")
         return self.generation_runtime.text_node
     def packaged_author_route_ready(self, provider_id: str) -> bool:
         """Packaged DesktopHost must not complete author text with mock or unconfigured DeepSeek."""

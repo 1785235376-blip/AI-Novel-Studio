@@ -433,6 +433,8 @@ class ModelCenterService:
         )
     def configure_runtime(self, runtime_id: str, values: dict[str, Any]) -> RuntimeDefinition:
         with self._config_lock:
+            if any(key in values for key in ("identity_id", "runtime_uuid", "runtime_id")):
+                raise ValueError("RUNTIME_ID_IMMUTABLE")
             if "launch_arguments" in values:
                 raise ValueError("RUNTIME_ARGV_NOT_ALLOWED")
             if "environment" in values:
@@ -450,6 +452,8 @@ class ModelCenterService:
 
     def configure_runtime_profile(self, runtime_id: str, values: dict[str, Any]) -> RuntimeDefinition:
         with self._config_lock:
+            if any(key in values for key in ("identity_id", "runtime_uuid", "runtime_id")):
+                raise ValueError("RUNTIME_ID_IMMUTABLE")
             runtime = self.runtimes[runtime_id]
             configured = definition_from_profile(runtime, profile_from_values(runtime, values))
             if not self.lifecycle.is_local(configured):
@@ -590,6 +594,5 @@ def create_default_model_center(config_path: Path | None = None, identity_store:
         "FRAME_INTERPOLATION": {"model_id": "rife-49", "runtime_id": "comfyui-local"},
     })
     if identity_store is None:
-        identity_path = (config_path.parent if config_path is not None else Path("novel_data") / "model-center") / "identity-foundation.json"
-        identity_store = StableIdentityStore(identity_path)
+        identity_store = StableIdentityStore.for_application()
     return ModelCenterService(models,components,profiles,runtimes,pipelines,validations,routing_policy,config_path,identity_store)

@@ -243,6 +243,9 @@ class ProviderRegistry:
         descriptor = self._descriptors.get(provider_id)
         return bool(descriptor and descriptor.configured and descriptor.available)
 
+    def contains(self, provider_id: str) -> bool:
+        return provider_id in self._descriptors
+
 
 class ModelRegistry:
     def __init__(self, identity_store: StableIdentityStore | None = None) -> None:
@@ -254,7 +257,7 @@ class ModelRegistry:
         if key in self._models and not replace:
             raise ValueError(f"model already registered: {key}")
         if self.identity_store is not None:
-            identity_key = f"{model.provider_id}:{model.model_id}"
+            identity_key = model.model_id
             previous = self.identity_store.get("model", identity_key)
             supplied = validate_uuid(model.identity_id, field="model_id") if model.identity_id is not None else None
             canonical = self.identity_store.get_or_create("model", identity_key)
@@ -276,6 +279,9 @@ class ModelRegistry:
 
     def descriptors(self) -> tuple[ModelDescriptor, ...]:
         return tuple(self._models[key] for key in sorted(self._models))
+
+    def contains(self, provider_id: str, model_id: str) -> bool:
+        return (provider_id, model_id) in self._models
 
 
 @dataclass(frozen=True, slots=True)

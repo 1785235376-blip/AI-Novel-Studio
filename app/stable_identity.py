@@ -8,8 +8,10 @@ layer.
 from __future__ import annotations
 
 import json
+import os
 import threading
 import uuid
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, Mapping
@@ -27,6 +29,17 @@ class IdentityIntegrityError(ValueError):
 
 class IdentityMutationError(IdentityIntegrityError):
     """An ordinary update attempted to mutate an authoritative identity."""
+
+
+@dataclass(frozen=True, slots=True)
+class TrustedLegacySource:
+    """Explicit server/Host-owned boundary for legacy backfill input."""
+
+    entries: tuple[Mapping[str, Any], ...]
+
+    @classmethod
+    def from_entries(cls, entries: Iterable[Mapping[str, Any]]) -> "TrustedLegacySource":
+        return cls(tuple(entries))
 
 
 def validate_uuid(value: uuid.UUID | str, *, field: str = "identity") -> uuid.UUID:
@@ -72,6 +85,12 @@ class TaxonomyIdentity:
     key: str
     display_name: str
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.taxonomy_id, uuid.UUID) or self.taxonomy_id == ZERO_UUID:
+            raise IdentityIntegrityError("taxonomy_id_INVALID")
+        if not isinstance(self.key, str) or not self.key.strip() or not isinstance(self.display_name, str) or not self.display_name.strip():
+            raise IdentityIntegrityError("taxonomy_VALUE_INVALID")
+
 
 # Explicit, centrally-owned literals.  They are intentionally not UUID5/hash
 # outputs and are stable across processes, reloads, and installations.
@@ -111,6 +130,10 @@ class StableIdentityStore:
         with self._locks_guard:
             self._lock = self._locks.setdefault(key, threading.RLock())
 
+    @classmethod
+    def for_application(cls) -> "StableIdentityStore":
+        return cls(canonical_identity_store_path())
+
     def _empty(self) -> dict[str, Any]:
         return {"schema_version": SCHEMA_VERSION, "entities": {kind: [] for kind in self.KINDS}}
 
@@ -118,13 +141,19 @@ class StableIdentityStore:
         if not self.path.exists():
             return self._empty()
         try:
-            raw = json.loads(self.path.read_text(encoding="utf-8"))
+            raw = json.loads(
+                self.path.read_text(encoding="utf-8"),
+                object_pairs_hook=_strict_object,
+                parse_constant=_reject_constant,
+            )
         except (OSError, UnicodeError, json.JSONDecodeError) as exc:
             raise IdentityIntegrityError("IDENTITY_STORE_UNREADABLE") from exc
-        if not isinstance(raw, dict) or raw.get("schema_version") != SCHEMA_VERSION:
+        if not isinstance(raw, dict) or set(raw) != {"schema_version", "entities"}:
+            raise IdentityIntegrityError("IDENTITY_STORE_SCHEMA_INVALID")
+        if type(raw.get("schema_version")) is not int or raw["schema_version"] != SCHEMA_VERSION:
             raise IdentityIntegrityError("IDENTITY_STORE_SCHEMA_INVALID")
         entities = raw.get("entities")
-        if not isinstance(entities, dict):
+        if not isinstance(entities, dict) or set(entities) != set(self.KINDS):
             raise IdentityIntegrityError("IDENTITY_STORE_ENTITIES_INVALID")
         result = self._empty()
         for kind in self.KINDS:
@@ -140,7 +169,7 @@ class StableIdentityStore:
         seen_ids: set[uuid.UUID] = set()
         validated: list[dict[str, Any]] = []
         for row in rows:
-            if not isinstance(row, dict) or not isinstance(row.get("key"), str) or not row["key"].strip():
+            if not isinstance(row, dict) or set(row) != {"key", "identity_id", "metadata"} or not isinstance(row.get("key"), str) or not row["key"].strip():
                 raise IdentityIntegrityError(f"{kind}_ENTRY_INVALID")
             key = row["key"]
             if key in seen_keys:
@@ -160,6 +189,36 @@ class StableIdentityStore:
         payload = json.dumps(data, ensure_ascii=False, indent=2, sort_keys=True)
         atomic_write(self.path, payload)
 
+    @contextmanager
+    def _mutation(self):
+        """Serialize read/validate/mutate/persist across threads and processes."""
+        with self._lock:
+            lock_path = Path(str(self.path) + ".lock")
+            lock_path.parent.mkdir(parents=True, exist_ok=True)
+            if not lock_path.exists() or lock_path.stat().st_size == 0:
+                try:
+                    atomic_write(lock_path, "0")
+                except OSError:
+                    pass
+            with lock_path.open("r+b") as handle:
+                if os.name == "nt":
+                    import msvcrt
+                    handle.seek(0)
+                    msvcrt.locking(handle.fileno(), msvcrt.LK_LOCK, 1)
+                else:
+                    import fcntl
+                    fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+                try:
+                    yield
+                finally:
+                    if os.name == "nt":
+                        import msvcrt
+                        handle.seek(0)
+                        msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+                    else:
+                        import fcntl
+                        fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
     def list(self, kind: str) -> tuple[dict[str, Any], ...]:
         if kind not in self.KINDS:
             raise ValueError(f"unknown identity kind: {kind}")
@@ -173,7 +232,7 @@ class StableIdentityStore:
         """Create an entity; caller-supplied IDs are never authoritative."""
         if kind not in self.KINDS or not isinstance(key, str) or not key.strip():
             raise ValueError("identity key is required")
-        with self._lock:
+        with self._mutation():
             data = self._read()
             rows = data["entities"][kind]
             if any(row["key"] == key for row in rows):
@@ -187,14 +246,24 @@ class StableIdentityStore:
             return identity
 
     def get_or_create(self, kind: str, key: str, *, metadata: Mapping[str, Any] | None = None) -> uuid.UUID:
-        with self._lock:
-            existing = self.get(kind, key)
+        if kind not in self.KINDS or not isinstance(key, str) or not key.strip():
+            raise ValueError("identity key is required")
+        with self._mutation():
+            data = self._read()
+            existing_row = next((row for row in data["entities"][kind] if row["key"] == key), None)
+            existing = validate_uuid(existing_row["identity_id"], field=f"{kind}_id") if existing_row else None
             if existing is not None:
                 return existing
-            return self.create(kind, key, metadata=metadata)
+            identity = uuid.uuid4()
+            candidate = dict(data)
+            candidate["entities"] = {name: list(values) for name, values in data["entities"].items()}
+            candidate["entities"][kind].append({"key": key, "identity_id": str(identity), "metadata": dict(metadata or {})})
+            candidate["entities"][kind] = self._validate_rows(kind, candidate["entities"][kind])
+            self._write(candidate)
+            return identity
 
     def update(self, kind: str, key: str, *, identity_id: Any = None, metadata: Mapping[str, Any] | None = None) -> uuid.UUID:
-        with self._lock:
+        with self._mutation():
             data = self._read()
             rows = data["entities"][kind]
             row = next((item for item in rows if item["key"] == key), None)
@@ -215,12 +284,49 @@ class StableIdentityStore:
             self._write(candidate)
             return current
 
-    def migrate(self, kind: str, legacy_entries: Iterable[Mapping[str, Any]], *, key_field: str = "key", identity_field: str = "identity_id") -> dict[str, uuid.UUID]:
+    def rename(self, kind: str, old_key: str, new_key: str) -> uuid.UUID:
+        if kind not in self.KINDS or not isinstance(new_key, str) or not new_key.strip():
+            raise ValueError("identity key is required")
+        with self._mutation():
+            data = self._read()
+            rows = data["entities"][kind]
+            row = next((item for item in rows if item["key"] == old_key), None)
+            if row is None:
+                raise KeyError(old_key)
+            if old_key != new_key and any(item["key"] == new_key for item in rows):
+                raise IdentityIntegrityError(f"{kind}_KEY_ALREADY_EXISTS")
+            current = validate_uuid(row["identity_id"], field=f"{kind}_id")
+            candidate = dict(data)
+            candidate["entities"] = {name: list(values) for name, values in data["entities"].items()}
+            candidate["entities"][kind] = [
+                {**item, "key": new_key} if item["key"] == old_key else item
+                for item in rows
+            ]
+            candidate["entities"][kind] = self._validate_rows(kind, candidate["entities"][kind])
+            self._write(candidate)
+            return current
+
+    def delete(self, kind: str, key: str) -> None:
+        if kind not in self.KINDS:
+            raise ValueError(f"unknown identity kind: {kind}")
+        with self._mutation():
+            data = self._read()
+            rows = data["entities"][kind]
+            if not any(item["key"] == key for item in rows):
+                raise KeyError(key)
+            candidate = dict(data)
+            candidate["entities"] = {name: list(values) for name, values in data["entities"].items()}
+            candidate["entities"][kind] = [item for item in rows if item["key"] != key]
+            self._write(candidate)
+
+    def migrate(self, kind: str, legacy_entries: Iterable[Mapping[str, Any]] | TrustedLegacySource, *, key_field: str = "key", identity_field: str = "identity_id", trusted_source: TrustedLegacySource | None = None) -> dict[str, uuid.UUID]:
         """Backfill missing legacy IDs once, preserving and validating existing IDs."""
         if kind not in self.KINDS:
             raise ValueError(f"unknown identity kind: {kind}")
-        entries = list(legacy_entries)
-        with self._lock:
+        if not isinstance(trusted_source, TrustedLegacySource):
+            raise IdentityIntegrityError("IDENTITY_MIGRATION_TRUST_REQUIRED")
+        entries = list(trusted_source.entries)
+        with self._mutation():
             data = self._read()
             rows = list(data["entities"][kind])
             by_key = {row["key"]: row for row in rows}
@@ -258,6 +364,27 @@ class StableIdentityStore:
             return result
 
 
+def _strict_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise IdentityIntegrityError("IDENTITY_STORE_DUPLICATE_JSON_KEY")
+        result[key] = value
+    return result
+
+
+def _reject_constant(value: str) -> Any:
+    raise IdentityIntegrityError(f"IDENTITY_STORE_CONSTANT_INVALID:{value}")
+
+
+def canonical_identity_store_path() -> Path:
+    override = os.getenv("IDENTITY_FOUNDATION_PATH", "").strip()
+    if override:
+        return Path(override).resolve(strict=False)
+    from .config import settings
+    return (settings.data_path() / "identity-foundation.json").resolve(strict=False)
+
+
 class ProviderIdentityRegistry:
     def __init__(self, store: StableIdentityStore): self.store = store
     def ensure(self, provider_key: str) -> ProviderIdentity: return ProviderIdentity(self.store.get_or_create("provider", provider_key))
@@ -289,4 +416,3 @@ class ExecutionNodeIdentityStore:
 ProviderRegistryIdentity = ProviderIdentityRegistry
 ModelRegistryIdentity = ModelIdentityRegistry
 RuntimeRegistryIdentity = RuntimeIdentityRegistry
-

@@ -6,6 +6,8 @@ from enum import StrEnum
 from typing import Any
 from uuid import UUID
 
+from ..stable_identity import validate_uuid
+
 
 class Capability(StrEnum):
     TEXT = "TEXT"; IMAGE = "IMAGE"; VIDEO = "VIDEO"; VISION = "VISION"
@@ -65,6 +67,10 @@ class ModelDefinition:
     def model_uuid(self) -> UUID | None:
         return self.identity_id
 
+    def __post_init__(self) -> None:
+        if self.identity_id is not None:
+            object.__setattr__(self, "identity_id", validate_uuid(self.identity_id, field="model_id"))
+
 
 @dataclass(frozen=True)
 class RuntimeDefinition:
@@ -80,6 +86,10 @@ class RuntimeDefinition:
     @property
     def runtime_uuid(self) -> UUID | None:
         return self.identity_id
+
+    def __post_init__(self) -> None:
+        if self.identity_id is not None:
+            object.__setattr__(self, "identity_id", validate_uuid(self.identity_id, field="runtime_id"))
 
 
 @dataclass
