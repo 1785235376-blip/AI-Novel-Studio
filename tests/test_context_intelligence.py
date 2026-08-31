@@ -47,12 +47,8 @@ def test_writer_generation_records_context_snapshot(monkeypatch):
             self.snapshots.append(args)
             return {"id": "snapshot"}
 
-    class Provider:
-        def stream(self, prompt, model):
-            yield "Draft"
-
-    route = SimpleNamespace(provider="fake", model="mock-model")
-    router = SimpleNamespace(routes={"writer": [route]}, providers={"fake": Provider()})
+    route = SimpleNamespace(provider="mock", model="mock-writer")
+    router = SimpleNamespace(routes={"writer": [route]}, providers={})
     monkeypatch.setattr(jobs_module.runtime, "router", lambda *args: router)
     contexts = Contexts()
     manager = JobManager(
@@ -68,7 +64,47 @@ def test_writer_generation_records_context_snapshot(monkeypatch):
         time.sleep(.01)
     assert job.status == "COMPLETED"
     assert contexts.snapshots[0][:2] == ("novel:1", 3)
-    assert contexts.snapshots[0][-2:] == ("writer:v1", "mock-model")
+    assert contexts.snapshots[0][-2:] == ("writer:v1", "mock-writer")
+
+
+def test_job_identity_failure_never_executes_legacy_provider(monkeypatch, tmp_path):
+    from app import jobs as jobs_module
+    from app.jobs import JobManager
+    from app.runtime import Runtime
+    from app.stable_identity import StableIdentityStore
+
+    calls = {"stream": 0}
+
+    class Provider:
+        def stream(self, prompt, model):
+            calls["stream"] += 1
+            yield "forbidden"
+
+    class Persistence:
+        def load_all(self): return []
+        def save(self, item): pass
+
+    class Chapters:
+        def get(self, chapter_id):
+            return {"id": chapter_id, "novel_id": "novel", "number": 1, "version": 1, "content": "Text"}
+
+    class Contexts:
+        def for_chapter(self, *args): return {"novel_id": "novel"}
+        def save_snapshot(self, *args, **kwargs): return {"id": "snapshot"}
+
+    store = StableIdentityStore(tmp_path / "identity.json")
+    isolated = Runtime(store)
+    store.delete("execution_node", "local")
+    route = SimpleNamespace(provider="fake", model="legacy-model")
+    isolated.router = lambda *args: SimpleNamespace(routes={"writer": [route]}, providers={"fake": Provider()})
+    monkeypatch.setattr(jobs_module, "runtime", isolated)
+    manager = JobManager(Persistence(), Chapters(), Contexts(), SimpleNamespace(), SimpleNamespace(enqueue=lambda *args: None))
+    job = manager.create("continue", {"novel_id": "novel", "chapter_id": "chapter", "profile": "LOCAL_ONLY"})
+    for _ in range(100):
+        if job.status in manager.terminal: break
+        time.sleep(.01)
+    assert job.status == "FAILED"
+    assert calls["stream"] == 0
 
 
 def test_context_intent_resolves_character_location_and_operation():

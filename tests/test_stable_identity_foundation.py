@@ -30,6 +30,7 @@ from app.stable_identity import (
     ExecutionNodeIdentity,
     canonical_model_identity_key,
     canonical_identity_store_path,
+    _canonical_host_data_root,
 )
 
 
@@ -141,35 +142,16 @@ def test_taxonomy_ids_are_explicit_unique_and_stable():
     assert RUNTIME_FAMILIES["llama.cpp"].taxonomy_id == UUID("7c8b4e2a-1b0d-4d8f-9e64-0b5b3f0d1a11")
 
 
-def test_rename_preserves_id_and_delete_create_gets_new_id(tmp_path: Path):
+def test_authoritative_key_rename_is_not_supported_and_key_reuse_is_new_entity(tmp_path: Path):
     store = StableIdentityStore(tmp_path / "identity.json")
-    original = store.create("provider", "old-name")
-    assert store.rename("provider", "old-name", "new-name") == original
-    assert store.get("provider", "old-name") is None
-    assert store.get("provider", "new-name") == original
-    store.delete("provider", "new-name")
-    assert store.create("provider", "new-name") != original
-
-
-def test_production_model_registry_rename_preserves_uuid(tmp_path: Path):
-    store = StableIdentityStore(tmp_path / "identity.json")
-    models = ModelRegistry(store)
-    models.register(ModelDescriptor("old", "provider", "Old", Modality.TEXT, frozenset()))
-    original = models._models[("provider", "old")].model_uuid
-    renamed = models.rename("provider", "old", "new")
-    assert renamed.model_uuid == original
-    assert models.contains("provider", "new") and not models.contains("provider", "old")
-    assert store.get("model", canonical_model_identity_key("provider", "new")) == original
-
-
-def test_model_center_rename_preserves_uuid_and_updates_owner(tmp_path: Path):
-    store = StableIdentityStore(tmp_path / "identity.json")
+    original = store.create("provider", "stable-key")
+    assert not hasattr(store, "rename")
+    assert not hasattr(ProviderRegistry(store), "rename")
+    assert not hasattr(ModelRegistry(store), "rename")
     center = create_default_model_center(tmp_path / "runtime-config.json", identity_store=store)
-    original = center.models["qwen36-27b-q4km"].identity_id
-    renamed = center.rename_model("qwen36-27b-q4km", "qwen36-renamed")
-    assert renamed.identity_id == original
-    assert "qwen36-27b-q4km" not in center.models and center.models["qwen36-renamed"].identity_id == original
-    assert store.get("model", canonical_model_identity_key("ollama", "qwen36-renamed")) == original
+    assert not hasattr(center, "rename_model") and not hasattr(center, "rename_runtime")
+    store.delete("provider", "stable-key")
+    assert store.create("provider", "stable-key") != original
 
 
 def test_strict_store_rejects_duplicate_keys_unknown_content_and_bool_schema(tmp_path: Path):
@@ -346,6 +328,30 @@ def test_host_identity_path_is_independent_of_project_and_cwd(monkeypatch, tmp_p
     finally:
         object.__setattr__(settings, "root", original_root)
         object.__setattr__(settings, "novel_data", original_data)
+
+
+@pytest.mark.parametrize(("platform", "variable"), [("nt", "LOCALAPPDATA"), ("posix", "XDG_DATA_HOME")])
+def test_relative_host_data_root_is_rejected(monkeypatch, platform: str, variable: str):
+    monkeypatch.setenv(variable, "relative-data")
+    with pytest.raises(IdentityIntegrityError, match="HOST_DATA_ROOT_NOT_ABSOLUTE"):
+        _canonical_host_data_root(platform)
+
+
+def test_absolute_host_root_preserves_node_across_cwd(monkeypatch, tmp_path: Path):
+    host_root = tmp_path / "host-data"
+    cwd_a = tmp_path / "project-a"; cwd_b = tmp_path / "project-b"
+    cwd_a.mkdir(); cwd_b.mkdir()
+    monkeypatch.setenv("LOCALAPPDATA", str(host_root))
+    monkeypatch.chdir(cwd_a)
+    first_path = canonical_identity_store_path()
+    first_id = Runtime().execution_node_identity.get_or_create().execution_node_id
+    monkeypatch.chdir(cwd_b)
+    second_path = canonical_identity_store_path()
+    second_id = Runtime().execution_node_identity.get_or_create().execution_node_id
+    assert first_path == second_path
+    assert first_id == second_id
+    assert not (cwd_a / "identity-foundation.json").exists()
+    assert not (cwd_b / "identity-foundation.json").exists()
 
 
 def test_runtime_identity_cannot_be_supplied_or_mutated_by_configuration(tmp_path: Path):

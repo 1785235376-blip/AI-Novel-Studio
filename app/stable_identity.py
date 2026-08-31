@@ -330,28 +330,6 @@ class StableIdentityStore:
             self._write(candidate)
             return current
 
-    def rename(self, kind: str, old_key: str, new_key: str) -> uuid.UUID:
-        if kind not in self.KINDS or not isinstance(new_key, str) or not new_key.strip():
-            raise ValueError("identity key is required")
-        with self._mutation():
-            data = self._read()
-            rows = data["entities"][kind]
-            row = next((item for item in rows if item["key"] == old_key), None)
-            if row is None:
-                raise KeyError(old_key)
-            if old_key != new_key and any(item["key"] == new_key for item in rows):
-                raise IdentityIntegrityError(f"{kind}_KEY_ALREADY_EXISTS")
-            current = validate_uuid(row["identity_id"], field=f"{kind}_id")
-            candidate = dict(data)
-            candidate["entities"] = {name: list(values) for name, values in data["entities"].items()}
-            candidate["entities"][kind] = [
-                {**item, "key": new_key} if item["key"] == old_key else item
-                for item in rows
-            ]
-            candidate["entities"][kind] = self._validate_rows(kind, candidate["entities"][kind])
-            self._write(candidate)
-            return current
-
     def delete(self, kind: str, key: str) -> None:
         if kind not in self.KINDS:
             raise ValueError(f"unknown identity kind: {kind}")
@@ -464,11 +442,21 @@ def canonical_model_identity_key(provider_id: str, model_id: str) -> str:
 def canonical_identity_store_path() -> Path:
     # Host identity is application state, independent of the opened project,
     # repository, or current working directory.
-    if os.name == "nt":
-        root = os.environ.get("LOCALAPPDATA") or (Path.home() / "AppData" / "Local")
-        return (Path(root) / "AI-Novel-Studio" / "UserData" / "identity-foundation.json").resolve(strict=False)
-    root = os.environ.get("XDG_DATA_HOME") or (Path.home() / ".local" / "share")
-    return (Path(root) / "AI-Novel-Studio" / "identity-foundation.json").resolve(strict=False)
+    return _canonical_host_data_root(os.name) / "identity-foundation.json"
+
+
+def _canonical_host_data_root(platform: str) -> Path:
+    if platform == "nt":
+        configured = os.environ.get("LOCALAPPDATA")
+        root = Path(configured) if configured else Path.home() / "AppData" / "Local"
+        suffix = ("AI-Novel-Studio", "UserData")
+    else:
+        configured = os.environ.get("XDG_DATA_HOME")
+        root = Path(configured) if configured else Path.home() / ".local" / "share"
+        suffix = ("AI-Novel-Studio",)
+    if not root.is_absolute():
+        raise IdentityIntegrityError("HOST_DATA_ROOT_NOT_ABSOLUTE")
+    return root.resolve(strict=False).joinpath(*suffix)
 
 
 def get_host_identity_store() -> StableIdentityStore:
