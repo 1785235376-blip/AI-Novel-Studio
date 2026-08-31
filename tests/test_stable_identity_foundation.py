@@ -256,21 +256,34 @@ def test_real_multiprocess_mixed_kind_mutations_preserve_all_rows(tmp_path: Path
 def test_real_multiprocess_cold_start_stress_50_iterations(tmp_path: Path):
     path = tmp_path / "stress.json"
     context = mp.get_context("spawn")
-    for iteration in range(50):
+
+    def run_cold(jobs):
         for candidate in (path, Path(str(path) + ".lock")):
             try:
                 candidate.unlink()
             except FileNotFoundError:
                 pass
-        jobs = [("provider", f"p-{iteration}"), ("model", f"m-{iteration}"), ("runtime", f"r-{iteration}"), ("execution_node", f"n-{iteration}")]
         barrier = context.Barrier(len(jobs)); queue = context.Queue()
         processes = [context.Process(target=_mp_get_or_create, args=(str(path), kind, key, barrier, queue)) for kind, key in jobs]
         for process in processes: process.start()
         for process in processes: process.join(20)
         assert all(process.exitcode == 0 for process in processes)
-        results = [queue.get(timeout=2) for _ in processes]
-        assert {(kind, key) for kind, key, _ in results} == set(jobs)
-        assert all(len(StableIdentityStore(path).list(kind)) == 1 for kind, _ in jobs)
+        return [queue.get(timeout=2) for _ in processes]
+
+    for iteration in range(50):
+        same = run_cold([("provider", "same"), ("provider", "same")])
+        assert same[0][2] == same[1][2]
+        assert len(StableIdentityStore(path).list("provider")) == 1
+
+        different_jobs = [("provider", f"a-{iteration}"), ("provider", f"b-{iteration}")]
+        different = run_cold(different_jobs)
+        assert {(kind, key) for kind, key, _ in different} == set(different_jobs)
+        assert len(StableIdentityStore(path).list("provider")) == 2
+
+        mixed_jobs = [("provider", f"p-{iteration}"), ("model", f"m-{iteration}"), ("runtime", f"r-{iteration}"), ("execution_node", f"n-{iteration}")]
+        mixed = run_cold(mixed_jobs)
+        assert {(kind, key) for kind, key, _ in mixed} == set(mixed_jobs)
+        assert all(len(StableIdentityStore(path).list(kind)) == 1 for kind, _ in mixed_jobs)
 
 
 def test_route_preparation_is_read_only_and_does_not_mint(tmp_path: Path):
