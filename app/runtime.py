@@ -13,13 +13,17 @@ from .model_runtime import (
     ProviderRegistry,
 )
 from .openai_compatible import CompatibleProviderConfig,OpenAICompatibleTextProvider
+from .stable_identity import ExecutionNodeIdentityStore, StableIdentityStore
 
 class Runtime:
     def __init__(self):
         self.providers={"ollama":OllamaProvider(settings.ollama_url),"mock":MockProvider(settings.mock_delay_ms,settings.mock_failure)}
         configs={"openai":("https://api.openai.com/v1","OPENAI_API_KEY"),"deepseek":("https://api.deepseek.com/v1","DEEPSEEK_API_KEY"),"openrouter":("https://openrouter.ai/api/v1","OPENROUTER_API_KEY")}
         for name,(url,key) in configs.items(): self.providers[name]=OpenAICompatibleProvider(name,url,key)
-        self.provider_registry=ProviderRegistry();self.model_registry=ModelRegistry();self.generation_runtime=GenerationRuntime(self.provider_registry,self.model_registry)
+        identity_path = settings.data_path() / "identity-foundation.json"
+        identity_store = StableIdentityStore(identity_path)
+        self.execution_node_identity = ExecutionNodeIdentityStore(identity_path)
+        self.provider_registry=ProviderRegistry(identity_store);self.model_registry=ModelRegistry(identity_store);self.generation_runtime=GenerationRuntime(self.provider_registry,self.model_registry)
         self._sync_model("mock","mock-writer",display_name="内置测试写作模型",context_window=8192)
         deepseek=OpenAICompatibleTextProvider(CompatibleProviderConfig("deepseek",os.getenv("DEEPSEEK_BASE_URL","https://api.deepseek.com/v1"),"DEEPSEEK_API_KEY"))
         self._deepseek_execution_mode = "mock_standin" if settings.mock_provider and not settings.enable_packaged_runtime else "real"

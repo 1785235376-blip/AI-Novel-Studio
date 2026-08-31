@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import time
 from threading import Event
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace as dc_replace
 from enum import Enum
 from typing import Any, Iterable, Mapping, Protocol
+from uuid import UUID
 
 from .providers import Generation, LLMProvider, ProviderError
+from .stable_identity import IdentityMutationError, StableIdentityStore, validate_uuid
 
 
 class Modality(str, Enum):
@@ -116,6 +118,11 @@ class ProviderDescriptor:
     configured: bool
     available: bool
     health_status: str = "available"
+    identity_id: UUID | None = None
+
+    @property
+    def provider_uuid(self) -> UUID | None:
+        return self.identity_id
 
 
 @dataclass(frozen=True, slots=True)
@@ -129,6 +136,11 @@ class ModelDescriptor:
     structured_output: bool = False
     streaming: bool = False
     enabled: bool = True
+    identity_id: UUID | None = None
+
+    @property
+    def model_uuid(self) -> UUID | None:
+        return self.identity_id
 
 
 class TextProvider(Protocol):
@@ -197,13 +209,21 @@ class LegacyTextProviderAdapter:
 
 
 class ProviderRegistry:
-    def __init__(self) -> None:
+    def __init__(self, identity_store: StableIdentityStore | None = None) -> None:
         self._providers: dict[str, TextProvider] = {}
         self._descriptors: dict[str, ProviderDescriptor] = {}
+        self.identity_store = identity_store
 
     def register(self, descriptor: ProviderDescriptor, provider: TextProvider, *, replace: bool = False) -> None:
         if descriptor.provider_id in self._providers and not replace:
             raise ValueError(f"provider already registered: {descriptor.provider_id}")
+        if self.identity_store is not None:
+            previous = self.identity_store.get("provider", descriptor.provider_id)
+            supplied = validate_uuid(descriptor.identity_id, field="provider_id") if descriptor.identity_id is not None else None
+            canonical = self.identity_store.get_or_create("provider", descriptor.provider_id)
+            if supplied is not None and previous is not None and supplied != previous:
+                raise IdentityMutationError("provider_ID_IMMUTABLE")
+            descriptor = dc_replace(descriptor, identity_id=canonical)
         self._providers[descriptor.provider_id] = provider
         self._descriptors[descriptor.provider_id] = descriptor
 
@@ -225,13 +245,22 @@ class ProviderRegistry:
 
 
 class ModelRegistry:
-    def __init__(self) -> None:
+    def __init__(self, identity_store: StableIdentityStore | None = None) -> None:
         self._models: dict[tuple[str, str], ModelDescriptor] = {}
+        self.identity_store = identity_store
 
     def register(self, model: ModelDescriptor, *, replace: bool = False) -> None:
         key = (model.provider_id, model.model_id)
         if key in self._models and not replace:
             raise ValueError(f"model already registered: {key}")
+        if self.identity_store is not None:
+            identity_key = f"{model.provider_id}:{model.model_id}"
+            previous = self.identity_store.get("model", identity_key)
+            supplied = validate_uuid(model.identity_id, field="model_id") if model.identity_id is not None else None
+            canonical = self.identity_store.get_or_create("model", identity_key)
+            if supplied is not None and previous is not None and supplied != previous:
+                raise IdentityMutationError("model_ID_IMMUTABLE")
+            model = dc_replace(model, identity_id=canonical)
         self._models[key] = model
 
     def resolve(self, provider_id: str, model_id: str, modality: Modality) -> ModelDescriptor:

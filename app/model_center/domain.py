@@ -4,6 +4,7 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from enum import StrEnum
 from typing import Any
+from uuid import UUID
 
 
 class Capability(StrEnum):
@@ -58,6 +59,11 @@ class ModelDefinition:
     license: str = "UNKNOWN"; local_paths: tuple[str, ...] = (); components: tuple[str, ...] = ()
     hardware_profiles: tuple[str, ...] = (); compatibility: dict[str, Any] = field(default_factory=dict)
     status: ModelStatus = ModelStatus.NOT_INSTALLED; metadata: dict[str, Any] = field(default_factory=dict)
+    identity_id: UUID | None = None
+
+    @property
+    def model_uuid(self) -> UUID | None:
+        return self.identity_id
 
 
 @dataclass(frozen=True)
@@ -69,6 +75,11 @@ class RuntimeDefinition:
     provider_adapter: str = ""; management: RuntimeManagement = RuntimeManagement.MANAGED
     model_path: str = ""; context_size: int | None = None; gpu_layers: int | None = None
     threads: int | None = None; batch_size: int | None = None; extra_arguments: tuple[str, ...] = ()
+    identity_id: UUID | None = None
+
+    @property
+    def runtime_uuid(self) -> UUID | None:
+        return self.identity_id
 
 
 @dataclass
