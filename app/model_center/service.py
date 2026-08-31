@@ -303,6 +303,7 @@ class ModelCenterService:
     }
 
     def __init__(self, models: list[ModelDefinition], components: list[ModelComponentDefinition], profiles: list[HardwareProfile], runtimes: list[RuntimeDefinition], pipelines: list[PipelineDefinition], validations: list[ModelValidationRecord], routing_policy: RoutingPolicy, config_path: Path | None = None, identity_store: StableIdentityStore | None = None):
+        self.identity_store = identity_store
         if identity_store is not None:
             def owned(kind: str, key: str, supplied: Any) -> Any:
                 previous = identity_store.get(kind, key)
@@ -341,6 +342,43 @@ class ModelCenterService:
                         candidates[runtime_id] = configured
                 self.runtimes = candidates
             except (OSError, ValueError, TypeError, json.JSONDecodeError): pass
+
+    def rename_model(self, model_id: str, new_model_id: str) -> ModelDefinition:
+        """Rename a model and preserve its identity across the Model Center owner."""
+        if self.identity_store is None:
+            raise ValueError("IDENTITY_STORE_REQUIRED")
+        if model_id not in self.models or new_model_id in self.models:
+            raise KeyError(model_id)
+        model = self.models[model_id]
+        provider = {RuntimeType.LLAMA_CPP: "ollama", RuntimeType.COMFYUI: "comfyui"}.get(model.runtime_type, "model-center")
+        old_key = canonical_model_identity_key(provider, model_id)
+        new_key = canonical_model_identity_key(provider, new_model_id)
+        identity = self.identity_store.rename("model", old_key, new_key)
+        try:
+            renamed = replace(model, id=new_model_id, identity_id=identity)
+            updated = {new_model_id if key == model_id else key: value for key, value in self.models.items()}
+            updated[new_model_id] = renamed
+            self.models = updated
+            return renamed
+        except Exception:
+            self.identity_store.rename("model", new_key, old_key)
+            raise
+
+    def rename_runtime(self, runtime_id: str, new_runtime_id: str) -> RuntimeDefinition:
+        """Rename a runtime and preserve its identity across the Model Center owner."""
+        if self.identity_store is None:
+            raise ValueError("IDENTITY_STORE_REQUIRED")
+        if runtime_id not in self.runtimes or new_runtime_id in self.runtimes:
+            raise KeyError(runtime_id)
+        identity = self.identity_store.rename("runtime", runtime_id, new_runtime_id)
+        try:
+            renamed = replace(self.runtimes[runtime_id], id=new_runtime_id, identity_id=identity)
+            self.runtimes = {new_runtime_id if key == runtime_id else key: value for key, value in self.runtimes.items()}
+            self.runtimes[new_runtime_id] = renamed
+            return renamed
+        except Exception:
+            self.identity_store.rename("runtime", new_runtime_id, runtime_id)
+            raise
 
     def _validated_persisted_values(self, values: Any) -> dict[str, Any]:
         if not isinstance(values, dict):

@@ -29,6 +29,7 @@ from app.stable_identity import (
     RuntimeIdentity,
     ExecutionNodeIdentity,
     canonical_model_identity_key,
+    canonical_identity_store_path,
 )
 
 
@@ -161,6 +162,16 @@ def test_production_model_registry_rename_preserves_uuid(tmp_path: Path):
     assert store.get("model", canonical_model_identity_key("provider", "new")) == original
 
 
+def test_model_center_rename_preserves_uuid_and_updates_owner(tmp_path: Path):
+    store = StableIdentityStore(tmp_path / "identity.json")
+    center = create_default_model_center(tmp_path / "runtime-config.json", identity_store=store)
+    original = center.models["qwen36-27b-q4km"].identity_id
+    renamed = center.rename_model("qwen36-27b-q4km", "qwen36-renamed")
+    assert renamed.identity_id == original
+    assert "qwen36-27b-q4km" not in center.models and center.models["qwen36-renamed"].identity_id == original
+    assert store.get("model", canonical_model_identity_key("ollama", "qwen36-renamed")) == original
+
+
 def test_strict_store_rejects_duplicate_keys_unknown_content_and_bool_schema(tmp_path: Path):
     path = tmp_path / "identity.json"
     valid_entities = '"entities":{"provider":[],"model":[],"runtime":[],"execution_node":[]}'
@@ -260,10 +271,10 @@ def test_real_multiprocess_mixed_kind_mutations_preserve_all_rows(tmp_path: Path
     assert all(len(store.list(kind)) == 1 for kind, _ in jobs)
 
 
-def test_real_multiprocess_cold_start_stress_20_iterations(tmp_path: Path):
+def test_real_multiprocess_cold_start_stress_50_iterations(tmp_path: Path):
     path = tmp_path / "stress.json"
     context = mp.get_context("spawn")
-    for iteration in range(20):
+    for iteration in range(50):
         for candidate in (path, Path(str(path) + ".lock")):
             try:
                 candidate.unlink()
@@ -304,6 +315,37 @@ def test_normal_ollama_route_is_preprovisioned_and_read_only(tmp_path: Path):
     before = store.path.read_bytes()
     runtime.prepare_text_route("ollama", route_model)
     assert store.path.read_bytes() == before
+
+
+def test_execution_node_is_preinitialized_and_missing_node_fails_closed(tmp_path: Path):
+    store = StableIdentityStore(tmp_path / "identity.json")
+    runtime = Runtime(store)
+    node_id = runtime.execution_node_identity.get_or_create().execution_node_id
+    before = store.path.read_bytes()
+    runtime.prepare_text_route("ollama", settings.local_model)
+    assert store.path.read_bytes() == before
+    store.delete("execution_node", "local")
+    missing_before = store.path.read_bytes()
+    with pytest.raises(Exception, match="尚未完成注册"):
+        runtime.prepare_text_route("ollama", settings.local_model)
+    assert store.path.read_bytes() == missing_before
+    assert node_id != UUID(int=0)
+
+
+def test_host_identity_path_is_independent_of_project_and_cwd(monkeypatch, tmp_path: Path):
+    original_root = getattr(settings, "root")
+    original_data = getattr(settings, "novel_data")
+    try:
+        object.__setattr__(settings, "root", tmp_path / "project-a")
+        object.__setattr__(settings, "novel_data", Path("project-data"))
+        first = canonical_identity_store_path()
+        object.__setattr__(settings, "root", tmp_path / "project-b")
+        object.__setattr__(settings, "novel_data", Path("other-data"))
+        second = canonical_identity_store_path()
+        assert first == second
+    finally:
+        object.__setattr__(settings, "root", original_root)
+        object.__setattr__(settings, "novel_data", original_data)
 
 
 def test_runtime_identity_cannot_be_supplied_or_mutated_by_configuration(tmp_path: Path):

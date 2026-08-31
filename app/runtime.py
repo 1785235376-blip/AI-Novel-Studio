@@ -25,6 +25,9 @@ class Runtime:
         identity_store = identity_store or get_host_identity_store()
         self.identity_store = identity_store
         self.execution_node_identity = ExecutionNodeIdentityStore(identity_store.path)
+        # Host initialization is the sole authority that provisions the local
+        # execution node. Routing only reads this durable identity.
+        self.execution_node_identity.get_or_create()
         self.provider_registry=ProviderRegistry(identity_store);self.model_registry=ModelRegistry(identity_store);self.generation_runtime=GenerationRuntime(self.provider_registry,self.model_registry)
         self._sync_model("mock","mock-writer",display_name="内置测试写作模型",context_window=8192)
         self._sync_model("ollama", settings.local_model, display_name=settings.local_model, probe=False)
@@ -116,6 +119,7 @@ class Runtime:
         identities_present = (
             self.identity_store.get("provider", provider_id) is not None
             and self.identity_store.get("model", canonical_model_identity_key(provider_id, model_id)) is not None
+            and self.identity_store.get("execution_node", "local") is not None
         )
         if not identities_present or not self.provider_registry.contains(provider_id) or not self.model_registry.contains(provider_id, model_id):
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, "模型服务或模型尚未完成注册")

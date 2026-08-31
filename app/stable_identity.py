@@ -462,8 +462,13 @@ def canonical_model_identity_key(provider_id: str, model_id: str) -> str:
 
 
 def canonical_identity_store_path() -> Path:
-    from .config import settings
-    return (settings.data_path() / "identity-foundation.json").resolve(strict=False)
+    # Host identity is application state, independent of the opened project,
+    # repository, or current working directory.
+    if os.name == "nt":
+        root = os.environ.get("LOCALAPPDATA") or (Path.home() / "AppData" / "Local")
+        return (Path(root) / "AI-Novel-Studio" / "UserData" / "identity-foundation.json").resolve(strict=False)
+    root = os.environ.get("XDG_DATA_HOME") or (Path.home() / ".local" / "share")
+    return (Path(root) / "AI-Novel-Studio" / "identity-foundation.json").resolve(strict=False)
 
 
 def get_host_identity_store() -> StableIdentityStore:
