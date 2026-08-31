@@ -26,7 +26,11 @@ class RuntimeType(StrEnum):
 
 class RuntimeState(StrEnum):
     STOPPED = "STOPPED"; STARTING = "STARTING"; RUNNING = "RUNNING"
-    DEGRADED = "DEGRADED"; FAILED = "FAILED"
+    DEGRADED = "DEGRADED"; FAILED = "FAILED"; EXTERNAL = "EXTERNAL"
+
+
+class RuntimeManagement(StrEnum):
+    MANAGED = "MANAGED"; EXTERNAL = "EXTERNAL"
 
 
 @dataclass(frozen=True)
@@ -62,7 +66,9 @@ class RuntimeDefinition:
     bind_address: str = "127.0.0.1"; port: int | None = None; working_directory: str = ""
     launch_arguments: tuple[str, ...] = (); environment: dict[str, str] = field(default_factory=dict)
     health_endpoint: str = ""; capabilities: tuple[Capability, ...] = (); status: str = "CONFIGURED"
-    provider_adapter: str = ""
+    provider_adapter: str = ""; management: RuntimeManagement = RuntimeManagement.MANAGED
+    model_path: str = ""; context_size: int | None = None; gpu_layers: int | None = None
+    threads: int | None = None; batch_size: int | None = None; extra_arguments: tuple[str, ...] = ()
 
 
 @dataclass
@@ -70,7 +76,17 @@ class RuntimeInstance:
     runtime_id: str; process_id: int | None = None; state: RuntimeState = RuntimeState.STOPPED
     base_url: str = ""; started_at: str | None = None; last_health_check: str | None = None
     health: dict[str, Any] = field(default_factory=dict); loaded_models: list[str] = field(default_factory=list)
-    error: str | None = None
+    error: str | None = None; management: RuntimeManagement = RuntimeManagement.EXTERNAL
+    process_alive: bool = False; http_reachable: bool = False; version: str | None = None
+    latency_ms: float | None = None; last_success: str | None = None; last_failure: str | None = None
+    safe_error_code: str | None = None
+
+
+@dataclass(frozen=True)
+class RuntimeCapabilitySnapshot:
+    runtime_id: str; runtime_version: str | None; detected_at: str; runtime_state: RuntimeState
+    capabilities: tuple[str, ...] = (); available_models: tuple[str, ...] = ()
+    adapters: tuple[str, ...] = (); node_classes: tuple[str, ...] = (); warnings: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)

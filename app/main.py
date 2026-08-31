@@ -86,11 +86,14 @@ async def collaboration_fail_closed(request,call_next):
     packaged = bool(getattr(settings, "enable_packaged_runtime", False))
     collaboration = bool(getattr(settings, "enable_collaboration_runtime", False))
     normalized_request_path = _normalized_api_path(request.url.path)
-    model_center_mutation = request.method == "POST" and re.fullmatch(
-        r"/api/model-center/runtimes/[^/]+/(?:validate|start|stop)",
-        normalized_request_path,
-    ) is not None
-    if model_center_mutation and not packaged and not collaboration:
+    model_center_control = (
+        request.method == "POST" and re.fullmatch(r"/api/model-center/runtimes/[^/]+/(?:validate|start|stop)", normalized_request_path) is not None
+    ) or (
+        request.method == "PUT" and re.fullmatch(r"/api/model-center/runtimes/[^/]+/configuration", normalized_request_path) is not None
+    ) or (
+        request.method == "GET" and re.fullmatch(r"/api/model-center/runtimes/[^/]+/(?:configuration|diagnostics|logs)", normalized_request_path) is not None
+    )
+    if model_center_control and not packaged and not collaboration:
         token = request.headers.get("X-Session-Token")
         if not token:
             return JSONResponse({"detail": {"code": "SESSION_REQUIRED"}}, status_code=401)
@@ -177,7 +180,7 @@ async def collaboration_fail_closed(request,call_next):
             r"/api/release-gates(?:/[^/]+)?",
             r"/api/release/readiness",
             r"/api/audit",
-            r"/api/model-center/(?:models(?:/[^/]+)?|runtimes(?:/[^/]+(?:/(?:validate|start|stop))?)?|pipelines|health)",
+            r"/api/model-center/(?:models(?:/[^/]+)?|runtimes(?:/[^/]+(?:/(?:validate|start|stop|configuration|diagnostics|logs|capabilities))?)?|pipelines|health)",
         ))
         if capability_route:
             token = request.headers.get("X-Session-Token")
