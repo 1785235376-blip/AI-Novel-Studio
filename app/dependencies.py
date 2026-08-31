@@ -43,11 +43,11 @@ from .packaging.local_session_bootstrap import LocalSessionBootstrap, TrustedLoc
 from .packaging.initial_workspace import PackagedInitialWorkspaceProvisioner
 from .packaging.runtime_identity import RuntimeIdentity
 from .model_center import create_default_model_center
-from .stable_identity import StableIdentityStore, canonical_identity_store_path
+from .stable_identity import StableIdentityStore, get_host_identity_store
 import os
 import secrets
 repositories=create_repository_bundle()
-identity_store = StableIdentityStore(canonical_identity_store_path())
+identity_store = get_host_identity_store()
 execution_node_identity = runtime.execution_node_identity
 model_center_service=create_default_model_center(settings.data_path()/"model-center"/"runtime-config.json", identity_store=identity_store)
 novel_service=NovelService(repositories.novels,repositories.chapters)

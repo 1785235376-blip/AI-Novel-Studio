@@ -69,6 +69,8 @@ class ModelDefinition:
 
     def __post_init__(self) -> None:
         if self.identity_id is not None:
+            if not isinstance(self.identity_id, UUID):
+                raise ValueError("model_id_MALFORMED")
             object.__setattr__(self, "identity_id", validate_uuid(self.identity_id, field="model_id"))
 
 
@@ -89,6 +91,8 @@ class RuntimeDefinition:
 
     def __post_init__(self) -> None:
         if self.identity_id is not None:
+            if not isinstance(self.identity_id, UUID):
+                raise ValueError("runtime_id_MALFORMED")
             object.__setattr__(self, "identity_id", validate_uuid(self.identity_id, field="runtime_id"))
 
 

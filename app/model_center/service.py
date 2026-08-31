@@ -28,7 +28,7 @@ from .runtime_profiles import (
     resynthesize_runtime_argv,
     synthesized_launch_arguments,
 )
-from ..stable_identity import IdentityMutationError, StableIdentityStore, validate_uuid
+from ..stable_identity import IdentityMutationError, StableIdentityStore, canonical_model_identity_key, get_host_identity_store, validate_uuid
 
 
 class CompatibilityGraph:
@@ -311,7 +311,11 @@ class ModelCenterService:
                 if parsed is not None and previous is not None and parsed != previous:
                     raise IdentityMutationError(f"{kind}_ID_IMMUTABLE")
                 return canonical
-            models = [replace(item, identity_id=owned("model", item.id, item.identity_id)) for item in models]
+            domain_by_type = {
+                RuntimeType.LLAMA_CPP: "ollama",
+                RuntimeType.COMFYUI: "comfyui",
+            }
+            models = [replace(item, identity_id=owned("model", canonical_model_identity_key(domain_by_type.get(item.runtime_type, "model-center"), item.id), item.identity_id)) for item in models]
             runtimes = [replace(item, identity_id=owned("runtime", item.id, item.identity_id)) for item in runtimes]
         self.models={x.id:x for x in models}; self.components={x.component_id:x for x in components}; self.profiles={x.id:x for x in profiles}; self.runtimes={x.id:x for x in runtimes}; self.pipelines={x.id:x for x in pipelines}; self.validations=validations; self.compatibility=CompatibilityGraph(components); self.lifecycle=RuntimeLifecycle()
         self.routing_policy = routing_policy
@@ -594,5 +598,5 @@ def create_default_model_center(config_path: Path | None = None, identity_store:
         "FRAME_INTERPOLATION": {"model_id": "rife-49", "runtime_id": "comfyui-local"},
     })
     if identity_store is None:
-        identity_store = StableIdentityStore.for_application()
+        identity_store = get_host_identity_store()
     return ModelCenterService(models,components,profiles,runtimes,pipelines,validations,routing_policy,config_path,identity_store)

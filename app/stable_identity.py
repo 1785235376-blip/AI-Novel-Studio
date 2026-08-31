@@ -8,6 +8,7 @@ layer.
 from __future__ import annotations
 
 import json
+import math
 import os
 import threading
 import uuid
@@ -63,20 +64,32 @@ def validate_uuid(value: uuid.UUID | str, *, field: str = "identity") -> uuid.UU
 class ProviderIdentity:
     provider_id: uuid.UUID
 
+    def __post_init__(self) -> None:
+        _validate_wrapper_uuid(self.provider_id, "provider_id")
+
 
 @dataclass(frozen=True, slots=True)
 class ModelIdentity:
     model_id: uuid.UUID
+
+    def __post_init__(self) -> None:
+        _validate_wrapper_uuid(self.model_id, "model_id")
 
 
 @dataclass(frozen=True, slots=True)
 class RuntimeIdentity:
     runtime_id: uuid.UUID
 
+    def __post_init__(self) -> None:
+        _validate_wrapper_uuid(self.runtime_id, "runtime_id")
+
 
 @dataclass(frozen=True, slots=True)
 class ExecutionNodeIdentity:
     execution_node_id: uuid.UUID
+
+    def __post_init__(self) -> None:
+        _validate_wrapper_uuid(self.execution_node_id, "execution_node_id")
 
 
 @dataclass(frozen=True, slots=True)
@@ -182,12 +195,15 @@ class StableIdentityStore:
             metadata = row.get("metadata", {})
             if not isinstance(metadata, dict):
                 raise IdentityIntegrityError(f"{kind}_METADATA_INVALID")
+            _validate_metadata(metadata, field=f"{kind}_METADATA_INVALID")
             validated.append({"key": key, "identity_id": str(identity), "metadata": dict(metadata)})
         return validated
 
     def _write(self, data: dict[str, Any]) -> None:
-        payload = json.dumps(data, ensure_ascii=False, indent=2, sort_keys=True)
+        payload = json.dumps(data, ensure_ascii=False, indent=2, sort_keys=True, allow_nan=False)
         atomic_write(self.path, payload)
+        # Durable-authority invariant: never report success for unreadable state.
+        self._read()
 
     @contextmanager
     def _mutation(self):
@@ -195,15 +211,23 @@ class StableIdentityStore:
         with self._lock:
             lock_path = Path(str(self.path) + ".lock")
             lock_path.parent.mkdir(parents=True, exist_ok=True)
-            if not lock_path.exists() or lock_path.stat().st_size == 0:
-                try:
-                    atomic_write(lock_path, "0")
-                except OSError:
-                    pass
+            # The lock target is created with O_EXCL so cold-start ownership
+            # cannot be observed as available by two processes simultaneously.
+            try:
+                fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
+                os.write(fd, b"0")
+                os.close(fd)
+            except FileExistsError:
+                pass
+            except OSError:
+                pass
             with lock_path.open("r+b") as handle:
+                if handle.seek(0, os.SEEK_END) == 0:
+                    handle.write(b"0")
+                    handle.flush()
+                handle.seek(0)
                 if os.name == "nt":
                     import msvcrt
-                    handle.seek(0)
                     msvcrt.locking(handle.fileno(), msvcrt.LK_LOCK, 1)
                 else:
                     import fcntl
@@ -226,7 +250,23 @@ class StableIdentityStore:
             return tuple(self._read()["entities"][kind])
 
     def get(self, kind: str, key: str) -> uuid.UUID | None:
-        return next((validate_uuid(row["identity_id"], field=f"{kind}_id") for row in self.list(kind) if row["key"] == key), None)
+        lookup = self._lookup_key(kind, key)
+        return next((validate_uuid(row["identity_id"], field=f"{kind}_id") for row in self.list(kind) if row["key"] == lookup), None)
+
+    def _lookup_key(self, kind: str, key: str) -> str:
+        if kind != "model" or key.startswith("["):
+            return key
+        matches = []
+        for row in self.list(kind):
+            try:
+                parsed = json.loads(row["key"])
+                if isinstance(parsed, list) and len(parsed) == 3 and parsed[0] == "provider_model" and parsed[2] == key:
+                    matches.append(row["key"])
+            except (TypeError, json.JSONDecodeError):
+                continue
+        if len(matches) == 1:
+            return matches[0]
+        return key
 
     def create(self, kind: str, key: str, *, metadata: Mapping[str, Any] | None = None, supplied_id: Any = None) -> uuid.UUID:
         """Create an entity; caller-supplied IDs are never authoritative."""
@@ -240,7 +280,9 @@ class StableIdentityStore:
             identity = uuid.uuid4()
             candidate = dict(data)
             candidate["entities"] = {name: list(values) for name, values in data["entities"].items()}
-            candidate["entities"][kind].append({"key": key, "identity_id": str(identity), "metadata": dict(metadata or {})})
+            normalized = dict(metadata or {})
+            _validate_metadata(normalized, field=f"{kind}_METADATA_INVALID")
+            candidate["entities"][kind].append({"key": key, "identity_id": str(identity), "metadata": normalized})
             candidate["entities"][kind] = self._validate_rows(kind, candidate["entities"][kind])
             self._write(candidate)
             return identity
@@ -257,7 +299,9 @@ class StableIdentityStore:
             identity = uuid.uuid4()
             candidate = dict(data)
             candidate["entities"] = {name: list(values) for name, values in data["entities"].items()}
-            candidate["entities"][kind].append({"key": key, "identity_id": str(identity), "metadata": dict(metadata or {})})
+            normalized = dict(metadata or {})
+            _validate_metadata(normalized, field=f"{kind}_METADATA_INVALID")
+            candidate["entities"][kind].append({"key": key, "identity_id": str(identity), "metadata": normalized})
             candidate["entities"][kind] = self._validate_rows(kind, candidate["entities"][kind])
             self._write(candidate)
             return identity
@@ -276,8 +320,10 @@ class StableIdentityStore:
                 return current
             candidate = dict(data)
             candidate["entities"] = {name: list(values) for name, values in data["entities"].items()}
+            normalized = dict(metadata)
+            _validate_metadata(normalized, field=f"{kind}_METADATA_INVALID")
             candidate["entities"][kind] = [
-                {**item, "metadata": dict(metadata)} if item["key"] == key else item
+                {**item, "metadata": normalized} if item["key"] == key else item
                 for item in rows
             ]
             candidate["entities"][kind] = self._validate_rows(kind, candidate["entities"][kind])
@@ -311,6 +357,7 @@ class StableIdentityStore:
             raise ValueError(f"unknown identity kind: {kind}")
         with self._mutation():
             data = self._read()
+            key = self._lookup_key(kind, key)
             rows = data["entities"][kind]
             if not any(item["key"] == key for item in rows):
                 raise KeyError(key)
@@ -352,7 +399,9 @@ class StableIdentityStore:
                 if identity in seen_ids:
                     raise IdentityIntegrityError(f"{kind}_DUPLICATE_ID")
                 seen_ids.add(identity)
-                row = {"key": key, "identity_id": str(identity), "metadata": dict(entry.get("metadata", {}))}
+                metadata = dict(entry.get("metadata", {}))
+                _validate_metadata(metadata, field=f"{kind}_METADATA_INVALID")
+                row = {"key": key, "identity_id": str(identity), "metadata": metadata}
                 rows.append(row)
                 by_key[key] = row
                 result[key] = identity
@@ -377,12 +426,49 @@ def _reject_constant(value: str) -> Any:
     raise IdentityIntegrityError(f"IDENTITY_STORE_CONSTANT_INVALID:{value}")
 
 
+def _validate_wrapper_uuid(value: Any, field: str) -> uuid.UUID:
+    if not isinstance(value, uuid.UUID):
+        raise IdentityIntegrityError(f"{field}_MALFORMED")
+    if value == ZERO_UUID:
+        raise IdentityIntegrityError(f"{field}_ZERO")
+    return value
+
+
+def _validate_metadata(value: Any, *, field: str = "METADATA_INVALID") -> None:
+    if isinstance(value, dict):
+        if not all(isinstance(key, str) for key in value):
+            raise IdentityIntegrityError(field)
+        for item in value.values():
+            _validate_metadata(item, field=field)
+        return
+    if isinstance(value, list):
+        for item in value:
+            _validate_metadata(item, field=field)
+        return
+    if value is None or isinstance(value, (str, bool, int)):
+        return
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise IdentityIntegrityError(field)
+        return
+    raise IdentityIntegrityError(field)
+
+
+def canonical_model_identity_key(provider_id: str, model_id: str) -> str:
+    """Unambiguous structured key for provider-scoped model identities."""
+    if not isinstance(provider_id, str) or not isinstance(model_id, str) or not provider_id or not model_id:
+        raise ValueError("provider and model are required")
+    return json.dumps(["provider_model", provider_id, model_id], ensure_ascii=False, separators=(",", ":"))
+
+
 def canonical_identity_store_path() -> Path:
-    override = os.getenv("IDENTITY_FOUNDATION_PATH", "").strip()
-    if override:
-        return Path(override).resolve(strict=False)
     from .config import settings
     return (settings.data_path() / "identity-foundation.json").resolve(strict=False)
+
+
+def get_host_identity_store() -> StableIdentityStore:
+    """Construct the sole production identity store from Host application data."""
+    return StableIdentityStore(canonical_identity_store_path())
 
 
 class ProviderIdentityRegistry:
@@ -393,8 +479,12 @@ class ProviderIdentityRegistry:
 
 class ModelIdentityRegistry:
     def __init__(self, store: StableIdentityStore): self.store = store
-    def ensure(self, model_key: str) -> ModelIdentity: return ModelIdentity(self.store.get_or_create("model", model_key))
-    def create(self, model_key: str, supplied_id: Any = None) -> ModelIdentity: return ModelIdentity(self.store.create("model", model_key, supplied_id=supplied_id))
+    def ensure(self, provider_id: str, model_id: str | None = None) -> ModelIdentity:
+        key = canonical_model_identity_key(provider_id, model_id) if model_id is not None else provider_id
+        return ModelIdentity(self.store.get_or_create("model", key))
+    def create(self, provider_id: str, model_id: str | None = None, supplied_id: Any = None) -> ModelIdentity:
+        key = canonical_model_identity_key(provider_id, model_id) if model_id is not None else provider_id
+        return ModelIdentity(self.store.create("model", key, supplied_id=supplied_id))
 
 
 class RuntimeIdentityRegistry:

@@ -8,6 +8,7 @@ from uuid import UUID, uuid4
 import pytest
 
 from app.model_runtime import ModelDescriptor, ModelRegistry, Modality, ProviderDescriptor, ProviderRegistry
+from app.config import settings
 from app.model_center.service import create_default_model_center
 from app.runtime import Runtime
 from app.provider_runtime_v2_contracts import ExecutionNodeIdentity as ContractNodeIdentity
@@ -23,6 +24,11 @@ from app.stable_identity import (
     IdentityMutationError,
     StableIdentityStore,
     TrustedLegacySource,
+    ProviderIdentity,
+    ModelIdentity,
+    RuntimeIdentity,
+    ExecutionNodeIdentity,
+    canonical_model_identity_key,
 )
 
 
@@ -144,6 +150,17 @@ def test_rename_preserves_id_and_delete_create_gets_new_id(tmp_path: Path):
     assert store.create("provider", "new-name") != original
 
 
+def test_production_model_registry_rename_preserves_uuid(tmp_path: Path):
+    store = StableIdentityStore(tmp_path / "identity.json")
+    models = ModelRegistry(store)
+    models.register(ModelDescriptor("old", "provider", "Old", Modality.TEXT, frozenset()))
+    original = models._models[("provider", "old")].model_uuid
+    renamed = models.rename("provider", "old", "new")
+    assert renamed.model_uuid == original
+    assert models.contains("provider", "new") and not models.contains("provider", "old")
+    assert store.get("model", canonical_model_identity_key("provider", "new")) == original
+
+
 def test_strict_store_rejects_duplicate_keys_unknown_content_and_bool_schema(tmp_path: Path):
     path = tmp_path / "identity.json"
     valid_entities = '"entities":{"provider":[],"model":[],"runtime":[],"execution_node":[]}'
@@ -169,14 +186,39 @@ def test_migration_requires_explicit_trusted_source(tmp_path: Path):
         StableIdentityStore(tmp_path / "identity.json").migrate("provider", [{"key": "x"}])
 
 
-def test_model_registry_uses_one_canonical_model_key(tmp_path: Path):
+def test_model_registry_scopes_model_identity_by_provider(tmp_path: Path):
     store = StableIdentityStore(tmp_path / "identity.json")
     models = ModelRegistry(store)
     models.register(ModelDescriptor("shared-model", "provider-a", "Shared", Modality.TEXT, frozenset()))
     first = models.descriptors()[0].model_uuid
-    models.register(ModelDescriptor("shared-model", "provider-b", "Shared", Modality.TEXT, frozenset()), replace=True)
-    assert models.descriptors()[1].model_uuid == first
-    assert len(store.list("model")) == 1
+    models.register(ModelDescriptor("shared-model", "provider-b", "Shared", Modality.TEXT, frozenset()))
+    assert models.descriptors()[1].model_uuid != first
+    assert len(store.list("model")) == 2
+    assert canonical_model_identity_key("a:b", "c") != canonical_model_identity_key("a", "b:c")
+
+
+def test_model_identity_matches_between_runtime_and_model_center(tmp_path: Path):
+    store = StableIdentityStore(tmp_path / "identity.json")
+    runtime = Runtime(store)
+    center = create_default_model_center(tmp_path / "runtime-config.json", identity_store=store)
+    runtime.model_registry.register(ModelDescriptor("qwen36-27b-q4km", "ollama", "Qwen", Modality.TEXT, frozenset()))
+    assert runtime.model_registry._models[("ollama", "qwen36-27b-q4km")].model_uuid == center.models["qwen36-27b-q4km"].model_uuid
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), float("-inf"), {"nested": [float("nan")]}])
+def test_non_finite_metadata_is_rejected_without_mutation(tmp_path: Path, value):
+    path = tmp_path / "identity.json"
+    store = StableIdentityStore(path)
+    before = path.read_bytes() if path.exists() else None
+    with pytest.raises(IdentityIntegrityError):
+        store.create("provider", "bad", metadata={"value": value})
+    assert (path.read_bytes() if path.exists() else None) == before
+
+
+@pytest.mark.parametrize("wrapper,field", [(ProviderIdentity, "provider_id"), (ModelIdentity, "model_id"), (RuntimeIdentity, "runtime_id"), (ExecutionNodeIdentity, "execution_node_id")])
+def test_foundation_wrappers_reject_zero_wrong_types(wrapper, field):
+    with pytest.raises(IdentityIntegrityError): wrapper(**{field: UUID(int=0)})
+    with pytest.raises(IdentityIntegrityError): wrapper(**{field: "not-a-uuid"})
 
 
 def _mp_get_or_create(path: str, kind: str, key: str, barrier, queue) -> None:
@@ -218,6 +260,26 @@ def test_real_multiprocess_mixed_kind_mutations_preserve_all_rows(tmp_path: Path
     assert all(len(store.list(kind)) == 1 for kind, _ in jobs)
 
 
+def test_real_multiprocess_cold_start_stress_20_iterations(tmp_path: Path):
+    path = tmp_path / "stress.json"
+    context = mp.get_context("spawn")
+    for iteration in range(20):
+        for candidate in (path, Path(str(path) + ".lock")):
+            try:
+                candidate.unlink()
+            except FileNotFoundError:
+                pass
+        jobs = [("provider", f"p-{iteration}"), ("model", f"m-{iteration}"), ("runtime", f"r-{iteration}"), ("execution_node", f"n-{iteration}")]
+        barrier = context.Barrier(len(jobs)); queue = context.Queue()
+        processes = [context.Process(target=_mp_get_or_create, args=(str(path), kind, key, barrier, queue)) for kind, key in jobs]
+        for process in processes: process.start()
+        for process in processes: process.join(20)
+        assert all(process.exitcode == 0 for process in processes)
+        results = [queue.get(timeout=2) for _ in processes]
+        assert {(kind, key) for kind, key, _ in results} == set(jobs)
+        assert all(len(StableIdentityStore(path).list(kind)) == 1 for kind, _ in jobs)
+
+
 def test_route_preparation_is_read_only_and_does_not_mint(tmp_path: Path):
     store = StableIdentityStore(tmp_path / "identity.json")
     runtime = Runtime(store)
@@ -233,6 +295,15 @@ def test_route_preparation_is_read_only_and_does_not_mint(tmp_path: Path):
     with pytest.raises(Exception, match="尚未完成注册"):
         runtime.prepare_text_route("mock", "mock-writer")
     assert store.path.read_bytes() == before_missing
+
+
+def test_normal_ollama_route_is_preprovisioned_and_read_only(tmp_path: Path):
+    store = StableIdentityStore(tmp_path / "identity.json")
+    runtime = Runtime(store)
+    route_model = settings.local_model
+    before = store.path.read_bytes()
+    runtime.prepare_text_route("ollama", route_model)
+    assert store.path.read_bytes() == before
 
 
 def test_runtime_identity_cannot_be_supplied_or_mutated_by_configuration(tmp_path: Path):

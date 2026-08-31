@@ -10,7 +10,7 @@ from typing import Any, Iterable, Mapping, Protocol
 from uuid import UUID
 
 from .providers import Generation, LLMProvider, ProviderError
-from .stable_identity import IdentityMutationError, StableIdentityStore, validate_uuid
+from .stable_identity import IdentityMutationError, StableIdentityStore, canonical_model_identity_key, validate_uuid
 
 
 class Modality(str, Enum):
@@ -246,6 +246,18 @@ class ProviderRegistry:
     def contains(self, provider_id: str) -> bool:
         return provider_id in self._descriptors
 
+    def rename(self, provider_id: str, new_provider_id: str) -> ProviderDescriptor:
+        if self.identity_store is None:
+            raise ValueError("IDENTITY_STORE_REQUIRED")
+        if provider_id not in self._providers or new_provider_id in self._providers:
+            raise KeyError(provider_id)
+        identity = self.identity_store.rename("provider", provider_id, new_provider_id)
+        descriptor = dc_replace(self._descriptors.pop(provider_id), provider_id=new_provider_id, identity_id=identity)
+        provider = self._providers.pop(provider_id)
+        self._providers[new_provider_id] = provider
+        self._descriptors[new_provider_id] = descriptor
+        return descriptor
+
 
 class ModelRegistry:
     def __init__(self, identity_store: StableIdentityStore | None = None) -> None:
@@ -257,7 +269,7 @@ class ModelRegistry:
         if key in self._models and not replace:
             raise ValueError(f"model already registered: {key}")
         if self.identity_store is not None:
-            identity_key = model.model_id
+            identity_key = canonical_model_identity_key(model.provider_id, model.model_id)
             previous = self.identity_store.get("model", identity_key)
             supplied = validate_uuid(model.identity_id, field="model_id") if model.identity_id is not None else None
             canonical = self.identity_store.get_or_create("model", identity_key)
@@ -282,6 +294,18 @@ class ModelRegistry:
 
     def contains(self, provider_id: str, model_id: str) -> bool:
         return (provider_id, model_id) in self._models
+
+    def rename(self, provider_id: str, model_id: str, new_model_id: str) -> ModelDescriptor:
+        if self.identity_store is None:
+            raise ValueError("IDENTITY_STORE_REQUIRED")
+        old_key = (provider_id, model_id)
+        new_key = (provider_id, new_model_id)
+        if old_key not in self._models or new_key in self._models:
+            raise KeyError(model_id)
+        identity = self.identity_store.rename("model", canonical_model_identity_key(provider_id, model_id), canonical_model_identity_key(provider_id, new_model_id))
+        descriptor = dc_replace(self._models.pop(old_key), model_id=new_model_id, identity_id=identity)
+        self._models[new_key] = descriptor
+        return descriptor
 
 
 @dataclass(frozen=True, slots=True)

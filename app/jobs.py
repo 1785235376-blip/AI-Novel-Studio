@@ -12,7 +12,7 @@ from .services import ChapterService,ContextService,CanonService,GenerationServi
 from .config import settings
 from .actor_context import ActorContext,SessionContext
 from .authorization import AuthorizationScope,ScopeKind
-from .model_runtime import TextGenerationRequest,TextModelNodeInput,TextGenerationParameters,ModelRuntimeError,RuntimeErrorCode
+from .model_runtime import TextGenerationRequest,TextModelNodeInput,TextGenerationParameters,ModelRuntimeError,RuntimeErrorCode,ProviderRegistry,ModelRegistry,ProviderDescriptor,ModelDescriptor,Modality,GenerationRuntime,LegacyTextProviderAdapter
 from .router import Route
 
 # Compatibility facade for V0.3 tests and extensions that patched app.jobs.repo.
@@ -78,7 +78,21 @@ class JobManager:
                         snapshot=self.contexts.save_snapshot(job.chapter_id,ch.get("version",0),context,f"{role}:v1",route.model,actor_id=job.actor_id,session_id=job.session_id,scope_type=job.scope_type,scope_id=job.scope_id,generation_id=job.id,cloud=cloud)
                         if not snapshot:raise RuntimeError("Context snapshot persistence is required")
                         job.context_snapshot_id=snapshot["id"];self._persist(job)
-                    node=runtime.prepare_text_route(route.provider,route.model,router.providers.get(route.provider))
+                    route_provider = router.providers.get(route.provider)
+                    try:
+                        node=runtime.prepare_text_route(route.provider,route.model,route_provider)
+                    except ModelRuntimeError:
+                        # Legacy test/extensions may supply an unregistered bare
+                        # provider object. Keep this explicitly non-authoritative
+                        # compatibility path outside Runtime route preparation.
+                        if route_provider is None or hasattr(route_provider, "provider_id"):
+                            raise
+                        ephemeral_providers = ProviderRegistry()
+                        ephemeral_models = ModelRegistry()
+                        adapter = route_provider if hasattr(route_provider, "stream_text") else LegacyTextProviderAdapter(route.provider, route_provider)
+                        ephemeral_providers.register(ProviderDescriptor(route.provider, route.provider, "legacy", frozenset({Modality.TEXT}), True, True), adapter)
+                        ephemeral_models.register(ModelDescriptor(route.model, route.provider, route.model, Modality.TEXT, frozenset({"generate", "stream"}), streaming=True))
+                        node = GenerationRuntime(ephemeral_providers, ephemeral_models).text_node
                     request=TextGenerationRequest(provider_id=route.provider,model_id=route.model,prompt=prompt,context=context,parameters=TextGenerationParameters(),metadata={"purpose":job.operation},job_id=job.id,cancellation=job.cancelled)
                     for event in node.stream(TextModelNodeInput(request)):
                         if event.event_type=="generation.cancelled" or job.cancelled.is_set():job.status="CANCELLED";self._emit(job);return
