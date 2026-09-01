@@ -28,6 +28,7 @@ from .runtime_profiles import (
     resynthesize_runtime_argv,
     synthesized_launch_arguments,
 )
+from ..stable_identity import IdentityMutationError, StableIdentityStore, canonical_model_identity_key, get_host_identity_store, validate_uuid
 
 
 class CompatibilityGraph:
@@ -301,7 +302,21 @@ class ModelCenterService:
         "management", "model_path", "context_size", "gpu_layers", "threads", "batch_size", "extra_arguments",
     }
 
-    def __init__(self, models: list[ModelDefinition], components: list[ModelComponentDefinition], profiles: list[HardwareProfile], runtimes: list[RuntimeDefinition], pipelines: list[PipelineDefinition], validations: list[ModelValidationRecord], routing_policy: RoutingPolicy, config_path: Path | None = None):
+    def __init__(self, models: list[ModelDefinition], components: list[ModelComponentDefinition], profiles: list[HardwareProfile], runtimes: list[RuntimeDefinition], pipelines: list[PipelineDefinition], validations: list[ModelValidationRecord], routing_policy: RoutingPolicy, config_path: Path | None = None, identity_store: StableIdentityStore | None = None):
+        if identity_store is not None:
+            def owned(kind: str, key: str, supplied: Any) -> Any:
+                previous = identity_store.get(kind, key)
+                parsed = validate_uuid(supplied, field=f"{kind}_id") if supplied is not None else None
+                canonical = identity_store.get_or_create(kind, key)
+                if parsed is not None and previous is not None and parsed != previous:
+                    raise IdentityMutationError(f"{kind}_ID_IMMUTABLE")
+                return canonical
+            domain_by_type = {
+                RuntimeType.LLAMA_CPP: "ollama",
+                RuntimeType.COMFYUI: "comfyui",
+            }
+            models = [replace(item, identity_id=owned("model", canonical_model_identity_key(domain_by_type.get(item.runtime_type, "model-center"), item.id), item.identity_id)) for item in models]
+            runtimes = [replace(item, identity_id=owned("runtime", item.id, item.identity_id)) for item in runtimes]
         self.models={x.id:x for x in models}; self.components={x.component_id:x for x in components}; self.profiles={x.id:x for x in profiles}; self.runtimes={x.id:x for x in runtimes}; self.pipelines={x.id:x for x in pipelines}; self.validations=validations; self.compatibility=CompatibilityGraph(components); self.lifecycle=RuntimeLifecycle()
         self.routing_policy = routing_policy
         self.config_path=config_path
@@ -422,6 +437,8 @@ class ModelCenterService:
         )
     def configure_runtime(self, runtime_id: str, values: dict[str, Any]) -> RuntimeDefinition:
         with self._config_lock:
+            if any(key in values for key in ("identity_id", "runtime_uuid", "runtime_id")):
+                raise ValueError("RUNTIME_ID_IMMUTABLE")
             if "launch_arguments" in values:
                 raise ValueError("RUNTIME_ARGV_NOT_ALLOWED")
             if "environment" in values:
@@ -439,6 +456,8 @@ class ModelCenterService:
 
     def configure_runtime_profile(self, runtime_id: str, values: dict[str, Any]) -> RuntimeDefinition:
         with self._config_lock:
+            if any(key in values for key in ("identity_id", "runtime_uuid", "runtime_id")):
+                raise ValueError("RUNTIME_ID_IMMUTABLE")
             runtime = self.runtimes[runtime_id]
             configured = definition_from_profile(runtime, profile_from_values(runtime, values))
             if not self.lifecycle.is_local(configured):
@@ -536,7 +555,7 @@ class ModelCenterService:
                 except OSError: pass
 
 
-def create_default_model_center(config_path: Path | None = None) -> ModelCenterService:
+def create_default_model_center(config_path: Path | None = None, identity_store: StableIdentityStore | None = None) -> ModelCenterService:
     verified="2026-08-29T00:00:00+00:00"
     components=[
         ModelComponentDefinition("flux2-klein-qwen3-encoder","TEXT_ENCODER","FLUX2","KLEIN","QWEN3","1","SAFETENSORS","BF16",compatible_models=("flux2-klein-4b-fp8",)),
@@ -578,4 +597,6 @@ def create_default_model_center(config_path: Path | None = None) -> ModelCenterS
         "VIDEO_RESTORATION_FINAL": {"model_id": "seedvr2-7b-sharp", "runtime_id": "comfyui-local"},
         "FRAME_INTERPOLATION": {"model_id": "rife-49", "runtime_id": "comfyui-local"},
     })
-    return ModelCenterService(models,components,profiles,runtimes,pipelines,validations,routing_policy,config_path)
+    if identity_store is None:
+        identity_store = get_host_identity_store()
+    return ModelCenterService(models,components,profiles,runtimes,pipelines,validations,routing_policy,config_path,identity_store)

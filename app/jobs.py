@@ -78,8 +78,8 @@ class JobManager:
                         snapshot=self.contexts.save_snapshot(job.chapter_id,ch.get("version",0),context,f"{role}:v1",route.model,actor_id=job.actor_id,session_id=job.session_id,scope_type=job.scope_type,scope_id=job.scope_id,generation_id=job.id,cloud=cloud)
                         if not snapshot:raise RuntimeError("Context snapshot persistence is required")
                         job.context_snapshot_id=snapshot["id"];self._persist(job)
-                    node=runtime.prepare_text_route(route.provider,route.model,router.providers.get(route.provider))
                     request=TextGenerationRequest(provider_id=route.provider,model_id=route.model,prompt=prompt,context=context,parameters=TextGenerationParameters(),metadata={"purpose":job.operation},job_id=job.id,cancellation=job.cancelled)
+                    node=runtime.prepare_text_route(route.provider,route.model)
                     for event in node.stream(TextModelNodeInput(request)):
                         if event.event_type=="generation.cancelled" or job.cancelled.is_set():job.status="CANCELLED";self._emit(job);return
                         if event.event_type=="generation.failed":raise ModelRuntimeError(event.error_code or RuntimeErrorCode.GENERATION_FAILED,"生成失败，请稍后重试")

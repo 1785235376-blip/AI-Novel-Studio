@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 NonNegative = Annotated[int, Field(ge=0)]
 Positive = Annotated[int, Field(gt=0)]
@@ -61,17 +61,45 @@ class AssetType(str, Enum):
 class ProviderIdentity(Contract):
     provider_id: UUID
 
+    @field_validator("provider_id")
+    @classmethod
+    def nonzero(cls, value: UUID) -> UUID:
+        if value.int == 0:
+            raise ValueError("provider_id must not be zero UUID")
+        return value
+
 
 class ModelIdentity(Contract):
     model_id: UUID
+
+    @field_validator("model_id")
+    @classmethod
+    def nonzero(cls, value: UUID) -> UUID:
+        if value.int == 0:
+            raise ValueError("model_id must not be zero UUID")
+        return value
 
 
 class RuntimeIdentity(Contract):
     runtime_id: UUID
 
+    @field_validator("runtime_id")
+    @classmethod
+    def nonzero(cls, value: UUID) -> UUID:
+        if value.int == 0:
+            raise ValueError("runtime_id must not be zero UUID")
+        return value
+
 
 class ExecutionNodeIdentity(Contract):
     execution_node_id: UUID
+
+    @field_validator("execution_node_id")
+    @classmethod
+    def nonzero(cls, value: UUID) -> UUID:
+        if value.int == 0:
+            raise ValueError("execution_node_id must not be zero UUID")
+        return value
 
 
 class RouteIdentity(Contract):
