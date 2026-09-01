@@ -8,7 +8,7 @@ from uuid import uuid4
 import pytest
 
 from app.model_center import create_default_model_center
-from app.model_center.domain import RuntimeManagement
+from app.model_center.domain import ModelStatus, RuntimeManagement
 from app.model_runtime import ModelDescriptor, Modality, ProviderDescriptor
 from app.provider_runtime_v2_model_center_snapshot_bridge import (
     SnapshotItem,
@@ -170,3 +170,42 @@ def test_default_model_center_rejects_missing_architecture_without_probing(tmp_p
     snapshot = build_provider_runtime_snapshot(runtime.provider_registry, runtime.model_registry, center, runtime.execution_node_identity, store)
     assert not snapshot.candidates
     assert any(item.rejection and item.rejection.code is SnapshotRejectionCode.MISSING_REQUIRED_HARDWARE_FACT for item in snapshot.items)
+
+
+def test_real_wrong_owner_model_uuid_is_rejected(tmp_path: Path):
+    store, runtime, center = _setup(tmp_path)
+    source = center.models["qwen36-27b-q4km"]
+    other_uuid = store.create("model", "ollama/other-model")
+    runtime.model_registry.register(
+        ModelDescriptor("other-model", "ollama", "Other", Modality.TEXT, frozenset({"generate"}), identity_id=other_uuid)
+    )
+    center.models[source.id] = replace(source, identity_id=other_uuid)
+    snapshot = build_provider_runtime_snapshot(runtime.provider_registry, runtime.model_registry, center, runtime.execution_node_identity, store)
+    assert not snapshot.candidates
+    assert any(item.rejection and item.rejection.code is SnapshotRejectionCode.INVALID_IDENTITY for item in snapshot.items)
+
+
+def test_wrong_descriptor_model_id_cannot_own_route_model(tmp_path: Path):
+    store, runtime, center = _setup(tmp_path)
+    source = runtime.model_registry._models.pop(("ollama", "qwen36-27b-q4km"))
+    runtime.model_registry._models[("ollama", "other-model")] = replace(source, model_id="other-model")
+    snapshot = build_provider_runtime_snapshot(runtime.provider_registry, runtime.model_registry, center, runtime.execution_node_identity, store)
+    assert not snapshot.candidates
+    assert any(item.rejection and item.rejection.code is SnapshotRejectionCode.MISSING_MODEL_IDENTITY for item in snapshot.items)
+
+
+@pytest.mark.parametrize("status", [
+    ModelStatus.NOT_INSTALLED,
+    ModelStatus.DISCOVERED,
+    ModelStatus.VALIDATING,
+    ModelStatus.LICENSE_REQUIRED,
+    ModelStatus.RUNTIME_REQUIRED,
+    ModelStatus.INCOMPATIBLE,
+])
+def test_compatibility_is_false_without_positive_authority(tmp_path: Path, status: ModelStatus):
+    store, runtime, center = _setup(tmp_path / status.value)
+    model = center.models["qwen36-27b-q4km"]
+    center.models[model.id] = replace(model, status=status)
+    snapshot = build_provider_runtime_snapshot(runtime.provider_registry, runtime.model_registry, center, runtime.execution_node_identity, store)
+    assert snapshot.candidates
+    assert all(candidate.availability.compatible is False for candidate in snapshot.candidates)

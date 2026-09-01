@@ -26,6 +26,12 @@ architecture requirement, so production entries without one are rejected as
 `MISSING_REQUIRED_HARDWARE_FACT`. Host Hardware / Runtime Requirement
 Authority is deferred to a separate foundation.
 
+Model ownership is bound before UUID provenance is checked: the Model Center
+`ModelDefinition.id` must select exactly one Model Registry descriptor with the
+same `model_id`. Only then must both UUIDs and the provider-scoped Stable
+IdentityStore key agree. A valid UUID belonging to another real model is an
+owner mismatch, not authority.
+
 Capability mapping is explicit:
 
 - `TEXT` -> text input/text output
@@ -43,6 +49,11 @@ because no such authority belongs to this bridge. The bridge does not evaluate
 routing policy, access credentials or Vault, perform HTTP or hardware probing,
 start or stop runtimes, execute models/providers/plugins, or invoke Team
 Compute.
+
+Compatibility also defaults to false. Model status, routing-policy association
+and capability overlap do not provide a positive compatibility fact for the
+exact model/runtime pair; the absence of a known incompatibility is not
+compatibility authority.
 
 For the current Model Center status model, `READY`, `DEGRADED`, `DISABLED` and
 `INCOMPATIBLE` mean that an installed model definition exists. The remaining

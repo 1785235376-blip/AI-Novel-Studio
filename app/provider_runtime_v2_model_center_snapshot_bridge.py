@@ -179,7 +179,9 @@ def _availability(model: ModelDefinition, runtime: RuntimeDefinition, lifecycle:
     # Authorization, trust and self-hosting are separate concerns and have no
     # authoritative source in this bridge.
     authorized = False
-    compatible = model.status is not ModelStatus.INCOMPATIBLE
+    # No current Host-owned fact proves positive compatibility for this exact
+    # model/runtime pair. A missing negative is not a positive assertion.
+    compatible = False
     return Availability(configured=configured, installed=installed, healthy=health and running, reachable=reachable, authorized=authorized, compatible=compatible)
 
 
@@ -297,7 +299,9 @@ def build_provider_runtime_snapshot(
             items.append(SnapshotItem(source_key, rejection=SnapshotRejection(SnapshotRejectionCode.MISSING_RUNTIME_IDENTITY, source_key)))
             continue
         model_uuid = _identity(model.identity_id, "model_id")
-        matches = [descriptor for descriptor in model_descriptors if _identity(getattr(descriptor, "identity_id", None), "model_id") == model_uuid] if model_uuid else []
+        # Logical ownership is established by the source model key first.
+        # UUID equality is provenance validation, never an owner lookup.
+        matches = [descriptor for descriptor in model_descriptors if descriptor.model_id == model.id]
         if model_uuid is None or len(matches) == 0:
             items.append(SnapshotItem(source_key, rejection=SnapshotRejection(SnapshotRejectionCode.MISSING_MODEL_IDENTITY, source_key)))
             continue
@@ -318,13 +322,13 @@ def build_provider_runtime_snapshot(
         if provider_uuid is None:
             items.append(SnapshotItem(source_key, rejection=SnapshotRejection(SnapshotRejectionCode.MISSING_PROVIDER_IDENTITY, source_key)))
             continue
-        if registry_model_uuid is None or registry_model_uuid != model_uuid:
-            items.append(SnapshotItem(source_key, rejection=SnapshotRejection(SnapshotRejectionCode.MISSING_MODEL_IDENTITY, source_key)))
+        if registry_model.model_id != model.id or registry_model_uuid is None or registry_model_uuid != model_uuid:
+            items.append(SnapshotItem(source_key, rejection=SnapshotRejection(SnapshotRejectionCode.INVALID_IDENTITY, source_key)))
             continue
         if identity_store is None or _identity(identity_store.get("provider", provider_key), "provider_id") != provider_uuid:
             items.append(SnapshotItem(source_key, rejection=SnapshotRejection(SnapshotRejectionCode.INVALID_IDENTITY, source_key)))
             continue
-        if _identity(identity_store.get("model", canonical_model_identity_key(provider_key, registry_model.model_id)), "model_id") != model_uuid:
+        if _identity(identity_store.get("model", canonical_model_identity_key(provider_key, model.id)), "model_id") != model_uuid:
             items.append(SnapshotItem(source_key, rejection=SnapshotRejection(SnapshotRejectionCode.INVALID_IDENTITY, source_key)))
             continue
         runtime_uuid = _identity(runtime.identity_id, "runtime_id")
