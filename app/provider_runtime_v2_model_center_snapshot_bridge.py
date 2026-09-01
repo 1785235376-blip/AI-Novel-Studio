@@ -9,11 +9,11 @@ from __future__ import annotations
 import platform
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any, Iterable
+from typing import Any
 from uuid import UUID
 
 from .model_center.domain import Capability, ModelDefinition, ModelStatus, RuntimeDefinition, RuntimeManagement, RuntimeType, RuntimeState
-from .model_runtime import ModelDescriptor, ModelRegistry, ProviderDescriptor, ProviderRegistry
+from .model_runtime import ModelRegistry, ProviderRegistry
 from .provider_runtime_v2_contracts import (
     AssetType,
     Availability,
