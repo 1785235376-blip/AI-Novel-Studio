@@ -44,6 +44,7 @@ from .packaging.initial_workspace import PackagedInitialWorkspaceProvisioner
 from .packaging.runtime_identity import RuntimeIdentity
 from .model_center import create_default_model_center
 from .stable_identity import StableIdentityStore, get_host_identity_store
+from .provider_runtime_v2_model_center_snapshot_bridge import create_provider_runtime_snapshot as _create_provider_runtime_snapshot
 import os
 import secrets
 repositories=create_repository_bundle()
@@ -207,3 +208,7 @@ context_service=ContextService(repositories.novels,repositories.chapters,lore_se
 agent_context_service=AgentContextService(repositories.novels,repositories.chapters,context_service)
 agent_job_service=AgentJobService(generation_service,agent_context_service,repositories.novels,runtime,agent_runner)
 memory_agent_service=MemoryAgentRunner(repositories.novels,repositories.chapters,lore_service,generation_service,agent_runner,runtime)
+
+def create_provider_runtime_snapshot():
+    """Build the read-only Provider Runtime snapshot from Host-owned services."""
+    return _create_provider_runtime_snapshot()
