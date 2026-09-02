@@ -1,8 +1,11 @@
 """Host-owned Test Worker process (Phase 2A).
 
 Fixed operations only. Not a plugin, not extensible, not a command runner.
-Does not read the database, vault, providers, plugin packages, or network.
-Does not eval/exec/import user modules. Child processes are prohibited.
+Does not read the database, vault, providers, plugin packages, or arbitrary
+network. Does not eval/exec/import user modules. Generic child processes are
+prohibited. Fixed sandbox probes (read/write/token/loopback/child) exist only
+for Host-owned Phase 2B tests and never accept arbitrary paths, URLs, or
+commands.
 
 Run only via the frozen supervisor spawn:
 `python -I -S -u <absolute-host-owned-bootstrap>`.
@@ -36,6 +39,13 @@ from app.plugin_worker_protocol import (
     OPERATION_EMIT_OVERSIZED_FRAME_FOR_TEST,
     OPERATION_EMIT_TRUNCATED_FRAME_FOR_TEST,
     OPERATION_PING,
+    OPERATION_PROBE_ALLOWED_READ,
+    OPERATION_PROBE_ALLOWED_WRITE,
+    OPERATION_PROBE_CHILD_PROCESS,
+    OPERATION_PROBE_FORBIDDEN_HOST_READ,
+    OPERATION_PROBE_FORBIDDEN_HOST_WRITE,
+    OPERATION_PROBE_NETWORK,
+    OPERATION_PROBE_TOKEN_IDENTITY,
     OPERATION_RETURN_FIXED_RESULT,
     OPERATION_SLEEP,
     PLUGIN_WORKER_PROTOCOL_VERSION,
@@ -224,6 +234,163 @@ def _handle_subprocess(message: dict[str, Any]) -> None:
     )
 
 
+def _sandbox_env(name: str) -> str:
+    value = os.environ.get(name, "")
+    return value if isinstance(value, str) else ""
+
+
+def _result(message: dict[str, Any], operation: str, output: dict[str, Any]) -> None:
+    _write_envelope(MESSAGE_JOB_RESULT, {"operation": operation, "output": output}, **_job_ids(message))
+
+
+def _handle_probe_allowed_read(message: dict[str, Any]) -> None:
+    path = os.path.join(_sandbox_env("ANS_SANDBOX_IN"), "input.txt")
+    ok = False
+    text = ""
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            text = handle.read(64)
+        ok = text == "SANDBOX_INPUT_OK"
+    except OSError:
+        ok = False
+        text = ""
+    _result(message, OPERATION_PROBE_ALLOWED_READ, {"ok": ok, "matched": text == "SANDBOX_INPUT_OK"})
+
+
+def _handle_probe_allowed_write(message: dict[str, Any]) -> None:
+    out_path = os.path.join(_sandbox_env("ANS_SANDBOX_OUT"), "output.txt")
+    in_path = os.path.join(_sandbox_env("ANS_SANDBOX_IN"), "should_fail.txt")
+    tmp_path = os.path.join(_sandbox_env("ANS_SANDBOX_TMP"), "tmp.txt")
+    out_ok = False
+    in_denied = False
+    tmp_ok = False
+    try:
+        with open(out_path, "w", encoding="utf-8") as handle:
+            handle.write("SANDBOX_OUTPUT_OK")
+        out_ok = True
+    except OSError:
+        out_ok = False
+    try:
+        with open(in_path, "w", encoding="utf-8") as handle:
+            handle.write("SHOULD_NOT_LAND")
+        in_denied = False
+    except OSError:
+        in_denied = True
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as handle:
+            handle.write("SANDBOX_TMP_OK")
+        tmp_ok = True
+    except OSError:
+        tmp_ok = False
+    _result(
+        message,
+        OPERATION_PROBE_ALLOWED_WRITE,
+        {"output_ok": out_ok, "input_write_denied": in_denied, "tmp_ok": tmp_ok},
+    )
+
+
+def _handle_probe_forbidden_read(message: dict[str, Any]) -> None:
+    path = _sandbox_env("ANS_PROBE_FORBIDDEN_READ")
+    denied = True
+    leaked = False
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            data = handle.read(4096)
+        denied = False
+        leaked = bool(data)
+    except OSError:
+        denied = True
+        leaked = False
+    _result(message, OPERATION_PROBE_FORBIDDEN_HOST_READ, {"denied": denied, "secret_leaked": leaked})
+
+
+def _handle_probe_forbidden_write(message: dict[str, Any]) -> None:
+    path = _sandbox_env("ANS_PROBE_FORBIDDEN_WRITE")
+    denied = True
+    try:
+        with open(path, "w", encoding="utf-8") as handle:
+            handle.write("PWNED")
+        denied = False
+    except OSError:
+        denied = True
+    _result(message, OPERATION_PROBE_FORBIDDEN_HOST_WRITE, {"denied": denied})
+
+
+def _handle_probe_network(message: dict[str, Any]) -> None:
+    denied = True
+    raw = _sandbox_env("ANS_PROBE_LOOPBACK_PORT")
+    try:
+        port = int(raw)
+        if 0 < port < 65536:
+            import socket
+
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(0.4)
+            try:
+                sock.connect(("127.0.0.1", port))
+                denied = False
+            except OSError:
+                denied = True
+            finally:
+                sock.close()
+    except (ValueError, OSError):
+        denied = True
+    _result(message, OPERATION_PROBE_NETWORK, {"denied": denied, "loopback": True})
+
+
+def _handle_probe_child(message: dict[str, Any]) -> None:
+    denied = True
+    try:
+        pid = os.spawnv(os.P_NOWAIT, sys.executable, (sys.executable, "-c", "raise SystemExit(0)"))
+        denied = False
+        if isinstance(pid, int) and pid > 0:
+            try:
+                os.waitpid(pid, os.WNOHANG if hasattr(os, "WNOHANG") else 0)
+            except OSError:
+                pass
+    except OSError:
+        denied = True
+    _result(message, OPERATION_PROBE_CHILD_PROCESS, {"denied": denied})
+
+
+def _handle_probe_token(message: dict[str, Any]) -> None:
+    is_appcontainer = False
+    sid_present = False
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            from ctypes import wintypes
+
+            advapi32 = ctypes.WinDLL("advapi32", use_last_error=True)
+            kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+            token = wintypes.HANDLE()
+            TOKEN_QUERY = 0x0008
+            if advapi32.OpenProcessToken(kernel32.GetCurrentProcess(), TOKEN_QUERY, ctypes.byref(token)):
+                value = wintypes.DWORD()
+                needed = wintypes.DWORD()
+                TokenIsAppContainer = 19
+                TokenAppContainerSid = 31
+                if advapi32.GetTokenInformation(
+                    token, TokenIsAppContainer, ctypes.byref(value), ctypes.sizeof(value), ctypes.byref(needed)
+                ):
+                    is_appcontainer = int(value.value) != 0
+                needed = wintypes.DWORD(0)
+                advapi32.GetTokenInformation(token, TokenAppContainerSid, None, 0, ctypes.byref(needed))
+                if needed.value:
+                    buf = ctypes.create_string_buffer(needed.value)
+                    if advapi32.GetTokenInformation(token, TokenAppContainerSid, buf, needed, ctypes.byref(needed)):
+                        sid_present = True
+                kernel32.CloseHandle(token)
+        except Exception:
+            is_appcontainer = False
+            sid_present = False
+    _result(
+        message,
+        OPERATION_PROBE_TOKEN_IDENTITY,
+        {"is_appcontainer": is_appcontainer, "appcontainer_sid_present": sid_present},
+    )
+
+
 _OPERATIONS: dict[str, Callable[[dict[str, Any]], None]] = {
     OPERATION_PING: _handle_ping,
     OPERATION_ECHO_SAFE: _handle_echo,
@@ -234,6 +401,13 @@ _OPERATIONS: dict[str, Callable[[dict[str, Any]], None]] = {
     OPERATION_EMIT_OVERSIZED_FRAME_FOR_TEST: _handle_oversized,
     OPERATION_EMIT_TRUNCATED_FRAME_FOR_TEST: _handle_truncated,
     OPERATION_ATTEMPT_SUBPROCESS_FOR_TEST: _handle_subprocess,
+    OPERATION_PROBE_ALLOWED_READ: _handle_probe_allowed_read,
+    OPERATION_PROBE_ALLOWED_WRITE: _handle_probe_allowed_write,
+    OPERATION_PROBE_FORBIDDEN_HOST_READ: _handle_probe_forbidden_read,
+    OPERATION_PROBE_FORBIDDEN_HOST_WRITE: _handle_probe_forbidden_write,
+    OPERATION_PROBE_NETWORK: _handle_probe_network,
+    OPERATION_PROBE_CHILD_PROCESS: _handle_probe_child,
+    OPERATION_PROBE_TOKEN_IDENTITY: _handle_probe_token,
 }
 
 

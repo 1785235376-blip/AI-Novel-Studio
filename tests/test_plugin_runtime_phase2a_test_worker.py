@@ -264,6 +264,42 @@ def test_worker_crash(supervisor):
     assert b"api_key" not in bytes(session.stderr)
 
 
+def test_crash_exit_observation_already_exited_without_wait():
+    class FakeOwned:
+        def poll(self):
+            return 17
+
+        def wait(self, timeout=None):
+            raise AssertionError("already exited process must not wait")
+
+    assert HostTestWorkerSupervisor()._observe_exit_status(FakeOwned()) == 17
+
+
+def test_crash_exit_observation_waits_for_delayed_exit():
+    class FakeOwned:
+        def poll(self):
+            return None
+
+        def wait(self, timeout=None):
+            assert timeout is not None and timeout < 1
+            return 17
+
+    assert HostTestWorkerSupervisor()._observe_exit_status(FakeOwned()) == 17
+
+
+def test_crash_exit_observation_is_bounded_when_still_alive():
+    from subprocess import TimeoutExpired
+
+    class FakeOwned:
+        def poll(self):
+            return None
+
+        def wait(self, timeout=None):
+            raise TimeoutExpired(cmd="worker", timeout=timeout)
+
+    assert HostTestWorkerSupervisor()._observe_exit_status(FakeOwned()) is None
+
+
 def test_malformed_and_oversized_and_truncated_frames(supervisor):
     sup, start = supervisor
     malformed = start()
@@ -417,6 +453,8 @@ def test_production_startup_does_not_import_or_spawn_test_worker():
         "assert 'app.plugin_test_worker_supervisor' not in sys.modules\n"
         "assert 'app.plugin_test_worker' not in sys.modules\n"
         "assert 'app.plugin_test_worker_bootstrap' not in sys.modules\n"
+        "assert 'app.plugin_worker_windows_sandbox' not in sys.modules\n"
+        "assert 'app.plugin_worker_windows_api' not in sys.modules\n"
         "from app.api import plugin_runtime_status\n"
         "status = plugin_runtime_status()\n"
         "assert status['execution_supported'] is False\n"
