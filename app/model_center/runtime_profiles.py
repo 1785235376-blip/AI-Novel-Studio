@@ -24,11 +24,9 @@ EDITABLE_COMMON_FIELDS = (
 EDITABLE_LLAMA_FIELDS = EDITABLE_COMMON_FIELDS + (
     "model_path", "context_size", "gpu_layers", "threads", "batch_size", "extra_arguments",
 )
-EDITABLE_COMFY_FIELDS = (
-    "runtime_type", "management", "executable",
-    "base_url", "bind_address", "port", "health_endpoint",
-    "installation_path",
-)
+EDITABLE_COMFY_FIELDS = tuple(
+    field for field in EDITABLE_COMMON_FIELDS if field != "working_directory"
+) + ("installation_path",)
 OUTPUT_CONFIGURATION_FIELDS = frozenset({
     "id", "capabilities", "status", "provider_adapter", "environment",
     "instance", "discovery",

@@ -55,6 +55,10 @@ SAFE_RUNTIME_ENV_ALLOWLIST = frozenset({"PATH", "PATHEXT", "TEMP", "TMP", "SYSTE
 SECRET_ENV_MARKERS = ("AUTH", "COOKIE", "CREDENTIAL", "DATABASE_URL", "KEY", "PASSWORD", "PRIVATE", "SECRET", "SESSION", "TOKEN")
 
 
+class RuntimeArchitectureConfigurationError(ValueError):
+    pass
+
+
 def _safe_runtime_environment(explicit: dict[str, str]) -> dict[str, str]:
     rejected = [key for key in explicit if any(marker in key.upper() for marker in SECRET_ENV_MARKERS)]
     if rejected:
@@ -342,7 +346,10 @@ class ModelCenterService:
                             raise ValueError("unsafe runtime configuration")
                         candidates[runtime_id] = configured
                 self.runtimes = candidates
-            except (OSError, ValueError, TypeError, json.JSONDecodeError): pass
+            except RuntimeArchitectureConfigurationError:
+                raise
+            except (OSError, ValueError, TypeError, json.JSONDecodeError):
+                pass
 
     def _validated_persisted_values(self, values: Any) -> dict[str, Any]:
         if not isinstance(values, dict):
@@ -368,9 +375,9 @@ class ModelCenterService:
             filtered["management"] = RuntimeManagement(filtered["management"])
         if "architecture_id" in filtered and filtered["architecture_id"] is not None:
             try:
-                filtered["architecture_id"] = UUID(filtered["architecture_id"])
+                filtered["architecture_id"] = validate_architecture_identity(UUID(filtered["architecture_id"]))
             except (TypeError, ValueError) as exc:
-                raise ValueError("invalid runtime configuration") from exc
+                raise RuntimeArchitectureConfigurationError("RUNTIME_ARCHITECTURE_INVALID") from exc
         return filtered
     def model(self, model_id: str) -> dict[str, Any]:
         model=self.models[model_id]; value=serialize(model)
