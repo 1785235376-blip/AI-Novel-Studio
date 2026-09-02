@@ -11,10 +11,10 @@ routing choices, authorization, trust, compatibility, or cloud capability.
 | --- | --- | --- |
 | `node.execution_node_id` | Existing opaque identity of this Host execution node | Read-only `StableIdentityStore` entry `execution_node/local` |
 | `architecture_id` | CPU architecture actually reported by the Host | Strict alias normalization of the native architecture fact into the existing Stable Identity architecture taxonomy |
-| `gpu_vendor_id` | Vendor of one unambiguous physical display adapter | Windows display-device PCI vendor fact, mapped into the existing GPU vendor taxonomy |
-| `vram_mib` | Conservative floor of positively reported dedicated video-memory capacity | Windows DXGI dedicated-video-memory fact |
+| `gpu_vendor_id` | Vendor of one unambiguous physical GPU adapter | Windows DXGI adapter vendor fact, mapped into the existing GPU vendor taxonomy |
+| `vram_mib` | Conservative floor of positively reported dedicated video-memory capacity | Dedicated-memory fact from the same Windows DXGI adapter description as the vendor |
 | `ram_mib` | Installed physical Host RAM capacity, not free/available/process memory | Windows `GlobalMemoryStatusEx.ullTotalPhys` |
-| `runtime_family_ids` | Runtime families positively available on this node | Existing Model Center runtime definition and resident lifecycle facts |
+| `runtime_family_ids` | Runtime families positively available on this node | Known local managed runtime definition plus its exact Host-owned live lifecycle process |
 
 `ram_mib` and known `vram_mib` use `bytes // (1024 * 1024)` and never round
 up. Runtime requirements remain owned by PR #34. A runtime's configured
@@ -43,25 +43,30 @@ The raw fact seam distinguishes these cases before normalization:
 - one supported GPU: vendor taxonomy ID and conservative dedicated-memory MiB.
 
 No GPU model-name table, internet lookup, environment variable, runtime family,
-runtime requirement, executable name, WMI query, `nvidia-smi`, or new package is
-used. The Windows probe enumerates physical PCI display adapters with
-`EnumDisplayDevicesW`, excludes non-PCI virtual display devices, and obtains
-dedicated memory through DXGI. Adapter identifiers used to distinguish display
-heads remain inside the probe and are never returned or serialized.
+runtime requirement, executable name, WMI query, `EnumDisplayDevicesW`,
+`nvidia-smi`, or new package is used. One DXGI enumeration obtains vendor and
+dedicated memory from the same `DXGI_ADAPTER_DESC1`. Adapters carrying the DXGI
+software flag are excluded. Every remaining hardware adapter is counted,
+including adapters without a display head; two or more therefore fail closed as
+an ambiguous node-level capability.
 
 ## Runtime-family authority
 
-A default `RuntimeDefinition` does not establish capability. A family is present
-only when one of these existing positive facts holds:
+A default `RuntimeDefinition`, executable file, instance state, or reachability
+boolean does not establish capability. A family is present only for a known,
+local, managed runtime whose exact runtime ID is in the production lifecycle's
+Host-owned process registry and whose owned process is currently live
+(`poll() is None`).
 
-- a managed runtime has an absolute configured executable that currently exists;
-- an already-resident lifecycle instance is running/process-alive or has a
-  positive local reachability fact.
-
-An external URL merely being configured is insufficient. Inventory collection
-does not call Model Center health, validation, discovery, start, stop, or network
-probe methods. Duplicate runtime definitions collapse into the existing
-taxonomy set, and unknown runtime types produce no family.
+Generic HTTP reachability does not prove external ComfyUI service identity, so
+external ComfyUI remains unavailable and fail closed. A future runtime binary or
+service identity authority may support validated stopped managed runtimes or a
+validated external ComfyUI service; this foundation does not invent that
+authority. Inventory collection does not call Model Center health, validation,
+discovery, start, stop, binary/subprocess probe, or network methods. It only
+checks the liveness of an already Host-owned process. Duplicate runtime
+definitions collapse into the existing taxonomy set, and unknown runtime types
+produce no family.
 
 ## Failure and side-effect boundary
 

@@ -3,14 +3,12 @@ from __future__ import annotations
 
 import ctypes
 import platform
-import re
 import sys
 from dataclasses import dataclass
 from typing import Any
 from uuid import UUID
 
-from .model_center.domain import RuntimeManagement, RuntimeState, RuntimeType
-from .model_center.runtime_profiles import managed_executable_file
+from .model_center.domain import RuntimeManagement, RuntimeType
 from .provider_runtime_v2_contracts import ExecutionNodeIdentity, HardwareSnapshot
 from .stable_identity import (
     ARCHITECTURE_ARM64,
@@ -37,7 +35,7 @@ class HostHardwareInventoryError(RuntimeError):
 
 @dataclass(frozen=True)
 class HostGpuFact:
-    """One positively enumerated physical display adapter."""
+    """Vendor and dedicated memory from one enumerated DXGI hardware adapter."""
 
     pci_vendor_id: int
     dedicated_vram_bytes: int | None
@@ -126,22 +124,20 @@ def _existing_node_id(execution_node_identity: Any) -> UUID:
         raise HostHardwareInventoryError("EXECUTION_NODE_ID_INVALID") from exc
 
 
-def _resident_runtime_available(runtime: Any, lifecycle: Any) -> bool:
-    instances = getattr(lifecycle, "instances", {})
-    instance = instances.get(runtime.id) if isinstance(instances, dict) else None
-    if instance is not None:
-        state = getattr(instance, "state", None)
-        if getattr(instance, "http_reachable", False) and state in {RuntimeState.RUNNING, RuntimeState.EXTERNAL}:
-            return True
-        if getattr(instance, "process_alive", False) and state in {RuntimeState.STARTING, RuntimeState.RUNNING}:
-            return True
+def _host_owned_managed_runtime_available(runtime: Any, lifecycle: Any) -> bool:
     if getattr(runtime, "management", None) is not RuntimeManagement.MANAGED:
         return False
-    try:
-        managed_executable_file(runtime.executable)
-    except (OSError, ValueError, TypeError):
+    owned = getattr(lifecycle, "_owned", None)
+    if not isinstance(owned, dict):
         return False
-    return True
+    process = owned.get(getattr(runtime, "id", None))
+    poll = getattr(process, "poll", None)
+    if not callable(poll):
+        return False
+    try:
+        return poll() is None
+    except Exception:
+        return False
 
 
 def available_runtime_family_ids(model_center: Any) -> frozenset[UUID]:
@@ -160,7 +156,7 @@ def available_runtime_family_ids(model_center: Any) -> frozenset[UUID]:
             local = False
         if not local:
             continue
-        if _resident_runtime_available(runtime, lifecycle):
+        if _host_owned_managed_runtime_available(runtime, lifecycle):
             families.add(family)
     return frozenset(families)
 
@@ -200,7 +196,7 @@ def serialize_host_hardware_snapshot(snapshot: HardwareSnapshot) -> dict[str, An
 class WindowsHostHardwareProbe:
     """Minimal native Windows probe; no WMI, subprocess, network or persistence."""
 
-    _PCI_VENDOR_PATTERN = re.compile(r"(?:^|\\)VEN_([0-9A-Fa-f]{4})(?:&|$)")
+    _DXGI_ADAPTER_FLAG_SOFTWARE = 2
 
     def collect(self) -> HostHardwareFacts:
         if sys.platform != "win32":
@@ -240,54 +236,23 @@ class WindowsHostHardwareProbe:
 
     def _gpu_facts_fail_closed(self) -> tuple[HostGpuFact, ...] | None:
         try:
-            adapters = self._physical_display_adapters()
-            if len(adapters) != 1:
-                return tuple(HostGpuFact(vendor, None) for vendor in adapters)
-            vendor = adapters[0]
-            values = self._dxgi_dedicated_memory(vendor)
-            dedicated = min(values) if values else None
-            return (HostGpuFact(vendor, dedicated),)
-        except (HostHardwareInventoryError, OSError, ValueError):
+            return self._dxgi_gpu_facts()
+        except Exception:
             return None
 
-    def _physical_display_adapters(self) -> tuple[int, ...]:
-        from ctypes import wintypes
+    @classmethod
+    def _fact_from_dxgi_description(
+        cls,
+        vendor_id: int,
+        dedicated_vram_bytes: int,
+        flags: int,
+    ) -> HostGpuFact | None:
+        if flags & cls._DXGI_ADAPTER_FLAG_SOFTWARE:
+            return None
+        return HostGpuFact(vendor_id, dedicated_vram_bytes)
 
-        class DisplayDevice(ctypes.Structure):
-            _fields_ = [
-                ("cb", wintypes.DWORD),
-                ("DeviceName", wintypes.WCHAR * 32),
-                ("DeviceString", wintypes.WCHAR * 128),
-                ("StateFlags", wintypes.DWORD),
-                ("DeviceID", wintypes.WCHAR * 128),
-                ("DeviceKey", wintypes.WCHAR * 128),
-            ]
-
-        user32 = ctypes.WinDLL("user32", use_last_error=True)
-        enumerate_device = user32.EnumDisplayDevicesW
-        enumerate_device.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, ctypes.POINTER(DisplayDevice), wintypes.DWORD]
-        enumerate_device.restype = wintypes.BOOL
-        adapters: dict[tuple[str, str], int] = {}
-        for index in range(256):
-            device = DisplayDevice()
-            device.cb = ctypes.sizeof(device)
-            ctypes.set_last_error(0)
-            if not enumerate_device(None, index, ctypes.byref(device), 0):
-                error = ctypes.get_last_error()
-                if index == 0 and error:
-                    raise HostHardwareInventoryError("GPU_FACT_UNAVAILABLE")
-                break
-            match = self._PCI_VENDOR_PATTERN.search(device.DeviceID)
-            if match is None:
-                continue
-            # One adapter may expose several display heads. The registry adapter
-            # key prefix distinguishes physical adapters without leaving this probe.
-            adapter_key = device.DeviceKey.rsplit("\\", 1)[0].casefold()
-            adapters[(adapter_key, device.DeviceID.casefold())] = int(match.group(1), 16)
-        return tuple(value for _, value in sorted(adapters.items()))
-
-    @staticmethod
-    def _dxgi_dedicated_memory(vendor_id: int) -> tuple[int, ...]:
+    @classmethod
+    def _dxgi_gpu_facts(cls) -> tuple[HostGpuFact, ...]:
         from ctypes import wintypes
 
         class Guid(ctypes.Structure):
@@ -329,7 +294,7 @@ class WindowsHostHardwareProbe:
             ctypes.c_long, ctypes.c_void_p, wintypes.UINT, ctypes.POINTER(ctypes.c_void_p)
         )(factory_vtable[12])
         release_factory = function_type(wintypes.ULONG, ctypes.c_void_p)(factory_vtable[2])
-        values: list[int] = []
+        facts: list[HostGpuFact] = []
         try:
             for index in range(128):
                 adapter = ctypes.c_void_p()
@@ -347,13 +312,18 @@ class WindowsHostHardwareProbe:
                     description = AdapterDescription()
                     if get_description(adapter, ctypes.byref(description)) != 0:
                         raise HostHardwareInventoryError("GPU_FACT_UNAVAILABLE")
-                    if not (description.Flags & 2) and description.VendorId == vendor_id:
-                        values.append(int(description.DedicatedVideoMemory))
+                    fact = cls._fact_from_dxgi_description(
+                        int(description.VendorId),
+                        int(description.DedicatedVideoMemory),
+                        int(description.Flags),
+                    )
+                    if fact is not None:
+                        facts.append(fact)
                 finally:
                     release_adapter(adapter)
         finally:
             release_factory(factory)
-        return tuple(values)
+        return tuple(facts)
 
 
 def collect_host_hardware_snapshot(

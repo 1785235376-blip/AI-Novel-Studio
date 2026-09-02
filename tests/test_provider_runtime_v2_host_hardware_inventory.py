@@ -58,19 +58,28 @@ def restore_global_settings():
     yield
 
 
+class FakeProcess:
+    def __init__(self, return_code=None):
+        self.return_code = return_code
+
+    def poll(self):
+        return self.return_code
+
+
 class FakeLifecycle:
-    def __init__(self, instances=None):
+    def __init__(self, instances=None, owned=None):
         self.instances = instances or {}
+        self._owned = owned or {}
 
     @staticmethod
     def is_local(_runtime):
         return True
 
 
-def center(*runtimes, instances=None, config_path=None, routes=None):
+def center(*runtimes, instances=None, owned=None, config_path=None, routes=None):
     return SimpleNamespace(
         runtimes={runtime.id: runtime for runtime in runtimes},
-        lifecycle=FakeLifecycle(instances),
+        lifecycle=FakeLifecycle(instances, owned),
         config_path=config_path,
         routing_policy=SimpleNamespace(routes=routes or {}),
     )
@@ -185,6 +194,41 @@ def test_multiple_gpus_never_select_first_or_largest(tmp_path: Path):
         assert snapshot.vram_mib == 0
 
 
+def test_same_vendor_multiple_gpus_fail_closed(tmp_path: Path):
+    identity, _, _ = node_store(tmp_path)
+    gpus = (HostGpuFact(0x10DE, 8 * 1024 * MIB), HostGpuFact(0x10DE, 24 * 1024 * MIB))
+    snapshot = build_host_hardware_snapshot(facts(gpus=gpus), identity, center())
+    assert snapshot.gpu_vendor_id is None
+    assert snapshot.vram_mib == 0
+
+
+def test_headless_secondary_dxgi_gpu_is_still_ambiguous(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    identity, _, _ = node_store(tmp_path)
+    enumerated = (HostGpuFact(0x10DE, 8 * 1024 * MIB), HostGpuFact(0x8086, 0))
+    probe = WindowsHostHardwareProbe()
+    monkeypatch.setattr(probe, "_dxgi_gpu_facts", lambda: enumerated)
+    snapshot = build_host_hardware_snapshot(facts(gpus=probe._gpu_facts_fail_closed()), identity, center())
+    assert snapshot.gpu_vendor_id is None
+    assert snapshot.vram_mib == 0
+
+
+def test_dxgi_software_adapter_is_excluded_and_hardware_fact_is_same_adapter():
+    software = WindowsHostHardwareProbe._fact_from_dxgi_description(0x1414, 2 * 1024 * MIB, 2)
+    hardware = WindowsHostHardwareProbe._fact_from_dxgi_description(0x10DE, 16 * 1024 * MIB, 0)
+    assert software is None
+    assert hardware == HostGpuFact(0x10DE, 16 * 1024 * MIB)
+
+
+def test_dxgi_failure_maps_to_unknown_gpu(monkeypatch: pytest.MonkeyPatch):
+    probe = WindowsHostHardwareProbe()
+    monkeypatch.setattr(
+        probe,
+        "_dxgi_gpu_facts",
+        lambda: (_ for _ in ()).throw(HostHardwareInventoryError("GPU_FACT_UNAVAILABLE")),
+    )
+    assert probe._gpu_facts_fail_closed() is None
+
+
 def test_multiple_gpus_do_not_hide_malformed_facts(tmp_path: Path):
     identity, _, _ = node_store(tmp_path)
     with pytest.raises(HostHardwareInventoryError, match="INVALID_HARDWARE_FACT"):
@@ -207,11 +251,31 @@ def test_default_and_configured_but_unavailable_runtimes_are_excluded(tmp_path: 
     assert snapshot.runtime_family_ids == frozenset()
 
 
-def test_positive_managed_and_resident_external_runtime_families(tmp_path: Path):
-    identity, _, _ = node_store(tmp_path)
+def test_fake_managed_executable_without_owned_process_is_excluded(tmp_path: Path):
     executable = tmp_path / "llama-server.exe"
     executable.write_bytes(b"runtime")
     llama = RuntimeDefinition("llama", RuntimeType.LLAMA_CPP, executable=str(executable))
+    assert available_runtime_family_ids(center(llama)) == frozenset()
+
+
+def test_instance_process_alive_without_owned_process_is_excluded():
+    llama = RuntimeDefinition("llama", RuntimeType.LLAMA_CPP)
+    spoofed = RuntimeInstance("llama", state=RuntimeState.RUNNING, process_alive=True)
+    assert available_runtime_family_ids(center(llama, instances={"llama": spoofed})) == frozenset()
+
+
+def test_host_owned_live_managed_process_is_included():
+    llama = RuntimeDefinition("llama", RuntimeType.LLAMA_CPP)
+    values = available_runtime_family_ids(center(llama, owned={"llama": FakeProcess()}))
+    assert values == frozenset({RUNTIME_FAMILY_LLAMA_CPP.taxonomy_id})
+
+
+def test_dead_owned_managed_process_is_excluded():
+    llama = RuntimeDefinition("llama", RuntimeType.LLAMA_CPP)
+    assert available_runtime_family_ids(center(llama, owned={"llama": FakeProcess(1)})) == frozenset()
+
+
+def test_generic_reachable_external_comfyui_is_excluded():
     comfy = RuntimeDefinition(
         "comfy", RuntimeType.COMFYUI, base_url="http://127.0.0.1:8188",
         port=8188, management=RuntimeManagement.EXTERNAL,
@@ -220,11 +284,8 @@ def test_positive_managed_and_resident_external_runtime_families(tmp_path: Path)
         "comfy", state=RuntimeState.EXTERNAL, management=RuntimeManagement.EXTERNAL,
         http_reachable=True,
     )
-    values = available_runtime_family_ids(center(comfy, llama, instances={"comfy": instance}))
-    assert values == frozenset({
-        RUNTIME_FAMILY_LLAMA_CPP.taxonomy_id,
-        RUNTIME_FAMILY_COMFYUI.taxonomy_id,
-    })
+    values = available_runtime_family_ids(center(comfy, instances={"comfy": instance}))
+    assert values == frozenset()
 
 
 def test_unknown_and_duplicate_runtime_entries_do_not_invent_families(tmp_path: Path):
@@ -232,7 +293,10 @@ def test_unknown_and_duplicate_runtime_entries_do_not_invent_families(tmp_path: 
     executable.write_bytes(b"runtime")
     llama = RuntimeDefinition("llama", RuntimeType.LLAMA_CPP, executable=str(executable))
     unknown = SimpleNamespace(id="unknown", runtime_type="UNKNOWN", management="MANAGED", executable=str(executable))
-    model_center = SimpleNamespace(runtimes=(unknown, llama, llama), lifecycle=FakeLifecycle())
+    model_center = SimpleNamespace(
+        runtimes=(unknown, llama, llama),
+        lifecycle=FakeLifecycle(owned={"llama": FakeProcess()}),
+    )
     assert available_runtime_family_ids(model_center) == frozenset({RUNTIME_FAMILY_LLAMA_CPP.taxonomy_id})
 
 
@@ -275,8 +339,9 @@ def test_deterministic_serialization_ignores_runtime_enumeration_order(tmp_path:
         port=8188, management=RuntimeManagement.EXTERNAL,
     )
     instance = RuntimeInstance("comfy", state=RuntimeState.EXTERNAL, http_reachable=True)
-    first = SimpleNamespace(runtimes=(llama, comfy), lifecycle=FakeLifecycle({"comfy": instance}))
-    second = SimpleNamespace(runtimes=(comfy, llama), lifecycle=FakeLifecycle({"comfy": instance}))
+    owned = {"llama": FakeProcess()}
+    first = SimpleNamespace(runtimes=(llama, comfy), lifecycle=FakeLifecycle({"comfy": instance}, owned))
+    second = SimpleNamespace(runtimes=(comfy, llama), lifecycle=FakeLifecycle({"comfy": instance}, owned))
     left = serialize_host_hardware_snapshot(build_host_hardware_snapshot(facts(), identity, first))
     right = serialize_host_hardware_snapshot(build_host_hardware_snapshot(facts(), identity, second))
     assert left == right
@@ -321,13 +386,11 @@ def routing_scenario(snapshot: HardwareSnapshot):
 
 def test_existing_routing_policy_consumes_inventory_without_service_layer(tmp_path: Path):
     identity, _, _ = node_store(tmp_path)
-    executable = tmp_path / "llama-server.exe"
-    executable.write_bytes(b"runtime")
-    llama = RuntimeDefinition("llama", RuntimeType.LLAMA_CPP, executable=str(executable))
+    llama = RuntimeDefinition("llama", RuntimeType.LLAMA_CPP)
     snapshot = build_host_hardware_snapshot(
         facts(ram=16 * 1024 * MIB, gpus=(HostGpuFact(0x10DE, 8 * 1024 * MIB),)),
         identity,
-        center(llama),
+        center(llama, owned={"llama": FakeProcess()}),
     )
     request, candidate = routing_scenario(snapshot)
     assert evaluate_routing(request, (candidate,), hardware=(snapshot,)).decision is Decision.ALLOW
@@ -362,3 +425,5 @@ def test_inventory_module_has_no_execution_network_or_guessing_dependencies():
         "from . import dependencies",
     ):
         assert forbidden not in source
+    assert "enumdisplaydevices" not in source
+    assert "managed_executable_file" not in source
