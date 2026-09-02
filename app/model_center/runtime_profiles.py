@@ -3,10 +3,11 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from typing import Any, Literal
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from .domain import RuntimeDefinition, RuntimeManagement, RuntimeType
+from .domain import RuntimeDefinition, RuntimeManagement, RuntimeType, validate_architecture_identity
 
 
 LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1"}
@@ -18,7 +19,7 @@ PROTECTED_LLAMA_FLAGS = frozenset({
 })
 EDITABLE_COMMON_FIELDS = (
     "runtime_type", "management", "executable", "working_directory",
-    "base_url", "bind_address", "port", "health_endpoint",
+    "base_url", "bind_address", "port", "health_endpoint", "architecture_id",
 )
 EDITABLE_LLAMA_FIELDS = EDITABLE_COMMON_FIELDS + (
     "model_path", "context_size", "gpu_layers", "threads", "batch_size", "extra_arguments",
@@ -71,6 +72,12 @@ class RuntimeProfileBase(BaseModel):
     bind_address: str = "127.0.0.1"
     port: int = Field(ge=1, le=65535)
     health_endpoint: str = "/health"
+    architecture_id: UUID | None = None
+
+    @field_validator("architecture_id")
+    @classmethod
+    def known_architecture(cls, value: UUID | None) -> UUID | None:
+        return validate_architecture_identity(value) if value is not None else None
 
     @field_validator("executable")
     @classmethod
@@ -188,6 +195,7 @@ def definition_from_profile(runtime: RuntimeDefinition, profile: RuntimeProfile)
         port=profile.port,
         health_endpoint=profile.health_endpoint,
         management=profile.management,
+        architecture_id=profile.architecture_id,
     )
     if isinstance(profile, LlamaCppRuntimeConfig):
         values = {**runtime.__dict__, **common}
@@ -238,6 +246,7 @@ def profile_from_definition(runtime: RuntimeDefinition) -> RuntimeProfile:
         "port": runtime.port,
         "health_endpoint": runtime.health_endpoint or "/health",
         "management": runtime.management,
+        "architecture_id": runtime.architecture_id,
     }
     if runtime.runtime_type == RuntimeType.LLAMA_CPP:
         values.update(

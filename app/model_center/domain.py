@@ -6,7 +6,19 @@ from enum import StrEnum
 from typing import Any
 from uuid import UUID
 
-from ..stable_identity import validate_uuid
+from ..stable_identity import ARCHITECTURES, validate_uuid
+
+
+_ARCHITECTURE_IDS = frozenset(item.taxonomy_id for item in ARCHITECTURES.values())
+
+
+def validate_architecture_identity(value: UUID) -> UUID:
+    if not isinstance(value, UUID):
+        raise ValueError("architecture_id_MALFORMED")
+    parsed = validate_uuid(value, field="architecture_id")
+    if parsed not in _ARCHITECTURE_IDS:
+        raise ValueError("architecture_id_UNKNOWN")
+    return parsed
 
 
 class Capability(StrEnum):
@@ -83,6 +95,7 @@ class RuntimeDefinition:
     provider_adapter: str = ""; management: RuntimeManagement = RuntimeManagement.MANAGED
     model_path: str = ""; context_size: int | None = None; gpu_layers: int | None = None
     threads: int | None = None; batch_size: int | None = None; extra_arguments: tuple[str, ...] = ()
+    architecture_id: UUID | None = None
     identity_id: UUID | None = None
 
     @property
@@ -90,6 +103,8 @@ class RuntimeDefinition:
         return self.identity_id
 
     def __post_init__(self) -> None:
+        if self.architecture_id is not None:
+            object.__setattr__(self, "architecture_id", validate_architecture_identity(self.architecture_id))
         if self.identity_id is not None:
             if not isinstance(self.identity_id, UUID):
                 raise ValueError("runtime_id_MALFORMED")
