@@ -16,8 +16,9 @@ from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from uuid import UUID
 
-from .domain import Capability, HardwareProfile, ModelComponentDefinition, ModelDefinition, ModelStatus, ModelValidationRecord, PipelineDefinition, RoutingDecision, RoutingPolicy, RuntimeCapabilitySnapshot, RuntimeDefinition, RuntimeInstance, RuntimeManagement, RuntimeState, RuntimeType, serialize
+from .domain import Capability, HardwareProfile, ModelComponentDefinition, ModelDefinition, ModelStatus, ModelValidationRecord, PipelineDefinition, RoutingDecision, RoutingPolicy, RuntimeCapabilitySnapshot, RuntimeDefinition, RuntimeInstance, RuntimeManagement, RuntimeState, RuntimeType, serialize, validate_architecture_identity
 from .runtime_profiles import (
     RuntimeLogSanitizer,
     argv_contains_wildcard_bind,
@@ -52,6 +53,10 @@ class _RejectRedirects(urllib.request.HTTPRedirectHandler):
 
 SAFE_RUNTIME_ENV_ALLOWLIST = frozenset({"PATH", "PATHEXT", "TEMP", "TMP", "SYSTEMROOT", "WINDIR"})
 SECRET_ENV_MARKERS = ("AUTH", "COOKIE", "CREDENTIAL", "DATABASE_URL", "KEY", "PASSWORD", "PRIVATE", "SECRET", "SESSION", "TOKEN")
+
+
+class RuntimeArchitectureConfigurationError(ValueError):
+    pass
 
 
 def _safe_runtime_environment(explicit: dict[str, str]) -> dict[str, str]:
@@ -300,6 +305,7 @@ class ModelCenterService:
         "working_directory",
         "health_endpoint",
         "management", "model_path", "context_size", "gpu_layers", "threads", "batch_size", "extra_arguments",
+        "architecture_id",
     }
 
     def __init__(self, models: list[ModelDefinition], components: list[ModelComponentDefinition], profiles: list[HardwareProfile], runtimes: list[RuntimeDefinition], pipelines: list[PipelineDefinition], validations: list[ModelValidationRecord], routing_policy: RoutingPolicy, config_path: Path | None = None, identity_store: StableIdentityStore | None = None):
@@ -340,7 +346,10 @@ class ModelCenterService:
                             raise ValueError("unsafe runtime configuration")
                         candidates[runtime_id] = configured
                 self.runtimes = candidates
-            except (OSError, ValueError, TypeError, json.JSONDecodeError): pass
+            except RuntimeArchitectureConfigurationError:
+                raise
+            except (OSError, ValueError, TypeError, json.JSONDecodeError):
+                pass
 
     def _validated_persisted_values(self, values: Any) -> dict[str, Any]:
         if not isinstance(values, dict):
@@ -364,6 +373,11 @@ class ModelCenterService:
             filtered["extra_arguments"] = tuple(arguments)
         if "management" in filtered:
             filtered["management"] = RuntimeManagement(filtered["management"])
+        if "architecture_id" in filtered and filtered["architecture_id"] is not None:
+            try:
+                filtered["architecture_id"] = validate_architecture_identity(UUID(filtered["architecture_id"]))
+            except (TypeError, ValueError) as exc:
+                raise RuntimeArchitectureConfigurationError("RUNTIME_ARCHITECTURE_INVALID") from exc
         return filtered
     def model(self, model_id: str) -> dict[str, Any]:
         model=self.models[model_id]; value=serialize(model)
@@ -443,6 +457,11 @@ class ModelCenterService:
                 raise ValueError("RUNTIME_ARGV_NOT_ALLOWED")
             if "environment" in values:
                 _safe_runtime_environment(values["environment"])
+            if values.get("architecture_id") is not None:
+                try:
+                    values = {**values, "architecture_id": validate_architecture_identity(UUID(str(values["architecture_id"])))}
+                except (TypeError, ValueError) as exc:
+                    raise ValueError("RUNTIME_ARCHITECTURE_INVALID") from exc
             configured = replace(self.runtimes[runtime_id], **values)
             configured = resynthesize_runtime_argv(configured)
             if not self.lifecycle.is_local(configured):
@@ -530,7 +549,7 @@ class ModelCenterService:
 
     def _persist_runtimes(self, runtimes: dict[str, RuntimeDefinition]) -> None:
         assert self.config_path is not None
-        payload={"schema_version":self.RUNTIME_CONFIG_SCHEMA_VERSION,"runtimes":{key:{name:value for name,value in serialize(item).items() if name in self.PERSISTED_RUNTIME_FIELDS} for key,item in runtimes.items()}}
+        payload={"schema_version":self.RUNTIME_CONFIG_SCHEMA_VERSION,"runtimes":{key:{name:(str(value) if isinstance(value, UUID) else value) for name,value in serialize(item).items() if name in self.PERSISTED_RUNTIME_FIELDS} for key,item in runtimes.items()}}
         temporary_path: Path | None = None
         try:
             self.config_path.parent.mkdir(parents=True, exist_ok=True)

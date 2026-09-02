@@ -28,6 +28,7 @@ from .provider_runtime_v2_contracts import (
     RuntimeRequirements,
 )
 from .stable_identity import (
+    ARCHITECTURES,
     canonical_model_identity_key,
     RUNTIME_FAMILY_COMFYUI,
     RUNTIME_FAMILY_LLAMA_CPP,
@@ -354,9 +355,14 @@ def build_provider_runtime_snapshot(
         if not all(_capability_value(cap) in set(runtime.capabilities) for cap in model.capabilities):
             items.append(SnapshotItem(source_key, rejection=SnapshotRejection(SnapshotRejectionCode.UNSUPPORTED_CAPABILITY, source_key)))
             continue
-        architecture = getattr(runtime, "architecture_id", None)
-        if architecture is None:
+        architecture_value = getattr(runtime, "architecture_id", None)
+        if architecture_value is None:
             items.append(SnapshotItem(source_key, rejection=SnapshotRejection(SnapshotRejectionCode.MISSING_REQUIRED_HARDWARE_FACT, source_key)))
+            continue
+        architecture = _identity(architecture_value, "architecture_id")
+        known_architectures = frozenset(item.taxonomy_id for item in ARCHITECTURES.values())
+        if architecture is None or architecture not in known_architectures:
+            items.append(SnapshotItem(source_key, rejection=SnapshotRejection(SnapshotRejectionCode.INVALID_IDENTITY, source_key)))
             continue
         capability = _capability(model, runtime, registry_model, architecture)
         if isinstance(capability, SnapshotRejectionCode):
