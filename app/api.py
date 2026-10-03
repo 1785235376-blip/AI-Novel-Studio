@@ -105,7 +105,7 @@ def normalize_world_rule_payload(payload: dict) -> dict:
     if not payload.get("statement"):
         raise ValueError("world rule statement is required")
     terms = payload.get("forbidden_terms", payload.get("forbidden", []))
-    if isinstance(terms, str): terms = [terms]
+    if isinstance(terms, str): terms = re.split(r"[,，\n]", terms)
     if not isinstance(terms, list) or len(terms) > 100:
         raise ValueError("forbidden_terms must contain at most 100 items")
     normalized = []

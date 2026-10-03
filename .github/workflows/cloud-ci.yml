@@ -1,0 +1,160 @@
+name: Cloud CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloud-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Hosted Linux runners only. No production credentials, model services or downloads.
+env:
+  MOCK_PROVIDER: 'true'
+  MOCK_STREAM_DELAY_MS: '0'
+  ENABLE_CLOUD: 'false'
+  CREDENTIAL_VAULT_BACKEND: memory
+  CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: 'true'
+  PYTHONDONTWRITEBYTECODE: '1'
+  HF_HUB_OFFLINE: '1'
+  TRANSFORMERS_OFFLINE: '1'
+
+jobs:
+  backend:
+    name: Backend / ${{ matrix.backend }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [file, postgres]
+    services:
+      postgres:
+        image: ${{ matrix.backend == 'postgres' && 'postgres:16-alpine' || '' }}
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci-ephemeral-only
+          POSTGRES_DB: novel_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd 'pg_isready -U ci -d novel_ci'
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Prepare isolated checkout and receipt
+        run: bash .github/ci/prepare.sh backend-${{ matrix.backend }}
+      - name: Install backend dependencies
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev]'
+          python -m pip check
+          python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+      - name: Initialize disposable PostgreSQL
+        if: matrix.backend == 'postgres'
+        working-directory: ${{ env.CI_PROJECT }}
+        env:
+          DATABASE_URL: postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/novel_ci
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          import psycopg
+          with psycopg.connect(os.environ['DATABASE_URL'], autocommit=True) as connection:
+              assert connection.execute('SELECT 1').fetchone() == (1,)
+              for migration in sorted(Path('database/migrations').glob('*.sql')):
+                  connection.execute(migration.read_text(encoding='utf-8'))
+                  print('Applied', migration.name)
+          PY
+      - name: Full backend suite
+        working-directory: ${{ env.CI_PROJECT }}
+        env:
+          STORAGE_BACKEND: ${{ matrix.backend }}
+          DATABASE_URL: ${{ matrix.backend == 'postgres' && 'postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/novel_ci' || '' }}
+          TEST_POSTGRES_DATABASE_URL: ${{ matrix.backend == 'postgres' && 'postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/novel_ci' || '' }}
+        run: |
+          set -o pipefail
+          PYTHONPATH="$CI_PROJECT/.github/ci:$CI_PROJECT" python -m pytest -p postgres_gate -p no:cacheprovider --basetemp="$CI_SANDBOX/pytest" -q -ra --tb=short \
+            --junitxml="$CI_RECEIPTS/backend.xml" 2>&1 | tee "$CI_RECEIPTS/backend.log"
+      - name: Summarize exact revision and test counts
+        if: always() && env.CI_RECEIPTS != ''
+        run: python .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Upload backend receipts
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: backend-${{ matrix.backend }}-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}
+          if-no-files-found: error
+          retention-days: 14
+
+  frontend:
+    name: Frontend / unit-type-build-tokens
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: '22.14.0'
+      - name: Prepare isolated checkout and receipt
+        run: bash .github/ci/prepare.sh frontend
+      - name: Install locked frontend dependencies
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          npm install --global pnpm@10.6.5
+          pnpm install --frozen-lockfile
+          { node --version; pnpm --version; sha256sum pnpm-lock.yaml; } > "$CI_RECEIPTS/frontend-tools.txt"
+      - name: Frontend unit suite
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          pnpm test --reporter=default --reporter=junit --outputFile="$CI_RECEIPTS/frontend.xml" 2>&1 | tee "$CI_RECEIPTS/frontend.log"
+      - name: Type check and production build
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee "$CI_RECEIPTS/frontend-build.log"
+      - name: Design-token lint
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          pnpm lint 2>&1 | tee "$CI_RECEIPTS/design-tokens.log"
+      - name: Install Chromium for geometry checks
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Browser geometry (no golden updates)
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          PLAYWRIGHT_JUNIT_OUTPUT_FILE: ${{ env.CI_RECEIPTS }}/geometry.xml
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.visual.config.ts \
+            --grep 'shell geometry|compact desktop' --update-snapshots=none \
+            --reporter=list,junit 2>&1 | tee "$CI_RECEIPTS/geometry.log"
+      - name: Summarize exact revision and test counts
+        if: always() && env.CI_RECEIPTS != ''
+        run: python3 .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Upload frontend receipts
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}
+          if-no-files-found: error
+          retention-days: 14
