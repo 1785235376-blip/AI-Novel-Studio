@@ -93,7 +93,15 @@ describe('ModelCenter',()=>{
   const buttons=Array.from(host.querySelectorAll('button'));
   await act(async()=>{buttons.find(button=>button.textContent?.includes('Edit Configuration'))!.click();await Promise.resolve()});
   expect(host.querySelector('[role=dialog]')).toBeTruthy();expect((host.querySelector('input[value="D:/models/qwen.gguf"]') as HTMLInputElement).value).toContain('qwen.gguf');
+  // A backdrop click must not discard the unsaved configuration.
+  await act(async()=>{host.querySelector('[role=dialog]')!.dispatchEvent(new MouseEvent('click',{bubbles:true}));await Promise.resolve()});
+  expect(host.querySelector('[role=dialog]')).toBeTruthy();
+  await act(async()=>{Array.from(host.querySelectorAll<HTMLButtonElement>('[role=dialog] button')).find(button=>button.textContent==='Cancel')!.click();await Promise.resolve()});
+  expect(host.querySelector('[role=dialog]')).toBeNull();
+  await act(async()=>{buttons.find(button=>button.textContent?.includes('Edit Configuration'))!.click();await Promise.resolve()});
+  expect(host.querySelector('[role=dialog]')).toBeTruthy();
   await act(async()=>{host.querySelector('[role=dialog] button')!.dispatchEvent(new MouseEvent('click',{bubbles:true}));await Promise.resolve()});
+  expect(host.querySelector('[role=dialog]')).toBeNull();
   await act(async()=>{Array.from(host.querySelectorAll('button')).find(button=>button.textContent?.includes('View Diagnostics'))!.click();await Promise.resolve();await Promise.resolve()});
   expect(host.textContent).toContain('Advanced Diagnostics');expect(host.textContent).toContain('b7000');expect(host.textContent).toContain('ready');
  });

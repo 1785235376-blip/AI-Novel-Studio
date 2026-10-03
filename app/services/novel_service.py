@@ -1,5 +1,8 @@
 from __future__ import annotations
 import base64
+import copy
+import csv
+import io
 import json
 import re
 import uuid
@@ -157,7 +160,7 @@ class NovelService:
             screenplays = [dict(item) for item in self.novels.list_screenplays(nid)]
         except (FileNotFoundError, AttributeError):
             screenplays = []
-        source = {"novel": meta, "chapters": chapters, "datasets": datasets, "screenplays": screenplays}
+        source = copy.deepcopy({"novel": meta, "chapters": chapters, "datasets": datasets, "screenplays": screenplays})
         refs = self._asset_references(source)
         resources = []
         missing = []
@@ -189,8 +192,9 @@ class NovelService:
             "format": str(format or "").lower().strip() or None,
             "source": source,
             "source_versions": {
-                "novel_updated_at": meta.get("updated_at"),
-                "chapters": [{"id": c.get("id"), "version": c.get("version"), "updated_at": c.get("updated_at")} for c in chapters],
+                "novel_updated_at": source["novel"].get("updated_at"),
+                "chapters": [{"id": c.get("id"), "version": c.get("version"), "updated_at": c.get("updated_at")} for c in source["chapters"]],
+                "screenplays": [{"id": row.get("id"), "version": row.get("version"), "revision": row.get("revision"), "shot_revision": row.get("shot_revision"), "storyboard_revision": row.get("storyboard_revision"), "transition_revision": row.get("transition_revision"), "updated_at": row.get("updated_at")} for row in source["screenplays"]],
             },
             "resource_manifest": {
                 "referenced": refs,
@@ -259,7 +263,7 @@ class NovelService:
             }
             common_meta = {"schema_version": 1, "format_version": "1.0", "resource_manifest": resource_manifest}
             if format in {"screenplay-standard", "screenplay-fountain"}:
-                return {"format": "screenplay-standard", "filename": f"{nid}-screenplay.fountain", "media_type": "text/x-fountain", "content": screenplay_to_fountain(screenplay, **industry_kwargs), "industry": {**common_meta, "format_version": "Fountain 1.1"}}
+                return {"format": "screenplay-fountain", "filename": f"{nid}-screenplay.fountain", "media_type": "text/x-fountain", "content": screenplay_to_fountain(screenplay, **industry_kwargs), "industry": {**common_meta, "format_version": "Fountain 1.1"}}
             if format == "screenplay-docx":
                 binary = screenplay_to_docx(screenplay, **industry_kwargs)
                 return {"format": "screenplay-docx", "filename": f"{nid}-screenplay.docx", "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "content_base64": base64.b64encode(binary).decode("ascii"), "content_encoding": "base64", "industry": common_meta}
@@ -282,9 +286,12 @@ class NovelService:
                 content = "\n\n".join(f"INT./EXT. {scene.get('location') or '未设定'} - {scene.get('time') or '未设定'}\n{scene.get('action') or ''}\n" + "\n".join(f"{d.get('character','角色')}: {d.get('text','')}" for d in scene.get('dialogue',[])) for scene in screenplay.get('scenes',[]))
                 return {"format":"screenplay","filename":f"{nid}-screenplay.md","content":f"# {screenplay.get('title',meta.get('title',''))}\n\n{content}"}
             if format == "shot-list":
-                headers = "镜号,场景,景别,角度,运动,主体位置,动作,时长\n"
-                body = "\n".join(",".join(str(shot.get(key,"" )).replace(",","，") for key in ("number","scene_id","shot_size","camera_angle","camera_motion","subject_position","action","duration_seconds")) for shot in screenplay.get("shots",[]))
-                return {"format":"shot-list","filename":f"{nid}-shot-list.csv","content":headers+body}
+                buffer = io.StringIO(newline="")
+                writer = csv.writer(buffer, lineterminator="\n")
+                writer.writerow(("镜号", "场景", "景别", "角度", "运动", "主体位置", "动作", "时长"))
+                for shot in screenplay.get("shots", []):
+                    writer.writerow(str(shot.get(key, "")) for key in ("number", "scene_id", "shot_size", "camera_angle", "camera_motion", "subject_position", "action", "duration_seconds"))
+                return {"format":"shot-list","filename":f"{nid}-shot-list.csv","content":buffer.getvalue()}
             content = "\n\n".join(f"## 镜头 {card.get('number','')}\n\n画面：{card.get('frame_prompt','')}\n\n构图：{card.get('composition','')}\n\n色彩：{card.get('color','')}" for card in screenplay.get("storyboard",[]))
             return {"format":"storyboard","filename":f"{nid}-storyboard.md","content":content}
         if format not in {"json"}:
@@ -316,6 +323,7 @@ class NovelService:
             format,
             screenplays=screenplays,
             progress_callback=progress_callback,
+            snapshot=snapshot,
         )
         if progress_callback:
             progress_callback(90, "生成文件")

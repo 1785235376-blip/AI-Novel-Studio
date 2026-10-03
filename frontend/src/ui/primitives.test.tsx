@@ -60,9 +60,9 @@ describe('Panel native section props contract',()=>{
   it('forwards style and invokes native event handlers exactly once',()=>{
     const click=vi.fn();
     const keyDown=vi.fn();
-    render(<Panel aria-label="Interactive panel" style={{backgroundColor:'rgb(1, 2, 3)'}} onClick={click} onKeyDown={keyDown}>Interactive child</Panel>);
+    render(<Panel aria-label="Interactive panel" style={{display:'grid'}} onClick={click} onKeyDown={keyDown}>Interactive child</Panel>);
     const panel=screen.getByRole('region',{name:'Interactive panel'});
-    expect((panel as HTMLElement).style.backgroundColor).toBe('rgb(1, 2, 3)');
+    expect((panel as HTMLElement).style.display).toBe('grid');
     fireEvent.click(panel);
     fireEvent.keyDown(panel,{key:'Enter'});
     expect(click).toHaveBeenCalledTimes(1);

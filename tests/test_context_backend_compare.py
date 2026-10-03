@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
 
 import pytest
 
 from app.compare_context_backends import canonical_json_normalize, compare, differences
 from app.migrate_file_to_postgres import migrate
+from sample_novel_fixture import install_sample_novel
 
 
 DATABASE_URL = os.getenv("TEST_POSTGRES_DATABASE_URL", "")
@@ -21,11 +21,14 @@ def test_canonical_normalization_preserves_array_order_and_normalizes_numbers():
 
 
 @pytest.mark.skipif(not DATABASE_URL, reason="NOT VERIFIED: TEST_POSTGRES_DATABASE_URL is not configured")
+@pytest.mark.postgres_backend_only
 def test_real_file_and_postgres_contexts_match(tmp_path):
     # PostgreSQL tests must not depend on a fixture left by a prior script or
     # test order. Seed the authoritative File fixture into this database.
-    migrate(Path("novel_data"), DATABASE_URL, tmp_path / "migration.json")
-    report = compare(Path("novel_data"), DATABASE_URL, "sample_novel", 2,
+    data_root = tmp_path / "data"
+    install_sample_novel(data_root)
+    migrate(data_root, DATABASE_URL, tmp_path / "migration.json")
+    report = compare(data_root, DATABASE_URL, "sample_novel", 2,
                      "Continue validation scene", True, tmp_path / "compare.json")
     assert report["raw_sources_equal"], report["differences"]
     assert report["serialized_sources_equal"], report["differences"]
