@@ -1,7 +1,7 @@
-import {useState} from 'react';
+import {useLayoutEffect,useRef,useState} from 'react';
 import {Download,FileArchive,FileText,LoaderCircle,PackageCheck} from 'lucide-react';
 import {useMutation,useQuery,useQueryClient} from '@tanstack/react-query';
-import {api,apiErrorView,ExportJob} from '../api';
+import {api,apiErrorView,ExportJob,getCollaborationContext,Scope} from '../api';
 import {Badge,Button,EmptyState,Panel} from '../ui/primitives';
 import './export.css';
 
@@ -13,24 +13,37 @@ const formats=[
   {id:'pdf',label:'PDF 文档',detail:'本地确定性分页与中文字体回退；正式发行可配置嵌入字体',available:true,icon:FileText},
   {id:'epub',label:'EPUB 电子书',detail:'基础 EPUB 3 导航与章节；封面资源待接入',available:true,icon:FileArchive},
   {id:'screenplay',label:'影视剧本预览',detail:'确定性 Markdown 预览；标准排版仍待接入',available:true,icon:FileText},
+  {id:'screenplay-fountain',label:'Fountain 剧本',detail:'行业通用纯文本剧本格式，保留场景、动作与对白',available:true,icon:FileText},
+  {id:'screenplay-docx',label:'Word 剧本',detail:'独立剧本 OOXML 文档，保留场景、动作与对白',available:true,icon:FileText},
   {id:'shot-list',label:'镜头表 CSV',detail:'确定性镜头字段导出；对白扩展待接入',available:true,icon:FileArchive},
   {id:'storyboard',label:'分镜预览',detail:'确定性 Markdown 预览；图片资源待接入',available:true,icon:FileArchive},
 ] as const;
 
-export function ExportPanel({novelId}:{novelId?:string}){
+export function ExportPanel({novelId,scope,sessionToken}:{novelId?:string;scope?:Scope|null;sessionToken?:string}){
+  const context=getCollaborationContext();
+  const activeScope=scope===undefined?context.scope:scope;
+  const scopeKey=JSON.stringify([novelId||'',activeScope?.workspaceId||'',activeScope?.projectId||'',activeScope?.storylineId||'',activeScope?.branchId||'']);
+  // Remount the job observer and mutations on every project, branch or session change.
+  // Session credentials are used only for React identity, never in query cache keys.
+  return <ScopedExportPanel key={JSON.stringify([scopeKey,sessionToken??context.sessionToken])} novelId={novelId} scopeKey={scopeKey}/>;
+}
+
+function ScopedExportPanel({novelId,scopeKey}:{novelId?:string;scopeKey:string}){
+  const active=useRef(true);
+  useLayoutEffect(()=>{active.current=true;return()=>{active.current=false}},[]);
   const [jobId,setJobId]=useState('');
   const client=useQueryClient();
-  const selected=useQuery({queryKey:['export-job',jobId],queryFn:()=>api.exportJob(jobId),enabled:!!jobId,refetchInterval:(q)=>['queued','running'].includes(q.state.data?.status||'')?700:false});
-  const start=useMutation({mutationFn:(format:string)=>api.createExport(novelId!,format),onSuccess:(job)=>setJobId(job.id)});
-  const cancel=useMutation({mutationFn:(id:string)=>api.cancelExport(id),onSuccess:(next)=>client.setQueryData(['export-job',next.id],next)});
-  const retry=useMutation({mutationFn:(id:string)=>api.retryExport(id),onSuccess:(job)=>setJobId(job.id)});
+  const selected=useQuery({queryKey:['export-job',scopeKey,jobId],queryFn:()=>api.exportJob(jobId),enabled:!!jobId,refetchInterval:(q)=>['queued','running'].includes(q.state.data?.status||'')?700:false});
+  const start=useMutation({mutationFn:(format:string)=>api.createExport(novelId!,format),onSuccess:(job)=>{if(active.current)setJobId(job.id)}});
+  const cancel=useMutation({mutationFn:(id:string)=>api.cancelExport(id),onSuccess:(next)=>{if(active.current)client.setQueryData(['export-job',scopeKey,next.id],next)}});
+  const retry=useMutation({mutationFn:(id:string)=>api.retryExport(id),onSuccess:(job)=>{if(active.current)setJobId(job.id)}});
   const downloadJob=useMutation({mutationFn:(target:{id:string;filename:string})=>api.exportDownload(target.id).then(blob=>({blob,filename:target.filename}))});
   const job=selected.data as ExportJob|undefined;
-  function download(){if(!job?.result?.filename)return;downloadJob.mutate({id:job.id,filename:job.result.filename},{onSuccess:({blob,filename})=>{const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();window.setTimeout(()=>URL.revokeObjectURL(url),0)}})}
+  function download(){if(!job?.result?.filename)return;downloadJob.mutate({id:job.id,filename:job.result.filename},{onSuccess:({blob,filename})=>{if(!active.current)return;const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();window.setTimeout(()=>URL.revokeObjectURL(url),0)}})}
   const label=job?({queued:'排队中',running:'处理中',succeeded:'已完成',failed:'失败',cancelled:'已取消'} as Record<string,string>)[job.status]||'未知状态':'选择格式';
   const busy= start.isPending||cancel.isPending||retry.isPending;
   return <Panel title="导出中心" actions={<Badge tone={job?.status==='succeeded'?'success':job?.status==='failed'?'error':job?.status==='cancelled'?'warning':'info'}>{label}</Badge>}>
-    <p className="novel-help">导出读取任务执行时的项目内容。任务状态会保存，可在桌面端关闭后恢复查询。</p>
+    <p className="novel-help">导出使用任务创建时保存的只读项目快照，后续编辑不会改变该任务的导出内容。任务状态会保存，可在桌面端关闭后恢复查询。</p>
     {!novelId&&<EmptyState title="尚未选择项目" detail="打开一个小说项目后即可导出。"/>}
     <div className="export-format-grid" aria-label="可用导出格式">{formats.map(({id,label:formatLabel,detail,available,icon:Icon})=><button type="button" key={id} className="export-format" aria-label={`${formatLabel}${available?'':'（后端待接入）'}`} title={available?detail:`${detail}。此窗口会在后端能力完成后启用。`} disabled={!novelId||!available||busy} onClick={()=>start.mutate(id)}><Icon aria-hidden="true"/><span><strong>{formatLabel}</strong><small>{detail}</small></span>{available?<span className="export-format__state">可用</span>:<Badge>后端待接入</Badge>}</button>)}</div>
     {start.error&&<ExportError error={start.error} fallback="导出任务创建失败，请重试。"/>}

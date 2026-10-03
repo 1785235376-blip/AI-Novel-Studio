@@ -967,7 +967,7 @@ export default function App() {
           <p>在左侧新建或选择章节，开始写作。</p>
         </section>
       )}
-      <Panel type={panel} chapter={chapter.data} scope={scope} novelId={s.novelId} onOpenChapter={s.setChapter} />
+      <Panel type={panel} chapter={chapter.data} scope={scope} sessionToken={s.sessionToken} novelId={s.novelId} onOpenChapter={s.setChapter} />
     </div>
   );
   const inspector = (
@@ -1185,6 +1185,7 @@ function Panel({
   type,
   chapter,
   scope,
+  sessionToken,
   novelId,
   onOpenChapter,
 }: {
@@ -1193,6 +1194,7 @@ function Panel({
   scope?: Scope;
   novelId: string;
   onOpenChapter: (id:string)=>void;
+  sessionToken: string;
 }) {
   if (!scope && ["members", "permissions", "audit", "snapshots"].includes(type))
     return (
@@ -1222,7 +1224,7 @@ function Panel({
   if (type === "adaptation") return <AdaptationPanel novelId={chapter?.novel_id} branchId={scope?.branchId} />;
   if (type === "screenplay") return <ScreenplayPanel novelId={chapter?.novel_id} />;
   if (type === "assets") return <AssetLibraryPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
-  if (type === "exports") return <ExportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
+  if (type === "exports") return <ExportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} scope={scope||null} sessionToken={sessionToken} />;
   if (type === "knowledge") return <NovelImportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} chapterId={chapter?.id} />;
   if (type === "research") return <ResearchPanel novelId={novelId} />;
   if (type === "settings") return <><AiControlCenter /><MediaProviderSettings /><VideoCallbackSecurityStatus /></>;

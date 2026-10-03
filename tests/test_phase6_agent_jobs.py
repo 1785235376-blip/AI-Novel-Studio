@@ -219,12 +219,55 @@ def test_agent_job_cancel_is_terminal_against_late_model_result(monkeypatch):
 
 
 def test_agent_job_timeout_is_terminal_and_retry_creates_new_job(monkeypatch):
+    import threading
+
     client=TestClient(app);nid=setup_novel(client);created=client.post('/api/agent-jobs',json={'agent_id':'planner','novel_id':nid,'chapter':1,'provider_id':'deepseek','model_id':'deepseek-chat','execution_mode':'model','timeout_seconds':1}).json()
+    entered, release = threading.Event(), threading.Event()
+    timers = []
+
+    class ControlledTimer:
+        def __init__(self, interval, callback, args):
+            self.interval, self.callback, self.args = interval, callback, args
+            self.started = False
+            timers.append(self)
+        def start(self):
+            self.started = True
+        def fire(self):
+            assert self.started
+            self.callback(*self.args)
+
     class Node:
         def execute(self,_):
-            time.sleep(1.2);text='{"schema":"story_plan_proposal","agent_id":"planner","summary":"late","proposals":[],"findings":[],"context_hash":"'+created['context_hash']+'"}';response=TextGenerationResponse(text,'completed','deepseek','deepseek-chat');return TextModelNodeOutput(text,response,created['id'])
-    monkeypatch.setattr(agent_job_service.runtime,'prepare_text_route',lambda *_:Node());client.post(f"/api/agent-jobs/{created['id']}/start");time.sleep(1.1);stored=client.get(f"/api/agent-jobs/{created['id']}",headers=trusted_agent_headers()).json();retried=client.post(f"/api/agent-jobs/{created['id']}/retry").json()
-    assert stored['status']=='FAILED' and stored['error_code']=='TIMEOUT';assert retried['id']!=created['id'] and retried['retry_of']==created['id'] and retried['status']=='QUEUED'
+            entered.set()
+            assert release.wait(10), "test did not release the model worker"
+            text='{"schema":"story_plan_proposal","agent_id":"planner","summary":"late","proposals":[],"findings":[],"context_hash":"'+created['context_hash']+'"}'
+            response=TextGenerationResponse(text,'completed','deepseek','deepseek-chat')
+            return TextModelNodeOutput(text,response,created['id'])
+
+    monkeypatch.setattr(agent_job_service.runtime,'prepare_text_route',lambda *_:Node())
+    monkeypatch.setattr(threading, 'Timer', ControlledTimer)
+    worker = None
+    try:
+        assert client.post(f"/api/agent-jobs/{created['id']}/start").status_code == 202
+        assert entered.wait(5), "model worker did not start"
+        worker = next(t for t in threading.enumerate() if t.name == f"agent-job-{created['id']}")
+        assert len(timers) == 1 and timers[0].interval == 1 and timers[0].started
+        # Fire the scheduled production callback while the model is blocked.
+        # No race against the CI host's scheduling latency or wall clock.
+        timers[0].fire()
+        stored=client.get(f"/api/agent-jobs/{created['id']}",headers=trusted_agent_headers()).json()
+        assert stored['status']=='FAILED' and stored['error_code']=='TIMEOUT'
+        release.set()
+        worker.join(5)
+        assert not worker.is_alive(), "late model completion did not return"
+        late=client.get(f"/api/agent-jobs/{created['id']}",headers=trusted_agent_headers()).json()
+        assert late['status']=='FAILED' and late['error_code']=='TIMEOUT'
+        retried=client.post(f"/api/agent-jobs/{created['id']}/retry").json()
+        assert retried['id']!=created['id'] and retried['retry_of']==created['id'] and retried['status']=='QUEUED'
+    finally:
+        release.set()
+        if worker is not None:
+            worker.join(5)
 
 
 def test_completed_agent_job_is_not_retryable_or_cancellable():

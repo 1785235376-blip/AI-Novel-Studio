@@ -31,6 +31,8 @@ from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 INDUSTRY_SCHEMA_VERSION = 1
 RESOURCE_POLICIES = frozenset({"allow_missing", "require_all"})
+MAX_RESOURCE_BYTES = 25 * 1024 * 1024
+MAX_PACKAGE_RESOURCE_BYTES = 64 * 1024 * 1024
 
 
 class IndustryExportError(ValueError):
@@ -58,7 +60,10 @@ def _clean_text(value: object) -> str:
     return "".join(
         char
         for char in text
-        if char in "\t\n\r" or (ord(char) >= 0x20 and not 0xD800 <= ord(char) <= 0xDFFF)
+        if char in "\t\n\r"
+        or 0x20 <= ord(char) <= 0xD7FF
+        or 0xE000 <= ord(char) <= 0xFFFD
+        or 0x10000 <= ord(char) <= 0x10FFFF
     )
 
 
@@ -336,16 +341,19 @@ def normalize_resource_manifest(
     """Normalize snapshot resource metadata and expose deterministic statuses."""
 
     raw = _mapping(manifest)
-    available = {
-        _text(item.get("id")): dict(item)
-        for item in _as_list(raw.get("available"))
-        if isinstance(item, Mapping) and _text(item.get("id"))
-    }
-    missing = {
-        _text(item.get("id")): dict(item)
-        for item in _as_list(raw.get("missing"))
-        if isinstance(item, Mapping) and _text(item.get("id"))
-    }
+    available: dict[str, dict[str, Any]] = {}
+    missing: dict[str, dict[str, Any]] = {}
+    # Duplicate identities are ambiguous even if their metadata happens to
+    # agree. Never let dictionary last-write-wins choose resource provenance.
+    for status, destination in (("available", available), ("missing", missing)):
+        for item in _as_list(raw.get(status)):
+            if not isinstance(item, Mapping) or not (asset_id := str(item.get("id") or "").strip()):
+                continue
+            if asset_id in available or asset_id in missing:
+                available.pop(asset_id, None)
+                missing[asset_id] = {"id": asset_id, "reason": "ambiguous snapshot resource identity"}
+            else:
+                destination[asset_id] = dict(item)
     records: list[dict[str, Any]] = []
     for asset_id in sorted({str(item).strip() for item in references if str(item).strip()}):
         if asset_id in missing:
@@ -359,11 +367,14 @@ def normalize_resource_manifest(
         records.append(record)
     # Preserve explicitly listed resources even if a legacy snapshot did not
     # expose an asset reference in the screenplay JSON.
-    for asset_id, item in sorted(available.items()):
-        if asset_id not in {row["id"] for row in records}:
-            record = dict(item)
-            record.update({"id": asset_id, "status": "AVAILABLE", "unreferenced": True})
-            records.append(record)
+    seen = {row["id"] for row in records}
+    for status, rows in (("AVAILABLE", available), ("MISSING", missing)):
+        for asset_id, item in sorted(rows.items()):
+            if asset_id not in seen:
+                record = dict(item)
+                record.update({"id": asset_id, "status": status, "unreferenced": True})
+                records.append(record)
+                seen.add(asset_id)
     missing_rows = [row for row in records if row.get("status") != "AVAILABLE"]
     return {
         "schema_version": INDUSTRY_SCHEMA_VERSION,
@@ -418,26 +429,42 @@ def resolve_resources(
     normalized = normalize_resource_manifest(manifest, references)
     records: list[dict[str, Any]] = []
     binaries: dict[str, bytes] = {}
+    total_bytes = 0
     for record in normalized["available"] + normalized["missing"]:
         item = dict(record)
-        asset_id = _text(item.get("id"))
+        asset_id = str(item.get("id") or "").strip()
         if item.get("status") != "AVAILABLE":
+            item["packaged"] = False
             records.append(item)
             continue
         if loader is None:
+            item["status"] = "MISSING"
             item["packaged"] = False
             item["reason"] = "asset metadata available; binary loader not configured"
             records.append(item)
             continue
         try:
+            # IDs may reach a caller's filesystem-backed loader. Reject path
+            # syntax before invoking it; this module never opens any path.
+            if not re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9_.-]{0,254}", asset_id):
+                raise ValueError("unsafe asset identity")
             metadata = dict(_loader_get(loader, asset_id))
-            owner = _text(metadata.get("novel_id"))
-            if owner and _text(novel_id) and owner != _text(novel_id):
-                raise PermissionError("asset belongs to another project")
+            if metadata.get("id") != asset_id:
+                raise ValueError("asset identity mismatch")
+            if not _text(novel_id) or metadata.get("novel_id") != str(novel_id):
+                raise PermissionError("asset project ownership mismatch")
+            # The captured digest is authoritative. Current metadata must
+            # never bless bytes replaced after the snapshot was captured.
+            expected = _text(item.get("sha256")).lower()
+            if not re.fullmatch(r"[0-9a-f]{64}", expected):
+                raise ValueError("snapshot asset checksum missing or invalid")
             content = _loader_content(loader, asset_id)
-            expected = _text(metadata.get("sha256") or item.get("sha256"))
+            if len(content) > MAX_RESOURCE_BYTES:
+                raise ValueError("asset exceeds the resource byte limit")
+            if total_bytes + len(content) > MAX_PACKAGE_RESOURCE_BYTES:
+                raise ValueError("assets exceed the package resource byte limit")
             actual = hashlib.sha256(content).hexdigest()
-            if expected and expected.lower() != actual:
+            if expected != actual:
                 raise ValueError("asset checksum mismatch")
             item.update(
                 {
@@ -449,6 +476,7 @@ def resolve_resources(
                 }
             )
             binaries[asset_id] = content
+            total_bytes += len(content)
         except (FileNotFoundError, OSError, PermissionError, ValueError) as exc:
             item.update({"status": "MISSING", "packaged": False, "reason": str(exc) or "asset unavailable"})
         records.append(item)
@@ -1007,6 +1035,24 @@ def _package_manifest(
     return json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True).encode("utf-8")
 
 
+def _package_resource_files(resources: Mapping[str, Any]) -> tuple[dict[str, bytes], dict[str, str]]:
+    """Stage verified bytes and record their unique archive member paths."""
+
+    resource_paths: dict[str, str] = {}
+    files: dict[str, bytes] = {}
+    for index, row in enumerate(resources.get("available", []), 1):
+        asset_id = _text(row.get("id"))
+        if asset_id not in resources.get("binaries", {}):
+            continue
+        filename = _text(row.get("filename"), default=f"asset-{index:03d}.bin")
+        filename = re.sub(r"[\\/\x00-\x1f\x7f]", "_", filename).strip(" .") or f"asset-{index:03d}.bin"
+        path = f"resources/{index:03d}-{filename[:180]}"
+        resource_paths[asset_id] = path
+        files[path] = resources["binaries"][asset_id]
+        row["package_path"] = path
+    return files, resource_paths
+
+
 def storyboard_to_package(
     screenplay: Mapping[str, Any] | object,
     *,
@@ -1022,18 +1068,7 @@ def storyboard_to_package(
 
     normalized = normalize_screenplay(screenplay, title=title, novel_id=novel_id)
     resources = resolve_resources(resource_manifest, references=normalized["asset_ids"], loader=resource_loader, novel_id=novel_id, resource_policy=resource_policy)
-    resource_paths: dict[str, str] = {}
-    files: dict[str, bytes] = {}
-    for index, row in enumerate(resources.get("available", []), 1):
-        asset_id = _text(row.get("id"))
-        if asset_id not in resources.get("binaries", {}):
-            continue
-        filename = _text(row.get("filename"), default=f"asset-{index:03d}.bin")
-        filename = re.sub(r"[\\/\x00-\x1f\x7f]", "_", filename).strip(" .") or f"asset-{index:03d}.bin"
-        path = f"resources/{index:03d}-{filename[:180]}"
-        resource_paths[asset_id] = path
-        files[path] = resources["binaries"][asset_id]
-        row["package_path"] = path
+    files, resource_paths = _package_resource_files(resources)
     files["storyboard.html"] = _storyboard_html(normalized, novel_id=novel_id, snapshot_id=snapshot_id, source_versions=source_versions, resources=resources, resource_paths=resource_paths).encode("utf-8")
     files["shots.csv"] = shot_list_to_csv(normalized, title=title, novel_id=novel_id, resource_manifest=resources, resource_policy="allow_missing")
     files["screenplay.fountain"] = screenplay_to_fountain(normalized, title=title, novel_id=novel_id, snapshot_id=snapshot_id, source_versions=source_versions, resource_manifest=resources, resource_policy="allow_missing").encode("utf-8")
@@ -1064,14 +1099,8 @@ def screenplay_to_package(
         "screenplay.fountain": screenplay_to_fountain(normalized, title=title, novel_id=novel_id, snapshot_id=snapshot_id, source_versions=source_versions, resource_manifest=resources, resource_policy="allow_missing").encode("utf-8"),
         "screenplay.docx": screenplay_to_docx(normalized, title=title, novel_id=novel_id, snapshot_id=snapshot_id, source_versions=source_versions, resource_manifest=resources, resource_policy="allow_missing"),
     }
-    for index, row in enumerate(resources.get("available", []), 1):
-        asset_id = _text(row.get("id"))
-        content = resources.get("binaries", {}).get(asset_id)
-        if content is None:
-            continue
-        filename = re.sub(r"[\\/\x00-\x1f\x7f]", "_", _text(row.get("filename"), default=f"asset-{index:03d}.bin")).strip(" .") or f"asset-{index:03d}.bin"
-        row["package_path"] = f"resources/{index:03d}-{filename[:180]}"
-        files[row["package_path"]] = content
+    resource_files, _ = _package_resource_files(resources)
+    files.update(resource_files)
     files["manifest.json"] = _package_manifest(package_type="screenplay", normalized=normalized, novel_id=novel_id, snapshot_id=snapshot_id, source_versions=source_versions, resources=resources, files=[*files.keys(), "manifest.json"])
     output = BytesIO()
     with ZipFile(output, "w", compression=ZIP_DEFLATED) as archive:
@@ -1098,6 +1127,8 @@ def shot_list_to_package(
     files = {
         "shot-list.csv": shot_list_to_csv(normalized, title=title, novel_id=novel_id, resource_manifest=resources, resource_policy="allow_missing"),
     }
+    resource_files, _ = _package_resource_files(resources)
+    files.update(resource_files)
     files["manifest.json"] = _package_manifest(package_type="shot-list", normalized=normalized, novel_id=novel_id, snapshot_id=snapshot_id, source_versions=source_versions, resources=resources, files=[*files.keys(), "manifest.json"])
     output = BytesIO()
     with ZipFile(output, "w", compression=ZIP_DEFLATED) as archive:

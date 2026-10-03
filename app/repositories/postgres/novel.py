@@ -32,6 +32,7 @@ class PostgresNovelRepository:
             "created_at": iso(model.created_at),
             "updated_at": iso(model.updated_at),
             **({"long_term_summary": extra["long_term_summary"]} if "long_term_summary" in extra else {}),
+            **({"writing_goal": extra["writing_goal"]} if "writing_goal" in extra else {}),
         }
 
     def list(self):
@@ -72,7 +73,7 @@ class PostgresNovelRepository:
             if payload.get("title") is not None:
                 model.title = payload["title"]
             metadata = dict(model.metadata_json or {})
-            for key in ("genre", "status", "long_term_summary"):
+            for key in ("genre", "status", "long_term_summary", "writing_goal"):
                 if payload.get(key) is not None:
                     metadata[key] = payload[key]
             model.metadata_json = metadata

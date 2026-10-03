@@ -12,6 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from ..industry_export_formats import IndustryExportError
 from ..storage import atomic_write
 
 
@@ -54,7 +55,7 @@ class _ExportCancelled(RuntimeError):
 class ExportJobService:
     """Durable, local-first export queue with bounded background workers."""
 
-    SUPPORTED = {"json", "txt", "text", "markdown", "md", "docx", "word", "pdf", "epub", "screenplay", "shot-list", "storyboard"}
+    SUPPORTED = {"json", "txt", "text", "markdown", "md", "docx", "word", "pdf", "epub", "screenplay", "shot-list", "storyboard", "screenplay-fountain", "screenplay-standard", "screenplay-docx"}
     STATUSES = frozenset({"queued", "running", "succeeded", "failed", "cancelled"})
     MEDIA_TYPES = {
         "json": "application/json",
@@ -64,6 +65,8 @@ class ExportJobService:
         "pdf": "application/pdf",
         "epub": "application/epub+zip",
         "screenplay": "text/markdown",
+        "screenplay-fountain": "text/x-fountain",
+        "screenplay-docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "shot-list": "text/csv",
         "storyboard": "text/markdown",
     }
@@ -75,6 +78,8 @@ class ExportJobService:
         "pdf": "pdf",
         "epub": "epub",
         "screenplay": "md",
+        "screenplay-fountain": "fountain",
+        "screenplay-docx": "docx",
         "shot-list": "csv",
         "storyboard": "md",
     }
@@ -244,11 +249,12 @@ class ExportJobService:
         if fmt not in self.SUPPORTED:
             raise ValueError("unsupported export format")
         fmt = "markdown" if fmt == "md" else ("txt" if fmt == "text" else ("docx" if fmt == "word" else fmt))
+        fmt = "screenplay-fountain" if fmt == "screenplay-standard" else fmt
         with self._lock:
             jobs = self._read()
             if idempotency_key:
                 for item in jobs.values():
-                    if isinstance(item, dict) and item.get("novel_id") == novel_id and item.get("idempotency_key") == idempotency_key and self._is_idempotency_fresh(item):
+                    if isinstance(item, dict) and item.get("novel_id") == novel_id and item.get("idempotency_key") == idempotency_key and item.get("permission_context") == permission_context and self._is_idempotency_fresh(item):
                         return self._normalise_job(item)
             attempt = 1
             if retry_of:
@@ -470,19 +476,10 @@ class ExportJobService:
             kwargs["progress_callback"] = progress_callback
         elif "progress" in parameters:
             kwargs["progress"] = progress_callback
-        if kwargs:
-            try:
-                return self.exporter(job["novel_id"], job["format"], **kwargs)
-            except TypeError:
-                # Preserve compatibility with adapters that expose a broad
-                # signature but reject one optional keyword internally.
-                kwargs.pop("snapshot", None)
-                if kwargs:
-                    try:
-                        return self.exporter(job["novel_id"], job["format"], **kwargs)
-                    except TypeError:
-                        pass
-        return self.exporter(job["novel_id"], job["format"])
+        # The signature decides compatibility before invocation. A renderer's
+        # TypeError is a real failure; retrying without snapshot could silently
+        # export subsequently edited live data instead of the captured body.
+        return self.exporter(job["novel_id"], job["format"], **kwargs)
 
     @staticmethod
     def _result_bytes(result: dict) -> bytes:
@@ -625,7 +622,10 @@ class ExportJobService:
                 if isinstance(current, dict) and (cancel_event.is_set() or str(current.get("status", "")).lower() == "cancelled"):
                     self._mark_cancelled_from_worker(job_id)
                     return
-            update = {"status": "failed", "result": None, "error": {"code": "EXPORT_FAILED", "message": str(exc)}, "progress_message": "失败", "finished_at": _now(), "updated_at": _now()}
+            error = {"code": "EXPORT_FAILED", "message": str(exc)}
+            if isinstance(exc, IndustryExportError):
+                error.update(code=exc.code, details=exc.details)
+            update = {"status": "failed", "result": None, "error": error, "progress_message": "失败", "finished_at": _now(), "updated_at": _now()}
         with self._lock:
             jobs = self._read()
             job = jobs.get(job_id)

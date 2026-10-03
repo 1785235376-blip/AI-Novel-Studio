@@ -410,6 +410,9 @@ def test_spawn_spec_is_frozen_not_a_command_runner():
 
 def test_production_startup_does_not_import_or_spawn_test_worker():
     env = os.environ.copy()
+    # This subprocess tests plugin startup isolation, not database connectivity.
+    # The safety fixture deliberately removes database credentials.
+    env["STORAGE_BACKEND"] = "file"
     env["PYTHONPATH"] = str(REPO_ROOT) + os.pathsep + env.get("PYTHONPATH", "")
     script = (
         "import sys\n"

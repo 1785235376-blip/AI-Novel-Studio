@@ -1141,6 +1141,9 @@ def approve(pid:str,body:PendingEditIn|None=None):
 def reject_pending(pid:str): return guard(canon_service.reject,pid)
 @router.get("/novels/{nid}/export")
 def export_novel(nid:str,format:str="json"):
+    # Industry artifacts require the durable queue and its project/branch gate.
+    if str(format).lower().strip() not in {"json", "txt", "text", "markdown", "docx", "word", "pdf", "epub", "screenplay", "shot-list", "storyboard"}:
+        raise HTTPException(400, "use POST /exports for supported industry export formats")
     return guard(novel_service.export,nid,format)
 
 def _authorize_novel_project(
