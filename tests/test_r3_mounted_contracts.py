@@ -161,6 +161,7 @@ def mounted(request, tmp_path, monkeypatch, prefix):
         identity=identity, authorization=authorization, membership=membership,
         sessions=sessions, config=config, root=tmp_path, backend=backend, url=url,
         agents=agents,
+        lore_cleanup={"proposals": [], "evidence": []},
         scope={"mode": "local", "novel_id": nid}, api=api, main=main,
     )
     yield env
@@ -170,6 +171,29 @@ def mounted(request, tmp_path, monkeypatch, prefix):
         try:
             with store._connect() as connection:
                 connection.execute("DELETE FROM experimental_scope_documents WHERE novel_id = %s", (nid,))
+            if env.lore_cleanup["proposals"] or env.lore_cleanup["evidence"]:
+                from sqlalchemy import delete, select
+                from app.models.lore import EvidenceModel, LoreProposalEvidenceModel, LoreProposalModel
+                from app.repositories.postgres.common import external_uuid, novel_or_raise
+                # Evidence references are RESTRICT, so remove this fixture's
+                # exact junctions before its proposal/evidence and novel rows.
+                # Both the generated IDs and the owning project must match.
+                with bundle.novels.database.session() as session:
+                    project = novel_or_raise(session, nid)
+                    proposal_filter = (
+                        LoreProposalModel.novel_id == project.id,
+                        LoreProposalModel.id.in_([external_uuid(value) for value in env.lore_cleanup["proposals"]]),
+                    )
+                    evidence_filter = (
+                        EvidenceModel.novel_id == project.id,
+                        EvidenceModel.id.in_([external_uuid(value) for value in env.lore_cleanup["evidence"]]),
+                    )
+                    session.execute(delete(LoreProposalEvidenceModel).where(
+                        LoreProposalEvidenceModel.proposal_id.in_(select(LoreProposalModel.id).where(*proposal_filter)),
+                        LoreProposalEvidenceModel.evidence_id.in_(select(EvidenceModel.id).where(*evidence_filter)),
+                    ))
+                    session.execute(delete(LoreProposalModel).where(*proposal_filter))
+                    session.execute(delete(EvidenceModel).where(*evidence_filter))
             novels.delete(nid)
         finally:
             bundle.novels.database.engine.dispose()
@@ -419,10 +443,14 @@ def test_mounted_legacy_inbox_projects_real_queues_and_delegates_reviews(mounted
     hidden_import = e.imports.ensure_pending(e.nid, {"characters": [{"name": "Private candidate"}]}, permission_context=other_scope)
     pending = e.canon.save_pending({"id": str(uuid4()), "novel_id": e.nid, "status": "PENDING",
                                     "proposals": [{"fact_key": "gate", "fact_value": "Closed"}]})
-    evidence = e.lore.create_evidence({"id": str(uuid4()), "novel_id": e.nid, "source_type": "USER_ACTION",
+    evidence_id, proposal_id = str(uuid4()), str(uuid4())
+    # Register before creation so cleanup also covers a partially failed setup.
+    e.lore_cleanup["evidence"].append(evidence_id)
+    e.lore_cleanup["proposals"].append(proposal_id)
+    evidence = e.lore.create_evidence({"id": evidence_id, "novel_id": e.nid, "source_type": "USER_ACTION",
                                      "source_id": "mounted-fixture", "locator": {}, "content_hash": "a" * 64,
                                      "privacy": "LOCAL_ONLY"})
-    lore = e.lore.create_proposal({"id": str(uuid4()), "novel_id": e.nid, "proposal_type": "WORLD_RULE",
+    lore = e.lore.create_proposal({"id": proposal_id, "novel_id": e.nid, "proposal_type": "WORLD_RULE",
                                    "payload": {"rule": "The gate opens at dawn"}},
                                   [{"evidence_id": evidence["id"], "relevance": "PRIMARY"}])
     # Two chapters provide a real transition and therefore a video task.
