@@ -297,14 +297,14 @@
       ],
       "gap": "Actual synthetic 100k/500k/1m measurements and zoom/keyboard checks, no fabricated Windows IME or performance PASS.",
       "status": "PARTIAL",
-      "verification": "NOT_RUN",
+      "verification": "LOCAL_CONTRACTS_PASSED",
       "ui_integration": "INTEGRATED",
-      "api_integration": "REUSES_EXISTING",
-      "task_completion": "KEYBOARD_AND_UNICODE_SLICE",
-      "browser_verification": "NOT_RUN",
+      "api_integration": "INTEGRATED",
+      "task_completion": "BOUNDED_ENGINEERING_SLICE",
+      "browser_verification": "PENDING_CORRECTED_HOSTED_CI",
       "real_model_verification": "NOT_RUN",
-      "implemented_scope": "IME-safe literal prose, protected editor state, accessible chapter dialog and deterministic performance harness/browser contracts.",
-      "remaining_scope": "Final 100k/500k/1m measurements and actual hosted browser/zoom results pending. Native Windows IME/screen reader not run."
+      "implemented_scope": "Measured six isolated 100k/500k/1m File/API processes and240 real queued/cancelled tasks; all server search p95 targets met in this environment. Hosted Chromium passed scale/IME-simulation/keyboard/zoom assertions at0238444, with raw browser target values awaiting compact receipt.",
+      "remaining_scope": "Native Windows input, physical latency, screenreader and OS zoom NOT_RUN. Initial flags-off cleanup timeout and old-panel overlap regressions must pass corrected hostedCI."
     },
     {
       "id": "A04",
@@ -353,8 +353,8 @@
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_RUN",
       "real_model_verification": "NOT_RUN",
-      "implemented_scope": "Explicit reviewed knowledge events, facts/beliefs/secrets distinctions, time/branch/revocation-safe character context query.",
-      "remaining_scope": "Main author Adapter request replacement remains to integrate; the query alone is not complete generation protection.",
+      "implemented_scope": "Character-only continue/brainstorm preview and final adapter request; original user instruction only, no automatic manuscript tail, selection, omniscient context or derived STYLE/plan; final authority/source/LOCAL_ONLY fences.",
+      "remaining_scope": "Browser/real-PG verification of this new shared dispatch seam pending. Advanced selection/rewrite and model-quality evaluation remain separate.",
       "new_sources": [
         "app/experimental/story_graph.py",
         "frontend/src/experimental/StoryGraphPanel.tsx"
@@ -373,13 +373,15 @@
         "app/experimental/provider_profiles.py"
       ],
       "gap": "Current registered authority routing, honest unknown cost and idempotent budget reservation/settlement; final recheck.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "status": "PARTIAL",
+      "verification": "LOCAL_CONTRACTS_PASSED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "implemented_scope": "Actual registered route selection, explicit quote plus exact author request, original JobManager execution, atomic budget reservation/settlement, conservative unknown holds, CAS manual bill reconciliation and functional original draft-review navigation.",
+      "remaining_scope": "Current author execution is text; quality rankings absent without evidence; actual configured model/paid billing verification NOT_RUN."
     },
     {
       "id": "A07",
@@ -394,13 +396,15 @@
         "app/model_center/runtime_profiles.py"
       ],
       "gap": "User-triggered bounded benchmark management and evidence versioning; real-model quality requires configured model.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "status": "PARTIAL",
+      "verification": "LOCAL_CONTRACTS_PASSED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "implemented_scope": "Explicit bounded local text benchmark execution, real registration/fingerprint evidence, imported result management, current evidence invalidation and small-sample blind A/B preference.",
+      "remaining_scope": "Image/video execution remains import-only; real model quality/GPU/cold-warm measurements require configured runtime and are NOT_RUN."
     },
     {
       "id": "A09",
@@ -414,13 +418,15 @@
         "app/services/export_resource_snapshot.py"
       ],
       "gap": "Extend parent graph, cycle rejection, drift/impact and retained missing-source lineage.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "status": "PARTIAL",
+      "verification": "LOCAL_CONTRACTS_PASSED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "implemented_scope": "Existing asset DAG and metadata reused for scoped lineage view, versioned declarations, cycle/parent drift/deletion detection, exact impact records, legacy OFF/V1 projection hiding.",
+      "remaining_scope": "Broader non-recorded dependencies remain unknown; no automatic legal/license judgement."
     },
     {
       "id": "A13",
@@ -437,13 +443,15 @@
         "app/experimental/media.py"
       ],
       "gap": "Versioned redacted manifests, dependency preview and new authorized replay task, reproducibility levels separated.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "status": "PARTIAL",
+      "verification": "LOCAL_CONTRACTS_PASSED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "implemented_scope": "Versioned redacted manifests of real media tasks; current dependency/privacy/budget preflight; new original-executor replay task; actual deterministic PNG byte equality; explicit cancellation/restart and pending review.",
+      "remaining_scope": "Historical missing environment is blocked; configured cloud/real GPU workflow replay and output nondeterminism remain independent."
     },
     {
       "id": "U06",
@@ -460,13 +468,15 @@
         "app/experimental/audiobook.py"
       ],
       "gap": "Show exact source dependency changes, preserve locked output and require explicit per-domain rerun.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "status": "PARTIAL",
+      "verification": "LOCAL_CONTRACTS_PASSED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "implemented_scope": "Exact recorded impact graph, locks, selected synthetic COVER refresh through original media execution, current source/privacy/budget fences and unknown/manual-only domains.",
+      "remaining_scope": "Real media refresh unsupported; browser and actual PG at this integrated source pending."
     },
     {
       "id": "A02",
@@ -479,13 +489,15 @@
         "frontend/src/novel/CreationWorkbenchPanel.tsx"
       ],
       "gap": "Compute language-specific transparent metrics on selected versioned text; attach to existing STYLE records.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "status": "PARTIAL",
+      "verification": "LOCAL_CONTRACTS_PASSED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "implemented_scope": "Existing STYLE records reused; explicit Chinese/English source ranges, reproducible metrics and chapter drift, approved rule/profile editing, fresh preview and handoff to original writing inputs.",
+      "remaining_scope": "No calibrated quality probabilities or real-model interpretive assessment; broader language statistics require separate methods."
     },
     {
       "id": "A03",
@@ -502,13 +514,15 @@
         "app/services/narrative_finding_service.py"
       ],
       "gap": "Versioned rubric, exact evidence spans, deterministic repeated-exposition findings, ignore/review/stale handling.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "status": "PARTIAL",
+      "verification": "LOCAL_CONTRACTS_PASSED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "implemented_scope": "Versioned deterministic rubric findings with verified quotes, original review_threads state, ignore/review reasons, stale redaction and read-only inbox under full author authorization.",
+      "remaining_scope": "Model opinions remain optional unconfigured adapter boundary, not independently verified literary judgement. Broader semantically inferred findings require real evidence."
     },
     {
       "id": "A01",
@@ -524,13 +538,15 @@
         "app/experimental/world.py"
       ],
       "gap": "Finite deterministic event branches and constraints with explicit draft-only route promotion; no manuscript writes.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "status": "PARTIAL",
+      "verification": "LOCAL_CONTRACTS_PASSED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "implemented_scope": "Bounded deterministic/manual routes, prerequisites/time/knowledge/resources checks, cancellation/CAS, reviewed original-planning handoff and provenance fences.",
+      "remaining_scope": "Configured model suggestions remain unavailable; no future probabilities; actual PG/browser pending."
     },
     {
       "id": "A10",
@@ -547,13 +563,15 @@
         "app/experimental/imports.py"
       ],
       "gap": "Reuse research store and safe parsing, versioned citations, local search and derived invalidation.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "status": "PARTIAL",
+      "verification": "LOCAL_CONTRACTS_PASSED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "implemented_scope": "Bounded TXT/MD/DOCX/PDF/image sources, exact paragraph/page citations, local search/notes, explicit safe web fetch, source revocation and reviewed setting drafts using existing world authority.",
+      "remaining_scope": "OCR/vector/vision absent; real public-web compatibility/native Windows containment/PG/browser verification pending."
     },
     {
       "id": "A11",
@@ -570,13 +588,15 @@
         "frontend/src/RevisionPanel.tsx"
       ],
       "gap": "Source-fenced paragraph patch preview and individually accepted blocks through existing version service.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "status": "PARTIAL",
+      "verification": "LOCAL_CONTRACTS_PASSED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "implemented_scope": "Exact ProseMirror/Unicode block anchors, preview/selected accept/reject, original CAS/history, partial remainder re-review, persistent paragraph locks with drift/empty recovery.",
+      "remaining_scope": "Branch-isolated manuscript storage unavailable; actual PG/browser/model quality not claimed."
     },
     {
       "id": "U05",
@@ -592,13 +612,15 @@
         "frontend/src/Editor.tsx"
       ],
       "gap": "Stable Unicode selection digest and patch review; only selected approved blocks can change.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "status": "PARTIAL",
+      "verification": "LOCAL_CONTRACTS_PASSED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "implemented_scope": "Original author preview/dispatch with trusted exact selection receipt and partial-only job origin; legacy accept is forbidden; reviewed original-CAS path preserves untouched blocks.",
+      "remaining_scope": "Actual model quality and native input not evaluated; branch manuscript sources fail closed."
     },
     {
       "id": "U11",
@@ -1056,10 +1078,9 @@
     }
   ],
   "frontend_requirement": {
-    "source": "Sentinel_0c3b6359f6e481919bc831ce49937599",
-    "received_at_utc": "2026-10-05T14:20:00Z",
-    "user_quote": "记得为新功能给前端加入实现接口。",
-    "acceptance": "Real reachable frontend flow and service/API wiring, loading/error/recovery/stale/permission states. UI integration is separate from actual task completion. Existing design system retained."
+    "required": true,
+    "source": "User direction, 2026-10-05: every implemented feature needs a real frontend entry and API connection.",
+    "acceptance": "Working loading, empty, error, recovery, version and permission states; unavailable capabilities explain why."
   },
   "integration_parent_tree": "19180ad00035b9eda2baf0795ea947ea943b7e1f",
   "branch": "work/post-v1-r4-r5-ux",
@@ -1081,5 +1102,6 @@
       },
       "ci": "PENDING"
     }
-  ]
+  ],
+  "independent_review": "BLOCKED_AFTER_REPORTED_FINDINGS; implementation repairs have regression evidence, no independent closure"
 }
