@@ -118,8 +118,8 @@ asset_task_worker=AssetTaskWorker(screenplay_service)
 asset_library_service=AssetLibraryService(settings.data_path())
 import_review_service=ImportReviewService(settings.data_path())
 
-def _export_snapshot(novel_id: str, format: str):
-    return novel_service.export_snapshot(novel_id, asset_library=asset_library_service, format=format)
+def _export_snapshot(novel_id: str, format: str, permission_context: dict | None = None):
+    return novel_service.export_snapshot(novel_id, asset_library=asset_library_service, format=format, permission_context=permission_context)
 
 export_job_service=ExportJobService(
     settings.data_path(),

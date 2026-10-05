@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api";
+import {ImageQueuePanel} from "./ImageQueuePanel";
 import { Button, Panel } from "../ui/primitives";
 import {
   FOCUS_FAILED_TASKS_EVENT,
@@ -313,12 +314,10 @@ export function ImageGenerationPanel({
             <Button
               variant="ghost"
               onClick={async () => {
-                await api.importGeneratedImage(novelId, {
-                  asset_uri: uri,
-                  character_id: characterId,
-                  scene_id: sceneId,
-                });
-                setImported(true);
+                try {
+                  await api.importGeneratedImage(novelId, {asset_uri:uri,character_id:characterId,scene_id:sceneId});
+                  setImported(true);
+                } catch { setError("图片校验或入库失败。原生成结果已保留。"); }
               }}
             >
               {imported ? "已导入资产库" : "导入资产库"}
@@ -326,6 +325,7 @@ export function ImageGenerationPanel({
           )}
         </div>
       )}
+      <ImageQueuePanel novelId={novelId} local={providers.find(item=>item.provider_id===providerId)?.local} draft={{novel_id:novelId,provider_id:providerId,model_id:modelId,prompt,character_id:characterId,scene_id:sceneId,...(references.length?{images:references}:{})}}/>
       {history.length > 0 && (
         <details>
           <summary>生成历史（{history.length}）</summary>

@@ -1,15 +1,20 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, expect, it } from "vitest";
+import { afterEach, expect, it, vi } from "vitest";
 import { motionTaskInspection } from "./ScreenplayPanel";
+import {api} from "../api";
 import { VideoTaskInspector } from "./VideoTaskInspector";
 
-afterEach(cleanup);
+afterEach(()=>{cleanup();vi.restoreAllMocks()});
 
-it("maps and renders a real Motion Task result", () => {
+it("maps and renders an authenticated Motion Task asset", async () => {
+  const download=vi.spyOn(api,"assetDownload").mockResolvedValue(new Blob(["fixture"],{type:"video/mp4"}));
+  Object.defineProperty(URL,"createObjectURL",{configurable:true,value:vi.fn(()=>"blob:verified-video")});
+  Object.defineProperty(URL,"revokeObjectURL",{configurable:true,value:vi.fn()});
   const inspection=motionTaskInspection({id:"motion-1",status:"SUCCEEDED",transition_id:"transition-1",provider_id:"seedance",model_id:"video-2.5",progress:100,start_frame:"https://example.test/start.png",end_frame:"https://example.test/end.png",result:{url:"https://example.test/result.mp4",asset_id:"asset-video-1"}},"screenplay-1");
   render(<VideoTaskInspector inspection={inspection} novelId="novel-1"/>);
-  expect(screen.getByLabelText("当前视频生成结果").getAttribute("src")).toBe("https://example.test/result.mp4");
+  expect((await screen.findByLabelText("当前视频生成结果")).getAttribute("src")).toBe("blob:verified-video");
+  expect(download).toHaveBeenCalledWith("asset-video-1","novel-1");
   expect(screen.getByAltText("Motion Task 起始帧")).toBeTruthy();
   expect(screen.getByText("asset-video-1")).toBeTruthy();
   expect(inspection).not.toHaveProperty("prompt");

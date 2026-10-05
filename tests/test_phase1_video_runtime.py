@@ -1,4 +1,5 @@
 import pytest
+import hashlib
 
 from app.asset_providers import HttpVideoProvider, VideoGenerationRequest, VideoGenerationResult
 from app.services.screenplay_service import ScreenplayService
@@ -40,7 +41,7 @@ class Repo:
     def list_screenplays(self, novel_id):
         return self.rows
 
-    def save_screenplay(self, novel_id, screenplay):
+    def save_screenplay(self, novel_id, screenplay, *, expected_version=None):
         self.rows = [screenplay]
         return screenplay
 
@@ -52,6 +53,10 @@ def task(**overrides):
         "provider_id": "video",
         "model_id": "model",
         "prompt": "camera move",
+        "privacy_level":"CLOUD_ALLOWED",
+        "cloud_approval_provider_id":"video",
+        "cloud_approval_model_id":"model",
+        "cloud_approval_prompt_sha256":hashlib.sha256(b"camera move").hexdigest(),
         "start_frame": "https://cdn.example/start.png",
         "end_frame": "https://cdn.example/end.png",
         **overrides,
