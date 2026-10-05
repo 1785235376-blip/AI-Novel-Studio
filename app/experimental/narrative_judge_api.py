@@ -4,7 +4,11 @@ from .common import api_call
 from .narrative_judge import FEATURE, JudgeRunIn, JudgeReviewIn
 
 
-def create_narrative_judge_router(service, authorize, require_flag):
+def create_narrative_judge_router(service, authorize, require_flag, *, preparer=None, manager=None, broker=None, require_host_session=None):
+    from .narrative_judge_model import NarrativeJudgeModelCoordinator, JudgeModelActionIn, JudgeModelPreviewIn, JudgeModelDispatchIn
+    from .ux import ReadContext
+    if preparer is not None and manager is not None and broker is not None:
+        service.model_coordinator = NarrativeJudgeModelCoordinator(service, preparer, manager, broker)
     router = APIRouter(prefix="/novels/{nid}/experimental/narrative-judge", tags=["experimental-narrative-judge"])
 
     def access(nid, token, branch, response, review=False):
@@ -43,5 +47,39 @@ def create_narrative_judge_router(service, authorize, require_flag):
     def review(nid: str, rid: str, body: JudgeReviewIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope, again = access(nid, x_session_token, x_branch_id, response, True)
         return api_call(service.review, nid, scope, actor, rid, body, reauthorize=again)
+
+    def model_access(nid, token, branch, response):
+        actor, scope, again = access(nid, token, branch, response)
+        if service.model_coordinator is None or not callable(require_host_session):
+            raise HTTPException(409, {'code': 'JUDGE_REGISTERED_MODEL_EXECUTOR_UNAVAILABLE'})
+        def current():
+            again(); require_flag('model_broker_v2'); require_flag('author_context_inspector_v2'); require_host_session(token)
+        current()
+        return ReadContext(nid, scope, actor, token, branch), current
+
+    @router.get('/model/catalog')
+    def model_catalog(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, current = model_access(nid, x_session_token, x_branch_id, response)
+        return api_call(service.model_coordinator.catalog, ctx, current)
+
+    @router.post('/runs/{rid}/model/preview')
+    def model_preview(nid: str, rid: str, body: JudgeModelPreviewIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, current = model_access(nid, x_session_token, x_branch_id, response)
+        result = api_call(service.model_coordinator.preview, ctx, rid, body, current); current(); return result
+
+    @router.post('/runs/{rid}/model/dispatch')
+    def model_dispatch(nid: str, rid: str, body: JudgeModelDispatchIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, current = model_access(nid, x_session_token, x_branch_id, response)
+        result = api_call(service.model_coordinator.dispatch, ctx, rid, body, current); current(); return result
+
+    @router.post('/runs/{rid}/model/refresh')
+    def model_refresh(nid: str, rid: str, body: JudgeModelActionIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, current = model_access(nid, x_session_token, x_branch_id, response)
+        result = api_call(service.model_coordinator.refresh, ctx, rid, body, current); current(); return result
+
+    @router.post('/runs/{rid}/model/cancel')
+    def model_cancel(nid: str, rid: str, body: JudgeModelActionIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, current = model_access(nid, x_session_token, x_branch_id, response)
+        result = api_call(service.model_coordinator.cancel, ctx, rid, body, current); current(); return result
 
     return router

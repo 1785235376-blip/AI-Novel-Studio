@@ -6,7 +6,10 @@ from .common import api_call
 from .multilingual_editions import FEATURE, EditionIn, VersionIn, SegmentIn, ReviewIn, RuleIn, RuleReviewIn, RefreshIn, ExportIn
 
 
-def create_multilingual_editions_router(service, authorize, require_flag):
+def create_multilingual_editions_router(service, authorize, require_flag, *, preparer=None, broker=None, manager=None, require_host_session=None):
+    from .multilingual_translation import MultilingualTranslationCoordinator, TranslationPreviewIn, TranslationDispatchIn, TranslationAdoptIn
+    from .ux import ReadContext
+    service.translation_coordinator = MultilingualTranslationCoordinator(service, preparer, broker, manager) if all(x is not None for x in (preparer, broker, manager)) else None
     router = APIRouter(prefix='/novels/{nid}/experimental/language-editions', tags=['experimental-multilingual-editions'])
 
     def access(nid, token, branch, response, permission='domain.write'):
@@ -92,5 +95,36 @@ def create_multilingual_editions_router(service, authorize, require_flag):
     async def export(nid: str, eid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         data = await body(request, ExportIn); actor, scope, again = access(nid, x_session_token, x_branch_id, response, 'domain.review')
         return api_call(service.export, nid, scope, actor, eid, data, reauthorize=again)
+
+    def translation_access(nid, token, branch, response):
+        actor, scope, again = access(nid, token, branch, response)
+        if service.translation_coordinator is None or not callable(require_host_session):
+            raise HTTPException(409, {'code': 'TRANSLATION_ORIGINAL_EXECUTOR_UNAVAILABLE'})
+        def current():
+            again(); require_flag('model_broker_v2'); require_flag('author_context_inspector_v2'); require_host_session(token)
+        current()
+        return ReadContext(nid, scope, actor, token, branch), current
+
+    @router.get('/translation/routes')
+    def translation_routes(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, check = translation_access(nid, x_session_token, x_branch_id, response)
+        result = api_call(service.translation_coordinator.routes, ctx, check); check(); return result
+
+    @router.get('/{eid}/translations')
+    def translations(nid: str, eid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, check = translation_access(nid, x_session_token, x_branch_id, response)
+        result = api_call(service.translation_coordinator.list, ctx, eid, check); check(); return result
+
+    @router.post('/{eid}/segments/{sid}/translation-preview', status_code=201)
+    async def translation_preview(nid: str, eid: str, sid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        data = await body(request, TranslationPreviewIn); ctx, check = translation_access(nid, x_session_token, x_branch_id, response)
+        result = api_call(service.translation_coordinator.preview, ctx, eid, sid, data, check); check(); return result
+
+    @router.post('/{eid}/translations/{rid}/{action}')
+    async def translation_action(nid: str, eid: str, rid: str, action: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        models = {'dispatch': TranslationDispatchIn, 'refresh': VersionIn, 'cancel': VersionIn, 'adopt': TranslationAdoptIn}
+        if action not in models: raise HTTPException(404, {'code': 'TRANSLATION_ACTION_NOT_FOUND'})
+        data = await body(request, models[action]); ctx, check = translation_access(nid, x_session_token, x_branch_id, response)
+        result = api_call(getattr(service.translation_coordinator, action), ctx, eid, rid, data, check); check(); return result
 
     return router

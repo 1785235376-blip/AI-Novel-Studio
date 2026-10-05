@@ -12,7 +12,7 @@ from typing import Literal, Protocol
 
 from pydantic import Field, ValidationError
 
-from .common import StaleSourceError, check_version, new_row, now
+from .common import StaleSourceError, check_version, change_row, new_row, now
 from .planning import StrictModel, collection, require_row, digest
 from .style_analysis import SourceFencedService, paragraphs
 from ..repositories.file.mutation_coordinator import workspace_mutation
@@ -103,6 +103,7 @@ class NarrativeJudgeService(SourceFencedService):
     def __init__(self, store, novels, chapters, creation, world, planning=None, adapters=()):
         super().__init__(store, novels, chapters)
         self.creation, self.world, self.planning = creation, world, planning
+        self.model_coordinator = None
         self.adapters = {adapter.adapter_id: adapter for adapter in adapters}
         if len(self.adapters) != len(adapters): raise ValueError("duplicate judge adapter")
 
@@ -155,7 +156,8 @@ class NarrativeJudgeService(SourceFencedService):
             self._fresh(nid, scope, receipt)
         except (ValueError, FileNotFoundError):
             return {"id": receipt["id"], "version": receipt["version"], "status": receipt["status"], "stale": True,
-                    "findings": [], "abstentions": ["来源或审核资料已变化；旧结果已隐藏，请重新审稿。"], "verification": receipt["verification"], "model_called": receipt["model_called"]}
+                    "findings": [], "abstentions": ["来源或审核资料已变化；旧结果已隐藏，请重新审稿。"], "verification": receipt["verification"], "model_called": receipt["model_called"],
+                    "model_preview": None, "model_execution": deepcopy(receipt.get("model_execution"))}
         rows = {row["id"]: row for row in self._threads(nid, scope)}
         result["findings"] = [self._finding_public(nid, scope, rows[rid], receipt) for rid in receipt["finding_ids"] if rid in rows]
         result["stale"] = False
@@ -257,6 +259,55 @@ class NarrativeJudgeService(SourceFencedService):
                 self.creation.store._write("review_threads", rows)
                 collection(state, self.RUNS)[run_id] = receipt
         return self._public(nid, scope, receipt)
+
+    def record_model_result(self, ctx, previous, execution, opinions, guard):
+        """Publish validated model opinions into the original review authority.
+
+        Stable per-job finding IDs recover a sidecar write without reexecuting
+        the model. All output is validated before the first review-thread write.
+        """
+        nid, scope, actor, run_id = ctx.novel_id, ctx.scope, ctx.actor, previous['id']
+        if opinions is None and execution == previous.get('model_execution'):
+            self._fresh(nid, scope, previous); guard()
+            return self.run(nid, scope, run_id)
+        with self.creation.store._lock, workspace_mutation(self.creation.store.root, 'creation-workbench'):
+            with self.store.transaction(nid, scope) as state:
+                receipt = require_row(state, self.RUNS, run_id)
+                self._fresh(nid, scope, receipt); guard()
+                check_version({k: receipt[k] for k in ('id', 'version', 'status')}, previous['version'])
+                if receipt['created_by'] != actor: raise ValueError('JUDGE_MODEL_ACTOR_MISMATCH')
+                if receipt.get('model_execution') != previous.get('model_execution'): raise ValueError('JUDGE_MODEL_RECEIPT_CHANGED')
+                ids = list(receipt['finding_ids'])
+                if opinions is not None:
+                    _, chapters = self.capture(nid, scope, list(receipt['sources']))
+                    for opinion in opinions: validate_evidence(opinion['evidence'], chapters)
+                    route = receipt['model_preview']['broker']['chosen']
+                    identity = {k: deepcopy(route[k]) for k in ('route_id', 'provider_id', 'model_id', 'fingerprint', 'identity', 'synthetic')}
+                    rows = self.creation._rows('review_threads')
+                    for index, opinion in enumerate(opinions):
+                        rid = str(uuid.uuid5(uuid.UUID(run_id), 'model:' + execution['job_id'] + ':' + str(index)))
+                        if rid not in ids: ids.append(rid)
+                        existing = next((r for r in rows if r['id'] == rid), None)
+                        if existing:
+                            if not self.creation._match(existing, nid, scope): raise ValueError('review thread scope conflict')
+                            continue
+                        proof = opinion['evidence'][0]
+                        finding = {**deepcopy(opinion), 'code': 'MODEL_OPINION', 'severity': 'INFO', 'origin': 'MODEL_ASSESSMENT',
+                            'model': identity, 'job_id': execution['job_id'], 'rubric': receipt['model_preview']['rubric'],
+                            'independence': 'UNVERIFIED', 'quality_verification': receipt['model_preview']['quality_verification'],
+                            'run_id': run_id, 'decision': 'PENDING', 'privacy_level': 'LOCAL_ONLY'}
+                        rows.append({'id': rid, 'novel_id': nid, 'scope': deepcopy(scope),
+                            'anchor': {'chapter_id': proof['chapter_id'], 'chapter_version': proof['chapter_version'],
+                                'quote': proof['quote'], 'content_sha256': receipt['sources'][proof['chapter_id']]['digest']},
+                            'status': 'OPEN', 'version': 1, 'created_at': now(), 'updated_at': now(),
+                            'messages': [{'id': str(uuid.uuid4()), 'actor_id': actor, 'text': opinion['explanation'], 'at': now()}],
+                            'history': [{'action': 'JUDGE_MODEL_CREATED', 'actor_id': actor, 'at': now()}], 'narrative_judge': finding})
+                    self._fresh(nid, scope, receipt); guard()
+                    self.creation.store._write('review_threads', rows)
+                change_row(receipt, actor, receipt['version'], lambda r: r.update(model_execution=deepcopy(execution), finding_ids=ids,
+                    model_called=execution['model_called'], verification='RULES_AND_UNVERIFIED_MODEL' if opinions is not None else r['verification']))
+                self._fresh(nid, scope, receipt); guard()
+        return self.run(nid, scope, run_id)
 
     def review(self, nid, scope, actor, rid, value, reauthorize=lambda: None):
         data = JudgeReviewIn.model_validate(value.model_dump() if hasattr(value, "model_dump") else value)

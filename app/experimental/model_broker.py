@@ -238,7 +238,7 @@ class ModelBrokerService(DomainService):
                           'available': not reasons, 'reasons': list(dict.fromkeys(reasons)),
                           'verification': 'SYNTHETIC_PROTOCOL_ONLY' if facts.get('synthetic') else 'ADAPTER_CONTRACT_ONLY'})
         if self.media_registry is not None:
-            from .media import MockImageWorkflowAdapter
+            from .media import MockImageWorkflowAdapter, RegisteredLocalImageWorkflowAdapter, production_environment
             for definition in self.media_registry.definitions()['items']:
                 adapter = self.media_registry._adapters.get(definition['adapter_id'])
                 if adapter is None: continue  # Family contracts are not available models.
@@ -253,6 +253,12 @@ class ModelBrokerService(DomainService):
                     'model_version': definition['adapter_version'] if synthetic else None,
                     'workflow_hash': digest(definition), 'runtime_version': 'python-' + platform.python_version() if synthetic else None,
                     'quantization': None, 'hardware_hash': None, 'definition': definition}
+                if type(adapter) is RegisteredLocalImageWorkflowAdapter:
+                    try:
+                        environment = production_environment(adapter)
+                        identity['registered_environment'] = environment
+                        identity['workflow_hash'] = digest([definition, environment['workflow_digest'], environment['registration']['delegate_digest']])
+                    except (ValueError, RuntimeError): reasons.append('ORIGINAL_IMAGE_REGISTRATION_UNAVAILABLE')
                 items.append({'route_id': digest(['media', definition['adapter_id'], definition['model_id']]),
                     'adapter_id': definition['adapter_id'], 'provider_id': 'media:' + definition['adapter_id'],
                     'model_id': definition['model_id'], 'display_name': definition['family'],

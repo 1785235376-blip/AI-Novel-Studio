@@ -1,8 +1,9 @@
 """B05 independent, reviewed language editions over original paragraph authorities.
 
-This is local deterministic authoring, not a translation model or manuscript
-branch. Source prose is read through its current authority and never copied into
-this collection. No legacy chapter, generation, asset or export record is written.
+This is local authoring over independent editions, not a manuscript branch.
+Optional explicit translation composes the original author/model runtime. Source
+prose is read through its current authority and never copied into this edition
+collection. Manual edition operations write no legacy manuscript or asset record.
 """
 from __future__ import annotations
 
@@ -159,7 +160,9 @@ class MultilingualEditionsService(RevisionIntelligenceService):
             except (FileNotFoundError, ValueError): continue
             rows.append({'id': current['id'], 'title': current.get('title', current['id']), 'version': current['version']})
         return {'chapters': rows, 'branch_sources_available': bool(rows) or scope.get('branch_id') is None,
-                'translation': {'available': False, 'reason': 'AUTHORIZED_TRANSLATION_ADAPTER_UNAVAILABLE', 'model_called': False},
+                'translation': {'available': bool(getattr(self, 'translation_coordinator', None)),
+                                'reason': 'EXACT_SEGMENT_MODEL_PREFLIGHT_REQUIRED' if getattr(self, 'translation_coordinator', None) else 'TRANSLATION_ORIGINAL_EXECUTOR_UNAVAILABLE',
+                                'execution_authorized': False, 'model_called': False},
                 'limits': {'chapters': 20, 'segments': MAX_SEGMENTS, 'target_characters': MAX_TARGET_TEXT},
                 'language_validation': 'BCP47_SHAPED_TAGS_NOT_LANGUAGE_QUALITY', 'font_policy': 'SYSTEM_GENERIC_FALLBACK_GLYPHS_NOT_GUARANTEED'}
 
@@ -213,7 +216,7 @@ class MultilingualEditionsService(RevisionIntelligenceService):
         for segment in result['segments']:
             segment['source_text'] = texts[segment['id']]
             segment['issues'] = terminology_issues(segment['source_text'], segment['target_text'], row['rules'])
-        result.update(stale=False, content_withheld=False, checks=self._checks(row, texts), model_called=False)
+        result.update(stale=False, content_withheld=False, checks=self._checks(row, texts), model_called=any(s.get('translation_provenance') for s in row['segments']))
         return result
 
     def editions(self, nid, scope, actor):

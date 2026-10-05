@@ -15,7 +15,7 @@ from pydantic import Field, model_validator
 from ..source_privacy import source_privacy_status
 from ..services.v1_capability_service import CapabilityVersionConflict
 from .common import DomainService, StaleSourceError, check_version, new_row, now
-from .media import StrictModel, digest, production_environment
+from .media import StrictModel, RegisteredLocalImageWorkflowAdapter, digest, production_environment
 
 
 class LicenseDeclaration(StrictModel):
@@ -61,6 +61,7 @@ class ProductionLineageService(DomainService):
     def __init__(self, store, novels, chapters, assets, media, *, broker=None, broker_enabled=None):
         super().__init__(store, novels, chapters)
         self.assets, self.media = assets, media
+        self.change_impact = None
         self.broker, self.broker_enabled = broker, broker_enabled or (lambda: False)
 
     def _asset(self, nid, scope, aid, deleted=False):
@@ -233,11 +234,36 @@ class ProductionLineageService(DomainService):
             result["chapters"][cid] = {k: state[k] for k in ("privacy_level", "reviewed", "stale")}
         return result
 
+    def _origin(self, nid, scope, task, guard=lambda: None):
+        if task.get('benchmark_run_id'): raise ValueError('PRODUCTION_BENCHMARK_CAPTURE_NOT_SUPPORTED')
+        if task.get('production_origin_refresh_id'):
+            original = self._task(nid, scope, task['origin_media_task_id'])
+        else: original = task
+        if not original.get('change_impact_refresh_id'): return None
+        if self.change_impact is None: raise ValueError('PRODUCTION_CHANGE_IMPACT_AUTHORITY_REQUIRED')
+        return self.change_impact.manifest_origin(nid, scope, original, guard)
+
+    def _visible_origin(self, nid, scope, row):
+        if not row.get('origin'): return True
+        try:
+            self._task(nid, scope, row['task_id'])
+            return True
+        except (FileNotFoundError, ValueError): return False
+
+    def get(self, nid, scope, collection, rid):
+        row = super().get(nid, scope, collection, rid)
+        if collection == self.MANIFESTS and not self._visible_origin(nid, scope, row): raise FileNotFoundError(rid)
+        return row
+
+    def list(self, nid, scope, collection):
+        rows = super().list(nid, scope, collection)
+        return [r for r in rows if self._visible_origin(nid, scope, r)] if collection == self.MANIFESTS else rows
+
     def capture(self, nid, scope, actor, value, guard=lambda: None):
         body = ManifestInput.model_validate(value)
         task = self._task(nid, scope, body.task_id)
-        if task.get("change_impact_refresh_id"):
-            raise ValueError("PRODUCTION_CHANGE_IMPACT_CAPTURE_NOT_SUPPORTED")
+        origin = self._origin(nid, scope, task, guard)
+        if origin and task['created_by'] != actor: raise ValueError('PRODUCTION_CHANGE_IMPACT_OWNER_REQUIRED')
         check_version(task, body.expected_task_version)
         if task["status"] != "SUCCEEDED": raise ValueError("PRODUCTION_COMPLETED_TASK_REQUIRED")
         outputs = []
@@ -251,8 +277,11 @@ class ProductionLineageService(DomainService):
                    "environment": task.get("observed_environment"), "input_digest": task["source_digest"],
                    "brief_id": task["brief_id"], "brief_version": task["brief_version"],
                    "sources": task["sources"], "asset_sources": task["brief_snapshot"].get("asset_sources", {}),
-                   "seed": {"state": "NOT_SUPPORTED_BY_MEDIA_REQUEST", "value": None},
-                   "parameters": {"candidate_count": task["candidate_count"]}, "configuration_diff": {},
+                   "seed": {"state": "RECORDED" if "seed" in task.get("parameters", {}) else "NOT_RECORDED", "value": task.get("parameters", {}).get("seed")},
+                   "parameters": {"candidate_count": task["candidate_count"], **{k: v for k, v in task.get("parameters", {}).items() if k != "negative_prompt"},
+                       **({"negative_prompt_digest": digest(task["parameters"]["negative_prompt"])} if "negative_prompt" in task.get("parameters", {}) else {})},
+                   "parameter_digest": digest(task.get("parameters", {})), "configuration_diff": {},
+                   **({"origin": origin} if origin else {}),
                    "outputs": outputs, "privacy_at_capture": self._privacy(nid, scope, task),
                    "prompt_storage": "EXISTING_PRIVATE_MEDIA_BRIEF_ONLY", "quality_verification": "NOT_EVALUATED"}
         payload["manifest_digest"] = digest(payload)
@@ -260,6 +289,7 @@ class ProductionLineageService(DomainService):
         with self.store.transaction(nid, scope) as doc:
             guard()
             check_version(self._task(nid, scope, body.task_id), body.expected_task_version)
+            if self._origin(nid, scope, task, guard) != origin: raise ValueError('PRODUCTION_ORIGIN_CHANGED')
             rows = doc["collections"].setdefault(self.MANIFESTS, {})
             old = next((r for r in rows.values() if r["manifest_digest"] == payload["manifest_digest"]), None)
             if old: return self._manifest_view(nid, scope, old)
@@ -293,9 +323,11 @@ class ProductionLineageService(DomainService):
         reasons, task, current_env, privacy = [], None, None, None
         try:
             task = self._task(nid, scope, row["task_id"])
-            if task["status"] != "SUCCEEDED" or task["source_digest"] != row["input_digest"]:
+            if (task["status"] != "SUCCEEDED" or task["source_digest"] != row["input_digest"]
+                    or (row.get("parameter_digest") and digest(task.get("parameters", {})) != row["parameter_digest"])):
                 reasons.append("SOURCE_TASK_CHANGED")
             self.media._current_brief(nid, scope, task)
+            if self._origin(nid, scope, task) != row.get('origin'): reasons.append('ORIGIN_AUTHORITY_CHANGED')
             for aid in row["asset_sources"]:
                 self._asset(nid, scope, aid)
                 self.assets.content(aid, branch_id=scope.get("branch_id"))
@@ -307,6 +339,8 @@ class ProductionLineageService(DomainService):
             if adapter.definition.model_dump() != row["adapter"]: reasons.append("ADAPTER_OR_MODEL_CHANGED")
             current_env = production_environment(adapter)
             if not adapter.definition.local: reasons.append("FRESH_CLOUD_AUTHORIZATION_NOT_INTEGRATED")
+            if type(adapter) is RegisteredLocalImageWorkflowAdapter and not self.broker_enabled():
+                reasons.append("MODEL_BROKER_FEATURE_REQUIRED")
         except ValueError: reasons.append("CONFIGURED_ADAPTER_REQUIRED")
         if not row.get("environment"): reasons.append("ORIGINAL_RUNTIME_EVIDENCE_MISSING")
         elif row["environment"] != current_env: reasons.append("RUNTIME_OR_IMPLEMENTATION_CHANGED")
@@ -350,7 +384,7 @@ class ProductionLineageService(DomainService):
                 "preflight_digest": self._preflight_digest(actor, scope, state, broker_id, broker_version),
                 "broker_decision_id": broker_id, "broker_decision_version": broker_version, "cost": cost,
                 "states": {"traceable": not any(r in reasons for r in ("SOURCE_CHANGED_OR_UNAVAILABLE", "SOURCE_TASK_CHANGED")),
-                    "rebuildable": bool(row.get("environment")) and not any(r in reasons for r in ("RUNTIME_OR_IMPLEMENTATION_CHANGED", "EXACT_MODEL_IDENTITY_REQUIRED", "CONFIGURED_ADAPTER_REQUIRED")),
+                    "rebuildable": bool(row.get("environment")) and bool(row["environment"].get("deterministic") or (row["environment"].get("registration") or {}).get("runtime_version")) and not any(r in reasons for r in ("RUNTIME_OR_IMPLEMENTATION_CHANGED", "EXACT_MODEL_IDENTITY_REQUIRED", "CONFIGURED_ADAPTER_REQUIRED")),
                     "replayable": not reasons, "deterministic": bool(row.get("environment", {}).get("deterministic")) if row.get("environment") else False,
                     "byte_equal": None},
                 "authorization": "CURRENT_REQUEST_ONLY_NEW_TASK_REQUIRES_EXPLICIT_ACTION", "automatic_retry": False,
@@ -386,7 +420,13 @@ class ProductionLineageService(DomainService):
             replay = new_row(nid, scope, actor, {"manifest_id": rid, "idempotency_digest": key, "request_digest": fingerprint,
                 "request": body.model_dump(), "status": "LINKED", "broker_required": bool(self.broker_enabled()), "reservation_id": None})
             task = self.media.prepare_task(nid, scope, actor, {"brief_id": row["brief_id"], "expected_brief_version": row["brief_version"],
-                "adapter_id": row["adapter"]["adapter_id"], "candidate_count": row["parameters"]["candidate_count"]})
+                "adapter_id": row["adapter"]["adapter_id"], "candidate_count": row["parameters"]["candidate_count"],
+                "parameters": copy.deepcopy(self._task(nid, scope, row["task_id"]).get("parameters", {}))},
+                origin_guard=(lambda brief: self._assert_replay(nid, scope, actor, row, body, guard)) if row.get('origin') else None)
+            if row.get('origin'):
+                original = self._task(nid, scope, row['task_id'])
+                task.update(production_origin_refresh_id=row['origin']['refresh_id'],
+                    origin_media_task_id=original.get('origin_media_task_id', original['id']))
             task.update(production_replay_id=replay["id"], production_manifest_id=rid)
             replay["task_id"] = task["id"]
             doc["collections"].setdefault(self.media.TASKS, {})[task["id"]] = task; rows[replay["id"]] = replay
@@ -416,10 +456,16 @@ class ProductionLineageService(DomainService):
                 "recovery": "NEW_PREFLIGHT_AND_NEW_TASK_REQUIRED" if recoverable or task["status"] == "FAILED"
                     or any(r["integrity"] != "VERIFIED" for r in outputs) else None,
                 "reservation_id": row.get("reservation_id"), "broker_required": row["broker_required"],
-                "review_feature": "cover_storyboard_generation", "automatic_approval": False}
+                "review_feature": "cover_storyboard_generation", "automatic_approval": False,
+                "synthetic": bool((manifest.get("environment") or {}).get("deterministic"))}
 
     def replays(self, nid, scope, actor):
-        return {"items": [self._replay_view(nid, scope, r) for r in self.list(nid, scope, self.REPLAYS) if r["created_by"] == actor]}
+        result = []
+        for row in self.list(nid, scope, self.REPLAYS):
+            if row['created_by'] != actor: continue
+            try: result.append(self._replay_view(nid, scope, row))
+            except (FileNotFoundError, ValueError): continue
+        return {'items': result}
 
     def execute_replay(self, nid, scope, actor, rid, expected_task_version, guard=lambda: None):
         replay = self.get(nid, scope, self.REPLAYS, rid)
@@ -494,8 +540,10 @@ class ProductionLineageService(DomainService):
                 "adapter_digest": env.get("adapter_digest"), "workflow_digest": env.get("workflow_digest"),
                 "workflow_version_digest": digest(env.get("workflow_version")),
                 "input_versions": [{"version": binding["version"], "digest": binding["digest"]} for group in (row["sources"], row["asset_sources"]) for binding in group.values()],
-                "seed": {"state": "NOT_SUPPORTED_BY_MEDIA_REQUEST", "value": None},
-                "parameters": {"candidate_count": row["parameters"]["candidate_count"]}, "configuration_diff_digest": digest(row["configuration_diff"]),
+                "seed": {"state": "RECORDED" if type((row.get('seed') or {}).get('value')) is int else "NOT_RECORDED",
+                         "value": row['seed']['value'] if type((row.get('seed') or {}).get('value')) is int else None},
+                "parameters": {k: row['parameters'][k] for k in ('candidate_count', 'width', 'height', 'steps', 'seed') if type(row['parameters'].get(k)) is int},
+                "parameters_digest": digest(row['parameters']), "configuration_diff_digest": digest(row["configuration_diff"]),
                 "outputs": [{"candidate_index": r["candidate_index"], "digest": r["digest"]} for r in row["outputs"]],
                 "deterministic": bool(env.get("deterministic")), "byte_equal": None,
                 "redaction": {"raw_prompts": False, "source_text": False, "credentials": False, "paths": False, "asset_ids": False},
