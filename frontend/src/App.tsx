@@ -71,6 +71,8 @@ import { NovelOverviewPanel } from "./novel/NovelOverviewPanel";
 import { ResearchPanel } from "./novel/ResearchPanel";
 import { ContinuityCheckPanel } from "./novel/ContinuityCheckPanel";
 import { FeatureLauncher } from "./ui/FeatureLauncher";
+import { ExperimentalWorkbench, EXPERIMENTAL_GROUPS } from "./experimental/ExperimentalWorkbench";
+import { experimentalFeatures } from "./experimental/api";
 import { AiControlCenter } from "./ui/AiControlCenter";
 import { MediaProviderSettings } from "./ui/MediaProviderSettings";
 import "./ui/capability.css";
@@ -136,6 +138,8 @@ export default function App() {
     saveGate = useRef(new SingleFlight<any>()),
     cancelledVariantIds = useRef(new Set<string>());
   active.current = { namespace, chapterId: s.chapterId };
+  const experimentalFlags = useQuery({ queryKey: ["experimental-features", namespace], queryFn: ({ signal }) => experimentalFeatures(signal, {sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}), retry: false, staleTime: 30000 });
+  const hasExperimental = Object.values(experimentalFlags.data?.features || {}).some(value => value === true);
   const [token, setToken] = useState(s.sessionToken),
     [scopeDraft, setScopeDraft] = useState<Scope>(
       s.scope || {
@@ -936,6 +940,7 @@ export default function App() {
       <div className="novel-sidebar-heading novel-sidebar-heading--tools"><span>工作区</span><strong>创作工具</strong></div>
       <FeatureLauncher
         selectedId={panel}
+        extraGroups={hasExperimental ? EXPERIMENTAL_GROUPS : undefined}
         expandedGroups={featureGroups}
         onSelect={setPanel}
         onToggleGroup={(id) => setFeatureGroups((current) => ({ ...current, [id]: !current[id] }))}
@@ -976,7 +981,7 @@ export default function App() {
           <p>在左侧新建或选择章节，开始写作。</p>
         </section>
       )}
-      <Panel type={panel} chapter={chapter.data} scope={scope} sessionToken={s.sessionToken} novelId={s.novelId} onOpenChapter={s.setChapter}
+      {panel === "experimental" ? <ExperimentalWorkbench key={`${namespace}:${s.novelId}`} novelId={s.novelId} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}} flags={experimentalFlags.data} /> : <Panel type={panel} chapter={chapter.data} scope={scope} sessionToken={s.sessionToken} novelId={s.novelId} onOpenChapter={s.setChapter}
         onRestored={(restored) => {
           // Feed the existing hydration path. It retains drafts and creates a
           // persistent conflict when a restored server version overtakes them.
@@ -985,7 +990,7 @@ export default function App() {
           qc.setQueryData<Chapter>(["chapter", namespace, s.chapterId], current =>
             current && current.version > restored.version ? current : restored);
           void qc.invalidateQueries({ queryKey: ["chapters", namespace, s.novelId] });
-        }} />
+        }} />}
     </div>
   );
   const inspector = (

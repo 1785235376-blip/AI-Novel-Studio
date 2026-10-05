@@ -37,14 +37,20 @@ def baseline_checksum() -> str:
     ).encode("ascii")).hexdigest()
 
 
-def load_packaged_migrations(migrations: Path) -> tuple[PackagedMigration, ...]:
-    return (PackagedMigration.from_file(
+def load_packaged_migrations(migrations: Path, *, include_experimental: bool = False) -> tuple[PackagedMigration, ...]:
+    baseline = (PackagedMigration.from_file(
         "0001_chapter_archive_state", "chapter archive state",
         migrations / "017_chapter_archive_state.sql",
     ), PackagedMigration.from_file(
         "0002_context_privacy", "durable fail-closed context privacy",
         migrations / "018_context_privacy.sql",
     ))
+    if not include_experimental:
+        return baseline
+    return baseline + (PackagedMigration.from_file(
+        "0003_experimental_scope_documents", "default-off experimental scope metadata",
+        migrations / "019_experimental_scope_documents.sql",
+    ),)
 
 
 _BASELINE_FINGERPRINT = {
@@ -248,7 +254,8 @@ class PackagedPostgresMigrationRunner:
         log: Callable[[str], None] | None = None,
         migrations: tuple[PackagedMigration, ...] | None = None,
     ):
-        self.migrations = migrations or load_packaged_migrations(migrations_path)
+        from ..experimental.flags import enabled_flags
+        self.migrations = migrations or load_packaged_migrations(migrations_path, include_experimental=bool(enabled_flags()))
         self.execute_sql = execute_sql
         self.log = log or (lambda _message: None)
 

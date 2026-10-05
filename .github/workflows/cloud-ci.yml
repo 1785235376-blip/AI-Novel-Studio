@@ -118,7 +118,7 @@ jobs:
   frontend:
     name: Frontend / unit-type-build-tokens
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4.2.2
         with:
@@ -178,6 +178,22 @@ jobs:
         run: |
           set -o pipefail
           pnpm exec playwright test --config playwright.r2.config.ts 2>&1 | tee "$CI_RECEIPTS/business.log"
+      - name: Install real media validators for experimental browser workflows
+        if: success() || failure()
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          ffmpeg -version > "$CI_RECEIPTS/browser-ffmpeg-version.txt"
+          ffprobe -version > "$CI_RECEIPTS/browser-ffprobe-version.txt"
+          python -c "import shutil; assert shutil.which('ffmpeg') and shutil.which('ffprobe')"
+      - name: Experimental R3 business journeys and default-off regression
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          R3_PYTHON: python
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.experimental.config.ts 2>&1 | tee "$CI_RECEIPTS/experimental-browser.log"
       - name: Export recovery browser isolation and screenshots
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}/frontend

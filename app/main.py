@@ -273,6 +273,12 @@ async def collaboration_fail_closed(request,call_next):
             re.fullmatch(r"/api/novels/[^/]+/knowledge-base/review",normalized_path) is not None and method=="POST" or
             re.fullmatch(r"/api/novels/[^/]+/chapters/[^/]+/knowledge-base/review",normalized_path) is not None and method=="POST" or
             capability_route and method in {"GET","POST","PUT","PATCH","DELETE"}))
+        # New routes are admitted only behind server-owned opt-in. Domain
+        # routers still require exact project/branch authorization and flags.
+        from .experimental.flags import enabled_flags
+        experimental_path = re.fullmatch(r"/api/novels/[^/]+/experimental/.+", normalized_path) is not None
+        if (normalized_path == "/api/experimental/features" and method == "GET") or (experimental_path and enabled_flags() and method in {"GET", "POST", "PUT", "PATCH", "DELETE"}):
+            allowed = True
         if not allowed:
             return JSONResponse({"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}},status_code=501)
         public_metadata = (
@@ -291,6 +297,9 @@ async def collaboration_fail_closed(request,call_next):
 app.add_middleware(CORSMiddleware,allow_origins=[settings.frontend_origin],allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 app.include_router(api_router, prefix="/api")
 app.include_router(api_router, prefix="/api/v1")
+from .experimental.api import router as experimental_router
+app.include_router(experimental_router, prefix="/api")
+app.include_router(experimental_router, prefix="/api/v1")
 app.include_router(create_model_center_router(model_center_service, mutation_authorization=_model_center_mutation_authorization))
 app.include_router(create_model_center_router(model_center_service, prefix="/api/v1/model-center", mutation_authorization=_model_center_mutation_authorization))
 app.include_router(create_local_discovery_router(local_ai_discovery, mutation_authorization=_model_center_mutation_authorization))
