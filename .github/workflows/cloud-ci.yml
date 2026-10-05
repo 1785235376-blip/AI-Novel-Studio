@@ -308,6 +308,20 @@ jobs:
         run: |
           python scripts/verify_windows_base.py --base "$env:R2_PACKAGE_ROOT/package/Application" --work-root "$env:R2_PACKAGE_ROOT/native-smoke" 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/native-smoke.log"
           exit $LASTEXITCODE
+      - name: Upload bounded native package receipts
+        if: always()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: windows-native-receipts-${{ github.sha }}
+          path: |
+            ${{ env.R2_PACKAGE_ROOT }}/receipts
+            ${{ env.R2_PACKAGE_ROOT }}/base/base-input-provenance.json
+            ${{ env.R2_PACKAGE_ROOT }}/package/*.json
+            ${{ env.R2_PACKAGE_ROOT }}/package/*.txt
+            ${{ env.R2_PACKAGE_ROOT }}/native-smoke/native-base-smoke.json
+            ${{ env.R2_PACKAGE_ROOT }}/native-smoke/command-logs
+          if-no-files-found: error
+          retention-days: 14
       - name: Upload internal package and provenance (not a Release)
         if: always()
         uses: actions/upload-artifact@v4.6.2

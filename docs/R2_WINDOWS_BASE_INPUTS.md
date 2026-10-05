@@ -128,3 +128,33 @@ Studio and Strawberry Perl. However, default MSVC configuration omits OpenSSL/pg
 001 explicitly creates pgcrypto; zlib is also needed for the existing custom-format backup workflow.
 It therefore requires an additional reviewed OpenSSL/zlib build chain. Using the exact official EDB
 redistribution input closes the current gap without silently weakening those application contracts.
+
+## Native smoke process-output correction (2026-10-05)
+
+The first hosted full-package attempt successfully assembled the base, rebuilt the self-contained Host
+with SDK 8.0.424 and produced the unsigned acceptance ZIP. Its original native-smoke step did not
+complete while being observed; that attempt is not a native PASS. Source inspection found a concrete
+Windows inherited-pipe hazard: PostgreSQL 16 `pg_ctl` starts CMD with inherited standard handles,
+while CPython's Windows `subprocess.run(capture_output=True)` timeout cleanup calls `communicate()`
+again without a timeout. A long-lived descendant can retain the pipe even after the direct process
+exits. This is a source-supported diagnosis, not an assertion that the unavailable unfinished job log
+proved its exact stopping point.
+
+The verifier now captures each command into fresh `command-logs/NNN.stdout.log` and stderr files,
+waits for the immediate process with the same finite timeout, and reads a bounded file tail. Flushed
+progress markers expose inventory start/completion and command start/completion/timeout without
+printing paths or environment values. Regular files do not require descendant EOF to be readable.
+
+For a genuine command timeout, cleanup is scoped to the still-live Popen-owned PID: absolute
+`System32/taskkill.exe /PID <pid> /T /F`, bounded to 10 seconds, followed when necessary by killing
+that same process handle and a five-second wait. No executable-name/global termination is used.
+The receipt distinguishes `TASKKILL_REPORTED_SUCCESS` from `NOT_VERIFIED`; it does not claim
+independent enumeration of every descendant. A successful pg_ctl launch is allowed to leave its
+fresh cluster running until the existing data-directory-specific stop in `finally`. Both command
+failure and owned shutdown failure retain a FAILED native receipt.
+
+Tests include real file-backed subprocess output with a temporary descendant holding inherited
+handles, a real bounded synthetic timeout, Windows PID-tree command mocks, no-kill-after-parent-exit,
+owned-cluster stop on intermediate/initdb timeout, no database stop before a cluster exists, shutdown
+failure receipts, and refusal to reuse an existing work root. Cross-platform and mocked controls do
+not substitute for the subsequent hosted Windows PostgreSQL execution.

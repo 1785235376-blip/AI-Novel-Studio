@@ -13,6 +13,7 @@ from pathlib import Path
 import socket
 import subprocess
 import sys
+import time
 
 
 def digest(path: Path) -> str:
@@ -42,6 +43,101 @@ def native_environment(root: Path) -> dict[str, str]:
     }
 
 
+def progress(stage: str, **details: object) -> None:
+    """Print only stage names, executable basenames and synthetic counters."""
+    print("NATIVE_BASE_PROGRESS " + json.dumps({"stage": stage, **details}, sort_keys=True), flush=True)
+
+
+def log_tail(path: Path, limit: int = 5000) -> str:
+    with path.open("rb") as stream:
+        stream.seek(max(0, path.stat().st_size - limit))
+        return stream.read(limit).decode("utf-8", errors="replace")
+
+
+def terminate_owned_command(process, environment: dict[str, str], stdout, stderr) -> dict:
+    """Bound cleanup to this invocation's still-live PID, never executable name.
+
+    Windows taskkill reports on a PID tree; its success is recorded as reported
+    success rather than independent proof that every descendant was enumerated.
+    The owned cluster still has its separate data-directory shutdown in finally.
+    """
+    evidence: dict = {"pid": process.pid, "tree_cleanup": "NOT_VERIFIED"}
+    if process.poll() is not None:
+        evidence["parent_exited"] = True
+        return evidence
+    if sys.platform == "win32":
+        taskkill = Path(environment["SystemRoot"]) / "System32/taskkill.exe"
+        try:
+            terminated = subprocess.run(
+                [str(taskkill), "/PID", str(process.pid), "/T", "/F"],
+                env=environment, stdin=subprocess.DEVNULL, stdout=stdout, stderr=stderr,
+                timeout=10, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+            )
+            evidence["taskkill_exit_code"] = terminated.returncode
+            if terminated.returncode == 0:
+                evidence["tree_cleanup"] = "TASKKILL_REPORTED_SUCCESS"
+        except (OSError, subprocess.TimeoutExpired) as error:
+            evidence["taskkill_error"] = type(error).__name__
+    # A non-Windows call is only used by isolated tests. Preserve the explicit
+    # NOT_VERIFIED tree status rather than claiming POSIX descendant cleanup.
+    if process.poll() is None:
+        process.kill()  # Popen's handle, not a guessed or globally selected PID
+    try:
+        process.wait(timeout=5)
+        evidence["parent_exited"] = True
+    except subprocess.TimeoutExpired:
+        evidence["parent_exited"] = False
+    return evidence
+
+
+def run_native_command(arguments: list[str | Path], *, root: Path,
+                       environment: dict[str, str], commands: list[dict], timeout: int = 60) -> str:
+    arguments = [str(value) for value in arguments]
+    executable = Path(arguments[0]).name
+    logs = root / "command-logs"
+    logs.mkdir(exist_ok=True)
+    index = len(commands) + 1
+    stdout_path = logs / f"{index:03d}.stdout.log"
+    stderr_path = logs / f"{index:03d}.stderr.log"
+    entry: dict = {"executable": executable, "arguments": arguments[1:], "status": "RUNNING",
+                   "stdout_file": stdout_path.relative_to(root).as_posix(),
+                   "stderr_file": stderr_path.relative_to(root).as_posix()}
+    commands.append(entry)
+    progress("command_start", executable=executable, number=index)
+    began = time.monotonic()
+    try:
+        # Regular files avoid inherited PIPE handles held by Windows CMD /
+        # postgres descendants. Waiting for the direct process is sufficient;
+        # reading a finite file never waits for descendant pipe EOF.
+        with stdout_path.open("xb") as stdout, stderr_path.open("xb") as stderr:
+            process = subprocess.Popen(
+                arguments, cwd=root, env=environment, stdin=subprocess.DEVNULL,
+                stdout=stdout, stderr=stderr,
+                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+            )
+            try:
+                code = process.wait(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                entry.update({"status": "TIMEOUT", "timeout_seconds": timeout, "exit_code": None})
+                progress("command_timeout", executable=executable, number=index, timeout_seconds=timeout)
+                entry["timeout_cleanup"] = terminate_owned_command(process, environment, stdout, stderr)
+                raise
+            entry.update({"status": "PASS" if code == 0 else "FAILED", "exit_code": code})
+            progress("command_complete", executable=executable, number=index, exit_code=code)
+        if code:
+            raise RuntimeError(f"Native command failed: {executable}: {log_tail(stderr_path)[-1500:]}")
+        return log_tail(stdout_path, limit=1_000_000).strip()
+    except BaseException:
+        if entry["status"] == "RUNNING":
+            entry["status"] = "FAILED_TO_START"
+            progress("command_failed", executable=executable, number=index)
+        raise
+    finally:
+        entry["elapsed_seconds"] = round(time.monotonic() - began, 3)
+        entry["stdout"] = log_tail(stdout_path) if stdout_path.exists() else ""
+        entry["stderr"] = log_tail(stderr_path) if stderr_path.exists() else ""
+
+
 def verify(base: Path, root: Path) -> dict:
     if sys.platform != "win32":
         raise RuntimeError("Native base verification requires Windows; it is not a cross-platform mock")
@@ -57,6 +153,7 @@ def verify(base: Path, root: Path) -> dict:
     root.mkdir(parents=True)
     environment = native_environment(root)
     provenance = json.loads((base / "base-input-provenance.json").read_text(encoding="utf-8"))
+    progress("inventory_start", files=len(provenance["files"]))
     for item in provenance["files"]:
         path = base / item["path"]
         reject_links(path)
@@ -64,19 +161,11 @@ def verify(base: Path, root: Path) -> dict:
             raise ValueError("Base inventory escapes the application root")
         if not path.is_file() or path.stat().st_size != item["size"] or digest(path) != item["sha256"]:
             raise ValueError(f"Base inventory changed: {item['path']}")
+    progress("inventory_complete", files=len(provenance["files"]))
     commands: list[dict] = []
 
     def run(arguments: list[str | Path], timeout: int = 60) -> str:
-        arguments = [str(value) for value in arguments]
-        completed = subprocess.run(arguments, cwd=root, env=environment, stdin=subprocess.DEVNULL,
-                                   capture_output=True, text=True, encoding="utf-8", errors="replace",
-                                   timeout=timeout, creationflags=subprocess.CREATE_NO_WINDOW)
-        commands.append({"executable": Path(arguments[0]).name, "arguments": arguments[1:],
-                         "exit_code": completed.returncode, "stdout": completed.stdout[-5000:],
-                         "stderr": completed.stderr[-5000:]})
-        if completed.returncode:
-            raise RuntimeError(f"Native command failed: {Path(arguments[0]).name}: {completed.stderr[-1500:]}")
-        return completed.stdout.strip()
+        return run_native_command(arguments, root=root, environment=environment, commands=commands, timeout=timeout)
 
     result = {"kind": "native-windows-base-smoke", "status": "RUNNING", "public_release": False,
               "interactive_desktop": "NOT_RUN", "user_acceptance": "NOT_RUN", "commands": commands}

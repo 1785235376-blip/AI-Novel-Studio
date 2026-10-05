@@ -30,6 +30,9 @@ test('R2 real File API: save/reopen, reviewed plans, anchored comments and immut
  // Real browser Draft/Diff/Accept and revision restore, with explicitly labeled mock execution.
  const beforeWriting=await (await request.get(`http://127.0.0.1:8015/api/novels/${novel.id}/chapters`)).json();
  const writingChapter=await (await request.get(`http://127.0.0.1:8015/api/chapters/${beforeWriting[0].id}`)).json();
+ // Exercise the actual StrictMode root's first post-reload history request,
+ // before a later version change can mask an initial observer replay bug.
+ await expect(page.locator('.revision-timeline')).toContainText(`版本 ${writingChapter.version-1}`);
  await page.getByRole('combobox',{name:/文本模型/}).first().selectOption('deepseek:deepseek-chat');
  await expect(page.locator('.novel-ai-status [role="status"]')).toContainText(/DeepSeek Chat.*模拟测试/);
  await editor.click();await editor.press('Control+A');
