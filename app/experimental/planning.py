@@ -85,6 +85,7 @@ class PlanningGenerateIn(StrictModel):
 class PlanningAdapterRequest(StrictModel):
     schema_version: Literal[1] = 1
     node: dict[str, Any]
+    ancestors: list[dict[str, Any]] = Field(default_factory=list)
     template: PlanningTemplateIn
     instruction: str
     candidate_count: int = Field(ge=1, le=8)
@@ -199,35 +200,46 @@ class PlanningService(DomainService):
             raise ValueError("character objectives require linked real characters")
         return scoped_sources(self, nid, scope, links["chapter_ids"]), entity_sources(self, nid, scope, links, state)
 
-    def _assert_fresh(self, nid, scope, row, state=None):
+    def _ancestors(self, state, node):
+        rows, seen = [], {node["id"]}
+        current = node
+        while current["parent_id"]:
+            current = require_row(state, self.NODES, current["parent_id"])
+            if current["id"] in seen or current["graph_id"] != node["graph_id"] or current["status"] == "ARCHIVED":
+                raise StaleSourceError("planning ancestor is unavailable")
+            seen.add(current["id"])
+            rows.append(current)
+        return list(reversed(rows))
+
+    def _assert_fresh(self, nid, scope, row, state=None, allow_applied=False):
+        state = state if state is not None else self.store.read(nid, scope)
         self.assert_sources(nid, row.get("sources", {}))
-        scoped_sources(self, nid, scope, list(row.get("sources", {})))
         try:
+            scoped_sources(self, nid, scope, list(row.get("sources", {})))
             refs = entity_sources(self, nid, scope, row["links"], state)
         except (ValueError, FileNotFoundError) as exc:
-            raise StaleSourceError("planning entity source changed") from exc
+            raise StaleSourceError("planning entity or branch source changed") from exc
         if refs != row.get("entity_sources", {}):
             raise StaleSourceError("planning entity source changed")
-        node = require_row(state, self.NODES, row["node_id"]) if state is not None else self.get(nid, scope, self.NODES, row["node_id"])
-        if node["version"] != row["target_version"] or node["status"] == "ARCHIVED":
+        node = require_row(state, self.NODES, row["node_id"])
+        if require_row(state, self.GRAPHS, row["graph_id"])["status"] != "ACTIVE":
+            raise StaleSourceError("planning graph is archived")
+        ancestors = {ancestor["id"]: ancestor["version"] for ancestor in self._ancestors(state, node)}
+        if ancestors != row.get("ancestor_versions", {}):
+            raise StaleSourceError("planning ancestor context changed")
+        expected_target = row["target_version"]
+        if allow_applied and row["status"] == "APPROVED" and node.get("approved_proposal_id") == row["id"]:
+            expected_target = row.get("applied_node_version")
+        if node["version"] != expected_target or node["status"] == "ARCHIVED":
             raise StaleSourceError("planning target node changed")
 
     def _decorate(self, nid, scope, row, state=None):
         row = deepcopy(row)
         try:
-            self._assert_fresh(nid, scope, row, state)
+            self._assert_fresh(nid, scope, row, state, allow_applied=True)
             row["stale"] = False
         except (ValueError, FileNotFoundError):
-            # Approved proposal's own application increments its target version.
-            node = (state or self.store.read(nid, scope)).get("collections", {}).get(self.NODES, {}).get(row["node_id"], {})
-            row["stale"] = not (row["status"] == "APPROVED" and node.get("approved_proposal_id") == row["id"] and node.get("version") == row.get("applied_node_version"))
-            if not row["stale"]:
-                try:
-                    self.assert_sources(nid, row.get("sources", {}))
-                    scoped_sources(self, nid, scope, list(row.get("sources", {})))
-                    row["stale"] = entity_sources(self, nid, scope, row["links"], state) != row.get("entity_sources", {})
-                except (ValueError, FileNotFoundError):
-                    row["stale"] = True
+            row["stale"] = True
         return row
 
     def list_graphs(self, nid, scope):
@@ -277,6 +289,9 @@ class PlanningService(DomainService):
         expected = payload.pop("expected_version")
         with self.store.transaction(nid, scope) as state:
             row = require_row(state, self.NODES, node_id)
+            if row["status"] == "ARCHIVED" or require_row(state, self.GRAPHS, row["graph_id"])["status"] != "ACTIVE":
+                raise ValueError("restore archived planning targets before editing")
+            self._ancestors(state, row)
             if row["links"]["chapter_ids"] != payload["links"]["chapter_ids"] and row["level"] in {"CHAPTER", "SCENE"}:
                 raise ValueError("a chapter or scene node cannot be rebound to another chapter")
             sources, entities = self._validate_links(nid, scope, payload["fields"], payload["links"], state)
@@ -338,7 +353,7 @@ class PlanningService(DomainService):
         if node["level"] in {"CHAPTER", "SCENE"} and payload["links"]["chapter_ids"] != node["links"]["chapter_ids"]:
             raise ValueError("proposal cannot rebind a chapter or scene node")
         sources, entities = self._validate_links(nid, scope, payload["fields"], payload["links"], state)
-        return new_row(nid, scope, actor, {**payload, "graph_id": node["graph_id"], "target_version": expected, "status": "REVIEW", "sources": sources, "entity_sources": entities, "execution_mode": execution_mode, "privacy_state": "LOCAL_ONLY"})
+        return new_row(nid, scope, actor, {**payload, "graph_id": node["graph_id"], "target_version": expected, "ancestor_versions": {ancestor["id"]: ancestor["version"] for ancestor in self._ancestors(state, node)}, "status": "REVIEW", "sources": sources, "entity_sources": entities, "execution_mode": execution_mode, "privacy_state": "LOCAL_ONLY"})
 
     def create_proposal(self, nid, scope, actor, value):
         payload = self._payload(value, PlanningProposalIn)
@@ -357,13 +372,18 @@ class PlanningService(DomainService):
         node = self.get(nid, scope, self.NODES, request.node_id)
         if node["version"] != request.expected_node_version:
             raise CapabilityVersionConflict(node)
+        ancestors = self._ancestors(self.store.read(nid, scope), node)
+        captured_ancestors = {ancestor["id"]: ancestor["version"] for ancestor in ancestors}
         captured_sources, captured_entities = self._validate_links(nid, scope, node["fields"], node["links"])
-        output = MockStructuredPlanningAdapter().generate(PlanningAdapterRequest(node=node, template=self._template(nid, scope, request.template_id), instruction=request.instruction, candidate_count=request.candidate_count))
+        output = MockStructuredPlanningAdapter().generate(PlanningAdapterRequest(node=node, ancestors=[{key: value for key, value in ancestor.items() if key != "history"} for ancestor in ancestors], template=self._template(nid, scope, request.template_id), instruction=request.instruction, candidate_count=request.candidate_count))
         # Validate the same public output schema before storing an entire batch atomically.
         output = PlanningAdapterOutput.model_validate(output.model_dump())
         rows = []
         with self.store.transaction(nid, scope) as state:
             self.assert_sources(nid, captured_sources)
+            current_node = require_row(state, self.NODES, node["id"])
+            if {ancestor["id"]: ancestor["version"] for ancestor in self._ancestors(state, current_node)} != captured_ancestors:
+                raise StaleSourceError("planning ancestor context changed during adapter execution")
             if entity_sources(self, nid, scope, node["links"], state) != captured_entities:
                 raise StaleSourceError("planning sources changed during adapter execution")
             for candidate in output.candidates:
@@ -398,8 +418,6 @@ class PlanningService(DomainService):
             transitions = {"approve": ({"REVIEW"}, "APPROVED"), "reject": ({"REVIEW"}, "REJECTED"), "reopen": ({"REJECTED", "ARCHIVED"}, "REVIEW"), "archive": ({"REVIEW", "REJECTED", "APPROVED"}, "ARCHIVED")}
             if action not in transitions or row["status"] not in transitions[action][0]:
                 raise ValueError("invalid planning review transition")
-            if row["version"] != expected_version:
-                raise CapabilityVersionConflict(deepcopy(row))
             if action == "approve":
                 if require_row(state, self.GRAPHS, row["graph_id"])["status"] != "ACTIVE":
                     raise ValueError("planning graph is archived")
@@ -423,7 +441,7 @@ class PlanningService(DomainService):
             if old is None:
                 raise FileNotFoundError("planning history version")
             # History content comes back for review with its original source fence.
-            restored = {key: deepcopy(old[key]) for key in ("fields", "links", "title", "rationale", "sources", "entity_sources", "target_version")}
+            restored = {key: deepcopy(old[key]) for key in ("fields", "links", "title", "rationale", "sources", "entity_sources", "target_version", "ancestor_versions")}
             change_row(row, actor, expected_version, lambda target: target.update(restored, status="REVIEW", restored_from_version=historical_version))
             return deepcopy(row)
 

@@ -241,3 +241,18 @@ def test_planning_adapter_late_source_change_is_atomic(planning_env, monkeypatch
     with pytest.raises(StaleSourceError):
         e.service.generate(e.nid, e.scope, "writer", {"node_id": g["root_node_id"], "expected_node_version": 1})
     assert not e.service.proposals(e.nid, e.scope)
+
+
+def test_planning_parent_context_fences_child_proposals_and_archived_edit(planning_env):
+    e = planning_env
+    g = graph(e)
+    child = e.service.create_node(e.nid, e.scope, "writer", {"graph_id": g["id"], "parent_id": g["root_node_id"], "level": "VOLUME", "title": "Volume"})
+    candidate = proposal(e, child["id"])
+    assert candidate["ancestor_versions"] == {g["root_node_id"]: 1}
+    approved = e.service.review(e.nid, e.scope, "reviewer", candidate["id"], "approve", 1)
+    assert not e.service.proposal(e.nid, e.scope, approved["id"])["stale"]
+    e.service.edit_node(e.nid, e.scope, "writer", g["root_node_id"], {"expected_version": 1, "title": "Changed direction", "fields": {"goal": "A different goal"}})
+    assert e.service.proposal(e.nid, e.scope, approved["id"])["stale"]
+    e.service.transition_node(e.nid, e.scope, "writer", child["id"], "archive", 2)
+    with pytest.raises(ValueError, match="restore archived"):
+        e.service.edit_node(e.nid, e.scope, "writer", child["id"], {"expected_version": 3, "title": "Cannot unarchive by PUT"})
