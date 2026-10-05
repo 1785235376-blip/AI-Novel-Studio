@@ -1305,6 +1305,12 @@ export default function App() {
               updatedAt: resolution.updatedAt,
             };
             setDurability(drafts.save(next, namespace).durability);
+            // An explicit merge resolves this comparison, not the pending save.
+            // Retain the old candidates in history, and synchronize the already
+            // reviewed server base so a delayed query cannot reopen it.
+            conflicts.resolve(conflict.chapterId, namespace);
+            qc.setQueryData<Chapter>(['chapter', namespace, conflict.chapterId], current =>
+              !current || current.version > conflict.server.version ? current : { ...current, content: conflict.server.content, document: conflict.server.document, version: conflict.server.version });
             buffer.current = { identity: editorIdentity, value: next };
             setText(next.content);
             setDoc(next.document);

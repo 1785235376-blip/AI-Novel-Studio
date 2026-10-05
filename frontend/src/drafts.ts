@@ -102,6 +102,14 @@ export const conflicts = {
     }
     return storage.setItem(scopedKey('conflict', value.chapterId, namespace), JSON.stringify(value));
   },
+  resolve(id: string, namespace = 'file') {
+    const current = this.load(id, namespace);
+    const history = this.list(id, namespace);
+    if (current && !history.some(item => sameConflict(item, current))) {
+      storage.setItem(scopedKey('conflict-history', id, namespace), JSON.stringify([...history, current]));
+    }
+    return storage.removeItem(scopedKey('conflict', id, namespace));
+  },
   remove: (id: string, namespace = 'file') => storage.removeItem(scopedKey('conflict', id, namespace)),
   clearHistory: (id: string, namespace = 'file') => storage.removeItem(scopedKey('conflict-history', id, namespace)),
 };

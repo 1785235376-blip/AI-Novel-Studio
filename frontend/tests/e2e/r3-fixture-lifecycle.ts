@@ -11,14 +11,17 @@ function safePath(request: Request) {
 /** Track actual requests; interception begins only when teardown is requested.
  * Page reload can detach the Page association from a terminal network event.
  * Context events still reconcile the exact Request objects this page started.
- * A timeout/failure never authorizes fixture deletion or closing under readers.
+ * This establishes browser request termination, not server-handler completion.
+ * Exact-owned project deletion uses the real repository locking/active-project
+ * guards; request aborts are recorded as uncertain and never called server success.
  */
 export function createPageQuiescer(page: Page, timeoutMs = 15_000) {
   if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error('Drain timeout must be positive and bounded');
   const pending = new Map<Request, Pending>(), waiters = new Set<() => void>();
   const inspected = new WeakSet<Request>(), blocked = new WeakSet<Request>(), acknowledgedBlocked = new WeakSet<Request>();
   const context = page.context();
-  let sequence = 0, completed = 0, blockedBeforeDispatch = 0, active = true;
+  let sequence = 0, completed = 0, abortedServerUnknown = 0, blockedBeforeDispatch = 0, active = true;
+  const uncertain: { method: string; path: string; reason: string }[] = [];
   let phase = 'observing', teardown: Promise<void> | undefined;
   const notify = () => { if (!pending.size) for (const done of [...waiters]) done(); };
   const started = (request: Request) => {
@@ -32,6 +35,15 @@ export function createPageQuiescer(page: Page, timeoutMs = 15_000) {
     if (pending.delete(request)) completed++;
     notify();
   };
+  const clientTerminated = (request: Request, reason: string) => {
+    const item = pending.get(request);
+    if (!active || !item) return;
+    // React query cancellation and deliberate pre-dispatch faults are normal.
+    // Retiring a terminal browser request is not proof its server handler ended.
+    abortedServerUnknown++;
+    if (uncertain.length < 20) uncertain.push({ method: item.method, path: item.path, reason });
+    pending.delete(request); notify();
+  };
   const failed = (request: Request) => {
     if (!active) return;
     if (acknowledgedBlocked.has(request)) { pending.delete(request); notify(); return; }
@@ -39,19 +51,17 @@ export function createPageQuiescer(page: Page, timeoutMs = 15_000) {
       if (pending.has(request)) pending.get(request)!.phase = 'awaiting_teardown_abort_ack';
       return;
     }
-    const item = pending.get(request);
-    // A browser-side abort is not evidence that an already dispatched server
-    // handler stopped touching files. Preserve it as an actionable blocker.
-    if (item) item.phase = 'request_failed_server_completion_unknown';
+    clientTerminated(request, 'BROWSER_REQUEST_FAILED_SERVER_COMPLETION_UNKNOWN');
   };
   const responseObserved = (response: Response) => {
     const request = response.request(), item = pending.get(request);
     if (!active || !item) return;
     item.status = response.status();
     if (!item.phase.startsWith('request_failed')) item.phase = 'awaiting_response_end';
-    void response.finished().then(() => finished(request), () => {
-      if (active && pending.has(request)) pending.get(request)!.phase = 'response_end_failed_server_completion_unknown';
-    });
+    void response.finished().then(error => {
+      if (error) clientTerminated(request, 'RESPONSE_END_FAILED_SERVER_COMPLETION_UNKNOWN');
+      else finished(request);
+    }, () => clientTerminated(request, 'RESPONSE_END_FAILED_SERVER_COMPLETION_UNKNOWN'));
   };
   const inspect = (request: Request) => {
     if (inspected.has(request)) return;
@@ -64,6 +74,8 @@ export function createPageQuiescer(page: Page, timeoutMs = 15_000) {
   };
   const diagnostics = () => ({ phase, timeout_ms: timeoutMs, page_closed: page.isClosed(),
     pending_count: pending.size, completed_requests: completed, blocked_before_dispatch: blockedBeforeDispatch,
+    aborted_requests_server_completion_unknown: abortedServerUnknown, uncertain_requests: uncertain,
+    server_completion_verified: false, cleanup_authority: 'REAL_PROJECT_DELETE_LOCK_AND_ACTIVE_PROJECT_GUARDS',
     pending: [...pending.values()].slice(0, 20).map(item => ({ sequence: item.sequence, method: item.method,
       path: item.path, status: item.status, phase: item.phase, age_ms: Math.max(0, Date.now() - item.started) })),
     diagnostics_truncated: pending.size > 20, contains_headers_body_query_or_dynamic_ids: false });

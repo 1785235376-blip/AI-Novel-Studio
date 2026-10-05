@@ -207,3 +207,19 @@ it('archives the old conflict and invalidates its stale manual resolution when a
   expect(conflicts.list(local.chapterId).some(item => item.local.content === 'OLDER')).toBe(true);
   expect(editor().value).toBe('LATEST');
 });
+
+it('keeps an explicit merge pending through a cache refresh of its already-reviewed server version', async () => {
+  const latest = chapter('SERVER FOUR', 4);
+  vi.spyOn(api, 'saveChapter').mockRejectedValue(new ApiError({ status: 409, code: 'VERSION_CONFLICT', message: 'conflict' }));
+  vi.spyOn(api, 'chapter').mockResolvedValue(latest);
+  const { query } = setup(); edit('LOCAL THREE'); save();
+  const dialog = await screen.findByRole('dialog');
+  fireEvent.change(within(dialog).getByLabelText('手工解决草稿'), { target: { value: 'REVIEWED MERGE FOUR' } });
+  fireEvent.click(within(dialog).getByRole('button', { name: '应用手工解决并保存' }));
+  await act(async () => { query.setQueryData(['chapter', 'file', 'recovery:1'], latest); await new Promise(resolve => setTimeout(resolve, 0)); });
+  expect(screen.queryByRole('dialog')).toBeNull();
+  expect(editor().value).toBe('REVIEWED MERGE FOUR');
+  expect(drafts.load('recovery:1')?.baseVersion).toBe(4);
+  expect(conflicts.list('recovery:1').some(item => item.local.content === 'LOCAL THREE')).toBe(true);
+  expect(screen.queryByText('后端已保存')).toBeNull();
+});

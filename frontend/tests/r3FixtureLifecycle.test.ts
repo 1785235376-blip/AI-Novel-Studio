@@ -107,12 +107,13 @@ describe('R3 disposable browser fixture lifecycle (event-contract tests, not bro
     context.emit('requestfinished', pending); await drain;
     expect(canReload).toBe(true); await quiesce();
   });
-  it('does not mistake a browser-side request abort for server completion', async () => {
-    vi.useFakeTimers(); const { page } = pageFixture(); const quiesce = createPageQuiescer(page as unknown as Page, 100);
-    const pending = request('/api/novels/owned/chapters'); page.emit('request', pending); page.emit('requestfailed', pending);
-    const cleanup = quiesce(), failed = expect(cleanup).rejects.toThrow('server_completion_unknown');
-    await vi.advanceTimersByTimeAsync(101); await failed;
-    expect(page.close).not.toHaveBeenCalled();
+  it('distinguishes browser abort from server completion and delegates deletion safety to the real repository', async () => {
+    const { page } = pageFixture(); const quiesce = createPageQuiescer(page as unknown as Page);
+    const pending = request('/api/novels/owned/chapters'); page.emit('request', pending);
+    const cleanup = quiesce(); await Promise.resolve();
+    page.emit('requestfailed', pending); await cleanup;
+    expect(page.close).toHaveBeenCalledOnce();
+    expect(quiesce.diagnostics()).toMatchObject({ completed_requests: 0, aborted_requests_server_completion_unknown: 1, server_completion_verified: false, cleanup_authority: 'REAL_PROJECT_DELETE_LOCK_AND_ACTIVE_PROJECT_GUARDS' });
   });
   it('retires a newly intercepted request only after its abort acknowledgement', async () => {
     const { page } = pageFixture(); const quiesce = createPageQuiescer(page as unknown as Page);
@@ -140,14 +141,21 @@ describe('R3 disposable browser fixture lifecycle (event-contract tests, not bro
     page.emit('requestfinished', prior); await cleanup;
     expect(page.close).toHaveBeenCalledOnce();
   });
-  it('retains a failed response-completion probe as a blocker', async () => {
-    vi.useFakeTimers(); const { page } = pageFixture(); const quiesce = createPageQuiescer(page as unknown as Page, 100);
+  it('reports a failed response-end probe without inventing server completion', async () => {
+    const { page } = pageFixture(); const quiesce = createPageQuiescer(page as unknown as Page);
     const pending = request('/api/novels/owned/chapters'), result = response(pending);
     page.emit('request', pending); page.emit('response', result.value);
-    const cleanup = quiesce(), failed = expect(cleanup).rejects.toThrow('server_completion_unknown');
-    result.done.reject(new Error('target closed with private URL'));
-    await vi.advanceTimersByTimeAsync(101); await failed;
-    expect(page.close).not.toHaveBeenCalled(); expect(JSON.stringify(quiesce.diagnostics())).not.toContain('private URL');
+    const cleanup = quiesce(); result.done.reject(new Error('target closed with private URL')); await cleanup;
+    expect(page.close).toHaveBeenCalledOnce();
+    expect(quiesce.diagnostics()).toMatchObject({ completed_requests: 0, aborted_requests_server_completion_unknown: 1, server_completion_verified: false });
+    expect(JSON.stringify(quiesce.diagnostics())).not.toContain('private URL');
+  });
+  it('recognizes the Error return from the real Playwright Response.finished contract', async () => {
+    const { page } = pageFixture(); const quiesce = createPageQuiescer(page as unknown as Page);
+    const pending = request('/api/novels/owned/chapters'); page.emit('request', pending);
+    const value = { request: () => pending, status: () => 200, finished: async () => new Error('browser aborted') } as unknown as Response;
+    page.emit('response', value); await quiesce();
+    expect(quiesce.diagnostics()).toMatchObject({ completed_requests: 0, aborted_requests_server_completion_unknown: 1 });
   });
   it('bounds diagnostics while retaining every unresolved request', async () => {
     vi.useFakeTimers(); const { page } = pageFixture(); const quiesce = createPageQuiescer(page as unknown as Page, 100);
