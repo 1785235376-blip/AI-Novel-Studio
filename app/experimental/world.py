@@ -163,7 +163,7 @@ class WorldService(DomainService):
         pass
 
     def _visible_kind(self, row):
-        return self.supports_graph or row["kind"] in DATA_MODELS
+        return not row.get("research_sources") and (self.supports_graph or row["kind"] in DATA_MODELS)
 
     @staticmethod
     def _promotes_canon(row):
@@ -251,6 +251,10 @@ class WorldService(DomainService):
         return {"sources": sources, "effective_chapter": number, "links": links, "entity_sources": entities, "semantic_sources": refs}
 
     def _assert_fresh(self, nid, scope, row, state, seen=None):
+        # Research-derived drafts are visible only through the current-author
+        # A10 projection. Generic world/graph/context cannot promote or reuse.
+        if row.get("research_sources"):
+            raise StaleSourceError("research draft requires current research authority")
         seen = set(seen or ())
         if len(seen) >= 128:
             raise StaleSourceError("semantic source chain exceeds bounded depth")
@@ -300,6 +304,30 @@ class WorldService(DomainService):
             collection(state, self.RECORDS)[row["id"]] = row
             self._after_record_mutation(state, row, actor)
             return deepcopy(row)
+
+    def create_research_draft(self, nid, scope, actor, value, refs, *, guard, validate):
+        """Use this native world transaction, with transient caller authority.
+
+        No callback or session is persisted. These private candidates are not
+        generic world-review inputs and can never become Canon through it.
+        """
+        payload = self._payload(value)
+        if payload["kind"] != "ABILITY":
+            raise ValueError("research adoption supports original setting drafts only")
+        self.novels.get(nid)
+        with self.store.transaction(nid, scope) as state:
+            guard(); validate(state)
+            if sum(bool(item.get("research_sources")) for item in collection(state, self.RECORDS).values()) >= 1000:
+                raise ValueError("RESEARCH_DRAFT_LIMIT")
+            self._validate_create_capacity(state)
+            captured = self._capture(nid, scope, payload, state)
+            row = new_row(nid, scope, actor, {**payload, **captured, "status": "REVIEW",
+                "canon_state": "CANDIDATE", "privacy_state": "LOCAL_ONLY"})
+            self._assert_fresh(nid, scope, row, state)
+            row["research_sources"] = deepcopy(refs)
+            collection(state, self.RECORDS)[row["id"]] = row
+            guard(); validate(state)
+            return {**deepcopy(row), "layer": "SETTING_DRAFT", "canon_promotion_available": False}
 
     def edit_record(self, nid, scope, actor, rid, value):
         raw = value.model_dump() if isinstance(value, WorldRecordEditIn) else dict(value)
