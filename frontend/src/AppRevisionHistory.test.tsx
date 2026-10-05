@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { StrictMode } from "react";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { dehydrate, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
@@ -226,4 +227,58 @@ it("actual App refreshes mounted history after chapter cache advances on AI Acce
   act(() => { query.setQueryData(["chapter", "file", "novel-a:1"], chapterOf(3, "novel-a:1", "ACCEPTED AI VERSION")); });
   fireEvent.click(await screen.findByRole("button", { name: /版本 2/ }));
   expect(await screen.findByText("PRE AI VERSION TWO")).toBeTruthy();
+});
+
+it.each([false, true])("StrictMode retains the first deferred history response and usable restore controls, collaboration=%s", async collaboration => {
+  if (collaboration) setContext();
+  const query = client(), history = deferred<any[]>(), detail = deferred<any>(), restoreResult = deferred<Chapter>();
+  const historySpy = collaboration ? vi.spyOn(api, "history").mockReturnValue(history.promise)
+    : vi.spyOn(api, "legacyHistory").mockReturnValue(history.promise);
+  const detailSpy = vi.spyOn(api, "revisionDetail").mockReturnValue(detail.promise);
+  const restore = vi.spyOn(api, "restore").mockReturnValue(restoreResult.promise);
+  const onRestored = vi.fn();
+  render(<StrictMode>{wrap(query, <RevisionHistory chapter={chapterOf()} scope={collaboration ? scopeA : undefined}
+    sessionToken={collaboration ? "private-session-a" : ""} onRestored={onRestored} />)}</StrictMode>);
+  await waitFor(() => expect(historySpy).toHaveBeenCalledTimes(1));
+  await act(async () => history.resolve([revision(1, "STRICT INITIAL HISTORY")]));
+  fireEvent.click(await screen.findByRole("button", { name: /版本 1/ }));
+  if (collaboration) {
+    await waitFor(() => expect(detailSpy).toHaveBeenCalledTimes(1));
+    await act(async () => detail.resolve(revision(1, "STRICT SCOPED DETAIL")));
+    expect(await screen.findByText("STRICT SCOPED DETAIL")).toBeTruthy();
+  } else expect(await screen.findByText("STRICT INITIAL HISTORY")).toBeTruthy();
+  fireEvent.click(await screen.findByRole("button", { name: "预览并恢复此版本" }));
+  fireEvent.click(screen.getByRole("button", { name: "恢复此版本" }));
+  expect(restore).toHaveBeenCalledTimes(1);
+  await act(async () => restoreResult.resolve(chapterOf(3, "novel-a:1", "STRICT RESTORED")));
+  expect(onRestored).toHaveBeenCalledTimes(1);
+  expect(onRestored).toHaveBeenCalledWith(chapterOf(3, "novel-a:1", "STRICT RESTORED"));
+  expect(await screen.findByText(/恢复完成/)).toBeTruthy();
+  expect(reload).not.toHaveBeenCalled();
+});
+
+it("StrictMode still ignores a late restore after a genuine unmount", async () => {
+  const query = client(), pending = deferred<Chapter>(), onRestored = vi.fn();
+  vi.spyOn(api, "legacyHistory").mockResolvedValue([revision()]);
+  vi.spyOn(api, "restore").mockReturnValue(pending.promise);
+  const view = render(<StrictMode>{wrap(query, <RevisionHistory chapter={chapterOf()} sessionToken="" onRestored={onRestored} />)}</StrictMode>);
+  await confirmRestore();
+  view.unmount();
+  await act(async () => pending.resolve(chapterOf(3)));
+  expect(onRestored).not.toHaveBeenCalled();
+  expect(reload).not.toHaveBeenCalled();
+});
+
+it("StrictMode still fences a pending initial history request across a branch switch", async () => {
+  setContext();
+  const query = client(), pending = deferred<any[]>(), onRestored = vi.fn();
+  vi.spyOn(api, "history").mockReturnValueOnce(pending.promise).mockResolvedValue([revision(9, "NEW BRANCH", "New branch author")]);
+  const view = render(<StrictMode>{wrap(query, <RevisionHistory chapter={chapterOf()} scope={scopeA} sessionToken="private-session-a" onRestored={onRestored} />)}</StrictMode>);
+  const scopeB = { ...scopeA, branchId: "strict-branch-b" };
+  act(() => setContext(scopeB));
+  view.rerender(<StrictMode>{wrap(query, <RevisionHistory chapter={chapterOf()} scope={scopeB} sessionToken="private-session-a" onRestored={onRestored} />)}</StrictMode>);
+  await screen.findByRole("button", { name: /版本 9/ });
+  await act(async () => pending.resolve([revision(1, "OLD BRANCH", "PRIVATE STRICT OLD BRANCH")]));
+  expect(screen.queryByText(/PRIVATE STRICT OLD BRANCH/)).toBeNull();
+  expect(screen.getByRole("button", { name: /版本 9/ })).toBeTruthy();
 });

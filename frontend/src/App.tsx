@@ -1488,7 +1488,10 @@ function ScopedRevisionHistory({ chapter, scope, onRestored, context, observerId
       const next = revisionStoreIdentity(state);
       if (next !== observed) { observed = next; epoch.current += 1; }
     });
-    return () => { mounted.current = false; epoch.current += 1; unsubscribe(); };
+    // StrictMode replays setup/cleanup while React Query reuses its pending
+    // promise. Only identity changes advance the authority epoch; a genuine
+    // unmount is fenced by this observer's permanently inactive mounted ref.
+    return () => { mounted.current = false; unsubscribe(); };
   }, []);
   const current = (ticket: number) => mounted.current && ticket === epoch.current
     && revisionStoreIdentity(useStudio.getState()) === storeIdentity;

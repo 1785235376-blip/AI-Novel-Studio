@@ -40,8 +40,17 @@ Evidence:
 
 Actual browser retest remains **NOT_RUN locally** because the executor's established Chromium Unix-socket restriction is unchanged. No screenshot baseline or global UI styling was modified. The integration lead must rerun the hosted real File/browser scenario against the published candidate before claiming the original business flow passes.
 
+## StrictMode independent-review correction
+
+The independent `bbb55d10` audit reproduced a development-root regression: React StrictMode replays effect cleanup/setup while React Query reuses the initial pending promise. Incrementing the authority epoch during cleanup discarded that still-valid first history response.
+
+The minimal follow-on fix removes the cleanup epoch increment. Actual identity/store transitions still advance the epoch (including A→B→A), and the mounted flag still rejects responses after a genuine unmount. StrictMode replay reactivates the same observer and can retain its valid pending result.
+
+Follow-on verification: **56 passed in 7 files**, including all original 19 revision tests, four added StrictMode cases, and all three assertions in a byte-identical copy of `RevisionHistory.independent-audit.test.tsx`. The new cases cover first deferred history in local and collaboration modes, delayed scoped detail and usable restore controls, genuine unmount fencing, and branch-switch isolation. TypeScript passes. Evidence: `evidence/revision-history-strictmode.txt`, `.xml`, and `evidence/revision-history-strictmode-typecheck.txt`. The original independent archive was not modified. Actual browser retest is still delegated to hosted CI; this does not claim a browser pass.
+
 ## Files
 
 - `frontend/src/App.tsx`
 - `frontend/src/AppRevisionHistory.test.tsx`
+- `frontend/src/RevisionHistory.independent-audit.test.tsx` (unchanged independent assertions)
 - This report and its four evidence files
