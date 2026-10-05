@@ -2,10 +2,11 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ApiError, type Chapter } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { enabled, type ExperimentalClient, type ExperimentalFlags } from './api';
+import { NoticeCenterAddon } from './WritingSessionPanel';
 import { ErrorMessage, Field, ResourceState, useAction, useResource } from './shared';
 import { defaultLayout, workspaceClient, type WorkspaceAnchor, type WorkspaceNavigation, type ResumeItem, type SearchItem, type DiagnosticOptions, type DiagnosticResult } from './uxClient';
 
-export type WorkspaceToolsProps = { client: ExperimentalClient; chapter?: Chapter; flags?: ExperimentalFlags; currentAnchor?: WorkspaceAnchor; initialSection?: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; onNavigate?: (target: WorkspaceNavigation) => void };
+export type WorkspaceToolsProps = { focusActive?: boolean; saveFailure?: boolean; client: ExperimentalClient; chapter?: Chapter; flags?: ExperimentalFlags; currentAnchor?: WorkspaceAnchor; initialSection?: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; onNavigate?: (target: WorkspaceNavigation) => void };
 const commands = [
   { id: 'editor', label: '继续纯写作', detail: '回到当前章节；手工写作不需要模型。', words: '写作 编辑 章节 保存 novel' },
   { id: 'knowledge', label: '导入与知识审核', detail: '打开既有导入工具，先预览资料。', words: '导入 长篇 import' },
@@ -23,7 +24,7 @@ export function WorkspaceToolsPanel(props: WorkspaceToolsProps) {
   return <WorkspaceToolsBody key={identity} {...props} />;
 }
 
-function WorkspaceToolsBody({ client, chapter, flags, currentAnchor, initialSection, onNavigate }: WorkspaceToolsProps) {
+function WorkspaceToolsBody({ client, chapter, flags, currentAnchor, initialSection, onNavigate, focusActive, saveFailure }: WorkspaceToolsProps) {
   const api = useMemo(() => workspaceClient(client), [client]);
   const resume = useResource(signal => api.resume(signal), [api]);
   const [section, setSection] = useState<string>(initialSection || 'resume');
@@ -102,7 +103,7 @@ function WorkspaceToolsBody({ client, chapter, flags, currentAnchor, initialSect
       {density === 'advanced' && <ResumeHistory api={api} revision={saved?.version} />}
     </Panel>}
     {section === 'search' && <WorkspaceSearch api={api} chapter={chapter} commands={availableCommands} navigate={onNavigate ? navigate : undefined} recent={recent} />}
-    {section === 'tasks' && <WorkspaceTasks api={api} navigate={onNavigate ? navigate : undefined} advanced={density === 'advanced'} />}
+    {section === 'tasks' && <><WorkspaceTasks api={api} navigate={onNavigate ? navigate : undefined} advanced={density === 'advanced'} />{enabled(flags, 'writing_sessions_v2') && <NoticeCenterAddon client={client} onNavigate={onNavigate} focusActive={focusActive} saveFailure={saveFailure} />}</>}
     {section === 'diagnostics' && <WorkspaceDiagnostics api={api} />}
     {section === 'guide' && <Panel title="从一个真实任务开始">
       <p>这些入口只打开已有工具。生成、接受修改、导出和外发仍各自确认；没有模型也可以手工写作。</p>

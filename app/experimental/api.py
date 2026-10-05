@@ -29,7 +29,10 @@ from .media import MediaService
 from .media_api import create_media_router
 from .embeddings import EmbeddingService
 from .embeddings_api import create_embeddings_router
-from .audiobook import AudiobookV2Service
+from .voice_direction import DirectedAudiobookService
+from .voice_direction_api import create_voice_direction_router
+from .subtitle_timeline import SubtitleTimelineService
+from .subtitle_timeline_api import create_subtitle_timeline_router
 from .audiobook_api import create_audiobook_router
 from .inbox import UnifiedReviewInbox, ReviewBinding
 from .inbox_api import create_inbox_router
@@ -48,7 +51,7 @@ media_service = MediaService(store, legacy_api.novel_service, legacy_api.chapter
     assets=legacy_api.asset_library_service, screenplays=legacy_api.screenplay_service)
 embedding_service = EmbeddingService(store, legacy_api.novel_service, legacy_api.chapter_service,
     assets=legacy_api.asset_library_service, screenplays=legacy_api.screenplay_service)
-audiobook_service = AudiobookV2Service(store, legacy_api.novel_service, legacy_api.chapter_service,
+audiobook_service = DirectedAudiobookService(store, legacy_api.novel_service, legacy_api.chapter_service,
     assets=legacy_api.asset_library_service)
 
 
@@ -87,7 +90,34 @@ bind_domain('world', world_service, 'world_character_engines_v2', ('reject',))
 bind_domain('import', import_service, 'semantic_import_v2', ('reject',))
 bind_domain('agent_team', team_service, 'agent_team_recipes')
 bind_domain('media', media_service, 'cover_storyboard_generation')
-bind_domain('audiobook', audiobook_service, 'audiobook_v2')
+def read_audiobook_inbox(ctx):
+    def current():
+        from fastapi import HTTPException
+        require_flag('unified_review_inbox')
+        require_flag('audiobook_v2')
+        if authorize(ctx.novel_id, ctx.token, ctx.branch, 'domain.read') != (ctx.actor, ctx.scope):
+            raise HTTPException(403, {'code': 'REVIEW_AUTHORITY_CHANGED'})
+    current()
+    result = audiobook_service.as_actor(ctx.actor, audiobook_service.list_review_items, ctx.novel_id, ctx.scope)
+    current()
+    return result
+
+
+def review_audiobook_inbox(ctx, rid, action, version):
+    current = review_guard(ctx, 'audiobook_v2')
+    current()
+    result = audiobook_service.as_actor(ctx.actor, audiobook_service.review,
+        ctx.novel_id, ctx.scope, ctx.actor, rid, action, version)
+    current()
+    return result
+
+
+inbox_service.register(ReviewBinding('audiobook', read_audiobook_inbox,
+    review_audiobook_inbox, 'audiobook_v2', frozenset()))
+subtitle_timeline_service = SubtitleTimelineService(store, legacy_api.novel_service,
+    legacy_api.chapter_service, audiobook_service, legacy_api.asset_library_service)
+router.include_router(create_voice_direction_router(audiobook_service, authorize, require_flag))
+router.include_router(create_subtitle_timeline_router(subtitle_timeline_service, authorize, require_flag))
 register_legacy_bindings(inbox_service)
 router.include_router(create_inbox_router(inbox_service, authorize, require_flag))
 
@@ -109,6 +139,19 @@ def read_legacy_workflow_tasks(ctx):
     return {'items': result[:200], 'has_more': truncated}
 
 
+def read_voice_tasks(ctx):
+    from fastapi import HTTPException
+    from .voice_direction_api import voice_task_projection
+    def current():
+        require_flag('voice_direction_v2')
+        if authorize(ctx.novel_id, ctx.token, ctx.branch, 'domain.read') != (ctx.actor, ctx.scope):
+            raise HTTPException(403, {'code': 'VOICE_AUTHORITY_CHANGED'})
+    current()
+    value = voice_task_projection(audiobook_service, ctx.novel_id, ctx.scope, ctx.actor)
+    current()
+    return {**value, 'items': [{**row, 'novel_id': ctx.novel_id, 'scope': ctx.scope} for row in value['items']]}
+
+
 # U07 is a read-only projection over existing task authorities. Each legacy
 # reader executes its original access check with captured request authority.
 workspace_tools_service = WorkspaceToolsService(
@@ -122,7 +165,8 @@ workspace_tools_service = WorkspaceToolsService(
         TaskReader('agent_team', '创作团队', 'agent_team_recipes',
                    lambda ctx: team_service.list_runs(ctx.novel_id, ctx.scope), 'agent_team_recipes'),
         TaskReader('audiobook', '有声书 V2', 'audiobook_v2',
-                   lambda ctx: audiobook_service.plans(ctx.novel_id, ctx.scope), 'audiobook_v2'),
+                   lambda ctx: audiobook_service.as_actor(ctx.actor, audiobook_service.plans, ctx.novel_id, ctx.scope), 'audiobook_v2'),
+        TaskReader('voice_direction', '声音导演任务', 'voice_direction_v2', read_voice_tasks, 'voice_direction_v2'),
         TaskReader('agents', 'Agent 任务', 'agents', lambda ctx: legacy_api.list_agent_jobs(
             novel_id=ctx.novel_id, agent_id=None, status=None, created_after=None,
             created_before=None, branch_id=ctx.branch, page=1, page_size=100,
@@ -279,3 +323,90 @@ def read_revision_job(job_id, token, branch):
 router.include_router(create_revision_intelligence_router(revision_intelligence_service, authorize, require_flag,
     save_document=save_revision_document, read_job=read_revision_job))
 
+
+from .reader_preflight import ReaderPreflightService
+from .reader_preflight_api import create_reader_preflight_router
+from .writing_sessions import WritingSessionsService
+from .writing_sessions_api import create_writing_sessions_router
+
+
+def read_author_candidates(ctx):
+    from fastapi import HTTPException
+    if authorize(ctx.novel_id, ctx.token, ctx.branch, 'domain.read') != (ctx.actor, ctx.scope):
+        raise HTTPException(403, {'code': 'CANDIDATE_AUTHORITY_CHANGED'})
+    visible = []
+    # Snapshot identities only; each result uses the original current guard.
+    for job in list(legacy_api.jobs.jobs.values()):
+        if job.novel_id != ctx.novel_id or (job.scope or {}).get('branch_id') != ctx.branch:
+            continue
+        if ctx.scope.get('mode') != 'local' and job.actor_id != ctx.actor:
+            continue
+        try:
+            current = legacy_api.generation(job.id, x_session_token=ctx.token)
+        except HTTPException as exc:
+            if exc.status_code not in {401, 403, 404}: raise
+            continue
+        if current.get('status') in {'COMPLETED', 'FAILED', 'CANCELLED'} and current.get('output'):
+            visible.append({'id': current['id'], 'chapter_id': current['chapter_id'],
+                'base_version': current.get('base_chapter_version'), 'status': current['status']})
+            if len(visible) > 100: break
+    if authorize(ctx.novel_id, ctx.token, ctx.branch, 'domain.read') != (ctx.actor, ctx.scope):
+        raise HTTPException(403, {'code': 'CANDIDATE_AUTHORITY_CHANGED'})
+    return {'items': visible[:100], 'truncated': len(visible) > 100}
+
+
+def read_optional_workspace_tasks(ctx):
+    if 'workspace_tools_v2' not in enabled_flags():
+        return {'items': [], 'unavailable': [{'authority': 'workspace_tasks', 'label': '任务中心', 'reason': 'FEATURE_DISABLED'}], 'truncated': False}
+    return workspace_tools_service.tasks(ctx, require_flag)
+
+
+reader_preflight_service = ReaderPreflightService(store, legacy_api.novel_service, legacy_api.chapter_service,
+    sources=writing_focus_service, assets=legacy_api.asset_library_service,
+    task_reader=read_optional_workspace_tasks, candidate_reader=read_author_candidates)
+writing_sessions_service = WritingSessionsService(store, legacy_api.novel_service, legacy_api.chapter_service,
+    sources=writing_focus_service, task_reader=read_optional_workspace_tasks,
+    history_reader=lambda ctx, cid: legacy_api.chapter_history(cid, x_session_token=ctx.token, x_branch_id=ctx.branch))
+router.include_router(create_reader_preflight_router(reader_preflight_service, authorize, require_flag))
+router.include_router(create_writing_sessions_router(writing_sessions_service, authorize, require_flag))
+
+
+from .director import DirectorService
+from .director_api import create_director_router
+from .timeline_exchange import TimelineExchangeService
+from .timeline_exchange_api import create_timeline_exchange_router
+director_service = DirectorService(store, legacy_api.novel_service, legacy_api.chapter_service, legacy_api.screenplay_service)
+timeline_exchange_service = TimelineExchangeService(store, legacy_api.novel_service, legacy_api.chapter_service,
+    legacy_api.screenplay_service, legacy_api.asset_library_service, lineage=production_lineage_service)
+router.include_router(create_director_router(director_service, authorize, require_flag))
+router.include_router(create_timeline_exchange_router(timeline_exchange_service, authorize, require_flag))
+
+
+from .portable_projects import PortableProjectsService
+from .portable_projects_api import create_portable_projects_router
+from .safe_batches import SafeBatchesService
+from .safe_batches_api import create_safe_batches_router
+portable_projects_service = PortableProjectsService(store, legacy_api.novel_service,
+    legacy_api.chapter_service, sources=writing_focus_service, assets=legacy_api.asset_library_service)
+safe_batches_service = SafeBatchesService(store, legacy_api.novel_service,
+    legacy_api.chapter_service, sources=writing_focus_service, reader=reader_preflight_service,
+    media=media_service, broker=model_broker_service, flag_check=require_flag)
+router.include_router(create_portable_projects_router(portable_projects_service, authorize, require_flag, require_inspection_host_session))
+router.include_router(create_safe_batches_router(safe_batches_service, authorize, require_flag, require_inspection_host_session))
+
+from .multilingual_editions import MultilingualEditionsService
+from .multilingual_editions_api import create_multilingual_editions_router
+multilingual_editions_service = MultilingualEditionsService(store, legacy_api.novel_service, legacy_api.chapter_service)
+router.include_router(create_multilingual_editions_router(multilingual_editions_service, authorize, require_flag))
+
+from .template_library import TemplateLibraryService
+from .template_library_api import create_template_library_router
+from .declarative_agents import DeclarativeAgentsService
+from .declarative_agents_api import create_declarative_agents_router
+from .flags import enabled_flags
+template_library_service = TemplateLibraryService(store, legacy_api.novel_service,
+    legacy_api.chapter_service, planning=planning_service, enabled_features=enabled_flags)
+declarative_agents_service = DeclarativeAgentsService(store, legacy_api.novel_service,
+    legacy_api.chapter_service, sources=writing_focus_service, broker=model_broker_service)
+router.include_router(create_template_library_router(template_library_service, authorize, require_flag))
+router.include_router(create_declarative_agents_router(declarative_agents_service, authorize, require_flag))

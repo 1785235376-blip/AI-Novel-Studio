@@ -76,7 +76,8 @@ import { NovelOverviewPanel } from "./novel/NovelOverviewPanel";
 import { ResearchPanel } from "./novel/ResearchPanel";
 import { ContinuityCheckPanel } from "./novel/ContinuityCheckPanel";
 import { FeatureLauncher } from "./ui/FeatureLauncher";
-import { ExperimentalWorkbench, EXPERIMENTAL_GROUPS, EXPERIMENTAL_TABS } from "./experimental/ExperimentalWorkbench";
+import { DeferredExperimentalWorkbench as ExperimentalWorkbench } from "./experimental/DeferredExperimentalWorkbench";
+import { EXPERIMENTAL_GROUPS, EXPERIMENTAL_TABS } from "./experimental/experimentalNavigation";
 import { experimentalFeatures, experimentalClient } from "./experimental/api";
 import { WritingReferenceRail, defaultWritingPreferences, type WritingFocusPreferences } from "./experimental/WritingFocusPanel";
 import type { WorkspaceNavigation, WorkspaceAnchor } from "./experimental/uxClient";
@@ -1225,7 +1226,7 @@ export default function App() {
       )}
       {writingFocus && s.novelId && <WritingReferenceRail key={`${namespace}:${s.novelId}`} client={workspaceClient} revision={referenceRevision} />}
       </div>
-      {panel === "experimental" ? <ExperimentalWorkbench key={`${namespace}:${s.novelId}`} novelId={s.novelId} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}} flags={experimentalFlags.data} onNavigate={navigateWorkspace} currentAnchor={saveState === "saved" && editorAnchor?.identity === editorIdentity ? editorAnchor.anchor : undefined} requestedTab={experimentalTab} workspaceSection={workspaceSection} focusActive={focusActive} onFocusChange={setFocusActive} onPreferencesChange={preferences => { focusPreferencesTouched.current = true; setWritingPreferences(preferences); }} onReferencesChange={() => setReferenceRevision(value => value + 1)} currentSelection={selection} saved={saveState === 'saved'} onChapterSaved={value => {
+      {panel === "experimental" ? <ExperimentalWorkbench key={`${namespace}:${s.novelId}`} novelId={s.novelId} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}} flags={experimentalFlags.data} onNavigate={navigateWorkspace} currentAnchor={saveState === "saved" && editorAnchor?.identity === editorIdentity ? editorAnchor.anchor : undefined} requestedTab={experimentalTab} workspaceSection={workspaceSection} focusActive={focusActive} onFocusChange={setFocusActive} onPreferencesChange={preferences => { focusPreferencesTouched.current = true; setWritingPreferences(preferences); }} onReferencesChange={() => setReferenceRevision(value => value + 1)} localDraftState={chapter.data ? [{ chapter_id: chapter.data.id, chapter_version: chapter.data.version, state: saveState === 'saved' ? 'SAVED' : saveState === 'failed' ? 'SAVE_FAILED' : 'UNSAVED' }] : []} saveFailure={saveState === 'failed' || saveState === 'conflict'} currentSelection={selection} saved={saveState === 'saved'} onChapterSaved={value => {
         if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity || value.id !== s.chapterId || value.novel_id !== s.novelId) return;
         qc.setQueryData<Chapter>(['chapter', namespace, value.id], current => current && current.version > value.version ? current : value);
         void qc.invalidateQueries({ queryKey: ['chapters', namespace, s.novelId] });

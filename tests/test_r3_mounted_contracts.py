@@ -78,6 +78,7 @@ def mounted(request, tmp_path, monkeypatch, prefix):
     import app.main as main
     import app.workflow_api as workflows
     from app.audio_production_store import AudioProductionStore
+    import app.audio_production_store as audio_module
 
     backend = request.param
     url = os.getenv("TEST_POSTGRES_DATABASE_URL", "") if backend == "postgres" else ""
@@ -118,9 +119,12 @@ def mounted(request, tmp_path, monkeypatch, prefix):
         experimental.production_lineage_service, experimental.style_analysis_service,
         experimental.narrative_judge_service, experimental.change_impact_service,
         experimental.story_simulator_service, experimental.research_library_service,
-        experimental.revision_intelligence_service,
-       
-       
+        experimental.revision_intelligence_service, experimental.reader_preflight_service,
+        experimental.writing_sessions_service, experimental.director_service,
+        experimental.timeline_exchange_service, experimental.subtitle_timeline_service,
+        experimental.portable_projects_service, experimental.safe_batches_service,
+        experimental.multilingual_editions_service, experimental.template_library_service,
+        experimental.declarative_agents_service,
     )
     # Router closures capture these real service instances at application import.
     # Rebind their dependencies, not the route implementation or approval methods.
@@ -133,6 +137,7 @@ def mounted(request, tmp_path, monkeypatch, prefix):
             monkeypatch.setattr(service, "screenplays", screenplays)
         if hasattr(service, "creation"):
             monkeypatch.setattr(service, "creation", creation)
+    monkeypatch.setattr(audio_module, "audio_production_store", audio)
     monkeypatch.setattr(experimental.research_library_service, "legacy", capabilities)
     monkeypatch.setattr(experimental.import_service, "apply_service", ImportApplyService(novels, tmp_path))
     for name, value in {

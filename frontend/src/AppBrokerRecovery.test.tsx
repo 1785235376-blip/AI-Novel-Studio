@@ -75,7 +75,7 @@ afterEach(() => {
 it('opens an existing broker job only after fresh authorization and retains original review actions', async () => {
   vi.mocked(api.job).mockResolvedValue(taskState('broker-one', 'COMPLETED', 'AUTHORIZED BROKER DRAFT'));
   setup(); fireEvent.click(screen.getByRole('button', { name: 'Open broker' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Open current broker job' }));
+  fireEvent.click(await screen.findByRole('button', { name: 'Open current broker job' }));
   await waitFor(() => expect(screen.getByLabelText('Audit draft').textContent).toContain('AUTHORIZED BROKER DRAFT'));
   expect(api.job).toHaveBeenCalledWith('broker-one', expect.objectContaining({ sessionToken: '' }));
   expect(editor().value).toBe('SAVED');
@@ -83,7 +83,7 @@ it('opens an existing broker job only after fresh authorization and retains orig
 it('navigates to the authorized job chapter and keeps the previous unsaved manuscript', async () => {
   vi.mocked(api.job).mockResolvedValue({ ...taskState('broker-two', 'COMPLETED', 'SECOND BROKER DRAFT', 10), chapter_id: 'recovery:2' });
   setup(); edit('PRESERVE FIRST DRAFT'); fireEvent.click(screen.getByRole('button', { name: 'Open broker' }));
-  fireEvent.click(screen.getByRole('button', { name: 'Open other broker job' }));
+  fireEvent.click(await screen.findByRole('button', { name: 'Open other broker job' }));
   await waitFor(() => expect(screen.getByLabelText('Audit draft').textContent).toContain('SECOND BROKER DRAFT'));
   expect(useStudio.getState().chapterId).toBe('recovery:2');
   expect(drafts.load('recovery:1')?.content).toBe('PRESERVE FIRST DRAFT');
@@ -91,7 +91,7 @@ it('navigates to the authorized job chapter and keeps the previous unsaved manus
 });
 it('does not display a broker result if authority is revoked after chapter navigation', async () => {
   vi.mocked(api.job).mockResolvedValueOnce({ ...taskState('broker-two', 'COMPLETED', 'REVOKED PROSE', 10), chapter_id: 'recovery:2' }).mockRejectedValue(new ApiError({ status: 403, code: 'DENIED', message: 'Denied' }));
-  setup(); fireEvent.click(screen.getByRole('button', { name: 'Open broker' })); fireEvent.click(screen.getByRole('button', { name: 'Open other broker job' }));
+  setup(); fireEvent.click(screen.getByRole('button', { name: 'Open broker' })); fireEvent.click(await screen.findByRole('button', { name: 'Open other broker job' }));
   await waitFor(() => expect(useStudio.getState().chapterId).toBe('recovery:2'));
   await waitFor(() => expect(api.job).toHaveBeenCalledTimes(2));
   expect(screen.getByLabelText('Audit draft').textContent).not.toContain('REVOKED PROSE');
@@ -99,7 +99,7 @@ it('does not display a broker result if authority is revoked after chapter navig
 });
 it('ignores a delayed broker lookup after the author switches chapter', async () => {
   const pending = deferred<any>(); vi.mocked(api.job).mockReturnValue(pending.promise);
-  setup(); fireEvent.click(screen.getByRole('button', { name: 'Open broker' })); fireEvent.click(screen.getByRole('button', { name: 'Open current broker job' }));
+  setup(); fireEvent.click(screen.getByRole('button', { name: 'Open broker' })); fireEvent.click(await screen.findByRole('button', { name: 'Open current broker job' }));
   act(() => useStudio.getState().setChapter('recovery:2'));
   await act(async () => pending.resolve(taskState('broker-one', 'COMPLETED', 'LATE BROKER SECRET')));
   expect(screen.getByLabelText('Audit draft').textContent).not.toContain('LATE BROKER SECRET');
