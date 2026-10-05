@@ -5,6 +5,7 @@ adapters; only host-installed implementations can be registered. No adapter in
 this module performs network IO or infers approval from successful generation.
 """
 from __future__ import annotations
+from contextvars import ContextVar
 
 import base64
 import copy
@@ -270,6 +271,9 @@ def production_environment(adapter):
             "deterministic": synthetic, "verification": "SYNTHETIC_PROTOCOL_ONLY" if synthetic else "MODEL_IDENTITY_INCOMPLETE"}
 
 
+# Server-only capability; legacy routes cannot manufacture a batch context.
+batch_media_context = ContextVar('safe_batch_media_context', default=None)
+
 _ACTIVE = set()
 _ACTIVE_LOCK = threading.RLock()
 
@@ -286,12 +290,42 @@ class MediaService(DomainService):
             production_capture_enabled = lambda: "production_manifest_v2" in enabled_flags()
         self.production_capture_enabled = production_capture_enabled
 
+    def _safe_batch_visible(self, nid, scope, collection, row):
+        if 'safe_batch_id' not in row:
+            return True
+        from .flags import enabled_flags
+        if 'safe_batches_v2' not in enabled_flags():
+            return False
+        authority = batch_media_context.get()
+        if (not authority or authority.get('id') != row['safe_batch_id'] or authority.get('novel_id') != nid
+                or authority.get('scope') != scope or authority.get('actor') != row.get('created_by')):
+            return False
+        state = self.store.read(nid, scope)['collections']
+        owner = state.get('safe_batches_v2', {}).get(row['safe_batch_id'])
+        if (not isinstance(owner, dict) or owner.get('novel_id') != nid or owner.get('scope') != scope
+                or owner.get('created_by') != authority['actor'] or owner.get('status') == 'CANCELLED'):
+            return False
+        index = row.get('safe_batch_index')
+        if type(index) is not int or not 0 <= index < len(owner.get('items', [])):
+            return False
+        task_id = owner['items'][index].get('task_id')
+        if collection == self.TASKS and task_id != row['id']:
+            return False
+        if collection == self.PROPOSALS and task_id != row.get('task_id'):
+            return False
+        if collection not in {self.TASKS, self.PROPOSALS}:
+            return False
+        authority['guard']()
+        return True
+
     def _change_impact_visible(self, nid, scope, collection, row):
         """Opt-in derivative ownership survives every generic media route.
 
         Existing ordinary media/A13 records have no marker and are unchanged.
         A malformed marker or missing owner is denied rather than stripped.
         """
+        if not self._safe_batch_visible(nid, scope, collection, row):
+            return False
         if "change_impact_refresh_id" not in row:
             return True
         from .flags import enabled_flags
@@ -512,6 +546,8 @@ class MediaService(DomainService):
 
     def transition(self, nid, scope, actor, rid, action, expected_version):
         def change(row):
+            if row.get("safe_batch_id"):
+                raise ValueError("SAFE_BATCH_CONTROL_REQUIRED")
             if action == "cancel" and row["status"] in {"QUEUED", "RUNNING"}:
                 row.update(status="CANCELLED", execution_token=None, cancellation_mode="LOCAL_RESULT_DISCARD")
             elif action == "retry" and (row["status"] in {"FAILED", "CANCELLED"} or
@@ -533,9 +569,11 @@ class MediaService(DomainService):
         return brief
 
     def execute(self, nid, scope, actor, rid, expected_version, check_authority=None, check_egress=None,
-                production_guard=None, change_impact_guard=None):
+                production_guard=None, change_impact_guard=None, safe_batch_guard=None):
         token = str(uuid4())
         def claim(row):
+            if row.get("safe_batch_id") and safe_batch_guard is None:
+                raise ValueError("SAFE_BATCH_DISPATCH_AUTHORITY_REQUIRED")
             if row["status"] != "QUEUED":
                 raise ValueError("MEDIA_TASK_NOT_QUEUED")
             if row.get("change_impact_refresh_id") and change_impact_guard is None:
@@ -578,6 +616,8 @@ class MediaService(DomainService):
                     production_guard(task, adapter)
                 if change_impact_guard:
                     change_impact_guard(task, adapter)
+                if safe_batch_guard:
+                    safe_batch_guard(task, adapter)
                 results = adapter.generate(request)
                 if len(results) != task["candidate_count"]:
                     raise ValueError("MEDIA_RESULT_COUNT_INVALID")
@@ -588,7 +628,8 @@ class MediaService(DomainService):
                     measured = inspect_image(result.content)
                     if measured["media_type"] != result.media_type:
                         raise ValueError("MEDIA_RESULT_TYPE_MISMATCH")
-                    proposals.append({**({"change_impact_refresh_id": task["change_impact_refresh_id"]} if "change_impact_refresh_id" in task else {}),
+                    proposals.append({**({"safe_batch_id": task["safe_batch_id"], "safe_batch_index": task["safe_batch_index"]} if "safe_batch_id" in task else {}),
+                        **({"change_impact_refresh_id": task["change_impact_refresh_id"]} if "change_impact_refresh_id" in task else {}),
                         "id": str(uuid4()), "task_id": rid, "brief_id": task["brief_id"],
                         "kind": task["brief_snapshot"]["kind"], "candidate_index": index, "status": "PENDING_REVIEW",
                         "sources": task["sources"], "source_digest": task["source_digest"], "brief_version": task["brief_version"],
@@ -599,6 +640,8 @@ class MediaService(DomainService):
                         "created_at": now(), "updated_at": now(), "history": []})
                 if check_authority:
                     check_authority()
+                if safe_batch_guard:
+                    safe_batch_guard(task, adapter)
                 if environment and not self.production_capture_enabled():
                     raise ValueError("MEDIA_PRODUCTION_CAPTURE_DISABLED")
                 if environment and (production_environment(adapter) != environment
@@ -610,6 +653,8 @@ class MediaService(DomainService):
                         return self.public_task(row)
                     if "change_impact_refresh_id" in task and check_authority:
                         check_authority()
+                    if safe_batch_guard:
+                        safe_batch_guard(task, adapter)
                     self._current_brief(nid, scope, task)
                     collection = doc["collections"].setdefault(self.PROPOSALS, {})
                     for proposal in proposals:
@@ -663,7 +708,11 @@ class MediaService(DomainService):
         return {"items": [{k: v for k, v in row.items() if k != "content_base64"} for row in rows],
                 "inference_performed": False, "comparison_fields": ["adapter_id", "model_id", "media", "content_sha256", "verification"]}
 
-    def review(self, nid, scope, actor, item_id, action, expected_version):
+    def review(self, nid, scope, actor, item_id, action, expected_version, safe_batch_guard=None):
+        owned = self.get(nid, scope, self.PROPOSALS, item_id)
+        if owned.get("safe_batch_id"):
+            if safe_batch_guard is None: raise ValueError("SAFE_BATCH_REVIEW_AUTHORITY_REQUIRED")
+            safe_batch_guard()
         if action != "approve":
             def decide(row):
                 if action == "reopen" and row["status"] == "REJECTED":
@@ -693,8 +742,17 @@ class MediaService(DomainService):
         brief = self._current_brief(nid, scope, task)
         content, _ = self.preview(nid, scope, item_id)
         measured = inspect_image(content)
-        asset = self.assets.create(nid, f"r3-{current['id']}.{measured['extension']}", current["content_base64"],
-            measured["media_type"], "image", "r3-media:" + item_id, branch_id=scope.get("branch_id"))
+        if safe_batch_guard: safe_batch_guard()
+        if current.get("safe_batch_id") and current.get("promotion_asset_id"):
+            # Resume the original promotion checkpoint, including a public
+            # asset whose parent receipt was interrupted after publication.
+            asset = self.assets.get(current["promotion_asset_id"], branch_id=scope.get("branch_id"), actor_id=actor)
+            if asset.get("sha256") != current.get("promotion_asset_digest") or self.assets.content(asset["id"], branch_id=scope.get("branch_id"), actor_id=actor) != content:
+                raise ValueError("SAFE_BATCH_PROMOTION_ASSET_CHANGED")
+        else:
+            asset = self.assets.create(nid, f"r3-{current['id']}.{measured['extension']}", current["content_base64"],
+                measured["media_type"], "image", "r3-media:" + item_id, branch_id=scope.get("branch_id"),
+                **({"required_features": ("safe_batches_v2",), "owner_actor_id": actor} if current.get("safe_batch_id") else {}))
         current = checkpoint_promotion_asset(self, nid, scope, actor, self.PROPOSALS, current, asset)
         lineage = {"brief_id": brief["id"], "brief_version": brief["version"], "proposal_id": item_id,
             "source_digest": current["source_digest"], "sources": current["sources"], "verification": current["verification"],
@@ -702,8 +760,10 @@ class MediaService(DomainService):
         self.assets.update_metadata(asset["id"], {"source_job_id": task["id"], "provider_id": current["adapter_id"],
             "model_id": current["model_id"], "parameters": {"experimental_media_lineage": lineage},
             "approved_at": current["promotion_started_at"], "source_asset_ids": brief.get("reference_asset_ids", [])},
-            branch_id=scope.get("branch_id"))
+            branch_id=scope.get("branch_id"), **({"actor_id": actor} if current.get("safe_batch_id") else {}))
+        if safe_batch_guard: safe_batch_guard()
         with self.store.transaction(nid, scope) as doc:
+            if safe_batch_guard: safe_batch_guard()
             row = doc["collections"][self.PROPOSALS][item_id]
             if row.get("promotion_token") != current["promotion_token"]:
                 raise ValueError("MEDIA_PROMOTION_CHANGED")
@@ -713,6 +773,13 @@ class MediaService(DomainService):
             if row["status"] != "APPROVING":
                 raise ValueError("MEDIA_PROMOTION_CHANGED")
             self._current_brief(nid, scope, task)
+            if row.get("safe_batch_id"):
+                # Hold the owner scope lock through final publication so an
+                # accepted stop cannot race an asset becoming public.
+                safe_batch_guard()
+                stored = self.assets.get(asset["id"], branch_id=scope.get("branch_id"), actor_id=actor)
+                self.assets.promote_owned(asset["id"], actor_id=actor, branch_id=scope.get("branch_id"), expected_version=stored["version"],
+                    provenance={"safe_batch_id": row["safe_batch_id"], "proposal_id": item_id}, guard=safe_batch_guard)
             row.setdefault("history", []).append(snapshot(row))
             row.update(status="APPROVED", asset_id=asset["id"], lineage=lineage,
                 approved_at=current["promotion_started_at"], approved_by=current["promotion_actor"],
