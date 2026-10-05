@@ -27,7 +27,10 @@ test('B01/B02 local template copy, declarative authoring, original node executio
     await page.getByRole('button', { name: '创建小说', exact: true }).click();
     const novel = await body(await creating); nid = novel.id;
     const base = `${API}/novels/${nid}/experimental`;
-    const chapter = await body(await request.post(`${API}/novels/${nid}/chapters`, { headers, data: { title: '合成潮汐', content: '林舟等潮落。\n同伴举起合成地图。' } }));
+    const createdChapter = await body(await request.post(`${API}/novels/${nid}/chapters`, { headers, data: { title: '合成潮汐', content: '林舟等潮落。\n同伴举起合成地图。' } }));
+    // The original editor GET initializes the File rich-document representation.
+    // Compare exact authoritative content after that boundary, not the raw POST echo.
+    const chapter = await body(await request.get(`${API}/chapters/${createdChapter.id}`, { headers }));
     await tools(page, '本地模板库');
     const library = page.getByRole('region', { name: '本地模板库', exact: true });
     await library.getByLabel('选择本地模板').selectOption('planning-three-act');

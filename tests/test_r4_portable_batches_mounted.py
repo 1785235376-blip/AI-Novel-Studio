@@ -7,7 +7,7 @@ import pytest
 from test_r3_mounted_contracts import mounted, prefix, checked, scoped
 from app.experimental.flags import FLAGS
 from app.actor_context import SessionContext
-from test_r4_portable_batches import confirm, version
+from test_r4_portable_batches import confirm, version, project_inventory, unrelated_project
 
 @pytest.fixture
 def tools(mounted, monkeypatch):
@@ -19,16 +19,27 @@ def tools(mounted, monkeypatch):
 
 
 def test_mounted_portable_preflight_restore_actual_new_project_and_no_overwrite(tools):
-    e=tools;before=e.chapters.get(e.chapter['id']);base=e.base+'/portable-projects'
-    row=checked(e.client.post(base+'/export',json={'chapter_ids':[e.chapter['id']]}))
-    archive=e.client.get(base+f"/records/{row['id']}/file?expected_version=1");assert archive.status_code==200 and archive.headers['cache-control']=='no-store'
-    with zipfile.ZipFile(io.BytesIO(archive.content)) as z:assert 'manifest.json' in z.namelist()
-    preview=checked(e.client.post(base+'/import-preflight',json={'filename':'new.zip','content_base64':base64.b64encode(archive.content).decode()}))
-    assert len(e.novels.list())==1
-    restored=checked(e.client.post(base+f"/records/{preview['id']}/restore",json=confirm(preview)))
-    assert restored['target_id']!=e.nid and e.chapters.get(e.chapter['id'])==before
-    assert e.chapters.list(restored['target_id'])
-    e.novels.delete(restored['target_id'])
+    e=tools;before=e.chapters.get(e.chapter['id']);history=e.chapters.history(e.chapter['id']);base=e.base+'/portable-projects'
+    with unrelated_project(e.novels, e.chapters) as neighbor:
+        before_projects = project_inventory(e.novels)
+        row=checked(e.client.post(base+'/export',json={'chapter_ids':[e.chapter['id']]}))
+        archive=e.client.get(base+f"/records/{row['id']}/file?expected_version=1");assert archive.status_code==200 and archive.headers['cache-control']=='no-store'
+        with zipfile.ZipFile(io.BytesIO(archive.content)) as z:assert 'manifest.json' in z.namelist()
+        preview=checked(e.client.post(base+'/import-preflight',json={'filename':'new.zip','content_base64':base64.b64encode(archive.content).decode()}))
+        assert project_inventory(e.novels) == before_projects
+        restored=checked(e.client.post(base+f"/records/{preview['id']}/restore",json=confirm(preview)))
+        target=restored['target_id'];assert target not in before_projects
+        try:
+            after_projects = project_inventory(e.novels)
+            assert set(after_projects) == set(before_projects) | {target}
+            assert {nid: after_projects[nid] for nid in before_projects} == before_projects
+            assert e.novels.get(neighbor['project']['id']) == neighbor['project']
+            assert e.chapters.get(neighbor['chapter']['id']) == neighbor['chapter']
+            assert e.chapters.get(e.chapter['id'])==before and e.chapters.history(e.chapter['id'])==history
+            assert e.chapters.list(target)
+        finally:
+            e.novels.delete(target)
+        assert project_inventory(e.novels) == before_projects
 
 
 def test_mounted_batch_actual_docx_selected_snapshot_and_explicit_stages(tools):

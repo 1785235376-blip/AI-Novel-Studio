@@ -105,3 +105,70 @@ def test_actual_final_authority_recheck_after_projection(editions, monkeypatch, 
         return result
     monkeypatch.setattr(e.editions, 'catalog', catalog)
     assert e.client.get(e.path + '/catalog', headers=e.headers).status_code in {401, 403}
+
+
+def test_actual_created_heading_is_a_segment_and_wrong_fixture_alignment_blocks_review(editions):
+    """Reproduce the e12 browser fixture mismatch without weakening term guards."""
+    e = editions
+    prose = ['阿青🙂é来到港口。', '船长保留原位。', '第三段：钟声响起。']
+    created = checked(e.client.post(e.prefix + f'/novels/{e.nid}/chapters', json={
+        'title': '合成多语章节', 'content': '\n\n'.join(prose),
+    }), 201)
+    current = checked(e.client.get(e.prefix + '/chapters/' + created['id']))
+    row = checked(e.client.post(e.path, json={'title': 'Reproduce real heading alignment',
+        'source_language': 'zh-Hant', 'target_language': 'ar',
+        'chapters': [{'chapter_id': current['id'], 'chapter_version': current['version']}]}), 201)
+    assert [s['source_text'] for s in row['segments']] == ['合成多语章节', *prose]
+    item = e.path + '/' + row['id']
+    row = checked(e.client.post(item + '/rules', json={'expected_version': row['version'],
+        'source_term': '阿青', 'preferred': 'تشينغ', 'forbidden': ['WrongName'], 'strategy': 'transliteration'}))
+    row = checked(e.client.post(item + f"/rules/{row['rules'][0]['id']}/review",
+        json={'expected_version': row['version'], 'action': 'approve'}))
+    # e12 treated segment zero (the H1) as the first body paragraph. Its second
+    # iteration therefore supplied a generic target for the actual 阿青 source.
+    segment = row['segments'][1]; segment_path = item + '/segments/' + segment['id']
+    row = checked(e.client.put(segment_path, json={'expected_version': row['version'], 'text': 'فقرة عربية 2 🙂é'}))
+    row = checked(e.client.post(segment_path + '/review', json={'expected_version': row['version'], 'action': 'submit'}))
+    preview = checked(e.client.post(segment_path + '/preview', json={'expected_version': row['version']}))
+    assert preview['can_accept'] is False
+    assert [(issue['code'], issue.get('term'), issue.get('expected')) for issue in preview['issues']] == [('TERM_REQUIRED', '阿青', 'تشينغ')]
+    denied = e.client.post(segment_path + '/review', json={'expected_version': row['version'], 'action': 'accept', 'preview_digest': preview['preview_digest']})
+    assert denied.status_code == 422
+    assert checked(e.client.get(item))['segments'][1]['status'] == 'REVIEW'
+    assert checked(e.client.get(e.prefix + '/chapters/' + current['id'])) == current
+    print('B05 e12 reproduction:', json.dumps({'source_segments': ['合成多语章节', *prose], 'selected_source': segment['source_text'], 'can_accept': preview['can_accept'], 'issues': preview['issues']}, ensure_ascii=False))
+
+
+def test_actual_structured_three_paragraph_fixture_maps_terms_and_preserves_original(editions):
+    e = editions
+    prose = ['阿青🙂é来到港口。', '船长保留原位。', '第三段：钟声响起。']
+    document = {'type': 'doc', 'content': [{'type': 'paragraph', 'content': [{'type': 'text', 'text': text}]} for text in prose]}
+    created = checked(e.client.post(e.prefix + f'/novels/{e.nid}/chapters', json={'title': '合成多语章节', 'content': '\n\n'.join(prose)}), 201)
+    initial = checked(e.client.get(e.prefix + '/chapters/' + created['id']))
+    saved = checked(e.client.put(e.prefix + '/chapters/' + created['id'], json={'version': initial['version'], 'document': document}))
+    original = checked(e.client.get(e.prefix + '/chapters/' + created['id']))
+    assert original['version'] == saved['version'] == initial['version'] + 1
+    assert original['document'] == document
+    original_history = checked(e.client.get(e.prefix + '/chapters/' + created['id'] + '/history'))
+    row = checked(e.client.post(e.path, json={'title': 'Structured language edition', 'source_language': 'zh-Hant', 'target_language': 'ar',
+        'chapters': [{'chapter_id': original['id'], 'chapter_version': original['version']}]}), 201)
+    assert [s['source_text'] for s in row['segments']] == prose
+    item = e.path + '/' + row['id']
+    row = checked(e.client.post(item + '/rules', json={'expected_version': row['version'], 'source_term': '阿青', 'preferred': 'تشينغ', 'forbidden': ['WrongName'], 'strategy': 'transliteration'}))
+    row = checked(e.client.post(item + f"/rules/{row['rules'][0]['id']}/review", json={'expected_version': row['version'], 'action': 'approve'}))
+    targets = ['تشينغ وصل إلى الميناء 🙂é', 'فقرة عربية 2 🙂é', 'فقرة عربية 3 🙂é']
+    for index, text in enumerate(targets):
+        path = item + '/segments/' + row['segments'][index]['id']
+        row = checked(e.client.put(path, json={'expected_version': row['version'], 'text': text}))
+        row = checked(e.client.post(path + '/review', json={'expected_version': row['version'], 'action': 'submit'}))
+        preview = checked(e.client.post(path + '/preview', json={'expected_version': row['version']}))
+        assert preview['can_accept'] and not preview['issues'], json.dumps(preview, ensure_ascii=False)
+        row = checked(e.client.post(path + '/review', json={'expected_version': row['version'], 'action': 'accept', 'preview_digest': preview['preview_digest']}))
+    assert [s['target_text'] for s in row['segments']] == targets
+    assert [s['status'] for s in row['segments']] == ['ACCEPTED'] * 3
+    assert row['checks']['can_export']
+    preview = checked(e.client.post(item + '/export-preview', json={'expected_version': row['version'], 'format': 'html'}))
+    output = checked(e.client.post(item + '/export', json={'expected_version': row['version'], 'format': 'html', 'preview_digest': preview['preview_digest']}))
+    assert output['content'].count('<p>') == 3 and 'lang="ar" dir="rtl"' in output['content']
+    assert checked(e.client.get(e.prefix + '/chapters/' + created['id'])) == original
+    assert checked(e.client.get(e.prefix + '/chapters/' + created['id'] + '/history')) == original_history

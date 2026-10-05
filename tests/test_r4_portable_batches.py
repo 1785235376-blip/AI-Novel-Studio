@@ -1,6 +1,8 @@
 """U14/U16 real File and opt-in actual PostgreSQL domain-authority contracts."""
 import base64
 from copy import deepcopy
+from contextlib import contextmanager
+from uuid import uuid4
 import io
 import json
 import stat
@@ -35,6 +37,28 @@ def work(rig, monkeypatch):
 def confirm(row): return {'expected_version': row['version'], 'snapshot_digest': row['snapshot_digest'], 'confirmed': True}
 def version(row): return {'expected_version': row['version']}
 def upload(data, name='portable.zip'): return {'filename': name, 'content_base64': base64.b64encode(data).decode()}
+
+
+def project_inventory(novels):
+    """Snapshot the original readable inventory, without assuming an empty DB."""
+    rows = novels.list()
+    result = {row['id']: deepcopy(row) for row in rows}
+    assert len(result) == len(rows), 'project identities must be unique'
+    return result
+
+
+@contextmanager
+def unrelated_project(novels, chapters):
+    """Make nonempty-database preservation execute in File as well as PG."""
+    project = novels.create({'id': 'portable-neighbor-' + uuid4().hex, 'title': 'Synthetic unrelated portable neighbor'})
+    try:
+        chapter = chapters.create(project['id'], {'title': 'Unrelated chapter', 'content': 'Keep this synthetic neighbor unchanged.'})
+        yield {'project': deepcopy(novels.get(project['id'])), 'chapter': deepcopy(chapters.get(chapter['id']))}
+    finally:
+        # Only the exact synthetic project this context created may be removed.
+        novels.delete(project['id'])
+
+
 def add_media(r, missing=False):
     data = wav_bytes(); asset = r.assets.create(r.nid, 'synthetic.wav', base64.b64encode(data).decode(), 'audio/wav', 'audio')
     chapter = r.chapters.get(r.chapter['id']); doc = chapter['document']; doc['content'].append({'type': 'audio', 'attrs': {'asset_id': asset['id'], 'title': 'Synthetic audio'}})
@@ -45,20 +69,33 @@ def add_media(r, missing=False):
 
 def test_portable_real_round_trip_new_ids_missing_media_and_original_history(work):
     r=work; asset,_=add_media(r); history=deepcopy(r.chapters.history(r.chapter['id'])); original=deepcopy(r.chapters.get(r.chapter['id']))
-    exported=r.portable.export(r.ctx, {'chapter_ids':[r.chapter['id']]})
-    raw=r.portable.download(r.ctx,exported['id'],exported['version']); manifest,payloads=read_archive(raw)
-    assert manifest['media'][0]['state']=='AVAILABLE' and list(payloads)==['a0001']
-    assert str(r.root).encode() not in raw and asset['id'].encode() not in raw and r.nid.encode() not in raw
-    preview=r.portable.preflight_import(r.ctx,upload(raw)); assert len(r.novels.list())==1
-    restored=r.portable.restore(r.ctx,preview['id'],confirm(preview)); target=restored['target_id']
-    assert target!=r.nid and restored['status']=='RESTORED'
-    cid=restored['id_map']['chapters']['c0001']; aid=restored['id_map']['media']['a0001']
-    assert cid!=r.chapter['id'] and aid!=asset['id']
-    assert r.chapters.get(cid)['document']['content'][-1]['attrs']['asset_id']==aid
-    assert r.assets.content(aid,actor_id=r.actor)==payloads['a0001']
-    assert r.chapters.get(r.chapter['id'])==original and r.chapters.history(r.chapter['id'])==history
-    with pytest.raises((ValueError,CapabilityVersionConflict)): r.portable.restore(r.ctx,preview['id'],confirm(preview))
-    r.novels.delete(target)
+    with unrelated_project(r.novels, r.chapters) as neighbor:
+        before_projects = project_inventory(r.novels)
+        exported=r.portable.export(r.ctx, {'chapter_ids':[r.chapter['id']]})
+        raw=r.portable.download(r.ctx,exported['id'],exported['version']); manifest,payloads=read_archive(raw)
+        assert manifest['media'][0]['state']=='AVAILABLE' and list(payloads)==['a0001']
+        assert str(r.root).encode() not in raw and asset['id'].encode() not in raw and r.nid.encode() not in raw
+        preview=r.portable.preflight_import(r.ctx,upload(raw))
+        assert project_inventory(r.novels) == before_projects  # preflight creates or changes no project
+        restored=r.portable.restore(r.ctx,preview['id'],confirm(preview)); target=restored['target_id']
+        assert target not in before_projects  # never clean up or overwrite a pre-existing identity
+        try:
+            assert restored['status']=='RESTORED'
+            after_projects = project_inventory(r.novels)
+            assert set(after_projects) == set(before_projects) | {target}
+            assert {nid: after_projects[nid] for nid in before_projects} == before_projects
+            assert r.novels.get(neighbor['project']['id']) == neighbor['project']
+            assert r.chapters.get(neighbor['chapter']['id']) == neighbor['chapter']
+            cid=restored['id_map']['chapters']['c0001']; aid=restored['id_map']['media']['a0001']
+            assert cid!=r.chapter['id'] and aid!=asset['id']
+            assert r.chapters.get(cid)['document']['content'][-1]['attrs']['asset_id']==aid
+            assert r.assets.content(aid,actor_id=r.actor)==payloads['a0001']
+            assert r.chapters.get(r.chapter['id'])==original and r.chapters.history(r.chapter['id'])==history
+            with pytest.raises((ValueError,CapabilityVersionConflict)): r.portable.restore(r.ctx,preview['id'],confirm(preview))
+            assert project_inventory(r.novels) == after_projects  # duplicate confirmation creates no extra target
+        finally:
+            r.novels.delete(target)
+        assert project_inventory(r.novels) == before_projects
 
 
 def test_missing_media_retains_manuscript_and_explicit_digest_relink(work):

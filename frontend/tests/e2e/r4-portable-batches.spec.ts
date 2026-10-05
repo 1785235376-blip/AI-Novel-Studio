@@ -15,7 +15,10 @@ test('J15 portable ZIP new-project restore and J10 explicit serial batch without
   info.annotations.push({ type: 'verification', description: 'Authored real File API/React journey, NOT_RUN locally: Chromium launch EPERM; no retry. No real model, paid calls or GPU claims.' });
   page.on('request', req => { if (req.method() === 'POST') mutations.push(req.url()); });
   try {
-    await page.addInitScript(token => localStorage.setItem('studio.session', token), TOKEN); await page.goto(UI);
+    // The host token authorizes local tools; it is not a selected collaboration session.
+    await page.setExtraHTTPHeaders(headers); await page.goto(UI);
+    expect(await page.evaluate(() => localStorage.getItem('studio.session'))).toBeNull();
+    expect(await page.evaluate(() => localStorage.getItem('studio.scope'))).toBeNull();
     await page.getByPlaceholder('小说名称').fill('U14 U16 synthetic portable journey');
     const creating = page.waitForResponse(r => r.url().endsWith('/api/novels') && r.request().method() === 'POST');
     await page.getByRole('button', { name: '创建小说', exact: true }).click(); const novel = await (await creating).json(); projects.push(novel.id);

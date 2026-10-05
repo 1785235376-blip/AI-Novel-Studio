@@ -197,9 +197,10 @@ def test_preflight_tasks_and_candidates_are_explicitly_not_acceptance(env):
     assert not report['has_integrity_blockers'] and e.chapters.get(e.cid)['version'] == 2
 
 
+@pytest.mark.parametrize('env', [pytest.param('file', marks=pytest.mark.file_backend_only)], indirect=True)
 def test_never_opened_legacy_chapter_read_preflight_does_not_materialize(env):
     e = env
-    if e.store.backend != 'file': pytest.skip('legacy file boundary only')
+    assert e.store.backend == 'file'  # Markdown-to-document lazy materialization is File-specific.
     repo = e.chapters.repository.backend
     # create_chapter writes only Markdown; do not call ChapterService.get/list.
     legacy = repo.create_chapter(e.ctx.novel_id, {'title': 'Never opened', 'content': 'Only in markdown.'})
@@ -286,9 +287,10 @@ def test_pdf_font_check_reuses_original_status_never_renders(env, monkeypatch):
     assert not report['target_renderer_verified']
 
 
+@pytest.mark.parametrize('env', [pytest.param('file', marks=pytest.mark.file_backend_only)], indirect=True)
 def test_legacy_in_memory_revision_stays_stable_after_original_editor_opens(env):
     e = env
-    if e.store.backend != 'file': pytest.skip('legacy file boundary only')
+    assert e.store.backend == 'file'  # PostgreSQL has no legacy Markdown file to materialize.
     legacy = e.chapters.repository.backend.create_chapter(e.ctx.novel_id, {'title': 'Legacy', 'content': '未打开的正文'})
     before = next(r for r in e.reader.read(e.ctx)['chapters'] if r['id'] == legacy['id'])
     e.chapters.get(legacy['id'])  # original editor is allowed to initialize it
