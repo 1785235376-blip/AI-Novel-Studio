@@ -2,6 +2,7 @@ from __future__ import annotations
 import json
 from ...repository import FileRepository,read_json,slug
 from ...storage import atomic_write
+from ...privacy import privacy_for_update, privacy_record
 
 class FileNovelRepository:
     def __init__(self,backend:FileRepository):self.backend=backend
@@ -10,13 +11,17 @@ class FileNovelRepository:
     def get(self,novel_id):return self.backend.get_novel(novel_id)
     def update(self,novel_id,payload):return self.backend.update_novel(novel_id,payload)
     def delete(self,novel_id):return self.backend.delete_novel(novel_id)
-    def get_data_set(self,novel_id,name):return self.backend.data_set(novel_id,name)
+    def get_data_set(self,novel_id,name):
+        rows=self.backend.data_set(novel_id,name)
+        return [privacy_record(row) for row in rows] if name in {"characters","locations","canon","foreshadowing","timeline","relationships"} else rows
     def upsert_character(self,novel_id,character_id,payload):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
         path=root/'characters/characters.json';rows=read_json(path,[]);cid=slug(character_id or payload['name'])
         item={"id":cid,"name":payload["name"],"age":payload.get("age"),"role":payload.get("role",""),"personality":payload.get("personality",""),"goal":payload.get("goal",""),"current_location":payload.get("current_location",""),"status":payload.get("status","ALIVE"),"privacy_level":payload.get("privacy_level","CLOUD_ALLOWED")}
         index=next((i for i,row in enumerate(rows) if str(row.get('id'))==cid),None)
+        item["privacy_level"]=privacy_for_update(payload, rows[index] if index is not None else None)
+        if "privacy_level" not in payload and (index is None or "privacy_level" not in rows[index] or rows[index].get("privacy_status") == "UNKNOWN"):item["privacy_status"]="UNKNOWN"
         if index is None:rows.append(item)
         else:rows[index]=item
         atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
@@ -26,6 +31,8 @@ class FileNovelRepository:
         path=root/'locations/locations.json';rows=read_json(path,[]);lid=slug(location_id or payload['name'])
         item={"id":lid,"name":payload["name"],"location_type":payload.get("location_type",""),"description":payload.get("description",""),"rules":payload.get("rules",""),"atmosphere":payload.get("atmosphere",""),"status":payload.get("status","ACTIVE"),"privacy_level":payload.get("privacy_level","CLOUD_ALLOWED")}
         index=next((i for i,row in enumerate(rows) if str(row.get('id'))==lid),None)
+        item["privacy_level"]=privacy_for_update(payload, rows[index] if index is not None else None)
+        if "privacy_level" not in payload and (index is None or "privacy_level" not in rows[index] or rows[index].get("privacy_status") == "UNKNOWN"):item["privacy_status"]="UNKNOWN"
         if index is None:rows.append(item)
         else:rows[index]=item
         atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
@@ -35,6 +42,8 @@ class FileNovelRepository:
         path=root/'timeline/events.json';rows=read_json(path,[]);eid=slug(event_id or payload['title'])
         item={"id":eid,"sequence":payload.get("sequence",len(rows)+1),"time":payload.get("time",""),"title":payload["title"],"description":payload.get("description",""),"location":payload.get("location",""),"characters":payload.get("characters",[]),"chapter_id":payload.get("chapter_id",""),"status":payload.get("status","CONFIRMED"),"privacy_level":payload.get("privacy_level","CLOUD_ALLOWED")}
         index=next((i for i,row in enumerate(rows) if str(row.get('id'))==eid),None)
+        item["privacy_level"]=privacy_for_update(payload, rows[index] if index is not None else None)
+        if "privacy_level" not in payload and (index is None or "privacy_level" not in rows[index] or rows[index].get("privacy_status") == "UNKNOWN"):item["privacy_status"]="UNKNOWN"
         if index is None:rows.append(item)
         else:rows[index]=item
         rows.sort(key=lambda row:int(row.get('sequence',0)));atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
@@ -44,6 +53,8 @@ class FileNovelRepository:
         path=root/'foreshadowing.json';rows=read_json(path,[]);fid=slug(foreshadowing_id or payload['title'])
         item={"id":fid,"title":payload["title"],"description":payload.get("description",""),"planted_chapter":payload.get("planted_chapter"),"target_chapter":payload.get("target_chapter"),"status":payload.get("status","OPEN"),"characters":payload.get("characters",[]),"events":payload.get("events",[]),"privacy_level":payload.get("privacy_level","CLOUD_ALLOWED")}
         index=next((i for i,row in enumerate(rows) if str(row.get('id'))==fid),None)
+        item["privacy_level"]=privacy_for_update(payload, rows[index] if index is not None else None)
+        if "privacy_level" not in payload and (index is None or "privacy_level" not in rows[index] or rows[index].get("privacy_status") == "UNKNOWN"):item["privacy_status"]="UNKNOWN"
         if index is None:rows.append(item)
         else:rows[index]=item
         rows.sort(key=lambda row:(row.get('planted_chapter') is None,row.get('planted_chapter') or 0));atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
@@ -53,6 +64,8 @@ class FileNovelRepository:
         path=root/'relationships.json';rows=read_json(path,[]);rid=slug(relationship_id or f"{payload['source_character_id']}-{payload['target_character_id']}")
         item={"id":rid,**payload}
         index=next((i for i,row in enumerate(rows) if str(row.get('id'))==rid),None)
+        item["privacy_level"]=privacy_for_update(payload, rows[index] if index is not None else None)
+        if "privacy_level" not in payload and (index is None or "privacy_level" not in rows[index] or rows[index].get("privacy_status") == "UNKNOWN"):item["privacy_status"]="UNKNOWN"
         if index is None:rows.append(item)
         else:rows[index]=item
         atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
@@ -115,4 +128,4 @@ class FileNovelRepository:
     def get_context_sources(self,novel_id):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
-        return {"novel":read_json(root/"novel.json",{}),"characters":read_json(root/"characters/characters.json",[]),"locations":read_json(root/"locations/locations.json",[]),"story_state":read_json(root/"story_state.json",{}),"secrets":read_json(root/"secrets.json",[]),"foreshadowing":read_json(root/"foreshadowing.json",[]),"summaries":read_json(root/"summaries/index.json",[]),"style_profile":read_json(root/"style/profile.json",{})}
+        return {"novel":read_json(root/"novel.json",{}),"characters":[privacy_record(row) for row in read_json(root/"characters/characters.json",[])],"locations":[privacy_record(row) for row in read_json(root/"locations/locations.json",[])],"story_state":read_json(root/"story_state.json",{}),"secrets":[privacy_record(row) for row in read_json(root/"secrets.json",[])],"foreshadowing":[privacy_record(row) for row in read_json(root/"foreshadowing.json",[])],"summaries":read_json(root/"summaries/index.json",[]),"style_profile":read_json(root/"style/profile.json",{})}

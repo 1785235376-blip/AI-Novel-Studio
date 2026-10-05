@@ -12,6 +12,7 @@ from sqlalchemy import select
 
 from .document import markdown_to_document
 from .repository import FileRepository, read_json
+from .privacy import merge_privacy, normalize_privacy
 from .repositories.postgres.common import external_uuid
 from .repositories.postgres.models import (
     CanonModel, ChapterModel, ChapterSummaryModel, CharacterModel,
@@ -57,8 +58,8 @@ def _finalize(report: dict) -> None:
     }
 
 
-def _privacy(item: dict, default: str = "CLOUD_ALLOWED") -> str:
-    return str(item.get("privacy_level", default))
+def _privacy(item: dict, default: str = "LOCAL_ONLY") -> str:
+    return normalize_privacy(item.get("privacy_level", default))
 
 
 def _secret_source_mapping(item: dict, order: int) -> dict:
@@ -115,7 +116,8 @@ def _sync_locations(session, root: Path, novel: NovelModel, report: dict) -> dic
         facts = {key: value for key, value in item.items() if key not in {"id", "name", "privacy_level"}}
         facts["_source_order"] = order; facts["_source_privacy_present"] = "privacy_level" in item
         model = session.scalar(select(LocationModel).where(LocationModel.novel_id == novel.id, LocationModel.slug == source_id))
-        values = (str(item.get("name", source_id)), facts, _privacy(item))
+        values = (str(item.get("name", source_id)), facts,
+                  merge_privacy(_privacy(item), model.privacy) if model is not None else _privacy(item))
         if model is None:
             model = LocationModel(novel_id=novel.id, slug=source_id, name=values[0], facts=values[1], privacy=values[2]); session.add(model); session.flush()
             _record(report, "imported", "locations", source_id, model.id, "created")
@@ -139,6 +141,8 @@ def _sync_characters(session, root: Path, novel: NovelModel, locations: dict[str
         location_id = locations[str(location_slug)].id if location_slug else None
         expected = {"name": str(item.get("name", source_id)), "age": item.get("age"), "life_status": str(item.get("status", item.get("life_status", "ALIVE"))), "current_location_id": location_id, "facts": facts, "privacy": _privacy(item)}
         model = session.scalar(select(CharacterModel).where(CharacterModel.novel_id == novel.id, CharacterModel.slug == source_id))
+        if model is not None:
+            expected["privacy"] = merge_privacy(expected["privacy"], model.privacy)
         if model is None:
             model = CharacterModel(novel_id=novel.id, slug=source_id, **expected); session.add(model); session.flush(); _record(report, "imported", "characters", source_id, model.id, "created")
         elif any((canonical_json_compare(getattr(model, key), value) is False) for key, value in expected.items()):
@@ -156,8 +160,11 @@ def _sync_timeline(session, root: Path, novel: NovelModel, locations: dict[str, 
             _record(report, "conflicts", "timeline_events", source_id, target_id, f"location {location_slug!r} was not resolved"); continue
         details = {key: value for key, value in item.items() if key not in reserved}; details.update({"_source_id": source_id, "_source_order": order})
         if "privacy_level" in item: details["privacy_level"] = item["privacy_level"]
+        else: details["privacy_status"] = "UNKNOWN"
         expected = {"novel_id": novel.id, "event_time": str(item.get("time", item.get("event_time", ""))), "sequence": int(item.get("sequence", order)), "location_id": locations[str(location_slug)].id if location_slug else None, "title": str(item.get("title", source_id)), "details": details, "privacy": _privacy(item)}
         model = session.get(TimelineModel, target_id)
+        if model is not None:
+            expected["privacy"] = merge_privacy(expected["privacy"], model.privacy)
         if model is None:
             model = TimelineModel(id=target_id, **expected); session.add(model); _record(report, "imported", "timeline_events", source_id, target_id, "created")
         elif any(not canonical_json_compare(getattr(model, key), value) for key, value in expected.items()):
@@ -175,6 +182,8 @@ def _sync_secrets(session, root: Path, novel: NovelModel, report: dict) -> None:
             _record(report, "conflicts", "secrets", source_id, target_id, "novel metadata mapping is inconsistent"); continue
         expected = {"novel_id": novel.id, "title": str(item.get("title", source_id)), "content": str(item.get("content", "")), "earliest_reveal_chapter": int(item.get("earliest_reveal_chapter", 0)), "status": str(item.get("status", "ACTIVE")), "privacy": _privacy(item, "LOCAL_ONLY")}
         model = session.get(SecretModel, target_id)
+        if model is not None:
+            expected["privacy"] = merge_privacy(expected["privacy"], model.privacy)
         if model is None:
             model = SecretModel(id=target_id, **expected); session.add(model); _record(report, "imported", "secrets", source_id, target_id, "created")
         elif any(not canonical_json_compare(getattr(model, key), value) for key, value in expected.items()):
@@ -190,6 +199,9 @@ def _sync_foreshadowing(session, root: Path, novel: NovelModel, report: dict) ->
         details = {key: value for key, value in item.items() if key not in reserved}; details.update({"_source_id": source_id, "_source_order": order})
         expected = {"novel_id": novel.id, "title": str(item.get("title", source_id)), "planted_chapter": item.get("planted_chapter"), "target_chapter": item.get("target_chapter"), "status": str(item.get("status", "OPEN")), "details": details}
         model = session.get(ForeshadowingModel, target_id)
+        details["privacy_level"] = merge_privacy(_privacy(item), (model.details or {}).get("privacy_level")) if model is not None else _privacy(item)
+        if "privacy_level" not in item:
+            details["privacy_status"] = "UNKNOWN"
         if model is None:
             model = ForeshadowingModel(id=target_id, **expected); session.add(model); _record(report, "imported", "foreshadowing", source_id, target_id, "created")
         elif any(not canonical_json_compare(getattr(model, key), value) for key, value in expected.items()):
@@ -251,6 +263,10 @@ def _sync_canon_pending(session, root: Path, novel: NovelModel, report: dict) ->
     for index, item in enumerate(read_json(root / "canon.json", [])):
         source_id = str(item.get("id") or f"{novel.slug}:canon:{index}"); target_id = external_uuid(source_id)
         expected = {"fact_value": item, "source": str(item.get("source", "MIGRATED")), "privacy": _privacy(item)}; model = session.get(CanonModel, target_id)
+        if model is not None:
+            expected["privacy"] = merge_privacy(expected["privacy"], model.privacy)
+            if "privacy_level" in (model.fact_value or {}):
+                expected["privacy"] = merge_privacy(expected["privacy"], model.fact_value["privacy_level"])
         if model is None:
             model = CanonModel(id=target_id, novel_id=novel.id, entity_type=str(item.get("entity_type", "story")), entity_id=None, fact_key=str(item.get("fact_key") or source_id), **expected); session.add(model); _record(report, "imported", "canon_entries", source_id, target_id, "created")
         elif any(not canonical_json_compare(getattr(model, key), value) for key, value in expected.items()):

@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from sqlalchemy import delete, func, select
 
 from ...repository import slug
+from ...privacy import privacy_for_update
 from .common import iso, novel_or_raise
 from .models import (CanonModel, ChapterModel, ChapterSummaryModel, CharacterModel,
                      ForeshadowingModel, LocationModel, NovelModel, SecretModel,
@@ -118,30 +119,40 @@ class PostgresNovelRepository:
         with self.database.session() as session:
             novel=novel_or_raise(session,novel_id);character_slug=slug(character_id or payload["name"])
             model=session.scalar(select(CharacterModel).where(CharacterModel.novel_id==novel.id,CharacterModel.slug==character_slug))
+            policy=privacy_for_update(payload, serialize_character(model) if model is not None else None)
             facts={key:payload.get(key,"") for key in ("role","personality","goal","current_location")}
+            if "privacy_level" not in payload and (model is None or (model.facts or {}).get("_source_privacy_present") is False):
+                facts["_source_privacy_present"]=False
             if model is None:
-                model=CharacterModel(novel_id=novel.id,slug=character_slug,name=payload["name"],age=payload.get("age"),life_status=payload.get("status","ALIVE"),facts=facts,privacy=payload.get("privacy_level","CLOUD_ALLOWED"));session.add(model)
+                model=CharacterModel(novel_id=novel.id,slug=character_slug,name=payload["name"],age=payload.get("age"),life_status=payload.get("status","ALIVE"),facts=facts,privacy=policy);session.add(model)
             else:
-                model.name=payload["name"];model.age=payload.get("age");model.life_status=payload.get("status","ALIVE");model.facts=facts;model.privacy=payload.get("privacy_level","CLOUD_ALLOWED")
+                model.name=payload["name"];model.age=payload.get("age");model.life_status=payload.get("status","ALIVE");model.facts=facts;model.privacy=policy
             session.flush();return serialize_character(model)
 
     def upsert_location(self,novel_id,location_id,payload):
         with self.database.session() as session:
             novel=novel_or_raise(session,novel_id);location_slug=slug(location_id or payload["name"])
             model=session.scalar(select(LocationModel).where(LocationModel.novel_id==novel.id,LocationModel.slug==location_slug))
+            policy=privacy_for_update(payload, serialize_location(model) if model is not None else None)
             facts={key:payload.get(key,"") for key in ("location_type","description","rules","atmosphere","status")}
+            if "privacy_level" not in payload and (model is None or (model.facts or {}).get("_source_privacy_present") is False):
+                facts["_source_privacy_present"]=False
             if model is None:
-                model=LocationModel(novel_id=novel.id,slug=location_slug,name=payload["name"],facts=facts,privacy=payload.get("privacy_level","CLOUD_ALLOWED"));session.add(model)
-            else:model.name=payload["name"];model.facts=facts;model.privacy=payload.get("privacy_level","CLOUD_ALLOWED")
+                model=LocationModel(novel_id=novel.id,slug=location_slug,name=payload["name"],facts=facts,privacy=policy);session.add(model)
+            else:model.name=payload["name"];model.facts=facts;model.privacy=policy
             session.flush();return serialize_location(model)
 
     def upsert_timeline_event(self,novel_id,event_id,payload):
         with self.database.session() as session:
             novel=novel_or_raise(session,novel_id);source_id=slug(event_id or payload["title"]);target_id=uuid.uuid5(uuid.NAMESPACE_URL,f"ai-novel-studio:{novel.slug}:timeline:{source_id}")
-            model=session.get(TimelineModel,target_id);location_slug=payload.get("location");location=None
+            model=session.get(TimelineModel,target_id)
+            if model is None:model=session.scalar(select(TimelineModel).where(TimelineModel.novel_id==novel.id,TimelineModel.details["_source_id"].astext==source_id))
+            location_slug=payload.get("location");location=None
             if location_slug:location=session.scalar(select(LocationModel).where(LocationModel.novel_id==novel.id,LocationModel.slug==location_slug))
             details={key:payload.get(key,[] if key=="characters" else "") for key in ("description","characters","chapter_id","status")};details["_source_id"]=source_id
-            values={"novel_id":novel.id,"event_time":payload.get("time",""),"sequence":payload.get("sequence",1),"location_id":location.id if location else None,"title":payload["title"],"details":details,"privacy":payload.get("privacy_level","CLOUD_ALLOWED")}
+            if "privacy_level" not in payload and (model is None or (model.details or {}).get("privacy_status") == "UNKNOWN"):
+                details["privacy_status"]="UNKNOWN"
+            values={"novel_id":novel.id,"event_time":payload.get("time",""),"sequence":payload.get("sequence",1),"location_id":location.id if location else None,"title":payload["title"],"details":details,"privacy":privacy_for_update(payload, serialize_timeline(model) if model is not None else None)}
             if model is None:model=TimelineModel(id=target_id,**values);session.add(model)
             else:
                 for key,value in values.items():setattr(model,key,value)
@@ -150,18 +161,24 @@ class PostgresNovelRepository:
     def upsert_foreshadowing(self,novel_id,foreshadowing_id,payload):
         with self.database.session() as session:
             novel=novel_or_raise(session,novel_id);source_id=slug(foreshadowing_id or payload["title"]);target_id=uuid.uuid5(uuid.NAMESPACE_URL,f"ai-novel-studio:{novel.slug}:foreshadowing:{source_id}")
-            model=session.get(ForeshadowingModel,target_id);details={key:payload.get(key,[] if key in ("characters","events") else "") for key in ("description","characters","events")};details["_source_id"]=source_id
+            model=session.get(ForeshadowingModel,target_id)
+            if model is None:model=session.scalar(select(ForeshadowingModel).where(ForeshadowingModel.novel_id==novel.id,ForeshadowingModel.details["_source_id"].astext==source_id))
+            details={key:payload.get(key,[] if key in ("characters","events") else "") for key in ("description","characters","events")};details["_source_id"]=source_id
+            details["privacy_level"]=privacy_for_update(payload, model.details if model is not None else None)
+            if "privacy_level" not in payload and (model is None or (model.details or {}).get("privacy_status") == "UNKNOWN"):
+                details["privacy_status"]="UNKNOWN"
             values={"novel_id":novel.id,"title":payload["title"],"planted_chapter":payload.get("planted_chapter"),"target_chapter":payload.get("target_chapter"),"status":payload.get("status","OPEN"),"details":details}
             if model is None:model=ForeshadowingModel(id=target_id,**values);session.add(model)
             else:
                 for key,value in values.items():setattr(model,key,value)
-            session.flush();result=serialize_foreshadowing(model);result["privacy_level"]=payload.get("privacy_level","CLOUD_ALLOWED");return result
+            session.flush();return serialize_foreshadowing(model)
 
     def upsert_relationship(self,novel_id,relationship_id,payload):
         with self.database.session() as session:
             novel=novel_or_raise(session,novel_id);source_id=slug(relationship_id or f"{payload['source_character_id']}-{payload['target_character_id']}");rid=f"{novel.slug}:{source_id}";model=session.get(RelationshipStateModel,rid)
             details={key:payload.get(key,"") for key in ("relationship_type","description","status","valid_from_event_id","valid_to_event_id","certainty","privacy_level")}
             details["_source_id"]=source_id
+            details["privacy_level"]=privacy_for_update(payload, model.payload if model is not None else None)
             values={"project_id":novel.slug,"source_character_id":payload["source_character_id"],"target_character_id":payload["target_character_id"],"payload":details}
             if model is None:model=RelationshipStateModel(id=rid,**values);session.add(model)
             else:

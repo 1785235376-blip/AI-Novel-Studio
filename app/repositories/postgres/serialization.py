@@ -3,6 +3,8 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from ...privacy import merge_privacy, normalize_privacy
+
 
 MAX_SOURCE_ORDER = 2**31 - 1
 RESERVED_FIELDS = frozenset({
@@ -29,11 +31,15 @@ def character_order(model: Any) -> int:
 
 
 def _privacy_fields(model: Any) -> dict[str, Any]:
-    # Migrated legacy File records may omit the default. Never hide a stricter
-    # current database policy, even if the original File record lacked a field.
-    if (model.facts or {}).get("_source_privacy_present") is False and model.privacy == "CLOUD_ALLOWED":
-        return {}
-    return {"privacy_level": model.privacy}
+    facts = model.facts or {}
+    policies = [model.privacy]
+    if "privacy_level" in facts:
+        policies.append(facts["privacy_level"])
+    unknown = facts.get("_source_privacy_present") is False
+    if unknown:
+        policies.append("LOCAL_ONLY")
+    return {"privacy_level": merge_privacy(*policies),
+            **({"privacy_status": "UNKNOWN"} if unknown else {})}
 
 
 def serialize_character(model: Any) -> dict[str, Any]:
@@ -76,8 +82,10 @@ def serialize_timeline(model: Any) -> dict[str, Any]:
         "time": model.event_time,
         "title": model.title,
     }
+    policies = [model.privacy]
     if "privacy_level" in (model.details or {}):
-        output["privacy_level"] = model.privacy
+        policies.append(model.details["privacy_level"])
+    output["privacy_level"] = merge_privacy(*policies)
     return output
 
 
@@ -128,6 +136,8 @@ def serialize_foreshadowing(model: Any) -> dict[str, Any]:
         "title": model.title,
         "status": model.status,
         "planted_chapter": model.planted_chapter,
+        "privacy_level": normalize_privacy((model.details or {}).get("privacy_level")),
+        **({"privacy_status": "UNKNOWN"} if "privacy_level" not in (model.details or {}) else {}),
         **({"target_chapter": model.target_chapter} if model.target_chapter is not None else {}),
     }
 
@@ -136,5 +146,8 @@ def serialize_canon(model: Any) -> dict[str, Any]:
     output = dict(model.fact_value or {})
     output.setdefault("id", str(model.id))
     output.setdefault("source", model.source)
-    output.setdefault("privacy_level", model.privacy)
+    policies = [model.privacy]
+    if "privacy_level" in output:
+        policies.append(output["privacy_level"])
+    output["privacy_level"] = merge_privacy(*policies)
     return output

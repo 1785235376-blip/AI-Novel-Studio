@@ -49,7 +49,7 @@ def test_timeline_restores_source_id_time_and_removes_internal_fields():
                  privacy="CLOUD_ALLOWED", details={"_source_id": "meeting", "_source_order": 4,
                                                     "note": "extra", "id": "CORRUPT"})
     assert serialize_timeline(item) == {"id": "meeting", "sequence": 2, "time": "day two",
-                                         "title": "Meeting", "note": "extra"}
+                                         "title": "Meeting", "note": "extra", "privacy_level": "CLOUD_ALLOWED"}
     assert timeline_order(item) == (2, 4)
 
 
@@ -73,7 +73,7 @@ def test_foreshadowing_restores_id_removes_internal_fields_and_orders_source_fir
                                                "hint": "door", "status": "CORRUPT"})
     assert serialize_foreshadowing(item) == {"id": "rust-key", "title": "Rust key",
                                              "status": "OPEN", "planted_chapter": 1,
-                                             "hint": "door"}
+                                             "hint": "door", "privacy_level": "LOCAL_ONLY", "privacy_status": "UNKNOWN"}
     assert foreshadowing_order(item) == (0, 1)
 
 
@@ -102,11 +102,12 @@ def test_migrated_missing_privacy_shape_never_hides_restrictive_policy():
     ):
         item = model(slug="legacy", name="Legacy", privacy="CLOUD_ALLOWED",
                      facts={"_source_privacy_present": False}, **values)
-        assert "privacy_level" not in serializer(item)
+        assert serializer(item)["privacy_level"] == "LOCAL_ONLY"
+        assert serializer(item)["privacy_status"] == "UNKNOWN"
         assert "_source_privacy_present" not in serializer(item)
         for privacy in ("LOCAL_ONLY", "REDACT_BEFORE_CLOUD"):
             item.privacy = privacy
-            assert serializer(item)["privacy_level"] == privacy
+            assert serializer(item)["privacy_level"] == "LOCAL_ONLY"
         item.facts = {"_source_privacy_present": True, "privacy_level": "CLOUD_ALLOWED"}
         assert serializer(item)["privacy_level"] == "REDACT_BEFORE_CLOUD"
 
@@ -189,5 +190,9 @@ def test_sample_migration_preserves_raw_context_shape(tmp_path):
         (LocationModel, serialize_location, "locations/locations.json"),
         (SecretModel, lambda row: serialize_secret(row, mapping), "secrets.json"),
     ):
-        assert [serializer(row) for row in session.rows if isinstance(row, kind)] == read_json(root / source, [])
+        assert [serializer(row) for row in session.rows if isinstance(row, kind)] == [
+            {**item, "privacy_level": item.get("privacy_level", "LOCAL_ONLY"),
+             **({"privacy_status": "UNKNOWN"} if "privacy_level" not in item else {})}
+            for item in read_json(root / source, [])
+        ]
     assert not report["conflicts"] and not report["failed"]
