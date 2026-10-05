@@ -228,6 +228,42 @@ jobs:
       - name: Summarize exact revision and test counts
         if: always() && env.CI_RECEIPTS != ''
         run: python3 .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Prepare bounded original PNG evidence
+        id: screenshots
+        if: always() && env.CI_RECEIPTS != ''
+        run: python3 .github/ci/screenshots.py --root "$CI_PROJECT/frontend/test-results" --output "$CI_RECEIPTS/png-evidence" --source "${{ github.sha }}"
+      - name: Upload source-labelled PNG evidence part 1
+        if: always() && steps.screenshots.outputs.part_1 == 'true'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-png-1-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}/png-evidence/part-1
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload source-labelled PNG evidence part 2
+        if: always() && steps.screenshots.outputs.part_2 == 'true'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-png-2-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}/png-evidence/part-2
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload source-labelled PNG evidence part 3
+        if: always() && steps.screenshots.outputs.part_3 == 'true'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-png-3-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}/png-evidence/part-3
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload source-labelled PNG evidence part 4
+        if: always() && steps.screenshots.outputs.part_4 == 'true'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-png-4-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}/png-evidence/part-4
+          if-no-files-found: error
+          retention-days: 14
       - name: Upload compact frontend evidence
         if: always() && env.CI_RECEIPTS != ''
         uses: actions/upload-artifact@v4.6.2
@@ -237,6 +273,7 @@ jobs:
             ${{ env.CI_RECEIPTS }}
             ${{ env.CI_PROJECT }}/frontend/test-results/**/*.json
             ${{ env.CI_PROJECT }}/frontend/test-results/**/error-context.md
+            !${{ env.CI_RECEIPTS }}/png-evidence/**
           if-no-files-found: error
           retention-days: 14
       - name: Upload frontend receipts
@@ -247,6 +284,7 @@ jobs:
           path: |
             ${{ env.CI_RECEIPTS }}
             ${{ env.CI_PROJECT }}/frontend/test-results
+            !${{ env.CI_RECEIPTS }}/png-evidence/**
           if-no-files-found: error
           retention-days: 14
 

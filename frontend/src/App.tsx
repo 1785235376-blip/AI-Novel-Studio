@@ -768,6 +768,9 @@ export default function App() {
     if (!chapter.data || generationStarting || (generationCreating.current && isObservingGeneration(generationCreating.current)) || job?.status === 'GENERATING'
         || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return;
     if (activeCharacterId && (!previewReceipt || !['continue', 'brainstorm'].includes(operation))) return;
+    if (experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true && !previewReceipt) {
+      setJob({ id: 'generation-failed', status: 'FAILED', output: '', error: '请先检查本次真实请求，再生成草稿。' }); return;
+    }
     if (operation === 'rewrite' && !selection.text) {
       setJob({ id: 'selection-required', status: 'FAILED', output: '', error: '请先在正文中选择需要改写的文字。' }); return;
     }
@@ -1511,8 +1514,8 @@ export default function App() {
             }
           : undefined
       }
-      onGenerate={(operation: AiOperation, request, style) =>
-        runAI(operation, request, style)
+      onGenerate={(operation: AiOperation, request, style, receipt) =>
+        runAI(operation, request, style, receipt)
       }
       onCancel={cancelActiveGeneration}
       onAccept={acceptGeneratedDraft}
