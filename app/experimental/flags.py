@@ -15,9 +15,11 @@ LEGACY_FLAGS = (
 
 # Package-order dependencies are in capabilities.py. Runtime dependencies below
 # must all be explicitly allowlisted; this registry never auto-enables a feature.
-NEW_FLAGS = ("writing_recovery_v2", "workspace_tools_v2")
+NEW_FLAGS = ("writing_recovery_v2", "workspace_tools_v2", "local_ai_workflow_inspector_v2", "author_context_inspector_v2", "writing_focus_v2", "temporal_story_graph_v2", "character_mind_v2")
 FLAGS = LEGACY_FLAGS + NEW_FLAGS
 FLAG_DEPENDENCIES: dict[str, tuple[str, ...]] = {name: () for name in FLAGS}
+FLAG_DEPENDENCIES.update(temporal_story_graph_v2=('world_character_engines_v2',),
+                         character_mind_v2=('temporal_story_graph_v2',))
 
 
 def enabled_flags() -> frozenset[str]:
