@@ -60,5 +60,50 @@ export async function expectVisibleWorkspaceEditor(page: Page, resumeEnabled: bo
   expect(metrics.summaryPresent).toBe(resumeEnabled);
   if (!resumeEnabled) expect(metrics.chromeHeight).toBe(metrics.barHeight);
   expect(metrics.header).toBe(56); expect(metrics.context).toBe(44); expect(metrics.status).toBe(32); expect(metrics.overflow).toBeLessThanOrEqual(1);
+  await expectEditorbarControlsActionable(page, ['保存']);
   return metrics;
+}
+
+/** Guard the real click centers and full target rectangles without force-clicks,
+ * dismissing the inspector, or moving its original shell control. */
+export async function expectEditorbarControlsActionable(page: Page, expectedLabels: string[]) {
+  const toolbar = page.locator('.novel-workspace-chrome > .editorbar');
+  await expect(toolbar).toBeVisible();
+  for (const label of expectedLabels) await expect(toolbar.getByRole('button', { name: label, exact: true })).toBeVisible();
+  await toolbar.hover();
+  const metrics = await toolbar.evaluate(element => {
+    const box = element.getBoundingClientRect();
+    const toggle = document.querySelector('.inspector-edge-toggle')!;
+    const edge = toggle.getBoundingClientRect();
+    const workspace = element.closest('.novel-writing-workspace')!;
+    const main = workspace.closest('.main-workspace')!;
+    const controls = Array.from(element.querySelectorAll<HTMLButtonElement>('.save-controls button')).map(button => {
+      const rect = button.getBoundingClientRect();
+      const center = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+      return { label: button.textContent?.trim(), width: rect.width, height: rect.height,
+        ownsCenter: center === button || !!center && button.contains(center),
+        inToolbar: rect.left >= box.left && rect.right <= box.right && rect.top >= box.top && rect.bottom <= box.bottom,
+        overlapsToggle: Math.min(rect.right, edge.right) > Math.max(rect.left, edge.left)
+          && Math.min(rect.bottom, edge.bottom) > Math.max(rect.top, edge.top),
+        whiteSpace: getComputedStyle(button).whiteSpace,
+      };
+    });
+    return { controls, toolbarOverflow: element.scrollWidth - element.clientWidth,
+      workspaceOverflow: workspace.scrollWidth - workspace.clientWidth, workspaceScroll: workspace.scrollLeft,
+      mainOverflow: main.scrollWidth - main.clientWidth, mainScroll: main.scrollLeft,
+      toggleWidth: edge.width, toggleHeight: edge.height,
+      reserve: parseFloat(getComputedStyle(element).paddingRight) };
+  });
+  expect(metrics.controls.length).toBeGreaterThan(0);
+  for (const control of metrics.controls) {
+    expect(control.ownsCenter, `${control.label} click center is covered`).toBe(true);
+    expect(control.inToolbar, `${control.label} is outside editor chrome`).toBe(true);
+    expect(control.overlapsToggle, `${control.label} overlaps the inspector toggle`).toBe(false);
+    expect(control.whiteSpace).toBe('nowrap');
+    expect(control.width).toBeGreaterThan(32); expect(control.height).toBeGreaterThanOrEqual(28);
+  }
+  expect(metrics.reserve).toBeGreaterThan(metrics.toggleWidth);
+  expect(metrics.toggleWidth).toBeGreaterThanOrEqual(32); expect(metrics.toggleHeight).toBeGreaterThanOrEqual(32);
+  expect(metrics.toolbarOverflow).toBeLessThanOrEqual(1); expect(metrics.workspaceOverflow).toBeLessThanOrEqual(1);
+  expect(metrics.mainOverflow).toBeLessThanOrEqual(1); expect(metrics.workspaceScroll).toBe(0); expect(metrics.mainScroll).toBe(0);
 }

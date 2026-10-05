@@ -1,7 +1,7 @@
 import { test, expect, type Page, type APIResponse } from '@playwright/test';
 import fs from 'node:fs/promises';
 import { createPageQuiescer } from './r3-fixture-lifecycle';
-import { expectVisibleWorkspaceEditor } from './workspace-editor-geometry';
+import { expectEditorbarControlsActionable, expectVisibleWorkspaceEditor } from './workspace-editor-geometry';
 const API = 'http://127.0.0.1:8019/api';
 const owned = new WeakMap<Page, { id: string; api: string }[]>();
 const quiet = new WeakMap<Page, () => Promise<void>>();
@@ -19,6 +19,7 @@ async function project(page: Page, text = '合成原文：阿澄在月港，😀
   await page.getByRole('button', { name: '创建章节', exact: true }).click();
   const chapter = await body(await added);
   await page.getByRole('textbox', { name: '章节正文', exact: true }).fill(text);
+  await expectEditorbarControlsActionable(page, ['保存']);
   await page.getByRole('button', { name: '保存', exact: true }).click();
   await expect(page.locator('.editorbar')).toContainText('已保存');
   return { novel, chapter: await body(await page.request.get(`${api}/chapters/${chapter.id}`)) };
@@ -51,7 +52,7 @@ test('R4 default-off and acceptance override retain no-model Chinese writing', a
   const text = '纯手工中文，无模型也能保存。<b>文字不是 HTML</b> 👩🏽‍🚀';
   const { chapter } = await project(page, text, 'http://127.0.0.1:8020/api', 'http://127.0.0.1:5180');
   await page.reload(); await expect(page.locator('.ProseMirror')).toContainText(text);
-  for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
+  for (const viewport of [{ width: 1280, height: 720 }, { width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
     await page.setViewportSize(viewport); await expectVisibleWorkspaceEditor(page, false);
     await page.screenshot({ path: info.outputPath(`u01-feature-off-editor-${viewport.width}.png`) });
   }
@@ -69,16 +70,30 @@ test('R4 durable offline draft survives reload and preserves both conflict candi
   const candidate = '我的离线候选，中文与 emoji 😀 都必须保留。';
   await page.locator('.ProseMirror').fill(candidate);
   await expect(page.locator('.editorbar')).toContainText('后端未确认保存');
+  for (const viewport of [{ width: 1280, height: 720 }, { width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
+    await page.setViewportSize(viewport);
+    await expectVisibleWorkspaceEditor(page, true);
+    await expectEditorbarControlsActionable(page, ['保存', '导出当前草稿']);
+    await page.screenshot({ path: info.outputPath(`u02-failed-save-hit-targets-${viewport.width}.png`) });
+  }
   await page.reload(); await expect(page.locator('.ProseMirror')).toContainText(candidate);
   const current = await body(await request.get(`${API}/chapters/${chapter.id}`));
   await body(await request.put(`${API}/chapters/${chapter.id}`, { data: { version: current.version, content: '另一个客户端的服务器候选。' } }));
   await page.unroute(endpoint);
+  await expectEditorbarControlsActionable(page, ['保存']);
   await page.getByRole('button', { name: '保存', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: '检测到版本冲突' });
   await expect(dialog).toContainText(candidate); await expect(dialog).toContainText('另一个客户端的服务器候选。');
   await dialog.screenshot({ path: info.outputPath('offline-conflict-candidates.png') });
   await dialog.getByRole('button', { name: '保留本地草稿并关闭' }).click();
+  for (const viewport of [{ width: 1280, height: 720 }, { width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
+    await page.setViewportSize(viewport);
+    await expectVisibleWorkspaceEditor(page, true);
+    await expectEditorbarControlsActionable(page, ['保存', '查看冲突', '导出当前草稿']);
+    await page.screenshot({ path: info.outputPath(`u02-conflict-export-hit-targets-${viewport.width}.png`) });
+  }
   const download = page.waitForEvent('download');
+  await expectEditorbarControlsActionable(page, ['导出当前草稿']);
   await page.getByRole('button', { name: '导出当前草稿' }).click();
   const file = await download, path = await file.path();
   expect(path).toBeTruthy(); expect(await fs.readFile(path!, 'utf8')).toContain(candidate);
@@ -168,7 +183,7 @@ test('U01 two-project reopen restores the exact chapter, filters and original re
   await page.getByRole('button', { name: '恢复章节位置', exact: true }).click();
   await expect(page.locator('.editorbar')).toContainText('U01 resume destination');
   await expect(page.getByRole('complementary', { name: '写作分屏只读参考' })).toHaveCount(0);
-  for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
+  for (const viewport of [{ width: 1280, height: 720 }, { width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
     await page.setViewportSize(viewport);
     const metrics = await expectVisibleWorkspaceEditor(page, true);
     expect(metrics.noteClipped).toBe(true); expect(metrics.noteHeight).toBeLessThanOrEqual(32);

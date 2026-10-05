@@ -1318,6 +1318,7 @@ export default function App() {
     <div className="workspace novel-writing-workspace">
       <div className="novel-workspace-chrome">
       <div className="editorbar">
+        <div className="novel-editor-metadata">
         <div className="editorbar__identity"><span>当前章节</span><b>{chapter.data?.title || "未选择章节"}</b></div>
         <small>{text.trim() ? `${text.trim().length} 字` : "0 字"}</small>
         {writingGoal.data && (
@@ -1330,6 +1331,7 @@ export default function App() {
             <strong>{Math.round(writingGoal.data.words_progress)}%</strong>
           </div>
         )}
+        </div>
         <SaveControls
           state={saveState}
           ready={!!chapter.data && hydratedIdentity === editorIdentity}

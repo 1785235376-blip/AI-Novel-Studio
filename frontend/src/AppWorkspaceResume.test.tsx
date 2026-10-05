@@ -288,3 +288,16 @@ it('adds no grid row or editor remount when a volatile-memory draft warning appe
   expect(workspace.children[0].querySelector('[role="alert"]')).not.toBeNull();
   expect(editor()).toBe(originalEditor); expect(editor().value).toBe('DRAFT REMAINS VISIBLE');
 });
+it('keeps the original save controls outside the shrinking metadata group in recovery state', async () => {
+  const { query } = setup(); await screen.findByText('上次工作：Last chapter');
+  act(() => query.setQueryData(['experimental-features', 'file'], { experimental: true, default_enabled: false, features: { 'experimental.workspace_tools_v2': true, 'experimental.writing_focus_v2': true, 'experimental.writing_recovery_v2': true } }));
+  const originalEditor = editor(); edit('INTACT RECOVERY BUFFER');
+  const bar = document.querySelector('.novel-workspace-chrome > .editorbar')!;
+  const metadata = bar.querySelector(':scope > .novel-editor-metadata')!;
+  const actions = bar.querySelector(':scope > .save-controls')!;
+  expect(metadata.querySelector('.editorbar__identity')).not.toBeNull();
+  expect(metadata.querySelector('.writing-goal')).not.toBeNull();
+  expect(actions.querySelector('button')?.textContent).toBe('保存');
+  expect(screen.getByRole('button', { name: '导出当前草稿' }).parentElement).toBe(actions);
+  expect(editor()).toBe(originalEditor); expect(editor().value).toBe('INTACT RECOVERY BUFFER');
+});
