@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase": "IMPLEMENTING",
+  "phase": "BOUNDED_IMPLEMENTATION_DELIVERED_ACCEPTANCE_LIMITS_RETAINED",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "visibility": "public",
   "frozen_v1_sha": "1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0",
@@ -20,16 +20,16 @@
         "app/experimental/store.py",
         "app/experimental/api.py"
       ],
-      "gap": "Exact final-source CI and the separately BLOCKED independent review are still outstanding.",
+      "gap": "Exact documentation-delivery CI remains to be read from PR39. Independent follow-up review is BLOCKED; this is not a release decision.",
       "status": "INTEGRATED",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "METADATA_ONLY",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "NOT_APPLICABLE_METADATA",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "All 40 packages, seven waves, nine inherited gaps, explicit flags/dependencies and runtime descriptions.",
-      "remaining_scope": "Exact final-source CI and the separately BLOCKED independent review are still outstanding.",
+      "remaining_scope": "Exact documentation-delivery CI remains to be read from PR39. Independent follow-up review is BLOCKED; this is not a release decision.",
       "new_sources": [
         "app/experimental/capabilities.py"
       ],
@@ -50,11 +50,11 @@
       ],
       "gap": "Native OS power-loss and Windows interactive validation are NOT_RUN; never-persisted input cannot be guaranteed recoverable.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "FAILED_AT_038C_EXPORT_CLICK_INTERCEPTED; recovery content checks passed",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Durability receipts, volatile draft fallback, backend acknowledgement validation, conflict preservation, local export, scoped generation observers and task recovery chooser.",
       "remaining_scope": "Native OS power-loss and Windows interactive validation are NOT_RUN; never-persisted input cannot be guaranteed recoverable.",
@@ -64,8 +64,8 @@
         "frontend/src/Editor.tsx"
       ],
       "initial_gap": "Storage write failure currently throws; add honest volatile/durable journal states, IME and late-hydration fences, export recovery and browser failure journeys.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U01",
@@ -80,23 +80,23 @@
         "frontend/src/novel/EntryExperience.tsx",
         "frontend/src/App.tsx"
       ],
-      "gap": "Browser storage can be cleared; fallback is explicit project selection plus the server workspace. Unsupported branch manuscript adapters remain fail-closed. Exact final hosted verification is pending.",
+      "gap": "Browser storage can be cleared; fallback is explicit project selection plus the server workspace. Unsupported branch manuscript adapters remain fail-closed. Functional save/reopen/export and viewport/action-hit verification passed at bf0ec2b0; native desktop acceptance is separate.",
       "status": "PARTIAL",
-      "verification": "FOCUSED_CONTRACTS_PASSED_FINAL_FULL_RUN_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "FUNCTIONAL_AND_VISIBLE_PROSE_PASS_AT_038C; adjacent toolbar repair pending",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Actor/scope-private original workspace capture and current-authority reopen: exact chapter/anchor, saved filters, original preference/reference pointers, unresolved original task IDs; local last-project hint verified against fresh original inventory with missing/corrupt recovery and dirty-buffer fences.",
-      "remaining_scope": "Browser storage can be cleared; fallback is explicit project selection plus the server workspace. Unsupported branch manuscript adapters remain fail-closed. Exact final hosted verification is pending.",
+      "remaining_scope": "Browser storage can be cleared; fallback is explicit project selection plus the server workspace. Unsupported branch manuscript adapters remain fail-closed. Functional save/reopen/export and viewport/action-hit verification passed at bf0ec2b0; native desktop acceptance is separate.",
       "new_sources": [
         "app/experimental/ux.py",
         "frontend/src/experimental/WorkspaceToolsPanel.tsx"
       ],
       "initial_gap": "Add scoped version-aware resume anchors, user stopping notes and damaged-layout reset without storing tokens.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U03",
@@ -113,11 +113,11 @@
       ],
       "gap": "Current authorized project only; bounded 2M characters/2000 sources/50 results. Source files are rechecked for warm search; full storage-event incremental indexing remains to extend.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Existing Ctrl+K entry reaches real lexical project search, Chinese aliases, bounded incremental cache, safe commands and version-resolved jump.",
       "remaining_scope": "Current authorized project only; bounded 2M characters/2000 sources/50 results. Source files are rechecked for warm search; full storage-event incremental indexing remains to extend.",
@@ -126,8 +126,8 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx"
       ],
       "initial_gap": "Implement authorized project/entity search and keyboard command surface; no sensitive action execution from query.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U07",
@@ -143,11 +143,11 @@
       ],
       "gap": "Original task projection and exact original Draft/Diff recovery passed hosted execution. Universal domain-specific deep links/retries remain bounded by each original authority.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "ORIGINAL_TASK_STALE_REVIEW_PASS_AT_038C",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Read-only original task authorities, honest stages, filters, private diagnostic export; exact original author-job projection and scoped Draft/Diff/Accept navigation without a second executor.",
       "remaining_scope": "Original task projection and exact original Draft/Diff recovery passed hosted execution. Universal domain-specific deep links/retries remain bounded by each original authority.",
@@ -156,8 +156,8 @@
         "app/experimental/api.py"
       ],
       "initial_gap": "Aggregate existing task authorities and expose traceable IDs, stages, status filters and domain-specific recovery.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U08",
@@ -173,11 +173,11 @@
       ],
       "gap": "Only whole automatic-context bundles and approved STYLE/PLOT IDs have supported removal/pin boundaries. Cloud or broker-budgeted variant groups require group reservation and are unavailable; actual model quality is NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Exact shared-authority preview/final request, removable manuscript and dependent context bundles, current approved reference pins, and 2–3 local original-job variant receipts with durable uncertain-state handling.",
       "remaining_scope": "Only whole automatic-context bundles and approved STYLE/PLOT IDs have supported removal/pin boundaries. Cloud or broker-budgeted variant groups require group reservation and are unavailable; actual model quality is NOT_RUN.",
@@ -187,8 +187,8 @@
         "frontend/src/novel/AuthorRequestPreviewPanel.tsx"
       ],
       "initial_gap": "Actual shared request controls remove source/dependent bundles and pin current approved references; exact 2–3 local variant receipts. Active or persisted broker policy blocks unreserved variants. Per-source automatic-context decomposition and budgeted/cloud variant groups remain unavailable.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U09",
@@ -204,11 +204,11 @@
       ],
       "gap": "Unregistered runtime families stay ADAPTER_REQUIRED. No imported workflow execution or local environment modification; real GPU and model/runtime acceptance are NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Passive bounded imported Comfy API workflow inspection, existing metadata/registry comparison, honest blockers and explicit redacted report save/download.",
       "remaining_scope": "Unregistered runtime families stay ADAPTER_REQUIRED. No imported workflow execution or local environment modification; real GPU and model/runtime acceptance are NOT_RUN.",
@@ -217,8 +217,8 @@
         "frontend/src/experimental/WorkflowInspectionPanel.tsx"
       ],
       "initial_gap": "Add explicit untrusted Comfy API workflow inspection and actionable missing dependencies; never execute/import/install external nodes.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U12",
@@ -234,11 +234,11 @@
       ],
       "gap": "Diagnostic coverage is allowlisted and bounded, not complete cross-module event coverage. Export is explicit/local; no automatic upload.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Explicit allowlisted diagnosis preview, selected sections, state-bound local export, sanitized task status and actionable version/session errors.",
       "remaining_scope": "Diagnostic coverage is allowlisted and bounded, not complete cross-module event coverage. Export is explicit/local; no automatic upload.",
@@ -247,8 +247,8 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx"
       ],
       "initial_gap": "Add bounded allowlisted user-created diagnosis with preview, redaction and no automatic upload.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U04",
@@ -265,11 +265,11 @@
       ],
       "gap": "Persistent paragraph locks and restored original reference/preference pointers are implemented; native input remains NOT_RUN. Unsupported branch manuscript adapters fail closed.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Saved typography, focus, readonly split references, chapter bookmarks, private inspiration and reviewed planning copy; original-CAS paragraph locks shared with A11/U05.",
       "remaining_scope": "Persistent paragraph locks and restored original reference/preference pointers are implemented; native input remains NOT_RUN. Unsupported branch manuscript adapters fail closed.",
@@ -278,8 +278,8 @@
         "frontend/src/experimental/WritingFocusPanel.tsx"
       ],
       "initial_gap": "Extend existing editor with focus/preferences and read-only references, preserving selection and error visibility.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U10",
@@ -292,22 +292,22 @@
         "frontend/src/ui/FeatureLauncher.tsx",
         "frontend/src/ui/LocalAiDiscovery.tsx"
       ],
-      "gap": "One sample per actor/workspace. Original create without a returned receipt stays UNKNOWN rather than being replayed; confirmed partial projects remain available for manual recovery. Exact final hosted verification is pending.",
+      "gap": "One sample per actor/workspace. Original create without a returned receipt stays UNKNOWN rather than being replayed; confirmed partial projects remain available for manual recovery. Functional save/reopen/export and viewport/action-hit verification passed at bf0ec2b0; native desktop acceptance is separate.",
       "status": "PARTIAL",
-      "verification": "FOCUSED_CONTRACTS_PASSED_FINAL_FULL_RUN_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "FUNCTIONAL_AND_VISIBLE_PROSE_PASS_AT_038C; adjacent toolbar repair pending",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Skippable five-scenario guide and real isolated no-key synthetic project through original local/scoped authorities; durable partial receipts, explicit recovery/open, original editor/save/reopen/TXT export guide and currently enabled-tool discovery.",
-      "remaining_scope": "One sample per actor/workspace. Original create without a returned receipt stays UNKNOWN rather than being replayed; confirmed partial projects remain available for manual recovery. Exact final hosted verification is pending.",
+      "remaining_scope": "One sample per actor/workspace. Original create without a returned receipt stays UNKNOWN rather than being replayed; confirmed partial projects remain available for manual recovery. Functional save/reopen/export and viewport/action-hit verification passed at bf0ec2b0; native desktop acceptance is separate.",
       "new_sources": [
         "frontend/src/experimental/WorkspaceToolsPanel.tsx"
       ],
       "initial_gap": "Provide safe task shortcuts and skippable no-model journey, respect server capability flags.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U13",
@@ -325,17 +325,17 @@
       ],
       "gap": "Source-specific Linux rendering/search measurements retained; visible-editor geometry correction awaits hosted execution. Native Windows, physical latency, screen reader and OS zoom remain NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Actual 100k/500k/1m File/API processes plus hosted Chromium input-render and search samples, composition/Unicode, keyboard and CSS-zoom matrix; lazy experimental workbench.",
       "remaining_scope": "Source-specific Linux rendering/search measurements retained; visible-editor geometry correction awaits hosted execution. Native Windows, physical latency, screen reader and OS zoom remain NOT_RUN.",
       "initial_gap": "Actual synthetic 100k/500k/1m measurements and zoom/keyboard checks, no fabricated Windows IME or performance PASS.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A04",
@@ -350,11 +350,11 @@
       ],
       "gap": "Deterministic reviewed relations, not universal semantic understanding; branch manuscript source adapter remains unavailable.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Typed temporal relations over existing IDs and world review, perspective filtering, persisted affected-index updates and evidence/version checks.",
       "remaining_scope": "Deterministic reviewed relations, not universal semantic understanding; branch manuscript source adapter remains unavailable.",
@@ -363,8 +363,8 @@
         "frontend/src/experimental/StoryGraphPanel.tsx"
       ],
       "initial_gap": "Typed time-aware relation projection over existing IDs, source versions, perspectives and bounded impact index.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A05",
@@ -381,11 +381,11 @@
       ],
       "gap": "Character-only continue/brainstorm uses reviewed local-only knowledge. Advanced character selection/rewrite and actual model-quality evaluation remain unavailable or unverified.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Character-only continue/brainstorm preview and final adapter request; original user instruction only, no automatic manuscript tail, selection, omniscient context or derived STYLE/plan; final authority/source/LOCAL_ONLY fences.",
       "remaining_scope": "Character-only continue/brainstorm uses reviewed local-only knowledge. Advanced character selection/rewrite and actual model-quality evaluation remain unavailable or unverified.",
@@ -394,8 +394,8 @@
         "frontend/src/experimental/StoryGraphPanel.tsx"
       ],
       "initial_gap": "Reviewed knowledge events, belief/secret distinction and physically filtered perspective context; no second character store.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A06",
@@ -411,17 +411,17 @@
       ],
       "gap": "Text author execution only; no fabricated model quality ranking. Actual configured-model and paid-billing validation remain NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Actual registered route selection, explicit quote plus exact author request, original JobManager execution, atomic budget reservation/settlement, conservative unknown holds, CAS manual bill reconciliation and functional original draft-review navigation.",
       "remaining_scope": "Text author execution only; no fabricated model quality ranking. Actual configured-model and paid-billing validation remain NOT_RUN.",
       "initial_gap": "Current registered authority routing, honest unknown cost and idempotent budget reservation/settlement; final recheck.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A07",
@@ -437,17 +437,17 @@
       ],
       "gap": "Image/video benchmarks are import-only. Real model quality, GPU and cold/warm runtime measurements require configured runtime and remain NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Explicit bounded local text benchmark execution, real registration/fingerprint evidence, imported result management, current evidence invalidation and small-sample blind A/B preference.",
       "remaining_scope": "Image/video benchmarks are import-only. Real model quality, GPU and cold/warm runtime measurements require configured runtime and remain NOT_RUN.",
       "initial_gap": "User-triggered bounded benchmark management and evidence versioning; real-model quality requires configured model.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A09",
@@ -462,17 +462,17 @@
       ],
       "gap": "Only recorded dependency evidence is known; unmapped dependencies and license judgements remain unknown.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Existing asset DAG and metadata reused for scoped lineage view, versioned declarations, cycle/parent drift/deletion detection, exact impact records, legacy OFF/V1 projection hiding.",
       "remaining_scope": "Only recorded dependency evidence is known; unmapped dependencies and license judgements remain unknown.",
       "initial_gap": "Extend parent graph, cycle rejection, drift/impact and retained missing-source lineage.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A13",
@@ -490,17 +490,17 @@
       ],
       "gap": "Historical missing environments fail closed. Configured cloud/GPU replay and output nondeterminism require independent runtime evidence.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Versioned redacted manifests of real media tasks; current dependency/privacy/budget preflight; new original-executor replay task; actual deterministic PNG byte equality; explicit cancellation/restart and pending review.",
       "remaining_scope": "Historical missing environments fail closed. Configured cloud/GPU replay and output nondeterminism require independent runtime evidence.",
       "initial_gap": "Versioned redacted manifests, dependency preview and new authorized replay task, reproducibility levels separated.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U06",
@@ -518,17 +518,17 @@
       ],
       "gap": "Selective refresh is the supported synthetic COVER path; unregistered real-media refresh remains unavailable.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Exact recorded impact graph, locks, selected synthetic COVER refresh through original media execution, current source/privacy/budget fences and unknown/manual-only domains.",
       "remaining_scope": "Selective refresh is the supported synthetic COVER path; unregistered real-media refresh remains unavailable.",
       "initial_gap": "Show exact source dependency changes, preserve locked output and require explicit per-domain rerun.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A02",
@@ -542,17 +542,17 @@
       ],
       "gap": "No calibrated quality probabilities or real-model interpretation. Additional language metrics need separately defined methods.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Existing STYLE records reused; explicit Chinese/English source ranges, reproducible metrics and chapter drift, approved rule/profile editing, fresh preview and handoff to original writing inputs.",
       "remaining_scope": "No calibrated quality probabilities or real-model interpretation. Additional language metrics need separately defined methods.",
       "initial_gap": "Compute language-specific transparent metrics on selected versioned text; attach to existing STYLE records.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A03",
@@ -570,17 +570,17 @@
       ],
       "gap": "Optional model-opinion adapter is unconfigured. Deterministic evidence is not verified literary quality or complete semantic inference.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Versioned deterministic rubric findings with verified quotes, original review_threads state, ignore/review reasons, stale redaction and read-only inbox under full author authorization.",
       "remaining_scope": "Optional model-opinion adapter is unconfigured. Deterministic evidence is not verified literary quality or complete semantic inference.",
       "initial_gap": "Versioned rubric, exact evidence spans, deterministic repeated-exposition findings, ignore/review/stale handling.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A01",
@@ -597,17 +597,17 @@
       ],
       "gap": "Configured model suggestions are unavailable; manual deterministic routes have no claimed future probabilities.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Bounded deterministic/manual routes, prerequisites/time/knowledge/resources checks, cancellation/CAS, reviewed original-planning handoff and provenance fences.",
       "remaining_scope": "Configured model suggestions are unavailable; manual deterministic routes have no claimed future probabilities.",
       "initial_gap": "Finite deterministic event branches and constraints with explicit draft-only route promotion; no manuscript writes.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A10",
@@ -625,17 +625,17 @@
       ],
       "gap": "OCR/vector/vision adapters absent; actual public-web compatibility and native Windows containment are not verified.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Bounded TXT/MD/DOCX/PDF/image sources, exact paragraph/page citations, local search/notes, explicit safe web fetch, source revocation and reviewed setting drafts using existing world authority.",
       "remaining_scope": "OCR/vector/vision adapters absent; actual public-web compatibility and native Windows containment are not verified.",
       "initial_gap": "Reuse research store and safe parsing, versioned citations, local search and derived invalidation.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A11",
@@ -653,17 +653,17 @@
       ],
       "gap": "Branch-isolated manuscript writing remains unavailable; local original-CAS partial changes are implemented. Model quality is NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Exact ProseMirror/Unicode block anchors, preview/selected accept/reject, original CAS/history, partial remainder re-review, persistent paragraph locks with drift/empty recovery.",
       "remaining_scope": "Branch-isolated manuscript writing remains unavailable; local original-CAS partial changes are implemented. Model quality is NOT_RUN.",
       "initial_gap": "Source-fenced paragraph patch preview and individually accepted blocks through existing version service.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U05",
@@ -680,17 +680,17 @@
       ],
       "gap": "Actual model quality and native input are NOT_RUN; branch manuscript sources fail closed.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Original author preview/dispatch with trusted exact selection receipt and partial-only job origin; legacy accept is forbidden; reviewed original-CAS path preserves untouched blocks.",
       "remaining_scope": "Actual model quality and native input are NOT_RUN; branch manuscript sources fail closed.",
       "initial_gap": "Exact Unicode/rich-document selection, source-only controls, original reviewed generation, per-block accept/reject and retained drafts. External branch manuscript writers and actual model quality remain separate.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U11",
@@ -710,17 +710,17 @@
       ],
       "gap": "Native target reader/layout and full typography validation remain separate from deterministic preflight and internal reader.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "reader_preflight_v2",
       "initial_gap": "Real read-only sequential reader, annotations/literal proof and publish preflight. Native target reader/layout and full typography verification separate.",
       "remaining_scope": "Native target reader/layout and full typography validation remain separate from deterministic preflight and internal reader.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U15",
@@ -739,17 +739,17 @@
       ],
       "gap": "Reminders occur only while the task center is open; no OS/background/external notification claim.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "writing_sessions_v2",
       "initial_gap": "Private session goals/checklist/recap and task-center deduplicated notices. Reminders only while task center is open; no background or external notification claim.",
       "remaining_scope": "Reminders occur only while the task center is open; no OS/background/external notification claim.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A08",
@@ -765,17 +765,17 @@
       ],
       "gap": "Manual reviewed shot direction is implemented; real visual/model production quality is NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "ai_director_v2",
       "initial_gap": "Reviewed camera geometry/source-aware shot application and original version history. Real visual/model quality separate.",
       "remaining_scope": "Manual reviewed shot direction is implemented; real visual/model production quality is NOT_RUN.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "A12",
@@ -794,17 +794,17 @@
       ],
       "gap": "Official OTIO parser executes; target NLE applications and interoperability acceptance remain NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "timeline_exchange_v2",
       "initial_gap": "Pinned native OTIO JSON parser, exact rational timelines, explicit import/export loss reports. Target NLE applications not run.",
       "remaining_scope": "Official OTIO parser executes; target NLE applications and interoperability acceptance remain NOT_RUN.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "B03",
@@ -821,17 +821,17 @@
       ],
       "gap": "Cloud-budgeted execution, real TTS/voice quality and cloning consent are unavailable or unverified.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "voice_direction_v2",
       "initial_gap": "Real manual directions and actor-private original local-only synthesis queue with explicit output review. Remote budget, real TTS/voice quality and cloning consent unavailable.",
       "remaining_scope": "Cloud-budgeted execution, real TTS/voice quality and cloning consent are unavailable or unverified.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "B04",
@@ -850,17 +850,17 @@
       ],
       "gap": "ASR/forced alignment, subtitle burn-in and target subtitle applications are not implemented/verified.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "subtitle_timeline_v2",
       "initial_gap": "Measured PCM waveform and explicit integer-tick captions, actual SRT/VTT roundtrip. ASR/forced alignment, burn-in and target subtitle applications not run.",
       "remaining_scope": "ASR/forced alignment, subtitle burn-in and target subtitle applications are not implemented/verified.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U14",
@@ -879,17 +879,17 @@
       ],
       "gap": "Selected portable manuscript/media subset only; complete history/Canon backup remains the original backup. Collaboration restore unsupported. The corrected browser workflow passed; exact final PG rerun remains required.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "portable_projects_v2",
       "initial_gap": "Selected manuscript/media subset export, new-target restore, relink and reconstructible-cache cleanup. Full history/Canon backup remains original backup; collaboration restore unsupported.",
       "remaining_scope": "Selected portable manuscript/media subset only; complete history/Canon backup remains the original backup. Collaboration restore unsupported. The corrected browser workflow passed; exact final PG rerun remains required.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "U16",
@@ -909,17 +909,17 @@
       ],
       "gap": "Selected deterministic proof/export/synthetic media batches only; paid/unregistered execution unavailable. The corrected browser workflow passed at 344062df.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "safe_batches_v2",
       "initial_gap": "Bounded selected-source proof/export/synthetic media loops with durable step claims and explicit uncertain-state handling. Paid/unregistered execution unavailable.",
       "remaining_scope": "Selected deterministic proof/export/synthetic media batches only; paid/unregistered execution unavailable. The corrected browser workflow passed at 344062df.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "B01",
@@ -937,17 +937,17 @@
       ],
       "gap": "Eight versioned local templates. Planning/workflow use real original records; other categories remain editable briefs. Remote market/sync disabled. ",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "template_library_v2",
       "initial_gap": "Eight local versioned templates; planning/workflow copies use real original records, other categories editable briefs. Remote market/sync disabled.",
       "remaining_scope": "Eight versioned local templates. Planning/workflow use real original records; other categories remain editable briefs. Remote market/sync disabled. ",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "B02",
@@ -968,17 +968,17 @@
       ],
       "gap": "Registered deterministic reviewed Workflow chain executes. Custom model nodes and executable extensions remain unavailable; ",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "declarative_agents_v2",
       "initial_gap": "Registered deterministic connected workflow chain uses original executor with mandatory review and actual SDK contracts. Custom model execution and executable extensions unavailable.",
       "remaining_scope": "Registered deterministic reviewed Workflow chain executes. Custom model nodes and executable extensions remain unavailable; ",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "B05",
@@ -997,17 +997,17 @@
       ],
       "gap": "Manual language editions only; automatic translation and actual language quality unavailable/unverified. The corrected source mapping and complete browser workflow passed at 344062df.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "multilingual_editions_v2",
       "initial_gap": "Independent manual language editions, per-segment review, terminology and exact-source rebind with archived candidates. Automatic translation and real language quality unavailable/unverified.",
       "remaining_scope": "Manual language editions only; automatic translation and actual language quality unavailable/unverified. The corrected source mapping and complete browser workflow passed at 344062df.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "B06",
@@ -1026,17 +1026,17 @@
       ],
       "gap": "Model art and external production typography quality remain separate. Actual CJK preview/export browser journey passed at 344062df.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "comic_layouts_v2",
       "initial_gap": "Actual approved-image manual page/Webtoon layouts, readable pinned CJK raster preview/export and review history. Model art and external production typography quality remain separate.",
       "remaining_scope": "Model art and external production typography quality remain separate. Actual CJK preview/export browser journey passed at 344062df.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "B07",
@@ -1055,17 +1055,17 @@
       ],
       "gap": "Bounded two-ending stories with neutral/RenPy text-menu export. Media references are manifests, not deployed assets; external engine runtime NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "interactive_story_v2",
       "initial_gap": "Bounded playable two-ending interactive stories, current-source review/rebind and neutral/RenPy text-menu export. Media manifest references only; external engine runtime not run.",
       "remaining_scope": "Bounded two-ending stories with neutral/RenPy text-menu export. Media references are manifests, not deployed assets; external engine runtime NOT_RUN.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "B08",
@@ -1083,17 +1083,17 @@
       ],
       "gap": "Asynchronous assignment/comment/review packages implemented; real-time co-editing and branch manuscript reader are unavailable. ",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "writer_room_v2",
       "initial_gap": "Real asynchronous scoped assignments, comments/conflict candidates and selected review packages. Original project-asset scope validation repaired separately; collaboration manuscript branch reader still unavailable.",
       "remaining_scope": "Asynchronous assignment/comment/review packages implemented; real-time co-editing and branch manuscript reader are unavailable. ",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "B09",
@@ -1114,17 +1114,17 @@
       ],
       "gap": "Selected local rich-document fork/three-way merge/checkpoint recovery implemented. Collaboration branch writing and unmapped structured domains fail closed.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "project_forks_v2",
       "initial_gap": "Real selected local rich-document forks, three-way choices, original CAS/archive and durable checkpoint recovery. Collaboration branch writing and unmapped structured domains fail closed.",
       "remaining_scope": "Selected local rich-document fork/three-way merge/checkpoint recovery implemented. Collaboration branch writing and unmapped structured domains fail closed.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     },
     {
       "id": "B10",
@@ -1144,18 +1144,18 @@
       ],
       "gap": "Selected local manual exchange and real two-process loopback test implemented. Production cloud transport, default networking and collaboration branch writing unavailable.",
       "status": "PARTIAL",
-      "verification": "LOCAL_CONTRACTS_PASSED_FINAL_INTEGRATION_PENDING",
+      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
-      "browser_verification": "BOUNDED_JOURNEYS_AT_038C; see UX_JOURNEYS for exact coverage",
+      "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "offline_sync_v2",
       "runtime_verification": "REAL_LOCAL_TWO_PROCESS_TCP_VERIFIED",
       "initial_gap": "Versioned selected local outbox/inbox/manual exchange, review/CAS and unknown-write reconciliation. Real two-process TCP test passed; external cloud transport/default networking and branch writing remain unavailable.",
       "remaining_scope": "Selected local manual exchange and real two-process loopback test implemented. Production cloud transport, default networking and collaboration branch writing unavailable.",
-      "browser_source": "038c322d98f034b04ab27770239fbfed8570e604",
-      "browser_run": 37369744252
+      "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "browser_run": 37372638988
     }
   ],
   "source_tree": "91135f6ec842bf443a2c5fd1dda58ea7bda62d2f",
@@ -1379,6 +1379,37 @@
       "windows_package": "SUCCESS",
       "file": "PUSH_SUCCESS:3409pass/1044skip; real_TCP_1pass; PR_QUEUE_CANCELLED",
       "frontend": "R4_34_PASS_1_FAIL; BUSINESS_1_PASS_1_FAIL; existing toggle overlaps save/export controls; prose geometry and U07 fixed"
+    },
+    {
+      "remote_sha": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "source_tree": "b54040210916fc5a76bc94b79d7ab923d2647cfe",
+      "pr_run": 37372638988,
+      "pr_attempt": 4,
+      "pr_conclusion": "SUCCESS_ALL_FIVE_LANES",
+      "push_run": 37372631617,
+      "push_conclusion": "WINDOWS_SUCCESS_LINUX_QUEUE_CANCELLED; not passed",
+      "file": {
+        "passed": 3409,
+        "skipped": 1044,
+        "real_tcp_passed": 1
+      },
+      "postgres": {
+        "passed": 3411,
+        "skipped": 1042,
+        "marked_pg_skips": 0,
+        "failures": 0,
+        "errors": 0
+      },
+      "frontend": {
+        "unit_passed": 981,
+        "optional_http_skipped": 6,
+        "r4": 35,
+        "business": 2,
+        "geometry": 9,
+        "r3": 7,
+        "export": 1,
+        "failed": 0
+      }
     }
   ],
   "independent_review": "BLOCKED_AFTER_REPORTED_FINDINGS; implementation repairs have regression evidence, no independent closure",
@@ -1434,7 +1465,22 @@
     "skipped": 6,
     "types_build_tokens": "PASS",
     "hosted_prose_at_predecessor": "PASS",
-    "hosted_action_targets": "PENDING",
-    "independent_review": "BLOCKED"
-  }
+    "hosted_action_targets": "PASS_AT_BF0EC2B0",
+    "independent_review": "BLOCKED",
+    "hosted_browser": {
+      "source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
+      "tree": "b54040210916fc5a76bc94b79d7ab923d2647cfe",
+      "pr_run": 37372638988,
+      "frontend_job": 111978727700,
+      "r4_passed": 35,
+      "business_passed": 2,
+      "geometry_passed": 9,
+      "r3_passed": 7,
+      "export_passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "screenshot_inspection": "FIVE_ORIGINAL_PNGS_INSPECTED"
+  },
+  "delivery_status": "BOUNDED_ENGINEERING_VERIFIED_AT_BF0; DOCUMENTATION_HEAD_CI_TO_BE_READ_FROM_PR39; INDEPENDENT_REVIEW_BLOCKED"
 }

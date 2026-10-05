@@ -35,3 +35,7 @@ Named task-center region and screenshot-discovered editor-chrome corrections are
 ### Toolbar action-hit repair
 
 Pinned UI `81af92aa5c8f363f73edae9cf0233460209908ab`: full frontend **981 passed / 6 optional HTTP skipped**, types/build/token guard passed. Predecessor 038c322d passed actual File/PG/Windows and all new prose geometry, but retained 34/35 R4 and 1/2 business because the sidebar-edge toggle covered Save/export targets. The new consumer repair retains original click/download checks and requires a new hosted result. See EDITOR_CHROME_REPAIR.md; this is not an independent-review closure.
+
+### Verified engineering delivery bf0ec2b0
+
+PR run 37372638988, attempt 4: all-five-lane SUCCESS. Frontend: 981 passed / 6 optional HTTP skipped; all 54 hosted browser cases passed without skips. File: 3,409 passed / 1,044 expected skips; separate actual TCP: 1 passed. PostgreSQL: 3,411 passed / 1,042 expected skips, no skipped marked-PG contract, failure or error. Windows compile/package lanes pass. Five retained original corrected screenshots directly inspected; both observed layout defects closed within hosted browser scope. Earlier queued cancellations and runner shutdown at 63% are not pass receipts. FINAL_DELIVERY.md records exact sources/artifacts and the blocked independent/native/model-quality boundaries. The documentation-only successor still requires exact-head CI readback.

@@ -203,3 +203,9 @@ Keep `.novel-workspace-chrome` as the first grid item, containing save/resume/vo
 ### Keep save and recovery actions reachable
 
 The actual 038c322d browser run passed visible manuscript geometry but exposed the original sidebar-edge toggle covering Save/export actions. The consumer repair groups shrinkable title/count/goal metadata, wraps intact original SaveControls, and reserves the existing toggle footprint with design tokens. Keep the shared toggle position and interactive area unchanged. Do not replace the repair with a forced click, hidden toggle, removed recovery button or horizontally scrolling chrome. Hosted geometry checks now verify action rectangles and pointer-hit ownership in real failed-save/conflict states at 1280/1366/1440/1920. Exact hosted results remain in the delivery checkpoint.
+
+### Corrected current-source browser receipt
+
+Source `bf0ec2b0`, exact tree `b5404021`, passed all **54 hosted browser cases** (35 R4 + 2 business + 9 geometry + 7 R3 + 1 export), plus 981 frontend unit tests and types/build/token checks. The original Save and conflict-draft download paths now pass actual pointer dispatch at the preserved shell sizes. See [corrected writing/recovery screenshots](docs/delivery/post-v1-r4-r5-ux/evidence/browser-bf0ec2b0/README.md): all five original PNGs were directly inspected; do not use the old clipped historical image as the current design reference.
+
+Preserve the current consumer chrome grouping, metadata/control wrapping and token-based toggle reserve. The warnings and conflict controls are intentional. New styling must pass visible-prose and action-hit checks, keep original Draft/Diff/Accept and source/privacy guards, and retain disabled-state explanations. Model/GPU/native interactive Windows and the separately blocked independent review remain unverified.
