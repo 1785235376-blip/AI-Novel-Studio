@@ -3,8 +3,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 async function feature(page:any,name:string){
- const menu=page.getByRole('button',{name:/功能导航/});
- if(await menu.count())await menu.first().click();
+ const menu=page.getByRole('button',{name:/功能导航/}).first();
+ // reload() resolves before React mounts; count() does not wait and can skip
+ // opening the navigation entirely. Wait for the existing accessible control.
+ await expect(menu).toBeVisible();
+ await menu.click();
  await page.getByRole('button',{name,exact:true}).first().click();
 }
 
