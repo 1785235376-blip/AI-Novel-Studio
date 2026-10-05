@@ -9,6 +9,7 @@ from sqlalchemy import delete, func, select
 from ...repository import slug
 from ...privacy import privacy_for_update
 from ..screenplay_versions import versioned_screenplay
+from ..structured_cas import UNGUARDED, assert_record_cas
 from .common import iso, novel_or_raise
 from .models import (CanonModel, ChapterModel, ChapterSummaryModel, CharacterModel,
                      ForeshadowingModel, LocationModel, NovelModel, SecretModel,
@@ -22,6 +23,11 @@ from .serialization import (character_order, foreshadowing_order, location_order
 class PostgresNovelRepository:
     def __init__(self, database):
         self.database = database
+
+    def compare_and_swap_record(self,novel_id,kind,record_id,payload,expected_digest):
+        methods={"characters":self.upsert_character,"locations":self.upsert_location,"relationships":self.upsert_relationship}
+        if kind not in methods: raise ValueError("unsupported structured record kind")
+        return methods[kind](novel_id,record_id,payload,expected_digest=expected_digest)
 
     @staticmethod
     def _locked_metadata_model(session, novel_id):
@@ -122,10 +128,11 @@ class PostgresNovelRepository:
                 return list((novel.metadata_json or {}).get("story_routes",[]))
             raise KeyError(name)
 
-    def upsert_character(self,novel_id,character_id,payload):
+    def upsert_character(self,novel_id,character_id,payload,*,expected_digest=UNGUARDED):
         with self.database.session() as session:
-            novel=novel_or_raise(session,novel_id);character_slug=slug(character_id or payload["name"])
+            novel=self._locked_metadata_model(session,novel_id);character_slug=slug(character_id or payload["name"])
             model=session.scalar(select(CharacterModel).where(CharacterModel.novel_id==novel.id,CharacterModel.slug==character_slug))
+            assert_record_cas("characters", character_slug, serialize_character(model) if model is not None else None, payload, expected_digest)
             policy=privacy_for_update(payload, serialize_character(model) if model is not None else None)
             facts={key:payload.get(key,"") for key in ("role","personality","goal","current_location")}
             if "privacy_level" not in payload and (model is None or (model.facts or {}).get("_source_privacy_present") is False):
@@ -136,10 +143,11 @@ class PostgresNovelRepository:
                 model.name=payload["name"];model.age=payload.get("age");model.life_status=payload.get("status","ALIVE");model.facts=facts;model.privacy=policy
             session.flush();return serialize_character(model)
 
-    def upsert_location(self,novel_id,location_id,payload):
+    def upsert_location(self,novel_id,location_id,payload,*,expected_digest=UNGUARDED):
         with self.database.session() as session:
-            novel=novel_or_raise(session,novel_id);location_slug=slug(location_id or payload["name"])
+            novel=self._locked_metadata_model(session,novel_id);location_slug=slug(location_id or payload["name"])
             model=session.scalar(select(LocationModel).where(LocationModel.novel_id==novel.id,LocationModel.slug==location_slug))
+            assert_record_cas("locations", location_slug, serialize_location(model) if model is not None else None, payload, expected_digest)
             policy=privacy_for_update(payload, serialize_location(model) if model is not None else None)
             facts={key:payload.get(key,"") for key in ("location_type","description","rules","atmosphere","status")}
             if "privacy_level" not in payload and (model is None or (model.facts or {}).get("_source_privacy_present") is False):
@@ -180,9 +188,11 @@ class PostgresNovelRepository:
                 for key,value in values.items():setattr(model,key,value)
             session.flush();return serialize_foreshadowing(model)
 
-    def upsert_relationship(self,novel_id,relationship_id,payload):
+    def upsert_relationship(self,novel_id,relationship_id,payload,*,expected_digest=UNGUARDED):
         with self.database.session() as session:
-            novel=novel_or_raise(session,novel_id);source_id=slug(relationship_id or f"{payload['source_character_id']}-{payload['target_character_id']}");rid=f"{novel.slug}:{source_id}";model=session.get(RelationshipStateModel,rid)
+            novel=self._locked_metadata_model(session,novel_id);source_id=slug(relationship_id or f"{payload['source_character_id']}-{payload['target_character_id']}");rid=f"{novel.slug}:{source_id}";model=session.get(RelationshipStateModel,rid)
+            current={"id":dict(model.payload or {}).get("_source_id",model.id),"source_character_id":model.source_character_id,"target_character_id":model.target_character_id,**{key:value for key,value in dict(model.payload or {}).items() if not key.startswith("_")}} if model is not None else None
+            assert_record_cas("relationships",source_id,current,payload,expected_digest)
             details={key:payload.get(key,"") for key in ("relationship_type","description","status","valid_from_event_id","valid_to_event_id","certainty","privacy_level")}
             details["_source_id"]=source_id
             details["privacy_level"]=privacy_for_update(payload, model.payload if model is not None else None)

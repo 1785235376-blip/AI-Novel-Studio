@@ -185,3 +185,7 @@ apply; this correction is not a claim of universal deletion-race closure.
 ## Unified HTTP error response headers
 
 The original error normalizer discarded explicit HTTPException headers, including Cache-Control: no-store, nosniff and authentication/retry directives. The follow-on correction preserves those declared headers while keeping the server request ID authoritative. It changes no error body contract or permission decision. Focused tests cover privacy, auth/retry, headerless compatibility and request-ID override. This is a backport candidate only; no frozen-branch change is authorized or performed.
+
+## B09 original structured-record CAS seam
+
+Local source `3270d66`: NovelService.compare_and_swap_record supports exact original character/location/relationship public-record digests, absent-record creation, sanitized conflicts and unknown-field rejection. File uses the original project guard; PostgreSQL uses the original novel row lock shared by ordinary upserts. New future-feature orchestration remains separate. Candidate for later review only; no frozen-branch backport was performed.

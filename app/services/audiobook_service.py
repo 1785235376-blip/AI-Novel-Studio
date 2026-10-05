@@ -102,7 +102,7 @@ class AudiobookService:
             return recovered
         return self.store.mutate(novel_id, change)
 
-    def execute(self, novel_id, job_id, chapter, resolve, load_current_source=None, check_project_policy=None, direction_guard=None):
+    def execute(self, novel_id, job_id, chapter, resolve, load_current_source=None, check_project_policy=None, direction_guard=None, before_send=None):
         preview = self.find(self.store.load(novel_id), job_id)
         if preview.get("experimental_origin"):
             if direction_guard is None: raise AudiobookError("VOICE_CURRENT_AUTHORITY_REQUIRED", "请从声音导演显式执行已审核片段", 403)
@@ -173,6 +173,7 @@ class AudiobookService:
             check_source(chapter)
             current = self.find(self.store.load(novel_id), job_id)
             if not same_attempt(current, job): return current
+            if before_send is not None: before_send(job, provider_id, default_model, provider)
             result = provider.generate(request)
             if job.get("experimental_origin"):
                 check_source(load_current_source() if load_current_source else chapter)
@@ -191,7 +192,7 @@ class AudiobookService:
                 if not same_attempt(current, job):
                     return current
                 if job.get("experimental_origin"): direction_guard(job)
-                private = {"required_features": (job["experimental_origin"],), "owner_actor_id": job["direction_binding"]["actor"]} if job.get("experimental_origin") else {}
+                private = {"required_features": (job["experimental_origin"], "safe_batches_v2") if job.get("safe_batch_binding") else (job["experimental_origin"],), "owner_actor_id": job["direction_binding"]["actor"]} if job.get("experimental_origin") else {}
                 asset = self.assets.create(novel_id, f"{job_id}.{measured['extension']}", base64.b64encode(content).decode(), measured["media_type"], "audio", f"audiobook:{job_id}:{job['source_sha256']}", branch_id=self.branch_id, **private)
                 asset = self.assets.update_metadata(asset['id'], {'source_job_id':job_id,'provider_id':provider_id,'model_id':model_id,'character_id':job.get('character_id')}, branch_id=self.branch_id, actor_id=private.get('owner_actor_id'))
                 stamp = timestamp()
@@ -201,6 +202,7 @@ class AudiobookService:
                     current.update(asset_version=asset["version"], timing_status="MEASURED_SEGMENT")
                 speech = {"job_id": job_id, "chapter_id": job["chapter_id"], "character_id": job.get("character_id"), "provider_id": provider_id, "model_id": model_id, "voice": job.get("voice"), "audio_uri": uri, "asset_id": asset["id"], "created_at": stamp, "duration_ms": measured["duration_ms"], "source_sha256": job["source_sha256"], "source_version": job.get("source_version"), "group_id":job.get("group_id"), "segment_index":job.get("segment_index",0), "segment_count":job.get("segment_count",1)}
                 if job.get("experimental_origin"): speech["experimental_origin"] = job["experimental_origin"]
+                if job.get("safe_batch_binding"): speech["safe_batch_binding"] = job["safe_batch_binding"]
                 state["generations"] = [row for row in state["generations"] if row.get("job_id") != job_id] + [speech]
                 return current
             return self.store.mutate(novel_id, complete)
