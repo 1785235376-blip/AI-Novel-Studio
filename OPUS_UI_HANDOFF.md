@@ -169,3 +169,9 @@ New functional panels are intentionally dense and may need spacing, grouping and
 WAVE_2_3_CHECKPOINT.md records exact local source and tests. Hosted browser checks run `playwright.r4.config.ts` with synthetic isolated projects and exact flags; actual model quality and native desktop interaction are separate. U13's backend performance receipt is scoped to its recorded older source/method and is not a browser latency claim. Raw browser measurements are now explicitly written into compact CI artifacts.
 
 The blocked second-slice independent review is documented in SECOND_SLICE_REVIEW_STATUS.md. Functional tests do not imply audit closure or user acceptance. No new visual goldens were accepted merely to make tests pass.
+
+### Production, reading and language extension
+
+The subsequent pinned source adds ReaderPreflightPanel, WritingSessionPanel and the existing task-center notice addon; DirectorPanel and TimelineExchangePanel; VoiceDirectionPanel and SubtitleTimelinePanel; PortableProjectsPanel and SafeBatchesPanel; TemplateLibraryPanel, DeclarativeAgentsPanel and MultilingualEditionsPanel. All use captured ExperimentalClient authority and the existing workbench. See WAVE_4_5_CHECKPOINT.md for exact local validation and pending hosted checks.
+
+Navigation metadata now lives in experimentalNavigation.tsx. DeferredExperimentalWorkbench loads the optional workbench only when an enabled entry opens; its own loading/error/retry boundary must not unmount the prose editor or resubmit jobs. Keep current source/version/permission fences, readable unavailable states, exact integer/rational time, approved asset identity and per-segment human review intact during later visual polish.

@@ -634,16 +634,19 @@
       "sources": [
         "frontend/src/novel/ExportPanel.tsx",
         "app/services/export_job_service.py",
-        "app/release_readiness.py"
+        "app/release_readiness.py",
+        "app/experimental/reader_preflight.py",
+        "frontend/src/experimental/ReaderPreflightPanel.tsx"
       ],
-      "gap": "Read-only preflight with actionable provenance; separate integrity blockers from subjective advice.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "gap": "Real read-only sequential reader, annotations/literal proof and publish preflight. Native target reader/layout and full typography verification separate.",
+      "status": "PARTIAL",
+      "verification": "CONTRACT_VERIFIED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "PARTIAL",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "runtime_flag": "reader_preflight_v2"
     },
     {
       "id": "U15",
@@ -656,16 +659,19 @@
       "sources": [
         "frontend/src/novel/NovelOverviewPanel.tsx",
         "frontend/src/ui/taskSummary.ts",
-        "app/services/v1_capability_service.py"
+        "app/services/v1_capability_service.py",
+        "app/experimental/writing_sessions.py",
+        "frontend/src/experimental/WritingSessionPanel.tsx"
       ],
-      "gap": "Session goal, stopping note and deduplicated task notices; only persisted activity counts, reminders explicit.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "gap": "Private session goals/checklist/recap and task-center deduplicated notices. Reminders only while task center is open; no background or external notification claim.",
+      "status": "PARTIAL",
+      "verification": "CONTRACT_VERIFIED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "PARTIAL",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "runtime_flag": "writing_sessions_v2"
     },
     {
       "id": "A08",
@@ -675,16 +681,19 @@
       "dependencies": [],
       "sources": [
         "app/services/screenplay_service.py",
-        "frontend/src/novel/DirectorShotCard.tsx"
+        "frontend/src/novel/DirectorShotCard.tsx",
+        "app/experimental/director.py",
+        "frontend/src/experimental/DirectorPanel.tsx"
       ],
-      "gap": "Extend existing shot version fields and geometry-based rule checks with insufficient-information states.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "gap": "Reviewed camera geometry/source-aware shot application and original version history. Real visual/model quality separate.",
+      "status": "PARTIAL",
+      "verification": "CONTRACT_VERIFIED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "PARTIAL",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "runtime_flag": "ai_director_v2"
     },
     {
       "id": "A12",
@@ -697,16 +706,19 @@
       "sources": [
         "app/industry_export_formats.py",
         "app/services/export_job_service.py",
-        "app/services/video_assembly_service.py"
+        "app/services/video_assembly_service.py",
+        "app/experimental/timeline_exchange.py",
+        "frontend/src/experimental/TimelineExchangePanel.tsx"
       ],
-      "gap": "Rational-time supported subset OTIO round-trip and loss report; no application compatibility claim without opening it.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "gap": "Pinned native OTIO JSON parser, exact rational timelines, explicit import/export loss reports. Target NLE applications not run.",
+      "status": "PARTIAL",
+      "verification": "CONTRACT_VERIFIED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "PARTIAL",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "runtime_flag": "timeline_exchange_v2"
     },
     {
       "id": "B03",
@@ -717,16 +729,19 @@
       "sources": [
         "app/experimental/audiobook.py",
         "frontend/src/experimental/AudiobookPanel.tsx",
-        "app/audio_production_store.py"
+        "app/audio_production_store.py",
+        "app/experimental/voice_direction.py",
+        "frontend/src/experimental/VoiceDirectionPanel.tsx"
       ],
-      "gap": "Editable segment identity/voices/locking and selective stale segment redo; actual audio quality separate.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "gap": "Real manual directions and actor-private original local-only synthesis queue with explicit output review. Remote budget, real TTS/voice quality and cloning consent unavailable.",
+      "status": "PARTIAL",
+      "verification": "CONTRACT_VERIFIED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "PARTIAL",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "runtime_flag": "voice_direction_v2"
     },
     {
       "id": "B04",
@@ -739,16 +754,19 @@
       "sources": [
         "app/industry_export_formats.py",
         "app/services/audiobook_service.py",
-        "app/experimental/audiobook.py"
+        "app/experimental/audiobook.py",
+        "app/experimental/subtitle_timeline.py",
+        "frontend/src/experimental/SubtitleTimelinePanel.tsx"
       ],
-      "gap": "Versioned user-time subtitles, duration/overlap validation and real SRT/VTT parsing; no fake forced alignment.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "gap": "Measured PCM waveform and explicit integer-tick captions, actual SRT/VTT roundtrip. ASR/forced alignment, burn-in and target subtitle applications not run.",
+      "status": "PARTIAL",
+      "verification": "CONTRACT_VERIFIED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "PARTIAL",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "runtime_flag": "subtitle_timeline_v2"
     },
     {
       "id": "U14",
@@ -761,16 +779,19 @@
       "sources": [
         "app/backup_restore.py",
         "app/services/export_resource_snapshot.py",
-        "app/services/asset_library_service.py"
+        "app/services/asset_library_service.py",
+        "app/experimental/portable_projects.py",
+        "frontend/src/experimental/PortableProjectsPanel.tsx"
       ],
-      "gap": "New destination portable manifest, digest relink and cache-only explicit cleanup preview; archive/path hardening.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "gap": "Selected manuscript/media subset export, new-target restore, relink and reconstructible-cache cleanup. Full history/Canon backup remains original backup; collaboration restore unsupported.",
+      "status": "PARTIAL",
+      "verification": "CONTRACT_VERIFIED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "PARTIAL",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "runtime_flag": "portable_projects_v2"
     },
     {
       "id": "U16",
@@ -784,16 +805,19 @@
       "sources": [
         "app/workflow.py",
         "app/experimental/inbox.py",
-        "app/services/asset_task_worker.py"
+        "app/services/asset_task_worker.py",
+        "app/experimental/safe_batches.py",
+        "frontend/src/experimental/SafeBatchesPanel.tsx"
       ],
-      "gap": "Snapshot-bound domain-delegating batch preflight, bounded execution, partial receipt and unknown-outcome handling.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "gap": "Bounded selected-source proof/export/synthetic media loops with durable step claims and explicit uncertain-state handling. Paid/unregistered execution unavailable.",
+      "status": "PARTIAL",
+      "verification": "CONTRACT_VERIFIED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "PARTIAL",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "runtime_flag": "safe_batches_v2"
     },
     {
       "id": "B01",
@@ -805,16 +829,19 @@
         "app/experimental/planning.py",
         "app/experimental/teams.py",
         "app/workflow_recipes.py",
-        "app/plugin_package_manager.py"
+        "app/plugin_package_manager.py",
+        "app/experimental/template_library.py",
+        "frontend/src/experimental/TemplateLibraryPanel.tsx"
       ],
-      "gap": "Local template preview/instantiate/version compare using existing services; no executable package or remote marketplace.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "gap": "Eight local versioned templates; planning/workflow copies use real original records, other categories editable briefs. Remote market/sync disabled.",
+      "status": "PARTIAL",
+      "verification": "CONTRACT_VERIFIED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "PARTIAL",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "runtime_flag": "template_library_v2"
     },
     {
       "id": "B02",
@@ -829,16 +856,19 @@
         "app/experimental/teams.py",
         "app/workflow.py",
         "app/workflow_api.py",
-        "app/plugin_capability_policy.py"
+        "app/plugin_capability_policy.py",
+        "app/experimental/declarative_agents.py",
+        "frontend/src/experimental/DeclarativeAgentsPanel.tsx"
       ],
-      "gap": "Bounded declarative graph editor/contracts and registry-only nodes, reuse scheduler, DENY_ALL code extensions.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "gap": "Registered deterministic connected workflow chain uses original executor with mandatory review and actual SDK contracts. Custom model execution and executable extensions unavailable.",
+      "status": "PARTIAL",
+      "verification": "CONTRACT_VERIFIED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "PARTIAL",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "runtime_flag": "declarative_agents_v2"
     },
     {
       "id": "B05",
@@ -851,16 +881,19 @@
       "sources": [
         "app/services/chapter_service.py",
         "app/document_revision.py",
-        "app/experimental/store.py"
+        "app/experimental/store.py",
+        "app/experimental/multilingual_editions.py",
+        "frontend/src/experimental/MultilingualEditionsPanel.tsx"
       ],
-      "gap": "Parallel versioned target-language paragraphs, glossary checks and explicit accept without source overwrite.",
-      "status": "PENDING",
-      "verification": "NOT_RUN",
-      "ui_integration": "PENDING",
-      "api_integration": "PENDING",
-      "task_completion": "PENDING",
+      "gap": "Independent manual language editions, per-segment review, terminology and exact-source rebind with archived candidates. Automatic translation and real language quality unavailable/unverified.",
+      "status": "PARTIAL",
+      "verification": "CONTRACT_VERIFIED",
+      "ui_integration": "INTEGRATED",
+      "api_integration": "INTEGRATED",
+      "task_completion": "PARTIAL",
       "browser_verification": "NOT_RUN",
-      "real_model_verification": "NOT_RUN"
+      "real_model_verification": "NOT_RUN",
+      "runtime_flag": "multilingual_editions_v2"
     },
     {
       "id": "B06",
@@ -1101,6 +1134,14 @@
         "postgres_deselected": 160
       },
       "ci": "PENDING"
+    },
+    {
+      "remote_sha": "12745cbb7785d744e8aa2b13324a38dea6017718",
+      "source_tree": "030a11d778df302fe6c52f87b69be27275ac633f",
+      "status": "HOSTED_CI_PENDING",
+      "local_file_passed": 2820,
+      "local_frontend_passed": 814,
+      "independent_review": "BLOCKED"
     }
   ],
   "independent_review": "BLOCKED_AFTER_REPORTED_FINDINGS; implementation repairs have regression evidence, no independent closure"

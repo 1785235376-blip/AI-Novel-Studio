@@ -1,19 +1,11 @@
 # Execution checkpoint
 
-Parent and merge-base: `d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b`. Branch: `work/post-v1-r4-r5-ux`; stacked Draft PR39.
+Parent/merge-base: `d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b`. Branch `work/post-v1-r4-r5-ux`, Draft PR39. PR37 is unchanged.
 
-Published:
-- F00 `ad17f905bfe97d6d7a4a7986f4848b7970f3478d`, both CI runs successful.
-- Isolated storage repair `0e5ea915f4a540c78b4589a3974c9ee2fc7a268f`, tree `899c816c36aff2a4ce27fe4954c4e5a4820b4a09`. Full local File-compatible suite 2,320 passed / 8 skipped / 160 actual-PG-only deselected. Hosted exact-head CI is tracked separately.
+Current staged runtime source is `6fb3c44`; browser-contract correction is `1e3aea0`. See WAVE_4_5_CHECKPOINT.md for exact trees, 3,054 File-compatible passes, 865 frontend passes and verification boundaries. The source extends all A and U packages with bounded functional slices plus B01–B05. The matrix tracks remaining gaps; B06–B10 continue separately and no forty-package completion is claimed.
 
-Current integration:
-- U02 editing/save/recovery plus independently corrected races and retained-task observer scope.
-- U01/U03/U07/U10/U12 workspace resume/search/commands/task projection/diagnostics with actual frontend and mounted API.
-- U09 passive untrusted workflow inspection and U08 actual request preflight/final-dispatch correspondence.
-- U04 saved focus/reference/inspiration/bookmarks/overview tools.
-- U13 keyboard/IME/Unicode changes, actual measurement harness and authored browser matrix.
-- A04/A05 typed temporal graph and reviewed knowledge query UI; main generation viewpoint replacement still pending.
+Published runtime checkpoint `12745cbb` passed File, real PostgreSQL and both Windows lanes, but its frontend browser job failed. Browser corrections `11157b4` and `4364613` preserve those failure records and are checked on their own exact heads. F00/storage/first-slice evidence remains historical in prior checkpoint documents and the PR.
 
-Next publish boundary: commit the integrated composition, run immutable File/UI/build/token checks and independent review, then publish bounded source commits and wait for actual PG/Chromium/native CI. New A06/A07 broker/benchmark and A09/A13 lineage/replay implementation may proceed in disjoint files without moving the pinned validation source.
+Current-model/real-quality/GPU/native-desktop/external-software checks are not inferred from deterministic software tests. The independent follow-up review remains platform-BLOCKED; ordinary implementation and regression continue without retrying or rerouting that review.
 
-No arbitrary time-based stop or forty-package completion claim. Missing real runtime/paid model/native desktop requirements block only their dependent work. Continue all listed deterministic/UI scopes and revisit explicitly tracked partial items in their dependency wave.
+Next boundary: publish this pinned production/reading/language slice in bounded commits, verify exact remote tree and all hosted lanes, then continue remaining packages and feasible old-UX gaps. No merge, release, deployment, paid API, real credentials or user-runtime modification is authorized.
