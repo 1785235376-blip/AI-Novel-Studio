@@ -135,3 +135,84 @@ it('recovers persisted manual inputs only by explicit action and requires renewe
   expect(screen.queryByRole('region', { name: '人物已知信息' })).toBeNull();
   expect((screen.getByRole('button', { name: '保存输入并创建推演' }) as HTMLButtonElement).disabled).toBe(true);
 });
+
+const modelRoute = { route_id: 'route-local', provider_id: 'mock', model_id: 'mock-writer', synthetic: true, available: true, reasons: [] };
+const modelPreview = { preview_digest: 'd'.repeat(64), execution_available: true, source_strategy: 'A05_CHARACTER_ONLY_NO_MANUSCRIPT', max_output_bytes: 64000, timeout_seconds: 120, quality_verification: 'NOT_RUN' as const, request: { prompt: 'Synthetic bounded route instructions', context: { character_viewpoint: { character_id: 'alice' } } }, broker: { chosen: { ...modelRoute, price: { source: 'Synthetic test adapter', currency: 'USD', reserve_microusd: 0 } }, candidates: [] } };
+const modelCandidate = { id: 'model-a', input: { id: 'model-a', title: '模型替代路线', events: [] }, rules: { ...completed.routes![0], id: 'model-a', title: '模型替代路线' }, evidence_ids: [] as string[], hypothesis: true as const, quality_verification: 'NOT_RUN' as const };
+function modelTransport(initial: SimulatorRun = completed) {
+  let row = initial;
+  const fetch = vi.fn(async (url: string, init?: RequestInit) => {
+    if (url.endsWith('/catalog')) return reply({ ...catalog, model_configured: true, model_routes: [modelRoute] });
+    if (url.endsWith('/model/preview')) { row = { ...row, version: 3, model_preview: modelPreview }; return reply(row); }
+    if (url.endsWith('/model/dispatch')) { row = { ...row, version: 4, model_execution: { job_id: 'job-one', status: 'QUEUED', receipt_state: 'RECORDED', usage_state: 'UNKNOWN', quality_verification: 'NOT_RUN' } }; return reply(row); }
+    if (url.endsWith('/model/refresh')) { row = { ...row, version: 5, model_execution: { ...row.model_execution!, status: 'CANDIDATES' }, model_candidates: [modelCandidate], model_candidates_digest: 'e'.repeat(64) }; return reply(row); }
+    if (url.endsWith('/model/cancel')) { row = { ...row, version: row.version + 1, model_execution: { ...row.model_execution!, status: 'CANCELLED' }, model_candidates: [] }; return reply(row); }
+    if (url.endsWith('/model/select')) { row = { ...ready, id: 'adopted-run', model_called: true, model_adoption: { run_id: 'run-one', candidate_id: 'model-a', evidence_ids: [], quality_verification: 'NOT_RUN' } }; return reply(row, 201); }
+    if (url.endsWith('/runs')) return reply({ items: [row] });
+    if (url.endsWith('/runs/run-one') || url.endsWith('/runs/adopted-run')) return reply(row);
+    throw new Error(`Unhandled ${init?.method} ${url}`);
+  });
+  return fetch;
+}
+it('previews exact local character request, dispatches once with consent, then manually selects checked candidate', async () => {
+  const fetch = modelTransport(); vi.stubGlobal('fetch', fetch);
+  render(<StorySimulatorPanel client={client()} chapter={chapter} />); await chooseRun();
+  expect(fetch.mock.calls.every(([, init]) => init?.method === 'GET')).toBe(true);
+  fireEvent.change(screen.getByLabelText('推演候选本地模型'), { target: { value: 'route-local' } });
+  fireEvent.click(screen.getByRole('button', { name: '预览模型候选请求（不发送）' }));
+  await screen.findByRole('region', { name: '模型候选发送预览' });
+  expect(screen.getByText(/Synthetic bounded route instructions/)).toBeTruthy();
+  const send = screen.getByRole('button', { name: '发送这一次模型候选请求' }) as HTMLButtonElement;
+  expect(send.disabled).toBe(true);
+  fireEvent.click(screen.getByLabelText('我已核对这份发送内容、当前本地路线与零费用上限，允许发送一次模型候选请求'));
+  fireEvent.click(send); fireEvent.click(send);
+  await screen.findByText(/状态：QUEUED/);
+  expect(fetch.mock.calls.filter(([url]) => url.endsWith('/model/dispatch'))).toHaveLength(1);
+  const dispatch = fetch.mock.calls.find(([url]) => url.endsWith('/model/dispatch'))!;
+  expect(JSON.parse(dispatch[1]!.body as string)).toEqual({ expected_version: 3, reviewed_preview_digest: modelPreview.preview_digest });
+  expect(fetch.mock.calls.some(([url]) => url.endsWith('/model/refresh'))).toBe(false);
+  fireEvent.click(screen.getByRole('button', { name: '检查原模型请求结果' }));
+  await screen.findByRole('article', { name: '比较路线 模型替代路线' });
+  const select = screen.getByRole('button', { name: '将选中模型候选创建为独立推演' }) as HTMLButtonElement;
+  expect(select.disabled).toBe(true);
+  fireEvent.click(screen.getByLabelText('选用模型候选 模型替代路线 创建独立推演'));
+  fireEvent.click(screen.getByLabelText('已核对所选模型假设、证据与违规，只创建待手动推进的独立推演'));
+  fireEvent.click(select); fireEvent.click(select);
+  await screen.findByText(/此记录由人工选用模型候选创建/);
+  expect(fetch.mock.calls.filter(([url]) => url.endsWith('/model/select'))).toHaveLength(1);
+  expect(fetch.mock.calls.some(([url]) => /\/(step|save|accept|approve)$/.test(url))).toBe(false);
+});
+it('model cancellation and unknown admission never offer automatic replay or candidate adoption', async () => {
+  const initial: SimulatorRun = { ...completed, model_preview: modelPreview, model_execution: { job_id: 'job-one', status: 'UNKNOWN', receipt_state: 'UNKNOWN_NO_AUTOMATIC_REPLAY', usage_state: 'UNKNOWN', quality_verification: 'NOT_RUN' } };
+  const fetch = modelTransport(initial); vi.stubGlobal('fetch', fetch);
+  render(<StorySimulatorPanel client={client()} chapter={chapter} />); await chooseRun();
+  expect((screen.getByRole('button', { name: '发送这一次模型候选请求' }) as HTMLButtonElement).disabled).toBe(true);
+  expect((screen.getByRole('button', { name: '检查原模型请求结果' }) as HTMLButtonElement).disabled).toBe(true);
+  expect(screen.queryByRole('button', { name: '将选中模型候选创建为独立推演' })).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: '取消模型候选并丢弃结果' }));
+  await screen.findByText(/状态：CANCELLED/);
+  expect(fetch.mock.calls.some(([url]) => url.endsWith('/model/dispatch'))).toBe(false);
+});
+it('ignores late model preview from a replaced scope and never preserves its consent', async () => {
+  const base = modelTransport(); let finish!: (r: Response) => void;
+  vi.stubGlobal('fetch', vi.fn((url: string, init?: RequestInit) => url.endsWith('/model/preview') ? new Promise<Response>(resolve => { finish = resolve; }) : base(url, init)));
+  const view = render(<StorySimulatorPanel client={client()} chapter={chapter} />); await chooseRun();
+  fireEvent.change(screen.getByLabelText('推演候选本地模型'), { target: { value: 'route-local' } });
+  fireEvent.click(screen.getByRole('button', { name: '预览模型候选请求（不发送）' }));
+  view.rerender(<StorySimulatorPanel client={experimentalClient('novel-new', { sessionToken: 'session-new' })} />);
+  await act(async () => finish(reply({ ...completed, model_preview: modelPreview })));
+  expect(screen.queryByRole('region', { name: '模型候选发送预览' })).toBeNull();
+  expect(screen.queryByLabelText('我已核对这份发送内容、当前本地路线与零费用上限，允许发送一次模型候选请求')).toBeNull();
+});
+it('changing selected model route clears consent and fences a previously reviewed request', async () => {
+  const base = modelTransport({ ...completed, model_preview: modelPreview });
+  vi.stubGlobal('fetch', vi.fn((url: string, init?: RequestInit) => url.endsWith('/catalog') ? Promise.resolve(reply({ ...catalog, model_configured: true, model_routes: [modelRoute, { ...modelRoute, route_id: 'another-route', model_id: 'other-local' }] })) : base(url, init)));
+  render(<StorySimulatorPanel client={client()} chapter={chapter} />); await chooseRun();
+  fireEvent.click(screen.getByLabelText('我已核对这份发送内容、当前本地路线与零费用上限，允许发送一次模型候选请求'));
+  expect((screen.getByRole('button', { name: '发送这一次模型候选请求' }) as HTMLButtonElement).disabled).toBe(false);
+  fireEvent.change(screen.getByLabelText('推演候选本地模型'), { target: { value: 'another-route' } });
+  expect((screen.getByRole('button', { name: '发送这一次模型候选请求' }) as HTMLButtonElement).disabled).toBe(true);
+  expect((screen.getByLabelText('我已核对这份发送内容、当前本地路线与零费用上限，允许发送一次模型候选请求') as HTMLInputElement).checked).toBe(false);
+  expect(screen.getByText('模型选择已变化。请重新预览所选路线后再确认发送。')).toBeTruthy();
+  expect(base.mock.calls.some(([url]) => url.endsWith('/model/dispatch'))).toBe(false);
+});

@@ -2,6 +2,7 @@ import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { Chapter } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
+import { NarrativeJudgeModelPanel } from './NarrativeJudgeModelPanel';
 import { ErrorMessage, Field, ResourceState, useResource } from './shared';
 import type { WorkspaceNavigation } from './uxClient';
 import { styleReviewClient, useReviewAction, type JudgeFinding, type JudgeRun, type StyleReviewClient } from './styleReviewClient';
@@ -40,7 +41,7 @@ function NarrativeJudgeBody({ client, chapter, onNavigate }: Props) {
   }, '已生成有证据范围的规则检查。请逐条核对；正文未改动。');
   return <section className="experimental-section" aria-label="叙事证据审阅">
     <div className="experimental-actions"><h3>叙事证据审阅</h3><Badge>建议需要作者判断</Badge><Button disabled={catalog.loading || runs.loading || detail.loading || action.busy} onClick={refresh}>刷新审阅与来源（保留输入）</Button></div>
-    <p>当前提供确定性规则检查；未执行模型评审。规则发现只是检查线索，没有文学总分，也不自动改写正文或批准 Canon。</p>
+    <p>先运行确定性规则检查，再按需预览并单独发送给已注册的本地模型。规则与模型意见分别标注，没有文学总分，不自动改写正文或批准 Canon。</p>
     <ResourceState loading={catalog.loading} error={catalog.error} />
     {!!catalog.error && <StatusMessage tone="warning">请核对本机会话、当前分支权限和功能开关后刷新；尚未提交的选择与审核理由保留在本页。</StatusMessage>}
     <Panel title="选择审阅范围">
@@ -54,6 +55,7 @@ function NarrativeJudgeBody({ client, chapter, onNavigate }: Props) {
       {!!action.error && <ErrorMessage error={action.error} />}{action.notice && <StatusMessage tone="success">{action.notice}</StatusMessage>}
       {!!action.error && <StatusMessage tone="warning">选择和审核理由仍保留。若来源或权限已变化，请刷新核对后重试，不会自动重发检查。</StatusMessage>}
     </Panel>
+    {run && <NarrativeJudgeModelPanel key={run.id} api={api} run={run} chapter={chapter} onChanged={() => { detail.reload(); runs.reload(); }} />}
     <Panel title="检查记录与证据">
       <ResourceState loading={runs.loading} error={runs.error} />
       {!runs.loading && !runs.error && !runs.data?.items.length && <EmptyState title="还没有审阅记录" detail="先选择章节并运行检查。打开页面不会调用模型或自动审稿。" />}
@@ -82,6 +84,7 @@ function FindingReview({ api, action, finding, run, chapter, onNavigate, onChang
   if (stale) return <article className="experimental-record" aria-label={`检查线索 ${finding.id}`}><Badge tone="warning">来源已变化</Badge><StatusMessage tone="warning">旧证据与评语已隐藏。请重新检查当前章节。</StatusMessage></article>;
   return <article className="experimental-record" aria-label={`检查线索 ${finding.id}`}>
     <div className="experimental-actions"><strong>{categoryLabels[finding.category] || finding.category} · {finding.code}</strong><Badge tone={finding.severity === 'WARNING' ? 'warning' : 'info'}>{finding.severity === 'WARNING' ? '待注意' : '提示'}</Badge><Badge>{decisions[finding.decision]} · v{finding.version}</Badge><Badge>{finding.origin === 'MODEL_ASSESSMENT' ? '模型判断' : '确定性规则'}</Badge></div>
+    {finding.model && <StatusMessage tone="warning">{finding.model.synthetic ? '合成协议测试，未调用真实模型' : '模型意见，文学质量未验证'} · {finding.model.provider_id} / {finding.model.model_id}。独立性未验证；相同模型不同提示不构成独立审稿。</StatusMessage>}
     <p>{finding.explanation}</p><p>建议：{finding.suggestion}</p><StatusMessage>判断边界：{finding.boundary}</StatusMessage>
     {stale && <StatusMessage tone="warning">来源已变化，此线索保留供历史核对。请重新检查最新来源，不能继续据此修改审核决定。</StatusMessage>}
     {!finding.evidence.length && <StatusMessage tone="warning">此线索没有可定位的原文证据，不能据此推断全章结论。</StatusMessage>}

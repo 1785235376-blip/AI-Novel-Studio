@@ -4,6 +4,7 @@ import type { ExperimentalClient } from './api';
 import { Field, ResourceState, useAction, useResource } from './shared';
 import { multilingualEditionsClient, type AlignmentPreview, type EditionCreate, type EditionExportPreview, type EditionSegment, type LanguageEdition, type SegmentPreview, type TermInput, type TermIssue } from './multilingualEditionsClient';
 import './multilingualEditions.css';
+import { LanguageTranslationPanel } from './LanguageTranslationPanel';
 let sequence = 0;
 export function MultilingualEditionsPanel({ client }: { client: ExperimentalClient }) {
   const identity = useMemo(() => ++sequence, [client]);
@@ -26,7 +27,7 @@ function EditionsBody({ client }: { client: ExperimentalClient }) {
   const segment = selected?.segments?.[index];
   return <section className="experimental-section" aria-label="多语言版本与术语">
     <Panel title="独立语言版本"><p>手工双语编辑、术语检查与逐段审核。译文保存在独立语言版本中，原稿和原稿历史不会改变。</p>
-      <StatusMessage>未配置已授权的翻译 Adapter。当前不调用模型、不自动重译；术语检查不证明目标语言质量。</StatusMessage>
+      <StatusMessage>模型翻译需先选择已配置本地路线并核对本段精确请求。手工编辑无需模型；不会自动重译，术语检查不证明语言质量。</StatusMessage>
       <ResourceState loading={catalog.loading} error={catalog.error} empty={!catalog.data?.chapters.length} />
       {!catalog.loading && !catalog.error && !catalog.data?.branch_sources_available && <StatusMessage tone="warning">当前分支没有独立正文读取权限。请回到具有原稿权限的范围，不会借用其他分支正文。</StatusMessage>}
       <div className="experimental-grid"><Field label="语言版本名称"><input value={title} maxLength={160} onChange={e => setTitle(e.target.value)} /></Field><Field label="原文语言代码"><input value={sourceLanguage} maxLength={64} onChange={e => setSourceLanguage(e.target.value)} /></Field><Field label="目标语言代码"><input value={targetLanguage} maxLength={64} onChange={e => setTargetLanguage(e.target.value)} /></Field>
@@ -67,6 +68,11 @@ function Issues({ issues }: { issues: TermIssue[] }) {
 function SegmentEditor({ api, edition, segment, number, busy, perform, onDirty }: { api: EditionApi; edition: LanguageEdition; segment: EditionSegment; number: number; busy: boolean; perform: Performer; onDirty: (dirty: boolean) => void }) {
   const [text, setText] = useState(segment.target_text), [note, setNote] = useState(segment.note), [preview, setPreview] = useState<SegmentPreview>(), [approved, setApproved] = useState(false);
   const action = useAction(); const alive = useRef(true), epoch = useRef(0);
+  const saved = useRef({ text: segment.target_text, note: segment.note });
+  useEffect(() => {
+    if (text === saved.current.text && note === saved.current.note) { setText(segment.target_text); setNote(segment.note); }
+    saved.current = { text: segment.target_text, note: segment.note };
+  }, [edition.version, segment.target_text, segment.note]);
   const dirty = text !== segment.target_text || note !== segment.note;
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
   useEffect(() => { onDirty(dirty); }, [dirty, onDirty]);
@@ -88,6 +94,7 @@ function SegmentEditor({ api, edition, segment, number, busy, perform, onDirty }
       <Button disabled={disabled || dirty || !['ACCEPTED', 'REJECTED'].includes(segment.status)} onClick={() => perform(() => api.review(edition, segment, 'reopen'), '本段已重新打开为草稿。')}>重新打开本段</Button></div>
     {!!segment.issues.length && <Issues issues={segment.issues} />}
     {preview && <section aria-label="本段接受预览"><Issues issues={preview.issues} /><label className="experimental-check"><input type="checkbox" disabled={!preview.can_accept || disabled || dirty} checked={approved} onChange={e => setApproved(e.target.checked)} />已人工核对本段译文、术语与源版本</label><Button disabled={disabled || dirty || !approved || !preview.can_accept} onClick={() => perform(() => api.review(edition, segment, 'accept', preview), '仅本段译文已接受。原稿仍保持原样。')}>确认仅接受本段译文</Button></section>}
+    <LanguageTranslationPanel key={`${edition.id}:${segment.id}:${edition.version}`} api={api} edition={edition} segment={segment} blocked={disabled || dirty} perform={perform} />
     {action.feedback}
   </article>;
 }

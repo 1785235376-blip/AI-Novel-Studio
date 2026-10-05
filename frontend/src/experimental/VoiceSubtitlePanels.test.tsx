@@ -49,3 +49,33 @@ it('empty and failed catalog never auto-create captions or model tasks',async()=
  const fetch=vi.fn(async()=>response({detail:{code:'FORBIDDEN'}},403));vi.stubGlobal('fetch',fetch);render(<SubtitleTimelinePanel client={client()}/>);
  await screen.findAllByText(/FORBIDDEN/);expect((screen.getByRole('button',{name:'创建字幕草稿'}) as HTMLButtonElement).disabled).toBe(true);expect(fetch.mock.calls.length).toBe(2);
 });
+
+it('explicit measured mix captures versions, avoids duplicate sends and keeps approval separate from preview',async()=>{
+ const measured={...plan,status:'APPROVED',voice_direction:true,timing_status:'MEASURED',version:8};
+ const mix={id:'mix',plan_id:'plan',version:1,status:'PENDING_REVIEW',stale:false,media:{duration_ms:1250},verification:'CONTRACT_VERIFIED'};
+ let mixes:typeof mix[]=[];let resolveMix:((r:Response)=>void)|undefined;
+ const fetch=vi.fn(async(url:string,init:RequestInit)=>{
+  if(url.endsWith('/plans/plan/mix'))return new Promise<Response>(resolve=>{resolveMix=resolve;});
+  if(url.includes('/mixes/mix/audio'))return new Response(new Blob(['synthetic bytes'],{type:'audio/wav'}));
+  if(url.endsWith('/mixes/mix/approve'))return response({...mix,status:'APPROVED',version:4});
+  if(url.endsWith('/catalog'))return response({plans:[measured],mixes,mixer:'local-pcm16-wav-v1',profiles:[],characters:[],tts:{}});
+  return response({items:[]});
+ });vi.stubGlobal('fetch',fetch);vi.stubGlobal('URL',class extends URL{static createObjectURL=vi.fn(()=> 'blob:measured-mix');static revokeObjectURL=vi.fn();});
+ render(<VoiceDirectionPanel client={client()}/>);await screen.findByText('Synthetic voice · v8 · APPROVED');fireEvent.change(screen.getByLabelText('声音导演有声计划'),{target:{value:'plan'}});
+ expect(fetch.mock.calls.filter(([,r])=>r.method==='POST')).toHaveLength(0);
+ const button=screen.getByRole('button',{name:'生成含停顿混音候选'});fireEvent.click(button);fireEvent.click(button);
+ await waitFor(()=>expect(resolveMix).toBeDefined());expect(fetch.mock.calls.filter(([url])=>url.endsWith('/plans/plan/mix'))).toHaveLength(1);
+ const request=fetch.mock.calls.find(([url])=>url.endsWith('/plans/plan/mix'))![1];expect(JSON.parse(String(request.body))).toEqual({expected_version:8});expect(request.headers).toMatchObject({'X-Session-Token':'trusted','X-Branch-Id':'branch'});
+ mixes=[mix];resolveMix!(response(mix));await screen.findByRole('button',{name:'试听含停顿混音'});
+ fireEvent.click(screen.getByRole('button',{name:'试听含停顿混音'}));await screen.findByText('已读取含停顿混音，请试听完整轨道');
+ expect(fetch.mock.calls.some(([url])=>url.endsWith('/mixes/mix/audio?expected_version=1'))).toBe(true);expect(fetch.mock.calls.some(([url])=>url.endsWith('/mixes/mix/approve'))).toBe(false);
+ fireEvent.click(screen.getByRole('button',{name:'批准混音资产'}));await waitFor(()=>expect(fetch.mock.calls.some(([url])=>url.endsWith('/mixes/mix/approve'))).toBe(true));
+});
+
+it('stale or unmeasured directed audio cannot generate or download a misleading mix',async()=>{
+ const stale={id:'mix',plan_id:'plan',version:1,status:'PENDING_REVIEW',stale:true};
+ const fetch=vi.fn(async(url:string)=>response(url.endsWith('/catalog')?{plans:[{...plan,voice_direction:true,timing_status:'PARTIAL'}],mixes:[stale],mixer:'local-pcm16-wav-v1',profiles:[],characters:[],tts:{}}:{items:[]}));vi.stubGlobal('fetch',fetch);
+ render(<VoiceDirectionPanel client={client()}/>);await screen.findByText('Synthetic voice · v1 · PENDING_REVIEW');fireEvent.change(screen.getByLabelText('声音导演有声计划'),{target:{value:'plan'}});
+ expect((screen.getByRole('button',{name:'生成含停顿混音候选'}) as HTMLButtonElement).disabled).toBe(true);expect(screen.queryByRole('button',{name:'下载混音 WAV'})).toBeNull();
+ await screen.findByText('计划或音频来源已变化，请重新生成候选');
+});
