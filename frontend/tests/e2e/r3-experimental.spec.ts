@@ -1,6 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
+import { createPageQuiescer } from './r3-fixture-lifecycle';
 const API = 'http://127.0.0.1:8016/api';
 const ownedProjects = new WeakMap<Page, { api: string; id: string }[]>();
+const quiescePages = new WeakMap<Page, () => Promise<void>>();
 function rememberProject(page: Page, id: string, api = API) { ownedProjects.get(page)!.push({ api, id }); }
 async function body(response: any) { expect(response.ok(), await response.text()).toBeTruthy(); return response.json(); }
 async function project(page: Page, text = 'Alice said hello in Harbor. One day the secret would return.') {
@@ -34,9 +36,18 @@ async function openWorkbench(page: Page, tab = '分层规划') {
 async function tab(page: Page, name: string) { await page.getByRole('navigation', { name: '实验功能' }).getByRole('button', { name, exact: true }).click(); }
 test.beforeEach(({ page }) => {
   ownedProjects.set(page, []);
+  quiescePages.set(page, createPageQuiescer(page));
   test.info().annotations.push({ type: 'verification', description: 'Actual File API + browser, synthetic fixtures. Planning/image MOCK_ONLY; no paid provider, GPU, TTS quality or literary-quality verification.' });
 });
-test.afterEach(async ({ page, request }) => {
+test.afterEach(async ({ page, request }, info) => {
+  // Preserve a failure screenshot before explicitly closing the page. The
+  // context still retains its trace after close, but cannot take a later image.
+  if (info.status !== info.expectedStatus && !page.isClosed()) {
+    try { await page.screenshot({ path: info.outputPath('fixture-failure-before-close.png'), fullPage: true }); }
+    catch { info.annotations.push({ type: 'diagnostic', description: 'Failure page screenshot unavailable before teardown; inspect retained trace.' }); }
+  }
+  await quiescePages.get(page)!();
+  quiescePages.delete(page);
   // The File app intentionally auto-opens an existing novel. Restore the empty
   // per-run fixture state after success OR failure, deleting only IDs this test
   // actually created. Never enumerate/delete another test's or user's projects.
