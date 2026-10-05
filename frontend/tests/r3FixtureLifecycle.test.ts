@@ -53,14 +53,14 @@ describe('R3 disposable browser fixture lifecycle (event-contract tests, not bro
     const quiesce = createPageQuiescer(page as unknown as Page, 100);
     const pending = request('/api/novels/private-title/chapters?q=secret-text&token=private-token#private-fragment', 'PUT');
     page.emit('request', pending); page.emit('response', response(pending).value);
-    const cleanup = quiesce().then(() => { order.push('delete:owned-1'); });
+    const cleanup = quiesce.drain().then(() => { order.push('delete:owned-1'); });
     const failed = expect(cleanup).rejects.toThrow('page API requests did not drain');
     await vi.advanceTimersByTimeAsync(101); await failed;
     const diagnostic = quiesce.diagnostics();
     expect(diagnostic.pending[0]).toMatchObject({ method: 'PUT', path: '/api/novels/:id/chapters', status: 200, phase: 'awaiting_response_end', age_ms: 101 });
     expect(JSON.stringify(diagnostic)).not.toMatch(/private-|secret-text|127\.0\.0\.1|token=/);
     expect(page.close).not.toHaveBeenCalled(); expect(order).not.toContain('delete:owned-1');
-    expect(page.listenerCount('request')).toBe(0); expect(context.listenerCount('requestfinished')).toBe(0);
+    expect(page.listenerCount('request')).toBe(1); expect(context.listenerCount('requestfinished')).toBe(1);
   });
   it('requires page close to succeed before cleanup continues', async () => {
     const { page, order } = pageFixture();
@@ -160,7 +160,7 @@ describe('R3 disposable browser fixture lifecycle (event-contract tests, not bro
   it('bounds diagnostics while retaining every unresolved request', async () => {
     vi.useFakeTimers(); const { page } = pageFixture(); const quiesce = createPageQuiescer(page as unknown as Page, 100);
     for (let n = 0; n < 25; n++) page.emit('request', request(`/api/novels/private-${n}/chapters`));
-    const cleanup = quiesce(), failed = expect(cleanup).rejects.toThrow('did not drain');
+    const cleanup = quiesce.drain(), failed = expect(cleanup).rejects.toThrow('did not drain');
     await vi.advanceTimersByTimeAsync(101); await failed;
     expect(quiesce.diagnostics()).toMatchObject({ pending_count: 25, diagnostics_truncated: true });
     expect(quiesce.diagnostics().pending).toHaveLength(20);
@@ -178,4 +178,25 @@ describe('R3 disposable browser fixture lifecycle (event-contract tests, not bro
     const { page } = pageFixture();
     for (const timeout of [0, -1, Infinity, NaN]) expect(() => createPageQuiescer(page as unknown as Page, timeout)).toThrow('positive and bounded');
   });
+});
+
+// Browser closure is a terminal client receipt, never proof of server completion.
+it('closes abandoned browser requests before exact-owned cleanup and records uncertainty', async () => {
+  vi.useFakeTimers(); const {page,order}=pageFixture();
+  const quiesce=createPageQuiescer(page as unknown as Page,100);
+  page.emit('request',request('/api/chapters/owned/history'));
+  const pending=quiesce().then(() => order.push('delete:owned'));
+  await vi.advanceTimersByTimeAsync(101); await pending;
+  expect(order).toEqual(['block-new-api','close-page','delete:owned']);
+  expect(quiesce.diagnostics()).toMatchObject({phase:'closed',drain_timed_out:true,page_closed:true,pending_count:0,server_completion_verified:false,aborted_requests_server_completion_unknown:1});
+  expect(quiesce.diagnostics().uncertain_requests[0].reason).toBe('PAGE_CLOSED_SERVER_COMPLETION_UNKNOWN');
+});
+it('still blocks owned deletion when unresolved requests cannot be closed', async () => {
+  vi.useFakeTimers(); const {page,order}=pageFixture(); page.close.mockRejectedValueOnce(new Error('close denied'));
+  const quiesce=createPageQuiescer(page as unknown as Page,100);
+  page.emit('request',request('/api/chapters/owned/history'));
+  const pending=quiesce().then(() => order.push('delete:owned'));
+  const rejected=expect(pending).rejects.toThrow('close denied');
+  await vi.advanceTimersByTimeAsync(101);await rejected;
+  expect(order).not.toContain('delete:owned');expect(quiesce.diagnostics().pending_count).toBe(1);
 });

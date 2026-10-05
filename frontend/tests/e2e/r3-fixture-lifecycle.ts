@@ -1,5 +1,7 @@
 import type { Page, Request, Response, Route } from '@playwright/test';
 
+class DrainTimeout extends Error {}
+
 type Pending = { sequence: number; method: string; path: string; started: number; status: number | null; phase: string };
 const routeWords = new Set(('api v1 novels chapters experimental workspace search resume history tasks features capabilities health models text-models media-tasks writing-goal archived characters locations canon foreshadowing timeline relationships volumes scenes story-routes story_routes outline secrets assets exports diagnostics context author-context runtime model-center providers runtimes events generations jobs agent-jobs planning graphs world records imports inbox teams media audiobook profiles').split(' '));
 /** Keep route shape only: no host, credentials, query, fragment or dynamic IDs. */
@@ -22,7 +24,7 @@ export function createPageQuiescer(page: Page, timeoutMs = 15_000) {
   const context = page.context();
   let sequence = 0, completed = 0, abortedServerUnknown = 0, blockedBeforeDispatch = 0, active = true;
   const uncertain: { method: string; path: string; reason: string }[] = [];
-  let phase = 'observing', teardown: Promise<void> | undefined;
+  let phase = 'observing', teardown: Promise<void> | undefined, drainTimedOut = false;
   const notify = () => { if (!pending.size) for (const done of [...waiters]) done(); };
   const started = (request: Request) => {
     if (!active || acknowledgedBlocked.has(request) || !new URL(request.url()).pathname.startsWith('/api/')) return;
@@ -72,7 +74,7 @@ export function createPageQuiescer(page: Page, timeoutMs = 15_000) {
       if (active && pending.has(request)) pending.get(request)!.phase = 'response_unavailable';
     });
   };
-  const diagnostics = () => ({ phase, timeout_ms: timeoutMs, page_closed: page.isClosed(),
+  const diagnostics = () => ({ phase, drain_timed_out: drainTimedOut, timeout_ms: timeoutMs, page_closed: page.isClosed(),
     pending_count: pending.size, completed_requests: completed, blocked_before_dispatch: blockedBeforeDispatch,
     aborted_requests_server_completion_unknown: abortedServerUnknown, uncertain_requests: uncertain,
     server_completion_verified: false, cleanup_authority: 'REAL_PROJECT_DELETE_LOCK_AND_ACTIVE_PROJECT_GUARDS',
@@ -86,7 +88,7 @@ export function createPageQuiescer(page: Page, timeoutMs = 15_000) {
       const done = () => { clearTimeout(timer); waiters.delete(done); resolve(); };
       const timer = setTimeout(() => {
         waiters.delete(done);
-        reject(new Error(`Owned-project cleanup blocked: page API requests did not drain; ${JSON.stringify(diagnostics())}`));
+        reject(new DrainTimeout(`Owned-project cleanup blocked: page API requests did not drain; ${JSON.stringify(diagnostics())}`));
       }, timeoutMs);
       waiters.add(done);
       notify(); // Close the finish-between-snapshot-and-subscription race.
@@ -113,7 +115,18 @@ export function createPageQuiescer(page: Page, timeoutMs = 15_000) {
       try {
         phase = 'blocking_new_requests';
         if (!page.isClosed()) await page.route('**/api/**', blockNew);
-        phase = 'draining'; await drain();
+        phase = 'draining';
+        try { await drain(); }
+        catch (error) {
+          if (!(error instanceof DrainTimeout)) throw error;
+          // Chromium can retain an abandoned Request without a terminal event.
+          // Successful page closure establishes client termination, never server
+          // completion. The real repository delete lock remains the authority.
+          drainTimedOut = true; phase = 'closing_unresolved_requests';
+          if (!page.isClosed()) await page.close({ runBeforeUnload: false });
+          if (!page.isClosed()) throw new Error('Page closure was not confirmed; owned cleanup remains blocked');
+          for (const request of [...pending.keys()]) clientTerminated(request, 'PAGE_CLOSED_SERVER_COMPLETION_UNKNOWN');
+        }
         if (!page.isClosed()) await page.close({ runBeforeUnload: false });
         phase = 'closed';
       } catch (error) { phase = 'blocked'; throw error; }

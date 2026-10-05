@@ -41,10 +41,11 @@ async function preview(page: Page, routeId: string) {
   await expect(page.getByRole('region', { name: '模型路线预览' })).toContainText('KNOWN_SYNTHETIC_ZERO');
 }
 async function approveAuthor(page: Page) {
-  await page.getByLabel('本次创作要求', { exact: true }).fill('只使用合成资料，返回中文短稿。');
-  await page.getByRole('button', { name: '检查真实生成请求', exact: true }).click();
-  await expect(page.getByText('请求已预检', { exact: true })).toBeVisible();
-  await page.getByLabel('已核对准确请求、来源与模型，并授权生成这一次草稿', { exact: true }).check();
+  const panel = page.getByRole('region', {name: 'Experimental 工作台', exact: true});
+  await panel.getByLabel('本次创作要求', { exact: true }).fill('只使用合成资料，返回中文短稿。');
+  await panel.getByRole('button', { name: '检查真实生成请求', exact: true }).click();
+  await expect(panel.getByText('请求已预检', { exact: true })).toBeVisible();
+  await panel.getByLabel('已核对准确请求、来源与模型，并授权生成这一次草稿', { exact: true }).check();
 }
 
 test('R4 broker real API, author executor, cancellation, bounded evidence and draft review navigation', async ({ page, request }, info) => {
