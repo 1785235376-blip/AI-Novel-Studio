@@ -2,8 +2,8 @@
 
 This is a projection and a pointer checkpoint, not another graph, asset store,
 executor or review authority. Unknown relationships remain unknown. Only the
-existing deterministic cover adapter is executable here; every other node is a
-manual review item. Original inputs/results and manuscript remain untouched.
+existing synthetic and registered-local image adapters are executable here;
+unsupported domains remain manual review items. Original inputs/results and manuscript remain untouched.
 """
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from pydantic import Field
 
 from ..source_privacy import source_privacy_status
 from .common import DomainService, StaleSourceError, change_row, check_version, new_row, snapshot
-from .media import CoverBriefIn, MockImageWorkflowAdapter, StrictModel, digest, production_environment
+from .media import CoverBriefIn, StoryboardBriefIn, RegisteredLocalImageWorkflowAdapter, StrictModel, digest, production_environment, supported_local_image
 
 
 class SourceRef(StrictModel):
@@ -64,6 +64,7 @@ class ChangeImpactService(DomainService):
         super().__init__(store, novels, chapters)
         self.graph, self.production, self.planning, self.audiobook = story_graph, production, planning, audiobook
         self.media = production.media
+        production.change_impact = self
         if enabled is None:
             from .flags import enabled_flags
             enabled = lambda name: name in enabled_flags()
@@ -124,6 +125,10 @@ class ChangeImpactService(DomainService):
             deps += [(node_key('CHARACTER', cid), b) for cid, b in row.get('character_snapshots', {}).items() if isinstance(b, str)]
             deps += [(node_key('ASSET', aid), b) for aid, b in row.get('asset_sources', {}).items()]
             deps += [(node_key('WORLD_RECORD', rid), b) for rid, b in row.get('semantic_sources', {}).items()]
+            if row.get('kind') == 'STORYBOARD' and row.get('screenplay_source') and row.get('shot_snapshot'):
+                source = row['screenplay_source']
+                deps.append((node_key('SHOT', source['id'] + '/' + row['shot_id']),
+                    {'version': source['version'], 'digest': digest(snapshot({**row['shot_snapshot'], 'version': source['version']}))}))
             for key, binding in row.get('entity_sources', {}).items():
                 if key.startswith('characters:'): deps.append((node_key('CHARACTER', key.split(':', 1)[1]), binding))
                 elif key.startswith('locations:'): deps.append((node_key('LOCATION', key.split(':', 1)[1]), binding))
@@ -247,7 +252,7 @@ class ChangeImpactService(DomainService):
 
     def _node_view(self, node):
         locked = bool(node['lock'] and node['lock']['locked'])
-        supported = node['kind'] == 'MEDIA_TASK' and node['raw'].get('operation') == 'cover_generation'
+        supported = node['kind'] == 'MEDIA_TASK' and node['raw'].get('operation') in {'cover_generation', 'storyboard_card_generation'}
         reason = 'LOCKED_OUTCOME' if locked else 'SOURCE_CURRENT' if not node['stale'] else None
         if not supported: reason = 'ORIGINAL_DOMAIN_MANUAL_REVIEW_REQUIRED'
         elif node['status'] in {'RUNNING', 'QUEUED'}: reason = 'ORIGINAL_TASK_NOT_TERMINAL'
@@ -291,6 +296,23 @@ class ChangeImpactService(DomainService):
             guard(); self._active()
         return self._node_view(self._inventory(nid, scope)[0][body.key])
 
+    def _prepare_brief(self, nid, scope, actor, kind, recipe):
+        return (self.media.prepare_cover if kind == 'COVER' else self.media.prepare_storyboard)(nid, scope, actor, recipe)
+
+    def manifest_origin(self, nid, scope, task, guard=lambda: None):
+        """Bind A13 capture/replay to this coordinator's original current checks."""
+        self._active(); guard()
+        refresh = self.get(nid, scope, self.REFRESHES, task['change_impact_refresh_id'])
+        if refresh['task_id'] != task['id'] or refresh['created_by'] != task['created_by']:
+            raise ValueError('CHANGE_IMPACT_MANIFEST_ORIGIN_CHANGED')
+        plan = self.get(nid, scope, self.PLANS, refresh['plan_id'])
+        entry = next(e for e in plan['entries'] if e['key'] == refresh['node_key'])
+        single = {**plan, 'selected': [e for e in plan['selected'] if e['key'] == refresh['node_key']], 'entries': [entry]}
+        self._assert_plan(nid, scope, task['created_by'], single, guard)
+        self.media._current_brief(nid, scope, task)
+        return {'refresh_id': refresh['id'], 'plan_id': plan['id'], 'node_key': refresh['node_key'],
+                'preflight_digest': plan['preflight_digest']}
+
     def _entry(self, nid, scope, actor, source, selected, guard):
         view = self.impact(nid, scope, {'source': source})
         public = next((r for r in view['items'] if r['key'] == selected['key']), None)
@@ -309,19 +331,27 @@ class ChangeImpactService(DomainService):
         except ValueError:
             result['blockers'].append('ORIGINAL_ADAPTER_UNAVAILABLE'); return result
         try:
-            if type(adapter) is not MockImageWorkflowAdapter or not adapter.definition.local:
-                result['blockers'].append('ONLY_EXISTING_SYNTHETIC_COVER_EXECUTOR_SUPPORTED'); return result
+            if not supported_local_image(adapter):
+                result['blockers'].append('REGISTERED_LOCAL_IMAGE_EXECUTOR_REQUIRED'); return result
+            if type(adapter) is RegisteredLocalImageWorkflowAdapter and not self.production.broker_enabled():
+                result['blockers'].append('MODEL_BROKER_FEATURE_REQUIRED'); return result
             if adapter.definition.model_dump() != task['adapter_definition']:
                 result['blockers'].append('ORIGINAL_ADAPTER_CHANGED'); return result
             old = task['brief_snapshot']
-            recipe = {name: copy.deepcopy(old[name]) for name in CoverBriefIn.model_fields if name in old}
-            brief = self.media.prepare_cover(nid, scope, actor, recipe)
+            fields = CoverBriefIn.model_fields if old['kind'] == 'COVER' else StoryboardBriefIn.model_fields
+            recipe = {name: copy.deepcopy(old[name]) for name in fields if name in old}
+            if old['kind'] == 'STORYBOARD':
+                screenplay, _ = self.media._shot(nid, scope, old['screenplay_id'], old['shot_id'])
+                recipe['expected_screenplay_version'] = screenplay.get('edit_version', 0)
+            brief = self._prepare_brief(nid, scope, actor, old['kind'], recipe)
+            if type(adapter) is RegisteredLocalImageWorkflowAdapter: adapter.validate_request(brief, task['candidate_count'])
             self.media._assert_brief(nid, scope, brief)
             privacy = {cid: {k: v for k, v in source_privacy_status(self.chapters.get(cid), scope.get('branch_id'), self.store.root).items()
                              if k in {'privacy_level', 'reviewed', 'stale'}} for cid in brief['sources']}
             guard(); self._active()
             result.update(recipe=recipe, state={'source': view['source']['binding'], 'node_fingerprint': node['fingerprint'],
-                'lock_version': public['lock_version'], 'brief_digest': digest({k: brief[k] for k in (*CoverBriefIn.model_fields, 'sources', 'asset_sources', 'character_sources')}),
+                'lock_version': public['lock_version'], 'brief_digest': digest({k: v for k, v in brief.items() if k not in {'id', 'created_at', 'updated_at', 'created_by', 'updated_by', 'history'}}),
+                'kind': old['kind'], 'parameters': copy.deepcopy(task.get('parameters', {})),
                 'privacy': privacy, 'adapter': adapter.definition.model_dump(), 'environment': production_environment(adapter),
                 'candidate_count': task['candidate_count'], 'broker_required': bool(self.production.broker_enabled())})
         except (FileNotFoundError, ValueError, KeyError):
@@ -335,16 +365,21 @@ class ChangeImpactService(DomainService):
         source = body.source.model_dump()
         entries = [self._entry(nid, scope, actor, source, r, guard) for r in selected]
         for entry in entries:
-            entry.update(broker_decision_id=None, broker_decision_version=None)
+            entry.update(broker_decision_id=None, broker_decision_version=None, cost=None)
             if not entry['blockers'] and entry['state']['broker_required']:
                 broker = self.production.broker
                 if broker is None: entry['blockers'].append('MODEL_BROKER_NOT_CONFIGURED'); continue
                 adapter = entry['state']['adapter']
                 decision = broker.preview(nid, scope, actor, {'capability': 'IMAGE', 'policy': 'CUSTOM', 'profile': 'LOCAL_ONLY',
                     'preferred_route': digest(['media', adapter['adapter_id'], adapter.get('model_id')]),
-                    'chapter_ids': entry['recipe']['chapter_ids'], 'allow_synthetic': True}, guard)
+                    'chapter_ids': entry['recipe'].get('chapter_ids', list(self.media.prepare_storyboard(nid, scope, actor, entry['recipe'])['sources']) if entry['state']['kind'] == 'STORYBOARD' else []),
+                    'allow_synthetic': entry['state']['environment']['deterministic']}, guard)
                 if not decision.get('chosen'): entry['blockers'].append('MODEL_BROKER_NO_LEGAL_ROUTE')
                 entry.update(broker_decision_id=decision['id'], broker_decision_version=decision['version'])
+                if decision.get('chosen'):
+                    entry['cost'] = {'state': decision['chosen']['cost_state'], 'estimate_microusd': (decision['chosen'].get('price') or {}).get('reserve_microusd')}
+            elif not entry['blockers']:
+                entry['cost'] = {'state': 'KNOWN_SYNTHETIC_ZERO', 'estimate_microusd': 0}
         guard(); self._active()
         with self.store.transaction(nid, scope) as doc:
             for selected_node, entry in zip(selected, entries):
@@ -356,14 +391,17 @@ class ChangeImpactService(DomainService):
         return self._plan_view(row)
 
     def _plan_view(self, row):
+        ready = all(not e['blockers'] for e in row['entries'])
+        amounts = [(e.get('cost') or {}).get('estimate_microusd') for e in row['entries']]
+        synthetic = all((e.get('state') or {}).get('environment', {}).get('deterministic') for e in row['entries'])
         return {'id': row['id'], 'version': row['version'], 'preflight_digest': row['preflight_digest'],
                 'source_snapshot': copy.deepcopy(row['source_snapshot']),
                 'ready': all(not e['blockers'] for e in row['entries']),
                 'items': [{'key': e['key'], 'label': e['label'], 'blockers': e['blockers']} for e in row['entries']],
-                'cost': {'state': 'KNOWN_SYNTHETIC_ZERO' if all(not e['blockers'] for e in row['entries']) else 'UNAVAILABLE',
-                         'currency': 'USD', 'estimate_microusd': 0 if all(not e['blockers'] for e in row['entries']) else None},
+                'cost': {'state': ('KNOWN_SYNTHETIC_ZERO' if synthetic else 'ESTIMATE') if ready and all(v is not None for v in amounts) else 'UNAVAILABLE',
+                         'currency': 'USD', 'estimate_microusd': sum(amounts) if ready and all(v is not None for v in amounts) else None},
                 'automatic_execution': False, 'maximum_candidates': sum(e['state']['candidate_count'] for e in row['entries'] if e['state']),
-                'verification': 'SYNTHETIC_PROTOCOL_ONLY'}
+                'verification': 'SYNTHETIC_PROTOCOL_ONLY' if synthetic else 'REGISTERED_LOCAL_RUNTIME_NOT_RUN'}
 
     def _assert_plan(self, nid, scope, actor, row, guard):
         self._active(); guard()
@@ -401,10 +439,11 @@ class ChangeImpactService(DomainService):
             self._assert_plan(nid, scope, actor, plan, guard)
             result = []
             for entry in plan['entries']:
-                brief = self.media.prepare_cover(nid, scope, actor, entry['recipe'])
+                brief = self._prepare_brief(nid, scope, actor, entry['state']['kind'], entry['recipe'])
                 doc['collections'].setdefault(self.media.BRIEFS, {})[brief['id']] = brief
                 task = self.media.prepare_task(nid, scope, actor, {'brief_id': brief['id'], 'expected_brief_version': 1,
-                    'adapter_id': entry['state']['adapter']['adapter_id'], 'candidate_count': entry['state']['candidate_count']})
+                    'adapter_id': entry['state']['adapter']['adapter_id'], 'candidate_count': entry['state']['candidate_count'],
+                    'parameters': entry['state']['parameters']})
                 pointer = new_row(nid, scope, actor, {'plan_id': rid, 'node_key': entry['key'], 'task_id': task['id'],
                     'idempotency_digest': key, 'request_digest': fingerprint, 'status': 'LINKED', 'reservation_id': None})
                 task['change_impact_refresh_id'] = pointer['id']
@@ -461,7 +500,7 @@ class ChangeImpactService(DomainService):
                 current(); doc['collections'][self.REFRESHES][rid]['reservation_id'] = reservation_id
         def dispatch(actual, adapter):
             current()
-            if actual['id'] != task['id'] or type(adapter) is not MockImageWorkflowAdapter: raise ValueError('CHANGE_IMPACT_TASK_BINDING_CHANGED')
+            if actual['id'] != task['id'] or not supported_local_image(adapter): raise ValueError('CHANGE_IMPACT_TASK_BINDING_CHANGED')
             if reservation_id: broker.guard_dispatch(nid, scope, actor, reservation_id, task['id'], current)
             latest = self.media.get(nid, scope, self.media.TASKS, task['id'])
             if latest['status'] != 'RUNNING' or latest.get('execution_token') != actual.get('execution_token') or latest['version'] != actual['version']:

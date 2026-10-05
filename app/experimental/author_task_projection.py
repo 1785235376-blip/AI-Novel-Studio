@@ -74,6 +74,7 @@ def create_author_task_reader(manager, authorize, require_flag, read_generation)
                     continue
                 candidates.append({'id': jid, 'novel_id': ctx.novel_id, 'scope': deepcopy(ctx.scope),
                     'actor_id': ctx.actor, 'chapter_id': job.chapter_id,
+                    'experimental_origin': job.experimental_origin,
                     'base_chapter_version': job.base_chapter_version, 'status': state.get('status', 'UNKNOWN'),
                     'stale': chapter.get('version') != job.base_chapter_version,
                     'error_code': safe_code(state['error_code']) if state.get('error_code') else None})
@@ -92,7 +93,8 @@ def create_author_task_reader(manager, authorize, require_flag, read_generation)
             try:
                 latest = source(row['id'])
                 if latest is not None and latest[0].chapter_id == row['chapter_id'] and latest[0].base_chapter_version == row['base_chapter_version']:
-                    result.append({**row, 'stale': latest[1].get('version') != row['base_chapter_version']})
+                    result.append({**row, 'experimental_origin': latest[0].experimental_origin,
+                        'stale': latest[1].get('version') != row['base_chapter_version']})
             except (FileNotFoundError, KeyError):
                 continue
             except HTTPException as exc:

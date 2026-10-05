@@ -2,7 +2,7 @@ import base64
 import time
 from urllib.parse import quote
 from dataclasses import dataclass, field
-from typing import Protocol
+from typing import Callable, Protocol
 IMAGE_PROVIDER_CATALOG={
     "comfyui":{"display_name":"ComfyUI（本地）","endpoint":"http://127.0.0.1:8188","default_model":"","api_style":"comfyui","local":True,"requires_credential":False},
     "automatic1111":{"display_name":"Stable Diffusion WebUI（本地）","endpoint":"http://127.0.0.1:7860","default_model":"","api_style":"automatic1111","local":True,"requires_credential":False},
@@ -34,6 +34,8 @@ class AssetGenerationRequest:
     prompt: str
     task_id: str
     parameters: dict = field(default_factory=dict)
+    # Optional server-owned last-mile authority, preserved by legacy callers.
+    dispatch_guard: Callable[[], None] | None = field(default=None, repr=False, compare=False)
 
 @dataclass(frozen=True)
 class AssetGenerationResult:

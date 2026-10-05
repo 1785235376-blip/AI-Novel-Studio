@@ -91,3 +91,35 @@ def run_trusted_local(adapter: TrustedAdapter, request: AdapterRequest, *, autho
         if not isinstance(output, dict) or len(canonical(output).encode()) > caps.max_output_bytes: raise ValueError('SDK_OUTPUT_LIMIT')
         return AdapterReceipt(request.request_id, request.scope_digest, output, attempt)
     raise RuntimeError('unreachable bounded adapter loop')
+
+
+@dataclass(frozen=True)
+class BoundModelReceipt:
+    """Opaque original-host authority references, never credentials or code."""
+    run_id: str
+    node_id: str
+    definition_digest: str
+    author_request_digest: str
+    broker_preview_id: str
+    reviewed_preview_digest: str
+    source_strategy: str
+    max_output_bytes: int
+    deadline: str
+    max_cost_microusd: int = 0
+    automatic_retry: bool = False
+
+
+class BoundModelHost(Protocol):
+    """Only a shipped trusted coordinator may implement this protocol.
+
+    Preview must rebuild the actual AuthorPreparer payload and broker decision.
+    Dispatch must stage a durable original Workflow claim before reservation and
+    call JobManager.start_prepared once. Refresh must check current authority and
+    exact source before admitting the original job's bounded draft into review.
+    Cancel fences future admission and cooperatively cancels that same job.
+    Missing/uncertain receipts never authorize replay or an alternative route.
+    """
+    def preview(self, ctx, run_id: str, value, guard: Callable[[], None]) -> dict: ...
+    def dispatch(self, ctx, run_id: str, value, guard: Callable[[], None]) -> dict: ...
+    def refresh(self, ctx, run_id: str, value, guard: Callable[[], None]) -> dict: ...
+    def cancel(self, ctx, run_id: str) -> None: ...

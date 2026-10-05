@@ -25,7 +25,8 @@ from .imports import SemanticImportService
 from .imports_api import create_import_router
 from .teams import TeamService
 from .teams_api import create_team_router
-from .media import MediaService
+from ..dependencies import asset_provider_registry
+from .media import MediaService, MediaAdapterRegistry
 from .media_api import create_media_router
 from .embeddings import EmbeddingService
 from .embeddings_api import create_embeddings_router
@@ -33,6 +34,7 @@ from .voice_direction import DirectedAudiobookService
 from .voice_direction_api import create_voice_direction_router, create_runtime_executor, resolve_runtime_provider
 from .subtitle_timeline import SubtitleTimelineService
 from .subtitle_timeline_api import create_subtitle_timeline_router
+from .audiobook import LocalPcmMixer
 from .audiobook_api import create_audiobook_router
 from .inbox import UnifiedReviewInbox, ReviewBinding
 from .inbox_api import create_inbox_router
@@ -50,11 +52,12 @@ import_service = SemanticImportService(store, legacy_api.novel_service, legacy_a
     apply_service=ImportApplyService(legacy_api.novel_service, settings.data_path()))
 team_service = TeamService(store, legacy_api.novel_service, legacy_api.chapter_service)
 media_service = MediaService(store, legacy_api.novel_service, legacy_api.chapter_service,
-    assets=legacy_api.asset_library_service, screenplays=legacy_api.screenplay_service)
+    assets=legacy_api.asset_library_service, screenplays=legacy_api.screenplay_service,
+    registry=MediaAdapterRegistry(original_registry=asset_provider_registry))
 embedding_service = EmbeddingService(store, legacy_api.novel_service, legacy_api.chapter_service,
     assets=legacy_api.asset_library_service, screenplays=legacy_api.screenplay_service)
 audiobook_service = DirectedAudiobookService(store, legacy_api.novel_service, legacy_api.chapter_service,
-    assets=legacy_api.asset_library_service)
+    assets=legacy_api.asset_library_service, mixer=LocalPcmMixer())
 
 
 def authorize(nid, token, branch, permission):
@@ -256,8 +259,10 @@ from .model_benchmark_api import create_model_benchmark_router
 model_broker_service = ModelBrokerService(store, legacy_api.novel_service, legacy_api.chapter_service,
     runtime=runtime, model_center=model_center_service, media_registry=media_service.registry,
     audio_resolver=resolve_runtime_provider)
+media_service.broker = model_broker_service
+media_service.broker_enabled = lambda: "model_broker_v2" in enabled_flags()
 model_benchmark_service = ModelBenchmarkService(store, legacy_api.novel_service, legacy_api.chapter_service,
-    broker=model_broker_service)
+    broker=model_broker_service, media=media_service)
 model_broker_service.evidence_reader = model_benchmark_service.evidence
 router.include_router(create_model_broker_router(model_broker_service, authorize, require_flag,
     require_inspection_host_session, prepare_author=author_preparer.prepare_author, manager=legacy_api.jobs))
@@ -283,7 +288,9 @@ style_analysis_service = StyleAnalysisService(store, legacy_api.novel_service, l
 narrative_judge_service = NarrativeJudgeService(store, legacy_api.novel_service, legacy_api.chapter_service,
     legacy_api.creation_workbench_service, world_service, planning_service)
 router.include_router(create_style_analysis_router(style_analysis_service, authorize, require_flag))
-router.include_router(create_narrative_judge_router(narrative_judge_service, authorize, require_flag))
+router.include_router(create_narrative_judge_router(narrative_judge_service, authorize, require_flag,
+    preparer=author_preparer, manager=legacy_api.jobs, broker=model_broker_service,
+    require_host_session=require_inspection_host_session))
 def read_narrative_judge_reviews(ctx):
     from fastapi import HTTPException
     # Inbox read is weaker than the author's private review authority.
@@ -311,8 +318,9 @@ router.include_router(create_change_impact_router(change_impact_service, authori
 from .story_simulator import StorySimulatorService
 from .story_simulator_api import create_story_simulator_router
 story_simulator_service = StorySimulatorService(store, legacy_api.novel_service, legacy_api.chapter_service,
-    planning_service, story_graph_service)
-router.include_router(create_story_simulator_router(story_simulator_service, authorize, require_flag))
+    planning_service, story_graph_service, broker=model_broker_service)
+router.include_router(create_story_simulator_router(story_simulator_service, authorize, require_flag,
+    preparer=author_preparer, manager=legacy_api.jobs, require_host_session=require_inspection_host_session))
 
 
 from .research_library import ResearchLibraryService
@@ -422,7 +430,9 @@ router.include_router(create_safe_batches_router(safe_batches_service, authorize
 from .multilingual_editions import MultilingualEditionsService
 from .multilingual_editions_api import create_multilingual_editions_router
 multilingual_editions_service = MultilingualEditionsService(store, legacy_api.novel_service, legacy_api.chapter_service)
-router.include_router(create_multilingual_editions_router(multilingual_editions_service, authorize, require_flag))
+router.include_router(create_multilingual_editions_router(multilingual_editions_service, authorize, require_flag,
+    preparer=author_preparer, broker=model_broker_service, manager=legacy_api.jobs,
+    require_host_session=require_inspection_host_session))
 
 from .template_library import TemplateLibraryService
 from .template_library_api import create_template_library_router
@@ -435,7 +445,8 @@ safe_batches_service.templates = template_library_service
 declarative_agents_service = DeclarativeAgentsService(store, legacy_api.novel_service,
     legacy_api.chapter_service, sources=writing_focus_service, broker=model_broker_service)
 router.include_router(create_template_library_router(template_library_service, authorize, require_flag))
-router.include_router(create_declarative_agents_router(declarative_agents_service, authorize, require_flag))
+router.include_router(create_declarative_agents_router(declarative_agents_service, authorize, require_flag,
+    preparer=author_preparer, manager=legacy_api.jobs, require_host_session=require_inspection_host_session))
 
 from .interactive_story import InteractiveStoryService
 from .interactive_story_api import create_interactive_story_router
