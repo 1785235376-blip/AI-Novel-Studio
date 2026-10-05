@@ -48,6 +48,8 @@ def _model_center_mutation_authorization(token: str | None) -> dict:
 
 @asynccontextmanager
 async def app_lifespan(_app):
+    from .dependencies import agent_job_service
+    agent_job_service.recover_interrupted()
     yield
     harness_process_service.stop()
     model_center_service.lifecycle.stop_all()
@@ -162,8 +164,29 @@ async def collaboration_fail_closed(request,call_next):
         # expanded allowlist from turning research/plugin/workflow records into
         # anonymous development endpoints.  Packaged mode has already applied
         # its stronger bootstrap-issued session gate above.
+        if (re.fullmatch(r"/api/novels/[^/]+/visual-memory(?:/[^/]+)?", normalized_path)
+                or normalized_path == "/api/memory"
+                or re.fullmatch(r"/api/assets/[^/]+/derivatives", normalized_path)):
+            return JSONResponse({"detail": {"code": "LEGACY_MEDIA_SCOPE_UNAVAILABLE", "message": "请使用当前分支的视觉参考与资产管理入口。"}}, status_code=501)
         capability_route = any(re.fullmatch(pattern, normalized_path) is not None for pattern in (
             r"/api/novels/[^/]+/overview",
+            r"/api/novels/[^/]+/text-runtime-diagnostics",
+            r"/api/novels/[^/]+/planning-runs(?:/[^/]+(?:/cancel|/candidates/[^/]+/save-draft)?)?",
+            r"/api/novels/[^/]+/creation-reference-data",
+            r"/api/novels/[^/]+/chapters/[^/]+/privacy",
+            r"/api/workflows/recipes(?:/[^/]+)?",
+            r"/api/workflow-runs/[^/]+/nodes/[^/]+/(?:approve|reject|trigger-agent)",
+            r"/api/agent-queue(?:/[^/]+/[^/]+/(?:execute|sync))?",
+            r"/api/plugin-packages/(?:install|[^/]+(?:/rollback)?)",
+            r"/api/novels/[^/]+/screenplays/[^/]+/video-assemblies",
+            r"/api/novels/[^/]+/screenplays/[^/]+/motion-tasks/[^/]+/privacy",
+            r"/api/novels/[^/]+/image-jobs(?:/[^/]+/(?:execute|cancel|retry|accept))?",
+            r"/api/novels/[^/]+/audiobook/chapters/[^/]+/(?:export|queue-segments)",
+            r"/api/novels/[^/]+/asset-trash",
+            r"/api/novels/[^/]+/assets/[^/]+/(?:restore|references)",
+            r"/api/novels/[^/]+/visual-references(?:/[^/]+(?:/approve)?)?",
+            r"/api/novels/[^/]+/visual-reference-search",
+            r"/api/novels/[^/]+/(?:creation-records|review-threads)(?:/[^/]+(?:/[^/]+)?)?",
             r"/api/novels/[^/]+/research(?:/[^/]+)?",
             r"/api/research",
             r"/api/novels/[^/]+/continuity/scan-chapter",
@@ -209,7 +232,8 @@ async def collaboration_fail_closed(request,call_next):
             re.fullmatch(r"/api/chapters/[^/]+",normalized_path) is not None and method=="PUT" or
             re.fullmatch(r"/api/chapters/[^/]+",normalized_path) is not None and method=="DELETE" or
             re.fullmatch(r"/api/chapters/[^/]+/(?:rename|archive|restore-archive|history/\d+/restore)",normalized_path) is not None and method=="POST" or
-            re.fullmatch(r"/api/generate/[^/]+",normalized_path) is not None and method=="POST" or
+            re.fullmatch(r"/api/generate/[^/]+(?:/variants)?",normalized_path) is not None and method=="POST" or
+            re.fullmatch(r"/api/generation-groups/[^/]+",normalized_path) is not None and method=="GET" or
             normalized_path=="/api/agent/chat" and method=="POST" or
             normalized_path in {"/api/user-preferences","/api/user-preferences-enabled","/api/user-preferences-share-enabled","/api/harness-enabled"} and method in {"GET","PUT"} or
             normalized_path=="/api/harness/status" and method=="GET" or

@@ -54,7 +54,7 @@ def test_approved_revision_fork_retains_source_and_leaves_assets_untouched(scree
     original["shot_status"] = "APPROVED"
     original["motion_tasks"] = [{"id": "completed-task", "status": "SUCCEEDED"}]
     source.save_screenplay("project", original)
-    response = client.post(f"/api/novels/project/screenplays/{original['id']}/revise", headers=headers)
+    response = client.post(f"/api/novels/project/screenplays/{original['id']}/revise", headers=headers,json={"expected_version":0})
     assert response.status_code == 201, response.text
     draft = response.json()
     assert draft["status"] == "DRAFT" and draft["revision"] == 1
@@ -68,4 +68,4 @@ def test_approved_revision_fork_retains_source_and_leaves_assets_untouched(scree
     edited = service.update_scene("project", draft["id"], draft["scenes"][0]["id"], payload)
     assert edited["scenes"][0]["action"] == "Revised synthetic scene"
     assert next(row for row in service.list("project") if row["id"] == original["id"]) == original
-    assert client.post(f"/api/novels/project/screenplays/{draft['id']}/revise", headers=headers).status_code == 400
+    assert client.post(f"/api/novels/project/screenplays/{draft['id']}/revise", headers=headers,json={"expected_version":0}).status_code == 400

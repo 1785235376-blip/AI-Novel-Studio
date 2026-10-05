@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/ai-novel-r2/frontend
+
+ ✓ src/novel/MotionPrivacyPanel.test.tsx (1 test) 107ms
+ ✓ src/novel/AudioTaskInspector.test.tsx (2 tests) 91ms
+ ✓ src/novel/VideoAssemblyPanel.test.tsx (1 test) 130ms
+ ✓ src/novel/ImageQueuePanel.test.tsx (2 tests) 138ms
+ ✓ src/novel/AudiobookManifestPanel.test.tsx (4 tests) 309ms
+ ✓ src/novel/VideoTaskInspector.test.tsx (3 tests) 138ms
+ ✓ src/novel/ImageGenerationPanel.test.tsx (7 tests) 283ms
+
+ Test Files  7 passed (7)
+      Tests  20 passed (20)
+   Start at  22:26:54
+   Duration  1.30s (transform 647ms, setup 0ms, collect 2.39s, tests 1.20s, environment 2.73s, prepare 528ms)

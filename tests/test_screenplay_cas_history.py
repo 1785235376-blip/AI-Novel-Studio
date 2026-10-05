@@ -110,6 +110,11 @@ def test_api_reports_409_with_original_editor_version_and_preserves_history(tmp_
     created=service.create(nid,"Synthetic")
     scene=created["scenes"][0]
     path=f"/api/novels/{nid}/screenplays/{created['id']}"
+    for suffix,method,body in [(f"/scenes/{scene['id']}","put",scene),("/approve","post",{}),("/revise","post",{})]:
+        missing=getattr(client,method)(path+suffix,json=body)
+        assert missing.status_code==428
+        assert missing.json()["detail"]["code"]=="PRECONDITION_REQUIRED"
+    assert service.history(nid,created['id'])["current_version"]==1
     body={**scene,"action":"Saved action","expected_version":1}
     assert client.put(path+f"/scenes/{scene['id']}",json=body).json()["edit_version"]==2
     stale=client.put(path+f"/scenes/{scene['id']}",json={**body,"action":"Must not overwrite"})

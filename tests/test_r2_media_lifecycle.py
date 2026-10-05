@@ -284,7 +284,7 @@ def test_audio_cloud_uses_reviewed_source_and_rechecks_drift_before_dispatch(tmp
     cloud=FixtureVoice();cloud.local=False
     with pytest.raises(AudiobookError,match='隐私'):service.execute('novel-a',old_job['id'],chapter,lambda _:('cloud','fixture',cloud))
     job=service.queue('novel-a',chapter,{'provider_id':'cloud','voice':'licensed synthetic'},[])
-    result=service.execute('novel-a',job['id'],chapter,lambda _:('cloud','fixture',cloud))
+    result=service.execute('novel-a',job['id'],chapter,lambda _:('cloud','fixture',cloud),check_project_policy=lambda:None)
     assert result['status']=='SUCCEEDED' and len(cloud.requests)==1
     next_job=service.queue('novel-a',chapter,{'provider_id':'cloud','voice':'licensed synthetic'},[])
     newer={**chapter,'content':'Changed secret','version':8}

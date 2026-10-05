@@ -1,5 +1,5 @@
 from uuid import uuid4
-from fastapi.testclient import TestClient
+from screenplay_http_client import VersionedScreenplayClient as TestClient
 from app.main import app
 
 def setup(client):

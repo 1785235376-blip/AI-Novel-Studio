@@ -3,6 +3,7 @@ import {api,apiErrorView,type Chapter,type CreationRecord,type ReviewThread,type
 import {useStudio} from '../store';
 import {Badge,Button,EmptyState,Panel,StatusMessage} from '../ui/primitives';
 import './creationWorkbench.css';
+import {AIPlanningPanel} from './AIPlanningPanel';
 
 const kinds:Record<string,string>={STYLE:'风格档案',PLOT:'三幕与结局',HISTORY:'历史事件',GEOGRAPHY:'地理关系',CIVILIZATION:'文明与组织',ABILITY:'能力规则',PSYCHOLOGY:'人物心理记录'};
 const blank=(kind='STYLE')=>({kind,title:'',description:'',instructions:'',acts:['','',''],conflict:'',climax:'',ending:'',rules:[] as string[],privacy_level:'LOCAL_ONLY',chapter_ids:[] as string[],character_ids:[] as string[],location_ids:[] as string[],related_record_ids:[] as string[],story_route_id:null as string|null});
@@ -11,6 +12,7 @@ const editable=(row:CreationRecord):Draft=>Object.fromEntries(Object.keys(blank(
 
 export function CreationWorkbenchPanel({novelId,chapter,initialComments=false,context}:{novelId:string;chapter?:Chapter;initialComments?:boolean;context?:CollaborationContext}){
  const [comments,setComments]=useState(initialComments),[records,setRecords]=useState<CreationRecord[]>([]),[threads,setThreads]=useState<ReviewThread[]>([]),[draft,setDraft]=useState<Draft>(blank),[editing,setEditing]=useState<CreationRecord>(),[busy,setBusy]=useState(false),[loading,setLoading]=useState(true),[error,setError]=useState(''),[message,setMessage]=useState(''),[text,setText]=useState(''),[quote,setQuote]=useState(''),[reply,setReply]=useState<Record<string,string>>({}),[compare,setCompare]=useState<string[]>([]);
+ const [planningOpen,setPlanningOpen]=useState(false);
  const [references,setReferences]=useState<{characters:{id:string;name:string}[];locations:{id:string;name:string}[];story_routes:{id:string;name:string}[]}>({characters:[],locations:[],story_routes:[]});
  const mounted=useRef(true),generation=useRef(0),flight=useRef(false);
  const selected=useStudio(s=>s.writingInputs),setSelected=useStudio(s=>s.setWritingInputs);
@@ -44,6 +46,7 @@ export function CreationWorkbenchPanel({novelId,chapter,initialComments=false,co
  <details><summary>审核记录（{thread.history.length}）</summary>{thread.history.map((event,i)=><p key={i}>{event.action} · {event.actor_id} · {event.at}</p>)}</details>
  </article>)}
  </>:<>
+ <details onToggle={event=>setPlanningOpen(event.currentTarget.open)}><summary>AI 结构化方案与明确规则提取</summary>{planningOpen&&<AIPlanningPanel novelId={novelId} chapter={chapter} context={context} onSaved={row=>{setRecords(current=>[row,...current.filter(value=>value.id!==row.id)]);setMessage(`已保存${kinds[row.kind]}草稿：${row.title}`)}}/>}</details>
  <p className="novel-help">手工方案保存为草稿，审核后可复用。风格与三幕方案可加入 AI 写作输入；AI 输出仍需预览、Diff 和明确采用。其他世界结构保留独立版本与关联记录。</p>
  {(selected?.styleProfileId||selected?.plotPlanId)&&<p role="status">已选写作输入：{records.filter(r=>r.id===selected.styleProfileId||r.id===selected.plotPlanId).map(r=>r.title).join('、')} <Button onClick={()=>setSelected({})}>清除选择</Button></p>}
  <label>记录类型<select value={draft.kind} disabled={!!editing||busy} onChange={e=>reset(e.target.value)}>{Object.entries(kinds).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></label>
@@ -65,6 +68,7 @@ export function CreationWorkbenchPanel({novelId,chapter,initialComments=false,co
  <p>{row.instructions||row.description||row.ending}</p><small>{row.privacy_level} · 来源章节 {Object.entries(row.source_versions).map(([id,v])=>`${id} v${v}`).join('、')||'无'} · {row.actor_id}</small>
  <div className="novel-actions"><Button disabled={busy} onClick={()=>{setEditing(row);setDraft(editable(row))}}>编辑</Button>{row.status==='DRAFT'&&<Button disabled={busy} onClick={()=>void run(()=>api.creationRecordAction(novelId,row.id,'approve',row.version,undefined,context),'方案已审核')}>审核通过</Button>}{row.status==='APPROVED'&&['STYLE','PLOT'].includes(row.kind)&&<Button onClick={()=>{setSelected({...selected,[row.kind==='STYLE'?'styleProfileId':'plotPlanId']:row.id});setMessage('已加入写作输入。选择模型生成后，仍需审阅 AI 草稿。')}}>用于写作</Button>}{row.status!=='ARCHIVED'&&<Button disabled={busy} onClick={()=>void run(()=>api.creationRecordAction(novelId,row.id,'archive',row.version,undefined,context),'记录已归档，历史仍保留')}>归档</Button>}</div>
  <label><input type="checkbox" checked={compare.includes(row.id)} disabled={!compare.includes(row.id)&&compare.length>=2} onChange={e=>setCompare(current=>e.target.checked?[...current,row.id]:current.filter(id=>id!==row.id))}/>加入比较（最多两项）</label>
+ <details><summary>来源与证据</summary><p>{row.source||'USER'} · {row.source_provenance?.execution_mode||'手工记录'}</p>{row.source_provenance?.evidence.map((item,index)=><p key={index}>{item.chapter_id} · v{item.chapter_version} · 字符 {item.start}–{item.end}：{item.quote}</p>)}</details>
  <details><summary>版本历史（{row.history.length}）</summary>{row.history.map(old=><div key={old.version}><p>v{old.version} · {old.title} · {old.instructions||old.ending||old.description}</p><Button disabled={busy} onClick={()=>void run(()=>api.creationRecordAction(novelId,row.id,'restore',row.version,old.version,context),'历史已恢复为新草稿版本，需重新审核')}>恢复 v{old.version} 为新草稿</Button></div>)}</details>
  </article>)}
  {selectedRecords.length>0&&<section aria-label="方案比较" className="creation-workbench__compare">{selectedRecords.map(row=><article key={row.id}><h3>{row.title} · v{row.version}</h3><p>{row.instructions||row.description}</p>{row.acts.map((act,i)=><p key={i}>第 {i+1} 幕：{act}</p>)}{row.conflict&&<p>冲突：{row.conflict}</p>}{row.climax&&<p>高潮：{row.climax}</p>}{row.ending&&<p>结局：{row.ending}</p>}</article>)}</section>}

@@ -11,8 +11,9 @@ import os
 import hmac
 from urllib.parse import quote
 from .idempotency import IdempotencyStore
-from fastapi import APIRouter,HTTPException,Query,Header
+from fastapi import APIRouter,HTTPException,Query,Header,Depends,Request
 from fastapi.responses import StreamingResponse,Response
+from starlette.concurrency import run_in_threadpool
 from pydantic import BaseModel,Field,field_validator
 from .config import settings
 from .jobs import jobs
@@ -37,6 +38,7 @@ from .audio_provider_config import load as load_audio_provider_config, save as s
 from .provider_support import is_canonical_provider_id, provider_support_registry
 from .storage import atomic_write
 from .services.export_job_service import (
+    ExportJobService,
     ExportJobNotCancellable,
     ExportJobNotRetryable,
     ExportJobResultInvalid,
@@ -90,6 +92,8 @@ class GenerateIn(BaseModel):
     source:str=""
     selected_text:str=""
     style:str=""
+    style_profile_id:str|None=None
+    plot_plan_id:str|None=None
     @field_validator("style")
     @classmethod
     def validate_style(cls,value:str)->str:
@@ -170,7 +174,7 @@ class AssetProviderConfigIn(BaseModel):
     display_name:str=""
 class AssetUploadIn(BaseModel): novel_id:str; filename:str; content_base64:str; media_type:str|None=None; kind:str="image"; character_id:str|None=None; scene_id:str|None=None
 class VisionAnalyzeIn(BaseModel): provider_id:str="openai"; model_id:str="gpt-4o-mini"; prompt:str; image_url:str; novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None
-class ImageGenerateIn(BaseModel): provider_id:str="ddshub"; model_id:str="gpt-image-2"; prompt:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None; constraints:dict[str,object]={}
+class ImageGenerateIn(BaseModel): provider_id:str="ddshub"; model_id:str="gpt-image-2"; prompt:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None; constraints:dict[str,object]={}; parameters:dict[str,object]=Field(default_factory=dict)
 class ImageEditIn(ImageGenerateIn):
     images:list[str]=Field(min_length=1,max_length=5)
     size:str="auto"
@@ -203,12 +207,14 @@ class AudiobookJobIn(BaseModel):
     character_id:str|None=None
     speech_rate:float=Field(default=1.0,ge=0.5,le=2.0)
     pause_ms:int=Field(default=280,ge=0,le=3000)
+    license_note:str|None=Field(default=None,max_length=500)
 class VoiceBindingIn(BaseModel):
     character_id:str=Field(min_length=1,max_length=160)
     provider_id:str="openai"
     model_id:str="gpt-4o-mini-tts"
     voice:str=Field(default="alloy",min_length=1,max_length=120)
     emotion:str=Field(default="neutral",max_length=80)
+    license_note:str|None=Field(default=None,max_length=500)
 class PronunciationEntryIn(BaseModel):
     term:str=Field(min_length=1,max_length=160)
     pronunciation:str=Field(min_length=1,max_length=240)
@@ -251,15 +257,18 @@ class MoveIn(BaseModel): direction:str
 class PendingEditIn(BaseModel): proposals:list[dict]
 class ImportIn(BaseModel): format:str; content:str=""; content_base64:str|None=None; confirm:bool=False
 class ImportKnowledgeReviewIn(BaseModel):
+    expected_version:int|None=Field(default=None,ge=1)
     decision:str
     candidates:dict[str,list[dict]]={}
     review_id:str|None=None
     note:str=""
     selected:dict[str,list[bool]]|None=None
 class ImportKnowledgeReviewUpdateIn(BaseModel):
+    expected_version:int|None=Field(default=None,ge=1)
     candidates:dict[str,list[dict]]
     selected:dict[str,list[bool]]|None=None
 class ImportAiReviewIn(BaseModel):
+    allow_cloud_excerpt:bool=False
     provider_id:str|None=None
     model_id:str|None=None
 class ExportCreateIn(BaseModel): format:str="json"
@@ -268,11 +277,12 @@ class AdaptationBlueprintUpdateIn(BaseModel): focus:str; pacing:str; format:str;
 class AdaptationDraftReviewIn(BaseModel): decision:str; note:str=""
 class AdaptationDraftGenerateIn(BaseModel): mode:str="deterministic"; provider_id:str|None=None; model_id:str|None=None
 class ScreenplayIn(BaseModel): title:str=""
-class ScreenplaySceneIn(BaseModel): heading:str; time:str=""; location:str=""; characters:list[str]=[]; action:str=""; dialogue:list[dict]=[]; emotion:str=""
-class ShotIn(BaseModel): shot_size:str; camera_angle:str; camera_motion:str; subject_position:str; action:str; dialogue:list[dict]=[]; sound_effect:str; duration_seconds:int=5
-class StoryboardCardIn(BaseModel): frame_prompt:str=""; composition:str=""; color:str=""
-class TransitionIn(BaseModel): type:str="CUT"; duration_seconds:int=0; note:str=""; prompt:str=""
-class AssetRequirementIn(BaseModel): kind:str="IMAGE"; description:str=""; status:str="PENDING"; notes:str=""
+class ScreenplayVersionIn(BaseModel): expected_version:int|None=Field(default=None,ge=0); source_version:int|None=Field(default=None,ge=0)
+class ScreenplaySceneIn(ScreenplayVersionIn): heading:str; time:str=""; location:str=""; characters:list[str]=[]; action:str=""; dialogue:list[dict]=[]; emotion:str=""
+class ShotIn(ScreenplayVersionIn): shot_size:str; camera_angle:str; camera_motion:str; subject_position:str; action:str; dialogue:list[dict]=[]; sound_effect:str; duration_seconds:int=5
+class StoryboardCardIn(ScreenplayVersionIn): frame_prompt:str=""; composition:str=""; color:str=""
+class TransitionIn(ScreenplayVersionIn): type:str="CUT"; duration_seconds:int=0; note:str=""; prompt:str=""
+class AssetRequirementIn(ScreenplayVersionIn): kind:str="IMAGE"; description:str=""; status:str="PENDING"; notes:str=""
 class AssetTaskIn(BaseModel): status:str="PENDING"; provider_id:str|None=None; model_id:str|None=None; error:str|None=None
 class ContinuityCheckIn(BaseModel): events:list[dict]=[]; locations:list[dict]=[]; knowledge:list[dict]=[]; used_subject_ids:list[str]=[]; world_rules:list[dict]=[]
 class ContinuityScanChapterIn(BaseModel): chapter_id:str|None=None; chapter:int|None=Field(default=None,ge=1)
@@ -392,6 +402,8 @@ def _agent_job_scope(actor, novel_id: str, branch_id: str | None):
     permission without duplicating these checks.
     """
     if not branch_id:
+        if collaboration_scope_service.repository.project_workspace(novel_id):
+            raise HTTPException(403,{"code":"AGENT_JOB_BRANCH_REQUIRED"})
         return None
     try:
         workspace_id = collaboration_scope_service.repository.project_workspace(novel_id)
@@ -465,6 +477,8 @@ def _validate_agent_job_filter(
 
 def _agent_job_actor_for_record(actor_token, job, permission: str = "domain.read"):
     actor = _agent_job_read_actor(actor_token)
+    if not job.get("branch_id") and job.get("owner") != {"actor_id":actor.actor_id,"workspace_id":actor.workspace_id}:
+        raise HTTPException(403,{"code":"AGENT_JOB_OWNER_FORBIDDEN"})
     _validate_agent_job_branch(actor, job.get("novel_id"), job.get("branch_id"), permission)
     return actor
 
@@ -494,9 +508,23 @@ def guard(fn,*args):
     except FileExistsError as exc:raise HTTPException(409,f"Already exists: {exc}")
     except (ValueError,KeyError) as exc:raise HTTPException(400,str(exc))
 
-def _authorize_media_novel(novel_id:str,session_token:str|None,permission:str):
+def _authorize_media_novel(novel_id:str,session_token:str|None,permission:str,branch_id:str|None=None):
     if settings.enable_collaboration_runtime:
         _authorize_novel_project(novel_id,session_token,permission)
+        if not branch_id: raise HTTPException(400,{"code":"BRANCH_SCOPE_REQUIRED"})
+        _adaptation_context(novel_id,branch_id,session_token,permission)
+
+def _audio_store(branch_id:str|None=None,session_token:str|None=None):
+    if not settings.enable_collaboration_runtime:return audio_production_store
+    actor=trusted_session_resolver.resolve(session_token)
+    return audio_production_store.for_branch(branch_id).for_actor(actor.actor_id)
+
+def _authorize_motion(novel_id,screenplay_id,session_token,permission,branch_id):
+    _authorize_media_novel(novel_id,session_token,permission,branch_id)
+    if settings.enable_collaboration_runtime:
+        screenplay=next((row for row in screenplay_service.list(novel_id) if row['id']==screenplay_id),None)
+        if screenplay is None or screenplay.get('branch_id')!=branch_id:
+            raise HTTPException(404,{"code":"MEDIA_SCOPE_NOT_FOUND"})
 
 def capability_guard(fn,*args,**kwargs):
     """Map capability-service failures to the shared API error contract."""
@@ -695,7 +723,10 @@ def agent_chat(body:AgentChatIn):
         raise HTTPException(503,{"code":exc.code.value,"message":exc.safe_message,"retryable":exc.retryable}) from exc
     return {"message":result.generated_text,"provider_id":result.response.provider_id,"model_id":result.response.model_id,"read_only":True,"preferences_used":preferences_used}
 @router.get("/agents/{agent_id}/context-preview")
-def agent_context_preview(agent_id:str,novel_id:str,chapter:int,instruction:str="",target:str="local"):
+def agent_context_preview(agent_id:str,novel_id:str,chapter:int,instruction:str="",target:str="local",x_session_token:str|None=Header(default=None),x_branch_id:str|None=Header(default=None)):
+    if settings.enable_collaboration_runtime:
+        actor=_agent_job_read_actor(x_session_token)
+        _validate_agent_job_branch(actor,novel_id,x_branch_id,"domain.read")
     if target not in {"local","cloud"}:raise HTTPException(400,"target must be local or cloud")
     return guard(agent_context_service.build,agent_id,novel_id,chapter,instruction,target=="cloud")
 @router.post("/agent-jobs",status_code=202)
@@ -704,16 +735,26 @@ def create_agent_job(body:AgentJobIn,x_session_token:str|None=Header(default=Non
     _validate_agent_job_branch(actor,body.novel_id,body.branch_id,"domain.write")
     if body.target not in {"local","cloud"}:raise HTTPException(400,"target must be local or cloud")
     result=guard(agent_job_service.create,body.agent_id,body.novel_id,body.chapter,body.instruction,body.target,body.provider_id,body.model_id,body.execution_mode,body.timeout_seconds)
-    if body.branch_id:
-        result={**result,"branch_id":body.branch_id};agent_job_service.generations.save(result)
+    result={**result,"owner":{"actor_id":actor.actor_id,"workspace_id":actor.workspace_id}}
+    if body.branch_id:result["branch_id"]=body.branch_id
+    agent_job_service.generations.save(result)
     return result
+def _agent_job_visibility(token):
+    def visible(job):
+        try:
+            _agent_job_actor_for_record(token,job)
+            return True
+        except HTTPException:
+            return False
+    return visible
+
 @router.get("/agent-jobs/export.csv")
 def export_agent_jobs(novel_id:str|None=None,agent_id:str|None=None,status:str|None=None,created_after:str|None=None,created_before:str|None=None,branch_id:str|None=None,x_session_token:str|None=Header(default=None,alias="X-Session-Token")):
     actor=_agent_job_read_actor(x_session_token)
     scope=_validate_agent_job_filter(actor,novel_id,branch_id,"domain.read")
-    content=guard(agent_job_service.export_csv,novel_id,agent_id,status,created_after,created_before,branch_id)
+    content=guard(agent_job_service.export_csv,novel_id,agent_id,status,created_after,created_before,branch_id,_agent_job_visibility(x_session_token))
     if scope is not None:
-        summary=agent_job_service.export_summary(novel_id,agent_id,status,created_after,created_before,branch_id)
+        summary=agent_job_service.export_summary(novel_id,agent_id,status,created_after,created_before,branch_id,_agent_job_visibility(x_session_token))
         audit_service.append(audit_service.build(actor,"AGENT_JOB_EXPORT","AgentJobExport",novel_id or scope.project_id,scope,summary))
     return Response(content=content,media_type="text/csv",headers={"Content-Disposition":"attachment; filename=agent-jobs.csv"})
 @router.get("/agent-jobs/audit")
@@ -743,7 +784,7 @@ def get_agent_job(job_id:str,x_session_token:str|None=Header(default=None,alias=
 def list_agent_jobs(novel_id:str|None=None,agent_id:str|None=None,status:str|None=None,created_after:str|None=None,created_before:str|None=None,branch_id:str|None=None,page:int=Query(default=1,ge=1),page_size:int=Query(default=20,ge=1,le=100),x_session_token:str|None=Header(default=None,alias="X-Session-Token")):
     actor=_agent_job_read_actor(x_session_token)
     _validate_agent_job_filter(actor,novel_id,branch_id,"domain.read")
-    return guard(agent_job_service.list,novel_id,agent_id,status,page,page_size,created_after,created_before,branch_id)
+    return guard(agent_job_service.list,novel_id,agent_id,status,page,page_size,created_after,created_before,branch_id,_agent_job_visibility(x_session_token))
 @router.post("/agent-jobs/{job_id}/execute")
 def execute_agent_job(job_id:str,x_session_token:str|None=Header(default=None,alias="X-Session-Token")):
     _agent_job_actor_for_record(x_session_token,guard(agent_job_service.get,job_id),"domain.write")
@@ -762,12 +803,12 @@ def retry_agent_job(job_id:str,x_session_token:str|None=Header(default=None,alia
     return guard(agent_job_service.retry,job_id)
 @router.post("/agent-jobs/{job_id}/review")
 def review_agent_job(job_id:str,body:AgentJobReviewIn,x_session_token:str|None=Header(default=None,alias="X-Session-Token")):
-    _require_agent_job_capability(x_session_token,guard(agent_job_service.get,job_id),"domain.review")
-    return guard(agent_job_service.review,job_id,body.decision,body.reviewed_by,body.note,body.actions)
+    actor=_require_agent_job_capability(x_session_token,guard(agent_job_service.get,job_id),"domain.review")
+    return guard(agent_job_service.review,job_id,body.decision,actor.actor_id,body.note,body.actions)
 @router.post("/agent-jobs/{job_id}/apply")
 def apply_agent_job(job_id:str,body:AgentJobApplyIn,x_session_token:str|None=Header(default=None,alias="X-Session-Token")):
-    _require_agent_job_capability(x_session_token,guard(agent_job_service.get,job_id),"domain.write")
-    return guard(agent_job_service.apply,job_id,body.applied_by)
+    actor=_require_agent_job_capability(x_session_token,guard(agent_job_service.get,job_id),"domain.write")
+    return guard(agent_job_service.apply,job_id,actor.actor_id)
 @router.post("/workspaces",status_code=201)
 def create_workspace(body:WorkspaceIn):
     raise HTTPException(410,{"code":"LEGACY_WORKSPACE_MUTATION_DISABLED","detail":"Use /api/collaboration/admin/workspaces with a trusted session"})
@@ -1057,37 +1098,96 @@ def upsert_story_route(nid:str,route_id:str,body:StoryRouteIn):return guard(nove
 def story_routes(nid:str):return guard(novel_service.data_set,nid,"story_routes")
 @router.get("/novels/{nid}/secrets")
 def secrets(nid:str): return guard(novel_service.public_secrets,nid)
+def _generation_request_context(body, token, branch):
+    actor = scope = None
+    chapter = guard(chapter_service.get, body.chapter_id)
+    if chapter["novel_id"] != body.novel_id:
+        raise HTTPException(404, {"code": "CHAPTER_OUTSIDE_PROJECT"})
+    if settings.enable_collaboration_runtime:
+        actor, scope, _ = _collaboration_context(body.chapter_id, token, branch)
+        try:
+            membership_authorization_service.require(actor, "domain.read", ModalityDomain.NOVEL, scope)
+        except PermissionError as exc:
+            raise HTTPException(403, {"code": "FORBIDDEN"}) from exc
+    return actor, scope
+
+
+def _generation_payload(body, token, branch):
+    payload = body.model_dump(exclude={"count"})
+    if body.style_profile_id or body.plot_plan_id:
+        _, record_scope = _workbench_authorize(body.novel_id, token, branch, "domain.read")
+        try:
+            inputs = creation_workbench_service.generation_inputs(body.novel_id, record_scope, body.style_profile_id, body.plot_plan_id)
+        except (ValueError, FileNotFoundError) as exc:
+            raise HTTPException(422, {"code": "CREATION_RECORD_NOT_AVAILABLE", "message": str(exc)}) from exc
+        restricted = any(r["privacy_level"] != "CLOUD_ALLOWED" for r in inputs["records"])
+        if restricted and (body.profile != "LOCAL_ONLY" or runtime.is_remote_text_provider(body.provider_id)):
+            raise HTTPException(403, {"code": "CREATION_RECORD_LOCAL_ONLY", "message": "所选方案限制云端使用，请选择本地模型或调整方案隐私后重新审核。"})
+        payload["creation_records"] = inputs["records"]
+        if inputs["style"]:
+            payload["style"] = inputs["style"]
+        payload["instruction"] = "\n".join(x for x in (body.instruction, inputs["instruction"]) if x)
+    return payload
+
+
 @router.post("/generate/{operation}",status_code=202)
 def generate(operation:str,body:GenerateIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None),idempotency_key:str|None=Header(None,alias="Idempotency-Key")):
-    if operation not in {"continue","rewrite","polish","brainstorm","review"}: raise HTTPException(404,"Unknown generation operation")
+    if operation not in {"continue","rewrite","polish","brainstorm","review"}:
+        raise HTTPException(404,"Unknown generation operation")
+    actor, scope = _generation_request_context(body, x_session_token, x_branch_id)
+    payload = _generation_payload(body, x_session_token, x_branch_id)
+    authority = [body.novel_id, body.chapter_id, getattr(actor, "actor_id", "local-author"), getattr(actor, "workspace_id", "local"), getattr(scope, "branch_id", None)]
+    cache_scope = "generate:" + operation + ":" + hashlib.sha256(json.dumps(authority).encode()).hexdigest()
+    digest = hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+    def create():
+        job = jobs.create(operation, payload, actor=actor, scope=scope)
+        return {"job_id":job.id,"status":job.status,"events_url":f"/api/generation/{job.id}/events","base_chapter_version":job.base_chapter_version}
     if idempotency_key:
         with _idempotency_execution_lock:
-            cached=_cached_idempotent(idempotency_key,f"generate:{operation}")
-            if cached:return cached
-            result=_generate_once(operation,body,x_session_token,x_branch_id)
-            return _store_idempotent(idempotency_key,f"generate:{operation}",result)
-    return _generate_once(operation,body,x_session_token,x_branch_id)
+            cached = _cached_idempotent(idempotency_key, cache_scope)
+            if cached:
+                if cached.get("request_digest") != digest:
+                    raise HTTPException(409, {"code": "IDEMPOTENCY_REQUEST_MISMATCH"})
+                if settings.enable_collaboration_runtime:
+                    _generation_context(cached["result"]["job_id"], x_session_token)
+                return cached["result"]
+            result = create()
+            _store_idempotent(idempotency_key, cache_scope, {"request_digest": digest, "result": result})
+            return result
+    return create()
+
+
 def _generate_once(operation,body,x_session_token,x_branch_id):
-    if settings.enable_collaboration_runtime:
-        actor,scope,_=_collaboration_context(body.chapter_id,x_session_token,x_branch_id);membership_authorization_service.require(actor,"domain.read",ModalityDomain.NOVEL,scope);job=jobs.create(operation,body.model_dump(),actor=actor,scope=scope)
-    else:job=jobs.create(operation,body.model_dump())
+    actor, scope = _generation_request_context(body, x_session_token, x_branch_id)
+    job = jobs.create(operation, _generation_payload(body, x_session_token, x_branch_id), actor=actor, scope=scope)
     return {"job_id":job.id,"status":job.status,"events_url":f"/api/generation/{job.id}/events","base_chapter_version":job.base_chapter_version}
+
+
 @router.post("/generate/{operation}/variants",status_code=202)
 def generate_variants(operation:str,body:GenerateVariantsIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
-    if operation not in {"continue","rewrite","polish","brainstorm"}: raise HTTPException(404,"Unknown generation operation")
-    payload=body.model_dump(exclude={"count"});created=[];group_id=str(uuid.uuid4())
-    actor=scope=None
-    if settings.enable_collaboration_runtime:
-        actor,scope,_=_collaboration_context(body.chapter_id,x_session_token,x_branch_id);membership_authorization_service.require(actor,"domain.read",ModalityDomain.NOVEL,scope)
+    if operation not in {"continue","rewrite","polish","brainstorm"}:
+        raise HTTPException(404,"Unknown generation operation")
+    actor, scope = _generation_request_context(body, x_session_token, x_branch_id)
+    payload = _generation_payload(body, x_session_token, x_branch_id)
+    created = []
+    group_id = str(uuid.uuid4())
     for index in range(body.count):
-        item=dict(payload);item["variant_group_id"]=group_id;item["variant_index"]=index+1;item["instruction"]=(body.instruction+f"\n候选方案 {index+1}：请提供与其他候选明显不同但同样符合要求的方向。").strip()
-        job=jobs.create(operation,item,actor=actor,scope=scope)
+        item = dict(payload)
+        item.update(variant_group_id=group_id, variant_index=index + 1,
+                    instruction=(payload["instruction"] + f"\n候选方案 {index+1}：请提供与其他候选明显不同但同样符合要求的方向。").strip())
+        job = jobs.create(operation, item, actor=actor, scope=scope)
         created.append({"job_id":job.id,"status":job.status,"events_url":f"/api/generation/{job.id}/events","base_chapter_version":job.base_chapter_version,"variant_index":index+1})
     return {"operation":operation,"group_id":group_id,"count":len(created),"variants":created}
+
+
 @router.get("/generation-groups/{group_id}")
 def generation_group(group_id:str,x_session_token:str|None=Header(None)):
-    variants=jobs.variants(group_id)
-    if not variants: raise HTTPException(404,"Generation variant group not found")
+    variants = jobs.variants(group_id)
+    if not variants:
+        raise HTTPException(404,"Generation variant group not found")
+    if settings.enable_collaboration_runtime:
+        for job in variants:
+            _generation_context(job.id, x_session_token)
     return {"group_id":group_id,"count":len(variants),"variants":[job.public() for job in variants]}
 @router.get("/generation/{jid}")
 def generation(jid:str,x_session_token:str|None=Header(None)):
@@ -1140,10 +1240,14 @@ def approve(pid:str,body:PendingEditIn|None=None):
 @router.post("/pending-canon/{pid}/reject")
 def reject_pending(pid:str): return guard(canon_service.reject,pid)
 @router.get("/novels/{nid}/export")
-def export_novel(nid:str,format:str="json"):
+def export_novel(nid:str,format:str="json",x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
     # Industry artifacts require the durable queue and its project/branch gate.
     if str(format).lower().strip() not in {"json", "txt", "text", "markdown", "docx", "word", "pdf", "epub", "screenplay", "shot-list", "storyboard"}:
         raise HTTPException(400, "use POST /exports for supported industry export formats")
+    if settings.enable_collaboration_runtime or x_branch_id:
+        context = _export_request_context(nid,x_branch_id,x_session_token)
+        snapshot = guard(lambda: novel_service.export_snapshot(nid,format=format,permission_context=context))
+        return guard(lambda: novel_service.export(nid,format,snapshot=snapshot))
     return guard(novel_service.export,nid,format)
 
 def _authorize_novel_project(
@@ -1200,6 +1304,39 @@ def _authorize_export_project(
             raise HTTPException(403,{"code":"EXPORT_SCOPE_FORBIDDEN"}) from exc
         raise
 
+def _export_request_context(novel_id: str, requested_branch: str | None, session_token: str | None) -> dict:
+    context = {"mode": "local", "novel_id": novel_id}
+    if settings.enable_collaboration_runtime or requested_branch:
+        actor, scope = _authorize_export_project(novel_id, requested_branch, session_token, "domain.read")
+        context = {"mode": "collaboration", "novel_id": novel_id, "branch_id": requested_branch,
+                   "workspace_id": scope.workspace_id, "storyline_id": scope.storyline_id,
+                   "actor_id": actor.actor_id, "permission": "domain.read"}
+    return context
+
+
+@router.get("/exports")
+def list_exports(
+    novel_id: str,
+    branch_id: str | None = Query(default=None),
+    status: str | None = Query(default=None),
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    x_branch_id: str | None = Header(default=None, alias="X-Branch-Id"),
+    x_session_token: str | None = Header(default=None, alias="X-Session-Token"),
+):
+    context = _export_request_context(novel_id, branch_id or x_branch_id, x_session_token)
+    try:
+        novel_service.get(novel_id)
+        page = export_job_service.list(novel_id, permission_context=context, status=status, limit=limit, offset=offset)
+        # The trusted actor and membership are resolved again on every request.
+        # Individual reads/downloads retain their own fresh authorization gate.
+        return page
+    except FileNotFoundError:
+        raise HTTPException(404, "novel not found")
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+
+
 @router.post("/exports", status_code=202)
 def create_export(
     body:ExportCreateIn,
@@ -1210,32 +1347,7 @@ def create_export(
     x_session_token: str | None = Header(default=None, alias="X-Session-Token"),
 ):
     try:
-        requested_branch = branch_id or x_branch_id
-        permission_context = {"mode": "local", "novel_id": novel_id}
-        if settings.enable_collaboration_runtime:
-            actor, scope = _authorize_export_project(
-                novel_id, requested_branch, x_session_token, "domain.read"
-            )
-            permission_context = {
-                "mode": "collaboration",
-                "novel_id": novel_id,
-                "branch_id": requested_branch,
-                "workspace_id": scope.workspace_id,
-                "storyline_id": scope.storyline_id,
-                "actor_id": actor.actor_id,
-                "permission": "domain.read",
-            }
-        elif requested_branch:
-            actor, scope = _adaptation_context(novel_id, requested_branch, x_session_token, "domain.read")
-            permission_context = {
-                "mode": "collaboration",
-                "novel_id": novel_id,
-                "branch_id": requested_branch,
-                "workspace_id": scope.workspace_id,
-                "storyline_id": scope.storyline_id,
-                "actor_id": actor.actor_id,
-                "permission": "domain.read",
-            }
+        permission_context = _export_request_context(novel_id, branch_id or x_branch_id, x_session_token)
         novel_service.get(novel_id)
         create_export_job = export_job_service.create
         try:
@@ -1245,8 +1357,8 @@ def create_export(
         if "permission_context" in parameters or any(
             parameter.kind is inspect.Parameter.VAR_KEYWORD for parameter in parameters.values()
         ):
-            return create_export_job(novel_id, body.format, idempotency_key, permission_context=permission_context)
-        return create_export_job(novel_id, body.format, idempotency_key)
+            return ExportJobService.public(create_export_job(novel_id, body.format, idempotency_key, permission_context=permission_context))
+        return ExportJobService.public(create_export_job(novel_id, body.format, idempotency_key))
     except FileNotFoundError: raise HTTPException(404, "novel not found")
     except ValueError as exc: raise HTTPException(400, str(exc))
 
@@ -1254,34 +1366,38 @@ def _authorize_export_job(
     job_id: str,
     session_token: str | None,
     permission: str,
+    requested_branch: str | None = None,
 ):
-    """Authorize an export record against its persisted project scope."""
-    if not settings.enable_collaboration_runtime:
-        return None
+    """Reauthorize persisted owner/scope; never trust a request's actor ID."""
     try:
         job = export_job_service.get(job_id)
     except (FileNotFoundError, ExportJobResultInvalid):
         raise HTTPException(404, "export job not found")
-    permission_context = job.get("permission_context")
-    branch_id = permission_context.get("branch_id") if isinstance(permission_context, dict) else None
-    _authorize_export_project(
-        str(job.get("novel_id") or ""),
-        branch_id,
-        session_token,
-        permission,
-        conceal=True,
+    context = job.get("permission_context") or {}
+    if not settings.enable_collaboration_runtime and context.get("mode") != "collaboration":
+        return job
+    branch_id = context.get("branch_id")
+    actor, scope = _authorize_export_project(
+        str(job.get("novel_id") or ""), branch_id, session_token, permission, conceal=True,
     )
+    if (context.get("mode") != "collaboration" or context.get("actor_id") != actor.actor_id
+        or context.get("workspace_id") != scope.workspace_id
+        or context.get("novel_id") != job.get("novel_id")
+        or context.get("storyline_id") != scope.storyline_id
+        or (requested_branch is not None and requested_branch != branch_id)):
+        raise HTTPException(404, "export job not found")
     return job
 
 @router.post("/exports/{job_id}/cancel")
 def cancel_export(
     job_id: str,
     x_session_token: str | None = Header(default=None, alias="X-Session-Token"),
+    x_branch_id: str | None = Header(default=None, alias="X-Branch-Id"),
 ):
     """Cancel a queued/running export without exposing provider credentials."""
     try:
-        _authorize_export_job(job_id, x_session_token, "domain.write")
-        return export_job_service.cancel(job_id)
+        _authorize_export_job(job_id, x_session_token, "domain.write", x_branch_id)
+        return ExportJobService.public(export_job_service.cancel(job_id))
     except FileNotFoundError:
         raise HTTPException(404, "export job not found")
     except ExportJobNotCancellable as exc:
@@ -1298,11 +1414,12 @@ def cancel_export(
 def retry_export(
     job_id: str,
     x_session_token: str | None = Header(default=None, alias="X-Session-Token"),
+    x_branch_id: str | None = Header(default=None, alias="X-Branch-Id"),
 ):
     """Start a new attempt for a failed/cancelled export."""
     try:
-        _authorize_export_job(job_id, x_session_token, "domain.write")
-        return export_job_service.retry(job_id)
+        _authorize_export_job(job_id, x_session_token, "domain.write", x_branch_id)
+        return ExportJobService.public(export_job_service.retry(job_id))
     except FileNotFoundError:
         raise HTTPException(404, "export job not found")
     except ExportJobNotRetryable as exc:
@@ -1332,9 +1449,10 @@ def _export_content_disposition(filename: str) -> str:
 def download_export(
     job_id:str,
     x_session_token: str | None = Header(default=None, alias="X-Session-Token"),
+    x_branch_id: str | None = Header(default=None, alias="X-Branch-Id"),
 ):
     try:
-        _authorize_export_job(job_id, x_session_token, "domain.read")
+        _authorize_export_job(job_id, x_session_token, "domain.read", x_branch_id)
         payload = export_job_service.download(job_id)
         return Response(
             content=payload["content"],
@@ -1367,48 +1485,57 @@ def download_export(
 def get_export(
     job_id:str,
     x_session_token: str | None = Header(default=None, alias="X-Session-Token"),
+    x_branch_id: str | None = Header(default=None, alias="X-Branch-Id"),
 ):
     try:
-        authorized_job = _authorize_export_job(job_id, x_session_token, "domain.read")
-        return authorized_job if authorized_job is not None else export_job_service.get(job_id)
+        authorized_job = _authorize_export_job(job_id, x_session_token, "domain.read", x_branch_id)
+        return ExportJobService.public(authorized_job if authorized_job is not None else export_job_service.get(job_id))
     except FileNotFoundError: raise HTTPException(404, "export job not found")
 @router.post("/novels/{nid}/assets")
-def upload_asset(nid:str, body:AssetUploadIn, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):
-    if body.novel_id != nid: raise HTTPException(400, "novel_id does not match path")
+def upload_asset(nid:str, body:AssetUploadIn, idempotency_key:str|None=Header(None,alias="Idempotency-Key"),x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_asset_project(nid,x_session_token,x_branch_id,"domain.write")
+    if body.novel_id!=nid: raise HTTPException(400,"novel_id does not match path")
     try:
-        asset=asset_library_service.create(nid, body.filename, body.content_base64, body.media_type, body.kind, idempotency_key)
+        asset=asset_library_service.create(nid,body.filename,body.content_base64,body.media_type,body.kind,idempotency_key,branch_id=x_branch_id if settings.enable_collaboration_runtime else None)
         if body.character_id or body.scene_id:
-            asset.update({"character_id":body.character_id,"scene_id":body.scene_id})
-            from .repository import atomic_write
-            atomic_write(asset_library_service._meta_path(asset["id"]), __import__('json').dumps(asset,ensure_ascii=False,indent=2))
+            asset=asset_library_service.update_metadata(asset['id'],{'character_id':body.character_id,'scene_id':body.scene_id},branch_id=_image_branch(x_branch_id))
         return asset
-    except ValueError as exc: raise HTTPException(400, str(exc))
+    except ValueError as exc: raise HTTPException(400,str(exc))
 @router.get("/novels/{nid}/assets")
-def list_assets(nid:str,kind:str|None=None,character_id:str|None=None,scene_id:str|None=None):
-    items=asset_library_service.list(nid)
+def list_assets(nid:str,kind:str|None=None,character_id:str|None=None,scene_id:str|None=None,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_asset_project(nid,x_session_token,x_branch_id,"domain.read")
+    items=asset_library_service.list(nid,branch_id=x_branch_id if settings.enable_collaboration_runtime else None)
     return [item for item in items if (not kind or item.get('kind')==kind) and (not character_id or item.get('character_id')==character_id) and (not scene_id or item.get('scene_id')==scene_id)]
-def _scoped_asset(asset_id:str,novel_id:str):
-    asset=asset_library_service.get(asset_id)
-    if not hmac.compare_digest(str(asset.get('novel_id') or ''),str(novel_id)):
-        raise FileNotFoundError(asset_id)
+def _scoped_asset(asset_id:str,novel_id:str,branch_id:str|None=None):
+    asset=asset_library_service.get(asset_id,branch_id=branch_id if settings.enable_collaboration_runtime else None)
+    if not hmac.compare_digest(str(asset.get('novel_id') or ''),str(novel_id)): raise FileNotFoundError(asset_id)
     return asset
 def _authorize_asset_project(novel_id:str,session_token:str|None,branch_id:str|None,permission:str):
     if not settings.enable_collaboration_runtime:return
+    _authorize_novel_project(novel_id,session_token,permission)
     if not branch_id:raise HTTPException(400,{"code":"BRANCH_SCOPE_REQUIRED"})
     _adaptation_context(novel_id,branch_id,session_token,permission)
 @router.get("/assets/{asset_id}")
 def get_asset(asset_id:str,novel_id:str=Query(min_length=1),x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
-    try: _authorize_asset_project(novel_id,x_session_token,x_branch_id,"domain.read"); return _scoped_asset(asset_id,novel_id)
-    except FileNotFoundError: raise HTTPException(404, "asset not found")
+    try:
+        _authorize_asset_project(novel_id,x_session_token,x_branch_id,"domain.read")
+        return _scoped_asset(asset_id,novel_id,x_branch_id)
+    except FileNotFoundError: raise HTTPException(404,"asset not found")
+    except ValueError: raise HTTPException(400,"invalid asset identifier")
 @router.get("/assets/{asset_id}/download")
 def download_asset(asset_id:str,novel_id:str=Query(min_length=1),x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     try:
-        _authorize_asset_project(novel_id,x_session_token,x_branch_id,"domain.read");meta=_scoped_asset(asset_id,novel_id); return Response(asset_library_service.content(asset_id), media_type=meta["media_type"], headers={"Content-Disposition": _export_content_disposition(meta["filename"]), "X-Asset-SHA256": meta["sha256"]})
-    except FileNotFoundError: raise HTTPException(404, "asset not found")
+        _authorize_asset_project(novel_id,x_session_token,x_branch_id,"domain.read");meta=_scoped_asset(asset_id,novel_id,x_branch_id)
+        return Response(asset_library_service.content(asset_id,branch_id=x_branch_id if settings.enable_collaboration_runtime else None),media_type=meta["media_type"],headers={"Content-Disposition":_export_content_disposition(meta["filename"]),"X-Asset-SHA256":meta["sha256"],"X-Content-Type-Options":"nosniff"})
+    except FileNotFoundError: raise HTTPException(404,"asset not found")
+    except ValueError: raise HTTPException(409,{"code":"ASSET_INTEGRITY_FAILED","message":"资产内容校验失败"})
 @router.delete("/assets/{asset_id}")
 def delete_asset(asset_id:str,novel_id:str=Query(min_length=1),x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
-    try: _authorize_asset_project(novel_id,x_session_token,x_branch_id,"domain.write");_scoped_asset(asset_id,novel_id); return asset_library_service.delete(asset_id)
-    except FileNotFoundError: raise HTTPException(404, "asset not found")
+    try:
+        _authorize_asset_project(novel_id,x_session_token,x_branch_id,"domain.write");_scoped_asset(asset_id,novel_id,x_branch_id)
+        return asset_library_service.delete(asset_id,branch_id=x_branch_id if settings.enable_collaboration_runtime else None)
+    except FileNotFoundError: raise HTTPException(404,"asset not found")
+    except ValueError: raise HTTPException(400,"invalid asset identifier")
 @router.post("/novels/import")
 def import_novel(body:ImportIn,idempotency_key:str|None=Header(None,alias="Idempotency-Key")):
     def attach_review(payload):
@@ -1437,39 +1564,48 @@ def import_novel(body:ImportIn,idempotency_key:str|None=Header(None,alias="Idemp
         return attach_review(novel_service.import_project(body.format,body.content,body.confirm,body.content_base64))
     except json.JSONDecodeError as exc:raise HTTPException(400,f"Invalid JSON: {exc}")
     except ValueError as exc:raise HTTPException(400,str(exc))
+def _import_review_access(nid, token, branch, permission, review=None):
+    actor, scope = _workbench_authorize(nid, token, branch, permission)
+    if review is not None and (review.get("novel_id") != nid or review.get("permission_context", {"mode": "local", "novel_id": nid}) != scope):
+        raise HTTPException(404, {"code": "IMPORT_REVIEW_NOT_FOUND"})
+    return actor, scope
+
+
 @router.post("/novels/{nid}/import/knowledge-base/review")
-def review_import_knowledge(nid:str,body:ImportKnowledgeReviewIn):
+def review_import_knowledge(nid:str,body:ImportKnowledgeReviewIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     try:
-        # Do not create an orphan review record for an unknown project.
-        novel_service.get(nid)
-        if body.review_id:
-            review = import_review_service.get(body.review_id)
-            if review.get("novel_id") != nid:
-                raise HTTPException(403, {"code": "IMPORT_REVIEW_SCOPE_FORBIDDEN"})
-        else:
-            review = None
-            pending = import_review_service.list_for_novel(nid, status="PENDING")
-            # A confirmed import creates one full candidate set.  The desktop
-            # review window may POST only the checked subset; attach that
-            # decision to the existing pending record instead of creating a
-            # second orphan review for the subset fingerprint.
-            if pending:
-                review = pending[0]
+        actor, scope = _import_review_access(nid, x_session_token, x_branch_id, "domain.write")
+        with import_review_service._lock:
+            if body.review_id:
+                review = import_review_service.get(body.review_id)
+                _import_review_access(nid, x_session_token, x_branch_id, "domain.write", review)
             else:
-                review = import_review_service.ensure_pending(nid, body.candidates)
-        decision = str(body.decision or "").upper().strip()
-        if decision == "SKIPPED":
-            record = import_review_service.decide(review["id"], "SKIPPED", note=body.note)
-            return {"decision": "SKIPPED", "applied": {"characters": [], "locations": [], "timeline_events": [], "foreshadowing": []}, "review": record}
-        applied = guard(novel_service.review_import_knowledge, nid, decision, body.candidates or review.get("candidates", {}))
-        record = import_review_service.decide(
-            review["id"],
-            decision,
-            selected=body.candidates or review.get("candidates", {}),
-            applied=applied.get("applied") if isinstance(applied, dict) else {},
-            note=body.note,
-        )
-        return {**applied, "review": record}
+                pending = [r for r in import_review_service.list_for_novel(nid, status="PENDING") if r.get("permission_context", {"mode": "local", "novel_id": nid}) == scope]
+                review = pending[0] if pending else import_review_service.ensure_pending(nid, body.candidates, permission_context=scope)
+            decision = str(body.decision or "").upper().strip()
+            if decision not in {"ACCEPTED", "REJECTED", "SKIPPED"}:
+                raise ValueError("invalid knowledge review decision")
+            if review["status"] != "PENDING":
+                if review["status"] != decision:
+                    raise HTTPException(409, {"code": "IMPORT_REVIEW_ALREADY_DECIDED"})
+                return {"decision": review["status"], "applied": review.get("applied", {}), "review": review}
+            if body.review_id and body.expected_version is None:
+                raise HTTPException(428, {"code": "IMPORT_REVIEW_VERSION_REQUIRED"})
+            if body.expected_version is not None and body.expected_version != int(review.get("version", 1)):
+                raise HTTPException(409, {"code": "IMPORT_REVIEW_VERSION_CONFLICT", "current": review})
+            selected = body.candidates
+            if not selected and body.selected is not None:
+                selected = {kind: [item for i, item in enumerate(items) if i < len(body.selected.get(kind, [])) and body.selected[kind][i]] for kind, items in review.get("candidates", {}).items()}
+            # Empty explicit selection must never expand to all candidates.
+            applied = {"decision": decision, "applied": {"characters": [], "locations": [], "timeline_events": [], "foreshadowing": []}}
+            if decision == "ACCEPTED":
+                from .services.import_apply_service import ImportApplyService, ImportApplyInterrupted
+                try:
+                    applied = ImportApplyService(novel_service, import_review_service.path.parent).apply(review["id"], nid, selected, actor_id=actor)
+                except ImportApplyInterrupted as exc:
+                    raise HTTPException(409, exc.detail) from exc
+            record = import_review_service.decide(review["id"], decision, selected=selected, applied=applied["applied"], note=body.note, actor_id=actor)
+            return {**applied, "review": record}
     except HTTPException:
         raise
     except FileNotFoundError:
@@ -1477,69 +1613,50 @@ def review_import_knowledge(nid:str,body:ImportKnowledgeReviewIn):
     except ValueError as exc:
         raise HTTPException(400, str(exc))
 
+
 @router.get("/novels/{nid}/import/knowledge-base/review")
-def list_import_knowledge_reviews(nid: str, status: str | None = Query(default=None)):
-    try:
-        novel_service.get(nid)
-        rows = import_review_service.list_for_novel(nid, status=status)
-        pending = next((row for row in rows if row.get("status") == "PENDING"), None)
-        return {"items": rows, "pending": pending}
-    except FileNotFoundError:
-        raise HTTPException(404, "novel not found")
+def list_import_knowledge_reviews(nid: str, status: str | None = Query(default=None), x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _, scope = _import_review_access(nid, x_session_token, x_branch_id, "domain.read")
+    rows = [r for r in import_review_service.list_for_novel(nid, status=status) if r.get("permission_context", {"mode": "local", "novel_id": nid}) == scope]
+    return {"items": rows, "pending": next((row for row in rows if row["status"] == "PENDING"), None)}
+
 
 @router.post("/novels/{nid}/knowledge-base/review", status_code=201)
-def create_novel_knowledge_review(nid: str):
-    try:
-        novel_service.get(nid)
-        chapters = chapter_service.list(nid)
-        if not any(str(item.get("content") or "").strip() for item in chapters):
-            raise HTTPException(409, {"code": "KNOWLEDGE_REVIEW_SOURCE_EMPTY", "message": "小说尚无可审查的章节正文"})
-        return import_review_service.ensure_pending(nid, {}, source_format="project", import_id=f"project:{nid}")
-    except HTTPException:
-        raise
-    except FileNotFoundError:
-        raise HTTPException(404, "novel not found")
+def create_novel_knowledge_review(nid: str, x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _, scope = _import_review_access(nid, x_session_token, x_branch_id, "domain.write")
+    chapters = chapter_service.list(nid)
+    if not any(str(item.get("content") or "").strip() for item in chapters):
+        raise HTTPException(409, {"code": "KNOWLEDGE_REVIEW_SOURCE_EMPTY", "message": "小说尚无可审查的章节正文"})
+    candidates = novel_service._knowledge_candidates(chapters)
+    return import_review_service.ensure_pending(nid, candidates, source_format="project", import_id=f"project:{nid}", permission_context=scope)
+
 
 @router.post("/novels/{nid}/chapters/{chapter_id}/knowledge-base/review", status_code=201)
-def create_chapter_knowledge_review(nid: str, chapter_id: str):
-    try:
-        novel_service.get(nid)
-        chapter = chapter_service.get(chapter_id)
-        if chapter.get("novel_id") != nid:
-            raise HTTPException(404, "chapter not found")
-        if not str(chapter.get("content") or "").strip():
-            raise HTTPException(409, {"code": "KNOWLEDGE_REVIEW_SOURCE_EMPTY", "message": "当前章节尚无可审查的正文"})
-        return import_review_service.ensure_pending(nid, {}, source_format="chapter", import_id=chapter_id)
-    except HTTPException:
-        raise
-    except FileNotFoundError:
+def create_chapter_knowledge_review(nid: str, chapter_id: str, x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _, scope = _import_review_access(nid, x_session_token, x_branch_id, "domain.write")
+    chapter = guard(chapter_service.get, chapter_id)
+    if chapter.get("novel_id") != nid:
         raise HTTPException(404, "chapter not found")
+    if not str(chapter.get("content") or "").strip():
+        raise HTTPException(409, {"code": "KNOWLEDGE_REVIEW_SOURCE_EMPTY", "message": "当前章节尚无可审查的正文"})
+    return import_review_service.ensure_pending(nid, novel_service._knowledge_candidates([chapter]), source_format="chapter", import_id=chapter_id, permission_context=scope)
+
 
 @router.get("/novels/{nid}/import/knowledge-base/review/{review_id}")
-def get_import_knowledge_review(nid: str, review_id: str):
-    try:
-        review = import_review_service.get(review_id)
-        if review.get("novel_id") != nid:
-            raise HTTPException(403, {"code": "IMPORT_REVIEW_SCOPE_FORBIDDEN"})
-        return review
-    except HTTPException:
-        raise
-    except FileNotFoundError:
-        raise HTTPException(404, "import review not found")
+def get_import_knowledge_review(nid: str, review_id: str, x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    review = guard(import_review_service.get, review_id)
+    _import_review_access(nid, x_session_token, x_branch_id, "domain.read", review)
+    from .services.import_apply_service import ImportApplyService
+    return {**review, "apply_checkpoint": ImportApplyService(novel_service, import_review_service.path.parent).status(review_id, nid)}
+
 
 @router.put("/novels/{nid}/import/knowledge-base/review/{review_id}")
-def update_import_knowledge_review(nid: str, review_id: str, body: ImportKnowledgeReviewUpdateIn):
-    try:
-        review = import_review_service.get(review_id)
-        if review.get("novel_id") != nid:
-            raise HTTPException(403, {"code": "IMPORT_REVIEW_SCOPE_FORBIDDEN"})
-        return import_review_service.update_candidates(review_id, body.candidates, selected=body.selected)
-    except HTTPException:
-        raise
-    except FileNotFoundError:
-        raise HTTPException(404, "import review not found")
-    except ValueError as exc:
-        raise HTTPException(409, str(exc))
+def update_import_knowledge_review(nid: str, review_id: str, body: ImportKnowledgeReviewUpdateIn, x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    review = guard(import_review_service.get, review_id)
+    _import_review_access(nid, x_session_token, x_branch_id, "domain.write", review)
+    if body.expected_version is None:
+        raise HTTPException(428, {"code": "IMPORT_REVIEW_VERSION_REQUIRED"})
+    return capability_guard(import_review_service.update_candidates, review_id, body.candidates, selected=body.selected, expected_version=body.expected_version)
 
 def _import_ai_candidates(text: str) -> dict[str, list[dict]]:
     raw = str(text or "").strip()
@@ -1581,10 +1698,11 @@ def _import_ai_candidates(text: str) -> dict[str, list[dict]]:
     return result
 
 @router.post("/novels/{nid}/import/knowledge-base/review/{review_id}/ai-analyze")
-def ai_analyze_import_knowledge(nid: str, review_id: str, body: ImportAiReviewIn):
+def ai_analyze_import_knowledge(nid: str, review_id: str, body: ImportAiReviewIn, x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     try:
         novel = novel_service.get(nid)
         review = import_review_service.get(review_id)
+        _import_review_access(nid, x_session_token, x_branch_id, "domain.write", review)
         if review.get("novel_id") != nid:
             raise HTTPException(403, {"code": "IMPORT_REVIEW_SCOPE_FORBIDDEN"})
         if review.get("status") != "PENDING":
@@ -1601,22 +1719,54 @@ def ai_analyze_import_knowledge(nid: str, review_id: str, body: ImportAiReviewIn
             excerpts.append({"number": chapter.get("number"), "title": chapter.get("title"), "content": content})
             remaining -= len(content)
         provider_id, model_id = body.provider_id or "deepseek", body.model_id or "deepseek-chat"
+        from .source_privacy import effective_source_privacy, content_digest
+        from .privacy import normalize_privacy, cloud_safe_context
+        cloud = runtime.is_remote_text_provider(provider_id)
+        captured_versions = {item["id"]: (item.get("version"), content_digest(item)) for item in chapters}
+        def validate_sources():
+            _import_review_access(nid, x_session_token, x_branch_id, "domain.write", import_review_service.get(review_id))
+            current_chapters = {item["id"]: item for item in novel_service.chapters.list(nid)}
+            for cid, (version, digest) in captured_versions.items():
+                current = current_chapters.get(cid)
+                if current is None or current.get("version") != version or content_digest(current) != digest:
+                    raise HTTPException(409, {"code": "IMPORT_SOURCE_CHANGED", "message": "章节已改变，请重新建立审查任务。"})
+            if not cloud:
+                return
+            if not body.allow_cloud_excerpt:
+                raise HTTPException(403, {"code": "IMPORT_CLOUD_EXCERPT_CONFIRMATION_REQUIRED", "message": "请明确允许所选云模型接收本次章节节选，或选择本地模型。"})
+            secret_policies = [{**item, "privacy_level": item.get("privacy_level", item.get("visibility", "LOCAL_ONLY"))} for item in novel_service.public_secrets(nid)]
+            protected_sources = [novel_service.get(nid), *current_chapters.values(), *secret_policies, *novel_service.data_set(nid,"relationships")]
+            outline = novel_service.outline(nid)
+            if outline:
+                protected_sources.append(outline)
+            for dataset in ("characters", "locations", "timeline", "foreshadowing", "canon"):
+                protected_sources.extend(novel_service.data_set(nid, dataset))
+            if any("privacy_level" in row and normalize_privacy(row["privacy_level"]) != "CLOUD_ALLOWED" for row in protected_sources):
+                raise HTTPException(403, {"code": "IMPORT_SOURCE_RESTRICTED", "message": "项目包含限制外发的资料，整章分析仅允许本地模型。"})
+            branch = x_branch_id if settings.enable_collaboration_runtime else None
+            if any(effective_source_privacy(current_chapters[cid], branch) != "CLOUD_ALLOWED" for cid in captured_versions):
+                raise HTTPException(403, {"code": "IMPORT_SOURCE_REVIEW_REQUIRED", "message": "请先在正文隐私面板确认各章节当前版本允许云端使用。"})
+        validate_sources()
+        safe_candidates = ({kind: cloud_safe_context(rows)[0] for kind, rows in review.get("candidates", {}).items()}
+                           if cloud else review.get("candidates", {}))
         prompt = (
             "请阅读小说项目的章节节选，提取并纠正资料库候选。只输出 JSON，不要 Markdown。\n"
             "JSON 顶层必须含 candidates，分组仅限 characters、locations、timeline_events、foreshadowing。"
             "人物和地点使用 name；时间线使用 title、sequence、description；伏笔使用 title、description。"
             "每项尽量提供 evidence 和 confidence；不确定或仅出现一次的普通词不要收录。\n\n"
-            + json.dumps({"novel": {"title": novel.get("title")}, "chapter_excerpts": excerpts, "local_candidates": review.get("candidates", {})}, ensure_ascii=False)
+            + json.dumps({"novel": {"title": novel.get("title")}, "chapter_excerpts": excerpts, "local_candidates": safe_candidates}, ensure_ascii=False)
         )
         request = TextGenerationRequest(provider_id=provider_id, model_id=model_id, prompt=prompt,
             system_instruction="你是小说导入资料库审查员。严格依据原文，不得臆造；只返回符合要求的 JSON。",
             parameters=TextGenerationParameters(temperature=0.1, max_output_tokens=5000),
             metadata={"surface": "novel_knowledge_review", "mode": "author_approval_required", "source_format": review.get("source_format")})
-        result = runtime.generation_runtime.text_node.execute(TextModelNodeInput(request))
+        node = runtime.prepare_text_route(provider_id, model_id)
+        validate_sources()
+        result = node.execute(TextModelNodeInput(request))
         candidates = _import_ai_candidates(result.generated_text)
         analysis = {"source": "AI_REVIEW", "provider_id": result.response.provider_id, "model_id": result.response.model_id,
             "chapter_count": len(excerpts), "content_characters": 48000 - remaining}
-        saved = import_review_service.update_candidates(review_id, candidates, analysis=analysis)
+        saved = capability_guard(import_review_service.update_candidates, review_id, candidates, analysis=analysis, expected_version=review.get("version", 1))
         return {"review": saved, "analysis": analysis}
     except HTTPException:
         raise
@@ -1676,43 +1826,68 @@ def apply_adaptation_draft(nid:str,proposal_id:str,task_id:str,branch_id:str|Non
     target_scope=AuthorizationScope(ScopeKind.BRANCH,target["workspace_id"],target["project_id"],target["storyline_id"],target["branch_id"]);current=chapter_service.get(task["target_chapter_id"]);body=re.sub(r"^#{1,6}\s+[^\n]+\n+","",task["draft"]["content"].strip(),count=1).strip();document=markdown_to_document(f"# {current['title']}\n\n{body}")
     saved=collaboration_application_service.update_chapter(actor=actor,scope=target_scope,chapter_id=current["id"],document=document,expected_version=current["version"],reason="AI_ACCEPT");result=adaptation_service.mark_applied(nid,proposal_id,tasks,index,saved["version"])
     audit_service.append(audit_service.build(actor,"ADAPTATION_DRAFT_APPLIED","AdaptationProposal",proposal_id,source_scope,{"novel_id":nid,"branch_id":branch_id,"status":"APPLIED","result_version":saved["version"]}));return result
+async def _screenplay_route_guard(request: Request, nid: str, screenplay_id: str,
+                            x_session_token: str | None = Header(None, alias="X-Session-Token"),
+                            x_branch_id: str | None = Header(None, alias="X-Branch-Id")):
+    await run_in_threadpool(_authorize_motion,nid,screenplay_id,x_session_token,
+                            "domain.read" if request.method == "GET" else "domain.write",x_branch_id)
+    suffix=request.url.path.split(f"/screenplays/{screenplay_id}/",1)[-1]
+    editorial=(request.method=="PUT" and re.fullmatch(r"(?:scenes|shots|storyboard|transitions|assets)/[^/]+",suffix)) or (request.method=="POST" and suffix in {"approve","revise","shots/approve","storyboard/approve","transitions/approve","assets/approve"})
+    if editorial:
+        try: payload=await request.json()
+        except ValueError: payload={}
+        version=payload.get("expected_version") if isinstance(payload,dict) else None
+        if version is None:
+            raise HTTPException(428,{"code":"PRECONDITION_REQUIRED","message":"Read the current screenplay edit_version and include expected_version before editing or approving."})
+        if type(version) is not int or version<0:
+            raise HTTPException(422,{"code":"INVALID_EXPECTED_VERSION","message":"expected_version must be a non-negative integer"})
+
+
 @router.get("/novels/{nid}/screenplays")
-def screenplays(nid:str):return guard(screenplay_service.list,nid)
+def screenplays(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
+    return [{key:value for key,value in row.items() if key!="version_history"} for row in guard(lambda: screenplay_service.list(nid,branch_id=x_branch_id if settings.enable_collaboration_runtime else None))]
 @router.post("/novels/{nid}/screenplays",status_code=201)
-def create_screenplay(nid:str,body:ScreenplayIn):return guard(screenplay_service.create,nid,body.title)
-@router.put("/novels/{nid}/screenplays/{screenplay_id}/scenes/{scene_id}")
+def create_screenplay(nid:str,body:ScreenplayIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
+    return guard(lambda: screenplay_service.create(nid,body.title,branch_id=x_branch_id if settings.enable_collaboration_runtime else None))
+@router.put("/novels/{nid}/screenplays/{screenplay_id}/scenes/{scene_id}",dependencies=[Depends(_screenplay_route_guard)])
 def update_screenplay_scene(nid:str,screenplay_id:str,scene_id:str,body:ScreenplaySceneIn):return guard(screenplay_service.update_scene,nid,screenplay_id,scene_id,body.model_dump())
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/approve")
-def approve_screenplay(nid:str,screenplay_id:str):return guard(screenplay_service.approve,nid,screenplay_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/shots",status_code=201)
-def plan_screenplay_shots(nid:str,screenplay_id:str):return guard(screenplay_service.plan_shots,nid,screenplay_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/shots/approve")
-def approve_screenplay_shots(nid:str,screenplay_id:str):return guard(screenplay_service.approve_shots,nid,screenplay_id)
-@router.put("/novels/{nid}/screenplays/{screenplay_id}/shots/{shot_id}")
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/approve",dependencies=[Depends(_screenplay_route_guard)])
+def approve_screenplay(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.approve,nid,screenplay_id,body.expected_version if body else None)
+@router.get("/novels/{nid}/screenplays/{screenplay_id}/revisions",dependencies=[Depends(_screenplay_route_guard)])
+def screenplay_revisions(nid:str,screenplay_id:str):return guard(screenplay_service.history,nid,screenplay_id)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/revise",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
+def revise_screenplay(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.revise,nid,screenplay_id,body.expected_version if body else None,body.source_version if body else None)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/shots",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
+def plan_screenplay_shots(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.plan_shots,nid,screenplay_id,body.expected_version if body else None)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/shots/approve",dependencies=[Depends(_screenplay_route_guard)])
+def approve_screenplay_shots(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.approve_shots,nid,screenplay_id,body.expected_version if body else None)
+@router.put("/novels/{nid}/screenplays/{screenplay_id}/shots/{shot_id}",dependencies=[Depends(_screenplay_route_guard)])
 def update_screenplay_shot(nid:str,screenplay_id:str,shot_id:str,body:ShotIn):return guard(screenplay_service.update_shot,nid,screenplay_id,shot_id,body.model_dump())
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/storyboard",status_code=201)
-def plan_storyboard(nid:str,screenplay_id:str):return guard(screenplay_service.plan_storyboard,nid,screenplay_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/storyboard/approve")
-def approve_storyboard(nid:str,screenplay_id:str):return guard(screenplay_service.approve_storyboard,nid,screenplay_id)
-@router.put("/novels/{nid}/screenplays/{screenplay_id}/storyboard/{card_id}")
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/storyboard",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
+def plan_storyboard(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.plan_storyboard,nid,screenplay_id,body.expected_version if body else None)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/storyboard/approve",dependencies=[Depends(_screenplay_route_guard)])
+def approve_storyboard(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.approve_storyboard,nid,screenplay_id,body.expected_version if body else None)
+@router.put("/novels/{nid}/screenplays/{screenplay_id}/storyboard/{card_id}",dependencies=[Depends(_screenplay_route_guard)])
 def update_storyboard(nid:str,screenplay_id:str,card_id:str,body:StoryboardCardIn):return guard(screenplay_service.update_storyboard_card,nid,screenplay_id,card_id,body.model_dump())
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/transitions",status_code=201)
-def plan_transitions(nid:str,screenplay_id:str):return guard(screenplay_service.plan_transitions,nid,screenplay_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/transitions/approve")
-def approve_transitions(nid:str,screenplay_id:str):return guard(screenplay_service.approve_transitions,nid,screenplay_id)
-@router.put("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}")
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/transitions",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
+def plan_transitions(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.plan_transitions,nid,screenplay_id,body.expected_version if body else None)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/transitions/approve",dependencies=[Depends(_screenplay_route_guard)])
+def approve_transitions(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.approve_transitions,nid,screenplay_id,body.expected_version if body else None)
+@router.put("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}",dependencies=[Depends(_screenplay_route_guard)])
 def update_transition(nid:str,screenplay_id:str,transition_id:str,body:TransitionIn):return guard(screenplay_service.update_transition,nid,screenplay_id,transition_id,body.model_dump())
-@router.get("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/prompt")
+@router.get("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/prompt",dependencies=[Depends(_screenplay_route_guard)])
 def transition_prompt(nid:str,screenplay_id:str,transition_id:str):return guard(screenplay_service.transition_prompt,nid,screenplay_id,transition_id)
-@router.get("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/suggestion")
+@router.get("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/suggestion",dependencies=[Depends(_screenplay_route_guard)])
 def transition_suggestion(nid:str,screenplay_id:str,transition_id:str):return guard(screenplay_service.transition_suggestion,nid,screenplay_id,transition_id)
-@router.get("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt")
+@router.get("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt",dependencies=[Depends(_screenplay_route_guard)])
 def motion_prompt(nid:str,screenplay_id:str,transition_id:str):return guard(screenplay_service.motion_prompt,nid,screenplay_id,transition_id)
 class MotionPromptIn(BaseModel): motion_prompt:str=Field(min_length=1,max_length=10000)
-@router.put("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt")
+@router.put("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt",dependencies=[Depends(_screenplay_route_guard)])
 def save_motion_prompt(nid:str,screenplay_id:str,transition_id:str,body:MotionPromptIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.save_motion_prompt,nid,screenplay_id,transition_id,body.motion_prompt)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks",status_code=201)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
 def create_motion_tasks(nid:str,screenplay_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.create_motion_tasks,nid,screenplay_id)
 @router.get("/video-providers")
@@ -1738,7 +1913,10 @@ class VideoProviderConfigIn(BaseModel):
     @classmethod
     def validate_endpoint(cls,value):
         value=value.strip()
-        if value and not value.lower().startswith(('http://','https://')): raise ValueError('endpoint must use http or https')
+        if value:
+            from urllib.parse import urlsplit
+            parsed=urlsplit(value)
+            if parsed.scheme not in {'http','https'} or not parsed.hostname or parsed.username or parsed.password or parsed.fragment: raise ValueError('endpoint must use http or https without embedded credentials')
         return value.rstrip('/')
     @field_validator('model_id')
     @classmethod
@@ -1800,30 +1978,36 @@ def delete_video_provider_config(provider_id:str):
 def get_video_provider_config(provider_id:str): return {"provider_id":provider_id,**VIDEO_PROVIDER_CATALOG.get(provider_id,{}),**_video_provider_configs.get(provider_id,{})}
 @router.get("/video-providers/{provider_id}/health")
 def video_provider_health(provider_id:str):
-    if provider_id=='deterministic': return {"provider_id":provider_id,"health":"READY","available":True}
+    if provider_id=='deterministic': return {"provider_id":provider_id,"health":"NOT_CONFIGURED","available":False}
     config=_video_provider_configs.get(provider_id)
     config={**VIDEO_PROVIDER_CATALOG.get(provider_id,{}),**(_video_provider_configs.get(provider_id) or {})};registered=provider_id in screenplay_service.video_providers
     return {"provider_id":provider_id,"health":"READY" if registered else "NOT_CONFIGURED","available":registered,"local":bool(config.get('local'))}
 @router.get("/video-providers/{provider_id}/credential-status")
 def video_provider_credential_status(provider_id:str):
-    if provider_id=='deterministic': return {"provider_id":provider_id,"configured":True,"secret_exposed":False}
+    if provider_id=='deterministic': return {"provider_id":provider_id,"configured":False,"secret_exposed":False}
     return {"provider_id":provider_id,"configured":credential_vault.has(provider_id),"secret_exposed":False}
 @router.get("/multimodal/health")
 def multimodal_health():
+    import shutil
     from .dependencies import asset_provider_registry
     image_ids=list(asset_provider_registry._providers.keys())
     vision=[{'id':pid,'configured':bool(endpoint and credential_vault.has(pid))} for pid,endpoint in DEFAULT_IMAGE_ENDPOINTS.items() if pid!='custom']
-    return {'image_providers':[{"id":pid,"registered":True} for pid in image_ids],"vision_providers":vision,"vision_credentials":any(item['configured'] for item in vision),"speech_credentials":any(item['configured'] for item in vision),"video_provider_configs":len(_video_provider_configs)}
+    return {'image_providers':[{"id":pid,"registered":True} for pid in image_ids],"vision_providers":vision,"vision_credentials":any(item['configured'] for item in vision),"speech_credentials":any(item['configured'] for item in vision),"video_provider_configs":len(_video_provider_configs),"media_validation":{"pcm_wav":True,"ffmpeg":bool(shutil.which("ffmpeg")),"ffprobe":bool(shutil.which("ffprobe")),"image_video_ingestion":bool(shutil.which("ffmpeg") and shutil.which("ffprobe")),"video_assembly_profile":"REVIEW_640x360_24FPS_VIDEO_ONLY","codec_binaries_bundled":False}}
 @router.get("/video-callback/security")
 def video_callback_security(): return {"configured":bool(os.getenv('VIDEO_CALLBACK_TOKEN','').strip()),"header":"X-Video-Callback-Token","secret_exposed":False}
 @router.post("/vision/analyze")
-def vision_analyze(body:VisionAnalyzeIn):
+def vision_analyze(body:VisionAnalyzeIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write",x_branch_id)
+    elif settings.enable_collaboration_runtime: raise HTTPException(400,{"code":"PROJECT_SCOPE_REQUIRED"})
     from .asset_providers import OpenAICompatibleVisionProvider,VisionRequest
     from .dependencies import credential_vault
     endpoint=DEFAULT_IMAGE_ENDPOINTS.get(body.provider_id,'')
     secret=credential_vault.resolve(body.provider_id)
     if not endpoint or not secret: raise HTTPException(503,'vision provider is not configured')
-    try: safe_image_url=validate_outbound_url(body.image_url)
+    try:
+        from .media_files import media_destination
+        media_destination(body.image_url)
+        safe_image_url=body.image_url
     except OutboundURLRejected as exc: raise HTTPException(400,{'code':'OUTBOUND_URL_REJECTED','message':str(exc)})
     try:
         import httpx
@@ -1835,13 +2019,65 @@ def vision_analyze(body:VisionAnalyzeIn):
         return payload
     except Exception:
         raise HTTPException(502,{'code':'VISION_ANALYZE_FAILED','message':'图片分析失败'})
+from .services.image_job_service import ImageJobService
+image_job_service=ImageJobService(settings.data_path())
+
+def _image_branch(branch_id): return branch_id if settings.enable_collaboration_runtime else None
+
+def _image_jobs(session_token):
+    if not settings.enable_collaboration_runtime:return image_job_service
+    actor=trusted_session_resolver.resolve(session_token)
+    return image_job_service.for_actor(actor.actor_id)
+
+@router.get("/novels/{nid}/image-jobs")
+def list_image_jobs(nid:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
+    return {'items':_image_jobs(x_session_token).list(nid,_image_branch(x_branch_id))}
+
+@router.post("/novels/{nid}/image-jobs",status_code=202)
+def create_image_job(nid:str,body:ImageEditIn|ImageGenerateIn,idempotency_key:str|None=Header(None,alias="Idempotency-Key"),x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
+    from .dependencies import repositories
+    from .media_files import media_destination
+    repositories.novels.get(nid)
+    if body.novel_id and body.novel_id!=nid: raise HTTPException(400,'novel_id does not match path')
+    try:
+        for reference in getattr(body,'images',[]):
+            if not reference.startswith('data:image/'): media_destination(reference)
+        return _image_jobs(x_session_token).create(nid,_image_branch(x_branch_id),body.model_dump(),idempotency_key)
+    except ValueError as exc: raise HTTPException(400,{'code':'IMAGE_JOB_INVALID','message':str(exc)})
+
+@router.post("/novels/{nid}/image-jobs/{job_id}/execute")
+def execute_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
+    from .dependencies import asset_provider_registry
+    return guard(_image_jobs(x_session_token).execute,nid,_image_branch(x_branch_id),job_id,asset_provider_registry)
+
+@router.post("/novels/{nid}/image-jobs/{job_id}/cancel")
+def cancel_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
+    return guard(_image_jobs(x_session_token).transition,nid,_image_branch(x_branch_id),job_id,'CANCELLED')
+
+@router.post("/novels/{nid}/image-jobs/{job_id}/retry")
+def retry_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
+    return guard(_image_jobs(x_session_token).transition,nid,_image_branch(x_branch_id),job_id,'QUEUED')
+
+@router.post("/novels/{nid}/image-jobs/{job_id}/accept")
+def accept_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
+    from .dependencies import asset_provider_registry
+    return guard(_image_jobs(x_session_token).accept,nid,_image_branch(x_branch_id),job_id,asset_library_service,asset_provider_registry)
+
 @router.post("/images/generate")
-def generate_image(body:ImageGenerateIn):
+def generate_image(body:ImageGenerateIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write",x_branch_id)
+    elif settings.enable_collaboration_runtime: raise HTTPException(400,{"code":"PROJECT_SCOPE_REQUIRED"})
     from .asset_providers import AssetGenerationRequest
     from .dependencies import asset_provider_registry,repositories
     try:
         provider=asset_provider_registry.get(body.provider_id)
-        result=provider.generate(AssetGenerationRequest(body.provider_id,body.model_id,body.prompt,str(__import__('uuid').uuid4())))
+        result=provider.generate(AssetGenerationRequest(body.provider_id,body.model_id,body.prompt,str(__import__('uuid').uuid4()),body.parameters))
     except ValueError: raise HTTPException(503,{'code':'IMAGE_PROVIDER_UNAVAILABLE','message':'图片生成服务未配置或不可用'})
     except Exception: raise HTTPException(502,{'code':'IMAGE_PROVIDER_REQUEST_FAILED','message':'图片服务请求失败，请检查地址、模型和服务状态'})
     payload={'provider_id':result.provider_id,'model_id':result.model_id,'asset_uri':result.asset_uri,'prompt':body.prompt,'constraints':body.constraints,'character_id':body.character_id,'scene_id':body.scene_id,'created_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}
@@ -1849,8 +2085,9 @@ def generate_image(body:ImageGenerateIn):
         novel=repositories.novels.get(body.novel_id); rows=list(novel.get('image_generations',[])); rows.append({**payload,'asset_uri':'inline://generated-image'} if result.asset_uri.startswith('data:') else payload); repositories.novels.update(body.novel_id,{**novel,'image_generations':rows[-50:]})
     return payload
 @router.post("/images/edits")
-def edit_image(body:ImageEditIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write")
+def edit_image(body:ImageEditIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None)):
+    if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write",x_branch_id)
+    elif settings.enable_collaboration_runtime: raise HTTPException(400,{"code":"PROJECT_SCOPE_REQUIRED"})
     from .dependencies import credential_vault
     from .asset_providers import AssetGenerationRequest,OpenAICompatibleImageProvider
     import httpx
@@ -1867,20 +2104,23 @@ def edit_image(body:ImageEditIn,x_session_token:str|None=Header(None,alias="X-Se
     except Exception: raise HTTPException(502,{"code":"IMAGE_EDIT_FAILED","message":"图片编辑失败，请检查 Provider 或参考图。"})
     return {"provider_id":result.provider_id,"model_id":result.model_id,"asset_uri":result.asset_uri,"prompt":body.prompt,"reference_count":len(body.images),"created_at":__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}
 @router.post("/speech/synthesize")
-def synthesize_speech(body:SpeechSynthesizeIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write")
+def synthesize_speech(body:SpeechSynthesizeIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None)):
+    if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write",x_branch_id)
+    elif settings.enable_collaboration_runtime: raise HTTPException(400,{"code":"PROJECT_SCOPE_REQUIRED"})
     from .audio_providers import AudioGenerationRequest,resolve_provider
     from .dependencies import credential_vault
     try:
         import httpx
         provider_id,default_model,provider=resolve_provider(body.provider_id,'TTS',credential_vault,httpx);model_id=body.model_id.strip() or default_model
-        result=provider.generate(AudioGenerationRequest(provider_id,model_id,'TTS',f"[emotion:{body.emotion}] {body.text}",str(uuid.uuid4()),voice=body.voice))
+        result=provider.generate(AudioGenerationRequest(provider_id,model_id,'TTS',body.text,str(uuid.uuid4()),voice=body.voice,parameters={"emotion":body.emotion}))
         payload={'provider_id':result.provider_id,'model_id':result.model_id,'voice':body.voice,'emotion':body.emotion,'audio_uri':result.audio_uri,'character_id':body.character_id,'chapter_id':body.chapter_id,'text':body.text,'created_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}
         if body.novel_id:
             from .dependencies import repositories
-            repositories.novels.get(body.novel_id); state=audio_production_store.load(body.novel_id); state['generations'].append(payload); audio_production_store.save(body.novel_id,state)
+            repositories.novels.get(body.novel_id); state=_audio_store(x_branch_id,x_session_token).load(body.novel_id); state['generations'].append(payload); _audio_store(x_branch_id,x_session_token).save(body.novel_id,state)
         return payload
-    except ValueError: raise HTTPException(503,{'code':'SPEECH_PROVIDER_UNAVAILABLE','message':'语音 Provider 未配置'})
+    except ValueError as exc:
+        if 'AUDIO_PARAMETER_UNSUPPORTED' in str(exc):raise HTTPException(400,{'code':'AUDIO_PARAMETER_UNSUPPORTED','message':'该 Provider 不支持所选情绪参数'})
+        raise HTTPException(503,{'code':'SPEECH_PROVIDER_UNAVAILABLE','message':'语音 Provider 未配置'})
     except HTTPException: raise
     except Exception: raise HTTPException(502,{'code':'SPEECH_SYNTHESIS_FAILED','message':'语音合成失败'})
 @router.get("/audio/providers")
@@ -1909,8 +2149,9 @@ def remove_audio_provider(provider_id:str):
     if deleted:provider_support_registry.remove("audio",provider_id)
     return {'provider_id':provider_id,'deleted':deleted}
 @router.post("/audio/generate",status_code=202)
-def generate_audio(body:AudioGenerateIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write")
+def generate_audio(body:AudioGenerateIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None)):
+    if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write",x_branch_id)
+    elif settings.enable_collaboration_runtime: raise HTTPException(400,{"code":"PROJECT_SCOPE_REQUIRED"})
     from .audio_providers import AudioGenerationRequest,resolve_provider
     from .dependencies import credential_vault
     try:
@@ -1922,179 +2163,221 @@ def generate_audio(body:AudioGenerateIn,x_session_token:str|None=Header(None,ali
     except ValueError as exc: raise HTTPException(503,{'code':'AUDIO_PROVIDER_UNAVAILABLE','message':str(exc)})
     except Exception: raise HTTPException(502,{'code':'AUDIO_GENERATION_FAILED','message':'音频生成失败'})
 @router.get("/novels/{nid}/image-generations")
-def list_image_generations(nid:str,character_id:str|None=None,scene_id:str|None=None):
+def list_image_generations(nid:str,character_id:str|None=None,scene_id:str|None=None,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
+    if settings.enable_collaboration_runtime: return {"novel_id":nid,"items":[],"legacy_scope_unavailable":True}
     from .dependencies import repositories
     novel=repositories.novels.get(nid); items=[item for item in novel.get('image_generations',[]) if (not character_id or item.get('character_id')==character_id) and (not scene_id or item.get('scene_id')==scene_id)]
     return {'novel_id':nid,'items':items[-50:]}
 @router.get("/novels/{nid}/speech-generations")
-def list_speech_generations(nid:str,character_id:str|None=None):
+def list_speech_generations(nid:str,character_id:str|None=None,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
     from .dependencies import repositories
-    repositories.novels.get(nid); items=[item for item in audio_production_store.load(nid)['generations'] if not character_id or item.get('character_id')==character_id]
+    repositories.novels.get(nid); items=[item for item in _audio_store(x_branch_id,x_session_token).load(nid)['generations'] if not character_id or item.get('character_id')==character_id]
     return {'novel_id':nid,'items':items[-50:]}
 @router.get("/novels/{nid}/audio-production/settings")
-def audio_production_settings(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.read")
+def audio_production_settings(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
     from .dependencies import repositories
-    repositories.novels.get(nid); state=audio_production_store.load(nid)
+    repositories.novels.get(nid); state=_audio_store(x_branch_id,x_session_token).load(nid)
     return {'novel_id':nid,'voice_bindings':state['voice_bindings'],'pronunciation_dictionary':state['pronunciation_dictionary']}
 @router.put("/novels/{nid}/audio-production/settings")
-def audio_production_settings_update(nid:str,body:AudioProductionSettingsIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write")
+def audio_production_settings_update(nid:str,body:AudioProductionSettingsIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     from .dependencies import repositories
-    repositories.novels.get(nid); payload=body.model_dump(); state=audio_production_store.load(nid); state.update(payload); audio_production_store.save(nid,state)
+    repositories.novels.get(nid); payload=body.model_dump(exclude_none=True); _audio_store(x_branch_id,x_session_token).mutate(nid,lambda state:state.update(payload))
     return {'novel_id':nid,**payload}
 @router.get("/novels/{nid}/audiobook/manifest")
-def audiobook_manifest(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.read")
+def audiobook_manifest(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
     from .dependencies import repositories
-    chapters=repositories.chapters.list(nid); novel=repositories.novels.get(nid); production=audio_production_store.load(nid); speeches=production['generations']; jobs=production['jobs']
+    chapters=repositories.chapters.list(nid); novel=repositories.novels.get(nid); production=_audio_store(x_branch_id,x_session_token).load(nid); speeches=production['generations']; jobs=production['jobs']
     items=[]
     for chapter in chapters:
         text=str(chapter.get('content','')).strip()
         chapter_speeches=[item for item in speeches if item.get('chapter_id')==chapter.get('id')]
         chapter_jobs=[job for job in jobs if job.get('chapter_id')==chapter.get('id')]; latest_job=chapter_jobs[-1] if chapter_jobs else None
         production_status=str(latest_job.get('status')) if latest_job else ('SUCCEEDED' if chapter_speeches else 'NOT_QUEUED')
+        if latest_job:
+            group=latest_job.get('group_id')
+            selected_jobs=[job for job in chapter_jobs if job.get('group_id')==group] if group else [latest_job]
+            selected_ids={job['id'] for job in selected_jobs}
+            chapter_speeches=sorted([item for item in chapter_speeches if item.get('job_id') in selected_ids],key=lambda item:int(item.get('segment_index') or 0))
+            states={job.get('status') for job in selected_jobs}
+            production_status=next((status for status in ('RUNNING','QUEUED','FAILED','CANCELLED') if status in states),'SUCCEEDED')
         items.append({'chapter_id':chapter.get('id'),'title':chapter.get('title',''),'text_length':len(text),'audio_count':len(chapter_speeches),'audio':chapter_speeches,'production_status':production_status,'latest_job':latest_job})
-    return {'novel_id':nid,'title':novel.get('title',''),'chapters':items,'total_chapters':len(items),'ready_chapters':sum(1 for item in items if item['audio_count']>0)}
+    return {'novel_id':nid,'title':novel.get('title',''),'chapters':items,'total_chapters':len(items),'ready_chapters':sum(1 for item in items if item['audio_count']>0 and item['production_status']=='SUCCEEDED')}
 @router.get("/novels/{nid}/audiobook/mix-plan")
-def audiobook_mix_plan(nid:str,chapter_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.read")
+def audiobook_mix_plan(nid:str,chapter_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
     from .dependencies import repositories
-    repositories.novels.get(nid); rows=[item for item in audio_production_store.load(nid)['generations'] if not chapter_id or item.get('chapter_id')==chapter_id]
+    repositories.novels.get(nid); rows=[item for item in _audio_store(x_branch_id,x_session_token).load(nid)['generations'] if not chapter_id or item.get('chapter_id')==chapter_id]
     tracks={}
     for item in rows:
         key=item.get('character_id') or 'narrator'; tracks.setdefault(key,[]).append({'audio_uri':item.get('audio_uri'),'voice':item.get('voice'),'emotion':item.get('emotion','neutral'),'created_at':item.get('created_at')})
     return {'novel_id':nid,'chapter_id':chapter_id,'tracks':[{'track_id':key,'clips':clips} for key,clips in tracks.items()],'mix_status':'PLAN_ONLY'}
 @router.post("/novels/{nid}/audiobook/chapters/{chapter_id}/queue",status_code=202)
-def queue_audiobook_chapter(nid:str,chapter_id:str,body:AudiobookJobIn|None=None,voice:str='alloy',x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write")
+def queue_audiobook_chapter(nid:str,chapter_id:str,body:AudiobookJobIn|None=None,voice:str='alloy',x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id"),idempotency_key:str|None=Header(None,alias="Idempotency-Key")):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     from .dependencies import repositories
-    repositories.novels.get(nid); state=audio_production_store.load(nid); chapters=repositories.chapters.list(nid); chapter=next((item for item in chapters if item.get('id')==chapter_id),None)
+    from .services.audiobook_service import AudiobookService,AudiobookError
+    repositories.novels.get(nid)
+    chapter=next((item for item in repositories.chapters.list(nid) if item.get('id')==chapter_id),None)
     if chapter is None: raise HTTPException(404,'chapter not found')
-    config=(body or AudiobookJobIn(voice=voice)).model_dump(); now=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()
-    bindings=state['voice_bindings']; binding=next((item for item in bindings if config.get('character_id') and item.get('character_id')==config['character_id']),None)
-    if binding: config={**config,**binding,'character_id':config['character_id']}
-    text=_spoken_chapter_text(str(chapter.get('content','')));segments=_estimated_subtitle_segments(text,float(config.get('speech_rate') or 1),int(config.get('pause_ms') or 0));estimated_duration=segments[-1]['end_ms'] if segments else 0
-    jobs=state['jobs']; job={'id':f"audio-{__import__('uuid').uuid4()}",'chapter_id':chapter_id,**config,'status':'QUEUED','attempt':0,'text_length':len(text),'segments':segments,'timing_status':'ESTIMATED','estimated_duration_ms':estimated_duration,'created_at':now,'updated_at':now,'error':None,'error_code':None}
-    jobs.append(job); state['jobs']=jobs; audio_production_store.save(nid,state); return job
-@router.get("/novels/{nid}/audiobook/jobs")
-def list_audiobook_jobs(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.read")
+    chapter=repositories.chapters.get(chapter_id)
+    config=(body or AudiobookJobIn(voice=voice)).model_dump()
+    segments=_estimated_subtitle_segments(str(chapter.get('content','')),float(config.get('speech_rate') or 1),int(config.get('pause_ms') or 0))
+    try: return AudiobookService(_audio_store(x_branch_id,x_session_token),asset_library_service,branch_id=x_branch_id if settings.enable_collaboration_runtime else None).queue(nid,chapter,config,segments,idempotency_key)
+    except AudiobookError as exc: raise HTTPException(exc.status,{'code':exc.code,'message':str(exc)})
+
+@router.post("/novels/{nid}/audiobook/chapters/{chapter_id}/queue-segments",status_code=202)
+def queue_audiobook_segments(nid:str,chapter_id:str,body:AudiobookJobIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     from .dependencies import repositories
-    repositories.novels.get(nid); jobs=audio_production_store.load(nid)['jobs']; return {'novel_id':nid,'items':jobs,'total':len(jobs)}
+    from .services.audiobook_service import AudiobookService,AudiobookError
+    chapter=repositories.chapters.get(chapter_id)
+    if chapter.get('novel_id')!=nid: raise HTTPException(404,'chapter not found')
+    config=body.model_dump();segments=_estimated_subtitle_segments(str(chapter.get('content','')),body.speech_rate,body.pause_ms)
+    if not segments or len(segments)>500: raise HTTPException(400,{'code':'AUDIOBOOK_SEGMENT_LIMIT','message':'需要 1 至 500 个朗读分段'})
+    service=AudiobookService(_audio_store(x_branch_id,x_session_token),asset_library_service,branch_id=_image_branch(x_branch_id))
+    group_id=str(uuid.uuid4());jobs=[]
+    try:
+        for index,segment in enumerate(segments):
+            part={**chapter,'content':segment['text']}
+            jobs.append(service.queue(nid,part,{**config,'group_id':group_id,'segment_index':index,'segment_count':len(segments)},_estimated_subtitle_segments(segment['text'],body.speech_rate,body.pause_ms),source_chapter=chapter))
+        return {'group_id':group_id,'items':jobs,'order':'SOURCE_ORDER','text_snapshot_sha256':hashlib.sha256(_spoken_chapter_text(str(chapter.get('content',''))).encode()).hexdigest()}
+    except AudiobookError as exc: raise HTTPException(exc.status,{'code':exc.code,'message':str(exc)})
+
+@router.get("/novels/{nid}/audiobook/jobs")
+def list_audiobook_jobs(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
+    from .dependencies import repositories
+    repositories.novels.get(nid); jobs=_audio_store(x_branch_id,x_session_token).load(nid)['jobs']; return {'novel_id':nid,'items':jobs,'total':len(jobs)}
 @router.get("/novels/{nid}/media-tasks")
-def list_media_tasks(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.read")
+def list_media_tasks(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
     from .dependencies import repositories
     repositories.novels.get(nid)
-    audiobook=list(audio_production_store.load(nid)['jobs'])
+    audiobook=list(_audio_store(x_branch_id,x_session_token).load(nid)['jobs'])
     motion=[]
     for screenplay in screenplay_service.list(nid):
+        if settings.enable_collaboration_runtime and screenplay.get('branch_id')!=x_branch_id: continue
         for task in screenplay.get('motion_tasks',[]):
             motion.append({**task,'screenplay_id':screenplay.get('id')})
     return {'novel_id':nid,'audiobook':audiobook,'motion':motion}
 @router.get("/novels/{nid}/audiobook/jobs/{job_id}/subtitles.{format}")
-def audiobook_job_subtitles(nid:str,job_id:str,format:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.read")
+def audiobook_job_subtitles(nid:str,job_id:str,format:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
     from .dependencies import repositories
     repositories.novels.get(nid)
     if format not in {'srt','vtt'}: raise HTTPException(404,'subtitle format not found')
-    job=next((item for item in audio_production_store.load(nid)['jobs'] if item.get('id')==job_id),None)
+    job=next((item for item in _audio_store(x_branch_id,x_session_token).load(nid)['jobs'] if item.get('id')==job_id),None)
     if job is None: raise HTTPException(404,'audiobook job not found')
     segments=list(job.get('segments') or [])
     if not segments: raise HTTPException(409,{'code':'AUDIOBOOK_SUBTITLES_UNAVAILABLE','message':'该任务没有可导出的字幕分段'})
     media_type='text/vtt' if format=='vtt' else 'application/x-subrip';filename=f"{job.get('chapter_id') or 'chapter'}-{job_id[-8:]}.{format}"
     return Response(_render_subtitles(segments,format),media_type=f'{media_type}; charset=utf-8',headers={'Content-Disposition':f'attachment; filename="{filename}"'})
 @router.post("/novels/{nid}/audiobook/jobs/{job_id}/retry")
-def retry_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write")
+def retry_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     from .dependencies import repositories
-    repositories.novels.get(nid); state=audio_production_store.load(nid); jobs=state['jobs']; index=next((i for i,item in enumerate(jobs) if item.get('id')==job_id),None)
-    if index is None: raise HTTPException(404,'audiobook job not found')
-    if jobs[index].get('status') not in {'FAILED','CANCELLED'}: raise HTTPException(409,{'code':'AUDIOBOOK_JOB_NOT_RETRYABLE','message':'只有失败或已取消任务可以重试'})
-    now=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); jobs[index]={**jobs[index],'status':'QUEUED','error':None,'error_code':None,'retry_at':now,'updated_at':now}; state['jobs']=jobs; audio_production_store.save(nid,state); return jobs[index]
+    from .services.audiobook_service import AudiobookService,AudiobookError
+    repositories.novels.get(nid)
+    try: return AudiobookService(_audio_store(x_branch_id,x_session_token),asset_library_service,branch_id=x_branch_id if settings.enable_collaboration_runtime else None).transition(nid,job_id,"QUEUED")
+    except AudiobookError as exc: raise HTTPException(exc.status,{'code':exc.code,'message':str(exc)})
+
 @router.post("/novels/{nid}/audiobook/jobs/{job_id}/cancel")
-def cancel_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write")
+def cancel_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     from .dependencies import repositories
-    repositories.novels.get(nid); state=audio_production_store.load(nid); jobs=state['jobs']; index=next((i for i,item in enumerate(jobs) if item.get('id')==job_id),None)
-    if index is None: raise HTTPException(404,'audiobook job not found')
-    if jobs[index].get('status') not in {'QUEUED','RUNNING'}: raise HTTPException(409,{'code':'AUDIOBOOK_JOB_NOT_CANCELLABLE','message':'当前任务不能取消'})
-    now=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); jobs[index]={**jobs[index],'status':'CANCELLED','cancelled_at':now,'updated_at':now}; state['jobs']=jobs; audio_production_store.save(nid,state); return jobs[index]
+    from .services.audiobook_service import AudiobookService,AudiobookError
+    repositories.novels.get(nid)
+    try: return AudiobookService(_audio_store(x_branch_id,x_session_token),asset_library_service,branch_id=x_branch_id if settings.enable_collaboration_runtime else None).transition(nid,job_id,"CANCELLED")
+    except AudiobookError as exc: raise HTTPException(exc.status,{'code':exc.code,'message':str(exc)})
+
 @router.post("/novels/{nid}/audiobook/jobs/{job_id}/execute")
-def execute_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write")
+def execute_audiobook_job(nid:str,job_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     from .dependencies import repositories,credential_vault
-    from .audio_providers import AudioGenerationRequest,resolve_provider
-    repositories.novels.get(nid); state=audio_production_store.load(nid); jobs=state['jobs']; index=next((i for i,item in enumerate(jobs) if item.get('id')==job_id),None)
-    if index is None: raise HTTPException(404,'audiobook job not found')
-    job=jobs[index]
-    if job.get('status')!='QUEUED': raise HTTPException(409,{'code':'AUDIOBOOK_JOB_NOT_EXECUTABLE','message':'只有排队中的任务可以执行'})
-    chapter=next((item for item in repositories.chapters.list(nid) if item.get('id')==job.get('chapter_id')),None)
-    if chapter is None: raise HTTPException(404,'chapter not found')
-    provider_id=str(job.get('provider_id') or 'auto')
-    now=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); jobs[index]={**job,'status':'RUNNING','attempt':int(job.get('attempt') or 0)+1,'started_at':now,'updated_at':now}; state['jobs']=jobs; audio_production_store.save(nid,state); job=jobs[index]
+    from .audio_providers import resolve_provider
+    from .services.audiobook_service import AudiobookService,AudiobookError
+    import httpx
+    repositories.novels.get(nid)
+    service=AudiobookService(_audio_store(x_branch_id,x_session_token),asset_library_service,branch_id=x_branch_id if settings.enable_collaboration_runtime else None)
     try:
-        import httpx
-        resolved_provider,default_model,provider=resolve_provider(provider_id,'TTS',credential_vault,httpx);model_id=str(job.get('model_id') or default_model)
-        text=_spoken_chapter_text(str(chapter.get('content',''))); dictionary=state['pronunciation_dictionary']
-        for entry in dictionary: text=text.replace(str(entry.get('term','')),str(entry.get('pronunciation','')))
-        prompt=f"[emotion:{job.get('emotion','neutral')}] {text}"; result=provider.generate(AudioGenerationRequest(resolved_provider,model_id,'TTS',prompt,job_id,voice=str(job.get('voice') or 'alloy')))
-        latest=audio_production_store.load(nid); latest_index=next((i for i,item in enumerate(latest['jobs']) if item.get('id')==job_id),None)
-        if latest_index is not None and latest['jobs'][latest_index].get('status')=='CANCELLED': return latest['jobs'][latest_index]
-        state=latest; jobs=state['jobs']; index=latest_index if latest_index is not None else index
-        completed=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); speech={'provider_id':resolved_provider,'model_id':model_id,'voice':job.get('voice'),'emotion':job.get('emotion','neutral'),'audio_uri':result.audio_uri,'character_id':job.get('character_id'),'chapter_id':job['chapter_id'],'text':str(chapter.get('content','')),'created_at':completed}; state['generations'].append(speech); jobs[index]={**job,'provider_id':resolved_provider,'model_id':model_id,'status':'SUCCEEDED','audio_uri':result.audio_uri,'completed_at':completed,'updated_at':completed,'error':None,'error_code':None}; state['jobs']=jobs; audio_production_store.save(nid,state); return jobs[index]
-    except ValueError:
-        latest=audio_production_store.load(nid);latest_index=next((i for i,item in enumerate(latest['jobs']) if item.get('id')==job_id),index);failed=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat();latest['jobs'][latest_index]={**job,'status':'FAILED','error':'语音 Provider 未配置','error_code':'SPEECH_PROVIDER_UNAVAILABLE','updated_at':failed};audio_production_store.save(nid,latest);raise HTTPException(503,{'code':'SPEECH_PROVIDER_UNAVAILABLE','message':'语音 Provider 未配置'})
-    except Exception:
-        latest=audio_production_store.load(nid); latest_index=next((i for i,item in enumerate(latest['jobs']) if item.get('id')==job_id),None)
-        if latest_index is not None and latest['jobs'][latest_index].get('status')=='CANCELLED': return latest['jobs'][latest_index]
-        state=latest; jobs=state['jobs']; index=latest_index if latest_index is not None else index
-        failed=__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(); jobs[index]={**job,'status':'FAILED','error':'语音服务请求失败','error_code':'SPEECH_SYNTHESIS_FAILED','updated_at':failed}; state['jobs']=jobs; audio_production_store.save(nid,state); raise HTTPException(502,{'code':'SPEECH_SYNTHESIS_FAILED','message':'语音服务请求失败'})
+        job=service.find(_audio_store(x_branch_id,x_session_token).load(nid),job_id)
+        chapter=repositories.chapters.get(job['chapter_id'])
+        if chapter.get('novel_id') != nid: raise HTTPException(404,'chapter not found')
+        def load_current_source():
+            try:_authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
+            except HTTPException as exc:raise AudiobookError('AUDIOBOOK_PERMISSION_REVOKED','当前会话已无权执行该任务',403) from exc
+            return repositories.chapters.get(job['chapter_id'])
+        from .source_privacy import assert_project_source_policies
+        return service.execute(nid,job_id,chapter,lambda provider_id:resolve_provider(provider_id,'TTS',credential_vault,httpx),load_current_source,lambda:assert_project_source_policies(repositories.novels,nid))
+    except AudiobookError as exc: raise HTTPException(exc.status,{'code':exc.code,'message':str(exc)})
+
 @router.post("/novels/{nid}/audiobook/jobs/consume")
-def consume_audiobook_jobs(nid:str,body:AudiobookConsumeIn|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write")
+def consume_audiobook_jobs(nid:str,body:AudiobookConsumeIn|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     from datetime import datetime,timezone,timedelta
     from .dependencies import repositories
-    repositories.novels.get(nid); config=body or AudiobookConsumeIn(); state=audio_production_store.load(nid); now=datetime.now(timezone.utc); recovered=[]
+    repositories.novels.get(nid); config=body or AudiobookConsumeIn(); state=_audio_store(x_branch_id,x_session_token).load(nid); now=datetime.now(timezone.utc); recovered=[]
     if config.recover_stale:
-        cutoff=now-timedelta(seconds=config.stale_after_seconds)
-        for index,job in enumerate(state['jobs']):
-            if job.get('status')!='RUNNING': continue
-            try: updated=datetime.fromisoformat(str(job.get('updated_at') or job.get('started_at')).replace('Z','+00:00'))
-            except (TypeError,ValueError): continue
-            if updated<=cutoff:
-                state['jobs'][index]={**job,'status':'QUEUED','updated_at':now.isoformat(),'recovered_at':now.isoformat(),'recovery_count':int(job.get('recovery_count') or 0)+1,'error':None,'error_code':None}; recovered.append(str(job.get('id')))
-        if recovered: audio_production_store.save(nid,state)
-    queued=[str(job.get('id')) for job in audio_production_store.load(nid)['jobs'] if job.get('status')=='QUEUED'][:config.limit]; results=[]
+        from .services.audiobook_service import AudiobookService
+        recovered=AudiobookService(_audio_store(x_branch_id,x_session_token),asset_library_service,branch_id=x_branch_id if settings.enable_collaboration_runtime else None).recover(nid,config.stale_after_seconds)
+    queued=[str(job.get('id')) for job in _audio_store(x_branch_id,x_session_token).load(nid)['jobs'] if job.get('status')=='QUEUED'][:config.limit]; results=[]
     for queued_id in queued:
-        try: execute_audiobook_job(nid,queued_id,x_session_token)
+        try: execute_audiobook_job(nid,queued_id,x_session_token,x_branch_id)
         except HTTPException: pass
-        persisted=next(item for item in audio_production_store.load(nid)['jobs'] if item.get('id')==queued_id)
+        persisted=next(item for item in _audio_store(x_branch_id,x_session_token).load(nid)['jobs'] if item.get('id')==queued_id)
         results.append({'id':queued_id,'status':persisted.get('status'),'error_code':persisted.get('error_code')})
-    remaining=sum(1 for job in audio_production_store.load(nid)['jobs'] if job.get('status')=='QUEUED')
+    remaining=sum(1 for job in _audio_store(x_branch_id,x_session_token).load(nid)['jobs'] if job.get('status')=='QUEUED')
     return {'novel_id':nid,'requested':config.limit,'processed':len(results),'recovered':recovered,'results':results,'remaining_queued':remaining,'execution':'SYNCHRONOUS_USER_TRIGGERED'}
+class AudiobookExportIn(BaseModel):
+    job_ids:list[str]=Field(min_length=1,max_length=500)
+    manifest_only:bool=False
+
+@router.post("/novels/{nid}/audiobook/chapters/{chapter_id}/export")
+def export_audiobook_chapter(nid:str,chapter_id:str,body:AudiobookExportIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
+    from .dependencies import repositories
+    from .services.audiobook_service import AudiobookService,AudiobookError
+    from .media_files import MediaValidationError
+    repositories.novels.get(nid)
+    try:
+        data,manifest=AudiobookService(_audio_store(x_branch_id,x_session_token),asset_library_service,branch_id=x_branch_id if settings.enable_collaboration_runtime else None).export_chapter(nid,chapter_id,body.job_ids)
+        if body.manifest_only: return manifest
+        return Response(data,media_type=manifest['media_type'],headers={'Content-Disposition':_export_content_disposition(f"{chapter_id}.{manifest['extension']}"),'X-Audio-SHA256':manifest['sha256']})
+    except AudiobookError as exc: raise HTTPException(exc.status,{'code':exc.code,'message':str(exc)})
+    except MediaValidationError: raise HTTPException(409,{'code':'AUDIOBOOK_CONCATENATION_UNAVAILABLE','message':'多个片段需要相同格式的 PCM WAV 音频'})
+
 @router.post("/novels/{nid}/speech-generations/import",status_code=202)
-def import_generated_speech(nid:str,body:dict,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write")
+def import_generated_speech(nid:str,body:dict,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     import base64
-    from .net_safety import fetch_outbound_bytes,OutboundURLRejected
+    from .net_safety import OutboundURLRejected
+    from .media_files import fetch_media_bytes,inspect_media,inspect_image
     url=str(body.get('audio_uri','')).strip()
     if not url: raise HTTPException(400,'audio_uri is required')
     try:
-        data=fetch_outbound_bytes(url,asset_library_service.MAX_BYTES,30)
-        asset=asset_library_service.create(nid,str(body.get('filename') or 'generated-speech.mp3'),base64.b64encode(data).decode('ascii'),'audio/mpeg','audio',f"speech-generation:{url}")
+        if url.startswith('data:audio/'):
+            match=re.fullmatch(r'data:audio/[A-Za-z0-9.+-]+;base64,([A-Za-z0-9+/=]+)',url)
+            if not match or len(match[1])>asset_library_service.MAX_BYTES*4//3+8:raise ValueError('invalid audio data URI')
+            data=base64.b64decode(match[1],validate=True)
+        else:data=fetch_media_bytes(url,asset_library_service.MAX_BYTES,30)
+        measured=inspect_media(data,'audio')
+        asset=asset_library_service.create(nid,str(body.get('filename') or f"generated-speech.{measured['extension']}"),base64.b64encode(data).decode('ascii'),measured['media_type'],'audio',f"speech-generation:{hashlib.sha256(data).hexdigest()}",branch_id=_image_branch(x_branch_id))
         if body.get('character_id'):
-            asset['character_id']=body['character_id']
-            from .repository import atomic_write
-            atomic_write(asset_library_service._meta_path(asset['id']),__import__('json').dumps(asset,ensure_ascii=False,indent=2))
+            asset=asset_library_service.update_metadata(asset['id'],{'character_id':body['character_id']},branch_id=_image_branch(x_branch_id))
         return asset
     except OutboundURLRejected as exc: raise HTTPException(400,{'code':'OUTBOUND_URL_REJECTED','message':str(exc)})
     except Exception: raise HTTPException(502,{'code':'AUDIO_IMPORT_FAILED','message':'音频导入失败'})
 @router.post("/novels/{nid}/image-generations/import",status_code=202)
-def import_generated_image(nid:str,body:dict):
+def import_generated_image(nid:str,body:dict,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     import base64
-    from .net_safety import fetch_outbound_bytes,OutboundURLRejected
+    from .net_safety import OutboundURLRejected
+    from .media_files import fetch_media_bytes,inspect_media,inspect_image
     url=str(body.get('asset_uri','')).strip()
     if not url: raise HTTPException(400,'asset_uri is required')
     try:
@@ -2103,19 +2386,20 @@ def import_generated_image(nid:str,body:dict):
             if not match: raise ValueError('invalid image data URI')
             data=base64.b64decode(match.group(2),validate=True)
             if not data or len(data)>asset_library_service.MAX_BYTES: raise ValueError('image data exceeds limit')
-        else:data=fetch_outbound_bytes(url,asset_library_service.MAX_BYTES,30)
+        else:data=fetch_media_bytes(url,asset_library_service.MAX_BYTES,30)
+        measured=inspect_image(data)
         source_key=hashlib.sha256(url.encode('utf-8')).hexdigest()
-        asset=asset_library_service.create(nid,str(body.get('filename') or 'generated-image.png'),base64.b64encode(data).decode('ascii'),'image/png','image',f"image-generation:{source_key}")
+        asset=asset_library_service.create(nid,str(body.get('filename') or f"generated-image.{measured['extension']}"),base64.b64encode(data).decode('ascii'),measured['media_type'],'image',f"image-generation:{source_key}",branch_id=_image_branch(x_branch_id))
         links={key:body.get(key) for key in ('character_id','scene_id') if body.get(key)}
         if links:
-            asset.update(links)
-            from .repository import atomic_write
-            atomic_write(asset_library_service._meta_path(asset['id']),__import__('json').dumps(asset,ensure_ascii=False,indent=2))
+            asset=asset_library_service.update_metadata(asset['id'],links,branch_id=_image_branch(x_branch_id))
         return asset
     except OutboundURLRejected as exc: raise HTTPException(400,{'code':'OUTBOUND_URL_REJECTED','message':str(exc)})
     except Exception: raise HTTPException(502,{'code':'IMAGE_IMPORT_FAILED','message':'图片导入失败'})
 @router.get("/novels/{nid}/visual-memories")
-def list_visual_memories(nid:str,character_id:str|None=None,scene_id:str|None=None):
+def list_visual_memories(nid:str,character_id:str|None=None,scene_id:str|None=None,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
+    if settings.enable_collaboration_runtime: return {"novel_id":nid,"items":[],"legacy_scope_unavailable":True}
     from .dependencies import repositories
     novel=repositories.novels.get(nid)
     items=[item for item in list(novel.get('visual_memories',[])) if (not character_id or item.get('character_id')==character_id) and (not scene_id or item.get('scene_id')==scene_id)]
@@ -2123,27 +2407,26 @@ def list_visual_memories(nid:str,character_id:str|None=None,scene_id:str|None=No
 class MotionTaskStatusIn(BaseModel): status:str=Field(pattern="^(PENDING|CANCELLED)$")
 class MotionFramesIn(BaseModel): start_frame:str|None=None; end_frame:str|None=None; constraints:dict[str,object]={}
 class MotionProviderIn(BaseModel): provider_id:str=Field(min_length=1); model_id:str='video-placeholder'
-@router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}")
-def update_motion_task(nid:str,screenplay_id:str,task_id:str,body:MotionTaskStatusIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.update_motion_task,nid,screenplay_id,task_id,body.status)
-@router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frames")
-def update_motion_frames(nid:str,screenplay_id:str,task_id:str,body:MotionFramesIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write")
-    result=guard(screenplay_service.update_motion_frames,nid,screenplay_id,task_id,body.start_frame,body.end_frame)
-    if isinstance(result,dict) and body.constraints: result={**result,"constraints":body.constraints}
+@router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}",dependencies=[Depends(_screenplay_route_guard)])
+def update_motion_task(nid:str,screenplay_id:str,task_id:str,body:MotionTaskStatusIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.update_motion_task,nid,screenplay_id,task_id,body.status)
+@router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frames",dependencies=[Depends(_screenplay_route_guard)])
+def update_motion_frames(nid:str,screenplay_id:str,task_id:str,body:MotionFramesIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id)
+    result=guard(screenplay_service.update_motion_frames,nid,screenplay_id,task_id,body.start_frame,body.end_frame,body.constraints)
     return result
-@router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/provider")
-def update_motion_provider(nid:str,screenplay_id:str,task_id:str,body:MotionProviderIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.update_motion_provider,nid,screenplay_id,task_id,body.provider_id,body.model_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/execute")
-def execute_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.execute_motion_task,nid,screenplay_id,task_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/cancel")
-def cancel_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.cancel_motion_task,nid,screenplay_id,task_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/retry")
-def retry_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.retry_motion_task,nid,screenplay_id,task_id)
+@router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/provider",dependencies=[Depends(_screenplay_route_guard)])
+def update_motion_provider(nid:str,screenplay_id:str,task_id:str,body:MotionProviderIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.update_motion_provider,nid,screenplay_id,task_id,body.provider_id,body.model_id)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/execute",dependencies=[Depends(_screenplay_route_guard)])
+def execute_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.execute_motion_task,nid,screenplay_id,task_id)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/cancel",dependencies=[Depends(_screenplay_route_guard)])
+def cancel_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.cancel_motion_task,nid,screenplay_id,task_id)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/retry",dependencies=[Depends(_screenplay_route_guard)])
+def retry_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.retry_motion_task,nid,screenplay_id,task_id)
 class MotionResultIn(BaseModel):
     url:str=Field(min_length=1,max_length=4000)
     media_type:str='video/mp4'
@@ -2157,76 +2440,91 @@ class MotionResultIn(BaseModel):
     def validate_media_type(cls,value):
         if not value.startswith('video/'): raise ValueError('media_type must be video/*')
         return value
-class MotionCallbackIn(BaseModel): status:str; progress:int=Field(default=0,ge=0,le=100); url:str|None=None; error:str|None=None
-@router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result")
-def attach_motion_result(nid:str,screenplay_id:str,task_id:str,body:MotionResultIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.attach_motion_result,nid,screenplay_id,task_id,body.url,body.media_type)
+class MotionCallbackIn(BaseModel): status:str; progress:int=Field(default=0,ge=0,le=100); url:str|None=None; error:str|None=None; remote_task_id:str|None=None; submission_key:str|None=None
+@router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result",dependencies=[Depends(_screenplay_route_guard)])
+def attach_motion_result(nid:str,screenplay_id:str,task_id:str,body:MotionResultIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.attach_motion_result,nid,screenplay_id,task_id,body.url,body.media_type)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/callback")
 def motion_callback(nid:str,screenplay_id:str,task_id:str,body:MotionCallbackIn,x_video_callback_token:str|None=Header(None)):
     expected=os.getenv('VIDEO_CALLBACK_TOKEN','').strip()
     if not expected: raise HTTPException(401,{"code":"VIDEO_CALLBACK_TOKEN_REQUIRED"})
     if not x_video_callback_token or not hmac.compare_digest(x_video_callback_token,expected): raise HTTPException(401,{"code":"INVALID_VIDEO_CALLBACK_TOKEN"})
+    screenplay=next((row for row in screenplay_service.list(nid) if row['id']==screenplay_id),None)
+    task=next((row for row in (screenplay or {}).get('motion_tasks',[]) if row['id']==task_id),None)
+    if task is None: raise HTTPException(404,'motion task not found')
+    if not body.remote_task_id or not body.submission_key or body.remote_task_id!=task.get('remote_task_id') or body.submission_key!=task.get('submission_key'):
+        raise HTTPException(409,{'code':'VIDEO_CALLBACK_ATTEMPT_MISMATCH'})
     return guard(screenplay_service.motion_callback,nid,screenplay_id,task_id,body.status,body.progress,body.url,body.error)
 class RemoteMotionTaskIn(BaseModel): remote_task_id:str=Field(min_length=1,max_length=400)
-@router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/remote-id")
-def set_remote_motion_task_id(nid:str,screenplay_id:str,task_id:str,body:RemoteMotionTaskIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.set_remote_motion_task_id,nid,screenplay_id,task_id,body.remote_task_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/sync")
-def sync_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.sync_motion_task,nid,screenplay_id,task_id)
-@router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result-history")
-def motion_result_history(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.motion_result_history,nid,screenplay_id,task_id)
-@router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/asset-reference")
-def motion_asset_reference(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.motion_asset_reference,nid,screenplay_id,task_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset",status_code=202)
-def import_motion_asset(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.import_motion_asset_reference,nid,screenplay_id,task_id)
-@router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset")
-def motion_asset_import_status(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.motion_asset_import_status,nid,screenplay_id,task_id)
-@router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets")
-def list_motion_asset_imports(nid:str,screenplay_id:str):return guard(screenplay_service.list_motion_asset_imports,nid,screenplay_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets/retry")
-def retry_failed_motion_asset_imports(nid:str,screenplay_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.retry_failed_motion_asset_imports,nid,screenplay_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/download",status_code=202)
-def download_motion_asset(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.download_motion_asset,nid,screenplay_id,task_id,asset_library_service)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/retry")
-def retry_motion_asset_import(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.retry_motion_asset_import,nid,screenplay_id,task_id)
-@router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frame-history")
-def motion_frame_history(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.motion_frame_history,nid,screenplay_id,task_id)
-@router.get("/novels/{nid}/screenplays/{screenplay_id}/visual-continuity")
+@router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/remote-id",dependencies=[Depends(_screenplay_route_guard)])
+def set_remote_motion_task_id(nid:str,screenplay_id:str,task_id:str,body:RemoteMotionTaskIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.set_remote_motion_task_id,nid,screenplay_id,task_id,body.remote_task_id)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/sync",dependencies=[Depends(_screenplay_route_guard)])
+def sync_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.sync_motion_task,nid,screenplay_id,task_id)
+@router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result-history",dependencies=[Depends(_screenplay_route_guard)])
+def motion_result_history(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.read",x_branch_id)
+    return guard(screenplay_service.motion_result_history,nid,screenplay_id,task_id)
+@router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/asset-reference",dependencies=[Depends(_screenplay_route_guard)])
+def motion_asset_reference(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.read",x_branch_id)
+    return guard(screenplay_service.motion_asset_reference,nid,screenplay_id,task_id)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset",status_code=202,dependencies=[Depends(_screenplay_route_guard)])
+def import_motion_asset(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.import_motion_asset_reference,nid,screenplay_id,task_id)
+@router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset",dependencies=[Depends(_screenplay_route_guard)])
+def motion_asset_import_status(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.read",x_branch_id)
+    return guard(screenplay_service.motion_asset_import_status,nid,screenplay_id,task_id)
+@router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets",dependencies=[Depends(_screenplay_route_guard)])
+def list_motion_asset_imports(nid:str,screenplay_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.read",x_branch_id)
+    return guard(screenplay_service.list_motion_asset_imports,nid,screenplay_id)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets/retry",dependencies=[Depends(_screenplay_route_guard)])
+def retry_failed_motion_asset_imports(nid:str,screenplay_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.retry_failed_motion_asset_imports,nid,screenplay_id)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/download",status_code=202,dependencies=[Depends(_screenplay_route_guard)])
+def download_motion_asset(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.download_motion_asset,nid,screenplay_id,task_id,asset_library_service)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/retry",dependencies=[Depends(_screenplay_route_guard)])
+def retry_motion_asset_import(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.retry_motion_asset_import,nid,screenplay_id,task_id)
+@router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frame-history",dependencies=[Depends(_screenplay_route_guard)])
+def motion_frame_history(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.read",x_branch_id)
+    return guard(screenplay_service.motion_frame_history,nid,screenplay_id,task_id)
+@router.get("/novels/{nid}/screenplays/{screenplay_id}/visual-continuity",dependencies=[Depends(_screenplay_route_guard)])
 def visual_continuity(nid:str,screenplay_id:str):return guard(screenplay_service.validate_visual_continuity,nid,screenplay_id)
-@router.get("/novels/{nid}/screenplays/{screenplay_id}/pipeline-status")
+@router.get("/novels/{nid}/screenplays/{screenplay_id}/pipeline-status",dependencies=[Depends(_screenplay_route_guard)])
 def screenplay_pipeline_status(nid:str,screenplay_id:str):return guard(screenplay_service.pipeline_status,nid,screenplay_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance")
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance",dependencies=[Depends(_screenplay_route_guard)])
 def advance_screenplay_pipeline(nid:str,screenplay_id:str):return guard(screenplay_service.advance_pipeline,nid,screenplay_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance-until-gate")
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance-until-gate",dependencies=[Depends(_screenplay_route_guard)])
 def advance_screenplay_pipeline_until_gate(nid:str,screenplay_id:str,max_steps:int=10):return guard(screenplay_service.advance_pipeline_until_gate,nid,screenplay_id,max_steps)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/assets",status_code=201)
-def plan_assets(nid:str,screenplay_id:str):return guard(screenplay_service.plan_assets,nid,screenplay_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/assets/approve")
-def approve_assets(nid:str,screenplay_id:str):return guard(screenplay_service.approve_assets,nid,screenplay_id)
-@router.put("/novels/{nid}/screenplays/{screenplay_id}/assets/{asset_id}")
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/assets",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
+def plan_assets(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.plan_assets,nid,screenplay_id,body.expected_version if body else None)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/assets/approve",dependencies=[Depends(_screenplay_route_guard)])
+def approve_assets(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.approve_assets,nid,screenplay_id,body.expected_version if body else None)
+@router.put("/novels/{nid}/screenplays/{screenplay_id}/assets/{asset_id}",dependencies=[Depends(_screenplay_route_guard)])
 def update_asset(nid:str,screenplay_id:str,asset_id:str,body:AssetRequirementIn):return guard(screenplay_service.update_asset,nid,screenplay_id,asset_id,body.model_dump())
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks",status_code=201)
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
 def create_asset_tasks(nid:str,screenplay_id:str):return guard(screenplay_service.create_asset_tasks,nid,screenplay_id)
-@router.put("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}")
+@router.put("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}",dependencies=[Depends(_screenplay_route_guard)])
 def update_asset_task(nid:str,screenplay_id:str,task_id:str,body:AssetTaskIn):return guard(screenplay_service.update_asset_task,nid,screenplay_id,task_id,body.model_dump())
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/execute")
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/execute",dependencies=[Depends(_screenplay_route_guard)])
 def execute_asset_task(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.execute_asset_task,nid,screenplay_id,task_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/retry")
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/retry",dependencies=[Depends(_screenplay_route_guard)])
 def retry_asset_task(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.retry_asset_task,nid,screenplay_id,task_id)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/recover")
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/recover",dependencies=[Depends(_screenplay_route_guard)])
 def recover_asset_tasks(nid:str,screenplay_id:str):return guard(screenplay_service.recover_asset_tasks,nid,screenplay_id)
 @router.post("/novels/{nid}/asset-tasks/recover")
 def recover_all_asset_tasks(nid:str):return guard(screenplay_service.recover_all_asset_tasks,nid)
-@router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/cleanup")
+@router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/cleanup",dependencies=[Depends(_screenplay_route_guard)])
 def cleanup_asset_tasks(nid:str,screenplay_id:str):return guard(screenplay_service.cleanup_asset_tasks,nid,screenplay_id)
 @router.get("/novels/{nid}/asset-tasks/stats")
 def asset_task_stats(nid:str):return guard(screenplay_service.asset_task_stats,nid)
-@router.get("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/stats")
+@router.get("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/stats",dependencies=[Depends(_screenplay_route_guard)])
 def screenplay_asset_task_stats(nid:str,screenplay_id:str):return guard(screenplay_service.asset_task_stats,nid,screenplay_id)
 @router.post("/novels/{nid}/asset-tasks/claim")
 def claim_asset_tasks(nid:str,limit:int=10,provider_id:str|None=None):return guard(screenplay_service.claim_asset_tasks,nid,limit,provider_id)
@@ -2876,7 +3174,7 @@ def discover_plugins():
     return discover_installed_plugins(settings.data_path() / "plugins")
 @router.get("/plugins/runtime-status")
 def plugin_runtime_status():
-    return {'execution_supported':False,'sandbox':'NOT_CONFIGURED','isolation':'DENY_ALL','reason':'plugin runtime execution is disabled until isolated worker is shipped'}
+    return {'execution_supported':False,'sandbox':'NOT_CONFIGURED','isolation':'DENY_ALL','reason':'plugin runtime execution is disabled until isolated worker is shipped','management_supported':not settings.enable_collaboration_runtime,'management_reason':'Local host management only; collaboration requires a host-admin authority.' if settings.enable_collaboration_runtime else 'Declarative resource packages only.'}
 @router.get("/release/readiness")
 def release_readiness():
     from .dependencies import asset_provider_registry, packaged_bootstrap_registry
@@ -2927,75 +3225,12 @@ def get_declarative_plugin_resource(plugin_id: str, resource_id: str):
     return plugin_catalog_guard(get_plugin_resource, plugin_id, resource_id)
 
 
-# Durable, deterministic workflow metadata engine.
-@router.get("/workflows")
-def list_workflows(novel_id: str | None = None):
-    return capability_guard(v1_capability_service.list_workflows, novel_id)
+from .plugin_management_api import router as plugin_management_router
+router.include_router(plugin_management_router)
 
-
-@router.post("/workflows", status_code=201)
-def create_workflow(body: WorkflowDefinitionIn,
-                    idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):
-    return capability_guard(v1_capability_service.create_workflow, body, idempotency_key)
-
-
-@router.get("/workflows/{workflow_id}")
-def get_workflow(workflow_id: str):
-    return capability_guard(v1_capability_service.get_workflow, workflow_id)
-
-
-@router.post("/workflows/{workflow_id}/runs", status_code=202)
-def create_workflow_run(workflow_id: str, body: WorkflowRunIn,
-                        idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):
-    return capability_guard(v1_capability_service.create_workflow_run, workflow_id, body, idempotency_key)
-
-
-@router.get("/workflows/{workflow_id}/runs")
-def list_workflow_runs(workflow_id: str):
-    return capability_guard(v1_capability_service.list_workflow_runs, workflow_id)
-
-
-@router.get("/workflow-runs/{run_id}")
-def get_workflow_run(run_id: str):
-    return capability_guard(v1_capability_service.get_workflow_run, run_id)
-
-
-@router.post("/workflow-runs/{run_id}/nodes/{node_id}/approve")
-def approve_workflow_node(run_id: str, node_id: str, approved_by: str = Query(...), note: str = Query(default="")):
-    return capability_guard(v1_capability_service.approve_workflow_node, run_id, node_id, approved_by, note)
-@router.post("/workflow-runs/{run_id}/nodes/{node_id}/trigger-agent")
-def trigger_agent_node(run_id: str, node_id: str, triggered_by: str = Query(default="local-author")):
-    return capability_guard(v1_capability_service.trigger_agent_node, run_id, node_id, triggered_by)
-@router.get("/agent-queue")
-def list_agent_queue(novel_id: str | None = None):
-    return capability_guard(v1_capability_service.list_agent_queue, novel_id)
-@router.post("/agent-queue/{run_id}/{node_id}/claim")
-def claim_agent_task(run_id: str, node_id: str, claimed_by: str = Query(default="local-worker")):
-    return capability_guard(v1_capability_service.claim_agent_task, run_id, node_id, claimed_by)
-@router.post("/agent-queue/{run_id}/{node_id}/complete")
-def complete_agent_task(run_id: str, node_id: str, status: str = Query(...), output: dict | None = None, error: str | None = None):
-    return capability_guard(v1_capability_service.complete_agent_task, run_id, node_id, status, output, error)
-
-
-@router.post("/workflow-runs/{run_id}/pause")
-def pause_workflow_run(run_id: str):
-    return capability_guard(v1_capability_service.set_workflow_run_state, run_id, "pause")
-
-
-@router.post("/workflow-runs/{run_id}/resume")
-def resume_workflow_run(run_id: str):
-    return capability_guard(v1_capability_service.set_workflow_run_state, run_id, "resume")
-
-
-@router.post("/workflow-runs/{run_id}/cancel")
-def cancel_workflow_run(run_id: str):
-    return capability_guard(v1_capability_service.set_workflow_run_state, run_id, "cancel")
-
-
-@router.post("/workflow-runs/{run_id}/retry", status_code=202)
-def retry_workflow_run(run_id: str,
-                       idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):
-    return capability_guard(v1_capability_service.retry_workflow_run, run_id, idempotency_key)
+# Workflow authorization and bounded execution live in a dedicated router.
+from .workflow_api import router as workflow_router
+router.include_router(workflow_router)
 
 
 @router.get("/release-gates")
@@ -3017,3 +3252,85 @@ def get_release_gate(gate_id: str):
 @router.get("/audit")
 def list_capability_audit(novel_id: str | None = None, limit: int = Query(default=100, ge=1, le=500)):
     return capability_guard(v1_capability_service.list_audit, novel_id, limit)
+
+# Versioned authoring records and review threads share the existing capability store.
+from .creation_workbench_api import create_workbench_router
+from .services.creation_workbench_service import CreationWorkbenchService
+creation_workbench_service = CreationWorkbenchService(v1_capability_service, chapter_service, novel_service)
+
+def _workbench_authorize(nid, token, branch, permission):
+    if settings.enable_collaboration_runtime:
+        if not branch:
+            raise HTTPException(400, {"code": "BRANCH_SCOPE_REQUIRED"})
+        actor, scope = _authorize_novel_project(nid, token, permission, branch_id=branch)
+        return actor.actor_id, {"mode": "collaboration", "novel_id": nid, "workspace_id": scope.workspace_id,
+            "storyline_id": scope.storyline_id, "branch_id": scope.branch_id}
+    guard(novel_service.get,nid)
+    return "local-author", CreationWorkbenchService.local_scope(nid)
+
+router.include_router(create_workbench_router(creation_workbench_service, _workbench_authorize))
+
+from .asset_lifecycle_api import create_asset_lifecycle_router
+router.include_router(create_asset_lifecycle_router(asset_library_service,v1_capability_service))
+
+from .services.video_assembly_service import VideoAssemblyService
+from .video_assembly_api import create_video_assembly_router
+video_assembly_service=VideoAssemblyService(settings.data_path(),asset_library_service)
+router.include_router(create_video_assembly_router(video_assembly_service))
+
+screenplay_service.asset_library=asset_library_service
+
+class MotionPrivacyIn(BaseModel):
+    privacy_level:str=Field(pattern='^(LOCAL_ONLY|CLOUD_ALLOWED)$')
+    prompt_sha256:str=Field(pattern='^[a-f0-9]{64}$')
+
+@router.get('/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy')
+def motion_privacy_review(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_motion(nid,screenplay_id,x_session_token,'domain.read',x_branch_id)
+    return guard(screenplay_service.motion_privacy,nid,screenplay_id,task_id)
+
+@router.put('/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy')
+def update_motion_privacy(nid:str,screenplay_id:str,task_id:str,body:MotionPrivacyIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
+    _authorize_motion(nid,screenplay_id,x_session_token,'domain.write',x_branch_id)
+    return guard(screenplay_service.update_motion_privacy,nid,screenplay_id,task_id,body.privacy_level,body.prompt_sha256)
+
+class SourcePrivacyIn(BaseModel):
+    privacy_level: str
+    expected_version: int = Field(ge=1)
+    content_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+@router.get("/novels/{nid}/chapters/{cid}/privacy")
+def get_source_privacy(nid: str, cid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+    _workbench_authorize(nid, x_session_token, x_branch_id, "domain.read")
+    chapter = guard(chapter_service.get, cid)
+    if chapter.get("novel_id") != nid:
+        raise HTTPException(404, "chapter not found")
+    from .source_privacy import source_privacy_status
+    return source_privacy_status(chapter, x_branch_id if settings.enable_collaboration_runtime else None)
+
+@router.put("/novels/{nid}/chapters/{cid}/privacy")
+def set_source_privacy(nid: str, cid: str, body: SourcePrivacyIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+    actor, _ = _workbench_authorize(nid, x_session_token, x_branch_id, "domain.write")
+    chapter = guard(chapter_service.get, cid)
+    if chapter.get("novel_id") != nid:
+        raise HTTPException(404, "chapter not found")
+    from .source_privacy import review_source_privacy
+    try:
+        return review_source_privacy(chapter, x_branch_id if settings.enable_collaboration_runtime else None,
+            actor, body.privacy_level, body.expected_version, body.content_sha256)
+    except ValueError as exc:
+        raise HTTPException(409, {"code": "SOURCE_PRIVACY_REVIEW_REQUIRED", "message": str(exc)}) from exc
+
+@router.get("/novels/{nid}/text-runtime-diagnostics")
+def local_text_runtime_diagnostics(nid: str, provider_id: str, model_id: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+    _workbench_authorize(nid, x_session_token, x_branch_id, "domain.read")
+    from .runtime_diagnostics import TextRuntimeDiagnosticsAdapter
+    try:
+        return TextRuntimeDiagnosticsAdapter(runtime.provider_registry, runtime.model_registry).diagnose(provider_id, model_id)
+    except ModelRuntimeError as exc:
+        raise HTTPException(404, {"code": exc.code.value, "message": exc.safe_message}) from exc
+
+from .services.ai_planning_service import AIPlanningService
+from .ai_planning_api import create_ai_planning_router
+ai_planning_service = AIPlanningService(creation_workbench_service, runtime)
+router.include_router(create_ai_planning_router(ai_planning_service, _workbench_authorize))

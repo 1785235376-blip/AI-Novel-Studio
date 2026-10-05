@@ -8,6 +8,7 @@ from typing import Any
 
 from .config import Settings
 from .repository import read_json
+from .privacy import privacy_record
 from .repositories.factory import create_repository_bundle
 from .services import ContextService
 
@@ -63,6 +64,31 @@ def _file_raw(root: Path, novel_id: str) -> dict:
     }
 
 
+def _legacy_file_privacy_projection(raw: dict) -> tuple[dict, list[dict]]:
+    """Apply the documented storage-upgrade policy, never discard differences.
+
+    PostgreSQL already exposes migrated effective policies. Legacy File bytes
+    are kept untouched; only their comparison projection receives the same
+    conservative missing/invalid-policy interpretation as the File repository.
+    The PostgreSQL side is deliberately not normalized, so missing, invalid or
+    downgraded stored policies still fail the independent comparison.
+    """
+    result = dict(raw)
+    upgrades = []
+    for dataset in ("characters", "locations", "timeline", "secrets", "foreshadowing", "canon"):
+        result[dataset] = []
+        for index, original in enumerate(raw.get(dataset, [])):
+            projected = privacy_record(original)
+            result[dataset].append(projected)
+            if projected != original:
+                upgrades.append({"path": f"raw.{dataset}[{index}]",
+                                 "source_privacy_present": "privacy_level" in original,
+                                 "source_privacy_level": original.get("privacy_level"),
+                                 "effective_privacy_level": projected["privacy_level"],
+                                 "privacy_status": projected.get("privacy_status")})
+    return result, upgrades
+
+
 def _semantic_sources(bundle, novel_id: str) -> dict:
     context = bundle.novels.get_context_sources(novel_id)
     return {
@@ -82,7 +108,7 @@ def compare(data_root: Path, database_url: str, novel_id: str, chapter_number: i
             instruction: str, cloud: bool, report_path: Path) -> dict:
     file_bundle = create_repository_bundle(Settings(storage_backend="file", novel_data=data_root), data_root)
     postgres_bundle = create_repository_bundle(Settings(storage_backend="postgres", database_url=database_url))
-    file_raw = _file_raw(data_root, novel_id)
+    file_raw, privacy_upgrades = _legacy_file_privacy_projection(_file_raw(data_root, novel_id))
     postgres_raw = _semantic_sources(postgres_bundle, novel_id)
     file_serialized = _semantic_sources(file_bundle, novel_id)
     postgres_serialized = _semantic_sources(postgres_bundle, novel_id)
@@ -108,6 +134,8 @@ def compare(data_root: Path, database_url: str, novel_id: str, chapter_number: i
         "inputs": {"novel_id": novel_id, "chapter_id": chapter_id, "instruction": instruction,
                    "provider_mode": "CLOUD" if cloud else "LOCAL_ONLY", "cloud": cloud},
         "raw_sources_equal": not raw_differences,
+        "raw_comparison_contract": "FAIL_CLOSED_PRIVACY_PROJECTION_V1",
+        "legacy_file_privacy_upgrades": privacy_upgrades,
         "serialized_sources_equal": not serialized_differences,
         "context_pack_equal": not pack_differences,
         "datasets": dataset_results,

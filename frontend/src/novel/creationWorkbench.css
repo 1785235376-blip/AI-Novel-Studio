@@ -7,3 +7,6 @@
 .creation-workbench__record p { white-space: pre-wrap; overflow-wrap: anywhere; }
 .creation-workbench__compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: var(--space-3); }
 .creation-workbench__compare article { border: var(--border-default); padding: var(--space-3); }
+
+.creation-workbench__planning { display: grid; gap: var(--space-3); padding-block: var(--space-3); }
+.creation-workbench__planning p { white-space: pre-wrap; overflow-wrap: anywhere; }

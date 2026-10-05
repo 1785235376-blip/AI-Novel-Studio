@@ -78,6 +78,8 @@ import { isPackagedDesktopHost } from "./packagedHost";
 import { generationRecovery } from "./generationRecovery";
 import { WorldBuildingDashboard } from "./novel/WorldBuildingDashboard";
 import { publishTaskSummary, summarizeTasks } from "./ui/taskSummary";
+import { SourcePrivacyControl } from "./novel/SourcePrivacyControl";
+import { CreationWorkbenchPanel } from "./novel/CreationWorkbenchPanel";
 import { StoryPlanningWorkspace } from "./novel/StoryPlanningWorkspace";
 import "./style.css";
 import "./ux.css";
@@ -251,17 +253,15 @@ export default function App() {
   const routeDiagnostics = useQuery({
     queryKey: [
       "text-runtime-diagnostics",
+      s.novelId,
       s.scope,
       selectedProviderId,
       selectedModelId,
     ],
-    queryFn: () =>
-      api.textRuntimeDiagnostics(
-        s.scope!,
-        selectedProviderId!,
-        selectedModelId!,
-      ),
-    enabled: !!s.scope && !!selectedProviderId && !!selectedModelId,
+    queryFn: () => s.scope
+      ? api.textRuntimeDiagnostics(s.scope, selectedProviderId!, selectedModelId!)
+      : api.localTextRuntimeDiagnostics(s.novelId, selectedProviderId!, selectedModelId!, {sessionToken:s.sessionToken}),
+    enabled: !!s.novelId && !!selectedProviderId && !!selectedModelId,
     retry: false,
   });
   const runtimeHealth = useQuery({
@@ -517,6 +517,8 @@ export default function App() {
         chapter_id: s.chapterId,
         instruction: request,
         style,
+        style_profile_id: s.writingInputs?.styleProfileId,
+        plot_plan_id: s.writingInputs?.plotPlanId,
         profile: s.mode,
         provider_id: s.textModel?.providerId,
         model_id: s.textModel?.modelId,
@@ -615,6 +617,8 @@ export default function App() {
         chapter_id: s.chapterId,
         instruction: request,
         style,
+        style_profile_id: s.writingInputs?.styleProfileId,
+        plot_plan_id: s.writingInputs?.plotPlanId,
         profile: s.mode,
         provider_id: s.textModel?.providerId,
         model_id: s.textModel?.modelId,
@@ -974,6 +978,7 @@ export default function App() {
     <div className="novel-inspector-stack">
       <section className="novel-inspector-context" aria-label="当前写作上下文"><span>当前章节</span><strong>{chapter.data?.title || "未选择章节"}</strong><small>{chapter.data ? `第 ${chapter.data.number} 章 · 版本 ${chapter.data.version}` : "从左侧章节树选择章节"}</small></section>
       <WritingGoalPanel novelId={s.novelId} />
+      {chapter.data&&<SourcePrivacyControl key={`${namespace}:${chapter.data.id}`} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}}/>}
       <AiWritingPanel
       novelId={s.novelId}
       chapterNumber={chapter.data?.number}
@@ -1222,10 +1227,11 @@ function Panel({
   if (type === "diagnostics") return <RuntimeDiagnosticsPanel scope={scope} />;
   if (type === "agents") return <>{chapter&&<AgentActivityCenter novelId={chapter.novel_id} />}{chapter&&<AgentJobHistory novelId={chapter.novel_id} />}<AgentTeamPanel chapter={chapter} /></>;
   if (type === "adaptation") return <AdaptationPanel novelId={chapter?.novel_id} branchId={scope?.branchId} />;
-  if (type === "screenplay") return <ScreenplayPanel novelId={chapter?.novel_id} />;
+  if (type === "screenplay") return <ScreenplayPanel novelId={chapter?.novel_id} scope={scope||null} sessionToken={sessionToken} />;
   if (type === "assets") return <AssetLibraryPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
   if (type === "exports") return <ExportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} scope={scope||null} sessionToken={sessionToken} />;
-  if (type === "knowledge") return <NovelImportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} chapterId={chapter?.id} />;
+  if (type === "knowledge") return <NovelImportPanel key={`${novelId}:${scope?.branchId||"local"}:${sessionToken}`} requestContext={{sessionToken,scope}} novelId={chapter?.novel_id || useStudio.getState().novelId || ""} chapterId={chapter?.id} />;
+  if (type === "creation" || type === "comments") return <CreationWorkbenchPanel key={`${novelId}:${scope?.branchId||"local"}:${sessionToken}`} novelId={novelId} chapter={chapter} initialComments={type === "comments"} context={{sessionToken,scope}} />;
   if (type === "research") return <ResearchPanel novelId={novelId} />;
   if (type === "settings") return <><AiControlCenter /><MediaProviderSettings /><VideoCallbackSecurityStatus /></>;
   if (type === "roadmap") return <CapabilityRoadmapPanel />;

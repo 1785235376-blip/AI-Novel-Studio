@@ -78,3 +78,24 @@ def review_source_privacy(chapter, branch_id, actor_id, privacy_level, expected_
             "reviewed_at": datetime.now(timezone.utc).isoformat()}
         atomic_write(_path(root), json.dumps({"schema_version": 1, "records": records}, ensure_ascii=False, indent=2))
     return source_privacy_status(chapter, branch_id, root)
+
+
+def assert_project_source_policies(novel_repository, novel_id):
+    """Raw manuscript consent cannot weaken independent private knowledge.
+
+    This is intentionally conservative: when a project contains restricted or
+    unreviewed facts, raw excerpts require local processing. Structured context
+    can still omit/redact those facts. No private value is echoed in the error.
+    """
+    if novel_repository is None or not hasattr(novel_repository, "get_context_sources"):
+        raise ValueError("project source policy authority is unavailable")
+    sources = novel_repository.get_context_sources(novel_id)
+    for name in ("characters", "locations", "secrets", "foreshadowing", "canon", "timeline", "relationships"):
+        rows = sources.get(name, [])
+        if hasattr(novel_repository, "get_data_set") and name != "secrets":
+            rows = novel_repository.get_data_set(novel_id, name)
+        if not isinstance(rows, list):
+            raise ValueError("project source policy is invalid")
+        for row in rows:
+            if not isinstance(row, dict) or normalize_privacy(row.get("privacy_level", row.get("privacy"))) != "CLOUD_ALLOWED":
+                raise ValueError("项目含限制外发或尚未确认隐私的资料，请使用本地模型。")

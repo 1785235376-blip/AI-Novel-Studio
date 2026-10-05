@@ -28,7 +28,7 @@ def rig(monkeypatch, tmp_path, policy=None, approve=False):
     monkeypatch.setattr(module,"deterministic_review",lambda *_:[])
     manager=JobManager.__new__(JobManager)
     manager.chapters=S(get=lambda _:chapter)
-    manager.contexts=S(for_chapter=lambda *_:{"chapter":1},save_snapshot=lambda *_:None)
+    manager.contexts=S(novels=S(get_context_sources=lambda _:{"characters":[],"secrets":[]}),for_chapter=lambda *_:{"chapter":1},save_snapshot=lambda *_:None)
     manager.snapshot_required=False
     def emit(job,chunk=""):job.output+=chunk
     manager._emit=emit
@@ -95,5 +95,33 @@ def test_creation_record_revocation_is_rechecked_before_dispatch(monkeypatch,tmp
     monkeypatch.setattr(api,"creation_workbench_service",S(local_scope=lambda nid:{"mode":"local","novel_id":nid},get_record=lambda *_:{"version":2,"status":"DRAFT","privacy_level":"LOCAL_ONLY"}))
     job=Job("synthetic","continue","n","n:1","Continue","QUALITY",style="copied style")
     job.creation_records=[{"id":"revoked","version":1,"privacy_level":"CLOUD_ALLOWED"}]
+    manager._run(job)
+    assert job.status=="FAILED" and captured==[]
+
+
+def test_chapter_review_cannot_waive_independently_private_project_fact(monkeypatch,tmp_path):
+    manager,_,captured,_=rig(monkeypatch,tmp_path,approve=True)
+    manager.contexts.novels=S(get_context_sources=lambda _:{"secrets":[{"content":"SYNTHETIC_CHAPTER_CANARY","privacy_level":"LOCAL_ONLY"}]})
+    job=Job("private-fact","continue","n","n:1","Continue","QUALITY")
+    manager._run(job)
+    assert job.status=="FAILED" and captured==[]
+
+
+def test_project_fact_revocation_before_send_is_rechecked(monkeypatch,tmp_path):
+    manager,_,captured,_=rig(monkeypatch,tmp_path,approve=True)
+    records=[]
+    manager.contexts.novels=S(get_context_sources=lambda _:{"secrets":records})
+    def context(*_):
+        records.append({"content":"private","privacy_level":"LOCAL_ONLY"})
+        return {}
+    manager.contexts.for_chapter=context
+    job=Job("revoke-project","continue","n","n:1","Continue","QUALITY")
+    manager._run(job)
+    assert job.status=="FAILED" and captured==[]
+
+
+def test_local_only_profile_cannot_dispatch_remote_even_with_source_review(monkeypatch,tmp_path):
+    manager,_,captured,_=rig(monkeypatch,tmp_path,approve=True)
+    job=Job("local-profile","continue","n","n:1","Continue","LOCAL_ONLY",requested_provider="remote",requested_model="selected")
     manager._run(job)
     assert job.status=="FAILED" and captured==[]

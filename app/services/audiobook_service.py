@@ -97,7 +97,7 @@ class AudiobookService:
             return recovered
         return self.store.mutate(novel_id, change)
 
-    def execute(self, novel_id, job_id, chapter, resolve, load_current_source=None):
+    def execute(self, novel_id, job_id, chapter, resolve, load_current_source=None, check_project_policy=None):
         def claim(state):
             job = self.find(state, job_id)
             if job["status"] != "QUEUED":
@@ -121,6 +121,13 @@ class AudiobookService:
             for entry in job.get("pronunciation_dictionary", []):
                 if entry.get("term"): text = text.replace(str(entry["term"]), str(entry.get("pronunciation", "")))
             model_id = str(job.get("model_id") or default_model)
+            if not getattr(provider, "local", False):
+                if check_project_policy is None:
+                    raise AudiobookError("AUDIOBOOK_POLICY_AUTHORITY_MISSING", "无法核验项目资料隐私，请使用本地语音服务", 403)
+                try:
+                    check_project_policy()
+                except ValueError as exc:
+                    raise AudiobookError("AUDIOBOOK_PROJECT_PRIVACY_BLOCKED", "项目资料隐私限制不允许外发正文", 403) from exc
             result = provider.generate(AudioGenerationRequest(provider_id, model_id, "TTS", text, job_id + ":" + str(job["attempt"]), voice=str(job.get("voice") or "alloy"), parameters={"emotion": job.get("emotion") or "neutral", "speed": float(job.get("speech_rate") or 1.0), "response_format": "wav"}))
             if result.status != "SUCCEEDED" or not result.audio_uri:
                 raise AudiobookError("AUDIOBOOK_ASYNC_UNSUPPORTED", "该语音服务未返回完成的音频；异步任务仍需 Provider 轮询适配", 502)

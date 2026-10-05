@@ -142,6 +142,11 @@ def test_writing_goal_update_and_read_keep_only_allowed_metadata(monkeypatch):
     record = model(slug="novel", title="Novel", created_at=stamp, updated_at=stamp,
                    metadata_json={"genre": "Mystery", "style_profile": {"pov": "first"}})
     class Session:
+        def scalar(self, query):
+            # Metadata updates now acquire the same FOR UPDATE row lock as
+            # screenplay CAS, so the fake session must expose that operation.
+            return record
+
         def flush(self):
             pass
     class Database:

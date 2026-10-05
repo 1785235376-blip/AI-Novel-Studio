@@ -24,6 +24,26 @@ test('R2 real File API: save/reopen, reviewed plans, anchored comments and immut
  await page.getByRole('button',{name:'保存',exact:true}).click();
  await expect(page.locator('.editorbar')).toContainText('已保存');
  await page.reload();await expect(editor).toContainText('Alice said hello');
+ // Real browser Draft/Diff/Accept and revision restore, with explicitly labeled mock execution.
+ const beforeWriting=await (await request.get(`http://127.0.0.1:8015/api/novels/${novel.id}/chapters`)).json();
+ const writingChapter=beforeWriting[0];
+ await page.getByLabel('文本模型',{exact:true}).selectOption('deepseek:deepseek-chat');
+ await expect(page.locator('.novel-ai-status [role="status"]')).toContainText(/DeepSeek Chat.*模拟测试/);
+ await editor.click();await editor.press('Control+A');
+ await page.getByRole('tab',{name:'改写',exact:true}).click();
+ await page.getByRole('button',{name:'生成改写草稿',exact:true}).click();
+ const draft=page.locator('.novel-draft-review');
+ await expect(draft.getByRole('button',{name:'采用草稿',exact:true})).toBeEnabled();
+ expect((await (await request.get(`http://127.0.0.1:8015/api/chapters/${writingChapter.id}`)).json()).version).toBe(writingChapter.version);
+ await draft.getByRole('tab',{name:'差异',exact:true}).click();await expect(draft.locator('.novel-diff')).toBeVisible();
+ await draft.getByRole('button',{name:'采用草稿',exact:true}).click();
+ await expect(page.locator('.novel-draft-review')).toHaveCount(0);
+ await feature(page,'版本历史');
+ await page.locator('.revision-timeline button').filter({has:page.getByText(`版本 ${writingChapter.version}`,{exact:true})}).click();
+ await page.getByRole('button',{name:'预览并恢复此版本',exact:true}).click();
+ await page.getByRole('button',{name:'恢复此版本',exact:true}).click();
+ await expect(editor).toContainText('Alice said hello');
+
  await feature(page,'创作方案与风格');
  await page.getByLabel('名称',{exact:true}).fill('简练风格');
  await page.getByLabel(/可复用风格指令/).fill('使用短句，保持人称一致。');
@@ -43,6 +63,15 @@ test('R2 real File API: save/reopen, reviewed plans, anchored comments and immut
  await request.put(`http://127.0.0.1:8015/api/chapters/${chapter.id}`,{data:{content:'新版本正文，评论锚点应标为过期。',version:chapter.version}});
  await page.getByRole('button',{name:'刷新记录',exact:true}).click();
  await expect(page.getByText('来源已更新，请重新核对',{exact:true})).toBeVisible();
+ // A second client changed the server version; preserve both sides and resolve explicitly.
+ await editor.fill('本地未提交内容，必须保留。');
+ await page.getByRole('button',{name:'保存',exact:true}).click();
+ const conflict=page.getByRole('dialog');await expect(conflict).toBeVisible();
+ await expect(conflict).toContainText('本地未提交内容');await expect(conflict).toContainText('新版本正文');
+ await conflict.getByRole('textbox',{name:'手工解决草稿'}).fill('新版本正文，已与本地未提交内容合并。');
+ await conflict.getByRole('button',{name:'应用手工解决并保存'}).click();
+ await expect(conflict).toHaveCount(0);await expect(editor).toContainText('已与本地未提交内容合并');
+
  await feature(page,'导出中心');
  const exported=page.waitForResponse(r=>r.url().includes('/api/exports?')&&r.request().method()==='POST');
  await page.getByRole('button',{name:'TXT 小说',exact:true}).click();

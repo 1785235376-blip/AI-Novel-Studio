@@ -66,17 +66,24 @@ class JobManager:
         self._persist(job)
     def _validate_outbound_sources(self, job, cloud):
         """Last-hop authority; queued copies never override current source policy."""
-        from .source_privacy import effective_source_privacy
+        from .source_privacy import effective_source_privacy, assert_project_source_policies
         branch_id=(job.scope or {}).get("branch_id")
         chapter = self.chapters.get(job.chapter_id)
         if chapter.get("novel_id", job.novel_id) != job.novel_id:
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "章节不属于当前项目")
         if job.base_chapter_version is not None and chapter.get("version") != job.base_chapter_version:
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "章节已改变，请重新生成")
+        if cloud and job.profile == "LOCAL_ONLY":
+            raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "仅本地创作模式不允许云模型，请明确切换创作模式后重试。")
         if cloud and job.source and job.source not in str(chapter.get("content") or ""):
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "所选文本不属于已审核正文，请重新选择。")
         if cloud and effective_source_privacy(chapter,branch_id) != "CLOUD_ALLOWED":
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "正文尚未明确允许云端使用，请选择本地模型或先审核正文隐私。")
+        if cloud:
+            try:
+                assert_project_source_policies(getattr(self.contexts, "novels", None), job.novel_id)
+            except ValueError as exc:
+                raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, str(exc)) from exc
         if job.actor_id and job.scope:
             from .dependencies import membership_authorization_service
             from .authorization import ModalityDomain

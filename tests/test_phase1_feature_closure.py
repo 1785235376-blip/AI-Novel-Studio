@@ -1,7 +1,7 @@
 from uuid import uuid4
 import time
 
-from fastapi.testclient import TestClient
+from screenplay_http_client import VersionedScreenplayClient as TestClient
 
 from app.actor_context import SessionContext
 from app.asset_providers import DeterministicVideoProvider, VideoGenerationRequest

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+from types import SimpleNamespace
 
 from app import jobs as jobs_module
 from app.jobs import Job, JobManager
@@ -20,7 +21,7 @@ class Chapters:
 
 
 class Contexts:
-    def __init__(self): self.cloud = None
+    def __init__(self): self.cloud = None; self.novels = SimpleNamespace(get_context_sources=lambda _: {})
     def for_chapter(self, *_args): self.cloud = _args[2]; return {"chapter": "context"}
     def save_snapshot(self, *_args, **_kwargs): return None
 
@@ -68,7 +69,7 @@ def test_explicit_model_selection_reaches_provider_neutral_runtime_without_fallb
     monkeypatch.setattr(jobs_module.runtime, "is_remote_text_provider", lambda provider: provider == "deepseek")
     monkeypatch.setattr(jobs_module.runtime, "prepare_text_route", lambda provider, model, _provider=None: captured.append((provider, model)) or Node())
     value = manager()
-    job = Job("job", "continue", "n", "c", "", "LOCAL_ONLY", requested_provider=selection.get("provider_id"), requested_model=selection.get("model_id"))
+    job = Job("job", "continue", "n", "c", "", "QUALITY" if selection else "LOCAL_ONLY", requested_provider=selection.get("provider_id"), requested_model=selection.get("model_id"))
     value._run(job)
     assert job.status == "COMPLETED"
     assert captured == [expected]

@@ -1,4 +1,4 @@
-from fastapi.testclient import TestClient
+from screenplay_http_client import VersionedScreenplayClient as TestClient
 from app.main import app
 
 def test_storyboard_lifecycle():
