@@ -229,11 +229,14 @@ def test_agent_job_timeout_is_terminal_and_retry_creates_new_job(monkeypatch):
         def __init__(self, interval, callback, args):
             self.interval, self.callback, self.args = interval, callback, args
             self.started = False
+            self.cancelled = False
             timers.append(self)
         def start(self):
             self.started = True
+        def cancel(self):
+            self.cancelled = True
         def fire(self):
-            assert self.started
+            assert self.started and not self.cancelled
             self.callback(*self.args)
 
     class Node:

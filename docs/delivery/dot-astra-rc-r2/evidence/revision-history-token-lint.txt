@@ -1,0 +1,6 @@
+ISOLATED_TEST_ROOT=/workspace/scratch/b8734129d01d/r2-test.Uandz0
+
+> ai-novel-studio-ui@0.7.0 lint /workspace/scratch/b8734129d01d/ai-novel-r2/frontend
+> node ../scripts/check_ui_design_tokens.mjs
+
+UI token guard PASS (42 files)

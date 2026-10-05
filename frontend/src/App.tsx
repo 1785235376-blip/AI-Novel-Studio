@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   QueryClient,
   useMutation,
@@ -10,6 +10,7 @@ import {
   api,
   ApiError,
   Chapter,
+  type CollaborationContext,
   Novel,
   Scope,
   setCollaborationContext,
@@ -975,7 +976,16 @@ export default function App() {
           <p>在左侧新建或选择章节，开始写作。</p>
         </section>
       )}
-      <Panel type={panel} chapter={chapter.data} scope={scope} sessionToken={s.sessionToken} novelId={s.novelId} onOpenChapter={s.setChapter} />
+      <Panel type={panel} chapter={chapter.data} scope={scope} sessionToken={s.sessionToken} novelId={s.novelId} onOpenChapter={s.setChapter}
+        onRestored={(restored) => {
+          // Feed the existing hydration path. It retains drafts and creates a
+          // persistent conflict when a restored server version overtakes them.
+          if (revisionStoreIdentity(useStudio.getState()) !== revisionStoreIdentity(s)
+              || restored.id !== s.chapterId || restored.novel_id !== s.novelId) return;
+          qc.setQueryData<Chapter>(["chapter", namespace, s.chapterId], current =>
+            current && current.version > restored.version ? current : restored);
+          void qc.invalidateQueries({ queryKey: ["chapters", namespace, s.novelId] });
+        }} />
     </div>
   );
   const inspector = (
@@ -1192,12 +1202,14 @@ function Panel({
   sessionToken,
   novelId,
   onOpenChapter,
+  onRestored,
 }: {
   type: string;
   chapter?: Chapter;
   scope?: Scope;
   novelId: string;
   onOpenChapter: (id:string)=>void;
+  onRestored: (chapter: Chapter) => void;
   sessionToken: string;
 }) {
   if (!scope && ["members", "permissions", "audit", "snapshots"].includes(type))
@@ -1208,7 +1220,7 @@ function Panel({
       </section>
     );
   if (type === "history")
-    return chapter ? <RevisionHistory chapter={chapter} scope={scope} /> : null;
+    return chapter ? <RevisionHistory chapter={chapter} scope={scope} sessionToken={sessionToken} onRestored={onRestored} /> : null;
   if (type === "story")
     return chapter ? (
       <StoryDatabasePanel chapter={chapter} scope={scope} onOpenChapter={onOpenChapter} />
@@ -1418,22 +1430,95 @@ function StoryDatabasePanel({
       </>
     );
 }
-function RevisionHistory({
-  chapter,
-  scope,
-}: {
+let revisionObserverSequence = 0;
+function revisionStoreIdentity(state: Pick<ReturnType<typeof useStudio.getState>, "sessionToken" | "actor" | "scope" | "novelId" | "chapterId">) {
+  return JSON.stringify([state.sessionToken, state.actor?.id, state.actor?.workspaceId,
+    state.novelId, state.chapterId, state.scope?.workspaceId, state.scope?.projectId,
+    state.scope?.storylineId, state.scope?.branchId]);
+}
+
+type RevisionHistoryProps = {
   chapter: Chapter;
   scope?: Scope;
-}) {
+  sessionToken: string;
+  onRestored: (chapter: Chapter) => void;
+};
+
+export function RevisionHistory(props: RevisionHistoryProps) {
+  const storeIdentity = useStudio(revisionStoreIdentity);
+  const actor = useStudio(state => state.actor);
+  const [scopeEpoch, setScopeEpoch] = useState(0);
+  useLayoutEffect(() => {
+    let observed = revisionStoreIdentity(useStudio.getState());
+    return useStudio.subscribe(state => {
+      const next = revisionStoreIdentity(state);
+      if (next !== observed) { observed = next; setScopeEpoch(value => value + 1); }
+    });
+  }, []);
+  // Identity comparisons remain in memory. Only this opaque observer ID enters
+  // React Query keys, so neither cache keys nor dehydrated caches contain tokens.
+  const identity = JSON.stringify([storeIdentity, scopeEpoch, props.chapter.novel_id, props.chapter.id,
+    props.sessionToken, props.scope?.workspaceId, props.scope?.projectId,
+    props.scope?.storylineId, props.scope?.branchId]);
+  const observer = useRef<{ identity: string; id: string }>();
+  if (!observer.current || observer.current.identity !== identity) observer.current = {
+    identity,
+    id: globalThis.crypto?.randomUUID?.() || `revision-${Date.now()}-${++revisionObserverSequence}-${Math.random()}`,
+  };
+  const context: CollaborationContext = {
+    sessionToken: props.sessionToken,
+    actor: actor && { ...actor },
+    scope: props.scope && { ...props.scope },
+  };
+  return <ScopedRevisionHistory key={observer.current.id} {...props}
+    context={context} observerId={observer.current.id} storeIdentity={storeIdentity} />;
+}
+
+function ScopedRevisionHistory({ chapter, scope, onRestored, context, observerId, storeIdentity }:
+  RevisionHistoryProps & { context: CollaborationContext; observerId: string; storeIdentity: string }) {
   const [selected, setSelected] = useState<number>();
+  const epoch = useRef(0);
+  const mounted = useRef(true);
+  const restorePending = useRef(false);
+  useLayoutEffect(() => {
+    mounted.current = true;
+    let observed = revisionStoreIdentity(useStudio.getState());
+    // Invalidates even an A→B→A change batched into one React render.
+    const unsubscribe = useStudio.subscribe(state => {
+      const next = revisionStoreIdentity(state);
+      if (next !== observed) { observed = next; epoch.current += 1; }
+    });
+    return () => { mounted.current = false; epoch.current += 1; unsubscribe(); };
+  }, []);
+  const current = (ticket: number) => mounted.current && ticket === epoch.current
+    && revisionStoreIdentity(useStudio.getState()) === storeIdentity;
   const q = useQuery({
-    queryKey: ["revision-history", scope, chapter.id],
-    queryFn: () =>
-      scope ? api.history(scope, chapter.id) : api.legacyHistory(chapter.id),
+    queryKey: ["revision-history", observerId, chapter.id, chapter.version],
+    gcTime: 0,
+    queryFn: async () => {
+      const ticket = epoch.current;
+      try {
+        const rows = scope ? await api.history(scope, chapter.id, context) : await api.legacyHistory(chapter.id, context);
+        return current(ticket) ? rows : [];
+      } catch (error) {
+        if (!current(ticket)) return [];
+        throw error;
+      }
+    },
   });
   const detail = useQuery({
-    queryKey: ["revision-detail", scope, chapter.id, selected],
-    queryFn: () => api.revisionDetail(scope!, chapter.id, selected!),
+    queryKey: ["revision-detail", observerId, chapter.id, selected],
+    gcTime: 0,
+    queryFn: async () => {
+      const ticket = epoch.current;
+      try {
+        const row = await api.revisionDetail(scope!, chapter.id, selected!, context);
+        return current(ticket) ? row : null;
+      } catch (error) {
+        if (!current(ticket)) return null;
+        throw error;
+      }
+    },
     enabled: !!scope && selected !== undefined,
   });
   const preview: any = scope
@@ -1446,11 +1531,12 @@ function RevisionHistory({
     reason: v.reason,
     source: v.source,
   }));
+  const revisionSummary = revisions.find(revision => revision.version === selected);
   const selectedRevision: RevisionDetail | null =
-    selected === undefined || !preview
+    selected === undefined || !preview || !revisionSummary
       ? null
       : {
-          ...revisions.find((v) => v.version === selected)!,
+          ...revisionSummary,
           comparison: {
             historicalLabel: `历史版本 ${selected}`,
             historicalText: revisionDocumentText(preview.document),
@@ -1469,23 +1555,26 @@ function RevisionHistory({
       detailError={detail.error ? String(detail.error) : null}
       onSelectRevision={setSelected}
       onRestore={async (request) => {
+        const ticket = epoch.current;
+        if (!current(ticket) || restorePending.current) return;
+        restorePending.current = true;
         try {
-          await api.restore(
-            chapter.id,
-            request.revisionVersion,
-            request.expectedCurrentVersion,
+          const restored = await api.restore(
+            chapter.id, request.revisionVersion, request.expectedCurrentVersion, context,
           );
-          location.reload();
+          if (!current(ticket)) return;
+          if (restored.id !== chapter.id || restored.novel_id !== chapter.novel_id)
+            throw new Error("恢复结果与当前章节不一致，请刷新后检查。");
+          onRestored(restored);
         } catch (error: any) {
+          if (!current(ticket)) return;
           if (error?.status === 409)
-            throw {
-              kind: "conflict",
-              message: error.message,
-              currentVersion: error.problem?.details?.actual_version,
-            };
+            throw { kind: "conflict", message: error.message, currentVersion: error.problem?.details?.actual_version };
           if (error?.status === 403)
             throw { kind: "unauthorized", message: error.message };
           throw error;
+        } finally {
+          if (current(ticket)) restorePending.current = false;
         }
       }}
     />

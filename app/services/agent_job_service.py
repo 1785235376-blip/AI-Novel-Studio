@@ -28,7 +28,7 @@ class AgentJobError(ValueError):
 
 class AgentJobService:
     terminal={"COMPLETED","VALIDATED","FAILED","CANCELLED","ACCEPTED","REJECTED"}
-    def __init__(self,generations,contexts,novels,runtime=None,agent_runner=None):self.generations,self.contexts,self.novels,self.runtime,self.agent_runner=generations,contexts,novels,runtime,agent_runner;self.lock=threading.RLock();self.cancellations={}
+    def __init__(self,generations,contexts,novels,runtime=None,agent_runner=None):self.generations,self.contexts,self.novels,self.runtime,self.agent_runner=generations,contexts,novels,runtime,agent_runner;self.lock=threading.RLock();self.cancellations={};self._timers={}
 
     def create(self,agent_id,novel_id,chapter_number,instruction="",target="local",provider=None,model=None,execution_mode="deterministic",timeout_seconds=120,retry_of=None):
         agent=next((item for item in AGENTS if item["id"]==agent_id),None)
@@ -149,6 +149,8 @@ class AgentJobService:
                 current=self.get(jid)
                 if not self._same_attempt(current,working):return current
                 failed={**working,"status":"FAILED","error_code":code,"error":exc.safe_message if isinstance(exc,ModelRuntimeError) else "Agent execution failed; inspect the safe error code.","fallback_used":False,"updated_at":utc()};self.generations.save(failed);return failed
+        finally:
+            self._drop_timer(jid)
 
     def recover_interrupted(self):
         """Reconcile persisted in-flight work after restart without replaying billing."""
@@ -161,24 +163,55 @@ class AgentJobService:
                 self.generations.save(failed);recovered.append(job["id"])
         return recovered
 
-    def start(self,jid,check_authority=None):
-        job=self.get(jid)
-        if job["status"]!="QUEUED":raise ValueError("agent job is not queued")
-        thread=threading.Thread(target=self.execute,args=(jid,check_authority),daemon=True,name=f"agent-job-{jid}");thread.start()
-        timer=threading.Timer(job.get("timeout_seconds",120),self._timeout,args=(jid,));timer.daemon=True;timer.start()
-        return self.get(jid)
+    def _drop_timer(self,jid):
+        with self.lock:
+            timer=self._timers.pop(jid,None)
+            if timer is not None:timer.cancel()
 
-    def _timeout(self,jid):
+    def _run_started(self,jid,check_authority):
+        try:
+            return self.execute(jid,check_authority)
+        except KeyError:
+            # A deleted project owns no runnable job or timer.
+            return None
+        except ValueError:
+            current=self.get(jid)
+            if current["status"] in self.terminal:
+                return current
+            raise
+        finally:
+            self._drop_timer(jid)
+
+    def start(self,jid,check_authority=None):
         with self.lock:
             job=self.get(jid)
-            if job["status"] not in {"QUEUED","WORKING"}:return
-            self.cancellations.setdefault(jid,threading.Event()).set();failed={**job,"status":"FAILED","error_code":"TIMEOUT","error":"Agent task timed out","fallback_used":False,"updated_at":utc()};self.generations.save(failed)
+            if job["status"]!="QUEUED":raise ValueError("agent job is not queued")
+            if jid in self._timers:return job
+            timer=threading.Timer(job.get("timeout_seconds",120),self._timeout,args=(jid,));timer.daemon=True
+            self._timers[jid]=timer
+            thread=threading.Thread(target=self._run_started,args=(jid,check_authority),daemon=True,name=f"agent-job-{jid}")
+            # Register the timer before execution can complete and clean it up.
+            timer.start();thread.start()
+            return self.get(jid)
+
+    def _timeout(self,jid):
+        try:
+            with self.lock:
+                try:
+                    job=self.get(jid)
+                except KeyError:
+                    self.cancellations.pop(jid,None)
+                    return
+                if job["status"] not in {"QUEUED","WORKING"}:return
+                self.cancellations.setdefault(jid,threading.Event()).set();failed={**job,"status":"FAILED","error_code":"TIMEOUT","error":"Agent task timed out","fallback_used":False,"updated_at":utc()};self.generations.save(failed)
+        finally:
+            self._drop_timer(jid)
 
     def cancel(self,jid):
         with self.lock:
             job=self.get(jid)
             if job["status"] not in {"QUEUED","WORKING"}:raise ValueError("agent job cannot be cancelled")
-            self.cancellations.setdefault(jid,threading.Event()).set();cancelled={**job,"status":"CANCELLED","error_code":"CANCELLED","error":"Agent task cancelled","updated_at":utc()};self.generations.save(cancelled);return cancelled
+            self.cancellations.setdefault(jid,threading.Event()).set();cancelled={**job,"status":"CANCELLED","error_code":"CANCELLED","error":"Agent task cancelled","updated_at":utc()};self.generations.save(cancelled);self._drop_timer(jid);return cancelled
 
     def retry(self,jid):
         job=self.get(jid)

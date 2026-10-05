@@ -59,6 +59,13 @@ jobs:
           python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild]'
           python -m pip check
           python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+      - name: Install real media decoding and assembly tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          ffmpeg -version > "$CI_RECEIPTS/ffmpeg-version.txt"
+          ffprobe -version > "$CI_RECEIPTS/ffprobe-version.txt"
+          python -c "import shutil; assert shutil.which('ffmpeg') and shutil.which('ffprobe')"
       - name: Install matching PostgreSQL recovery tools
         if: matrix.backend == 'postgres'
         run: |
