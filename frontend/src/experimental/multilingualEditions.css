@@ -1,0 +1,6 @@
+.multilingual-chapters{border:var(--border-default);border-radius:var(--radius-md);padding:var(--space-3);display:grid;gap:var(--space-2);min-width:0}
+.multilingual-columns>section{min-width:0;display:grid;align-content:start;gap:var(--space-2)}
+.multilingual-prose{font-family:var(--font-editor);white-space:pre-wrap;overflow-wrap:anywhere;unicode-bidi:plaintext}
+.multilingual-font-serif{font-family:var(--font-editor)}
+.multilingual-font-sans-serif{font-family:var(--font-ui)}
+.multilingual-font-monospace{font-family:var(--font-mono)}
