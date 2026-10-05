@@ -297,8 +297,6 @@ class WorldService(DomainService):
             transitions = {"approve": ({"REVIEW"}, "APPROVED"), "reject": ({"REVIEW"}, "REJECTED"), "reopen": ({"REJECTED", "ARCHIVED"}, "REVIEW"), "archive": ({"REVIEW", "REJECTED", "APPROVED"}, "ARCHIVED")}
             if action not in transitions or row["status"] not in transitions[action][0]:
                 raise ValueError("invalid world review transition")
-            if row["version"] != expected_version:
-                raise CapabilityVersionConflict(deepcopy(row))
             if action == "approve":
                 self._assert_fresh(nid, scope, row, state)
             def update(target):
@@ -343,7 +341,8 @@ class WorldService(DomainService):
     def character_state(self, nid, scope, character_id, chapter_id):
         entity_sources(self, nid, scope, {"character_ids": [character_id]})
         chapter = self._chapter(nid, scope, chapter_id)
-        rows = [row for row in self.canon(nid, scope) if not row["stale"] and row["effective_chapter"] <= chapter["narrative_sequence"]]
+        canonical_rows = self.canon(nid, scope)
+        rows = [row for row in canonical_rows if not row["stale"] and row["effective_chapter"] <= chapter["narrative_sequence"]]
         rows.sort(key=self._order)
         state = {"character_id": character_id, "chapter_id": chapter_id, "chapter_number": chapter["narrative_sequence"], "life_state": "UNSPECIFIED", "psychology": None, "arcs": {}, "relationships": {}, "evidence_record_ids": [], "verification": "DETERMINISTIC_RULES"}
         for row in rows:
@@ -363,7 +362,7 @@ class WorldService(DomainService):
                 state["relationships"][pair] = deepcopy(data)
                 relevant = True
             if relevant: state["evidence_record_ids"].append(row["source_record_id"])
-        state["excluded_stale_records"] = [row["source_record_id"] for row in self.canon(nid, scope) if row["stale"] and row["effective_chapter"] <= chapter["narrative_sequence"] and character_id in row["links"]["character_ids"]]
+        state["excluded_stale_records"] = [row["source_record_id"] for row in canonical_rows if row["stale"] and row["effective_chapter"] <= chapter["narrative_sequence"] and character_id in row["links"]["character_ids"]]
         return state
 
     def continuity(self, nid, scope, include_candidates=False):
