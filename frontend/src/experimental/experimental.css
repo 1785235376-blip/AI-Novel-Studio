@@ -1,0 +1,21 @@
+.experimental-workbench{min-width:0;padding:var(--space-4);display:grid;gap:var(--space-3);border-top:var(--border-default);background:var(--color-bg-surface)}
+.experimental-workbench h2,.experimental-workbench h3,.experimental-workbench p{margin:0}
+.experimental-workbench .ui-panel{min-width:0;padding:var(--space-3);display:grid;gap:var(--space-3)}
+.experimental-tabs,.experimental-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2)}
+.experimental-tabs [aria-pressed="true"]{background:var(--color-selection-bg);border-color:var(--color-selection-border)}
+.experimental-form,.experimental-list,.experimental-section{display:grid;gap:var(--space-3);min-width:0}
+.experimental-field{display:grid;gap:var(--space-1);min-width:0;color:var(--color-text-secondary)}
+.experimental-field input,.experimental-field textarea,.experimental-field select{min-width:0;width:100%;box-sizing:border-box}
+.experimental-field textarea{min-height:var(--space-12);resize:vertical}
+.experimental-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:var(--space-3);min-width:0}
+.experimental-record{border:var(--border-default);border-radius:var(--radius-md);padding:var(--space-3);display:grid;gap:var(--space-2);min-width:0;overflow-wrap:anywhere}
+.experimental-record.is-selected{border-color:var(--color-selection-border);background:var(--color-selection-bg)}
+.experimental-details{min-width:0;overflow-wrap:anywhere;color:var(--color-text-secondary)}
+.experimental-details summary{cursor:pointer}
+.experimental-details pre{font-family:var(--font-mono);white-space:pre-wrap;overflow-wrap:anywhere;max-height:calc(var(--space-12)*6);overflow:auto;padding:var(--space-2);background:var(--color-bg-subtle);margin:var(--space-2) 0 0}
+.experimental-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:var(--space-2);margin:0;overflow-wrap:anywhere}
+.experimental-meta dt{color:var(--color-text-muted)}
+.experimental-meta dd{margin:0}
+.experimental-check{display:flex;gap:var(--space-2);align-items:flex-start}
+.experimental-check input{width:auto}
+.experimental-preview{max-width:100%;height:auto;border:var(--border-default)}
