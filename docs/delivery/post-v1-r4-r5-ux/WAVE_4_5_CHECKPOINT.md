@@ -24,3 +24,7 @@ Each has a mounted API, functional frontend controls, persisted/versioned record
 Earlier head `11157b4` retained a broker locator ambiguity and an abandoned-browser-request teardown failure, with isolation cascades. Its real File/PostgreSQL/Windows results and separate U13 receipts remain scoped historical evidence. Correction `4364613` is being checked independently before this larger feature increment. No failures are rewritten as successful runs.
 
 The second-slice independent review remains BLOCKED by the platform. Known reported defects have implementation fixes and retained regression tests; that is not independent audit closure. Real TTS/model/GPU, native Windows IME, external subtitle/NLE applications, remote custom Agent execution, branch-isolated original manuscript writing and user acceptance retain explicit NOT_RUN or unavailable boundaries.
+
+## Cancellation repair on the same staged slice
+
+Subsequent runtime source `c6c99abf3f80603a25c8125fcf24e1f6d3fe0ca7` fixes the real RESERVED→DISPATCHED cancel race observed in the hosted browser. The full File-compatible suite was rerun on that immutable source: **3,063 passed, 9 skipped, 748 real-PG-only deselected**, 243.55 seconds. The focused broker/origin suite additionally passed 75 checks; these counts are separate runs, not summed. The frontend runtime is unchanged from the 865-pass suite; the browser specification now asserts the actual cancellation HTTP response before polling. See BROKER_CANCEL_DISPATCH_REPAIR.md.

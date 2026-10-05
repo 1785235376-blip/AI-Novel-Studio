@@ -89,7 +89,9 @@ test('R4 broker real API, author executor, cancellation, bounded evidence and dr
     const second = page.waitForResponse(r => r.url().endsWith('/model-broker/generate') && r.request().method() === 'POST');
     await page.getByRole('button', { name: '按预览路线预占并生成', exact: true }).click();
     const cancelled = await body(await second); lastReservation = cancelled.reservation_id; lastJob = cancelled.job_id;
+    const cancelResponse = page.waitForResponse(r => r.url().endsWith(`/model-broker/jobs/${cancelled.reservation_id}/cancel`) && r.request().method() === 'POST');
     await page.getByRole('button', { name: '取消本次生成', exact: true }).click();
+    expect((await body(await cancelResponse)).job.status).toBe('CANCELLED');
     await expect.poll(async () => (await body(await request.get(`${base}/model-broker/jobs/${cancelled.reservation_id}`, { headers }))).job.status).toBe('CANCELLED');
     await expect.poll(async () => (await body(await request.get(`${base}/model-broker/jobs/${cancelled.reservation_id}`, { headers }))).ledger.status).toMatch(/SETTLED|RELEASED/);
     expect((await body(await request.get(`${API}/chapters/${chapter.id}`, { headers }))).content).toBe(chapter.content);

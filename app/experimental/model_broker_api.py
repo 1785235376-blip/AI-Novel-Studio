@@ -19,6 +19,24 @@ class BrokerGenerateInput(Strict):
     author: AuthorPreviewInput
 
 
+def cancellation_version_matches(entry, expected):
+    """Cancel is monotonic: the same owned reservation may just have dispatched.
+
+    This never rewrites ledger data or accepts a generic stale financial edit.
+    Only the original RESERVED -> DISPATCHED transition is admissible.
+    """
+    if expected == entry.get('version'):
+        return True
+    if entry.get('status') != 'DISPATCHED' or entry.get('version') != expected + 1:
+        return False
+    immutable = ('id', 'job_id', 'created_by', 'novel_id', 'scope', 'authorization_digest',
+        'preview_id', 'route_id', 'route_fingerprint', 'provider_id', 'model_id',
+        'price', 'currency', 'reserve_microusd')
+    return any(row.get('version') == expected and row.get('status') == 'RESERVED'
+        and all(row.get(key) == entry.get(key) for key in immutable)
+        for row in entry.get('history', []) if isinstance(row, dict))
+
+
 def create_model_broker_router(service, authorize, require_flag, require_host_session, *, prepare_author=None, manager=None):
     router = APIRouter(prefix='/novels/{nid}/experimental/model-broker', tags=['Experimental Model Broker'])
 
@@ -190,7 +208,10 @@ def create_model_broker_router(service, authorize, require_flag, require_host_se
         value = await body(request, ReservationVersionInput)
         entry = api_call(service.get, nid, scope, service.LEDGER, reservation_id)
         if entry['created_by'] != actor: raise HTTPException(404, {'code': 'BROKER_JOB_NOT_FOUND'})
-        api_call(check_version, entry, value.expected_version)
+        if not cancellation_version_matches(entry, value.expected_version):
+            # Do not return historical source-bound ledger contents in errors,
+            # including the feature-OFF recovery path.
+            raise HTTPException(409, {'code': 'BROKER_CANCELLATION_STATE_CHANGED'})
         recovery_access(nid, x_session_token, x_branch_id, 'domain.write')
         try: current = manager.cancel(entry['job_id']) if manager else None
         except KeyError: raise HTTPException(409, {'code': 'BROKER_EXECUTOR_NOT_RESUMABLE'}) from None
