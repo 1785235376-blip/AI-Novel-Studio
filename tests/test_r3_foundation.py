@@ -131,3 +131,35 @@ def test_corrupt_collection_cannot_escape_scope(tmp_path):
     service = DomainService(store, SimpleNamespace(get=lambda nid: {}), None)
     with pytest.raises(ValueError, match='scope metadata'):
         service.list('n', scope, 'records')
+
+
+def test_real_process_restart_and_abrupt_transaction_exit(store):
+    import json
+    import subprocess
+    import sys
+    nid = f'r3-process-{uuid.uuid4()}'
+    scope = {'mode':'local', 'novel_id':nid}
+    service = DomainService(store, SimpleNamespace(get=lambda nid: {}), None)
+    record = service.create(nid, scope, 'author', 'restart', {'title':'Durable source'})
+    environment = dict(os.environ, R3_TEST_DATABASE_URL=store.database_url)
+    script = '''import json,os,sys
+from app.experimental.store import ExperimentalStore
+root,backend,nid,rid,mode=sys.argv[1:]
+scope={'mode':'local','novel_id':nid}
+store=ExperimentalStore(root,backend,os.environ.get('R3_TEST_DATABASE_URL',''))
+if mode=='crash':
+    with store.transaction(nid,scope) as doc:
+        doc['collections']['restart'][rid]['title']='Uncommitted crash'
+        os._exit(71)
+else:
+    print(json.dumps(store.read(nid,scope)['collections']['restart'][rid]))
+'''
+    args = [sys.executable, '-c', script, str(store.root), store.backend, nid, record['id']]
+    fresh = subprocess.run(args+['read'], env=environment, capture_output=True, text=True, timeout=20)
+    assert fresh.returncode == 0, fresh.stderr
+    assert json.loads(fresh.stdout) == record
+    crashed = subprocess.run(args+['crash'], env=environment, capture_output=True, text=True, timeout=20)
+    assert crashed.returncode == 71, crashed.stderr
+    again = subprocess.run(args+['read'], env=environment, capture_output=True, text=True, timeout=20)
+    assert again.returncode == 0, again.stderr
+    assert json.loads(again.stdout)['title'] == 'Durable source'
