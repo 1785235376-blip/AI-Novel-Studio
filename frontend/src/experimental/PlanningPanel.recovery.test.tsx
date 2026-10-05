@@ -30,6 +30,9 @@ describe('planning same-node version recovery', () => {
     vi.stubGlobal('fetch', fetch);
     render(<PlanningPanel client={experimentalClient('novel', { sessionToken: '' })} />);
     await screen.findByRole('heading', { name: '编辑 PROJECT' });
+    // Visible editor controls are already hydrated, before the first user edit.
+    expect((screen.getByLabelText('节点标题') as HTMLInputElement).value).toBe('Server title');
+    expect((screen.getByLabelText('目标', { exact: true }) as HTMLTextAreaElement).value).toBe('Original goal');
     fireEvent.change(screen.getByLabelText('节点标题'), { target: { value: 'Retained local title' } });
     fireEvent.change(screen.getByLabelText('目标', { exact: true }), { target: { value: 'Retained local goal' } });
     fireEvent.change(screen.getByLabelText('自定义节拍（JSON）'), { target: { value: '{"local":"Keep this beat"}' } });

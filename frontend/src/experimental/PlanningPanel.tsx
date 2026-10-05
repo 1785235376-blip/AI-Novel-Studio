@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import type { Chapter } from '../api';
 import { type ExperimentalClient, type Row, type Rows, segment } from './api';
@@ -15,6 +15,7 @@ export function PlanningPanel({ client, chapter }: { client: ExperimentalClient;
   const graph = useResource(signal => graphId ? client.get<Row>(`/planning/graphs/${segment(graphId)}`, signal) : Promise.resolve(undefined), [client, graphId]);
   const reload = () => { overview.reload(); graph.reload(); };
   const action = useAction(reload);
+  const [editingNodeId, setEditingNodeId] = useState('');
   const [graphTitle, setGraphTitle] = useState(''), [title, setTitle] = useState(''), [editingVersion, setEditingVersion] = useState(1);
   const [fields, setFields] = useState(emptyFields), [objectives, setObjectives] = useState('{}'), [beats, setBeats] = useState('{}');
   const [links, setLinks] = useState({ chapter_ids: '', character_ids: '', location_ids: '', world_rule_ids: '', story_route_ids: '' });
@@ -24,13 +25,15 @@ export function PlanningPanel({ client, chapter }: { client: ExperimentalClient;
   const node: Row | undefined = graph.data?.nodes?.find((item: Row) => item.id === nodeId);
   useEffect(() => { if (!graphId && overview.data?.graphs[0]) setGraphId(overview.data.graphs[0].id); }, [overview.data, graphId]);
   useEffect(() => { if (graph.data && !graph.data.nodes?.some((item: Row) => item.id === nodeId)) setNodeId(graph.data.root_node_id); }, [graph.data]);
-  useEffect(() => {
+  // Initialize a newly selected node before exposing editable controls. Same-node
+  // version refreshes deliberately do not rehydrate and overwrite a local draft.
+  useLayoutEffect(() => {
     if (!node) return;
     setTitle(node.title); setEditingVersion(node.version);
     setFields(Object.fromEntries(Object.keys(emptyFields).map(key => [key, node.fields?.[key] || ''])) as typeof emptyFields);
     setObjectives(JSON.stringify(node.fields?.character_objectives || {})); setBeats(JSON.stringify(node.fields?.beats || {}));
     setLinks(Object.fromEntries(Object.keys(links).map(key => [key, (node.links?.[key] || []).join(', ')])) as typeof links);
-    setSelected([]); setComparison(undefined);
+    setSelected([]); setComparison(undefined); setEditingNodeId(node.id);
   }, [node?.id]);
   const payload = () => ({ title, fields: { ...fields, character_objectives: objectValue(objectives), beats: objectValue(beats) }, links: Object.fromEntries(Object.entries(links).map(([key, value]) => [key, ids(value)])) });
   const nextLevel = node && ({ PROJECT: 'VOLUME', VOLUME: 'CHAPTER', CHAPTER: 'SCENE' } as Record<string, string>)[node.level];
@@ -48,7 +51,7 @@ export function PlanningPanel({ client, chapter }: { client: ExperimentalClient;
     {!!overview.data?.graphs.length && <Field label="规划图"><select value={graphId} onChange={event => { setGraphId(event.target.value); setNodeId(''); }}><option value="">选择规划</option>{overview.data.graphs.map(row => <option key={row.id} value={row.id}>{row.title}</option>)}</select></Field>}
     {graph.data && <div className="experimental-list" aria-label="规划层级">{graph.data.nodes?.map((row: Row) => <div className={`experimental-record ${nodeId === row.id ? 'is-selected' : ''}`} key={row.id}><Button type="button" aria-pressed={nodeId === row.id} onClick={() => setNodeId(row.id)}>{row.level} · {row.title}</Button><RecordStatus row={row} /><small>父节点：{row.parent_id || '项目根节点'}</small></div>)}</div>}
     {graph.data && <div className="experimental-actions"><Button disabled={busy} onClick={() => action.run(() => client.post(`/planning/graphs/${segment(graph.data!.id)}/${graph.data!.status === 'ARCHIVED' ? 'restore' : 'archive'}`, { expected_version: graph.data!.version }), '规划图归档状态已更新')}>{graph.data.status === 'ARCHIVED' ? '恢复规划图' : '归档规划图'}</Button><Badge>{graph.data.status}</Badge></div>}
-    {node && <section className="experimental-section" aria-label="规划节点编辑">
+    {node && editingNodeId === node.id && <section className="experimental-section" aria-label="规划节点编辑">
       <h3>编辑 {node.level}</h3>
       {requiresRebase && <section className="experimental-record" aria-label="规划节点版本恢复">
         <StatusMessage tone="warning">当前节点已更新为 v{node.version}，草稿仍以 v{editingVersion} 为基线。你的编辑已保留。请对照当前记录核对草稿，再明确更新保存基线。</StatusMessage>
