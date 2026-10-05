@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
-import {afterEach,describe,expect,it,vi} from 'vitest';
+import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 import {api,ApiError,ExportJob,setCollaborationContext} from '../api';
 import {ExportPanel} from './ExportPanel';
 
@@ -17,6 +17,7 @@ function job(status:ExportJob['status']='queued',extra:Partial<ExportJob>={}):Ex
 }
 function deferred<T>(){let resolve!:(value:T)=>void;const promise=new Promise<T>(done=>{resolve=done});return {promise,resolve};}
 function disabled(name:string){return (screen.getByRole('button',{name}) as HTMLButtonElement).disabled;}
+beforeEach(()=>{vi.spyOn(api,'exportHistory').mockResolvedValue({items:[],next_offset:null});});
 afterEach(()=>{cleanup();clients.splice(0).forEach(client=>client.clear());vi.restoreAllMocks();vi.unstubAllGlobals();setCollaborationContext({sessionToken:''});});
 
 describe('ExportPanel industry formats',()=>{
@@ -32,14 +33,13 @@ describe('ExportPanel industry formats',()=>{
     expect(fetchMock.mock.calls.some(([url])=>url==='/api/exports/export-1')).toBe(true);
     expect(fetchMock.mock.calls.every(([url])=>!url.includes('/novels/'))).toBe(true);
   });
-  it('explains the immutable creation-time snapshot and keeps ZIP formats unexposed',()=>{
+  it('explains the immutable creation-time snapshot and exposes the three real resource packages',()=>{
     mount();
     expect(screen.getByText(/任务创建时保存的只读项目快照，后续编辑不会改变该任务的导出内容/)).toBeTruthy();
     expect(screen.queryByText(/任务执行时/)).toBeNull();
     expect(screen.getByRole('button',{name:'影视剧本预览'})).toBeTruthy();
     expect(screen.getByRole('button',{name:'Word 文档'})).toBeTruthy();
-    expect(screen.getAllByRole('button')).toHaveLength(11);
-    expect(screen.queryByRole('button',{name:/ZIP|资源包/i})).toBeNull();
+    expect(screen.getAllByRole('button',{name:/ZIP|资源包/i})).toHaveLength(3);
   });
   it('disables every format without a selected project',()=>{
     mount('');
@@ -78,12 +78,12 @@ describe('ExportPanel industry formats',()=>{
     fireEvent.click(await screen.findByRole('button',{name:'取消任务'}));
     await waitFor(()=>expect(disabled('取消任务')).toBe(true));
     expect(disabled('Word 剧本')).toBe(true);
-    expect(cancel).toHaveBeenCalledWith('export-1');
+    expect(cancel).toHaveBeenCalledWith('export-1',expect.any(Object));
     await act(async()=>cancelling.resolve(job('cancelled')));
     fireEvent.click(await screen.findByRole('button',{name:'重新尝试'}));
     await waitFor(()=>expect(disabled('重新尝试')).toBe(true));
     expect(disabled('Fountain 剧本')).toBe(true);
-    expect(retry).toHaveBeenCalledWith('export-1');
+    expect(retry).toHaveBeenCalledWith('export-1',expect.any(Object));
     await act(async()=>retrying.resolve(job('queued',{id:'export-2',retry_of:'export-1',attempt:2})));
     await screen.findByRole('button',{name:'取消任务'});
     expect(disabled('Fountain 剧本')).toBe(false);
@@ -142,7 +142,7 @@ describe('ExportPanel industry formats',()=>{
     await waitFor(()=>expect(disabled('准备下载…')).toBe(true));
     fireEvent.click(screen.getByRole('button',{name:'准备下载…'}));
     expect(download).toHaveBeenCalledTimes(1);
-    expect(download).toHaveBeenCalledWith('export-1');
+    expect(download).toHaveBeenCalledWith('export-1',expect.any(Object));
     expect(click).not.toHaveBeenCalled();
     const blob=new Blob(['INT. STUDIO - DAY'],{type:'text/x-fountain'});
     await act(async()=>pending.resolve(blob));

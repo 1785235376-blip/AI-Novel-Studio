@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
-import {afterEach,describe,expect,it,vi} from 'vitest';
+import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 import {api,ExportJob,Scope,setCollaborationContext} from '../api';
 import {ExportPanel} from './ExportPanel';
 const clients:QueryClient[]=[];
@@ -22,6 +22,7 @@ function switchView(view:ReturnType<typeof mount>,change:string){
   else if(change==='session'){setCollaborationContext({sessionToken:'replacement-session',scope:initialScope});view.switchTo('novel-1');}
   else view.unmount();
 }
+beforeEach(()=>{vi.spyOn(api,'exportHistory').mockResolvedValue({items:[],next_offset:null});});
 afterEach(()=>{cleanup();clients.splice(0).forEach(client=>client.clear());vi.restoreAllMocks();vi.unstubAllGlobals();setCollaborationContext({sessionToken:''});});
 
 describe('ExportPanel scope isolation',()=>{
@@ -40,7 +41,7 @@ describe('ExportPanel scope isolation',()=>{
     vi.spyOn(api,'createExport').mockResolvedValueOnce(job()).mockResolvedValueOnce(job('queued',{id:'export-2',novel_id:'novel-2'}));
     const status=vi.spyOn(api,'exportJob').mockImplementation(id=>id==='export-1'?pending.promise:Promise.resolve(job('queued',{id:'export-2',novel_id:'novel-2'})));
     const view=mount();fireEvent.click(screen.getByRole('button',{name:'Fountain 剧本'}));
-    await waitFor(()=>expect(status).toHaveBeenCalledWith('export-1'));
+    await waitFor(()=>expect(status).toHaveBeenCalledWith('export-1',expect.any(Object)));
     view.switchTo('novel-2');fireEvent.click(screen.getByRole('button',{name:'Word 剧本'}));
     await screen.findByRole('button',{name:'取消任务'});
     await act(async()=>pending.resolve(job('succeeded',{result:{format:'screenplay-fountain',filename:'old-project.fountain'}})));
@@ -63,10 +64,10 @@ describe('ExportPanel scope isolation',()=>{
     const pending=deferred<ExportJob>(),mutation=vi.spyOn(api,action==='cancel'?'cancelExport':'retryExport').mockReturnValue(pending.promise);
     const view=mount();fireEvent.click(screen.getByRole('button',{name:'Fountain 剧本'}));
     fireEvent.click(await screen.findByRole('button',{name:action==='cancel'?'取消任务':'重新尝试'}));
-    await waitFor(()=>expect(mutation).toHaveBeenCalledWith('export-1'));view.switchTo('novel-2');
+    await waitFor(()=>expect(mutation).toHaveBeenCalledWith('export-1',expect.any(Object)));view.switchTo('novel-2');
     await act(async()=>pending.resolve(job(action==='cancel'?'cancelled':'queued',{id:action==='cancel'?'export-1':'late-retry'})));
-    expect(status).not.toHaveBeenCalledWith('late-retry');expect(screen.queryByRole('button',{name:'取消任务'})).toBeNull();
+    expect(status).not.toHaveBeenCalledWith('late-retry',expect.any(Object));expect(screen.queryByRole('button',{name:'取消任务'})).toBeNull();
     expect(screen.queryByRole('button',{name:'重新尝试'})).toBeNull();expect(disabled('Word 剧本')).toBe(false);
-    if(action==='cancel')expect(view.client.getQueryData<ExportJob>(['export-job',JSON.stringify(['novel-1','w','p','s','initial-branch']),'export-1'])?.status).toBe('queued');
+    if(action==='cancel')expect(view.client.getQueryCache().findAll({queryKey:['export-job',JSON.stringify(['novel-1','w','p','s','initial-branch'])]}).map(query=>query.state.data as ExportJob|undefined).find(item=>item?.id==='export-1')?.status).toBe('queued');
   });
 });

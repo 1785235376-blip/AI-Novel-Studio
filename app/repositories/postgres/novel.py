@@ -8,6 +8,7 @@ from sqlalchemy import delete, func, select
 
 from ...repository import slug
 from ...privacy import privacy_for_update
+from ..screenplay_versions import versioned_screenplay
 from .common import iso, novel_or_raise
 from .models import (CanonModel, ChapterModel, ChapterSummaryModel, CharacterModel,
                      ForeshadowingModel, LocationModel, NovelModel, SecretModel,
@@ -21,6 +22,12 @@ from .serialization import (character_order, foreshadowing_order, location_order
 class PostgresNovelRepository:
     def __init__(self, database):
         self.database = database
+
+    @staticmethod
+    def _locked_metadata_model(session, novel_id):
+        model=session.scalar(select(NovelModel).where(NovelModel.slug==novel_id).with_for_update())
+        if model is None: raise FileNotFoundError(novel_id)
+        return model
 
     @staticmethod
     def _meta(model: NovelModel) -> dict:
@@ -70,7 +77,7 @@ class PostgresNovelRepository:
 
     def update(self, novel_id, payload):
         with self.database.session() as session:
-            model = novel_or_raise(session, novel_id)
+            model = self._locked_metadata_model(session, novel_id)
             if payload.get("title") is not None:
                 model.title = payload["title"]
             metadata = dict(model.metadata_json or {})
@@ -192,25 +199,25 @@ class PostgresNovelRepository:
 
     def update_outline(self,novel_id,payload):
         with self.database.session() as session:
-            model=novel_or_raise(session,novel_id);metadata=dict(model.metadata_json or {});metadata["outline"]={**payload};model.metadata_json=metadata;model.updated_at=datetime.now(timezone.utc);session.flush();return dict(metadata["outline"])
+            model=self._locked_metadata_model(session,novel_id);metadata=dict(model.metadata_json or {});metadata["outline"]={**payload};model.metadata_json=metadata;model.updated_at=datetime.now(timezone.utc);session.flush();return dict(metadata["outline"])
 
     def upsert_volume(self,novel_id,volume_id,payload):
         with self.database.session() as session:
-            model=novel_or_raise(session,novel_id);metadata=dict(model.metadata_json or {});rows=list(metadata.get("volumes",[]));vid=slug(volume_id or payload["title"]);item={"id":vid,**payload};index=next((i for i,row in enumerate(rows) if str(row.get("id"))==vid),None)
+            model=self._locked_metadata_model(session,novel_id);metadata=dict(model.metadata_json or {});rows=list(metadata.get("volumes",[]));vid=slug(volume_id or payload["title"]);item={"id":vid,**payload};index=next((i for i,row in enumerate(rows) if str(row.get("id"))==vid),None)
             if index is None:rows.append(item)
             else:rows[index]=item
             metadata["volumes"]=sorted(rows,key=lambda row:int(row.get("sequence",0)));model.metadata_json=metadata;model.updated_at=datetime.now(timezone.utc);session.flush();return item
 
     def upsert_scene(self,novel_id,scene_id,payload):
         with self.database.session() as session:
-            model=novel_or_raise(session,novel_id);metadata=dict(model.metadata_json or {});rows=list(metadata.get("scenes",[]));sid=slug(scene_id or payload["title"]);item={"id":sid,**payload};index=next((i for i,row in enumerate(rows) if str(row.get("id"))==sid),None)
+            model=self._locked_metadata_model(session,novel_id);metadata=dict(model.metadata_json or {});rows=list(metadata.get("scenes",[]));sid=slug(scene_id or payload["title"]);item={"id":sid,**payload};index=next((i for i,row in enumerate(rows) if str(row.get("id"))==sid),None)
             if index is None:rows.append(item)
             else:rows[index]=item
             metadata["scenes"]=sorted(rows,key=lambda row:(str(row.get("chapter_id","")),int(row.get("sequence",0))));model.metadata_json=metadata;model.updated_at=datetime.now(timezone.utc);session.flush();return item
 
     def upsert_story_route(self,novel_id,route_id,payload):
         with self.database.session() as session:
-            model=novel_or_raise(session,novel_id);metadata=dict(model.metadata_json or {});rows=list(metadata.get("story_routes",[]));rid=slug(route_id or payload["title"]);item={"id":rid,**payload};parent=item.get("parent_route_id")
+            model=self._locked_metadata_model(session,novel_id);metadata=dict(model.metadata_json or {});rows=list(metadata.get("story_routes",[]));rid=slug(route_id or payload["title"]);item={"id":rid,**payload};parent=item.get("parent_route_id")
             if parent and not any(str(row.get("id"))==parent for row in rows):raise KeyError(parent)
             index=next((i for i,row in enumerate(rows) if str(row.get("id"))==rid),None)
             if index is None:rows.append(item)
@@ -235,7 +242,7 @@ class PostgresNovelRepository:
 
     def save_adaptation_proposal(self,novel_id,proposal):
         with self.database.session() as session:
-            model=novel_or_raise(session,novel_id);metadata=dict(model.metadata_json or {});rows=list(metadata.get("adaptation_proposals",[]));index=next((i for i,row in enumerate(rows) if row.get("id")==proposal["id"]),None)
+            model=self._locked_metadata_model(session,novel_id);metadata=dict(model.metadata_json or {});rows=list(metadata.get("adaptation_proposals",[]));index=next((i for i,row in enumerate(rows) if row.get("id")==proposal["id"]),None)
             if index is None:rows.append(proposal)
             else:rows[index]=proposal
             metadata["adaptation_proposals"]=rows;model.metadata_json=metadata;model.updated_at=datetime.now(timezone.utc);session.flush();return proposal
@@ -244,12 +251,13 @@ class PostgresNovelRepository:
         with self.database.session() as session:
             model=novel_or_raise(session,novel_id);return list((model.metadata_json or {}).get("screenplays",[]))
 
-    def save_screenplay(self,novel_id,screenplay):
+    def save_screenplay(self,novel_id,screenplay,*,expected_version=None):
         with self.database.session() as session:
-            model=novel_or_raise(session,novel_id);metadata=dict(model.metadata_json or {});rows=list(metadata.get("screenplays",[]));index=next((i for i,row in enumerate(rows) if row.get("id")==screenplay["id"]),None)
-            if index is None:rows.append(screenplay)
-            else:rows[index]=screenplay
-            metadata["screenplays"]=rows;model.metadata_json=metadata;model.updated_at=datetime.now(timezone.utc);session.flush();return screenplay
+            model=self._locked_metadata_model(session,novel_id);metadata=dict(model.metadata_json or {});rows=list(metadata.get("screenplays",[]));index=next((i for i,row in enumerate(rows) if row.get("id")==screenplay["id"]),None)
+            saved=versioned_screenplay(rows[index] if index is not None else None,screenplay,expected_version)
+            if index is None:rows.append(saved)
+            else:rows[index]=saved
+            metadata["screenplays"]=rows;model.metadata_json=metadata;model.updated_at=datetime.now(timezone.utc);session.flush();return saved
 
     def get_context_sources(self, novel_id):
         with self.database.session() as session:

@@ -3,6 +3,8 @@ import json
 from ...repository import FileRepository,read_json,slug
 from ...storage import atomic_write
 from ...privacy import privacy_for_update, privacy_record
+from .mutation_coordinator import workspace_mutation
+from ..screenplay_versions import versioned_screenplay
 
 class FileNovelRepository:
     def __init__(self,backend:FileRepository):self.backend=backend
@@ -118,13 +120,15 @@ class FileNovelRepository:
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
         return read_json(root/'screenplays.json',[])
-    def save_screenplay(self,novel_id,screenplay):
+    def save_screenplay(self,novel_id,screenplay,*,expected_version=None):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
-        path=root/'screenplays.json';rows=read_json(path,[]);index=next((i for i,row in enumerate(rows) if row.get('id')==screenplay['id']),None)
-        if index is None:rows.append(screenplay)
-        else:rows[index]=screenplay
-        atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return screenplay
+        with workspace_mutation(root,"screenplay-records"):
+            path=root/'screenplays.json';rows=read_json(path,[]);index=next((i for i,row in enumerate(rows) if row.get('id')==screenplay['id']),None)
+            saved=versioned_screenplay(rows[index] if index is not None else None,screenplay,expected_version)
+            if index is None:rows.append(saved)
+            else:rows[index]=saved
+            atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return saved
     def get_context_sources(self,novel_id):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)

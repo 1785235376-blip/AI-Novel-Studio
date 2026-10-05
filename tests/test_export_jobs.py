@@ -128,6 +128,7 @@ def test_export_download_route_returns_attachment(monkeypatch):
     import app.api as api
 
     fake = type("FakeExportService", (), {
+        "get": lambda self, job_id: {"id": job_id, "permission_context": {"mode": "local"}},
         "download": lambda self, _job_id: {
             "content": b"fixture",
             "filename": "章节.md",
@@ -154,7 +155,7 @@ def test_export_download_route_reports_not_ready(monkeypatch):
     def unavailable(_self, _job_id):
         raise ExportJobUnavailable("running")
 
-    fake = type("FakeExportService", (), {"download": unavailable})()
+    fake = type("FakeExportService", (), {"get": lambda self, jid: {"id": jid, "permission_context": {"mode": "local"}}, "download": unavailable})()
     monkeypatch.setattr(api, "export_job_service", fake)
     local_app = FastAPI()
     local_app.include_router(api.router, prefix="/api")
@@ -274,6 +275,9 @@ def test_export_lifecycle_routes_cancel_and_retry(monkeypatch):
     import app.api as api
 
     class FakeExportService:
+        def get(self, job_id):
+            return {"id": job_id, "permission_context": {"mode": "local"}}
+
         def cancel(self, job_id):
             return {"id": job_id, "status": "cancelled", "progress": 20}
 
@@ -299,7 +303,7 @@ class _ScopedExportService:
             "id": "job-1",
             "novel_id": "project-b",
             "status": "succeeded",
-            "permission_context": {"branch_id": "branch-b"},
+            "permission_context": {"mode": "collaboration", "novel_id": "project-b", "branch_id": "branch-b", "workspace_id": "workspace-b", "storyline_id": "story-b", "actor_id": "session-b"},
         }
 
     def create(self, novel_id, format, idempotency_key=None, *, permission_context=None):

@@ -15,7 +15,7 @@ from app.services.novel_service import NovelService
 
 class Source:
     def __init__(self):
-        self.screenplays = [{"id": "script-1", "title": "Original screenplay", "version": 7,
+        self.screenplays = [{"id": "script-1", "branch_id": "branch-a", "title": "Original screenplay", "version": 7,
             "scenes": [{"id": "scene-1", "location": "STATION", "time": "DAY",
                         "action": "Original action", "dialogue": [{"character": "ALICE", "text": "Original dialogue"}]}]}]
         self.chapters = [{"id": "chapter-1", "title": "Chapter", "content": "Original prose", "version": 3}]
@@ -176,7 +176,7 @@ def test_snapshot_is_deep_copy(setup_queue):
 def test_legacy_export_does_not_expose_industry_renderer(setup_queue, fmt):
     _, _, queue, client = setup_queue
     assert client.get(f'/api/novels/project/export?format={fmt}').status_code == 400
-    if fmt not in {'screenplay-fountain', 'screenplay-docx', 'screenplay-standard'}:
+    if fmt == 'storyboard-html':
         with pytest.raises(ValueError, match='unsupported'):
             queue.create('project', fmt)
 
