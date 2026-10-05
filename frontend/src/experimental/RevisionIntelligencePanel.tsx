@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { api as originalApi, type Chapter, type CollaborationContext } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { AuthorRequestPreviewPanel } from '../novel/AuthorRequestPreviewPanel';
-import { authorContextRequest, type AuthorPreviewReceipt, type AuthorRequestBody } from '../novel/authorContextClient';
+import { AuthorRequestControls } from '../novel/AuthorRequestControls';
+import { authorContextRequest, defaultAuthorRequestScope, type AuthorRequestScope, type AuthorPreviewReceipt, type AuthorRequestBody } from '../novel/authorContextClient';
 import type { ExperimentalClient } from './api';
 import { Field, ResourceState, useAction, useResource } from './shared';
 import { revisionIntelligenceClient, type RevisionPreview, type RevisionProposal, type RevisionSelection, type SelectionReceipt } from './revisionIntelligenceClient';
@@ -116,12 +117,13 @@ function RevisionReview({ proposal, api, saved, canWrite, onClose, onResult }: {
 }
 
 function SelectionGeneration({ options, selection, goal, saved, onCandidate }: { options: RevisionGenerationOptions; selection: SelectionReceipt; goal: string; saved: boolean; onCandidate: (texts: string[], jobId: string) => void }) {
+  const [requestScope, setRequestScope] = useState<AuthorRequestScope>({ ...defaultAuthorRequestScope, source_mode: 'SELECTION_ONLY', include_automatic_context: false });
   const [operation, setOperation] = useState('polish'), [style, setStyle] = useState(''), [receipt, setReceipt] = useState<AuthorPreviewReceipt>(), [authorized, setAuthorized] = useState(false);
   const [job, setJob] = useState<{ id: string; status: string; output: string; error?: string; execution_mode?: string }>();
   const alive = useRef(true), epoch = useRef(0); const action = useAction();
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
   const instructions: Record<string, string> = { polish: '润色选中文字，保留事实与语义。', compress: '压缩选中文字，保留关键事实。', expand: '扩写选中文字，保留已有事实。', dialogue: '将选中文字改成自然对白，保留角色与事实。' };
-  const body: AuthorRequestBody | null = options.providerId && options.modelId ? { novel_id: options.novelId, chapter_id: selection.selection.chapter_id, chapter_version: selection.selection.chapter_version, operation: 'rewrite', instruction: `${instructions[operation]}每个输入段落只输出一个对应段落，不加标题、解释或额外整章内容。保留要求：${goal}`, style, profile: options.profile, provider_id: options.providerId, model_id: options.modelId, source: selection.selection.text, selected_text: selection.selection.text, revision_selection: selection.selection, revision_selection_digest: selection.selection_digest } : null;
+  const body: AuthorRequestBody | null = options.providerId && options.modelId ? { novel_id: options.novelId, chapter_id: selection.selection.chapter_id, chapter_version: selection.selection.chapter_version, operation: 'rewrite', request_scope: requestScope, instruction: `${instructions[operation]}每个输入段落只输出一个对应段落，不加标题、解释或额外整章内容。保留要求：${goal}`, style, profile: options.profile, provider_id: options.providerId, model_id: options.modelId, source: selection.selection.text, selected_text: selection.selection.text, revision_selection: selection.selection, revision_selection_digest: selection.selection_digest } : null;
   const requestKey = JSON.stringify(body);
   useEffect(() => { epoch.current++; setJob(undefined); setReceipt(undefined); setAuthorized(false); }, [requestKey, saved]);
   const outputLines = job?.status === 'COMPLETED' ? job.output.split('\n') : [];
@@ -129,9 +131,10 @@ function SelectionGeneration({ options, selection, goal, saved, onCandidate }: {
   return <section className="experimental-section" aria-label="选区 AI 助手"><h3>选区 AI 助手</h3>
     <Field label="选区操作"><select value={operation} disabled={action.busy} onChange={e => setOperation(e.target.value)}><option value="polish">润色</option><option value="compress">压缩</option><option value="expand">扩写</option><option value="dialogue">改对白</option></select></Field>
     <Field label="本次选区风格"><input value={style} maxLength={120} onChange={e => setStyle(e.target.value)} /></Field>
+    <AuthorRequestControls value={requestScope} onChange={setRequestScope} source={selection.selection.text} operation="rewrite" disabled={action.busy} />
     <AuthorRequestPreviewPanel body={body} context={options.context} saved={saved} disabled={action.busy} onReceipt={value => { setReceipt(value); setAuthorized(false); }} />
     <label className="experimental-check"><input type="checkbox" disabled={!receipt || action.busy} checked={authorized} onChange={e => setAuthorized(e.target.checked)} />已核对实际请求，授权所选明确模型处理这一次选区</label>
-    <Button disabled={!body || !receipt || !authorized || !saved || action.busy} onClick={() => void action.run(async () => { const ticket = ++epoch.current; const result = await authorContextRequest<{ job_id: string; status: string }>(options.novelId, 'generate', { ...body!, preview_digest: receipt!.previewDigest, generation_request_id: receipt!.requestId }, options.context); if (alive.current && ticket === epoch.current) setJob({ id: result.job_id, status: result.status, output: '' }); }, '生成请求已提交，请刷新任务状态。结果仍需逐区块审核。')}>生成一次选区草稿</Button>
+    <Button disabled={!body || !receipt || !authorized || !saved || action.busy} onClick={() => void action.run(async () => { const ticket = ++epoch.current; const result = await authorContextRequest<{ job_id: string; status: string }>(options.novelId, 'generate', { ...receipt!.requestBody, preview_digest: receipt!.previewDigest, generation_request_id: receipt!.requestId }, options.context); if (alive.current && ticket === epoch.current) setJob({ id: result.job_id, status: result.status, output: '' }); }, '生成请求已提交，请刷新任务状态。结果仍需逐区块审核。')}>生成一次选区草稿</Button>
     {job && <section aria-label="选区生成结果"><Badge>{job.status}</Badge><Button disabled={action.busy} onClick={() => void action.run(async () => { const ticket = epoch.current; const result = await originalApi.job(job.id, options.context); if (alive.current && ticket === epoch.current) setJob(result); }, '已读取原生成任务当前状态。')}>刷新选区生成任务</Button>
       {job.error && <StatusMessage tone="error">{job.error}</StatusMessage>}
       {job.status === 'COMPLETED' && <><Field label="生成原始结果，尚未采用"><textarea readOnly value={job.output} /></Field><p>执行标记：{job.execution_mode || '未知'}。合成结果不代表真实模型质量。</p>

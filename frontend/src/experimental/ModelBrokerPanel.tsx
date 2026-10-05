@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Chapter, CollaborationContext } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { AuthorRequestPreviewPanel } from '../novel/AuthorRequestPreviewPanel';
-import type { AuthorPreviewReceipt, AuthorRequestBody } from '../novel/authorContextClient';
+import { defaultAuthorRequestScope, type AuthorRequestScope, type AuthorPreviewReceipt, type AuthorRequestBody } from '../novel/authorContextClient';
+import { AuthorRequestControls } from '../novel/AuthorRequestControls';
 import type { ExperimentalClient, Row } from './api';
 import { Details, Field, ResourceState, useAction, useResource } from './shared';
 import { modelBrokerClient, type BrokerApi, type BrokerJob, type BrokerPreview, type BrokerStatus } from './modelBrokerClient';
@@ -24,6 +25,7 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
   const [ram, setRam] = useState(''), [vram, setVram] = useState('');
   const [synthetic, setSynthetic] = useState(false), [excluded, setExcluded] = useState<string[]>([]);
   const [quote, setQuote] = useState<BrokerPreview>(), [operation, setOperation] = useState('continue'), [instruction, setInstruction] = useState('');
+  const [requestScope, setRequestScope] = useState<AuthorRequestScope>(defaultAuthorRequestScope);
   const [receipt, setReceipt] = useState<AuthorPreviewReceipt>(), [reviewed, setReviewed] = useState(false), [reservation, setReservation] = useState('');
   const epoch = useRef(0), alive = useRef(true), requestId = useRef(freshId());
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
@@ -31,7 +33,7 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
   const invalidate = () => { epoch.current++; setQuote(undefined); setReceipt(undefined); setReviewed(false); requestId.current = freshId(); };
   const authorChanged = () => { setReceipt(undefined); setReviewed(false); requestId.current = freshId(); };
   const author: AuthorRequestBody | null = quote?.chosen && chapter ? { novel_id: novelId, chapter_id: chapter.id, chapter_version: chapter.version,
-    operation, instruction, style: '', profile, provider_id: quote.chosen.provider_id, model_id: quote.chosen.model_id, source: '', selected_text: '' } : null;
+    operation, instruction, style: '', profile, request_scope: requestScope, provider_id: quote.chosen.provider_id, model_id: quote.chosen.model_id, source: '', selected_text: '' } : null;
   const currentRoutes = status.data?.candidates.filter(r => r.capability === 'TEXT') || [];
   const providers = [...new Set(currentRoutes.map(r => r.provider_id))];
   return <div className="experimental-section">
@@ -70,13 +72,14 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
     {quote?.chosen && author && <Panel title="按已核对路线生成单份草稿">
       <Field label="创作任务"><select value={operation} disabled={action.busy} onChange={e => { authorChanged(); setOperation(e.target.value); }}><option value="continue">续写</option><option value="polish">润色</option><option value="brainstorm">构思</option><option value="review">审稿</option></select></Field>
       <Field label="本次创作要求"><textarea maxLength={20000} value={instruction} onChange={e => { authorChanged(); setInstruction(e.target.value); }} /></Field>
+      <AuthorRequestControls value={requestScope} onChange={value => { setRequestScope(value); authorChanged(); }} source={author.source} operation={operation} disabled={action.busy} />
       <AuthorRequestPreviewPanel body={author} context={context} saved={true} disabled={action.busy} onReceipt={value => { setReceipt(value); setReviewed(false); }} />
       <label className="experimental-check"><input type="checkbox" disabled={!receipt} checked={reviewed} onChange={e => setReviewed(e.target.checked)} />已核对准确请求、来源与模型，并授权生成这一次草稿</label>
       <StatusMessage>预算限制预占金额；上游实际费用可能超出估计。取消后已发出的内容不能收回，费用不确定时仍保留预占。</StatusMessage>
       {!status.data?.author_execution_available && <StatusMessage tone="warning">当前服务器尚未接入原有作者任务协调器，不能执行。</StatusMessage>}
       <Button disabled={!receipt || !reviewed || action.busy || !status.data?.author_execution_available} onClick={() => void action.run(async () => {
         const ticket = epoch.current;
-        const result = await api.generate(quote, { ...author, preview_digest: receipt!.previewDigest }, requestId.current);
+        const result = await api.generate(quote, { ...receipt!.requestBody, preview_digest: receipt!.previewDigest }, requestId.current);
         if (alive.current && ticket === epoch.current) { setReservation(result.reservation_id); setReviewed(false); }
       }, '已交给原有作者任务执行器。结果仍是草稿，不自动写入正文。')}>按预览路线预占并生成</Button>
     </Panel>}

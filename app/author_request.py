@@ -7,6 +7,22 @@ from dataclasses import asdict
 from .agents import agent_runner
 from .model_runtime import TextGenerationParameters, TextGenerationRequest
 
+def author_source(job, chapter):
+    """Reduced scope never falls back to an unreviewed manuscript tail."""
+    scope = getattr(job, "request_scope", None) or {}
+    mode = scope.get("source_mode", "AUTO")
+    if mode == "NONE": return ""
+    if mode == "SELECTION_ONLY":
+        if not job.source: raise ValueError("AUTHOR_SELECTION_REQUIRED")
+        return job.source
+    return job.source or chapter["content"][-2000:]
+
+
+def automatic_context_allowed(job):
+    scope = getattr(job, "request_scope", None) or {}
+    return scope.get("source_mode", "AUTO") == "AUTO" and scope.get("include_automatic_context", True)
+
+
 AUTHOR_ROLES = {"continue": "writer", "rewrite": "writer", "polish": "editor", "brainstorm": "plot_planner", "review": "continuity_reviewer"}
 AUTHOR_TASKS = {"continue": "Continue the chapter without repeating it.", "rewrite": "Rewrite only the supplied selection.", "polish": "Polish the supplied text without changing facts.", "brainstorm": "Return concise story options.", "review": "Review the chapter and list actionable issues."}
 
@@ -23,7 +39,8 @@ def build_author_request(job, route, chapter, context, dispatch_guard=None):
         style, source = "", ""  # Never fall back to omniscient manuscript tail.
     else:
         style = f"\n写作风格要求：{job.style}" if job.style else ""
-        source = job.source or chapter["content"][-2000:]
+        source = author_source(job, chapter)
+        if not automatic_context_allowed(job): context = {}
     prompt = agent_runner.build_prompt(role, context, AUTHOR_TASKS[job.operation] + " " + job.instruction + style, source)
     return TextGenerationRequest(provider_id=route.provider, model_id=route.model, prompt=prompt, context=context,
                                  parameters=TextGenerationParameters(), metadata={"purpose": job.operation},
@@ -44,6 +61,13 @@ def request_digest(request, job, cloud=False):
              "chapter_version": job.base_chapter_version, "chapter_digest": job.base_chapter_digest, "actor_id": job.actor_id, "workspace_id": job.workspace_id,
              "session_id": job.session_id, "scope": job.scope, "profile": job.profile,
              "creation_records": job.creation_records, "route_locality": "cloud" if cloud else "local"}
+    if getattr(job, "author_input_digest", None) is not None:
+        value["author_input_digest"] = job.author_input_digest
+    if getattr(job, "request_scope", None) is not None:
+        value["request_scope"] = job.request_scope
+    if getattr(job, "reviewed_variant", None) is not None:
+        value["reviewed_variant"] = job.reviewed_variant
+        value["reviewed_variant_policy"] = job.reviewed_variant_policy
     if getattr(job, "character_viewpoint", None) is not None:
         value["character_viewpoint"] = job.character_viewpoint
     if getattr(job, "revision_selection_binding", None) is not None:

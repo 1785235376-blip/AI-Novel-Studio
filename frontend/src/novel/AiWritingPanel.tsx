@@ -5,7 +5,8 @@ import type { TextModelSelection } from "../store";
 import { DeepSeekCredentialControl } from "./DeepSeekCredentialControl";
 import { AiContextPreviewPanel, type ContextPreviewTarget } from "./AiContextPreviewPanel";
 import { AuthorRequestPreviewPanel } from "./AuthorRequestPreviewPanel";
-import { authorRequestKey, type AuthorPreviewOptions, type AuthorPreviewReceipt, type AuthorRequestBody } from "./authorContextClient";
+import { AuthorRequestControls } from "./AuthorRequestControls";
+import { defaultAuthorRequestScope, type AuthorRequestScope, authorVariantsKey, type AuthorVariantsReceipt, authorRequestKey, type AuthorPreviewOptions, type AuthorPreviewReceipt, type AuthorRequestBody } from "./authorContextClient";
 import { GenerationWorkflowTimeline } from "./GenerationWorkflowTimeline";
 import "./novel.css";
 
@@ -65,6 +66,7 @@ export const generationFailureMessage = (value?: string | null) =>
   value && value.includes("TEXT_PROVIDER_NOT_CONFIGURED")
     ? "未配置可用文本模型，未调用 DeepSeek，不能当作创作完成。"
     : value === "请先在正文中选择需要改写的文字。" ||
+  value === "部分方案未启动或结果未知；请核对原任务，不会自动重新发送。" ||
   value === "候选生成超时，请重新生成此候选。" ||
   value === "生成连接中断且恢复超时，请重试" ||
   value === "生成连接中断，恢复失败，请重试" ||
@@ -336,6 +338,7 @@ export function AiWritingPanel({
     instruction: string,
     count: number,
     style: string,
+    preview?: AuthorVariantsReceipt,
   ) => Promise<void> | void;
   onSelectVariant?: (index: number) => void;
   onCancel?: () => Promise<void> | void;
@@ -348,15 +351,19 @@ export function AiWritingPanel({
     [instruction, setInstruction] = useState(""),
     [style, setStyle] = useState(""),
     [variantCount, setVariantCount] = useState(1);
+  const [requestScope, setRequestScope] = useState<AuthorRequestScope>(defaultAuthorRequestScope);
+  const [variantsReceipt, setVariantsReceipt] = useState<AuthorVariantsReceipt>();
   const [previewReceipt, setPreviewReceipt] = useState<AuthorPreviewReceipt>();
   const previewBody: AuthorRequestBody | null = authorPreview?.enabled && novelId && selection ? {
     novel_id: novelId, chapter_id: authorPreview.chapterId, chapter_version: authorPreview.chapterVersion,
+    ...(authorPreview.characterId ? {} : { request_scope: requestScope }),
     operation, instruction: instruction.trim(), style: style.trim(), profile: authorPreview.profile,
     provider_id: selection.providerId, model_id: selection.modelId,
     source: authorPreview.characterId ? '' : authorPreview.source, selected_text: authorPreview.characterId ? '' : authorPreview.source,
     style_profile_id: authorPreview.characterId ? undefined : authorPreview.styleProfileId, plot_plan_id: authorPreview.characterId ? undefined : authorPreview.plotPlanId,
     ...(authorPreview.characterId ? { character_id: authorPreview.characterId, style: '', profile: 'LOCAL_ONLY' } : {}),
   } : null;
+  const variantsCurrent = !!variantsReceipt && !!previewBody && !!authorPreview?.saved && variantsReceipt.requestKey === authorVariantsKey(previewBody, variantCount, authorPreview.context);
   const previewCurrent = !!previewReceipt && !!previewBody && !!authorPreview?.saved &&
     previewReceipt.requestKey === authorRequestKey(previewBody, authorPreview.context);
 
@@ -499,9 +506,11 @@ export function AiWritingPanel({
       <div className="style-presets" aria-label="写作风格预设">
         {stylePresets.map((preset) => <button key={preset} type="button" disabled={generating || cancelling || !!authorPreview?.characterId} aria-pressed={style === preset} onClick={() => setStyle(preset)}>{preset}</button>)}
       </div>
-      {authorPreview?.enabled && variantCount === 1 ? (
+      {authorPreview?.enabled && !authorPreview.characterId && <AuthorRequestControls value={requestScope} onChange={setRequestScope} source={authorPreview.source}
+        operation={operation} styleProfileId={authorPreview.styleProfileId} plotPlanId={authorPreview.plotPlanId} disabled={generating || cancelling} />}
+      {authorPreview?.enabled ? (
         <AuthorRequestPreviewPanel body={previewBody} context={authorPreview.context} saved={authorPreview.saved}
-          disabled={generating || cancelling} onReceipt={setPreviewReceipt} />
+          disabled={generating || cancelling} onReceipt={setPreviewReceipt} variantCount={variantCount} onVariantsReceipt={setVariantsReceipt} />
       ) : !authorPreview?.characterId && novelId && chapterNumber !== undefined && (
         <AiContextPreviewPanel
           novelId={novelId}
@@ -513,7 +522,6 @@ export function AiWritingPanel({
           disabled={generating || cancelling}
         />
       )}
-      {authorPreview?.enabled && variantCount > 1 && <StatusMessage tone="warning">多方案生成会改变各候选指令，尚未接入逐方案真实预检。请改为单草稿后检查请求。</StatusMessage>}
       <div className="novel-ai-actions">
         {generating || cancelling ? (
           <Button type="button" disabled={cancelling} onClick={onCancel}>
@@ -522,11 +530,11 @@ export function AiWritingPanel({
         ) : (
           <Button
             variant="primary"
-            disabled={!canGenerate || !!authorPreview?.enabled && (variantCount !== 1 || !previewCurrent) || !!authorPreview?.characterId && !['continue', 'brainstorm'].includes(operation)}
+            disabled={!canGenerate || !!authorPreview?.enabled && (variantCount === 1 ? !previewCurrent : !variantsCurrent) || !!authorPreview?.characterId && !['continue', 'brainstorm'].includes(operation)}
             onClick={() => {
               const requestInstruction = instruction.trim();
               return variantCount > 1 && onGenerateVariants
-                ? onGenerateVariants(operation, requestInstruction, variantCount, style.trim())
+                ? authorPreview?.enabled ? onGenerateVariants(operation, requestInstruction, variantCount, style.trim(), variantsReceipt) : onGenerateVariants(operation, requestInstruction, variantCount, style.trim())
                 : authorPreview?.enabled ? onGenerate(operation, requestInstruction, style.trim(), previewReceipt) : onGenerate(operation, requestInstruction, style.trim());
             }}
           >{`生成${operationLabels[operation]}草稿`}</Button>
@@ -539,7 +547,7 @@ export function AiWritingPanel({
         rejecting={rejecting}
         cancelled={cancelled}
         recovering={recovering}
-        onRetry={variants.length > 1 ? onRetry : undefined}
+        onRetry={!authorPreview?.enabled && variants.length > 1 ? onRetry : undefined}
       />
       {variants.length > 1 && (
         <div className="novel-tabs" role="tablist" aria-label="候选方案">
@@ -560,13 +568,14 @@ export function AiWritingPanel({
           ))}
         </div>
       )}
+      {authorPreview?.enabled && (variants.some(value => value.status === 'failed') || draft?.status === 'failed') && <StatusMessage tone="warning">失败或结果未知的请求不会直接重发。请先在任务中心核对原任务；新生成需要重新预检，并明确选择本次数量。</StatusMessage>}
       <AiDraftReview
         draft={variants[activeVariant] || draft}
         accepting={accepting}
         rejecting={rejecting}
         onAccept={onAccept}
         onReject={onReject}
-        onRetry={onRetry}
+        onRetry={authorPreview?.enabled ? undefined : onRetry}
         onResolveConflict={onResolveConflict}
       />
     </Panel>

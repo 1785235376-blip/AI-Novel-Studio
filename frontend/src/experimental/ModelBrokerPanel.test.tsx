@@ -133,3 +133,20 @@ it('opens existing draft through the App authority callback and fences a late na
   await waitFor(() => expect(screen.queryByText('已核对当前权限并打开原有草稿审核；尚未采用。')).toBeNull());
   expect(screen.queryByDisplayValue('Actual existing job draft')).toBeNull();
 });
+
+it('invalidates prior authorization and sends the exact reviewed material scope', async () => {
+  const fetch=transport();vi.stubGlobal('fetch',fetch);render(panel());await selectQuote();
+  fireEvent.click(screen.getByRole('button',{name:'检查真实生成请求'}));
+  await screen.findByLabelText('准确生成 Prompt');
+  fireEvent.click(screen.getByLabelText('已核对准确请求、来源与模型，并授权生成这一次草稿'));
+  fireEvent.change(screen.getByLabelText('正文范围'),{target:{value:'NONE'}});
+  expect((screen.getByRole('button',{name:'按预览路线预占并生成'}) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByRole('button',{name:'检查真实生成请求'}));
+  await screen.findByLabelText('准确生成 Prompt');
+  fireEvent.click(screen.getByLabelText('已核对准确请求、来源与模型，并授权生成这一次草稿'));
+  fireEvent.click(screen.getByRole('button',{name:'按预览路线预占并生成'}));
+  await screen.findByDisplayValue('Actual existing job draft');
+  const sent=JSON.parse(fetch.mock.calls.find(([url])=>url.endsWith('/model-broker/generate'))![1]!.body as string);
+  expect(sent.author.request_scope.source_mode).toBe('NONE');
+  expect(fetch.mock.calls.filter(([url])=>url.endsWith('/model-broker/generate'))).toHaveLength(1);
+});

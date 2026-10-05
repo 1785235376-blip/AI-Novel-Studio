@@ -38,7 +38,7 @@ def rig(monkeypatch, tmp_path, request):
     manager.snapshot_required = False
     manager._emit = lambda job, chunk='': setattr(job, 'output', job.output + chunk)
     manager._persist = lambda job: None
-    state = S(cloud=False, permitted=True, sent=[], created=[], before_send=lambda: None, extra_style='')
+    state = S(cloud=False, permitted=True, sent=[], created=[], before_send=lambda: None, extra_style='', variant_policy=lambda: {'policy': 'SYNTHETIC_NO_BUDGET'})
     class Node:
         def stream(self, value):
             state.before_send()
@@ -60,7 +60,7 @@ def rig(monkeypatch, tmp_path, request):
         return 'actor', {'mode': 'local', 'novel_id': nid}
     def generation_context(*_): return None, None
     def generation_payload(body, *_): return {**body.model_dump(), 'style': state.extra_style or body.style}
-    app = FastAPI(); router = create_author_context_router(manager, authorize, require_flag, generation_context, generation_payload)
+    app = FastAPI(); router = create_author_context_router(manager, authorize, require_flag, generation_context, generation_payload, variant_policy_guard=lambda *_: state.variant_policy())
     app.include_router(router, prefix='/api'); app.include_router(router, prefix='/api/v1')
     return S(client=TestClient(app), manager=manager, chapter=chapter, sources=sources, state=state, headers={'X-Session-Token': 'session'},
              body={'novel_id': 'n', 'chapter_id': 'n:1', 'chapter_version': 1, 'operation': 'continue', 'provider_id': 'fixture', 'model_id': 'model', 'instruction': 'Concise', 'style': 'calm', 'source': 'selection', 'selected_text': 'selection'})

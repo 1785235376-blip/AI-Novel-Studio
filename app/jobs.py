@@ -3,7 +3,7 @@ import difflib,json,threading,uuid,time
 from dataclasses import dataclass,field,asdict
 from datetime import datetime,timezone
 from .agents import agent_runner
-from .author_request import AUTHOR_ROLES, build_author_request, request_digest, saved_source_matches, chapter_digest
+from .author_request import AUTHOR_ROLES, build_author_request, request_digest, saved_source_matches, chapter_digest, automatic_context_allowed
 from .review import deterministic_review
 from .runtime import runtime
 from .structured_log import runtime_log
@@ -28,6 +28,11 @@ class Job:
     creation_records:list=field(default_factory=list)
     expected_request_digest:str|None=None
     base_chapter_digest:str|None=None
+    author_input_digest:str|None=None
+    request_scope:dict|None=None
+    reviewed_variant:dict|None=None
+    reviewed_variant_receipt_state:str|None=None
+    reviewed_variant_policy:dict|None=None
     request_authorization:object=field(default=None,repr=False)
     experimental_origin:str|None=None
     required_experimental_features:list=field(default_factory=list)
@@ -48,6 +53,10 @@ class Job:
     route_decisions:list=field(default_factory=list)
     def public(self):
         result = {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at","creation_records","usage","usage_status","execution_mode","provider_reference_id","route_decisions")}
+        if self.author_input_digest is not None: result["author_input_digest"] = self.author_input_digest
+        if self.request_scope is not None: result["request_scope"] = self.request_scope
+        if self.reviewed_variant is not None:
+            result.update(reviewed_variant=self.reviewed_variant, reviewed_variant_receipt_state=self.reviewed_variant_receipt_state, reviewed_variant_policy=self.reviewed_variant_policy)
         if self.expected_request_digest:
             result.update(expected_request_digest=self.expected_request_digest, base_chapter_digest=self.base_chapter_digest)
         if self.experimental_origin is not None:
@@ -170,6 +179,27 @@ class JobManager:
     def create(self,operation,payload,actor=None,scope=None,request_authorization=None):
         job=self.prepare_job(operation,payload,actor,scope,request_authorization)
         return self.start_prepared(job)
+    def stage_reviewed_variants(self, jobs):
+        """Record the entire bounded review before the first adapter can run.
+
+        Keep partial persistence evidence on failure. The batch coordinator will
+        never fill missing members by replay after an uncertain staging/start.
+        """
+        if not 2 <= len(jobs) <= 3 or any(not job.reviewed_variant or not job.expected_request_digest
+                or not callable(job.request_authorization) or job.status != "PREPARED" for job in jobs):
+            raise ValueError("AUTHOR_VARIANT_REVIEW_REQUIRED")
+        with self.lock:
+            if any(job.id in self.jobs for job in jobs): raise ValueError("AUTHOR_VARIANT_ALREADY_RECORDED")
+            for job in jobs:
+                job.reviewed_variant_receipt_state = "NOT_RECORDED"
+                self.jobs[job.id] = job
+            for job in jobs:
+                job.reviewed_variant_receipt_state = "RECORDED"
+                try: self._persist(job)
+                except Exception:
+                    job.reviewed_variant_receipt_state = "PERSISTENCE_UNCERTAIN"
+                    raise
+
     def start_prepared(self, job):
         """Start the exact validated instance once, never rebuild its payload."""
         from .experimental.character_author_context import is_character_job
@@ -187,12 +217,13 @@ class JobManager:
         if job.dispatch_hooks_required and (not callable(job.before_dispatch) or not callable(job.on_terminal)):
             raise ValueError("GENERATION_DISPATCH_SESSION_REQUIRED")
         with self.lock:
-            if job.id in self.jobs: raise ValueError("GENERATION_JOB_ALREADY_STARTED")
+            if job.id in self.jobs and not (job.reviewed_variant and self.jobs[job.id] is job):
+                raise ValueError("GENERATION_JOB_ALREADY_STARTED")
             job.status = "QUEUED"
             self.jobs[job.id] = job
             try: self._persist(job)
             except Exception:
-                self.jobs.pop(job.id, None)
+                if not job.reviewed_variant: self.jobs.pop(job.id, None)
                 job.status = "PREPARED"
                 raise
         try: threading.Thread(target=self._run,args=(job,),daemon=True).start()
@@ -266,8 +297,10 @@ class JobManager:
         from .experimental.character_author_context import is_character_job, resolve_character_author_context
         if is_character_job(job):
             context = resolve_character_author_context(job, cloud=cloud)
-        else:
+        elif automatic_context_allowed(job):
             context = self.contexts.for_chapter(job.chapter_id, job.instruction, cloud, job.operation)
+        else:
+            context = {}
         request = build_author_request(job, route, chapter, context,
             dispatch_guard=lambda: self._guard_author_request(job, route, dispatch=True))
         if job.expected_request_digest and request_digest(request, job, cloud) != job.expected_request_digest:

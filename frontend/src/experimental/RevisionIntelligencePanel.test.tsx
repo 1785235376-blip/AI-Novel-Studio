@@ -115,5 +115,8 @@ it('reuses exact author preview and blocks extra generated paragraphs from autom
   expect((screen.getByLabelText('区块 1 候选文字') as HTMLTextAreaElement).value).toBe(blocks[0].before);
   const generated = JSON.parse(fetch.mock.calls.find(([url]) => url.endsWith('/generate'))![1].body as string);
   expect(generated.revision_selection).toEqual(selected); expect(generated.revision_selection_digest).toBe(receipt.selection_digest);
+  expect(generated.request_scope).toEqual({ source_mode: 'SELECTION_ONLY', include_automatic_context: false, include_style_reference: true, include_plan_reference: true });
+  const previewed = JSON.parse(fetch.mock.calls.find(([url]) => url.endsWith('/author-context/preview'))![1].body as string);
+  expect(generated.request_scope).toEqual(previewed.request_scope);
   expect(generated.preview_digest).toBe('f'.repeat(64)); expect(generated.provider_id).toBe('local');
 });
