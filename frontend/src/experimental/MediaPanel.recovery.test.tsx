@@ -44,6 +44,19 @@ describe('media promotion checkpoint recovery', () => {
     expect(screen.getByRole('alert').textContent).toContain('PROMOTION_INTERRUPTED');
     expect(fetch.mock.calls.filter(([, request]) => request.method === 'POST')).toHaveLength(1);
   });
+  it('preserves checkpoint details but removes resume if the current-source refresh fails', async () => {
+    const fetch = fixture(false);
+    render(<ExperimentalWorkbench novelId="novel" context={{ sessionToken: '' }} flags={flags('cover_storyboard_generation')} />);
+    await screen.findByRole('button', { name: '恢复此次资产批准' });
+    const refresh = screen.getByRole('button', { name: '刷新实验记录' });
+    await waitFor(() => expect((refresh as HTMLButtonElement).disabled).toBe(false));
+    fetch.mockImplementation(async () => new Response(JSON.stringify({ detail: { code: 'READ_UNAVAILABLE' } }), { status: 503 }));
+    fireEvent.click(refresh); await screen.findByRole('alert');
+    const recovery = screen.getByRole('region', { name: '资产批准恢复' });
+    expect(recovery.textContent).toContain('existing-asset-r3'); expect(recovery.textContent).toContain('checkpoint-sha256'); expect(recovery.textContent).toContain('SOURCE_FRESHNESS_UNVERIFIED');
+    expect(screen.queryByRole('button', { name: '恢复此次资产批准' })).toBeNull(); expect(screen.queryByRole('button', { name: '驳回媒体候选' })).toBeNull();
+    expect(fetch.mock.calls.filter(([, request]) => request.method === 'POST')).toHaveLength(0);
+  });
   it.each([true, undefined])('retains asset references and offers no resume/reject when source currentness is %s', async stale => {
     const fetch = fixture(stale);
     render(<ExperimentalWorkbench novelId="novel" context={{ sessionToken: '' }} flags={flags('cover_storyboard_generation')} />);

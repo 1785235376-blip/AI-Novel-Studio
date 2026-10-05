@@ -9,10 +9,10 @@ export function needsPromotionRecovery(row: Row) {
   return row.status === 'APPROVING' || ['RESUME_APPROVAL', 'SOURCE_CHANGED_RECONCILIATION_REQUIRED'].includes(row.recovery_state);
 }
 /** A checkpoint is an incomplete cross-store write, never a fresh rejectable proposal. */
-export function PromotionRecovery({ row, busy, onResume }: { row: Row; busy: boolean; onResume?: () => void }) {
+export function PromotionRecovery({ row, busy, onResume, sourceUnavailable = false }: { row: Row; busy: boolean; onResume?: () => void; sourceUnavailable?: boolean }) {
   if (!needsPromotionRecovery(row)) return null;
   const stale = row.stale === true || row.recovery_state === 'SOURCE_CHANGED_RECONCILIATION_REQUIRED';
-  const current = row.stale === false && !stale;
+  const current = row.stale === false && !stale && !sourceUnavailable;
   const recoveryState = stale ? 'SOURCE_CHANGED_RECONCILIATION_REQUIRED' : current ? 'RESUME_APPROVAL' : 'SOURCE_FRESHNESS_UNVERIFIED';
   return <section className="experimental-record" aria-label="资产批准恢复">
     <StatusMessage tone="warning">{stale ? '批准写入已中断，且来源已变化：需要核对与协调处理。已创建的资产引用已保留，不能继续批准或改为驳回。' : current ? '批准写入尚未完成。来源仍为当前版本，可明确恢复同一次批准；不会自动重试或创建新的批准意图。' : '批准写入尚未完成，来源状态尚未确认。请刷新后核对；资产引用与批准意图已保留。'}</StatusMessage>
