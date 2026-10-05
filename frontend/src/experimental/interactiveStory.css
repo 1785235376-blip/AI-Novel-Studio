@@ -1,0 +1,15 @@
+.interactive-story-prose {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: var(--font-editor);
+}
+
+.interactive-story fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-3);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--space-3);
+}
