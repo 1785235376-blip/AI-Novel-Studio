@@ -256,7 +256,7 @@ class CreationWorkbenchService:
                 row["anchor_state"] = "MISSING"
         return {"items": rows, "storage": self.store.storage_mode}
 
-    def create_comment(self, nid, scope, actor, body: CommentIn):
+    def create_comment(self, nid, scope, actor, body: CommentIn, *, reauthorize=None):
         self.novels.get(nid)
         with self.store._lock, workspace_mutation(self.store.root, "creation-workbench"):
             anchor = self._anchor(nid, body.chapter_id, body.chapter_version, body.quote)
@@ -267,10 +267,12 @@ class CreationWorkbenchService:
                    "messages": [{"id": str(uuid.uuid4()), "actor_id": actor, "text": body.text, "at": now}],
                    "history": [{"action": "CREATED", "actor_id": actor, "at": now}]}
             rows.append(row)
+            if reauthorize is not None:
+                reauthorize()
             self.store._write("review_threads", rows)
             return copy.deepcopy(row)
 
-    def update_comment(self, nid, scope, actor, rid, action, version, text=""):
+    def update_comment(self, nid, scope, actor, rid, action, version, text="", *, reauthorize=None):
         with self.store._lock, workspace_mutation(self.store.root, "creation-workbench"):
             rows = self._rows("review_threads")
             row = self._find(rows, nid, scope, rid)
@@ -291,5 +293,7 @@ class CreationWorkbenchService:
                 raise ValueError("unknown comment action")
             row["history"].append({"action": action.upper(), "actor_id": actor, "at": now})
             row.update(version=row["version"] + 1, updated_at=now)
+            if reauthorize is not None:
+                reauthorize()
             self.store._write("review_threads", rows)
             return copy.deepcopy(row)
