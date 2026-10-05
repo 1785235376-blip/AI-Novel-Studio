@@ -134,3 +134,50 @@ it('late preview cannot replace changed import JSON or a new client scope', asyn
   view.rerender(<TemplateLibraryPanel client={client('two')} />); await screen.findByLabelText('模板目录 JSON');
   expect((screen.getByLabelText('模板目录 JSON') as HTMLTextAreaElement).value).toBe('');
 });
+
+it('requires a separate exact model preview confirmation and never auto dispatches or approves a deferred model node', async () => {
+  const modelWorkflow: AuthoredWorkflow = { ...workflow, agent: { ...workflow.agent, model_route: 'registered-model' }, nodes: workflow.nodes.map(n => n.id === 'prepare' ? { ...n, type: 'agent_task' } : n) };
+  let row: AgentRun = { ...waiting, definition_snapshot: modelWorkflow, current_node_id: 'prepare', model_preview: null };
+  const base = agentTransport();
+  const fetch = vi.fn(async (url: string, init?: RequestInit) => {
+    if (url.endsWith('/runs')) return reply({ items: [row] });
+    if (url.endsWith('/model/preview')) { row = { ...row, version: 3, model_preview: { preview_digest: 'e'.repeat(64), source_strategy: 'NO_MANUSCRIPT', execution_available: true, request: { prompt: 'Synthetic exact request', context: {} }, broker: { chosen: { provider_id: 'mock', model_id: 'mock-writer', synthetic: true, cost_state: 'KNOWN_SYNTHETIC_ZERO', price: { reserve_microusd: 0 } }, candidates: [] }, quality_verification: 'NOT_RUN' } }; return reply(row); }
+    if (url.endsWith('/model/dispatch')) { row = { ...row, version: 5, status: 'RUNNING', model_execution: { job_id: 'original-job', node_id: 'prepare', reservation_id: 'original-reservation', status: 'QUEUED', receipt_state: 'RECORDED', usage_state: 'UNKNOWN', quality_verification: 'NOT_RUN' } }; return reply(row); }
+    if (url.endsWith('/model/refresh')) { row = { ...row, version: 6, model_execution: { ...row.model_execution!, status: 'UNKNOWN', receipt_state: 'UNKNOWN_NO_AUTOMATIC_REPLAY' } }; return reply(row); }
+    return base(url, init);
+  });
+  vi.stubGlobal('fetch', fetch); render(<StrictMode><DeclarativeAgentsPanel client={client()} /></StrictMode>);
+  await waitFor(() => expect((screen.getByLabelText('查看 Workflow 运行') as HTMLSelectElement).options.length).toBe(2));
+  fireEvent.change(screen.getByLabelText('查看 Workflow 运行'), { target: { value: 'run-one' } });
+  expect(screen.queryByRole('button', { name: '批准当前审核节点' })).toBeNull();
+  expect(fetch.mock.calls.every(([, init]) => init?.method === 'GET')).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: '预览精确模型请求与费用' }));
+  await screen.findByText(/正文策略 NO_MANUSCRIPT/);
+  expect((screen.getByRole('button', { name: '明确启动这个模型节点' }) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByLabelText('已核对精确请求、模型、来源、零成本预留与本地限制'));
+  const launch = screen.getByRole('button', { name: '明确启动这个模型节点' }); fireEvent.click(launch); fireEvent.click(launch);
+  await screen.findByText(/原任务 original-job/);
+  const calls = fetch.mock.calls.filter(([url]) => url.endsWith('/model/dispatch'));
+  expect(calls).toHaveLength(1);
+  expect(JSON.parse(calls[0][1]!.body as string)).toEqual({ expected_version: 3, reviewed_preview_digest: 'e'.repeat(64) });
+  expect((screen.getByRole('button', { name: '暂停运行' }) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByRole('button', { name: '刷新原模型任务并核对输出' }));
+  await screen.findByText(/原执行或结算回执未知/);
+  expect(fetch.mock.calls.filter(([url]) => url.endsWith('/model/dispatch'))).toHaveLength(1);
+});
+
+it('late model preview cannot restore data after the captured client scope changes', async () => {
+  const modelWorkflow: AuthoredWorkflow = { ...workflow, nodes: workflow.nodes.map(n => n.id === 'prepare' ? { ...n, type: 'agent_task' } : n) };
+  const initial = { ...waiting, definition_snapshot: modelWorkflow, current_node_id: 'prepare' };
+  const base = agentTransport(initial); let resolve!: (value: Response) => void;
+  vi.stubGlobal('fetch', vi.fn((url: string, init?: RequestInit) => url.endsWith('/model/preview') ? new Promise<Response>(r => { resolve = r; }) : base(url, init)));
+  const view = render(<DeclarativeAgentsPanel client={client()} />);
+  await waitFor(() => expect((screen.getByLabelText('查看 Workflow 运行') as HTMLSelectElement).options.length).toBe(2));
+  fireEvent.change(screen.getByLabelText('查看 Workflow 运行'), { target: { value: 'run-one' } });
+  fireEvent.click(screen.getByRole('button', { name: '预览精确模型请求与费用' }));
+  view.rerender(<DeclarativeAgentsPanel client={client('two')} />);
+  await screen.findByLabelText('Agent 名称');
+  await act(async () => resolve(reply({ ...initial, model_preview: { request: { prompt: 'OLD_SCOPE_SECRET' } } })));
+  expect(screen.queryByText(/OLD_SCOPE_SECRET/)).toBeNull();
+  expect(screen.queryByRole('button', { name: '明确启动这个模型节点' })).toBeNull();
+});

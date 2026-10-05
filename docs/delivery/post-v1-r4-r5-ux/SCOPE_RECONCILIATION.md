@@ -23,3 +23,11 @@ A01 simulator proposals, A03 optional judge opinions and B05 reviewed translatio
 - The platform-blocked independent follow-up review is not retried, rerouted or claimed closed by engineering tests.
 
 All future flags remain default OFF and V1_ACCEPTANCE_MODE remains server authoritative. PR37 and PR38 stay unchanged; PR39 stays Draft.
+
+First-refinement equipped File completion: exact source `126c317` / remote-equivalent `f9173c2`, tree `292c4251dd01abf53b75979d9f11f39b0771e814`: **3533 passed, 10 explicit platform/manual-gate skips, 1145 real-PG parameters deselected**, 313.18 seconds. OTIO parser and pinned CJK font paths were supplied. This supersedes the earlier incomplete-optional-dependency invocation for that source; neither substitutes for hosted PostgreSQL/browser.
+
+## Adapter refinement now implemented; aggregate verification pending
+
+The previously active A01/A03/B05 text execution seams and B02 rooted DAG/model node now use the original runtime/broker/jobs with exact preview/admission, current-source guards, bounded outputs and review-only adoption. A03 advisory opinions remain separate from deterministic findings. The U07 task projection routes each trusted feature-owned origin to its own review panel. B03 per-segment pauses now produce measured PCM assembly through the existing mixer and original asset review. Supported original-local image registrations are bridged for media generation, A07 benchmarks, U06 COVER/STORYBOARD refresh and A13 observed manifests/replay. These are implemented local execution paths, not merely injected schemas.
+
+Focused File/UI tests pass; next-wave combined File/real-PG/hosted browser are still pending. Actual models/GPU/voice/translation quality remain NOT_RUN. Optional or structurally absent boundaries above remain explicit and are not relabeled as tested execution.

@@ -1,3 +1,7 @@
+# Historical first bounded engineering checkpoint
+
+The report below records the pre-reconciliation checkpoint, verified again at `1da63f5`. It is not final closure of the original forty-package scope. Current published refinement is `f9173c2bedf4866d8f28119baabc53ed2aa8d0dc`; see [SCOPE_RECONCILIATION.md](SCOPE_RECONCILIATION.md), [EXECUTION_CHECKPOINT.md](EXECUTION_CHECKPOINT.md) and the current matrix. Further adapter execution wiring is active. Historical evidence remains unchanged.
+
 # R4/R5/UX bounded engineering delivery
 
 ## Identity and baseline

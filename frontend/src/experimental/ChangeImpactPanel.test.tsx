@@ -58,10 +58,10 @@ describe('ChangeImpactPanel explicit scoped actions', () => {
     expect(await screen.findByText('没有已记录的下游依赖')).toBeTruthy();
     cleanup();
     const available = client(); const normal = available.post;
-    available.post = vi.fn(async (path, body) => path.endsWith('/preflights') ? { ...plan, ready: false, items: [{ ...plan.items[0], blockers: ['ONLY_EXISTING_SYNTHETIC_COVER_EXECUTOR_SUPPORTED'] }], cost: { ...plan.cost, estimate_microusd: null } } : normal(path, body)) as ExperimentalClient['post'];
+    available.post = vi.fn(async (path, body) => path.endsWith('/preflights') ? { ...plan, ready: false, items: [{ ...plan.items[0], blockers: ['REGISTERED_LOCAL_IMAGE_EXECUTOR_REQUIRED'] }], cost: { ...plan.cost, estimate_microusd: null } } : normal(path, body)) as ExperimentalClient['post'];
     render(<ChangeImpactPanel client={available} />); await select(); await check();
     expect(screen.getByRole('button', { name: '仅准备这些选中更新' }).hasAttribute('disabled')).toBe(true);
-    expect(screen.getByText(/真实图片、配音、字幕和视频重做尚未接入/)).toBeTruthy();
+    expect(screen.getByText(/需要已启用的原本地图像 Adapter/)).toBeTruthy();
   });
   it('allows cancel while execute awaits completion, using latest task version', async () => {
     const api = client(); vi.mocked(api.get).mockImplementation(async path => path.endsWith('/sources') ? { items: [source] } : { items: [{ ...refresh, task_version: 2 }] });

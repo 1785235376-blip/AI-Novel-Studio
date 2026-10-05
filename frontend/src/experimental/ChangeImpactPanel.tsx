@@ -7,7 +7,7 @@ import type { WorkspaceNavigation } from './uxClient';
 
 type Props = { client: ExperimentalClient; onNavigate?: (target: WorkspaceNavigation) => void; readOnly?: boolean };
 const kinds: Record<string, string> = { CHAPTER: '章节', CHARACTER: '角色', WORLD_RECORD: '世界关系 / 知识', ASSET: '资产', PLANNING_NODE: '规划', PLANNING_PROPOSAL: '规划建议', MEDIA_BRIEF: '媒体需求', MEDIA_TASK: '媒体任务', AUDIO_PLAN: '配音计划', SUBTITLES: '字幕视图', EXPORT: '清单导出视图', SHOT: '镜头', SCREENPLAY_SCENE: '剧本场景', STORYBOARD_FRAME: '分镜卡片', MOTION_TASK: '视频任务', AUDIO_MIX: '混音候选' };
-const reasons: Record<string, string> = { LOCKED_OUTCOME: '成果已锁定，请先明确解锁。', SOURCE_CURRENT: '现有来源仍有效，无需重做。', ORIGINAL_DOMAIN_MANUAL_REVIEW_REQUIRED: '请到原领域核对与更新；此处不替代它的审核流程。', ORIGINAL_TASK_NOT_TERMINAL: '原任务仍在排队或执行中。', ONLY_EXISTING_SYNTHETIC_COVER_EXECUTOR_SUPPORTED: '此入口仅支持现有确定性合成封面 Adapter。真实图片、配音、字幕和视频重做尚未接入，不能自动运行。', ORIGINAL_ADAPTER_CHANGED: '原 Adapter 配置已改变，需要在原领域重新准备。', ORIGINAL_ADAPTER_UNAVAILABLE: '原 Adapter 未配置或已停用。请先在原媒体领域检查工作流，不会自动换模型。', CURRENT_INPUTS_UNAVAILABLE: '当前输入已删除、不可访问或不满足原执行器条件。', MODEL_BROKER_NOT_CONFIGURED: '路由与预算服务未配置。', MODEL_BROKER_NO_LEGAL_ROUTE: '当前路由、隐私或预算不允许执行。', MEDIA_FEATURE_DISABLED: '原媒体领域未启用。' };
+const reasons: Record<string, string> = { LOCKED_OUTCOME: '成果已锁定，请先明确解锁。', SOURCE_CURRENT: '现有来源仍有效，无需重做。', ORIGINAL_DOMAIN_MANUAL_REVIEW_REQUIRED: '请到原领域核对与更新；此处不替代它的审核流程。', ORIGINAL_TASK_NOT_TERMINAL: '原任务仍在排队或执行中。', REGISTERED_LOCAL_IMAGE_EXECUTOR_REQUIRED: '需要已启用的原本地图像 Adapter 或内置合成协议 Adapter。', MODEL_BROKER_FEATURE_REQUIRED: '真实本地图像需要启用模型路由，并配置当前费用估计。', ORIGINAL_ADAPTER_CHANGED: '原 Adapter 配置已改变，需要在原领域重新准备。', ORIGINAL_ADAPTER_UNAVAILABLE: '原 Adapter 未配置或已停用。请先在原媒体领域检查工作流，不会自动换模型。', CURRENT_INPUTS_UNAVAILABLE: '当前输入已删除、不可访问或不满足原执行器条件。', MODEL_BROKER_NOT_CONFIGURED: '路由与预算服务未配置。', MODEL_BROKER_NO_LEGAL_ROUTE: '当前路由、隐私或预算不允许执行。', MEDIA_FEATURE_DISABLED: '原媒体领域未启用。' };
 const evidenceStates: Record<string, string> = { CURRENT: '原始快照仍有效', STALE: '来源版本已变化', UNVERIFIED: '已记录关联，缺少版本证据' };
 const sourceVersion = (source?: ImpactSource) => source?.binding && typeof source.binding === 'object' && 'version' in source.binding ? String(source.binding.version) : '摘要绑定';
 const newKey = () => globalThis.crypto?.randomUUID?.() || `refresh-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -23,7 +23,7 @@ function RefreshCard({ api, row, reload, onNavigate }: { api: ReturnType<typeof 
     <h3>新任务 {row.task_id}</h3><div className="experimental-actions"><Badge>{row.status} · v{row.task_version}</Badge><Badge tone={row.source_current ? 'neutral' : 'warning'}>{row.source_current ? '新任务来源快照有效' : '新任务来源已变化'}</Badge></div>
     {action.feedback}{cancelAction.feedback}
     {row.recovery && <StatusMessage tone="warning">需要重新查看影响并预检。不会复用旧授权或自动重试。</StatusMessage>}
-    <div className="experimental-actions">{row.status === 'QUEUED' && <Button disabled={action.busy || cancelAction.busy || !row.source_current} onClick={() => action.run(() => api.execute(row), '合成任务已执行，产物仍需在原媒体领域审核。')}>执行此选中任务</Button>}
+    <div className="experimental-actions">{row.status === 'QUEUED' && <Button disabled={action.busy || cancelAction.busy || !row.source_current} onClick={() => action.run(() => api.execute(row), '选中任务已执行，产物仍需在原媒体领域审核。')}>执行此选中任务</Button>}
       {['QUEUED', 'RUNNING'].includes(row.status) && <Button disabled={cancelAction.busy} onClick={cancel}>取消此次更新</Button>}
       {row.outputs.length > 0 && onNavigate && <Button onClick={() => onNavigate({ kind: 'feature', id: 'cover_storyboard_generation', feature: 'cover_storyboard_generation' })}>审核更新产物</Button>}
     </div>{row.outputs.map(output => <p key={output.id}>候选 {output.id} · {output.status}</p>)}
@@ -65,7 +65,7 @@ function ImpactSelection({ source, api, onPrepared, onNavigate }: { source: Impa
       {preflight && <section className="experimental-record" aria-label="选择性更新预检"><h3>{preflight.ready ? '可准备新的选中任务' : '当前不能执行选中更新'}</h3>
         {preflight.items.map(item => <div key={item.key}><p>{item.label}</p>{item.blockers.map(code => <StatusMessage key={code} tone="warning">{reasons[code] || code}</StatusMessage>)}</div>)}
         <p>预检来源：{preflight.source_snapshot?.label || source.label} · 当前来源版本 {sourceVersion(preflight.source_snapshot)}</p><p>费用：{preflight.cost.estimate_microusd === null ? '未知，不以免费代替' : `${preflight.cost.estimate_microusd / 1000000} ${preflight.cost.currency}`} · 最多 {preflight.maximum_candidates} 个候选</p>
-        <StatusMessage tone="warning">仅确定性合成封面协议，真实模型效果未验。每次执行仍重新检查权限、来源、隐私和预算；不会批准产物或替换旧成果。</StatusMessage>
+        <StatusMessage tone="warning">支持合成测试与已登记本地封面 / 分镜路线，真实模型效果未验。每次执行仍重新检查权限、来源、隐私和预算；不会批准产物或替换旧成果。</StatusMessage>
         <Button disabled={action.busy || !preflight.ready} onClick={prepare}>仅准备这些选中更新</Button>
       </section>}
     </>}

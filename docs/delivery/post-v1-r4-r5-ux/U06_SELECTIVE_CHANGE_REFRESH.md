@@ -2,7 +2,7 @@
 
 ## Status and usable scope
 
-EXTEND; deterministic implementation and integration are present. Contract tests pass for File storage and both production API aliases. Overall U06 remains PARTIAL: automatic refresh is intentionally limited to the existing deterministic synthetic cover executor. Real image/audio/video execution and model-inferred impact are not verified or silently substituted.
+EXTEND; deterministic implementation and integration are present. Contract tests pass for File storage and both production API aliases. Selected cover and storyboard refresh now also reaches currently validated/enabled original local A1111 and supported ComfyUI checkpoint routes through the existing media registry bridge. Real routes require the current broker and explicit estimates. Generation remains an explicit action, with no automatic approval. Video/audio/subtitle refresh and model-inferred impact remain separate unsupported coordinators; real image quality is NOT_RUN.
 
 The experimental workbench tab **修改影响与更新** lets an authorized author:
 
@@ -42,23 +42,23 @@ Read-only collaborators cannot use this author-omniscient projection: all routes
 
 ## Dispatch, budget and cancellation
 
-Only the exact registered built-in `MockImageWorkflowAdapter` used by the original cover task is supported here. It creates real deterministic synthetic PNG bytes through the original executor and is labelled `SYNTHETIC_PROTOCOL_ONLY`. This does not establish image-model quality or GPU/runtime compatibility.
+The exact built-in `MockImageWorkflowAdapter` retains its `SYNTHETIC_PROTOCOL_ONLY` path. `RegisteredLocalImageWorkflowAdapter` projects only exact original `LocalImageAdapter` registrations for enabled A1111 and the shipped ComfyUI checkpoint workflow. No family-name discovery installs executable code. Real routes run one image per task and reject reference-image conditioning. Both cover and storyboard refresh use the original current-source preparers. Stored storyboard shot snapshots are exact dependency edges; an old screenplay scene still requires its original source to be brought current first.
 
 Current chapter/character/asset bindings, the original task fingerprint, lock version, actor/scope, adapter configuration, environment identity and current chapter privacy state are bound to preflight. They are rechecked at prepare, final dispatch and result acceptance. A newer source cannot be marked current by an old callback.
 
-If the existing model broker is enabled, U06 reuses its preview, reservation, final-dispatch guard and terminal settlement. A budget change blocks the old preview. Cancellation can recover a reservation committed before its pointer checkpoint. Without that optional broker, only the known-zero synthetic executor is available; unknown actual-media costs are never shown as zero.
+If the existing model broker is enabled, U06 reuses its preview, reservation, final-dispatch guard and terminal settlement. A budget change blocks the old preview. Cancellation can recover a reservation committed before its pointer checkpoint. Without that broker, only the known-zero synthetic executor is available. Real preflight costs are estimates; absent actual billing stays `UNKNOWN_UPSTREAM` and must be explicitly reconciled before new work. They are never silently zeroed.
 
 The copied brief/task/pointer are one scope transaction. Partial preparation rolls back. Cancellation invalidates the existing media execution token; late output is discarded. No direct Canon/manuscript write, arbitrary replacement adapter, output approval or second executor exists.
 
 ## Explicit unsupported paths
 
-- Actual image models, storyboard regeneration, video, TTS, subtitles and arbitrary exports require their original domain's preparation/review and are not executable from U06. Their recorded impact and locks remain useful.
+- Video, TTS, subtitles, reference-conditioned images, arbitrary ComfyUI graphs and arbitrary exports have no U06 executor. Their recorded impact and locks remain useful. Local-image quality/GPU performance remain unverified even though supported original routes are wired.
 - No text-based whole-manuscript rename or semantic impact inference runs.
 - Existing task preparation cannot queue from a U06-owned copied brief; it requires a fresh U06 preflight.
-- A13 capture of a U06 refresh is explicitly rejected with `PRODUCTION_CHANGE_IMPACT_CAPTURE_NOT_SUPPORTED`. A cross-package manifest must not outlive U06's visibility or dispatch authority.
+- A13 capture now calls the U06 coordinator's current origin checks and records the exact refresh/preflight binding. Replay preserves that origin, validates it again and keeps U06-owned derivatives hidden when U06 is off. Missing/currently inaccessible origin authority still blocks capture or replay.
 - Full literary quality, real model cost/quality, Windows/IME/native GPU, complete external export dependency discovery and user aesthetic acceptance are NOT_RUN or outside this checkpoint.
 
-## Verification receipt · 2026-10-05
+## Earlier synthetic-checkpoint receipt · 2026-10-05
 
 Executed through the isolated repository runner:
 
@@ -90,4 +90,4 @@ No paid API, actual model, downloaded weights, credentials, production deploymen
 
 New consumers: `ChangeImpactPanel.tsx`, typed `changeImpactClient.ts`, and the workbench tab supplied by the composition owner. They reuse `Panel`, `Button`, `Badge`, `StatusMessage`, shared fields/action/resource hooks and existing experimental layout classes. No tokens, AppShell geometry or protected primitives change. The canonical NOVEL reference and DS-v1.0 rules were reviewed.
 
-Preserve explicit selection, lock state, pending-review status, source-version evidence, unknown-impact wording, permission/retry states and independent cancel availability when styling. Do not turn prepare into execute, remove late-response fencing or imply real-media generation works.
+Preserve explicit selection, lock state, pending-review status, source-version evidence, unknown-impact wording, permission/retry states and independent cancel availability when styling. Do not turn prepare into execute, remove late-response fencing or claim that protocol wiring proves real-model quality. See [registered local-media receipt](REGISTERED_LOCAL_MEDIA.md) for the later implementation and verification.
