@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import { type ExperimentalClient, type Row, type Rows, segment } from './api';
 import { Details, Field, Form, RecordStatus, Refresh, ResourceState, useAction, useResource } from './shared';
+import { hasPromotionIntent, needsPromotionRecovery, PromotionRecovery } from './PromotionRecovery';
 const actionLabels: Record<string, string> = { approve: '批准', reject: '驳回', reopen: '重开审核' };
 export function InboxPanel({ client }: { client: ExperimentalClient }) {
   const [domain, setDomain] = useState(''), [status, setStatus] = useState(''), [search, setSearch] = useState(''), [stale, setStale] = useState(''), [filter, setFilter] = useState('');
@@ -9,8 +10,11 @@ export function InboxPanel({ client }: { client: ExperimentalClient }) {
   const action = useAction(resource.reload), [selected, setSelected] = useState<string[]>([]), [batchResult, setBatchResult] = useState<any>();
   const rows = resource.data?.items || [], key = (row: Row) => `${row.domain}:${row.id}`;
   const selectedRows = rows.filter(row => selected.includes(key(row)));
-  const batchAllowed = (operation: string) => selectedRows.length > 0 && selectedRows.every(row => row.batch_safe === true && row.batch_actions?.includes(operation) && (operation !== 'approve' || !row.stale));
-  const execute = (row: Row, operation: string) => action.run(() => client.post(`/review-inbox/${segment(row.domain)}/${segment(row.id)}/${operation}`, { expected_version: row.version }), '领域审核已完成');
+  const batchAllowed = (operation: string) => selectedRows.length > 0 && selectedRows.every(row => !hasPromotionIntent(row) && row.batch_safe === true && row.batch_actions?.includes(operation) && (operation !== 'approve' || !row.stale));
+  const execute = (row: Row, operation: string) => action.run(async () => {
+    try { return await client.post(`/review-inbox/${segment(row.domain)}/${segment(row.id)}/${operation}`, { expected_version: row.version }); }
+    catch (error) { if (operation === 'approve') resource.reload(); throw error; }
+  }, '领域审核已完成');
   const busy = action.busy || resource.loading;
   return <Panel title="Unified Review Inbox · 统一审核" actions={<Refresh reload={resource.reload} busy={busy} />}>
     <StatusMessage>所有动作转交原领域审核服务。不可批量审核的领域不会显示批量选择，过期记录不能批准。</StatusMessage>{action.feedback}
@@ -26,8 +30,9 @@ export function InboxPanel({ client }: { client: ExperimentalClient }) {
       <div className="experimental-actions"><Badge tone="info">{row.domain}</Badge><strong>{typeof row.preview === 'string' ? row.preview : row.preview?.title || row.id}</strong></div><RecordStatus row={row} />
       <dl className="experimental-meta">{Object.entries({ source: row.source, project: row.project, workspace: row.workspace, branch: row.branch, created_by: row.created_by, risk: row.risk, privacy_state: row.privacy_state, source_hash: row.source_hash }).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{typeof value === 'object' ? JSON.stringify(value) : String(value ?? '—')}</dd></div>)}</dl>
       <Details label="来源版本、预览与目标" value={{ source_versions: row.source_versions, preview: row.preview, target: row.target }} />
-      {row.batch_safe === true && <label className="experimental-check"><input type="checkbox" checked={selected.includes(key(row))} onChange={event => setSelected(current => event.target.checked ? [...current, key(row)] : current.filter(id => id !== key(row)))} />加入安全批量审核</label>}
-      <div className="experimental-actions">{(row.allowed_actions || []).filter((operation: string) => operation in actionLabels).map((operation: string) => <Button key={operation} disabled={busy || (operation === 'approve' && row.stale)} onClick={() => execute(row, operation)}>{actionLabels[operation]}此审核项</Button>)}{!row.allowed_actions?.length && <span>此领域当前状态仅供查看。</span>}</div>
+      <PromotionRecovery row={row} busy={busy} onResume={row.allowed_actions?.includes('approve') ? () => execute(row, 'approve') : undefined} />
+      {row.batch_safe === true && !hasPromotionIntent(row) && <label className="experimental-check"><input type="checkbox" checked={selected.includes(key(row))} onChange={event => setSelected(current => event.target.checked ? [...current, key(row)] : current.filter(id => id !== key(row)))} />加入安全批量审核</label>}
+      <div className="experimental-actions">{(row.allowed_actions || []).filter((operation: string) => operation in actionLabels && !needsPromotionRecovery(row) && (!hasPromotionIntent(row) || operation === 'approve')).map((operation: string) => <Button key={operation} disabled={busy || (operation === 'approve' && row.stale)} onClick={() => execute(row, operation)}>{actionLabels[operation]}此审核项</Button>)}{!row.allowed_actions?.length && <span>此领域当前状态仅供查看。</span>}</div>
     </article>)}</div>
   </Panel>;
 }
