@@ -1,5 +1,8 @@
 /* Consumer-only prose and reference styles. Existing shell/status stays intact. */
-.writing-focus-split{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--space-3);min-width:0}
+/* OFF mode preserves the editor as a workspace grid item. A plain wrapper
+   would let its prose overflow the row and intercept the next panel. */
+.writing-editor-row{display:contents}
+.writing-editor-row.writing-focus-split{display:grid;min-height:0;overflow:hidden;grid-template-columns:minmax(0,1fr);gap:var(--space-3);min-width:0}
 .writing-focus-split:has(.writing-reference-rail){grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
 .writing-reference-rail{min-width:0;display:grid;align-content:start;gap:var(--space-3);max-height:calc(var(--space-12)*14);overflow:auto;padding:var(--space-3);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-surface)}
 .writing-reference-text{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;font-family:var(--font-editor)}

@@ -12,7 +12,7 @@ const OFF_API = process.env.R4_OFF_API_URL || 'http://127.0.0.1:8020/api';
 const OFF_UI = process.env.R4_OFF_UI_URL || 'http://127.0.0.1:5180';
 const WARMUPS = 3, SAMPLES = 30;
 const owned = new WeakMap<Page, Array<{ api: string; id: string }>>();
-const quiescers = new WeakMap<Page, () => Promise<void>>();
+const quiescers = new WeakMap<Page, ReturnType<typeof createPageQuiescer>>();
 const modelRequests = new WeakMap<Page, string[]>();
 const original = [
   '阿澄在月港修理星桥灯塔。乔岚把旧信放进木盒，沈墨守在门外。',
@@ -89,7 +89,14 @@ test.afterEach(async ({ page, request }, info) => {
     try { await page.screenshot({ path: info.outputPath('u13-failure-before-cleanup.png'), fullPage: true }); }
     catch { info.annotations.push({ type: 'diagnostic', description: 'Screenshot unavailable; inspect retained trace.' }); }
   }
-  await quiescers.get(page)!();
+  const quiesce = quiescers.get(page)!;
+  try { await quiesce(); }
+  catch (error) {
+    await attach(info, 'fixture-drain-blocked.json', quiesce.diagnostics());
+    info.annotations.push({ type: 'cleanup-blocked', description: 'Owned fixture retained: an API request has no verified completion. Inspect sanitized drain diagnostics.' });
+    throw error;
+  }
+  await attach(info, 'fixture-drain-completed.json', quiesce.diagnostics());
   for (const row of owned.get(page) || []) {
     const response = await request.delete(`${row.api}/novels/${encodeURIComponent(row.id)}`);
     expect([200, 204, 404], 'Delete only exact fixture IDs created by this test').toContain(response.status());
@@ -195,7 +202,7 @@ test('U13 Chromium composition, Chinese punctuation, Unicode, undo/redo and mult
   const persisted = await json(await request.get(`${API}/chapters/${chapter.id}`));
   expect(persisted.content).toContain('中文候选' + unicode);
   expect(persisted.content).toContain('👨‍👩‍👧‍👦');
-  await page.reload(); await expect(editor).toContainText('中文候选' + unicode);
+  await quiescers.get(page)!.drain(); await page.reload(); await expect(editor).toContainText('中文候选' + unicode);
   await attach(info, 'unicode-composition-boundaries.json', {
     chromium_cdp_composition: 'REAL_BROWSER_PROTOCOL_VERIFIED', clipboard_event: 'SYNTHETIC_EVENT_REAL_EDITOR',
     saved_and_reopened: true, os_clipboard: 'NOT_RUN', windows_native_ime: 'NOT_RUN',
@@ -254,7 +261,7 @@ test('U13 no-model flags-off 100k baseline preserves Chinese editing and blocks 
   expect((await request.get(`${OFF_API}/novels/r4-u13-100000/experimental/workspace/search?q=阿澄`)).status()).toBe(404);
   const editor = page.getByRole('textbox', { name: '章节正文', exact: true });
   await editor.focus(); await page.keyboard.press('Control+End'); await page.keyboard.insertText('关闭实验功能仍能写中文。');
-  await save(page); await page.reload(); await expect(editor).toContainText('关闭实验功能仍能写中文。');
+  await save(page); await quiescers.get(page)!.drain(); await page.reload(); await expect(editor).toContainText('关闭实验功能仍能写中文。');
   const persisted = await json(await request.get(`${OFF_API}/chapters/${chapter.id}`));
   expect(persisted.content).toContain('关闭实验功能仍能写中文。');
   await attach(info, 'flags-off-browser-baseline.json', { flags: 'ALL_OFF', real_file_save_reopen: true, model_execution_requests: modelRequests.get(page), windows_ime: 'NOT_RUN' });

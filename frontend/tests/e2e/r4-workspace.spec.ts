@@ -8,7 +8,7 @@ async function body(response: APIResponse) { expect(response.ok(), `HTTP ${respo
 async function project(page: Page, text = '合成原文：阿澄在月港，😀 看见灯塔。', api = API, ui = '/') {
   expect(await body(await page.request.get(`${api}/novels`))).toHaveLength(0);
   await page.goto(ui);
-  await page.getByPlaceholder('小说名称').fill('R4 browser synthetic');
+  await page.getByPlaceholder('小说名称').fill(`R4 browser synthetic ${Date.now()}-${test.info().testId}`);
   const created = page.waitForResponse(r => r.url().endsWith('/api/novels') && r.request().method() === 'POST');
   await page.getByRole('button', { name: '创建小说', exact: true }).click();
   const novel = await body(await created); owned.get(page)!.push({ id: novel.id, api });

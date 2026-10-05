@@ -1162,7 +1162,7 @@ export default function App() {
       {writingRecovery && durability === 'memory' && <section className="notice" role="alert">
         本机草稿写入失败。当前修改仅在此页面内存中，关闭、刷新或断电可能丢失。请导出当前草稿。
       </section>}
-      <div className={writingFocus ? 'writing-focus-split' : undefined}>
+      <div className={writingFocus ? 'writing-editor-row writing-focus-split' : 'writing-editor-row'}>
       {chapter.data && hydratedIdentity === editorIdentity ? (
         <ChapterEditor
           writingPreferences={writingFocus ? writingPreferences : undefined}

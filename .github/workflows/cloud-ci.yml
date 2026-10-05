@@ -213,6 +213,17 @@ jobs:
       - name: Summarize exact revision and test counts
         if: always() && env.CI_RECEIPTS != ''
         run: python3 .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Upload compact frontend evidence
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-compact-${{ github.sha }}
+          path: |
+            ${{ env.CI_RECEIPTS }}
+            ${{ env.CI_PROJECT }}/frontend/test-results/**/*.json
+            ${{ env.CI_PROJECT }}/frontend/test-results/**/error-context.md
+          if-no-files-found: error
+          retention-days: 14
       - name: Upload frontend receipts
         if: always() && env.CI_RECEIPTS != ''
         uses: actions/upload-artifact@v4.6.2
