@@ -219,11 +219,16 @@ class AudiobookService:
             if current.get("execution_token") != job["execution_token"] or current["status"] != "FAILED": return current
             raise error from exc
 
-    def export_chapter(self, novel_id, chapter_id, job_ids):
+    def export_chapter(self, novel_id, chapter_id, job_ids, *, direction_guard=None):
         if not job_ids or len(job_ids) != len(set(job_ids)):
             raise AudiobookError("AUDIOBOOK_EXPORT_SELECTION_INVALID", "请选择互不重复的音频任务", 400)
         state = self.store.load(novel_id)
         jobs = [self.find(state, job_id) for job_id in job_ids]
+        for job in jobs:
+            if job.get("experimental_origin"):
+                if direction_guard is None:
+                    raise AudiobookError("VOICE_CURRENT_AUTHORITY_REQUIRED", "请从声音导演导出当前已审核的音频", 403)
+                direction_guard(job)
         if any(job.get("chapter_id") != chapter_id or job.get("status") != "SUCCEEDED" or not job.get("asset_id") for job in jobs):
             raise AudiobookError("AUDIOBOOK_EXPORT_NOT_READY", "只能导出本章节已验证的完成音频")
         parts = [self.assets.content(job["asset_id"], branch_id=self.branch_id) for job in jobs]
@@ -231,8 +236,10 @@ class AudiobookService:
             output, offsets = parts[0], [{"sequence": 1, "start_ms": 0, "duration_ms": jobs[0]["duration_ms"]}]
             measured = inspect_media(output, "audio")
         else:
-            pauses={int(job.get('pause_ms') or 0) for job in jobs}
-            if len(pauses)!=1:raise AudiobookError('AUDIOBOOK_TIMING_MISMATCH','请选择使用相同分段停顿配置的音频任务')
-            output, offsets = concatenate_wav(parts,pause_ms=pauses.pop())
+            pauses = [job.get('pause_ms') or 0 for job in jobs[:-1]]
+            output, offsets = concatenate_wav(parts, pauses_ms=pauses)
             measured = inspect_media(output, "audio")
+        for job in jobs:
+            if job.get("experimental_origin"):
+                direction_guard(self.find(self.store.load(novel_id), job["id"]))
         return output, {"chapter_id": chapter_id, "media_type": measured["media_type"], "extension": measured["extension"], "duration_ms": measured["duration_ms"], "sha256": hashlib.sha256(output).hexdigest(), "segments": [{**offset, "job_id": job["id"], "asset_id": job["asset_id"], "source_sha256": job["source_sha256"], "voice_authorization": job.get("voice_authorization")} for offset, job in zip(offsets, jobs)]}

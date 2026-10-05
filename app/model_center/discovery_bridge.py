@@ -145,6 +145,12 @@ class LocalImageAdapter:
         if current.get('enabled_at') != candidate.get('enabled_at'): raise ValueError('LOCAL_AI_CONFIGURATION_CHANGED')
         if request.model_id not in {'', candidate['id'], candidate['model_name']}:
             raise ValueError('LOCAL_AI_MODEL_MISMATCH')
+        if request.dispatch_guard is not None:
+            request.dispatch_guard()
+        # Metadata validation can block; recheck enablement after its caller's
+        # current source/budget guard and immediately before inference.
+        current = self.bridge.guard(candidate['id'])
+        if current.get('enabled_at') != candidate.get('enabled_at'): raise ValueError('LOCAL_AI_CONFIGURATION_CHANGED')
         result = self.delegate.generate(replace(request, model_id=candidate['model_name']))
         return replace(result, model_id=candidate['id'])
 

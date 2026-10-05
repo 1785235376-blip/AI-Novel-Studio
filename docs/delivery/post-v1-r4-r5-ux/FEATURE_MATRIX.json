@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase": "ORIGINAL_SCOPE_RECONCILIATION_IN_PROGRESS",
+  "phase": "ORIGINAL_SCOPE_ADAPTER_REFINEMENT_VALIDATING",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "visibility": "public",
   "frozen_v1_sha": "1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0",
@@ -149,7 +149,7 @@
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
-      "implemented_scope": "Read-only original task authorities, honest stages, filters, private diagnostic export; exact original author-job projection and scoped Draft/Diff/Accept navigation without a second executor.",
+      "implemented_scope": "Read-only original task authorities, honest stages, filters, private diagnostic export; exact original author-job projection and scoped Draft/Diff/Accept navigation without a second executor. Feature-owned simulator/judge/translation/declarative jobs reopen their owning review panels, not generic manuscript acceptance.",
       "remaining_scope": "Original task projection and exact original Draft/Diff recovery passed hosted execution. Universal domain-specific deep links/retries remain bounded by each original authority.",
       "new_sources": [
         "app/experimental/ux.py",
@@ -435,19 +435,24 @@
         "app/model_center/discovery.py",
         "app/model_center/runtime_profiles.py"
       ],
-      "gap": "Registered-local IMAGE benchmark wiring remains active implementation. Unsupported video admission and actual quality are separate limits.",
+      "gap": "VIDEO_WORKFLOW lacks equivalent proven-local current broker admission and remains explicit import-only. Missing hardware/usage/cold-start measurements are unknown; real GPU/model quality remains NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FOCUSED_LOCAL_ENGINEERING_PASS; COMBINED_EXACT_SOURCE_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
-      "implemented_scope": "Explicit bounded local text benchmark execution, real registration/fingerprint evidence, imported result management, current evidence invalidation and small-sample blind A/B preference.",
-      "remaining_scope": "Registered-local IMAGE benchmark wiring remains active implementation. Unsupported video admission and actual quality are separate limits.",
+      "implemented_scope": "Bounded registered text and supported original-local IMAGE benchmarks with original job/output receipts, current registration/config/model evidence, decoded dimensions, actual measured latency and budget admission; preference evidence remains separate.",
+      "remaining_scope": "VIDEO_WORKFLOW lacks equivalent proven-local current broker admission and remains explicit import-only. Missing hardware/usage/cold-start measurements are unknown; real GPU/model quality remains NOT_RUN.",
       "initial_gap": "User-triggered bounded benchmark management and evidence versioning; real-model quality requires configured model.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
-      "browser_run": 37372638988
+      "browser_run": 37372638988,
+      "new_sources": [
+        "tests/test_r4_registered_local_media.py"
+      ],
+      "engineering_delivery": "IMPLEMENTED_PENDING_EXACT_HOSTED_VERIFICATION",
+      "model_adapter_state": "WIRED_REGISTERED_LOCAL; REAL_QUALITY_NOT_RUN"
     },
     {
       "id": "A09",
@@ -488,19 +493,24 @@
         "app/services/asset_library_service.py",
         "app/experimental/media.py"
       ],
-      "gap": "Original local media registration/model identity and selected-refresh manifest capture remain active implementation; missing historical identity stays unknown.",
+      "gap": "Trusted original model hash is used only when observed; absent/historical hashes remain unknown and block exact reconstruction. A seed never promises GPU byte equality. Cloud replay coordinator remains optional unimplemented.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FOCUSED_LOCAL_ENGINEERING_PASS; COMBINED_EXACT_SOURCE_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
-      "implemented_scope": "Versioned redacted manifests of real media tasks; current dependency/privacy/budget preflight; new original-executor replay task; actual deterministic PNG byte equality; explicit cancellation/restart and pending review.",
-      "remaining_scope": "Original local media registration/model identity and selected-refresh manifest capture remain active implementation; missing historical identity stays unknown.",
+      "implemented_scope": "Real media manifests with observed original local registration/runtime/model metadata, supported seed and parameters, source/current quote validation, new original replay tasks and origin-bound selected-refresh capture; synthetic byte equality remains separately labeled.",
+      "remaining_scope": "Trusted original model hash is used only when observed; absent/historical hashes remain unknown and block exact reconstruction. A seed never promises GPU byte equality. Cloud replay coordinator remains optional unimplemented.",
       "initial_gap": "Versioned redacted manifests, dependency preview and new authorized replay task, reproducibility levels separated.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
-      "browser_run": 37372638988
+      "browser_run": 37372638988,
+      "new_sources": [
+        "tests/test_r4_registered_local_media.py"
+      ],
+      "engineering_delivery": "IMPLEMENTED_PENDING_EXACT_HOSTED_VERIFICATION",
+      "model_adapter_state": "WIRED_REGISTERED_LOCAL; REAL_QUALITY_NOT_RUN"
     },
     {
       "id": "U06",
@@ -516,19 +526,24 @@
         "app/services/asset_library_service.py",
         "app/experimental/audiobook.py"
       ],
-      "gap": "Registered local image refresh wiring remains active implementation; current shipped first refinement supports synthetic COVER.",
+      "gap": "Audio/subtitle/video nodes are not generically executable via image refresh. Unknown upstream money usage requires explicit original ledger reconciliation; no fake zero actual cost.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FOCUSED_LOCAL_ENGINEERING_PASS; COMBINED_EXACT_SOURCE_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
-      "implemented_scope": "Exact recorded impact graph, locks, selected synthetic COVER refresh through original media execution, current source/privacy/budget fences and unknown/manual-only domains.",
-      "remaining_scope": "Registered local image refresh wiring remains active implementation; current shipped first refinement supports synthetic COVER.",
+      "implemented_scope": "Selected recorded COVER/STORYBOARD refresh through original synthetic or supported registered-local image workflow, fresh original source preparation/quote, current registration/source fences, locked-result preservation and pending asset review.",
+      "remaining_scope": "Audio/subtitle/video nodes are not generically executable via image refresh. Unknown upstream money usage requires explicit original ledger reconciliation; no fake zero actual cost.",
       "initial_gap": "Show exact source dependency changes, preserve locked output and require explicit per-domain rerun.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
-      "browser_run": 37372638988
+      "browser_run": 37372638988,
+      "new_sources": [
+        "tests/test_r4_registered_local_media.py"
+      ],
+      "engineering_delivery": "IMPLEMENTED_PENDING_EXACT_HOSTED_VERIFICATION",
+      "model_adapter_state": "WIRED_REGISTERED_LOCAL; REAL_QUALITY_NOT_RUN"
     },
     {
       "id": "A02",
@@ -568,19 +583,25 @@
         "app/lore/continuity.py",
         "app/services/narrative_finding_service.py"
       ],
-      "gap": "Registered model-opinion coordinator and UI execution wiring are active original-scope implementation; deterministic findings remain available.",
+      "gap": "One bounded model job per rule run, 18k-character input, 32KiB output and120s deadline. Independence remains UNVERIFIED; actual literary quality is NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FOCUSED_LOCAL_ENGINEERING_PASS; COMBINED_EXACT_SOURCE_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
-      "implemented_scope": "Versioned deterministic rubric findings with verified quotes, original review_threads state, ignore/review reasons, stale redaction and read-only inbox under full author authorization.",
-      "remaining_scope": "Registered model-opinion coordinator and UI execution wiring are active original-scope implementation; deterministic findings remain available.",
+      "implemented_scope": "Versioned deterministic findings plus separately selected local-model opinion jobs through original author/broker/job authorities; exact source/rubric/evidence preview, strict quote validation, original review_threads, durable cancellation/recovery and advisory-only results.",
+      "remaining_scope": "One bounded model job per rule run, 18k-character input, 32KiB output and120s deadline. Independence remains UNVERIFIED; actual literary quality is NOT_RUN.",
       "initial_gap": "Versioned rubric, exact evidence spans, deterministic repeated-exposition findings, ignore/review/stale handling.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
-      "browser_run": 37372638988
+      "browser_run": 37372638988,
+      "new_sources": [
+        "app/experimental/narrative_judge_model.py",
+        "docs/r4_registered_judge_execution.md"
+      ],
+      "engineering_delivery": "IMPLEMENTED_PENDING_EXACT_HOSTED_VERIFICATION",
+      "model_adapter_state": "WIRED_REGISTERED_LOCAL; REAL_QUALITY_NOT_RUN"
     },
     {
       "id": "A01",
@@ -595,19 +616,25 @@
         "app/experimental/planning.py",
         "app/experimental/world.py"
       ],
-      "gap": "Registered simulator-model coordinator and UI execution wiring are active original-scope implementation, not only quality verification.",
+      "gap": "No automatic Canon/manuscript write or factual future probability. Local registered route/configuration and known zero rates are required; model/GPU quality remains NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FOCUSED_LOCAL_ENGINEERING_PASS; COMBINED_EXACT_SOURCE_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
-      "implemented_scope": "Bounded deterministic/manual routes, prerequisites/time/knowledge/resources checks, cancellation/CAS, reviewed original-planning handoff and provenance fences.",
-      "remaining_scope": "Registered simulator-model coordinator and UI execution wiring are active original-scope implementation, not only quality verification.",
+      "implemented_scope": "Original deterministic simulator plus explicit registered-local model preview/consent/job dispatch, bounded schema/evidence/step/branch checks, original A05 character-only context, durable recovery/cancel and explicit candidate selection into existing planning review.",
+      "remaining_scope": "No automatic Canon/manuscript write or factual future probability. Local registered route/configuration and known zero rates are required; model/GPU quality remains NOT_RUN.",
       "initial_gap": "Finite deterministic event branches and constraints with explicit draft-only route promotion; no manuscript writes.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
-      "browser_run": 37372638988
+      "browser_run": 37372638988,
+      "new_sources": [
+        "app/experimental/story_simulator_model.py",
+        "docs/r4_story_simulator_model_execution.md"
+      ],
+      "engineering_delivery": "IMPLEMENTED_PENDING_EXACT_HOSTED_VERIFICATION",
+      "model_adapter_state": "WIRED_REGISTERED_LOCAL; REAL_QUALITY_NOT_RUN"
     },
     {
       "id": "A10",
@@ -819,9 +846,9 @@
         "app/experimental/voice_direction.py",
         "frontend/src/experimental/VoiceDirectionPanel.tsx"
       ],
-      "gap": "Pause-aware deterministic PCM assembly through original mixer is active implementation; voice quality/optional ASR are separate.",
+      "gap": "Real voice/TTS quality, cloned-reference voice consent, ASR/phoneme alignment and cloud-budgeted coordinator remain unavailable/unverified. Legacy bindings retain measured millisecond precision until rebound.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FOCUSED_LOCAL_ENGINEERING_PASS; COMBINED_EXACT_SOURCE_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
@@ -829,9 +856,16 @@
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "voice_direction_v2",
       "initial_gap": "Real manual directions and actor-private original local-only synthesis queue with explicit output review. Remote budget, real TTS/voice quality and cloning consent unavailable.",
-      "remaining_scope": "Pause-aware deterministic PCM assembly through original mixer is active implementation; voice quality/optional ASR are separate.",
+      "remaining_scope": "Real voice/TTS quality, cloned-reference voice consent, ASR/phoneme alignment and cloud-budgeted coordinator remain unavailable/unverified. Legacy bindings retain measured millisecond precision until rebound.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
-      "browser_run": 37372638988
+      "browser_run": 37372638988,
+      "implemented_scope": "Segment speaker/voice/emotion/rate/pause editing, original approved TTS queue and selected redo, measured frame-based per-segment pause/reorder assembly using existing PCM mixer, explicit WAV candidate preview/download and original asset review.",
+      "new_sources": [
+        "tests/test_r5_pause_aware_audio.py",
+        "frontend/tests/e2e/r4-pause-aware-audio.spec.ts"
+      ],
+      "engineering_delivery": "IMPLEMENTED_PENDING_EXACT_HOSTED_VERIFICATION",
+      "model_adapter_state": "WIRED_REGISTERED_LOCAL; REAL_QUALITY_NOT_RUN"
     },
     {
       "id": "B04",
@@ -968,9 +1002,9 @@
         "app/experimental/declarative_agents.py",
         "frontend/src/experimental/DeclarativeAgentsPanel.tsx"
       ],
-      "gap": "Registered bounded model-node/DAG execution is implemented in the next local staging wave, not included in this first refinement checkpoint. Executable plugins remain DENY_ALL.",
+      "gap": "Only registered allowlisted data nodes; no executable plugin, dynamic import or arbitrary tool authority. LOCAL_ONLY known-zero configured route required; model quality NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FOCUSED_LOCAL_ENGINEERING_PASS; COMBINED_EXACT_SOURCE_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
@@ -978,9 +1012,16 @@
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "declarative_agents_v2",
       "initial_gap": "Registered deterministic connected workflow chain uses original executor with mandatory review and actual SDK contracts. Custom model execution and executable extensions unavailable.",
-      "remaining_scope": "Registered bounded model-node/DAG execution is implemented in the next local staging wave, not included in this first refinement checkpoint. Executable plugins remain DENY_ALL.",
+      "remaining_scope": "Only registered allowlisted data nodes; no executable plugin, dynamic import or arbitrary tool authority. LOCAL_ONLY known-zero configured route required; model quality NOT_RUN.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
-      "browser_run": 37372638988
+      "browser_run": 37372638988,
+      "implemented_scope": "Form-defined rooted declarative DAG with branching/join preflight, one registered bounded local-model agent task, original Workflow and JobManager execution, broker reservation, exact source/schema/role receipts and mandatory manual-review terminal.",
+      "new_sources": [
+        "app/experimental/declarative_model.py",
+        "docs/delivery/post-v1-r4-r5-ux/B02_BOUND_MODEL_RECEIPT.md"
+      ],
+      "engineering_delivery": "IMPLEMENTED_PENDING_EXACT_HOSTED_VERIFICATION",
+      "model_adapter_state": "WIRED_REGISTERED_LOCAL; REAL_QUALITY_NOT_RUN"
     },
     {
       "id": "B05",
@@ -997,9 +1038,9 @@
         "app/experimental/multilingual_editions.py",
         "frontend/src/experimental/MultilingualEditionsPanel.tsx"
       ],
-      "gap": "Reviewed registered local translation executor/UI is active original-scope implementation; manual edition drafts remain usable.",
+      "gap": "No auto-retranslation after source edits. Current source/edition/price/route receipts required; unknown jobs are not replayed. Actual translation/RTL/font/target-language quality acceptance remains source-specific NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FOCUSED_LOCAL_ENGINEERING_PASS; COMBINED_EXACT_SOURCE_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
@@ -1007,9 +1048,16 @@
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "multilingual_editions_v2",
       "initial_gap": "Independent manual language editions, per-segment review, terminology and exact-source rebind with archived candidates. Automatic translation and real language quality unavailable/unverified.",
-      "remaining_scope": "Reviewed registered local translation executor/UI is active original-scope implementation; manual edition drafts remain usable.",
+      "remaining_scope": "No auto-retranslation after source edits. Current source/edition/price/route receipts required; unknown jobs are not replayed. Actual translation/RTL/font/target-language quality acceptance remains source-specific NOT_RUN.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
-      "browser_run": 37372638988
+      "browser_run": 37372638988,
+      "implemented_scope": "Independent language-edition drafts with selected-segment translation preview/consent, current approved glossary/aliases/style, original local-model/broker/job dispatch, bounded output and explicit CAS adoption before existing paragraph review.",
+      "new_sources": [
+        "app/experimental/multilingual_translation.py",
+        "docs/r5_multilingual_translation_execution.md"
+      ],
+      "engineering_delivery": "IMPLEMENTED_PENDING_EXACT_HOSTED_VERIFICATION",
+      "model_adapter_state": "WIRED_REGISTERED_LOCAL; REAL_QUALITY_NOT_RUN"
     },
     {
       "id": "B06",
@@ -1486,7 +1534,7 @@
     },
     "screenshot_inspection": "FIVE_ORIGINAL_PNGS_INSPECTED"
   },
-  "delivery_status": "GREEN_CHECKPOINT_1DA63F5_RETAINED; FIRST_REFINEMENT_LOCAL_TESTED_HOSTED_PENDING; ADAPTER_WIRING_CONTINUES",
+  "delivery_status": "FIRST_REFINEMENT_F9173C2_PUBLISHED_CI_RUNNING; ADAPTER_WAVE_LOCAL_IMPLEMENTED_AGGREGATE_PENDING; INDEPENDENT_REVIEW_BLOCKED",
   "scope_refinement": {
     "source_before_documentation": "96ba824ac9d973c7ef45a0dea536f4bd8b8e4e8b",
     "prior_green_remote": "1da63f5b698a71ebb2a3e6a4e94f0634e8b8a487",
@@ -1499,8 +1547,18 @@
       "skipped": 10,
       "postgres_deselected": 1145
     },
-    "file_repairs": "Both fixture-only failures repaired; focused rerun36PASS33deselected; corrected full File running",
+    "file_repairs": "Both fixture-only failures repaired; focused36PASS and corrected equipped full File3533PASS,10explicitplatform/manual-gate skips.",
     "hosted_current": "PENDING",
-    "independent_review": "BLOCKED_NO_RETRY"
+    "independent_review": "BLOCKED_NO_RETRY",
+    "file_corrected_equipped": {
+      "source": "126c317815b847297f1970dbb9974f7696d44fd4",
+      "tree": "292c4251dd01abf53b75979d9f11f39b0771e814",
+      "passed": 3533,
+      "skipped": 10,
+      "postgres_deselected": 1145,
+      "elapsed_seconds": 313.18,
+      "optional_dependencies": "pinned Noto CJK font and installed official OTIO parser"
+    },
+    "published_remote": "f9173c2bedf4866d8f28119baabc53ed2aa8d0dc"
   }
 }
