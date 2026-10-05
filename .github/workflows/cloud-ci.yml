@@ -194,6 +194,14 @@ jobs:
         run: |
           set -o pipefail
           pnpm exec playwright test --config playwright.experimental.config.ts 2>&1 | tee "$CI_RECEIPTS/experimental-browser.log"
+      - name: R4 writing recovery and workspace journeys
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          R4_PYTHON: python
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.r4.config.ts 2>&1 | tee "$CI_RECEIPTS/r4-ux-browser.log"
       - name: Export recovery browser isolation and screenshots
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}/frontend

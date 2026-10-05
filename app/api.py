@@ -1224,6 +1224,8 @@ def retry_generation(jid:str,x_session_token:str|None=Header(None)):
     if settings.enable_collaboration_runtime:
         actor,scope,job=_generation_context(jid,x_session_token)
     else:job=guard(jobs.get,jid)
+    if getattr(job, 'expected_request_digest', None):
+        raise HTTPException(409, {'code': 'AUTHOR_PREVIEW_REQUIRED'})
     if job.status not in {"FAILED","CANCELLED"}:raise HTTPException(409,{"code":"GENERATION_NOT_RETRYABLE","status":job.status})
     payload={
         "novel_id":job.novel_id,"chapter_id":job.chapter_id,"instruction":job.instruction,
