@@ -92,3 +92,41 @@ test('U08 real React source removals and individually reviewed local variant job
     if (nid) expect([200, 204, 404]).toContain((await page.request.delete(`${API}/novels/${encodeURIComponent(nid)}`)).status());
   }
 });
+
+test('U08 identified source exclusion removes dependent summaries from the actual reviewed request', async ({ page }, info) => {
+  const quiesce = createPageQuiescer(page); let nid = '', jid = '';
+  try {
+    await page.goto(UI); await page.getByPlaceholder('小说名称').fill('U08 per-source synthetic receipt');
+    const creating = page.waitForResponse(r => r.url().endsWith('/api/novels') && r.request().method() === 'POST');
+    await page.getByRole('button', { name: '创建小说', exact: true }).click(); nid = (await checked(await creating)).id;
+    await page.getByRole('button', { name: '新建章节', exact: true }).click(); await page.getByLabel('章节标题', { exact: true }).fill('逐项来源测试');
+    const adding = page.waitForResponse(r => r.url().endsWith(`/novels/${nid}/chapters`) && r.request().method() === 'POST');
+    await page.getByRole('button', { name: '创建章节', exact: true }).click(); const chapter = await checked(await adding);
+    await page.locator('.ProseMirror').fill('当前合成正文不包含资料中的测试暗语。');
+    await page.getByRole('button', { name: '保存', exact: true }).click(); await expect(page.locator('.editorbar')).toContainText('已保存');
+    const saved = await checked(await page.request.get(`${API}/chapters/${chapter.id}`));
+    await checked(await page.request.put(`${API}/novels/${nid}/characters/removed`, { data: { name: '排除人物', personality: 'EXCLUDED_SOURCE_ITEM_CANARY', privacy_level: 'LOCAL_ONLY' } }));
+    await checked(await page.request.put(`${API}/novels/${nid}/characters/kept`, { data: { name: '保留人物', personality: 'RETAINED_SOURCE_ITEM_CANARY', privacy_level: 'LOCAL_ONLY' } }));
+    await checked(await page.request.put(`${API}/novels/${nid}`, { data: { long_term_summary: 'EXCLUDED_SOURCE_ITEM_CANARY' } }));
+    const panel = page.locator('.novel-ai-panel');
+    await panel.getByRole('combobox', { name: '文本模型', exact: true }).selectOption('deepseek:deepseek-chat');
+    await panel.getByLabel('附加要求（可选）', { exact: true }).fill('排除人物与保留人物：仅作合成协议测试。');
+    let response = page.waitForResponse(r => r.url().endsWith('/author-context/preview') && r.request().method() === 'POST');
+    await panel.getByRole('button', { name: '检查真实生成请求', exact: true }).click(); const initial = await checked(await response);
+    const source = initial.source_manifest.items.find((row: any) => row.label === '排除人物');expect(source).toBeTruthy();
+    await panel.getByRole('checkbox', { name: `包含人物：排除人物 · ${source.key.slice(0, 8)}`, exact: true }).uncheck();
+    await expect(panel.getByRole('button', { name: '生成创作下一章草稿', exact: true })).toBeDisabled();
+    response = page.waitForResponse(r => r.url().endsWith('/author-context/preview') && r.request().method() === 'POST');
+    await panel.getByRole('button', { name: '检查真实生成请求', exact: true }).click(); const filtered = await checked(await response);
+    expect(JSON.stringify(filtered.request)).not.toContain('EXCLUDED_SOURCE_ITEM_CANARY');expect(filtered.request.prompt).toContain('RETAINED_SOURCE_ITEM_CANARY');
+    expect(filtered.source_manifest.dependent_context_omitted).toBe(true);expect(filtered.scope_effects.references_omitted_for_source_isolation).toBe(true);
+    const generating = page.waitForResponse(r => r.url().endsWith('/author-context/generate') && r.request().method() === 'POST');
+    await panel.getByRole('button', { name: '生成创作下一章草稿', exact: true }).click(); const generatedResponse = await generating;
+    jid = (await checked(generatedResponse)).job_id; const sent = generatedResponse.request().postDataJSON();
+    expect(sent.preview_digest).toBe(filtered.preview_digest);expect(sent.request_scope.source_items).toEqual([{ key: source.key, source_digest: source.source_digest, include: false }]);
+    await expect.poll(async () => (await checked(await page.request.get(`${API}/generation/${jid}`))).status).toBe('COMPLETED');
+    expect((await checked(await page.request.get(`${API}/generation/${jid}`))).request_scope).toEqual(sent.request_scope);
+    expect((await checked(await page.request.get(`${API}/chapters/${chapter.id}`))).content).toBe(saved.content);
+    await page.screenshot({ path: info.outputPath('u08-source-item-exclusion.png'), fullPage: true });
+  } finally { await quiesce(); if (jid) await page.request.post(`${API}/generation/${jid}/cancel`); if (nid) expect([200, 204, 404]).toContain((await page.request.delete(`${API}/novels/${nid}`)).status()); }
+});

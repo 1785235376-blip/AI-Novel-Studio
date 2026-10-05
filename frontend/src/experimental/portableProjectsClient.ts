@@ -1,7 +1,8 @@
 import type { ExperimentalClient } from './api';
-export type PortableRecord = { id: string; version: number; status: string; kind: 'IMPORT' | 'EXPORT' | 'RELINK'; snapshot_digest: string; title?: string; chapter_count?: number; target_id?: string; digest_matches?: boolean; error_code?: string; id_map?: { chapters: Record<string, string>; media: Record<string, string> }; media?: { ref: string; state: string; sha256?: string }[] };
+export type RelinkReview = { missing_id: string; expected_sha256: string | null; candidate_sha256: string; affected_chapters: { id: string; title: string; version: number; current_version?: number }[]; conflicts: { code: string; blocking: boolean; chapter_id?: string }[]; can_confirm: boolean };
+export type PortableRecord = { id: string; version: number; status: string; kind: 'IMPORT' | 'EXPORT' | 'RELINK'; snapshot_digest: string; title?: string; chapter_count?: number; target_id?: string; digest_matches?: boolean; relink_review?: RelinkReview; error_code?: string; id_map?: { chapters: Record<string, string>; media: Record<string, string> }; media?: { ref: string; state: string; sha256?: string }[] };
 export type PortableCatalog = { chapters: { id: string; title: string; version: number }[]; missing: { id: string; expected_sha256: string | null; chapter_ids: string[] }[]; restore_available: boolean; limitations: string[] };
-export type StoragePreview = { categories: { kind: string; bytes: number | null; measurement: string; cleanable: boolean }[]; eligible: { id: string; version: number; bytes: number; sha256: string }[]; preview_digest: string };
+export type StoragePreview = { categories: { kind: string; bytes: number | null; measurement: string; unmeasured_records?: number; cleanable: boolean }[]; eligible: { id: string; version: number; bytes: number; sha256: string }[]; preview_digest: string };
 const key = encodeURIComponent;
 const confirmation = (row: PortableRecord) => ({ expected_version: row.version, snapshot_digest: row.snapshot_digest, confirmed: true });
 export function portableProjectsClient(client: ExperimentalClient) {

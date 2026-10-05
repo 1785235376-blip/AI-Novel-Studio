@@ -7,7 +7,9 @@ export type AuthorPreviewOptions = {
   characterId?: string;
   onExitCharacter?: () => void;
 };
-export type AuthorRequestScope = { source_mode: 'AUTO' | 'SELECTION_ONLY' | 'NONE'; include_automatic_context: boolean; include_style_reference: boolean; include_plan_reference: boolean };
+export type AuthorSourceControl = { key: string; source_digest: string; include: boolean };
+export type AuthorSourceManifest = { items: { key: string; kind: string; label: string; version: number | null; version_state: string; source_digest: string; included: boolean; pinned: boolean }[]; dependent_context_omitted: boolean; omission_reason: string | null; unidentified_sources_require_bundle_removal: boolean; primary_manuscript_and_author_input_separate: boolean; granularity: string };
+export type AuthorRequestScope = { source_items?: AuthorSourceControl[]; source_mode: 'AUTO' | 'SELECTION_ONLY' | 'NONE'; include_automatic_context: boolean; include_style_reference: boolean; include_plan_reference: boolean };
 export const defaultAuthorRequestScope: AuthorRequestScope = { source_mode: 'AUTO', include_automatic_context: true, include_style_reference: true, include_plan_reference: true };
 export type AuthorPreviewReceipt = { requestBody: AuthorRequestBody; previewDigest: string; chapterVersion: number; requestKey: string; requestId: string };
 export type AuthorRequestBody = {
@@ -27,7 +29,7 @@ export const authorVariantsKey = (body: AuthorRequestBody, count: number, contex
 export type AuthorPreview = {
   variant_policy?: Record<string, unknown>;
   variant?: { job_id: string; variant_index: number; group_id: string; count: number };
-  scope_changes_supported?: boolean; request_scope?: AuthorRequestScope;
+  scope_changes_supported?: boolean; request_scope?: AuthorRequestScope; source_manifest?: AuthorSourceManifest | null;
   scope_effects?: { automatic_context_included: boolean; references_omitted_for_source_isolation: boolean; granularity: string; reason: string | null };
   contract: string; preview_digest: string; chapter_id: string; chapter_version: number;
   target: 'local' | 'cloud'; provider_id: string; model_id: string; prompt_characters: number;

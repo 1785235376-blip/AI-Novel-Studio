@@ -65,6 +65,32 @@ test('B10 actual File/API/React selected exchange, conflict review, receipt and 
     await expect(panel.getByText(/原章节写入已确认/)).toBeVisible(); expect(applies).toHaveLength(1);
     expect((await checked(await request.get(`${API}/chapters/${encodeURIComponent(chapter.id)}`, { headers }))).document).toEqual(incoming);
     expect((await checked(await request.get(`${API}/chapters/${encodeURIComponent(other.id)}`, { headers }))).content).toContain('MUST_NEVER_APPEAR_IN_ENVELOPE');
+    // Narrow withdrawal changes only the selected chapter, with a reviewed
+    // fresh immutable baseline for the newly selected existing chapter.
+    expect((await request.get(base + '/outbox/' + out.id, { headers })).status()).toBe(409);
+    await panel.getByLabel('撤回章节：合成交换章节', { exact: true }).check();
+    await panel.getByLabel(/新增范围：未选章节 · v/).check();
+    await panel.getByRole('button', { name: '预览章节范围变更', exact: true }).click();
+    const selectionAck = panel.getByLabel('已核对新增基线和撤回范围，理解已有副本无法收回', { exact: true });
+    await expect(selectionAck).toBeVisible(); await expect(panel.getByRole('button', { name: '确认章节范围变更', exact: true })).toBeDisabled();
+    for (const [width, height] of [[1366, 768], [1440, 900], [1920, 1080]]) {
+      await page.setViewportSize({ width, height }); expect(await panel.evaluate(node => node.scrollWidth <= node.clientWidth + 2)).toBe(true);
+      await page.screenshot({ path: info.outputPath(`offline-sync-selection-${width}.png`), fullPage: true });
+    }
+    await selectionAck.check(); await panel.getByRole('button', { name: '确认章节范围变更', exact: true }).click();
+    await expect(panel.getByLabel('撤回章节：未选章节', { exact: true })).toBeVisible();
+    await expect(panel.getByRole('link', { name: '下载本地同步消息', exact: true })).toHaveCount(0);
+    const selected = await checked(await request.get(base + '/records', { headers }));
+    expect(selected.channels[0].status).toBe('ACTIVE'); expect(selected.channels[0].chapter_ids).toEqual([other.id]);
+    expect(selected.channels[0].withdrawn_chapter_ids).toEqual([chapter.id]);
+    expect((await request.get(base + '/outbox/' + out.id, { headers })).status()).toBe(422);
+    expect((await request.post(base + '/channels/' + selected.channels[0].id + '/receive', { headers, data: { expected_version: selected.channels[0].version, envelope, create_new: true } })).status()).toBe(422);
+    expect((await checked(await request.get(`${API}/chapters/${encodeURIComponent(chapter.id)}`, { headers }))).document).toEqual(incoming);
+    await panel.getByLabel('加入发件箱的已选章节', { exact: true }).selectOption(other.id);
+    await panel.getByRole('button', { name: '保存到本机发件箱', exact: true }).click();
+    await panel.getByRole('button', { name: '预览此消息内容', exact: true }).click();
+    await expect(panel.getByRole('button', { name: '生成手动交换文件', exact: true })).toBeVisible();
+    expect(applies).toHaveLength(1);
     await panel.getByLabel('停止此范围后续交换，已有下载和备份仍可能存在', { exact: true }).check(); await panel.getByRole('button', { name: '撤销此交换范围', exact: true }).click();
     await expect(panel.getByText(/后续导出、接收和应用已停止/)).toBeVisible();
     const state = await checked(await request.get(base + '/records', { headers }));

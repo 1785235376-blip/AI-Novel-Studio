@@ -2,11 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import { apiErrorView, type CollaborationContext } from '../api';
 import { authorContextRequest, authorContextVariants, authorVariantsKey, type AuthorVariantsReceipt, type AuthorVariantsPreview, authorRequestKey, type AuthorPreview, type AuthorPreviewReceipt, type AuthorRequestBody } from './authorContextClient';
+import { AuthorSourceItems } from './AuthorSourceItems';
+import type { AuthorRequestScope } from './authorContextClient';
 import './AiContextPreview.css';
 import './AuthorRequestPreview.css';
 
-export function AuthorRequestPreviewPanel({ body, context, saved, disabled, onReceipt, variantCount = 1, onVariantsReceipt }: {
+export function AuthorRequestPreviewPanel({ body, context, saved, disabled, onReceipt, variantCount = 1, onVariantsReceipt, onScopeChange }: {
   body: AuthorRequestBody | null; context: CollaborationContext; saved: boolean; disabled: boolean;
+  onScopeChange?: (value: AuthorRequestScope) => void;
   variantCount?: number; onVariantsReceipt?: (value: AuthorVariantsReceipt | undefined) => void;
   onReceipt: (value: AuthorPreviewReceipt | undefined) => void;
 }) {
@@ -64,11 +67,12 @@ export function AuthorRequestPreviewPanel({ body, context, saved, disabled, onRe
       <StatusMessage>生成前和模型发送前会重新检查当前来源、隐私与权限。取消不能收回已经发送的内容；本次预检尚未产生模型费用。</StatusMessage>
       {value.privacy_omissions.length > 0 && <StatusMessage tone="info">隐私策略排除了受限资料；不会展示被排除来源的标识、名称、数量或正文。</StatusMessage>}
       {value.scope_effects?.references_omitted_for_source_isolation && <StatusMessage>来源精简已生效：自动派生上下文与固定参考均已移除。</StatusMessage>}
+      {index === 0 && value.source_manifest && <AuthorSourceItems manifest={value.source_manifest} scope={body?.request_scope} onChange={onScopeChange} disabled={busy || disabled || !saved} />}
       <ul className="ai-context-preview__sources" aria-label="真实请求上下文章节">{value.context_sections.map(row => <li className="ai-context-preview__source" key={row.name}><strong>{row.name}</strong><span>{row.characters} 字符 · Adapter 请求包含</span></li>)}</ul>
       <details><summary>查看准确 Prompt（本机显示，不代表已发送）</summary><textarea aria-label={variantCount > 1 ? `方案 ${index + 1} 准确生成 Prompt` : "准确生成 Prompt"} readOnly value={value.request.prompt} /></details>
       <details><summary>查看请求摘要与任务映射</summary><dl><dt>准确请求摘要</dt><dd>{value.preview_digest}</dd>{value.variant && <><dt>原任务 ID</dt><dd>{value.variant.job_id}</dd><dt>原任务组 ID</dt><dd>{value.variant.group_id}</dd></>}</dl></details>
       <details><summary>查看 Adapter 参数与上下文</summary><pre>{JSON.stringify({ context: value.request.context, parameters: value.request.parameters, system_instruction: value.request.system_instruction, creation_records: value.creation_records, variant_policy: value.variant_policy }, null, 2)}</pre></details>
-      <p className="novel-help">这里展示发送给 Adapter 的准确字段，Provider 的协议编码由对应 Adapter 处理。资料范围使用整包隔离；固定引用版本与移除结果可在准确字段中核对。</p>
+      <p className="novel-help">这里展示发送给 Adapter 的准确字段，Provider 的协议编码由对应 Adapter 处理。逐项来源及其保守派生排除结果、固定引用版本都可在准确字段中核对。</p>
     </section>)}
   </section>;
 }

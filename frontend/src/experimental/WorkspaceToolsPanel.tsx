@@ -2,9 +2,10 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ApiError, type Chapter } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { enabled, type ExperimentalClient, type ExperimentalFlags } from './api';
+import { WorkspaceSearch } from './WorkspaceSearch';
 import { NoticeCenterAddon } from './WritingSessionPanel';
 import { ErrorMessage, Field, ResourceState, useAction, useResource } from './shared';
-import { defaultLayout, defaultWorkspaceView, workspaceClient, type WorkspaceAnchor, type WorkspaceNavigation, type WorkspaceLayout, type WorkspaceView, type ResumeItem, type SearchItem, type DiagnosticOptions, type DiagnosticResult } from './uxClient';
+import { defaultLayout, defaultWorkspaceView, workspaceClient, type WorkspaceAnchor, type WorkspaceNavigation, type WorkspaceLayout, type WorkspaceView, type ResumeItem, type DiagnosticOptions, type DiagnosticResult } from './uxClient';
 
 export type WorkspaceToolsProps = { focusActive?: boolean; saveFailure?: boolean; client: ExperimentalClient; chapter?: Chapter; flags?: ExperimentalFlags; currentAnchor?: WorkspaceAnchor; initialSection?: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; onNavigate?: (target: WorkspaceNavigation) => void; workspaceView?: WorkspaceView; onWorkspaceViewChange?: (view: WorkspaceView) => void; onWorkspaceSaved?: () => void };
 const commands = [
@@ -141,51 +142,6 @@ function WorkspaceToolsBody({ client, chapter, flags, currentAnchor, initialSect
 function ResumeHistory({ api, revision }: { api: ReturnType<typeof workspaceClient>; revision?: number }) {
   const result = useResource(signal => api.history(signal), [api, revision]);
   return <details><summary>工作现场历史（最多 20 次）</summary><ResourceState loading={result.loading} error={result.error} empty={!result.data?.items.length} /><ol>{result.data?.items.map(row => <li key={row.version}>现场 v{row.version} · 章节 v{row.chapter_version || '—'} · {row.stopping_note || '无停止点'}</li>)}</ol></details>;
-}
-
-function WorkspaceSearch({ api, chapter, commands: choices, navigate, recent, filters, updateFilters }: { api: ReturnType<typeof workspaceClient>; chapter?: Chapter; commands: readonly (typeof commands)[number][]; navigate?: (target: WorkspaceNavigation) => void; recent: string[]; filters: WorkspaceLayout; updateFilters: (patch: Partial<WorkspaceLayout>) => void }) {
-  const input = filters.search_query, kind = filters.search_kind, local = filters.search_current_chapter;
-  const query = input;
-  const setInput = (value: string) => updateFilters({ search_query: value });
-  const setKind = (value: string) => updateFilters({ search_kind: value as WorkspaceLayout['search_kind'] });
-  const setLocal = (value: boolean) => updateFilters({ search_current_chapter: value });
-  const [stale, setStale] = useState<SearchItem>();
-  const search = useResource(signal => api.search(query, kind, local ? chapter?.id || '' : '', signal), [api, query, kind, local, chapter?.id]);
-  const action = useAction();
-  const active = useRef(true), operation = useRef(0);
-  const [jumpNotice, setJumpNotice] = useState('');
-  useLayoutEffect(() => { active.current = true; return () => { active.current = false; operation.current += 1; }; }, []);
-  const invalidateJump = () => { operation.current += 1; setStale(undefined); setJumpNotice(''); };
-  const open = (row: SearchItem, current = false) => action.run(async () => {
-    const ticket = ++operation.current;
-    const currentOperation = () => active.current && operation.current === ticket;
-    try {
-      const target = await api.resolve(row, current);
-      if (!currentOperation()) return;
-      navigate?.(target); setStale(undefined); setJumpNotice('已请求打开来源');
-    } catch (error) {
-      if (!currentOperation()) return;
-      if (error instanceof ApiError && error.status === 409) setStale(row);
-      throw error;
-    }
-  }, '');
-  const filtered = choices.filter(c => `${c.label} ${c.words}`.toLowerCase().includes(input.trim().toLowerCase()));
-  const listRef = useRef<HTMLDivElement>(null);
-  return <Panel title="当前作品搜索与安全命令">
-    <form className="experimental-form" onSubmit={e => { e.preventDefault(); invalidateJump(); search.reload(); }}>
-      <Field label="搜索中文名称、别名或正文"><input autoFocus maxLength={160} value={input} onChange={e => { invalidateJump(); setInput(e.target.value); }} onKeyDown={e => { if (e.key === 'ArrowDown') { e.preventDefault(); listRef.current?.querySelector<HTMLButtonElement>('button')?.focus(); } }} /></Field>
-      <div className="experimental-actions"><Field label="内容类型"><select value={kind} onChange={e => { invalidateJump(); setKind(e.target.value); }}><option value="">全部</option><option value="chapter">章节</option><option value="character">人物</option><option value="location">地点</option><option value="foreshadowing">伏笔</option></select></Field><label className="experimental-check"><input type="checkbox" checked={local} disabled={!chapter} onChange={e => { invalidateJump(); setLocal(e.target.checked); }} />只搜当前章</label><Button type="submit">搜索</Button><Button type="button" disabled={search.loading} onClick={() => { invalidateJump(); search.reload(); }}>刷新来源</Button><Button type="button" disabled={action.busy} onClick={() => action.run(async () => { await api.rebuild(); search.reload(); }, '索引已安全重建')}>重建索引</Button></div>
-    </form>
-    <p>按字面匹配，不调用模型。人物与地点只搜索可见名称和别名。最多返回 50 条。</p>
-    <div className="experimental-actions" aria-label="安全导航命令">{filtered.map(command => <Button disabled={!navigate} key={command.id} onClick={() => { invalidateJump(); navigate?.({ kind: 'feature', id: command.id, feature: command.id }); }}>{command.label}{recent.includes(command.id) ? ' · 最近使用' : ''}</Button>)}</div>
-    <ResourceState loading={search.loading} error={search.error} empty={!search.data?.items.length} />
-    {search.data && !search.data.branch_sources_available && <StatusMessage tone="warning">当前分支尚未接入可授权的章节来源；不会借用主分支正文。</StatusMessage>}
-    {search.data?.truncated && <StatusMessage tone="warning">已达到单次索引或结果上限，请缩小到当前章或使用更具体的关键词。</StatusMessage>}
-    {!search.loading && !search.error && <div ref={listRef} className="experimental-list" onKeyDown={e => { if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return; const buttons = Array.from(listRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)') || []); const index = buttons.indexOf(document.activeElement as HTMLButtonElement); if (index >= 0 && buttons.length) { e.preventDefault(); buttons[(index + (e.key === 'ArrowDown' ? 1 : buttons.length - 1)) % buttons.length].focus(); } }}>{search.data?.items.map(row => <article className="experimental-record" key={`${row.kind}:${row.id}`}><h3>{row.title}</h3><p>{row.snippet || row.aliases.join('、') || '名称匹配'}</p><div className="experimental-actions"><Badge>{({ chapter: '章节', character: '人物', location: '地点', foreshadowing: '伏笔' })[row.kind]}</Badge>{row.version && <Badge>v{row.version}</Badge>}<Button disabled={!navigate || action.busy} onClick={() => open(row)}>{row.kind === 'chapter' ? '打开章节位置' : '打开资料库来源'}</Button></div></article>)}</div>}
-    {stale && <StatusMessage tone="warning">「{stale.title}」来源已经变化，旧位置未跳转。<Button disabled={!navigate || action.busy} onClick={() => open(stale, true)}>核对并打开当前版本</Button></StatusMessage>}
-    {action.feedback}
-    {jumpNotice && <StatusMessage tone="success">{jumpNotice}</StatusMessage>}
-  </Panel>;
 }
 
 function WorkspaceTasks({ api, navigate, advanced, filters, updateFilters }: { api: ReturnType<typeof workspaceClient>; navigate?: (target: WorkspaceNavigation) => void; advanced: boolean; filters: WorkspaceLayout; updateFilters: (patch: Partial<WorkspaceLayout>) => void }) {

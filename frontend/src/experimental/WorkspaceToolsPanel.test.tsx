@@ -48,7 +48,7 @@ describe('real workspace tools UI', () => {
     await screen.findByRole('button', { name: '核对并打开当前版本' });
     expect(navigate).not.toHaveBeenCalled(); expect(resolves).toBe(1);
     fireEvent.click(screen.getByRole('button', { name: '核对并打开当前版本' }));
-    await waitFor(() => expect(navigate).toHaveBeenCalledWith({ kind: 'chapter', id: chapter.id, version: 4, anchor: { offset: 0, scroll: 0 } }));
+    await waitFor(() => expect(navigate).toHaveBeenCalledWith({ kind: 'chapter', id: chapter.id, version: 4, anchor: { offset: 0, scroll: 0 }, signal: expect.any(AbortSignal) }));
   });
   it('discards pending search and action responses after A → B → A scope changes', async () => {
     let resolveJump: (value: Response) => void = () => {};
@@ -193,7 +193,7 @@ it('deduplicates repeated resolves and only honors the reopened search request',
   await act(async () => pending[1](response({ kind: 'chapter', id: 'new-chapter', version: 4 })));
   await act(async () => pending[0](response({ kind: 'chapter', id: 'old-chapter', version: 3 })));
   expect(navigate).toHaveBeenCalledTimes(1);
-  expect(navigate).toHaveBeenCalledWith({ kind: 'chapter', id: 'new-chapter', version: 4 });
+  expect(navigate).toHaveBeenCalledWith({ kind: 'chapter', id: 'new-chapter', version: 4, signal: expect.any(AbortSignal) });
 });
 
 it('drops a delayed search jump after the query changes', async () => {

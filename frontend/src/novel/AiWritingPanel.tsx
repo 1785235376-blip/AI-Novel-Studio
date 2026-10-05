@@ -510,7 +510,7 @@ export function AiWritingPanel({
         operation={operation} styleProfileId={authorPreview.styleProfileId} plotPlanId={authorPreview.plotPlanId} disabled={generating || cancelling} />}
       {authorPreview?.enabled ? (
         <AuthorRequestPreviewPanel body={previewBody} context={authorPreview.context} saved={authorPreview.saved}
-          disabled={generating || cancelling} onReceipt={setPreviewReceipt} variantCount={variantCount} onVariantsReceipt={setVariantsReceipt} />
+          disabled={generating || cancelling} onScopeChange={authorPreview.characterId ? undefined : setRequestScope} onReceipt={setPreviewReceipt} variantCount={variantCount} onVariantsReceipt={setVariantsReceipt} />
       ) : !authorPreview?.characterId && novelId && chapterNumber !== undefined && (
         <AiContextPreviewPanel
           novelId={novelId}
