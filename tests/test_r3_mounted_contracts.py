@@ -112,7 +112,15 @@ def mounted(request, tmp_path, monkeypatch, prefix):
         experimental.planning_service, experimental.world_service,
         experimental.import_service, experimental.team_service,
         experimental.media_service, experimental.embedding_service,
-        experimental.audiobook_service,
+        experimental.audiobook_service, experimental.workspace_tools_service,
+        experimental.writing_focus_service, experimental.story_graph_service,
+        experimental.model_broker_service, experimental.model_benchmark_service,
+        experimental.production_lineage_service, experimental.style_analysis_service,
+        experimental.narrative_judge_service, experimental.change_impact_service,
+        experimental.story_simulator_service, experimental.research_library_service,
+        experimental.revision_intelligence_service,
+       
+       
     )
     # Router closures capture these real service instances at application import.
     # Rebind their dependencies, not the route implementation or approval methods.
@@ -123,6 +131,9 @@ def mounted(request, tmp_path, monkeypatch, prefix):
             monkeypatch.setattr(service, "assets", assets)
         if hasattr(service, "screenplays"):
             monkeypatch.setattr(service, "screenplays", screenplays)
+        if hasattr(service, "creation"):
+            monkeypatch.setattr(service, "creation", creation)
+    monkeypatch.setattr(experimental.research_library_service, "legacy", capabilities)
     monkeypatch.setattr(experimental.import_service, "apply_service", ImportApplyService(novels, tmp_path))
     for name, value in {
         "settings": config, "novel_service": novels, "chapter_service": chapters,

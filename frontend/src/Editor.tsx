@@ -3,6 +3,7 @@ import type { WritingFocusPreferences } from './experimental/writingFocusClient'
 import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import { RevisionLocks, normalizeRevisionLockDocument } from './experimental/revisionLocks';
 
 // BACKPORT CANDIDATE (U13): manuscript prose is text, never an HTML template.
 export function proseDocument(content: string): JSONContent {
@@ -36,7 +37,7 @@ export function ChapterEditor(props: Props) {
   const emitted = useRef<JSONContent>();
   const appliedAnchor = useRef<number>();
   const editor = useEditor({
-    extensions: [StarterKit, Placeholder.configure({ placeholder: '从这里开始写作…' })],
+    extensions: [StarterKit, RevisionLocks, Placeholder.configure({ placeholder: '从这里开始写作…' })],
     content: props.document ?? proseDocument(props.content),
     editorProps: {
       attributes: { role: 'textbox', 'aria-label': '章节正文', 'aria-multiline': 'true' },
@@ -53,7 +54,7 @@ export function ChapterEditor(props: Props) {
           compositionEnd.current = setTimeout(() => {
             if (view.isDestroyed) return;
             composing.current = false;
-            emitted.current = view.state.doc.toJSON();
+            emitted.current = normalizeRevisionLockDocument(view.state.doc.toJSON());
             callbacks.current.onChange(editorAnchorText(view.state.doc, 0, view.state.doc.content.size), emitted.current);
             callbacks.current.onCompositionChange?.(false);
           }, 0);
@@ -62,7 +63,7 @@ export function ChapterEditor(props: Props) {
       },
     },
     onUpdate: ({ editor }) => {
-      emitted.current = editor.getJSON();
+      emitted.current = normalizeRevisionLockDocument(editor.getJSON());
       callbacks.current.onChange(editor.getText({ blockSeparator: '\n' }), emitted.current);
     },
     onSelectionUpdate: ({ editor }) => {
@@ -80,7 +81,7 @@ export function ChapterEditor(props: Props) {
     // selection/undo and can interrupt Chinese composition on every keystroke.
     if (props.document && props.document === emitted.current) return;
     const next = props.document ?? proseDocument(props.content);
-    if (JSON.stringify(editor.getJSON()) !== JSON.stringify(next)) editor.commands.setContent(next, false);
+    if (JSON.stringify(normalizeRevisionLockDocument(editor.getJSON())) !== JSON.stringify(next)) editor.commands.setContent(next, false);
   }, [props.document, props.content, editor]);
   useEffect(() => {
     if (!editor || !props.onAnchorChange) return;

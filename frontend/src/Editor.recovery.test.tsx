@@ -4,6 +4,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { afterEach, expect, it, vi } from 'vitest';
 import type { JSONContent } from '@tiptap/react';
 import { ChapterEditor, proseDocument } from './Editor';
+import { normalizeRevisionLockDocument } from './experimental/revisionLocks';
 
 const observed = vi.hoisted(() => ({ editor: undefined as any }));
 vi.mock('@tiptap/react', async importOriginal => {
@@ -21,7 +22,7 @@ it('renders manuscript HTML-looking text and full Unicode literally, with paragr
   const textbox = await screen.findByRole('textbox', { name: '章节正文' });
   expect(textbox.querySelector('img,b,script')).toBeNull();
   expect(observed.editor.getText({ blockSeparator: '\n' })).toBe(content);
-  expect(observed.editor.getJSON()).toEqual(proseDocument(content));
+  expect(normalizeRevisionLockDocument(observed.editor.getJSON())).toEqual(proseDocument(content));
 });
 it('keeps the same ProseMirror state, selection and undo history on controlled echoes', async () => {
   render(<StrictMode><Controlled /></StrictMode>);

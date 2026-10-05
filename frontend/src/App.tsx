@@ -1,3 +1,4 @@
+import { Button } from './ui/primitives';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   QueryClient,
@@ -179,6 +180,10 @@ export default function App() {
   const writingRecovery = experimentalFlags.data?.features['experimental.writing_recovery_v2'] === true;
   const workspaceTools = experimentalFlags.data?.features['experimental.workspace_tools_v2'] === true;
   const writingFocus = experimentalFlags.data?.features['experimental.writing_focus_v2'] === true;
+  const characterMind = experimentalFlags.data?.features['experimental.character_mind_v2'] === true && experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true;
+  const [characterViewpoint, setCharacterViewpoint] = useState<{ identity: string; chapterId: string; characterId: string; epoch: number }>();
+  const activeCharacterId = characterMind && characterViewpoint?.identity === namespace && characterViewpoint?.chapterId === s.chapterId && characterViewpoint?.epoch === scopeEpoch ? characterViewpoint.characterId : undefined;
+  useEffect(() => { setCharacterViewpoint(undefined); }, [namespace, scopeEpoch, characterMind]);
   const [focusActive, setFocusActive] = useState(false), [writingPreferences, setWritingPreferences] = useState<WritingFocusPreferences>(defaultWritingPreferences), [referenceRevision, setReferenceRevision] = useState(0);
   const workspaceClient = useMemo(() => experimentalClient(s.novelId, {sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}), [namespace, s.novelId, s.actor?.id]);
   const focusPreferencesTouched = useRef(false);
@@ -198,6 +203,7 @@ export default function App() {
   const [editorAnchor, setEditorAnchor] = useState<{ identity: string; anchor: WorkspaceAnchor }>();
   const [pendingAnchor, setPendingAnchor] = useState<{ namespace: string; chapterId: string; version: number; requestId: number; offset: number; scroll: number }>();
   const anchorSequence = useRef(0);
+  const [pendingGenerationOpen, setPendingGenerationOpen] = useState<{ namespace: string; novelId: string; actorId?: string; chapterId: string; jobId: string }>();
 
   const [token, setToken] = useState(s.sessionToken),
     [scopeDraft, setScopeDraft] = useState<Scope>(
@@ -731,6 +737,7 @@ export default function App() {
   ) {
     if (!chapter.data || generationStarting || (generationCreating.current && isObservingGeneration(generationCreating.current)) || job?.status === 'GENERATING'
         || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return;
+    if (activeCharacterId && (!previewReceipt || !['continue', 'brainstorm'].includes(operation))) return;
     if (operation === 'rewrite' && !selection.text) {
       setJob({ id: 'selection-required', status: 'FAILED', output: '', error: '请先在正文中选择需要改写的文字。' }); return;
     }
@@ -743,7 +750,8 @@ export default function App() {
         novel_id: observer.novelId, chapter_id: observer.chapterId, instruction: request, style,
         style_profile_id: s.writingInputs?.styleProfileId, plot_plan_id: s.writingInputs?.plotPlanId,
         profile: s.mode, provider_id: s.textModel?.providerId, model_id: s.textModel?.modelId,
-        source: selection.text, selected_text: selection.text,
+        source: activeCharacterId ? '' : selection.text, selected_text: activeCharacterId ? '' : selection.text,
+        ...(activeCharacterId ? { character_id: activeCharacterId, style: '', style_profile_id: undefined, plot_plan_id: undefined, profile: 'LOCAL_ONLY' as const } : {}),
       };
       if (previewReceipt && (saveState !== 'saved' || previewReceipt.chapterVersion !== chapter.data.version))
         throw new Error('正文或预检版本已改变，请先保存并重新检查。');
@@ -768,6 +776,7 @@ export default function App() {
     }
   }
   async function runAIVariants(operation: string, request: string, count: number, style = '') {
+    if (activeCharacterId) return;
     if (!chapter.data || generationStarting || (generationCreating.current && isObservingGeneration(generationCreating.current)) || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return;
     if (operation === 'rewrite' && !selection.text) {
       setJob({ id: 'selection-required', status: 'FAILED', output: '', error: '请先在正文中选择需要改写的文字。' }); return;
@@ -861,6 +870,15 @@ export default function App() {
     const value = { chapterId: origin.chapterId, local, server, detectedAt: new Date().toISOString() };
     conflicts.save(value, origin.namespace); setConflict(value); setSaveState('conflict');
   }
+  function verifyRecoveredState(origin: GenerationOrigin, state: any, id: string, chapterId = origin.chapterId) {
+    const scope = origin.context.scope;
+    if (state.id !== id || state.novel_id !== origin.novelId || state.chapter_id !== chapterId
+        || !Number.isInteger(state.base_chapter_version) || typeof state.output !== 'string'
+        || (state.status !== 'QUEUED' && state.status !== 'GENERATING' && state.status !== 'SETTLING' && !isGenerationTerminal(state.status))
+        || (origin.context.actor?.id && state.actor_id !== origin.context.actor.id)
+        || (scope && (state.scope?.workspace_id !== scope.workspaceId || state.scope?.project_id !== scope.projectId
+          || state.scope?.storyline_id !== scope.storylineId || state.scope?.branch_id !== scope.branchId))) throw new Error('RECOVERY_SOURCE_CHANGED');
+  }
   async function readVerifiedRecovery(origin: GenerationOrigin, value: RecoverableGeneration): Promise<any[]> {
     if (!isCurrentGeneration(origin) || value.chapterId !== origin.chapterId
         || (value.actorId !== undefined && value.actorId !== origin.context.actor?.id)) throw new Error('RECOVERY_SCOPE_CHANGED');
@@ -868,15 +886,7 @@ export default function App() {
     if (!ids.length || ids.length > 8) throw new Error('INVALID_RECOVERY_GROUP');
     const states = await Promise.all(ids.map(id => api.job(id, origin.context)));
     if (!isCurrentGeneration(origin)) throw new Error('RECOVERY_SCOPE_CHANGED');
-    states.forEach((state, index) => {
-      const scope = origin.context.scope;
-      if (state.id !== ids[index] || state.novel_id !== origin.novelId || state.chapter_id !== origin.chapterId
-          || !Number.isInteger(state.base_chapter_version) || typeof state.output !== 'string'
-          || (state.status !== 'QUEUED' && state.status !== 'GENERATING' && !isGenerationTerminal(state.status))
-          || (origin.context.actor?.id && state.actor_id !== origin.context.actor.id)
-          || (scope && (state.scope?.workspace_id !== scope.workspaceId || state.scope?.project_id !== scope.projectId
-            || state.scope?.storyline_id !== scope.storylineId || state.scope?.branch_id !== scope.branchId))) throw new Error('RECOVERY_SOURCE_CHANGED');
-    });
+    states.forEach((state, index) => verifyRecoveredState(origin, state, ids[index]));
     return states;
   }
   async function displayVerifiedRecovery(observer: GenerationObservation, value: RecoverableGeneration, states: any[]) {
@@ -906,6 +916,38 @@ export default function App() {
     setGenerationRecoveryUnverified(false);
     void displayVerifiedRecovery(observer, value, states);
   }
+  async function openExistingGeneration(jobId: string, chapterId: string) {
+    const origin = captureGenerationOrigin();
+    if (!experimentalFlags.data?.features['experimental.model_broker_v2'] || !jobId || !chapterId) throw new Error('GENERATION_ENTRY_DISABLED');
+    // Verify at the originating authority before navigating. Only identifiers
+    // survive navigation; the destination performs another current read.
+    const value = { chapterId, jobId, actorId: origin.context.actor?.id };
+    const initial = await api.job(jobId, origin.context);
+    if (!isCurrentGeneration(origin)) throw new Error('RECOVERY_SCOPE_CHANGED');
+    verifyRecoveredState(origin, initial, jobId, chapterId);
+    if (chapterId !== origin.chapterId) {
+      setPendingGenerationOpen({ namespace, novelId: s.novelId, actorId: s.actor?.id, chapterId, jobId });
+      s.setChapter(chapterId); setPanel('history'); return;
+    }
+    const states = await readVerifiedRecovery(origin, value);
+    if (!isCurrentGeneration(origin)) throw new Error('RECOVERY_SCOPE_CHANGED');
+    const observer = beginGenerationObservation();
+    setGenerationRecoveryUnverified(false); setPanel('history');
+    await displayVerifiedRecovery(observer, { ...value, original: states[0].source || chapter.data?.content || '' }, states);
+  }
+  useEffect(() => {
+    if (!pendingGenerationOpen) return;
+    const value = pendingGenerationOpen;
+    if (value.namespace !== namespace || value.novelId !== s.novelId || value.actorId !== s.actor?.id || value.chapterId !== s.chapterId) {
+      setPendingGenerationOpen(undefined); return;
+    }
+    if (hydratedIdentity !== editorIdentity || chapter.data?.id !== value.chapterId) return;
+    setPendingGenerationOpen(undefined);
+    void openExistingGeneration(value.jobId, value.chapterId).catch(() => {
+      if (revisionStoreIdentity(useStudio.getState()) === editorIdentity)
+        setShellMessage('无法打开生成记录，请检查当前项目、权限和版本后，从模型任务面板重试。正文草稿未改变。');
+    });
+  }, [pendingGenerationOpen, namespace, s.novelId, s.actor?.id, s.chapterId, hydratedIdentity, editorIdentity, chapter.data?.id]);
   function clearRecoveredTask(origin: GenerationOrigin, id: string) {
     const saved = generationRecovery.load(origin.namespace, origin.chapterId);
     if (saved?.jobId === id || saved?.variants?.some(item => item.id === id)) generationRecovery.remove(origin.namespace, origin.chapterId);
@@ -1115,7 +1157,7 @@ export default function App() {
     </div>
   );
   function navigateWorkspace(target: WorkspaceNavigation) {
-    if ((!workspaceTools && !writingFocus) || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return;
+    if (!hasExperimental || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return;
     if (target.kind === 'chapter') {
       if (!target.id || !Number.isInteger(target.version) || !target.version) return;
       setPendingAnchor({ namespace, chapterId: target.id, version: target.version,
@@ -1183,7 +1225,11 @@ export default function App() {
       )}
       {writingFocus && s.novelId && <WritingReferenceRail key={`${namespace}:${s.novelId}`} client={workspaceClient} revision={referenceRevision} />}
       </div>
-      {panel === "experimental" ? <ExperimentalWorkbench key={`${namespace}:${s.novelId}`} novelId={s.novelId} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}} flags={experimentalFlags.data} onNavigate={navigateWorkspace} currentAnchor={saveState === "saved" && editorAnchor?.identity === editorIdentity ? editorAnchor.anchor : undefined} requestedTab={experimentalTab} workspaceSection={workspaceSection} focusActive={focusActive} onFocusChange={setFocusActive} onPreferencesChange={preferences => { focusPreferencesTouched.current = true; setWritingPreferences(preferences); }} onReferencesChange={() => setReferenceRevision(value => value + 1)} /> : <Panel type={panel} chapter={chapter.data} scope={scope} sessionToken={s.sessionToken} novelId={s.novelId} onOpenChapter={s.setChapter}
+      {panel === "experimental" ? <ExperimentalWorkbench key={`${namespace}:${s.novelId}`} novelId={s.novelId} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}} flags={experimentalFlags.data} onNavigate={navigateWorkspace} currentAnchor={saveState === "saved" && editorAnchor?.identity === editorIdentity ? editorAnchor.anchor : undefined} requestedTab={experimentalTab} workspaceSection={workspaceSection} focusActive={focusActive} onFocusChange={setFocusActive} onPreferencesChange={preferences => { focusPreferencesTouched.current = true; setWritingPreferences(preferences); }} onReferencesChange={() => setReferenceRevision(value => value + 1)} currentSelection={selection} saved={saveState === 'saved'} onChapterSaved={value => {
+        if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity || value.id !== s.chapterId || value.novel_id !== s.novelId) return;
+        qc.setQueryData<Chapter>(['chapter', namespace, value.id], current => current && current.version > value.version ? current : value);
+        void qc.invalidateQueries({ queryKey: ['chapters', namespace, s.novelId] });
+      }} revisionGeneration={{ enabled: experimentalFlags.data?.features['experimental.selection_assistant_v2'] === true && experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true, novelId: s.novelId, context: {sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}, providerId:s.textModel?.providerId, modelId:s.textModel?.modelId, profile:s.mode }} onOpenGeneration={openExistingGeneration} onUseStyle={id => { if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return; setCharacterViewpoint(undefined); s.setWritingInputs({ ...s.writingInputs, styleProfileId: id }); setPanel('history'); }} activeCharacterId={activeCharacterId} onExitCharacter={() => setCharacterViewpoint(undefined)} onUseCharacter={characterMind ? (characterId, chapterId) => { if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return; if (chapterId !== s.chapterId) { s.setChapter(chapterId); setShellMessage('已打开人物视角对应章节，请再次核对知识后选择人物视角。'); return; } setCharacterViewpoint({ identity: namespace, chapterId, characterId, epoch: scopeEpoch }); setPanel('history'); } : undefined} /> : <Panel type={panel} chapter={chapter.data} scope={scope} sessionToken={s.sessionToken} novelId={s.novelId} onOpenChapter={s.setChapter}
         onRestored={(restored) => {
           // Feed the existing hydration path. It retains drafts and creates a
           // persistent conflict when a restored server version overtakes them.
@@ -1203,10 +1249,12 @@ export default function App() {
       {writingRecovery && chapter.data && <GenerationRecoveryPicker key={`${namespace}:${s.chapterId}:${scopeEpoch}`}
         namespace={namespace} chapterId={s.chapterId} actorId={s.actor?.id} revision={generationRecoveryRevision} includeCurrent={generationRecoveryUnverified}
         onRecover={reopenRetainedGeneration} />}
+      {experimentalFlags.data?.features['experimental.revision_intelligence_v2'] === true && chapter.data && <Button disabled={!selection.text || saveState !== 'saved'} onClick={() => { setExperimentalTab('revision_intelligence_v2'); setPanel('experimental'); }}>修订选区与逐段接受</Button>}
       <AiWritingPanel
       authorPreview={chapter.data ? {
         enabled: experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true,
         chapterId: chapter.data.id, chapterVersion: chapter.data.version, source: selection.text,
+        characterId: activeCharacterId, onExitCharacter: () => setCharacterViewpoint(undefined),
         profile: s.mode, styleProfileId: s.writingInputs?.styleProfileId, plotPlanId: s.writingInputs?.plotPlanId,
         context: {sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}, saved: saveState === 'saved',
       } : undefined}

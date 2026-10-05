@@ -1,3 +1,4 @@
+import { normalizeRevisionLockDocument } from './experimental/revisionLocks';
 // @vitest-environment jsdom
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
@@ -42,7 +43,7 @@ it('changes reading preferences and paragraph emphasis without replacing the edi
   expect(editor.view).toBe(originalView); expect(editor.state.selection.from).toBe(originalSelection);
   expect(editor.view.dom.parentElement?.style.getPropertyValue('--writing-font-size')).toBe('20px');
   expect(editor.view.dom.querySelector('[data-writing-active="true"]')).toBeTruthy();
-  expect(editor.getJSON()).toEqual(document); expect(change).not.toHaveBeenCalled();
+  expect(normalizeRevisionLockDocument(editor.getJSON())).toEqual(document); expect(change).not.toHaveBeenCalled();
   view.rerender(<ChapterEditor content="" document={document} onChange={change} />);
   expect(editor.view).toBe(originalView); expect(editor.view.dom.querySelector('[data-writing-active]')).toBeNull();
 });

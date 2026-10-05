@@ -1,5 +1,6 @@
 import { expect, test, type APIRequestContext, type APIResponse, type Page, type TestInfo } from '@playwright/test';
 import { createHash } from 'node:crypto';
+import { writeFile } from 'node:fs/promises';
 import { createPageQuiescer } from './r3-fixture-lifecycle';
 
 /** U13 real-browser contracts. Authored tests are NOT_RUN until CI executes them.
@@ -67,7 +68,9 @@ async function save(page: Page) {
   await expect(page.locator('.editorbar')).toContainText('已保存');
 }
 async function attach(info: TestInfo, name: string, value: unknown) {
-  await info.attach(name, { body: JSON.stringify(value, null, 2), contentType: 'application/json' });
+  const receipt = info.outputPath(name);
+  await writeFile(receipt, JSON.stringify(value, null, 2), 'utf8');
+  await info.attach(name, { path: receipt, contentType: 'application/json' });
 }
 function percentile(values: number[], fraction: number) {
   return [...values].sort((a, b) => a - b)[Math.ceil(values.length * fraction) - 1];

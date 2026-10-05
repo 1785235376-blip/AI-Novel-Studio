@@ -66,6 +66,16 @@ async def request_id_middleware(request: Request, call_next):
     response.headers["X-Request-ID"] = request_id
     return response
 
+from .revision_constraints import RevisionConstraintError
+
+
+@app.exception_handler(RevisionConstraintError)
+async def revision_constraint_error(request: Request, exc: RevisionConstraintError):
+    return JSONResponse(status_code=409, content={"code": exc.code,
+        "message": "段落已锁定或锁定依据已变化。请核对后明确解锁，再采用 AI 修改。",
+        "details": {}, "request_id": getattr(request.state, "request_id", "")})
+
+
 @app.exception_handler(HTTPException)
 async def unified_http_error(request: Request, exc: HTTPException):
     detail = exc.detail
