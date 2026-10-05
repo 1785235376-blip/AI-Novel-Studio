@@ -291,6 +291,9 @@ async def collaboration_fail_closed(request,call_next):
 app.add_middleware(CORSMiddleware,allow_origins=[settings.frontend_origin],allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 app.include_router(api_router, prefix="/api")
 app.include_router(api_router, prefix="/api/v1")
+from .experimental.api import router as experimental_router
+app.include_router(experimental_router, prefix="/api")
+app.include_router(experimental_router, prefix="/api/v1")
 app.include_router(create_model_center_router(model_center_service, mutation_authorization=_model_center_mutation_authorization))
 app.include_router(create_model_center_router(model_center_service, prefix="/api/v1/model-center", mutation_authorization=_model_center_mutation_authorization))
 app.include_router(create_local_discovery_router(local_ai_discovery, mutation_authorization=_model_center_mutation_authorization))
