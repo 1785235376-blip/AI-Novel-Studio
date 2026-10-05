@@ -222,3 +222,73 @@ def executable_metadata(path_value: str) -> dict:
     except (OSError, ValueError, AttributeError):
         pass
     return result
+
+
+def ollama_remote_declaration(metadata: Any) -> str:
+    """Optional official remote fields are omitted for local models, not a locality proof.
+
+    https://github.com/ollama/ollama/blob/main/api/types.go
+    ListModelResponse / ShowResponse both expose remote_model and remote_host.
+    """
+    if not isinstance(metadata, dict): return 'NOT_VERIFIED'
+    for key in ('remote_model', 'remote_host'):
+        if key not in metadata: continue
+        value = metadata[key]
+        if not isinstance(value, str) or (value and not value.strip()): return 'NOT_VERIFIED'
+        if value: return 'REMOTE'
+    return 'NO_REMOTE_DECLARATION'
+
+
+def ollama_locality_evidence(tag: Any, show: Any) -> dict:
+    """Require positive local weight metadata; neither endpoint nor name proves locality."""
+    tag_state, show_state = ollama_remote_declaration(tag), ollama_remote_declaration(show)
+    result = {'source_locality': 'NOT_VERIFIED', 'reported_capabilities': [], 'locality_fingerprint': None,
+              'locality_blockers': ['OLLAMA_LOCALITY_UNVERIFIED']}
+    if isinstance(tag, dict):
+        result.update({key: tag[key] for key in ('digest', 'size', 'details', 'remote_model', 'remote_host') if key in tag})
+    if isinstance(show, dict):
+        result.update({'show_' + key: show[key] for key in ('remote_model', 'remote_host') if key in show})
+    if 'REMOTE' in (tag_state, show_state):
+        result.update(source_locality='REMOTE', locality_blockers=['OLLAMA_REMOTE_MODEL_BLOCKED'])
+        return result
+    if tag_state != 'NO_REMOTE_DECLARATION' or show_state != 'NO_REMOTE_DECLARATION': return result
+    capabilities = show.get('capabilities')
+    tag_details, show_details, model_info = tag.get('details'), show.get('details'), show.get('model_info')
+    if (not isinstance(capabilities, list) or not capabilities or not all(isinstance(item, str) for item in capabilities) or
+        not isinstance(tag.get('digest'), str) or not re.fullmatch(r'(?:sha256:)?[a-fA-F0-9]{64}', tag['digest']) or
+        type(tag.get('size')) is not int or tag['size'] <= 0 or
+        not isinstance(tag_details, dict) or str(tag_details.get('format', '')).casefold() != 'gguf' or
+        not isinstance(show_details, dict) or str(show_details.get('format', '')).casefold() != 'gguf' or
+        not isinstance(model_info, dict) or not isinstance(model_info.get('general.architecture'), str) or
+        not model_info['general.architecture'].strip()):
+        return result
+    proof = {'digest': tag['digest'].removeprefix('sha256:').lower(), 'size': tag['size'],
+             'tag_details': tag_details, 'show_details': show_details, 'architecture': model_info['general.architecture'],
+             'capabilities': sorted(set(capabilities)), 'remote_model': '', 'remote_host': ''}
+    result.update(source_locality='LOCAL_VERIFIED', reported_capabilities=capabilities[:32],
+                  locality_fingerprint=hashlib.sha256(json.dumps(proof, sort_keys=True).encode()).hexdigest(),
+                  model_architecture=model_info['general.architecture'], locality_blockers=[])
+    return result
+
+
+def read_ollama_local_metadata(client, endpoint: str, model_name: str, enumerate_models) -> dict:
+    """One common strict proof for discovery and every legacy Ollama prompt leaf."""
+    endpoint = local_endpoint(endpoint)
+    def tag():
+        rows = enumerate_models(read_json=lambda path: client.json(endpoint, path), include_details=True, strict=True)
+        matches = [item for item in rows if item.get('name') == model_name]
+        return matches[0] if len(matches) == 1 else None
+    try:
+        before = tag()
+        if ollama_remote_declaration(before) == 'REMOTE': return ollama_locality_evidence(before, None)
+        show = client.json(endpoint, '/api/show', body={'model': model_name, 'verbose': False})
+        checked = ollama_locality_evidence(before, show)
+        if checked['source_locality'] != 'LOCAL_VERIFIED': return checked
+        after_checked = ollama_locality_evidence(tag(), show)
+        if after_checked['source_locality'] != 'LOCAL_VERIFIED': return after_checked
+        if checked['locality_fingerprint'] != after_checked['locality_fingerprint']:
+            after_checked.update(source_locality='NOT_VERIFIED', locality_fingerprint=None,
+                                 reported_capabilities=[], locality_blockers=['OLLAMA_IDENTITY_CHANGED'])
+        return after_checked
+    except (ProbeFailure, ValueError, TypeError, KeyError):
+        return ollama_locality_evidence(None, None)

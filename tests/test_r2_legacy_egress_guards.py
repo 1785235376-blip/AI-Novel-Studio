@@ -70,19 +70,20 @@ def test_memory_never_silently_uses_development_mock(tmp_path,packaged,mock_enab
 
 def test_memory_registered_loopback_adapter_uses_normalized_node(tmp_path):
     import json
+    from test_local_ai_discovery import service,scan,approve_license
+    from test_local_ai_discovery_egress import OllamaWire
+    from app.model_center.discovery_bridge import LocalDiscoveryBridge
     agent,bundle,nid,cid,version=runner(tmp_path,valid_output())
-    candidate={'id':'synthetic-model','provider_id':'local-fixture','model_name':'fixture',
-               'runtime_config':{'endpoint':'http://127.0.0.1:11434','type':'OLLAMA','management':'EXTERNAL'}}
-    bridge=SimpleNamespace(guard=lambda _:deepcopy(candidate))
-    adapter=LocalTextAdapter(bridge,candidate);calls=[]
-    adapter.client=SimpleNamespace(json=lambda endpoint,path,body: calls.append((endpoint,path,body)) or {'response':json.dumps(valid_output())})
-    providers=ProviderRegistry();models=ModelRegistry()
-    providers.register(ProviderDescriptor('local-fixture','Synthetic local transport','local',frozenset({Modality.TEXT}),True,True),adapter)
-    models.register(ModelDescriptor('synthetic-model','local-fixture','Synthetic',Modality.TEXT,frozenset({'generate'})))
-    generation=GenerationRuntime(providers,models)
-    agent.runtime=SimpleNamespace(provider_registry=providers,model_registry=models,prepare_text_route=lambda *args:generation.text_node)
+    runtime=SimpleNamespace(provider_registry=ProviderRegistry(),model_registry=ModelRegistry())
+    svc=service(tmp_path);wire=OllamaWire('fixture');wire.response_text=json.dumps(valid_output());svc.client=wire.client()
+    svc.route_bridge=LocalDiscoveryBridge(svc,runtime,AssetProviderRegistry())
+    candidate=scan(svc)['candidates'][0];svc.validate(candidate['id']);svc.register(candidate['id']);approve_license(svc,candidate['id']);svc.enable(candidate['id'])
+    adapter=runtime.provider_registry.resolve(candidate['provider_id']);adapter.client=wire.client()
+    generation=GenerationRuntime(runtime.provider_registry,runtime.model_registry)
+    runtime.prepare_text_route=lambda *args:generation.text_node
+    agent.runtime=runtime
     assert len(agent.extract(nid,cid,version,profile='QUALITY'))==1
-    assert len(calls)==1 and calls[0][:2]==('http://127.0.0.1:11434','/api/generate')
+    assert len(wire.generations)==1 and wire.generations[0][1]=='/api/generate'
 
 
 def test_legacy_live_workflow_fails_before_read_write_or_router(tmp_path):

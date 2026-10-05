@@ -183,7 +183,10 @@ class LegacyTextProviderAdapter:
 
     def generate_text(self, request: TextGenerationRequest) -> TextGenerationResponse:
         try:
-            return self._response(request, self.provider.generate(request.prompt, request.model_id, **self._kwargs(request)))
+            kwargs=self._kwargs(request)
+            if getattr(self.provider,"supports_dispatch_guard",False):
+                kwargs.update(dispatch_guard=request.dispatch_guard,cancellation=request.cancellation)
+            return self._response(request, self.provider.generate(request.prompt, request.model_id, **kwargs))
         except ProviderError as exc:
             raise ModelRuntimeError(RuntimeErrorCode.PROVIDER_UNAVAILABLE, "模型服务暂时不可用", retryable=True) from exc
 
@@ -193,6 +196,8 @@ class LegacyTextProviderAdapter:
         chunks: list[str] = []
         reported_usage: dict[str, Any] = {}
         kwargs=self._kwargs(request)
+        if getattr(self.provider,"supports_dispatch_guard",False):
+            kwargs.update(dispatch_guard=request.dispatch_guard,cancellation=request.cancellation)
         if getattr(self.provider,"supports_stream_usage",False):
             kwargs["usage_callback"]=reported_usage.update
         try:

@@ -15,7 +15,7 @@ async function setup(page: Page, populated = false) {
   const qwen = model('qwen', 'Qwen3 local', 'TEXT', 'OLLAMA');
   let currentScan: Record<string, unknown> | null = populated ? {id: 'scan-one', status: 'PARTIAL', runtimes: [{id: 'ollama', name: 'Ollama', type: 'OLLAMA', endpoint: 'http://127.0.0.1:11434', status: 'RUNNING', management: 'EXTERNAL', version: '0.9'}], candidates: [qwen, model('qwen-image', 'Qwen Image', 'IMAGE'), model('minimax', 'MiniMax H3', 'VIDEO'), model('rife', 'RIFE', 'INTERPOLATION'), model('unknown', 'Unknown', 'UNKNOWN')], errors: [{runtime_id: 'a1111', code: 'NOT_FOUND'}]} : null;
   let registrations: ReturnType<typeof model>[] = [];
-  await page.addInitScript(() => {localStorage.setItem('studio.session', 'local-ai-browser-test');});
+  await page.addInitScript(() => {localStorage.setItem('studio.session', 'local-ai-browser-test');localStorage.setItem('studio.scope', JSON.stringify({workspaceId:'synthetic-w',projectId:'synthetic-project',storylineId:'synthetic-story',branchId:'synthetic-branch',workspaceName:'Synthetic workspace',projectName:'Synthetic project'}));});
   await page.route('**/api/**', async route => {
     const request = route.request(), path = new URL(request.url()).pathname;
     if (path.startsWith('/api/model-center/local-ai')) {

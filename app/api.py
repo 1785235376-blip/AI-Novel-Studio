@@ -1754,7 +1754,10 @@ def ai_analyze_import_knowledge(nid: str, review_id: str, body: ImportAiReviewIn
                 return
             if not body.allow_cloud_excerpt:
                 raise HTTPException(403, {"code": "IMPORT_CLOUD_EXCERPT_CONFIRMATION_REQUIRED", "message": "请明确允许所选云模型接收本次章节节选，或选择本地模型。"})
-            assert_project_source_policies(novel_service.novels, nid)
+            try:
+                assert_project_source_policies(getattr(novel_service,"novels",None), nid)
+            except ValueError as exc:
+                raise HTTPException(403,{"code":"IMPORT_SOURCE_RESTRICTED","message":"项目隐私授权不可用或限制云端外发，请使用本地模型。"}) from exc
             secret_policies = [{**item, "privacy_level": item.get("privacy_level", item.get("visibility", "LOCAL_ONLY"))} for item in novel_service.public_secrets(nid)]
             protected_sources = [novel_service.get(nid), *current_chapters.values(), *secret_policies, *novel_service.data_set(nid,"relationships")]
             outline = novel_service.outline(nid)

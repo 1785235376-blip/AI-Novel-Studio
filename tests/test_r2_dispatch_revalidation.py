@@ -6,7 +6,7 @@ import pytest
 
 from app.agents import agent_runner
 from app.authorization import ModalityDomain
-from app.config import settings
+from app.config import Settings, settings
 from app.identity import IdentityStatus
 from app.model_runtime import TextGenerationResponse, TextModelNode, TextModelNodeOutput
 from app.repositories.factory import create_repository_bundle
@@ -237,7 +237,7 @@ def test_image_egress_callback_sees_hash_bound_consent_and_cannot_race_cancellat
 @pytest.fixture
 def agent_rig(tmp_path):
     object.__setattr__(settings, "novel_data", tmp_path)
-    bundle = create_repository_bundle(data_root=tmp_path)
+    bundle = create_repository_bundle(Settings(storage_backend="file", database_url=""), data_root=tmp_path)
     novel = bundle.novels.create({"title": "Synthetic dispatch fixture"})
     bundle.chapters.create(novel["id"], {"title": "Synthetic", "content": "Synthetic chapter."})
     fact = {"name": "PRIVATE_FACT_CANARY", "privacy_level": "CLOUD_ALLOWED"}

@@ -68,12 +68,20 @@ class LocalTextAdapter:
                 if config['type'] == 'LLAMA_CPP' and config['management'] == 'MANAGED':
                     managed = self.bridge.launch_on_demand(candidate)
                 self.bridge.guard(candidate['id'])
+                if config['type'] == 'OLLAMA':
+                    try: self.bridge.service.check_ollama_dispatch(candidate)
+                    except ValueError as exc:
+                        raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, '本地模型来源或版本已变化，请重新验证后启用') from exc
+                    self.bridge.guard(candidate['id'])
                 # Waiting for a managed process is preparation, not dispatch.
                 # Re-authorize after startup and reject cancellation before any prompt leaves.
                 if request.dispatch_guard is not None:
                     request.dispatch_guard()
                 if request.cancellation and request.cancellation.is_set():
                     raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, '已停止生成')
+                authorized = self.bridge.guard(candidate['id'])
+                if authorized.get('enabled_at') != candidate.get('enabled_at'):
+                    raise ModelRuntimeError(RuntimeErrorCode.MODEL_DISABLED, '本地模型授权已变化，请重新提交任务')
                 if config['type'] == 'OLLAMA':
                     options = {}
                     if request.parameters.temperature is not None: options['temperature'] = request.parameters.temperature
@@ -86,7 +94,7 @@ class LocalTextAdapter:
                 else:
                     messages = [{'role':'user', 'content':request.prompt}]
                     if request.system_instruction: messages.insert(0, {'role':'system', 'content':request.system_instruction})
-                    body = {'model': candidate['model_name'], 'messages': messages, 'stream': False}
+                    body = {'model': config.get('model_id') or candidate['model_name'], 'messages': messages, 'stream': False}
                     if request.parameters.temperature is not None: body['temperature'] = request.parameters.temperature
                     if request.parameters.max_output_tokens is not None: body['max_tokens'] = request.parameters.max_output_tokens
                     if request.parameters.stop_sequences: body['stop'] = list(request.parameters.stop_sequences)
@@ -106,6 +114,7 @@ class LocalTextAdapter:
                 if managed: self.bridge.service.center.lifecycle.stop(managed)
 
     def stream_text(self, request):
+        # Buffered stream protocol: one final delta, never advertised as live token streaming.
         yield GenerationEvent('generation.started', request.job_id)
         response = self.generate_text(request)
         yield GenerationEvent('generation.delta', request.job_id, delta=response.text)
@@ -167,8 +176,8 @@ class LocalDiscoveryBridge:
             self.runtime.provider_registry.register(ProviderDescriptor(provider_id, candidate['display_name'], 'local',
                 frozenset({Modality.TEXT}), enabled, enabled, 'metadata_validated_inference_not_run' if enabled else 'disabled'), adapter, replace=True)
             self.runtime.model_registry.register(ModelDescriptor(candidate['id'], provider_id, candidate['display_name'],
-                Modality.TEXT, frozenset({'generate', 'stream'}), candidate['runtime_config'].get('context_size'),
-                streaming=False, enabled=enabled), replace=True)
+                Modality.TEXT, frozenset({'generate', 'stream', 'buffered_stream'}), candidate['runtime_config'].get('context_size'),
+                streaming=True, enabled=enabled), replace=True)
         if enabled and 'IMAGE' in candidate['verified_capabilities']:
             if candidate['runtime_type'] not in {'COMFYUI','AUTOMATIC1111'}:
                 raise ValueError('LOCAL_AI_IMAGE_ADAPTER_REQUIRED')

@@ -43,7 +43,8 @@ def manager():
 def test_text_model_catalog_comes_from_registry_without_credentials():
     items = Runtime().text_models()
     assert {item["model_id"] for item in items} >= {"deepseek-chat", "deepseek-reasoner"}
-    assert all(set(item) == {"provider_id", "model_id", "display_name", "available", "execution_mode"} for item in items)
+    assert all(set(item) == ({"provider_id", "model_id", "display_name", "available", "execution_mode"} | ({"source_locality"} if item["provider_id"] == "ollama" else set())) for item in items)
+    assert all(item["source_locality"] in {"LOCAL_VERIFIED", "REMOTE", "NOT_VERIFIED"} for item in items if item["provider_id"] == "ollama")
     assert "api_key" not in repr(items).casefold() and "authorization" not in repr(items).casefold()
 
 

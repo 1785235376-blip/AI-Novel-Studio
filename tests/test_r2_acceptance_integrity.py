@@ -1,4 +1,8 @@
-"""Synthetic local Draft acceptance CAS, concurrency and recovery contracts."""
+"""Explicit File-backend Draft acceptance CAS, concurrency and recovery contracts.
+
+These fixtures remain File-backed even inside the PostgreSQL matrix job. Real
+PostgreSQL acceptance coverage lives in test_r2_acceptance_postgres.py.
+"""
 from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import get_context
 from threading import Event
@@ -6,6 +10,7 @@ from types import SimpleNamespace
 
 import pytest
 
+from app.config import Settings
 from app.jobs import Job, JobManager
 from app.repositories.chapter_repository import VersionConflict
 from app.repositories.factory import create_repository_bundle
@@ -13,7 +18,7 @@ from app.services import CanonService, ChapterService, ContextService, Generatio
 
 
 def build_manager(root):
-    bundle = create_repository_bundle(data_root=root)
+    bundle = create_repository_bundle(Settings(storage_backend="file", database_url=""), data_root=root)
     manager = JobManager(
         GenerationService(bundle.generations), ChapterService(bundle.chapters),
         ContextService(bundle.novels, bundle.chapters), CanonService(bundle.canon),
@@ -84,7 +89,10 @@ def accept_in_process(root, ready, start, results):
         results.put("blocked")
 
 
-def test_separate_processes_create_only_one_chapter_and_proposal(tmp_path):
+def test_separate_processes_create_only_one_chapter_and_proposal(tmp_path, monkeypatch):
+    # Spawn imports app dependencies before entering build_manager; keep those
+    # child composition roots File-backed in every parent CI matrix lane.
+    monkeypatch.setenv("STORAGE_BACKEND", "file")
     manager, bundle, novel, chapter, job = seed(tmp_path)
     context = get_context("spawn")
     ready, results, start = context.Queue(), context.Queue(), context.Event()

@@ -12,6 +12,7 @@ from app.providers import Generation,MockProvider
 from app.model_runtime import (GenerationRuntime,LegacyTextProviderAdapter,ModelDescriptor,ModelRegistry,
  Modality,ProviderDescriptor,ProviderRegistry)
 from app.jobs import Job,JobManager
+from app.config import Settings
 
 class MemoryFixtureProvider(MockProvider):
  def __init__(self,text):self.text=text;self.requests=[]
@@ -30,7 +31,7 @@ class Runtime:
  def prepare_text_route(self,*args):return self.generation_runtime.text_node
  def router(self,*args):raise AssertionError("memory extraction must not use legacy routing")
 def runner(tmp_path,output):
- bundle=create_repository_bundle(data_root=tmp_path);novels=NovelService(bundle.novels,bundle.chapters);chapters=ChapterService(bundle.chapters);nid=novels.create({"id":"agent-test","title":"Agent"})["id"];chapter=chapters.create(nid,{"title":"One","content":"Lin learned the harbor secret."});saved=chapters.save(chapter["id"],{"content":"Lin learned the harbor secret.","version":1,"source":"AI_ACCEPT"})
+ bundle=create_repository_bundle(Settings(storage_backend="file",database_url=""),data_root=tmp_path);novels=NovelService(bundle.novels,bundle.chapters);chapters=ChapterService(bundle.chapters);nid=novels.create({"id":"agent-test","title":"Agent"})["id"];chapter=chapters.create(nid,{"title":"One","content":"Lin learned the harbor secret."});saved=chapters.save(chapter["id"],{"content":"Lin learned the harbor secret.","version":1,"source":"AI_ACCEPT"})
  atomic_write(tmp_path/"novels"/nid/"characters"/"characters.json",json.dumps([{"id":"lin","name":"Lin"}]))
  service=LoreService(bundle.lore);return MemoryAgentRunner(bundle.novels,bundle.chapters,service,GenerationService(bundle.generations),AgentRunner(AgentRegistry()),Runtime(json.dumps(output))),bundle,nid,chapter["id"],saved["version"]
 def valid_output():return {"proposals":[{"proposal_type":"CHARACTER_MEMORY","payload":{"character_id":"lin","memory_type":"KNOWLEDGE_CHANGE","content":{"fact":"harbor secret"}},"confidence":0.9,"evidence":[{"chapter_id":"agent-test:1","chapter_version":2,"excerpt":"Lin learned the harbor secret.","locator":{"kind":"DOCUMENT_RANGE","from":1,"to":31}}]}]}

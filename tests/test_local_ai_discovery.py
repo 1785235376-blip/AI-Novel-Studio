@@ -57,8 +57,8 @@ def approve_license(svc, identifier):
 
 def ollama(client, name='qwen3.6:8b', capabilities=('completion',)):
     endpoint = 'http://127.0.0.1:11434'
-    client.payloads[(endpoint, '/api/tags')] = {'models':[{'name':name, 'size':1234, 'modified_at':'synthetic', 'digest':'abc'}]}
-    client.payloads[(endpoint, '/api/show')] = {'capabilities':list(capabilities)}
+    client.payloads[(endpoint, '/api/tags')] = {'models':[{'name':name, 'size':1234, 'modified_at':'synthetic', 'digest':'a'*64,'details':{'format':'gguf','family':'qwen'}}]}
+    client.payloads[(endpoint, '/api/show')] = {'capabilities':list(capabilities),'details':{'format':'gguf','family':'qwen'},'model_info':{'general.architecture':'qwen3'}}
 
 
 def gguf(path, arch='qwen3', magic=b'GGUF', version=3):
@@ -413,7 +413,7 @@ def test_changed_model_digest_invalidates_prior_license_review(tmp_path):
     svc=service(tmp_path);ollama(svc.client)
     candidate=scan(svc)['candidates'][0];svc.validate(candidate['id']);svc.register(candidate['id']);approve_license(svc,candidate['id'])
     svc.enable(candidate['id'])
-    svc.client.payloads[('http://127.0.0.1:11434','/api/tags')]['models'][0]['digest']='replacement-digest'
+    svc.client.payloads[('http://127.0.0.1:11434','/api/tags')]['models'][0]['digest']='b'*64
     with pytest.raises(ValueError,match='LICENSE_VALIDATION_REQUIRED'):svc.enable(candidate['id'])
     assert not svc.registrations[candidate['id']]['enabled']
     assert not svc.registrations[candidate['id']]['license_confirmed']
@@ -513,16 +513,16 @@ def test_ollama_discovery_reuses_existing_enumerator_with_safe_reader(tmp_path,m
     svc=service(tmp_path);ollama(svc.client)
     candidate=scan(svc)['candidates'][0]
     assert candidate['model_name']=='qwen3.6:8b'
-    assert candidate['evidence']['digest']=='abc'
+    assert candidate['evidence']['digest']=='a'*64
     assert calls and callable(calls[0]['read_json']) and calls[0]['strict'] and calls[0]['include_details']
 
 
 def test_ollama_enumeration_legacy_shape_and_strict_error_contract(monkeypatch):
     from app.providers import OllamaProvider
     payload={'models':[{'name':'qwen','size':123,'modified_at':'synthetic','digest':'digest','details':{'family':'qwen'}}]}
-    monkeypatch.setattr('app.providers.urlopen',lambda *_args,**_kwargs:ByteResponse(json.dumps(payload).encode()))
-    assert OllamaProvider('http://127.0.0.1:1').list_models()==[{'name':'qwen','size':123,'modified_at':'synthetic'}]
     provider=OllamaProvider('http://127.0.0.1:1')
+    provider._metadata_client=FixtureClient();provider._metadata_client.payloads[(provider.base_url,'/api/tags')]=payload
+    assert provider.list_models()==[{'name':'qwen','size':123,'modified_at':'synthetic'}]
     reader=Mock(side_effect=ProbeFailure('LOCAL_AI_PROBE_TIMEOUT'))
     assert provider.list_models(read_json=reader)==[]
     with pytest.raises(ProbeFailure,match='TIMEOUT'):provider.list_models(read_json=reader,strict=True)

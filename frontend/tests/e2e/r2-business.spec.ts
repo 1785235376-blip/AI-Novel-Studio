@@ -26,8 +26,8 @@ test('R2 real File API: save/reopen, reviewed plans, anchored comments and immut
  await page.reload();await expect(editor).toContainText('Alice said hello');
  // Real browser Draft/Diff/Accept and revision restore, with explicitly labeled mock execution.
  const beforeWriting=await (await request.get(`http://127.0.0.1:8015/api/novels/${novel.id}/chapters`)).json();
- const writingChapter=beforeWriting[0];
- await page.getByLabel('文本模型',{exact:true}).selectOption('deepseek:deepseek-chat');
+ const writingChapter=await (await request.get(`http://127.0.0.1:8015/api/chapters/${beforeWriting[0].id}`)).json();
+ await page.getByRole('combobox',{name:/文本模型/}).first().selectOption('deepseek:deepseek-chat');
  await expect(page.locator('.novel-ai-status [role="status"]')).toContainText(/DeepSeek Chat.*模拟测试/);
  await editor.click();await editor.press('Control+A');
  await page.getByRole('tab',{name:'改写',exact:true}).click();
@@ -59,7 +59,7 @@ test('R2 real File API: save/reopen, reviewed plans, anchored comments and immut
  await page.getByRole('button',{name:'重新打开',exact:true}).click();
  await expect(page.getByText('待处理',{exact:true})).toBeVisible();
  const chapters=await (await request.get(`http://127.0.0.1:8015/api/novels/${novel.id}/chapters`)).json();
- const chapter=chapters[0];
+ const chapter=await (await request.get(`http://127.0.0.1:8015/api/chapters/${chapters[0].id}`)).json();
  await request.put(`http://127.0.0.1:8015/api/chapters/${chapter.id}`,{data:{content:'新版本正文，评论锚点应标为过期。',version:chapter.version}});
  await page.getByRole('button',{name:'刷新记录',exact:true}).click();
  await expect(page.getByText('来源已更新，请重新核对',{exact:true})).toBeVisible();
@@ -92,7 +92,8 @@ test('R2 real File API: save/reopen, reviewed plans, anchored comments and immut
 test('R2 actual backend Draft Accept is explicit and repeat-safe, with synthetic mock output',async({request})=>{
  test.info().annotations.push({type:'verification',description:'MOCK_ONLY model, real API/persistence; no paid provider'});
  const novel=await (await request.post('http://127.0.0.1:8015/api/novels',{data:{title:'R2 Draft Accept fixture'}})).json();
- const chapter=await (await request.post(`http://127.0.0.1:8015/api/novels/${novel.id}/chapters`,{data:{title:'合成草稿',content:'这是原文。'}})).json();
+ const createdChapter=await (await request.post(`http://127.0.0.1:8015/api/novels/${novel.id}/chapters`,{data:{title:'合成草稿',content:'这是原文。'}})).json();
+ const chapter=await (await request.get(`http://127.0.0.1:8015/api/chapters/${createdChapter.id}`)).json();
  const job=await (await request.post('http://127.0.0.1:8015/api/generate/rewrite',{data:{novel_id:novel.id,chapter_id:chapter.id,source:'这是原文。',profile:'LOCAL_ONLY',instruction:'改写合成句子'}})).json();
  await expect.poll(async()=> (await (await request.get(`http://127.0.0.1:8015/api/generation/${job.job_id}`)).json()).status).toBe('COMPLETED');
  const before=await (await request.get(`http://127.0.0.1:8015/api/chapters/${chapter.id}`)).json();expect(before.version).toBe(chapter.version);

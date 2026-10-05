@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any, Callable
 from uuid import uuid4
 
-from .discovery_probes import LocalProbeClient, ProbeFailure, candidate_id, executable_metadata, gguf_metadata, host_hardware, infer_family, scan_gguf_roots
+from .discovery_probes import LocalProbeClient, ProbeFailure, candidate_id, executable_metadata, gguf_metadata, host_hardware, infer_family, scan_gguf_roots, ollama_remote_declaration, ollama_locality_evidence, read_ollama_local_metadata
 from .discovery_types import DiscoverySettingsInput, LocalRuntimeInput, RegistrationInput, safe_local_path
 from .domain import Capability, ModelDefinition, ModelStatus, RuntimeDefinition, RuntimeManagement, RuntimeType
 
@@ -41,12 +41,13 @@ class LocalDiscoveryService:
         self.settings = {'scan_roots': [], 'runtimes': []}
         self.configured_runtime_sources: list[dict] = []
         self.registrations: dict[str, dict] = {}
+        self._control_epochs: dict[str, int] = {}
         self.scan: dict | None = None
         self.cancel_event = threading.Event()
         self.hardware = {'status': 'NOT_VERIFIED', 'notes': ['SCAN_REQUIRED'], 'gpus': []}
         self.persistence_error = None
         self.workflow_adapters = [{'id': 'comfy-sd-checkpoint-v1', 'display_name': 'Stable Diffusion checkpoint (T2I)',
-            'family': 'STABLE_DIFFUSION', 'capability': 'IMAGE', 'required_nodes': ['CheckpointLoaderSimple', 'KSampler', 'EmptyLatentImage', 'CLIPTextEncode', 'VAEDecode', 'SaveImage']}]
+            'family': 'STABLE_DIFFUSION', 'capability': 'IMAGE', 'model_loader': 'CheckpointLoaderSimple', 'model_input': 'ckpt_name', 'required_nodes': ['CheckpointLoaderSimple', 'KSampler', 'EmptyLatentImage', 'CLIPTextEncode', 'VAEDecode', 'SaveImage']}]
         self._load()
 
     def _load(self):
@@ -124,7 +125,9 @@ class LocalDiscoveryService:
                          enable_blockers=['REVALIDATION_REQUIRED'], verified_capabilities=[])
             self._persist(settings=settings, registrations=records)
             self.settings, self.registrations = settings, records
-            for r in changed: self._publish_model(r); self._bridge(r)
+            for r in changed:
+                self._control_epochs[r['id']] = self._control_epochs.get(r['id'], 0) + 1
+                self._publish_model(r); self._bridge(r)
             return copy.deepcopy(item)
 
     def _runtimes(self):
@@ -182,6 +185,7 @@ class LocalDiscoveryService:
                 report, found = self._probe(runtime, cancel)
                 with self.lock:
                     job['runtimes'].append(report)
+                    self._reconcile_detected_runtime(runtime, report, found)
                     for candidate in found: candidates[candidate['id']] = candidate
                     job['candidates'] = list(candidates.values())
                     if report['status'] not in {'RUNNING', 'DISCOVERED'}:
@@ -240,7 +244,12 @@ class LocalDiscoveryService:
                 models = OllamaProvider(runtime['endpoint']).list_models(read_json=get, include_details=True, strict=True)
                 for model in models:
                     if isinstance(model, dict) and isinstance(model.get('name'), str) and 0 < len(model['name']) <= 256:
-                        found.append(self._candidate(runtime, model['name'], evidence={key:model[key] for key in ('size','modified_at','digest','details') if key in model}))
+                        candidate = self._candidate(runtime, model['name'], evidence={key:model[key] for key in ('size','modified_at','digest','details','remote_model','remote_host') if key in model})
+                        remote = ollama_remote_declaration(model)
+                        candidate.update(local=False, source_locality='REMOTE' if remote == 'REMOTE' else 'NOT_VERIFIED')
+                        if remote == 'REMOTE':
+                            candidate.update(source='OLLAMA_HOSTED', validation_notes=['OLLAMA_REMOTE_MODEL_BLOCKED'], enable_blockers=['OLLAMA_REMOTE_MODEL_BLOCKED'])
+                        found.append(candidate)
                 try:
                     version = get('/api/version')
                     if isinstance(version, dict) and isinstance(version.get('version'), str): report['version'] = version['version'][:100]
@@ -251,7 +260,7 @@ class LocalDiscoveryService:
                 if not isinstance(stats, dict) or not isinstance(info, dict): raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
                 report['version'] = str((stats.get('system') if isinstance(stats.get('system'), dict) else {}).get('comfyui_version') or '')[:100] or None
                 nodes = sorted(str(key) for key in info)[:4096]
-                names = {}
+                names, bindings = {}, {}
                 for node, definition in list(info.items())[:4096]:
                     if not isinstance(definition, dict): continue
                     inputs = definition.get('input')
@@ -265,9 +274,10 @@ class LocalDiscoveryService:
                                 if not isinstance(name, str) or not 0 < len(name) <= 256: continue
                                 if len(names) >= 512 and name not in names: continue
                                 names.setdefault(name, []).append(str(node))
+                                bindings.setdefault(name, []).append({'node_class': str(node), 'input_field': field})
                 for name, loaders in names.items():
                     found.append(self._candidate(runtime, name, family_hint=' '.join(loaders), evidence={
-                        'model_listed': True, 'model_file_exists': None, 'loader_nodes': loaders,
+                        'model_listed': True, 'model_file_exists': None, 'loader_nodes': loaders, 'loader_bindings': bindings[name],
                         'node_classes': nodes, 'nodes_fingerprint': digest(info), 'workflow_status': 'NOT_CONFIGURED', 'generation_verified': False}))
             elif kind == 'AUTOMATIC1111':
                 payload = get('/sdapi/v1/sd-models')
@@ -322,6 +332,7 @@ class LocalDiscoveryService:
     def validate(self, identifier):
         with self.lock:
             candidate = self._find(identifier)
+            expected_epoch = self._control_epochs.get(identifier, 0)
             saved = self.registrations.get(identifier)
             if saved:
                 for field in ('workflow_adapter_id','license_confirmed'): candidate[field] = saved.get(field, '' if field == 'workflow_adapter_id' else False)
@@ -351,29 +362,31 @@ class LocalDiscoveryService:
                 notes.append('MEMORY_AND_CONTEXT_NOT_VERIFIED')
         elif current and report['status'] == 'RUNNING':
             if kind == 'OLLAMA':
-                try:
-                    metadata = self.client.json(runtime['endpoint'], '/api/show', body={'name': candidate['model_name'], 'verbose': False})
-                    capabilities = metadata.get('capabilities', []) if isinstance(metadata, dict) else []
-                    if not isinstance(capabilities, list) or not all(isinstance(c, str) for c in capabilities): capabilities = []
-                    # Runtime's explicit metadata, never family/name inference.
+                checked = self.ollama_metadata_check(runtime, candidate['model_name'])
+                evidence.update(checked)
+                notes.extend(checked['locality_blockers'])
+                candidate['source_locality'] = checked['source_locality']
+                candidate['local'] = checked['source_locality'] == 'LOCAL_VERIFIED'
+                candidate['source'] = 'OLLAMA_HOSTED' if checked['source_locality'] == 'REMOTE' else 'OLLAMA'
+                capabilities = checked['reported_capabilities']
+                if checked['source_locality'] == 'LOCAL_VERIFIED':
                     if 'completion' in capabilities: verified.append('TEXT')
                     if 'vision' in capabilities: verified.append('VISION')
                     if 'embedding' in capabilities and 'completion' not in capabilities: notes.append('TEXT_GENERATION_UNSUPPORTED')
-                    evidence['reported_capabilities'] = [str(value) for value in capabilities][:32]
-                except ProbeFailure: notes.append('CAPABILITY_METADATA_UNAVAILABLE')
             elif kind == 'AUTOMATIC1111': verified = ['IMAGE']
             elif kind == 'COMFYUI':
                 adapter = next((a for a in self.workflow_adapters if a['id'] == candidate.get('workflow_adapter_id')), None)
                 if not adapter and candidate['family'] == 'STABLE_DIFFUSION':
                     adapter = self.workflow_adapters[0]; candidate['workflow_adapter_id'] = adapter['id']
-                if adapter and adapter['family'] == candidate['family'] and set(adapter['required_nodes']) <= set(evidence.get('node_classes', [])):
+                bound = bool(adapter and {'node_class': adapter['model_loader'], 'input_field': adapter['model_input']} in evidence.get('loader_bindings', []))
+                if adapter and bound and adapter['family'] == candidate['family'] and set(adapter['required_nodes']) <= set(evidence.get('node_classes', [])):
                     verified = [adapter['capability']]; evidence['workflow_status'] = 'STRUCTURE_VALIDATED_NOT_GENERATED'
                 else: notes.append('WORKFLOW_ADAPTER_REQUIRED')
             elif kind == 'OPENAI_COMPATIBLE_LOCAL': notes.append('CAPABILITY_UNVERIFIED')
             else: notes.append('ADAPTER_REQUIRED')
         else: notes.append('MODEL_OR_RUNTIME_NOT_FOUND')
         if not verified: notes.append('CAPABILITY_UNVERIFIED')
-        observed_identity = {key: evidence[key] for key in ('digest', 'sha256', 'size', 'modified_ns', 'general.architecture') if key in evidence}
+        observed_identity = {key: evidence[key] for key in ('digest', 'sha256', 'size', 'modified_ns', 'general.architecture', 'locality_fingerprint') if key in evidence}
         model_evidence_fingerprint = digest(observed_identity) if observed_identity else None
         previous_fingerprint = saved.get('model_evidence_fingerprint') if saved else None
         if previous_fingerprint and previous_fingerprint != model_evidence_fingerprint:
@@ -387,21 +400,72 @@ class LocalDiscoveryService:
         self._eligibility(candidate)
         with self.lock:
             latest_runtime = next((r for r in self._runtimes() if r['id'] == runtime['id']), runtime)
-            if fingerprint != digest(latest_runtime): raise ValueError('LOCAL_AI_CONFIGURATION_CHANGED')
+            if fingerprint != digest(latest_runtime) or expected_epoch != self._control_epochs.get(identifier, 0):
+                raise ValueError('LOCAL_AI_CONFIGURATION_CHANGED')
             if self.scan:
                 self.scan['candidates'] = [candidate if item['id'] == identifier else item for item in self.scan['candidates']]
             if identifier in self.registrations:
                 records = {**self.registrations, identifier: candidate}
                 self._persist(registrations=records); self.registrations = records
+                self._control_epochs[identifier] = expected_epoch + 1
                 self._publish_model(candidate); self._bridge(candidate)
             return copy.deepcopy(candidate)
+
+    def ollama_metadata_check(self, runtime, model_name):
+        from ..providers import OllamaProvider
+        return read_ollama_local_metadata(self.client, runtime['endpoint'], model_name,
+                                          OllamaProvider(runtime['endpoint']).list_models)
+
+    def _invalidate_registration(self, identifier, reason, evidence=None):
+        with self.lock:
+            live = self.registrations.get(identifier)
+            if not live: return
+            blocked = copy.deepcopy(live)
+            blocked.update(enabled=False, enable_eligible=False, verified_capabilities=[],
+                status='VALIDATION_REQUIRED', compatible='NOT_VERIFIED', local=False,
+                source_locality=(evidence or {}).get('source_locality', 'NOT_VERIFIED'),
+                enable_blockers=[reason], license_confirmed=False,
+                validation_notes=list(dict.fromkeys([*live.get('validation_notes', []), reason])))
+            if evidence: blocked['evidence'].update(evidence)
+            if blocked['source_locality'] == 'REMOTE': blocked['source'] = 'OLLAMA_HOSTED'
+            records = {**self.registrations, identifier: blocked}
+            self.registrations = records
+            self._control_epochs[identifier] = self._control_epochs.get(identifier, 0) + 1
+            try: self._persist(registrations=records)
+            except ValueError: self.persistence_error = 'LOCAL_AI_CONFIG_WRITE_FAILED'
+            self._publish_model(blocked); self._bridge(blocked)
+
+    def _reconcile_detected_runtime(self, runtime, report, found):
+        if runtime['type'] != 'OLLAMA': return
+        observed = {item['id']: item for item in found}
+        for identifier, record in list(self.registrations.items()):
+            if not record.get('enabled') or record['runtime_id'] != runtime['id']: continue
+            current = observed.get(identifier)
+            if not current or report['status'] != 'RUNNING':
+                self._invalidate_registration(identifier, 'OLLAMA_LOCALITY_UNVERIFIED')
+                continue
+            evidence = current['evidence']
+            if ollama_remote_declaration(evidence) == 'REMOTE':
+                self._invalidate_registration(identifier, 'OLLAMA_REMOTE_MODEL_BLOCKED', {**evidence, 'source_locality':'REMOTE'})
+            elif any(evidence.get(key) != record.get('evidence', {}).get(key) for key in ('digest', 'size', 'details', 'remote_model', 'remote_host')):
+                self._invalidate_registration(identifier, 'OLLAMA_IDENTITY_CHANGED', evidence)
+
+    def check_ollama_dispatch(self, candidate):
+        checked = self.ollama_metadata_check(candidate['runtime_config'], candidate['model_name'])
+        previous = candidate.get('evidence', {}).get('locality_fingerprint')
+        reason = (checked['locality_blockers'] or ['OLLAMA_IDENTITY_CHANGED'])[0]
+        if checked['source_locality'] != 'LOCAL_VERIFIED' or not previous or checked['locality_fingerprint'] != previous:
+            # A stale local classification loses routing authority even on disk failure.
+            self._invalidate_registration(candidate['id'], reason, checked)
+            raise ValueError('LOCAL_AI_' + reason)
+        return checked
 
     def _eligibility(self, candidate):
         blockers = []
         if not candidate.get('validated_at'): blockers.append('VALIDATION_REQUIRED')
         if not candidate.get('verified_capabilities'): blockers.append('CAPABILITY_UNVERIFIED')
         for note in candidate.get('validation_notes', []):
-            if note in {'RUNTIME_REQUIRED','GGUF_HEADER_INVALID','RUNTIME_MODEL_PATH_MISMATCH','RUNTIME_MODEL_UNVERIFIED','MODEL_OR_RUNTIME_NOT_FOUND','WORKFLOW_ADAPTER_REQUIRED','ADAPTER_REQUIRED'}: blockers.append(note)
+            if note in {'RUNTIME_REQUIRED','GGUF_HEADER_INVALID','RUNTIME_MODEL_PATH_MISMATCH','RUNTIME_MODEL_UNVERIFIED','MODEL_OR_RUNTIME_NOT_FOUND','WORKFLOW_ADAPTER_REQUIRED','ADAPTER_REQUIRED','OLLAMA_REMOTE_MODEL_BLOCKED','OLLAMA_LOCALITY_UNVERIFIED','OLLAMA_IDENTITY_CHANGED'}: blockers.append(note)
         if candidate.get('license_required') and not candidate.get('license_confirmed'): blockers.append('LICENSE_VALIDATION_REQUIRED')
         if candidate['runtime_config'].get('credential_required'): blockers.append('LOCAL_AI_CREDENTIAL_BINDING_REQUIRED')
         candidate['enable_blockers'] = list(dict.fromkeys(blockers))
@@ -419,6 +483,7 @@ class LocalDiscoveryService:
             candidate.update(enabled=False, registered_at=now())
             records = {**self.registrations, identifier: candidate}
             self._persist(registrations=records); self.registrations = records
+            self._control_epochs[identifier] = self._control_epochs.get(identifier, 0) + 1
             self._publish_model(candidate)
             return copy.deepcopy(candidate)
 
@@ -433,14 +498,20 @@ class LocalDiscoveryService:
             self._eligibility(candidate)
             records = {**self.registrations, identifier: candidate}
             self._persist(registrations=records); self.registrations = records
+            self._control_epochs[identifier] = self._control_epochs.get(identifier, 0) + 1
             self._publish_model(candidate); self._bridge(candidate)
             return copy.deepcopy(candidate)
 
     def enable(self, identifier):
-        # Revalidate immediately before explicit enable to avoid stale observations.
+        # Revalidate immediately before explicit enable; newer controls win by CAS.
+        with self.lock:
+            if identifier not in self.registrations: raise KeyError(identifier)
+            expected_epoch = self._control_epochs.get(identifier, 0)
         candidate = self.validate(identifier)
         with self.lock:
             if identifier not in self.registrations: raise KeyError(identifier)
+            if self._control_epochs.get(identifier, 0) != expected_epoch + 1:
+                raise ValueError('LOCAL_AI_CONFIGURATION_CHANGED')
             if not candidate['enable_eligible']: raise ValueError('LOCAL_AI_ENABLE_BLOCKED:' + ','.join(candidate['enable_blockers']))
             candidate.update(enabled=True, status='DEGRADED', enabled_at=now())
             # Validate adapters before committing enabled state; callback never launches.
@@ -449,7 +520,9 @@ class LocalDiscoveryService:
             try: self._persist(registrations=records)
             except ValueError:
                 self._bridge({**candidate, 'enabled': False}); raise
-            self.registrations = records; self._publish_model(candidate)
+            self.registrations = records
+            self._control_epochs[identifier] = expected_epoch + 2
+            self._publish_model(candidate)
             return copy.deepcopy(candidate)
 
     def disable(self, identifier):
@@ -457,6 +530,7 @@ class LocalDiscoveryService:
             candidate = {**self.registrations[identifier], 'enabled': False, 'status': 'DISABLED'}
             records = {**self.registrations, identifier: candidate}
             self._persist(registrations=records); self.registrations = records
+            self._control_epochs[identifier] = self._control_epochs.get(identifier, 0) + 1
             self._bridge(candidate); self._publish_model(candidate)
             return copy.deepcopy(candidate)
 
@@ -465,6 +539,7 @@ class LocalDiscoveryService:
             candidate = self.registrations[identifier]
             records = {key:value for key,value in self.registrations.items() if key != identifier}
             self._persist(registrations=records); self.registrations = records
+            self._control_epochs[identifier] = self._control_epochs.get(identifier, 0) + 1
             self._bridge({**candidate, 'enabled': False})
             self.center.models.pop(identifier, None)
             return {'removed': True, 'model_files_deleted': False}

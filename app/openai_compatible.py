@@ -87,7 +87,7 @@ class OpenAICompatibleTextProvider:
         if request.cancellation and request.cancellation.is_set():
             raise ModelRuntimeError(RuntimeErrorCode.CANCELLED,"已停止生成")
         if time.monotonic()-started > self.config.overall_timeout:
-            raise ModelRuntimeError(RuntimeErrorCode.TIMEOUT,"生成超时")
+            raise ModelRuntimeError(RuntimeErrorCode.TIMEOUT,"生成超时",metadata={"phase":"OVERALL"})
 
     def generate_text(self, request: TextGenerationRequest) -> TextGenerationResponse:
         started=time.monotonic()

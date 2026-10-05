@@ -85,3 +85,11 @@ Both `/api/model-center/local-ai` and `/api/v1/model-center/local-ai` expose:
 Implementation: `app/model_center/discovery_types.py`, `discovery_probes.py`, `discovery.py`, `discovery_api.py`, `discovery_bridge.py`; frontend `LocalAiDiscovery` and `localAiDiscoveryApi`. Storage is an atomic, host-local JSON file alongside runtime configuration, using the existing stable identity store and existing Model Center/text/image registries.
 
 To extend: add a bounded metadata probe; keep family declarations distinct from verified capabilities; add a reviewed workflow adapter with explicit node/model requirements; test Detect → Validate → Register → Enable → authorized task dispatch and disable/restart invalidation. Do not infer safe arbitrary custom-node execution from `/object_info` presence. See `LOCAL_AI_WINDOWS_ACCEPTANCE.md` for independent native acceptance.
+
+## R2 safety-review update: Ollama locality and author dispatch
+
+A localhost Ollama server may advertise hosted models. Both `/api/tags` and `/api/show` remote source fields are checked; explicit `remote_host` or `remote_model` blocks LOCAL routing regardless of the model name. Missing/malformed metadata is NOT_VERIFIED. Positive local GGUF metadata, architecture, completion capability and a stable digest are required. Discovery and the old Ollama generation/stream leaves share this check, and repeat it before prompt dispatch. Rescan identity drift, changed source locality, cancellation and later Disable/Remove/Configure invalidate older authority.
+
+Enabled discovery text models use the existing author stream protocol with a buffered final delta; this is not real-time token streaming. External llama aliases and the selected Comfy checkpoint's exact loader field are honored. Legacy Model Center Validate/Diagnostics are also passive and never execute `--version`.
+
+See `docs/delivery/dot-astra-rc-r2/local-ai-safety-review.md` for the review fixes and synthetic HTTP-to-author-Draft evidence. Actual native/model acceptance remains separate.

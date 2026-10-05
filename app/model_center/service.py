@@ -188,19 +188,14 @@ class RuntimeLifecycle:
                 executable = None
         path_ok = bool(executable and executable.is_file()) if definition.runtime_type == RuntimeType.LLAMA_CPP else bool(definition.working_directory and Path(definition.working_directory).is_dir())
         version = None
+        version_source = "NOT_VERIFIED"
         if probe_version and executable and executable.is_file():
-            try:
-                result = subprocess.run(
-                    [str(executable), "--version"],
-                    cwd=definition.working_directory or executable.parent,
-                    env=_safe_runtime_environment(definition.environment),
-                    capture_output=True,
-                    check=False,
-                    timeout=5,
-                )
-                version = (result.stdout or result.stderr).decode("utf-8", errors="replace").strip()[:500] or None
-            except (OSError, subprocess.TimeoutExpired):
-                version = None
+            # Even the legacy Validate/Diagnostics paths are passive. Executing
+            # an arbitrary selected binary with --version is still execution.
+            from .discovery_probes import executable_metadata
+            metadata = executable_metadata(str(executable))
+            version = metadata.get("version")
+            version_source = metadata.get("version_source", "NOT_VERIFIED")
         instance = self.refresh(definition.id)
         return {
             "runtime_id": definition.id,
@@ -208,6 +203,8 @@ class RuntimeLifecycle:
             "path_exists": path_ok,
             "executable_exists": bool(executable and executable.is_file()),
             "version": version,
+            "version_source": version_source,
+            "executable_executed": False,
             "health": instance.health if instance else {"reachable": False},
             "gpu_capability": (instance.health.get("gpu") if instance else None) or "UNKNOWN",
             "security_warning": None if self.is_local(definition) else "RUNTIME_NOT_LOOPBACK_BOUND",

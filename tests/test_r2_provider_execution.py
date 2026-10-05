@@ -89,18 +89,12 @@ def test_interrupted_agent_job_requires_explicit_retry():
 def test_ollama_stream_requires_terminal_record_and_preserves_usage():
     from app.providers import OllamaProvider
     from app.model_runtime import LegacyTextProviderAdapter
-    class Response:
-        def __init__(self,complete):self.complete=complete
-        def __enter__(self):return self
-        def __exit__(self,*_):pass
-        def __iter__(self):
-            yield b'{"response":"synthetic","done":false}\n'
-            if self.complete:yield b'{"done":true,"prompt_eval_count":8,"eval_count":3}\n'
-    provider=OllamaProvider("http://localhost:11434")
+    from test_local_ai_discovery_egress import OllamaWire
+    wire=OllamaWire('synthetic')
+    provider=OllamaProvider("http://localhost:11434");provider._metadata_client=wire.client()
     adapter=LegacyTextProviderAdapter("ollama",provider)
     request=TextGenerationRequest("ollama","synthetic","Synthetic input")
-    with patch("app.providers.urlopen",return_value=Response(True)):
-        events=list(adapter.stream_text(request))
+    events=list(adapter.stream_text(request))
     assert events[-1].response.usage.input_tokens==8 and events[-1].response.usage.total_tokens==11
-    with patch("app.providers.urlopen",return_value=Response(False)),pytest.raises(ModelRuntimeError):
-        list(adapter.stream_text(request))
+    wire.complete=False
+    with pytest.raises(ModelRuntimeError):list(adapter.stream_text(request))

@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 const frontend=path.dirname(fileURLToPath(import.meta.url));
 const root=path.resolve(frontend,'..');
 const python=process.env.R2_PYTHON||'python';
-export default defineConfig({
+export default defineConfig({outputDir:path.join(frontend,"test-results","business"),
  testDir:path.join(frontend,'tests','e2e'),testMatch:/r2-business\.spec\.ts/,workers:1,fullyParallel:false,timeout:90000,expect:{timeout:15000},
  reporter:[['list'],['junit',{outputFile:process.env.CI_RECEIPTS?path.join(process.env.CI_RECEIPTS,'business.xml'):'test-results-r2/business.xml'}]],
  use:{baseURL:'http://127.0.0.1:5175',locale:'zh-CN',viewport:{width:1440,height:900},trace:'retain-on-failure',screenshot:'only-on-failure'},

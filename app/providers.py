@@ -1,5 +1,5 @@
 from __future__ import annotations
-import json, os, time
+import json, os, time, threading
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from urllib.request import Request, urlopen
@@ -30,15 +30,50 @@ class LLMProvider(ABC):
 class OllamaProvider(LLMProvider):
     name = "ollama"
     supports_stream_usage = True
-    def __init__(self, base_url: str): self.base_url = base_url.rstrip("/")
+    supports_dispatch_guard = True
+    def __init__(self, base_url: str):
+        self.base_url = base_url.rstrip("/")
+        self._metadata_client = None
+        self._model_proofs = {}
+        self._model_proof_lock = threading.Lock()
+
+    def _local_client(self):
+        if self._metadata_client is None:
+            from .model_center.discovery_probes import LocalProbeClient
+            self._metadata_client = LocalProbeClient()
+        return self._metadata_client
+
+    def local_model_metadata(self, model: str) -> dict:
+        from .model_center.discovery_probes import read_ollama_local_metadata
+        try: return read_ollama_local_metadata(self._local_client(), self.base_url, model, self.list_models)
+        except ValueError: return {"source_locality":"NOT_VERIFIED", "reported_capabilities":[], "locality_fingerprint":None}
+
+    def _local_dispatch(self, model, dispatch_guard=None, cancellation=None):
+        from .model_center.discovery_types import local_endpoint
+        evidence = self.local_model_metadata(model)
+        proof = evidence.get("locality_fingerprint")
+        with self._model_proof_lock:
+            previous = self._model_proofs.get(model)
+            if (evidence.get("source_locality") != "LOCAL_VERIFIED" or "completion" not in evidence.get("reported_capabilities", [])
+                    or not proof or (previous is not None and previous != proof)):
+                raise ProviderError("OLLAMA_LOCAL_MODEL_REVALIDATION_REQUIRED")
+            self._model_proofs[model] = proof
+        if dispatch_guard is not None: dispatch_guard()
+        if cancellation is not None and cancellation.is_set(): raise ProviderError("OLLAMA_CANCELLED")
+        return local_endpoint(self.base_url), self._local_client()
+
     def generate(self, prompt: str, model: str, **kwargs) -> Generation:
-        started=time.monotonic(); payload=json.dumps({"model":model,"prompt":prompt,"stream":False,"options":kwargs}).encode()
-        try:
-            with urlopen(Request(self.base_url+"/api/generate",payload,{"Content-Type":"application/json"}),timeout=kwargs.get("timeout",120)) as r: data=json.load(r)
+        from .model_center.discovery_probes import LocalProbeClient
+        dispatch_guard, cancellation = kwargs.pop("dispatch_guard", None), kwargs.pop("cancellation", None)
+        timeout = kwargs.pop("timeout", 120)
+        endpoint, metadata_client = self._local_dispatch(model, dispatch_guard, cancellation)
+        started=time.monotonic()
+        client=LocalProbeClient(timeout=timeout);client.open=metadata_client.open
+        try: data=client.json(endpoint, "/api/generate", body={"model":model,"prompt":prompt,"stream":False,"options":kwargs})
         except Exception as exc: raise ProviderError(f"Ollama unavailable: {type(exc).__name__}") from exc
         return Generation(data.get("response",""),self.name,model,data.get("prompt_eval_count",0),data.get("eval_count",0),int((time.monotonic()-started)*1000))
     def health_check(self) -> bool:
-        try: urlopen(self.base_url+"/api/tags",timeout=3); return True
+        try: self._local_client().json(self.base_url,"/api/tags"); return True
         except Exception: return False
     def list_models(self, *, read_json=None, include_details: bool = False, strict: bool = False) -> list[dict]:
         """Enumerate installed models; discovery injects its bounded local-only reader.
@@ -49,8 +84,7 @@ class OllamaProvider(LLMProvider):
         """
         try:
             if read_json is None:
-                with urlopen(self.base_url+"/api/tags",timeout=3) as response:
-                    data=json.load(response)
+                data=self._local_client().json(self.base_url,"/api/tags")
             else:
                 data=read_json("/api/tags")
             if not isinstance(data, dict) or not isinstance(data.get("models", None if strict else []), list):
@@ -64,7 +98,7 @@ class OllamaProvider(LLMProvider):
                     continue
                 item={"name":model.get("name"),"size":model.get("size"),"modified_at":model.get("modified_at")}
                 if include_details:
-                    item.update({key:model[key] for key in ("digest", "details") if key in model})
+                    item.update({key:model[key] for key in ("digest", "details", "remote_model", "remote_host") if key in model})
                 result.append(item)
             return result
         except Exception:
@@ -73,13 +107,16 @@ class OllamaProvider(LLMProvider):
             return []
     def stream(self,prompt:str,model:str,**kwargs):
         usage_callback=kwargs.pop("usage_callback",None)
+        dispatch_guard,cancellation=kwargs.pop("dispatch_guard",None),kwargs.pop("cancellation",None)
         timeout=kwargs.pop("timeout",120)
+        endpoint,client=self._local_dispatch(model,dispatch_guard,cancellation)
         if "max_tokens" in kwargs:kwargs["num_predict"]=kwargs.pop("max_tokens")
         payload=json.dumps({"model":model,"prompt":prompt,"stream":True,"options":kwargs}).encode()
         done=False
         try:
-            with urlopen(Request(self.base_url+"/api/generate",payload,{"Content-Type":"application/json"}),timeout=timeout) as response:
+            with client.open(Request(endpoint+"/api/generate",payload,{"Content-Type":"application/json"}),timeout=timeout) as response:
                 for line in response:
+                    if cancellation is not None and cancellation.is_set():raise ProviderError("OLLAMA_CANCELLED")
                     if not line:continue
                     item=json.loads(line)
                     if item.get("error"):raise ProviderError("Ollama generation failed")

@@ -103,17 +103,31 @@ class Runtime:
         return result
     def models(self)->list[dict]:
         models=[]
-        for m in self.providers["ollama"].list_models(): models.append({"name":m["name"],"provider":"ollama","context_window":None,"capabilities":["generate","stream"],"local":True,"cloud":False,"available":True})
+        for m in self.providers["ollama"].list_models(include_details=True):
+            remote=bool(m.get("remote_host") or m.get("remote_model"))
+            # A loopback service may proxy hosted inference. Listing metadata
+            # alone proves neither model locality nor its execution capability.
+            models.append({"name":m["name"],"provider":"ollama","context_window":None,"capabilities":[],"local":False,"cloud":remote,"available":False,"source_locality":"REMOTE" if remote else "NOT_VERIFIED"})
         models.append({"name":"mock-writer","provider":"mock","context_window":8192,"capabilities":["generate","stream","test"],"local":True,"cloud":False,"available":self.providers["mock"].health_check()})
         return models
     def text_models(self)->list[dict]:
         providers={item.provider_id:item for item in self.provider_registry.descriptors()}
-        return [
-            {"provider_id":model.provider_id,"model_id":model.model_id,"display_name":model.display_name + (" [模拟测试，未调用真实模型]" if provider and provider.health_status.startswith("mock_standin") else ""),"available":bool(provider and provider.configured and provider.available),"execution_mode":"mock_standin" if provider and provider.health_status.startswith("mock_standin") else "real"}
-            for model in self.model_registry.descriptors()
-            if model.modality is Modality.TEXT and model.enabled and model.provider_id!="mock"
-            for provider in (providers.get(model.provider_id),)
-        ]
+        result=[]
+        for model in self.model_registry.descriptors():
+            if model.modality is not Modality.TEXT or not model.enabled or model.provider_id=="mock":
+                continue
+            provider=providers.get(model.provider_id)
+            available=bool(provider and provider.configured and provider.available)
+            row={"provider_id":model.provider_id,"model_id":model.model_id,"display_name":model.display_name + (" [模拟测试，未调用真实模型]" if provider and provider.health_status.startswith("mock_standin") else ""),"available":available,"execution_mode":"mock_standin" if provider and provider.health_status.startswith("mock_standin") else "real"}
+            if model.provider_id=="ollama":
+                try:
+                    proof=self.providers["ollama"].local_model_metadata(model.model_id)
+                except Exception:
+                    proof={"source_locality":"NOT_VERIFIED","reported_capabilities":[]}
+                row["source_locality"]=proof.get("source_locality","NOT_VERIFIED")
+                row["available"]=available and row["source_locality"]=="LOCAL_VERIFIED" and "completion" in proof.get("reported_capabilities",[])
+            result.append(row)
+        return result
     def is_remote_text_provider(self,provider_id:str|None)->bool:
         if not provider_id:return False
         # Egress follows the host-owned adapter, not the brand shown in a picker.

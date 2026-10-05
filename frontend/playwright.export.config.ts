@@ -3,7 +3,7 @@ import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 const frontend=path.dirname(fileURLToPath(import.meta.url));
 const root=path.resolve(frontend,'..');
-export default defineConfig({
+export default defineConfig({outputDir:path.join(frontend,"test-results","export"),
   testDir:path.join(frontend,'tests/e2e'),testMatch:/export-recovery\.spec\.ts/,workers:1,fullyParallel:false,timeout:60000,
   reporter:'list',use:{baseURL:'http://127.0.0.1:5178',trace:'retain-on-failure',locale:'zh-CN',timezoneId:'UTC',acceptDownloads:true},
   projects:[{name:'chromium',use:{...devices['Desktop Chrome']}}],
