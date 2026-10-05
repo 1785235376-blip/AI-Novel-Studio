@@ -16,7 +16,7 @@ class MemoryGenerations:
 
 
 class Chapters:
-    def get(self, _chapter_id): return {"content": "chapter", "number": 1, "version": 2}
+    def get(self, _chapter_id): return {"id":"c","novel_id":"n","content": "chapter", "number": 1, "version": 2, "privacy_level": "CLOUD_ALLOWED"}
 
 
 class Contexts:
@@ -33,13 +33,16 @@ class Node:
 
 
 def manager():
+    from app.source_privacy import review_source_privacy, content_digest
+    chapter=Chapters().get("c")
+    review_source_privacy(chapter,None,"synthetic-test","CLOUD_ALLOWED",2,content_digest(chapter))
     return JobManager(generations=MemoryGenerations(), chapters=Chapters(), contexts=Contexts(), canon=object(), memory_extractor=object(), snapshot_required=False, collaboration_updates=object())
 
 
 def test_text_model_catalog_comes_from_registry_without_credentials():
     items = Runtime().text_models()
     assert {item["model_id"] for item in items} >= {"deepseek-chat", "deepseek-reasoner"}
-    assert all(set(item) == {"provider_id", "model_id", "display_name", "available"} for item in items)
+    assert all(set(item) == {"provider_id", "model_id", "display_name", "available", "execution_mode"} for item in items)
     assert "api_key" not in repr(items).casefold() and "authorization" not in repr(items).casefold()
 
 

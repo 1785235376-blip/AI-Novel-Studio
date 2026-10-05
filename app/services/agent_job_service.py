@@ -7,6 +7,7 @@ import threading
 import csv
 import io
 from datetime import datetime, timezone
+from dataclasses import asdict
 from pydantic import BaseModel,Field
 
 from ..agent_catalog import AGENTS
@@ -26,6 +27,11 @@ class AgentJobService:
     def create(self,agent_id,novel_id,chapter_number,instruction="",target="local",provider=None,model=None,execution_mode="deterministic",timeout_seconds=120,retry_of=None):
         agent=next((item for item in AGENTS if item["id"]==agent_id),None)
         if agent is None:raise KeyError(agent_id)
+        if target not in {"local", "cloud"}:raise ValueError("invalid execution target")
+        if execution_mode == "model":
+            if self.runtime is None:raise ValueError("agent model runtime is unavailable")
+            # Provider registry, not the request's target label, determines egress.
+            target = "cloud" if self.runtime.is_remote_text_provider(provider) else "local"
         context=self.contexts.build(agent_id,novel_id,chapter_number,instruction,target=="cloud");jid=str(uuid.uuid4());now=utc()
         if execution_mode not in {"deterministic","model"}:raise ValueError("invalid agent execution mode")
         if execution_mode=="model" and (not provider or not model):raise ValueError("model execution requires provider and model")
@@ -39,10 +45,11 @@ class AgentJobService:
         job.setdefault("execution_label", "真实模型执行" if job.get("execution_mode")=="model" else "契约校验，未调用模型")
         return job
 
-    def list(self, novel_id=None, agent_id=None, status=None, page=1, page_size=20, created_after=None, created_before=None, branch_id=None):
+    def list(self, novel_id=None, agent_id=None, status=None, page=1, page_size=20, created_after=None, created_before=None, branch_id=None, visibility=None):
         if page < 1 or page_size < 1 or page_size > 100:
             raise ValueError("invalid pagination")
         jobs=[item for item in self.generations.load_all() if item.get("operation")=="AGENT_TASK"]
+        if visibility is not None: jobs=[item for item in jobs if visibility(item)]
         for item in jobs: item.setdefault("execution_label", "真实模型执行" if item.get("execution_mode")=="model" else "契约校验，未调用模型")
         if novel_id: jobs=[item for item in jobs if item.get("novel_id")==novel_id]
         if agent_id: jobs=[item for item in jobs if item.get("agent_id")==agent_id]
@@ -54,13 +61,13 @@ class AgentJobService:
         total=len(jobs); start=(page-1)*page_size
         return {"items":jobs[start:start+page_size],"page":page,"page_size":page_size,"total":total,"has_more":start+page_size<total}
 
-    def export_csv(self, novel_id=None, agent_id=None, status=None, created_after=None, created_before=None, branch_id=None):
-        payload=self.list(novel_id,agent_id,status,1,100,created_after,created_before,branch_id)
+    def export_csv(self, novel_id=None, agent_id=None, status=None, created_after=None, created_before=None, branch_id=None, visibility=None):
+        payload=self.list(novel_id,agent_id,status,1,100,created_after,created_before,branch_id,visibility)
         out=io.StringIO(); writer=csv.DictWriter(out,fieldnames=["id","agent_id","agent_name","novel_id","status","execution_mode","provider","model","created_at","updated_at","error_code","retry_of"],extrasaction="ignore"); writer.writeheader(); writer.writerows(payload["items"])
         return out.getvalue()
 
-    def export_summary(self, novel_id=None, agent_id=None, status=None, created_after=None, created_before=None, branch_id=None):
-        payload=self.list(novel_id,agent_id,status,1,100,created_after,created_before,branch_id)
+    def export_summary(self, novel_id=None, agent_id=None, status=None, created_after=None, created_before=None, branch_id=None, visibility=None):
+        payload=self.list(novel_id,agent_id,status,1,100,created_after,created_before,branch_id,visibility)
         return {"result_count":payload["total"],"filters":{"novel_id":novel_id,"agent_id":agent_id,"status":status,"created_after":created_after,"created_before":created_before,"branch_id":branch_id}}
 
     def execute(self,jid):
@@ -70,26 +77,39 @@ class AgentJobService:
             cancellation=self.cancellations.setdefault(jid,threading.Event());working={**job,"status":"WORKING","updated_at":utc()};self.generations.save(working)
         try:
             if job.get("execution_mode","deterministic")=="model":
-                output,provider,model=self._execute_model(job)
+                output,provider,model,usage,provider_execution_mode=self._execute_model(job)
                 status="COMPLETED"
-                execution_label="真实模型执行"
-                model_called=True
+                execution_label="模拟测试执行，未调用真实模型" if provider_execution_mode=="mock_standin" else "真实模型执行"
+                model_called=provider_execution_mode!="mock_standin"
             else:
                 output={"schema":job["output_schema"],"agent_id":job["agent_id"],"summary":"契约校验通过，未调用模型，未生成可应用正文。","proposals":[],"findings":[],"context_hash":job["context_hash"]}
                 provider,model=job.get("provider") or "deterministic-local",job.get("model") or "contract-validator-v1"
                 status="VALIDATED"
                 execution_label="契约校验，未调用模型"
                 model_called=False
+                usage=None
+                provider_execution_mode="deterministic"
             with self.lock:
                 current=self.get(jid)
                 if current["status"] in {"CANCELLED","FAILED"}:return current
-                completed={**working,"status":status,"execution_label":execution_label,"model_called":model_called,"result":{"structured_output":output,"empty":not output.get("proposals") and not output.get("findings")},"provider":provider,"model":model,"fallback_used":False,"updated_at":utc()};self.generations.save(completed);return completed
+                completed={**working,"status":status,"execution_label":execution_label,"model_called":model_called,"result":{"structured_output":output,"empty":not output.get("proposals") and not output.get("findings")},"provider":provider,"model":model,"fallback_used":False,"provider_execution_mode":provider_execution_mode,"usage":usage,"usage_status":"REPORTED" if usage else "UNKNOWN","updated_at":utc()};self.generations.save(completed);return completed
         except Exception as exc:
             code=exc.code.value if isinstance(exc,ModelRuntimeError) else ("INVALID_STRUCTURED_OUTPUT" if isinstance(exc,(ValueError,json.JSONDecodeError)) else "AGENT_EXECUTION_FAILED")
             with self.lock:
                 current=self.get(jid)
                 if current["status"] in {"CANCELLED","FAILED"}:return current
-                failed={**working,"status":"FAILED","error_code":code,"error":str(exc),"fallback_used":False,"updated_at":utc()};self.generations.save(failed);return failed
+                failed={**working,"status":"FAILED","error_code":code,"error":exc.safe_message if isinstance(exc,ModelRuntimeError) else "Agent execution failed; inspect the safe error code.","fallback_used":False,"updated_at":utc()};self.generations.save(failed);return failed
+
+    def recover_interrupted(self):
+        """Reconcile persisted in-flight work after restart without replaying billing."""
+        recovered=[]
+        with self.lock:
+            for job in self.generations.load_all():
+                if job.get("operation") != "AGENT_TASK" or job.get("status") != "WORKING" or job["id"] in self.cancellations:
+                    continue
+                failed={**job,"status":"FAILED","error_code":"INTERRUPTED","error":"Execution interrupted. Review before explicitly retrying; the provider may have processed the request.","replay_safe":False,"updated_at":utc()}
+                self.generations.save(failed);recovered.append(job["id"])
+        return recovered
 
     def start(self,jid):
         job=self.get(jid)
@@ -117,20 +137,24 @@ class AgentJobService:
         # Keep the authorization scope attached to the retry. Without this,
         # a branch-bound job silently became an unscoped legacy job and could
         # then be read or executed without the branch capability.
-        if job.get("branch_id"):
-            retried={**retried,"branch_id":job["branch_id"]}
-            self.generations.save(retried)
+        retried={**retried,**{key:job[key] for key in ("branch_id","owner") if key in job}}
+        self.generations.save(retried)
         return retried
 
     def _execute_model(self,job):
         if self.runtime is None or self.agent_runner is None:raise RuntimeError("agent model runtime is unavailable")
+        actual_target="cloud" if self.runtime.is_remote_text_provider(job["provider"]) else "local"
+        if actual_target != job.get("target"):
+            raise ValueError("provider egress changed; create and review a fresh agent job")
         context=self.contexts.build(job["agent_id"],job["novel_id"],int(str(job["chapter_id"]).rsplit(":",1)[-1]),job.get("instruction",""),job.get("target")=="cloud")
+        if context["context_hash"] != job["context_hash"] or context["chapter_version"] != job["chapter_version"]:
+            raise ValueError("agent source changed; create a fresh job for review")
         prompt=self.agent_runner.build_prompt(job["prompt_role"],context,job.get("instruction") or "Return a structured result.")+"\n\nReturn JSON only with keys: schema, agent_id, summary, proposals, findings, context_hash."
         node=self.runtime.prepare_text_route(job["provider"],job["model"],self.runtime.providers.get(job["provider"]))
         request=TextGenerationRequest(provider_id=job["provider"],model_id=job["model"],prompt=prompt,context=context,parameters=TextGenerationParameters(temperature=0.2),metadata={"purpose":"agent_task"},job_id=job["id"],cancellation=self.cancellations.setdefault(job["id"],threading.Event()))
         response=node.execute(TextModelNodeInput(request)).response;parsed=StructuredAgentOutput.model_validate_json(response.text).model_dump(by_alias=True)
         if parsed["schema"]!=job["output_schema"] or parsed["agent_id"]!=job["agent_id"] or parsed["context_hash"]!=job["context_hash"]:raise ValueError("structured agent output contract mismatch")
-        return parsed,response.provider_id,response.model_id
+        return parsed,response.provider_id,response.model_id,asdict(response.usage) if response.usage else None,response.execution_mode
 
     def review(self,jid,decision,reviewed_by,note="",actions=None):
         job=self.get(jid)
@@ -152,6 +176,13 @@ class AgentJobService:
         if review.get("applied"):raise ValueError("agent job is already applied")
         output=(job.get("result") or {}).get("structured_output");current_hash=hashlib.sha256(json.dumps(output,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()).hexdigest()
         if current_hash!=review.get("output_hash"):raise ValueError("agent output changed after review")
+        actions = review.get("reviewed_actions", [])
+        # Validate the complete action set before the first domain mutation.
+        for action in actions:
+            if action.get("type") not in {"outline.update", "volume.upsert", "scene.upsert"}:
+                raise ValueError("unsupported agent application action")
+            if action.get("type") != "outline.update" and not action.get("id"):
+                raise ValueError("agent application action requires id")
         snapshots=[]
         for action in review.get("reviewed_actions",[]):
             kind=action.get("type");payload=dict(action.get("payload") or {});target_id=str(action.get("id") or "")

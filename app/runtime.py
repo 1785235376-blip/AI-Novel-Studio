@@ -40,13 +40,31 @@ class Runtime:
             health_status = "mock_standin" if available else "mock_standin_unavailable"
         else:
             from .credential_vault import credential_vault
-            configured = credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
+            configured = credential_vault.has("deepseek") or (not settings.enable_packaged_runtime and bool(os.getenv("DEEPSEEK_API_KEY")))
             available = configured
             self._deepseek_provider_adapter = deepseek
             health_status = "available" if available else "not_configured"
         self.provider_registry.register(ProviderDescriptor("deepseek","DeepSeek","remote",frozenset({Modality.TEXT}),configured,available,health_status),self._deepseek_provider_adapter,replace=True)
         for model_id,display_name in (("deepseek-chat","DeepSeek Chat"),("deepseek-reasoner","DeepSeek Reasoner")):
             self.model_registry.register(ModelDescriptor(model_id,"deepseek",display_name,Modality.TEXT,frozenset({"generate","stream"}),streaming=True,enabled=True),replace=True)
+        # These host-owned variables contain model identifiers only. Credentials
+        # remain in the existing vault (development env fallback is unchanged).
+        for provider_id,variable in (("claude","ANTHROPIC_MODEL"),("gemini","GEMINI_MODEL")):
+            model_id=os.getenv(variable,"").strip()
+            if model_id:self.register_native_text_route(provider_id,model_id)
+    def register_native_text_route(self, provider_id: str, model_id: str):
+        """Host bootstrap only: explicit configured model, no discovery or egress."""
+        from .native_text_providers import AnthropicTextProvider, GeminiTextProvider
+        from .credential_vault import credential_vault
+        configs={"claude":(AnthropicTextProvider,"https://api.anthropic.com/v1","ANTHROPIC_API_KEY"),"gemini":(GeminiTextProvider,"https://generativelanguage.googleapis.com/v1beta","GEMINI_API_KEY")}
+        if provider_id not in configs or not model_id or len(model_id)>200:
+            raise ValueError("explicit supported native provider and model required")
+        cls,url,key_env=configs[provider_id]
+        configured=credential_vault.has(provider_id) or (not settings.enable_packaged_runtime and bool(os.getenv(key_env)))
+        adapter=cls(CompatibleProviderConfig(provider_id,url,key_env))
+        self.provider_registry.register(ProviderDescriptor(provider_id,provider_id.title(),"remote",frozenset({Modality.TEXT}),configured,configured,"configured_unverified" if configured else "not_configured"),adapter,replace=True)
+        self.model_registry.register(ModelDescriptor(model_id,provider_id,model_id,Modality.TEXT,frozenset({"generate","stream"}),streaming=True),replace=True)
+
     def provider_status(self)->dict:
         result={}
         for name,p in self.providers.items():
@@ -58,7 +76,7 @@ class Runtime:
                     execution_mode = "mock_standin"
                 else:
                     from .credential_vault import credential_vault
-                    configured = credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
+                    configured = credential_vault.has("deepseek") or (not settings.enable_packaged_runtime and bool(os.getenv("DEEPSEEK_API_KEY")))
                     available = p.health_check() if configured else False
                     health_status = "available" if available else ("not_configured" if not configured else "unavailable")
                     execution_mode = "real"
@@ -77,8 +95,11 @@ class Runtime:
                         current.supported_modalities, configured, available,
                         health_status
                     ), self._deepseek_provider_adapter, replace=True)
-        result["anthropic"]={"available":False,"configured":bool(os.getenv("ANTHROPIC_API_KEY")),"kind":"cloud","status":"adapter_not_implemented"}
-        result["gemini"]={"available":False,"configured":bool(os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")),"kind":"cloud","status":"adapter_not_implemented"}
+        descriptors={item.provider_id:item for item in self.provider_registry.descriptors()}
+        for provider_id in ("claude","gemini"):
+            descriptor=descriptors.get(provider_id)
+            result[provider_id]={"available":bool(descriptor and descriptor.available),"configured":bool(descriptor and descriptor.configured),"kind":"cloud","status":"configured_unverified" if descriptor and descriptor.configured else "explicit_model_and_vault_required","execution_mode":"real","protocol_verification":"CONTRACT_ONLY"}
+        result["anthropic"]=result["claude"]
         return result
     def models(self)->list[dict]:
         models=[]
@@ -88,14 +109,17 @@ class Runtime:
     def text_models(self)->list[dict]:
         providers={item.provider_id:item for item in self.provider_registry.descriptors()}
         return [
-            {"provider_id":model.provider_id,"model_id":model.model_id,"display_name":model.display_name,"available":bool(provider and provider.configured and provider.available)}
+            {"provider_id":model.provider_id,"model_id":model.model_id,"display_name":model.display_name + (" [模拟测试，未调用真实模型]" if provider and provider.health_status.startswith("mock_standin") else ""),"available":bool(provider and provider.configured and provider.available),"execution_mode":"mock_standin" if provider and provider.health_status.startswith("mock_standin") else "real"}
             for model in self.model_registry.descriptors()
             if model.modality is Modality.TEXT and model.enabled and model.provider_id!="mock"
             for provider in (providers.get(model.provider_id),)
         ]
     def is_remote_text_provider(self,provider_id:str|None)->bool:
         if not provider_id:return False
-        return any(item.provider_id==provider_id and item.provider_type=="remote" for item in self.provider_registry.descriptors())
+        # Egress follows the host-owned adapter, not the brand shown in a picker.
+        if provider_id == "deepseek" and self._deepseek_execution_mode == "mock_standin" and isinstance(self._deepseek_provider_adapter, LegacyTextProviderAdapter) and isinstance(self._deepseek_provider_adapter.provider, MockProvider):
+            return False
+        return any(item.provider_id==provider_id and item.provider_type in {"remote", "cloud"} for item in self.provider_registry.descriptors())
     def router(self,profile:str,role:str)->ModelRouter:
         packaged=bool(settings.enable_packaged_runtime)
         local="mock" if settings.mock_provider and not packaged else "ollama"
@@ -115,6 +139,8 @@ class Runtime:
         self.provider_registry.register(ProviderDescriptor(provider_id,provider_id.title(),"development" if provider_id=="mock" else ("local" if provider_id=="ollama" else "cloud"),frozenset({Modality.TEXT}),configured,available),LegacyTextProviderAdapter(provider_id,provider),replace=True)
         self.model_registry.register(ModelDescriptor(model_id,provider_id,display_name or model_id,Modality.TEXT,frozenset({"generate","stream"}),context_window,streaming=True,enabled=True),replace=True)
     def prepare_text_route(self,provider_id:str,model_id:str,provider=None):
+        if self.is_remote_text_provider(provider_id) and not settings.enable_cloud:
+            raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, "主机未启用云端模型调用")
         # Route preparation is read-only: registration is the only identity minting path.
         identities_present = (
             self.identity_store.get("provider", provider_id) is not None
@@ -132,7 +158,10 @@ class Runtime:
             return False
         if provider_id == "deepseek":
             from .credential_vault import credential_vault
-            return credential_vault.has("deepseek") or bool(os.getenv("DEEPSEEK_API_KEY"))
+            return credential_vault.has("deepseek")
+        if provider_id in {"claude","gemini"}:
+            from .credential_vault import credential_vault
+            return self.provider_registry.contains(provider_id) and credential_vault.has(provider_id)
         provider = self.providers.get(provider_id)
         health = getattr(provider, "health_check", None)
         return bool(health()) if callable(health) else False

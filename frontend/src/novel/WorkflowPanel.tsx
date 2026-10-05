@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api";
+import { useStudio } from "../store";
 import { Button, Panel } from "../ui/primitives";
 import {
   FOCUS_FAILED_TASKS_EVENT,
@@ -9,6 +10,9 @@ import "./WorkflowConsole.css";
 import type { WorkflowInspection } from "./WorkflowInspector";
 
 export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInspect?: (inspection: WorkflowInspection) => void }) {
+  const branchId = useStudio((state) => state.scope?.branchId);
+  const [sourceText, setSourceText] = useState("");
+  const [busy, setBusy] = useState(false);
   const [items, setItems] = useState<any[]>([]),
     [selected, setSelected] = useState<any>(),
     [runs, setRuns] = useState<any[]>([]),
@@ -42,8 +46,9 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
     }
   };
   useEffect(() => {
+    setSelected(undefined); setRuns([]); setSourceText("");
     refresh();
-  }, [novelId]);
+  }, [novelId, branchId]);
   useEffect(() => {
     publishTaskSummary(
       "workflow",
@@ -82,7 +87,10 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
       agent_task: "Agent 任务",
     };
     try {
-      await api.createWorkflow({
+      if (template.startsWith("recipe:")) {
+        await api.createWorkflowRecipe(template.slice(7), novelId, branchId);
+      } else await api.createWorkflow({
+        branch_id: branchId,
         novel_id: novelId,
         title: title.trim(),
         description,
@@ -104,6 +112,12 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
       setError("工作流创建失败，请检查项目状态。");
     }
   }
+  async function action(work: () => Promise<unknown>) {
+    setBusy(true); setError("");
+    try { await work(); if(selected) await loadRuns(selected.id); }
+    catch { setError("操作失败；请检查权限、输入和任务当前状态后重试。"); }
+    finally { setBusy(false); }
+  }
   return (
     <Panel title="工作流编排" className="workflow-console">
       <section>
@@ -118,6 +132,9 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
             value={template}
             onChange={(e) => setTemplate(e.target.value)}
           >
+            <option value="recipe:import_knowledge">导入资料 → 知识候选 → 审核</option>
+            <option value="recipe:planning_draft">创作规划 → 草稿 → 审阅</option>
+            <option value="recipe:screenplay_assets">剧本 → 镜头分镜 → 资源任务提案</option>
             <option value="quality_gate">质量检查</option>
             <option value="manual_approval">人工审批</option>
             <option value="project_snapshot">项目快照</option>
@@ -157,68 +174,54 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
       {selected && (
         <section ref={runsSection} tabIndex={-1} aria-label="工作流运行记录">
           <h4>{selected.title || selected.name || selected.id} 运行</h4>
-          <Button
-            onClick={async () => {
-              const run = await api.createWorkflowRun(selected.id, {
-                input: { novel_id: novelId },
+          <p className="novel-help">配方使用本地规则整理输入，结果仅为审核材料。不会自动修改正文、Canon 或提交外部资源任务。</p>
+          <label>配方输入（每行一条资料、创作要点或场景）<textarea value={sourceText} maxLength={20000} rows={5} onChange={event => setSourceText(event.target.value)} /></label>
+          <Button disabled={busy}
+            onClick={() => action(() => api.createWorkflowRun(selected.id, {
+                input: { source_text: sourceText },
                 initiated_by: "local-author",
-              });
-              setRuns((current) => [run, ...current]);
-            }}
+              }))}
           >
             启动运行
           </Button>
           {runs.map((run) => (
-            <p key={run.id}>
+            <div key={run.id} className="workflow-console__run">
               运行 {run.id} · {run.status}{" "}
               <Button variant="ghost" onClick={() => onInspect?.({ kind: "run", id: String(run.id), status: run.status, workflowTitle: selected.title || selected.name || selected.id, currentNodeId: run.current_node_id, error: run.error || run.error_message })}>检查</Button>
               <Button
-                variant="ghost"
-                onClick={() =>
-                  api.pauseWorkflow(run.id).then(() => loadRuns(selected.id))
-                }
+                variant="ghost" disabled={busy || !["QUEUED","RUNNING","WAITING_APPROVAL"].includes(run.status)}
+                onClick={() => action(() => api.pauseWorkflow(run.id))}
               >
                 暂停
               </Button>
               <Button
-                variant="ghost"
-                onClick={() =>
-                  api.resumeWorkflow(run.id).then(() => loadRuns(selected.id))
-                }
+                variant="ghost" disabled={busy || run.status !== "PAUSED"}
+                onClick={() => action(() => api.resumeWorkflow(run.id))}
               >
                 恢复
               </Button>
-              {run.current_node_id && (
-                <Button
-                  variant="ghost"
-                  onClick={() =>
-                    api
-                      .approveWorkflowNode(run.id, run.current_node_id)
-                      .then(() => loadRuns(selected.id))
-                  }
-                >
-                  批准当前节点
-                </Button>
-              )}
+              <Button variant="ghost" disabled={busy || ["SUCCEEDED","FAILED","CANCELLED","REJECTED"].includes(run.status)} onClick={() => action(() => api.cancelWorkflow(run.id))}>取消</Button>
+              {["FAILED","CANCELLED"].includes(run.status) && <Button variant="ghost" disabled={busy} onClick={() => action(() => api.retryWorkflow(run.id))}>重新运行（新审批）</Button>}
+              {Object.entries(run.node_states || {}).map(([nodeId, state]: any) => state.status === "WAITING_APPROVAL" && run.status === "WAITING_APPROVAL" && state.output?.execution !== "DEFERRED" && <span key={nodeId}>
+                <Button variant="ghost" disabled={busy} onClick={() => action(() => api.approveWorkflowNode(run.id,nodeId))}>批准当前节点</Button>
+                <Button variant="ghost" disabled={busy} onClick={() => action(() => api.rejectWorkflowNode(run.id,nodeId))}>拒绝并停止</Button>
+              </span>)}
+              <details><summary>节点结果与来源</summary><textarea aria-label={`运行 ${run.id} 结果`} readOnly rows={8} value={JSON.stringify(run.node_states,null,2)} /></details>
               {run.node_states &&
                 Object.entries(run.node_states).map(
                   ([nodeId, state]: any) =>
-                    state.status === "WAITING_APPROVAL" &&
+                    state.status === "WAITING_APPROVAL" && run.status === "WAITING_APPROVAL" &&
                     state.output?.execution === "DEFERRED" && (
                       <Button
                         key={nodeId}
                         variant="ghost"
-                        onClick={() =>
-                          api
-                            .triggerAgentNode(run.id, nodeId)
-                            .then(() => loadRuns(selected.id))
-                        }
+                        disabled={busy} onClick={() => action(() => api.triggerAgentNode(run.id, nodeId))}
                       >
                         触发 Agent
                       </Button>
                     ),
                 )}
-            </p>
+            </div>
           ))}
         </section>
       )}

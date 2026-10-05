@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api";
+import { useStudio } from "../store";
 import { Button, Panel } from "../ui/primitives";
 import {
   FOCUS_FAILED_TASKS_EVENT,
@@ -9,6 +10,9 @@ import "./WorkflowConsole.css";
 import type { WorkflowInspection } from "./WorkflowInspector";
 
 export function AgentQueuePanel({ novelId, onInspect }: { novelId?: string; onInspect?: (inspection: WorkflowInspection) => void }) {
+  const selectedModel = useStudio(state => state.textModel);
+  const [chapter, setChapter] = useState(1);
+  const [busy, setBusy] = useState(false);
   const [items, setItems] = useState<any[]>([]),
     [loading, setLoading] = useState(false),
     [error, setError] = useState("");
@@ -56,8 +60,16 @@ export function AgentQueuePanel({ novelId, onInspect }: { novelId?: string; onIn
     window.addEventListener(FOCUS_FAILED_TASKS_EVENT, listener);
     return () => window.removeEventListener(FOCUS_FAILED_TASKS_EVENT, listener);
   }, [items, onInspect]);
+  async function action(work: () => Promise<unknown>) {
+    setBusy(true);setError("");
+    try { await work();await refresh(); } catch { setError("Agent 操作失败，请检查模型配置、权限和任务状态。"); }
+    finally { setBusy(false); }
+  }
   return (
     <Panel title="Agent 队列" className="agent-queue-console">
+      <p className="novel-help">使用写作区已选择的模型执行。结果保留在 Agent Job，需审核后再决定是否采用；可能产生服务商费用。</p>
+      <label>章节编号<input type="number" min={1} value={chapter} onChange={event => setChapter(Number(event.target.value))} /></label>
+      <p>{selectedModel ? `${selectedModel.providerId} / ${selectedModel.modelId}` : "请先在写作区选择已配置模型。"}</p>
       <Button variant="ghost" onClick={refresh}>
         {loading ? "加载中…" : "刷新队列"}
       </Button>
@@ -75,42 +87,8 @@ export function AgentQueuePanel({ novelId, onInspect }: { novelId?: string; onIn
           运行 {item.run_id} · 节点 {item.node_id} · 角色 {item.agent_role} ·{" "}
           {item.status}{" "}
           <Button variant="ghost" onClick={() => onInspect?.({ kind: "agent", id: `${item.run_id}:${item.node_id}`, status: item.status, nodeId: item.node_id, agentRole: item.agent_role, error: item.error || item.error_message })}>检查</Button>{" "}
-          <Button
-            variant="ghost"
-            onClick={() =>
-              api.claimAgentTask(item.run_id, item.node_id).then(refresh)
-            }
-          >
-            领取任务
-          </Button>{" "}
-          <Button
-            variant="ghost"
-            onClick={() =>
-              api
-                .completeAgentTask(item.run_id, item.node_id, "SUCCEEDED", {
-                  note: "manual completion",
-                })
-                .then(refresh)
-            }
-          >
-            标记成功
-          </Button>{" "}
-          <Button
-            variant="ghost"
-            onClick={() =>
-              api
-                .completeAgentTask(
-                  item.run_id,
-                  item.node_id,
-                  "FAILED",
-                  undefined,
-                  "manual failure",
-                )
-                .then(refresh)
-            }
-          >
-            标记失败
-          </Button>
+          {item.status === "QUEUED" && <Button variant="ghost" disabled={busy || !selectedModel || chapter < 1} onClick={() => selectedModel && action(() => api.executeWorkflowAgent(item.run_id,item.node_id,{chapter,provider_id:selectedModel.providerId,model_id:selectedModel.modelId}))}>执行所选模型</Button>}
+          {item.status === "WORKING" && <Button variant="ghost" disabled={busy} onClick={() => action(() => api.syncWorkflowAgent(item.run_id,item.node_id))}>同步真实结果</Button>}
         </p>
       ))}
       </div>

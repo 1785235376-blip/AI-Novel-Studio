@@ -29,6 +29,7 @@ class LLMProvider(ABC):
 
 class OllamaProvider(LLMProvider):
     name = "ollama"
+    supports_stream_usage = True
     def __init__(self, base_url: str): self.base_url = base_url.rstrip("/")
     def generate(self, prompt: str, model: str, **kwargs) -> Generation:
         started=time.monotonic(); payload=json.dumps({"model":model,"prompt":prompt,"stream":False,"options":kwargs}).encode()
@@ -45,14 +46,26 @@ class OllamaProvider(LLMProvider):
             return [{"name":m.get("name"),"size":m.get("size"),"modified_at":m.get("modified_at")} for m in data.get("models",[])]
         except Exception: return []
     def stream(self,prompt:str,model:str,**kwargs):
+        usage_callback=kwargs.pop("usage_callback",None)
+        timeout=kwargs.pop("timeout",120)
+        if "max_tokens" in kwargs:kwargs["num_predict"]=kwargs.pop("max_tokens")
         payload=json.dumps({"model":model,"prompt":prompt,"stream":True,"options":kwargs}).encode()
+        done=False
         try:
-            with urlopen(Request(self.base_url+"/api/generate",payload,{"Content-Type":"application/json"}),timeout=kwargs.get("timeout",120)) as r:
-                for line in r:
-                    if line:
-                        item=json.loads(line); chunk=item.get("response","")
-                        if chunk: yield chunk
-        except Exception as exc: raise ProviderError(f"Ollama unavailable: {type(exc).__name__}") from exc
+            with urlopen(Request(self.base_url+"/api/generate",payload,{"Content-Type":"application/json"}),timeout=timeout) as response:
+                for line in response:
+                    if not line:continue
+                    item=json.loads(line)
+                    if item.get("error"):raise ProviderError("Ollama generation failed")
+                    chunk=item.get("response","")
+                    if chunk:yield chunk
+                    if item.get("done") is True:
+                        done=True
+                        if usage_callback:usage_callback({"input_tokens":item.get("prompt_eval_count"),"output_tokens":item.get("eval_count")})
+                        break
+                if not done:raise ProviderError("Ollama stream ended without completion")
+        except ProviderError:raise
+        except Exception as exc:raise ProviderError(f"Ollama unavailable: {type(exc).__name__}") from exc
 
 class OpenAICompatibleProvider(LLMProvider):
     def __init__(self,name:str,base_url:str,api_key_env:str): self.name=name; self.base_url=base_url.rstrip("/"); self.api_key_env=api_key_env
@@ -63,16 +76,16 @@ class OpenAICompatibleProvider(LLMProvider):
             packaged = packaged or settings.enable_packaged_runtime
         except Exception:
             pass
-        if self.name=="deepseek":
-            from .credential_vault import credential_vault
-            stored=credential_vault.resolve("deepseek")
+        from .credential_vault import credential_vault
+        if credential_vault.supports_provider(self.name):
+            stored=credential_vault.resolve(self.name)
             if stored:return stored
         return "" if packaged else os.getenv(self.api_key_env,"")
     def generate(self,prompt:str,model:str,**kwargs)->Generation:
         key=self._key(); 
         if not key: raise ProviderError(f"{self.name} API key missing")
         started=time.monotonic(); body=json.dumps({"model":model,"messages":[{"role":"user","content":prompt}]}).encode()
-        retries = max(0, min(int(kwargs.get("retries", 2)), 5))
+        retries = max(0, min(int(kwargs.get("retries", 0)), 5))
         backoff = max(0.0, min(float(kwargs.get("backoff", 0.35)), 10.0))
         request = Request(self.base_url+"/chat/completions",body,{"Content-Type":"application/json","Authorization":"Bearer "+key})
         for attempt in range(retries + 1):
@@ -88,28 +101,37 @@ class OpenAICompatibleProvider(LLMProvider):
                     raise ProviderError(f"{self.name} unavailable: {type(exc).__name__}") from exc
             if backoff: time.sleep(backoff * (2 ** attempt))
         usage=data.get("usage",{}); text=data["choices"][0]["message"]["content"]
-        return Generation(text,self.name,model,usage.get("prompt_tokens",0),usage.get("completion_tokens",0),int((time.monotonic()-started)*1000))
+        return Generation(text,self.name,model,usage.get("prompt_tokens",0),usage.get("completion_tokens",0),int((time.monotonic()-started)*1000),metadata={"usage_known": bool(usage)})
     def health_check(self)->bool: return bool(self._key())
     def stream(self, prompt: str, model: str, **kwargs):
         key = self._key()
         if not key: raise ProviderError(f"{self.name} API key missing")
         payload = json.dumps({"model": model, "messages": [{"role": "user", "content": prompt}], "stream": True}).encode()
-        retries = max(0, min(int(kwargs.get("retries", 2)), 5))
+        retries = max(0, min(int(kwargs.get("retries", 0)), 5))
+        emitted = False
+        completed = False
         for attempt in range(retries + 1):
             try:
                 request = Request(self.base_url + "/chat/completions", payload, {"Content-Type": "application/json", "Authorization": "Bearer " + key, "Accept": "text/event-stream"})
                 with urlopen(request, timeout=kwargs.get("timeout", 120)) as response:
                     for raw in response:
                         line = raw.decode("utf-8", "ignore").strip()
-                        if not line.startswith("data:") or "[DONE]" in line: continue
+                        if not line.startswith("data:"):continue
+                        if line[5:].strip() == "[DONE]":
+                            completed=True
+                            break
                         item = json.loads(line[5:].strip())
+                        if any(choice.get("finish_reason") for choice in item.get("choices",[])):completed=True
                         delta = item.get("choices", [{}])[0].get("delta", {}).get("content", "")
-                        if delta: yield delta
+                        if delta:
+                            emitted = True
+                            yield delta
+                if not completed:raise ProviderError(f"{self.name} stream ended without completion")
                 return
             except (HTTPError, URLError, TimeoutError) as exc:
                 status = getattr(exc, "code", None)
                 transient = status is None or status == 429 or status >= 500
-                if not transient or attempt >= retries:
+                if emitted or not transient or attempt >= retries:
                     raise ProviderError(f"{self.name} stream unavailable: {type(exc).__name__}") from exc
                 time.sleep(min(10.0, 0.35 * (2 ** attempt)))
     def probe(self, timeout: float = 8.0) -> dict:

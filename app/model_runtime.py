@@ -98,6 +98,7 @@ class TextGenerationResponse:
     latency_ms: int = 0
     provider_reference_id: str | None = None
     structured_output: Mapping[str, Any] | None = None
+    execution_mode: str = "real"
 
 
 @dataclass(frozen=True, slots=True)
@@ -173,9 +174,10 @@ class LegacyTextProviderAdapter:
             finish_reason="completed",
             provider_id=self.provider_id,
             model_id=request.model_id,
-            usage=GenerationUsage(value.input_tokens, value.output_tokens, value.input_tokens + value.output_tokens),
+            usage=(None if value.metadata.get("usage_known") is False else GenerationUsage(value.input_tokens, value.output_tokens, value.input_tokens + value.output_tokens)),
             latency_ms=value.latency_ms,
             provider_reference_id=str(value.metadata.get("request_id")) if value.metadata.get("request_id") else None,
+            execution_mode="mock_standin" if value.metadata.get("mock") else "real",
         )
 
     def generate_text(self, request: TextGenerationRequest) -> TextGenerationResponse:
@@ -188,8 +190,12 @@ class LegacyTextProviderAdapter:
         started = time.monotonic()
         yield GenerationEvent("generation.started", request.job_id)
         chunks: list[str] = []
+        reported_usage: dict[str, Any] = {}
+        kwargs=self._kwargs(request)
+        if getattr(self.provider,"supports_stream_usage",False):
+            kwargs["usage_callback"]=reported_usage.update
         try:
-            for chunk in self.provider.stream(request.prompt, request.model_id, **self._kwargs(request)):
+            for chunk in self.provider.stream(request.prompt, request.model_id, **kwargs):
                 if request.cancellation is not None and request.cancellation.is_set():
                     raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
                 chunks.append(chunk)
@@ -200,7 +206,8 @@ class LegacyTextProviderAdapter:
                 finish_reason="completed",
                 provider_id=self.provider_id,
                 model_id=request.model_id,
-                usage=None,
+                usage=(GenerationUsage(reported_usage.get("input_tokens"),reported_usage.get("output_tokens"),sum(reported_usage.values()) if all(isinstance(value,int) for value in reported_usage.values()) else None) if any(value is not None for value in reported_usage.values()) else None),
+                execution_mode="mock_standin" if getattr(self.provider,"name",None)=="mock" else "real",
                 latency_ms=int((time.monotonic() - started) * 1000),
             )
             yield GenerationEvent("generation.completed", request.job_id, response=response)
@@ -308,7 +315,13 @@ class TextModelNode:
         model = self.models.resolve(request.provider_id, request.model_id, Modality.TEXT)
         if request.structured_output_schema is not None and not model.structured_output:
             raise ModelRuntimeError(RuntimeErrorCode.CAPABILITY_NOT_SUPPORTED, "当前模型不支持结构化输出")
+        if request.cancellation is not None and request.cancellation.is_set():
+            raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
         response = provider.generate_text(request)
+        if request.cancellation is not None and request.cancellation.is_set():
+            raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
+        if response.provider_id != request.provider_id or response.model_id != request.model_id:
+            raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED, "模型响应与已批准路由不一致")
         return TextModelNodeOutput(response.text, response, request.job_id)
 
     def stream(self, value: TextModelNodeInput) -> Iterable[GenerationEvent]:
@@ -319,14 +332,23 @@ class TextModelNode:
             raise ModelRuntimeError(RuntimeErrorCode.CAPABILITY_NOT_SUPPORTED, "当前模型不支持流式生成")
         terminal = False
         try:
+            if request.cancellation is not None and request.cancellation.is_set():
+                raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
             for event in provider.stream_text(request):
+                if terminal:
+                    break
+                if request.cancellation is not None and request.cancellation.is_set():
+                    raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
+                if event.response and (event.response.provider_id != request.provider_id or event.response.model_id != request.model_id):
+                    raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED, "模型响应与已批准路由不一致")
                 if event.event_type in {"generation.completed", "generation.failed", "generation.cancelled"}:
                     if terminal:
                         continue
                     terminal = True
                 yield event
             if not terminal:
-                yield GenerationEvent("generation.completed", request.job_id)
+                # An interrupted adapter is not evidence of a completed generation.
+                yield GenerationEvent("generation.failed", request.job_id, error_code=RuntimeErrorCode.GENERATION_FAILED)
         except ModelRuntimeError as exc:
             event_type = "generation.cancelled" if exc.code is RuntimeErrorCode.CANCELLED else "generation.failed"
             yield GenerationEvent(event_type, request.job_id, error_code=exc.code)

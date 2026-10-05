@@ -147,7 +147,7 @@ def test_agent_job_review_accepts_without_applying_output(monkeypatch):
     client=TestClient(app);nid=setup_novel(client);created=complete_model_job(client,monkeypatch,nid)
     accepted=client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author-1','note':'方向可用'}).json()
     assert accepted['status']=='ACCEPTED' and accepted['review']['applied'] is False
-    assert accepted['review']['reviewed_by']=='author-1' and len(accepted['review']['output_hash'])==64
+    assert accepted['review']['reviewed_by']=='agent-job-test' and len(accepted['review']['output_hash'])==64
 
 
 def test_agent_job_review_rejects_and_prevents_second_decision(monkeypatch):
