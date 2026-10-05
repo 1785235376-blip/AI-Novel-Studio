@@ -1,7 +1,7 @@
 """Feature-fenced, actor-owned batch previews and explicit per-stage commands."""
 from fastapi import APIRouter, Header, HTTPException, Response
 from .common import api_call as domain_call
-from .safe_batches import FEATURE, BatchIn, VersionIn, ConfirmIn, ReviewIn
+from .safe_batches import FEATURE, BatchIn, VersionIn, ConfirmIn, ReviewIn, VoiceReviewIn
 from .ux import ReadContext
 
 
@@ -48,11 +48,22 @@ def create_safe_batches_router(service, authorize, require_flag, require_host_se
     @router.post('/{rid}/retry-failed')
     def retry(nid: str, rid: str, body: VersionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx, check = access(nid, x_session_token, x_branch_id, 'domain.write'); return api_call(service.retry_failed, ctx, rid, body, check)
+    @router.post('/{rid}/reconcile')
+    def reconcile(nid: str, rid: str, body: VersionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, check = access(nid, x_session_token, x_branch_id, 'domain.write'); return api_call(service.reconcile, ctx, rid, body, check)
     @router.get('/{rid}/items/{index}/file')
     def download(nid: str, rid: str, index: int, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx, check = access(nid, x_session_token, x_branch_id)
         raw, fmt, mime = api_call(service.download, ctx, rid, index, check)
         return Response(raw, media_type=mime, headers={'Cache-Control': 'no-store', 'Content-Disposition': f'attachment; filename="batch-export.{fmt}"', 'X-Content-Type-Options': 'nosniff'})
+    @router.get('/{rid}/items/{index}/audio')
+    def audio(nid: str, rid: str, index: int, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, check = access(nid, x_session_token, x_branch_id)
+        raw, mime = api_call(service.preview_voice, ctx, rid, index, check)
+        return Response(raw, media_type=mime, headers={'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'})
+    @router.post('/{rid}/approve-voice')
+    def approve_voice(nid: str, rid: str, body: VoiceReviewIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, check = access(nid, x_session_token, x_branch_id, 'domain.review'); return api_call(service.approve_voice, ctx, rid, body, check)
     @router.get('/{rid}/proposals/{pid}/preview')
     def preview(nid: str, rid: str, pid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx, check = access(nid, x_session_token, x_branch_id)

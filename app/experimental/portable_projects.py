@@ -233,6 +233,7 @@ def read_archive(raw):
 
 class PortableProjectsService(DomainService):
     RECORDS = 'portable_projects_v2'
+    MISSING_MEDIA = 'portable_missing_media_v2'
 
     def __init__(self, store, novels, chapters, *, sources, assets):
         super().__init__(store, novels, chapters)
@@ -266,7 +267,28 @@ class PortableProjectsService(DomainService):
                     asset = self.assets.get(aid, branch_id=ctx.scope.get('branch_id'), actor_id=ctx.actor)
                     if asset.get('novel_id') != ctx.novel_id or asset.get('branch_id') != ctx.scope.get('branch_id') or asset.get('hidden') or asset.get('secret'):
                         raise FileNotFoundError('record unavailable')
+        if row['kind'] == 'RELINK' and not row['missing_id'].startswith('missing-'):
+            asset = self.assets.get(row['missing_id'], branch_id=ctx.scope.get('branch_id'), actor_id=ctx.actor)
+            if asset.get('novel_id') != ctx.novel_id or asset.get('branch_id') != ctx.scope.get('branch_id') or asset.get('hidden') or asset.get('secret'):
+                raise FileNotFoundError('record unavailable')
         return row
+
+    def _missing_metadata(self, ctx, aid):
+        # This is a retained import declaration, not a second asset library.
+        # Only this actor's new-project recovery metadata can supply a digest.
+        for row in self.list(ctx.novel_id, ctx.scope, self.MISSING_MEDIA):
+            if row['created_by'] == ctx.actor and row.get('missing_id') == aid:
+                return {'sha256': row.get('expected_sha256'), 'kind': row.get('media_kind')}
+        return None
+
+    def _retain_missing(self, ctx, target, rid, media, aid, reauthorize):
+        scope = {'mode': 'local', 'novel_id': target}
+        with self.store.transaction(target, scope) as state:
+            reauthorize(); self.novels.get(target)
+            row = new_row(target, scope, ctx.actor, {
+                'missing_id': aid, 'expected_sha256': media['sha256'], 'media_kind': media['kind'],
+                'portable_record_id': rid, 'portable_ref': media['ref'], 'status': 'MISSING'})
+            state['collections'].setdefault(self.MISSING_MEDIA, {})[row['id']] = row
 
     def _file(self, ctx, rid, extension='zip'):
         if not re.fullmatch(r'[a-f0-9-]{36}', rid): raise ValueError('PORTABLE_RECORD_INVALID')
@@ -284,13 +306,31 @@ class PortableProjectsService(DomainService):
         if sha(data) != row['artifact_digest']: raise ValueError('PORTABLE_CACHE_CHANGED')
         return data
 
-    def _summary(self, row):
+    def _summary(self, row, ctx=None):
         result = {k: deepcopy(row[k]) for k in ('id', 'version', 'status', 'kind', 'snapshot_digest', 'created_at', 'error_code', 'target_id', 'id_map', 'digest_matches') if k in row}
         manifest = row.get('manifest')
         if manifest:
             result['title'] = manifest['title']; result['chapter_count'] = len(manifest['chapters'])
             result['media'] = [{k: v for k, v in m.items() if k != 'path'} for m in manifest['media']]
             result['limitations'] = LIMITS
+        if row['kind'] == 'RELINK':
+            review = deepcopy(row.get('relink_review'))
+            if review is None:
+                # Older records remain readable, but need a full new preflight.
+                review = {'missing_id': row['missing_id'], 'expected_sha256': None,
+                          'candidate_sha256': row['artifact_digest'], 'affected_chapters': [],
+                          'conflicts': [{'code': 'PREFLIGHT_REQUIRED', 'blocking': True}]}
+            if ctx is not None and row['status'] == 'PREFLIGHT':
+                current = {r['id']: r for r in self._rows(ctx, list(row['sources']))}
+                for chapter in review['affected_chapters']:
+                    chapter['current_version'] = current[chapter['id']]['version']
+                    if digest(current[chapter['id']]) != row['sources'][chapter['id']]:
+                        review['conflicts'].append({'code': 'SOURCE_CHANGED', 'blocking': True, 'chapter_id': chapter['id']})
+                missing = next((m for m in self.catalog(ctx)['missing'] if m['id'] == row['missing_id']), None)
+                if missing is None or missing['expected_sha256'] != review['expected_sha256']:
+                    review['conflicts'].append({'code': 'ORIGINAL_REFERENCE_CHANGED', 'blocking': True})
+            review['can_confirm'] = row['status'] == 'PREFLIGHT' and not any(c['blocking'] for c in review['conflicts'])
+            result['relink_review'] = review
         return result
 
     def catalog(self, ctx):
@@ -308,6 +348,7 @@ class PortableProjectsService(DomainService):
             except (OSError, ValueError): pass
             # ID occurs in an authorized chapter. Never expose inaccessible
             # external asset metadata, names, paths or content.
+            meta = meta or self._missing_metadata(ctx, aid)
             missing.append({'id': aid, 'expected_sha256': meta.get('sha256') if meta else None,
                             'chapter_ids': [r['id'] for r in rows if aid in NovelService._asset_references(r)]})
         return {'chapters': [{'id': r['id'], 'title': r['title'], 'version': r['version']} for r in rows],
@@ -320,7 +361,7 @@ class PortableProjectsService(DomainService):
             if row['created_by'] != ctx.actor: continue
             try: self._owned(ctx, row['id'])
             except FileNotFoundError: continue
-            visible.append(self._summary(row))
+            visible.append(self._summary(row, ctx))
         return {'items': visible[-100:]}
 
     def _build(self, ctx, selected):
@@ -343,6 +384,7 @@ class PortableProjectsService(DomainService):
                 path = f"media/{alias}.{measured['extension']}"; payloads[path] = data
                 media.append({'ref': alias, 'state': 'AVAILABLE', 'kind': kind, 'path': path, 'sha256': sha(data), 'size': len(data), 'media_type': measured['media_type']})
             except (OSError, ValueError):
+                if meta is None and aid.startswith('missing-'): meta = self._missing_metadata(ctx, aid)
                 media.append({'ref': alias, 'state': 'MISSING', 'kind': meta.get('kind') if meta and meta.get('kind') in {'image', 'audio', 'video'} else None,
                               'path': None, 'size': None, 'media_type': None, 'sha256': meta.get('sha256') if meta else None})
         manifest = Manifest.model_validate({'format': 'AI_NOVEL_PORTABLE_1', 'title': str(self.novels.get(ctx.novel_id)['title'])[:200], 'privacy_level': 'LOCAL_ONLY',
@@ -412,7 +454,9 @@ class PortableProjectsService(DomainService):
                 if media['state'] == 'AVAILABLE':
                     asset = self.assets.create(target, media['path'].split('/')[-1], base64.b64encode(payloads[media['ref']]).decode(), media['media_type'], media['kind'], 'portable:' + rid + ':' + media['ref'], required_features=(FEATURE,), owner_actor_id=ctx.actor)
                     mapping[media['ref']] = asset['id']
-                else: mapping[media['ref']] = 'missing-' + uuid4().hex
+                else:
+                    mapping[media['ref']] = 'missing-' + uuid4().hex
+                    self._retain_missing(ctx, target, rid, media, mapping[media['ref']], reauthorize)
                 self._checkpoint(ctx, rid, 'media', media['ref'], mapping[media['ref']])
             for i, chapter in enumerate(manifest['chapters'], 1):
                 reauthorize(); created = self.chapters.create(target, {'number': i, 'title': chapter['title'], 'content': ''})
@@ -447,30 +491,43 @@ class PortableProjectsService(DomainService):
         if missing is None: raise FileNotFoundError('missing reference unavailable')
         raw = decode(value.content_base64, MAX_MEMBER); measured = inspect_payload(raw, value.kind); reauthorize()
         sources = self._sources(rows)
+        expected = missing['expected_sha256']; candidate = sha(raw)
+        review = {'missing_id': value.missing_id, 'expected_sha256': expected, 'candidate_sha256': candidate,
+                  'affected_chapters': [{'id': r['id'], 'title': r['title'], 'version': r['version']} for r in rows],
+                  'conflicts': [] if expected == candidate else [{'code': 'DIGEST_MISMATCH' if expected else 'ORIGINAL_DIGEST_UNKNOWN', 'blocking': False}]}
         row = new_row(ctx.novel_id, ctx.scope, ctx.actor, {'kind': 'RELINK', 'status': 'PREFLIGHT', 'sources': sources, 'missing_id': value.missing_id,
             'media_kind': value.kind, 'media_type': measured['media_type'], 'extension': measured['extension'], 'artifact_digest': sha(raw),
-            'digest_matches': missing['expected_sha256'] == sha(raw), 'snapshot_digest': digest([sources, value.missing_id, sha(raw)])})
+            'digest_matches': expected == candidate, 'relink_review': review, 'snapshot_digest': digest([sources, review])})
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
-            reauthorize(); self._assert_sources(ctx, sources); atomic_bytes(self._file(ctx, row['id'], 'bin'), raw); state['collections'].setdefault(self.RECORDS, {})[row['id']] = row
+            reauthorize(); self._assert_sources(ctx, sources); self._assert_relink_reference(ctx, row)
+            atomic_bytes(self._file(ctx, row['id'], 'bin'), raw); state['collections'].setdefault(self.RECORDS, {})[row['id']] = row
         return self._summary(row)
+
+    def _assert_relink_reference(self, ctx, row):
+        review = row.get('relink_review')
+        if review is None: raise StaleSourceError('PORTABLE_RELINK_PREFLIGHT_REQUIRED')
+        missing = next((m for m in self.catalog(ctx)['missing'] if m['id'] == row['missing_id']), None)
+        if missing is None or missing['expected_sha256'] != review['expected_sha256']:
+            raise StaleSourceError('PORTABLE_ORIGINAL_REFERENCE_CHANGED')
 
     def relink(self, ctx, rid, body, reauthorize=lambda: None):
         value = RelinkConfirmIn.model_validate(body); row = self._owned(ctx, rid); check_version(row, value.expected_version)
         if ctx.scope['mode'] != 'local': raise ValueError('PORTABLE_BRANCH_WRITE_ADAPTER_REQUIRED')
         if row['kind'] != 'RELINK' or row['status'] != 'PREFLIGHT' or row['snapshot_digest'] != value.snapshot_digest: raise ValueError('PORTABLE_CONFIRMATION_CHANGED')
         if not row['digest_matches'] and not value.accept_different_digest: raise ValueError('PORTABLE_EXPLICIT_REPLACEMENT_REQUIRED')
-        self._assert_sources(ctx, row['sources']); raw = self._read_file(ctx, row, 'bin'); reauthorize()
+        self._assert_sources(ctx, row['sources']); self._assert_relink_reference(ctx, row)
+        raw = self._read_file(ctx, row, 'bin'); reauthorize()
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
             current = state['collections'][self.RECORDS][rid]
             change_row(current, ctx.actor, value.expected_version, lambda r: r.update(status='RELINKING', id_map={'chapters': {}, 'media': {}})); reauthorize()
         try:
-            reauthorize(); self._assert_sources(ctx, row['sources'])
+            reauthorize(); self._assert_sources(ctx, row['sources']); self._assert_relink_reference(ctx, row)
             asset = self.assets.create(ctx.novel_id, 'relinked.' + row['extension'], base64.b64encode(raw).decode(), row['media_type'], row['media_kind'], 'portable-relink:' + rid, required_features=(FEATURE,), owner_actor_id=ctx.actor)
             self._checkpoint(ctx, rid, 'media', row['missing_id'], asset['id'])
             for chapter in self._rows(ctx, list(row['sources'])):
                 if digest(chapter) != row['sources'][chapter['id']]: raise StaleSourceError('PORTABLE_SOURCE_CHANGED')
                 mapping = {ref: asset['id'] if ref == row['missing_id'] else ref for ref in NovelService._asset_references(chapter)}
-                document = safe_document(chapter['document'], mapping); reauthorize()
+                document = safe_document(chapter['document'], mapping); reauthorize(); self._assert_relink_reference(ctx, row)
                 self.chapters.save(chapter['id'], {'version': chapter['version'], 'document': document, 'source': 'PORTABLE_RELINK'})
                 self._checkpoint(ctx, rid, 'chapters', chapter['id'], chapter['id'])
             reauthorize()
@@ -484,6 +541,40 @@ class PortableProjectsService(DomainService):
             with self.store.transaction(ctx.novel_id, ctx.scope) as state:
                 current = state['collections'][self.RECORDS][rid]; change_row(current, ctx.actor, current['version'], lambda r: r.update(status='RECOVERY_REQUIRED', error_code='PORTABLE_PARTIAL_RELINK_NO_AUTOMATIC_RETRY'))
             raise
+
+    def _history_measurement(self, ctx, rows):
+        result = {'kind': 'HISTORY', 'bytes': None, 'measurement': 'ORIGINAL_REVISION_AUTHORITY_NOT_ENUMERATED', 'cleanable': False}
+        if ctx.scope['mode'] != 'local' or self.sources.chapter_reader is not None: return result
+        total = 0
+        try:
+            for chapter in rows:
+                for revision in self.chapters.history(chapter['id']):
+                    # Scoped/private history needs its own authorization adapter.
+                    if (revision.get('scope_type') or revision.get('scope_id') or revision.get('hidden') or revision.get('secret')
+                        or str(revision.get('visibility', '')).upper() in {'PRIVATE', 'SECRET', 'DENIED'}):
+                        return result
+                    total += len(canonical(revision['document']).encode())
+                    if total > MAX_TOTAL:
+                        return {**result, 'measurement': 'HISTORY_MEASUREMENT_LIMIT'}
+            self._assert_sources(ctx, self._sources(rows))
+        except (OSError, ValueError, KeyError): return result
+        return {**result, 'bytes': total, 'measurement': 'AUTHORIZED_ACTIVE_CHAPTER_HISTORY_CONTENT_BYTES'}
+
+    def _recovery_measurement(self, ctx, cache, assets):
+        measured = sum(a['size'] for a in assets if not a.get('deleted_at') and a.get('_owner_actor_id') == ctx.actor)
+        unmeasured = 0; eligible = {r['id'] for r in cache}
+        for row in self.list(ctx.novel_id, ctx.scope, self.RECORDS):
+            if row['created_by'] != ctx.actor or row['id'] in eligible: continue
+            try: self._owned(ctx, row['id'])
+            except FileNotFoundError: continue
+            try:
+                raw = self._read_file(ctx, row, 'bin' if row['kind'] == 'RELINK' else 'zip')
+                measured += len(raw)
+            except FileNotFoundError:
+                if row['kind'] != 'EXPORT': unmeasured += 1
+            except (OSError, ValueError): unmeasured += 1
+        return {'kind': 'TEMPORARY_FAILED_FILES', 'bytes': measured, 'unmeasured_records': unmeasured,
+                'measurement': 'OWNED_PRESERVED_INPUT_AND_STAGED_ASSET_BYTES', 'cleanable': False}
 
     def storage(self, ctx):
         rows = self._rows(ctx); assets = [a for a in self.assets.list(ctx.novel_id, branch_id=ctx.scope.get('branch_id'), include_deleted=True, actor_id=ctx.actor)
@@ -500,10 +591,10 @@ class PortableProjectsService(DomainService):
         categories = [
             {'kind': 'MANUSCRIPT', 'bytes': sum(len(canonical(r['document']).encode()) for r in rows), 'measurement': 'AUTHORIZED_CONTENT_BYTES', 'cleanable': False},
             {'kind': 'ACCEPTED_ASSETS', 'bytes': sum(a['size'] for a in assets if not a.get('deleted_at') and not a.get('_owner_actor_id')), 'measurement': 'AUTHORIZED_RECORDED_BYTES', 'cleanable': False},
-            {'kind': 'HISTORY', 'bytes': None, 'measurement': 'ORIGINAL_REVISION_AUTHORITY_NOT_ENUMERATED', 'cleanable': False},
+            self._history_measurement(ctx, rows),
             {'kind': 'TRASH', 'bytes': sum(a['size'] for a in assets if a.get('deleted_at')), 'measurement': 'AUTHORIZED_RECORDED_BYTES', 'cleanable': False},
             {'kind': 'REPRODUCIBLE_CACHE', 'bytes': sum(c['bytes'] for c in cache), 'measurement': 'VERIFIED_PORTABLE_EXPORT_CACHE_ONLY', 'cleanable': True},
-            {'kind': 'TEMPORARY_FAILED_FILES', 'bytes': None, 'measurement': 'RECOVERY_INPUTS_PRESERVED_NOT_ENUMERATED', 'cleanable': False}]
+            self._recovery_measurement(ctx, cache, assets)]
         return {'categories': categories, 'eligible': cache, 'preview_digest': digest([ctx.scope, ctx.actor, cache]), 'default_policy': 'ONLY_VERIFIED_UNUSED_REPRODUCIBLE_CACHE'}
 
     def cleanup(self, ctx, body, reauthorize=lambda: None):
