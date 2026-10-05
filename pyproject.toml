@@ -10,6 +10,7 @@ dev = ["pytest>=8,<9"]
 vault = ["keyring>=25,<26"]
 fontbuild = ["fonttools==4.59.1"]
 otio = ["opentimelineio==0.18.1"]
+comic = ["Pillow==12.3.0", "fonttools==4.59.1"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
