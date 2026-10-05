@@ -11,7 +11,10 @@ test('U03 real File incremental multi-project search, keyboard navigation, cance
     const first = await body(await request.post(`${API}/novels`, { data: { title: `U03 first ${Date.now()}` } })); owned.push(first.id);
     const second = await body(await request.post(`${API}/novels`, { data: { title: `U03 second ${Date.now()}` } })); owned.push(second.id);
     await body(await request.post(`${API}/novels/${first.id}/chapters`, { data: { title: '起点章节', content: '合成原文，石城。' } }));
-    const target = await body(await request.post(`${API}/novels/${second.id}/chapters`, { data: { title: '跨作品灯塔', content: '合成检索目标灯塔。' } }));
+    const createdTarget = await body(await request.post(`${API}/novels/${second.id}/chapters`, { data: { title: '跨作品灯塔', content: '合成检索目标灯塔。' } }));
+    // Creation returns an identity, not the authoritative versioned document.
+    const target = await body(await request.get(`${API}/chapters/${createdTarget.id}`));
+    expect(target.version).toBeGreaterThan(0);
     const base = `${API}/novels/${first.id}/experimental/workspace`;
     const cold = await body(await request.get(`${base}/search?scope=authorized&q=灯塔`));
     expect(cold.match_count).toBe(1); expect(cold.items[0].novel_id).toBe(second.id);

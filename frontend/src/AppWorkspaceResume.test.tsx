@@ -11,6 +11,7 @@ import { generationRecovery } from './generationRecovery';
 import { experimentalClient } from './experimental/api';
 import { WorkspaceToolsPanel } from './experimental/WorkspaceToolsPanel';
 import { defaultLayout } from './experimental/uxClient';
+import { authorRequestKey, defaultAuthorRequestScope } from './novel/authorContextClient';
 import { readLocalWorkspaceSelection, rememberLocalWorkspaceSelection } from './workspaceSelection';
 
 // Real App state, version guards, local persistence and requests; only unrelated
@@ -21,9 +22,14 @@ vi.mock('./Editor', async importOriginal => ({ ...(await importOriginal<typeof i
   <output aria-label="Applied reading preferences">{JSON.stringify(writingPreferences)}</output>
   <output aria-label="Applied chapter anchor">{JSON.stringify(restoreAnchor)}</output>
 </> }));
-vi.mock('./ui/AppShell', () => ({ AppShell: ({ main, status, sidebar, focusMode }: any) => <div data-testid="shell" data-focus={focusMode}>{sidebar}<main>{main}</main><footer>{status}</footer></div> }));
-vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: ({ onGenerate, onGenerateVariants, onRetry, onCancel, onAccept, onReject, draft, variants }: any) => <>
+vi.mock('./ui/AppShell', () => ({ AppShell: ({ main, status, sidebar, inspector, focusMode }: any) => <div data-testid="shell" data-focus={focusMode}>{sidebar}<main>{main}</main>{inspector}<footer>{status}</footer></div> }));
+vi.mock('./novel/AiWritingPanel', () => ({ AiWritingPanel: ({ onGenerate, onGenerateVariants, onRetry, onCancel, onAccept, onReject, draft, variants, authorPreview }: any) => <>
   <button onClick={() => onGenerate('continue', '', '')}>Audit generate</button>
+  <button onClick={() => {
+    const state = useStudio.getState();
+    const body = { novel_id: state.novelId, chapter_id: authorPreview.chapterId, chapter_version: authorPreview.chapterVersion, operation: 'continue', instruction: 'Exact reviewed exclusions', style: '', profile: authorPreview.profile, provider_id: state.textModel!.providerId, model_id: state.textModel!.modelId, source: authorPreview.source, selected_text: authorPreview.source, style_profile_id: authorPreview.styleProfileId, plot_plan_id: authorPreview.plotPlanId, request_scope: { ...defaultAuthorRequestScope, source_items: [{ key: 'a'.repeat(64), source_digest: 'b'.repeat(64), include: false }] } };
+    onGenerate('continue', body.instruction, '', { requestBody: body, previewDigest: 'c'.repeat(64), chapterVersion: body.chapter_version, requestKey: authorRequestKey(body, authorPreview.context), requestId: 'reviewed-original-request' });
+  }}>Generate exact reviewed request</button>
   <button onClick={() => onGenerateVariants('continue', '', 2, '')}>Audit variants</button>
   <button onClick={() => onRetry(draft || variants?.[0])}>Audit retry</button>
   <button onClick={onCancel}>Audit cancel</button>
@@ -55,7 +61,7 @@ const resume = { item: { id: 'saved-workspace', version: 1, chapter_id: 'recover
 let target: any;
 let inventory: any[];
 const response = (data: unknown) => new Response(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
-function setup(enabled = true, strict = false) {
+function setup(enabled = true, strict = false, author = false) {
   const query = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Infinity }, mutations: { retry: false } } }); clients.push(query);
   query.setQueryData(['novels'], inventory);
   query.setQueryData(['chapter', 'file', 'recovery:1'], chapter());
@@ -66,7 +72,7 @@ function setup(enabled = true, strict = false) {
   query.setQueryData(['media-tasks', 'recovery'], { audiobook: [], motion: [] });
   query.setQueryData(['writing-goal', 'recovery'], { current_words: 0, target_words: 10, current_chapters: 2, target_chapters: 3, words_progress: 0 });
   query.setQueryData(['writing-focus-preferences', 'file', 'recovery', undefined], { preferences });
-  query.setQueryData(['experimental-features', 'file'], { experimental: enabled, default_enabled: false, features: { 'experimental.writing_recovery_v2': false, 'experimental.model_broker_v2': false, 'experimental.workspace_tools_v2': enabled, 'experimental.writing_focus_v2': enabled } });
+  query.setQueryData(['experimental-features', 'file'], { experimental: enabled, default_enabled: false, features: { 'experimental.author_context_inspector_v2': author, 'experimental.writing_recovery_v2': false, 'experimental.model_broker_v2': false, 'experimental.workspace_tools_v2': enabled, 'experimental.writing_focus_v2': enabled } });
   const app = <QueryClientProvider client={query}><App /></QueryClientProvider>;
   const view = render(strict ? <StrictMode>{app}</StrictMode> : app);
   return { query, view };
@@ -337,4 +343,26 @@ it('does not navigate to a search project removed from the refreshed original in
   otherProjectSearch();setup();await screen.findByText('上次工作：Last chapter');vi.mocked(api.novels).mockResolvedValue([{ id: 'recovery', title: 'Synthetic' }] as any);
   await openSearchResult();await screen.findByText(/搜索目标当前不可读或版本已变/);
   expect(useStudio.getState().novelId).toBe('recovery');expect(api.chapter).not.toHaveBeenCalled();
+});
+
+
+it('forwards the actual reviewed source exclusions through App into the original author endpoint', async () => {
+  useStudio.setState({ textModel: { providerId: 'fixture', modelId: 'registered-local' } });
+  const fetch = vi.mocked(globalThis.fetch);
+  fetch.mockImplementation(async (url: any, init?: RequestInit) => String(url).endsWith('/author-context/generate') ? response({ job_id: 'reviewed-original-job', base_chapter_version: 3 }) : response({ items: [] }));
+  setup(true, false, true); await screen.findByLabelText('Test chapter editor');
+  fireEvent.click(screen.getByRole('button', { name: 'Generate exact reviewed request' }));
+  await waitFor(() => expect(fetch.mock.calls.some(([url]) => String(url).endsWith('/author-context/generate'))).toBe(true));
+  const send = fetch.mock.calls.find(([url]) => String(url).endsWith('/author-context/generate'))!;
+  expect(JSON.parse(String(send[1]?.body))).toMatchObject({ preview_digest: 'c'.repeat(64), generation_request_id: 'reviewed-original-request', instruction: 'Exact reviewed exclusions', request_scope: { source_items: [{ key: 'a'.repeat(64), source_digest: 'b'.repeat(64), include: false }] } });
+  expect(api.generate).not.toHaveBeenCalled();
+});
+
+it('cannot fall back to legacy generation when the enabled request inspector receipt is omitted', async () => {
+  useStudio.setState({ textModel: { providerId: 'fixture', modelId: 'registered-local' } });
+  setup(true, false, true); await screen.findByLabelText('Test chapter editor');
+  fireEvent.click(screen.getByRole('button', { name: 'Audit generate' }));
+  await waitFor(() => expect(screen.getByLabelText('Audit draft').textContent).toContain('请先检查本次真实请求'));
+  expect(api.generate).not.toHaveBeenCalled();
+  expect(vi.mocked(globalThis.fetch).mock.calls.some(([url]) => String(url).includes('/author-context/generate'))).toBe(false);
 });

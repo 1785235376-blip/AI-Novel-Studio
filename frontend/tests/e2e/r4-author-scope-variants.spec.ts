@@ -95,6 +95,8 @@ test('U08 real React source removals and individually reviewed local variant job
 
 test('U08 identified source exclusion removes dependent summaries from the actual reviewed request', async ({ page }, info) => {
   const quiesce = createPageQuiescer(page); let nid = '', jid = '';
+  const legacySends: string[] = [];
+  page.on('request', request => { if (request.method() === 'POST' && new URL(request.url()).pathname.startsWith('/api/generate/')) legacySends.push(request.url()); });
   try {
     await page.goto(UI); await page.getByPlaceholder('小说名称').fill('U08 per-source synthetic receipt');
     const creating = page.waitForResponse(r => r.url().endsWith('/api/novels') && r.request().method() === 'POST');
@@ -130,6 +132,7 @@ test('U08 identified source exclusion removes dependent summaries from the actua
     expect(sent.preview_digest).toBe(filtered.preview_digest);expect(sent.request_scope.source_items).toEqual([{ key: source.key, source_digest: source.source_digest, include: false }]);
     await expect.poll(async () => (await checked(await page.request.get(`${API}/generation/${jid}`))).status).toBe('COMPLETED');
     expect((await checked(await page.request.get(`${API}/generation/${jid}`))).request_scope).toEqual(sent.request_scope);
+    expect(legacySends).toEqual([]);
     expect((await checked(await page.request.get(`${API}/chapters/${chapter.id}`))).content).toBe(saved.content);
     await page.screenshot({ path: info.outputPath('u08-source-item-exclusion.png'), fullPage: true });
   } finally { await quiesce(); if (jid) await page.request.post(`${API}/generation/${jid}/cancel`); if (nid) expect([200, 204, 404]).toContain((await page.request.delete(`${API}/novels/${nid}`)).status()); }
