@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "phase": "BOUNDED_IMPLEMENTATION_DELIVERED_ACCEPTANCE_LIMITS_RETAINED",
+  "phase": "ORIGINAL_SCOPE_RECONCILIATION_IN_PROGRESS",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "visibility": "public",
   "frozen_v1_sha": "1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0",
   "inspected_local_source_sha": "d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b",
   "observed_remote_r3_sha": "d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b",
   "integration_parent_sha": "d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b",
-  "note": "All forty packages have concrete bounded code paths and frontend/API consumers where applicable. This matrix separates implemented scope, remaining scope and exact-source verification; PARTIAL is not full product acceptance.",
+  "note": "A bounded implementation is not completion of original scope. This refinement closes feasible original requirements; remaining deterministic adapter wiring is active work, separately from real-model/native acceptance.",
   "packages": [
     {
       "id": "F00",
@@ -20,7 +20,7 @@
         "app/experimental/store.py",
         "app/experimental/api.py"
       ],
-      "gap": "Exact documentation-delivery CI remains to be read from PR39. Independent follow-up review is BLOCKED; this is not a release decision.",
+      "gap": "Original-scope reconciliation remains active; independent follow-up review is BLOCKED and not retried. Historical 1da63f5 exact CI is green.",
       "status": "INTEGRATED",
       "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "METADATA_ONLY",
@@ -29,7 +29,7 @@
       "browser_verification": "NOT_APPLICABLE_METADATA",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "All 40 packages, seven waves, nine inherited gaps, explicit flags/dependencies and runtime descriptions.",
-      "remaining_scope": "Exact documentation-delivery CI remains to be read from PR39. Independent follow-up review is BLOCKED; this is not a release decision.",
+      "remaining_scope": "Original-scope reconciliation remains active; independent follow-up review is BLOCKED and not retried. Historical 1da63f5 exact CI is green.",
       "new_sources": [
         "app/experimental/capabilities.py"
       ],
@@ -111,16 +111,16 @@
         "app/services/visual_memory_index.py",
         "app/lore/context_view.py"
       ],
-      "gap": "Current authorized project only; bounded 2M characters/2000 sources/50 results. Source files are rechecked for warm search; full storage-event incremental indexing remains to extend.",
+      "gap": "Cache bounded to 8 scopes, 2M characters/2000 records and 50 results per page. Collaboration branch manuscript storage is not implemented; no base-source fallback. Hosted expanded journeys/PG for this refinement pending.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FIRST_REFINEMENT_LOCAL_REGRESSION; EXACT_HOSTED_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
-      "implemented_scope": "Existing Ctrl+K entry reaches real lexical project search, Chinese aliases, bounded incremental cache, safe commands and version-resolved jump.",
-      "remaining_scope": "Current authorized project only; bounded 2M characters/2000 sources/50 results. Source files are rechecked for warm search; full storage-event incremental indexing remains to extend.",
+      "implemented_scope": "Storage-manifest incremental chapter reads, bounded current-chapter/project/20 authorized-project search, filters/Chinese aliases/paging/cancel/rebuild, current-authority counts and version-resolved navigation; original small structured/task authorities reread.",
+      "remaining_scope": "Cache bounded to 8 scopes, 2M characters/2000 records and 50 results per page. Collaboration branch manuscript storage is not implemented; no base-source fallback. Hosted expanded journeys/PG for this refinement pending.",
       "new_sources": [
         "app/experimental/ux.py",
         "frontend/src/experimental/WorkspaceToolsPanel.tsx"
@@ -171,16 +171,16 @@
         "app/services/context_snapshot_service.py",
         "app/source_privacy.py"
       ],
-      "gap": "Only whole automatic-context bundles and approved STYLE/PLOT IDs have supported removal/pin boundaries. Cloud or broker-budgeted variant groups require group reservation and are unavailable; actual model quality is NOT_RUN.",
+      "gap": "Anonymous automatic source bundles cannot be decomposed and remain whole-bundle controls. Independent duplicate user/manuscript text is not semantic DLP. Cloud/budgeted variant group admission remains unavailable; real inference quality NOT_RUN.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FIRST_REFINEMENT_LOCAL_REGRESSION; EXACT_HOSTED_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
-      "implemented_scope": "Exact shared-authority preview/final request, removable manuscript and dependent context bundles, current approved reference pins, and 2–3 local original-job variant receipts with durable uncertain-state handling.",
-      "remaining_scope": "Only whole automatic-context bundles and approved STYLE/PLOT IDs have supported removal/pin boundaries. Cloud or broker-budgeted variant groups require group reservation and are unavailable; actual model quality is NOT_RUN.",
+      "implemented_scope": "One preview/final request authority with exact per-record source digests and exclusions, explicit STYLE/PLOT pins, conservative removal of potentially derived context, UI receipt invalidation and original local variants.",
+      "remaining_scope": "Anonymous automatic source bundles cannot be decomposed and remain whole-bundle controls. Independent duplicate user/manuscript text is not semantic DLP. Cloud/budgeted variant group admission remains unavailable; real inference quality NOT_RUN.",
       "new_sources": [
         "app/author_request.py",
         "app/experimental/author_context_api.py",
@@ -409,16 +409,16 @@
         "app/model_center/service.py",
         "app/experimental/provider_profiles.py"
       ],
-      "gap": "Text author execution only; no fabricated model quality ranking. Actual configured-model and paid-billing validation remain NOT_RUN.",
+      "gap": "No fabricated quality ranking. Actual configured-model quality and paid-billing acceptance remain NOT_RUN. Optional cloud execution remains explicitly restricted.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FIRST_REFINEMENT_LOCAL_REGRESSION; EXACT_HOSTED_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
-      "implemented_scope": "Actual registered route selection, explicit quote plus exact author request, original JobManager execution, atomic budget reservation/settlement, conservative unknown holds, CAS manual bill reconciliation and functional original draft-review navigation.",
-      "remaining_scope": "Text author execution only; no fabricated model quality ranking. Actual configured-model and paid-billing validation remain NOT_RUN.",
+      "implemented_scope": "Registered TEXT, IMAGE and AUDIO candidates, current quote/request receipts, original executor admission, atomic reservations/settlement and honest unknown holds; explicit zero-price local media batch admission.",
+      "remaining_scope": "No fabricated quality ranking. Actual configured-model quality and paid-billing acceptance remain NOT_RUN. Optional cloud execution remains explicitly restricted.",
       "initial_gap": "Current registered authority routing, honest unknown cost and idempotent budget reservation/settlement; final recheck.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
       "browser_run": 37372638988
@@ -435,7 +435,7 @@
         "app/model_center/discovery.py",
         "app/model_center/runtime_profiles.py"
       ],
-      "gap": "Image/video benchmarks are import-only. Real model quality, GPU and cold/warm runtime measurements require configured runtime and remain NOT_RUN.",
+      "gap": "Registered-local IMAGE benchmark wiring remains active implementation. Unsupported video admission and actual quality are separate limits.",
       "status": "PARTIAL",
       "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
@@ -444,7 +444,7 @@
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Explicit bounded local text benchmark execution, real registration/fingerprint evidence, imported result management, current evidence invalidation and small-sample blind A/B preference.",
-      "remaining_scope": "Image/video benchmarks are import-only. Real model quality, GPU and cold/warm runtime measurements require configured runtime and remain NOT_RUN.",
+      "remaining_scope": "Registered-local IMAGE benchmark wiring remains active implementation. Unsupported video admission and actual quality are separate limits.",
       "initial_gap": "User-triggered bounded benchmark management and evidence versioning; real-model quality requires configured model.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
       "browser_run": 37372638988
@@ -488,7 +488,7 @@
         "app/services/asset_library_service.py",
         "app/experimental/media.py"
       ],
-      "gap": "Historical missing environments fail closed. Configured cloud/GPU replay and output nondeterminism require independent runtime evidence.",
+      "gap": "Original local media registration/model identity and selected-refresh manifest capture remain active implementation; missing historical identity stays unknown.",
       "status": "PARTIAL",
       "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
@@ -497,7 +497,7 @@
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Versioned redacted manifests of real media tasks; current dependency/privacy/budget preflight; new original-executor replay task; actual deterministic PNG byte equality; explicit cancellation/restart and pending review.",
-      "remaining_scope": "Historical missing environments fail closed. Configured cloud/GPU replay and output nondeterminism require independent runtime evidence.",
+      "remaining_scope": "Original local media registration/model identity and selected-refresh manifest capture remain active implementation; missing historical identity stays unknown.",
       "initial_gap": "Versioned redacted manifests, dependency preview and new authorized replay task, reproducibility levels separated.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
       "browser_run": 37372638988
@@ -516,7 +516,7 @@
         "app/services/asset_library_service.py",
         "app/experimental/audiobook.py"
       ],
-      "gap": "Selective refresh is the supported synthetic COVER path; unregistered real-media refresh remains unavailable.",
+      "gap": "Registered local image refresh wiring remains active implementation; current shipped first refinement supports synthetic COVER.",
       "status": "PARTIAL",
       "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
@@ -525,7 +525,7 @@
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Exact recorded impact graph, locks, selected synthetic COVER refresh through original media execution, current source/privacy/budget fences and unknown/manual-only domains.",
-      "remaining_scope": "Selective refresh is the supported synthetic COVER path; unregistered real-media refresh remains unavailable.",
+      "remaining_scope": "Registered local image refresh wiring remains active implementation; current shipped first refinement supports synthetic COVER.",
       "initial_gap": "Show exact source dependency changes, preserve locked output and require explicit per-domain rerun.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
       "browser_run": 37372638988
@@ -568,7 +568,7 @@
         "app/lore/continuity.py",
         "app/services/narrative_finding_service.py"
       ],
-      "gap": "Optional model-opinion adapter is unconfigured. Deterministic evidence is not verified literary quality or complete semantic inference.",
+      "gap": "Registered model-opinion coordinator and UI execution wiring are active original-scope implementation; deterministic findings remain available.",
       "status": "PARTIAL",
       "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
@@ -577,7 +577,7 @@
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Versioned deterministic rubric findings with verified quotes, original review_threads state, ignore/review reasons, stale redaction and read-only inbox under full author authorization.",
-      "remaining_scope": "Optional model-opinion adapter is unconfigured. Deterministic evidence is not verified literary quality or complete semantic inference.",
+      "remaining_scope": "Registered model-opinion coordinator and UI execution wiring are active original-scope implementation; deterministic findings remain available.",
       "initial_gap": "Versioned rubric, exact evidence spans, deterministic repeated-exposition findings, ignore/review/stale handling.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
       "browser_run": 37372638988
@@ -595,7 +595,7 @@
         "app/experimental/planning.py",
         "app/experimental/world.py"
       ],
-      "gap": "Configured model suggestions are unavailable; manual deterministic routes have no claimed future probabilities.",
+      "gap": "Registered simulator-model coordinator and UI execution wiring are active original-scope implementation, not only quality verification.",
       "status": "PARTIAL",
       "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
@@ -604,7 +604,7 @@
       "browser_verification": "BOUNDED_JOURNEYS_PASSED_AT_BF0EC2B0",
       "real_model_verification": "NOT_RUN",
       "implemented_scope": "Bounded deterministic/manual routes, prerequisites/time/knowledge/resources checks, cancellation/CAS, reviewed original-planning handoff and provenance fences.",
-      "remaining_scope": "Configured model suggestions are unavailable; manual deterministic routes have no claimed future probabilities.",
+      "remaining_scope": "Registered simulator-model coordinator and UI execution wiring are active original-scope implementation, not only quality verification.",
       "initial_gap": "Finite deterministic event branches and constraints with explicit draft-only route promotion; no manuscript writes.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
       "browser_run": 37372638988
@@ -819,7 +819,7 @@
         "app/experimental/voice_direction.py",
         "frontend/src/experimental/VoiceDirectionPanel.tsx"
       ],
-      "gap": "Cloud-budgeted execution, real TTS/voice quality and cloning consent are unavailable or unverified.",
+      "gap": "Pause-aware deterministic PCM assembly through original mixer is active implementation; voice quality/optional ASR are separate.",
       "status": "PARTIAL",
       "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
@@ -829,7 +829,7 @@
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "voice_direction_v2",
       "initial_gap": "Real manual directions and actor-private original local-only synthesis queue with explicit output review. Remote budget, real TTS/voice quality and cloning consent unavailable.",
-      "remaining_scope": "Cloud-budgeted execution, real TTS/voice quality and cloning consent are unavailable or unverified.",
+      "remaining_scope": "Pause-aware deterministic PCM assembly through original mixer is active implementation; voice quality/optional ASR are separate.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
       "browser_run": 37372638988
     },
@@ -877,9 +877,9 @@
         "app/experimental/portable_projects.py",
         "frontend/src/experimental/PortableProjectsPanel.tsx"
       ],
-      "gap": "Selected portable manuscript/media subset only; complete history/Canon backup remains the original backup. Collaboration restore unsupported. The corrected browser workflow passed; exact final PG rerun remains required.",
+      "gap": "Selected portable subset is not complete project backup; original backup remains authoritative for full history/Canon. Collaboration restore unsupported. Actual native packaging/large user archives remain acceptance gates.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FIRST_REFINEMENT_LOCAL_REGRESSION; EXACT_HOSTED_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
@@ -887,9 +887,10 @@
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "portable_projects_v2",
       "initial_gap": "Selected manuscript/media subset export, new-target restore, relink and reconstructible-cache cleanup. Full history/Canon backup remains original backup; collaboration restore unsupported.",
-      "remaining_scope": "Selected portable manuscript/media subset only; complete history/Canon backup remains the original backup. Collaboration restore unsupported. The corrected browser workflow passed; exact final PG rerun remains required.",
+      "remaining_scope": "Selected portable subset is not complete project backup; original backup remains authoritative for full history/Canon. Collaboration restore unsupported. Actual native packaging/large user archives remain acceptance gates.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
-      "browser_run": 37372638988
+      "browser_run": 37372638988,
+      "implemented_scope": "Portable selected manuscript/media export and reviewed restore; retained expected missing-media digests, restart/re-export/relink verification, current-source conflicts and exact candidate/original hashes; authorized storage/history diagnostics."
     },
     {
       "id": "U16",
@@ -907,9 +908,9 @@
         "app/experimental/safe_batches.py",
         "frontend/src/experimental/SafeBatchesPanel.tsx"
       ],
-      "gap": "Selected deterministic proof/export/synthetic media batches only; paid/unregistered execution unavailable. The corrected browser workflow passed at 344062df.",
+      "gap": "Paid/unknown-price routes are held or unavailable; no cloud execution, voice-quality or GPU claim. Unknown settlement remains an explicit reconciliation state.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FIRST_REFINEMENT_LOCAL_REGRESSION; EXACT_HOSTED_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "PARTIAL",
@@ -917,9 +918,10 @@
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "safe_batches_v2",
       "initial_gap": "Bounded selected-source proof/export/synthetic media loops with durable step claims and explicit uncertain-state handling. Paid/unregistered execution unavailable.",
-      "remaining_scope": "Selected deterministic proof/export/synthetic media batches only; paid/unregistered execution unavailable. The corrected browser workflow passed at 344062df.",
+      "remaining_scope": "Paid/unknown-price routes are held or unavailable; no cloud execution, voice-quality or GPU claim. Unknown settlement remains an explicit reconciliation state.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
-      "browser_run": 37372638988
+      "browser_run": 37372638988,
+      "implemented_scope": "Reviewed proof/export, registered IMAGE and approved/queued AUDIO batches through original broker/executors; known-zero current quotes, durable approval/admission/settlement, no unknown replay, versioned presets and satisfied-result reuse."
     },
     {
       "id": "B01",
@@ -966,7 +968,7 @@
         "app/experimental/declarative_agents.py",
         "frontend/src/experimental/DeclarativeAgentsPanel.tsx"
       ],
-      "gap": "Registered deterministic reviewed Workflow chain executes. Custom model nodes and executable extensions remain unavailable; ",
+      "gap": "Registered bounded model-node/DAG execution is implemented in the next local staging wave, not included in this first refinement checkpoint. Executable plugins remain DENY_ALL.",
       "status": "PARTIAL",
       "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
@@ -976,7 +978,7 @@
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "declarative_agents_v2",
       "initial_gap": "Registered deterministic connected workflow chain uses original executor with mandatory review and actual SDK contracts. Custom model execution and executable extensions unavailable.",
-      "remaining_scope": "Registered deterministic reviewed Workflow chain executes. Custom model nodes and executable extensions remain unavailable; ",
+      "remaining_scope": "Registered bounded model-node/DAG execution is implemented in the next local staging wave, not included in this first refinement checkpoint. Executable plugins remain DENY_ALL.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
       "browser_run": 37372638988
     },
@@ -995,7 +997,7 @@
         "app/experimental/multilingual_editions.py",
         "frontend/src/experimental/MultilingualEditionsPanel.tsx"
       ],
-      "gap": "Manual language editions only; automatic translation and actual language quality unavailable/unverified. The corrected source mapping and complete browser workflow passed at 344062df.",
+      "gap": "Reviewed registered local translation executor/UI is active original-scope implementation; manual edition drafts remain usable.",
       "status": "PARTIAL",
       "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
       "ui_integration": "INTEGRATED",
@@ -1005,7 +1007,7 @@
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "multilingual_editions_v2",
       "initial_gap": "Independent manual language editions, per-segment review, terminology and exact-source rebind with archived candidates. Automatic translation and real language quality unavailable/unverified.",
-      "remaining_scope": "Manual language editions only; automatic translation and actual language quality unavailable/unverified. The corrected source mapping and complete browser workflow passed at 344062df.",
+      "remaining_scope": "Reviewed registered local translation executor/UI is active original-scope implementation; manual edition drafts remain usable.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
       "browser_run": 37372638988
     },
@@ -1112,9 +1114,9 @@
         "app/experimental/project_forks.py",
         "frontend/src/experimental/ProjectForksPanel.tsx"
       ],
-      "gap": "Selected local rich-document fork/three-way merge/checkpoint recovery implemented. Collaboration branch writing and unmapped structured domains fail closed.",
+      "gap": "Collaboration branch IDs have no branch-manuscript repository/writer authority. No substitution of base manuscript, new parallel manuscript store or arbitrary target-project merge. Unsupported entity domains remain explicit.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FIRST_REFINEMENT_LOCAL_REGRESSION; EXACT_HOSTED_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
@@ -1122,9 +1124,10 @@
       "real_model_verification": "NOT_RUN",
       "runtime_flag": "project_forks_v2",
       "initial_gap": "Real selected local rich-document forks, three-way choices, original CAS/archive and durable checkpoint recovery. Collaboration branch writing and unmapped structured domains fail closed.",
-      "remaining_scope": "Selected local rich-document fork/three-way merge/checkpoint recovery implemented. Collaboration branch writing and unmapped structured domains fail closed.",
+      "remaining_scope": "Collaboration branch IDs have no branch-manuscript repository/writer authority. No substitution of base manuscript, new parallel manuscript store or arbitrary target-project merge. Unsupported entity domains remain explicit.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
-      "browser_run": 37372638988
+      "browser_run": 37372638988,
+      "implemented_scope": "Owned local-project manuscript forks with reviewed CAS merges, plus original character/location/relationship field-level merge attached to the same owned manuscript fork; exact endpoint closure, tombstones and partial checkpoints."
     },
     {
       "id": "B10",
@@ -1142,9 +1145,9 @@
         "app/experimental/offline_sync.py",
         "frontend/src/experimental/OfflineSyncPanel.tsx"
       ],
-      "gap": "Selected local manual exchange and real two-process loopback test implemented. Production cloud transport, default networking and collaboration branch writing unavailable.",
+      "gap": "Automatic/cloud transport and real collaboration-branch manuscript sync require a distinct supported source authority/transport. No silent fallback or cross-domain inference.",
       "status": "PARTIAL",
-      "verification": "BOUNDED_FILE_PG_AND_HOSTED_JOURNEYS_PASS_AT_BF0; real runtime/native/independent acceptance separate",
+      "verification": "FIRST_REFINEMENT_LOCAL_REGRESSION; EXACT_HOSTED_PG_BROWSER_PENDING",
       "ui_integration": "INTEGRATED",
       "api_integration": "INTEGRATED",
       "task_completion": "BOUNDED_ENGINEERING_SLICE",
@@ -1153,9 +1156,10 @@
       "runtime_flag": "offline_sync_v2",
       "runtime_verification": "REAL_LOCAL_TWO_PROCESS_TCP_VERIFIED",
       "initial_gap": "Versioned selected local outbox/inbox/manual exchange, review/CAS and unknown-write reconciliation. Real two-process TCP test passed; external cloud transport/default networking and branch writing remain unavailable.",
-      "remaining_scope": "Selected local manual exchange and real two-process loopback test implemented. Production cloud transport, default networking and collaboration branch writing unavailable.",
+      "remaining_scope": "Automatic/cloud transport and real collaboration-branch manuscript sync require a distinct supported source authority/transport. No silent fallback or cross-domain inference.",
       "browser_source": "bf0ec2b09ef03187536f0e9a677142e3e915aa44",
-      "browser_run": 37372638988
+      "browser_run": 37372638988,
+      "implemented_scope": "Manual portable local exchange using exact source evidence, selection addition/withdrawal preview, current authority and independent-process conflicts, original manuscript CAS and pure source reads."
     }
   ],
   "source_tree": "91135f6ec842bf443a2c5fd1dda58ea7bda62d2f",
@@ -1482,5 +1486,21 @@
     },
     "screenshot_inspection": "FIVE_ORIGINAL_PNGS_INSPECTED"
   },
-  "delivery_status": "BOUNDED_ENGINEERING_VERIFIED_AT_BF0; DOCUMENTATION_HEAD_CI_TO_BE_READ_FROM_PR39; INDEPENDENT_REVIEW_BLOCKED"
+  "delivery_status": "GREEN_CHECKPOINT_1DA63F5_RETAINED; FIRST_REFINEMENT_LOCAL_TESTED_HOSTED_PENDING; ADAPTER_WIRING_CONTINUES",
+  "scope_refinement": {
+    "source_before_documentation": "96ba824ac9d973c7ef45a0dea536f4bd8b8e4e8b",
+    "prior_green_remote": "1da63f5b698a71ebb2a3e6a4e94f0634e8b8a487",
+    "ui_passed": 1016,
+    "ui_optional_http_skipped": 6,
+    "types_build_tokens": "PASS",
+    "file_first_run": {
+      "passed": 3531,
+      "failed": 2,
+      "skipped": 10,
+      "postgres_deselected": 1145
+    },
+    "file_repairs": "Both fixture-only failures repaired; focused rerun36PASS33deselected; corrected full File running",
+    "hosted_current": "PENDING",
+    "independent_review": "BLOCKED_NO_RETRY"
+  }
 }

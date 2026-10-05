@@ -1,5 +1,16 @@
 # U08 request scope and exact local variants
 
+## Original-scope completion: identified source controls
+
+The follow-on source adds individual current record controls for eligible characters, locations, foreshadowing and author-secret records, mapped from the actual authorized/provider-eligible context. Each opaque identity binds the project, record kind and original ID; each pin binds its actual numeric version when available plus a canonical content digest. Records without numeric versions are labelled digest-only, never assigned invented versions. Unknown identities and stale/revoked pins fail closed without returning source details.
+
+The exact same projection runs before request construction and at final dispatch. Excluding one identified record physically removes it while keeping other identified records, and removes every potentially dependent state/summary/lore/narrative/policy/context-pack/legacy-style bundle lacking complete provenance. It also removes approved STYLE/PLOT references when an underlying record was excluded. Excluding an approved reference alone removes its direct enrichment and uncertain automatic derivatives; other explicitly selected approved references retain their own original current-approval checks. Explicit manuscript and author instructions remain separate choices, not semantic text-redaction guarantees.
+
+React previews expose include/exclude and version-pin actions. Each change clears the old receipt and requires a new explicit preflight. Stale restrictions can be cleared without a prior successful preview; doing so never sends a provider request automatically. Writing, original broker and selection-revision consumers share these controls.
+
+Focused backend/context/mounted regression: **94 passed / 22 locally skipped PostgreSQL cases**. New source controls have real mounted File/PG parameterized contracts and captured actual request/transport checks, including excluded canaries copied into summaries and current source changes at dispatch. Four frontend files passed **43 tests**, including original cross-project navigation regressions. A second real hosted U08 journey is authored and collected; actual hosted PG/browser execution must be recorded at the published refinement head. Existing historical boundaries below describe the earlier checkpoint and are superseded only by these implemented controls.
+
+
 This is feature implementation, not closure of the separately platform-blocked independent review.
 
 ## Actual author workflow

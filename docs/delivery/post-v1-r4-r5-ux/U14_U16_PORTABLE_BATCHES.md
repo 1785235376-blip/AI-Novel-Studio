@@ -2,6 +2,8 @@
 
 ## Status and scope
 
+Current deterministic extensions and their evidence supersede the initial boundaries below: [U14 maintenance](u14-portable-maintenance.md) and [U16 original domain admission](U16_DOMAIN_ADMISSION.md). The initial checkpoint remains recorded rather than retroactively treating its unrun environments as passed.
+
 EXTEND, deterministic implementation and UI integration. File/API/request behavior is exercised below. Actual PostgreSQL, Chromium, native desktop, screen readers, Windows IME and real-model behavior remain NOT_RUN in this environment. This checkpoint does not mark all of U14/U16 complete.
 
 - U14 exports a real bounded ZIP containing selected current manuscript documents and their referenced, decoded media. SHA-256 manifests use relative media references and portable aliases. Import first validates all members and media without extraction, then requires an explicit version/digest-bound confirmation to create a fresh UUID-based project through the original project/chapter/asset services. It never restores into an existing project or copies grants.
@@ -20,7 +22,7 @@ EXTEND, deterministic implementation and UI integration. File/API/request behavi
 4. Bounds: 100 selected chapters; 100 media records; 101 ZIP members; 40 MiB input ZIP; 32 MiB expanded content; 8 MiB per media member; 4 MiB manifest; compression ratio maximum 100. No extraction, network retrieval or optional-tool installation occurs. Existing decoders fail closed if unavailable.
 5. Cross-repository restore/relink is deliberately checkpointed, not a distributed transaction. Interrupted writes retain the partial new project/assets and ID map as RECOVERY_REQUIRED; they are not automatically repeated or cleaned. Recovery uses the original project/chapter/asset interfaces. There is no destructive rollback button.
 6. Cleanup currently covers only this feature's reproducible export cache. It is not a full disk scanner, old-asset deleter, history compactor or general cache manager. Cache regeneration requires the same current sources and media. Private recovery assets are excluded from accepted-asset byte totals.
-7. U16 allows at most 20 items per batch, at most 200 readable chapters/2,000,000 source characters, 2 MiB per result and 4 MiB total persisted stage results. It does not run cloud/paid models, external workflow programs, real audio redo or real image/video models. Those paths need original workflow and broker admission. There is no GPU telemetry or control claim. B01 reusable template integration remains a dependency, not a parallel preset system.
+7. Initial checkpoint (extended by U16_DOMAIN_ADMISSION.md): U16 allowed at most 20 items per batch, at most 200 readable chapters/2,000,000 source characters, 2 MiB per result and 4 MiB total persisted stage results. It does not run cloud/paid models, external workflow programs, real audio redo or real image/video models. Those paths need original workflow and broker admission. There is no GPU telemetry or control claim. B01 reusable template integration remains a dependency, not a parallel preset system.
 8. Media-bearing prose exports are refused here and directed to the original resource-package export flow, rather than silently dropping resources. Actual renderer compatibility in Word/EPUB readers/PDF viewers remains unverified.
 
 ## Authority and persistence

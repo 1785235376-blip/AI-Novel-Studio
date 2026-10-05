@@ -1,4 +1,4 @@
-# Recommended next work after this bounded delivery
+# New work candidates after original-scope completion
 
 These are recommendations, not newly executed tasks. The forty-package matrix remains the authoritative record of current limits. Independent follow-up review is BLOCKED, so this is an engineering prioritization, not an independent all-clear.
 
@@ -8,13 +8,11 @@ These are recommendations, not newly executed tasks. The forty-package matrix re
 2. Run native Windows acceptance on a real connected test machine: actual Chinese IME, WebView2 focus/zoom/multi-monitor, vault access, installer/upgrade/uninstall retention and crash/power-loss boundaries. Hosted compile/package smoke is insufficient evidence.
 3. Validate one registered local model per text/image/TTS family with recorded runtime/model fingerprints, current consent and real quality samples. Keep paid/cloud execution and environment changes separately authorized; never promote synthetic adapters into quality evidence.
 
-## Improve existing daily workflows
+## Complete the original scope first
 
-- U03: storage-event-driven incremental search and bounded authorized multi-project filtering, with cold-start/memory receipts and preserved post-revocation checks. Current-project lexical search and measured warm timings already work.
-- U08/A06: source-level provenance decomposition and multi-request broker reservations before enabling cloud/budgeted variants. Do not expose finer removal controls until excluded derivatives can be proven absent at final dispatch.
-- U14/U16 and the original asset library: reviewed bulk tags/archive/restore/reimport, clearer portable-subset versus full-backup choice, and previewed orphan/cache accounting. Never delete originals as “cleanup.”
-- B09/B10: real branch-source adapters and cross-domain merge semantics before broader forks/sync. Cloud transport needs its own consent, credentials, transport policy and deployment task; manual local exchange is already implemented.
-- Large-workbench navigation: use real author feedback to group frequent tasks within the current shell. Enabled-tool search is already implemented; avoid another top-level menu per package or a visual rewrite.
+U03/U08/U14/U16/B09/B10 refinement and remaining A01/A03/A07/A13/U06/B02/B03/B05 execution seams are active original requirements. See SCOPE_RECONCILIATION.md and FEATURE_MATRIX.json. They are not recommendations for a separate future project.
+
+Large-workbench navigation should continue to respond to observed flow defects within the current shell. No visual rewrite or unbounded aesthetic pass is required.
 
 ## Separate new feature candidates
 
