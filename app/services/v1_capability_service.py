@@ -784,6 +784,11 @@ class V1CapabilityService:
                 if any(states[source]["status"] != "SUCCEEDED" for source in incoming[node_id]):
                     continue
                 node = nodes[node_id]
+                # Optional trusted-host fence; ordinary V1 hosts remain unchanged.
+                # Keep this outside node error handling so revoked authority aborts.
+                dispatch_guard = getattr(self, "workflow_dispatch_guard", None)
+                if dispatch_guard is not None:
+                    dispatch_guard(run, node)
                 if node["type"] == "manual_approval":
                     state.update(status="WAITING_APPROVAL", output=None, error=None)
                     states[node_id] = state
