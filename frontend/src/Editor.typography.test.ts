@@ -1,7 +1,5 @@
 import {describe,expect,it} from 'vitest';
-// @ts-expect-error Node built-ins are provided by the Vitest runtime.
 import {readFileSync} from 'node:fs';
-// @ts-expect-error Node built-ins are provided by the Vitest runtime.
 import {fileURLToPath} from 'node:url';
 const css=readFileSync(fileURLToPath(new URL('./style.css',import.meta.url)),'utf8');
 const tokens=readFileSync(fileURLToPath(new URL('./ui/tokens.css',import.meta.url)),'utf8');
