@@ -183,6 +183,14 @@ def safe_code(value):
     return value if isinstance(value, str) and value in SAFE_CODES else 'UNCLASSIFIED'
 
 
+FEATURE_OWNED_GENERATION = {
+    "declarative_agent": ("declarative_agents_v2", "声明式工作流候选"),
+    "story_simulator_model": ("story_simulator_v2", "剧情模拟候选"),
+    "multilingual_translation": ("multilingual_editions_v2", "语言版本译文候选"),
+    "narrative_judge_model": ("narrative_quality_judge_v2", "叙事评审意见"),
+}
+
+
 def projected_task(reader, row):
     error = row.get('error_code') or (row.get('error', {}).get('code') if isinstance(row.get('error'), dict) else None)
     status = str(row.get('status', 'UNKNOWN')).upper()
@@ -198,14 +206,17 @@ def projected_task(reader, row):
                for item in row.get('history', [])[-10:] if isinstance(item, dict)
                and str(item.get('status', '')).upper() in STAGES]
     source = {}
-    if (reader.name == 'author_generation' and isinstance(row.get('chapter_id'), str)
+    owner = FEATURE_OWNED_GENERATION.get(row.get('experimental_origin')) if reader.name == 'author_generation' else None
+    if owner:
+        source = {'source': {'kind': 'feature', 'id': str(row['id']), 'feature': owner[0]}}
+    if (not owner and reader.name == 'author_generation' and isinstance(row.get('chapter_id'), str)
             and row['chapter_id'] and type(row.get('base_chapter_version')) is int
             and row['base_chapter_version'] > 0):
         source = {'source': {'kind': 'generation', 'id': str(row['id']),
                   'chapter_id': row['chapter_id'], 'version': row['base_chapter_version']}}
-    return {**source, 'id': str(row['id']), 'authority': reader.name, 'label': reader.label,
+    return {**source, 'id': str(row['id']), 'authority': reader.name, 'label': owner[1] if owner else reader.label,
             'status': status, 'stage_label': STAGES[status], 'version': row.get('version'),
-            'feature': reader.feature, 'progress': progress, 'history': history,
+            'feature': owner[0] if owner else reader.feature, 'progress': progress, 'history': history,
             'stale': bool(row.get('stale')), 'cost': {'estimate': None, 'actual': None, 'state': 'UNKNOWN'},
             'error_code': safe_code(error) if error else None,
             'actions': ['open_source'], 'retry_policy': 'SOURCE_AUTHORITY_ONLY',

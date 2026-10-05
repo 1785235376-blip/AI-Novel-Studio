@@ -1,5 +1,5 @@
 """Current-actor B03 APIs; synthesis goes through the existing executor."""
-from fastapi import APIRouter, Header, HTTPException, Response
+from fastapi import APIRouter, Header, HTTPException, Query, Response
 from pydantic import Field
 from .production_lineage_api import api_call, PrivateProductionRoute
 from .voice_direction import DirectionEditIn, LockIn, ReorderIn, QueueSegmentsIn, VersionIn, VOICE_FLAG
@@ -46,6 +46,18 @@ def create_voice_direction_router(service, authorize, require_flag, executor_fac
     @router.get("/catalog")
     def catalog(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return invoke(nid, x_session_token, x_branch_id, "domain.read", lambda a,s,g: service.catalog(nid,s,a))
+
+    @router.post("/plans/{rid}/mix")
+    def mix(nid: str, rid: str, body: VersionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke(nid,x_session_token,x_branch_id,"domain.write",lambda a,s,g: service.mix(nid,s,a,rid,body.expected_version,g))
+
+    @router.get("/mixes/{rid}/audio")
+    def mix_audio(nid: str, rid: str, expected_version: int = Query(ge=1), x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        def read(a,s,g):
+            data, media_type = service.mix_audio(nid,s,a,rid,expected_version)
+            g()
+            return Response(data, media_type=media_type, headers={"Cache-Control":"no-store", "X-Content-Type-Options":"nosniff"})
+        return invoke(nid,x_session_token,x_branch_id,"domain.read",read)
 
     @router.put("/plans/{rid}/segments/{sid}")
     def edit(nid: str, rid: str, sid: str, body: DirectionEditIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

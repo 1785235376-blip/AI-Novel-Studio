@@ -6,7 +6,9 @@ are integrated. Local runtime capability is discovered only on explicit send.
 """
 from __future__ import annotations
 import copy
+import base64
 from contextvars import ContextVar
+from fractions import Fraction
 import hashlib
 import re
 from typing import Literal
@@ -97,16 +99,47 @@ class DirectedAudiobookService(AudiobookV2Service):
 
     @staticmethod
     def visible(row):
-        return not row.get("voice_direction") or (VOICE_FLAG in enabled_flags() and _actor_context.get() == row.get("created_by"))
+        return set(row.get("required_features", [])).issubset(enabled_flags()) and (
+            not row.get("voice_direction") or (VOICE_FLAG in enabled_flags()
+                and _actor_context.get() == row.get("created_by")))
 
     def list(self, nid, scope, collection):
-        return [r for r in super().list(nid, scope, collection) if self.visible(r)]
+        rows = [r for r in super().list(nid, scope, collection) if self.visible(r)]
+        if collection == self.PLANS:
+            for row in rows: self._timeline(row)
+        return rows
 
     def get(self, nid, scope, collection, rid):
         row = super().get(nid, scope, collection, rid)
         if not self.visible(row):
             raise FileNotFoundError(rid)
+        if collection == self.PLANS:
+            self._timeline(row)
         return row
+
+    @staticmethod
+    def _timeline(plan):
+        if not plan.get("voice_direction"):
+            return AudiobookV2Service._timeline(plan)
+        position, measured = Fraction(0), 0
+        for index, segment in enumerate(plan["segments"]):
+            duration = segment.get("duration_ms")
+            frames = segment.get("frame_timing")
+            if duration is not None:
+                measured += 1
+                duration = Fraction(frames["frames"] * 1000, frames["sample_rate"]) if frames else Fraction(duration)
+            pause = segment.get("direction", {}).get("pause_ms", 0) if index + 1 < len(plan["segments"]) else 0
+            if type(pause) is not int or not 0 <= pause <= 3000:
+                raise ValueError("VOICE_PAUSE_INVALID")
+            segment["start_ms"] = float(position) if position is not None else None
+            end = position + duration if position is not None and duration is not None else None
+            segment["end_ms"] = float(end) if end is not None else None
+            segment["pause_after_ms"] = pause
+            # No guessed start beyond an unmeasured segment. No final silence.
+            silence = Fraction(round(Fraction(pause * frames["sample_rate"], 1000)) * 1000, frames["sample_rate"]) if frames else Fraction(pause)
+            position = end + silence if end is not None else None
+        plan["duration_ms"] = float(position) if position is not None else None
+        plan["timing_status"] = "MEASURED" if measured == len(plan["segments"]) else "PARTIAL" if measured else "UNMEASURED"
 
     def mutate(self, nid, scope, actor, collection, rid, expected_version, callback):
         def guarded(row):
@@ -138,7 +171,9 @@ class DirectedAudiobookService(AudiobookV2Service):
         for row in plans:
             if row["stale"]:
                 row.pop("segments", None)
-        return {"plans": plans, "profiles": self.list(nid, scope, self.PROFILES),
+        mixes = [{k: v for k, v in r.items() if k != "history"} for r in
+            self.as_actor(actor, self.list_review_items, nid, scope) if r.get("plan_id") and r.get("voice_direction")]
+        return {"plans": plans, "mixes": mixes, "mixer": self.capabilities()["mixer"], "profiles": self.list(nid, scope, self.PROFILES),
                 "characters": [{"id": "__narrator__", "name": "旁白"}, *[{"id": c["id"], "name": c.get("name", c["id"])} for c in self._characters(nid, scope)]],
                 "tts": {"execution": "EXISTING_EXECUTOR_LOCAL_ONLY", "runtime": "CHECKED_ON_EXPLICIT_EXECUTE", "max_cost": 0,
                         "reference_voice": "UNAVAILABLE_SEPARATE_CONSENT_REQUIRED", "quality": "NOT_RUN", "alignment": "NOT_CONFIGURED"}}
@@ -216,11 +251,60 @@ class DirectedAudiobookService(AudiobookV2Service):
         return super().review(nid, scope, actor, item_id, action, expected_version)
 
     def mix(self, nid, scope, actor, rid, expected_version, check_authority=None):
-        # Existing mixer does not yet honour per-segment delivery pauses. Never
-        # create a misleading directed mix through a generic legacy route.
         if self.get(nid, scope, self.PLANS, rid).get("voice_direction"):
-            raise ValueError("VOICE_DIRECTED_MIX_PAUSE_ADAPTER_UNAVAILABLE")
+            require_flag(VOICE_FLAG)
+            plan = self.owned_plan(nid, scope, actor, rid)
+            if any(not s.get("direction", {}).get("text_reviewed") or not s.get("direction", {}).get("voice_authorized") for s in plan["segments"]):
+                raise ValueError("VOICE_TEXT_AND_VOICE_REVIEW_REQUIRED")
         return super().mix(nid, scope, actor, rid, expected_version, check_authority)
+
+    def _mix_origin(self, nid, scope, plan, source_ids):
+        options = self._mix_asset_options(nid, scope, plan, {"source_asset_ids":source_ids})
+        origin = {"required_features": list(options["required_features"])} if options else {}
+        if not plan.get("voice_direction"): return origin
+        return {**origin, "voice_direction": True, "timeline": [{k: s.get(k) for k in
+            ("id", "audio_asset_id", "start_ms", "end_ms", "pause_after_ms", "frame_timing")} for s in plan["segments"]]}
+
+    def duration_manifest(self, nid, scope, rid):
+        manifest = super().duration_manifest(nid, scope, rid)
+        plan = self.get(nid, scope, self.PLANS, rid)
+        if plan.get("voice_direction"):
+            manifest["silence_policy"] = "BETWEEN_SEGMENTS_NO_TRAILING_SILENCE"
+            for timing, segment in zip(manifest["segments"], plan["segments"]):
+                timing.update(pause_after_ms=segment["pause_after_ms"], frame_timing=segment.get("frame_timing"))
+        return manifest
+
+    def _mix_asset_options(self, nid, scope, plan, proposal):
+        features = {"audiobook_v2", VOICE_FLAG} if plan.get("voice_direction") else set()
+        for aid in proposal["source_asset_ids"]:
+            asset, _ = self._audio_asset(nid, scope, aid)
+            features.update(asset.get("_required_features", []))
+        # Explicit mix approval uses the original asset promotion lifecycle.
+        # Persist every source origin at creation, before metadata is attached.
+        return {"required_features": tuple(sorted(features))} if features else {}
+
+    def mix_audio(self, nid, scope, actor, rid, expected_version):
+        require_flag(VOICE_FLAG)
+        row = self.get(nid, scope, self.MIXES, rid)
+        if not row.get("voice_direction") or row["created_by"] != actor:
+            raise FileNotFoundError(rid)
+        check_version(row, expected_version)
+        self._mix_plan(nid, scope, row)
+        if row["status"] not in {"PENDING_REVIEW", "APPROVING", "APPROVED"}:
+            raise ValueError("VOICE_MIX_PREVIEW_UNAVAILABLE")
+        content = base64.b64decode(row["content_base64"], validate=True)
+        if hashlib.sha256(content).hexdigest() != row["content_sha256"]:
+            raise ValueError("AUDIO_MIX_INTEGRITY_FAILED")
+        if row.get("asset_id"):
+            _, content = self._audio_asset(nid, scope, row["asset_id"])
+            if hashlib.sha256(content).hexdigest() != row["content_sha256"]:
+                raise ValueError("AUDIO_MIX_INTEGRITY_FAILED")
+        current = self.get(nid, scope, self.MIXES, rid)
+        check_version(current, expected_version)
+        self._mix_plan(nid, scope, current)
+        if current["content_sha256"] != row["content_sha256"]:
+            raise StaleSourceError("AUDIO_MIX_CONTENT_CHANGED")
+        return content, row["media"]["media_type"]
 
     @staticmethod
     def segment_fingerprint(segment):

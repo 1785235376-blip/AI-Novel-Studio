@@ -28,6 +28,9 @@ class Job:
     creation_records:list=field(default_factory=list)
     expected_request_digest:str|None=None
     base_chapter_digest:str|None=None
+    generation_max_output_bytes:int|None=None
+    generation_deadline:str|None=None
+    generation_bound_failure:str|None=None
     author_input_digest:str|None=None
     request_scope:dict|None=None
     reviewed_variant:dict|None=None
@@ -53,6 +56,9 @@ class Job:
     route_decisions:list=field(default_factory=list)
     def public(self):
         result = {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at","creation_records","usage","usage_status","execution_mode","provider_reference_id","route_decisions")}
+        if self.generation_max_output_bytes is not None or self.generation_deadline is not None:
+            result.update(generation_max_output_bytes=self.generation_max_output_bytes, generation_deadline=self.generation_deadline)
+        if self.generation_bound_failure is not None: result["generation_bound_failure"] = self.generation_bound_failure
         if self.author_input_digest is not None: result["author_input_digest"] = self.author_input_digest
         if self.request_scope is not None: result["request_scope"] = self.request_scope
         if self.reviewed_variant is not None:
@@ -78,6 +84,10 @@ class Job:
 # These stamps are set by trusted server coordinators, never from GenerateIn or
 # an unvalidated payload. Intrinsic receipt fields retain older-job fencing.
 GENERATION_ORIGINS = {
+    "story_simulator_model": frozenset({"author_context_inspector_v2", "model_broker_v2", "story_simulator_v2"}),
+    "multilingual_translation": frozenset({"author_context_inspector_v2", "model_broker_v2", "multilingual_editions_v2"}),
+    "narrative_judge_model": frozenset({"author_context_inspector_v2", "model_broker_v2", "narrative_quality_judge_v2"}),
+    "declarative_agent": frozenset({"author_context_inspector_v2", "model_broker_v2", "declarative_agents_v2"}),
     "author_context": frozenset({"author_context_inspector_v2"}),
     "character_author": frozenset({"author_context_inspector_v2", "world_character_engines_v2", "temporal_story_graph_v2", "character_mind_v2"}),
     "model_broker": frozenset({"author_context_inspector_v2", "model_broker_v2"}),
@@ -127,6 +137,14 @@ def require_generation_content(job):
 
 
 def require_whole_generation_acceptance(job):
+    required = generation_required_features(job)
+    for feature, code in (("story_simulator_v2", "SIMULATOR_DRAFT_ONLY"), ("multilingual_editions_v2", "TRANSLATION_DRAFT_ONLY"), ("narrative_quality_judge_v2", "JUDGE_DRAFT_ONLY")):
+        if feature in required:
+            from fastapi import HTTPException
+            raise HTTPException(409, {"code": code})
+    if "declarative_agents_v2" in generation_required_features(job):
+        from fastapi import HTTPException
+        raise HTTPException(409, {"code": "DECLARATIVE_DRAFT_ONLY"})
     if (getattr(job, "partial_revision_only", False) or getattr(job, "revision_selection_binding", None) is not None
         or "selection_assistant_v2" in generation_required_features(job)):
         from fastapi import HTTPException
@@ -137,6 +155,41 @@ def require_generation_accounting(job):
     if (job.dispatch_hooks_required or callable(job.on_terminal)) and job.terminal_hook_status != "COMPLETED":
         from fastapi import HTTPException
         raise HTTPException(409, {"code": "GENERATION_ACCOUNTING_NOT_TERMINAL"})
+
+
+def validate_generation_bounds(job):
+    """Trusted-host-only optional bounds. Ordinary input payloads cannot set them."""
+    size, deadline = job.generation_max_output_bytes, job.generation_deadline
+    if size is None and deadline is None: return None
+    if type(size) is not int or not 256 <= size <= 128000 or not isinstance(deadline, str):
+        raise ValueError("GENERATION_BOUNDS_INVALID")
+    try: parsed = datetime.fromisoformat(deadline)
+    except ValueError: raise ValueError("GENERATION_BOUNDS_INVALID") from None
+    if parsed.tzinfo is None or (parsed - datetime.now(timezone.utc)).total_seconds() > 301:
+        raise ValueError("GENERATION_BOUNDS_INVALID")
+    return parsed
+
+
+def check_generation_bounds(job, *, delta="", completion_text=None):
+    expected = getattr(job, "_generation_bounds", None)
+    changed = expected is not None and expected != (job.generation_max_output_bytes, job.generation_deadline)
+    if changed:
+        job.generation_bound_failure = "GENERATION_BOUNDS_CHANGED"; job.output = ""; job.cancelled.set()
+        raise ValueError("GENERATION_BOUNDS_CHANGED")
+    deadline = validate_generation_bounds(job)
+    if deadline is None: return
+    code = None
+    if datetime.now(timezone.utc) >= deadline: code = "GENERATION_DEADLINE_EXCEEDED"
+    elif len(job.output.encode("utf-8")) + len(delta.encode("utf-8")) > job.generation_max_output_bytes:
+        code = "GENERATION_OUTPUT_LIMIT"
+    elif completion_text is not None and len(completion_text.encode("utf-8")) > job.generation_max_output_bytes:
+        # Completion is often the same text already streamed; never add it twice.
+        code = "GENERATION_OUTPUT_LIMIT"
+    if code:
+        job.generation_bound_failure = code
+        job.output = ""
+        job.cancelled.set()  # Cooperative signal, not forced upstream preemption.
+        raise ValueError(code)
 
 
 class JobManager:
@@ -204,6 +257,8 @@ class JobManager:
         """Start the exact validated instance once, never rebuild its payload."""
         from .experimental.character_author_context import is_character_job
         if job.status != "PREPARED": raise ValueError("GENERATION_JOB_NOT_PREPARED")
+        validate_generation_bounds(job)
+        job._generation_bounds = (job.generation_max_output_bytes, job.generation_deadline)
         if job.expected_request_digest and not callable(job.request_authorization):
             raise ValueError("AUTHOR_PREVIEW_SESSION_REQUIRED")
         if (job.partial_revision_only or job.revision_selection_binding is not None) and not callable(job.request_authorization):
@@ -314,6 +369,7 @@ class JobManager:
         return chapter, dict(request.context), request
 
     def _guard_author_request(self, job, route, *, dispatch=False):
+        check_generation_bounds(job)
         cloud = runtime.is_remote_text_provider(route.provider)
         self._validate_outbound_sources(job, cloud)
         from .experimental.character_author_context import is_character_job, resolve_character_author_context
@@ -394,8 +450,11 @@ class JobManager:
                     for event in node.stream(TextModelNodeInput(request)):
                         if event.event_type=="generation.cancelled" or job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
                         if event.event_type=="generation.failed":raise ModelRuntimeError(event.error_code or RuntimeErrorCode.GENERATION_FAILED,"生成失败，请审核已有输出后重试")
-                        if event.event_type=="generation.delta" and event.delta:self._emit(job,event.delta)
+                        if event.event_type=="generation.delta" and event.delta:
+                            check_generation_bounds(job, delta=event.delta)
+                            self._emit(job,event.delta)
                         if event.event_type=="generation.completed":
+                            check_generation_bounds(job, completion_text=event.response.text if event.response else None)
                             completed=True
                             if event.response:
                                 job.usage=asdict(event.response.usage) if event.response.usage else None
@@ -413,6 +472,7 @@ class JobManager:
             else:raise last or RuntimeError("No provider route")
             if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
             if role=="writer" and not self.snapshot_required:self.contexts.save_snapshot(job.chapter_id,ch.get("version",0),context,"writer:v1",job.model or "unknown")
+            check_generation_bounds(job)
             job.issues=deterministic_review(job.output,context);job.latency_ms=int((time.monotonic()-started)*1000)
             if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
             with job.condition:
@@ -425,6 +485,10 @@ class JobManager:
         except Exception as exc:
             if job.status in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN", "REJECTED"}:
                 return  # A late logging/accounting failure cannot undo review.
+            if job.generation_bound_failure:
+                job.output="";job.status="FAILED";job.execution_outcome="FAILED";job.error_code=job.generation_bound_failure
+                job.error="生成超出已审核的时间或输出限额，未完成内容已丢弃。"
+                self._emit(job);return
             if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
             if isinstance(exc,ModelRuntimeError):safe_error=exc.safe_message;error_code=exc.code.value
             elif isinstance(exc,RuntimeError) and "snapshot" in str(exc).casefold():safe_error="Context snapshot failed";error_code="CONTEXT_SNAPSHOT_FAILED"

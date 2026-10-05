@@ -93,7 +93,6 @@ class SimulationRunIn(StrictModel):
         if len(set(self.chapter_ids)) != len(self.chapter_ids) or set(self.expected_versions) != set(self.chapter_ids):
             raise ValueError('provide exactly the selected unique chapter versions')
         if self.chapter_id not in self.chapter_ids: raise ValueError('viewpoint chapter must be selected')
-        if self.model_id: raise ValueError('SIMULATOR_MODEL_NOT_CONFIGURED: manual rules remain available')
         if set(self.assumptions) & set(self.hard_constraints.forbidden_facts): raise ValueError('initial assumptions violate forbidden facts')
         if any(v > self.hard_constraints.resource_caps.get(k, 1_000_000) for k, v in self.resources.items()):
             raise ValueError('initial resources exceed hard limits')
@@ -147,9 +146,10 @@ def transition(state, event, knowledge_ids, graph_ids, constraints):
 class StorySimulatorService(SourceFencedService):
     RUNS = 'story_simulation_runs'
 
-    def __init__(self, store, novels, chapters, planning, story_graph):
+    def __init__(self, store, novels, chapters, planning, story_graph, *, broker=None):
         super().__init__(store, novels, chapters)
         self.planning, self.story_graph = planning, story_graph
+        self.broker, self.model_coordinator = broker, None
         # A transient validator, never persisted credentials or authority.
         self.planning.simulation_validator = self.validate_proposal
 
@@ -160,9 +160,10 @@ class StorySimulatorService(SourceFencedService):
             require_row(state, self.planning.NODES, row['id'])
             if row['status'] == 'ARCHIVED' or require_row(state, self.planning.GRAPHS, row['graph_id'])['status'] != 'ACTIVE': continue
             nodes.append({'id': row['id'], 'title': row['title'], 'version': row['version'], 'chapter_ids': row['links']['chapter_ids']})
+        model_routes = self.model_coordinator.catalog(nid, scope) if self.model_coordinator else []
         return {'chapters': self.chapter_catalog(nid, scope), 'planning_nodes': nodes,
                 'characters': [{'id': r['id'], 'name': r.get('name', r['id'])} for r in self.novels.data_set(nid, 'characters') if not r.get('branch_id') or r['branch_id'] == scope.get('branch_id')],
-                'limits': deepcopy(LIMITS), 'model_configured': False}
+                'limits': deepcopy(LIMITS), 'model_configured': any(route['available'] for route in model_routes), 'model_routes': model_routes}
 
     def _context(self, nid, scope, data):
         context = CharacterProjection.model_validate(self.story_graph.character_context(nid, scope, data['character_id'], data['chapter_id'], data['world_time'], data['calendar'])).model_dump()
@@ -192,6 +193,9 @@ class StorySimulatorService(SourceFencedService):
                 'entities': entity_sources(self, nid, scope, node['links'], state), 'links_digest': digest(node['links'])}
 
     def _fresh(self, nid, scope, row, state=None, proposal=None):
+        if row.get('model_adoption'):
+            if not self.model_coordinator: raise StaleSourceError('simulation model authority unavailable')
+            self.model_coordinator.validate_adoption(nid, scope, row, state, proposal)
         self.assert_capture(nid, scope, row['sources'])
         self.assert_capture(nid, scope, row['evidence_sources'])
         context, _ = self._context(nid, scope, row['request'])
@@ -229,6 +233,9 @@ class StorySimulatorService(SourceFencedService):
                     'routes': [], 'model_called': False, 'limitations': ['来源、规划或角色知识已变化；旧路线已隐藏，请按当前来源重新创建推演。']}
         result = {k: deepcopy(v) for k, v in row.items() if k not in {'history', 'sources', 'evidence_sources', 'planning_capture', 'request'}}
         result['routes'] = [{k: deepcopy(v) for k, v in route.items() if k not in {'state', 'seen_states'}} for route in row['routes']]
+        if row.get('model_preview') or row.get('model_execution'):
+            if self.model_coordinator: result = self.model_coordinator.public_model(nid, scope, row, result)
+            else: result.update(model_preview=None, model_candidates=[], model_candidates_digest=None, model_unavailable=True)
         return {**result, 'input': deepcopy(row['request']), 'stale': False}
 
     def runs(self, nid, scope):
@@ -237,8 +244,12 @@ class StorySimulatorService(SourceFencedService):
     def run(self, nid, scope, rid):
         return self._public(nid, scope, self.get(nid, scope, self.RUNS, rid))
 
-    def create_run(self, nid, scope, actor, value, reauthorize=lambda: None):
+    def _prepare_run(self, nid, scope, actor, value):
         request = SimulationRunIn.model_validate(value.model_dump() if hasattr(value, 'model_dump') else value).model_dump()
+        if request['model_id'] and (not self.model_coordinator or not any(
+            route['model_id'] == request['model_id'] and route['available']
+            for route in self.model_coordinator.catalog(nid, scope))):
+            raise ValueError('SIMULATOR_MODEL_NOT_CONFIGURED: manual rules remain available')
         sources, _ = self.capture(nid, scope, request['chapter_ids'], request['expected_versions'])
         context, evidence_sources = self._context(nid, scope, request)
         if context['context_digest'] != request['context_digest']: raise StaleSourceError('character knowledge changed; refresh its preview')
@@ -248,59 +259,70 @@ class StorySimulatorService(SourceFencedService):
         check_version(node, request['expected_node_version'])
         if not set(node['links']['chapter_ids']).issubset(request['chapter_ids']): raise ValueError('include all planning target chapter sources')
         planning_capture = self._plan_capture(nid, scope, node['id'], state)
-        routes = []
-        initial = {'facts': sorted(set(request['assumptions'])), 'resources': request['resources'], 'time': request['world_time']}
-        for route in request['routes']:
-            routes.append({'id': route['id'], 'title': route['title'], 'cursor': 0, 'status': 'PENDING', 'steps': [], 'violations': [], 'unresolved_questions': [],
-                           'motivation_hypothesis': route['motivation_hypothesis'] or request['motivation_hypothesis'], 'character_goal': request['character_goal'],
-                           'state': deepcopy(initial), 'seen_states': [digest(initial)]})
+        routes = self.initial_routes(request)
         input_digest = digest([METHOD, sources, evidence_sources, planning_capture, request])
         row = new_row(nid, scope, actor, {'status': 'READY', 'request': request, 'sources': sources, 'evidence_sources': evidence_sources, 'planning_capture': planning_capture,
                       'chapter_id': request['chapter_id'], 'source_version': sources[request['chapter_id']]['version'], 'routes': routes, 'expansions': 0,
                       'limits': {**LIMITS, 'max_steps': request['max_steps'], 'max_branches': request['max_branches']},
                       'request_digest': input_digest, 'result_digest': digest(routes), 'model_called': False, 'model_budget': 0,
                       'provenance': {'method': METHOD, 'execution': 'DETERMINISTIC_MANUAL', 'source_versions': sources, 'context_digest': context['context_digest'], 'input_digest': input_digest},
-                      'limitations': ['只检查作者手工输入的事件，不推测真实未来概率。', '目标与动机是明确标注的作者假设，不是已证明的人物心理。', '未配置模型；没有模型调用、收费或 GPU 等价性声明。']})
+                      'limitations': ['只检查作者手工输入的事件，不推测真实未来概率。', '目标与动机是明确标注的作者假设，不是已证明的人物心理。', '此记录的手工规则检查不调用模型。可另行明确预览已配置的本地模型候选；模型质量未验证。']})
+        return row
+
+    def create_run(self, nid, scope, actor, value, reauthorize=lambda: None):
+        row = self._prepare_run(nid, scope, actor, value)
         with self.store.transaction(nid, scope) as state:
             if len(collection(state, self.RUNS)) >= 200: raise ValueError('simulation run limit reached')
             reauthorize(); self._fresh(nid, scope, row, state)
             collection(state, self.RUNS)[row['id']] = row
         return self._public(nid, scope, row)
 
+    @staticmethod
+    def initial_routes(request):
+        routes = []
+        initial = {'facts': sorted(set(request['assumptions'])), 'resources': request['resources'], 'time': request['world_time']}
+        for route in request['routes']:
+            routes.append({'id': route['id'], 'title': route['title'], 'cursor': 0, 'status': 'PENDING', 'steps': [], 'violations': [], 'unresolved_questions': [],
+                           'motivation_hypothesis': route['motivation_hypothesis'] or request['motivation_hypothesis'], 'character_goal': request['character_goal'],
+                           'state': deepcopy(initial), 'seen_states': [digest(initial)]})
+        return routes
+
+    @staticmethod
+    def advance_round(target, current_context, reauthorize=lambda: None):
+        request = target['request']; graph_ids = {r['id'] for r in current_context['graph_links']}
+        for route, candidate in zip(target['routes'], request['routes']):
+            if route['status'] != 'PENDING': continue
+            reauthorize()  # Sources are fenced before the round and again before its atomic commit.
+            if route['cursor'] >= request['max_steps'] or target['expansions'] >= LIMITS['max_expansions']:
+                route['status'] = 'LIMIT_REACHED'; continue
+            event = candidate['events'][route['cursor']]
+            after, errors = transition(route['state'], event, set(request['knowledge_ids']), graph_ids, request['hard_constraints'])
+            route['cursor'] += 1; target['expansions'] += 1
+            if not errors:
+                stamp = digest(after)
+                if stamp in route['seen_states']:
+                    errors.append(violation('CYCLE_STOPPED', '路线重复已有状态，已停止此路线继续扩展。')); route['status'] = 'LIMIT_REACHED'
+                else: route['seen_states'].append(stamp); route['state'] = after
+            route['steps'].append({'event_id': event['id'], 'title': event['title'], 'at': event['at'], 'applied': not errors, 'violations': errors,
+                                   'question': event['question'], 'foreshadowing_links': [r for r in event['foreshadowing_links'] if r in graph_ids]})
+            route['violations'].extend([{**e, 'event_id': event['id']} for e in errors])
+            if event['question']: route['unresolved_questions'].append(event['question'])
+            if route['status'] == 'PENDING':
+                if route['cursor'] >= len(candidate['events']): route['status'] = 'COMPLETED'
+                elif route['cursor'] >= request['max_steps']: route['status'] = 'LIMIT_REACHED'
+            if route['status'] != 'PENDING':
+                if set(request['hard_constraints']['required_final_facts']) - set(route['state']['facts']):
+                    route['violations'].append(violation('FINAL_GOAL_UNMET', '路线结束时尚未满足必需的终态条件。'))
+                if route['status'] == 'LIMIT_REACHED': route['unresolved_questions'].append('已到达步数或循环边界；未展开的事件没有被检查。')
+        target['status'] = 'COMPLETED' if all(r['status'] != 'PENDING' for r in target['routes']) else 'RUNNING'
+        target['result_digest'] = digest([{k: v for k, v in r.items() if k != 'saved_proposal_id'} for r in target['routes']])
+
     def step(self, nid, scope, actor, rid, version, reauthorize=lambda: None):
         with self.store.transaction(nid, scope) as state:
             row = require_row(state, self.RUNS, rid)
             current_context = self._fresh(nid, scope, row, state); reauthorize(); check_version(row, version)
             if row['status'] not in {'READY', 'RUNNING'}: raise ValueError('simulation cannot expand after completion or cancellation')
-            def advance(target):
-                request = target['request']; graph_ids = {r['id'] for r in current_context['graph_links']}
-                for route, candidate in zip(target['routes'], request['routes']):
-                    if route['status'] != 'PENDING': continue
-                    reauthorize()  # Sources are fenced before the round and again before its atomic commit.
-                    if route['cursor'] >= request['max_steps'] or target['expansions'] >= LIMITS['max_expansions']:
-                        route['status'] = 'LIMIT_REACHED'; continue
-                    event = candidate['events'][route['cursor']]
-                    after, errors = transition(route['state'], event, set(request['knowledge_ids']), graph_ids, request['hard_constraints'])
-                    route['cursor'] += 1; target['expansions'] += 1
-                    if not errors:
-                        stamp = digest(after)
-                        if stamp in route['seen_states']:
-                            errors.append(violation('CYCLE_STOPPED', '路线重复已有状态，已停止此路线继续扩展。')); route['status'] = 'LIMIT_REACHED'
-                        else: route['seen_states'].append(stamp); route['state'] = after
-                    route['steps'].append({'event_id': event['id'], 'title': event['title'], 'at': event['at'], 'applied': not errors, 'violations': errors,
-                                           'question': event['question'], 'foreshadowing_links': [r for r in event['foreshadowing_links'] if r in graph_ids]})
-                    route['violations'].extend([{**e, 'event_id': event['id']} for e in errors])
-                    if event['question']: route['unresolved_questions'].append(event['question'])
-                    if route['status'] == 'PENDING':
-                        if route['cursor'] >= len(candidate['events']): route['status'] = 'COMPLETED'
-                        elif route['cursor'] >= request['max_steps']: route['status'] = 'LIMIT_REACHED'
-                    if route['status'] != 'PENDING':
-                        if set(request['hard_constraints']['required_final_facts']) - set(route['state']['facts']):
-                            route['violations'].append(violation('FINAL_GOAL_UNMET', '路线结束时尚未满足必需的终态条件。'))
-                        if route['status'] == 'LIMIT_REACHED': route['unresolved_questions'].append('已到达步数或循环边界；未展开的事件没有被检查。')
-                target['status'] = 'COMPLETED' if all(r['status'] != 'PENDING' for r in target['routes']) else 'RUNNING'
-                target['result_digest'] = digest([{k: v for k, v in r.items() if k != 'saved_proposal_id'} for r in target['routes']])
-            change_run(row, actor, version, advance)
+            change_run(row, actor, version, lambda target: self.advance_round(target, current_context, reauthorize))
             reauthorize(); self._fresh(nid, scope, row, state)
         return self._public(nid, scope, row)
 
@@ -335,9 +357,10 @@ class StorySimulatorService(SourceFencedService):
             body = PlanningProposalIn(node_id=node['id'], expected_node_version=request['expected_node_version'], title=route['title'], links=links,
                 fields={'goal': request['character_goal'], 'character_objectives': {request['character_id']: request['character_goal']},
                         'beats': {f"{index + 1}:{step['event_id']}": f"[{'假设通过规则检查' if step['applied'] else '违反规则，待审'}] {step['title']}" for index, step in enumerate(route['steps'])}},
-                rationale=f"手工有界推演，待人工审核。动机假设：{route['motivation_hypothesis']}\n观察到的规则违反：" + '; '.join(e['code'] for e in route['violations']) + '\n未决问题：' + '; '.join(route['unresolved_questions'])).model_dump()
-            proposal = self.planning._proposal_row(nid, scope, actor, body, state, 'DETERMINISTIC_MANUAL')
+                rationale=f"{'模型候选经确定性检查' if row.get('model_adoption') else '手工有界推演'}，待人工审核。动机假设：{route['motivation_hypothesis']}\n观察到的规则违反：" + '; '.join(e['code'] for e in route['violations']) + '\n未决问题：' + '; '.join(route['unresolved_questions'])).model_dump()
+            proposal = self.planning._proposal_row(nid, scope, actor, body, state, 'MODEL_CANDIDATE_MANUAL_SELECTION' if row.get('model_adoption') else 'DETERMINISTIC_MANUAL')
             proposal['simulation_provenance'] = {'run_id': rid, 'route_id': route['id'], 'input_digest': row['request_digest'], 'result_digest': row['result_digest'], 'method': METHOD}
+            if row.get('model_adoption'): proposal['simulation_provenance']['model_adoption'] = deepcopy(row['model_adoption'])
             self._fresh(nid, scope, row, state); reauthorize()
             collection(state, self.planning.PROPOSALS)[proposal['id']] = proposal
             change_run(row, actor, data.expected_version, lambda _: route.update(saved_proposal_id=proposal['id']))
