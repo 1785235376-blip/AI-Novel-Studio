@@ -56,7 +56,7 @@ jobs:
       - name: Install backend dependencies
         working-directory: ${{ env.CI_PROJECT }}
         run: |
-          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio]'
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
           python -m pip check
           python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
       - name: Install real media decoding and assembly tools
@@ -103,6 +103,15 @@ jobs:
           set -o pipefail
           PYTHONPATH="$CI_PROJECT/.github/ci:$CI_PROJECT" python -m pytest -p postgres_gate -p no:cacheprovider --basetemp="$CI_SANDBOX/pytest" -q -ra --tb=short \
             --junitxml="$CI_RECEIPTS/backend.xml" 2>&1 | tee "$CI_RECEIPTS/backend.log"
+      - name: Real two-process loopback offline synchronization
+        if: matrix.backend == 'file' && (success() || failure())
+        working-directory: ${{ env.CI_PROJECT }}
+        env:
+          RUN_B10_TCP_SYNC_TEST: '1'
+          STORAGE_BACKEND: file
+        run: |
+          set -o pipefail
+          python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/sync-tcp-pytest" -q -ra --tb=short tests/test_r5_offline_sync_tcp.py --junitxml="$CI_RECEIPTS/sync-tcp.xml" 2>&1 | tee "$CI_RECEIPTS/sync-tcp.log"
       - name: Summarize exact revision and test counts
         if: always() && env.CI_RECEIPTS != ''
         run: python .github/ci/receipt.py "$CI_RECEIPTS"
@@ -171,7 +180,7 @@ jobs:
       - name: Install isolated backend for business browser journeys
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}
-        run: python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio]'
+        run: python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
       - name: Business browser journeys (synthetic data; explicit mock boundary)
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}/frontend
@@ -194,6 +203,12 @@ jobs:
         run: |
           set -o pipefail
           pnpm exec playwright test --config playwright.experimental.config.ts 2>&1 | tee "$CI_RECEIPTS/experimental-browser.log"
+      - name: Prepare reviewed-layout CJK font for browser journeys
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python scripts/prepare_pdf_font.py --output "$CI_SANDBOX/browser-fonts" > "$CI_RECEIPTS/browser-font-manifest.json"
+          echo "AI_NOVEL_STUDIO_PDF_FONT=$CI_SANDBOX/browser-fonts/NotoSansSC-Regular.ttf" >> "$GITHUB_ENV"
       - name: R4 writing recovery and workspace journeys
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}/frontend

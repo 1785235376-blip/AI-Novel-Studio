@@ -81,7 +81,7 @@ import { EXPERIMENTAL_GROUPS, EXPERIMENTAL_TABS } from "./experimental/experimen
 import { experimentalFeatures, experimentalClient } from "./experimental/api";
 import { WritingReferenceRail, defaultWritingPreferences, type WritingFocusPreferences } from "./experimental/WritingFocusPanel";
 import type { WorkspaceNavigation, WorkspaceAnchor } from "./experimental/uxClient";
-import { authorContextRequest, type AuthorPreviewReceipt } from "./novel/authorContextClient";
+import { authorContextRequest, authorContextVariants, authorVariantsKey, authorRequestKey, type AuthorVariantsReceipt, type AuthorVariantsResult, type AuthorPreviewReceipt } from "./novel/authorContextClient";
 import { AiControlCenter } from "./ui/AiControlCenter";
 import { MediaProviderSettings } from "./ui/MediaProviderSettings";
 import "./ui/capability.css";
@@ -756,9 +756,13 @@ export default function App() {
       };
       if (previewReceipt && (saveState !== 'saved' || previewReceipt.chapterVersion !== chapter.data.version))
         throw new Error('正文或预检版本已改变，请先保存并重新检查。');
+      if (previewReceipt && authorRequestKey({ ...payload, request_scope: previewReceipt.requestBody.request_scope,
+          provider_id: payload.provider_id || '', model_id: payload.model_id || '', operation,
+          chapter_version: previewReceipt.chapterVersion }, observer.context) !== previewReceipt.requestKey)
+        throw new Error('预检范围或输入已改变，请重新检查。');
       const result = previewReceipt
         ? await authorContextRequest<any>(observer.novelId, 'generate', {
-            ...payload, provider_id: payload.provider_id || '', model_id: payload.model_id || '',
+            ...payload, request_scope: previewReceipt.requestBody.request_scope, provider_id: payload.provider_id || '', model_id: payload.model_id || '',
             operation, chapter_version: previewReceipt.chapterVersion, preview_digest: previewReceipt.previewDigest, generation_request_id: previewReceipt.requestId,
           }, observer.context)
         : await api.generate(operation, payload, observer.context);
@@ -776,7 +780,7 @@ export default function App() {
       if (isObservingGeneration(observer)) setGenerationStarting(false);
     }
   }
-  async function runAIVariants(operation: string, request: string, count: number, style = '') {
+  async function runAIVariants(operation: string, request: string, count: number, style = '', previewReceipt?: AuthorVariantsReceipt) {
     if (activeCharacterId) return;
     if (!chapter.data || generationStarting || (generationCreating.current && isObservingGeneration(generationCreating.current)) || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return;
     if (operation === 'rewrite' && !selection.text) {
@@ -787,20 +791,37 @@ export default function App() {
     const original = operation === 'rewrite' ? selection.text : text;
     setGenerationStarting(true); setVariantDrafts([]); setActiveVariant(0); setJob(undefined);
     try {
-      const response = await api.generateVariants(operation, {
+      const payload = {
         novel_id: observer.novelId, chapter_id: observer.chapterId, instruction: request, style,
         style_profile_id: s.writingInputs?.styleProfileId, plot_plan_id: s.writingInputs?.plotPlanId,
-        profile: s.mode, provider_id: s.textModel?.providerId, model_id: s.textModel?.modelId,
-        source: selection.text, selected_text: selection.text, count,
-      }, observer.context);
+        profile: s.mode, provider_id: s.textModel?.providerId || '', model_id: s.textModel?.modelId || '',
+        source: selection.text, selected_text: selection.text,
+      };
+      if (previewReceipt && (saveState !== 'saved' || previewReceipt.chapterVersion !== chapter.data.version
+          || authorVariantsKey({ ...payload, operation, chapter_version: chapter.data.version,
+            request_scope: previewReceipt.requestBody.request_scope }, count, observer.context) !== previewReceipt.requestKey))
+        throw new Error('方案预检范围或输入已改变，请重新检查。');
+      const response = previewReceipt
+        ? await authorContextVariants<AuthorVariantsResult>(observer.novelId, 'generate-variants', previewReceipt.batch, observer.context)
+        : await api.generateVariants(operation, { ...payload, count }, observer.context);
       const candidates: AiVariantDraft[] = response.variants.map(item => ({
         id: item.job_id, variantIndex: item.variant_index, baseChapterVersion: item.base_chapter_version,
-        output: '', original, status: 'working',
+        tracked: 'receipt_state' in item ? item.receipt_state === 'RECORDED' : true,
+        output: '', original, status: ['FAILED', 'CANCELLED', 'UNKNOWN'].includes('status' in item ? item.status : '') ? 'failed' : 'working',
+        ...(['FAILED', 'CANCELLED', 'UNKNOWN'].includes('status' in item ? item.status : '') ? { error: '部分方案未启动或结果未知；请核对原任务，不会自动重新发送。' } : {}),
       }));
       retainGeneration(observer, { chapterId: observer.chapterId, variants: candidates });
       if (isObservingGeneration(observer)) { setGenerationRecoveryUnverified(false); await observeVariantGenerations(observer, candidates); }
     } catch {
-      if (isObservingGeneration(observer)) setJob({ id: 'generation-failed', status: 'FAILED', output: '', error: '多方案生成失败，请重试' });
+      if (previewReceipt) {
+        // The review already supplies exact original job IDs. Preserve them on
+        // an ambiguous transport failure; never generate replacement requests.
+        const unknown: AiVariantDraft[] = previewReceipt.jobIds.map((id, index) => ({ id, variantIndex: index + 1,
+          baseChapterVersion: previewReceipt.chapterVersion, original, output: '', status: 'failed', tracked: false,
+          error: '部分方案未启动或结果未知；请核对原任务，不会自动重新发送。' }));
+        retainGeneration(observer, { chapterId: observer.chapterId, variants: unknown });
+        if (isObservingGeneration(observer)) setVariantDrafts(unknown);
+      } else if (isObservingGeneration(observer)) setJob({ id: 'generation-failed', status: 'FAILED', output: '', error: '多方案生成失败，请重试' });
     } finally {
       if (generationCreating.current === observer) generationCreating.current = undefined;
       if (isObservingGeneration(observer)) setGenerationStarting(false);
@@ -917,21 +938,32 @@ export default function App() {
     setGenerationRecoveryUnverified(false);
     void displayVerifiedRecovery(observer, value, states);
   }
-  async function openExistingGeneration(jobId: string, chapterId: string) {
+  const generationOpenSequence = useRef(0);
+  // Closing this surface, choosing another task or disabling either entry
+  // invalidates pending reads without cancelling the original generation.
+  useLayoutEffect(() => { generationOpenSequence.current += 1; },
+    [panel, experimentalTab, workspaceSection, workspaceTools, experimentalFlags.data?.features['experimental.model_broker_v2']]);
+  async function openExistingGeneration(jobId: string, chapterId: string, signal?: AbortSignal) {
     const origin = captureGenerationOrigin();
-    if (!experimentalFlags.data?.features['experimental.model_broker_v2'] || !jobId || !chapterId) throw new Error('GENERATION_ENTRY_DISABLED');
+    const entryEnabled = () => {
+      const current = qc.getQueryData<{ features: Record<string, boolean> }>(['experimental-features', origin.namespace]);
+      return current?.features['experimental.model_broker_v2'] === true || current?.features['experimental.workspace_tools_v2'] === true;
+    };
+    if (!entryEnabled() || signal?.aborted || !jobId || !chapterId) throw new Error('GENERATION_ENTRY_DISABLED');
+    const ticket = ++generationOpenSequence.current;
+    const current = () => !signal?.aborted && ticket === generationOpenSequence.current && isCurrentGeneration(origin) && entryEnabled();
     // Verify at the originating authority before navigating. Only identifiers
     // survive navigation; the destination performs another current read.
     const value = { chapterId, jobId, actorId: origin.context.actor?.id };
     const initial = await api.job(jobId, origin.context);
-    if (!isCurrentGeneration(origin)) throw new Error('RECOVERY_SCOPE_CHANGED');
+    if (!current()) throw new Error('RECOVERY_SCOPE_CHANGED');
     verifyRecoveredState(origin, initial, jobId, chapterId);
     if (chapterId !== origin.chapterId) {
       setPendingGenerationOpen({ namespace, novelId: s.novelId, actorId: s.actor?.id, chapterId, jobId });
       s.setChapter(chapterId); setPanel('history'); return;
     }
     const states = await readVerifiedRecovery(origin, value);
-    if (!isCurrentGeneration(origin)) throw new Error('RECOVERY_SCOPE_CHANGED');
+    if (!current()) throw new Error('RECOVERY_SCOPE_CHANGED');
     const observer = beginGenerationObservation();
     setGenerationRecoveryUnverified(false); setPanel('history');
     await displayVerifiedRecovery(observer, { ...value, original: states[0].source || chapter.data?.content || '' }, states);
@@ -939,16 +971,17 @@ export default function App() {
   useEffect(() => {
     if (!pendingGenerationOpen) return;
     const value = pendingGenerationOpen;
-    if (value.namespace !== namespace || value.novelId !== s.novelId || value.actorId !== s.actor?.id || value.chapterId !== s.chapterId) {
+    if (panel !== 'history' || value.namespace !== namespace || value.novelId !== s.novelId || value.actorId !== s.actor?.id || value.chapterId !== s.chapterId) {
       setPendingGenerationOpen(undefined); return;
     }
     if (hydratedIdentity !== editorIdentity || chapter.data?.id !== value.chapterId) return;
     setPendingGenerationOpen(undefined);
+    const ticket = generationOpenSequence.current + 1;
     void openExistingGeneration(value.jobId, value.chapterId).catch(() => {
-      if (revisionStoreIdentity(useStudio.getState()) === editorIdentity)
-        setShellMessage('无法打开生成记录，请检查当前项目、权限和版本后，从模型任务面板重试。正文草稿未改变。');
+      if (generationOpenSequence.current === ticket && revisionStoreIdentity(useStudio.getState()) === editorIdentity)
+        setShellMessage('无法打开生成记录，请检查当前项目、权限和版本后，从原任务入口重试。正文草稿未改变。');
     });
-  }, [pendingGenerationOpen, namespace, s.novelId, s.actor?.id, s.chapterId, hydratedIdentity, editorIdentity, chapter.data?.id]);
+  }, [pendingGenerationOpen, namespace, s.novelId, s.actor?.id, s.chapterId, hydratedIdentity, editorIdentity, chapter.data?.id, panel]);
   function clearRecoveredTask(origin: GenerationOrigin, id: string) {
     const saved = generationRecovery.load(origin.namespace, origin.chapterId);
     if (saved?.jobId === id || saved?.variants?.some(item => item.id === id)) generationRecovery.remove(origin.namespace, origin.chapterId);
@@ -1159,6 +1192,18 @@ export default function App() {
   );
   function navigateWorkspace(target: WorkspaceNavigation) {
     if (!hasExperimental || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return;
+    generationOpenSequence.current += 1;
+    setPendingGenerationOpen(undefined);
+    if (target.kind === 'generation') {
+      if (!workspaceTools || !target.id || !target.chapter_id || !Number.isInteger(target.version) || !target.version) return;
+      const ticket = generationOpenSequence.current + 1;
+      const origin = captureGenerationOrigin();
+      void openExistingGeneration(target.id, target.chapter_id, target.signal).catch(() => {
+        if (!target.signal?.aborted && generationOpenSequence.current === ticket && isCurrentGeneration(origin))
+          setShellMessage('无法打开生成记录，请刷新任务并核对当前权限与来源。正文草稿未改变。');
+      });
+      return;
+    }
     if (target.kind === 'chapter') {
       if (!target.id || !Number.isInteger(target.version) || !target.version) return;
       setPendingAnchor({ namespace, chapterId: target.id, version: target.version,

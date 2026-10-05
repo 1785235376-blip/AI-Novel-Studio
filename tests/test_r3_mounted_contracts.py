@@ -94,6 +94,11 @@ def mounted(request, tmp_path, monkeypatch, prefix):
     exports = ExportJobService(tmp_path, novels.export)
     capabilities = V1CapabilityService(tmp_path, novels, chapters, assets, exports)
     creation = CreationWorkbenchService(capabilities, chapters, novels)
+    # Original router closures retain the initial service object. Rebind its
+    # dependencies too, rather than claiming a replacement global changes it.
+    captured_creation = api.creation_workbench_service
+    for name, value in (("store", capabilities), ("chapters", chapters), ("novels", novels)):
+        monkeypatch.setattr(captured_creation, name, value)
     screenplays = ScreenplayService(bundle.novels, bundle.chapters)
     imports = ImportReviewService(tmp_path)
     canon, lore = CanonService(bundle.canon), LoreService(bundle.lore)
@@ -124,7 +129,9 @@ def mounted(request, tmp_path, monkeypatch, prefix):
         experimental.timeline_exchange_service, experimental.subtitle_timeline_service,
         experimental.portable_projects_service, experimental.safe_batches_service,
         experimental.multilingual_editions_service, experimental.template_library_service,
-        experimental.declarative_agents_service,
+        experimental.declarative_agents_service, experimental.comic_layouts_service,
+        experimental.interactive_story_service, experimental.writer_room_service,
+        experimental.project_forks_service, experimental.offline_sync_service,
     )
     # Router closures capture these real service instances at application import.
     # Rebind their dependencies, not the route implementation or approval methods.

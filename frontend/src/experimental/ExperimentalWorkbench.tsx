@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { FlaskConical } from 'lucide-react';
 import type { Chapter, CollaborationContext } from '../api';
-import { Badge, Button, EmptyState } from '../ui/primitives';
+import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import { enabled, experimentalClient, type ExperimentalFlags } from './api';
+import { Field } from './shared';
 import { PlanningPanel } from './PlanningPanel';
 import { ImportPanel } from './ImportPanel';
 import { WorldPanel } from './WorldPanel';
@@ -31,6 +32,11 @@ import { SafeBatchesPanel } from './SafeBatchesPanel';
 import { MultilingualEditionsPanel } from './MultilingualEditionsPanel';
 import { TemplateLibraryPanel } from './TemplateLibraryPanel';
 import { DeclarativeAgentsPanel } from './DeclarativeAgentsPanel';
+import { ComicLayoutsPanel } from './ComicLayoutsPanel';
+import { InteractiveStoryPanel } from './InteractiveStoryPanel';
+import { WriterRoomPanel } from './WriterRoomPanel';
+import { ProjectForksPanel } from './ProjectForksPanel';
+import { OfflineSyncPanel } from './OfflineSyncPanel';
 import { WritingSessionPanel } from './WritingSessionPanel';
 import type { DraftStatus } from './readerPreflightClient';
 import { RevisionIntelligencePanel, type RevisionGenerationOptions } from './RevisionIntelligencePanel';
@@ -43,14 +49,27 @@ import { EXPERIMENTAL_TABS } from './experimentalNavigation';
 export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavigate, currentAnchor, requestedTab, workspaceSection, focusActive, onFocusChange, onPreferencesChange, onReferencesChange, onUseCharacter, onExitCharacter, activeCharacterId, onOpenGeneration, onUseStyle, currentSelection, saved, onChapterSaved, revisionGeneration, localDraftState, saveFailure }: { novelId: string; chapter?: Chapter; context: CollaborationContext; flags?: ExperimentalFlags; onNavigate?: (target: WorkspaceNavigation) => void; currentAnchor?: WorkspaceAnchor; requestedTab?: string; workspaceSection?: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; focusActive?: boolean; onFocusChange?: (active: boolean) => void; onPreferencesChange?: (preferences: WritingFocusPreferences) => void; onReferencesChange?: () => void; onUseCharacter?: (characterId: string, chapterId: string) => void; onExitCharacter?: () => void; activeCharacterId?: string; onOpenGeneration?: (jobId: string, chapterId: string) => Promise<void>; onUseStyle?: (id: string) => void; currentSelection?: { from: number; to: number; text: string }; saved?: boolean; onChapterSaved?: (chapter: Chapter) => void; revisionGeneration?: RevisionGenerationOptions; localDraftState?: DraftStatus[]; saveFailure?: boolean }) {
   const client = useMemo(() => experimentalClient(novelId, context), [novelId, context.sessionToken, context.scope?.workspaceId, context.scope?.projectId, context.scope?.storylineId, context.scope?.branchId]);
   const [selected, setSelected] = useState(requestedTab || 'advanced_planning_v2');
-  useEffect(() => { if (requestedTab) setSelected(requestedTab); }, [requestedTab]);
+  const [toolQuery, setToolQuery] = useState('');
+  const filterInput = useRef<HTMLInputElement>(null);
+  const filterHintId = useId(), toolNavigationId = useId();
+  useEffect(() => { if (requestedTab) { setSelected(requestedTab); setToolQuery(''); } }, [requestedTab]);
   const tabs = EXPERIMENTAL_TABS.filter(([key]) => enabled(flags, key));
+  const queryTerms = toolQuery.normalize('NFKC').trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const visibleTabs = tabs.filter(([key, label]) => queryTerms.every(term => `${label} experimental.${key}`.normalize('NFKC').toLowerCase().includes(term)));
+  // Filter navigation only. Keep the active panel and its draft state mounted.
   const active = tabs.some(([key]) => key === selected) ? selected : tabs[0]?.[0];
+  const activeLabel = tabs.find(([key]) => key === active)?.[1];
   if (!tabs.length) return <EmptyState title="Experimental 未启用" detail="这些功能默认关闭，V1.0 验收模式保持关闭。" />;
   if (!novelId) return <EmptyState title="先选择作品" detail="实验记录仍受作品、分支和审核权限约束。" />;
   return <section className="experimental-workbench" aria-label="Experimental 工作台">
     <div className="experimental-actions"><h2>Experimental 工作台</h2><Badge tone="warning">默认关闭 · V1.1 预览</Badge></div>
-    <nav className="experimental-tabs" aria-label="实验功能">{tabs.map(([key, label]) => <Button key={key} aria-pressed={active === key} onClick={() => setSelected(key)}>{label}</Button>)}</nav>
+    <div className="experimental-actions">
+      <Field label="查找已启用工具"><input ref={filterInput} type="search" value={toolQuery} autoComplete="off" placeholder="工具名称或标识" aria-describedby={filterHintId} aria-controls={toolNavigationId} onChange={event => setToolQuery(event.target.value)} /></Field>
+      <Button type="button" disabled={!toolQuery} onClick={() => { setToolQuery(''); filterInput.current?.focus(); }}>清除筛选</Button>
+      <small id={filterHintId}>仅筛选下方入口；当前工具：{activeLabel}。</small>
+    </div>
+    {!!queryTerms.length && <StatusMessage>{visibleTabs.length ? `找到 ${visibleTabs.length} / ${tabs.length} 个已启用工具。` : '没有匹配的已启用工具。请更换关键词或清除筛选。'}</StatusMessage>}
+    <nav id={toolNavigationId} className="experimental-tabs" aria-label="实验功能">{visibleTabs.map(([key, label]) => <Button key={key} type="button" aria-pressed={active === key} onClick={() => { setSelected(key); setToolQuery(''); }}>{label}</Button>)}</nav>
     {active === 'temporal_story_graph_v2' && <StoryGraphPanel client={client} chapter={chapter} mindEnabled={enabled(flags, 'character_mind_v2')} onNavigate={onNavigate} onUseCharacter={onUseCharacter} onExitCharacter={onExitCharacter} activeCharacterId={activeCharacterId} />}
     {active === 'model_broker_v2' && <ModelBrokerPanel client={client} novelId={novelId} context={context} chapter={chapter} benchmarkEnabled={enabled(flags, 'model_benchmark_v2')} onOpenGeneration={onOpenGeneration} />}
     {active === 'asset_lineage_v2' && <ProductionLineagePanel client={client} manifestsEnabled={enabled(flags, 'production_manifest_v2')} onNavigate={onNavigate} />}
@@ -61,6 +80,11 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
     {active === 'research_library_v2' && <ResearchLibraryPanel client={client} />}
     {active === 'reader_preflight_v2' && <ReaderPreflightPanel client={client} localDraftState={localDraftState} onNavigate={onNavigate} />}
     {active === 'writing_sessions_v2' && <WritingSessionPanel client={client} onNavigate={onNavigate} />}
+    {active === 'project_forks_v2' && <ProjectForksPanel client={client} />}
+    {active === 'offline_sync_v2' && <OfflineSyncPanel client={client} />}
+    {active === 'writer_room_v2' && <WriterRoomPanel client={client} onNavigate={onNavigate} />}
+    {active === 'comic_layouts_v2' && <ComicLayoutsPanel client={client} />}
+    {active === 'interactive_story_v2' && <InteractiveStoryPanel client={client} />}
     {active === 'template_library_v2' && <TemplateLibraryPanel client={client} onNavigate={onNavigate} />}
     {active === 'declarative_agents_v2' && <DeclarativeAgentsPanel client={client} />}
     {active === 'multilingual_editions_v2' && <MultilingualEditionsPanel client={client} />}
