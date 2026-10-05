@@ -44,7 +44,7 @@ class AudioProductionStore:
             raise ValueError("invalid novel id")
         return self.root / f"{novel_id}.json"
 
-    def load(self, novel_id: str) -> dict:
+    def _load(self, novel_id: str) -> dict:
         path = self._path(novel_id)
         with self._lock:
             if not path.exists():
@@ -53,6 +53,17 @@ class AudioProductionStore:
             if not isinstance(data, dict) or any(not isinstance(data.get(key, []), list) for key in ("voice_bindings", "pronunciation_dictionary", "jobs", "generations")):
                 raise ValueError("AUDIO_STATE_INVALID: restore the audio production backup")
             return {key: list(data.get(key, [])) for key in ("voice_bindings", "pronunciation_dictionary", "jobs", "generations")}
+
+    @staticmethod
+    def visible(row):
+        from .experimental.flags import enabled_flags
+        return not row.get("experimental_origin") or row["experimental_origin"] in enabled_flags()
+
+    def load(self, novel_id: str) -> dict:
+        data = self._load(novel_id)
+        for key in ("jobs", "generations"):
+            data[key] = [row for row in data[key] if self.visible(row)]
+        return data
 
     def save(self, novel_id: str, data: dict) -> dict:
         payload = {key: list(data.get(key, [])) for key in ("voice_bindings", "pronunciation_dictionary", "jobs", "generations")}
@@ -64,7 +75,7 @@ class AudioProductionStore:
 
     def mutate(self, novel_id: str, operation: Callable[[dict], T]) -> T:
         with self._lock:
-            state = self.load(novel_id)
+            state = self._load(novel_id)
             result = operation(state)
             self.save(novel_id, state)
             return copy.deepcopy(result)
