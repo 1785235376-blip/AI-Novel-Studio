@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "head": "93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+  "tree": "09d9ebb78e4a987344546535cbd02ca1acfa35dc",
+  "pr_merge_checkout": "d4cf75265ecb829401d1ecfdad1ce3792a17e675",
+  "push_run": 37282974046,
+  "pr_run": 37282980028,
+  "both_runs_conclusion": "SUCCESS",
+  "backend_file": {
+    "passed": 2147,
+    "skipped": 45
+  },
+  "backend_postgres": {
+    "passed": 2155,
+    "skipped": 37
+  },
+  "frontend": {
+    "passed": 575,
+    "files": 110,
+    "typecheck": "PASS",
+    "token_lint": "PASS",
+    "build": "PASS",
+    "geometry_local_ai": 9,
+    "business": 2,
+    "export_recovery": 1
+  },
+  "windows": {
+    "sdk": "8.0.424",
+    "host_contracts": 59,
+    "package": "PASS",
+    "native_base": "PASS",
+    "native_commands": 11,
+    "interactive_desktop": "NOT_RUN",
+    "install_upgrade_uninstall": "NOT_RUN",
+    "user_acceptance": "NOT_RUN"
+  },
+  "artifacts": [
+    {
+      "id": 11333730134,
+      "name": "windows-acceptance-93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+      "size_bytes": 161705903,
+      "sha256": "f7aa633e371310016ba3fd63082f94697fce1942deeed9e1e92769579f46dcdf",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046/artifacts/11333730134",
+      "expires_at": "2026-10-19T08:24:51Z"
+    },
+    {
+      "id": 11333555334,
+      "name": "backend-file-93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+      "size_bytes": 48589,
+      "sha256": "56d0d062924fee8e92a65d91a9502fa25dc79bb2dd11fc2bb79331903ae71a49",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046/artifacts/11333555334",
+      "expires_at": "2026-10-19T08:25:11Z"
+    },
+    {
+      "id": 11333231658,
+      "name": "windows-native-receipts-93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+      "size_bytes": 541583,
+      "sha256": "ef1273f71c5429d5e22744c2aaec8d47507c666806ebc61a7661ca67d7428c75",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046/artifacts/11333231658",
+      "expires_at": "2026-10-19T08:24:50Z"
+    },
+    {
+      "id": 11333063167,
+      "name": "backend-postgres-93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+      "size_bytes": 48009,
+      "sha256": "f5fbfcc9830711f5ee9a8ee76e9c1bef5e87b98f8d32590d16fc53b26299687d",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046/artifacts/11333063167",
+      "expires_at": "2026-10-19T08:26:19Z"
+    },
+    {
+      "id": 11333003685,
+      "name": "frontend-93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+      "size_bytes": 1540855,
+      "sha256": "3cb1fd7c9975b6ca58a54a8ecc30fd0ec810d853f433e27446c62be587fd8bbe",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046/artifacts/11333003685",
+      "expires_at": "2026-10-19T08:22:26Z"
+    },
+    {
+      "id": 11332199493,
+      "name": "windows-host-93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+      "size_bytes": 531991,
+      "sha256": "b454761ce301dc6f988d2209b083bae8313dd54312ed7e161ebdb3752985272e",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046/artifacts/11332199493",
+      "expires_at": "2026-10-19T08:22:39Z"
+    }
+  ],
+  "scope": "Historical all-green engineering snapshot before the subsequent small goal-form CSS repair; not automatically a result for later commits."
+}

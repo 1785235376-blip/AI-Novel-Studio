@@ -73,7 +73,9 @@ Domain spacing and controls must use existing tokens. Token `--border-default` a
 
 Canonical design references: `docs/ui/reference/*.png`. They are design guidance, not screenshot goldens.
 
-Current R2 synthetic browser screenshots are produced by `frontend/tests/e2e/r2-business.spec.ts` (1366×768, 1440×900, 1920×1080) and `export-recovery.spec.ts`; find them in the exact-head GitHub Actions artifacts referenced in TEST_RESULTS. Local cloud Chromium launch is blocked by an OS socket restriction, so local UI screenshots/geometry are NOT_RUN. Do not relabel API/unit results as visual acceptance or update goldens merely to silence failures.
+Committed screenshots are in `docs/delivery/dot-astra-rc-r2/evidence/screenshots/` with an exact-source/run/artifact/SHA256 `manifest.json`. `export-recovery-{1366x768,1440x900,1920x1080}.png` records the real File-backend browser journey with synthetic text and explicitly mocked model output. `local-ai-{1366,1440,1920}.png` records actual browser rendering against synthetic runtime/hardware API fixtures, including deliberate PARTIAL and unavailable capability states; it is not real Windows/GPU discovery. All six were opened and inspected. The writing-goal inspector fields now use a scoped token grid and have three-viewport containment/non-overlap assertions. Independently scrollable panes may be captured at the download position.
+
+The exact-source hosted runs are in TEST_RESULTS. Local cloud Chromium remains blocked by the OS socket restriction; hosted Chromium actually executed the business/geometry checks. Do not relabel unit/API tests as visual acceptance or update goldens merely to silence failures.
 
 Known visual follow-up: long workbench forms need visual polish, screenplay editing controls are compact, histories can be dense, and media inspectors need consistent spacing at smaller desktop sizes. Functional inputs/actions must remain discoverable and scrollable. Native Windows WebView2 and Chinese IME/paste/undo require user-machine acceptance.
 
@@ -87,3 +89,10 @@ Outstanding backend/provider/native verification remains listed in the readiness
 ## Local AI Discovery supplement
 
 Model Center now consumes LocalAiDiscovery. Improve hierarchy and token spacing only; preserve separate Detect, Validate, Register, explicit Enable and task-only Launch, unknown/partial evidence, protected local paths, auth lockout, cancellation/late-response guards, license review and registration-only deletion. Declared, metadata-verified, workflow and real inference evidence must remain distinct. See LOCAL_AI_DISCOVERY.md and LOCAL_AI_WINDOWS_ACCEPTANCE.md.
+
+
+## Revision and native-package additions
+
+- Live `RevisionHistory` includes chapter version in its cache key and uses opaque per-scope observer IDs. Captured API context and authority epochs fence late list/detail/restore results across actor/session/project/workspace/storyline/branch changes, including A→B→A. StrictMode effect replay must not invalidate an otherwise current pending request. Preserve `AppRevisionHistory.test.tsx` and the independent replay controls.
+- Restore updates the existing chapter cache/hydration path, preserving newer dirty buffers and persistent conflicts. Do not reintroduce unconditional `location.reload()` or clear local drafts on a late response.
+- Native Windows package/Python/PostgreSQL smoke is a separate tested layer. Interactive WebView2, OS-vault, IME, installer/upgrade/uninstall and real-model acceptance remain distinct NOT_RUN gates. See `docs/R2_WINDOWS_BASE_INPUTS.md` and the exact-head receipts.

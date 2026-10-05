@@ -6,7 +6,7 @@
 
 以 PR 最新的最终 SHA、CI 回执和 `docs/delivery/dot-astra-rc-r2/RELEASE_READINESS.md` 为准。工程版本保留 `0.7.0 Beta`，没有升级为正式 1.0，没有合并 main、发布 Release 或部署。
 
-当前仓库提供源码、迁移、可复现验证/打包入口，以及 CI 生成的内部 DesktopHost 编译工件。一个独立的 Host EXE 不是完整安装包：Python/PostgreSQL/工具与授权清单构成的 BaseApplication 基础发行目录，本轮环境没有可核验的完整副本。完整安装器构建/安装/卸载验收因此仍有明确阻塞。不能把历史 EXE 或只编译出的 Host 当作本轮已验收软件。
+当前仓库提供源码、迁移、可复现验证/打包入口和 CI 生成的未签名内部验收 ZIP（内含 PowerShell 安装/卸载脚本）。本轮已从固定官方来源重新组装 Python/PostgreSQL 基础目录，完成新鲜 Host/前端/后端打包，并在真实 Windows 托管环境验证嵌入式 Python、PostgreSQL、pgcrypto、中文 UTF-8 备份恢复及包内后端导入。请在 `TEST_RESULTS.md` 对应精确提交的 `windows-acceptance-*` 工件中下载并核对摘要；独立的 `windows-host-*` 只是编译工件。完整桌面窗口、保险库、中文输入法、实际安装/升级/卸载及用户验收仍未运行。此内部包不是正式发布，也不是已通过用户验收的软件。
 
 ## 安全准备
 
@@ -17,7 +17,7 @@
 
 ## 可复现工程入口
 
-开发/验收人员可从精确分支提交准备隔离环境；普通用户的完整安装包入口必须等打包门禁完成后再使用。
+开发/验收人员可从精确分支提交准备隔离环境；内部验收包只从对应成功 CI 工件取得，不混用旧版本。安装前确认已有 WebView2 Evergreen Runtime 与 VC++ x64 Redistributable；它们不是本包自动安装的组件。详见 `docs/R2_WINDOWS_BASE_INPUTS.md`。
 
 - Python 3.12，安装 `python -m pip install -c .github/ci/python-constraints.txt -e ".[dev,fontbuild]"`
 - Node 22.14.0、pnpm 10.6.5；在 `frontend` 执行 `pnpm install --frozen-lockfile`
@@ -26,7 +26,7 @@
 - 前端：在 `frontend` 执行 `pnpm dev --host 127.0.0.1`，按输出打开本机地址。
 - 自动化开发测试可显式设置 `MOCK_PROVIDER=true`；界面会标明模拟执行。模拟结果不能用作真实模型验收。
 
-Windows 打包继续复用 `scripts/package_windows_acceptance.ps1`，提供已核验的 BaseApplication、新输出目录、同轮 Host publish 目录、.NET/Node/Vite 路径及 VerifiedFontDirectory。脚本要求新输出目录，记录实际源码 SHA、运行时版本和摘要。字体通过 `python scripts/prepare_pdf_font.py --output <新的字体目录>` 准备；它下载固定官方来源、核验哈希、生成 Regular 实例并携带完整 OFL。
+Windows 基础目录可通过 `python scripts/prepare_windows_base.py --output <新的基础目录> --cache <隔离缓存>` 从固定官方输入构建，不需要复制用户电脑旧目录。随后复用 `scripts/package_windows_acceptance.ps1`，提供已核验的 BaseApplication、新输出目录、同轮 Host publish 目录、.NET/Node/Vite 路径及 VerifiedFontDirectory。脚本要求新输出目录，记录实际源码 SHA、运行时版本和摘要。字体通过 `python scripts/prepare_pdf_font.py --output <新的字体目录>` 准备；它下载固定官方来源、核验哈希、生成 Regular 实例并携带完整 OFL。
 
 ## 功能验收
 

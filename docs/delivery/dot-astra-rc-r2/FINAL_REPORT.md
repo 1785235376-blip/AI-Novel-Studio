@@ -1,91 +1,73 @@
-# R2 engineering delivery report — draft
+# R2 engineering delivery report
 
-Status: **ENGINEERING_IN_PROGRESS / NOT RELEASE-ACCEPTED**. Updated 2026-10-05T06:59:40.727167+00:00.
+**Decision: candidate for bounded internal desktop acceptance. All final engineering-source hosted gates pass. Not a formal release or a claim that every feature is complete.** Updated 2026-10-05T08:45:14.220087 + 00:00.
 
-## Delivery identity
+## Tested source and delivery identity
 
-- Repository: https://github.com/1785235376-blip/AI-Novel-Studio
-- Working branch: `work/dot-astra-v1-rc-r2`
-- Draft PR: https://github.com/1785235376-blip/AI-Novel-Studio/pull/37
-- Starting SHA: `f8c141c39a543cc9dbea57647ac91185bc9aecd6`
-- Current fixed inspection snapshot: `547167e8abce15cad3495779f52e845310a0a1fe`
-- Fixed tree: `528459b8c7d6b94dde8b70e37c1e52d12524fc81`
-- Final committed/tested/remote SHA: **PENDING_LEAD**
-- Last remote head reported by the integration lead: `90f4369b7367579b7aaeb00d4d25f21171353753`. The integration lead verified this remote head and source tree. Commit metadata differs from local 547167e8; source bytes are identical. See SOURCE_TREE_EQUIVALENCE.json. Newer corrective commits and final tested identity remain pending.
-- Actual main development/audit model recorded by the team: `gpt-6-astra`. This is the development model, not a required product provider.
-- Environment: isolated Linux; local Python 3.12.14, Node 24.19.0, pnpm 10.6.5. CI is configured for Python 3.12.9, Node 22.14.0, PostgreSQL 16 and Windows/.NET 8.0.424. Configuration is not proof a job ran.
-- Product remains 0.7.0/Beta engineering candidate; no merge, formal release or production deployment is authorized or claimed.
+- Repository: https://github.com/1785235376-blip/AI-Novel-Studio; branch `work/dot-astra-v1-rc-r2`; [Draft PR #37](https://github.com/1785235376-blip/AI-Novel-Studio/pull/37), unmerged.
+- Baseline: `f8c141c39a543cc9dbea57647ac91185bc9aecd6`.
+- **Final tested engineering source: `98b7d53c3193765e792e5a756fff02a87b5948b8`**, tree `f6c4a84c5ff0d1b2639b537af1ea287611935fd4`. It is source-tree-equivalent to independently reviewed local `1c19d83d870f325cb6af1d182573b1e8b2a47a29`.
+- [Push 37284138175](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284138175) and [PR 37284145310](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284145310): **all five lanes completed SUCCESS**. Actual PR merge checkout: `1c10ecc09ce07d445750a3a994931a1bc7f6f0be`. Branch and merge checkout are distinct identities.
+- Subsequent documentation/evidence-only commit: its actual delivery SHA, readback and separate CI will be reported in the final Draft PR body/delivery message. It cannot embed its own future commit ID. This does not make the completed engineering-source gates unknown.
+- Product remains **0.7.0/Beta**; development/audit model reported by the team is `gpt-6-astra`. No merge, formal Release or production deployment is claimed.
 
-## Implemented and connected bounded capabilities
+## Final execution results
 
-1. Privacy/data: conservative timeline/foreshadowing/Canon persistence, migration 018, no policy downgrade on File→PostgreSQL migration, hash/version-bound source review and final dispatch guards. Backups preserve complete selected runtime sidecars/assets and restore only into new directories/databases with inventory/digest checks.
-2. Authoring/review: persisted STYLE/PLOT and typed world/psychology records, comments anchored to chapter versions, explicit structured planning suggestions with validated source quotes, editable Draft review, history/restore and approved inputs to existing generation. Four-group import extraction and separate explicit-marker rule/plot extraction retain human approval and honest partial-apply journals.
-3. Acceptance integrity: captured generation base is authoritative; durable single-host acceptance claims block concurrent duplicate side effects and blind retry after ambiguous failure. Workflow/Agent queue observers fence full scope changes and stale responses.
-4. Controlled execution: compatible and native Claude/Gemini text adapters preserve actual usage or UNKNOWN, cancellation, safe failure and no hidden paid replay. Adaptation, Agent, image/audio and motion paths recheck authority after preparation. Automatic memory extraction is guarded-local-only. Legacy remote asset generation without exact prompt consent is explicitly unavailable.
-5. Exports: scoped history, reopen/same snapshot/download, current authorization and retry; structural Fountain fixes; immutable resource ZIPs; screenplay CAS/history; licensed pinned CJK font and PDF embedding evidence. Target desktop application typography remains unverified.
-6. Media: persistent reviewed image queue, decoded results, recoverable asset trash/restore, digest/version lineage and approved lexical reference search; verified video downloads, exact-request motion consent and bounded silent clip assembly; persistent voice/segment queues, verified binary audio and ordered PCM WAV export.
-7. Agent/workflow/plugins: bounded persisted DAG, actual selected-model Agent job completion, manual approval/rejection/cancel/retry. Three local recipes produce reviewed artifacts. Declarative plugin install/update/rollback/remove is integrity checked; executable plugins remain DENY_ALL.
-8. Functional UI remains in the existing single NOVEL/IMAGE/VIDEO shell and design tokens. New forms, histories, errors, missing-configuration states and recovery controls do not claim completed native/window acceptance.
+| Layer | Verified result at final source |
+|---|---|
+| File backend | **2147 passed /  45 skipped** |
+| Actual PostgreSQL 16.15 | **2155 passed /  37 skipped**; all **10** specialized acceptance/dispatch controls pass without skips |
+| Frontend unit | **579 passed /  111 files** |
+| TypeScript / design tokens / production build | **PASS**, with the existing large-chunk advisory retained |
+| Actual browser | **9** geometry/Local AI, **2** full business and **1** export-recovery tests pass |
+| Final writing-goal layout | Actual containment/stacking/no-overlap assertions pass at **1366×768, 1440×900, 1920×1080** |
+| Windows Host | **SDK 8.0.424**, compilation and **59** native contracts pass |
+| Complete unsigned internal Windows package | **PASS** |
+| Real Windows native base | **11 commands, all exit 0**, including owned-cluster stop |
 
-## Independent review: repaired original findings, new open discovery findings
+The native receipt verifies isolated **Python 3.12.9 / 27 locked wheels / binary psycopg**, **PostgreSQL 16.15**, pgcrypto, UTF-8 Chinese text round-trip, custom dump restored into a new database, packaged app import and owned shutdown. This is actual hosted Windows execution, distinct from Linux input preparation or mocked subprocess tests.
 
-At earlier frozen `eb165609`, an independent audit reproduced seven finding groups: adaptation cloud egress, Agent revalidation, image/audio pre-dispatch races, stale local Accept, concurrent acceptance side effects, project/outline policy omission and stale Workflow UI scope. The original Python invariant set now passes 10/10; the exact archived UI assertion also passes. Focused repair evidence is retained in `acceptance-scope-work.md`, `evidence/dispatch-repair.*` and `evidence/workflow-scope.*`. The current full original-invariant receipt is PENDING_LEAD publication.
+Permanent exact-source evidence is in `evidence/ci-98b.json`, `ci-98b-native-smoke.json`, `ci-98b-pg-controls.json`, `ci-98b-application-provenance.json` and `ci-98b-host-provenance.json`. Counts overlap across suites; skipped tests do not pass. Full historical provenance is in [TEST_RESULTS.md](TEST_RESULTS.md).
 
-The separate Local AI review of `547167e8abce15cad3495779f52e845310a0a1fe` reports five issues still awaiting accepted fixes:
-- Ollama cloud-proxy models were treated as local based on loopback transport
-- Enabled local text registrations were excluded by Writer streaming eligibility
-- Changed model/digest rescan did not reliably invalidate registration authority
-- Late validation/enable could override a newer Disable
-- External llama.cpp validated model alias did not consistently match actual dispatch identity
+## Package and screenshot handoff
 
-Author changes are in progress beyond the fixed snapshot. Their presence in the working tree is not independent verification. These prevent a release-final conclusion even though prior synthetic discovery tests passed.
+[Download the complete internal Windows acceptance artifact](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284138175/artifacts/11333273928) from the successful final-source run. It is **161705892 bytes**, outer CI archive SHA256:
 
-## Local AI Discovery supplement
+`e248ce586e0dc8ceec313dc947b5cb991bdd48dd9ba73743e75b42b77bfa0d28`
 
-All 28 sections are mapped in the feature matrix. The real Settings → Model Center → Local AI entry and both `/api/model-center/local-ai` and `/api/v1/model-center/local-ai` routes are mounted. Read-only bounded detection, validation, disabled registration, separate explicit Enable, license acknowledgment, configuration, cancel/partial results and registration-only removal are implemented. Host paths stay on the trusted local surface.
+This is the complete package artifact; the separate windows-host artifact is compile-only. CI artifacts expire **2026-10-19**; safe receipts and screenshots remain in Git. The hash above identifies the downloaded CI archive, not an invented inner ZIP hash.
 
-Supported discovery: Ollama tags/show metadata; configured llama.cpp/GGUF header/metadata; ComfyUI system_stats/object_info and model/node evidence; A1111 checkpoint lists; configured local OpenAI-compatible models lists and Custom HTTP health. Flexible family declarations include Qwen text, Qwen-Image, FLUX/FLUX.2, Z-Image, H3, Wan, LTX, SeedVR2 and RIFE. Unknown names remain unverified.
+Six actual final-source screenshots are committed under [evidence/screenshots](evidence/screenshots/manifest.json), with source/run/artifact and per-file SHA256/size metadata. Every file digest/size was checked; the integration lead opened and reviewed all six. The export-recovery set uses an actual File-backend business journey with synthetic text and explicitly mocked model output. The Local AI set is real browser rendering against synthetic API/hardware/runtime fixtures, including deliberate PARTIAL/unavailable states. Neither set is evidence of real GPU inference or interactive Windows hardware discovery.
 
-Execution depth: existing Ollama/llama text and A1111/standard SD Comfy image bridges are present but current local-route review fixes remain pending. Nonstandard Comfy video/restoration/interpolation/family workflows are **PARTIAL**, not generated from guessed JSON. Generic HTTP/model-list and credential-required custom runtimes remain disabled without verified adapters. `minimax-h3-video` is independent VIDEO identity; old audio `minimax-h3` stays disabled for history. No actual GPU/model inference ran.
+The earlier 93d package inventory matched **232 backend and three Host source files after the documented Windows LF→CRLF checkout transformation**, with no unexpected differences. This is not literal Git-blob byte equality, and its historical inventory check is not silently relabeled as a later execution. Exact latest application/Host provenance is retained separately.
 
-Source: `app/model_center/discovery_*.py`, `discovery.py`, existing provider/hardware/domain/services; UI `LocalAiDiscovery.tsx`, `localAiDiscoveryApi.ts`; docs `LOCAL_AI_DISCOVERY.md`, `LOCAL_AI_WINDOWS_ACCEPTANCE.md`, `OPUS_UI_HANDOFF.md`.
+## Delivered bounded capabilities
 
-## Test status, without combining verification layers
+1. **Privacy and recovery:** migration 018, conservative persisted policies, strict File→PostgreSQL policy preservation, hash/version-bound source review, final-send authority checks, selected sidecar/asset backup and verified restoration to new targets.
+2. **Authoring and acceptance:** reviewed STYLE/PLOT/world/psychology records, anchored comments, bounded exact-evidence structured suggestions, Draft/Diff/Accept, captured generation bases, durable acceptance claims and fail-closed ambiguous interruption. History refresh, context/ABA fencing, dirty-buffer preservation and StrictMode replay are exercised through actual browser flows.
+3. **Execution:** guarded compatible/Claude/Gemini protocols, explicit usage or UNKNOWN, cancellation and no hidden paid replay; automatic memory stays guarded-local-only. Agent timer ownership prevents late callbacks from recreating deleted jobs. Legacy remote asset generation without exact prompt consent remains unavailable.
+4. **Exports and media:** scoped immutable export snapshots/history/recovery, Fountain/parser fixes, resource ZIPs, screenplay CAS/history and pinned licensed CJK fonts; verified image/audio/video bytes, lineage, recoverable asset trash, lexical references, bounded silent review cuts and ordered PCM WAV export.
+5. **Workflows and plugins:** bounded persisted DAG, actual Agent job dispatch/review/cancel/retry and three reviewed-artifact local recipes. Declarative plugin lifecycle is checked; executable plugins remain **DENY_ALL**.
+6. **UI and Local AI:** existing NOVEL/IMAGE/VIDEO shell/tokens retained. Settings → Model Center → Local AI and both API aliases are mounted; latest scoped goal-field layout passes actual three-viewport assertions without changing App behavior or global design tokens.
 
-- Latest full File checkpoint: **2032 passed, 35 skipped, 1 failed**. The failure is the missing-policy-authority import fixture expecting the older error contract; production currently rejects with 403. The focused contract rerun now passes 143 tests; it does not replace the pending full rerun.
-- Latest full frontend checkpoint: **548 tests / 108 files passed**. Later discovery changes still need rerunning at the final SHA.
-- Earlier dedicated provider/hardware/discovery checkpoint: **263 passed, 1 skipped**, synthetic metadata/adapter contracts. Skip is real Windows native acceptance. Independent review subsequently found the issues above.
-- File/provider/UI focused counts overlap and must not be summed into a completion measure.
-- Final exact-SHA File/PostgreSQL/frontend/build/tokens/browser/hosted Windows results: **PENDING_LEAD**.
-- Local browser launch: blocked before assertions by socket EPERM. Browser test existence or collection is not a pass.
-- Real model/GPU, interactive Windows/WebView2/OS vault, full installer/upgrade/uninstall and user acceptance: **NOT_RUN**.
+The matrix retains **all 143 original feature IDs, 19 packages and 28 supplement sections**, each with specific implementation, integration, verification, evidence and remaining acceptance boundaries. There is no completion percentage.
 
-See [TEST_RESULTS.md](TEST_RESULTS.md) for checkpoint provenance and [RELEASE_READINESS.md](RELEASE_READINESS.md) for gates.
+## Independent review and preserved history
 
-## Packaging and user acceptance
+- e38 independently closes the original and Discovery defects with **55** preserved/expanded invariants, complete File/UI regression and type/token/build checks.
+- d033 closes the newly discovered StrictMode P2 with the **three unchanged independent assertions**, **23 additional replay checks**, full committed UI **575 / 110**, Agent/timer/dispatch **90**, and type/token/build passes.
+- Final source-equivalent 1c19 increment: **35 UI/history/StrictMode/layout** and **40 input/native-verifier** checks pass, plus type/token/build; **1331 tracked files** match fixed blobs. No new concrete defect was found in this bounded review. Its pre-CI note that CSS execution was pending is now resolved by the later actual final-source hosted results, without rewriting that historical report.
 
-The current scripts verify source/Host/font provenance and can build a hosted Windows Host artifact when the job succeeds. A standalone Host EXE is not a complete installer. No verified complete BaseApplication distribution was available; full installation and bundled codec/license delivery remain explicit blockers. No new-head hosted Windows result is assumed.
+See [INDEPENDENT_REVIEW.md](INDEPENDENT_REVIEW.md), [INDEPENDENT_REVIEW_INCREMENTAL.md](INDEPENDENT_REVIEW_INCREMENTAL.md), and [INDEPENDENT_REVIEW_FINAL_INCREMENT.md](INDEPENDENT_REVIEW_FINAL_INCREMENT.md). Earlier red assertions, failed browser runs and incomplete/cancelled native smoke remain recorded; they are not retroactively relabeled green.
 
-Use root `USER_ACCEPTANCE_GUIDE.md` and `LOCAL_AI_WINDOWS_ACCEPTANCE.md` with isolated synthetic data after the lead provides the verified final candidate/checkouts. Preserve original data, validate backup to a new instance, review model licenses and enter credentials only through the existing trusted Host/OS-vault path.
+## Deliberate partial and NOT_RUN boundaries
 
-## Remaining concrete work
+The package is an **unsigned internal acceptance ZIP with PowerShell installation tooling**, including self-contained .NET 8, but requires external **WebView2 Evergreen Runtime and VC++ x64 Redistributable**. Observed System32 CRT hashes prove the runner's prerequisite, not CRT bundling or clean-machine readiness. Official pinned inputs were assembled as 4876 files; the corrected focused breakdown is **29 base-input + 11 verifier cases = 40**.
 
-- Close the five discovery review findings and prove actual approved Writer dispatch plus current revocation/locality.
-- Retain the 143-test focused correction evidence without weakening fail-closed authority; rerun all final gates.
-- Publish newer corrective changes, read back the final branch/PR head and inspect every CI job/artifact at its exact checkout SHA; existing fixed-tree delivery is already verified.
-- Keep multi-key profiles/full v2 broker, semantic visual retrieval, cover/storyboard-specific generation, whole-book hierarchical planning, automatic speaker/emotion/mastering, final-master video and executable plugin sandbox clearly partial/missing.
-- Complete actual Windows/model/GPU and user acceptance separately; these are not transferred to Opus as hidden backend work.
+**NOT_RUN:** interactive Windows/WebView2/OS vault/Chinese IME; clean install/upgrade/uninstall retention; signing; real provider/GPU/model inference; target Word/Final Draft/EPUB/NLE compatibility; user acceptance. Native package smoke does not waive these layers.
 
-## Delivered commit chain through current integration snapshot
+Local AI Ollama routes require positive current local-model/digest/completion evidence and reject remote or unknown locality; Writer output is explicitly buffered. External llama aliases and managed task-only lifecycle remain bounded. A1111 and standard SD Comfy adapters are connected; unimplemented family workflows, generic model-list/health adapters and unsupported credential bindings remain blocked or PARTIAL. Model names and metadata never certify inference. Old MiniMax audio history is preserved under its disabled identity; the new video identity is separate.
 
-These are the delivered remote-chain commits through 90f4369b. SOURCE_TREE_EQUIVALENCE.json maps metadata-different local review commits to byte-identical remote trees. Later corrective publication/testing remains PENDING_LEAD.
+Multi-key profiles/full v2 broker, full hierarchical/semantic planning, long-book identity resolution, embeddings, dedicated cover/storyboard generation, final-master video, automatic speaker/emotion/alignment, unified approvals and executable plugin sandbox remain incomplete as itemized in the matrix.
 
-- `825b3caf40f6f7f617e5350fd1efcfe86533a003` build: pin frontend toolchain and record verified R2 baseline
-- `78920f2f9435a9c1d5625479c37b0948c1db5b51` fix: preserve privacy across storage and verified recovery
-- `e8ebfccdce0678cac15c632d640ac57bd822b93f` feat: enforce controlled model dispatch and durable workflow execution
-- `ff34bf87979e2c4dc39681b3d91069979bca06a7` feat: add scoped reviewed media queues and recoverable assets
-- `c6e8c07d8786da24c3e265561cece80c4bf5b73b` feat: persist reviewed author plans and version-anchored collaboration
-- `db3212c3f1418557e3ab0152e8c3c0c8ee27ef97` build: verify CJK font provenance and expand release candidate gates
-- `40464f656aa1437e5b56969212ea801eccfcafc0` feat: recover frozen exports and version screenplay edits
-- `16b65c10ada1670ac57891054ffe4571fa463491` feat: integrate reviewed planning and fail-closed release candidate workflows
-- `90f4369b7367579b7aaeb00d4d25f21171353753` fix: close independent dispatch and acceptance gaps and integrate local AI discovery
+Use USER_ACCEPTANCE_GUIDE.md and LOCAL_AI_WINDOWS_ACCEPTANCE.md on backed-up/synthetic data for the next bounded desktop checks. No real credentials/paid calls, irreversible user-data changes, main merge, formal Release or production deployment are implied by this engineering handoff.

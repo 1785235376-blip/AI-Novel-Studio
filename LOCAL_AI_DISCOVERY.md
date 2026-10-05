@@ -1,6 +1,6 @@
 # Local AI Discovery / Model Center
 
-R2 supplement implementation. Discovery is an explicit, read-only, host-local operation. Real Windows, GPU and model generation acceptance is **NOT_RUN** in this cloud environment. Synthetic protocol tests are not evidence of real model compatibility.
+R2 supplement implementation. Discovery is an explicit, read-only, host-local operation. Interactive Windows Local AI Discovery, GPU and real-model generation acceptance is **NOT_RUN**. The separate hosted native Python/PostgreSQL package smoke has passed at its recorded CI revision; that does not validate hardware discovery or real model inference. Synthetic protocol tests are not evidence of real model compatibility.
 
 ## Entry and state contract
 

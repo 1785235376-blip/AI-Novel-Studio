@@ -1,47 +1,38 @@
-# R2 release readiness — draft
+# R2 release readiness — bounded internal acceptance candidate
 
-**Decision: ENGINEERING_IN_PROGRESS. Not release-accepted, not a complete installer, not ready to claim all gates green.**
+**Decision: ready to offer the verified engineering candidate for bounded internal desktop acceptance. Not a formal release and not all-feature completion.**
 
-Fixed snapshot `547167e8abce15cad3495779f52e845310a0a1fe` / tree `528459b8c7d6b94dde8b70e37c1e52d12524fc81`. Later discovery fixes are in progress. Final committed/tested/remote SHA and CI: **PENDING_LEAD**.
+Final tested source **`98b7d53c3193765e792e5a756fff02a87b5948b8`**, tree `f6c4a84c5ff0d1b2639b537af1ea287611935fd4`, is source-tree-equivalent to independently reviewed local 1c19d83d. [Push 37284138175](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284138175) and [PR 37284145310](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284145310) completed **all five lanes SUCCESS**; actual PR merge checkout `1c10ecc09ce07d445750a3a994931a1bc7f6f0be` is recorded separately.
 
-## Gate ledger
+## Gates and remaining boundaries
 
-| Gate | State | Evidence boundary |
+| Gate | Engineering result | Remaining boundary |
 |---|---|---|
-| G01 Safety/privacy | BLOCKED | Original seven findings have focused passing rechecks. New Local AI locality/identity/control findings pending author fixes and independent acceptance. |
-| G02 Data/recovery | PENDING_LEAD | Migration 018, strict policies, non-destructive new-target backup/restore and single-host locks exist; final real PostgreSQL integrity/restart/restore evidence missing. |
-| G03 Core writing | PARTIAL_VERIFICATION | Draft-base CAS and durable acceptance claims repaired; original invariants pass. Final browser/IME/crash and actual model workflow unrun. |
-| G04 Export | CONTRACT_CHECKPOINT_ONLY | History/snapshot/ownership/Fountain/parser/resource/font checks passed focused checkpoints. Final browser and target desktop typography remain pending. |
-| G05 Advanced features | PARTIAL | Bounded structured proposals, manual records, reviewed media, lexical references, local recipes and explicit plugin denial delivered; no semantic/autonomous/full-media completion claim. |
-| G06 Frontend | PENDING_LEAD | 548 unit tests/108 files latest pass before further edits. Current final build/tokens/browser/geometry/Local AI callback fix acceptance pending. |
-| G07 Provider | BLOCKED_FOR_PRODUCTION_ACCEPTANCE | No actual model/provider/GPU run. New discovered local route findings remain; compatible/native protocol tests are not real output-quality evidence. |
-| G08 Windows | NOT_RUN_INTERACTIVE | Hosted new-head Host/native job PENDING_LEAD; interactive Host/WebView2/vault/install/upgrade/uninstall/IME not run. |
-| G09 Plugins | SAFE_DISABLED | Declarative lifecycle contract verified; execution_supported=false/DENY_ALL. Real third-party execution, broker/AppContainer denial and cleanup not accepted. |
-| G10 GitHub/packaging | BLOCKED | Fixed tree delivered at 90f4369b; final corrective remote head/readback/CI/artifact hashes PENDING_LEAD. No verified complete BaseApplication installer. Hosted Host binary alone is insufficient. |
+| G01 Safety/privacy | **PASS** in scoped independent review and final regression | Original/Discovery findings closed; no real-provider quality claim |
+| G02 Data/recovery | **PASS**: real PG 2155 / 37; ten specialized controls without skips; native dump/newDB restore/owned stop | Interactive upgrades, power-loss/ACL and actual user-data acceptance NOT_RUN |
+| G03 Core authoring/history | **PASS**: full business 2 including first history, Draft/Diff/Accept, restore/conflict | Ambiguous interrupted Accept remains review-required; native IME/crash and real model quality NOT_RUN |
+| G04 Exports | **PASS**: export 1/business 2 plus parser/font/frozen-resource contracts | Target Word/Final Draft/EPUB/NLE typography/interoperability NOT_RUN |
+| G05 Advanced features | **PARTIAL** | Semantic/hierarchical planning, advanced media, dedicated workflows and unified approvals remain itemized gaps |
+| G06 Frontend | **PASS**: UI 579 / 111, type/token/build; geometry 9/business 2/export 1; final three-viewport goal layout; six reviewed screenshots | Broader design polish, native accessibility/IME/user acceptance remain separate |
+| G07 Providers | **MOCK_ONLY / bounded protocol contracts** | Real model/GPU/quality NOT_RUN; missing adapters/capabilities stay blocked |
+| G08 Windows | **PASS**: SDK 8.0.424/Host 59, complete unsigned package and 11 real native commands | Interactive WebView2/vault/IME, clean install/upgrade/uninstall, signing and user acceptance NOT_RUN |
+| G09 Plugins | **Safe disabled executable runtime** | Declarative lifecycle works; executable sandbox/broker remains DENY_ALL/incomplete |
+| G10 Source/artifacts | **PASS** for final engineering source and exact artifact evidence | Later documentation-only delivery SHA/readback/CI reported separately by lead |
 
-## Immediate blockers
+No unresolved concrete defect remains in the stated independent review scope. Reviews preserve earlier failures and do not certify unseen requirements, real model output or every historical feature. All 143 original IDs,19 packages and 28 supplement sections remain in the matrix, with PARTIAL/MISSING/MOCK_ONLY/NOT_RUN where appropriate.
 
-1. Independently recheck the five discovery fixes: Ollama cloud-proxy locality, Writer eligibility/buffered streaming, rescan identity revocation, Disable callback race and external llama upstream alias.
-2. Preserve latest failed full backend checkpoint (2032 pass/35 skip/1 fail), verify the missing-authority fixture correction and rerun full final-SHA regression.
-3. The fixed integration tree is already delivered; publish newer corrections and verify the final remote head/Draft PR. Current verified delivery head is 90f4369b7367579b7aaeb00d4d25f21171353753; source-tree equivalence is recorded in SOURCE_TREE_EQUIVALENCE.json.
-4. Run and inspect final File/real PostgreSQL/frontend/build/tokens/browser/hosted Windows jobs, distinguish branch SHA from merge checkout, and publish artifact hashes.
-5. Keep complete installer/BaseApplication and interactive Windows/GPU/model/user acceptance separately blocked/NOT_RUN until actual environment and evidence exist.
+## Windows acceptance boundary
 
-## What is already useful
+The complete unsigned internal acceptance ZIP and actual Windows native base passed at the final source. Isolated Python 3.12.9 / 27 wheels, binary psycopg, PostgreSQL 16.15, pgcrypto, UTF-8/custom dump into a new restored database, packaged app import and owned shutdown are verified. All 11 native commands exit0. The 40 focused source controls are 29 input +11 verifier cases.
 
-Manual creation/edit/history, structured reviewed plans/comments, safe export history/resource packaging, recoverable verified assets, bounded video/audio file processing, local workflow review artifacts and declarative plugin management are concrete implementations. Missing external inference or native acceptance does not erase those implementations. It also cannot promote them into semantic AI, complete film production, a safe executable plugin runtime or a ready Windows release.
+The package includes self-contained.NET 8 and retained provenance/licenses, with external prerequisites **WebView2 Evergreen Runtime and VC++ x64 Redistributable**. Observed System32 CRT hashes do not claim CRT bundling or clean-prerequisite installation. Use the complete `windows-acceptance-*` artifact, not the compile-only Host artifact. Download hashes and 2026-10-19 retention dates are in [TEST_RESULTS.md](TEST_RESULTS.md).
 
-## Safety-preserving availability
+**NOT_RUN:** interactive Windows/WebView2/OS vault/Chinese IME; clean install/upgrade/uninstall data retention; signing; real GPU/local/paid model inference; target desktop document interoperability; user acceptance. These remain independent acceptance gates even though hosted package/native checks passed.
 
-- Missing model configuration remains NOT_CONFIGURED; no silent paid/cloud fallback.
-- Post-Accept automatic memory uses only guarded enabled local routes; unavailable extraction does not revert an accepted manuscript.
-- Legacy remote asset tasks without exact prompt review remain blocked; current authorized individual local execution is separate.
-- New local registrations are disabled until review/explicit Enable and disabled after restart; current revocation/locality findings still need accepted fixes.
-- Comfy family discovery/registration is available, but missing video/restoration/interpolation/other workflow adapters remain PARTIAL/unavailable for execution.
-- Plugin executable runtime remains DENY_ALL.
+## Next authorized boundary
 
-## Exit conditions for this engineering delivery
+1. Lead publishes the documentation/evidence-only commit, verifies its actual delivery SHA and follows its separate CI; final Draft PR body/delivery message records it. No final code result is unknown or awaiting repair review.
+2. The user can perform the documented bounded internal desktop checks with backups/synthetic data and the prerequisites above. Tests against real user data, real credentials/paid models or additional permissions require their own authorization.
+3. Any later product work should start from the matrix’s explicit missing/partial capabilities, preserving fail-closed privacy, current authority, source/version fencing and original repros.
 
-A verified remote dedicated branch and Draft PR, reconciled exact-SHA gate receipts, no unresolved blocking safety/data-integrity findings, complete disclosure of partial/unrun capabilities, and accessible source/migration/testing/user-acceptance/Opus documents. User acceptance and formal release remain separate future decisions; do not merge main, publish a release or deploy automatically.
-
-See [FINAL_REPORT.md](FINAL_REPORT.md), [TEST_RESULTS.md](TEST_RESULTS.md), [FEATURE_READINESS_MATRIX.md](FEATURE_READINESS_MATRIX.md), root `USER_ACCEPTANCE_GUIDE.md` and `LOCAL_AI_WINDOWS_ACCEPTANCE.md`.
+Do not merge main, create a formal Release or deploy production automatically. Consult [FINAL_REPORT.md](FINAL_REPORT.md), [FEATURE_READINESS_MATRIX.md](FEATURE_READINESS_MATRIX.md), USER_ACCEPTANCE_GUIDE.md and LOCAL_AI_WINDOWS_ACCEPTANCE.md.

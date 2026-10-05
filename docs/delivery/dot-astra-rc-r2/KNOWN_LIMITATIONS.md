@@ -4,7 +4,7 @@ Final gate status is tracked in RELEASE_READINESS and TEST_RESULTS; this file do
 
 - Real provider/model/GPU/audio/video inference and billing were not invoked. Native/OpenAI-compatible adapters are contract-tested, not universally vendor-certified. No paid budget or real credentials were used.
 - Interactive Windows DesktopHost/WebView2, OS-vault persistence, Chinese IME and user acceptance remain separate from hosted compile/native-contract results.
-- No verified complete BaseApplication distribution was available in this environment. Existing package scripts now verify current source/Host/font provenance, but a standalone compiled Host is not a complete installer. Full clean install/upgrade/uninstall retention is NOT_RUN.
+- A fresh official-input BaseApplication, self-contained Host and complete unsigned internal acceptance ZIP have now been built and verified in hosted Windows CI. Native Python/PostgreSQL/pgcrypto/UTF-8 recovery and packaged-app imports passed at the recorded source revisions. WebView2 Evergreen and VC++ x64 are explicit external prerequisites; this is not a fully offline or signed public installer. Real clean install/upgrade/uninstall retention and interactive desktop acceptance remain NOT_RUN.
 - ffmpeg/ffprobe processing is exercised when installed. They are not silently bundled or downloaded by production; Windows codec packaging and redistribution inventory remain a packaging boundary.
 - Plugin execution remains DENY_ALL. Declarative package validation/install/rollback is distinct from a secure executable extension runtime; PR #26 was not merged.
 - Visual references use lexical metadata search. No fake embeddings or claimed automatic visual-consistency model.
