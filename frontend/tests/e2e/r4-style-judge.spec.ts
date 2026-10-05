@@ -6,7 +6,7 @@ const chapterTitle = '夜港手记';
 const refrain = '她把灯留在门边，等待夜航的船只返回。';
 const originalProse = `# 合成测试场景\n\n${refrain}\n\n${refrain}`;
 const owned = new WeakMap<Page, string[]>();
-const quiet = new WeakMap<Page, () => Promise<void>>();
+const quiet = new WeakMap<Page, ReturnType<typeof createPageQuiescer>>();
 const modelRequests = new WeakMap<Page, string[]>();
 type SavedChapter = { id: string; version: number; title: string; content: string };
 async function body<T = any>(response: Pick<APIResponse, 'ok' | 'status' | 'text' | 'json'>): Promise<T> {
@@ -23,11 +23,12 @@ async function project(page: Page) {
   await page.getByLabel('章节标题', { exact: true }).fill(chapterTitle);
   const added = page.waitForResponse(response => response.url().endsWith(`/novels/${novel.id}/chapters`) && response.request().method() === 'POST');
   await page.getByRole('button', { name: '创建章节', exact: true }).click();
-  const empty = await body<SavedChapter>(await added);
+  const createdChapter = await body<SavedChapter>(await added);
+  const empty = await body<SavedChapter>(await page.request.get(`${API}/chapters/${createdChapter.id}`));
   // Seed real, saved Markdown through the ordinary versioned chapter endpoint.
   // It includes a heading so raw source offsets cannot be mistaken for editor offsets.
   const chapter = await body<SavedChapter>(await page.request.put(`${API}/chapters/${empty.id}`, { data: { version: empty.version, content: originalProse } }));
-  await page.reload();
+  await quiet.get(page)!.drain(); await page.reload();
   await expect(page.locator('.ProseMirror')).toContainText(refrain);
   await expect(page.locator('.editorbar')).toContainText('已保存');
   return { novel, chapter, base: `${API}/novels/${novel.id}/experimental` };
@@ -78,14 +79,14 @@ test('R4 style draft, real sample counts, approval and explicit previewed use re
   await panel.getByLabel('风格档案标题', { exact: true }).fill(title);
   await panel.getByLabel('可复用风格指令（最多 120 字）', { exact: true }).fill(instruction);
   await panel.getByLabel('参考规则（每行一条，不注入生成请求）', { exact: true }).fill('有意的回环不自动认定为错误。');
-  await panel.getByRole('checkbox', { name: `档案来源：${chapterTitle} · v${chapter.version}`, exact: true }).check();
+  await panel.getByRole('checkbox', { name: `档案来源：${chapter.title} · v${chapter.version}`, exact: true }).check();
   const saved = page.waitForResponse(response => response.url().endsWith('/style-analysis/profiles') && response.request().method() === 'POST');
   await panel.getByRole('button', { name: '保存风格草稿', exact: true }).click();
   const profile = await body(await saved); expect(profile.kind).toBe('STYLE'); expect(profile.status).toBe('DRAFT');
   await expect(panel.getByRole('button', { name: `审核风格 ${title}`, exact: true })).toBeVisible();
   await panel.getByLabel('分析与预览的风格档案', { exact: true }).selectOption(profile.id);
   await expect(panel.getByRole('button', { name: '预览风格注入内容', exact: true })).toBeDisabled();
-  await panel.getByRole('checkbox', { name: `分析样本：${chapterTitle} · v${chapter.version}`, exact: true }).check();
+  await panel.getByRole('checkbox', { name: `分析样本：${chapter.title} · v${chapter.version}`, exact: true }).check();
   const analyzed = page.waitForResponse(response => response.url().endsWith('/style-analysis/analyses') && response.request().method() === 'POST');
   await panel.getByRole('button', { name: '分析所选已保存样本', exact: true }).click();
   const analysis = await body(await analyzed); expect(analysis.model_called).toBe(false); expect(analysis.metrics.paragraph_count).toBe(3);
@@ -131,7 +132,7 @@ test('R4 exact duplicate evidence supports reasoned ignore and hides stale sourc
   const panel = page.getByRole('region', { name: '叙事证据审阅', exact: true });
   await expect(panel.getByText('还没有审阅记录', { exact: true })).toBeVisible();
   expect((await body(await page.request.get(`${base}/narrative-judge/runs`))).items).toHaveLength(0);
-  await expect(panel.getByRole('checkbox', { name: `审阅章节：${chapterTitle} · v${chapter.version}`, exact: true })).toBeChecked();
+  await expect(panel.getByRole('checkbox', { name: `审阅章节：${chapter.title} · v${chapter.version}`, exact: true })).toBeChecked();
   const started = page.waitForResponse(response => response.url().endsWith('/narrative-judge/runs') && response.request().method() === 'POST');
   await panel.getByRole('button', { name: '检查所选已保存章节', exact: true }).click();
   const run = await body(await started); expect(run.model_called).toBe(false); expect(run.verification).toBe('DETERMINISTIC_RULES');

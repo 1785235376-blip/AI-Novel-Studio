@@ -1,8 +1,8 @@
-# Opus UI handoff · R2 engineering candidate
+# Opus UI handoff · R4/R5/UX experimental continuation
 
-Repository: `1785235376-blip/AI-Novel-Studio` · branch `work/dot-astra-v1-rc-r2` · Draft PR [#37](https://github.com/1785235376-blip/AI-Novel-Studio/pull/37).
+Current target: `1785235376-blip/AI-Novel-Studio` · branch `work/post-v1-r4-r5-ux` · Draft PR [#39](https://github.com/1785235376-blip/AI-Novel-Studio/pull/39), stacked on PR38 parent `d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b`.
 
-This is the functional/interaction handoff. The current tree is still undergoing final integration. Use the PR head and `git rev-parse HEAD` to identify the exact revision; final-SHA receipts are published in the PR and `docs/delivery/dot-astra-rc-r2/TEST_RESULTS.md`. No merge, release or production deployment is approved.
+The R2 sections below retain historical evidence and protected functional contracts. Current scope, new UI entry points and verification boundaries are in the R4/R5/UX functional supplement at the end and `docs/delivery/post-v1-r4-r5-ux/`. PR37 at `1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0` remains its original frozen acceptance object. This follow-on handoff does not modify that branch or package. No merge, release or production deployment is approved.
 
 ## Start and verify
 
@@ -139,3 +139,33 @@ The successor work lives on `work/post-v1-r4-r5-ux`, Draft PR39, from exact rele
 Every new mode needs loading, empty, permission/configuration missing, conflict/stale, in-progress and recovery states. Do not simplify away draft durability, source versions, missing adapters, history, privacy or consent. One shared shell/tokens/framework remains. The optional search/focus consumer contract is documented in `docs/ui/change_requests/r4_workspace_search.md`.
 
 Screenshots and actual hosted browser/PG/native evidence for this successor are pending its exact integration CI. Existing R3/R2 screenshots retain their own provenance. Native Windows IME, screen readers, actual GPU/model quality, target editors and user acceptance remain separate NOT_RUN layers; CSS zoom is labelled simulation, not native OS zoom.
+
+
+---
+
+## R4/R5/UX functional supplement — current experimental continuation
+
+Target: Draft PR39, `work/post-v1-r4-r5-ux`, stacked on frozen R3 `d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b`. This is the current functional supplement in the original handoff; it does not alter the frozen PR37 acceptance package.
+
+Read AGENTS.md, the repository UI skill and DS-v1.0. Keep one AppShell, original TipTap editor, shared tokens/primitives and captured collaboration context. This handoff is for later visual polish; it is not authority to redesign the shell or weaken business behavior.
+
+## Current real entry points
+
+- App editor: visible draft/save/recovery states, explicit archived conflict resolution, composition-safe updates, focus/reference rail, exact selection and paragraph AI locks.
+- Existing experimental workbench: resume/search/tasks/diagnostics, workflow inspection, graph/character viewpoint, model route/benchmark, asset lineage/replay, style/judge, selective change refresh, bounded simulator, research library and partial revision panels.
+- Original writing inspector: shared actual request preview and final dispatch authority, explicit character viewpoint, style choice and trusted partial-only generation binding.
+- Existing history and Draft/Diff/Accept remain the final action surfaces. The new revision panel uses the same document CAS path; it cannot silently accept an entire generation.
+
+Each panel has current loading, empty, missing-dependency, error and review states. Preserve source versions, actor/scope-bound clients, abort/late-response fences, expected-version tokens and pending/accepted distinctions. Do not replace disabled explanations with empty buttons.
+
+## Layout and accessibility constraints
+
+The feature-OFF editor wrapper uses `display: contents`; focus split alone creates a grid. This prevents an invisible editor row from intercepting legacy panel actions. Preserve keyboard names, focus return, status live regions, IME composition buffers and manual-merge cache monotonicity. Reference content remains read-only.
+
+New functional panels are intentionally dense and may need spacing, grouping and navigation polish within the design system. The number of experimental tabs is a known discoverability cost; later grouping should retain searchable, testable feature access rather than add top-level menus.
+
+## Evidence and outstanding checks
+
+WAVE_2_3_CHECKPOINT.md records exact local source and tests. Hosted browser checks run `playwright.r4.config.ts` with synthetic isolated projects and exact flags; actual model quality and native desktop interaction are separate. U13's backend performance receipt is scoped to its recorded older source/method and is not a browser latency claim. Raw browser measurements are now explicitly written into compact CI artifacts.
+
+The blocked second-slice independent review is documented in SECOND_SLICE_REVIEW_STATUS.md. Functional tests do not imply audit closure or user acceptance. No new visual goldens were accepted merely to make tests pass.

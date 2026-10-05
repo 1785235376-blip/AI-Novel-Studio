@@ -24,7 +24,8 @@ test('J05 bounded manual comparison, violations, cancellation, pending planning 
     await page.getByLabel('章节标题', { exact: true }).fill('门前的选择');
     const added = page.waitForResponse(r => r.url().endsWith(`/novels/${novel.id}/chapters`) && r.request().method() === 'POST');
     await page.getByRole('button', { name: '创建章节', exact: true }).click();
-    const chapter = await json(await added);
+    const createdChapter = await json(await added);
+    const chapter = await json(await request.get(`${API}/chapters/${createdChapter.id}`));
     await json(await request.put(`${API}/novels/${novel.id}/characters/alice`, { data: { name: '阿澄', privacy_level: 'LOCAL_ONLY' } }));
     const base = `${API}/novels/${novel.id}/experimental`;
     const graph = await json(await request.post(base + '/planning/graphs', { data: { title: '已有城门规划', links: { chapter_ids: [chapter.id] } } }));

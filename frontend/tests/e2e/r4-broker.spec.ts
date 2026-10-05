@@ -16,7 +16,8 @@ async function tools(page: Page) {
   await page.getByRole('navigation', { name: '实验功能' }).getByRole('button', { name: '模型路由与评测', exact: true }).click();
 }
 async function createProject(page: Page) {
-  await page.addInitScript(token => localStorage.setItem('studio.session', token), TOKEN);
+  // Emulate the trusted local host header, not an unselected collaboration session.
+  await page.setExtraHTTPHeaders(headers);
   await page.goto(UI);
   await page.getByPlaceholder('小说名称').fill('R4 synthetic broker browser');
   const created = page.waitForResponse(r => r.url().endsWith('/api/novels') && r.request().method() === 'POST');
@@ -121,7 +122,7 @@ test('R4 broker real API, author executor, cancellation, bounded evidence and dr
     await executedCard.getByRole('button', { name: '使此证据失效', exact: true }).click();
     await expect(executedCard).toContainText('历史 / 待复验');
     await page.screenshot({ path: info.outputPath('broker-bounded-evidence-invalidation.png') });
-    await page.reload(); await tools(page);
+    await quiesce.drain(); await page.reload(); await tools(page);
     await expect(page.getByRole('button', { name: '编辑任务集 中文协议浏览器任务集', exact: true })).toBeVisible();
     const persisted = await body(await request.get(`${base}/model-benchmarks/status`, { headers }));
     expect(persisted.runs).toHaveLength(1); expect(persisted.evidence).toHaveLength(2);
