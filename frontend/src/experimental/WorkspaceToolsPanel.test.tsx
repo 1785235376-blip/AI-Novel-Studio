@@ -234,3 +234,105 @@ it('passes only exact authorized original generation coordinates to the host', a
   expect(fetch.mock.calls.every(([, init]) => init?.method === 'GET')).toBe(true);
   expect(screen.queryByRole('button', { name: '打开来源工具' })).toBeNull();
 });
+
+it('captures actual split visibility and keeps search/task filters across section changes and remount', async () => {
+  let stored = structuredClone(resume);
+  const fetch = backend((url, init) => {
+    if (url.endsWith('/resume') && init?.method === 'PUT') { const value = JSON.parse(String(init.body)); stored = { ...stored, item: { ...stored.item, ...value, version: stored.item.version + 1 } }; return response(stored); }
+    if (url.endsWith('/resume')) return response(stored);
+    if (url.includes('/tasks?')) return response({ items: [], unavailable: [], truncated: false });
+  });
+  vi.stubGlobal('fetch', fetch);
+  const client = experimentalClient('novel', { sessionToken: 'private-token' });
+  const view = render(<WorkspaceToolsPanel client={client} chapter={chapter} workspaceView={{ focus_active: true, references_visible: false }} />);
+  await screen.findByText('现场 v1');
+  fireEvent.click(screen.getByRole('button', { name: '搜索与命令' }));
+  fireEvent.change(screen.getByLabelText('搜索中文名称、别名或正文'), { target: { value: '旧信' } });
+  fireEvent.change(screen.getByLabelText('内容类型'), { target: { value: 'chapter' } });
+  fireEvent.click(screen.getByLabelText('只搜当前章'));
+  fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
+  fireEvent.change(screen.getByLabelText('按任务 ID、类型或阶段搜索'), { target: { value: 'original-job' } });
+  fireEvent.click(screen.getByLabelText('只看失败或结果未知'));
+  fireEvent.click(screen.getByRole('button', { name: '保存筛选到工作现场' }));
+  await screen.findByText('工作现场已保存。正文仍由编辑器保存。');
+  const request = JSON.parse(String(fetch.mock.calls.find(([, init]) => init?.method === 'PUT')![1]?.body));
+  expect(request.layout).toMatchObject({ search_query: '旧信', search_kind: 'chapter', search_current_chapter: true, task_query: 'original-job', show_failed_only: true, section: 'tasks' });
+  expect(request.view).toEqual({ focus_active: true, references_visible: false });
+  expect(request).not.toHaveProperty('pins'); expect(JSON.stringify(request)).not.toContain('private-token');
+  view.unmount();
+  render(<WorkspaceToolsPanel client={client} chapter={chapter} initialSection="search" />);
+  await waitFor(() => expect((screen.getByLabelText('搜索中文名称、别名或正文') as HTMLInputElement).value).toBe('旧信'));
+  await waitFor(() => expect(fetch.mock.calls.some(([url]) => url.includes('/search?') && new URL(url, 'http://test').searchParams.get('q') === '旧信' && url.includes('chapter_id=chapter-one'))).toBe(true));
+  fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
+  expect((screen.getByLabelText('按任务 ID、类型或阶段搜索') as HTMLInputElement).value).toBe('original-job');
+  expect((screen.getByLabelText('只看失败或结果未知') as HTMLInputElement).checked).toBe(true);
+});
+
+it('keeps newly entered filters while the initial workspace read is delayed', async () => {
+  let finish!: (value: Response) => void;
+  vi.stubGlobal('fetch', backend(url => url.endsWith('/resume') ? new Promise<Response>(resolve => { finish = resolve; }) : undefined));
+  render(<WorkspaceToolsPanel client={experimentalClient('novel', { sessionToken: '' })} initialSection="search" />);
+  fireEvent.change(screen.getByLabelText('搜索中文名称、别名或正文'), { target: { value: 'new typing' } });
+  await act(async () => finish(response({ ...resume, item: { ...resume.item, layout: { ...resume.item.layout, search_query: 'old filter' } } })));
+  expect((screen.getByLabelText('搜索中文名称、别名或正文') as HTMLInputElement).value).toBe('new typing');
+});
+
+it('shows current original task states and aborts its navigation when the resume section closes', async () => {
+  const source = { kind: 'generation', id: 'original-id', chapter_id: chapter.id, version: chapter.version };
+  const fetch = backend(url => url.endsWith('/resume') ? response({ ...resume, item: { ...resume.item,
+    pending_tasks: [{ id: 'original-id', authority: 'author_generation', label: '正文生成', stage_label: '待审核', source }], tasks_recovery_required: true, tasks_capture_partial: true } }) : undefined);
+  vi.stubGlobal('fetch', fetch); const navigate = vi.fn();
+  render(<WorkspaceToolsPanel client={experimentalClient('novel', { sessionToken: '' })} onNavigate={navigate} />);
+  fireEvent.click(await screen.findByRole('button', { name: '恢复原生成草稿' }));
+  expect(navigate).toHaveBeenCalledWith(expect.objectContaining(source));
+  const signal = navigate.mock.calls[0][0].signal as AbortSignal;
+  expect(signal.aborted).toBe(false);
+  fireEvent.click(screen.getByRole('button', { name: '使用指引' }));
+  expect(signal.aborted).toBe(true);
+  expect(fetch.mock.calls.every(([, init]) => init?.method === 'GET')).toBe(true);
+});
+
+it('invalidates a restore when the current chapter changes before its response', async () => {
+  let finish!: (value: Response) => void;
+  vi.stubGlobal('fetch', backend(url => url.endsWith('/resume/resolve') ? new Promise<Response>(resolve => { finish = resolve; }) : undefined));
+  const navigate = vi.fn(), client = experimentalClient('novel', { sessionToken: '' });
+  const view = render(<WorkspaceToolsPanel client={client} chapter={chapter} onNavigate={navigate} />);
+  fireEvent.click(await screen.findByRole('button', { name: '恢复章节位置' }));
+  view.rerender(<WorkspaceToolsPanel client={client} chapter={{ ...chapter, id: 'another-chapter' }} onNavigate={navigate} />);
+  await act(async () => finish(response({ kind: 'chapter', id: 'saved-chapter', version: 3 })));
+  expect(navigate).not.toHaveBeenCalled();
+});
+
+it('resets view and filters without rewriting the original reference authority', async () => {
+  const changeView = vi.fn();
+  vi.stubGlobal('fetch', backend(url => url.endsWith('/resume/reset-layout') ? response({ ...resume, item: { ...resume.item, version: 2 } }) : undefined));
+  render(<WorkspaceToolsPanel client={experimentalClient('novel', { sessionToken: '' })} onWorkspaceViewChange={changeView} />);
+  fireEvent.click(await screen.findByRole('button', { name: '重置布局' }));
+  await screen.findByText('布局已重置，作品未改变');
+  expect(changeView).toHaveBeenCalledWith({ focus_active: false, references_visible: true });
+  expect((screen.getByLabelText('停止点与下次要做的事') as HTMLTextAreaElement).value).toBe('明天检查旧信');
+});
+
+it('keeps a newer stopping note instead of following a delayed restore response', async () => {
+  let finish!: (value: Response) => void;
+  vi.stubGlobal('fetch', backend(url => url.endsWith('/resume/resolve') ? new Promise<Response>(resolve => { finish = resolve; }) : undefined));
+  const navigate = vi.fn();
+  render(<WorkspaceToolsPanel client={experimentalClient('novel', { sessionToken: '' })} onNavigate={navigate} />);
+  fireEvent.click(await screen.findByRole('button', { name: '恢复章节位置' }));
+  fireEvent.change(screen.getByLabelText('停止点与下次要做的事'), { target: { value: '新写的停止点，尚未保存' } });
+  await act(async () => finish(response({ kind: 'chapter', id: chapter.id, version: 3 })));
+  expect(navigate).not.toHaveBeenCalled();
+  expect((screen.getByLabelText('停止点与下次要做的事') as HTMLTextAreaElement).value).toBe('新写的停止点，尚未保存');
+});
+
+it('aborts host verification when a newer split choice follows a resolved workspace request', async () => {
+  const navigate = vi.fn();
+  vi.stubGlobal('fetch', backend(url => url.endsWith('/resume/resolve') ? response({ kind: 'chapter', id: chapter.id, version: 3, workspace: { layout: resume.item.layout, view: { focus_active: false, references_visible: true }, focus_state: 'READY' } }) : undefined));
+  render(<WorkspaceToolsPanel client={experimentalClient('novel', { sessionToken: '' })} onNavigate={navigate} onWorkspaceViewChange={vi.fn()} flags={{ experimental: true, default_enabled: false, features: { 'experimental.writing_focus_v2': true } }} />);
+  fireEvent.click(await screen.findByRole('button', { name: '恢复章节位置' }));
+  await waitFor(() => expect(navigate).toHaveBeenCalledTimes(1));
+  const signal = navigate.mock.calls[0][0].signal as AbortSignal;
+  expect(signal.aborted).toBe(false);
+  fireEvent.click(screen.getByLabelText('显示固定参考分屏'));
+  expect(signal.aborted).toBe(true);
+});

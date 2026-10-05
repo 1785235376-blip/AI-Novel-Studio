@@ -37,6 +37,15 @@ class Layout(StrictModel):
     density: Literal['normal', 'advanced'] = 'normal'
     section: Literal['resume', 'search', 'tasks', 'diagnostics', 'guide'] = 'resume'
     show_failed_only: bool = False
+    search_query: str = Field(default='', max_length=160)
+    search_kind: Literal['', 'chapter', 'character', 'location', 'foreshadowing'] = ''
+    search_current_chapter: bool = False
+    task_query: str = Field(default='', max_length=160)
+
+
+class WorkspaceView(StrictModel):
+    focus_active: bool = False
+    references_visible: bool = True
 
 
 class ResumeIn(StrictModel):
@@ -45,6 +54,7 @@ class ResumeIn(StrictModel):
     chapter_version: int | None = Field(default=None, ge=1)
     anchor: Anchor = Field(default_factory=Anchor)
     layout: Layout = Field(default_factory=Layout)
+    view: WorkspaceView = Field(default_factory=WorkspaceView)
     stopping_note: str = Field(default='', max_length=2000)
     pinned_chapter_ids: list[str] = Field(default_factory=list, max_length=8)
     recent_commands: list[str] = Field(default_factory=list, max_length=12)
@@ -195,11 +205,12 @@ def projected_task(reader, row):
 class WorkspaceToolsService(DomainService):
     RESUMES = 'workspace_resumes_v2'
 
-    def __init__(self, store, novels, chapters, *, chapter_reader=None, entity_readers=None, task_readers=None):
+    def __init__(self, store, novels, chapters, *, chapter_reader=None, entity_readers=None, task_readers=None, focus_reader=None):
         super().__init__(store, novels, chapters)
         self.chapter_reader = chapter_reader
         self.entity_readers = entity_readers or {}
         self.task_readers = tuple(task_readers or ())
+        self.focus_reader = focus_reader
         self._indexes = OrderedDict()
         self._index_lock = RLock()
 
@@ -236,7 +247,27 @@ class WorkspaceToolsService(DomainService):
             raise ValueError('invalid workspace metadata owner')
         return row
 
-    def resume(self, ctx):
+    def _focus(self, ctx, require_flag):
+        # U04 remains the only preferences/reference authority. This projection
+        # never writes it or persists a duplicate pin list/reference body.
+        if not self.focus_reader:
+            return None
+        try:
+            require_flag('writing_focus_v2')
+            value = self.focus_reader(ctx)
+            if value['preferences'].get('recovery_required'):
+                return None
+            return value
+        except Exception:
+            return None
+
+    @staticmethod
+    def _pending(task):
+        if task['status'] in {'ACCEPTED', 'APPROVED', 'COMMITTED', 'REJECTED', 'CANCELLED', 'SUCCEEDED'}:
+            return False
+        return task['status'] != 'COMPLETED' or task['authority'] == 'author_generation'
+
+    def resume(self, ctx, require_flag=lambda flag: None, reauthorize=lambda: None):
         row = deepcopy(self._resume_row(ctx))
         if not row:
             return {'item': None, 'availability': 'EMPTY'}
@@ -257,10 +288,29 @@ class WorkspaceToolsService(DomainService):
         except ValueError:
             row['layout'] = Layout().model_dump()
             row['layout_recovery_required'] = True
+        try:
+            row['view'] = WorkspaceView.model_validate(row.get('view', {})).model_dump()
+        except ValueError:
+            row['view'] = WorkspaceView().model_dump()
+            row['layout_recovery_required'] = True
+        focus = self._focus(ctx, require_flag)
+        captured_version = row.pop('focus_preferences_version', None)
+        row['focus_state'] = ('UNAVAILABLE' if focus is None else 'NOT_CAPTURED' if captured_version is None
+                              else 'READY' if captured_version == focus['preferences']['version'] else 'CHANGED')
+        row['reference_recovery_required'] = bool(focus and any(pin['state'] != 'READY' for pin in focus['pins']['items']))
+        # Re-read original services before disclosing remembered IDs or status.
+        references = row.pop('pending_task_refs', [])
+        current = self.tasks(ctx, require_flag) if references else {'items': [], 'unavailable': [], 'truncated': False}
+        by_id = {(task['authority'], task['id']): task for task in current['items']}
+        row['pending_tasks'] = [by_id[(ref['authority'], ref['id'])] for ref in references
+                                if (ref['authority'], ref['id']) in by_id]
+        row['tasks_recovery_required'] = len(row['pending_tasks']) != len(references) or bool(current['unavailable'])
+        row['tasks_capture_partial'] = bool(row.get('tasks_capture_partial')) or current['truncated']
         row.pop('chapter_digest', None)
+        reauthorize()
         return {'item': row, 'availability': state}
 
-    def save_resume(self, ctx, body):
+    def save_resume(self, ctx, body, require_flag=lambda flag: None, reauthorize=lambda: None):
         data = ResumeIn.model_validate(body).model_dump()
         version = data.pop('expected_version')
         if any(command not in FEATURES for command in data['recent_commands']):
@@ -276,8 +326,18 @@ class WorkspaceToolsService(DomainService):
             raise ValueError('anchor requires a chapter')
         for cid in data['pinned_chapter_ids']:
             self._chapter(ctx, cid)
+        focus = self._focus(ctx, require_flag)
+        data['focus_preferences_version'] = focus['preferences']['version'] if focus else None
+        tasks = self.tasks(ctx, require_flag)
+        pending = [task for task in tasks['items'] if self._pending(task)]
+        data['pending_task_refs'] = [{'authority': task['authority'], 'id': task['id']} for task in pending[:50]]
+        data['tasks_capture_partial'] = len(pending) > 50 or tasks['truncated'] or bool(tasks['unavailable'])
+        reauthorize()
+        if data['chapter_id'] and digest(self._chapter(ctx, data['chapter_id'])) != data['chapter_digest']:
+            raise StaleSourceError('chapter changed during workspace capture')
         with self.store.transaction(ctx.novel_id, ctx.scope) as doc:
             row = self._resume_row(ctx, doc)
+            reauthorize()
             if row:
                 change_row(row, ctx.actor, version, lambda value: value.update(data))
                 row['history'] = row['history'][-20:]
@@ -286,18 +346,19 @@ class WorkspaceToolsService(DomainService):
                     raise CapabilityVersionConflict({'version': 0})
                 row = new_row(ctx.novel_id, ctx.scope, ctx.actor, data)
                 doc['collections'].setdefault(self.RESUMES, {})[self._owner(ctx.actor)] = row
-        return self.resume(ctx)
+        return self.resume(ctx, require_flag, reauthorize)
 
-    def reset_layout(self, ctx, expected_version):
+    def reset_layout(self, ctx, expected_version, require_flag=lambda flag: None, reauthorize=lambda: None):
         with self.store.transaction(ctx.novel_id, ctx.scope) as doc:
             row = self._resume_row(ctx, doc)
             if not row:
                 raise FileNotFoundError('resume')
-            change_row(row, ctx.actor, expected_version, lambda value: value.update(layout=Layout().model_dump()))
+            reauthorize()
+            change_row(row, ctx.actor, expected_version, lambda value: value.update(layout=Layout().model_dump(), view=WorkspaceView().model_dump()))
             row['history'] = row['history'][-20:]
-        return self.resume(ctx)
+        return self.resume(ctx, require_flag, reauthorize)
 
-    def resolve_resume(self, ctx, body):
+    def resolve_resume(self, ctx, body, require_flag=lambda flag: None, reauthorize=lambda: None):
         value = ResumeResolveIn.model_validate(body)
         row = self._resume_row(ctx)
         if not row or not row.get('chapter_id'):
@@ -308,8 +369,21 @@ class WorkspaceToolsService(DomainService):
         stale = digest(chapter) != row.get('chapter_digest')
         if stale and not value.open_current:
             raise StaleSourceError('saved chapter changed; explicitly open its current version')
+        snapshot = self.resume(ctx, require_flag)['item']
+        if not snapshot or snapshot['version'] != value.expected_version:
+            raise CapabilityVersionConflict({'version': snapshot['version'] if snapshot else 0})
+        # Return only a current U04 projection when the saved authority version
+        # still matches. Changed pins/preferences require an explicit fresh save.
+        focus = self._focus(ctx, require_flag)
+        workspace = {key: deepcopy(snapshot[key]) for key in ('layout', 'view', 'focus_state', 'reference_recovery_required')}
+        if focus and row.get('focus_preferences_version') == focus['preferences']['version']:
+            workspace['focus_preferences'] = focus['preferences']['preferences']
+        else:
+            workspace['focus_state'] = 'CHANGED' if focus else 'UNAVAILABLE'
+        reauthorize()
         return {'kind': 'chapter', 'id': chapter['id'], 'feature': 'editor', 'version': chapter['version'],
-                'anchor': {'offset': 0, 'scroll': 0} if stale else deepcopy(row['anchor']), 'stale': stale, 'coordinate': COORDINATE}
+                'anchor': {'offset': 0, 'scroll': 0} if stale else deepcopy(row['anchor']), 'stale': stale, 'coordinate': COORDINATE,
+                'workspace': workspace}
 
     def resume_history(self, ctx):
         row = self._resume_row(ctx)

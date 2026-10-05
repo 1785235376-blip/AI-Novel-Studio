@@ -1,6 +1,6 @@
 """Server-gated workspace routes. No commands execute from search or diagnosis."""
 import json
-from fastapi import APIRouter, Header, Query, Response
+from fastapi import APIRouter, Header, HTTPException, Query, Response
 from .common import api_call
 from .ux import ReadContext, ResumeIn, VersionIn, ResumeResolveIn, ResolveIn, DiagnosticIn, DiagnosticExportIn
 
@@ -13,17 +13,24 @@ def create_ux_router(service, authorize, require_flag):
         actor, scope = authorize(nid, token, branch, 'domain.write' if write else 'domain.read')
         return ReadContext(nid, scope, actor, token, branch)
 
+    def current(ctx, write=False):
+        if access(ctx.novel_id, ctx.token, ctx.branch, write) != ctx:
+            raise HTTPException(403, {'code': 'WORKSPACE_AUTHORITY_CHANGED'})
+
     @router.get('/resume')
     def resume(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return api_call(service.resume, access(nid, x_session_token, x_branch_id))
+        ctx = access(nid, x_session_token, x_branch_id)
+        return api_call(service.resume, ctx, require_flag, lambda: current(ctx))
 
     @router.put('/resume')
     def save_resume(nid: str, body: ResumeIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return api_call(service.save_resume, access(nid, x_session_token, x_branch_id, True), body)
+        ctx = access(nid, x_session_token, x_branch_id, True)
+        return api_call(service.save_resume, ctx, body, require_flag, lambda: current(ctx, True))
 
     @router.post('/resume/resolve')
     def resume_resolve(nid: str, body: ResumeResolveIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return api_call(service.resolve_resume, access(nid, x_session_token, x_branch_id), body)
+        ctx = access(nid, x_session_token, x_branch_id)
+        return api_call(service.resolve_resume, ctx, body, require_flag, lambda: current(ctx))
 
     @router.get('/resume/history')
     def history(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -31,7 +38,8 @@ def create_ux_router(service, authorize, require_flag):
 
     @router.post('/resume/reset-layout')
     def reset(nid: str, body: VersionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return api_call(service.reset_layout, access(nid, x_session_token, x_branch_id, True), body.expected_version)
+        ctx = access(nid, x_session_token, x_branch_id, True)
+        return api_call(service.reset_layout, ctx, body.expected_version, require_flag, lambda: current(ctx, True))
 
     @router.get('/search')
     def search(nid: str, q: str = Query('', max_length=160), kind: str = '', chapter_id: str | None = None,

@@ -1,8 +1,11 @@
 import type { ExperimentalClient } from './api';
+import type { WritingFocusPreferences } from './writingFocusClient';
 export type WorkspaceAnchor = { offset: number; scroll: number };
-export type WorkspaceNavigation = { kind: 'chapter' | 'feature' | 'generation'; id: string; chapter_id?: string; signal?: AbortSignal; feature?: string; version?: number; anchor?: WorkspaceAnchor; stale?: boolean; coordinate?: 'EDITOR_TEXT_CODEPOINT' };
-export type WorkspaceLayout = { density: 'normal' | 'advanced'; section: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; show_failed_only: boolean };
-export type ResumeItem = { id: string; version: number; chapter_id: string | null; chapter_version: number | null; chapter_title?: string; current_chapter_version?: number; anchor: WorkspaceAnchor; layout: WorkspaceLayout; stopping_note: string; pinned_chapter_ids: string[]; recent_commands: string[]; guide_dismissed: boolean; layout_recovery_required?: boolean; updated_at: string };
+export type WorkspaceView = { focus_active: boolean; references_visible: boolean };
+export type WorkspaceRestore = { layout: WorkspaceLayout; view: WorkspaceView; focus_state: 'READY' | 'CHANGED' | 'UNAVAILABLE' | 'NOT_CAPTURED'; reference_recovery_required: boolean; focus_preferences?: WritingFocusPreferences };
+export type WorkspaceNavigation = { kind: 'chapter' | 'feature' | 'generation'; id: string; chapter_id?: string; signal?: AbortSignal; feature?: string; version?: number; anchor?: WorkspaceAnchor; stale?: boolean; coordinate?: 'EDITOR_TEXT_CODEPOINT'; workspace?: WorkspaceRestore };
+export type WorkspaceLayout = { density: 'normal' | 'advanced'; section: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; show_failed_only: boolean; search_query: string; search_kind: '' | 'chapter' | 'character' | 'location' | 'foreshadowing'; search_current_chapter: boolean; task_query: string };
+export type ResumeItem = { id: string; version: number; chapter_id: string | null; chapter_version: number | null; chapter_title?: string; current_chapter_version?: number; anchor: WorkspaceAnchor; layout: WorkspaceLayout; view?: WorkspaceView; focus_state?: WorkspaceRestore['focus_state']; reference_recovery_required?: boolean; pending_tasks?: TaskItem[]; tasks_recovery_required?: boolean; tasks_capture_partial?: boolean; stopping_note: string; pinned_chapter_ids: string[]; recent_commands: string[]; guide_dismissed: boolean; layout_recovery_required?: boolean; updated_at: string };
 export type ResumeResult = { item: ResumeItem | null; availability: 'EMPTY' | 'READY' | 'STALE' | 'UNAVAILABLE' };
 export type SearchItem = { kind: 'chapter' | 'character' | 'location' | 'foreshadowing'; id: string; title: string; version?: number; revision: string; feature: string; offset: number; snippet: string; aliases: string[] };
 export type SearchResult = { items: SearchItem[]; mode: string; truncated: boolean; branch_sources_available: boolean };
@@ -10,7 +13,8 @@ export type TaskItem = { source?: WorkspaceNavigation; id: string; authority: st
 export type TaskResult = { items: TaskItem[]; unavailable: { authority: string; label: string; reason: string }[]; truncated: boolean };
 export type DiagnosticOptions = { include_environment: boolean; include_task_states: boolean; include_error_codes: boolean };
 export type DiagnosticResult = { schema: string; preview_digest: string; uploaded: false; sections: { environment?: { component: string; storage: string; scope_mode: string; diagnostic_contract: number }; task_states?: { authority: string; status: string; cost_state: string }[]; error_codes?: string[]; coverage?: { truncated: boolean; raw_logs_included: false } } };
-export const defaultLayout: WorkspaceLayout = { density: 'normal', section: 'resume', show_failed_only: false };
+export const defaultLayout: WorkspaceLayout = { density: 'normal', section: 'resume', show_failed_only: false, search_query: '', search_kind: '', search_current_chapter: false, task_query: '' };
+export const defaultWorkspaceView: WorkspaceView = { focus_active: false, references_visible: true };
 export function workspaceClient(client: ExperimentalClient) {
   const base = '/workspace';
   return {
