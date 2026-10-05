@@ -4,12 +4,17 @@ export type AuthorPreviewOptions = {
   enabled: boolean; chapterId: string; chapterVersion: number; source: string;
   profile: 'LOCAL_ONLY' | 'HYBRID' | 'QUALITY'; styleProfileId?: string; plotPlanId?: string;
   context: CollaborationContext; saved: boolean;
+  characterId?: string;
+  onExitCharacter?: () => void;
 };
 export type AuthorPreviewReceipt = { previewDigest: string; chapterVersion: number; requestKey: string; requestId: string };
 export type AuthorRequestBody = {
   novel_id: string; chapter_id: string; chapter_version: number; operation: string;
   instruction: string; style: string; profile: string; provider_id: string; model_id: string;
   source: string; selected_text: string; style_profile_id?: string; plot_plan_id?: string; preview_digest?: string; generation_request_id?: string;
+  character_id?: string; world_time?: number; calendar?: string;
+  revision_selection?: { chapter_id: string; chapter_version: number; from_pos: number; to_pos: number; text: string };
+  revision_selection_digest?: string;
 };
 export type AuthorPreview = {
   contract: string; preview_digest: string; chapter_id: string; chapter_version: number;

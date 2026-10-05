@@ -86,8 +86,13 @@ def create_story_graph_router(service, authorize, require_flag):
         actor, scope = access(nid, x_session_token, x_branch_id, 'domain.write' if action == 'recompute' else 'domain.review')
         record(nid, scope, rid)
         if action == 'recompute':
-            require_flag('character_mind_v2')
-            return api_call(service.recompute, nid, scope, actor, rid, body.expected_version)
+            result = api_call(service.recompute, nid, scope, actor, rid, body.expected_version)
+            # Graph-only users can refresh their graph. Never disclose IDs or
+            # counts of the disabled knowledge extension in the result.
+            result['recomputed_ids'] = [key for key in result['recomputed_ids']
+                if enabled_kind(api_call(service.record, nid, scope, key)['kind'])]
+            result['count'] = len(result['recomputed_ids'])
+            return result
         return api_call(service.review, nid, scope, actor, rid, action, body.expected_version)
 
     @router.get('/query')

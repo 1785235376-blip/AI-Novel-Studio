@@ -15,8 +15,15 @@ def build_author_request(job, route, chapter, context, dispatch_guard=None):
     """No routing, persistence, context discovery or provider IO occurs here."""
     context = _safe_audit_metadata(context)
     role = AUTHOR_ROLES[job.operation]
-    style = f"\n写作风格要求：{job.style}" if job.style else ""
-    source = job.source or chapter["content"][-2000:]
+    from .experimental.character_author_context import is_character_job
+    if is_character_job(job):
+        if (set(context) != {"character_viewpoint"} or job.source or job.style or job.creation_records
+                or context["character_viewpoint"].get("context_digest") != (job.character_viewpoint or {}).get("context_digest")):
+            raise ValueError("CHARACTER_AUTHOR_CONTEXT_UNSAFE")
+        style, source = "", ""  # Never fall back to omniscient manuscript tail.
+    else:
+        style = f"\n写作风格要求：{job.style}" if job.style else ""
+        source = job.source or chapter["content"][-2000:]
     prompt = agent_runner.build_prompt(role, context, AUTHOR_TASKS[job.operation] + " " + job.instruction + style, source)
     return TextGenerationRequest(provider_id=route.provider, model_id=route.model, prompt=prompt, context=context,
                                  parameters=TextGenerationParameters(), metadata={"purpose": job.operation},
@@ -37,6 +44,11 @@ def request_digest(request, job, cloud=False):
              "chapter_version": job.base_chapter_version, "chapter_digest": job.base_chapter_digest, "actor_id": job.actor_id, "workspace_id": job.workspace_id,
              "session_id": job.session_id, "scope": job.scope, "profile": job.profile,
              "creation_records": job.creation_records, "route_locality": "cloud" if cloud else "local"}
+    if getattr(job, "character_viewpoint", None) is not None:
+        value["character_viewpoint"] = job.character_viewpoint
+    if getattr(job, "revision_selection_binding", None) is not None:
+        value["revision_selection_binding"] = job.revision_selection_binding
+        value["partial_revision_only"] = True
     return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
 
 

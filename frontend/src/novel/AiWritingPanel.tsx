@@ -353,8 +353,9 @@ export function AiWritingPanel({
     novel_id: novelId, chapter_id: authorPreview.chapterId, chapter_version: authorPreview.chapterVersion,
     operation, instruction: instruction.trim(), style: style.trim(), profile: authorPreview.profile,
     provider_id: selection.providerId, model_id: selection.modelId,
-    source: authorPreview.source, selected_text: authorPreview.source,
-    style_profile_id: authorPreview.styleProfileId, plot_plan_id: authorPreview.plotPlanId,
+    source: authorPreview.characterId ? '' : authorPreview.source, selected_text: authorPreview.characterId ? '' : authorPreview.source,
+    style_profile_id: authorPreview.characterId ? undefined : authorPreview.styleProfileId, plot_plan_id: authorPreview.characterId ? undefined : authorPreview.plotPlanId,
+    ...(authorPreview.characterId ? { character_id: authorPreview.characterId, style: '', profile: 'LOCAL_ONLY' } : {}),
   } : null;
   const previewCurrent = !!previewReceipt && !!previewBody && !!authorPreview?.saved &&
     previewReceipt.requestKey === authorRequestKey(previewBody, authorPreview.context);
@@ -374,13 +375,14 @@ export function AiWritingPanel({
     state === "ready" || state === "failed" || state === "cancelled";
   return (
     <Panel className="novel-ai-panel" title="AI 写作助手">
+      {authorPreview?.characterId && <section aria-label="人物视角生成模式"><StatusMessage>人物视角已启用：{authorPreview.characterId}。只发送审核过的人物知识和本次要求；不包含正文、选区、全知上下文、风格或规划。仅支持本地单份续写或头脑风暴。</StatusMessage>{authorPreview.onExitCharacter && <Button onClick={authorPreview.onExitCharacter} disabled={generating || cancelling}>退出人物视角生成</Button>}</section>}
       <div className="novel-tabs" role="tablist" aria-label="AI 写作方式">
         {(Object.keys(operationLabels) as AiOperation[]).map((value) => (
           <button
             key={value}
             role="tab"
             aria-selected={operation === value}
-            disabled={generating || cancelling}
+            disabled={generating || cancelling || !!authorPreview?.characterId && value !== 'continue' && value !== 'brainstorm'}
             onClick={() => setOperation(value)}
           >
             {operationLabels[value]}
@@ -474,7 +476,7 @@ export function AiWritingPanel({
             key={count}
             type="button"
             aria-pressed={variantCount === count}
-            disabled={generating || cancelling}
+            disabled={generating || cancelling || !!authorPreview?.characterId && count !== 1}
             onClick={() => setVariantCount(count)}
           >
             {count}
@@ -492,15 +494,15 @@ export function AiWritingPanel({
       </label>
       <label>
         写作风格（可选）
-        <input value={style} maxLength={120} disabled={generating || cancelling} onChange={(e) => setStyle(e.target.value)} placeholder="例如：克制、冷峻、短句为主" />
+        <input value={authorPreview?.characterId ? '' : style} maxLength={120} disabled={generating || cancelling || !!authorPreview?.characterId} onChange={(e) => setStyle(e.target.value)} placeholder="例如：克制、冷峻、短句为主" />
       </label>
       <div className="style-presets" aria-label="写作风格预设">
-        {stylePresets.map((preset) => <button key={preset} type="button" disabled={generating || cancelling} aria-pressed={style === preset} onClick={() => setStyle(preset)}>{preset}</button>)}
+        {stylePresets.map((preset) => <button key={preset} type="button" disabled={generating || cancelling || !!authorPreview?.characterId} aria-pressed={style === preset} onClick={() => setStyle(preset)}>{preset}</button>)}
       </div>
       {authorPreview?.enabled && variantCount === 1 ? (
         <AuthorRequestPreviewPanel body={previewBody} context={authorPreview.context} saved={authorPreview.saved}
           disabled={generating || cancelling} onReceipt={setPreviewReceipt} />
-      ) : novelId && chapterNumber !== undefined && (
+      ) : !authorPreview?.characterId && novelId && chapterNumber !== undefined && (
         <AiContextPreviewPanel
           novelId={novelId}
           chapterNumber={chapterNumber}
@@ -520,7 +522,7 @@ export function AiWritingPanel({
         ) : (
           <Button
             variant="primary"
-            disabled={!canGenerate || !!authorPreview?.enabled && (variantCount !== 1 || !previewCurrent)}
+            disabled={!canGenerate || !!authorPreview?.enabled && (variantCount !== 1 || !previewCurrent) || !!authorPreview?.characterId && !['continue', 'brainstorm'].includes(operation)}
             onClick={() => {
               const requestInstruction = instruction.trim();
               return variantCount > 1 && onGenerateVariants

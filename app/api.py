@@ -1202,29 +1202,41 @@ def generation_group(group_id:str,x_session_token:str|None=Header(None)):
     variants = jobs.variants(group_id)
     if not variants:
         raise HTTPException(404,"Generation variant group not found")
-    if settings.enable_collaboration_runtime:
-        for job in variants:
-            _generation_context(job.id, x_session_token)
+    from .jobs import require_generation_content
+    for job in variants:
+        if settings.enable_collaboration_runtime: _generation_context(job.id, x_session_token)
+        require_generation_content(job)
     return {"group_id":group_id,"count":len(variants),"variants":[job.public() for job in variants]}
 @router.get("/generation/{jid}")
 def generation(jid:str,x_session_token:str|None=Header(None)):
     if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
-    job=guard(jobs.get,jid); return {**job.public(),"diff":jobs.diff(jid) if job.output else ""}
+    job=guard(jobs.get,jid)
+    from .jobs import require_generation_content
+    require_generation_content(job)
+    return {**job.public(),"diff":jobs.diff(jid) if job.output else ""}
 @router.get("/generation/{jid}/events")
 def events(jid:str,x_session_token:str|None=Header(None)):
     if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
-    guard(jobs.get,jid); return StreamingResponse(jobs.events(jid),media_type="text/event-stream",headers={"Cache-Control":"no-cache"})
+    from .jobs import require_generation_content
+    require_generation_content(guard(jobs.get,jid))
+    return StreamingResponse(jobs.events(jid),media_type="text/event-stream",headers={"Cache-Control":"no-cache"})
 @router.post("/generation/{jid}/cancel")
 def cancel(jid:str,x_session_token:str|None=Header(None)):
     if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
-    return guard(jobs.cancel,jid).public()
+    job = guard(jobs.cancel,jid)
+    from .jobs import generation_content_available
+    if not generation_content_available(job):
+        return {"id": job.id, "status": job.public()["status"], "cancellation_requested": True, "content_available": False}
+    return job.public()
 @router.post("/generation/{jid}/retry",status_code=202)
 def retry_generation(jid:str,x_session_token:str|None=Header(None)):
     actor=scope=None
     if settings.enable_collaboration_runtime:
         actor,scope,job=_generation_context(jid,x_session_token)
     else:job=guard(jobs.get,jid)
-    if getattr(job, 'expected_request_digest', None):
+    from .jobs import require_generation_content, generation_required_features
+    require_generation_content(job)
+    if generation_required_features(job):
         raise HTTPException(409, {'code': 'AUTHOR_PREVIEW_REQUIRED'})
     if job.status not in {"FAILED","CANCELLED"}:raise HTTPException(409,{"code":"GENERATION_NOT_RETRYABLE","status":job.status})
     payload={
@@ -1236,6 +1248,8 @@ def retry_generation(jid:str,x_session_token:str|None=Header(None)):
     return {"job_id":retried.id,"status":retried.status,"events_url":f"/api/generation/{retried.id}/events","base_chapter_version":retried.base_chapter_version,"retry_of":jid}
 @router.post("/generation/{jid}/accept")
 def accept(jid:str,body:AcceptIn|None=None,x_session_token:str|None=Header(None)):
+    from .jobs import require_generation_content
+    require_generation_content(guard(jobs.get,jid))
     if settings.enable_collaboration_runtime:
         actor,scope,job=_generation_context(jid,x_session_token)
         if body is None or body.expected_version is None:raise HTTPException(428,{"code":"EXPECTED_VERSION_REQUIRED"})
@@ -1246,6 +1260,8 @@ def accept(jid:str,body:AcceptIn|None=None,x_session_token:str|None=Header(None)
 @router.post("/generation/{jid}/reject")
 def reject(jid:str,x_session_token:str|None=Header(None)):
     if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
+    from .jobs import require_generation_content
+    require_generation_content(guard(jobs.get,jid))
     return guard(jobs.reject,jid).public()
 @router.get("/context-preview")
 def context_preview(novel_id:str,chapter:int,instruction:str="",target:str="cloud"):
@@ -1518,13 +1534,13 @@ def upload_asset(nid:str, body:AssetUploadIn, idempotency_key:str|None=Header(No
         asset=asset_library_service.create(nid,body.filename,body.content_base64,body.media_type,body.kind,idempotency_key,branch_id=x_branch_id if settings.enable_collaboration_runtime else None)
         if body.character_id or body.scene_id:
             asset=asset_library_service.update_metadata(asset['id'],{'character_id':body.character_id,'scene_id':body.scene_id},branch_id=_image_branch(x_branch_id))
-        return asset
+        return asset_library_service.public(asset)
     except ValueError as exc: raise HTTPException(400,str(exc))
 @router.get("/novels/{nid}/assets")
 def list_assets(nid:str,kind:str|None=None,character_id:str|None=None,scene_id:str|None=None,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_asset_project(nid,x_session_token,x_branch_id,"domain.read")
     items=asset_library_service.list(nid,branch_id=x_branch_id if settings.enable_collaboration_runtime else None)
-    return [item for item in items if (not kind or item.get('kind')==kind) and (not character_id or item.get('character_id')==character_id) and (not scene_id or item.get('scene_id')==scene_id)]
+    return asset_library_service.public([item for item in items if (not kind or item.get('kind')==kind) and (not character_id or item.get('character_id')==character_id) and (not scene_id or item.get('scene_id')==scene_id)])
 def _scoped_asset(asset_id:str,novel_id:str,branch_id:str|None=None):
     asset=asset_library_service.get(asset_id,branch_id=branch_id if settings.enable_collaboration_runtime else None)
     if not hmac.compare_digest(str(asset.get('novel_id') or ''),str(novel_id)): raise FileNotFoundError(asset_id)
@@ -1538,7 +1554,7 @@ def _authorize_asset_project(novel_id:str,session_token:str|None,branch_id:str|N
 def get_asset(asset_id:str,novel_id:str=Query(min_length=1),x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     try:
         _authorize_asset_project(novel_id,x_session_token,x_branch_id,"domain.read")
-        return _scoped_asset(asset_id,novel_id,x_branch_id)
+        return asset_library_service.public(_scoped_asset(asset_id,novel_id,x_branch_id))
     except FileNotFoundError: raise HTTPException(404,"asset not found")
     except ValueError: raise HTTPException(400,"invalid asset identifier")
 @router.get("/assets/{asset_id}/download")
@@ -2119,7 +2135,7 @@ def retry_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_b
 def accept_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     from .dependencies import asset_provider_registry
-    return guard(_image_jobs(x_session_token).accept,nid,_image_branch(x_branch_id),job_id,asset_library_service,asset_provider_registry)
+    return asset_library_service.public(guard(_image_jobs(x_session_token).accept,nid,_image_branch(x_branch_id),job_id,asset_library_service,asset_provider_registry))
 
 @router.post("/images/generate")
 def generate_image(body:ImageGenerateIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
@@ -2428,7 +2444,7 @@ def import_generated_speech(nid:str,body:dict,x_session_token:str|None=Header(No
         asset=asset_library_service.create(nid,str(body.get('filename') or f"generated-speech.{measured['extension']}"),base64.b64encode(data).decode('ascii'),measured['media_type'],'audio',f"speech-generation:{hashlib.sha256(data).hexdigest()}",branch_id=_image_branch(x_branch_id))
         if body.get('character_id'):
             asset=asset_library_service.update_metadata(asset['id'],{'character_id':body['character_id']},branch_id=_image_branch(x_branch_id))
-        return asset
+        return asset_library_service.public(asset)
     except OutboundURLRejected as exc: raise HTTPException(400,{'code':'OUTBOUND_URL_REJECTED','message':str(exc)})
     except Exception: raise HTTPException(502,{'code':'AUDIO_IMPORT_FAILED','message':'音频导入失败'})
 @router.post("/novels/{nid}/image-generations/import",status_code=202)
@@ -2452,7 +2468,7 @@ def import_generated_image(nid:str,body:dict,x_session_token:str|None=Header(Non
         links={key:body.get(key) for key in ('character_id','scene_id') if body.get(key)}
         if links:
             asset=asset_library_service.update_metadata(asset['id'],links,branch_id=_image_branch(x_branch_id))
-        return asset
+        return asset_library_service.public(asset)
     except OutboundURLRejected as exc: raise HTTPException(400,{'code':'OUTBOUND_URL_REJECTED','message':str(exc)})
     except Exception: raise HTTPException(502,{'code':'IMAGE_IMPORT_FAILED','message':'图片导入失败'})
 @router.get("/novels/{nid}/visual-memories")
@@ -3047,7 +3063,7 @@ def delete_visual_memory(nid: str, memory_id: str, expected_version: int | None 
 
 @router.get("/assets/{asset_id}/derivatives")
 def asset_derivatives(asset_id: str):
-    return capability_guard(v1_capability_service.list_asset_derivatives, asset_id)
+    return asset_library_service.public(capability_guard(v1_capability_service.list_asset_derivatives, asset_id))
 
 
 @router.post("/assets/{asset_id}/derivatives", status_code=201)

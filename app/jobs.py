@@ -29,6 +29,18 @@ class Job:
     expected_request_digest:str|None=None
     base_chapter_digest:str|None=None
     request_authorization:object=field(default=None,repr=False)
+    experimental_origin:str|None=None
+    required_experimental_features:list=field(default_factory=list)
+    execution_outcome:str|None=None
+    partial_revision_only:bool=False
+    revision_selection_binding:dict|None=None
+    character_viewpoint:dict|None=None
+    character_context_resolver:object=field(default=None,repr=False)
+    before_dispatch:object=field(default=None,repr=False)
+    on_terminal:object=field(default=None,repr=False)
+    dispatch_hooks_required:bool=False
+    terminal_hook_status:str|None=None
+    _terminal_hook_called:bool=field(default=False,repr=False)
     usage:dict|None=None
     usage_status:str="UNKNOWN"
     execution_mode:str|None=None
@@ -38,16 +50,100 @@ class Job:
         result = {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at","creation_records","usage","usage_status","execution_mode","provider_reference_id","route_decisions")}
         if self.expected_request_digest:
             result.update(expected_request_digest=self.expected_request_digest, base_chapter_digest=self.base_chapter_digest)
+        if self.experimental_origin is not None:
+            result.update(experimental_origin=self.experimental_origin,
+                          required_experimental_features=list(self.required_experimental_features))
+        if self.execution_outcome is not None and (self.experimental_origin is not None or self.dispatch_hooks_required):
+            result["execution_outcome"] = self.execution_outcome
+        if self.status == "COMPLETED" and (self.dispatch_hooks_required or callable(self.on_terminal)) and self.terminal_hook_status is None:
+            result["status"] = "SETTLING"
+        if self.partial_revision_only or self.revision_selection_binding is not None:
+            result.update(partial_revision_only=True, revision_selection_binding=self.revision_selection_binding)
+        if self.character_viewpoint is not None:
+            result["character_viewpoint"] = self.character_viewpoint
+        if self.dispatch_hooks_required:
+            result["dispatch_hooks_required"] = True
+        if self.terminal_hook_status is not None:
+            result["terminal_hook_status"] = self.terminal_hook_status
         return result
+# These stamps are set by trusted server coordinators, never from GenerateIn or
+# an unvalidated payload. Intrinsic receipt fields retain older-job fencing.
+GENERATION_ORIGINS = {
+    "author_context": frozenset({"author_context_inspector_v2"}),
+    "character_author": frozenset({"author_context_inspector_v2", "world_character_engines_v2", "temporal_story_graph_v2", "character_mind_v2"}),
+    "model_broker": frozenset({"author_context_inspector_v2", "model_broker_v2"}),
+    "selection_assistant": frozenset({"author_context_inspector_v2", "revision_intelligence_v2", "selection_assistant_v2"}),
+}
+
+
+def generation_required_features(job):
+    required = set()
+    origin = getattr(job, "experimental_origin", None)
+    stored = getattr(job, "required_experimental_features", [])
+    allowed = set().union(*GENERATION_ORIGINS.values())
+    if origin is not None:
+        if origin not in GENERATION_ORIGINS or not isinstance(stored, list) or any(not isinstance(value, str) or value not in allowed for value in stored):
+            raise ValueError("GENERATION_ORIGIN_INVALID")
+        required.update(GENERATION_ORIGINS[origin]); required.update(stored)
+    elif stored:
+        raise ValueError("GENERATION_ORIGIN_INVALID")
+    if getattr(job, "expected_request_digest", None): required.update(GENERATION_ORIGINS["author_context"])
+    if getattr(job, "character_viewpoint", None) is not None or getattr(job, "character_context_resolver", None) is not None:
+        required.update(GENERATION_ORIGINS["character_author"])
+    if getattr(job, "dispatch_hooks_required", False): required.update(GENERATION_ORIGINS["model_broker"])
+    if getattr(job, "partial_revision_only", False) or getattr(job, "revision_selection_binding", None) is not None:
+        required.update(GENERATION_ORIGINS["selection_assistant"])
+    return frozenset(required)
+
+
+def mark_generation_origin(job, origin):
+    if origin not in GENERATION_ORIGINS: raise ValueError("GENERATION_ORIGIN_INVALID")
+    required = generation_required_features(job) | GENERATION_ORIGINS[origin]
+    job.experimental_origin = origin
+    job.required_experimental_features = sorted(required)
+
+
+def generation_content_available(job):
+    try: required = generation_required_features(job)
+    except ValueError: return False
+    if not required: return True
+    from .experimental.flags import enabled_flags
+    return required.issubset(enabled_flags())
+
+
+def require_generation_content(job):
+    if not generation_content_available(job):
+        from fastapi import HTTPException
+        raise HTTPException(404, {"code": "GENERATION_FEATURE_DISABLED"})
+
+
+def require_whole_generation_acceptance(job):
+    if (getattr(job, "partial_revision_only", False) or getattr(job, "revision_selection_binding", None) is not None
+        or "selection_assistant_v2" in generation_required_features(job)):
+        from fastapi import HTTPException
+        raise HTTPException(409, {"code": "REVISION_REVIEW_REQUIRED"})
+
+
+def require_generation_accounting(job):
+    if (job.dispatch_hooks_required or callable(job.on_terminal)) and job.terminal_hook_status != "COMPLETED":
+        from fastapi import HTTPException
+        raise HTTPException(409, {"code": "GENERATION_ACCOUNTING_NOT_TERMINAL"})
+
+
 class JobManager:
+    transient_fields={"cancelled", "condition", "request_authorization", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
     terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED","ACCEPTING","ACCEPTANCE_UNCERTAIN"}
     def __init__(self,generations=None,chapters=None,contexts=None,canon=None,memory_extractor=None,snapshot_required=None,collaboration_updates=None):
         if generations is None and repo is not None:
             bundle=create_repository_bundle(data_root=repo.data);generations=GenerationService(bundle.generations);chapters=ChapterService(bundle.chapters);contexts=ContextService(bundle.novels,bundle.chapters,LoreService(bundle.lore));canon=CanonService(bundle.canon)
         self.jobs={};self.lock=threading.Lock();self.persistence=generations or generation_service;self.chapters=chapters or chapter_service;self.contexts=contexts or context_service;self.canon=canon or canon_service;self.memory_extractor=memory_extractor if memory_extractor is not None else memory_agent_service;self.snapshot_required=settings.enable_collaboration_runtime if snapshot_required is None else snapshot_required;self.collaboration_updates=collaboration_application_service if collaboration_updates is None else collaboration_updates
         for item in self.persistence.load_all():
-            if item.get("status") in {"RUNNING","GENERATING","QUEUED"}:item["status"]="FAILED";item["error"]="服务重启导致生成中断，请重新生成。"
-            try:self.jobs[item["id"]]=Job(**{k:v for k,v in item.items() if k in Job.__dataclass_fields__ and k not in {"cancelled","condition"}})
+            if item.get("status") == "SETTLING":
+                item.update(status="FAILED", error_code="GENERATION_SETTLEMENT_RECOVERY_REQUIRED",
+                    error="服务重启中断了结算确认。已保留草稿与费用占用，请核对调度记录，不会自动重放。",
+                    dispatch_hooks_required=True, terminal_hook_status="MISSING_RECONCILIATION_REQUIRED")
+            elif item.get("status") in {"RUNNING","GENERATING","QUEUED","PREPARED"}:item["status"]="FAILED";item["error"]="服务重启导致生成中断，请重新生成。"
+            try:self.jobs[item["id"]]=Job(**{k:v for k,v in item.items() if k in Job.__dataclass_fields__ and k not in self.transient_fields})
             except Exception:continue
     def _persist(self,job):self.persistence.save(job.public())
     def prepare_job(self,operation,payload,actor=None,scope=None,request_authorization=None):
@@ -57,6 +153,7 @@ class JobManager:
         job.creation_records = [dict(row) for row in payload.get("creation_records", [])]
         job.expected_request_digest = payload.get("expected_request_digest")
         job.request_authorization = request_authorization
+        job.status = "PREPARED"
         job.variant_group_id = payload.get("variant_group_id")
         job.variant_index = payload.get("variant_index")
         # Capture the generation base before dispatch so the response, snapshot
@@ -72,8 +169,40 @@ class JobManager:
         return job
     def create(self,operation,payload,actor=None,scope=None,request_authorization=None):
         job=self.prepare_job(operation,payload,actor,scope,request_authorization)
-        with self.lock:self.jobs[job.id]=job
-        self._persist(job);threading.Thread(target=self._run,args=(job,),daemon=True).start();return job
+        return self.start_prepared(job)
+    def start_prepared(self, job):
+        """Start the exact validated instance once, never rebuild its payload."""
+        from .experimental.character_author_context import is_character_job
+        if job.status != "PREPARED": raise ValueError("GENERATION_JOB_NOT_PREPARED")
+        if job.expected_request_digest and not callable(job.request_authorization):
+            raise ValueError("AUTHOR_PREVIEW_SESSION_REQUIRED")
+        if (job.partial_revision_only or job.revision_selection_binding is not None) and not callable(job.request_authorization):
+            raise ValueError("REVISION_SELECTION_AUTHORITY_REQUIRED")
+        if is_character_job(job) and not callable(job.character_context_resolver):
+            raise ValueError("CHARACTER_CONTEXT_SESSION_REQUIRED")
+        if job.before_dispatch is not None or job.on_terminal is not None:
+            if not callable(job.before_dispatch) or not callable(job.on_terminal):
+                raise ValueError("GENERATION_DISPATCH_HOOK_PAIR_REQUIRED")
+            job.dispatch_hooks_required = True
+        if job.dispatch_hooks_required and (not callable(job.before_dispatch) or not callable(job.on_terminal)):
+            raise ValueError("GENERATION_DISPATCH_SESSION_REQUIRED")
+        with self.lock:
+            if job.id in self.jobs: raise ValueError("GENERATION_JOB_ALREADY_STARTED")
+            job.status = "QUEUED"
+            self.jobs[job.id] = job
+            try: self._persist(job)
+            except Exception:
+                self.jobs.pop(job.id, None)
+                job.status = "PREPARED"
+                raise
+        try: threading.Thread(target=self._run,args=(job,),daemon=True).start()
+        except Exception:
+            job.status = "FAILED"; job.execution_outcome = "FAILED"; job.error_code = "GENERATION_START_FAILED"
+            job.error = "生成未启动，请检查任务记录。"
+            self._finish_terminal_hook(job)
+            self._persist(job)
+            raise
+        return job
     def _emit(self,job,chunk=""):
         with job.condition:
             if chunk and not job.cancelled.is_set() and job.status not in self.terminal:job.output+=chunk
@@ -82,6 +211,7 @@ class JobManager:
     def _validate_outbound_sources(self, job, cloud):
         """Last-hop authority; queued copies never override current source policy."""
         from .source_privacy import effective_source_privacy, assert_project_source_policies
+        require_generation_content(job)
         branch_id=(job.scope or {}).get("branch_id")
         chapter = self.chapters.get(job.chapter_id)
         if chapter.get("novel_id", job.novel_id) != job.novel_id:
@@ -133,15 +263,26 @@ class JobManager:
     def prepare_author_request(self, job, route):
         cloud = runtime.is_remote_text_provider(route.provider)
         chapter = self._validate_outbound_sources(job, cloud)
-        context = self.contexts.for_chapter(job.chapter_id, job.instruction, cloud, job.operation)
+        from .experimental.character_author_context import is_character_job, resolve_character_author_context
+        if is_character_job(job):
+            context = resolve_character_author_context(job, cloud=cloud)
+        else:
+            context = self.contexts.for_chapter(job.chapter_id, job.instruction, cloud, job.operation)
         request = build_author_request(job, route, chapter, context,
-            dispatch_guard=lambda: self._guard_author_request(job, route))
+            dispatch_guard=lambda: self._guard_author_request(job, route, dispatch=True))
         if job.expected_request_digest and request_digest(request, job, cloud) != job.expected_request_digest:
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "预检内容、来源或授权已改变，请重新检查后生成。")
         return chapter, dict(request.context), request
 
-    def _guard_author_request(self, job, route):
-        self._validate_outbound_sources(job, runtime.is_remote_text_provider(route.provider))
+    def _guard_author_request(self, job, route, *, dispatch=False):
+        cloud = runtime.is_remote_text_provider(route.provider)
+        self._validate_outbound_sources(job, cloud)
+        from .experimental.character_author_context import is_character_job, resolve_character_author_context
+        if is_character_job(job): resolve_character_author_context(job, cloud=cloud)
+        if job.cancelled.is_set():
+            raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "生成已取消，请重新检查。")
+        if job.dispatch_hooks_required and (not callable(job.before_dispatch) or not callable(job.on_terminal)):
+            raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "调度会话不可恢复，请重新预检。")
         if job.expected_request_digest:
             from .experimental.flags import require_flag
             require_flag("author_context_inspector_v2")
@@ -152,11 +293,40 @@ class JobManager:
                 raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "生成已取消，请重新检查。")
             # Late context/prompt/approval changes cannot ride an earlier receipt.
             self.prepare_author_request(job, route)
+        # Only the actual adapter-facing guard marks budget dispatch. Ordinary
+        # preflight and request assembly never invoke this side-effect hook.
+        if dispatch and callable(job.before_dispatch): job.before_dispatch()
+
+    def _finish_terminal_hook(self, job):
+        if job._terminal_hook_called: return
+        if not callable(job.on_terminal):
+            if job.dispatch_hooks_required:
+                job.terminal_hook_status = "MISSING_RECONCILIATION_REQUIRED"
+                try: self._persist(job)
+                except Exception: job.terminal_hook_status = "PERSISTENCE_UNCERTAIN_RECONCILIATION_REQUIRED"
+            return
+        job._terminal_hook_called = True
+        if job.execution_outcome is None:
+            job.execution_outcome = job.status if job.status in {"COMPLETED", "CANCELLED", "FAILED"} else "UNKNOWN"
+        try:
+            job.on_terminal()
+            job.terminal_hook_status = "COMPLETED"
+        except Exception:
+            # A lost settlement never releases a reservation or triggers replay.
+            # Retain output for review while surfacing the accounting blocker.
+            job.terminal_hook_status = "FAILED_RECONCILIATION_REQUIRED"
+            if job.status not in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN", "REJECTED"}:
+                job.status = "FAILED"
+            job.error_code = "TERMINAL_RECONCILIATION_REQUIRED"
+            job.error = "模型任务已结束，但用量结算未确认。请核对调度记录，不要自动重试。"
+        try: self._persist(job)
+        except Exception:
+            job.terminal_hook_status = "PERSISTENCE_UNCERTAIN_RECONCILIATION_REQUIRED"
 
     def _run(self,job):
         started=time.monotonic()
         try:
-            if job.cancelled.is_set():job.status="CANCELLED";self._emit(job);return
+            if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
             job.status="GENERATING";self._emit(job)
             role=AUTHOR_ROLES[job.operation]
             router=runtime.router(job.profile,role)
@@ -168,7 +338,7 @@ class JobManager:
                 decision={"provider":route.provider,"model":route.model,"cloud":cloud,"status":"PREFLIGHT"}
                 job.route_decisions.append(decision)
                 try:
-                    if job.cancelled.is_set():job.status="CANCELLED";self._emit(job);return
+                    if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
                     if job.expected_request_digest:
                         self._guard_author_request(job, route)
                     if not runtime.packaged_author_route_ready(route.provider):
@@ -183,7 +353,7 @@ class JobManager:
                     self._guard_author_request(job, route)
                     completed=False;dispatched=True;decision["status"]="DISPATCHED"
                     for event in node.stream(TextModelNodeInput(request)):
-                        if event.event_type=="generation.cancelled" or job.cancelled.is_set():job.status="CANCELLED";self._emit(job);return
+                        if event.event_type=="generation.cancelled" or job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
                         if event.event_type=="generation.failed":raise ModelRuntimeError(event.error_code or RuntimeErrorCode.GENERATION_FAILED,"生成失败，请审核已有输出后重试")
                         if event.event_type=="generation.delta" and event.delta:self._emit(job,event.delta)
                         if event.event_type=="generation.completed":
@@ -202,19 +372,28 @@ class JobManager:
                     # whose remote billing/result is ambiguous.
                     if dispatched or job.output or job.requested_provider or cloud:raise
             else:raise last or RuntimeError("No provider route")
-            if job.cancelled.is_set():job.status="CANCELLED";self._emit(job);return
+            if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
             if role=="writer" and not self.snapshot_required:self.contexts.save_snapshot(job.chapter_id,ch.get("version",0),context,"writer:v1",job.model or "unknown")
             job.issues=deterministic_review(job.output,context);job.latency_ms=int((time.monotonic()-started)*1000)
-            if job.cancelled.is_set():job.status="CANCELLED";self._emit(job);return
-            job.status="COMPLETED";self._emit(job)
+            if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
+            with job.condition:
+                job.status="COMPLETED";job.execution_outcome="COMPLETED"
+                # Settle and persist under the same in-process transition lock
+                # that acceptance uses. Readers see SETTLING until this ends.
+                self._finish_terminal_hook(job)
+                self._emit(job)
             runtime_log.write(generation_id=job.id,novel_id=job.novel_id,chapter_id=job.chapter_id,agent=role,provider=job.provider,model=job.model,status=job.status,latency_ms=job.latency_ms)
         except Exception as exc:
-            if job.cancelled.is_set():job.status="CANCELLED";self._emit(job);return
+            if job.status in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN", "REJECTED"}:
+                return  # A late logging/accounting failure cannot undo review.
+            if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
             if isinstance(exc,ModelRuntimeError):safe_error=exc.safe_message;error_code=exc.code.value
             elif isinstance(exc,RuntimeError) and "snapshot" in str(exc).casefold():safe_error="Context snapshot failed";error_code="CONTEXT_SNAPSHOT_FAILED"
             else:safe_error="生成失败，请稍后重试";error_code=RuntimeErrorCode.GENERATION_FAILED.value
-            job.latency_ms=int((time.monotonic()-started)*1000);job.status="FAILED";job.error=safe_error;job.error_code=error_code;self._emit(job)
+            job.latency_ms=int((time.monotonic()-started)*1000);job.status="FAILED";job.execution_outcome=job.execution_outcome or "FAILED";job.error=safe_error;job.error_code=error_code;self._emit(job)
             runtime_log.write(generation_id=job.id,novel_id=job.novel_id,chapter_id=job.chapter_id,status=job.status,error=error_code,latency_ms=job.latency_ms)
+        finally:
+            self._finish_terminal_hook(job)
     def get(self,jid):
         if jid not in self.jobs:raise KeyError(jid)
         return self.jobs[jid]
@@ -230,9 +409,11 @@ class JobManager:
     def events(self,jid):
         job=self.get(jid);sent=0
         while True:
+            if not generation_content_available(job): return
             with job.condition:
-                if len(job.output)==sent and job.status not in self.terminal:job.condition.wait(timeout=10)
-                chunk=job.output[sent:];sent=len(job.output);status=job.status
+                if len(job.output)==sent and job.public()["status"] not in self.terminal:job.condition.wait(timeout=10)
+                if not generation_content_available(job): return
+                chunk=job.output[sent:];sent=len(job.output);status=job.public()["status"]
             yield "data: "+json.dumps({"job_id":jid,"status":status,"chunk":chunk,"provider":job.provider,"model":job.model,"error":job.error,"error_code":job.error_code},ensure_ascii=False)+"\n\n"
             if status in self.terminal:return
     def accept(self,jid,accepted_output=None,actor=None,scope=None,expected_version=None):
@@ -247,46 +428,55 @@ class JobManager:
         lock_root = getattr(persistence_repository, "root", None) or Path(settings.novel_data) / "runtime/jobs"
         with workspace_mutation(Path(lock_root), f"generation-accept:{jid}"):
             job = self.get(jid)
-            read = getattr(self.persistence, "get", None)
-            try:
-                stored = read(jid) if callable(read) else None
-            except KeyError:
-                stored = None  # Compatibility with explicitly injected drafts.
-            if stored is not None:
-                for key, value in stored.items():
-                    if key in Job.__dataclass_fields__ and key not in {"cancelled", "condition"}:
-                        setattr(job, key, value)
-            if job.status != "COMPLETED":
-                raise ValueError("Only completed drafts can be accepted; an interrupted acceptance requires manual review")
-            chapter = self.chapters.get(job.chapter_id)
-            # Caller-supplied versions may narrow the precondition, never rebase
-            # an old generation onto a newer manuscript. Legacy continuations
-            # create a new chapter; legacy replacements without a base fail shut.
-            target_version = job.base_chapter_version
-            if target_version is None:
-                if job.operation != "continue":
-                    raise ValueError("Draft generation base is missing; regenerate before accepting")
-                target_version = chapter["version"]
-            if chapter["version"] != target_version or (expected_version is not None and expected_version != target_version):
-                raise VersionConflict(chapter, resource_id=job.chapter_id, expected_version=target_version)
-            # Persist before the first side effect. If the process dies, ACCEPTING
-            # is deliberately not replayable: a chapter may already exist. A
-            # subsequent manager must reconcile it rather than write it twice.
-            job.status = "ACCEPTING"
-            self._persist(job)
-            try:
-                return self._accept_claimed(job, chapter, target_version, accepted_output, actor, scope)
-            except Exception:
-                job.status = "ACCEPTANCE_UNCERTAIN"
-                job.error_code = "ACCEPTANCE_REVIEW_REQUIRED"
-                job.error = "采用操作未能完整确认，正文可能已保存。请检查正文及待审核 Canon，勿重复采用。"
+            with job.condition:
+                require_generation_content(job)
+                require_whole_generation_acceptance(job)
+                require_generation_accounting(job)
+                read = getattr(self.persistence, "get", None)
                 try:
-                    self._emit(job)
+                    stored = read(jid) if callable(read) else None
+                except KeyError:
+                    stored = None  # Compatibility with explicitly injected drafts.
+                if stored is not None:
+                    for key, value in stored.items():
+                        if key in Job.__dataclass_fields__ and key not in self.transient_fields:
+                            setattr(job, key, value)
+                require_generation_content(job)
+                require_whole_generation_acceptance(job)
+                require_generation_accounting(job)
+                if job.status != "COMPLETED":
+                    raise ValueError("Only completed drafts can be accepted; an interrupted acceptance requires manual review")
+                chapter = self.chapters.get(job.chapter_id)
+                # Caller-supplied versions may narrow the precondition, never rebase
+                # an old generation onto a newer manuscript. Legacy continuations
+                # create a new chapter; legacy replacements without a base fail shut.
+                target_version = job.base_chapter_version
+                if target_version is None:
+                    if job.operation != "continue":
+                        raise ValueError("Draft generation base is missing; regenerate before accepting")
+                    target_version = chapter["version"]
+                if chapter["version"] != target_version or (expected_version is not None and expected_version != target_version):
+                    raise VersionConflict(chapter, resource_id=job.chapter_id, expected_version=target_version)
+                # Persist before the first side effect. If the process dies, ACCEPTING
+                # is deliberately not replayable: a chapter may already exist. A
+                # subsequent manager must reconcile it rather than write it twice.
+                job.status = "ACCEPTING"
+                self._persist(job)
+                try:
+                    return self._accept_claimed(job, chapter, target_version, accepted_output, actor, scope)
                 except Exception:
-                    pass  # The durable ACCEPTING claim still prevents replay.
-                raise
+                    job.status = "ACCEPTANCE_UNCERTAIN"
+                    job.error_code = "ACCEPTANCE_REVIEW_REQUIRED"
+                    job.error = "采用操作未能完整确认，正文可能已保存。请检查正文及待审核 Canon，勿重复采用。"
+                    try:
+                        self._emit(job)
+                    except Exception:
+                        pass  # The durable ACCEPTING claim still prevents replay.
+                    raise
 
     def _accept_claimed(self,job,chapter,target_version,accepted_output=None,actor=None,scope=None):
+        require_generation_content(job)
+        require_whole_generation_acceptance(job)
         jid = job.id
         original=chapter["content"];output=accepted_output if accepted_output is not None else job.output;content=(original+"\n\n"+output) if job.operation=="continue" else (original.replace(job.source,output,1) if job.operation=="rewrite" and job.source in original else output)
         if job.operation == "continue":
@@ -338,15 +528,17 @@ class JobManager:
         lock_root = getattr(persistence_repository, "root", None) or Path(settings.novel_data) / "runtime/jobs"
         with workspace_mutation(Path(lock_root), f"generation-accept:{jid}"):
             job = self.get(jid)
-            read = getattr(self.persistence, "get", None)
-            try:
-                stored = read(jid) if callable(read) else None
-            except KeyError:
-                stored = None
-            if stored is not None and stored.get("status") in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN"}:
-                raise ValueError("An accepted or uncertain draft cannot be rejected")
-            if job.status in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN"}:
-                raise ValueError("An accepted or uncertain draft cannot be rejected")
-            job.status="REJECTED";self._emit(job);return job
-    def diff(self,jid):job=self.get(jid);original=job.source or self.chapters.get(job.chapter_id)["content"];return "\n".join(difflib.unified_diff(original.splitlines(),job.output.splitlines(),fromfile="original",tofile="generated",lineterm=""))
+            with job.condition:
+                require_generation_content(job)
+                read = getattr(self.persistence, "get", None)
+                try:
+                    stored = read(jid) if callable(read) else None
+                except KeyError:
+                    stored = None
+                if stored is not None and stored.get("status") in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN"}:
+                    raise ValueError("An accepted or uncertain draft cannot be rejected")
+                if job.status in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN"}:
+                    raise ValueError("An accepted or uncertain draft cannot be rejected")
+                job.status="REJECTED";self._emit(job);return job
+    def diff(self,jid):job=self.get(jid);require_generation_content(job);original=job.source or self.chapters.get(job.chapter_id)["content"];return "\n".join(difflib.unified_diff(original.splitlines(),job.output.splitlines(),fromfile="original",tofile="generated",lineterm=""))
 jobs=JobManager()

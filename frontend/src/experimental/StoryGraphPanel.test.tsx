@@ -91,3 +91,22 @@ it('does not request psychology or offer knowledge mutations when the mind flag 
   expect(screen.queryByRole('option', { name: '知识与心智事件' })).toBeNull();
   expect(fetch.mock.calls.some(([url]) => url.includes('/world/'))).toBe(false);
 });
+
+it('hands off the exact visible character/chapter and exposes explicit local-only opt-out', async () => {
+  const fetch = vi.fn(async (url: string) => reply(url.endsWith('/catalog') ? catalog : url.includes('/query?') ? { edges: [], nodes: [], visible_count: 0 } : url.endsWith('/character-context') ? { known_facts: [], secrets: [] } : { items: [] }));
+  vi.stubGlobal('fetch', fetch);
+  const useCharacter = vi.fn(), exitCharacter = vi.fn();
+  render(<StoryGraphPanel client={client()} chapter={chapter} mindEnabled onUseCharacter={useCharacter} onExitCharacter={exitCharacter} activeCharacterId="alice" />);
+  fireEvent.click(screen.getByRole('button', { name: '人物可知视图' }));
+  fireEvent.change(screen.getByLabelText('视角人物 ID'), { target: { value: 'alice' } });
+  fireEvent.click(screen.getByRole('button', { name: '查询当前视图' }));
+  fireEvent.click(await screen.findByRole('button', { name: '以此人物视角准备生成' }));
+  expect(useCharacter).toHaveBeenCalledWith('alice', 'ch1');
+  expect(screen.getByText(/自动正文、选区、风格与规划资料全部排除/)).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: '退出人物生成视角' }));
+  expect(exitCharacter).toHaveBeenCalledTimes(1);
+  fireEvent.change(screen.getByLabelText('查询世界时间（留空只按叙事顺序）'), { target: { value: '10' } });
+  expect(screen.queryByRole('button', { name: '以此人物视角准备生成' })).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: '查询当前视图' }));
+  await waitFor(() => expect((screen.getByRole('button', { name: '以此人物视角准备生成' }) as HTMLButtonElement).disabled).toBe(true));
+});

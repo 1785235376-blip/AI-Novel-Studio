@@ -222,6 +222,9 @@ def test_api_flags_permissions_author_view_and_legacy_bypass(env):
     assert client.post(base + f'/records/{r["id"]}/archive', json={'expected_version': 2}, headers=headers).status_code == 403
     controls['mind'] = False
     assert k['id'] not in json.dumps(client.get(base + '/records', headers=headers).json())
+    recomputed = client.post(base + f'/records/{r["id"]}/recompute', json={'expected_version': r['version']}, headers=headers)
+    assert recomputed.status_code == 200
+    assert recomputed.json()['recomputed_ids'] == [r['id']] and recomputed.json()['count'] == 1
     assert client.post(base + '/character-context', json={'character_id': 'alice', 'chapter_id': e.order[3]}, headers=headers).status_code == 404
     old = f'/novels/{e.nid}/experimental/world'
     assert client.get(old + f'/records/{k["id"]}', headers=headers).status_code == 404

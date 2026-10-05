@@ -78,3 +78,59 @@ def test_mounted_graph_current_manuscript_invalidates_relation_and_evidence(grap
     body = {'chapter_id': e.chapter['id'], 'character_id': 'alice'}
     assert not checked(e.client.post(e.base + '/story-graph/character-context', json=body))['known_facts']
     assert checked(e.client.get(e.base + f"/story-graph/records/{r['id']}"))['stale']
+
+
+def test_mounted_character_preview_and_actual_local_adapter_have_identical_safe_payload(graph_app, monkeypatch):
+    import time
+    from types import SimpleNamespace as S
+    import app.jobs as jobs_module
+    import app.experimental.author_context_api as author_api
+    from app.author_request import request_payload
+    from app.model_runtime import TextModelNode
+    from app.router import Route
+    from app.services.generation_service import GenerationService
+    from test_local_ai_discovery_egress import enabled
+    e = graph_app; secret = 'HIDDEN_IN_MANUSCRIPT_紫色钥匙'
+    current = e.chapters.get(e.chapter['id'])
+    e.chapters.save(current['id'], {'content': secret, 'version': current['version']})
+    current = e.chapters.get(current['id'])
+    r = approve(e, relation(e))
+    _, registered, candidate, adapter, wire = enabled(e.root / 'character-wire')
+    captured = []; original_generate = adapter.generate_text
+    def capture(request):
+        captured.append(copy.deepcopy(request_payload(request)))
+        return original_generate(request)
+    monkeypatch.setattr(adapter, 'generate_text', capture)
+    manager = e.api.jobs
+    def forbidden(*_): pytest.fail('Must not discover omniscient author context')
+    for key, value in (('chapters', e.chapters), ('contexts', S(novels=e.novels, for_chapter=forbidden, save_snapshot=lambda *_args, **_kwargs: None)),
+                       ('persistence', GenerationService(e.bundle.generations)), ('snapshot_required', False), ('jobs', {})):
+        monkeypatch.setattr(manager, key, value)
+    route = Route(candidate['provider_id'], candidate['id'])
+    runtime = S(is_remote_text_provider=lambda _: False, router=lambda *_: S(routes={'writer': [route]}),
+                packaged_author_route_ready=lambda _: True,
+                prepare_text_route=lambda *_: TextModelNode(registered.provider_registry, registered.model_registry))
+    monkeypatch.setattr(jobs_module, 'runtime', runtime); monkeypatch.setattr(author_api, 'runtime', runtime)
+    monkeypatch.setattr(jobs_module, 'runtime_log', S(write=lambda **_: None))
+    monkeypatch.setattr(jobs_module, 'deterministic_review', lambda *_: [])
+    body = {'novel_id': e.nid, 'chapter_id': current['id'], 'chapter_version': current['version'], 'operation': 'continue',
+        'character_id': 'alice', 'provider_id': candidate['provider_id'], 'model_id': candidate['id'],
+        'instruction': 'Stay within the selected fictional viewpoint.', 'source': secret, 'style': secret,
+        'style_profile_id': 'do-not-fetch-style', 'plot_plan_id': 'do-not-fetch-plan'}
+    preview = checked(e.client.post(e.base + '/author-context/preview', json=body))
+    assert secret not in json.dumps(preview, ensure_ascii=False)
+    assert r['data']['statement'] not in json.dumps(preview)
+    assert preview['source_strategy'] == 'CHARACTER_KNOWLEDGE_ONLY' and not wire.calls
+    result = checked(e.client.post(e.base + '/author-context/generate', json={**body, 'preview_digest': preview['preview_digest']}), 202)
+    for _ in range(200):
+        value = manager.get(result['job_id'])
+        if value.status in manager.terminal: break
+        time.sleep(.01)
+    assert value.status == 'COMPLETED', value.error
+    assert captured == [preview['request']]
+    assert wire.generations[0][2]['prompt'] == preview['request']['prompt']
+    stored = manager.persistence.get(value.id)
+    assert stored['character_viewpoint'] == preview['character_viewpoint']
+    assert stored['source'] == stored['style'] == '' and stored['creation_records'] == []
+    assert not set(stored) & {'request_authorization', 'character_context_resolver', 'before_dispatch', 'on_terminal'}
+    assert e.chapters.get(current['id']) == current

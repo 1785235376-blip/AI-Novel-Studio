@@ -50,10 +50,10 @@ def rig(monkeypatch, tmp_path, request):
                 packaged_author_route_ready=lambda _: True, prepare_text_route=lambda *_: Node())
     monkeypatch.setattr(jobs, 'runtime', runtime); monkeypatch.setattr(api, 'runtime', runtime)
     monkeypatch.setattr(jobs, 'runtime_log', S(write=lambda **_: None)); monkeypatch.setattr(jobs, 'deterministic_review', lambda *_: [])
-    def create(operation, payload, actor=None, scope=None, request_authorization=None):
-        job = manager.prepare_job(operation, payload, actor, scope, request_authorization)
+    def start_prepared(job):
+        assert job.status == 'PREPARED'
         state.created.append(job); manager._run(job); return job
-    manager.create = create
+    manager.start_prepared = start_prepared
     def authorize(nid, token, branch, permission):
         if not state.permitted or token != 'session' or nid != 'n' or branch:
             raise HTTPException(403, {'code': 'FORBIDDEN'})
