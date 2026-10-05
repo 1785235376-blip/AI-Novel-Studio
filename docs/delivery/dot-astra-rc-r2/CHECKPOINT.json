@@ -8,9 +8,9 @@
   "starting_sha": "f8c141c39a543cc9dbea57647ac91185bc9aecd6",
   "fixed_snapshot_sha": "98b7d53c3193765e792e5a756fff02a87b5948b8",
   "fixed_snapshot_tree": "f6c4a84c5ff0d1b2639b537af1ea287611935fd4",
-  "working_tree_state": "Final runtime/frontend/test source 98b is fully verified. Current uncommitted changes owned by this task are documentation only; subsequent documentation/evidence delivery commit is not yet self-identifiable.",
+  "working_tree_state": "Engineering source is frozen at verified 98b. This delivery snapshot changes documentation and synthetic evidence only; its later published SHA/readback/CI is recorded separately in the final Draft PR body.",
   "last_reported_remote_sha": "98b7d53c3193765e792e5a756fff02a87b5948b8",
-  "remote_verification": "Lead-confirmed98b7d53c/treef6c4a84c equals local 1c19d83d. Push 37284138175 and PR 37284145310 running. Last completely green source remains93daeb97.",
+  "remote_verification": "Verified engineering head 98b7d53c3193765e792e5a756fff02a87b5948b8 / tree f6c4a84c5ff0d1b2639b537af1ea287611935fd4 equals local 1c19d83d. Push 37284138175 and PR 37284145310 both completed SUCCESS across all five lanes.",
   "final_commit_sha": "98b7d53c3193765e792e5a756fff02a87b5948b8",
   "final_ci": "PASS",
   "current_result_summary": {
@@ -956,5 +956,6 @@
     "state": "PENDING_LEAD_READBACK_AND_DOCS_ONLY_CI",
     "commit_sha": null,
     "scope": "Subsequent documentation/evidence-only commit after tested engineering source 98b. Cannot embed its own future commit ID; final Draft PR body/user delivery message must provide the actual verified delivery SHA and docs-only-head CI. This does not make the completed 98b core gates unknown."
-  }
+  },
+  "final_commit_sha_scope": "Final tested engineering source, not the later documentation-only delivery commit. See documentation_delivery and the final Draft PR body for that separate identity."
 }
