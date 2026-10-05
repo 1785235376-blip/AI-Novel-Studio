@@ -273,6 +273,12 @@ async def collaboration_fail_closed(request,call_next):
             re.fullmatch(r"/api/novels/[^/]+/knowledge-base/review",normalized_path) is not None and method=="POST" or
             re.fullmatch(r"/api/novels/[^/]+/chapters/[^/]+/knowledge-base/review",normalized_path) is not None and method=="POST" or
             capability_route and method in {"GET","POST","PUT","PATCH","DELETE"}))
+        # New routes are admitted only behind server-owned opt-in. Domain
+        # routers still require exact project/branch authorization and flags.
+        from .experimental.flags import enabled_flags
+        experimental_path = re.fullmatch(r"/api/novels/[^/]+/experimental/.+", normalized_path) is not None
+        if (normalized_path == "/api/experimental/features" and method == "GET") or (experimental_path and enabled_flags() and method in {"GET", "POST", "PUT", "PATCH", "DELETE"}):
+            allowed = True
         if not allowed:
             return JSONResponse({"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}},status_code=501)
         public_metadata = (
