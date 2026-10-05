@@ -1,0 +1,12 @@
+ISOLATED_TEST_ROOT=/workspace/scratch/b8734129d01d/r2-test.1FrSFM
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/ai-novel-r2/frontend
+
+ ✓ src/localAiDiscoveryApi.test.ts (3 tests) 8ms
+ ✓ src/ui/ModelCenter.test.tsx (10 tests) 148ms
+ ✓ src/ui/LocalAiDiscovery.test.tsx (23 tests) 269ms
+
+ Test Files  3 passed (3)
+      Tests  36 passed (36)
+   Start at  23:15:20
+   Duration  1.03s (transform 255ms, setup 0ms, collect 596ms, tests 424ms, environment 896ms, prepare 188ms)

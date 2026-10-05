@@ -40,11 +40,37 @@ class OllamaProvider(LLMProvider):
     def health_check(self) -> bool:
         try: urlopen(self.base_url+"/api/tags",timeout=3); return True
         except Exception: return False
-    def list_models(self) -> list[dict]:
+    def list_models(self, *, read_json=None, include_details: bool = False, strict: bool = False) -> list[dict]:
+        """Enumerate installed models; discovery injects its bounded local-only reader.
+
+        The no-argument legacy response and failure behavior remain unchanged.
+        The injected reader receives a relative metadata path, never prompts or
+        credentials. In strict mode probe failures remain visible to discovery.
+        """
         try:
-            with urlopen(self.base_url+"/api/tags",timeout=3) as r: data=json.load(r)
-            return [{"name":m.get("name"),"size":m.get("size"),"modified_at":m.get("modified_at")} for m in data.get("models",[])]
-        except Exception: return []
+            if read_json is None:
+                with urlopen(self.base_url+"/api/tags",timeout=3) as response:
+                    data=json.load(response)
+            else:
+                data=read_json("/api/tags")
+            if not isinstance(data, dict) or not isinstance(data.get("models", None if strict else []), list):
+                raise ValueError("LOCAL_AI_INVALID_RESPONSE")
+            models=data.get("models", [])
+            if read_json is not None:
+                models=models[:512]
+            result=[]
+            for model in models:
+                if not isinstance(model, dict):
+                    continue
+                item={"name":model.get("name"),"size":model.get("size"),"modified_at":model.get("modified_at")}
+                if include_details:
+                    item.update({key:model[key] for key in ("digest", "details") if key in model})
+                result.append(item)
+            return result
+        except Exception:
+            if strict:
+                raise
+            return []
     def stream(self,prompt:str,model:str,**kwargs):
         usage_callback=kwargs.pop("usage_callback",None)
         timeout=kwargs.pop("timeout",120)

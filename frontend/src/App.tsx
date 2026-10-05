@@ -99,7 +99,7 @@ export function workingVariantIds(variants: AiVariantDraft[]) {
 }
 export const VARIANT_TIMEOUT_ERROR = "候选生成超时，请重新生成此候选。";
 export function isGenerationTerminal(status: string) {
-  return ["COMPLETED", "FAILED", "CANCELLED"].includes(status);
+  return ["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED", "ACCEPTING", "ACCEPTANCE_UNCERTAIN"].includes(status);
 }
 export function isRecoveredDraftStale(baseVersion?: number, currentVersion?: number) {
   return baseVersion !== undefined && currentVersion !== undefined && baseVersion !== currentVersion;
@@ -537,7 +537,7 @@ export default function App() {
         for (let i = 0; i < 300; i++) {
           const x = await api.job(r.job_id);
           setJob((j: any) => ({ ...j, ...x }));
-          if (["COMPLETED", "FAILED", "CANCELLED"].includes(x.status)) break;
+          if (["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED", "ACCEPTING", "ACCEPTANCE_UNCERTAIN"].includes(x.status)) break;
           await new Promise((ok) => setTimeout(ok, 500));
         }
       } else {
@@ -550,7 +550,7 @@ export default function App() {
             ...x,
             output: (j?.output || "") + (x.chunk || ""),
           }));
-          if (["COMPLETED", "FAILED", "CANCELLED"].includes(x.status))
+          if (["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED", "ACCEPTING", "ACCEPTANCE_UNCERTAIN"].includes(x.status))
             {es.close();generationRecovery.remove(namespace,s.chapterId)}
         };
         es.onerror = async () => {
@@ -811,7 +811,7 @@ export default function App() {
       />
     );
   const scope = s.scope;
-  if (studioModule !== "NOVEL") return <ModuleWorkspaceRoutes module={studioModule} onModuleChange={setStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={{workspace:scope?.workspaceName || "本机作品", project:scope?.projectName || "当前小说", storyline:scope?.storylineName || "默认故事线", branch:scope?.branchName || "主线"}} />;
+  if (studioModule !== "NOVEL") return <ModuleWorkspaceRoutes key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={setStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={{workspace:scope?.workspaceName || "本机作品", project:scope?.projectName || "当前小说", storyline:scope?.storylineName || "默认故事线", branch:scope?.branchName || "主线"}} />;
   const localNovelTitle =
     novels.data?.find((n) => n.id === s.novelId)?.title || "当前小说";
   const shellScope = scope

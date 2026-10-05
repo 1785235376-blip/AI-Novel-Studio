@@ -98,10 +98,30 @@ class AudiobookService:
         return self.store.mutate(novel_id, change)
 
     def execute(self, novel_id, job_id, chapter, resolve, load_current_source=None, check_project_policy=None):
+        def same_attempt(current, claimed):
+            return (current.get("execution_token") == claimed.get("execution_token")
+                    and current.get("status") == "RUNNING"
+                    and all(current.get(key) == claimed.get(key) for key in (
+                        "owner_actor_id", "chapter_id", "request_sha256", "source_text",
+                        "source_version", "source_content_sha256", "source_sha256",
+                        "privacy_level", "provider_id", "model_id", "voice", "emotion",
+                        "speech_rate", "pronunciation_dictionary")))
+
+        def check_source(current_source):
+            if current_source.get("id") != job["chapter_id"] or current_source.get("novel_id") != novel_id:
+                raise AudiobookError("AUDIOBOOK_SOURCE_CHANGED", "正文所属项目已改变，请重新创建任务", 409)
+            if not getattr(provider, "local", False):
+                if job.get('source_version') != current_source.get('version') or job.get('source_content_sha256') != content_digest(current_source):
+                    raise AudiobookError('AUDIOBOOK_SOURCE_CHANGED', '正文版本已改变，请重新审核隐私并创建任务', 409)
+                if merge_privacy(job.get("privacy_level"), effective_source_privacy(current_source, self.branch_id)) != "CLOUD_ALLOWED":
+                    raise AudiobookError("AUDIOBOOK_PRIVACY_BLOCKED", "章节隐私策略不允许向远端语音服务发送正文", 403)
+
         def claim(state):
             job = self.find(state, job_id)
             if job["status"] != "QUEUED":
                 raise AudiobookError("AUDIOBOOK_JOB_NOT_EXECUTABLE", "只有排队中的任务可以执行")
+            if job.get("owner_actor_id") != getattr(self.store, "owner_actor_id", None):
+                raise AudiobookError("AUDIOBOOK_PERMISSION_REVOKED", "当前会话已无权执行该任务", 403)
             # Legacy jobs have no immutable text snapshot. Require explicit requeue.
             if not job.get("source_text"):
                 raise AudiobookError("AUDIOBOOK_SNAPSHOT_MISSING", "旧任务缺少正文快照，请重新创建任务")
@@ -111,12 +131,10 @@ class AudiobookService:
         try:
             try: provider_id, default_model, provider = resolve(job.get("provider_id") or "auto")
             except ValueError as exc: raise AudiobookError("SPEECH_PROVIDER_UNAVAILABLE", "语音 Provider 未配置", 503) from exc
+            if job.get("owner_actor_id") and load_current_source is None:
+                raise AudiobookError("AUDIOBOOK_POLICY_AUTHORITY_MISSING", "无法核验当前任务权限", 403)
             if load_current_source is not None: chapter=load_current_source()
-            if not getattr(provider, "local", False):
-                if job.get('source_version')!=chapter.get('version') or job.get('source_content_sha256')!=content_digest(chapter):
-                    raise AudiobookError('AUDIOBOOK_SOURCE_CHANGED','正文版本已改变，请重新审核隐私并创建任务',409)
-                if merge_privacy(job.get("privacy_level"),effective_source_privacy(chapter,self.branch_id)) != "CLOUD_ALLOWED":
-                    raise AudiobookError("AUDIOBOOK_PRIVACY_BLOCKED", "章节隐私策略不允许向远端语音服务发送正文", 403)
+            check_source(chapter)
             text = job["source_text"]
             for entry in job.get("pronunciation_dictionary", []):
                 if entry.get("term"): text = text.replace(str(entry["term"]), str(entry.get("pronunciation", "")))
@@ -128,7 +146,14 @@ class AudiobookService:
                     check_project_policy()
                 except ValueError as exc:
                     raise AudiobookError("AUDIOBOOK_PROJECT_PRIVACY_BLOCKED", "项目资料隐私限制不允许外发正文", 403) from exc
-            result = provider.generate(AudioGenerationRequest(provider_id, model_id, "TTS", text, job_id + ":" + str(job["attempt"]), voice=str(job.get("voice") or "alloy"), parameters={"emotion": job.get("emotion") or "neutral", "speed": float(job.get("speech_rate") or 1.0), "response_format": "wav"}))
+            request = AudioGenerationRequest(provider_id, model_id, "TTS", text, job_id + ":" + str(job["attempt"]), voice=str(job.get("voice") or "alloy"), parameters={"emotion": job.get("emotion") or "neutral", "speed": float(job.get("speech_rate") or 1.0), "response_format": "wav"})
+            # Resolution and policy callbacks may block. Re-read source authority
+            # and the durable claim after them, immediately before the send.
+            if load_current_source is not None: chapter = load_current_source()
+            check_source(chapter)
+            current = self.find(self.store.load(novel_id), job_id)
+            if not same_attempt(current, job): return current
+            result = provider.generate(request)
             if result.status != "SUCCEEDED" or not result.audio_uri:
                 raise AudiobookError("AUDIOBOOK_ASYNC_UNSUPPORTED", "该语音服务未返回完成的音频；异步任务仍需 Provider 轮询适配", 502)
             if result.audio_uri.startswith("data:audio/"):
@@ -141,7 +166,7 @@ class AudiobookService:
             measured = inspect_media(content, "audio")
             def complete(state):
                 current = self.find(state, job_id)
-                if current.get("execution_token") != job["execution_token"] or current["status"] != "RUNNING":
+                if not same_attempt(current, job):
                     return current
                 asset = self.assets.create(novel_id, f"{job_id}.{measured['extension']}", base64.b64encode(content).decode(), measured["media_type"], "audio", f"audiobook:{job_id}:{job['source_sha256']}", branch_id=self.branch_id)
                 asset = self.assets.update_metadata(asset['id'], {'source_job_id':job_id,'provider_id':provider_id,'model_id':model_id,'character_id':job.get('character_id')}, branch_id=self.branch_id)
@@ -158,7 +183,7 @@ class AudiobookService:
             else: error = AudiobookError("SPEECH_SYNTHESIS_FAILED", "语音合成或音频验证失败", 502)
             def fail(state):
                 current = self.find(state, job_id)
-                if current.get("execution_token") != job["execution_token"] or current["status"] != "RUNNING": return current
+                if not same_attempt(current, job): return current
                 current.update(status="FAILED", error=str(error), error_code=error.code, updated_at=timestamp())
                 return current
             current = self.store.mutate(novel_id, fail)

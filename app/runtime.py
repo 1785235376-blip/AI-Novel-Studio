@@ -162,6 +162,14 @@ class Runtime:
         if provider_id in {"claude","gemini"}:
             from .credential_vault import credential_vault
             return self.provider_registry.contains(provider_id) and credential_vault.has(provider_id)
+        descriptor = next((item for item in self.provider_registry.descriptors() if item.provider_id == provider_id), None)
+        if descriptor is not None and descriptor.provider_type == "local" and descriptor.configured and descriptor.available:
+            try:
+                adapter = self.provider_registry.resolve(provider_id)
+                health = getattr(adapter, "health_check", None)
+                return bool(health()) if callable(health) else False
+            except (ModelRuntimeError, ValueError):
+                return False
         provider = self.providers.get(provider_id)
         health = getattr(provider, "health_check", None)
         return bool(health()) if callable(health) else False

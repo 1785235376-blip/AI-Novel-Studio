@@ -4,6 +4,7 @@ from ..repositories.screenplay_versions import check_screenplay_version
 import copy
 import threading
 import hashlib
+import json
 from ..asset_providers import AssetGenerationRequest,AssetProviderRegistry,VideoGenerationRequest,VideoProvider,DeterministicVideoProvider
 
 def utc():return datetime.now(timezone.utc).isoformat()
@@ -339,59 +340,143 @@ class ScreenplayService:
     def _motion_save(self, novel_id, screenplay, rows):
         return self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
 
+    @staticmethod
+    def _media_owner(screenplay,novel_id):
+        if screenplay.get('novel_id',novel_id)!=novel_id:
+            raise ValueError('MEDIA_OWNER_CHANGED')
+        return (screenplay.get('id'),screenplay.get('novel_id',novel_id),screenplay.get('branch_id'),
+                screenplay.get('actor_id'),screenplay.get('owner_actor_id'),screenplay.get('workspace_id'),
+                json.dumps(screenplay.get('owner'),sort_keys=True))
+
+    @staticmethod
+    def _require_media_authorization(reauthorize):
+        if not callable(reauthorize):raise ValueError('MEDIA_DISPATCH_AUTHORIZATION_REQUIRED')
+        reauthorize()
+
+    def _motion_request_digest(self,task,screenplay,novel_id):
+        provider=self.video_providers.get(task.get('provider_id'))
+        payload={key:task.get(key) for key in ('provider_id','model_id','prompt','start_frame','end_frame')}
+        payload['constraints']=task.get('constraints') or {}
+        payload['endpoint']=getattr(provider,'endpoint',None)
+        payload['owner']=self._media_owner(screenplay,novel_id)
+        return hashlib.sha256(json.dumps(payload,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+
+    def _require_motion_review(self,task,provider,screenplay,novel_id):
+        from ..media_frames import provider_is_local
+        if provider_is_local(provider):return
+        from ..source_privacy import assert_project_source_policies
+        from ..privacy import normalize_privacy
+        assert_project_source_policies(self.novels,novel_id)
+        if any(key in screenplay and normalize_privacy(screenplay[key])!='CLOUD_ALLOWED' for key in ('privacy_level','privacy')):
+            raise ValueError('VIDEO_SCREENPLAY_PRIVACY_REVIEW_REQUIRED')
+        digest=hashlib.sha256(str(task.get('prompt','')).encode()).hexdigest()
+        if (task.get('privacy_level')!='CLOUD_ALLOWED' or task.get('cloud_approval_prompt_sha256')!=digest
+            or task.get('cloud_approval_provider_id')!=task.get('provider_id')
+            or task.get('cloud_approval_model_id')!=task.get('model_id')
+            or task.get('cloud_approval_request_sha256')!=self._motion_request_digest(task,screenplay,novel_id)):
+            raise ValueError('VIDEO_CLOUD_PROMPT_REVIEW_REQUIRED')
+
+    def _verify_motion_frame_sources(self,sources,screenplay,novel_id,provider):
+        from ..media_frames import provider_is_local
+        from ..privacy import normalize_privacy
+        for source in sources:
+            if source.get('kind')!='ASSET':continue
+            if self.asset_library is None:raise ValueError('MEDIA_FRAME_CHANGED')
+            asset=self.asset_library.get(source['asset_id'],branch_id=screenplay.get('branch_id'))
+            if (asset.get('novel_id')!=novel_id or asset.get('sha256')!=source['asset_sha256']
+                or asset.get('version',1)!=source['asset_version']):raise ValueError('MEDIA_FRAME_CHANGED')
+            if not provider_is_local(provider) and normalize_privacy(asset.get('privacy_level'))!='CLOUD_ALLOWED':
+                raise ValueError('FRAME_CLOUD_PRIVACY_REVIEW_REQUIRED')
+
     def motion_privacy(self,novel_id,screenplay_id,task_id):
         with self._motion_lock:
-            _,rows,index=self._motion_record(novel_id,screenplay_id,task_id);task=rows[index]
-            return {'task_id':task_id,'prompt':task.get('prompt',''),'prompt_sha256':hashlib.sha256(str(task.get('prompt','')).encode()).hexdigest(),'privacy_level':task.get('privacy_level','LOCAL_ONLY'),'provider_id':task.get('provider_id'),'model_id':task.get('model_id'),'status':task.get('status'),'local_frames_require_separate_privacy_review':True}
+            screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id);task=rows[index]
+            return {'task_id':task_id,'prompt':task.get('prompt',''),'prompt_sha256':hashlib.sha256(str(task.get('prompt','')).encode()).hexdigest(),
+                    'request_sha256':self._motion_request_digest(task,screenplay,novel_id),'start_frame':task.get('start_frame'),'end_frame':task.get('end_frame'),
+                    'constraints':copy.deepcopy(task.get('constraints') or {}),'privacy_level':task.get('privacy_level','LOCAL_ONLY'),
+                    'provider_id':task.get('provider_id'),'model_id':task.get('model_id'),'status':task.get('status'),
+                    'local_frames_require_separate_privacy_review':True}
 
-    def update_motion_privacy(self,novel_id,screenplay_id,task_id,privacy_level,prompt_sha256):
+    def update_motion_privacy(self,novel_id,screenplay_id,task_id,privacy_level,prompt_sha256,request_sha256=None):
         with self._motion_lock:
             screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id);task=rows[index]
             if task.get('status') not in {'PENDING','FAILED','CANCELLED'} or task.get('remote_task_id'):raise ValueError('motion privacy can only change before execution')
             actual=hashlib.sha256(str(task.get('prompt','')).encode()).hexdigest()
             if actual!=prompt_sha256:raise ValueError('motion prompt changed; review it again')
             if privacy_level not in {'LOCAL_ONLY','CLOUD_ALLOWED'}:raise ValueError('invalid motion privacy policy')
-            rows[index]={**task,'privacy_level':privacy_level,'cloud_approval_prompt_sha256':actual if privacy_level=='CLOUD_ALLOWED' else None,'cloud_approval_provider_id':task.get('provider_id') if privacy_level=='CLOUD_ALLOWED' else None,'cloud_approval_model_id':task.get('model_id') if privacy_level=='CLOUD_ALLOWED' else None,'privacy_reviewed_at':utc()}
+            request_digest=self._motion_request_digest(task,screenplay,novel_id)
+            if privacy_level=='CLOUD_ALLOWED' and request_sha256!=request_digest:
+                raise ValueError('motion request changed or was not reviewed; review frames and parameters again')
+            rows[index]={**task,'privacy_level':privacy_level,'cloud_approval_prompt_sha256':actual if privacy_level=='CLOUD_ALLOWED' else None,
+                         'cloud_approval_request_sha256':request_digest if privacy_level=='CLOUD_ALLOWED' else None,
+                         'cloud_approval_provider_id':task.get('provider_id') if privacy_level=='CLOUD_ALLOWED' else None,
+                         'cloud_approval_model_id':task.get('model_id') if privacy_level=='CLOUD_ALLOWED' else None,'privacy_reviewed_at':utc()}
             self._motion_save(novel_id,screenplay,rows)
             return self.motion_privacy(novel_id,screenplay_id,task_id)
 
-    def execute_motion_task(self,novel_id,screenplay_id,task_id):
+    def execute_motion_task(self,novel_id,screenplay_id,task_id,*,reauthorize=None):
         with self._motion_lock:
             screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id)
-            task=rows[index]
+            task=copy.deepcopy(rows[index]);owner=self._media_owner(screenplay,novel_id)
             if task.get('status')!='PENDING' or task.get('remote_task_id'): raise ValueError('motion task must be PENDING without a remote submission before execution')
             require_motion_frames(task)
             provider_id=task.get('provider_id')
-            if not provider_id or provider_id=='deterministic':
+            if not provider_id or provider_id=='deterministic' or not str(task.get('model_id') or '').strip():
                 rows[index]={**task,'error':'VIDEO_PROVIDER_NOT_CONFIGURED','progress':0,'updated_at':utc()}
                 return self._motion_save(novel_id,screenplay,rows)
             provider=self.video_providers.get(provider_id)
             if provider is None: raise ValueError(f'video provider is not configured: {provider_id}')
-            from ..media_frames import resolve_motion_frame,provider_is_local
-            if not provider_is_local(provider):
-                digest=hashlib.sha256(str(task.get('prompt','')).encode()).hexdigest()
-                if task.get('privacy_level')!='CLOUD_ALLOWED' or task.get('cloud_approval_prompt_sha256')!=digest or task.get('cloud_approval_provider_id')!=provider_id or task.get('cloud_approval_model_id')!=task.get('model_id'):
-                    raise ValueError('VIDEO_CLOUD_PROMPT_REVIEW_REQUIRED')
-            start_frame,start_source=resolve_motion_frame(task['start_frame'],screenplay,novel_id,provider,self.asset_library)
-            end_frame,end_source=resolve_motion_frame(task['end_frame'],screenplay,novel_id,provider,self.asset_library)
-            token=str(uuid4()); submission_key=task.get('submission_key') or task_id; started=utc()
-            rows[index]={**task,'status':'RUNNING','execution_token':token,'frame_provenance':{'start':start_source,'end':end_source},'progress':0,'error':None,'attempts':int(task.get('attempts',0))+1,'submission_key':submission_key,'history':list(task.get('history',[]))+[{'status':'RUNNING','phase':'SUBMITTING','at':started}],'updated_at':started}
+            self._require_motion_review(task,provider,screenplay,novel_id)
+            request_digest=self._motion_request_digest(task,screenplay,novel_id)
+            token=str(uuid4()); submission_key=task.get('submission_key') or task_id; started=utc();attempt=int(task.get('attempts',0))+1
+            rows[index]={**task,'status':'RUNNING','execution_token':token,'progress':0,'error':None,'attempts':attempt,
+                         'submission_key':submission_key,'history':list(task.get('history',[]))+[{'status':'RUNNING','phase':'SUBMITTING','at':started}],'updated_at':started}
             self._motion_save(novel_id,screenplay,rows)
         try:
+            from ..media_frames import resolve_motion_frame
+            start_frame,start_source=resolve_motion_frame(task['start_frame'],screenplay,novel_id,provider,self.asset_library)
+            end_frame,end_source=resolve_motion_frame(task['end_frame'],screenplay,novel_id,provider,self.asset_library)
+            with self._motion_lock:
+                # Preparation can be expensive. Recheck authority and every captured
+                # outbound byte after it, immediately before the provider boundary.
+                self._require_media_authorization(reauthorize)
+                current_screenplay,current_rows,current_index=self._motion_record(novel_id,screenplay_id,task_id);current=copy.deepcopy(current_rows[current_index])
+                if (self._media_owner(current_screenplay,novel_id)!=owner or current.get('status')!='RUNNING'
+                    or current.get('execution_token')!=token or current.get('attempts')!=attempt
+                    or current.get('submission_key')!=submission_key or current.get('remote_task_id')
+                    or self.video_providers.get(provider_id) is not provider
+                    or self._motion_request_digest(current,current_screenplay,novel_id)!=request_digest):
+                    raise ValueError('MEDIA_DISPATCH_STATE_CHANGED')
+                self._require_motion_review(current,provider,current_screenplay,novel_id)
+                checked_start,checked_start_source=resolve_motion_frame(current['start_frame'],current_screenplay,novel_id,provider,self.asset_library)
+                checked_end,checked_end_source=resolve_motion_frame(current['end_frame'],current_screenplay,novel_id,provider,self.asset_library)
+                if (checked_start,checked_end,checked_start_source,checked_end_source)!=(start_frame,end_frame,start_source,end_source):
+                    raise ValueError('MEDIA_FRAME_CHANGED')
+                # A source resolver must not be able to invalidate permission or
+                # swap the attempt between the final read and dispatch.
+                self._require_media_authorization(reauthorize)
+                latest,latest_rows,latest_index=self._motion_record(novel_id,screenplay_id,task_id);last=latest_rows[latest_index]
+                if (self._media_owner(latest,novel_id)!=owner or last!=current
+                    or any(latest.get(key)!=current_screenplay.get(key) for key in ('shots','storyboard'))):
+                    raise ValueError('MEDIA_DISPATCH_STATE_CHANGED')
+                if self.video_providers.get(provider_id) is not provider or self._motion_request_digest(last,latest,novel_id)!=request_digest:
+                    raise ValueError('MEDIA_DISPATCH_STATE_CHANGED')
+                self._require_motion_review(last,provider,latest,novel_id)
+                self._verify_motion_frame_sources((start_source,end_source),latest,novel_id,provider)
             generated=provider.generate(VideoGenerationRequest(provider_id,task.get('model_id') or 'video-model',task.get('prompt',''),start_frame,end_frame,task_id,submission_key,dict(task.get('constraints') or {})))
             if str(generated.video_uri or '').lower().startswith('placeholder://'): raise ValueError('placeholder video URI is not allowed')
-        except Exception:
+        except Exception as exc:
             with self._motion_lock:
                 screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id); current=rows[index]
                 if current.get('execution_token')!=token or current.get('status')!='RUNNING': return screenplay
-                stamp=utc();rows[index]={**current,'status':'FAILED','error':'VIDEO_PROVIDER_REQUEST_FAILED','history':list(current.get('history',[]))+[{'status':'FAILED','phase':'SUBMITTING','at':stamp,'error':'VIDEO_PROVIDER_REQUEST_FAILED'}],'updated_at':stamp}
+                error=str(exc) if isinstance(exc,ValueError) and str(exc).startswith(('MEDIA_','VIDEO_','FRAME_')) else 'VIDEO_PROVIDER_REQUEST_FAILED'
+                stamp=utc();rows[index]={**current,'status':'FAILED','error':error,'history':list(current.get('history',[]))+[{'status':'FAILED','phase':'SUBMITTING','at':stamp,'error':error}],'updated_at':stamp}
                 self._motion_save(novel_id,screenplay,rows)
             raise
         with self._motion_lock:
             screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id); current=rows[index]
-            if current.get('execution_token')!=token or current.get('status')!='RUNNING':
-                # Cancellation won the race. Do not resurrect the task or import a late result.
-                # Best effort remote cancellation is recorded separately from the local terminal state.
+            if (current.get('execution_token')!=token or current.get('status')!='RUNNING'
+                or current.get('attempts')!=attempt or self._media_owner(screenplay,novel_id)!=owner):
                 if generated.remote_task_id and hasattr(provider,'cancel'):
                     try: provider.cancel(generated.remote_task_id)
                     except Exception: pass
@@ -402,7 +487,7 @@ class ScreenplayService:
             if status=='SUCCEEDED' and not generated.video_uri: raise ValueError('successful video response requires a result URL')
             stamp=utc();result={'kind':'VIDEO','task_id':task_id,'prompt':task.get('prompt',''),'url':generated.video_uri,'provider_id':generated.provider_id,'model_id':generated.model_id,'created_at':stamp}
             asset_import={'task_id':task_id,'url':generated.video_uri,'filename':f'motion-{task_id}.mp4','import_status':'READY_TO_IMPORT','created_at':stamp} if generated.video_uri else None
-            rows[index]={**current,'status':status,'progress':100 if status=='SUCCEEDED' else 0,'remote_task_id':generated.remote_task_id,'result':result,'asset_import':asset_import,'history':list(current.get('history',[]))+[{'status':status,'phase':'SUBMITTED','at':stamp}],'updated_at':stamp}
+            rows[index]={**current,'status':status,'frame_provenance':{'start':start_source,'end':end_source},'progress':100 if status=='SUCCEEDED' else 0,'remote_task_id':generated.remote_task_id,'result':result,'asset_import':asset_import,'history':list(current.get('history',[]))+[{'status':status,'phase':'SUBMITTED','at':stamp}],'updated_at':stamp}
             return self._motion_save(novel_id,screenplay,rows)
     def cancel_motion_task(self,novel_id,screenplay_id,task_id):
         with self._motion_lock:
@@ -646,36 +731,82 @@ class ScreenplayService:
         preferred=next(((provider_id,provider) for provider_id,provider in self.asset_providers._providers.items() if getattr(provider,'health_check',lambda:True)()),(None,None))
         default_provider,provider=preferred
         default_model=getattr(provider,"default_model",None) if provider else None
-        tasks=[{"id":str(uuid4()),"asset_id":a["id"],"provider_id":default_provider,"model_id":default_model,"status":"PENDING","error":None,"attempts":0,"history":[{"status":"PENDING","at":utc()}]} for a in screenplay["asset_requirements"]]
+        tasks=[{"id":str(uuid4()),"asset_id":a["id"],"provider_id":default_provider,"model_id":default_model,"privacy_level":"LOCAL_ONLY","status":"PENDING","error":None,"attempts":0,"history":[{"status":"PENDING","at":utc()}]} for a in screenplay["asset_requirements"]]
         return self._save_screenplay(novel_id,{**screenplay,"asset_tasks":tasks,"task_revision":1,"updated_at":utc()})
+    def _asset_record(self,novel_id,screenplay_id,task_id):
+        screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+        if screenplay is None:raise KeyError(screenplay_id)
+        rows=list(screenplay.get('asset_tasks',[]));index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
+        if index is None:raise KeyError(task_id)
+        return screenplay,rows,index
+
+    def _asset_save(self,novel_id,screenplay,rows):
+        return self._save_screenplay(novel_id,{**screenplay,'asset_tasks':rows,'task_revision':int(screenplay.get('task_revision',0))+1,'updated_at':utc()})
+
     def update_asset_task(self,novel_id,screenplay_id,task_id,payload):
-        screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
-        if screenplay is None: raise KeyError(screenplay_id)
-        rows=list(screenplay.get("asset_tasks",[])); i=next((i for i,r in enumerate(rows) if r["id"]==task_id),None)
-        if i is None: raise KeyError(task_id)
-        status=str(payload.get("status",rows[i]["status"]))
-        if status not in {"PENDING","RUNNING","SUCCEEDED","FAILED","CANCELLED"}: raise ValueError("invalid task status")
-        current=rows[i]["status"]
-        allowed={"PENDING":{"RUNNING","CANCELLED"},"RUNNING":{"SUCCEEDED","FAILED","CANCELLED"},"FAILED":{"PENDING","CANCELLED"},"CANCELLED":{"PENDING"},"SUCCEEDED":set()}
-        if status!=current and status not in allowed.get(current,set()): raise ValueError(f"invalid task transition: {current} -> {status}")
-        row=rows[i]; history=list(row.get("history",[])); history.append({"status":status,"at":utc(),"error":payload.get("error")}); attempts=int(row.get("attempts",0))+(1 if status=="RUNNING" else 0)
-        rows[i]={**row,"status":status,"provider_id":payload.get("provider_id",row.get("provider_id")),"model_id":payload.get("model_id",row.get("model_id")),"error":payload.get("error"),"attempts":attempts,"history":history}
-        return self._save_screenplay(novel_id,{**screenplay,"asset_tasks":rows,"task_revision":int(screenplay.get("task_revision",1))+1,"updated_at":utc()})
-    def execute_asset_task(self,novel_id,screenplay_id,task_id):
-        screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
-        if screenplay is None: raise KeyError(screenplay_id)
-        task=next((r for r in screenplay.get("asset_tasks",[]) if r["id"]==task_id),None)
-        if task is None: raise KeyError(task_id)
-        if task["status"]!="RUNNING": raise ValueError("task must be RUNNING before execution")
-        if not task.get("provider_id") or not task.get("model_id"): raise ValueError("provider and model are required")
-        asset=next((a for a in screenplay.get("asset_requirements",[]) if a["id"]==task["asset_id"]),None)
+        with self._motion_lock:
+            screenplay,rows,i=self._asset_record(novel_id,screenplay_id,task_id);row=rows[i]
+            status=str(payload.get('status',row['status']))
+            if status not in {'PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'}:raise ValueError('invalid task status')
+            current=row['status']
+            allowed={'PENDING':{'RUNNING','CANCELLED'},'RUNNING':{'SUCCEEDED','FAILED','CANCELLED'},'FAILED':{'PENDING','CANCELLED'},'CANCELLED':{'PENDING'},'SUCCEEDED':set()}
+            if status!=current and status not in allowed.get(current,set()):raise ValueError(f'invalid task transition: {current} -> {status}')
+            provider_id=payload.get('provider_id',row.get('provider_id'));model_id=payload.get('model_id',row.get('model_id'))
+            if current in {'RUNNING','SUCCEEDED'} and (provider_id!=row.get('provider_id') or model_id!=row.get('model_id')):
+                raise ValueError('asset provider configuration is frozen during or after execution')
+            history=list(row.get('history',[]));history.append({'status':status,'at':utc(),'error':payload.get('error')})
+            attempts=int(row.get('attempts',0))+(1 if status=='RUNNING' and current!='RUNNING' else 0)
+            rows[i]={**row,'status':status,'provider_id':provider_id,'model_id':model_id,'error':payload.get('error'),
+                     'attempts':attempts,'history':history,'execution_token':row.get('execution_token') if status==current=='RUNNING' else None}
+            return self._asset_save(novel_id,screenplay,rows)
+
+    def execute_asset_task(self,novel_id,screenplay_id,task_id,*,reauthorize=None):
+        with self._motion_lock:
+            screenplay,rows,index=self._asset_record(novel_id,screenplay_id,task_id);task=copy.deepcopy(rows[index])
+            owner=self._media_owner(screenplay,novel_id)
+            if task['status']!='RUNNING':raise ValueError('task must be RUNNING before execution')
+            if task.get('execution_token'):raise ValueError('asset task is already executing')
+            if not task.get('provider_id') or not task.get('model_id'):raise ValueError('provider and model are required')
+            asset=copy.deepcopy(next((a for a in screenplay.get('asset_requirements',[]) if a['id']==task['asset_id']),None))
+            token=str(uuid4());attempt=task.get('attempts',0)
+            rows[index]={**task,'execution_token':token}
+            self._asset_save(novel_id,screenplay,rows)
         try:
-            provider=self.asset_providers.get(task.get("provider_id"))
-            result=provider.generate(AssetGenerationRequest(task["provider_id"],task["model_id"],asset["description"],task_id))
-            rows=[{**r,"status":"SUCCEEDED","asset_uri":result.asset_uri,"error":None,"history":list(r.get("history",[]))+[{"status":"SUCCEEDED","at":utc()}]} if r["id"]==task_id else r for r in screenplay["asset_tasks"]]
-            return self._save_screenplay(novel_id,{**screenplay,"asset_tasks":rows,"updated_at":utc()})
+            provider=self.asset_providers.get(task['provider_id']);endpoint=getattr(provider,'endpoint',None)
+            from ..media_frames import provider_is_local
+            # Legacy source-derived descriptions have no exact outbound review UI.
+            # Approval of a screenplay/storyboard never grants cloud permission.
+            if not provider_is_local(provider):raise ValueError('IMAGE_CLOUD_PROMPT_REVIEW_REQUIRED')
+            if asset is None or not str(asset.get('description') or '').strip():raise ValueError('IMAGE_PROMPT_REQUIRED')
+            request=AssetGenerationRequest(task['provider_id'],task['model_id'],asset['description'],task_id)
+            with self._motion_lock:
+                self._require_media_authorization(reauthorize)
+                current_screenplay,current_rows,current_index=self._asset_record(novel_id,screenplay_id,task_id);current=current_rows[current_index]
+                current_asset=next((a for a in current_screenplay.get('asset_requirements',[]) if a['id']==task['asset_id']),None)
+                if (self._media_owner(current_screenplay,novel_id)!=owner or current.get('status')!='RUNNING'
+                    or current.get('execution_token')!=token or current.get('attempts',0)!=attempt
+                    or current.get('provider_id')!=task['provider_id'] or current.get('model_id')!=task['model_id']
+                    or current.get('asset_id')!=task['asset_id'] or current_asset!=asset
+                    or self.asset_providers.get(task['provider_id']) is not provider or getattr(provider,'endpoint',None)!=endpoint):
+                    raise ValueError('MEDIA_DISPATCH_STATE_CHANGED')
+                if not provider_is_local(provider):raise ValueError('IMAGE_CLOUD_PROMPT_REVIEW_REQUIRED')
+            result=provider.generate(request)
+            if not result.asset_uri or str(result.asset_uri).lower().startswith('placeholder://'):
+                raise ValueError('IMAGE_PROVIDER_RESULT_INVALID')
+            with self._motion_lock:
+                screenplay,rows,index=self._asset_record(novel_id,screenplay_id,task_id);current=rows[index]
+                if (current.get('status')!='RUNNING' or current.get('execution_token')!=token
+                    or current.get('attempts',0)!=attempt or self._media_owner(screenplay,novel_id)!=owner):return screenplay
+                rows[index]={**current,'status':'SUCCEEDED','asset_uri':result.asset_uri,'error':None,
+                             'history':list(current.get('history',[]))+[{'status':'SUCCEEDED','at':utc()}]}
+                return self._asset_save(novel_id,screenplay,rows)
         except Exception as exc:
-            return self.update_asset_task(novel_id,screenplay_id,task_id,{**task,"status":"FAILED","error":str(exc)})
+            with self._motion_lock:
+                screenplay,rows,index=self._asset_record(novel_id,screenplay_id,task_id);current=rows[index]
+                if current.get('status')!='RUNNING' or current.get('execution_token')!=token or current.get('attempts',0)!=attempt:return screenplay
+                error=str(exc) if isinstance(exc,ValueError) and str(exc).startswith(('MEDIA_','IMAGE_','asset provider is not configured:')) else 'IMAGE_PROVIDER_REQUEST_FAILED'
+                rows[index]={**current,'status':'FAILED','error':error,'history':list(current.get('history',[]))+[{'status':'FAILED','at':utc(),'error':error}]}
+                return self._asset_save(novel_id,screenplay,rows)
     def retry_asset_task(self,novel_id,screenplay_id,task_id):
         screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
@@ -689,7 +820,7 @@ class ScreenplayService:
         for i,row in enumerate(rows):
             if row.get("status")!="RUNNING": continue
             history=list(row.get("history",[])); history.append({"status":"PENDING","at":utc(),"error":"recovered after restart"})
-            rows[i]={**row,"status":"PENDING","error":"recovered after restart","history":history}; changed=True
+            rows[i]={**row,"status":"PENDING","execution_token":None,"error":"recovered after restart","history":history}; changed=True
         if not changed: return screenplay
         return self._save_screenplay(novel_id,{**screenplay,"asset_tasks":rows,"task_revision":int(screenplay.get("task_revision",1))+1,"updated_at":utc()})
     def recover_all_asset_tasks(self,novel_id):

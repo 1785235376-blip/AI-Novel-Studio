@@ -63,7 +63,7 @@ class ImageJobService:
         from ..asset_providers import validate_image_parameters
         validate_image_parameters(parameters)
         def add(rows):
-            payload = {key: body.get(key) for key in ('prompt','provider_id','model_id','parameters','character_id','scene_id','images','size','quality','output_format') if key in body}
+            payload = {key: body.get(key) for key in ('prompt','provider_id','model_id','parameters','character_id','scene_id','images','size','quality','output_format','allow_cloud_prompt') if key in body}
             digest = hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()
             existing = next((row for row in rows if idempotency_key and row.get('idempotency_key') == idempotency_key), None)
             if existing:
@@ -83,15 +83,37 @@ class ImageJobService:
             return row
         return self._mutate(novel_id,branch_id,change)
 
-    def execute(self, novel_id, branch_id, job_id, registry):
+    def execute(self, novel_id, branch_id, job_id, registry, check_authority=None, check_egress=None):
+        def same_attempt(current, claimed):
+            return (current.get('status') == 'RUNNING'
+                    and current.get('execution_token') == claimed.get('execution_token')
+                    and all(current.get(key) == claimed.get(key) for key in (
+                        'novel_id', 'branch_id', 'owner_actor_id', 'request_sha256',
+                        'provider_id', 'model_id', 'prompt', 'parameters', 'images',
+                        'size', 'quality', 'output_format', 'allow_cloud_prompt')))
+
         def claim(rows):
             row=self._find(rows,job_id)
             if row['status']!='QUEUED': raise ValueError('IMAGE_JOB_NOT_QUEUED')
+            if row.get('owner_actor_id') != self.owner_actor_id or row.get('novel_id') != novel_id or row.get('branch_id') != branch_id:
+                raise ValueError('IMAGE_JOB_SCOPE_CHANGED')
             row.update(status='RUNNING',execution_token=str(uuid4()),attempt=row['attempt']+1,updated_at=now());self._active.add(row['execution_token']);return row
         job=self._mutate(novel_id,branch_id,claim)
         try:
             provider=registry.get(job['provider_id'])
             request=AssetGenerationRequest(job['provider_id'],job['model_id'],job['prompt'],job['id'],dict(job.get('parameters') or {}))
+            if self.owner_actor_id and check_authority is None: raise ValueError('IMAGE_JOB_AUTHORITY_MISSING')
+            if check_authority is not None: check_authority()
+            if check_egress is not None:
+                check_egress(job, provider)
+            elif not getattr(provider, 'local', False):
+                raise ValueError('IMAGE_EGRESS_AUTHORITY_MISSING')
+            if check_authority is not None: check_authority()
+            # Do not let cancellation/retry or owner/scope changes during
+            # provider resolution dispatch a request from a stale attempt.
+            with self._lock:
+                current = self._find(self._load(novel_id, branch_id), job_id)
+                if not same_attempt(current, job): return dict(current)
             if job.get('images'):
                 if not hasattr(provider,'edit'): raise ValueError('IMAGE_EDIT_PROVIDER_UNSUPPORTED')
                 result=provider.edit(request,job['images'],**{key:job[key] for key in ('size','quality','output_format') if key in job})
@@ -99,14 +121,17 @@ class ImageJobService:
             if not result.asset_uri or len(result.asset_uri)>36*1024*1024: raise ValueError('IMAGE_RESULT_INVALID')
             def complete(rows):
                 current=self._find(rows,job_id)
-                if current['status']!='RUNNING' or current.get('execution_token')!=job['execution_token']:return current
+                if not same_attempt(current, job):return current
                 current.update(status='SUCCEEDED',asset_uri=result.asset_uri,updated_at=now(),error=None);return current
             return self._mutate(novel_id,branch_id,complete)
         except Exception as exc:
-            error_code="IMAGE_PARAMETER_UNSUPPORTED" if isinstance(exc,ValueError) and "IMAGE_PARAMETER_UNSUPPORTED" in str(exc) else "IMAGE_PROVIDER_REQUEST_FAILED"
+            if isinstance(exc, ValueError) and str(exc) in {'IMAGE_JOB_AUTHORITY_MISSING', 'IMAGE_EGRESS_AUTHORITY_MISSING'}:
+                error_code = str(exc)
+            else:
+                error_code="IMAGE_PARAMETER_UNSUPPORTED" if isinstance(exc,ValueError) and "IMAGE_PARAMETER_UNSUPPORTED" in str(exc) else "IMAGE_PROVIDER_REQUEST_FAILED"
             def fail(rows):
                 current=self._find(rows,job_id)
-                if current['status']=='RUNNING' and current.get('execution_token')==job['execution_token']:current.update(status='FAILED',error=error_code,error_code=error_code,updated_at=now())
+                if same_attempt(current, job):current.update(status='FAILED',error=error_code,error_code=error_code,updated_at=now())
                 return current
             return self._mutate(novel_id,branch_id,fail)
         finally:

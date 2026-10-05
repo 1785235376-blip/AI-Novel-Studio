@@ -6,8 +6,9 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from . import __version__
 from .config import settings
-from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service
+from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
 from .model_center.api import create_model_center_router
+from .model_center.discovery_api import create_local_discovery_router
 from .collaboration_api import create_collaboration_router
 from .collaboration_admin import create_collaboration_admin_router
 from .packaging.bootstrap_api import create_packaged_bootstrap_router
@@ -157,6 +158,10 @@ async def collaboration_fail_closed(request,call_next):
                 return JSONResponse({"detail": {"code": "INVALID_SESSION"}}, status_code=401)
         return await call_next(request)
 
+    if normalized_request_path.startswith("/api/model-center/local-ai"):
+        # Every endpoint has the same trusted Host/session dependency; do not
+        # make discovery anonymous via the legacy collaboration allowlist.
+        return await call_next(request)
     if collaboration:
         path=request.url.path; normalized_path=_normalized_api_path(path); method=request.method
         # V1 metadata capabilities are available to the collaboration runtime
@@ -288,6 +293,8 @@ app.include_router(api_router, prefix="/api")
 app.include_router(api_router, prefix="/api/v1")
 app.include_router(create_model_center_router(model_center_service, mutation_authorization=_model_center_mutation_authorization))
 app.include_router(create_model_center_router(model_center_service, prefix="/api/v1/model-center", mutation_authorization=_model_center_mutation_authorization))
+app.include_router(create_local_discovery_router(local_ai_discovery, mutation_authorization=_model_center_mutation_authorization))
+app.include_router(create_local_discovery_router(local_ai_discovery, prefix="/api/v1/model-center/local-ai", mutation_authorization=_model_center_mutation_authorization))
 app.include_router(create_collaboration_router(collaboration_read_service))
 app.include_router(create_collaboration_router(collaboration_read_service, prefix="/api/v1/collaboration"))
 app.include_router(create_collaboration_admin_router(collaboration_admin_service))

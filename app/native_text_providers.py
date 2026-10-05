@@ -72,6 +72,8 @@ class NativeTextProvider(OpenAICompatibleTextProvider):
         url,headers,body=self._request(request,False)
         try:
             with self._client() as client:
+                if request.dispatch_guard is not None: request.dispatch_guard()
+                self._check(request,started)
                 response=client.post(url,headers=headers,json=body)
                 self._check(request,started)
                 if response.status_code>=400:raise self._error(response.status_code,request,response.headers)
@@ -89,6 +91,8 @@ class NativeTextProvider(OpenAICompatibleTextProvider):
         yield GenerationEvent("generation.started",request.job_id)
         try:
             with self._client() as client:
+                if request.dispatch_guard is not None: request.dispatch_guard()
+                self._check(request,started)
                 with client.stream("POST",url,headers=headers,json=body) as response:
                     if response.status_code>=400:raise self._error(response.status_code,request,response.headers)
                     for line in response.iter_lines():

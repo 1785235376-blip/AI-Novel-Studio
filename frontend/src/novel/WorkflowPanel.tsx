@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { api } from "../api";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { api, type CollaborationContext } from "../api";
 import { useStudio } from "../store";
 import { Button, Panel } from "../ui/primitives";
 import {
@@ -9,8 +9,32 @@ import {
 import "./WorkflowConsole.css";
 import type { WorkflowInspection } from "./WorkflowInspector";
 
-export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInspect?: (inspection: WorkflowInspection) => void }) {
-  const branchId = useStudio((state) => state.scope?.branchId);
+type WorkflowPanelProps = { novelId?: string; onInspect?: (inspection: WorkflowInspection) => void };
+
+export function WorkflowPanel(props: WorkflowPanelProps) {
+  const actor = useStudio((state) => state.actor);
+  const scope = useStudio((state) => state.scope);
+  const sessionToken = useStudio((state) => state.sessionToken);
+  const scopeKey = JSON.stringify([props.novelId, actor?.id, actor?.workspaceId, sessionToken,
+    scope?.workspaceId, scope?.projectId, scope?.storylineId, scope?.branchId]);
+  const context = { sessionToken: sessionToken || "", actor: actor && { ...actor }, scope: scope && { ...scope } };
+  return <ScopedWorkflowPanel key={scopeKey} {...props} context={context} />;
+}
+
+function ScopedWorkflowPanel({ novelId, onInspect, context }: WorkflowPanelProps & { context: CollaborationContext }) {
+  const branchId = context.scope?.branchId;
+  // In local mode each API call captures the empty context synchronously. In
+  // collaboration mode always bind the request to this observer's identity.
+  const requestContext: [CollaborationContext?] = context.sessionToken || context.actor || context.scope?.workspaceId ? [context] : [];
+  const epoch = useRef(0);
+  const listRequest = useRef(0);
+  const runsRequest = useRef(0);
+  const selectedId = useRef<string>();
+  const mutationPending = useRef(false);
+  useLayoutEffect(() => {
+    epoch.current += 1;
+    return () => { epoch.current += 1; };
+  }, []);
   const [sourceText, setSourceText] = useState("");
   const [busy, setBusy] = useState(false);
   const [items, setItems] = useState<any[]>([]),
@@ -24,31 +48,40 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
   const runsSection = useRef<HTMLElement>(null);
   const refreshButton = useRef<HTMLButtonElement>(null);
   const refresh = async () => {
+    const ticket = epoch.current, request = ++listRequest.current;
     setLoading(true);
     try {
-      const data = await api.workflows(novelId);
+      const data = await api.workflows(novelId, ...requestContext);
+      if (ticket !== epoch.current || request !== listRequest.current) return;
       setItems(data.items || []);
       setError("");
     } catch {
-      setError("工作流加载失败，请检查连接后重试。");
+      if (ticket === epoch.current && request === listRequest.current) setError("工作流加载失败，请检查连接后重试。");
     } finally {
-      setLoading(false);
+      if (ticket === epoch.current && request === listRequest.current) setLoading(false);
     }
   };
-  const loadRuns = async (id: string) => {
-    setSelected(items.find((item) => item.id === id));
+  const loadRuns = async (id: string, select = true) => {
+    if (!select && selectedId.current !== id) return;
+    if (select) {
+      selectedId.current = id;
+      setSelected(items.find((item) => item.id === id));
+      setRuns([]);
+    }
+    const ticket = epoch.current, request = ++runsRequest.current;
     try {
-      const data = await api.workflowRuns(id);
+      const data = await api.workflowRuns(id, ...requestContext);
+      if (ticket !== epoch.current || request !== runsRequest.current || selectedId.current !== id) return;
       setRuns(data.items || []);
       setError("");
     } catch {
-      setError("运行记录加载失败，请刷新后重试。");
+      if (ticket === epoch.current && request === runsRequest.current && selectedId.current === id) setError("运行记录加载失败，请刷新后重试。");
     }
   };
   useEffect(() => {
-    setSelected(undefined); setRuns([]); setSourceText("");
-    refresh();
-  }, [novelId, branchId]);
+    void refresh();
+    return () => { publishTaskSummary("workflow", []); };
+  }, []);
   useEffect(() => {
     publishTaskSummary(
       "workflow",
@@ -60,25 +93,31 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
     );
   }, [runs]);
   useEffect(() => {
+    const ticket = epoch.current;
     const listener = (event: Event) => {
+      if (ticket !== epoch.current) return;
       const detail = (event as CustomEvent).detail;
       if (detail?.source !== "workflow") return;
       const target = detail.taskId
         ? runs.find((run) => String(run.id) === String(detail.taskId))
         : undefined;
       if (target) {
+        selectedId.current = target.workflow_id;
         setSelected(items.find((item) => item.id === target.workflow_id) || selected);
         onInspect?.({ kind: "run", id: String(target.id), status: target.status, workflowTitle: selected?.title || selected?.name, currentNodeId: target.current_node_id, error: target.error || target.error_message });
       } else if (detail.taskId) onInspect?.({ kind: "run", id: String(detail.taskId), status: "FAILED", pendingRefresh: true });
       requestAnimationFrame(() =>
-        (runsSection.current || refreshButton.current)?.focus(),
+        ticket === epoch.current && (runsSection.current || refreshButton.current)?.focus(),
       );
     };
     window.addEventListener(FOCUS_FAILED_TASKS_EVENT, listener);
     return () => window.removeEventListener(FOCUS_FAILED_TASKS_EVENT, listener);
   }, [items, runs, selected, onInspect]);
   async function create() {
-    if (!novelId || !title.trim()) return;
+    if (!novelId || !title.trim() || mutationPending.current) return;
+    const ticket = epoch.current;
+    mutationPending.current = true;
+    setBusy(true);
     setError("");
     const names: Record<string, string> = {
       quality_gate: "质量检查",
@@ -88,7 +127,7 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
     };
     try {
       if (template.startsWith("recipe:")) {
-        await api.createWorkflowRecipe(template.slice(7), novelId, branchId);
+        await api.createWorkflowRecipe(template.slice(7), novelId, branchId, ...requestContext);
       } else await api.createWorkflow({
         branch_id: branchId,
         novel_id: novelId,
@@ -106,17 +145,27 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
           },
         ],
         edges: [],
-      });
-      await refresh();
+      }, ...requestContext);
+      if (ticket === epoch.current) await refresh();
     } catch {
-      setError("工作流创建失败，请检查项目状态。");
+      if (ticket === epoch.current) setError("工作流创建失败，请检查项目状态。");
+    } finally {
+      if (ticket === epoch.current) { mutationPending.current = false; setBusy(false); }
     }
   }
   async function action(work: () => Promise<unknown>) {
+    if (mutationPending.current) return;
+    const ticket = epoch.current, workflowId = selectedId.current;
+    mutationPending.current = true;
     setBusy(true); setError("");
-    try { await work(); if(selected) await loadRuns(selected.id); }
-    catch { setError("操作失败；请检查权限、输入和任务当前状态后重试。"); }
-    finally { setBusy(false); }
+    try {
+      await work();
+      if (ticket === epoch.current && workflowId && selectedId.current === workflowId) await loadRuns(workflowId, false);
+    } catch {
+      if (ticket === epoch.current) setError("操作失败；请检查权限、输入和任务当前状态后重试。");
+    } finally {
+      if (ticket === epoch.current) { mutationPending.current = false; setBusy(false); }
+    }
   }
   return (
     <Panel title="工作流编排" className="workflow-console">
@@ -149,7 +198,7 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
             onChange={(e) => setDescription(e.target.value)}
           />
         </label>
-        <Button disabled={!novelId || !title.trim()} onClick={create}>
+        <Button disabled={busy || !novelId || !title.trim()} onClick={create}>
           创建工作流
         </Button>
         {error && <p role="alert">{error}</p>}
@@ -180,7 +229,7 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
             onClick={() => action(() => api.createWorkflowRun(selected.id, {
                 input: { source_text: sourceText },
                 initiated_by: "local-author",
-              }))}
+              }, ...requestContext))}
           >
             启动运行
           </Button>
@@ -190,21 +239,21 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
               <Button variant="ghost" onClick={() => onInspect?.({ kind: "run", id: String(run.id), status: run.status, workflowTitle: selected.title || selected.name || selected.id, currentNodeId: run.current_node_id, error: run.error || run.error_message })}>检查</Button>
               <Button
                 variant="ghost" disabled={busy || !["QUEUED","RUNNING","WAITING_APPROVAL"].includes(run.status)}
-                onClick={() => action(() => api.pauseWorkflow(run.id))}
+                onClick={() => action(() => api.pauseWorkflow(run.id, ...requestContext))}
               >
                 暂停
               </Button>
               <Button
                 variant="ghost" disabled={busy || run.status !== "PAUSED"}
-                onClick={() => action(() => api.resumeWorkflow(run.id))}
+                onClick={() => action(() => api.resumeWorkflow(run.id, ...requestContext))}
               >
                 恢复
               </Button>
-              <Button variant="ghost" disabled={busy || ["SUCCEEDED","FAILED","CANCELLED","REJECTED"].includes(run.status)} onClick={() => action(() => api.cancelWorkflow(run.id))}>取消</Button>
-              {["FAILED","CANCELLED"].includes(run.status) && <Button variant="ghost" disabled={busy} onClick={() => action(() => api.retryWorkflow(run.id))}>重新运行（新审批）</Button>}
+              <Button variant="ghost" disabled={busy || ["SUCCEEDED","FAILED","CANCELLED","REJECTED"].includes(run.status)} onClick={() => action(() => api.cancelWorkflow(run.id, ...requestContext))}>取消</Button>
+              {["FAILED","CANCELLED"].includes(run.status) && <Button variant="ghost" disabled={busy} onClick={() => action(() => api.retryWorkflow(run.id, ...requestContext))}>重新运行（新审批）</Button>}
               {Object.entries(run.node_states || {}).map(([nodeId, state]: any) => state.status === "WAITING_APPROVAL" && run.status === "WAITING_APPROVAL" && state.output?.execution !== "DEFERRED" && <span key={nodeId}>
-                <Button variant="ghost" disabled={busy} onClick={() => action(() => api.approveWorkflowNode(run.id,nodeId))}>批准当前节点</Button>
-                <Button variant="ghost" disabled={busy} onClick={() => action(() => api.rejectWorkflowNode(run.id,nodeId))}>拒绝并停止</Button>
+                <Button variant="ghost" disabled={busy} onClick={() => action(() => api.approveWorkflowNode(run.id,nodeId, ...requestContext))}>批准当前节点</Button>
+                <Button variant="ghost" disabled={busy} onClick={() => action(() => api.rejectWorkflowNode(run.id,nodeId, ...requestContext))}>拒绝并停止</Button>
               </span>)}
               <details><summary>节点结果与来源</summary><textarea aria-label={`运行 ${run.id} 结果`} readOnly rows={8} value={JSON.stringify(run.node_states,null,2)} /></details>
               {run.node_states &&
@@ -215,7 +264,7 @@ export function WorkflowPanel({ novelId, onInspect }: { novelId?: string; onInsp
                       <Button
                         key={nodeId}
                         variant="ghost"
-                        disabled={busy} onClick={() => action(() => api.triggerAgentNode(run.id, nodeId))}
+                        disabled={busy} onClick={() => action(() => api.triggerAgentNode(run.id, nodeId, ...requestContext))}
                       >
                         触发 Agent
                       </Button>

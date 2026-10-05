@@ -38,6 +38,9 @@ class Repo:
     def __init__(self, task):
         self.rows = [{"id": "screenplay-1", "motion_tasks": [task], "motion_task_revision": 1}]
 
+    def get_context_sources(self, novel_id):
+        return {}  # Synthetic fixture has no unreviewed project knowledge.
+
     def list_screenplays(self, novel_id):
         return self.rows
 
@@ -63,6 +66,11 @@ def task(**overrides):
     }
 
 
+def approve_synthetic_motion(service,novel_id="novel-1"):
+    review=service.motion_privacy(novel_id,"screenplay-1","motion-1")
+    return service.update_motion_privacy(novel_id,"screenplay-1","motion-1","CLOUD_ALLOWED",review["prompt_sha256"],review["request_sha256"])
+
+
 def test_http_provider_keeps_remote_id_separate_and_sends_idempotency_key():
     transport = Transport()
     provider = HttpVideoProvider(transport, "https://video.example/v1", "secret", "model")
@@ -81,7 +89,8 @@ def test_motion_submit_sync_and_asset_ready_state_are_persistent():
     provider = HttpVideoProvider(Transport(), "https://video.example/v1", "secret", "model")
     service = ScreenplayService(repo, object(), video_providers={"video": provider})
 
-    submitted = service.execute_motion_task("novel-1", "screenplay-1", "motion-1")
+    approve_synthetic_motion(service)
+    submitted = service.execute_motion_task("novel-1", "screenplay-1", "motion-1",reauthorize=lambda:None)
     submitted_task = submitted["motion_tasks"][0]
     assert submitted_task["status"] == "PENDING"
     assert submitted_task["remote_task_id"] == "remote-1"
@@ -103,8 +112,9 @@ def test_submit_failure_is_durable_and_retry_preserves_idempotency_key():
     repo = Repo(task())
     service = ScreenplayService(repo, object(), video_providers={"video": BrokenProvider()})
 
+    approve_synthetic_motion(service)
     with pytest.raises(RuntimeError, match="provider unavailable"):
-        service.execute_motion_task("novel-1", "screenplay-1", "motion-1")
+        service.execute_motion_task("novel-1", "screenplay-1", "motion-1",reauthorize=lambda:None)
 
     failed = repo.rows[0]["motion_tasks"][0]
     assert failed["status"] == "FAILED"

@@ -103,6 +103,11 @@ def refresh_asset_provider(provider_id: str) -> bool:
         return False
     return True
 
+from .model_center.discovery import LocalDiscoveryService
+from .model_center.discovery_bridge import LocalDiscoveryBridge
+local_ai_discovery=LocalDiscoveryService(model_center_service, settings.data_path()/"model-center"/"local-discovery.json")
+local_ai_discovery.route_bridge=LocalDiscoveryBridge(local_ai_discovery, runtime, asset_provider_registry)
+
 screenplay_service=ScreenplayService(repositories.novels,repositories.chapters,asset_provider_registry)
 def refresh_video_provider(provider_id: str, endpoint: str, model_id: str, requires_credential: bool = True) -> bool:
     if provider_id == 'deterministic' or not endpoint or (requires_credential and not credential_vault.has(provider_id)):

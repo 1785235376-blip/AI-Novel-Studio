@@ -32,7 +32,7 @@ class Job:
     route_decisions:list=field(default_factory=list)
     def public(self):return {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at","creation_records","usage","usage_status","execution_mode","provider_reference_id","route_decisions")}
 class JobManager:
-    terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED"}
+    terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED","ACCEPTING","ACCEPTANCE_UNCERTAIN"}
     def __init__(self,generations=None,chapters=None,contexts=None,canon=None,memory_extractor=None,snapshot_required=None,collaboration_updates=None):
         if generations is None and repo is not None:
             bundle=create_repository_bundle(data_root=repo.data);generations=GenerationService(bundle.generations);chapters=ChapterService(bundle.chapters);contexts=ContextService(bundle.novels,bundle.chapters,LoreService(bundle.lore));canon=CanonService(bundle.canon)
@@ -108,6 +108,9 @@ class JobManager:
                     source=self.chapters.get(chapter_id)
                     if source.get("version") != version or (cloud and effective_source_privacy(source,branch_id) != "CLOUD_ALLOWED"):
                         raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST,"创作方案引用的正文版本或隐私已改变。")
+        if cloud:
+            from .source_privacy import assert_current_manuscript_egress
+            assert_current_manuscript_egress(self.chapters, getattr(self.contexts,"novels",None), job.novel_id, chapter, branch_id)
         return chapter
 
     def _run(self,job):
@@ -139,7 +142,7 @@ class JobManager:
                         snapshot=self.contexts.save_snapshot(job.chapter_id,ch.get("version",0),context,f"{role}:v1",route.model,actor_id=job.actor_id,session_id=job.session_id,scope_type=job.scope_type,scope_id=job.scope_id,generation_id=job.id,cloud=cloud)
                         if not snapshot:raise RuntimeError("Context snapshot persistence is required")
                         job.context_snapshot_id=snapshot["id"];self._persist(job)
-                    request=TextGenerationRequest(provider_id=route.provider,model_id=route.model,prompt=prompt,context=context,parameters=TextGenerationParameters(),metadata={"purpose":job.operation},job_id=job.id,cancellation=job.cancelled)
+                    request=TextGenerationRequest(provider_id=route.provider,model_id=route.model,prompt=prompt,context=context,parameters=TextGenerationParameters(),metadata={"purpose":job.operation},job_id=job.id,cancellation=job.cancelled,dispatch_guard=lambda selected=route.provider: self._validate_outbound_sources(job,runtime.is_remote_text_provider(selected)))
                     # Recheck after potentially slow context/snapshot assembly.
                     self._validate_outbound_sources(job,cloud)
                     completed=False;dispatched=True;decision["status"]="DISPATCHED"
@@ -197,9 +200,59 @@ class JobManager:
             yield "data: "+json.dumps({"job_id":jid,"status":status,"chunk":chunk,"provider":job.provider,"model":job.model,"error":job.error,"error_code":job.error_code},ensure_ascii=False)+"\n\n"
             if status in self.terminal:return
     def accept(self,jid,accepted_output=None,actor=None,scope=None,expected_version=None):
-        job=self.get(jid)
-        if job.status!="COMPLETED":raise ValueError("Only completed drafts can be accepted")
-        chapter=self.chapters.get(job.chapter_id);original=chapter["content"];output=accepted_output if accepted_output is not None else job.output;content=(original+"\n\n"+output) if job.operation=="continue" else (original.replace(job.source,output,1) if job.operation=="rewrite" and job.source in original else output)
+        from .repositories.file.mutation_coordinator import workspace_mutation
+        from .repositories.chapter_repository import VersionConflict
+        from pathlib import Path
+
+        # The shared coordinator combines a process lock with an OS file lock.
+        # All managers on this host use the same persisted-job namespace, not a
+        # manager-local threading lock. Re-read durable state inside that lock.
+        persistence_repository = getattr(self.persistence, "repository", self.persistence)
+        lock_root = getattr(persistence_repository, "root", None) or Path(settings.novel_data) / "runtime/jobs"
+        with workspace_mutation(Path(lock_root), f"generation-accept:{jid}"):
+            job = self.get(jid)
+            read = getattr(self.persistence, "get", None)
+            try:
+                stored = read(jid) if callable(read) else None
+            except KeyError:
+                stored = None  # Compatibility with explicitly injected drafts.
+            if stored is not None:
+                for key, value in stored.items():
+                    if key in Job.__dataclass_fields__ and key not in {"cancelled", "condition"}:
+                        setattr(job, key, value)
+            if job.status != "COMPLETED":
+                raise ValueError("Only completed drafts can be accepted; an interrupted acceptance requires manual review")
+            chapter = self.chapters.get(job.chapter_id)
+            # Caller-supplied versions may narrow the precondition, never rebase
+            # an old generation onto a newer manuscript. Legacy continuations
+            # create a new chapter; legacy replacements without a base fail shut.
+            target_version = job.base_chapter_version
+            if target_version is None:
+                if job.operation != "continue":
+                    raise ValueError("Draft generation base is missing; regenerate before accepting")
+                target_version = chapter["version"]
+            if chapter["version"] != target_version or (expected_version is not None and expected_version != target_version):
+                raise VersionConflict(chapter, resource_id=job.chapter_id, expected_version=target_version)
+            # Persist before the first side effect. If the process dies, ACCEPTING
+            # is deliberately not replayable: a chapter may already exist. A
+            # subsequent manager must reconcile it rather than write it twice.
+            job.status = "ACCEPTING"
+            self._persist(job)
+            try:
+                return self._accept_claimed(job, chapter, target_version, accepted_output, actor, scope)
+            except Exception:
+                job.status = "ACCEPTANCE_UNCERTAIN"
+                job.error_code = "ACCEPTANCE_REVIEW_REQUIRED"
+                job.error = "采用操作未能完整确认，正文可能已保存。请检查正文及待审核 Canon，勿重复采用。"
+                try:
+                    self._emit(job)
+                except Exception:
+                    pass  # The durable ACCEPTING claim still prevents replay.
+                raise
+
+    def _accept_claimed(self,job,chapter,target_version,accepted_output=None,actor=None,scope=None):
+        jid = job.id
+        original=chapter["content"];output=accepted_output if accepted_output is not None else job.output;content=(original+"\n\n"+output) if job.operation=="continue" else (original.replace(job.source,output,1) if job.operation=="rewrite" and job.source in original else output)
         if job.operation == "continue":
             title = f"第{chapter['number'] + 1}章"
             if actor is not None and scope is not None:
@@ -224,25 +277,40 @@ class JobManager:
                     # next chapter through ChapterService.create().
                     saved = self.chapters.save(
                         job.chapter_id,
-                        {"title": title, "content": f"{original}\n\n{output}", "version": chapter["version"], "source": "AI_ACCEPT"},
+                        {"title": title, "content": f"{original}\n\n{output}", "version": target_version, "source": "AI_ACCEPT"},
                     )
             self.chapters.save_summary(job.novel_id, saved.get("number", chapter["number"] + 1), output[:240])
-            pending_canon={"id":str(uuid.uuid4()),"novel_id":job.novel_id,"chapter":saved.get("number", chapter["number"] + 1),"status":"PENDING","proposals":[{"fact":"AI draft introduced a possible lasting story fact","source_job":jid}],"source":"archivist"}
+            pending_canon={"id":str(uuid.uuid5(uuid.NAMESPACE_URL, f"novel-generation-accept:{jid}")),"novel_id":job.novel_id,"chapter":saved.get("number", chapter["number"] + 1),"status":"PENDING","proposals":[{"fact":"AI draft introduced a possible lasting story fact","source_job":jid}],"source":"archivist"}
             self.canon.save_pending(pending_canon)
             job.status="ACCEPTED";self._emit(job)
             return {"chapter": saved, "pending_canon": pending_canon}
-        current=self.chapters.get(job.chapter_id);target_version=expected_version if expected_version is not None else (job.base_chapter_version if job.base_chapter_version is not None else current["version"])
         if actor is not None and scope is not None:
             saved=self.collaboration_updates.update_chapter(actor=actor,scope=scope,chapter_id=job.chapter_id,document=__import__("app.document",fromlist=["markdown_to_document"]).markdown_to_document(content),expected_version=target_version,reason="AI_ACCEPT")
         elif job.actor_id and job.scope:
             session=SessionContext(job.session_id or "",job.client_id or "",job.actor_id,job.workspace_id or "",job.correlation_id)
             stored_actor=ActorContext(job.actor_id,job.workspace_id or "",session,job.correlation_id);raw=job.scope;stored_scope=AuthorizationScope(ScopeKind(raw["kind"]),raw["workspace_id"],raw.get("project_id"),raw.get("storyline_id"),raw.get("branch_id"))
             saved=self.collaboration_updates.update_chapter(actor=stored_actor,scope=stored_scope,chapter_id=job.chapter_id,document=__import__("app.document",fromlist=["markdown_to_document"]).markdown_to_document(content),expected_version=target_version,reason="AI_ACCEPT")
-        else:saved=self.chapters.save(job.chapter_id,{"content":content,"version":current["version"],"source":"AI_ACCEPT"})
-        self.chapters.save_summary(job.novel_id,chapter["number"],content[:240]);pending={"id":str(uuid.uuid4()),"novel_id":job.novel_id,"chapter":chapter["number"],"status":"PENDING","proposals":[{"fact":"AI draft introduced a possible lasting story fact","source_job":jid}],"source":"archivist"};self.canon.save_pending(pending);job.status="ACCEPTED";self._emit(job)
+        else:saved=self.chapters.save(job.chapter_id,{"content":content,"version":target_version,"source":"AI_ACCEPT"})
+        self.chapters.save_summary(job.novel_id,chapter["number"],content[:240]);pending={"id":str(uuid.uuid5(uuid.NAMESPACE_URL, f"novel-generation-accept:{jid}")),"novel_id":job.novel_id,"chapter":chapter["number"],"status":"PENDING","proposals":[{"fact":"AI draft introduced a possible lasting story fact","source_job":jid}],"source":"archivist"};self.canon.save_pending(pending);job.status="ACCEPTED";self._emit(job)
         try:self.memory_extractor.enqueue(job.novel_id,job.chapter_id,saved["version"],job.profile)
         except Exception:pass
         return {"chapter":self.chapters.get(job.chapter_id),"pending_canon":pending}
-    def reject(self,jid):job=self.get(jid);job.status="REJECTED";self._emit(job);return job
+    def reject(self,jid):
+        from .repositories.file.mutation_coordinator import workspace_mutation
+        from pathlib import Path
+        persistence_repository = getattr(self.persistence, "repository", self.persistence)
+        lock_root = getattr(persistence_repository, "root", None) or Path(settings.novel_data) / "runtime/jobs"
+        with workspace_mutation(Path(lock_root), f"generation-accept:{jid}"):
+            job = self.get(jid)
+            read = getattr(self.persistence, "get", None)
+            try:
+                stored = read(jid) if callable(read) else None
+            except KeyError:
+                stored = None
+            if stored is not None and stored.get("status") in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN"}:
+                raise ValueError("An accepted or uncertain draft cannot be rejected")
+            if job.status in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN"}:
+                raise ValueError("An accepted or uncertain draft cannot be rejected")
+            job.status="REJECTED";self._emit(job);return job
     def diff(self,jid):job=self.get(jid);original=job.source or self.chapters.get(job.chapter_id)["content"];return "\n".join(difflib.unified_diff(original.splitlines(),job.output.splitlines(),fromfile="original",tofile="generated",lineterm=""))
 jobs=JobManager()

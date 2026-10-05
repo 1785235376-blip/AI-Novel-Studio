@@ -8,15 +8,27 @@ from app.repositories.factory import create_repository_bundle
 from app.repository import FileRepository
 from app.services import ChapterService,GenerationService,LoreService,NovelService
 from app.storage import atomic_write
-from app.providers import Generation
+from app.providers import Generation,MockProvider
+from app.model_runtime import (GenerationRuntime,LegacyTextProviderAdapter,ModelDescriptor,ModelRegistry,
+ Modality,ProviderDescriptor,ProviderRegistry)
 from app.jobs import Job,JobManager
 
-class Router:
- def __init__(self,text):self.text=text
- def generate(self,role,prompt):return Generation(self.text,"fake","memory-test")
+class MemoryFixtureProvider(MockProvider):
+ def __init__(self,text):self.text=text;self.requests=[]
+ def generate(self,prompt,model,**kwargs):
+  self.requests.append(prompt)
+  return Generation(self.text,"mock",model,metadata={"mock":True})
 class Runtime:
- def __init__(self,text):self.text=text
- def router(self,profile,role):return Router(self.text)
+ """Explicit in-process fixture through the real normalized node; never network."""
+ def __init__(self,text):
+  from app.config import settings
+  object.__setattr__(settings,"mock_provider",True)  # Explicit development fixture, restored by conftest.
+  self.provider=MemoryFixtureProvider(text);self.provider_registry=ProviderRegistry();self.model_registry=ModelRegistry()
+  self.provider_registry.register(ProviderDescriptor("mock","Synthetic memory fixture","development",frozenset({Modality.TEXT}),True,True),LegacyTextProviderAdapter("mock",self.provider))
+  self.model_registry.register(ModelDescriptor("memory-test","mock","Synthetic memory fixture",Modality.TEXT,frozenset({"generate"})))
+  self.generation_runtime=GenerationRuntime(self.provider_registry,self.model_registry)
+ def prepare_text_route(self,*args):return self.generation_runtime.text_node
+ def router(self,*args):raise AssertionError("memory extraction must not use legacy routing")
 def runner(tmp_path,output):
  bundle=create_repository_bundle(data_root=tmp_path);novels=NovelService(bundle.novels,bundle.chapters);chapters=ChapterService(bundle.chapters);nid=novels.create({"id":"agent-test","title":"Agent"})["id"];chapter=chapters.create(nid,{"title":"One","content":"Lin learned the harbor secret."});saved=chapters.save(chapter["id"],{"content":"Lin learned the harbor secret.","version":1,"source":"AI_ACCEPT"})
  atomic_write(tmp_path/"novels"/nid/"characters"/"characters.json",json.dumps([{"id":"lin","name":"Lin"}]))
@@ -30,6 +42,7 @@ def test_json_output_and_evidence_contract():
 def test_extract_creates_pending_proposal_with_evidence_and_is_idempotent(tmp_path):
  agent,bundle,nid,cid,version=runner(tmp_path,valid_output());first=agent.extract(nid,cid,version,job_id="memory-job-1");second=agent.extract(nid,cid,version,job_id="memory-job-2")
  assert first==second and len(bundle.lore.list_proposals(nid))==1
+ assert bundle.generations.get("memory-job-1")["execution_mode"]=="mock_standin"
  proposal=bundle.lore.get_proposal(first[0]);relations=bundle.lore.list_proposal_evidence(first[0]);assert proposal["status"]=="PENDING" and relations and bundle.lore.get_evidence(relations[0]["evidence_id"])["chapter_version"]==version
  assert bundle.lore.list_memories(nid)==[]
 @pytest.mark.file_backend_only

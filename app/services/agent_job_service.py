@@ -20,6 +20,12 @@ class StructuredAgentOutput(BaseModel):
     schema_name:str=Field(alias="schema");agent_id:str;summary:str;proposals:list[dict]=[];findings:list[dict]=[];context_hash:str
 
 
+class AgentJobError(ValueError):
+    def __init__(self, code, message):
+        super().__init__(message)
+        self.code = code
+
+
 class AgentJobService:
     terminal={"COMPLETED","VALIDATED","FAILED","CANCELLED","ACCEPTED","REJECTED"}
     def __init__(self,generations,contexts,novels,runtime=None,agent_runner=None):self.generations,self.contexts,self.novels,self.runtime,self.agent_runner=generations,contexts,novels,runtime,agent_runner;self.lock=threading.RLock();self.cancellations={}
@@ -70,18 +76,62 @@ class AgentJobService:
         payload=self.list(novel_id,agent_id,status,1,100,created_after,created_before,branch_id,visibility)
         return {"result_count":payload["total"],"filters":{"novel_id":novel_id,"agent_id":agent_id,"status":status,"created_after":created_after,"created_before":created_before,"branch_id":branch_id}}
 
-    def execute(self,jid):
+    @staticmethod
+    def _same_attempt(current, claimed):
+        return (current.get("status") == "WORKING"
+                and current.get("execution_token") == claimed.get("execution_token")
+                and all(current.get(key) == claimed.get(key) for key in (
+                    "owner", "branch_id", "novel_id", "chapter_id", "chapter_version",
+                    "context_hash", "agent_id", "prompt_role", "instruction", "target",
+                    "provider", "model", "execution_mode", "output_schema")))
+
+    def _check_current_attempt(self, job):
+        with self.lock:
+            current = self.get(job["id"])
+            if (not self._same_attempt(current, job)
+                    or self.cancellations.setdefault(job["id"], threading.Event()).is_set()):
+                raise AgentJobError("AGENT_JOB_CHANGED", "Agent execution claim is no longer current")
+            return current
+
+    def _check_authority(self, job, check_authority):
+        current = self._check_current_attempt(job)
+        if check_authority is None:
+            if job.get("owner") or job.get("branch_id"):
+                raise AgentJobError("AGENT_AUTHORITY_MISSING", "Agent execution authority is unavailable")
+            return
+        try:
+            check_authority(current)
+        except Exception as exc:
+            raise AgentJobError("AGENT_PERMISSION_REVOKED", "Agent execution is no longer authorized") from exc
+
+    def _check_dispatch(self, job, check_authority):
+        # Rebuild only to validate the reviewed prompt, never silently substitute
+        # changed sources. This also catches privacy filtering changes at runtime.
+        self._check_authority(job, check_authority)
+        actual_target = "cloud" if self.runtime.is_remote_text_provider(job["provider"]) else "local"
+        if actual_target != job.get("target"):
+            raise AgentJobError("AGENT_ROUTE_CHANGED", "Agent provider egress changed")
+        context = self.contexts.build(job["agent_id"], job["novel_id"], int(str(job["chapter_id"]).rsplit(":", 1)[-1]), job.get("instruction", ""), actual_target == "cloud")
+        if context["context_hash"] != job["context_hash"] or context["chapter_version"] != job["chapter_version"]:
+            raise AgentJobError("AGENT_SOURCE_CHANGED", "Agent sources changed; review a fresh job")
+        # Context repositories may themselves be slow. Membership must still
+        # hold after they finish, and a callback may have cancelled the attempt.
+        self._check_authority(job, check_authority)
+        self._check_current_attempt(job)
+
+    def execute(self,jid,check_authority=None):
         with self.lock:
             job=self.get(jid)
             if job["status"]!="QUEUED":raise ValueError("agent job is not queued")
-            cancellation=self.cancellations.setdefault(jid,threading.Event());working={**job,"status":"WORKING","updated_at":utc()};self.generations.save(working)
+            cancellation=self.cancellations.setdefault(jid,threading.Event());working={**job,"status":"WORKING","execution_token":str(uuid.uuid4()),"attempt":int(job.get("attempt",0))+1,"updated_at":utc()};self.generations.save(working)
         try:
             if job.get("execution_mode","deterministic")=="model":
-                output,provider,model,usage,provider_execution_mode=self._execute_model(job)
+                output,provider,model,usage,provider_execution_mode=self._execute_model(working,check_authority)
                 status="COMPLETED"
                 execution_label="模拟测试执行，未调用真实模型" if provider_execution_mode=="mock_standin" else "真实模型执行"
                 model_called=provider_execution_mode!="mock_standin"
             else:
+                self._check_authority(working,check_authority)
                 output={"schema":job["output_schema"],"agent_id":job["agent_id"],"summary":"契约校验通过，未调用模型，未生成可应用正文。","proposals":[],"findings":[],"context_hash":job["context_hash"]}
                 provider,model=job.get("provider") or "deterministic-local",job.get("model") or "contract-validator-v1"
                 status="VALIDATED"
@@ -91,13 +141,13 @@ class AgentJobService:
                 provider_execution_mode="deterministic"
             with self.lock:
                 current=self.get(jid)
-                if current["status"] in {"CANCELLED","FAILED"}:return current
+                if not self._same_attempt(current,working) or cancellation.is_set():return current
                 completed={**working,"status":status,"execution_label":execution_label,"model_called":model_called,"result":{"structured_output":output,"empty":not output.get("proposals") and not output.get("findings")},"provider":provider,"model":model,"fallback_used":False,"provider_execution_mode":provider_execution_mode,"usage":usage,"usage_status":"REPORTED" if usage else "UNKNOWN","updated_at":utc()};self.generations.save(completed);return completed
         except Exception as exc:
-            code=exc.code.value if isinstance(exc,ModelRuntimeError) else ("INVALID_STRUCTURED_OUTPUT" if isinstance(exc,(ValueError,json.JSONDecodeError)) else "AGENT_EXECUTION_FAILED")
+            code=exc.code.value if isinstance(exc,ModelRuntimeError) else (exc.code if isinstance(exc,AgentJobError) else ("INVALID_STRUCTURED_OUTPUT" if isinstance(exc,(ValueError,json.JSONDecodeError)) else "AGENT_EXECUTION_FAILED"))
             with self.lock:
                 current=self.get(jid)
-                if current["status"] in {"CANCELLED","FAILED"}:return current
+                if not self._same_attempt(current,working):return current
                 failed={**working,"status":"FAILED","error_code":code,"error":exc.safe_message if isinstance(exc,ModelRuntimeError) else "Agent execution failed; inspect the safe error code.","fallback_used":False,"updated_at":utc()};self.generations.save(failed);return failed
 
     def recover_interrupted(self):
@@ -111,10 +161,10 @@ class AgentJobService:
                 self.generations.save(failed);recovered.append(job["id"])
         return recovered
 
-    def start(self,jid):
+    def start(self,jid,check_authority=None):
         job=self.get(jid)
         if job["status"]!="QUEUED":raise ValueError("agent job is not queued")
-        thread=threading.Thread(target=self.execute,args=(jid,),daemon=True,name=f"agent-job-{jid}");thread.start()
+        thread=threading.Thread(target=self.execute,args=(jid,check_authority),daemon=True,name=f"agent-job-{jid}");thread.start()
         timer=threading.Timer(job.get("timeout_seconds",120),self._timeout,args=(jid,));timer.daemon=True;timer.start()
         return self.get(jid)
 
@@ -141,7 +191,7 @@ class AgentJobService:
         self.generations.save(retried)
         return retried
 
-    def _execute_model(self,job):
+    def _execute_model(self,job,check_authority=None):
         if self.runtime is None or self.agent_runner is None:raise RuntimeError("agent model runtime is unavailable")
         actual_target="cloud" if self.runtime.is_remote_text_provider(job["provider"]) else "local"
         if actual_target != job.get("target"):
@@ -151,7 +201,9 @@ class AgentJobService:
             raise ValueError("agent source changed; create a fresh job for review")
         prompt=self.agent_runner.build_prompt(job["prompt_role"],context,job.get("instruction") or "Return a structured result.")+"\n\nReturn JSON only with keys: schema, agent_id, summary, proposals, findings, context_hash."
         node=self.runtime.prepare_text_route(job["provider"],job["model"],self.runtime.providers.get(job["provider"]))
-        request=TextGenerationRequest(provider_id=job["provider"],model_id=job["model"],prompt=prompt,context=context,parameters=TextGenerationParameters(temperature=0.2),metadata={"purpose":"agent_task"},job_id=job["id"],cancellation=self.cancellations.setdefault(job["id"],threading.Event()))
+        dispatch_guard=lambda:self._check_dispatch(job,check_authority)
+        request=TextGenerationRequest(provider_id=job["provider"],model_id=job["model"],prompt=prompt,context=context,parameters=TextGenerationParameters(temperature=0.2),metadata={"purpose":"agent_task"},job_id=job["id"],cancellation=self.cancellations.setdefault(job["id"],threading.Event()),dispatch_guard=dispatch_guard)
+        dispatch_guard()
         response=node.execute(TextModelNodeInput(request)).response;parsed=StructuredAgentOutput.model_validate_json(response.text).model_dump(by_alias=True)
         if parsed["schema"]!=job["output_schema"] or parsed["agent_id"]!=job["agent_id"] or parsed["context_hash"]!=job["context_hash"]:raise ValueError("structured agent output contract mismatch")
         return parsed,response.provider_id,response.model_id,asdict(response.usage) if response.usage else None,response.execution_mode

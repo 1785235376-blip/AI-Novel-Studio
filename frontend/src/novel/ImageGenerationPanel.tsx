@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api";
+import {CloudPromptConsent,useScopedRequestConsent,cloudPromptReviewMessage} from "../useScopedRequestConsent";
 import {ImageQueuePanel} from "./ImageQueuePanel";
 import { Button, Panel } from "../ui/primitives";
 import {
@@ -54,13 +55,14 @@ export function ImageGenerationPanel({
     [modelId, setModelId] = useState(""),
     [task, setTask] = useState<ImageTask | null>(null);
   const generateButton = useRef<HTMLButtonElement>(null);
+  const consent=useScopedRequestConsent([novelId,characterId,sceneId,providerId,modelId,prompt,referenceInput]);
+  useEffect(()=>{setError('');setLoading(false);setTask(current=>current&&['QUEUED','RUNNING'].includes(current.status)?null:current)},[consent.requestKey]);
+  useEffect(()=>{setUri('');setHistory([]);setTask(null);setImported(false);setCanvasReferences([])},[consent.scopeKey,novelId,characterId,sceneId]);
   useEffect(() => {
-    if (novelId)
-      api
-        .imageGenerations(novelId, characterId, sceneId)
-        .then((data) => setHistory(data.items || []))
-        .catch(() => setHistory([]));
-  }, [novelId, characterId, sceneId]);
+    let active=true;setHistory([]);
+    if(novelId)api.imageGenerations(novelId,characterId,sceneId).then(data=>{if(active)setHistory(data.items||[])}).catch(()=>{if(active)setHistory([])});
+    return()=>{active=false};
+  }, [consent.scopeKey,novelId,characterId,sceneId]);
   useEffect(() => {
     let active = true;
     api
@@ -84,7 +86,7 @@ export function ImageGenerationPanel({
     return () => {
       active = false;
     };
-  }, []);
+  }, [consent.scopeKey]);
   useEffect(() => {
     publishTaskSummary("image", task ? [task] : []);
   }, [task]);
@@ -121,7 +123,8 @@ export function ImageGenerationPanel({
     const requestPrompt = prompt.trim(),
       requestProvider = providerId,
       requestModel = modelId.trim();
-    if (!requestPrompt || !requestProvider || !requestModel) return;
+    if (loading || !requestPrompt || !requestProvider || !requestModel) return;
+    const currentRequest=consent.begin();
     setLoading(true);
     setError("");
     setUri("");
@@ -143,6 +146,7 @@ export function ImageGenerationPanel({
             provider_id: requestProvider,
             model_id: requestModel,
             prompt: requestPrompt,
+            allow_cloud_prompt: consent.allowed,
             images: references,
             size: "auto",
             quality: "auto",
@@ -155,26 +159,29 @@ export function ImageGenerationPanel({
             provider_id: requestProvider,
             model_id: requestModel,
             prompt: requestPrompt,
+            allow_cloud_prompt: consent.allowed,
             novel_id: novelId,
             character_id: characterId,
             scene_id: sceneId,
           });
+      if(!currentRequest())return;
       setUri(result.asset_uri);
       setTask((current) =>
         current
           ? { ...current, status: "SUCCEEDED", asset_uri: result.asset_uri }
           : current,
       );
-    } catch {
-      const message = referenceInput.trim()
+    } catch(reason) {
+      if(!currentRequest())return;
+      const message = cloudPromptReviewMessage(reason, referenceInput.trim()
         ? "参考图融合失败，请检查图片地址、数量和 Provider 配置。"
-        : "图片生成失败，请检查 Provider 配置。";
+        : "图片生成失败，请检查 Provider 配置。");
       setError(message);
       setTask((current) =>
         current ? { ...current, status: "FAILED", error: message } : current,
       );
     } finally {
-      setLoading(false);
+      if(currentRequest())setLoading(false);
     }
   }
   const available = providers.some(
@@ -256,6 +263,7 @@ export function ImageGenerationPanel({
         {canvasReferences.length>0&&<Button variant="ghost" onClick={()=>setReferenceInput(canvasReferences.join('\n'))}>使用画布所选（{canvasReferences.length}）</Button>}
         {references.length > 0 && !referencesValid && <p role="alert">仅支持 1–5 个 http(s) 或 data:image 地址。</p>}
       </details>
+      <CloudPromptConsent target={`${providerId || "所选 Provider"} / ${modelId || "未选择模型"}`} checked={consent.allowed} onChange={consent.setAllowed}/>
       <Button
         ref={generateButton}
         disabled={loading || !prompt.trim() || !providerId || !modelId.trim() || !referencesValid || (references.length > 0 && providerId !== "ddshub")}
@@ -314,10 +322,11 @@ export function ImageGenerationPanel({
             <Button
               variant="ghost"
               onClick={async () => {
+                const current=consent.begin();
                 try {
                   await api.importGeneratedImage(novelId, {asset_uri:uri,character_id:characterId,scene_id:sceneId});
-                  setImported(true);
-                } catch { setError("图片校验或入库失败。原生成结果已保留。"); }
+                  if(current())setImported(true);
+                } catch { if(current())setError("图片校验或入库失败。原生成结果已保留。"); }
               }}
             >
               {imported ? "已导入资产库" : "导入资产库"}
@@ -325,7 +334,7 @@ export function ImageGenerationPanel({
           )}
         </div>
       )}
-      <ImageQueuePanel novelId={novelId} local={providers.find(item=>item.provider_id===providerId)?.local} draft={{novel_id:novelId,provider_id:providerId,model_id:modelId,prompt,character_id:characterId,scene_id:sceneId,...(references.length?{images:references}:{})}}/>
+      <ImageQueuePanel novelId={novelId} local={providers.find(item=>item.provider_id===providerId)?.local} draft={{...{allow_cloud_prompt:consent.allowed},novel_id:novelId,provider_id:providerId,model_id:modelId,prompt,character_id:characterId,scene_id:sceneId,...(references.length?{images:references}:{})}}/>
       {history.length > 0 && (
         <details>
           <summary>生成历史（{history.length}）</summary>

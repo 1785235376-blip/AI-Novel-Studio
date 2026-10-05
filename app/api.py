@@ -160,6 +160,7 @@ class AcceptIn(BaseModel): content:str|None=None;expected_version:int|None=None
 class CredentialIn(BaseModel): provider:str; credential:str
 class UserPreferenceIn(BaseModel): key:str=Field(min_length=1,max_length=120); content:str=Field(min_length=1,max_length=2000); source:str="explicit"; confidence:float=Field(default=1.0,ge=0,le=1)
 class AgentChatIn(BaseModel):
+    allow_cloud_prompt:bool=Field(default=False,strict=True)
     message:str=Field(min_length=1,max_length=12000)
     provider_id:str|None=None
     model_id:str|None=None
@@ -173,15 +174,17 @@ class AssetProviderConfigIn(BaseModel):
     requires_credential:bool=True
     display_name:str=""
 class AssetUploadIn(BaseModel): novel_id:str; filename:str; content_base64:str; media_type:str|None=None; kind:str="image"; character_id:str|None=None; scene_id:str|None=None
-class VisionAnalyzeIn(BaseModel): provider_id:str="openai"; model_id:str="gpt-4o-mini"; prompt:str; image_url:str; novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None
-class ImageGenerateIn(BaseModel): provider_id:str="ddshub"; model_id:str="gpt-image-2"; prompt:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None; constraints:dict[str,object]={}; parameters:dict[str,object]=Field(default_factory=dict)
+class ManualEgressIn(BaseModel):
+    allow_cloud_prompt:bool=Field(default=False,strict=True)
+class VisionAnalyzeIn(ManualEgressIn): provider_id:str="openai"; model_id:str="gpt-4o-mini"; prompt:str; image_url:str; novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None
+class ImageGenerateIn(ManualEgressIn): provider_id:str="ddshub"; model_id:str="gpt-image-2"; prompt:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; scene_id:str|None=None; constraints:dict[str,object]={}; parameters:dict[str,object]=Field(default_factory=dict)
 class ImageEditIn(ImageGenerateIn):
     images:list[str]=Field(min_length=1,max_length=5)
     size:str="auto"
     quality:str="auto"
     output_format:str="png"
-class SpeechSynthesizeIn(BaseModel): provider_id:str="auto"; model_id:str=""; voice:str="alloy"; text:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; chapter_id:str|None=None; emotion:str="neutral"
-class AudioGenerateIn(BaseModel):
+class SpeechSynthesizeIn(ManualEgressIn): provider_id:str="auto"; model_id:str=""; voice:str="alloy"; text:str=Field(min_length=1); novel_id:str|None=None; character_id:str|None=None; chapter_id:str|None=None; emotion:str="neutral"
+class AudioGenerateIn(ManualEgressIn):
     provider_id:str="auto"
     model_id:str=""
     capability:str=Field(pattern="^(TEXT_TO_AUDIO|AUDIO_EDIT|VIDEO_TO_AUDIO|SFX|FOLEY|MUSIC)$")
@@ -697,7 +700,7 @@ def user_preferences_share_enabled(enabled: bool = Query(...)): return {"share_e
 @router.put("/harness-enabled")
 def harness_enabled(enabled: bool = Query(...)): return {"harness_enabled":user_preference_service.set_harness_enabled(enabled)}
 @router.post("/agent/chat")
-def agent_chat(body:AgentChatIn):
+def agent_chat(body:AgentChatIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     """Read-only control-center conversation; no mutation tools are exposed."""
     provider_id=body.provider_id or "deepseek"
     model_id=body.model_id or "deepseek-chat"
@@ -712,13 +715,25 @@ def agent_chat(body:AgentChatIn):
     prompt=body.message
     if safe_context:
         prompt += "\n\n当前工作区只读上下文：" + json.dumps(safe_context,ensure_ascii=False)[:8000]
+    def dispatch_guard():
+        if settings.enable_collaboration_runtime:
+            _agent_job_read_actor(x_session_token)
+        if runtime.is_remote_text_provider(provider_id):
+            if not body.allow_cloud_prompt:
+                raise HTTPException(403,{"code":"CLOUD_PROMPT_REVIEW_REQUIRED","message":"请明确允许所选云模型接收这次输入，或选择本地模型。"})
+            if body.context:
+                raise HTTPException(403,{"code":"UNREVIEWED_CHAT_CONTEXT","message":"主控云端问答不接收未绑定来源版本的自动上下文。"})
+            if preferences_used and user_preference_service.list() != preference_state:
+                raise HTTPException(409,{"code":"PREFERENCE_SHARE_CHANGED","message":"偏好授权或内容已改变，请重新提交。"})
     request=TextGenerationRequest(provider_id=provider_id,model_id=model_id,prompt=prompt,
         system_instruction="你是 AI-Novel-Studio 的只读主控助手。只能回答问题、解释软件能力和提出建议，不得声称已经执行任何写入、删除、发布或外部操作。",
-        parameters=TextGenerationParameters(temperature=0.2,max_output_tokens=1200),metadata={"surface":"control_center","mode":"read_only"})
+        parameters=TextGenerationParameters(temperature=0.2,max_output_tokens=1200),metadata={"surface":"control_center","mode":"read_only"},dispatch_guard=dispatch_guard)
     if not runtime.packaged_author_route_ready(provider_id):
         raise HTTPException(503,{"code":"TEXT_PROVIDER_NOT_CONFIGURED","message":"未配置可用文本模型，未调用 DeepSeek。","retryable":False})
     try:
-        result=runtime.generation_runtime.text_node.execute(TextModelNodeInput(request))
+        node=runtime.prepare_text_route(provider_id,model_id)
+        dispatch_guard()
+        result=node.execute(TextModelNodeInput(request))
     except ModelRuntimeError as exc:
         raise HTTPException(503,{"code":exc.code.value,"message":exc.safe_message,"retryable":exc.retryable}) from exc
     return {"message":result.generated_text,"provider_id":result.response.provider_id,"model_id":result.response.model_id,"read_only":True,"preferences_used":preferences_used}
@@ -788,11 +803,11 @@ def list_agent_jobs(novel_id:str|None=None,agent_id:str|None=None,status:str|Non
 @router.post("/agent-jobs/{job_id}/execute")
 def execute_agent_job(job_id:str,x_session_token:str|None=Header(default=None,alias="X-Session-Token")):
     _agent_job_actor_for_record(x_session_token,guard(agent_job_service.get,job_id),"domain.write")
-    return guard(agent_job_service.execute,job_id)
+    return guard(agent_job_service.execute,job_id,lambda current: _agent_job_actor_for_record(x_session_token,current,"domain.write"))
 @router.post("/agent-jobs/{job_id}/start",status_code=202)
 def start_agent_job(job_id:str,x_session_token:str|None=Header(default=None,alias="X-Session-Token")):
     _agent_job_actor_for_record(x_session_token,guard(agent_job_service.get,job_id),"domain.write")
-    return guard(agent_job_service.start,job_id)
+    return guard(agent_job_service.start,job_id,lambda current: _agent_job_actor_for_record(x_session_token,current,"domain.write"))
 @router.post("/agent-jobs/{job_id}/cancel")
 def cancel_agent_job(job_id:str,x_session_token:str|None=Header(default=None,alias="X-Session-Token")):
     _agent_job_actor_for_record(x_session_token,guard(agent_job_service.get,job_id),"domain.write")
@@ -885,6 +900,8 @@ def asset_providers():
         configured=bool(enabled and endpoint and credential_configured and (not local or bool(cfg)));registered=pid in asset_provider_registry._providers
         adapter=asset_provider_registry._providers.get(pid);probe=getattr(adapter,'health_check',None);reachable=bool(registered and callable(probe) and probe())
         items.append({"provider_id":pid,"display_name":effective.get("display_name") or pid,"endpoint":endpoint,"default_model":model,"api_style":effective.get("api_style","openai"),"local":local,"enabled":enabled,"requires_credential":requires_credential,"credential_configured":credential_configured,"configured":configured,"registered":registered,"reachable":reachable,"secret":None})
+    from .dependencies import local_ai_discovery
+    items.extend(local_ai_discovery.media_routes())
     items.sort(key=lambda item:(not item["local"],not item["reachable"],item["display_name"]))
     return {"items":items,"routing_policy":"LOCAL_FIRST"}
 
@@ -1223,7 +1240,7 @@ def accept(jid:str,body:AcceptIn|None=None,x_session_token:str|None=Header(None)
         if job.base_chapter_version is None or body.expected_version!=job.base_chapter_version:
             raise HTTPException(409,{"code":"GENERATION_BASE_VERSION_MISMATCH","generation_version":job.base_chapter_version,"expected_version":body.expected_version})
         return guard(jobs.accept,jid,body.content,actor,scope,body.expected_version)
-    return guard(jobs.accept,jid,body.content if body else None)
+    return guard(jobs.accept,jid,body.content if body else None,None,None,body.expected_version if body else None)
 @router.post("/generation/{jid}/reject")
 def reject(jid:str,x_session_token:str|None=Header(None)):
     if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
@@ -1719,12 +1736,15 @@ def ai_analyze_import_knowledge(nid: str, review_id: str, body: ImportAiReviewIn
             excerpts.append({"number": chapter.get("number"), "title": chapter.get("title"), "content": content})
             remaining -= len(content)
         provider_id, model_id = body.provider_id or "deepseek", body.model_id or "deepseek-chat"
-        from .source_privacy import effective_source_privacy, content_digest
+        from .source_privacy import effective_source_privacy, content_digest, assert_project_source_policies
         from .privacy import normalize_privacy, cloud_safe_context
         cloud = runtime.is_remote_text_provider(provider_id)
         captured_versions = {item["id"]: (item.get("version"), content_digest(item)) for item in chapters}
         def validate_sources():
-            _import_review_access(nid, x_session_token, x_branch_id, "domain.write", import_review_service.get(review_id))
+            current_review=import_review_service.get(review_id)
+            _import_review_access(nid, x_session_token, x_branch_id, "domain.write", current_review)
+            if current_review.get("status") != "PENDING" or current_review.get("version") != review.get("version"):
+                raise HTTPException(409,{"code":"IMPORT_REVIEW_CHANGED"})
             current_chapters = {item["id"]: item for item in novel_service.chapters.list(nid)}
             for cid, (version, digest) in captured_versions.items():
                 current = current_chapters.get(cid)
@@ -1734,6 +1754,7 @@ def ai_analyze_import_knowledge(nid: str, review_id: str, body: ImportAiReviewIn
                 return
             if not body.allow_cloud_excerpt:
                 raise HTTPException(403, {"code": "IMPORT_CLOUD_EXCERPT_CONFIRMATION_REQUIRED", "message": "请明确允许所选云模型接收本次章节节选，或选择本地模型。"})
+            assert_project_source_policies(novel_service.novels, nid)
             secret_policies = [{**item, "privacy_level": item.get("privacy_level", item.get("visibility", "LOCAL_ONLY"))} for item in novel_service.public_secrets(nid)]
             protected_sources = [novel_service.get(nid), *current_chapters.values(), *secret_policies, *novel_service.data_set(nid,"relationships")]
             outline = novel_service.outline(nid)
@@ -1759,7 +1780,7 @@ def ai_analyze_import_knowledge(nid: str, review_id: str, body: ImportAiReviewIn
         request = TextGenerationRequest(provider_id=provider_id, model_id=model_id, prompt=prompt,
             system_instruction="你是小说导入资料库审查员。严格依据原文，不得臆造；只返回符合要求的 JSON。",
             parameters=TextGenerationParameters(temperature=0.1, max_output_tokens=5000),
-            metadata={"surface": "novel_knowledge_review", "mode": "author_approval_required", "source_format": review.get("source_format")})
+            metadata={"surface": "novel_knowledge_review", "mode": "author_approval_required", "source_format": review.get("source_format")},dispatch_guard=validate_sources)
         node = runtime.prepare_text_route(provider_id, model_id)
         validate_sources()
         result = node.execute(TextModelNodeInput(request))
@@ -1813,7 +1834,7 @@ def materialize_adaptation(nid:str,proposal_id:str,branch_id:str|None=None,x_ses
     return guard(adaptation_service.materialize,nid,proposal_id)
 @router.post("/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/generate")
 def generate_adaptation_draft(nid:str,proposal_id:str,task_id:str,body:AdaptationDraftGenerateIn,branch_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _adaptation_context(nid,branch_id,x_session_token,"domain.write");return guard(adaptation_service.generate_draft,nid,proposal_id,task_id,body.mode,body.provider_id,body.model_id)
+    _adaptation_context(nid,branch_id,x_session_token,"domain.write");return guard(adaptation_service.generate_draft,nid,proposal_id,task_id,body.mode,body.provider_id,body.model_id,branch_id,lambda: _adaptation_context(nid,branch_id,x_session_token,"domain.write"))
 @router.post("/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/review")
 def review_adaptation_draft(nid:str,proposal_id:str,task_id:str,body:AdaptationDraftReviewIn,branch_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     _adaptation_context(nid,branch_id,x_session_token,"domain.review");return guard(adaptation_service.review_draft,nid,proposal_id,task_id,body.decision,body.note)
@@ -1995,6 +2016,29 @@ def multimodal_health():
     return {'image_providers':[{"id":pid,"registered":True} for pid in image_ids],"vision_providers":vision,"vision_credentials":any(item['configured'] for item in vision),"speech_credentials":any(item['configured'] for item in vision),"video_provider_configs":len(_video_provider_configs),"media_validation":{"pcm_wav":True,"ffmpeg":bool(shutil.which("ffmpeg")),"ffprobe":bool(shutil.which("ffprobe")),"image_video_ingestion":bool(shutil.which("ffmpeg") and shutil.which("ffprobe")),"video_assembly_profile":"REVIEW_640x360_24FPS_VIDEO_ONLY","codec_binaries_bundled":False}}
 @router.get("/video-callback/security")
 def video_callback_security(): return {"configured":bool(os.getenv('VIDEO_CALLBACK_TOKEN','').strip()),"header":"X-Video-Callback-Token","secret_exposed":False}
+def _assert_manual_media_egress(body, provider, session_token=None, branch_id=None):
+    """Explicit manual-input permission never overrides referenced source policy."""
+    value = body if isinstance(body, dict) else body.model_dump()
+    nid = value.get("novel_id")
+    if nid:
+        _authorize_media_novel(nid,session_token,"domain.write",branch_id)
+    if getattr(provider,"local",False) is True:
+        return
+    if not getattr(settings,"enable_cloud",False) or value.get("allow_cloud_prompt") is not True:
+        raise HTTPException(403,{"code":"CLOUD_PROMPT_REVIEW_REQUIRED","message":"云端外发未启用或未明确授权这次输入及引用媒体，请使用本地模型。"})
+    from .source_privacy import assert_project_source_policies, assert_current_manuscript_egress
+    if nid:
+        assert_project_source_policies(novel_service.novels,nid)
+    cid = value.get("chapter_id")
+    if cid:
+        if not nid:
+            raise HTTPException(403,{"code":"SOURCE_SCOPE_REQUIRED"})
+        source=chapter_service.get(cid)
+        text=str(value.get("text") or "")
+        if text and text not in str(source.get("content") or ""):
+            raise HTTPException(403,{"code":"SOURCE_TEXT_NOT_REVIEWED"})
+        assert_current_manuscript_egress(chapter_service,novel_service,nid,source,branch_id if settings.enable_collaboration_runtime else None)
+
 @router.post("/vision/analyze")
 def vision_analyze(body:VisionAnalyzeIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     if body.novel_id: _authorize_media_novel(body.novel_id,x_session_token,"domain.write",x_branch_id)
@@ -2011,12 +2055,15 @@ def vision_analyze(body:VisionAnalyzeIn,x_session_token:str|None=Header(None),x_
     except OutboundURLRejected as exc: raise HTTPException(400,{'code':'OUTBOUND_URL_REJECTED','message':str(exc)})
     try:
         import httpx
-        result=OpenAICompatibleVisionProvider(httpx,secret,endpoint).analyze(VisionRequest(body.provider_id,body.model_id,body.prompt,safe_image_url))
+        provider=OpenAICompatibleVisionProvider(httpx,secret,endpoint)
+        _assert_manual_media_egress(body,provider,x_session_token,x_branch_id)
+        result=provider.analyze(VisionRequest(body.provider_id,body.model_id,body.prompt,safe_image_url))
         payload={'provider_id':result.provider_id,'model_id':result.model_id,'text':result.text,'image_url':safe_image_url,'prompt':body.prompt,'character_id':body.character_id,'scene_id':body.scene_id}
         if body.novel_id:
             from .dependencies import repositories
             novel=repositories.novels.get(body.novel_id); memories=list(novel.get('visual_memories',[])); memories.append({**payload,'created_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}); repositories.novels.update(body.novel_id,{**novel,'visual_memories':memories[-50:]})
         return payload
+    except HTTPException: raise
     except Exception:
         raise HTTPException(502,{'code':'VISION_ANALYZE_FAILED','message':'图片分析失败'})
 from .services.image_job_service import ImageJobService
@@ -2051,7 +2098,7 @@ def create_image_job(nid:str,body:ImageEditIn|ImageGenerateIn,idempotency_key:st
 def execute_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     from .dependencies import asset_provider_registry
-    return guard(_image_jobs(x_session_token).execute,nid,_image_branch(x_branch_id),job_id,asset_provider_registry)
+    return guard(_image_jobs(x_session_token).execute,nid,_image_branch(x_branch_id),job_id,asset_provider_registry,lambda: _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id),lambda job,provider: _assert_manual_media_egress(job,provider,x_session_token,x_branch_id))
 
 @router.post("/novels/{nid}/image-jobs/{job_id}/cancel")
 def cancel_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
@@ -2077,7 +2124,9 @@ def generate_image(body:ImageGenerateIn,x_session_token:str|None=Header(None),x_
     from .dependencies import asset_provider_registry,repositories
     try:
         provider=asset_provider_registry.get(body.provider_id)
+        _assert_manual_media_egress(body,provider,x_session_token,x_branch_id)
         result=provider.generate(AssetGenerationRequest(body.provider_id,body.model_id,body.prompt,str(__import__('uuid').uuid4()),body.parameters))
+    except HTTPException: raise
     except ValueError: raise HTTPException(503,{'code':'IMAGE_PROVIDER_UNAVAILABLE','message':'图片生成服务未配置或不可用'})
     except Exception: raise HTTPException(502,{'code':'IMAGE_PROVIDER_REQUEST_FAILED','message':'图片服务请求失败，请检查地址、模型和服务状态'})
     payload={'provider_id':result.provider_id,'model_id':result.model_id,'asset_uri':result.asset_uri,'prompt':body.prompt,'constraints':body.constraints,'character_id':body.character_id,'scene_id':body.scene_id,'created_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}
@@ -2099,7 +2148,9 @@ def edit_image(body:ImageEditIn,x_session_token:str|None=Header(None,alias="X-Se
     endpoint=str(config.get("endpoint") or "").rstrip("/"); secret=credential_vault.resolve(body.provider_id)
     if not endpoint or not secret: raise HTTPException(503,{"code":"IMAGE_PROVIDER_UNAVAILABLE","message":"图片 Provider 未配置"})
     try:
-        result=OpenAICompatibleImageProvider(httpx,secret,endpoint).edit(AssetGenerationRequest(body.provider_id,body.model_id,body.prompt,str(uuid.uuid4())),body.images,size=body.size,quality=body.quality,output_format=body.output_format)
+        provider=OpenAICompatibleImageProvider(httpx,secret,endpoint)
+        _assert_manual_media_egress(body,provider,x_session_token,x_branch_id)
+        result=provider.edit(AssetGenerationRequest(body.provider_id,body.model_id,body.prompt,str(uuid.uuid4())),body.images,size=body.size,quality=body.quality,output_format=body.output_format)
     except ValueError as exc: raise HTTPException(400,{"code":"IMAGE_EDIT_INVALID","message":str(exc)})
     except Exception: raise HTTPException(502,{"code":"IMAGE_EDIT_FAILED","message":"图片编辑失败，请检查 Provider 或参考图。"})
     return {"provider_id":result.provider_id,"model_id":result.model_id,"asset_uri":result.asset_uri,"prompt":body.prompt,"reference_count":len(body.images),"created_at":__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}
@@ -2112,6 +2163,7 @@ def synthesize_speech(body:SpeechSynthesizeIn,x_session_token:str|None=Header(No
     try:
         import httpx
         provider_id,default_model,provider=resolve_provider(body.provider_id,'TTS',credential_vault,httpx);model_id=body.model_id.strip() or default_model
+        _assert_manual_media_egress(body,provider,x_session_token,x_branch_id)
         result=provider.generate(AudioGenerationRequest(provider_id,model_id,'TTS',body.text,str(uuid.uuid4()),voice=body.voice,parameters={"emotion":body.emotion}))
         payload={'provider_id':result.provider_id,'model_id':result.model_id,'voice':body.voice,'emotion':body.emotion,'audio_uri':result.audio_uri,'character_id':body.character_id,'chapter_id':body.chapter_id,'text':body.text,'created_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat()}
         if body.novel_id:
@@ -2158,8 +2210,10 @@ def generate_audio(body:AudioGenerateIn,x_session_token:str|None=Header(None,ali
         import httpx
         provider_id,default_model,provider=resolve_provider(body.provider_id,body.capability,credential_vault,httpx)
         model_id=body.model_id.strip() or default_model
+        _assert_manual_media_egress(body,provider,x_session_token,x_branch_id)
         result=provider.generate(AudioGenerationRequest(provider_id,model_id,body.capability,body.prompt,str(uuid.uuid4()),source_audio_uri=body.source_audio_uri,source_video_uri=body.source_video_uri,duration_seconds=body.duration_seconds,parameters=body.parameters))
         return {'domain':'AUDIO','kind':body.capability,'provider_id':result.provider_id,'model_id':result.model_id,'audio_uri':result.audio_uri,'remote_task_id':result.remote_task_id,'status':result.status}
+    except HTTPException: raise
     except ValueError as exc: raise HTTPException(503,{'code':'AUDIO_PROVIDER_UNAVAILABLE','message':str(exc)})
     except Exception: raise HTTPException(502,{'code':'AUDIO_GENERATION_FAILED','message':'音频生成失败'})
 @router.get("/novels/{nid}/image-generations")
@@ -2420,7 +2474,7 @@ def update_motion_provider(nid:str,screenplay_id:str,task_id:str,body:MotionProv
     _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.update_motion_provider,nid,screenplay_id,task_id,body.provider_id,body.model_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/execute",dependencies=[Depends(_screenplay_route_guard)])
 def execute_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.execute_motion_task,nid,screenplay_id,task_id)
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(lambda: screenplay_service.execute_motion_task(nid,screenplay_id,task_id,reauthorize=lambda: _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id)))
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/cancel",dependencies=[Depends(_screenplay_route_guard)])
 def cancel_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
     _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.cancel_motion_task,nid,screenplay_id,task_id)
@@ -2513,7 +2567,8 @@ def create_asset_tasks(nid:str,screenplay_id:str):return guard(screenplay_servic
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}",dependencies=[Depends(_screenplay_route_guard)])
 def update_asset_task(nid:str,screenplay_id:str,task_id:str,body:AssetTaskIn):return guard(screenplay_service.update_asset_task,nid,screenplay_id,task_id,body.model_dump())
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/execute",dependencies=[Depends(_screenplay_route_guard)])
-def execute_asset_task(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.execute_asset_task,nid,screenplay_id,task_id)
+def execute_asset_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
+    return guard(lambda: screenplay_service.execute_asset_task(nid,screenplay_id,task_id,reauthorize=lambda: _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id)))
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/retry",dependencies=[Depends(_screenplay_route_guard)])
 def retry_asset_task(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.retry_asset_task,nid,screenplay_id,task_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/recover",dependencies=[Depends(_screenplay_route_guard)])
@@ -3283,6 +3338,7 @@ screenplay_service.asset_library=asset_library_service
 class MotionPrivacyIn(BaseModel):
     privacy_level:str=Field(pattern='^(LOCAL_ONLY|CLOUD_ALLOWED)$')
     prompt_sha256:str=Field(pattern='^[a-f0-9]{64}$')
+    request_sha256:str|None=Field(default=None,pattern='^[a-f0-9]{64}$')
 
 @router.get('/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy')
 def motion_privacy_review(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
@@ -3292,7 +3348,7 @@ def motion_privacy_review(nid:str,screenplay_id:str,task_id:str,x_session_token:
 @router.put('/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy')
 def update_motion_privacy(nid:str,screenplay_id:str,task_id:str,body:MotionPrivacyIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_motion(nid,screenplay_id,x_session_token,'domain.write',x_branch_id)
-    return guard(screenplay_service.update_motion_privacy,nid,screenplay_id,task_id,body.privacy_level,body.prompt_sha256)
+    return guard(screenplay_service.update_motion_privacy,nid,screenplay_id,task_id,body.privacy_level,body.prompt_sha256,body.request_sha256)
 
 class SourcePrivacyIn(BaseModel):
     privacy_level: str

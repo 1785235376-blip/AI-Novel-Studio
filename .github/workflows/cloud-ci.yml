@@ -159,7 +159,7 @@ jobs:
         run: |
           set -o pipefail
           pnpm exec playwright test --config playwright.visual.config.ts \
-            --grep 'shell geometry|compact desktop' --update-snapshots=none \
+            --grep 'shell geometry|compact desktop|Local AI' --update-snapshots=none \
             --reporter=list,junit 2>&1 | tee "$CI_RECEIPTS/geometry.log"
       - name: Install isolated backend for business browser journeys
         if: success() || failure()

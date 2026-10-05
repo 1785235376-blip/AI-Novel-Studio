@@ -90,6 +90,21 @@ def assert_project_source_policies(novel_repository, novel_id):
     if novel_repository is None or not hasattr(novel_repository, "get_context_sources"):
         raise ValueError("project source policy authority is unavailable")
     sources = novel_repository.get_context_sources(novel_id)
+    if not isinstance(sources, dict):
+        raise ValueError("project source policy is invalid")
+    # Project/outline restrictions are independent of an excerpt approval.
+    # Older records may omit these optional policies; an explicit unknown or
+    # restrictive value may never be overridden by a chapter-level approval.
+    project_values = [sources.get("novel"), sources.get("outline")]
+    for method in ("get", "get_outline"):
+        reader = getattr(novel_repository, method, None)
+        if callable(reader):
+            project_values.append(reader(novel_id))
+    for value in project_values:
+        if value is not None and not isinstance(value, dict):
+            raise ValueError("project source policy is invalid")
+        if value and any(key in value and normalize_privacy(value[key]) != "CLOUD_ALLOWED" for key in ("privacy_level", "privacy")):
+            raise ValueError("项目或大纲限制原文外发，请使用本地模型。")
     for name in ("characters", "locations", "secrets", "foreshadowing", "canon", "timeline", "relationships"):
         rows = sources.get(name, [])
         if hasattr(novel_repository, "get_data_set") and name != "secrets":
@@ -99,3 +114,25 @@ def assert_project_source_policies(novel_repository, novel_id):
         for row in rows:
             if not isinstance(row, dict) or normalize_privacy(row.get("privacy_level", row.get("privacy"))) != "CLOUD_ALLOWED":
                 raise ValueError("项目含限制外发或尚未确认隐私的资料，请使用本地模型。")
+
+
+def assert_current_manuscript_egress(chapters, novels, novel_id, captured_chapter,
+                                    branch_id=None, reauthorize=None, root=None):
+    """Final dispatch check for raw text, bound to current persisted authority.
+
+    Call after route preparation and again at the model node boundary. Historical
+    snapshots cannot inherit approval from a newer chapter revision. No caller
+    supplied consent flag overrides project or record restrictions.
+    """
+    if reauthorize is not None:
+        reauthorize()
+    repository = getattr(novels, "novels", novels)
+    assert_project_source_policies(repository, novel_id)
+    current = chapters.get(captured_chapter["id"])
+    if (current.get("novel_id") != novel_id
+            or current.get("version") != captured_chapter.get("version")
+            or content_digest(current) != content_digest(captured_chapter)):
+        raise ValueError("正文版本或内容已改变，请重新审核来源。")
+    if effective_source_privacy(current, branch_id, root) != "CLOUD_ALLOWED":
+        raise ValueError("正文当前版本尚未允许云端使用，请使用本地模型或重新审核。")
+    return current

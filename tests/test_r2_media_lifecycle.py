@@ -185,6 +185,7 @@ def test_image_review_queue_restarts_scopes_and_accepts_only_decoded_results(tmp
     if not shutil.which('ffmpeg'):pytest.skip('ffmpeg required for real image validation')
     registry=AssetProviderRegistry()
     class Provider:
+        local=True  # Recording-only fixture; no external provider.
         def generate(self,request):return AssetGenerationResult('fixture','fixture','data:image/png;base64,'+base64.b64encode(png_bytes()).decode())
     registry.register('fixture',Provider());service=ImageJobService(tmp_path);assets=AssetLibraryService(tmp_path)
     job=service.create('novel-a','branch-a',{'provider_id':'fixture','model_id':'fixture','prompt':'CC0 synthetic swatch','parameters':{}},'key')
@@ -198,14 +199,16 @@ def test_image_review_queue_restarts_scopes_and_accepts_only_decoded_results(tmp
 
 
 def test_video_late_submission_cannot_resurrect_cancelled_task():
-    from test_phase1_video_runtime import Repo,task
+    from test_phase1_video_runtime import Repo,task,approve_synthetic_motion
     repo=Repo(task());started,release=threading.Event(),threading.Event()
     class Provider:
+        local=True  # Recording-only fixture; no external provider.
         def generate(self,request):started.set();assert release.wait(5);return VideoGenerationResult('video','model','https://cdn.example/late.mp4','remote-late','SUCCEEDED')
         def cancel(self,remote):self.cancelled=remote
     provider=Provider();service=ScreenplayService(repo,object(),video_providers={'video':provider})
+    approve_synthetic_motion(service,'novel-a')
     with ThreadPoolExecutor() as pool:
-        future=pool.submit(service.execute_motion_task,'novel-a','screenplay-1','motion-1');assert started.wait(5)
+        future=pool.submit(service.execute_motion_task,'novel-a','screenplay-1','motion-1',reauthorize=lambda:None);assert started.wait(5)
         service.cancel_motion_task('novel-a','screenplay-1','motion-1');release.set();future.result()
     final=repo.rows[0]['motion_tasks'][0]
     assert final['status']=='CANCELLED' and not final.get('result') and provider.cancelled=='remote-late'
@@ -263,6 +266,7 @@ def test_cloud_video_prompt_requires_explicit_hash_bound_review():
     from test_phase1_video_runtime import Repo,task
     from app.asset_providers import VideoGenerationResult
     class Provider:
+        local=True  # Recording-only fixture; no external provider.
         def __init__(self):self.calls=0
         def generate(self,request):self.calls+=1;return VideoGenerationResult('video','model',remote_task_id='remote',status='RUNNING')
     provider=Provider();repo=Repo(task(privacy_level='LOCAL_ONLY',cloud_approval_prompt_sha256=None));service=ScreenplayService(repo,object(),video_providers={'video':provider})
@@ -270,8 +274,8 @@ def test_cloud_video_prompt_requires_explicit_hash_bound_review():
     assert provider.calls==0
     review=service.motion_privacy('novel-a','screenplay-1','motion-1')
     with pytest.raises(ValueError,match='changed'):service.update_motion_privacy('novel-a','screenplay-1','motion-1','CLOUD_ALLOWED','0'*64)
-    service.update_motion_privacy('novel-a','screenplay-1','motion-1','CLOUD_ALLOWED',review['prompt_sha256'])
-    service.execute_motion_task('novel-a','screenplay-1','motion-1');assert provider.calls==1
+    service.update_motion_privacy('novel-a','screenplay-1','motion-1','CLOUD_ALLOWED',review['prompt_sha256'],review['request_sha256'])
+    service.execute_motion_task('novel-a','screenplay-1','motion-1',reauthorize=lambda:None);assert provider.calls==1
 
 
 def test_audio_cloud_uses_reviewed_source_and_rechecks_drift_before_dispatch(tmp_path,monkeypatch):

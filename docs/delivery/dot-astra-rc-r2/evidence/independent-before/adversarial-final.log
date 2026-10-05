@@ -1,0 +1,241 @@
+F.FFFFFFFF                                                               [100%]
+=================================== FAILURES ===================================
+_________ test_local_stale_draft_accept_must_not_overwrite_newer_edit __________
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/r2-independent-evidence/eb165609/adversarial-final2-tmp/test_local_stale_draft_accept_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7effc6d96b40>
+
+    def test_local_stale_draft_accept_must_not_overwrite_newer_edit(tmp_path,monkeypatch):
+        manager,bundle,novel,chapter=manager_setup(tmp_path,monkeypatch)
+        job=Job('stale-polish','polish',novel['id'],chapter['id'],'','LOCAL_ONLY',status='COMPLETED',output='OLD AI DRAFT',base_chapter_version=chapter['version'])
+        manager.jobs[job.id]=job
+        current=manager.chapters.save(chapter['id'],{'content':'NEWER USER EDIT','version':chapter['version']})
+>       with pytest.raises(VersionConflict):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'app.repositories.chapter_repository.VersionConflict'>
+
+../r2-independent-evidence/eb165609/test_audit_adversarial.py:44: Failed
+____ test_audiobook_cancelled_during_provider_resolution_must_not_dispatch _____
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/r2-independent-evidence/eb165609/adversarial-final2-tmp/test_audiobook_cancelled_durin0')
+
+    def test_audiobook_cancelled_during_provider_resolution_must_not_dispatch(tmp_path):
+        service,store,assets,chapter,job=audio_setup(tmp_path)
+        voice=FixtureVoice()
+        def resolve(_):
+            service.transition('novel-a',job['id'],'CANCELLED')
+            return 'synthetic','fixture',voice
+        result=service.execute('novel-a',job['id'],chapter,resolve)
+        assert result['status']=='CANCELLED'
+>       assert not voice.requests, 'Provider called after cancellation was persisted before dispatch'
+E       AssertionError: Provider called after cancellation was persisted before dispatch
+E       assert not [AudioGenerationRequest(provider_id='synthetic', model_id='fixture', capability='TTS', prompt='First sentence.', task_...urce_video_uri=None, duration_seconds=None, parameters={'emotion': 'neutral', 'speed': 1.0, 'response_format': 'wav'})]
+E        +  where [AudioGenerationRequest(provider_id='synthetic', model_id='fixture', capability='TTS', prompt='First sentence.', task_...urce_video_uri=None, duration_seconds=None, parameters={'emotion': 'neutral', 'speed': 1.0, 'response_format': 'wav'})] = <test_r2_media_lifecycle.FixtureVoice object at 0x7effc6da6120>.requests
+
+../r2-independent-evidence/eb165609/test_audit_adversarial.py:68: AssertionError
+__ test_generation_rejects_independent_project_or_outline_restriction[novel] ___
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/r2-independent-evidence/eb165609/adversarial-final2-tmp/test_generation_rejects_indepe0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7effc6da5730>
+source = 'novel'
+
+    @pytest.mark.parametrize('source',['novel','outline'])
+    def test_generation_rejects_independent_project_or_outline_restriction(tmp_path,monkeypatch,source):
+        manager,chapter,captured,_=rig(monkeypatch,tmp_path,approve=True)
+        novels=S(get_context_sources=lambda _:{'novel':{'privacy_level':'LOCAL_ONLY'} if source=='novel' else {},'secrets':[]},get_data_set=lambda *a:[],get=lambda _:{'privacy_level':'LOCAL_ONLY'} if source=='novel' else {},get_outline=lambda _:{'privacy_level':'LOCAL_ONLY'} if source=='outline' else {})
+        manager.contexts.novels=novels
+        job=Job('project-policy','continue','n','n:1','Continue','QUALITY')
+        manager._run(job)
+>       assert captured==[], 'Restricted project raw chapter reached outbound request'
+E       AssertionError: Restricted project raw chapter reached outbound request
+E       assert ['---\nname: ...APTER_CANARY'] == []
+E
+E         Left contains one more item: '---\nname: writer\nversion: 0.1.0\ndescription: 按 Beat Sheet 创作正文\nlast_updated: 2026-08-09\nmodel_notes: 文风仅取自当前小说 S...\nContinue the chapter without repeating it. Continue\n\nCONTEXT:\n{"chapter": 1}\n\nSOURCE:\nSYNTHETIC_CHAPTER_CANARY'
+E         Use -v to get more diff
+
+../r2-independent-evidence/eb165609/test_audit_adversarial.py:78: AssertionError
+_ test_generation_rejects_independent_project_or_outline_restriction[outline] __
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/r2-independent-evidence/eb165609/adversarial-final2-tmp/test_generation_rejects_indepe1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7effc6da18b0>
+source = 'outline'
+
+    @pytest.mark.parametrize('source',['novel','outline'])
+    def test_generation_rejects_independent_project_or_outline_restriction(tmp_path,monkeypatch,source):
+        manager,chapter,captured,_=rig(monkeypatch,tmp_path,approve=True)
+        novels=S(get_context_sources=lambda _:{'novel':{'privacy_level':'LOCAL_ONLY'} if source=='novel' else {},'secrets':[]},get_data_set=lambda *a:[],get=lambda _:{'privacy_level':'LOCAL_ONLY'} if source=='novel' else {},get_outline=lambda _:{'privacy_level':'LOCAL_ONLY'} if source=='outline' else {})
+        manager.contexts.novels=novels
+        job=Job('project-policy','continue','n','n:1','Continue','QUALITY')
+        manager._run(job)
+>       assert captured==[], 'Restricted project raw chapter reached outbound request'
+E       AssertionError: Restricted project raw chapter reached outbound request
+E       assert ['---\nname: ...APTER_CANARY'] == []
+E
+E         Left contains one more item: '---\nname: writer\nversion: 0.1.0\ndescription: 按 Beat Sheet 创作正文\nlast_updated: 2026-08-09\nmodel_notes: 文风仅取自当前小说 S...\nContinue the chapter without repeating it. Continue\n\nCONTEXT:\n{"chapter": 1}\n\nSOURCE:\nSYNTHETIC_CHAPTER_CANARY'
+E         Use -v to get more diff
+
+../r2-independent-evidence/eb165609/test_audit_adversarial.py:78: AssertionError
+_____ test_agent_fact_revocation_during_route_preparation_must_block_send ______
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/r2-independent-evidence/eb165609/adversarial-final2-tmp/test_agent_fact_revocation_dur0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7effc6da1580>
+
+    def test_agent_fact_revocation_during_route_preparation_must_block_send(tmp_path,monkeypatch):
+        from app.services.agent_context_service import AgentContextService
+        from app.services.agent_job_service import AgentJobService
+        from app.agents import agent_runner
+        from app.model_runtime import TextGenerationResponse,TextModelNodeOutput
+        manager,bundle,novel,chapter=manager_setup(tmp_path,monkeypatch)
+        payload={'name':'PRIVATE_FACT_CANARY','privacy_level':'CLOUD_ALLOWED'}
+        bundle.novels.upsert_character(novel['id'],'fact',payload)
+        contexts=AgentContextService(bundle.novels,bundle.chapters,manager.contexts)
+        captured=[]
+        class Node:
+            def execute(self,value):
+                captured.append(value.request.prompt)
+                response=TextGenerationResponse('{}','completed','remote','model')
+                return TextModelNodeOutput(response.text,response,None)
+        def prepare(*args):
+            bundle.novels.upsert_character(novel['id'],'fact',{**payload,'privacy_level':'LOCAL_ONLY'})
+            return Node()
+        runtime=S(is_remote_text_provider=lambda _:True,prepare_text_route=prepare,providers={})
+        service=AgentJobService(bundle.generations,contexts,bundle.novels,runtime,agent_runner)
+        job=service.create('planner',novel['id'],1,provider='remote',model='model',execution_mode='model')
+        service.execute(job['id'])
+>       assert not captured, 'The persisted revocation preceded node.execute, but its old prompt was sent'
+E       AssertionError: The persisted revocation preceded node.execute, but its old prompt was sent
+E       assert not ['---\nname: plot_planner\nversion: 0.1.0\ndescription: 生成章节 Beat Sheet\nlast_updated: 2026-08-09\nmodel_notes: Hybrid...T06:09:07.778518+00:00"}\n\nReturn JSON only with keys: schema, agent_id, summary, proposals, findings, context_hash.']
+
+../r2-independent-evidence/eb165609/test_audit_adversarial.py:103: AssertionError
+______ test_image_cancelled_during_provider_resolution_must_not_dispatch _______
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/r2-independent-evidence/eb165609/adversarial-final2-tmp/test_image_cancelled_during_pr0')
+
+    def test_image_cancelled_during_provider_resolution_must_not_dispatch(tmp_path):
+        from app.services.image_job_service import ImageJobService
+        from app.asset_providers import AssetGenerationResult
+        service=ImageJobService(tmp_path)
+        job=service.create('n',None,{'provider_id':'synthetic','model_id':'fixture','prompt':'PRIVATE_IMAGE_PROMPT'})
+        captured=[]
+        class Provider:
+            def generate(self,request):
+                captured.append(request)
+                return AssetGenerationResult('synthetic','fixture','data:image/png;base64,AA==')
+        class Registry:
+            def get(self,_):
+                service.transition('n',None,job['id'],'CANCELLED')
+                return Provider()
+        result=service.execute('n',None,job['id'],Registry())
+        assert result['status']=='CANCELLED'
+>       assert captured==[], 'Image request dispatched after persisted cancellation'
+E       AssertionError: Image request dispatched after persisted cancellation
+E       assert [AssetGenerat...arameters={})] == []
+E
+E         Left contains one more item: AssetGenerationRequest(provider_id='synthetic', model_id='fixture', prompt='PRIVATE_IMAGE_PROMPT', task_id='51626e46-c048-4fa0-abb1-7cfb38bba1d7', parameters={})
+E         Use -v to get more diff
+
+../r2-independent-evidence/eb165609/test_audit_adversarial.py:122: AssertionError
+______ test_audiobook_rechecks_source_privacy_after_project_policy_check _______
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/r2-independent-evidence/eb165609/adversarial-final2-tmp/test_audiobook_rechecks_source0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7effc6d8f1d0>
+
+    def test_audiobook_rechecks_source_privacy_after_project_policy_check(tmp_path,monkeypatch):
+        from app.services.audiobook_service import AudiobookService
+        from app.audio_production_store import AudioProductionStore
+        from app.services.asset_library_service import AssetLibraryService
+        object.__setattr__(settings,'novel_data',tmp_path)
+        chapter={'id':'n:1','novel_id':'n','version':1,'content':'SYNTHETIC_AUDIO_SECRET'}
+        review_source_privacy(chapter,None,'author','CLOUD_ALLOWED',1,content_digest(chapter))
+        service=AudiobookService(AudioProductionStore(tmp_path/'audio'),AssetLibraryService(tmp_path))
+        job=service.queue('n',chapter,{'provider_id':'synthetic','model_id':'fixture'},[])
+        voice=FixtureVoice();voice.local=False
+        def check_policy():
+            review_source_privacy(chapter,None,'author','LOCAL_ONLY',1,content_digest(chapter))
+        try:service.execute('n',job['id'],chapter,lambda _:('synthetic','fixture',voice),lambda:chapter,check_policy)
+        except ValueError:pass
+>       assert not voice.requests, 'Source policy was revoked before dispatch but audio text was sent'
+E       AssertionError: Source policy was revoked before dispatch but audio text was sent
+E       assert not [AudioGenerationRequest(provider_id='synthetic', model_id='fixture', capability='TTS', prompt='SYNTHETIC_AUDIO_SECRET'...urce_video_uri=None, duration_seconds=None, parameters={'emotion': 'neutral', 'speed': 1.0, 'response_format': 'wav'})]
+E        +  where [AudioGenerationRequest(provider_id='synthetic', model_id='fixture', capability='TTS', prompt='SYNTHETIC_AUDIO_SECRET'...urce_video_uri=None, duration_seconds=None, parameters={'emotion': 'neutral', 'speed': 1.0, 'response_format': 'wav'})] = <test_r2_media_lifecycle.FixtureVoice object at 0x7effc6d8c650>.requests
+
+../r2-independent-evidence/eb165609/test_audit_adversarial.py:139: AssertionError
+____ test_concurrent_continue_accept_must_create_only_one_pending_proposal _____
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/r2-independent-evidence/eb165609/adversarial-final2-tmp/test_concurrent_continue_accep0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7effc6d8fc50>
+
+    def test_concurrent_continue_accept_must_create_only_one_pending_proposal(tmp_path,monkeypatch):
+        manager,bundle,novel,chapter=manager_setup(tmp_path,monkeypatch)
+        job=Job('repeat-continue-proposal','continue',novel['id'],chapter['id'],'','LOCAL_ONLY',status='COMPLETED',output='ONE NEW CHAPTER',base_chapter_version=chapter['version'])
+        manager.jobs[job.id]=job
+        entered,second_entered,release=Event(),Event(),Event()
+        gate=Lock();count=[0]
+        original=manager.chapters.create
+        def create(*args):
+            with gate:
+                count[0]+=1
+                if count[0]==1:entered.set()
+                else:second_entered.set()
+            assert release.wait(5)
+            return original(*args)
+        monkeypatch.setattr(manager.chapters,'create',create)
+        def accept():
+            try:return manager.accept(job.id)
+            except (ValueError,VersionConflict) as exc:return type(exc).__name__
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            first=pool.submit(accept);assert entered.wait(3)
+            second=pool.submit(accept)
+            # Old code lets second enter create; a correctly serialized acceptance
+            # blocks it, so release the first after a bounded opportunity either way.
+            second_entered.wait(0.25);release.set()
+            results=[first.result(),second.result()]
+        pending=bundle.canon.list_pending(novel['id'])
+>       assert len(pending)==1, {'pending_count':len(pending),'accepted_results':sum(isinstance(result,dict) for result in results)}
+E       AssertionError: {'accepted_results': 2, 'pending_count': 2}
+E       assert 2 == 1
+E        +  where 2 = len([{'chapter': 2, 'id': 'fc02c2f4-e08a-438f-bd31-6e1a318f82bc', 'novel_id': 'synthetic-acceptance-audit', 'proposals': [...sals': [{'fact': 'AI draft introduced a possible lasting story fact', 'source_job': 'repeat-continue-proposal'}], ...}])
+
+../r2-independent-evidence/eb165609/test_audit_adversarial.py:168: AssertionError
+______ test_adaptation_cloud_generation_cannot_send_unreviewed_manuscript ______
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/r2-independent-evidence/eb165609/adversarial-final2-tmp/test_adaptation_cloud_generati0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7effc6d96930>
+
+    def test_adaptation_cloud_generation_cannot_send_unreviewed_manuscript(tmp_path,monkeypatch):
+        from app.services.adaptation_service import AdaptationService
+        from app.agents import agent_runner
+        from app.model_runtime import TextGenerationResponse,TextModelNodeOutput
+        from app.source_privacy import effective_source_privacy
+        manager,bundle,novel,chapter=manager_setup(tmp_path,monkeypatch)
+        captured=[]
+        class Node:
+            def execute(self,value):
+                captured.append(value.request.prompt)
+                response=TextGenerationResponse('{}','completed','remote','model')
+                return TextModelNodeOutput(response.text,response,None)
+        runtime=S(is_remote_text_provider=lambda _:True,prepare_text_route=lambda *a:Node(),providers={})
+        service=AdaptationService(bundle.novels,bundle.chapters,runtime,agent_runner)
+        proposal=service.create(novel['id'],'LITERARY',title='Synthetic adaptation result')
+        service.approve(novel['id'],proposal['id'])
+        service.materialize(novel['id'],proposal['id'])
+        task=service.get(novel['id'],proposal['id'])['execution_manifest'][0]
+        assert effective_source_privacy(chapter,None)=='LOCAL_ONLY'
+        service.generate_draft(novel['id'],proposal['id'],task['id'],'model','remote','model')
+>       assert not captured, 'Unreviewed LOCAL_ONLY chapter copied directly into adaptation outbound prompt'
+E       AssertionError: Unreviewed LOCAL_ONLY chapter copied directly into adaptation outbound prompt
+E       assert not ['---\nname: writer\nversion: 0.1.0\ndescription: 按 Beat Sheet 创作正文\nlast_updated: 2026-08-09\nmodel_notes: 文风仅取自当前小说 ...主题意象", "source_chapter_id": "synthetic-acceptance-audit:1", "source_version": 1}\n\nSOURCE:\nOriginal synthetic text.']
+
+../r2-independent-evidence/eb165609/test_audit_adversarial.py:191: AssertionError
+- generated xml file: /workspace/scratch/b8734129d01d/r2-independent-evidence/eb165609/adversarial-final.xml -
+=========================== short test summary info ============================
+FAILED ../r2-independent-evidence/eb165609/test_audit_adversarial.py::test_local_stale_draft_accept_must_not_overwrite_newer_edit
+FAILED ../r2-independent-evidence/eb165609/test_audit_adversarial.py::test_audiobook_cancelled_during_provider_resolution_must_not_dispatch
+FAILED ../r2-independent-evidence/eb165609/test_audit_adversarial.py::test_generation_rejects_independent_project_or_outline_restriction[novel]
+FAILED ../r2-independent-evidence/eb165609/test_audit_adversarial.py::test_generation_rejects_independent_project_or_outline_restriction[outline]
+FAILED ../r2-independent-evidence/eb165609/test_audit_adversarial.py::test_agent_fact_revocation_during_route_preparation_must_block_send
+FAILED ../r2-independent-evidence/eb165609/test_audit_adversarial.py::test_image_cancelled_during_provider_resolution_must_not_dispatch
+FAILED ../r2-independent-evidence/eb165609/test_audit_adversarial.py::test_audiobook_rechecks_source_privacy_after_project_policy_check
+FAILED ../r2-independent-evidence/eb165609/test_audit_adversarial.py::test_concurrent_continue_accept_must_create_only_one_pending_proposal
+FAILED ../r2-independent-evidence/eb165609/test_audit_adversarial.py::test_adaptation_cloud_generation_cannot_send_unreviewed_manuscript
+9 failed, 1 passed in 1.16s

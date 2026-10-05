@@ -6,7 +6,7 @@ import time
 from threading import Event
 from dataclasses import dataclass, field, replace as dc_replace
 from enum import Enum
-from typing import Any, Iterable, Mapping, Protocol
+from typing import Any, Callable, Iterable, Mapping, Protocol
 from uuid import UUID
 
 from .providers import Generation, LLMProvider, ProviderError
@@ -75,6 +75,7 @@ class TextGenerationRequest:
     metadata: Mapping[str, str] = field(default_factory=dict)
     job_id: str | None = None
     cancellation: Event | None = field(default=None, repr=False, compare=False)
+    dispatch_guard: Callable[[], None] | None = field(default=None, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         if not self.provider_id or not self.model_id or not self.prompt.strip():
@@ -317,6 +318,10 @@ class TextModelNode:
             raise ModelRuntimeError(RuntimeErrorCode.CAPABILITY_NOT_SUPPORTED, "当前模型不支持结构化输出")
         if request.cancellation is not None and request.cancellation.is_set():
             raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
+        if request.dispatch_guard is not None:
+            request.dispatch_guard()
+        if request.cancellation is not None and request.cancellation.is_set():
+            raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
         response = provider.generate_text(request)
         if request.cancellation is not None and request.cancellation.is_set():
             raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
@@ -332,6 +337,10 @@ class TextModelNode:
             raise ModelRuntimeError(RuntimeErrorCode.CAPABILITY_NOT_SUPPORTED, "当前模型不支持流式生成")
         terminal = False
         try:
+            if request.cancellation is not None and request.cancellation.is_set():
+                raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
+            if request.dispatch_guard is not None:
+                request.dispatch_guard()
             if request.cancellation is not None and request.cancellation.is_set():
                 raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, "已停止生成")
             for event in provider.stream_text(request):

@@ -1,0 +1,6 @@
+ISOLATED_TEST_ROOT=/workspace/scratch/b8734129d01d/r2-test.bQ5sJU
+........................................................................ [ 35%]
+........................................................................ [ 70%]
+............................................................             [100%]
+- generated xml file: /workspace/scratch/b8734129d01d/ai-novel-r2/docs/delivery/dot-astra-rc-r2/evidence/local-ai-backend.xml -
+204 passed, 1 warning in 10.23s

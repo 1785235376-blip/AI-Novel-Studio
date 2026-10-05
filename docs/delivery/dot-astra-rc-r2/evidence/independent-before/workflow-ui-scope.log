@@ -1,0 +1,42 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/r2-independent-eb165609/frontend
+
+ × src/novel/WorkflowPanel.independent-audit.test.tsx > discard old-project workflow response after changing projects
+   → expected <p><button …(1)></button></p> to be null
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/novel/WorkflowPanel.independent-audit.test.tsx > discard old-project workflow response after changing projects
+AssertionError: expected <p><button …(1)></button></p> to be null
+
+- Expected:
+null
+
++ Received:
+<p>
+  PRIVATE_PROJECT_A_WORKFLOW
+   ·
+  ACTIVE
+
+
+  <button
+    class="ui-button ui-button--ghost"
+  >
+    查看运行
+  </button>
+</p>
+
+ ❯ src/novel/WorkflowPanel.independent-audit.test.tsx:17:59
+     15|  await waitFor(()=>expect(api.workflows).toHaveBeenCalledWith('project…
+     16|  await act(async()=>finish({items:[{id:'private-a',title:'PRIVATE_PROJ…
+     17|  expect(screen.queryByText(/PRIVATE_PROJECT_A_WORKFLOW/)).toBeNull();
+       |                                                           ^
+     18| });
+     19|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  23:03:26
+   Duration  867ms (transform 77ms, setup 0ms, collect 174ms, tests 50ms, environment 358ms, prepare 91ms)

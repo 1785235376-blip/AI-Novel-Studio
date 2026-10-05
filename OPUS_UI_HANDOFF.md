@@ -82,3 +82,8 @@ Known visual follow-up: long workbench forms need visual polish, screenplay edit
 Under the subsequent user's visual-design authorization: improve spacing, alignment, hierarchy, labels, responsive domain layout, focus and accessibility within the existing component contracts. Keep domain tests and data behavior. Backend schemas, source permissions, identity, credential handling, migration/recovery, task state machines and provider dispatch are engineering boundaries, not visual-cleanup targets.
 
 Outstanding backend/provider/native verification remains listed in the readiness matrix; it is not silently reassigned to Opus.
+
+
+## Local AI Discovery supplement
+
+Model Center now consumes LocalAiDiscovery. Improve hierarchy and token spacing only; preserve separate Detect, Validate, Register, explicit Enable and task-only Launch, unknown/partial evidence, protected local paths, auth lockout, cancellation/late-response guards, license review and registration-only deletion. Declared, metadata-verified, workflow and real inference evidence must remain distinct. See LOCAL_AI_DISCOVERY.md and LOCAL_AI_WINDOWS_ACCEPTANCE.md.
