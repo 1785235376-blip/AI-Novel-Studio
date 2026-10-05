@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { api, ApiError, apiErrorView, type AgentContextPreview } from "../api";
+import { api, ApiError, apiErrorView, getCollaborationContext, type AgentContextPreview } from "../api";
 import { Badge, Button, EmptyState, Spinner, StatusMessage } from "../ui/primitives";
 import "./AiContextPreview.css";
 
@@ -14,6 +14,7 @@ type SourceCard = {
   value?: unknown;
   status: SourceStatus;
   summary?: string;
+  supportingOnly?: boolean;
   emptyHint: string;
 };
 
@@ -176,6 +177,7 @@ function sourceCards(
   const contextCanon = hasValue(contextCanonValue) ? contextCanonValue : canonQuery.data;
   add({
     id: "canon",
+    supportingOnly: !hasValue(contextCanonValue),
     label: "已确认 Canon",
     emptyHint: allowRelatedQueries
       ? "在故事资料库 → Canon 中审核并确认事实。"
@@ -191,12 +193,14 @@ function sourceCards(
   });
   add({
     id: "goal",
+    supportingOnly: true,
     label: "当前写作目标",
     emptyHint: "在概览 → 写作目标中设置目标字数、章节数或截止日期。",
     ...querySource(goalQuery.data, goalQuery, "empty", revealLabels),
   });
   add({
     id: "rules",
+    supportingOnly: hasValue(approvedRules),
     label: "世界规则约束",
     emptyHint: "在一致性检查 → 世界规则中审核并批准规则。",
     ...querySource(rulesValue, worldRulesSourceQuery, "unconfigured", revealLabels),
@@ -217,6 +221,7 @@ function SourceRow({ source }: { source: SourceCard }) {
         <strong>{source.label}</strong>
         <Badge tone={statusTones[source.status]}>{statusLabels[source.status]}</Badge>
       </div>
+      {source.supportingOnly && <p className="novel-help">辅助查询资料；未证明会进入本次生成请求。</p>}
       {source.status === "loaded" && (
         <p className="novel-help">{source.summary || valueSummary(source.value)}</p>
       )}
@@ -236,6 +241,7 @@ function SourceRow({ source }: { source: SourceCard }) {
 export function AiContextPreviewPanel({
   novelId,
   chapterNumber,
+  chapterVersion,
   operation,
   instruction,
   defaultTarget = "local",
@@ -243,21 +249,26 @@ export function AiContextPreviewPanel({
 }: {
   novelId?: string;
   chapterNumber?: number;
+  chapterVersion?: number;
   operation: ContextPreviewOperation;
   instruction: string;
   defaultTarget?: ContextPreviewTarget;
   disabled?: boolean;
 }) {
+  const currentContext = getCollaborationContext();
+  const scopeKey = JSON.stringify([currentContext.sessionToken, currentContext.scope, currentContext.actor]);
   const [target, setTarget] = useState<ContextPreviewTarget>(defaultTarget);
   const [request, setRequest] = useState<{
     operation: ContextPreviewOperation;
     instruction: string;
     target: ContextPreviewTarget;
+    scopeKey: string;
+    chapterVersion?: number;
   }>();
   const [refreshNonce, setRefreshNonce] = useState(0);
   useEffect(() => {
     setRequest(undefined);
-  }, [novelId, chapterNumber]);
+  }, [novelId, chapterNumber, chapterVersion, scopeKey]);
   useEffect(() => {
     setTarget(defaultTarget);
   }, [defaultTarget]);
@@ -267,6 +278,8 @@ export function AiContextPreviewPanel({
   const contextQuery = useQuery({
     queryKey: [
       "ai-context-preview",
+      scopeKey,
+      chapterVersion,
       novelId,
       chapterNumber,
       request?.operation,
@@ -283,24 +296,24 @@ export function AiContextPreviewPanel({
         request?.instruction || "",
         request?.target || target,
       ),
-    enabled: canPreview && !!request,
+    enabled: canPreview && !!request && request.scopeKey === scopeKey && request.chapterVersion === chapterVersion,
     retry: false,
   });
   const secondaryEnabled = canPreview && !!request && !!contextQuery.data;
   const goalQuery = useQuery({
-    queryKey: ["ai-context-preview-writing-goal", novelId, refreshNonce],
+    queryKey: ["ai-context-preview-writing-goal", novelId, scopeKey, chapterVersion, refreshNonce],
     queryFn: () => api.writingGoal(novelId!),
     enabled: secondaryEnabled,
     retry: false,
   });
   const canonQuery = useQuery({
-    queryKey: ["ai-context-preview-canon", novelId, refreshNonce],
+    queryKey: ["ai-context-preview-canon", novelId, scopeKey, chapterVersion, refreshNonce],
     queryFn: () => api.resource(novelId!, "canon"),
     enabled: secondaryEnabled && request?.target === "local",
     retry: false,
   });
   const worldRulesQuery = useQuery({
-    queryKey: ["ai-context-preview-world-rules", novelId, refreshNonce],
+    queryKey: ["ai-context-preview-world-rules", novelId, scopeKey, chapterVersion, refreshNonce],
     queryFn: () => api.worldRules(novelId!, "APPROVED"),
     enabled: secondaryEnabled && request?.target === "local",
     retry: false,
@@ -324,10 +337,10 @@ export function AiContextPreviewPanel({
     !!request &&
     request.operation === operation &&
     request.instruction === currentInstruction &&
-    request.target === target;
+    request.target === target && request.scopeKey === scopeKey && request.chapterVersion === chapterVersion;
   const refresh = () => {
     if (!canPreview) return;
-    setRequest({ operation, instruction: currentInstruction, target });
+    setRequest({ operation, instruction: currentInstruction, target, scopeKey, chapterVersion });
     setRefreshNonce((value) => value + 1);
   };
   const contextError = contextQuery.error
@@ -341,10 +354,10 @@ export function AiContextPreviewPanel({
       <header className="ai-context-preview__header">
         <div>
           <h3 id="ai-context-preview-title">AI Context Preview</h3>
-          <p className="novel-help">生成前查看本次角色上下文服务实际返回的资料。</p>
+          <p className="novel-help">角色上下文资料检查。它与写作生成的请求构造不同，不是最终发送预览。</p>
         </div>
         <Badge tone={requestIsCurrent && contextQuery.isSuccess ? "success" : "info"}>
-          {requestIsCurrent && contextQuery.isSuccess ? "已同步" : "生成前检查"}
+          {requestIsCurrent && contextQuery.isSuccess ? "资料已读取" : "资料检查"}
         </Badge>
       </header>
       <div className="ai-context-preview__controls">
@@ -388,7 +401,7 @@ export function AiContextPreviewPanel({
           <Button type="button" onClick={refresh} disabled={disabled}>重试读取</Button>
         </StatusMessage>
       )}
-      {canPreview && request && contextQuery.data && !contextQuery.error && (
+      {canPreview && request && request.scopeKey === scopeKey && request.chapterVersion === chapterVersion && contextQuery.data && !contextQuery.error && (
         <>
           {!requestIsCurrent && (
             <StatusMessage tone="warning">写作方式、附加要求或目标已变化；刷新后才会得到对应上下文。</StatusMessage>
@@ -400,7 +413,7 @@ export function AiContextPreviewPanel({
             <div><dt>Context Hash</dt><dd><code>{contextQuery.data.context_hash || "—"}</code></dd></div>
           </dl>
           {privacyOmissions && privacyOmissions.length > 0 && (
-            <StatusMessage tone="info">云端安全策略省略 {privacyOmissions.length} 项本地资料；未把省略内容伪装成已读取。</StatusMessage>
+            <StatusMessage tone="info">云端安全策略省略受限资料；不展示被排除来源的标识或数量。</StatusMessage>
           )}
           <ul className="ai-context-preview__sources" aria-label="AI 上下文来源">
             {cards.map((source) => <SourceRow key={source.id} source={source} />)}

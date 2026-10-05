@@ -3,6 +3,7 @@ import difflib,json,threading,uuid,time
 from dataclasses import dataclass,field,asdict
 from datetime import datetime,timezone
 from .agents import agent_runner
+from .author_request import AUTHOR_ROLES, build_author_request, request_digest, saved_source_matches, chapter_digest
 from .review import deterministic_review
 from .runtime import runtime
 from .structured_log import runtime_log
@@ -25,12 +26,19 @@ def utc():return datetime.now(timezone.utc).isoformat()
 class Job:
     id:str;operation:str;novel_id:str;chapter_id:str;instruction:str;profile:str;source:str="";requested_provider:str|None=None;requested_model:str|None=None;style:str="";status:str="QUEUED";output:str="";error:str|None=None;error_code:str|None=None;provider:str|None=None;model:str|None=None;issues:list=field(default_factory=list);latency_ms:int=0;base_chapter_version:int|None=None;variant_group_id:str|None=None;variant_index:int|None=None;actor_id:str|None=None;session_id:str|None=None;client_id:str|None=None;workspace_id:str|None=None;scope:dict|None=None;scope_type:str|None=None;scope_id:str|None=None;correlation_id:str|None=None;context_snapshot_id:str|None=None;created_at:str=field(default_factory=utc);updated_at:str=field(default_factory=utc);cancelled:threading.Event=field(default_factory=threading.Event,repr=False);condition:threading.Condition=field(default_factory=threading.Condition,repr=False)
     creation_records:list=field(default_factory=list)
+    expected_request_digest:str|None=None
+    base_chapter_digest:str|None=None
+    request_authorization:object=field(default=None,repr=False)
     usage:dict|None=None
     usage_status:str="UNKNOWN"
     execution_mode:str|None=None
     provider_reference_id:str|None=None
     route_decisions:list=field(default_factory=list)
-    def public(self):return {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at","creation_records","usage","usage_status","execution_mode","provider_reference_id","route_decisions")}
+    def public(self):
+        result = {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at","creation_records","usage","usage_status","execution_mode","provider_reference_id","route_decisions")}
+        if self.expected_request_digest:
+            result.update(expected_request_digest=self.expected_request_digest, base_chapter_digest=self.base_chapter_digest)
+        return result
 class JobManager:
     terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED","ACCEPTING","ACCEPTANCE_UNCERTAIN"}
     def __init__(self,generations=None,chapters=None,contexts=None,canon=None,memory_extractor=None,snapshot_required=None,collaboration_updates=None):
@@ -42,21 +50,28 @@ class JobManager:
             try:self.jobs[item["id"]]=Job(**{k:v for k,v in item.items() if k in Job.__dataclass_fields__ and k not in {"cancelled","condition"}})
             except Exception:continue
     def _persist(self,job):self.persistence.save(job.public())
-    def create(self,operation,payload,actor=None,scope=None):
+    def prepare_job(self,operation,payload,actor=None,scope=None,request_authorization=None):
         requested_provider=payload.get("provider_id");requested_model=payload.get("model_id")
         if bool(requested_provider)!=bool(requested_model):raise ValueError("provider_id and model_id must be selected together")
         job=Job(str(uuid.uuid4()),operation,payload["novel_id"],payload["chapter_id"],payload.get("instruction",""),payload.get("profile","LOCAL_ONLY"),payload.get("source",payload.get("selected_text","")),requested_provider,requested_model,payload.get("style",""))
         job.creation_records = [dict(row) for row in payload.get("creation_records", [])]
+        job.expected_request_digest = payload.get("expected_request_digest")
+        job.request_authorization = request_authorization
         job.variant_group_id = payload.get("variant_group_id")
         job.variant_index = payload.get("variant_index")
         # Capture the generation base before dispatch so the response, snapshot
         # and later AI_ACCEPT all refer to the same optimistic version.
-        job.base_chapter_version=self.chapters.get(job.chapter_id).get("version")
+        captured_chapter=self.chapters.get(job.chapter_id)
+        job.base_chapter_version=captured_chapter.get("version")
+        job.base_chapter_digest=chapter_digest(captured_chapter)
         if actor is not None:
             job.actor_id=actor.actor_id;job.session_id=actor.session_id;job.client_id=actor.client_id;job.workspace_id=actor.workspace_id;job.correlation_id=actor.effective_correlation_id
             if scope is not None:
                 job.scope={"kind":scope.kind.value,"workspace_id":scope.workspace_id,"project_id":scope.project_id,"storyline_id":scope.storyline_id,"branch_id":scope.branch_id}
                 job.scope_type=scope.kind.value;job.scope_id={"WORKSPACE":scope.workspace_id,"PROJECT":scope.project_id,"STORYLINE":scope.storyline_id,"BRANCH":scope.branch_id}[scope.kind.value]
+        return job
+    def create(self,operation,payload,actor=None,scope=None,request_authorization=None):
+        job=self.prepare_job(operation,payload,actor,scope,request_authorization)
         with self.lock:self.jobs[job.id]=job
         self._persist(job);threading.Thread(target=self._run,args=(job,),daemon=True).start();return job
     def _emit(self,job,chunk=""):
@@ -73,9 +88,11 @@ class JobManager:
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "章节不属于当前项目")
         if job.base_chapter_version is not None and chapter.get("version") != job.base_chapter_version:
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "章节已改变，请重新生成")
+        if job.expected_request_digest and chapter_digest(chapter) != job.base_chapter_digest:
+            raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "正文内容已改变，请重新检查。")
         if cloud and job.profile == "LOCAL_ONLY":
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "仅本地创作模式不允许云模型，请明确切换创作模式后重试。")
-        if cloud and job.source and job.source not in str(chapter.get("content") or ""):
+        if cloud and job.source and not saved_source_matches(chapter, job.source):
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "所选文本不属于已审核正文，请重新选择。")
         if cloud and effective_source_privacy(chapter,branch_id) != "CLOUD_ALLOWED":
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "正文尚未明确允许云端使用，请选择本地模型或先审核正文隐私。")
@@ -113,14 +130,35 @@ class JobManager:
             assert_current_manuscript_egress(self.chapters, getattr(self.contexts,"novels",None), job.novel_id, chapter, branch_id)
         return chapter
 
+    def prepare_author_request(self, job, route):
+        cloud = runtime.is_remote_text_provider(route.provider)
+        chapter = self._validate_outbound_sources(job, cloud)
+        context = self.contexts.for_chapter(job.chapter_id, job.instruction, cloud, job.operation)
+        request = build_author_request(job, route, chapter, context,
+            dispatch_guard=lambda: self._guard_author_request(job, route))
+        if job.expected_request_digest and request_digest(request, job, cloud) != job.expected_request_digest:
+            raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "预检内容、来源或授权已改变，请重新检查后生成。")
+        return chapter, dict(request.context), request
+
+    def _guard_author_request(self, job, route):
+        self._validate_outbound_sources(job, runtime.is_remote_text_provider(route.provider))
+        if job.expected_request_digest:
+            from .experimental.flags import require_flag
+            require_flag("author_context_inspector_v2")
+            if not callable(job.request_authorization):
+                raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "预检会话不可恢复，请重新检查。")
+            job.request_authorization()
+            if job.cancelled.is_set():
+                raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "生成已取消，请重新检查。")
+            # Late context/prompt/approval changes cannot ride an earlier receipt.
+            self.prepare_author_request(job, route)
+
     def _run(self,job):
         started=time.monotonic()
         try:
             if job.cancelled.is_set():job.status="CANCELLED";self._emit(job);return
             job.status="GENERATING";self._emit(job)
-            roles={"continue":"writer","rewrite":"writer","polish":"editor","brainstorm":"plot_planner","review":"continuity_reviewer"}
-            tasks={"continue":"Continue the chapter without repeating it.","rewrite":"Rewrite only the supplied selection.","polish":"Polish the supplied text without changing facts.","brainstorm":"Return concise story options.","review":"Review the chapter and list actionable issues."}
-            role=roles[job.operation]
+            role=AUTHOR_ROLES[job.operation]
             router=runtime.router(job.profile,role)
             if job.requested_provider and job.requested_model:router.routes[role]=[Route(job.requested_provider,job.requested_model)]
             last=None
@@ -131,20 +169,18 @@ class JobManager:
                 job.route_decisions.append(decision)
                 try:
                     if job.cancelled.is_set():job.status="CANCELLED";self._emit(job);return
+                    if job.expected_request_digest:
+                        self._guard_author_request(job, route)
                     if not runtime.packaged_author_route_ready(route.provider):
                         raise ModelRuntimeError(RuntimeErrorCode.TEXT_PROVIDER_NOT_CONFIGURED,"未配置可用文本模型，请先在设置中配置文本 Provider。",provider_id=route.provider)
                     node=runtime.prepare_text_route(route.provider,route.model)
-                    ch=self._validate_outbound_sources(job,cloud)
-                    context=self.contexts.for_chapter(job.chapter_id,job.instruction,cloud,job.operation)
-                    style_instruction=f"\n写作风格要求：{job.style}" if job.style else ""
-                    prompt=agent_runner.build_prompt(role,context,tasks[job.operation]+" "+job.instruction+style_instruction,job.source or ch["content"][-2000:])
+                    ch, context, request = self.prepare_author_request(job, route)
                     if self.snapshot_required:
                         snapshot=self.contexts.save_snapshot(job.chapter_id,ch.get("version",0),context,f"{role}:v1",route.model,actor_id=job.actor_id,session_id=job.session_id,scope_type=job.scope_type,scope_id=job.scope_id,generation_id=job.id,cloud=cloud)
                         if not snapshot:raise RuntimeError("Context snapshot persistence is required")
                         job.context_snapshot_id=snapshot["id"];self._persist(job)
-                    request=TextGenerationRequest(provider_id=route.provider,model_id=route.model,prompt=prompt,context=context,parameters=TextGenerationParameters(),metadata={"purpose":job.operation},job_id=job.id,cancellation=job.cancelled,dispatch_guard=lambda selected=route.provider: self._validate_outbound_sources(job,runtime.is_remote_text_provider(selected)))
                     # Recheck after potentially slow context/snapshot assembly.
-                    self._validate_outbound_sources(job,cloud)
+                    self._guard_author_request(job, route)
                     completed=False;dispatched=True;decision["status"]="DISPATCHED"
                     for event in node.stream(TextModelNodeInput(request)):
                         if event.event_type=="generation.cancelled" or job.cancelled.is_set():job.status="CANCELLED";self._emit(job);return

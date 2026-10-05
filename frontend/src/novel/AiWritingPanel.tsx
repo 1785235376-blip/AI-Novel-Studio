@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
-import { Badge, Button, EmptyState, Panel } from "../ui/primitives";
+import { Badge, Button, EmptyState, Panel, StatusMessage } from "../ui/primitives";
 import type { TextModel, TextRuntimeDiagnostics } from "../api";
 import type { TextModelSelection } from "../store";
 import { DeepSeekCredentialControl } from "./DeepSeekCredentialControl";
 import { AiContextPreviewPanel, type ContextPreviewTarget } from "./AiContextPreviewPanel";
+import { AuthorRequestPreviewPanel } from "./AuthorRequestPreviewPanel";
+import { authorRequestKey, type AuthorPreviewOptions, type AuthorPreviewReceipt, type AuthorRequestBody } from "./authorContextClient";
 import { GenerationWorkflowTimeline } from "./GenerationWorkflowTimeline";
 import "./novel.css";
 
@@ -261,6 +263,7 @@ export function AiWritingPanel({
   novelId,
   chapterNumber,
   contextTarget = "local",
+  authorPreview,
   draft,
   variants = [],
   activeVariant = 0,
@@ -297,6 +300,7 @@ export function AiWritingPanel({
   novelId?: string;
   chapterNumber?: number;
   contextTarget?: ContextPreviewTarget;
+  authorPreview?: AuthorPreviewOptions;
   draft?: AiDraft;
   variants?: AiVariantDraft[];
   activeVariant?: number;
@@ -325,6 +329,7 @@ export function AiWritingPanel({
     operation: AiOperation,
     instruction: string,
     style: string,
+    preview?: AuthorPreviewReceipt,
   ) => Promise<void> | void;
   onGenerateVariants?: (
     operation: AiOperation,
@@ -343,6 +348,17 @@ export function AiWritingPanel({
     [instruction, setInstruction] = useState(""),
     [style, setStyle] = useState(""),
     [variantCount, setVariantCount] = useState(1);
+  const [previewReceipt, setPreviewReceipt] = useState<AuthorPreviewReceipt>();
+  const previewBody: AuthorRequestBody | null = authorPreview?.enabled && novelId && selection ? {
+    novel_id: novelId, chapter_id: authorPreview.chapterId, chapter_version: authorPreview.chapterVersion,
+    operation, instruction: instruction.trim(), style: style.trim(), profile: authorPreview.profile,
+    provider_id: selection.providerId, model_id: selection.modelId,
+    source: authorPreview.source, selected_text: authorPreview.source,
+    style_profile_id: authorPreview.styleProfileId, plot_plan_id: authorPreview.plotPlanId,
+  } : null;
+  const previewCurrent = !!previewReceipt && !!previewBody && !!authorPreview?.saved &&
+    previewReceipt.requestKey === authorRequestKey(previewBody, authorPreview.context);
+
   const value = selection ? `${selection.providerId}:${selection.modelId}` : "";
   const state = aiExperienceState({
     selection: selection || undefined,
@@ -481,16 +497,21 @@ export function AiWritingPanel({
       <div className="style-presets" aria-label="写作风格预设">
         {stylePresets.map((preset) => <button key={preset} type="button" disabled={generating || cancelling} aria-pressed={style === preset} onClick={() => setStyle(preset)}>{preset}</button>)}
       </div>
-      {novelId && chapterNumber !== undefined && (
+      {authorPreview?.enabled && variantCount === 1 ? (
+        <AuthorRequestPreviewPanel body={previewBody} context={authorPreview.context} saved={authorPreview.saved}
+          disabled={generating || cancelling} onReceipt={setPreviewReceipt} />
+      ) : novelId && chapterNumber !== undefined && (
         <AiContextPreviewPanel
           novelId={novelId}
           chapterNumber={chapterNumber}
+          chapterVersion={authorPreview?.chapterVersion}
           operation={operation}
           instruction={instruction}
           defaultTarget={contextTarget}
           disabled={generating || cancelling}
         />
       )}
+      {authorPreview?.enabled && variantCount > 1 && <StatusMessage tone="warning">多方案生成会改变各候选指令，尚未接入逐方案真实预检。请改为单草稿后检查请求。</StatusMessage>}
       <div className="novel-ai-actions">
         {generating || cancelling ? (
           <Button type="button" disabled={cancelling} onClick={onCancel}>
@@ -499,12 +520,12 @@ export function AiWritingPanel({
         ) : (
           <Button
             variant="primary"
-            disabled={!canGenerate}
+            disabled={!canGenerate || !!authorPreview?.enabled && (variantCount !== 1 || !previewCurrent)}
             onClick={() => {
               const requestInstruction = instruction.trim();
               return variantCount > 1 && onGenerateVariants
                 ? onGenerateVariants(operation, requestInstruction, variantCount, style.trim())
-                : onGenerate(operation, requestInstruction, style.trim());
+                : authorPreview?.enabled ? onGenerate(operation, requestInstruction, style.trim(), previewReceipt) : onGenerate(operation, requestInstruction, style.trim());
             }}
           >{`生成${operationLabels[operation]}草稿`}</Button>
         )}

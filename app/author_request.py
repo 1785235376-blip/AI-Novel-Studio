@@ -1,0 +1,71 @@
+"""Single deterministic author request assembly and reviewable payload contract."""
+from __future__ import annotations
+import hashlib
+import json
+from dataclasses import asdict
+
+from .agents import agent_runner
+from .model_runtime import TextGenerationParameters, TextGenerationRequest
+
+AUTHOR_ROLES = {"continue": "writer", "rewrite": "writer", "polish": "editor", "brainstorm": "plot_planner", "review": "continuity_reviewer"}
+AUTHOR_TASKS = {"continue": "Continue the chapter without repeating it.", "rewrite": "Rewrite only the supplied selection.", "polish": "Polish the supplied text without changing facts.", "brainstorm": "Return concise story options.", "review": "Review the chapter and list actionable issues."}
+
+
+def build_author_request(job, route, chapter, context, dispatch_guard=None):
+    """No routing, persistence, context discovery or provider IO occurs here."""
+    context = _safe_audit_metadata(context)
+    role = AUTHOR_ROLES[job.operation]
+    style = f"\n写作风格要求：{job.style}" if job.style else ""
+    source = job.source or chapter["content"][-2000:]
+    prompt = agent_runner.build_prompt(role, context, AUTHOR_TASKS[job.operation] + " " + job.instruction + style, source)
+    return TextGenerationRequest(provider_id=route.provider, model_id=route.model, prompt=prompt, context=context,
+                                 parameters=TextGenerationParameters(), metadata={"purpose": job.operation},
+                                 job_id=job.id, cancellation=job.cancelled, dispatch_guard=dispatch_guard)
+
+
+def request_payload(request):
+    """Exact adapter-facing data; orchestration-only IDs/guards are excluded."""
+    return {"provider_id": request.provider_id, "model_id": request.model_id, "prompt": request.prompt,
+            "system_instruction": request.system_instruction, "context": dict(request.context),
+            "parameters": {**asdict(request.parameters), "stop_sequences": list(request.parameters.stop_sequences)}, "structured_output_schema": request.structured_output_schema,
+            "metadata": dict(request.metadata)}
+
+
+def request_digest(request, job, cloud=False):
+    # Scope and version bind a receipt even if identical text exists elsewhere.
+    value = {"request": request_payload(request), "novel_id": job.novel_id, "chapter_id": job.chapter_id,
+             "chapter_version": job.base_chapter_version, "chapter_digest": job.base_chapter_digest, "actor_id": job.actor_id, "workspace_id": job.workspace_id,
+             "session_id": job.session_id, "scope": job.scope, "profile": job.profile,
+             "creation_records": job.creation_records, "route_locality": "cloud" if cloud else "local"}
+    return hashlib.sha256(json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+
+
+def _safe_audit_metadata(value):
+    """Omission auditing must not leak excluded source identifiers to an adapter."""
+    if isinstance(value, dict):
+        return {key: (["SOURCE_PRIVACY_POLICY"] if item else [])
+                if key in {"privacy_omissions", "omitted_local_only"}
+                else _safe_audit_metadata(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_safe_audit_metadata(item) for item in value]
+    return value
+
+
+def saved_source_matches(chapter, source):
+    if source in str(chapter.get("content") or ""):
+        return True
+    document = chapter.get("document")
+    if not isinstance(document, dict) or document.get("type") != "doc":
+        return False
+    # Selection uses the editor projection, while persisted content is Markdown.
+    # Never accept an independently changed document under an old content review.
+    from .document import document_to_markdown
+    from .experimental.ux import chapter_text
+    if document_to_markdown(document).strip() != str(chapter.get("content") or "").strip():
+        return False
+    return source in chapter_text(chapter)
+
+
+def chapter_digest(chapter):
+    return hashlib.sha256(json.dumps({"content": chapter.get("content"), "document": chapter.get("document")},
+                                    ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()).hexdigest()

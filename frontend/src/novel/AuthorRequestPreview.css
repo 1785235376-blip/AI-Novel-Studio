@@ -1,0 +1,4 @@
+.author-request-preview{min-width:0;overflow-wrap:anywhere}
+.author-request-preview details{min-width:0}
+.author-request-preview textarea{box-sizing:border-box;width:100%;min-height:calc(var(--space-12)*3);resize:vertical;font-family:var(--font-mono)}
+.author-request-preview pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:calc(var(--space-12)*6);overflow:auto;font-family:var(--font-mono);padding:var(--space-2);background:var(--color-bg-subtle)}
