@@ -21,3 +21,7 @@ Hosted browser is the real React/File evidence route; local Chromium is unavaila
 Independent follow-up review: **BLOCKED**, with original error/scope retained in SECOND_SLICE_REVIEW_STATUS.md. Reported implementation defects have regression repairs; this is not independent review closure.
 
 Real model/GPU/interactive Windows/target-software/user acceptance: **NOT_RUN** unless a specific package receipt states a narrower native build/parser result. No paid API, private credentials, automatic runtime changes, merge, release or deployment occurred. Existing R3 exact-parent evidence in BASELINE_RECEIPT.md is historical and not added to new test counts.
+
+## Final workspace/sample and accessibility extension
+
+FINAL_UX_CI_CORRECTIONS.md records the subsequent bounded U01/U10 loops and all observed 344062df failures. Full File-compatible backend at `a6815ae`: 3,409 passed / 9 skipped / 1,035 actual-PG-only deselected, 289.03 s. Backend code remains unchanged through the later accessible-label and fixture-only repairs. Final full UI: 971 passed / 6 optional HTTP skipped; types/build/token guard passed. Real TCP synchronization: 1 passed / 15.49 s. Corrected fork inventory focused run: 42 passed / 39 PG-only deselected. App is 634.69 kB plus deferred workbench 477.43 kB minified; warning retained. Exact new-head hosted results remain pending at this receipt.

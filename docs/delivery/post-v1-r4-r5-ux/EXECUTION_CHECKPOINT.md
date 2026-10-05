@@ -1,17 +1,9 @@
 # Execution checkpoint
 
-Parent/merge-base: `d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b`. Branch `work/post-v1-r4-r5-ux`, Draft PR39. Frozen PR37 and PR38 are unchanged.
+Branch `work/post-v1-r4-r5-ux`, Draft PR39, stacked on released R3 `d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b`. Frozen PR37 and PR38 are unchanged.
 
-## Published correction
+Published all-forty checkpoint `344062df637685d78cf25e9edf9f2c6734bbd75e`, tree `cfbf2c8cf750b7b1959135269db058ccc6faf643`: File and both Windows lanes passed. R4 browser 27/33 passed; PostgreSQL 3,368 passed / 1 failed / 1,000 skipped with no marked-PG execution-gate failure. The remaining failures and retained corrections are documented in FINAL_UX_CI_CORRECTIONS.md.
 
-Remote `60314f9d093c6f1b4b27959ac2b3d7414d03d6da`, tree `cea3e3bada5ab113576945d1528eb21efd594371`, matches detached correction source `48407cd7e74db814c5ce989554e06a2cd8b4d4d4`. Push `37359470961` and PR `37359477778` are running at this receipt. It contains the prior A/U and B01–B05 slices plus exact shared-database/browser fixture corrections; see WAVE_4_5_CI_CORRECTIONS.md.
+The next pinned source adds complete bounded U01 workspace/last-project restoration and U10 isolated first-use samples, plus those corrections. Backend runtime `a6815ae7967944d1bebb50f2ed28541900f86b69` passed 3,409 File-compatible cases, with 9 explicit skips and 1,035 PostgreSQL-only deselections. Subsequent production change is the source-control accessible label only; backend code is unchanged. Final frontend passed 971 cases / 6 optional HTTP skips; TypeScript, build and 42-file token guard passed. Real two-process TCP sync passed separately. A focused 42-case fork suite checks the corrected shared-database fixture. Thirty-five R4 journeys are authored and collected, not locally browser-run.
 
-Prior remote `e12db8d` passed File and both Windows lanes. PostgreSQL/frontend failed as explicitly recorded; its R4 browser result was 22 passed / 3 failed. Broker cancellation now passes the actual browser journey. Historical failures are retained rather than relabelled as success.
-
-## Next immutable integration
-
-Local runtime `d2390d12cea037aa848b769d1f87822922832258`, tree `a4334158a8b9d25a9f0c142de1e0787e32305b82`, contains bounded code paths for all forty packages, including B06–B10, removable shared-author context, exact local variants, original author-task recovery and searchable enabled tools. Full File-compatible execution passed 3,367 cases, with 9 explicit skips and 993 PostgreSQL-only deselections; 932 frontend tests passed, with 6 optional HTTP skips. TypeScript/build/token checks passed. The real two-process loopback offline-sync test passed separately. This runtime is not yet published and does not include the subsequent U01/U10 gap-closing work.
-
-The matrix tracks implemented and remaining scope without conflating local verification, real PG, hosted browser, native runtime/model quality, or user acceptance. The independent follow-up review remains platform-BLOCKED; permitted implementation/regression continues without retrying or rerouting it.
-
-Next boundary: finish this pinned source's complete tests, publish in bounded commits, and verify exact hosted lanes while closing feasible workspace-restoration and first-use sample gaps. No merge, release, deployment, paid API or user-runtime modification is authorized.
+Exact hosted verification of this next source is pending. The Draft PR body is the live remote SHA/run readback; historic receipts are not silently upgraded. Independent follow-up review remains BLOCKED and has not been retried or routed elsewhere. NEXT_UX_PRIORITIES.md separates remaining acceptance gates, current-package extensions and genuinely new suggestions.

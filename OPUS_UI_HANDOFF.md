@@ -185,3 +185,11 @@ Workbench search filters only currently enabled Chinese labels and stable featur
 Original writing, broker and revision consumers share AuthorRequestControls. Reduced source modes physically remove dependent context bundles/references; UI preview carries the exact request body sent at dispatch. Local 2–3 variants each have a reviewed original job ID, receipt and recovery state. Broker-budgeted/cloud groups remain unavailable. Do not replace these controls with an independent summary that disagrees with the actual request.
 
 U07 now projects existing author jobs and opens their exact original Draft/Diff/Accept without requiring broker enablement. Dismissed/superseded navigation cannot open a late result; aborting that lookup never cancels the job. Preserve unsaved chapters, current authorization and origin feature gates. U01 full reference-layout restoration and U10 isolated first-use sample work remain tracked separately from this pin.
+
+### Restored workspace and first-use sample extension
+
+U01 now persists search/task filters and original U04 preference/reference pointers, plus bounded unresolved task IDs. Only the original services resolve those pointers. The local project-ID hint is checked against a fresh original project inventory, never consumed by authenticated/scoped sessions, and never contains credentials or manuscript. Keep missing/corrupt/stale explanations, dirty/IME/target-draft fences and late-response cancellation visible. “切换本机作品” must preserve unsaved work.
+
+U10 adds FirstUsePanel inside the existing entry experience and SampleJourneyGuide inside the original inspector stack, not an extra workspace grid row. Explicit sample creation uses original local/scoped authorities and durable stage receipts; uncertain creation is not retried automatically. Opening refreshes the original project list before selection so the title and U01 hint are authoritative. The guide uses actual saved chapter versions and original export navigation; it does not mark reopening/download complete merely from a click. Preserve skip/reopen, manual-writing availability and disabled adapter explanations.
+
+Final full-suite and hosted results must be read from the exact delivery checkpoint, not inferred from these descriptions. Independent review remains BLOCKED.
