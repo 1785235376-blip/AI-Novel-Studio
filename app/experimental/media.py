@@ -1,8 +1,8 @@
 """Experimental media workflow contracts and explicitly reviewed image artifacts.
 
 Discovery never registers executable code. Family definitions describe missing
-adapters; only host-installed implementations can be registered. No adapter in
-this module performs network IO or infers approval from successful generation.
+adapters; only host-installed implementations can be registered. Original registered local-image execution delegates to the existing guarded
+provider transport. Successful generation never implies approval.
 """
 from __future__ import annotations
 from contextvars import ContextVar
@@ -13,11 +13,12 @@ import hashlib
 import inspect
 import json
 import platform
+import re
 import struct
 import threading
 import zlib
-from dataclasses import dataclass
-from typing import Any, Literal, Protocol
+from dataclasses import dataclass, field
+from typing import Any, Callable, Literal, Protocol
 from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -161,6 +162,13 @@ class MediaTaskIn(StrictModel):
     expected_brief_version: int = Field(ge=1)
     adapter_id: str = Field(min_length=1, max_length=240)
     candidate_count: int = Field(default=2, ge=1, le=8)
+    parameters: dict = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def bounded_parameters(self):
+        from ..asset_providers import validate_image_parameters
+        validate_image_parameters(self.parameters, {"width", "height", "steps", "seed", "negative_prompt"})
+        return self
 
 
 class AdapterDefinition(StrictModel):
@@ -185,6 +193,8 @@ class MediaWorkflowRequest:
     candidate_count: int
     scope: dict
     source_digest: str
+    parameters: dict = field(default_factory=dict)
+    dispatch_guard: Callable[[], None] | None = field(default=None, repr=False, compare=False)
 
 
 @dataclass(frozen=True)
@@ -218,9 +228,109 @@ class MockImageWorkflowAdapter:
         return output
 
 
+class RegisteredLocalImageWorkflowAdapter:
+    """Bounded projection of the original validated local image registration.
+
+    No discovery/probing in catalogs; dispatch goes through LocalImageAdapter's
+    original live model check. Only the shipped checkpoint text-to-image route
+    is supported. Reference-image requests are rejected, never ignored.
+    """
+    def __init__(self, original_registry, provider_id, original):
+        self.original_registry, self.provider_id, self.original = original_registry, provider_id, original
+        candidate = self.current_candidate()
+        self.definition = AdapterDefinition(adapter_id="registered-image:" + candidate['id'],
+            family=candidate['runtime_type'] + " · " + candidate['display_name'], modality="IMAGE",
+            operations=["text_to_image", "cover_generation", "storyboard_card_generation"],
+            state="CONTRACT_VERIFIED", local=True, model_id=candidate['id'], adapter_version="original-checkpoint-v1", runnable=True,
+            limitations=["Existing enabled local checkpoint workflow; one image per task; no reference-image conditioning.",
+                        "Explicit broker admission required. Runtime execution and visual quality are not pre-verified."])
+
+    def current_candidate(self):
+        from ..model_center.discovery_bridge import LocalImageAdapter
+        if type(self.original) is not LocalImageAdapter or self.original_registry.get(self.provider_id) is not self.original:
+            raise ValueError("MEDIA_ORIGINAL_REGISTRATION_CHANGED")
+        candidate = self.original.bridge.guard(self.original.candidate['id'])
+        if (candidate['runtime_type'] not in {'AUTOMATIC1111', 'COMFYUI'}
+                or 'IMAGE' not in candidate.get('verified_capabilities', [])
+                or candidate['provider_id'] != self.provider_id
+                or candidate.get('runtime_config') != self.original.candidate.get('runtime_config')
+                or candidate.get('enabled_at') != self.original.candidate.get('enabled_at')):
+            raise ValueError("MEDIA_ORIGINAL_REGISTRATION_CHANGED")
+        # Reuse the original loopback-only endpoint parser, never infer locality
+        # merely from a provider name or an arbitrary host adapter's assertion.
+        from ..model_center.discovery_types import local_endpoint
+        local_endpoint(candidate['runtime_config']['endpoint'])
+        if candidate['runtime_type'] == 'COMFYUI':
+            binding = {'node_class': 'CheckpointLoaderSimple', 'input_field': 'ckpt_name'}
+            if binding not in candidate.get('evidence', {}).get('loader_bindings', []):
+                raise ValueError("MEDIA_CHECKPOINT_WORKFLOW_REQUIRED")
+        return candidate
+
+    def registration_identity(self):
+        from .model_broker import implementation_hash
+        candidate = self.current_candidate()
+        value = candidate.get('evidence', {}).get('sha256')
+        model_digest = value.lower() if isinstance(value, str) and re.fullmatch(r'[0-9a-fA-F]{64}', value) else None
+        return {'provider_id': self.provider_id, 'candidate_id': candidate['id'],
+            'runtime_type': candidate['runtime_type'], 'runtime_version': None,
+            'original_adapter_digest': implementation_hash(type(self.original)),
+            'delegate_digest': implementation_hash(type(self.original.delegate)),
+            'transport_digest': implementation_hash(type(self.original.delegate.transport)),
+            'registration_digest': digest({key: candidate.get(key) for key in ('id', 'provider_id', 'model_name',
+                'enabled', 'enable_eligible', 'enabled_at', 'verified_capabilities', 'runtime_config',
+                'runtime_fingerprint', 'model_evidence_fingerprint', 'evidence')}),
+            'model_digest': model_digest, 'model_digest_source': 'RUNTIME_REPORTED_SHA256' if model_digest else 'UNKNOWN',
+            'deterministic': False}
+
+    @staticmethod
+    def parameters(value):
+        from ..asset_providers import validate_image_parameters
+        return {"width": 512, "height": 512, "steps": 20, "seed": 0, "negative_prompt": "",
+                **validate_image_parameters(value, {"width", "height", "steps", "seed", "negative_prompt"})}
+
+    def validate_request(self, brief, candidate_count):
+        self.current_candidate()
+        if candidate_count != 1: raise ValueError("MEDIA_REGISTERED_LOCAL_ONE_IMAGE_PER_TASK")
+        if brief.get('reference_asset_ids') or brief.get('asset_sources'):
+            raise ValueError("MEDIA_REGISTERED_LOCAL_REFERENCE_CONDITIONING_UNSUPPORTED")
+
+    def generate(self, request):
+        from ..asset_providers import AssetGenerationRequest
+        self.validate_request(request.brief, request.candidate_count)
+        if request.dispatch_guard is None: raise ValueError("MEDIA_REGISTERED_LOCAL_BROKER_REQUIRED")
+        identity = self.registration_identity()
+        def dispatch():
+            if self.registration_identity() != identity: raise ValueError("MEDIA_ORIGINAL_REGISTRATION_CHANGED")
+            request.dispatch_guard()
+        # Keep original brief preparation as the source authority. The request
+        # contains only bounded user-facing creative fields, no local paths.
+        brief = request.brief
+        prompt = json.dumps({key: brief[key] for key in ('title', 'subtitle', 'genre', 'palette', 'composition',
+            'prompt', 'safe_area', 'character_snapshots', 'shot_snapshot', 'scene_snapshot') if key in brief}, ensure_ascii=False)
+        result = self.original.generate(AssetGenerationRequest(self.provider_id, request.model_id, prompt,
+            request.request_id, self.parameters(request.parameters), dispatch_guard=dispatch))
+        if self.registration_identity() != identity: raise ValueError('MEDIA_ORIGINAL_REGISTRATION_CHANGED')
+        prefix = 'data:image/png;base64,'
+        if result.provider_id != self.provider_id or result.model_id != request.model_id or not result.asset_uri.startswith(prefix):
+            raise ValueError("MEDIA_REGISTERED_LOCAL_RESULT_INVALID")
+        encoded = result.asset_uri[len(prefix):]
+        if len(encoded) > 36 * 1024 * 1024: raise ValueError("MEDIA_RESULT_TOO_LARGE")
+        content = base64.b64decode(encoded, validate=True)
+        measured = inspect_image(content)
+        return [ImageWorkflowResult(content, measured['media_type'], {'verification': 'LOCAL_ADAPTER_EXECUTED',
+            'registration': identity, 'parameters': self.parameters(request.parameters)})]
+
+
+def supported_local_image(adapter):
+    return type(adapter) in {MockImageWorkflowAdapter, RegisteredLocalImageWorkflowAdapter} and adapter.definition.local
+
+
 class MediaAdapterRegistry:
-    def __init__(self, include_mock=True):
+    def __init__(self, include_mock=True, original_registry=None):
         self._adapters = {}
+        self.original_registry = original_registry
+        self._projected_ids = set()
+        self._projection_lock = threading.RLock()
         if include_mock:
             self.register(MockImageWorkflowAdapter())
 
@@ -233,14 +343,38 @@ class MediaAdapterRegistry:
         # This is a trusted host extension point, deliberately absent from HTTP.
         self._adapters[definition.adapter_id] = adapter
 
+    def refresh_original(self):
+        with self._projection_lock:
+            self._refresh_original()
+
+    def _refresh_original(self):
+        if self.original_registry is None: return
+        from ..model_center.discovery_bridge import LocalImageAdapter
+        active = set()
+        for provider_id, original in list(self.original_registry._providers.items()):
+            if type(original) is not LocalImageAdapter: continue
+            try:
+                aid = 'registered-image:' + original.candidate['id']
+                adapter = self._adapters.get(aid)
+                if type(adapter) is not RegisteredLocalImageWorkflowAdapter or adapter.original is not original:
+                    adapter = RegisteredLocalImageWorkflowAdapter(self.original_registry, provider_id, original)
+                adapter.current_candidate()
+            except (ValueError, KeyError, RuntimeError): continue
+            self._adapters[aid] = adapter
+            active.add(aid)
+        for aid in self._projected_ids - active: self._adapters.pop(aid, None)
+        self._projected_ids = active
+
     def definitions(self):
+        self.refresh_original()
         rows = [AdapterDefinition(adapter_id=key, family=label, modality=modality, operations=list(operations),
                     state="ADAPTER_REQUIRED", limitations=["Family contract only. Model discovery does not install a workflow."]).model_dump()
                 for key, (label, modality, operations) in FAMILIES.items()]
-        rows.extend(AdapterDefinition.model_validate(adapter.definition).model_dump() for adapter in self._adapters.values())
+        rows.extend(AdapterDefinition.model_validate(adapter.definition).model_dump() for adapter in list(self._adapters.values()))
         return {"items": rows, "operations": OPERATIONS, "request_schema": MediaOperationInput.model_json_schema(), "verification": "CONTRACT_VERIFIED"}
 
     def resolve(self, adapter_id, operation):
+        self.refresh_original()
         adapter = self._adapters.get(adapter_id)
         if adapter is None:
             raise ValueError("MEDIA_ADAPTER_REQUIRED")
@@ -252,8 +386,8 @@ class MediaAdapterRegistry:
 def production_environment(adapter):
     """Observed host implementation identity, never paths, secrets or hardware.
 
-    A model name is not a weight hash. Only the built-in synthetic fixture has
-    a complete deterministic implementation here; other adapters say unknown.
+    A model name is not a weight hash. Registered original adapters may report
+    the runtime's actual SHA-256 evidence; unreported weights/versions stay unknown.
     """
     from .. import __version__
     def source_hash(value):
@@ -262,13 +396,16 @@ def production_environment(adapter):
         except (OSError, TypeError):
             return None
     synthetic = type(adapter) is MockImageWorkflowAdapter
+    registration = adapter.registration_identity() if type(adapter) is RegisteredLocalImageWorkflowAdapter else None
     return {"schema": "media-production-environment-v1", "app_version": __version__,
             "runtime": {"implementation": platform.python_implementation(), "python": platform.python_version(),
                         "zlib": zlib.ZLIB_RUNTIME_VERSION},
             "adapter_version": adapter.definition.adapter_version, "adapter_digest": source_hash(type(adapter)),
-            "workflow_version": "r3-media-request-v1", "workflow_digest": source_hash(MediaService.execute),
-            "model_id": adapter.definition.model_id, "model_digest": source_hash(type(adapter)) if synthetic else None,
-            "deterministic": synthetic, "verification": "SYNTHETIC_PROTOCOL_ONLY" if synthetic else "MODEL_IDENTITY_INCOMPLETE"}
+            "workflow_version": "r4-original-local-image-request-v1" if registration else "r3-media-request-v1", "workflow_digest": source_hash(MediaService.execute),
+            "model_id": adapter.definition.model_id, "model_digest": source_hash(type(adapter)) if synthetic else (registration or {}).get("model_digest"),
+            **({"registration": registration} if registration else {}),
+            "deterministic": synthetic, "verification": "SYNTHETIC_PROTOCOL_ONLY" if synthetic else
+                "RUNTIME_REPORTED_MODEL_IDENTITY" if (registration or {}).get("model_digest") else "MODEL_IDENTITY_INCOMPLETE"}
 
 
 # Server-only capability; legacy routes cannot manufacture a batch context.
@@ -285,6 +422,8 @@ class MediaService(DomainService):
         super().__init__(store, novels, chapters)
         self.assets, self.screenplays = assets, screenplays
         self.registry = registry or MediaAdapterRegistry()
+        self.broker = None
+        self.broker_enabled = lambda: False
         if production_capture_enabled is None:
             from .flags import enabled_flags
             production_capture_enabled = lambda: "production_manifest_v2" in enabled_flags()
@@ -324,6 +463,24 @@ class MediaService(DomainService):
         Existing ordinary media/A13 records have no marker and are unchanged.
         A malformed marker or missing owner is denied rather than stripped.
         """
+        if 'production_origin_refresh_id' in row:
+            original = self.store.read(nid, scope)['collections'].get(self.TASKS, {}).get(row.get('origin_media_task_id'))
+            if (not original or original.get('change_impact_refresh_id') != row['production_origin_refresh_id']
+                    or not self._change_impact_visible(nid, scope, self.TASKS, original)): return False
+        if 'benchmark_run_id' in row:
+            from .flags import enabled_flags
+            if 'model_benchmark_v2' not in enabled_flags(): return False
+            owner = self.store.read(nid, scope)['collections'].get('benchmark_runs_v2', {}).get(row['benchmark_run_id'])
+            index = row.get('benchmark_index')
+            if (not owner or owner.get('scope') != scope or owner.get('novel_id') != nid
+                    or owner.get('created_by') != row.get('created_by') or type(index) is not int): return False
+            task_id = owner.get('media_task_ids', {}).get(str(index))
+            if not task_id: return False
+            if collection == self.TASKS and row['id'] != task_id: return False
+            if collection == self.PROPOSALS and row.get('task_id') != task_id: return False
+            if collection == self.BRIEFS:
+                task = self.store.read(nid, scope)['collections'].get(self.TASKS, {}).get(task_id)
+                if not task or task.get('brief_id') != row['id']: return False
         if not self._safe_batch_visible(nid, scope, collection, row):
             return False
         if "change_impact_refresh_id" not in row:
@@ -462,7 +619,7 @@ class MediaService(DomainService):
             row.update(data)
         return self.mutate(nid, scope, actor, self.BRIEFS, rid, expected_version, change)
 
-    def create_storyboard(self, nid, scope, actor, body):
+    def prepare_storyboard(self, nid, scope, actor, body):
         data = StoryboardBriefIn.model_validate(body).model_dump()
         screenplay, shot = self._shot(nid, scope, data["screenplay_id"], data["shot_id"])
         if screenplay.get("edit_version", 0) != data.pop("expected_screenplay_version"):
@@ -473,7 +630,13 @@ class MediaService(DomainService):
                     screenplay_source={"id": screenplay["id"], "version": screenplay.get("edit_version", 0), "shot_digest": digest(shot)},
                     sources=sources, asset_sources=self._references(nid, scope, data), status="DRAFT")
         self.assert_sources(nid, sources)
-        return self.create(nid, scope, actor, self.BRIEFS, data)
+        return new_row(nid, scope, actor, data)
+
+    def create_storyboard(self, nid, scope, actor, body):
+        with self.store.transaction(nid, scope) as doc:
+            row = self.prepare_storyboard(nid, scope, actor, body)
+            doc['collections'].setdefault(self.BRIEFS, {})[row['id']] = row
+            return copy.deepcopy(row)
 
     def _assert_brief(self, nid, scope, brief):
         self._scoped_sources(nid, scope, list(brief.get("sources", {})))
@@ -494,7 +657,7 @@ class MediaService(DomainService):
             if screenplay.get("edit_version", 0) != old["version"] or digest(shot) != old["shot_digest"]:
                 raise StaleSourceError("MEDIA_SHOT_SOURCE_CHANGED")
 
-    def prepare_task(self, nid, scope, actor, body):
+    def prepare_task(self, nid, scope, actor, body, origin_guard=None):
         """Build the existing-domain task for a caller-owned atomic checkpoint.
 
         This does not persist or execute. Replay uses it to commit its pointer
@@ -503,11 +666,18 @@ class MediaService(DomainService):
         data = MediaTaskIn.model_validate(body).model_dump()
         brief = self.get(nid, scope, self.BRIEFS, data["brief_id"])
         if "change_impact_refresh_id" in brief:
-            raise ValueError("CHANGE_IMPACT_OWNED_BRIEF_REQUIRES_FRESH_PREFLIGHT")
+            if origin_guard is None: raise ValueError("CHANGE_IMPACT_OWNED_BRIEF_REQUIRES_FRESH_PREFLIGHT")
+            origin_guard(brief)
         check_version(brief, data.pop("expected_brief_version"))
         self._assert_brief(nid, scope, brief)
         operation = "cover_generation" if brief["kind"] == "COVER" else "storyboard_card_generation"
         adapter = self.registry.resolve(data["adapter_id"], operation)
+        if type(adapter) is RegisteredLocalImageWorkflowAdapter:
+            adapter.validate_request(brief, data['candidate_count'])
+            data['parameters'] = adapter.parameters(data['parameters'])
+            data['registration_identity'] = adapter.registration_identity()
+        elif data['parameters']:
+            raise ValueError("MEDIA_ADAPTER_PARAMETERS_UNSUPPORTED")
         inputs = MediaOperationInput(operation=operation, brief_id=brief["id"],
             shot_ids=[brief["shot_id"]] if brief["kind"] == "STORYBOARD" else []).model_dump()
         data.update(request_inputs=inputs, status="QUEUED", brief_version=brief["version"], brief_snapshot=snapshot(brief),
@@ -552,6 +722,10 @@ class MediaService(DomainService):
                 row.update(status="CANCELLED", execution_token=None, cancellation_mode="LOCAL_RESULT_DISCARD")
             elif action == "retry" and (row["status"] in {"FAILED", "CANCELLED"} or
                     (row["status"] == "RUNNING" and row.get("execution_token") not in _ACTIVE)):
+                if row.get("registration_identity"):
+                    raise ValueError("MEDIA_REGISTERED_LOCAL_REQUIRES_NEW_TASK_AND_PREFLIGHT")
+                if row.get("benchmark_run_id"):
+                    raise ValueError("BENCHMARK_REQUIRES_NEW_RUN")
                 if row.get("change_impact_refresh_id"):
                     raise ValueError("CHANGE_IMPACT_REQUIRES_NEW_PREFLIGHT_AND_TASK")
                 if row.get("production_replay_id"):
@@ -568,10 +742,76 @@ class MediaService(DomainService):
         self._assert_brief(nid, scope, brief)
         return brief
 
+    def _ordinary_registered_task(self, nid, scope, rid, version):
+        task = self.get(nid, scope, self.TASKS, rid)
+        check_version(task, version)
+        if any(task.get(k) for k in ('safe_batch_id', 'change_impact_refresh_id', 'production_replay_id', 'benchmark_run_id')):
+            raise ValueError('MEDIA_ORIGIN_COORDINATOR_REQUIRED')
+        if task['status'] != 'QUEUED': raise ValueError('MEDIA_TASK_NOT_QUEUED')
+        adapter = self.registry.resolve(task['adapter_id'], task['operation'])
+        if type(adapter) is not RegisteredLocalImageWorkflowAdapter: raise ValueError('MEDIA_REGISTERED_LOCAL_ROUTE_REQUIRED')
+        if not self.broker or not self.broker_enabled(): raise ValueError('MEDIA_MODEL_BROKER_FEATURE_REQUIRED')
+        self._current_brief(nid, scope, task)
+        if adapter.registration_identity() != task.get('registration_identity'): raise ValueError('MEDIA_ORIGINAL_REGISTRATION_CHANGED')
+        return task
+
+    def preflight_registered(self, nid, scope, actor, rid, version, guard=lambda: None):
+        guard()
+        task = self._ordinary_registered_task(nid, scope, rid, version)
+        decision = self.broker.preview(nid, scope, actor, {'capability': 'IMAGE', 'policy': 'CUSTOM', 'profile': 'LOCAL_ONLY',
+            'preferred_route': digest(['media', task['adapter_id'], task['adapter_definition']['model_id']]),
+            'chapter_ids': list(task['sources']), 'allow_synthetic': False}, guard)
+        self._ordinary_registered_task(nid, scope, rid, version); guard()
+        with self.store.transaction(nid, scope) as doc:
+            guard()
+            self._ordinary_registered_task(nid, scope, rid, version)
+            doc['collections'][self.broker.DECISIONS][decision['id']]['media_task_binding'] = self._task_binding(task)
+        chosen = decision.get('chosen')
+        return {'task_id': rid, 'task_version': version, 'broker_decision_id': decision['id'], 'broker_decision_version': decision['version'],
+            'ready': bool(chosen), 'cost': {'state': chosen['cost_state'] if chosen else 'UNAVAILABLE',
+                'currency': 'USD', 'estimate_microusd': (chosen.get('price') or {}).get('reserve_microusd') if chosen else None},
+            'blockers': [] if chosen else ['MODEL_BROKER_NO_LEGAL_ROUTE'], 'parameters': task['parameters'],
+            'verification': 'REGISTERED_LOCAL_RUNTIME_NOT_RUN', 'automatic_execution': False}
+
+    @staticmethod
+    def _task_binding(task):
+        return digest([task['id'], task['version'], task['source_digest'], task.get('parameters', {}),
+            task['candidate_count'], task.get('registration_identity')])
+
+    def execute_registered(self, nid, scope, actor, rid, version, decision_id, decision_version, guard=lambda: None):
+        task = self._ordinary_registered_task(nid, scope, rid, version)
+        if not decision_id or not decision_version: raise ValueError('MEDIA_FRESH_BROKER_PREFLIGHT_REQUIRED')
+        decision = self.broker.get(nid, scope, self.broker.DECISIONS, decision_id)
+        check_version(decision, decision_version)
+        if decision.get('media_task_binding') != self._task_binding(task): raise ValueError('MEDIA_FRESH_TASK_PREFLIGHT_REQUIRED')
+        if decision['request']['chapter_ids'] != list(task['sources']): raise ValueError('MEDIA_BROKER_SOURCES_CHANGED')
+        def authority():
+            guard()
+            if not self.broker_enabled(): raise ValueError('MEDIA_MODEL_BROKER_FEATURE_REQUIRED')
+            self._current_brief(nid, scope, task)
+            route = self.broker._assert_preview(nid, scope, actor, decision)
+            if route.get('adapter_id') != task['adapter_id'] or route.get('model_id') != task['adapter_definition']['model_id']:
+                raise ValueError('MEDIA_BROKER_ROUTE_CHANGED')
+        authority()
+        reservation = self.broker.reserve(nid, scope, actor, decision_id, decision_version, 'media:' + rid, rid, authority)
+        def dispatch(actual, adapter):
+            authority()
+            if actual['id'] != rid: raise ValueError('MEDIA_BROKER_TASK_CHANGED')
+            self.broker.guard_dispatch(nid, scope, actor, reservation['id'], rid, authority)
+        try:
+            return self.execute(nid, scope, actor, rid, version, authority, production_guard=dispatch)
+        finally:
+            status = self.get(nid, scope, self.TASKS, rid)['status']
+            if status not in {'QUEUED', 'RUNNING'}:
+                self.broker.finalize(nid, scope, actor, reservation['id'], rid,
+                    {'SUCCEEDED': 'COMPLETED', 'FAILED': 'FAILED', 'CANCELLED': 'CANCELLED'}.get(status, 'UNKNOWN'))
+
     def execute(self, nid, scope, actor, rid, expected_version, check_authority=None, check_egress=None,
-                production_guard=None, change_impact_guard=None, safe_batch_guard=None):
+                production_guard=None, change_impact_guard=None, safe_batch_guard=None, benchmark_guard=None):
         token = str(uuid4())
         def claim(row):
+            if row.get("benchmark_run_id") and benchmark_guard is None:
+                raise ValueError("BENCHMARK_DISPATCH_AUTHORITY_REQUIRED")
             if row.get("safe_batch_id") and safe_batch_guard is None:
                 raise ValueError("SAFE_BATCH_DISPATCH_AUTHORITY_REQUIRED")
             if row["status"] != "QUEUED":
@@ -611,14 +851,31 @@ class MediaService(DomainService):
                     return self.public_task(current)
                 MediaOperationInput.model_validate(task["request_inputs"])
                 request = MediaWorkflowRequest(token, task["operation"], adapter.definition.model_id or "", task["brief_snapshot"],
-                                               task["candidate_count"], copy.deepcopy(scope), task["source_digest"])
-                if production_guard:
-                    production_guard(task, adapter)
-                if change_impact_guard:
-                    change_impact_guard(task, adapter)
-                if safe_batch_guard:
-                    safe_batch_guard(task, adapter)
+                                               task["candidate_count"], copy.deepcopy(scope), task["source_digest"],
+                                               copy.deepcopy(task.get('parameters', {})))
+                def dispatch():
+                    if check_authority: check_authority()
+                    self._current_brief(nid, scope, task)
+                    latest = self.get(nid, scope, self.TASKS, rid)
+                    if latest['status'] != 'RUNNING' or latest.get('execution_token') != token or latest['version'] != task['version']:
+                        raise ValueError('MEDIA_TASK_CANCELLED_OR_CHANGED')
+                    if type(adapter) is RegisteredLocalImageWorkflowAdapter:
+                        if not any((production_guard, change_impact_guard, safe_batch_guard, benchmark_guard)):
+                            raise ValueError('MEDIA_REGISTERED_LOCAL_BROKER_REQUIRED')
+                        if adapter.registration_identity() != task.get('registration_identity'):
+                            raise ValueError('MEDIA_ORIGINAL_REGISTRATION_CHANGED')
+                    if production_guard: production_guard(task, adapter)
+                    if change_impact_guard: change_impact_guard(task, adapter)
+                    if safe_batch_guard: safe_batch_guard(task, adapter)
+                    if benchmark_guard: benchmark_guard(task, adapter)
+                if type(adapter) is not RegisteredLocalImageWorkflowAdapter: dispatch()
+                from dataclasses import replace
+                request = replace(request, dispatch_guard=dispatch)
                 results = adapter.generate(request)
+                latest = self.get(nid, scope, self.TASKS, rid)
+                if latest['status'] != 'RUNNING' or latest.get('execution_token') != token or latest['version'] != task['version']:
+                    return self.public_task(latest)
+                dispatch()
                 if len(results) != task["candidate_count"]:
                     raise ValueError("MEDIA_RESULT_COUNT_INVALID")
                 proposals = []
@@ -629,6 +886,8 @@ class MediaService(DomainService):
                     if measured["media_type"] != result.media_type:
                         raise ValueError("MEDIA_RESULT_TYPE_MISMATCH")
                     proposals.append({**({"safe_batch_id": task["safe_batch_id"], "safe_batch_index": task["safe_batch_index"]} if "safe_batch_id" in task else {}),
+                        **({"production_origin_refresh_id": task["production_origin_refresh_id"], "origin_media_task_id": task["origin_media_task_id"]} if "production_origin_refresh_id" in task else {}),
+                        **({"benchmark_run_id": task["benchmark_run_id"], "benchmark_index": task["benchmark_index"]} if "benchmark_run_id" in task else {}),
                         **({"change_impact_refresh_id": task["change_impact_refresh_id"]} if "change_impact_refresh_id" in task else {}),
                         "id": str(uuid4()), "task_id": rid, "brief_id": task["brief_id"],
                         "kind": task["brief_snapshot"]["kind"], "candidate_index": index, "status": "PENDING_REVIEW",

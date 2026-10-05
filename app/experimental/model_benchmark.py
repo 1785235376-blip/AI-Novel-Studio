@@ -1,4 +1,4 @@
-"""User-triggered, bounded local test steps through the existing text model node.
+"""User-triggered, bounded steps through original text and image authorities.
 
 Each step runs at most one saved case. There is no background executor, startup
 benchmark, paid provider, executable workflow import, or fabricated performance.
@@ -80,9 +80,9 @@ class ModelBenchmarkService(DomainService):
     RUNS = 'benchmark_runs_v2'
     EVIDENCE = 'benchmark_evidence_v2'
 
-    def __init__(self, store, novels, chapters, *, broker):
+    def __init__(self, store, novels, chapters, *, broker, media=None):
         super().__init__(store, novels, chapters)
-        self.broker = broker
+        self.broker, self.media = broker, media
 
     @staticmethod
     def set_hash(row):
@@ -134,12 +134,25 @@ class ModelBenchmarkService(DomainService):
         body = BenchmarkRunInput.model_validate(value)
         test_set = self.get(nid, scope, self.SETS, body.set_id)
         check_version(test_set, body.expected_set_version)
-        if any(c['kind'] in {'IMAGE_WORKFLOW', 'VIDEO_WORKFLOW'} for c in test_set['cases']):
-            raise ValueError('BENCHMARK_WORKFLOW_EXECUTOR_NOT_INTEGRATED_IMPORT_EVIDENCE_ONLY')
+        kinds = {c['kind'] for c in test_set['cases']}
+        if 'VIDEO_WORKFLOW' in kinds:
+            raise ValueError('BENCHMARK_VIDEO_LOCAL_ADMISSION_UNAVAILABLE_IMPORT_ONLY')
+        capability = 'IMAGE' if kinds == {'IMAGE_WORKFLOW'} else 'TEXT'
+        if 'IMAGE_WORKFLOW' in kinds and capability != 'IMAGE': raise ValueError('BENCHMARK_MIXED_MODALITIES_UNSUPPORTED')
         route = self.broker.current_route(body.route_id)
+        if route['capability'] != capability: raise ValueError('BENCHMARK_ROUTE_CAPABILITY_MISMATCH')
+        if capability == 'IMAGE':
+            from .flags import enabled_flags
+            if not {'media_adapter_registry', 'cover_storyboard_generation'} <= enabled_flags():
+                raise ValueError('BENCHMARK_ORIGINAL_MEDIA_FEATURE_REQUIRED')
+            from .media import supported_local_image
+            if self.media is None or not supported_local_image(self.media.registry.resolve(route['adapter_id'], 'cover_generation')):
+                raise ValueError('BENCHMARK_IMAGE_EXECUTOR_UNAVAILABLE')
+            if any(c['rule'] != 'NONEMPTY' for c in test_set['cases']):
+                raise ValueError('BENCHMARK_IMAGE_DECODE_RULE_REQUIRED')
         if not route['available'] or route['cloud']: raise ValueError('BENCHMARK_LOCAL_REGISTERED_ROUTE_REQUIRED')
         guard()
-        preview = self.broker.preview(nid, scope, actor, {'policy': 'CUSTOM', 'preferred_route': body.route_id,
+        preview = self.broker.preview(nid, scope, actor, {'capability': capability, 'policy': 'CUSTOM', 'preferred_route': body.route_id,
             'profile': 'LOCAL_ONLY', 'allow_synthetic': route['synthetic'], 'max_cost_microusd': test_set['max_cost_microusd']}, guard)
         if not preview['chosen']: raise ValueError('BENCHMARK_NO_LEGAL_ROUTE')
         amount = (preview['chosen']['price'] or {}).get('reserve_microusd')
@@ -158,7 +171,7 @@ class ModelBenchmarkService(DomainService):
                 'set_id': body.set_id, 'set_version': test_set['version'], 'set_hash': self.set_hash(test_set),
                 'route_id': body.route_id, 'route_fingerprint': route['fingerprint'], 'route_identity': route['identity'],
                 'preview_id': preview['id'], 'preview_version': preview['version'], 'total': total,
-                'completed': 0, 'results': [], 'cold_start_state': 'NOT_MEASURED', 'automatic_replay': False})
+                'completed': 0, 'results': [], 'capability': capability, 'media_task_ids': {}, 'cold_start_state': 'NOT_MEASURED', 'automatic_replay': False})
             row['id'] = key
             rows[key] = row
             return copy.deepcopy(row)
@@ -197,6 +210,10 @@ class ModelBenchmarkService(DomainService):
         deadline = time.monotonic() + test_set['timeout_seconds']
         def live_guard():
             guard()
+            if row.get('capability') == 'IMAGE':
+                from .flags import enabled_flags
+                if not {'media_adapter_registry', 'cover_storyboard_generation'} <= enabled_flags():
+                    raise ValueError('BENCHMARK_ORIGINAL_MEDIA_FEATURE_REQUIRED')
             current = self.get(nid, scope, self.RUNS, rid)
             if current['status'] != 'RUNNING' or current['version'] != claimed['version'] or time.monotonic() >= deadline:
                 cancellation.set()
@@ -205,6 +222,7 @@ class ModelBenchmarkService(DomainService):
             if latest['version'] != row['set_version']: raise StaleSourceError('BENCHMARK_SET_CHANGED')
         start = time.perf_counter()
         response, failure, output, input_hash = None, None, '', None
+        media_receipt = None
         timer = threading.Timer(test_set['timeout_seconds'], cancellation.set)
         timer.daemon = True
         try:
@@ -212,16 +230,48 @@ class ModelBenchmarkService(DomainService):
             def dispatch():
                 live_guard()
                 self.broker.guard_dispatch(nid, scope, actor, reservation['id'], sample_id, live_guard)
-            request = TextGenerationRequest(provider_id=route['provider_id'], model_id=route['model_id'], prompt=case['prompt'],
-                parameters=TextGenerationParameters(temperature=0, max_output_tokens=test_set['max_output_tokens']),
-                metadata={'purpose': 'bounded_benchmark', 'synthetic_input': 'true'}, job_id=sample_id,
-                cancellation=cancellation, dispatch_guard=dispatch)
-            input_hash = digest(request_payload(request))
             timer.start()
-            response = self.broker.runtime.prepare_text_route(route['provider_id'], route['model_id']).execute(TextModelNodeInput(request)).response
-            live_guard()
-            output = response.text[:20000]
+            if row.get('capability') == 'IMAGE':
+                # The original media domain owns the durable job and reviewed
+                # proposals. This coordinator stores only the sample pointer.
+                with self.store.transaction(nid, scope) as doc:
+                    live_guard()
+                    brief = self.media.prepare_cover(nid, scope, actor, {'title': case['title'], 'prompt': case['prompt']})
+                    doc['collections'].setdefault(self.media.BRIEFS, {})[brief['id']] = brief
+                    task = self.media.prepare_task(nid, scope, actor, {'brief_id': brief['id'], 'expected_brief_version': 1,
+                        'adapter_id': route['adapter_id'], 'candidate_count': 1})
+                    for item in (task, brief): item.update(benchmark_run_id=rid, benchmark_index=index)
+                    from .common import snapshot
+                    from .media import digest as media_digest
+                    task['brief_snapshot'] = snapshot(brief)
+                    task['source_digest'] = media_digest(snapshot(brief))
+                    doc['collections'].setdefault(self.media.TASKS, {})[task['id']] = task
+                    doc['collections'][self.RUNS][rid]['media_task_ids'][str(index)] = task['id']
+                input_hash = digest({'source_digest': task['source_digest'], 'operation': task['operation'],
+                    'adapter': task['adapter_definition'], 'parameters': task.get('parameters', {}), 'candidate_count': 1})
+                media_receipt = {'task_id': task['id'], 'source_digest': task['source_digest'], 'status': 'QUEUED', 'outputs': [], 'parameters': task.get('parameters', {})}
+                def image_dispatch(actual, adapter):
+                    if actual['id'] != task['id']: raise ValueError('BENCHMARK_MEDIA_BINDING_CHANGED')
+                    dispatch()
+                task = self.media.execute(nid, scope, actor, task['id'], 1, live_guard, benchmark_guard=image_dispatch)
+                live_guard()
+                media_receipt.update(status=task['status'], outputs=[{
+                    key: self.media.get(nid, scope, self.media.PROPOSALS, pid)[key]
+                    for key in ('id', 'content_sha256', 'media', 'status')} for pid in task['proposal_ids']])
+                output = json.dumps(media_receipt, ensure_ascii=False)
+            else:
+                request = TextGenerationRequest(provider_id=route['provider_id'], model_id=route['model_id'], prompt=case['prompt'],
+                    parameters=TextGenerationParameters(temperature=0, max_output_tokens=test_set['max_output_tokens']),
+                    metadata={'purpose': 'bounded_benchmark', 'synthetic_input': 'true'}, job_id=sample_id,
+                    cancellation=cancellation, dispatch_guard=dispatch)
+                input_hash = digest(request_payload(request))
+                response = self.broker.runtime.prepare_text_route(route['provider_id'], route['model_id']).execute(TextModelNodeInput(request)).response
+                live_guard()
+                output = response.text[:20000]
         except Exception:
+            if media_receipt:
+                try: media_receipt['status'] = self.media.get(nid, scope, self.media.TASKS, media_receipt['task_id'])['status']
+                except (ValueError, FileNotFoundError): media_receipt['status'] = 'UNAVAILABLE'
             failure = 'CANCELLED_OR_TIMEOUT' if cancellation.is_set() else 'ADAPTER_OR_CURRENT_AUTHORITY_FAILED'
         finally:
             timer.cancel()
@@ -246,7 +296,7 @@ class ModelBenchmarkService(DomainService):
                 change_row(current, actor, current['version'], lambda r: r.update(status='FAILED', error_code='BENCHMARK_CURRENT_AUTHORITY_CHANGED'))
                 return copy.deepcopy(current)
             result = {'index': index, 'case_title': case['title'], 'rule': case['rule'], 'passed': passed,
-                      'output': output, 'error_code': failure, 'latency_ms': elapsed,
+                      'output': output, 'media_receipt': media_receipt, 'error_code': failure, 'latency_ms': elapsed,
                       'input_hash': input_hash,
                       'reservation_id': reservation['id'] if reservation else None, 'warmth': 'NOT_MEASURED'}
             results = current['results'] + [result]
@@ -258,7 +308,8 @@ class ModelBenchmarkService(DomainService):
                     'run_id': rid, 'set_id': row['set_id'], 'set_version': row['set_version'], 'set_hash': row['set_hash'],
                     'route_id': route['route_id'], 'route_fingerprint': route['fingerprint'], 'route_identity': route['identity'],
                     'input_hash': digest([r['input_hash'] for r in results]), 'workflow_hash': route['identity']['workflow_hash'],
-                    'parameters': {'temperature': 0, 'max_output_tokens': test_set['max_output_tokens']},
+                    'parameters': {'candidate_count': 1, **(media_receipt or {}).get('parameters', {})} if row.get('capability') == 'IMAGE' else {'temperature': 0, 'max_output_tokens': test_set['max_output_tokens']},
+                    'capability': row.get('capability', 'TEXT'),
                     'metrics': {'sample_count': count, 'error_count': sum(bool(r['error_code']) for r in results),
                                 'error_rate': sum(bool(r['error_code']) for r in results) / count,
                                 'latency_ms': round(sum(r['latency_ms'] for r in results) / count, 3),
@@ -284,6 +335,8 @@ class ModelBenchmarkService(DomainService):
             # hashes instead; each output remains bound to its exact own input.
             if selected[0]['set_hash'] != selected[1]['set_hash'] or selected[0]['parameters'] != selected[1]['parameters']:
                 raise ValueError('BENCHMARK_COMPARABLE_INPUTS_REQUIRED')
+        if any(r.get('capability', 'TEXT') != 'TEXT' for r in selected):
+            raise ValueError('BENCHMARK_MEDIA_REVIEW_USE_ORIGINAL_PROPOSALS')
         runs = [self.get(nid, scope, self.RUNS, r['run_id']) for r in selected]
         if any(r['created_by'] != actor or r['status'] != 'COMPLETED' for r in runs): raise ValueError('BENCHMARK_OWN_COMPLETED_RUNS_REQUIRED')
         if secrets.randbits(1): selected.reverse(); runs.reverse()

@@ -50,7 +50,8 @@ def create_model_benchmark_router(service, authorize, require_flag, require_host
         return {'sets': api_call(service.sets, nid, scope), 'runs': api_call(service.runs, nid, scope, actor),
                 'evidence': api_call(service.evidence, nid, scope), 'comparisons': api_call(service.comparisons, nid, scope, actor), 'task_kinds': TASK_KINDS,
                 'execution': 'ONE_EXPLICIT_LOCAL_STEP', 'max_samples': 6, 'startup_runs': False,
-                'image_video_execution': 'IMPORT_ONLY_WORKFLOW_EXECUTOR_NOT_INTEGRATED'}
+                'image_execution': 'ONE_REGISTERED_LOCAL_IMAGE_THROUGH_ORIGINAL_MEDIA_REVIEW',
+                'video_execution': 'IMPORT_ONLY_LOCAL_ADMISSION_UNAVAILABLE'}
 
     @router.post('/sets', status_code=201)
     async def create(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

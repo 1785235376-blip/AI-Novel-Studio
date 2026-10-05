@@ -5,7 +5,10 @@ from .ux import ReadContext
 from .declarative_agents import FEATURE, WorkflowAuthoring, SaveDefinitionIn, TestIn, ActionIn
 
 
-def create_declarative_agents_router(service, authorize, require_flag):
+def create_declarative_agents_router(service, authorize, require_flag, *, preparer=None, manager=None, require_host_session=None):
+    from .declarative_model import DeclarativeModelCoordinator, ModelDispatchIn
+    if preparer is not None and manager is not None and service.broker is not None:
+        service.model_coordinator = DeclarativeModelCoordinator(service, preparer, manager)
     router = APIRouter(prefix='/novels/{nid}/experimental/declarative-agents', tags=['declarative-agents'])
     def access(nid, token, branch, permission='domain.read'):
         require_flag(FEATURE)
@@ -46,5 +49,33 @@ def create_declarative_agents_router(service, authorize, require_flag):
     def transition(nid: str, rid: str, action: str, body: ActionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         permission = 'domain.review' if action in {'approve', 'reject'} else 'domain.write'
         ctx, check = access(nid, x_session_token, x_branch_id, permission)
-        return api_call(service.transition, ctx, rid, action, body, check)
+        result = api_call(service.transition, ctx, rid, action, body, check)
+        if action == 'cancel' and service.model_coordinator: service.model_coordinator.cancel(ctx, rid)
+        return result
+    def model_access(nid, token, branch):
+        ctx, check = access(nid, token, branch, 'domain.write')
+        if not service.model_coordinator or not callable(require_host_session):
+            raise HTTPException(409, {'code': 'CUSTOM_AGENT_BOUND_EXECUTOR_REQUIRED'})
+        def current():
+            check(); require_flag('model_broker_v2'); require_flag('author_context_inspector_v2'); require_host_session(token)
+        current()
+        return ctx, current
+    @router.post('/runs/{rid}/model/preview')
+    def model_preview(nid: str, rid: str, body: ActionIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, check = model_access(nid, x_session_token, x_branch_id)
+        response.headers['Cache-Control'] = 'no-store'
+        result = api_call(service.model_coordinator.preview, ctx, rid, body, check)
+        check(); return result
+    @router.post('/runs/{rid}/model/dispatch')
+    def model_dispatch(nid: str, rid: str, body: ModelDispatchIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, check = model_access(nid, x_session_token, x_branch_id)
+        response.headers['Cache-Control'] = 'no-store'
+        result = api_call(service.model_coordinator.dispatch, ctx, rid, body, check)
+        check(); return result
+    @router.post('/runs/{rid}/model/refresh')
+    def model_refresh(nid: str, rid: str, body: ActionIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, check = model_access(nid, x_session_token, x_branch_id)
+        response.headers['Cache-Control'] = 'no-store'
+        result = api_call(service.model_coordinator.refresh, ctx, rid, body, check)
+        check(); return result
     return router
