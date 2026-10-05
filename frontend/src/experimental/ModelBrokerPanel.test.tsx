@@ -150,3 +150,25 @@ it('invalidates prior authorization and sends the exact reviewed material scope'
   expect(sent.author.request_scope.source_mode).toBe('NONE');
   expect(fetch.mock.calls.filter(([url])=>url.endsWith('/model-broker/generate'))).toHaveLength(1);
 });
+
+it('previews IMAGE or AUDIO using the original broker and never exposes author text dispatch for them', async () => {
+  const image = { ...route, route_id: 'media-route', provider_id: 'media:fixture', adapter_id: 'fixture', capability: 'IMAGE' };
+  const audio = { ...route, route_id: 'audio-route', provider_id: 'audio:fixture', capability: 'AUDIO' };
+  const fetch = vi.fn(async (url: string, init?: RequestInit) => {
+    if (url.endsWith('/model-broker/status')) return reply({ ...status, candidates: [route, image, audio] });
+    if (url.endsWith('/model-broker/history')) return reply({ decisions: [], ledger: [] });
+    if (url.endsWith('/model-broker/preview')) { const capability = JSON.parse(String(init?.body)).capability; const chosen = capability === 'IMAGE' ? image : audio; return reply({ ...quote, chosen: { ...chosen, cost_state: 'ESTIMATE', price: { reserve_microusd: 0, source: 'synthetic quote' } }, candidates: [] }); }
+    return reply({});
+  });
+  vi.stubGlobal('fetch', fetch); render(panel()); await screen.findByLabelText('模型能力类型');
+  fireEvent.change(screen.getByLabelText('模型能力类型'), { target: { value: 'IMAGE' } });
+  fireEvent.change(screen.getByLabelText('单任务预占上限（µUSD；留空不另设）'), { target: { value: '0' } });
+  fireEvent.click(screen.getByRole('button', { name: '预览合法模型路线' })); await screen.findByRole('region', { name: '模型路线预览' });
+  expect(JSON.parse(String(fetch.mock.calls.find(([url]) => url.endsWith('/preview'))![1]!.body))).toMatchObject({ capability: 'IMAGE', max_cost_microusd: 0 });
+  expect(screen.queryByRole('button', { name: '按预览路线预占并生成' })).toBeNull();
+  fireEvent.change(screen.getByLabelText('模型能力类型'), { target: { value: 'AUDIO' } });
+  expect(screen.queryByRole('region', { name: '模型路线预览' })).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: '预览合法模型路线' })); await screen.findByRole('region', { name: '模型路线预览' });
+  expect(JSON.parse(String(fetch.mock.calls.filter(([url]) => url.endsWith('/preview')).at(-1)![1]!.body))).toMatchObject({ capability: 'AUDIO', max_cost_microusd: 0 });
+  expect(fetch.mock.calls.some(([url]) => url.endsWith('/generate'))).toBe(false);
+});

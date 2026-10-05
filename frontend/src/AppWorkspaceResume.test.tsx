@@ -301,3 +301,40 @@ it('keeps the original save controls outside the shrinking metadata group in rec
   expect(screen.getByRole('button', { name: '导出当前草稿' }).parentElement).toBe(actions);
   expect(editor()).toBe(originalEditor); expect(editor().value).toBe('INTACT RECOVERY BUFFER');
 });
+
+function otherProjectSearch() {
+  inventory.push({ id: 'other', title: 'Other authorized project' });
+  const result = { kind: 'chapter', id: 'other:2', novel_id: 'other', branch_id: null, version: 5, revision: 'exact-source', title: 'Other chapter', aliases: [], offset: 2, snippet: 'OTHER SAVED', feature: 'editor' };
+  const originalFetch = vi.mocked(fetch).getMockImplementation()!;
+  vi.mocked(fetch).mockImplementation(async (url: any, init?: any) => response(String(url).endsWith('/writing-goal') ? { current_words: 11, target_words: 20, current_chapters: 1, target_chapters: 2, words_progress: .55 } : String(url).includes('/search?') ? { items: [result], branch_sources_available: true, suggestions: [], match_count: 1 } : String(url).endsWith('/search/resolve') ? { ...result, anchor: { offset: 2, scroll: 0 } } : await (await originalFetch(url, init)).json()));
+  const destination = { ...chapter('OTHER SAVED', 5, 'other:2'), novel_id: 'other', number: 2 };
+  vi.mocked(api.chapter).mockResolvedValue(destination);
+  return destination;
+}
+async function openSearchResult() {
+  fireEvent.click(await screen.findByRole('button', { name: 'Open broker' }));
+  fireEvent.click(await screen.findByRole('button', { name: '搜索与命令' }));
+  fireEvent.click(await screen.findByRole('button', { name: '打开章节位置' }));
+}
+it('opens another authorized project only after original inventory and exact chapter version revalidation', async () => {
+  const destination = otherProjectSearch();setup(true, true);await screen.findByText('上次工作：Last chapter');
+  await openSearchResult();await waitFor(() => expect(useStudio.getState().chapterId).toBe('other:2'));
+  expect(useStudio.getState().novelId).toBe('other');expect(api.novels).toHaveBeenCalled();expect(api.chapter).toHaveBeenCalledWith('other:2', expect.any(Object));
+  await waitFor(() => expect(editor().value).toBe(destination.content));expect(api.generate).not.toHaveBeenCalled();
+});
+it('refuses cross-project search navigation while manuscript is dirty', async () => {
+  otherProjectSearch();setup();await screen.findByText('上次工作：Last chapter');edit('LOCAL UNSAVED');
+  await openSearchResult();await screen.findByText(/再打开另一作品的搜索结果/);
+  expect(useStudio.getState().novelId).toBe('recovery');expect(editor().value).toBe('LOCAL UNSAVED');expect(api.chapter).not.toHaveBeenCalled();
+});
+it('drops a delayed cross-project source when the author types during revalidation', async () => {
+  const destination = otherProjectSearch(), pending = deferred<Chapter>();vi.mocked(api.chapter).mockReturnValue(pending.promise);
+  setup();await screen.findByText('上次工作：Last chapter');await openSearchResult();await waitFor(() => expect(api.chapter).toHaveBeenCalled());
+  edit('NEW INPUT');await act(async () => pending.resolve(destination));
+  expect(useStudio.getState().novelId).toBe('recovery');expect(editor().value).toBe('NEW INPUT');
+});
+it('does not navigate to a search project removed from the refreshed original inventory', async () => {
+  otherProjectSearch();setup();await screen.findByText('上次工作：Last chapter');vi.mocked(api.novels).mockResolvedValue([{ id: 'recovery', title: 'Synthetic' }] as any);
+  await openSearchResult();await screen.findByText(/搜索目标当前不可读或版本已变/);
+  expect(useStudio.getState().novelId).toBe('recovery');expect(api.chapter).not.toHaveBeenCalled();
+});
