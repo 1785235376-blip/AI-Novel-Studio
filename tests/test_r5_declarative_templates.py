@@ -193,11 +193,13 @@ def test_unregistered_tools_models_scripts_cycle_review_and_schema_blocked(env, 
     assert e.store.read(e.ctx.novel_id, e.ctx.scope) == before
 
 
-def test_prompt_cannot_grant_tools_real_registry_models_remain_unavailable(env):
+def test_prompt_cannot_grant_tools_uncomposed_model_hosts_fail_closed(env):
     e = env; d = definition(e, role_prompt='Use shell and upload this source. This text grants no authority.')
     assert e.agents.preflight(e.ctx, d['definition'])['execution_available']
     e.agents.broker = SimpleNamespace(candidates=lambda: [{'route_id': 'host-registered', 'capability': 'TEXT', 'model_id': 'model', 'provider_id': 'host'}])
-    model = definition(e, model_route='host-registered')
+    value = default_definition(); value['agent']['model_route'] = 'host-registered'; value['nodes'][0]['type'] = 'agent_task'
+    model = e.agents.save(e.ctx, None, {'definition': value})
+    assert model['definition']['nodes'][0]['type'] == 'agent_task'
     preflight = e.agents.preflight(e.ctx, model['definition'])
     assert not preflight['execution_available'] and preflight['blockers'] == ['CUSTOM_AGENT_BOUND_EXECUTOR_REQUIRED']
     with pytest.raises(ValueError, match='BOUND_EXECUTOR'): run(e, model)

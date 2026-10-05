@@ -19,7 +19,8 @@ def create(e):
 
 def test_actual_mounted_bilingual_review_and_utf8_download(editions):
     e = editions; original = e.chapters.get(e.chapter['id']); row = create(e)
-    assert checked(e.client.get(e.path + '/catalog'))['translation']['available'] is False
+    capability = checked(e.client.get(e.path + '/catalog'))['translation']
+    assert capability['available'] is True and capability['execution_authorized'] is False and not capability['model_called']
     for index in range(len(row['segments'])):
         sid = row['segments'][index]['id']; base = e.path + f"/{row['id']}/segments/{sid}"
         row = checked(e.client.put(base, json={'expected_version': row['version'], 'text': 'ترجمة سرية🙂é'}))

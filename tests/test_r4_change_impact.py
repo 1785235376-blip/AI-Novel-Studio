@@ -366,12 +366,16 @@ def test_actor_bound_research_records_never_enter_unscoped_impact_projection(rig
         with pytest.raises(FileNotFoundError): query(r, s, 'WORLD_RECORD', research['id'])
 
 
-def test_refresh_cannot_be_captured_as_cross_package_manifest(rig, impact):
+def test_refresh_manifest_keeps_current_origin_and_feature_visibility(rig, impact):
     r, s = rig, impact; _, original = cover(r, s); edit(r)
     refreshed = prepare(r, s, preflight(r, s, original))
     completed = s.execute(r.nid, r.scope, r.actor, refreshed['id'], 1)
-    with pytest.raises(ValueError, match='CHANGE_IMPACT_CAPTURE_NOT_SUPPORTED'):
-        s.production.capture(r.nid, r.scope, r.actor, {'task_id': completed['task_id'], 'expected_task_version': completed['task_version']})
+    manifest = s.production.capture(r.nid, r.scope, r.actor, {'task_id': completed['task_id'], 'expected_task_version': completed['task_version']})
+    stored = s.production.get(r.nid, r.scope, s.production.MANIFESTS, manifest['id'])
+    assert stored['origin']['refresh_id'] == refreshed['id']
+    assert s.production.preflight(r.nid, r.scope, r.actor, manifest['id'], 1)['ready']
+    edit(r, 'A further change requires fresh preparation.')
+    assert not s.production.preflight(r.nid, r.scope, r.actor, manifest['id'], 1)['ready']
 
 
 def test_simulation_proposals_use_original_visibility_without_private_ids_or_counts(rig, impact, monkeypatch):
@@ -390,3 +394,26 @@ def test_simulation_proposals_use_original_visibility_without_private_ids_or_cou
         assert [n['id'] for n in result['items'] if n['kind'] == 'PLANNING_PROPOSAL'] == [ordinary['id']]
         serial = json.dumps(result)
         assert derived['id'] not in serial and derived['title'] not in serial and 'unavailable-private-run' not in serial
+
+
+def test_storyboard_selected_refresh_reuses_current_original_shot_authority(rig, impact):
+    r, s = rig, impact
+    screenplay = r.screenplays.create(r.nid)
+    screenplay = r.screenplays.approve(r.nid, screenplay['id'], screenplay['edit_version'])
+    screenplay = r.screenplays.plan_shots(r.nid, screenplay['id'], screenplay['edit_version'])
+    shot = screenplay['shots'][0]
+    brief = s.media.create_storyboard(r.nid, r.scope, r.actor, {'screenplay_id': screenplay['id'],
+        'shot_id': shot['id'], 'expected_screenplay_version': screenplay['edit_version']})
+    original = s.media.queue(r.nid, r.scope, r.actor, {'brief_id': brief['id'], 'expected_brief_version': 1,
+        'adapter_id': 'mock-image-v1', 'candidate_count': 1})
+    original = s.media.execute(r.nid, r.scope, r.actor, original['id'], 1)
+    r.screenplays.update_shot(r.nid, screenplay['id'], shot['id'], {**shot, 'expected_version': screenplay['edit_version'], 'action': 'Updated original shot action.'})
+    plan = preflight(r, s, original)
+    assert plan['ready'], plan
+    refreshed = prepare(r, s, plan)
+    complete = s.execute(r.nid, r.scope, r.actor, refreshed['id'], 1)
+    assert complete['status'] == 'SUCCEEDED'
+    task = s.media.get(r.nid, r.scope, s.media.TASKS, complete['task_id'])
+    assert task['brief_snapshot']['kind'] == 'STORYBOARD'
+    assert task['brief_snapshot']['shot_snapshot']['action'] == 'Updated original shot action.'
+    assert original['brief_snapshot']['shot_snapshot']['action'] == shot['action']
