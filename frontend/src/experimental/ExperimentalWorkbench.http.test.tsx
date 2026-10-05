@@ -52,7 +52,9 @@ describe.skipIf(!base)('Experimental React with real HTTP File backend (not a br
   it('reviews a world record through the actual unified domain dispatcher', async () => {
     await click('世界与人物'); fill('世界记录标题', 'HTTP historical event'); await click('创建世界候选'); await screen.findByRole('article', { name: '世界记录 HTTP historical event' });
     await click('统一审核'); const row = await screen.findByRole('article', { name: '审核项 world HTTP historical event' }); fireEvent.click(within(row).getByRole('button', { name: '批准此审核项' })); await waitFor(() => expect(row.textContent).toContain('APPROVED'));
-    const canon = await api(`/novels/${novel.id}/experimental/world/canon`); expect(canon.items).toHaveLength(1); await settled();
+    const canon = await api(`/novels/${novel.id}/experimental/world/canon`); expect(canon.items).toHaveLength(1);
+    await click('世界与人物'); await click('检查世界连续性');
+    expect((await screen.findByRole('region', { name: '世界连续性结果' })).textContent).toContain('DETERMINISTIC_RULES'); await settled();
   });
   it('executes the actual team recipe and leaves a reviewed artifact', async () => {
     await click('创作团队'); fill('团队任务指令', 'Synthetic outline'); await click('创建团队任务'); const row = await screen.findByRole('article', { name: '团队任务 outline_chapter_editor' }); fireEvent.click(within(row).getByRole('button', { name: '执行本地 Recipe' })); await screen.findByRole('button', { name: '人工批准团队产物' }); await click('人工批准团队产物'); await waitFor(() => expect(row.textContent).toContain('SUCCEEDED')); await settled();
