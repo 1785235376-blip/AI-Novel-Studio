@@ -13,3 +13,7 @@ Only disposable synthetic manuscripts/providers were used. There is no claim tha
 The full 9bdae frontend artifact is 34,808,465 bytes, exceeding the supported local file downloader's 32 MiB maximum. A direct fetch of its generated URL returned HTTP 403 and was stopped without retry or alternate access to that resource. Its full trace bytes were NOT inspected. The independently available compact artifact, hosted failure logs and current source were inspected.
 
 The authorized successor CI produces separate source-labelled PNG groups, each at most24MiB of original image bytes plus a small manifest, without editing images. The original full trace/receipt artifact and its history remain intact. Capacity/oversize errors are explicit rather than dropping evidence; compact reports exclude only the newly prepared duplicate PNG directory. This provides a supported connector route for future newly produced evidence, not a retry of the denied URL.
+
+## Expanded PostgreSQL suite time budget
+
+Both 9bdae PostgreSQL jobs were cancelled at their configured20-minute job cap. The PR log continued advancing from67% at23:46 to83% at23:52:29 and was cancelled at23:52:37; no completed PG verdict is claimed. The successor raises only the PostgreSQL job cap to30minutes, leaving File at20minutes and retaining the full suite and strict no-skipped-marked-PG gate. This is a bounded allowance for the expanded suite, not removal of assertions or an infinite retry.

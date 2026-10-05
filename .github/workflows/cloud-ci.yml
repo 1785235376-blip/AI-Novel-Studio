@@ -27,7 +27,9 @@ jobs:
   backend:
     name: Backend / ${{ matrix.backend }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    # The expanded marked PG suite reached 83% while still advancing at the
+    # former 20-minute cap; retain a finite cap without skipping contracts.
+    timeout-minutes: ${{ matrix.backend == 'postgres' && 30 || 20 }}
     strategy:
       fail-fast: false
       matrix:
