@@ -40,6 +40,8 @@ class PostgresAtomicChapterAuditPort:
             novel, chapter = chapter_or_raise(session, chapter_id)
             old_document = chapter.document or markdown_to_document("")
             old_updated_at = chapter.updated_at
+            from ..revision_constraints import preserve_revision_constraints
+            document = preserve_revision_constraints(old_document, document, source)
             markdown = document_to_markdown(document)
             title = chapter.title
             if document.get("content") and document["content"][0].get("type") == "heading":

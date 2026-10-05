@@ -51,6 +51,8 @@ class ChapterRepository:
         current=self.get(cid)
         if expected_version!=current["version"]:
             raise VersionConflict(current,resource_id=cid,expected_version=expected_version)
+        from ..revision_constraints import preserve_revision_constraints
+        document = preserve_revision_constraints(current["document"], document, source)
         if create_revision:
             history=root/"history"/f"chapter-{num:04d}";history.mkdir(parents=True,exist_ok=True)
             reason=source if source in {"MANUAL_SAVE","AI_ACCEPT","RESTORE","CHAPTER_SWITCH","EXPLICIT_CHECKPOINT"} else "MANUAL_SAVE"
