@@ -284,17 +284,32 @@ def test_current_source_authority_checked_again_between_writes(env):
 
 
 def test_failed_new_project_fork_is_visible_without_duplicate_create(env, monkeypatch):
-    e = env; preview = e.service.preflight(e.ctx, {'chapter_ids': [e.cid], 'title': 'Interrupted new target'})
+    e = env
+    neighbor_id = 'fork-unrelated-' + uuid4().hex
+    e.novels.create({'id': neighbor_id, 'title': 'Owned unrelated sentinel'})
+    neighbor = e.chapters.create(neighbor_id, {'title': 'Untouched neighbor', 'content': 'Must survive interrupted fork'})
+    neighbor = deepcopy(e.chapters.get(neighbor['id']))
+    source = deepcopy(e.chapters.get(e.cid)); history = deepcopy(e.chapters.history(e.cid))
+    before = {row['id']: deepcopy(row) for row in e.novels.list()}
     original = e.chapters.save
-    def fail(*args, **kwargs): raise RuntimeError('synthetic copied document failure')
-    monkeypatch.setattr(e.chapters, 'save', fail)
-    with pytest.raises(RuntimeError): e.service.create_fork(e.ctx, preview['id'], confirmation(preview))
-    raw = e.service._owned(e.ctx, e.service.FORKS, preview['id'])
-    assert raw['status'] == 'RECOVERY_REQUIRED' and e.novels.get(raw['target_id'])
-    assert raw['id_map']['chapters'][e.cid] and raw['journal'][-1]['status'] == 'CLAIMED'
-    with pytest.raises(CapabilityVersionConflict): e.service.create_fork(e.ctx, preview['id'], confirmation(preview))
-    assert len(e.novels.list()) == 2
-    monkeypatch.setattr(e.chapters, 'save', original)
+    try:
+        preview = e.service.preflight(e.ctx, {'chapter_ids': [e.cid], 'title': 'Interrupted new target'})
+        def fail(*args, **kwargs): raise RuntimeError('synthetic copied document failure')
+        monkeypatch.setattr(e.chapters, 'save', fail)
+        with pytest.raises(RuntimeError): e.service.create_fork(e.ctx, preview['id'], confirmation(preview))
+        raw = e.service._owned(e.ctx, e.service.FORKS, preview['id'])
+        assert raw['status'] == 'RECOVERY_REQUIRED' and e.novels.get(raw['target_id'])
+        assert raw['target_id'] not in before
+        assert raw['id_map']['chapters'][e.cid] and raw['journal'][-1]['status'] == 'CLAIMED'
+        with pytest.raises(CapabilityVersionConflict): e.service.create_fork(e.ctx, preview['id'], confirmation(preview))
+        after = {row['id']: row for row in e.novels.list()}
+        assert set(after) == set(before) | {raw['target_id']}
+        assert {nid: after[nid] for nid in before} == before
+        assert e.chapters.get(e.cid) == source and e.chapters.history(e.cid) == history
+        assert e.chapters.get(neighbor['id']) == neighbor
+    finally:
+        monkeypatch.setattr(e.chapters, 'save', original)
+        e.novels.delete(neighbor_id)
 
 
 def test_media_digest_or_source_version_drift_blocks_fork_and_compare(env):

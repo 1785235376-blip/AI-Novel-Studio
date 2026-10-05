@@ -46,7 +46,7 @@ test('U07 original author job is reopened from its exact task with original Diff
     expect(JSON.stringify(projected)).not.toContain(manuscript);
     let posts = 0; page.on('request', request => { if (request.method() === 'POST' && /\/(generate|generation)\//.test(request.url())) posts++; });
     await tasks(page);
-    const card = page.locator('article.experimental-record').filter({ hasText: jid });
+    const card = page.getByRole('region', { name: '任务中心 · 原服务实时读取', exact: true }).locator('article.experimental-record').filter({ hasText: jid });
     await expect(card).toContainText('已完成');
     await card.getByRole('button', { name: '打开原生成草稿', exact: true }).click();
     await expect(page.locator('.novel-draft-review')).toBeVisible();

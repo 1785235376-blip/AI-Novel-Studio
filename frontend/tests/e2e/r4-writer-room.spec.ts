@@ -31,7 +31,10 @@ test('B08 real File/React async assignment, independent-client conflict, origina
     await page.goto('/'); await page.getByPlaceholder('小说名称').fill(`B08 synthetic ${info.testId}`);
     const created = page.waitForResponse(r => r.url().endsWith('/api/novels') && r.request().method() === 'POST');
     await page.getByRole('button', { name: '创建小说', exact: true }).click(); nid = (await checked(await created)).id;
-    const chapter = await checked(await request.post(`${API}/novels/${nid}/chapters`, { data: { title: '合成审阅章节', content: '阿青🙂来到城门。需要讨论动机。' } }));
+    const createdChapter = await checked(await request.post(`${API}/novels/${nid}/chapters`, { data: { title: '合成审阅章节', content: '阿青🙂来到城门。需要讨论动机。' } }));
+    // Capture the original editor's normalized, versioned baseline before derived work.
+    const chapter = await checked(await request.get(`${API}/chapters/${createdChapter.id}`));
+    const originalHistory = await checked(await request.get(`${API}/chapters/${chapter.id}/history`));
     await checked(await request.post(`${API}/novels/${nid}/chapters`, { data: { title: '未选私有章节', content: 'UNSELECTED_REVIEW_MARKER' } }));
     const base = `${API}/novels/${nid}/experimental/writer-room`;
     await page.reload(); await open(page);
@@ -78,7 +81,9 @@ test('B08 real File/React async assignment, independent-client conflict, origina
     const files = unzip(Buffer.from(array)); expect([...files.keys()]).toEqual(['manifest.json', 'chapters/001.txt']);
     const manifest = JSON.parse(files.get('manifest.json')!.toString('utf8')); expect(manifest.chapters.map((c: any) => c.id)).toEqual([chapter.id]);
     expect(files.get('chapters/001.txt')!.toString('utf8')).toContain('阿青🙂'); expect(Buffer.concat([...files.values()]).toString('utf8')).not.toContain('UNSELECTED_REVIEW_MARKER');
-    expect((await checked(await request.get(`${API}/chapters/${chapter.id}`))).version).toBe(chapter.version);
+    const unchanged = await checked(await request.get(`${API}/chapters/${chapter.id}`));
+    expect(unchanged.version).toBe(chapter.version); expect(unchanged.content).toBe(chapter.content); expect(unchanged.document).toEqual(chapter.document);
+    expect(await checked(await request.get(`${API}/chapters/${chapter.id}/history`))).toEqual(originalHistory);
     for (const [width, height] of [[1366, 768], [1440, 900], [1920, 1080]]) {
       await page.setViewportSize({ width, height }); const panel = page.locator('section[aria-label="Writer Room 异步团队审阅"]');
       expect(await panel.evaluate(node => node.scrollWidth <= node.clientWidth + 2)).toBe(true);

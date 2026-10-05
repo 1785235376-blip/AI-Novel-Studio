@@ -15,7 +15,8 @@ test('B09 real local fork, rich three-way conflict choice, original CAS merge an
   info.annotations.push({ type: 'verification', description: 'Authored original File/API/React B09 journey; no response mocks or collaboration-branch claim. Local Chromium previously blocked by EPERM and not retried; hosted runtime evidence must be observed separately.' });
   page.on('request', r => { if (r.method() === 'POST' && r.url().includes('/project-forks/')) writes.push(r.url()); });
   try {
-    await page.addInitScript(token => localStorage.setItem('studio.session', token), TOKEN); await page.goto(UI);
+    await page.setExtraHTTPHeaders(headers); await page.goto(UI);
+    expect(await page.evaluate(() => [localStorage.getItem('studio.session'), localStorage.getItem('studio.scope')])).toEqual([null, null]);
     await page.getByPlaceholder('小说名称').fill(`B09 synthetic ${info.testId}`);
     const creating = page.waitForResponse(r => r.url().endsWith('/api/novels') && r.request().method() === 'POST');
     await page.getByRole('button', { name: '创建小说', exact: true }).click(); const novel = await checked(await creating); projects.push(novel.id);

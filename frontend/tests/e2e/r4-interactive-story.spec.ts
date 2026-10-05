@@ -21,7 +21,10 @@ test('B07 real File/React author choices, verify two endings, exact review, inde
     await page.goto('/'); await page.getByPlaceholder('小说名称').fill(`B07 synthetic ${info.testId}`);
     const created = page.waitForResponse(r => r.url().endsWith('/api/novels') && r.request().method() === 'POST');
     await page.getByRole('button', { name: '创建小说', exact: true }).click(); nid = (await checked(await created)).id;
-    const chapter = await checked(await page.request.post(`${API}/novels/${nid}/chapters`, { data: { title: '合成互动来源', content: '阿青来到城门。这里将分成两条剧情路线。' } }));
+    const createdChapter = await checked(await page.request.post(`${API}/novels/${nid}/chapters`, { data: { title: '合成互动来源', content: '阿青来到城门。这里将分成两条剧情路线。' } }));
+    // Capture the original editor's normalized, versioned baseline before derived work.
+    const chapter = await checked(await page.request.get(`${API}/chapters/${createdChapter.id}`));
+    const originalHistory = await checked(await page.request.get(`${API}/chapters/${chapter.id}/history`));
     const base = `${API}/novels/${nid}/experimental`;
     const graph = await checked(await page.request.post(base + '/planning/graphs', { data: { title: '合成城门入口', links: { chapter_ids: [chapter.id] } } }));
     const endings: any[] = [];
@@ -73,7 +76,9 @@ test('B07 real File/React author choices, verify two endings, exact review, inde
     const neutral = JSON.parse(inflateRawSync(zip.subarray(begin, begin + compressedLength)).toString('utf8'));
     expect(neutral.schema).toBe('ai-novel-interactive-story/1'); expect(neutral.spec.nodes[0].node_id).toBe(graph.root_node_id);
     expect(neutral.spec.nodes.filter((n: any) => n.ending).length).toBe(2);
-    expect((await checked(await page.request.get(`${API}/chapters/${chapter.id}`))).version).toBe(chapter.version);
+    const unchanged = await checked(await page.request.get(`${API}/chapters/${chapter.id}`));
+    expect(unchanged.version).toBe(chapter.version); expect(unchanged.content).toBe(chapter.content); expect(unchanged.document).toEqual(chapter.document);
+    expect(await checked(await page.request.get(`${API}/chapters/${chapter.id}/history`))).toEqual(originalHistory);
     for (const [width, height] of [[1366, 768], [1440, 900], [1920, 1080]]) {
       await page.setViewportSize({ width, height });
       const panel = page.locator('section[aria-label="互动故事与导出"]');

@@ -15,7 +15,8 @@ test('B10 actual File/API/React selected exchange, conflict review, receipt and 
   info.annotations.push({ type: 'verification', description: 'Real original File/API/React journey without response mocks, separate from RUN_B10_TCP_SYNC_TEST two-isolated-endpoint test. Local Chromium EPERM is not retried. Hosted execution is not claimed until observed.' });
   page.on('request', req => { if (req.method() === 'POST' && req.url().includes('/offline-sync/') && req.url().endsWith('/apply')) applies.push(req.url()); });
   try {
-    await page.addInitScript(token => localStorage.setItem('studio.session', token), TOKEN); await page.goto(UI);
+    await page.setExtraHTTPHeaders(headers); await page.goto(UI);
+    expect(await page.evaluate(() => [localStorage.getItem('studio.session'), localStorage.getItem('studio.scope')])).toEqual([null, null]);
     await page.getByPlaceholder('小说名称').fill(`B10 synthetic ${info.testId}`);
     const created = page.waitForResponse(r => r.url().endsWith('/api/novels') && r.request().method() === 'POST');
     await page.getByRole('button', { name: '创建小说', exact: true }).click(); const novel = await checked(await created); projects.push(novel.id);
