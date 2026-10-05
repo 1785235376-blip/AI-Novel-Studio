@@ -1,0 +1,9 @@
+/* Consumer-only prose and reference styles. Existing shell/status stays intact. */
+.writing-focus-split{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--space-3);min-width:0}
+.writing-focus-split:has(.writing-reference-rail){grid-template-columns:minmax(0,2fr) minmax(0,1fr)}
+.writing-reference-rail{min-width:0;display:grid;align-content:start;gap:var(--space-3);max-height:calc(var(--space-12)*14);overflow:auto;padding:var(--space-3);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-surface)}
+.writing-reference-text{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;font-family:var(--font-editor)}
+.editor.writing-focus-editor .tiptap{max-width:var(--writing-column-width,68ch);margin-inline:auto;font-size:var(--writing-font-size,18px);line-height:var(--writing-line-height,1.75)}
+.editor.writing-paragraph-focus .tiptap>[data-writing-inactive="true"]{color:var(--color-text-muted)}
+.editor.writing-paragraph-focus .tiptap>[data-writing-active="true"]{color:var(--color-text-primary);border-inline-start:var(--space-1) solid var(--color-selection-border);padding-inline-start:var(--space-2)}
+@media(max-width:1100px){.writing-focus-split:has(.writing-reference-rail){grid-template-columns:minmax(0,1fr)}.writing-reference-rail{max-height:calc(var(--space-12)*6)}}
