@@ -37,6 +37,7 @@ export function PlanningPanel({ client, chapter }: { client: ExperimentalClient;
   const proposals = (overview.data?.proposals || []).filter(row => !nodeId || row.node_id === nodeId);
   const review = (row: Row, operation: string) => action.run(() => client.post(`/planning/proposals/${segment(row.id)}/${operation}`, { expected_version: row.version }), '审核状态已更新');
   const busy = action.busy || overview.loading || graph.loading;
+  const requiresRebase = !!node && node.version > editingVersion;
   return <Panel title="分层创作规划 V2" actions={<Refresh reload={reload} busy={busy} />}>
     <StatusMessage>Project → Volume → Chapter → Scene。生成使用 MOCK_ONLY；批准只更新规划，正文与 Canon 保持人工审核流程。</StatusMessage>
     {action.feedback}<ResourceState loading={overview.loading || graph.loading} error={overview.error || graph.error} />
@@ -49,13 +50,22 @@ export function PlanningPanel({ client, chapter }: { client: ExperimentalClient;
     {graph.data && <div className="experimental-actions"><Button disabled={busy} onClick={() => action.run(() => client.post(`/planning/graphs/${segment(graph.data!.id)}/${graph.data!.status === 'ARCHIVED' ? 'restore' : 'archive'}`, { expected_version: graph.data!.version }), '规划图归档状态已更新')}>{graph.data.status === 'ARCHIVED' ? '恢复规划图' : '归档规划图'}</Button><Badge>{graph.data.status}</Badge></div>}
     {node && <section className="experimental-section" aria-label="规划节点编辑">
       <h3>编辑 {node.level}</h3>
+      {requiresRebase && <section className="experimental-record" aria-label="规划节点版本恢复">
+        <StatusMessage tone="warning">当前节点已更新为 v{node.version}，草稿仍以 v{editingVersion} 为基线。你的编辑已保留。请对照当前记录核对草稿，再明确更新保存基线。</StatusMessage>
+        <div className="experimental-grid">
+          <Details open label={`当前服务器节点 · v${node.version}`} value={{ title: node.title, fields: node.fields, links: node.links }} />
+          <Details open label={`保留的编辑草稿 · 基线 v${editingVersion}`} value={{ title, fields, character_objectives_json: objectives, beats_json: beats, links }} />
+        </div>
+        <p>更新基线只保留当前表单并改变下一次保存的预期版本，不会自动提交，也不会丢弃你的编辑。请先把需要保留的服务器变更合入表单。</p>
+        <Button disabled={busy} onClick={() => action.run(async () => { setEditingVersion(node.version); }, '草稿已保留并更新保存基线，尚未提交')}>保留草稿并更新保存基线</Button>
+      </section>}
       <Field label="节点标题"><input value={title} onChange={event => setTitle(event.target.value)} /></Field>
       <div className="experimental-grid">{Object.entries(fieldLabels).map(([key, label]) => <Field key={key} label={label}><textarea value={fields[key as keyof typeof fields]} onChange={event => setFields(current => ({ ...current, [key]: event.target.value }))} /></Field>)}</div>
       <ObjectInput label="人物目标（JSON：人物 ID → 目标）" value={objectives} onChange={setObjectives} /><ObjectInput label="自定义节拍（JSON）" value={beats} onChange={setBeats} />
       <details><summary>关联真实记录</summary><div className="experimental-grid">{Object.entries({ chapter_ids: '章节 ID', character_ids: '人物 ID', location_ids: '地点 ID', world_rule_ids: '已批准世界规则 ID', story_route_ids: '剧情路线 ID' }).map(([key, label]) => <Field key={key} label={`${label}（逗号分隔）`}><input value={links[key as keyof typeof links]} onChange={event => setLinks(current => ({ ...current, [key]: event.target.value }))} /></Field>)}</div></details>
       <div className="experimental-actions">
-        <Button disabled={busy || !title.trim() || node.status === 'ARCHIVED' || graph.data?.status === 'ARCHIVED'} onClick={() => action.run(async () => { const value = await client.put<Row>(`/planning/nodes/${segment(node.id)}`, { ...payload(), expected_version: editingVersion, position: node.position }); setEditingVersion(value.version); }, '节点已保存')}>保存节点</Button>
-        <Button disabled={busy || !title.trim()} onClick={() => action.run(() => client.post('/planning/proposals', { ...payload(), node_id: node.id, expected_node_version: editingVersion, rationale: instruction }), '方案已进入审核')}>保存为待审方案</Button>
+        <Button disabled={busy || requiresRebase || !title.trim() || node.status === 'ARCHIVED' || graph.data?.status === 'ARCHIVED'} onClick={() => action.run(async () => { const value = await client.put<Row>(`/planning/nodes/${segment(node.id)}`, { ...payload(), expected_version: editingVersion, position: node.position }); setEditingVersion(value.version); }, '节点已保存')}>保存节点</Button>
+        <Button disabled={busy || requiresRebase || !title.trim()} onClick={() => action.run(() => client.post('/planning/proposals', { ...payload(), node_id: node.id, expected_node_version: editingVersion, rationale: instruction }), '方案已进入审核')}>保存为待审方案</Button>
         {node.level !== 'PROJECT' && <Button disabled={busy || graph.data?.status === 'ARCHIVED' || (node.status !== 'ARCHIVED' && graph.data?.nodes?.some((row: Row) => row.parent_id === node.id && row.status !== 'ARCHIVED'))} onClick={() => action.run(() => client.post(`/planning/nodes/${segment(node.id)}/${node.status === 'ARCHIVED' ? 'restore' : 'archive'}`, { expected_version: node.version }), '规划节点归档状态已更新')}>{node.status === 'ARCHIVED' ? '恢复规划节点' : '归档规划节点'}</Button>}
         {nextLevel && <Button disabled={busy || !title.trim() || ((nextLevel === 'CHAPTER' || nextLevel === 'SCENE') && !chapter && !node.links?.chapter_ids?.length)} onClick={() => action.run(async () => { const value = await client.post<Row>('/planning/nodes', { ...payload(), title: `${nextLevel} ${title}`, graph_id: graphId, parent_id: node.id, level: nextLevel, links: { ...payload().links, chapter_ids: nextLevel === 'SCENE' ? node.links.chapter_ids : nextLevel === 'CHAPTER' ? [chapter?.id] : [] } }); setNodeId(value.id); }, '已创建下级规划')}>添加 {nextLevel} 子节点</Button>}
       </div>

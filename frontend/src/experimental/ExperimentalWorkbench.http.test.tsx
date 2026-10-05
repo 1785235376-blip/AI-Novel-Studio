@@ -10,7 +10,7 @@ const transport = globalThis.fetch;
 const flags = { experimental: true, default_enabled: false as const, features: Object.fromEntries(['advanced_planning_v2', 'semantic_import_v2', 'world_character_engines_v2', 'unified_review_inbox', 'agent_team_recipes', 'media_adapter_registry', 'cover_storyboard_generation', 'visual_embeddings', 'audiobook_v2'].map(key => [`experimental.${key}`, true])) };
 async function api(path: string, data?: unknown, method = 'POST') { const response = await transport(base + '/api' + path, { method: data === undefined ? 'GET' : method, headers: { 'Content-Type': 'application/json' }, ...(data === undefined ? {} : { body: JSON.stringify(data) }) }); const value = await response.json(); expect(response.ok, JSON.stringify(value)).toBe(true); return value; }
 function fill(name: string, value: string) { fireEvent.change(screen.getByLabelText(name, { exact: true }), { target: { value } }); }
-async function click(name: string) { const button = screen.getByRole('button', { name }) as HTMLButtonElement; await waitFor(() => expect(button.disabled).toBe(false)); fireEvent.click(button); }
+async function click(name: string) { await waitFor(() => expect((screen.getByRole('button', { name }) as HTMLButtonElement).disabled).toBe(false)); fireEvent.click(screen.getByRole('button', { name })); }
 async function settled() { await waitFor(() => expect(screen.queryByRole('alert')).toBeNull()); }
 let novel: any, chapter: any;
 describe.skipIf(!base)('Experimental React with real HTTP File backend (not a browser)', () => {
@@ -30,6 +30,16 @@ describe.skipIf(!base)('Experimental React with real HTTP File backend (not a br
     fill('规划模板', 'multiple-endings'); await click('生成 Mock 双方案'); const first = await screen.findByRole('article', { name: '方案 Mock option 1' }); const second = await screen.findByRole('article', { name: '方案 Mock option 2' });
     fireEvent.click(within(first).getByRole('checkbox')); fireEvent.click(within(second).getByRole('checkbox')); await click('比较已选方案'); await screen.findByRole('region', { name: '规划方案比较' });
     await waitFor(() => expect((within(first).getByRole('button', { name: '批准规划' }) as HTMLButtonElement).disabled).toBe(false)); fireEvent.click(within(first).getByRole('button', { name: '批准规划' })); await waitFor(() => expect(first.textContent).toContain('APPROVED'));
+    // Approval advances the same node. Retain edits and explicitly rebase before saving again.
+    fill('目标', 'Retained post-approval draft');
+    await screen.findByRole('region', { name: '规划节点版本恢复' });
+    await click('刷新实验记录');
+    expect((screen.getByLabelText('目标', { exact: true }) as HTMLTextAreaElement).value).toBe('Retained post-approval draft');
+    await click('保留草稿并更新保存基线'); await screen.findByText('草稿已保留并更新保存基线，尚未提交'); await click('保存节点');
+    await screen.findByText('节点已保存');
+    const graphs = await api(`/novels/${novel.id}/experimental/planning/graphs`);
+    const stored = await api(`/novels/${novel.id}/experimental/planning/graphs/${graphs.items[0].id}`);
+    expect(stored.nodes.find((row: any) => row.level === 'SCENE').fields.goal).toBe('Retained post-approval draft');
     expect((await api(`/chapters/${chapter.id}`)).content).toBe(chapter.content); await settled();
   });
   it('runs actual chunk extraction and verified review/commit', async () => {

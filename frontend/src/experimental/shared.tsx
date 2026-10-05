@@ -38,8 +38,8 @@ export function ErrorMessage({ error }: { error: unknown }) {
 export function ResourceState({ loading, error, empty = false }: { loading: boolean; error?: unknown; empty?: boolean }) {
   return <>{loading && <StatusMessage>正在读取…</StatusMessage>}{!!error && <ErrorMessage error={error} />}{!loading && !error && empty && <EmptyState title="暂无记录" detail="创建记录后会显示在这里。" />}</>;
 }
-export function Details({ value, label = '来源与详情' }: { value: unknown; label?: string }) {
-  return <details className="experimental-details"><summary>{label}</summary><pre>{JSON.stringify(value, null, 2)}</pre></details>;
+export function Details({ value, label = '来源与详情', open = false }: { value: unknown; label?: string; open?: boolean }) {
+  return <details open={open || undefined} className="experimental-details"><summary>{label}</summary><pre>{JSON.stringify(value, null, 2)}</pre></details>;
 }
 export function RecordStatus({ row }: { row: Row }) {
   return <div className="experimental-actions"><Badge tone={row.status === 'APPROVED' || row.status === 'COMMITTED' || row.status === 'SUCCEEDED' ? 'success' : 'neutral'}>{row.status || 'DRAFT'} · v{row.version}</Badge>{row.stale && <Badge tone="warning">STALE · 来源已变化</Badge>}{row.execution_mode && <Badge tone="info">{row.execution_mode}</Badge>}</div>;
