@@ -32,6 +32,8 @@ test('U08 real React source removals and individually reviewed local variant job
       const selection = window.getSelection()!; selection.removeAllRanges(); selection.addRange(range);
       document.dispatchEvent(new Event('selectionchange'));
     });
+    await expect(panel.getByRole('region', { name: '本次请求材料范围', exact: true })).toBeVisible();
+    await expect(panel.getByLabel('正文范围', { exact: true })).toBeVisible();
     await panel.getByLabel('正文范围', { exact: true }).selectOption('SELECTION_ONLY');
     const selecting = page.waitForResponse(r => r.url().endsWith('/author-context/preview') && r.request().method() === 'POST');
     await panel.getByRole('button', { name: '检查真实生成请求', exact: true }).click();

@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { StatusMessage } from '../ui/primitives';
 import { defaultAuthorRequestScope, type AuthorRequestScope } from './authorContextClient';
 import './AuthorRequestPreview.css';
@@ -8,9 +9,10 @@ export function AuthorRequestControls({ value = defaultAuthorRequestScope, onCha
   styleProfileId?: string; plotPlanId?: string; disabled?: boolean; operation: string;
 }) {
   const reduced = value.source_mode !== 'AUTO';
+  const sourceLabelId = useId();
   return <section className="ai-context-preview author-request-controls" aria-label="本次请求材料范围">
     <header className="ai-context-preview__header"><h3>本次请求材料范围</h3></header>
-    <label>正文范围<select value={value.source_mode} disabled={disabled} onChange={event => onChange({ ...value, source_mode: event.target.value as AuthorRequestScope['source_mode'] })}>
+    <label><span id={sourceLabelId}>正文范围</span><select aria-labelledby={sourceLabelId} value={value.source_mode} disabled={disabled} onChange={event => onChange({ ...value, source_mode: event.target.value as AuthorRequestScope['source_mode'] })}>
       <option value="AUTO">当前选区；未选中时使用末尾 2000 字符</option>
       <option value="SELECTION_ONLY" disabled={!source}>只用当前已保存选区</option>
       <option value="NONE" disabled={operation === 'rewrite'}>不包含正文</option>
