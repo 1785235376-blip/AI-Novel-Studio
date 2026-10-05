@@ -244,7 +244,10 @@ class CreationWorkbenchService:
     def list_comments(self, nid, scope):
         self.novels.get(nid)
         with self.store._lock, workspace_mutation(self.store.root, "creation-workbench"):
-            rows = [r for r in self._rows("review_threads") if self._match(r, nid, scope)]
+            # Derived judge threads reuse this authority but require their current
+            # experimental source/permission fence. The legacy route must not
+            # expose them when the experiment is disabled or evidence is stale.
+            rows = [r for r in self._rows("review_threads") if self._match(r, nid, scope) and not r.get("narrative_judge")]
         for row in rows:
             try:
                 chapter = self.chapters.get(row["anchor"]["chapter_id"])
@@ -271,6 +274,8 @@ class CreationWorkbenchService:
         with self.store._lock, workspace_mutation(self.store.root, "creation-workbench"):
             rows = self._rows("review_threads")
             row = self._find(rows, nid, scope, rid)
+            if row.get("narrative_judge"):
+                raise FileNotFoundError(rid)
             if version != row["version"]:
                 raise CapabilityVersionConflict(row)
             now = self._now()
