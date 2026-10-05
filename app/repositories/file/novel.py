@@ -2,6 +2,7 @@ from __future__ import annotations
 import json
 from ...repository import FileRepository,read_json,slug
 from ...storage import atomic_write
+from ...file_project_lifecycle import guard_project
 from ...privacy import privacy_for_update, privacy_record
 from .mutation_coordinator import workspace_mutation
 from ..screenplay_versions import versioned_screenplay
@@ -13,9 +14,11 @@ class FileNovelRepository:
     def get(self,novel_id):return self.backend.get_novel(novel_id)
     def update(self,novel_id,payload):return self.backend.update_novel(novel_id,payload)
     def delete(self,novel_id):return self.backend.delete_novel(novel_id)
+    @guard_project("novel_id")
     def get_data_set(self,novel_id,name):
         rows=self.backend.data_set(novel_id,name)
         return [privacy_record(row) for row in rows] if name in {"characters","locations","canon","foreshadowing","timeline","relationships"} else rows
+    @guard_project("novel_id")
     def upsert_character(self,novel_id,character_id,payload):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
@@ -27,6 +30,7 @@ class FileNovelRepository:
         if index is None:rows.append(item)
         else:rows[index]=item
         atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
+    @guard_project("novel_id")
     def upsert_location(self,novel_id,location_id,payload):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
@@ -38,6 +42,7 @@ class FileNovelRepository:
         if index is None:rows.append(item)
         else:rows[index]=item
         atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
+    @guard_project("novel_id")
     def upsert_timeline_event(self,novel_id,event_id,payload):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
@@ -49,6 +54,7 @@ class FileNovelRepository:
         if index is None:rows.append(item)
         else:rows[index]=item
         rows.sort(key=lambda row:int(row.get('sequence',0)));atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
+    @guard_project("novel_id")
     def upsert_foreshadowing(self,novel_id,foreshadowing_id,payload):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
@@ -60,6 +66,7 @@ class FileNovelRepository:
         if index is None:rows.append(item)
         else:rows[index]=item
         rows.sort(key=lambda row:(row.get('planted_chapter') is None,row.get('planted_chapter') or 0));atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
+    @guard_project("novel_id")
     def upsert_relationship(self,novel_id,relationship_id,payload):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
@@ -71,14 +78,17 @@ class FileNovelRepository:
         if index is None:rows.append(item)
         else:rows[index]=item
         atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
+    @guard_project("novel_id")
     def get_outline(self,novel_id):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
         return read_json(root/'outline.json',{})
+    @guard_project("novel_id")
     def update_outline(self,novel_id,payload):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
         item={**payload};atomic_write(root/'outline.json',__import__('json').dumps(item,ensure_ascii=False,indent=2));return item
+    @guard_project("novel_id")
     def upsert_volume(self,novel_id,volume_id,payload):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
@@ -87,6 +97,7 @@ class FileNovelRepository:
         if index is None:rows.append(item)
         else:rows[index]=item
         rows.sort(key=lambda row:int(row.get('sequence',0)));atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
+    @guard_project("novel_id")
     def upsert_scene(self,novel_id,scene_id,payload):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
@@ -95,6 +106,7 @@ class FileNovelRepository:
         if index is None:rows.append(item)
         else:rows[index]=item
         rows.sort(key=lambda row:(str(row.get('chapter_id','')),int(row.get('sequence',0))));atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
+    @guard_project("novel_id")
     def upsert_story_route(self,novel_id,route_id,payload):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
@@ -104,11 +116,14 @@ class FileNovelRepository:
         if index is None:rows.append(item)
         else:rows[index]=item
         atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
+    @guard_project("novel_id")
     def get_public_secrets(self,novel_id):return self.backend.secrets_public(novel_id)
+    @guard_project("novel_id")
     def list_adaptation_proposals(self,novel_id):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
         return read_json(root/'adaptations.json',[])
+    @guard_project("novel_id")
     def save_adaptation_proposal(self,novel_id,proposal):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
@@ -116,10 +131,12 @@ class FileNovelRepository:
         if index is None:rows.append(proposal)
         else:rows[index]=proposal
         atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return proposal
+    @guard_project("novel_id")
     def list_screenplays(self,novel_id):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
         return read_json(root/'screenplays.json',[])
+    @guard_project("novel_id")
     def save_screenplay(self,novel_id,screenplay,*,expected_version=None):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
@@ -129,6 +146,7 @@ class FileNovelRepository:
             if index is None:rows.append(saved)
             else:rows[index]=saved
             atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return saved
+    @guard_project("novel_id")
     def get_context_sources(self,novel_id):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
