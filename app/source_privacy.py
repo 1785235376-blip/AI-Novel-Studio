@@ -14,6 +14,7 @@ from pathlib import Path
 from .config import settings
 from .privacy import normalize_privacy, merge_privacy
 from .storage import atomic_write
+from .repositories.file.mutation_coordinator import workspace_mutation
 
 _LOCK = threading.RLock()
 
@@ -41,7 +42,7 @@ def _read(root=None):
 
 
 def source_privacy_status(chapter, branch_id=None, root=None):
-    with _LOCK:
+    with _LOCK, workspace_mutation(Path(root or settings.data_path()), "source-privacy"):
         try:
             record = _read(root).get(_key(chapter, branch_id))
         except (ValueError, OSError):
@@ -69,7 +70,7 @@ def review_source_privacy(chapter, branch_id, actor_id, privacy_level, expected_
         raise ValueError("invalid source privacy policy")
     if expected_version != chapter.get("version") or expected_digest != content_digest(chapter):
         raise ValueError("chapter changed; review its current text before changing privacy")
-    with _LOCK:
+    with _LOCK, workspace_mutation(Path(root or settings.data_path()), "source-privacy"):
         records = _read(root)
         records[_key(chapter, branch_id)] = {"novel_id": chapter["novel_id"], "chapter_id": chapter["id"],
             "branch_id": branch_id, "chapter_version": expected_version, "content_sha256": expected_digest,

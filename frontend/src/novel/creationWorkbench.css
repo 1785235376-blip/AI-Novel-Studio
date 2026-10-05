@@ -1,0 +1,9 @@
+.creation-workbench { display: flex; flex-direction: column; gap: var(--space-3); overflow: auto; }
+.creation-workbench form { display: grid; gap: var(--space-3); }
+.creation-workbench label { display: grid; gap: var(--space-2); }
+.creation-workbench textarea { min-height: var(--space-12); resize: vertical; }
+.creation-workbench__record { border: var(--border-default); border-radius: var(--radius-md); padding: var(--space-3); display: grid; gap: var(--space-2); }
+.creation-workbench__record header { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.creation-workbench__record p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.creation-workbench__compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: var(--space-3); }
+.creation-workbench__compare article { border: var(--border-default); padding: var(--space-3); }

@@ -22,6 +22,7 @@ export interface FeatureGroupDefinition {
  */
 export const FEATURE_GROUPS:readonly FeatureGroupDefinition[]=[
   {id:'create',label:'创作',icon:<PenLine aria-hidden="true"/>,items:[
+    {id:'creation',label:'创作方案与风格',icon:<PenLine aria-hidden="true"/>},
     {id:'story',label:'故事资料库',icon:<BookOpen aria-hidden="true"/>},
     {id:'overview',label:'概览',icon:<LayoutDashboard aria-hidden="true"/>},
     {id:'history',label:'版本历史',icon:<History aria-hidden="true"/>},
@@ -37,6 +38,7 @@ export const FEATURE_GROUPS:readonly FeatureGroupDefinition[]=[
     {id:'research',label:'研究资料',icon:<BookMarked aria-hidden="true"/>},
   ]},
   {id:'collaboration',label:'协作',icon:<UsersRound aria-hidden="true"/>,items:[
+    {id:'comments',label:'评论与审核',icon:<ClipboardList aria-hidden="true"/>},
     {id:'agents',label:'Agent 团队',icon:<Users aria-hidden="true"/>},
     {id:'members',label:'团队成员',icon:<UsersRound aria-hidden="true"/>},
     {id:'permissions',label:'权限设置',icon:<Shield aria-hidden="true"/>},
