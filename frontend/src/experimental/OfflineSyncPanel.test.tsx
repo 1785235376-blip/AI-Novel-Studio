@@ -18,6 +18,14 @@ function backend(options: { records?: SyncRecords; override?: (url: string, init
     const overridden = await options.override?.(url, init, records); if (overridden) return overridden;
     if (url.endsWith('/catalog')) return response({ chapters: [{ id: 'chapter', title: 'Selected synthetic chapter', version: 2 }, { id: 'other', title: 'Unselected synthetic chapter', version: 1 }], network_enabled: false, truncated: false });
     if (url.endsWith('/records')) return response(records);
+    if (url.endsWith('/selection/preview')) { const body = JSON.parse(String(init.body)); return response({ channel_id: 'channel', version: records.channels[0].version, additions: body.add_chapter_ids.map((id: string) => ({ id, title: 'Fresh baseline', version: 1, document: 'Saved original baseline🙂' })), withdraw_chapter_ids: body.withdraw_chapter_ids, preview_digest: 'd'.repeat(64), copy_boundary: 'DOWNLOADED_COPIES_AND_BACKUPS_CANNOT_BE_RECALLED' }); }
+    if (url.endsWith('/selection')) {
+      const body = JSON.parse(String(init.body)), current = records.channels[0]; current.version++;
+      current.chapter_ids = current.chapter_ids.filter(id => !body.withdraw_chapter_ids.includes(id)).concat(body.add_chapter_ids);
+      current.withdrawn_chapter_ids = (current.withdrawn_chapter_ids || []).concat(body.withdraw_chapter_ids);
+      for (const item of [...records.outbox, ...records.inbox]) if (body.withdraw_chapter_ids.includes(item.chapter_id || item.target_chapter_id)) { item.selection_withdrawn = true; item.version++; if (['PENDING', 'PENDING_REVIEW'].includes(item.status)) item.status = 'SELECTION_REVOKED'; }
+      return response(current);
+    }
     if (url.endsWith('/queue')) { const output = row('PENDING'); records.outbox.push(output); records.channels[0].version++; return response(output); }
     if (url.endsWith('/review')) return response(plan(JSON.parse(String(init.body)).choices));
     if (url.endsWith('/apply')) { records.inbox[0].status = 'APPLIED'; records.inbox[0].version++; return response(records.inbox[0]); }
@@ -121,4 +129,52 @@ it('can discard obsolete conflict choices after source drift without discarding 
   expect((screen.getByLabelText('冲突选择 1') as HTMLSelectElement).value).toBe('');
   expect((screen.getByRole('button', { name: '应用已核对的候选' }) as HTMLButtonElement).disabled).toBe(true);
   const requests = fetch.mock.calls.filter(([url]) => url.endsWith('/review')); expect(JSON.parse(String(requests[requests.length - 1][1].body)).choices).toEqual({});
+});
+
+
+it('withdraws one chapter only after versioned preview, clears cached file and blocks its pending review', async () => {
+  const make = vi.fn(() => 'blob:withdrawn'), revoke = vi.fn(); vi.stubGlobal('URL', class extends URL { static createObjectURL = make; static revokeObjectURL = revoke; });
+  const fetch = backend({ records: { channels: [channel()], outbox: [{ ...row('PENDING'), chapter_id: 'chapter' }], inbox: [row()], network_enabled: false } });
+  vi.stubGlobal('fetch', fetch); render(<OfflineSyncPanel client={client()} />); await select();
+  fireEvent.click(screen.getByRole('button', { name: '预览此消息内容' })); await screen.findByRole('button', { name: '生成手动交换文件' });
+  fireEvent.click(screen.getByLabelText('我了解导出的本地副本无法远程撤回')); fireEvent.click(screen.getByRole('button', { name: '生成手动交换文件' })); await screen.findByRole('link', { name: '下载本地同步消息' });
+  fireEvent.click(screen.getByRole('button', { name: '读取当前三方差异' })); await screen.findByLabelText('冲突选择 1');
+  fireEvent.click(screen.getByLabelText('撤回章节：Selected synthetic chapter')); fireEvent.click(screen.getByRole('button', { name: '预览章节范围变更' }));
+  const commit = await screen.findByRole('button', { name: '确认章节范围变更' }); expect((commit as HTMLButtonElement).disabled).toBe(true);
+  expect(fetch.mock.calls.some(([url]) => url.endsWith('/selection'))).toBe(false);
+  fireEvent.click(screen.getByLabelText('已核对新增基线和撤回范围，理解已有副本无法收回')); fireEvent.click(commit);
+  await screen.findByText('此批次没有当前已选章节。');
+  expect(screen.queryByRole('link', { name: '下载本地同步消息' })).toBeNull(); expect(revoke).toHaveBeenCalledWith('blob:withdrawn');
+  expect(screen.queryByRole('button', { name: '应用已核对的候选' })).toBeNull(); expect(screen.queryByLabelText('新增范围：Selected synthetic chapter · v2')).toBeNull();
+  expect(screen.getByRole('button', { name: 'batch · A → B' })).toBeTruthy();
+  expect(JSON.parse(String(fetch.mock.calls.find(([url]) => url.endsWith('/selection'))![1].body))).toMatchObject({ expected_version: 1, withdraw_chapter_ids: ['chapter'], add_chapter_ids: [], confirmed: true, preview_digest: 'd'.repeat(64) });
+  expect(fetch.mock.calls.some(([url]) => url.endsWith('/apply') || url.endsWith('/revoke'))).toBe(false);
+});
+
+it('adds only a freshly reviewed baseline and invalidates preview when selection changes', async () => {
+  const fetch = backend(); vi.stubGlobal('fetch', fetch); render(<OfflineSyncPanel client={client()} />); await select();
+  expect((screen.getByLabelText('新增范围：Unselected synthetic chapter · v1') as HTMLInputElement).checked).toBe(false);
+  fireEvent.click(screen.getByLabelText('新增范围：Unselected synthetic chapter · v1')); fireEvent.click(screen.getByRole('button', { name: '预览章节范围变更' }));
+  await screen.findByText(/Saved original baseline🙂/); fireEvent.click(screen.getByLabelText('已核对新增基线和撤回范围，理解已有副本无法收回'));
+  fireEvent.click(screen.getByLabelText('撤回章节：Selected synthetic chapter')); expect(screen.queryByRole('button', { name: '确认章节范围变更' })).toBeNull();
+  fireEvent.click(screen.getByLabelText('撤回章节：Selected synthetic chapter')); fireEvent.click(screen.getByRole('button', { name: '预览章节范围变更' }));
+  const commit = await screen.findByRole('button', { name: '确认章节范围变更' }); expect((commit as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByLabelText('已核对新增基线和撤回范围，理解已有副本无法收回')); fireEvent.click(commit);
+  await screen.findByLabelText('撤回章节：Unselected synthetic chapter');
+  expect(JSON.parse(String(fetch.mock.calls.find(([url]) => url.endsWith('/selection'))![1].body))).toMatchObject({ expected_version: 1, add_chapter_ids: ['other'], withdraw_chapter_ids: [], confirmed: true });
+  expect(fetch.mock.calls.some(([url]) => url.endsWith('/queue') || url.endsWith('/apply'))).toBe(false);
+});
+
+it('preserves pasted input but invalidates cached target and preview when that chapter is withdrawn elsewhere', async () => {
+  const records = { channels: [channel()], outbox: [], inbox: [], network_enabled: false as const }; const fetch = backend({ records });
+  vi.stubGlobal('fetch', fetch); render(<OfflineSyncPanel client={client()} />); await select();
+  const text = JSON.stringify(envelope); fireEvent.change(screen.getByLabelText('收到的同步消息 JSON'), { target: { value: text } });
+  fireEvent.change(screen.getByLabelText('收到章节的本机目标'), { target: { value: 'chapter' } }); fireEvent.click(screen.getByRole('button', { name: '预览待接收消息' }));
+  await screen.findByRole('button', { name: '接收到待审核收件箱' });
+  records.channels[0] = { ...records.channels[0], version: 2, chapter_ids: [], withdrawn_chapter_ids: ['chapter'] };
+  fireEvent.click(screen.getByRole('button', { name: '刷新本机同步状态与权限' })); await screen.findByText('此批次没有当前已选章节。');
+  expect((screen.getByLabelText('收到的同步消息 JSON') as HTMLTextAreaElement).value).toBe(text);
+  expect((screen.getByLabelText('收到章节的本机目标') as HTMLSelectElement).value).toBe('');
+  expect(screen.queryByRole('button', { name: '接收到待审核收件箱' })).toBeNull();
+  expect(fetch.mock.calls.some(([url]) => url.endsWith('/receive'))).toBe(false);
 });

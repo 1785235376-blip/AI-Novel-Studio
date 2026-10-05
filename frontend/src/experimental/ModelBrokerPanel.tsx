@@ -20,6 +20,7 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
   const api = useMemo(() => modelBrokerClient(client), [client]);
   const status = useResource(signal => api.status(signal), [api]);
   const history = useResource(signal => api.history(signal), [api]);
+  const [capability, setCapability] = useState('TEXT');
   const [policy, setPolicy] = useState('LOCAL_FIRST'), [profile, setProfile] = useState('LOCAL_ONLY'), [route, setRoute] = useState('');
   const [contextTokens, setContextTokens] = useState('0'), [limit, setLimit] = useState(''), [latency, setLatency] = useState('');
   const [ram, setRam] = useState(''), [vram, setVram] = useState('');
@@ -32,15 +33,17 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
   const action = useAction(() => { history.reload(); status.reload(); });
   const invalidate = () => { epoch.current++; setQuote(undefined); setReceipt(undefined); setReviewed(false); requestId.current = freshId(); };
   const authorChanged = () => { setReceipt(undefined); setReviewed(false); requestId.current = freshId(); };
-  const author: AuthorRequestBody | null = quote?.chosen && chapter ? { novel_id: novelId, chapter_id: chapter.id, chapter_version: chapter.version,
+  const author: AuthorRequestBody | null = quote?.chosen?.capability === 'TEXT' && chapter ? { novel_id: novelId, chapter_id: chapter.id, chapter_version: chapter.version,
     operation, instruction, style: '', profile, request_scope: requestScope, provider_id: quote.chosen.provider_id, model_id: quote.chosen.model_id, source: '', selected_text: '' } : null;
-  const currentRoutes = status.data?.candidates.filter(r => r.capability === 'TEXT') || [];
+  const currentRoutes = status.data?.candidates.filter(r => r.capability === capability) || [];
   const providers = [...new Set(currentRoutes.map(r => r.provider_id))];
   return <div className="experimental-section">
     <Panel title="可解释模型调度">
       <p>候选来自当前已注册模型与 Adapter。发现不代表启用，路由预览不代表执行授权；不自动改走云端。</p>
       <ResourceState loading={status.loading} error={status.error} />
-      {!status.loading && !status.error && !currentRoutes.length && <EmptyState title="没有注册的文本路线" detail="先在已有 Model Center 配置、验证并明确启用本地模型；没有真实模型时可明确选择合成协议测试。" />}
+      {!status.loading && !status.error && !currentRoutes.length && <EmptyState title="没有此类型的注册路线" detail="先在已有 Model Center 配置、验证并明确启用本地模型；没有真实模型时可明确选择合成协议测试。" />}
+      <Field label="模型能力类型"><select value={capability} onChange={e => { invalidate(); setCapability(e.target.value); setRoute(''); setContextTokens('0'); }}><option value="TEXT">TEXT · 作者草稿</option><option value="IMAGE">IMAGE · 批次媒体预检</option><option value="AUDIO">AUDIO · 已审核语音段预检</option></select></Field>
+      {capability !== 'TEXT' && <p>这里只创建原路线预检；请在安全批处理中选择同一来源、明确本地与 0 USD 上限，再单独确认和执行。费用未知不能当作免费。</p>}
       <div className="experimental-grid">
         <Field label="调度策略"><select value={policy} onChange={e => { invalidate(); setPolicy(e.target.value); }}><option value="LOCAL_FIRST">本地优先</option><option value="COST">成本优先</option><option value="QUALITY">质量优先（无证据不排名）</option><option value="SPEED">速度优先（仅当前执行证据）</option><option value="CUSTOM">自定义指定路线</option></select></Field>
         <Field label="创作隐私模式"><select value={profile} onChange={e => { invalidate(); setProfile(e.target.value); }}><option value="LOCAL_ONLY">仅本地</option><option value="HYBRID">允许已授权云端候选</option><option value="QUALITY">质量模式（仍检查来源授权）</option></select></Field>
@@ -57,7 +60,7 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
       <p>当前来源：{chapter ? `「${chapter.title}」已保存版本 v${chapter.version}` : '尚未选择章节'}。只使用已保存章节；未保存的编辑请先返回编辑器保存。</p>
       <div className="experimental-actions"><Button disabled={!chapter || action.busy || status.loading || !!status.error || (policy === 'CUSTOM' && !route)} onClick={() => void action.run(async () => {
         const ticket = ++epoch.current; setQuote(undefined); setReceipt(undefined); setReviewed(false);
-        const result = await api.preview({ capability: 'TEXT', chapter_ids: [chapter!.id], policy, profile, preferred_route: route || null, excluded_providers: excluded,
+        const result = await api.preview({ capability, chapter_ids: [chapter!.id], policy, profile, preferred_route: route || null, excluded_providers: excluded,
           context_tokens: Number(contextTokens || 0), max_latency_ms: latency ? Number(latency) : null, max_cost_microusd: limit ? Number(limit) : null, allow_synthetic: synthetic, min_host_ram_mib: ram ? Number(ram) : null, min_host_vram_mib: vram ? Number(vram) : null });
         if (alive.current && ticket === epoch.current) setQuote(result);
       }, '路线检查已完成；尚未调用模型。')}>预览合法模型路线</Button><Button disabled={action.busy} onClick={() => { invalidate(); status.reload(); history.reload(); }}>重新读取当前注册状态</Button></div>
@@ -73,7 +76,7 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
       <Field label="创作任务"><select value={operation} disabled={action.busy} onChange={e => { authorChanged(); setOperation(e.target.value); }}><option value="continue">续写</option><option value="polish">润色</option><option value="brainstorm">构思</option><option value="review">审稿</option></select></Field>
       <Field label="本次创作要求"><textarea maxLength={20000} value={instruction} onChange={e => { authorChanged(); setInstruction(e.target.value); }} /></Field>
       <AuthorRequestControls value={requestScope} onChange={value => { setRequestScope(value); authorChanged(); }} source={author.source} operation={operation} disabled={action.busy} />
-      <AuthorRequestPreviewPanel body={author} context={context} saved={true} disabled={action.busy} onReceipt={value => { setReceipt(value); setReviewed(false); }} />
+      <AuthorRequestPreviewPanel body={author} context={context} saved={true} disabled={action.busy} onScopeChange={value => { setRequestScope(value); authorChanged(); }} onReceipt={value => { setReceipt(value); setReviewed(false); }} />
       <label className="experimental-check"><input type="checkbox" disabled={!receipt} checked={reviewed} onChange={e => setReviewed(e.target.checked)} />已核对准确请求、来源与模型，并授权生成这一次草稿</label>
       <StatusMessage>预算限制预占金额；上游实际费用可能超出估计。取消后已发出的内容不能收回，费用不确定时仍保留预占。</StatusMessage>
       {!status.data?.author_execution_available && <StatusMessage tone="warning">当前服务器尚未接入原有作者任务协调器，不能执行。</StatusMessage>}

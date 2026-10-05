@@ -6,7 +6,7 @@ import { Details, Field, ResourceState, objectValue, useAction, useResource } fr
 import { templateLibraryClient, type TemplateComparison, type TemplateInstance, type TemplatePackage, type TemplatePreview } from './templateLibraryClient';
 let sequence = 0;
 const requestId = () => globalThis.crypto.randomUUID();
-const labels: Record<string, string> = { planning: '章节结构', character: '人物档案', screenplay: '剧本', storyboard: '分镜', review: '审核流程', workflow: 'Workflow' };
+const labels: Record<string, string> = { planning: '章节结构', character: '人物档案', screenplay: '剧本', storyboard: '分镜', review: '审核流程', workflow: 'Workflow', safe_batch: '安全批处理参数' };
 export function TemplateLibraryPanel(props: { client: ExperimentalClient; onNavigate?: (value: WorkspaceNavigation) => void }) {
   const key = useMemo(() => ++sequence, [props.client]); return <LibraryBody key={key} {...props} />;
 }
@@ -18,6 +18,7 @@ function PackagePreview({ value }: { value: TemplatePackage }) {
     {sections?.map(section => <p key={section.key}><strong>{section.title}</strong>：{section.text}</p>)}
     {value.content.beats && <ul>{Object.entries(value.content.beats).map(([key, text]) => <li key={key}>{key}：{String(text)}</li>)}</ul>}
     {value.content.nodes && <ol>{value.content.nodes.map((node: { id: string; name: string; type: string }) => <li key={node.id}>{node.name} · {node.type}</li>)}</ol>}
+    {value.manifest.type === 'safe_batch' && <p>校对：{value.content.proof ? '开启' : '关闭'} · 导出：{value.content.export_format || '不导出'} · 跳过满意结果：{value.content.skip_satisfied ? '开启' : '关闭'}。不包含来源、预算或执行授权。</p>}
     <p>作者：{value.manifest.author} · 许可声明：{value.manifest.license}</p>
     <p>依赖：{value.manifest.dependencies.join('、') || '无'} · 来源：{value.manifest.provenance}</p>
   </figure>;

@@ -4,6 +4,7 @@ import type { ExperimentalClient } from './api';
 import { Details, ErrorMessage, Field, ResourceState, useResource } from './shared';
 import { useReviewAction } from './styleReviewClient';
 import { projectForksClient, type ForkChoice, type ForkComparison, type ForkNode, type ForkRecord, type ForkRecovery } from './projectForksClient';
+import { StructuredForksPanel } from './StructuredForksPanel';
 let nextScope = 0;
 type ForkApi = ReturnType<typeof projectForksClient>;
 const stages: Record<string, string> = { PREFLIGHT: '待确认分叉', FORKED: '分叉已建立', CLAIMED: '已记录写入意图', APPLYING: '正在写入或结果待核对', RECOVERY_REQUIRED: '需要恢复核对', COMPLETED: '合并完成', RESTORED: '检查点已恢复', RESTORING_CHECKPOINT: '检查点恢复处理中' };
@@ -15,6 +16,7 @@ function ForksContent({ client }: { client: ExperimentalClient }) {
   const api = useMemo(() => projectForksClient(client), [client]);
   const catalog = useResource(signal => api.catalog(signal), [api]); const records = useResource(signal => api.records(signal), [api]);
   const action = useReviewAction(); const [selected, setSelected] = useState<string[]>([]); const [title, setTitle] = useState('');
+  const [showStructured, setShowStructured] = useState(false);
   const [operationError, setOperationError] = useState<unknown>(); const [receipt, setReceipt] = useState('');
   const report = (error: unknown, message = '') => { setOperationError(error); setReceipt(message); };
   const [licenses, setLicenses] = useState<Record<string, string>>({}); const [permissions, setPermissions] = useState<Record<string, boolean>>({});
@@ -25,7 +27,7 @@ function ForksContent({ client }: { client: ExperimentalClient }) {
   return <section className="experimental-section" aria-label="项目分叉与合并">
     <div className="experimental-actions"><h3>项目分叉与合并</h3><Badge>本地新项目 · 逐项三方审核</Badge><Button disabled={action.busy} onClick={refresh}>刷新分叉与合并记录</Button></div>
     <p>从选中的已保存章节建立新项目，保留分叉基线。修改副本后，在这里比较基线、当前原稿与当前副本，明确选择冲突再合并回原稿。新旧项目都会保留。</p>
-    <StatusMessage>这不是 Git 分支或协作分支。协作分支写入器尚不可用；人物、Canon、故事图谱、Workflow、历史与权限不会复制。新增或改变的副本媒体引用需要另外的映射流程，当前会阻止合并。</StatusMessage>
+    <StatusMessage>这不是 Git 分支或协作分支。协作分支正文尚无独立存储与写入服务，不能将基础正文当作分支内容。此正文入口不复制结构记录；人物、地点与关系可在下方单独选择和审核。Canon、Workflow、历史与权限不会复制。新增或改变的副本媒体引用需要另外的映射流程，当前会阻止合并。</StatusMessage>
     <ResourceState loading={catalog.loading} error={catalog.error} />
     {!catalog.loading && !catalog.error && !catalog.data?.available && <StatusMessage tone="warning">当前协作范围不能建立或合并本地项目分叉。不会读取其他分支的基础正文。</StatusMessage>}
     {!!operationError && <ErrorMessage error={operationError} />}{receipt && <StatusMessage tone="success">{receipt}</StatusMessage>}
@@ -41,6 +43,8 @@ function ForksContent({ client }: { client: ExperimentalClient }) {
     <Panel title="分叉记录与三方比较"><ResourceState loading={records.loading} error={records.error} empty={!!readyRecords && !readyRecords.items.length} />
       {readyRecords && readyRecords.items.map(row => <ForkReview key={`${row.id}:${row.version}`} api={api} row={row} available={available} refresh={refresh} report={report} />)}
     </Panel>
+    <Button aria-expanded={showStructured} onClick={() => setShowStructured(value => !value)}>{showStructured ? '收起人物与关系分叉' : '打开人物与关系分叉'}</Button>
+    {showStructured && <StructuredForksPanel client={client} manuscriptForks={readyRecords ? readyRecords.items : []} />}
     <Panel title="合并检查点与中断恢复">
       <p>每次合并都先保存完整检查点，再逐项记录写入意图。部分完成或结果未知时不自动重试。恢复需要重新核对当前内容，并以新版本保存检查点。</p>
       {readyRecords && !readyRecords.merges.length && <p>尚无合并检查点。</p>}

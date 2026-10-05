@@ -5,6 +5,7 @@ import { Details, ErrorMessage, Field, ResourceState, useResource } from './shar
 import { useReviewAction } from './styleReviewClient';
 import { portableProjectsClient, readPortableFile, downloadPortableBlob } from './portableProjectsClient';
 let nextScope = 0;
+const conflicts: Record<string, string> = { DIGEST_MISMATCH: '候选文件与原媒体摘要不同；确认替代后才会写入。', ORIGINAL_DIGEST_UNKNOWN: '原媒体摘要未知；不能证明候选文件与原文件相同。', SOURCE_CHANGED: '章节版本或来源权限已变化；请重新预检。', ORIGINAL_REFERENCE_CHANGED: '原媒体状态或摘要已变化；请重新预检。', PREFLIGHT_REQUIRED: '此旧记录缺少完整影响报告；请重新预检。' };
 const names: Record<string, string> = { MANUSCRIPT: '作品正文', ACCEPTED_ASSETS: '正式资产', HISTORY: '历史版本', TRASH: '回收站', REPRODUCIBLE_CACHE: '可重建缓存', TEMPORARY_FAILED_FILES: '临时失败与恢复文件' };
 export function PortableProjectsPanel({ client }: { client: ExperimentalClient }) {
   const identity = useMemo(() => ++nextScope, [client]); return <PortableProjectsContent key={identity} client={client} />;
@@ -49,12 +50,22 @@ function PortableProjectsContent({ client }: { client: ExperimentalClient }) {
       <ResourceState loading={records.loading} error={records.error} empty={recordAvailable && !records.data!.items.length} />
       {recordAvailable && records.data!.items.map(row => <article key={row.id} className="experimental-record"><div className="experimental-actions"><strong>{row.title || (row.kind === 'RELINK' ? '媒体重连预检' : '便携包')}</strong><Badge>{row.status} · v{row.version}</Badge></div>
         {row.chapter_count != null && <p>{row.chapter_count} 个章节；缺失媒体 {row.media?.filter(m => m.state === 'MISSING').length || 0} 项</p>}
+        {!!row.media?.some(media => media.state === 'MISSING') && <Details value={row.media.filter(media => media.state === 'MISSING')} label="查看缺失媒体清单" />}
         {row.kind === 'EXPORT' && <Button disabled={action.busy} onClick={() => void action.run(async current => { const blob = await api.download(row); if (current()) downloadPortableBlob(blob, 'portable-project.zip'); })}>下载便携 ZIP</Button>}
+        {row.kind === 'RELINK' && row.relink_review && <div aria-label="重连影响与冲突报告">
+          <p>缺失引用：{row.relink_review.missing_id}</p>
+          <Field label="原媒体 SHA-256"><input readOnly value={row.relink_review.expected_sha256 || '未知'} /></Field>
+          <Field label="候选文件 SHA-256"><input readOnly value={row.relink_review.candidate_sha256} /></Field>
+          <p>本次改写 {row.relink_review.affected_chapters.length} 个章节的当前引用；历史版本和原资产保留。</p>
+          <ul>{row.relink_review.affected_chapters.map(chapter => <li key={chapter.id}>{chapter.title} · 预检 v{chapter.version}{chapter.current_version != null && <> · 当前 v{chapter.current_version}</>}</li>)}</ul>
+          {row.relink_review.conflicts.map((conflict, index) => <StatusMessage key={index} tone="warning">{conflicts[conflict.code] || conflict.code}</StatusMessage>)}
+          {!row.relink_review.conflicts.length && <p>预检未发现摘要或章节版本冲突。</p>}
+        </div>}
         {row.status === 'PREFLIGHT' && <>
           {row.kind === 'RELINK' && <StatusMessage tone={row.digest_matches ? 'success' : 'warning'}>{row.digest_matches ? '内容摘要与原媒体一致。' : '内容摘要不同或原摘要未知，需要人工确认替代。'}</StatusMessage>}
           <label className="experimental-check"><input type="checkbox" checked={!!reviewed[row.id]} disabled={action.busy} onChange={e => setReviewed(v => ({ ...v, [row.id]: e.target.checked }))} />已核对本记录与缺失项，确认{row.kind === 'IMPORT' ? '创建新项目副本' : '重连所列章节引用'}</label>
           {row.kind === 'RELINK' && !row.digest_matches && <label className="experimental-check"><input type="checkbox" checked={!!replace[row.id]} disabled={action.busy} onChange={e => setReplace(v => ({ ...v, [row.id]: e.target.checked }))} />明确使用内容不同或摘要未知的替代文件</label>}
-          <Button disabled={action.busy || !available || !catalog.data!.restore_available || !reviewed[row.id] || (row.kind === 'RELINK' && !row.digest_matches && !replace[row.id])} onClick={() => void action.run(async current => { if (row.kind === 'IMPORT') await api.restore(row); else await api.relink(row, !!replace[row.id]); if (current()) refresh(); }, row.kind === 'IMPORT' ? '恢复完成。新项目 ID 显示在记录中，请返回项目列表打开。' : '引用已更新，旧资产和历史仍保留。')}>{row.kind === 'IMPORT' ? '确认恢复到新项目' : '确认重连当前引用'}</Button>
+          <Button disabled={action.busy || !available || !catalog.data!.restore_available || !reviewed[row.id] || row.relink_review?.can_confirm === false || (row.kind === 'RELINK' && !row.digest_matches && !replace[row.id])} onClick={() => void action.run(async current => { try { if (row.kind === 'IMPORT') await api.restore(row); else await api.relink(row, !!replace[row.id]); } finally { if (current()) refresh(); } }, row.kind === 'IMPORT' ? '恢复完成。新项目 ID 显示在记录中，请返回项目列表打开。' : '引用已更新，旧资产和历史仍保留。')}>{row.kind === 'IMPORT' ? '确认恢复到新项目' : '确认重连当前引用'}</Button>
         </>}
         {row.target_id && <p>新项目 ID：{row.target_id}</p>}
         {row.status === 'RECOVERY_REQUIRED' && <StatusMessage tone="warning">操作部分完成或结果无法确认。已保留新项目、原文件和映射；不会自动重复写入。请在原项目与版本入口核对。</StatusMessage>}
@@ -63,7 +74,9 @@ function PortableProjectsContent({ client }: { client: ExperimentalClient }) {
     </Panel>
     <Panel title="存储分类与清理预览">
       <ResourceState loading={storage.loading} error={storage.error} />
-      {storageAvailable && <><ul>{storage.data!.categories.map(c => <li key={c.kind}>{names[c.kind] || c.kind}：{c.bytes == null ? '未统计，保留' : `${c.bytes} 字节`}{c.cleanable ? '（可重建便携缓存）' : '（不清理）'}</li>)}</ul>
+      {storageAvailable && <><ul>{storage.data!.categories.map(c => <li key={c.kind}>{names[c.kind] || c.kind}：{c.bytes == null ? '未统计，保留' : `${c.bytes} 字节`}{c.cleanable ? '（可重建便携缓存）' : '（不清理）'}{!!c.unmeasured_records && `；另有 ${c.unmeasured_records} 项无法校验，保留且未计入`}</li>)}</ul>
+        <p>正文与历史按当前已授权章节的内容字节计量；正式资产按登记大小计量。恢复输入只统计当前用户可校验的保留文件与待确认资产，不代表整个磁盘占用。</p>
+        <Details value={storage.data!.eligible} label="查看本次可清理缓存清单" />
         <p>本次可清理 {storage.data!.eligible.length} 个经过校验、未被任务占用的导出缓存；历史、回收站、正式资产和恢复输入保留。</p>
         <label className="experimental-check"><input type="checkbox" checked={cleanupReviewed} disabled={action.busy} onChange={e => setCleanupReviewed(e.target.checked)} />已核对当前预览，只清理列出的可重建缓存</label>
         <Button disabled={action.busy || !cleanupReviewed || !storage.data!.eligible.length} onClick={() => void action.run(async current => { const preview = storage.data!; await api.cleanup(preview, preview.eligible.map(c => c.id)); if (current()) refresh(); }, '已清理确认的导出缓存；原正文、历史、回收站和资产未修改。')}>确认清理预览中的缓存</Button>
