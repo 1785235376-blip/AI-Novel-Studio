@@ -85,8 +85,12 @@ test('R3 planning browser hierarchy CRUD, compare, approval, history and stale f
   const first = page.getByRole('article', { name: '方案 Mock option 1', exact: true }), second = page.getByRole('article', { name: '方案 Mock option 2', exact: true });
   await first.getByRole('checkbox').check(); await second.getByRole('checkbox').check();
   await page.getByRole('button', { name: '比较已选方案', exact: true }).click();
-  await expect(page.getByRole('region', { name: '规划方案比较' })).toContainText('结局意图');
-  await page.getByRole('region', { name: '规划方案比较' }).screenshot({ path: info.outputPath('planning-compare.png') });
+  const comparison = page.getByRole('region', { name: '规划方案比较' });
+  await expect(comparison).toContainText('结局意图');
+  await comparison.getByText('结局意图', { exact: true }).click();
+  await expect(comparison.getByText(/Hopeful resolution/)).toBeVisible();
+  await expect(comparison.getByText(/Tragic consequence/)).toBeVisible();
+  await comparison.screenshot({ path: info.outputPath('planning-compare.png') });
   expect((await body(await request.get(`${API}/chapters/${chapter.id}`))).version).toBe(original.version);
   await first.getByRole('button', { name: '批准规划', exact: true }).click();
   await expect(first).toContainText('APPROVED'); await expect(second.getByRole('button', { name: '批准规划' })).toBeDisabled();
