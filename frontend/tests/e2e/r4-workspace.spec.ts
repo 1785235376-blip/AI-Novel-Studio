@@ -1,6 +1,7 @@
 import { test, expect, type Page, type APIResponse } from '@playwright/test';
 import fs from 'node:fs/promises';
 import { createPageQuiescer } from './r3-fixture-lifecycle';
+import { expectVisibleWorkspaceEditor } from './workspace-editor-geometry';
 const API = 'http://127.0.0.1:8019/api';
 const owned = new WeakMap<Page, { id: string; api: string }[]>();
 const quiet = new WeakMap<Page, () => Promise<void>>();
@@ -50,6 +51,10 @@ test('R4 default-off and acceptance override retain no-model Chinese writing', a
   const text = '纯手工中文，无模型也能保存。<b>文字不是 HTML</b> 👩🏽‍🚀';
   const { chapter } = await project(page, text, 'http://127.0.0.1:8020/api', 'http://127.0.0.1:5180');
   await page.reload(); await expect(page.locator('.ProseMirror')).toContainText(text);
+  for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
+    await page.setViewportSize(viewport); await expectVisibleWorkspaceEditor(page, false);
+    await page.screenshot({ path: info.outputPath(`u01-feature-off-editor-${viewport.width}.png`) });
+  }
   await page.getByRole('button', { name: /功能导航/ }).first().click();
   await expect(page.getByRole('button', { name: '实验工作台', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: '版本历史', exact: true })).toBeVisible();
@@ -146,7 +151,8 @@ test('U01 two-project reopen restores the exact chapter, filters and original re
   await page.getByLabel('按任务 ID、类型或阶段搜索').fill('original-task');
   await page.getByLabel('只看失败或结果未知').check();
   await page.getByRole('button', { name: '继续工作', exact: true }).click();
-  await page.getByLabel('停止点与下次要做的事').fill('U01 non-first project stopping note');
+  const stoppingNote = 'U01 non-first project stopping note ' + '逐章核对灯塔来信与人物伏笔。'.repeat(100);
+  await page.getByLabel('停止点与下次要做的事').fill(stoppingNote);
   await page.getByLabel('显示固定参考分屏').uncheck();
   await page.getByRole('button', { name: '保存工作现场', exact: true }).click();
   await expect(page.getByText('工作现场已保存。正文仍由编辑器保存。')).toBeVisible();
@@ -158,9 +164,16 @@ test('U01 two-project reopen restores the exact chapter, filters and original re
   await page.reload();
   await expect(page.getByRole('region', { name: '当前项目上次工作' })).toContainText('U01 non-first project stopping note');
   await page.getByRole('button', { name: '查看上次工作现场', exact: true }).click();
+  await expect(page.getByLabel('停止点与下次要做的事')).toHaveValue(stoppingNote);
   await page.getByRole('button', { name: '恢复章节位置', exact: true }).click();
   await expect(page.locator('.editorbar')).toContainText('U01 resume destination');
   await expect(page.getByRole('complementary', { name: '写作分屏只读参考' })).toHaveCount(0);
+  for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
+    await page.setViewportSize(viewport);
+    const metrics = await expectVisibleWorkspaceEditor(page, true);
+    expect(metrics.noteClipped).toBe(true); expect(metrics.noteHeight).toBeLessThanOrEqual(32);
+    await page.screenshot({ path: info.outputPath(`u01-long-note-visible-editor-${viewport.width}.png`) });
+  }
   await tools(page);
   await page.getByRole('button', { name: '搜索与命令', exact: true }).click();
   await expect(page.getByLabel('搜索中文名称、别名或正文')).toHaveValue('旧信');

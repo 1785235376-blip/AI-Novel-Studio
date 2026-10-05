@@ -1,6 +1,7 @@
 import { test, expect, type APIResponse } from '@playwright/test';
 import fs from 'node:fs/promises';
 import { createPageQuiescer } from './r3-fixture-lifecycle';
+import { expectVisibleWorkspaceEditor } from './workspace-editor-geometry';
 const API = 'http://127.0.0.1:8019/api';
 async function body(response: APIResponse) { expect(response.ok(), `HTTP ${response.status()}`).toBeTruthy(); return response.json(); }
 
@@ -42,11 +43,7 @@ test('U10 original no-key sample, skip/reopen, write/save/reopen and actual TXT 
     await expect(page.getByText(/当前已保存自己的版本 v/)).toBeVisible();
     for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) {
       await page.setViewportSize(viewport); await page.evaluate(() => document.fonts.ready);
-      const sizes = await page.evaluate(() => {
-        const box = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
-        return { header: box('.global-header').height, context: box('.context-bar').height, status: box('.status-bar').height, overflow: document.documentElement.scrollWidth - innerWidth };
-      });
-      expect(sizes.header).toBe(56); expect(sizes.context).toBe(44); expect(sizes.status).toBe(32); expect(sizes.overflow).toBeLessThanOrEqual(1);
+      await expectVisibleWorkspaceEditor(page, true);
       await page.screenshot({ path: info.outputPath(`u10-guide-${viewport.width}.png`) });
     }
     await page.getByRole('button', { name: '打开练习导出中心', exact: true }).click();

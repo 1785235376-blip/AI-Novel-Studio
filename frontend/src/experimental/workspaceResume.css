@@ -1,0 +1,8 @@
+/* U01 is a consumer of the original three-row NOVEL grid. Keep all editor
+   chrome in row one; never add a notice as another workspace grid item. */
+.novel-workspace-chrome{min-width:0}
+.workspace-resume-summary{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-2);min-width:0;margin:0;padding:var(--space-2) var(--space-3);border-bottom:var(--border-default)}
+.workspace-resume-summary>.ui-button{flex:none;white-space:nowrap}
+.workspace-resume-summary__content{flex:1;min-width:0;display:grid;gap:var(--space-1)}
+.workspace-resume-summary__content>strong,.workspace-resume-summary__note{display:block;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin:0}
+.workspace-resume-summary__recovery{flex-basis:100%;margin:0}

@@ -251,3 +251,40 @@ it('retains a picker and explanation when the confirmed sample is no longer in i
   await screen.findByText(/练习项目当前不存在或不可访问/);
   expect(useStudio.getState().novelId).toBe('');
 });
+
+it.each([false, true])('keeps the original three workspace rows with resume enabled=%s', async enabled => {
+  setup(enabled);
+  if (enabled) await screen.findByText('上次工作：Last chapter');
+  const workspace = document.querySelector('.novel-writing-workspace')!;
+  const children = Array.from(workspace.children);
+  expect(children).toHaveLength(3);
+  expect(children[0].classList.contains('novel-workspace-chrome')).toBe(true);
+  expect(children[0].querySelector('.editorbar')).not.toBeNull();
+  expect(children[1].classList.contains('writing-editor-row')).toBe(true);
+  expect(children[1].contains(editor())).toBe(true);
+  expect(children[0].querySelector('[aria-label="当前项目上次工作"]') !== null).toBe(enabled);
+  expect(workspace.querySelector(':scope > [aria-label="当前项目上次工作"]')).toBeNull();
+});
+it('keeps a long stopping note intact in its editor while the chrome uses a bounded preview', async () => {
+  const note = '核对灯塔来信与人物动机。'.repeat(150);
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => response(url.endsWith('/resume') ? { ...resume, item: { ...resume.item, stopping_note: note } } : { items: [] })));
+  setup();
+  await screen.findByText('上次工作：Last chapter');
+  const preview = document.querySelector('.workspace-resume-summary__note')!;
+  expect(preview.textContent).toBe(note);
+  expect(preview.closest('.novel-workspace-chrome')).not.toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: '查看上次工作现场' }));
+  await waitFor(() => expect((screen.getByLabelText('停止点与下次要做的事') as HTMLTextAreaElement).value).toBe(note));
+});
+it('adds no grid row or editor remount when a volatile-memory draft warning appears', async () => {
+  const { query } = setup(); await screen.findByText('上次工作：Last chapter');
+  act(() => query.setQueryData(['experimental-features', 'file'], { experimental: true, default_enabled: false, features: { 'experimental.workspace_tools_v2': true, 'experimental.writing_focus_v2': true, 'experimental.writing_recovery_v2': true } }));
+  const originalEditor = editor();
+  vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new DOMException('Full', 'QuotaExceededError'); });
+  edit('DRAFT REMAINS VISIBLE');
+  await screen.findByText(/本机草稿写入失败。当前修改仅在此页面内存中/);
+  const workspace = document.querySelector('.novel-writing-workspace')!;
+  expect(workspace.children).toHaveLength(3);
+  expect(workspace.children[0].querySelector('[role="alert"]')).not.toBeNull();
+  expect(editor()).toBe(originalEditor); expect(editor().value).toBe('DRAFT REMAINS VISIBLE');
+});

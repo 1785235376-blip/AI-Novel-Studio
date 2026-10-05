@@ -101,6 +101,7 @@ import "./ux.css";
 import "./collaboration.css";
 import "./ui/ui.css";
 import "./ui/FeatureLauncher.css";
+import "./experimental/workspaceResume.css";
 export function cacheCreatedNovel(c: QueryClient, n: Novel) {
   c.setQueryData<Novel[]>(["novels"], (x) =>
     x?.some((v) => v.id === n.id) ? x : [...(x || []), n],
@@ -1315,6 +1316,7 @@ export default function App() {
   } : undefined;
   const mainWorkspace = (
     <div className="workspace novel-writing-workspace">
+      <div className="novel-workspace-chrome">
       <div className="editorbar">
         <div className="editorbar__identity"><span>当前章节</span><b>{chapter.data?.title || "未选择章节"}</b></div>
         <small>{text.trim() ? `${text.trim().length} 字` : "0 字"}</small>
@@ -1336,14 +1338,18 @@ export default function App() {
           recovery={writingRecovery ? { durability, onExport: exportCurrentDraft, onConflict: reopenConflict } : undefined}
         />
       </div>
-      {workspaceTools && <section className="notice" aria-label="当前项目上次工作">
-        {projectRecoveryNotice && <p>{projectRecoveryNotice}</p>}
+      {workspaceTools && <section className="notice workspace-resume-summary" aria-label="当前项目上次工作">
+        {projectRecoveryNotice && <p className="workspace-resume-summary__recovery">{projectRecoveryNotice}</p>}
         {!packagedHost && shouldLoadLocalNovels(s.sessionToken, s.scope) && <Button onClick={() => { if (saveState !== 'saved' || composing || savePending.current || (s.chapterId && (hydratedIdentity !== editorIdentity || drafts.load(s.chapterId, namespace)))) { setShellMessage('请先保存或处理当前草稿，再切换本机作品。当前内容已保留。'); return; } setProjectChoiceOpen(true); setProjectRecoveryNotice('请选择本机作品；会记住本次明确选择。'); s.setNovel(''); }}>切换本机作品</Button>}
-        {lastWorkspace.isFetching ? <span>正在核对上次工作现场…</span> : lastWorkspace.isError ? <><span>工作现场暂时不可读，手工写作仍可继续。</span><Button onClick={() => void lastWorkspace.refetch()}>重试读取上次现场</Button></> : lastWorkspace.data?.item ? <><strong>上次工作：{lastWorkspace.data.item.chapter_title || '已保存停止点'}</strong><p>{lastWorkspace.data.item.stopping_note || '没有停止点备注。'}</p><Button onClick={() => { setWorkspaceSection('resume'); setExperimentalTab('workspace_tools_v2'); setPanel('experimental'); }}>查看上次工作现场</Button></> : <><span>可保存当前位置、筛选与下次事项。</span><Button onClick={() => { setWorkspaceSection('resume'); setExperimentalTab('workspace_tools_v2'); setPanel('experimental'); }}>保存当前工作现场</Button></>}
+        <div className="workspace-resume-summary__content">
+          {lastWorkspace.isFetching ? <span>正在核对上次工作现场…</span> : lastWorkspace.isError ? <span>工作现场暂时不可读，手工写作仍可继续。</span> : lastWorkspace.data?.item ? <><strong>上次工作：{lastWorkspace.data.item.chapter_title || '已保存停止点'}</strong><p className="workspace-resume-summary__note">{lastWorkspace.data.item.stopping_note || '没有停止点备注。'}</p></> : <span>可保存当前位置、筛选与下次事项。</span>}
+        </div>
+        {!lastWorkspace.isFetching && (lastWorkspace.isError ? <Button onClick={() => void lastWorkspace.refetch()}>重试读取上次现场</Button> : <Button onClick={() => { setWorkspaceSection('resume'); setExperimentalTab('workspace_tools_v2'); setPanel('experimental'); }}>{lastWorkspace.data?.item ? '查看上次工作现场' : '保存当前工作现场'}</Button>)}
       </section>}
       {writingRecovery && durability === 'memory' && <section className="notice" role="alert">
         本机草稿写入失败。当前修改仅在此页面内存中，关闭、刷新或断电可能丢失。请导出当前草稿。
       </section>}
+      </div>
       <div className={writingFocus && referencesVisible ? 'writing-editor-row writing-focus-split' : 'writing-editor-row'}>
       {chapter.data && hydratedIdentity === editorIdentity ? (
         <ChapterEditor
