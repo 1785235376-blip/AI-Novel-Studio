@@ -98,6 +98,8 @@ class TaskReader:
 
 STAGES = {'QUEUED': '排队', 'PENDING': '等待', 'DRAFT': '草稿', 'READY': '就绪',
           'RUNNING': '运行中', 'WORKING': '运行中', 'PROCESSING': '处理中',
+          'PREPARED': '准备就绪', 'GENERATING': '生成中', 'SETTLING': '结算确认中',
+          'ACCEPTING': '接受处理中', 'ACCEPTANCE_UNCERTAIN': '接受结果未知',
           'VALIDATED': '待审核', 'REVIEW': '待审核', 'AWAITING_REVIEW': '待审核',
           'COMPLETED': '已完成', 'SUCCEEDED': '已完成', 'COMMITTED': '已应用', 'ACCEPTED': '已接受',
           'APPROVED': '已批准', 'REJECTED': '已拒绝', 'FAILED': '失败', 'CANCELLED': '已取消',
@@ -175,7 +177,13 @@ def projected_task(reader, row):
     history = [{'version': item.get('version'), 'status': str(item.get('status', 'UNKNOWN')).upper()}
                for item in row.get('history', [])[-10:] if isinstance(item, dict)
                and str(item.get('status', '')).upper() in STAGES]
-    return {'id': str(row['id']), 'authority': reader.name, 'label': reader.label,
+    source = {}
+    if (reader.name == 'author_generation' and isinstance(row.get('chapter_id'), str)
+            and row['chapter_id'] and type(row.get('base_chapter_version')) is int
+            and row['base_chapter_version'] > 0):
+        source = {'source': {'kind': 'generation', 'id': str(row['id']),
+                  'chapter_id': row['chapter_id'], 'version': row['base_chapter_version']}}
+    return {**source, 'id': str(row['id']), 'authority': reader.name, 'label': reader.label,
             'status': status, 'stage_label': STAGES[status], 'version': row.get('version'),
             'feature': reader.feature, 'progress': progress, 'history': history,
             'stale': bool(row.get('stale')), 'cost': {'estimate': None, 'actual': None, 'state': 'UNKNOWN'},

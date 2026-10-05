@@ -1,12 +1,12 @@
 import type { ExperimentalClient } from './api';
 export type WorkspaceAnchor = { offset: number; scroll: number };
-export type WorkspaceNavigation = { kind: 'chapter' | 'feature'; id: string; feature?: string; version?: number; anchor?: WorkspaceAnchor; stale?: boolean; coordinate?: 'EDITOR_TEXT_CODEPOINT' };
+export type WorkspaceNavigation = { kind: 'chapter' | 'feature' | 'generation'; id: string; chapter_id?: string; signal?: AbortSignal; feature?: string; version?: number; anchor?: WorkspaceAnchor; stale?: boolean; coordinate?: 'EDITOR_TEXT_CODEPOINT' };
 export type WorkspaceLayout = { density: 'normal' | 'advanced'; section: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; show_failed_only: boolean };
 export type ResumeItem = { id: string; version: number; chapter_id: string | null; chapter_version: number | null; chapter_title?: string; current_chapter_version?: number; anchor: WorkspaceAnchor; layout: WorkspaceLayout; stopping_note: string; pinned_chapter_ids: string[]; recent_commands: string[]; guide_dismissed: boolean; layout_recovery_required?: boolean; updated_at: string };
 export type ResumeResult = { item: ResumeItem | null; availability: 'EMPTY' | 'READY' | 'STALE' | 'UNAVAILABLE' };
 export type SearchItem = { kind: 'chapter' | 'character' | 'location' | 'foreshadowing'; id: string; title: string; version?: number; revision: string; feature: string; offset: number; snippet: string; aliases: string[] };
 export type SearchResult = { items: SearchItem[]; mode: string; truncated: boolean; branch_sources_available: boolean };
-export type TaskItem = { id: string; authority: string; label: string; feature: string; status: string; stage_label: string; version?: number; progress: { completed: number; total: number; unit: string } | null; stale: boolean; error_code: string; history: { version?: number; status: string }[]; lifecycle: string };
+export type TaskItem = { source?: WorkspaceNavigation; id: string; authority: string; label: string; feature: string; status: string; stage_label: string; version?: number; progress: { completed: number; total: number; unit: string } | null; stale: boolean; error_code: string; history: { version?: number; status: string }[]; lifecycle: string };
 export type TaskResult = { items: TaskItem[]; unavailable: { authority: string; label: string; reason: string }[]; truncated: boolean };
 export type DiagnosticOptions = { include_environment: boolean; include_task_states: boolean; include_error_codes: boolean };
 export type DiagnosticResult = { schema: string; preview_digest: string; uploaded: false; sections: { environment?: { component: string; storage: string; scope_mode: string; diagnostic_contract: number }; task_states?: { authority: string; status: string; cost_state: string }[]; error_codes?: string[]; coverage?: { truncated: boolean; raw_logs_included: false } } };

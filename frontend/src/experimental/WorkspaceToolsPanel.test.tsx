@@ -219,3 +219,18 @@ it('does not restore a chapter after the resume section was dismissed and reopen
   await act(async () => finish(response({ kind: 'chapter', id: 'old-chapter', version: 3 })));
   expect(navigate).not.toHaveBeenCalled();
 });
+
+it('passes only exact authorized original generation coordinates to the host', async () => {
+  const source = { kind: 'generation', id: 'author-job', chapter_id: 'author-chapter', version: 7 };
+  const fetch = backend(url => url.includes('/tasks?') ? response({ items: [{ id: 'author-job', authority: 'author_generation', label: '正文生成', feature: 'history', source, status: 'SETTLING', stage_label: '结算确认中', progress: null, stale: false, history: [], lifecycle: '原任务服务' }], unavailable: [], truncated: false }) : undefined);
+  vi.stubGlobal('fetch', fetch); const navigate = vi.fn();
+  render(<WorkspaceToolsPanel client={experimentalClient('novel', { sessionToken: '' })} onNavigate={navigate} initialSection="tasks" />);
+  await screen.findByText('结算确认中');
+  fireEvent.click(screen.getByRole('button', { name: '打开原生成草稿' }));
+  expect(navigate).toHaveBeenCalledWith(expect.objectContaining(source));
+  expect(navigate.mock.calls[0][0].signal.aborted).toBe(false);
+  fireEvent.click(screen.getByRole('button', { name: '继续工作' }));
+  expect(navigate.mock.calls[0][0].signal.aborted).toBe(true);
+  expect(fetch.mock.calls.every(([, init]) => init?.method === 'GET')).toBe(true);
+  expect(screen.queryByRole('button', { name: '打开来源工具' })).toBeNull();
+});

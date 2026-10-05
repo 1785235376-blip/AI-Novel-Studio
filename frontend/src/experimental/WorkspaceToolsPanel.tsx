@@ -166,13 +166,23 @@ function WorkspaceTasks({ api, navigate, advanced }: { api: ReturnType<typeof wo
   const [query, setQuery] = useState(''), [failed, setFailed] = useState(false);
   const tasks = useResource(signal => api.tasks(query, failed, signal), [api, query, failed]);
   const action = useAction();
+  const lookup = useRef<AbortController>();
+  const stopLookup = () => { lookup.current?.abort(); lookup.current = undefined; };
+  useLayoutEffect(() => () => stopLookup(), [api, query, failed]);
+  const openSource = (source: WorkspaceNavigation) => {
+    stopLookup();
+    if (source.kind !== 'generation') { navigate?.(source); return; }
+    lookup.current = new AbortController();
+    // This cancels navigation only. It never cancels or resubmits the source job.
+    navigate?.({ ...source, signal: lookup.current.signal });
+  };
   return <Panel title="任务中心 · 原服务实时读取">
-    <div className="experimental-actions"><Field label="按任务 ID、类型或阶段搜索"><input maxLength={160} value={query} onChange={e => setQuery(e.target.value)} /></Field><label className="experimental-check"><input type="checkbox" checked={failed} onChange={e => setFailed(e.target.checked)} />只看失败或结果未知</label><Button disabled={tasks.loading} onClick={tasks.reload}>刷新任务</Button></div>
-    <p>费用未知时不显示免费。这里不会执行或重试任务；请进入原工具核对权限、输入和费用后处理。</p>
+    <div className="experimental-actions"><Field label="按任务 ID、类型或阶段搜索"><input maxLength={160} value={query} onChange={e => { stopLookup(); setQuery(e.target.value); }} /></Field><label className="experimental-check"><input type="checkbox" checked={failed} onChange={e => { stopLookup(); setFailed(e.target.checked); }} />只看失败或结果未知</label><Button disabled={tasks.loading} onClick={() => { stopLookup(); tasks.reload(); }}>刷新任务</Button></div>
+    <p>费用未知时不显示免费。这里不会执行或重试任务；请进入原工具核对权限、输入和费用后处理。正文生成只显示近期可读记录，更早记录可能不在本次读取范围。</p>
     <ResourceState loading={tasks.loading} error={tasks.error} empty={!tasks.data?.items.length} />
     {tasks.data?.unavailable.map(source => <StatusMessage tone="warning" key={source.authority}>{source.label}暂时不可读，其他来源仍可使用。</StatusMessage>)}
     {tasks.data?.truncated && <StatusMessage tone="warning">显示范围达到上限；更早的记录请进入原任务工具查找。</StatusMessage>}
-    {!tasks.loading && !tasks.error && <div className="experimental-list">{tasks.data?.items.map(task => <article key={`${task.authority}:${task.id}`} className="experimental-record"><div className="experimental-actions"><h3>{task.label}</h3><Badge tone={task.status === 'FAILED' || task.status === 'UNKNOWN' ? 'warning' : 'neutral'}>{task.stage_label}</Badge>{task.stale && <Badge tone="warning">来源已变化</Badge>}</div><p>任务 ID：{task.id}</p><p>{task.progress ? `${task.progress.completed} / ${task.progress.total} ${task.progress.unit}` : '原服务未报告可量化进度，仅显示阶段。'} · 预估费用：未知 · 实际费用：未知</p><p>{task.lifecycle}</p>{advanced && <details><summary>原任务状态历史</summary>{task.history.length ? <ol>{task.history.map((entry, index) => <li key={index}>v{entry.version ?? '—'} · {entry.status}</li>)}</ol> : <p>来源没有提供历史。</p>}</details>}<div className="experimental-actions"><Button disabled={!navigate} onClick={() => navigate?.({ kind: 'feature', id: task.id, feature: task.feature })}>打开来源工具</Button><Button disabled={action.busy || !navigator.clipboard?.writeText} title={!navigator.clipboard?.writeText ? '当前浏览器不支持剪贴板写入，可在诊断包中导出安全信息。' : undefined} onClick={() => action.run(() => navigator.clipboard.writeText(JSON.stringify({ component: 'workspace_tools_v2', authority: task.authority, status: task.status, error_code: task.error_code, cost_state: 'UNKNOWN' }, null, 2)), '已复制脱敏状态，不含正文、任务 ID 或密钥')}>复制脱敏状态</Button></div></article>)}</div>}
+    {!tasks.loading && !tasks.error && <div className="experimental-list">{tasks.data?.items.map(task => <article key={`${task.authority}:${task.id}`} className="experimental-record"><div className="experimental-actions"><h3>{task.label}</h3><Badge tone={task.status === 'FAILED' || task.status === 'UNKNOWN' ? 'warning' : 'neutral'}>{task.stage_label}</Badge>{task.stale && <Badge tone="warning">来源已变化</Badge>}</div><p>任务 ID：{task.id}</p><p>{task.progress ? `${task.progress.completed} / ${task.progress.total} ${task.progress.unit}` : '原服务未报告可量化进度，仅显示阶段。'} · 预估费用：未知 · 实际费用：未知</p><p>{task.lifecycle}</p>{advanced && <details><summary>原任务状态历史</summary>{task.history.length ? <ol>{task.history.map((entry, index) => <li key={index}>v{entry.version ?? '—'} · {entry.status}</li>)}</ol> : <p>来源没有提供历史。</p>}</details>}<div className="experimental-actions"><Button disabled={!navigate} onClick={() => openSource(task.source?.kind === 'generation' ? task.source : { kind: 'feature', id: task.id, feature: task.feature })}>{task.source?.kind === 'generation' ? '打开原生成草稿' : '打开来源工具'}</Button><Button disabled={action.busy || !navigator.clipboard?.writeText} title={!navigator.clipboard?.writeText ? '当前浏览器不支持剪贴板写入，可在诊断包中导出安全信息。' : undefined} onClick={() => action.run(() => navigator.clipboard.writeText(JSON.stringify({ component: 'workspace_tools_v2', authority: task.authority, status: task.status, error_code: task.error_code, cost_state: 'UNKNOWN' }, null, 2)), '已复制脱敏状态，不含正文、任务 ID 或密钥')}>复制脱敏状态</Button></div></article>)}</div>}
     {action.feedback}
   </Panel>;
 }
