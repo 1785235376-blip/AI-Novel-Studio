@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { cloneElement, isValidElement, useCallback, useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { ApiError } from '../api';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import type { Row } from './api';
@@ -45,7 +45,12 @@ export function RecordStatus({ row }: { row: Row }) {
   return <div className="experimental-actions"><Badge tone={row.status === 'APPROVED' || row.status === 'COMMITTED' || row.status === 'SUCCEEDED' ? 'success' : 'neutral'}>{row.status || 'DRAFT'} · v{row.version}</Badge>{row.stale && <Badge tone="warning">STALE · 来源已变化</Badge>}{row.execution_mode && <Badge tone="info">{row.execution_mode}</Badge>}</div>;
 }
 export function Field({ label, children }: { label: string; children: ReactNode }) {
-  return <label className="experimental-field"><span>{label}</span>{children}</label>;
+  const generatedId = useId();
+  const control = isValidElement<{ id?: string }>(children) ? children : undefined;
+  const controlId = control?.props.id || generatedId;
+  // A wrapping label also contains native select option text in browser label
+  // selectors. Keep label text separate and bind it explicitly to the control.
+  return <div className="experimental-field"><label htmlFor={controlId}>{label}</label>{control ? cloneElement(control, { id: controlId }) : children}</div>;
 }
 export function Form({ children, onSubmit }: { children: ReactNode; onSubmit: () => void }) {
   return <form className="experimental-form" onSubmit={(event: FormEvent) => { event.preventDefault(); onSubmit(); }}>{children}</form>;

@@ -19,7 +19,7 @@ function frontendServer(port: number, apiPort: number) {
 export default defineConfig({
   testDir: path.join(frontend, 'tests', 'e2e'), testMatch: /r3-experimental\.spec\.ts/, outputDir: path.join(frontend, 'test-results', 'experimental'), fullyParallel: false, workers: 1, timeout: 120000, expect: { timeout: 15000 },
   reporter: [['list'], ['junit', { outputFile: process.env.CI_RECEIPTS ? path.join(process.env.CI_RECEIPTS, 'experimental.xml') : 'test-results-r3/experimental.xml' }]],
-  use: { baseURL: 'http://127.0.0.1:5176', viewport: { width: 1440, height: 900 }, locale: 'zh-CN', trace: 'retain-on-failure', screenshot: 'only-on-failure' },
+  use: { baseURL: 'http://127.0.0.1:5176', viewport: { width: 1440, height: 900 }, locale: 'zh-CN', actionTimeout: 15000, navigationTimeout: 30000, trace: 'retain-on-failure', screenshot: 'only-on-failure' },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'], launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE } : undefined } }],
   webServer: [backend(8016, 'enabled', flags), frontendServer(5176, 8016), backend(8017, 'default-off', ''), frontendServer(5177, 8017), backend(8018, 'v1-acceptance', flags, 'true')],
 });

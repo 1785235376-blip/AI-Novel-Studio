@@ -1,12 +1,17 @@
 import { test, expect, type Page } from '@playwright/test';
 const API = 'http://127.0.0.1:8016/api';
+const ownedProjects = new WeakMap<Page, { api: string; id: string }[]>();
+function rememberProject(page: Page, id: string, api = API) { ownedProjects.get(page)!.push({ api, id }); }
 async function body(response: any) { expect(response.ok(), await response.text()).toBeTruthy(); return response.json(); }
 async function project(page: Page, text = 'Alice said hello in Harbor. One day the secret would return.') {
+  const existing = await body(await page.request.get(`${API}/novels`));
+  expect(existing.length, 'Isolated synthetic backend must be empty after owned-fixture teardown').toBe(0);
   await page.goto('/');
   await page.getByPlaceholder('小说名称').fill(`R3 synthetic ${Date.now()}`);
   const created = page.waitForResponse(response => response.url().endsWith('/api/novels') && response.request().method() === 'POST');
   await page.getByRole('button', { name: '创建小说', exact: true }).click();
   const novel = await body(await created);
+  rememberProject(page, novel.id);
   await page.getByRole('button', { name: '新建章节', exact: true }).click();
   await page.getByLabel('章节标题').fill('R3 synthetic chapter');
   const chapterResponse = page.waitForResponse(response => response.url().endsWith(`/novels/${novel.id}/chapters`) && response.request().method() === 'POST');
@@ -27,7 +32,20 @@ async function openWorkbench(page: Page, tab = '分层规划') {
   await page.getByRole('navigation', { name: '实验功能' }).getByRole('button', { name: tab, exact: true }).click();
 }
 async function tab(page: Page, name: string) { await page.getByRole('navigation', { name: '实验功能' }).getByRole('button', { name, exact: true }).click(); }
-test.beforeEach(() => test.info().annotations.push({ type: 'verification', description: 'Actual File API + browser, synthetic fixtures. Planning/image MOCK_ONLY; no paid provider, GPU, TTS quality or literary-quality verification.' }));
+test.beforeEach(({ page }) => {
+  ownedProjects.set(page, []);
+  test.info().annotations.push({ type: 'verification', description: 'Actual File API + browser, synthetic fixtures. Planning/image MOCK_ONLY; no paid provider, GPU, TTS quality or literary-quality verification.' });
+});
+test.afterEach(async ({ page, request }) => {
+  // The File app intentionally auto-opens an existing novel. Restore the empty
+  // per-run fixture state after success OR failure, deleting only IDs this test
+  // actually created. Never enumerate/delete another test's or user's projects.
+  for (const owned of ownedProjects.get(page) || []) {
+    const response = await request.delete(`${owned.api}/novels/${encodeURIComponent(owned.id)}`);
+    expect([200, 204, 404], `cleanup of owned synthetic project ${owned.id}`).toContain(response.status());
+  }
+  ownedProjects.delete(page);
+});
 
 test('R3 default off and V1 acceptance override keep Experimental absent', async ({ page, request }) => {
   for (const port of [8017, 8018]) {
@@ -37,7 +55,9 @@ test('R3 default off and V1 acceptance override keep Experimental absent', async
   }
   await page.goto('http://127.0.0.1:5177');
   await page.getByPlaceholder('小说名称').fill('V1 frozen workflow synthetic');
+  const created = page.waitForResponse(response => response.url().endsWith('/api/novels') && response.request().method() === 'POST');
   await page.getByRole('button', { name: '创建小说', exact: true }).click();
+  rememberProject(page, (await body(await created)).id, 'http://127.0.0.1:8017/api');
   await page.getByRole('button', { name: /功能导航/ }).first().click();
   await expect(page.getByRole('button', { name: '实验工作台', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: '版本历史', exact: true })).toBeVisible();
@@ -60,7 +80,7 @@ test('R3 planning browser hierarchy CRUD, compare, approval, history and stale f
   await page.getByLabel('目标', { exact: true }).fill('找到海港秘密');
   await page.getByRole('button', { name: '保存节点', exact: true }).click();
   await expect(page.getByText('节点已保存', { exact: true })).toBeVisible();
-  await page.getByLabel('规划模板', { exact: true }).selectOption('multiple-endings');
+  await page.getByRole('combobox', { name: '规划模板', exact: true }).selectOption('multiple-endings');
   await page.getByRole('button', { name: '生成 Mock 双方案' }).click();
   const first = page.getByRole('article', { name: '方案 Mock option 1', exact: true }), second = page.getByRole('article', { name: '方案 Mock option 2', exact: true });
   await first.getByRole('checkbox').check(); await second.getByRole('checkbox').check();
@@ -113,7 +133,7 @@ test('R3 world browser records, unified inbox filtering/domain review and determ
   await page.getByRole('button', { name: '创建世界候选', exact: true }).click();
   const record = page.getByRole('article', { name: '世界记录 合成历史事件' }); await expect(record).toContainText('REVIEW');
   await tab(page, '统一审核');
-  await page.getByLabel('审核领域', { exact: true }).selectOption('world'); await page.getByLabel('搜索审核项', { exact: true }).fill('合成历史事件');
+  await page.getByRole('combobox', { name: '审核领域', exact: true }).selectOption('world'); await page.getByLabel('搜索审核项', { exact: true }).fill('合成历史事件');
   await page.getByRole('button', { name: '筛选审核项' }).click();
   const item = page.getByRole('article', { name: /审核项 world 合成历史事件/ }); await expect(item).toContainText('source_hash'); await expect(item).toContainText('LOCAL_ONLY');
   await expect(page.getByRole('button', { name: '批量批准已选审核项' })).toBeDisabled();
@@ -166,7 +186,7 @@ test('R3 audiobook browser ambiguous attribution, voices, timeline and unmeasure
   await page.getByRole('button', { name: '保存声音 Profile' }).click(); await page.getByRole('button', { name: '保存人物声音映射' }).click();
   await page.getByRole('button', { name: '创建对白序列计划' }).click(); const plan = page.getByRole('region', { name: '有声计划详情' });
   const dialogue = plan.getByRole('article', { name: '有声片段 DIALOGUE' }); await expect(dialogue).toContainText('NEEDS_REVIEW'); await expect(page.getByRole('button', { name: '批准有声计划' })).toBeDisabled();
-  await dialogue.getByLabel('片段人物 ID（旁白为 __narrator__）').fill('char-r3'); await dialogue.getByLabel('片段声音 Profile', { exact: true }).selectOption({ label: 'Synthetic voice' }); await dialogue.getByRole('checkbox', { name: '已人工核对白归属' }).check(); await dialogue.getByRole('button', { name: '保存片段归属与风格' }).click();
+  await dialogue.getByLabel('片段人物 ID（旁白为 __narrator__）').fill('char-r3'); await dialogue.getByRole('combobox', { name: '片段声音 Profile', exact: true }).selectOption({ label: 'Synthetic voice' }); await dialogue.getByRole('checkbox', { name: '已人工核对白归属' }).check(); await dialogue.getByRole('button', { name: '保存片段归属与风格' }).click();
   await expect(dialogue).toContainText('REVIEWED'); await page.getByLabel('轨道名称', { exact: true }).fill('合成环境轨道槽'); await page.getByRole('button', { name: '添加混音轨道槽位' }).click();
   await page.getByRole('button', { name: '查看时长清单' }).click(); await expect(page.getByText('实测时长清单', { exact: true })).toBeVisible(); await expect(plan).toContainText('UNMEASURED'); await expect(page.getByRole('button', { name: '查看片段字幕' })).toBeDisabled();
   await page.getByRole('button', { name: '批准有声计划' }).click(); await expect(plan).toContainText('APPROVED');
