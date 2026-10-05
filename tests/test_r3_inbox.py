@@ -107,3 +107,24 @@ def test_projection_cannot_leak_cross_scope(inbox):
     box.register(ReviewBinding('broken', lambda _: [{'id': 'secret', 'novel_id': 'other', 'preview': 'private'}]))
     with pytest.raises(ValueError, match='escaped'):
         box.list(ctx)
+
+
+def test_legacy_missing_privacy_does_not_claim_local_only():
+    from app.experimental.legacy_inbox import _row
+    row = _row({'id':'cloud-job', 'target':'cloud', 'execution_mode':'model', 'status':'COMPLETED'})
+    assert row['privacy_state'] == 'UNKNOWN' and row['execution_target'] == 'cloud'
+    assert _row({'id':'explicit', 'privacy_state':'REDACT_BEFORE_CLOUD'})['privacy_state'] == 'REDACT_BEFORE_CLOUD'
+
+
+def test_aggregate_preserves_original_domain_denial_without_hiding_authorized_rows(inbox):
+    box, _, ctx, calls, a, _ = inbox
+    def forbidden(context):
+        raise HTTPException(403, {'code':'PRIVATE_PROJECT_DETAILS_MUST_NOT_LEAK'})
+    box.register(ReviewBinding('legacy_denied', forbidden))
+    result = box.list(ctx)
+    assert len(result['items']) == 2
+    assert result['unavailable'] == [{'domain':'legacy_denied','reason':'ORIGINAL_DOMAIN_ACCESS_REQUIRED'}]
+    assert 'PRIVATE_PROJECT' not in str(result)
+    with pytest.raises(FileNotFoundError):
+        box.review(ctx, 'legacy_denied', 'guessed', 'approve', 1)
+    assert calls == []

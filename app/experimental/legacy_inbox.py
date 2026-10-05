@@ -14,7 +14,8 @@ def _row(row, *, preview=None, target=None, allowed=(), version=None, stale=Fals
     return {**row, 'preview': preview if preview is not None else row.get('title', row.get('name', '')),
             'target': target or {'id': row['id']}, 'version': version if version is not None else row.get('version', legacy_version(row)),
             'source_hash': digest(row), 'stale': stale, 'allowed_actions': list(allowed), 'batch_safe': False,
-            'risk': 'DOMAIN_REVIEW_REQUIRED', 'privacy_state': row.get('privacy_level', 'LOCAL_ONLY')}
+            'risk': 'DOMAIN_REVIEW_REQUIRED', 'privacy_state': row.get('privacy_state', row.get('privacy_level', 'UNKNOWN')),
+            'execution_target': row.get('target') if isinstance(row.get('target'), str) else None}
 
 
 def register_legacy_bindings(inbox):

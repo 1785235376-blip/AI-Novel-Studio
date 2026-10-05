@@ -75,7 +75,7 @@ class UnifiedReviewInbox:
                     created_by=item.get('created_by', item.get('actor_id', 'UNKNOWN')),
                     status=item.get('status', 'UNKNOWN'), stale=bool(item.get('stale', False)),
                     risk=item.get('risk', 'REVIEW_REQUIRED'),
-                    privacy_state=item.get('privacy_state', item.get('privacy_level', 'LOCAL_ONLY')),
+                    privacy_state=item.get('privacy_state', item.get('privacy_level', 'UNKNOWN')),
                     preview=item.get('preview', item.get('title', '')),
                     target=item.get('target', {'id': rid, 'domain': binding.domain}),
                     version=item.get('version', legacy_version(row)),
@@ -89,7 +89,17 @@ class UnifiedReviewInbox:
         rows = []
         unavailable = []
         for binding in bindings:
-            projected = binding.list_items(context)
+            try:
+                projected = binding.list_items(context)
+            except Exception as exc:
+                from fastapi import HTTPException
+                if not isinstance(exc, HTTPException) or exc.status_code not in {401, 403, 404, 501}:
+                    raise
+                # A legacy domain may require stronger original authority than
+                # the new Inbox's branch read. Preserve that denial and omit
+                # its rows without denying other independently authorized domains.
+                unavailable.append({'domain': binding.domain, 'reason': 'ORIGINAL_DOMAIN_ACCESS_REQUIRED'})
+                continue
             if isinstance(projected, dict):
                 unavailable.extend(projected.get('unavailable', []))
                 projected = projected.get('items', [])
