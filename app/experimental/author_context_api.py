@@ -22,12 +22,26 @@ from .planning import digest
 FEATURE = 'author_context_inspector_v2'
 
 
+class AuthorSourceControl(BaseModel):
+    model_config = ConfigDict(extra='forbid', strict=True)
+    key: str = Field(pattern=r'^[0-9a-f]{64}$')
+    source_digest: str = Field(pattern=r'^[0-9a-f]{64}$')
+    include: bool
+
+
 class AuthorRequestScope(BaseModel):
     model_config = ConfigDict(extra='forbid', strict=True)
     source_mode: Literal['AUTO', 'SELECTION_ONLY', 'NONE'] = 'AUTO'
     include_automatic_context: bool = True
     include_style_reference: bool = True
     include_plan_reference: bool = True
+    source_items: list[AuthorSourceControl] | None = Field(default=None, max_length=256)
+
+    @model_validator(mode='after')
+    def distinct_sources(self):
+        if self.source_items and len({row.key for row in self.source_items}) != len(self.source_items):
+            raise ValueError('source control identities must be unique')
+        return self
 
 
 class AuthorPreviewInput(BaseModel):
@@ -131,7 +145,7 @@ class AuthorPreparer:
         authorization = self.authorize(nid, token, branch, permission)
         if body.novel_id != nid: raise HTTPException(404, {'code': 'CHAPTER_OUTSIDE_PROJECT'})
         character = body.character_id is not None
-        requested_scope = body.request_scope.model_dump() if body.request_scope else None
+        requested_scope = body.request_scope.model_dump(exclude_none=True) if body.request_scope else None
         if character and requested_scope is not None:
             raise HTTPException(422, {'code': 'CHARACTER_CONTEXT_SCOPE_UNSUPPORTED'})
         if character:
@@ -169,7 +183,7 @@ class AuthorPreparer:
         raw = body.model_dump(exclude={'operation', 'chapter_version', 'preview_digest', 'generation_request_id', 'character_id', 'world_time', 'calendar', 'revision_selection', 'revision_selection_digest', 'request_scope'})
         raw.update(source=source, selected_text=source)
         if body.request_scope:
-            reduced = body.request_scope.source_mode != 'AUTO'
+            reduced = body.request_scope.source_mode != 'AUTO' or any(not row.include for row in (body.request_scope.source_items or []))
             # Approved references can derive from excluded manuscript, too. Their
             # dependency metadata cannot prove substring-level noninterference.
             if reduced or not body.request_scope.include_style_reference: raw['style_profile_id'] = None
@@ -302,9 +316,10 @@ def create_author_context_router(manager, authorize, require_flag, generation_co
             'context_sections': [{'name': key, 'characters': len(json.dumps(value, ensure_ascii=False)), 'included_in_adapter_request': True} for key, value in context.items()],
             'creation_records': [{'id': row['id'], 'version': row['version']} for row in job.creation_records],
             'scope_changes_supported': not character, 'request_scope': job.request_scope,
+            'source_manifest': getattr(job, 'author_source_manifest', None),
             'scope_effects': {'automatic_context_included': not character and automatic_context_allowed(job),
-                'references_omitted_for_source_isolation': not character and (job.request_scope or {}).get('source_mode', 'AUTO') != 'AUTO',
-                'granularity': 'WHOLE_AUTOMATIC_BUNDLE',
+                'references_omitted_for_source_isolation': not character and ((job.request_scope or {}).get('source_mode', 'AUTO') != 'AUTO' or any(not row['include'] for row in ((job.request_scope or {}).get('source_items') or []))),
+                'granularity': 'IDENTIFIED_RECORDS_WITH_CONSERVATIVE_DEPENDENCIES' if getattr(job, 'author_source_manifest', None) else 'WHOLE_AUTOMATIC_BUNDLE',
                 'reason': 'DERIVED_SOURCE_ISOLATION_UNPROVEN' if not character and (job.request_scope or {}).get('source_mode', 'AUTO') != 'AUTO' else None}, 'verification': 'ACTUAL_REQUEST_BUILDER', 'model_called': False,
             'boundary': 'Adapter-facing payload; provider-specific protocol encoding is performed by the selected adapter.'}
         if job.reviewed_variant is not None:

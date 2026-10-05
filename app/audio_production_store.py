@@ -57,6 +57,9 @@ class AudioProductionStore:
     @staticmethod
     def visible(row):
         from .experimental.flags import enabled_flags
+        if row.get("safe_batch_binding"):
+            from .experimental.safe_batch_voice import batch_voice_visible
+            if not batch_voice_visible(row): return False
         return not row.get("experimental_origin") or row["experimental_origin"] in enabled_flags()
 
     def load(self, novel_id: str) -> dict:

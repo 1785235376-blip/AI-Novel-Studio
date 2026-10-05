@@ -125,9 +125,10 @@ class ModelBrokerService(DomainService):
     BUDGET = 'broker_budget_v2'
     PRICES = 'broker_prices_v2'
 
-    def __init__(self, store, novels, chapters, *, runtime, model_center=None, media_registry=None):
+    def __init__(self, store, novels, chapters, *, runtime, model_center=None, media_registry=None, audio_resolver=None):
         super().__init__(store, novels, chapters)
         self.runtime, self.model_center, self.media_registry = runtime, model_center, media_registry
+        self.audio_resolver = audio_resolver
         self.evidence_reader = None
         self._credential_salt = secrets.token_bytes(32)
         self._credential_bindings = {}
@@ -259,7 +260,41 @@ class ModelBrokerService(DomainService):
                     'synthetic': synthetic, 'fingerprint': digest(identity), 'binding_hash': digest([id(adapter), digest(identity)]),
                     'identity': identity, 'available': not reasons, 'reasons': reasons,
                     'verification': 'SYNTHETIC_PROTOCOL_ONLY' if synthetic else 'ADAPTER_CONTRACT_ONLY'})
+        if self.audio_resolver is not None:
+            from ..audio_providers import provider_catalog
+            for config in provider_catalog():
+                if 'TTS' not in config['capabilities']: continue
+                pid = config['provider_id']
+                if pid == 'auto': continue  # Resolving auto may health-check; catalog reads never do.
+                try:
+                    resolved_id, model_id, adapter = self.audio_resolver(pid)
+                    if resolved_id != pid: continue  # An explicit route cannot silently fall back.
+                    identity = self.audio_identity(pid, model_id, adapter)
+                    local = bool(getattr(adapter, 'local', False))
+                    reasons = [] if local else ['AUDIO_CLOUD_BUDGET_EGRESS_NOT_INTEGRATED']
+                    items.append({'route_id': digest(['audio', pid, model_id]), 'audio_provider_id': pid,
+                        'provider_id': 'audio:' + pid, 'model_id': model_id, 'display_name': config['display_name'],
+                        'capability': 'AUDIO', 'context_window': None, 'cloud': not local, 'synthetic': False,
+                        'fingerprint': digest(identity), 'binding_hash': digest(identity), 'identity': identity,
+                        'available': not reasons, 'reasons': reasons, 'verification': 'ADAPTER_CONFIG_ONLY_RUNTIME_NOT_PROBED'})
+                except (ValueError, RuntimeError):
+                    continue  # Missing credentials/configuration are never a runnable route.
         return items
+
+    def audio_identity(self, provider_id, model_id, adapter):
+        """Metadata-only identity of the original resolver, never a health call.
+
+        No endpoint, path or credential is returned, and no fee is inferred from
+        locality. Original configure_price remains the sole estimate authority.
+        """
+        from ..audio_providers import HttpAudioProvider
+        if type(adapter) is not HttpAudioProvider: raise ValueError('BROKER_ORIGINAL_AUDIO_ADAPTER_REQUIRED')
+        return {'provider_id': provider_id, 'model_id': model_id, 'adapter_hash': implementation_hash(type(adapter)),
+            'endpoint_hash': digest(adapter.endpoint), 'local': adapter.local,
+            'emotion_values': list(adapter.emotion_values),
+            'credential_binding': self._credential_binding('audio:' + provider_id, adapter.api_key) if adapter.api_key else 'NONE_CONFIGURED',
+            'model_version': None, 'runtime_version': None, 'hardware_hash': None,
+            'workflow_hash': digest({'executor': 'original.audiobook', 'contract': 1})}
 
     def hardware_capacity(self):
         from ..provider_runtime_v2_host_hardware_inventory import collect_host_hardware_snapshot

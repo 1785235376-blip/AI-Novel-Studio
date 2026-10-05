@@ -30,7 +30,7 @@ from .media_api import create_media_router
 from .embeddings import EmbeddingService
 from .embeddings_api import create_embeddings_router
 from .voice_direction import DirectedAudiobookService
-from .voice_direction_api import create_voice_direction_router
+from .voice_direction_api import create_voice_direction_router, create_runtime_executor, resolve_runtime_provider
 from .subtitle_timeline import SubtitleTimelineService
 from .subtitle_timeline_api import create_subtitle_timeline_router
 from .audiobook_api import create_audiobook_router
@@ -40,6 +40,7 @@ from .legacy_inbox import register_legacy_bindings
 from .ux import WorkspaceToolsService, TaskReader
 from .author_task_projection import create_author_task_reader
 from .ux_api import create_ux_router
+from .search_sources import create_search_candidates
 from ..services.import_apply_service import ImportApplyService
 
 store = ExperimentalStore(settings.data_path(), settings.storage_backend, settings.database_url)
@@ -157,6 +158,8 @@ def read_voice_tasks(ctx):
 # reader executes its original access check with captured request authority.
 workspace_tools_service = WorkspaceToolsService(
     store, legacy_api.novel_service, legacy_api.chapter_service,
+    search_candidates=lambda ctx, service: create_search_candidates(legacy_api.collaboration_scope_service.repository)(ctx, service),
+    finding_reader=lambda ctx: legacy_api.continuity_finding_service.list_findings(ctx.novel_id) if ctx.scope.get('mode') == 'local' else [],
     task_readers=(
         TaskReader('author_generation', '正文生成', 'history',
                    create_author_task_reader(legacy_api.jobs, authorize, require_flag,
@@ -251,7 +254,8 @@ from .model_broker_api import create_model_broker_router
 from .model_benchmark import ModelBenchmarkService
 from .model_benchmark_api import create_model_benchmark_router
 model_broker_service = ModelBrokerService(store, legacy_api.novel_service, legacy_api.chapter_service,
-    runtime=runtime, model_center=model_center_service, media_registry=media_service.registry)
+    runtime=runtime, model_center=model_center_service, media_registry=media_service.registry,
+    audio_resolver=resolve_runtime_provider)
 model_benchmark_service = ModelBenchmarkService(store, legacy_api.novel_service, legacy_api.chapter_service,
     broker=model_broker_service)
 model_broker_service.evidence_reader = model_benchmark_service.evidence
@@ -405,11 +409,13 @@ from .portable_projects import PortableProjectsService
 from .portable_projects_api import create_portable_projects_router
 from .safe_batches import SafeBatchesService
 from .safe_batches_api import create_safe_batches_router
+from .safe_batch_voice import BatchVoiceAuthority
 portable_projects_service = PortableProjectsService(store, legacy_api.novel_service,
     legacy_api.chapter_service, sources=writing_focus_service, assets=legacy_api.asset_library_service)
 safe_batches_service = SafeBatchesService(store, legacy_api.novel_service,
     legacy_api.chapter_service, sources=writing_focus_service, reader=reader_preflight_service,
-    media=media_service, broker=model_broker_service, flag_check=require_flag)
+    media=media_service, broker=model_broker_service, flag_check=require_flag,
+    voice=BatchVoiceAuthority(audiobook_service, create_runtime_executor, resolve_runtime_provider))
 router.include_router(create_portable_projects_router(portable_projects_service, authorize, require_flag, require_inspection_host_session))
 router.include_router(create_safe_batches_router(safe_batches_service, authorize, require_flag, require_inspection_host_session))
 
@@ -425,6 +431,7 @@ from .declarative_agents_api import create_declarative_agents_router
 from .flags import enabled_flags
 template_library_service = TemplateLibraryService(store, legacy_api.novel_service,
     legacy_api.chapter_service, planning=planning_service, enabled_features=enabled_flags)
+safe_batches_service.templates = template_library_service
 declarative_agents_service = DeclarativeAgentsService(store, legacy_api.novel_service,
     legacy_api.chapter_service, sources=writing_focus_service, broker=model_broker_service)
 router.include_router(create_template_library_router(template_library_service, authorize, require_flag))

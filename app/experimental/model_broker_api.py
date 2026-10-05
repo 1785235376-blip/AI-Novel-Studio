@@ -107,7 +107,7 @@ def create_model_broker_router(service, authorize, require_flag, require_host_se
                 'prices': api_call(service.list, nid, scope, service.PRICES),
                 'author_execution_available': callable(prepare_author) and manager is not None,
                 'provider_profile_state': 'USES_EXISTING_HOST_VAULT_AND_RUNTIME_REGISTRATIONS',
-                'supports': ['TEXT_AUTHOR_EXECUTOR'], 'unsupported_capabilities': ['IMAGE', 'VIDEO', 'AUDIO', 'EMBEDDING'],
+                'supports': ['TEXT_AUTHOR_EXECUTOR', 'IMAGE_AUDIO_PREFLIGHT_FOR_SAFE_BATCHES'], 'unsupported_capabilities': ['VIDEO', 'EMBEDDING'],
                 'source_privacy': 'CURRENT_CHAPTER_AND_PROJECT_AUTHORITY', 'auto_fallback': False}
 
     @router.post('/preview')
@@ -145,6 +145,7 @@ def create_model_broker_router(service, authorize, require_flag, require_host_se
         api_call(check_version, row, value.expected_version)
         await run_in_threadpool(api_call, service._assert_preview, nid, scope, actor, row)
         chosen = row['chosen']
+        if chosen['capability'] != 'TEXT': raise HTTPException(409, {'code': 'BROKER_USE_ORIGINAL_MEDIA_OR_AUDIO_BATCH_EXECUTOR'})
         if (row['request']['chapter_ids'] != [value.author.chapter_id] or value.author.novel_id != nid
             or row['request']['profile'] != value.author.profile
             or (chosen['provider_id'], chosen['model_id']) != (value.author.provider_id, value.author.model_id)):

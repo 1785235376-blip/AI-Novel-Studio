@@ -12,7 +12,7 @@ from ..repositories.chapter_repository import VersionConflict
 from ..revision_constraints import RevisionConstraintError
 from .common import api_call as domain_call
 from .offline_sync import (FEATURE, MAX_BYTES, ChannelIn, VersionIn, QueueIn, ReceiveIn,
-                           ReviewIn, ApplyIn, ExportIn, DeliveryIn, RecoverIn)
+                           ReviewIn, ApplyIn, ExportIn, DeliveryIn, RecoverIn, SelectionIn, SelectionApplyIn)
 from .portable_projects import _json
 from .ux import ReadContext
 
@@ -72,6 +72,16 @@ def create_offline_sync_router(service, authorize, require_flag, require_host_se
     async def revoke(nid: str, rid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx, again = access(nid, x_session_token, x_branch_id, True); value = await body(request, VersionIn); response.headers['Cache-Control'] = 'no-store'
         return await run_in_threadpool(call, service.revoke, ctx, rid, value, again)
+
+    @router.post('/channels/{rid}/selection/preview')
+    async def preview_selection(nid: str, rid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again = access(nid, x_session_token, x_branch_id); value = await body(request, SelectionIn); response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(call, service.preview_selection, ctx, rid, value, again)
+
+    @router.post('/channels/{rid}/selection')
+    async def change_selection(nid: str, rid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again = access(nid, x_session_token, x_branch_id, True); value = await body(request, SelectionApplyIn); response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(call, service.change_selection, ctx, rid, value, again)
 
     @router.post('/channels/{rid}/queue')
     async def queue(nid: str, rid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

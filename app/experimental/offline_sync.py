@@ -16,7 +16,7 @@ from ..revision_constraints import assert_ai_locks, RevisionConstraintError
 from .common import DomainService, StaleSourceError, check_version, new_row, now
 from .planning import StrictModel, digest
 from .project_forks import rich_document, block_merge, advance
-from .reader_sources import authorized_chapter_rows
+from .reader_sources import authorized_chapter, authorized_chapter_rows
 from .store import canonical
 
 FEATURE = 'offline_sync_v2'
@@ -29,7 +29,8 @@ LIMITS = ['MANUAL_LOCAL_EXCHANGE_ONLY', 'EXTERNAL_NETWORK_SYNC_OFF', 'PUBLIC_LAB
           'NO_END_TO_END_ENCRYPTION_OR_PRODUCTION_KEY_LIFECYCLE', 'LOCAL_PROJECT_NOT_COLLABORATION_BRANCH',
           'SELECTED_CHAPTERS_ONLY_NO_ASSETS_CREDENTIALS_MODELS_CACHE_OR_PATH_METADATA',
           'REVIEW_BEFORE_ORIGINAL_CHAPTER_CAS', 'DOWNLOADED_COPIES_AND_BACKUPS_CANNOT_BE_RECALLED',
-          'TOMBSTONES_BLOCK_FUTURE_EXCHANGE_NOT_PHYSICAL_ERASURE', 'BOUNDED_JOURNAL_NO_AUTOMATIC_RETRY']
+          'TOMBSTONES_BLOCK_FUTURE_EXCHANGE_NOT_PHYSICAL_ERASURE', 'BOUNDED_JOURNAL_NO_AUTOMATIC_RETRY',
+          'LOCAL_WITHDRAWAL_DOES_NOT_NOTIFY_PEER', 'NEW_SELECTION_REQUIRES_REVIEWED_IMMUTABLE_BASELINE']
 # Defensive export guard. This is not a general DLP or secret scanner. Unlike
 # silent redaction, rejection preserves the saved manuscript exactly.
 UNSAFE_TEXT = re.compile(r'(?:[A-Za-z]:[\\/]|(?:^|[\s"\'])/(?:home|Users|workspace|tmp|var|etc|root|mnt|Volumes)/|\\\\[^\s\\]+\\|(?:sk-[A-Za-z0-9_-]{12,})|-----BEGIN [A-Z ]*PRIVATE KEY-----|(?:postgres(?:ql)?://|Bearer\s+[A-Za-z0-9._-]{12,})|(?:api[_ -]?key|password|access[_ -]?token)\s*[:=]\s*\S+)', re.I)
@@ -62,6 +63,16 @@ class ChannelIn(SyncInput):
 
 class VersionIn(SyncInput):
     expected_version: int = Field(ge=1)
+
+
+class SelectionIn(VersionIn):
+    add_chapter_ids: list[str] = Field(default_factory=list, max_length=20)
+    withdraw_chapter_ids: list[str] = Field(default_factory=list, max_length=20)
+
+
+class SelectionApplyIn(SelectionIn):
+    preview_digest: str = Field(pattern=SHA)
+    confirmed: Literal[True]
 
 
 class QueueIn(VersionIn):
@@ -142,14 +153,8 @@ class OfflineSyncService(DomainService):
         return row
 
     def _chapter(self, ctx, cid):
-        # Original local chapter IDs are project:number. Fence before even a
-        # lazy repository read; cross-project/path-shaped IDs must not touch it.
-        if not isinstance(cid, str) or cid.rpartition(':')[0] != ctx.novel_id or not cid.rpartition(':')[2].isdigit():
-            raise FileNotFoundError('chapter unavailable')
-        row = self.chapters.get(cid)
-        if (row.get('novel_id') != ctx.novel_id or row.get('branch_id') or row.get('hidden') or row.get('secret')
-                or str(row.get('visibility', '')).upper() in {'PRIVATE', 'SECRET', 'DENIED'}):
-            raise FileNotFoundError('chapter unavailable')
+        self._local(ctx)
+        row = authorized_chapter(ctx, self.source_reader, self.chapters, cid, include_archived=True)
         snapshot = safe_snapshot({'title': row['title'], 'document': row['document']})
         return {'id': cid, 'version': row['version'], 'archived': bool(row.get('is_archived')), **snapshot}
 
@@ -197,7 +202,8 @@ class OfflineSyncService(DomainService):
             if any(r['created_by'] == ctx.actor and r['stream_id'] == value.stream_id for r in channels.values()):
                 raise ValueError('SYNC_STREAM_ALREADY_REGISTERED_USE_NEW_STREAM_AFTER_REVOCATION')
             row = new_row(ctx.novel_id, ctx.scope, ctx.actor, {**value.model_dump(), 'baseline': baseline,
-                'status': 'ACTIVE', 'send_cursor': 0, 'receive_cursor': 0, 'bindings': {}, 'tombstones': [], 'sent_tombstones': []})
+                'status': 'ACTIVE', 'send_cursor': 0, 'receive_cursor': 0, 'bindings': {}, 'tombstones': [], 'sent_tombstones': [],
+                'withdrawn_chapter_ids': [], 'withdrawn_source_ids': []})
             channels[row['id']] = row; self._bounded(state, row['id']); reauthorize()
             return self._summary(row)
 
@@ -208,6 +214,65 @@ class OfflineSyncService(DomainService):
             advance(row, ctx.actor, value.expected_version, lambda r: r.update(status='REVOKED'))
             reauthorize(); return self._summary(row)
 
+    @staticmethod
+    def _selection_guard(channel, cid=None, remote_id=None):
+        if channel['status'] != 'ACTIVE': raise ValueError('SYNC_CHANNEL_REVOKED')
+        if (cid and cid in channel.get('withdrawn_chapter_ids', [])
+                or remote_id and remote_id in channel.get('withdrawn_source_ids', [])):
+            raise ValueError('SYNC_SELECTION_REVOKED_NEW_CHANNEL_REQUIRED')
+        if cid and cid not in channel['chapter_ids']: raise ValueError('SYNC_TARGET_NOT_SELECTED')
+
+    def _selection_plan(self, ctx, channel, value):
+        check_version(channel, value.expected_version)
+        added, withdrawn = value.add_chapter_ids, value.withdraw_chapter_ids
+        if (not added and not withdrawn or len(set(added)) != len(added) or len(set(withdrawn)) != len(withdrawn)
+                or set(added) & set(withdrawn)):
+            raise ValueError('SYNC_SELECTION_CHANGE_INVALID')
+        if any(cid not in channel['chapter_ids'] for cid in withdrawn): raise ValueError('SYNC_CHAPTER_NOT_SELECTED')
+        if any(cid in channel.get('withdrawn_chapter_ids', []) for cid in added):
+            raise ValueError('SYNC_SELECTION_REVOKED_NEW_CHANNEL_REQUIRED')
+        if any(cid in channel['baseline'] for cid in added): raise ValueError('SYNC_BASELINE_ALREADY_REGISTERED')
+        # Immutable historical baselines also count toward the bounded channel.
+        reserved = sum(r['channel_id'] == channel['id'] and r['target_chapter_id'] is None
+                       for r in self.list(ctx.novel_id, ctx.scope, self.INBOX))
+        if len(channel['baseline']) + reserved + len(added) > 20: raise ValueError('SYNC_SELECTION_LIMIT_NEW_CHANNEL_REQUIRED')
+        chapters = [self._chapter(ctx, cid) for cid in added]
+        if any(c['archived'] for c in chapters): raise ValueError('SYNC_ARCHIVED_SOURCE_UNAVAILABLE')
+        result = {'channel_id': channel['id'], 'version': channel['version'], 'additions': chapters,
+                  'withdraw_chapter_ids': withdrawn, 'baseline_policy': 'FRESH_IMMUTABLE_BASELINE_FOR_NEW_SELECTIONS',
+                  'copy_boundary': 'DOWNLOADED_COPIES_AND_BACKUPS_CANNOT_BE_RECALLED'}
+        result['preview_digest'] = digest(result)
+        return result
+
+    def preview_selection(self, ctx, rid, body, reauthorize=lambda: None):
+        value = SelectionIn.model_validate(body); channel = self._channel(ctx, rid)
+        result = self._selection_plan(ctx, channel, value); reauthorize(); return result
+
+    def change_selection(self, ctx, rid, body, reauthorize=lambda: None):
+        value = SelectionApplyIn.model_validate(body); self._channel(ctx, rid); reauthorize()
+        with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+            channel = state['collections'][self.CHANNELS][rid]; self._selection_guard(channel)
+            plan = self._selection_plan(ctx, channel, value)
+            if plan['preview_digest'] != value.preview_digest: raise StaleSourceError('SYNC_SELECTION_REVIEW_CHANGED')
+            withdrawn = set(value.withdraw_chapter_ids)
+            remote_ids = {key for key, binding in channel['bindings'].items() if binding['chapter_id'] in withdrawn}
+            remote_ids.update(r['envelope']['source_chapter_id'] for r in state['collections'].get(self.INBOX, {}).values()
+                              if r['channel_id'] == rid and r['target_chapter_id'] in withdrawn)
+            def change(row):
+                row['chapter_ids'] = [cid for cid in row['chapter_ids'] if cid not in withdrawn] + value.add_chapter_ids
+                row['withdrawn_chapter_ids'] = sorted(set(row.get('withdrawn_chapter_ids', [])) | withdrawn)
+                row['withdrawn_source_ids'] = sorted(set(row.get('withdrawn_source_ids', [])) | remote_ids)
+                for chapter in plan['additions']: row['baseline'][chapter['id']] = self._snapshot(chapter)
+            advance(channel, ctx.actor, value.expected_version, change)
+            for collection, key in [(self.OUTBOX, 'chapter_id'), (self.INBOX, 'target_chapter_id')]:
+                for row in state['collections'].get(collection, {}).values():
+                    if row['channel_id'] != rid or row[key] not in withdrawn: continue
+                    def invalidate(item):
+                        item['selection_withdrawn'] = True
+                        if item['status'] in {'PENDING', 'FAILED', 'PENDING_REVIEW'}: item['status'] = 'SELECTION_REVOKED'
+                    advance(row, ctx.actor, row['version'], invalidate)
+            self._bounded(state, rid); reauthorize(); return self._summary(channel)
+
     def queue(self, ctx, rid, body, reauthorize=lambda: None):
         value = QueueIn.model_validate(body); channel = self._channel(ctx, rid)
         if value.chapter_id not in channel['chapter_ids']: raise ValueError('SYNC_CHAPTER_NOT_SELECTED')
@@ -215,7 +280,8 @@ class OfflineSyncService(DomainService):
         if current['archived'] != value.tombstone: raise ValueError('SYNC_TOMBSTONE_REQUIRES_CURRENT_ARCHIVE')
         signature = digest(value.model_dump(exclude={'expected_version'})); reauthorize()
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
-            channel = state['collections'][self.CHANNELS][rid]; rows = state['collections'].setdefault(self.OUTBOX, {})
+            channel = state['collections'][self.CHANNELS][rid]; self._selection_guard(channel, value.chapter_id)
+            rows = state['collections'].setdefault(self.OUTBOX, {})
             prior = next((r for r in rows.values() if r['channel_id'] == rid and r['request_id'] == value.request_id), None)
             if prior:
                 if prior['request_digest'] != signature: raise ValueError('SYNC_IDEMPOTENCY_KEY_REUSED')
@@ -239,8 +305,8 @@ class OfflineSyncService(DomainService):
             self._bounded(state, rid); reauthorize(); return self._summary(row)
 
     def _dispatch_guard(self, ctx, row):
-        channel = self._channel(ctx, row['channel_id']); current = self._chapter(ctx, row['chapter_id']); envelope = row['envelope']
-        if row['chapter_id'] not in channel['chapter_ids']: raise ValueError('SYNC_SELECTION_REVOKED')
+        channel = self._channel(ctx, row['channel_id']); self._selection_guard(channel, row['chapter_id'])
+        current = self._chapter(ctx, row['chapter_id']); envelope = row['envelope']
         if envelope['operation'] != 'TOMBSTONE' and row['chapter_id'] in channel['sent_tombstones']: raise ValueError('SYNC_SOURCE_TOMBSTONED')
         if (current['version'] != envelope['source_version'] or current['archived'] != (envelope['operation'] == 'TOMBSTONE')
                 or not current['archived'] and self._snapshot(current) != envelope['snapshot']):
@@ -290,10 +356,12 @@ class OfflineSyncService(DomainService):
         remote_id = envelope['source_chapter_id']; fingerprint = digest(envelope)
         request_digest = digest(value.model_dump(exclude={'expected_version'})); reauthorize()
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
-            channel = state['collections'][self.CHANNELS][rid]; rows = state['collections'].setdefault(self.INBOX, {})
+            channel = state['collections'][self.CHANNELS][rid]; self._selection_guard(channel, remote_id=remote_id)
+            rows = state['collections'].setdefault(self.INBOX, {})
             prior = rows.get(envelope['message_id'])
             if prior:
                 if prior['channel_id'] != rid or prior['envelope_digest'] != fingerprint or prior['receive_request_digest'] != request_digest: raise ValueError('SYNC_IDEMPOTENCY_KEY_REUSED')
+                self._selection_guard(channel, prior['target_chapter_id'], remote_id)
                 return {**self._summary(prior), 'receipt': self._receipt(prior), 'duplicate': True}
             check_version(channel, value.expected_version)
             if envelope['sequence'] <= channel['receive_cursor']: raise ValueError('SYNC_OLD_OR_OUT_OF_ORDER_SEQUENCE')
@@ -306,15 +374,17 @@ class OfflineSyncService(DomainService):
                 if value.create_new or value.target_chapter_id not in {None, binding['chapter_id']} or binding['base_digest'] != digest(envelope['base']):
                     raise ValueError('SYNC_EXISTING_BINDING_OR_BASE_CHANGED')
                 target_id = binding['chapter_id']
+                self._selection_guard(channel, target_id, remote_id)
             else:
                 target_id = value.target_chapter_id
                 if value.create_new:
-                    if target_id or not channel['allow_new_chapters'] or envelope['operation'] == 'TOMBSTONE' or len(channel['chapter_ids']) + sum(r['channel_id'] == rid and r['target_chapter_id'] is None for r in rows.values()) >= 20: raise ValueError('SYNC_NEW_CHAPTER_NOT_APPROVED')
+                    if target_id or not channel['allow_new_chapters'] or envelope['operation'] == 'TOMBSTONE' or len(channel['baseline']) + sum(r['channel_id'] == rid and r['target_chapter_id'] is None for r in rows.values()) >= 20: raise ValueError('SYNC_NEW_CHAPTER_NOT_APPROVED')
                     # A second message cannot create another copy while an add is pending.
                     if any(r['channel_id'] == rid and r['envelope']['source_chapter_id'] == remote_id for r in rows.values()):
                         raise ValueError('SYNC_PENDING_NEW_CHAPTER_REVIEW_REQUIRED')
                 else:
-                    if target_id not in channel['chapter_ids']: raise ValueError('SYNC_TARGET_NOT_SELECTED')
+                    self._selection_guard(channel, target_id, remote_id)
+                    if not target_id: raise ValueError('SYNC_TARGET_NOT_SELECTED')
                     if channel['baseline'][target_id] != envelope['base']: raise ValueError('SYNC_INITIAL_BASE_MISMATCH_USE_NEW_CHAPTER')
                     self._chapter(ctx, target_id)
                     if any(b['chapter_id'] == target_id for b in channel['bindings'].values()): raise ValueError('SYNC_TARGET_ALREADY_BOUND')
@@ -332,6 +402,7 @@ class OfflineSyncService(DomainService):
 
     def _review(self, ctx, row, choices):
         channel = self._channel(ctx, row['channel_id']); envelope = row['envelope']; cid = row['target_chapter_id']
+        self._selection_guard(channel, cid, envelope['source_chapter_id'])
         if row['status'] != 'PENDING_REVIEW': raise ValueError('SYNC_MESSAGE_NOT_PENDING_REVIEW')
         if envelope['operation'] != 'TOMBSTONE' and envelope['source_chapter_id'] in channel['tombstones']: raise ValueError('SYNC_REMOTE_CHAPTER_TOMBSTONED')
         current = self._chapter(ctx, cid) if cid else None
@@ -339,6 +410,7 @@ class OfflineSyncService(DomainService):
         if not cid and not channel['allow_new_chapters']: raise ValueError('SYNC_NEW_CHAPTER_NOT_APPROVED')
         base, incoming = envelope['base'], envelope['snapshot']; segments = []; used = set(); unresolved = 0; blocked = []
         if current is None:
+            if len(channel['baseline']) >= 20: blocked.append('SYNC_SELECTION_LIMIT_NEW_CHANNEL_REQUIRED')
             desired = deepcopy(incoming)
             segments = [{'kind': 'NEW_CHAPTER', 'incoming': incoming}]
         elif envelope['operation'] == 'TOMBSTONE' or current['archived']:
@@ -376,11 +448,12 @@ class OfflineSyncService(DomainService):
         result = self._review(ctx, row, value.choices); reauthorize()
         return {**result, 'version': row['version'], 'limitations': LIMITS}
 
-    def _update(self, ctx, mid, callback):
+    def _mark_unknown(self, ctx, mid):
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
             row = state['collections'][self.INBOX][mid]
-            advance(row, ctx.actor, row['version'], callback); self._bounded(state, row['channel_id'])
-            return deepcopy(row)
+            if row['status'] not in {'CLAIMED', 'UNKNOWN'}: return
+            advance(row, ctx.actor, row['version'], lambda r: r.update(status='UNKNOWN', error_code='SYNC_WRITE_OUTCOME_UNKNOWN_NO_AUTOMATIC_RETRY'))
+            self._bounded(state, row['channel_id'])
 
     def apply(self, ctx, mid, body, reauthorize=lambda: None, *, save_document=None, archive_chapter=None, create_chapter=None):
         value = ApplyIn.model_validate(body); row = self._owned(ctx, self.INBOX, mid); check_version(row, value.expected_version)
@@ -395,24 +468,29 @@ class OfflineSyncService(DomainService):
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
             stored = state['collections'][self.INBOX][mid]; check_version(stored, value.expected_version)
             if self._review(ctx, stored, value.choices)['preview_digest'] != value.preview_digest: raise StaleSourceError('SYNC_REVIEW_CHANGED')
-            created_ids = [r['id'] for r in self.chapters.list(ctx.novel_id)] if not old else []
+            created_ids = [r['id'] for r in authorized_chapter_rows(ctx, self.source_reader, self.chapters)] if not old else []
             advance(stored, ctx.actor, value.expected_version, lambda r: r.update(status='CLAIMED', checkpoint=old, intent=desired,
                 created_ids=created_ids, journal=[{'kind': kind, 'status': 'CLAIMED', 'at': now()}]))
             self._bounded(state, row['channel_id']); reauthorize()
         try:
-            self._channel(ctx, row['channel_id']); reauthorize()
-            if old and self._chapter(ctx, cid) != old: raise StaleSourceError('SYNC_FINAL_SOURCE_CHANGED')
-            if old: assert_ai_locks(old['document'], desired['document'] if desired else {'type': 'doc', 'content': []})
-            if kind == 'CREATE': result = create_chapter(ctx.novel_id, desired['title'], deepcopy(desired['document']))
-            elif kind == 'ARCHIVE': result = archive_chapter(cid, old['version'])
-            else: result = save_document(cid, deepcopy(desired['document']), old['version'], 'OFFLINE_SYNC_REVIEW')
-            # The current authority must still permit access after dispatch.
-            self._channel(ctx, row['channel_id']); reauthorize()
-            new_cid = result['id']; actual = self._chapter(ctx, new_cid)
-            if not self._matches(actual, desired): raise ValueError('SYNC_WRITER_RECEIPT_MISMATCH')
-            return self._finish(ctx, mid, new_cid, actual['version'], confirmed=True, expected_version=value.expected_version + 1, reauthorize=reauthorize)
+            with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+                stored = state['collections'][self.INBOX][mid]
+                channel = self._channel(ctx, row['channel_id'])
+                self._selection_guard(channel, cid, row['envelope']['source_chapter_id'])
+                check_version(stored, value.expected_version + 1)
+                if stored['status'] != 'CLAIMED': raise ValueError('SYNC_MESSAGE_ALREADY_RESOLVED_NO_REPLAY')
+                reauthorize()
+                if old and self._chapter(ctx, cid) != old: raise StaleSourceError('SYNC_FINAL_SOURCE_CHANGED')
+                if old: assert_ai_locks(old['document'], desired['document'] if desired else {'type': 'doc', 'content': []})
+                if kind == 'CREATE': result = create_chapter(ctx.novel_id, desired['title'], deepcopy(desired['document']))
+                elif kind == 'ARCHIVE': result = archive_chapter(cid, old['version'])
+                else: result = save_document(cid, deepcopy(desired['document']), old['version'], 'OFFLINE_SYNC_REVIEW')
+                self._channel(ctx, row['channel_id']); reauthorize()
+                new_cid = result['id']; actual = self._chapter(ctx, new_cid)
+                if not self._matches(actual, desired): raise ValueError('SYNC_WRITER_RECEIPT_MISMATCH')
+                return self._finish_row(ctx, state, stored, new_cid, actual['version'], True, value.expected_version + 1, reauthorize)
         except Exception:
-            self._update(ctx, mid, lambda r: r.update(status='UNKNOWN', error_code='SYNC_WRITE_OUTCOME_UNKNOWN_NO_AUTOMATIC_RETRY'))
+            self._mark_unknown(ctx, mid)
             raise
 
     @staticmethod
@@ -421,27 +499,33 @@ class OfflineSyncService(DomainService):
 
     def _finish(self, ctx, mid, cid, version, confirmed, expected_version, reauthorize):
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
-            row = state['collections'][self.INBOX][mid]; channel = state['collections'][self.CHANNELS][row['channel_id']]
-            check_version(row, expected_version)
-            if row['status'] not in {'CLAIMED', 'UNKNOWN'}: raise ValueError('SYNC_RECOVERY_ALREADY_RESOLVED')
-            if channel['status'] != 'ACTIVE': raise ValueError('SYNC_CHANNEL_REVOKED')
-            actual = self._chapter(ctx, cid)
-            if actual['version'] != version or not self._matches(actual, row['intent']): raise StaleSourceError('SYNC_FINAL_RECEIPT_CHANGED')
-            reauthorize()
-            if row['target_chapter_id'] is None:
-                channel['chapter_ids'].append(cid); channel['baseline'][cid] = row['envelope']['base']
-                channel['bindings'][row['envelope']['source_chapter_id']] = {'chapter_id': cid, 'base_digest': digest(row['envelope']['base'])}
-                advance(channel, ctx.actor, channel['version'], lambda r: None)
-            advance(row, ctx.actor, row['version'], lambda r: r.update(status='APPLIED' if confirmed else 'RECONCILED', target_chapter_id=cid,
-                result_version=version, journal=[{**r['journal'][0], 'status': 'RECEIPT_CONFIRMED' if confirmed else 'MANUALLY_ADOPTED'}]))
-            self._bounded(state, row['channel_id']); reauthorize(); return self._summary(row)
+            row = state['collections'][self.INBOX][mid]
+            return self._finish_row(ctx, state, row, cid, version, confirmed, expected_version, reauthorize)
+
+    def _finish_row(self, ctx, state, row, cid, version, confirmed, expected_version, reauthorize):
+        channel = state['collections'][self.CHANNELS][row['channel_id']]
+        check_version(row, expected_version)
+        if row['status'] not in {'CLAIMED', 'UNKNOWN'}: raise ValueError('SYNC_RECOVERY_ALREADY_RESOLVED')
+        self._selection_guard(channel, row['target_chapter_id'], row['envelope']['source_chapter_id'])
+        actual = self._chapter(ctx, cid)
+        if actual['version'] != version or not self._matches(actual, row['intent']): raise StaleSourceError('SYNC_FINAL_RECEIPT_CHANGED')
+        reauthorize()
+        if row['target_chapter_id'] is None:
+            if cid in channel['baseline'] or cid in row['created_ids'] or len(channel['baseline']) >= 20:
+                raise ValueError('SYNC_NEW_TARGET_ALREADY_SELECTED_OR_LIMIT_MANUAL_CLOSE_REQUIRED')
+            channel['chapter_ids'].append(cid); channel['baseline'][cid] = row['envelope']['base']
+            channel['bindings'][row['envelope']['source_chapter_id']] = {'chapter_id': cid, 'base_digest': digest(row['envelope']['base'])}
+            advance(channel, ctx.actor, channel['version'], lambda r: None)
+        advance(row, ctx.actor, row['version'], lambda r: r.update(status='APPLIED' if confirmed else 'RECONCILED', target_chapter_id=cid,
+            result_version=version, journal=[{**r['journal'][0], 'status': 'RECEIPT_CONFIRMED' if confirmed else 'MANUALLY_ADOPTED'}]))
+        self._bounded(state, row['channel_id']); reauthorize(); return self._summary(row)
 
     def recover(self, ctx, mid, body, reauthorize=lambda: None):
         value = RecoverIn.model_validate(body); row = self._owned(ctx, self.INBOX, mid); check_version(row, value.expected_version)
         self._channel(ctx, row['channel_id'])
         if row['status'] not in {'CLAIMED', 'UNKNOWN'}: raise ValueError('SYNC_RECOVERY_NOT_REQUIRED')
         cid = row['target_chapter_id']; observations = []
-        ids = [cid] if cid else [r['id'] for r in self.chapters.list(ctx.novel_id) if r['id'] not in row['created_ids']]
+        ids = [cid] if cid else [r['id'] for r in authorized_chapter_rows(ctx, self.source_reader, self.chapters) if r['id'] not in row['created_ids']]
         for key in ids:
             try: current = self._chapter(ctx, key)
             except FileNotFoundError: continue
@@ -451,6 +535,11 @@ class OfflineSyncService(DomainService):
         result = {'id': mid, 'version': row['version'], 'status': row['status'], 'observations': observations,
                   'can_adopt': len(observations) == 1 and observations[0]['state'] == 'MATCHES_INTENT_UNCONFIRMED',
                   'retry_allowed': False, 'recovery': 'Inspect original editor/history. Partial additions are retained. Never replay an uncertain create or save.'}
+        try: self._selection_guard(self._channel(ctx, row['channel_id']), cid, row['envelope']['source_chapter_id'])
+        except ValueError:
+            result['can_adopt'] = False; result['selection_withdrawn'] = True
+        if not cid and any(item['chapter_id'] in self._channel(ctx, row['channel_id'])['baseline'] for item in observations):
+            result['can_adopt'] = False; result['target_already_selected'] = True
         result['preview_digest'] = digest(result); reauthorize()
         if value.adopt_matching_result and value.close_without_replay: raise ValueError('SYNC_ONE_RECOVERY_ACTION_REQUIRED')
         if value.close_without_replay:
