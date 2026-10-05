@@ -25,3 +25,9 @@ Real model/GPU/interactive Windows/target-software/user acceptance: **NOT_RUN** 
 ## Final workspace/sample and accessibility extension
 
 FINAL_UX_CI_CORRECTIONS.md records the subsequent bounded U01/U10 loops and all observed 344062df failures. Full File-compatible backend at `a6815ae`: 3,409 passed / 9 skipped / 1,035 actual-PG-only deselected, 289.03 s. Backend code remains unchanged through the later accessible-label and fixture-only repairs. Final full UI: 971 passed / 6 optional HTTP skipped; types/build/token guard passed. Real TCP synchronization: 1 passed / 15.49 s. Corrected fork inventory focused run: 42 passed / 39 PG-only deselected. App is 634.69 kB plus deferred workbench 477.43 kB minified; warning retained. Exact new-head hosted results remain pending at this receipt.
+
+## Real 1d results and screenshot-driven correction
+
+PR 37363904465 at 1d1b9756: actual PG 3,411 passed / 1,042 skipped / zero failures/errors; unchanged postgres_gate rejects any skipped marked-PG contract. Of the skips, 1,033 are File-only, the remainder are explicit native/legacy/opt-in TCP boundaries. PR retry preserved PG and Windows compile, passed Windows package, and ran R4 browser 34/35. File remained cancelled/unexecuted. The initial queued cancellations have no exposed cause in available metadata; root confirmed no user stop or intentional cancellation.
+
+Named task-center region and screenshot-discovered editor-chrome corrections are in afa975a. Full UI 978 passed / 6 optional HTTP skipped, types/build/token checks passed. Backend/CI/dependency source is unchanged. EDITOR_CHROME_REPAIR.md and the retained source-specific evidence distinguish functional execution, known visual regression, its repair and the still-pending new hosted visual checks. These results do not close the blocked independent review.
