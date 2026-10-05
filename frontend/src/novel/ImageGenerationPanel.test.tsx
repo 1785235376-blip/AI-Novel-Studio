@@ -44,7 +44,7 @@ it("exposes real task lifecycle and only renders URI after generation resolves",
     ).toBe(false),
   );
   fireEvent.click(screen.getByRole("button", { name: "生成图片" }));
-  expect(screen.getByText("任务状态：执行中")).toBeTruthy();
+  expect(await screen.findByText("任务状态：执行中")).toBeTruthy();
   expect(screen.queryByAltText("生成结果")).toBeNull();
   resolve({ asset_uri: "https://example.test/image.png" });
   await waitFor(() => expect(screen.getByAltText("生成结果")).toBeTruthy());

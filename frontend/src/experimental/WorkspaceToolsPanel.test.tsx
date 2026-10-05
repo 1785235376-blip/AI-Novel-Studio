@@ -339,3 +339,14 @@ it('aborts host verification when a newer split choice follows a resolved worksp
   fireEvent.click(screen.getByLabelText('显示固定参考分屏'));
   expect(signal.aborted).toBe(true);
 });
+
+it.each(['declarative_agents_v2', 'story_simulator_v2', 'multilingual_editions_v2', 'narrative_quality_judge_v2'])('opens the original review tool for %s jobs without generic manuscript acceptance', async feature => {
+  const navigate = vi.fn();
+  const source = { kind: 'feature', id: 'review-only-job', feature };
+  vi.stubGlobal('fetch', backend(url => url.includes('/tasks?') ? response({ items: [{ id: source.id, authority: 'author_generation', label: '原服务待审候选', feature, source, status: 'COMPLETED', stage_label: '已完成', progress: null, stale: false, history: [], lifecycle: '原任务服务' }], unavailable: [], truncated: false }) : undefined));
+  render(<WorkspaceToolsPanel client={experimentalClient('novel', { sessionToken: '' })} chapter={chapter} onNavigate={navigate} />);
+  fireEvent.click(screen.getByRole('button', { name: '任务中心' }));
+  fireEvent.click(await screen.findByRole('button', { name: '打开来源工具' }));
+  expect(navigate).toHaveBeenCalledWith(source);
+  expect(screen.queryByRole('button', { name: '打开原生成草稿' })).toBeNull();
+});

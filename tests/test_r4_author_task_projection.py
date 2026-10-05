@@ -174,3 +174,30 @@ def test_factory_rechecks_captured_identity_and_feature_before_any_scan():
     with pytest.raises(HTTPException) as disabled:
         create_author_task_reader(manager, lambda *args: pytest.fail('authorized while off'), off, None)(ctx)
     assert disabled.value.status_code == 404
+
+
+@pytest.mark.parametrize('origin,feature,code', [
+    ('declarative_agent', 'declarative_agents_v2', 'DECLARATIVE_DRAFT_ONLY'),
+    ('story_simulator_model', 'story_simulator_v2', 'SIMULATOR_DRAFT_ONLY'),
+    ('multilingual_translation', 'multilingual_editions_v2', 'TRANSLATION_DRAFT_ONLY'),
+    ('narrative_judge_model', 'narrative_quality_judge_v2', 'JUDGE_DRAFT_ONLY'),
+])
+def test_feature_owned_jobs_route_to_original_review_not_generic_accept(author_tasks, monkeypatch, origin, feature, code):
+    from app.jobs import require_whole_generation_acceptance, generation_required_features, Job
+    from fastapi import HTTPException
+    e = author_tasks; job = add(e)
+    mark_generation_origin(job, origin)
+    required = generation_required_features(job)
+    assert {feature, 'model_broker_v2', 'author_context_inspector_v2'} <= required
+    rows = read(e)[1]
+    assert len(rows) == 1 and rows[0]['feature'] == feature
+    assert rows[0]['source'] == {'kind': 'feature', 'id': job.id, 'feature': feature}
+    assert not any(secret in json.dumps(rows) for secret in ('PRIVATE PROMPT', 'PRIVATE OUTPUT'))
+    e.api.jobs._persist(job)
+    stored = e.api.jobs.persistence.get(job.id)
+    restored = Job(**{k: v for k, v in stored.items() if k in Job.__dataclass_fields__ and k not in e.api.jobs.transient_fields})
+    with pytest.raises(HTTPException) as denied: require_whole_generation_acceptance(restored)
+    assert denied.value.status_code == 409 and denied.value.detail['code'] == code
+    monkeypatch.setenv('V1_ACCEPTANCE_MODE', 'true')
+    assert e.client.get(e.prefix + '/generation/' + job.id).status_code == 404
+    assert e.client.get(e.base + '/workspace/tasks').status_code == 404

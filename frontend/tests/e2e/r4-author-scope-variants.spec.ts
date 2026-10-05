@@ -114,7 +114,11 @@ test('U08 identified source exclusion removes dependent summaries from the actua
     let response = page.waitForResponse(r => r.url().endsWith('/author-context/preview') && r.request().method() === 'POST');
     await panel.getByRole('button', { name: '检查真实生成请求', exact: true }).click(); const initial = await checked(await response);
     const source = initial.source_manifest.items.find((row: any) => row.label === '排除人物');expect(source).toBeTruthy();
-    await panel.getByRole('checkbox', { name: `包含人物：排除人物 · ${source.key.slice(0, 8)}`, exact: true }).uncheck();
+    // Selecting an item invalidates and removes the old request preview immediately.
+    // Click the real control, then verify new intent in the next actual request;
+    // uncheck() would wait for a checked-state on the intentionally removed node.
+    const exclusion = panel.getByRole('checkbox', { name: `包含人物：排除人物 · ${source.key.slice(0, 8)}`, exact: true });
+    await expect(exclusion).toBeChecked(); await exclusion.click();
     await expect(panel.getByRole('button', { name: '生成创作下一章草稿', exact: true })).toBeDisabled();
     response = page.waitForResponse(r => r.url().endsWith('/author-context/preview') && r.request().method() === 'POST');
     await panel.getByRole('button', { name: '检查真实生成请求', exact: true }).click(); const filtered = await checked(await response);

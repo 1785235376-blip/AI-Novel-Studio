@@ -49,7 +49,7 @@ test('B05 real File/React bilingual edition: approved terms, exact paragraphs, U
     expect(edition.segments.every((s: any) => s.source_version === original.version)).toBe(true);
     await info.attach('multilingual-source-map.json', { body: JSON.stringify({ chapter_id: original.id, source_version: original.version, segments: edition.segments.map((s: any) => ({ id: s.id, path: s.path, source_text: s.source_text })) }, null, 2), contentType: 'application/json' });
     await expect(page.getByLabel('第 1 段译文', { exact: true })).toHaveAttribute('dir', 'rtl');
-    await expect(page.getByText('未配置已授权的翻译 Adapter。', { exact: false })).toBeVisible();
+    await expect(page.getByText('模型翻译需先选择已配置本地路线', { exact: false })).toBeVisible();
     await page.getByLabel('源术语', { exact: true }).fill('阿青');
     await page.getByLabel('首选译法', { exact: true }).fill('تشينغ');
     await page.getByLabel('翻译策略', { exact: true }).selectOption('transliteration');

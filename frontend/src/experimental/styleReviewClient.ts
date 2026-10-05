@@ -14,8 +14,12 @@ export type StylePreview = { style_id: string; style_version: number; instructio
 export type JudgeRubric = { id: string; version: number; title: string; checks: string[]; limitations: string[] };
 export type JudgeCatalog = { chapters: ReviewChapter[]; rubrics: JudgeRubric[]; adapters: unknown[] };
 export type JudgeEvidence = { chapter_id: string; chapter_version: number; paragraph: number; start: number; end: number; quote: string };
-export type JudgeFinding = { id: string; version: number; status: 'OPEN' | 'RESOLVED'; decision: 'PENDING' | 'REVIEWED' | 'IGNORED'; code: string; category: string; severity: 'INFO' | 'WARNING'; explanation: string; suggestion: string; boundary: string; origin: 'DETERMINISTIC' | 'MODEL_ASSESSMENT'; evidence: JudgeEvidence[]; stale: boolean; revision?: { chapter_id: string; version: number } | null; review_history?: { action: string; reason?: string; at?: string }[] };
-export type JudgeRun = { id: string; version: number; status: string; stale: boolean; findings: JudgeFinding[]; abstentions: string[]; verification: string; model_called: boolean; chapter_ids?: string[]; created_at?: string };
+export type JudgeFinding = { id: string; version: number; status: 'OPEN' | 'RESOLVED'; decision: 'PENDING' | 'REVIEWED' | 'IGNORED'; code: string; category: string; severity: 'INFO' | 'WARNING'; explanation: string; suggestion: string; boundary: string; origin: 'DETERMINISTIC' | 'MODEL_ASSESSMENT'; evidence: JudgeEvidence[]; stale: boolean; revision?: { chapter_id: string; version: number } | null; model?: { provider_id: string; model_id: string; synthetic: boolean; identity: Record<string, unknown> }; independence?: string; quality_verification?: string; review_history?: { action: string; reason?: string; at?: string }[] };
+export type JudgeRun = { id: string; version: number; status: string; stale: boolean; findings: JudgeFinding[]; abstentions: string[]; verification: string; model_called: boolean; chapter_ids?: string[]; created_at?: string; model_preview?: JudgeModelPreview | null; model_execution?: JudgeModelExecution | null };
+export type JudgeModelRoute = { route_id: string; provider_id: string; model_id: string; display_name: string; synthetic: boolean; available: boolean; reasons: string[]; identity: Record<string, unknown> };
+export type JudgeModelCatalog = { routes: JudgeModelRoute[]; rubric: { id: string; version: number; boundary: string }; max_output_bytes: number; timeout_seconds: number; boundary: string };
+export type JudgeModelPreview = { previewed_at: string; budget: Record<string, unknown>; preview_digest: string; actor: string; scope: Record<string, unknown>; sources: Record<string, { version: number; digest: string }>; request: Record<string, unknown>; rubric: { id: string; version: number; boundary: string }; broker: { chosen: (JudgeModelRoute & { price: Record<string, unknown> }) | null; budget_version: number; candidates: JudgeModelRoute[]; decision_reason: string; }; excluded: string[]; max_output_bytes: number; timeout_seconds: number; execution_available: boolean; quality_verification: string };
+export type JudgeModelExecution = { job_id: string; reservation_id: string | null; status: string; receipt_state: string; model_called: boolean; usage_state: string; failure_code?: string | null; accounting?: Record<string, unknown> | null };
 export type JudgeReviewInput = { expected_version: number; action: 'review' | 'ignore' | 'reopen'; reason: string; revision_chapter_id?: string | null; revision_version?: number | null };
 const segment = encodeURIComponent;
 export function styleReviewClient(client: ExperimentalClient) {
@@ -31,6 +35,11 @@ export function styleReviewClient(client: ExperimentalClient) {
     runs: (signal?: AbortSignal) => client.get<{ items: JudgeRun[] }>('/narrative-judge/runs', signal),
     run: (id: string, signal?: AbortSignal) => client.get<JudgeRun>(`/narrative-judge/runs/${segment(id)}`, signal),
     startRun: (chapters: ReviewChapter[], rubricId: string) => client.post<JudgeRun>('/narrative-judge/runs', { chapter_ids: chapters.map(row => row.id), expected_versions: Object.fromEntries(chapters.map(row => [row.id, row.version])), rubric_id: rubricId }),
+    judgeModelCatalog: () => client.get<JudgeModelCatalog>('/narrative-judge/model/catalog'),
+    previewJudgeModel: (run: JudgeRun, routeId: string) => client.post<JudgeRun>(`/narrative-judge/runs/${segment(run.id)}/model/preview`, { expected_version: run.version, route_id: routeId }),
+    dispatchJudgeModel: (run: JudgeRun) => client.post<JudgeRun>(`/narrative-judge/runs/${segment(run.id)}/model/dispatch`, { expected_version: run.version, reviewed_preview_digest: run.model_preview?.preview_digest }),
+    refreshJudgeModel: (run: JudgeRun) => client.post<JudgeRun>(`/narrative-judge/runs/${segment(run.id)}/model/refresh`, { expected_version: run.version }),
+    cancelJudgeModel: (run: JudgeRun) => client.post<JudgeRun>(`/narrative-judge/runs/${segment(run.id)}/model/cancel`, { expected_version: run.version }),
     reviewFinding: (id: string, body: JudgeReviewInput) => client.post<JudgeFinding>(`/narrative-judge/findings/${segment(id)}/review`, body),
   };
 }
