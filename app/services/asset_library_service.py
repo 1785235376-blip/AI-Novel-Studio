@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import copy
 import hashlib
 import hmac
 import json
@@ -34,6 +35,28 @@ class AssetLibraryService:
     """
 
     MAX_BYTES = 25 * 1024 * 1024
+
+    @staticmethod
+    def public(value):
+        """Legacy response projection, retaining all persisted metadata.
+
+        Only the new reserved field is hidden when A09 is off. Ordinary
+        parameters and the pre-existing source_asset_ids contract are intact.
+        Accepts nested asset response envelopes as well as one asset/list.
+        """
+        from ..experimental.flags import enabled_flags
+        result = copy.deepcopy(value)
+        if "asset_lineage_v2" in enabled_flags():
+            return result
+        def redact(item):
+            if isinstance(item, dict):
+                if isinstance(item.get("parameters"), dict):
+                    item["parameters"].pop("asset_lineage_v2", None)
+                for child in item.values(): redact(child)
+            elif isinstance(item, list):
+                for child in item: redact(child)
+        redact(result)
+        return result
 
     def __init__(self, root: Path):
         self.root = root / "assets"
@@ -179,7 +202,8 @@ class AssetLibraryService:
         with self._lock, workspace_mutation(self.root, "asset-library"):
             return self._verified_content(self.get(asset_id, branch_id=branch_id))
 
-    def update_metadata(self, asset_id: str, fields: dict, *, branch_id: str | None = None):
+    def update_metadata(self, asset_id: str, fields: dict, *, branch_id: str | None = None,
+                        expected_version: int | None = None, _lineage_write: bool = False):
         allowed = {"source_job_id", "provider_id", "model_id", "parameters", "approved_at",
                    "character_id", "scene_id", "source_asset_ids"}
         if not isinstance(fields, dict) or set(fields) - allowed:
@@ -198,6 +222,18 @@ class AssetLibraryService:
                 raise ValueError("invalid asset metadata value")
         with self._lock, workspace_mutation(self.root, "asset-library"):
             meta = self.get(asset_id, branch_id=branch_id)
+            if expected_version is not None and meta["version"] != expected_version:
+                from .v1_capability_service import CapabilityVersionConflict
+                raise CapabilityVersionConflict(meta)
+            if "parameters" in fields and not _lineage_write:
+                # Legacy generation parameters are caller-controlled. They
+                # cannot manufacture or erase the gated provenance authority.
+                protected = meta.get("parameters", {}).get("asset_lineage_v2")
+                provided = fields["parameters"].get("asset_lineage_v2")
+                if "asset_lineage_v2" in fields["parameters"] and (protected is None or provided != protected):
+                    raise ValueError("asset_lineage_v2 requires scoped versioned annotation")
+                if protected is not None:
+                    fields = {**fields, "parameters": {**fields["parameters"], "asset_lineage_v2": protected}}
             self._verified_content(meta)
             for source_id in fields.get("source_asset_ids", []):
                 source = self.get(source_id, branch_id=branch_id)
@@ -220,6 +256,34 @@ class AssetLibraryService:
                 meta.update(updated_at=now(), version=int(meta.get("version", 1)) + 1)
                 self._write_meta(meta)
             return meta
+
+    def annotate_lineage(self, asset_id: str, declaration: dict, parent_ids: list[str], *,
+                         branch_id: str | None, expected_version: int, guard=None):
+        """Extend the existing DAG in its existing mutation boundary.
+
+        The experimental caller validates the declaration and chapter scope.
+        Parent revisions are measured here, under the same lock as cycle
+        validation and the write, so callers cannot supply fictional digests.
+        """
+        with self._lock, workspace_mutation(self.root, "asset-library"):
+            meta = self.get(asset_id, branch_id=branch_id)
+            parents = {}
+            for parent_id in dict.fromkeys(parent_ids):
+                parent = self.get(parent_id, branch_id=branch_id)
+                if parent.get("novel_id") != meta.get("novel_id") or parent.get("branch_id") != meta.get("branch_id"):
+                    raise FileNotFoundError(parent_id)
+                self._verified_content(parent)
+                parents[parent_id] = {"version": parent["version"], "digest": parent["sha256"]}
+            lineage = {**declaration, "parents": parents, "output_digest": meta["sha256"]}
+            previous = meta.get("parameters", {}).get("asset_lineage_v2")
+            if isinstance(previous, dict):
+                lineage["history"] = list(previous.get("history", [])) + [
+                    {**{key: value for key, value in previous.items() if key != "history"}, "asset_version": meta["version"]}]
+            parameters = {**meta.get("parameters", {}), "asset_lineage_v2": lineage}
+            if guard:
+                guard()
+            return self.update_metadata(asset_id, {"parameters": parameters, "source_asset_ids": list(parents)},
+                                        branch_id=branch_id, expected_version=expected_version, _lineage_write=True)
 
     def delete(self, asset_id: str, *, branch_id: str | None = None):
         with self._lock, workspace_mutation(self.root, "asset-library"):

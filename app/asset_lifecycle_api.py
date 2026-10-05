@@ -52,13 +52,13 @@ def create_asset_lifecycle_router(assets, capabilities) -> APIRouter:
         branch, _ = authorize(nid, x_session_token, x_branch_id, "domain.read")
         guard(capabilities._require_novel, nid)
         items = [item for item in guard(assets.list, nid, branch_id=branch, include_deleted=True) if item.get("deleted_at")]
-        return {"items": items, "total": len(items), "recoverable": True}
+        return assets.public({"items": items, "total": len(items), "recoverable": True})
 
     @router.post("/novels/{nid}/assets/{asset_id}/restore")
     def restore(nid: str, asset_id: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         branch, _ = authorize(nid, x_session_token, x_branch_id, "domain.write")
         guard(owned, asset_id, nid, branch, include_deleted=True)
-        return guard(assets.restore, asset_id, branch_id=branch)
+        return assets.public(guard(assets.restore, asset_id, branch_id=branch))
 
     @router.get("/novels/{nid}/assets/{asset_id}/references")
     def references(nid: str, asset_id: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
