@@ -30,3 +30,14 @@ The metadata handling follows Ollama's official [Go API types](https://github.co
 ## Remaining verification boundary
 
 Actual Windows version-resource reading, actual Ollama/llama inference, GPU behavior, native installers and non-standard Comfy workflows remain NOT_RUN/PARTIAL as stated in the main acceptance guide. A metadata proof is not a hardware benchmark, successful inference certificate or license grant.
+
+## Final cross-runtime guard sweep
+
+The additional five independent assertions from reviewed commit `19e240d9` are retained in `tests/test_local_ai_discovery_remaining.py`, alongside 19 positive/negative controls:
+
+- Rescan reconciles enabled registrations for A1111, ComfyUI and llama.cpp/GGUF as well as Ollama. Observed checksum/file/header/node/loader changes invalidate route authority and pending controls; unchanged evidence preserves the existing explicit enable.
+- Cached/queued text and image adapters refresh the corresponding model/runtime evidence before actual dispatch. Invalid GGUFs fail before managed launch; changed A1111 checkpoints and missing Comfy workflow requirements cannot reach the generation delegate.
+- Buffered Ollama results require `done` to be the strict boolean `true`. An incomplete or malformed terminal marker cannot create a completed Draft.
+- Missing/malformed counters are unknown, not reported zeros. The discovery response has `usage=None` when no valid count exists; the legacy buffered leaf uses the existing `usage_known=False` contract, and the legacy stream preserves unknown counters. Valid zero/nonzero counts remain reportable.
+
+Final related regression: **338 passed** (`evidence/local-ai-final-guards.txt/.xml`). The independently established 50-case combination is also rerun separately in `evidence/local-ai-preserved-fifty.txt/.xml`; counts overlap and must not be added together. Native/real-model verification remains NOT_RUN.

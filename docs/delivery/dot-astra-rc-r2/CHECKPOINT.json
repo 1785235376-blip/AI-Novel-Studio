@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "updated_at_utc": "2026-10-05T06:59:40.727167+00:00",
+  "status": "ENGINEERING_IN_PROGRESS",
+  "repository": "https://github.com/1785235376-blip/AI-Novel-Studio",
+  "branch": "work/dot-astra-v1-rc-r2",
+  "draft_pr": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/37",
+  "starting_sha": "f8c141c39a543cc9dbea57647ac91185bc9aecd6",
+  "fixed_snapshot_sha": "547167e8abce15cad3495779f52e845310a0a1fe",
+  "fixed_snapshot_tree": "528459b8c7d6b94dde8b70e37c1e52d12524fc81",
+  "working_tree_state": "Additional uncommitted discovery/API/provider/UI/test repairs are in progress; owned draft delivery documents updated separately.",
+  "last_reported_remote_sha": "90f4369b7367579b7aaeb00d4d25f21171353753",
+  "remote_verification": "Lead-verified delivery head 90f4369b, source-tree-equivalent to fixed 547167e8; latest corrective head still PENDING_LEAD",
+  "final_commit_sha": null,
+  "final_ci": "PENDING_LEAD",
+  "current_result_summary": {
+    "original_independent_findings": "At frozen eb165609: 9 failing Python assertions / 1 pass plus one failing UI assertion, grouped into 7 findings; preserved evidence/independent-before.",
+    "original_repair_recheck": "10/10 unchanged Python invariants now pass; exact unchanged UI scope assertion passes. New Local AI findings remain open separately. Current public exact-recheck artifact PENDING_LEAD.",
+    "latest_full_file_backend": "FAILED checkpoint: 2032 passed / 35 skipped / 1 failed. Missing-policy-authority fixture expected a prior code; production fails closed with 403. Focused contract recheck now passes 143 tests; public focused receipt and complete final rerun remain PENDING_LEAD.",
+    "latest_frontend_unit": "548 passed across 108 files; integration-worktree checkpoint, not proof of later discovery edits or exact final SHA. Public current receipt PENDING_LEAD.",
+    "focused_discovery": "263 passed / 1 native-Windows skip in provider/hardware combined checkpoint; standalone lifecycle and metadata contracts only; independent fixed-snapshot discovery review found additional gaps.",
+    "final_file_suite": "PENDING_LEAD",
+    "final_real_postgresql": "NOT_RUN for this final candidate locally; final hosted result PENDING_LEAD",
+    "final_frontend_unit_typecheck_build": "PENDING_LEAD for final committed code",
+    "browser_business_e2e": "Local BLOCKED before launch by socket EPERM; hosted exact-final result PENDING_LEAD",
+    "hosted_windows_build_native_contract": "No new-head result confirmed; PENDING_LEAD. Historical hosted checks do not validate this snapshot.",
+    "interactive_windows_webview2_install_upgrade_uninstall": "NOT_RUN",
+    "real_provider_gpu_models": "NOT_RUN",
+    "user_acceptance": "NOT_RUN",
+    "latest_focused_contract_correction": "143 passed; local stdout inspected; not a substitute for final full run."
+  },
+  "original_independent_repairs": {
+    "prior_frozen_sha": "eb16560988672bfbbf4a6c46431ddc4df6162f2d",
+    "findings": 7,
+    "prior_python_invariants": {
+      "failed": 9,
+      "passed": 1
+    },
+    "prior_ui_invariants": {
+      "failed": 1
+    },
+    "current_original_python_invariants": {
+      "passed": 10,
+      "scope": "Original unchanged tests; current public artifact PENDING_LEAD"
+    },
+    "current_exact_ui_invariant": "PASS within evidence/workflow-scope.xml; byte-identical archived assertion",
+    "new_discovery_review": "Separate open set; no release-final conclusion"
+  },
+  "open_discovery_findings": [
+    {
+      "id": "DISCOVERY-REVIEW-01",
+      "description": "Ollama remote_host/remote_model entries can be classified local at the fixed snapshot. A loopback Ollama service can proxy a cloud model; endpoint locality alone is insufficient.",
+      "source": "app/model_center/discovery_probes.py; app/model_center/discovery.py; app/providers.py",
+      "affected_sections": [
+        2,
+        4,
+        6,
+        15,
+        22,
+        26
+      ],
+      "state": "AUTHOR_FIX_AND_INDEPENDENT_REVIEW_PENDING",
+      "required_check": "Capture actual dispatch; remote/unknown locality must issue zero generation calls, including raw legacy Ollama and auto-memory paths."
+    },
+    {
+      "id": "DISCOVERY-REVIEW-02",
+      "description": "The fixed snapshot registers enabled local text models with streaming=False while the Writer route requires streaming. Discovery Enable therefore does not establish usable Writer selection.",
+      "source": "app/model_center/discovery_bridge.py LocalDiscoveryBridge.__call__/LocalTextAdapter",
+      "affected_sections": [
+        1,
+        4,
+        6,
+        19,
+        20,
+        26
+      ],
+      "state": "AUTHOR_FIX_AND_INDEPENDENT_REVIEW_PENDING",
+      "required_check": "Enabled discovered local model must execute through the actual Writer path. If output is buffered, label it buffered instead of claiming live token streaming."
+    },
+    {
+      "id": "DISCOVERY-REVIEW-03",
+      "description": "Rescan/model digest changes do not reliably revoke existing registration authority in the fixed snapshot.",
+      "source": "app/model_center/discovery.py scan/validate/registration lifecycle",
+      "affected_sections": [
+        2,
+        4,
+        5,
+        17,
+        19,
+        22,
+        26
+      ],
+      "state": "AUTHOR_FIX_AND_INDEPENDENT_REVIEW_PENDING",
+      "required_check": "Changed/vanished model identity after rescan must invalidate route and require current validation and explicit re-enable."
+    },
+    {
+      "id": "DISCOVERY-REVIEW-04",
+      "description": "A Disable during a blocking validation/enable callback can be overwritten by the late callback in the fixed snapshot.",
+      "source": "app/model_center/discovery.py validate/enable/disable; frontend/src/ui/LocalAiDiscovery.tsx",
+      "affected_sections": [
+        2,
+        17,
+        19,
+        20,
+        22,
+        26
+      ],
+      "state": "AUTHOR_FIX_AND_INDEPENDENT_REVIEW_PENDING",
+      "required_check": "Control epoch/CAS: Disable, removal or configuration changes win over older validate/enable results; no subsequent dispatch."
+    },
+    {
+      "id": "DISCOVERY-REVIEW-05",
+      "description": "External llama.cpp model alias association can be validated using a filename fallback but dispatched with the internal candidate identifier in the fixed snapshot.",
+      "source": "app/model_center/discovery.py external LLAMA_CPP validation; app/model_center/discovery_bridge.py LocalTextAdapter",
+      "affected_sections": [
+        5,
+        6,
+        14,
+        19,
+        26
+      ],
+      "state": "AUTHOR_FIX_AND_INDEPENDENT_REVIEW_PENDING",
+      "required_check": "Validate an external runtime advertised model alias and assert actual request.model matches the validated upstream identity."
+    }
+  ],
+  "coverage": {
+    "original_feature_ids": 143,
+    "work_packages": 19,
+    "local_ai_supplement_sections": 28
+  },
+  "artifacts": [
+    "FEATURE_READINESS_MATRIX.md",
+    "FEATURE_READINESS_MATRIX.json",
+    "FINAL_REPORT.md",
+    "TEST_RESULTS.md",
+    "RELEASE_READINESS.md",
+    "CHECKPOINT.json"
+  ],
+  "next_actions": [
+    "Finish/review discovery corrections and preserve exact repros.",
+    "Verify focused correction for test_r2_import_boundaries missing-authority fixture; rerun full suites at fixed final code.",
+    "Complete newer correction upload; read back final branch/PR head and compare intended tree. Current 90f4369b fixed-tree delivery is verified.",
+    "Follow final corrective CI to terminal jobs; publish exact checkout, logs/XML/screenshots/artifact digests.",
+    "Update final identity and gates while retaining independent NOT_RUN layers."
+  ],
+  "stop_boundaries": [
+    "No merge main",
+    "No formal Release",
+    "No production deployment",
+    "No real credentials or paid model execution without authorization",
+    "No irreversible user data changes"
+  ],
+  "not_run": [
+    "Real GPU/model/provider inference",
+    "Interactive Windows/WebView2/vault/IME",
+    "Complete installer/upgrade/uninstall retention",
+    "User acceptance"
+  ],
+  "validation": {
+    "original_code_set_preserved": true,
+    "work_packages": 19,
+    "supplement_sections": 28,
+    "missing_referenced_paths": [],
+    "final_results_not_fabricated": true
+  },
+  "delivery_head_sha": "90f4369b7367579b7aaeb00d4d25f21171353753",
+  "delivery_tree_sha": "528459b8c7d6b94dde8b70e37c1e52d12524fc81",
+  "source_tree_equivalence_evidence": "docs/delivery/dot-astra-rc-r2/SOURCE_TREE_EQUIVALENCE.json"
+}

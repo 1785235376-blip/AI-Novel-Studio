@@ -6,6 +6,8 @@ no distributed/multiple-host guarantee is claimed. Never use DATABASE_URL as a
 fallback. Only uniquely named synthetic projects created here are deleted.
 """
 from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import get_context
+from queue import Empty
 import os
 from threading import Event
 from types import SimpleNamespace
@@ -167,3 +169,129 @@ def test_postgres_interrupted_accepting_claim_survives_manager_reopen(pg_accepta
         reopened.accept(job.id)
     assert len(reopened.chapters.list(novel["id"])) == 1
     assert persisted.canon.list_pending(novel["id"]) == []
+
+
+def _accept_in_postgres_child(job_id, ready, start, release, create_entries, results):
+    """Spawn target: all application imports and repositories remain PostgreSQL."""
+    url = os.environ["TEST_POSTGRES_DATABASE_URL"]
+    assert os.environ["STORAGE_BACKEND"] == settings.storage_backend == "postgres"
+    assert os.environ["DATABASE_URL"] == url
+    assert str(settings.novel_data) == os.environ["NOVEL_DATA_PATH"]
+    bundle = create_repository_bundle(Settings(storage_backend="postgres", database_url=url))
+    try:
+        assert isinstance(bundle.generations, PostgresGenerationRepository)
+        assert isinstance(bundle.chapters, PostgresChapterRepository)
+        manager = JobManager(
+            GenerationService(bundle.generations), ChapterService(bundle.chapters),
+            ContextService(bundle.novels, bundle.chapters), CanonService(bundle.canon),
+            memory_extractor=SimpleNamespace(enqueue=lambda *args: None), snapshot_required=False,
+        )
+        row = bundle.generations.get(job_id)
+        ready.put({"pid": os.getpid(), "status": row["status"], "backend": "postgres"})
+        assert start.wait(20), "parent did not start child acceptance"
+        original_create = manager.chapters.create
+
+        def paused_create(*args):
+            create_entries.put(os.getpid())
+            assert release.wait(20), "parent did not release child chapter creation"
+            return original_create(*args)
+
+        manager.chapters.create = paused_create
+        try:
+            accepted = manager.accept(job_id)
+            result = {"outcome": "accepted", "chapter_id": accepted["chapter"]["id"]}
+        except ValueError:
+            result = {"outcome": "blocked"}
+        results.put({**result, "pid": os.getpid(), "persisted_status": bundle.generations.get(job_id)["status"]})
+    finally:
+        bundle.novels.database.engine.dispose()
+
+
+def _postgres_child_environment(monkeypatch):
+    # The child imports app.dependencies before entering the spawn target. It
+    # must initialize against the authorized disposable PG endpoint, never File.
+    monkeypatch.setenv("STORAGE_BACKEND", "postgres")
+    monkeypatch.setenv("DATABASE_URL", TEST_URL)
+    monkeypatch.setenv("TEST_POSTGRES_DATABASE_URL", TEST_URL)
+    monkeypatch.setenv("NOVEL_DATA_PATH", str(settings.novel_data))
+
+
+def _finish_children(processes):
+    for process in processes:
+        if process.pid is None:
+            continue
+        if process.is_alive():
+            process.terminate()
+        process.join(10)
+        if process.is_alive():
+            process.kill()
+            process.join(5)
+
+
+def test_postgres_spawned_processes_accept_once_with_one_proposal(pg_acceptance, monkeypatch):
+    manager, bundle, novel, chapter, job = pg_acceptance.seed()
+    _postgres_child_environment(monkeypatch)
+    spawn = get_context("spawn")
+    ready, entries, results = spawn.Queue(), spawn.Queue(), spawn.Queue()
+    start, release = spawn.Event(), spawn.Event()
+    processes = [spawn.Process(target=_accept_in_postgres_child,
+                              args=(job.id, ready, start, release, entries, results)) for _ in range(2)]
+    try:
+        for process in processes:
+            process.start()
+        prepared = [ready.get(timeout=30) for _ in processes]
+        assert len({row["pid"] for row in prepared}) == 2
+        assert all(row["pid"] != os.getpid() and row["status"] == "COMPLETED" and row["backend"] == "postgres" for row in prepared)
+        start.set()
+        first_writer = entries.get(timeout=20)
+        assert first_writer in {row["pid"] for row in prepared}
+        # Read the child's committed claim using the parent's separate PG pool.
+        assert bundle.generations.get(job.id)["status"] == "ACCEPTING"
+        with pytest.raises(Empty):
+            entries.get(timeout=0.25)
+        release.set()
+        outcomes = [results.get(timeout=30) for _ in processes]
+        assert sorted(row["outcome"] for row in outcomes) == ["accepted", "blocked"]
+        assert all(row["persisted_status"] == "ACCEPTED" for row in outcomes)
+        for process in processes:
+            process.join(10)
+            assert process.exitcode == 0
+    finally:
+        start.set()
+        release.set()
+        _finish_children(processes)
+    assert bundle.generations.get(job.id)["status"] == "ACCEPTED"
+    assert len(manager.chapters.list(novel["id"])) == 2
+    assert manager.chapters.get(chapter["id"])["content"] == chapter["content"]
+    pending = bundle.canon.list_pending(novel["id"])
+    assert len(pending) == 1 and pending[0]["proposals"][0]["source_job"] == job.id
+
+
+def test_postgres_fresh_child_cannot_replay_interrupted_claim(pg_acceptance, monkeypatch):
+    manager, bundle, novel, chapter, job = pg_acceptance.seed()
+    job.status = "ACCEPTING"
+    manager._persist(job)
+    _postgres_child_environment(monkeypatch)
+    spawn = get_context("spawn")
+    ready, entries, results = spawn.Queue(), spawn.Queue(), spawn.Queue()
+    start, release = spawn.Event(), spawn.Event()
+    process = spawn.Process(target=_accept_in_postgres_child,
+                            args=(job.id, ready, start, release, entries, results))
+    try:
+        process.start()
+        observed = ready.get(timeout=30)
+        assert observed == {"pid": process.pid, "status": "ACCEPTING", "backend": "postgres"}
+        start.set()
+        result = results.get(timeout=20)
+        assert result == {"pid": process.pid, "outcome": "blocked", "persisted_status": "ACCEPTING"}
+        process.join(10)
+        assert process.exitcode == 0
+        with pytest.raises(Empty):
+            entries.get(timeout=0.25)
+    finally:
+        start.set()
+        release.set()
+        _finish_children([process])
+    assert bundle.generations.get(job.id)["status"] == "ACCEPTING"
+    assert len(manager.chapters.list(novel["id"])) == 1
+    assert bundle.canon.list_pending(novel["id"]) == []

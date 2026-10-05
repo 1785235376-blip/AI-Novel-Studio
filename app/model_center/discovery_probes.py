@@ -292,3 +292,11 @@ def read_ollama_local_metadata(client, endpoint: str, model_name: str, enumerate
         return after_checked
     except (ProbeFailure, ValueError, TypeError, KeyError):
         return ollama_locality_evidence(None, None)
+
+
+def ollama_token_counts(payload: dict) -> tuple[int | None, int | None]:
+    """Missing, negative, boolean or malformed counters are unknown, never zero."""
+    def count(key):
+        value = payload.get(key)
+        return value if type(value) is int and value >= 0 else None
+    return count('prompt_eval_count'), count('eval_count')

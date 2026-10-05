@@ -248,7 +248,7 @@ def test_registry_bridge_routes_only_explicitly_enabled_and_disables_live_adapte
     svc.enable(identifier)
     assert runtime.model_registry.resolve(provider,identifier,Modality.TEXT).enabled
     adapter=runtime.provider_registry.resolve(provider)
-    adapter.client=FixtureClient();adapter.client.payloads[('http://127.0.0.1:11434','/api/generate')]={'response':'synthetic local text'}
+    adapter.client=FixtureClient();adapter.client.payloads[('http://127.0.0.1:11434','/api/generate')]={'response':'synthetic local text','done':True}
     response=adapter.generate_text(TextGenerationRequest(provider,identifier,'synthetic prompt'))
     assert response.text=='synthetic local text'
     assert adapter.client.calls[0][2]['model']=='qwen3.6:8b'

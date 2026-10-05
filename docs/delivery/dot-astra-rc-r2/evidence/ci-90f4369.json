@@ -1,0 +1,57 @@
+{
+  "head_sha": "90f4369b7367579b7aaeb00d4d25f21171353753",
+  "tree_sha": "528459b8c7d6b94dde8b70e37c1e52d12524fc81",
+  "run_id": 37274903913,
+  "run_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37274903913",
+  "overall": "FAILURE",
+  "jobs": {
+    "file": {
+      "passed": 2027,
+      "failed": 2,
+      "skipped": 39,
+      "known_failures": [
+        "overall timeout phase metadata",
+        "import policy test authority AttributeError"
+      ]
+    },
+    "postgres": {
+      "passed": 1988,
+      "failed": 25,
+      "errors": 14,
+      "skipped": 41,
+      "findings": [
+        "same two contract failures",
+        "three File-only fixtures inherited postgres and collided fixed identifiers; corrected explicit File; separate true PG coverage added"
+      ]
+    },
+    "frontend": {
+      "unit_passed": 547,
+      "unit_failed": 1,
+      "typecheck": "PASS",
+      "build": "PASS",
+      "tokens": "PASS",
+      "geometry_passed": 5,
+      "geometry_failed": 4,
+      "business_failed": 2,
+      "export_recovery_browser_passed": 1,
+      "findings": [
+        "MotionPrivacy test missing full-request digest",
+        "Discovery browser did not enter a workspace",
+        "Business selected exact label and assumed creation DTO contains version",
+        "Playwright result directories overlapped; corrected per-suite output directories"
+      ]
+    },
+    "windows_host": {
+      "native_contract_passed": 59,
+      "compile": "PASS",
+      "actual_sdk": "10.0.401",
+      "requested_sdk": "8.0.424",
+      "findings": [
+        "SDK selection drift; corrected global.json in next batch",
+        "unused WebView WPF reference warning; corrected in next batch"
+      ],
+      "interactive_acceptance": "NOT_RUN"
+    }
+  },
+  "publication_note": "Synthetic data only. This is a historical failed checkpoint, not final release evidence."
+}

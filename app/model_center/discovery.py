@@ -435,20 +435,64 @@ class LocalDiscoveryService:
             except ValueError: self.persistence_error = 'LOCAL_AI_CONFIG_WRITE_FAILED'
             self._publish_model(blocked); self._bridge(blocked)
 
+    def _observed_registration(self, record, found):
+        current = next((item for item in found if item['id'] == record['id']), None)
+        if record['runtime_type'] == 'LLAMA_CPP':
+            # Registered GGUFs may come from bounded roots rather than the
+            # runtime's single configured default file. Recheck their own path.
+            return {**record, 'evidence': gguf_metadata(Path(record['local_path']))}
+        return current
+
+    def _observation_problem(self, record, report, current):
+        kind = record['runtime_type']
+        if not current: return 'MODEL_OR_RUNTIME_NOT_FOUND'
+        evidence, previous = current['evidence'], record.get('evidence', {})
+        if kind == 'OLLAMA':
+            if report['status'] != 'RUNNING': return 'OLLAMA_LOCALITY_UNVERIFIED'
+            if ollama_remote_declaration(evidence) == 'REMOTE': return 'OLLAMA_REMOTE_MODEL_BLOCKED'
+            keys = ('digest', 'size', 'details', 'remote_model', 'remote_host')
+        elif kind == 'LLAMA_CPP':
+            if not evidence.get('header_valid'): return 'GGUF_HEADER_INVALID'
+            config = record['runtime_config']
+            if config['management'] == 'MANAGED':
+                if not report.get('executable_exists'): return 'RUNTIME_REQUIRED'
+            elif (report['status'] != 'RUNNING' or (config.get('model_id') or Path(record['local_path']).name) not in report.get('available_models', [])):
+                return 'RUNTIME_MODEL_UNVERIFIED'
+            keys = ('file_exists', 'header_valid', 'size', 'modified_ns', 'general.architecture')
+        elif kind == 'COMFYUI':
+            if report['status'] != 'RUNNING': return 'MODEL_OR_RUNTIME_NOT_FOUND'
+            adapter = next((item for item in self.workflow_adapters if item['id'] == record.get('workflow_adapter_id')), None)
+            if (not adapter or not set(adapter['required_nodes']) <= set(evidence.get('node_classes', [])) or
+                    {'node_class':adapter['model_loader'], 'input_field':adapter['model_input']} not in evidence.get('loader_bindings', [])):
+                return 'WORKFLOW_ADAPTER_REQUIRED'
+            keys = ('model_listed', 'nodes_fingerprint', 'loader_bindings')
+        elif kind == 'AUTOMATIC1111':
+            if report['status'] != 'RUNNING' or not evidence.get('model_listed'): return 'MODEL_OR_RUNTIME_NOT_FOUND'
+            keys = ('model_listed', 'sha256', 'filename')
+        else:
+            return 'ADAPTER_REQUIRED'
+        if any(evidence.get(key) != previous.get(key) for key in keys): return 'LOCAL_MODEL_EVIDENCE_CHANGED'
+        return None
+
     def _reconcile_detected_runtime(self, runtime, report, found):
-        if runtime['type'] != 'OLLAMA': return
-        observed = {item['id']: item for item in found}
         for identifier, record in list(self.registrations.items()):
             if not record.get('enabled') or record['runtime_id'] != runtime['id']: continue
-            current = observed.get(identifier)
-            if not current or report['status'] != 'RUNNING':
-                self._invalidate_registration(identifier, 'OLLAMA_LOCALITY_UNVERIFIED')
-                continue
-            evidence = current['evidence']
-            if ollama_remote_declaration(evidence) == 'REMOTE':
-                self._invalidate_registration(identifier, 'OLLAMA_REMOTE_MODEL_BLOCKED', {**evidence, 'source_locality':'REMOTE'})
-            elif any(evidence.get(key) != record.get('evidence', {}).get(key) for key in ('digest', 'size', 'details', 'remote_model', 'remote_host')):
-                self._invalidate_registration(identifier, 'OLLAMA_IDENTITY_CHANGED', evidence)
+            current = self._observed_registration(record, found)
+            reason = self._observation_problem(record, report, current)
+            if reason:
+                evidence = dict(current['evidence']) if current else {}
+                if reason == 'OLLAMA_REMOTE_MODEL_BLOCKED': evidence['source_locality'] = 'REMOTE'
+                self._invalidate_registration(identifier, reason, evidence)
+
+    def check_model_dispatch(self, candidate):
+        if candidate['runtime_type'] == 'OLLAMA': return self.check_ollama_dispatch(candidate)
+        report, found = self._probe(candidate['runtime_config'], threading.Event())
+        current = self._observed_registration(candidate, found)
+        reason = self._observation_problem(candidate, report, current)
+        if reason:
+            self._invalidate_registration(candidate['id'], reason, current['evidence'] if current else None)
+            raise ValueError('LOCAL_AI_' + reason)
+        return current['evidence']
 
     def check_ollama_dispatch(self, candidate):
         checked = self.ollama_metadata_check(candidate['runtime_config'], candidate['model_name'])
@@ -465,7 +509,7 @@ class LocalDiscoveryService:
         if not candidate.get('validated_at'): blockers.append('VALIDATION_REQUIRED')
         if not candidate.get('verified_capabilities'): blockers.append('CAPABILITY_UNVERIFIED')
         for note in candidate.get('validation_notes', []):
-            if note in {'RUNTIME_REQUIRED','GGUF_HEADER_INVALID','RUNTIME_MODEL_PATH_MISMATCH','RUNTIME_MODEL_UNVERIFIED','MODEL_OR_RUNTIME_NOT_FOUND','WORKFLOW_ADAPTER_REQUIRED','ADAPTER_REQUIRED','OLLAMA_REMOTE_MODEL_BLOCKED','OLLAMA_LOCALITY_UNVERIFIED','OLLAMA_IDENTITY_CHANGED'}: blockers.append(note)
+            if note in {'RUNTIME_REQUIRED','GGUF_HEADER_INVALID','RUNTIME_MODEL_PATH_MISMATCH','RUNTIME_MODEL_UNVERIFIED','MODEL_OR_RUNTIME_NOT_FOUND','WORKFLOW_ADAPTER_REQUIRED','ADAPTER_REQUIRED','OLLAMA_REMOTE_MODEL_BLOCKED','OLLAMA_LOCALITY_UNVERIFIED','OLLAMA_IDENTITY_CHANGED','LOCAL_MODEL_EVIDENCE_CHANGED'}: blockers.append(note)
         if candidate.get('license_required') and not candidate.get('license_confirmed'): blockers.append('LICENSE_VALIDATION_REQUIRED')
         if candidate['runtime_config'].get('credential_required'): blockers.append('LOCAL_AI_CREDENTIAL_BINDING_REQUIRED')
         candidate['enable_blockers'] = list(dict.fromkeys(blockers))

@@ -224,6 +224,8 @@ jobs:
       - name: Compile fresh DesktopHost WinExe
         shell: pwsh
         run: |
+          if ((dotnet --version).Trim() -ne '8.0.424') { throw 'Wrong .NET SDK selected' }
+          dotnet --version | Out-File "$env:CI_RECEIPTS/dotnet-sdk.txt" -Encoding utf8
           dotnet publish desktop-host/AI.NovelStudio.DesktopHost/AI.NovelStudio.DesktopHost.csproj -c Release -r win-x64 --self-contained false -o "$env:R2_HOST_OUTPUT" 2>&1 | Tee-Object "$env:CI_RECEIPTS/host-build.log"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           Get-ChildItem "$env:R2_HOST_OUTPUT" -File -Recurse | Get-FileHash -Algorithm SHA256 | ForEach-Object { "$($_.Hash)  $([IO.Path]::GetRelativePath($env:R2_HOST_OUTPUT, $_.Path))" } | Out-File "$env:CI_RECEIPTS/host-sha256.txt" -Encoding utf8
@@ -240,5 +242,76 @@ jobs:
           path: |
             ${{ env.CI_RECEIPTS }}
             ${{ env.R2_HOST_OUTPUT }}
+          if-no-files-found: error
+          retention-days: 14
+
+  windows-package:
+    name: Windows / Fresh base and acceptance package
+    runs-on: windows-2022
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: '22.14.0'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.424'
+      - name: Prepare isolated package paths and actual SDK receipt
+        shell: pwsh
+        run: |
+          if ((dotnet --version).Trim() -ne '8.0.424') { throw 'Wrong .NET SDK selected' }
+          $sandbox = Join-Path $env:RUNNER_TEMP 'r2-complete-package'
+          New-Item -ItemType Directory -Force -Path $sandbox, "$sandbox/receipts", "$sandbox/data" | Out-Null
+          "R2_PACKAGE_ROOT=$sandbox" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "NOVEL_DATA_PATH=$sandbox/data" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "STORAGE_BACKEND=file" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "PROJECT_ROOT=$env:GITHUB_WORKSPACE" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "checked_out_sha=$(git rev-parse HEAD)" | Out-File "$sandbox/receipts/revision.txt" -Encoding utf8
+          "sdk=$(dotnet --version)" | Out-File "$sandbox/receipts/revision.txt" -Append -Encoding utf8
+          "scope=Fresh native base smoke; interactive DesktopHost/IME/install/upgrade/signing/user acceptance NOT_RUN" | Out-File "$sandbox/receipts/revision.txt" -Append -Encoding utf8
+      - name: Install locked source build tools
+        shell: pwsh
+        run: |
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild]'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm install --global pnpm@10.6.5
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          pnpm --dir frontend install --frozen-lockfile
+          exit $LASTEXITCODE
+      - name: Assemble official pinned base and OFL font
+        shell: pwsh
+        run: |
+          python scripts/prepare_windows_base.py --output "$env:R2_PACKAGE_ROOT/base" --cache "$env:R2_PACKAGE_ROOT/inputs" 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/prepare-base.log"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/prepare_pdf_font.py --output "$env:R2_PACKAGE_ROOT/fonts" > "$env:R2_PACKAGE_ROOT/receipts/font-manifest.json"
+          exit $LASTEXITCODE
+      - name: Build self-contained Host and unsigned internal acceptance package
+        shell: pwsh
+        run: |
+          ./scripts/package_windows_acceptance.ps1 -BaseApplication "$env:R2_PACKAGE_ROOT/base" -OutputRoot "$env:R2_PACKAGE_ROOT/package" -HostPublishDirectory "$env:R2_PACKAGE_ROOT/host" -DotnetPath (Get-Command dotnet).Source -NodePath (Get-Command node).Source -ViteCliPath (Join-Path $PWD 'frontend/node_modules/vite/bin/vite.js') -VerifiedFontDirectory "$env:R2_PACKAGE_ROOT/fonts" -SkipIExpress 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/package.log"
+          if (-not $?) { throw 'Acceptance package build failed' }
+      - name: Native embedded Python and PostgreSQL UTF-8 recovery smoke
+        shell: pwsh
+        run: |
+          python scripts/verify_windows_base.py --base "$env:R2_PACKAGE_ROOT/package/Application" --work-root "$env:R2_PACKAGE_ROOT/native-smoke" 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/native-smoke.log"
+          exit $LASTEXITCODE
+      - name: Upload internal package and provenance (not a Release)
+        if: always()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: windows-acceptance-${{ github.sha }}
+          path: |
+            ${{ env.R2_PACKAGE_ROOT }}/receipts
+            ${{ env.R2_PACKAGE_ROOT }}/base/base-input-provenance.json
+            ${{ env.R2_PACKAGE_ROOT }}/package/*.json
+            ${{ env.R2_PACKAGE_ROOT }}/package/*.txt
+            ${{ env.R2_PACKAGE_ROOT }}/package/*.zip
+            ${{ env.R2_PACKAGE_ROOT }}/native-smoke/native-base-smoke.json
           if-no-files-found: error
           retention-days: 14

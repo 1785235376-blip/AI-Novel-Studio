@@ -13,7 +13,7 @@ from urllib.parse import urlsplit
 from ..asset_providers import Automatic1111ImageProvider, ComfyUIImageProvider
 from ..model_runtime import (GenerationEvent, GenerationUsage, ModelDescriptor, ModelRuntimeError, Modality,
     ProviderDescriptor, RuntimeErrorCode, TextGenerationResponse)
-from .discovery_probes import LocalProbeClient, ProbeFailure
+from .discovery_probes import LocalProbeClient, ProbeFailure, ollama_token_counts
 from .discovery_types import LocalRuntimeInput, local_endpoint
 from .domain import Capability, RuntimeDefinition, RuntimeManagement, RuntimeType
 from .runtime_profiles import resynthesize_runtime_argv
@@ -66,13 +66,15 @@ class LocalTextAdapter:
             started = time.monotonic()
             try:
                 if config['type'] == 'LLAMA_CPP' and config['management'] == 'MANAGED':
+                    try: self.bridge.service.check_model_dispatch(candidate)
+                    except ValueError as exc:
+                        raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, '本地模型证据已变化，请重新验证') from exc
                     managed = self.bridge.launch_on_demand(candidate)
                 self.bridge.guard(candidate['id'])
-                if config['type'] == 'OLLAMA':
-                    try: self.bridge.service.check_ollama_dispatch(candidate)
-                    except ValueError as exc:
-                        raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, '本地模型来源或版本已变化，请重新验证后启用') from exc
-                    self.bridge.guard(candidate['id'])
+                try: self.bridge.service.check_model_dispatch(candidate)
+                except ValueError as exc:
+                    raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, '本地模型来源或版本已变化，请重新验证后启用') from exc
+                self.bridge.guard(candidate['id'])
                 # Waiting for a managed process is preparation, not dispatch.
                 # Re-authorize after startup and reject cancellation before any prompt leaves.
                 if request.dispatch_guard is not None:
@@ -90,7 +92,12 @@ class LocalTextAdapter:
                     body = {'model': candidate['model_name'], 'prompt': request.prompt, 'stream': False, 'options': options}
                     if request.system_instruction: body['system'] = request.system_instruction
                     data = self.client.json(config['endpoint'], '/api/generate', body=body)
-                    text = data.get('response'); usage = GenerationUsage(data.get('prompt_eval_count'), data.get('eval_count'))
+                    if not isinstance(data, dict) or data.get('done') is not True or data.get('error'):
+                        raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED, '本地模型未返回完成标记')
+                    text = data.get('response')
+                    input_count, output_count = ollama_token_counts(data)
+                    usage = (GenerationUsage(input_count, output_count, input_count + output_count if input_count is not None and output_count is not None else None)
+                             if input_count is not None or output_count is not None else None)
                 else:
                     messages = [{'role':'user', 'content':request.prompt}]
                     if request.system_instruction: messages.insert(0, {'role':'system', 'content':request.system_instruction})
@@ -133,6 +140,9 @@ class LocalImageAdapter:
         except (ValueError, KeyError, ModelRuntimeError): return False
     def generate(self, request):
         candidate = self.bridge.guard(self.candidate['id'])
+        self.bridge.service.check_model_dispatch(candidate)
+        current = self.bridge.guard(candidate['id'])
+        if current.get('enabled_at') != candidate.get('enabled_at'): raise ValueError('LOCAL_AI_CONFIGURATION_CHANGED')
         if request.model_id not in {'', candidate['id'], candidate['model_name']}:
             raise ValueError('LOCAL_AI_MODEL_MISMATCH')
         result = self.delegate.generate(replace(request, model_id=candidate['model_name']))

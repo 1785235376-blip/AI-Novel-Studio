@@ -101,6 +101,10 @@ export const VARIANT_TIMEOUT_ERROR = "候选生成超时，请重新生成此候
 export function isGenerationTerminal(status: string) {
   return ["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED", "ACCEPTING", "ACCEPTANCE_UNCERTAIN"].includes(status);
 }
+export function draftStateFromGeneration(status: string): "working" | "failed" | "ready" {
+  if (["QUEUED", "GENERATING", "ACCEPTING"].includes(status)) return "working";
+  return status === "COMPLETED" ? "ready" : "failed";
+}
 export function isRecoveredDraftStale(baseVersion?: number, currentVersion?: number) {
   return baseVersion !== undefined && currentVersion !== undefined && baseVersion !== currentVersion;
 }
@@ -1013,21 +1017,16 @@ export default function App() {
       rejecting={draftAction === "reject"}
       error={job?.error}
       draft={
-        job && job.status !== "CANCELLED"
+        job && !["CANCELLED", "ACCEPTED", "REJECTED"].includes(job.status)
           ? {
               id: job.id,
               output: job.output || "",
               original: job.original,
-              status:
-                job.status === "GENERATING"
-                  ? "working"
-                  : job.status === "FAILED"
-                    ? "failed"
-                    : "ready",
+              status: draftStateFromGeneration(job.status),
               error: job.error,
               latency_ms: job.latency_ms,
-              acceptBlocked: job.acceptBlocked,
-              acceptBlockedReason: job.acceptBlockedReason,
+              acceptBlocked: job.acceptBlocked || ["ACCEPTING", "ACCEPTANCE_UNCERTAIN"].includes(job.status),
+              acceptBlockedReason: job.acceptBlockedReason || (job.status === "ACCEPTANCE_UNCERTAIN" ? "采用结果待核对。请检查正文与待审核 Canon，不要重复采用。" : undefined),
               tracked: !["generation-failed", "selection-required"].includes(job.id),
             }
           : undefined

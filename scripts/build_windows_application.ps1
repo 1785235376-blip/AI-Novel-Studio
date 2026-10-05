@@ -179,7 +179,7 @@ $sourceInventory = @(
 )
 $sourceInventory | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $sourceManifest -Encoding utf8
 
-& $dotnetExecutable restore $hostProjectPath -r win-x64
+& $dotnetExecutable restore $hostProjectPath -r win-x64 -p:SelfContained=true
 if ($LASTEXITCODE -ne 0) { throw "DesktopHost dependency restore failed with exit code $LASTEXITCODE" }
 & $dotnetExecutable publish $hostProjectPath `
     -c Release `
@@ -262,6 +262,53 @@ if (Test-Path -LiteralPath $stagedHost) {
 }
 Copy-Item -LiteralPath $HostPublishDirectory -Destination $stagedHost -Recurse
 
+# Preserve full notices from precisely the packages restored for this build.
+# NuGet package folders and exact dependency versions come from project.assets;
+# do not copy unrelated versions from a shared global package cache.
+$assetsPath = Join-Path $hostSourcePath 'obj\project.assets.json'
+$restoredAssets = Get-Content -LiteralPath $assetsPath -Raw | ConvertFrom-Json
+$packageRoots = @($restoredAssets.packageFolders.PSObject.Properties | ForEach-Object { $_.Name })
+$licensePackages = @([ordered]@{ id = 'Microsoft.Web.WebView2'; version = '1.0.3537.50'; require_notices = $false })
+foreach ($framework in $restoredAssets.project.frameworks.PSObject.Properties) {
+    foreach ($dependency in $framework.Value.downloadDependencies) {
+        if ($dependency.name -in @('Microsoft.NETCore.App.Runtime.win-x64', 'Microsoft.WindowsDesktop.App.Runtime.win-x64')) {
+            $match = [regex]::Match([string]$dependency.version, '^\[(8\.0\.\d+),\s*\1\]$')
+            if (-not $match.Success) { throw "Runtime license source is not an exact .NET 8 pin: $($dependency.name)" }
+            $licensePackages += [ordered]@{ id = [string]$dependency.name; version = $match.Groups[1].Value; require_notices = ($dependency.name -eq 'Microsoft.NETCore.App.Runtime.win-x64') }
+        }
+    }
+}
+$licensePackages = @($licensePackages | Sort-Object { $_.id } -Unique)
+if ($licensePackages.Count -ne 3) { throw 'Exact restored .NET Runtime/WindowsDesktop/WebView2 license sources are required.' }
+$runtimeLicenseRoot = Join-Path $outputApplication 'Licenses\DesktopHost'
+$runtimeLicenseProvenance = @()
+foreach ($package in $licensePackages) {
+    $relative = $package.id.ToLowerInvariant() + '\' + $package.version
+    $packageDirectory = $packageRoots | ForEach-Object { Join-Path $_ $relative } |
+        Where-Object { Test-Path -LiteralPath $_ -PathType Container } | Select-Object -First 1
+    if (-not $packageDirectory) { throw "Restored package license source missing: $relative" }
+    $licenseFiles = @(Get-ChildItem -LiteralPath $packageDirectory -File | Where-Object {
+        $_.Name -match '^(?i:LICENSE)(?:[._-].*)?$' -or $_.Name -match '^(?i:THIRD-PARTY-NOTICES)(?:[._-].*)?$'
+    })
+    if (-not @($licenseFiles | Where-Object { $_.Name -match '^(?i:LICENSE)' }).Count) {
+        throw "Full license missing in restored package: $relative"
+    }
+    if ($package.require_notices -and -not @($licenseFiles | Where-Object { $_.Name -match '^(?i:THIRD-PARTY-NOTICES)' }).Count) {
+        throw "Full third-party notices missing in restored package: $relative"
+    }
+    $destination = Join-Path $runtimeLicenseRoot ($package.id + '-' + $package.version)
+    [void](New-Item -ItemType Directory -Path $destination -Force)
+    foreach ($file in $licenseFiles) {
+        Copy-Item -LiteralPath $file.FullName -Destination $destination
+        $runtimeLicenseProvenance += [ordered]@{
+            package = $package.id; version = $package.version; source = $file.FullName
+            staged = (Join-Path $destination $file.Name)
+            sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $file.FullName).Hash
+        }
+    }
+}
+$runtimeLicenseProvenance | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $runtimeLicenseRoot 'provenance.json') -Encoding utf8
+
 $stagedHostDll = Join-Path $stagedHost 'AI-Novel-Studio.DesktopHost.dll'
 $freshHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $freshHostDll).Hash
 $stagedHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $stagedHostDll).Hash
@@ -313,6 +360,7 @@ $release = Get-Content -LiteralPath (Join-Path $projectRoot 'release\version.jso
     }
     source_commit = (& git -C $projectRoot rev-parse HEAD)
     font_inventory = $fontInventory
+    runtime_license_provenance = $runtimeLicenseProvenance
     python_runtime = (& (Join-Path $baseApplicationPath 'Runtime\Python\python.exe') --version)
     postgresql_runtime = (& (Join-Path $baseApplicationPath 'PostgreSQL\bin\pg_ctl.exe') --version)
 } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $applicationManifest -Encoding utf8

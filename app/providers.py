@@ -63,7 +63,7 @@ class OllamaProvider(LLMProvider):
         return local_endpoint(self.base_url), self._local_client()
 
     def generate(self, prompt: str, model: str, **kwargs) -> Generation:
-        from .model_center.discovery_probes import LocalProbeClient
+        from .model_center.discovery_probes import LocalProbeClient, ollama_token_counts
         dispatch_guard, cancellation = kwargs.pop("dispatch_guard", None), kwargs.pop("cancellation", None)
         timeout = kwargs.pop("timeout", 120)
         endpoint, metadata_client = self._local_dispatch(model, dispatch_guard, cancellation)
@@ -71,7 +71,11 @@ class OllamaProvider(LLMProvider):
         client=LocalProbeClient(timeout=timeout);client.open=metadata_client.open
         try: data=client.json(endpoint, "/api/generate", body={"model":model,"prompt":prompt,"stream":False,"options":kwargs})
         except Exception as exc: raise ProviderError(f"Ollama unavailable: {type(exc).__name__}") from exc
-        return Generation(data.get("response",""),self.name,model,data.get("prompt_eval_count",0),data.get("eval_count",0),int((time.monotonic()-started)*1000))
+        if not isinstance(data, dict) or data.get("done") is not True or data.get("error"):
+            raise ProviderError("Ollama generation ended without completion")
+        input_count,output_count=ollama_token_counts(data)
+        known=input_count is not None and output_count is not None
+        return Generation(data.get("response",""),self.name,model,input_count or 0,output_count or 0,int((time.monotonic()-started)*1000),metadata={"usage_known":known})
     def health_check(self) -> bool:
         try: self._local_client().json(self.base_url,"/api/tags"); return True
         except Exception: return False
@@ -124,7 +128,10 @@ class OllamaProvider(LLMProvider):
                     if chunk:yield chunk
                     if item.get("done") is True:
                         done=True
-                        if usage_callback:usage_callback({"input_tokens":item.get("prompt_eval_count"),"output_tokens":item.get("eval_count")})
+                        if usage_callback:
+                            from .model_center.discovery_probes import ollama_token_counts
+                            inputs,outputs=ollama_token_counts(item)
+                            usage_callback({"input_tokens":inputs,"output_tokens":outputs})
                         break
                 if not done:raise ProviderError("Ollama stream ended without completion")
         except ProviderError:raise

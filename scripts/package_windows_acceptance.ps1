@@ -33,7 +33,8 @@ if (Test-Path -LiteralPath $hostPublish) { throw "HostPublishDirectory must be f
     -HostPublishDirectory $hostPublish `
     -DotnetPath (Resolve-Absolute $DotnetPath 'DotnetPath') `
     -NodePath (Resolve-Absolute $NodePath 'NodePath') `
-    -ViteCliPath (Resolve-Absolute $ViteCliPath 'ViteCliPath')
+    -ViteCliPath (Resolve-Absolute $ViteCliPath 'ViteCliPath') `
+    -VerifiedFontDirectory (Resolve-Absolute $VerifiedFontDirectory 'VerifiedFontDirectory')
 if ($LASTEXITCODE -ne 0) { throw "Application staging failed with exit code $LASTEXITCODE" }
 
 $application = Join-Path $output 'Application'
