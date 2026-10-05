@@ -7,6 +7,11 @@ from app.idempotency import IdempotencyStore
 from app.main import app
 
 
+@pytest.fixture(autouse=True)
+def synthetic_chapter_authority(monkeypatch):
+    import app.api as api
+    monkeypatch.setattr(api.chapter_service, "get", lambda cid: {"id": cid, "novel_id": "n", "version": 1})
+
 @pytest.fixture
 def isolated_generation_idempotency_store(tmp_path, monkeypatch):
     """Run-scoped store. Does not read or write repository novel_data."""

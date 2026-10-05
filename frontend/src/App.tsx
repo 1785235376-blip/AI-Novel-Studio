@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   QueryClient,
   useMutation,
@@ -10,6 +10,7 @@ import {
   api,
   ApiError,
   Chapter,
+  type CollaborationContext,
   Novel,
   Scope,
   setCollaborationContext,
@@ -78,6 +79,8 @@ import { isPackagedDesktopHost } from "./packagedHost";
 import { generationRecovery } from "./generationRecovery";
 import { WorldBuildingDashboard } from "./novel/WorldBuildingDashboard";
 import { publishTaskSummary, summarizeTasks } from "./ui/taskSummary";
+import { SourcePrivacyControl } from "./novel/SourcePrivacyControl";
+import { CreationWorkbenchPanel } from "./novel/CreationWorkbenchPanel";
 import { StoryPlanningWorkspace } from "./novel/StoryPlanningWorkspace";
 import "./style.css";
 import "./ux.css";
@@ -97,7 +100,11 @@ export function workingVariantIds(variants: AiVariantDraft[]) {
 }
 export const VARIANT_TIMEOUT_ERROR = "候选生成超时，请重新生成此候选。";
 export function isGenerationTerminal(status: string) {
-  return ["COMPLETED", "FAILED", "CANCELLED"].includes(status);
+  return ["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED", "ACCEPTING", "ACCEPTANCE_UNCERTAIN"].includes(status);
+}
+export function draftStateFromGeneration(status: string): "working" | "failed" | "ready" {
+  if (["QUEUED", "GENERATING", "ACCEPTING"].includes(status)) return "working";
+  return status === "COMPLETED" ? "ready" : "failed";
 }
 export function isRecoveredDraftStale(baseVersion?: number, currentVersion?: number) {
   return baseVersion !== undefined && currentVersion !== undefined && baseVersion !== currentVersion;
@@ -251,17 +258,15 @@ export default function App() {
   const routeDiagnostics = useQuery({
     queryKey: [
       "text-runtime-diagnostics",
+      s.novelId,
       s.scope,
       selectedProviderId,
       selectedModelId,
     ],
-    queryFn: () =>
-      api.textRuntimeDiagnostics(
-        s.scope!,
-        selectedProviderId!,
-        selectedModelId!,
-      ),
-    enabled: !!s.scope && !!selectedProviderId && !!selectedModelId,
+    queryFn: () => s.scope
+      ? api.textRuntimeDiagnostics(s.scope, selectedProviderId!, selectedModelId!)
+      : api.localTextRuntimeDiagnostics(s.novelId, selectedProviderId!, selectedModelId!, {sessionToken:s.sessionToken}),
+    enabled: !!s.novelId && !!selectedProviderId && !!selectedModelId,
     retry: false,
   });
   const runtimeHealth = useQuery({
@@ -517,6 +522,8 @@ export default function App() {
         chapter_id: s.chapterId,
         instruction: request,
         style,
+        style_profile_id: s.writingInputs?.styleProfileId,
+        plot_plan_id: s.writingInputs?.plotPlanId,
         profile: s.mode,
         provider_id: s.textModel?.providerId,
         model_id: s.textModel?.modelId,
@@ -535,7 +542,7 @@ export default function App() {
         for (let i = 0; i < 300; i++) {
           const x = await api.job(r.job_id);
           setJob((j: any) => ({ ...j, ...x }));
-          if (["COMPLETED", "FAILED", "CANCELLED"].includes(x.status)) break;
+          if (["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED", "ACCEPTING", "ACCEPTANCE_UNCERTAIN"].includes(x.status)) break;
           await new Promise((ok) => setTimeout(ok, 500));
         }
       } else {
@@ -548,7 +555,7 @@ export default function App() {
             ...x,
             output: (j?.output || "") + (x.chunk || ""),
           }));
-          if (["COMPLETED", "FAILED", "CANCELLED"].includes(x.status))
+          if (["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED", "ACCEPTING", "ACCEPTANCE_UNCERTAIN"].includes(x.status))
             {es.close();generationRecovery.remove(namespace,s.chapterId)}
         };
         es.onerror = async () => {
@@ -615,6 +622,8 @@ export default function App() {
         chapter_id: s.chapterId,
         instruction: request,
         style,
+        style_profile_id: s.writingInputs?.styleProfileId,
+        plot_plan_id: s.writingInputs?.plotPlanId,
         profile: s.mode,
         provider_id: s.textModel?.providerId,
         model_id: s.textModel?.modelId,
@@ -807,7 +816,7 @@ export default function App() {
       />
     );
   const scope = s.scope;
-  if (studioModule !== "NOVEL") return <ModuleWorkspaceRoutes module={studioModule} onModuleChange={setStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={{workspace:scope?.workspaceName || "本机作品", project:scope?.projectName || "当前小说", storyline:scope?.storylineName || "默认故事线", branch:scope?.branchName || "主线"}} />;
+  if (studioModule !== "NOVEL") return <ModuleWorkspaceRoutes key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={setStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={{workspace:scope?.workspaceName || "本机作品", project:scope?.projectName || "当前小说", storyline:scope?.storylineName || "默认故事线", branch:scope?.branchName || "主线"}} />;
   const localNovelTitle =
     novels.data?.find((n) => n.id === s.novelId)?.title || "当前小说";
   const shellScope = scope
@@ -967,13 +976,23 @@ export default function App() {
           <p>在左侧新建或选择章节，开始写作。</p>
         </section>
       )}
-      <Panel type={panel} chapter={chapter.data} scope={scope} novelId={s.novelId} onOpenChapter={s.setChapter} />
+      <Panel type={panel} chapter={chapter.data} scope={scope} sessionToken={s.sessionToken} novelId={s.novelId} onOpenChapter={s.setChapter}
+        onRestored={(restored) => {
+          // Feed the existing hydration path. It retains drafts and creates a
+          // persistent conflict when a restored server version overtakes them.
+          if (revisionStoreIdentity(useStudio.getState()) !== revisionStoreIdentity(s)
+              || restored.id !== s.chapterId || restored.novel_id !== s.novelId) return;
+          qc.setQueryData<Chapter>(["chapter", namespace, s.chapterId], current =>
+            current && current.version > restored.version ? current : restored);
+          void qc.invalidateQueries({ queryKey: ["chapters", namespace, s.novelId] });
+        }} />
     </div>
   );
   const inspector = (
     <div className="novel-inspector-stack">
       <section className="novel-inspector-context" aria-label="当前写作上下文"><span>当前章节</span><strong>{chapter.data?.title || "未选择章节"}</strong><small>{chapter.data ? `第 ${chapter.data.number} 章 · 版本 ${chapter.data.version}` : "从左侧章节树选择章节"}</small></section>
       <WritingGoalPanel novelId={s.novelId} />
+      {chapter.data&&<SourcePrivacyControl key={`${namespace}:${chapter.data.id}`} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}}/>}
       <AiWritingPanel
       novelId={s.novelId}
       chapterNumber={chapter.data?.number}
@@ -1008,21 +1027,16 @@ export default function App() {
       rejecting={draftAction === "reject"}
       error={job?.error}
       draft={
-        job && job.status !== "CANCELLED"
+        job && !["CANCELLED", "ACCEPTED", "REJECTED"].includes(job.status)
           ? {
               id: job.id,
               output: job.output || "",
               original: job.original,
-              status:
-                job.status === "GENERATING"
-                  ? "working"
-                  : job.status === "FAILED"
-                    ? "failed"
-                    : "ready",
+              status: draftStateFromGeneration(job.status),
               error: job.error,
               latency_ms: job.latency_ms,
-              acceptBlocked: job.acceptBlocked,
-              acceptBlockedReason: job.acceptBlockedReason,
+              acceptBlocked: job.acceptBlocked || ["ACCEPTING", "ACCEPTANCE_UNCERTAIN"].includes(job.status),
+              acceptBlockedReason: job.acceptBlockedReason || (job.status === "ACCEPTANCE_UNCERTAIN" ? "采用结果待核对。请检查正文与待审核 Canon，不要重复采用。" : undefined),
               tracked: !["generation-failed", "selection-required"].includes(job.id),
             }
           : undefined
@@ -1185,14 +1199,18 @@ function Panel({
   type,
   chapter,
   scope,
+  sessionToken,
   novelId,
   onOpenChapter,
+  onRestored,
 }: {
   type: string;
   chapter?: Chapter;
   scope?: Scope;
   novelId: string;
   onOpenChapter: (id:string)=>void;
+  onRestored: (chapter: Chapter) => void;
+  sessionToken: string;
 }) {
   if (!scope && ["members", "permissions", "audit", "snapshots"].includes(type))
     return (
@@ -1202,7 +1220,7 @@ function Panel({
       </section>
     );
   if (type === "history")
-    return chapter ? <RevisionHistory chapter={chapter} scope={scope} /> : null;
+    return chapter ? <RevisionHistory chapter={chapter} scope={scope} sessionToken={sessionToken} onRestored={onRestored} /> : null;
   if (type === "story")
     return chapter ? (
       <StoryDatabasePanel chapter={chapter} scope={scope} onOpenChapter={onOpenChapter} />
@@ -1220,10 +1238,11 @@ function Panel({
   if (type === "diagnostics") return <RuntimeDiagnosticsPanel scope={scope} />;
   if (type === "agents") return <>{chapter&&<AgentActivityCenter novelId={chapter.novel_id} />}{chapter&&<AgentJobHistory novelId={chapter.novel_id} />}<AgentTeamPanel chapter={chapter} /></>;
   if (type === "adaptation") return <AdaptationPanel novelId={chapter?.novel_id} branchId={scope?.branchId} />;
-  if (type === "screenplay") return <ScreenplayPanel novelId={chapter?.novel_id} />;
+  if (type === "screenplay") return <ScreenplayPanel novelId={chapter?.novel_id} scope={scope||null} sessionToken={sessionToken} />;
   if (type === "assets") return <AssetLibraryPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
-  if (type === "exports") return <ExportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
-  if (type === "knowledge") return <NovelImportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} chapterId={chapter?.id} />;
+  if (type === "exports") return <ExportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} scope={scope||null} sessionToken={sessionToken} />;
+  if (type === "knowledge") return <NovelImportPanel key={`${novelId}:${scope?.branchId||"local"}:${sessionToken}`} requestContext={{sessionToken,scope}} novelId={chapter?.novel_id || useStudio.getState().novelId || ""} chapterId={chapter?.id} />;
+  if (type === "creation" || type === "comments") return <CreationWorkbenchPanel key={`${novelId}:${scope?.branchId||"local"}:${sessionToken}`} novelId={novelId} chapter={chapter} initialComments={type === "comments"} context={{sessionToken,scope}} />;
   if (type === "research") return <ResearchPanel novelId={novelId} />;
   if (type === "settings") return <><AiControlCenter /><MediaProviderSettings /><VideoCallbackSecurityStatus /></>;
   if (type === "roadmap") return <CapabilityRoadmapPanel />;
@@ -1411,22 +1430,98 @@ function StoryDatabasePanel({
       </>
     );
 }
-function RevisionHistory({
-  chapter,
-  scope,
-}: {
+let revisionObserverSequence = 0;
+function revisionStoreIdentity(state: Pick<ReturnType<typeof useStudio.getState>, "sessionToken" | "actor" | "scope" | "novelId" | "chapterId">) {
+  return JSON.stringify([state.sessionToken, state.actor?.id, state.actor?.workspaceId,
+    state.novelId, state.chapterId, state.scope?.workspaceId, state.scope?.projectId,
+    state.scope?.storylineId, state.scope?.branchId]);
+}
+
+type RevisionHistoryProps = {
   chapter: Chapter;
   scope?: Scope;
-}) {
+  sessionToken: string;
+  onRestored: (chapter: Chapter) => void;
+};
+
+export function RevisionHistory(props: RevisionHistoryProps) {
+  const storeIdentity = useStudio(revisionStoreIdentity);
+  const actor = useStudio(state => state.actor);
+  const [scopeEpoch, setScopeEpoch] = useState(0);
+  useLayoutEffect(() => {
+    let observed = revisionStoreIdentity(useStudio.getState());
+    return useStudio.subscribe(state => {
+      const next = revisionStoreIdentity(state);
+      if (next !== observed) { observed = next; setScopeEpoch(value => value + 1); }
+    });
+  }, []);
+  // Identity comparisons remain in memory. Only this opaque observer ID enters
+  // React Query keys, so neither cache keys nor dehydrated caches contain tokens.
+  const identity = JSON.stringify([storeIdentity, scopeEpoch, props.chapter.novel_id, props.chapter.id,
+    props.sessionToken, props.scope?.workspaceId, props.scope?.projectId,
+    props.scope?.storylineId, props.scope?.branchId]);
+  const observer = useRef<{ identity: string; id: string }>();
+  if (!observer.current || observer.current.identity !== identity) observer.current = {
+    identity,
+    id: globalThis.crypto?.randomUUID?.() || `revision-${Date.now()}-${++revisionObserverSequence}-${Math.random()}`,
+  };
+  const context: CollaborationContext = {
+    sessionToken: props.sessionToken,
+    actor: actor && { ...actor },
+    scope: props.scope && { ...props.scope },
+  };
+  return <ScopedRevisionHistory key={observer.current.id} {...props}
+    context={context} observerId={observer.current.id} storeIdentity={storeIdentity} />;
+}
+
+function ScopedRevisionHistory({ chapter, scope, onRestored, context, observerId, storeIdentity }:
+  RevisionHistoryProps & { context: CollaborationContext; observerId: string; storeIdentity: string }) {
   const [selected, setSelected] = useState<number>();
+  const epoch = useRef(0);
+  const mounted = useRef(true);
+  const restorePending = useRef(false);
+  useLayoutEffect(() => {
+    mounted.current = true;
+    let observed = revisionStoreIdentity(useStudio.getState());
+    // Invalidates even an A→B→A change batched into one React render.
+    const unsubscribe = useStudio.subscribe(state => {
+      const next = revisionStoreIdentity(state);
+      if (next !== observed) { observed = next; epoch.current += 1; }
+    });
+    // StrictMode replays setup/cleanup while React Query reuses its pending
+    // promise. Only identity changes advance the authority epoch; a genuine
+    // unmount is fenced by this observer's permanently inactive mounted ref.
+    return () => { mounted.current = false; unsubscribe(); };
+  }, []);
+  const current = (ticket: number) => mounted.current && ticket === epoch.current
+    && revisionStoreIdentity(useStudio.getState()) === storeIdentity;
   const q = useQuery({
-    queryKey: ["revision-history", scope, chapter.id],
-    queryFn: () =>
-      scope ? api.history(scope, chapter.id) : api.legacyHistory(chapter.id),
+    queryKey: ["revision-history", observerId, chapter.id, chapter.version],
+    gcTime: 0,
+    queryFn: async () => {
+      const ticket = epoch.current;
+      try {
+        const rows = scope ? await api.history(scope, chapter.id, context) : await api.legacyHistory(chapter.id, context);
+        return current(ticket) ? rows : [];
+      } catch (error) {
+        if (!current(ticket)) return [];
+        throw error;
+      }
+    },
   });
   const detail = useQuery({
-    queryKey: ["revision-detail", scope, chapter.id, selected],
-    queryFn: () => api.revisionDetail(scope!, chapter.id, selected!),
+    queryKey: ["revision-detail", observerId, chapter.id, selected],
+    gcTime: 0,
+    queryFn: async () => {
+      const ticket = epoch.current;
+      try {
+        const row = await api.revisionDetail(scope!, chapter.id, selected!, context);
+        return current(ticket) ? row : null;
+      } catch (error) {
+        if (!current(ticket)) return null;
+        throw error;
+      }
+    },
     enabled: !!scope && selected !== undefined,
   });
   const preview: any = scope
@@ -1439,11 +1534,12 @@ function RevisionHistory({
     reason: v.reason,
     source: v.source,
   }));
+  const revisionSummary = revisions.find(revision => revision.version === selected);
   const selectedRevision: RevisionDetail | null =
-    selected === undefined || !preview
+    selected === undefined || !preview || !revisionSummary
       ? null
       : {
-          ...revisions.find((v) => v.version === selected)!,
+          ...revisionSummary,
           comparison: {
             historicalLabel: `历史版本 ${selected}`,
             historicalText: revisionDocumentText(preview.document),
@@ -1462,23 +1558,26 @@ function RevisionHistory({
       detailError={detail.error ? String(detail.error) : null}
       onSelectRevision={setSelected}
       onRestore={async (request) => {
+        const ticket = epoch.current;
+        if (!current(ticket) || restorePending.current) return;
+        restorePending.current = true;
         try {
-          await api.restore(
-            chapter.id,
-            request.revisionVersion,
-            request.expectedCurrentVersion,
+          const restored = await api.restore(
+            chapter.id, request.revisionVersion, request.expectedCurrentVersion, context,
           );
-          location.reload();
+          if (!current(ticket)) return;
+          if (restored.id !== chapter.id || restored.novel_id !== chapter.novel_id)
+            throw new Error("恢复结果与当前章节不一致，请刷新后检查。");
+          onRestored(restored);
         } catch (error: any) {
+          if (!current(ticket)) return;
           if (error?.status === 409)
-            throw {
-              kind: "conflict",
-              message: error.message,
-              currentVersion: error.problem?.details?.actual_version,
-            };
+            throw { kind: "conflict", message: error.message, currentVersion: error.problem?.details?.actual_version };
           if (error?.status === 403)
             throw { kind: "unauthorized", message: error.message };
           throw error;
+        } finally {
+          if (current(ticket)) restorePending.current = false;
         }
       }}
     />

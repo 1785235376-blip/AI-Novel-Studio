@@ -1,0 +1,35 @@
+{
+  "note": "The downloaded CI ZIPs were hash-verified unchanged. These repository JSON copies normalize Windows CRLF line endings to LF for text review only; their parsed data is unchanged. Original file digests and archive receipts remain separately identified.",
+  "files": [
+    {
+      "path": "ci-93d-host-provenance.json",
+      "original_artifact_file_sha256": "c70f25a8b9de6aaddae9c4ed959142af0e1551927cccf1817d6a103546160918",
+      "repository_lf_copy_sha256": "ce7c9f149fea29863319eecb240793ddd635b37f026f91174432729ba1d44885"
+    },
+    {
+      "path": "ci-93d-native-smoke.json",
+      "original_artifact_file_sha256": "3ae3add23c6df08a5e70f8f9bb13465feb15cf8ff0a54d3477035c62f8e2ac24",
+      "repository_lf_copy_sha256": "c4e1ff5059873fe509f99c3c61f173e949d59b16ac72ea0a16175737bb09d505"
+    },
+    {
+      "path": "ci-98b-host-provenance.json",
+      "original_artifact_file_sha256": "a14aa76dff7300a242b082e9b781046043d30bd088158f7c3c2c57a0edd3ca83",
+      "repository_lf_copy_sha256": "9b1d066401acbd38ed2933a620e7dbbb784f13d2492adeed9b41919628112298"
+    },
+    {
+      "path": "ci-98b-native-smoke.json",
+      "original_artifact_file_sha256": "9421f6a2c368e2f8122d35abf46e281d5ca302f036defcac6492a8e321b0f773",
+      "repository_lf_copy_sha256": "1f37462c90b46d2f6189e4abcb1b91524fa024c6486327075e0ffe2cfbd228bb"
+    },
+    {
+      "path": "ci-98b-application-provenance.json",
+      "original_artifact_file_sha256": "fb0d53cbd821c480fc159aeba85820ad0f3e0a6848f2d2f40b8a13d8a7eefbe8",
+      "repository_lf_copy_sha256": "a21344d6b185412e08c84c741c3d1e84a1ab0fc07b3e25cdf6473f2ca0b890ed"
+    },
+    {
+      "path": "ci-93d-application-provenance.json",
+      "original_artifact_file_sha256": "e16c7028a190cb31b2fb0de1a990a974321c672e1a62f1cb0dec9ef88042a138",
+      "repository_lf_copy_sha256": "5c71a01ee981ecacd882b6f6db7df49dc970fd80a16e30c98da5f57c695d3019"
+    }
+  ]
+}

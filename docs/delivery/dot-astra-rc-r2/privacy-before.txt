@@ -1,0 +1,3 @@
+timeline {"id": "t", "sequence": 1, "time": "now", "title": "SECRET_TIMELINE"} LEAKED
+foreshadowing {"id": "f", "title": "SECRET_FORESHADOW", "status": "OPEN", "planted_chapter": 1} LEAKED
+canon {"fact": "SECRET_CANON", "privacy_level": "CLOUD_ALLOWED", "id": "c", "source": "manual"} LEAKED

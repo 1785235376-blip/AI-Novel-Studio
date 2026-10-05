@@ -83,13 +83,29 @@ class OpenAICompatibleTextProvider:
         if not value:return None
         return GenerationUsage(value.get("prompt_tokens"),value.get("completion_tokens"),value.get("total_tokens"))
 
+    def _check(self, request, started):
+        if request.cancellation and request.cancellation.is_set():
+            raise ModelRuntimeError(RuntimeErrorCode.CANCELLED,"已停止生成")
+        if time.monotonic()-started > self.config.overall_timeout:
+            raise ModelRuntimeError(RuntimeErrorCode.TIMEOUT,"生成超时",metadata={"phase":"OVERALL"})
+
     def generate_text(self, request: TextGenerationRequest) -> TextGenerationResponse:
         started=time.monotonic()
+        if request.cancellation and request.cancellation.is_set():
+            raise ModelRuntimeError(RuntimeErrorCode.CANCELLED,"已停止生成")
+        headers={"Authorization":"Bearer "+self._key()}
+        body=self._payload(request,False)
         try:
             with self._client() as client:
+                if request.dispatch_guard is not None: request.dispatch_guard()
+                self._check(request,started)
                 response=client.post(self.config.base_url.rstrip("/")+"/chat/completions",
-                    headers={"Authorization":"Bearer "+self._key()},json=self._payload(request,False))
+                    headers=headers,json=body)
                 if response.status_code >= 400: raise self._error(response.status_code,request,response.headers)
+                if request.cancellation and request.cancellation.is_set():
+                    raise ModelRuntimeError(RuntimeErrorCode.CANCELLED,"已停止生成")
+                if time.monotonic()-started > self.config.overall_timeout:
+                    raise ModelRuntimeError(RuntimeErrorCode.TIMEOUT,"生成超时",metadata={"replay_safe":False})
                 data=response.json(); choice=data["choices"][0]
                 return TextGenerationResponse(choice["message"]["content"],choice.get("finish_reason") or "unknown",
                     self.provider_id,request.model_id,self._usage(data.get("usage")),int((time.monotonic()-started)*1000),data.get("id"))
@@ -97,14 +113,18 @@ class OpenAICompatibleTextProvider:
         except (httpx.HTTPError, ValueError, KeyError, IndexError) as exc: raise self._network_error(exc,request) from exc
 
     def stream_text(self, request: TextGenerationRequest) -> Iterator[GenerationEvent]:
-        started=time.monotonic(); chunks=[]; finish="unknown"; usage=None; reference=None
+        started=time.monotonic(); chunks=[]; finish="unknown"; usage=None; reference=None; done=False
         if request.cancellation and request.cancellation.is_set():
             raise ModelRuntimeError(RuntimeErrorCode.CANCELLED,"已停止生成")
         yield GenerationEvent("generation.started",request.job_id)
+        headers={"Authorization":"Bearer "+self._key()}
+        body=self._payload(request,True)
         try:
             with self._client() as client:
+                if request.dispatch_guard is not None: request.dispatch_guard()
+                self._check(request,started)
                 with client.stream("POST",self.config.base_url.rstrip("/")+"/chat/completions",
-                    headers={"Authorization":"Bearer "+self._key()},json=self._payload(request,True)) as response:
+                    headers=headers,json=body) as response:
                     if response.status_code >= 400: raise self._error(response.status_code,request,response.headers)
                     for line in response.iter_lines():
                         if time.monotonic()-started > self.config.overall_timeout:
@@ -114,12 +134,18 @@ class OpenAICompatibleTextProvider:
                             raise ModelRuntimeError(RuntimeErrorCode.CANCELLED,"已停止生成")
                         if not line.startswith("data:"): continue
                         payload=line[5:].strip()
-                        if payload == "[DONE]": break
+                        if payload == "[DONE]":
+                            done=True
+                            break
                         item=json.loads(payload); reference=reference or item.get("id"); usage=self._usage(item.get("usage")) or usage
                         for choice in item.get("choices",[]):
                             delta=(choice.get("delta") or {}).get("content") or ""
                             if delta: chunks.append(delta); yield GenerationEvent("generation.delta",request.job_id,delta=delta)
                             if choice.get("finish_reason"): finish=choice["finish_reason"]
+            if request.cancellation and request.cancellation.is_set():
+                raise ModelRuntimeError(RuntimeErrorCode.CANCELLED,"已停止生成")
+            if not done and finish == "unknown":
+                raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED,"模型连接中断，结果未完成",metadata={"replay_safe":False,"partial_output":bool(chunks)})
             text="".join(chunks)
             result=TextGenerationResponse(text,finish,self.provider_id,request.model_id,usage,
                 int((time.monotonic()-started)*1000),reference)

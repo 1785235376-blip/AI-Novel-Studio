@@ -1,0 +1,961 @@
+{
+  "schema_version": 2,
+  "updated_at_utc": "2026-10-05T08:45:14.220087+00:00",
+  "status": "READY_FOR_BOUNDED_INTERNAL_DESKTOP_ACCEPTANCE",
+  "repository": "https://github.com/1785235376-blip/AI-Novel-Studio",
+  "branch": "work/dot-astra-v1-rc-r2",
+  "draft_pr": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/37",
+  "starting_sha": "f8c141c39a543cc9dbea57647ac91185bc9aecd6",
+  "fixed_snapshot_sha": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+  "fixed_snapshot_tree": "f6c4a84c5ff0d1b2639b537af1ea287611935fd4",
+  "working_tree_state": "Engineering source is frozen at verified 98b. This delivery snapshot changes documentation and synthetic evidence only; its later published SHA/readback/CI is recorded separately in the final Draft PR body.",
+  "last_reported_remote_sha": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+  "remote_verification": "Verified engineering head 98b7d53c3193765e792e5a756fff02a87b5948b8 / tree f6c4a84c5ff0d1b2639b537af1ea287611935fd4 equals local 1c19d83d. Push 37284138175 and PR 37284145310 both completed SUCCESS across all five lanes.",
+  "final_commit_sha": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+  "final_ci": "PASS",
+  "current_result_summary": {
+    "engineering_source": "98b7d53c3193765e792e5a756fff02a87b5948b8; treef6c4a84c5ff0d1b2639b537af1ea287611935fd4; source-equivalent independent 1c19d83d.",
+    "original_and_discovery_review": "CLOSED independently at e38;55 preserved/expanded invariants and full UI suite. Later history StrictMode P2 CLOSED at d033; no new concrete finding in final 1c19 incremental review.",
+    "final_independent_increment": "Fixed1c19:35 UI/history/StrictMode/layout and 40 native/input contracts pass; type/token42/build pass;1331 tracked files match exact blobs. This is local independent review, not claimed local PG/Windows/browser execution.",
+    "final_file_suite": "PASS at 98b:2147 passed / 45 skipped.",
+    "final_real_postgresql": "PASS at 98b:2155 passed / 37 skipped; actual PostgreSQL 16.15. Earlier specialized ten-case process/restart/revocation evidence retained.",
+    "final_frontend_unit_typecheck_build": "PASS at 98b:579 unit tests /111 files; typecheck/token lint/build pass; existing large-chunk advisory retained.",
+    "final_browser": "PASS at 98b:geometry/LocalAI9, full business 2 including initial history and goal layout at 1366x768/1440x900/1920x1080, export 1.",
+    "final_windows_host": "PASS at 98b:SDK 8.0.424 selected explicitly; Host build and 59 native contracts.",
+    "final_windows_package_native": "PASS at 98b:complete unsigned internal package and 11 actual native commands all exit0, including Python 3.12.9/27 wheels, PostgreSQL 16.15/pgcrypto/UTF8/custom dump-newDB restore/app import/owned stop.",
+    "final_runs": "Push 37284138175 and PR 37284145310 completed SUCCESS for all five lanes. Actual PR merge checkout 1c10ecc09ce07d445750a3a994931a1bc7f6f0be differs from branch98b.",
+    "screenshots": "Six actual 98b browser PNGs retained with source/run/artifact/hash manifest; all hashes/sizes verified, all opened/reviewed by integration lead. File-business synthetic model data and LocalAI API-fixture boundaries explicit.",
+    "historical_results": "Prior failures, cancellations, local counts and 93d all-green checkpoint retained separately in revision_evidence_ledger; no historical red is rewritten.",
+    "documentation_delivery": "Only later docs/evidence-only commit identity/readback/CI PENDING_LEAD; completed 98b engineering gates are PASS.",
+    "interactive_windows_webview2_vault_ime": "NOT_RUN",
+    "clean_install_upgrade_uninstall_retention": "NOT_RUN",
+    "signing": "NOT_RUN; unsigned internal candidate, no formal Release",
+    "real_provider_gpu_models": "NOT_RUN",
+    "target_desktop_document_interoperability": "NOT_RUN",
+    "user_acceptance": "NOT_RUN"
+  },
+  "revision_evidence_ledger": {
+    "HISTORICAL-CI-4E7": {
+      "revision": "4e7ca3d3bfcf9908fee7d3a6e80a3d1243b9238a",
+      "source_equivalent_local_revision": "19e240d999b41c28fe64f076759a567dd87ca2e6",
+      "tree": "7dfcf2c9e9a1bfa7cb35f00c805419dd8a64fb45",
+      "state": "FAILED",
+      "run_id": 37277922570,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37277922570",
+      "source": "Integration lead inspected terminal hosted run; browser repair report and retained hosted receipts.",
+      "results": {
+        "file": {
+          "passed": 2069,
+          "skipped": 45
+        },
+        "postgres": {
+          "passed": 2073,
+          "skipped": 41,
+          "actual_server": "16.15"
+        },
+        "frontend": {
+          "passed": 548
+        },
+        "typecheck_build_tokens": "PASS",
+        "browser_geometry_and_local_ai": {
+          "passed": 9
+        },
+        "browser_export": {
+          "passed": 1
+        },
+        "browser_business": {
+          "passed": 1,
+          "failed": 1
+        },
+        "windows_native_contracts": {
+          "passed": 59
+        },
+        "windows_host_compile": "Reported passing compile/native checkpoint; a separate packaging attempt selected SDK 10 and is not a successful complete package."
+      },
+      "qualification": "Historical terminal failed snapshot: business history-cache defect. Later repairs and actual native/package/browser success are recorded at 93d and final 98b; this older failure is not relabeled."
+    },
+    "INDEPENDENT-E38": {
+      "revision": "e38d1eccff6c1aac02a836817c878f423df0479e",
+      "tree": "197a04c858434b58ad1ab38fbd478030bcbca7b8",
+      "state": "PASS_WITH_SCOPE_LIMITS",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW.md"
+      ],
+      "raw_receipts": "Auditor bundle retained at the e38 revision: invariant/File/UI logs/XML, type/token/build and source-verification records. The committed INDEPENDENT_REVIEW.md summarizes it; do not infer every raw historical file is committed.",
+      "results": {
+        "preserved_and_expanded_invariants": {
+          "passed": 55
+        },
+        "file": {
+          "passed": 2131,
+          "skipped": 46,
+          "font_runtime_check": "NOT_RUN"
+        },
+        "frontend": {
+          "passed": 549,
+          "files": 108
+        },
+        "typecheck": "PASS",
+        "design_token_lint": {
+          "state": "PASS",
+          "files": 42
+        },
+        "production_build": "PASS",
+        "packaging_and_pg_structure": {
+          "passed": 59,
+          "skipped": 10,
+          "qualification": "Real PostgreSQL cases skipped; structure review is not PG execution."
+        },
+        "source_integrity": {
+          "tracked_files_byte_identical": 1310
+        }
+      },
+      "qualification": "All previously reproduced original and Discovery audit defects closed in this scoped review. Synthetic transports and Linux only; exact new-head CI, native acceptance and real inference remain separate."
+    },
+    "LEAD-E38-FONT": {
+      "revision": "e38d1eccff6c1aac02a836817c878f423df0479e",
+      "state": "PASS_WITH_SCOPE_LIMITS",
+      "results": {
+        "file": {
+          "passed": 2132,
+          "skipped": 45,
+          "font_runtime_check": "PASS"
+        }
+      },
+      "source": "Integration lead report of actual pinned-font-enabled run.",
+      "qualification": "One more pass and one fewer skip than the independent e38 run; counts overlap and must not be added."
+    },
+    "LEAD-BBB-LOCAL": {
+      "revision": "bbb55d10ac57de123e138a51510efd846ee42aee",
+      "tree": "9280bee5f82c6843fef15154080f5dc1a89f87a0",
+      "state": "PASS_WITH_SCOPE_LIMITS",
+      "results": {
+        "file": {
+          "passed": 2136,
+          "skipped": 45,
+          "font_runtime_check": "PASS"
+        },
+        "frontend": {
+          "passed": 568,
+          "files": 109
+        },
+        "typecheck": "PASS",
+        "design_token_lint": {
+          "state": "PASS",
+          "files": 42
+        },
+        "production_build": "PASS"
+      },
+      "raw_receipts": "Published repository receipts listed in evidence; source_commit and tree are explicit. Historical StrictMode note describes the bbb checkpoint and is superseded by d033 closure.",
+      "source": "Lead execution report, corroborated by full-suite log summaries.",
+      "qualification": "Python 3.12.14 / Node 24.19.0. A first attempt called nonexistent lint:tokens and did not run lint; the subsequent correct pnpm lint passed. Do not claim the first chained command succeeded. Hosted PG/browser/Windows not run by this local suite.",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/evidence/bbb55d1-local-receipt.json",
+        "docs/delivery/dot-astra-rc-r2/evidence/bbb55d1-full-file.txt",
+        "docs/delivery/dot-astra-rc-r2/evidence/bbb55d1-full-ui.txt"
+      ]
+    },
+    "BBB-HISTORY-FOCUSED": {
+      "revision": "bbb55d10ac57de123e138a51510efd846ee42aee",
+      "state": "PASS",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/revision-history-work.md",
+        "docs/delivery/dot-astra-rc-r2/evidence/revision-history.txt",
+        "docs/delivery/dot-astra-rc-r2/evidence/revision-history.xml",
+        "docs/delivery/dot-astra-rc-r2/evidence/revision-history-typecheck.txt",
+        "docs/delivery/dot-astra-rc-r2/evidence/revision-history-token-lint.txt"
+      ],
+      "results": {
+        "passed": 49,
+        "files": 6,
+        "new_real_queryclient_app_tests": 19
+      },
+      "qualification": "Mounted version invalidation, full context/ABA fencing, token-free cache keys and clean/dirty App hydration have focused evidence; actual hosted browser reruns subsequently PASS at 93d and final 98b."
+    },
+    "BBB-AGENT-TIMERS": {
+      "revision": "bbb55d10ac57de123e138a51510efd846ee42aee",
+      "state": "PASS",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/browser-ci-repair.md",
+        "docs/delivery/dot-astra-rc-r2/evidence/agent-timer-cleanup.txt"
+      ],
+      "results": {
+        "passed": 75
+      },
+      "qualification": "Service owns timeout timers; completion/cancel disposes them; deleted jobs/projects are not recreated, and database failures remain failures. Focused tests overlap full suite."
+    },
+    "WINDOWS-INPUT-ASSEMBLY": {
+      "revision": "e38d1eccff6c1aac02a836817c878f423df0479e",
+      "state": "PASS_INPUT_ASSEMBLY_ONLY",
+      "evidence": [
+        "docs/R2_WINDOWS_BASE_INPUTS.md",
+        "packaging/windows-runtime-inputs.json",
+        "scripts/prepare_windows_base.py",
+        "scripts/verify_windows_base.py"
+      ],
+      "results": {
+        "actual_materialized_files": 4876,
+        "windows_executable_run": false,
+        "input_contract_cases": 29
+      },
+      "qualification": "Actual pinned official CPython/PyPI/EDB downloads and Linux materialization are input assembly only. Current collection has29 base-input contract cases; real Windows verification subsequently passed at 93daeb97, separately recorded in HOSTED-93DAEB."
+    },
+    "INDEPENDENT-BBB": {
+      "revision": "bbb55d10ac57de123e138a51510efd846ee42aee",
+      "tree": "9280bee5f82c6843fef15154080f5dc1a89f87a0",
+      "state": "REQUEST_CHANGES",
+      "source": "Independent reviewer is retesting the fixed bbb55d10 snapshot.",
+      "qualification": "Historical REQUEST_CHANGES at bbb: initial query discarded by StrictMode replay. The original three independent assertions are preserved and pass at d033. Do not retroactively relabel the failed bbb review as green.",
+      "results": {
+        "file": {
+          "passed": 2135,
+          "skipped": 46
+        },
+        "frontend": {
+          "passed": 568,
+          "files": 109
+        },
+        "new_strictmode_repro": "FAIL"
+      },
+      "closed_at_revision": "d03399ee7d4b183173be47e5336b9bc4e0bd30b0",
+      "closure_evidence": "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW_INCREMENTAL.md"
+    },
+    "FINAL-HOSTED-CI": {
+      "requested_source_revision": "1c19d83d870f325cb6af1d182573b1e8b2a47a29",
+      "requested_source_tree": "f6c4a84c5ff0d1b2639b537af1ea287611935fd4",
+      "published_branch_sha": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+      "checkout_sha": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+      "run_id": 37284138175,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284138175",
+      "state": "PASS_ALL_FIVE_HOSTED_LANES",
+      "qualification": "Final engineering source 98b7d53c is tree-identical to independently reviewed local 1c19d83d. Both push and PR completed all five lanes successfully, including post-CSS three-viewport goal geometry and actual Windows package/native smoke. Branch and PR merge checkout are distinct. Later documentation/evidence-only delivery commit is tracked separately.",
+      "pr_run_id": 37284145310,
+      "pr_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284145310",
+      "execution_status": "COMPLETED_SUCCESS",
+      "revision": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+      "tree": "f6c4a84c5ff0d1b2639b537af1ea287611935fd4",
+      "pr_merge_checkout": "1c10ecc09ce07d445750a3a994931a1bc7f6f0be",
+      "reported_pr_base_prefix": "fed2404",
+      "push_conclusion": "success",
+      "pr_conclusion": "success",
+      "results": {
+        "file": {
+          "passed": 2147,
+          "skipped": 45
+        },
+        "postgres": {
+          "passed": 2155,
+          "skipped": 37,
+          "actual_server": "16.15",
+          "specialized_acceptance_dispatch_cases": {
+            "passed": 10,
+            "skipped": 0,
+            "evidence": "docs/delivery/dot-astra-rc-r2/evidence/ci-98b-pg-controls.json"
+          }
+        },
+        "frontend": {
+          "passed": 579,
+          "files": 111
+        },
+        "typecheck": "PASS",
+        "production_build": "PASS_WITH_EXISTING_LARGE_CHUNK_WARNING",
+        "design_token_lint": "PASS",
+        "geometry_local_ai": {
+          "passed": 9
+        },
+        "business_browser": {
+          "passed": 2,
+          "writing_goal_geometry_viewports": [
+            "1366x768",
+            "1440x900",
+            "1920x1080"
+          ],
+          "first_reload_history_assertion": "PASS"
+        },
+        "export_browser": {
+          "passed": 1
+        },
+        "windows_host": {
+          "state": "PASS",
+          "sdk": "8.0.424",
+          "native_contracts_passed": 59
+        },
+        "windows_package": {
+          "state": "PASS_UNSIGNED_INTERNAL_PACKAGE",
+          "public_release": false
+        },
+        "windows_native_base": {
+          "state": "PASS",
+          "command_count": 11,
+          "all_exit_codes": 0,
+          "python": "3.12.9",
+          "python_isolated": true,
+          "wheels": 27,
+          "psycopg_implementation": "binary",
+          "postgres": "16.15",
+          "pgcrypto": "PASS",
+          "utf8_roundtrip": "PASS",
+          "custom_dump_new_database_restore": "PASS",
+          "packaged_app_import": "PASS",
+          "owned_cluster_stop": "PASS",
+          "crt": "Hosted System32 VC++ runtime observed and hashed; external prerequisite, not evidence of bundled CRT.",
+          "interactive_desktop": "NOT_RUN",
+          "user_acceptance": "NOT_RUN"
+        }
+      },
+      "artifacts": [
+        {
+          "id": 11334100802,
+          "name": "windows-host-98b7d53c3193765e792e5a756fff02a87b5948b8",
+          "size_bytes": 532000,
+          "sha256": "57a65b9f6aa3170e3c356d73bf79774a6d534303a0a074bdc02a670d9bca982c",
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284138175/artifacts/11334100802",
+          "expires_at": "2026-10-19T08:33:31Z",
+          "kind": "outer_ci_artifact_archive"
+        },
+        {
+          "id": 11334096982,
+          "name": "backend-postgres-98b7d53c3193765e792e5a756fff02a87b5948b8",
+          "size_bytes": 48051,
+          "sha256": "f0b30a6c84df25e11abd4190fae63242b038f09f95d3f0a7a4a7101d2bdceee9",
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284138175/artifacts/11334096982",
+          "expires_at": "2026-10-19T08:37:13Z",
+          "kind": "outer_ci_artifact_archive"
+        },
+        {
+          "id": 11333762608,
+          "name": "windows-native-receipts-98b7d53c3193765e792e5a756fff02a87b5948b8",
+          "size_bytes": 541621,
+          "sha256": "b4d4d9e46558c4d5b7d1fe070b77597b090164501421d3715e0e4e074f139832",
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284138175/artifacts/11333762608",
+          "expires_at": "2026-10-19T08:35:12Z",
+          "kind": "outer_ci_artifact_archive"
+        },
+        {
+          "id": 11333273928,
+          "name": "windows-acceptance-98b7d53c3193765e792e5a756fff02a87b5948b8",
+          "size_bytes": 161705892,
+          "sha256": "e248ce586e0dc8ceec313dc947b5cb991bdd48dd9ba73743e75b42b77bfa0d28",
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284138175/artifacts/11333273928",
+          "expires_at": "2026-10-19T08:35:13Z",
+          "kind": "outer_ci_artifact_archive"
+        },
+        {
+          "id": 11333198775,
+          "name": "backend-file-98b7d53c3193765e792e5a756fff02a87b5948b8",
+          "size_bytes": 48335,
+          "sha256": "fd686e5b037a8223cf1f0bbc7b2a262f3b15a6fa706c3f712b43006a21abd7b7",
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284138175/artifacts/11333198775",
+          "expires_at": "2026-10-19T08:35:17Z",
+          "kind": "outer_ci_artifact_archive"
+        },
+        {
+          "id": 11333054745,
+          "name": "frontend-98b7d53c3193765e792e5a756fff02a87b5948b8",
+          "size_bytes": 1529950,
+          "sha256": "f6b246d173e0decbf59f4c3c7ed1a18a5f0bda8d1e22a7c9e30140930477a739",
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37284138175/artifacts/11333054745",
+          "expires_at": "2026-10-19T08:33:36Z",
+          "kind": "outer_ci_artifact_archive"
+        }
+      ],
+      "receipt_qualification": "Permanent exact 98b CI/native/PG/provenance receipts and six screenshot files are listed in evidence. Documentation worker inspected latest native eleven-command PASS and ten specialized PG PASS cases, and checked every screenshot SHA256/size. Integration lead verified terminal runs and archive digests and visually reviewed all six screenshots. Outer archive SHA256s are not inner acceptance-ZIP digests.",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW_FINAL_INCREMENT.md",
+        "docs/delivery/dot-astra-rc-r2/evidence/screenshots/manifest.json",
+        "docs/delivery/dot-astra-rc-r2/writing-goal-layout-work.md",
+        "docs/delivery/dot-astra-rc-r2/evidence/ci-98b.json",
+        "docs/delivery/dot-astra-rc-r2/evidence/ci-98b-native-smoke.json",
+        "docs/delivery/dot-astra-rc-r2/evidence/ci-98b-pg-controls.json",
+        "docs/delivery/dot-astra-rc-r2/evidence/ci-98b-application-provenance.json",
+        "docs/delivery/dot-astra-rc-r2/evidence/ci-98b-host-provenance.json"
+      ],
+      "source_provenance": {
+        "qualification": "Exact98b latest source is tree-equal to independent 1c19. The separate93d package-source inventory check matched232 backend and 3 Host files after Windows LF-to-CRLF normalization; it is not literal Git blob byte equality or automatically relabeled as a fresh98b inventory comparison.",
+        "historical_comparison_evidence": "docs/delivery/dot-astra-rc-r2/evidence/ci-93d-provenance-check.json"
+      }
+    },
+    "D033-STRICTMODE-FOCUSED": {
+      "revision": "d03399ee7d4b183173be47e5336b9bc4e0bd30b0",
+      "tree": "e2dcef339c3e040130801e5e2608eb8f7af8a62c",
+      "state": "PASS",
+      "results": {
+        "focused_passed": 56,
+        "additional_strictmode_tests": 4,
+        "preserved_independent_assertions": 3
+      },
+      "source": "Worker receipts independently corroborated by the separate INDEPENDENT-D033 review.",
+      "qualification": "Focused passing tests do not transfer bbb complete-suite or 55a hosted results to d033.",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/revision-history-work.md",
+        "docs/delivery/dot-astra-rc-r2/evidence/revision-history-strictmode.xml",
+        "docs/delivery/dot-astra-rc-r2/evidence/revision-history-strictmode.txt",
+        "docs/delivery/dot-astra-rc-r2/evidence/revision-history-strictmode-typecheck.txt"
+      ]
+    },
+    "INTERMEDIATE-HOSTED-55A": {
+      "revision": "55a9082dbd3655c39a9b23bd4da19fedb3373072",
+      "source_equivalent_local_revision": "bbb55d10ac57de123e138a51510efd846ee42aee",
+      "tree": "9280bee5f82c6843fef15154080f5dc1a89f87a0",
+      "state": "SUPERSEDED_CANCELLED",
+      "push_run_id": 37281198873,
+      "push_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37281198873",
+      "pr_run_id": 37281203870,
+      "pr_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37281203870",
+      "pr_merge_checkout": "a48d6915927fe9b7b135d4373c65c7b7cd09fdab",
+      "reported_pr_base_prefix": "fed2404",
+      "results": {
+        "windows_host_job_id": 111669455963,
+        "windows_host_compile": "PASS",
+        "selected_sdk": "8.0.424",
+        "native_contracts_passed": 59,
+        "windows_full_package_job_id": 111669455960,
+        "windows_full_package": "Acceptance ZIP build succeeded; native smoke did not complete before normal cancellation by replacement 93daeb97 publication. CANCELLED/incomplete native smoke is not a pass.",
+        "postgres": {
+          "state": "PASS",
+          "passed": 2144,
+          "skipped": 37,
+          "job_id": 111669455843,
+          "new_pg_cases_passed_without_skip": 10,
+          "artifact_id": 11332517596,
+          "artifact_sha256": "178c927c13961b457d1e14b3d7dc1403d1c634635c1dfe0a599edd26c1ecd445"
+        },
+        "browser_business": "FAILED after reload navigation before second export; previous Draft/Diff/Accept/restore/style/comments/conflict/first export steps passed. b0 helper synchronization correction requires hosted rerun.",
+        "file": {
+          "state": "PASS",
+          "passed": 2136,
+          "skipped": 45
+        },
+        "frontend": {
+          "passed": 568,
+          "type_build_tokens": "PASS"
+        },
+        "browser_geometry_and_local_ai": {
+          "passed": 9
+        },
+        "browser_export": {
+          "passed": 1
+        }
+      },
+      "qualification": "Branch/PR readback confirmed by integration lead. This is bbb source, before the new d033 StrictMode repair. It is not final candidate CI."
+    },
+    "INDEPENDENT-D033": {
+      "revision": "d03399ee7d4b183173be47e5336b9bc4e0bd30b0",
+      "tree": "e2dcef339c3e040130801e5e2608eb8f7af8a62c",
+      "state": "PASS_WITH_SCOPE_LIMITS",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW_INCREMENTAL.md"
+      ],
+      "results": {
+        "unchanged_independent_assertions": {
+          "passed": 3
+        },
+        "all_history_tests_under_strictmode": {
+          "passed": 23
+        },
+        "frontend": {
+          "passed": 575,
+          "files": 110
+        },
+        "agent_timer_and_dispatch": {
+          "passed": 90
+        },
+        "typecheck": "PASS",
+        "design_token_lint": {
+          "state": "PASS",
+          "files": 42
+        },
+        "production_build": "PASS",
+        "source_integrity": {
+          "tracked_files_byte_identical": 1324
+        }
+      },
+      "qualification": "StrictMode P2 closed; no additional concrete unresolved defect in this increment. Real React/QueryClient/App under jsdom, synthetic backend. Full File suite not rerun for the frontend-only fix; backend source/tests/workflow byte-identical to bbb independent 2135/46 run. Counts overlap; final hosted/native/user acceptance remain separate."
+    },
+    "B0-BROWSER-NAVIGATION": {
+      "revision": "b0cb9723cebaafb1e62d0f2bccd466e2efd6d5ad",
+      "tree": "8b19ed6c0da3fc1511aa70169403135a718e27c6",
+      "state": "PASS_HOSTED_AT_93D_AND_98B",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/browser-ci-repair.md",
+        "frontend/tests/e2e/r2-business.spec.ts"
+      ],
+      "qualification": "55a business reached second export after reload. Immediate locator.count() raced React mount; helper now waits for existing accessible navigation to be visible. Product journey/export/snapshot/download assertions are unchanged. This is separate from the closed StrictMode production defect."
+    },
+    "871-NATIVE-SMOKE-CONTROLS": {
+      "revision": "87127a5020c2c8d9463b4b631fe77fd0aacb3115",
+      "tree": "09d9ebb78e4a987344546535cbd02ca1acfa35dc",
+      "state": "PASS_FOCUSED_AND_SUBSEQUENT_NATIVE_EXECUTION",
+      "source": "Lead-reported 40 focused passes; source/test changes and explanatory input document inspected.",
+      "evidence": [
+        "docs/R2_WINDOWS_BASE_INPUTS.md",
+        "scripts/verify_windows_base.py",
+        "tests/test_r2_windows_native_verifier.py",
+        ".github/workflows/cloud-ci.yml",
+        "frontend/tests/e2e/r2-business.spec.ts"
+      ],
+      "results": {
+        "focused_passed": 40,
+        "base_input_cases": 29,
+        "new_verifier_cases": 11,
+        "verifier_test_functions": 10
+      },
+      "qualification": "40 collected focused cases comprise29 base-input cases and 11 verifier cases (10 functions plus parametrization), not12 new cases. Synthetic controls stay separate from the actual 93d Windows smoke now recorded in HOSTED-93DAEB. Browser first-reload history assertion retained."
+    },
+    "HOSTED-93DAEB": {
+      "requested_source_revision": "87127a5020c2c8d9463b4b631fe77fd0aacb3115",
+      "requested_source_tree": "09d9ebb78e4a987344546535cbd02ca1acfa35dc",
+      "published_branch_sha": "93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+      "checkout_sha": "93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+      "run_id": 37282974046,
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046",
+      "state": "PASS_ALL_FIVE_HOSTED_LANES",
+      "qualification": "Both push 37282974046 and PR 37282980028 completed all five lanes successfully. Push checkout 93daeb97 and PR merge checkoutd4cf7526 are distinct. Native receipt explicitly records93daeb97 and SDK 8.0.424. This full pass does not automatically certify the later CSS/layout source 1c19d83d.",
+      "pr_run_id": 37282980028,
+      "pr_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282980028",
+      "execution_status": "COMPLETED_SUCCESS",
+      "revision": "93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+      "tree": "09d9ebb78e4a987344546535cbd02ca1acfa35dc",
+      "pr_merge_checkout": "d4cf75265ecb829401d1ecfdad1ce3792a17e675",
+      "reported_pr_base_prefix": "fed2404",
+      "push_conclusion": "success",
+      "pr_conclusion": "success",
+      "results": {
+        "file": {
+          "passed": 2147,
+          "skipped": 45
+        },
+        "postgres": {
+          "passed": 2155,
+          "skipped": 37,
+          "actual_server": "16.15"
+        },
+        "frontend": {
+          "passed": 575,
+          "files": 110
+        },
+        "typecheck": "PASS",
+        "production_build": "PASS_WITH_EXISTING_LARGE_CHUNK_WARNING",
+        "design_token_lint": "PASS",
+        "geometry_local_ai": {
+          "passed": 9
+        },
+        "business_browser": {
+          "passed": 2
+        },
+        "export_browser": {
+          "passed": 1
+        },
+        "windows_host": {
+          "state": "PASS",
+          "sdk": "8.0.424",
+          "native_contracts_passed": 59
+        },
+        "windows_package": {
+          "state": "PASS_UNSIGNED_INTERNAL_PACKAGE",
+          "public_release": false
+        },
+        "windows_native_base": {
+          "state": "PASS",
+          "command_count": 11,
+          "all_exit_codes": 0,
+          "python": "3.12.9",
+          "python_isolated": true,
+          "wheels": 27,
+          "psycopg_implementation": "binary",
+          "postgres": "16.15",
+          "pgcrypto": "PASS",
+          "utf8_roundtrip": "PASS",
+          "custom_dump_new_database_restore": "PASS",
+          "packaged_app_import": "PASS",
+          "owned_cluster_stop": "PASS",
+          "crt": "Hosted System32 VC++ runtime observed and hashed; external prerequisite, not evidence of bundled CRT.",
+          "interactive_desktop": "NOT_RUN",
+          "user_acceptance": "NOT_RUN"
+        }
+      },
+      "artifacts": [
+        {
+          "id": 11333730134,
+          "name": "windows-acceptance-93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+          "size_bytes": 161705903,
+          "sha256": "f7aa633e371310016ba3fd63082f94697fce1942deeed9e1e92769579f46dcdf",
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046/artifacts/11333730134",
+          "expires_at": "2026-10-19T08:24:51Z",
+          "kind": "outer_ci_artifact_archive"
+        },
+        {
+          "id": 11333555334,
+          "name": "backend-file-93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+          "size_bytes": 48589,
+          "sha256": "56d0d062924fee8e92a65d91a9502fa25dc79bb2dd11fc2bb79331903ae71a49",
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046/artifacts/11333555334",
+          "expires_at": "2026-10-19T08:25:11Z",
+          "kind": "outer_ci_artifact_archive"
+        },
+        {
+          "id": 11333231658,
+          "name": "windows-native-receipts-93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+          "size_bytes": 541583,
+          "sha256": "ef1273f71c5429d5e22744c2aaec8d47507c666806ebc61a7661ca67d7428c75",
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046/artifacts/11333231658",
+          "expires_at": "2026-10-19T08:24:50Z",
+          "kind": "outer_ci_artifact_archive"
+        },
+        {
+          "id": 11333063167,
+          "name": "backend-postgres-93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+          "size_bytes": 48009,
+          "sha256": "f5fbfcc9830711f5ee9a8ee76e9c1bef5e87b98f8d32590d16fc53b26299687d",
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046/artifacts/11333063167",
+          "expires_at": "2026-10-19T08:26:19Z",
+          "kind": "outer_ci_artifact_archive"
+        },
+        {
+          "id": 11333003685,
+          "name": "frontend-93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+          "size_bytes": 1540855,
+          "sha256": "3cb1fd7c9975b6ca58a54a8ecc30fd0ec810d853f433e27446c62be587fd8bbe",
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046/artifacts/11333003685",
+          "expires_at": "2026-10-19T08:22:26Z",
+          "kind": "outer_ci_artifact_archive"
+        },
+        {
+          "id": 11332199493,
+          "name": "windows-host-93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+          "size_bytes": 531991,
+          "sha256": "b454761ce301dc6f988d2209b083bae8313dd54312ed7e161ebdb3752985272e",
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37282974046/artifacts/11332199493",
+          "expires_at": "2026-10-19T08:22:39Z",
+          "kind": "outer_ci_artifact_archive"
+        }
+      ],
+      "receipt_qualification": "Verified safe repository receipts listed in evidence preserve exact run/source/native/artifact facts. Documentation worker inspected native receipt and revision plus provenance summary. Archive SHA256 values identify outer CI artifact archives; hashes of source/input/package manifests are separately recorded. Artifacts have2026-10-19 expiry, distinct from permanent Git evidence.",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/evidence/ci-93d.json",
+        "docs/delivery/dot-astra-rc-r2/evidence/ci-93d-native-smoke.json",
+        "docs/delivery/dot-astra-rc-r2/evidence/ci-93d-host-provenance.json",
+        "docs/delivery/dot-astra-rc-r2/evidence/ci-93d-application-provenance.json",
+        "docs/delivery/dot-astra-rc-r2/evidence/ci-93d-provenance-check.json"
+      ],
+      "source_provenance": {
+        "backend_files": 232,
+        "desktophost_files": 3,
+        "unexpected": 0,
+        "comparison": "Git source matches staged source after documented Windows checkout LF-to-CRLF transformation; not literal Git blob byte equality.",
+        "package_inventory_files": 5625,
+        "base_inventory_files": 4876,
+        "manifests": {
+          "package/acceptance-package-manifest.json": "1188f181c61919c28878813ed6777f16f089374ad829a822d9951c116d71081e",
+          "base/base-input-provenance.json": "c64a25060af42ce303dc87a84252e05e2dcce7f37143400b329d22056f69a9a7",
+          "package/application-provenance.json": "e16c7028a190cb31b2fb0de1a990a974321c672e1a62f1cb0dec9ef88042a138",
+          "package/desktophost-provenance.json": "c70f25a8b9de6aaddae9c4ed959142af0e1551927cccf1817d6a103546160918",
+          "package/desktophost-source-manifest.json": "497b86fbc326374366d8f728a2f695efd5896745ae42b28c0206eec76a936deb",
+          "package/desktophost-publish-manifest.json": "d3d4434bd3211e9d3aa7a937409ea91985ef0827e184a797503df7c5a262b2f3"
+        }
+      }
+    },
+    "LAYOUT-1C19-FOCUSED": {
+      "revision": "1c19d83d870f325cb6af1d182573b1e8b2a47a29",
+      "tree": "f6c4a84c5ff0d1b2639b537af1ea287611935fd4",
+      "state": "PASS_FOCUSED_AND_FINAL_HOSTED_GEOMETRY",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/writing-goal-layout-work.md",
+        "docs/delivery/dot-astra-rc-r2/evidence/writing-goal-layout.txt",
+        "docs/delivery/dot-astra-rc-r2/evidence/writing-goal-layout.xml",
+        "docs/delivery/dot-astra-rc-r2/evidence/writing-goal-typecheck.txt",
+        "docs/delivery/dot-astra-rc-r2/evidence/writing-goal-token-lint.txt",
+        "frontend/tests/writingGoalLayout.test.ts",
+        "frontend/tests/e2e/r2-business.spec.ts",
+        "frontend/src/novel/novel.css",
+        "docs/delivery/dot-astra-rc-r2/evidence/screenshots/manifest.json",
+        "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW_FINAL_INCREMENT.md"
+      ],
+      "results": {
+        "focused_layout_contracts": 9,
+        "new_cases": 4,
+        "typecheck": "PASS",
+        "token_lint": "PASS",
+        "business_cases_collected_not_executed": 2
+      },
+      "qualification": "Five scoped CSS lines retain existing tokens and behavior. Nine local contracts passed; actual 98b business tests subsequently passed all three-viewport label/input/containment/overlap assertions. Six real screenshots are hash-manifested and visually inspected by integration lead; LocalAI screenshots use synthetic API/runtime/hardware fixtures."
+    },
+    "INDEPENDENT-871-NATIVE": {
+      "revision": "87127a5020c2c8d9463b4b631fe77fd0aacb3115",
+      "tree": "09d9ebb78e4a987344546535cbd02ca1acfa35dc",
+      "state": "CLOSED_BY_FINAL_INCREMENT_REVIEW",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW_FINAL_INCREMENT.md"
+      ],
+      "qualification": "The native verifier increment was independently reviewed within fixed 1c19;40 input/native contracts and source controls pass, no new concrete finding. Actual Windows execution is separately PASS at 93d and final 98b."
+    },
+    "INDEPENDENT-FINAL-1C19": {
+      "revision": "1c19d83d870f325cb6af1d182573b1e8b2a47a29",
+      "tree": "f6c4a84c5ff0d1b2639b537af1ea287611935fd4",
+      "source_equivalent_remote": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+      "state": "PASS_NO_NEW_CONCRETE_FINDING",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW_FINAL_INCREMENT.md"
+      ],
+      "results": {
+        "native_input_contracts_passed": 40,
+        "scoped_ui_history_strictmode_layout_passed": 35,
+        "typecheck": "PASS",
+        "token_lint": {
+          "state": "PASS",
+          "files": 42
+        },
+        "production_build": "PASS",
+        "tracked_files_byte_identical": 1331
+      },
+      "qualification": "Bounded independent increment covers native timeout/owned cleanup, browser synchronization and scoped CSS; original assertions retained. No full backend rerun or local browser is claimed by reviewer. Report was written before final 98b browser CI; its then-pending CSS execution note is now resolved by the separately recorded final hosted PASS, not by editing review history."
+    },
+    "FINAL-SCREENSHOTS": {
+      "revision": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+      "run_id": 37284138175,
+      "artifact_id": 11333054745,
+      "artifact_sha256": "f6b246d173e0decbf59f4c3c7ed1a18a5f0bda8d1e22a7c9e30140930477a739",
+      "state": "PASS_CAPTURE_HASH_AND_VISUAL_REVIEW",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/evidence/screenshots/manifest.json",
+        "docs/delivery/dot-astra-rc-r2/evidence/screenshots/export-recovery-1366x768.png",
+        "docs/delivery/dot-astra-rc-r2/evidence/screenshots/export-recovery-1440x900.png",
+        "docs/delivery/dot-astra-rc-r2/evidence/screenshots/export-recovery-1920x1080.png",
+        "docs/delivery/dot-astra-rc-r2/evidence/screenshots/local-ai-1366.png",
+        "docs/delivery/dot-astra-rc-r2/evidence/screenshots/local-ai-1440.png",
+        "docs/delivery/dot-astra-rc-r2/evidence/screenshots/local-ai-1920.png"
+      ],
+      "screenshots": [
+        {
+          "path": "export-recovery-1366x768.png",
+          "sha256": "0a8e0aad8fb06c72d46e3279d7f0e9a6fd8dd3af7f3fa2bcb93ae6740c98d693",
+          "size": 180183
+        },
+        {
+          "path": "export-recovery-1440x900.png",
+          "sha256": "09a0a14126affdc025664b6315d30cdb42a5563ebe5d7c20a5c331c32ad10b20",
+          "size": 218010
+        },
+        {
+          "path": "export-recovery-1920x1080.png",
+          "sha256": "5e8beb6a572a7c3476674a2fc7233108c24e1761ff1bcb71bc8eb2b23ebec644",
+          "size": 248313
+        },
+        {
+          "path": "local-ai-1366.png",
+          "sha256": "2ac443c5e423a6addf2d6ca05f3b115d2828af5385585046993feb45da5b8369",
+          "size": 148272
+        },
+        {
+          "path": "local-ai-1440.png",
+          "sha256": "8a082172a0fa51b0fdb990439cce5be4fbb77bd873a0b6182aeac0c49aca402f",
+          "size": 160727
+        },
+        {
+          "path": "local-ai-1920.png",
+          "sha256": "86a18e4901b0e43d3708cc2f3f2d3403b2e48b58a6aff49aafd8bcbdecdbdbbf",
+          "size": 177903
+        }
+      ],
+      "capture_boundaries": {
+        "export-recovery-*": "Actual File backend business journey with synthetic text and explicitly mocked model output; screenshot after download with independently scrollable panes.",
+        "local-ai-*": "Real browser rendering with synthetic API/hardware/runtime fixtures, including deliberate partial discovery and unavailable global capability state; not actual Windows hardware or GPU inference."
+      },
+      "verification": "Documentation worker checked all six file lengths and SHA256s; integration lead opened and visually inspected all six. Visual assertions passed in the actual final business/browser run. No real provider/GPU/interactive Windows screenshot claim."
+    }
+  },
+  "original_independent_repairs": {
+    "prior_frozen_sha": "eb16560988672bfbbf4a6c46431ddc4df6162f2d",
+    "findings": 7,
+    "prior_python_invariants": {
+      "failed": 9,
+      "passed": 1
+    },
+    "prior_ui_invariants": {
+      "failed": 1
+    },
+    "current_original_python_invariants": {
+      "passed": 10,
+      "scope": "Preserved unchanged original tests within the independently rerun 55-invariant expanded set at e38d1ecc."
+    },
+    "current_exact_ui_invariant": "PASS in the complete independently run 549-test UI suite at e38d1ecc; original stale-project assertion retained.",
+    "new_discovery_review": "All five original Discovery findings and later discovered final guards CLOSED at e38d1ecc; see INDEPENDENT_REVIEW.md.",
+    "independent_evidence": "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW.md",
+    "closed_at_revision": "e38d1eccff6c1aac02a836817c878f423df0479e"
+  },
+  "open_discovery_findings": [],
+  "closed_discovery_findings": [
+    {
+      "id": "DISCOVERY-REVIEW-01",
+      "description": "Ollama remote_host/remote_model entries can be classified local at the fixed snapshot. A loopback Ollama service can proxy a cloud model; endpoint locality alone is insufficient.",
+      "source": "app/model_center/discovery_probes.py; app/model_center/discovery.py; app/providers.py",
+      "affected_sections": [
+        2,
+        4,
+        6,
+        15,
+        22,
+        26
+      ],
+      "state": "CLOSED_INDEPENDENTLY_VERIFIED",
+      "required_check": "Capture actual dispatch; remote/unknown locality must issue zero generation calls, including raw legacy Ollama and auto-memory paths.",
+      "historical_snapshot": "547167e8abce15cad3495779f52e845310a0a1fe",
+      "closed_at_revision": "e38d1eccff6c1aac02a836817c878f423df0479e",
+      "closure": "Positive local GGUF/model/digest/completion evidence and remote_host/remote_model rejection apply to Discovery and legacy Ollama leaves; current locality is checked before actual prompt dispatch.",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW.md"
+      ]
+    },
+    {
+      "id": "DISCOVERY-REVIEW-02",
+      "description": "The fixed snapshot registers enabled local text models with streaming=False while the Writer route requires streaming. Discovery Enable therefore does not establish usable Writer selection.",
+      "source": "app/model_center/discovery_bridge.py LocalDiscoveryBridge.__call__/LocalTextAdapter",
+      "affected_sections": [
+        1,
+        4,
+        6,
+        19,
+        20,
+        26
+      ],
+      "state": "CLOSED_INDEPENDENTLY_VERIFIED",
+      "required_check": "Enabled discovered local model must execute through the actual Writer path. If output is buffered, label it buffered instead of claiming live token streaming.",
+      "historical_snapshot": "547167e8abce15cad3495779f52e845310a0a1fe",
+      "closed_at_revision": "e38d1eccff6c1aac02a836817c878f423df0479e",
+      "closure": "Enabled discovered text routes execute through the real normalized author node using explicitly buffered final deltas, not a real-time token-stream claim.",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW.md"
+      ]
+    },
+    {
+      "id": "DISCOVERY-REVIEW-03",
+      "description": "Rescan/model digest changes do not reliably revoke existing registration authority in the fixed snapshot.",
+      "source": "app/model_center/discovery.py scan/validate/registration lifecycle",
+      "affected_sections": [
+        2,
+        4,
+        5,
+        17,
+        19,
+        22,
+        26
+      ],
+      "state": "CLOSED_INDEPENDENTLY_VERIFIED",
+      "required_check": "Changed/vanished model identity after rescan must invalidate route and require current validation and explicit re-enable.",
+      "historical_snapshot": "547167e8abce15cad3495779f52e845310a0a1fe",
+      "closed_at_revision": "e38d1eccff6c1aac02a836817c878f423df0479e",
+      "closure": "Rescan and dispatch identity/capability drift revoke authority for Ollama, A1111, ComfyUI and GGUF; fresh validation and explicit Enable are required.",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW.md"
+      ]
+    },
+    {
+      "id": "DISCOVERY-REVIEW-04",
+      "description": "A Disable during a blocking validation/enable callback can be overwritten by the late callback in the fixed snapshot.",
+      "source": "app/model_center/discovery.py validate/enable/disable; frontend/src/ui/LocalAiDiscovery.tsx",
+      "affected_sections": [
+        2,
+        17,
+        19,
+        20,
+        22,
+        26
+      ],
+      "state": "CLOSED_INDEPENDENTLY_VERIFIED",
+      "required_check": "Control epoch/CAS: Disable, removal or configuration changes win over older validate/enable results; no subsequent dispatch.",
+      "historical_snapshot": "547167e8abce15cad3495779f52e845310a0a1fe",
+      "closed_at_revision": "e38d1eccff6c1aac02a836817c878f423df0479e",
+      "closure": "Control epochs and final authority callbacks ensure newer Disable/remove/configuration beats older validation/Enable completion and prevents subsequent dispatch.",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW.md"
+      ]
+    },
+    {
+      "id": "DISCOVERY-REVIEW-05",
+      "description": "External llama.cpp model alias association can be validated using a filename fallback but dispatched with the internal candidate identifier in the fixed snapshot.",
+      "source": "app/model_center/discovery.py external LLAMA_CPP validation; app/model_center/discovery_bridge.py LocalTextAdapter",
+      "affected_sections": [
+        5,
+        6,
+        14,
+        19,
+        26
+      ],
+      "state": "CLOSED_INDEPENDENTLY_VERIFIED",
+      "required_check": "Validate an external runtime advertised model alias and assert actual request.model matches the validated upstream identity.",
+      "historical_snapshot": "547167e8abce15cad3495779f52e845310a0a1fe",
+      "closed_at_revision": "e38d1eccff6c1aac02a836817c878f423df0479e",
+      "closure": "External llama sends the actually validated advertised upstream alias; Comfy binds the selected checkpoint to the exact loader field.",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW.md"
+      ]
+    }
+  ],
+  "coverage": {
+    "original_feature_ids": 143,
+    "work_packages": 19,
+    "local_ai_supplement_sections": 28
+  },
+  "artifacts": [
+    "FEATURE_READINESS_MATRIX.md",
+    "FEATURE_READINESS_MATRIX.json",
+    "FINAL_REPORT.md",
+    "TEST_RESULTS.md",
+    "RELEASE_READINESS.md",
+    "CHECKPOINT.json"
+  ],
+  "next_actions": [
+    "Lead publishes documentation/evidence-only commit, reads back actual delivery SHA and follows that separate head’s CI; final PR body/delivery message records it.",
+    "User may perform bounded internal desktop acceptance with backed-up/synthetic data and documented prerequisites. Do not infer release, model/GPU or interactive acceptance from engineering CI."
+  ],
+  "stop_boundaries": [
+    "No merge main",
+    "No formal Release",
+    "No production deployment",
+    "No real credentials or paid model execution without authorization",
+    "No irreversible user data changes"
+  ],
+  "not_run": [
+    "Real GPU/model/provider inference",
+    "Interactive Windows/WebView2/OS vault/Chinese IME",
+    "Clean installer/upgrade/uninstall and user-data retention",
+    "Package signing",
+    "User acceptance"
+  ],
+  "validation": {
+    "original_code_set_preserved": true,
+    "work_packages": 19,
+    "supplement_sections": 28,
+    "missing_referenced_paths": [],
+    "final_results_not_fabricated": true
+  },
+  "delivery_head_sha": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+  "delivery_tree_sha": "f6c4a84c5ff0d1b2639b537af1ea287611935fd4",
+  "new_independent_findings": [
+    {
+      "id": "REVISION-STRICTMODE-01",
+      "priority": "P2",
+      "found_at_revision": "bbb55d10ac57de123e138a51510efd846ee42aee",
+      "state": "CLOSED_INDEPENDENTLY_VERIFIED",
+      "description": "Actual React.StrictMode initial effect cleanup increments epoch, discarding the first revision-history response. Existing complete suite did not cover the initial StrictMode mount.",
+      "repair_revision": "d03399ee7d4b183173be47e5336b9bc4e0bd30b0",
+      "focused_passed": 56,
+      "next": "Retain unchanged repros and obtain exact final-head hosted browser/CI receipts; do not reopen old Discovery findings.",
+      "closed_at_revision": "d03399ee7d4b183173be47e5336b9bc4e0bd30b0",
+      "evidence": [
+        "docs/delivery/dot-astra-rc-r2/INDEPENDENT_REVIEW_INCREMENTAL.md"
+      ]
+    }
+  ],
+  "source_tree_equivalence_evidence": "docs/delivery/dot-astra-rc-r2/SOURCE_TREE_EQUIVALENCE.json",
+  "source_tree_equivalence_qualification": "Final engineering remote98b7d53c and independently reviewed local 1c19d83d share treef6c4a84c. Distinct commit metadata and PR merge1c10ecc0 are recorded, not substituted. Final documentation-only delivery SHA is intentionally external to its own files.",
+  "final_candidate_remote_sha": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+  "last_all_gate_tested_sha": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+  "final_tested_sha": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+  "documentation_delivery": {
+    "state": "PENDING_LEAD_READBACK_AND_DOCS_ONLY_CI",
+    "commit_sha": null,
+    "scope": "Subsequent documentation/evidence-only commit after tested engineering source 98b. Cannot embed its own future commit ID; final Draft PR body/user delivery message must provide the actual verified delivery SHA and docs-only-head CI. This does not make the completed 98b core gates unknown."
+  },
+  "final_commit_sha_scope": "Final tested engineering source, not the later documentation-only delivery commit. See documentation_delivery and the final Draft PR body for that separate identity."
+}

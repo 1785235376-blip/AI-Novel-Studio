@@ -103,6 +103,11 @@ def refresh_asset_provider(provider_id: str) -> bool:
         return False
     return True
 
+from .model_center.discovery import LocalDiscoveryService
+from .model_center.discovery_bridge import LocalDiscoveryBridge
+local_ai_discovery=LocalDiscoveryService(model_center_service, settings.data_path()/"model-center"/"local-discovery.json")
+local_ai_discovery.route_bridge=LocalDiscoveryBridge(local_ai_discovery, runtime, asset_provider_registry)
+
 screenplay_service=ScreenplayService(repositories.novels,repositories.chapters,asset_provider_registry)
 def refresh_video_provider(provider_id: str, endpoint: str, model_id: str, requires_credential: bool = True) -> bool:
     if provider_id == 'deterministic' or not endpoint or (requires_credential and not credential_vault.has(provider_id)):
@@ -118,8 +123,8 @@ asset_task_worker=AssetTaskWorker(screenplay_service)
 asset_library_service=AssetLibraryService(settings.data_path())
 import_review_service=ImportReviewService(settings.data_path())
 
-def _export_snapshot(novel_id: str, format: str):
-    return novel_service.export_snapshot(novel_id, asset_library=asset_library_service, format=format)
+def _export_snapshot(novel_id: str, format: str, permission_context: dict | None = None):
+    return novel_service.export_snapshot(novel_id, asset_library=asset_library_service, format=format, permission_context=permission_context)
 
 export_job_service=ExportJobService(
     settings.data_path(),

@@ -284,7 +284,7 @@ class PackagedProcessFactory:
         # the packaged migration runner can adopt and advance it.
         if not self._schema_exists(port):
             for migration in sorted(self.config.layout.migrations.glob("*.sql")):
-                if migration.name != "017_chapter_archive_state.sql":
+                if int(migration.name.split("_", 1)[0]) < 17:
                     _run(self._psql(port, self.config.database_name, ["-v", "ON_ERROR_STOP=1", "-f", str(migration)]))
 
     def _schema_exists(self, port: int) -> bool:

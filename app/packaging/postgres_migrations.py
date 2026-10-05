@@ -41,7 +41,10 @@ def load_packaged_migrations(migrations: Path) -> tuple[PackagedMigration, ...]:
     return (PackagedMigration.from_file(
         "0001_chapter_archive_state", "chapter archive state",
         migrations / "017_chapter_archive_state.sql",
-    ),)
+    ), PackagedMigration.from_file(
+        "0002_context_privacy", "durable fail-closed context privacy",
+        migrations / "018_context_privacy.sql",
+    ))
 
 
 _BASELINE_FINGERPRINT = {

@@ -1,0 +1,44 @@
+{
+  "source_commit": "98b7d53c3193765e792e5a756fff02a87b5948b8",
+  "run_id": 37284138175,
+  "artifact_id": 11333054745,
+  "artifact_sha256": "f6b246d173e0decbf59f4c3c7ed1a18a5f0bda8d1e22a7c9e30140930477a739",
+  "synthetic_data_only": true,
+  "screenshots": [
+    {
+      "path": "export-recovery-1366x768.png",
+      "sha256": "0a8e0aad8fb06c72d46e3279d7f0e9a6fd8dd3af7f3fa2bcb93ae6740c98d693",
+      "size": 180183
+    },
+    {
+      "path": "export-recovery-1440x900.png",
+      "sha256": "09a0a14126affdc025664b6315d30cdb42a5563ebe5d7c20a5c331c32ad10b20",
+      "size": 218010
+    },
+    {
+      "path": "export-recovery-1920x1080.png",
+      "sha256": "5e8beb6a572a7c3476674a2fc7233108c24e1761ff1bcb71bc8eb2b23ebec644",
+      "size": 248313
+    },
+    {
+      "path": "local-ai-1366.png",
+      "sha256": "2ac443c5e423a6addf2d6ca05f3b115d2828af5385585046993feb45da5b8369",
+      "size": 148272
+    },
+    {
+      "path": "local-ai-1440.png",
+      "sha256": "8a082172a0fa51b0fdb990439cce5be4fbb77bd873a0b6182aeac0c49aca402f",
+      "size": 160727
+    },
+    {
+      "path": "local-ai-1920.png",
+      "sha256": "86a18e4901b0e43d3708cc2f3f2d3403b2e48b58a6aff49aafd8bcbdecdbdbbf",
+      "size": 177903
+    }
+  ],
+  "capture_boundaries": {
+    "export-recovery-*": "Actual File backend business journey with synthetic text and explicitly mocked model output; screenshot after download with independently scrollable panes.",
+    "local-ai-*": "Real browser rendering with synthetic API/hardware/runtime fixtures, including deliberate partial discovery and unavailable global capability state; not actual Windows hardware or GPU inference."
+  },
+  "visual_review": "All six screenshots opened and inspected; goal fields stack inside inspector after scoped CSS repair; no whole-AppShell redesign."
+}

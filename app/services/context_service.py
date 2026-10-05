@@ -33,10 +33,10 @@ class ContextService:
         result["context_pack_v2"]=ContextPackV2Builder(self.context_policy_token_budget).build(candidates,enabled=True,cloud=cloud,query=instruction,character_ids=state.get("active_characters",[]),current_chapter=result.get("chapter")).model_dump(mode="json")
         return result
 
-    def _narrative_context(self,base,novel_id,chapter_number):
+    def _narrative_context(self,base,novel_id,chapter_number,cloud=False):
         if not self.enable_narrative_context or self.narrative_repository is None:return None
         chapter=self.chapters.get(f"{novel_id}:{chapter_number}");active=base.get("current_story_state",{}).get("active_characters",[])
-        return NarrativeContextBuilder(self.narrative_repository,self.narrative_token_budget).build(novel_id,chapter["id"],chapter["version"],active)
+        return NarrativeContextBuilder(self.narrative_repository,self.narrative_token_budget).build(novel_id,chapter["id"],chapter["version"],active,cloud=cloud)
 
     def _context_policy(self,base,narrative=None,lore_memory=None,cloud=False):
         if not self.enable_lore_context and not self.enable_narrative_context:return None
@@ -54,14 +54,17 @@ class ContextService:
         return policy.apply(items,cloud)
 
     def build_envelope(self, novel_id, chapter_number, instruction="", cloud=False, operation=""):
-        base = build_context_from_sources(
-            self.novels.get_context_sources(novel_id), novel_id, chapter_number, instruction, cloud
-        )
+        sources = self.novels.get_context_sources(novel_id)
+        base = build_context_from_sources(sources, novel_id, chapter_number, instruction, cloud)
         if not self.lore:return None
+        # Selection and omission auditing are local. Selecting only from the
+        # already filtered base would hide relevant restricted-memory decisions.
+        selection_base = build_context_from_sources(sources, novel_id, chapter_number, instruction, False) if cloud else base
         envelope=LoreContextBuilder(self.lore).build(
-            base, chapter_number, cloud, instruction=instruction, operation=operation
+            selection_base, chapter_number, cloud, instruction=instruction, operation=operation
         )
-        envelope.narrative_context=self._narrative_context(base,novel_id,chapter_number);envelope.context_policy=self._context_policy(base,envelope.narrative_context.model_dump(mode="json") if envelope.narrative_context else None,envelope.lore_memory.model_dump(mode="json") if self.enable_lore_context else None,cloud);return envelope
+        envelope.base_context = base
+        envelope.narrative_context=self._narrative_context(base,novel_id,chapter_number,cloud);envelope.context_policy=self._context_policy(base,envelope.narrative_context.model_dump(mode="json") if envelope.narrative_context else None,envelope.lore_memory.model_dump(mode="json") if self.enable_lore_context else None,cloud);return envelope
 
     def context_from_envelope(self, envelope: ContextEnvelope | None, base: dict | None = None, cloud=False, instruction=""):
         if envelope is None:
@@ -79,7 +82,7 @@ class ContextService:
         base=build_context_from_sources(
             self.novels.get_context_sources(novel_id), novel_id, chapter_number, instruction, cloud
         )
-        narrative=self._narrative_context(base,novel_id,chapter_number)
+        narrative=self._narrative_context(base,novel_id,chapter_number,cloud)
         narrative_data=narrative.model_dump(mode="json") if narrative is not None else None;policy=self._context_policy(base,narrative_data,None,cloud);result=dict(base)
         if narrative_data is not None:result["narrative_context"]=narrative_data
         if policy is not None:result["context_policy"]=policy.model_dump(mode="json")

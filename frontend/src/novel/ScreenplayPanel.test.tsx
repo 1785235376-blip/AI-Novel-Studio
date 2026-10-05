@@ -78,7 +78,7 @@ describe("ScreenplayPanel Motion Prompt contract", () => {
   it("initializes from a saved prompt and syncs a genuinely persisted update", async () => {
     const {client} = renderPanel();
     expect(await screen.findByDisplayValue(savedPrompt)).toBeTruthy();
-    act(() => client.setQueryData(["screenplays", novelId], [screenplay(transition("transition-1", "persisted update"))]));
+    act(() => client.setQueriesData({queryKey:["screenplays", novelId]}, [screenplay(transition("transition-1", "persisted update"))]));
     expect(await screen.findByDisplayValue("persisted update")).toBeTruthy();
   });
 
@@ -232,7 +232,7 @@ describe("ScreenplayPanel Motion Prompt contract", () => {
     const {client} = renderPanel();
     fireEvent.click(await screen.findByRole("button", {name: "生成 Motion Prompt"}));
     expect(await screen.findByText("Motion Prompt 生成失败。")).toBeTruthy();
-    act(() => client.setQueryData(["screenplays", novelId], [screenplay(transition("transition-2", "second saved prompt"))]));
+    act(() => client.setQueriesData({queryKey:["screenplays", novelId]}, [screenplay(transition("transition-2", "second saved prompt"))]));
     expect(await screen.findByDisplayValue("second saved prompt")).toBeTruthy();
     expect(screen.queryByText("Motion Prompt 生成失败。")).toBeNull();
   });

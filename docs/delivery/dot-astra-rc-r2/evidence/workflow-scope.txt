@@ -1,0 +1,16 @@
+ISOLATED_TEST_ROOT=/workspace/scratch/b8734129d01d/r2-test.EtOdXj
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/ai-novel-r2/frontend
+
+ ✓ tests/uiContracts.test.ts (5 tests) 3ms
+ ✓ src/novel/WorkflowPanel.independent-audit.test.tsx (1 test) 42ms
+ ✓ src/novel/AgentQueuePanel.test.tsx (2 tests) 165ms
+ ✓ src/novel/WorkflowPanel.test.tsx (2 tests) 207ms
+ ✓ src/novel/WorkflowScopeGuards.test.tsx (20 tests) 346ms
+
+ Test Files  5 passed (5)
+      Tests  30 passed (30)
+   Start at  23:34:54
+   Duration  1.08s (transform 227ms, setup 0ms, collect 745ms, tests 763ms, environment 1.27s, prepare 314ms)
+
+JUNIT report written to /workspace/scratch/b8734129d01d/ai-novel-r2/docs/delivery/dot-astra-rc-r2/evidence/workflow-scope.xml

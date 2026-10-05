@@ -35,8 +35,19 @@ def sample_novel_source() -> Path:
     return _sample_novel_source()
 
 
+def postgres_test_environment(request, environment: dict[str, str]) -> dict[str, str]:
+    """Opt in only marked PostgreSQL contracts to a dedicated test endpoint."""
+    if (
+        environment.get("STORAGE_BACKEND", "file").strip().lower() == "postgres"
+        and request.node.get_closest_marker("postgres_backend_only")
+        and (url := environment.get("TEST_POSTGRES_DATABASE_URL"))
+    ):
+        return {"TEST_POSTGRES_DATABASE_URL": url, "DATABASE_URL": url}
+    return {}
+
+
 @pytest.fixture(autouse=True)
-def restore_global_settings():
+def restore_global_settings(request):
     """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
 
     Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
@@ -55,11 +66,13 @@ def restore_global_settings():
         for key, value in runtime.__dict__.items()
     }
     original_store = dict(credential_store._values)
+    test_database_env = postgres_test_environment(request, os.environ)
     removed_env: dict[str, str] = {}
     try:
         for key in _PROVIDER_AND_DATABASE_ENV:
             if key in os.environ:
                 removed_env[key] = os.environ.pop(key)
+        os.environ.update(test_database_env)
         yield
     finally:
         for key in _PROVIDER_AND_DATABASE_ENV:

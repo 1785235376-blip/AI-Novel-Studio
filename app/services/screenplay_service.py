@@ -1,5 +1,10 @@
 from datetime import datetime,timezone,timedelta
 from uuid import uuid4
+from ..repositories.screenplay_versions import check_screenplay_version
+import copy
+import threading
+import hashlib
+import json
 from ..asset_providers import AssetGenerationRequest,AssetProviderRegistry,VideoGenerationRequest,VideoProvider,DeterministicVideoProvider
 
 def utc():return datetime.now(timezone.utc).isoformat()
@@ -74,93 +79,140 @@ def require_motion_frames(task: dict) -> None:
         raise ValueError("motion task requires traceable start_frame and end_frame before execution")
 
 class ScreenplayService:
-    def __init__(self,novels,chapters,asset_providers=None,video_providers=None):self.novels=novels;self.chapters=chapters;self.asset_providers=asset_providers or AssetProviderRegistry();self.video_providers=video_providers or {'deterministic':DeterministicVideoProvider()}
+    def __init__(self,novels,chapters,asset_providers=None,video_providers=None):self.novels=novels;self.chapters=chapters;self.asset_providers=asset_providers or AssetProviderRegistry();self.video_providers=video_providers or {'deterministic':DeterministicVideoProvider()};self._motion_lock=threading.RLock();self.asset_library=None
+    def _save_screenplay(self,novel_id,screenplay):
+        return self.novels.save_screenplay(novel_id,screenplay,expected_version=int(screenplay.get("edit_version",0)))
+
+    def history(self,novel_id,screenplay_id):
+        current=next((row for row in self.list(novel_id) if row["id"]==screenplay_id),None)
+        if current is None: raise KeyError(screenplay_id)
+        rows=[*current.get("version_history",[]),{k:v for k,v in current.items() if k!="version_history"}]
+        return {"screenplay_id":screenplay_id,"current_version":current.get("edit_version",0),"items":rows}
+
     def register_video_provider(self,provider_id,provider):
         if not str(provider_id).strip() or not hasattr(provider,'generate'): raise ValueError('invalid video provider')
         self.video_providers[str(provider_id).strip()]=provider
-    def list(self,novel_id):return self.novels.list_screenplays(novel_id)
-    def create(self,novel_id,title=""):
+    def list(self,novel_id,*,branch_id=None):
+        rows=self.novels.list_screenplays(novel_id)
+        return rows if branch_id is None else [row for row in rows if row.get("branch_id")==branch_id]
+    def create(self,novel_id,title="",*,branch_id=None):
         novel=self.novels.get(novel_id);chapters=self.chapters.list(novel_id);now=utc();scenes=[]
         for sequence,summary in enumerate(chapters,1):
             chapter=self.chapters.get(summary["id"]);scenes.append({"id":str(uuid4()),"sequence":sequence,"source_chapter_id":chapter["id"],"source_version":chapter["version"],"heading":chapter["title"],"time":"未设定","location":"未设定","characters":[],"action":"待从章节提炼可见行动","dialogue":[],"emotion":"待设定","status":"DRAFT"})
         screenplay={"id":str(uuid4()),"novel_id":novel_id,"source_title":novel["title"],"title":title.strip() or f"{novel['title']} 影视剧本","status":"DRAFT","revision":1,"scenes":scenes,"created_at":now,"updated_at":now}
-        return self.novels.save_screenplay(novel_id,screenplay)
+        if branch_id is not None: screenplay["branch_id"]=branch_id
+        return self._save_screenplay(novel_id,screenplay)
     def update_scene(self,novel_id,screenplay_id,scene_id,payload):
         screenplay=next((row for row in self.list(novel_id) if row["id"]==screenplay_id),None)
         if screenplay is None:raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,payload.get("expected_version"))
         if screenplay["status"]!="DRAFT":raise ValueError("approved screenplay is frozen")
         scenes=list(screenplay["scenes"]);index=next((i for i,row in enumerate(scenes) if row["id"]==scene_id),None)
         if index is None:raise KeyError(scene_id)
         immutable={key:scenes[index][key] for key in ("id","sequence","source_chapter_id","source_version")};scenes[index]={**immutable,"heading":payload["heading"].strip(),"time":payload["time"].strip(),"location":payload["location"].strip(),"characters":[str(x).strip() for x in payload.get("characters",[]) if str(x).strip()],"action":payload["action"].strip(),"dialogue":payload.get("dialogue",[]),"emotion":payload["emotion"].strip(),"status":"DRAFT"}
-        updated={**screenplay,"scenes":scenes,"revision":screenplay["revision"]+1,"updated_at":utc()};return self.novels.save_screenplay(novel_id,updated)
-    def approve(self,novel_id,screenplay_id):
+        updated={**screenplay,"scenes":scenes,"revision":screenplay["revision"]+1,"updated_at":utc()};return self._save_screenplay(novel_id,updated)
+    def approve(self,novel_id,screenplay_id,expected_version=None):
         screenplay=next((row for row in self.list(novel_id) if row["id"]==screenplay_id),None)
         if screenplay is None:raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,expected_version)
         if screenplay["status"]!="DRAFT":raise ValueError("screenplay is already decided")
-        return self.novels.save_screenplay(novel_id,{**screenplay,"status":"APPROVED","updated_at":utc()})
-    def plan_shots(self,novel_id,screenplay_id):
+        return self._save_screenplay(novel_id,{**screenplay,"status":"APPROVED","updated_at":utc()})
+    def revise(self,novel_id,screenplay_id,expected_version=None,source_version=None):
+        """Fork an approved screenplay without modifying any approved assets.
+
+        A new draft starts from captured scenes, retaining chapter provenance.
+        Downstream shot/storyboard/transition and generation tasks stay on the
+        approved original; they must be reviewed/planned anew for this draft.
+        """
+        original=next((row for row in self.list(novel_id) if row["id"]==screenplay_id),None)
+        if original is None: raise KeyError(screenplay_id)
+        if original.get("status")!="APPROVED": raise ValueError("only approved screenplays can be revised")
+        check_screenplay_version(original,expected_version)
+        source=original
+        if source_version is not None:
+            source=next((row for row in self.history(novel_id,screenplay_id)["items"] if row.get("edit_version",0)==source_version),None)
+            if source is None: raise KeyError(source_version)
+        now=utc()
+        scenes=copy.deepcopy(source.get("scenes",[]))
+        for scene in scenes: scene["status"]="DRAFT"
+        revised={"id":str(uuid4()),"novel_id":novel_id,"title":original["title"],
+                 "source_title":original.get("source_title", ""),"status":"DRAFT","revision":1,
+                 "scenes":scenes,"created_at":now,"updated_at":now,
+                 "derived_from":{"screenplay_id":screenplay_id,"revision":source.get("revision"),"edit_version":source.get("edit_version",0),
+                                 "shot_revision":original.get("shot_revision"),"created_at":now}}
+        if original.get("branch_id") is not None: revised["branch_id"]=original["branch_id"]
+        return self._save_screenplay(novel_id,revised)
+    def plan_shots(self,novel_id,screenplay_id,expected_version=None):
         screenplay=next((row for row in self.list(novel_id) if row["id"]==screenplay_id),None)
         if screenplay is None:raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,expected_version)
         if screenplay["status"]!="APPROVED":raise ValueError("screenplay must be approved before shot planning")
         if screenplay.get("shots"):return screenplay
         shots=[]
         for scene in screenplay["scenes"]:
             shots.append({"id":str(uuid4()),"number":scene["sequence"]*10+1,"scene_id":scene["id"],"source_chapter_id":scene["source_chapter_id"],"shot_size":"MEDIUM","camera_angle":"EYE_LEVEL","camera_motion":"STATIC","subject_position":"待设计","action":scene["action"],"dialogue":scene["dialogue"],"sound_effect":"待设计","duration_seconds":5,"status":"DRAFT"})
-        return self.novels.save_screenplay(novel_id,{**screenplay,"shots":shots,"shot_revision":1,"updated_at":utc()})
+        return self._save_screenplay(novel_id,{**screenplay,"shots":shots,"shot_revision":1,"updated_at":utc()})
     def update_shot(self,novel_id,screenplay_id,shot_id,payload):
         screenplay=next((row for row in self.list(novel_id) if row["id"]==screenplay_id),None)
         if screenplay is None:raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,payload.get("expected_version"))
         if screenplay.get("shot_status")=="APPROVED":raise ValueError("approved shot plan is frozen")
         shots=list(screenplay.get("shots",[]));index=next((i for i,row in enumerate(shots) if row["id"]==shot_id),None)
         if index is None:raise KeyError(shot_id)
         immutable={key:shots[index][key] for key in ("id","number","scene_id","source_chapter_id")};shots[index]={**immutable,"shot_size":payload["shot_size"],"camera_angle":payload["camera_angle"],"camera_motion":payload["camera_motion"],"subject_position":payload["subject_position"],"action":payload["action"],"dialogue":payload.get("dialogue",[]),"sound_effect":payload["sound_effect"],"duration_seconds":max(1,min(600,int(payload["duration_seconds"]))),"status":"DRAFT"}
-        return self.novels.save_screenplay(novel_id,{**screenplay,"shots":shots,"shot_revision":int(screenplay.get("shot_revision",1))+1,"updated_at":utc()})
-    def approve_shots(self,novel_id,screenplay_id):
+        return self._save_screenplay(novel_id,{**screenplay,"shots":shots,"shot_revision":int(screenplay.get("shot_revision",1))+1,"updated_at":utc()})
+    def approve_shots(self,novel_id,screenplay_id,expected_version=None):
         screenplay=next((row for row in self.list(novel_id) if row["id"]==screenplay_id),None)
         if screenplay is None:raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,expected_version)
         if not screenplay.get("shots"):raise ValueError("shot plan is empty")
         if screenplay.get("shot_status")=="APPROVED":raise ValueError("shot plan is already approved")
-        return self.novels.save_screenplay(novel_id,{**screenplay,"shot_status":"APPROVED","updated_at":utc()})
-    def plan_storyboard(self,novel_id,screenplay_id):
+        return self._save_screenplay(novel_id,{**screenplay,"shot_status":"APPROVED","updated_at":utc()})
+    def plan_storyboard(self,novel_id,screenplay_id,expected_version=None):
         screenplay=next((row for row in self.list(novel_id) if row["id"]==screenplay_id),None)
         if screenplay is None:raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,expected_version)
         if screenplay.get("shot_status")!="APPROVED":raise ValueError("shot plan must be approved before storyboard")
         if screenplay.get("storyboard"):return screenplay
         cards=[{"id":str(uuid4()),"number":shot["number"],"shot_id":shot["id"],"scene_id":shot["scene_id"],"source_chapter_id":shot["source_chapter_id"],"frame_prompt":"待设计画面","composition":"待设计构图","color":"待设计色彩","status":"DRAFT"} for shot in screenplay.get("shots",[])]
-        return self.novels.save_screenplay(novel_id,{**screenplay,"storyboard":cards,"storyboard_revision":1,"updated_at":utc()})
+        return self._save_screenplay(novel_id,{**screenplay,"storyboard":cards,"storyboard_revision":1,"updated_at":utc()})
     def update_storyboard_card(self,novel_id,screenplay_id,card_id,payload):
         screenplay=next((row for row in self.list(novel_id) if row["id"]==screenplay_id),None)
         if screenplay is None:raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,payload.get("expected_version"))
         if screenplay.get("storyboard_status")=="APPROVED":raise ValueError("storyboard is frozen")
         cards=list(screenplay.get("storyboard",[]));index=next((i for i,row in enumerate(cards) if row["id"]==card_id),None)
         if index is None:raise KeyError(card_id)
         immutable={k:cards[index][k] for k in ("id","number","shot_id","scene_id","source_chapter_id")};cards[index]={**immutable,"frame_prompt":str(payload.get("frame_prompt","")).strip(),"composition":str(payload.get("composition","")).strip(),"color":str(payload.get("color","")).strip(),"status":"DRAFT"}
-        return self.novels.save_screenplay(novel_id,{**screenplay,"storyboard":cards,"storyboard_revision":int(screenplay.get("storyboard_revision",1))+1,"updated_at":utc()})
-    def approve_storyboard(self,novel_id,screenplay_id):
+        return self._save_screenplay(novel_id,{**screenplay,"storyboard":cards,"storyboard_revision":int(screenplay.get("storyboard_revision",1))+1,"updated_at":utc()})
+    def approve_storyboard(self,novel_id,screenplay_id,expected_version=None):
         screenplay=next((row for row in self.list(novel_id) if row["id"]==screenplay_id),None)
         if screenplay is None:raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,expected_version)
         if not screenplay.get("storyboard"):raise ValueError("storyboard is empty")
         if screenplay.get("storyboard_status")=="APPROVED":raise ValueError("storyboard is already approved")
-        return self.novels.save_screenplay(novel_id,{**screenplay,"storyboard_status":"APPROVED","updated_at":utc()})
-    def plan_transitions(self,novel_id,screenplay_id):
+        return self._save_screenplay(novel_id,{**screenplay,"storyboard_status":"APPROVED","updated_at":utc()})
+    def plan_transitions(self,novel_id,screenplay_id,expected_version=None):
         screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,expected_version)
         if screenplay.get("shot_status")!="APPROVED": raise ValueError("shot plan must be approved before transitions")
         if screenplay.get("transitions") is not None: return screenplay
         shots=screenplay.get("shots",[]); transitions=[]
         for prev,nxt in zip(shots,shots[1:]):
             transitions.append({"id":str(uuid4()),"from_shot_id":prev["id"],"to_shot_id":nxt["id"],"type":"CUT","duration_seconds":0,"note":"待设计","status":"DRAFT"})
-        return self.novels.save_screenplay(novel_id,{**screenplay,"transitions":transitions,"transition_revision":1,"updated_at":utc()})
+        return self._save_screenplay(novel_id,{**screenplay,"transitions":transitions,"transition_revision":1,"updated_at":utc()})
     def update_transition(self,novel_id,screenplay_id,transition_id,payload):
         screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,payload.get("expected_version"))
         if screenplay.get("transition_status")=="APPROVED": raise ValueError("transitions are frozen")
         rows=list(screenplay.get("transitions",[])); i=next((i for i,r in enumerate(rows) if r["id"]==transition_id),None)
         if i is None: raise KeyError(transition_id)
         immutable={k:rows[i][k] for k in ("id","from_shot_id","to_shot_id")}; new_prompt=str(payload.get("prompt",rows[i].get("prompt", ""))).strip(); history=list(rows[i].get("prompt_history",[])); old_prompt=str(rows[i].get("prompt","")).strip();
         if old_prompt and old_prompt != new_prompt: history.append({"prompt":old_prompt,"saved_at":utc()})
         rows[i]={**immutable,"type":str(payload.get("type","CUT")).strip() or "CUT","duration_seconds":max(0,min(30,int(payload.get("duration_seconds",0)))),"note":str(payload.get("note","")).strip(),"prompt":new_prompt,"prompt_history":history[-10:],"prompt_status":"EDITED","status":"DRAFT"}
-        return self.novels.save_screenplay(novel_id,{**screenplay,"transitions":rows,"transition_revision":int(screenplay.get("transition_revision",1))+1,"updated_at":utc()})
+        return self._save_screenplay(novel_id,{**screenplay,"transitions":rows,"transition_revision":int(screenplay.get("transition_revision",1))+1,"updated_at":utc()})
     def transition_prompt(self,novel_id,screenplay_id,transition_id):
         screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
@@ -207,7 +259,7 @@ class ScreenplayService:
         rows=list(screenplay.get('transitions',[])); index=next((i for i,r in enumerate(rows) if r['id']==transition_id),None)
         if index is None: raise KeyError(transition_id)
         rows[index]={**rows[index],'motion_prompt':str(motion_prompt).strip(),'motion_status':'PENDING'}
-        return self.novels.save_screenplay(novel_id,{**screenplay,'transitions':rows,'transition_revision':int(screenplay.get('transition_revision',1))+1,'updated_at':utc()})
+        return self._save_screenplay(novel_id,{**screenplay,'transitions':rows,'transition_revision':int(screenplay.get('transition_revision',1))+1,'updated_at':utc()})
     def create_motion_tasks(self,novel_id,screenplay_id):
         screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
@@ -216,8 +268,8 @@ class ScreenplayService:
             if row.get('motion_prompt') and row.get('id') not in existing:
                 configured=next(((provider_id,getattr(provider,'default_model','')) for provider_id,provider in self.video_providers.items() if provider_id!='deterministic' and getattr(provider,'health_check',lambda:False)()),(None,None))
                 start_frame,end_frame=self._frames_for_transition(screenplay,row)
-                tasks.append({'id':str(uuid4()),'transition_id':row['id'],'prompt':row['motion_prompt'],'provider_id':configured[0],'model_id':configured[1],'start_frame':start_frame,'end_frame':end_frame,'status':'PENDING','progress':0,'error':None if configured[0] else 'VIDEO_PROVIDER_NOT_CONFIGURED','created_at':utc()})
-        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':tasks,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+                tasks.append({'id':str(uuid4()),'transition_id':row['id'],'prompt':row['motion_prompt'],'privacy_level':'LOCAL_ONLY','provider_id':configured[0],'model_id':configured[1],'start_frame':start_frame,'end_frame':end_frame,'status':'PENDING','progress':0,'error':None if configured[0] else 'VIDEO_PROVIDER_NOT_CONFIGURED','created_at':utc()})
+        return self._save_screenplay(novel_id,{**screenplay,'motion_tasks':tasks,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
     def _frames_for_transition(self,screenplay,transition):
         from_id=str(transition.get('from_shot_id') or '')
         to_id=str(transition.get('to_shot_id') or '')
@@ -243,127 +295,272 @@ class ScreenplayService:
         if status == 'CANCELLED' and status != current: return self.cancel_motion_task(novel_id,screenplay_id,task_id)
         if status == 'PENDING' and status != current: return self.retry_motion_task(novel_id,screenplay_id,task_id)
         rows[index]={**rows[index],'status':status,'updated_at':utc()}
-        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
-    def update_motion_frames(self,novel_id,screenplay_id,task_id,start_frame=None,end_frame=None):
-        screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
-        if screenplay is None: raise KeyError(screenplay_id)
-        rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
-        if index is None: raise KeyError(task_id)
-        def validate(value):
-            if value is None or value == '': return value
-            value=str(value).strip()
-            if not is_traceable_frame(value): raise ValueError('frame must be an http(s) URL or a traceable asset/shot/storyboard reference')
-            return value
-        row=rows[index]; new_start=validate(start_frame) if start_frame is not None else row.get('start_frame'); new_end=validate(end_frame) if end_frame is not None else row.get('end_frame'); frame_history=list(row.get('frame_history',[]));
-        if row.get('start_frame')!=new_start or row.get('end_frame')!=new_end: frame_history.append({'start_frame':row.get('start_frame'),'end_frame':row.get('end_frame'),'changed_at':utc()})
-        rows[index]={**row,'start_frame':new_start,'end_frame':new_end,'frame_history':frame_history[-10:],'updated_at':utc()}
-        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+        return self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+    def update_motion_frames(self,novel_id,screenplay_id,task_id,start_frame=None,end_frame=None,constraints=None):
+        with self._motion_lock:
+            screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+            if screenplay is None: raise KeyError(screenplay_id)
+            rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
+            if index is None: raise KeyError(task_id)
+            if rows[index].get('status') not in {'PENDING','FAILED','CANCELLED'} or rows[index].get('remote_task_id'): raise ValueError('motion configuration is frozen during or after execution')
+            def validate(value):
+                if value is None or value == '': return value
+                value=str(value).strip()
+                if not is_traceable_frame(value): raise ValueError('frame must be an http(s) URL or a traceable asset/shot/storyboard reference')
+                return value
+            if constraints is not None:
+                if not isinstance(constraints,dict) or set(constraints)-{'duration_seconds','fps','aspect_ratio','camera_motion'}:raise ValueError('unsupported motion parameter')
+                if 'duration_seconds' in constraints and (isinstance(constraints['duration_seconds'],bool) or not isinstance(constraints['duration_seconds'],(int,float)) or not 0.1<=constraints['duration_seconds']<=120):raise ValueError('invalid motion duration')
+                if 'fps' in constraints and constraints['fps'] not in {12,24,25,30,60}:raise ValueError('invalid motion frame rate')
+                if 'aspect_ratio' in constraints and constraints['aspect_ratio'] not in {'16:9','9:16','1:1'}:raise ValueError('invalid motion aspect ratio')
+                if 'camera_motion' in constraints and (not isinstance(constraints['camera_motion'],str) or len(constraints['camera_motion'])>2000):raise ValueError('invalid camera motion')
+            row=rows[index]; new_start=validate(start_frame) if start_frame is not None else row.get('start_frame'); new_end=validate(end_frame) if end_frame is not None else row.get('end_frame'); frame_history=list(row.get('frame_history',[]));
+            if row.get('start_frame')!=new_start or row.get('end_frame')!=new_end: frame_history.append({'start_frame':row.get('start_frame'),'end_frame':row.get('end_frame'),'changed_at':utc()})
+            rows[index]={**row,'start_frame':new_start,'end_frame':new_end,'frame_history':frame_history[-10:],'constraints':constraints if constraints is not None else row.get('constraints',{}),'updated_at':utc()}
+            return self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+
     def update_motion_provider(self,novel_id,screenplay_id,task_id,provider_id,model_id):
-        screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+        with self._motion_lock:
+            screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+            if screenplay is None: raise KeyError(screenplay_id)
+            if provider_id not in self.video_providers: raise ValueError(f'video provider is not configured: {provider_id}')
+            rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
+            if index is None: raise KeyError(task_id)
+            if rows[index].get('status') not in {'PENDING','FAILED','CANCELLED'} or rows[index].get('remote_task_id'): raise ValueError('motion configuration is frozen during or after execution')
+            rows[index]={**rows[index],'privacy_level':'LOCAL_ONLY','cloud_approval_prompt_sha256':None,'provider_id':provider_id,'model_id':str(model_id).strip() or 'video-placeholder','updated_at':utc()}
+            return self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+
+    def _motion_record(self, novel_id, screenplay_id, task_id):
+        screenplay=next((row for row in self.list(novel_id) if row['id']==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
-        if provider_id not in self.video_providers: raise ValueError(f'video provider is not configured: {provider_id}')
-        rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
+        rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,row in enumerate(rows) if row['id']==task_id),None)
         if index is None: raise KeyError(task_id)
-        rows[index]={**rows[index],'provider_id':provider_id,'model_id':str(model_id).strip() or 'video-placeholder','updated_at':utc()}
-        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
-    def execute_motion_task(self,novel_id,screenplay_id,task_id):
-        screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
-        if screenplay is None: raise KeyError(screenplay_id)
-        rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
-        if index is None: raise KeyError(task_id)
-        task=rows[index]
-        if task.get('status')!='PENDING': raise ValueError('motion task must be PENDING before execution')
-        require_motion_frames(task)
-        provider_id=task.get('provider_id')
-        if not provider_id or provider_id=='deterministic':
-            failed_at=utc(); message='VIDEO_PROVIDER_NOT_CONFIGURED'
-            history=list(task.get('history',[])); history.append({'status':'PENDING','phase':'PROVIDER_MISSING','at':failed_at,'error':message})
-            rows[index]={**task,'status':'PENDING','progress':0,'error':message,'history':history,'updated_at':failed_at}
-            return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':failed_at})
-        model_id=task.get('model_id') or 'video-model'; provider=self.video_providers.get(provider_id)
-        if provider is None: raise ValueError(f'video provider is not configured: {provider_id}')
-        started=utc(); history=list(task.get('history',[])); history.append({'status':'RUNNING','phase':'SUBMITTING','at':started,'error':None})
-        submission_key=task.get('submission_key') or task_id
-        rows[index]={**task,'status':'RUNNING','progress':0,'error':None,'attempts':int(task.get('attempts',0))+1,'submission_key':submission_key,'history':history,'updated_at':started}
-        screenplay=self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':started})
+        return screenplay,rows,index
+
+    def _motion_save(self, novel_id, screenplay, rows):
+        return self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+
+    @staticmethod
+    def _media_owner(screenplay,novel_id):
+        if screenplay.get('novel_id',novel_id)!=novel_id:
+            raise ValueError('MEDIA_OWNER_CHANGED')
+        return (screenplay.get('id'),screenplay.get('novel_id',novel_id),screenplay.get('branch_id'),
+                screenplay.get('actor_id'),screenplay.get('owner_actor_id'),screenplay.get('workspace_id'),
+                json.dumps(screenplay.get('owner'),sort_keys=True))
+
+    @staticmethod
+    def _require_media_authorization(reauthorize):
+        if not callable(reauthorize):raise ValueError('MEDIA_DISPATCH_AUTHORIZATION_REQUIRED')
+        reauthorize()
+
+    def _motion_request_digest(self,task,screenplay,novel_id):
+        provider=self.video_providers.get(task.get('provider_id'))
+        payload={key:task.get(key) for key in ('provider_id','model_id','prompt','start_frame','end_frame')}
+        payload['constraints']=task.get('constraints') or {}
+        payload['endpoint']=getattr(provider,'endpoint',None)
+        payload['owner']=self._media_owner(screenplay,novel_id)
+        return hashlib.sha256(json.dumps(payload,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+
+    def _require_motion_review(self,task,provider,screenplay,novel_id):
+        from ..media_frames import provider_is_local
+        if provider_is_local(provider):return
+        from ..source_privacy import assert_project_source_policies
+        from ..privacy import normalize_privacy
+        assert_project_source_policies(self.novels,novel_id)
+        if any(key in screenplay and normalize_privacy(screenplay[key])!='CLOUD_ALLOWED' for key in ('privacy_level','privacy')):
+            raise ValueError('VIDEO_SCREENPLAY_PRIVACY_REVIEW_REQUIRED')
+        digest=hashlib.sha256(str(task.get('prompt','')).encode()).hexdigest()
+        if (task.get('privacy_level')!='CLOUD_ALLOWED' or task.get('cloud_approval_prompt_sha256')!=digest
+            or task.get('cloud_approval_provider_id')!=task.get('provider_id')
+            or task.get('cloud_approval_model_id')!=task.get('model_id')
+            or task.get('cloud_approval_request_sha256')!=self._motion_request_digest(task,screenplay,novel_id)):
+            raise ValueError('VIDEO_CLOUD_PROMPT_REVIEW_REQUIRED')
+
+    def _verify_motion_frame_sources(self,sources,screenplay,novel_id,provider):
+        from ..media_frames import provider_is_local
+        from ..privacy import normalize_privacy
+        for source in sources:
+            if source.get('kind')!='ASSET':continue
+            if self.asset_library is None:raise ValueError('MEDIA_FRAME_CHANGED')
+            asset=self.asset_library.get(source['asset_id'],branch_id=screenplay.get('branch_id'))
+            if (asset.get('novel_id')!=novel_id or asset.get('sha256')!=source['asset_sha256']
+                or asset.get('version',1)!=source['asset_version']):raise ValueError('MEDIA_FRAME_CHANGED')
+            if not provider_is_local(provider) and normalize_privacy(asset.get('privacy_level'))!='CLOUD_ALLOWED':
+                raise ValueError('FRAME_CLOUD_PRIVACY_REVIEW_REQUIRED')
+
+    def motion_privacy(self,novel_id,screenplay_id,task_id):
+        with self._motion_lock:
+            screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id);task=rows[index]
+            return {'task_id':task_id,'prompt':task.get('prompt',''),'prompt_sha256':hashlib.sha256(str(task.get('prompt','')).encode()).hexdigest(),
+                    'request_sha256':self._motion_request_digest(task,screenplay,novel_id),'start_frame':task.get('start_frame'),'end_frame':task.get('end_frame'),
+                    'constraints':copy.deepcopy(task.get('constraints') or {}),'privacy_level':task.get('privacy_level','LOCAL_ONLY'),
+                    'provider_id':task.get('provider_id'),'model_id':task.get('model_id'),'status':task.get('status'),
+                    'local_frames_require_separate_privacy_review':True}
+
+    def update_motion_privacy(self,novel_id,screenplay_id,task_id,privacy_level,prompt_sha256,request_sha256=None):
+        with self._motion_lock:
+            screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id);task=rows[index]
+            if task.get('status') not in {'PENDING','FAILED','CANCELLED'} or task.get('remote_task_id'):raise ValueError('motion privacy can only change before execution')
+            actual=hashlib.sha256(str(task.get('prompt','')).encode()).hexdigest()
+            if actual!=prompt_sha256:raise ValueError('motion prompt changed; review it again')
+            if privacy_level not in {'LOCAL_ONLY','CLOUD_ALLOWED'}:raise ValueError('invalid motion privacy policy')
+            request_digest=self._motion_request_digest(task,screenplay,novel_id)
+            if privacy_level=='CLOUD_ALLOWED' and request_sha256!=request_digest:
+                raise ValueError('motion request changed or was not reviewed; review frames and parameters again')
+            rows[index]={**task,'privacy_level':privacy_level,'cloud_approval_prompt_sha256':actual if privacy_level=='CLOUD_ALLOWED' else None,
+                         'cloud_approval_request_sha256':request_digest if privacy_level=='CLOUD_ALLOWED' else None,
+                         'cloud_approval_provider_id':task.get('provider_id') if privacy_level=='CLOUD_ALLOWED' else None,
+                         'cloud_approval_model_id':task.get('model_id') if privacy_level=='CLOUD_ALLOWED' else None,'privacy_reviewed_at':utc()}
+            self._motion_save(novel_id,screenplay,rows)
+            return self.motion_privacy(novel_id,screenplay_id,task_id)
+
+    def execute_motion_task(self,novel_id,screenplay_id,task_id,*,reauthorize=None):
+        with self._motion_lock:
+            screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id)
+            task=copy.deepcopy(rows[index]);owner=self._media_owner(screenplay,novel_id)
+            if task.get('status')!='PENDING' or task.get('remote_task_id'): raise ValueError('motion task must be PENDING without a remote submission before execution')
+            require_motion_frames(task)
+            provider_id=task.get('provider_id')
+            if not provider_id or provider_id=='deterministic' or not str(task.get('model_id') or '').strip():
+                rows[index]={**task,'error':'VIDEO_PROVIDER_NOT_CONFIGURED','progress':0,'updated_at':utc()}
+                return self._motion_save(novel_id,screenplay,rows)
+            provider=self.video_providers.get(provider_id)
+            if provider is None: raise ValueError(f'video provider is not configured: {provider_id}')
+            self._require_motion_review(task,provider,screenplay,novel_id)
+            request_digest=self._motion_request_digest(task,screenplay,novel_id)
+            token=str(uuid4()); submission_key=task.get('submission_key') or task_id; started=utc();attempt=int(task.get('attempts',0))+1
+            rows[index]={**task,'status':'RUNNING','execution_token':token,'progress':0,'error':None,'attempts':attempt,
+                         'submission_key':submission_key,'history':list(task.get('history',[]))+[{'status':'RUNNING','phase':'SUBMITTING','at':started}],'updated_at':started}
+            self._motion_save(novel_id,screenplay,rows)
         try:
-            generated=provider.generate(VideoGenerationRequest(provider_id,model_id,task.get('prompt',''),task['start_frame'],task['end_frame'],task_id,submission_key))
+            from ..media_frames import resolve_motion_frame
+            start_frame,start_source=resolve_motion_frame(task['start_frame'],screenplay,novel_id,provider,self.asset_library)
+            end_frame,end_source=resolve_motion_frame(task['end_frame'],screenplay,novel_id,provider,self.asset_library)
+            with self._motion_lock:
+                # Preparation can be expensive. Recheck authority and every captured
+                # outbound byte after it, immediately before the provider boundary.
+                self._require_media_authorization(reauthorize)
+                current_screenplay,current_rows,current_index=self._motion_record(novel_id,screenplay_id,task_id);current=copy.deepcopy(current_rows[current_index])
+                if (self._media_owner(current_screenplay,novel_id)!=owner or current.get('status')!='RUNNING'
+                    or current.get('execution_token')!=token or current.get('attempts')!=attempt
+                    or current.get('submission_key')!=submission_key or current.get('remote_task_id')
+                    or self.video_providers.get(provider_id) is not provider
+                    or self._motion_request_digest(current,current_screenplay,novel_id)!=request_digest):
+                    raise ValueError('MEDIA_DISPATCH_STATE_CHANGED')
+                self._require_motion_review(current,provider,current_screenplay,novel_id)
+                checked_start,checked_start_source=resolve_motion_frame(current['start_frame'],current_screenplay,novel_id,provider,self.asset_library)
+                checked_end,checked_end_source=resolve_motion_frame(current['end_frame'],current_screenplay,novel_id,provider,self.asset_library)
+                if (checked_start,checked_end,checked_start_source,checked_end_source)!=(start_frame,end_frame,start_source,end_source):
+                    raise ValueError('MEDIA_FRAME_CHANGED')
+                # A source resolver must not be able to invalidate permission or
+                # swap the attempt between the final read and dispatch.
+                self._require_media_authorization(reauthorize)
+                latest,latest_rows,latest_index=self._motion_record(novel_id,screenplay_id,task_id);last=latest_rows[latest_index]
+                if (self._media_owner(latest,novel_id)!=owner or last!=current
+                    or any(latest.get(key)!=current_screenplay.get(key) for key in ('shots','storyboard'))):
+                    raise ValueError('MEDIA_DISPATCH_STATE_CHANGED')
+                if self.video_providers.get(provider_id) is not provider or self._motion_request_digest(last,latest,novel_id)!=request_digest:
+                    raise ValueError('MEDIA_DISPATCH_STATE_CHANGED')
+                self._require_motion_review(last,provider,latest,novel_id)
+                self._verify_motion_frame_sources((start_source,end_source),latest,novel_id,provider)
+            generated=provider.generate(VideoGenerationRequest(provider_id,task.get('model_id') or 'video-model',task.get('prompt',''),start_frame,end_frame,task_id,submission_key,dict(task.get('constraints') or {})))
+            if str(generated.video_uri or '').lower().startswith('placeholder://'): raise ValueError('placeholder video URI is not allowed')
         except Exception as exc:
-            failed_at=utc(); message=f'{type(exc).__name__}: {str(exc)}'[:1000]; history.append({'status':'FAILED','phase':'SUBMITTING','at':failed_at,'error':message})
-            rows=list(screenplay.get('motion_tasks',[])); rows[index]={**rows[index],'status':'FAILED','error':message,'history':history,'updated_at':failed_at}
-            self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':failed_at})
+            with self._motion_lock:
+                screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id); current=rows[index]
+                if current.get('execution_token')!=token or current.get('status')!='RUNNING': return screenplay
+                error=str(exc) if isinstance(exc,ValueError) and str(exc).startswith(('MEDIA_','VIDEO_','FRAME_')) else 'VIDEO_PROVIDER_REQUEST_FAILED'
+                stamp=utc();rows[index]={**current,'status':'FAILED','error':error,'history':list(current.get('history',[]))+[{'status':'FAILED','phase':'SUBMITTING','at':stamp,'error':error}],'updated_at':stamp}
+                self._motion_save(novel_id,screenplay,rows)
             raise
-        status=str(generated.status or ('SUCCEEDED' if generated.video_uri else 'RUNNING')).upper()
-        if str(generated.video_uri or '').lower().startswith('placeholder://'):
-            raise ValueError('placeholder video URI is not allowed')
-        if status not in {'PENDING','RUNNING','SUCCEEDED'}: status='RUNNING'
-        if generated.video_uri: status='SUCCEEDED'
-        result={'kind':'VIDEO','task_id':task_id,'prompt':task.get('prompt',''),'asset_id':f"motion-{task_id}",'url':generated.video_uri,'provider_id':generated.provider_id,'model_id':generated.model_id,'created_at':utc()}
-        completed=utc(); history.append({'status':status,'phase':'SUBMITTED','at':completed,'error':None})
-        asset_import={'task_id':task_id,'url':generated.video_uri,'filename':f'motion-{task_id}.mp4','import_status':'READY_TO_IMPORT','created_at':completed} if generated.video_uri else rows[index].get('asset_import')
-        rows=list(screenplay.get('motion_tasks',[])); rows[index]={**rows[index],'status':status,'progress':100 if status=='SUCCEEDED' else 0,'remote_task_id':generated.remote_task_id,'result':result,'asset_import':asset_import,'history':history,'updated_at':completed}
-        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':completed})
+        with self._motion_lock:
+            screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id); current=rows[index]
+            if (current.get('execution_token')!=token or current.get('status')!='RUNNING'
+                or current.get('attempts')!=attempt or self._media_owner(screenplay,novel_id)!=owner):
+                if generated.remote_task_id and hasattr(provider,'cancel'):
+                    try: provider.cancel(generated.remote_task_id)
+                    except Exception: pass
+                return screenplay
+            status=str(generated.status or 'RUNNING').upper()
+            if status not in {'PENDING','RUNNING','SUCCEEDED'}: status='RUNNING'
+            if generated.video_uri: status='SUCCEEDED'
+            if status=='SUCCEEDED' and not generated.video_uri: raise ValueError('successful video response requires a result URL')
+            stamp=utc();result={'kind':'VIDEO','task_id':task_id,'prompt':task.get('prompt',''),'url':generated.video_uri,'provider_id':generated.provider_id,'model_id':generated.model_id,'created_at':stamp}
+            asset_import={'task_id':task_id,'url':generated.video_uri,'filename':f'motion-{task_id}.mp4','import_status':'READY_TO_IMPORT','created_at':stamp} if generated.video_uri else None
+            rows[index]={**current,'status':status,'frame_provenance':{'start':start_source,'end':end_source},'progress':100 if status=='SUCCEEDED' else 0,'remote_task_id':generated.remote_task_id,'result':result,'asset_import':asset_import,'history':list(current.get('history',[]))+[{'status':status,'phase':'SUBMITTED','at':stamp}],'updated_at':stamp}
+            return self._motion_save(novel_id,screenplay,rows)
     def cancel_motion_task(self,novel_id,screenplay_id,task_id):
-        screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
-        if screenplay is None: raise KeyError(screenplay_id)
-        rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
-        if index is None: raise KeyError(task_id)
-        task=rows[index]; status=task.get('status','PENDING')
-        if status in {'SUCCEEDED','FAILED','CANCELLED'}: raise ValueError(f'motion task cannot be cancelled from {status}')
-        remote=task.get('remote_task_id'); provider=self.video_providers.get(task.get('provider_id',''))
-        if remote:
-            if not provider or not hasattr(provider,'cancel'): raise ValueError('video provider does not support cancellation')
-            provider.cancel(remote)
-        stamp=utc(); history=list(task.get('history',[])); history.append({'status':'CANCELLED','phase':'CANCELLED','at':stamp,'error':None})
-        rows[index]={**task,'status':'CANCELLED','error':None,'history':history,'updated_at':stamp}
-        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':stamp})
+        with self._motion_lock:
+            screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+            if screenplay is None: raise KeyError(screenplay_id)
+            rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
+            if index is None: raise KeyError(task_id)
+            task=rows[index]; status=task.get('status','PENDING')
+            if status in {'SUCCEEDED','FAILED','CANCELLED'}: raise ValueError(f'motion task cannot be cancelled from {status}')
+            remote=task.get('remote_task_id'); provider=self.video_providers.get(task.get('provider_id',''))
+            if remote:
+                if not provider or not hasattr(provider,'cancel'): raise ValueError('video provider does not support cancellation')
+                provider.cancel(remote)
+            stamp=utc(); history=list(task.get('history',[])); history.append({'status':'CANCELLED','phase':'CANCELLED','at':stamp,'error':None})
+            rows[index]={**task,'status':'CANCELLED','error':None,'history':history,'updated_at':stamp}
+            return self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':stamp})
+
     def retry_motion_task(self,novel_id,screenplay_id,task_id):
-        screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
-        if screenplay is None: raise KeyError(screenplay_id)
-        rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
-        if index is None: raise KeyError(task_id)
-        task=rows[index]; status=task.get('status')
-        if status not in {'FAILED','CANCELLED'}: raise ValueError(f'motion task cannot be retried from {status}')
-        stamp=utc(); history=list(task.get('history',[])); history.append({'status':'PENDING','phase':'RETRY_QUEUED','at':stamp,'error':None})
-        results=list(task.get('result_history',[])); previous=task.get('result')
-        if previous: results.append({**previous,'replaced_at':stamp})
-        next_attempt=int(task.get('attempts',0))+1
-        rows[index]={**task,'status':'PENDING','progress':0,'error':None,'remote_task_id':None,'submission_key':f'{task_id}:attempt:{next_attempt}','result':None,'asset_import':None,'result_history':results[-10:],'history':history,'updated_at':stamp}
-        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':stamp})
+        with self._motion_lock:
+            screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+            if screenplay is None: raise KeyError(screenplay_id)
+            rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
+            if index is None: raise KeyError(task_id)
+            task=rows[index]; status=task.get('status')
+            if status not in {'FAILED','CANCELLED'}: raise ValueError(f'motion task cannot be retried from {status}')
+            stamp=utc(); history=list(task.get('history',[])); history.append({'status':'PENDING','phase':'RETRY_QUEUED','at':stamp,'error':None})
+            results=list(task.get('result_history',[])); previous=task.get('result')
+            if previous: results.append({**previous,'replaced_at':stamp})
+            next_attempt=int(task.get('attempts',0))+1
+            rows[index]={**task,'status':'PENDING','progress':0,'error':None,'remote_task_id':None,'execution_token':None,'submission_key':f'{task_id}:attempt:{next_attempt}','result':None,'asset_import':None,'result_history':results[-10:],'history':history,'updated_at':stamp}
+            return self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':stamp})
+
     def attach_motion_result(self,novel_id,screenplay_id,task_id,url,media_type='video/mp4'):
-        screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
-        if screenplay is None: raise KeyError(screenplay_id)
-        rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
-        if index is None: raise KeyError(task_id)
-        if rows[index].get('status') == 'CANCELLED': raise ValueError('cancelled motion task cannot accept a result')
-        if str(url).lower().startswith('placeholder://'): raise ValueError('placeholder video URI is not allowed')
-        stamp=utc(); result={**rows[index].get('result',{}),'url':str(url).strip(),'media_type':media_type,'attached_at':stamp}
-        history=list(rows[index].get('result_history',[])); previous=rows[index].get('result');
-        if previous: history.append({**previous,'replaced_at':stamp})
-        asset_import={'task_id':task_id,'url':result['url'],'filename':f'motion-{task_id}.mp4','import_status':'READY_TO_IMPORT','created_at':stamp}
-        rows[index]={**rows[index],'status':'SUCCEEDED','progress':100,'result':result,'asset_import':asset_import,'result_history':history[-10:],'updated_at':stamp}
-        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+        with self._motion_lock:
+            screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+            if screenplay is None: raise KeyError(screenplay_id)
+            rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
+            if index is None: raise KeyError(task_id)
+            if rows[index].get('status') == 'CANCELLED': raise ValueError('cancelled motion task cannot accept a result')
+            if str(url).lower().startswith('placeholder://'): raise ValueError('placeholder video URI is not allowed')
+            stamp=utc(); result={**rows[index].get('result',{}),'url':str(url).strip(),'media_type':media_type,'attached_at':stamp}
+            history=list(rows[index].get('result_history',[])); previous=rows[index].get('result');
+            if previous: history.append({**previous,'replaced_at':stamp})
+            asset_import={'task_id':task_id,'url':result['url'],'filename':f'motion-{task_id}.mp4','import_status':'READY_TO_IMPORT','created_at':stamp}
+            rows[index]={**rows[index],'status':'SUCCEEDED','progress':100,'result':result,'asset_import':asset_import,'result_history':history[-10:],'updated_at':stamp}
+            return self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+
     def motion_callback(self,novel_id,screenplay_id,task_id,status,progress=0,url=None,error=None):
-        screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
-        if screenplay is None: raise KeyError(screenplay_id)
-        rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
-        if index is None: raise KeyError(task_id)
-        if status not in {'PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'}: raise ValueError('invalid motion callback status')
-        row=rows[index]; current=row.get('status','PENDING')
-        if current in {'SUCCEEDED','FAILED','CANCELLED'} and status != current: raise ValueError(f'terminal motion task cannot transition: {current} -> {status}')
-        allowed={'PENDING':{'PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'},'RUNNING':{'RUNNING','SUCCEEDED','FAILED','CANCELLED'}}
-        if current not in {'SUCCEEDED','FAILED','CANCELLED'} and status not in allowed.get(current,set()): raise ValueError(f'invalid motion callback transition: {current} -> {status}')
-        if status=='SUCCEEDED' and not (url or (row.get('result') or {}).get('url')): raise ValueError('successful motion callback requires a video URL')
-        if url and str(url).lower().startswith('placeholder://'): raise ValueError('placeholder video URI is not allowed')
-        stamp=utc(); history=list(row.get('history',[])); history.append({'status':status,'phase':'PROVIDER_UPDATE','at':stamp,'error':error})
-        updated={**row,'status':status,'progress':100 if status=='SUCCEEDED' else max(0,min(100,int(progress))),'error':error,'history':history,'updated_at':stamp}
-        if url:
-            previous=row.get('result'); result={**(previous or {}),'url':url,'media_type':'video/mp4','attached_at':stamp}; result_history=list(row.get('result_history',[]))
-            if previous and previous.get('url') and previous.get('url') != url: result_history.append({**previous,'replaced_at':stamp})
-            updated['result']=result; updated['result_history']=result_history[-10:]
-            updated['asset_import']={'task_id':task_id,'url':url,'filename':f'motion-{task_id}.mp4','import_status':'READY_TO_IMPORT','created_at':stamp}
-        rows[index]=updated
-        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+        with self._motion_lock:
+            screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+            if screenplay is None: raise KeyError(screenplay_id)
+            rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
+            if index is None: raise KeyError(task_id)
+            if status not in {'PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'}: raise ValueError('invalid motion callback status')
+            row=rows[index]; current=row.get('status','PENDING')
+            if current in {'SUCCEEDED','FAILED','CANCELLED'} and status != current: raise ValueError(f'terminal motion task cannot transition: {current} -> {status}')
+            if current in {'SUCCEEDED','FAILED','CANCELLED'} and status == current:
+                if url and url != (row.get('result') or {}).get('url'): raise ValueError('terminal motion result cannot be replaced by a callback')
+                return screenplay
+            allowed={'PENDING':{'PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'},'RUNNING':{'RUNNING','SUCCEEDED','FAILED','CANCELLED'}}
+            if current not in {'SUCCEEDED','FAILED','CANCELLED'} and status not in allowed.get(current,set()): raise ValueError(f'invalid motion callback transition: {current} -> {status}')
+            if status=='SUCCEEDED' and not (url or (row.get('result') or {}).get('url')): raise ValueError('successful motion callback requires a video URL')
+            if url and str(url).lower().startswith('placeholder://'): raise ValueError('placeholder video URI is not allowed')
+            stamp=utc(); history=list(row.get('history',[])); history.append({'status':status,'phase':'PROVIDER_UPDATE','at':stamp,'error':error})
+            updated={**row,'status':status,'progress':100 if status=='SUCCEEDED' else max(int(row.get('progress') or 0),max(0,min(100,int(progress)))),'error':error,'history':history,'updated_at':stamp}
+            if url:
+                previous=row.get('result'); result={**(previous or {}),'url':url,'media_type':'video/mp4','attached_at':stamp}; result_history=list(row.get('result_history',[]))
+                if previous and previous.get('url') and previous.get('url') != url: result_history.append({**previous,'replaced_at':stamp})
+                updated['result']=result; updated['result_history']=result_history[-10:]
+                updated['asset_import']={'task_id':task_id,'url':url,'filename':f'motion-{task_id}.mp4','import_status':'READY_TO_IMPORT','created_at':stamp}
+            rows[index]=updated
+            return self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+
     def sync_motion_provider_status(self,novel_id,screenplay_id,task_id,remote_task_id,provider):
         state=provider.get_status(remote_task_id); status=str(state.get('status','RUNNING')).upper(); status={'COMPLETED':'SUCCEEDED','COMPLETE':'SUCCEEDED','IN_PROGRESS':'RUNNING'}.get(status,status)
         if status not in {'PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'}: status='RUNNING'
@@ -374,7 +571,7 @@ class ScreenplayService:
         rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
         if index is None: raise KeyError(task_id)
         rows[index]={**rows[index],'remote_task_id':str(remote_task_id).strip(),'updated_at':utc()}
-        return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
+        return self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
     def sync_motion_task(self,novel_id,screenplay_id,task_id):
         screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
@@ -401,7 +598,7 @@ class ScreenplayService:
     def import_motion_asset_reference(self,novel_id,screenplay_id,task_id):
         ref=self.motion_asset_reference(novel_id,screenplay_id,task_id)
         if not ref.get('url'): raise ValueError('motion result does not have a downloadable URL')
-        screenplay=next(r for r in self.list(novel_id) if r['id']==screenplay_id); rows=list(screenplay.get('motion_tasks',[])); index=next(i for i,r in enumerate(rows) if r['id']==task_id); job={**ref,'import_status':'PENDING_DOWNLOAD','filename':f"{ref.get('asset_id') or task_id}.mp4",'created_at':utc()}; rows[index]={**rows[index],'asset_import':job,'updated_at':utc()}; self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'updated_at':utc()}); return job
+        screenplay=next(r for r in self.list(novel_id) if r['id']==screenplay_id); rows=list(screenplay.get('motion_tasks',[])); index=next(i for i,r in enumerate(rows) if r['id']==task_id); job={**ref,'import_status':'PENDING_DOWNLOAD','filename':f"{ref.get('asset_id') or task_id}.mp4",'created_at':utc()}; rows[index]={**rows[index],'asset_import':job,'updated_at':utc()}; self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'updated_at':utc()}); return job
     def motion_asset_import_status(self,novel_id,screenplay_id,task_id):
         screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
@@ -419,25 +616,40 @@ class ScreenplayService:
         for i,row in enumerate(rows):
             job=row.get('asset_import')
             if job and job.get('import_status')=='FAILED': rows[i]={**row,'asset_import':{**job,'import_status':'PENDING_DOWNLOAD','error':None,'retry_at':utc()},'updated_at':utc()}; count+=1
-        if count: self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'updated_at':utc()})
+        if count: self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'updated_at':utc()})
         return {'screenplay_id':screenplay_id,'retried':count}
     def download_motion_asset(self,novel_id,screenplay_id,task_id,asset_library):
         import base64
-        from ..net_safety import fetch_outbound_bytes
-        job=self.motion_asset_import_status(novel_id,screenplay_id,task_id)
-        if not job.get('url'): raise ValueError('asset import URL is missing')
+        import hashlib
+        from ..media_files import fetch_media_bytes,inspect_media
+        with self._motion_lock:
+            screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id); task=rows[index]; job=task.get('asset_import') or {}
+            if task.get('status')!='SUCCEEDED': raise ValueError('only successful motion tasks can import assets')
+            if not job.get('url'): raise ValueError('asset import URL is missing')
+            if job.get('import_status')=='COMPLETED': return job
+            token=task.get('execution_token'); url=job['url']; provider=self.video_providers.get(task.get('provider_id'))
         try:
-            data=fetch_outbound_bytes(job['url'],asset_library.MAX_BYTES,30)
-            asset=asset_library.create(novel_id,job['filename'],base64.b64encode(data).decode('ascii'),'video/mp4','video',f"motion-import:{task_id}")
-            updated={**job,'import_status':'COMPLETED','asset':asset,'completed_at':utc()}
-            screenplay=next(r for r in self.list(novel_id) if r['id']==screenplay_id); task=next(r for r in screenplay.get('motion_tasks',[]) if r['id']==task_id); result={**(task.get('result') or {}),'asset_id':asset.get('id') if isinstance(asset,dict) else asset}; rows=list(screenplay.get('motion_tasks',[])); index=next(i for i,r in enumerate(rows) if r['id']==task_id); rows[index]={**task,'result':result,'asset_import':updated,'updated_at':utc()}; self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'updated_at':utc()})
-            return updated
-        except Exception as exc:
-            updated={**job,'import_status':'FAILED','error':str(exc)}
-            self._save_motion_import(novel_id,screenplay_id,task_id,updated)
-            return updated
+            data=fetch_media_bytes(url,asset_library.MAX_BYTES,30,configured_provider_endpoint=getattr(provider,'endpoint',None))
+            measured=inspect_media(data,'video')
+            with self._motion_lock:
+                screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id); current=rows[index]
+                if current.get('status')!='SUCCEEDED' or current.get('execution_token')!=token or (current.get('asset_import') or {}).get('url')!=url:
+                    return {'task_id':task_id,'import_status':'CANCELLED','error':'MOTION_RESULT_CHANGED'}
+                asset=asset_library.create(novel_id,f"motion-{task_id}.{measured['extension']}",base64.b64encode(data).decode('ascii'),measured['media_type'],'video',f"motion-import:{task_id}:{hashlib.sha256(data).hexdigest()}",branch_id=screenplay.get("branch_id"))
+                asset=asset_library.update_metadata(asset['id'],{'source_job_id':task_id,'provider_id':current.get('provider_id'),'model_id':current.get('model_id')},branch_id=screenplay.get('branch_id'))
+                updated={**job,'import_status':'COMPLETED','asset':asset,'duration_ms':measured['duration_ms'],'validation':measured['validation'],'completed_at':utc()}
+                rows[index]={**current,'result':{**(current.get('result') or {}),'asset_id':asset['id'],'media_type':measured['media_type'],'duration_ms':measured['duration_ms']},'asset_import':updated,'updated_at':utc()}
+                self._motion_save(novel_id,screenplay,rows)
+                return updated
+        except Exception:
+            with self._motion_lock:
+                screenplay,rows,index=self._motion_record(novel_id,screenplay_id,task_id); current=rows[index]
+                if current.get('execution_token')!=token or (current.get('asset_import') or {}).get('url')!=url: return current.get('asset_import') or {}
+                updated={**job,'import_status':'FAILED','error':'MEDIA_DOWNLOAD_OR_VALIDATION_FAILED'}
+                rows[index]={**current,'asset_import':updated,'updated_at':utc()};self._motion_save(novel_id,screenplay,rows)
+                return updated
     def _save_motion_import(self,novel_id,screenplay_id,task_id,job):
-        screenplay=next(r for r in self.list(novel_id) if r['id']==screenplay_id); rows=list(screenplay.get('motion_tasks',[])); index=next(i for i,r in enumerate(rows) if r['id']==task_id); rows[index]={**rows[index],'asset_import':job,'updated_at':utc()}; self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'updated_at':utc()})
+        screenplay=next(r for r in self.list(novel_id) if r['id']==screenplay_id); rows=list(screenplay.get('motion_tasks',[])); index=next(i for i,r in enumerate(rows) if r['id']==task_id); rows[index]={**rows[index],'asset_import':job,'updated_at':utc()}; self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'updated_at':utc()})
     def retry_motion_asset_import(self,novel_id,screenplay_id,task_id):
         screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
@@ -446,7 +658,7 @@ class ScreenplayService:
         job=rows[index].get('asset_import')
         if not job: raise ValueError('asset import has not been requested')
         updated={**job,'import_status':'PENDING_DOWNLOAD','error':None,'retry_at':utc()}; rows[index]={**rows[index],'asset_import':updated,'updated_at':utc()}
-        self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'updated_at':utc()}); return updated
+        self._save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'updated_at':utc()}); return updated
     def motion_frame_history(self,novel_id,screenplay_id,task_id):
         screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
@@ -479,34 +691,38 @@ class ScreenplayService:
             status=self.pipeline_status(novel_id,screenplay_id)
             if status['next_stage'] in {'screenplay','complete'}: break
         return {'screenplay_id':screenplay_id,'actions':actions,'status':self.pipeline_status(novel_id,screenplay_id)}
-    def approve_transitions(self,novel_id,screenplay_id):
+    def approve_transitions(self,novel_id,screenplay_id,expected_version=None):
         screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,expected_version)
         if screenplay.get("transitions") is None: raise ValueError("transitions are not planned")
         if screenplay.get("transition_status")=="APPROVED": raise ValueError("transitions already approved")
         transitions=[{**row,"prompt_status":"FROZEN"} for row in screenplay.get("transitions",[])]
-        return self.novels.save_screenplay(novel_id,{**screenplay,"transitions":transitions,"transition_status":"APPROVED","updated_at":utc()})
-    def plan_assets(self,novel_id,screenplay_id):
+        return self._save_screenplay(novel_id,{**screenplay,"transitions":transitions,"transition_status":"APPROVED","updated_at":utc()})
+    def plan_assets(self,novel_id,screenplay_id,expected_version=None):
         screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,expected_version)
         if screenplay.get("storyboard_status")!="APPROVED": raise ValueError("storyboard must be approved before asset planning")
         if screenplay.get("asset_requirements") is not None: return screenplay
         assets=[{"id":str(uuid4()),"storyboard_id":card["id"],"shot_id":card["shot_id"],"kind":"IMAGE","description":card["frame_prompt"],"status":"PENDING","notes":"待准备"} for card in screenplay.get("storyboard",[])]
-        return self.novels.save_screenplay(novel_id,{**screenplay,"asset_requirements":assets,"asset_revision":1,"updated_at":utc()})
+        return self._save_screenplay(novel_id,{**screenplay,"asset_requirements":assets,"asset_revision":1,"updated_at":utc()})
     def update_asset(self,novel_id,screenplay_id,asset_id,payload):
         screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,payload.get("expected_version"))
         if screenplay.get("asset_status")=="APPROVED": raise ValueError("asset requirements are frozen")
         rows=list(screenplay.get("asset_requirements",[])); i=next((i for i,r in enumerate(rows) if r["id"]==asset_id),None)
         if i is None: raise KeyError(asset_id)
         immutable={k:rows[i][k] for k in ("id","storyboard_id","shot_id")}; rows[i]={**immutable,"kind":str(payload.get("kind","IMAGE")).strip() or "IMAGE","description":str(payload.get("description","")).strip(),"status":str(payload.get("status","PENDING")).strip() or "PENDING","notes":str(payload.get("notes","")).strip()}
-        return self.novels.save_screenplay(novel_id,{**screenplay,"asset_requirements":rows,"asset_revision":int(screenplay.get("asset_revision",1))+1,"updated_at":utc()})
-    def approve_assets(self,novel_id,screenplay_id):
+        return self._save_screenplay(novel_id,{**screenplay,"asset_requirements":rows,"asset_revision":int(screenplay.get("asset_revision",1))+1,"updated_at":utc()})
+    def approve_assets(self,novel_id,screenplay_id,expected_version=None):
         screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
+        check_screenplay_version(screenplay,expected_version)
         if screenplay.get("asset_requirements") is None: raise ValueError("asset requirements are not planned")
         if screenplay.get("asset_status")=="APPROVED": raise ValueError("asset requirements already approved")
-        return self.novels.save_screenplay(novel_id,{**screenplay,"asset_status":"APPROVED","updated_at":utc()})
+        return self._save_screenplay(novel_id,{**screenplay,"asset_status":"APPROVED","updated_at":utc()})
     def create_asset_tasks(self,novel_id,screenplay_id):
         screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
@@ -515,36 +731,82 @@ class ScreenplayService:
         preferred=next(((provider_id,provider) for provider_id,provider in self.asset_providers._providers.items() if getattr(provider,'health_check',lambda:True)()),(None,None))
         default_provider,provider=preferred
         default_model=getattr(provider,"default_model",None) if provider else None
-        tasks=[{"id":str(uuid4()),"asset_id":a["id"],"provider_id":default_provider,"model_id":default_model,"status":"PENDING","error":None,"attempts":0,"history":[{"status":"PENDING","at":utc()}]} for a in screenplay["asset_requirements"]]
-        return self.novels.save_screenplay(novel_id,{**screenplay,"asset_tasks":tasks,"task_revision":1,"updated_at":utc()})
+        tasks=[{"id":str(uuid4()),"asset_id":a["id"],"provider_id":default_provider,"model_id":default_model,"privacy_level":"LOCAL_ONLY","status":"PENDING","error":None,"attempts":0,"history":[{"status":"PENDING","at":utc()}]} for a in screenplay["asset_requirements"]]
+        return self._save_screenplay(novel_id,{**screenplay,"asset_tasks":tasks,"task_revision":1,"updated_at":utc()})
+    def _asset_record(self,novel_id,screenplay_id,task_id):
+        screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+        if screenplay is None:raise KeyError(screenplay_id)
+        rows=list(screenplay.get('asset_tasks',[]));index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
+        if index is None:raise KeyError(task_id)
+        return screenplay,rows,index
+
+    def _asset_save(self,novel_id,screenplay,rows):
+        return self._save_screenplay(novel_id,{**screenplay,'asset_tasks':rows,'task_revision':int(screenplay.get('task_revision',0))+1,'updated_at':utc()})
+
     def update_asset_task(self,novel_id,screenplay_id,task_id,payload):
-        screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
-        if screenplay is None: raise KeyError(screenplay_id)
-        rows=list(screenplay.get("asset_tasks",[])); i=next((i for i,r in enumerate(rows) if r["id"]==task_id),None)
-        if i is None: raise KeyError(task_id)
-        status=str(payload.get("status",rows[i]["status"]))
-        if status not in {"PENDING","RUNNING","SUCCEEDED","FAILED","CANCELLED"}: raise ValueError("invalid task status")
-        current=rows[i]["status"]
-        allowed={"PENDING":{"RUNNING","CANCELLED"},"RUNNING":{"SUCCEEDED","FAILED","CANCELLED"},"FAILED":{"PENDING","CANCELLED"},"CANCELLED":{"PENDING"},"SUCCEEDED":set()}
-        if status!=current and status not in allowed.get(current,set()): raise ValueError(f"invalid task transition: {current} -> {status}")
-        row=rows[i]; history=list(row.get("history",[])); history.append({"status":status,"at":utc(),"error":payload.get("error")}); attempts=int(row.get("attempts",0))+(1 if status=="RUNNING" else 0)
-        rows[i]={**row,"status":status,"provider_id":payload.get("provider_id",row.get("provider_id")),"model_id":payload.get("model_id",row.get("model_id")),"error":payload.get("error"),"attempts":attempts,"history":history}
-        return self.novels.save_screenplay(novel_id,{**screenplay,"asset_tasks":rows,"task_revision":int(screenplay.get("task_revision",1))+1,"updated_at":utc()})
-    def execute_asset_task(self,novel_id,screenplay_id,task_id):
-        screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
-        if screenplay is None: raise KeyError(screenplay_id)
-        task=next((r for r in screenplay.get("asset_tasks",[]) if r["id"]==task_id),None)
-        if task is None: raise KeyError(task_id)
-        if task["status"]!="RUNNING": raise ValueError("task must be RUNNING before execution")
-        if not task.get("provider_id") or not task.get("model_id"): raise ValueError("provider and model are required")
-        asset=next((a for a in screenplay.get("asset_requirements",[]) if a["id"]==task["asset_id"]),None)
+        with self._motion_lock:
+            screenplay,rows,i=self._asset_record(novel_id,screenplay_id,task_id);row=rows[i]
+            status=str(payload.get('status',row['status']))
+            if status not in {'PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'}:raise ValueError('invalid task status')
+            current=row['status']
+            allowed={'PENDING':{'RUNNING','CANCELLED'},'RUNNING':{'SUCCEEDED','FAILED','CANCELLED'},'FAILED':{'PENDING','CANCELLED'},'CANCELLED':{'PENDING'},'SUCCEEDED':set()}
+            if status!=current and status not in allowed.get(current,set()):raise ValueError(f'invalid task transition: {current} -> {status}')
+            provider_id=payload.get('provider_id',row.get('provider_id'));model_id=payload.get('model_id',row.get('model_id'))
+            if current in {'RUNNING','SUCCEEDED'} and (provider_id!=row.get('provider_id') or model_id!=row.get('model_id')):
+                raise ValueError('asset provider configuration is frozen during or after execution')
+            history=list(row.get('history',[]));history.append({'status':status,'at':utc(),'error':payload.get('error')})
+            attempts=int(row.get('attempts',0))+(1 if status=='RUNNING' and current!='RUNNING' else 0)
+            rows[i]={**row,'status':status,'provider_id':provider_id,'model_id':model_id,'error':payload.get('error'),
+                     'attempts':attempts,'history':history,'execution_token':row.get('execution_token') if status==current=='RUNNING' else None}
+            return self._asset_save(novel_id,screenplay,rows)
+
+    def execute_asset_task(self,novel_id,screenplay_id,task_id,*,reauthorize=None):
+        with self._motion_lock:
+            screenplay,rows,index=self._asset_record(novel_id,screenplay_id,task_id);task=copy.deepcopy(rows[index])
+            owner=self._media_owner(screenplay,novel_id)
+            if task['status']!='RUNNING':raise ValueError('task must be RUNNING before execution')
+            if task.get('execution_token'):raise ValueError('asset task is already executing')
+            if not task.get('provider_id') or not task.get('model_id'):raise ValueError('provider and model are required')
+            asset=copy.deepcopy(next((a for a in screenplay.get('asset_requirements',[]) if a['id']==task['asset_id']),None))
+            token=str(uuid4());attempt=task.get('attempts',0)
+            rows[index]={**task,'execution_token':token}
+            self._asset_save(novel_id,screenplay,rows)
         try:
-            provider=self.asset_providers.get(task.get("provider_id"))
-            result=provider.generate(AssetGenerationRequest(task["provider_id"],task["model_id"],asset["description"],task_id))
-            rows=[{**r,"status":"SUCCEEDED","asset_uri":result.asset_uri,"error":None,"history":list(r.get("history",[]))+[{"status":"SUCCEEDED","at":utc()}]} if r["id"]==task_id else r for r in screenplay["asset_tasks"]]
-            return self.novels.save_screenplay(novel_id,{**screenplay,"asset_tasks":rows,"updated_at":utc()})
+            provider=self.asset_providers.get(task['provider_id']);endpoint=getattr(provider,'endpoint',None)
+            from ..media_frames import provider_is_local
+            # Legacy source-derived descriptions have no exact outbound review UI.
+            # Approval of a screenplay/storyboard never grants cloud permission.
+            if not provider_is_local(provider):raise ValueError('IMAGE_CLOUD_PROMPT_REVIEW_REQUIRED')
+            if asset is None or not str(asset.get('description') or '').strip():raise ValueError('IMAGE_PROMPT_REQUIRED')
+            request=AssetGenerationRequest(task['provider_id'],task['model_id'],asset['description'],task_id)
+            with self._motion_lock:
+                self._require_media_authorization(reauthorize)
+                current_screenplay,current_rows,current_index=self._asset_record(novel_id,screenplay_id,task_id);current=current_rows[current_index]
+                current_asset=next((a for a in current_screenplay.get('asset_requirements',[]) if a['id']==task['asset_id']),None)
+                if (self._media_owner(current_screenplay,novel_id)!=owner or current.get('status')!='RUNNING'
+                    or current.get('execution_token')!=token or current.get('attempts',0)!=attempt
+                    or current.get('provider_id')!=task['provider_id'] or current.get('model_id')!=task['model_id']
+                    or current.get('asset_id')!=task['asset_id'] or current_asset!=asset
+                    or self.asset_providers.get(task['provider_id']) is not provider or getattr(provider,'endpoint',None)!=endpoint):
+                    raise ValueError('MEDIA_DISPATCH_STATE_CHANGED')
+                if not provider_is_local(provider):raise ValueError('IMAGE_CLOUD_PROMPT_REVIEW_REQUIRED')
+            result=provider.generate(request)
+            if not result.asset_uri or str(result.asset_uri).lower().startswith('placeholder://'):
+                raise ValueError('IMAGE_PROVIDER_RESULT_INVALID')
+            with self._motion_lock:
+                screenplay,rows,index=self._asset_record(novel_id,screenplay_id,task_id);current=rows[index]
+                if (current.get('status')!='RUNNING' or current.get('execution_token')!=token
+                    or current.get('attempts',0)!=attempt or self._media_owner(screenplay,novel_id)!=owner):return screenplay
+                rows[index]={**current,'status':'SUCCEEDED','asset_uri':result.asset_uri,'error':None,
+                             'history':list(current.get('history',[]))+[{'status':'SUCCEEDED','at':utc()}]}
+                return self._asset_save(novel_id,screenplay,rows)
         except Exception as exc:
-            return self.update_asset_task(novel_id,screenplay_id,task_id,{**task,"status":"FAILED","error":str(exc)})
+            with self._motion_lock:
+                screenplay,rows,index=self._asset_record(novel_id,screenplay_id,task_id);current=rows[index]
+                if current.get('status')!='RUNNING' or current.get('execution_token')!=token or current.get('attempts',0)!=attempt:return screenplay
+                error=str(exc) if isinstance(exc,ValueError) and str(exc).startswith(('MEDIA_','IMAGE_','asset provider is not configured:')) else 'IMAGE_PROVIDER_REQUEST_FAILED'
+                rows[index]={**current,'status':'FAILED','error':error,'history':list(current.get('history',[]))+[{'status':'FAILED','at':utc(),'error':error}]}
+                return self._asset_save(novel_id,screenplay,rows)
     def retry_asset_task(self,novel_id,screenplay_id,task_id):
         screenplay=next((r for r in self.list(novel_id) if r["id"]==screenplay_id),None)
         if screenplay is None: raise KeyError(screenplay_id)
@@ -558,9 +820,9 @@ class ScreenplayService:
         for i,row in enumerate(rows):
             if row.get("status")!="RUNNING": continue
             history=list(row.get("history",[])); history.append({"status":"PENDING","at":utc(),"error":"recovered after restart"})
-            rows[i]={**row,"status":"PENDING","error":"recovered after restart","history":history}; changed=True
+            rows[i]={**row,"status":"PENDING","execution_token":None,"error":"recovered after restart","history":history}; changed=True
         if not changed: return screenplay
-        return self.novels.save_screenplay(novel_id,{**screenplay,"asset_tasks":rows,"task_revision":int(screenplay.get("task_revision",1))+1,"updated_at":utc()})
+        return self._save_screenplay(novel_id,{**screenplay,"asset_tasks":rows,"task_revision":int(screenplay.get("task_revision",1))+1,"updated_at":utc()})
     def recover_all_asset_tasks(self,novel_id):
         results=[]
         for screenplay in self.list(novel_id):
@@ -573,7 +835,7 @@ class ScreenplayService:
         rows=list(screenplay.get("asset_tasks",[])); kept=[r for r in rows if r.get("status") not in {"SUCCEEDED","CANCELLED"}]
         removed=len(rows)-len(kept)
         if not removed: return {"screenplay":screenplay,"removed":0}
-        updated=self.novels.save_screenplay(novel_id,{**screenplay,"asset_tasks":kept,"task_revision":int(screenplay.get("task_revision",1))+1,"updated_at":utc()})
+        updated=self._save_screenplay(novel_id,{**screenplay,"asset_tasks":kept,"task_revision":int(screenplay.get("task_revision",1))+1,"updated_at":utc()})
         return {"screenplay":updated,"removed":removed}
     def asset_task_stats(self,novel_id,screenplay_id=None):
         screenplays=self.list(novel_id)
@@ -598,7 +860,7 @@ class ScreenplayService:
                 if row.get("status")!="PENDING" or (provider_id and row.get("provider_id")!=provider_id): continue
                 history=list(row.get("history",[])); history.append({"status":"RUNNING","at":utc(),"error":None})
                 rows[i]={**row,"status":"RUNNING","error":None,"attempts":int(row.get("attempts",0))+1,"history":history}; claimed.append({"screenplay_id":screenplay["id"],"task":rows[i]}); changed=True
-            if changed: self.novels.save_screenplay(novel_id,{**screenplay,"asset_tasks":rows,"task_revision":int(screenplay.get("task_revision",1))+1,"updated_at":utc()})
+            if changed: self._save_screenplay(novel_id,{**screenplay,"asset_tasks":rows,"task_revision":int(screenplay.get("task_revision",1))+1,"updated_at":utc()})
             if len(claimed)>=limit: break
         return {"novel_id":novel_id,"claimed":claimed,"count":len(claimed)}
     def dispatch_asset_tasks(self,novel_id,limit=10,execute=False,provider_id=None):
@@ -623,5 +885,5 @@ class ScreenplayService:
                 history=list(row.get("history",[])); history.append({"status":"FAILED","at":utc(),"error":"task execution timed out"})
                 rows[i]={**row,"status":"FAILED","error":"task execution timed out","history":history}; changed+=1; dirty=True
             if dirty:
-                results.append(self.novels.save_screenplay(novel_id,{**screenplay,"asset_tasks":rows,"task_revision":int(screenplay.get("task_revision",1))+1,"updated_at":utc()}))
+                results.append(self._save_screenplay(novel_id,{**screenplay,"asset_tasks":rows,"task_revision":int(screenplay.get("task_revision",1))+1,"updated_at":utc()}))
         return {"novel_id":novel_id,"timed_out":changed,"screenplays":results}

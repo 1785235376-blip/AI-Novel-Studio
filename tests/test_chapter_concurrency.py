@@ -95,6 +95,7 @@ def test_autosave_multiple_editor_generations_increment_one_durable_version(chap
     or not Database(os.getenv("TEST_POSTGRES_DATABASE_URL", "postgresql://invalid")).health_check(),
     reason="NOT VERIFIED: TEST_POSTGRES_DATABASE_URL is unavailable",
 )
+@pytest.mark.postgres_backend_only
 def test_postgres_two_clients_atomic_cas_and_single_history_row():
     url = os.environ["TEST_POSTGRES_DATABASE_URL"]
     first_bundle = create_repository_bundle(Settings(storage_backend="postgres", database_url=url))

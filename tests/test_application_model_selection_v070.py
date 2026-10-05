@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+from types import SimpleNamespace
 
 from app import jobs as jobs_module
 from app.jobs import Job, JobManager
@@ -16,11 +17,11 @@ class MemoryGenerations:
 
 
 class Chapters:
-    def get(self, _chapter_id): return {"content": "chapter", "number": 1, "version": 2}
+    def get(self, _chapter_id): return {"id":"c","novel_id":"n","content": "chapter", "number": 1, "version": 2, "privacy_level": "CLOUD_ALLOWED"}
 
 
 class Contexts:
-    def __init__(self): self.cloud = None
+    def __init__(self): self.cloud = None; self.novels = SimpleNamespace(get_context_sources=lambda _: {})
     def for_chapter(self, *_args): self.cloud = _args[2]; return {"chapter": "context"}
     def save_snapshot(self, *_args, **_kwargs): return None
 
@@ -33,13 +34,17 @@ class Node:
 
 
 def manager():
+    from app.source_privacy import review_source_privacy, content_digest
+    chapter=Chapters().get("c")
+    review_source_privacy(chapter,None,"synthetic-test","CLOUD_ALLOWED",2,content_digest(chapter))
     return JobManager(generations=MemoryGenerations(), chapters=Chapters(), contexts=Contexts(), canon=object(), memory_extractor=object(), snapshot_required=False, collaboration_updates=object())
 
 
 def test_text_model_catalog_comes_from_registry_without_credentials():
     items = Runtime().text_models()
     assert {item["model_id"] for item in items} >= {"deepseek-chat", "deepseek-reasoner"}
-    assert all(set(item) == {"provider_id", "model_id", "display_name", "available"} for item in items)
+    assert all(set(item) == ({"provider_id", "model_id", "display_name", "available", "execution_mode"} | ({"source_locality"} if item["provider_id"] == "ollama" else set())) for item in items)
+    assert all(item["source_locality"] in {"LOCAL_VERIFIED", "REMOTE", "NOT_VERIFIED"} for item in items if item["provider_id"] == "ollama")
     assert "api_key" not in repr(items).casefold() and "authorization" not in repr(items).casefold()
 
 
@@ -65,7 +70,7 @@ def test_explicit_model_selection_reaches_provider_neutral_runtime_without_fallb
     monkeypatch.setattr(jobs_module.runtime, "is_remote_text_provider", lambda provider: provider == "deepseek")
     monkeypatch.setattr(jobs_module.runtime, "prepare_text_route", lambda provider, model, _provider=None: captured.append((provider, model)) or Node())
     value = manager()
-    job = Job("job", "continue", "n", "c", "", "LOCAL_ONLY", requested_provider=selection.get("provider_id"), requested_model=selection.get("model_id"))
+    job = Job("job", "continue", "n", "c", "", "QUALITY" if selection else "LOCAL_ONLY", requested_provider=selection.get("provider_id"), requested_model=selection.get("model_id"))
     value._run(job)
     assert job.status == "COMPLETED"
     assert captured == [expected]

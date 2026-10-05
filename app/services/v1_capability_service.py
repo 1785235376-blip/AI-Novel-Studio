@@ -122,7 +122,7 @@ class PluginPermissionIn(_StrictModel):
 
 class WorkflowNodeIn(_StrictModel):
     id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$")
-    type: Literal["project_snapshot", "quality_gate", "manual_approval", "checkpoint", "agent_task"]
+    type: Literal["project_snapshot", "quality_gate", "manual_approval", "checkpoint", "agent_task", "knowledge_candidates", "draft_prepare", "shot_proposals", "review_artifact"]
     name: str = Field(min_length=1, max_length=160)
     config: dict[str, Any] = Field(default_factory=dict)
 
@@ -143,6 +143,7 @@ class WorkflowDefinitionIn(_StrictModel):
 class WorkflowRunIn(_StrictModel):
     input: dict[str, Any] = Field(default_factory=dict)
     initiated_by: str = Field(default="local-author", min_length=1, max_length=160)
+    timeout_seconds: int = Field(default=3600, ge=1, le=86400)
 
 
 class ReleaseEvidenceIn(_StrictModel):
@@ -376,10 +377,12 @@ class V1CapabilityService:
 
     # Visual memory and asset lineage -----------------------------------
     def list_visual_memory(self, novel_id: str, entity_type: str | None = None,
-                           entity_id: str | None = None, status: str | None = None) -> dict[str, Any]:
+                           entity_id: str | None = None, status: str | None = None,
+                           *, branch_id: str | None = None) -> dict[str, Any]:
         self._require_novel(novel_id)
         rows = [self._public(row) for row in self._read("visual_memory")
-                if row.get("novel_id") == novel_id and not row.get("deleted_at")]
+                if row.get("novel_id") == novel_id and not row.get("deleted_at")
+                and (branch_id is None or row.get("branch_id") == branch_id)]
         if entity_type:
             rows = [row for row in rows if row.get("entity_type") == entity_type]
         if entity_id:
@@ -389,53 +392,196 @@ class V1CapabilityService:
         rows.sort(key=lambda row: str(row.get("updated_at", "")), reverse=True)
         return {"items": rows, "total": len(rows), "inference_performed": False, "storage": self.storage_mode}
 
-    def create_visual_memory(self, novel_id: str, body: VisualMemoryIn,
-                             idempotency_key: str | None = None) -> dict[str, Any]:
+    def _visual_asset(self, asset_id: str, novel_id: str, branch_id: str | None = None) -> dict[str, Any]:
+        asset = self.assets.get(asset_id, branch_id=branch_id)
+        if asset.get("novel_id") != novel_id:
+            raise FileNotFoundError(asset_id)
+        self.assets.content(asset_id, branch_id=branch_id)
+        return asset
+
+    def _visual_payload(self, novel_id: str, body: VisualMemoryIn,
+                        branch_id: str | None = None) -> dict[str, Any]:
         self._require_novel(novel_id)
         if body.entity_type == "CHARACTER":
             self._require_character(novel_id, body.entity_id)
         if body.asset_id:
-            self._require_asset(body.asset_id, novel_id)
-        return self._create("visual_memory", body.model_dump(mode="json"), novel_id=novel_id,
-                            action="VISUAL_MEMORY_CREATED", target_type="VisualMemory",
-                            idempotency_key=idempotency_key)
+            self._visual_asset(body.asset_id, novel_id, branch_id)
+        payload = body.model_dump(mode="json")
+        if len(json.dumps(payload, ensure_ascii=False).encode()) > 128 * 1024:
+            raise ValueError("visual memory metadata exceeds 128 KiB")
+        return {**payload, "branch_id": branch_id, "approval_status": "DRAFT", "approval": None}
+
+    def create_visual_memory(self, novel_id: str, body: VisualMemoryIn,
+                             idempotency_key: str | None = None,
+                             *, branch_id: str | None = None) -> dict[str, Any]:
+        payload = self._visual_payload(novel_id, body, branch_id)
+        # Bind idempotency to branch and exact payload, not merely a free-form key.
+        key = f"{branch_id or 'local'}:{idempotency_key}" if idempotency_key else None
+        with self._lock:
+            if key:
+                cached = self._idempotency.get(f"visual_memory:{novel_id}:{key}")
+                if isinstance(cached, dict):
+                    if any(cached.get(field) != value for field, value in payload.items()):
+                        raise ValueError("visual memory idempotency key was used for a different request")
+                    return self._get("visual_memory", cached["id"], novel_id)
+            return self._create("visual_memory", payload, novel_id=novel_id,
+                                action="VISUAL_MEMORY_CREATED", target_type="VisualMemory", idempotency_key=key)
 
     def update_visual_memory(self, novel_id: str, memory_id: str, body: VisualMemoryIn,
-                             expected_version: int | None = None) -> dict[str, Any]:
+                             expected_version: int | None = None,
+                             *, branch_id: str | None = None) -> dict[str, Any]:
+        payload = self._visual_payload(novel_id, body, branch_id)
+        with self._lock:
+            current = self._get("visual_memory", memory_id, novel_id)
+            if branch_id is not None and current.get("branch_id") != branch_id:
+                raise FileNotFoundError(memory_id)
+            return self._update("visual_memory", memory_id, payload, novel_id=novel_id,
+                                expected_version=expected_version, action="VISUAL_MEMORY_UPDATED", target_type="VisualMemory")
+
+    def approve_visual_memory(self, novel_id: str, memory_id: str, expected_version: int,
+                              *, branch_id: str | None = None, actor_id: str = "local-author") -> dict[str, Any]:
         self._require_novel(novel_id)
-        if body.entity_type == "CHARACTER":
-            self._require_character(novel_id, body.entity_id)
-        if body.asset_id:
-            self._require_asset(body.asset_id, novel_id)
-        return self._update("visual_memory", memory_id, body.model_dump(mode="json"), novel_id=novel_id,
-                            expected_version=expected_version, action="VISUAL_MEMORY_UPDATED", target_type="VisualMemory")
+        with self._lock:
+            row = self._get("visual_memory", memory_id, novel_id)
+            if branch_id is not None and row.get("branch_id") != branch_id:
+                raise FileNotFoundError(memory_id)
+            if row.get("status") != "ACTIVE" or not row.get("asset_id"):
+                raise ValueError("an active visual memory with a reference asset is required")
+            asset = self._visual_asset(row["asset_id"], novel_id, branch_id)
+            if not str(asset.get("media_type", "")).startswith("image/"):
+                raise ValueError("visual memory reference must be an image asset")
+            approval = {"approved_by": actor_id, "approved_at": _now(), "memory_version": expected_version + 1,
+                        "asset_id": asset["id"], "asset_sha256": asset["sha256"], "asset_size": asset["size"],
+                        "asset_version": int(asset.get("version", 1)), "origin": row.get("origin"),
+                        "evidence_ids": list(row.get("evidence_ids") or [])}
+            updated = self._update("visual_memory", memory_id, {"approval_status": "APPROVED", "approval": approval},
+                                   novel_id=novel_id, expected_version=expected_version,
+                                   action="VISUAL_MEMORY_APPROVED", target_type="VisualMemory")
+            self.search_visual_memory(novel_id, branch_id=branch_id)
+            return updated
+
+    def search_visual_memory(self, novel_id: str, query: str = "", *, entity_type: str | None = None,
+                             entity_id: str | None = None, limit: int = 20,
+                             branch_id: str | None = None) -> dict[str, Any]:
+        from .visual_memory_index import VisualMemoryIndex
+        if len(query) > 1000 or not 1 <= limit <= 100:
+            raise ValueError("invalid visual memory search bounds")
+        self._require_novel(novel_id)
+        with self._lock:
+            rows = self.list_visual_memory(novel_id, status="ACTIVE", branch_id=branch_id)["items"]
+            documents, excluded = [], []
+            for row in sorted(rows, key=lambda item: item["id"]):
+                if row.get("approval_status") != "APPROVED":
+                    continue
+                approval = row.get("approval") or {}
+                try:
+                    asset = self._visual_asset(row.get("asset_id"), novel_id, branch_id)
+                except (ValueError, FileNotFoundError):
+                    excluded.append({"id": row["id"], "reason": "ASSET_MISSING_OR_INVALID"})
+                    continue
+                if (approval.get("memory_version") != row.get("version")
+                        or approval.get("asset_id") != asset["id"]
+                        or approval.get("asset_sha256") != asset["sha256"]
+                        or approval.get("asset_size") != asset["size"]
+                        or approval.get("asset_version") != int(asset.get("version", 1))):
+                    excluded.append({"id": row["id"], "reason": "APPROVAL_STALE"})
+                    continue
+                searchable = {key: row.get(key) for key in ("entity_type", "entity_id", "appearance", "clothing", "style", "scene_features", "notes")}
+                searchable["filename"] = asset["filename"]
+                documents.append({"id": row["id"], "version": row["version"], "novel_id": novel_id,
+                                  "branch_id": row.get("branch_id"), "entity_type": row["entity_type"],
+                                  "entity_id": row["entity_id"], "asset_id": asset["id"],
+                                  "provenance": approval, "searchable": searchable})
+            index = VisualMemoryIndex(self.root, novel_id, branch_id)
+            snapshot = index.synchronize(documents)
+            # Filter first so unrelated entities cannot consume the result limit.
+            filtered = [item for item in snapshot["documents"]
+                        if (not entity_type or item["entity_type"] == entity_type)
+                        and (not entity_id or item["entity_id"] == entity_id)]
+            allowed = {item["id"] for item in filtered}
+            filtered_snapshot = {**snapshot, "documents": filtered,
+                                 "postings": {term: {key: count for key, count in postings.items() if key in allowed}
+                                              for term, postings in snapshot["postings"].items()}}
+            items = index.search(filtered_snapshot, query, limit=limit)
+            return {"items": items, "total": len(items), "indexed_count": len(documents), "excluded": excluded,
+                    "retrieval_mode": index.MODE, "inference_performed": False, "embeddings_available": False,
+                    "source_fingerprint": snapshot["source_fingerprint"], "storage": self.storage_mode}
+
+    def asset_references(self, asset_id: str, *, branch_id: str | None = None,
+                         include_deleted: bool = False) -> dict[str, Any]:
+        asset = self.assets.get(asset_id, branch_id=branch_id, include_deleted=include_deleted)
+        references = []
+        for collection, fields in (("visual_memory", ("asset_id",)), ("research", ("asset_ids",)),
+                                   ("asset_derivatives", ("source_asset_id", "derivative_asset_id"))):
+            for row in self._read(collection):
+                if (row.get("novel_id") != asset["novel_id"] or row.get("deleted_at")
+                        or (branch_id is not None and row.get("branch_id") != branch_id)):
+                    continue
+                for field in fields:
+                    value = row.get(field)
+                    if value == asset_id or (isinstance(value, list) and asset_id in value):
+                        references.append({"collection": collection, "id": row["id"], "field": field,
+                                           "version": row.get("version"), "status": row.get("status")})
+        for row in self.assets.list(asset["novel_id"], branch_id=branch_id):
+            if asset_id in (row.get("source_asset_ids") or []):
+                references.append({"collection": "assets", "id": row["id"], "field": "source_asset_ids",
+                                   "version": row.get("version", 1), "status": "AVAILABLE"})
+        return {"asset_id": asset_id, "items": references, "total": len(references),
+                "coverage": ["visual_memory", "research", "asset_derivatives", "asset_metadata"],
+                "other_project_references_scanned": False, "deletion_policy": "recoverable_tombstone"}
 
     def list_asset_derivatives(self, asset_id: str) -> dict[str, Any]:
         source = self._require_asset(asset_id)
         rows = [self._public(row) for row in self._read("asset_derivatives")
                 if row.get("source_asset_id") == asset_id and not row.get("deleted_at")]
+        for row in rows:
+            try:
+                target = self._visual_asset(row["derivative_asset_id"], source["novel_id"])
+                self.assets.content(asset_id)
+                row["integrity_status"] = ("VERIFIED" if target["sha256"] == row.get("derivative_sha256")
+                                           and source["sha256"] == row.get("source_sha256") else "CHANGED")
+            except (ValueError, FileNotFoundError):
+                row["integrity_status"] = "MISSING_OR_INVALID"
         return {"source_asset": source, "items": rows, "total": len(rows), "generation_performed": False,
                 "storage": self.storage_mode}
 
     def create_asset_derivative(self, asset_id: str, body: AssetDerivativeIn,
                                 idempotency_key: str | None = None) -> dict[str, Any]:
         source = self._require_asset(asset_id)
-        derivative = self._require_asset(body.derivative_asset_id, source.get("novel_id"))
+        derivative = self._visual_asset(body.derivative_asset_id, source.get("novel_id"))
+        self.assets.content(asset_id)
         if derivative["id"] == source["id"]:
             raise ValueError("derivative asset must differ from source asset")
-        payload = {
-            "source_asset_id": source["id"], **body.model_dump(mode="json"),
-            "source_sha256": source.get("sha256"), "derivative_sha256": derivative.get("sha256"),
-            "status": "AVAILABLE", "generation_performed": False,
-        }
-        return self._create("asset_derivatives", payload, novel_id=source.get("novel_id"),
-                            action="ASSET_DERIVATIVE_LINKED", target_type="AssetDerivative",
-                            idempotency_key=idempotency_key)
+        with self._lock:
+            edges = self._read("asset_derivatives")
+            pending, seen = [derivative["id"]], set()
+            while pending:
+                node = pending.pop()
+                if node == source["id"]:
+                    raise ValueError("asset derivative relationship would create a cycle")
+                if node in seen:
+                    continue
+                seen.add(node)
+                pending.extend(row["derivative_asset_id"] for row in edges
+                               if row.get("source_asset_id") == node and not row.get("deleted_at")
+                               and row.get("novel_id") == source["novel_id"])
+            payload = {
+                "source_asset_id": source["id"], **body.model_dump(mode="json"),
+                "source_sha256": source.get("sha256"), "derivative_sha256": derivative.get("sha256"),
+                "branch_id": source.get("branch_id"), "status": "AVAILABLE", "generation_performed": False,
+            }
+            if source.get("branch_id") != derivative.get("branch_id"):
+                raise ValueError("asset derivative must belong to the same branch")
+            return self._create("asset_derivatives", payload, novel_id=source.get("novel_id"),
+                                action="ASSET_DERIVATIVE_LINKED", target_type="AssetDerivative",
+                                idempotency_key=idempotency_key)
 
     # Plugin manifest and permission manager -----------------------------
     def _public_plugin(self, item: dict[str, Any]) -> dict[str, Any]:
         public = self._public(item)
         public["execution_supported"] = False
+        previous=settings.data_path()/"plugin_previous"/str(public.get("id") or "invalid")
+        public["rollback_available"]=previous.is_dir() and not previous.is_symlink() and (previous/"manifest.json").is_file()
         try:
             public["version"] = int(public.get("version") or 1)
         except (TypeError, ValueError):
@@ -565,7 +711,8 @@ class V1CapabilityService:
         if novel_id:
             rows = [row for row in rows if row.get("novel_id") == novel_id]
         return {"items": rows, "total": len(rows), "supported_node_types": [
-            "project_snapshot", "quality_gate", "manual_approval", "checkpoint",
+            "project_snapshot", "quality_gate", "manual_approval", "checkpoint", "agent_task",
+            "knowledge_candidates", "draft_prepare", "shot_proposals", "review_artifact",
         ], "external_ai_calls": False, "storage": self.storage_mode}
 
     def get_workflow(self, workflow_id: str) -> dict[str, Any]:
@@ -588,7 +735,13 @@ class V1CapabilityService:
         return {"items": rows, "total": len(rows), "storage": self.storage_mode}
 
     def get_workflow_run(self, run_id: str) -> dict[str, Any]:
-        return self._get("workflow_runs", run_id)
+        with self._lock:
+            run=self._get("workflow_runs", run_id)
+            if run["status"] in {"QUEUED","RUNNING","WAITING_APPROVAL","PAUSED"}:
+                elapsed=(datetime.now(timezone.utc)-datetime.fromisoformat(run.get("started_at",run["created_at"]))).total_seconds()
+                if elapsed > run.get("timeout_seconds",3600):
+                    return self._update("workflow_runs",run_id,{"status":"FAILED","error":{"code":"WORKFLOW_TIMEOUT"}},novel_id=run["novel_id"],expected_version=run["version"],action="WORKFLOW_TIMED_OUT",target_type="WorkflowRun")
+            return run
 
     def create_workflow_run(self, workflow_id: str, body: WorkflowRunIn,
                             idempotency_key: str | None = None) -> dict[str, Any]:
@@ -600,7 +753,8 @@ class V1CapabilityService:
             "definition_snapshot": {key: workflow[key] for key in ("title", "nodes", "edges", "topological_order")},
             "input": body.input, "initiated_by": body.initiated_by, "status": "QUEUED",
             "node_states": node_states, "attempt": 1, "retry_of": None,
-            "external_ai_calls": False,
+            "external_ai_calls": False, "timeout_seconds": body.timeout_seconds,
+            "started_at": _now(), "step_limit": 100, "steps_completed": 0,
         }
         run = self._create("workflow_runs", payload, novel_id=workflow["novel_id"], action="WORKFLOW_RUN_CREATED",
                            target_type="WorkflowRun", idempotency_key=idempotency_key)
@@ -609,8 +763,11 @@ class V1CapabilityService:
     def _advance_workflow_run(self, run_id: str) -> dict[str, Any]:
         with self._lock:
             run = self.get_workflow_run(run_id)
-            if run["status"] in {"SUCCEEDED", "FAILED", "CANCELLED"}:
+            if run["status"] in {"SUCCEEDED", "FAILED", "CANCELLED", "REJECTED", "PAUSED"}:
                 return run
+            elapsed = (datetime.now(timezone.utc) - datetime.fromisoformat(run.get("started_at", run["created_at"]))).total_seconds()
+            if elapsed > run.get("timeout_seconds", 3600):
+                return self._update("workflow_runs", run_id, {"status":"FAILED", "error":{"code":"WORKFLOW_TIMEOUT"}}, novel_id=run["novel_id"], expected_version=run["version"], action="WORKFLOW_TIMED_OUT", target_type="WorkflowRun")
             snapshot = run["definition_snapshot"]
             nodes = {node["id"]: node for node in snapshot["nodes"]}
             incoming: dict[str, list[str]] = {node_id: [] for node_id in nodes}
@@ -622,6 +779,8 @@ class V1CapabilityService:
                 state = dict(states[node_id])
                 if state["status"] == "SUCCEEDED":
                     continue
+                if state["status"] in {"QUEUED", "WORKING"}:
+                    break
                 if any(states[source]["status"] != "SUCCEEDED" for source in incoming[node_id]):
                     continue
                 node = nodes[node_id]
@@ -636,7 +795,10 @@ class V1CapabilityService:
                     status = "WAITING_APPROVAL"
                     break
                 try:
-                    if node["type"] == "project_snapshot":
+                    if node["type"] in {"knowledge_candidates", "draft_prepare", "shot_proposals", "review_artifact"}:
+                        from ..workflow_recipes import execute_local_recipe_node
+                        output = execute_local_recipe_node(node["type"], run["input"], states, node.get("config", {}))
+                    elif node["type"] == "project_snapshot":
                         overview = self.overview(run["novel_id"])
                         output = {"counts": overview["counts"], "content": overview["content"]}
                     elif node["type"] == "quality_gate":
@@ -647,19 +809,24 @@ class V1CapabilityService:
                     state.update(status="SUCCEEDED", output=output, error=None, finished_at=_now())
                     states[node_id] = state
                 except Exception as exc:
-                    state.update(status="FAILED", output=None, error={"code": "WORKFLOW_NODE_FAILED", "message": str(exc)})
+                    state.update(status="FAILED", output=None, error={"code": "WORKFLOW_NODE_FAILED", "message": "节点处理失败；请检查输入和配置。"})
                     states[node_id] = state
                     status = "FAILED"
+                    for blocked_id, blocked in states.items():
+                        if blocked["status"] == "PENDING":
+                            states[blocked_id] = {**blocked, "status":"SKIPPED", "error":{"code":"UPSTREAM_FAILED"}}
                     break
             else:
                 status = "SUCCEEDED" if all(state["status"] == "SUCCEEDED" for state in states.values()) else status
-            return self._update("workflow_runs", run_id, {"node_states": states, "status": status}, novel_id=run["novel_id"],
+            return self._update("workflow_runs", run_id, {"node_states": states, "status": status, "current_node_id": next((key for key, value in states.items() if value["status"] in {"WAITING_APPROVAL", "QUEUED", "WORKING"}), None), "steps_completed":sum(value["status"] == "SUCCEEDED" for value in states.values())}, novel_id=run["novel_id"],
                                 expected_version=run["version"], action="WORKFLOW_RUN_ADVANCED", target_type="WorkflowRun")
 
     def approve_workflow_node(self, run_id: str, node_id: str, approved_by: str, note: str = "") -> dict[str, Any]:
         if not approved_by.strip():
             raise ValueError("approved_by is required")
         run = self.get_workflow_run(run_id)
+        if run["status"] != "WAITING_APPROVAL":
+            raise ValueError("workflow run is not awaiting approval")
         states = dict(run["node_states"])
         state = dict(states.get(node_id) or {})
         node = next((node for node in run["definition_snapshot"]["nodes"] if node["id"] == node_id), None)
@@ -671,10 +838,20 @@ class V1CapabilityService:
         updated = self._update("workflow_runs", run_id, {"node_states": states, "status": "RUNNING"}, novel_id=run["novel_id"],
                                expected_version=run["version"], action="WORKFLOW_NODE_APPROVED", target_type="WorkflowRun")
         return self._advance_workflow_run(updated["id"])
+    def reject_workflow_node(self, run_id: str, node_id: str, rejected_by: str, note: str = "") -> dict[str, Any]:
+        run = self.get_workflow_run(run_id)
+        state = dict(run["node_states"].get(node_id) or {})
+        if run["status"] != "WAITING_APPROVAL" or state.get("status") != "WAITING_APPROVAL":
+            raise ValueError("workflow node is not awaiting approval")
+        state.update(status="REJECTED", output={"rejected_by": rejected_by, "note":note, "rejected_at":_now()})
+        states = {key: ({**value, "status":"SKIPPED"} if value["status"] == "PENDING" else value) for key, value in run["node_states"].items()}
+        states[node_id] = state
+        return self._update("workflow_runs", run_id, {"status":"REJECTED", "node_states":states}, novel_id=run["novel_id"], expected_version=run["version"], action="WORKFLOW_REJECTED", target_type="WorkflowRun")
+
     def trigger_agent_node(self, run_id: str, node_id: str, triggered_by: str) -> dict[str, Any]:
         run=self.get_workflow_run(run_id); node=next((n for n in run["definition_snapshot"]["nodes"] if n["id"]==node_id),None); state=dict(run["node_states"].get(node_id) or {})
-        if not node or node.get("type")!="agent_task" or state.get("status")!="WAITING_APPROVAL": raise ValueError("agent node is not waiting for trigger")
-        state.update(status="SUCCEEDED",output={"execution":"QUEUED","triggered_by":str(triggered_by).strip(),"agent_role":node.get("config",{}).get("agent_role","writer"),"queued_at":_now()},finished_at=_now())
+        if run["status"] != "WAITING_APPROVAL" or not node or node.get("type")!="agent_task" or state.get("status")!="WAITING_APPROVAL": raise ValueError("agent node is not waiting for trigger")
+        state.update(status="QUEUED",output={"execution":"QUEUED","triggered_by":str(triggered_by).strip(),"agent_role":node.get("config",{}).get("agent_role","writer"),"queued_at":_now()},finished_at=_now())
         updated=self._update("workflow_runs",run_id,{"node_states":{**run["node_states"],node_id:state},"status":"RUNNING"},novel_id=run["novel_id"],expected_version=run["version"],action="AGENT_NODE_QUEUED",target_type="WorkflowRun")
         return self._advance_workflow_run(updated["id"])
     def list_agent_queue(self, novel_id: str | None = None) -> dict[str, Any]:
@@ -682,16 +859,16 @@ class V1CapabilityService:
         for run in self._read('workflow_runs'):
             if novel_id and run.get('novel_id')!=novel_id: continue
             for node_id,state in (run.get('node_states') or {}).items():
-                if state.get('status')=='SUCCEEDED' and state.get('output',{}).get('execution')=='QUEUED': rows.append({'run_id':run['id'],'novel_id':run.get('novel_id'),'node_id':node_id,'agent_role':state.get('output',{}).get('agent_role'),'status':'QUEUED'})
+                if run.get('status') == 'RUNNING' and state.get('status') in {'QUEUED', 'WORKING'} and state.get('output',{}).get('execution') in {'QUEUED', 'CLAIMED'}: rows.append({'run_id':run['id'],'novel_id':run.get('novel_id'),'node_id':node_id,'agent_role':state.get('output',{}).get('agent_role'),'status':state['status']})
         return {'items':rows,'total':len(rows)}
     def claim_agent_task(self, run_id: str, node_id: str, claimed_by: str) -> dict[str, Any]:
         run=self.get_workflow_run(run_id); state=dict((run.get('node_states') or {}).get(node_id) or {})
-        if state.get('status')!='SUCCEEDED' or state.get('output',{}).get('execution')!='QUEUED': raise ValueError('agent task is not queued')
-        output={**state.get('output',{}),'execution':'CLAIMED','claimed_by':str(claimed_by).strip(),'claimed_at':_now()}; state['output']=output
+        if run.get('status') != 'RUNNING' or state.get('status')!='QUEUED' or state.get('output',{}).get('execution')!='QUEUED': raise ValueError('agent task is not queued')
+        output={**state.get('output',{}),'execution':'CLAIMED','claimed_by':str(claimed_by).strip(),'claimed_at':_now()}; state['output']=output; state['status']='WORKING'
         return self._update('workflow_runs',run_id,{'node_states':{**run['node_states'],node_id:state}},novel_id=run['novel_id'],expected_version=run['version'],action='AGENT_TASK_CLAIMED',target_type='WorkflowRun')
     def complete_agent_task(self, run_id: str, node_id: str, status: str, output: dict[str, Any] | None = None, error: str | None = None) -> dict[str, Any]:
         run=self.get_workflow_run(run_id); state=dict((run.get('node_states') or {}).get(node_id) or {})
-        if state.get('output',{}).get('execution')!='CLAIMED': raise ValueError('agent task is not claimed')
+        if run.get('status') != 'RUNNING' or state.get('status') != 'WORKING' or state.get('output',{}).get('execution')!='CLAIMED': raise ValueError('agent task is not claimed')
         if status not in {'SUCCEEDED','FAILED'}: raise ValueError('invalid agent completion status')
         state.update(status=status,output={**state.get('output',{}),'execution':'COMPLETED','result':output} if status=='SUCCEEDED' else {**state.get('output',{}),'execution':'FAILED'},error={'message':error} if error else None,finished_at=_now())
         updated=self._update('workflow_runs',run_id,{'node_states':{**run['node_states'],node_id:state},'status':'RUNNING' if status=='SUCCEEDED' else 'FAILED'},novel_id=run['novel_id'],expected_version=run['version'],action='AGENT_TASK_COMPLETED',target_type='WorkflowRun')
@@ -700,7 +877,7 @@ class V1CapabilityService:
     def set_workflow_run_state(self, run_id: str, action: Literal["pause", "resume", "cancel"]) -> dict[str, Any]:
         run = self.get_workflow_run(run_id)
         if action == "cancel":
-            if run["status"] in {"SUCCEEDED", "FAILED", "CANCELLED"}:
+            if run["status"] in {"SUCCEEDED", "FAILED", "CANCELLED", "REJECTED"}:
                 raise ValueError("terminal workflow run cannot be cancelled")
             return self._update("workflow_runs", run_id, {"status": "CANCELLED"}, novel_id=run["novel_id"],
                                 expected_version=run["version"], action="WORKFLOW_RUN_CANCELLED", target_type="WorkflowRun")
