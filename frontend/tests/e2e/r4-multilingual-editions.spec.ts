@@ -1,6 +1,9 @@
 import { expect, test, type APIResponse, type Page } from '@playwright/test';
 import { createPageQuiescer } from './r3-fixture-lifecycle';
 const API = 'http://127.0.0.1:8019/api';
+const UI = 'http://127.0.0.1:5179';
+// Browser fetches use Vite's same-origin proxy; APIRequestContext uses API directly.
+const browserEndpoint = (endpoint: string) => UI + new URL(endpoint).pathname;
 async function checked(response: Pick<APIResponse, 'ok' | 'status' | 'text' | 'json'>): Promise<any> {
   expect(response.ok(), `HTTP ${response.status()}: ${await response.text()}`).toBeTruthy(); return response.json();
 }
@@ -38,7 +41,7 @@ test('B05 real File/React bilingual edition: approved terms, exact paragraphs, U
     await page.getByLabel('语言版本名称', { exact: true }).fill('Arabic synthetic edition');
     await page.getByLabel('目标语言代码', { exact: true }).fill('ar');
     await page.getByLabel(`${original.title} · v${original.version}`, { exact: true }).check();
-    const editionCreated = page.waitForResponse(r => r.url() === base && r.request().method() === 'POST');
+    const editionCreated = page.waitForResponse(r => r.url() === browserEndpoint(base) && r.request().method() === 'POST');
     await page.getByRole('button', { name: '创建语言版本', exact: true }).click();
     let edition = await checked(await editionCreated);
     expect(edition.segments.map((s: any) => s.source_text)).toEqual(originals);
@@ -65,7 +68,7 @@ test('B05 real File/React bilingual edition: approved terms, exact paragraphs, U
       await expect(page.getByRole('button', { name: '提交本段审核', exact: true })).toBeEnabled();
       await page.getByRole('button', { name: '提交本段审核', exact: true }).click();
       await expect(page.getByRole('button', { name: '预检本段术语与版本', exact: true })).toBeEnabled();
-      const previewResponse = page.waitForResponse(r => r.url() === segmentUrl + '/preview' && r.request().method() === 'POST');
+      const previewResponse = page.waitForResponse(r => r.url() === browserEndpoint(segmentUrl + '/preview') && r.request().method() === 'POST');
       await page.getByRole('button', { name: '预检本段术语与版本', exact: true }).click();
       const preview = await checked(await previewResponse);
       const diagnostic = { index: i, segment_id: segment.id, source_text: segment.source_text, preview };
@@ -75,7 +78,7 @@ test('B05 real File/React bilingual edition: approved terms, exact paragraphs, U
       await expect(page.getByRole('button', { name: '确认仅接受本段译文', exact: true })).toBeDisabled();
       const approval = page.getByLabel('已人工核对本段译文、术语与源版本', { exact: true });
       await expect(approval).toBeEnabled(); await approval.check();
-      const accepted = page.waitForResponse(r => r.url() === segmentUrl + '/review' && r.request().method() === 'POST');
+      const accepted = page.waitForResponse(r => r.url() === browserEndpoint(segmentUrl + '/review') && r.request().method() === 'POST');
       await page.getByRole('button', { name: '确认仅接受本段译文', exact: true }).click();
       edition = await checked(await accepted);
       expect(edition.segments[i].status).toBe('ACCEPTED');
@@ -107,7 +110,7 @@ test('B05 real File/React bilingual edition: approved terms, exact paragraphs, U
     await expect(page.getByLabel('第 3 段译文', { exact: true })).toHaveCount(0);
     await page.getByRole('button', { name: '预览重新对齐', exact: true }).click();
     await expect(page.getByText('保留原位置且内容完全一致的 2 段；', { exact: false })).toBeVisible();
-    const refreshed = page.waitForResponse(r => r.url() === `${base}/${edition.id}/refresh` && r.request().method() === 'POST');
+    const refreshed = page.waitForResponse(r => r.url() === browserEndpoint(`${base}/${edition.id}/refresh`) && r.request().method() === 'POST');
     await page.getByRole('button', { name: '确认重新对齐并重新审核', exact: true }).click();
     edition = await checked(await refreshed);
     expect(await checked(await page.request.get(`${base}/${edition.id}`))).toEqual(edition);

@@ -11,3 +11,7 @@ This correction changes test fixtures/contracts only; it does not relax producti
 - Reader legacy contracts: Markdown lazy-materialization tests are explicitly File-only rather than parameterizing impossible PostgreSQL filesystem cases and skipping them at runtime. All 18 applicable PostgreSQL reader parameters remain collected. The no-skipped-marked-PG gate is unchanged.
 
 Isolated correction checks: 78 File reader/portable/mounted cases passed, 65 PostgreSQL parameters excluded locally; 20 multilingual mounted File cases passed, 20 PostgreSQL parameters excluded. Feature workers also ran focused panel checks and type/spec collection checks. Actual corrected PostgreSQL/browser execution remains pending hosted CI. Local Chromium was not retried. Independent follow-up review remains BLOCKED.
+
+## Follow-on browser predicate correction
+
+At `60314f9d`, PR run `37359477778` passed 24 of 25 R4 browser cases. Portable and declarative journeys now pass. The remaining multilingual fixture timed out waiting for a response with the direct backend origin `8019`, while the real React client sends through the existing Vite same-origin proxy `5179`. All four new response waits now match the exact frontend-origin endpoint and HTTP method. Source mapping, term checks, human approval and unchanged-original/history assertions remain intact. The spec is collected successfully; corrected execution requires the next hosted run. PostgreSQL was still running when this receipt was recorded.
