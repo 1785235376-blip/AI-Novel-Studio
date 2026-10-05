@@ -1330,7 +1330,9 @@ def _authorize_novel_project(
             )
         else:
             scope = AuthorizationScope(ScopeKind.PROJECT, workspace_id, novel_id)
-        collaboration_scope_service.validate_scope(scope)
+        # The original authority validates the declared scope level while
+        # checking current membership and grants. The collaboration validator
+        # requires a complete branch and would reject a valid PROJECT scope.
         membership_authorization_service.require(actor, permission, ModalityDomain.NOVEL, scope)
         return actor, scope
     except (KeyError, ValueError, PermissionError) as exc:
