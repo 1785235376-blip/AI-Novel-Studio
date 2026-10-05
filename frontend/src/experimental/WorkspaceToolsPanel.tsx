@@ -204,7 +204,7 @@ function WorkspaceTasks({ api, navigate, advanced, filters, updateFilters }: { a
     // This cancels navigation only. It never cancels or resubmits the source job.
     navigate?.({ ...source, signal: lookup.current.signal });
   };
-  return <Panel title="任务中心 · 原服务实时读取">
+  return <Panel title="任务中心 · 原服务实时读取" aria-label="任务中心 · 原服务实时读取">
     <div className="experimental-actions"><Field label="按任务 ID、类型或阶段搜索"><input maxLength={160} value={query} onChange={e => { stopLookup(); setQuery(e.target.value); }} /></Field><label className="experimental-check"><input type="checkbox" checked={failed} onChange={e => { stopLookup(); setFailed(e.target.checked); }} />只看失败或结果未知</label><Button disabled={tasks.loading} onClick={() => { stopLookup(); tasks.reload(); }}>刷新任务</Button></div>
     <p>费用未知时不显示免费。这里不会执行或重试任务；请进入原工具核对权限、输入和费用后处理。正文生成只显示近期可读记录，更早记录可能不在本次读取范围。</p>
     <ResourceState loading={tasks.loading} error={tasks.error} empty={!tasks.data?.items.length} />

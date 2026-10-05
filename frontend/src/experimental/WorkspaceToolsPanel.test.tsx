@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { StrictMode } from 'react';
-import { cleanup, fireEvent, render, screen, waitFor, act } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, act, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { WorkspaceToolsPanel } from './WorkspaceToolsPanel';
 import { experimentalClient } from './api';
@@ -224,9 +224,12 @@ it('passes only exact authorized original generation coordinates to the host', a
   const source = { kind: 'generation', id: 'author-job', chapter_id: 'author-chapter', version: 7 };
   const fetch = backend(url => url.includes('/tasks?') ? response({ items: [{ id: 'author-job', authority: 'author_generation', label: '正文生成', feature: 'history', source, status: 'SETTLING', stage_label: '结算确认中', progress: null, stale: false, history: [], lifecycle: '原任务服务' }], unavailable: [], truncated: false }) : undefined);
   vi.stubGlobal('fetch', fetch); const navigate = vi.fn();
-  render(<WorkspaceToolsPanel client={experimentalClient('novel', { sessionToken: '' })} onNavigate={navigate} initialSection="tasks" />);
-  await screen.findByText('结算确认中');
-  fireEvent.click(screen.getByRole('button', { name: '打开原生成草稿' }));
+  render(<><article className="experimental-record">通知记录 author-job</article><WorkspaceToolsPanel client={experimentalClient('novel', { sessionToken: '' })} onNavigate={navigate} initialSection="tasks" /></>);
+  const center = await screen.findByRole('region', { name: '任务中心 · 原服务实时读取' });
+  await within(center).findByText('结算确认中');
+  expect(within(center).getByText('任务 ID：author-job')).toBeTruthy();
+  expect(within(center).queryByText('通知记录 author-job')).toBeNull();
+  fireEvent.click(within(center).getByRole('button', { name: '打开原生成草稿' }));
   expect(navigate).toHaveBeenCalledWith(expect.objectContaining(source));
   expect(navigate.mock.calls[0][0].signal.aborted).toBe(false);
   fireEvent.click(screen.getByRole('button', { name: '继续工作' }));
