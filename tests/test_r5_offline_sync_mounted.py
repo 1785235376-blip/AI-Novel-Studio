@@ -64,6 +64,8 @@ def test_mounted_default_off_v1_dependency_host_session_and_strict_body(sync, mo
         monkeypatch.setenv('EXPERIMENTAL_FEATURES', flags); monkeypatch.setenv('V1_ACCEPTANCE_MODE', v1)
         assert e.client.get(e.sbase + '/records').status_code == 404
         assert e.client.post(e.sbase + '/channels', json={}).status_code == 404
+        assert e.client.post(e.sbase + '/channels/unavailable/selection/preview', json={}).status_code == 404
+        assert e.client.post(e.sbase + '/channels/unavailable/selection', json={}).status_code == 404
     monkeypatch.setenv('EXPERIMENTAL_FEATURES', ','.join(FLAGS)); monkeypatch.setenv('V1_ACCEPTANCE_MODE', 'false')
     response = e.client.post(e.sbase + '/channels', content='{"stream_id":"a","stream_id":"b"}', headers={'Content-Type': 'application/json'})
     assert response.status_code == 422
@@ -98,3 +100,55 @@ def test_mounted_collaboration_branch_never_reads_base_chapters(sync, monkeypatc
     response = e.client.get(e.sbase + '/catalog', headers=e.headers)
     assert response.status_code in {401, 403, 422} and 'city gate opened' not in response.text
     assert e.client.get(e.sbase + '/records').status_code == 401
+
+
+def change_selection(e, channel, *, add=(), withdraw=()):
+    body = {'expected_version': channel['version'], 'add_chapter_ids': list(add), 'withdraw_chapter_ids': list(withdraw)}
+    plan = checked(e.client.post(e.sbase + '/channels/' + channel['id'] + '/selection/preview', json=body))
+    return checked(e.client.post(e.sbase + '/channels/' + channel['id'] + '/selection', json={**body, 'preview_digest': plan['preview_digest'], 'confirmed': True}))
+
+
+def test_mounted_selective_withdrawal_and_explicit_new_baseline_use_current_scope(sync, monkeypatch):
+    e = sync; channel = create(e); row, apply_body = incoming(e, channel)
+    channel = checked(e.client.get(e.sbase + '/records'))['channels'][0]
+    added = e.chapters.create(e.nid, {'title': 'New scope', 'content': 'Fresh original'})
+    before = deepcopy(e.chapters.get(e.chapter['id'])); writes = []
+    monkeypatch.setattr(e.api, 'update_chapter', lambda *args, **kwargs: writes.append(args))
+    changed = change_selection(e, channel, add=[added['id']], withdraw=[e.chapter['id']])
+    assert changed['status'] == 'ACTIVE' and changed['chapter_ids'] == [added['id']]
+    assert e.client.post(e.sbase + '/inbox/' + row['id'] + '/apply', json=apply_body).status_code == 409
+    assert writes == [] and e.chapters.get(e.chapter['id']) == before
+    body = {'expected_version': changed['version'], 'add_chapter_ids': [e.chapter['id']]}
+    rejected = e.client.post(e.sbase + '/channels/' + channel['id'] + '/selection/preview', json=body)
+    assert rejected.status_code == 422 and 'SELECTION_REVOKED' in rejected.text
+    assert checked(e.client.get(e.sbase + '/records'))['inbox'][0]['selection_withdrawn']
+
+
+def test_mounted_selection_requires_preview_confirmation_and_version_fence(sync):
+    e = sync; channel = create(e); path = e.sbase + '/channels/' + channel['id'] + '/selection'
+    body = {'expected_version': channel['version'], 'withdraw_chapter_ids': [e.chapter['id']]}
+    preview = e.client.post(path + '/preview', json=body); plan = checked(preview)
+    assert preview.headers['cache-control'] == 'no-store'
+    assert e.client.post(path, json=body).status_code == 422
+    assert e.client.post(path, json={**body, 'confirmed': False, 'preview_digest': plan['preview_digest']}).status_code == 422
+    assert e.client.post(path, json={**body, 'confirmed': True, 'preview_digest': '0' * 64}).status_code == 409
+    assert e.client.post(path, json={**body, 'confirmed': True, 'preview_digest': plan['preview_digest'], 'automatic_network': True}).status_code == 422
+    assert checked(e.client.post(path, json={**body, 'confirmed': True, 'preview_digest': plan['preview_digest']}))['chapter_ids'] == []
+    assert e.client.post(path, json={**body, 'confirmed': True, 'preview_digest': plan['preview_digest']}).status_code == 409
+
+
+@pytest.mark.parametrize('fence', ['flag', 'v1', 'session'])
+def test_mounted_selection_commit_rechecks_authority_and_rolls_back(sync, monkeypatch, fence):
+    e = sync; channel = create(e); path = e.sbase + '/channels/' + channel['id'] + '/selection'
+    body = {'expected_version': channel['version'], 'withdraw_chapter_ids': [e.chapter['id']]}
+    plan = checked(e.client.post(path + '/preview', json=body)); original = e.sync._selection_plan
+    before = deepcopy(e.store.read(e.nid, e.scope))
+    def revoked(*args, **kwargs):
+        result = original(*args, **kwargs)
+        if fence == 'flag': monkeypatch.setenv('EXPERIMENTAL_FEATURES', '')
+        elif fence == 'v1': monkeypatch.setenv('V1_ACCEPTANCE_MODE', 'true')
+        else: e.sessions.revoke('sync-host')
+        return result
+    monkeypatch.setattr(e.sync, '_selection_plan', revoked)
+    assert e.client.post(path, json={**body, 'confirmed': True, 'preview_digest': plan['preview_digest']}).status_code in {401, 404}
+    assert e.store.read(e.nid, e.scope) == before

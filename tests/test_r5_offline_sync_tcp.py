@@ -117,3 +117,59 @@ def test_two_isolated_tcp_endpoints_add_edit_conflict_disconnect_replay_tombston
         # The previously received bytes still exist in this process, exactly as disclosed.
         assert add['envelope']['snapshot'] is not None
         print('B10_TCP_TRANSFER: REAL_HTTP_LOOPBACK, two independent uvicorn processes and isolated File roots; add/edit/conflict/disconnect/restart/replay/tombstone/revocation passed; no production cloud or E2EE claim.')
+
+
+@pytest.mark.file_backend_only
+@pytest.mark.skipif(os.getenv('RUN_B10_TCP_SYNC_TEST') != '1', reason='explicit real-loopback subprocess gate; not an in-process substitute')
+def test_two_isolated_tcp_endpoints_stale_dispatch_selective_withdrawal_and_fresh_baseline(tmp_path):
+    from copy import deepcopy
+    with ExitStack() as stack:
+        a, b = Endpoint(tmp_path / 'selection-a', 'A'), Endpoint(tmp_path / 'selection-b', 'B')
+        stack.callback(a.close); stack.callback(b.close); a.start(); b.start()
+        assert a.process.pid != b.process.pid and a.root != b.root and a.port != b.port
+        stream = uuid4().hex
+        for endpoint, peer in [(a, 'B'), (b, 'A')]:
+            novel = endpoint.post('/novels', {'title': 'B10 selection TCP ' + endpoint.label}, 201)
+            endpoint.nid = novel['id']; endpoint.base = '/novels/' + endpoint.nid + '/experimental/offline-sync'
+            ids = [endpoint.post('/novels/' + endpoint.nid + '/chapters', {'title': title, 'content': 'Same immutable baseline'}, 201)['id'] for title in ['Withdraw this', 'Keep this']]
+            endpoint.cid, endpoint.kept = ids
+            endpoint.post(endpoint.base + '/channels', {'stream_id': stream, 'endpoint_id': endpoint.label, 'peer_id': peer, 'chapter_ids': ids, 'allow_new_chapters': True}, 201)
+        stale = a.queue(); historical = a.export(stale); a.put_document('Changed after queued snapshot')
+        inspected = a.client.get(a.base + '/outbox/' + stale['id']); assert inspected.status_code == 409
+        rejected = a.client.post(a.base + '/outbox/' + stale['id'] + '/export', json={'expected_version': historical['version'], 'envelope_digest': stale['envelope_digest'], 'acknowledge_copy_boundary': True})
+        assert rejected.status_code == 409
+        current = a.export(a.queue()); inbox = b.receive(current); plan = b.review(inbox)
+        original_b = b.get('/chapters/' + b.cid); original_ids = a.cid, b.cid
+        for endpoint in [a, b]:
+            channel = endpoint.channel(); path = endpoint.base + '/channels/' + channel['id'] + '/selection'
+            body = {'expected_version': channel['version'], 'withdraw_chapter_ids': [endpoint.cid]}
+            preview = endpoint.post(path + '/preview', body)
+            changed = endpoint.post(path, {**body, 'preview_digest': preview['preview_digest'], 'confirmed': True})
+            assert changed['status'] == 'ACTIVE' and changed['chapter_ids'] == [endpoint.kept]
+            assert endpoint.client.post(path, json={**body, 'preview_digest': preview['preview_digest'], 'confirmed': True}).status_code == 409
+            assert endpoint.client.post(path + '/preview', json={'expected_version': changed['version'], 'add_chapter_ids': [endpoint.cid]}).status_code == 422
+        assert a.client.get(a.base + '/outbox/' + current['id']).status_code == 422
+        assert a.client.post(a.base + '/outbox/' + current['id'] + '/export', json={'expected_version': current['version'], 'envelope_digest': current['envelope_digest'], 'acknowledge_copy_boundary': True}).status_code == 422
+        apply_request = {'expected_version': inbox['version'], 'choices': plan['choices'], 'preview_digest': plan['preview_digest'], 'confirmed': True}
+        assert b.client.post(b.base + '/inbox/' + inbox['id'] + '/apply', json=apply_request).status_code == 409
+        assert b.client.post(b.base + '/inbox/' + inbox['id'] + '/review', json={'expected_version': inbox['version']}).status_code == 409
+        receive_request = {'expected_version': b.channel()['version'], 'envelope': current['envelope'], 'target_chapter_id': b.cid}
+        assert b.client.post(b.base + '/channels/' + b.channel()['id'] + '/receive', json=receive_request).status_code == 422
+        bypass = deepcopy(current['envelope']); bypass['message_id'] = uuid4().hex; bypass['sequence'] += 1
+        assert b.client.post(b.base + '/channels/' + b.channel()['id'] + '/receive', json={'expected_version': b.channel()['version'], 'envelope': bypass, 'create_new': True}).status_code == 422
+        assert b.get('/chapters/' + b.cid) == original_b and 'Same immutable baseline' in str(historical['envelope']['snapshot'])
+        # Other selected chapters continue to exchange on the same active batch.
+        a.cid, b.cid = a.kept, b.kept; a.put_document('Retained selection still exchanges')
+        kept = a.export(a.queue()); received = b.receive(kept); b.apply(received, b.review(received))
+        assert 'Retained selection still exchanges' in str(b.get('/chapters/' + b.cid)['document'])
+        # A never-selected chapter requires preview and source-stable confirmation.
+        extra = a.post('/novels/' + a.nid + '/chapters', {'title': 'Fresh addition', 'content': 'New baseline'}, 201)
+        channel = a.channel(); path = a.base + '/channels/' + channel['id'] + '/selection'
+        body = {'expected_version': channel['version'], 'add_chapter_ids': [extra['id']]}; preview = a.post(path + '/preview', body)
+        a.cid = extra['id']; a.put_document('Baseline changed during review')
+        assert a.client.post(path, json={**body, 'preview_digest': preview['preview_digest'], 'confirmed': True}).status_code == 409
+        fresh = a.post(path + '/preview', body); changed = a.post(path, {**body, 'preview_digest': fresh['preview_digest'], 'confirmed': True})
+        assert changed['chapter_ids'] == [a.kept, extra['id']]
+        sent = a.export(a.queue()); assert sent['envelope']['base']['document'] == fresh['additions'][0]['document']
+        assert original_ids[0] in a.channel()['withdrawn_chapter_ids'] and original_ids[1] in b.channel()['withdrawn_chapter_ids']
+        print('B10_TCP_SELECTION: REAL_HTTP_LOOPBACK, two isolated uvicorn processes; stale-source dispatch, selective withdrawal, replay/create-new bypass fences, unchanged original, retained selection exchange, fresh reviewed addition baseline passed.')

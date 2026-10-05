@@ -58,10 +58,15 @@ def transition(e, r, action, **body):
     return e.agents.transition(e.ctx, r['id'], action, {'expected_version': r['version'], **body})
 
 
-def test_builtin_manifest_reuses_planning_and_all_six_types_are_offline(env):
+def test_builtin_manifest_reuses_planning_and_all_types_are_offline(env):
     e = env; original = e.store.read(e.ctx.novel_id, e.ctx.scope)
     catalog = e.library.catalog(e.ctx)
-    assert len(catalog['items']) == 8 and set(catalog['types']) == {'planning', 'character', 'screenplay', 'storyboard', 'review', 'workflow'}
+    legacy = [p for p in catalog['items'] if p['package']['manifest']['type'] != 'safe_batch']
+    assert len(legacy) == 8 and {p['package']['manifest']['type'] for p in legacy} == {'planning', 'character', 'screenplay', 'storyboard', 'review', 'workflow'}
+    assert len(catalog['items']) == 9 and set(catalog['types']) == {'planning', 'character', 'screenplay', 'storyboard', 'review', 'workflow', 'safe_batch'}
+    batch = next(p for p in catalog['items'] if p['package']['manifest']['type'] == 'safe_batch')
+    assert batch['missing_dependencies'] == ['safe_batches_v2']
+    assert batch['package']['content'] == {'proof': True, 'export_format': 'txt', 'skip_satisfied': True}
     assert all(p['package']['manifest']['license'] == 'CC0-1.0' for p in catalog['items'])
     assert catalog['remote_sync'] == 'DISABLED' and catalog['executable_extensions'] == 'DENY_ALL'
     assert e.store.read(e.ctx.novel_id, e.ctx.scope) == original

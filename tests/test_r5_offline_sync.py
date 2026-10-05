@@ -273,3 +273,179 @@ def test_cross_project_or_path_shaped_source_rejected_before_repository_read(pai
     for cid in [b.cid, '../other:1', a.nid + ':../1', '/tmp/not-a-project:1']:
         with pytest.raises(FileNotFoundError): a.service._chapter(a.ctx, cid)
     assert calls == []
+
+
+def selection(e, *, add=(), withdraw=(), preview=None):
+    body = {'expected_version': channel(e)['version'], 'add_chapter_ids': list(add), 'withdraw_chapter_ids': list(withdraw)}
+    plan = preview or e.service.preview_selection(e.ctx, e.channel['id'], body)
+    return e.service.change_selection(e.ctx, e.channel['id'], {**body, 'preview_digest': plan['preview_digest'], 'confirmed': True})
+
+
+def test_selective_withdrawal_fences_queued_export_duplicate_receive_review_and_apply(pair):
+    a, b = pair; edit(a, 'Candidate before withdrawal'); outgoing = export(a, queue(a)); inbox = receive(b, outgoing); plan = review(b, inbox)
+    before = deepcopy(b.chapters.get(b.cid)); old_base = deepcopy(channel(b)['baseline']); historical = deepcopy(outgoing['envelope'])
+    selection(a, withdraw=[a.cid]); selection(b, withdraw=[b.cid])
+    assert channel(a)['status'] == channel(b)['status'] == 'ACTIVE'
+    assert channel(b)['baseline'] == old_base and not channel(b)['chapter_ids']
+    with pytest.raises(ValueError, match='SELECTION_REVOKED'): a.service.inspect_outbox(a.ctx, outgoing['id'])
+    with pytest.raises(ValueError, match='SELECTION_REVOKED'): export(a, outgoing)
+    with pytest.raises(ValueError, match='NOT_SELECTED'): queue(a)
+    with pytest.raises(ValueError, match='SELECTION_REVOKED'): receive(b, outgoing)
+    # A bound withdrawn source cannot bypass withdrawal through new-chapter mode.
+    changed = deepcopy(outgoing); changed['envelope']['message_id'] = uuid4().hex; changed['envelope']['sequence'] += 1
+    with pytest.raises(ValueError, match='SELECTION_REVOKED'): receive(b, changed, target_chapter_id=None, create_new=True)
+    with pytest.raises(CapabilityVersionConflict): review(b, inbox)
+    with pytest.raises(CapabilityVersionConflict): apply(b, inbox, plan)
+    raw = b.service._owned(b.ctx, b.service.INBOX, inbox['id'])
+    assert raw['status'] == 'SELECTION_REVOKED' and raw['selection_withdrawn']
+    assert raw['envelope'] == historical and b.chapters.get(b.cid) == before
+    assert outgoing['envelope'] == historical  # exported bytes are never recalled
+    with pytest.raises(ValueError, match='SELECTION_REVOKED'): selection(b, add=[b.cid])
+
+
+def test_new_selection_requires_fresh_reviewed_immutable_baseline_and_keeps_other_selection(pair):
+    a, b = pair
+    original = deepcopy(channel(a)['baseline'][a.cid]); extra = a.chapters.create(a.nid, {'title': 'New selected', 'content': 'Fresh seed'})
+    request = {'expected_version': channel(a)['version'], 'add_chapter_ids': [extra['id']], 'withdraw_chapter_ids': []}
+    plan = a.service.preview_selection(a.ctx, a.channel['id'], request)
+    assert plan['additions'][0]['id'] == extra['id'] and extra['id'] not in channel(a)['chapter_ids']
+    chapter = a.chapters.get(extra['id']); a.chapters.save(extra['id'], {'version': chapter['version'], 'document': doc('Changed since baseline preview')})
+    with pytest.raises(StaleSourceError, match='SELECTION_REVIEW_CHANGED'): selection(a, add=[extra['id']], preview=plan)
+    selection(a, add=[extra['id']]); frozen = deepcopy(channel(a)['baseline'][extra['id']]); selection(a, withdraw=[a.cid])
+    assert channel(a)['chapter_ids'] == [extra['id']] and channel(a)['baseline'][a.cid] == original
+    extra_current = a.chapters.get(extra['id']); a.chapters.save(extra['id'], {'version': extra_current['version'], 'document': doc('Next change')})
+    sent = export(a, queue(a, chapter_id=extra['id']))
+    assert sent['envelope']['base'] == frozen and sent['envelope']['snapshot']['document'] == doc('Next change')
+    assert channel(a)['baseline'][extra['id']] == frozen
+
+
+def test_selection_version_fence_and_invalid_changes_leave_channel_unchanged(pair):
+    a, b = pair; before = deepcopy(channel(a)); request = {'expected_version': before['version'], 'withdraw_chapter_ids': [a.cid]}
+    plan = a.service.preview_selection(a.ctx, a.channel['id'], request); queue(a)
+    with pytest.raises(CapabilityVersionConflict):
+        a.service.change_selection(a.ctx, a.channel['id'], {**request, 'preview_digest': plan['preview_digest'], 'confirmed': True})
+    for extra in [{}, {'withdraw_chapter_ids': [a.cid, a.cid]}, {'add_chapter_ids': [a.cid]}, {'add_chapter_ids': [b.cid]}, {'withdraw_chapter_ids': [b.cid]}, {'add_chapter_ids': [a.cid], 'withdraw_chapter_ids': [a.cid]}]:
+        current = deepcopy(channel(a))
+        with pytest.raises((ValueError, FileNotFoundError)):
+            a.service.preview_selection(a.ctx, a.channel['id'], {'expected_version': current['version'], **extra})
+        assert channel(a) == current
+    assert channel(a)['baseline'] == before['baseline']
+
+
+def test_withdrawal_between_claim_and_dispatch_stops_original_write(pair, monkeypatch):
+    from contextlib import contextmanager
+    a, b = pair; edit(a, 'Not written'); inbox = receive(b, export(a, queue(a))); plan = review(b, inbox)
+    original_transaction = b.store.transaction; armed = [True]; calls = []
+    @contextmanager
+    def transaction(nid, scope):
+        with original_transaction(nid, scope) as state: yield state
+        if armed[0]:
+            armed[0] = False
+            selection(b, withdraw=[b.cid])
+    monkeypatch.setattr(b.store, 'transaction', transaction)
+    with pytest.raises(ValueError, match='SELECTION_REVOKED'):
+        apply(b, inbox, plan, save_document=lambda *args: calls.append(args))
+    assert calls == [] and b.chapters.get(b.cid)['document'] == doc()
+    unknown = b.service._owned(b.ctx, b.service.INBOX, inbox['id'])
+    assert unknown['status'] == 'UNKNOWN' and unknown['selection_withdrawn']
+    observed = b.service.recover(b.ctx, inbox['id'], {'expected_version': unknown['version']})
+    assert observed['selection_withdrawn'] and not observed['can_adopt']
+    closed = b.service.recover(b.ctx, inbox['id'], {'expected_version': unknown['version'], 'close_without_replay': True, 'preview_digest': observed['preview_digest']})
+    assert closed['status'] == 'CLOSED_WITHOUT_REPLAY'
+
+
+def test_selection_withdrawal_serializes_with_started_original_write(pair):
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Event
+    a, b = pair; edit(a, 'Started write'); inbox = receive(b, export(a, queue(a))); plan = review(b, inbox)
+    entered, release, attempting, withdrew = Event(), Event(), Event(), Event()
+    def write(cid, document, version, source):
+        entered.set(); assert release.wait(10)
+        return b.chapters.save(cid, {'version': version, 'document': document, 'source': source})
+    def withdraw():
+        attempting.set(); result = selection(b, withdraw=[b.cid]); withdrew.set(); return result
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        writing = pool.submit(apply, b, inbox, plan, save_document=write)
+        try:
+            assert entered.wait(10); withdrawing = pool.submit(withdraw); assert attempting.wait(10)
+            assert not withdrew.wait(.1)  # cannot revoke ahead of an already fenced dispatch
+        finally: release.set()
+        assert writing.result(timeout=10)['status'] == 'APPLIED'
+        assert withdrawing.result(timeout=10)['withdrawn_chapter_ids'] == [b.cid]
+    assert b.chapters.get(b.cid)['document'] == doc('Started write')
+    with pytest.raises(ValueError, match='SELECTION_REVOKED'): receive(b, export(a, queue(a)))
+
+
+def test_unknown_matching_result_cannot_be_adopted_after_selection_withdrawal(pair):
+    a, b = pair; edit(a, 'Unknown written result'); inbox = receive(b, export(a, queue(a))); plan = review(b, inbox)
+    def lost(cid, document, version, source):
+        b.chapters.save(cid, {'version': version, 'document': document, 'source': source}); raise RuntimeError('lost receipt')
+    with pytest.raises(RuntimeError): apply(b, inbox, plan, save_document=lost)
+    selection(b, withdraw=[b.cid]); unknown = b.service._owned(b.ctx, b.service.INBOX, inbox['id'])
+    result = b.service.recover(b.ctx, inbox['id'], {'expected_version': unknown['version']})
+    assert result['observations'][0]['state'] == 'MATCHES_INTENT_UNCONFIRMED' and not result['can_adopt']
+    with pytest.raises(StaleSourceError):
+        b.service.recover(b.ctx, inbox['id'], {'expected_version': unknown['version'], 'adopt_matching_result': True, 'preview_digest': result['preview_digest']})
+    assert b.chapters.get(b.cid)['document'] == doc('Unknown written result')
+
+
+def test_sync_reads_never_mutate_original_chapter_authority(pair, monkeypatch):
+    a, b = pair
+    if a.store.backend != 'file':
+        before = deepcopy(a.chapters.get(a.cid)); outgoing = queue(a)
+        a.service.catalog(a.ctx); a.service.inspect_outbox(a.ctx, outgoing['id']); export(a, outgoing)
+        assert a.chapters.get(a.cid) == before
+        return
+    legacy = a.chapters.create(a.nid, {'title': 'Legacy original', 'content': 'Original Markdown bytes'})
+    repo = a.chapters.repository; root = repo.backend.novels / a.nid
+    before = {str(p.relative_to(root)): p.read_bytes() for p in root.rglob('*') if p.is_file()}
+    def forbidden(*args, **kwargs): raise AssertionError('sync read must not materialize original packages')
+    monkeypatch.setattr(a.chapters, 'get', forbidden); monkeypatch.setattr(a.chapters, 'list', forbidden)
+    assert legacy['id'] in [r['id'] for r in a.service.catalog(a.ctx)['chapters']]
+    selection(a, add=[legacy['id']]); outgoing = queue(a, chapter_id=legacy['id']); a.service.inspect_outbox(a.ctx, outgoing['id']); export(a, outgoing)
+    assert a.service._chapter(a.ctx, legacy['id'])['version'] == 1
+    assert {str(p.relative_to(root)): p.read_bytes() for p in root.rglob('*') if p.is_file()} == before
+    assert not repo._paths(legacy['id'])[2].exists()
+
+
+def test_added_selection_respects_reserved_new_chapter_capacity(pair):
+    a, b = pair; inbox = receive(b, export(a, queue(a)), target_chapter_id=None, create_new=True)
+    extras = [b.chapters.create(b.nid, {'title': f'Extra {index}', 'content': 'Synthetic bounded baseline'})['id'] for index in range(19)]
+    selection(b, add=extras[:18])
+    with pytest.raises(ValueError, match='SELECTION_LIMIT'): selection(b, add=extras[18:])
+    assert len(channel(b)['baseline']) == 19
+    apply(b, inbox, review(b, inbox)); assert len(channel(b)['baseline']) == 20
+
+
+def test_unknown_created_chapter_selected_separately_cannot_overwrite_its_fresh_baseline(pair):
+    a, b = pair; edit(a, 'New chapter candidate'); inbox = receive(b, export(a, queue(a)), target_chapter_id=None, create_new=True); plan = review(b, inbox)
+    created = []
+    def lost(*args):
+        created.append(create_writer(b, *args)); raise RuntimeError('lost creation receipt')
+    with pytest.raises(RuntimeError): apply(b, inbox, plan, create_chapter=lost)
+    unknown = b.service._owned(b.ctx, b.service.INBOX, inbox['id'])
+    selection(b, add=[created[0]['id']]); frozen = deepcopy(channel(b)['baseline'][created[0]['id']])
+    result = b.service.recover(b.ctx, inbox['id'], {'expected_version': unknown['version']})
+    assert not result['can_adopt'] and result['target_already_selected']
+    with pytest.raises(StaleSourceError):
+        b.service.recover(b.ctx, inbox['id'], {'expected_version': unknown['version'], 'adopt_matching_result': True, 'preview_digest': result['preview_digest']})
+    assert channel(b)['baseline'][created[0]['id']] == frozen
+    assert channel(b)['chapter_ids'].count(created[0]['id']) == 1
+
+
+def test_manual_close_between_claim_and_dispatch_is_not_replayed_or_reopened(pair, monkeypatch):
+    from contextlib import contextmanager
+    a, b = pair; edit(a, 'Do not replay closed candidate'); inbox = receive(b, export(a, queue(a))); plan = review(b, inbox)
+    original_transaction = b.store.transaction; armed = [True]; calls = []
+    @contextmanager
+    def transaction(nid, scope):
+        with original_transaction(nid, scope) as state: yield state
+        if armed[0]:
+            armed[0] = False
+            claimed = b.service._owned(b.ctx, b.service.INBOX, inbox['id'])
+            result = b.service.recover(b.ctx, inbox['id'], {'expected_version': claimed['version']})
+            b.service.recover(b.ctx, inbox['id'], {'expected_version': claimed['version'], 'close_without_replay': True, 'preview_digest': result['preview_digest']})
+    monkeypatch.setattr(b.store, 'transaction', transaction)
+    with pytest.raises(CapabilityVersionConflict): apply(b, inbox, plan, save_document=lambda *args: calls.append(args))
+    assert calls == [] and b.chapters.get(b.cid)['document'] == doc()
+    assert b.service._owned(b.ctx, b.service.INBOX, inbox['id'])['status'] == 'CLOSED_WITHOUT_REPLAY'
