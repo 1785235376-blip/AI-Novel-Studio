@@ -175,3 +175,13 @@ The blocked second-slice independent review is documented in SECOND_SLICE_REVIEW
 The subsequent pinned source adds ReaderPreflightPanel, WritingSessionPanel and the existing task-center notice addon; DirectorPanel and TimelineExchangePanel; VoiceDirectionPanel and SubtitleTimelinePanel; PortableProjectsPanel and SafeBatchesPanel; TemplateLibraryPanel, DeclarativeAgentsPanel and MultilingualEditionsPanel. All use captured ExperimentalClient authority and the existing workbench. See WAVE_4_5_CHECKPOINT.md for exact local validation and pending hosted checks.
 
 Navigation metadata now lives in experimentalNavigation.tsx. DeferredExperimentalWorkbench loads the optional workbench only when an enabled entry opens; its own loading/error/retry boundary must not unmount the prose editor or resubmit jobs. Keep current source/version/permission fences, readable unavailable states, exact integer/rational time, approved asset identity and per-segment human review intact during later visual polish.
+
+### All-forty runtime and request/recovery controls
+
+The next immutable runtime is `d2390d12cea037aa848b769d1f87822922832258` (full hosted results pending). ComicLayoutsPanel, InteractiveStoryPanel, WriterRoomPanel, ProjectForksPanel and OfflineSyncPanel now have actual service/API wiring. Preserve explicit approved-media review, exact source/version receipts, original CAS/checkpoint recovery and uncertain-state reconciliation; exports are bounded supported formats, not claims of external engine/NLE quality.
+
+Workbench search filters only currently enabled Chinese labels and stable feature identities locally. Typing never switches the active panel, resets drafts or calls a search API. Clear/focus and IME behavior must survive visual changes.
+
+Original writing, broker and revision consumers share AuthorRequestControls. Reduced source modes physically remove dependent context bundles/references; UI preview carries the exact request body sent at dispatch. Local 2–3 variants each have a reviewed original job ID, receipt and recovery state. Broker-budgeted/cloud groups remain unavailable. Do not replace these controls with an independent summary that disagrees with the actual request.
+
+U07 now projects existing author jobs and opens their exact original Draft/Diff/Accept without requiring broker enablement. Dismissed/superseded navigation cannot open a late result; aborting that lookup never cancels the job. Preserve unsaved chapters, current authorization and origin feature gates. U01 full reference-layout restoration and U10 isolated first-use sample work remain tracked separately from this pin.

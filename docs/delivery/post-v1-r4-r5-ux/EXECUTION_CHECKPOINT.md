@@ -1,11 +1,17 @@
 # Execution checkpoint
 
-Parent/merge-base: `d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b`. Branch `work/post-v1-r4-r5-ux`, Draft PR39. PR37 is unchanged.
+Parent/merge-base: `d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b`. Branch `work/post-v1-r4-r5-ux`, Draft PR39. Frozen PR37 and PR38 are unchanged.
 
-Current staged runtime source is `6fb3c44`; browser-contract correction is `1e3aea0`. See WAVE_4_5_CHECKPOINT.md for exact trees, 3,054 File-compatible passes, 865 frontend passes and verification boundaries. The source extends all A and U packages with bounded functional slices plus B01–B05. The matrix tracks remaining gaps; B06–B10 continue separately and no forty-package completion is claimed.
+## Published correction
 
-Published runtime checkpoint `12745cbb` passed File, real PostgreSQL and both Windows lanes, but its frontend browser job failed. Browser corrections `11157b4` and `4364613` preserve those failure records and are checked on their own exact heads. F00/storage/first-slice evidence remains historical in prior checkpoint documents and the PR.
+Remote `60314f9d093c6f1b4b27959ac2b3d7414d03d6da`, tree `cea3e3bada5ab113576945d1528eb21efd594371`, matches detached correction source `48407cd7e74db814c5ce989554e06a2cd8b4d4d4`. Push `37359470961` and PR `37359477778` are running at this receipt. It contains the prior A/U and B01–B05 slices plus exact shared-database/browser fixture corrections; see WAVE_4_5_CI_CORRECTIONS.md.
 
-Current-model/real-quality/GPU/native-desktop/external-software checks are not inferred from deterministic software tests. The independent follow-up review remains platform-BLOCKED; ordinary implementation and regression continue without retrying or rerouting that review.
+Prior remote `e12db8d` passed File and both Windows lanes. PostgreSQL/frontend failed as explicitly recorded; its R4 browser result was 22 passed / 3 failed. Broker cancellation now passes the actual browser journey. Historical failures are retained rather than relabelled as success.
 
-Next boundary: publish this pinned production/reading/language slice in bounded commits, verify exact remote tree and all hosted lanes, then continue remaining packages and feasible old-UX gaps. No merge, release, deployment, paid API, real credentials or user-runtime modification is authorized.
+## Next immutable integration
+
+Local runtime `d2390d12cea037aa848b769d1f87822922832258`, tree `a4334158a8b9d25a9f0c142de1e0787e32305b82`, contains bounded code paths for all forty packages, including B06–B10, removable shared-author context, exact local variants, original author-task recovery and searchable enabled tools. Full File-compatible execution passed 3,367 cases, with 9 explicit skips and 993 PostgreSQL-only deselections; 932 frontend tests passed, with 6 optional HTTP skips. TypeScript/build/token checks passed. The real two-process loopback offline-sync test passed separately. This runtime is not yet published and does not include the subsequent U01/U10 gap-closing work.
+
+The matrix tracks implemented and remaining scope without conflating local verification, real PG, hosted browser, native runtime/model quality, or user acceptance. The independent follow-up review remains platform-BLOCKED; permitted implementation/regression continues without retrying or rerouting it.
+
+Next boundary: finish this pinned source's complete tests, publish in bounded commits, and verify exact hosted lanes while closing feasible workspace-restoration and first-use sample gaps. No merge, release, deployment, paid API or user-runtime modification is authorized.

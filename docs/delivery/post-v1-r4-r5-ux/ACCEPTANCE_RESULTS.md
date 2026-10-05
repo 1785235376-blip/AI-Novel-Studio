@@ -1,11 +1,23 @@
 # Acceptance results
 
-The F00 registry tests verify all forty IDs and seven waves, preserve nine inherited R3 gaps, require exact server allowlists, prevent planned entries from becoming executable, and force all runtime flags off in V1 acceptance mode. The initial local result is recorded at the first commit receipt/PR; hosted checks remain pending until they return.
+This delivery distinguishes deterministic implementation, exact-source tests, native/runtime quality and user acceptance. All forty IDs, seven waves, exact allowlists/dependencies, default-OFF and server-enforced V1 override are registered and tested. A registered or locally tested package is not automatically a fully accepted product capability.
 
-R3's exact-parent results are historical baseline evidence in BASELINE_RECEIPT.md. They are not added to new test counts. Each later package records separate unit/API, File, actual PostgreSQL, UI/component, actual browser, runtime, real model and user-accepted states.
+## Published source receipts
 
-Current new model/GPU/interactive Windows/target-software/user-acceptance result: NOT_RUN. No paid API or private credentials used.
+- F00 `ad17f905` and isolated File lifecycle repair `0e5ea915`: both push and PR hosted runs passed.
+- First UX slice and corrections `fc9e39d`: PR and the targeted duplicate-push rerun passed all five lanes. Later source is not covered by that result.
+- Wave 2/3 `12745cbb`: File/PG/Windows passed; browser failures were retained and repaired in subsequent commits.
+- Wave 4/5 plus broker cancellation repair `e12db8d`: File and both Windows passed; R4 browser 22/25 passed. PostgreSQL/frontend still failed. See WAVE_4_5_CI_CORRECTIONS.md for the actual errors and unchanged assertions.
+- Correction `60314f9d`, exact tree `cea3e3bada5ab113576945d1528eb21efd594371`: push `37359470961` and PR `37359477778` are pending. Correction checks passed 78 File reader/portable cases and 20 mounted multilingual File cases, with actual PG parameters explicitly excluded locally.
 
-## Current bounded integration
+## Next pinned full integration
 
-WAVE_4_5_CHECKPOINT.md supersedes the old F00-pending statement for current local source: runtime `6fb3c44`, browser correction `1e3aea0`, 3,054 File-compatible passes and 865 frontend passes, with explicit skips/deselections. Hosted results remain exact-head-specific and are recorded in the Draft PR. The independent second-slice review is BLOCKED; no user acceptance or release approval is claimed.
+Runtime `d2390d12cea037aa848b769d1f87822922832258` includes concrete bounded slices for all forty packages. Full File-compatible execution: 3,367 passed / 9 skipped / 993 PostgreSQL-only deselected in 277.29 seconds. The separately enabled TCP case passed and remains an explicit skip in the generic full run. Full frontend: 932 passed / 6 optional HTTP skipped; types, production build and 42-file token guard passed. Original two-process loopback synchronization: 1 passed. App is 619.08 kB minified plus a deferred 474.00 kB workbench; the large App warning remains visible.
+
+Hosted browser is the real React/File evidence route; local Chromium is unavailable under the established launch restriction and was not retried. PostgreSQL results must come from its real hosted service, with no skipped marked-PG tests accepted. U13_BROWSER_MEASUREMENTS.md provides actual synthetic Linux/Chromium/File measurements and their method, not physical input latency.
+
+## Separate gates
+
+Independent follow-up review: **BLOCKED**, with original error/scope retained in SECOND_SLICE_REVIEW_STATUS.md. Reported implementation defects have regression repairs; this is not independent review closure.
+
+Real model/GPU/interactive Windows/target-software/user acceptance: **NOT_RUN** unless a specific package receipt states a narrower native build/parser result. No paid API, private credentials, automatic runtime changes, merge, release or deployment occurred. Existing R3 exact-parent evidence in BASELINE_RECEIPT.md is historical and not added to new test counts.

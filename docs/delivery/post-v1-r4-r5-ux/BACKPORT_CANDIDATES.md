@@ -181,3 +181,7 @@ Verification of the corrected source:
 The original audit finding and earlier test results are retained here as
 provenance. The remaining coordination and platform boundaries above still
 apply; this correction is not a claim of universal deletion-race closure.
+
+## Unified HTTP error response headers
+
+The original error normalizer discarded explicit HTTPException headers, including Cache-Control: no-store, nosniff and authentication/retry directives. The follow-on correction preserves those declared headers while keeping the server request ID authoritative. It changes no error body contract or permission decision. Focused tests cover privacy, auth/retry, headerless compatibility and request-ID override. This is a backport candidate only; no frozen-branch change is authorized or performed.
