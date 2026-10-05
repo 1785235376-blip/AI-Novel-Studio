@@ -6,18 +6,30 @@ from __future__ import annotations
 import os
 from fastapi import HTTPException
 
-FLAGS = (
+LEGACY_FLAGS = (
     "advanced_planning_v2", "semantic_import_v2", "world_character_engines_v2",
     "unified_review_inbox", "agent_team_recipes", "media_adapter_registry",
     "cover_storyboard_generation", "visual_embeddings", "audiobook_v2",
 )
 
 
+# Package-order dependencies are in capabilities.py. Runtime dependencies below
+# must all be explicitly allowlisted; this registry never auto-enables a feature.
+NEW_FLAGS = ("writing_recovery_v2", "workspace_tools_v2")
+FLAGS = LEGACY_FLAGS + NEW_FLAGS
+FLAG_DEPENDENCIES: dict[str, tuple[str, ...]] = {name: () for name in FLAGS}
+
+
 def enabled_flags() -> frozenset[str]:
     if os.getenv("V1_ACCEPTANCE_MODE", "").strip().lower() in {"1", "true", "yes", "on"}:
         return frozenset()
     configured = {v.strip().removeprefix("experimental.") for v in os.getenv("EXPERIMENTAL_FEATURES", "").split(",") if v.strip()}
-    return frozenset(configured.intersection(FLAGS))
+    enabled = configured.intersection(FLAGS)
+    while True:
+        supported = {name for name in enabled if set(FLAG_DEPENDENCIES[name]).issubset(enabled)}
+        if supported == enabled:
+            return frozenset(enabled)
+        enabled = supported
 
 
 def require_flag(name: str) -> None:
@@ -28,4 +40,5 @@ def require_flag(name: str) -> None:
 def flag_status() -> dict:
     enabled = enabled_flags()
     return {"experimental": True, "default_enabled": False,
-            "features": {f"experimental.{name}": name in enabled for name in FLAGS}}
+            "features": {f"experimental.{name}": name in enabled for name in FLAGS},
+            "dependencies": {f"experimental.{name}": list(FLAG_DEPENDENCIES[name]) for name in FLAGS}}

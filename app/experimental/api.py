@@ -8,6 +8,11 @@ router = APIRouter()
 def features():
     return flag_status()
 
+@router.get('/experimental/capabilities')
+def capabilities():
+    from .capabilities import capability_status
+    return capability_status()
+
 from .. import api as legacy_api
 from ..config import settings
 from .store import ExperimentalStore

@@ -6,7 +6,7 @@ import uuid
 from types import SimpleNamespace
 import pytest
 from app.experimental.common import DomainService, StaleSourceError
-from app.experimental.flags import FLAGS, enabled_flags, require_flag
+from app.experimental.flags import FLAGS, LEGACY_FLAGS, enabled_flags, require_flag
 from app.experimental.store import ExperimentalStore
 from app.services.v1_capability_service import CapabilityVersionConflict
 from fastapi import HTTPException
@@ -23,7 +23,8 @@ def test_flags_are_default_off_and_v1_mode_overrides(monkeypatch):
     assert enabled_flags() == {'advanced_planning_v2'}
     monkeypatch.setenv('V1_ACCEPTANCE_MODE', 'true')
     assert not enabled_flags()
-    assert len(FLAGS) == 9
+    assert len(LEGACY_FLAGS) == 9
+    assert set(LEGACY_FLAGS).issubset(FLAGS)
 
 
 @pytest.fixture(params=['file', pytest.param('postgres', marks=pytest.mark.postgres_backend_only)])

@@ -1,0 +1,993 @@
+{
+  "schema_version": 1,
+  "phase": "IMPLEMENTING",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "visibility": "public",
+  "frozen_v1_sha": "1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0",
+  "inspected_local_source_sha": "e6cae2440478bb8c70cdc0471c47319790979c6c",
+  "observed_remote_r3_sha": "4c43add056ba541c196a683fd7eee61534b38b6f",
+  "integration_parent_sha": "d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b",
+  "note": "Complete scoped inventory; PENDING/PARTIAL rows are not claimed implemented. Actual UI/API/storage/browser/model results remain separate.",
+  "packages": [
+    {
+      "id": "F00",
+      "name": "Foundation, reuse and dependency registry",
+      "wave": 0,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py"
+      ],
+      "gap": "Register 40 capabilities, server dependency allowlist and new exact-head evidence.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U02",
+      "name": "Loss-resistant editing and visible save state",
+      "wave": 1,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "frontend/src/drafts.ts",
+        "frontend/src/App.tsx",
+        "frontend/src/Editor.tsx",
+        "frontend/src/ui/SaveControls.tsx",
+        "app/autosave/durable.py"
+      ],
+      "gap": "Storage write failure currently throws; add honest volatile/durable journal states, IME and late-hydration fences, export recovery and browser failure journeys.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U01",
+      "name": "Resume the previous workspace",
+      "wave": 1,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "U02"
+      ],
+      "sources": [
+        "frontend/src/store.ts",
+        "frontend/src/novel/EntryExperience.tsx",
+        "frontend/src/App.tsx"
+      ],
+      "gap": "Add scoped version-aware resume anchors, user stopping notes and damaged-layout reset without storing tokens.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U03",
+      "name": "Search, commands and recents",
+      "wave": 1,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "U01"
+      ],
+      "sources": [
+        "frontend/src/ui/FeatureLauncher.tsx",
+        "app/services/visual_memory_index.py",
+        "app/lore/context_view.py"
+      ],
+      "gap": "Implement authorized project/entity search and keyboard command surface; no sensitive action execution from query.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U07",
+      "name": "Unified task center and honest progress",
+      "wave": 1,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "app/jobs.py",
+        "app/application/task_service.py",
+        "frontend/src/ui/taskSummary.ts",
+        "frontend/src/novel/AgentActivityCenter.tsx"
+      ],
+      "gap": "Aggregate existing task authorities and expose traceable IDs, stages, status filters and domain-specific recovery.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U08",
+      "name": "Context and privacy inspector",
+      "wave": 1,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "frontend/src/novel/AiContextPreviewPanel.tsx",
+        "app/services/agent_context_service.py",
+        "app/services/context_snapshot_service.py",
+        "app/source_privacy.py"
+      ],
+      "gap": "Bind rendered request manifest to actual final dispatch, sources and exclusions; test captures rather than invent token counts.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U09",
+      "name": "Local AI diagnostic and setup guidance",
+      "wave": 1,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "app/model_center/discovery.py",
+        "app/model_center/discovery_probes.py",
+        "frontend/src/ui/LocalAiDiscovery.tsx",
+        "app/experimental/media.py"
+      ],
+      "gap": "Add explicit untrusted Comfy API workflow inspection and actionable missing dependencies; never execute/import/install external nodes.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U12",
+      "name": "Actionable errors and private diagnostic export",
+      "wave": 1,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "app/structured_log.py",
+        "app/runtime_diagnostics.py",
+        "frontend/src/api.ts",
+        "frontend/src/novel/RuntimeDiagnostics.tsx"
+      ],
+      "gap": "Add bounded allowlisted user-created diagnosis with preview, redaction and no automatic upload.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U04",
+      "name": "Focus, reference split and inspiration",
+      "wave": 1,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "U02"
+      ],
+      "sources": [
+        "frontend/src/Editor.tsx",
+        "frontend/src/App.tsx",
+        "frontend/src/novel/ResearchPanel.tsx"
+      ],
+      "gap": "Extend existing editor with focus/preferences and read-only references, preserving selection and error visibility.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U10",
+      "name": "Scenario onboarding and progressive disclosure",
+      "wave": 1,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "frontend/src/novel/EntryExperience.tsx",
+        "frontend/src/ui/FeatureLauncher.tsx",
+        "frontend/src/ui/LocalAiDiscovery.tsx"
+      ],
+      "gap": "Provide safe task shortcuts and skippable no-model journey, respect server capability flags.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U13",
+      "name": "Chinese input, accessibility and scale",
+      "wave": 1,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "U02",
+        "U03"
+      ],
+      "sources": [
+        "frontend/src/Editor.tsx",
+        "frontend/tests/visual",
+        "scripts"
+      ],
+      "gap": "Actual synthetic 100k/500k/1m measurements and zoom/keyboard checks, no fabricated Windows IME or performance PASS.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A04",
+      "name": "Temporal semantic story graph",
+      "wave": 2,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "app/experimental/world.py",
+        "app/experimental/planning.py",
+        "app/experimental/imports.py"
+      ],
+      "gap": "Typed time-aware relation projection over existing IDs, source versions, perspectives and bounded impact index.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A05",
+      "name": "Character knowledge and mind state",
+      "wave": 2,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A04"
+      ],
+      "sources": [
+        "app/experimental/world.py",
+        "app/lore/context_intelligence.py",
+        "app/services/agent_context_service.py"
+      ],
+      "gap": "Reviewed knowledge events, belief/secret distinction and physically filtered perspective context; no second character store.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A06",
+      "name": "Explainable model broker",
+      "wave": 2,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "app/provider_runtime_v2_routing_service.py",
+        "app/provider_routing_policy_v2.py",
+        "app/model_center/service.py",
+        "app/experimental/provider_profiles.py"
+      ],
+      "gap": "Current registered authority routing, honest unknown cost and idempotent budget reservation/settlement; final recheck.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A07",
+      "name": "Model benchmark and capability evidence",
+      "wave": 2,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A06"
+      ],
+      "sources": [
+        "app/model_center/discovery.py",
+        "app/model_center/runtime_profiles.py"
+      ],
+      "gap": "User-triggered bounded benchmark management and evidence versioning; real-model quality requires configured model.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A09",
+      "name": "Asset lineage and derived relationships",
+      "wave": 2,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "app/services/asset_library_service.py",
+        "app/experimental/media.py",
+        "app/services/export_resource_snapshot.py"
+      ],
+      "gap": "Extend parent graph, cycle rejection, drift/impact and retained missing-source lineage.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A13",
+      "name": "Production manifest and controlled replay",
+      "wave": 2,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A06",
+        "A09"
+      ],
+      "sources": [
+        "app/jobs.py",
+        "app/services/asset_library_service.py",
+        "app/experimental/media.py"
+      ],
+      "gap": "Versioned redacted manifests, dependency preview and new authorized replay task, reproducibility levels separated.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U06",
+      "name": "Change impact and selective refresh",
+      "wave": 2,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A04",
+        "A09"
+      ],
+      "sources": [
+        "app/experimental/common.py",
+        "app/services/asset_library_service.py",
+        "app/experimental/audiobook.py"
+      ],
+      "gap": "Show exact source dependency changes, preserve locked output and require explicit per-domain rerun.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A02",
+      "name": "Style metrics and drift",
+      "wave": 3,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "app/services/creation_workbench_service.py",
+        "frontend/src/novel/CreationWorkbenchPanel.tsx"
+      ],
+      "gap": "Compute language-specific transparent metrics on selected versioned text; attach to existing STYLE records.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A03",
+      "name": "Evidence-based narrative judge",
+      "wave": 3,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A04",
+        "A05"
+      ],
+      "sources": [
+        "app/experimental/world.py",
+        "app/lore/continuity.py",
+        "app/services/narrative_finding_service.py"
+      ],
+      "gap": "Versioned rubric, exact evidence spans, deterministic repeated-exposition findings, ignore/review/stale handling.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A01",
+      "name": "Bounded story simulation",
+      "wave": 3,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A04",
+        "A05"
+      ],
+      "sources": [
+        "app/experimental/planning.py",
+        "app/experimental/world.py"
+      ],
+      "gap": "Finite deterministic event branches and constraints with explicit draft-only route promotion; no manuscript writes.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A10",
+      "name": "Layered research library",
+      "wave": 3,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A04"
+      ],
+      "sources": [
+        "frontend/src/novel/ResearchPanel.tsx",
+        "app/import_parsers.py",
+        "app/services/memory_service.py",
+        "app/experimental/imports.py"
+      ],
+      "gap": "Reuse research store and safe parsing, versioned citations, local search and derived invalidation.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A11",
+      "name": "Revision intelligence and partial changes",
+      "wave": 3,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A04"
+      ],
+      "sources": [
+        "app/document_revision.py",
+        "app/repositories/screenplay_versions.py",
+        "app/services/chapter_service.py",
+        "frontend/src/RevisionPanel.tsx"
+      ],
+      "gap": "Source-fenced paragraph patch preview and individually accepted blocks through existing version service.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U05",
+      "name": "Selection assistant and partial accept",
+      "wave": 3,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A11"
+      ],
+      "sources": [
+        "frontend/src/novel/AiWritingPanel.tsx",
+        "app/services/generation_service.py",
+        "frontend/src/Editor.tsx"
+      ],
+      "gap": "Stable Unicode selection digest and patch review; only selected approved blocks can change.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U11",
+      "name": "Reading, proofreading and publishing checks",
+      "wave": 3,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A03",
+        "A11"
+      ],
+      "sources": [
+        "frontend/src/novel/ExportPanel.tsx",
+        "app/services/export_job_service.py",
+        "app/release_readiness.py"
+      ],
+      "gap": "Read-only preflight with actionable provenance; separate integrity blockers from subjective advice.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U15",
+      "name": "Writing goals and controlled notices",
+      "wave": 3,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "U07"
+      ],
+      "sources": [
+        "frontend/src/novel/NovelOverviewPanel.tsx",
+        "frontend/src/ui/taskSummary.ts",
+        "app/services/v1_capability_service.py"
+      ],
+      "gap": "Session goal, stopping note and deduplicated task notices; only persisted activity counts, reminders explicit.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A08",
+      "name": "Camera grammar and scene direction",
+      "wave": 4,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "app/services/screenplay_service.py",
+        "frontend/src/novel/DirectorShotCard.tsx"
+      ],
+      "gap": "Extend existing shot version fields and geometry-based rule checks with insufficient-information states.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "A12",
+      "name": "OTIO and NLE exchange",
+      "wave": 4,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A09"
+      ],
+      "sources": [
+        "app/industry_export_formats.py",
+        "app/services/export_job_service.py",
+        "app/services/video_assembly_service.py"
+      ],
+      "gap": "Rational-time supported subset OTIO round-trip and loss report; no application compatibility claim without opening it.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "B03",
+      "name": "Voice direction and speaker attribution",
+      "wave": 4,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "app/experimental/audiobook.py",
+        "frontend/src/experimental/AudiobookPanel.tsx",
+        "app/audio_production_store.py"
+      ],
+      "gap": "Editable segment identity/voices/locking and selective stale segment redo; actual audio quality separate.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "B04",
+      "name": "Subtitle editing and timeline",
+      "wave": 4,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "B03"
+      ],
+      "sources": [
+        "app/industry_export_formats.py",
+        "app/services/audiobook_service.py",
+        "app/experimental/audiobook.py"
+      ],
+      "gap": "Versioned user-time subtitles, duration/overlap validation and real SRT/VTT parsing; no fake forced alignment.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U14",
+      "name": "Portable project, relink and safe cleanup",
+      "wave": 4,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A09"
+      ],
+      "sources": [
+        "app/backup_restore.py",
+        "app/services/export_resource_snapshot.py",
+        "app/services/asset_library_service.py"
+      ],
+      "gap": "New destination portable manifest, digest relink and cache-only explicit cleanup preview; archive/path hardening.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "U16",
+      "name": "Safe batch preflight",
+      "wave": 4,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "U07",
+        "A06"
+      ],
+      "sources": [
+        "app/workflow.py",
+        "app/experimental/inbox.py",
+        "app/services/asset_task_worker.py"
+      ],
+      "gap": "Snapshot-bound domain-delegating batch preflight, bounded execution, partial receipt and unknown-outcome handling.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "B01",
+      "name": "Declarative template library",
+      "wave": 5,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "app/experimental/planning.py",
+        "app/experimental/teams.py",
+        "app/workflow_recipes.py",
+        "app/plugin_package_manager.py"
+      ],
+      "gap": "Local template preview/instantiate/version compare using existing services; no executable package or remote marketplace.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "B02",
+      "name": "Custom agents and workflow SDK",
+      "wave": 5,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A06",
+        "B01"
+      ],
+      "sources": [
+        "app/experimental/teams.py",
+        "app/workflow.py",
+        "app/workflow_api.py",
+        "app/plugin_capability_policy.py"
+      ],
+      "gap": "Bounded declarative graph editor/contracts and registry-only nodes, reuse scheduler, DENY_ALL code extensions.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "B05",
+      "name": "Multilingual revisions and terminology",
+      "wave": 5,
+      "dedup": "NEW",
+      "dependencies": [
+        "A11"
+      ],
+      "sources": [
+        "app/services/chapter_service.py",
+        "app/document_revision.py",
+        "app/experimental/store.py"
+      ],
+      "gap": "Parallel versioned target-language paragraphs, glossary checks and explicit accept without source overwrite.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "B06",
+      "name": "Comic and Webtoon layouts",
+      "wave": 5,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A08",
+        "A09"
+      ],
+      "sources": [
+        "frontend/src/novel/ImageInfiniteCanvas.tsx",
+        "app/services/asset_library_service.py"
+      ],
+      "gap": "Manual approved-image panels, reading order and speech text preflight with actual layout export.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "B07",
+      "name": "Interactive narrative export",
+      "wave": 5,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A01",
+        "A04"
+      ],
+      "sources": [
+        "app/experimental/planning.py",
+        "frontend/src/novel/StoryRouteEditor.test.tsx"
+      ],
+      "gap": "Restricted condition parser, bounded two-ending preview and engine-neutral export; target runtime validation separate.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "B08",
+      "name": "Writer room and team review",
+      "wave": 6,
+      "dedup": "EXTEND",
+      "dependencies": [],
+      "sources": [
+        "app/collaboration.py",
+        "app/collaboration_api.py",
+        "app/experimental/inbox.py",
+        "app/services/creation_workbench_service.py"
+      ],
+      "gap": "Scoped assignment and asynchronous version comments, domain review authority and revocation checks.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "B09",
+      "name": "Project fork and merge",
+      "wave": 6,
+      "dedup": "EXTEND",
+      "dependencies": [
+        "A04",
+        "A09",
+        "A11"
+      ],
+      "sources": [
+        "app/collaboration.py",
+        "app/document_revision.py",
+        "app/repositories/scoped_narrative.py"
+      ],
+      "gap": "Baseline-backed three-way preview/conflict resolution and recovery journal; preserve original branches.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    },
+    {
+      "id": "B10",
+      "name": "Offline synchronization foundation",
+      "wave": 6,
+      "dedup": "NEW",
+      "dependencies": [
+        "B08",
+        "B09"
+      ],
+      "sources": [
+        "app/collaboration.py",
+        "app/backup_restore.py",
+        "app/experimental/store.py"
+      ],
+      "gap": "Default-off scoped outbox/inbox protocol and two isolated local endpoints, idempotency/conflict/revocation; production cloud blocked.",
+      "status": "PENDING",
+      "verification": "NOT_RUN",
+      "ui_integration": "PENDING",
+      "api_integration": "PENDING",
+      "task_completion": "PENDING",
+      "browser_verification": "NOT_RUN",
+      "real_model_verification": "NOT_RUN"
+    }
+  ],
+  "source_tree": "91135f6ec842bf443a2c5fd1dda58ea7bda62d2f",
+  "main_sha": "fed2404c8e30b44061b7139dced45b7f3301601c",
+  "latest_candidate_r3_sha": "d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b",
+  "latest_candidate_r3_tree": "19180ad00035b9eda2baf0795ea947ea943b7e1f",
+  "candidate_released": true,
+  "inherited_r3_gaps": [
+    {
+      "id": "R3-GAP-01",
+      "status": "OPEN_DEFECT",
+      "scope": "File delete/lazy document read resurrection",
+      "successor_packages": [
+        "U02"
+      ],
+      "next": "Separate shared fix with deterministic concurrency regression and backport-candidate entry."
+    },
+    {
+      "id": "R3-GAP-02",
+      "status": "PARTIAL",
+      "scope": "Branch-specific manuscript and entity snapshot adapters",
+      "successor_packages": [
+        "A04",
+        "A05",
+        "A11",
+        "B09"
+      ],
+      "next": "Preserve fail-closed source capture until actual branch repository support is verified."
+    },
+    {
+      "id": "R3-GAP-03",
+      "status": "PARTIAL",
+      "scope": "Organization, world-rule and relationship import promotion",
+      "successor_packages": [
+        "A04",
+        "A10"
+      ],
+      "next": "Add explicit adapters through existing review and stable IDs; never silently adopt candidates."
+    },
+    {
+      "id": "R3-GAP-04",
+      "status": "PARTIAL",
+      "scope": "Interrupted media promotion after source changes requires manual reconciliation",
+      "successor_packages": [
+        "A09",
+        "U06",
+        "U16"
+      ],
+      "next": "Retain actual asset/checkpoint and reconciliation-required state; do not falsely reject already-written assets."
+    },
+    {
+      "id": "R3-GAP-05",
+      "status": "PARTIAL",
+      "scope": "Live named provider profiles and OS-vault registrar/UI",
+      "successor_packages": [
+        "A06"
+      ],
+      "next": "Reuse contracts; block credential binding without actual Host/OS secure workflow."
+    },
+    {
+      "id": "R3-GAP-06",
+      "status": "ADAPTER_REQUIRED",
+      "scope": "Declared media families and actual planning/agent/embedding/image/video/TTS runtime adapters",
+      "successor_packages": [
+        "A06",
+        "A07",
+        "A08",
+        "B03"
+      ],
+      "next": "No mock promotion into real quality; only registered reviewed runtime implementations can dispatch."
+    },
+    {
+      "id": "R3-GAP-07",
+      "status": "NOT_RUN",
+      "scope": "Maximum-scale long-book processing and whole-scope serialization performance",
+      "successor_packages": [
+        "U13"
+      ],
+      "next": "Separate measured 100k/500k/1m synthetic test from earlier 320475-character R3 import evidence."
+    },
+    {
+      "id": "R3-GAP-08",
+      "status": "MISSING",
+      "scope": "Optional bulk asset tags, archive/restore, replace/reimport and repair UI",
+      "successor_packages": [
+        "A09",
+        "U14",
+        "U16"
+      ],
+      "next": "Extend the existing asset library without replacement or automatic deletion."
+    },
+    {
+      "id": "R3-GAP-09",
+      "status": "NOT_RUN",
+      "scope": "Interactive Windows/IME/OS vault, real GPU/models, install retention and target software",
+      "successor_packages": [
+        "U09",
+        "U13",
+        "A07",
+        "A12"
+      ],
+      "next": "Retain distinct environment/quality/user acceptance gates; no local-only substitute claim."
+    }
+  ],
+  "frontend_requirement": {
+    "source": "Sentinel_0c3b6359f6e481919bc831ce49937599",
+    "received_at_utc": "2026-10-05T14:20:00Z",
+    "user_quote": "记得为新功能给前端加入实现接口。",
+    "acceptance": "Real reachable frontend flow and service/API wiring, loading/error/recovery/stale/permission states. UI integration is separate from actual task completion. Existing design system retained."
+  },
+  "integration_parent_tree": "19180ad00035b9eda2baf0795ea947ea943b7e1f",
+  "branch": "work/post-v1-r4-r5-ux",
+  "parent_pr": 38
+}
