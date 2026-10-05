@@ -159,8 +159,39 @@ class ScreenplayService:
         if screenplay.get("shot_status")=="APPROVED":raise ValueError("approved shot plan is frozen")
         shots=list(screenplay.get("shots",[]));index=next((i for i,row in enumerate(shots) if row["id"]==shot_id),None)
         if index is None:raise KeyError(shot_id)
-        immutable={key:shots[index][key] for key in ("id","number","scene_id","source_chapter_id")};shots[index]={**immutable,"shot_size":payload["shot_size"],"camera_angle":payload["camera_angle"],"camera_motion":payload["camera_motion"],"subject_position":payload["subject_position"],"action":payload["action"],"dialogue":payload.get("dialogue",[]),"sound_effect":payload["sound_effect"],"duration_seconds":max(1,min(600,int(payload["duration_seconds"]))),"status":"DRAFT"}
+        immutable={key:shots[index][key] for key in ("id","number","scene_id","source_chapter_id")};immutable.update({"director":copy.deepcopy(shots[index]["director"])} if "director" in shots[index] else {});shots[index]={**immutable,"shot_size":payload["shot_size"],"camera_angle":payload["camera_angle"],"camera_motion":payload["camera_motion"],"subject_position":payload["subject_position"],"action":payload["action"],"dialogue":payload.get("dialogue",[]),"sound_effect":payload["sound_effect"],"duration_seconds":max(1,min(600,int(payload["duration_seconds"]))),"status":"DRAFT"}
         return self._save_screenplay(novel_id,{**screenplay,"shots":shots,"shot_revision":int(screenplay.get("shot_revision",1))+1,"updated_at":utc()})
+    def apply_director_plan(self,novel_id,screenplay_id,patches,*,expected_version,plan_id,actor,source_evidence,guard):
+        """Apply a reviewed A08 proposal as a new *draft* of existing shots.
+
+        The repository owns CAS and history. Previous downstream records remain
+        in history with an internal stale-version receipt; active arrays are invalidated,
+        so no old callback or re-approval can silently reuse an old output.
+        """
+        from ..experimental.director import ShotDirection
+        with self._motion_lock:
+            screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+            if screenplay is None:raise FileNotFoundError(screenplay_id)
+            if screenplay.get('director_applied_plan_id')==plan_id:return screenplay
+            check_screenplay_version(screenplay,expected_version)
+            changes={p.shot_id:p.model_dump(exclude={'shot_id'}) for p in (ShotDirection.model_validate(value) for value in patches)}
+            if not changes or set(changes)-{r['id'] for r in screenplay.get('shots',[])}:raise ValueError('DIRECTOR_UNKNOWN_SHOT')
+            updated=copy.deepcopy(screenplay)
+            updated['shots']=[{**r,**changes.get(r['id'],{}),'status':'DRAFT'} for r in updated['shots']]
+            updated.update(shot_status='DRAFT',shot_revision=int(screenplay.get('shot_revision',0))+1,
+                           director_applied_plan_id=plan_id,director_applied_by=actor,director_source_evidence=copy.deepcopy(source_evidence),updated_at=utc())
+            downstream=('storyboard','transitions','asset_requirements','asset_tasks','motion_tasks')
+            archive={key:updated.pop(key) for key in downstream if key in updated}
+            if archive:
+                updated.setdefault('director_stale_outputs',[]).append({'screenplay_version':screenplay['edit_version'],
+                    'shot_revision':screenplay.get('shot_revision'),'review_state':'STALE_PENDING_REVIEW','reason':'SHOT_PLAN_REVISED','collections':list(archive)})
+            for key in ('storyboard_status','transition_status','asset_status'):
+                updated.pop(key,None)
+            # Generation is never performed here. Original approval/planning
+            # actions must explicitly rebuild the downstream draft chain.
+            guard()
+            return self._save_screenplay(novel_id,updated)
+
     def approve_shots(self,novel_id,screenplay_id,expected_version=None):
         screenplay=next((row for row in self.list(novel_id) if row["id"]==screenplay_id),None)
         if screenplay is None:raise KeyError(screenplay_id)
