@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="9" failures="0" errors="0" time="0.26">
+    <testsuite name="tests/uiContracts.test.ts" timestamp="2026-10-05T08:25:44.133Z" hostname="1c13474a30ae" tests="5" failures="0" errors="0" skipped="0" time="0.002966556">
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; defines every frozen layout token" time="0.001063032">
+        </testcase>
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; defines one accent family and semantic states" time="0.000414323">
+        </testcase>
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; builds the shell geometry from tokens" time="0.000145465">
+        </testcase>
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; keeps the Inspector recoverable across desktop and narrow shell layouts" time="0.000227366">
+        </testcase>
+        <testcase classname="tests/uiContracts.test.ts" name="DS-v1.0 contracts &gt; keeps the entry experience out of the legacy editor grid" time="0.000208038">
+        </testcase>
+    </testsuite>
+    <testsuite name="tests/writingGoalLayout.test.ts" timestamp="2026-10-05T08:25:44.135Z" hostname="1c13474a30ae" tests="4" failures="0" errors="0" skipped="0" time="0.002907239">
+        <testcase classname="tests/writingGoalLayout.test.ts" name="writing-goal inspector form layout &gt; uses a shrinking single-column panel with the existing spacing token" time="0.001274614">
+        </testcase>
+        <testcase classname="tests/writingGoalLayout.test.ts" name="writing-goal inspector form layout &gt; places each label above its own input instead of inline with another field" time="0.000327234">
+        </testcase>
+        <testcase classname="tests/writingGoalLayout.test.ts" name="writing-goal inspector form layout &gt; contains date and number controls within the available panel width" time="0.00024357">
+        </testcase>
+        <testcase classname="tests/writingGoalLayout.test.ts" name="writing-goal inspector form layout &gt; lets the panel gap own direct heading and description spacing" time="0.000214758">
+        </testcase>
+    </testsuite>
+</testsuites>

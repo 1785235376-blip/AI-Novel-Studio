@@ -92,7 +92,37 @@ test('R2 real File API: save/reopen, reviewed plans, anchored comments and immut
  const file=await download;expect(file.suggestedFilename()).toMatch(/\.txt$/);
  const downloaded=await file.path();expect(downloaded).toBeTruthy();expect(fs.readFileSync(downloaded!,'utf8')).toContain('新版本正文');
  const screenshots=process.env.CI_RECEIPTS?path.join(process.env.CI_RECEIPTS,'screenshots'):info.outputPath('screenshots');fs.mkdirSync(screenshots,{recursive:true});
- for(const [width,height] of [[1366,768],[1440,900],[1920,1080]]){await page.setViewportSize({width,height});await page.screenshot({path:path.join(screenshots,`export-recovery-${width}x${height}.png`),fullPage:true});}
+ for(const [width,height] of [[1366,768],[1440,900],[1920,1080]]){
+  await page.setViewportSize({width,height});
+  const goal=page.locator('.writing-goal-panel');
+  await expect(goal).toBeVisible();
+  const geometry=await goal.evaluate(panel=>{
+   const box=(element:Element|Range)=>{const r=element.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};};
+   const fields=Array.from(panel.querySelectorAll(':scope > label')).map(label=>{
+    const text=Array.from(label.childNodes).find(node=>node.nodeType===Node.TEXT_NODE)!;
+    const range=document.createRange();range.selectNodeContents(text);
+    return {name:text.textContent?.trim(),label:box(label),text:box(range),input:box(label.querySelector('input')!)};
+   });
+   return {panel:box(panel),fields,button:box(panel.querySelector('button')!),clientWidth:panel.clientWidth,scrollWidth:panel.scrollWidth};
+  });
+  expect(geometry.fields.map(field=>field.name)).toEqual(['目标字数','目标章节','截止日期']);
+  expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth+1);
+  for(const [index,field] of geometry.fields.entries()){
+   for(const rect of [field.label,field.text,field.input]){
+    expect(rect.left).toBeGreaterThanOrEqual(geometry.panel.left-1);
+    expect(rect.right).toBeLessThanOrEqual(geometry.panel.right+1);
+    expect(rect.top).toBeGreaterThanOrEqual(geometry.panel.top-1);
+    expect(rect.bottom).toBeLessThanOrEqual(geometry.panel.bottom+1);
+    expect(rect.width).toBeGreaterThan(0);expect(rect.height).toBeGreaterThan(0);
+   }
+   expect(field.input.top).toBeGreaterThanOrEqual(field.text.bottom);
+   expect(Math.abs(field.input.width-field.label.width)).toBeLessThanOrEqual(1);
+   if(index)expect(field.label.top).toBeGreaterThanOrEqual(geometry.fields[index-1].input.bottom);
+  }
+  expect(geometry.button.top).toBeGreaterThanOrEqual(geometry.fields[2].input.bottom);
+  expect(geometry.button.right).toBeLessThanOrEqual(geometry.panel.right+1);
+  await page.screenshot({path:path.join(screenshots,`export-recovery-${width}x${height}.png`),fullPage:true});
+ }
 });
 
 test('R2 actual backend Draft Accept is explicit and repeat-safe, with synthetic mock output',async({request})=>{
