@@ -11,7 +11,9 @@ from copy import deepcopy
 from dataclasses import dataclass
 import hashlib
 import json
-from threading import RLock
+from threading import RLock, Event
+from datetime import datetime, timezone
+from uuid import uuid4
 from typing import Callable, Literal
 
 from fastapi import HTTPException
@@ -19,6 +21,7 @@ from pydantic import Field
 
 from .common import DomainService, StaleSourceError, change_row, new_row
 from .planning import StrictModel, digest
+from .search_sources import SearchSource, chapter_manifest, project_ids
 from ..services.v1_capability_service import CapabilityVersionConflict
 
 FEATURES = frozenset({'editor', 'creation', 'story', 'history', 'workflow', 'screenplay', 'assets',
@@ -38,7 +41,12 @@ class Layout(StrictModel):
     section: Literal['resume', 'search', 'tasks', 'diagnostics', 'guide'] = 'resume'
     show_failed_only: bool = False
     search_query: str = Field(default='', max_length=160)
-    search_kind: Literal['', 'chapter', 'character', 'location', 'foreshadowing'] = ''
+    search_kind: Literal['', 'chapter', 'character', 'location', 'foreshadowing', 'finding', 'task'] = ''
+    search_scope: Literal['project', 'authorized'] = 'project'
+    search_tag: str = Field(default='', max_length=80)
+    search_recent_days: int = Field(default=0, ge=0, le=3650)
+    search_unresolved: bool = False
+    search_fulltext: bool = False
     search_current_chapter: bool = False
     task_query: str = Field(default='', max_length=160)
 
@@ -70,7 +78,9 @@ class ResumeResolveIn(VersionIn):
 
 
 class ResolveIn(StrictModel):
-    kind: Literal['chapter', 'character', 'location', 'foreshadowing']
+    kind: Literal['chapter', 'character', 'location', 'foreshadowing', 'finding', 'task']
+    novel_id: str | None = Field(default=None, max_length=160)
+    branch_id: str | None = Field(default=None, max_length=160)
     id: str = Field(min_length=1, max_length=160)
     revision: str = Field(min_length=1, max_length=80)
     offset: int = Field(default=0, ge=0, le=2_000_000)
@@ -205,12 +215,15 @@ def projected_task(reader, row):
 class WorkspaceToolsService(DomainService):
     RESUMES = 'workspace_resumes_v2'
 
-    def __init__(self, store, novels, chapters, *, chapter_reader=None, entity_readers=None, task_readers=None, focus_reader=None):
+    def __init__(self, store, novels, chapters, *, chapter_reader=None, entity_readers=None, task_readers=None, focus_reader=None, search_candidates=None, finding_reader=None):
         super().__init__(store, novels, chapters)
         self.chapter_reader = chapter_reader
         self.entity_readers = entity_readers or {}
         self.task_readers = tuple(task_readers or ())
         self.focus_reader = focus_reader
+        self.search_candidates = search_candidates
+        self.finding_reader = finding_reader
+        self._search_operations = OrderedDict()
         self._indexes = OrderedDict()
         self._index_lock = RLock()
 
@@ -390,84 +403,204 @@ class WorkspaceToolsService(DomainService):
         return {'items': [{k: deepcopy(r.get(k)) for k in ('version', 'updated_at', 'chapter_id', 'chapter_version', 'stopping_note')}
                           for r in (row or {}).get('history', [])]}
 
-    def _documents(self, ctx):
-        for row in self.chapter_rows(ctx):
-            yield {'kind': 'chapter', 'id': str(row['id']), 'title': str(row.get('title', '章节')),
-                         'text': chapter_text(row), 'version': row['version'], 'revision': digest(row),
-                         'feature': 'editor', 'aliases': [], 'tags': [], 'updated_at': row.get('updated_at', ''), 'coordinate': COORDINATE}
-        # Legacy entities do not have member/character-level visibility adapters;
-        # expose names/aliases only in local author mode, never secrets or body.
-        for kind, dataset in (('character', 'characters'), ('location', 'locations'), ('foreshadowing', 'foreshadowing')):
-            if kind in self.entity_readers:
-                rows = self.entity_readers[kind](ctx)
-            elif ctx.scope.get('mode') == 'local':
-                rows = self.novels.data_set(ctx.novel_id, dataset)
-            else:
-                rows = []
-            for row in rows:
-                if not row.get('id') or row.get('hidden') or row.get('secret') or str(row.get('visibility', '')).upper() in {'PRIVATE', 'SECRET', 'DENIED'}:
-                    continue
-                if row.get('branch_id') and row['branch_id'] != ctx.scope.get('branch_id'):
-                    continue
-                aliases = row.get('aliases', [])
-                aliases = [v for v in aliases[:20] if isinstance(v, str)] if isinstance(aliases, list) else []
-                title = str(row.get('name') or row.get('title') or {'character': '人物', 'location': '地点', 'foreshadowing': '伏笔'}[kind])
-                yield {'kind': kind, 'id': str(row['id']), 'title': title, 'text': '', 'version': row.get('version'),
-                             'revision': digest(row), 'feature': 'story', 'aliases': aliases, 'tags': [], 'updated_at': row.get('updated_at', ''), 'coordinate': COORDINATE}
+    @staticmethod
+    def _visible_search_row(ctx, row):
+        return (isinstance(row, dict) and bool(row.get('id')) and not row.get('is_archived')
+                and not row.get('hidden') and not row.get('secret')
+                and str(row.get('visibility', '')).upper() not in {'PRIVATE', 'SECRET', 'DENIED'}
+                and (not row.get('branch_id') if ctx.scope.get('mode') == 'local'
+                     else row.get('branch_id') == ctx.scope.get('branch_id')))
 
-    def search(self, ctx, query='', kind='', chapter_id=None, rebuild=False):
-        if len(query) > 160 or kind not in {'', 'chapter', 'character', 'location', 'foreshadowing'}:
-            raise ValueError('invalid search filter')
-        query = query.strip().casefold()
-        documents = self._documents(ctx)
-        key = digest([ctx.novel_id, ctx.scope, ctx.actor])
+    @staticmethod
+    def _search_document(ctx, kind, row):
+        strings = lambda name: [v[:160] for v in row.get(name, [])[:20] if isinstance(v, str)] if isinstance(row.get(name), list) else []
+        doc = {'kind': kind, 'id': str(row['id']), 'novel_id': ctx.novel_id, 'branch_id': ctx.branch,
+               'title': str(row.get('name') or row.get('title') or row.get('label') or row.get('message') or kind)[:500],
+               'text': chapter_text(row) if kind == 'chapter' else '', 'version': row.get('version'),
+               'feature': 'editor' if kind == 'chapter' else row.get('feature', 'story'),
+               'aliases': strings('aliases'), 'tags': strings('tags'), 'updated_at': str(row.get('updated_at') or ''),
+               'status': str(row.get('status', '')), 'coordinate': COORDINATE}
+        if kind == 'task':
+            doc['source'] = deepcopy(row.get('source') or {'kind': 'feature', 'id': row['id'], 'feature': row['feature']})
+        # The digest and cache contain only this allowlisted searchable projection.
+        # A chapter document/style change remains version fenced by the authority.
+        doc['revision'] = digest(doc)
+        return doc
+
+    def _search_manifest(self, ctx, check, require_flag):
+        self.novels.get(ctx.novel_id)
+        sources = chapter_manifest(self, ctx, check)
+        projected_rows = 0
+        incremental = sources is not None
+        if sources is None:
+            sources = []
+            for row in self.chapter_rows(ctx):
+                check()
+                if self._visible_search_row(ctx, row):
+                    projected_rows += 1
+                    doc = self._search_document(ctx, 'chapter', row)
+                    sources.append(SearchSource('chapter:' + doc['id'], doc['revision'], lambda doc=doc: doc))
+        for kind, dataset in (('character', 'characters'), ('location', 'locations'), ('foreshadowing', 'foreshadowing')):
+            rows = (self.entity_readers[kind](ctx) if kind in self.entity_readers else
+                    self.novels.data_set(ctx.novel_id, dataset) if ctx.scope.get('mode') == 'local' else [])
+            for row in rows:
+                check()
+                if not self._visible_search_row(ctx, row): continue
+                projected_rows += 1
+                doc = self._search_document(ctx, kind, row)
+                sources.append(SearchSource(kind + ':' + doc['id'], doc['revision'], lambda doc=doc: doc))
+        if self.finding_reader:
+            for row in self.finding_reader(ctx):
+                check()
+                if row.get('project_id') != ctx.novel_id or not self._visible_search_row(ctx, row): continue
+                projected_rows += 1
+                doc = self._search_document(ctx, 'finding', {**row, 'feature': 'story',
+                    'title': row.get('description') or row.get('message') or row.get('finding_type') or '连续性发现',
+                    'updated_at': row.get('resolved_at') or row.get('created_at') or ''})
+                sources.append(SearchSource('finding:' + doc['id'], doc['revision'], lambda doc=doc: doc))
+        if self.task_readers:
+            for row in self.tasks(ctx, require_flag)['items']:
+                check()
+                projected_rows += 1
+                doc = self._search_document(ctx, 'task', {**row, 'id': row['authority'] + ':' + row['id']})
+                # Source navigation must retain the original ID, not the index key.
+                doc['source'] = deepcopy(row.get('source') or {'kind': 'feature', 'id': row['id'], 'feature': row['feature']})
+                doc['revision'] = digest({k: v for k, v in doc.items() if k != 'revision'})
+                sources.append(SearchSource('task:' + doc['id'], doc['revision'], lambda doc=doc: doc))
+        return sources, incremental, projected_rows
+
+    def candidates(self, ctx):
+        return (self.search_candidates(ctx, self) if self.search_candidates else
+                [(nid, None) for nid in project_ids(self)] if ctx.scope.get('mode') == 'local' else [])
+
+    @staticmethod
+    def _index_key(ctx):
+        return digest([ctx.novel_id, ctx.scope, ctx.actor])
+
+    def discard_search(self, ctx):
         with self._index_lock:
-            old = {} if rebuild else self._indexes.get(key, {})
-            current, size, changed, truncated = {}, 0, 0, False
-            for doc in documents:
-                size += len(doc['text']) + len(doc['title'])
-                if len(current) >= MAX_RECORDS or size > MAX_CHARACTERS:
-                    truncated = True
-                    break
-                sid = f"{doc['kind']}:{doc['id']}"
-                cached = old.get(sid)
-                if not cached or cached['revision'] != doc['revision']:
-                    doc['_search'] = '\n'.join([doc['title'], *doc['aliases'], doc['text']]).casefold()
-                    changed += 1
-                    current[sid] = doc
+            self._indexes.pop(self._index_key(ctx), None)
+
+    def cancel_search(self, ctx, request_id):
+        # Bounded pre-start tombstones close the HTTP start/cancel race. No token
+        # is retained; a different actor/branch cannot cancel this operation.
+        key = (self._index_key(ctx), request_id)
+        with self._index_lock:
+            event = self._search_operations.setdefault(key, Event()); event.set()
+            self._search_operations.move_to_end(key)
+            while len(self._search_operations) > 256:
+                self._search_operations.popitem(last=False)
+        return {'state': 'CANCELLED', 'request_id': request_id}
+
+    def search_cancelled(self, ctx, request_id):
+        with self._index_lock:
+            event = self._search_operations.get((self._index_key(ctx), request_id))
+            return bool(event and event.is_set())
+
+    def search(self, ctx, query='', kind='', chapter_id=None, rebuild=False, *, tag='', recent_days=0,
+               unresolved=False, fulltext=False, offset=0, request_id=None, reauthorize=lambda: None,
+               require_flag=lambda flag: None, cancelled=lambda: False, limit=50):
+        if (len(query) > 160 or len(tag) > 80 or kind not in {'', 'chapter', 'character', 'location', 'foreshadowing', 'finding', 'task'}
+            or not 0 <= recent_days <= 3650 or not 0 <= offset <= MAX_RECORDS):
+            raise ValueError('invalid search filter')
+        key = self._index_key(ctx); operation = (key, request_id or str(uuid4()))
+        with self._index_lock:
+            event = self._search_operations.setdefault(operation, Event())
+            old = {} if rebuild else dict(self._indexes.get(key, {}))
+        def check():
+            if event.is_set() or cancelled():
+                raise HTTPException(409, {'code': 'SEARCH_CANCELLED'})
+        check(); reauthorize()
+        try:
+            sources, incremental, projected_rows = self._search_manifest(ctx, check, require_flag)
+            current, size, changed, reads, chapter_reads, truncated = {}, 0, 0, 0, 0, False
+            for source in sources:
+                check()
+                if len(current) >= MAX_RECORDS:
+                    truncated = True; break
+                cached = old.get(source.key)
+                if cached and cached['_stamp'] == source.stamp:
+                    doc = cached
                 else:
-                    current[sid] = cached
-            # Drop removed/unauthorized sources before querying, including counts.
-            self._indexes[key] = current
-            self._indexes.move_to_end(key)
-            while len(self._indexes) > 8:
-                self._indexes.popitem(last=False)
+                    row = source.read(); reads += 1
+                    if source.key.startswith('chapter:') and 'kind' not in row:
+                        chapter_reads += 1
+                        if row.get('novel_id') != ctx.novel_id or not self._visible_search_row(ctx, row): continue
+                        doc = self._search_document(ctx, 'chapter', row)
+                    else: doc = row
+                    doc = {**doc, '_stamp': source.stamp,
+                           '_search': '\n'.join([doc['title'], *doc['aliases'], doc['id'], doc['text']]).casefold()}
+                    changed += 1
+                size += len(doc['text']) + len(doc['title']) + sum(map(len, doc['aliases']))
+                if size > MAX_CHARACTERS:
+                    truncated = True; break
+                current[source.key] = doc
+            # Validate metadata again before committing a replacement. On cancel,
+            # source races or revoked permissions the prior cache is untouched.
+            latest, _, latest_projected = self._search_manifest(ctx, check, require_flag)
+            if [(r.key, r.stamp) for r in latest] != [(r.key, r.stamp) for r in sources]:
+                raise StaleSourceError('sources changed while indexing; retry the current search')
+            reauthorize(); check()
+            query, tag = query.strip().casefold(), tag.strip().casefold()
+            cutoff = datetime.now(timezone.utc).timestamp() - recent_days * 86400
             results = []
             for doc in current.values():
-                if kind and doc['kind'] != kind or chapter_id and (doc['kind'] != 'chapter' or doc['id'] != chapter_id):
-                    continue
-                if query and query not in doc['_search']:
-                    continue
-                offset = literal_offset(doc['text'], query) if query else 0
-                results.append({k: deepcopy(v) for k, v in doc.items() if k not in {'text', '_search'}} |
-                               {'offset': offset, 'snippet': doc['text'][max(0, offset - 35):offset + 125]})
-                if len(results) >= 50:
-                    truncated = True
-                    break
-        return {'items': results, 'mode': 'LITERAL_LEXICAL', 'model_called': False,
-                'truncated': truncated, 'updated_documents': changed, 'limit': 50,
-                'branch_sources_available': ctx.scope.get('mode') == 'local' or self.chapter_reader is not None}
+                check()
+                if kind and doc['kind'] != kind or chapter_id and (doc['kind'] != 'chapter' or doc['id'] != chapter_id): continue
+                if tag and tag not in [value.casefold() for value in doc['tags']]: continue
+                if unresolved and doc['status'].upper() not in {'OPEN', 'UNRESOLVED', 'PENDING', 'FAILED', 'UNKNOWN', 'WAITING_APPROVAL', 'PENDING_REVIEW', 'REVIEW_REQUIRED'}: continue
+                if recent_days:
+                    try: stamp = datetime.fromisoformat(doc['updated_at'].replace('Z', '+00:00'))
+                    except (ValueError, TypeError): continue
+                    if stamp.tzinfo is None or stamp.timestamp() < cutoff: continue
+                if query and query not in (doc['text'].casefold() if fulltext else doc['_search']): continue
+                title = doc['title'].casefold(); aliases = [value.casefold() for value in doc['aliases']]
+                rank = 0 if query == title else 1 if query in aliases else 2 if title.startswith(query) else 3 if any(query in name for name in aliases) else 4
+                position = literal_offset(doc['text'], query) if query else 0
+                results.append((rank, {k: deepcopy(v) for k, v in doc.items() if k not in {'text', '_search', '_stamp', 'source'}} |
+                                {'offset': position, 'snippet': doc['text'][max(0, position - 35):position + 125]}))
+            results.sort(key=lambda pair: (pair[0], pair[1]['title'], pair[1]['kind'], pair[1]['id']))
+            reauthorize(); check()
+            with self._index_lock:
+                check()
+                self._indexes[key] = current; self._indexes.move_to_end(key)
+                while len(self._indexes) > 8: self._indexes.popitem(last=False)
+            return {'items': [row for _, row in results[offset:offset + limit]], 'mode': 'LITERAL_LEXICAL', 'model_called': False,
+                    'truncated': truncated or len(results) > offset + limit, 'index_truncated': truncated,
+                    'match_count': len(results), 'next_offset': offset + limit if len(results) > offset + limit else None,
+                    'updated_documents': changed, 'source_rows_read': reads, 'chapter_bodies_read': chapter_reads,
+                    'projection_rows_scanned': projected_rows + latest_projected, 'metadata_checks': len(sources) + len(latest),
+                    'incremental_chapters': incremental, 'limit': limit,
+                    'branch_sources_available': ctx.scope.get('mode') == 'local' or self.chapter_reader is not None}
+        except HTTPException as exc:
+            if exc.status_code in {401, 403, 404}: self.discard_search(ctx)
+            raise
+        finally:
+            with self._index_lock:
+                if request_id is None: self._search_operations.pop(operation, None)
+                while len(self._search_operations) > 256: self._search_operations.popitem(last=False)
 
-    def resolve(self, ctx, body):
+    def resolve(self, ctx, body, *, reauthorize=lambda: None, require_flag=lambda flag: None):
         value = ResolveIn.model_validate(body)
-        doc = next((d for d in self._documents(ctx) if d['kind'] == value.kind and d['id'] == value.id), None)
-        if doc is None:
-            raise FileNotFoundError(value.id)
+        reauthorize()
+        sources, _, _ = self._search_manifest(ctx, lambda: None, require_flag)
+        source = next((s for s in sources if s.key == value.kind + ':' + value.id), None)
+        if source is None: raise FileNotFoundError(value.id)
+        row = source.read()
+        if value.kind == 'chapter' and 'kind' not in row:
+            if row.get('novel_id') != ctx.novel_id or not self._visible_search_row(ctx, row): raise FileNotFoundError(value.id)
+            doc = self._search_document(ctx, value.kind, row)
+        else: doc = row
         stale = doc['revision'] != value.revision
         if stale and not value.open_current:
             raise StaleSourceError('search target changed; explicitly open its current version')
-        return {'kind': 'chapter' if doc['kind'] == 'chapter' else 'feature', 'id': doc['id'],
-                'feature': doc['feature'], 'version': doc['version'],
+        latest, _, latest_projected = self._search_manifest(ctx, lambda: None, require_flag)
+        if next((s.stamp for s in latest if s.key == source.key), None) != source.stamp:
+            raise StaleSourceError('search target changed while resolving; retry')
+        reauthorize()
+        navigation = doc.get('source', {'kind': 'chapter' if doc['kind'] == 'chapter' else 'feature', 'id': doc['id'], 'feature': doc['feature']})
+        return {**navigation,
+                'novel_id': ctx.novel_id, 'branch_id': ctx.branch, 'version': navigation.get('version', doc['version']),
                 'anchor': {'offset': 0 if stale else min(value.offset, len(doc['text'])), 'scroll': 0},
                 'stale': stale, 'revision': doc['revision'], 'coordinate': COORDINATE}
 

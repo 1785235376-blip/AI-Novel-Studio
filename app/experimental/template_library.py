@@ -17,22 +17,23 @@ from .common import DomainService, StaleSourceError, change_row, check_version, 
 from .declarative_agents import Strict, WorkflowAuthoring, default_definition
 from .planning import BUILTIN_TEMPLATES, PlanningTemplateIn, collection, digest, require_row
 from .store import canonical
+from .safe_batch_contracts import BatchPreset
 from ..services.v1_capability_service import CapabilityVersionConflict
 
 FEATURE = 'template_library_v2'
 LIMIT = 128000
-TYPES = ('planning', 'character', 'screenplay', 'storyboard', 'review', 'workflow')
+TYPES = ('planning', 'character', 'screenplay', 'storyboard', 'review', 'workflow', 'safe_batch')
 
 
 class Manifest(Strict):
     id: str = Field(pattern=r'^[a-z][a-z0-9-]{1,79}$')
     version: str = Field(pattern=r'^[0-9]{1,4}\.[0-9]{1,4}\.[0-9]{1,4}$')
-    type: Literal['planning', 'character', 'screenplay', 'storyboard', 'review', 'workflow']
+    type: Literal['planning', 'character', 'screenplay', 'storyboard', 'review', 'workflow', 'safe_batch']
     title: str = Field(min_length=1, max_length=160)
     description: str = Field(default='', max_length=2000)
     author: str = Field(min_length=1, max_length=160)
     license: str = Field(min_length=1, max_length=160)
-    dependencies: list[Literal['advanced_planning_v2', 'declarative_agents_v2']] = Field(default_factory=list, max_length=2)
+    dependencies: list[Literal['advanced_planning_v2', 'declarative_agents_v2', 'safe_batches_v2']] = Field(default_factory=list, max_length=3)
     provenance: str = Field(default='USER_SUPPLIED_DECLARATION', max_length=1000)
 
 
@@ -57,10 +58,10 @@ class TemplatePackage(Strict):
     @model_validator(mode='after')
     def content_contract(self):
         typ = self.manifest.type
-        model = PlanningTemplateIn if typ == 'planning' else WorkflowAuthoring if typ == 'workflow' else Brief
+        model = PlanningTemplateIn if typ == 'planning' else WorkflowAuthoring if typ == 'workflow' else BatchPreset if typ == 'safe_batch' else Brief
         self.content = model.model_validate(self.content).model_dump()
         # Reject contradictory dependency claims; templates cannot enable them.
-        dependency = {'planning': 'advanced_planning_v2', 'workflow': 'declarative_agents_v2'}.get(typ)
+        dependency = {'planning': 'advanced_planning_v2', 'workflow': 'declarative_agents_v2', 'safe_batch': 'safe_batches_v2'}.get(typ)
         if dependency and dependency not in self.manifest.dependencies:
             raise ValueError('missing declared template dependency: ' + dependency)
         if len(canonical(self.model_dump()).encode()) > LIMIT: raise ValueError('template exceeds 128000 bytes')
@@ -106,6 +107,7 @@ def builtin_packages():
         result.append({'schema_version': 1, 'manifest': {'id': 'synthetic-' + typ, 'version': '1.0.0', 'type': typ, 'title': title,
             'author': 'AI-Novel-Studio synthetic examples', 'license': 'CC0-1.0', 'dependencies': [], 'provenance': 'ORIGINAL_SYNTHETIC_OFFLINE'},
             'content': {'sections': [{'key': key, 'title': label, 'text': text} for key, label, text in sections]}})
+    result.append({'schema_version': 1, 'manifest': {'id': 'synthetic-safe-batch', 'version': '1.0.0', 'type': 'safe_batch', 'title': '校对与正文导出参数', 'author': 'AI-Novel-Studio synthetic examples', 'license': 'CC0-1.0', 'dependencies': ['safe_batches_v2'], 'provenance': 'ORIGINAL_SYNTHETIC_OFFLINE'}, 'content': {'proof': True, 'export_format': 'txt', 'skip_satisfied': True}})
     return [parse_package(p) for p in result]
 
 

@@ -80,27 +80,7 @@ def create_voice_direction_router(service, authorize, require_flag, executor_fac
     @router.post("/jobs/{jid}/execute")
     def execute(nid: str, jid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         def run(a,s,g):
-            executor = executor_factory(s,a); job = executor.find(executor.store.load(nid),jid)
-            provider_identity = None
-            def identity(resolved):
-                provider = resolved[2]
-                return (resolved[0], resolved[1], getattr(provider, "endpoint", None), bool(getattr(provider, "local", False)), tuple(getattr(provider, "emotion_values", ())))
-            def check(current):
-                g()
-                source = service.assert_job(nid,s,a,current)
-                if provider_identity is not None:
-                    latest = resolver(current.get("provider_id") or "auto")
-                    if identity(latest) != provider_identity:
-                        raise AudiobookError("VOICE_PROVIDER_AUTHORITY_CHANGED", "声音 Provider 配置已变化，请重新核对",409)
-                return source
-            chapter = check(job)
-            def resolve(pid):
-                nonlocal provider_identity
-                resolved = resolver(pid)
-                if not getattr(resolved[2],"local",False): raise AudiobookError("VOICE_REMOTE_BUDGET_NOT_INTEGRATED", "仅允许显式本地零外部费用执行",403)
-                provider_identity = identity(resolved)
-                return resolved
-            result = executor.execute(nid,jid,chapter,resolve,lambda:check(job),direction_guard=check)
+            result = service.execute_local_job(nid,s,a,jid,executor_factory(s,a),resolver,g)
             return {k:v for k,v in result.items() if k not in {"source_text", "pronunciation_dictionary", "direction_binding", "execution_token"}}
         return invoke(nid,x_session_token,x_branch_id,"domain.write",run)
 

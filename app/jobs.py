@@ -301,6 +301,12 @@ class JobManager:
             context = self.contexts.for_chapter(job.chapter_id, job.instruction, cloud, job.operation)
         else:
             context = {}
+        if job.request_scope is not None and not is_character_job(job):
+            from .author_context_sources import apply_source_controls
+            context, job.author_source_manifest = apply_source_controls(context, job.novel_id,
+                (job.request_scope or {}).get("source_items") if automatic_context_allowed(job) else None,
+                omit_dependents=automatic_context_allowed(job) and (not job.request_scope.get("include_style_reference", True)
+                    or not job.request_scope.get("include_plan_reference", True)))
         request = build_author_request(job, route, chapter, context,
             dispatch_guard=lambda: self._guard_author_request(job, route, dispatch=True))
         if job.expected_request_digest and request_digest(request, job, cloud) != job.expected_request_digest:

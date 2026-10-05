@@ -265,6 +265,28 @@ class DirectedAudiobookService(AudiobookV2Service):
             jobs.append(executor.queue(nid, {**chapter, "content": direction["reviewed_text"]}, config, [], idempotency_key="voice-" + digest([group, segment["id"]]), source_chapter=chapter))
         return {"items": jobs, "approval_status": "PENDING", "execution": "QUEUED_NOT_SENT", "group_id": group}
 
+    def execute_local_job(self, nid, scope, actor, jid, executor, resolver, guard, before_send=None):
+        """One shared B03 execution authority for standalone and U16 callers."""
+        from ..services.audiobook_service import AudiobookError
+        job = executor.find(executor.store.load(nid), jid)
+        provider_identity = None
+        def identity(resolved):
+            provider = resolved[2]
+            return (resolved[0], resolved[1], getattr(provider, 'endpoint', None), bool(getattr(provider, 'local', False)), tuple(getattr(provider, 'emotion_values', ())))
+        def check(current):
+            guard(); source = self.assert_job(nid, scope, actor, current)
+            if provider_identity is not None and identity(resolver(current.get('provider_id') or 'auto')) != provider_identity:
+                raise AudiobookError('VOICE_PROVIDER_AUTHORITY_CHANGED', '声音 Provider 配置已变化，请重新核对', 409)
+            return source
+        chapter = check(job)
+        def resolve(pid):
+            nonlocal provider_identity
+            resolved = resolver(pid)
+            if not getattr(resolved[2], 'local', False): raise AudiobookError('VOICE_REMOTE_BUDGET_NOT_INTEGRATED', '仅允许显式本地零外部费用执行', 403)
+            provider_identity = identity(resolved)
+            return resolved
+        return executor.execute(nid, jid, chapter, resolve, lambda: check(job), direction_guard=check, before_send=before_send)
+
     def assert_job(self, nid, scope, actor, job):
         require_flag(VOICE_FLAG)
         binding = job.get("direction_binding", {})
