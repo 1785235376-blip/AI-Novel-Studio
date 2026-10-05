@@ -5,6 +5,7 @@ param(
     [Parameter(Mandatory = $true)] [string]$DotnetPath,
     [Parameter(Mandatory = $true)] [string]$NodePath,
     [Parameter(Mandatory = $true)] [string]$ViteCliPath,
+    [Parameter(Mandatory = $true)] [string]$VerifiedFontDirectory,
     [switch]$SkipIExpress
 )
 
@@ -63,8 +64,8 @@ Install to the normal per-user location with:
   powershell -ExecutionPolicy Bypass -File .\Install-AI-Novel-Studio.ps1
 
 Provider credentials are entered at runtime inside DesktopHost only. The
-packaged backend scrubs provider-key environment variables and uses a memory
-credential vault. Do not put keys in files, logs, URLs or tests.
+packaged backend scrubs provider-key environment variables and requires a persistent OS
+credential vault with memory fallback disabled. Do not put keys in files, logs, URLs or tests.
 "@
 Set-Content -LiteralPath (Join-Path $packageRoot 'README-ACCEPTANCE.txt') -Value $readme -Encoding UTF8
 
@@ -89,7 +90,7 @@ $manifest = [ordered]@{
     channel = $version.channel
     packaged_at_utc = [DateTime]::UtcNow.ToString('o')
     application_root = $application
-    credential_policy = 'runtime-only-desktophost-memory-vault-no-provider-env-inheritance'
+    credential_policy = 'desktophost-os-vault-no-memory-fallback-no-provider-env-inheritance'
     files = $inventory
 }
 $manifestPath = Join-Path $output 'acceptance-package-manifest.json'

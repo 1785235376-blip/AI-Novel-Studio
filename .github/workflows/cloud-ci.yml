@@ -12,7 +12,7 @@ concurrency:
   group: cloud-ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Hosted Linux runners only. No production credentials, model services or downloads.
+# Hosted Linux and Windows checks. Synthetic data; no production credentials or model calls.
 env:
   MOCK_PROVIDER: 'true'
   MOCK_STREAM_DELAY_MS: '0'
@@ -56,9 +56,15 @@ jobs:
       - name: Install backend dependencies
         working-directory: ${{ env.CI_PROJECT }}
         run: |
-          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev]'
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild]'
           python -m pip check
           python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+      - name: Install matching PostgreSQL recovery tools
+        if: matrix.backend == 'postgres'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-16
+          echo "/usr/lib/postgresql/16/bin" >> "$GITHUB_PATH"
       - name: Initialize disposable PostgreSQL
         if: matrix.backend == 'postgres'
         working-directory: ${{ env.CI_PROJECT }}
@@ -75,6 +81,11 @@ jobs:
                   connection.execute(migration.read_text(encoding='utf-8'))
                   print('Applied', migration.name)
           PY
+      - name: Prepare pinned OFL CJK font and receipt
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python scripts/prepare_pdf_font.py --output "$CI_SANDBOX/fonts" > "$CI_RECEIPTS/font-manifest.json"
+          echo "R2_TEST_FONT_FILE=$CI_SANDBOX/fonts/NotoSansSC-Regular.ttf" >> "$GITHUB_ENV"
       - name: Full backend suite
         working-directory: ${{ env.CI_PROJECT }}
         env:
@@ -108,6 +119,9 @@ jobs:
       - uses: actions/setup-node@v4.4.0
         with:
           node-version: '22.14.0'
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
       - name: Prepare isolated checkout and receipt
         run: bash .github/ci/prepare.sh frontend
       - name: Install locked frontend dependencies
@@ -147,6 +161,24 @@ jobs:
           pnpm exec playwright test --config playwright.visual.config.ts \
             --grep 'shell geometry|compact desktop' --update-snapshots=none \
             --reporter=list,junit 2>&1 | tee "$CI_RECEIPTS/geometry.log"
+      - name: Install isolated backend for business browser journeys
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}
+        run: python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild]'
+      - name: Business browser journeys (synthetic data; explicit mock boundary)
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.r2.config.ts 2>&1 | tee "$CI_RECEIPTS/business.log"
+      - name: Export recovery browser isolation and screenshots
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          PLAYWRIGHT_JUNIT_OUTPUT_FILE: ${{ env.CI_RECEIPTS }}/export-browser.xml
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.export.config.ts --reporter=list,junit 2>&1 | tee "$CI_RECEIPTS/export-browser.log"
       - name: Summarize exact revision and test counts
         if: always() && env.CI_RECEIPTS != ''
         run: python3 .github/ci/receipt.py "$CI_RECEIPTS"
@@ -155,6 +187,58 @@ jobs:
         uses: actions/upload-artifact@v4.6.2
         with:
           name: frontend-${{ github.sha }}
-          path: ${{ env.CI_RECEIPTS }}
+          path: |
+            ${{ env.CI_RECEIPTS }}
+            ${{ env.CI_PROJECT }}/frontend/test-results
+          if-no-files-found: error
+          retention-days: 14
+
+  windows-host:
+    name: Windows / Host compile and native contracts
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.424'
+      - name: Prepare isolated Windows runtime and receipt
+        shell: pwsh
+        run: |
+          $sandbox = Join-Path $env:RUNNER_TEMP 'novel-r2-native'
+          New-Item -ItemType Directory -Force -Path $sandbox, "$sandbox/data", "$sandbox/receipts", "$sandbox/host" | Out-Null
+          "NOVEL_DATA_PATH=$sandbox/data" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "PROJECT_ROOT=$env:GITHUB_WORKSPACE" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "STORAGE_BACKEND=file" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "CI_RECEIPTS=$sandbox/receipts" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "R2_HOST_OUTPUT=$sandbox/host" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "checked_out_sha=$(git rev-parse HEAD)" | Out-File "$sandbox/receipts/revision.txt" -Encoding utf8
+          "platform=Windows hosted runner; interactive DesktopHost/WebView2/user acceptance NOT_RUN" | Out-File "$sandbox/receipts/revision.txt" -Append -Encoding utf8
+      - name: Install pinned Python runtime dependencies
+        run: python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild]'
+      - name: Compile fresh DesktopHost WinExe
+        shell: pwsh
+        run: |
+          dotnet publish desktop-host/AI.NovelStudio.DesktopHost/AI.NovelStudio.DesktopHost.csproj -c Release -r win-x64 --self-contained false -o "$env:R2_HOST_OUTPUT" 2>&1 | Tee-Object "$env:CI_RECEIPTS/host-build.log"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-ChildItem "$env:R2_HOST_OUTPUT" -File -Recurse | Get-FileHash -Algorithm SHA256 | ForEach-Object { "$($_.Hash)  $([IO.Path]::GetRelativePath($env:R2_HOST_OUTPUT, $_.Path))" } | Out-File "$env:CI_RECEIPTS/host-sha256.txt" -Encoding utf8
+      - name: Windows native and packaging contracts (not window acceptance)
+        shell: pwsh
+        run: |
+          python -m pytest -q -ra --tb=short tests/test_runtime_ownership_foundation_v070.py tests/test_webview2_host_contract_v070.py tests/test_packaged_process_factory_v070.py tests/test_packaged_local_session_bootstrap_v070.py tests/test_packaged_desktop_bridge_v070.py tests/test_packaged_postgres_migrations_v070.py tests/test_windows_packaging_host_provenance_v070.py --junitxml="$env:CI_RECEIPTS/windows.xml" 2>&1 | Tee-Object "$env:CI_RECEIPTS/windows-tests.log"
+          exit $LASTEXITCODE
+      - name: Upload internal Host build and receipts
+        if: always()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: windows-host-${{ github.sha }}
+          path: |
+            ${{ env.CI_RECEIPTS }}
+            ${{ env.R2_HOST_OUTPUT }}
           if-no-files-found: error
           retention-days: 14

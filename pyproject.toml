@@ -8,6 +8,7 @@ dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1", "psycopg[binary]>=3.2,<
 [project.optional-dependencies]
 dev = ["pytest>=8,<9"]
 vault = ["keyring>=25,<26"]
+fontbuild = ["fonttools==4.59.1"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

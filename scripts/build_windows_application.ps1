@@ -15,7 +15,9 @@ param(
     [string]$NodePath,
 
     [Parameter(Mandatory = $true)]
-    [string]$ViteCliPath
+    [string]$ViteCliPath,
+    [Parameter(Mandatory = $true)]
+    [string]$VerifiedFontDirectory
 )
 
 $ErrorActionPreference = 'Stop'
@@ -94,6 +96,9 @@ function New-ProductInventory([string]$Source, [string]$Prefix, [string[]]$Exten
     )
 }
 
+# The font is fetched from a pinned official source with a checked digest and
+# full OFL license. It is build material, never a copied proprietary OS font.
+# Preparation is explicit below after the owned output tree has been staged.
 $baseApplicationPath = Resolve-ExistingPath $BaseApplication 'Base Application'
 $dotnetExecutable = Resolve-ExistingPath $DotnetPath '.NET host'
 $nodeExecutable = Resolve-ExistingPath $NodePath 'Node.js host'
@@ -174,6 +179,8 @@ $sourceInventory = @(
 )
 $sourceInventory | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $sourceManifest -Encoding utf8
 
+& $dotnetExecutable restore $hostProjectPath -r win-x64
+if ($LASTEXITCODE -ne 0) { throw "DesktopHost dependency restore failed with exit code $LASTEXITCODE" }
 & $dotnetExecutable publish $hostProjectPath `
     -c Release `
     -r win-x64 `
@@ -225,6 +232,19 @@ if ($backendStageInventory.Count -eq 0 -or -not (Test-Path -LiteralPath (Join-Pa
     throw 'Backend staging inventory is missing required product files'
 }
 Assert-InventoriesMatch $backendSourceInventory $backendStageInventory 'Backend'
+
+$fontSource = Resolve-ExistingPath $VerifiedFontDirectory 'Pinned CJK font directory'
+$fontName = 'NotoSansSC-Regular.ttf'
+$fontHash = 'eeb06b8a64fd04a2744d95579db1571b51027cda61ed78c62e4b730791525461'
+$licenseHash = '1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9'
+if ((Get-FileHash (Join-Path $fontSource $fontName) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $fontHash) { throw 'CJK font is not the verified regular build; run scripts/prepare_pdf_font.py with pinned dependencies.' }
+if ((Get-FileHash (Join-Path $fontSource 'OFL.txt') -Algorithm SHA256).Hash.ToLowerInvariant() -ne $licenseHash) { throw 'Complete pinned OFL license is required.' }
+$stagedFonts = Join-Path $stagedBackend 'assets\fonts'
+[void](New-Item -ItemType Directory -Path $stagedFonts -Force)
+foreach ($name in @($fontName, 'OFL.txt', 'font-manifest.json')) {
+    Copy-Item -LiteralPath (Join-Path $fontSource $name) -Destination $stagedFonts -Force
+}
+$fontInventory = New-FileInventory $stagedFonts
 
 $stagedMigrations = Join-Path $outputApplication 'Database\Migrations'
 if (Test-Path -LiteralPath $stagedMigrations) {
@@ -291,8 +311,10 @@ $release = Get-Content -LiteralPath (Join-Path $projectRoot 'release\version.jso
         dotnet_sdk_version = $sdkVersion
         dotnet_sdk_base_path = $sdkBasePath
     }
-    python_runtime = 'CPython 3.12.10 x64'
-    postgresql_runtime = 'PostgreSQL 16.4 x64'
+    source_commit = (& git -C $projectRoot rev-parse HEAD)
+    font_inventory = $fontInventory
+    python_runtime = (& (Join-Path $baseApplicationPath 'Runtime\Python\python.exe') --version)
+    postgresql_runtime = (& (Join-Path $baseApplicationPath 'PostgreSQL\bin\pg_ctl.exe') --version)
 } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $applicationManifest -Encoding utf8
 
 Write-Output "APPLICATION_STAGED $outputApplication"
