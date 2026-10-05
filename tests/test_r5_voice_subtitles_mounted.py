@@ -139,3 +139,32 @@ def test_mounted_workspace_tasks_project_directed_owner_and_hide_other_actor_off
     monkeypatch.delenv('V1_ACCEPTANCE_MODE');e=scoped(e,monkeypatch)
     other=checked(e.client.get(e.base+'/workspace/tasks',headers=e.viewer_headers))
     assert job['id'] not in json.dumps(other) and not any(r['authority']=='voice_direction' for r in other['items'])
+
+
+def test_mounted_production_pcm_mixer_preview_export_and_review(mounted, monkeypatch):
+    """Production composer and /api aliases, synthetic PCM only, no provider."""
+    e = mounted; p = prepare(e)
+    capability = checked(e.client.get(e.base+'/audiobook/capabilities'))
+    assert capability['mixer'] == 'local-pcm16-wav-v1'
+    source = e.chapters.get(e.chapter['id'])
+    for index, segment in enumerate(p['segments']):
+        asset = checked(e.client.post(e.prefix+f'/novels/{e.nid}/assets', json={
+            'novel_id':e.nid,'filename':f'mix-{index}.wav','kind':'audio','media_type':'audio/wav',
+            'content_base64':base64.b64encode(wav_bytes(100, sample=100+index)).decode()}))
+        p = checked(e.client.put(e.base+f'/audiobook/plans/{p["id"]}/segments/{segment["id"]}/audio', json={'expected_version':p['version'],'asset_id':asset['id']}))
+    p = checked(e.client.post(e.base+f'/audiobook/plans/{p["id"]}/approve', json={'expected_version':p['version']}))
+    mixed = checked(e.client.post(e.base+f'/voice-direction/plans/{p["id"]}/mix', json={'expected_version':p['version']}))
+    catalog = checked(e.client.get(e.base+'/voice-direction/catalog'))
+    assert catalog['mixes'][0]['id'] == mixed['id'] and 'content_base64' not in json.dumps(catalog)
+    url = e.base+f'/voice-direction/mixes/{mixed["id"]}/audio?expected_version={mixed["version"]}'
+    audio = e.client.get(url)
+    assert audio.status_code == 200 and audio.content.startswith(b'RIFF')
+    approved = checked(e.client.post(e.base+f'/review-inbox/audiobook/{mixed["id"]}/approve', json={'expected_version':mixed['version']}))
+    assert e.assets.content(approved['asset_id']) == audio.content
+    assert e.chapters.get(source['id']) == source
+    current_url = e.base+f'/voice-direction/mixes/{mixed["id"]}/audio?expected_version={approved["version"]}'
+    assert e.client.get(current_url).content == audio.content
+    monkeypatch.setenv('EXPERIMENTAL_FEATURES','audiobook_v2,unified_review_inbox')
+    assert checked(e.client.get(e.base+'/audiobook/mixes'))['items'] == []
+    assert e.client.get(current_url).status_code == 404
+    with pytest.raises(FileNotFoundError): e.assets.content(approved['asset_id'])
