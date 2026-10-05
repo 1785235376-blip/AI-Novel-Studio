@@ -211,6 +211,7 @@ router.include_router(create_local_ai_inspection_router(
 from .writing_focus import WritingFocusService
 from .writing_focus_api import create_writing_focus_router
 writing_focus_service = WritingFocusService(store, legacy_api.novel_service, legacy_api.chapter_service, planning=planning_service)
+workspace_tools_service.focus_reader = lambda ctx: {'preferences': writing_focus_service.preferences(ctx), 'pins': writing_focus_service.pinned(ctx)}
 router.include_router(create_writing_focus_router(writing_focus_service, authorize, require_flag))
 
 
@@ -533,3 +534,10 @@ def create_sync_chapter(nid, title, document, token, branch):
 router.include_router(create_offline_sync_router(offline_sync_service, authorize, require_flag,
     require_inspection_host_session, save_document=save_sync_document, archive_chapter=archive_sync_chapter,
     create_chapter=create_sync_chapter))
+
+
+from .first_use import FirstUseService, OriginalFirstUseAuthorities
+from .first_use_api import create_first_use_router
+from ..dependencies import collaboration_read_service
+first_use_service = FirstUseService(store, OriginalFirstUseAuthorities(legacy_api, collaboration_read_service))
+router.include_router(create_first_use_router(first_use_service, require_flag))

@@ -289,6 +289,10 @@ async def collaboration_fail_closed(request,call_next):
         experimental_path = re.fullmatch(r"/api/novels/[^/]+/experimental/.+", normalized_path) is not None
         if (normalized_path == "/api/experimental/features" and method == "GET") or (experimental_path and enabled_flags() and method in {"GET", "POST", "PUT", "PATCH", "DELETE"}):
             allowed = True
+        first_use_route = ((normalized_path == "/api/experimental/first-use/sample" and method in {"GET", "POST"})
+                           or (normalized_path == "/api/experimental/first-use/sample/recover" and method == "POST"))
+        if first_use_route and 'workspace_tools_v2' in enabled_flags():
+            allowed = True
         if not allowed:
             return JSONResponse({"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}},status_code=501)
         public_metadata = (

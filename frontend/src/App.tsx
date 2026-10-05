@@ -17,6 +17,7 @@ import {
   setCollaborationContext,
 } from "./api";
 import { useStudio } from "./store";
+import { readLocalWorkspaceSelection, rememberLocalWorkspaceSelection } from "./workspaceSelection";
 import { ChapterEditor, proseDocument } from "./Editor";
 import {
   drafts,
@@ -56,6 +57,7 @@ import {
   type SaveState,
 } from "./ui/SaveControls";
 import { EntryExperience } from "./novel/EntryExperience";
+import { SampleJourneyGuide } from "./novel/SampleJourneyGuide";
 import { ChapterTree } from "./novel/ChapterTree";
 import { CharacterEditor, CharacterConsistencyPanel, CharacterEvolutionPanel, ForeshadowingEditor, ForeshadowingTrackerPanel, LocationEditor, OutlineEditor, RelationshipEditor, RelationshipGraph, SceneEditor, StoryDatabase, StoryRouteEditor, TimelineEditor, VolumeEditor, WorldSummaryEditor, WorldRulesPanel, type CharacterDraft, type ForeshadowingDraft, type LocationDraft, type OutlineDraft, type RelationshipDraft, type SceneDraft, type StoryRouteDraft, type TimelineDraft, type VolumeDraft, type StoryDatabaseKind } from "./novel/StoryDatabase";
 import {
@@ -80,7 +82,7 @@ import { DeferredExperimentalWorkbench as ExperimentalWorkbench } from "./experi
 import { EXPERIMENTAL_GROUPS, EXPERIMENTAL_TABS } from "./experimental/experimentalNavigation";
 import { experimentalFeatures, experimentalClient } from "./experimental/api";
 import { WritingReferenceRail, defaultWritingPreferences, type WritingFocusPreferences } from "./experimental/WritingFocusPanel";
-import type { WorkspaceNavigation, WorkspaceAnchor } from "./experimental/uxClient";
+import type { WorkspaceNavigation, WorkspaceAnchor, ResumeResult } from "./experimental/uxClient";
 import { authorContextRequest, authorContextVariants, authorVariantsKey, authorRequestKey, type AuthorVariantsReceipt, type AuthorVariantsResult, type AuthorPreviewReceipt } from "./novel/authorContextClient";
 import { AiControlCenter } from "./ui/AiControlCenter";
 import { MediaProviderSettings } from "./ui/MediaProviderSettings";
@@ -186,6 +188,9 @@ export default function App() {
   const activeCharacterId = characterMind && characterViewpoint?.identity === namespace && characterViewpoint?.chapterId === s.chapterId && characterViewpoint?.epoch === scopeEpoch ? characterViewpoint.characterId : undefined;
   useEffect(() => { setCharacterViewpoint(undefined); }, [namespace, scopeEpoch, characterMind]);
   const [focusActive, setFocusActive] = useState(false), [writingPreferences, setWritingPreferences] = useState<WritingFocusPreferences>(defaultWritingPreferences), [referenceRevision, setReferenceRevision] = useState(0);
+  const [referencesVisible, setReferencesVisible] = useState(true);
+  const [projectChoiceOpen, setProjectChoiceOpen] = useState(false);
+  const [projectRecoveryNotice, setProjectRecoveryNotice] = useState('');
   const workspaceClient = useMemo(() => experimentalClient(s.novelId, {sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}), [namespace, s.novelId, s.actor?.id]);
   const focusPreferencesTouched = useRef(false);
   const persistedFocusPreferences = useQuery({
@@ -193,12 +198,17 @@ export default function App() {
     queryFn: ({ signal }) => workspaceClient.get<{ preferences: WritingFocusPreferences }>('/writing-focus/preferences', signal),
     enabled: writingFocus && !!s.novelId, retry: false,
   });
-  useEffect(() => { focusPreferencesTouched.current = false; setFocusActive(false); setWritingPreferences(defaultWritingPreferences); }, [namespace, s.novelId, writingFocus]);
+  useEffect(() => { focusPreferencesTouched.current = false; setFocusActive(false); setReferencesVisible(true); setWritingPreferences(defaultWritingPreferences); }, [namespace, s.novelId, s.actor?.id, writingFocus]);
   useEffect(() => {
     if (writingFocus && persistedFocusPreferences.data && !focusPreferencesTouched.current)
       setWritingPreferences(persistedFocusPreferences.data.preferences);
   }, [writingFocus, persistedFocusPreferences.data]);
 
+  const lastWorkspace = useQuery({
+    queryKey: ['workspace-resume', namespace, s.novelId, s.actor?.id],
+    queryFn: ({ signal }) => workspaceClient.get<ResumeResult>('/workspace/resume', signal),
+    enabled: workspaceTools && !!s.novelId, retry: false, refetchOnWindowFocus: false,
+  });
   const [experimentalTab, setExperimentalTab] = useState<string>();
   const [workspaceSection, setWorkspaceSection] = useState<'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'>('resume');
   const [editorAnchor, setEditorAnchor] = useState<{ identity: string; anchor: WorkspaceAnchor }>();
@@ -288,6 +298,7 @@ export default function App() {
   const novels = useQuery({
     queryKey: ["novels"],
     queryFn: api.novels,
+    refetchOnMount: workspaceTools ? 'always' : true,
     enabled: !packagedHost && shouldLoadLocalNovels(s.sessionToken, s.scope),
   });
   const mediaTasks = useQuery({
@@ -425,8 +436,25 @@ export default function App() {
     return () => { observer.active = false; observer.sources.forEach(source => source.close()); observer.sources.clear(); };
   }, [chapter.data?.id, namespace, editorIdentity, scopeEpoch]);
   useEffect(() => {
-    if (!s.novelId && novels.data?.[0]) s.setNovel(novels.data[0].id);
-  }, [novels.data]);
+    // Wait for current server flags and the original project inventory. A hint
+    // cannot select a foreign/missing project or redirect an authenticated scope.
+    if (packagedHost || !shouldLoadLocalNovels(s.sessionToken, s.scope) || experimentalFlags.isPending) return;
+    if (!workspaceTools) { if (!s.novelId && novels.data?.[0]) s.setNovel(novels.data[0].id); return; }
+    if (novels.isFetching || !novels.isSuccess) return;
+    if (s.novelId) {
+      if (novels.data.some(row => row.id === s.novelId) && !rememberLocalWorkspaceSelection(s.novelId))
+        setProjectRecoveryNotice('当前浏览器无法记住项目选择；服务端工作现场仍保留，下次请手动选择作品。');
+      return;
+    }
+    if (projectChoiceOpen) return;
+    const selected = readLocalWorkspaceSelection();
+    if (selected.state === 'SAVED') {
+      if (novels.data.some(row => row.id === selected.projectId)) s.setNovel(selected.projectId);
+      else setProjectRecoveryNotice('上次项目当前不存在或不可访问。请选择一个可用作品；不会改跳到其他项目或分支。');
+    } else if (selected.state === 'EMPTY') {
+      if (novels.data[0]) s.setNovel(novels.data[0].id);
+    } else setProjectRecoveryNotice('上次项目选择损坏或浏览器存储不可用。请选择作品；正文和服务端工作现场未改变。');
+  }, [novels.data, novels.isFetching, novels.isSuccess, experimentalFlags.isPending, workspaceTools, packagedHost, s.novelId, s.sessionToken, s.scope, projectChoiceOpen]);
   useEffect(() => {
     if (!s.chapterId && chapters.data?.[0]) s.setChapter(chapters.data[0].id);
   }, [chapters.data]);
@@ -938,6 +966,10 @@ export default function App() {
     setGenerationRecoveryUnverified(false);
     void displayVerifiedRecovery(observer, value, states);
   }
+  const workspaceRestoreSequence = useRef(0);
+  const workspaceRestoreState = useRef({ saveState, composing, hydratedIdentity, editorIdentity });
+  workspaceRestoreState.current = { saveState, composing, hydratedIdentity, editorIdentity };
+  useLayoutEffect(() => { workspaceRestoreSequence.current++; }, [editorIdentity, scopeEpoch, panel, experimentalTab, workspaceSection, workspaceTools, writingFocus]);
   const generationOpenSequence = useRef(0);
   // Closing this surface, choosing another task or disabling either entry
   // invalidates pending reads without cancelling the original generation.
@@ -1051,15 +1083,40 @@ export default function App() {
       if (isCurrentGeneration(origin)) setDraftAction(undefined);
     }
   }
+  async function openLocalSample(id: string) {
+    const origin = useStudio.getState();
+    if (!workspaceTools || packagedHost || origin.sessionToken || origin.scope || origin.novelId) return;
+    const identity = revisionStoreIdentity(origin);
+    // Sample creation does not run NovelHome's original query invalidation.
+    // Hold explicit project choice while refreshing the original inventory.
+    setProjectChoiceOpen(true);
+    try {
+      await qc.invalidateQueries({ queryKey: ['novels'], refetchType: 'none' });
+      const currentProjects = await qc.fetchQuery({ queryKey: ['novels'], queryFn: api.novels, staleTime: 0 });
+      if (revisionStoreIdentity(useStudio.getState()) !== identity) return;
+      const currentFlags = qc.getQueryData<{ features: Record<string, boolean> }>(['experimental-features', namespace]);
+      if (!currentFlags?.features['experimental.workspace_tools_v2']) return;
+      if (!currentProjects.some(project => project.id === id)) {
+        setProjectRecoveryNotice('练习项目当前不存在或不可访问，请核对项目列表。');
+        return;
+      }
+      setProjectChoiceOpen(false); setProjectRecoveryNotice('');
+      useStudio.getState().setNovel(id);
+    } catch {
+      if (revisionStoreIdentity(useStudio.getState()) === identity)
+        setProjectRecoveryNotice('项目列表未核对完成，练习内容已保留。请恢复连接后重新打开。');
+    }
+  }
   if (!s.novelId && !s.scope?.workspaceId)
     return (
       <EntryExperience
         packagedHost={packagedHost}
         initialToken={s.sessionToken}
+        onOpenLocalSample={id => { void openLocalSample(id); }}
         onEnter={(nextToken, nextScope) =>
           s.setCollaboration(nextToken, undefined, nextScope)
         }
-        localHome={<NovelHome onCreated={s.setNovel} />}
+        localHome={<>{workspaceTools && projectRecoveryNotice && <section className="notice" role="status">{projectRecoveryNotice}</section>}<NovelHome onCreated={id => { setProjectChoiceOpen(false); setProjectRecoveryNotice(''); s.setNovel(id); }} /></>}
       />
     );
   const scope = s.scope;
@@ -1191,7 +1248,8 @@ export default function App() {
     </div>
   );
   function navigateWorkspace(target: WorkspaceNavigation) {
-    if (!hasExperimental || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return;
+    if (!hasExperimental || revisionStoreIdentity(useStudio.getState()) !== editorIdentity || target.signal?.aborted) return;
+    const workspaceTicket = ++workspaceRestoreSequence.current;
     generationOpenSequence.current += 1;
     setPendingGenerationOpen(undefined);
     if (target.kind === 'generation') {
@@ -1206,10 +1264,41 @@ export default function App() {
     }
     if (target.kind === 'chapter') {
       if (!target.id || !Number.isInteger(target.version) || !target.version) return;
-      setPendingAnchor({ namespace, chapterId: target.id, version: target.version,
-        requestId: ++anchorSequence.current, offset: target.anchor?.offset || 0, scroll: target.anchor?.scroll || 0 });
-      s.setChapter(target.id);
-      setPanel('history');
+      const open = () => {
+        setPendingAnchor({ namespace, chapterId: target.id, version: target.version!,
+          requestId: ++anchorSequence.current, offset: target.anchor?.offset || 0, scroll: target.anchor?.scroll || 0 });
+        s.setChapter(target.id); setPanel('history');
+      };
+      if (!target.workspace) { open(); return; }
+      const origin = captureGenerationOrigin();
+      const current = () => mounted.current && !target.signal?.aborted && workspaceTicket === workspaceRestoreSequence.current
+        && origin.epoch === editorEpoch.current && origin.identity === revisionStoreIdentity(useStudio.getState())
+        && qc.getQueryData<{ features: Record<string, boolean> }>(['experimental-features', origin.namespace])?.features['experimental.workspace_tools_v2'] === true;
+      const safeBuffer = () => {
+        const live = workspaceRestoreState.current;
+        return live.saveState === 'saved' && !live.composing && !savePending.current && live.hydratedIdentity === live.editorIdentity
+          && !drafts.load(origin.chapterId, origin.namespace) && !drafts.load(target.id, origin.namespace) && !conflicts.load(target.id, origin.namespace);
+      };
+      if (!safeBuffer()) { setShellMessage('当前或目标章节有未保存草稿，请先保存或处理冲突，再恢复工作现场。当前内容已保留。'); return; }
+      // Re-open through the original chapter authority, even when React Query
+      // has a cached destination. A delayed response cannot replace newer work.
+      void api.chapter(target.id, origin.context).then(value => {
+        if (!current()) return;
+        if (!safeBuffer()) { setShellMessage('恢复期间出现新输入，已保留草稿；请保存后再次恢复。'); return; }
+        if (value.id !== target.id || value.novel_id !== origin.novelId || value.version !== target.version) {
+          setShellMessage('章节版本已变化，未套用旧现场。请重新核对并选择打开当前版本。'); return;
+        }
+        qc.setQueryData(['chapter', origin.namespace, target.id], value);
+        const restored = target.workspace!;
+        if (writingFocus && restored.focus_state === 'READY' && restored.focus_preferences) {
+          focusPreferencesTouched.current = true;
+          setWritingPreferences(restored.focus_preferences); setFocusActive(restored.view.focus_active);
+          setReferencesVisible(restored.view.references_visible); setReferenceRevision(value => value + 1);
+        }
+        setWorkspaceSection(restored.layout.section);
+        setShellMessage(restored.focus_state === 'CHANGED' ? '章节位置已核对；固定参考与阅读偏好已有新版本，保留当前设置。' : '已恢复核对过的章节位置。未重新提交任何任务。');
+        open();
+      }).catch(() => { if (current()) setShellMessage('原章节当前不可读，未恢复现场。请核对权限或刷新后重试，当前内容已保留。'); });
       return;
     }
     const feature = target.feature || target.id;
@@ -1247,10 +1336,15 @@ export default function App() {
           recovery={writingRecovery ? { durability, onExport: exportCurrentDraft, onConflict: reopenConflict } : undefined}
         />
       </div>
+      {workspaceTools && <section className="notice" aria-label="当前项目上次工作">
+        {projectRecoveryNotice && <p>{projectRecoveryNotice}</p>}
+        {!packagedHost && shouldLoadLocalNovels(s.sessionToken, s.scope) && <Button onClick={() => { if (saveState !== 'saved' || composing || savePending.current || (s.chapterId && (hydratedIdentity !== editorIdentity || drafts.load(s.chapterId, namespace)))) { setShellMessage('请先保存或处理当前草稿，再切换本机作品。当前内容已保留。'); return; } setProjectChoiceOpen(true); setProjectRecoveryNotice('请选择本机作品；会记住本次明确选择。'); s.setNovel(''); }}>切换本机作品</Button>}
+        {lastWorkspace.isFetching ? <span>正在核对上次工作现场…</span> : lastWorkspace.isError ? <><span>工作现场暂时不可读，手工写作仍可继续。</span><Button onClick={() => void lastWorkspace.refetch()}>重试读取上次现场</Button></> : lastWorkspace.data?.item ? <><strong>上次工作：{lastWorkspace.data.item.chapter_title || '已保存停止点'}</strong><p>{lastWorkspace.data.item.stopping_note || '没有停止点备注。'}</p><Button onClick={() => { setWorkspaceSection('resume'); setExperimentalTab('workspace_tools_v2'); setPanel('experimental'); }}>查看上次工作现场</Button></> : <><span>可保存当前位置、筛选与下次事项。</span><Button onClick={() => { setWorkspaceSection('resume'); setExperimentalTab('workspace_tools_v2'); setPanel('experimental'); }}>保存当前工作现场</Button></>}
+      </section>}
       {writingRecovery && durability === 'memory' && <section className="notice" role="alert">
         本机草稿写入失败。当前修改仅在此页面内存中，关闭、刷新或断电可能丢失。请导出当前草稿。
       </section>}
-      <div className={writingFocus ? 'writing-editor-row writing-focus-split' : 'writing-editor-row'}>
+      <div className={writingFocus && referencesVisible ? 'writing-editor-row writing-focus-split' : 'writing-editor-row'}>
       {chapter.data && hydratedIdentity === editorIdentity ? (
         <ChapterEditor
           writingPreferences={writingFocus ? writingPreferences : undefined}
@@ -1269,9 +1363,9 @@ export default function App() {
           <p>在左侧新建或选择章节，开始写作。</p>
         </section>
       )}
-      {writingFocus && s.novelId && <WritingReferenceRail key={`${namespace}:${s.novelId}`} client={workspaceClient} revision={referenceRevision} />}
+      {writingFocus && referencesVisible && s.novelId && <WritingReferenceRail key={`${namespace}:${s.novelId}`} client={workspaceClient} revision={referenceRevision} />}
       </div>
-      {panel === "experimental" ? <ExperimentalWorkbench key={`${namespace}:${s.novelId}`} novelId={s.novelId} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}} flags={experimentalFlags.data} onNavigate={navigateWorkspace} currentAnchor={saveState === "saved" && editorAnchor?.identity === editorIdentity ? editorAnchor.anchor : undefined} requestedTab={experimentalTab} workspaceSection={workspaceSection} focusActive={focusActive} onFocusChange={setFocusActive} onPreferencesChange={preferences => { focusPreferencesTouched.current = true; setWritingPreferences(preferences); }} onReferencesChange={() => setReferenceRevision(value => value + 1)} localDraftState={chapter.data ? [{ chapter_id: chapter.data.id, chapter_version: chapter.data.version, state: saveState === 'saved' ? 'SAVED' : saveState === 'failed' ? 'SAVE_FAILED' : 'UNSAVED' }] : []} saveFailure={saveState === 'failed' || saveState === 'conflict'} currentSelection={selection} saved={saveState === 'saved'} onChapterSaved={value => {
+      {panel === "experimental" ? <ExperimentalWorkbench key={`${namespace}:${s.novelId}`} novelId={s.novelId} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}} flags={experimentalFlags.data} onNavigate={navigateWorkspace} currentAnchor={saveState === "saved" && editorAnchor?.identity === editorIdentity ? editorAnchor.anchor : undefined} requestedTab={experimentalTab} workspaceSection={workspaceSection} workspaceView={{ focus_active: focusActive, references_visible: referencesVisible }} onWorkspaceViewChange={view => { if (!workspaceTools || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return; setFocusActive(view.focus_active); setReferencesVisible(view.references_visible); }} onWorkspaceSaved={() => { void lastWorkspace.refetch(); }} focusActive={focusActive} onFocusChange={setFocusActive} onPreferencesChange={preferences => { focusPreferencesTouched.current = true; setWritingPreferences(preferences); }} onReferencesChange={() => setReferenceRevision(value => value + 1)} localDraftState={chapter.data ? [{ chapter_id: chapter.data.id, chapter_version: chapter.data.version, state: saveState === 'saved' ? 'SAVED' : saveState === 'failed' ? 'SAVE_FAILED' : 'UNSAVED' }] : []} saveFailure={saveState === 'failed' || saveState === 'conflict'} currentSelection={selection} saved={saveState === 'saved'} onChapterSaved={value => {
         if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity || value.id !== s.chapterId || value.novel_id !== s.novelId) return;
         qc.setQueryData<Chapter>(['chapter', namespace, value.id], current => current && current.version > value.version ? current : value);
         void qc.invalidateQueries({ queryKey: ['chapters', namespace, s.novelId] });
@@ -1290,6 +1384,7 @@ export default function App() {
   const inspector = (
     <div className="novel-inspector-stack">
       <section className="novel-inspector-context" aria-label="当前写作上下文"><span>当前章节</span><strong>{chapter.data?.title || "未选择章节"}</strong><small>{chapter.data ? `第 ${chapter.data.number} 章 · 版本 ${chapter.data.version}` : "从左侧章节树选择章节"}</small></section>
+      {workspaceTools && <SampleJourneyGuide novelId={s.novelId} context={{ sessionToken: s.sessionToken, scope: s.scope, actor: s.actor }} chapter={chapter.data} saved={saveState === 'saved'} onNavigate={feature => navigateWorkspace({ kind: 'feature', id: feature, feature })} />}
       <WritingGoalPanel novelId={s.novelId} />
       {chapter.data&&<SourcePrivacyControl key={`${namespace}:${chapter.data.id}`} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}}/>}
       {writingRecovery && chapter.data && <GenerationRecoveryPicker key={`${namespace}:${s.chapterId}:${scopeEpoch}`}
@@ -1990,4 +2085,3 @@ function NovelHome({ onCreated }: { onCreated: (id: string) => void }) {
     </section>
   );
 }
-

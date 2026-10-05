@@ -114,6 +114,7 @@ def mounted(request, tmp_path, monkeypatch, prefix):
     membership = MembershipAuthorizationService(identity, authorization)
     sessions = TrustedSessionResolver()
     store = ExperimentalStore(tmp_path, backend, url)
+    monkeypatch.setattr(experimental.first_use_service, "store", store)
     services = (
         experimental.planning_service, experimental.world_service,
         experimental.import_service, experimental.team_service,
