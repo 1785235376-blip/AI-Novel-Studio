@@ -1,0 +1,46 @@
+{
+  "scope": "original-scope registered execution refinement",
+  "runtime_source": "e49a5cf",
+  "runtime_tree": "09dcdc686f68f154f35e11c3b0830e5e8ad65aa4",
+  "local_file": {
+    "passed": 3750,
+    "skipped": 10,
+    "postgres_deselected": 1342,
+    "seconds": 459.1,
+    "optional_otio_and_pinned_cjk_font": true
+  },
+  "frontend_corrected_pin": "804fb65",
+  "frontend": {
+    "passed": 1043,
+    "optional_http_skipped": 6,
+    "types": "PASS",
+    "build": "PASS",
+    "tokens": "PASS",
+    "app_minified_kb": 640.68,
+    "deferred_workbench_minified_kb": 543.39,
+    "large_chunk_warning_retained": true
+  },
+  "later_changes": "After runtime pin, only tests/browser/docs changed: added registered media cancellation/quote cases, exact scoped U03 browser response barriers, U08 invalidated-checkbox test synchronization, async image lifecycle render wait, and real PG non-versioned refresh branch replacing erroneous skip. No runtime change. Focused tests rerun; exact hosted final-head validation pending.",
+  "historical_f9173c2": {
+    "file_passed": 3533,
+    "file_skipped": 1155,
+    "tcp_passed": 2,
+    "pg_passed": 3533,
+    "pg_skipped": 1155,
+    "pg_marked_skip_gate_failures": 1,
+    "pg_assertion_failures": 0,
+    "r4_browser_passed": 37,
+    "r4_browser_failed": 2,
+    "other_browser_passed": 19,
+    "frontend_passed": 1016,
+    "frontend_optional_skipped": 6,
+    "windows_host": "PASS",
+    "windows_package": "PASS",
+    "run_pr": 37386646774,
+    "run_push": 37386642938
+  },
+  "independent_review": "BLOCKED_NO_RETRY",
+  "real_inference_quality": "NOT_RUN",
+  "native_windows_interactive": "NOT_RUN",
+  "final_hosted_status": "PENDING"
+}

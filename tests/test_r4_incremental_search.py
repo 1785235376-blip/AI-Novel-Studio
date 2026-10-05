@@ -172,7 +172,27 @@ def test_mounted_permission_revocation_mid_read_and_disabled_cancel(source_env):
 
 def test_never_opened_file_search_is_read_only_and_detects_nonversioned_edits(source_env):
     e = source_env
-    if e.backend != 'file': pytest.skip('File-specific filesystem metadata contract')
+    if e.backend == 'postgres':
+        # The marked PG contract must execute, not skip a File-only branch.
+        # Observe the same read-only/freshness invariant in original PG storage.
+        import hashlib
+        from app.repositories.postgres.common import chapter_or_raise
+        before = [e.chapters.get(row['id']) for row in e.rows]
+        e.service.search(e.ctx, '阿青')
+        assert [e.chapters.get(row['id']) for row in e.rows] == before
+        markdown = '# 原地编辑\n\n外部变更灯塔'
+        with e.bundle.chapters.database.session() as session:
+            _, chapter = chapter_or_raise(session, e.rows[0]['id'])
+            assert chapter.version == before[0]['version']
+            chapter.title = '原地编辑'
+            chapter.document = markdown_to_document(markdown)
+            chapter.content_hash = hashlib.sha256(markdown.encode()).hexdigest()
+            chapter.updated_at = datetime.now(timezone.utc)
+        assert e.chapters.get(e.rows[0]['id'])['version'] == before[0]['version']
+        result = e.service.search(e.ctx, '灯塔')
+        assert result['source_rows_read'] == 1 and result['items'][0]['title'] == '原地编辑'
+        assert result['items'][0]['id'] == e.rows[0]['id']
+        return
     root = e.bundle.chapters.backend.novels / e.ctx.novel_id
     snapshot = lambda: {str(p.relative_to(root)): p.read_bytes() for p in root.rglob('*') if p.is_file()}
     before = snapshot(); e.service.search(e.ctx, '阿青'); assert snapshot() == before

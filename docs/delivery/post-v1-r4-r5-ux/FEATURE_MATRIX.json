@@ -1548,7 +1548,7 @@
       "postgres_deselected": 1145
     },
     "file_repairs": "Both fixture-only failures repaired; focused36PASS and corrected equipped full File3533PASS,10explicitplatform/manual-gate skips.",
-    "hosted_current": "PENDING",
+    "hosted_current": "FILE_AND_2TCP_AND_BOTH_WINDOWS_PASS; BROWSER_TWO_TEST_FAILURES_REPAIRED; PG_ONE_MARKED_SKIP_REPLACED_WITH_REAL_CONTRACT; NEXT_HEAD_PENDING",
     "independent_review": "BLOCKED_NO_RETRY",
     "file_corrected_equipped": {
       "source": "126c317815b847297f1970dbb9974f7696d44fd4",
@@ -1560,5 +1560,6 @@
       "optional_dependencies": "pinned Noto CJK font and installed official OTIO parser"
     },
     "published_remote": "f9173c2bedf4866d8f28119baabc53ed2aa8d0dc"
-  }
+  },
+  "adapter_refinement_receipt": "ADAPTER_REFINEMENT_RECEIPT.json"
 }
