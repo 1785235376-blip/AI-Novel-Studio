@@ -88,7 +88,7 @@ async def unified_http_error(request: Request, exc: HTTPException):
         message = str(detail)
         details = {}
     request_id = getattr(request.state, "request_id", "")
-    return JSONResponse(status_code=exc.status_code, content={"detail": detail, "code": code, "message": message, "details": details, "request_id": request_id}, headers={"X-Request-ID": request_id})
+    return JSONResponse(status_code=exc.status_code, content={"detail": detail, "code": code, "message": message, "details": details, "request_id": request_id}, headers={**{key: value for key, value in (exc.headers or {}).items() if key.lower() != "x-request-id"}, "X-Request-ID": request_id})
 
 def _normalized_api_path(path: str) -> str:
     """Use the legacy path shape for middleware checks on the v1 alias."""
