@@ -78,7 +78,13 @@ def create_import_router(service, authorize, require_flag):
     @router.post(prefix + "/jobs/{job_id}/process")
     def process(nid: str, job_id: str, body: ProcessIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope = access(nid, x_session_token, x_branch_id, "domain.write")
-        return api_call(service.process, nid, scope, actor, job_id, **body.model_dump())
+
+        def check_authority():
+            current_actor, current_scope = access(nid, x_session_token, x_branch_id, "domain.write")
+            if current_actor != actor or current_scope != scope:
+                raise HTTPException(403, {"code": "IMPORT_PROCESS_SCOPE_CHANGED"})
+
+        return api_call(service.process, nid, scope, actor, job_id, **body.model_dump(), check_authority=check_authority)
 
     @router.post(prefix + "/jobs/{job_id}/review-batch")
     def batch(nid: str, job_id: str, body: BatchReviewIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

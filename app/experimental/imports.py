@@ -57,8 +57,15 @@ class ExtractedCandidate(BaseModel):
 
 
 class SemanticExtractionAdapter(Protocol):
+    """In-process proposal extraction only; remote providers are not integrated.
+
+    Implementations must explicitly declare their locality and supported output
+    kinds. Unknown locality never inherits the built-in adapter's safe default.
+    """
     adapter_id: str
     verification: str
+    local: bool
+    capabilities: frozenset[str]
 
     def extract(self, chunk: dict) -> list[dict]: ...
 
@@ -66,6 +73,8 @@ class SemanticExtractionAdapter(Protocol):
 class DeterministicSemanticAdapter:
     adapter_id = "local-semantic-rules-v2"
     verification = "LOCAL_HEURISTIC"
+    local = True
+    capabilities = frozenset(SUPPORTED_KINDS)
 
     def extract(self, chunk: dict) -> list[dict]:
         text = chunk["text"]
@@ -104,9 +113,36 @@ class SemanticImportService(DomainService):
         default = DeterministicSemanticAdapter()
         self.adapters = {default.adapter_id: default}
         for adapter in adapters or ():
+            self._adapter_contract(adapter)
             if adapter.adapter_id in self.adapters:
                 raise ValueError("duplicate semantic extraction adapter")
             self.adapters[adapter.adapter_id] = adapter
+
+    @staticmethod
+    def _adapter_contract(adapter):
+        if getattr(adapter, "local", None) is not True:
+            raise ValueError("SEMANTIC_ADAPTER_LOCAL_ONLY_REQUIRED")
+        adapter_id = getattr(adapter, "adapter_id", None)
+        capabilities = getattr(adapter, "capabilities", None)
+        verification = getattr(adapter, "verification", None)
+        if (not isinstance(adapter_id, str) or not re.fullmatch(r"[A-Za-z0-9_.-]{1,120}", adapter_id)
+            or not isinstance(capabilities, (tuple, list, set, frozenset)) or not capabilities
+            or any(not isinstance(kind, str) or kind not in SUPPORTED_KINDS for kind in capabilities)
+            or verification not in {"LOCAL_HEURISTIC", "MOCK_ONLY", "CONTRACT_VERIFIED"}
+            or not callable(getattr(adapter, "extract", None))):
+            raise ValueError("SEMANTIC_ADAPTER_CAPABILITY_CONTRACT_REQUIRED")
+        return {"schema_version": 1, "adapter_id": adapter_id, "local": True,
+                "capabilities": sorted(set(capabilities)), "verification": verification,
+                "output_mode": "PROPOSALS_ONLY", "remote_dispatch": False}
+
+    def _adapter(self, adapter_id, expected_contract=None):
+        adapter = self.adapters.get(adapter_id)
+        if adapter is None:
+            raise ValueError("SEMANTIC_ADAPTER_NOT_CONFIGURED")
+        contract = self._adapter_contract(adapter)
+        if contract["adapter_id"] != adapter_id or (expected_contract is not None and contract != expected_contract):
+            raise ValueError("SEMANTIC_ADAPTER_CONTRACT_CHANGED")
+        return adapter, contract
 
     @staticmethod
     def _record(nid, scope, actor, rid, payload):
@@ -141,8 +177,7 @@ class SemanticImportService(DomainService):
                    adapter_id="local-semantic-rules-v2"):
         if scope.get("mode") != "local":
             raise ValueError("IMPORT_BRANCH_SOURCE_ADAPTER_REQUIRED")
-        if adapter_id not in self.adapters:
-            raise ValueError("SEMANTIC_ADAPTER_NOT_CONFIGURED")
+        _, adapter_contract = self._adapter(adapter_id)
         if not 256 <= chunk_size <= 32000 or not 0 <= overlap < min(chunk_size // 2, 1025):
             raise ValueError("invalid chunk size or overlap")
         if not chapter_ids or len(chapter_ids) > 2000 or len(set(chapter_ids)) != len(chapter_ids):
@@ -177,7 +212,7 @@ class SemanticImportService(DomainService):
         self.assert_sources(nid, sources)
         job = self._record(nid, scope, actor, job_id, {
             "status": "QUEUED", "sources": sources, "chapter_ids": chapter_ids,
-            "adapter_id": adapter_id, "verification": self.adapters[adapter_id].verification,
+            "adapter_id": adapter_id, "adapter_contract": adapter_contract, "verification": adapter_contract["verification"],
             "chunk_size": chunk_size, "overlap": overlap, "chunk_ids": [c["id"] for c in chunks],
             "total_chunks": len(chunks), "completed_chunks": 0, "candidate_count": 0,
             "privacy_state": "LOCAL_ONLY", "applied": False, "generation": 1,
@@ -226,12 +261,14 @@ class SemanticImportService(DomainService):
                         row["stale"] = True
             raise StaleSourceError("IMPORT_SOURCE_STALE") from None
 
-    def _validated_output(self, chunk, result):
+    def _validated_output(self, chunk, result, capabilities=SUPPORTED_KINDS):
         if not isinstance(result, list) or len(result) > 1000:
             raise ValueError("adapter must return at most 1000 candidates per chunk")
         rows = []
         for raw in result:
             row = ExtractedCandidate.model_validate(raw).model_dump()
+            if row["kind"] not in capabilities:
+                raise ValueError("SEMANTIC_ADAPTER_UNDECLARED_CAPABILITY")
             if not row["label"].strip() or row["start"] >= row["end"] or row["end"] > len(chunk["text"]):
                 raise ValueError("invalid extraction source span")
             if chunk["text"][row["start"]:row["end"]] != row["quote"]:
@@ -311,13 +348,18 @@ class SemanticImportService(DomainService):
         for row in rows:
             row["risk"] = "CONFLICT" if row["conflicts"] else "REVIEW_REQUIRED"
 
-    def process(self, nid, scope, actor, job_id, expected_version, max_chunks=1):
+    def process(self, nid, scope, actor, job_id, expected_version, max_chunks=1, *, check_authority=None):
         if not 1 <= max_chunks <= 100:
             raise ValueError("process 1-100 chunks at a time")
         job = self.job(nid, scope, job_id)
         check_version(job, expected_version)
         self._assert_fresh(nid, scope, job, actor)
         for _ in range(max_chunks):
+            if check_authority is not None:
+                check_authority()
+            if not job.get("adapter_contract"):
+                raise ValueError("SEMANTIC_ADAPTER_CAPABILITY_CONTRACT_REQUIRED")
+            self._adapter(job["adapter_id"], job["adapter_contract"])
             with self.store.transaction(nid, scope) as doc:
                 live = self._row(doc, JOBS, job_id)
                 check_version(live, expected_version)
@@ -336,11 +378,27 @@ class SemanticImportService(DomainService):
                 live["status"] = "ANALYZING"
                 chunk = copy.deepcopy(pending)
                 captured_generation = live["generation"]
-            try:
-                result = self.adapters[job["adapter_id"]].extract(copy.deepcopy(chunk))
-                output = self._validated_output(chunk, result)
+            def final_guard():
+                if check_authority is not None:
+                    check_authority()
                 self._assert_fresh(nid, scope, job, actor)
+                current = self.store.read(nid, scope)
+                live_job = self._row(current, JOBS, job_id)
+                live_chunk = self._row(current, CHUNKS, chunk["id"])
+                if (live_job["status"] != "ANALYZING" or live_job["generation"] != captured_generation
+                    or live_chunk.get("claim_token") != claim):
+                    raise ValueError("IMPORT_LATE_CALLBACK_REJECTED")
+
+            try:
+                final_guard()
+                adapter, contract = self._adapter(job["adapter_id"], job["adapter_contract"])
+                result = adapter.extract(copy.deepcopy(chunk))
+                output = self._validated_output(chunk, result, contract["capabilities"])
+                final_guard()
                 with self.store.transaction(nid, scope) as doc:
+                    if check_authority is not None:
+                        check_authority()
+                    self.assert_sources(nid, job["sources"])
                     live = self._row(doc, JOBS, job_id)
                     pending = self._row(doc, CHUNKS, chunk["id"])
                     if live["status"] != "ANALYZING" or live["generation"] != captured_generation or pending.get("claim_token") != claim:
@@ -354,6 +412,11 @@ class SemanticImportService(DomainService):
                     expected_version = live["version"]
                     job = copy.deepcopy(live)
             except Exception as exc:
+                if isinstance(exc, StaleSourceError):
+                    try:
+                        self._assert_fresh(nid, scope, job, actor)
+                    except StaleSourceError:
+                        pass
                 with self.store.transaction(nid, scope) as doc:
                     live = self._row(doc, JOBS, job_id)
                     pending = self._row(doc, CHUNKS, chunk["id"])

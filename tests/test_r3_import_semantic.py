@@ -142,6 +142,8 @@ def test_adapter_validation_retry_and_restart_claim_recovery(ctx):
     class Adapter:
         adapter_id = "test-contract"
         verification = "MOCK_ONLY"
+        local = True
+        capabilities = frozenset({"characters"})
         mode = "invalid"
         def extract(self, chunk):
             if self.mode == "crash":
@@ -177,6 +179,8 @@ def test_pause_fences_late_adapter_callback(ctx):
     class Adapter:
         adapter_id = "pause-during-extract"
         verification = "MOCK_ONLY"
+        local = True
+        capabilities = frozenset({"characters"})
         def extract(self, chunk):
             job = ctx.service.job(ctx.nid, ctx.scope, chunk["job_id"])
             ctx.service.transition(ctx.nid, ctx.scope, ctx.actor, job["id"], "pause", job["version"])
@@ -242,6 +246,8 @@ def test_cross_chunk_alias_conflict_suggestions_require_review(ctx):
     class Adapter:
         adapter_id = "alias-test"
         verification = "MOCK_ONLY"
+        local = True
+        capabilities = frozenset({"characters"})
         def extract(self, chunk):
             return [{"kind": "characters", "label": "Alice" if chunk["start"] == 0 else "Red",
                      "aliases": ["Red"] if chunk["start"] == 0 else [], "attributes": {"status": "alive" if chunk["start"] == 0 else "dead"},
@@ -382,3 +388,168 @@ def test_inbox_projects_domain_owned_actions_and_evidence(ctx):
     assert item["source_versions"] and item["source_evidence"] and not item["applied"]
     approved = ctx.service.review(ctx.nid, ctx.scope, ctx.actor, item["id"], "approve", item["version"])
     assert approved["status"] == "APPROVED" and not approved["applied"]
+
+
+@pytest.mark.parametrize("interruption", ["revoke", "cancel", "source_change"])
+def test_final_pre_extraction_guard_prevents_adapter_call(ctx, interruption):
+    class Adapter:
+        adapter_id = "final-guard-test"
+        verification = "MOCK_ONLY"
+        local = True
+        capabilities = frozenset({"characters"})
+        calls = 0
+        def extract(self, chunk):
+            self.calls += 1
+            return []
+    adapter = Adapter()
+    ctx.service.adapters[adapter.adapter_id] = adapter
+    chapter, job = create(ctx, adapter_id=adapter.adapter_id)
+    checks = 0
+    def check_authority():
+        nonlocal checks
+        checks += 1
+        if checks != 2:
+            return
+        # This guard runs after a durable claim, immediately before extraction.
+        if interruption == "revoke":
+            raise HTTPException(403, "REVOKED")
+        if interruption == "cancel":
+            live = ctx.service.job(ctx.nid, ctx.scope, job["id"])
+            ctx.service.transition(ctx.nid, ctx.scope, ctx.actor, job["id"], "cancel", live["version"])
+        if interruption == "source_change":
+            current = ctx.chapters.get(chapter["id"])
+            ctx.chapters.save(chapter["id"], {"content": "Changed before dispatch", "version": current["version"]})
+    with pytest.raises((HTTPException, ValueError)):
+        ctx.service.process(ctx.nid, ctx.scope, ctx.actor, job["id"], job["version"], check_authority=check_authority)
+    assert adapter.calls == 0
+    assert ctx.service.candidates(ctx.nid, ctx.scope) == []
+    status = ctx.service.job(ctx.nid, ctx.scope, job["id"])["status"]
+    assert status == {"revoke": "FAILED", "cancel": "CANCELLED", "source_change": "STALE"}[interruption]
+
+
+def test_authority_revoked_after_extraction_discards_output(ctx):
+    allowed = True
+    class Adapter:
+        adapter_id = "revoke-after-extraction"
+        verification = "MOCK_ONLY"
+        local = True
+        capabilities = frozenset({"characters"})
+        def extract(self, chunk):
+            nonlocal allowed
+            allowed = False
+            return [{"kind": "characters", "label": "Late result", "start": 0, "end": 3, "quote": chunk["text"][:3]}]
+    adapter = Adapter()
+    ctx.service.adapters[adapter.adapter_id] = adapter
+    _, job = create(ctx, adapter_id=adapter.adapter_id)
+    def check_authority():
+        if not allowed:
+            raise HTTPException(403, "REVOKED")
+    with pytest.raises(HTTPException):
+        ctx.service.process(ctx.nid, ctx.scope, ctx.actor, job["id"], job["version"], check_authority=check_authority)
+    assert ctx.service.candidates(ctx.nid, ctx.scope) == []
+    assert ctx.service.job(ctx.nid, ctx.scope, job["id"])["completed_chunks"] == 0
+
+
+def test_adapter_contract_rejects_unknown_remote_and_changed_locality(ctx):
+    class Unknown:
+        adapter_id = "unknown-adapter"
+        verification = "MOCK_ONLY"
+        capabilities = frozenset({"characters"})
+        calls = 0
+        def extract(self, chunk):
+            self.calls += 1
+            return []
+    unknown = Unknown()
+    with pytest.raises(ValueError, match="LOCAL_ONLY_REQUIRED"):
+        SemanticImportService(ctx.store, ctx.novels, ctx.chapters, adapters=[unknown])
+    unknown.local = False
+    with pytest.raises(ValueError, match="LOCAL_ONLY_REQUIRED"):
+        SemanticImportService(ctx.store, ctx.novels, ctx.chapters, adapters=[unknown])
+    ctx.service.adapters[unknown.adapter_id] = unknown
+    chapter = ctx.chapters.create(ctx.nid, {"title": "Contract", "content": "Alice said hello."})
+    with pytest.raises(ValueError, match="LOCAL_ONLY_REQUIRED"):
+        ctx.service.create_job(ctx.nid, ctx.scope, ctx.actor, [chapter["id"]], adapter_id=unknown.adapter_id)
+    unknown.local = True
+    unknown.capabilities = []
+    with pytest.raises(ValueError, match="CAPABILITY_CONTRACT_REQUIRED"):
+        ctx.service.create_job(ctx.nid, ctx.scope, ctx.actor, [chapter["id"]], adapter_id=unknown.adapter_id)
+    unknown.capabilities = frozenset({"characters"})
+    job = ctx.service.create_job(ctx.nid, ctx.scope, ctx.actor, [chapter["id"]], adapter_id=unknown.adapter_id)
+    unknown.local = False
+    with pytest.raises(ValueError, match="LOCAL_ONLY_REQUIRED"):
+        ctx.service.process(ctx.nid, ctx.scope, ctx.actor, job["id"], job["version"])
+    assert unknown.calls == 0
+    unknown.local = True
+    unknown.capabilities = frozenset({"locations"})
+    with pytest.raises(ValueError, match="CONTRACT_CHANGED"):
+        ctx.service.process(ctx.nid, ctx.scope, ctx.actor, job["id"], job["version"])
+    assert unknown.calls == 0
+
+
+def test_adapter_output_cannot_exceed_declared_capability(ctx):
+    class Adapter:
+        adapter_id = "declared-character-only"
+        verification = "MOCK_ONLY"
+        local = True
+        capabilities = frozenset({"characters"})
+        def extract(self, chunk):
+            return [{"kind": "world_rules", "label": "Not declared", "start": 0, "end": 3, "quote": chunk["text"][:3]}]
+    adapter = Adapter()
+    ctx.service.adapters[adapter.adapter_id] = adapter
+    _, job = create(ctx, adapter_id=adapter.adapter_id)
+    with pytest.raises(ValueError, match="UNDECLARED_CAPABILITY"):
+        ctx.service.process(ctx.nid, ctx.scope, ctx.actor, job["id"], job["version"])
+    assert ctx.service.candidates(ctx.nid, ctx.scope) == []
+
+
+def test_api_passes_live_scope_reauthorization_to_each_extraction(ctx):
+    class Adapter:
+        adapter_id = "api-final-guard"
+        verification = "MOCK_ONLY"
+        local = True
+        capabilities = frozenset({"characters"})
+        calls = 0
+        def extract(self, chunk):
+            self.calls += 1
+            return []
+    adapter = Adapter()
+    ctx.service.adapters[adapter.adapter_id] = adapter
+    _, job = create(ctx, adapter_id=adapter.adapter_id)
+    auth_calls = 0
+    def authorize(nid, token, branch, permission):
+        nonlocal auth_calls
+        auth_calls += 1
+        assert permission == "domain.write"
+        if auth_calls == 3:
+            return "different-actor", ctx.scope
+        return ctx.actor, ctx.scope
+    app = FastAPI()
+    app.include_router(create_import_router(ctx.service, authorize, lambda name: None))
+    response = TestClient(app).post(f"/novels/{ctx.nid}/experimental/imports/jobs/{job['id']}/process",
+        json={"expected_version": job["version"], "max_chunks": 100})
+    assert response.status_code == 403 and response.json()["detail"]["code"] == "IMPORT_PROCESS_SCOPE_CHANGED"
+    assert adapter.calls == 0 and ctx.service.candidates(ctx.nid, ctx.scope) == []
+
+
+def test_each_chunk_reauthorizes_without_replaying_prior_success(ctx):
+    class Adapter:
+        adapter_id = "per-chunk-guard"
+        verification = "MOCK_ONLY"
+        local = True
+        capabilities = frozenset({"characters"})
+        calls = 0
+        def extract(self, chunk):
+            self.calls += 1
+            return []
+    adapter = Adapter()
+    ctx.service.adapters[adapter.adapter_id] = adapter
+    _, job = create(ctx, "Alice said hello. " * 100, chunk_size=256, overlap=64, adapter_id=adapter.adapter_id)
+    def check_authority():
+        live = ctx.service.job(ctx.nid, ctx.scope, job["id"])
+        if live["completed_chunks"]:
+            raise HTTPException(403, "REVOKED_BEFORE_NEXT_CHUNK")
+    with pytest.raises(HTTPException):
+        ctx.service.process(ctx.nid, ctx.scope, ctx.actor, job["id"], job["version"], max_chunks=100, check_authority=check_authority)
+    assert adapter.calls == 1
+    live = ctx.service.job(ctx.nid, ctx.scope, job["id"])
+    assert live["completed_chunks"] == 1 and live["status"] == "ANALYZING"
