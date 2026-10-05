@@ -105,3 +105,29 @@ def test_scope_rejects_incomplete_or_cross_project(tmp_path):
     for scope in ({'mode': 'local', 'novel_id': 'other'}, {'mode': 'collaboration', 'novel_id': 'n'}, {'mode': 'all', 'novel_id': 'n'}):
         with pytest.raises(ValueError):
             store.read('n', scope)
+
+
+def test_packaged_migration_is_additive_and_opt_in(monkeypatch):
+    from pathlib import Path
+    from app.packaging.postgres_migrations import load_packaged_migrations, PackagedPostgresMigrationRunner
+    root = Path(__file__).resolve().parents[1] / 'database' / 'migrations'
+    before = load_packaged_migrations(root)
+    after = load_packaged_migrations(root, include_experimental=True)
+    assert after[:-1] == before
+    assert after[-1].migration_id == '0003_experimental_scope_documents'
+    assert 'DROP TABLE' not in '\n'.join(line for line in after[-1].sql.splitlines() if not line.startswith('--'))
+    monkeypatch.setenv('EXPERIMENTAL_FEATURES', 'advanced_planning_v2')
+    monkeypatch.delenv('V1_ACCEPTANCE_MODE', raising=False)
+    assert len(PackagedPostgresMigrationRunner(migrations_path=root, execute_sql=lambda sql: None).migrations) == len(before) + 1
+    monkeypatch.setenv('V1_ACCEPTANCE_MODE', 'true')
+    assert PackagedPostgresMigrationRunner(migrations_path=root, execute_sql=lambda sql: None).migrations == before
+
+
+def test_corrupt_collection_cannot_escape_scope(tmp_path):
+    scope = {'mode': 'local', 'novel_id': 'n'}
+    store = ExperimentalStore(tmp_path)
+    with store.transaction('n', scope) as doc:
+        doc['collections']['records'] = {'foreign': {'id':'foreign', 'novel_id':'other', 'scope':scope}}
+    service = DomainService(store, SimpleNamespace(get=lambda nid: {}), None)
+    with pytest.raises(ValueError, match='scope metadata'):
+        service.list('n', scope, 'records')

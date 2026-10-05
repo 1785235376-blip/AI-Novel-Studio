@@ -69,7 +69,10 @@ class DomainService:
 
     def list(self, nid, scope, collection):
         self.novels.get(nid)
-        return list(self.store.read(nid, scope)["collections"].get(collection, {}).values())
+        rows = list(self.store.read(nid, scope)["collections"].get(collection, {}).values())
+        if any(not isinstance(row, dict) or row.get("novel_id") != nid or row.get("scope") != scope for row in rows):
+            raise ValueError("experimental collection contains invalid scope metadata")
+        return rows
 
     def get(self, nid, scope, collection, rid):
         self.novels.get(nid)
