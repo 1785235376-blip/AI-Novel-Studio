@@ -1,0 +1,746 @@
+{
+  "source_sha": "20cd2679ee104702529962202ce4b9d894bffc89",
+  "run_id": 37321369458,
+  "artifact_id": 11349759383,
+  "count": 123,
+  "cases": [
+    {
+      "class": "tests.test_r3_audiobook_preparation",
+      "name": "test_audio_plan_offsets_attribution_voice_mapping_and_review[postgres]",
+      "seconds": 0.358,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_audiobook_preparation",
+      "name": "test_audio_measured_timeline_manifest_subtitles_and_mixer[postgres]",
+      "seconds": 1.034,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_audiobook_preparation",
+      "name": "test_audio_partial_durations_do_not_invent_later_starts[postgres]",
+      "seconds": 0.272,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_audiobook_preparation",
+      "name": "test_audio_stale_mapping_source_conflict_and_scope[postgres]",
+      "seconds": 0.377,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_audiobook_preparation",
+      "name": "test_audio_track_slots_and_not_configured_mixer[postgres]",
+      "seconds": 0.214,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_audiobook_preparation",
+      "name": "test_audio_mix_promotion_failure_checkpoint_blocks_reject_and_resumes[postgres]",
+      "seconds": 1.021,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_audiobook_preparation",
+      "name": "test_audio_mix_source_changes_during_callback_are_discarded[postgres]",
+      "seconds": 0.616,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_audiobook_preparation",
+      "name": "test_audio_api_flag_authority_and_contract[postgres]",
+      "seconds": 0.212,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_audiobook_preparation",
+      "name": "test_audio_source_edit_during_attribution_cannot_bind_old_text_to_new_version[postgres]",
+      "seconds": 0.108,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_audiobook_preparation",
+      "name": "test_audio_approval_validates_exact_segment_evidence[postgres]",
+      "seconds": 0.288,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_audiobook_preparation",
+      "name": "test_audio_mixer_change_at_final_authority_guard_cannot_dispatch[postgres]",
+      "seconds": 0.57,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_embedding_contracts",
+      "name": "test_embedding_not_configured_never_lexical_fallback[postgres]",
+      "seconds": 0.1,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_embedding_contracts",
+      "name": "test_embedding_real_vector_lifecycle_model_lineage_restart[postgres]",
+      "seconds": 0.353,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_embedding_contracts",
+      "name": "test_embedding_source_and_model_invalidation[postgres]",
+      "seconds": 0.197,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_embedding_contracts",
+      "name": "test_embedding_branch_isolation_conflict_and_guard[postgres]",
+      "seconds": 0.152,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_embedding_contracts",
+      "name": "test_embedding_rejects_malformed_vectors_without_active_records[postgres-vector0]",
+      "seconds": 0.159,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_embedding_contracts",
+      "name": "test_embedding_rejects_malformed_vectors_without_active_records[postgres-vector1]",
+      "seconds": 0.158,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_embedding_contracts",
+      "name": "test_embedding_rejects_malformed_vectors_without_active_records[postgres-vector2]",
+      "seconds": 0.161,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_embedding_contracts",
+      "name": "test_embedding_rejects_malformed_vectors_without_active_records[postgres-vector3]",
+      "seconds": 0.161,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_embedding_contracts",
+      "name": "test_embedding_late_callback_cannot_restore_removed_index[postgres]",
+      "seconds": 0.16,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_embedding_contracts",
+      "name": "test_embedding_api_not_configured_authorization_and_flag[postgres]",
+      "seconds": 0.109,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_embedding_contracts",
+      "name": "test_embedding_provider_change_at_final_guard_cannot_dispatch[postgres]",
+      "seconds": 0.127,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_embedding_contracts",
+      "name": "test_embedding_scene_keeps_original_chapter_provenance[postgres]",
+      "seconds": 0.085,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_foundation",
+      "name": "test_atomic_restart_conflict_and_scope_isolation[postgres]",
+      "seconds": 0.088,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_foundation",
+      "name": "test_concurrent_compare_and_swap_only_one_winner[postgres]",
+      "seconds": 0.037,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_foundation",
+      "name": "test_real_process_restart_and_abrupt_transaction_exit[postgres]",
+      "seconds": 1.826,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_chunk_resume_exact_evidence_dedup_and_explicit_commit[postgres]",
+      "seconds": 0.946,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_stale_sources_fail_closed_and_persist_candidate_stale[postgres]",
+      "seconds": 0.255,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_batch_all_or_nothing_versions_evidence_and_scope[postgres]",
+      "seconds": 0.25,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_adapter_validation_retry_and_restart_claim_recovery[postgres]",
+      "seconds": 0.343,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_pause_fences_late_adapter_callback[postgres]",
+      "seconds": 0.172,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_partial_commit_resumes_only_unfinished_targets[postgres]",
+      "seconds": 0.338,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_commit_crash_gap_journal_prevents_duplicate_success[postgres]",
+      "seconds": 0.325,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_cross_chunk_alias_conflict_suggestions_require_review[postgres]",
+      "seconds": 0.351,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_extended_kinds_are_proposals_not_fake_canon_promotion[postgres]",
+      "seconds": 0.196,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_api_flag_auth_version_and_reauthorization_fences[postgres]",
+      "seconds": 0.285,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_candidate_get_detects_stale_without_review_attempt[postgres]",
+      "seconds": 0.158,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_commit_rechecks_each_target_source_and_stops_mid_batch[postgres]",
+      "seconds": 0.286,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_concurrent_review_has_one_version_winner[postgres]",
+      "seconds": 0.175,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_inbox_projects_domain_owned_actions_and_evidence[postgres]",
+      "seconds": 0.228,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_final_pre_extraction_guard_prevents_adapter_call[postgres-revoke]",
+      "seconds": 0.127,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_final_pre_extraction_guard_prevents_adapter_call[postgres-cancel]",
+      "seconds": 0.157,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_final_pre_extraction_guard_prevents_adapter_call[postgres-source_change]",
+      "seconds": 0.159,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_authority_revoked_after_extraction_discards_output[postgres]",
+      "seconds": 0.155,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_adapter_contract_rejects_unknown_remote_and_changed_locality[postgres]",
+      "seconds": 0.1,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_adapter_output_cannot_exceed_declared_capability[postgres]",
+      "seconds": 0.128,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_api_passes_live_scope_reauthorization_to_each_extraction[postgres]",
+      "seconds": 0.152,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_import_semantic",
+      "name": "test_each_chunk_reauthorizes_without_replaying_prior_success[postgres]",
+      "seconds": 0.194,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_media_workflows",
+      "name": "test_cover_execution_compare_review_lineage_and_restart[postgres]",
+      "seconds": 0.735,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_media_workflows",
+      "name": "test_media_stale_source_cannot_be_approved_or_run[postgres]",
+      "seconds": 0.573,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_media_workflows",
+      "name": "test_media_branch_and_version_fences[postgres]",
+      "seconds": 0.161,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_media_workflows",
+      "name": "test_storyboard_binds_exact_shot_and_fences_changes[postgres]",
+      "seconds": 0.722,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_media_workflows",
+      "name": "test_media_cancel_late_callback_and_restart_recovery[postgres]",
+      "seconds": 0.455,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_media_workflows",
+      "name": "test_media_remote_guard_does_not_dispatch[postgres]",
+      "seconds": 0.156,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_media_workflows",
+      "name": "test_media_api_flag_authorization_review_and_contract[postgres]",
+      "seconds": 0.512,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_media_workflows",
+      "name": "test_media_promotion_checkpoint_blocks_reject_and_recovers[postgres]",
+      "seconds": 1.002,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_media_workflows",
+      "name": "test_storyboard_old_scene_cannot_launder_new_chapter_lineage[postgres]",
+      "seconds": 0.092,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_media_workflows",
+      "name": "test_cover_character_source_changes_require_new_review[postgres]",
+      "seconds": 0.491,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_default_off_and_v1_override_all_domain_reads[postgres-/api]",
+      "seconds": 0.298,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_default_off_and_v1_override_all_domain_reads[postgres-/api/v1]",
+      "seconds": 0.304,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_every_enabled_domain_read_uses_real_composition[postgres-/api]",
+      "seconds": 0.595,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_every_enabled_domain_read_uses_real_composition[postgres-/api/v1]",
+      "seconds": 0.605,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_planning_inbox_history_restart_preserves_manuscript_and_canon[postgres-/api]",
+      "seconds": 0.572,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_planning_inbox_history_restart_preserves_manuscript_and_canon[postgres-/api/v1]",
+      "seconds": 0.575,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_source_edit_fences_inbox_approval[postgres-/api]",
+      "seconds": 0.198,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_source_edit_fences_inbox_approval[postgres-/api/v1]",
+      "seconds": 0.207,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_real_roles_branch_scope_viewer_and_revocation[postgres-/api]",
+      "seconds": 2.169,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_real_roles_branch_scope_viewer_and_revocation[postgres-/api/v1]",
+      "seconds": 2.179,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_batch_rechecks_real_revoked_role_between_items[postgres-/api]",
+      "seconds": 1.66,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_batch_rechecks_real_revoked_role_between_items[postgres-/api/v1]",
+      "seconds": 1.692,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_branch_read_access_preserves_authorized_inbox[postgres-/api]",
+      "seconds": 5.22,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_branch_read_access_preserves_authorized_inbox[postgres-/api/v1]",
+      "seconds": 5.189,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_legacy_inbox_projects_real_queues_and_delegates_reviews[postgres-/api]",
+      "seconds": 1.015,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_legacy_inbox_projects_real_queues_and_delegates_reviews[postgres-/api/v1]",
+      "seconds": 1.025,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_legacy_branch_queues_do_not_leak_other_branches[postgres-/api]",
+      "seconds": 2.059,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_mounted_contracts",
+      "name": "test_mounted_legacy_branch_queues_do_not_leak_other_branches[postgres-/api/v1]",
+      "seconds": 2.045,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_planning",
+      "name": "test_planning_hierarchy_real_refs_and_restart[postgres]",
+      "seconds": 0.099,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_planning",
+      "name": "test_planning_compare_approve_history_and_restore_are_manuscript_safe[postgres]",
+      "seconds": 0.186,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_planning",
+      "name": "test_planning_reject_reopen_archive_and_stale_entity_fences[postgres]",
+      "seconds": 0.131,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_planning",
+      "name": "test_planning_custom_theory_and_mock_generation[postgres]",
+      "seconds": 0.069,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_planning",
+      "name": "test_planning_atomic_approval_rollback_and_concurrent_one_winner[postgres]",
+      "seconds": 0.099,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_planning",
+      "name": "test_planning_api_flags_permissions_scope_conflict_and_crud[postgres]",
+      "seconds": 0.223,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_planning",
+      "name": "test_planning_node_edit_optimistic_version_and_branch_metadata[postgres]",
+      "seconds": 0.069,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_planning",
+      "name": "test_planning_archive_hierarchy_and_restore_do_not_bypass_review[postgres]",
+      "seconds": 0.16,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_planning",
+      "name": "test_planning_adapter_late_source_change_is_atomic[postgres]",
+      "seconds": 0.055,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_planning",
+      "name": "test_planning_parent_context_fences_child_proposals_and_archived_edit[postgres]",
+      "seconds": 0.12,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_all_roles_recipes_and_review_only_outputs[postgres-outline_chapter_editor]",
+      "seconds": 0.251,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_all_roles_recipes_and_review_only_outputs[postgres-continuity_fix]",
+      "seconds": 0.206,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_all_roles_recipes_and_review_only_outputs[postgres-screenplay_shots]",
+      "seconds": 0.206,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_all_roles_recipes_and_review_only_outputs[postgres-storyboard_image_tasks]",
+      "seconds": 0.21,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_pause_resume_cancel_retry_and_review_reopen[postgres]",
+      "seconds": 0.39,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_late_or_cross_scope_callbacks_fail_closed[postgres-version]",
+      "seconds": 0.113,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_late_or_cross_scope_callbacks_fail_closed[postgres-token]",
+      "seconds": 0.115,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_late_or_cross_scope_callbacks_fail_closed[postgres-hash]",
+      "seconds": 0.115,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_late_or_cross_scope_callbacks_fail_closed[postgres-actor]",
+      "seconds": 0.117,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_late_or_cross_scope_callbacks_fail_closed[postgres-scope]",
+      "seconds": 0.117,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_late_or_cross_scope_callbacks_fail_closed[postgres-project]",
+      "seconds": 0.104,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_late_or_cross_scope_callbacks_fail_closed[postgres-source]",
+      "seconds": 0.121,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_late_or_cross_scope_callbacks_fail_closed[postgres-cancel]",
+      "seconds": 0.127,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_late_or_cross_scope_callbacks_fail_closed[postgres-pause]",
+      "seconds": 0.131,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_source_stale_blocks_approval_retry_and_is_visible_in_inbox[postgres]",
+      "seconds": 0.261,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_restart_unknown_outcome_requires_explicit_retry_and_fences_old_attempt[postgres]",
+      "seconds": 0.191,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_recovery_never_steals_this_hosts_live_claim[postgres]",
+      "seconds": 0.144,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_crash_after_commit_before_response_does_not_lose_or_duplicate_output[postgres]",
+      "seconds": 0.215,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_recovery_advances_persisted_receipt_without_dispatch[postgres]",
+      "seconds": 0.131,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_concurrent_claim_exactly_one_wins_durably[postgres]",
+      "seconds": 0.394,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_malformed_output_rolls_back_receipt_artifact_and_version[postgres]",
+      "seconds": 0.13,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_source_text_only_contract_and_unknown_recipe_validation[postgres]",
+      "seconds": 0.134,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_http_feature_gate_authority_version_and_review[postgres]",
+      "seconds": 0.246,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_branch_chapter_input_fails_closed_but_explicit_text_is_isolated[postgres]",
+      "seconds": 0.153,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_execute_revoked_authority_discards_late_output[postgres]",
+      "seconds": 0.116,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_explicit_branch_reader_never_substitutes_base_manuscript[postgres]",
+      "seconds": 0.153,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_retry_preserves_completed_nodes_and_failed_claim_creates_no_artifact[postgres]",
+      "seconds": 0.252,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_team_recipes",
+      "name": "test_recovery_rejects_corrupt_receipt_without_advancing[postgres]",
+      "seconds": 0.141,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_world",
+      "name": "test_world_canon_requires_review_restart_and_never_mutates_legacy[postgres]",
+      "seconds": 0.076,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_world",
+      "name": "test_world_death_appearance_and_explained_revival[postgres]",
+      "seconds": 0.158,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_world",
+      "name": "test_world_geography_organization_and_temporal_event_relations[postgres]",
+      "seconds": 0.22,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_world",
+      "name": "test_world_ability_constraints_costs_and_rule_conflicts[postgres]",
+      "seconds": 0.113,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_world",
+      "name": "test_world_character_snapshots_arcs_relationship_evolution_and_reversal[postgres]",
+      "seconds": 0.186,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_world",
+      "name": "test_world_source_hash_version_order_and_transitive_stale_fences[postgres]",
+      "seconds": 0.119,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_world",
+      "name": "test_world_history_reopen_edit_and_canon_archival_are_explicit[postgres]",
+      "seconds": 0.142,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_world",
+      "name": "test_world_atomic_approval_crash_and_concurrent_cas[postgres]",
+      "seconds": 0.081,
+      "status": "PASS"
+    },
+    {
+      "class": "tests.test_r3_world",
+      "name": "test_world_api_contract_authorization_scope_and_stale[postgres]",
+      "seconds": 0.201,
+      "status": "PASS"
+    }
+  ]
+}

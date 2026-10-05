@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "baseline_sha": "1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0",
+  "tested_implementation_sha": "20cd2679ee104702529962202ce4b9d894bffc89",
+  "tested_tree": "bc0fd5eb415a2d0b2076e061f6982d8e85fecacb",
+  "recorded_at_utc": "2026-10-05T14:10:48Z",
+  "push": {
+    "id": 37321369458,
+    "checked_out_sha": "20cd2679ee104702529962202ce4b9d894bffc89",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job_id": 111800978901,
+        "name": "Backend / file",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37321369458/job/111800978901"
+      },
+      {
+        "job_id": 111800979301,
+        "name": "Windows / Host compile and native contracts",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37321369458/job/111800979301"
+      },
+      {
+        "job_id": 111800979400,
+        "name": "Backend / postgres",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37321369458/job/111800979400"
+      },
+      {
+        "job_id": 111800979403,
+        "name": "Frontend / unit-type-build-tokens",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37321369458/job/111800979403"
+      },
+      {
+        "job_id": 111800979620,
+        "name": "Windows / Fresh base and acceptance package",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37321369458/job/111800979620"
+      }
+    ]
+  },
+  "pull_request": {
+    "id": 37321380176,
+    "checked_out_sha": "c185dd00827cc022fd847d75671e744e4fcaf610",
+    "checked_out_tree": "bc0fd5eb415a2d0b2076e061f6982d8e85fecacb",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job_id": 111801017184,
+        "name": "Frontend / unit-type-build-tokens",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "job_id": 111801017673,
+        "name": "Windows / Host compile and native contracts",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "job_id": 111801017753,
+        "name": "Backend / file",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "job_id": 111801017930,
+        "name": "Windows / Fresh base and acceptance package",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "job_id": 111801018001,
+        "name": "Backend / postgres",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "results": {
+    "file": {
+      "passed": 2289,
+      "skipped": 168,
+      "failures": 0,
+      "errors": 0
+    },
+    "postgres": {
+      "passed": 2322,
+      "skipped": 135,
+      "failures": 0,
+      "errors": 0,
+      "new_r3_parameters": 123,
+      "new_r3_skipped": 0
+    },
+    "frontend": {
+      "passed": 605,
+      "skipped": 6,
+      "failures": 0,
+      "errors": 0,
+      "skip_reason": "Optional real-HTTP tests; separate actual-HTTP run:6 passed"
+    },
+    "browser": {
+      "r3": 7,
+      "inherited_business": 2,
+      "inherited_geometry": 9,
+      "export": 1,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0
+    },
+    "windows_host": {
+      "passed": 59
+    },
+    "windows_native_package": {
+      "status": "PASS",
+      "fresh_unsigned_package": true,
+      "embedded_python": "3.12.9",
+      "postgres": "16.15",
+      "pgcrypto": "PASS",
+      "utf8_roundtrip": "PASS",
+      "custom_dump_restore": "PASS",
+      "packaged_app_import": "PASS",
+      "interactive_windows": "NOT_RUN"
+    }
+  },
+  "artifacts": [
+    {
+      "id": 11350881328,
+      "name": "frontend-20cd2679ee104702529962202ce4b9d894bffc89",
+      "bytes": 2115019,
+      "digest": "sha256:9b008d96b50f85965f91dec0950af5181c0ebfa44e9d1410c4d0dcbbe0537fb0",
+      "expires_at": "2026-10-19T14:05:10Z",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37321369458/artifacts/11350881328"
+    },
+    {
+      "id": 11350861484,
+      "name": "windows-acceptance-20cd2679ee104702529962202ce4b9d894bffc89",
+      "bytes": 161798157,
+      "digest": "sha256:729248c37469d90f0aca7121d84922eff571844404b2fda8fc5943fdf7286290",
+      "expires_at": "2026-10-19T14:05:49Z",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37321369458/artifacts/11350861484"
+    },
+    {
+      "id": 11350456347,
+      "name": "windows-host-20cd2679ee104702529962202ce4b9d894bffc89",
+      "bytes": 531978,
+      "digest": "sha256:5617a528b2527cf9175f5e89033584746877a4f683958da16b3d5bcc8d532797",
+      "expires_at": "2026-10-19T14:03:58Z",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37321369458/artifacts/11350456347"
+    },
+    {
+      "id": 11350151987,
+      "name": "windows-native-receipts-20cd2679ee104702529962202ce4b9d894bffc89",
+      "bytes": 544000,
+      "digest": "sha256:ecbc4014ce5e4204ab17e350ad0a64a5295ff205892953317290a4c3a532077d",
+      "expires_at": "2026-10-19T14:05:47Z",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37321369458/artifacts/11350151987"
+    },
+    {
+      "id": 11349908301,
+      "name": "backend-file-20cd2679ee104702529962202ce4b9d894bffc89",
+      "bytes": 53157,
+      "digest": "sha256:b5f764fd9075848d3a218d1457666ebf1d1c8f6655728d917a88b8658a65567a",
+      "expires_at": "2026-10-19T14:05:10Z",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37321369458/artifacts/11349908301"
+    },
+    {
+      "id": 11349759383,
+      "name": "backend-postgres-20cd2679ee104702529962202ce4b9d894bffc89",
+      "bytes": 53031,
+      "digest": "sha256:9816ad9b6937b73bbfeb6610f96de3b1c89cff97d6cb38edd7108a146f3501e1",
+      "expires_at": "2026-10-19T14:08:16Z",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37321369458/artifacts/11349759383"
+    }
+  ],
+  "limitations": [
+    "Synthetic data and explicitly Mock planning/image output; real-model/GPU/provider quality NOT_RUN.",
+    "Known inherited File delete/lazy-read resurrection remains OPEN; fixture quiescence is not a production fix.",
+    "This is the tested code checkpoint. A subsequent delivery commit adds documentation/evidence only; its exact final SHA and full rerun are recorded in PR38 delivery readback."
+  ]
+}

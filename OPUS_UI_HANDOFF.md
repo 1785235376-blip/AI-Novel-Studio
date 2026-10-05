@@ -96,3 +96,31 @@ Model Center now consumes LocalAiDiscovery. Improve hierarchy and token spacing 
 - Live `RevisionHistory` includes chapter version in its cache key and uses opaque per-scope observer IDs. Captured API context and authority epochs fence late list/detail/restore results across actor/session/project/workspace/storyline/branch changes, including A→B→A. StrictMode effect replay must not invalidate an otherwise current pending request. Preserve `AppRevisionHistory.test.tsx` and the independent replay controls.
 - Restore updates the existing chapter cache/hydration path, preserving newer dirty buffers and persistent conflicts. Do not reintroduce unconditional `location.reload()` or clear local drafts on a late response.
 - Native Windows package/Python/PostgreSQL smoke is a separate tested layer. Interactive WebView2, OS-vault, IME, installer/upgrade/uninstall and real-model acceptance remain distinct NOT_RUN gates. See `docs/R2_WINDOWS_BASE_INPUTS.md` and the exact-head receipts.
+
+## Post-V1 R3 Experimental workbench (2026-10-05)
+
+This section belongs to PR #38 only. The PR #37 / 1ad947e V1 acceptance package and visual evidence remain frozen. Do not fold R3 into V1 acceptance requirements.
+
+Entry: an optional Experimental group in the existing FeatureLauncher, inside the existing NOVEL panel contract. It is absent when the server feature allowlist is empty or V1_ACCEPTANCE_MODE=true. Feature discovery is session-keyed and uses the captured authenticated session; the browser cannot enable flags.
+
+Functional panels reuse the current tokens/primitives/shell:
+- Planning: graph/node hierarchy, structured fields, custom theories, Mock multi-proposals, compare, approve/reject, archive, history and explicit version recovery
+- Long-book import: bounded chunk processing, pause/resume/retry, exact source evidence, item/batch review and explicit checkpointed commit
+- World/characters: typed candidate records, reviewed experimental Canon, deterministic continuity findings and chapter-state queries
+- Unified Inbox: domain/status/search/stale filters, original-domain review actions, honest unavailable/read-only domains, safe batch receipts
+- Agent teams: eight roles, four recipes, explicit execution/recovery and human review; contract-only output is labelled
+- Media: adapter definitions versus runnable implementations, cover/storyboard briefs, explicit Mock task execution, compare and reviewed asset lineage
+- Embeddings: NOT_CONFIGURED by default; indexes and status never imply lexical search is an embedding
+- Audiobook: attribution/voice mapping, emotion/style, ordered segments, measured-versus-unknown duration, track slots and review
+
+Preserve these distinctions in any later visual design: REVIEW/PENDING_REVIEW versus APPROVED; STALE versus current; VERSION_CONFLICT versus failed save; NEEDS_REVIEW attribution; ADAPTER_REQUIRED family versus runnable adapter; NOT_CONFIGURED versus MOCK_ONLY; APPROVING/RESUME_APPROVAL versus source-changed reconciliation. Never turn a successful generation task into implicit Canon or asset approval.
+
+Planning retains edited fields when a selected node changes version. Its explicit comparison/rebase control updates the save baseline only after the user chooses to keep the draft; it does not submit or discard edits. Interrupted media/audio approval exposes its existing asset checkpoint and cannot be rejected as though no promotion occurred.
+
+No final aesthetic redesign, AppShell geometry change, golden-image rewrite or new token system is part of R3. New browser tests are separate from inherited R2 tests. Screenshot claims must refer to successful hosted runs; local Chromium failed to launch in the cloud executor, so authored screenshot calls alone are not visual evidence.
+
+See POST_V1_FEATURE_MATRIX.md and POST_V1_FEATURE_FORWARD_REPORT.md for exact scope, actual verification and remaining limits.
+
+Known inherited engineering defect: File project deletion can race lazy chapter-document readers, producing DirectoryNotEmpty or recreating a deleted project. R3 browser teardown isolates disposable fixtures; it does not fix application deletion concurrency. Preserve this distinction and defer the production shared-fix/backport candidate to the subsequent authorized engineering branch. See docs/delivery/post-v1-r3/KNOWN_INHERITED_DEFECTS.md.
+
+R3 visual evidence: docs/delivery/post-v1-r3/screenshots/ contains eight actual hosted-Chromium screenshots from implementation SHA 20cd2679ee104702529962202ce4b9d894bffc89, run 37321369458, artifact 11350881328, with file digests/dimensions/provenance in manifest.json. All eight were opened and inspected. Planning comparison visibly expands both ending values; history/Inbox/audio preserve explicit reviewed states; media previews are tiny synthetic Mock color fixtures, not quality evidence. Three desktop sizes retain scroll position (heading partly above its scrollport; lower controls below smaller viewports); no serious overlap or horizontal clipping was observed. The 1920×1080 capture is the clearest overall functional handoff reference.
