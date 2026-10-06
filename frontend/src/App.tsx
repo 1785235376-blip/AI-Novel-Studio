@@ -1333,6 +1333,8 @@ export default function App() {
   );
   function navigateWorkspace(target: WorkspaceNavigation) {
     if (!hasExperimental || revisionStoreIdentity(useStudio.getState()) !== editorIdentity || target.signal?.aborted) return;
+    if (target.task_authority === 'revision_model_job' && (target.kind !== 'feature' || target.feature !== 'revision_intelligence_v2'
+      || !target.chapter_id || !Number.isInteger(target.version) || !target.version)) return;
     const workspaceTicket = ++workspaceRestoreSequence.current;
     generationOpenSequence.current += 1;
     setPendingGenerationOpen(undefined);
@@ -1344,10 +1346,11 @@ export default function App() {
       }
       const origin = captureGenerationOrigin(), destination = target.novel_id;
       const originBuffer = JSON.stringify(buffer.current);
-      const chapterId = target.kind === 'chapter' ? target.id : target.kind === 'generation' ? target.chapter_id : undefined;
+      const chapterId = target.kind === 'chapter' ? target.id : target.kind === 'generation' || target.task_authority === 'revision_model_job' ? target.chapter_id : undefined;
       const current = () => mounted.current && !target.signal?.aborted && workspaceTicket === workspaceRestoreSequence.current
         && origin.epoch === editorEpoch.current && origin.identity === revisionStoreIdentity(useStudio.getState())
-        && qc.getQueryData<{ features: Record<string, boolean> }>(['experimental-features', origin.namespace])?.features['experimental.workspace_tools_v2'] === true;
+        && qc.getQueryData<{ features: Record<string, boolean> }>(['experimental-features', origin.namespace])?.features['experimental.workspace_tools_v2'] === true
+        && (target.task_authority !== 'revision_model_job' || qc.getQueryData<{ features: Record<string, boolean> }>(['experimental-features', origin.namespace])?.features['experimental.revision_intelligence_v2'] === true);
       const safeBuffer = () => {
         const live = workspaceRestoreState.current;
         return live.saveState === 'saved' && !live.composing && !savePending.current && live.hydratedIdentity === live.editorIdentity
@@ -1365,11 +1368,13 @@ export default function App() {
         if (!current()) return;
         if (destinationChapter && (destinationChapter.id !== chapterId || destinationChapter.novel_id !== destination
           || target.kind === 'chapter' && destinationChapter.version !== target.version)) throw new Error('SEARCH_SOURCE_CHANGED');
-        if (target.kind === 'generation') {
+        if (target.kind === 'generation' || target.task_authority === 'revision_model_job') {
           if (!chapterId || !destinationChapter) throw new Error('SEARCH_TASK_SOURCE_UNAVAILABLE');
           const original = await api.job(target.id, origin.context);
           if (!current()) return;
           if (original.novel_id !== destination || original.chapter_id !== chapterId) throw new Error('SEARCH_TASK_SCOPE_CHANGED');
+          if (target.task_authority === 'revision_model_job' && (original.id !== target.id || original.experimental_origin !== 'revision_comparison_model'
+            || original.base_chapter_version !== target.version)) throw new Error('SEARCH_TASK_SOURCE_CHANGED');
         }
         if (!current()) return;
         if (!safeBuffer()) { setShellMessage('核对搜索来源期间出现新输入，已保留草稿；请保存后再次打开。'); return; }
@@ -1386,7 +1391,8 @@ export default function App() {
           useStudio.getState().setChapter(chapterId);
           setPendingAnchor({ namespace: origin.namespace, chapterId, version: destinationChapter.version,
             requestId: ++anchorSequence.current, offset: target.anchor?.offset || 0, scroll: target.anchor?.scroll || 0 });
-          setPanel('history');
+          if (target.task_authority === 'revision_model_job') { setExperimentalTab(feature); setPanel('experimental'); }
+          else setPanel('history');
           if (target.kind === 'generation') setPendingGenerationOpen({ namespace: origin.namespace, novelId: destination,
             actorId: s.actor?.id, chapterId, jobId: target.id });
         } else if (experimental) { setExperimentalTab(feature); setPanel('experimental'); }
@@ -1396,6 +1402,34 @@ export default function App() {
         }
         setShellMessage('已通过原项目与来源权限核对，打开另一作品的搜索结果。未执行或重新提交任何任务。');
       })().catch(() => { if (current()) setShellMessage('搜索目标当前不可读或版本已变，未切换作品。请刷新结果并重新核对；当前草稿已保留。'); });
+      return;
+    }
+    if (target.kind === 'feature' && target.task_authority === 'revision_model_job') {
+      if (!workspaceTools || target.feature !== 'revision_intelligence_v2' || !target.chapter_id || !target.version
+        || experimentalFlags.data?.features['experimental.revision_intelligence_v2'] !== true) return;
+      const origin = captureGenerationOrigin(), chapterId = target.chapter_id;
+      const originalBuffer = JSON.stringify(buffer.current);
+      const current = () => mounted.current && !target.signal?.aborted && workspaceTicket === workspaceRestoreSequence.current
+        && origin.epoch === editorEpoch.current && origin.identity === revisionStoreIdentity(useStudio.getState())
+        && qc.getQueryData<{ features: Record<string, boolean> }>(['experimental-features', origin.namespace])?.features['experimental.workspace_tools_v2'] === true
+        && qc.getQueryData<{ features: Record<string, boolean> }>(['experimental-features', origin.namespace])?.features['experimental.revision_intelligence_v2'] === true;
+      const safeBuffer = () => {
+        const live = workspaceRestoreState.current;
+        return live.saveState === 'saved' && !live.composing && !savePending.current && live.hydratedIdentity === live.editorIdentity
+          && JSON.stringify(buffer.current) === originalBuffer && !drafts.load(origin.chapterId, origin.namespace)
+          && !conflicts.load(origin.chapterId, origin.namespace) && !drafts.load(chapterId, origin.namespace) && !conflicts.load(chapterId, origin.namespace);
+      };
+      if (!safeBuffer()) { setShellMessage('当前或目标章节有未保存草稿，请先保存或处理冲突，再打开原版本比较任务。当前内容已保留。'); return; }
+      void Promise.all([api.chapter(chapterId, origin.context), api.job(target.id, origin.context)]).then(([value, original]) => {
+        if (!current()) return;
+        if (!safeBuffer()) { setShellMessage('核对原版本比较任务期间出现新输入，已保留草稿；请保存后再次打开。'); return; }
+        if (value.id !== chapterId || value.novel_id !== origin.novelId || original.id !== target.id || original.novel_id !== origin.novelId
+          || original.chapter_id !== chapterId || original.base_chapter_version !== target.version
+          || original.experimental_origin !== 'revision_comparison_model') throw new Error('SEARCH_TASK_SOURCE_CHANGED');
+        qc.setQueryData(['chapter', origin.namespace, chapterId], value);
+        setTaskTarget({ namespace: origin.namespace, novelId: origin.novelId, id: target.id, authority: target.task_authority });
+        s.setChapter(chapterId); setExperimentalTab('revision_intelligence_v2'); setPanel('experimental');
+      }).catch(() => { if (current()) setShellMessage('原版本比较任务或来源章节当前不可读，未切换章节。请刷新任务后重试；当前草稿已保留。'); });
       return;
     }
     if (target.kind === 'generation') {
@@ -1750,6 +1784,7 @@ function Panel({
     );
   if (type === "history")
     return chapter ? <RevisionHistory chapter={chapter} scope={scope} sessionToken={sessionToken} onRestored={onRestored} /> : null;
+  if (type === "story" && taskTarget?.authority === "world_rule") return <WorldRulesPanel novelId={novelId} requestedRuleId={taskTarget.id} />;
   if (type === "story")
     return chapter ? (
       <StoryDatabasePanel key={`${novelId}:${scope?.branchId || 'local'}`} chapter={chapter} scope={scope} target={storyTarget} onOpenChapter={onOpenChapter} />
@@ -1761,6 +1796,7 @@ function Panel({
         </p>
       </section>
     );
+  if (type === "workflow" && taskTarget?.authority === "workflow_definition") return <WorkflowPanel novelId={novelId} requestedWorkflowId={taskTarget.id} />;
   if (type === "workflow") return taskTarget?.authority === 'workflows' ? <WorkflowPanel novelId={novelId} requestedRunId={taskTarget.id} requestedWorkflowId={taskTarget.parent_id} /> : <VisualWorkflowPanel scope={scope} />;
   if (type === 'audiobook') return <AudiobookManifestPanel novelId={novelId} requestedTaskId={taskTarget?.authority === 'audio_tts' ? taskTarget.id : undefined} />;
   if (type === "overview") return <NovelOverviewPanel novelId={novelId} />;
@@ -1771,7 +1807,7 @@ function Panel({
   if (type === "screenplay" && taskTarget?.authority === 'motion' && taskTarget.parent_id) return <MotionTaskWorkspace key={`${novelId}:${taskTarget.parent_id}:${taskTarget.id}`} novelId={novelId} screenplayId={taskTarget.parent_id} taskIds={[taskTarget.id]} />;
   if (type === "screenplay") return <ScreenplayPanel novelId={chapter?.novel_id} scope={scope||null} sessionToken={sessionToken} />;
   if (type === "assets" && taskTarget?.authority === 'images') return <ImageQueuePanel novelId={novelId} requestedTaskId={taskTarget.id} draft={{ provider_id: '', model_id: '', prompt: '' }} />;
-  if (type === "assets") return <AssetLibraryPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
+  if (type === "assets") return <AssetLibraryPanel novelId={novelId} requestedAssetId={taskTarget?.authority === "asset_record" ? taskTarget.id : undefined} />;
   if (type === "exports") return <ExportPanel requestedTaskId={taskTarget?.authority === 'exports' ? taskTarget.id : undefined} novelId={chapter?.novel_id || useStudio.getState().novelId || ""} scope={scope||null} sessionToken={sessionToken} />;
   if (type === "knowledge") return <NovelImportPanel key={`${novelId}:${scope?.branchId||"local"}:${sessionToken}`} requestContext={{sessionToken,scope}} novelId={chapter?.novel_id || useStudio.getState().novelId || ""} chapterId={chapter?.id} />;
   if (type === "creation" || type === "comments") return <CreationWorkbenchPanel key={`${novelId}:${scope?.branchId||"local"}:${sessionToken}`} novelId={novelId} chapter={chapter} initialComments={type === "comments"} context={{sessionToken,scope}} />;

@@ -60,3 +60,7 @@ Current product totals remain F00 INTEGRATED +39 PARTIAL. Original-owner task ca
 ## Independent Wave3 checkpoint after recovery
 
 A06/A07/A10 and existing embedding/asset references have deeper real workflows. Fresh recovered-source focused backend:276 passed,97 unchanged profile skips. Actual local HTTP transport uses a synthetic vector server and does not establish semantic/model quality. Product totals remain F00 INTEGRATED +39 PARTIAL. Full final-source hosted evidence is pending.
+
+## Wave2 and exact-source UX refinement
+
+Creation intelligence now uses scene-aware original sources, independent deterministic metrics and explicitly dispatched local model opinions, exact original-history comparisons, evidence-bound intentional decisions and original WriterRoom tasks. Native Chapter/Canon/Graph/Research references can be added/pinned/excluded in actual generation requests. Additional structured search opens original current-scope records. Current product totals remain F00 INTEGRATED +39 PARTIAL; real-model quality and final hosted/native acceptance are separate.

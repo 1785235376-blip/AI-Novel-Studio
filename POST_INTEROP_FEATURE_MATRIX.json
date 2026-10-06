@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase": "INDEPENDENT_WAVE_3_RECOVERED_CHECKPOINT_FINAL_CI_PENDING",
+  "phase": "WAVE_2_AND_EXACT_SOURCE_UX_IMPLEMENTED_FINAL_CI_PENDING",
   "model": "gpt-6-astra",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "branch": "work/post-interop-r4-r5-ux-continuation",
@@ -96,7 +96,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING",
+      "current_verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING",
       "inherited_scope": "Storage-manifest incremental chapter reads, bounded current-chapter/project/20 authorized-project search, filters/Chinese aliases/paging/cancel/rebuild, current-authority counts and version-resolved navigation; original small structured/task authorities reread.",
       "sources": [
         "frontend/src/ui/FeatureLauncher.tsx",
@@ -106,7 +106,7 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx"
       ],
       "inherited_remaining_scope": "Cache bounded to 8 scopes, 2M characters/2000 records and 50 results per page. Collaboration branch manuscript storage is not implemented; no base-source fallback. Hosted incremental/search journeys and real PG passed at 4e476ce.",
-      "continuation_delta": "Original novel/volume/scene/timeline/review search and precise story record navigation; full source digest changes stale the receipt.",
+      "continuation_delta": "Original organization/rule/graph/asset/workflow-definition search with exact scoped owner navigation and source revision fences.",
       "real_model_verification": "NOT_RUN",
       "native_acceptance": "LOCAL_REQUIRED",
       "continuation_waves": [
@@ -115,6 +115,12 @@
           "delta": "Original novel/volume/scene/timeline/review search and precise story record navigation; full source digest changes stale the receipt.",
           "remaining": "Universal organization/rule/StoryGraph/asset/workflow-definition search remains incomplete; literal search is not vector retrieval.",
           "verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING"
+        },
+        {
+          "wave": 1,
+          "refinement": true,
+          "delta": "Original organization/rule/graph/asset/workflow-definition search with exact scoped owner navigation and source revision fences.",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
         }
       ]
     },
@@ -125,7 +131,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING",
+      "current_verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING",
       "inherited_scope": "Read-only original task authorities, honest stages, filters, private diagnostic export; exact original author-job projection and scoped Draft/Diff/Accept navigation without a second executor. Feature-owned simulator/judge/translation/declarative jobs reopen their owning review panels, not generic manuscript acceptance.",
       "sources": [
         "app/jobs.py",
@@ -136,7 +142,7 @@
         "app/experimental/api.py"
       ],
       "inherited_remaining_scope": "Original task projection and exact original Draft/Diff recovery passed hosted execution. Universal domain-specific deep links/retries remain bounded by each original authority.",
-      "continuation_delta": "Original-owner cancellation receipt, missing audio/video/review projections and owner-ID navigation, route evidence and action limits.",
+      "continuation_delta": "Original style/revision model jobs reopen exact source analysis/comparison by original job ID, no automatic replay.",
       "real_model_verification": "NOT_RUN",
       "native_acceptance": "LOCAL_REQUIRED",
       "continuation_waves": [
@@ -145,6 +151,12 @@
           "delta": "Original-owner cancellation receipt, missing audio/video/review projections and owner-ID navigation, route evidence and action limits.",
           "remaining": "Retry/resume/review remain explicit owning surfaces; fee data UNKNOWN; some model-owned historical candidates lack exact subrecord focusing.",
           "verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING"
+        },
+        {
+          "wave": 1,
+          "refinement": true,
+          "delta": "Original style/revision model jobs reopen exact source analysis/comparison by original job ID, no automatic replay.",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
         }
       ]
     },
@@ -155,7 +167,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING",
+      "current_verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING",
       "inherited_scope": "One preview/final request authority with exact per-record source digests and exclusions, explicit STYLE/PLOT pins, conservative removal of potentially derived context, UI receipt invalidation and original local variants.",
       "sources": [
         "frontend/src/novel/AiContextPreviewPanel.tsx",
@@ -167,7 +179,7 @@
         "frontend/src/novel/AuthorRequestPreviewPanel.tsx"
       ],
       "inherited_remaining_scope": "Anonymous automatic source bundles cannot be decomposed and remain whole-bundle controls. Independent duplicate user/manuscript text is not semantic DLP. Cloud/budgeted variant group admission remains unavailable; real inference quality NOT_RUN.",
-      "continuation_delta": "Scene identity is carried by the frontend author preview; the matching optional server scene validation is integrated with Wave2.",
+      "continuation_delta": "Pointer-only Chapter/Canon/StoryGraph/Research add/pin/exclude picker; actual preview/final dispatch resolve originals; persisted output hides after source/flag/privacy revocation and restart.",
       "real_model_verification": "NOT_RUN",
       "native_acceptance": "LOCAL_REQUIRED",
       "continuation_waves": [
@@ -176,6 +188,12 @@
           "delta": "Scene identity is carried by the frontend author preview; the matching optional server scene validation is integrated with Wave2.",
           "remaining": "Assigned next slice: explicit Research/Canon/StoryGraph add/pin/exclude through existing request owner. Not complete in this checkpoint.",
           "verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING"
+        },
+        {
+          "wave": 1,
+          "refinement": true,
+          "delta": "Pointer-only Chapter/Canon/StoryGraph/Research add/pin/exclude picker; actual preview/final dispatch resolve originals; persisted output hides after source/flag/privacy revocation and restart.",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
         }
       ]
     },
@@ -306,7 +324,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "NOT_RUN",
+      "current_verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING",
       "inherited_scope": "Typed temporal relations over existing IDs and world review, perspective filtering, persisted affected-index updates and evidence/version checks.",
       "sources": [
         "app/experimental/world.py",
@@ -316,9 +334,16 @@
         "frontend/src/experimental/StoryGraphPanel.tsx"
       ],
       "inherited_remaining_scope": "Deterministic reviewed relations, not universal semantic understanding; branch manuscript source adapter remains unavailable.",
-      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "continuation_delta": "Original Scene identity/order/source/ancestor fences and requested relation/object types; live transaction authority",
       "real_model_verification": "NOT_RUN",
-      "native_acceptance": "LOCAL_REQUIRED"
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 2,
+          "delta": "Original Scene identity/order/source/ancestor fences and requested relation/object types; live transaction authority",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ]
     },
     {
       "id": "A05",
@@ -327,7 +352,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "NOT_RUN",
+      "current_verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING",
       "inherited_scope": "Character-only continue/brainstorm preview and final adapter request; original user instruction only, no automatic manuscript tail, selection, omniscient context or derived STYLE/plan; final authority/source/LOCAL_ONLY fences.",
       "sources": [
         "app/experimental/world.py",
@@ -337,9 +362,16 @@
         "frontend/src/experimental/StoryGraphPanel.tsx"
       ],
       "inherited_remaining_scope": "Character-only continue/brainstorm uses reviewed local-only knowledge. Advanced character selection/rewrite and actual model-quality evaluation remain unavailable or unverified.",
-      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "continuation_delta": "Relationship state, unknown/future exclusion, stale forget tombstones and exact-scene original character authoring",
       "real_model_verification": "NOT_RUN",
-      "native_acceptance": "LOCAL_REQUIRED"
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 2,
+          "delta": "Relationship state, unknown/future exclusion, stale forget tombstones and exact-scene original character authoring",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ]
     },
     {
       "id": "A06",
@@ -467,16 +499,23 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "NOT_RUN",
+      "current_verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING",
       "inherited_scope": "Existing STYLE records reused; explicit Chinese/English source ranges, reproducible metrics and chapter drift, approved rule/profile editing, fresh preview and handoff to original writing inputs.",
       "sources": [
         "app/services/creation_workbench_service.py",
         "frontend/src/novel/CreationWorkbenchPanel.tsx"
       ],
       "inherited_remaining_scope": "No calibrated quality probabilities or real-model interpretation. Additional language metrics need separately defined methods.",
-      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "continuation_delta": "Independent source-local deterministic metrics plus explicit registered-local, exact-range Model Opinion job/review lifecycle",
       "real_model_verification": "NOT_RUN",
-      "native_acceptance": "LOCAL_REQUIRED"
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 2,
+          "delta": "Independent source-local deterministic metrics plus explicit registered-local, exact-range Model Opinion job/review lifecycle",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ]
     },
     {
       "id": "A03",
@@ -485,7 +524,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "NOT_RUN",
+      "current_verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING",
       "inherited_scope": "Versioned deterministic findings plus separately selected local-model opinion jobs through original author/broker/job authorities; exact source/rubric/evidence preview, strict quote validation, original review_threads, durable cancellation/recovery and advisory-only results.",
       "sources": [
         "app/experimental/world.py",
@@ -495,9 +534,16 @@
         "docs/r4_registered_judge_execution.md"
       ],
       "inherited_remaining_scope": "One bounded model job per rule run, 18k-character input, 32KiB output and120s deadline. Independence remains UNVERIFIED; actual literary quality is NOT_RUN.",
-      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "continuation_delta": "Accept/Intentional evidence-bound dedup, reopening and original Writer Room task creation/retained target",
       "real_model_verification": "NOT_RUN",
-      "native_acceptance": "LOCAL_REQUIRED"
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 2,
+          "delta": "Accept/Intentional evidence-bound dedup, reopening and original Writer Room task creation/retained target",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ]
     },
     {
       "id": "A01",
@@ -506,7 +552,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "NOT_RUN",
+      "current_verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING",
       "inherited_scope": "Original deterministic simulator plus explicit registered-local model preview/consent/job dispatch, bounded schema/evidence/step/branch checks, original A05 character-only context, durable recovery/cancel and explicit candidate selection into existing planning review.",
       "sources": [
         "app/experimental/planning.py",
@@ -515,9 +561,16 @@
         "docs/r4_story_simulator_model_execution.md"
       ],
       "inherited_remaining_scope": "No automatic Canon/manuscript write or factual future probability. Local registered route/configuration and known zero rates are required; model/GPU quality remains NOT_RUN.",
-      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "continuation_delta": "Scene/mind receipt, per-step applied hypothetical deltas, safe version history; existing local-model and Proposal-only lifecycle retained",
       "real_model_verification": "NOT_RUN",
-      "native_acceptance": "LOCAL_REQUIRED"
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 2,
+          "delta": "Scene/mind receipt, per-step applied hypothetical deltas, safe version history; existing local-model and Proposal-only lifecycle retained",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ]
     },
     {
       "id": "A10",
@@ -553,7 +606,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "NOT_RUN",
+      "current_verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING",
       "inherited_scope": "Exact ProseMirror/Unicode block anchors, preview/selected accept/reject, original CAS/history, partial remainder re-review, persistent paragraph locks with drift/empty recovery.",
       "sources": [
         "app/document_revision.py",
@@ -562,9 +615,16 @@
         "frontend/src/RevisionPanel.tsx"
       ],
       "inherited_remaining_scope": "Branch-isolated manuscript writing remains unavailable; local original-CAS partial changes are implemented. Model quality is NOT_RUN.",
-      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "continuation_delta": "Original history A/B diff, exact evidence/imported interpretations, separately executed Model-derived opinion jobs and explicit metadata-only review",
       "real_model_verification": "NOT_RUN",
-      "native_acceptance": "LOCAL_REQUIRED"
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 2,
+          "delta": "Original history A/B diff, exact evidence/imported interpretations, separately executed Model-derived opinion jobs and explicit metadata-only review",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ]
     },
     {
       "id": "U05",
@@ -573,7 +633,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING",
+      "current_verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING",
       "inherited_scope": "Original author preview/dispatch with trusted exact selection receipt and partial-only job origin; legacy accept is forbidden; reviewed original-CAS path preserves untouched blocks.",
       "sources": [
         "frontend/src/novel/AiWritingPanel.tsx",
@@ -581,7 +641,7 @@
         "frontend/src/Editor.tsx"
       ],
       "inherited_remaining_scope": "Actual model quality and native input are NOT_RUN; branch manuscript sources fail closed.",
-      "continuation_delta": "Retained existing original-CAS selection revision path, regression-covered App integration.",
+      "continuation_delta": "Existing exact selection/locks/partial acceptance/CAS preserved; global UX remains the existing UX owner",
       "real_model_verification": "NOT_RUN",
       "native_acceptance": "LOCAL_REQUIRED",
       "continuation_waves": [
@@ -590,6 +650,11 @@
           "delta": "Retained existing original-CAS selection revision path, regression-covered App integration.",
           "remaining": "Further revision work is Wave2; real model quality NOT_RUN.",
           "verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING"
+        },
+        {
+          "wave": 2,
+          "delta": "Existing exact selection/locks/partial acceptance/CAS preserved; global UX remains the existing UX owner",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
         }
       ]
     },

@@ -156,7 +156,8 @@ class WriterRoomService(DomainService):
         return row
 
     def _target(self, ctx, ref):
-        row = self.inbox.get(self._review_ctx(ctx), ref.domain, ref.id)
+        reader = getattr(self, 'review_target_readers', {}).get(ref.domain)
+        row = reader(ctx, ref.id) if reader else self.inbox.get(self._review_ctx(ctx), ref.domain, ref.id)
         if row['version'] != ref.version or row.get('stale'):
             raise StaleSourceError('domain review target changed; reopen its original review flow')
         return row

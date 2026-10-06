@@ -201,3 +201,21 @@ def test_motion_projection_and_cancel_stay_in_original_screenplay(workspace):
     assert result['status'] == 'CANCELLED' and 'PRIVATE_VIDEO_PROMPT' not in json.dumps(result)
     original = next(row for row in e.screenplays.list(e.nid) if row['id'] == screenplay['id'])
     assert original['motion_tasks'][0]['status'] == 'CANCELLED'
+
+
+@pytest.mark.parametrize('origin,feature,owner', [
+    ('style_analysis_model', 'style_dna_v2', 'style_model_job'),
+    ('revision_comparison_model', 'revision_intelligence_v2', 'revision_model_job'),
+])
+def test_model_opinion_tasks_return_exact_original_job_to_owner_without_draft_actions(workspace, monkeypatch, origin, feature, owner):
+    e = workspace
+    monkeypatch.setattr(e.api.jobs, 'jobs', {})
+    monkeypatch.setattr(e.api.jobs, 'chapters', e.chapters)
+    job = add(e); mark_generation_origin(job, origin)
+    row = task(e, 'author_generation', job.id)
+    assert row['feature'] == feature
+    assert row['source'] == {'kind': 'feature', 'id': job.id, 'feature': feature,
+        'task_authority': owner, 'chapter_id': job.chapter_id, 'version': job.base_chapter_version}
+    assert row['actions'] == ['open_source'] and 'PRIVATE OUTPUT' not in json.dumps(row)
+    monkeypatch.setenv('EXPERIMENTAL_FEATURES', 'workspace_tools_v2,author_context_inspector_v2,model_broker_v2')
+    assert not any(row['id'] == job.id for row in tasks(e)['items'])

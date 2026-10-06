@@ -1,12 +1,13 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { StyleAnalysisModelPanel } from './StyleAnalysisModelPanel';
 import { ApiError, type Chapter } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { Details, ErrorMessage, Field, ResourceState, useResource } from './shared';
 import type { WorkspaceNavigation } from './uxClient';
-import { styleOperationLabels, styleReviewClient, useReviewAction, type StyleProfile, type StyleProfileInput, type StylePreview, type StyleOperation, type StyleAnalysis } from './styleReviewClient';
+import { styleOperationLabels, styleReviewClient, useReviewAction, type StyleProfile, type StyleProfileInput, type StylePreview, type StyleOperation, type StyleAnalysis, type StyleReviewClient } from './styleReviewClient';
 
-type Props = { client: ExperimentalClient; chapter?: Chapter; onNavigate?: (target: WorkspaceNavigation) => void; onUseStyle?: (id: string) => void };
+type Props = { client: ExperimentalClient; requestedJobId?: string; chapter?: Chapter; onNavigate?: (target: WorkspaceNavigation) => void; onUseStyle?: (id: string) => void };
 const emptyProfile = (): StyleProfileInput => ({ title: '', instructions: '', rules: [], chapter_ids: [], character_ids: [] });
 const statusLabel = { DRAFT: '待审核草稿', APPROVED: '已审核', ARCHIVED: '已归档' };
 const toggle = (values: string[], id: string) => values.includes(id) ? values.filter(value => value !== id) : [...values, id];
@@ -15,7 +16,7 @@ export function StyleAnalysisPanel(props: Props) {
   const identity = useMemo(() => ++scopeSequence, [props.client]);
   return <StyleAnalysisBody key={identity} {...props} />;
 }
-function StyleAnalysisBody({ client, chapter, onNavigate, onUseStyle }: Props) {
+function StyleAnalysisBody({ client, chapter, onNavigate, onUseStyle, requestedJobId }: Props) {
   const api = useMemo(() => styleReviewClient(client), [client]);
   const catalog = useResource(signal => api.styleCatalog(signal), [api]);
   const analyses = useResource(signal => api.analyses(signal), [api]);
@@ -23,7 +24,11 @@ function StyleAnalysisBody({ client, chapter, onNavigate, onUseStyle }: Props) {
   const [selectedId, setSelectedId] = useState(''), [sampleIds, setSampleIds] = useState<string[]>([]), [ranges, setRanges] = useState<Record<string, { start: string; end: string }>>({});
   const [language, setLanguage] = useState<'zh' | 'en'>('zh'), [compare, setCompare] = useState(false), [operations, setOperations] = useState<StyleOperation[]>(['continue']);
   const [operation, setOperation] = useState<StyleOperation>('continue'), [characterId, setCharacterId] = useState(''), [preview, setPreview] = useState<StylePreview>(), [reviewed, setReviewed] = useState(false), [used, setUsed] = useState(false);
-  const action = useReviewAction(), epoch = useRef(0);
+  const action = useReviewAction(), epoch = useRef(0), focusedJob = useRef('');
+  const [dismissedJob, setDismissedJob] = useState('');
+  const targetJob = requestedJobId && requestedJobId !== dismissedJob ? requestedJobId : undefined;
+  const targetReport = targetJob && analyses.data?.items.find(row => row.model_execution?.job_id === targetJob);
+  const focusTarget = (element: HTMLElement | null) => { if (element && targetJob && focusedJob.current !== targetJob) { focusedJob.current = targetJob; element.focus(); element.scrollIntoView?.({ block: 'nearest' }); } };
   useLayoutEffect(() => () => { epoch.current++; }, []);
   const invalidate = () => { epoch.current++; setPreview(undefined); setReviewed(false); setUsed(false); };
   useLayoutEffect(() => { invalidate(); }, [chapter?.id, chapter?.version]);
@@ -48,10 +53,10 @@ function StyleAnalysisBody({ client, chapter, onNavigate, onUseStyle }: Props) {
   const save = () => action.run(async isCurrent => {
     const input = { ...draft, rules: parsedRules };
     const saved = editing ? await api.updateProfile(editing.id, editing.version, input) : await api.createProfile(input);
-    if (isCurrent()) { setEditing(saved); setDraft(input); invalidate(); catalog.reload(); }
+    if (isCurrent()) { setEditing(saved); setDraft(input); invalidate(); catalog.reload(); analyses.reload(); }
   }, '风格草稿已保存，请核对后审核。尚未用于生成。');
   return <section className="experimental-section" aria-label="文风分析与档案">
-    <div className="experimental-actions"><h3>文风分析</h3><Badge>本地确定性统计 · 不调用模型</Badge><Button disabled={catalog.loading || analyses.loading || action.busy} onClick={refresh}>刷新风格与来源（保留输入）</Button></div>
+    <div className="experimental-actions"><h3>文风分析</h3><Badge>统计不调用模型 · 模型解读须确认</Badge><Button disabled={catalog.loading || analyses.loading || action.busy} onClick={refresh}>刷新风格与来源（保留输入）</Button></div>
     <ResourceState loading={catalog.loading} error={catalog.error} />
     {!!catalog.error && <StatusMessage tone="warning">请核对本机会话、项目与分支权限或功能开关后刷新。未保存的表单仍保留。</StatusMessage>}
     {!!action.error && <ErrorMessage error={action.error} />}{action.notice && <StatusMessage tone="success">{action.notice}</StatusMessage>}
@@ -89,7 +94,9 @@ function StyleAnalysisBody({ client, chapter, onNavigate, onUseStyle }: Props) {
       <ResourceState loading={analyses.loading} error={analyses.error} />
       {!!analyses.error && <Button disabled={analyses.loading || action.busy} onClick={analyses.reload}>重新读取分析报告</Button>}
       {!analyses.loading && !analyses.error && !analyses.data?.items.length && <EmptyState title="还没有文风统计" detail="选定档案、样本与用途后，主动运行一次分析。页面打开时不会分析正文。" />}
-      {available && !analyses.loading && !analyses.error && analyses.data?.items.filter(row => !selectedId || row.style_id === selectedId).map(row => <AnalysisReport key={row.id} row={row} title={catalog.data!.styles.find(style => style.id === row.style_id)?.title} onNavigate={onNavigate} />)}
+      {targetJob && !analyses.loading && !analyses.error && !targetReport && <StatusMessage tone="warning">请求的原文风模型任务当前不可读或已移除；没有打开其他报告，也不会重放任务。</StatusMessage>}
+      {targetJob && <Button disabled={action.busy} onClick={() => setDismissedJob(targetJob)}>退出任务定位，查看全部文风报告</Button>}
+      {available && !analyses.loading && !analyses.error && analyses.data?.items.filter(row => targetJob ? row.model_execution?.job_id === targetJob : !selectedId || row.style_id === selectedId).map(row => <AnalysisReport target={!!targetJob} onFocusTarget={targetJob ? focusTarget : undefined} key={row.id} api={api} chapter={chapter} onChanged={analyses.reload} row={row} title={catalog.data!.styles.find(style => style.id === row.style_id)?.title} onNavigate={onNavigate} />)}
     </Panel>
     <Panel title="核对准确风格输入">
       <p>此处仅预览已有写作服务实际接收的风格指令。参考规则保留在档案中，不会注入请求；生成仍需在写作区单独发起。</p>
@@ -100,8 +107,26 @@ function StyleAnalysisBody({ client, chapter, onNavigate, onUseStyle }: Props) {
     </Panel>
   </section>;
 }
-function AnalysisReport({ row, title, onNavigate }: { row: StyleAnalysis; title?: string; onNavigate?: Props['onNavigate'] }) {
-  if (row.stale) return <article className="experimental-record" aria-label={`文风报告 ${row.id}`}><strong>{title || '风格档案'} · 历史报告</strong><Badge tone="warning">来源已变化</Badge><StatusMessage tone="warning">旧来源的派生指标已隐藏。核对最新章节与档案版本，再重新选择样本创建报告。</StatusMessage>{row.limitations?.map((text, index) => <p key={index}>{text}</p>)}</article>;
+function AnalysisReport({ row, title, onNavigate, api, chapter, onChanged, target, onFocusTarget }: { row: StyleAnalysis; title?: string; onNavigate?: Props['onNavigate']; api: StyleReviewClient; chapter?: Chapter; onChanged: () => void; target?: boolean; onFocusTarget?: (element: HTMLElement | null) => void }) {
+  if (row.stale) return <article className="experimental-record" aria-label={`文风报告 ${row.id}`} aria-current={target ? 'true' : undefined} tabIndex={target ? 0 : undefined} ref={onFocusTarget}><strong>{title || '风格档案'} · 历史报告</strong><Badge tone="warning">来源已变化</Badge><StatusMessage tone="warning">旧来源的派生指标已隐藏。核对最新章节与档案版本，再重新选择样本创建报告。</StatusMessage>{row.limitations?.map((text, index) => <p key={index}>{text}</p>)}<StyleAnalysisModelPanel api={api} analysis={row} chapter={chapter} onChanged={onChanged} /></article>;
   const labels: Record<string, string> = { sentence_count: '句子数', paragraph_count: '段落数', unit_count: row.language === 'zh' ? '汉字数（非分词）' : '英文词单元数', dialogue_characters: '对话字符数', characters: '字符数' };
-  return <article className="experimental-record" aria-label={`文风报告 ${row.id}`}><div className="experimental-actions"><strong>{title || '风格档案'} · 样本统计</strong><Badge tone={row.stale ? 'warning' : 'neutral'}>{row.stale ? '来源已变化，请重新分析' : '已完成'}</Badge></div><p>档案 v{row.style_version} · 方法 {row.method_version} · {row.language === 'zh' ? '中文' : '英文'}</p><dl className="experimental-meta">{Object.entries(labels).filter(([key]) => typeof row.metrics[key] === 'number').map(([key, label]) => <div key={key}><dt>{label}</dt><dd>{String(row.metrics[key])}</dd></div>)}</dl>{row.limitations?.length > 0 && <ul>{row.limitations.map((text, index) => <li key={index}>{text}</li>)}</ul>}{row.stale && <StatusMessage tone="warning">旧统计仅供历史参考。核对最新章节与档案版本后重新选择样本，创建新报告。</StatusMessage>}<Details value={{ metrics: row.metrics, samples: row.samples, comparison: row.comparison }} label="核对原始计数、范围与比较数据" />{onNavigate && <div className="experimental-actions">{row.samples.map((sample, index) => <Button key={`${sample.chapter_id}:${index}`} disabled={row.stale} onClick={() => onNavigate({ kind: 'chapter', id: sample.chapter_id, version: sample.expected_version })}>打开样本来源 {index + 1}</Button>)}</div>}</article>;
+  return <article className="experimental-record" aria-label={`文风报告 ${row.id}`} aria-current={target ? 'true' : undefined} tabIndex={target ? 0 : undefined} ref={onFocusTarget}>
+    <div className="experimental-actions"><strong>{title || '风格档案'} · 样本统计</strong><Badge>已完成</Badge></div><Badge>Deterministic Metric · 确定性测量</Badge>
+    <p>档案 v{row.style_version} · 方法 {row.method_version} · {row.language === 'zh' ? '中文' : '英文'}</p>
+    <dl className="experimental-meta">{Object.entries(labels).filter(([key]) => typeof row.metrics[key] === 'number').map(([key, label]) => <div key={key}><dt>{label}</dt><dd>{String(row.metrics[key])}</dd></div>)}</dl><MeasuredRatios metrics={row.metrics} />
+    {(row.model_opinion_state === 'NOT_CONFIGURED' || row.model_opinion_state === 'NOT_REQUESTED') && <StatusMessage>Model Opinion：尚未请求模型意见。可以在下方明确选择本地模型并核对预览。描写和感官语义占比均未测量；人称词频不等于第一或第三人称判定。</StatusMessage>}
+    {row.sample_metrics?.map((sample, index) => <details className="experimental-details" key={`${sample.chapter_id}:${sample.start}:${index}`}><summary>来源样本 {index + 1} 的独立测量与原文位置</summary><p>{sample.chapter_id} · v{sample.expected_version} · 原始 Markdown Unicode 范围 {sample.start}–{sample.end}</p><MeasuredRatios metrics={sample.metrics} />{sample.paragraphs.map(paragraph => <section key={`${paragraph.paragraph}:${paragraph.start}`}><p>原文段落 {paragraph.paragraph} · 范围 {paragraph.start}–{paragraph.end}{paragraph.partial_paragraph ? ' · 仅选择段落的一部分' : ''}</p><Field label={`样本 ${index + 1} 段落 ${paragraph.paragraph} 原文`}><textarea readOnly value={paragraph.quote} /></Field></section>)}{sample.paragraphs_truncated && <StatusMessage tone="warning">原文位置显示前 200 段；统计仍覆盖完整选区。</StatusMessage>}</details>)}
+    {!!row.limitations?.length && <ul>{row.limitations.map((text, index) => <li key={index}>{text}</li>)}</ul>}
+    <Details value={{ metrics: row.metrics, samples: row.samples, sample_metrics: row.sample_metrics, comparison: row.comparison }} label="核对原始计数、范围与比较数据" />
+    {onNavigate && <div className="experimental-actions">{row.samples.map((sample, index) => <Button key={`${sample.chapter_id}:${index}`} onClick={() => onNavigate({ kind: 'chapter', id: sample.chapter_id, version: sample.expected_version })}>打开样本来源 {index + 1}</Button>)}</div>}
+    <StyleAnalysisModelPanel api={api} analysis={row} chapter={chapter} onChanged={onChanged} />
+  </article>;
+}
+function MeasuredRatios({ metrics }: { metrics: Record<string, unknown> }) {
+  const labels = { sentence_length_mean: '平均句长（非空白字符）', paragraph_length_mean: '平均段落长度（非空白字符）', dialogue_share_nonspace: '引号内对白字符 / 非空白字符', repeated_unit_share: '重复词单元 / 全部词单元' };
+  return <dl className="experimental-meta">{Object.entries(labels).map(([key, label]) => {
+    const value = metrics[key] as { numerator?: number; denominator?: number } | undefined;
+    if (!value || typeof value.numerator !== 'number' || typeof value.denominator !== 'number') return null;
+    return <div key={key}><dt>{label}</dt><dd>{value.numerator} / {value.denominator}{key.endsWith('_mean') && value.denominator > 0 ? ` = ${(value.numerator / value.denominator).toFixed(2)}` : ''}{value.denominator === 0 ? '（没有可测量单位）' : ''}</dd></div>;
+  })}</dl>;
 }

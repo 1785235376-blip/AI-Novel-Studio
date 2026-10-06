@@ -42,7 +42,7 @@ class Layout(StrictModel):
     section: Literal['resume', 'search', 'tasks', 'diagnostics', 'guide'] = 'resume'
     show_failed_only: bool = False
     search_query: str = Field(default='', max_length=160)
-    search_kind: Literal['', 'novel', 'chapter', 'volume', 'scene', 'character', 'location', 'timeline', 'foreshadowing', 'finding', 'review', 'task'] = ''
+    search_kind: Literal['', 'novel', 'chapter', 'volume', 'scene', 'character', 'location', 'timeline', 'foreshadowing', 'finding', 'organization', 'rule', 'story_graph', 'asset', 'workflow', 'review', 'task'] = ''
     search_scope: Literal['project', 'authorized'] = 'project'
     search_tag: str = Field(default='', max_length=80)
     search_recent_days: int = Field(default=0, ge=0, le=3650)
@@ -79,7 +79,7 @@ class ResumeResolveIn(VersionIn):
 
 
 class ResolveIn(StrictModel):
-    kind: Literal['novel', 'chapter', 'volume', 'scene', 'character', 'location', 'timeline', 'foreshadowing', 'finding', 'review', 'task']
+    kind: Literal['novel', 'chapter', 'volume', 'scene', 'character', 'location', 'timeline', 'foreshadowing', 'finding', 'organization', 'rule', 'story_graph', 'asset', 'workflow', 'review', 'task']
     novel_id: str | None = Field(default=None, max_length=160)
     branch_id: str | None = Field(default=None, max_length=160)
     id: str = Field(min_length=1, max_length=160)
@@ -195,6 +195,8 @@ FEATURE_OWNED_GENERATION = {
     "story_simulator_model": ("story_simulator_v2", "剧情模拟候选"),
     "multilingual_translation": ("multilingual_editions_v2", "语言版本译文候选"),
     "narrative_judge_model": ("narrative_quality_judge_v2", "叙事评审意见"),
+    "style_analysis_model": ("style_dna_v2", "文风模型意见"),
+    "revision_comparison_model": ("revision_intelligence_v2", "版本语义比较"),
 }
 
 
@@ -225,6 +227,9 @@ def projected_task(reader, row):
     owner = FEATURE_OWNED_GENERATION.get(row.get('experimental_origin')) if reader.name == 'author_generation' else None
     if owner:
         source = {'source': {'kind': 'feature', 'id': str(row['id']), 'feature': owner[0]}}
+        if row.get('experimental_origin') in {'style_analysis_model', 'revision_comparison_model'}:
+            source['source'].update(task_authority='style_model_job' if row['experimental_origin'] == 'style_analysis_model' else 'revision_model_job',
+                                    chapter_id=row.get('chapter_id'), version=row.get('base_chapter_version'))
     if (not owner and reader.name == 'author_generation' and isinstance(row.get('chapter_id'), str)
             and row['chapter_id'] and type(row.get('base_chapter_version')) is int
             and row['base_chapter_version'] > 0):
@@ -450,6 +455,7 @@ class WorkspaceToolsService(DomainService):
     @staticmethod
     def _visible_search_row(ctx, row):
         return (isinstance(row, dict) and bool(row.get('id')) and not row.get('is_archived')
+                and str(row.get('status', '')).upper() != 'ARCHIVED'
                 and not row.get('hidden') and not row.get('secret')
                 and str(row.get('visibility', '')).upper() not in {'PRIVATE', 'SECRET', 'DENIED'}
                 and (not row.get('branch_id') if ctx.scope.get('mode') == 'local'
@@ -464,6 +470,8 @@ class WorkspaceToolsService(DomainService):
                'feature': 'editor' if kind == 'chapter' else row.get('feature', 'story'),
                'aliases': strings('aliases'), 'tags': strings('tags'), 'updated_at': str(row.get('updated_at') or ''),
                'status': str(row.get('status', '')), 'coordinate': COORDINATE}
+        if kind in {'organization', 'rule', 'story_graph', 'asset', 'workflow'}:
+            doc['source'] = deepcopy(row['source_navigation'])
         if kind == 'novel':
             doc['source'] = {'kind': 'feature', 'id': row['id'], 'feature': 'overview'}
         elif kind in {'volume', 'scene', 'character', 'location', 'timeline', 'foreshadowing'}:
@@ -508,6 +516,20 @@ class WorkspaceToolsService(DomainService):
                 rows = self.novels.data_set(ctx.novel_id, dataset)
             else:
                 rows = []
+            for row in rows:
+                check()
+                if not self._visible_search_row(ctx, row): continue
+                projected_rows += 1
+                doc = self._search_document(ctx, kind, row)
+                sources.append(SearchSource(kind + ':' + doc['id'], doc['revision'], lambda doc=doc: doc))
+        for kind in ('organization', 'rule', 'story_graph', 'asset', 'workflow'):
+            reader = self.entity_readers.get(kind)
+            if reader is None: continue
+            try:
+                rows = reader(ctx)
+            except HTTPException as exc:
+                if exc.status_code in {401, 403, 404}: continue
+                raise
             for row in rows:
                 check()
                 if not self._visible_search_row(ctx, row): continue
@@ -566,7 +588,7 @@ class WorkspaceToolsService(DomainService):
     def search(self, ctx, query='', kind='', chapter_id=None, rebuild=False, *, tag='', recent_days=0,
                unresolved=False, fulltext=False, offset=0, request_id=None, reauthorize=lambda: None,
                require_flag=lambda flag: None, cancelled=lambda: False, limit=50):
-        if (len(query) > 160 or len(tag) > 80 or kind not in {'', 'novel', 'chapter', 'volume', 'scene', 'character', 'location', 'timeline', 'foreshadowing', 'finding', 'review', 'task'}
+        if (len(query) > 160 or len(tag) > 80 or kind not in {'', 'novel', 'chapter', 'volume', 'scene', 'character', 'location', 'timeline', 'foreshadowing', 'finding', 'organization', 'rule', 'story_graph', 'asset', 'workflow', 'review', 'task'}
             or not 0 <= recent_days <= 3650 or not 0 <= offset <= MAX_RECORDS):
             raise ValueError('invalid search filter')
         key = self._index_key(ctx); operation = (key, request_id or str(uuid4()))

@@ -18,6 +18,7 @@ from ..runtime import runtime
 
 from .revision_intelligence import SelectionIn
 from .planning import digest
+from ..author_context_sources import AddedAuthorSource, NativeAuthorContext, added_source_key
 
 FEATURE = 'author_context_inspector_v2'
 
@@ -36,12 +37,22 @@ class AuthorRequestScope(BaseModel):
     include_style_reference: bool = True
     include_plan_reference: bool = True
     source_items: list[AuthorSourceControl] | None = Field(default=None, max_length=256)
+    added_sources: list[AddedAuthorSource] | None = Field(default=None, max_length=16)
 
     @model_validator(mode='after')
     def distinct_sources(self):
         if self.source_items and len({row.key for row in self.source_items}) != len(self.source_items):
             raise ValueError('source control identities must be unique')
+        if self.added_sources and len({added_source_key(row.model_dump(exclude_none=True)) for row in self.added_sources}) != len(self.added_sources):
+            raise ValueError('added source identities must be unique')
         return self
+
+
+class AuthorSourceCatalogInput(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    kind: Literal['CHAPTER', 'CANON', 'STORY_GRAPH', 'RESEARCH'] = 'CHAPTER'
+    query: str = Field(default='', max_length=160)
+    provider_id: str = Field(min_length=1, max_length=240)
 
 
 class AuthorPreviewInput(BaseModel):
@@ -63,6 +74,7 @@ class AuthorPreviewInput(BaseModel):
     revision_selection: SelectionIn | None = None
     revision_selection_digest: str | None = Field(default=None, pattern=r'^[0-9a-f]{64}$')
     character_id: str | None = Field(default=None, min_length=1, max_length=160)
+    scene_id: str | None = Field(default=None, min_length=1, max_length=160)
     world_time: int | None = None
     calendar: str = Field(default='story', min_length=1, max_length=80)
     preview_digest: str | None = Field(default=None, pattern=r'^[0-9a-f]{64}$')
@@ -74,7 +86,7 @@ class AuthorPreviewInput(BaseModel):
             raise ValueError('revision selection and receipt are required together')
         if self.revision_selection is not None and (self.operation != 'rewrite' or self.character_id is not None):
             raise ValueError('selection generation requires rewrite without character mode')
-        if self.character_id is None and (self.world_time is not None or self.calendar != 'story'):
+        if self.character_id is None and (self.scene_id is not None or self.world_time is not None or self.calendar != 'story'):
             raise ValueError('world-time viewpoint requires a character')
         return self
 
@@ -126,6 +138,7 @@ class AuthorPreparer:
         self.variant_policy_guard = variant_policy_guard
         self.story_graph = story_graph
         self.revision_selection_validator = revision_selection_validator
+        self.native_sources = None
 
     def _revision_receipt(self, nid, scope, body, source):
         self.require_flag('revision_intelligence_v2'); self.require_flag('selection_assistant_v2')
@@ -180,10 +193,11 @@ class AuthorPreparer:
             try: revision_binding, revision_fingerprint = self._revision_receipt(nid, authorization[1], body, source)
             except (ValueError, FileNotFoundError, KeyError):
                 raise HTTPException(409, {'code': 'REVISION_SELECTION_UNAVAILABLE_OR_STALE'}) from None
-        raw = body.model_dump(exclude={'operation', 'chapter_version', 'preview_digest', 'generation_request_id', 'character_id', 'world_time', 'calendar', 'revision_selection', 'revision_selection_digest', 'request_scope'})
+        raw = body.model_dump(exclude={'operation', 'chapter_version', 'preview_digest', 'generation_request_id', 'character_id', 'world_time', 'calendar', 'scene_id', 'revision_selection', 'revision_selection_digest', 'request_scope'})
         raw.update(source=source, selected_text=source)
         if body.request_scope:
-            reduced = body.request_scope.source_mode != 'AUTO' or any(not row.include for row in (body.request_scope.source_items or []))
+            reduced = (body.request_scope.source_mode != 'AUTO' or any(not row.include for row in (body.request_scope.source_items or []))
+                       or any(not row.include for row in (body.request_scope.added_sources or [])))
             # Approved references can derive from excluded manuscript, too. Their
             # dependency metadata cannot prove substring-level noninterference.
             if reduced or not body.request_scope.include_style_reference: raw['style_profile_id'] = None
@@ -233,12 +247,25 @@ class AuthorPreparer:
             return authorization
 
         job.request_authorization = reauthorize
+        if requested_scope and requested_scope.get('added_sources'):
+            if character or self.native_sources is None:
+                raise HTTPException(409, {'code': 'AUTHOR_ADDED_SOURCE_AUTHORITY_REQUIRED'})
+            native = self.native_sources
+            source_context = NativeAuthorContext(nid, authorization[1], authorization[0], token, branch)
+            captured_refs = deepcopy(requested_scope['added_sources'])
+            def resolve_added(*, cloud=False):
+                reauthorize()
+                resolved = native.resolve(source_context, captured_refs, cloud=cloud)
+                reauthorize()
+                return resolved
+            resolve_added.validate_content = native.check_job
+            job.author_context_resolver = resolve_added
         if character:
             from .character_author_context import CharacterContextSource, configure_character_job
             ctx = CharacterContextSource(novel_id=nid, scope=authorization[1], actor=authorization[0], token=token,
                 branch=branch, service=self.story_graph, user_instruction=body.instruction)
             try:
-                configure_character_job(job, ctx, body.character_id, body.chapter_id, body.world_time, body.calendar, authorize=reauthorize)
+                configure_character_job(job, ctx, body.character_id, body.chapter_id, body.world_time, body.calendar, authorize=reauthorize, scene_id=body.scene_id)
             except (ValueError, FileNotFoundError):
                 raise HTTPException(409, {'code': 'CHARACTER_CONTEXT_UNAVAILABLE_OR_STALE'}) from None
         from ..jobs import mark_generation_origin
@@ -292,6 +319,24 @@ def create_author_context_router(manager, authorize, require_flag, generation_co
         try: return model.model_validate_json(bytes(raw))
         except (ValidationError, ValueError): raise HTTPException(422, {'code': 'AUTHOR_PREVIEW_INPUT_INVALID'}) from None
 
+    @router.post('/sources')
+    async def sources(nid: str, request: Request, response: Response,
+                      x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        body = await read_body(request, AuthorSourceCatalogInput)
+        actor, scope = authorize(nid, x_session_token, x_branch_id, 'domain.read')
+        if preparer.native_sources is None:
+            raise HTTPException(409, {'code': 'AUTHOR_ADDED_SOURCE_AUTHORITY_REQUIRED'})
+        ctx = NativeAuthorContext(nid, scope, actor, x_session_token, x_branch_id)
+        try:
+            result = preparer.native_sources.catalog(ctx, kind=body.kind, query=body.query,
+                cloud=runtime.is_remote_text_provider(body.provider_id))
+        except (ValueError, FileNotFoundError, KeyError):
+            raise HTTPException(409, {'code': 'AUTHOR_ADDED_SOURCE_UNAVAILABLE_OR_CHANGED'}) from None
+        if authorize(nid, x_session_token, x_branch_id, 'domain.read') != (actor, scope):
+            raise HTTPException(403, {'code': 'AUTHOR_SOURCE_AUTHORITY_CHANGED'})
+        response.headers['Cache-Control'] = 'no-store'
+        return result
+
     @router.post('/preview')
     async def preview(nid: str, request: Request, response: Response,
                       x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -318,7 +363,7 @@ def create_author_context_router(manager, authorize, require_flag, generation_co
             'scope_changes_supported': not character, 'request_scope': job.request_scope,
             'source_manifest': getattr(job, 'author_source_manifest', None),
             'scope_effects': {'automatic_context_included': not character and automatic_context_allowed(job),
-                'references_omitted_for_source_isolation': not character and ((job.request_scope or {}).get('source_mode', 'AUTO') != 'AUTO' or any(not row['include'] for row in ((job.request_scope or {}).get('source_items') or []))),
+                'references_omitted_for_source_isolation': not character and ((job.request_scope or {}).get('source_mode', 'AUTO') != 'AUTO' or any(not row['include'] for row in ((job.request_scope or {}).get('source_items') or [])) or any(not row.get('include', True) for row in ((job.request_scope or {}).get('added_sources') or []))),
                 'granularity': 'IDENTIFIED_RECORDS_WITH_CONSERVATIVE_DEPENDENCIES' if getattr(job, 'author_source_manifest', None) else 'WHOLE_AUTOMATIC_BUNDLE',
                 'reason': 'DERIVED_SOURCE_ISOLATION_UNPROVEN' if not character and (job.request_scope or {}).get('source_mode', 'AUTO') != 'AUTO' else None}, 'verification': 'ACTUAL_REQUEST_BUILDER', 'model_called': False,
             'boundary': 'Adapter-facing payload; provider-specific protocol encoding is performed by the selected adapter.'}

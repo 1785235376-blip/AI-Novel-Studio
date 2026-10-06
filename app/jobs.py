@@ -37,6 +37,7 @@ class Job:
     reviewed_variant_receipt_state:str|None=None
     reviewed_variant_policy:dict|None=None
     request_authorization:object=field(default=None,repr=False)
+    author_context_resolver:object=field(default=None,repr=False)
     experimental_origin:str|None=None
     required_experimental_features:list=field(default_factory=list)
     execution_outcome:str|None=None
@@ -84,6 +85,8 @@ class Job:
 # These stamps are set by trusted server coordinators, never from GenerateIn or
 # an unvalidated payload. Intrinsic receipt fields retain older-job fencing.
 GENERATION_ORIGINS = {
+    "style_analysis_model": frozenset({"author_context_inspector_v2", "model_broker_v2", "style_dna_v2"}),
+    "revision_comparison_model": frozenset({"author_context_inspector_v2", "model_broker_v2", "revision_intelligence_v2"}),
     "story_simulator_model": frozenset({"author_context_inspector_v2", "model_broker_v2", "story_simulator_v2"}),
     "multilingual_translation": frozenset({"author_context_inspector_v2", "model_broker_v2", "multilingual_editions_v2"}),
     "narrative_judge_model": frozenset({"author_context_inspector_v2", "model_broker_v2", "narrative_quality_judge_v2"}),
@@ -96,10 +99,11 @@ GENERATION_ORIGINS = {
 
 
 def generation_required_features(job):
+    from .author_context_sources import NATIVE_SOURCE_FLAGS
     required = set()
     origin = getattr(job, "experimental_origin", None)
     stored = getattr(job, "required_experimental_features", [])
-    allowed = set().union(*GENERATION_ORIGINS.values())
+    allowed = set().union(*GENERATION_ORIGINS.values()) | set(NATIVE_SOURCE_FLAGS.values())
     if origin is not None:
         if origin not in GENERATION_ORIGINS or not isinstance(stored, list) or any(not isinstance(value, str) or value not in allowed for value in stored):
             raise ValueError("GENERATION_ORIGIN_INVALID")
@@ -112,6 +116,13 @@ def generation_required_features(job):
     if getattr(job, "dispatch_hooks_required", False): required.update(GENERATION_ORIGINS["model_broker"])
     if getattr(job, "partial_revision_only", False) or getattr(job, "revision_selection_binding", None) is not None:
         required.update(GENERATION_ORIGINS["selection_assistant"])
+    refs = (getattr(job, "request_scope", None) or {}).get("added_sources") or []
+    if refs:
+        from .author_context_sources import AddedAuthorSource
+        required.update(GENERATION_ORIGINS["author_context"])
+        for ref in refs:
+            parsed = AddedAuthorSource.model_validate(ref)
+            if parsed.kind in NATIVE_SOURCE_FLAGS: required.add(NATIVE_SOURCE_FLAGS[parsed.kind])
     return frozenset(required)
 
 
@@ -127,7 +138,9 @@ def generation_content_available(job):
     except ValueError: return False
     if not required: return True
     from .experimental.flags import enabled_flags
-    return required.issubset(enabled_flags())
+    if not required.issubset(enabled_flags()): return False
+    from .author_context_sources import added_source_content_available
+    return added_source_content_available(job)
 
 
 def require_generation_content(job):
@@ -138,6 +151,10 @@ def require_generation_content(job):
 
 def require_whole_generation_acceptance(job):
     required = generation_required_features(job)
+    origin = getattr(job, "experimental_origin", None)
+    if origin in {"style_analysis_model", "revision_comparison_model"}:
+        from fastapi import HTTPException
+        raise HTTPException(409, {"code": "STYLE_OPINION_REVIEW_ONLY" if origin == "style_analysis_model" else "REVISION_COMPARISON_REVIEW_ONLY"})
     for feature, code in (("story_simulator_v2", "SIMULATOR_DRAFT_ONLY"), ("multilingual_editions_v2", "TRANSLATION_DRAFT_ONLY"), ("narrative_quality_judge_v2", "JUDGE_DRAFT_ONLY")):
         if feature in required:
             from fastapi import HTTPException
@@ -203,7 +220,7 @@ def check_generation_bounds(job, *, delta="", completion_text=None):
 
 
 class JobManager:
-    transient_fields={"cancelled", "condition", "request_authorization", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
+    transient_fields={"cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
     terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED","ACCEPTING","ACCEPTANCE_UNCERTAIN"}
     def __init__(self,generations=None,chapters=None,contexts=None,canon=None,memory_extractor=None,snapshot_required=None,collaboration_updates=None):
         if generations is None and repo is not None:
@@ -397,6 +414,8 @@ class JobManager:
                 (job.request_scope or {}).get("source_items") if automatic_context_allowed(job) else None,
                 omit_dependents=automatic_context_allowed(job) and (not job.request_scope.get("include_style_reference", True)
                     or not job.request_scope.get("include_plan_reference", True)))
+        from .author_context_sources import apply_added_sources
+        context = apply_added_sources(job, context, cloud=cloud)
         request = build_author_request(job, route, chapter, context,
             dispatch_guard=lambda: self._guard_author_request(job, route, dispatch=True))
         if job.expected_request_digest and request_digest(request, job, cloud) != job.expected_request_digest:

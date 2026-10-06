@@ -28,6 +28,7 @@ class SimulatorContextIn(StrictModel):
     chapter_id: Symbol
     expected_version: int = Field(ge=1)
     character_id: Symbol
+    scene_id: Symbol | None = None
     world_time: int | None = None
     calendar: str = Field(default='story', min_length=1, max_length=80)
 
@@ -69,6 +70,7 @@ class SimulationRunIn(StrictModel):
     expected_versions: dict[Symbol, int] = Field(min_length=1, max_length=20)
     chapter_id: Symbol
     character_id: Symbol
+    scene_id: Symbol | None = None
     world_time: int | None = None
     calendar: str = Field(default='story', min_length=1, max_length=80)
     node_id: Symbol
@@ -161,20 +163,23 @@ class StorySimulatorService(SourceFencedService):
             if row['status'] == 'ARCHIVED' or require_row(state, self.planning.GRAPHS, row['graph_id'])['status'] != 'ACTIVE': continue
             nodes.append({'id': row['id'], 'title': row['title'], 'version': row['version'], 'chapter_ids': row['links']['chapter_ids']})
         model_routes = self.model_coordinator.catalog(nid, scope) if self.model_coordinator else []
-        return {'chapters': self.chapter_catalog(nid, scope), 'planning_nodes': nodes,
+        return {'chapters': self.chapter_catalog(nid, scope), 'planning_nodes': nodes, 'scenes': [r for r in self.story_graph.catalog(nid, scope)['items'] if r['kind'] == 'SCENE'],
                 'characters': [{'id': r['id'], 'name': r.get('name', r['id'])} for r in self.novels.data_set(nid, 'characters') if not r.get('branch_id') or r['branch_id'] == scope.get('branch_id')],
                 'limits': deepcopy(LIMITS), 'model_configured': any(route['available'] for route in model_routes), 'model_routes': model_routes}
 
     def _context(self, nid, scope, data):
-        context = CharacterProjection.model_validate(self.story_graph.character_context(nid, scope, data['character_id'], data['chapter_id'], data['world_time'], data['calendar'])).model_dump()
-        graph = self.story_graph.graph(nid, scope, data['chapter_id'], data['character_id'], data['world_time'], data['calendar'])
+        context = CharacterProjection.model_validate(self.story_graph.character_context(nid, scope, data['character_id'], data['chapter_id'], data['world_time'], data['calendar'], scene_id=data.get('scene_id'))).model_dump(exclude_unset=True)
+        graph = self.story_graph.graph(nid, scope, data['chapter_id'], data['character_id'], data['world_time'], data['calendar'], scene_id=data.get('scene_id'))
         entries = context['known_facts'] + context['secrets']
         visible = {'knowledge': [{'id': r['evidence']['record_id'], 'version': r['evidence']['record_version'], 'text': r['text'], 'category': r['epistemic_status']} for r in entries],
                    'goals': [{'id': r['evidence']['record_id'], 'version': r['evidence']['record_version'], 'text': r['text'], 'category': r['epistemic_status']} for r in context['goals']],
                    'graph_links': [{'id': r['id'], 'version': r['version'], 'text': r['statement']} for r in graph['edges']],
-                   **{k: data[k] for k in ('chapter_id', 'character_id', 'world_time', 'calendar')}}
+                   **{k: data[k] for k in ('chapter_id', 'character_id', 'world_time', 'calendar')},
+                   'scene_id': data.get('scene_id'), 'scene_boundary': context.get('scene_boundary'),
+                   'mind': {section: deepcopy(context.get(section, [])) for section in ('beliefs', 'false_beliefs', 'fears', 'values', 'emotion', 'intent', 'relationships')},
+                   'verification': 'DETERMINISTIC_REVIEWED_EVENTS_NOT_PSYCHOLOGICAL_PROBABILITY'}
         # Revalidate all evidence source policies without fetching hidden facts.
-        evidence_ids = {cid for section in ('known_facts', 'secrets', 'goals') for r in context[section] for cid in r['evidence']['source_versions']}
+        evidence_ids = {cid for section in ('known_facts', 'secrets', 'goals', 'beliefs', 'false_beliefs', 'fears', 'values', 'emotion', 'intent', 'relationships') for r in context.get(section, []) for cid in r['evidence']['source_versions']}
         evidence_ids.update(cid for r in graph['edges'] for cid in r['evidence']['source_versions'])
         evidence_sources, _ = self.capture(nid, scope, sorted(evidence_ids))
         visible['context_digest'] = digest([context, graph, evidence_sources, entity_sources(self, nid, scope, {'character_ids': [data['character_id']]})])
@@ -232,6 +237,7 @@ class StorySimulatorService(SourceFencedService):
             return {'id': row['id'], 'version': row['version'], 'status': row['status'], 'stale': True,
                     'routes': [], 'model_called': False, 'limitations': ['来源、规划或角色知识已变化；旧路线已隐藏，请按当前来源重新创建推演。']}
         result = {k: deepcopy(v) for k, v in row.items() if k not in {'history', 'sources', 'evidence_sources', 'planning_capture', 'request'}}
+        result['history_receipts'] = [{key: deepcopy(prior.get(key)) for key in ('version', 'status', 'updated_at', 'expansions', 'request_digest', 'result_digest')} for prior in row.get('history', [])[-100:]]
         result['routes'] = [{k: deepcopy(v) for k, v in route.items() if k not in {'state', 'seen_states'}} for route in row['routes']]
         if row.get('model_preview') or row.get('model_execution'):
             if self.model_coordinator: result = self.model_coordinator.public_model(nid, scope, row, result)
@@ -296,6 +302,7 @@ class StorySimulatorService(SourceFencedService):
             if route['cursor'] >= request['max_steps'] or target['expansions'] >= LIMITS['max_expansions']:
                 route['status'] = 'LIMIT_REACHED'; continue
             event = candidate['events'][route['cursor']]
+            before = deepcopy(route['state'])
             after, errors = transition(route['state'], event, set(request['knowledge_ids']), graph_ids, request['hard_constraints'])
             route['cursor'] += 1; target['expansions'] += 1
             if not errors:
@@ -304,6 +311,12 @@ class StorySimulatorService(SourceFencedService):
                     errors.append(violation('CYCLE_STOPPED', '路线重复已有状态，已停止此路线继续扩展。')); route['status'] = 'LIMIT_REACHED'
                 else: route['seen_states'].append(stamp); route['state'] = after
             route['steps'].append({'event_id': event['id'], 'title': event['title'], 'at': event['at'], 'applied': not errors, 'violations': errors,
+                                   'rule_effects': {'method': 'bounded-state-delta-v1',
+                                       'facts_added': sorted(set(route['state']['facts']) - set(before['facts'])),
+                                       'facts_removed': sorted(set(before['facts']) - set(route['state']['facts'])),
+                                       'resource_changes': {key: {'before': before['resources'].get(key, 0), 'after': route['state']['resources'].get(key, 0)} for key in sorted(set(before['resources']) | set(route['state']['resources'])) if before['resources'].get(key, 0) != route['state']['resources'].get(key, 0)},
+                                       'time_before': before['time'], 'time_after': route['state']['time'],
+                                       'interpretation': 'HYPOTHETICAL_RULE_EFFECTS_NOT_WORLD_FACTS'},
                                    'question': event['question'], 'foreshadowing_links': [r for r in event['foreshadowing_links'] if r in graph_ids]})
             route['violations'].extend([{**e, 'event_id': event['id']} for e in errors])
             if event['question']: route['unresolved_questions'].append(event['question'])

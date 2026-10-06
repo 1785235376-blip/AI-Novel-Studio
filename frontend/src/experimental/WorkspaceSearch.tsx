@@ -6,7 +6,7 @@ import { type SearchItem, type SearchOptions, type SearchResult, type WorkspaceL
 
 type SearchAPI = ReturnType<typeof workspaceClient>;
 type Command = { id: string; label: string; detail: string; words: string };
-const kinds = { review: '审核项', novel: '小说', volume: '卷', scene: '场景', timeline: '时间线', chapter: '章节', character: '人物', location: '地点', foreshadowing: '伏笔', finding: '发现', task: '任务' };
+const kinds = { review: '审核项', novel: '小说', volume: '卷', scene: '场景', timeline: '时间线', chapter: '章节', character: '人物', location: '地点', organization: '组织 / 文明', rule: '世界规则 / 能力', story_graph: '故事图谱', asset: '资产', workflow: '工作流定义', foreshadowing: '伏笔', finding: '发现', task: '任务' };
 const newRequest = () => globalThis.crypto?.randomUUID?.() || `search-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
 function useWorkspaceSearch(api: SearchAPI, options: SearchOptions, composing: boolean) {

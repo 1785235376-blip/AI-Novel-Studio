@@ -331,12 +331,28 @@ class EmbeddingService(DomainService):
             return copy.deepcopy(row)
 
     def indexes(self, nid, scope, actor=None):
-        rows = [row for row in self.list(nid, scope, self.INDEXES) if not self._requires_owner(row) or row["created_by"] == actor]
-        for row in rows:
-            if any(ref.get('entity_type') == 'RESEARCH' for ref in row['entities']): self.research_guard()
-            row["stale"] = self._index_stale(nid, scope, row, actor)
+        from fastapi import HTTPException
+        rows = []
+        for row in self.list(nid, scope, self.INDEXES):
+            if self._requires_owner(row) and row["created_by"] != actor: continue
+            research = any(ref.get('entity_type') == 'RESEARCH' for ref in row['entities'])
+            try:
+                if research: self.research_guard()
+                row["stale"] = self._index_stale(nid, scope, row, actor)
+                if research: self.research_guard()
+            except HTTPException as exc:
+                # A disabled dependency hides only its rows, including a flag
+                # change during stale-source checking. Direct access still uses
+                # owned_index's fail-closed guard. Never swallow project/session
+                # denial or an unrelated/malformed 404 from another authority.
+                if (research and exc.status_code == 404 and isinstance(exc.detail, dict)
+                    and exc.detail.get('code') == 'EXPERIMENTAL_FEATURE_DISABLED'
+                    and exc.detail.get('feature') == 'research_library_v2'):
+                    continue
+                raise
             try: self._provider(row).capability; row['provider_status'] = 'CONFIGURED'
             except (ValueError, RuntimeError): row['provider_status'] = 'NOT_CONFIGURED'
+            rows.append(row)
         return rows
 
     def _index_stale(self, nid, scope, row, actor=None):

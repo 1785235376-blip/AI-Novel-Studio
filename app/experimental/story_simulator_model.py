@@ -154,7 +154,7 @@ class StorySimulatorModelCoordinator:
         return AuthorPreviewInput(novel_id=ctx.novel_id, chapter_id=request['chapter_id'],
             chapter_version=request['expected_versions'][request['chapter_id']], operation='brainstorm',
             instruction=instruction, profile='LOCAL_ONLY', provider_id=route['provider_id'], model_id=route['model_id'],
-            character_id=request['character_id'], world_time=request['world_time'], calendar=request['calendar'])
+            character_id=request['character_id'], world_time=request['world_time'], calendar=request['calendar'], scene_id=request.get('scene_id'))
 
     def preview(self, ctx, rid, value, guard):
         body = SimulatorModelPreviewIn.model_validate(value)

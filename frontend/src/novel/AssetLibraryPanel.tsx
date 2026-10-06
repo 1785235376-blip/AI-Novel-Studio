@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { Download, Trash2, Upload } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, apiErrorView, type Asset } from "../api";
 import { Button, EmptyState, IconButton, Panel } from "../ui/primitives";
+import { useRequestedRecord } from "../experimental/useRequestedRecord";
+import { useStudio } from "../store";
 
 export const MAX_ASSET_BYTES = 25 * 1024 * 1024;
+let requestedAssetSequence = 0;
 // A local, non-network placeholder keeps the accessible image node present
 // while the authenticated DesktopHost download is in flight.
 const IMAGE_PLACEHOLDER_DATA_URI =
@@ -15,14 +18,21 @@ export function AssetLibraryPanel({
   characterId,
   sceneId,
   selectedAssetId,
+  requestedAssetId,
   onSelectAsset,
 }: {
   novelId: string;
   characterId?: string;
   sceneId?: string;
   selectedAssetId?: string;
+  requestedAssetId?: string;
   onSelectAsset?: (asset?: Asset) => void;
 }) {
+  const authority = useStudio(state => JSON.stringify([state.sessionToken, state.actor?.id, state.actor?.workspaceId,
+    state.scope?.workspaceId, state.scope?.projectId, state.scope?.storylineId, state.scope?.branchId]));
+  // A targeted source read must not reuse an older session/branch's in-flight
+  // list. Only this opaque observer enters React Query; credentials stay local.
+  const observer = useMemo(() => ++requestedAssetSequence, [authority, novelId, requestedAssetId]);
   const client = useQueryClient(),
     input = useRef<HTMLInputElement>(null),
     [error, setError] = useState<unknown>(),
@@ -30,10 +40,14 @@ export function AssetLibraryPanel({
     [kind, setKind] = useState(""),
     [showTrash, setShowTrash] = useState(false);
   const assets = useQuery({
-    queryKey: ["assets", novelId, kind, characterId, sceneId],
+    queryKey: ["assets", novelId, kind, characterId, sceneId, ...(requestedAssetId ? [observer] : [])],
     queryFn: () => api.assets(novelId, kind || undefined, characterId, sceneId),
     enabled: !!novelId,
+    refetchOnMount: requestedAssetId ? 'always' : true,
   });
+  useEffect(() => { setKind(''); setShowTrash(false); }, [requestedAssetId]);
+  const requestedReady = assets.isFetchedAfterMount && !assets.isFetching && !assets.error;
+  const requested = useRequestedRecord(requestedAssetId, assets.data, !!requestedReady, observer);
   const remove = useMutation({
     mutationFn: (assetId: string) => api.deleteAsset(assetId, novelId),
     onSuccess: async (_, assetId) => {
@@ -184,11 +198,13 @@ export function AssetLibraryPanel({
         </article>)}
       </section>}
       <div className="novel-record-list asset-library__grid">
-        {assets.data?.map((asset) => (
+        {requested.missing && <p role="status">请求的原资产当前不可读或已移除，请刷新搜索。</p>}
+        {(!requestedAssetId || requestedReady) && assets.data?.map((asset) => (
           <AssetCard
             key={asset.id}
             asset={asset}
-            selected={selectedAssetId === asset.id}
+            selected={(selectedAssetId || requestedAssetId) === asset.id}
+            focusRef={requestedAssetId === asset.id ? requested.ref : undefined}
             onSelect={() => onSelectAsset?.(asset)}
             onDelete={() => {
               remove.mutate(asset.id);
@@ -213,12 +229,14 @@ function AssetCard({
   onSelect,
   selected,
   deleting,
+  focusRef,
 }: {
   asset: Asset;
   onDelete: () => void;
   onSelect: () => void;
   selected: boolean;
   deleting: boolean;
+  focusRef?: RefObject<HTMLElement>;
 }) {
   const [previewUrl, setPreviewUrl] = useState("");
   const [previewLoading, setPreviewLoading] = useState(
@@ -279,7 +297,7 @@ function AssetCard({
     }
   }
   return (
-    <article className={selected ? "is-selected" : ""}>
+    <article className={selected ? "is-selected" : ""} aria-label={`资产 ${asset.filename}`} aria-current={focusRef ? 'true' : undefined} tabIndex={focusRef ? -1 : undefined} ref={focusRef}>
       <button
         type="button"
         className="asset-card__select"

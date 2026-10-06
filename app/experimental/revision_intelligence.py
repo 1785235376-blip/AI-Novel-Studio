@@ -12,7 +12,7 @@ import hashlib
 import unicodedata
 from typing import Literal
 
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict, Field, model_validator
 
 from .common import DomainService, StaleSourceError, new_row, check_version, change_row
 from .planning import StrictModel, collection, require_row, digest
@@ -42,7 +42,7 @@ class ReplacementIn(StrictModel):
 class ExplanationIn(StrictModel):
     model_config = ConfigDict(extra='forbid', str_strip_whitespace=False)
     anchor_id: str = Field(pattern=r'^[a-f0-9]{64}$')
-    kind: Literal['motivation', 'relationship', 'world_fact', 'foreshadowing', 'other']
+    kind: Literal['motivation', 'relationship', 'world_fact', 'foreshadowing', 'other', 'fact_added', 'fact_removed', 'character_state', 'canon', 'emotional_tone', 'plot_intent']
     explanation: str = Field(min_length=1, max_length=2000)
     before_quote: str = Field(min_length=1, max_length=2000)
     after_quote: str = Field(min_length=1, max_length=2000)
@@ -88,6 +88,64 @@ class MilestoneIn(StrictModel):
     chapter_version: int = Field(ge=1)
     title: str = Field(min_length=1, max_length=160)
     goal: str = Field(default='', max_length=1000)
+
+
+class VersionCompareIn(StrictModel):
+    chapter_id: str = Field(min_length=1, max_length=240)
+    current_version: int = Field(ge=1)
+    before_version: int = Field(ge=1)
+    after_version: int = Field(ge=1)
+
+    @model_validator(mode='after')
+    def distinct(self):
+        if self.before_version == self.after_version: raise ValueError('choose two distinct original versions')
+        return self
+
+
+class SemanticChangeIn(StrictModel):
+    model_config = ConfigDict(extra='forbid', str_strip_whitespace=False)
+    kind: Literal['FACT_ADDED', 'FACT_REMOVED', 'CHARACTER_STATE_CHANGED', 'RELATIONSHIP_CHANGED',
+                  'CANON_CHANGED', 'EMOTIONAL_TONE_CHANGED', 'PLOT_INTENT_CHANGED']
+    explanation: str = Field(min_length=1, max_length=2000)
+    before_quote: str = Field(default='', max_length=4000)
+    before_start: int = Field(default=0, ge=0)
+    after_quote: str = Field(default='', max_length=4000)
+    after_start: int = Field(default=0, ge=0)
+    source: Literal['AUTHOR_NOTE', 'IMPORTED_MODEL_ASSESSMENT'] = 'AUTHOR_NOTE'
+    model_identity: str | None = Field(default=None, min_length=1, max_length=160)
+
+    @model_validator(mode='after')
+    def evidence_shape(self):
+        if not self.explanation.strip(): raise ValueError('semantic interpretation needs an explanation')
+        if self.kind == 'FACT_ADDED':
+            if self.before_quote or not self.after_quote: raise ValueError('added fact requires after evidence only')
+        elif self.kind == 'FACT_REMOVED':
+            if not self.before_quote or self.after_quote: raise ValueError('removed fact requires before evidence only')
+        elif not self.before_quote or not self.after_quote:
+            raise ValueError('changed state requires both original-version quotes')
+        if self.source == 'IMPORTED_MODEL_ASSESSMENT' and not self.model_identity:
+            raise ValueError('model-derived assessment requires a declared model identity')
+        if self.source == 'AUTHOR_NOTE' and self.model_identity:
+            raise ValueError('author notes must not claim model provenance')
+        return self
+
+
+class VersionComparisonSaveIn(StrictModel):
+    comparison: VersionCompareIn
+    preview_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
+    title: str = Field(min_length=1, max_length=160)
+    changes: list[SemanticChangeIn] = Field(default_factory=list, max_length=50)
+
+
+class VersionComparisonEditIn(StrictModel):
+    expected_version: int = Field(ge=1)
+    title: str = Field(min_length=1, max_length=160)
+    changes: list[SemanticChangeIn] = Field(default_factory=list, max_length=50)
+
+
+class VersionComparisonReviewIn(StrictModel):
+    expected_version: int = Field(ge=1)
+    action: Literal['acknowledge', 'archive', 'reopen']
 
 
 def utf16_size(text):
@@ -242,10 +300,12 @@ def inline_diff(before, after):
 class RevisionIntelligenceService(DomainService):
     COLLECTION = 'revision_proposals'
     MILESTONES = 'revision_milestones'
+    COMPARISONS = 'revision_comparisons'
 
     def __init__(self, store, novels, chapters, *, save_document=None, read_job=None):
         super().__init__(store, novels, chapters)
         self.save_document, self.read_job = save_document, read_job
+        self.model_coordinator = None
 
     def capture(self, nid, scope, cid, expected=None):
         self.novels.get(nid)
@@ -287,6 +347,197 @@ class RevisionIntelligenceService(DomainService):
                                'lock_state': 'UNLOCKED' if marker is None or not active_lock(marker) else 'LOCKED' if isinstance(marker, dict) and marker.get('digest') == node_digest(b['node']) else 'STALE'})
         return {'chapters': chapters, 'blocks': blocks, 'document_digest': document_digest, 'branch_sources_available': scope.get('branch_id') is None,
                 'model_called': False, 'range_limit': 50, 'chapter_character_limit': MAX_TEXT}
+
+    def version_catalog(self, nid, scope, cid):
+        chapter, _ = self.capture(nid, scope, cid)
+        versions = self._original_versions(chapter)
+        return {'chapter_id': cid, 'current_version': chapter['version'], 'items': [
+            {'version': version, 'document_digest': digest(row['document']),
+             'current': version == chapter['version'], 'timestamp': row.get('timestamp', row.get('updated_at'))}
+            for version, row in sorted(versions.items(), reverse=True)], 'authority': 'ORIGINAL_CHAPTER_HISTORY'}
+
+    def _original_versions(self, chapter):
+        history = self.chapters.history(chapter['id'])
+        if len(history) > 2000: raise ValueError('original version history exceeds comparison limit')
+        versions = {chapter['version']: chapter}
+        for row in history:
+            version = row.get('version')
+            if type(version) is not int or version < 1 or not isinstance(row.get('document'), dict):
+                raise ValueError('original revision history is malformed')
+            if version in versions: raise ValueError('original revision history has ambiguous versions')
+            versions[version] = row
+        return versions
+
+    def _comparison_pair(self, nid, scope, value, *, require_current=True):
+        data = VersionCompareIn.model_validate(value)
+        chapter, current = self.capture(nid, scope, data.chapter_id, data.current_version if require_current else None)
+        versions = self._original_versions(chapter)
+        texts, pins = {}, {}
+        for side, version in [('before', data.before_version), ('after', data.after_version)]:
+            if version not in versions: raise FileNotFoundError(str(version))
+            document = versions[version]['document']
+            blocks = text_blocks(document)
+            if any(not b['supported'] for b in blocks): raise ValueError('version contains unsupported text objects')
+            texts[side] = '\n'.join(b['text'] for b in blocks)
+            pins[side] = {'version': version, 'document_digest': digest(document), 'text_digest': digest(texts[side])}
+        policy = {key: current['privacy'][key] for key in ('privacy_level', 'reviewed_by', 'reviewed_at')}
+        capture = {'chapter_id': data.chapter_id, 'versions': pins, 'privacy': policy,
+                   'coordinate_contract': 'ORIGINAL_SAVED_TEXT_BLOCKS_CODEPOINT_V1'}
+        return data, texts, capture
+
+    def compare_versions(self, nid, scope, value, *, reauthorize=lambda: None):
+        reauthorize()
+        data, texts, capture = self._comparison_pair(nid, scope, value)
+        changes, method = inline_diff(texts['before'], texts['after'])
+        reauthorize()
+        _, _, final_capture = self._comparison_pair(nid, scope, data)
+        if capture != final_capture: raise StaleSourceError('original compared versions changed')
+        return {'comparison': data.model_dump(), 'capture': capture, 'preview_digest': digest(capture),
+                'before_text': texts['before'], 'after_text': texts['after'], 'diff': changes,
+                'diff_method': method, 'model_called': False, 'semantic_execution': 'NOT_REQUESTED',
+                'semantic_verification': 'AUTHOR_OR_IMPORTED_ASSESSMENT_REQUIRES_REVIEW'}
+
+    @staticmethod
+    def _semantic_changes(changes, texts):
+        result = []
+        for item in changes:
+            raw = item.model_dump() if hasattr(item, 'model_dump') else item
+            data = SemanticChangeIn.model_validate(raw).model_dump()
+            for side in ('before', 'after'):
+                quote, start = data[side + '_quote'], data[side + '_start']
+                if quote and texts[side][start:start + len(quote)] != quote:
+                    raise ValueError('semantic evidence must match exact original-version quote and codepoint offset')
+                if not quote and start != 0: raise ValueError('absent evidence must have zero offset')
+            data['interpretation'] = 'MODEL_DERIVED' if data['source'] == 'IMPORTED_MODEL_ASSESSMENT' else 'AUTHOR_INTERPRETATION'
+            data['provenance_verification'] = 'DECLARED_NOT_VERIFIED' if data['source'] == 'IMPORTED_MODEL_ASSESSMENT' else 'USER_AUTHORED'
+            data['evidence_verification'] = 'EXACT_QUOTE_ONLY_NOT_SEMANTIC_TRUTH'
+            data['id'] = digest(data)
+            if data['id'] in {row['id'] for row in result}: raise ValueError('duplicate semantic assessment')
+            result.append(data)
+        return result
+
+    def save_comparison(self, nid, scope, actor, value, *, reauthorize=lambda: None):
+        data = VersionComparisonSaveIn.model_validate(value)
+        preview = self.compare_versions(nid, scope, data.comparison, reauthorize=reauthorize)
+        if preview['preview_digest'] != data.preview_digest: raise StaleSourceError('version comparison preview changed')
+        changes = self._semantic_changes(data.changes, {'before': preview['before_text'], 'after': preview['after_text']})
+        with self.store.transaction(nid, scope) as state:
+            reauthorize()
+            current = self.compare_versions(nid, scope, data.comparison, reauthorize=reauthorize)
+            if current['capture'] != preview['capture']: raise StaleSourceError('version comparison source changed')
+            if len(collection(state, self.COMPARISONS)) >= 200: raise ValueError('version comparison limit reached')
+            row = new_row(nid, scope, actor, {'status': 'REVIEW', 'title': data.title,
+                'comparison': data.comparison.model_dump(), 'capture': preview['capture'], 'changes': changes,
+                'model_called': False, 'semantic_execution': 'NOT_REQUESTED', 'manuscript_modified': False})
+            collection(state, self.COMPARISONS)[row['id']] = row
+            reauthorize()
+        return self.comparison(nid, scope, row['id'])
+
+    def _assert_comparison(self, nid, scope, row):
+        _, texts, capture = self._comparison_pair(nid, scope, row['comparison'], require_current=False)
+        if capture != row['capture']: raise StaleSourceError('original version or privacy changed; prepare a fresh comparison')
+        return texts
+
+    def comparison(self, nid, scope, rid):
+        row = self.get(nid, scope, self.COMPARISONS, rid)
+        try: texts = self._assert_comparison(nid, scope, row)
+        except (ValueError, FileNotFoundError):
+            return {'id': rid, 'version': row['version'], 'status': row['status'], 'stale': True,
+                    'chapter_id': row['comparison']['chapter_id'], 'changes': [], 'history': [], 'model_called': row.get('model_called', False),
+                    'model_preview': None, 'model_assessments': [], 'model_execution': deepcopy(row.get('model_execution'))}
+        changes, method = inline_diff(texts['before'], texts['after'])
+        row['history'] = [{key: prior.get(key) for key in ('version', 'status', 'title', 'updated_at')} for prior in row.get('history', [])]
+        from .flags import enabled_flags
+        if not {'revision_intelligence_v2', 'model_broker_v2', 'author_context_inspector_v2'}.issubset(enabled_flags()):
+            row.pop('model_preview', None); row.pop('model_assessments', None)
+            row['model_unavailable'] = True
+        return {**row, 'stale': False, 'diff': changes, 'diff_method': method,
+                'before_text': texts['before'], 'after_text': texts['after']}
+
+    def record_model_result(self, ctx, previous, execution, opinions, guard):
+        from .revision_intelligence_model import parse_version_opinions
+        from .store import canonical
+        nid, scope, actor, rid = ctx.novel_id, ctx.scope, ctx.actor, previous['id']
+        if opinions is None and execution == previous.get('model_execution'):
+            self._assert_comparison(nid, scope, previous); guard()
+            return self.comparison(nid, scope, rid)
+        with self.store.transaction(nid, scope) as state:
+            row = require_row(state, self.COMPARISONS, rid)
+            guard(); self._assert_comparison(nid, scope, row)
+            check_version({key: row[key] for key in ('id', 'version', 'status')}, previous['version'])
+            if row['created_by'] != actor or row.get('model_execution') != previous.get('model_execution'):
+                raise ValueError('REVISION_MODEL_RECEIPT_CHANGED')
+            if row['status'] != 'REVIEW': raise ValueError('REVISION_MODEL_REVIEW_CLOSED')
+            assessments = deepcopy(row.get('model_assessments', []))
+            if opinions is not None:
+                texts = self._assert_comparison(nid, scope, row)
+                opinions = parse_version_opinions(canonical({'opinions': opinions}), texts, row['capture'])
+                route = row['model_preview']['broker']['chosen']
+                identity = {key: deepcopy(route[key]) for key in ('route_id', 'provider_id', 'model_id', 'fingerprint', 'identity', 'synthetic')}
+                assessments = [{**opinion, 'id': digest([execution['job_id'], index, opinion]), 'decision': 'PENDING',
+                    'interpretation': 'MODEL_DERIVED', 'source': 'EXECUTED_MODEL_ASSESSMENT',
+                    'provenance_verification': 'ORIGINAL_REGISTERED_LOCAL_JOB', 'model': identity,
+                    'job_id': execution['job_id'], 'quality_verification': row['model_preview']['quality_verification'],
+                    'evidence_verification': 'EXACT_QUOTE_ONLY_NOT_SEMANTIC_TRUTH'} for index, opinion in enumerate(opinions)]
+            change_row(row, actor, row['version'], lambda target: target.update(model_execution=deepcopy(execution),
+                model_assessments=assessments, model_called=execution['model_called'],
+                semantic_execution='MODEL_DERIVED_REQUIRES_REVIEW' if opinions is not None else target.get('semantic_execution', 'NOT_REQUESTED')))
+            self._assert_comparison(nid, scope, row); guard()
+        return self.comparison(nid, scope, rid)
+
+    def review_model_opinion(self, ctx, rid, oid, expected_version, action, guard):
+        if action not in {'accept', 'ignore', 'reopen'}: raise ValueError('invalid model opinion review')
+        with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+            row = require_row(state, self.COMPARISONS, rid)
+            guard(); self._assert_comparison(ctx.novel_id, ctx.scope, row)
+            check_version({key: row[key] for key in ('id', 'version', 'status')}, expected_version)
+            if row['status'] != 'REVIEW': raise ValueError('reopen comparison before reviewing model opinions')
+            opinion = next((item for item in row.get('model_assessments', []) if item['id'] == oid), None)
+            if opinion is None: raise FileNotFoundError(oid)
+            change_row(row, ctx.actor, expected_version, lambda _: opinion.update(decision={'accept': 'ACCEPTED_INTERPRETATION', 'ignore': 'IGNORED', 'reopen': 'PENDING'}[action]))
+            guard()
+        return self.comparison(ctx.novel_id, ctx.scope, rid)
+
+    def comparisons(self, nid, scope):
+        from .flags import enabled_flags
+        models_enabled = {'revision_intelligence_v2', 'model_broker_v2', 'author_context_inspector_v2'}.issubset(enabled_flags())
+        items = []
+        for row in self.list(nid, scope, self.COMPARISONS):
+            try: self._assert_comparison(nid, scope, row); stale = False
+            except (ValueError, FileNotFoundError): stale = True
+            items.append({'id': row['id'], 'version': row['version'], 'status': row['status'],
+                          'title': row['title'] if not stale else '来源不可用的版本比较', 'stale': stale,
+                          'comparison': row['comparison'], 'model_called': row.get('model_called', False),
+                          **({'model_execution': {key: row['model_execution'].get(key) for key in ('job_id', 'status')}} if models_enabled and row.get('model_execution') else {})})
+        return {'items': items}
+
+    def edit_comparison(self, nid, scope, actor, rid, value, *, reauthorize=lambda: None):
+        data = VersionComparisonEditIn.model_validate(value)
+        with self.store.transaction(nid, scope) as state:
+            row = require_row(state, self.COMPARISONS, rid)
+            reauthorize(); check_version({key: row[key] for key in ('id', 'version', 'status')}, data.expected_version)
+            if row['status'] != 'REVIEW': raise ValueError('reopen comparison before editing interpretations')
+            texts = self._assert_comparison(nid, scope, row)
+            changes = self._semantic_changes(data.changes, texts)
+            change_row(row, actor, data.expected_version, lambda target: target.update(title=data.title, changes=changes))
+            self._assert_comparison(nid, scope, row); reauthorize()
+        return self.comparison(nid, scope, rid)
+
+    def review_comparison(self, nid, scope, actor, rid, value, *, reauthorize=lambda: None):
+        data = VersionComparisonReviewIn.model_validate(value)
+        with self.store.transaction(nid, scope) as state:
+            row = require_row(state, self.COMPARISONS, rid)
+            reauthorize(); check_version({key: row[key] for key in ('id', 'version', 'status')}, data.expected_version)
+            transitions = {'acknowledge': ({'REVIEW'}, 'ACKNOWLEDGED'), 'archive': ({'REVIEW', 'ACKNOWLEDGED'}, 'ARCHIVED'),
+                           'reopen': ({'ACKNOWLEDGED', 'ARCHIVED'}, 'REVIEW')}
+            if (row.get('model_execution') or {}).get('status') in {'ADMISSION_PENDING', 'QUEUED', 'RUNNING', 'UNKNOWN'}:
+                raise ValueError('cancel or reconcile original model task before closing comparison')
+            allowed, status = transitions[data.action]
+            if row['status'] not in allowed: raise ValueError('invalid comparison review transition')
+            if data.action != 'archive': self._assert_comparison(nid, scope, row)
+            change_row(row, actor, data.expected_version, lambda target: target.update(status=status))
+            reauthorize()
+        return self.comparison(nid, scope, rid)
 
     def create_proposal(self, nid, scope, actor, value, *, reauthorize=lambda: None, job_reader=None):
         data = ProposalIn.model_validate(value)

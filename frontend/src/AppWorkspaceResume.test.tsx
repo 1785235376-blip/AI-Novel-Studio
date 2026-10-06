@@ -46,7 +46,7 @@ vi.mock('./ui/FeatureLauncher', () => ({ FeatureLauncher: ({ onSelect }: any) =>
 vi.mock('./experimental/WritingFocusPanel', async original => ({ ...(await original<typeof import('./experimental/WritingFocusPanel')>()), WritingReferenceRail: () => <aside aria-label="Original authority reference rail" /> }));
 vi.mock('./experimental/DeferredExperimentalWorkbench', () => ({ DeferredExperimentalWorkbench: ({ novelId, context, workspaceSection, ...props }: any) => {
   const client = useMemo(() => experimentalClient(novelId, context), [novelId, context.sessionToken, context.actor?.id]);
-  return <WorkspaceToolsPanel {...props} client={client} initialSection={workspaceSection} />;
+  return <><output aria-label="Requested original owner">{JSON.stringify({ task: props.requestedTask, chapter: props.chapter?.id, tab: props.requestedTab })}</output><WorkspaceToolsPanel {...props} client={client} initialSection={workspaceSection} /></>;
 } }));
 function doc(text: string) { return { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text }] }] }; }
 function chapter(content = 'SAVED', version = 3, id = 'recovery:1'): Chapter {
@@ -365,4 +365,59 @@ it('cannot fall back to legacy generation when the enabled request inspector rec
   await waitFor(() => expect(screen.getByLabelText('Audit draft').textContent).toContain('请先检查本次真实请求'));
   expect(api.generate).not.toHaveBeenCalled();
   expect(vi.mocked(globalThis.fetch).mock.calls.some(([url]) => String(url).includes('/author-context/generate'))).toBe(false);
+});
+
+function revisionSourceSearch() {
+  const source = { kind: 'feature', id: 'revision-original-job', task_authority: 'revision_model_job', novel_id: 'recovery', chapter_id: 'recovery:2', version: 10, feature: 'revision_intelligence_v2' };
+  const result = { kind: 'task', id: 'author_generation:revision-original-job', novel_id: 'recovery', title: '原版本模型任务', revision: 'original-model-source', aliases: [], offset: 0, snippet: '', feature: source.feature };
+  const originalFetch = vi.mocked(fetch).getMockImplementation()!;
+  vi.mocked(fetch).mockImplementation(async (url: any, init?: any) => response(String(url).includes('/search?') ? { items: [result], branch_sources_available: true } : String(url).endsWith('/search/resolve') ? source : await (await originalFetch(url, init)).json()));
+  vi.mocked(api.job).mockResolvedValue({ id: source.id, chapter_id: source.chapter_id, novel_id: source.novel_id, base_chapter_version: source.version, experimental_origin: 'revision_comparison_model', status: 'COMPLETED' });
+  return source;
+}
+function enableRevisionOwner(query: QueryClient) {
+  act(() => query.setQueryData(['experimental-features', 'file'], { experimental: true, features: { 'experimental.workspace_tools_v2': true, 'experimental.writing_focus_v2': true, 'experimental.revision_intelligence_v2': true } }));
+}
+async function openRevisionSource() {
+  fireEvent.click(await screen.findByRole('button', { name: 'Open broker' }));
+  fireEvent.click(await screen.findByRole('button', { name: '搜索与命令' }));
+  fireEvent.click(await screen.findByRole('button', { name: '打开原任务' }));
+}
+it('opens the exact revision model owner with its original chapter after authoritative verification', async () => {
+  const source = revisionSourceSearch(); const { query } = setup(); enableRevisionOwner(query);
+  await openRevisionSource();
+  await waitFor(() => expect(useStudio.getState().chapterId).toBe(source.chapter_id));
+  expect(JSON.parse(screen.getByLabelText('Requested original owner').textContent!)).toMatchObject({ chapter: source.chapter_id, tab: 'revision_intelligence_v2', task: { id: source.id, authority: 'revision_model_job' } });
+  expect(api.chapter).toHaveBeenCalledWith(source.chapter_id, expect.objectContaining({ sessionToken: '' }));
+  expect(api.job).toHaveBeenCalledWith(source.id, expect.objectContaining({ sessionToken: '' }));
+  expect(api.generate).not.toHaveBeenCalled(); expect(api.accept).not.toHaveBeenCalled();
+});
+it('refuses a revision-owner chapter switch when the manuscript has unsaved work', async () => {
+  revisionSourceSearch(); const { query } = setup(); enableRevisionOwner(query); edit('KEEP UNSAVED ORIGINAL');
+  await openRevisionSource(); await screen.findByText(/再打开原版本比较任务/);
+  expect(useStudio.getState().chapterId).toBe('recovery:1'); expect(editor().value).toBe('KEEP UNSAVED ORIGINAL');
+  expect(api.chapter).not.toHaveBeenCalled(); expect(api.job).not.toHaveBeenCalled();
+});
+it('rejects a mismatched original revision job and never falls back to another draft', async () => {
+  revisionSourceSearch(); vi.mocked(api.job).mockResolvedValue({ id: 'revision-original-job', novel_id: 'recovery', chapter_id: 'recovery:1', experimental_origin: 'author_context', base_chapter_version: 10 });
+  const { query } = setup(); enableRevisionOwner(query);
+  await openRevisionSource(); await screen.findByText(/原版本比较任务或来源章节当前不可读/);
+  expect(useStudio.getState().chapterId).toBe('recovery:1'); expect(editor().value).toBe('SAVED');
+  expect(api.generate).not.toHaveBeenCalled(); expect(screen.getByLabelText('Requested original owner').textContent).not.toContain('revision_model_job');
+});
+it('drops delayed revision-owner navigation after new typing or scope change', async () => {
+  revisionSourceSearch(); const pending = deferred<Chapter>(); vi.mocked(api.chapter).mockReturnValue(pending.promise);
+  const { query } = setup(); enableRevisionOwner(query);
+  await openRevisionSource(); await waitFor(() => expect(api.chapter).toHaveBeenCalled());
+  edit('NEWER MANUSCRIPT'); await act(async () => pending.resolve(chapter('SECOND', 10, 'recovery:2')));
+  expect(useStudio.getState().chapterId).toBe('recovery:1'); expect(editor().value).toBe('NEWER MANUSCRIPT');
+  expect(api.generate).not.toHaveBeenCalled();
+});
+it('does not open a delayed revision source after its feature is revoked', async () => {
+  revisionSourceSearch(); const pending = deferred<Chapter>(); vi.mocked(api.chapter).mockReturnValue(pending.promise);
+  const { query } = setup(); enableRevisionOwner(query);
+  await openRevisionSource(); await waitFor(() => expect(api.chapter).toHaveBeenCalled());
+  act(() => query.setQueryData(['experimental-features', 'file'], { experimental: true, features: { 'experimental.workspace_tools_v2': true, 'experimental.revision_intelligence_v2': false } }));
+  await act(async () => pending.resolve(chapter('SECOND', 10, 'recovery:2')));
+  expect(useStudio.getState().chapterId).toBe('recovery:1'); expect(api.generate).not.toHaveBeenCalled();
 });

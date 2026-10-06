@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Badge, Button, EmptyState, Panel, StatusMessage } from "../ui/primitives";
 import type { TextModel, TextRuntimeDiagnostics } from "../api";
 import type { TextModelSelection } from "../store";
@@ -351,7 +351,11 @@ export function AiWritingPanel({
     [instruction, setInstruction] = useState(""),
     [style, setStyle] = useState(""),
     [variantCount, setVariantCount] = useState(1);
-  const [requestScope, setRequestScope] = useState<AuthorRequestScope>(defaultAuthorRequestScope);
+  const scopeOwner = JSON.stringify([novelId, authorPreview?.context.sessionToken, authorPreview?.context.scope, authorPreview?.context.actor]);
+  const [requestScopeState, setRequestScopeState] = useState<{ owner: string; value: AuthorRequestScope }>({ owner: scopeOwner, value: defaultAuthorRequestScope });
+  const requestScope = requestScopeState.owner === scopeOwner ? requestScopeState.value : defaultAuthorRequestScope;
+  const setRequestScope = (value: AuthorRequestScope) => setRequestScopeState({ owner: scopeOwner, value });
+  useEffect(() => { setRequestScopeState(previous => previous.owner === scopeOwner ? previous : { owner: scopeOwner, value: defaultAuthorRequestScope }); }, [scopeOwner]);
   const [variantsReceipt, setVariantsReceipt] = useState<AuthorVariantsReceipt>();
   const [previewReceipt, setPreviewReceipt] = useState<AuthorPreviewReceipt>();
   const previewBody: AuthorRequestBody | null = authorPreview?.enabled && novelId && selection ? {

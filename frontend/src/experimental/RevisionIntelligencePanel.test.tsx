@@ -120,3 +120,53 @@ it('reuses exact author preview and blocks extra generated paragraphs from autom
   expect(generated.request_scope).toEqual(previewed.request_scope);
   expect(generated.preview_digest).toBe('f'.repeat(64)); expect(generated.provider_id).toBe('local');
 });
+
+it('compares real-version pins and explicitly labels imported model interpretations', async () => {
+  const compare = {comparison: {chapter_id: chapter.id, current_version: 4, before_version: 3, after_version: 4}, preview_digest: 'c'.repeat(64), before_text: '旧事实', after_text: '新事实', diff: [{kind: 'replace', before: '旧事实', after: '新事实'}], diff_method: 'EXACT_CODEPOINT_DIFF', model_called: false, semantic_execution: 'NOT_REQUESTED'};
+  let stored: unknown[] = [];
+  const fetch = vi.fn(async (url: string, init: RequestInit) => {
+    if (url.includes('/original-versions')) return reply({current_version: 4, items: [{version: 4, current: true}, {version: 3, current: false}]});
+    if (url.endsWith('/comparisons/preview')) return reply(compare);
+    if (url.endsWith('/comparisons') && init.method === 'POST') { const body = JSON.parse(init.body as string); const row = {...compare, ...body, id: 'compare-one', version: 1, status: 'REVIEW', stale: false, history: []}; stored = [row]; return reply(row, 201); }
+    if (url.endsWith('/comparisons')) return reply({items: stored}); return reply(read(url));
+  });
+  mount(fetch); fireEvent.click(screen.getByRole('button', {name: '比较原历史版本'}));
+  await within(screen.getByLabelText('比较版本 A')).findByRole('option', {name: 'v3'});
+  fireEvent.change(screen.getByLabelText('比较版本 A'), {target: {value: '3'}});
+  fireEvent.click(screen.getByRole('button', {name: '预览原版本对比'}));
+  fireEvent.change(await screen.findByLabelText('版本比较名称'), {target: {value: '事实更正'}});
+  fireEvent.click(screen.getByRole('button', {name: '添加有证据的语义解释'}));
+  fireEvent.change(screen.getByLabelText('解释 1 来源'), {target: {value: 'IMPORTED_MODEL_ASSESSMENT'}});
+  fireEvent.change(screen.getByLabelText('解释 1 声明模型'), {target: {value: 'declared-local-model'}});
+  fireEvent.change(screen.getByLabelText('解释 1 判断'), {target: {value: '作者需核对的事实新增判断'}});
+  fireEvent.change(screen.getByLabelText('解释 1 B 原文证据'), {target: {value: '新事实'}});
+  fireEvent.click(screen.getByRole('button', {name: '保存版本比较与解释'})); await screen.findByRole('button', {name: '确认已读解读'});
+  const body = JSON.parse(fetch.mock.calls.find(([url, init]) => url.endsWith('/comparisons') && init.method === 'POST')![1].body as string);
+  expect(body.preview_digest).toBe(compare.preview_digest);
+  expect(body.changes[0]).toMatchObject({kind: 'FACT_ADDED', source: 'IMPORTED_MODEL_ASSESSMENT', model_identity: 'declared-local-model', after_quote: '新事实', after_start: 0});
+  expect(screen.getByText(/模型身份为用户声明/)).toBeTruthy();
+  expect(fetch.mock.calls.some(([url]) => url.includes('/generate') || url.endsWith('/apply'))).toBe(false);
+});
+it('closing version comparison discards late preview without replay or mutation', async () => {
+  let finish: (value: Response) => void = () => {};
+  const fetch = vi.fn(async (url: string) => url.includes('/original-versions') ? reply({current_version: 4, items: [{version: 3}, {version: 4}]}) : url.endsWith('/comparisons/preview') ? new Promise<Response>(resolve => {finish = resolve;}) : reply(read(url)));
+  mount(fetch); fireEvent.click(screen.getByRole('button', {name: '比较原历史版本'}));
+  await within(screen.getByLabelText('比较版本 A')).findByRole('option', {name: 'v3'});
+  fireEvent.change(screen.getByLabelText('比较版本 A'), {target: {value: '3'}});
+  fireEvent.click(screen.getByRole('button', {name: '预览原版本对比'})); fireEvent.click(screen.getByRole('button', {name: '关闭版本比较'}));
+  finish(reply({before_text: 'STALE_PREVIEW', after_text: 'STALE_PREVIEW', diff: []}));
+  await waitFor(() => expect(screen.queryByLabelText('版本比较名称')).toBeNull()); expect(screen.queryByText('STALE_PREVIEW')).toBeNull();
+});
+it('opens only the exact original model job comparison from a task target without generating', async () => {
+  const compared = {id: 'exact-comparison', version: 2, status: 'REVIEW', title: 'Exact original result', stale: false, comparison: {chapter_id: chapter.id, current_version: 4, before_version: 3, after_version: 4}, model_execution: {job_id: 'original-model-job', status: 'UNKNOWN', receipt_state: 'UNKNOWN_NO_AUTOMATIC_REPLAY'}, changes: [], diff: [], before_text: 'A', after_text: 'B'};
+  const fetch = vi.fn(async (url: string) => reply(url.includes('/original-versions') ? {current_version: 4, items: []} : url.endsWith('/comparisons') ? {items: [compared]} : url.endsWith('/comparisons/exact-comparison') ? compared : read(url)));
+  mount(fetch, {requestedJobId: 'original-model-job'}); await screen.findByRole('region', {name: '原版本模型任务'});
+  expect(fetch.mock.calls.some(([url]) => url.endsWith('/comparisons/exact-comparison'))).toBe(true);
+  expect(fetch.mock.calls.some(([url]) => url.endsWith('/dispatch'))).toBe(false);
+});
+it('missing original model task target stays unavailable without substituting a comparison', async () => {
+  const fetch = vi.fn(async (url: string) => reply(url.includes('/original-versions') ? {current_version: 4, items: []} : read(url)));
+  mount(fetch, {requestedJobId: 'missing-original'}); await screen.findByText(/原版本模型任务当前不可用/);
+  expect(screen.queryByRole('region', {name: '原版本模型任务'})).toBeNull();
+  expect(fetch.mock.calls.some(([url]) => url.endsWith('/dispatch') || url.endsWith('/model/preview'))).toBe(false);
+});

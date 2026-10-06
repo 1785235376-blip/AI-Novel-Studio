@@ -64,3 +64,21 @@ it('rejects stale index query in the UI and clears prior scope results', async (
   expect((screen.getByLabelText('视觉向量查询') as HTMLInputElement).value).toBe('');
   expect(fetch.mock.calls.every(([, init]) => init.method === 'GET')).toBe(true);
 });
+
+it('keeps an independent Character index usable after Research rows disappear on refresh', async () => {
+  const character = { ...row, id: 'character-index', title: 'Independent Character Index', entities: [{ entity_type: 'CHARACTER', entity_id: 'alice' }] };
+  const items = [{ ...row, title: 'Private Research Index' }, character];
+  const fetch = fixture(items); vi.stubGlobal('fetch', fetch);
+  render(<EmbeddingPanel client={client()} />);
+  await screen.findByRole('heading', { name: 'Private Research Index' });
+  await screen.findByRole('heading', { name: 'Independent Character Index' });
+  items.splice(0, 1); // Server's scoped list omits only the disabled dependency.
+  fireEvent.click(screen.getByRole('button', { name: '刷新实验记录' }));
+  await waitFor(() => expect(screen.queryByRole('heading', { name: 'Private Research Index' })).toBeNull());
+  expect(screen.getByRole('heading', { name: 'Independent Character Index' })).toBeTruthy();
+  expect(screen.queryByRole('alert')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: '选用此索引' }));
+  fireEvent.change(screen.getByLabelText('视觉向量查询'), { target: { value: 'Alice' } });
+  expect((screen.getByRole('button', { name: '查询向量' }) as HTMLButtonElement).disabled).toBe(false);
+  expect(fetch.mock.calls.every(([, init]) => init.method === 'GET')).toBe(true);
+});

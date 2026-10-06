@@ -70,10 +70,10 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
     </div>
     {!!queryTerms.length && <StatusMessage>{visibleTabs.length ? `找到 ${visibleTabs.length} / ${tabs.length} 个已启用工具。` : '没有匹配的已启用工具。请更换关键词或清除筛选。'}</StatusMessage>}
     <nav id={toolNavigationId} className="experimental-tabs" aria-label="实验功能">{visibleTabs.map(([key, label]) => <Button key={key} type="button" aria-pressed={active === key} onClick={() => { setSelected(key); setToolQuery(''); }}>{label}</Button>)}</nav>
-    {active === 'temporal_story_graph_v2' && <StoryGraphPanel client={client} chapter={chapter} mindEnabled={enabled(flags, 'character_mind_v2')} onNavigate={onNavigate} onUseCharacter={onUseCharacter} onExitCharacter={onExitCharacter} activeCharacterId={activeCharacterId} />}
+    {active === 'temporal_story_graph_v2' && <StoryGraphPanel client={client} chapter={chapter} requestedRecordId={requestedTask?.authority === 'graph_record' ? requestedTask.id : undefined} mindEnabled={enabled(flags, 'character_mind_v2')} onNavigate={onNavigate} onUseCharacter={onUseCharacter} onExitCharacter={onExitCharacter} activeCharacterId={activeCharacterId} />}
     {active === 'model_broker_v2' && <ModelBrokerPanel client={client} novelId={novelId} context={context} chapter={chapter} benchmarkEnabled={enabled(flags, 'model_benchmark_v2')} onOpenGeneration={onOpenGeneration} />}
     {active === 'asset_lineage_v2' && <ProductionLineagePanel client={client} manifestsEnabled={enabled(flags, 'production_manifest_v2')} onNavigate={onNavigate} />}
-    {active === 'style_dna_v2' && <StyleAnalysisPanel client={client} chapter={chapter} onNavigate={onNavigate} onUseStyle={onUseStyle} />}
+    {active === 'style_dna_v2' && <StyleAnalysisPanel client={client} chapter={chapter} requestedJobId={requestedTask?.authority === 'style_model_job' ? requestedTask.id : undefined} onNavigate={onNavigate} onUseStyle={onUseStyle} />}
     {active === 'narrative_quality_judge_v2' && <NarrativeJudgePanel client={client} chapter={chapter} onNavigate={onNavigate} />}
     {active === 'change_impact_v2' && <ChangeImpactPanel client={client} onNavigate={onNavigate} />}
     {active === 'story_simulator_v2' && <StorySimulatorPanel client={client} chapter={chapter} onNavigate={onNavigate} />}
@@ -92,13 +92,13 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
     {active === 'safe_batches_v2' && <SafeBatchesPanel client={client} />}
     {active === 'ai_director_v2' && <DirectorPanel client={client} />}
     {active === 'timeline_exchange_v2' && <TimelineExchangePanel client={client} />}
-    {active === 'revision_intelligence_v2' && <RevisionIntelligencePanel client={client} chapter={chapter} selection={currentSelection} saved={saved} onChapterSaved={onChapterSaved} generation={revisionGeneration} onHistory={() => onNavigate?.({ kind: 'feature', id: 'history', feature: 'history' })} />}
+    {active === 'revision_intelligence_v2' && <RevisionIntelligencePanel client={client} chapter={chapter} requestedJobId={requestedTask?.authority === 'revision_model_job' ? requestedTask.id : undefined} selection={currentSelection} saved={saved} onChapterSaved={onChapterSaved} generation={revisionGeneration} onHistory={() => onNavigate?.({ kind: 'feature', id: 'history', feature: 'history' })} />}
     {active === 'writing_focus_v2' && <WritingFocusPanel client={client} chapter={chapter} flags={flags} onNavigate={onNavigate} focusActive={focusActive} onFocusChange={onFocusChange} onPreferencesChange={onPreferencesChange} onReferencesChange={onReferencesChange} />}
     {active === 'local_ai_workflow_inspector_v2' && <WorkflowInspectionPanel client={client} />}
     {active === 'workspace_tools_v2' && <WorkspaceToolsPanel client={client} chapter={chapter} flags={flags} onNavigate={onNavigate} currentAnchor={currentAnchor} initialSection={workspaceSection} focusActive={focusActive} saveFailure={saveFailure} workspaceView={workspaceView} onWorkspaceViewChange={onWorkspaceViewChange} onWorkspaceSaved={onWorkspaceSaved} />}
     {active === 'advanced_planning_v2' && <PlanningPanel client={client} chapter={chapter} />}
     {active === 'semantic_import_v2' && <ImportPanel client={client} chapter={chapter} requestedTaskId={requestedTask?.authority === 'semantic_import' ? requestedTask.id : undefined} />}
-    {active === 'world_character_engines_v2' && <WorldPanel client={client} chapter={chapter} />}
+    {active === 'world_character_engines_v2' && <WorldPanel client={client} chapter={chapter} requestedRecordId={requestedTask?.authority === 'world_record' ? requestedTask.id : undefined} />}
     {active === 'unified_review_inbox' && <InboxPanel client={client} requestedItemId={requestedTask?.authority === 'review_inbox' ? requestedTask.id : undefined} requestedDomain={requestedTask?.authority === 'review_inbox' ? requestedTask.parent_id : undefined} />}
     {active === 'agent_team_recipes' && <TeamsPanel client={client} chapter={chapter} requestedTaskId={requestedTask?.authority === 'agent_team' ? requestedTask.id : undefined} />}
     {active === 'media_adapter_registry' && <RegistryPanel client={client} />}

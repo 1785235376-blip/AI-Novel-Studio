@@ -1,5 +1,5 @@
 {
-  "phase": "RECOVERED_INDEPENDENT_WAVE_3_CHECKPOINT",
+  "phase": "CORE_CREATION_AND_UX_IMPLEMENTED_FINAL_CI_PENDING",
   "source": "User request of 2026-10-06, sections 1–37",
   "waves": [
     {
@@ -25,7 +25,7 @@
         "U12",
         "U13"
       ],
-      "state": "IMPLEMENTED_CHECKPOINT_REFINEMENT_ACTIVE",
+      "state": "IMPLEMENTED_FRESH_FOCUSED_TESTS_FINAL_CI_PENDING",
       "safe_cloud_closure": "Existing-owner implementation, actual persistence/API/UI journeys and tests; explicit local/paid/native/unsupported boundary labels."
     },
     {
@@ -38,7 +38,7 @@
         "A05",
         "A11"
       ],
-      "state": "PENDING",
+      "state": "IMPLEMENTED_FRESH_FOCUSED_TESTS_FINAL_CI_PENDING",
       "safe_cloud_closure": "Existing-owner implementation, actual persistence/API/UI journeys and tests; explicit local/paid/native/unsupported boundary labels."
     },
     {
