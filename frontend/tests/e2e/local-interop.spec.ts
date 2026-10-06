@@ -57,10 +57,24 @@ test('real App → host → synthetic Tutor metadata, explicit send and host-aut
 
 test('actual TipTap selection produces exact saved text and Unicode offset preview', async ({ page }, info) => {
   const editor = page.getByRole('textbox', { name: '章节正文', exact: true });
-  await editor.click(); await page.keyboard.press('Control+Home'); await page.keyboard.down('Shift');
-  for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowRight');
-  await page.keyboard.up('Shift');
-  const selected = await page.evaluate(() => window.getSelection()?.toString()); expect(selected?.length).toBeGreaterThan(0);
+  await expect(editor).toContainText('合成😀选区');
+  let selected = '';
+  // The editor may be rehydrated after first becoming visible. Re-select through
+  // actual keyboard input until the CURRENT editor owns the observed range.
+  await expect(async () => {
+    await editor.click();
+    expect(await editor.evaluate(element => element.contains(document.activeElement))).toBe(true);
+    await page.keyboard.press('Control+Home'); await page.keyboard.down('Shift');
+    try { for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowRight'); }
+    finally { await page.keyboard.up('Shift'); }
+    selected = await page.evaluate(() => window.getSelection()?.toString() ?? '');
+    expect(selected.length).toBeGreaterThan(0);
+    expect(selected).toBe('合成😀选区');
+    expect(await editor.evaluate(element => {
+      const range = window.getSelection();
+      return !!range && !range.isCollapsed && element.contains(range.anchorNode) && element.contains(range.focusNode);
+    })).toBe(true);
+  }).toPass({ timeout: 10_000, intervals: [100, 250, 500] });
   const dialog = await enabledConnection(page);
   await dialog.getByRole('checkbox', { name: '选中文本', exact: true }).check();
   await expect(dialog.getByLabel('当前编辑器选区')).toHaveText(selected!);

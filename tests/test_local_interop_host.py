@@ -683,7 +683,7 @@ def test_unsubscribe_cancels_unsent_event_and_old_sse_grant(env):
         e.host.transport_factory = Delayed
         sid = await e.connect()
         e.subscribe(sid, fields=["task"])
-        await asyncio.wait_for(entered.wait(), 2)
+        await wait_for_observation(entered.is_set)
         session = e.host.sessions[sid]
         grant_id = session.event_grant_id
         e.host.event_unsubscribe("author", SessionInput(session_id=sid))
