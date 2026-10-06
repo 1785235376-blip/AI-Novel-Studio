@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 from sqlalchemy import func, select, update
 
-from ...document import clone_document_with_title, document_to_markdown, markdown_to_document
+from ...document import duplicate_document, document_to_markdown, markdown_to_document
 from ..chapter_repository import VersionConflict
 from .common import chapter_external_id, chapter_or_raise, iso, lock_chapter_namespace, novel_or_raise, require_chapter_identity, split_chapter_id
 from .models import ChapterIdentityModel, ChapterModel, ChapterSummaryModel, DocumentVersionModel
@@ -162,7 +162,7 @@ class PostgresChapterRepository:
         created = self.create(current["novel_id"], {"title": current["title"] + " Copy", "content": ""})
         with self.database.session() as session:
             _, old = chapter_or_raise(session, chapter_id); novel, new = chapter_or_raise(session, created["id"])
-            new.document = clone_document_with_title(current["document"], new.title)
+            new.document = duplicate_document(current["document"], new.title)
             new.content_hash = hashlib.sha256(document_to_markdown(new.document).encode()).hexdigest()
             latest = session.scalar(select(ChapterSummaryModel).where(ChapterSummaryModel.chapter_id == old.id).order_by(ChapterSummaryModel.created_at.desc()))
             if latest: session.add(ChapterSummaryModel(chapter_id=new.id, summary=latest.summary, structured_summary=dict(latest.structured_summary or {})))

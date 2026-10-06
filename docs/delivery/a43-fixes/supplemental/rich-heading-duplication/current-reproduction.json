@@ -1,0 +1,342 @@
+{
+  "source_commit": "1d9b88ac36b1d75c06544e3aa69c3ab308164120",
+  "layer": "real isolated File save/get/duplicate + shared PG-facing helper with original PG title calculation; no actual PostgreSQL",
+  "results": [
+    {
+      "case": "mixed_marks",
+      "source_document": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": {
+              "level": 1
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "BOLDPART",
+                "marks": [
+                  {
+                    "type": "bold"
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "text": "ITALICPART",
+                "marks": [
+                  {
+                    "type": "italic"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "BODYKEEP"
+              }
+            ]
+          }
+        ]
+      },
+      "source_file_title": "BOLDPARTITALICPART",
+      "file_duplicate_title": "BOLDPARTITALICPART Copy",
+      "file_duplicate_document": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": {
+              "level": 1
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "BOLDPARTITALICPART Copy",
+                "marks": [
+                  {
+                    "type": "bold"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "BODYKEEP"
+              }
+            ]
+          }
+        ]
+      },
+      "file_duplicate_loses_second_line": false,
+      "file_original_unchanged": true,
+      "pg_facing_helper_only_not_real_pg": {
+        "title_rule": "original PG save concatenates direct text children without hardBreak",
+        "source_title": "BOLDPARTITALICPART",
+        "document": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 1
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "BOLDPARTITALICPART Copy",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "BODYKEEP"
+                }
+              ]
+            }
+          ]
+        },
+        "retained_hard_break": false
+      }
+    },
+    {
+      "case": "hard_break",
+      "source_document": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": {
+              "level": 1
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "FIRSTLINE",
+                "marks": [
+                  {
+                    "type": "bold"
+                  }
+                ]
+              },
+              {
+                "type": "hardBreak"
+              },
+              {
+                "type": "text",
+                "text": "SECONDLINESECRET",
+                "marks": [
+                  {
+                    "type": "italic"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "BODYKEEP"
+              }
+            ]
+          }
+        ]
+      },
+      "source_file_title": "FIRSTLINE",
+      "file_duplicate_title": "FIRSTLINE Copy",
+      "file_duplicate_document": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": {
+              "level": 1
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "FIRSTLINE Copy",
+                "marks": [
+                  {
+                    "type": "bold"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "BODYKEEP"
+              }
+            ]
+          }
+        ]
+      },
+      "file_duplicate_loses_second_line": true,
+      "file_original_unchanged": true,
+      "pg_facing_helper_only_not_real_pg": {
+        "title_rule": "original PG save concatenates direct text children without hardBreak",
+        "source_title": "FIRSTLINESECONDLINESECRET",
+        "document": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 1
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "FIRSTLINESECONDLINESECRET Copy",
+                  "marks": [
+                    {
+                      "type": "bold"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "BODYKEEP"
+                }
+              ]
+            }
+          ]
+        },
+        "retained_hard_break": false
+      }
+    },
+    {
+      "case": "literal_newline",
+      "source_document": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": {
+              "level": 1
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "FIRSTLINE\nSECONDLINESECRET",
+                "marks": [
+                  {
+                    "type": "italic"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "BODYKEEP"
+              }
+            ]
+          }
+        ]
+      },
+      "source_file_title": "FIRSTLINE",
+      "file_duplicate_title": "FIRSTLINE Copy",
+      "file_duplicate_document": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "heading",
+            "attrs": {
+              "level": 1
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "FIRSTLINE Copy",
+                "marks": [
+                  {
+                    "type": "italic"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "BODYKEEP"
+              }
+            ]
+          }
+        ]
+      },
+      "file_duplicate_loses_second_line": true,
+      "file_original_unchanged": true,
+      "pg_facing_helper_only_not_real_pg": {
+        "title_rule": "original PG save concatenates direct text children without hardBreak",
+        "source_title": "FIRSTLINE\nSECONDLINESECRET",
+        "document": {
+          "type": "doc",
+          "content": [
+            {
+              "type": "heading",
+              "attrs": {
+                "level": 1
+              },
+              "content": [
+                {
+                  "type": "text",
+                  "text": "FIRSTLINE\nSECONDLINESECRET Copy",
+                  "marks": [
+                    {
+                      "type": "italic"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "paragraph",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "BODYKEEP"
+                }
+              ]
+            }
+          ]
+        },
+        "retained_hard_break": false
+      }
+    }
+  ]
+}

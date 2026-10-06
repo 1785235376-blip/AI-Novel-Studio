@@ -54,7 +54,7 @@
   "docx_list_text_present": false,
   "docx_quote_text_present": false,
   "plain_text": "第一章\n普通段落保留\n\n\n前句后句",
-  "root": "/tmp/pr43-doc-audit-qlh5di6l",
+  "root": "${OBSERVATION_TEMP}",
   "original_novel_service_snapshot_export": {
     "list_text_present": false,
     "quote_text_present": false,

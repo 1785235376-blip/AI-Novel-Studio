@@ -82,5 +82,5 @@
       "status": "PASS"
     }
   ],
-  "root": "/tmp/pr43-boundaries-l3l4u871"
+  "root": "${OBSERVATION_TEMP}"
 }

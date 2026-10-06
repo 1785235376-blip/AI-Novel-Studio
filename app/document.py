@@ -196,20 +196,43 @@ def document_to_markdown(doc: dict) -> str:
     return _markdown_block(doc) + "\n\n"
 
 
-def clone_document_with_title(doc: dict, title: str) -> dict:
-    """Deep-copy the manuscript, replacing only its leading chapter-title H1."""
+def duplicate_document(doc: dict, title: str) -> dict:
+    """Deep-copy a chapter and add only `` Copy`` to its first H1 display line.
+
+    This is exclusively the two duplicate owners' helper, not a rename API.
+    Existing rich inline runs, marks, breaks and later heading lines remain
+    intact. ``title`` is the fallback for a missing/empty H1. File and PG keep
+    their existing metadata title rules; metadata is never a lossless source
+    from which to reconstruct the copied heading.
+    """
     validate_document(doc)
     result = deepcopy(doc)
     nodes = result.setdefault("content", [])
     heading = {"type": "heading", "attrs": {"level": 1}, "content": [{"type": "text", "text": title}]}
-    if nodes and nodes[0].get("type") == "heading" and (nodes[0].get("attrs") or {}).get("level", 1) == 1:
-        original_text = next((node for node in nodes[0].get("content", []) if node["type"] == "text"), {})
-        if original_text.get("marks"):
-            heading["content"][0]["marks"] = deepcopy(original_text["marks"])
-        heading = {**nodes[0], "content": heading["content"]}
-        nodes[0] = heading
-    else:
+    if not nodes or nodes[0].get("type") != "heading" or (nodes[0].get("attrs") or {}).get("level", 1) != 1:
         nodes.insert(0, heading)
+        return result
+    content = nodes[0].setdefault("content", [])
+    if not content:
+        content.append({"type": "text", "text": title})
+        return result
+    previous_text = None
+    for index, node in enumerate(content):
+        if node["type"] == "hardBreak":
+            if previous_text is None:
+                content.insert(index, {"type": "text", "text": " Copy"})
+            else:
+                previous_text["text"] += " Copy"
+            return result
+        # Match Python's existing File title splitlines boundary, including
+        # CRLF and Unicode line separators, without normalizing any character.
+        boundary = re.search(r"[\n\r\v\f\x1c-\x1e\x85\u2028\u2029]", node["text"])
+        if boundary is not None:
+            position = boundary.start()
+            node["text"] = node["text"][:position] + " Copy" + node["text"][position:]
+            return result
+        previous_text = node
+    previous_text["text"] += " Copy"
     return result
 
 

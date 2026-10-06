@@ -3,7 +3,7 @@ from ..runtime_events import committed_change
 import json
 from pathlib import Path
 from datetime import datetime,timezone
-from ..document import markdown_to_document,document_to_markdown,clone_document_with_title
+from ..document import markdown_to_document,document_to_markdown,duplicate_document
 from ..repository import FileRepository,read_json
 from ..storage import atomic_write
 from .. import chapter_identity
@@ -92,7 +92,7 @@ class ChapterRepository:
     def duplicate(self,cid):
         current = self.get(cid)
         title = current["title"] + " Copy"
-        document = clone_document_with_title(current["document"], title)
+        document = duplicate_document(current["document"], title)
         markdown = document_to_markdown(document)
         created = self.backend.create_chapter(current["novel_id"], {"title": title, "content": ""})
         _, _, path = self._paths(created["id"])

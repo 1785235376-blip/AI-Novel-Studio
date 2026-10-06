@@ -657,9 +657,13 @@ class JobManager:
                 require_generation_content(job)
                 require_whole_generation_acceptance(job)
                 require_generation_accounting(job)
+                # Resolve the original durable source before interpreting draft
+                # readiness. A refused late completion can leave an older job
+                # status persisted after its chapter was deleted; that missing
+                # owner must remain a not-found result on either backend.
+                chapter = self.chapters.get(job.chapter_id)
                 if job.status != "COMPLETED":
                     raise ValueError("Only completed drafts can be accepted; an interrupted acceptance requires manual review")
-                chapter = self.chapters.get(job.chapter_id)
                 # Caller-supplied versions may narrow the precondition, never rebase
                 # an old generation onto a newer manuscript. Legacy continuations
                 # create a new chapter; legacy replacements without a base fail shut.
