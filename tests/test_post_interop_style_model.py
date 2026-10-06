@@ -161,14 +161,57 @@ def test_style_cancellation_fences_late_output_even_after_source_change(broker_a
     assert e.manager.get(row['model_execution']['job_id']).output=='' and cancelled['model_assessments']==[]
 
 def test_style_restart_uses_original_job_without_admitting_untrusted_persisted_output(broker_app,monkeypatch):
-    from app.jobs import JobManager
-    e=broker_app; preview=ready(e); row=dispatch(e,preview); wait_ledger(e,row['model_execution']['reservation_id'])
+    from uuid import uuid4
+    from unittest.mock import Mock
+    from app.jobs import Job, JobManager
+    e=broker_app
+    def persisted():
+        rows=e.manager.persistence.load_all()
+        assert len(rows)==len({item['id'] for item in rows})
+        return deepcopy({item['id']:item for item in rows})
+    # PG load_all is database-wide; File uses this fixture's directory. Keep
+    # every pre-existing record and deliberately exercise unrelated hydration
+    # on both backends, without calling an unconfigured provider.
+    prior=persisted()
+    unrelated=Job(str(uuid4()),'continue',e.nid,e.chapter['id'],'Unrelated terminal fixture','LOCAL_ONLY',
+        requested_provider='deepseek',requested_model='deepseek-chat',status='FAILED',
+        error_code='TEXT_PROVIDER_NOT_CONFIGURED',error='Synthetic persisted failure fixture')
+    e.manager.persistence.save(unrelated.public())
+    unrelated_saved=deepcopy(e.manager.persistence.get(unrelated.id))
+    preview=ready(e); row=dispatch(e,preview); wait_ledger(e,row['model_execution']['reservation_id'])
+    jid=row['model_execution']['job_id']; original=e.manager.get(jid)
+    # Settlement commits its ledger before publishing the final job receipt.
+    # Its original condition protects both writes; capture only that completed
+    # publication, rather than racing the final persisted updated_at.
+    with original.condition:
+        assert original.status=='COMPLETED' and original.terminal_hook_status=='COMPLETED'
+        original_public=deepcopy(original.public())
+        saved=persisted()
+    assert set(saved)==set(prior)|{unrelated.id,jid}
+    assert saved=={**prior,unrelated.id:unrelated_saved,jid:saved[jid]}
+    ledger=deepcopy(e.broker.ledger(e.nid,e.scope,'local-author'))
+    assert len(ledger)==1 and ledger[0]['job_id']==jid
     restarted=JobManager(generations=e.manager.persistence,chapters=e.chapters,contexts=e.manager.contexts,canon=e.canon,snapshot_required=False)
-    monkeypatch.setattr(e.experimental.style_analysis_service.model_coordinator,'manager',restarted)
+    assert persisted()==saved
+    assert restarted.get(jid).public()==original_public
+    assert restarted.get(jid).request_authorization is None
+    assert restarted.get(unrelated.id).public()==unrelated.public()
+    assert {job.id for job in restarted.jobs.values() if job.novel_id==e.nid and job.experimental_origin=='style_analysis_model'}=={jid}
+    hydrated={key:deepcopy(job.public()) for key,job in restarted.jobs.items()}
+    assert set(hydrated)<=set(saved)
+    coordinator=e.experimental.style_analysis_service.model_coordinator
+    monkeypatch.setattr(coordinator,'manager',restarted)
+    prepare=Mock(side_effect=AssertionError('Restart must not prepare another author job'))
+    start=Mock(side_effect=AssertionError('Restart must not dispatch a provider job'))
+    monkeypatch.setattr(coordinator.preparer,'prepare_author',prepare)
+    monkeypatch.setattr(restarted,'start_prepared',start)
     current=action(e,row,'refresh')
     assert current['model_execution']['status']=='UNKNOWN' and current['model_assessments']==[]
     assert current['model_execution']['receipt_state']=='UNKNOWN_NO_AUTOMATIC_REPLAY'
-    assert dispatch(e,preview)['model_execution']['job_id']==row['model_execution']['job_id'] and len(restarted.jobs)==1
+    assert dispatch(e,preview)['model_execution']['job_id']==jid
+    prepare.assert_not_called(); start.assert_not_called()
+    assert {key:job.public() for key,job in restarted.jobs.items()}==hydrated
+    assert persisted()==saved and e.broker.ledger(e.nid,e.scope,'local-author')==ledger
 
 def test_style_missing_host_flag_and_branch_source_never_fall_back(broker_app,monkeypatch):
     e=broker_app; assert e.client.get(e.base+'/style-analysis/model/catalog').status_code==401

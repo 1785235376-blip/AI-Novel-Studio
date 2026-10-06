@@ -1,5 +1,13 @@
 # Post-Interop R4/R5 UX continuation
 
+## Latest acceptance correction: persisted Style jobs
+
+The daaebf8 push and PR PostgreSQL shard 1 each failed the added Style restart case's global singleton expectation. Independently verified artifacts 11431714898 and 11432857833 show that the original Style job ID was retained while another terminal job was also restored. PostgreSQL loads the database-wide original generation table; clearing a mounted test's in-memory map does not clear persistence. This is a fixture assumption, with no indicated production defect.
+
+The existing case now deliberately seeds an unrelated terminal record on both backends, retains every prior persisted record, and checks exact job/persistence/ledger conservation. It checks the original restored Style state and fails on any attempted author preparation or job start. UNKNOWN_NO_AUTOMATIC_REPLAY and empty model assessments remain required after transient authorization is lost. No job is filtered away to make a singleton count pass.
+
+Fresh focused verification passed 41 File/unit/API cases; 32 PostgreSQL variants await hosted execution. Two complete collections retain exactly 7,492 ordered nodes and unchanged skip maps. Only this continuation-owned test module's source digest changes. Production, inherited assertions, timeouts, migrations and frozen Interop files are unchanged. See [the source-labelled correction receipt](docs/delivery/post-interop-continuation/STYLE_RESTART_FIXTURE_CORRECTION.json). Full applicable CI on the successor source remains required; this focused result does not upgrade any PARTIAL or blocked historical review.
+
 ## Current source delivery
 
 Draft [PR43](https://github.com/1785235376-blip/AI-Novel-Studio/pull/43) deepens the original owners across Waves0–5. It retains F00 INTEGRATED and39 PARTIAL; this is engineering continuation, not a release or complete real-model/native product acceptance. Current per-feature and UX journey evidence is in `POST_INTEROP_FEATURE_MATRIX.md/json` and `UX_ACCEPTANCE_MATRIX.md`; original requirement traceability is in `docs/delivery/post-interop-continuation/TASK_REGISTER.json`.
