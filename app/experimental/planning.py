@@ -211,7 +211,15 @@ class PlanningService(DomainService):
             rows.append(current)
         return list(reversed(rows))
 
+    def _assert_simulation(self, nid, scope, row, state=None):
+        if row.get("simulation_provenance"):
+            validator = getattr(self, "simulation_validator", None)
+            if not callable(validator):
+                raise StaleSourceError("simulation validator unavailable; reopen with current simulator configuration")
+            validator(nid, scope, row, state)
+
     def _assert_fresh(self, nid, scope, row, state=None, allow_applied=False):
+        self._assert_simulation(nid, scope, row, state)
         state = state if state is not None else self.store.read(nid, scope)
         self.assert_sources(nid, row.get("sources", {}))
         try:
@@ -396,10 +404,19 @@ class PlanningService(DomainService):
     def proposals(self, nid, scope):
         state = self.store.read(nid, scope)
         self.novels.get(nid)
-        return [self._decorate(nid, scope, row, state) for row in collection(state, self.PROPOSALS).values()]
+        rows = []
+        for row in collection(state, self.PROPOSALS).values():
+            try:
+                self._assert_simulation(nid, scope, row, state)
+            except (ValueError, FileNotFoundError):
+                continue  # No disabled/stale simulator content or count in legacy projections.
+            rows.append(self._decorate(nid, scope, row, state))
+        return rows
 
     def proposal(self, nid, scope, pid):
-        return self._decorate(nid, scope, self.get(nid, scope, self.PROPOSALS, pid))
+        row = self.get(nid, scope, self.PROPOSALS, pid)
+        self._assert_simulation(nid, scope, row)
+        return self._decorate(nid, scope, row)
 
     def compare(self, nid, scope, ids):
         if not 2 <= len(ids) <= 8 or len(set(ids)) != len(ids):
@@ -410,9 +427,10 @@ class PlanningService(DomainService):
         differences = {key: {row["id"]: row["fields"][key] for row in rows} for key in PlanningFields.model_fields if len({digest(row["fields"][key]) for row in rows}) > 1}
         return {"items": rows, "differences": differences, "target_node_id": rows[0]["node_id"]}
 
-    def review(self, nid, scope, actor, item_id, action, expected_version):
+    def review(self, nid, scope, actor, item_id, action, expected_version, reauthorize=lambda: None):
         with self.store.transaction(nid, scope) as state:
             row = require_row(state, self.PROPOSALS, item_id)
+            self._assert_simulation(nid, scope, row, state)
             if row["version"] != expected_version:
                 raise CapabilityVersionConflict(deepcopy(row))
             transitions = {"approve": ({"REVIEW"}, "APPROVED"), "reject": ({"REVIEW"}, "REJECTED"), "reopen": ({"REJECTED", "ARCHIVED"}, "REVIEW"), "archive": ({"REVIEW", "REJECTED", "APPROVED"}, "ARCHIVED")}
@@ -432,21 +450,28 @@ class PlanningService(DomainService):
                 if action == "approve":
                     target["applied_node_version"] = applied_version
             change_row(row, actor, expected_version, update)
+            reauthorize()
+            self._assert_simulation(nid, scope, row, state)
             return deepcopy(row)
 
-    def restore(self, nid, scope, actor, pid, expected_version, historical_version):
+    def restore(self, nid, scope, actor, pid, expected_version, historical_version, reauthorize=lambda: None):
         with self.store.transaction(nid, scope) as state:
             row = require_row(state, self.PROPOSALS, pid)
+            self._assert_simulation(nid, scope, row, state)
             old = next((entry for entry in row["history"] if entry.get("version") == historical_version), None)
             if old is None:
                 raise FileNotFoundError("planning history version")
             # History content comes back for review with its original source fence.
             restored = {key: deepcopy(old[key]) for key in ("fields", "links", "title", "rationale", "sources", "entity_sources", "target_version", "ancestor_versions")}
             change_row(row, actor, expected_version, lambda target: target.update(restored, status="REVIEW", restored_from_version=historical_version))
+            reauthorize()
+            self._assert_simulation(nid, scope, row, state)
             return deepcopy(row)
 
     def history(self, nid, scope, pid):
-        return self.get(nid, scope, self.PROPOSALS, pid)["history"]
+        row = self.get(nid, scope, self.PROPOSALS, pid)
+        self._assert_simulation(nid, scope, row)
+        return row["history"]
 
     def list_review_items(self, nid, scope):
         return [{**row, "domain": "planning", "source": "structured_planning", "preview": row["title"], "target": {"node_id": row["node_id"], "graph_id": row["graph_id"]}, "source_versions": row["sources"], "risk": "PLANNING_ONLY", "safe_batch": False, "allowed_actions": ["approve", "reject"] if row["status"] == "REVIEW" else ["reopen"] if row["status"] in {"REJECTED", "ARCHIVED"} else []} for row in self.proposals(nid, scope)]

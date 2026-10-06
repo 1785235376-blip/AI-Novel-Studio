@@ -66,6 +66,16 @@ async def request_id_middleware(request: Request, call_next):
     response.headers["X-Request-ID"] = request_id
     return response
 
+from .revision_constraints import RevisionConstraintError
+
+
+@app.exception_handler(RevisionConstraintError)
+async def revision_constraint_error(request: Request, exc: RevisionConstraintError):
+    return JSONResponse(status_code=409, content={"code": exc.code,
+        "message": "段落已锁定或锁定依据已变化。请核对后明确解锁，再采用 AI 修改。",
+        "details": {}, "request_id": getattr(request.state, "request_id", "")})
+
+
 @app.exception_handler(HTTPException)
 async def unified_http_error(request: Request, exc: HTTPException):
     detail = exc.detail
@@ -78,7 +88,7 @@ async def unified_http_error(request: Request, exc: HTTPException):
         message = str(detail)
         details = {}
     request_id = getattr(request.state, "request_id", "")
-    return JSONResponse(status_code=exc.status_code, content={"detail": detail, "code": code, "message": message, "details": details, "request_id": request_id}, headers={"X-Request-ID": request_id})
+    return JSONResponse(status_code=exc.status_code, content={"detail": detail, "code": code, "message": message, "details": details, "request_id": request_id}, headers={**{key: value for key, value in (exc.headers or {}).items() if key.lower() != "x-request-id"}, "X-Request-ID": request_id})
 
 def _normalized_api_path(path: str) -> str:
     """Use the legacy path shape for middleware checks on the v1 alias."""
@@ -278,6 +288,10 @@ async def collaboration_fail_closed(request,call_next):
         from .experimental.flags import enabled_flags
         experimental_path = re.fullmatch(r"/api/novels/[^/]+/experimental/.+", normalized_path) is not None
         if (normalized_path == "/api/experimental/features" and method == "GET") or (experimental_path and enabled_flags() and method in {"GET", "POST", "PUT", "PATCH", "DELETE"}):
+            allowed = True
+        first_use_route = ((normalized_path == "/api/experimental/first-use/sample" and method in {"GET", "POST"})
+                           or (normalized_path == "/api/experimental/first-use/sample/recover" and method == "POST"))
+        if first_use_route and 'workspace_tools_v2' in enabled_flags():
             allowed = True
         if not allowed:
             return JSONResponse({"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}},status_code=501)

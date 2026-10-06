@@ -19,7 +19,7 @@ async function request<T>(url: string, method: string, body?: unknown, context?:
     try { raw = await response.json(); } catch { /* Never render arbitrary server HTML. */ }
     const detail = raw.detail ?? raw.error ?? raw;
     const code = raw.code ?? detail?.code ?? (response.status === 403 ? 'FORBIDDEN' : response.status === 409 ? 'VERSION_CONFLICT' : 'EXPERIMENTAL_REQUEST_FAILED');
-    throw new ApiError({ status: response.status, code: typeof code === 'string' ? code : 'EXPERIMENTAL_REQUEST_FAILED', message: response.status === 409 ? '版本或来源已改变。草稿已保留，请刷新并核对后再操作。' : response.status === 403 ? '当前身份没有此操作权限。' : response.status === 404 ? '功能未启用或记录不可用。' : '操作未完成，请核对输入后重试。', request_id: raw.request_id ?? response.headers.get('X-Request-ID') ?? undefined });
+    throw new ApiError({ status: response.status, code: typeof code === 'string' ? code : 'EXPERIMENTAL_REQUEST_FAILED', message: response.status === 401 ? '需要有效的本机可信会话，请重新打开已授权的本机应用。' : response.status === 409 ? '版本或来源已改变。草稿已保留，请刷新并核对后再操作。' : response.status === 403 ? '当前身份没有此操作权限。' : response.status === 404 ? '功能未启用或记录不可用。' : '操作未完成，请核对输入后重试。', request_id: raw.request_id ?? response.headers.get('X-Request-ID') ?? undefined });
   }
   return response.status === 204 ? undefined as T : asBlob ? response.blob() as Promise<T> : response.json();
 }

@@ -78,6 +78,7 @@ def mounted(request, tmp_path, monkeypatch, prefix):
     import app.main as main
     import app.workflow_api as workflows
     from app.audio_production_store import AudioProductionStore
+    import app.audio_production_store as audio_module
 
     backend = request.param
     url = os.getenv("TEST_POSTGRES_DATABASE_URL", "") if backend == "postgres" else ""
@@ -93,6 +94,11 @@ def mounted(request, tmp_path, monkeypatch, prefix):
     exports = ExportJobService(tmp_path, novels.export)
     capabilities = V1CapabilityService(tmp_path, novels, chapters, assets, exports)
     creation = CreationWorkbenchService(capabilities, chapters, novels)
+    # Original router closures retain the initial service object. Rebind its
+    # dependencies too, rather than claiming a replacement global changes it.
+    captured_creation = api.creation_workbench_service
+    for name, value in (("store", capabilities), ("chapters", chapters), ("novels", novels)):
+        monkeypatch.setattr(captured_creation, name, value)
     screenplays = ScreenplayService(bundle.novels, bundle.chapters)
     imports = ImportReviewService(tmp_path)
     canon, lore = CanonService(bundle.canon), LoreService(bundle.lore)
@@ -108,11 +114,25 @@ def mounted(request, tmp_path, monkeypatch, prefix):
     membership = MembershipAuthorizationService(identity, authorization)
     sessions = TrustedSessionResolver()
     store = ExperimentalStore(tmp_path, backend, url)
+    monkeypatch.setattr(experimental.first_use_service, "store", store)
     services = (
         experimental.planning_service, experimental.world_service,
         experimental.import_service, experimental.team_service,
         experimental.media_service, experimental.embedding_service,
-        experimental.audiobook_service,
+        experimental.audiobook_service, experimental.workspace_tools_service,
+        experimental.writing_focus_service, experimental.story_graph_service,
+        experimental.model_broker_service, experimental.model_benchmark_service,
+        experimental.production_lineage_service, experimental.style_analysis_service,
+        experimental.narrative_judge_service, experimental.change_impact_service,
+        experimental.story_simulator_service, experimental.research_library_service,
+        experimental.revision_intelligence_service, experimental.reader_preflight_service,
+        experimental.writing_sessions_service, experimental.director_service,
+        experimental.timeline_exchange_service, experimental.subtitle_timeline_service,
+        experimental.portable_projects_service, experimental.safe_batches_service,
+        experimental.multilingual_editions_service, experimental.template_library_service,
+        experimental.declarative_agents_service, experimental.comic_layouts_service,
+        experimental.interactive_story_service, experimental.writer_room_service,
+        experimental.project_forks_service, experimental.offline_sync_service,
     )
     # Router closures capture these real service instances at application import.
     # Rebind their dependencies, not the route implementation or approval methods.
@@ -123,6 +143,10 @@ def mounted(request, tmp_path, monkeypatch, prefix):
             monkeypatch.setattr(service, "assets", assets)
         if hasattr(service, "screenplays"):
             monkeypatch.setattr(service, "screenplays", screenplays)
+        if hasattr(service, "creation"):
+            monkeypatch.setattr(service, "creation", creation)
+    monkeypatch.setattr(audio_module, "audio_production_store", audio)
+    monkeypatch.setattr(experimental.research_library_service, "legacy", capabilities)
     monkeypatch.setattr(experimental.import_service, "apply_service", ImportApplyService(novels, tmp_path))
     for name, value in {
         "settings": config, "novel_service": novels, "chapter_service": chapters,

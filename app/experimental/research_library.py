@@ -1,0 +1,335 @@
+"""A10 extends Research metadata with native scoped, cited local sources.
+
+Legacy research is projected live in local scope, never copied or migrated.
+New native records use ExperimentalStore; the legacy metadata-only sidecar keeps
+its old contract. Research never becomes manuscript, Canon or character input.
+"""
+from __future__ import annotations
+
+import base64
+import copy
+import hashlib
+import re
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from ..import_parsers import decode_base64
+from .common import DomainService, StaleSourceError, new_row, now, check_version, change_row
+from .planning import collection, require_row, digest
+from .research_extract import MAX_BYTES, extract_document, fetch_webpage, _paragraphs
+from .world import WorldRecordIn
+
+SOURCES = 'research_sources'
+NOTES = 'research_notes'
+MAX_SOURCES = 100
+MAX_STORED_BYTES = 32 * 1024 * 1024
+
+
+class StrictInput(BaseModel):
+    model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
+
+
+class MetadataIn(StrictInput):
+    title: str = Field(min_length=1, max_length=240)
+    author: str = Field(default='', max_length=160)
+    source: str = Field(default='', max_length=2000)
+    source_version: str = Field(default='', max_length=160)
+    usage_notes: str = Field(default='', max_length=4000)
+    access: Literal['PRIVATE', 'PROJECT'] = 'PRIVATE'
+
+
+class FileIn(MetadataIn):
+    filename: str = Field(min_length=1, max_length=240)
+    content_base64: str = Field(min_length=4, max_length=((MAX_BYTES + 2) // 3) * 4)
+
+
+class WebIn(MetadataIn):
+    url: str = Field(min_length=1, max_length=2000)
+    confirm_fetch: Literal[True]
+
+
+class EditIn(MetadataIn):
+    expected_version: int = Field(ge=1)
+
+
+class CitationIn(StrictInput):
+    source_id: str = Field(min_length=1, max_length=200)
+    source_version: int = Field(ge=1)
+    paragraph: int = Field(ge=0, le=5000)
+    page: int | None = Field(default=None, ge=1, le=1000)
+    quote_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+
+    @model_validator(mode='after')
+    def location(self):
+        if (self.paragraph == 0) != (self.page is not None):
+            raise ValueError('page-only citation requires paragraph 0 and a page')
+        return self
+
+
+class NoteIn(StrictInput):
+    title: str = Field(min_length=1, max_length=240)
+    text: str = Field(min_length=1, max_length=8000)
+    citations: list[CitationIn] = Field(min_length=1, max_length=20)
+
+
+class AdoptIn(StrictInput):
+    title: str = Field(min_length=1, max_length=240)
+    original_setting: str = Field(min_length=1, max_length=8000)
+    citations: list[CitationIn] = Field(min_length=1, max_length=20)
+    confirm_original: Literal[True]
+
+
+class ResearchLibraryService(DomainService):
+    def __init__(self, store, novels, chapters, *, legacy=None, world=None):
+        super().__init__(store, novels, chapters)
+        self.legacy, self.world = legacy, world
+
+    @staticmethod
+    def _visible(row, actor):
+        return row.get('status') == 'ACTIVE' and (row.get('access') == 'PROJECT' or row.get('created_by') == actor)
+
+    @staticmethod
+    def _public(row, details=False):
+        excluded = {'content_base64', 'history', 'paragraphs'}
+        value = {key: copy.deepcopy(item) for key, item in row.items() if key not in excluded}
+        if details: value['paragraphs'] = [{**copy.deepcopy(paragraph), 'citation': ResearchLibraryService._cite(row, paragraph)} for paragraph in row.get('paragraphs', [])]
+        value['page_citations'] = [ResearchLibraryService._page_cite(row, page) for page in row.get('unread_pages', [])] if details else []
+        value['layer'] = 'RESEARCH'
+        value['paragraph_count'] = len(row.get('paragraphs', []))
+        return value
+
+    def _legacy_sources(self, nid, scope):
+        if self.legacy is None or scope.get('mode') != 'local': return []
+        projected = []
+        for source in self.legacy.list_research(nid)['items']:
+            if source.get('status') != 'ACTIVE': continue
+            text = source.get('excerpt') or ''
+            projected.append({**source, 'id': 'legacy:' + source['id'], 'access': 'PROJECT',
+                'format': 'LEGACY_NOTE', 'origin': 'LEGACY_LIVE', 'storage': 'durable_sidecar',
+                'source': source.get('url') or source.get('citation', ''), 'source_version': str(source['version']),
+                'usage_notes': source.get('notes', ''), 'accessed_at': source.get('updated_at'),
+                'extraction_status': 'TEXT_EXTRACTED' if text else 'NO_TEXT',
+                'paragraphs': _paragraphs([(None, text)]), 'warnings': ['Existing metadata; URLs are not fetched.'],
+                'content_sha256': hashlib.sha256(text.encode()).hexdigest(), 'privacy_level': 'LOCAL_ONLY'})
+        return projected
+
+    def _sources(self, nid, scope, actor, state=None):
+        self.novels.get(nid)
+        state = state or self.store.read(nid, scope)
+        rows = []
+        for rid in collection(state, SOURCES):
+            row = require_row(state, SOURCES, rid)
+            if self._visible(row, actor): rows.append(copy.deepcopy(row))
+        return rows + self._legacy_sources(nid, scope)
+
+    def _source(self, nid, scope, actor, rid, state=None):
+        row = next((row for row in self._sources(nid, scope, actor, state) if row['id'] == rid), None)
+        if row is None: raise FileNotFoundError(rid)
+        return row
+
+    def sources(self, nid, scope, actor):
+        rows = [self._public(row) for row in self._sources(nid, scope, actor)]
+        return {'items': rows, 'total': len(rows), 'storage': self.store.storage_mode,
+                'adapters': {'ocr': 'NOT_CONFIGURED', 'vector': 'NOT_CONFIGURED', 'vision': 'NOT_CONFIGURED'},
+                'external_fetch': False, 'context_injection': False}
+
+    def source(self, nid, scope, actor, rid):
+        return self._public(self._source(nid, scope, actor, rid), True)
+
+    def original(self, nid, scope, actor, rid):
+        row = self._source(nid, scope, actor, rid)
+        if not row.get('content_base64'): raise FileNotFoundError(rid)
+        return base64.b64decode(row['content_base64']), row['filename']
+
+    def _save_source(self, nid, scope, actor, meta, extraction, *, filename='', encoded='', guard):
+        self.novels.get(nid)
+        payload = {**meta, **extraction, 'filename': filename, 'content_base64': encoded,
+                   'origin': 'LOCAL_IMPORT' if encoded else 'EXPLICIT_WEB_FETCH',
+                   'status': 'ACTIVE', 'accessed_at': now(), 'privacy_level': 'LOCAL_ONLY'}
+        with self.store.transaction(nid, scope) as state:
+            guard()
+            rows = collection(state, SOURCES)
+            if len(rows) >= MAX_SOURCES: raise ValueError('RESEARCH_SOURCE_LIMIT')
+            if sum(len(row.get('content_base64', '')) + sum(len(p['text']) for p in row.get('paragraphs', [])) for row in rows.values()) + len(encoded) + sum(len(p['text']) for p in extraction['paragraphs']) > MAX_STORED_BYTES:
+                raise ValueError('RESEARCH_STORAGE_LIMIT')
+            row = new_row(nid, scope, actor, payload)
+            rows[row['id']] = row
+            guard()
+            return self._public(row, True)
+
+    def import_file(self, nid, scope, actor, value, *, guard):
+        body = FileIn.model_validate(value)
+        guard()
+        try: raw = decode_base64(body.content_base64)
+        except ValueError as exc: raise ValueError('RESEARCH_BASE64_INVALID') from exc
+        extraction = extract_document(body.filename, raw)
+        guard()
+        meta = MetadataIn.model_validate(body.model_dump(exclude={'filename', 'content_base64'})).model_dump()
+        return self._save_source(nid, scope, actor, meta, extraction, filename=body.filename, encoded=body.content_base64, guard=guard)
+
+    def import_web(self, nid, scope, actor, value, *, guard):
+        body = WebIn.model_validate(value)
+        guard()
+        extraction = fetch_webpage(body.url, guard=guard)
+        guard()
+        meta = MetadataIn.model_validate(body.model_dump(exclude={'url', 'confirm_fetch'})).model_dump()
+        meta['source'] = extraction['final_url']
+        return self._save_source(nid, scope, actor, meta, extraction, guard=guard)
+
+    def edit_source(self, nid, scope, actor, rid, value, *, guard):
+        body = EditIn.model_validate(value)
+        with self.store.transaction(nid, scope) as state:
+            guard()
+            row = self._source(nid, scope, actor, rid, state)
+            if row.get('origin') == 'LEGACY_LIVE': raise ValueError('RESEARCH_LEGACY_USE_EXISTING_EDITOR')
+            if row['created_by'] != actor: raise FileNotFoundError(rid)
+            check_version(self._public(row), body.expected_version)
+            target = require_row(state, SOURCES, rid)
+            target.update(body.model_dump(exclude={'expected_version'}), version=row['version'] + 1, updated_at=now(), updated_by=actor)
+            self._invalidate(state, rid)
+            guard()
+            return self._public(target, True)
+
+    @staticmethod
+    def _invalidate(state, rid):
+        # Native derived caches are erased atomically. Notes/drafts keep the
+        # author's work but cannot be returned or reused without current proof.
+        for name in ('research_index', 'research_contexts', 'research_summaries', 'research_vectors'):
+            rows = collection(state, name)
+            for key in list(rows):
+                if rid in rows[key].get('source_ids', []): del rows[key]
+        for name in (NOTES, 'world_records'):
+            for row in collection(state, name).values():
+                refs = row.get('citations', row.get('research_sources', []))
+                if any(ref['source_id'] == rid for ref in refs): row['research_stale'] = True
+
+    def transition_source(self, nid, scope, actor, rid, expected_version, action, *, guard):
+        if action not in {'revoke', 'delete'}: raise ValueError('invalid source action')
+        with self.store.transaction(nid, scope) as state:
+            guard()
+            row = self._source(nid, scope, actor, rid, state)
+            if row.get('origin') == 'LEGACY_LIVE': raise ValueError('RESEARCH_LEGACY_USE_EXISTING_EDITOR')
+            if row['created_by'] != actor: raise FileNotFoundError(rid)
+            check_version(self._public(row), expected_version)
+            target = require_row(state, SOURCES, rid)
+            target.update(status='REVOKED' if action == 'revoke' else 'DELETED', version=row['version'] + 1, updated_at=now(), updated_by=actor)
+            self._invalidate(state, rid)
+            guard()
+            return {'id': rid, 'version': target['version'], 'status': target['status'], 'derived_context_invalidated': True}
+
+    @staticmethod
+    def _cite(row, paragraph):
+        return {'source_id': row['id'], 'source_version': row['version'], 'paragraph': paragraph['paragraph'],
+                'quote_sha256': hashlib.sha256(paragraph['text'].encode()).hexdigest()}
+
+    @staticmethod
+    def _page_cite(row, page):
+        return {'source_id': row['id'], 'source_version': row['version'], 'paragraph': 0, 'page': page, 'quote_sha256': row['content_sha256']}
+
+    def resolve(self, nid, scope, actor, value, state=None):
+        ref = CitationIn.model_validate(value).model_dump(exclude_none=True)
+        row = self._source(nid, scope, actor, ref['source_id'], state)
+        if row['version'] != ref['source_version']: raise StaleSourceError('RESEARCH_SOURCE_VERSION_CHANGED')
+        if ref['paragraph'] == 0:
+            if ref['page'] not in row.get('unread_pages', []) or self._page_cite(row, ref['page']) != ref:
+                raise StaleSourceError('RESEARCH_PAGE_CITATION_CHANGED')
+            return {'citation': ref, 'title': row['title'], 'author': row.get('author', ''), 'source': row.get('source', ''),
+                    'page': ref['page'], 'paragraph': 0, 'text': '', 'layer': 'RESEARCH', 'not_understood': True,
+                    'warning': 'Page reference only; OCR and visual understanding are not configured.'}
+        paragraph = next((p for p in row['paragraphs'] if p['paragraph'] == ref['paragraph']), None)
+        if paragraph is None or self._cite(row, paragraph) != ref: raise StaleSourceError('RESEARCH_CITATION_CHANGED')
+        return self._evidence(row, paragraph)
+
+    @staticmethod
+    def _evidence(row, paragraph):
+        return {'citation': ResearchLibraryService._cite(row, paragraph), 'title': row['title'], 'author': row.get('author', ''), 'source': row.get('source', ''),
+                'page': paragraph['page'], 'paragraph': paragraph['paragraph'], 'text': paragraph['text'],
+                'accessed_at': row.get('accessed_at'), 'source_version_label': row.get('source_version', ''), 'layer': 'RESEARCH'}
+
+    def search(self, nid, scope, actor, query, limit=30):
+        if not query.strip() or len(query) > 200 or not 1 <= limit <= 100: raise ValueError('RESEARCH_QUERY_INVALID')
+        words = re.findall(r'\S+', query.casefold())
+        items = []
+        for row in self._sources(nid, scope, actor):
+            for paragraph in row['paragraphs']:
+                text = paragraph['text'].casefold()
+                if all(word in text for word in words):
+                    items.append(self._evidence(row, paragraph))
+                    if len(items) >= limit: return {'items': items, 'limit': limit, 'method': 'LOCAL_LITERAL', 'truncated': True}
+        return {'items': items, 'limit': limit, 'method': 'LOCAL_LITERAL', 'truncated': False}
+
+    def _validate_refs(self, nid, scope, actor, refs, state=None):
+        if not refs: raise ValueError('RESEARCH_CITATION_REQUIRED')
+        return [self.resolve(nid, scope, actor, ref, state) for ref in refs]
+
+    def context(self, nid, scope, actor, refs):
+        evidence = self._validate_refs(nid, scope, actor, refs)
+        return {'items': evidence, 'layer': 'RESEARCH', 'privacy_level': 'LOCAL_ONLY', 'untrusted_data': True,
+                'instructions_allowed': False, 'automatic_injection': False, 'model_called': False}
+
+    def create_note(self, nid, scope, actor, value, *, guard):
+        payload = NoteIn.model_validate(value).model_dump(exclude_none=True)
+        with self.store.transaction(nid, scope) as state:
+            guard(); self._validate_refs(nid, scope, actor, payload['citations'], state)
+            if len(collection(state, NOTES)) >= 1000: raise ValueError('RESEARCH_NOTE_LIMIT')
+            row = new_row(nid, scope, actor, {**payload, 'status': 'ACTIVE', 'layer': 'RESEARCH_NOTE'})
+            collection(state, NOTES)[row['id']] = row
+            guard()
+            return copy.deepcopy(row)
+
+    def notes(self, nid, scope, actor):
+        state = self.store.read(nid, scope)
+        rows = []
+        for row in collection(state, NOTES).values():
+            if row['created_by'] != actor: continue
+            try: evidence = self._validate_refs(nid, scope, actor, row['citations'], state)
+            except (FileNotFoundError, StaleSourceError): continue
+            rows.append({**copy.deepcopy(row), 'evidence': evidence})
+        return {'items': rows, 'total': len(rows)}
+
+    def adopt(self, nid, scope, actor, value, *, guard):
+        body = AdoptIn.model_validate(value)
+        if self.world is None: raise ValueError('RESEARCH_WORLD_NOT_CONFIGURED')
+        refs = [ref.model_dump(exclude_none=True) for ref in body.citations]
+        # A new author-written setting, never a verbatim adoption of a source.
+        evidence = self._validate_refs(nid, scope, actor, refs)
+        if any(body.original_setting.strip() == item['text'].strip() for item in evidence):
+            raise ValueError('RESEARCH_ORIGINAL_SETTING_REQUIRED')
+        payload = WorldRecordIn(kind='ABILITY', title=body.title, data={'name': body.title, 'description': body.original_setting})
+        return self.world.create_research_draft(nid, scope, actor, payload, refs, guard=guard,
+            validate=lambda state: self._validate_refs(nid, scope, actor, refs, state))
+
+    def drafts(self, nid, scope, actor):
+        state = self.store.read(nid, scope)
+        rows = []
+        for row in collection(state, 'world_records').values():
+            if not row.get('research_sources') or row['created_by'] != actor: continue
+            try: evidence = self._validate_refs(nid, scope, actor, row['research_sources'], state)
+            except (FileNotFoundError, StaleSourceError): continue
+            rows.append({**copy.deepcopy(row), 'evidence': evidence, 'layer': 'SETTING_DRAFT', 'canon_promotion_available': False})
+        return {'items': rows, 'total': len(rows)}
+
+    def review_draft(self, nid, scope, actor, rid, expected_version, action, *, guard):
+        if action not in {'review', 'reopen'}: raise ValueError('RESEARCH_DRAFT_ACTION_INVALID')
+        with self.store.transaction(nid, scope) as state:
+            guard()
+            row = require_row(state, 'world_records', rid)
+            if not row.get('research_sources') or row['created_by'] != actor: raise FileNotFoundError(rid)
+            self._validate_refs(nid, scope, actor, row['research_sources'], state)
+            check_version(row, expected_version)
+            if (action == 'review' and row['status'] != 'REVIEW') or (action == 'reopen' and row['status'] != 'RESEARCH_REVIEWED'):
+                raise ValueError('RESEARCH_DRAFT_TRANSITION_INVALID')
+            change_row(row, actor, expected_version, lambda target: target.update(
+                status='RESEARCH_REVIEWED' if action == 'review' else 'REVIEW', canon_state='CANDIDATE'))
+            guard()
+            return {**copy.deepcopy(row), 'layer': 'SETTING_DRAFT', 'canon_promotion_available': False}
+
+    def backrefs(self, nid, scope, actor, rid):
+        self._source(nid, scope, actor, rid)
+        result = []
+        for kind, rows in [('NOTE', self.notes(nid, scope, actor)['items']), ('SETTING_DRAFT', self.drafts(nid, scope, actor)['items'])]:
+            for row in rows:
+                if any(ref['source_id'] == rid for ref in row.get('citations', row.get('research_sources', []))):
+                    result.append({'kind': kind, 'id': row['id'], 'title': row['title'], 'version': row['version']})
+        return {'items': result, 'total': len(result)}

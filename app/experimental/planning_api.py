@@ -1,5 +1,5 @@
 """Opt-in planning HTTP contracts; all authority comes from the existing gate."""
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Header, HTTPException
 from pydantic import Field
 
 from .common import api_call
@@ -25,6 +25,12 @@ def create_planning_router(service, authorize, require_flag):
     def access(nid, token, branch, write=False, review=False):
         require_flag("advanced_planning_v2")
         return authorize(nid, token, branch, "domain.review" if review else "domain.write" if write else "domain.read")
+
+    def reauthorize(nid, token, branch, actor, scope, review=False):
+        def again():
+            if access(nid, token, branch, True, review) != (actor, scope):
+                raise HTTPException(409, {"code": "PLANNING_AUTHORITY_CHANGED"})
+        return again
 
     @router.get("/graphs")
     def graphs(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -104,11 +110,11 @@ def create_planning_router(service, authorize, require_flag):
     @router.post("/proposals/{pid}/restore")
     def restore(nid: str, pid: str, body: PlanningRestoreIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope = access(nid, x_session_token, x_branch_id, True)
-        return api_call(service.restore, nid, scope, actor, pid, body.expected_version, body.historical_version)
+        return api_call(service.restore, nid, scope, actor, pid, body.expected_version, body.historical_version, reauthorize=reauthorize(nid, x_session_token, x_branch_id, actor, scope))
 
     @router.post("/proposals/{pid}/{action}")
     def review(nid: str, pid: str, action: str, body: PlanningActionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope = access(nid, x_session_token, x_branch_id, True, action in {"approve", "reject", "reopen"})
-        return api_call(service.review, nid, scope, actor, pid, action, body.expected_version)
+        return api_call(service.review, nid, scope, actor, pid, action, body.expected_version, reauthorize=reauthorize(nid, x_session_token, x_branch_id, actor, scope, action in {"approve", "reject", "reopen"}))
 
     return router

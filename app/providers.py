@@ -226,6 +226,13 @@ class MockProvider(LLMProvider):
     def __init__(self,delay_ms:int=35,failure:str=""): self.delay_ms=delay_ms; self.failure=failure
     def _text(self,prompt:str)->str:
         if self.failure: raise ProviderError(f"Mock failure: {self.failure}")
+        # Explicit synthetic contract only; never a fallback for registered models.
+        from .experimental.narrative_judge_model import synthetic_judge_response
+        judged = synthetic_judge_response(prompt)
+        if judged is not None: return judged
+        from .experimental.story_simulator_model import synthetic_simulator_response
+        simulated = synthetic_simulator_response(prompt)
+        if simulated is not None: return simulated
         return "海风裹着雨水灌入狭窄的舱道。林海推开船舱门，锈蚀的合页发出低哑呻吟。他没有立刻迈进去——黑暗深处，某种金属正有规律地轻响。"
     def generate(self,prompt:str,model:str,**kwargs)->Generation:
         text=self._text(prompt); return Generation(text,self.name,model,len(prompt)//3,len(text)//3,metadata={"mock":True})

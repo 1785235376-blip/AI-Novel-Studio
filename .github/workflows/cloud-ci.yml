@@ -27,7 +27,9 @@ jobs:
   backend:
     name: Backend / ${{ matrix.backend }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    # The expanded marked PG suite reached 83% while still advancing at the
+    # former 20-minute cap; retain a finite cap without skipping contracts.
+    timeout-minutes: ${{ matrix.backend == 'postgres' && 30 || 20 }}
     strategy:
       fail-fast: false
       matrix:
@@ -56,7 +58,7 @@ jobs:
       - name: Install backend dependencies
         working-directory: ${{ env.CI_PROJECT }}
         run: |
-          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild]'
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
           python -m pip check
           python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
       - name: Install real media decoding and assembly tools
@@ -103,6 +105,15 @@ jobs:
           set -o pipefail
           PYTHONPATH="$CI_PROJECT/.github/ci:$CI_PROJECT" python -m pytest -p postgres_gate -p no:cacheprovider --basetemp="$CI_SANDBOX/pytest" -q -ra --tb=short \
             --junitxml="$CI_RECEIPTS/backend.xml" 2>&1 | tee "$CI_RECEIPTS/backend.log"
+      - name: Real two-process loopback offline synchronization
+        if: matrix.backend == 'file' && (success() || failure())
+        working-directory: ${{ env.CI_PROJECT }}
+        env:
+          RUN_B10_TCP_SYNC_TEST: '1'
+          STORAGE_BACKEND: file
+        run: |
+          set -o pipefail
+          python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/sync-tcp-pytest" -q -ra --tb=short tests/test_r5_offline_sync_tcp.py --junitxml="$CI_RECEIPTS/sync-tcp.xml" 2>&1 | tee "$CI_RECEIPTS/sync-tcp.log"
       - name: Summarize exact revision and test counts
         if: always() && env.CI_RECEIPTS != ''
         run: python .github/ci/receipt.py "$CI_RECEIPTS"
@@ -171,7 +182,7 @@ jobs:
       - name: Install isolated backend for business browser journeys
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}
-        run: python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild]'
+        run: python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
       - name: Business browser journeys (synthetic data; explicit mock boundary)
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}/frontend
@@ -194,6 +205,20 @@ jobs:
         run: |
           set -o pipefail
           pnpm exec playwright test --config playwright.experimental.config.ts 2>&1 | tee "$CI_RECEIPTS/experimental-browser.log"
+      - name: Prepare reviewed-layout CJK font for browser journeys
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python scripts/prepare_pdf_font.py --output "$CI_SANDBOX/browser-fonts" > "$CI_RECEIPTS/browser-font-manifest.json"
+          echo "AI_NOVEL_STUDIO_PDF_FONT=$CI_SANDBOX/browser-fonts/NotoSansSC-Regular.ttf" >> "$GITHUB_ENV"
+      - name: R4 writing recovery and workspace journeys
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          R4_PYTHON: python
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.r4.config.ts 2>&1 | tee "$CI_RECEIPTS/r4-ux-browser.log"
       - name: Export recovery browser isolation and screenshots
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}/frontend
@@ -205,6 +230,54 @@ jobs:
       - name: Summarize exact revision and test counts
         if: always() && env.CI_RECEIPTS != ''
         run: python3 .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Prepare bounded original PNG evidence
+        id: screenshots
+        if: always() && env.CI_RECEIPTS != ''
+        run: python3 .github/ci/screenshots.py --root "$CI_PROJECT/frontend/test-results" --output "$CI_RECEIPTS/png-evidence" --source "${{ github.sha }}"
+      - name: Upload source-labelled PNG evidence part 1
+        if: always() && steps.screenshots.outputs.part_1 == 'true'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-png-1-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}/png-evidence/part-1
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload source-labelled PNG evidence part 2
+        if: always() && steps.screenshots.outputs.part_2 == 'true'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-png-2-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}/png-evidence/part-2
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload source-labelled PNG evidence part 3
+        if: always() && steps.screenshots.outputs.part_3 == 'true'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-png-3-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}/png-evidence/part-3
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload source-labelled PNG evidence part 4
+        if: always() && steps.screenshots.outputs.part_4 == 'true'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-png-4-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}/png-evidence/part-4
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload compact frontend evidence
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-compact-${{ github.sha }}
+          path: |
+            ${{ env.CI_RECEIPTS }}
+            ${{ env.CI_PROJECT }}/frontend/test-results/**/*.json
+            ${{ env.CI_PROJECT }}/frontend/test-results/**/error-context.md
+            !${{ env.CI_RECEIPTS }}/png-evidence/**
+          if-no-files-found: error
+          retention-days: 14
       - name: Upload frontend receipts
         if: always() && env.CI_RECEIPTS != ''
         uses: actions/upload-artifact@v4.6.2
@@ -213,6 +286,7 @@ jobs:
           path: |
             ${{ env.CI_RECEIPTS }}
             ${{ env.CI_PROJECT }}/frontend/test-results
+            !${{ env.CI_RECEIPTS }}/png-evidence/**
           if-no-files-found: error
           retention-days: 14
 

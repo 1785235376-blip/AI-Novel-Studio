@@ -244,7 +244,10 @@ class CreationWorkbenchService:
     def list_comments(self, nid, scope):
         self.novels.get(nid)
         with self.store._lock, workspace_mutation(self.store.root, "creation-workbench"):
-            rows = [r for r in self._rows("review_threads") if self._match(r, nid, scope)]
+            # Derived judge threads reuse this authority but require their current
+            # experimental source/permission fence. The legacy route must not
+            # expose them when the experiment is disabled or evidence is stale.
+            rows = [r for r in self._rows("review_threads") if self._match(r, nid, scope) and not r.get("narrative_judge")]
         for row in rows:
             try:
                 chapter = self.chapters.get(row["anchor"]["chapter_id"])
@@ -253,7 +256,7 @@ class CreationWorkbenchService:
                 row["anchor_state"] = "MISSING"
         return {"items": rows, "storage": self.store.storage_mode}
 
-    def create_comment(self, nid, scope, actor, body: CommentIn):
+    def create_comment(self, nid, scope, actor, body: CommentIn, *, reauthorize=None):
         self.novels.get(nid)
         with self.store._lock, workspace_mutation(self.store.root, "creation-workbench"):
             anchor = self._anchor(nid, body.chapter_id, body.chapter_version, body.quote)
@@ -264,13 +267,17 @@ class CreationWorkbenchService:
                    "messages": [{"id": str(uuid.uuid4()), "actor_id": actor, "text": body.text, "at": now}],
                    "history": [{"action": "CREATED", "actor_id": actor, "at": now}]}
             rows.append(row)
+            if reauthorize is not None:
+                reauthorize()
             self.store._write("review_threads", rows)
             return copy.deepcopy(row)
 
-    def update_comment(self, nid, scope, actor, rid, action, version, text=""):
+    def update_comment(self, nid, scope, actor, rid, action, version, text="", *, reauthorize=None):
         with self.store._lock, workspace_mutation(self.store.root, "creation-workbench"):
             rows = self._rows("review_threads")
             row = self._find(rows, nid, scope, rid)
+            if row.get("narrative_judge"):
+                raise FileNotFoundError(rid)
             if version != row["version"]:
                 raise CapabilityVersionConflict(row)
             now = self._now()
@@ -286,5 +293,7 @@ class CreationWorkbenchService:
                 raise ValueError("unknown comment action")
             row["history"].append({"action": action.upper(), "actor_id": actor, "at": now})
             row.update(version=row["version"] + 1, updated_at=now)
+            if reauthorize is not None:
+                reauthorize()
             self.store._write("review_threads", rows)
             return copy.deepcopy(row)

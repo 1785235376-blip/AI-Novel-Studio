@@ -1,0 +1,19 @@
+/* U01 is a consumer of the original three-row NOVEL grid. Keep all editor
+   chrome in row one; never add a notice as another workspace grid item. */
+.novel-workspace-chrome{min-width:0}
+.workspace-resume-summary{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-2);min-width:0;margin:0;padding:var(--space-2) var(--space-3);border-bottom:var(--border-default)}
+.workspace-resume-summary>.ui-button{flex:none;white-space:nowrap}
+.workspace-resume-summary__content{flex:1;min-width:0;display:grid;gap:var(--space-1)}
+.workspace-resume-summary__content>strong,.workspace-resume-summary__note{display:block;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin:0}
+.workspace-resume-summary__recovery{flex-basis:100%;margin:0}
+/* The existing edge toggle overlaps the main pane's top-right corner. Reserve
+   its control width + edge offset + breathing room inside this consumer only.
+   Reflow metadata/actions before their intrinsic sizes can scroll the editor. */
+.novel-writing-workspace .novel-workspace-chrome>.editorbar{height:auto;min-height:calc(var(--space-8)*2);flex-wrap:wrap;gap:var(--space-2) var(--space-3);padding:var(--space-2) calc(var(--control-height-md) + var(--space-2) + var(--space-3)) var(--space-2) var(--space-3)}
+.novel-editor-metadata{display:flex;align-items:center;flex:1 1 calc(var(--space-12)*8);flex-wrap:wrap;gap:var(--space-2);min-width:0}
+.novel-editor-metadata>.editorbar__identity{flex:1 1 calc(var(--space-12)*3);min-width:0}
+.novel-editor-metadata>small{flex:none;white-space:nowrap;color:var(--color-text-muted)}
+.novel-editor-metadata>.writing-goal{min-width:0;max-width:100%;flex-wrap:wrap;margin:0}
+.novel-workspace-chrome .save-controls{flex:0 1 auto;flex-wrap:wrap;max-width:100%;min-width:0;gap:var(--space-2) var(--space-3);margin-inline-start:auto}
+.novel-workspace-chrome .save-controls>.ui-button{flex:none;white-space:nowrap}
+.novel-workspace-chrome .save-controls>.save-status{max-width:100%;white-space:normal;overflow-wrap:anywhere}

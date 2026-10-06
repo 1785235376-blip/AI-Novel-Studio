@@ -43,6 +43,7 @@ class NovelService:
         self.update(nid,{"writing_goal":{"target_words":target_words,"target_chapters":target_chapters,"deadline":str(payload.get("deadline") or "")}})
         return self.writing_goal(nid)
     def delete(self,nid):return self.novels.delete(nid)
+    def compare_and_swap_record(self,nid,kind,record_id,payload,expected_digest):return self.novels.compare_and_swap_record(nid,kind,record_id,payload,expected_digest)
     def data_set(self,nid,name):return self.novels.get_data_set(nid,name)
     def upsert_character(self,nid,character_id,payload):return self.novels.upsert_character(nid,character_id,payload)
     def upsert_location(self,nid,location_id,payload):return self.novels.upsert_location(nid,location_id,payload)

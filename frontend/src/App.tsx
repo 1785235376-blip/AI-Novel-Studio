@@ -1,4 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Button } from './ui/primitives';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   QueryClient,
   useMutation,
@@ -16,9 +17,13 @@ import {
   setCollaborationContext,
 } from "./api";
 import { useStudio } from "./store";
-import { ChapterEditor } from "./Editor";
+import { readLocalWorkspaceSelection, rememberLocalWorkspaceSelection } from "./workspaceSelection";
+import { ChapterEditor, proseDocument } from "./Editor";
 import {
   drafts,
+  exportDraftText,
+  type DraftDurability,
+  type LocalDraft,
   conflicts,
   conflictResolutionDrafts,
   PersistentConflict,
@@ -48,9 +53,11 @@ import {
   reduceSaveState,
   SaveControls,
   saveStateLabel,
+  recoveryStateLabel,
   type SaveState,
 } from "./ui/SaveControls";
 import { EntryExperience } from "./novel/EntryExperience";
+import { SampleJourneyGuide } from "./novel/SampleJourneyGuide";
 import { ChapterTree } from "./novel/ChapterTree";
 import { CharacterEditor, CharacterConsistencyPanel, CharacterEvolutionPanel, ForeshadowingEditor, ForeshadowingTrackerPanel, LocationEditor, OutlineEditor, RelationshipEditor, RelationshipGraph, SceneEditor, StoryDatabase, StoryRouteEditor, TimelineEditor, VolumeEditor, WorldSummaryEditor, WorldRulesPanel, type CharacterDraft, type ForeshadowingDraft, type LocationDraft, type OutlineDraft, type RelationshipDraft, type SceneDraft, type StoryRouteDraft, type TimelineDraft, type VolumeDraft, type StoryDatabaseKind } from "./novel/StoryDatabase";
 import {
@@ -71,14 +78,19 @@ import { NovelOverviewPanel } from "./novel/NovelOverviewPanel";
 import { ResearchPanel } from "./novel/ResearchPanel";
 import { ContinuityCheckPanel } from "./novel/ContinuityCheckPanel";
 import { FeatureLauncher } from "./ui/FeatureLauncher";
-import { ExperimentalWorkbench, EXPERIMENTAL_GROUPS } from "./experimental/ExperimentalWorkbench";
-import { experimentalFeatures } from "./experimental/api";
+import { DeferredExperimentalWorkbench as ExperimentalWorkbench } from "./experimental/DeferredExperimentalWorkbench";
+import { EXPERIMENTAL_GROUPS, EXPERIMENTAL_TABS } from "./experimental/experimentalNavigation";
+import { experimentalFeatures, experimentalClient } from "./experimental/api";
+import { WritingReferenceRail, defaultWritingPreferences, type WritingFocusPreferences } from "./experimental/WritingFocusPanel";
+import type { WorkspaceNavigation, WorkspaceAnchor, ResumeResult } from "./experimental/uxClient";
+import { authorContextRequest, authorContextVariants, authorVariantsKey, authorRequestKey, type AuthorVariantsReceipt, type AuthorVariantsResult, type AuthorPreviewReceipt } from "./novel/authorContextClient";
 import { AiControlCenter } from "./ui/AiControlCenter";
 import { MediaProviderSettings } from "./ui/MediaProviderSettings";
 import "./ui/capability.css";
 import DesignSystemFixture from "./ui/DesignSystemFixture";
 import { isPackagedDesktopHost } from "./packagedHost";
-import { generationRecovery } from "./generationRecovery";
+import { generationRecovery, type RecoverableGeneration } from "./generationRecovery";
+import { GenerationRecoveryPicker } from "./novel/GenerationRecoveryPicker";
 import { WorldBuildingDashboard } from "./novel/WorldBuildingDashboard";
 import { publishTaskSummary, summarizeTasks } from "./ui/taskSummary";
 import { SourcePrivacyControl } from "./novel/SourcePrivacyControl";
@@ -89,6 +101,7 @@ import "./ux.css";
 import "./collaboration.css";
 import "./ui/ui.css";
 import "./ui/FeatureLauncher.css";
+import "./experimental/workspaceResume.css";
 export function cacheCreatedNovel(c: QueryClient, n: Novel) {
   c.setQueryData<Novel[]>(["novels"], (x) =>
     x?.some((v) => v.id === n.id) ? x : [...(x || []), n],
@@ -115,31 +128,95 @@ export async function recoverGenerationJob(
   jobId: string,
   load: (id: string) => Promise<any>,
   update: (state: any) => void,
-  options: { attempts?: number; intervalMs?: number; wait?: (ms: number) => Promise<void> } = {},
+  options: { attempts?: number; intervalMs?: number; wait?: (ms: number) => Promise<void>; isActive?: () => boolean } = {},
 ) {
   const attempts = options.attempts ?? 300;
   const intervalMs = options.intervalMs ?? 500;
   const wait = options.wait ?? ((ms: number) => new Promise<void>((ok) => setTimeout(ok, ms)));
   for (let attempt = 0; attempt < attempts; attempt++) {
+    if (options.isActive && !options.isActive()) return undefined;
     const state = await load(jobId);
+    if (options.isActive && !options.isActive()) return undefined;
     update(state);
     if (isGenerationTerminal(state.status)) return state;
     await wait(intervalMs);
   }
   return undefined;
 }
+type GenerationOrigin = { namespace: string; chapterId: string; novelId: string; identity: string; epoch: number; serial: number; baseVersion?: number; context: CollaborationContext };
+type GenerationObservation = GenerationOrigin & { active: boolean; sources: Set<EventSource> };
 export default function App() {
   const packagedHost = isPackagedDesktopHost();
   const qc = useQueryClient(),
     s = useStudio(),
     namespace = recoveryKey(s.scope, s.sessionToken) || "file",
-    active = useRef({ namespace, chapterId: s.chapterId }),
-    dispatched = useRef<any>(),
     saveGate = useRef(new SingleFlight<any>()),
     cancelledVariantIds = useRef(new Set<string>());
-  active.current = { namespace, chapterId: s.chapterId };
+  const editorIdentity = revisionStoreIdentity(s);
+  const editorEpoch = useRef(0), mounted = useRef(true), savePending = useRef(false);
+  const [generationRecoveryRevision, refreshGenerationRecovery] = useState(0);
+  const [generationRecoveryUnverified, setGenerationRecoveryUnverified] = useState(false);
+  const generationSerial = useRef(0);
+  const generationObserver = useRef<GenerationObservation>();
+  const generationCreating = useRef<GenerationObservation>();
+  const generationAction = useRef<{ origin: GenerationOrigin; id: string; kind: string }>();
+  const [scopeEpoch, setScopeEpoch] = useState(0);
+  const [hydratedIdentity, setHydratedIdentity] = useState<string>();
+  const [durability, setDurability] = useState<DraftDurability>('none');
+  const [composing, setComposing] = useState(false);
+  const buffer = useRef<{ identity: string; value: LocalDraft }>();
+  useLayoutEffect(() => {
+    mounted.current = true;
+    let previous = revisionStoreIdentity(useStudio.getState());
+    const unsubscribe = useStudio.subscribe(state => {
+      const next = revisionStoreIdentity(state);
+      if (next !== previous) {
+        previous = next;
+        editorEpoch.current += 1;
+        stopGenerationObservation();
+        setScopeEpoch(editorEpoch.current);
+      }
+    });
+    return () => { mounted.current = false; stopGenerationObservation(); unsubscribe(); };
+  }, []);
   const experimentalFlags = useQuery({ queryKey: ["experimental-features", namespace], queryFn: ({ signal }) => experimentalFeatures(signal, {sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}), retry: false, staleTime: 30000 });
   const hasExperimental = Object.values(experimentalFlags.data?.features || {}).some(value => value === true);
+  const writingRecovery = experimentalFlags.data?.features['experimental.writing_recovery_v2'] === true;
+  const workspaceTools = experimentalFlags.data?.features['experimental.workspace_tools_v2'] === true;
+  const writingFocus = experimentalFlags.data?.features['experimental.writing_focus_v2'] === true;
+  const characterMind = experimentalFlags.data?.features['experimental.character_mind_v2'] === true && experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true;
+  const [characterViewpoint, setCharacterViewpoint] = useState<{ identity: string; chapterId: string; characterId: string; epoch: number }>();
+  const activeCharacterId = characterMind && characterViewpoint?.identity === namespace && characterViewpoint?.chapterId === s.chapterId && characterViewpoint?.epoch === scopeEpoch ? characterViewpoint.characterId : undefined;
+  useEffect(() => { setCharacterViewpoint(undefined); }, [namespace, scopeEpoch, characterMind]);
+  const [focusActive, setFocusActive] = useState(false), [writingPreferences, setWritingPreferences] = useState<WritingFocusPreferences>(defaultWritingPreferences), [referenceRevision, setReferenceRevision] = useState(0);
+  const [referencesVisible, setReferencesVisible] = useState(true);
+  const [projectChoiceOpen, setProjectChoiceOpen] = useState(false);
+  const [projectRecoveryNotice, setProjectRecoveryNotice] = useState('');
+  const workspaceClient = useMemo(() => experimentalClient(s.novelId, {sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}), [namespace, s.novelId, s.actor?.id]);
+  const focusPreferencesTouched = useRef(false);
+  const persistedFocusPreferences = useQuery({
+    queryKey: ['writing-focus-preferences', namespace, s.novelId, s.actor?.id],
+    queryFn: ({ signal }) => workspaceClient.get<{ preferences: WritingFocusPreferences }>('/writing-focus/preferences', signal),
+    enabled: writingFocus && !!s.novelId, retry: false,
+  });
+  useEffect(() => { focusPreferencesTouched.current = false; setFocusActive(false); setReferencesVisible(true); setWritingPreferences(defaultWritingPreferences); }, [namespace, s.novelId, s.actor?.id, writingFocus]);
+  useEffect(() => {
+    if (writingFocus && persistedFocusPreferences.data && !focusPreferencesTouched.current)
+      setWritingPreferences(persistedFocusPreferences.data.preferences);
+  }, [writingFocus, persistedFocusPreferences.data]);
+
+  const lastWorkspace = useQuery({
+    queryKey: ['workspace-resume', namespace, s.novelId, s.actor?.id],
+    queryFn: ({ signal }) => workspaceClient.get<ResumeResult>('/workspace/resume', signal),
+    enabled: workspaceTools && !!s.novelId, retry: false, refetchOnWindowFocus: false,
+  });
+  const [experimentalTab, setExperimentalTab] = useState<string>();
+  const [workspaceSection, setWorkspaceSection] = useState<'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'>('resume');
+  const [editorAnchor, setEditorAnchor] = useState<{ identity: string; anchor: WorkspaceAnchor }>();
+  const [pendingAnchor, setPendingAnchor] = useState<{ namespace: string; chapterId: string; version: number; requestId: number; offset: number; scroll: number }>();
+  const anchorSequence = useRef(0);
+  const [pendingGenerationOpen, setPendingGenerationOpen] = useState<{ namespace: string; novelId: string; actorId?: string; chapterId: string; jobId: string }>();
+
   const [token, setToken] = useState(s.sessionToken),
     [scopeDraft, setScopeDraft] = useState<Scope>(
       s.scope || {
@@ -186,6 +263,7 @@ export default function App() {
   useEffect(() => {
     const update = (event: Event) => {
       const { chapterId, server } = (event as CustomEvent).detail;
+      if (chapterId !== useStudio.getState().chapterId || server?.id !== chapterId) return;
       qc.setQueryData(["chapter", namespace, chapterId], server);
       drafts.remove(chapterId, namespace);
       conflicts.remove(chapterId, namespace);
@@ -221,6 +299,7 @@ export default function App() {
   const novels = useQuery({
     queryKey: ["novels"],
     queryFn: api.novels,
+    refetchOnMount: workspaceTools ? 'always' : true,
     enabled: !packagedHost && shouldLoadLocalNovels(s.sessionToken, s.scope),
   });
   const mediaTasks = useQuery({
@@ -318,505 +397,730 @@ export default function App() {
     enabled: !!s.chapterId,
   });
   useEffect(() => {
-    if (!chapter.data?.id || job || variantDrafts.length) return;
-    const saved = generationRecovery.load(namespace, chapter.data.id);
-    if (!saved) return;
-    setGenerationRecovering(true);
-    if (saved.variants?.length) {
-      setVariantDrafts(saved.variants);
-      Promise.all(saved.variants.map(async (variant) => {
-        try {
-          const state = await api.job(variant.id);
-          const updated: AiVariantDraft = {...variant,output:state.output||variant.output,status:state.status==="COMPLETED"?"ready":isGenerationTerminal(state.status)?"failed":"working",error:state.error};
-          if (isRecoveredDraftStale(updated.baseChapterVersion,chapter.data.version)) {
-            updated.acceptBlocked=true;updated.acceptBlockedReason="正文已在生成期间发生变化，请先处理版本冲突。";
-          }
-          setVariantDrafts((current)=>current.map((item)=>item.id===variant.id?updated:item));
-          if (!isGenerationTerminal(state.status)) await recoverGenerationJob(variant.id,api.job,(next)=>setVariantDrafts((current)=>current.map((item)=>item.id===variant.id?{...item,output:next.output||item.output,status:next.status==="COMPLETED"?"ready":isGenerationTerminal(next.status)?"failed":"working",error:next.error}:item)));
-        } catch {setVariantDrafts((current)=>current.map((item)=>item.id===variant.id?{...item,status:"failed",error:"生成连接中断，恢复失败，请重试"}:item));}
-      })).finally(()=>{generationRecovery.remove(namespace,chapter.data.id);setGenerationRecovering(false)});
-    } else if (saved.jobId) {
-      setJob({id:saved.jobId,status:"GENERATING",output:"",original:saved.original,base_chapter_version:saved.baseChapterVersion});
-      recoverGenerationJob(saved.jobId,api.job,(state)=>setJob((current:any)=>({...current,...state,output:state.output||current?.output||"",acceptBlocked:isRecoveredDraftStale(state.base_chapter_version??saved.baseChapterVersion,chapter.data.version),acceptBlockedReason:isRecoveredDraftStale(state.base_chapter_version??saved.baseChapterVersion,chapter.data.version)?"正文已在生成期间发生变化，请先处理版本冲突。":undefined}))).finally(()=>{generationRecovery.remove(namespace,chapter.data.id);setGenerationRecovering(false)});
+    if (!pendingAnchor) return;
+    if (pendingAnchor.namespace !== namespace || (!workspaceTools && !writingFocus)) { setPendingAnchor(undefined); return; }
+    if (chapter.data?.id !== pendingAnchor.chapterId || hydratedIdentity !== editorIdentity) return;
+    if (chapter.data.version !== pendingAnchor.version || saveState !== 'saved') {
+      setPendingAnchor(undefined);
+      setShellMessage('章节已有新版本或未保存草稿，已保留当前内容；未套用旧光标。');
     }
-  }, [chapter.data?.id, namespace]);
+  }, [pendingAnchor, namespace, workspaceTools, writingFocus, hydratedIdentity, editorIdentity, saveState, chapter.data?.id, chapter.data?.version]);
+
+  // A scope change retires only local observers. The server task and its
+  // original-scope recovery record remain available; panel changes do neither.
+  useLayoutEffect(() => {
+    stopGenerationObservation();
+    setJob(undefined); setVariantDrafts([]); setActiveVariant(0); setSelection({ from: 0, to: 0, text: '' });
+    setGenerationStarting(false); setGenerationRecovering(false); setGenerationRecoveryUnverified(false); setVariantCancelling(false); setDraftAction(undefined);
+  }, [editorIdentity, scopeEpoch]);
   useEffect(() => {
-    if (!s.novelId && novels.data?.[0]) s.setNovel(novels.data[0].id);
-  }, [novels.data]);
+    if (!chapter.data?.id || chapter.data.id !== s.chapterId) return;
+    const saved = generationRecovery.load(namespace, chapter.data.id);
+    if (!saved || (saved.actorId !== undefined && saved.actorId !== s.actor?.id)) return;
+    const observer = beginGenerationObservation();
+    setGenerationRecovering(true);
+    setGenerationRecoveryUnverified(true);
+    // Cached output is a recovery candidate, not current read authorization.
+    // Revalidate even COMPLETED/ready tasks before exposing original or output.
+    void (async () => {
+      try {
+        const states = await readVerifiedRecovery(observer, saved);
+        if (!isObservingGeneration(observer)) return;
+        setGenerationRecoveryUnverified(false);
+        await displayVerifiedRecovery(observer, saved, states);
+      } catch {
+        if (isObservingGeneration(observer)) setShellMessage('生成草稿尚未通过权限与来源核对，内容仍保留；恢复连接或权限后可重新打开。');
+      } finally {
+        if (isObservingGeneration(observer)) setGenerationRecovering(false);
+      }
+    })();
+    return () => { observer.active = false; observer.sources.forEach(source => source.close()); observer.sources.clear(); };
+  }, [chapter.data?.id, namespace, editorIdentity, scopeEpoch]);
+  useEffect(() => {
+    // Wait for current server flags and the original project inventory. A hint
+    // cannot select a foreign/missing project or redirect an authenticated scope.
+    if (packagedHost || !shouldLoadLocalNovels(s.sessionToken, s.scope) || experimentalFlags.isPending) return;
+    if (!workspaceTools) { if (!s.novelId && novels.data?.[0]) s.setNovel(novels.data[0].id); return; }
+    if (novels.isFetching || !novels.isSuccess) return;
+    if (s.novelId) {
+      if (novels.data.some(row => row.id === s.novelId) && !rememberLocalWorkspaceSelection(s.novelId))
+        setProjectRecoveryNotice('当前浏览器无法记住项目选择；服务端工作现场仍保留，下次请手动选择作品。');
+      return;
+    }
+    if (projectChoiceOpen) return;
+    const selected = readLocalWorkspaceSelection();
+    if (selected.state === 'SAVED') {
+      if (novels.data.some(row => row.id === selected.projectId)) s.setNovel(selected.projectId);
+      else setProjectRecoveryNotice('上次项目当前不存在或不可访问。请选择一个可用作品；不会改跳到其他项目或分支。');
+    } else if (selected.state === 'EMPTY') {
+      if (novels.data[0]) s.setNovel(novels.data[0].id);
+    } else setProjectRecoveryNotice('上次项目选择损坏或浏览器存储不可用。请选择作品；正文和服务端工作现场未改变。');
+  }, [novels.data, novels.isFetching, novels.isSuccess, experimentalFlags.isPending, workspaceTools, packagedHost, s.novelId, s.sessionToken, s.scope, projectChoiceOpen]);
   useEffect(() => {
     if (!s.chapterId && chapters.data?.[0]) s.setChapter(chapters.data[0].id);
   }, [chapters.data]);
-  useEffect(() => {
-    if (!chapter.data) return;
-    const d = drafts.load(chapter.data.id, namespace),
-      savedConflict = conflicts.load(chapter.data.id, namespace);
-    setText(d?.content ?? chapter.data.content);
-    setDoc(d?.document ?? chapter.data.document);
-    setBaseVersion(d?.baseVersion ?? chapter.data.version);
+  // BACKPORT CANDIDATE (U02): hydrate before exposing an editable surface, and
+  // prefer the current draft even when its rich-text document is absent.
+  useLayoutEffect(() => { setComposing(false); }, [editorIdentity, scopeEpoch]);
+  useLayoutEffect(() => {
+    if (!chapter.data || chapter.data.id !== s.chapterId) {
+      setHydratedIdentity(undefined);
+      setConflict(undefined);
+      return;
+    }
+    const d = drafts.load(chapter.data.id, namespace);
+    let savedConflict = conflicts.load(chapter.data.id, namespace);
+    if (d && savedConflict && (savedConflict.local.content !== d.content
+        || savedConflict.local.baseVersion !== d.baseVersion
+        || JSON.stringify(savedConflict.local.document) !== JSON.stringify(d.document))) {
+      // A later local candidate wins the comparison UI. Archive the older
+      // conflict and invalidate its manual-resolution input before reopening.
+      savedConflict = { ...savedConflict, local: d, detectedAt: new Date().toISOString() };
+      conflicts.save(savedConflict, namespace);
+    }
+    const value: LocalDraft = d ?? {
+      chapterId: chapter.data.id, content: chapter.data.content,
+      document: chapter.data.document, baseVersion: chapter.data.version,
+      updatedAt: new Date().toISOString(),
+    };
+    buffer.current = { identity: editorIdentity, value };
+    setText(value.content);
+    setDoc(value.document);
+    setBaseVersion(value.baseVersion);
+    setDurability(d ? drafts.durability(d.chapterId, namespace) : 'none');
+    setHydratedIdentity(editorIdentity);
     if (d && d.baseVersion !== chapter.data.version) {
-      const v = savedConflict || {
-        chapterId: d.chapterId,
-        local: d,
-        server: chapter.data,
-        detectedAt: new Date().toISOString(),
+      const value = savedConflict?.server.version === chapter.data.version ? savedConflict : {
+        chapterId: d.chapterId, local: d, server: chapter.data, detectedAt: new Date().toISOString(),
       };
-      conflicts.save(v, namespace);
-      setConflict(v);
-      setSaveState((current) =>
-        reduceSaveState(current, { type: "save-failed", conflict: true }),
-      );
+      conflicts.save(value, namespace);
+      setConflict(value);
+      setSaveState('conflict');
     } else {
       setConflict(savedConflict);
-      setSaveState((current) =>
-        reduceSaveState(current, {
-          type: "hydrate",
-          hasDraft: !!d,
-          hasConflict: !!savedConflict,
-        }),
-      );
+      setSaveState(current => reduceSaveState(current, {
+        type: 'hydrate', hasDraft: !!d, hasConflict: !!savedConflict,
+      }));
     }
-  }, [namespace, chapter.data?.id, chapter.data?.version]);
+  }, [namespace, editorIdentity, scopeEpoch, chapter.data?.id, chapter.data?.version]);
+  type SaveRequest = LocalDraft & {
+    namespace: string; identity: string; epoch: number; context: CollaborationContext; novelId: string;
+  };
+  const isCurrentSave = (value: SaveRequest) => mounted.current
+    && value.epoch === editorEpoch.current
+    && value.identity === revisionStoreIdentity(useStudio.getState());
   const save = useMutation({
-    mutationFn: () =>
-      saveGate.current.run(() => {
-        const v = {
-          namespace,
-          chapterId: s.chapterId,
-          baseVersion,
-          content: text,
-          document: doc,
-        };
-        dispatched.current = v;
-        return api
-          .saveChapter(v.chapterId, v.content, v.baseVersion, v.document)
-          .then((x) => ({ x, v }));
-      }),
-    onMutate: () =>
-      setSaveState((current) =>
-        reduceSaveState(current, { type: "save-started" }),
-      ),
-    onSuccess: ({ x, v }) => {
-      if (
-        active.current.namespace !== v.namespace ||
-        active.current.chapterId !== v.chapterId
-      )
+    mutationFn: (value: SaveRequest) => saveGate.current.run(async () => {
+      // Recovered text/manual merges may lack a rich document. Submit literal
+      // prose as a document too, so every acknowledgement can prove which
+      // candidate it persisted without comparing the server Markdown projection.
+      const submittedDocument = value.document ?? proseDocument(value.content);
+      const result = await api.saveChapter(value.chapterId, value.content, value.baseVersion, submittedDocument, 'USER', value.context);
+      // A transport success without an authoritative chapter/version is unknown,
+      // not a save receipt. Retain the candidate and require an explicit retry.
+      if (!result || result.id !== value.chapterId || !Number.isInteger(result.version)
+          || result.version <= value.baseVersion || typeof result.content !== 'string'
+          || JSON.stringify(result.document) !== JSON.stringify(submittedDocument)) {
+        throw new Error('INVALID_SAVE_RECEIPT');
+      }
+      return result as Chapter;
+    }),
+    onSuccess: (result: Chapter, value) => {
+      if (!isCurrentSave(value)) return;
+      const currentServer = qc.getQueryData<Chapter>(['chapter', value.namespace, value.chapterId]);
+      if (currentServer && currentServer.version > result.version) {
+        const local = drafts.load(value.chapterId, value.namespace) ?? value;
+        const conflictValue = { chapterId: value.chapterId, local, server: currentServer, detectedAt: new Date().toISOString() };
+        conflicts.save(conflictValue, value.namespace);
+        setConflict(conflictValue);
+        setSaveState('conflict');
         return;
-      const newer = rebaseNewerDraft(
-        drafts.load(x.id, v.namespace),
-        v,
-        x.version,
-      );
-      setBaseVersion(x.version);
-      qc.setQueryData(["chapter", v.namespace, x.id], x);
-      qc.invalidateQueries({ queryKey: ["writing-goal", s.novelId] });
+      }
+      const newer = rebaseNewerDraft(drafts.load(value.chapterId, value.namespace), value, result.version);
       if (newer) {
-        drafts.save(newer, v.namespace);
-        setSaveState((current) =>
-          reduceSaveState(current, {
-            type: "save-succeeded",
-            hasNewerChanges: true,
-          }),
-        );
+        setDurability(drafts.save(newer, value.namespace).durability);
+        buffer.current = { identity: value.identity, value: newer };
       } else {
-        drafts.remove(x.id, v.namespace);
-        conflicts.remove(x.id, v.namespace);
-        conflictResolutionDrafts.remove(x.id, v.namespace);
-        setSaveState((current) =>
-          reduceSaveState(current, {
-            type: "save-succeeded",
-            hasNewerChanges: false,
-          }),
-        );
+        drafts.remove(value.chapterId, value.namespace);
+        conflicts.remove(value.chapterId, value.namespace);
+        conflictResolutionDrafts.remove(value.chapterId, value.namespace);
+        buffer.current = { identity: value.identity, value: { ...value, baseVersion: result.version } };
+        setDurability('none');
+        setConflict(undefined);
+      }
+      setBaseVersion(result.version);
+      // Update the cache only after the newer candidate has its rebased version.
+      qc.setQueryData(['chapter', value.namespace, value.chapterId], result);
+      void qc.invalidateQueries({ queryKey: ['writing-goal', value.novelId] });
+      setSaveState(current => reduceSaveState(current, { type: 'save-succeeded', hasNewerChanges: !!newer }));
+    },
+    onError: async (error: unknown, value) => {
+      if (!isCurrentSave(value)) return;
+      // Establish a terminal state before the optional conflict fetch. A second
+      // network failure must not leave the editor claiming that it is Saving.
+      setSaveState('failed');
+      if (error instanceof ApiError && error.status === 409) {
+        try {
+          const server = await api.chapter(value.chapterId, value.context);
+          if (!isCurrentSave(value) || server.id !== value.chapterId) return;
+          const local = drafts.load(value.chapterId, value.namespace) ?? value;
+          const conflictValue = { chapterId: value.chapterId, local, server, detectedAt: new Date().toISOString() };
+          conflicts.save(conflictValue, value.namespace);
+          setConflict(conflictValue);
+          setSaveState('conflict');
+        } catch { /* Keep the draft and the visible retry/export state. */ }
       }
     },
-    onError: async (e: ApiError) => {
-      const v = dispatched.current;
-      if (
-        !v ||
-        active.current.namespace !== v.namespace ||
-        active.current.chapterId !== v.chapterId
-      )
-        return;
-      if (e.status === 409) {
-        const server = await api.chapter(v.chapterId);
-        if (active.current.namespace !== v.namespace) return;
-        const local = drafts.load(v.chapterId, v.namespace);
-        if (!local) {
-          setSaveState((current) =>
-            reduceSaveState(current, { type: "save-failed" }),
-          );
-          return;
-        }
-        const conflictValue = {
-          chapterId: v.chapterId,
-          local,
-          server,
-          detectedAt: new Date().toISOString(),
-        };
-        conflicts.save(conflictValue, v.namespace);
-        setConflict(conflictValue);
-        setSaveState((current) =>
-          reduceSaveState(current, { type: "save-failed", conflict: true }),
-        );
-      } else
-        setSaveState((current) =>
-          reduceSaveState(current, { type: "save-failed" }),
-        );
-    },
+    onSettled: () => { savePending.current = false; },
   });
   const dispatchSave = () => {
-    if (!save.isPending && !saveGate.current.active) save.mutate();
+    const current = buffer.current;
+    if (composing || !chapter.data || hydratedIdentity !== editorIdentity || !current
+        || current.identity !== revisionStoreIdentity(useStudio.getState())
+        || saveState === 'conflict' || savePending.current || save.isPending || saveGate.current.active) return;
+    const value: SaveRequest = { ...current.value, namespace, identity: editorIdentity,
+      epoch: editorEpoch.current, novelId: s.novelId,
+      context: { sessionToken: s.sessionToken, actor: s.actor && { ...s.actor }, scope: s.scope && { ...s.scope } },
+    };
+    setDurability(drafts.save(current.value, namespace).durability);
+    // Synchronous latch also covers repeated clicks before React Query starts.
+    savePending.current = true;
+    setSaveState('saving');
+    save.mutate(value);
   };
+  function compositionChanged(next: boolean) {
+    if (next && buffer.current?.identity === editorIdentity) {
+      // Reserve the pre-composition base before a server update can arrive,
+      // including the gap before the IME emits its first document transaction.
+      setDurability(drafts.save(buffer.current.value, namespace).durability);
+      setSaveState(current => current === 'saved' ? 'dirty' : current);
+    }
+    if (!next && saveState === 'conflict') reopenConflict();
+    setComposing(next);
+  }
   function edit(content: string, document: any) {
+    if (hydratedIdentity !== editorIdentity || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return;
+    const value = { chapterId: s.chapterId, content, document,
+      baseVersion: buffer.current?.identity === editorIdentity ? buffer.current.value.baseVersion : baseVersion,
+      updatedAt: new Date().toISOString() };
+    buffer.current = { identity: editorIdentity, value };
     setText(content);
     setDoc(document);
-    setSaveState((current) => reduceSaveState(current, { type: "edit" }));
-    drafts.save(
-      {
-        chapterId: s.chapterId,
-        content,
-        document,
-        baseVersion,
-        updatedAt: new Date().toISOString(),
-      },
-      namespace,
-    );
+    // A closed conflict dialog does not authorize autosaving over its server.
+    setSaveState(current => current === 'conflict' ? 'conflict' : reduceSaveState(current, { type: 'edit' }));
+    setDurability(drafts.save(value, namespace).durability);
   }
   useEffect(() => {
-    if (saveState !== "dirty" || save.isPending || saveGate.current.active)
-      return;
-    const t = setTimeout(dispatchSave, 900);
-    return () => clearTimeout(t);
-  }, [
-    text,
-    doc,
-    saveState,
-    namespace,
-    s.chapterId,
-    baseVersion,
-    save.isPending,
-  ]);
+    if (composing || hydratedIdentity !== editorIdentity || saveState !== 'dirty' || save.isPending || saveGate.current.active) return;
+    const timeout = setTimeout(dispatchSave, 900);
+    return () => clearTimeout(timeout);
+  }, [text, doc, saveState, namespace, s.chapterId, baseVersion, save.isPending, composing, hydratedIdentity, editorIdentity]);
+  useEffect(() => {
+    if (!writingRecovery || saveState === 'saved') return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ''; };
+    addEventListener('beforeunload', warn);
+    return () => removeEventListener('beforeunload', warn);
+  }, [writingRecovery, saveState]);
+  function reopenConflict() {
+    const previous = conflicts.load(s.chapterId, namespace);
+    if (!previous) return;
+    const current = drafts.load(s.chapterId, namespace);
+    const value = current && current.content !== previous.local.content
+      ? { ...previous, local: current, detectedAt: new Date().toISOString() } : previous;
+    conflicts.save(value, namespace);
+    setConflict(value);
+  }
+  function exportCurrentDraft() {
+    try { exportDraftText(buffer.current?.identity === editorIdentity ? buffer.current.value.content : text); }
+    catch { setShellMessage('无法下载恢复文本。请在正文中全选并复制到本机文件，再关闭页面。'); }
+  }
+  function stopGenerationObservation() {
+    const observer = generationObserver.current;
+    if (!observer) return;
+    observer.active = false;
+    observer.sources.forEach(source => source.close());
+    observer.sources.clear();
+  }
+  function captureGenerationOrigin() {
+    return { namespace, chapterId: s.chapterId, novelId: s.novelId, identity: editorIdentity,
+      epoch: editorEpoch.current, serial: generationSerial.current, baseVersion: chapter.data?.version,
+      context: { sessionToken: s.sessionToken, actor: s.actor && { ...s.actor }, scope: s.scope && { ...s.scope } } };
+  }
+  function beginGenerationObservation(): GenerationObservation {
+    stopGenerationObservation();
+    generationSerial.current += 1;
+    const observer = { ...captureGenerationOrigin(), active: true, sources: new Set<EventSource>() };
+    generationObserver.current = observer;
+    return observer;
+  }
+  function isCurrentGeneration(origin: GenerationOrigin) {
+    return mounted.current && origin.epoch === editorEpoch.current && origin.serial === generationSerial.current
+      && origin.identity === revisionStoreIdentity(useStudio.getState());
+  }
+  function isObservingGeneration(observer: GenerationObservation) {
+    return observer.active && generationObserver.current === observer && isCurrentGeneration(observer);
+  }
+  function retainGeneration(observer: GenerationOrigin, value: RecoverableGeneration) {
+    generationRecovery.save(observer.namespace, { ...value, chapterId: observer.chapterId, actorId: observer.context.actor?.id }, !isCurrentGeneration(observer) || ('active' in observer && !isObservingGeneration(observer as GenerationObservation)));
+    // Refresh identifiers only for this origin, never a late candidate's prose.
+    if (mounted.current && observer.identity === revisionStoreIdentity(useStudio.getState())) refreshGenerationRecovery(value => value + 1);
+  }
+  function generationVersionFlags(origin: GenerationOrigin, version?: number) {
+    const currentVersion = qc.getQueryData<Chapter>(['chapter', origin.namespace, origin.chapterId])?.version;
+    const stale = isRecoveredDraftStale(version, currentVersion);
+    return { acceptBlocked: stale, acceptBlockedReason: stale ? '正文已在生成期间发生变化，请先处理版本冲突。' : undefined };
+  }
+  async function observeSingleGeneration(observer: GenerationObservation, initial: any, eventsUrl?: string) {
+    let current = initial;
+    const update = (state: any, streamed = false) => {
+      if (!isObservingGeneration(observer)) return;
+      const version = typeof state.base_chapter_version === 'number' ? state.base_chapter_version : current.base_chapter_version;
+      current = { id: initial.id, original: initial.original,
+        status: typeof state.status === 'string' ? state.status : current.status,
+        output: streamed && typeof state.chunk === 'string' ? (current.output || '') + state.chunk
+          : typeof state.output === 'string' ? state.output : current.output || '',
+        error: typeof state.error === 'string' ? state.error : current.error,
+        latency_ms: typeof state.latency_ms === 'number' ? state.latency_ms : current.latency_ms,
+        base_chapter_version: version, ...generationVersionFlags(observer, version) };
+      retainGeneration(observer, { chapterId: observer.chapterId, jobId: current.id, original: current.original,
+        baseChapterVersion: current.base_chapter_version, job: current });
+      setJob(current);
+    };
+    const poll = async () => {
+      try {
+        const terminal = await recoverGenerationJob(initial.id, id => api.job(id, observer.context), state => update(state), {
+          isActive: () => isObservingGeneration(observer),
+        });
+        if (!terminal && isObservingGeneration(observer)) update({ status: 'FAILED', error: '生成连接中断且恢复超时，请重试' });
+      } catch {
+        if (isObservingGeneration(observer)) update({ status: 'FAILED', error: '生成连接中断，恢复失败，请重试' });
+      }
+    };
+    if (!isObservingGeneration(observer)) return;
+    update(initial);
+    if (isGenerationTerminal(initial.status)) return;
+    // Authenticated scopes cannot attach headers to EventSource. They always
+    // poll with the captured session and branch, including local session hosts.
+    if (!eventsUrl || observer.context.scope || observer.context.sessionToken || packagedHost) { await poll(); return; }
+    const source = new EventSource(eventsUrl);
+    observer.sources.add(source);
+    const close = () => { source.close(); observer.sources.delete(source); };
+    let recovering = false;
+    source.onmessage = event => {
+      if (!isObservingGeneration(observer)) { close(); return; }
+      try {
+        const state = JSON.parse(event.data);
+        update(state, true);
+        if (isGenerationTerminal(state.status)) close();
+      } catch { source.onerror?.(new Event('error')); }
+    };
+    source.onerror = async () => {
+      if (recovering) return;
+      recovering = true; close();
+      if (isObservingGeneration(observer)) await poll();
+    };
+  }
+  async function observeVariantGenerations(observer: GenerationObservation, initial: AiVariantDraft[]) {
+    let candidates = initial;
+    const publish = () => {
+      if (!isObservingGeneration(observer)) return;
+      candidates = candidates.filter(item => !cancelledVariantIds.current.has(item.id));
+      retainGeneration(observer, { chapterId: observer.chapterId, variants: candidates });
+      setVariantDrafts([...candidates]);
+    };
+    publish();
+    await Promise.all(initial.filter(item => item.status === 'working').map(async candidate => {
+      try {
+        const terminal = await recoverGenerationJob(candidate.id, id => api.job(id, observer.context), state => {
+          if (!isObservingGeneration(observer) || cancelledVariantIds.current.has(candidate.id)) return;
+          candidates = candidates.map(item => item.id === candidate.id ? { ...item,
+            output: state.output ?? item.output, status: state.status === 'COMPLETED' ? 'ready' : isGenerationTerminal(state.status) ? 'failed' : 'working',
+            error: state.error, ...generationVersionFlags(observer, state.base_chapter_version ?? item.baseChapterVersion) } : item);
+          publish();
+        }, { isActive: () => isObservingGeneration(observer) && !cancelledVariantIds.current.has(candidate.id) });
+        if (!terminal && isObservingGeneration(observer) && !cancelledVariantIds.current.has(candidate.id)) {
+          candidates = candidates.map(item => item.id === candidate.id ? { ...item, status: 'failed', error: VARIANT_TIMEOUT_ERROR } : item);
+          publish();
+        }
+      } catch {
+        if (!isObservingGeneration(observer)) return;
+        candidates = candidates.map(item => item.id === candidate.id ? { ...item, status: 'failed', error: '生成连接中断，恢复失败，请重试' } : item);
+        publish();
+      }
+    }));
+  }
   const cancelGeneration = useMutation({
-    mutationFn: (id: string) => api.cancel(id),
-    onSuccess: () =>
-      setJob((current: any) =>
-        current ? { ...current, status: "CANCELLED" } : current,
-      ),
+    mutationFn: ({ id, origin }: { id: string; origin: GenerationOrigin }) => api.cancel(id, origin.context),
+    onSuccess: (_result, { id, origin }) => {
+      if (!isCurrentGeneration(origin)) return;
+      setJob((current: any) => current?.id === id ? { ...current, status: 'CANCELLED' } : current);
+      const saved = generationRecovery.load(origin.namespace, origin.chapterId);
+      if (saved?.jobId === id) generationRecovery.remove(origin.namespace, origin.chapterId);
+      stopGenerationObservation();
+    },
   });
   async function runAI(
     operation: string = tool,
     request: string = instruction,
-    style = "",
+    style = '',
+    previewReceipt?: AuthorPreviewReceipt,
   ) {
-    if (!chapter.data || generationStarting || job?.status === "GENERATING")
-      return;
-    if (operation === "rewrite" && !selection.text) {
-      setJob({
-        id: "selection-required",
-        status: "FAILED",
-        output: "",
-        error: "请先在正文中选择需要改写的文字。",
-      });
-      return;
+    if (!chapter.data || generationStarting || (generationCreating.current && isObservingGeneration(generationCreating.current)) || job?.status === 'GENERATING'
+        || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return;
+    if (activeCharacterId && (!previewReceipt || !['continue', 'brainstorm'].includes(operation))) return;
+    if (experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true && !previewReceipt) {
+      setJob({ id: 'generation-failed', status: 'FAILED', output: '', error: '请先检查本次真实请求，再生成草稿。' }); return;
     }
+    if (operation === 'rewrite' && !selection.text) {
+      setJob({ id: 'selection-required', status: 'FAILED', output: '', error: '请先在正文中选择需要改写的文字。' }); return;
+    }
+    const observer = beginGenerationObservation();
+    generationCreating.current = observer;
+    const original = operation === 'rewrite' ? selection.text : text;
     setGenerationStarting(true);
     try {
-      const r = await api.generate(operation, {
-        novel_id: s.novelId,
-        chapter_id: s.chapterId,
-        instruction: request,
-        style,
-        style_profile_id: s.writingInputs?.styleProfileId,
-        plot_plan_id: s.writingInputs?.plotPlanId,
-        profile: s.mode,
-        provider_id: s.textModel?.providerId,
-        model_id: s.textModel?.modelId,
-        source: selection.text,
-        selected_text: selection.text,
-      });
-      setJob({
-        id: r.job_id,
-        status: "GENERATING",
-        output: "",
-        original: operation === "rewrite" ? selection.text : text,
-        base_chapter_version: r.base_chapter_version ?? chapter.data.version,
-      });
-      generationRecovery.save(namespace,{chapterId:s.chapterId,jobId:r.job_id,original:operation === "rewrite" ? selection.text : text,baseChapterVersion:r.base_chapter_version ?? chapter.data.version});
-      if (s.scope) {
-        for (let i = 0; i < 300; i++) {
-          const x = await api.job(r.job_id);
-          setJob((j: any) => ({ ...j, ...x }));
-          if (["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED", "ACCEPTING", "ACCEPTANCE_UNCERTAIN"].includes(x.status)) break;
-          await new Promise((ok) => setTimeout(ok, 500));
-        }
-      } else {
-        const es = new EventSource(r.events_url);
-        let recovering = false;
-        es.onmessage = (e) => {
-          const x = JSON.parse(e.data);
-          setJob((j: any) => ({
-            ...j,
-            ...x,
-            output: (j?.output || "") + (x.chunk || ""),
-          }));
-          if (["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED", "ACCEPTING", "ACCEPTANCE_UNCERTAIN"].includes(x.status))
-            {es.close();generationRecovery.remove(namespace,s.chapterId)}
-        };
-        es.onerror = async () => {
-          if (recovering) return;
-          recovering = true;
-          es.close();
-          try {
-            const recovered = await recoverGenerationJob(
-              r.job_id,
-              api.job,
-              (state) => setJob((current: any) => ({ ...current, ...state, output: state.output || current?.output || "" })),
-            );
-            if (!recovered) {
-              await api.cancel(r.job_id).catch(() => undefined);
-              setJob((current: any) => ({
-                ...current,
-                status: "FAILED",
-                error: "生成连接中断且恢复超时，请重试",
-              }));
-            }
-          } catch {
-            setJob((current: any) => ({
-              ...current,
-              status: "FAILED",
-              error: "生成连接中断，恢复失败，请重试",
-            }));
-          }
-        };
-      }
+      const payload = {
+        novel_id: observer.novelId, chapter_id: observer.chapterId, instruction: request, style,
+        style_profile_id: s.writingInputs?.styleProfileId, plot_plan_id: s.writingInputs?.plotPlanId,
+        profile: s.mode, provider_id: s.textModel?.providerId, model_id: s.textModel?.modelId,
+        source: activeCharacterId ? '' : selection.text, selected_text: activeCharacterId ? '' : selection.text,
+        ...(activeCharacterId ? { character_id: activeCharacterId, style: '', style_profile_id: undefined, plot_plan_id: undefined, profile: 'LOCAL_ONLY' as const } : {}),
+      };
+      if (previewReceipt && (saveState !== 'saved' || previewReceipt.chapterVersion !== chapter.data.version))
+        throw new Error('正文或预检版本已改变，请先保存并重新检查。');
+      if (previewReceipt && authorRequestKey({ ...payload, request_scope: previewReceipt.requestBody.request_scope,
+          provider_id: payload.provider_id || '', model_id: payload.model_id || '', operation,
+          chapter_version: previewReceipt.chapterVersion }, observer.context) !== previewReceipt.requestKey)
+        throw new Error('预检范围或输入已改变，请重新检查。');
+      const result = previewReceipt
+        ? await authorContextRequest<any>(observer.novelId, 'generate', {
+            ...payload, request_scope: previewReceipt.requestBody.request_scope, provider_id: payload.provider_id || '', model_id: payload.model_id || '',
+            operation, chapter_version: previewReceipt.chapterVersion, preview_digest: previewReceipt.previewDigest, generation_request_id: previewReceipt.requestId,
+          }, observer.context)
+        : await api.generate(operation, payload, observer.context);
+      const initial = { id: result.job_id, status: 'GENERATING', output: '', original,
+        base_chapter_version: result.base_chapter_version ?? observer.baseVersion };
+      retainGeneration(observer, { chapterId: observer.chapterId, jobId: initial.id, original,
+        baseChapterVersion: initial.base_chapter_version, job: initial });
+      if (!isObservingGeneration(observer)) return;
+      setGenerationRecoveryUnverified(false);
+      await observeSingleGeneration(observer, initial, result.events_url);
     } catch {
-      setJob({
-        id: "generation-failed",
-        status: "FAILED",
-        output: "",
-        error: "生成失败，请重试",
-      });
+      if (isObservingGeneration(observer)) setJob({ id: 'generation-failed', status: 'FAILED', output: '', error: '生成失败，请重试' });
     } finally {
-      setGenerationStarting(false);
+      if (generationCreating.current === observer) generationCreating.current = undefined;
+      if (isObservingGeneration(observer)) setGenerationStarting(false);
     }
   }
-  async function runAIVariants(
-    operation: string,
-    request: string,
-    count: number,
-    style = "",
-  ) {
-    if (!chapter.data || generationStarting) return;
-    if (operation === "rewrite" && !selection.text) {
-      setJob({
-        id: "selection-required",
-        status: "FAILED",
-        output: "",
-        error: "请先在正文中选择需要改写的文字。",
-      });
-      return;
+  async function runAIVariants(operation: string, request: string, count: number, style = '', previewReceipt?: AuthorVariantsReceipt) {
+    if (activeCharacterId) return;
+    if (!chapter.data || generationStarting || (generationCreating.current && isObservingGeneration(generationCreating.current)) || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return;
+    if (operation === 'rewrite' && !selection.text) {
+      setJob({ id: 'selection-required', status: 'FAILED', output: '', error: '请先在正文中选择需要改写的文字。' }); return;
     }
-    setGenerationStarting(true);
-    setVariantDrafts([]);
-    setActiveVariant(0);
-    setJob(undefined);
+    const observer = beginGenerationObservation();
+    generationCreating.current = observer;
+    const original = operation === 'rewrite' ? selection.text : text;
+    setGenerationStarting(true); setVariantDrafts([]); setActiveVariant(0); setJob(undefined);
     try {
-      const response = await api.generateVariants(operation, {
-        novel_id: s.novelId,
-        chapter_id: s.chapterId,
-        instruction: request,
-        style,
-        style_profile_id: s.writingInputs?.styleProfileId,
-        plot_plan_id: s.writingInputs?.plotPlanId,
-        profile: s.mode,
-        provider_id: s.textModel?.providerId,
-        model_id: s.textModel?.modelId,
-        source: selection.text,
-        selected_text: selection.text,
-        count,
-      });
-      const original = operation === "rewrite" ? selection.text : text;
-      let candidates: AiVariantDraft[] = response.variants.map((item) => ({
-        id: item.job_id,
-        variantIndex: item.variant_index,
-        baseChapterVersion: item.base_chapter_version,
-        output: "",
-        original,
-        status: "working",
+      const payload = {
+        novel_id: observer.novelId, chapter_id: observer.chapterId, instruction: request, style,
+        style_profile_id: s.writingInputs?.styleProfileId, plot_plan_id: s.writingInputs?.plotPlanId,
+        profile: s.mode, provider_id: s.textModel?.providerId || '', model_id: s.textModel?.modelId || '',
+        source: selection.text, selected_text: selection.text,
+      };
+      if (previewReceipt && (saveState !== 'saved' || previewReceipt.chapterVersion !== chapter.data.version
+          || authorVariantsKey({ ...payload, operation, chapter_version: chapter.data.version,
+            request_scope: previewReceipt.requestBody.request_scope }, count, observer.context) !== previewReceipt.requestKey))
+        throw new Error('方案预检范围或输入已改变，请重新检查。');
+      const response = previewReceipt
+        ? await authorContextVariants<AuthorVariantsResult>(observer.novelId, 'generate-variants', previewReceipt.batch, observer.context)
+        : await api.generateVariants(operation, { ...payload, count }, observer.context);
+      const candidates: AiVariantDraft[] = response.variants.map(item => ({
+        id: item.job_id, variantIndex: item.variant_index, baseChapterVersion: item.base_chapter_version,
+        tracked: 'receipt_state' in item ? item.receipt_state === 'RECORDED' : true,
+        output: '', original, status: ['FAILED', 'CANCELLED', 'UNKNOWN'].includes('status' in item ? item.status : '') ? 'failed' : 'working',
+        ...(['FAILED', 'CANCELLED', 'UNKNOWN'].includes('status' in item ? item.status : '') ? { error: '部分方案未启动或结果未知；请核对原任务，不会自动重新发送。' } : {}),
       }));
-      setVariantDrafts(candidates);
-      generationRecovery.save(namespace,{chapterId:s.chapterId,variants:candidates});
-      await Promise.all(
-        response.variants.map(async (item, index) => {
-          let terminal = false;
-          for (let attempt = 0; attempt < 300; attempt++) {
-            const state = await api.job(item.job_id);
-            if (cancelledVariantIds.current.has(item.job_id)) break;
-            candidates = candidates.map((candidate, i) =>
-              i === index
-                ? {
-                    ...candidate,
-                    output: state.output || "",
-                    status:
-                      state.status === "COMPLETED"
-                        ? "ready"
-                        : state.status === "FAILED"
-                          ? "failed"
-                          : "working",
-                    error: state.error,
-                  }
-                : candidate,
-            );
-            setVariantDrafts([...candidates]);
-            generationRecovery.save(namespace,{chapterId:s.chapterId,variants:candidates});
-            if (isGenerationTerminal(state.status)) {
-              terminal = true;
-              break;
-            }
-            await new Promise((ok) => setTimeout(ok, 500));
-          }
-          if (!terminal && !cancelledVariantIds.current.has(item.job_id)) {
-            await api.cancel(item.job_id).catch(() => undefined);
-            candidates = candidates.map((candidate, i) =>
-              i === index
-                ? { ...candidate, status: "failed", error: VARIANT_TIMEOUT_ERROR }
-                : candidate,
-            );
-            setVariantDrafts([...candidates]);
-          }
-        }),
-      );
-      generationRecovery.remove(namespace,s.chapterId);
+      retainGeneration(observer, { chapterId: observer.chapterId, variants: candidates });
+      if (isObservingGeneration(observer)) { setGenerationRecoveryUnverified(false); await observeVariantGenerations(observer, candidates); }
     } catch {
-      setJob({
-        id: "generation-failed",
-        status: "FAILED",
-        output: "",
-        error: "多方案生成失败，请重试",
-      });
+      if (previewReceipt) {
+        // The review already supplies exact original job IDs. Preserve them on
+        // an ambiguous transport failure; never generate replacement requests.
+        const unknown: AiVariantDraft[] = previewReceipt.jobIds.map((id, index) => ({ id, variantIndex: index + 1,
+          baseChapterVersion: previewReceipt.chapterVersion, original, output: '', status: 'failed', tracked: false,
+          error: '部分方案未启动或结果未知；请核对原任务，不会自动重新发送。' }));
+        retainGeneration(observer, { chapterId: observer.chapterId, variants: unknown });
+        if (isObservingGeneration(observer)) setVariantDrafts(unknown);
+      } else if (isObservingGeneration(observer)) setJob({ id: 'generation-failed', status: 'FAILED', output: '', error: '多方案生成失败，请重试' });
     } finally {
-      setGenerationStarting(false);
+      if (generationCreating.current === observer) generationCreating.current = undefined;
+      if (isObservingGeneration(observer)) setGenerationStarting(false);
     }
   }
   async function cancelActiveGeneration() {
     if (variantCancelling || cancelGeneration.isPending) return;
+    const origin = captureGenerationOrigin();
     const workingIds = workingVariantIds(variantDrafts);
     if (workingIds.length) {
       setVariantCancelling(true);
-      workingIds.forEach((id) => cancelledVariantIds.current.add(id));
+      workingIds.forEach(id => cancelledVariantIds.current.add(id));
       try {
-        await Promise.all(workingIds.map((id) => api.cancel(id).catch(() => undefined)));
-        setVariantDrafts((current) =>
-          current.filter((item) => !cancelledVariantIds.current.has(item.id)),
-        );
-        setActiveVariant(0);
+        await Promise.all(workingIds.map(id => api.cancel(id, origin.context)));
+        if (!isCurrentGeneration(origin)) return;
+        const remaining = variantDrafts.filter(item => !workingIds.includes(item.id));
+        setVariantDrafts(remaining); setActiveVariant(0);
+        retainGeneration(origin, { chapterId: origin.chapterId, variants: remaining });
+      } catch {
+        if (isCurrentGeneration(origin)) setShellMessage('取消结果尚未确认，请在任务中心核对。');
       } finally {
-        setVariantCancelling(false);
+        if (isCurrentGeneration(origin)) setVariantCancelling(false);
       }
       return;
     }
-    if (job?.id) cancelGeneration.mutate(job.id);
+    if (job?.id) cancelGeneration.mutate({ id: job.id, origin });
   }
   async function retryVariant(draft: AiVariantDraft) {
-    const index = variantDrafts.findIndex((item) => item.id === draft.id);
-    if (index < 0 || draft.status !== "failed") return;
-    setVariantDrafts((current) =>
-      current.map((item) =>
-        item.id === draft.id ? { ...item, status: "working", error: undefined } : item,
-      ),
-    );
+    if (draft.status !== 'failed' || !variantDrafts.some(item => item.id === draft.id)) return;
+    const observer = beginGenerationObservation();
+    const originalCandidates = variantDrafts;
+    setVariantDrafts(current => current.map(item => item.id === draft.id ? { ...item, status: 'working', error: undefined } : item));
     try {
-      const response = await api.retryGeneration(draft.id);
-      const replacement: AiVariantDraft = {
-        ...draft,
-        id: response.job_id,
-        status: "working",
-        output: "",
-        error: undefined,
-        baseChapterVersion: response.base_chapter_version,
-      };
-      setVariantDrafts((current) =>
-        current.map((item) => (item.id === draft.id ? replacement : item)),
-      );
-      let terminal = false;
-      for (let attempt = 0; attempt < 300; attempt++) {
-        const state = await api.job(response.job_id);
-        const updated: AiVariantDraft = {
-          ...replacement,
-          output: state.output || "",
-          status:
-            state.status === "COMPLETED"
-              ? "ready"
-              : state.status === "FAILED" || state.status === "CANCELLED"
-                ? "failed"
-                : "working",
-          error: state.error,
-        };
-        setVariantDrafts((current) =>
-          current.map((item) => (item.id === response.job_id ? updated : item)),
-        );
-        if (isGenerationTerminal(state.status)) {
-          terminal = true;
-          break;
-        }
-        await new Promise((ok) => setTimeout(ok, 500));
-      }
-      if (!terminal) {
-        await api.cancel(response.job_id).catch(() => undefined);
-        setVariantDrafts((current) =>
-          current.map((item) =>
-            item.id === response.job_id
-              ? { ...item, status: "failed", error: VARIANT_TIMEOUT_ERROR }
-              : item,
-          ),
-        );
-      }
+      const response = await api.retryGeneration(draft.id, observer.context);
+      const candidates: AiVariantDraft[] = originalCandidates.map(item => item.id === draft.id ? {
+        ...draft, id: response.job_id, status: 'working', output: '', error: undefined, baseChapterVersion: response.base_chapter_version,
+      } : item);
+      retainGeneration(observer, { chapterId: observer.chapterId, variants: candidates, retryOf: draft.id });
+      if (isObservingGeneration(observer)) await observeVariantGenerations(observer, candidates);
     } catch {
-      setVariantDrafts((current) =>
-        current.map((item) =>
-          item.id === draft.id
-            ? { ...item, status: "failed", error: "生成失败，请重试" }
-            : item,
-        ),
-      );
+      if (isObservingGeneration(observer)) setVariantDrafts(current => current.map(item => item.id === draft.id ? { ...item, status: 'failed', error: '生成失败，请重试' } : item));
     }
   }
   async function retryDraft(draft: { id: string; status: string }) {
-    const variant = variantDrafts.find((item) => item.id === draft.id);
+    const variant = variantDrafts.find(item => item.id === draft.id);
     if (variant) return retryVariant(variant);
-    if (draft.status !== "failed") return;
-    setJob((current: any) => ({ ...current, status: "GENERATING", output: "", error: undefined }));
+    if (draft.status !== 'failed' || job?.id !== draft.id) return;
+    const observer = beginGenerationObservation();
+    const previous = job;
+    setJob((current: any) => ({ ...current, status: 'GENERATING', output: '', error: undefined }));
     try {
-      const response = await api.retryGeneration(draft.id);
-      setJob((current: any) => ({...current,id:response.job_id,status:"GENERATING",base_chapter_version:response.base_chapter_version}));
-      generationRecovery.save(namespace,{chapterId:s.chapterId,jobId:response.job_id,original:job?.original,baseChapterVersion:response.base_chapter_version});
-      const recovered = await recoverGenerationJob(response.job_id,api.job,(state)=>setJob((current:any)=>({...current,...state,output:state.output||current?.output||""})));
-      if (!recovered) setJob((current:any)=>({...current,status:"FAILED",error:"生成连接中断且恢复超时，请重试"}));
+      const response = await api.retryGeneration(draft.id, observer.context);
+      const initial = { ...previous, id: response.job_id, status: 'GENERATING', output: '', error: undefined, base_chapter_version: response.base_chapter_version };
+      retainGeneration(observer, { chapterId: observer.chapterId, jobId: initial.id, original: initial.original, baseChapterVersion: initial.base_chapter_version, job: initial, retryOf: draft.id });
+      if (isObservingGeneration(observer)) await observeSingleGeneration(observer, initial);
     } catch {
-      setJob((current:any)=>({...current,status:"FAILED",error:"生成连接中断，恢复失败，请重试"}));
-    } finally {
-      generationRecovery.remove(namespace,s.chapterId);
+      if (isObservingGeneration(observer)) setJob((current: any) => ({ ...current, status: 'FAILED', error: '生成连接中断，恢复失败，请重试' }));
     }
   }
   async function openDraftConflict(draft: { output: string }) {
     if (!chapter.data) return;
-    const variant=variantDrafts.find((item)=>item.output===draft.output);
-    const generationVersion=variant?.baseChapterVersion??job?.base_chapter_version??chapter.data.version;
-    const server=await api.chapter(s.chapterId);
-    const local={chapterId:s.chapterId,content:draft.output,document:undefined,baseVersion:generationVersion,updatedAt:new Date().toISOString()};
-    const value={chapterId:s.chapterId,local,server,detectedAt:new Date().toISOString()};
-    conflicts.save(value,namespace);setConflict(value);
-    setSaveState((current)=>reduceSaveState(current,{type:"save-failed",conflict:true}));
+    const origin = captureGenerationOrigin();
+    const variant = variantDrafts.find(item => item.output === draft.output);
+    const generationVersion = variant?.baseChapterVersion ?? job?.base_chapter_version ?? chapter.data.version;
+    const server = await api.chapter(origin.chapterId, origin.context);
+    if (!isCurrentGeneration(origin)) return;
+    const local = { chapterId: origin.chapterId, content: draft.output, document: undefined, baseVersion: generationVersion, updatedAt: new Date().toISOString() };
+    const value = { chapterId: origin.chapterId, local, server, detectedAt: new Date().toISOString() };
+    conflicts.save(value, origin.namespace); setConflict(value); setSaveState('conflict');
+  }
+  function verifyRecoveredState(origin: GenerationOrigin, state: any, id: string, chapterId = origin.chapterId) {
+    const scope = origin.context.scope;
+    if (state.id !== id || state.novel_id !== origin.novelId || state.chapter_id !== chapterId
+        || !Number.isInteger(state.base_chapter_version) || typeof state.output !== 'string'
+        || (state.status !== 'QUEUED' && state.status !== 'GENERATING' && state.status !== 'SETTLING' && !isGenerationTerminal(state.status))
+        || (origin.context.actor?.id && state.actor_id !== origin.context.actor.id)
+        || (scope && (state.scope?.workspace_id !== scope.workspaceId || state.scope?.project_id !== scope.projectId
+          || state.scope?.storyline_id !== scope.storylineId || state.scope?.branch_id !== scope.branchId))) throw new Error('RECOVERY_SOURCE_CHANGED');
+  }
+  async function readVerifiedRecovery(origin: GenerationOrigin, value: RecoverableGeneration): Promise<any[]> {
+    if (!isCurrentGeneration(origin) || value.chapterId !== origin.chapterId
+        || (value.actorId !== undefined && value.actorId !== origin.context.actor?.id)) throw new Error('RECOVERY_SCOPE_CHANGED');
+    const ids = value.jobId ? [value.jobId] : value.variants?.map(item => item.id) ?? [];
+    if (!ids.length || ids.length > 8) throw new Error('INVALID_RECOVERY_GROUP');
+    const states = await Promise.all(ids.map(id => api.job(id, origin.context)));
+    if (!isCurrentGeneration(origin)) throw new Error('RECOVERY_SCOPE_CHANGED');
+    states.forEach((state, index) => verifyRecoveredState(origin, state, ids[index]));
+    return states;
+  }
+  async function displayVerifiedRecovery(observer: GenerationObservation, value: RecoverableGeneration, states: any[]) {
+    if (value.jobId) {
+      const state = states[0];
+      const initial = { id: value.jobId, status: state.status, output: state.output || '', original: value.original,
+        base_chapter_version: state.base_chapter_version, error: state.error, ...generationVersionFlags(observer, state.base_chapter_version) };
+      retainGeneration(observer, { chapterId: observer.chapterId, jobId: value.jobId, original: value.original,
+        baseChapterVersion: state.base_chapter_version, job: initial });
+      setVariantDrafts([]); setActiveVariant(0);
+      await observeSingleGeneration(observer, initial);
+    } else {
+      const candidates: AiVariantDraft[] = value.variants!.map((item, index) => ({ ...item, output: states[index].output || '',
+        status: states[index].status === 'COMPLETED' ? 'ready' : isGenerationTerminal(states[index].status) ? 'failed' : 'working',
+        baseChapterVersion: states[index].base_chapter_version, error: states[index].error,
+        ...generationVersionFlags(observer, states[index].base_chapter_version) }));
+      retainGeneration(observer, { chapterId: observer.chapterId, variants: candidates });
+      setJob(undefined); setActiveVariant(0); await observeVariantGenerations(observer, candidates);
+    }
+  }
+  async function reopenRetainedGeneration(value: RecoverableGeneration) {
+    const origin = captureGenerationOrigin();
+    if (!writingRecovery) throw new Error('RECOVERY_DISABLED');
+    const states = await readVerifiedRecovery(origin, value);
+    if (!isCurrentGeneration(origin)) return;
+    const observer = beginGenerationObservation();
+    setGenerationRecoveryUnverified(false);
+    void displayVerifiedRecovery(observer, value, states);
+  }
+  const workspaceRestoreSequence = useRef(0);
+  const workspaceRestoreState = useRef({ saveState, composing, hydratedIdentity, editorIdentity });
+  workspaceRestoreState.current = { saveState, composing, hydratedIdentity, editorIdentity };
+  useLayoutEffect(() => { workspaceRestoreSequence.current++; }, [editorIdentity, scopeEpoch, panel, experimentalTab, workspaceSection, workspaceTools, writingFocus]);
+  const generationOpenSequence = useRef(0);
+  // Closing this surface, choosing another task or disabling either entry
+  // invalidates pending reads without cancelling the original generation.
+  useLayoutEffect(() => { generationOpenSequence.current += 1; },
+    [panel, experimentalTab, workspaceSection, workspaceTools, experimentalFlags.data?.features['experimental.model_broker_v2']]);
+  async function openExistingGeneration(jobId: string, chapterId: string, signal?: AbortSignal) {
+    const origin = captureGenerationOrigin();
+    const entryEnabled = () => {
+      const current = qc.getQueryData<{ features: Record<string, boolean> }>(['experimental-features', origin.namespace]);
+      return current?.features['experimental.model_broker_v2'] === true || current?.features['experimental.workspace_tools_v2'] === true;
+    };
+    if (!entryEnabled() || signal?.aborted || !jobId || !chapterId) throw new Error('GENERATION_ENTRY_DISABLED');
+    const ticket = ++generationOpenSequence.current;
+    const current = () => !signal?.aborted && ticket === generationOpenSequence.current && isCurrentGeneration(origin) && entryEnabled();
+    // Verify at the originating authority before navigating. Only identifiers
+    // survive navigation; the destination performs another current read.
+    const value = { chapterId, jobId, actorId: origin.context.actor?.id };
+    const initial = await api.job(jobId, origin.context);
+    if (!current()) throw new Error('RECOVERY_SCOPE_CHANGED');
+    verifyRecoveredState(origin, initial, jobId, chapterId);
+    if (chapterId !== origin.chapterId) {
+      setPendingGenerationOpen({ namespace, novelId: s.novelId, actorId: s.actor?.id, chapterId, jobId });
+      s.setChapter(chapterId); setPanel('history'); return;
+    }
+    const states = await readVerifiedRecovery(origin, value);
+    if (!current()) throw new Error('RECOVERY_SCOPE_CHANGED');
+    const observer = beginGenerationObservation();
+    setGenerationRecoveryUnverified(false); setPanel('history');
+    await displayVerifiedRecovery(observer, { ...value, original: states[0].source || chapter.data?.content || '' }, states);
+  }
+  useEffect(() => {
+    if (!pendingGenerationOpen) return;
+    const value = pendingGenerationOpen;
+    if (panel !== 'history' || value.namespace !== namespace || value.novelId !== s.novelId || value.actorId !== s.actor?.id || value.chapterId !== s.chapterId) {
+      setPendingGenerationOpen(undefined); return;
+    }
+    if (hydratedIdentity !== editorIdentity || chapter.data?.id !== value.chapterId) return;
+    setPendingGenerationOpen(undefined);
+    const ticket = generationOpenSequence.current + 1;
+    void openExistingGeneration(value.jobId, value.chapterId).catch(() => {
+      if (generationOpenSequence.current === ticket && revisionStoreIdentity(useStudio.getState()) === editorIdentity)
+        setShellMessage('无法打开生成记录，请检查当前项目、权限和版本后，从原任务入口重试。正文草稿未改变。');
+    });
+  }, [pendingGenerationOpen, namespace, s.novelId, s.actor?.id, s.chapterId, hydratedIdentity, editorIdentity, chapter.data?.id, panel]);
+  function clearRecoveredTask(origin: GenerationOrigin, id: string) {
+    const saved = generationRecovery.load(origin.namespace, origin.chapterId);
+    if (saved?.jobId === id || saved?.variants?.some(item => item.id === id)) generationRecovery.remove(origin.namespace, origin.chapterId);
+  }
+  async function acceptGeneratedDraft(draft: { id: string; output: string }) {
+    if (generationAction.current && isCurrentGeneration(generationAction.current.origin)) return;
+    const origin = captureGenerationOrigin();
+    if (!isCurrentGeneration(origin)) return;
+    const action = { origin, id: draft.id, kind: 'accept' };
+    generationAction.current = action;
+    const variant = variantDrafts.find(item => item.id === draft.id);
+    const generationVersion = variant?.baseChapterVersion ?? job?.base_chapter_version;
+    const peers = variantDrafts.filter(item => item.id !== draft.id).map(item => item.id);
+    setDraftAction('accept');
+    const showConflict = async () => {
+      const server = await api.chapter(origin.chapterId, origin.context);
+      if (!isCurrentGeneration(origin)) return;
+      const local = { chapterId: origin.chapterId, content: draft.output, document: undefined,
+        baseVersion: generationVersion ?? origin.baseVersion ?? server.version, updatedAt: new Date().toISOString() };
+      const value = { chapterId: origin.chapterId, local, server, detectedAt: new Date().toISOString() };
+      conflicts.save(value, origin.namespace); setConflict(value); setSaveState('conflict');
+      setJob((current: any) => current?.id === draft.id ? { ...current, error: '正文已有更新，AI 草稿已保留，请先处理冲突。', acceptBlocked: true } : current);
+    };
+    try {
+      if (isRecoveredDraftStale(generationVersion, chapter.data?.version)) { await showConflict(); return; }
+      const accepted = await api.accept(draft.id, draft.output, generationVersion, origin.context);
+      await Promise.all(peers.map(id => api.reject(id, origin.context).catch(() => undefined)));
+      clearRecoveredTask(origin, draft.id);
+      if (!isCurrentGeneration(origin)) return;
+      stopGenerationObservation(); setVariantDrafts([]); setActiveVariant(0); setJob(undefined);
+      const saved = accepted?.chapter ?? await api.chapter(origin.chapterId, origin.context);
+      if (!isCurrentGeneration(origin)) return;
+      if (saved?.id) {
+        qc.setQueryData(['chapter', origin.namespace, saved.id], saved);
+        void qc.invalidateQueries({ queryKey: ['chapters', origin.namespace, origin.novelId] });
+        if (saved.id !== origin.chapterId) s.setChapter(saved.id);
+      }
+    } catch (error) {
+      if (!isCurrentGeneration(origin)) return;
+      if (error instanceof ApiError && error.status === 409) {
+        try { await showConflict(); } catch { if (isCurrentGeneration(origin)) setShellMessage('版本冲突查询未完成，AI 草稿已保留。'); }
+      } else setShellMessage('采用结果未确认，请先在任务中心和版本记录中核对。');
+    } finally {
+      if (generationAction.current === action) generationAction.current = undefined;
+      if (isCurrentGeneration(origin)) setDraftAction(undefined);
+    }
+  }
+  async function rejectGeneratedDraft(draft: { id: string }) {
+    if (generationAction.current && isCurrentGeneration(generationAction.current.origin)) return;
+    const origin = captureGenerationOrigin();
+    if (!isCurrentGeneration(origin)) return;
+    const action = { origin, id: draft.id, kind: 'reject' };
+    generationAction.current = action;
+    const remaining = variantDrafts.filter(item => item.id !== draft.id);
+    setDraftAction('reject');
+    try {
+      await api.reject(draft.id, origin.context);
+      clearRecoveredTask(origin, draft.id);
+      if (remaining.length) retainGeneration(origin, { chapterId: origin.chapterId, variants: remaining });
+      if (!isCurrentGeneration(origin)) return;
+      setVariantDrafts(remaining); setActiveVariant(0);
+      if (job?.id === draft.id) { stopGenerationObservation(); setJob(undefined); }
+    } catch {
+      if (isCurrentGeneration(origin)) setShellMessage('拒绝结果未确认，草稿已保留，请重试。');
+    } finally {
+      if (generationAction.current === action) generationAction.current = undefined;
+      if (isCurrentGeneration(origin)) setDraftAction(undefined);
+    }
+  }
+  async function openLocalSample(id: string) {
+    const origin = useStudio.getState();
+    if (!workspaceTools || packagedHost || origin.sessionToken || origin.scope || origin.novelId) return;
+    const identity = revisionStoreIdentity(origin);
+    // Sample creation does not run NovelHome's original query invalidation.
+    // Hold explicit project choice while refreshing the original inventory.
+    setProjectChoiceOpen(true);
+    try {
+      await qc.invalidateQueries({ queryKey: ['novels'], refetchType: 'none' });
+      const currentProjects = await qc.fetchQuery({ queryKey: ['novels'], queryFn: api.novels, staleTime: 0 });
+      if (revisionStoreIdentity(useStudio.getState()) !== identity) return;
+      const currentFlags = qc.getQueryData<{ features: Record<string, boolean> }>(['experimental-features', namespace]);
+      if (!currentFlags?.features['experimental.workspace_tools_v2']) return;
+      if (!currentProjects.some(project => project.id === id)) {
+        setProjectRecoveryNotice('练习项目当前不存在或不可访问，请核对项目列表。');
+        return;
+      }
+      setProjectChoiceOpen(false); setProjectRecoveryNotice('');
+      useStudio.getState().setNovel(id);
+    } catch {
+      if (revisionStoreIdentity(useStudio.getState()) === identity)
+        setProjectRecoveryNotice('项目列表未核对完成，练习内容已保留。请恢复连接后重新打开。');
+    }
   }
   if (!s.novelId && !s.scope?.workspaceId)
     return (
       <EntryExperience
         packagedHost={packagedHost}
         initialToken={s.sessionToken}
+        onOpenLocalSample={id => { void openLocalSample(id); }}
         onEnter={(nextToken, nextScope) =>
           s.setCollaboration(nextToken, undefined, nextScope)
         }
-        localHome={<NovelHome onCreated={s.setNovel} />}
+        localHome={<>{workspaceTools && projectRecoveryNotice && <section className="notice" role="status">{projectRecoveryNotice}</section>}<NovelHome onCreated={id => { setProjectChoiceOpen(false); setProjectRecoveryNotice(''); s.setNovel(id); }} /></>}
       />
     );
   const scope = s.scope;
@@ -837,7 +1141,7 @@ export default function App() {
         branch: "主线",
       };
   const saveDisplayLabel = chapter.data
-    ? saveStateLabel(saveState)
+    ? (writingRecovery ? recoveryStateLabel(saveState, durability, composing) : saveStateLabel(saveState))
     : "正在打开章节…";
   const taskSummary = summarizeTasks(job?.status ? [{ status: job.status }] : []);
   const archivedItems = Array.isArray(archived.data)
@@ -947,9 +1251,134 @@ export default function App() {
       />
     </div>
   );
+  function navigateWorkspace(target: WorkspaceNavigation) {
+    if (!hasExperimental || revisionStoreIdentity(useStudio.getState()) !== editorIdentity || target.signal?.aborted) return;
+    const workspaceTicket = ++workspaceRestoreSequence.current;
+    generationOpenSequence.current += 1;
+    setPendingGenerationOpen(undefined);
+    if (target.novel_id && (target.novel_id !== s.novelId || (target.branch_id || undefined) !== s.scope?.branchId)) {
+      if (!workspaceTools || packagedHost || s.sessionToken || s.scope || target.branch_id) {
+        setShellMessage('请通过原工作区与分支选择器切换此来源；不会把当前会话或主线正文借给另一分支。当前草稿未改变。');
+        return;
+      }
+      const origin = captureGenerationOrigin(), destination = target.novel_id;
+      const originBuffer = JSON.stringify(buffer.current);
+      const chapterId = target.kind === 'chapter' ? target.id : target.kind === 'generation' ? target.chapter_id : undefined;
+      const current = () => mounted.current && !target.signal?.aborted && workspaceTicket === workspaceRestoreSequence.current
+        && origin.epoch === editorEpoch.current && origin.identity === revisionStoreIdentity(useStudio.getState())
+        && qc.getQueryData<{ features: Record<string, boolean> }>(['experimental-features', origin.namespace])?.features['experimental.workspace_tools_v2'] === true;
+      const safeBuffer = () => {
+        const live = workspaceRestoreState.current;
+        return live.saveState === 'saved' && !live.composing && !savePending.current && live.hydratedIdentity === live.editorIdentity
+          && JSON.stringify(buffer.current) === originBuffer
+          && !drafts.load(origin.chapterId, origin.namespace) && !conflicts.load(origin.chapterId, origin.namespace)
+          && (!chapterId || !drafts.load(chapterId, origin.namespace) && !conflicts.load(chapterId, origin.namespace));
+      };
+      if (!safeBuffer()) { setShellMessage('当前或目标章节有未保存草稿，请先保存或处理冲突，再打开另一作品的搜索结果。当前内容已保留。'); return; }
+      void (async () => {
+        // Search metadata is not project authority: refresh the original inventory.
+        const projects = await qc.fetchQuery({ queryKey: ['novels'], queryFn: api.novels, staleTime: 0 });
+        if (!current()) return;
+        if (!projects.some(project => project.id === destination)) throw new Error('SEARCH_PROJECT_UNAVAILABLE');
+        const destinationChapter = chapterId ? await api.chapter(chapterId, origin.context) : undefined;
+        if (!current()) return;
+        if (destinationChapter && (destinationChapter.id !== chapterId || destinationChapter.novel_id !== destination
+          || target.kind === 'chapter' && destinationChapter.version !== target.version)) throw new Error('SEARCH_SOURCE_CHANGED');
+        if (target.kind === 'generation') {
+          if (!chapterId || !destinationChapter) throw new Error('SEARCH_TASK_SOURCE_UNAVAILABLE');
+          const original = await api.job(target.id, origin.context);
+          if (!current()) return;
+          if (original.novel_id !== destination || original.chapter_id !== chapterId) throw new Error('SEARCH_TASK_SCOPE_CHANGED');
+        }
+        if (!current()) return;
+        if (!safeBuffer()) { setShellMessage('核对搜索来源期间出现新输入，已保留草稿；请保存后再次打开。'); return; }
+        const feature = target.feature || target.id;
+        const safePanels = new Set(['editor', 'creation', 'story', 'history', 'workflow', 'screenplay', 'assets', 'exports', 'knowledge', 'research', 'agents', 'diagnostics', 'settings']);
+        const experimental = EXPERIMENTAL_TABS.some(([key]) => key === feature);
+        if (target.kind === 'feature' && !safePanels.has(feature)
+          && !(experimental && experimentalFlags.data?.features[`experimental.${feature}`] === true)) return;
+        if (destinationChapter) qc.setQueryData(['chapter', origin.namespace, chapterId], destinationChapter);
+        setProjectChoiceOpen(false); setProjectRecoveryNotice('');
+        useStudio.getState().setNovel(destination);
+        if (chapterId && destinationChapter) {
+          useStudio.getState().setChapter(chapterId);
+          setPendingAnchor({ namespace: origin.namespace, chapterId, version: destinationChapter.version,
+            requestId: ++anchorSequence.current, offset: target.anchor?.offset || 0, scroll: target.anchor?.scroll || 0 });
+          setPanel('history');
+          if (target.kind === 'generation') setPendingGenerationOpen({ namespace: origin.namespace, novelId: destination,
+            actorId: s.actor?.id, chapterId, jobId: target.id });
+        } else if (experimental) { setExperimentalTab(feature); setPanel('experimental'); }
+        else setPanel(feature === 'editor' ? 'history' : feature);
+        setShellMessage('已通过原项目与来源权限核对，打开另一作品的搜索结果。未执行或重新提交任何任务。');
+      })().catch(() => { if (current()) setShellMessage('搜索目标当前不可读或版本已变，未切换作品。请刷新结果并重新核对；当前草稿已保留。'); });
+      return;
+    }
+    if (target.kind === 'generation') {
+      if (!workspaceTools || !target.id || !target.chapter_id || !Number.isInteger(target.version) || !target.version) return;
+      const ticket = generationOpenSequence.current + 1;
+      const origin = captureGenerationOrigin();
+      void openExistingGeneration(target.id, target.chapter_id, target.signal).catch(() => {
+        if (!target.signal?.aborted && generationOpenSequence.current === ticket && isCurrentGeneration(origin))
+          setShellMessage('无法打开生成记录，请刷新任务并核对当前权限与来源。正文草稿未改变。');
+      });
+      return;
+    }
+    if (target.kind === 'chapter') {
+      if (!target.id || !Number.isInteger(target.version) || !target.version) return;
+      const open = () => {
+        setPendingAnchor({ namespace, chapterId: target.id, version: target.version!,
+          requestId: ++anchorSequence.current, offset: target.anchor?.offset || 0, scroll: target.anchor?.scroll || 0 });
+        s.setChapter(target.id); setPanel('history');
+      };
+      if (!target.workspace) { open(); return; }
+      const origin = captureGenerationOrigin();
+      const current = () => mounted.current && !target.signal?.aborted && workspaceTicket === workspaceRestoreSequence.current
+        && origin.epoch === editorEpoch.current && origin.identity === revisionStoreIdentity(useStudio.getState())
+        && qc.getQueryData<{ features: Record<string, boolean> }>(['experimental-features', origin.namespace])?.features['experimental.workspace_tools_v2'] === true;
+      const safeBuffer = () => {
+        const live = workspaceRestoreState.current;
+        return live.saveState === 'saved' && !live.composing && !savePending.current && live.hydratedIdentity === live.editorIdentity
+          && !drafts.load(origin.chapterId, origin.namespace) && !drafts.load(target.id, origin.namespace) && !conflicts.load(target.id, origin.namespace);
+      };
+      if (!safeBuffer()) { setShellMessage('当前或目标章节有未保存草稿，请先保存或处理冲突，再恢复工作现场。当前内容已保留。'); return; }
+      // Re-open through the original chapter authority, even when React Query
+      // has a cached destination. A delayed response cannot replace newer work.
+      void api.chapter(target.id, origin.context).then(value => {
+        if (!current()) return;
+        if (!safeBuffer()) { setShellMessage('恢复期间出现新输入，已保留草稿；请保存后再次恢复。'); return; }
+        if (value.id !== target.id || value.novel_id !== origin.novelId || value.version !== target.version) {
+          setShellMessage('章节版本已变化，未套用旧现场。请重新核对并选择打开当前版本。'); return;
+        }
+        qc.setQueryData(['chapter', origin.namespace, target.id], value);
+        const restored = target.workspace!;
+        if (writingFocus && restored.focus_state === 'READY' && restored.focus_preferences) {
+          focusPreferencesTouched.current = true;
+          setWritingPreferences(restored.focus_preferences); setFocusActive(restored.view.focus_active);
+          setReferencesVisible(restored.view.references_visible); setReferenceRevision(value => value + 1);
+        }
+        setWorkspaceSection(restored.layout.section);
+        setShellMessage(restored.focus_state === 'CHANGED' ? '章节位置已核对；固定参考与阅读偏好已有新版本，保留当前设置。' : '已恢复核对过的章节位置。未重新提交任何任务。');
+        open();
+      }).catch(() => { if (current()) setShellMessage('原章节当前不可读，未恢复现场。请核对权限或刷新后重试，当前内容已保留。'); });
+      return;
+    }
+    const feature = target.feature || target.id;
+    const experimental = EXPERIMENTAL_TABS.find(([key]) => key === feature);
+    if (experimental) {
+      if (experimentalFlags.data?.features[`experimental.${feature}`] !== true) return;
+      setExperimentalTab(feature); setPanel('experimental'); return;
+    }
+    const safePanels = new Set(['editor', 'creation', 'story', 'history', 'workflow', 'screenplay', 'assets', 'exports', 'knowledge', 'research', 'agents', 'diagnostics', 'settings']);
+    if (safePanels.has(feature)) setPanel(feature === 'editor' ? 'history' : feature);
+  }
+  const openWorkspaceSearch = workspaceTools ? () => {
+    setStudioModule('NOVEL'); setWorkspaceSection('search'); setExperimentalTab('workspace_tools_v2'); setPanel('experimental');
+  } : undefined;
   const mainWorkspace = (
     <div className="workspace novel-writing-workspace">
+      <div className="novel-workspace-chrome">
       <div className="editorbar">
+        <div className="novel-editor-metadata">
         <div className="editorbar__identity"><span>当前章节</span><b>{chapter.data?.title || "未选择章节"}</b></div>
         <small>{text.trim() ? `${text.trim().length} 字` : "0 字"}</small>
         {writingGoal.data && (
@@ -962,18 +1391,39 @@ export default function App() {
             <strong>{Math.round(writingGoal.data.words_progress)}%</strong>
           </div>
         )}
+        </div>
         <SaveControls
           state={saveState}
-          ready={!!chapter.data}
+          ready={!!chapter.data && hydratedIdentity === editorIdentity}
           onSave={dispatchSave}
+          composing={composing}
+          recovery={writingRecovery ? { durability, onExport: exportCurrentDraft, onConflict: reopenConflict } : undefined}
         />
       </div>
-      {chapter.data ? (
+      {workspaceTools && <section className="notice workspace-resume-summary" aria-label="当前项目上次工作">
+        {projectRecoveryNotice && <p className="workspace-resume-summary__recovery">{projectRecoveryNotice}</p>}
+        {!packagedHost && shouldLoadLocalNovels(s.sessionToken, s.scope) && <Button onClick={() => { if (saveState !== 'saved' || composing || savePending.current || (s.chapterId && (hydratedIdentity !== editorIdentity || drafts.load(s.chapterId, namespace)))) { setShellMessage('请先保存或处理当前草稿，再切换本机作品。当前内容已保留。'); return; } setProjectChoiceOpen(true); setProjectRecoveryNotice('请选择本机作品；会记住本次明确选择。'); s.setNovel(''); }}>切换本机作品</Button>}
+        <div className="workspace-resume-summary__content">
+          {lastWorkspace.isFetching ? <span>正在核对上次工作现场…</span> : lastWorkspace.isError ? <span>工作现场暂时不可读，手工写作仍可继续。</span> : lastWorkspace.data?.item ? <><strong>上次工作：{lastWorkspace.data.item.chapter_title || '已保存停止点'}</strong><p className="workspace-resume-summary__note">{lastWorkspace.data.item.stopping_note || '没有停止点备注。'}</p></> : <span>可保存当前位置、筛选与下次事项。</span>}
+        </div>
+        {!lastWorkspace.isFetching && (lastWorkspace.isError ? <Button onClick={() => void lastWorkspace.refetch()}>重试读取上次现场</Button> : <Button onClick={() => { setWorkspaceSection('resume'); setExperimentalTab('workspace_tools_v2'); setPanel('experimental'); }}>{lastWorkspace.data?.item ? '查看上次工作现场' : '保存当前工作现场'}</Button>)}
+      </section>}
+      {writingRecovery && durability === 'memory' && <section className="notice" role="alert">
+        本机草稿写入失败。当前修改仅在此页面内存中，关闭、刷新或断电可能丢失。请导出当前草稿。
+      </section>}
+      </div>
+      <div className={writingFocus && referencesVisible ? 'writing-editor-row writing-focus-split' : 'writing-editor-row'}>
+      {chapter.data && hydratedIdentity === editorIdentity ? (
         <ChapterEditor
+          writingPreferences={writingFocus ? writingPreferences : undefined}
+          key={`${namespace}:${s.chapterId}:${s.actor?.id || 'local'}:${scopeEpoch}`}
           content={text}
           document={doc}
           onChange={edit}
           onSelection={setSelection}
+          onCompositionChange={compositionChanged}
+          onAnchorChange={workspaceTools || writingFocus ? anchor => setEditorAnchor({ identity: editorIdentity, anchor }) : undefined}
+          restoreAnchor={pendingAnchor && pendingAnchor.chapterId === s.chapterId && pendingAnchor.namespace === namespace && pendingAnchor.version === chapter.data.version && saveState === 'saved' ? pendingAnchor : undefined}
         />
       ) : (
         <section className="notice" aria-live="polite">
@@ -981,7 +1431,13 @@ export default function App() {
           <p>在左侧新建或选择章节，开始写作。</p>
         </section>
       )}
-      {panel === "experimental" ? <ExperimentalWorkbench key={`${namespace}:${s.novelId}`} novelId={s.novelId} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}} flags={experimentalFlags.data} /> : <Panel type={panel} chapter={chapter.data} scope={scope} sessionToken={s.sessionToken} novelId={s.novelId} onOpenChapter={s.setChapter}
+      {writingFocus && referencesVisible && s.novelId && <WritingReferenceRail key={`${namespace}:${s.novelId}`} client={workspaceClient} revision={referenceRevision} />}
+      </div>
+      {panel === "experimental" ? <ExperimentalWorkbench key={`${namespace}:${s.novelId}`} novelId={s.novelId} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}} flags={experimentalFlags.data} onNavigate={navigateWorkspace} currentAnchor={saveState === "saved" && editorAnchor?.identity === editorIdentity ? editorAnchor.anchor : undefined} requestedTab={experimentalTab} workspaceSection={workspaceSection} workspaceView={{ focus_active: focusActive, references_visible: referencesVisible }} onWorkspaceViewChange={view => { if (!workspaceTools || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return; setFocusActive(view.focus_active); setReferencesVisible(view.references_visible); }} onWorkspaceSaved={() => { void lastWorkspace.refetch(); }} focusActive={focusActive} onFocusChange={setFocusActive} onPreferencesChange={preferences => { focusPreferencesTouched.current = true; setWritingPreferences(preferences); }} onReferencesChange={() => setReferenceRevision(value => value + 1)} localDraftState={chapter.data ? [{ chapter_id: chapter.data.id, chapter_version: chapter.data.version, state: saveState === 'saved' ? 'SAVED' : saveState === 'failed' ? 'SAVE_FAILED' : 'UNSAVED' }] : []} saveFailure={saveState === 'failed' || saveState === 'conflict'} currentSelection={selection} saved={saveState === 'saved'} onChapterSaved={value => {
+        if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity || value.id !== s.chapterId || value.novel_id !== s.novelId) return;
+        qc.setQueryData<Chapter>(['chapter', namespace, value.id], current => current && current.version > value.version ? current : value);
+        void qc.invalidateQueries({ queryKey: ['chapters', namespace, s.novelId] });
+      }} revisionGeneration={{ enabled: experimentalFlags.data?.features['experimental.selection_assistant_v2'] === true && experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true, novelId: s.novelId, context: {sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}, providerId:s.textModel?.providerId, modelId:s.textModel?.modelId, profile:s.mode }} onOpenGeneration={openExistingGeneration} onUseStyle={id => { if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return; setCharacterViewpoint(undefined); s.setWritingInputs({ ...s.writingInputs, styleProfileId: id }); setPanel('history'); }} activeCharacterId={activeCharacterId} onExitCharacter={() => setCharacterViewpoint(undefined)} onUseCharacter={characterMind ? (characterId, chapterId) => { if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return; if (chapterId !== s.chapterId) { s.setChapter(chapterId); setShellMessage('已打开人物视角对应章节，请再次核对知识后选择人物视角。'); return; } setCharacterViewpoint({ identity: namespace, chapterId, characterId, epoch: scopeEpoch }); setPanel('history'); } : undefined} /> : <Panel type={panel} chapter={chapter.data} scope={scope} sessionToken={s.sessionToken} novelId={s.novelId} onOpenChapter={s.setChapter}
         onRestored={(restored) => {
           // Feed the existing hydration path. It retains drafts and creates a
           // persistent conflict when a restored server version overtakes them.
@@ -996,9 +1452,21 @@ export default function App() {
   const inspector = (
     <div className="novel-inspector-stack">
       <section className="novel-inspector-context" aria-label="当前写作上下文"><span>当前章节</span><strong>{chapter.data?.title || "未选择章节"}</strong><small>{chapter.data ? `第 ${chapter.data.number} 章 · 版本 ${chapter.data.version}` : "从左侧章节树选择章节"}</small></section>
+      {workspaceTools && <SampleJourneyGuide novelId={s.novelId} context={{ sessionToken: s.sessionToken, scope: s.scope, actor: s.actor }} chapter={chapter.data} saved={saveState === 'saved'} onNavigate={feature => navigateWorkspace({ kind: 'feature', id: feature, feature })} />}
       <WritingGoalPanel novelId={s.novelId} />
       {chapter.data&&<SourcePrivacyControl key={`${namespace}:${chapter.data.id}`} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}}/>}
+      {writingRecovery && chapter.data && <GenerationRecoveryPicker key={`${namespace}:${s.chapterId}:${scopeEpoch}`}
+        namespace={namespace} chapterId={s.chapterId} actorId={s.actor?.id} revision={generationRecoveryRevision} includeCurrent={generationRecoveryUnverified}
+        onRecover={reopenRetainedGeneration} />}
+      {experimentalFlags.data?.features['experimental.revision_intelligence_v2'] === true && chapter.data && <Button disabled={!selection.text || saveState !== 'saved'} onClick={() => { setExperimentalTab('revision_intelligence_v2'); setPanel('experimental'); }}>修订选区与逐段接受</Button>}
       <AiWritingPanel
+      authorPreview={chapter.data ? {
+        enabled: experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true,
+        chapterId: chapter.data.id, chapterVersion: chapter.data.version, source: selection.text,
+        characterId: activeCharacterId, onExitCharacter: () => setCharacterViewpoint(undefined),
+        profile: s.mode, styleProfileId: s.writingInputs?.styleProfileId, plotPlanId: s.writingInputs?.plotPlanId,
+        context: {sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}, saved: saveState === 'saved',
+      } : undefined}
       novelId={s.novelId}
       chapterNumber={chapter.data?.number}
       contextTarget={s.mode === "LOCAL_ONLY" ? "local" : "cloud"}
@@ -1046,75 +1514,12 @@ export default function App() {
             }
           : undefined
       }
-      onGenerate={(operation: AiOperation, request, style) =>
-        runAI(operation, request, style)
+      onGenerate={(operation: AiOperation, request, style, receipt) =>
+        runAI(operation, request, style, receipt)
       }
       onCancel={cancelActiveGeneration}
-      onAccept={async (draft) => {
-        setDraftAction("accept");
-        try {
-          const variant=variantDrafts.find(item=>item.id===draft.id);
-          const generationVersion=variant?.baseChapterVersion??job?.base_chapter_version;
-          if (isRecoveredDraftStale(generationVersion,chapter.data?.version)) {
-            const server=await api.chapter(s.chapterId);
-            const local={chapterId:s.chapterId,content:draft.output,document:undefined,baseVersion:generationVersion,updatedAt:new Date().toISOString()};
-            const value={chapterId:s.chapterId,local,server,detectedAt:new Date().toISOString()};
-            conflicts.save(value,namespace);setConflict(value);
-            setSaveState((current)=>reduceSaveState(current,{type:"save-failed",conflict:true}));
-            setJob((current:any)=>({...current,error:"正文已有更新，AI 草稿已保留，请先处理冲突。",acceptBlocked:true,acceptBlockedReason:"正文已在生成期间发生变化，请先处理版本冲突。"}));
-            return;
-          }
-          const accepted = await api.accept(draft.id,draft.output,generationVersion);
-          await Promise.all(variantDrafts.filter(item=>item.id!==draft.id).map(item=>api.reject(item.id).catch(()=>undefined)));
-          setVariantDrafts([]);setActiveVariant(0);
-          setJob(undefined);
-          if (accepted?.chapter?.id && accepted.chapter.id !== s.chapterId) {
-            await chapters.refetch();
-            s.setChapter(accepted.chapter.id);
-          } else {
-            await chapter.refetch();
-          }
-        } catch (error) {
-          if (error instanceof ApiError && error.status === 409) {
-            const server = await api.chapter(s.chapterId);
-            const local = {
-              chapterId: s.chapterId,
-              content: draft.output,
-              document: undefined,
-              baseVersion: job.base_chapter_version,
-              updatedAt: new Date().toISOString(),
-            };
-            const value = {
-              chapterId: s.chapterId,
-              local,
-              server,
-              detectedAt: new Date().toISOString(),
-            };
-            conflicts.save(value, namespace);
-            setConflict(value);
-            setSaveState((current) =>
-              reduceSaveState(current, { type: "save-failed", conflict: true }),
-            );
-            setJob((current: any) => ({
-              ...current,
-              error: "正文已有更新，AI 草稿已保留，请先处理冲突。",
-            }));
-            return;
-          }
-          throw error;
-        } finally {
-          setDraftAction(undefined);
-        }
-      }}
-      onReject={async (draft) => {
-        setDraftAction("reject");
-        try {
-          await api.reject(draft.id);
-          if(variantDrafts.length){const remaining=variantDrafts.filter(item=>item.id!==draft.id);setVariantDrafts(remaining);setActiveVariant(0)}else setJob(undefined);
-        } finally {
-          setDraftAction(undefined);
-        }
-      }}
+      onAccept={acceptGeneratedDraft}
+      onReject={rejectGeneratedDraft}
       />
     </div>
   );
@@ -1126,6 +1531,9 @@ export default function App() {
           onModuleChange={setStudioModule}
           scope={shellScope}
           actor={s.actor?.displayName || "本机作者"}
+          onGlobalSearch={openWorkspaceSearch}
+          focusMode={writingFocus && focusActive}
+          onExitFocus={() => setFocusActive(false)}
           sidebarClassName="workspace-sidebar--novel"
           sidebar={sidebar}
           main={mainWorkspace}
@@ -1139,8 +1547,9 @@ export default function App() {
           }
         />
       }{" "}
-      {conflict && (
+      {conflict && !composing && (
         <ConflictDialog
+          key={`${namespace}:${conflict.chapterId}:${conflict.detectedAt}`}
           value={conflict}
           namespace={namespace}
           onClose={() => setConflict(undefined)}
@@ -1152,7 +1561,14 @@ export default function App() {
               baseVersion: resolution.serverVersion,
               updatedAt: resolution.updatedAt,
             };
-            drafts.save(next, namespace);
+            setDurability(drafts.save(next, namespace).durability);
+            // An explicit merge resolves this comparison, not the pending save.
+            // Retain the old candidates in history, and synchronize the already
+            // reviewed server base so a delayed query cannot reopen it.
+            conflicts.resolve(conflict.chapterId, namespace);
+            qc.setQueryData<Chapter>(['chapter', namespace, conflict.chapterId], current =>
+              !current || current.version > conflict.server.version ? current : { ...current, content: conflict.server.content, document: conflict.server.document, version: conflict.server.version });
+            buffer.current = { identity: editorIdentity, value: next };
             setText(next.content);
             setDoc(next.document);
             setBaseVersion(next.baseVersion);
@@ -1164,6 +1580,12 @@ export default function App() {
           onUseServer={() => {
             setText(conflict.server.content);
             setDoc(conflict.server.document);
+            setBaseVersion(conflict.server.version);
+            buffer.current = { identity: editorIdentity, value: {
+              chapterId: conflict.chapterId, content: conflict.server.content, document: conflict.server.document,
+              baseVersion: conflict.server.version, updatedAt: new Date().toISOString(),
+            } };
+            setDurability('none');
             drafts.remove(conflict.chapterId, namespace);
             conflicts.remove(conflict.chapterId, namespace);
             conflictResolutionDrafts.remove(conflict.chapterId, namespace);
@@ -1731,4 +2153,3 @@ function NovelHome({ onCreated }: { onCreated: (id: string) => void }) {
     </section>
   );
 }
-

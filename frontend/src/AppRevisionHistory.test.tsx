@@ -11,7 +11,7 @@ import { recoveryKey } from "./collaborationGuards";
 
 // Exercise the real App queries, revision panel, draft persistence and hydration.
 // Only unrelated shell chrome and the rich-text widget are replaced.
-vi.mock("./Editor", () => ({ ChapterEditor: ({ content, onChange }: any) =>
+vi.mock("./Editor", async importOriginal => ({ ...(await importOriginal<typeof import("./Editor")>()), ChapterEditor: ({ content, onChange }: any) =>
   <textarea aria-label="Test chapter editor" value={content} onChange={event => onChange(event.target.value, documentOf(event.target.value))} /> }));
 vi.mock("./ui/AppShell", () => ({ AppShell: ({ main, status }: any) => <><main>{main}</main><footer>{status}</footer></> }));
 vi.mock("./novel/AiWritingPanel", () => ({ AiWritingPanel: () => null }));

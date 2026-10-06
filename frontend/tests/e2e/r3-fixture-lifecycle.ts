@@ -1,35 +1,143 @@
-import type { Page, Request } from '@playwright/test';
+import type { Page, Request, Response, Route } from '@playwright/test';
 
-/** Track real business requests without interception until teardown begins. */
+class DrainTimeout extends Error {}
+
+type Pending = { sequence: number; method: string; path: string; started: number; status: number | null; phase: string };
+const routeWords = new Set(('api v1 novels chapters experimental workspace search resume history tasks features capabilities health models text-models media-tasks writing-goal archived characters locations canon foreshadowing timeline relationships volumes scenes story-routes story_routes outline secrets assets exports diagnostics context author-context runtime model-center providers runtimes events generations jobs agent-jobs planning graphs world records imports inbox teams media audiobook profiles').split(' '));
+/** Keep route shape only: no host, credentials, query, fragment or dynamic IDs. */
+function safePath(request: Request) {
+  try { return new URL(request.url()).pathname.split('/').map(part => !part || routeWords.has(part) ? part : ':id').join('/').slice(0, 240); }
+  catch { return '/invalid-url'; }
+}
+
+/** Track actual requests; interception begins only when teardown is requested.
+ * Page reload can detach the Page association from a terminal network event.
+ * Context events still reconcile the exact Request objects this page started.
+ * This establishes browser request termination, not server-handler completion.
+ * Exact-owned project deletion uses the real repository locking/active-project
+ * guards; request aborts are recorded as uncertain and never called server success.
+ */
 export function createPageQuiescer(page: Page, timeoutMs = 15_000) {
-  const pending = new Set<Request>();
-  const drained = new Set<() => void>();
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new Error('Drain timeout must be positive and bounded');
+  const pending = new Map<Request, Pending>(), waiters = new Set<() => void>();
+  const inspected = new WeakSet<Request>(), blocked = new WeakSet<Request>(), acknowledgedBlocked = new WeakSet<Request>();
+  const context = page.context();
+  let sequence = 0, completed = 0, abortedServerUnknown = 0, blockedBeforeDispatch = 0, active = true;
+  const uncertain: { method: string; path: string; reason: string }[] = [];
+  let phase = 'observing', teardown: Promise<void> | undefined, drainTimedOut = false;
+  const notify = () => { if (!pending.size) for (const done of [...waiters]) done(); };
   const started = (request: Request) => {
-    if (new URL(request.url()).pathname.startsWith('/api/')) pending.add(request);
+    if (!active || acknowledgedBlocked.has(request) || !new URL(request.url()).pathname.startsWith('/api/')) return;
+    const method = request.method();
+    pending.set(request, { sequence: ++sequence, method: /^[A-Z]{1,12}$/.test(method) ? method : 'OTHER',
+      path: safePath(request), started: Date.now(), status: null, phase: 'awaiting_response' });
   };
   const finished = (request: Request) => {
-    pending.delete(request);
-    if (!pending.size) for (const resolve of [...drained]) resolve();
+    if (!active) return;
+    if (pending.delete(request)) completed++;
+    notify();
+  };
+  const clientTerminated = (request: Request, reason: string) => {
+    const item = pending.get(request);
+    if (!active || !item) return;
+    // React query cancellation and deliberate pre-dispatch faults are normal.
+    // Retiring a terminal browser request is not proof its server handler ended.
+    abortedServerUnknown++;
+    if (uncertain.length < 20) uncertain.push({ method: item.method, path: item.path, reason });
+    pending.delete(request); notify();
+  };
+  const failed = (request: Request) => {
+    if (!active) return;
+    if (acknowledgedBlocked.has(request)) { pending.delete(request); notify(); return; }
+    if (blocked.has(request)) {
+      if (pending.has(request)) pending.get(request)!.phase = 'awaiting_teardown_abort_ack';
+      return;
+    }
+    clientTerminated(request, 'BROWSER_REQUEST_FAILED_SERVER_COMPLETION_UNKNOWN');
+  };
+  const responseObserved = (response: Response) => {
+    const request = response.request(), item = pending.get(request);
+    if (!active || !item) return;
+    item.status = response.status();
+    if (!item.phase.startsWith('request_failed')) item.phase = 'awaiting_response_end';
+    void response.finished().then(error => {
+      if (error) clientTerminated(request, 'RESPONSE_END_FAILED_SERVER_COMPLETION_UNKNOWN');
+      else finished(request);
+    }, () => clientTerminated(request, 'RESPONSE_END_FAILED_SERVER_COMPLETION_UNKNOWN'));
+  };
+  const inspect = (request: Request) => {
+    if (inspected.has(request)) return;
+    inspected.add(request);
+    // Response.finished observes a real protocol completion; no sleep, retry
+    // request, mock response or inferred idle interval establishes completion.
+    void request.response().then(response => { if (response) responseObserved(response); }, () => {
+      if (active && pending.has(request)) pending.get(request)!.phase = 'response_unavailable';
+    });
+  };
+  const diagnostics = () => ({ phase, drain_timed_out: drainTimedOut, timeout_ms: timeoutMs, page_closed: page.isClosed(),
+    pending_count: pending.size, completed_requests: completed, blocked_before_dispatch: blockedBeforeDispatch,
+    aborted_requests_server_completion_unknown: abortedServerUnknown, uncertain_requests: uncertain,
+    server_completion_verified: false, cleanup_authority: 'REAL_PROJECT_DELETE_LOCK_AND_ACTIVE_PROJECT_GUARDS',
+    pending: [...pending.values()].slice(0, 20).map(item => ({ sequence: item.sequence, method: item.method,
+      path: item.path, status: item.status, phase: item.phase, age_ms: Math.max(0, Date.now() - item.started) })),
+    diagnostics_truncated: pending.size > 20, contains_headers_body_query_or_dynamic_ids: false });
+  const drain = async () => {
+    for (const request of pending.keys()) inspect(request);
+    if (!pending.size) return;
+    await new Promise<void>((resolve, reject) => {
+      const done = () => { clearTimeout(timer); waiters.delete(done); resolve(); };
+      const timer = setTimeout(() => {
+        waiters.delete(done);
+        reject(new DrainTimeout(`Owned-project cleanup blocked: page API requests did not drain; ${JSON.stringify(diagnostics())}`));
+      }, timeoutMs);
+      waiters.add(done);
+      notify(); // Close the finish-between-snapshot-and-subscription race.
+    });
+  };
+  const blockNew = async (route: Route) => {
+    const request = route.request();
+    // Mark only this intercepted request, never an older in-flight one. The
+    // interception establishes it has not reached the backend.
+    blocked.add(request);
+    try { await route.abort('aborted'); acknowledgedBlocked.add(request); blockedBeforeDispatch++; pending.delete(request); notify(); }
+    catch { if (pending.has(request)) pending.get(request)!.phase = 'teardown_interception_failed'; }
   };
   page.on('request', started);
+  page.on('response', responseObserved);
   page.on('requestfinished', finished);
-  page.on('requestfailed', finished);
-  return async () => {
-    try {
-      // Stop late polling/refetches from starting more FileRepository readers.
-      // Existing requests are allowed to finish; closing first would abort them
-      // client-side while their server handlers could still touch the fixture.
-      if (!page.isClosed()) await page.route('**/api/**', route => route.abort('aborted'));
-      if (pending.size) await new Promise<void>((resolve, reject) => {
-        const done = () => { clearTimeout(timer); drained.delete(done); resolve(); };
-        const timer = setTimeout(() => { drained.delete(done); reject(new Error('Owned-project cleanup blocked: page API requests did not drain')); }, timeoutMs);
-        drained.add(done);
-      });
-      if (!page.isClosed()) await page.close({ runBeforeUnload: false });
-    } finally {
-      page.off('request', started);
-      page.off('requestfinished', finished);
-      page.off('requestfailed', finished);
-    }
+  page.on('requestfailed', failed);
+  context.on('response', responseObserved);
+  context.on('requestfinished', finished);
+  context.on('requestfailed', failed);
+  const quiesce = () => {
+    if (teardown) return teardown;
+    teardown = (async () => {
+      try {
+        phase = 'blocking_new_requests';
+        if (!page.isClosed()) await page.route('**/api/**', blockNew);
+        phase = 'draining';
+        try { await drain(); }
+        catch (error) {
+          if (!(error instanceof DrainTimeout)) throw error;
+          // Chromium can retain an abandoned Request without a terminal event.
+          // Successful page closure establishes client termination, never server
+          // completion. The real repository delete lock remains the authority.
+          drainTimedOut = true; phase = 'closing_unresolved_requests';
+          if (!page.isClosed()) await page.close({ runBeforeUnload: false });
+          if (!page.isClosed()) throw new Error('Page closure was not confirmed; owned cleanup remains blocked');
+          for (const request of [...pending.keys()]) clientTerminated(request, 'PAGE_CLOSED_SERVER_COMPLETION_UNKNOWN');
+        }
+        if (!page.isClosed()) await page.close({ runBeforeUnload: false });
+        phase = 'closed';
+      } catch (error) { phase = 'blocked'; throw error; }
+      finally {
+        active = false;
+        page.off('request', started); page.off('response', responseObserved);
+        page.off('requestfinished', finished); page.off('requestfailed', failed);
+        context.off('response', responseObserved); context.off('requestfinished', finished); context.off('requestfailed', failed);
+      }
+    })();
+    return teardown;
   };
+  return Object.assign(quiesce, { drain, diagnostics });
 }

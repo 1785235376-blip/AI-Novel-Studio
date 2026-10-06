@@ -511,6 +511,20 @@ def guard(fn,*args):
     except FileExistsError as exc:raise HTTPException(409,f"Already exists: {exc}")
     except (ValueError,KeyError) as exc:raise HTTPException(400,str(exc))
 
+def screenplay_guard(fn, *args):
+    # Re-evaluate feature/source authority after the underlying read or mutation.
+    from .experimental.api import director_service
+    from .experimental.flags import enabled_flags
+    try:
+        value = guard(fn, *args)
+    except HTTPException as exc:
+        exc.detail = director_service.project_screenplay(
+            exc.detail, enabled='ai_director_v2' in enabled_flags())
+        raise
+    return director_service.project_screenplay(
+        value, enabled='ai_director_v2' in enabled_flags())
+
+
 def _authorize_media_novel(novel_id:str,session_token:str|None,permission:str,branch_id:str|None=None):
     if settings.enable_collaboration_runtime:
         _authorize_novel_project(novel_id,session_token,permission)
@@ -1202,28 +1216,42 @@ def generation_group(group_id:str,x_session_token:str|None=Header(None)):
     variants = jobs.variants(group_id)
     if not variants:
         raise HTTPException(404,"Generation variant group not found")
-    if settings.enable_collaboration_runtime:
-        for job in variants:
-            _generation_context(job.id, x_session_token)
+    from .jobs import require_generation_content
+    for job in variants:
+        if settings.enable_collaboration_runtime: _generation_context(job.id, x_session_token)
+        require_generation_content(job)
     return {"group_id":group_id,"count":len(variants),"variants":[job.public() for job in variants]}
 @router.get("/generation/{jid}")
 def generation(jid:str,x_session_token:str|None=Header(None)):
     if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
-    job=guard(jobs.get,jid); return {**job.public(),"diff":jobs.diff(jid) if job.output else ""}
+    job=guard(jobs.get,jid)
+    from .jobs import require_generation_content
+    require_generation_content(job)
+    return {**job.public(),"diff":jobs.diff(jid) if job.output else ""}
 @router.get("/generation/{jid}/events")
 def events(jid:str,x_session_token:str|None=Header(None)):
     if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
-    guard(jobs.get,jid); return StreamingResponse(jobs.events(jid),media_type="text/event-stream",headers={"Cache-Control":"no-cache"})
+    from .jobs import require_generation_content
+    require_generation_content(guard(jobs.get,jid))
+    return StreamingResponse(jobs.events(jid),media_type="text/event-stream",headers={"Cache-Control":"no-cache"})
 @router.post("/generation/{jid}/cancel")
 def cancel(jid:str,x_session_token:str|None=Header(None)):
     if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
-    return guard(jobs.cancel,jid).public()
+    job = guard(jobs.cancel,jid)
+    from .jobs import generation_content_available
+    if not generation_content_available(job):
+        return {"id": job.id, "status": job.public()["status"], "cancellation_requested": True, "content_available": False}
+    return job.public()
 @router.post("/generation/{jid}/retry",status_code=202)
 def retry_generation(jid:str,x_session_token:str|None=Header(None)):
     actor=scope=None
     if settings.enable_collaboration_runtime:
         actor,scope,job=_generation_context(jid,x_session_token)
     else:job=guard(jobs.get,jid)
+    from .jobs import require_generation_content, generation_required_features
+    require_generation_content(job)
+    if generation_required_features(job):
+        raise HTTPException(409, {'code': 'AUTHOR_PREVIEW_REQUIRED'})
     if job.status not in {"FAILED","CANCELLED"}:raise HTTPException(409,{"code":"GENERATION_NOT_RETRYABLE","status":job.status})
     payload={
         "novel_id":job.novel_id,"chapter_id":job.chapter_id,"instruction":job.instruction,
@@ -1234,6 +1262,8 @@ def retry_generation(jid:str,x_session_token:str|None=Header(None)):
     return {"job_id":retried.id,"status":retried.status,"events_url":f"/api/generation/{retried.id}/events","base_chapter_version":retried.base_chapter_version,"retry_of":jid}
 @router.post("/generation/{jid}/accept")
 def accept(jid:str,body:AcceptIn|None=None,x_session_token:str|None=Header(None)):
+    from .jobs import require_generation_content
+    require_generation_content(guard(jobs.get,jid))
     if settings.enable_collaboration_runtime:
         actor,scope,job=_generation_context(jid,x_session_token)
         if body is None or body.expected_version is None:raise HTTPException(428,{"code":"EXPECTED_VERSION_REQUIRED"})
@@ -1244,6 +1274,8 @@ def accept(jid:str,body:AcceptIn|None=None,x_session_token:str|None=Header(None)
 @router.post("/generation/{jid}/reject")
 def reject(jid:str,x_session_token:str|None=Header(None)):
     if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
+    from .jobs import require_generation_content
+    require_generation_content(guard(jobs.get,jid))
     return guard(jobs.reject,jid).public()
 @router.get("/context-preview")
 def context_preview(novel_id:str,chapter:int,instruction:str="",target:str="cloud"):
@@ -1298,7 +1330,9 @@ def _authorize_novel_project(
             )
         else:
             scope = AuthorizationScope(ScopeKind.PROJECT, workspace_id, novel_id)
-        collaboration_scope_service.validate_scope(scope)
+        # The original authority validates the declared scope level while
+        # checking current membership and grants. The collaboration validator
+        # requires a complete branch and would reject a valid PROJECT scope.
         membership_authorization_service.require(actor, permission, ModalityDomain.NOVEL, scope)
         return actor, scope
     except (KeyError, ValueError, PermissionError) as exc:
@@ -1516,13 +1550,13 @@ def upload_asset(nid:str, body:AssetUploadIn, idempotency_key:str|None=Header(No
         asset=asset_library_service.create(nid,body.filename,body.content_base64,body.media_type,body.kind,idempotency_key,branch_id=x_branch_id if settings.enable_collaboration_runtime else None)
         if body.character_id or body.scene_id:
             asset=asset_library_service.update_metadata(asset['id'],{'character_id':body.character_id,'scene_id':body.scene_id},branch_id=_image_branch(x_branch_id))
-        return asset
+        return asset_library_service.public(asset)
     except ValueError as exc: raise HTTPException(400,str(exc))
 @router.get("/novels/{nid}/assets")
 def list_assets(nid:str,kind:str|None=None,character_id:str|None=None,scene_id:str|None=None,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_asset_project(nid,x_session_token,x_branch_id,"domain.read")
     items=asset_library_service.list(nid,branch_id=x_branch_id if settings.enable_collaboration_runtime else None)
-    return [item for item in items if (not kind or item.get('kind')==kind) and (not character_id or item.get('character_id')==character_id) and (not scene_id or item.get('scene_id')==scene_id)]
+    return asset_library_service.public([item for item in items if (not kind or item.get('kind')==kind) and (not character_id or item.get('character_id')==character_id) and (not scene_id or item.get('scene_id')==scene_id)])
 def _scoped_asset(asset_id:str,novel_id:str,branch_id:str|None=None):
     asset=asset_library_service.get(asset_id,branch_id=branch_id if settings.enable_collaboration_runtime else None)
     if not hmac.compare_digest(str(asset.get('novel_id') or ''),str(novel_id)): raise FileNotFoundError(asset_id)
@@ -1536,7 +1570,7 @@ def _authorize_asset_project(novel_id:str,session_token:str|None,branch_id:str|N
 def get_asset(asset_id:str,novel_id:str=Query(min_length=1),x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     try:
         _authorize_asset_project(novel_id,x_session_token,x_branch_id,"domain.read")
-        return _scoped_asset(asset_id,novel_id,x_branch_id)
+        return asset_library_service.public(_scoped_asset(asset_id,novel_id,x_branch_id))
     except FileNotFoundError: raise HTTPException(404,"asset not found")
     except ValueError: raise HTTPException(400,"invalid asset identifier")
 @router.get("/assets/{asset_id}/download")
@@ -1870,50 +1904,50 @@ async def _screenplay_route_guard(request: Request, nid: str, screenplay_id: str
 @router.get("/novels/{nid}/screenplays")
 def screenplays(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
     _authorize_media_novel(nid,x_session_token,"domain.read",x_branch_id)
-    return [{key:value for key,value in row.items() if key!="version_history"} for row in guard(lambda: screenplay_service.list(nid,branch_id=x_branch_id if settings.enable_collaboration_runtime else None))]
+    return [{key:value for key,value in row.items() if key!="version_history"} for row in screenplay_guard(lambda: screenplay_service.list(nid,branch_id=x_branch_id if settings.enable_collaboration_runtime else None))]
 @router.post("/novels/{nid}/screenplays",status_code=201)
 def create_screenplay(nid:str,body:ScreenplayIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
     _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
-    return guard(lambda: screenplay_service.create(nid,body.title,branch_id=x_branch_id if settings.enable_collaboration_runtime else None))
+    return screenplay_guard(lambda: screenplay_service.create(nid,body.title,branch_id=x_branch_id if settings.enable_collaboration_runtime else None))
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/scenes/{scene_id}",dependencies=[Depends(_screenplay_route_guard)])
-def update_screenplay_scene(nid:str,screenplay_id:str,scene_id:str,body:ScreenplaySceneIn):return guard(screenplay_service.update_scene,nid,screenplay_id,scene_id,body.model_dump())
+def update_screenplay_scene(nid:str,screenplay_id:str,scene_id:str,body:ScreenplaySceneIn):return screenplay_guard(screenplay_service.update_scene,nid,screenplay_id,scene_id,body.model_dump())
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/approve",dependencies=[Depends(_screenplay_route_guard)])
-def approve_screenplay(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.approve,nid,screenplay_id,body.expected_version if body else None)
+def approve_screenplay(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return screenplay_guard(screenplay_service.approve,nid,screenplay_id,body.expected_version if body else None)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/revisions",dependencies=[Depends(_screenplay_route_guard)])
-def screenplay_revisions(nid:str,screenplay_id:str):return guard(screenplay_service.history,nid,screenplay_id)
+def screenplay_revisions(nid:str,screenplay_id:str):return screenplay_guard(screenplay_service.history,nid,screenplay_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/revise",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
-def revise_screenplay(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.revise,nid,screenplay_id,body.expected_version if body else None,body.source_version if body else None)
+def revise_screenplay(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return screenplay_guard(screenplay_service.revise,nid,screenplay_id,body.expected_version if body else None,body.source_version if body else None)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/shots",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
-def plan_screenplay_shots(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.plan_shots,nid,screenplay_id,body.expected_version if body else None)
+def plan_screenplay_shots(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return screenplay_guard(screenplay_service.plan_shots,nid,screenplay_id,body.expected_version if body else None)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/shots/approve",dependencies=[Depends(_screenplay_route_guard)])
-def approve_screenplay_shots(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.approve_shots,nid,screenplay_id,body.expected_version if body else None)
+def approve_screenplay_shots(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return screenplay_guard(screenplay_service.approve_shots,nid,screenplay_id,body.expected_version if body else None)
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/shots/{shot_id}",dependencies=[Depends(_screenplay_route_guard)])
-def update_screenplay_shot(nid:str,screenplay_id:str,shot_id:str,body:ShotIn):return guard(screenplay_service.update_shot,nid,screenplay_id,shot_id,body.model_dump())
+def update_screenplay_shot(nid:str,screenplay_id:str,shot_id:str,body:ShotIn):return screenplay_guard(screenplay_service.update_shot,nid,screenplay_id,shot_id,body.model_dump())
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/storyboard",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
-def plan_storyboard(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.plan_storyboard,nid,screenplay_id,body.expected_version if body else None)
+def plan_storyboard(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return screenplay_guard(screenplay_service.plan_storyboard,nid,screenplay_id,body.expected_version if body else None)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/storyboard/approve",dependencies=[Depends(_screenplay_route_guard)])
-def approve_storyboard(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.approve_storyboard,nid,screenplay_id,body.expected_version if body else None)
+def approve_storyboard(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return screenplay_guard(screenplay_service.approve_storyboard,nid,screenplay_id,body.expected_version if body else None)
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/storyboard/{card_id}",dependencies=[Depends(_screenplay_route_guard)])
-def update_storyboard(nid:str,screenplay_id:str,card_id:str,body:StoryboardCardIn):return guard(screenplay_service.update_storyboard_card,nid,screenplay_id,card_id,body.model_dump())
+def update_storyboard(nid:str,screenplay_id:str,card_id:str,body:StoryboardCardIn):return screenplay_guard(screenplay_service.update_storyboard_card,nid,screenplay_id,card_id,body.model_dump())
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/transitions",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
-def plan_transitions(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.plan_transitions,nid,screenplay_id,body.expected_version if body else None)
+def plan_transitions(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return screenplay_guard(screenplay_service.plan_transitions,nid,screenplay_id,body.expected_version if body else None)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/transitions/approve",dependencies=[Depends(_screenplay_route_guard)])
-def approve_transitions(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.approve_transitions,nid,screenplay_id,body.expected_version if body else None)
+def approve_transitions(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return screenplay_guard(screenplay_service.approve_transitions,nid,screenplay_id,body.expected_version if body else None)
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}",dependencies=[Depends(_screenplay_route_guard)])
-def update_transition(nid:str,screenplay_id:str,transition_id:str,body:TransitionIn):return guard(screenplay_service.update_transition,nid,screenplay_id,transition_id,body.model_dump())
+def update_transition(nid:str,screenplay_id:str,transition_id:str,body:TransitionIn):return screenplay_guard(screenplay_service.update_transition,nid,screenplay_id,transition_id,body.model_dump())
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/prompt",dependencies=[Depends(_screenplay_route_guard)])
-def transition_prompt(nid:str,screenplay_id:str,transition_id:str):return guard(screenplay_service.transition_prompt,nid,screenplay_id,transition_id)
+def transition_prompt(nid:str,screenplay_id:str,transition_id:str):return screenplay_guard(screenplay_service.transition_prompt,nid,screenplay_id,transition_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/suggestion",dependencies=[Depends(_screenplay_route_guard)])
-def transition_suggestion(nid:str,screenplay_id:str,transition_id:str):return guard(screenplay_service.transition_suggestion,nid,screenplay_id,transition_id)
+def transition_suggestion(nid:str,screenplay_id:str,transition_id:str):return screenplay_guard(screenplay_service.transition_suggestion,nid,screenplay_id,transition_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt",dependencies=[Depends(_screenplay_route_guard)])
-def motion_prompt(nid:str,screenplay_id:str,transition_id:str):return guard(screenplay_service.motion_prompt,nid,screenplay_id,transition_id)
+def motion_prompt(nid:str,screenplay_id:str,transition_id:str):return screenplay_guard(screenplay_service.motion_prompt,nid,screenplay_id,transition_id)
 class MotionPromptIn(BaseModel): motion_prompt:str=Field(min_length=1,max_length=10000)
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt",dependencies=[Depends(_screenplay_route_guard)])
 def save_motion_prompt(nid:str,screenplay_id:str,transition_id:str,body:MotionPromptIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.save_motion_prompt,nid,screenplay_id,transition_id,body.motion_prompt)
+    _authorize_media_novel(nid,x_session_token,"domain.write");return screenplay_guard(screenplay_service.save_motion_prompt,nid,screenplay_id,transition_id,body.motion_prompt)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
 def create_motion_tasks(nid:str,screenplay_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _authorize_media_novel(nid,x_session_token,"domain.write");return guard(screenplay_service.create_motion_tasks,nid,screenplay_id)
+    _authorize_media_novel(nid,x_session_token,"domain.write");return screenplay_guard(screenplay_service.create_motion_tasks,nid,screenplay_id)
 @router.get("/video-providers")
 def video_providers():
     items=[]
@@ -2117,7 +2151,7 @@ def retry_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_b
 def accept_image_job(nid:str,job_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_media_novel(nid,x_session_token,"domain.write",x_branch_id)
     from .dependencies import asset_provider_registry
-    return guard(_image_jobs(x_session_token).accept,nid,_image_branch(x_branch_id),job_id,asset_library_service,asset_provider_registry)
+    return asset_library_service.public(guard(_image_jobs(x_session_token).accept,nid,_image_branch(x_branch_id),job_id,asset_library_service,asset_provider_registry))
 
 @router.post("/images/generate")
 def generate_image(body:ImageGenerateIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
@@ -2426,7 +2460,7 @@ def import_generated_speech(nid:str,body:dict,x_session_token:str|None=Header(No
         asset=asset_library_service.create(nid,str(body.get('filename') or f"generated-speech.{measured['extension']}"),base64.b64encode(data).decode('ascii'),measured['media_type'],'audio',f"speech-generation:{hashlib.sha256(data).hexdigest()}",branch_id=_image_branch(x_branch_id))
         if body.get('character_id'):
             asset=asset_library_service.update_metadata(asset['id'],{'character_id':body['character_id']},branch_id=_image_branch(x_branch_id))
-        return asset
+        return asset_library_service.public(asset)
     except OutboundURLRejected as exc: raise HTTPException(400,{'code':'OUTBOUND_URL_REJECTED','message':str(exc)})
     except Exception: raise HTTPException(502,{'code':'AUDIO_IMPORT_FAILED','message':'音频导入失败'})
 @router.post("/novels/{nid}/image-generations/import",status_code=202)
@@ -2450,7 +2484,7 @@ def import_generated_image(nid:str,body:dict,x_session_token:str|None=Header(Non
         links={key:body.get(key) for key in ('character_id','scene_id') if body.get(key)}
         if links:
             asset=asset_library_service.update_metadata(asset['id'],links,branch_id=_image_branch(x_branch_id))
-        return asset
+        return asset_library_service.public(asset)
     except OutboundURLRejected as exc: raise HTTPException(400,{'code':'OUTBOUND_URL_REJECTED','message':str(exc)})
     except Exception: raise HTTPException(502,{'code':'IMAGE_IMPORT_FAILED','message':'图片导入失败'})
 @router.get("/novels/{nid}/visual-memories")
@@ -2466,24 +2500,24 @@ class MotionFramesIn(BaseModel): start_frame:str|None=None; end_frame:str|None=N
 class MotionProviderIn(BaseModel): provider_id:str=Field(min_length=1); model_id:str='video-placeholder'
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}",dependencies=[Depends(_screenplay_route_guard)])
 def update_motion_task(nid:str,screenplay_id:str,task_id:str,body:MotionTaskStatusIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.update_motion_task,nid,screenplay_id,task_id,body.status)
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return screenplay_guard(screenplay_service.update_motion_task,nid,screenplay_id,task_id,body.status)
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frames",dependencies=[Depends(_screenplay_route_guard)])
 def update_motion_frames(nid:str,screenplay_id:str,task_id:str,body:MotionFramesIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
     _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id)
-    result=guard(screenplay_service.update_motion_frames,nid,screenplay_id,task_id,body.start_frame,body.end_frame,body.constraints)
+    result=screenplay_guard(screenplay_service.update_motion_frames,nid,screenplay_id,task_id,body.start_frame,body.end_frame,body.constraints)
     return result
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/provider",dependencies=[Depends(_screenplay_route_guard)])
 def update_motion_provider(nid:str,screenplay_id:str,task_id:str,body:MotionProviderIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.update_motion_provider,nid,screenplay_id,task_id,body.provider_id,body.model_id)
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return screenplay_guard(screenplay_service.update_motion_provider,nid,screenplay_id,task_id,body.provider_id,body.model_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/execute",dependencies=[Depends(_screenplay_route_guard)])
 def execute_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(lambda: screenplay_service.execute_motion_task(nid,screenplay_id,task_id,reauthorize=lambda: _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id)))
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return screenplay_guard(lambda: screenplay_service.execute_motion_task(nid,screenplay_id,task_id,reauthorize=lambda: _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id)))
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/cancel",dependencies=[Depends(_screenplay_route_guard)])
 def cancel_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.cancel_motion_task,nid,screenplay_id,task_id)
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return screenplay_guard(screenplay_service.cancel_motion_task,nid,screenplay_id,task_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/retry",dependencies=[Depends(_screenplay_route_guard)])
 def retry_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.retry_motion_task,nid,screenplay_id,task_id)
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return screenplay_guard(screenplay_service.retry_motion_task,nid,screenplay_id,task_id)
 class MotionResultIn(BaseModel):
     url:str=Field(min_length=1,max_length=4000)
     media_type:str='video/mp4'
@@ -2500,7 +2534,7 @@ class MotionResultIn(BaseModel):
 class MotionCallbackIn(BaseModel): status:str; progress:int=Field(default=0,ge=0,le=100); url:str|None=None; error:str|None=None; remote_task_id:str|None=None; submission_key:str|None=None
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result",dependencies=[Depends(_screenplay_route_guard)])
 def attach_motion_result(nid:str,screenplay_id:str,task_id:str,body:MotionResultIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.attach_motion_result,nid,screenplay_id,task_id,body.url,body.media_type)
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return screenplay_guard(screenplay_service.attach_motion_result,nid,screenplay_id,task_id,body.url,body.media_type)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/callback")
 def motion_callback(nid:str,screenplay_id:str,task_id:str,body:MotionCallbackIn,x_video_callback_token:str|None=Header(None)):
     expected=os.getenv('VIDEO_CALLBACK_TOKEN','').strip()
@@ -2511,85 +2545,85 @@ def motion_callback(nid:str,screenplay_id:str,task_id:str,body:MotionCallbackIn,
     if task is None: raise HTTPException(404,'motion task not found')
     if not body.remote_task_id or not body.submission_key or body.remote_task_id!=task.get('remote_task_id') or body.submission_key!=task.get('submission_key'):
         raise HTTPException(409,{'code':'VIDEO_CALLBACK_ATTEMPT_MISMATCH'})
-    return guard(screenplay_service.motion_callback,nid,screenplay_id,task_id,body.status,body.progress,body.url,body.error)
+    return screenplay_guard(screenplay_service.motion_callback,nid,screenplay_id,task_id,body.status,body.progress,body.url,body.error)
 class RemoteMotionTaskIn(BaseModel): remote_task_id:str=Field(min_length=1,max_length=400)
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/remote-id",dependencies=[Depends(_screenplay_route_guard)])
 def set_remote_motion_task_id(nid:str,screenplay_id:str,task_id:str,body:RemoteMotionTaskIn,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.set_remote_motion_task_id,nid,screenplay_id,task_id,body.remote_task_id)
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return screenplay_guard(screenplay_service.set_remote_motion_task_id,nid,screenplay_id,task_id,body.remote_task_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/sync",dependencies=[Depends(_screenplay_route_guard)])
 def sync_motion_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.sync_motion_task,nid,screenplay_id,task_id)
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return screenplay_guard(screenplay_service.sync_motion_task,nid,screenplay_id,task_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result-history",dependencies=[Depends(_screenplay_route_guard)])
 def motion_result_history(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_motion(nid,screenplay_id,x_session_token,"domain.read",x_branch_id)
-    return guard(screenplay_service.motion_result_history,nid,screenplay_id,task_id)
+    return screenplay_guard(screenplay_service.motion_result_history,nid,screenplay_id,task_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/asset-reference",dependencies=[Depends(_screenplay_route_guard)])
 def motion_asset_reference(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_motion(nid,screenplay_id,x_session_token,"domain.read",x_branch_id)
-    return guard(screenplay_service.motion_asset_reference,nid,screenplay_id,task_id)
+    return screenplay_guard(screenplay_service.motion_asset_reference,nid,screenplay_id,task_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset",status_code=202,dependencies=[Depends(_screenplay_route_guard)])
 def import_motion_asset(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.import_motion_asset_reference,nid,screenplay_id,task_id)
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return screenplay_guard(screenplay_service.import_motion_asset_reference,nid,screenplay_id,task_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset",dependencies=[Depends(_screenplay_route_guard)])
 def motion_asset_import_status(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_motion(nid,screenplay_id,x_session_token,"domain.read",x_branch_id)
-    return guard(screenplay_service.motion_asset_import_status,nid,screenplay_id,task_id)
+    return screenplay_guard(screenplay_service.motion_asset_import_status,nid,screenplay_id,task_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets",dependencies=[Depends(_screenplay_route_guard)])
 def list_motion_asset_imports(nid:str,screenplay_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_motion(nid,screenplay_id,x_session_token,"domain.read",x_branch_id)
-    return guard(screenplay_service.list_motion_asset_imports,nid,screenplay_id)
+    return screenplay_guard(screenplay_service.list_motion_asset_imports,nid,screenplay_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets/retry",dependencies=[Depends(_screenplay_route_guard)])
 def retry_failed_motion_asset_imports(nid:str,screenplay_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.retry_failed_motion_asset_imports,nid,screenplay_id)
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return screenplay_guard(screenplay_service.retry_failed_motion_asset_imports,nid,screenplay_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/download",status_code=202,dependencies=[Depends(_screenplay_route_guard)])
 def download_motion_asset(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.download_motion_asset,nid,screenplay_id,task_id,asset_library_service)
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return screenplay_guard(screenplay_service.download_motion_asset,nid,screenplay_id,task_id,asset_library_service)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/retry",dependencies=[Depends(_screenplay_route_guard)])
 def retry_motion_asset_import(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return guard(screenplay_service.retry_motion_asset_import,nid,screenplay_id,task_id)
+    _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id);return screenplay_guard(screenplay_service.retry_motion_asset_import,nid,screenplay_id,task_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frame-history",dependencies=[Depends(_screenplay_route_guard)])
 def motion_frame_history(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_motion(nid,screenplay_id,x_session_token,"domain.read",x_branch_id)
-    return guard(screenplay_service.motion_frame_history,nid,screenplay_id,task_id)
+    return screenplay_guard(screenplay_service.motion_frame_history,nid,screenplay_id,task_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/visual-continuity",dependencies=[Depends(_screenplay_route_guard)])
-def visual_continuity(nid:str,screenplay_id:str):return guard(screenplay_service.validate_visual_continuity,nid,screenplay_id)
+def visual_continuity(nid:str,screenplay_id:str):return screenplay_guard(screenplay_service.validate_visual_continuity,nid,screenplay_id)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/pipeline-status",dependencies=[Depends(_screenplay_route_guard)])
-def screenplay_pipeline_status(nid:str,screenplay_id:str):return guard(screenplay_service.pipeline_status,nid,screenplay_id)
+def screenplay_pipeline_status(nid:str,screenplay_id:str):return screenplay_guard(screenplay_service.pipeline_status,nid,screenplay_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance",dependencies=[Depends(_screenplay_route_guard)])
-def advance_screenplay_pipeline(nid:str,screenplay_id:str):return guard(screenplay_service.advance_pipeline,nid,screenplay_id)
+def advance_screenplay_pipeline(nid:str,screenplay_id:str):return screenplay_guard(screenplay_service.advance_pipeline,nid,screenplay_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance-until-gate",dependencies=[Depends(_screenplay_route_guard)])
-def advance_screenplay_pipeline_until_gate(nid:str,screenplay_id:str,max_steps:int=10):return guard(screenplay_service.advance_pipeline_until_gate,nid,screenplay_id,max_steps)
+def advance_screenplay_pipeline_until_gate(nid:str,screenplay_id:str,max_steps:int=10):return screenplay_guard(screenplay_service.advance_pipeline_until_gate,nid,screenplay_id,max_steps)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/assets",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
-def plan_assets(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.plan_assets,nid,screenplay_id,body.expected_version if body else None)
+def plan_assets(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return screenplay_guard(screenplay_service.plan_assets,nid,screenplay_id,body.expected_version if body else None)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/assets/approve",dependencies=[Depends(_screenplay_route_guard)])
-def approve_assets(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return guard(screenplay_service.approve_assets,nid,screenplay_id,body.expected_version if body else None)
+def approve_assets(nid:str,screenplay_id:str,body:ScreenplayVersionIn|None=None):return screenplay_guard(screenplay_service.approve_assets,nid,screenplay_id,body.expected_version if body else None)
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/assets/{asset_id}",dependencies=[Depends(_screenplay_route_guard)])
-def update_asset(nid:str,screenplay_id:str,asset_id:str,body:AssetRequirementIn):return guard(screenplay_service.update_asset,nid,screenplay_id,asset_id,body.model_dump())
+def update_asset(nid:str,screenplay_id:str,asset_id:str,body:AssetRequirementIn):return screenplay_guard(screenplay_service.update_asset,nid,screenplay_id,asset_id,body.model_dump())
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks",status_code=201,dependencies=[Depends(_screenplay_route_guard)])
-def create_asset_tasks(nid:str,screenplay_id:str):return guard(screenplay_service.create_asset_tasks,nid,screenplay_id)
+def create_asset_tasks(nid:str,screenplay_id:str):return screenplay_guard(screenplay_service.create_asset_tasks,nid,screenplay_id)
 @router.put("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}",dependencies=[Depends(_screenplay_route_guard)])
-def update_asset_task(nid:str,screenplay_id:str,task_id:str,body:AssetTaskIn):return guard(screenplay_service.update_asset_task,nid,screenplay_id,task_id,body.model_dump())
+def update_asset_task(nid:str,screenplay_id:str,task_id:str,body:AssetTaskIn):return screenplay_guard(screenplay_service.update_asset_task,nid,screenplay_id,task_id,body.model_dump())
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/execute",dependencies=[Depends(_screenplay_route_guard)])
 def execute_asset_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
-    return guard(lambda: screenplay_service.execute_asset_task(nid,screenplay_id,task_id,reauthorize=lambda: _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id)))
+    return screenplay_guard(lambda: screenplay_service.execute_asset_task(nid,screenplay_id,task_id,reauthorize=lambda: _authorize_motion(nid,screenplay_id,x_session_token,"domain.write",x_branch_id)))
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/retry",dependencies=[Depends(_screenplay_route_guard)])
-def retry_asset_task(nid:str,screenplay_id:str,task_id:str):return guard(screenplay_service.retry_asset_task,nid,screenplay_id,task_id)
+def retry_asset_task(nid:str,screenplay_id:str,task_id:str):return screenplay_guard(screenplay_service.retry_asset_task,nid,screenplay_id,task_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/recover",dependencies=[Depends(_screenplay_route_guard)])
-def recover_asset_tasks(nid:str,screenplay_id:str):return guard(screenplay_service.recover_asset_tasks,nid,screenplay_id)
+def recover_asset_tasks(nid:str,screenplay_id:str):return screenplay_guard(screenplay_service.recover_asset_tasks,nid,screenplay_id)
 @router.post("/novels/{nid}/asset-tasks/recover")
-def recover_all_asset_tasks(nid:str):return guard(screenplay_service.recover_all_asset_tasks,nid)
+def recover_all_asset_tasks(nid:str):return screenplay_guard(screenplay_service.recover_all_asset_tasks,nid)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/cleanup",dependencies=[Depends(_screenplay_route_guard)])
-def cleanup_asset_tasks(nid:str,screenplay_id:str):return guard(screenplay_service.cleanup_asset_tasks,nid,screenplay_id)
+def cleanup_asset_tasks(nid:str,screenplay_id:str):return screenplay_guard(screenplay_service.cleanup_asset_tasks,nid,screenplay_id)
 @router.get("/novels/{nid}/asset-tasks/stats")
-def asset_task_stats(nid:str):return guard(screenplay_service.asset_task_stats,nid)
+def asset_task_stats(nid:str):return screenplay_guard(screenplay_service.asset_task_stats,nid)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/stats",dependencies=[Depends(_screenplay_route_guard)])
-def screenplay_asset_task_stats(nid:str,screenplay_id:str):return guard(screenplay_service.asset_task_stats,nid,screenplay_id)
+def screenplay_asset_task_stats(nid:str,screenplay_id:str):return screenplay_guard(screenplay_service.asset_task_stats,nid,screenplay_id)
 @router.post("/novels/{nid}/asset-tasks/claim")
-def claim_asset_tasks(nid:str,limit:int=10,provider_id:str|None=None):return guard(screenplay_service.claim_asset_tasks,nid,limit,provider_id)
+def claim_asset_tasks(nid:str,limit:int=10,provider_id:str|None=None):return screenplay_guard(screenplay_service.claim_asset_tasks,nid,limit,provider_id)
 @router.post("/novels/{nid}/asset-tasks/dispatch")
-def dispatch_asset_tasks(nid:str,limit:int=10,execute:bool=False,provider_id:str|None=None):return guard(screenplay_service.dispatch_asset_tasks,nid,limit,execute,provider_id)
+def dispatch_asset_tasks(nid:str,limit:int=10,execute:bool=False,provider_id:str|None=None):return screenplay_guard(screenplay_service.dispatch_asset_tasks,nid,limit,execute,provider_id)
 @router.post("/novels/{nid}/asset-tasks/timeout")
-def timeout_asset_tasks(nid:str,timeout_seconds:int=3600):return guard(screenplay_service.timeout_asset_tasks,nid,timeout_seconds)
+def timeout_asset_tasks(nid:str,timeout_seconds:int=3600):return screenplay_guard(screenplay_service.timeout_asset_tasks,nid,timeout_seconds)
 @router.post("/novels/{nid}/asset-tasks/worker/run-once")
 def run_asset_task_worker(nid:str,limit:int=10,execute:bool=False,provider_id:str|None=None,timeout_seconds:int=3600,x_session_token:str|None=Header(None)):
     if execute and settings.enable_packaged_runtime:
@@ -3045,7 +3079,7 @@ def delete_visual_memory(nid: str, memory_id: str, expected_version: int | None 
 
 @router.get("/assets/{asset_id}/derivatives")
 def asset_derivatives(asset_id: str):
-    return capability_guard(v1_capability_service.list_asset_derivatives, asset_id)
+    return asset_library_service.public(capability_guard(v1_capability_service.list_asset_derivatives, asset_id))
 
 
 @router.post("/assets/{asset_id}/derivatives", status_code=201)
@@ -3346,12 +3380,12 @@ class MotionPrivacyIn(BaseModel):
 @router.get('/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy')
 def motion_privacy_review(nid:str,screenplay_id:str,task_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_motion(nid,screenplay_id,x_session_token,'domain.read',x_branch_id)
-    return guard(screenplay_service.motion_privacy,nid,screenplay_id,task_id)
+    return screenplay_guard(screenplay_service.motion_privacy,nid,screenplay_id,task_id)
 
 @router.put('/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy')
 def update_motion_privacy(nid:str,screenplay_id:str,task_id:str,body:MotionPrivacyIn,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     _authorize_motion(nid,screenplay_id,x_session_token,'domain.write',x_branch_id)
-    return guard(screenplay_service.update_motion_privacy,nid,screenplay_id,task_id,body.privacy_level,body.prompt_sha256,body.request_sha256)
+    return screenplay_guard(screenplay_service.update_motion_privacy,nid,screenplay_id,task_id,body.privacy_level,body.prompt_sha256,body.request_sha256)
 
 class SourcePrivacyIn(BaseModel):
     privacy_level: str

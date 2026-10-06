@@ -1,0 +1,219 @@
+{
+  "size_han": 100000,
+  "chapter_count": 12,
+  "active_chapter_han": 8334,
+  "content_sha256": "ffe18acacc2ddfda7f450662cbb94e887425212d2f8ecd6f2e845936e1c5b482",
+  "method": "Trusted Chromium beforeinput to second requestAnimationFrame after input; rendering opportunity proxy, not OS/physical-display latency",
+  "warmup_count": 3,
+  "sample_count": 30,
+  "percentile": "nearest rank ceil(p*n)",
+  "samples": [
+    {
+      "duration_ms": 16.900000000023283,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 16.900000000023283,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 22.800000000046566,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 16.600000000034925,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 24.899999999965075,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 21.79999999998836,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 26.70000000001164,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 17.099999999976717,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 27,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 22,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 23.20000000001164,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 13.400000000023283,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 31.70000000001164,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 15.399999999965075,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 14.900000000023283,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 24.600000000034925,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 17.20000000001164,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 14.5,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 14.900000000023283,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 23,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 13.599999999976717,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 13.700000000011642,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 21.79999999998836,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 21.20000000001164,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 14.099999999976717,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 18.400000000023283,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 21.79999999998836,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 13.700000000011642,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 23.399999999965075,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 22,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    }
+  ],
+  "warmups": [
+    {
+      "duration_ms": 30.899999999965075,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 17.79999999998836,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 16,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    }
+  ],
+  "p50_ms": 18.400000000023283,
+  "p95_ms": 27,
+  "target_ms": 100,
+  "target_status": "PASS",
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.7922.34 Safari/537.36",
+  "editor_replacements": 0,
+  "whole_project_resident": "API fixture; editor opens one chapter, not the entire novel"
+}

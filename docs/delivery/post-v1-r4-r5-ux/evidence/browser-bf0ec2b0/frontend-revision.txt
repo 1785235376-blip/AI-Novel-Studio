@@ -1,0 +1,5 @@
+checked_out_sha=a35e443e40146749f8713d2e2a7c931495819199
+event_sha=a35e443e40146749f8713d2e2a7c931495819199
+run_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37372638988
+job=frontend
+platform=Linux; native Windows host/AppContainer/installer=NOT RUN

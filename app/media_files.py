@@ -162,9 +162,19 @@ def inspect_media(data: bytes, kind: str) -> dict:
     return {"media_type": mime, "extension": extension, "duration_ms": round(duration * 1000), "validation": "DECODED", "codec": streams[0].get("codec_name")}
 
 
-def concatenate_wav(parts: list[bytes], pause_ms: int = 0) -> tuple[bytes, list[dict]]:
+def concatenate_wav(parts: list[bytes], pause_ms: int = 0, *, pauses_ms: list[int] | None = None) -> tuple[bytes, list[dict]]:
+    """Concatenate measured PCM frames with optional per-boundary silence.
+
+    The scalar API is unchanged. A vector names exactly the boundaries between
+    parts; the last segment never adds trailing silence.
+    """
     if not parts or len(parts) > 500 or not 0 <= pause_ms <= 3000:
         raise MediaValidationError("invalid audio segment count or pause")
+    if pauses_ms is not None and (len(pauses_ms) != len(parts) - 1 or any(
+            type(pause) is not int or not 0 <= pause <= 3000 for pause in pauses_ms)):
+        raise MediaValidationError("invalid per-segment pauses")
+    if sum(len(part) for part in parts) > 64 * 1024 * 1024:
+        raise MediaValidationError("audio concatenation input exceeds limit")
     output, manifest, frames, signature = io.BytesIO(), [], 0, None
     with wave.open(output, "wb") as writer:
         for index, data in enumerate(parts):
@@ -179,10 +189,12 @@ def concatenate_wav(parts: list[bytes], pause_ms: int = 0) -> tuple[bytes, list[
                 if current != signature:
                     raise MediaValidationError("audio segments use different PCM formats")
                 count = reader.getnframes()
+                silence = round(signature[2] * (pause_ms if pauses_ms is None else pauses_ms[index]) / 1000) if index + 1 < len(parts) else 0
+                if (frames + count + silence) * signature[0] * signature[1] + 44 > 25 * 1024 * 1024:
+                    raise MediaValidationError("audio concatenation output exceeds limit")
                 manifest.append({"sequence": index + 1, "start_ms": round(frames * 1000 / signature[2]), "duration_ms": info["duration_ms"]})
                 writer.writeframesraw(reader.readframes(count)); frames += count
                 if index + 1 < len(parts):
-                    silence = round(signature[2] * pause_ms / 1000)
                     writer.writeframesraw((b"\x80" if signature[1] == 1 else b"\x00") * silence * signature[0] * signature[1]); frames += silence
     return output.getvalue(), manifest
 

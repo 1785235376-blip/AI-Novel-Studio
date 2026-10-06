@@ -1,0 +1,8 @@
+import { FlaskConical } from 'lucide-react';
+import type { FeatureGroupDefinition } from '../ui/FeatureLauncher';
+export const EXPERIMENTAL_GROUPS: readonly FeatureGroupDefinition[] = [{ id: 'experimental', label: 'Experimental', icon: <FlaskConical aria-hidden="true" />, items: [{ id: 'experimental', label: '实验工作台', icon: <FlaskConical aria-hidden="true" /> }] }];
+export const EXPERIMENTAL_TABS = [
+  ['workspace_tools_v2', '工作现场'], ['local_ai_workflow_inspector_v2', '工作流检查'], ['writing_focus_v2', '专注与灵感'], ['temporal_story_graph_v2', '故事图谱'],
+  ['model_broker_v2', '模型路由与评测'], ['asset_lineage_v2', '资产来源与复现'], ['style_dna_v2', '风格档案'], ['narrative_quality_judge_v2', '作品审稿'], ['change_impact_v2', '修改影响与更新'], ['story_simulator_v2', '剧情推演'], ['research_library_v2', '创作资料库'], ['revision_intelligence_v2', '选区修订与保护'], ['reader_preflight_v2', '阅读与发布预检'], ['writing_sessions_v2', '本次写作目标'], ['ai_director_v2', '镜头导演'], ['timeline_exchange_v2', 'OTIO 剪辑交换'], ['voice_direction_v2', '声音导演'], ['subtitle_timeline_v2', '字幕时间轴'], ['portable_projects_v2', '项目便携与资源恢复'], ['safe_batches_v2', '安全批处理'], ['multilingual_editions_v2', '多语言版本与术语'], ['template_library_v2', '本地模板库'], ['declarative_agents_v2', 'Agent 与 Workflow'], ['comic_layouts_v2', '漫画与 Webtoon'], ['interactive_story_v2', '互动故事与导出'], ['writer_room_v2', '团队审阅室'], ['project_forks_v2', '项目分叉与合并'], ['offline_sync_v2', '离线同步'],
+  ['advanced_planning_v2', '分层规划'], ['semantic_import_v2', '长篇导入'], ['world_character_engines_v2', '世界与人物'], ['unified_review_inbox', '统一审核'], ['agent_team_recipes', '创作团队'], ['media_adapter_registry', '媒体 Adapter'], ['cover_storyboard_generation', '封面与分镜'], ['visual_embeddings', '视觉 Embedding'], ['audiobook_v2', '有声书 V2'],
+] as const;

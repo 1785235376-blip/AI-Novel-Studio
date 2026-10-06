@@ -1,0 +1,56 @@
+{
+  "head_sha": "1d1b9756cedf9daf04dc1123f043e8d555b164c1",
+  "checkout_sha": "5fbe1dccd8f06d44fa8a79cc80288466e6cdd627",
+  "exact_tree": "aca2a09f096b461e99a9636a2761e6df9eacc596",
+  "run_id": 37363904465,
+  "attempt": 2,
+  "frontend_job": 111950920729,
+  "full_artifact_id": 11368537479,
+  "artifact_zip_sha256": "f444dc6e2e55c07b1cbbae0391bd96e57cd1272d28ab9c0f99c66980f4f8631f",
+  "r4_cases": {
+    "passed": 34,
+    "failed": 1,
+    "skipped": 0
+  },
+  "failed_case": "U07 unnamed task-center region; production accessible-name correction follows",
+  "visual_finding": "U01 resume notice consumed flexible editor row. Screenshots exposed prose clipping despite prior journey assertions passing. New chrome and visible-text hit-test regressions require fresh hosted execution.",
+  "platform": "GitHub-hosted Linux Chromium; Windows user-agent preset is not native Windows",
+  "images": [
+    {
+      "file": "u10-before-chrome-fix-1366.png",
+      "package": "U10/U01",
+      "source_path": "r4-first-use-U10-original--df18c-pen-and-actual-TXT-download-chromium/u10-guide-1366.png",
+      "state": "KNOWN_EDITOR_VISIBILITY_REGRESSION; not visual acceptance",
+      "sha256": "5a963d51d6b50def40814e0556f672516ae4aaf1301c9296839c69bebe7a9206"
+    },
+    {
+      "file": "u08-variant-diff.png",
+      "package": "U08",
+      "source_path": "r4-author-scope-variants-U-ca32f-serve-original-draft-review-chromium/u08-reviewed-variant-diff.png",
+      "state": "FUNCTIONAL_JOURNEY_PASSED; shared editor chrome later corrected",
+      "sha256": "d9b49d55a762452f4ff35a618e1a18f795197fb40b61bba90fdb1a302bd5cb81"
+    },
+    {
+      "file": "b09-merge-review-1366.png",
+      "package": "B09",
+      "source_path": "r4-project-forks-B09-real--b18f3-rge-and-checkpoint-recovery-chromium/project-fork-three-way-1366.png",
+      "state": "FUNCTIONAL_JOURNEY_PASSED",
+      "sha256": "c041a19665421968e9ff19ab2610697d22537faa08f824ee00a56a9b675f33ee"
+    },
+    {
+      "file": "b10-sync-review-1366.png",
+      "package": "B10",
+      "source_path": "r4-offline-sync-B10-actual-5b315--from-two-process-TCP-suite-chromium/offline-sync-conflict-1366.png",
+      "state": "FUNCTIONAL_JOURNEY_PASSED",
+      "sha256": "f9fc113c5ae0eb2ede7a3901bf9d8e84de8f9253141c0c5ff1ad7ec2010404bd"
+    },
+    {
+      "file": "b06-rendered-test-segment-001.png",
+      "package": "B06",
+      "state": "REAL_RENDERED_EXPORT; synthetic image, not final artwork or UI screenshot",
+      "sha256": "3105207449d88ddc264229baf8d0dd107aca004b7a32cdac807b514e2a51573c"
+    }
+  ],
+  "real_model_quality": "NOT_RUN",
+  "user_acceptance": "NOT_RUN"
+}

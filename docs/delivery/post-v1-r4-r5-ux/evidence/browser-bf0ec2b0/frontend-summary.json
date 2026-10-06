@@ -1,0 +1,44 @@
+{
+  "revision": "checked_out_sha=a35e443e40146749f8713d2e2a7c931495819199\nevent_sha=a35e443e40146749f8713d2e2a7c931495819199\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37372638988\njob=frontend\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+  "test_reports": {
+    "business.xml": {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "experimental.xml": {
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "export-browser.xml": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "frontend.xml": {
+      "tests": 987,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 6
+    },
+    "geometry.xml": {
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "r4-ux.xml": {
+      "tests": 35,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "report_status": "RECORDED",
+  "native_windows_host_appcontainer_installer": "NOT RUN",
+  "real_model_and_paid_provider_execution": "NOT RUN"
+}

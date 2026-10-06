@@ -29,12 +29,14 @@ import {
   type ImportRecovery,
 } from "./importRecovery";
 import "./novel.css";
+import { FirstUsePanel } from "./FirstUsePanel";
 
 type Props = {
   initialToken: string;
   onEnter: (token: string, scope: Scope) => void;
   localHome?: ReactNode;
   packagedHost?: boolean;
+  onOpenLocalSample?: (id: string) => void;
 };
 type EntryMode = "PERSONAL" | "TEAM";
 type PackagedStage = "LAUNCH" | "WORKSPACE" | "NOVELS";
@@ -43,6 +45,7 @@ export function EntryExperience({
   initialToken,
   onEnter,
   localHome,
+  onOpenLocalSample,
   packagedHost = false,
 }: Props) {
   const [token, setToken] = useState(initialToken),
@@ -56,6 +59,7 @@ export function EntryExperience({
     [deleteTarget,setDeleteTarget]=useState<WorkspaceNavigationPath>(),
     [mode, setMode] = useState<EntryMode>(),
     [stage, setStage] = useState<PackagedStage>("LAUNCH");
+  const localHomeRef = useRef<HTMLDivElement>(null), importRef = useRef<HTMLDivElement>(null);
   const projectTitleRef = useRef<HTMLInputElement>(null),
     personalCreateRef = useRef<Promise<AdminWorkspace | undefined>>();
 
@@ -490,7 +494,8 @@ export function EntryExperience({
             >
               {loading ? "正在创建…" : "新建小说"}
             </Button>
-            <NovelImportPanel onConfirm={importProject} />
+            <div ref={importRef}><NovelImportPanel onConfirm={importProject} /></div>
+            <FirstUsePanel sessionToken={token.trim()} workspaceId={workspace!.id} onOpenScoped={enter} onChooseWriting={focusCreate} onChooseImport={() => importRef.current?.querySelector<HTMLInputElement>('input[type="file"]')?.click()} />
           </aside>
         </div>
         {deleteTarget&&<div className="novel-dialog-backdrop" role="presentation"><section className="novel-dialog" role="alertdialog" aria-modal="true" aria-labelledby="delete-novel-heading"><h2 id="delete-novel-heading">永久删除“{deleteTarget.project_name||"未命名小说"}”？</h2><p>小说正文、资料库、生成记录和关联资产都将被永久删除，此操作无法撤销。</p><div className="novel-actions"><Button disabled={loading} onClick={()=>setDeleteTarget(undefined)}>取消</Button><Button variant="danger" loading={loading} onClick={()=>void deleteProject()}>永久删除小说</Button></div></section></div>}
@@ -585,7 +590,9 @@ export function EntryExperience({
           </div>
         </Panel>
       )}
-      {!initialToken && localHome}
+      {workspace && <FirstUsePanel sessionToken={token.trim()} workspaceId={workspace.id} onOpenScoped={enter} />}
+      {!initialToken && !workspace && <FirstUsePanel sessionToken="" onOpenLocal={onOpenLocalSample} onChooseWriting={() => localHomeRef.current?.querySelector<HTMLInputElement>('input[aria-label="小说名称"]')?.focus()} onChooseImport={() => localHomeRef.current?.querySelector<HTMLInputElement>('input[type="file"]')?.click()} />}
+      {!initialToken && <div ref={localHomeRef}>{localHome}</div>}
     </main>
   );
 }

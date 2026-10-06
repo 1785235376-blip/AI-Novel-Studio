@@ -122,6 +122,9 @@ export function AppShell({
   main,
   inspector,
   status,
+  onGlobalSearch,
+  focusMode = false,
+  onExitFocus,
 }: {
   module: StudioModule;
   onModuleChange: (value: StudioModule) => void;
@@ -132,7 +135,13 @@ export function AppShell({
   main: ReactNode;
   inspector: ReactNode;
   status: ReactNode;
+  onGlobalSearch?: () => void;
+  focusMode?: boolean;
+  onExitFocus?: () => void;
 }) {
+  const searchAction = useRef(onGlobalSearch);
+  searchAction.current = onGlobalSearch;
+  const openSearch = () => searchAction.current ? searchAction.current() : setCommandOpen(true);
   const [commandOpen, setCommandOpen] = useState(false);
   const [commandQuery, setCommandQuery] = useState("");
   const [commandIndex, setCommandIndex] = useState(0);
@@ -151,8 +160,10 @@ export function AppShell({
   );
   const [inspectorWidth, setInspectorWidth] = useState(() => {
     if (typeof window === "undefined") return 340;
-    const value = Number(localStorage.getItem("studio-inspector-width"));
-    return Number.isFinite(value) && value >= 280 && value <= 480 ? value : 340;
+    try {
+      const value = Number(localStorage.getItem("studio-inspector-width"));
+      return Number.isFinite(value) && value >= 280 && value <= 480 ? value : 340;
+    } catch { return 340; }
   });
   const startResize = (event: React.PointerEvent) => {
     event.preventDefault();
@@ -164,7 +175,7 @@ export function AppShell({
         Math.max(280, startWidth - (next.clientX - startX)),
       );
       setInspectorWidth(width);
-      localStorage.setItem("studio-inspector-width", String(width));
+      try { localStorage.setItem("studio-inspector-width", String(width)); } catch { /* Layout may remain session-only; manuscript storage has separate status. */ }
     };
     const stop = () => {
       window.removeEventListener("pointermove", move);
@@ -174,13 +185,13 @@ export function AppShell({
     window.addEventListener("pointerup", stop);
   };
   useEffect(() => {
-    if (!inspectorOpen) return;
+    if (!inspectorOpen || focusMode) return;
     const close = (event: KeyboardEvent) => {
       if (event.key === "Escape") setInspectorOpen(false);
     };
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
-  }, [inspectorOpen]);
+  }, [inspectorOpen, focusMode]);
   useEffect(() => {
     const compact = window.matchMedia?.("(max-width: 1100px)");
     if (!compact) return;
@@ -192,9 +203,9 @@ export function AppShell({
   }, []);
   useEffect(() => {
     const shortcut = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+      if (!event.isComposing && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        setCommandOpen(true);
+        openSearch();
       }
     };
     window.addEventListener("keydown", shortcut);
@@ -287,14 +298,16 @@ export function AppShell({
       }
     }
   };
-  const toggleLabel = inspectorOpen ? "收起侧栏" : "展开侧栏";
+  const visibleInspector = inspectorOpen && !focusMode;
+  const toggleLabel = visibleInspector ? '收起侧栏' : '展开侧栏';
+  const toggleInspector = () => { if (focusMode) { onExitFocus?.(); setInspectorOpen(true); } else setInspectorOpen(value => !value); };
   const shellStyle = {
     "--layout-inspector-width": `${inspectorWidth}px`,
   } as CSSProperties;
   const actorInitial = (actor.trim()[0] || "作").toUpperCase();
   return (
     <div
-      className={`app-shell${inspectorOpen ? "" : " is-inspector-collapsed"}`}
+      className={`app-shell${visibleInspector ? "" : " is-inspector-collapsed"}`}
       style={shellStyle}
       data-module={module}
     >
@@ -313,7 +326,7 @@ export function AppShell({
           ref={commandTrigger}
           className="global-search"
           aria-label="打开全局命令"
-          onClick={() => setCommandOpen(true)}
+          onClick={openSearch}
         >
           <Search aria-hidden="true" />
           <span>搜索作品、章节与素材</span>
@@ -337,11 +350,11 @@ export function AppShell({
         <IconButton
           className="inspector-edge-toggle"
           label={toggleLabel}
-          aria-expanded={inspectorOpen}
+          aria-expanded={visibleInspector}
           aria-controls="workspace-inspector"
-          onClick={() => setInspectorOpen((value) => !value)}
+          onClick={toggleInspector}
         >
-          {inspectorOpen ? (
+          {visibleInspector ? (
             <PanelRightClose aria-hidden="true" />
           ) : (
             <PanelRightOpen aria-hidden="true" />
@@ -350,7 +363,7 @@ export function AppShell({
         <aside
           id="workspace-inspector"
           className="workspace-inspector"
-          aria-hidden={!inspectorOpen}
+          aria-hidden={!visibleInspector}
         >
           <div
             className="workspace-inspector__resize"

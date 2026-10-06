@@ -142,6 +142,9 @@ class LocalPcmMixer:
         parameters = None
         for item in [*request.speech, *request.tracks]:
             content = item["content"]
+            if content[:4] != b"RIFF" or content[8:12] != b"WAVE":
+                raise ValueError("AUDIO_MIX_PCM16_REQUIRED")
+            inspect_media(content, "audio")
             with wave.open(io.BytesIO(content), "rb") as wav:
                 config = (wav.getnchannels(), wav.getsampwidth(), wav.getframerate(), wav.getcomptype())
                 if config[1] != 2 or config[0] not in (1, 2) or config[3] != "NONE":
@@ -399,6 +402,10 @@ class AudiobookV2Service(DomainService):
         measured = inspect_media(content, "audio")
         if not isinstance(measured.get("duration_ms"), (int, float)) or measured["duration_ms"] <= 0:
             raise ValueError("AUDIO_DURATION_UNAVAILABLE")
+        frame_timing = None
+        if measured["media_type"] == "audio/wav":
+            with wave.open(io.BytesIO(content), "rb") as audio:
+                frame_timing = {"frames": audio.getnframes(), "sample_rate": audio.getframerate()}
         def change(row):
             self._editable(row)
             self._assert_plan(nid, scope, row)
@@ -406,7 +413,8 @@ class AudiobookV2Service(DomainService):
             if segment is None:
                 raise FileNotFoundError(sid)
             segment.update(audio_asset_id=asset["id"], audio_source={"version": asset["version"], "digest": asset["sha256"]},
-                           duration_ms=measured["duration_ms"], timing_status="MEASURED", media_validation=measured["validation"])
+                           duration_ms=measured["duration_ms"], timing_status="MEASURED", media_validation=measured["validation"],
+                           frame_timing=frame_timing)
             self._timeline(row)
         return self.mutate(nid, scope, actor, self.PLANS, rid, data.expected_version, change)
 
@@ -502,11 +510,13 @@ class AudiobookV2Service(DomainService):
             raise ValueError("AUDIO_MIX_INTEGRITY_FAILED")
         measured = inspect_media(content, "audio")
         asset = self.assets.create(nid, f"r3-mix-{item_id}.{measured['extension']}", current["content_base64"],
-            measured["media_type"], "audio", "r3-audio-mix:" + item_id, branch_id=scope.get("branch_id"))
+            measured["media_type"], "audio", "r3-audio-mix:" + item_id, branch_id=scope.get("branch_id"),
+            **self._mix_asset_options(nid, scope, plan, current))
         current = checkpoint_promotion_asset(self, nid, scope, actor, self.MIXES, current, asset)
         self.assets.update_metadata(asset["id"], {"source_job_id": item_id, "parameters": {
             "experimental_audio_lineage": {"plan_id": plan["id"], "plan_version": plan["version"],
-                "sources": plan["sources"], "mixer_id": current["mixer_id"], "verification": current["verification"]}},
+                "sources": plan["sources"], "mixer_id": current["mixer_id"], "verification": current["verification"],
+                **({"timeline": current["timeline"]} if "timeline" in current else {})}},
             "source_asset_ids": current["source_asset_ids"], "approved_at": current["promotion_started_at"]}, branch_id=scope.get("branch_id"))
         with self.store.transaction(nid, scope) as doc:
             row = doc["collections"][self.MIXES][item_id]
@@ -522,6 +532,12 @@ class AudiobookV2Service(DomainService):
             row.update(status="APPROVED", asset_id=asset["id"], approved_at=current["promotion_started_at"],
                 approved_by=current["promotion_actor"], version=row["version"] + 1, updated_at=now(), updated_by=actor)
             return {k: copy.deepcopy(v) for k, v in row.items() if k != "content_base64"}
+
+    def _mix_origin(self, nid, scope, plan, source_ids):
+        return {}
+
+    def _mix_asset_options(self, nid, scope, plan, proposal):
+        return {}
 
     def mix(self, nid, scope, actor, rid, expected_version, check_authority=None):
         if self.mixer is None:
@@ -580,7 +596,8 @@ class AudiobookV2Service(DomainService):
             row = new_row(nid, scope, actor, {"plan_id": rid, "plan_version": plan["version"], "sources": plan["sources"],
                 "source_asset_ids": list(dict.fromkeys(source_ids)), "status": "PENDING_REVIEW", "mixer_id": mixer_id,
                 "content_base64": base64.b64encode(result.content).decode(), "content_sha256": hashlib.sha256(result.content).hexdigest(),
-                "verification": result.verification, "media": measured, "asset_id": None})
+                "verification": result.verification, "media": measured, "asset_id": None,
+                **self._mix_origin(nid, scope, plan, source_ids)})
             doc["collections"].setdefault(self.MIXES, {})[row["id"]] = row
             return {k: copy.deepcopy(v) for k, v in row.items() if k != "content_base64"}
 

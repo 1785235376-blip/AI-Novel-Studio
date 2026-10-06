@@ -1,0 +1,35 @@
+# Screenshot-discovered editor chrome repair
+
+Actual source `1d1b9756`, PR `37363904465` attempt 2, executed 34/35 R4 journeys successfully. The remaining U07 journey failed because its original task panel had no accessible region name. Naming that consumer panel fixes the exact locator and improves landmark navigation; the exact task ID/action assertion remains.
+
+Visual inspection of the [actual U10 1366×768 screenshot](evidence/browser-1d1b9756/u10-before-chrome-fix-1366.png) found a separate production layout regression. The resume notice was a direct child of the original three-row workspace, occupying the flexible row intended for the editor. Prose was clipped at 1366×768 and displaced at 1920×1080. The source text and original saved versions were intact. Existing presence/typing/shell-size assertions were insufficient and are not called visual acceptance.
+
+The correction groups existing save controls, resume summary and volatile-memory warning in one first-row chrome container. The original editor remains the flexible second row and the original panel the third. No AppShell grid constants, design tokens, editor key, source authority, selection/IME or save behavior are changed. Long stopping notes ellipsize in the banner but retain their complete original editable value; action controls are not truncated.
+
+`workspace-editor-geometry.ts` checks real text-range clipping and hit-testing, at least 200 px of visible editor, direct/effective row count, adjacency to chrome, unchanged 56/44/32 shell geometry, feature-OFF chrome height and long-note behavior at 1366/1440/1920. U01/U10 browser journeys retain their business assertions and now use these visible-prose checks. Local Chromium was not retried; fresh hosted execution and screenshot inspection are required.
+
+Pinned UI source `afa975a4038c8a30eeac97f7ba4624fdc7bcdb9c`, tree `601425e8402ed152d90954c6c8521f5d505f019d`: full frontend **978 passed / 6 optional HTTP skipped**; TypeScript, Vite build and token guard passed. App 634.84 kB / deferred workbench 477.48 kB minified; existing App size warning retained. Backend code, tests, CI definition and dependencies are byte-identical to 1d1b9756. Its successful real PostgreSQL receipt is retained with exact provenance; it is not a claim that the new metadata head has completed CI.
+
+Initial 1d queued CI lanes were cancelled without executing. Root confirmed no user stop or intentional cancellation; available metadata did not expose a cause. A targeted PR retry preserved successful PG/Windows compile, ran Windows package successfully and exposed the 34/35 browser result; File remained unexecuted/cancelled. These cancellations are not passes. The next source requires exact hosted closure. Independent follow-up review remains BLOCKED and is not retried.
+
+## Actual hosted 038c322d result and the next observed defect
+
+PR run 37369744252 used merge commit `b14a7a8719532fb465943e5c2b86e935f2939024`, independently verified to have the exact head tree `a9761dd42e136ffe258c90ee34126820e607268b`. The new visible-text, clipping, hit-test and three-row checks passed for U01/U10 at 1366/1440/1920, including feature OFF and a long stopping note. The U07 original-task region journey also passed. Direct inspection of the unmodified U10 1366 screenshot confirms that manuscript prose is now visible.
+
+The frontend lane still failed: **34/35 R4** and **1/2 inherited business** journeys passed. Actual pointer dispatch showed the original inspector-edge toggle intercepting the center of the Save and current-draft-export buttons. The conflict screenshot also shows vertically wrapped action labels and horizontal workspace displacement after the blocked click tried to scroll into view. This is a real consumer-layout defect, not an assertion to waive. The next repair must wrap intact controls, reserve the unchanged toggle hit area with existing design tokens, and verify action centers in actual recovery states. Original clicks and downloaded-content assertions must remain unchanged.
+
+Other browser groups were **9/9 geometry**, **7/7 R3 experimental**, and **1/1 immutable export**. Full frontend unit tests were **978 passed / 6 optional HTTP skipped**. The source-labelled full artifact is [11370991673](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37369744252/artifacts/11370991673), SHA-256 `a1958de175646406416e8d3a5d05bf7dce87bc73843d9430785d3d66477b0d56`; it includes the failed screenshots and traces. No screenshot was edited or promoted into a new golden.
+
+Push run 37369737903 passed File **3,409 / 1,044 expected skips**, plus the separate real two-process TCP test. PostgreSQL passed **3,411 / 1,042 expected skips**, zero failures/errors and zero skipped marked-PG contracts, in 689.33 seconds. Both Windows build/package lanes passed. The PR File and duplicate push frontend jobs expired in the queue without running; they are not counted as successful. The known UI defect will be repaired before requesting another full frontend run.
+
+## Pinned action-target repair
+
+Source `81af92aa5c8f363f73edae9cf0233460209908ab`, tree `76fbc943ae5d927d86ddbaa0de5501065094ee8a` groups only the original title/count/goal metadata and reflows the existing SaveControls. The toolbar reserves the unchanged sidebar toggle width and edge spacing using existing tokens; action labels stay intact. It does not hide the toggle, suppress pointer events, force-click controls or collapse the inspector. Hosted checks now cover complete action rectangles, center hit ownership, no toggle overlap and no horizontal workspace displacement at 1280/1366/1440/1920 in original feature-OFF, feature-ON, failed-save and conflict states. Every original Save/export/content assertion is retained.
+
+Full local frontend: **981 passed / 6 optional HTTP skipped**; TypeScript, build, token guard and diff checks passed. App minified size is 634.90 kB; the 477.48 kB deferred workbench and the App large-chunk warning remain. No backend, dependency or CI configuration changes accompany this repair. The new hosted run is pending.
+
+## Hosted closure of the two observed layout defects
+
+At `bf0ec2b09ef03187536f0e9a677142e3e915aa44` / tree `b54040210916fc5a76bc94b79d7ab923d2647cfe`, PR run 37372638988 frontend attempt 2 passed **35/35 R4, 2/2 legacy business, 9/9 geometry, 7/7 R3, and 1/1 immutable export**. Original Save and draft-export clicks passed without workarounds, alongside exact downloaded content and the new action-target checks. The merge checkout tree was verified equal to the branch head tree.
+
+The lead inspected five unmodified retained [corrected screenshots](evidence/browser-bf0ec2b0/README.md), including 1280 recovery and required 1366/1440/1920 views. Prose is visible; action labels are intact and separated from the unchanged toggle; long notes stay bounded. These findings close the two observed layout regressions within the hosted browser contract. They do not close the blocked independent review, native Windows interaction or full model-quality acceptance. Historical failures above remain part of the record.

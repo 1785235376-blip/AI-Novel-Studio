@@ -154,6 +154,20 @@ class WorldRecordEditIn(WorldRecordIn):
 class WorldService(DomainService):
     RECORDS = "world_records"
     CANON = "world_canon"
+    supports_graph = False
+
+    def _validate_create_capacity(self, state):
+        pass
+
+    def _after_record_mutation(self, state, row, actor):
+        pass
+
+    def _visible_kind(self, row):
+        return not row.get("research_sources") and (self.supports_graph or row["kind"] in DATA_MODELS)
+
+    @staticmethod
+    def _promotes_canon(row):
+        return row["kind"] in DATA_MODELS or (row["kind"] == "STORY_RELATION" and row["data"]["layer"] == "WORLD_FACT")
 
     def _payload(self, value):
         return WorldRecordIn.model_validate(value.model_dump() if isinstance(value, WorldRecordIn) else value).model_dump()
@@ -208,6 +222,7 @@ class WorldService(DomainService):
         refs = {}
         for rid, expected_kind in dependencies:
             row = require_row(state, self.RECORDS, rid)
+            if not self._visible_kind(row): raise FileNotFoundError(rid)
             if row["status"] != "APPROVED" or row["kind"] != expected_kind:
                 raise ValueError("semantic references require an approved record of the correct kind")
             if row.get("id") == payload.get("id"):
@@ -227,13 +242,22 @@ class WorldService(DomainService):
         return links, entities, refs
 
     def _capture(self, nid, scope, payload, state):
+        if payload["kind"] not in DATA_MODELS:
+            from .story_graph import capture_graph
+            return capture_graph(self, nid, scope, payload, state)
         sources = scoped_sources(self, nid, scope, [payload["chapter_id"]] if payload["chapter_id"] else [])
         number = self._chapter(nid, scope, payload["chapter_id"])["narrative_sequence"] if payload["chapter_id"] else 0
         links, entities, refs = self._references(nid, scope, payload, state)
         return {"sources": sources, "effective_chapter": number, "links": links, "entity_sources": entities, "semantic_sources": refs}
 
     def _assert_fresh(self, nid, scope, row, state, seen=None):
+        # Research-derived drafts are visible only through the current-author
+        # A10 projection. Generic world/graph/context cannot promote or reuse.
+        if row.get("research_sources"):
+            raise StaleSourceError("research draft requires current research authority")
         seen = set(seen or ())
+        if len(seen) >= 128:
+            raise StaleSourceError("semantic source chain exceeds bounded depth")
         if row["id"] in seen:
             raise StaleSourceError("cyclic semantic source chain")
         seen.add(row["id"])
@@ -242,7 +266,7 @@ class WorldService(DomainService):
             capture = self._capture(nid, scope, row, state)
         except (ValueError, FileNotFoundError, KeyError) as exc:
             raise StaleSourceError("world reference changed or is no longer approved") from exc
-        for field in ("effective_chapter", "entity_sources", "semantic_sources"):
+        for field in ("effective_chapter", "entity_sources", "semantic_sources", *(["effective_until"] if "effective_until" in row else [])):
             if capture[field] != row[field]:
                 raise StaleSourceError("world source or narrative order changed")
         for rid in row["semantic_sources"]:
@@ -260,22 +284,50 @@ class WorldService(DomainService):
     def records(self, nid, scope):
         self.novels.get(nid)
         state = self.store.read(nid, scope)
-        return [self._decorate(nid, scope, row, state) for row in collection(state, self.RECORDS).values()]
+        return [self._decorate(nid, scope, row, state) for row in collection(state, self.RECORDS).values() if self._visible_kind(row)]
 
     def record(self, nid, scope, rid):
         self.novels.get(nid)
         state = self.store.read(nid, scope)
-        return self._decorate(nid, scope, require_row(state, self.RECORDS, rid), state)
+        row = require_row(state, self.RECORDS, rid)
+        if not self._visible_kind(row): raise FileNotFoundError(rid)
+        return self._decorate(nid, scope, row, state)
 
     def create_record(self, nid, scope, actor, value):
         payload = self._payload(value)
         self.novels.get(nid)
         with self.store.transaction(nid, scope) as state:
+            self._validate_create_capacity(state)
             captured = self._capture(nid, scope, payload, state)
             row = new_row(nid, scope, actor, {**payload, **captured, "status": "REVIEW", "canon_state": "CANDIDATE", "privacy_state": "LOCAL_ONLY"})
             self._assert_fresh(nid, scope, row, state)
             collection(state, self.RECORDS)[row["id"]] = row
+            self._after_record_mutation(state, row, actor)
             return deepcopy(row)
+
+    def create_research_draft(self, nid, scope, actor, value, refs, *, guard, validate):
+        """Use this native world transaction, with transient caller authority.
+
+        No callback or session is persisted. These private candidates are not
+        generic world-review inputs and can never become Canon through it.
+        """
+        payload = self._payload(value)
+        if payload["kind"] != "ABILITY":
+            raise ValueError("research adoption supports original setting drafts only")
+        self.novels.get(nid)
+        with self.store.transaction(nid, scope) as state:
+            guard(); validate(state)
+            if sum(bool(item.get("research_sources")) for item in collection(state, self.RECORDS).values()) >= 1000:
+                raise ValueError("RESEARCH_DRAFT_LIMIT")
+            self._validate_create_capacity(state)
+            captured = self._capture(nid, scope, payload, state)
+            row = new_row(nid, scope, actor, {**payload, **captured, "status": "REVIEW",
+                "canon_state": "CANDIDATE", "privacy_state": "LOCAL_ONLY"})
+            self._assert_fresh(nid, scope, row, state)
+            row["research_sources"] = deepcopy(refs)
+            collection(state, self.RECORDS)[row["id"]] = row
+            guard(); validate(state)
+            return {**deepcopy(row), "layer": "SETTING_DRAFT", "canon_promotion_available": False}
 
     def edit_record(self, nid, scope, actor, rid, value):
         raw = value.model_dump() if isinstance(value, WorldRecordEditIn) else dict(value)
@@ -283,15 +335,19 @@ class WorldService(DomainService):
         payload = self._payload(raw)
         with self.store.transaction(nid, scope) as state:
             row = require_row(state, self.RECORDS, rid)
+            if not self._visible_kind(row): raise FileNotFoundError(rid)
+            if row["kind"] != payload["kind"]: raise ValueError("record kind is immutable")
             if row["status"] == "APPROVED":
                 raise ValueError("approved Canon is immutable; create a new candidate")
             captured = self._capture(nid, scope, payload, state)
             change_row(row, actor, expected, lambda target: target.update(payload, **captured, status="REVIEW", canon_state="CANDIDATE"))
+            self._after_record_mutation(state, row, actor)
             return deepcopy(row)
 
     def review(self, nid, scope, actor, item_id, action, expected_version):
         with self.store.transaction(nid, scope) as state:
             row = require_row(state, self.RECORDS, item_id)
+            if not self._visible_kind(row): raise FileNotFoundError(item_id)
             if row["version"] != expected_version:
                 raise CapabilityVersionConflict(deepcopy(row))
             transitions = {"approve": ({"REVIEW"}, "APPROVED"), "reject": ({"REVIEW"}, "REJECTED"), "reopen": ({"REJECTED", "ARCHIVED"}, "REVIEW"), "archive": ({"REVIEW", "REJECTED", "APPROVED"}, "ARCHIVED")}
@@ -300,10 +356,10 @@ class WorldService(DomainService):
             if action == "approve":
                 self._assert_fresh(nid, scope, row, state)
             def update(target):
-                target.update(status=transitions[action][1], canon_state="CANON" if action == "approve" else "CANDIDATE")
+                target.update(status=transitions[action][1], canon_state=("CANON" if self._promotes_canon(row) else "REVIEWED") if action == "approve" else "CANDIDATE")
             change_row(row, actor, expected_version, update)
             canon_rows = collection(state, self.CANON)
-            if action == "approve":
+            if action == "approve" and self._promotes_canon(row):
                 content = {key: deepcopy(row[key]) for key in ("kind", "title", "chapter_id", "event_order", "data", "sources", "effective_chapter", "links", "entity_sources", "semantic_sources")}
                 content.update(source_record_id=row["id"], source_record_version=row["version"], status="ACTIVE")
                 previous = next((entry for entry in canon_rows.values() if entry["source_record_id"] == row["id"]), None)
@@ -318,17 +374,18 @@ class WorldService(DomainService):
                 canon = canon_rows[row["canon_id"]]
                 if canon["status"] == "ACTIVE":
                     change_row(canon, actor, canon["version"], lambda target: target.update(status="ARCHIVED"))
+            self._after_record_mutation(state, row, actor)
             return deepcopy(row)
 
     def history(self, nid, scope, rid):
-        return self.get(nid, scope, self.RECORDS, rid)["history"]
+        return self.record(nid, scope, rid)["history"]
 
     def canon(self, nid, scope):
         self.novels.get(nid)
         state = self.store.read(nid, scope)
         rows = []
         for canon in collection(state, self.CANON).values():
-            if canon["status"] != "ACTIVE":
+            if canon["status"] != "ACTIVE" or not self._visible_kind(canon):
                 continue
             source = require_row(state, self.RECORDS, canon["source_record_id"])
             rows.append({**deepcopy(canon), "stale": self._decorate(nid, scope, source, state)["stale"]})
