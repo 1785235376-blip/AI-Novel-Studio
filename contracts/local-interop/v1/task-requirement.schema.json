@@ -1,0 +1,75 @@
+{
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/task-requirement.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "cost_priority": {
+      "default": 50,
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Cost Priority",
+      "type": "integer"
+    },
+    "estimated_context": {
+      "maximum": 100000000,
+      "minimum": 0,
+      "title": "Estimated Context",
+      "type": "integer"
+    },
+    "latency_priority": {
+      "default": 50,
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Latency Priority",
+      "type": "integer"
+    },
+    "privacy": {
+      "default": "LOCAL_ONLY",
+      "enum": [
+        "LOCAL_ONLY",
+        "REDACTION_REQUIRED",
+        "CONSENTED_CLOUD"
+      ],
+      "title": "Privacy",
+      "type": "string"
+    },
+    "quality_priority": {
+      "default": 50,
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Quality Priority",
+      "type": "integer"
+    },
+    "required_modality": {
+      "items": {
+        "enum": [
+          "TEXT",
+          "IMAGE",
+          "AUDIO",
+          "VIDEO",
+          "EMBEDDING",
+          "MULTIMODAL"
+        ],
+        "type": "string"
+      },
+      "maxItems": 6,
+      "minItems": 1,
+      "title": "Required Modality",
+      "type": "array"
+    },
+    "task_type": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Task Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_type",
+    "required_modality",
+    "estimated_context"
+  ],
+  "title": "TaskRequirement",
+  "type": "object"
+}

@@ -1,0 +1,367 @@
+{
+  "$defs": {
+    "CapabilityState": {
+      "additionalProperties": false,
+      "properties": {
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        },
+        "capability": {
+          "enum": [
+            "project.context.read",
+            "project.selection.share",
+            "project.metadata.read",
+            "task.status.read",
+            "task.error.read",
+            "diagnostics.read",
+            "model.registry.read",
+            "model.runtime.status.read",
+            "tutor.guidance.request",
+            "tutor.guidance.receive",
+            "verifier.request",
+            "verifier.result.receive",
+            "case.candidate.create",
+            "handoff.open_feature",
+            "handoff.open_project",
+            "handoff.open_task"
+          ],
+          "title": "Capability",
+          "type": "string"
+        }
+      },
+      "required": [
+        "capability",
+        "available"
+      ],
+      "title": "CapabilityState",
+      "type": "object"
+    },
+    "ContextEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "authority": {
+          "enum": [
+            "AUTHORITATIVE",
+            "CONSTRAINING",
+            "SUPPORTING",
+            "ADVISORY"
+          ],
+          "title": "Authority",
+          "type": "string"
+        },
+        "content_hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Hash",
+          "type": "string"
+        },
+        "locator": {
+          "maxLength": 256,
+          "pattern": "^(?:app|project|chapter|task|runtime|model|selection|feature|interop|diagnostic|user-observation):[A-Za-z0-9][A-Za-z0-9._:-]{0,191}$",
+          "title": "Locator",
+          "type": "string"
+        },
+        "privacy": {
+          "default": "LOCAL_ONLY",
+          "enum": [
+            "LOCAL_ONLY",
+            "REDACTION_REQUIRED",
+            "CONSENTED_CLOUD"
+          ],
+          "title": "Privacy",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_version": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+          "title": "Source Version",
+          "type": "string"
+        },
+        "timestamp": {
+          "format": "date-time",
+          "title": "Timestamp",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_version",
+        "locator",
+        "content_hash",
+        "timestamp",
+        "authority"
+      ],
+      "title": "ContextEvidence",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/diagnostic.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "evidence": {
+            "contains": {
+              "properties": {
+                "privacy": {
+                  "const": "LOCAL_ONLY"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "evidence"
+        ]
+      },
+      "then": {
+        "properties": {
+          "privacy_scope": {
+            "enum": [
+              "LOCAL_ONLY"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidence": {
+            "contains": {
+              "properties": {
+                "privacy": {
+                  "const": "REDACTION_REQUIRED"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "evidence"
+        ]
+      },
+      "then": {
+        "properties": {
+          "privacy_scope": {
+            "enum": [
+              "LOCAL_ONLY",
+              "REDACTION_REQUIRED"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "capability_state": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CapabilityState"
+      },
+      "maxItems": 64,
+      "title": "Capability State",
+      "type": "array"
+    },
+    "content_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Content Hash",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "diagnostic_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Diagnostic Id",
+      "type": "string"
+    },
+    "error_code": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Code"
+    },
+    "evidence": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ContextEvidence"
+      },
+      "maxItems": 64,
+      "title": "Evidence",
+      "type": "array"
+    },
+    "expires_at": {
+      "format": "date-time",
+      "title": "Expires At",
+      "type": "string"
+    },
+    "feature": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Feature"
+    },
+    "model": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model"
+    },
+    "privacy_scope": {
+      "default": "LOCAL_ONLY",
+      "enum": [
+        "LOCAL_ONLY",
+        "REDACTION_REQUIRED",
+        "CONSENTED_CLOUD"
+      ],
+      "title": "Privacy Scope",
+      "type": "string"
+    },
+    "protocol_name": {
+      "const": "PoemSeed Local Interop",
+      "default": "PoemSeed Local Interop",
+      "title": "Protocol Name",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "runtime": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Runtime"
+    },
+    "sanitized": {
+      "const": true,
+      "default": true,
+      "title": "Sanitized",
+      "type": "boolean"
+    },
+    "software_id": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 3,
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Software Id"
+    },
+    "software_version": {
+      "anyOf": [
+        {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Software Version"
+    },
+    "source_version": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+      "title": "Source Version",
+      "type": "string"
+    },
+    "task_state": {
+      "anyOf": [
+        {
+          "enum": [
+            "PENDING",
+            "QUEUED",
+            "RUNNING",
+            "WAITING",
+            "FAILED",
+            "COMPLETED",
+            "CANCELLED",
+            "BLOCKED",
+            "UNKNOWN"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Task State"
+    }
+  },
+  "required": [
+    "content_hash",
+    "created_at",
+    "diagnostic_id",
+    "expires_at",
+    "protocol_name",
+    "protocol_version",
+    "source_version"
+  ],
+  "title": "DiagnosticCapsule",
+  "type": "object"
+}

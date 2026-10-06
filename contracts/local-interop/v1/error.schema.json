@@ -1,0 +1,76 @@
+{
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/error.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "enum": [
+        "PROTOCOL_INCOMPATIBLE",
+        "PRODUCT_NOT_AVAILABLE",
+        "CAPABILITY_NOT_SUPPORTED",
+        "SESSION_REQUIRED",
+        "SESSION_REVOKED",
+        "PERMISSION_DENIED",
+        "CONTEXT_NOT_AUTHORIZED",
+        "CONTEXT_STALE",
+        "SOURCE_CHANGED",
+        "HANDOFF_TARGET_NOT_FOUND",
+        "TUTOR_UNAVAILABLE",
+        "VERIFIER_UNAVAILABLE",
+        "MODEL_NOT_AVAILABLE",
+        "TRANSPORT_ERROR",
+        "TIMEOUT",
+        "CANCELLED",
+        "INVALID_MESSAGE"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "message": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "title": "Message",
+      "type": "string"
+    },
+    "protocol_name": {
+      "const": "PoemSeed Local Interop",
+      "default": "PoemSeed Local Interop",
+      "title": "Protocol Name",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "request_id": {
+      "anyOf": [
+        {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Request Id"
+    },
+    "retryable": {
+      "default": false,
+      "title": "Retryable",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "code",
+    "message",
+    "protocol_name",
+    "protocol_version"
+  ],
+  "title": "InteropError",
+  "type": "object"
+}

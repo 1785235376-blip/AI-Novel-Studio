@@ -30,7 +30,10 @@ jobs:
     # The shared-repair suite adds 638 marked PG cases (1,982 total). Both
     # 94e74 runs reached the 30-minute outer cap while still advancing at
     # 87%/94%. Keep every test/timeout/no-skip assertion and a finite outer cap.
-    timeout-minutes: ${{ matrix.backend == 'postgres' && 45 || 20 }}
+    # Local Interop adds 6–7 minutes to the measured ~42-minute full PG
+    # baseline. This finite capacity adjustment preserves every test, command,
+    # per-test timeout and strict no-skip gate; it is not an observed timeout.
+    timeout-minutes: ${{ matrix.backend == 'postgres' && 55 || 20 }}
     strategy:
       fail-fast: false
       matrix:
@@ -184,6 +187,23 @@ jobs:
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}
         run: python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
+      - name: Local Interop actual TypeScript client and independent peer
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          INTEROP_PYTHON: python
+          LOCAL_INTEROP_REAL_HOST_TEST: '1'
+        run: |
+          set -o pipefail
+          pnpm exec vitest run tests/localInteropRealHost.test.ts --pool=forks --maxWorkers=1 --minWorkers=1 2>&1 | tee "$CI_RECEIPTS/local-interop-client.log"
+      - name: Local Interop real-process browser journeys (MOCK_ONLY)
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          INTEROP_PYTHON: python
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.interop.config.ts 2>&1 | tee "$CI_RECEIPTS/local-interop-browser.log"
       - name: Business browser journeys (synthetic data; explicit mock boundary)
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}/frontend

@@ -47,3 +47,19 @@ it('changes reading preferences and paragraph emphasis without replacing the edi
   view.rerender(<ChapterEditor content="" document={document} onChange={change} />);
   expect(editor.view).toBe(originalView); expect(editor.view.dom.querySelector('[data-writing-active]')).toBeNull();
 });
+
+it('exposes exact current selection as plain Unicode codepoint offsets without changing editor positions', async () => {
+  const selection = vi.fn(); render(<ChapterEditor content="" document={document} onChange={vi.fn()} onSelection={selection} />);
+  await screen.findByRole('textbox');
+  const editor = observed.editor;
+  const fromText = '标题\n甲\n乙', selectedText = '😀丙';
+  let from = 0, to = 0;
+  for (let pos = 0; pos <= editor.state.doc.content.size; pos++) {
+    const value = editorAnchorText(editor.state.doc, 0, pos);
+    if (!from && value === fromText) from = pos;
+    if (!to && value === fromText + selectedText) to = pos;
+  }
+  act(() => { editor.commands.setTextSelection({ from, to }); });
+  expect(selection.mock.calls.at(-1)?.[0]).toEqual({ from, to, text: selectedText, text_start: Array.from(fromText).length, text_end: Array.from(fromText + selectedText).length });
+  expect(editor.state.selection.from).toBe(from); expect(editor.state.selection.to).toBe(to);
+});

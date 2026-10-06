@@ -1,0 +1,703 @@
+{
+  "$defs": {
+    "GuidanceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "locator": {
+          "maxLength": 256,
+          "pattern": "^(?:app|project|chapter|task|runtime|model|selection|feature|interop|diagnostic|user-observation):[A-Za-z0-9][A-Za-z0-9._:-]{0,191}$",
+          "title": "Locator",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "label",
+        "locator"
+      ],
+      "title": "GuidanceReference",
+      "type": "object"
+    },
+    "GuidanceStep": {
+      "additionalProperties": false,
+      "properties": {
+        "handoff": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HandoffTarget"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "instruction": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Instruction",
+          "type": "string"
+        },
+        "step_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Step Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "instruction"
+      ],
+      "title": "GuidanceStep",
+      "type": "object"
+    },
+    "HandoffTarget": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_FEATURE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "null"
+              },
+              "feature": {
+                "type": "string"
+              },
+              "project_id": {
+                "type": "null"
+              },
+              "session_id": {
+                "type": "null"
+              },
+              "task_id": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "feature"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_PROJECT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "null"
+              },
+              "feature": {
+                "type": "null"
+              },
+              "project_id": {
+                "type": "string"
+              },
+              "session_id": {
+                "type": "null"
+              },
+              "source_version": {
+                "type": "string"
+              },
+              "task_id": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "project_id",
+              "source_version"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_TASK"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "null"
+              },
+              "feature": {
+                "type": "null"
+              },
+              "session_id": {
+                "type": "null"
+              },
+              "source_version": {
+                "type": "string"
+              },
+              "task_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "task_id",
+              "source_version"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_CHAPTER"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "string"
+              },
+              "feature": {
+                "type": "null"
+              },
+              "session_id": {
+                "type": "null"
+              },
+              "source_version": {
+                "type": "string"
+              },
+              "task_id": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "chapter_id",
+              "source_version"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "const": "OPEN_SESSION"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "chapter_id": {
+                "type": "null"
+              },
+              "feature": {
+                "type": "null"
+              },
+              "project_id": {
+                "type": "null"
+              },
+              "session_id": {
+                "type": "string"
+              },
+              "task_id": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "session_id"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "action": {
+          "enum": [
+            "OPEN_FEATURE",
+            "OPEN_PROJECT",
+            "OPEN_TASK",
+            "OPEN_CHAPTER",
+            "OPEN_SESSION"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "chapter_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chapter Id"
+        },
+        "feature": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Feature"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Id"
+        },
+        "source_version": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Version"
+        },
+        "target_product_id": {
+          "maxLength": 128,
+          "minLength": 3,
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$",
+          "title": "Target Product Id",
+          "type": "string"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Id"
+        }
+      },
+      "required": [
+        "action",
+        "target_product_id"
+      ],
+      "title": "HandoffTarget",
+      "type": "object"
+    },
+    "ModelRecommendation": {
+      "additionalProperties": false,
+      "properties": {
+        "authority": {
+          "const": "ADVISORY",
+          "default": "ADVISORY",
+          "title": "Authority",
+          "type": "string"
+        },
+        "model_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Model Id",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "runtime_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Runtime Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "runtime_id",
+        "model_id",
+        "reason"
+      ],
+      "title": "ModelRecommendation",
+      "type": "object"
+    },
+    "VerificationCondition": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "field": {
+                "const": "runtime_status"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expected_value": {
+                "enum": [
+                  "READY",
+                  "LOADING",
+                  "UNAVAILABLE",
+                  "ERROR",
+                  "UNKNOWN"
+                ]
+              },
+              "operator": {
+                "enum": [
+                  "EQ",
+                  "NE"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "field": {
+                "const": "task_status"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expected_value": {
+                "enum": [
+                  "PENDING",
+                  "QUEUED",
+                  "RUNNING",
+                  "WAITING",
+                  "FAILED",
+                  "COMPLETED",
+                  "CANCELLED",
+                  "BLOCKED",
+                  "UNKNOWN"
+                ]
+              },
+              "operator": {
+                "enum": [
+                  "EQ",
+                  "NE"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "field": {
+                "const": "project_version"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expected_value": {
+                "type": "string"
+              },
+              "operator": {
+                "enum": [
+                  "EQ",
+                  "NE"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "field": {
+                "const": "chapter_version"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "expected_value": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "expected_value": {
+          "anyOf": [
+            {
+              "enum": [
+                "PENDING",
+                "QUEUED",
+                "RUNNING",
+                "WAITING",
+                "FAILED",
+                "COMPLETED",
+                "CANCELLED",
+                "BLOCKED",
+                "UNKNOWN"
+              ],
+              "type": "string"
+            },
+            {
+              "enum": [
+                "READY",
+                "LOADING",
+                "UNAVAILABLE",
+                "ERROR",
+                "UNKNOWN"
+              ],
+              "type": "string"
+            },
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            }
+          ],
+          "title": "Expected Value"
+        },
+        "field": {
+          "enum": [
+            "runtime_status",
+            "task_status",
+            "project_version",
+            "chapter_version"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "operator": {
+          "default": "EQ",
+          "enum": [
+            "EQ",
+            "NE",
+            "GTE"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "expected_value",
+        "source_id"
+      ],
+      "title": "VerificationCondition",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/tutor-response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority": {
+      "const": "ADVISORY",
+      "default": "ADVISORY",
+      "title": "Authority",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "diagnosis": {
+      "maxLength": 8192,
+      "minLength": 1,
+      "title": "Diagnosis",
+      "type": "string"
+    },
+    "guidance_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Guidance Id",
+      "type": "string"
+    },
+    "privacy_scope": {
+      "default": "LOCAL_ONLY",
+      "enum": [
+        "LOCAL_ONLY",
+        "REDACTION_REQUIRED",
+        "CONSENTED_CLOUD"
+      ],
+      "title": "Privacy Scope",
+      "type": "string"
+    },
+    "protocol_name": {
+      "const": "PoemSeed Local Interop",
+      "default": "PoemSeed Local Interop",
+      "title": "Protocol Name",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "recommended_model": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ModelRecommendation"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "references": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/GuidanceReference"
+      },
+      "maxItems": 32,
+      "title": "References",
+      "type": "array"
+    },
+    "request_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "session_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "title": "Session Id",
+      "type": "string"
+    },
+    "steps": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/GuidanceStep"
+      },
+      "maxItems": 32,
+      "title": "Steps",
+      "type": "array"
+    },
+    "summary": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    },
+    "verification_condition": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VerificationCondition"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "maxLength": 2048,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 16,
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "created_at",
+    "diagnosis",
+    "guidance_id",
+    "protocol_name",
+    "protocol_version",
+    "request_id",
+    "session_id",
+    "summary"
+  ],
+  "title": "TutorGuidance",
+  "type": "object"
+}
