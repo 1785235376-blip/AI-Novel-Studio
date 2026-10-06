@@ -71,5 +71,10 @@ it('late preview after closing stays hidden and never dispatches', async () => {
 it('adoption updates visible saved draft while requiring separate submit and review', async () => {
   const e = fixture(); render(<MultilingualEditionsPanel client={e.client} />); fireEvent.click(await screen.findByRole('button', { name: /Arabic edition · ar/ })); await preview(); await dispatch();
   fireEvent.click(screen.getByRole('button', { name: '刷新原翻译任务并核对候选' })); await screen.findByLabelText('本段未审核翻译候选'); fireEvent.click(screen.getByLabelText('确认将候选替换本段已保存译文为草稿，之后另行审核')); fireEvent.click(screen.getByRole('button', { name: '仅采用到本段译文草稿' }));
-  await screen.findByText('候选已采用到本段译文草稿，仍需提交与逐段审核。'); expect((screen.getByLabelText('第 1 段译文') as HTMLTextAreaElement).value).toBe(candidate.text); expect((screen.getByRole('button', { name: '提交本段审核' }) as HTMLButtonElement).disabled).toBe(false); expect(screen.queryByText('译文输入尚未保存。', { exact: false })).toBeNull();
+  await screen.findByText('候选已采用到本段译文草稿，仍需提交与逐段审核。');
+  await waitFor(() => {
+    expect((screen.getByLabelText('第 1 段译文') as HTMLTextAreaElement).value).toBe(candidate.text);
+    expect((screen.getByRole('button', { name: '提交本段审核' }) as HTMLButtonElement).disabled).toBe(false);
+    expect(screen.queryByText('译文输入尚未保存。', { exact: false })).toBeNull();
+  });
 });
