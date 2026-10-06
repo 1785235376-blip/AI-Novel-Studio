@@ -157,6 +157,16 @@ def require_generation_accounting(job):
         raise HTTPException(409, {"code": "GENERATION_ACCOUNTING_NOT_TERMINAL"})
 
 
+class GenerationStateConflict(ValueError):
+    """A review command cannot change an executing or already-decided draft."""
+    def __init__(self, status):
+        self.status = status
+        super().__init__("Only completed, settled drafts can be rejected")
+
+    def as_dict(self):
+        return {"code": "GENERATION_NOT_REJECTABLE", "status": self.status}
+
+
 def validate_generation_bounds(job):
     """Trusted-host-only optional bounds. Ordinary input payloads cannot set them."""
     size, deadline = job.generation_max_output_bytes, job.generation_deadline
@@ -200,14 +210,38 @@ class JobManager:
             bundle=create_repository_bundle(data_root=repo.data);generations=GenerationService(bundle.generations);chapters=ChapterService(bundle.chapters);contexts=ContextService(bundle.novels,bundle.chapters,LoreService(bundle.lore));canon=CanonService(bundle.canon)
         self.jobs={};self.lock=threading.Lock();self.persistence=generations or generation_service;self.chapters=chapters or chapter_service;self.contexts=contexts or context_service;self.canon=canon or canon_service;self.memory_extractor=memory_extractor if memory_extractor is not None else memory_agent_service;self.snapshot_required=settings.enable_collaboration_runtime if snapshot_required is None else snapshot_required;self.collaboration_updates=collaboration_application_service if collaboration_updates is None else collaboration_updates
         for item in self.persistence.load_all():
-            if item.get("status") == "SETTLING":
-                item.update(status="FAILED", error_code="GENERATION_SETTLEMENT_RECOVERY_REQUIRED",
-                    error="服务重启中断了结算确认。已保留草稿与费用占用，请核对调度记录，不会自动重放。",
-                    dispatch_hooks_required=True, terminal_hook_status="MISSING_RECONCILIATION_REQUIRED")
-            elif item.get("status") in {"RUNNING","GENERATING","QUEUED","PREPARED"}:item["status"]="FAILED";item["error"]="服务重启导致生成中断，请重新生成。"
-            try:self.jobs[item["id"]]=Job(**{k:v for k,v in item.items() if k in Job.__dataclass_fields__ and k not in self.transient_fields})
-            except Exception:continue
+            if "id" not in item: continue
+            if item.get("status") in {"SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"}:
+                # The load_all snapshot can race a final worker/review publish.
+                # Re-read inside the same claim lock before durable recovery.
+                with self._review_mutation(item["id"]):
+                    read = getattr(self.persistence, "get", None)
+                    try: current = read(item["id"]) if callable(read) else item
+                    except KeyError: continue
+                    self._restore_job(current)
+            else:
+                self._restore_job(item)
+
+    def _restore_job(self, item):
+        recovered = item.get("status") in {"SETTLING", "RUNNING", "GENERATING", "QUEUED", "PREPARED"}
+        if item.get("status") == "SETTLING":
+            item.update(status="FAILED", error_code="GENERATION_SETTLEMENT_RECOVERY_REQUIRED",
+                error="服务重启中断了结算确认。已保留草稿与费用占用，请核对调度记录，不会自动重放。",
+                dispatch_hooks_required=True, terminal_hook_status="MISSING_RECONCILIATION_REQUIRED")
+        elif item.get("status") in {"RUNNING","GENERATING","QUEUED","PREPARED"}:item["status"]="FAILED";item["error"]="服务重启导致生成中断，请重新生成。"
+        try:self.jobs[item["id"]]=Job(**{k:v for k,v in item.items() if k in Job.__dataclass_fields__ and k not in self.transient_fields})
+        except Exception:return
+        # Recovery is a durable state transition. A later reader/restart
+        # must not see the interrupted task as still executing or reviewable.
+        if recovered: self._persist(self.jobs[item["id"]])
     def _persist(self,job):self.persistence.save(job.public())
+    def _review_mutation(self, jid):
+        from .repositories.file.mutation_coordinator import workspace_mutation
+        from pathlib import Path
+        persistence = getattr(self, "persistence", None)
+        repository = getattr(persistence, "repository", persistence)
+        root = getattr(repository, "root", None) or Path(settings.novel_data) / "runtime/jobs"
+        return workspace_mutation(Path(root), f"generation-accept:{jid}")
     def prepare_job(self,operation,payload,actor=None,scope=None,request_authorization=None):
         requested_provider=payload.get("provider_id");requested_model=payload.get("model_id")
         if bool(requested_provider)!=bool(requested_model):raise ValueError("provider_id and model_id must be selected together")
@@ -292,8 +326,9 @@ class JobManager:
     def _emit(self,job,chunk=""):
         with job.condition:
             if chunk and not job.cancelled.is_set() and job.status not in self.terminal:job.output+=chunk
-            job.updated_at=utc();job.condition.notify_all()
-        self._persist(job)
+            job.updated_at=utc()
+            self._persist(job)
+            job.condition.notify_all()
     def _validate_outbound_sources(self, job, cloud):
         """Last-hop authority; queued copies never override current source policy."""
         from .source_privacy import effective_source_privacy, assert_project_source_policies
@@ -393,36 +428,46 @@ class JobManager:
         if dispatch and callable(job.before_dispatch): job.before_dispatch()
 
     def _finish_terminal_hook(self, job):
-        if job._terminal_hook_called: return
-        if not callable(job.on_terminal):
-            if job.dispatch_hooks_required:
-                job.terminal_hook_status = "MISSING_RECONCILIATION_REQUIRED"
-                try: self._persist(job)
-                except Exception: job.terminal_hook_status = "PERSISTENCE_UNCERTAIN_RECONCILIATION_REQUIRED"
-            return
-        job._terminal_hook_called = True
-        if job.execution_outcome is None:
-            job.execution_outcome = job.status if job.status in {"COMPLETED", "CANCELLED", "FAILED"} else "UNKNOWN"
-        try:
-            job.on_terminal()
-            job.terminal_hook_status = "COMPLETED"
-        except Exception:
-            # A lost settlement never releases a reservation or triggers replay.
-            # Retain output for review while surfacing the accounting blocker.
-            job.terminal_hook_status = "FAILED_RECONCILIATION_REQUIRED"
-            if job.status not in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN", "REJECTED"}:
-                job.status = "FAILED"
-            job.error_code = "TERMINAL_RECONCILIATION_REQUIRED"
-            job.error = "模型任务已结束，但用量结算未确认。请核对调度记录，不要自动重试。"
-        try: self._persist(job)
-        except Exception:
-            job.terminal_hook_status = "PERSISTENCE_UNCERTAIN_RECONCILIATION_REQUIRED"
+        # Claim and settle under the same lock used by terminal transitions.
+        # Reentrant calls and racing finalizers never bill or release twice.
+        with job.condition:
+            if job._terminal_hook_called or job.terminal_hook_status is not None: return
+            if not callable(job.on_terminal):
+                if job.dispatch_hooks_required:
+                    job.terminal_hook_status = "MISSING_RECONCILIATION_REQUIRED"
+                    try: self._persist(job)
+                    except Exception: job.terminal_hook_status = "PERSISTENCE_UNCERTAIN_RECONCILIATION_REQUIRED"
+                return
+            job._terminal_hook_called = True
+            if job.execution_outcome is None:
+                job.execution_outcome = job.status if job.status in {"COMPLETED", "CANCELLED", "FAILED"} else "UNKNOWN"
+            try:
+                job.on_terminal()
+                job.terminal_hook_status = "COMPLETED"
+            except Exception:
+                # A lost settlement never releases a reservation or triggers replay.
+                # Retain output for review while surfacing the accounting blocker.
+                job.terminal_hook_status = "FAILED_RECONCILIATION_REQUIRED"
+                if job.status == "COMPLETED" or job.status not in self.terminal:
+                    job.status = "FAILED"
+                job.error_code = "TERMINAL_RECONCILIATION_REQUIRED"
+                job.error = "模型任务已结束，但用量结算未确认。请核对调度记录，不要自动重试。"
+            try: self._persist(job)
+            except Exception:
+                job.terminal_hook_status = "PERSISTENCE_UNCERTAIN_RECONCILIATION_REQUIRED"
+                if job.status == "COMPLETED": job.status = "FAILED"
+                if job.error_code != "GENERATION_TERMINAL_PERSISTENCE_UNCERTAIN":
+                    job.error_code = "TERMINAL_RECONCILIATION_REQUIRED"
+                    job.error = "模型任务已结束，但结算记录未能确认保存。请核对调度记录，不要自动重试。"
 
     def _run(self,job):
         started=time.monotonic()
         try:
-            if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
-            job.status="GENERATING";self._emit(job)
+            if job.cancelled.is_set():self._cancel_execution(job);return
+            with job.condition:
+                if job.status in self.terminal: return
+                if job.cancelled.is_set(): self._cancel_execution(job); return
+                job.status="GENERATING";self._emit(job)
             role=AUTHOR_ROLES[job.operation]
             router=runtime.router(job.profile,role)
             if job.requested_provider and job.requested_model:router.routes[role]=[Route(job.requested_provider,job.requested_model)]
@@ -433,7 +478,7 @@ class JobManager:
                 decision={"provider":route.provider,"model":route.model,"cloud":cloud,"status":"PREFLIGHT"}
                 job.route_decisions.append(decision)
                 try:
-                    if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
+                    if job.cancelled.is_set():self._cancel_execution(job);return
                     if job.expected_request_digest:
                         self._guard_author_request(job, route)
                     if not runtime.packaged_author_route_ready(route.provider):
@@ -448,19 +493,21 @@ class JobManager:
                     self._guard_author_request(job, route)
                     completed=False;dispatched=True;decision["status"]="DISPATCHED"
                     for event in node.stream(TextModelNodeInput(request)):
-                        if event.event_type=="generation.cancelled" or job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
-                        if event.event_type=="generation.failed":raise ModelRuntimeError(event.error_code or RuntimeErrorCode.GENERATION_FAILED,"生成失败，请审核已有输出后重试")
-                        if event.event_type=="generation.delta" and event.delta:
-                            check_generation_bounds(job, delta=event.delta)
-                            self._emit(job,event.delta)
-                        if event.event_type=="generation.completed":
-                            check_generation_bounds(job, completion_text=event.response.text if event.response else None)
-                            completed=True
-                            if event.response:
-                                job.usage=asdict(event.response.usage) if event.response.usage else None
-                                job.usage_status="REPORTED" if event.response.usage else "UNKNOWN"
-                                job.execution_mode=event.response.execution_mode
-                                job.provider_reference_id=event.response.provider_reference_id
+                        with job.condition:
+                            if job.status in self.terminal: return
+                            if event.event_type=="generation.cancelled" or job.cancelled.is_set():self._cancel_execution(job);return
+                            if event.event_type=="generation.failed":raise ModelRuntimeError(event.error_code or RuntimeErrorCode.GENERATION_FAILED,"生成失败，请审核已有输出后重试")
+                            if event.event_type=="generation.delta" and event.delta:
+                                check_generation_bounds(job, delta=event.delta)
+                                self._emit(job,event.delta)
+                            if event.event_type=="generation.completed":
+                                check_generation_bounds(job, completion_text=event.response.text if event.response else None)
+                                completed=True
+                                if event.response:
+                                    job.usage=asdict(event.response.usage) if event.response.usage else None
+                                    job.usage_status="REPORTED" if event.response.usage else "UNKNOWN"
+                                    job.execution_mode=event.response.execution_mode
+                                    job.provider_reference_id=event.response.provider_reference_id
                     if not completed:raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED,"模型连接中断，草稿未完成")
                     job.provider=route.provider;job.model=route.model;decision["status"]="COMPLETED";break
                 except Exception as exc:
@@ -470,31 +517,48 @@ class JobManager:
                     # whose remote billing/result is ambiguous.
                     if dispatched or job.output or job.requested_provider or cloud:raise
             else:raise last or RuntimeError("No provider route")
-            if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
+            if job.cancelled.is_set():self._cancel_execution(job);return
             if role=="writer" and not self.snapshot_required:self.contexts.save_snapshot(job.chapter_id,ch.get("version",0),context,"writer:v1",job.model or "unknown")
             check_generation_bounds(job)
             job.issues=deterministic_review(job.output,context);job.latency_ms=int((time.monotonic()-started)*1000)
-            if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
-            with job.condition:
+            if job.cancelled.is_set():self._cancel_execution(job);return
+            with self._review_mutation(job.id), job.condition:
+                if job.status in self.terminal: return
+                if job.cancelled.is_set(): self._cancel_execution(job); return
                 job.status="COMPLETED";job.execution_outcome="COMPLETED"
-                # Settle and persist under the same in-process transition lock
-                # that acceptance uses. Readers see SETTLING until this ends.
-                self._finish_terminal_hook(job)
-                self._emit(job)
+                try:
+                    # Persist SETTLING before entering a potentially slow callback.
+                    # A crash here retains the unconfirmed accounting boundary.
+                    if job.dispatch_hooks_required or callable(job.on_terminal):
+                        self._persist(job)
+                    self._finish_terminal_hook(job)
+                    self._emit(job)
+                except Exception:
+                    # A provider completion is not a published draft until its
+                    # receipt is durable. Keep the separate execution outcome
+                    # for once-only billing, but block review on this executor.
+                    job.status = "FAILED"
+                    job.error_code = "GENERATION_TERMINAL_PERSISTENCE_UNCERTAIN"
+                    job.error = "生成已结束，但完成记录未能确认保存。请检查任务记录，不要自动重试或采用。"
+                    try: self._persist(job)
+                    except Exception: pass  # Storage may remain unavailable.
+                    job.condition.notify_all()
+                    raise
             runtime_log.write(generation_id=job.id,novel_id=job.novel_id,chapter_id=job.chapter_id,agent=role,provider=job.provider,model=job.model,status=job.status,latency_ms=job.latency_ms)
         except Exception as exc:
-            if job.status in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN", "REJECTED"}:
-                return  # A late logging/accounting failure cannot undo review.
-            if job.generation_bound_failure:
-                job.output="";job.status="FAILED";job.execution_outcome="FAILED";job.error_code=job.generation_bound_failure
-                job.error="生成超出已审核的时间或输出限额，未完成内容已丢弃。"
-                self._emit(job);return
-            if job.cancelled.is_set():job.status="CANCELLED";job.execution_outcome="CANCELLED";self._emit(job);return
-            if isinstance(exc,ModelRuntimeError):safe_error=exc.safe_message;error_code=exc.code.value
-            elif isinstance(exc,RuntimeError) and "snapshot" in str(exc).casefold():safe_error="Context snapshot failed";error_code="CONTEXT_SNAPSHOT_FAILED"
-            else:safe_error="生成失败，请稍后重试";error_code=RuntimeErrorCode.GENERATION_FAILED.value
-            job.latency_ms=int((time.monotonic()-started)*1000);job.status="FAILED";job.execution_outcome=job.execution_outcome or "FAILED";job.error=safe_error;job.error_code=error_code;self._emit(job)
-            runtime_log.write(generation_id=job.id,novel_id=job.novel_id,chapter_id=job.chapter_id,status=job.status,error=error_code,latency_ms=job.latency_ms)
+            with job.condition:
+                if job.status in self.terminal:
+                    return  # Late failure cannot undo an already published terminal state.
+                if job.generation_bound_failure:
+                    job.output="";job.status="FAILED";job.execution_outcome="FAILED";job.error_code=job.generation_bound_failure
+                    job.error="生成超出已审核的时间或输出限额，未完成内容已丢弃。"
+                    self._emit(job);return
+                if job.cancelled.is_set():self._cancel_execution(job);return
+                if isinstance(exc,ModelRuntimeError):safe_error=exc.safe_message;error_code=exc.code.value
+                elif isinstance(exc,RuntimeError) and "snapshot" in str(exc).casefold():safe_error="Context snapshot failed";error_code="CONTEXT_SNAPSHOT_FAILED"
+                else:safe_error="生成失败，请稍后重试";error_code=RuntimeErrorCode.GENERATION_FAILED.value
+                job.latency_ms=int((time.monotonic()-started)*1000);job.status="FAILED";job.execution_outcome=job.execution_outcome or "FAILED";job.error=safe_error;job.error_code=error_code;self._emit(job)
+                runtime_log.write(generation_id=job.id,novel_id=job.novel_id,chapter_id=job.chapter_id,status=job.status,error=error_code,latency_ms=job.latency_ms)
         finally:
             self._finish_terminal_hook(job)
     def get(self,jid):
@@ -502,22 +566,47 @@ class JobManager:
         return self.jobs[jid]
     def variants(self, group_id):
         return sorted((job for job in self.jobs.values() if job.variant_group_id == group_id), key=lambda job: job.variant_index or 0)
+    def _cancel_execution(self, job):
+        with job.condition:
+            if job.status not in self.terminal:
+                job.status = "CANCELLED"
+                job.execution_outcome = "CANCELLED"
+                self._emit(job)
+
     def cancel(self,jid):
         job=self.get(jid)
+        # The cooperative signal stays responsive during a slow settlement.
+        # The locked transition rechecks state before changing it, so this can
+        # never turn a completed/reviewed draft back into cancellation.
         job.cancelled.set()
-        if job.status not in self.terminal:
-            job.status="CANCELLED"
-            self._emit(job)
+        if job.status not in self.terminal: self._cancel_execution(job)
         return job
-    def events(self,jid):
-        job=self.get(jid);sent=0
+    def events(self,jid,authorize=None,stop_event=None):
+        job=self.get(jid);sent=0;heartbeat=time.monotonic()
+        def available():
+            return (not (stop_event is not None and stop_event.is_set())
+                    and generation_content_available(job)
+                    and (authorize is None or authorize()))
         while True:
-            if not generation_content_available(job): return
+            if not available(): return
             with job.condition:
-                if len(job.output)==sent and job.public()["status"] not in self.terminal:job.condition.wait(timeout=10)
-                if not generation_content_available(job): return
-                chunk=job.output[sent:];sent=len(job.output);status=job.public()["status"]
-            yield "data: "+json.dumps({"job_id":jid,"status":status,"chunk":chunk,"provider":job.provider,"model":job.model,"error":job.error,"error_code":job.error_code},ensure_ascii=False)+"\n\n"
+                if len(job.output)==sent and job.public()["status"] not in self.terminal:
+                    # Poll observer authority and disconnect independently of
+                    # provider output. Never cancel the shared generation.
+                    job.condition.wait(timeout=.25)
+                if not available(): return
+                chunk=job.output[sent:];status=job.public()["status"]
+                if not chunk and status not in self.terminal and time.monotonic()-heartbeat<10:
+                    continue
+                payload={"job_id":jid,"status":status,"chunk":chunk,"provider":job.provider,
+                         "model":job.model,"error":job.error,"error_code":job.error_code}
+                # Authorization can change while reading or serializing state.
+                event="data: "+json.dumps(payload,ensure_ascii=False)+"\n\n"
+                if not available(): return
+                sent=len(job.output)
+            if not available(): return
+            yield event
+            heartbeat=time.monotonic()
             if status in self.terminal:return
     def accept(self,jid,accepted_output=None,actor=None,scope=None,expected_version=None):
         from .repositories.file.mutation_coordinator import workspace_mutation
@@ -535,6 +624,8 @@ class JobManager:
                 require_generation_content(job)
                 require_whole_generation_acceptance(job)
                 require_generation_accounting(job)
+                if job.error_code == "GENERATION_TERMINAL_PERSISTENCE_UNCERTAIN":
+                    raise ValueError("Draft completion persistence is unconfirmed; review the task before accepting")
                 read = getattr(self.persistence, "get", None)
                 try:
                     stored = read(jid) if callable(read) else None
@@ -627,10 +718,16 @@ class JobManager:
     def reject(self,jid):
         from .repositories.file.mutation_coordinator import workspace_mutation
         from pathlib import Path
+        job = self.get(jid)
+        require_generation_content(job)
+        # Reject is review, not cancellation. Do not queue a running/settling
+        # rejection behind the worker lock and silently reinterpret it later.
+        status = job.public()["status"]
+        if status != "COMPLETED":
+            raise GenerationStateConflict(status)
         persistence_repository = getattr(self.persistence, "repository", self.persistence)
         lock_root = getattr(persistence_repository, "root", None) or Path(settings.novel_data) / "runtime/jobs"
         with workspace_mutation(Path(lock_root), f"generation-accept:{jid}"):
-            job = self.get(jid)
             with job.condition:
                 require_generation_content(job)
                 read = getattr(self.persistence, "get", None)
@@ -638,10 +735,13 @@ class JobManager:
                     stored = read(jid) if callable(read) else None
                 except KeyError:
                     stored = None
-                if stored is not None and stored.get("status") in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN"}:
-                    raise ValueError("An accepted or uncertain draft cannot be rejected")
-                if job.status in {"ACCEPTING", "ACCEPTED", "ACCEPTANCE_UNCERTAIN"}:
-                    raise ValueError("An accepted or uncertain draft cannot be rejected")
+                if stored is not None and stored.get("status") != "COMPLETED":
+                    raise GenerationStateConflict(stored.get("status"))
+                if stored is not None and stored.get("dispatch_hooks_required") and stored.get("terminal_hook_status") != "COMPLETED":
+                    raise GenerationStateConflict("SETTLING")
+                if job.public()["status"] != "COMPLETED":
+                    raise GenerationStateConflict(job.public()["status"])
+                require_generation_accounting(job)
                 job.status="REJECTED";self._emit(job);return job
     def diff(self,jid):job=self.get(jid);require_generation_content(job);original=job.source or self.chapters.get(job.chapter_id)["content"];return "\n".join(difflib.unified_diff(original.splitlines(),job.output.splitlines(),fromfile="original",tofile="generated",lineterm=""))
 jobs=JobManager()

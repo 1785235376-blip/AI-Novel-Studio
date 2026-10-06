@@ -336,10 +336,16 @@ class ContextRequest(BaseModel): novel_id:str; chapter:int; instruction:str; clo
 @app.get("/health")
 def health(): return {"status":"ok","version":__version__,"profile":settings.profile}
 @app.get("/novels")
-def novels():
+def novels(request: Request):
+    if settings.enable_collaboration_runtime or settings.enable_packaged_runtime:
+        from .api import novels as authorized_novels
+        return [{"id": row["id"]} for row in authorized_novels(request.headers.get("X-Session-Token"))]
     root=settings.data_path()/"novels"; return [{"id":p.name} for p in root.iterdir() if p.is_dir()] if root.exists() else []
 @app.post("/context-packs")
-def context_pack(req:ContextRequest):
+def context_pack(req:ContextRequest, request: Request):
+    from .api import _require_shared_project
+    _require_shared_project(req.novel_id, request.headers.get("X-Session-Token"),
+                            "domain.read", request.headers.get("X-Branch-ID"))
     try: return context_service.build(req.novel_id,req.chapter,req.instruction,req.cloud)
     except Exception as exc: raise HTTPException(400,str(exc)) from exc
 
