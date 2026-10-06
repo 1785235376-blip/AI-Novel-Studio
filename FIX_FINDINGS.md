@@ -1,6 +1,6 @@
 # A43 shared document and chapter identity repair
 
-Status: implementation and exact-source full regression in progress. Draft PR44 is a separate successor to frozen PR43; it is not a release or backport.
+Status: integration corrections and exact-source full regression in progress. Draft PR44 is a separate successor to frozen PR43; it is not a release or backport.
 
 ## Scope and frozen source
 
@@ -60,3 +60,9 @@ Final checked SHA/tree, publication changes, both full backend profiles, fronten
 ## Unchanged product and acceptance boundaries
 
 F00 stays INTEGRATED; the other 39 features stay PARTIAL. Existing remaining product gaps are not erased by this repair. Real model/GPU/TTS/translation quality, native Windows IME/vault/install/upgrade/interaction, target NLE/engine use and actual user acceptance remain NOT_RUN or LOCAL_REQUIRED. Historical independent review remains BLOCKED and is neither restarted nor replaced here.
+
+## First integration checkpoint corrections
+
+The first complete supplemental File run exposed 26 pre-existing product audio-node contracts rejected by the new overly narrow validator, plus one earlier lifecycle regression already corrected before de92. Original test assertions and skips stayed unchanged. The document projector now preserves the original portable media-node/mark subset, with explicit non-embedded media descriptions in text exports and a separate coordinate-only warning contract.
+
+Actual de92 PostgreSQL initialization stopped before tests: DISTINCT inferred an untyped NULL as text for a UUID target. Migration020 now explicitly casts that value to UUID; all original constraints and historical migration files remain. See docs/delivery/a43-fixes/INTEGRATION_CORRECTIONS.json and MEDIA_CORRECTION_INVENTORY.json. These are diagnosed source corrections, not a retry of an unchanged failure or a PostgreSQL pass claim.

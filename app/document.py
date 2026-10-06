@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 import re
+import warnings
 
 
 class DocumentProjectionError(ValueError):
@@ -18,8 +19,36 @@ class DocumentProjectionError(ValueError):
 
 _TEXT_BLOCKS = frozenset({"paragraph", "heading", "codeBlock"})
 _CONTAINERS = frozenset({"doc", "blockquote", "bulletList", "orderedList", "listItem"})
-_LEAVES = frozenset({"text", "hardBreak", "horizontalRule"})
-_MARKS = frozenset({"bold", "italic", "strike", "code"})
+# These reference atoms and additional marks predate A43 in the original
+# portable/relink/project-fork document contract. They must remain storable.
+_MEDIA = frozenset({"image", "audio", "video"})
+_LEAVES = frozenset({"text", "hardBreak", "horizontalRule"}) | _MEDIA
+_MARKS = frozenset({"bold", "italic", "strike", "code", "underline", "subscript", "superscript"})
+
+
+class DocumentProjectionWarning(UserWarning):
+    """A coordinate-only view deliberately excludes known non-text media."""
+
+
+def _media_placeholder(node: dict) -> str:
+    # A text export must disclose its binary omission and preserve descriptive
+    # text. Never dereference an asset or expose its internal identifier here.
+    values = [f"[{node['type']} media not embedded]"]
+    attrs = node.get("attrs") or {}
+    for key in ("title", "alt"):
+        if isinstance(attrs.get(key), str):
+            values.append(attrs[key])
+    return "\n".join(values)
+
+
+def _has_media(doc: dict) -> bool:
+    pending = [doc]
+    while pending:
+        node = pending.pop()
+        if node["type"] in _MEDIA:
+            return True
+        pending.extend(node.get("content", []))
+    return False
 
 
 def markdown_to_document(markdown:str)->dict:
@@ -62,6 +91,15 @@ def validate_document(doc: dict) -> None:
         attrs = node.get("attrs") or {}
         if not isinstance(attrs, dict):
             raise DocumentProjectionError("unsupported document attributes")
+        if kind in _MEDIA:
+            allowed = {"asset_id", "title"} | ({"alt"} if kind == "image" else set())
+            asset_id = attrs.get("asset_id")
+            if (set(attrs) - allowed or not isinstance(asset_id, str)
+                or re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,239}", asset_id) is None):
+                raise DocumentProjectionError("unsupported media reference or attributes")
+            if any(value is not None and (not isinstance(value, str) or len(value) > 200)
+                   for key, value in attrs.items() if key != "asset_id"):
+                raise DocumentProjectionError("unsupported media descriptive text")
         if kind == "heading" and (type(attrs.get("level", 1)) is not int or not 1 <= attrs.get("level", 1) <= 6):
             raise DocumentProjectionError("unsupported heading level")
         if kind == "orderedList" and type(attrs.get("start", 1)) is not int:
@@ -80,30 +118,40 @@ def validate_document(doc: dict) -> None:
         pending.extend(children)
 
 
-def _inline_text(node: dict) -> str:
+def _inline_text(node: dict, *, media_placeholders: bool = False) -> str:
+    if node["type"] in _MEDIA:
+        return _media_placeholder(node) if media_placeholders else ""
     if node["type"] == "text":
         return node["text"]
     if node["type"] == "hardBreak":
         return "\n"
-    return "".join(_inline_text(child) for child in node.get("content", []))
+    return "".join(_inline_text(child, media_placeholders=media_placeholders) for child in node.get("content", []))
 
 
-def _text_blocks(node: dict):
+def _text_blocks(node: dict, *, media_placeholders: bool = False):
     if node["type"] in _TEXT_BLOCKS:
-        yield _inline_text(node)
+        yield _inline_text(node, media_placeholders=media_placeholders)
+    elif node["type"] in _MEDIA and media_placeholders:
+        yield _media_placeholder(node)
     else:
         for child in node.get("content", []):
-            yield from _text_blocks(child)
+            yield from _text_blocks(child, media_placeholders=media_placeholders)
 
 
-def plain_text(doc: dict) -> str:
+def plain_text(doc: dict, *, media_placeholders: bool = False) -> str:
     """Editor/search/Interop text: no syntax, codepoint offsets, no final LF.
 
     Nested block containers do not add separators of their own. Empty text
-    blocks do; a horizontalRule has no text. Marks add no characters.
+    blocks do; a horizontalRule has no text. Marks add no characters. Known
+    media atoms have no editor-coordinate text; warn instead of silently
+    treating that view as a full export. Exporters request visible placeholders
+    and descriptive metadata explicitly, never using them as editor offsets.
     """
     validate_document(doc)
-    return "\n".join(_text_blocks(doc))
+    if not media_placeholders and _has_media(doc):
+        warnings.warn("Editor coordinate projection excludes non-text media; export projection retains media descriptions and omission markers.",
+                      DocumentProjectionWarning, stacklevel=2)
+    return "\n".join(_text_blocks(doc, media_placeholders=media_placeholders))
 
 
 def _markdown_inline(node: dict) -> str:
@@ -125,6 +173,8 @@ def _markdown_block(node: dict) -> str:
         return fence + (attrs.get("language") or "") + "\n" + value + "\n" + fence
     if kind == "horizontalRule":
         return "---"
+    if kind in _MEDIA:
+        return _media_placeholder(node)
     if kind in {"bulletList", "orderedList"}:
         items = []
         for index, child in enumerate(node.get("content", []), attrs.get("start", 1)):
@@ -178,4 +228,4 @@ def chapter_body_text(chapter, *, markdown: bool = False) -> str:
     if (nodes and nodes[0]["type"] == "heading" and (nodes[0].get("attrs") or {}).get("level", 1) == 1
         and _inline_text(nodes[0]) == str(chapter.get("title") or "")):
         document = {**document, "content": nodes[1:]}
-    return document_to_markdown(document) if markdown else plain_text(document)
+    return document_to_markdown(document) if markdown else plain_text(document, media_placeholders=True)

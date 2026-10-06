@@ -78,6 +78,20 @@
       "original_bytes": 4035,
       "original_sha256": "42655a830ad92d11850f7ecb0e724185b4fe3c09e248ef5626c5f7e64cc762d2",
       "gzip_sha256": "485bef4e886e1a5c94b6054db769074648c6045d549f73b14a8714da4f3fc8e1"
+    },
+    {
+      "original_name": "supplemental/rich-media-compatibility/media-fixed-focused.xml",
+      "file": "supplemental/rich-media-compatibility/media-fixed-focused.xml.gz",
+      "original_bytes": 72207,
+      "original_sha256": "05b751e178979ce852098dc885c6a6f23a0eeedec84d8f04cd02085d2a55886d",
+      "gzip_sha256": "69e953347eac3656d99c552890a2961ba2930b808d83577b5cfc1a70de8b6126"
+    },
+    {
+      "original_name": "supplemental/rich-media-compatibility/media-red.xml",
+      "file": "supplemental/rich-media-compatibility/media-red.xml.gz",
+      "original_bytes": 62566,
+      "original_sha256": "568b0ed62f680081ec1ea80d9833c1e42ef7584f126b548bdf2b8f5831f033f7",
+      "gzip_sha256": "247fc95e7848fa55d4b4da2b21cdcf42797c38ee5ebc242747b6fc6da1c9e7c7"
     }
   ]
 }

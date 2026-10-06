@@ -92,7 +92,7 @@ BEGIN
   LOOP
     EXECUTE format($scan$
       INSERT INTO chapter_identities(novel_id, chapter_number, chapter_id, state, provenance)
-      SELECT DISTINCT aliases.novel_id, aliases.number::INTEGER, NULL, 'DELETED', 'LEGACY_REFERENCE'
+      SELECT DISTINCT aliases.novel_id, aliases.number::INTEGER, NULL::UUID, 'DELETED', 'LEGACY_REFERENCE'
       FROM (
         SELECT n.id AS novel_id,
           CASE WHEN substring(ref.value #>> '{}' FROM length(n.slug)+2) ~ '^[1-9][0-9]{0,9}(:v[0-9]+)?$'

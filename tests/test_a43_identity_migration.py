@@ -59,6 +59,8 @@ def test_identity_migration_bytes_are_checksummed():
     assert migration.checksum == hashlib.sha256((MIGRATIONS / "020_stable_chapter_identity.sql").read_text().strip().encode()).hexdigest()
     assert "DELETE FROM" not in migration.sql.upper()
     assert "DROP TABLE" not in migration.sql.upper()
+    # DISTINCT resolves an untyped NULL before INSERT target coercion.
+    assert "aliases.number::INTEGER, NULL::UUID" in migration.sql
 
 
 @pytest.mark.parametrize("sql", ["BEGIN; SELECT 1; COMMIT;", "SELECT 1; ROLLBACK;", "START TRANSACTION; SELECT 1;", "COMMIT"])
@@ -100,7 +102,7 @@ def test_real_postgres_legacy_migration_preserves_bytes_and_reserves_aliases():
         """)
         nid, aid, bid, cid, empty_id = (uuid.uuid4() for _ in range(5))
         connection.execute("INSERT INTO novels(id,slug,metadata) VALUES (%s,'legacy',%s),(%s,'empty','{}')",
-                           (nid, Jsonb({"source_id": "legacy:31:v7"}), empty_id))
+                           (nid, Jsonb({"source_id": "legacy:31:v7", "retained_refs": ["legacy:31:v7", "legacy:31:v7"]}), empty_id))
         docs = [{"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": marker}]}]} for marker in ("A", "B", "C")]
         for chapter_id, number, original, doc in ((aid, 2, 1, docs[0]), (bid, 1, 2, docs[1]), (cid, 3, 3, docs[2])):
             connection.execute("INSERT INTO chapters VALUES (%s,%s,%s,%s,%s,2,%s)",
@@ -124,6 +126,11 @@ def test_real_postgres_legacy_migration_preserves_bytes_and_reserves_aliases():
         reservations = dict(connection.execute("SELECT chapter_number,state FROM chapter_identities").fetchall())
         assert set(reservations) >= {1, 2, 3, 31, 37, 44, 99}
         assert reservations[99] == "DELETED"
+        # These rows are produced by the dynamic DISTINCT scan, including a
+        # repeated exact alias. Its NULL UUID source must reach the real table.
+        assert connection.execute("SELECT chapter_number,chapter_id,provenance FROM chapter_identities WHERE chapter_number IN (31,37,44) ORDER BY chapter_number").fetchall() == [
+            (31, None, "LEGACY_REFERENCE"), (37, None, "LEGACY_REFERENCE"), (44, None, "LEGACY_REFERENCE")]
+
         assert dict(connection.execute("SELECT slug,chapter_identity_provenance FROM novels").fetchall()) == {"legacy": "LEGACY_UNKNOWN", "empty": "LEGACY_UNKNOWN"}
         fresh_id = uuid.uuid4()
         connection.execute("INSERT INTO novels(id,slug) VALUES (%s,'fresh')", (fresh_id,))
