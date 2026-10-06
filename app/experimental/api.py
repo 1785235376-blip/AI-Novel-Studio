@@ -200,6 +200,7 @@ router.include_router(create_ux_router(workspace_tools_service, authorize, requi
 from .local_ai_inspection import LocalAIInspectionService
 from .local_ai_inspection_api import create_local_ai_inspection_router
 from ..dependencies import local_ai_discovery
+embedding_service.discovery_bridge = local_ai_discovery.route_bridge
 
 
 def require_inspection_host_session(token):
@@ -333,6 +334,7 @@ from .research_library import ResearchLibraryService
 from .research_library_api import create_research_library_router
 research_library_service = ResearchLibraryService(store, legacy_api.novel_service, legacy_api.chapter_service,
     legacy=legacy_api.v1_capability_service, world=world_service)
+embedding_service.research = research_library_service
 router.include_router(create_research_library_router(research_library_service, authorize, require_flag))
 
 

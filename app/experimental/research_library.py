@@ -15,13 +15,14 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from ..import_parsers import decode_base64
-from .common import DomainService, StaleSourceError, new_row, now, check_version, change_row
+from .common import DomainService, StaleSourceError, new_row, now, check_version, change_row, snapshot
 from .planning import collection, require_row, digest
 from .research_extract import MAX_BYTES, extract_document, fetch_webpage, _paragraphs
 from .world import WorldRecordIn
 
 SOURCES = 'research_sources'
 NOTES = 'research_notes'
+MAX_SOURCE_REVISIONS = 20
 MAX_SOURCES = 100
 MAX_STORED_BYTES = 32 * 1024 * 1024
 
@@ -42,6 +43,15 @@ class MetadataIn(StrictInput):
 class FileIn(MetadataIn):
     filename: str = Field(min_length=1, max_length=240)
     content_base64: str = Field(min_length=4, max_length=((MAX_BYTES + 2) // 3) * 4)
+
+
+class ReplaceFileIn(FileIn):
+    expected_version: int = Field(ge=1)
+
+
+class RestoreSourceIn(StrictInput):
+    expected_version: int = Field(ge=1)
+    restore_version: int = Field(ge=1)
 
 
 class WebIn(MetadataIn):
@@ -71,6 +81,10 @@ class NoteIn(StrictInput):
     title: str = Field(min_length=1, max_length=240)
     text: str = Field(min_length=1, max_length=8000)
     citations: list[CitationIn] = Field(min_length=1, max_length=20)
+
+
+class EditNoteIn(NoteIn):
+    expected_version: int = Field(ge=1)
 
 
 class AdoptIn(StrictInput):
@@ -155,6 +169,7 @@ class ResearchLibraryService(DomainService):
                 raise ValueError('RESEARCH_STORAGE_LIMIT')
             row = new_row(nid, scope, actor, payload)
             rows[row['id']] = row
+            self._storage_limit(state)
             guard()
             return self._public(row, True)
 
@@ -186,10 +201,87 @@ class ResearchLibraryService(DomainService):
             if row['created_by'] != actor: raise FileNotFoundError(rid)
             check_version(self._public(row), body.expected_version)
             target = require_row(state, SOURCES, rid)
-            target.update(body.model_dump(exclude={'expected_version'}), version=row['version'] + 1, updated_at=now(), updated_by=actor)
+            self._change_source(state, target, actor, body.expected_version, body.model_dump(exclude={'expected_version'}))
             self._invalidate(state, rid)
             guard()
             return self._public(target, True)
+
+    @staticmethod
+    def _storage_limit(state):
+        from .store import canonical
+        # Include retained versions and UTF-8 bytes; quotas cannot be bypassed
+        # through repeated edits or multibyte text.
+        if len(canonical(collection(state, SOURCES)).encode()) > MAX_STORED_BYTES:
+            raise ValueError('RESEARCH_STORAGE_LIMIT')
+
+    def _change_source(self, state, row, actor, version, values):
+        stopping = values.get('status') in {'REVOKED', 'DELETED'}
+        if not stopping and len(row.get('history', [])) >= MAX_SOURCE_REVISIONS:
+            raise ValueError('RESEARCH_REVISION_LIMIT')
+        change_row(row, actor, version, lambda target: target.update(values))
+        if not stopping: self._storage_limit(state)
+
+    def _owned_source(self, nid, scope, actor, rid, state):
+        self.novels.get(nid)
+        row = require_row(state, SOURCES, rid)
+        if row.get('created_by') != actor or row.get('novel_id') != nid or row.get('scope') != scope:
+            raise FileNotFoundError(rid)
+        return row
+
+    def archived_sources(self, nid, scope, actor):
+        self.novels.get(nid)
+        state = self.store.read(nid, scope)
+        rows = [self._public(row) for row in collection(state, SOURCES).values()
+                if row.get('created_by') == actor and row.get('status') in {'REVOKED', 'DELETED'}]
+        return {'items': rows, 'total': len(rows), 'restoration_requires_review': True}
+
+    def source_history(self, nid, scope, actor, rid):
+        state = self.store.read(nid, scope)
+        row = self._owned_source(nid, scope, actor, rid, state)
+        # Current visibility never grants access to older private revisions.
+        return {'items': [self._public(value) for value in [*row.get('history', []), snapshot(row)]],
+                'current_version': row['version'], 'restore_creates_new_version': True}
+
+    def historical_original(self, nid, scope, actor, rid, version):
+        state = self.store.read(nid, scope)
+        row = self._owned_source(nid, scope, actor, rid, state)
+        revision = next((item for item in [*row.get('history', []), snapshot(row)] if item['version'] == version), None)
+        if not revision or not revision.get('content_base64'): raise FileNotFoundError(rid)
+        return base64.b64decode(revision['content_base64']), revision['filename']
+
+    def replace_file(self, nid, scope, actor, rid, value, *, guard):
+        body = ReplaceFileIn.model_validate(value)
+        guard()
+        extraction = extract_document(body.filename, decode_base64(body.content_base64))
+        with self.store.transaction(nid, scope) as state:
+            guard()
+            row = self._owned_source(nid, scope, actor, rid, state)
+            if row['status'] != 'ACTIVE': raise ValueError('RESEARCH_SOURCE_INACTIVE')
+            check_version(self._public(row), body.expected_version)
+            values = {**body.model_dump(exclude={'expected_version'}), **extraction,
+                      'origin': 'LOCAL_IMPORT', 'accessed_at': now()}
+            self._change_source(state, row, actor, body.expected_version, values)
+            self._invalidate(state, rid)
+            guard()
+            return self._public(row, True)
+
+    def restore_source(self, nid, scope, actor, rid, value, *, guard):
+        body = RestoreSourceIn.model_validate(value)
+        with self.store.transaction(nid, scope) as state:
+            guard()
+            row = self._owned_source(nid, scope, actor, rid, state)
+            check_version(self._public(row), body.expected_version)
+            original = next((revision for revision in row.get('history', [])
+                if revision['version'] == body.restore_version and revision['status'] == 'ACTIVE'), None)
+            if original is None: raise ValueError('RESEARCH_ACTIVE_REVISION_REQUIRED')
+            protected = {'id', 'novel_id', 'scope', 'version', 'history', 'created_by', 'created_at', 'updated_by', 'updated_at'}
+            values = {k: copy.deepcopy(v) for k, v in original.items() if k not in protected}
+            # Restoring historical access must never republish private content.
+            values.update(access='PRIVATE', restored_from_version=body.restore_version)
+            self._change_source(state, row, actor, body.expected_version, values)
+            self._invalidate(state, rid)
+            guard()
+            return self._public(row, True)
 
     @staticmethod
     def _invalidate(state, rid):
@@ -199,6 +291,15 @@ class ResearchLibraryService(DomainService):
             rows = collection(state, name)
             for key in list(rows):
                 if rid in rows[key].get('source_ids', []): del rows[key]
+        # Real vectors share the original embedding authority, including in-flight
+        # builds: source revision invalidates the execution token atomically.
+        for row in collection(state, 'embedding_indexes').values():
+            if row.get('status') == 'REMOVED': continue
+            if any(ref.get('entity_type') == 'RESEARCH' and ref.get('entity_id') == rid for ref in row.get('entities', [])):
+                change_row(row, 'research-source-invalidation', row['version'], lambda target: target.update(
+                    status='INVALIDATED', execution_token=None, error_code='EMBEDDING_RESEARCH_SOURCE_CHANGED'))
+                for vector in collection(state, 'embedding_vectors').values():
+                    if vector.get('index_id') == row['id']: vector.update(status='INVALIDATED', vector=[])
         for name in (NOTES, 'world_records'):
             for row in collection(state, name).values():
                 refs = row.get('citations', row.get('research_sources', []))
@@ -213,7 +314,7 @@ class ResearchLibraryService(DomainService):
             if row['created_by'] != actor: raise FileNotFoundError(rid)
             check_version(self._public(row), expected_version)
             target = require_row(state, SOURCES, rid)
-            target.update(status='REVOKED' if action == 'revoke' else 'DELETED', version=row['version'] + 1, updated_at=now(), updated_by=actor)
+            self._change_source(state, target, actor, expected_version, {'status': 'REVOKED' if action == 'revoke' else 'DELETED'})
             self._invalidate(state, rid)
             guard()
             return {'id': rid, 'version': target['version'], 'status': target['status'], 'derived_context_invalidated': True}
@@ -245,7 +346,7 @@ class ResearchLibraryService(DomainService):
     def _evidence(row, paragraph):
         return {'citation': ResearchLibraryService._cite(row, paragraph), 'title': row['title'], 'author': row.get('author', ''), 'source': row.get('source', ''),
                 'page': paragraph['page'], 'paragraph': paragraph['paragraph'], 'text': paragraph['text'],
-                'accessed_at': row.get('accessed_at'), 'source_version_label': row.get('source_version', ''), 'layer': 'RESEARCH'}
+                'accessed_at': row.get('accessed_at'), 'imported_at': row.get('created_at'), 'source_digest': row.get('content_sha256'), 'source_version_label': row.get('source_version', ''), 'layer': 'RESEARCH'}
 
     def search(self, nid, scope, actor, query, limit=30):
         if not query.strip() or len(query) > 200 or not 1 <= limit <= 100: raise ValueError('RESEARCH_QUERY_INVALID')
@@ -282,11 +383,64 @@ class ResearchLibraryService(DomainService):
         state = self.store.read(nid, scope)
         rows = []
         for row in collection(state, NOTES).values():
-            if row['created_by'] != actor: continue
+            if row['created_by'] != actor or row.get('status') != 'ACTIVE': continue
             try: evidence = self._validate_refs(nid, scope, actor, row['citations'], state)
             except (FileNotFoundError, StaleSourceError): continue
-            rows.append({**copy.deepcopy(row), 'evidence': evidence})
+            rows.append({**{k: copy.deepcopy(v) for k, v in row.items() if k != 'history'}, 'evidence': evidence})
         return {'items': rows, 'total': len(rows)}
+
+    def note_repairs(self, nid, scope, actor):
+        self.novels.get(nid)
+        state = self.store.read(nid, scope)
+        rows = []
+        for row in collection(state, NOTES).values():
+            if row['created_by'] != actor or row['status'] != 'ACTIVE': continue
+            try: self._validate_refs(nid, scope, actor, row['citations'], state)
+            except StaleSourceError:
+                # Only the author's own currently active sources permit draft
+                # recovery. Revoked/private third-party citations stay hidden.
+                sources = [collection(state, SOURCES).get(ref['source_id']) for ref in row['citations']]
+                if sources and all(source and source['created_by'] == actor and source['status'] == 'ACTIVE' for source in sources):
+                    rows.append({k: copy.deepcopy(row[k]) for k in ('id', 'version', 'title', 'text') } | {'status': 'CITATIONS_NEED_REVIEW', 'citations': []})
+            except FileNotFoundError: continue
+        return {'items': rows, 'automatic_rebind': False}
+
+    def edit_note(self, nid, scope, actor, rid, value, *, guard):
+        body = EditNoteIn.model_validate(value)
+        with self.store.transaction(nid, scope) as state:
+            guard()
+            row = require_row(state, NOTES, rid)
+            if row['created_by'] != actor or row['status'] != 'ACTIVE': raise FileNotFoundError(rid)
+            # An unavailable old citation is not authorization to reveal its
+            # source. Replacement references must all be currently visible.
+            self._validate_refs(nid, scope, actor, body.model_dump()['citations'], state)
+            check_version({k: v for k, v in row.items() if k != 'history'}, body.expected_version)
+            if len(row.get('history', [])) >= 20: raise ValueError('RESEARCH_REVISION_LIMIT')
+            change_row(row, actor, body.expected_version, lambda target: target.update(
+                **body.model_dump(exclude={'expected_version'}, exclude_none=True), research_stale=False))
+            guard()
+            return {k: copy.deepcopy(v) for k, v in row.items() if k != 'history'}
+
+    def delete_note(self, nid, scope, actor, rid, expected_version, *, guard):
+        with self.store.transaction(nid, scope) as state:
+            guard()
+            row = require_row(state, NOTES, rid)
+            if row['created_by'] != actor or row['status'] != 'ACTIVE': raise FileNotFoundError(rid)
+            check_version({'id': rid, 'version': row['version']}, expected_version)
+            change_row(row, actor, expected_version, lambda target: target.update(status='DELETED'))
+            guard()
+            return {'id': rid, 'version': row['version'], 'status': row['status']}
+
+    def note_history(self, nid, scope, actor, rid):
+        state = self.store.read(nid, scope)
+        row = require_row(state, NOTES, rid)
+        if row['created_by'] != actor: raise FileNotFoundError(rid)
+        items = []
+        for revision in [*row.get('history', []), snapshot(row)]:
+            try: self._validate_refs(nid, scope, actor, revision['citations'], state)
+            except (FileNotFoundError, StaleSourceError): continue
+            items.append(copy.deepcopy(revision))
+        return {'items': items, 'current_version': row['version'], 'unavailable_revisions_hidden': True}
 
     def adopt(self, nid, scope, actor, value, *, guard):
         body = AdoptIn.model_validate(value)

@@ -56,3 +56,7 @@ Historical independent follow-up review remains BLOCKED. New implementation chec
 ## Wave1 continuation checkpoint
 
 Current product totals remain F00 INTEGRATED +39 PARTIAL. Original-owner task cancellation/IDs, Review Inbox resume, richer literal search and draft integrity are implemented. Focused File/API/UI checks passed; exact-source full CI and native acceptance are separate. Native Research/Canon/Graph add/pin context and the remaining structured search kinds continue in a later scoped refinement.
+
+## Independent Wave3 checkpoint after recovery
+
+A06/A07/A10 and existing embedding/asset references have deeper real workflows. Fresh recovered-source focused backend:276 passed,97 unchanged profile skips. Actual local HTTP transport uses a synthetic vector server and does not establish semantic/model quality. Product totals remain F00 INTEGRATED +39 PARTIAL. Full final-source hosted evidence is pending.

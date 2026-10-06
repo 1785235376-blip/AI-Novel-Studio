@@ -4,7 +4,7 @@ from fastapi import APIRouter, Header, HTTPException, Request, Response
 from pydantic import Field, ValidationError
 from .common import api_call
 from .model_broker import Strict
-from .model_benchmark import FEATURE, TASK_KINDS, BenchmarkSetInput, BenchmarkRunInput, EvidenceImportInput
+from .model_benchmark import FEATURE, TASK_KINDS, BenchmarkSetInput, BenchmarkRunInput, EvidenceImportInput, EvidenceReviewInput
 
 
 class ComparisonInput(Strict):
@@ -53,6 +53,14 @@ def create_model_benchmark_router(service, authorize, require_flag, require_host
                 'image_execution': 'ONE_REGISTERED_LOCAL_IMAGE_THROUGH_ORIGINAL_MEDIA_REVIEW',
                 'video_execution': 'IMPORT_ONLY_LOCAL_ADMISSION_UNAVAILABLE'}
 
+    @router.get('/profiles')
+    def profiles(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        authority = access(nid, x_session_token, x_branch_id)
+        result = api_call(service.capability_profiles, nid, authority[1])
+        if access(nid, x_session_token, x_branch_id) != authority: raise HTTPException(403, {'code': 'BENCHMARK_AUTHORITY_CHANGED'})
+        response.headers['Cache-Control'] = 'no-store'
+        return result
+
     @router.post('/sets', status_code=201)
     async def create(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         authority = access(nid, x_session_token, x_branch_id, 'domain.write')
@@ -89,6 +97,12 @@ def create_model_benchmark_router(service, authorize, require_flag, require_host
         value = await read(request, EvidenceImportInput)
         guard(nid, x_session_token, x_branch_id, authority)()
         return await run_in_threadpool(api_call, service.import_evidence, nid, authority[1], authority[0], value)
+
+    @router.post('/evidence/{rid}/review')
+    async def review_evidence(nid: str, rid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        authority = access(nid, x_session_token, x_branch_id, 'domain.write')
+        value = await read(request, EvidenceReviewInput)
+        return await run_in_threadpool(api_call, service.review_evidence, nid, authority[1], authority[0], rid, value, guard(nid, x_session_token, x_branch_id, authority))
 
     @router.post('/evidence/{rid}/invalidate')
     async def invalidate(nid: str, rid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

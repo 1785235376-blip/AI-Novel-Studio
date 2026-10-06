@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "phase": "WAVE_1_IMPLEMENTATION_CHECKPOINT_FINAL_VERIFICATION_PENDING",
+  "phase": "INDEPENDENT_WAVE_3_RECOVERED_CHECKPOINT_FINAL_CI_PENDING",
   "model": "gpt-6-astra",
   "repository": "1785235376-blip/AI-Novel-Studio",
   "branch": "work/post-interop-r4-r5-ux-continuation",
@@ -348,7 +348,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "NOT_RUN",
+      "current_verification": "FRESH_RECOVERED_FOCUSED_BACKEND_PASS_FULL_FINAL_SOURCE_PENDING",
       "inherited_scope": "Registered TEXT, IMAGE and AUDIO candidates, current quote/request receipts, original executor admission, atomic reservations/settlement and honest unknown holds; explicit zero-price local media batch admission.",
       "sources": [
         "app/provider_runtime_v2_routing_service.py",
@@ -357,9 +357,16 @@
         "app/experimental/provider_profiles.py"
       ],
       "inherited_remaining_scope": "No fabricated quality ranking. Actual configured-model quality and paid-billing acceptance remain NOT_RUN. Optional cloud execution remains explicitly restricted.",
-      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "continuation_delta": "Privacy/Balanced policy and explicit cloud-fallback/license admission controls over existing broker routes and unknown-cost accounting.",
       "real_model_verification": "NOT_RUN",
-      "native_acceptance": "LOCAL_REQUIRED"
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 3,
+          "delta": "Privacy/Balanced policy and explicit cloud-fallback/license admission controls over existing broker routes and unknown-cost accounting.",
+          "verification": "FRESH_RECOVERED_FOCUSED_BACKEND_PASS_FULL_FINAL_SOURCE_PENDING"
+        }
+      ]
     },
     {
       "id": "A07",
@@ -368,7 +375,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "NOT_RUN",
+      "current_verification": "FRESH_RECOVERED_FOCUSED_BACKEND_PASS_FULL_FINAL_SOURCE_PENDING",
       "inherited_scope": "Bounded registered text and supported original-local IMAGE benchmarks with original job/output receipts, current registration/config/model evidence, decoded dimensions, actual measured latency and budget admission; preference evidence remains separate.",
       "sources": [
         "app/model_center/discovery.py",
@@ -376,9 +383,16 @@
         "tests/test_r4_registered_local_media.py"
       ],
       "inherited_remaining_scope": "VIDEO_WORKFLOW lacks equivalent proven-local current broker admission and remains explicit import-only. Missing hardware/usage/cold-start measurements are unknown; real GPU/model quality remains NOT_RUN.",
-      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "continuation_delta": "Capability profiles distinguish catalog/detected/contract/local execution; explicit current-evidence human verification cannot promote imported evidence.",
       "real_model_verification": "NOT_RUN",
-      "native_acceptance": "LOCAL_REQUIRED"
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 3,
+          "delta": "Capability profiles distinguish catalog/detected/contract/local execution; explicit current-evidence human verification cannot promote imported evidence.",
+          "verification": "FRESH_RECOVERED_FOCUSED_BACKEND_PASS_FULL_FINAL_SOURCE_PENDING"
+        }
+      ]
     },
     {
       "id": "A09",
@@ -387,7 +401,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "NOT_RUN",
+      "current_verification": "FRESH_RECOVERED_FOCUSED_BACKEND_PASS_FULL_FINAL_SOURCE_PENDING",
       "inherited_scope": "Existing asset DAG and metadata reused for scoped lineage view, versioned declarations, cycle/parent drift/deletion detection, exact impact records, legacy OFF/V1 projection hiding.",
       "sources": [
         "app/services/asset_library_service.py",
@@ -395,9 +409,16 @@
         "app/services/export_resource_snapshot.py"
       ],
       "inherited_remaining_scope": "Only recorded dependency evidence is known; unmapped dependencies and license judgements remain unknown.",
-      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "continuation_delta": "Existing vector records now reference original Research/asset source digests with atomic invalidation; semantic quality remains unverified.",
       "real_model_verification": "NOT_RUN",
-      "native_acceptance": "LOCAL_REQUIRED"
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 3,
+          "delta": "Existing vector records now reference original Research/asset source digests with atomic invalidation; semantic quality remains unverified.",
+          "verification": "FRESH_RECOVERED_FOCUSED_BACKEND_PASS_FULL_FINAL_SOURCE_PENDING"
+        }
+      ]
     },
     {
       "id": "A13",
@@ -505,7 +526,7 @@
       "historical_pr39_status": "PARTIAL",
       "current_status": "PARTIAL",
       "implementation_label": "PARTIAL",
-      "current_verification": "NOT_RUN",
+      "current_verification": "FRESH_RECOVERED_FOCUSED_BACKEND_PASS_FULL_FINAL_SOURCE_PENDING",
       "inherited_scope": "Bounded TXT/MD/DOCX/PDF/image sources, exact paragraph/page citations, local search/notes, explicit safe web fetch, source revocation and reviewed setting drafts using existing world authority.",
       "sources": [
         "frontend/src/novel/ResearchPanel.tsx",
@@ -514,9 +535,16 @@
         "app/experimental/imports.py"
       ],
       "inherited_remaining_scope": "OCR/vector/vision adapters absent; actual public-web compatibility and native Windows containment are not verified.",
-      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "continuation_delta": "Research file replacement/history/private restore/export and note edit/delete/citation repair; original-source vector picker and real guarded registered-local embedding adapter.",
       "real_model_verification": "NOT_RUN",
-      "native_acceptance": "LOCAL_REQUIRED"
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 3,
+          "delta": "Research file replacement/history/private restore/export and note edit/delete/citation repair; original-source vector picker and real guarded registered-local embedding adapter.",
+          "verification": "FRESH_RECOVERED_FOCUSED_BACKEND_PASS_FULL_FINAL_SOURCE_PENDING"
+        }
+      ]
     },
     {
       "id": "A11",

@@ -6,7 +6,7 @@ import re
 from pydantic import Field
 
 from .common import api_call
-from .research_library import FileIn, WebIn, EditIn, CitationIn, NoteIn, AdoptIn, StrictInput
+from .research_library import FileIn, WebIn, EditIn, CitationIn, NoteIn, AdoptIn, StrictInput, ReplaceFileIn, RestoreSourceIn, EditNoteIn
 
 
 class VersionIn(StrictInput):
@@ -91,6 +91,32 @@ def create_research_library_router(service, authorize, require_flag):
     def import_web(nid: str, body: WebIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return run(nid, x_session_token, x_branch_id, service.import_web, body.model_dump(), mutation=True)
 
+    @router.get('/sources-archive')
+    def archive(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        return run(nid, x_session_token, x_branch_id, service.archived_sources)
+
+    @router.get('/sources/{rid}/history')
+    def source_history(nid: str, rid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        return run(nid, x_session_token, x_branch_id, service.source_history, rid)
+
+    @router.get('/sources/{rid}/history/{version}/original')
+    def historical_original(nid: str, rid: str, version: int, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        content, filename = run(nid, x_session_token, x_branch_id, service.historical_original, rid, version)
+        from urllib.parse import quote
+        return Response(content, media_type='application/octet-stream', headers={
+            'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff',
+            'Content-Disposition': "attachment; filename*=UTF-8''" + quote(filename, safe='')})
+
+    @router.put('/sources/{rid}/file')
+    def replace_file(nid: str, rid: str, body: ReplaceFileIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return run(nid, x_session_token, x_branch_id, service.replace_file, rid, body.model_dump(), mutation=True)
+
+    @router.post('/sources/{rid}/restore')
+    def restore_source(nid: str, rid: str, body: RestoreSourceIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return run(nid, x_session_token, x_branch_id, service.restore_source, rid, body.model_dump(), mutation=True)
+
     @router.get('/sources/{rid}')
     def source(nid: str, rid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         response.headers['Cache-Control'] = 'no-store'
@@ -141,6 +167,24 @@ def create_research_library_router(service, authorize, require_flag):
     @router.post('/notes', status_code=201)
     def note(nid: str, body: NoteIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return run(nid, x_session_token, x_branch_id, service.create_note, body.model_dump(), mutation=True)
+
+    @router.get('/note-repairs')
+    def note_repairs(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        return run(nid, x_session_token, x_branch_id, service.note_repairs)
+
+    @router.put('/notes/{rid}')
+    def edit_note(nid: str, rid: str, body: EditNoteIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return run(nid, x_session_token, x_branch_id, service.edit_note, rid, body.model_dump(), mutation=True)
+
+    @router.post('/notes/{rid}/delete')
+    def delete_note(nid: str, rid: str, body: VersionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return run(nid, x_session_token, x_branch_id, service.delete_note, rid, body.expected_version, mutation=True)
+
+    @router.get('/notes/{rid}/history')
+    def note_history(nid: str, rid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        return run(nid, x_session_token, x_branch_id, service.note_history, rid)
 
     @router.get('/setting-drafts')
     def drafts(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

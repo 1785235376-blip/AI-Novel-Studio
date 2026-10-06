@@ -1,5 +1,5 @@
 {
-  "phase": "WAVE_1_IMPLEMENTATION_CHECKPOINT",
+  "phase": "RECOVERED_INDEPENDENT_WAVE_3_CHECKPOINT",
   "source": "User request of 2026-10-06, sections 1–37",
   "waves": [
     {
@@ -48,7 +48,7 @@
         "A07",
         "A10"
       ],
-      "state": "PENDING",
+      "state": "IMPLEMENTED_FRESH_FOCUSED_TESTS_FINAL_CI_PENDING",
       "safe_cloud_closure": "Existing-owner implementation, actual persistence/API/UI journeys and tests; explicit local/paid/native/unsupported boundary labels."
     },
     {

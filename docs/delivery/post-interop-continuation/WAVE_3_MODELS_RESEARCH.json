@@ -1,0 +1,266 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-06",
+  "wave": 3,
+  "starting_sha": "e58c72b04182cd374af092314386b90f8250a173",
+  "recovery_base_sha": "4d736c0d14bdcd12d0ad3cc7146553971654620b",
+  "recovery_base_tree": "6b8269fb95e695178ce4c587c9fc729275d0e848",
+  "source_scope": "Reconstructed owned bytes; hashes below. Fresh post-recovery 14-file backend receipt is current. Pre-reset frontend/type results do not verify recovered frontend bytes.",
+  "recovery_status": "RECONSTRUCTED_FOCUSED_BACKEND_PASS_FRONTEND_RECHECK_BLOCKED",
+  "original_ids": [
+    {
+      "id": "A06",
+      "delta": [
+        "Privacy/Balanced and aliases",
+        "explicit local-to-cloud candidate preapproval",
+        "license confirmation constraint"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "id": "A07",
+      "delta": [
+        "separate capability evidence tiers",
+        "explicit version-bound exact-output user review"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "id": "A10",
+      "delta": [
+        "file replacement and retained history",
+        "owner version export and PRIVATE restore",
+        "note edit/delete/history and safe citation repair",
+        "image metadata"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "id": "R3-GAP-06",
+      "feature": "visual_embeddings",
+      "associated_ids": [
+        "A06",
+        "A07",
+        "A10"
+      ],
+      "delta": [
+        "original-authority real Ollama transport",
+        "scoped source picker",
+        "Research vector invalidation",
+        "index edit/cancel/restart fences"
+      ],
+      "status": "PARTIAL"
+    },
+    {
+      "id": "R3-GAP-05",
+      "status": "BLOCKED",
+      "reason": "OS-vault host profile integration required; unchanged original contract."
+    }
+  ],
+  "changed_files": [
+    {
+      "path": "app/experimental/model_broker.py",
+      "sha256": "af8cd59405e3e6f869264a51b3552d9ac88e48a8d28a1e13b062bdd57825891d"
+    },
+    {
+      "path": "app/experimental/model_benchmark.py",
+      "sha256": "6e83e208626a0db55b8f6111421aedae2ecca1dfcba782cc70979205ee6a9a53"
+    },
+    {
+      "path": "app/experimental/model_benchmark_api.py",
+      "sha256": "d88856750b9fdb4b9226422783c811e77740723fcdab343b0d1263391c6965c0"
+    },
+    {
+      "path": "app/experimental/research_library.py",
+      "sha256": "b432d9e798d408d83e85eea566d213f9b5d44f955c04e9c7cb138dc4b7966a6d"
+    },
+    {
+      "path": "app/experimental/research_library_api.py",
+      "sha256": "28b543b6ff1044785dde24d1344e5c67d99d9c3bab087bf3caf465372c764a6a"
+    },
+    {
+      "path": "app/experimental/research_extract.py",
+      "sha256": "70662a3ad21ae785291396b2a1bede5181c871bfe3b779f4375076848c86ef6d"
+    },
+    {
+      "path": "app/experimental/embeddings.py",
+      "sha256": "32c28e5ff4844081d0f8820a8e2bc3b92899d871a822219f9c77bbec3d39aa45"
+    },
+    {
+      "path": "app/experimental/embeddings_api.py",
+      "sha256": "60326a8640bd1993addc6841cb5e9286191877b1d684ce1a63243a2734727eb3"
+    },
+    {
+      "path": "app/model_center/discovery.py",
+      "sha256": "ffc235b8a7c44608ff014bf36dfef79e08773f1457ca83b5f71429d84c1d67a2"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBrokerPanel.tsx",
+      "sha256": "af755cac67fd01ede6c5069ec72ac5f95839d2bdff91ced7d67074362c0d34d6"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBenchmarkPanel.tsx",
+      "sha256": "fbb1bc529a4c6038ecd2675abc7b156b9e1cc0c8af7f6adcbcfcc45ff8619fee"
+    },
+    {
+      "path": "frontend/src/experimental/modelBrokerClient.ts",
+      "sha256": "76c8177c72c0a15ab0c84cf317f2a7e0864effcca1693a1aed6ce1a36c9ceb60"
+    },
+    {
+      "path": "frontend/src/experimental/ResearchLibraryPanel.tsx",
+      "sha256": "25a646aca1b38f8a387343e8c3d6714b4ba9c3e76afc3f5918beb6dfbda9a2af"
+    },
+    {
+      "path": "frontend/src/experimental/researchLibraryClient.ts",
+      "sha256": "13ef6fa0356cfd632803321774f60f660bc6fbf4b3f881f2d9c5f035487bcf53"
+    },
+    {
+      "path": "frontend/src/experimental/EmbeddingPanel.tsx",
+      "sha256": "5f699875dadff71b66179747dd70867a716611587b06df284c938fbe00fb252e"
+    },
+    {
+      "path": "tests/test_post_interop_wave3_research.py",
+      "sha256": "d22685972ee47aac879cb9ba2c8fbce5a30a01ab8f5b2014770b9ddab18804f0"
+    },
+    {
+      "path": "tests/test_post_interop_wave3_embedding_adapter.py",
+      "sha256": "f746b4a0bd18e3672bbd02ab9c5520e9f6e306a35170ca55e110665b665fe96b"
+    },
+    {
+      "path": "tests/test_post_interop_wave3_broker.py",
+      "sha256": "6b39ff56d9ad62d8d2d8825420acddb2c4cf5039ca0835b79ed438b470913187"
+    },
+    {
+      "path": "frontend/src/experimental/EmbeddingPanel.continuation.test.tsx",
+      "sha256": "6ec6a6c2a92f55f25d5c70033c943a12cf52a70d8dc33acb3f6a7526b1e94c9a"
+    },
+    {
+      "path": "frontend/src/experimental/ResearchLibraryPanel.continuation.test.tsx",
+      "sha256": "9fd60c97688ebe707c16e311c553b9bae51020260b61f80a6cc3e4ddd610d4fe"
+    },
+    {
+      "path": "frontend/src/experimental/ModelBenchmarkPanel.continuation.test.tsx",
+      "sha256": "710a5cbe4b85b1cf76dec4d0cc35d0177eb493b9ab16c03a4510871a65b21322"
+    },
+    {
+      "path": "frontend/tests/e2e/r4-wave3-continuation.spec.ts",
+      "sha256": "cfc8d88d417622b7e12b381490c17f77ffe9b60d2d8f24853b45d8ef029b76ca"
+    }
+  ],
+  "verification": [
+    {
+      "scope": "9 owned Python implementation files and 3 restored Python tests",
+      "stage": "AST_PARSE",
+      "status": "PASS"
+    },
+    {
+      "stage": "OWNED_DIFF_CHECK",
+      "status": "PASS"
+    },
+    {
+      "stage": "RECOVERED_FOCUSED_BACKEND",
+      "command": "../r2-run.sh /workspace/scratch/b8734129d01d/interop-test-venv/bin/python -m pytest -q tests/test_post_interop_wave3_research.py tests/test_post_interop_wave3_embedding_adapter.py tests/test_post_interop_wave3_broker.py tests/test_r3_embedding_contracts.py tests/test_r4_model_broker.py tests/test_r4_research_library.py tests/test_r4_research_extract.py tests/test_r4_research_library_mounted.py tests/test_r4_broker_mounted.py tests/test_r4_broker_cancel_dispatch.py tests/test_local_ai_discovery.py tests/test_local_ai_discovery_adversarial.py tests/test_local_ai_discovery_egress.py tests/test_local_ai_discovery_remaining.py --disable-warnings",
+      "passed": 276,
+      "skipped": 97,
+      "warnings": 1,
+      "duration_seconds": 18.11,
+      "status": "PASS",
+      "skip_scope": "Unchanged inherited backend-profile/real PostgreSQL availability gates; no real local PostgreSQL endpoint configured."
+    },
+    {
+      "stage": "RECOVERED_FRONTEND_AND_TYPESCRIPT",
+      "status": "NOT_RUN",
+      "reason": "Node dependency setup blocked in recovered sandbox; hosted CI required."
+    }
+  ],
+  "historical_pre_reset_only": [
+    {
+      "command": "../r2-run.sh python -m pytest -q tests/test_post_interop_wave3_research.py tests/test_post_interop_wave3_embedding_adapter.py tests/test_post_interop_wave3_broker.py tests/test_r3_embedding_contracts.py tests/test_r4_model_broker.py tests/test_r4_research_library.py tests/test_r4_research_extract.py tests/test_r4_research_library_mounted.py tests/test_r4_broker_mounted.py tests/test_r4_broker_cancel_dispatch.py tests/test_local_ai_discovery.py tests/test_local_ai_discovery_adversarial.py tests/test_local_ai_discovery_egress.py tests/test_local_ai_discovery_remaining.py --disable-warnings",
+      "passed": 276,
+      "skipped": 97,
+      "warnings": 1,
+      "status": "HISTORICAL_SOURCE_ONLY_NOT_RECOVERED_BYTES_EVIDENCE"
+    },
+    {
+      "command": "cd frontend && ./node_modules/.bin/vitest run src/experimental/EmbeddingPanel.continuation.test.tsx src/experimental/ResearchLibraryPanel.continuation.test.tsx src/experimental/ModelBenchmarkPanel.continuation.test.tsx src/experimental/ResearchLibraryPanel.test.tsx src/experimental/ModelBrokerPanel.test.tsx src/experimental/RegisteredMediaPanel.test.tsx --reporter=dot",
+      "passed": 31,
+      "status": "HISTORICAL_SOURCE_ONLY_NOT_RECOVERED_BYTES_EVIDENCE"
+    },
+    {
+      "command": "cd frontend && ./node_modules/.bin/tsc -b",
+      "status": "HISTORICAL_SOURCE_ONLY_PASS"
+    },
+    {
+      "command": "cd frontend && node ../scripts/check_ui_design_tokens.mjs",
+      "guarded_files": 42,
+      "status": "HISTORICAL_SOURCE_ONLY_PASS"
+    }
+  ],
+  "required_rechecks": {
+    "backend_files": [
+      "tests/test_post_interop_wave3_research.py",
+      "tests/test_post_interop_wave3_embedding_adapter.py",
+      "tests/test_post_interop_wave3_broker.py",
+      "tests/test_r3_embedding_contracts.py",
+      "tests/test_r4_model_broker.py",
+      "tests/test_r4_research_library.py",
+      "tests/test_r4_research_extract.py",
+      "tests/test_r4_research_library_mounted.py",
+      "tests/test_r4_broker_mounted.py",
+      "tests/test_r4_broker_cancel_dispatch.py",
+      "tests/test_local_ai_discovery.py",
+      "tests/test_local_ai_discovery_adversarial.py",
+      "tests/test_local_ai_discovery_egress.py",
+      "tests/test_local_ai_discovery_remaining.py"
+    ],
+    "frontend_files": [
+      "src/experimental/EmbeddingPanel.continuation.test.tsx",
+      "src/experimental/ResearchLibraryPanel.continuation.test.tsx",
+      "src/experimental/ModelBenchmarkPanel.continuation.test.tsx",
+      "src/experimental/ResearchLibraryPanel.test.tsx",
+      "src/experimental/ModelBrokerPanel.test.tsx",
+      "src/experimental/RegisteredMediaPanel.test.tsx"
+    ],
+    "typescript": true,
+    "design_tokens": true,
+    "full_parent_product_gate": true,
+    "real_postgres": "NOT_RUN_LOCAL_ENDPOINT_ABSENT_IN_PRE_RESET_ENVIRONMENT",
+    "backend_focused_completed": true
+  },
+  "browser": {
+    "path": "frontend/tests/e2e/r4-wave3-continuation.spec.ts",
+    "selection": "Existing **/r4-*.spec.ts glob",
+    "local": "BLOCKED_PREVIOUS_PLATFORM_RESTRICTION_NOT_RETRIED",
+    "execution": "NOT_RUN_PENDING_HOSTED_CI",
+    "viewports": [
+      1366,
+      1440,
+      1920
+    ]
+  },
+  "runtime_truth": {
+    "real_loopback_http_transport": "REAL_VERIFIED_POST_RECOVERY_SYNTHETIC_VECTOR_SERVER",
+    "vector_fixture": "SYNTHETIC_TEST_SERVER",
+    "actual_ollama_inference": "NOT_RUN",
+    "semantic_quality": "NOT_RUN",
+    "real_gpu": "LOCAL_REQUIRED",
+    "real_image_embedding": "NOT_CONFIGURED",
+    "paid_api": "NOT_RUN",
+    "private_manuscript_used": false,
+    "models_installed": false,
+    "lexical_embedding_fallback": false
+  },
+  "database": {
+    "new_sql_migrations": [],
+    "old_migrations_modified": false,
+    "storage": "Original scope-atomic ExperimentalStore File/PG JSON",
+    "additive_collection": "benchmark_evidence_reviews_v2",
+    "compatibility": "Old native/legacy Research and default-provider indexes load; missing past history not invented. New Research indexes require continuation executor. No destructive or real V1 data migration."
+  },
+  "composition_parent_owned": [
+    "embedding_service.research = research_library_service",
+    "embedding_service.discovery_bridge = local_ai_discovery.route_bridge"
+  ],
+  "independent_audit": "Historical BLOCKED unchanged; not retried or replaced",
+  "opus_handoff": "See companion MD; original shared shell/primitives/tokens only."
+}

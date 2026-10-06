@@ -372,6 +372,8 @@ class LocalDiscoveryService:
                 if checked['source_locality'] == 'LOCAL_VERIFIED':
                     if 'completion' in capabilities: verified.append('TEXT')
                     if 'vision' in capabilities: verified.append('VISION')
+                    from ..experimental.flags import enabled_flags
+                    if 'embedding' in capabilities and 'visual_embeddings' in enabled_flags(): verified.append('EMBEDDING')
                     if 'embedding' in capabilities and 'completion' not in capabilities: notes.append('TEXT_GENERATION_UNSUPPORTED')
             elif kind == 'AUTOMATIC1111': verified = ['IMAGE']
             elif kind == 'COMFYUI':
