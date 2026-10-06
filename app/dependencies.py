@@ -217,3 +217,15 @@ memory_agent_service=MemoryAgentRunner(repositories.novels,repositories.chapters
 def create_provider_runtime_snapshot():
     """Build the read-only Provider Runtime snapshot from Host-owned services."""
     return _create_provider_runtime_snapshot()
+
+# The interop Host is passive at construction and disabled by default.
+from .local_interop.provider import InteropContextProvider
+from .local_interop.host import LocalInteropHost
+
+def _interop_jobs():
+    from .jobs import jobs
+    return jobs
+
+local_interop_host = LocalInteropHost(InteropContextProvider(
+    collaboration_read_service, model_center=model_center_service, jobs=_interop_jobs,
+))

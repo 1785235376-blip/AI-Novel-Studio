@@ -3,6 +3,7 @@ import type { WritingFocusPreferences } from './experimental/writingFocusClient'
 import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import type { EditorSelection } from './interop/LocalTutorIntegration';
 import { RevisionLocks, normalizeRevisionLockDocument } from './experimental/revisionLocks';
 
 // BACKPORT CANDIDATE (U13): manuscript prose is text, never an HTML template.
@@ -18,12 +19,19 @@ export function editorAnchorText(doc: any, from: number, to: number): string {
   return doc.textBetween(from, to, '\n', (node: any) => node.type.name === 'hardBreak' ? '\n' : '');
 }
 
+export function currentEditorSelection(editor: any): EditorSelection {
+  const { from, to } = editor.state.selection;
+  return { from, to, text: editorAnchorText(editor.state.doc, from, to),
+    text_start: Array.from(editorAnchorText(editor.state.doc, 0, from)).length,
+    text_end: Array.from(editorAnchorText(editor.state.doc, 0, to)).length };
+}
+
 type Props = {
   writingPreferences?: WritingFocusPreferences;
   content: string;
   document?: JSONContent;
   onChange: (value: string, document?: JSONContent) => void;
-  onSelection?: (selection: { from: number; to: number; text: string }) => void;
+  onSelection?: (selection: EditorSelection) => void;
   onCompositionChange?: (composing: boolean) => void;
   onAnchorChange?: (anchor: { offset: number; scroll: number }) => void;
   restoreAnchor?: { requestId: number; offset: number; scroll: number };
@@ -65,10 +73,11 @@ export function ChapterEditor(props: Props) {
     onUpdate: ({ editor }) => {
       emitted.current = normalizeRevisionLockDocument(editor.getJSON());
       callbacks.current.onChange(editor.getText({ blockSeparator: '\n' }), emitted.current);
+      callbacks.current.onSelection?.(currentEditorSelection(editor));
     },
     onSelectionUpdate: ({ editor }) => {
       const { from, to } = editor.state.selection;
-      callbacks.current.onSelection?.({ from, to, text: editorAnchorText(editor.state.doc, from, to) });
+      callbacks.current.onSelection?.(currentEditorSelection(editor));
       if (callbacks.current.onAnchorChange) callbacks.current.onAnchorChange({
         offset: Array.from(editorAnchorText(editor.state.doc, 0, from)).length,
         scroll: editor.view.dom.closest('.main-workspace')?.scrollTop || 0,
@@ -81,7 +90,10 @@ export function ChapterEditor(props: Props) {
     // selection/undo and can interrupt Chinese composition on every keystroke.
     if (props.document && props.document === emitted.current) return;
     const next = props.document ?? proseDocument(props.content);
-    if (JSON.stringify(normalizeRevisionLockDocument(editor.getJSON())) !== JSON.stringify(next)) editor.commands.setContent(next, false);
+    if (JSON.stringify(normalizeRevisionLockDocument(editor.getJSON())) !== JSON.stringify(next)) {
+      editor.commands.setContent(next, false);
+      callbacks.current.onSelection?.(currentEditorSelection(editor));
+    }
   }, [props.document, props.content, editor]);
   useEffect(() => {
     if (!editor || !props.onAnchorChange) return;

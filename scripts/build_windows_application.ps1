@@ -214,13 +214,14 @@ if (Test-Path -LiteralPath $stagedBackend) {
 }
 [void](New-Item -ItemType Directory -Path $stagedBackend)
 Copy-ProductTree $backendAppSource (Join-Path $stagedBackend 'app') @('.py')
+Copy-ProductTree (Join-Path $projectRoot 'local_interop_protocol') (Join-Path $stagedBackend 'local_interop_protocol') @('.py')
 foreach ($name in @('config', 'prompts', 'workflows')) {
     Copy-ProductTree (Join-Path $projectRoot $name) (Join-Path $stagedBackend $name) @()
 }
 $backendSourceInventory = @()
 $backendStageInventory = @()
-foreach ($name in @('app', 'config', 'prompts', 'workflows')) {
-    $extensions = if ($name -eq 'app') { @('.py') } else { @() }
+foreach ($name in @('app', 'local_interop_protocol', 'config', 'prompts', 'workflows')) {
+    $extensions = if ($name -in @('app', 'local_interop_protocol')) { @('.py') } else { @() }
     $backendSourceInventory += New-ProductInventory (Join-Path $projectRoot $name) $name $extensions
     $stageRoot = Join-Path $stagedBackend $name
     $stageItems = New-FileInventory $stageRoot | ForEach-Object {

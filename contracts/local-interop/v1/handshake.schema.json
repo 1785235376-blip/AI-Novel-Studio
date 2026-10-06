@@ -1,0 +1,153 @@
+{
+  "$defs": {
+    "ProductDescriptor": {
+      "additionalProperties": false,
+      "properties": {
+        "capabilities": {
+          "default": [],
+          "items": {
+            "maxLength": 128,
+            "minLength": 3,
+            "pattern": "^[a-z][a-z0-9_-]*(?:\\.[a-z][a-z0-9_-]*)+$",
+            "type": "string"
+          },
+          "maxItems": 64,
+          "title": "Capabilities",
+          "type": "array"
+        },
+        "display_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        },
+        "instance_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 128,
+          "minLength": 3,
+          "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)+$",
+          "title": "Product Id",
+          "type": "string"
+        },
+        "product_role": {
+          "enum": [
+            "AI_TUTOR",
+            "CREATIVE_STUDIO",
+            "DCC",
+            "VIDEO_EDITOR",
+            "GAME_ENGINE",
+            "IMAGE_TOOL",
+            "AUDIO_TOOL"
+          ],
+          "title": "Product Role",
+          "type": "string"
+        },
+        "product_version": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+          "title": "Product Version",
+          "type": "string"
+        },
+        "protocol_name": {
+          "const": "PoemSeed Local Interop",
+          "default": "PoemSeed Local Interop",
+          "title": "Protocol Name",
+          "type": "string"
+        },
+        "protocol_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Protocol Version",
+          "type": "string"
+        },
+        "protocol_versions": {
+          "default": [
+            "1.0"
+          ],
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$",
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Protocol Versions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "display_name",
+        "instance_id",
+        "product_id",
+        "product_role",
+        "product_version",
+        "protocol_name",
+        "protocol_version"
+      ],
+      "title": "ProductDescriptor",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.poemseed.dev/local-interop/v1/handshake.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "privacy_mode": {
+      "default": "LOCAL_ONLY",
+      "enum": [
+        "LOCAL_ONLY",
+        "REDACTION_REQUIRED",
+        "CONSENTED_CLOUD"
+      ],
+      "title": "Privacy Mode",
+      "type": "string"
+    },
+    "product": {
+      "$ref": "#/$defs/ProductDescriptor"
+    },
+    "protocol_name": {
+      "const": "PoemSeed Local Interop",
+      "default": "PoemSeed Local Interop",
+      "title": "Protocol Name",
+      "type": "string"
+    },
+    "protocol_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Protocol Version",
+      "type": "string"
+    },
+    "session_nonce": {
+      "maxLength": 128,
+      "minLength": 24,
+      "pattern": "^[A-Za-z0-9_-]+$",
+      "title": "Session Nonce",
+      "type": "string"
+    },
+    "transport": {
+      "enum": [
+        "NAMED_PIPE",
+        "LOOPBACK_HTTP"
+      ],
+      "title": "Transport",
+      "type": "string"
+    }
+  },
+  "required": [
+    "product",
+    "protocol_name",
+    "protocol_version",
+    "session_nonce",
+    "transport"
+  ],
+  "title": "HandshakeHello",
+  "type": "object"
+}

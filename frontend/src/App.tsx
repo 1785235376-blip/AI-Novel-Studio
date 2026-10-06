@@ -1,4 +1,7 @@
 import { Button } from './ui/primitives';
+import { useLocalTutorIntegration, type EditorSelection } from './interop/LocalTutorIntegration';
+import type { HostRoute } from './interop/client';
+import { assertCurrentHandoff, currentInteropSurface, interopFeatureRoutes } from './interop/navigation';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   QueryClient,
@@ -180,7 +183,7 @@ export default function App() {
     return () => { mounted.current = false; stopGenerationObservation(); unsubscribe(); };
   }, []);
   const experimentalFlags = useQuery({ queryKey: ["experimental-features", namespace], queryFn: ({ signal }) => experimentalFeatures(signal, {sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}), retry: false, staleTime: 30000 });
-  const hasExperimental = Object.values(experimentalFlags.data?.features || {}).some(value => value === true);
+  const hasExperimental = Object.entries(experimentalFlags.data?.features || {}).some(([key, value]) => value === true && key !== 'experimental.local_tutor_interop_v1');
   const writingRecovery = experimentalFlags.data?.features['experimental.writing_recovery_v2'] === true;
   const workspaceTools = experimentalFlags.data?.features['experimental.workspace_tools_v2'] === true;
   const writingFocus = experimentalFlags.data?.features['experimental.writing_focus_v2'] === true;
@@ -236,7 +239,7 @@ export default function App() {
     [conflict, setConflict] = useState<PersistentConflict>(),
     [tool, setTool] = useState("continue"),
     [instruction, setInstruction] = useState(""),
-    [selection, setSelection] = useState({ from: 0, to: 0, text: "" }),
+    [selection, setSelection] = useState<EditorSelection>({ from: 0, to: 0, text: "" }),
     [job, setJob] = useState<any>();
   const [featureGroups, setFeatureGroups] = useState<Record<string, boolean>>(() => {
     const defaults = { create: true, production: true, collaboration: false, system: false };
@@ -244,6 +247,10 @@ export default function App() {
     try { return { ...defaults, ...JSON.parse(localStorage.getItem("studio-feature-groups") || "{}")} } catch { return defaults; }
   });
   useEffect(() => { try { localStorage.setItem("studio-feature-groups", JSON.stringify(featureGroups)); } catch { /* storage may be unavailable in private hosts */ } }, [featureGroups]);
+  const [interopControlTab, setInteropControlTab] = useState<'models'>();
+  const [interopControlSurface, setInteropControlSurface] = useState('settings');
+  const [interopTask, setInteropTask] = useState<{ id: string; status: string; chapterId?: string }>();
+  useLayoutEffect(() => { setInteropTask(undefined); }, [namespace, s.novelId, s.chapterId]);
   const [studioModule, setStudioModule] = useState<StudioModule>("NOVEL"),
     [draftAction, setDraftAction] = useState<"accept" | "reject">(),
     [generationStarting, setGenerationStarting] = useState(false),
@@ -1087,6 +1094,57 @@ export default function App() {
       if (isCurrentGeneration(origin)) setDraftAction(undefined);
     }
   }
+  async function navigateInterop(route: HostRoute, signal: AbortSignal) {
+    const context = { sessionToken: s.sessionToken, scope: s.scope, actor: s.actor };
+    assertCurrentHandoff(route, context, s.novelId);
+    const current = () => !signal.aborted && mounted.current && revisionStoreIdentity(useStudio.getState()) === editorIdentity;
+    if (!current()) return;
+    // Navigating is explicit and read-only. Existing draft/review paths retain ownership.
+    if (route.action === 'OPEN_FEATURE') {
+      const target = interopFeatureRoutes[route.feature || ''];
+      if (!target) throw new ApiError({ status: 404, code: 'HANDOFF_TARGET_NOT_FOUND', message: '' });
+      if (target.experimental && experimentalFlags.data?.features[`experimental.${target.experimental}`] !== true)
+        throw new ApiError({ status: 403, code: 'CAPABILITY_NOT_SUPPORTED', message: '' });
+      setInteropControlTab(target.controlTab);
+      if (target.controlTab) setInteropControlSurface('model-center');
+      if (target.experimental) setExperimentalTab(target.experimental);
+      if (target.panel) setPanel(target.panel);
+      setStudioModule(target.module); return;
+    }
+    if (route.action === 'OPEN_PROJECT') {
+      if (route.project_id !== s.novelId) throw new ApiError({ status: 403, code: 'PERMISSION_DENIED', message: '' });
+      setStudioModule('NOVEL'); setPanel('overview'); return;
+    }
+    if (route.action === 'OPEN_CHAPTER') {
+      if (!route.chapter_id) throw new ApiError({ status: 404, code: 'HANDOFF_TARGET_NOT_FOUND', message: '' });
+      const safe = () => {
+        const live = workspaceRestoreState.current;
+        return live.saveState === 'saved' && !live.composing && !savePending.current && live.hydratedIdentity === live.editorIdentity
+          && !drafts.load(route.chapter_id!, namespace) && !conflicts.load(route.chapter_id!, namespace);
+      };
+      if (!safe()) throw new ApiError({ status: 409, code: 'SOURCE_CHANGED', message: '' });
+      const target = await api.chapter(route.chapter_id, context);
+      if (!current()) return;
+      if (!safe() || target.novel_id !== s.novelId || target.id !== route.chapter_id || route.chapter_version !== undefined && target.version !== route.chapter_version)
+        throw new ApiError({ status: 409, code: 'SOURCE_CHANGED', message: '' });
+      s.setChapter(target.id); setStudioModule('NOVEL'); setPanel('history'); return;
+    }
+    if (!route.task_id || route.task_kind !== 'generation' || !['PENDING', 'QUEUED', 'RUNNING', 'WAITING', 'FAILED', 'COMPLETED', 'CANCELLED', 'BLOCKED', 'UNKNOWN'].includes(route.task_status || ''))
+      throw new ApiError({ status: 404, code: 'HANDOFF_TARGET_NOT_FOUND', message: '' });
+    // This bounded receipt comes from the original task authority in the host.
+    // Do not fetch prompts/output or enter Generation Review from an advice link.
+    setInteropTask({ id: route.task_id, status: route.task_status!, chapterId: route.chapter_id });
+    setStudioModule('NOVEL'); setPanel('agents');
+  }
+  const localTutor = useLocalTutorIntegration({
+    context: { sessionToken: s.sessionToken, scope: s.scope, actor: s.actor }, projectId: s.novelId,
+    module: studioModule, surface: studioModule === 'CONTROL' ? interopControlSurface : currentInteropSurface(studioModule, panel, experimentalTab),
+    chapterId: studioModule === 'NOVEL' ? s.chapterId || undefined : undefined,
+    chapterVersion: chapter.data?.version, taskId: job?.id && !['generation-failed', 'selection-required'].includes(job.id) ? job.id : undefined,
+    selection: studioModule === 'NOVEL' ? selection : undefined,
+    sourceReady: studioModule === 'NOVEL' && saveState === 'saved' && !composing && !savePending.current && hydratedIdentity === editorIdentity && !!chapter.data,
+    onNavigate: navigateInterop,
+  });
   async function openLocalSample(id: string) {
     const origin = useStudio.getState();
     if (!workspaceTools || packagedHost || origin.sessionToken || origin.scope || origin.novelId) return;
@@ -1124,7 +1182,7 @@ export default function App() {
       />
     );
   const scope = s.scope;
-  if (studioModule !== "NOVEL") return <ModuleWorkspaceRoutes key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={setStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={{workspace:scope?.workspaceName || "本机作品", project:scope?.projectName || "当前小说", storyline:scope?.storylineName || "默认故事线", branch:scope?.branchName || "主线"}} />;
+  if (studioModule !== "NOVEL") return <>{localTutor.dialog}<ModuleWorkspaceRoutes interopEntry={localTutor.entry} interopSettings={localTutor.settings} controlTab={interopControlTab} onControlSurfaceChange={setInteropControlSurface} key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={setStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={{workspace:scope?.workspaceName || "本机作品", project:scope?.projectName || "当前小说", storyline:scope?.storylineName || "默认故事线", branch:scope?.branchName || "主线"}} /></>;
   const localNovelTitle =
     novels.data?.find((n) => n.id === s.novelId)?.title || "当前小说";
   const shellScope = scope
@@ -1433,6 +1491,8 @@ export default function App() {
       )}
       {writingFocus && referencesVisible && s.novelId && <WritingReferenceRail key={`${namespace}:${s.novelId}`} client={workspaceClient} revision={referenceRevision} />}
       </div>
+      {panel === 'settings' && localTutor.settings}
+      {panel === 'agents' && interopTask && <section className="panel" aria-label="已授权的 Tutor 任务目标"><h2>任务详情 · 只读</h2><p>任务：{interopTask.id}</p><p>状态：{interopTask.status}</p><p>章节：{interopTask.chapterId || '无'}</p><p>状态来自原任务服务；未重新运行或接受任何生成。</p></section>}
       {panel === "experimental" ? <ExperimentalWorkbench key={`${namespace}:${s.novelId}`} novelId={s.novelId} chapter={chapter.data} context={{sessionToken:s.sessionToken,scope:s.scope,actor:s.actor}} flags={experimentalFlags.data} onNavigate={navigateWorkspace} currentAnchor={saveState === "saved" && editorAnchor?.identity === editorIdentity ? editorAnchor.anchor : undefined} requestedTab={experimentalTab} workspaceSection={workspaceSection} workspaceView={{ focus_active: focusActive, references_visible: referencesVisible }} onWorkspaceViewChange={view => { if (!workspaceTools || revisionStoreIdentity(useStudio.getState()) !== editorIdentity) return; setFocusActive(view.focus_active); setReferencesVisible(view.references_visible); }} onWorkspaceSaved={() => { void lastWorkspace.refetch(); }} focusActive={focusActive} onFocusChange={setFocusActive} onPreferencesChange={preferences => { focusPreferencesTouched.current = true; setWritingPreferences(preferences); }} onReferencesChange={() => setReferenceRevision(value => value + 1)} localDraftState={chapter.data ? [{ chapter_id: chapter.data.id, chapter_version: chapter.data.version, state: saveState === 'saved' ? 'SAVED' : saveState === 'failed' ? 'SAVE_FAILED' : 'UNSAVED' }] : []} saveFailure={saveState === 'failed' || saveState === 'conflict'} currentSelection={selection} saved={saveState === 'saved'} onChapterSaved={value => {
         if (revisionStoreIdentity(useStudio.getState()) !== editorIdentity || value.id !== s.chapterId || value.novel_id !== s.novelId) return;
         qc.setQueryData<Chapter>(['chapter', namespace, value.id], current => current && current.version > value.version ? current : value);
@@ -1525,6 +1585,7 @@ export default function App() {
   );
   return (
     <>
+      {localTutor.dialog}
       {
         <AppShell
           module={studioModule}
@@ -1543,6 +1604,7 @@ export default function App() {
               保存：{saveDisplayLabel} · 连接：{scope ? "协作服务" : "本机"}
               {taskSummary.total ? ` · AI 任务：${taskSummary.running ? "生成中" : taskSummary.failed ? "失败" : taskSummary.succeeded ? "已完成" : "排队中"}` : " · AI 任务：无运行任务"}
               {shellMessage ? ` · ${shellMessage}` : ""}
+              {localTutor.entry}
             </>
           }
         />

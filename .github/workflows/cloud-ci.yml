@@ -228,6 +228,23 @@ jobs:
         run: |
           set -o pipefail
           pnpm exec playwright test --config playwright.export.config.ts --reporter=list,junit 2>&1 | tee "$CI_RECEIPTS/export-browser.log"
+      - name: Local Interop actual TypeScript client and independent peer
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          INTEROP_PYTHON: python
+          LOCAL_INTEROP_REAL_HOST_TEST: '1'
+        run: |
+          set -o pipefail
+          pnpm exec vitest run tests/localInteropRealHost.test.ts --pool=forks --maxWorkers=1 --minWorkers=1 2>&1 | tee "$CI_RECEIPTS/local-interop-client.log"
+      - name: Local Interop real-process browser journeys (MOCK_ONLY)
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          INTEROP_PYTHON: python
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.interop.config.ts 2>&1 | tee "$CI_RECEIPTS/local-interop-browser.log"
       - name: Summarize exact revision and test counts
         if: always() && env.CI_RECEIPTS != ''
         run: python3 .github/ci/receipt.py "$CI_RECEIPTS"

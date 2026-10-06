@@ -52,6 +52,8 @@ async def app_lifespan(_app):
     from .dependencies import agent_job_service
     agent_job_service.recover_interrupted()
     yield
+    from .dependencies import local_interop_host
+    await local_interop_host.shutdown()
     harness_process_service.stop()
     model_center_service.lifecycle.stop_all()
 
@@ -168,6 +170,10 @@ async def collaboration_fail_closed(request,call_next):
                 return JSONResponse({"detail": {"code": "INVALID_SESSION"}}, status_code=401)
         return await call_next(request)
 
+    if normalized_request_path.startswith("/api/local-interop/"):
+        # Every interop endpoint independently requires a live trusted session,
+        # IPv4 loopback, explicit opt-in and exact scoped project authority.
+        return await call_next(request)
     if normalized_request_path.startswith("/api/model-center/local-ai"):
         # Every endpoint has the same trusted Host/session dependency; do not
         # make discovery anonymous via the legacy collaboration allowlist.
@@ -348,6 +354,11 @@ def context_pack(req:ContextRequest, request: Request):
                             "domain.read", request.headers.get("X-Branch-ID"))
     try: return context_service.build(req.novel_id,req.chapter,req.instruction,req.cloud)
     except Exception as exc: raise HTTPException(400,str(exc)) from exc
+
+from .dependencies import local_interop_host
+from .local_interop.api import create_local_interop_router
+app.include_router(create_local_interop_router(local_interop_host))
+app.include_router(create_local_interop_router(local_interop_host, prefix="/api/v1/local-interop"))
 
 if settings.enable_packaged_runtime:
     mount_packaged_frontend(app, Path(os.environ.get("PACKAGED_FRONTEND_DIST", "")))
