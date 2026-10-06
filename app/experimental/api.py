@@ -40,7 +40,7 @@ from .inbox import UnifiedReviewInbox, ReviewBinding
 from .inbox_api import create_inbox_router
 from .legacy_inbox import register_legacy_bindings
 from .ux import WorkspaceToolsService, TaskReader
-from .author_task_projection import create_author_task_reader
+from .author_task_projection import create_author_task_reader, create_author_task_canceller
 from .ux_api import create_ux_router
 from .search_sources import create_search_candidates
 from ..services.import_apply_service import ImportApplyService
@@ -166,7 +166,9 @@ workspace_tools_service = WorkspaceToolsService(
     task_readers=(
         TaskReader('author_generation', '正文生成', 'history',
                    create_author_task_reader(legacy_api.jobs, authorize, require_flag,
-                       lambda jid, token: legacy_api.generation(jid=jid, x_session_token=token))),
+                       lambda jid, token: legacy_api.generation(jid=jid, x_session_token=token)),
+                   cancel=create_author_task_canceller(legacy_api.jobs, authorize, require_flag,
+                       lambda jid, token: legacy_api.cancel(jid=jid, x_session_token=token))),
         TaskReader('workflows', 'Workflow 任务', 'workflow', read_legacy_workflow_tasks),
         TaskReader('semantic_import', '长篇导入', 'semantic_import_v2',
                    lambda ctx: import_service.jobs(ctx.novel_id, ctx.scope), 'semantic_import_v2'),
@@ -188,12 +190,17 @@ workspace_tools_service = WorkspaceToolsService(
             nid=ctx.novel_id, x_session_token=ctx.token, x_branch_id=ctx.branch)),
     ),
 )
+from .workspace_task_owners import extend_workspace_task_readers
+workspace_tools_service.task_readers = extend_workspace_task_readers(
+    workspace_tools_service.task_readers, legacy_api, import_service, team_service, media_service,
+    audiobook_service, inbox_service, authorize, require_flag)
 router.include_router(create_ux_router(workspace_tools_service, authorize, require_flag))
 
 
 from .local_ai_inspection import LocalAIInspectionService
 from .local_ai_inspection_api import create_local_ai_inspection_router
 from ..dependencies import local_ai_discovery
+embedding_service.discovery_bridge = local_ai_discovery.route_bridge
 
 
 def require_inspection_host_session(token):
@@ -225,6 +232,9 @@ from .story_graph import StoryGraphService
 from .story_graph_api import create_story_graph_router
 story_graph_service = StoryGraphService(store, legacy_api.novel_service, legacy_api.chapter_service)
 router.include_router(create_story_graph_router(story_graph_service, authorize, require_flag))
+from .search_sources import create_extended_search_readers
+workspace_tools_service.entity_readers.update(create_extended_search_readers(legacy_api, world_service,
+    story_graph_service, authorize, require_flag))
 
 
 def variant_policy_guard(nid, scope, actor_id, provider_id, model_id, count):
@@ -287,7 +297,9 @@ style_analysis_service = StyleAnalysisService(store, legacy_api.novel_service, l
     legacy_api.creation_workbench_service)
 narrative_judge_service = NarrativeJudgeService(store, legacy_api.novel_service, legacy_api.chapter_service,
     legacy_api.creation_workbench_service, world_service, planning_service)
-router.include_router(create_style_analysis_router(style_analysis_service, authorize, require_flag))
+router.include_router(create_style_analysis_router(style_analysis_service, authorize, require_flag,
+    preparer=author_preparer, manager=legacy_api.jobs, broker=model_broker_service,
+    require_host_session=require_inspection_host_session))
 router.include_router(create_narrative_judge_router(narrative_judge_service, authorize, require_flag,
     preparer=author_preparer, manager=legacy_api.jobs, broker=model_broker_service,
     require_host_session=require_inspection_host_session))
@@ -327,6 +339,10 @@ from .research_library import ResearchLibraryService
 from .research_library_api import create_research_library_router
 research_library_service = ResearchLibraryService(store, legacy_api.novel_service, legacy_api.chapter_service,
     legacy=legacy_api.v1_capability_service, world=world_service)
+embedding_service.research = research_library_service
+from ..author_context_sources import NativeAuthorSources
+author_preparer.native_sources = NativeAuthorSources(legacy_api, world_service, story_graph_service,
+    research_library_service, authorize, require_flag)
 router.include_router(create_research_library_router(research_library_service, authorize, require_flag))
 
 
@@ -352,7 +368,9 @@ def read_revision_job(job_id, token, branch):
 
 
 router.include_router(create_revision_intelligence_router(revision_intelligence_service, authorize, require_flag,
-    save_document=save_revision_document, read_job=read_revision_job))
+    save_document=save_revision_document, read_job=read_revision_job,
+    preparer=author_preparer, manager=legacy_api.jobs, broker=model_broker_service,
+    require_host_session=require_inspection_host_session))
 
 
 from .reader_preflight import ReaderPreflightService
@@ -460,6 +478,18 @@ writer_room_service = WriterRoomService(store, legacy_api.novel_service, legacy_
     sources=writing_focus_service, creation=legacy_api.creation_workbench_service, inbox=inbox_service,
     assets=legacy_api.asset_library_service, membership=lambda: legacy_api.membership_authorization_service,
     asset_authorize=lambda ctx: legacy_api._authorize_asset_project(ctx.novel_id, ctx.token, ctx.branch, 'domain.read'))
+narrative_judge_service.writer_room = writer_room_service
+def read_pinned_judge_review(ctx, rid):
+    from fastapi import HTTPException
+    def current():
+        require_flag('narrative_quality_judge_v2')
+        if authorize(ctx.novel_id, ctx.token, ctx.branch, 'domain.write') != (ctx.actor, ctx.scope):
+            raise HTTPException(403, {'code': 'REVIEW_AUTHORITY_CHANGED'})
+    current()
+    result = narrative_judge_service.review_item(ctx.novel_id, ctx.scope, rid)
+    current()
+    return result
+writer_room_service.review_target_readers = {'narrative_judge': read_pinned_judge_review}
 router.include_router(create_writer_room_router(writer_room_service, authorize, require_flag))
 
 from .comic_layouts import ComicLayoutsService

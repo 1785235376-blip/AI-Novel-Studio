@@ -4,7 +4,8 @@ import type { RefNode } from '../novel/useMultimodalWorkspacePersistence';
 // Original canvas coordinate/identity contract, with explicit print dimensions.
 export type ComicRect = Pick<RefNode, 'x' | 'y'> & { width: number; height: number };
 export type ComicBubble = ComicRect & { id: string; kind: 'DIALOGUE' | 'NARRATION'; text: string; character_id: string | null; font_size: number };
-export type ComicPanel = ComicRect & { id: string; shot_id: string; order: number; character_ids: string[]; asset_id: string | null; expected_asset_version: number | null; fit: 'CONTAIN' | 'COVER'; bubbles: ComicBubble[] };
+export type ComicAppearanceReference = { character_id: string; asset_id: string; expected_asset_version: number; note: string };
+export type ComicPanel = ComicRect & { id: string; shot_id: string; order: number; character_ids: string[]; asset_id: string | null; expected_asset_version: number | null; fit: 'CONTAIN' | 'COVER'; bubbles: ComicBubble[]; image_brief?: string; appearance_references?: ComicAppearanceReference[] };
 export type ComicDocument = { title: string; screenplay_id: string; expected_screenplay_version: number; preset: 'PAGE' | 'WEBTOON'; font_family: 'NOTO_SANS_SC_OFL'; width: number; height: number; safe_area: number; segment_height: number; panels: ComicPanel[] };
 export type ComicRecord = { id: string; version: number; status: string; stale: boolean; document?: ComicDocument; history_versions?: number[]; scene_ids?: Record<string, string> };
 export type ComicAsset = { id: string; filename: string; version: number; approved: boolean; manual_review_available: boolean };
@@ -36,5 +37,5 @@ export function comicPreset(source: DirectorScreenplay, preset: 'PAGE' | 'WEBTOO
   const shots = source.shots.slice(0, preset === 'PAGE' ? 4 : 6); const gap = 16; const inset = settings.safe_area;
   const height = Math.floor((settings.height - inset * 2 - (shots.length - 1) * gap) / Math.max(1, shots.length));
   return { title: `${source.title} · 漫画草稿`, screenplay_id: source.id, expected_screenplay_version: source.edit_version, preset, font_family: 'NOTO_SANS_SC_OFL', ...settings,
-    panels: shots.map((shot, i) => ({ id: `panel-${i + 1}`, shot_id: shot.id, order: i + 1, x: inset, y: inset + i * (height + gap), width: settings.width - inset * 2, height, character_ids: [], asset_id: null, expected_asset_version: null, fit: 'CONTAIN', bubbles: [] })) };
+    panels: shots.map((shot, i) => ({ id: `panel-${i + 1}`, shot_id: shot.id, order: i + 1, x: inset, y: inset + i * (height + gap), width: settings.width - inset * 2, height, character_ids: [], asset_id: null, expected_asset_version: null, fit: 'CONTAIN', bubbles: [], image_brief: '', appearance_references: [] })) };
 }

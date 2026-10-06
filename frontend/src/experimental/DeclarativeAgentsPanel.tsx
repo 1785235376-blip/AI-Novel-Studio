@@ -5,7 +5,7 @@ import { Details, Field, ResourceState, useAction, useResource } from './shared'
 import { declarativeAgentsClient, type AgentDefinition, type AgentPreflight, type AgentRun, type AuthoredWorkflow, type SchemaField } from './declarativeAgentsClient';
 let sequence = 0;
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value));
-export function DeclarativeAgentsPanel(props: { client: ExperimentalClient }) {
+export function DeclarativeAgentsPanel(props: { client: ExperimentalClient; requestedJobId?: string }) {
   const key = useMemo(() => ++sequence, [props.client]); return <AgentsBody key={key} {...props} />;
 }
 function SchemaEditor({ label, fields, update }: { label: string; fields: SchemaField[]; update: (fields: SchemaField[]) => void }) {
@@ -17,18 +17,25 @@ function SchemaEditor({ label, fields, update }: { label: string; fields: Schema
     <Button disabled={fields.length >= 12} onClick={() => update([...fields, { name: label === '输出' ? 'summary' : 'notes', type: 'string', required: false, max_length: 8000 }])}>添加{label}字段</Button>
   </fieldset>;
 }
-function AgentsBody({ client }: { client: ExperimentalClient }) {
+function AgentsBody({ client, requestedJobId }: { client: ExperimentalClient; requestedJobId?: string }) {
   const api = useMemo(() => declarativeAgentsClient(client), [client]);
   const catalog = useResource(signal => api.catalog(signal), [api]);
   const definitions = useResource(signal => api.definitions(signal), [api]);
-  const runs = useResource(signal => api.runs(signal), [api]);
+  const runs = useResource(async signal => ({ ...(await api.runs(signal)), requestedJobId }), [api, requestedJobId]);
   const [definition, setDefinition] = useState<AuthoredWorkflow>(), [saved, setSaved] = useState<AgentDefinition>();
   const [preflight, setPreflight] = useState<AgentPreflight>(), [reviewGraph, setReviewGraph] = useState(false);
   const [input, setInput] = useState<Record<string, string>>({ source_text: '林舟等潮落。\n同伴举起合成地图。' }), [chapterId, setChapterId] = useState('');
-  const [run, setRun] = useState<AgentRun>(), [reviewNote, setReviewNote] = useState(''), [reviewOutput, setReviewOutput] = useState(false);
+  const [browsedRun, setRun] = useState<AgentRun>(), [reviewNote, setReviewNote] = useState(''), [reviewOutput, setReviewOutput] = useState(false);
+  const [dismissedJob, setDismissedJob] = useState<string>();
+  useLayoutEffect(() => { setDismissedJob(undefined); }, [requestedJobId]);
+  const targetJob = requestedJobId && requestedJobId !== dismissedJob ? requestedJobId : undefined;
+  const matches = targetJob && !runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId
+    ? (runs.data?.items || []).filter(row => row.model_execution?.job_id === targetJob) : [];
+  const run = targetJob ? matches.length === 1 ? matches[0] : undefined : browsedRun;
   const [anchorId, setAnchorId] = useState(''), [reviewModel, setReviewModel] = useState(false);
   const [edgeSource, setEdgeSource] = useState(''), [edgeTarget, setEdgeTarget] = useState('');
   const alive = useRef(true), formEpoch = useRef(0), runEpoch = useRef(0), initialized = useRef(false), nextNode = useRef(1);
+  useLayoutEffect(() => { runEpoch.current++; setReviewModel(false); setReviewOutput(false); }, [targetJob]);
   useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; formEpoch.current++; runEpoch.current++; }; }, []);
   useEffect(() => { if (catalog.data && !initialized.current) { initialized.current = true; setDefinition(clone(catalog.data.default_definition)); } }, [catalog.data]);
   const action = useAction();
@@ -43,6 +50,9 @@ function AgentsBody({ client }: { client: ExperimentalClient }) {
   return <section className="experimental-section" aria-label="Agent 与 Workflow">
     <div className="experimental-actions"><h3>Agent 与 Workflow</h3><Badge>声明式 · 原执行器</Badge><Button disabled={action.busy} onClick={() => { catalog.reload(); definitions.reload(); runs.reload(); setPreflight(undefined); }}>刷新授权目录与记录</Button></div>
     <p>复用原 Workflow DAG 与人工审核节点。支持单根分支 DAG，全部分支须汇入人工审核，最多 16 步；沿用原执行顺序。Python、JavaScript、shell、动态 import 与任意第三方插件均为 DENY_ALL。</p>
+    {targetJob && <section aria-label="任务中心原声明式模型任务"><p>正在定位原模型任务 {targetJob}，仅重新读取原运行。</p>
+      {!runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId && !run && <StatusMessage tone="warning">原模型任务在当前授权运行中不可用或身份不唯一；不会选择其他运行。</StatusMessage>}
+      <Button onClick={() => { setDismissedJob(targetJob); setRun(undefined); }}>退出原任务定位</Button></section>}
     <ResourceState loading={catalog.loading} error={catalog.error} />
     {catalog.data && !catalog.error && <>
       <Panel title="Agent 表单与已保存定义">
@@ -55,6 +65,9 @@ function AgentsBody({ client }: { client: ExperimentalClient }) {
           <p>提示词仅保存为声明，不能授予权限。本地规则节点不解释提示词，也不冒充模型写作。模型节点把用途、角色与输入作为可见的作者指令，复用原作者请求、费用预检与任务执行器；不授予任何工具权限。</p>
           <Field label="已注册模型路线"><select value={definition.agent.model_route || ''} onChange={e => agentEdit({ model_route: e.target.value || null })}><option value="">无模型：确定性本地规则</option>{catalog.data.model_routes.map(route => <option key={route.id} value={route.id}>{route.provider_id} / {route.model_id} · {route.available ? route.synthetic ? '合成协议验证' : '已注册本地模型' : route.reason}</option>)}</select></Field>
           {definition.agent.model_route && <StatusMessage tone="warning">请把一个准备节点类型设为 agent_task。每次运行仅允许一个本地模型节点；需要精确请求预览、已知零成本预留和明确启动。真实模型文学质量 NOT_RUN。</StatusMessage>}
+          <Field label="Adapter 运行时要求"><select value={definition.agent.runtime_requirement || ''} onChange={e => agentEdit({ runtime_requirement: (e.target.value || null) as AuthoredWorkflow['agent']['runtime_requirement'] })}><option value="">沿用当前已注册节点的运行时</option><option value="TRUSTED_IN_PROCESS_LOCAL">受信任的进程内本地规则</option><option value="ORIGINAL_BOUND_LOCAL_MODEL">原已绑定本地模型执行器</option></select></Field>
+          <fieldset><legend>能力要求（声明，不授予权限）</legend>{(['LOCAL_RULES', 'TEXT'] as const).map(capability => <label key={capability}><input type="checkbox" checked={(definition.agent.capability_requirements || []).includes(capability)} onChange={e => agentEdit({ capability_requirements: e.target.checked ? [...(definition.agent.capability_requirements || []), capability] : (definition.agent.capability_requirements || []).filter(c => c !== capability) })} />{capability}</label>)}</fieldset>
+          <p>运行时、模型能力与输入输出 Schema 一起保存并预检。缺少原注册模型或执行器时拒绝启动；声明不会安装 Adapter、开启模型或授权云端回退。</p>
           <fieldset><legend>服务端注册的允许工具</legend>{catalog.data.tools.map(tool => <label key={tool}><input type="checkbox" checked={definition.agent.allowed_tools.includes(tool)} onChange={e => agentEdit({ allowed_tools: e.target.checked ? [...definition.agent.allowed_tools, tool] : definition.agent.allowed_tools.filter(t => t !== tool) })} />{tool}</label>)}</fieldset>
           <SchemaEditor label="输入" fields={definition.agent.input_schema.fields} update={fields => agentEdit({ input_schema: { fields } })} />
           <SchemaEditor label="输出" fields={definition.agent.output_schema.fields} update={fields => agentEdit({ output_schema: { fields } })} />
@@ -75,7 +88,7 @@ function AgentsBody({ client }: { client: ExperimentalClient }) {
         <Button disabled={!edgeSource || !edgeTarget || definition.edges.length >= 40} onClick={() => edit({ ...definition, edges: [...definition.edges, { source: edgeSource, target: edgeTarget }] })}>添加连接</Button>
         <div className="experimental-actions"><Button disabled={action.busy} onClick={() => action.run(async () => { const ticket = formEpoch.current; const result = await api.preflight(definition); if (alive.current && ticket === formEpoch.current) setPreflight(result); }, '服务端已验证 DAG、工具注册表、Schema 与边界。未执行节点。')}>验证 Workflow 图与权限</Button><Button disabled={action.busy || !definition.agent.title.trim()} onClick={() => action.run(async () => { const ticket = formEpoch.current; const row = await api.save(definition, saved); if (alive.current && ticket === formEpoch.current) { setSaved(row); setDefinition(clone(row.definition)); setPreflight(undefined); setReviewGraph(false); definitions.reload(); } }, '定义已保存。修改旧定义会使此前运行的来源检查失效。')}>{saved ? '保存 Agent 新版本' : '保存 Agent 定义'}</Button></div>
         {saved && <p>已保存定义 {saved.id} · v{saved.version}{dirty ? ' · 当前表单有未保存修改' : ''}</p>}
-        {preflight && <><p>拓扑顺序：{preflight.topological_order.join(' → ')}</p>{preflight.blockers.map(b => <StatusMessage key={b} tone="warning">{b}</StatusMessage>)}<p>{preflight.execution_available ? definition.agent.model_route ? '原本地模型执行器可用；模型节点仍需单独核对精确请求与费用。' : '确定性本地执行可用。' : '执行依赖尚未满足。'}</p></>}
+        {preflight && <>{preflight.adapter_contract && <Details label="Adapter 能力、运行时与 Schema 合约" value={preflight.adapter_contract} />}<p>拓扑顺序：{preflight.topological_order.join(' → ')}</p>{preflight.blockers.map(b => <StatusMessage key={b} tone="warning">{b}</StatusMessage>)}<p>{preflight.execution_available ? definition.agent.model_route ? '原本地模型执行器可用；模型节点仍需单独核对精确请求与费用。' : '确定性本地执行可用。' : '执行依赖尚未满足。'}</p></>}
       </Panel>}
       {definition && <Panel title="测试输入与明确启动">
         <p>新运行先保存为排队状态，不会因保存定义或打开页面而执行。人工审核的等待时间计入已启动运行的总时限；超时后需明确重试。</p>
@@ -92,7 +105,7 @@ function AgentsBody({ client }: { client: ExperimentalClient }) {
       </Panel>}
       <Panel title="持久化逐节点结果与执行轨迹">
         <ResourceState loading={runs.loading} error={runs.error} empty={!runs.data?.items.length} />
-        <Field label="查看 Workflow 运行"><select value={run?.id || ''} disabled={action.busy || runs.loading || !!runs.error} onChange={e => { runEpoch.current++; setRun(runs.data?.items.find(r => r.id === e.target.value)); setReviewModel(false); setReviewOutput(false); }}><option value="">请选择运行</option>{runs.data?.items.map(r => <option key={r.id} value={r.id}>{r.id} · {r.status} · 尝试 {r.attempt}</option>)}</select></Field>
+        <Field label="查看 Workflow 运行"><select value={run?.id || ''} disabled={!!targetJob || action.busy || runs.loading || !!runs.error} onChange={e => { runEpoch.current++; setRun(runs.data?.items.find(r => r.id === e.target.value)); setReviewModel(false); setReviewOutput(false); }}><option value="">请选择运行</option>{runs.data?.items.map(r => <option key={r.id} value={r.id}>{r.id} · {r.status} · 尝试 {r.attempt}</option>)}</select></Field>
         {run && <>
           <p>状态 {run.status} · v{run.version} · 来源定义 v{run.definition_version}</p>
           <Button disabled={action.busy} onClick={() => action.run(async () => { const ticket = runEpoch.current; const current = await api.run(run.id); if (alive.current && ticket === runEpoch.current) setRun(current); }, '已重新核对来源与权限。')}>核对当前运行</Button>

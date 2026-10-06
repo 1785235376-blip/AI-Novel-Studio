@@ -7,7 +7,7 @@ import { useReviewAction } from './styleReviewClient';
 import { storySimulatorClient, type SimulatorModelRoute, type SimulatorContext, type SimulatorEvent, type SimulatorInput, type SimulatorKnowledge, type SimulatorRoute, type SimulatorRouteInput, type SimulatorRun } from './storySimulatorClient';
 import type { WorkspaceNavigation } from './uxClient';
 
-type Props = { client: ExperimentalClient; chapter?: Chapter; onNavigate?: (target: WorkspaceNavigation) => void };
+type Props = { client: ExperimentalClient; requestedJobId?: string; chapter?: Chapter; onNavigate?: (target: WorkspaceNavigation) => void };
 type Amount = { key: string; value: string };
 type EventDraft = Omit<SimulatorEvent, 'resource_delta'> & { resource_delta: Amount[] };
 type RouteDraft = Omit<SimulatorRouteInput, 'events'> & { events: EventDraft[] };
@@ -20,15 +20,22 @@ export function StorySimulatorPanel(props: Props) {
   const identity = useMemo(() => ++scopeSequence, [props.client]);
   return <StorySimulatorBody key={identity} {...props} />;
 }
-function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
+function StorySimulatorBody({ client, chapter, onNavigate, requestedJobId }: Props) {
   const api = useMemo(() => storySimulatorClient(client), [client]);
   const catalog = useResource(signal => api.catalog(signal), [api]);
-  const runs = useResource(signal => api.runs(signal), [api]);
-  const [runId, setRunId] = useState('');
-  const detail = useResource(signal => runId ? api.run(runId, signal) : Promise.resolve(undefined), [api, runId]);
+  const runs = useResource(async signal => ({ ...(await api.runs(signal)), requestedJobId }), [api, requestedJobId]);
+  const [browsedRunId, setRunId] = useState('');
+  const [dismissedJob, setDismissedJob] = useState<string>();
+  useLayoutEffect(() => { setDismissedJob(undefined); }, [requestedJobId]);
+  const targetJob = requestedJobId && requestedJobId !== dismissedJob ? requestedJobId : undefined;
+  const matches = targetJob && !runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId
+    ? (runs.data?.items || []).filter(row => row.model_execution?.job_id === targetJob) : [];
+  const targetRun = matches.length === 1 ? matches[0] : undefined;
+  const runId = targetJob ? targetRun?.id || '' : browsedRunId;
+  const detail = useResource(signal => runId ? api.run(runId, signal) : Promise.resolve(undefined), [api, runId, targetJob, targetRun?.version]);
   const action = useReviewAction(), epoch = useRef(0), sequence = useRef(2);
   const [sourceVersions, setSourceVersions] = useState<Record<string, number>>(chapter ? { [chapter.id]: chapter.version } : {});
-  const [chapterId, setChapterId] = useState(chapter?.id || ''), [characterId, setCharacterId] = useState(''), [worldTime, setWorldTime] = useState('');
+  const [chapterId, setChapterId] = useState(chapter?.id || ''), [characterId, setCharacterId] = useState(''), [sceneId, setSceneId] = useState(''), [worldTime, setWorldTime] = useState('');
   const [target, setTarget] = useState<{ id: string; version: number }>();
   const [receipt, setReceipt] = useState<{ value: SimulatorContext; binding: string }>();
   const [assumptions, setAssumptions] = useState(''), [goal, setGoal] = useState(''), [motivation, setMotivation] = useState(''), [knowledgeIds, setKnowledgeIds] = useState<string[]>([]);
@@ -37,6 +44,7 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
   const [routes, setRoutes] = useState<RouteDraft[]>(() => [newRoute(1), newRoute(2)]);
   const [chosen, setChosen] = useState(''), [reviewed, setReviewed] = useState(false), [needsRefresh, setNeedsRefresh] = useState(false), [savedProposal, setSavedProposal] = useState('');
   useLayoutEffect(() => { epoch.current++; setReceipt(undefined); setReviewed(false); if (runId) detail.reload(); }, [chapter?.id, chapter?.version]);
+  useLayoutEffect(() => { epoch.current++; }, [targetJob]);
   const ready = !catalog.loading && !catalog.error && !!catalog.data;
   const sources = ready ? catalog.data!.chapters.filter(row => row.id in sourceVersions) : [];
   const localSourceChanged = !!chapter && chapter.id in sourceVersions && chapter.version > sourceVersions[chapter.id];
@@ -45,10 +53,10 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
   const targetMatches = !!node && node.version === target?.version;
   const targetSourcesMatch = !!node && node.chapter_ids.every(id => id in sourceVersions);
   const timeValid = !worldTime || /^-?\d+$/.test(worldTime) && Number.isSafeInteger(Number(worldTime));
-  const contextBinding = JSON.stringify([chapterId, sourceVersions[chapterId], characterId, worldTime]);
+  const contextBinding = JSON.stringify([chapterId, sourceVersions[chapterId], characterId, sceneId, worldTime]);
   const context = ready && sourcesMatch && receipt?.binding === contextBinding ? receipt.value : undefined;
   const fresh = ready && !runs.loading && !runs.error && !detail.loading && !detail.error && !needsRefresh && !localSourceChanged;
-  const run = fresh && detail.data?.id === runId ? detail.data : undefined;
+  const run = fresh && detail.data?.id === runId && (!targetJob || detail.data.model_execution?.job_id === targetJob && detail.data.version === targetRun?.version) ? detail.data : undefined;
   const activeRun = run && !run.stale ? run : undefined;
   const selectedRoute = activeRun?.routes?.find(row => row.id === chosen);
   const branchLimit = catalog.data?.limits.max_branches || 8, stepLimit = catalog.data?.limits.max_steps || 32;
@@ -66,11 +74,11 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
   const loadContext = () => action.run(async isCurrent => {
     const ticket = ++epoch.current, binding = contextBinding;
     setReceipt(undefined); setKnowledgeIds([]);
-    try { const value = await api.context({ chapter_id: chapterId, expected_version: sourceVersions[chapterId], character_id: characterId, world_time: worldTime ? Number(worldTime) : null, calendar: 'story' }); if (isCurrent() && ticket === epoch.current) setReceipt({ value, binding }); }
+    try { const value = await api.context({ chapter_id: chapterId, expected_version: sourceVersions[chapterId], character_id: characterId, scene_id: sceneId || null, world_time: worldTime ? Number(worldTime) : null, calendar: 'story' }); if (isCurrent() && ticket === epoch.current) setReceipt({ value, binding }); }
     catch (error) { if (isCurrent() && ticket === epoch.current) setNeedsRefresh(true); throw error; }
   }, '人物视角已读取。请核对已知信息并明确选择；动机仍由作者填写为假设。');
   const recoverInput = (input: SimulatorInput) => {
-    invalidateContext(); setSourceVersions(input.expected_versions); setChapterId(input.chapter_id); setCharacterId(input.character_id);
+    invalidateContext(); setSourceVersions(input.expected_versions); setChapterId(input.chapter_id); setCharacterId(input.character_id); setSceneId(input.scene_id || '');
     setWorldTime(input.world_time === null ? '' : String(input.world_time)); setTarget({ id: input.node_id, version: input.expected_node_version });
     setAssumptions(input.assumptions.join('\n')); setGoal(input.character_goal); setMotivation(input.motivation_hypothesis);
     setResources(Object.entries(input.resources).map(([key, value]) => ({ key, value: String(value) })));
@@ -83,7 +91,7 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
   const create = () => action.run(async isCurrent => {
     if (!canCreate || !context || !target) return;
     const ticket = ++epoch.current;
-    const input: SimulatorInput = { chapter_ids: sources.map(row => row.id), expected_versions: { ...sourceVersions }, chapter_id: chapterId, character_id: characterId, world_time: worldTime ? Number(worldTime) : null, calendar: 'story', node_id: target.id, expected_node_version: target.version, context_digest: context.context_digest, assumptions: lines(assumptions), character_goal: goal.trim(), motivation_hypothesis: motivation.trim(), knowledge_ids: knowledgeIds, resources: amounts(resources), hard_constraints: { forbidden_facts: lines(forbidden), resource_caps: amounts(caps), required_final_facts: lines(required) }, max_steps: Number(maxSteps), max_branches: Number(maxBranches), model_id: null, model_budget: 0, routes: routes.map(route => ({ ...route, title: route.title.trim(), events: route.events.map(event => ({ ...event, title: event.title.trim(), requires: lines(event.requires.join('\n')), adds: lines(event.adds.join('\n')), removes: lines(event.removes.join('\n')), foreshadowing_links: lines(event.foreshadowing_links.join('\n')), resource_delta: amounts(event.resource_delta) })) })) };
+    const input: SimulatorInput = { chapter_ids: sources.map(row => row.id), expected_versions: { ...sourceVersions }, chapter_id: chapterId, character_id: characterId, scene_id: sceneId || null, world_time: worldTime ? Number(worldTime) : null, calendar: 'story', node_id: target.id, expected_node_version: target.version, context_digest: context.context_digest, assumptions: lines(assumptions), character_goal: goal.trim(), motivation_hypothesis: motivation.trim(), knowledge_ids: knowledgeIds, resources: amounts(resources), hard_constraints: { forbidden_facts: lines(forbidden), resource_caps: amounts(caps), required_final_facts: lines(required) }, max_steps: Number(maxSteps), max_branches: Number(maxBranches), model_id: null, model_budget: 0, routes: routes.map(route => ({ ...route, title: route.title.trim(), events: route.events.map(event => ({ ...event, title: event.title.trim(), requires: lines(event.requires.join('\n')), adds: lines(event.adds.join('\n')), removes: lines(event.removes.join('\n')), foreshadowing_links: lines(event.foreshadowing_links.join('\n')), resource_delta: amounts(event.resource_delta) })) })) };
     try { const result = await api.create(input); if (isCurrent() && ticket === epoch.current) { setRunId(result.id); setChosen(''); setReviewed(false); setSavedProposal(''); runs.reload(); detail.reload(); } }
     catch (error) { if (isCurrent() && ticket === epoch.current) setNeedsRefresh(true); throw error; }
   }, '已保存推演输入。尚未执行任何步骤；点击“推进一步”才检查下一事件。');
@@ -91,6 +99,9 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
     <div className="experimental-actions"><h3>剧情推演</h3><Badge>手动确定性检查</Badge><Button disabled={action.busy || catalog.loading || runs.loading || detail.loading} onClick={refresh}>刷新推演与来源（保留输入）</Button></div>
     <p>用作者提供的有限事件比较候选路线，每次只推进一步。手工检查不调用模型。检查结束后可另行预览已配置的本地模型候选；文学质量、动机与因果关系仍由作者判断。</p>
     <StatusMessage>路线选择只会另存为待审规划。正文、Canon、分支和发布状态不会自动改变。</StatusMessage>
+    {targetJob && <section aria-label="任务中心原剧情推演任务"><p>正在定位原模型任务 {targetJob}，仅重新读取原记录。</p>
+      {!runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId && !targetRun && <StatusMessage tone="warning">原模型任务在当前授权记录中不可用或身份不唯一；不会选择其他记录。</StatusMessage>}
+      <Button onClick={() => { setDismissedJob(targetJob); setRunId(''); }}>退出原任务定位</Button></section>}
     <ResourceState loading={catalog.loading} error={catalog.error} />
     {!!action.error && <ErrorMessage error={action.error} />}{action.notice && <StatusMessage tone="success">{action.notice}</StatusMessage>}
     {(!!catalog.error || !!runs.error || !!detail.error || needsRefresh) && <StatusMessage tone="warning">请核对本机会话、分支权限、功能开关和来源版本，再刷新重试。表单输入保留；旧结果不能继续推进或保存，不会自动重发请求。</StatusMessage>}
@@ -99,7 +110,8 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
       {ready && !catalog.data!.chapters.length && <EmptyState title="没有可用的已保存章节" detail="先保存正文，再返回刷新。不会读取其他分支作为替代。" />}
       {ready && !!Object.keys(sourceVersions).length && !sourcesMatch && <StatusMessage tone="warning">所选来源已变化或不可用。请核对最新章节后明确更新来源基线；输入不会被覆盖。<Button disabled={action.busy || localSourceChanged && sources.some(row => row.id === chapter?.id && row.version < chapter.version)} onClick={() => { invalidateContext(); setSourceVersions(Object.fromEntries(sources.map(row => [row.id, row.version]))); if (!sources.some(row => row.id === chapterId)) setChapterId(''); }}>已核对，更新来源版本（保留输入）</Button></StatusMessage>}
       <div className="experimental-grid">
-        <Field label="人物视角所在章节"><select disabled={!ready || action.busy} value={chapterId} onChange={event => { invalidateContext(); setChapterId(event.target.value); }}><option value="">选择所选来源中的章节</option>{sources.map(row => <option key={row.id} value={row.id}>{row.title} · v{row.version}</option>)}</select></Field>
+        <Field label="人物视角所在章节"><select disabled={!ready || action.busy} value={chapterId} onChange={event => { invalidateContext(); setChapterId(event.target.value); setSceneId(''); }}><option value="">选择所选来源中的章节</option>{sources.map(row => <option key={row.id} value={row.id}>{row.title} · v{row.version}</option>)}</select></Field>
+        <Field label="人物视角所在场景"><select disabled={!ready || action.busy} value={sceneId} onChange={event => { invalidateContext(); setSceneId(event.target.value); }}><option value="">章末 / 不指定场景</option>{catalog.data?.scenes?.filter(row => row.chapter_id === chapterId).map(row => <option key={row.id} value={row.id}>{row.label} · 顺序 {row.position}</option>)}</select></Field>
         <Field label="推演人物"><select disabled={!ready || action.busy} value={characterId} onChange={event => { invalidateContext(); setCharacterId(event.target.value); }}><option value="">选择虚构人物</option>{ready && catalog.data!.characters.map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></Field>
         <Field label="起始世界时间（整数，留空仅按章节）"><input type="number" step="1" disabled={action.busy} value={worldTime} onChange={event => { invalidateContext(); setWorldTime(event.target.value); }} /></Field>
         <Field label="待审规划的目标节点"><select disabled={!ready || action.busy} value={target?.id || ''} onChange={event => { const row = catalog.data?.planning_nodes.find(value => value.id === event.target.value); setTarget(row ? { id: row.id, version: row.version } : undefined); }}><option value="">选择现有规划节点</option>{ready && catalog.data!.planning_nodes.map(row => <option key={row.id} value={row.id}>{row.title} · v{row.version}</option>)}</select></Field>
@@ -113,6 +125,7 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
       {context && <section className="experimental-section" aria-label="人物已知信息"><h4>本次人物视角</h4><KnowledgeChoices knowledge={context.knowledge} selected={knowledgeIds} disabled={action.busy} label="使用已知信息" onChange={setKnowledgeIds} />{!context.knowledge.length && <EmptyState title="此视角没有可选的已知事实或秘密" detail="可继续填写作者假设，但不能把未知秘密当作人物知识。" />}{!!context.goals.length && <><h4>已有目标（仅供核对）</h4><ul>{context.goals.map(row => <li key={row.id}>{row.text} · v{row.version}</li>)}</ul></>}{!!context.graph_links?.length && <><h4>可引用的已审核图谱记录</h4><ul>{context.graph_links.map(row => <li key={row.id}>{row.text} · ID：{row.id} · v{row.version}</li>)}</ul></>}</section>}
       <Field label="人物目标"><textarea disabled={action.busy} maxLength={2000} value={goal} onChange={event => setGoal(event.target.value)} /></Field>
       <Field label="人物动机假设（不作为已证实事实）"><textarea disabled={action.busy} maxLength={2000} value={motivation} onChange={event => setMotivation(event.target.value)} /></Field>
+      {context?.mind && <details><summary>人物信念、情绪与关系状态（非客观事实）</summary><p>仅投影此人物在选定章节 / 场景已审核的心智事件；错误信念不会变成已知事实，状态不用于虚构概率。</p>{Object.entries(context.mind).map(([section, items]) => <section key={section}><h4>{({ beliefs: '信念', false_beliefs: '错误信念', fears: '恐惧', values: '价值观', emotion: '情绪', intent: '当前意图', relationships: '关系状态' } as Record<string, string>)[section] || section}</h4>{items.length ? items.map((item, index) => <p key={index}>{item.text} · {item.epistemic_status} · {item.evidence_status}</p>) : <p>未指定</p>}</section>)}</details>}
       <Field label="起始事实与作者假设（每行一条）"><textarea disabled={action.busy} value={assumptions} onChange={event => setAssumptions(event.target.value)} placeholder="例如：门已关闭。标签需与事件的前提和变化完全一致。" /></Field>
     </Panel>
     <Panel title="2. 规则、资源与执行边界">
@@ -139,7 +152,7 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
     <Panel title="4. 手动推进与候选比较">
       <ResourceState loading={runs.loading} error={runs.error} />
       {!runs.loading && !runs.error && !runs.data?.items.length && <EmptyState title="还没有剧情推演记录" detail="保存输入只创建等待中的记录，不会自动执行或调用模型。" />}
-      <Field label="查看剧情推演记录"><select value={runId} disabled={!ready || runs.loading || !!runs.error || action.busy} onChange={event => { epoch.current++; setRunId(event.target.value); setChosen(''); setReviewed(false); setSavedProposal(''); }}><option value="">选择一次推演</option>{ready && !runs.loading && !runs.error && runs.data?.items.map((row, index) => <option key={row.id} value={row.id}>推演 {index + 1} · {statuses[row.status]}{row.stale ? ' · 来源已变化' : ''} · {row.created_at || row.id.slice(0, 12)}</option>)}</select></Field>
+      <Field label="查看剧情推演记录"><select value={runId} disabled={!!targetJob || !ready || runs.loading || !!runs.error || action.busy} onChange={event => { epoch.current++; setRunId(event.target.value); setChosen(''); setReviewed(false); setSavedProposal(''); }}><option value="">选择一次推演</option>{ready && !runs.loading && !runs.error && runs.data?.items.map((row, index) => <option key={row.id} value={row.id}>推演 {index + 1} · {statuses[row.status]}{row.stale ? ' · 来源已变化' : ''} · {row.created_at || row.id.slice(0, 12)}</option>)}</select></Field>
       {runId && <ResourceState loading={detail.loading} error={detail.error} />}
       {runId && localSourceChanged && <StatusMessage tone="warning">当前章节版本已变化。旧结果已隐藏，请刷新并核对来源。</StatusMessage>}
       {run && <><div className="experimental-actions"><Badge tone={run.stale ? 'warning' : run.status === 'COMPLETED' ? 'success' : 'neutral'}>{run.stale ? '来源已变化' : statuses[run.status]}</Badge><span>v{run.version}</span></div>{run.stale ? <StatusMessage tone="warning">旧来源的路线与证据已隐藏，不能继续推进或另存规划。请核对最新来源并重新读取人物视角，再创建新的推演；历史记录保留。</StatusMessage> : <>
@@ -151,6 +164,7 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
         <label className="experimental-check"><input type="checkbox" checked={reviewed} disabled={action.busy || !selectedRoute || run.status !== 'COMPLETED' || !!selectedRoute.saved_proposal_id} onChange={event => setReviewed(event.target.checked)} />已核对所选路线的违规、未决问题和动机假设，仅另存为待审规划</label>
         <Button disabled={action.busy || !reviewed || !selectedRoute || selectedRoute.status === 'PENDING' || !!selectedRoute.saved_proposal_id || run.status !== 'COMPLETED'} onClick={() => void runWrite(async current => { const result = await api.save(run, chosen); if (current()) setSavedProposal(result.proposal_id); }, '所选路线已另存为待审规划，仍需在分层规划中人工审核。')}>将所选路线另存为待审规划</Button>
         {savedProposal && <StatusMessage tone="success">待审规划已创建：{savedProposal}<Button disabled={!onNavigate || action.busy} onClick={() => onNavigate?.({ kind: 'feature', id: savedProposal, feature: 'advanced_planning_v2' })}>前往分层规划审核</Button></StatusMessage>}
+        {!!run.history_receipts?.length && <details><summary>推演版本与执行历史</summary>{run.history_receipts.map(item => <p key={item.version}>v{item.version} · {statuses[item.status as keyof typeof statuses] || item.status} · 已检查 {item.expansions} 个事件 · {item.updated_at}</p>)}</details>}
         {run.provenance && <details className="experimental-details"><summary>执行来源与检查凭据</summary><p>方式：{run.provenance.execution === 'MODEL_CANDIDATE_MANUAL_SELECTION' ? '人工选用模型假设，规则仍为确定性检查' : '手动确定性检查'} · {run.provenance.method}</p><ul>{Object.entries(run.provenance.source_versions).map(([id, version]) => <li key={id}>来源 {id} · v{version.version}</li>)}</ul><p>输入凭据：{run.request_digest || run.provenance.input_digest}</p><p>结果凭据：{run.result_digest || '尚未执行'}</p></details>}
       </>}{!!run.limitations?.length && <section aria-label="推演判断边界"><h4>判断边界</h4><ul>{run.limitations.map((text, index) => <li key={index}>{text}</li>)}</ul></section>}</>}
     </Panel>
@@ -212,5 +226,5 @@ function EventEditor({ prefix, event, knowledge, disabled, onChange, onRemove }:
   return <fieldset className="experimental-form" disabled={disabled}><legend>{prefix}</legend><div className="experimental-grid"><Field label={`${prefix} 名称`}><input maxLength={240} value={event.title} onChange={value => onChange({ ...event, title: value.target.value })} /></Field><Field label={`${prefix} 世界时间`}><input type="number" step={1} value={Number.isNaN(event.at) ? '' : event.at} onChange={value => onChange({ ...event, at: value.target.value === '' ? NaN : Number(value.target.value) })} /></Field></div><details className="experimental-details"><summary>{prefix} 前提、变化与未决问题</summary><div className="experimental-grid">{Object.entries(lists).map(([key, label]) => <Field key={key} label={`${prefix} ${label}（每行一条）`}><textarea value={event[key as keyof typeof lists].join('\n')} onChange={value => onChange({ ...event, [key]: value.target.value.split('\n') })} /></Field>)}</div><p>伏笔关联填写下方角色可见图谱的记录 ID；只能确认引用可用，不能证明伏笔已回收。</p><KnowledgeChoices knowledge={knowledge} selected={event.requires_knowledge} disabled={disabled} label={`${prefix} 需要已知信息`} onChange={values => onChange({ ...event, requires_knowledge: values })} />{event.requires_knowledge.some(id => !knowledge.some(row => row.id === id)) && <Button type="button" onClick={() => onChange({ ...event, requires_knowledge: event.requires_knowledge.filter(id => knowledge.some(row => row.id === id)) })}>清除{prefix} 不可用的知识要求</Button>}<AmountEditor label={`${prefix} 资源变化`} rows={event.resource_delta} signed disabled={disabled} onChange={rows => onChange({ ...event, resource_delta: rows })} /><Field label={`${prefix} 未决问题`}><textarea maxLength={1000} value={event.question} onChange={value => onChange({ ...event, question: value.target.value })} /></Field></details>{onRemove && <Button type="button" onClick={onRemove}>删除{prefix}</Button>}</fieldset>;
 }
 function RouteResult({ route, selected, disabled, onSelect, selectionLabel }: { route: SimulatorRoute; selected: boolean; disabled: boolean; onSelect: () => void; selectionLabel?: string }) {
-  return <article className={`experimental-record${selected ? ' is-selected' : ''}`} aria-label={`比较路线 ${route.title}`}><div className="experimental-actions"><h4>{route.title}</h4><Badge tone={route.violations.length ? 'warning' : 'neutral'}>{{ PENDING: '尚未结束', COMPLETED: '已结束', LIMIT_REACHED: '达到步数上限' }[route.status]}</Badge></div><p>已检查 {route.cursor} 步 · {route.violations.length} 条规则违规 · {route.unresolved_questions.length} 个未决问题</p><p>人物目标：{route.character_goal || '未填写'}</p><p>动机假设：{route.motivation_hypothesis || '未填写，不能推断'}</p>{!route.steps.length && <p>尚未检查事件。</p>}<ol>{route.steps.map(step => <li key={step.event_id}><strong>{step.title}</strong> · 时间 {step.at} · {step.applied ? '状态变化已应用' : '未应用状态变化'}{step.violations.length > 0 && <ul>{step.violations.map((item, index) => <li key={index}>{item.message}（{item.code}）</li>)}</ul>}{step.question && <p>未决问题：{step.question}</p>}{step.foreshadowing_links.length > 0 && <p>伏笔提示：{step.foreshadowing_links.join('、')}</p>}</li>)}</ol>{route.violations.length > 0 && <section aria-label={`${route.title} 规则违规`}><h5>规则违规</h5><ul>{route.violations.map((item, index) => <li key={index}>{item.message}（{item.code}）</li>)}</ul></section>}{!!route.unresolved_questions.length && <section aria-label={`${route.title} 未决问题`}><h5>仍需作者判断</h5><ul>{route.unresolved_questions.map((text, index) => <li key={index}>{text}</li>)}</ul></section>}{route.status === 'COMPLETED' && !route.violations.length && <p>所填规则未发现违规，不代表动机、因果或文学质量已通过。</p>}{route.saved_proposal_id ? <StatusMessage>已另存待审规划：{route.saved_proposal_id}</StatusMessage> : <label className="experimental-check"><input type="radio" name={selectionLabel ? 'simulator-model-candidate' : 'simulator-chosen-route'} checked={selected} disabled={disabled} onChange={onSelect} />{selectionLabel || `选择路线 ${route.title} 另存待审规划`}</label>}</article>;
+  return <article className={`experimental-record${selected ? ' is-selected' : ''}`} aria-label={`比较路线 ${route.title}`}><div className="experimental-actions"><h4>{route.title}</h4><Badge tone={route.violations.length ? 'warning' : 'neutral'}>{{ PENDING: '尚未结束', COMPLETED: '已结束', LIMIT_REACHED: '达到步数上限' }[route.status]}</Badge></div><p>已检查 {route.cursor} 步 · {route.violations.length} 条规则违规 · {route.unresolved_questions.length} 个未决问题</p><p>人物目标：{route.character_goal || '未填写'}</p><p>动机假设：{route.motivation_hypothesis || '未填写，不能推断'}</p>{!route.steps.length && <p>尚未检查事件。</p>}<ol>{route.steps.map(step => <li key={step.event_id}><strong>{step.title}</strong> · 时间 {step.at} · {step.applied ? '状态变化已应用' : '未应用状态变化'}{step.violations.length > 0 && <ul>{step.violations.map((item, index) => <li key={index}>{item.message}（{item.code}）</li>)}</ul>}{step.rule_effects && <details><summary>本步假设状态后果（确定性规则）</summary><p>新增：{step.rule_effects.facts_added.join('、') || '无'} · 移除：{step.rule_effects.facts_removed.join('、') || '无'}</p>{Object.entries(step.rule_effects.resource_changes).map(([name, change]) => <p key={name}>{name}：{change.before} → {change.after}</p>)}<p>世界时间：{step.rule_effects.time_before ?? '未知'} → {step.rule_effects.time_after ?? '未知'}。仅表示作者输入规则内的假设变化，不是真实世界事实或未来概率。</p></details>}{step.question && <p>未决问题：{step.question}</p>}{step.foreshadowing_links.length > 0 && <p>伏笔提示：{step.foreshadowing_links.join('、')}</p>}</li>)}</ol>{route.violations.length > 0 && <section aria-label={`${route.title} 规则违规`}><h5>规则违规</h5><ul>{route.violations.map((item, index) => <li key={index}>{item.message}（{item.code}）</li>)}</ul></section>}{!!route.unresolved_questions.length && <section aria-label={`${route.title} 未决问题`}><h5>仍需作者判断</h5><ul>{route.unresolved_questions.map((text, index) => <li key={index}>{text}</li>)}</ul></section>}{route.status === 'COMPLETED' && !route.violations.length && <p>所填规则未发现违规，不代表动机、因果或文学质量已通过。</p>}{route.saved_proposal_id ? <StatusMessage>已另存待审规划：{route.saved_proposal_id}</StatusMessage> : <label className="experimental-check"><input type="radio" name={selectionLabel ? 'simulator-model-candidate' : 'simulator-chosen-route'} checked={selected} disabled={disabled} onChange={onSelect} />{selectionLabel || `选择路线 ${route.title} 另存待审规划`}</label>}</article>;
 }

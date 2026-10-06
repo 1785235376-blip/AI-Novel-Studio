@@ -110,3 +110,32 @@ it('hands off the exact visible character/chapter and exposes explicit local-onl
   fireEvent.click(screen.getByRole('button', { name: '查询当前视图' }));
   await waitFor(() => expect((screen.getByRole('button', { name: '以此人物视角准备生成' }) as HTMLButtonElement).disabled).toBe(true));
 });
+
+it('binds scene queries and character handoff to the exact original scene without catalog access', async () => {
+  const fetch = vi.fn(async (url: string) => reply(url.endsWith('/catalog') ? catalog : url.includes('/query?') ? { edges: [], nodes: [], visible_count: 0 } : url.endsWith('/character-context') ? { relationships: [{ text: '谨慎信任', epistemic_status: 'RELATIONSHIP_STATE', evidence_status: 'EXPLICIT', evidence }] } : { items: [] }));
+  vi.stubGlobal('fetch', fetch); const useCharacter = vi.fn();
+  render(<StoryGraphPanel client={client()} chapter={chapter} mindEnabled onUseCharacter={useCharacter} />);
+  fireEvent.click(screen.getByRole('button', {name: '人物可知视图'}));
+  fireEvent.change(screen.getByLabelText('视角人物 ID'), {target: {value: 'alice'}});
+  fireEvent.change(screen.getByLabelText('查询场景 ID（留空为章末）'), {target: {value: 'scene-two'}});
+  fetch.mockClear(); fireEvent.click(screen.getByRole('button', {name: '查询当前视图'}));
+  await screen.findByText('谨慎信任');
+  expect(fetch.mock.calls.some(([url]) => url.includes('scene_id=scene-two'))).toBe(true);
+  fireEvent.click(screen.getByRole('button', {name: '以此人物视角准备生成'}));
+  expect(useCharacter).toHaveBeenCalledWith('alice', 'ch1', 'scene-two');
+  expect(fetch.mock.calls.every(([url]) => url.includes('/query?') || url.endsWith('/character-context'))).toBe(true);
+});
+it('does not revive a late viewpoint result after A to B to A navigation', async () => {
+  let finish: (value: Response) => void = () => {};
+  const fetch = vi.fn(async (url: string) => url.endsWith('/character-context') ? new Promise<Response>(resolve => {finish = resolve;}) : reply(url.includes('/query?') ? {edges: [], nodes: [], visible_count: 0} : url.endsWith('/catalog') ? catalog : {items: []}));
+  vi.stubGlobal('fetch', fetch); render(<StoryGraphPanel client={client()} chapter={chapter} mindEnabled />);
+  fireEvent.click(screen.getByRole('button', {name: '人物可知视图'}));
+  fireEvent.change(screen.getByLabelText('视角人物 ID'), {target: {value: 'alice'}});
+  fireEvent.click(screen.getByRole('button', {name: '查询当前视图'}));
+  await waitFor(() => expect(fetch.mock.calls.some(([url]) => url.endsWith('/character-context'))).toBe(true));
+  fireEvent.change(screen.getByLabelText('查询场景 ID（留空为章末）'), {target: {value: 'scene-two'}});
+  fireEvent.change(screen.getByLabelText('查询场景 ID（留空为章末）'), {target: {value: ''}});
+  finish(reply({secrets: [{text: 'LATE_VIEWPOINT_RESULT', evidence_status: 'EXPLICIT', epistemic_status: 'SECRET', evidence}]}));
+  await waitFor(() => expect((screen.getByRole('button', {name: '查询当前视图'}) as HTMLButtonElement).disabled).toBe(false));
+  expect(screen.queryByText('LATE_VIEWPOINT_RESULT')).toBeNull();
+});

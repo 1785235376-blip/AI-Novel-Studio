@@ -8,6 +8,9 @@ import { timelineExchangeClient, readOtioFile, saveOtioFile, type ExchangeRecord
 let nextScope = 0;
 const rationalText = (value: Rational) => value.denominator === 1 ? `${value.numerator} 秒` : `${value.numerator}/${value.denominator} 秒`;
 const lossLabels: Record<string, string> = {
+  CAMERA_GRAMMAR_NOT_REPRESENTED: '景别、机位、运动和导演意图未转换为剪辑效果',
+  DIALOGUE_SUBTITLES_NOT_REPRESENTED: '对白未转换为字幕轨道', SOUND_DESIGN_NOT_RENDERED_OR_LINKED: '音效设计未渲染或关联音轨',
+  SHOT_DESCRIPTION_NOT_REPRESENTED: '镜头行动与位置文字未保留', UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED: '未知交换扩展元数据未保留',
   NAME_TRUNCATED_TO_240_CHARACTERS: '过长名称已截短至 240 字符', MISSING_MEDIA: '缺少媒体引用', MEDIA_REFERENCE_ONLY_NOT_PACKAGED: '仅生成媒体引用，文件未打包', TRANSITION_MEDIA_HANDLES_NOT_VERIFIED: '转场所需素材余量未实际验证',
   TRANSITION_NOT_REPRESENTED_CUT_USED: '不支持此转场，交换副本改为直接切点', SPEED_EFFECT_NOT_REPRESENTED_TIMING_UNVERIFIED: '变速效果未保留，效果后的时长未验证',
   EFFECT_NOT_REPRESENTED: '效果未保留', MARKERS_NOT_REPRESENTED: '标记未保留', APPLICATION_METADATA_MIX_SUBTITLES_NOT_REPRESENTED: '应用元数据、混音或字幕设置未保留',
@@ -32,6 +35,7 @@ function TimelineExchangeContent({ client }: { client: ExperimentalClient }) {
   const changed = !!selected && (!current || current.edit_version !== selected.edit_version);
   const refresh = () => { epoch.current++; setAcknowledged({}); catalog.reload(); records.reload(); };
   return <section className="experimental-section" aria-label="OTIO 剪辑交换">
+    <p>音视频仅保留各轨道的时间位置，不声称保留链接片段或自动同步关系。</p>
     <div className="experimental-actions"><h3>OTIO 剪辑交换</h3><Badge>有理数时间 · 外部引用</Badge><Button disabled={action.busy || catalog.loading || records.loading} onClick={refresh}>刷新交换来源与记录</Button></div>
     <p>支持明确子集的片段、轨道、切点、间隙和叠化。这里生成新交换副本，不渲染、不自动读取或打包媒体，也不改写外部工程。</p>
     <ResourceState loading={catalog.loading} error={catalog.error} />

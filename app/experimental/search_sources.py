@@ -120,3 +120,79 @@ def chapter_manifest(service, ctx, check):
                                        lambda cid=cid: repo.get(cid)))
         return result
     return None
+
+
+def create_extended_search_readers(legacy, world, graph, authorize, require_flag):
+    """Original-world/graph/asset/workflow projections, without a second index owner."""
+    from fastapi import HTTPException
+    from .. import workflow_api
+
+    def checked(ctx, feature=None, permission='domain.read'):
+        require_flag('workspace_tools_v2')
+        if feature: require_flag(feature)
+        if authorize(ctx.novel_id, ctx.token, ctx.branch, permission) != (ctx.actor, ctx.scope):
+            raise HTTPException(403, {'code': 'WORKSPACE_AUTHORITY_CHANGED'})
+
+    def shaped(ctx, row, feature, owner, *, title=None, rid=None):
+        if row.get('novel_id', ctx.novel_id) != ctx.novel_id or row.get('scope', ctx.scope) != ctx.scope:
+            raise FileNotFoundError('source scope')
+        if row.get('branch_id') and row['branch_id'] != ctx.branch: raise FileNotFoundError('source branch')
+        return {**row, 'id': rid or row['id'], 'title': title or row.get('title') or row.get('name') or str(row['id']),
+                'novel_id': ctx.novel_id, 'branch_id': ctx.branch, 'feature': feature,
+                'source_navigation': {'kind': 'feature', 'id': row['id'], 'feature': feature, 'task_authority': owner}}
+
+    def semantic(ctx, kind):
+        checked(ctx, 'world_character_engines_v2')
+        result = [shaped(ctx, row, 'world_character_engines_v2', 'world_record')
+                  for row in world.records(ctx.novel_id, ctx.scope) if row['kind'] == kind]
+        checked(ctx, 'world_character_engines_v2')
+        return result
+
+    def rules(ctx):
+        result = []
+        try: result.extend(semantic(ctx, 'ABILITY'))
+        except HTTPException as exc:
+            if exc.status_code not in {401, 403, 404}: raise
+        checked(ctx)
+        if ctx.scope.get('mode') == 'local':
+            for row in legacy.list_world_rules(nid=ctx.novel_id, status=None)['items']:
+                # The original public rule text is its searchable title; evidence,
+                # payload, hidden data and arbitrary logs are never indexed.
+                payload = row.get('payload') or {}
+                title = payload.get('statement') or payload.get('rule') or payload.get('title') or '世界规则'
+                result.append(shaped(ctx, row, 'story', 'world_rule', title=title, rid='legacy:' + row['id']))
+        checked(ctx)
+        return result
+
+    def story_graph(ctx):
+        # Match the existing author-only Graph /records route, not a weaker read.
+        checked(ctx, 'temporal_story_graph_v2', 'domain.write')
+        result = []
+        for row in graph.records(ctx.novel_id, ctx.scope):
+            if row['kind'] == 'KNOWLEDGE_EVENT':
+                try: require_flag('character_mind_v2')
+                except HTTPException as exc:
+                    if exc.status_code == 404: continue
+                    raise
+            result.append(shaped(ctx, row, 'temporal_story_graph_v2', 'graph_record'))
+        checked(ctx, 'temporal_story_graph_v2', 'domain.write')
+        return result
+
+    def assets(ctx):
+        checked(ctx)
+        rows = legacy.list_assets(nid=ctx.novel_id, kind=None, character_id=None, scene_id=None,
+                                 x_session_token=ctx.token, x_branch_id=ctx.branch)
+        if isinstance(rows, dict): rows = rows.get('items', [])
+        result = [shaped(ctx, row, 'assets', 'asset_record', title=row.get('title') or row.get('filename') or row.get('kind')) for row in rows]
+        checked(ctx)
+        return result
+
+    def workflows(ctx):
+        checked(ctx)
+        rows = workflow_api.workflows(novel_id=ctx.novel_id, x_session_token=ctx.token)['items']
+        result = [shaped(ctx, row, 'workflow', 'workflow_definition') for row in rows if row.get('branch_id') == ctx.branch]
+        checked(ctx)
+        return result
+
+    return {'organization': lambda ctx: semantic(ctx, 'CIVILIZATION'), 'rule': rules,
+            'story_graph': story_graph, 'asset': assets, 'workflow': workflows}

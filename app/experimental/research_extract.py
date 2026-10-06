@@ -123,7 +123,7 @@ def extract_document(filename: str, content: bytes):
         raise ValueError('RESEARCH_FILENAME_INVALID')
     if not content or len(content) > MAX_BYTES: raise ValueError('RESEARCH_FILE_LIMIT')
     suffix = PurePosixPath(filename).suffix.lower()
-    warnings, unread_pages = [], []
+    warnings, unread_pages, image_metadata = [], [], None
     if suffix in {'.txt', '.md'}:
         try: text = content.decode('utf-8-sig')
         except UnicodeDecodeError as exc: raise ValueError('RESEARCH_UTF8_REQUIRED') from exc
@@ -144,6 +144,7 @@ def extract_document(filename: str, content: bytes):
             with Image.open(io.BytesIO(content)) as image:
                 if image.format not in {'PNG', 'JPEG', 'WEBP'} or image.width * image.height > 40_000_000:
                     raise ValueError('RESEARCH_IMAGE_LIMIT')
+                image_metadata = {"format": image.format, "width": image.width, "height": image.height, "mode": image.mode}
                 image.verify()
         except Exception as exc:
             raise ValueError('RESEARCH_INVALID_IMAGE') from exc
@@ -153,7 +154,7 @@ def extract_document(filename: str, content: bytes):
     else: raise ValueError('RESEARCH_UNSUPPORTED_FILE_TYPE')
     if not rows and status == 'TEXT_EXTRACTED': status = 'NO_TEXT'
     return {'format': fmt, 'paragraphs': rows, 'extraction_status': status, 'warnings': warnings,
-            'content_sha256': hashlib.sha256(content).hexdigest(), 'unread_pages': unread_pages}
+            'content_sha256': hashlib.sha256(content).hexdigest(), 'unread_pages': unread_pages, 'image_metadata': image_metadata}
 
 
 class _PlainHTML(HTMLParser):

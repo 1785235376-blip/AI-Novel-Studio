@@ -6,7 +6,7 @@ import { type SearchItem, type SearchOptions, type SearchResult, type WorkspaceL
 
 type SearchAPI = ReturnType<typeof workspaceClient>;
 type Command = { id: string; label: string; detail: string; words: string };
-const kinds = { chapter: '章节', character: '人物', location: '地点', foreshadowing: '伏笔', finding: '发现', task: '任务' };
+const kinds = { review: '审核项', novel: '小说', volume: '卷', scene: '场景', timeline: '时间线', chapter: '章节', character: '人物', location: '地点', organization: '组织 / 文明', rule: '世界规则 / 能力', story_graph: '故事图谱', asset: '资产', workflow: '工作流定义', foreshadowing: '伏笔', finding: '发现', task: '任务' };
 const newRequest = () => globalThis.crypto?.randomUUID?.() || `search-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
 function useWorkspaceSearch(api: SearchAPI, options: SearchOptions, composing: boolean) {
@@ -94,7 +94,7 @@ export function WorkspaceSearch({ api, chapter, commands: choices, navigate, rec
       </div>
       <div className="experimental-actions"><Button type="submit" disabled={composing}>搜索</Button><Button type="button" onClick={() => { invalidateJump(); search.reload(); }}>刷新来源</Button><Button type="button" disabled={search.loading || composing} onClick={() => { invalidateJump(); search.rebuild(); }}>重建索引</Button><Button type="button" disabled={!search.loading} onClick={() => { invalidateJump(); search.cancel(); }}>取消搜索</Button></div>
     </form>
-    <p>按字面匹配，不调用模型。名称与别名优先；人物与地点不索引私密正文。每页最多 50 条。无更新时间的来源不进入最近修改筛选。</p>
+    <p>按字面匹配，不调用模型。名称与别名优先；资料记录只索引名称、别名与安全元数据，不索引私密正文。每页最多 50 条。无更新时间的来源不进入最近修改筛选。</p>
     <div className="experimental-actions" aria-label="安全导航命令">{filtered.map(command => <Button disabled={!navigate} key={command.id} onClick={() => { invalidateJump(); navigate?.({ kind: 'feature', id: command.id, feature: command.id }); }}>{command.label}{recent.includes(command.id) ? ' · 最近使用' : ''}</Button>)}</div>
     <ResourceState loading={search.loading} error={search.cancelled ? undefined : search.error} empty={!!data && !data.items.length} />
     {composing && <StatusMessage>中文输入完成后再搜索。</StatusMessage>}

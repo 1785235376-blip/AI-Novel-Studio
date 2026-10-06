@@ -216,3 +216,17 @@ it('changing selected model route clears consent and fences a previously reviewe
   expect(screen.getByText('模型选择已变化。请重新预览所选路线后再确认发送。')).toBeTruthy();
   expect(base.mock.calls.some(([url]) => url.endsWith('/model/dispatch'))).toBe(false);
 });
+
+it('invalidates scene context receipts and sends selected original scene with separate mind claims', async () => {
+  const original = transport();
+  const fetch = vi.fn(async (url: string, init?: RequestInit) => url.endsWith('/catalog') ? reply({...catalog, scenes: [{id: 'scene-one', label: '揭示前', chapter_id: chapter.id, position: 1}]}) : url.endsWith('/context') ? reply({...context, scene_id: 'scene-one', mind: {emotion: [{text: '担心被背叛', epistemic_status: 'EMOTION', evidence_status: 'HYPOTHESIS'}]}}) : original(url, init));
+  vi.stubGlobal('fetch', fetch); render(<StorySimulatorPanel client={client()} chapter={chapter} />); await fill();
+  fireEvent.change(screen.getByLabelText('人物视角所在场景'), {target: {value: 'scene-one'}});
+  expect(screen.queryByRole('region', {name: '人物已知信息'})).toBeNull();
+  expect((screen.getByRole('button', {name: '保存输入并创建推演'}) as HTMLButtonElement).disabled).toBe(true);
+  fireEvent.click(screen.getByRole('button', {name: '读取并核对人物已知信息'})); await screen.findByText(/担心被背叛/);
+  fireEvent.click(screen.getByRole('button', {name: '保存输入并创建推演'}));
+  await waitFor(() => expect(fetch.mock.calls.some(([url, init]) => url.endsWith('/runs') && init?.method === 'POST')).toBe(true));
+  const body = JSON.parse(fetch.mock.calls.find(([url, init]) => url.endsWith('/runs') && init?.method === 'POST')![1]!.body as string);
+  expect(body.scene_id).toBe('scene-one'); expect(body.knowledge_ids).not.toContain('EMOTION');
+});

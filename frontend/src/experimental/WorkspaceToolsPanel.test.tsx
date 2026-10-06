@@ -350,3 +350,33 @@ it.each(['declarative_agents_v2', 'story_simulator_v2', 'multilingual_editions_v
   expect(navigate).toHaveBeenCalledWith(source);
   expect(screen.queryByRole('button', { name: '打开原生成草稿' })).toBeNull();
 });
+it('cancels only after explicit original-task confirmation with the rendered source receipt', async () => {
+  const item = { id: 'author-queued', authority: 'author_generation', label: '正文生成', feature: 'history',
+    status: 'QUEUED', stage_label: '排队', progress: null, stale: false, history: [], lifecycle: '原任务',
+    revision: 'a'.repeat(64), actions: ['open_source', 'cancel'], provider_id: 'local-runtime', model_id: 'fixture-model', route_state: 'REQUESTED' };
+  let cancelled = false;
+  const fetch = backend((url, init) => {
+    if (url.includes('/tasks?')) return response({ items: [{ ...item, ...(cancelled ? { status: 'CANCELLED', stage_label: '已取消', actions: ['open_source'] } : {}) }], unavailable: [], truncated: false });
+    if (url.endsWith('/tasks/author_generation/author-queued/cancel')) { cancelled = true; return response({ item: { ...item, status: 'CANCELLED' }, cancellation_requested: true }); }
+  });
+  vi.stubGlobal('fetch', fetch);
+  render(<WorkspaceToolsPanel client={experimentalClient('novel', { sessionToken: 'owner' })} initialSection="tasks" />);
+  fireEvent.click(await screen.findByRole('button', { name: '取消原任务' }));
+  expect(fetch.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(0);
+  expect(screen.getByText(/请求路线，尚未证明实际执行/)).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: '确认请求取消' }));
+  await screen.findByText('已取消');
+  const posted = fetch.mock.calls.find(([url]) => url.endsWith('/author-queued/cancel'))!;
+  expect(JSON.parse(String(posted[1]?.body))).toEqual({ expected_revision: item.revision });
+  expect((posted[1]?.headers as Record<string, string>)['X-Session-Token']).toBe('owner');
+  expect(screen.queryByRole('button', { name: '取消原任务' })).toBeNull();
+});
+it('opens the exact non-generation owner pointer and clears cancelled navigation after owner change', async () => {
+  const pointer = { kind: 'feature', feature: 'exports', id: 'export-exact', task_authority: 'exports' };
+  const fetch = backend(url => url.includes('/tasks?') ? response({ items: [{ id: 'export-exact', authority: 'exports', label: '导出', feature: 'exports', source: pointer, status: 'FAILED', stage_label: '失败', progress: null, history: [], lifecycle: '原导出记录' }], unavailable: [], truncated: false }) : undefined);
+  vi.stubGlobal('fetch', fetch); const navigate = vi.fn();
+  render(<WorkspaceToolsPanel client={experimentalClient('novel', { sessionToken: '' })} initialSection="tasks" onNavigate={navigate} />);
+  fireEvent.click(await screen.findByRole('button', { name: '打开来源工具' }));
+  expect(navigate).toHaveBeenCalledWith(pointer);
+  expect(fetch.mock.calls.every(([, init]) => init?.method === 'GET')).toBe(true);
+});

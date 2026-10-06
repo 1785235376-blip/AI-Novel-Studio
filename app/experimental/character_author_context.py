@@ -39,10 +39,19 @@ class CharacterEvidence(StrictModel):
 
 class CharacterEntry(StrictModel):
     text: str = Field(max_length=8000)
-    epistemic_status: Literal['KNOWN_FACT', 'BELIEF', 'FALSE_BELIEF', 'SECRET', 'GOAL', 'FEAR', 'VALUE', 'EMOTION', 'INTENT']
+    epistemic_status: Literal['KNOWN_FACT', 'BELIEF', 'FALSE_BELIEF', 'SECRET', 'GOAL', 'FEAR', 'VALUE', 'EMOTION', 'INTENT', 'RELATIONSHIP_STATE']
     evidence_status: Literal['EXPLICIT', 'HYPOTHESIS']
     evidence: CharacterEvidence
     relation_version: int | None = Field(default=None, ge=1)
+
+
+class SceneBoundary(StrictModel):
+    id: str
+    chapter_id: str
+    parent_id: str
+    position: int = Field(ge=0)
+    version: int = Field(ge=1)
+    digest: str = Field(pattern=r'^[0-9a-f]{64}$')
 
 
 class CharacterProjection(StrictModel):
@@ -60,12 +69,16 @@ class CharacterProjection(StrictModel):
     values: list[CharacterEntry]
     emotion: list[CharacterEntry]
     intent: list[CharacterEntry]
+    relationships: list[CharacterEntry] = Field(default_factory=list)
+    scene_id: str | None = None
+    scene_boundary: SceneBoundary | None = None
     verification: Literal['DETERMINISTIC_REVIEWED_EVENTS']
     context_digest: str = Field(pattern=r'^[0-9a-f]{64}$')
 
 
 class CharacterViewpoint(StrictModel):
     schema_version: Literal[1] = 1
+    scene_id: str | None = Field(default=None, min_length=1, max_length=160)
     character_id: str = Field(min_length=1, max_length=160)
     chapter_id: str = Field(min_length=1, max_length=160)
     world_time: int | None = None
@@ -90,23 +103,24 @@ def _identity(job):
                      ('novel_id', 'chapter_id', 'scope', 'actor_id', 'session_id', 'client_id', 'workspace_id', 'operation')})
 
 
-def _snapshot(ctx, character_id, chapter_id, world_time, calendar):
-    raw = ctx.service.character_context(ctx.novel_id, ctx.scope, character_id, chapter_id, world_time, calendar)
-    value = CharacterProjection.model_validate(raw).model_dump()
+def _snapshot(ctx, character_id, chapter_id, world_time, calendar, scene_id=None):
+    raw = ctx.service.character_context(ctx.novel_id, ctx.scope, character_id, chapter_id, world_time, calendar, scene_id=scene_id)
+    value = CharacterProjection.model_validate(raw).model_dump(exclude_unset=True)
+    if value.get('scene_id') != scene_id: raise ValueError('CHARACTER_CONTEXT_SCENE_MISMATCH')
     if (value['character_id'], value['chapter_id'], value['world_time'], value['calendar']) != (character_id, chapter_id, world_time, calendar):
         raise ValueError('CHARACTER_CONTEXT_VIEWPOINT_MISMATCH')
     if value['context_digest'] != digest({key: item for key, item in value.items() if key != 'context_digest'}):
         raise ValueError('CHARACTER_CONTEXT_DIGEST_INVALID')
     expected = {'known_facts': 'KNOWN_FACT', 'beliefs': 'BELIEF', 'false_beliefs': 'FALSE_BELIEF', 'secrets': 'SECRET',
-                'goals': 'GOAL', 'fears': 'FEAR', 'values': 'VALUE', 'emotion': 'EMOTION', 'intent': 'INTENT'}
-    if any(item['epistemic_status'] != category for section, category in expected.items() for item in value[section]):
+                'goals': 'GOAL', 'fears': 'FEAR', 'values': 'VALUE', 'emotion': 'EMOTION', 'intent': 'INTENT', 'relationships': 'RELATIONSHIP_STATE'}
+    if any(item['epistemic_status'] != category for section, category in expected.items() for item in value.get(section, [])):
         raise ValueError('CHARACTER_CONTEXT_EPISTEMIC_MISMATCH')
     return value
 
 
 def configure_character_job(job, ctx: CharacterContextSource, character_id: str, chapter_id: str,
                             world_time: int | None = None, calendar: str = 'story', *,
-                            authorize: Callable[[], object]):
+                            authorize: Callable[[], object], scene_id: str | None = None):
     """Bind one user-selected viewpoint before preview/request construction.
 
     Returns the safe persistent descriptor. The resolver is transient and must
@@ -134,9 +148,9 @@ def configure_character_job(job, ctx: CharacterContextSource, character_id: str,
         token=ctx.token, branch=ctx.branch, service=ctx.service, user_instruction=ctx.user_instruction)
     authority = deepcopy(authorize())
     if authority is False: raise ValueError('CHARACTER_CONTEXT_AUTHORIZATION_REQUIRED')
-    initial = _snapshot(captured, character_id, chapter_id, world_time, calendar)
+    initial = _snapshot(captured, character_id, chapter_id, world_time, calendar, scene_id)
     descriptor = CharacterViewpoint(character_id=character_id, chapter_id=chapter_id,
-        world_time=world_time, calendar=calendar, context_digest=initial['context_digest']).model_dump()
+        world_time=world_time, calendar=calendar, scene_id=scene_id, context_digest=initial['context_digest']).model_dump()
     identity = _identity(job)
 
     def resolve(*, cloud: bool):
@@ -149,7 +163,7 @@ def configure_character_job(job, ctx: CharacterContextSource, character_id: str,
         if job.source or job.style or job.creation_records or job.instruction != captured.user_instruction:
             raise ValueError('CHARACTER_CONTEXT_UNSAFE_ENRICHMENT')
         if authorize() != authority: raise ValueError('CHARACTER_CONTEXT_AUTHORITY_CHANGED')
-        current = _snapshot(captured, character_id, chapter_id, world_time, calendar)
+        current = _snapshot(captured, character_id, chapter_id, world_time, calendar, scene_id)
         if authorize() != authority: raise ValueError('CHARACTER_CONTEXT_AUTHORITY_CHANGED')
         if current['context_digest'] != descriptor['context_digest']:
             raise StaleSourceError('CHARACTER_CONTEXT_SOURCE_CHANGED')

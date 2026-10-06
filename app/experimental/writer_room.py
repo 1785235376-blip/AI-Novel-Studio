@@ -156,7 +156,8 @@ class WriterRoomService(DomainService):
         return row
 
     def _target(self, ctx, ref):
-        row = self.inbox.get(self._review_ctx(ctx), ref.domain, ref.id)
+        reader = getattr(self, 'review_target_readers', {}).get(ref.domain)
+        row = reader(ctx, ref.id) if reader else self.inbox.get(self._review_ctx(ctx), ref.domain, ref.id)
         if row['version'] != ref.version or row.get('stale'):
             raise StaleSourceError('domain review target changed; reopen its original review flow')
         return row
@@ -182,13 +183,25 @@ class WriterRoomService(DomainService):
         rows = self.list(ctx.novel_id, ctx.scope, self.TASKS)
         return sorted(rows, key=lambda r: (r['updated_at'], r['id']), reverse=True)
 
+    def presence_contract(self, ctx):
+        """Read-only adapter boundary; membership is never fabricated presence."""
+        self.novels.get(ctx.novel_id)
+        if not self._permission(ctx, ctx.actor, 'domain.read'):
+            raise HTTPException(403, {'code': 'WRITER_ROOM_PRESENCE_AUTHORITY_REQUIRED'})
+        return {'schema': 'writer-room-presence/1', 'state': 'NOT_CONFIGURED', 'transport': None,
+                'occupants': [], 'realtime': False, 'polling_is_realtime': False,
+                'authority': 'CURRENT_WORKSPACE_PROJECT_BRANCH_SESSION',
+                'required_adapter_contract': ['ACTIVE_SESSION', 'CURRENT_MEMBERSHIP', 'EXACT_BRANCH', 'EXPIRING_LEASE',
+                    'REVOCATION_EVICTION', 'NO_MANUSCRIPT_OR_CURSOR_TEXT', 'NO_PERMISSION_GRANTS'],
+                'next_action': 'USE_ASYNCHRONOUS_ASSIGNMENTS_AND_ORIGINAL_COMMENTS'}
+
     def overview(self, ctx):
         rows = [r for r in self._rows(ctx) if self._source_state(ctx, r) != 'UNAVAILABLE']
         return {'items': [self._public(ctx, r) for r in rows[:MAX_ITEMS]], 'truncated': len(rows) > MAX_ITEMS,
                 'actor': ctx.actor, 'members': self.members(ctx), 'scope': ctx.scope,
                 'can_write': self._permission(ctx, ctx.actor, 'domain.write'),
                 'can_review': self._permission(ctx, ctx.actor, 'domain.review'),
-                'collaboration': 'ASYNC_ONLY', 'presence': 'NOT_IMPLEMENTED',
+                'collaboration': 'ASYNC_ONLY', 'presence': 'NOT_IMPLEMENTED', 'presence_interface': self.presence_contract(ctx),
                 'copy_warning': COPY_WARNING, 'approval_authority': 'ORIGINAL_DOMAIN_ONLY'}
 
     def catalog(self, ctx):

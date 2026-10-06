@@ -4,25 +4,27 @@ import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitive
 import { AuthorRequestPreviewPanel } from '../novel/AuthorRequestPreviewPanel';
 import { AuthorRequestControls } from '../novel/AuthorRequestControls';
 import { authorContextRequest, defaultAuthorRequestScope, type AuthorRequestScope, type AuthorPreviewReceipt, type AuthorRequestBody } from '../novel/authorContextClient';
+import { RevisionComparisonModelPanel } from './RevisionComparisonModelPanel';
 import type { ExperimentalClient } from './api';
 import { Field, ResourceState, useAction, useResource } from './shared';
-import { revisionIntelligenceClient, type RevisionPreview, type RevisionProposal, type RevisionSelection, type SelectionReceipt } from './revisionIntelligenceClient';
+import { revisionIntelligenceClient, type RevisionPreview, type RevisionProposal, type RevisionSelection, type SelectionReceipt, type VersionComparePreview, type VersionComparison, type SemanticChange } from './revisionIntelligenceClient';
 
 export type RevisionGenerationOptions = { enabled: boolean; novelId: string; context: CollaborationContext; providerId?: string; modelId?: string; profile: 'LOCAL_ONLY' | 'HYBRID' | 'QUALITY' };
-export type RevisionIntelligenceProps = { client: ExperimentalClient; chapter?: Chapter; selection?: { from: number; to: number; text: string }; saved?: boolean; onChapterSaved?: (chapter: Chapter) => void; generation?: RevisionGenerationOptions; onHistory?: () => void };
+export type RevisionIntelligenceProps = { client: ExperimentalClient; chapter?: Chapter; selection?: { from: number; to: number; text: string }; saved?: boolean; onChapterSaved?: (chapter: Chapter) => void; generation?: RevisionGenerationOptions; requestedJobId?: string; onHistory?: () => void };
 let scopeSequence = 0;
 export function RevisionIntelligencePanel(props: RevisionIntelligenceProps) {
   const identity = useMemo(() => ++scopeSequence, [props.client, props.chapter?.id, props.chapter?.version]);
   return <RevisionBody key={identity} {...props} />;
 }
-function RevisionBody({ client, chapter, selection, saved = false, onChapterSaved, generation, onHistory }: RevisionIntelligenceProps) {
+function RevisionBody({ client, chapter, selection, saved = false, onChapterSaved, generation, requestedJobId, onHistory }: RevisionIntelligenceProps) {
   const api = useMemo(() => revisionIntelligenceClient(client), [client]);
   const catalog = useResource(signal => api.catalog(chapter?.id, signal), [api, chapter?.id]);
   const history = useResource(signal => api.proposals(signal), [api]);
   const milestones = useResource(signal => api.milestones(signal), [api]);
   const [receipt, setReceipt] = useState<SelectionReceipt>(), [candidates, setCandidates] = useState<Record<string, string>>({});
   const [goal, setGoal] = useState(''), [jobId, setJobId] = useState<string>(), [reviewing, setReviewing] = useState<RevisionProposal>();
-  const [milestoneTitle, setMilestoneTitle] = useState('');
+  const [milestoneTitle, setMilestoneTitle] = useState(''), [showComparison, setShowComparison] = useState(!!requestedJobId);
+  useEffect(() => { if (requestedJobId) setShowComparison(true); }, [requestedJobId]);
   const epoch = useRef(0), alive = useRef(true);
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
   useEffect(() => { if (!saved) { epoch.current++; setReceipt(undefined); setReviewing(undefined); setJobId(undefined); } }, [saved]);
@@ -80,6 +82,7 @@ function RevisionBody({ client, chapter, selection, saved = false, onChapterSave
         <Button disabled={row.stale || !row.blocks || !['REVIEW', 'PARTIAL'].includes(row.status)} onClick={() => setReviewing(row)}>审核此修订</Button>
       </article>)}
     </Panel>
+    <Panel title="原版本 A / B 与语义解读"><p>文字差异来自原章节历史。语义解读是作者判断或明确导入的 Model-derived 意见，证据匹配不代表判断已被证明。</p><Button disabled={!chapter || !saved} onClick={() => setShowComparison(value => !value)}>{showComparison ? '关闭版本比较' : '比较原历史版本'}</Button>{showComparison && chapter && <OriginalVersionComparison client={client} chapter={chapter} saved={saved} requestedJobId={requestedJobId} />}</Panel>
     <Panel title="作品里程碑与修订目标"><p>仅标记原章节版本，不复制正文。恢复请使用原历史，会产生新的当前版本。</p>
       <Field label="里程碑名称"><input value={milestoneTitle} maxLength={160} onChange={e => setMilestoneTitle(e.target.value)} /></Field>
       <Button disabled={!chapter || !saved || !milestoneTitle.trim() || action.busy} onClick={() => void action.run(async () => { await api.milestone(chapter!, milestoneTitle, goal); if (alive.current) { setMilestoneTitle(''); milestones.reload(); } }, '里程碑已绑定原章节版本。')}>记录当前版本里程碑</Button>
@@ -142,5 +145,77 @@ function SelectionGeneration({ options, selection, goal, saved, onCandidate }: {
         <Button disabled={!representable || action.busy || !saved} onClick={() => onCandidate(outputLines, job.id)}>将对应段落导入候选，仍需审核</Button></>}
     </section>}
     {action.feedback}
+  </section>;
+}
+
+const semanticKinds: Record<string, string> = { FACT_ADDED: '事实增加', FACT_REMOVED: '事实删除', CHARACTER_STATE_CHANGED: '人物状态改变', RELATIONSHIP_CHANGED: '关系改变', CANON_CHANGED: 'Canon 相关陈述改变', EMOTIONAL_TONE_CHANGED: '情绪基调改变', PLOT_INTENT_CHANGED: '剧情意图改变' };
+function OriginalVersionComparison({ client, chapter, saved, requestedJobId }: { client: ExperimentalClient; chapter: Chapter; saved: boolean; requestedJobId?: string }) {
+  const api = useMemo(() => revisionIntelligenceClient(client), [client]);
+  const versions = useResource(signal => api.originalVersions(chapter.id, signal), [api, chapter.id]);
+  const records = useResource(signal => api.comparisons(signal), [api]);
+  const [before, setBefore] = useState(''), [after, setAfter] = useState(String(chapter.version));
+  const [preview, setPreview] = useState<VersionComparePreview>(), [record, setRecord] = useState<VersionComparison>();
+  const [title, setTitle] = useState(''), [changes, setChanges] = useState<SemanticChange[]>([]);
+  const epoch = useRef(0), alive = useRef(true), action = useAction();
+  const openedJob = useRef(''), [targetError, setTargetError] = useState('');
+  useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
+  useEffect(() => { if (!saved) { epoch.current++; setPreview(undefined); setRecord(undefined); } }, [saved]);
+  useEffect(() => {
+    if (!requestedJobId || openedJob.current === requestedJobId || records.loading || records.error || !records.data) return;
+    openedJob.current = requestedJobId; setTargetError('');
+    const target = records.data.items.find(item => item.model_execution?.job_id === requestedJobId);
+    if (!target) { setTargetError('原版本模型任务当前不可用；请核对项目、权限和功能开关。不会另建任务或重发模型。'); return; }
+    if (target.comparison.chapter_id !== chapter.id) { setTargetError('此模型任务属于另一个章节。请先打开原任务来源章节，再定位原版本比较。'); return; }
+    const ticket = ++epoch.current; setPreview(undefined); setRecord(undefined);
+    api.comparison(target.id).then(result => {
+      if (alive.current && ticket === epoch.current) { setRecord(result); setTitle(result.title || ''); setChanges((result.changes || []).map(({kind, explanation, before_quote, before_start, after_quote, after_start, source, model_identity}) => ({kind, explanation, before_quote, before_start, after_quote, after_start, source, model_identity}))); }
+    }).catch(() => { if (alive.current && ticket === epoch.current) setTargetError('原模型任务对应比较无法读取；请刷新当前权限和来源，旧结果不会替代。'); });
+  }, [requestedJobId, records.loading, records.error, records.data, api, chapter.id]);
+  const invalidate = () => { epoch.current++; setPreview(undefined); setRecord(undefined); };
+  const fresh = saved && !versions.loading && !versions.error && versions.data?.current_version === chapter.version;
+  const load = () => action.run(async () => {
+    const ticket = ++epoch.current; setPreview(undefined); setRecord(undefined);
+    const result = await api.compareVersions({chapter_id: chapter.id, current_version: chapter.version, before_version: Number(before), after_version: Number(after)});
+    if (alive.current && ticket === epoch.current) { setPreview(result); setChanges([]); }
+  }, '已读取原历史版本；仅显示确定性文字差异，尚未调用模型。');
+  const open = (id: string) => action.run(async () => {
+    const ticket = ++epoch.current; setPreview(undefined); setRecord(undefined);
+    const result = await api.comparison(id);
+    if (alive.current && ticket === epoch.current) {
+      setRecord(result); setTitle(result.title || '');
+      setChanges((result.changes || []).map(({kind, explanation, before_quote, before_start, after_quote, after_start, source, model_identity}) => ({kind, explanation, before_quote, before_start, after_quote, after_start, source, model_identity})));
+    }
+  }, '已重新核对原版本与当前权限。');
+  const view = preview || (record && !record.stale ? record : undefined);
+  const editable = !!view && fresh && (!record || record.status === 'REVIEW');
+  const update = (index: number, value: Partial<SemanticChange>) => setChanges(old => old.map((item, i) => i === index ? {...item, ...value} : item));
+  const save = () => action.run(async () => {
+    if (!view) return;
+    const ticket = ++epoch.current;
+    const result = record ? await api.editComparison(record, title, changes) : await api.saveComparison(view, title, changes);
+    if (alive.current && ticket === epoch.current) { setRecord(result); setPreview(undefined); records.reload(); }
+  }, '比较与解读已持久化，正文和 Canon 没有改变。');
+  const review = (row: VersionComparison, decision: 'acknowledge' | 'archive' | 'reopen') => action.run(async () => {
+    const ticket = ++epoch.current;
+    const result = await api.reviewComparison(row, decision);
+    if (alive.current && ticket === epoch.current) { if (record?.id === row.id) setRecord(result); records.reload(); }
+  }, '仅更新比较审核记录，不修改作品。');
+  return <section aria-label="原版本语义比较" className="experimental-section">
+    {requestedJobId && <StatusMessage>定位原版本模型任务：{requestedJobId}，仅读取原记录。</StatusMessage>}{targetError && <StatusMessage tone="warning">{targetError}</StatusMessage>}
+    <ResourceState loading={versions.loading} error={versions.error} />
+    <div className="experimental-grid">{(['before', 'after'] as const).map(side => <Field key={side} label={side === 'before' ? '比较版本 A' : '比较版本 B'}><select value={side === 'before' ? before : after} disabled={action.busy} onChange={e => { invalidate(); (side === 'before' ? setBefore : setAfter)(e.target.value); }}><option value="">选择原历史版本</option>{versions.data?.items.map(row => <option key={row.version} value={row.version}>v{row.version}{row.current ? ' 当前' : ''}</option>)}</select></Field>)}</div>
+    <div className="experimental-actions"><Button disabled={!fresh || action.busy || !before || !after || before === after} onClick={load}>预览原版本对比</Button><Button disabled={action.busy} onClick={() => { invalidate(); openedJob.current = ''; setTargetError(''); versions.reload(); records.reload(); }}>刷新原版本与比较记录</Button></div>
+    {action.feedback}
+    {record?.stale && <StatusMessage tone="warning">原版本或隐私状态已改变，旧证据和解读已隐藏。请重新选择版本比较。</StatusMessage>}
+    {view && <><StatusMessage>确定性文字差异 · {view.diff_method}。自动语义解释需另外明确请求。下方作者 / 导入解释与实际模型任务分开显示；不会自动生成事实或概率。</StatusMessage><div className="experimental-grid"><details><summary>版本 A 原文（按 Unicode 字符计数）</summary><p className="writing-reference-text">{view.before_text}</p></details><details><summary>版本 B 原文（按 Unicode 字符计数）</summary><p className="writing-reference-text">{view.after_text}</p></details></div><div aria-label="原版本文字差异">{view.diff?.filter(part => part.kind !== 'equal').map((part, i) => <article className="experimental-record" key={i}><Badge>{part.kind}</Badge><p>之前：{part.before || '（空）'}</p><p>之后：{part.after || '（空）'}</p></article>)}</div>
+      <Field label="版本比较名称"><input value={title} maxLength={160} disabled={!editable || action.busy} onChange={e => setTitle(e.target.value)} /></Field>
+      {changes.map((item, index) => <fieldset key={index} disabled={!editable || action.busy} className="experimental-form"><legend>语义解释 {index + 1}</legend><div className="experimental-grid"><Field label={`解释 ${index + 1} 类别`}><select value={item.kind} onChange={e => update(index, {kind: e.target.value})}>{Object.entries(semanticKinds).map(([kind, label]) => <option key={kind} value={kind}>{label}</option>)}</select></Field><Field label={`解释 ${index + 1} 来源`}><select value={item.source} onChange={e => update(index, {source: e.target.value as SemanticChange['source'], model_identity: null})}><option value="AUTHOR_NOTE">作者解读</option><option value="IMPORTED_MODEL_ASSESSMENT">Model-derived（导入，来源未验证）</option></select></Field></div>{item.source === 'IMPORTED_MODEL_ASSESSMENT' && <><StatusMessage tone="warning">Model-derived：这是导入的模型意见，模型身份为用户声明；没有调用或验证该模型。</StatusMessage><Field label={`解释 ${index + 1} 声明模型`}><input value={item.model_identity || ''} maxLength={160} onChange={e => update(index, {model_identity: e.target.value || null})} /></Field></>}
+      <Field label={`解释 ${index + 1} 判断`}><textarea value={item.explanation} maxLength={2000} onChange={e => update(index, {explanation: e.target.value})} /></Field>
+      {(['before', 'after'] as const).map(side => <div key={side} className="experimental-grid"><Field label={`解释 ${index + 1} ${side === 'before' ? 'A' : 'B'} 原文证据`}><textarea value={item[`${side}_quote`]} maxLength={4000} onChange={e => update(index, {[`${side}_quote`]: e.target.value})} /></Field><Field label={`解释 ${index + 1} ${side === 'before' ? 'A' : 'B'} 起始字符`}><input type="number" min={0} step={1} value={item[`${side}_start`]} onChange={e => update(index, {[`${side}_start`]: Number(e.target.value)})} /></Field></div>)}<p>事实增加只填 B；事实删除只填 A；其他类别必须提供两侧原文及准确 Unicode 字符起点。</p><Button onClick={() => setChanges(old => old.filter((_, i) => i !== index))}>移除解释 {index + 1}</Button></fieldset>)}
+      <div className="experimental-actions"><Button disabled={!editable || action.busy || changes.length >= 50} onClick={() => setChanges(old => [...old, {kind: 'FACT_ADDED', explanation: '', before_quote: '', before_start: 0, after_quote: '', after_start: 0, source: 'AUTHOR_NOTE', model_identity: null}])}>添加有证据的语义解释</Button><Button disabled={!editable || action.busy || !title.trim()} onClick={save}>保存版本比较与解释</Button></div>
+      {record?.history && <details><summary>比较记录版本历史</summary>{record.history.map(row => <p key={row.version}>v{row.version} · {row.status} · {row.title}</p>)}</details>}
+    </>}
+    {record && <RevisionComparisonModelPanel key={record.id} api={api} row={record} onChanged={value => { setRecord(value); records.reload(); }} />}
+    <h4>已保存的版本比较</h4><ResourceState loading={records.loading} error={records.error} empty={!records.data?.items.length} />{!records.loading && !records.error && records.data?.items.filter(row => row.comparison?.chapter_id === chapter.id).map(row => <article className="experimental-record" key={row.id}><strong>{row.title}</strong><p>{row.status} · v{row.version} · 原版本 {row.comparison.before_version} → {row.comparison.after_version}</p>{row.stale && <StatusMessage tone="warning">来源不可用</StatusMessage>}<div className="experimental-actions"><Button disabled={action.busy || row.stale} onClick={() => open(row.id)}>打开此版本比较</Button>{row.status === 'REVIEW' && <Button disabled={action.busy || row.stale} onClick={() => review(row, 'acknowledge')}>确认已读解读</Button>}{row.status !== 'ARCHIVED' && <Button disabled={action.busy} onClick={() => review(row, 'archive')}>归档此比较</Button>}{['ACKNOWLEDGED', 'ARCHIVED'].includes(row.status) && <Button disabled={action.busy || row.stale} onClick={() => review(row, 'reopen')}>重新审核此比较</Button>}</div></article>)}
   </section>;
 }

@@ -2,18 +2,21 @@ import { useEffect, useRef, useState } from 'react';
 import { Badge, Button, StatusMessage } from '../ui/primitives';
 import { Field, ResourceState, useAction, useResource } from './shared';
 import { multilingualEditionsClient, type EditionSegment, type LanguageEdition, type TranslationRun } from './multilingualEditionsClient';
-type Props = { api: ReturnType<typeof multilingualEditionsClient>; edition: LanguageEdition; segment: EditionSegment; blocked: boolean; perform: (operation: () => Promise<LanguageEdition>, message: string) => void };
+type Props = { requestedJobId?: string; api: ReturnType<typeof multilingualEditionsClient>; edition: LanguageEdition; segment: EditionSegment; blocked: boolean; perform: (operation: () => Promise<LanguageEdition>, message: string) => void };
 export function LanguageTranslationPanel(props: Props) {
   const [open, setOpen] = useState(false);
   return <section className="experimental-section" aria-label="本段模型翻译">
-    <Button disabled={props.blocked} aria-expanded={open} onClick={() => setOpen(value => !value)}>{open ? '收起本段模型翻译' : '打开本段模型翻译'}</Button>
-    {open && <TranslationBody {...props} />}
+    <Button disabled={props.blocked} aria-expanded={!!props.requestedJobId || open} onClick={() => setOpen(value => !value)}>{props.requestedJobId || open ? '收起本段模型翻译' : '打开本段模型翻译'}</Button>
+    {(props.requestedJobId || open) && <TranslationBody {...props} />}
   </section>;
 }
-function TranslationBody({ api, edition, segment, blocked, perform }: Props) {
+function TranslationBody({ api, edition, segment, blocked, perform, requestedJobId }: Props) {
   const routes = useResource(signal => api.translationRoutes(signal), [api]);
-  const runs = useResource(signal => api.translationRuns(edition, signal), [api, edition.id, edition.version]);
-  const [route, setRoute] = useState(''), [synthetic, setSynthetic] = useState(false), [run, setRun] = useState<TranslationRun>();
+  const runs = useResource(async signal => ({ ...(await api.translationRuns(edition, signal)), requestedJobId }), [api, edition.id, edition.version, requestedJobId]);
+  const [route, setRoute] = useState(''), [synthetic, setSynthetic] = useState(false), [browsedRun, setRun] = useState<TranslationRun>();
+  const matches = requestedJobId && !runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId
+    ? (runs.data?.items || []).filter(item => item.execution?.job_id === requestedJobId && item.segment_id === segment.id && item.edition_id === edition.id) : [];
+  const run = requestedJobId ? matches.length === 1 ? matches[0] : undefined : browsedRun;
   const [consent, setConsent] = useState(false), [adopt, setAdopt] = useState(false);
   const action = useAction(); const alive = useRef(true), epoch = useRef(0);
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
@@ -28,13 +31,14 @@ function TranslationBody({ api, edition, segment, blocked, perform }: Props) {
   const canAdopt = !!run?.candidate && run.status === 'CANDIDATE' && !run.content_withheld && run.edition_version === edition.version;
   return <>
     <p>仅翻译所选已保存段落，附带本版本批准的术语、别名与风格。LOCAL_ONLY，费用预留必须明确为 USD 0。输出是未审核候选，采用后仍需逐段审核。</p>
+    {requestedJobId && !runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId && !run && <StatusMessage tone="warning">原模型任务在此段落的当前回执中不可用，不会显示其他候选。</StatusMessage>}
     <ResourceState loading={routes.loading} error={routes.error} empty={!routes.data?.items.length} />
     {routes.error && <StatusMessage tone="warning">模型功能、主机身份或配置不可用。手工双语编辑仍可使用；不会发送模型请求。</StatusMessage>}
     <Field label="本段翻译本地模型路线"><select value={route} disabled={disabled || routes.loading} onChange={e => { setRoute(e.target.value); setRun(undefined); }}><option value="">选择已注册路线</option>{routes.data?.items.map(item => <option key={item.route_id} value={item.route_id} disabled={!item.available}>{item.display_name} · {item.provider_id}/{item.model_id}{item.synthetic ? ' · 合成协议测试' : ''}{item.available ? '' : ` · ${item.reasons.join('、')}`}</option>)}</select></Field>
     {selectedRoute?.synthetic && <label className="experimental-check"><input type="checkbox" checked={synthetic} disabled={disabled} onChange={e => { setSynthetic(e.target.checked); setRun(undefined); }} />允许合成协议测试路线，不代表真实翻译质量</label>}
     <div className="experimental-actions"><Button disabled={disabled || !selectedRoute?.available || (selectedRoute.synthetic && !synthetic)} onClick={() => execute(() => api.translationPreview(edition, segment, route, synthetic), '已生成本段精确请求，尚未调用模型。')}>预览本段翻译请求与费用</Button><Button disabled={disabled || routes.loading} onClick={routes.reload}>刷新翻译路线</Button><Button disabled={disabled || runs.loading} onClick={runs.reload}>找回本段翻译任务</Button></div>
     <ResourceState loading={runs.loading} error={runs.error} empty={!runs.data?.items.filter(item => item.segment_id === segment.id).length} />
-    {runs.data?.items.filter(item => item.segment_id === segment.id).map(item => <Button key={item.id} disabled={disabled} aria-pressed={run?.id === item.id} onClick={() => { epoch.current++; update(item); }}>翻译任务 {item.id.slice(0, 8)} · {item.status}{item.stale ? ' · 已过期' : ''}</Button>)}
+    {runs.data?.items.filter(item => item.segment_id === segment.id && (!requestedJobId || item.execution?.job_id === requestedJobId)).map(item => <Button key={item.id} disabled={disabled} aria-pressed={run?.id === item.id} onClick={() => { epoch.current++; update(item); }}>翻译任务 {item.id.slice(0, 8)} · {item.status}{item.stale ? ' · 已过期' : ''}</Button>)}
     {runs.data?.truncated && <p>仅显示最近 50 个任务。</p>}
     {run && <section aria-label="本段翻译任务详情"><Badge>状态 {run.status}</Badge><p>任务 {run.id} · 绑定语言版本 v{run.edition_version} · 语言质量 NOT_RUN</p>
       {run.content_withheld && <StatusMessage tone="warning">来源、语言版本、路线或执行身份已变化。候选内容停止展示与采用；不会自动重试。</StatusMessage>}

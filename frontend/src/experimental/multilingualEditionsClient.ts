@@ -1,7 +1,7 @@
 import type { ExperimentalClient } from './api';
 export type TermIssue = { code: string; rule_id?: string; term?: string; expected?: string; found?: string };
 export type EditionSegment = { id: string; chapter_id: string; source_version: number; path: number[]; from_pos: number; to_pos: number; source_text: string; target_text: string; note: string; status: 'DRAFT' | 'REVIEW' | 'ACCEPTED' | 'REJECTED'; issues: TermIssue[] };
-export type TermRule = { id: string; version: number; source_term: string; source_aliases: string[]; preferred: string; target_aliases: string[]; forbidden: string[]; strategy: 'meaning' | 'transliteration' | 'preserve'; category: 'term' | 'character' | 'title'; match: 'substring' | 'word'; status: 'DRAFT' | 'APPROVED' | 'REVOKED'; note: string; reviewed_by?: string; reviewed_at?: string };
+export type TermRule = { id: string; version: number; source_term: string; source_aliases: string[]; preferred: string; target_aliases: string[]; forbidden: string[]; strategy: 'meaning' | 'transliteration' | 'preserve'; category: 'term' | 'character' | 'title' | 'place' | 'world'; locked?: boolean; match: 'substring' | 'word'; status: 'DRAFT' | 'APPROVED' | 'REVOKED'; note: string; reviewed_by?: string; reviewed_at?: string };
 export type EditionChecks = { missing: string[]; pending: string[]; terminology: TermIssue[]; aligned: boolean; can_export: boolean };
 export type LanguageEdition = { id: string; version: number; status: string; title?: string; source_language?: string; target_language: string; direction: 'ltr' | 'rtl'; font?: 'serif' | 'sans-serif' | 'monospace'; style_note?: string; stale: boolean; content_withheld: boolean; segments?: EditionSegment[]; archived_segments?: { chapter_id: string; source_version: number; path: number[]; target_text: string; note: string }[]; rules?: TermRule[]; term_revision?: number; checks?: EditionChecks; segment_count?: number };
 export type EditionCatalog = { chapters: { id: string; title: string; version: number }[]; branch_sources_available: boolean; translation: { available: boolean; reason: string; execution_authorized?: false; model_called: false } };
@@ -17,6 +17,8 @@ export type TranslationRun = { id: string; version: number; status: string; edit
     broker: { id: string; version: number; budget_version: number; chosen: null | (TranslationRoute & { price: Record<string, unknown> }); candidates: (TranslationRoute & { reasons: string[] })[] } };
   execution: null | { job_id: string; reservation_id: string | null; receipt_state: string; model_called: boolean; usage_state: string; failure_code?: string; accounting: null | { status: string; cost_state: string; actual_microusd: number | null } };
   candidate: null | { text: string; digest: string; job_id: string; request_digest: string; applied: false; quality_verification: string } };
+export type TranslationMemoryCandidate = { source_edition_id: string; source_edition_version: number; source_segment_id: string; source_chapter_id: string; source_version: number; source_digest: string; target_text: string; target_digest: string; style_matches: boolean; issues: TermIssue[]; can_adopt: boolean; preview_digest: string; match: string };
+export type TranslationRevision = { version: number; target_text: string; note: string; status: string; preview_digest: string };
 export function multilingualEditionsClient(client: ExperimentalClient) {
   const base = '/language-editions'; const item = (e: LanguageEdition) => `${base}/${encodeURIComponent(e.id)}`;
   return {
@@ -25,6 +27,10 @@ export function multilingualEditionsClient(client: ExperimentalClient) {
     translationPreview: (e: LanguageEdition, s: EditionSegment, route_id: string, allow_synthetic: boolean) => client.post<TranslationRun>(`${item(e)}/segments/${encodeURIComponent(s.id)}/translation-preview`, { expected_version: e.version, route_id, allow_synthetic }),
     translationAction: (e: LanguageEdition, r: TranslationRun, action: 'dispatch' | 'refresh' | 'cancel') => client.post<TranslationRun>(`${item(e)}/translations/${encodeURIComponent(r.id)}/${action}`, { expected_version: r.version, ...(action === 'dispatch' ? { reviewed_preview_digest: r.preview!.preview_digest } : {}) }),
     translationAdopt: (e: LanguageEdition, r: TranslationRun) => client.post<LanguageEdition>(`${item(e)}/translations/${encodeURIComponent(r.id)}/adopt`, { expected_version: r.version, expected_edition_version: e.version, candidate_digest: r.candidate!.digest }),
+    memory: (e: LanguageEdition, s: EditionSegment) => client.post<{ items: TranslationMemoryCandidate[]; truncated: boolean }>(`${item(e)}/segments/${encodeURIComponent(s.id)}/memory`, { expected_version: e.version }),
+    adoptMemory: (e: LanguageEdition, s: EditionSegment, c: TranslationMemoryCandidate) => client.post<LanguageEdition>(`${item(e)}/segments/${encodeURIComponent(s.id)}/memory-adopt`, { expected_version: e.version, source_edition_id: c.source_edition_id, source_segment_id: c.source_segment_id, preview_digest: c.preview_digest }),
+    segmentHistory: (e: LanguageEdition, s: EditionSegment) => client.post<{ items: TranslationRevision[]; truncated: boolean }>(`${item(e)}/segments/${encodeURIComponent(s.id)}/history`, { expected_version: e.version }),
+    restoreSegment: (e: LanguageEdition, s: EditionSegment, r: TranslationRevision) => client.post<LanguageEdition>(`${item(e)}/segments/${encodeURIComponent(s.id)}/restore`, { expected_version: e.version, restore_version: r.version, preview_digest: r.preview_digest }),
     catalog: (signal?: AbortSignal) => client.get<EditionCatalog>(base + '/catalog', signal),
     list: (signal?: AbortSignal) => client.get<{ items: LanguageEdition[]; truncated: boolean }>(base, signal),
     get: (e: LanguageEdition) => client.get<LanguageEdition>(item(e)),
@@ -33,7 +39,7 @@ export function multilingualEditionsClient(client: ExperimentalClient) {
     preview: (e: LanguageEdition, s: EditionSegment) => client.post<SegmentPreview>(`${item(e)}/segments/${encodeURIComponent(s.id)}/preview`, { expected_version: e.version }),
     review: (e: LanguageEdition, s: EditionSegment, action: 'submit' | 'accept' | 'reject' | 'reopen', preview?: SegmentPreview) => client.post<LanguageEdition>(`${item(e)}/segments/${encodeURIComponent(s.id)}/review`, { expected_version: e.version, action, ...(preview ? { preview_digest: preview.preview_digest } : {}) }),
     addRule: (e: LanguageEdition, rule: TermInput) => client.post<LanguageEdition>(item(e) + '/rules', { expected_version: e.version, ...rule }),
-    ruleReview: (e: LanguageEdition, rule: TermRule, action: 'approve' | 'revoke') => client.post<LanguageEdition>(`${item(e)}/rules/${encodeURIComponent(rule.id)}/review`, { expected_version: e.version, action }),
+    ruleReview: (e: LanguageEdition, rule: TermRule, action: 'approve' | 'revoke' | 'lock' | 'unlock') => client.post<LanguageEdition>(`${item(e)}/rules/${encodeURIComponent(rule.id)}/review`, { expected_version: e.version, action }),
     refreshPreview: (e: LanguageEdition) => client.post<AlignmentPreview>(item(e) + '/refresh-preview', { expected_version: e.version }),
     refresh: (e: LanguageEdition, preview: AlignmentPreview) => client.post<LanguageEdition>(item(e) + '/refresh', { expected_version: e.version, preview_digest: preview.preview_digest }),
     exportPreview: (e: LanguageEdition, format: string) => client.post<EditionExportPreview>(item(e) + '/export-preview', { expected_version: e.version, format }),

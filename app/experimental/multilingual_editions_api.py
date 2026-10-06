@@ -3,7 +3,7 @@ from fastapi import APIRouter, Header, HTTPException, Request, Response
 from pydantic import ValidationError
 
 from .common import api_call
-from .multilingual_editions import FEATURE, EditionIn, VersionIn, SegmentIn, ReviewIn, RuleIn, RuleReviewIn, RefreshIn, ExportIn
+from .multilingual_editions import FEATURE, EditionIn, VersionIn, SegmentIn, ReviewIn, RuleIn, RuleReviewIn, RefreshIn, ExportIn, MemoryAdoptIn, RestoreSegmentIn
 
 
 def create_multilingual_editions_router(service, authorize, require_flag, *, preparer=None, broker=None, manager=None, require_host_session=None):
@@ -126,5 +126,14 @@ def create_multilingual_editions_router(service, authorize, require_flag, *, pre
         if action not in models: raise HTTPException(404, {'code': 'TRANSLATION_ACTION_NOT_FOUND'})
         data = await body(request, models[action]); ctx, check = translation_access(nid, x_session_token, x_branch_id, response)
         result = api_call(getattr(service.translation_coordinator, action), ctx, eid, rid, data, check); check(); return result
+
+    @router.post('/{eid}/segments/{sid}/{action}')
+    async def segment_memory_history(nid: str, eid: str, sid: str, action: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actions = {'memory': (VersionIn, 'translation_memory'), 'memory-adopt': (MemoryAdoptIn, 'adopt_memory'),
+                   'history': (VersionIn, 'segment_history'), 'restore': (RestoreSegmentIn, 'restore_segment')}
+        if action not in actions: raise HTTPException(404, {'code': 'LANGUAGE_EDITION_ACTION_NOT_FOUND'})
+        model, method = actions[action]; data = await body(request, model)
+        actor, scope, again = access(nid, x_session_token, x_branch_id, response)
+        result = api_call(getattr(service, method), nid, scope, actor, eid, sid, data, reauthorize=again); again(); return result
 
     return router

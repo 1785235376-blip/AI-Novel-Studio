@@ -1,0 +1,138 @@
+{
+  "scope": [
+    "U08",
+    "U03",
+    "U07",
+    "A02_OWNER_NAVIGATION",
+    "A11_OWNER_NAVIGATION"
+  ],
+  "status": "IMPLEMENTED_FRESH_FOCUSED_TESTS_PASS_HOSTED_PG_BROWSER_PENDING",
+  "baseline": "bdb735f798f1441f1424bba313c9d50d010efcac",
+  "source_context": "Recovered canonical checkout, follow-on working tree. No pre-reset verification reused. Checkpoint publication is tracked separately.",
+  "deltas": {
+    "U08": [
+      "Original Chapter/Canon/StoryGraph/Research pointers in existing request scope",
+      "Explicit catalogue, pin/include/exclude/budget/remove controls with exact request preview",
+      "Current owner source resolution at preview and final dispatch",
+      "Source/privacy/flag revocation withholds persisted output and prevents authority downgrade",
+      "Historical unversioned Canon compatibility and bounded Research paragraph search"
+    ],
+    "U03": "See search refinement handoff and existing owner integrations",
+    "U07": "Original A02/A11 job pointers and revision original chapter mapping"
+  },
+  "boundaries": [
+    "Branch Chapter additions unavailable without original branch manuscript adapter",
+    "StoryGraph raw records preserve original domain.write authority",
+    "Research always LOCAL_ONLY, no Canon promotion",
+    "Character-only author mode rejects additions",
+    "No local browser retry; hosted browser and real PG pending",
+    "No real models/GPU/paid cloud/manuscripts"
+  ],
+  "files": [
+    {
+      "path": "app/author_context_sources.py",
+      "sha256": "34cc3c1d2d5b6ede9bc377b0027a29ae86a94cd3a520e083141caa8b7586885f",
+      "shared": false
+    },
+    {
+      "path": "app/author_request.py",
+      "sha256": "149bfc12f5d76ad10151a24e046316070f4bd591609dd4ba02d131fa8b1e4e04",
+      "shared": false
+    },
+    {
+      "path": "app/experimental/author_context_api.py",
+      "sha256": "f95adb84bcd4d0adf1f98435410a0f804034f6e37202c86bdeea8d4295220917",
+      "shared": true
+    },
+    {
+      "path": "app/jobs.py",
+      "sha256": "fa40582e8d3ecc0efc93ae67a8aae7b2a2b36f72c0a0cf166ac6399bd3ea12a8",
+      "shared": true
+    },
+    {
+      "path": "app/experimental/api.py",
+      "sha256": "de7806403a1fbcce7cc6c10adc71d0b6bfe73ee778310f8aab58764e8f6d73e0",
+      "shared": true
+    },
+    {
+      "path": "app/experimental/ux.py",
+      "sha256": "fb320a7b875c6f11bb6f03920dd9d6683e51d98638a56055303fe41fb5880710",
+      "shared": true
+    },
+    {
+      "path": "frontend/src/novel/AiWritingPanel.tsx",
+      "sha256": "f4022a242802d2a64dffbcd5f469181d6215dd0dc7663048d9c424c476f1d38c",
+      "shared": false
+    },
+    {
+      "path": "frontend/src/novel/authorContextClient.ts",
+      "sha256": "0588eb11f034540b70b99b7bead32d0fd6da466f54f95d5cbcc37040f8668a1a",
+      "shared": false
+    },
+    {
+      "path": "frontend/src/novel/AuthorSourceItems.tsx",
+      "sha256": "1b18a0d8b5bccdeb64b290b291b9abba14eecc5b7f73b687933c39ce94a73170",
+      "shared": false
+    },
+    {
+      "path": "frontend/src/novel/AuthorRequestPreviewPanel.tsx",
+      "sha256": "c7f8802574bddf7a3e9109764474bd3e1a1b6b291a5f2413a0ae66c8940aee6f",
+      "shared": false
+    },
+    {
+      "path": "frontend/src/novel/AuthorRequestControls.tsx",
+      "sha256": "6176176fcefa40a7925368c91557ead4a19ee2cbb396630b614c396ed6919520",
+      "shared": false
+    },
+    {
+      "path": "frontend/src/novel/AuthorSourcePicker.test.tsx",
+      "sha256": "642be3aab371721b7ada731d91b4201648478a32d7a4115a0503178b5fa6647f",
+      "shared": false
+    },
+    {
+      "path": "tests/test_post_interop_author_added_sources.py",
+      "sha256": "3bbe262f4c70a914dfa34bdf66a35ba8cdf14232f641343b2f5eda4b12c91379",
+      "shared": false
+    },
+    {
+      "path": "tests/test_post_interop_workspace_ux.py",
+      "sha256": "ada95c114e397bb643f1082a31aef3230315e349818ab5069a6f6520e2d16f9b",
+      "shared": false
+    },
+    {
+      "path": "frontend/tests/e2e/r4-author-added-sources.spec.ts",
+      "sha256": "f6b386842fe2f0029a3724d1c0e0e33dbfef6a9b7a8b2f110c929408e5d53a91",
+      "shared": false
+    }
+  ],
+  "verification": [
+    {
+      "command": "../interop-test-venv/bin/python -m pytest -q tests/test_post_interop_author_added_sources.py tests/test_r4_author_source_items.py tests/test_r4_author_source_items_mounted.py tests/test_r4_author_context.py tests/test_r4_author_scope_variants.py tests/test_r4_author_scope_variants_mounted.py tests/test_r4_character_author_context.py tests/test_post_interop_workspace_ux.py -m 'not postgres_backend_only' --tb=short",
+      "result": "171 passed, 99 deselected, no skips"
+    },
+    {
+      "command": "frontend/node_modules/.bin/tsc -b frontend",
+      "result": "PASS"
+    },
+    {
+      "command": "frontend/node_modules/.bin/vitest run [from frontend] src/novel/AuthorSourcePicker.test.tsx src/novel/AuthorSourceItems.test.tsx src/novel/AuthorRequestPreviewPanel.test.tsx src/novel/AuthorRequestControls.test.tsx src/novel/AiWritingPanel.test.tsx src/novel/CharacterAuthorPanel.test.tsx",
+      "result": "37 passed, 6 files"
+    },
+    {
+      "command": "node scripts/check_ui_design_tokens.mjs",
+      "result": "PASS, 42 configured files"
+    },
+    {
+      "command": "frontend/node_modules/.bin/playwright test --config playwright.r4.config.ts r4-author-added-sources.spec.ts --list [from frontend]",
+      "result": "1 test collected, NOT_EXECUTED"
+    }
+  ],
+  "integration": [
+    "Shared experimental/api.py only native-source assignment/import and extended-source readers update belong to this refinement",
+    "Shared jobs.py narrow resolver/transient/request-source gates; preserve root A02/A11 mappings",
+    "Shared author_context_api.py scope/catalogue/resolver additions; preserve scene_author",
+    "Parent Workbench guarded original owner target props; search helper owns App/owner narrow target resolution",
+    "Parent stages and publishes exact source; expand hosted strict manifests"
+  ],
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts."
+}

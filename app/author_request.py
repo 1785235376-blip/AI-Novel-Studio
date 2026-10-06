@@ -20,7 +20,8 @@ def author_source(job, chapter):
 
 def automatic_context_allowed(job):
     scope = getattr(job, "request_scope", None) or {}
-    return scope.get("source_mode", "AUTO") == "AUTO" and scope.get("include_automatic_context", True)
+    return (scope.get("source_mode", "AUTO") == "AUTO" and scope.get("include_automatic_context", True)
+            and not any(not ref.get("include", True) for ref in (scope.get("added_sources") or [])))
 
 
 AUTHOR_ROLES = {"continue": "writer", "rewrite": "writer", "polish": "editor", "brainstorm": "plot_planner", "review": "continuity_reviewer"}
@@ -40,7 +41,14 @@ def build_author_request(job, route, chapter, context, dispatch_guard=None):
     else:
         style = f"\n写作风格要求：{job.style}" if job.style else ""
         source = author_source(job, chapter)
-        if not automatic_context_allowed(job): context = {}
+        if not automatic_context_allowed(job):
+            # NONE suppresses implicit manuscript/automatic context, while an
+            # explicitly added, freshly resolved source remains an independent
+            # author choice. Never trust an unbound context dictionary here.
+            context = ({"explicit_sources": context["explicit_sources"]}
+                       if (getattr(job, "request_scope", None) or {}).get("added_sources")
+                       and callable(getattr(job, "author_context_resolver", None))
+                       and "explicit_sources" in context else {})
     prompt = agent_runner.build_prompt(role, context, AUTHOR_TASKS[job.operation] + " " + job.instruction + style, source)
     return TextGenerationRequest(provider_id=route.provider, model_id=route.model, prompt=prompt, context=context,
                                  parameters=TextGenerationParameters(), metadata={"purpose": job.operation},

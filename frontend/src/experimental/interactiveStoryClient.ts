@@ -11,9 +11,12 @@ export type StoryPlay = { node: Omit<StoryNode, 'choices'>; character_name?: str
 export type StoryRefreshPreview = { preview_digest: string; retained_nodes: number; changed_source_count: number };
 export type StoryReviewPreview = { preview_digest: string; can_approve: boolean; analysis: StoryAnalysis };
 export type StoryExportPreview = { preview_digest: string; can_export: boolean; losses: string[]; target_runtime: string; media_manifest: { asset_id: string; missing: boolean; packaged: boolean; reason: string }[]; analysis: StoryAnalysis };
+export type StoryRevision = { version: number; status: string; spec: StorySpec; preview_digest: string };
 export function interactiveStoryClient(client: ExperimentalClient) {
   const base = '/interactive-stories', path = (row: InteractiveStory) => `${base}/${encodeURIComponent(row.id)}`;
   return {
+    history: (row: InteractiveStory) => client.post<{ items: StoryRevision[]; truncated: boolean }>(path(row) + '/history', { expected_version: row.version }),
+    restoreRevision: (row: InteractiveStory, revision: StoryRevision) => client.post<InteractiveStory>(path(row) + '/restore-revision', { expected_version: row.version, restore_version: revision.version, preview_digest: revision.preview_digest }),
     catalog: (signal?: AbortSignal) => client.get<StoryCatalog>(base + '/catalog', signal),
     list: (signal?: AbortSignal) => client.get<{ items: InteractiveStory[]; truncated: boolean }>(base, signal),
     get: (row: InteractiveStory) => client.get<InteractiveStory>(path(row)),

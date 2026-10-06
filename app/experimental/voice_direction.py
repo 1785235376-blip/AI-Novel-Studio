@@ -202,7 +202,7 @@ class DirectedAudiobookService(AudiobookV2Service):
                 profile_version=profile["version"] if profile else None, mapping_id=None, mapping_version=None,
                 attribution_status="NARRATION" if data.kind == "NARRATION" else "REVIEWED" if data.attribution_reviewed else "NEEDS_REVIEW",
                 emotion=data.emotion, direction=direction, direction_revision=segment.get("direction_revision", 0) + 1,
-                audio_asset_id=None, audio_source=None, duration_ms=None, timing_status="UNMEASURED")
+                audio_asset_id=None, audio_source=None, duration_ms=None, frame_timing=None, timing_status="UNMEASURED")
             self._timeline(row)
         return self.mutate(nid, scope, actor, self.PLANS, rid, data.expected_version, change)
 

@@ -75,10 +75,17 @@ class EvidenceImportInput(Strict):
         return self
 
 
+class EvidenceReviewInput(Strict):
+    expected_version: int = Field(ge=1)
+    reviewed_identity_and_outputs: Literal[True]
+    note: str = Field(min_length=1, max_length=500)
+
+
 class ModelBenchmarkService(DomainService):
     SETS = 'benchmark_sets_v2'
     RUNS = 'benchmark_runs_v2'
     EVIDENCE = 'benchmark_evidence_v2'
+    REVIEWS = 'benchmark_evidence_reviews_v2'
 
     def __init__(self, store, novels, chapters, *, broker, media=None):
         super().__init__(store, novels, chapters)
@@ -113,7 +120,72 @@ class ModelBenchmarkService(DomainService):
             row['evidence_state'] = 'HISTORICAL' if reasons else 'CURRENT'
             row['invalidation_reasons'] = reasons
             row['routing_eligible'] = not reasons and row['origin'] == 'EXECUTED'
+            row['evidence_tier'] = ('USER_SUPPLIED_UNVERIFIED' if row['origin'] != 'EXECUTED' else
+                'CONTRACT_TESTED' if row.get('verification') == 'SYNTHETIC_PROTOCOL_ONLY' else 'LOCALLY_BENCHMARKED')
         return sorted(rows, key=lambda r: r['created_at'], reverse=True)
+
+    def capability_profiles(self, nid, scope):
+        evidence = self.evidence(nid, scope)
+        reviews = self.list(nid, scope, self.REVIEWS)
+        profiles = []
+        for route in self.broker.candidates():
+            rows = [row for row in evidence if row['route_fingerprint'] == route['fingerprint'] and row['evidence_state'] == 'CURRENT']
+            measured = [row for row in rows if row['origin'] == 'EXECUTED']
+            identity = route['identity']
+            tiers = ['CATALOG_CLAIM']
+            if identity.get('source_locality') == 'LOCAL_VERIFIED' and not route['synthetic']: tiers.append('DETECTED')
+            for row in measured:
+                if row['evidence_tier'] not in tiers: tiers.append(row['evidence_tier'])
+            runtime_version = identity.get('runtime_version')
+            runtime_known = bool(runtime_version and runtime_version != 'provider-api-version-unreported' and not route['synthetic'])
+            reviewed = [review for review in reviews if any(review['evidence_id'] == row['id'] and review['evidence_version'] == row['version'] for row in measured)]
+            if reviewed: tiers.append('USER_VERIFIED')
+            profiles.append({'route_id': route['route_id'], 'provider_id': route['provider_id'], 'model_id': route['model_id'],
+                'fingerprint': route['fingerprint'], 'available': route['available'], 'evidence_tiers': tiers,
+                'synthetic': route['synthetic'], 'user_verified': bool(reviewed),
+                'user_verification_scope': 'EXACT_SAVED_OUTPUTS_ONLY_NOT_GLOBAL_QUALITY',
+                'user_review_ids': [review['id'] for review in reviewed],
+                'context': {'value': route['context_window'], 'tier': 'CATALOG_CLAIM'},
+                'runtime': {'value': runtime_version if runtime_known else None, 'tier': 'DETECTED' if runtime_known else 'NOT_MEASURED'},
+                'modality': {'value': route['capability'], 'tier': 'CATALOG_CLAIM'},
+                'measurements': [{'evidence_id': row['id'], 'tier': row['evidence_tier'], 'metrics': copy.deepcopy(row['metrics'])} for row in measured],
+                'throughput': None, 'memory_usage': None, 'literary_quality': None,
+                'structured_output': 'ONLY_RECORDED_CASE_RULES', 'tool_support': 'NOT_EXECUTED',
+                'hardware_hash': identity.get('hardware_hash'), 'imported_evidence_ids': [row['id'] for row in rows if row['origin'] != 'EXECUTED']})
+        return {'items': profiles, 'catalog_is_measurement': False, 'automatic_benchmark': False}
+
+    def review_evidence(self, nid, scope, actor, rid, value, guard=lambda: None):
+        body = EvidenceReviewInput.model_validate(value)
+        evidence = next((row for row in self.evidence(nid, scope) if row['id'] == rid), None)
+        if not evidence or evidence['created_by'] != actor: raise FileNotFoundError(rid)
+        if evidence['origin'] != 'EXECUTED' or evidence['evidence_state'] != 'CURRENT':
+            raise ValueError('BENCHMARK_CURRENT_EXECUTED_EVIDENCE_REQUIRED')
+        check_version(evidence, body.expected_version)
+        run = self.get(nid, scope, self.RUNS, evidence['run_id'])
+        if run['status'] != 'COMPLETED': raise ValueError('BENCHMARK_COMPLETED_OUTPUT_REVIEW_REQUIRED')
+        key = digest([actor, rid, body.expected_version])
+        with self.store.transaction(nid, scope) as doc:
+            guard()
+            current = doc['collections'][self.EVIDENCE][rid]
+            check_version(current, body.expected_version)
+            if current['status'] == 'INVALIDATED': raise StaleSourceError('BENCHMARK_EVIDENCE_CHANGED')
+            latest_set = self.get(nid, scope, self.SETS, current['set_id'])
+            route = self.broker.current_route(current['route_id'])
+            if latest_set['version'] != current['set_version'] or self.set_hash(latest_set) != current['set_hash'] or not route['available'] or route['fingerprint'] != current['route_fingerprint']:
+                raise StaleSourceError('BENCHMARK_EVIDENCE_CHANGED')
+            rows = doc['collections'].setdefault(self.REVIEWS, {})
+            if key in rows:
+                if rows[key]['note'] != body.note: raise ValueError('BENCHMARK_REVIEW_ALREADY_RECORDED')
+                guard()
+                return copy.deepcopy(rows[key])
+            row = new_row(nid, scope, actor, {'evidence_id': rid, 'evidence_version': current['version'],
+                'route_fingerprint': current['route_fingerprint'], 'status': 'RECORDED', 'tier': 'USER_VERIFIED',
+                'note': body.note, 'scope_of_verification': 'EXACT_SAVED_OUTPUTS_ONLY_NOT_GLOBAL_QUALITY',
+                'quality_score': None, 'routing_weight': None,
+                'synthetic': current['verification'] == 'SYNTHETIC_PROTOCOL_ONLY'})
+            row['id'] = key; rows[key] = row
+            guard()
+            return copy.deepcopy(row)
 
     def import_evidence(self, nid, scope, actor, value):
         body = EvidenceImportInput.model_validate(value)

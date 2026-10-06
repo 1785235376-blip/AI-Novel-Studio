@@ -13,7 +13,8 @@ from uuid import uuid4
 
 from pydantic import Field
 from ..privacy import merge_privacy
-from .common import StaleSourceError, check_version, new_row
+from ..services.v1_capability_service import CapabilityVersionConflict
+from .common import StaleSourceError, check_version, new_row, now
 from .planning import StrictModel, digest
 from .project_forks import ProjectForksService, VersionIn, ConfirmIn, CompareIn, ApplyIn, advance
 from .store import canonical
@@ -97,6 +98,41 @@ def content(row):
 
 
 def live(row): return row is not None and row.get('status') != 'ARCHIVED'
+
+
+# Shared Universe is an immutable sharing extension of these original owners.
+# It is not another Canon, project registry, manuscript, permission or task store.
+UNIVERSE_KINDS = {'HISTORY': 'timeline', 'CIVILIZATION': 'organization', 'ABILITY': 'rule', 'GEOGRAPHY': 'geography'}
+
+
+class UniverseSelection(StrictModel):
+    key: str = Field(min_length=1, max_length=240)
+    source_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
+
+
+class UniverseSnapshotIn(StrictModel):
+    universe_key: str = Field(pattern=r'^[A-Za-z0-9][A-Za-z0-9_.-]{0,79}$')
+    title: str = Field(min_length=1, max_length=160)
+    records: list[UniverseSelection] = Field(min_length=1, max_length=60)
+    license: str = Field(min_length=1, max_length=240)
+    allow_local_copy: Literal[True]
+
+
+class UniverseSnapshotConfirm(UniverseSnapshotIn):
+    preview_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
+    request_id: str = Field(pattern=r'^[A-Za-z0-9_-]{1,100}$')
+
+
+class UniversePinIn(StrictModel):
+    snapshot_id: str = Field(min_length=1, max_length=160)
+    target_project_id: str = Field(min_length=1, max_length=160)
+    role: Literal['MAIN_NOVEL', 'SEQUEL', 'PREQUEL', 'SIDE_STORY']
+    expected_version: int = Field(ge=0)
+
+
+class UniversePinConfirm(UniversePinIn):
+    preview_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
+    confirmed: Literal[True]
 
 
 class StructuredForksService(ProjectForksService):
@@ -406,3 +442,288 @@ class StructuredForksService(ProjectForksService):
             reauthorize(); state['collections'][self.MERGES][plan['id']] = plan
             advance(current, ctx.actor, current['version'], lambda r: r.update(active_merge=plan['id']))
         return self._execute_records(ctx, row, plan, reauthorize, target_authorize)
+
+    # These metadata collections live beside the original fork receipts. Only
+    # snapshot creation and explicit pin transitions write them.
+    UNIVERSE_SNAPSHOTS = 'structured_universe_snapshots_v1'
+    UNIVERSE_PINS = 'structured_universe_pins_v1'
+
+    @staticmethod
+    def _universe_visibility(row):
+        if row is None or row.get('status') == 'ARCHIVED' or row.get('hidden') or row.get('secret') or str(row.get('visibility', '')).upper() in {'PRIVATE', 'SECRET', 'DENIED'}:
+            raise FileNotFoundError('universe source unavailable')
+        return {k: deepcopy(row.get(k)) for k in ('branch_id', 'visibility', 'privacy_level', 'privacy_state', 'privacy_status', 'hidden', 'secret')}
+
+    def _universe_read(self, ctx, key, *, fresh=False, _seen=None):
+        from .world import WorldService
+        from .planning import require_row
+        self._local(ctx); self.novels.get(ctx.novel_id)
+        if key.startswith('world:'):
+            rid = key[len('world:'):]
+            world = WorldService(self.store, self.novels, self.chapters)
+            state = self.store.read(ctx.novel_id, ctx.scope)
+            row = require_row(state, world.RECORDS, rid)
+            if row.get('research_sources') or row.get('kind') not in UNIVERSE_KINDS or row.get('status') != 'APPROVED':
+                raise FileNotFoundError('approved original world record unavailable')
+            if fresh: world._assert_fresh(ctx.novel_id, ctx.scope, row, state)
+            result = {k: deepcopy(v) for k, v in row.items() if k != 'history'}
+        else:
+            result = self._read(ctx, key)
+            if result is None: raise FileNotFoundError('original structured record unavailable')
+            supported(split(key)[0], result)
+        self._universe_visibility(result)
+        if fresh:
+            seen = set(_seen or ())
+            if key in seen or len(seen) >= 128: raise ValueError('UNIVERSE_SOURCE_REFERENCE_CYCLE_OR_LIMIT')
+            seen.add(key)
+            for ref in self._universe_refs(key, result): self._universe_read(ctx, ref, fresh=True, _seen=seen)
+            for cid in result.get('sources', {}): self._universe_chapter_policy(ctx, cid)
+        return result
+
+    def _universe_refs(self, key, row):
+        if key.startswith('world:'):
+            return sorted(set(row.get('entity_sources', {})) | {'world:' + rid for rid in row.get('semantic_sources', {})})
+        return sorted({kind + ':' + rid for _, kind, rid in references(split(key)[0], row)})
+
+    def _universe_chapter_policy(self, ctx, cid):
+        from ..source_privacy import source_privacy_status
+        chapter = self.chapters.get(cid)
+        if chapter.get('novel_id') != ctx.novel_id or chapter.get('branch_id') != ctx.scope.get('branch_id'):
+            raise FileNotFoundError('universe source chapter unavailable')
+        if cid not in {c['id'] for c in self.chapters.list(ctx.novel_id)}: raise FileNotFoundError('universe source chapter archived')
+        visible = self._universe_visibility(chapter)
+        policy = source_privacy_status(chapter, ctx.branch, self.store.root)
+        return {'visibility': visible, 'privacy_level': policy['privacy_level'],
+                'reviewed_by': policy.get('reviewed_by'), 'reviewed_at': policy.get('reviewed_at')}
+
+    def universe_catalog(self, ctx, target_authorize=lambda nid: None):
+        from .world import WorldService
+        self._local(ctx); catalog = self.catalog(ctx); rows = []
+        for item in catalog['records']:
+            if not item['supported']: continue
+            try: raw = self._universe_read(ctx, item['key'], fresh=True)
+            except (ValueError, FileNotFoundError): continue
+            rows.append({**item, 'references': self._universe_refs(item['key'], raw)})
+        world = WorldService(self.store, self.novels, self.chapters)
+        for raw in world.records(ctx.novel_id, ctx.scope):
+            if raw.get('kind') not in UNIVERSE_KINDS: continue
+            key = 'world:' + raw['id']
+            try: record = self._universe_read(ctx, key, fresh=True)
+            except (ValueError, FileNotFoundError): continue
+            rows.append({'key': key, 'kind': UNIVERSE_KINDS[raw['kind']], 'record_id': raw['id'], 'title': raw['title'],
+                         'source_digest': digest(record), 'version': raw['version'], 'references': self._universe_refs(key, record), 'supported': True})
+        projects = []
+        for project in self.novels.list()[:100]:
+            try: target_authorize(project['id']); current = self.novels.get(project['id'])
+            except Exception as exc:
+                if isinstance(exc, (FileNotFoundError, PermissionError)) or getattr(exc, 'status_code', None) in {403, 404}: continue
+                raise
+            projects.append({'id': current['id'], 'title': current.get('title', current['id'])})
+        return {'records': rows[:1000], 'projects': projects, 'truncated': len(rows) > 1000 or len(self.novels.list()) > 100,
+                'storage': 'IMMUTABLE_ORIGINAL_OWNER_SNAPSHOTS', 'automatic_repin': False, 'canon_write': False}
+
+    def _universe_capture(self, ctx, value):
+        baseline = {}; policies = {}; chapters = {}
+        if value.license.strip().upper() in {'UNKNOWN', 'UNSPECIFIED', 'NONE'}: raise ValueError('UNIVERSE_EXPLICIT_LOCAL_COPY_LICENSE_REQUIRED')
+        for selected in value.records:
+            if selected.key in baseline: raise ValueError('UNIVERSE_DUPLICATE_SOURCE')
+            raw = self._universe_read(ctx, selected.key, fresh=True)
+            if digest(raw) != selected.source_digest: raise StaleSourceError('UNIVERSE_SELECTED_SOURCE_CHANGED')
+            baseline[selected.key] = raw
+            policies[selected.key] = self._universe_visibility(raw)
+            for cid in raw.get('sources', {}): chapters[cid] = self._universe_chapter_policy(ctx, cid)
+        missing = sorted({ref for key, row in baseline.items() for ref in self._universe_refs(key, row) if ref not in baseline})
+        if missing: raise ValueError('UNIVERSE_SELECT_REFERENCED_RECORDS: ' + ', '.join(missing))
+        if len(canonical(baseline).encode()) > 2 * 1024 * 1024: raise ValueError('UNIVERSE_SNAPSHOT_SIZE_LIMIT')
+        return {'baseline': baseline, 'source_policies': policies, 'chapter_policies': chapters,
+                'project_policy': self._universe_visibility(self.novels.get(ctx.novel_id))}
+
+    def universe_preview(self, ctx, body, reauthorize=lambda: None):
+        value = UniverseSnapshotIn.model_validate(body); captured = self._universe_capture(ctx, value); reauthorize()
+        return {'preview_digest': digest([ctx.novel_id, ctx.scope, ctx.actor, value.model_dump(), captured]),
+                'universe_key': value.universe_key, 'title': value.title, 'record_count': len(captured['baseline']),
+                'source_records': [{'key': key, 'source_digest': digest(row), 'version': row.get('version')} for key, row in captured['baseline'].items()],
+                'writes': 'IMMUTABLE_SNAPSHOT_ONLY', 'automatic_repin': False, 'canon_write': False}
+
+    def create_universe_snapshot(self, ctx, body, reauthorize=lambda: None):
+        from .planning import collection
+        value = UniverseSnapshotConfirm.model_validate(body); request = UniverseSnapshotIn.model_validate(value.model_dump(exclude={'preview_digest', 'request_id'}))
+        self._local(ctx); reauthorize()
+        with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+            rows = collection(state, self.UNIVERSE_SNAPSHOTS)
+            previous = next((r for r in rows.values() if r['created_by'] == ctx.actor and r['request_id'] == value.request_id), None)
+            if previous:
+                if previous['request_digest'] != digest(value.model_dump()): raise ValueError('UNIVERSE_REQUEST_ID_REUSED')
+                result = self._universe_snapshot_view(ctx, previous); reauthorize(); return result
+            if len(rows) >= 200: raise ValueError('UNIVERSE_SNAPSHOT_LIMIT')
+            captured = self._universe_capture(ctx, request)
+            receipt = digest([ctx.novel_id, ctx.scope, ctx.actor, request.model_dump(), captured])
+            if receipt != value.preview_digest: raise StaleSourceError('UNIVERSE_SNAPSHOT_PREVIEW_CHANGED')
+            revision = max([r['snapshot_revision'] for r in rows.values() if r['created_by'] == ctx.actor and r['universe_key'] == value.universe_key] or [0]) + 1
+            row = new_row(ctx.novel_id, ctx.scope, ctx.actor, {'universe_key': value.universe_key, 'title': value.title,
+                'snapshot_revision': revision, 'snapshot_digest': digest(captured), 'license': value.license,
+                'license_verification': 'AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION', 'request_id': value.request_id,
+                'request_digest': digest(value.model_dump()), 'status': 'IMMUTABLE', **captured})
+            if self._universe_capture(ctx, request) != captured: raise StaleSourceError('UNIVERSE_SOURCE_CHANGED_DURING_SNAPSHOT')
+            reauthorize(); rows[row['id']] = row
+            result = self._universe_snapshot_view(ctx, row)
+            if result['content_withheld']: raise FileNotFoundError('universe snapshot source authority changed')
+            reauthorize(); return result
+
+    def _universe_snapshot_view(self, ctx, row):
+        safe = {k: deepcopy(row[k]) for k in ('id', 'version', 'status', 'snapshot_revision', 'snapshot_digest', 'created_at')}
+        try:
+            if digest({k: row[k] for k in ('baseline', 'source_policies', 'chapter_policies', 'project_policy')}) != row['snapshot_digest']:
+                raise ValueError('UNIVERSE_SNAPSHOT_DIGEST_MISMATCH')
+            if self._universe_visibility(self.novels.get(ctx.novel_id)) != row.get('project_policy', {}):
+                raise FileNotFoundError('universe source project privacy changed')
+            current = {}
+            for key, before in row['source_policies'].items():
+                raw = self._universe_read(ctx, key)
+                if self._universe_visibility(raw) != before: raise FileNotFoundError('universe source privacy changed')
+                current[key] = raw
+            for cid, before in row['chapter_policies'].items():
+                if self._universe_chapter_policy(ctx, cid) != before: raise FileNotFoundError('universe source chapter privacy changed')
+        except (ValueError, FileNotFoundError):
+            return {**safe, 'content_withheld': True, 'source_changes': [], 'recovery': 'RESTORE_CURRENT_SOURCE_AUTHORITY_OR_CREATE_NEW_SNAPSHOT'}
+        return {**safe, 'universe_key': row['universe_key'], 'title': row['title'], 'license': row['license'],
+            'content_withheld': False, 'records': deepcopy(row['baseline']),
+            'source_changes': [key for key in row['baseline'] if digest(current[key]) != digest(row['baseline'][key])],
+            'automatic_repin': False, 'canon_write': False}
+
+    def universe_snapshots(self, ctx, reauthorize=lambda: None):
+        self._local(ctx); rows = [self._universe_snapshot_view(ctx, r) for r in self.list(ctx.novel_id, ctx.scope, self.UNIVERSE_SNAPSHOTS) if r['created_by'] == ctx.actor]
+        reauthorize(); return {'items': rows}
+
+    def _universe_pin(self, ctx, key, target, state=None):
+        rows = (state or self.store.read(ctx.novel_id, ctx.scope))['collections'].get(self.UNIVERSE_PINS, {}).values()
+        return next((r for r in rows if r['created_by'] == ctx.actor and r['universe_key'] == key and r['target_project_id'] == target), None)
+
+    def _universe_pin_preview(self, ctx, value, target_authorize, state=None):
+        snapshot = self._owned(ctx, self.UNIVERSE_SNAPSHOTS, value.snapshot_id)
+        view = self._universe_snapshot_view(ctx, snapshot)
+        if view['content_withheld']: raise FileNotFoundError('universe snapshot authority unavailable')
+        target_authorize(value.target_project_id); project = self.novels.get(value.target_project_id)
+        self._universe_visibility(project)
+        existing = self._universe_pin(ctx, snapshot['universe_key'], value.target_project_id, state)
+        version = existing['version'] if existing else 0
+        if version != value.expected_version: raise CapabilityVersionConflict({'id': existing['id'] if existing else None, 'version': version})
+        target_receipt = digest(project)
+        return {'preview_digest': digest([ctx.novel_id, ctx.scope, ctx.actor, value.model_dump(), snapshot['snapshot_digest'], target_receipt, existing]),
+            'snapshot_id': snapshot['id'], 'snapshot_revision': snapshot['snapshot_revision'], 'snapshot_digest': snapshot['snapshot_digest'],
+            'universe_key': snapshot['universe_key'], 'target_project_id': project['id'], 'target_title': project.get('title', project['id']),
+            'target_digest': target_receipt, 'role': value.role, 'expected_version': version, 'previous_snapshot_id': existing['snapshot_id'] if existing else None,
+            'source_changes': view['source_changes'], 'will_modify_target_content': False, 'automatic_repin': False}
+
+    def universe_pin_preview(self, ctx, body, reauthorize=lambda: None, target_authorize=lambda nid: None):
+        value = UniversePinIn.model_validate(body); result = self._universe_pin_preview(ctx, value, target_authorize); reauthorize(); return result
+
+    def pin_universe(self, ctx, body, reauthorize=lambda: None, target_authorize=lambda nid: None):
+        from .common import change_row
+        from .planning import collection
+        value = UniversePinConfirm.model_validate(body); request = UniversePinIn.model_validate(value.model_dump(exclude={'preview_digest', 'confirmed'})); reauthorize()
+        with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+            preview = self._universe_pin_preview(ctx, request, target_authorize, state)
+            if value.preview_digest != preview['preview_digest']: raise StaleSourceError('UNIVERSE_PIN_PREVIEW_CHANGED')
+            row = self._universe_pin(ctx, preview['universe_key'], value.target_project_id, state)
+            payload = {'universe_key': preview['universe_key'], 'snapshot_id': value.snapshot_id, 'snapshot_digest': preview['snapshot_digest'],
+                'snapshot_revision': preview['snapshot_revision'], 'target_project_id': value.target_project_id, 'role': value.role,
+                'status': 'PINNED', 'approved_by': ctx.actor, 'approved_at': now()}
+            if row: change_row(row, ctx.actor, value.expected_version, lambda r: r.update(payload))
+            else:
+                if len(collection(state, self.UNIVERSE_PINS)) >= 500: raise ValueError('UNIVERSE_PIN_LIMIT')
+                row = new_row(ctx.novel_id, ctx.scope, ctx.actor, payload); collection(state, self.UNIVERSE_PINS)[row['id']] = row
+            if self._universe_snapshot_view(ctx, self._owned(ctx, self.UNIVERSE_SNAPSHOTS, value.snapshot_id))['content_withheld']:
+                raise FileNotFoundError('universe snapshot authority changed')
+            target_authorize(value.target_project_id); reauthorize()
+            if digest(self.novels.get(value.target_project_id)) != preview['target_digest']: raise StaleSourceError('UNIVERSE_TARGET_CHANGED')
+            result = self._universe_pin_view(ctx, row, target_authorize)
+            if result['content_withheld']: raise FileNotFoundError('universe pin authority changed')
+            reauthorize(); return result
+
+    def _universe_pin_view(self, ctx, row, target_authorize):
+        safe = {k: deepcopy(row[k]) for k in ('id', 'version', 'status', 'created_at')}
+        try:
+            target_authorize(row['target_project_id']); project = self.novels.get(row['target_project_id']); self._universe_visibility(project)
+            snap = self._owned(ctx, self.UNIVERSE_SNAPSHOTS, row['snapshot_id']); view = self._universe_snapshot_view(ctx, snap)
+            if view['content_withheld']: raise FileNotFoundError('universe snapshot unavailable')
+        except Exception as exc:
+            if not isinstance(exc, (ValueError, FileNotFoundError, PermissionError)) and getattr(exc, 'status_code', None) not in {403, 404}: raise
+            return {**safe, 'content_withheld': True}
+        return {**{k: deepcopy(v) for k, v in row.items() if k != 'history'}, 'target_title': project.get('title', project['id']),
+                'content_withheld': False, 'history_versions': [h['version'] for h in row.get('history', [])], 'source_changes': view['source_changes'], 'automatic_repin': False}
+
+    def universe_pins(self, ctx, reauthorize=lambda: None, target_authorize=lambda nid: None):
+        self._local(ctx); result = [self._universe_pin_view(ctx, row, target_authorize) for row in self.list(ctx.novel_id, ctx.scope, self.UNIVERSE_PINS) if row['created_by'] == ctx.actor]
+        reauthorize(); return {'items': result}
+
+    def release_universe_pin(self, ctx, rid, body, reauthorize=lambda: None):
+        from .common import change_row
+        from .planning import require_row
+        value = VersionIn.model_validate(body); self._local(ctx); reauthorize()
+        with self.store.transaction(ctx.novel_id, ctx.scope) as state:
+            row = require_row(state, self.UNIVERSE_PINS, rid)
+            if row['created_by'] != ctx.actor: raise FileNotFoundError(rid)
+            if row['version'] != value.expected_version: raise CapabilityVersionConflict({'id': rid, 'version': row['version']})
+            if row['status'] != 'PINNED': raise ValueError('UNIVERSE_PIN_ALREADY_RELEASED')
+            change_row(row, ctx.actor, value.expected_version, lambda r: r.update(status='RELEASED'))
+            reauthorize(); return {k: deepcopy(row[k]) for k in ('id', 'version', 'status')}
+
+    def universe_pin_history(self, ctx, rid, reauthorize=lambda: None, target_authorize=lambda nid: None):
+        row = self._owned(ctx, self.UNIVERSE_PINS, rid)
+        items = [self._universe_pin_view(ctx, old, target_authorize) for old in row.get('history', [])]
+        reauthorize(); return {'items': items, 'restore': 'EXPLICIT_SNAPSHOT_REPIN_ONLY'}
+
+    def _universe_source_ctx(self, ctx, source_project_id, authorize_project):
+        from dataclasses import replace
+        self._local(ctx); authorize_project(source_project_id)
+        self.novels.get(ctx.novel_id); self.novels.get(source_project_id)
+        return replace(ctx, novel_id=source_project_id, scope={'mode': 'local', 'novel_id': source_project_id})
+
+    def universe_incoming(self, ctx, reauthorize=lambda: None, authorize_project=lambda nid: None):
+        """Bounded authorized pointer scan, not a second project/universe index."""
+        self._local(ctx); projects = self.novels.list(); items = []; truncated = len(projects) > 100
+        for project in projects[:100]:
+            try:
+                source_ctx = self._universe_source_ctx(ctx, project['id'], authorize_project)
+                for row in self.list(project['id'], source_ctx.scope, self.UNIVERSE_PINS):
+                    if row['created_by'] != ctx.actor or row['target_project_id'] != ctx.novel_id or row['status'] != 'PINNED': continue
+                    view = self._universe_pin_view(source_ctx, row, authorize_project)
+                    if view['content_withheld']: continue
+                    if len(items) >= 30: truncated = True; break
+                    items.append({'source_project_id': project['id'], 'source_project_title': project.get('title', project['id']),
+                        'pin_id': row['id'], 'pin_version': row['version'], 'universe_key': view['universe_key'],
+                        'snapshot_id': row['snapshot_id'], 'snapshot_revision': row['snapshot_revision'],
+                        'snapshot_digest': row['snapshot_digest'], 'role': row['role'], 'source_changes': view['source_changes']})
+            except Exception as exc:
+                if not isinstance(exc, (FileNotFoundError, PermissionError)) and getattr(exc, 'status_code', None) not in {403, 404}: raise
+        # A source revoked during the scan is removed rather than leaking its title.
+        safe = []
+        for item in items:
+            try:
+                source_ctx = self._universe_source_ctx(ctx, item['source_project_id'], authorize_project)
+                current = self._owned(source_ctx, self.UNIVERSE_PINS, item['pin_id'])
+                if current['version'] != item['pin_version'] or current['status'] != 'PINNED': continue
+                if self._universe_pin_view(source_ctx, current, authorize_project)['content_withheld']: continue
+            except Exception as exc:
+                if isinstance(exc, (FileNotFoundError, PermissionError)) or getattr(exc, 'status_code', None) in {403, 404}: continue
+                raise
+            safe.append(item)
+        reauthorize(); return {'items': safe, 'truncated': truncated, 'project_scan_limit': 100,
+                              'mode': 'READ_ONLY_ORIGINAL_OWNER_REFERENCES', 'automatic_context_injection': False}
+
+    def read_universe_incoming(self, ctx, source_project_id, pin_id, reauthorize=lambda: None, authorize_project=lambda nid: None):
+        source_ctx = self._universe_source_ctx(ctx, source_project_id, authorize_project)
+        pin = self._owned(source_ctx, self.UNIVERSE_PINS, pin_id)
+        if pin['target_project_id'] != ctx.novel_id or pin['status'] != 'PINNED': raise FileNotFoundError('universe pin unavailable')
+        row = self._owned(source_ctx, self.UNIVERSE_SNAPSHOTS, pin['snapshot_id'])
+        view = self._universe_snapshot_view(source_ctx, row)
+        if view['content_withheld']: raise FileNotFoundError('universe snapshot unavailable')
+        authorize_project(source_project_id); authorize_project(ctx.novel_id); reauthorize()
+        current = self._owned(source_ctx, self.UNIVERSE_PINS, pin_id)
+        if current['version'] != pin['version']: raise StaleSourceError('UNIVERSE_PIN_CHANGED_DURING_READ')
+        view = self._universe_snapshot_view(source_ctx, row)
+        if view['content_withheld']: raise FileNotFoundError('universe snapshot authority changed')
+        authorize_project(source_project_id); reauthorize()
+        return {'source_project_id': source_project_id, 'pin_id': pin_id, 'pin_version': pin['version'],
+                'snapshot': view, 'mode': 'READ_ONLY', 'canon_write': False, 'automatic_context_injection': False}

@@ -1,7 +1,7 @@
 """Current-authority narrative review; the inbox remains a read-through projection."""
 from fastapi import APIRouter, Header, HTTPException, Response
 from .common import api_call
-from .narrative_judge import FEATURE, JudgeRunIn, JudgeReviewIn
+from .narrative_judge import FEATURE, JudgeRunIn, JudgeReviewIn, JudgeRevisionTaskIn
 
 
 def create_narrative_judge_router(service, authorize, require_flag, *, preparer=None, manager=None, broker=None, require_host_session=None):
@@ -41,12 +41,29 @@ def create_narrative_judge_router(service, authorize, require_flag, *, preparer=
     @router.post("/runs", status_code=201)
     def create(nid: str, body: JudgeRunIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope, again = access(nid, x_session_token, x_branch_id, response)
-        return api_call(service.create_run, nid, scope, actor, body, reauthorize=again)
+        result = api_call(service.create_run, nid, scope, actor, body, reauthorize=again); again(); return result
 
     @router.post("/findings/{rid}/review")
     def review(nid: str, rid: str, body: JudgeReviewIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope, again = access(nid, x_session_token, x_branch_id, response, True)
-        return api_call(service.review, nid, scope, actor, rid, body, reauthorize=again)
+        result = api_call(service.review, nid, scope, actor, rid, body, reauthorize=again); again(); return result
+
+    def revision_access(nid, token, branch, response):
+        actor, scope, again = access(nid, token, branch, response, True)
+        def current():
+            again(); require_flag('writer_room_v2')
+        current()
+        return ReadContext(nid, scope, actor, token, branch), current
+
+    @router.get('/findings/{rid}/revision-task')
+    def revision_task_catalog(nid: str, rid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, current = revision_access(nid, x_session_token, x_branch_id, response)
+        result = api_call(service.revision_task_catalog, ctx, rid, current); current(); return result
+
+    @router.post('/findings/{rid}/revision-task', status_code=201)
+    def revision_task(nid: str, rid: str, body: JudgeRevisionTaskIn, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, current = revision_access(nid, x_session_token, x_branch_id, response)
+        result = api_call(service.create_revision_task, ctx, rid, body, current); current(); return result
 
     def model_access(nid, token, branch, response):
         actor, scope, again = access(nid, token, branch, response)

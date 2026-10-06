@@ -95,6 +95,29 @@ def synthetic_judge_response(prompt):
 
 
 class NarrativeJudgeModelCoordinator:
+    generation_origin = 'narrative_judge_model'
+    reservation_prefix = 'narrative-judge'
+    collection_attr = 'RUNS'
+    invalid_output_code = 'JUDGE_OUTPUT_INVALID_OR_UNSUPPORTED_EVIDENCE'
+
+    @property
+    def collection(self):
+        return getattr(self.service, self.collection_attr)
+
+    def _fresh(self, ctx, row):
+        self.service._fresh(ctx.novel_id, ctx.scope, row)
+
+    def _public(self, ctx, rid):
+        return self.service.run(ctx.novel_id, ctx.scope, rid)
+
+    def _parse_result(self, ctx, row, text):
+        _, chapters = self.service.capture(ctx.novel_id, ctx.scope, list(row['sources']))
+        return parse_opinions(text, chapters)
+
+    def _validate_chosen(self, chosen):
+        if chosen['cloud'] or not chosen.get('price') or chosen['price']['reserve_microusd'] != 0:
+            raise ValueError('JUDGE_KNOWN_ZERO_LOCAL_RESERVATION_REQUIRED')
+
     def __init__(self, service, preparer, manager, broker):
         self.service, self.preparer, self.manager, self.broker = service, preparer, manager, broker
 
@@ -109,9 +132,9 @@ class NarrativeJudgeModelCoordinator:
 
     def _row(self, ctx, rid, guard, *, fresh=True, active=False):
         guard()
-        row = require_row(self.service.store.read(ctx.novel_id, ctx.scope), self.service.RUNS, rid)
+        row = require_row(self.service.store.read(ctx.novel_id, ctx.scope), self.collection, rid)
         if row['created_by'] != ctx.actor: raise ValueError('JUDGE_MODEL_ACTOR_MISMATCH')
-        if fresh: self.service._fresh(ctx.novel_id, ctx.scope, row)
+        if fresh: self._fresh(ctx, row)
         if active and (row.get('model_execution') or {}).get('status') not in {'ADMISSION_PENDING', 'QUEUED', 'RUNNING'}:
             raise ValueError('JUDGE_MODEL_NO_LONGER_ACTIVE')
         return row
@@ -149,10 +172,10 @@ class NarrativeJudgeModelCoordinator:
         preview['preview_digest'] = digest(preview)
         with self.service.store.transaction(ctx.novel_id, ctx.scope) as state:
             current()
-            stored = require_row(state, self.service.RUNS, rid)
+            stored = require_row(state, self.collection, rid)
             change_row(stored, ctx.actor, body.expected_version, lambda r: r.update(model_preview=preview))
             guard()
-        return self.service.run(ctx.novel_id, ctx.scope, rid)
+        return self._public(ctx, rid)
 
     def dispatch(self, ctx, rid, value, guard):
         body = JudgeModelDispatchIn.model_validate(value)
@@ -160,13 +183,12 @@ class NarrativeJudgeModelCoordinator:
         preview = row.get('model_preview')
         if not preview or preview['preview_digest'] != body.reviewed_preview_digest or not preview['execution_available']:
             raise ValueError('JUDGE_EXACT_MODEL_PREVIEW_REQUIRED')
-        if row.get('model_execution'): return self.service.run(ctx.novel_id, ctx.scope, rid)
+        if row.get('model_execution'): return self._public(ctx, rid)
         _check_version(row, body.expected_version)
         chosen = preview['broker']['chosen']
-        if chosen['cloud'] or not chosen.get('price') or chosen['price']['reserve_microusd'] != 0:
-            raise ValueError('JUDGE_KNOWN_ZERO_LOCAL_RESERVATION_REQUIRED')
+        self._validate_chosen(chosen)
         job = self.preparer.prepare_author(ctx.novel_id, AuthorPreviewInput.model_validate(preview['author']), ctx.token, ctx.branch)
-        mark_generation_origin(job, 'narrative_judge_model')
+        mark_generation_origin(job, self.generation_origin)
         job.generation_max_output_bytes = MAX_OUTPUT_BYTES
         job.generation_deadline = (datetime.now(timezone.utc) + timedelta(seconds=TIMEOUT_SECONDS)).isoformat()
         bounds = (job.generation_max_output_bytes, job.generation_deadline)
@@ -182,18 +204,18 @@ class NarrativeJudgeModelCoordinator:
             'receipt_state': 'UNKNOWN_NO_AUTOMATIC_REPLAY', 'model_called': False, 'applied': False,
             'usage_state': 'UNKNOWN', 'deadline': job.generation_deadline}
         with self.service.store.transaction(ctx.novel_id, ctx.scope) as state:
-            stored = require_row(state, self.service.RUNS, rid)
-            _check_version(stored, body.expected_version); self.service._fresh(ctx.novel_id, ctx.scope, stored); guard()
+            stored = require_row(state, self.collection, rid)
+            _check_version(stored, body.expected_version); self._fresh(ctx, stored); guard()
             if stored.get('model_execution') or stored.get('model_preview') != preview: raise ValueError('JUDGE_MODEL_ADMISSION_CHANGED')
             change_row(stored, ctx.actor, body.expected_version, lambda r: r.update(model_execution=deepcopy(execution)))
             guard()
         try:
             reservation = self.broker.reserve(ctx.novel_id, ctx.scope, ctx.actor, preview['broker']['id'], preview['broker']['version'],
-                'narrative-judge:' + rid, job.id, current, preview['preview_digest'])
+                self.reservation_prefix + ':' + rid, job.id, current, preview['preview_digest'])
             if reservation['job_id'] != job.id: raise ValueError('JUDGE_MODEL_ADMISSION_UNKNOWN')
             execution.update(reservation_id=reservation['id'], status='QUEUED', receipt_state='RECORDED')
             with self.service.store.transaction(ctx.novel_id, ctx.scope) as state:
-                stored = require_row(state, self.service.RUNS, rid); current()
+                stored = require_row(state, self.collection, rid); current()
                 change_row(stored, ctx.actor, stored['version'], lambda r: r.update(model_execution=deepcopy(execution)))
             def before_dispatch():
                 self.broker.guard_dispatch(ctx.novel_id, ctx.scope, ctx.actor, reservation['id'], job.id, current)
@@ -203,13 +225,13 @@ class NarrativeJudgeModelCoordinator:
             self.manager.start_prepared(job)
         except Exception:
             with self.service.store.transaction(ctx.novel_id, ctx.scope) as state:
-                stored = require_row(state, self.service.RUNS, rid)
+                stored = require_row(state, self.collection, rid)
                 # Cancellation wins over an in-flight failed admission.
                 if stored['model_execution']['status'] != 'CANCELLED':
                     execution.update(status='UNKNOWN', receipt_state='UNKNOWN_NO_AUTOMATIC_REPLAY')
                     change_row(stored, ctx.actor, stored['version'], lambda r: r.update(model_execution=deepcopy(execution)))
             raise
-        return self.service.run(ctx.novel_id, ctx.scope, rid)
+        return self._public(ctx, rid)
 
     def refresh(self, ctx, rid, value, guard):
         body = JudgeModelActionIn.model_validate(value)
@@ -231,10 +253,9 @@ class NarrativeJudgeModelCoordinator:
                     receipt_state='RECORDED' if job.terminal_hook_status == 'COMPLETED' else 'UNKNOWN_NO_AUTOMATIC_REPLAY')
                 if job.status == 'COMPLETED' and job.terminal_hook_status == 'COMPLETED':
                     job.request_authorization()
-                    _, chapters = self.service.capture(ctx.novel_id, ctx.scope, list(row['sources']))
-                    try: opinions = parse_opinions(job.output, chapters)
+                    try: opinions = self._parse_result(ctx, row, job.output)
                     except ValueError:
-                        execution.update(status='FAILED', failure_code='JUDGE_OUTPUT_INVALID_OR_UNSUPPORTED_EVIDENCE'); opinions = None
+                        execution.update(status='FAILED', failure_code=self.invalid_output_code); opinions = None
                 elif job.status == 'COMPLETED':
                     execution.update(status='UNKNOWN', receipt_state='UNKNOWN_NO_AUTOMATIC_REPLAY')
             else: execution['status'] = 'RUNNING'
@@ -244,10 +265,10 @@ class NarrativeJudgeModelCoordinator:
         body = JudgeModelActionIn.model_validate(value)
         row = self._row(ctx, rid, guard, fresh=False); _check_version(row, body.expected_version)
         if not row.get('model_execution'): raise ValueError('JUDGE_MODEL_EXECUTION_REQUIRED')
-        if row['model_execution']['status'] in {'COMPLETED', 'FAILED', 'CANCELLED'}: return self.service.run(ctx.novel_id, ctx.scope, rid)
+        if row['model_execution']['status'] in {'COMPLETED', 'FAILED', 'CANCELLED'}: return self._public(ctx, rid)
         with self.service.store.transaction(ctx.novel_id, ctx.scope) as state:
-            stored = require_row(state, self.service.RUNS, rid); guard(); _check_version(stored, body.expected_version)
+            stored = require_row(state, self.collection, rid); guard(); _check_version(stored, body.expected_version)
             change_row(stored, ctx.actor, body.expected_version, lambda r: r['model_execution'].update(status='CANCELLED'))
         try: self.manager.cancel(row['model_execution']['job_id'])
         except KeyError: pass
-        return self.service.run(ctx.novel_id, ctx.scope, rid)
+        return self._public(ctx, rid)

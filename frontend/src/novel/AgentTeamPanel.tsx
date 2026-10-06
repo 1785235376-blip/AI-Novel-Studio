@@ -128,7 +128,7 @@ function AgentJobHistoryLegacy({
   );
 }
 
-export function AgentJobHistory({ novelId }: { novelId?: string }) {
+export function AgentJobHistory({ novelId, requestedTaskId }: { novelId?: string; requestedTaskId?: string }) {
   const branchId = useStudio((value) => value.scope?.branchId);
   const [status, setStatus] = useState(""),
     [agentId, setAgentId] = useState(""),
@@ -140,6 +140,7 @@ export function AgentJobHistory({ novelId }: { novelId?: string }) {
     [auditPage, setAuditPage] = useState(1),
     [auditSelected, setAuditSelected] = useState<string>(),
     [selected, setSelected] = useState<string>();
+  useEffect(() => { setSelected(requestedTaskId); }, [requestedTaskId, novelId, branchId]);
   const catalog = useQuery({ queryKey: ["agent-job-history-catalog"], queryFn: api.agents, retry: false });
   const history = useQuery({
     queryKey: ["agent-job-history-v2", novelId, branchId, status, agentId, createdAfter, createdBefore, page],

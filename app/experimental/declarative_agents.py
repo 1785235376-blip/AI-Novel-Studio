@@ -73,6 +73,8 @@ class AgentDefinition(Strict):
     output_schema: ObjectSchema = Field(default_factory=lambda: ObjectSchema(fields=[SchemaField(name='draft')]))
     allowed_tools: list[str] = Field(default_factory=lambda: ['draft_prepare'], max_length=3)
     model_route: str | None = Field(default=None, max_length=200)
+    capability_requirements: list[Literal['LOCAL_RULES', 'TEXT']] = Field(default_factory=list, max_length=2)
+    runtime_requirement: Literal['TRUSTED_IN_PROCESS_LOCAL', 'ORIGINAL_BOUND_LOCAL_MODEL'] | None = None
     review_required: Literal[True] = True
     max_steps: int = Field(default=8, ge=3, le=16)
     timeout_seconds: int = Field(default=30, ge=1, le=300)
@@ -80,6 +82,14 @@ class AgentDefinition(Strict):
     max_cost_microusd: Literal[0] = 0
     @model_validator(mode='after')
     def static_authority(self):
+        if len(set(self.capability_requirements)) != len(self.capability_requirements):
+            raise ValueError('duplicate capability requirement')
+        if 'TEXT' in self.capability_requirements and not self.model_route:
+            raise ValueError('TEXT capability requires a server-registered model route')
+        if self.runtime_requirement == 'TRUSTED_IN_PROCESS_LOCAL' and self.model_route:
+            raise ValueError('local recipe runtime cannot dispatch a model')
+        if self.runtime_requirement == 'ORIGINAL_BOUND_LOCAL_MODEL' and not self.model_route:
+            raise ValueError('bound model runtime requires a server-registered model route')
         if not self.allowed_tools or len(self.allowed_tools) != len(set(self.allowed_tools)) or set(self.allowed_tools) - TOOLS:
             raise ValueError('unregistered tool; executable extensions are DENY_ALL')
         source = next((f for f in self.input_schema.fields if f.name == 'source_text'), None)
@@ -248,13 +258,17 @@ class DeclarativeAgentsService(DomainService):
                 for r in self.broker.candidates() if r.get('capability') == 'TEXT']
 
     def catalog(self, ctx):
+        from .declarative_adapter_sdk import definition_contract
         self.novels.get(ctx.novel_id)
         chapters = [] if self.sources is None else self.sources._source_rows(ctx, 'chapter')
         return {'tools': sorted(TOOLS), 'node_types': sorted(LOCAL_NODES), 'model_routes': self._model_routes(),
             'default_definition': default_definition(), 'chapters': [{'id': r['id'], 'title': r.get('title', ''), 'version': r.get('version')} for r in chapters],
             'execution_mode': 'LOCAL_RULES_OR_BOUND_LOCAL_MODEL' if self.model_coordinator else 'LOCAL_RULES', 'executable_extensions': 'DENY_ALL', 'remote_calls': 0,
             'graph_subset': 'ROOTED_DAG_JOIN_BEFORE_EXPLICIT_REVIEW', 'schema_subset': 'FINITE_SCALAR_OBJECT',
-            'model_dependency': 'ORIGINAL_AUTHOR_BROKER_JOB_MANAGER' if self.model_coordinator else 'CUSTOM_AGENT_BOUND_EXECUTOR_REQUIRED', 'sdk_version': 1}
+            'model_dependency': 'ORIGINAL_AUTHOR_BROKER_JOB_MANAGER' if self.model_coordinator else 'CUSTOM_AGENT_BOUND_EXECUTOR_REQUIRED', 'sdk_version': 1,
+            'sdk_contract': definition_contract(default_definition()),
+            'capability_requirements': ['LOCAL_RULES', 'TEXT'],
+            'runtime_requirements': ['TRUSTED_IN_PROCESS_LOCAL', 'ORIGINAL_BOUND_LOCAL_MODEL']}
 
     def validate(self, definition):
         definition = WorkflowAuthoring.model_validate(definition).model_dump()
@@ -264,6 +278,7 @@ class DeclarativeAgentsService(DomainService):
         return definition
 
     def preflight(self, ctx, body):
+        from .declarative_adapter_sdk import definition_contract
         self.novels.get(ctx.novel_id)
         definition = self.validate(body)
         route = next((r for r in self._model_routes() if r['id'] == definition['agent']['model_route']), None)
@@ -271,7 +286,7 @@ class DeclarativeAgentsService(DomainService):
         return {'valid': True, 'definition_digest': digest(definition),
             'topological_order': V1CapabilityService._workflow_order(definition['nodes'], definition['edges']),
             'execution_available': not blockers,
-            'blockers': blockers,
+            'blockers': blockers, 'adapter_contract': definition_contract(definition),
             'model_called': False, 'applied': False, 'external_calls': 0}
 
     def definitions(self, ctx):

@@ -4,8 +4,9 @@ import { Button, Panel, StatusMessage } from '../ui/primitives';
 import { type ExperimentalClient, type Row, type Rows, segment } from './api';
 import { Details, Field, Form, RecordStatus, Refresh, ResourceState, ids, useAction, useResource } from './shared';
 
-export function ImportPanel({ client, chapter }: { client: ExperimentalClient; chapter?: Chapter }) {
-  const [chapterIds, setChapterIds] = useState(chapter?.id || ''), [chunkSize, setChunkSize] = useState(8000), [overlap, setOverlap] = useState(256), [jobId, setJobId] = useState('');
+export function ImportPanel({ client, chapter, requestedTaskId }: { client: ExperimentalClient; chapter?: Chapter; requestedTaskId?: string }) {
+  const [chapterIds, setChapterIds] = useState(chapter?.id || ''), [chunkSize, setChunkSize] = useState(8000), [overlap, setOverlap] = useState(256), [jobId, setJobId] = useState(requestedTaskId || '');
+  useEffect(() => { if (requestedTaskId) setJobId(requestedTaskId); }, [requestedTaskId, client]);
   const jobs = useResource(signal => client.get<Rows>('/imports/jobs', signal), [client]);
   const review = useResource(async signal => {
     if (!jobId) return { candidates: [], chunks: [] };
@@ -15,7 +16,7 @@ export function ImportPanel({ client, chapter }: { client: ExperimentalClient; c
   const reload = () => { jobs.reload(); review.reload(); };
   const action = useAction(reload), [selected, setSelected] = useState<string[]>([]), [confirmed, setConfirmed] = useState(false);
   const job = jobs.data?.items.find(row => row.id === jobId);
-  useEffect(() => { if (!jobId && jobs.data?.items[0]) setJobId(jobs.data.items[0].id); }, [jobId, jobs.data]);
+  useEffect(() => { if (!requestedTaskId && !jobId && jobs.data?.items[0]) setJobId(jobs.data.items[0].id); }, [jobId, jobs.data]);
   useEffect(() => { setSelected([]); setConfirmed(false); }, [jobId]);
   const transition = (operation: string, extras = {}) => job && action.run(() => client.post(`/imports/jobs/${segment(job.id)}/${operation}`, { expected_version: job.version, ...extras }), '导入任务已更新');
   const candidates = review.data?.candidates || [];
@@ -25,6 +26,7 @@ export function ImportPanel({ client, chapter }: { client: ExperimentalClient; c
   const busy = action.busy || jobs.loading || review.loading;
   return <Panel title="长篇分块导入 V2" actions={<Refresh reload={reload} busy={busy} />}>
     <StatusMessage>LOCAL_HEURISTIC 确定性提取。每项保留来源证据，审核后才可明确提交；这不代表真实模型语义质量。</StatusMessage>
+    {requestedTaskId && !jobs.loading && !jobs.error && !jobs.data?.items.some(row => row.id === requestedTaskId) && <StatusMessage tone="warning">请求的原导入任务当前不可读或已移除；未改选其他任务。</StatusMessage>}
     {action.feedback}<ResourceState loading={jobs.loading || review.loading} error={jobs.error || review.error} />
     <Form onSubmit={() => action.run(async () => { const result = await client.post<Row>('/imports/jobs', { chapter_ids: ids(chapterIds), chunk_size: chunkSize, overlap, adapter_id: 'local-semantic-rules-v2' }); setJobId(result.id); }, '分块任务已创建')}>
       <Field label="导入来源章节 ID（逗号分隔）"><input required value={chapterIds} onChange={event => setChapterIds(event.target.value)} /></Field>

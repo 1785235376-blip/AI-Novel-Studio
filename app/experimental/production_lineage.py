@@ -133,7 +133,14 @@ class ProductionLineageService(DomainService):
             except (FileNotFoundError, ValueError): linked = False
             if linked:
                 generation = {"task_id": task["id"], "adapter_id": task["adapter_id"], "operation": task["operation"],
-                              "candidate_count": task["candidate_count"], "input_digest": task["source_digest"]}
+                              "candidate_count": task["candidate_count"], "input_digest": task["source_digest"],
+                              "model_id": task["adapter_definition"].get("model_id"), "adapter_version": task["adapter_definition"].get("adapter_version"),
+                              "workflow_version": (task.get("observed_environment") or {}).get("workflow_version"),
+                              "seed": task.get("parameters", {}).get("seed"), "produced_at": proposal.get("created_at"),
+                              "prompt_digest": digest(task["brief_snapshot"].get("prompt", "")),
+                              "screenplay_id": task["brief_snapshot"].get("screenplay_id"), "shot_id": task["brief_snapshot"].get("shot_id"),
+                              "scene_id": task["brief_snapshot"].get("shot_snapshot", {}).get("scene_id"),
+                              "model_quality": "NOT_RUN"}
                 if not evidence:
                     evidence = {"origin": "GENERATED_RESULT", "sources": task["sources"],
                                 "parents": task["brief_snapshot"].get("asset_sources", {}), "operation": task["operation"]}
@@ -296,6 +303,18 @@ class ProductionLineageService(DomainService):
             row = new_row(nid, scope, actor, payload); rows[row["id"]] = row
             return self._manifest_view(nid, scope, row)
 
+    @staticmethod
+    def assurance(row, replayable=None):
+        """Evidence labels are independent; a seed is never a guarantee."""
+        environment = row.get("environment") or {}
+        synthetic = environment.get("deterministic") is True and environment.get("verification") == "SYNTHETIC_PROTOCOL_ONLY"
+        return {"traceable": "RECORDED_INPUTS_AND_OUTPUT_DIGESTS",
+                "replayable": "NOT_CHECKED" if replayable is None else "CURRENT_PREFLIGHT_PASSED" if replayable else "BLOCKED",
+                "approximately_reproducible": "NOT_EVALUATED",
+                "deterministically_reproducible": "SYNTHETIC_PROTOCOL_ONLY" if synthetic else "NOT_VERIFIED",
+                "byte_equality": "REQUIRES_COMPLETED_REPLAY_COMPARISON",
+                "seed_guarantees_identical_bytes": False, "model_quality": "NOT_EVALUATED"}
+
     def _manifest_view(self, nid, scope, row):
         # No prompt copy, private reference titles, local paths or arbitrary
         # adapter metadata are included in this API projection.
@@ -303,7 +322,7 @@ class ProductionLineageService(DomainService):
                 "schema", "operation", "manifest_digest", "input_digest", "parameters", "seed", "outputs",
                 "quality_verification")} | {"environment": copy.deepcopy(row.get("environment")),
                 "adapter_id": row["adapter"]["adapter_id"], "model_id": row["adapter"].get("model_id"),
-                "verification": row["adapter"]["state"], "input_versions": self._input_versions(nid, scope, row)}
+                "assurance": self.assurance(row), "verification": row["adapter"]["state"], "input_versions": self._input_versions(nid, scope, row)}
 
     def _input_versions(self, nid, scope, row):
         result = []
@@ -381,7 +400,7 @@ class ProductionLineageService(DomainService):
         _, after_state = self._dependencies(nid, scope, row)
         if after_state != state: raise StaleSourceError("PRODUCTION_PREFLIGHT_CHANGED_DURING_CHECK")
         return {"manifest_id": rid, "manifest_version": row["version"], "ready": not reasons, "blockers": reasons,
-                "preflight_digest": self._preflight_digest(actor, scope, state, broker_id, broker_version),
+                "assurance": self.assurance(row, not reasons), "preflight_digest": self._preflight_digest(actor, scope, state, broker_id, broker_version),
                 "broker_decision_id": broker_id, "broker_decision_version": broker_version, "cost": cost,
                 "states": {"traceable": not any(r in reasons for r in ("SOURCE_CHANGED_OR_UNAVAILABLE", "SOURCE_TASK_CHANGED")),
                     "rebuildable": bool(row.get("environment")) and bool(row["environment"].get("deterministic") or (row["environment"].get("registration") or {}).get("runtime_version")) and not any(r in reasons for r in ("RUNTIME_OR_IMPLEMENTATION_CHANGED", "EXACT_MODEL_IDENTITY_REQUIRED", "CONFIGURED_ADAPTER_REQUIRED")),
@@ -547,4 +566,4 @@ class ProductionLineageService(DomainService):
                 "outputs": [{"candidate_index": r["candidate_index"], "digest": r["digest"]} for r in row["outputs"]],
                 "deterministic": bool(env.get("deterministic")), "byte_equal": None,
                 "redaction": {"raw_prompts": False, "source_text": False, "credentials": False, "paths": False, "asset_ids": False},
-                "quality_verified": False, "license_verified": False}
+                "assurance": self.assurance(row), "quality_verified": False, "license_verified": False}

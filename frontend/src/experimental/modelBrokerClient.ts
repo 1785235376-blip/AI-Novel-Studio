@@ -18,6 +18,7 @@ export function modelBrokerClient(client: ExperimentalClient) {
     reconcile: (row: Row, amount: number, note: string, orphan = false) => client.post<Row>(base + '/ledger/' + encodeURIComponent(row.id) + '/reconcile', { expected_version: row.version, actual_microusd: amount, evidence_note: note, upstream_terminal_confirmed: true, original_executor_stopped_confirmed: orphan }),
     cancel: (reservationId: string, expectedVersion: number) => client.post<BrokerJob>(base + '/jobs/' + encodeURIComponent(reservationId) + '/cancel', { expected_version: expectedVersion }),
     benchmarks: (signal?: AbortSignal) => client.get<{ sets: Row[]; runs: Row[]; evidence: Row[]; comparisons?: Row[] }>(benchmarks + '/status', signal),
+    capabilityProfiles: (signal?: AbortSignal) => client.get<{ items: Row[] }>(benchmarks + '/profiles', signal),
     createSet: (body: Record<string, unknown>) => client.post<Row>(benchmarks + '/sets', body),
     updateSet: (id: string, body: Record<string, unknown>) => client.put<Row>(benchmarks + '/sets/' + encodeURIComponent(id), body),
     startBenchmark: (set: Row, routeId: string, requestId: string) => client.post<Row>(benchmarks + '/runs', { set_id: set.id, expected_set_version: set.version, route_id: routeId, request_id: requestId }),
@@ -25,6 +26,7 @@ export function modelBrokerClient(client: ExperimentalClient) {
     compareBlind: (left: string, right: string) => client.post<Row>(benchmarks + '/comparisons', { left_id: left, right_id: right }),
     voteBlind: (row: Row, choice: string) => client.post<Row>(benchmarks + '/comparisons/' + encodeURIComponent(row.id) + '/vote', { expected_version: row.version, choice }),
     importEvidence: (body: Record<string, unknown>) => client.post<Row>(benchmarks + '/evidence/import', body),
+    reviewEvidence: (row: Row, note: string) => client.post<Row>(benchmarks + '/evidence/' + encodeURIComponent(row.id) + '/review', { expected_version: row.version, note, reviewed_identity_and_outputs: true }),
     invalidateEvidence: (row: Row) => client.post<Row>(benchmarks + '/evidence/' + encodeURIComponent(row.id) + '/invalidate', { expected_version: row.version }),
   };
 }

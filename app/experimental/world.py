@@ -293,16 +293,18 @@ class WorldService(DomainService):
         if not self._visible_kind(row): raise FileNotFoundError(rid)
         return self._decorate(nid, scope, row, state)
 
-    def create_record(self, nid, scope, actor, value):
+    def create_record(self, nid, scope, actor, value, *, reauthorize=lambda: None):
         payload = self._payload(value)
         self.novels.get(nid)
         with self.store.transaction(nid, scope) as state:
+            reauthorize()
             self._validate_create_capacity(state)
             captured = self._capture(nid, scope, payload, state)
             row = new_row(nid, scope, actor, {**payload, **captured, "status": "REVIEW", "canon_state": "CANDIDATE", "privacy_state": "LOCAL_ONLY"})
             self._assert_fresh(nid, scope, row, state)
             collection(state, self.RECORDS)[row["id"]] = row
             self._after_record_mutation(state, row, actor)
+            reauthorize()
             return deepcopy(row)
 
     def create_research_draft(self, nid, scope, actor, value, refs, *, guard, validate):
@@ -329,11 +331,12 @@ class WorldService(DomainService):
             guard(); validate(state)
             return {**deepcopy(row), "layer": "SETTING_DRAFT", "canon_promotion_available": False}
 
-    def edit_record(self, nid, scope, actor, rid, value):
+    def edit_record(self, nid, scope, actor, rid, value, *, reauthorize=lambda: None):
         raw = value.model_dump() if isinstance(value, WorldRecordEditIn) else dict(value)
         expected = raw.pop("expected_version")
         payload = self._payload(raw)
         with self.store.transaction(nid, scope) as state:
+            reauthorize()
             row = require_row(state, self.RECORDS, rid)
             if not self._visible_kind(row): raise FileNotFoundError(rid)
             if row["kind"] != payload["kind"]: raise ValueError("record kind is immutable")
@@ -342,10 +345,12 @@ class WorldService(DomainService):
             captured = self._capture(nid, scope, payload, state)
             change_row(row, actor, expected, lambda target: target.update(payload, **captured, status="REVIEW", canon_state="CANDIDATE"))
             self._after_record_mutation(state, row, actor)
+            reauthorize()
             return deepcopy(row)
 
-    def review(self, nid, scope, actor, item_id, action, expected_version):
+    def review(self, nid, scope, actor, item_id, action, expected_version, *, reauthorize=lambda: None):
         with self.store.transaction(nid, scope) as state:
+            reauthorize()
             row = require_row(state, self.RECORDS, item_id)
             if not self._visible_kind(row): raise FileNotFoundError(item_id)
             if row["version"] != expected_version:
@@ -375,6 +380,7 @@ class WorldService(DomainService):
                 if canon["status"] == "ACTIVE":
                     change_row(canon, actor, canon["version"], lambda target: target.update(status="ARCHIVED"))
             self._after_record_mutation(state, row, actor)
+            reauthorize()
             return deepcopy(row)
 
     def history(self, nid, scope, rid):

@@ -4,6 +4,7 @@ import type { ExperimentalClient } from './api';
 import { Details, ErrorMessage, Field, ResourceState, useResource } from './shared';
 import { useReviewAction } from './styleReviewClient';
 import { projectForksClient, type ForkChoice, type ForkComparison, type ForkNode, type ForkRecord, type ForkRecovery } from './projectForksClient';
+import { SharedUniversePanel } from './SharedUniversePanel';
 import { StructuredForksPanel } from './StructuredForksPanel';
 let nextScope = 0;
 type ForkApi = ReturnType<typeof projectForksClient>;
@@ -17,6 +18,7 @@ function ForksContent({ client }: { client: ExperimentalClient }) {
   const catalog = useResource(signal => api.catalog(signal), [api]); const records = useResource(signal => api.records(signal), [api]);
   const action = useReviewAction(); const [selected, setSelected] = useState<string[]>([]); const [title, setTitle] = useState('');
   const [showStructured, setShowStructured] = useState(false);
+  const [showUniverse, setShowUniverse] = useState(false);
   const [operationError, setOperationError] = useState<unknown>(); const [receipt, setReceipt] = useState('');
   const report = (error: unknown, message = '') => { setOperationError(error); setReceipt(message); };
   const [licenses, setLicenses] = useState<Record<string, string>>({}); const [permissions, setPermissions] = useState<Record<string, boolean>>({});
@@ -45,6 +47,8 @@ function ForksContent({ client }: { client: ExperimentalClient }) {
     </Panel>
     <Button aria-expanded={showStructured} onClick={() => setShowStructured(value => !value)}>{showStructured ? '收起人物与关系分叉' : '打开人物与关系分叉'}</Button>
     {showStructured && <StructuredForksPanel client={client} manuscriptForks={readyRecords ? readyRecords.items : []} />}
+    <Button aria-expanded={showUniverse} onClick={() => setShowUniverse(value => !value)}>{showUniverse ? '收起系列世界观快照' : '打开系列世界观快照'}</Button>
+    {showUniverse && <SharedUniversePanel client={client} />}
     <Panel title="合并检查点与中断恢复">
       <p>每次合并都先保存完整检查点，再逐项记录写入意图。部分完成或结果未知时不自动重试。恢复需要重新核对当前内容，并以新版本保存检查点。</p>
       {readyRecords && !readyRecords.merges.length && <p>尚无合并检查点。</p>}

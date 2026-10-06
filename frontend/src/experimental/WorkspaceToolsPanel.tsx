@@ -5,7 +5,7 @@ import { enabled, type ExperimentalClient, type ExperimentalFlags } from './api'
 import { WorkspaceSearch } from './WorkspaceSearch';
 import { NoticeCenterAddon } from './WritingSessionPanel';
 import { ErrorMessage, Field, ResourceState, useAction, useResource } from './shared';
-import { defaultLayout, defaultWorkspaceView, workspaceClient, type WorkspaceAnchor, type WorkspaceNavigation, type WorkspaceLayout, type WorkspaceView, type ResumeItem, type DiagnosticOptions, type DiagnosticResult } from './uxClient';
+import { defaultLayout, defaultWorkspaceView, workspaceClient, type WorkspaceAnchor, type WorkspaceNavigation, type WorkspaceLayout, type WorkspaceView, type ResumeItem, type DiagnosticOptions, type DiagnosticResult, type TaskItem } from './uxClient';
 
 export type WorkspaceToolsProps = { focusActive?: boolean; saveFailure?: boolean; client: ExperimentalClient; chapter?: Chapter; flags?: ExperimentalFlags; currentAnchor?: WorkspaceAnchor; initialSection?: 'resume' | 'search' | 'tasks' | 'diagnostics' | 'guide'; onNavigate?: (target: WorkspaceNavigation) => void; workspaceView?: WorkspaceView; onWorkspaceViewChange?: (view: WorkspaceView) => void; onWorkspaceSaved?: () => void };
 const commands = [
@@ -111,7 +111,7 @@ function WorkspaceToolsBody({ client, chapter, flags, currentAnchor, initialSect
         </div>
         <section aria-label="上次未决任务"><h4>上次未决任务 · 当前状态</h4><p>仅核对原任务 ID，不会重新提交或取消任务。</p>
           {!saved.pending_tasks?.length && <p>本次没有可展示的原任务。</p>}
-          {saved.pending_tasks?.map(task => <article className="experimental-record" key={`${task.authority}:${task.id}`}><strong>{task.label}</strong><Badge>{task.stage_label}</Badge><p>任务 ID：{task.id}</p><Button disabled={!onNavigate} onClick={() => { stopLookup(); lookup.current = new AbortController(); navigate({ ...(task.source || { kind: 'feature', id: task.id, feature: task.feature }), signal: lookup.current.signal }); }}>{task.source?.kind === 'generation' ? '恢复原生成草稿' : '查看原任务工具'}</Button></article>)}
+          {saved.pending_tasks?.map(task => <article className="experimental-record" key={`${task.authority}:${task.id}`}><strong>{task.label}</strong><Badge>{task.stage_label}</Badge><p>任务 ID：{task.id}</p><Button disabled={!onNavigate} onClick={() => { stopLookup(); lookup.current = new AbortController(); navigate({ ...(task.owner_navigation || task.source || { kind: 'feature', id: task.id, feature: task.feature }), signal: lookup.current.signal }); }}>{task.source?.kind === 'generation' ? '恢复原生成草稿' : '查看原任务工具'}</Button></article>)}
           {saved.tasks_recovery_required && <StatusMessage tone="warning">部分原任务当前不可核对，可能已移除、权限变化或不在近期读取范围。可在任务中心重新检查。</StatusMessage>}
           {saved.tasks_capture_partial && <StatusMessage>任务快照有界且不完整，更多记录请查看原任务工具。</StatusMessage>}
         </section>
@@ -150,6 +150,21 @@ function WorkspaceTasks({ api, navigate, advanced, filters, updateFilters }: { a
   const setFailed = (value: boolean) => updateFilters({ show_failed_only: value });
   const tasks = useResource(signal => api.tasks(query, failed, signal), [api, query, failed]);
   const action = useAction();
+  const [cancelling, setCancelling] = useState<TaskItem>();
+  const alive = useRef(true);
+  useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  useEffect(() => { setCancelling(undefined); }, [api, query, failed]);
+  const cancel = (task: TaskItem) => action.run(async () => {
+    try {
+      const result = await api.cancelTask(task);
+      if (!alive.current) return;
+      setCancelling(undefined); tasks.reload();
+      if (!result.cancellation_requested) throw new Error('CANCELLATION_UNCONFIRMED');
+    } catch (error) {
+      if (alive.current) { setCancelling(undefined); tasks.reload(); }
+      throw error;
+    }
+  }, '已向原服务请求取消，请核对刷新后的阶段；已完成的结果不会被撤销。');
   const lookup = useRef<AbortController>();
   const stopLookup = () => { lookup.current?.abort(); lookup.current = undefined; };
   useLayoutEffect(() => () => stopLookup(), [api, query, failed]);
@@ -162,11 +177,12 @@ function WorkspaceTasks({ api, navigate, advanced, filters, updateFilters }: { a
   };
   return <Panel title="任务中心 · 原服务实时读取" aria-label="任务中心 · 原服务实时读取">
     <div className="experimental-actions"><Field label="按任务 ID、类型或阶段搜索"><input maxLength={160} value={query} onChange={e => { stopLookup(); setQuery(e.target.value); }} /></Field><label className="experimental-check"><input type="checkbox" checked={failed} onChange={e => { stopLookup(); setFailed(e.target.checked); }} />只看失败或结果未知</label><Button disabled={tasks.loading} onClick={() => { stopLookup(); tasks.reload(); }}>刷新任务</Button></div>
-    <p>费用未知时不显示免费。这里不会执行或重试任务；请进入原工具核对权限、输入和费用后处理。正文生成只显示近期可读记录，更早记录可能不在本次读取范围。</p>
+    <p>费用未知时不显示免费。支持的原任务可明确请求取消；重试、继续和审核仍需进入原工具核对权限、输入和费用。正文生成只显示近期可读记录，更早记录可能不在本次读取范围。</p>
     <ResourceState loading={tasks.loading} error={tasks.error} empty={!tasks.data?.items.length} />
     {tasks.data?.unavailable.map(source => <StatusMessage tone="warning" key={source.authority}>{source.label}暂时不可读，其他来源仍可使用。</StatusMessage>)}
     {tasks.data?.truncated && <StatusMessage tone="warning">显示范围达到上限；更早的记录请进入原任务工具查找。</StatusMessage>}
-    {!tasks.loading && !tasks.error && <div className="experimental-list">{tasks.data?.items.map(task => <article key={`${task.authority}:${task.id}`} className="experimental-record"><div className="experimental-actions"><h3>{task.label}</h3><Badge tone={task.status === 'FAILED' || task.status === 'UNKNOWN' ? 'warning' : 'neutral'}>{task.stage_label}</Badge>{task.stale && <Badge tone="warning">来源已变化</Badge>}</div><p>任务 ID：{task.id}</p><p>{task.progress ? `${task.progress.completed} / ${task.progress.total} ${task.progress.unit}` : '原服务未报告可量化进度，仅显示阶段。'} · 预估费用：未知 · 实际费用：未知</p><p>{task.lifecycle}</p>{advanced && <details><summary>原任务状态历史</summary>{task.history.length ? <ol>{task.history.map((entry, index) => <li key={index}>v{entry.version ?? '—'} · {entry.status}</li>)}</ol> : <p>来源没有提供历史。</p>}</details>}<div className="experimental-actions"><Button disabled={!navigate} onClick={() => openSource(task.source?.kind === 'generation' ? task.source : { kind: 'feature', id: task.id, feature: task.feature })}>{task.source?.kind === 'generation' ? '打开原生成草稿' : '打开来源工具'}</Button><Button disabled={action.busy || !navigator.clipboard?.writeText} title={!navigator.clipboard?.writeText ? '当前浏览器不支持剪贴板写入，可在诊断包中导出安全信息。' : undefined} onClick={() => action.run(() => navigator.clipboard.writeText(JSON.stringify({ component: 'workspace_tools_v2', authority: task.authority, status: task.status, error_code: task.error_code, cost_state: 'UNKNOWN' }, null, 2)), '已复制脱敏状态，不含正文、任务 ID 或密钥')}>复制脱敏状态</Button></div></article>)}</div>}
+    {!tasks.loading && !tasks.error && <div className="experimental-list">{tasks.data?.items.map(task => <article key={`${task.authority}:${task.id}`} className="experimental-record"><div className="experimental-actions"><h3>{task.label}</h3><Badge tone={task.status === 'FAILED' || task.status === 'UNKNOWN' ? 'warning' : 'neutral'}>{task.stage_label}</Badge>{task.stale && <Badge tone="warning">来源已变化</Badge>}</div><p>任务 ID：{task.id}</p><p>{task.progress ? `${task.progress.completed} / ${task.progress.total} ${task.progress.unit}` : '原服务未报告可量化进度，仅显示阶段。'} · 预估费用：未知 · 实际费用：未知</p><p>Provider：{task.provider_id || '未知'} · Model：{task.model_id || '未知'}{task.route_state === 'REQUESTED' ? '（请求路线，尚未证明实际执行）' : task.route_state === 'OBSERVED' ? '（原任务已记录）' : ''}</p>{task.error_code && <p>错误码：{task.error_code}。请打开来源工具核对可执行的下一步。</p>}<p>{task.lifecycle}</p>{task.action_limits?.cancel && <p>{task.action_limits.cancel === 'ORIGIN_COORDINATOR_REQUIRED' ? '此任务由批处理协调器管理，请在原批次中取消。' : task.action_limits.cancel === 'SOURCE_AUTHORITY_ONLY' ? '当前来源没有通用取消接口，请在原工具查看可用操作。' : '当前阶段不能取消；终态结果保留。'}</p>}{advanced && <details><summary>原任务状态历史</summary>{task.history.length ? <ol>{task.history.map((entry, index) => <li key={index}>v{entry.version ?? '—'} · {entry.status}</li>)}</ol> : <p>来源没有提供历史。</p>}</details>}<div className="experimental-actions"><Button disabled={!navigate} onClick={() => openSource(task.owner_navigation || task.source || { kind: 'feature', id: task.id, feature: task.feature })}>{task.source?.kind === 'generation' ? '打开原生成草稿' : '打开来源工具'}</Button>{task.actions?.includes('cancel') && task.revision && <Button disabled={action.busy} onClick={() => { stopLookup(); setCancelling(task); }}>取消原任务</Button>}<Button disabled={action.busy || !navigator.clipboard?.writeText} title={!navigator.clipboard?.writeText ? '当前浏览器不支持剪贴板写入，可在诊断包中导出安全信息。' : undefined} onClick={() => action.run(() => navigator.clipboard.writeText(JSON.stringify({ component: 'workspace_tools_v2', authority: task.authority, status: task.status, error_code: task.error_code, cost_state: 'UNKNOWN' }, null, 2)), '已复制脱敏状态，不含正文、任务 ID 或密钥')}>复制脱敏状态</Button></div></article>)}</div>}
+    {cancelling && <section className="experimental-record" aria-label="确认取消原任务"><h3>取消{cancelling.label}？</h3><p>任务 ID：{cancelling.id}。请求发送给原任务服务；已完成结果保留，已发生费用不会自动退回。状态改变后需重新核对。</p><div className="experimental-actions"><Button disabled={action.busy} onClick={() => cancel(cancelling)}>确认请求取消</Button><Button disabled={action.busy} onClick={() => setCancelling(undefined)}>继续保留任务</Button></div></section>}
     {action.feedback}
   </Panel>;
 }

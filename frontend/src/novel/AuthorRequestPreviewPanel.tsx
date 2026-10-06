@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Badge, Button, EmptyState, StatusMessage } from '../ui/primitives';
 import { apiErrorView, type CollaborationContext } from '../api';
 import { authorContextRequest, authorContextVariants, authorVariantsKey, type AuthorVariantsReceipt, type AuthorVariantsPreview, authorRequestKey, type AuthorPreview, type AuthorPreviewReceipt, type AuthorRequestBody } from './authorContextClient';
-import { AuthorSourceItems } from './AuthorSourceItems';
+import { AuthorSourceItems, AuthorSourcePicker } from './AuthorSourceItems';
 import type { AuthorRequestScope } from './authorContextClient';
 import './AiContextPreview.css';
 import './AuthorRequestPreview.css';
@@ -57,6 +57,7 @@ export function AuthorRequestPreviewPanel({ body, context, saved, disabled, onRe
     <header className="ai-context-preview__header"><div><h3>真实生成请求预检</h3><p className="novel-help">与本次每份草稿共用请求构造器。改变正文、选区、模型或要求后，旧预检失效。</p></div><Badge tone={values ? 'success' : 'info'}>{values ? '请求已预检' : '需要预检'}</Badge></header>
     {!body && <EmptyState title="请选择明确的 Provider / 模型" detail="每次请求必须明确指定已启用的模型，不能自动换路线。" />}
     {!saved && <StatusMessage tone="warning">请先保存当前正文，解决冲突后再预检。未保存的编辑内容不会被悄悄替换成旧正文提交。</StatusMessage>}
+    {body && !body.character_id && onScopeChange && <AuthorSourcePicker body={body} context={context} onChange={onScopeChange} disabled={disabled || busy || !saved} manifest={values?.[0]?.source_manifest || undefined} />}
     <Button disabled={!body || !saved || disabled || busy} loading={busy} onClick={() => void refresh()}>{error ? '重试真实请求预检' : '检查真实生成请求'}</Button>
     {busy && <StatusMessage>正在构造真实请求，未调用模型…</StatusMessage>}
     {!!error && <StatusMessage tone="error">{apiErrorView(error, '预检未完成，请重试。').message}</StatusMessage>}
@@ -66,7 +67,7 @@ export function AuthorRequestPreviewPanel({ body, context, saved, disabled, onRe
       <dl className="ai-context-preview__meta"><div><dt>目标 Provider / 模型</dt><dd>{value.target === 'cloud' ? '云端' : '本地'} · {value.provider_id} / {value.model_id}</dd></div><div><dt>保存的章节版本</dt><dd>{value.chapter_version}</dd></div><div><dt>实际 Prompt 长度</dt><dd>{value.prompt_characters} 字符；Token 数未知</dd></div><div><dt>正文策略</dt><dd>{value.source_strategy === 'CHARACTER_KNOWLEDGE_ONLY' ? '仅人物可知信息，不含正文' : value.source_strategy === 'NO_MANUSCRIPT' ? '不包含正文，不回退到章节末尾' : value.source_strategy === 'EXACT_SAVED_SELECTION' ? '已保存的精确选区' : value.source_strategy === 'LAST_2000_SAVED_CHARACTERS' ? '已保存正文的最后 2000 字符' : '服务器指定的受限范围'} · {value.source_characters} 字符</dd></div></dl>
       <StatusMessage>生成前和模型发送前会重新检查当前来源、隐私与权限。取消不能收回已经发送的内容；本次预检尚未产生模型费用。</StatusMessage>
       {value.privacy_omissions.length > 0 && <StatusMessage tone="info">隐私策略排除了受限资料；不会展示被排除来源的标识、名称、数量或正文。</StatusMessage>}
-      {value.scope_effects?.references_omitted_for_source_isolation && <StatusMessage>来源精简已生效：自动派生上下文与固定参考均已移除。</StatusMessage>}
+      {value.scope_effects?.references_omitted_for_source_isolation && <StatusMessage>来源精简已生效：自动派生上下文与风格 / 规划参考已移除；手动添加的原始来源以准确请求为准。</StatusMessage>}
       {index === 0 && value.source_manifest && <AuthorSourceItems manifest={value.source_manifest} scope={body?.request_scope} onChange={onScopeChange} disabled={busy || disabled || !saved} />}
       <ul className="ai-context-preview__sources" aria-label="真实请求上下文章节">{value.context_sections.map(row => <li className="ai-context-preview__source" key={row.name}><strong>{row.name}</strong><span>{row.characters} 字符 · Adapter 请求包含</span></li>)}</ul>
       <details><summary>查看准确 Prompt（本机显示，不代表已发送）</summary><textarea aria-label={variantCount > 1 ? `方案 ${index + 1} 准确生成 Prompt` : "准确生成 Prompt"} readOnly value={value.request.prompt} /></details>

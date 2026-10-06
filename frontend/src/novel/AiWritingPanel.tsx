@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Badge, Button, EmptyState, Panel, StatusMessage } from "../ui/primitives";
 import type { TextModel, TextRuntimeDiagnostics } from "../api";
 import type { TextModelSelection } from "../store";
@@ -351,7 +351,11 @@ export function AiWritingPanel({
     [instruction, setInstruction] = useState(""),
     [style, setStyle] = useState(""),
     [variantCount, setVariantCount] = useState(1);
-  const [requestScope, setRequestScope] = useState<AuthorRequestScope>(defaultAuthorRequestScope);
+  const scopeOwner = JSON.stringify([novelId, authorPreview?.context.sessionToken, authorPreview?.context.scope, authorPreview?.context.actor]);
+  const [requestScopeState, setRequestScopeState] = useState<{ owner: string; value: AuthorRequestScope }>({ owner: scopeOwner, value: defaultAuthorRequestScope });
+  const requestScope = requestScopeState.owner === scopeOwner ? requestScopeState.value : defaultAuthorRequestScope;
+  const setRequestScope = (value: AuthorRequestScope) => setRequestScopeState({ owner: scopeOwner, value });
+  useEffect(() => { setRequestScopeState(previous => previous.owner === scopeOwner ? previous : { owner: scopeOwner, value: defaultAuthorRequestScope }); }, [scopeOwner]);
   const [variantsReceipt, setVariantsReceipt] = useState<AuthorVariantsReceipt>();
   const [previewReceipt, setPreviewReceipt] = useState<AuthorPreviewReceipt>();
   const previewBody: AuthorRequestBody | null = authorPreview?.enabled && novelId && selection ? {
@@ -361,7 +365,7 @@ export function AiWritingPanel({
     provider_id: selection.providerId, model_id: selection.modelId,
     source: authorPreview.characterId ? '' : authorPreview.source, selected_text: authorPreview.characterId ? '' : authorPreview.source,
     style_profile_id: authorPreview.characterId ? undefined : authorPreview.styleProfileId, plot_plan_id: authorPreview.characterId ? undefined : authorPreview.plotPlanId,
-    ...(authorPreview.characterId ? { character_id: authorPreview.characterId, style: '', profile: 'LOCAL_ONLY' } : {}),
+    ...(authorPreview.characterId ? { character_id: authorPreview.characterId, scene_id: authorPreview.sceneId, style: '', profile: 'LOCAL_ONLY' } : {}),
   } : null;
   const variantsCurrent = !!variantsReceipt && !!previewBody && !!authorPreview?.saved && variantsReceipt.requestKey === authorVariantsKey(previewBody, variantCount, authorPreview.context);
   const previewCurrent = !!previewReceipt && !!previewBody && !!authorPreview?.saved &&
@@ -382,7 +386,7 @@ export function AiWritingPanel({
     state === "ready" || state === "failed" || state === "cancelled";
   return (
     <Panel className="novel-ai-panel" title="AI 写作助手">
-      {authorPreview?.characterId && <section aria-label="人物视角生成模式"><StatusMessage>人物视角已启用：{authorPreview.characterId}。只发送审核过的人物知识和本次要求；不包含正文、选区、全知上下文、风格或规划。仅支持本地单份续写或头脑风暴。</StatusMessage>{authorPreview.onExitCharacter && <Button onClick={authorPreview.onExitCharacter} disabled={generating || cancelling}>退出人物视角生成</Button>}</section>}
+      {authorPreview?.characterId && <section aria-label="人物视角生成模式"><StatusMessage>人物视角已启用：{authorPreview.characterId}{authorPreview.sceneId ? ` · 场景 ${authorPreview.sceneId}` : ''}。只发送审核过的人物知识和本次要求；不包含正文、选区、全知上下文、风格或规划。仅支持本地单份续写或头脑风暴。</StatusMessage>{authorPreview.onExitCharacter && <Button onClick={authorPreview.onExitCharacter} disabled={generating || cancelling}>退出人物视角生成</Button>}</section>}
       <div className="novel-tabs" role="tablist" aria-label="AI 写作方式">
         {(Object.keys(operationLabels) as AiOperation[]).map((value) => (
           <button

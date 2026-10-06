@@ -5,7 +5,7 @@ import {fireEvent} from '@testing-library/react';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {ApiError} from '../api';
 import {localAiDiscoveryApi as api, type LocalDiscoverySnapshot, type LocalDiscoveryScan, type LocalModelCandidate, type LocalModelRegistration} from '../localAiDiscoveryApi';
-import {LocalAiDiscovery} from './LocalAiDiscovery';
+import {LocalAiDiscovery, localAiDiagnostic} from './LocalAiDiscovery';
 
 (globalThis as typeof globalThis & {IS_REACT_ACT_ENVIRONMENT: boolean}).IS_REACT_ACT_ENVIRONMENT = true;
 const candidate = (extra: Partial<LocalModelCandidate> = {}): LocalModelCandidate => ({id: 'candidate-qwen', display_name: 'Qwen3 local', model_id: 'qwen3:8b', family: 'QWEN', modality: 'TEXT', declared_capabilities: ['TEXT'], verified_capabilities: [], runtime_id: 'ollama', runtime_type: 'OLLAMA', source: 'OLLAMA', model_name: 'qwen3:8b', status: 'DISCOVERED', compatible: 'NOT_VERIFIED', verified: false, validation_notes: [], validated_at: null, evidence: {}, enable_eligible: false, ...extra});
@@ -245,4 +245,14 @@ describe('Local AI Discovery', () => {
     const start = vi.spyOn(api, 'scan'); await render(false);
     expect(button('检测本机 AI 环境').disabled).toBe(true); expect(button('添加本地 Runtime').disabled).toBe(true); expect(host.textContent).toContain('需要受信任的桌面会话'); await click('检测本机 AI 环境'); expect(start).not.toHaveBeenCalled();
   });
+});
+
+it('maps concrete local blockers to safe user steps without inventing measurements or installing software', () => {
+  expect(localAiDiagnostic('MODEL_OR_RUNTIME_NOT_FOUND')).toContain('核对模型 ID');
+  expect(localAiDiagnostic('WORKFLOW_ADAPTER_REQUIRED')).toContain('不会安装未知节点');
+  expect(localAiDiagnostic('CURRENT_GPU_NOT_VERIFIED')).toContain('未实测');
+  expect(localAiDiagnostic('MEMORY_AND_CONTEXT_NOT_VERIFIED')).toContain('不能保证可运行');
+  expect(localAiDiagnostic('LICENSE_VALIDATION_REQUIRED')).toContain('许可证');
+  expect(localAiDiagnostic('CUDA_NOT_VERIFIED')).toContain('不会自动升级');
+  expect(localAiDiagnostic('PRIVATE_PROMPT_NOT_AN_ENUM')).toBeUndefined();
 });

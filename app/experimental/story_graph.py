@@ -19,7 +19,7 @@ GRAPH_KINDS = frozenset({'STORY_CONCEPT', 'STORY_RELATION', 'KNOWLEDGE_EVENT'})
 
 
 class GraphNode(StrictModel):
-    kind: Literal['CHARACTER', 'LOCATION', 'CHAPTER', 'SCENE', 'ORGANIZATION', 'EVENT', 'RULE', 'ITEM', 'SECRET', 'FORESHADOWING']
+    kind: Literal['CHARACTER', 'LOCATION', 'CHAPTER', 'SCENE', 'ORGANIZATION', 'EVENT', 'RULE', 'ITEM', 'OBJECT', 'SECRET', 'FORESHADOWING']
     id: str = Field(min_length=1, max_length=160)
 
 
@@ -30,6 +30,8 @@ class Evidence(StrictModel):
 
 
 class TemporalData(StrictModel):
+    # Existing planning Scene identity, never a duplicate scene store.
+    scene_id: str | None = Field(default=None, min_length=1, max_length=160)
     world_time: int | None = None
     valid_from: int | None = None
     valid_to: int | None = None
@@ -45,14 +47,14 @@ class TemporalData(StrictModel):
 
 
 class ConceptData(TemporalData):
-    concept_type: Literal['ITEM', 'SECRET', 'FORESHADOWING']
+    concept_type: Literal['ITEM', 'OBJECT', 'SECRET', 'FORESHADOWING']
     description: str = Field(default='', max_length=8000)
 
 
 class RelationData(TemporalData):
     subject: GraphNode
     object: GraphNode
-    relation: Literal['LOCATED_AT', 'MEMBER_OF', 'OWNS', 'ALLIED_WITH', 'OPPOSES', 'CAUSES', 'PRECEDES', 'REVEALS', 'FORESHADOWS', 'CONTRADICTS', 'ABOUT']
+    relation: Literal['LOCATED_AT', 'MEMBER_OF', 'OWNS', 'ALLIED_WITH', 'OPPOSES', 'CAUSES', 'PRECEDES', 'REVEALS', 'FORESHADOWS', 'CONTRADICTS', 'ABOUT', 'KNOWS', 'BELIEVES', 'BELONGS_TO', 'HATES', 'TRUSTS', 'RELATED_TO', 'APPEARS_IN']
     layer: Literal['WORLD_FACT', 'CHARACTER_BELIEF', 'RESEARCH', 'SPECULATION']
     statement: str = Field(min_length=1, max_length=8000)
     observer_id: str | None = Field(default=None, max_length=160)
@@ -67,7 +69,7 @@ class RelationData(TemporalData):
 class KnowledgeData(TemporalData):
     character_id: str = Field(min_length=1, max_length=160)
     operation: Literal['LEARN', 'HEARSAY', 'FORGET', 'MISUNDERSTAND', 'CORRECT', 'GOAL_CHANGE', 'SET_STATE']
-    category: Literal['KNOWN_FACT', 'BELIEF', 'FALSE_BELIEF', 'SECRET', 'GOAL', 'FEAR', 'VALUE', 'EMOTION', 'INTENT']
+    category: Literal['KNOWN_FACT', 'BELIEF', 'FALSE_BELIEF', 'SECRET', 'GOAL', 'FEAR', 'VALUE', 'EMOTION', 'INTENT', 'RELATIONSHIP_STATE']
     relation_id: str | None = Field(default=None, max_length=160)
     psychology_id: str | None = Field(default=None, max_length=160)
     value: str = Field(default='', max_length=8000)
@@ -82,8 +84,10 @@ class KnowledgeData(TemporalData):
             raise ValueError('hearsay and misunderstanding are beliefs, never facts')
         if self.operation == 'MISUNDERSTAND' and self.category != 'FALSE_BELIEF':
             raise ValueError('misunderstanding requires FALSE_BELIEF')
-        if self.category in {'BELIEF', 'FALSE_BELIEF', 'GOAL', 'FEAR', 'VALUE', 'EMOTION', 'INTENT'} and not self.value and self.operation != 'FORGET':
+        if self.category in {'BELIEF', 'FALSE_BELIEF', 'GOAL', 'FEAR', 'VALUE', 'EMOTION', 'INTENT', 'RELATIONSHIP_STATE'} and not self.value and self.operation != 'FORGET':
             raise ValueError('this knowledge change needs its own explicit value')
+        if self.category == 'RELATIONSHIP_STATE' and not self.relation_id:
+            raise ValueError('relationship state requires a reviewed relation')
         if self.operation == 'GOAL_CHANGE' and self.category != 'GOAL':
             raise ValueError('goal change requires GOAL')
         return self
@@ -109,6 +113,30 @@ class StoryRecordEditIn(StoryRecordIn):
     expected_version: int = Field(ge=1)
 
 
+def scene_boundary(service, nid, scope, scene_id, chapter_id, state):
+    """Resolve the original Scene's fresh identity and unambiguous sibling order."""
+    if not scene_id: return None
+    row = require_row(state, 'planning_nodes', scene_id)
+    graph = require_row(state, 'planning_graphs', row['graph_id'])
+    if row['level'] != 'SCENE' or row['status'] == 'ARCHIVED' or graph['status'] != 'ACTIVE':
+        raise StaleSourceError('scene is unavailable')
+    if row['links']['chapter_ids'] != [chapter_id]:
+        raise ValueError('scene must belong to the selected chapter')
+    from .planning import PlanningService
+    ancestors = PlanningService(service.store, service.novels, service.chapters)._ancestors(state, row)
+    sources = scoped_sources(service, nid, scope, list(row.get('sources', {})))
+    if sources != row.get('sources', {}): raise StaleSourceError('scene sources changed')
+    siblings = [item for item in collection(state, 'planning_nodes').values()
+                if item['parent_id'] == row['parent_id'] and item['status'] != 'ARCHIVED']
+    positions = [item['position'] for item in siblings]
+    if len(positions) != len(set(positions)):
+        raise ValueError('scene order is ambiguous; assign distinct original planning positions')
+    stamps = {item['id']: digest({k: v for k, v in item.items() if k != 'history'})
+              for item in [row, graph, *ancestors]}
+    return {'id': scene_id, 'chapter_id': chapter_id, 'parent_id': row['parent_id'],
+            'position': row['position'], 'version': row['version'], 'digest': digest(stamps)}
+
+
 def capture_graph(service, nid, scope, payload, state):
     """Source capture shared with WorldService; no second review authority."""
     data, kind = payload['data'], payload['kind']
@@ -127,6 +155,8 @@ def capture_graph(service, nid, scope, payload, state):
             raise ValueError('evidence quote does not match source at the selected offset')
     links = {'character_ids': [], 'location_ids': []}
     entities, semantic = {}, {}
+    scene = scene_boundary(service, nid, scope, data.get('scene_id'), payload['chapter_id'], state)
+    if scene: entities['viewpoint_scene:' + scene['id']] = scene['digest']
 
     def world_ref(rid, allowed):
         row = require_row(state, service.RECORDS, rid)
@@ -182,7 +212,8 @@ def capture_graph(service, nid, scope, payload, state):
     # genuinely branch-owned sources; unbranched manuscript is never evidence.
     entities.update(entity_sources(service, nid, scope, links, state))
     return {'sources': sources, 'effective_chapter': start, 'effective_until': end,
-            'links': links, 'entity_sources': entities, 'semantic_sources': semantic}
+            'links': links, 'entity_sources': entities, 'semantic_sources': semantic,
+            **({'effective_scene_position': scene['position'], 'effective_scene_parent_id': scene['parent_id']} if scene else {})}
 
 
 class StoryGraphService(WorldService):
@@ -202,10 +233,10 @@ class StoryGraphService(WorldService):
         if row['kind'] not in GRAPH_KINDS: raise FileNotFoundError(rid)
         return row
 
-    def edit_record(self, nid, scope, actor, rid, value):
+    def edit_record(self, nid, scope, actor, rid, value, *, reauthorize=lambda: None):
         raw = value.model_dump() if hasattr(value, 'model_dump') else dict(value)
         self.record(nid, scope, rid)
-        return super().edit_record(nid, scope, actor, rid, raw)
+        return super().edit_record(nid, scope, actor, rid, raw, reauthorize=reauthorize)
 
     def _validate_create_capacity(self, state):
         if len(collection(state, self.RECORDS)) >= self.MAX_RECORDS:
@@ -223,7 +254,7 @@ class StoryGraphService(WorldService):
             result.append({'kind': 'CHAPTER', 'id': row['id'], 'label': row.get('title') or str(row['number'])})
         for row in collection(state, 'planning_nodes').values():
             if row['level'] == 'SCENE' and row['status'] != 'ARCHIVED':
-                result.append({'kind': 'SCENE', 'id': row['id'], 'label': row['title']})
+                result.append({'kind': 'SCENE', 'id': row['id'], 'label': row['title'], 'chapter_id': row['links']['chapter_ids'][0], 'position': row['position']})
         for row in collection(state, self.RECORDS).values():
             if row['status'] != 'APPROVED': continue
             kind = {'CIVILIZATION': 'ORGANIZATION', 'HISTORY': 'EVENT', 'ABILITY': 'RULE'}.get(row['kind'])
@@ -239,8 +270,17 @@ class StoryGraphService(WorldService):
         if len(rows) > self.MAX_RECORDS: raise ValueError('graph exceeds bounded query capacity')
         return state, rows
 
-    def _current(self, nid, scope, row, state, chapter_number, world_time, calendar):
-        if row['status'] != 'APPROVED' or row.get('effective_chapter', 0) > chapter_number: return False
+    def _narrative_reached(self, nid, scope, row, state, chapter_number, scene):
+        number = row.get('effective_chapter', 0)
+        if number > chapter_number: return False
+        if scene is None or number < chapter_number: return True
+        if not row['data'].get('scene_id'): return False
+        # Reviewed boundary, not a later edited scene order: stale forgets stay tombstones.
+        return (row.get('effective_scene_parent_id') == scene['parent_id']
+                and row.get('effective_scene_position', float('inf')) <= scene['position'])
+
+    def _current(self, nid, scope, row, state, chapter_number, world_time, calendar, scene=None):
+        if row['status'] != 'APPROVED' or not self._narrative_reached(nid, scope, row, state, chapter_number, scene): return False
         if row.get('effective_until') is not None and chapter_number >= row['effective_until']: return False
         data = row['data']
         if world_time is not None:
@@ -260,15 +300,16 @@ class StoryGraphService(WorldService):
         return {'record_id': row['id'], 'record_version': row['version'], 'chapter_id': row['chapter_id'],
                 'source_versions': deepcopy(row['sources'])}
 
-    def _projection(self, nid, scope, character_id, chapter_id, world_time=None, calendar='story'):
+    def _projection(self, nid, scope, character_id, chapter_id, world_time=None, calendar='story', scene_id=None):
         entity_sources(self, nid, scope, {'character_ids': [character_id]})
         number = self._chapter(nid, scope, chapter_id)['narrative_sequence']
         state, rows = self._rows(nid, scope)
-        active = {rid: row for rid, row in rows.items() if row['kind'] in GRAPH_KINDS and self._current(nid, scope, row, state, number, world_time, calendar)}
+        scene = scene_boundary(self, nid, scope, scene_id, chapter_id, state)
+        active = {rid: row for rid, row in rows.items() if row['kind'] in GRAPH_KINDS and self._current(nid, scope, row, state, number, world_time, calendar, scene)}
         # A stale or revoked later change must not resurrect older knowledge.
         # Candidates have no effect. An archived previously approved change is
         # retained as a tombstone for its key until explicitly corrected.
-        events = []
+        events, uncertain = [], []
         for row in rows.values():
             if row['kind'] != 'KNOWLEDGE_EVENT' or row['data']['character_id'] != character_id or row['effective_chapter'] > number:
                 continue
@@ -279,8 +320,11 @@ class StoryGraphService(WorldService):
                 if data['calendar'] != calendar or all(data.get(key) is None for key in ('world_time', 'valid_from', 'valid_to')): continue
                 if data['world_time'] is not None and data['world_time'] > world_time: continue
                 if data['valid_from'] is not None and data['valid_from'] > world_time: continue
+            if not self._narrative_reached(nid, scope, row, state, number, scene):
+                if scene and row['effective_chapter'] == number and (not data.get('scene_id') or row.get('effective_scene_parent_id') != scene['parent_id']): uncertain.append(row)
+                continue
             events.append(row)
-        events.sort(key=self._order)
+        events.sort(key=lambda row: (row['effective_chapter'], row.get('effective_scene_position', float('inf')), *self._order(row)[1:]))
         knowledge, mental = {}, {}
         for event in events:
             data = event['data']; rid = data['relation_id']
@@ -292,34 +336,40 @@ class StoryGraphService(WorldService):
                 target.pop(key, None)
                 continue
             target[key] = event
-        return active, knowledge, mental
+        for event in uncertain:
+            data = event['data']
+            if data['category'] in {'KNOWN_FACT', 'BELIEF', 'FALSE_BELIEF', 'SECRET'}: knowledge.pop(data['relation_id'], None)
+            else: mental.pop((data['category'], data['state_key']), None)
+        return active, knowledge, mental, scene
 
-    def character_context(self, nid, scope, character_id, chapter_id, world_time=None, calendar='story'):
-        active, knowledge, mental = self._projection(nid, scope, character_id, chapter_id, world_time, calendar)
+    def character_context(self, nid, scope, character_id, chapter_id, world_time=None, calendar='story', scene_id=None):
+        active, knowledge, mental, scene = self._projection(nid, scope, character_id, chapter_id, world_time, calendar, scene_id)
         result = {'contract': 'CHARACTER_KNOWLEDGE_V1', 'character_id': character_id, 'chapter_id': chapter_id,
                   'world_time': world_time, 'calendar': calendar, 'known_facts': [], 'beliefs': [], 'false_beliefs': [],
                   'secrets': [], 'goals': [], 'fears': [], 'values': [], 'emotion': [], 'intent': [], 'verification': 'DETERMINISTIC_REVIEWED_EVENTS'}
         categories = {'KNOWN_FACT': 'known_facts', 'BELIEF': 'beliefs', 'FALSE_BELIEF': 'false_beliefs', 'SECRET': 'secrets',
-                      'GOAL': 'goals', 'FEAR': 'fears', 'VALUE': 'values', 'EMOTION': 'emotion', 'INTENT': 'intent'}
+                      'GOAL': 'goals', 'FEAR': 'fears', 'VALUE': 'values', 'EMOTION': 'emotion', 'INTENT': 'intent', 'RELATIONSHIP_STATE': 'relationships'}
+        if scene_id: result.update(scene_id=scene_id, scene_boundary=scene)
         for event in [*knowledge.values(), *mental.values()]:
             data = event['data']; relation = active.get(data['relation_id'])
             text = relation['data']['statement'] if relation and data['category'] in {'KNOWN_FACT', 'SECRET'} else data['value']
-            result[categories[data['category']]].append({'text': text, 'epistemic_status': data['category'],
+            result.setdefault(categories[data['category']], []).append({'text': text, 'epistemic_status': data['category'],
                 'evidence_status': data['evidence_status'], 'evidence': self._evidence(event),
                 'relation_version': relation['version'] if relation else None})
         result['context_digest'] = digest(result)
         return result
 
-    def graph(self, nid, scope, chapter_id, character_id=None, world_time=None, calendar='story'):
+    def graph(self, nid, scope, chapter_id, character_id=None, world_time=None, calendar='story', scene_id=None):
         number = self._chapter(nid, scope, chapter_id)['narrative_sequence']
         if character_id:
-            active, knowledge, _ = self._projection(nid, scope, character_id, chapter_id, world_time, calendar)
+            active, knowledge, _, scene = self._projection(nid, scope, character_id, chapter_id, world_time, calendar, scene_id)
             # False beliefs expose their own assertion, never true endpoints,
             # labels, tooltips, source quotes, or counts of hidden relations.
             selected = [active[rid] for rid, event in knowledge.items() if event['data']['category'] in {'KNOWN_FACT', 'SECRET'}]
         else:
             state, rows = self._rows(nid, scope)
-            selected = [row for row in rows.values() if row['kind'] == 'STORY_RELATION' and self._current(nid, scope, row, state, number, world_time, calendar)]
+            scene = scene_boundary(self, nid, scope, scene_id, chapter_id, state)
+            selected = [row for row in rows.values() if row['kind'] == 'STORY_RELATION' and self._current(nid, scope, row, state, number, world_time, calendar, scene)]
         edges, nodes = [], {}
         for row in selected:
             data = row['data']
@@ -332,7 +382,7 @@ class StoryGraphService(WorldService):
                 'time_state': 'UNKNOWN' if data['world_time'] is None else 'KNOWN', 'valid_from': data['valid_from'], 'valid_to': data['valid_to'],
                 'calendar': data['calendar'], 'evidence': self._evidence(row)})
         return {'perspective': 'CHARACTER' if character_id else 'AUTHOR', 'character_id': character_id, 'chapter_id': chapter_id,
-                'nodes': list(nodes.values()), 'edges': edges, 'visible_count': len(edges), 'verification': 'DETERMINISTIC_REVIEWED_RELATIONS'}
+                **({'scene_id': scene_id, 'scene_boundary': scene} if scene_id else {}), 'nodes': list(nodes.values()), 'edges': edges, 'visible_count': len(edges), 'verification': 'DETERMINISTIC_REVIEWED_RELATIONS'}
 
     def impact(self, nid, scope, rid):
         state, rows = self._rows(nid, scope)
@@ -363,12 +413,14 @@ class StoryGraphService(WorldService):
         # Revoke/approve/edit and their affected index entries commit together.
         self._refresh_index(row['novel_id'], row['scope'], actor, row['id'], state)
 
-    def recompute(self, nid, scope, actor, rid, expected_version):
+    def recompute(self, nid, scope, actor, rid, expected_version, *, reauthorize=lambda: None):
         with self.store.transaction(nid, scope) as state:
+            reauthorize()
             row = require_row(state, self.RECORDS, rid)
             from .common import check_version
             check_version(row, expected_version)
             ids = self._refresh_index(nid, scope, actor, rid, state)
+            reauthorize()
             return {'recomputed_ids': ids, 'count': len(ids), 'source_version': expected_version, 'scope_only': True}
 
     def list_review_items(self, nid, scope):

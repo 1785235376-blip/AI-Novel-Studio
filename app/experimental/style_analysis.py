@@ -7,17 +7,18 @@ from __future__ import annotations
 from collections import Counter
 from copy import deepcopy
 import re
+import uuid
 from typing import Literal
 
 from pydantic import Field
 
-from .common import DomainService, StaleSourceError, new_row, check_version
+from .common import DomainService, StaleSourceError, new_row, check_version, change_row, now
 from .planning import StrictModel, collection, require_row, digest, entity_sources
 from ..services.creation_workbench_service import WorkbenchRecordIn
 from ..source_privacy import content_digest, source_privacy_status
 
 FEATURE = "style_dna_v2"
-METHOD = "unicode-style-statistics-v1"
+METHOD = "unicode-style-statistics-v2-independent-samples"
 OPERATIONS = ("continue", "rewrite", "polish", "brainstorm", "review")
 MAX_CHARACTERS = 100_000
 
@@ -94,8 +95,50 @@ def metrics(text, language):
             "dialogue_share_nonspace": {"numerator": sum(len(re.sub(r"\s", "", m.group()[1:-1])) for m in dialogue), "denominator": len(re.sub(r"\s", "", text))},
             "repeated_unit_share": {"numerator": len(units) - len(vocabulary), "denominator": len(units)},
             "unique_units": len(vocabulary), "repeated_units": [{"unit": k, "count": v} for k, v in sorted(vocabulary.items(), key=lambda kv: (-kv[1], kv[0])) if v > 1][:30],
+            "frequent_units": [{"unit": k, "count": v} for k, v in sorted(vocabulary.items(), key=lambda kv: (-kv[1], kv[0]))][:30],
             "punctuation_counts": dict(sorted(Counter(c for c in text if c in '.,!?;:—…，。！？；：、“”「」『』\"').items())),
             "perspective_lexical_cues": cues, "sample_sufficiency": "SHORT_SAMPLE" if len(sentence_parts) < 5 else "DESCRIPTIVE_ONLY"}
+
+
+def sample_statistics(chapters, samples, language):
+    """Independent source samples with absolute raw Markdown Unicode anchors."""
+    texts, measured = [], []
+    for sample in samples:
+        source = chapters[sample['chapter_id']].get('content', '')
+        text = source[sample['start']:sample['end']]
+        texts.append(text)
+        local = metrics(text, language)
+        locations = []
+        for paragraph in paragraphs(source):
+            start, end = max(sample['start'], paragraph['start']), min(sample['end'], paragraph['end'])
+            if start < end:
+                locations.append({'paragraph': paragraph['paragraph'], 'start': start, 'end': end,
+                                  'quote': source[start:end], 'partial_paragraph': start != paragraph['start'] or end != paragraph['end']})
+        measured.append({**sample, 'metrics': local, 'coordinate': 'RAW_MARKDOWN_UNICODE_CODEPOINT',
+                         'paragraphs': locations[:200], 'paragraphs_truncated': len(locations) > 200,
+                         'dialogue_spans': [{'start': sample['start'] + span['start'], 'end': sample['start'] + span['end']} for span in local['dialogue_spans']]})
+    aggregate = metrics('', language)
+    pattern = r"[A-Za-z]+(?:['’][A-Za-z]+)?" if language == 'en' else r"[\u3400-\u4dbf\u4e00-\u9fff]"
+    vocabulary = Counter(unit for text in texts for unit in re.findall(pattern, text.casefold()))
+    aggregate['unique_units'] = len(vocabulary)
+    ordered = sorted(vocabulary.items(), key=lambda kv: (-kv[1], kv[0]))
+    aggregate['frequent_units'] = [{'unit': unit, 'count': count} for unit, count in ordered[:30]]
+    aggregate['repeated_units'] = [{'unit': unit, 'count': count} for unit, count in ordered if count > 1][:30]
+    for key in ('characters', 'nonspace_characters', 'sentence_count', 'paragraph_count', 'dialogue_characters', 'unit_count'):
+        aggregate[key] = sum(row['metrics'][key] for row in measured)
+    aggregate['repeated_unit_share'] = {'numerator': aggregate['unit_count'] - len(vocabulary), 'denominator': aggregate['unit_count']}
+    for key in ('punctuation_counts', 'perspective_lexical_cues'):
+        combined = Counter()
+        for row in measured: combined.update(row['metrics'][key])
+        aggregate[key] = dict(sorted(combined.items()))
+    for key in ('sentence_lengths_nonspace', 'paragraph_lengths_nonspace'):
+        aggregate[key] = [value for row in measured for value in row['metrics'][key]]
+    for key in ('sentence_length_mean', 'paragraph_length_mean', 'dialogue_share_nonspace'):
+        aggregate[key] = {part: sum(row['metrics'][key][part] for row in measured) for part in ('numerator', 'denominator')}
+    aggregate['dialogue_spans'] = []
+    aggregate['dialogue_location'] = 'SOURCE_LOCAL_SAMPLE_METRICS'
+    aggregate['sample_sufficiency'] = 'SHORT_SAMPLE' if aggregate['sentence_count'] < 5 else 'DESCRIPTIVE_ONLY'
+    return aggregate, measured
 
 
 class SourceFencedService(DomainService):
@@ -142,6 +185,7 @@ class StyleAnalysisService(SourceFencedService):
     def __init__(self, store, novels, chapters, creation):
         super().__init__(store, novels, chapters)
         self.creation = creation
+        self.model_coordinator = None
 
     def profile(self, nid, scope, rid):
         row = self.creation.get_record(nid, scope, rid)
@@ -188,11 +232,67 @@ class StyleAnalysisService(SourceFencedService):
             self._fresh(nid, scope, row)
         except (ValueError, FileNotFoundError):
             return {"id": row["id"], "version": row["version"], "style_id": row["style_id"], "status": row["status"],
-                    "stale": True, "privacy_level": "LOCAL_ONLY", "limitations": ["来源已变化；旧派生指标已隐藏，请重新分析。"]}
+                    "stale": True, "privacy_level": "LOCAL_ONLY", "limitations": ["来源已变化；旧派生指标已隐藏，请重新分析。"],
+                    "model_preview": None, "model_assessments": [], "model_opinion_state": "STALE",
+                    "model_execution": deepcopy(row.get('model_execution'))}
         return {**deepcopy(row), "stale": False}
 
     def analyses(self, nid, scope):
         return [self._public(nid, scope, row) for row in self.list(nid, scope, self.ANALYSES)]
+
+    def analysis(self, nid, scope, rid):
+        return self._public(nid, scope, self.get(nid, scope, self.ANALYSES, rid))
+
+    def record_model_result(self, ctx, previous, execution, opinions, guard):
+        """Atomic annotations on the original analysis; deterministic data stays intact."""
+        from .style_analysis_model import validate_style_opinions
+        nid, scope, actor = ctx.novel_id, ctx.scope, ctx.actor
+        if opinions is None and execution == previous.get('model_execution'):
+            self._fresh(nid, scope, previous); guard()
+            return self.analysis(nid, scope, previous['id'])
+        with self.store.transaction(nid, scope) as state:
+            row = require_row(state, self.ANALYSES, previous['id'])
+            check_version({key: row[key] for key in ('id', 'version', 'status')}, previous['version'])
+            self._fresh(nid, scope, row); guard()
+            if row['created_by'] != actor: raise ValueError('STYLE_MODEL_ACTOR_MISMATCH')
+            if row.get('model_execution') != previous.get('model_execution'): raise ValueError('STYLE_MODEL_RECEIPT_CHANGED')
+            assessments = deepcopy(row.get('model_assessments', []))
+            opinion_state = row.get('model_opinion_state', 'NOT_REQUESTED')
+            if opinions is not None:
+                if row['model_execution']['status'] in {'CANCELLED', 'FAILED', 'COMPLETED'}:
+                    raise ValueError('STYLE_MODEL_NO_LONGER_ACTIVE')
+                _, chapters = self.capture(nid, scope, list(row['sources']))
+                values = validate_style_opinions(opinions, chapters, row['samples'])
+                chosen = row['model_preview']['broker']['chosen']
+                identity = {key: deepcopy(chosen[key]) for key in ('route_id', 'provider_id', 'model_id', 'fingerprint', 'identity', 'synthetic')}
+                assessments = [{**opinion, 'id': str(uuid.uuid5(uuid.UUID(row['id']), 'style-opinion:' + execution['job_id'] + ':' + str(index))),
+                    'origin': 'MODEL_DERIVED', 'decision': 'PENDING', 'review_history': [], 'model': identity,
+                    'job_id': execution['job_id'], 'rubric': deepcopy(row['model_preview']['rubric']),
+                    'independence': 'UNVERIFIED', 'quality_verification': row['model_preview']['quality_verification']}
+                    for index, opinion in enumerate(values)]
+                opinion_state = 'AVAILABLE' if assessments else 'ABSTAINED'
+            elif execution['status'] in {'FAILED', 'CANCELLED', 'UNKNOWN'}:
+                opinion_state = execution['status']
+            change_row(row, actor, row['version'], lambda value: value.update(model_execution=deepcopy(execution),
+                model_assessments=assessments, model_opinion_state=opinion_state, model_called=execution['model_called']))
+            self._fresh(nid, scope, row); guard()
+        return self.analysis(nid, scope, previous['id'])
+
+    def review_opinion(self, nid, scope, actor, rid, opinion_id, value, guard):
+        from .style_analysis_model import StyleOpinionReviewIn
+        body = StyleOpinionReviewIn.model_validate(value.model_dump() if hasattr(value, 'model_dump') else value)
+        with self.store.transaction(nid, scope) as state:
+            row = require_row(state, self.ANALYSES, rid)
+            check_version({key: row[key] for key in ('id', 'version', 'status')}, body.expected_version)
+            self._fresh(nid, scope, row); guard()
+            opinion = next((item for item in row.get('model_assessments', []) if item['id'] == opinion_id), None)
+            if not opinion: raise FileNotFoundError(opinion_id)
+            def update(current):
+                opinion['decision'] = {'review': 'REVIEWED', 'ignore': 'IGNORED', 'reopen': 'PENDING'}[body.action]
+                opinion['review_history'].append({'action': body.action, 'reason': body.reason, 'actor_id': actor, 'at': now()})
+            change_row(row, actor, body.expected_version, update)
+            self._fresh(nid, scope, row); guard()
+        return self.analysis(nid, scope, rid)
 
     def analyze(self, nid, scope, actor, value, reauthorize=lambda: None):
         data = StyleAnalysisIn.model_validate(value.model_dump() if hasattr(value, "model_dump") else value)
@@ -203,6 +303,8 @@ class StyleAnalysisService(SourceFencedService):
         if not set(sample_ids).issubset(profile["chapter_ids"]):
             raise ValueError("samples must be selected in the existing STYLE record")
         expected = {s.chapter_id: s.expected_version for s in data.samples}
+        if any(expected[s.chapter_id] != s.expected_version for s in data.samples):
+            raise StaleSourceError("sample ranges disagree on the chapter version")
         if data.comparison:
             if data.comparison.chapter_id in expected and expected[data.comparison.chapter_id] != data.comparison.expected_version:
                 raise StaleSourceError("comparison source version conflicts")
@@ -217,8 +319,7 @@ class StyleAnalysisService(SourceFencedService):
                 raise ValueError("sample ranges must not overlap or double-count text")
             intervals.setdefault(sample.chapter_id, []).append((sample.start, end))
             texts.append(text[sample.start:end]); ranges.append({**sample.model_dump(), "end": end})
-        combined = "\n".join(texts)
-        measured = metrics(combined, data.language)
+        measured, sample_metrics = sample_statistics(chapters, ranges, data.language)
         comparison = None
         if data.comparison:
             target = chapters[data.comparison.chapter_id].get("content", "")
@@ -231,15 +332,21 @@ class StyleAnalysisService(SourceFencedService):
                           "interpretation": "RAW_COUNT_DIFFERENCES_NOT_QUALITY_OR_NORMALIZED_DRIFT" if comparable else "LANGUAGE_METHODS_NOT_COMPARABLE"}
         payload = {"style_id": profile["id"], "style_version": profile["version"], "style_digest": digest(profile),
                    "sources": sources, "samples": ranges, "language": data.language, "operations": data.operations,
-                   "method_version": METHOD, "metrics": measured, "comparison": comparison, "status": "COMPLETED",
+                   "method_version": METHOD, "metric_kind": "DETERMINISTIC_METRIC", "metrics": measured,
+                   "sample_metrics": sample_metrics, "comparison": comparison, "status": "COMPLETED",
+                   "model_opinion_state": "NOT_REQUESTED",
+                   "unmeasured": ["DESCRIPTION_RATIO", "SENSORY_MEANING_RATIO", "NARRATIVE_DISTANCE", "EMOTIONAL_TONE", "RHYTHM", "HUMOR", "IMAGERY"],
                    "privacy_level": "LOCAL_ONLY", "model_assessments": [], "model_called": False,
                    "limitations": ["句子按语言标点切分，段落按非空行切分；长度为非空白 Unicode 字符。缩写与引号嵌套可能误分。", "英文只统计拉丁字母单词；中文统计汉字而非分词。不同语言不共用阈值。", "对白仅按成对引号近似计数；人称词频不等于叙事视角。", "少于五个句子标为短样本。无校准评分、匹配百分比或文学质量判断。", "适用任务用于本次预览范围；只有现有 STYLE instructions 会进入既有生成上下文，rules 供作者参考。"]}
+        receipt_id = str(uuid.uuid5(uuid.NAMESPACE_URL, digest([METHOD, nid, scope, actor, payload])))
         with self.store.transaction(nid, scope) as state:
-            if len(collection(state, self.ANALYSES)) >= 200: raise ValueError("analysis receipt limit reached")
             self.assert_capture(nid, scope, sources)
             if digest(self.profile(nid, scope, profile["id"])) != payload["style_digest"]: raise StaleSourceError("style changed during analysis")
             reauthorize()
-            row = new_row(nid, scope, actor, payload)
+            existing = collection(state, self.ANALYSES).get(receipt_id)
+            if existing: return self._public(nid, scope, existing)
+            if len(collection(state, self.ANALYSES)) >= 200: raise ValueError("analysis receipt limit reached")
+            row = new_row(nid, scope, actor, payload); row["id"] = receipt_id
             collection(state, self.ANALYSES)[row["id"]] = row
         return self._public(nid, scope, row)
 

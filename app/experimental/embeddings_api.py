@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Header
+from fastapi import APIRouter, Header, Response
+from fastapi.routing import APIRoute
 from pydantic import Field
 from .common import api_call
-from .embeddings import EmbeddingIndexIn, EmbeddingQueryIn
+from .embeddings import EmbeddingIndexIn, EmbeddingIndexEditIn, EmbeddingQueryIn
 from .media import StrictModel
 
 
@@ -10,7 +11,24 @@ class EmbeddingActionIn(StrictModel):
 
 
 def create_embeddings_router(service, authorize, require_flag):
-    router = APIRouter(prefix="/novels/{nid}/experimental/embeddings", tags=["Experimental embeddings"])
+    service.research_guard = lambda: require_flag("research_library_v2")
+    class GuardedRoute(APIRoute):
+        def get_route_handler(self):
+            handler = super().get_route_handler()
+            async def guarded(request):
+                nid, token, branch = request.path_params['nid'], request.headers.get('X-Session-Token'), request.headers.get('X-Branch-ID')
+                permission = 'domain.read' if request.method == 'GET' or request.url.path.endswith('/query') else 'domain.write'
+                require_flag('visual_embeddings')
+                authority = authorize(nid, token, branch, permission)
+                response = await handler(request)
+                require_flag('visual_embeddings')
+                if authorize(nid, token, branch, permission) != authority:
+                    from fastapi import HTTPException
+                    raise HTTPException(403, {'code': 'EMBEDDING_AUTHORITY_CHANGED'})
+                response.headers['Cache-Control'] = 'no-store'
+                return response
+            return guarded
+    router = APIRouter(route_class=GuardedRoute, prefix="/novels/{nid}/experimental/embeddings", tags=["Experimental embeddings"])
 
     def access(nid, token, branch, permission="domain.read"):
         require_flag("visual_embeddings")
@@ -27,20 +45,39 @@ def create_embeddings_router(service, authorize, require_flag):
         access(nid, x_session_token, x_branch_id)
         return service.status()
 
+    @router.get('/sources')
+    def sources(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id)
+        response.headers['Cache-Control'] = 'no-store'
+        return api_call(service.catalog, nid, scope, actor)
+
+    @router.get('/providers')
+    def providers(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        access(nid, x_session_token, x_branch_id)
+        response.headers['Cache-Control'] = 'no-store'
+        return api_call(service.providers)
+
     @router.get("/indexes")
     def indexes(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        _, scope = access(nid, x_session_token, x_branch_id)
-        return {"items": api_call(service.indexes, nid, scope)}
+        actor, scope = access(nid, x_session_token, x_branch_id)
+        return {"items": api_call(service.indexes, nid, scope, actor)}
 
     @router.post("/indexes", status_code=201)
     def create(nid: str, body: EmbeddingIndexIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope = access(nid, x_session_token, x_branch_id, "domain.write")
-        return api_call(service.create_index, nid, scope, actor, body)
+        return api_call(service.create_index, nid, scope, actor, body,
+                        guard(nid, x_session_token, x_branch_id, actor, scope, 'domain.write'))
+
+    @router.put('/indexes/{rid}')
+    def edit(nid: str, rid: str, body: EmbeddingIndexEditIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id, 'domain.write')
+        return api_call(service.edit_index, nid, scope, actor, rid, body,
+                        guard(nid, x_session_token, x_branch_id, actor, scope, 'domain.write'))
 
     @router.get("/indexes/{rid}/records")
     def records(nid: str, rid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        _, scope = access(nid, x_session_token, x_branch_id)
-        return {"items": api_call(service.records, nid, scope, rid)}
+        actor, scope = access(nid, x_session_token, x_branch_id)
+        return {"items": api_call(service.records, nid, scope, rid, actor)}
 
     @router.post("/indexes/{rid}/{action}")
     def action(nid: str, rid: str, action: str, body: EmbeddingActionIn,
@@ -49,11 +86,12 @@ def create_embeddings_router(service, authorize, require_flag):
         if action == "rebuild":
             return api_call(service.rebuild, nid, scope, actor, rid, body.expected_version,
                             guard(nid, x_session_token, x_branch_id, actor, scope, "domain.write"))
-        return api_call(service.transition, nid, scope, actor, rid, action, body.expected_version)
+        return api_call(service.transition, nid, scope, actor, rid, action, body.expected_version,
+                        guard(nid, x_session_token, x_branch_id, actor, scope, 'domain.write'))
 
     @router.post("/query")
     def query(nid: str, body: EmbeddingQueryIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope = access(nid, x_session_token, x_branch_id)
-        return api_call(service.query, nid, scope, body, guard(nid, x_session_token, x_branch_id, actor, scope, "domain.read"))
+        return api_call(service.query, nid, scope, body, guard(nid, x_session_token, x_branch_id, actor, scope, "domain.read"), actor=actor)
 
     return router

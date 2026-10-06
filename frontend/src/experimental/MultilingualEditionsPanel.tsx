@@ -2,19 +2,41 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { Field, ResourceState, useAction, useResource } from './shared';
-import { multilingualEditionsClient, type AlignmentPreview, type EditionCreate, type EditionExportPreview, type EditionSegment, type LanguageEdition, type SegmentPreview, type TermInput, type TermIssue } from './multilingualEditionsClient';
+import { multilingualEditionsClient, type AlignmentPreview, type EditionCreate, type EditionExportPreview, type EditionSegment, type LanguageEdition, type SegmentPreview, type TermInput, type TermIssue, type TranslationRun } from './multilingualEditionsClient';
 import './multilingualEditions.css';
+import { TranslationMemoryPanel } from './TranslationMemoryPanel';
 import { LanguageTranslationPanel } from './LanguageTranslationPanel';
 let sequence = 0;
-export function MultilingualEditionsPanel({ client }: { client: ExperimentalClient }) {
+type EditionProps = { client: ExperimentalClient; requestedJobId?: string };
+export function MultilingualEditionsPanel({ client, requestedJobId }: EditionProps) {
   const identity = useMemo(() => ++sequence, [client]);
-  return <EditionsBody key={identity} client={client} />;
+  return <EditionsBody key={identity} client={client} requestedJobId={requestedJobId} />;
 }
 type EditionApi = ReturnType<typeof multilingualEditionsClient>;
-function EditionsBody({ client }: { client: ExperimentalClient }) {
+function EditionsBody({ client, requestedJobId }: EditionProps) {
   const api = useMemo(() => multilingualEditionsClient(client), [client]);
   const catalog = useResource(signal => api.catalog(signal), [api]);
-  const editions = useResource(signal => api.list(signal), [api]);
+  const editions = useResource(async signal => ({ ...(await api.list(signal)), requestedJobId }), [api, requestedJobId]);
+  const [dismissedJob, setDismissedJob] = useState<string>();
+  useEffect(() => { setDismissedJob(undefined); }, [requestedJobId]);
+  const targetJob = requestedJobId && requestedJobId !== dismissedJob ? requestedJobId : undefined;
+  const target = useResource(async signal => {
+    if (!targetJob || editions.loading || editions.error || !editions.data || editions.data.requestedJobId !== requestedJobId) return undefined;
+    const matches: { edition: LanguageEdition; run: TranslationRun }[] = [];
+    let truncated = !!editions.data.truncated;
+    for (const edition of editions.data.items) {
+      if (signal.aborted) return undefined;
+      const records = await api.translationRuns(edition, signal);
+      truncated ||= records.truncated;
+      for (const run of records.items) if (run.execution?.job_id === targetJob && run.edition_id === edition.id) matches.push({ edition, run });
+      if (matches.length > 1) break;
+    }
+    return { jobId: targetJob, match: matches.length === 1 ? matches[0] : undefined, truncated };
+  }, [api, targetJob, requestedJobId, editions.data, editions.loading, editions.error]);
+  const targetResult = !target.loading && !target.error && target.data?.jobId === targetJob ? target.data : undefined;
+  const targetEdition = targetResult?.match?.edition, targetRun = targetResult?.match?.run;
+  const targetIndex = targetEdition?.segments?.findIndex(row => row.id === targetRun?.segment_id) ?? -1;
+  const targetSegment = targetIndex >= 0 ? targetEdition?.segments?.[targetIndex] : undefined;
   const [title, setTitle] = useState(''), [sourceLanguage, setSourceLanguage] = useState('zh-Hant'), [targetLanguage, setTargetLanguage] = useState('en');
   const [direction, setDirection] = useState<EditionCreate['direction']>('auto'), [font, setFont] = useState<EditionCreate['font']>('serif'), [style, setStyle] = useState('');
   const [chapters, setChapters] = useState<string[]>([]), [selected, setSelected] = useState<LanguageEdition>();
@@ -40,6 +62,18 @@ function EditionsBody({ client }: { client: ExperimentalClient }) {
     </Panel>
     {action.feedback}
     {dirty && <StatusMessage tone="warning">译文输入尚未保存。先保存草稿或还原输入，再切换版本、段落或刷新。</StatusMessage>}
+    {targetJob && <section aria-label="任务中心原翻译任务">
+      <h4>原模型任务 {targetJob}</h4><p>仅从当前授权语言版本与翻译回执定位，不会重译、采用候选或覆盖未保存输入。</p>
+      <ResourceState loading={editions.loading || target.loading} error={editions.error || target.error} />
+      {targetResult && !targetRun && <StatusMessage tone="warning">原翻译任务在当前授权记录中不可用或身份不唯一；不会选择另一任务。{targetResult.truncated ? '原服务仅返回最近 50 个版本或任务，较早任务需要从原语言版本入口查找。' : ''}</StatusMessage>}
+      {targetRun && targetEdition && <><p>语言版本 {targetEdition.title || targetEdition.id} · 原段落 {targetRun.segment_id} · 原翻译记录 {targetRun.id}</p>
+        {!targetSegment || targetEdition.stale || targetEdition.content_withheld || targetRun.stale || targetRun.content_withheld || targetRun.edition_version !== targetEdition.version ? <StatusMessage tone="warning">原段落来源或隐私已变化，无法重新打开内容；原模型任务未重放。</StatusMessage> : <>
+          <LanguageTranslationPanel key={`${targetJob}:${targetEdition.id}:${targetEdition.version}`} api={api} edition={targetEdition} segment={targetSegment} blocked requestedJobId={targetJob} perform={perform} />
+          <Button disabled={dirty || action.busy} onClick={() => { choose(targetEdition); setIndex(targetIndex); }}>打开原译文段落（保留任务定位）</Button>
+        </>}
+      </>}
+      <Button onClick={() => setDismissedJob(targetJob)}>退出原任务定位</Button>
+    </section>}
     <Panel title="语言版本记录"><Button disabled={editions.loading || action.busy || dirty} onClick={editions.reload}>刷新语言版本列表</Button><ResourceState loading={editions.loading} error={editions.error} empty={!editions.data?.items.length} />
       {!editions.loading && !editions.error && editions.data?.items.map(e => <div className="experimental-actions" key={e.id}><Button disabled={action.busy || dirty} aria-pressed={selected?.id === e.id} onClick={() => choose(e)}>{e.title || '待更新语言版本'} · {e.target_language} · v{e.version}</Button><Badge tone={e.stale ? 'warning' : 'neutral'}>{e.stale ? '来源已变化' : e.status}</Badge></div>)}
       {editions.data?.truncated && <StatusMessage>仅显示最近 50 个语言版本。</StatusMessage>}
@@ -94,6 +128,7 @@ function SegmentEditor({ api, edition, segment, number, busy, perform, onDirty }
       <Button disabled={disabled || dirty || !['ACCEPTED', 'REJECTED'].includes(segment.status)} onClick={() => perform(() => api.review(edition, segment, 'reopen'), '本段已重新打开为草稿。')}>重新打开本段</Button></div>
     {!!segment.issues.length && <Issues issues={segment.issues} />}
     {preview && <section aria-label="本段接受预览"><Issues issues={preview.issues} /><label className="experimental-check"><input type="checkbox" disabled={!preview.can_accept || disabled || dirty} checked={approved} onChange={e => setApproved(e.target.checked)} />已人工核对本段译文、术语与源版本</label><Button disabled={disabled || dirty || !approved || !preview.can_accept} onClick={() => perform(() => api.review(edition, segment, 'accept', preview), '仅本段译文已接受。原稿仍保持原样。')}>确认仅接受本段译文</Button></section>}
+    <TranslationMemoryPanel key={`memory:${edition.id}:${segment.id}:${edition.version}`} api={api} edition={edition} segment={segment} blocked={disabled || dirty} perform={perform} />
     <LanguageTranslationPanel key={`${edition.id}:${segment.id}:${edition.version}`} api={api} edition={edition} segment={segment} blocked={disabled || dirty} perform={perform} />
     {action.feedback}
   </article>;
@@ -102,14 +137,14 @@ const split = (value: string) => value.split('\n').map(t => t.trim()).filter(Boo
 function Terminology({ api, edition, busy, perform }: { api: EditionApi; edition: LanguageEdition; busy: boolean; perform: Performer }) {
   const [source, setSource] = useState(''), [preferred, setPreferred] = useState(''), [sourceAliases, setSourceAliases] = useState(''), [targetAliases, setTargetAliases] = useState(''), [forbidden, setForbidden] = useState('');
   const [strategy, setStrategy] = useState<TermInput['strategy']>('meaning'), [category, setCategory] = useState<TermInput['category']>('term'), [match, setMatch] = useState<TermInput['match']>('substring');
-  return <Panel title="批准术语与别名"><p>仅批准规则参与校验。音译 / 意译由作者指定确切译法，不自动判断语言质量。规则改变会将已接受译文退回审核。</p>
+  return <Panel title="批准术语与别名"><p>仅批准规则参与校验。音译 / 意译由作者指定确切译法，不自动判断语言质量。规则改变会将已接受译文退回审核。锁定后只允许首选译法，其他允许译名也会提示名称漂移；撤销前必须明确解锁。</p>
     <div className="experimental-grid"><Field label="源术语"><input value={source} maxLength={160} onChange={e => setSource(e.target.value)} /></Field><Field label="首选译法"><input value={preferred} maxLength={160} onChange={e => setPreferred(e.target.value)} /></Field>
-      <Field label="术语类别"><select value={category} onChange={e => setCategory(e.target.value as TermInput['category'])}><option value="term">术语</option><option value="character">人物 / 别名</option><option value="title">称谓</option></select></Field><Field label="翻译策略"><select value={strategy} onChange={e => setStrategy(e.target.value as TermInput['strategy'])}><option value="meaning">意译</option><option value="transliteration">指定音译</option><option value="preserve">保留原词</option></select></Field>
+      <Field label="术语类别"><select value={category} onChange={e => setCategory(e.target.value as TermInput['category'])}><option value="term">术语</option><option value="character">人物 / 别名</option><option value="title">称谓</option><option value="place">地点名称</option><option value="world">世界观词汇</option></select></Field><Field label="翻译策略"><select value={strategy} onChange={e => setStrategy(e.target.value as TermInput['strategy'])}><option value="meaning">意译</option><option value="transliteration">指定音译</option><option value="preserve">保留原词</option></select></Field>
       <Field label="术语匹配"><select value={match} onChange={e => setMatch(e.target.value as TermInput['match'])}><option value="substring">字面子串，适合中文</option><option value="word">完整词边界，区分大小写</option></select></Field></div>
     <div className="experimental-grid"><Field label="源别名，每行一个"><textarea value={sourceAliases} onChange={e => setSourceAliases(e.target.value)} maxLength={3200} /></Field><Field label="允许译名，每行一个"><textarea value={targetAliases} onChange={e => setTargetAliases(e.target.value)} maxLength={3200} /></Field><Field label="禁用译法，每行一个"><textarea value={forbidden} onChange={e => setForbidden(e.target.value)} maxLength={3200} /></Field></div>
     <Button disabled={busy || !source.trim() || !preferred.trim()} onClick={() => perform(() => api.addRule(edition, { source_term: source, preferred, source_aliases: split(sourceAliases), target_aliases: split(targetAliases), forbidden: split(forbidden), strategy, category, match, note: '' }), '术语草稿已保存，仍需批准后生效。')}>保存术语草稿</Button>
     {!edition.rules?.length && <p>尚无术语规则，可先编辑译文。</p>}
-    {edition.rules?.map(rule => <article className="experimental-record" key={rule.id}><strong><bdi>{rule.source_term}</bdi> → <bdi>{rule.preferred}</bdi></strong><Badge>{rule.status} · v{rule.version} · {rule.strategy}</Badge><p>源别名：{rule.source_aliases.join('、') || '无'}；允许译名：{rule.target_aliases.join('、') || '无'}；禁用：{rule.forbidden.join('、') || '无'}</p>{rule.reviewed_by && <p>审核：{rule.reviewed_by} · {rule.reviewed_at}</p>}<div className="experimental-actions"><Button disabled={busy || rule.status !== 'DRAFT'} onClick={() => perform(() => api.ruleReview(edition, rule, 'approve'), '规则已批准，已接受译文需要重新审核。')}>批准此术语规则</Button><Button disabled={busy || rule.status !== 'APPROVED'} onClick={() => perform(() => api.ruleReview(edition, rule, 'revoke'), '规则已撤销，历史记录保留。')}>撤销此术语规则</Button></div></article>)}
+    {edition.rules?.map(rule => <article className="experimental-record" key={rule.id}><strong><bdi>{rule.source_term}</bdi> → <bdi>{rule.preferred}</bdi></strong><Badge>{rule.status} · v{rule.version} · {rule.strategy}{rule.locked ? ' · 已锁定' : ''}</Badge><p>源别名：{rule.source_aliases.join('、') || '无'}；允许译名：{rule.target_aliases.join('、') || '无'}；禁用：{rule.forbidden.join('、') || '无'}</p>{rule.reviewed_by && <p>审核：{rule.reviewed_by} · {rule.reviewed_at}</p>}<div className="experimental-actions"><Button disabled={busy || rule.status !== 'DRAFT'} onClick={() => perform(() => api.ruleReview(edition, rule, 'approve'), '规则已批准，已接受译文需要重新审核。')}>批准此术语规则</Button><Button disabled={busy || rule.status !== 'APPROVED' || rule.locked} onClick={() => perform(() => api.ruleReview(edition, rule, 'revoke'), '规则已撤销，历史记录保留。')}>撤销此术语规则</Button><Button disabled={busy || rule.status !== 'APPROVED'} onClick={() => perform(() => api.ruleReview(edition, rule, rule.locked ? 'unlock' : 'lock'), '术语锁定状态已保存，译文需要重新审核。')}>{rule.locked ? '明确解锁术语' : '锁定首选译法'}</Button></div></article>)}
   </Panel>;
 }
 function EditionExportPanel({ api, edition, blocked }: { api: EditionApi; edition: LanguageEdition; blocked: boolean }) {

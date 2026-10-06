@@ -23,18 +23,36 @@ from ..services.v1_capability_service import CapabilityVersionConflict
 FEATURE = 'template_library_v2'
 LIMIT = 128000
 TYPES = ('planning', 'character', 'screenplay', 'storyboard', 'review', 'workflow', 'safe_batch')
+EXTENDED_TYPES = ('novel', 'genre', 'world', 'agent', 'story_structure')
+
+
+class Compatibility(Strict):
+    # Versioned data protocol, not an application-version or runtime claim.
+    protocol: Literal['LOCAL_BOUNDED_JSON_V1'] = 'LOCAL_BOUNDED_JSON_V1'
+    schema_versions: list[Literal[1]] = Field(default_factory=lambda: [1], min_length=1, max_length=1)
+    import_mode: Literal['READ_ONLY_DECLARATION'] = 'READ_ONLY_DECLARATION'
+
+
+class Permissions(Strict):
+    execute: Literal[False] = False
+    network: Literal[False] = False
+    manuscript_write: Literal[False] = False
+    grant_capabilities: Literal[False] = False
+    executable_plugins: Literal['DENY_ALL'] = 'DENY_ALL'
 
 
 class Manifest(Strict):
     id: str = Field(pattern=r'^[a-z][a-z0-9-]{1,79}$')
     version: str = Field(pattern=r'^[0-9]{1,4}\.[0-9]{1,4}\.[0-9]{1,4}$')
-    type: Literal['planning', 'character', 'screenplay', 'storyboard', 'review', 'workflow', 'safe_batch']
+    type: Literal['planning', 'character', 'screenplay', 'storyboard', 'review', 'workflow', 'safe_batch', 'novel', 'genre', 'world', 'agent', 'story_structure']
     title: str = Field(min_length=1, max_length=160)
     description: str = Field(default='', max_length=2000)
     author: str = Field(min_length=1, max_length=160)
     license: str = Field(min_length=1, max_length=160)
     dependencies: list[Literal['advanced_planning_v2', 'declarative_agents_v2', 'safe_batches_v2']] = Field(default_factory=list, max_length=3)
     provenance: str = Field(default='USER_SUPPLIED_DECLARATION', max_length=1000)
+    compatibility: Compatibility = Field(default_factory=Compatibility)
+    permissions: Permissions = Field(default_factory=Permissions)
 
 
 class Section(Strict):
@@ -58,10 +76,10 @@ class TemplatePackage(Strict):
     @model_validator(mode='after')
     def content_contract(self):
         typ = self.manifest.type
-        model = PlanningTemplateIn if typ == 'planning' else WorkflowAuthoring if typ == 'workflow' else BatchPreset if typ == 'safe_batch' else Brief
+        model = PlanningTemplateIn if typ == 'planning' else WorkflowAuthoring if typ in {'workflow', 'agent'} else BatchPreset if typ == 'safe_batch' else Brief
         self.content = model.model_validate(self.content).model_dump()
         # Reject contradictory dependency claims; templates cannot enable them.
-        dependency = {'planning': 'advanced_planning_v2', 'workflow': 'declarative_agents_v2', 'safe_batch': 'safe_batches_v2'}.get(typ)
+        dependency = {'planning': 'advanced_planning_v2', 'workflow': 'declarative_agents_v2', 'agent': 'declarative_agents_v2', 'safe_batch': 'safe_batches_v2'}.get(typ)
         if dependency and dependency not in self.manifest.dependencies:
             raise ValueError('missing declared template dependency: ' + dependency)
         if len(canonical(self.model_dump()).encode()) > LIMIT: raise ValueError('template exceeds 128000 bytes')
@@ -108,6 +126,29 @@ def builtin_packages():
             'author': 'AI-Novel-Studio synthetic examples', 'license': 'CC0-1.0', 'dependencies': [], 'provenance': 'ORIGINAL_SYNTHETIC_OFFLINE'},
             'content': {'sections': [{'key': key, 'title': label, 'text': text} for key, label, text in sections]}})
     result.append({'schema_version': 1, 'manifest': {'id': 'synthetic-safe-batch', 'version': '1.0.0', 'type': 'safe_batch', 'title': '校对与正文导出参数', 'author': 'AI-Novel-Studio synthetic examples', 'license': 'CC0-1.0', 'dependencies': ['safe_batches_v2'], 'provenance': 'ORIGINAL_SYNTHETIC_OFFLINE'}, 'content': {'proof': True, 'export_format': 'txt', 'skip_satisfied': True}})
+    return [parse_package(p) for p in result]
+
+
+def extended_builtin_packages():
+    """Additive starters; preserve the original catalog's nine-item projection."""
+    result = []
+    for typ, title, sections in [
+        ('novel', '原创小说起步', [('premise', '故事前提', '潮汐港的制图师决定寻找失落的航道。'), ('scope', '作品范围', '先建立卷、章节与人物草案；人工确认后再写正文。')]),
+        ('genre', '悬疑类型约定', [('promise', '读者约定', '谜题的线索在揭晓前可见，误导应有合理解释。'), ('boundaries', '创作边界', '记录题材、语气与读者预期；类型约定不是事实。')]),
+        ('world', '潮汐港世界简报', [('rules', '世界规则', '每次潮落会露出一条不同的旧路。'), ('institutions', '组织与地点', '灯塔会保管航线记录，雨港钟楼发布潮汐时刻。')]),
+        ('story_structure', '三幕故事结构', [('setup', '第一幕', '建立人物目标、阻碍与选择。'), ('confrontation', '第二幕', '代价逐步升高，并检验人物的信念。'), ('resolution', '第三幕', '人物作出有代价的选择，回收已建立的伏笔。')]),
+    ]:
+        result.append({'manifest': {'id': 'synthetic-' + typ.replace('_', '-'), 'version': '1.0.0', 'type': typ,
+            'title': title, 'author': 'AI-Novel-Studio synthetic examples', 'license': 'CC0-1.0',
+            'provenance': 'ORIGINAL_SYNTHETIC_OFFLINE'}, 'content': {'sections': [
+                {'key': key, 'title': label, 'text': text} for key, label, text in sections]}})
+    definition = default_definition()
+    definition['agent'].update(title='人工审核的创作整理 Agent', purpose='整理明确选取的文字，产出待审材料。',
+        role_prompt='只整理当前输入；不得把未知内容写成 Canon。', capability_requirements=['LOCAL_RULES'],
+        runtime_requirement='TRUSTED_IN_PROCESS_LOCAL')
+    result.append({'manifest': {'id': 'synthetic-agent', 'version': '1.0.0', 'type': 'agent',
+        'title': '人工审核的创作整理 Agent', 'author': 'AI-Novel-Studio synthetic examples', 'license': 'CC0-1.0',
+        'dependencies': ['declarative_agents_v2'], 'provenance': 'ORIGINAL_SYNTHETIC_OFFLINE'}, 'content': definition})
     return [parse_package(p) for p in result]
 
 
@@ -183,12 +224,13 @@ class TemplateLibraryService(DomainService):
     def _package(self, ctx, pid, state=None):
         entry = self._entry(ctx, pid, state)
         if entry and entry['status'] == 'INSTALLED': return parse_package(entry['package'])
-        original = next((p for p in builtin_packages() if p['manifest']['id'] == pid), None)
+        original = next((p for p in builtin_packages() + extended_builtin_packages() if p['manifest']['id'] == pid), None)
         if original: return original
         raise FileNotFoundError(pid)
 
     def catalog(self, ctx):
-        packages = {p['manifest']['id']: p for p in builtin_packages()}
+        builtins = builtin_packages() + extended_builtin_packages()
+        packages = {p['manifest']['id']: p for p in builtins}
         entries = self._records(ctx, self.PACKAGES)
         for entry in entries:
             if entry['status'] == 'INSTALLED': packages[entry['package']['manifest']['id']] = parse_package(entry['package'])
@@ -197,11 +239,13 @@ class TemplateLibraryService(DomainService):
         rows = []
         for pid, package in packages.items():
             record = next((r for r in entries if r['package']['manifest']['id'] == pid), None)
-            rows.append({'id': pid, 'package': package, 'digest': digest(package), 'builtin': any(p['manifest']['id'] == pid for p in builtin_packages()),
+            rows.append({'id': pid, 'package': package, 'digest': digest(package), 'builtin': any(p['manifest']['id'] == pid for p in builtins),
                 'installed': bool(record and record['status'] == 'INSTALLED'), 'version': record['version'] if record else 0,
                 'favorite': favorites.get(pid, {}).get('favorite', False), 'favorite_version': favorites.get(pid, {}).get('version', 0),
                 'missing_dependencies': [f for f in package['manifest']['dependencies'] if f not in enabled]})
-        return {'items': rows, 'types': list(TYPES), 'remote_sync': 'DISABLED', 'executable_extensions': 'DENY_ALL',
+        return {'items': [r for r in rows if r['package']['manifest']['type'] in TYPES], 'types': list(TYPES),
+            'extended_items': [r for r in rows if r['package']['manifest']['type'] in EXTENDED_TYPES], 'extended_types': list(EXTENDED_TYPES),
+            'import_mode': 'READ_ONLY_DECLARATION', 'permission_grants': [], 'remote_sync': 'DISABLED', 'executable_extensions': 'DENY_ALL',
             'protocol': 'LOCAL_BOUNDED_JSON_V1', 'license_review': 'DECLARATIONS_ONLY'}
 
     def preview(self, ctx, body):
@@ -224,7 +268,7 @@ class TemplateLibraryService(DomainService):
             payload = {'package': package, 'package_digest': digest(package), 'status': 'INSTALLED'}
             if entry:
                 if entry['package']['manifest']['type'] != package['manifest']['type']: raise ValueError('template type cannot change')
-                if entry['package']['manifest']['version'] == package['manifest']['version'] and entry['package_digest'] != digest(package):
+                if entry['package']['manifest']['version'] == package['manifest']['version'] and digest(parse_package(entry['package'])) != digest(package):
                     raise ValueError('changed content requires a new manifest version')
                 change_row(entry, ctx.actor, data.expected_version, lambda r: r.update(payload))
             else:
@@ -276,7 +320,7 @@ class TemplateLibraryService(DomainService):
                     'template_instance_id': row['id']})
                 collection(state, self.planning.TEMPLATES)[target['id']] = target
                 row['linked_target'] = {'feature': 'advanced_planning_v2', 'id': target['id'], 'version': target['version']}
-            elif package['manifest']['type'] == 'workflow':
+            elif package['manifest']['type'] in {'workflow', 'agent'}:
                 from .declarative_agents import DeclarativeAgentsService
                 definition = WorkflowAuthoring.model_validate(package['content']).model_dump()
                 target = new_row(ctx.novel_id, ctx.scope, ctx.actor, {'definition': definition, 'definition_digest': digest(definition),

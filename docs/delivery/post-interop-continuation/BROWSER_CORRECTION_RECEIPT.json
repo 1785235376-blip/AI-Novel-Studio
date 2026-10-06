@@ -1,0 +1,180 @@
+{
+  "kind": "INVENTORY_REVIEW_NOT_EXECUTION",
+  "previous_nodes": 7484,
+  "current_nodes": 7492,
+  "changed_source_files": [
+    {
+      "path": "tests/test_post_interop_media_continuation.py",
+      "before_sha256": "9a6aca05f826748aa45b523b402a9fb67b247ebce199c1b91fc234caa4f353b2",
+      "after_sha256": "a9332d53ead1bf215fd6f39c16ac295082353555a616eef89d23833a4a863124"
+    },
+    {
+      "path": "tests/test_post_interop_style_model.py",
+      "before_sha256": "0437255a2a14bef9418b990d42a7797346e77af6dbf1274af2157bd44492396c",
+      "after_sha256": "0a78798407641d4c94688bfe19237d19d13c4bda9de039e2d1d1fc08c406a478"
+    }
+  ],
+  "old_skip_counts": {
+    "file": 2035,
+    "postgres": 2059
+  },
+  "manifest_sha256": "419b00a35e16510582fd961a5c404d38b8a190aef4de958416f82ffa71e71f9c",
+  "added_node_count": 8,
+  "tested_code_tree": "ef025078c13034916a696380398ce7606e71be7b",
+  "retained_observation": {
+    "head": "dedb813bb297bb5fb95bac55440a71913b54ed10",
+    "pr_run": 37498190450,
+    "checkout": "4774ad6fba4739003c8670d6b6f550fafd2e8432",
+    "artifact_id": 11429826185,
+    "artifact_zip_sha256": "65036a99744561049a8d150711343a2b8bc941f312760d20645b417af0d66bca",
+    "completed_r4_failures": 7,
+    "subsequently_superseded_cancelled": true,
+    "not_cancellation_only": true
+  },
+  "corrections": [
+    {
+      "scope": "U08 source picker",
+      "cause": "Exact wrapped-label lookup included native option text",
+      "fix": "Already corrected in c12 by exact accessible combobox names and readiness checks; no runtime change"
+    },
+    {
+      "scope": "Style/Judge/new structured search",
+      "cause": "Original File chapter POST returns metadata without version; GET owns versioned Markdown including heading/trailing newlines",
+      "fix": "Read original saved baseline and preserve exact version/content/document assertions; never trim stored text to hide changes"
+    },
+    {
+      "scope": "Style model selected evidence",
+      "cause": "Offsets were computed from submitted body, not authoritative saved Markdown",
+      "fix": "Derive Unicode offsets from exact stored text and assert one exact quoted fragment/version; add both-prefix File/PG mounted regression"
+    },
+    {
+      "scope": "Approved storyboard asset",
+      "cause": "New browser fixture omitted required original novel_id query",
+      "fix": "Supply original project query; add missing-query422, correct-project200 and wrong-project404 regression"
+    },
+    {
+      "scope": "Production manifest label",
+      "cause": "New explanatory wording broke an inherited exact browser assertion",
+      "fix": "Restore original label unchanged; retain separate synthetic-only explanation and test both truth values"
+    },
+    {
+      "scope": "New Judge task-reopen fixture",
+      "cause": "Source inspection found the same metadata-versus-versioned-read assumption",
+      "fix": "Preventative GET-baseline correction with exact version/content, one-ledger and no-replay checks; not claimed as an observed hosted failure"
+    },
+    {
+      "scope": "New Wave5 template/comic fixture",
+      "cause": "Exact backend-origin response matcher missed successful frontend-proxy creation; returned ID was not captured before teardown",
+      "fix": "Match exact POST path and owned title, capture returned ID before assertions/UI waits, settle capture after click failure, then quiesce and delete only captured owned IDs",
+      "local_proof": "Two cases collected, strict TypeScript,17 existing lifecycle cases and12 extracted-helper event contracts pass; actual browser execution requires hosted final source"
+    }
+  ],
+  "application_changes": "Only original production determinism label restored. No backend runtime/API/permission/persistence/migration change. New test fixture wrapper preserves profile classifications and original rig behavior; no skip policy expansion.",
+  "inherited_tests": "Unchanged, including r4-registered-media.spec.ts. Existing assertions retained; new fixture checks strengthened.",
+  "fresh_staged_verification": {
+    "frontend_passed": 1261,
+    "frontend_inherited_opt_in_skips": 8,
+    "typescript": "PASS",
+    "tokens": "PASS",
+    "focused_backend_passed": 57,
+    "postgres_deselected": 44,
+    "r4_browser_collection": 63,
+    "r4_browser_collection_files": 44,
+    "browser_execution": "HOSTED_ONLY_PENDING"
+  },
+  "full_final_source_hosted_ci": "PENDING",
+  "historical_independent_review": "BLOCKED_UNCHANGED",
+  "additional_exact_head_observation": {
+    "head": "c12f9b61bf732b40181fabd88e432c6b8deb5bae",
+    "tree": "f28e15f020505e5779ace2355f5c2bfacfba4952",
+    "cloud_push_run": 37500440705,
+    "cloud_pr_run": 37500446416,
+    "push_compact_artifact": 11430237153,
+    "push_compact_sha256": "e9cde86fa5d75b509f4c908006035b3033041e50354fc908cbf76939e53cfcf9",
+    "r4_cases": 63,
+    "r4_passed": 49,
+    "r4_failure_elements": 10,
+    "r4_error_elements": 4,
+    "frontend_unit_passed": 1259,
+    "frontend_unit_opt_in_skips": 8,
+    "geometry_passed": 9,
+    "business_passed": 2,
+    "r3_passed": 7,
+    "export_recovery_passed": 1,
+    "u08_source_picker": "PASS_AFTER_SELECTOR_CORRECTION",
+    "status": "BOTH_FRONTEND_JOBS_TERMINAL_FAILURE_NOT_CANCELLED",
+    "new_root": "Both Wave5 template/comic setup waits used a backend origin while UI creation used the frontend proxy. The created owned project was not captured for cleanup and subsequent inherited clean-store checks observed it."
+  },
+  "strict_file_coverage_observation": {
+    "head": "c12f9b61bf732b40181fabd88e432c6b8deb5bae",
+    "run": 37500440705,
+    "artifact": 11429649109,
+    "archive_sha256": "27af4016cc65032687b2706e4b66d9666a861f97208600e9ab361c08aa7b2421",
+    "passed": 5107,
+    "skipped": 2377,
+    "collected": 7484,
+    "test_failures": 0,
+    "seconds": 818.78,
+    "tcp_passed": 2,
+    "strict_guard_errors": 29,
+    "coverage_complete": false,
+    "cause": "Inherited media rig skipif(noDSN) executed before canonical opposite-profile setup handling for29 new test IDs",
+    "fix": "Continuation-only marked wrapper delegates unchanged original fixture generator without redundant missing-DSN skipif; existing conftest supplies canonical opposite-profile reason and original postgres_gate requires a realPG endpoint",
+    "legacy_fixture_conftest_skip_maps_and_guards": "UNCHANGED",
+    "focused_proof": {
+      "passed": 64,
+      "canonical_opposite_profile_skipped": 53,
+      "nodes": 117,
+      "file_classification": 53,
+      "postgres_classification": 53,
+      "both_classification": 11,
+      "original_outcome_checker_errors": 0,
+      "all_reported_29_skips_corrected": true,
+      "corresponding_29_file_cases_executed": true,
+      "applicable_postgres_skip_markers": 0,
+      "postgres_without_dsn": "EXISTING_GATE_REJECTS",
+      "real_postgres_local": "NOT_RUN"
+    }
+  },
+  "next_exact_staged_code_tree": "709614fc6b13fca1764fb715278692848096f633",
+  "latest_fresh_staged_verification": {
+    "tested_code_tree": "709614fc6b13fca1764fb715278692848096f633",
+    "frontend_passed": 1261,
+    "frontend_inherited_opt_in_skips": 8,
+    "typescript": "PASS",
+    "tokens": "PASS",
+    "focused_backend_passed": 105,
+    "canonical_opposite_profile_skipped": 85,
+    "complete_collections": 2,
+    "complete_nodes": 7492,
+    "new_cases_since_published_c12": 8,
+    "new_fixture_helper": "tests/post_interop_media_fixture_support.py",
+    "changed_continuation_test_digests": [
+      {
+        "path": "tests/test_post_interop_media_continuation.py",
+        "before_sha256": "9a6aca05f826748aa45b523b402a9fb67b247ebce199c1b91fc234caa4f353b2",
+        "after_sha256": "8159484584e658c80ba2f07ae16244611bdfa110aeb8917c3381f5c2405eef6a"
+      },
+      {
+        "path": "tests/test_post_interop_media_visibility.py",
+        "before_sha256": "a014f3ac28c380d16876ff032facdb9a40948213a4dab7f3e412845da34cea7f",
+        "after_sha256": "acb1562acacf4e538f1f91bfb9ca75cb1b1002dd22442a0dea3146f55bc26eac"
+      },
+      {
+        "path": "tests/test_post_interop_style_model.py",
+        "before_sha256": "0437255a2a14bef9418b990d42a7797346e77af6dbf1274af2157bd44492396c",
+        "after_sha256": "0a78798407641d4c94688bfe19237d19d13c4bda9de039e2d1d1fc08c406a478"
+      },
+      {
+        "path": "tests/test_post_interop_wave5_templates_sdk_comics.py",
+        "before_sha256": "8c7b77dfccef5929195770a78b11fde98cd78ebe85c4f1a857d48752c26d51c7",
+        "after_sha256": "3d67572426f625e9fe65167f4098ee2ebd33d64d545aa14b5af50a0b407c6a90"
+      }
+    ],
+    "old_skip_maps": "UNCHANGED",
+    "original_baseline_test_files": "BYTE_IDENTICAL",
+    "manifest_sha256": "11548199917da4f81fae18d57ed45a75d8225bed08de1480e2cd511ef09b3692",
+    "r4_collection": 63,
+    "hosted_execution": "PENDING_NEW_SOURCE"
+  }
+}

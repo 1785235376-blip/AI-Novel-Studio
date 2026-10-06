@@ -223,3 +223,33 @@ it('keeps an explicit merge pending through a cache refresh of its already-revie
   expect(conflicts.list('recovery:1').some(item => item.local.content === 'LOCAL THREE')).toBe(true);
   expect(screen.queryByText('后端已保存')).toBeNull();
 });
+it('preserves a corrupt local candidate behind an explicit export/discard recovery gate', async () => {
+  const raw = '{"chapterId":"recovery:1","content":"PARTIAL ORIGINAL';
+  localStorage.setItem('ai-novel-studio:draft:file:recovery:1', raw);
+  const request = vi.spyOn(api, 'saveChapter');
+  const create = vi.fn((_blob: Blob) => 'blob:raw-recovery');
+  vi.stubGlobal('URL', { createObjectURL: create, revokeObjectURL: vi.fn() });
+  vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
+  setup();
+  expect(screen.getByRole('alert').textContent).toContain('本机草稿记录损坏');
+  expect(screen.queryByLabelText('Test chapter editor')).toBeNull();
+  expect(localStorage.getItem('ai-novel-studio:draft:file:recovery:1')).toBe(raw);
+  fireEvent.click(screen.getByRole('button', { name: '导出原始草稿记录' }));
+  const text = await new Promise<string>(resolve => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.readAsText(create.mock.calls[0][0]); });
+  expect(text).toBe(raw); expect(request).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: '丢弃损坏记录并打开后端版本' }));
+  expect(editor().value).toBe('SAVED');
+  expect(screen.queryByRole('alert')).toBeNull(); expect(drafts.inspect('recovery:1')).toEqual({ state: 'EMPTY' });
+});
+it('labels browser-offline drafts honestly and permits an explicit reachable local-backend save', async () => {
+  const request = vi.spyOn(api, 'saveChapter').mockResolvedValue(chapter('OFFLINE LOCAL', 4));
+  const online = vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
+  setup(); edit('OFFLINE LOCAL');
+  expect(screen.getByText('离线草稿已写入当前浏览器，后端未确认')).toBeTruthy();
+  await act(async () => { await new Promise(resolve => setTimeout(resolve, 1000)); });
+  expect(request).not.toHaveBeenCalled();
+  save(); await screen.findByText('后端已保存');
+  expect(drafts.load('recovery:1')).toBeUndefined();
+  online.mockReturnValue(true); act(() => window.dispatchEvent(new Event('online')));
+  expect(screen.queryByText(/浏览器报告网络离线/)).toBeNull();
+});

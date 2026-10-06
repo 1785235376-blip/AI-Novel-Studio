@@ -70,7 +70,7 @@ class Strict(BaseModel):
 class BrokerRequest(Strict):
     capability: Literal['TEXT', 'IMAGE', 'VIDEO', 'AUDIO', 'EMBEDDING'] = 'TEXT'
     chapter_ids: list[str] = Field(default_factory=list, max_length=20)
-    policy: Literal['LOCAL_FIRST', 'COST', 'QUALITY', 'SPEED', 'CUSTOM'] = 'LOCAL_FIRST'
+    policy: Literal['LOCAL_FIRST', 'COST', 'QUALITY', 'SPEED', 'CUSTOM', 'PRIVACY_FIRST', 'BALANCED', 'COST_FIRST', 'QUALITY_FIRST', 'SPEED_FIRST'] = 'LOCAL_FIRST'
     profile: Literal['LOCAL_ONLY', 'HYBRID', 'QUALITY'] = 'LOCAL_ONLY'
     preferred_route: str | None = Field(default=None, max_length=160)
     excluded_providers: list[str] = Field(default_factory=list, max_length=50)
@@ -78,6 +78,8 @@ class BrokerRequest(Strict):
     max_latency_ms: int | None = Field(default=None, ge=1, le=3600000)
     max_cost_microusd: int | None = Field(default=None, ge=0, le=10**12)
     allow_synthetic: bool = False
+    allow_cloud_fallback: bool = False
+    require_confirmed_license: bool = False
     min_host_ram_mib: int | None = Field(default=None, ge=1, le=10**7)
     min_host_vram_mib: int | None = Field(default=None, ge=1, le=10**7)
 
@@ -167,7 +169,7 @@ class ModelBrokerService(DomainService):
             # not inference and never installs or starts a runtime.
             adapter.bridge.service.check_model_dispatch(candidate)
             candidate = adapter.bridge.guard(adapter.candidate['id'])
-            facts.update(runtime_hash=candidate.get('runtime_fingerprint'), model_version=candidate.get('model_evidence_fingerprint'),
+            facts.update(license_confirmed=bool(candidate.get('license_confirmed')), license_state='USER_CONFIRMED_LOCAL_USE' if candidate.get('license_confirmed') else 'REVIEW_REQUIRED', runtime_hash=candidate.get('runtime_fingerprint'), model_version=candidate.get('model_evidence_fingerprint'),
                          quantization=candidate.get('evidence', {}).get('general.file_type'),
                          runtime_version=candidate.get('evidence', {}).get('runtime_version'),
                          config_hash=digest(candidate['runtime_config']), enabled_at=candidate.get('enabled_at'),
@@ -175,7 +177,7 @@ class ModelBrokerService(DomainService):
             if not facts['model_version']: reasons.append('MODEL_VERSION_EVIDENCE_MISSING')
             if facts['source_locality'] != 'LOCAL_VERIFIED': reasons.append('LOCALITY_NOT_VERIFIED')
         elif isinstance(adapter, LegacyTextProviderAdapter) and type(adapter.provider) is MockProvider:
-            facts.update(synthetic=True, model_version='synthetic-protocol-v1', runtime_version='python-' + platform.python_version(),
+            facts.update(synthetic=True, license_confirmed=True, license_state='BUILTIN_SYNTHETIC_ONLY', model_version='synthetic-protocol-v1', runtime_version='python-' + platform.python_version(),
                          config_hash=digest({'delay': getattr(adapter.provider, 'delay_ms', None), 'failure': getattr(adapter.provider, 'failure', None)}),
                          source_locality='LOCAL_VERIFIED')
         elif isinstance(adapter, LegacyTextProviderAdapter) and isinstance(adapter.provider, OllamaProvider):
@@ -195,7 +197,9 @@ class ModelBrokerService(DomainService):
             reasons.append('VERIFIED_ADAPTER_REQUIRED')
         center_model = getattr(self.model_center, 'models', {}).get(model.model_id)
         if center_model is not None:
-            facts['model_center_hash'] = digest({k: str(getattr(center_model, k, '')) for k in ('version', 'quantization', 'precision', 'model_format', 'status')})
+            facts['model_center_hash'] = digest({k: str(getattr(center_model, k, '')) for k in ('version', 'quantization', 'precision', 'model_format', 'status', 'license')})
+            facts['catalog_license'] = center_model.license
+            facts.setdefault('license_state', 'CATALOG_CLAIM_NOT_CONFIRMATION')
             facts['quantization'] = center_model.quantization or facts['quantization']
             profiles = getattr(self.model_center, 'profiles', {})
             facts['hardware_hash'] = digest([asdict(profiles[pid]) for pid in center_model.hardware_profiles if pid in profiles]) if isinstance(profiles, dict) and center_model.hardware_profiles else None
@@ -402,7 +406,12 @@ class ModelBrokerService(DomainService):
             if route['provider_id'] in body.excluded_providers: reasons.append('EXCLUDED_BY_USER')
             if body.policy == 'CUSTOM' and body.preferred_route != route['route_id']: reasons.append('CUSTOM_ROUTE_NOT_SELECTED')
             if route['synthetic'] and not body.allow_synthetic: reasons.append('SYNTHETIC_NOT_REQUESTED')
+            route['license_state'] = route.get('identity', {}).get('license_state', 'UNKNOWN')
+            route['license_confirmed'] = bool(route['synthetic'] or route.get('identity', {}).get('license_confirmed'))
+            if body.require_confirmed_license and not route['license_confirmed']: reasons.append('LICENSE_CONFIRMATION_REQUIRED')
             if route['cloud']:
+                if body.policy == 'PRIVACY_FIRST': reasons.append('PRIVACY_FIRST_LOCAL_ONLY')
+                if body.policy == 'LOCAL_FIRST' and not body.allow_cloud_fallback: reasons.append('LOCAL_TO_CLOUD_FALLBACK_NOT_APPROVED')
                 if body.profile == 'LOCAL_ONLY': reasons.append('LOCAL_ONLY_POLICY')
                 for cid in sources:
                     try:
@@ -435,11 +444,22 @@ class ModelBrokerService(DomainService):
             route['reasons'] = list(dict.fromkeys(reasons))
             route['eligible'] = not route['reasons']
         eligible = [r for r in candidates if r['eligible']]
+        # Balanced uses ranks only across currently eligible routes. Missing
+        # facts rank last, and quality is never manufactured from transport success.
+        def ordinal(route, key):
+            known = sorted({key(value) for value in eligible if key(value) is not None})
+            value = key(route)
+            return known.index(value) if value is not None else len(known) + 1
         def rank(route):
             preferred = 0 if route['route_id'] == body.preferred_route else 1
             cost = route['price']['reserve_microusd'] if route['price'] else float('inf')
-            if body.policy == 'COST': return (cost, preferred, route['cloud'], route['route_id'])
-            if body.policy == 'SPEED': return (route['latency_ms'] if route['latency_ms'] is not None else float('inf'), preferred, route['cloud'], route['route_id'])
+            if body.policy in {'COST', 'COST_FIRST'}: return (cost, preferred, route['cloud'], route['route_id'])
+            if body.policy in {'SPEED', 'SPEED_FIRST'}: return (route['latency_ms'] if route['latency_ms'] is not None else float('inf'), preferred, route['cloud'], route['route_id'])
+            if body.policy == 'BALANCED':
+                points = ordinal(route, lambda r: r['price']['reserve_microusd'] if r['price'] else None) + ordinal(route, lambda r: r['latency_ms']) + int(route['cloud'])
+                return (points, preferred, route['synthetic'], route['route_id'])
+            if body.policy in {'LOCAL_FIRST', 'PRIVACY_FIRST'}:
+                return (route['cloud'], preferred, route['synthetic'], route['route_id'])
             return (preferred, route['cloud'], route['synthetic'], route['route_id'])
         chosen = sorted(eligible, key=rank)[0] if eligible else None
         guard()
@@ -447,10 +467,14 @@ class ModelBrokerService(DomainService):
         payload = {'request': body.model_dump(), 'sources': sources, 'budget_version': budget['version'],
                    'chosen': chosen, 'candidates': candidates, 'status': 'PREVIEW' if chosen else 'NO_LEGAL_ROUTE',
                    'decision_reason': 'CURRENT_ELIGIBLE_ROUTE_WITH_POLICY_ORDER' if chosen else 'NO_REGISTERED_ROUTE_SATISFIES_CURRENT_CONSTRAINTS',
-                   'warnings': (['QUALITY_EVIDENCE_UNAVAILABLE_NO_QUALITY_RANKING'] if body.policy == 'QUALITY' else []),
+                   'warnings': (['QUALITY_EVIDENCE_UNAVAILABLE_NO_QUALITY_RANKING'] if body.policy in {'QUALITY', 'QUALITY_FIRST'} else []),
                    'will_send': {'source_chapter_ids': list(sources), 'source_versions': sources, 'target': 'cloud' if chosen and chosen['cloud'] else 'local' if chosen else None,
                                  'author_request_preview_required': True},
-                   'execution_authorized': False, 'automatic_fallback': False, 'hardware': hardware}
+                   'execution_authorized': False, 'automatic_fallback': False, 'hardware': hardware,
+                   'policy_explanation': {'policy': body.policy, 'quality': 'NOT_MEASURED_NOT_RANKED',
+                       'balanced_factors': ['CURRENT_COST_RANK', 'CURRENT_LATENCY_RANK', 'CLOUD_PENALTY'] if body.policy == 'BALANCED' else [],
+                       'unknown_metrics': 'RANK_LAST', 'cloud_fallback_preapproved': body.allow_cloud_fallback,
+                       'license_confirmation_required': body.require_confirmed_license}}
         with self.store.transaction(nid, scope) as doc:
             guard()
             row = new_row(nid, scope, actor, payload)
@@ -472,7 +496,11 @@ class ModelBrokerService(DomainService):
             capacity = self.hardware_capacity()
             for required, available in ((constraints.get('min_host_ram_mib'), capacity.get('ram_mib')), (constraints.get('min_host_vram_mib'), capacity.get('vram_mib'))):
                 if required and (current['cloud'] or available is None or available < required): raise StaleSourceError('BROKER_HOST_CAPACITY_CHANGED')
+        if constraints.get('require_confirmed_license') and not (current['synthetic'] or current.get('identity', {}).get('license_confirmed')):
+            raise StaleSourceError('BROKER_LICENSE_AUTHORITY_CHANGED')
         if current['cloud']:
+            if constraints.get('policy') == 'PRIVACY_FIRST': raise ValueError('BROKER_PRIVACY_FIRST_LOCAL_ONLY')
+            if constraints.get('policy') == 'LOCAL_FIRST' and not constraints.get('allow_cloud_fallback'): raise ValueError('BROKER_CLOUD_FALLBACK_NOT_APPROVED')
             if row['request']['profile'] == 'LOCAL_ONLY': raise ValueError('BROKER_LOCAL_ONLY')
             for cid in row['sources']:
                 assert_current_manuscript_egress(self.chapters, self.novels, nid, self.chapters.get(cid), scope.get('branch_id'))

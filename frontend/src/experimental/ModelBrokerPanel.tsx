@@ -24,6 +24,7 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
   const [policy, setPolicy] = useState('LOCAL_FIRST'), [profile, setProfile] = useState('LOCAL_ONLY'), [route, setRoute] = useState('');
   const [contextTokens, setContextTokens] = useState('0'), [limit, setLimit] = useState(''), [latency, setLatency] = useState('');
   const [ram, setRam] = useState(''), [vram, setVram] = useState('');
+  const [fallback, setFallback] = useState(false), [license, setLicense] = useState(false);
   const [synthetic, setSynthetic] = useState(false), [excluded, setExcluded] = useState<string[]>([]);
   const [quote, setQuote] = useState<BrokerPreview>(), [operation, setOperation] = useState('continue'), [instruction, setInstruction] = useState('');
   const [requestScope, setRequestScope] = useState<AuthorRequestScope>(defaultAuthorRequestScope);
@@ -45,7 +46,7 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
       <Field label="模型能力类型"><select value={capability} onChange={e => { invalidate(); setCapability(e.target.value); setRoute(''); setContextTokens('0'); }}><option value="TEXT">TEXT · 作者草稿</option><option value="IMAGE">IMAGE · 批次媒体预检</option><option value="AUDIO">AUDIO · 已审核语音段预检</option></select></Field>
       {capability !== 'TEXT' && <p>这里只创建原路线预检；请在安全批处理中选择同一来源、明确本地与 0 USD 上限，再单独确认和执行。费用未知不能当作免费。</p>}
       <div className="experimental-grid">
-        <Field label="调度策略"><select value={policy} onChange={e => { invalidate(); setPolicy(e.target.value); }}><option value="LOCAL_FIRST">本地优先</option><option value="COST">成本优先</option><option value="QUALITY">质量优先（无证据不排名）</option><option value="SPEED">速度优先（仅当前执行证据）</option><option value="CUSTOM">自定义指定路线</option></select></Field>
+        <Field label="调度策略"><select value={policy} onChange={e => { invalidate(); setPolicy(e.target.value); }}><option value="LOCAL_FIRST">本地优先</option><option value="COST">成本优先</option><option value="QUALITY">质量优先（无证据不排名）</option><option value="SPEED">速度优先（仅当前执行证据）</option><option value="PRIVACY_FIRST">隐私优先（只允许本地）</option><option value="BALANCED">平衡（当前成本 / 延迟）</option><option value="CUSTOM">自定义指定路线</option></select></Field>
         <Field label="创作隐私模式"><select value={profile} onChange={e => { invalidate(); setProfile(e.target.value); }}><option value="LOCAL_ONLY">仅本地</option><option value="HYBRID">允许已授权云端候选</option><option value="QUALITY">质量模式（仍检查来源授权）</option></select></Field>
         <Field label="偏好模型路线"><select value={route} onChange={e => { invalidate(); setRoute(e.target.value); }}><option value="">无偏好</option>{currentRoutes.map(r => <option key={r.route_id} value={r.route_id}>{r.display_name} · {r.provider_id}{r.available ? '' : ' · 不可用'}{r.synthetic ? ' · 合成测试' : ''}</option>)}</select></Field>
         <Field label="最低上下文容量（Token；0 表示未设）"><input type="number" min="0" max="10000000" value={contextTokens} onChange={e => { invalidate(); setContextTokens(e.target.value); }} /></Field>
@@ -56,12 +57,14 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
       </div>
       <p>主机容量只在明确设限时读取；不是当前空闲内存，也不保证推理适配。没有真实硬件证据时不满足资源硬限制。</p>
       <label className="experimental-check"><input type="checkbox" checked={synthetic} onChange={e => { invalidate(); setSynthetic(e.target.checked); }} />明确允许内置合成协议测试（不代表真实模型质量）</label>
+      <label className="experimental-check"><input type="checkbox" checked={fallback} onChange={e => { invalidate(); setFallback(e.target.checked); }} />提前允许本地优先策略提出云端候选（仍需来源授权和单次生成确认）</label>
+      <label className="experimental-check"><input type="checkbox" checked={license} onChange={e => { invalidate(); setLicense(e.target.checked); }} />只接受已有 License 确认证据的路线</label>
       <details><summary>排除 Provider</summary>{providers.map(id => <label className="experimental-check" key={id}><input type="checkbox" checked={excluded.includes(id)} onChange={e => { invalidate(); setExcluded(old => e.target.checked ? [...old, id] : old.filter(v => v !== id)); }} />排除 {id}</label>)}</details>
       <p>当前来源：{chapter ? `「${chapter.title}」已保存版本 v${chapter.version}` : '尚未选择章节'}。只使用已保存章节；未保存的编辑请先返回编辑器保存。</p>
       <div className="experimental-actions"><Button disabled={!chapter || action.busy || status.loading || !!status.error || (policy === 'CUSTOM' && !route)} onClick={() => void action.run(async () => {
         const ticket = ++epoch.current; setQuote(undefined); setReceipt(undefined); setReviewed(false);
         const result = await api.preview({ capability, chapter_ids: [chapter!.id], policy, profile, preferred_route: route || null, excluded_providers: excluded,
-          context_tokens: Number(contextTokens || 0), max_latency_ms: latency ? Number(latency) : null, max_cost_microusd: limit ? Number(limit) : null, allow_synthetic: synthetic, min_host_ram_mib: ram ? Number(ram) : null, min_host_vram_mib: vram ? Number(vram) : null });
+          context_tokens: Number(contextTokens || 0), max_latency_ms: latency ? Number(latency) : null, max_cost_microusd: limit ? Number(limit) : null, allow_synthetic: synthetic, allow_cloud_fallback: fallback, require_confirmed_license: license, min_host_ram_mib: ram ? Number(ram) : null, min_host_vram_mib: vram ? Number(vram) : null });
         if (alive.current && ticket === epoch.current) setQuote(result);
       }, '路线检查已完成；尚未调用模型。')}>预览合法模型路线</Button><Button disabled={action.busy} onClick={() => { invalidate(); status.reload(); history.reload(); }}>重新读取当前注册状态</Button></div>
       {action.feedback}
@@ -69,7 +72,7 @@ function BrokerBody({ client, novelId, context, chapter, benchmarkEnabled = fals
         {quote.chosen ? <StatusMessage tone="success">建议：{quote.chosen.display_name} · {quote.chosen.cloud ? '云端' : '本地'} · 预占 {cost(quote.chosen.price?.reserve_microusd)} · {quote.chosen.cost_state}</StatusMessage> : <StatusMessage tone="warning">没有合法候选。请核对下方排除原因，不会自动选择替代云模型。</StatusMessage>}
         {!!quote.warnings.length && <StatusMessage tone="warning">文学质量证据不足，未进行质量排名。</StatusMessage>}
         {quote.candidates.map(r => <article className="experimental-record" key={r.route_id}><div className="experimental-actions"><strong>{r.display_name}</strong><Badge tone={r.eligible ? 'success' : 'warning'}>{r.eligible ? '合法候选' : '已排除'}</Badge><span>{r.provider_id} / {r.model_id}</span></div><p>{r.reasons.length ? r.reasons.join(' · ') : '通过当前能力、模型状态、来源隐私与预算检查'}</p><p>费用：{r.cost_state === 'UNKNOWN' ? '未知，不能当作免费' : cost(r.price?.reserve_microusd)} · {r.verification}</p></article>)}
-        <Details value={quote.will_send} label="核对来源、版本与外发范围" />
+        <Details value={quote.policy_explanation} label="策略排序与未知证据" /><Details value={quote.will_send} label="核对来源、版本与外发范围" />
       </section>}
     </Panel>
     {quote?.chosen && author && <Panel title="按已核对路线生成单份草稿">

@@ -1,3 +1,9 @@
+# Post-Interop continuation target (2026-10-06)
+
+Current development is Draft [PR43](https://github.com/1785235376-blip/AI-Novel-Studio/pull/43), branch `work/post-interop-r4-r5-ux-continuation`, stacked on frozen PR42 `e58c72b04182cd374af092314386b90f8250a173`. Current feature and journey evidence is in `POST_INTEROP_FEATURE_MATRIX.md`, `UX_ACCEPTANCE_MATRIX.md` and `docs/delivery/post-interop-continuation/`. Earlier handoff sections retain their historical scope; appended Post-Interop wave sections describe the current pages/components/APIs/state/permissions and non-breakable behavior. No final visual redesign or full product acceptance is claimed. Historical independent review stays BLOCKED; this work does not replace it.
+
+---
+
 # Opus UI handoff · R4/R5/UX experimental continuation
 
 Current target: `1785235376-blip/AI-Novel-Studio` · branch `work/post-v1-r4-r5-ux` · Draft PR [#39](https://github.com/1785235376-blip/AI-Novel-Studio/pull/39), stacked on PR38 parent `d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b`.
@@ -297,3 +303,37 @@ Local source-freeze verification for the truth-state/setup correction: **173 Vit
 On `a1b42cf` and its identical-tree PR merge checkout, both frontend jobs passed 1102 unit tests (7 optional skips), all 64 original browser tests, the real-client roundtrip, and eight of nine Interop browser flows. The sole remaining failure was Escape dismissal after an unavailable Tutor: disabling the async connect button can move native browser focus to `document.body`, outside the dialog's existing key handler.
 
 A body-focus Escape regression reproduced the defect before repair. The modal now captures Escape/Tab only when focus has escaped its active subtree, retaining existing in-dialog handlers, acknowledgment-based disconnect, focus restoration and cleanup. The hosted dismissal assertion remains unchanged. Final local verification: **1104 passed, 7 skipped** across the full unit suite; focused Interop **56/56**; TypeScript/build/token/diff checks passed. No local Chromium retry, baseline rewrite, transport/socket change or shell redesign was made. A new hosted run is still required to verify the repaired ninth flow.
+
+## Post-Interop Wave1 UX checkpoint
+
+Existing Editor/SaveControls now preserve corrupt local draft bytes before overwrite and distinguish offline draft from backend persistence. Keep explicit recovery export/reset, source CAS and durable acknowledgement truth. Existing WorkspaceTools aggregates original generation/import/team/image/media/audio/video/export/workflow/review owners; cancellation uses a current owner/state receipt. Unknown cost/progress remains unknown. Preserve current-scope exact IDs, dirty-buffer navigation guards, unavailable-action reasons, independent cancellation and no automatic model retry. Import/Teams/Review Inbox target props are owner-filtered; Media/Voice/Audiobook target forwarding integrates in Wave4. Source add/pin and further entity catalogs remain an active refinement. APIs: existing experimental `/ux` routes plus scoped task-cancel and original-owner readers. Server flags remain existing default-OFF gates; V1 forced OFF. No protected shell/token redesign.
+
+## Post-Interop Wave3 models and research
+
+Existing ModelBroker/Benchmark panels add policy and evidence controls without new state authorities. Keep explicit cloud fallback, unknown prices, exact current-route/evidence receipts and source-change invalidation. Existing ResearchLibrary adds original-file replacement, retained history/private restore/export, note edit/delete and citation repair. Restore creates a fresh private version; stale citations never silently rebind. Existing EmbeddingPanel uses scoped original source pickers and an explicitly selected original ModelCenter registration, with cancel/rebuild/invalidate/remove. No provider remains NOT_CONFIGURED; real transport contract evidence is not semantic model quality. Keep independent cancellation and old-response/scope fences. Default-OFF/server V1 gates and the original shell/tokens remain unchanged. Fresh final-source browser/geometry evidence remains required after reconstruction.
+
+## Post-Interop Wave2 and native source inspector
+
+Preserve optional exact scene IDs, Chapter/Scene timeline ordering, separate epistemic labels and author-versus-character context isolation. Simulator results remain proposals. Style deterministic counts must never become calibrated literary-quality scores. Style and original-history comparison model runs need exact source previews, explicit provider/price/consent, original job cancellation/recovery and separate human review; direct whole-manuscript Accept stays forbidden. Intentional Judge findings collapse without losing review history or existing revision-task references.
+
+The existing AuthorRequestPreview/Controls source picker stores only original IDs/version/digest pointers. Add/remove/pin/exclude changes invalidate receipts. Actual adapter-facing context shows citations, truncation reason and provider/locality; hidden or revoked sources cannot reappear from persisted jobs. Exact structured search targets remain scope/session/version-bound and preserve dirty editor drafts. Keep current unavailable-target and explicit retry messaging, and never dispatch a model during navigation. Existing server default-OFF/V1 gates and shell/tokens remain unchanged.
+
+## Post-Interop Wave4 media and production
+
+Keep original MediaPanel source pickers, cover/storyboard revision/CAS/history, explicit fixture-versus-registered route choice and source-stale labels. Cancellation stays independent of pending execute; navigation only selects the original authorized task/plan. Missing character references must leave independent work visible while prohibiting stale queue/approval. Brief edits retain reference identities, so explain fresh-brief recovery if the original source cannot be restored.
+
+Director suggestions are transparent source-local review aids, not inferred camera geometry or creative-quality scores. Production assurance labels remain independent; measured audio frames are segment evidence only, with unknown speaker/alignment review explicit. OTIO loss acknowledgements remain required. Preserve existing Panel/Button/Field/StatusMessage primitives, tokens, layout order, scope invalidation and default-OFF/server V1 gates; final visual redesign remains a later handoff.
+
+## Post-Interop Wave5 extended creation
+
+TranslationMemoryPanel remains inside the original edition owner. Keep exact source/target-version identity, locked-term reasons, explicit memory reuse and history-restore confirmation; literal drift checks are not translation quality. Comic image briefs/appearance references remain distinct from storyboard review, with approved asset versions and scene lineage visible. InteractiveStoryHistory restores through current original references and CAS, never stale content.
+
+SharedUniversePanel remains within ProjectForksPanel: selected immutable snapshot contents, explicit target work pin, source drift, incoming read-only pin view and human repin/release. Privacy withdrawal must withhold old content without silently merging or mutating target manuscript/Canon. WriterRoom presence stays explicitly unavailable while asynchronous assignment/comments/proposals remain usable. Templates expose version/compatibility and denied permissions; SDK previews never execute imported code. Preserve source-change invalidation, private draft cleanup, default-OFF/server V1 fences and existing shared design tokens/primitives. No final visual redesign is included.
+
+## Exact original model-task reopening
+
+Task Center uses the additive owner_navigation pointer while retaining the legacy source shape. Simulator/Judge/declarative panels select only the matching authorized original job receipt; translation shows the exact original receipt without overwriting dirty segment input. Opening its original segment is a separate action. Missing, withheld or out-of-window tasks remain unavailable instead of selecting unrelated output, and navigation never executes a model. Keep chapter/source scope fences and existing50-edition/50-run bounded translation visibility explicit.
+
+## Browser contract compatibility correction
+
+Retain the inherited production evidence label “确定性协议可复现” and its separate explanation that determinism is established only for synthetic protocols, never arbitrary GPU/model bytes. Source-based controls and fixtures must use the authoritative versioned chapter read, including its exact Markdown heading/whitespace and Unicode offsets. Asset links keep the original required project query; do not weaken permission checks to accommodate missing navigation inputs.

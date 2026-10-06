@@ -7,9 +7,10 @@ import {
   publishTaskSummary,
 } from "../ui/taskSummary";
 import "./WorkflowConsole.css";
+import { useRequestedRecord } from "../experimental/useRequestedRecord";
 import type { WorkflowInspection } from "./WorkflowInspector";
 
-type WorkflowPanelProps = { novelId?: string; onInspect?: (inspection: WorkflowInspection) => void };
+type WorkflowPanelProps = { novelId?: string; requestedRunId?: string; requestedWorkflowId?: string; onInspect?: (inspection: WorkflowInspection) => void };
 
 export function WorkflowPanel(props: WorkflowPanelProps) {
   const actor = useStudio((state) => state.actor);
@@ -21,11 +22,12 @@ export function WorkflowPanel(props: WorkflowPanelProps) {
   return <ScopedWorkflowPanel key={scopeKey} {...props} context={context} />;
 }
 
-function ScopedWorkflowPanel({ novelId, onInspect, context }: WorkflowPanelProps & { context: CollaborationContext }) {
+function ScopedWorkflowPanel({ novelId, onInspect, context, requestedRunId, requestedWorkflowId }: WorkflowPanelProps & { context: CollaborationContext }) {
   const branchId = context.scope?.branchId;
   // In local mode each API call captures the empty context synchronously. In
   // collaboration mode always bind the request to this observer's identity.
   const requestContext: [CollaborationContext?] = context.sessionToken || context.actor || context.scope?.workspaceId ? [context] : [];
+  const targetFocused = useRef('');
   const epoch = useRef(0);
   const listRequest = useRef(0);
   const runsRequest = useRef(0);
@@ -40,13 +42,14 @@ function ScopedWorkflowPanel({ novelId, onInspect, context }: WorkflowPanelProps
   const [items, setItems] = useState<any[]>([]),
     [selected, setSelected] = useState<any>(),
     [runs, setRuns] = useState<any[]>([]),
-    [loading, setLoading] = useState(false),
+    [loading, setLoading] = useState(true),
     [title, setTitle] = useState("小说质量检查"),
     [description, setDescription] = useState(""),
     [template, setTemplate] = useState("quality_gate"),
     [error, setError] = useState("");
   const runsSection = useRef<HTMLElement>(null);
   const refreshButton = useRef<HTMLButtonElement>(null);
+  const requested = useRequestedRecord(requestedRunId ? undefined : requestedWorkflowId, items, !loading && !error, novelId);
   const refresh = async () => {
     const ticket = epoch.current, request = ++listRequest.current;
     setLoading(true);
@@ -82,6 +85,11 @@ function ScopedWorkflowPanel({ novelId, onInspect, context }: WorkflowPanelProps
     void refresh();
     return () => { publishTaskSummary("workflow", []); };
   }, []);
+  useEffect(() => {
+    if (!requestedWorkflowId || loading) return;
+    if (!items.some(item => item.id === requestedWorkflowId)) { setError('请求的原工作流当前不可读或已移除。'); return; }
+    void loadRuns(requestedWorkflowId);
+  }, [requestedRunId, requestedWorkflowId, items]);
   useEffect(() => {
     publishTaskSummary(
       "workflow",
@@ -209,8 +217,9 @@ function ScopedWorkflowPanel({ novelId, onInspect, context }: WorkflowPanelProps
       {!items.length && !loading && (
         <p className="novel-help">暂无工作流定义。</p>
       )}
-      {items.map((item) => (
-        <p key={item.id}>
+      {requested.missing && <p role="status">请求的原工作流定义当前不可读或已移除，请刷新搜索。</p>}
+      {(!requestedWorkflowId || !loading && !error) && items.map((item) => (
+        <p key={item.id} aria-label={`工作流定义 ${item.title || item.name || item.id}`} aria-current={item.id === requestedWorkflowId ? 'true' : undefined} tabIndex={item.id === requestedWorkflowId ? -1 : undefined} ref={item.id === requestedWorkflowId && !requestedRunId ? requested.ref as React.RefObject<HTMLParagraphElement> : undefined}>
           {item.title || item.name || item.id} · {item.status || "ACTIVE"}{" "}
           {item.nodes?.some((node: any) => node.type === "agent_task") && (
             <small> · 含延迟 Agent 节点</small>
@@ -220,7 +229,7 @@ function ScopedWorkflowPanel({ novelId, onInspect, context }: WorkflowPanelProps
           </Button>
         </p>
       ))}
-      {selected && (
+      {selected && (!requestedWorkflowId || !loading && !error) && (
         <section ref={runsSection} tabIndex={-1} aria-label="工作流运行记录">
           <h4>{selected.title || selected.name || selected.id} 运行</h4>
           <p className="novel-help">配方使用本地规则整理输入，结果仅为审核材料。不会自动修改正文、Canon 或提交外部资源任务。</p>
@@ -234,7 +243,7 @@ function ScopedWorkflowPanel({ novelId, onInspect, context }: WorkflowPanelProps
             启动运行
           </Button>
           {runs.map((run) => (
-            <div key={run.id} className="workflow-console__run">
+            <div key={run.id} className="workflow-console__run" aria-current={requestedRunId === run.id ? "true" : undefined} tabIndex={requestedRunId === run.id ? 0 : undefined} ref={element => { if (element && requestedRunId === run.id && targetFocused.current !== requestedRunId) { targetFocused.current = String(requestedRunId); element.focus(); element.scrollIntoView?.({ block: "nearest" }); } }}>
               运行 {run.id} · {run.status}{" "}
               <Button variant="ghost" onClick={() => onInspect?.({ kind: "run", id: String(run.id), status: run.status, workflowTitle: selected.title || selected.name || selected.id, currentNodeId: run.current_node_id, error: run.error || run.error_message })}>检查</Button>
               <Button

@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import { type ExperimentalClient, type Row, type Rows, segment } from './api';
 import { Details, Field, Form, RecordStatus, Refresh, ResourceState, useAction, useResource } from './shared';
 import { hasPromotionIntent, needsPromotionRecovery, PromotionRecovery } from './PromotionRecovery';
 const actionLabels: Record<string, string> = { approve: '批准', reject: '驳回', reopen: '重开审核' };
-export function InboxPanel({ client }: { client: ExperimentalClient }) {
+export function InboxPanel({ client, requestedItemId, requestedDomain }: { client: ExperimentalClient; requestedItemId?: string; requestedDomain?: string }) {
   const [domain, setDomain] = useState(''), [status, setStatus] = useState(''), [search, setSearch] = useState(''), [stale, setStale] = useState(''), [filter, setFilter] = useState('');
+  const targetFocused = useRef('');
+  useEffect(() => { if (requestedItemId && requestedDomain) { setDomain(requestedDomain); setFilter('?' + new URLSearchParams({ domain: requestedDomain })); targetFocused.current = ''; } }, [requestedItemId, requestedDomain, client]);
   const resource = useResource(signal => client.get<Rows & { partial?: boolean; unavailable?: unknown[] }>('/review-inbox' + filter, signal), [client, filter]);
   const action = useAction(resource.reload), [selected, setSelected] = useState<string[]>([]), [batchResult, setBatchResult] = useState<any>();
   const rows = resource.data?.items || [], key = (row: Row) => `${row.domain}:${row.id}`;
@@ -21,12 +23,13 @@ export function InboxPanel({ client }: { client: ExperimentalClient }) {
     <Form onSubmit={() => { const params = new URLSearchParams(); Object.entries({ domain, status, search, stale }).forEach(([key, value]) => { if (value) params.set(key, value); }); setFilter(`?${params}`); setSelected([]); }}>
       <div className="experimental-grid"><Field label="审核领域"><select value={domain} onChange={event => setDomain(event.target.value)}><option value="">全部领域</option>{['import', 'world', 'planning', 'agent_team', 'media', 'audiobook', 'legacy_import', 'legacy_planning', 'legacy_canon', 'legacy_world_rule', 'legacy_agent', 'legacy_workflow', 'legacy_media', 'export_release_gate'].map(value => <option key={value}>{value}</option>)}</select></Field><Field label="审核状态筛选"><input value={status} placeholder="例如 REVIEW" onChange={event => setStatus(event.target.value)} /></Field><Field label="来源过期筛选"><select value={stale} onChange={event => setStale(event.target.value)}><option value="">全部来源状态</option><option value="true">已过期</option><option value="false">未过期</option></select></Field></div><Field label="搜索审核项"><input value={search} onChange={event => setSearch(event.target.value)} /></Field><Button type="submit" disabled={busy}>筛选审核项</Button>
     </Form>
+    {requestedItemId && !resource.loading && !resource.error && !rows.some(row => row.id === requestedItemId && row.domain === requestedDomain) && <StatusMessage tone="warning">请求的原审核项当前不可读或已移除；未自动选择其他记录。</StatusMessage>}
     <ResourceState loading={resource.loading} error={resource.error} empty={!rows.length} />
     {resource.data?.partial && <StatusMessage tone="warning">部分领域暂不可读；这里不是完整队列。</StatusMessage>}
     {!!resource.data?.unavailable?.length && <Details label="不可用领域" value={resource.data.unavailable} />}
     <div className="experimental-actions">{['approve', 'reject'].map(operation => <Button key={operation} disabled={busy || !batchAllowed(operation)} onClick={() => action.run(async () => { setBatchResult(await client.post('/review-inbox/batch', { items: selectedRows.map(row => ({ domain: row.domain, id: row.id, action: operation, expected_version: row.version })) })); setSelected([]); }, '批量处理结果已返回，请逐项核对')}>批量{actionLabels[operation]}已选审核项</Button>)}</div>
     {batchResult && <section aria-label="批量审核结果"><StatusMessage tone={batchResult.status === 'COMPLETED' ? 'success' : 'warning'}>{batchResult.status} · 未处理 {batchResult.remaining}</StatusMessage><Details label="逐项 checkpoint（成功项不会自动重试）" value={batchResult.results} /></section>}
-    <div className="experimental-list">{rows.map(row => <article className="experimental-record" key={key(row)} aria-label={`审核项 ${row.domain} ${typeof row.preview === 'string' ? row.preview : row.id}`}>
+    <div className="experimental-list">{rows.map(row => <article className="experimental-record" key={key(row)} aria-current={row.id === requestedItemId && row.domain === requestedDomain ? "true" : undefined} tabIndex={row.id === requestedItemId && row.domain === requestedDomain ? 0 : undefined} ref={element => { if (element && row.id === requestedItemId && row.domain === requestedDomain && targetFocused.current !== key(row)) { targetFocused.current = key(row); element.focus(); element.scrollIntoView?.({ block: "nearest" }); } }} aria-label={`审核项 ${row.domain} ${typeof row.preview === 'string' ? row.preview : row.id}`}>
       <div className="experimental-actions"><Badge tone="info">{row.domain}</Badge><strong>{typeof row.preview === 'string' ? row.preview : row.preview?.title || row.id}</strong></div><RecordStatus row={row} />
       <dl className="experimental-meta">{Object.entries({ source: row.source, project: row.project, workspace: row.workspace, branch: row.branch, created_by: row.created_by, risk: row.risk, privacy_state: row.privacy_state, source_hash: row.source_hash }).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{typeof value === 'object' ? JSON.stringify(value) : String(value ?? '—')}</dd></div>)}</dl>
       <Details label="来源版本、预览与目标" value={{ source_versions: row.source_versions, preview: row.preview, target: row.target }} />

@@ -61,10 +61,34 @@ class JudgeAdapter(Protocol):
 
 class JudgeReviewIn(StrictModel):
     expected_version: int = Field(ge=1)
-    action: Literal["review", "ignore", "reopen"]
+    action: Literal["review", "accept", "ignore", "intentional", "reopen"]
     reason: str = Field(min_length=1, max_length=2000)
     revision_chapter_id: str | None = Field(default=None, max_length=240)
     revision_version: int | None = Field(default=None, ge=1)
+
+
+class JudgeRevisionTaskIn(StrictModel):
+    expected_version: int = Field(ge=1)
+    title: str = Field(min_length=1, max_length=200)
+    description: str = Field(min_length=1, max_length=8000)
+    assignee: str = Field(min_length=1, max_length=240)
+    reviewer: str = Field(min_length=1, max_length=240)
+
+
+def issue_key(finding, chapters, world=None):
+    """Exact evidence identity. Never semantic similarity or a probability."""
+    evidence = []
+    for proof in finding['evidence']:
+        rows = paragraphs(chapters[proof['chapter_id']].get('content', ''))
+        paragraph = next(row for row in rows if row['paragraph'] == proof['paragraph'])
+        occurrence = sum(row['quote'] == paragraph['quote'] for row in rows[:proof['paragraph']])
+        evidence.append([proof['chapter_id'], paragraph['quote'], occurrence,
+                         proof['start'] - paragraph['start'], proof['quote']])
+    model = finding.get('model') if finding['origin'] == 'MODEL_ASSESSMENT' else None
+    opinion = [finding.get(key) for key in ('explanation', 'suggestion', 'boundary')] if model else None
+    records = {rid: (world or {}).get(rid) for rid in finding.get('world_record_ids', [])}
+    return digest(['narrative-intentional-evidence-v1', RUBRIC, finding.get('rubric'),
+                   finding['code'], finding['category'], finding['origin'], evidence, model, opinion, records])
 
 
 def validate_evidence(evidence, chapters):
@@ -104,6 +128,7 @@ class NarrativeJudgeService(SourceFencedService):
         super().__init__(store, novels, chapters)
         self.creation, self.world, self.planning = creation, world, planning
         self.model_coordinator = None
+        self.writer_room = None
         self.adapters = {adapter.adapter_id: adapter for adapter in adapters}
         if len(self.adapters) != len(adapters): raise ValueError("duplicate judge adapter")
 
@@ -150,6 +175,13 @@ class NarrativeJudgeService(SourceFencedService):
         with self.creation.store._lock, workspace_mutation(self.creation.store.root, "creation-workbench"):
             return [r for r in self.creation._rows("review_threads") if self.creation._match(r, nid, scope) and r.get("narrative_judge")]
 
+    def _inherit_intentional(self, nid, scope, finding, rows):
+        key = finding.get('issue_key')
+        if key and any(self.creation._match(row, nid, scope) and row.get('narrative_judge', {}).get('issue_key') == key
+                       and row['narrative_judge']['decision'] == 'INTENTIONAL' for row in rows):
+            finding.update(decision='INTENTIONAL', intentional_reused=True)
+        return finding
+
     def _public(self, nid, scope, receipt):
         result = {k: deepcopy(v) for k, v in receipt.items() if k not in {"sources", "context_digest", "finding_ids", "history", "request"}}
         try:
@@ -168,6 +200,10 @@ class NarrativeJudgeService(SourceFencedService):
 
     def run(self, nid, scope, rid):
         return self._public(nid, scope, require_row(self.store.read(nid, scope), self.RUNS, rid))
+
+    def review_item(self, nid, scope, rid):
+        row = self.creation._find(self._threads(nid, scope), nid, scope, rid)
+        return self._finding_public(nid, scope, row)
 
     def _deterministic(self, nid, scope, chapters):
         findings, seen = [], {}
@@ -226,7 +262,10 @@ class NarrativeJudgeService(SourceFencedService):
             for opinion in output.opinions:
                 findings.append({**opinion.model_dump(), "code": "MODEL_OPINION", "severity": "INFO", "origin": "MODEL_ASSESSMENT", "model": identity,
                                  "independence": "UNVERIFIED", "quality_verification": "NOT_VERIFIED"})
-        for finding in findings: finding["evidence"] = validate_evidence(finding["evidence"], chapters)
+        world, _ = self._context(nid, scope, list(chapters))
+        for finding in findings:
+            finding["evidence"] = validate_evidence(finding["evidence"], chapters)
+            finding['issue_key'] = issue_key(finding, chapters, world)
         payload = {"status": "COMPLETED", "sources": sources, "context_digest": context_digest, "request": data.model_dump(),
                    "rubric": deepcopy(RUBRIC), "finding_ids": [], "privacy_level": "LOCAL_ONLY", "model_called": bool(adapter),
                    "verification": "LOCAL_ADAPTER_UNVERIFIED" if adapter else "DETERMINISTIC_RULES", "findings_truncated": truncated,
@@ -249,12 +288,13 @@ class NarrativeJudgeService(SourceFencedService):
                     if existing_thread:
                         if not self.creation._match(existing_thread, nid, scope): raise ValueError("review thread scope conflict")
                         continue
+                    finding = self._inherit_intentional(nid, scope, {**finding, 'decision': 'PENDING'}, rows)
                     proof = finding["evidence"][0]
                     rows.append({"id": rid, "novel_id": nid, "scope": deepcopy(scope), "anchor": {"chapter_id": proof["chapter_id"], "chapter_version": proof["chapter_version"], "quote": proof["quote"], "content_sha256": sources[proof["chapter_id"]]["digest"]},
-                                 "status": "OPEN", "version": 1, "created_at": now(), "updated_at": now(),
+                                 "status": "RESOLVED" if finding['decision'] == 'INTENTIONAL' else "OPEN", "version": 1, "created_at": now(), "updated_at": now(),
                                  "messages": [{"id": str(uuid.uuid4()), "actor_id": actor, "text": finding["explanation"], "at": now()}],
-                                 "history": [{"action": "JUDGE_CREATED", "actor_id": actor, "at": now()}],
-                                 "narrative_judge": {**finding, "run_id": run_id, "decision": "PENDING", "privacy_level": "LOCAL_ONLY"}})
+                                 "history": [{"action": "INTENTIONAL_REUSED" if finding['decision'] == 'INTENTIONAL' else "JUDGE_CREATED", "actor_id": actor, "at": now()}],
+                                 "narrative_judge": {**finding, "run_id": run_id, "privacy_level": "LOCAL_ONLY"}})
                 self._fresh(nid, scope, receipt); reauthorize()
                 self.creation.store._write("review_threads", rows)
                 collection(state, self.RUNS)[run_id] = receipt
@@ -296,12 +336,14 @@ class NarrativeJudgeService(SourceFencedService):
                             'model': identity, 'job_id': execution['job_id'], 'rubric': receipt['model_preview']['rubric'],
                             'independence': 'UNVERIFIED', 'quality_verification': receipt['model_preview']['quality_verification'],
                             'run_id': run_id, 'decision': 'PENDING', 'privacy_level': 'LOCAL_ONLY'}
+                        finding['issue_key'] = issue_key(finding, chapters)
+                        self._inherit_intentional(nid, scope, finding, rows)
                         rows.append({'id': rid, 'novel_id': nid, 'scope': deepcopy(scope),
                             'anchor': {'chapter_id': proof['chapter_id'], 'chapter_version': proof['chapter_version'],
                                 'quote': proof['quote'], 'content_sha256': receipt['sources'][proof['chapter_id']]['digest']},
-                            'status': 'OPEN', 'version': 1, 'created_at': now(), 'updated_at': now(),
+                            'status': 'RESOLVED' if finding['decision'] == 'INTENTIONAL' else 'OPEN', 'version': 1, 'created_at': now(), 'updated_at': now(),
                             'messages': [{'id': str(uuid.uuid4()), 'actor_id': actor, 'text': opinion['explanation'], 'at': now()}],
-                            'history': [{'action': 'JUDGE_MODEL_CREATED', 'actor_id': actor, 'at': now()}], 'narrative_judge': finding})
+                            'history': [{'action': 'INTENTIONAL_REUSED' if finding['decision'] == 'INTENTIONAL' else 'JUDGE_MODEL_CREATED', 'actor_id': actor, 'at': now()}], 'narrative_judge': finding})
                     self._fresh(nid, scope, receipt); guard()
                     self.creation.store._write('review_threads', rows)
                 change_row(receipt, actor, receipt['version'], lambda r: r.update(model_execution=deepcopy(execution), finding_ids=ids,
@@ -310,29 +352,78 @@ class NarrativeJudgeService(SourceFencedService):
         return self.run(nid, scope, run_id)
 
     def review(self, nid, scope, actor, rid, value, reauthorize=lambda: None):
-        data = JudgeReviewIn.model_validate(value.model_dump() if hasattr(value, "model_dump") else value)
-        if bool(data.revision_chapter_id) != bool(data.revision_version): raise ValueError("revision linkage requires both chapter and version")
-        with self.creation.store._lock, workspace_mutation(self.creation.store.root, "creation-workbench"):
-            rows = self.creation._rows("review_threads")
+        data = JudgeReviewIn.model_validate(value.model_dump() if hasattr(value, 'model_dump') else value)
+        if bool(data.revision_chapter_id) != bool(data.revision_version): raise ValueError('revision linkage requires both chapter and version')
+        with self.creation.store._lock, workspace_mutation(self.creation.store.root, 'creation-workbench'):
+            rows = self.creation._rows('review_threads')
             row = self.creation._find(rows, nid, scope, rid)
-            info = row.get("narrative_judge")
+            info = row.get('narrative_judge')
             if not info: raise FileNotFoundError(rid)
-            receipt = require_row(self.store.read(nid, scope), self.RUNS, info["run_id"])
+            receipt = require_row(self.store.read(nid, scope), self.RUNS, info['run_id'])
             self._fresh(nid, scope, receipt)
-            check_version(row, data.expected_version)
+            check_version({key: row[key] for key in ('id', 'version', 'status')}, data.expected_version)
+            if info['decision'] == 'INTENTIONAL' and data.action not in {'intentional', 'reopen'}:
+                raise ValueError('reopen an intentional finding before changing its decision')
             if data.revision_chapter_id:
-                if data.revision_chapter_id not in receipt["sources"]: raise ValueError("revision must refer to a selected chapter")
+                if data.revision_chapter_id not in receipt['sources']: raise ValueError('revision must refer to a selected chapter')
                 self.capture(nid, scope, [data.revision_chapter_id], {data.revision_chapter_id: data.revision_version})
             reauthorize()
-            info["decision"] = {"review": "REVIEWED", "ignore": "IGNORED", "reopen": "PENDING"}[data.action]
-            info["revision"] = {"chapter_id": data.revision_chapter_id, "version": data.revision_version} if data.revision_chapter_id else None
-            row["status"] = "OPEN" if data.action == "reopen" else "RESOLVED"
-            row["messages"].append({"id": str(uuid.uuid4()), "actor_id": actor, "text": data.reason, "at": now()})
-            row["history"].append({"action": data.action.upper(), "reason": data.reason, "actor_id": actor, "at": now()})
-            row.update(version=row["version"] + 1, updated_at=now())
+            if not info.get('issue_key'):
+                _, chapters = self.capture(nid, scope, list(receipt['sources']))
+                world, _ = self._context(nid, scope, list(chapters))
+                info['issue_key'] = issue_key(info, chapters, world)
+            propagate = data.action == 'intentional' or (data.action == 'reopen' and info['decision'] == 'INTENTIONAL')
+            targets = [target for target in rows if self.creation._match(target, nid, scope)
+                       and target.get('narrative_judge', {}).get('issue_key') == info['issue_key']] if propagate else [row]
+            for target in targets:
+                details = target['narrative_judge']
+                details['decision'] = {'review': 'REVIEWED', 'accept': 'ACCEPTED', 'ignore': 'IGNORED', 'intentional': 'INTENTIONAL', 'reopen': 'PENDING'}[data.action]
+                details['intentional_reused'] = target['id'] != rid and data.action == 'intentional'
+                if target['id'] == rid:
+                    details['revision'] = {'chapter_id': data.revision_chapter_id, 'version': data.revision_version} if data.revision_chapter_id else None
+                target['status'] = 'OPEN' if data.action == 'reopen' else 'RESOLVED'
+                event = {'action': data.action.upper(), 'actor_id': actor, 'at': now()}
+                if target['id'] == rid:
+                    event['reason'] = data.reason
+                    target['messages'].append({'id': str(uuid.uuid4()), 'actor_id': actor, 'text': data.reason, 'at': now()})
+                target['history'].append(event)
+                target.update(version=target['version'] + 1, updated_at=now())
             self._fresh(nid, scope, receipt); reauthorize()
-            self.creation.store._write("review_threads", rows)
+            self.creation.store._write('review_threads', rows)
             return self._finding_public(nid, scope, row, receipt)
+
+    def revision_task_catalog(self, ctx, rid, guard):
+        if self.writer_room is None: raise ValueError('JUDGE_REVISION_TASK_AUTHORITY_UNAVAILABLE')
+        row = self.creation._find(self._threads(ctx.novel_id, ctx.scope), ctx.novel_id, ctx.scope, rid)
+        result = self._finding_public(ctx.novel_id, ctx.scope, row)
+        if result['stale']: raise StaleSourceError('review current source evidence before creating a revision task')
+        tasks = [task for task in self.writer_room._rows(ctx) if task.get('request_id') == 'judge-revision:' + rid and task['created_by'] == ctx.actor]
+        members = self.writer_room.members(ctx)
+        guard()
+        return {'finding_id': rid, 'finding_version': row['version'], 'members': members,
+                'existing_task': self.writer_room._public(ctx, tasks[0]) if tasks else None,
+                'task_authority': 'writer_room_v2', 'manuscript_changed': False}
+
+    def create_revision_task(self, ctx, rid, value, guard):
+        from .writer_room import TaskIn
+        data = JudgeRevisionTaskIn.model_validate(value.model_dump() if hasattr(value, 'model_dump') else value)
+        if self.writer_room is None: raise ValueError('JUDGE_REVISION_TASK_AUTHORITY_UNAVAILABLE')
+        with self.creation.store._lock, workspace_mutation(self.creation.store.root, 'creation-workbench'):
+            row = self.creation._find(self._threads(ctx.novel_id, ctx.scope), ctx.novel_id, ctx.scope, rid)
+            receipt = require_row(self.store.read(ctx.novel_id, ctx.scope), self.RUNS, row['narrative_judge']['run_id'])
+            def current():
+                self._fresh(ctx.novel_id, ctx.scope, receipt); guard()
+                latest = self.creation._find(self._threads(ctx.novel_id, ctx.scope), ctx.novel_id, ctx.scope, rid)
+                check_version({key: latest[key] for key in ('id', 'version', 'status')}, data.expected_version)
+                if latest['narrative_judge']['decision'] == 'INTENTIONAL':
+                    raise ValueError('reopen an intentional finding before creating a revision task')
+            current()
+            body = TaskIn(request_id='judge-revision:' + rid, title=data.title, description=data.description,
+                          assignee=data.assignee, reviewer=data.reviewer,
+                          review_target={'domain': 'narrative_judge', 'id': rid, 'version': data.expected_version})
+            task = self.writer_room.create_task(ctx, body, current)
+            current()
+            return {'task': task, 'task_authority': 'writer_room_v2', 'manuscript_changed': False}
 
     def list_review_items(self, nid, scope):
         output = []
@@ -340,6 +431,7 @@ class NarrativeJudgeService(SourceFencedService):
             run = self._public(nid, scope, receipt)
             if run["stale"]: continue
             for row in run["findings"]:
+                if row['decision'] == 'INTENTIONAL': continue
                 output.append({**row, "novel_id": nid, "scope": scope, "source": "narrative_judge", "preview": row["explanation"],
                                "target": {"module": "narrative_quality_judge_v2", "run_id": receipt["id"], "finding_id": row["id"]},
                                "allowed_actions": [], "risk": "ADVISORY_NO_AUTOMATIC_EDITS"})

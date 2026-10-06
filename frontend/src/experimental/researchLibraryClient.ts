@@ -1,7 +1,7 @@
 import type { ExperimentalClient } from './api';
 export type Citation = { source_id: string; source_version: number; paragraph: number; page?: number; quote_sha256: string };
 export type ResearchMeta = { title: string; author: string; source: string; source_version: string; usage_notes: string; access: 'PRIVATE' | 'PROJECT' };
-export type Source = ResearchMeta & { id: string; version: number; origin: string; format: string; filename: string; accessed_at: string; extraction_status: string; paragraph_count: number; page_citations?: Citation[]; warnings: string[]; paragraphs?: { paragraph: number; page: number | null; text: string; citation: Citation }[] };
+export type Source = ResearchMeta & { status?: string; content_sha256?: string;  id: string; version: number; origin: string; format: string; filename: string; accessed_at: string; extraction_status: string; paragraph_count: number; page_citations?: Citation[]; warnings: string[]; paragraphs?: { paragraph: number; page: number | null; text: string; citation: Citation }[] };
 export type Evidence = { citation: Citation; title: string; author: string; text: string; page: number | null; paragraph: number; source: string; not_understood?: boolean; warning?: string };
 export type Note = { id: string; version: number; title: string; text: string; citations: Citation[]; evidence: Evidence[] };
 export type SettingDraft = { id: string; version: number; title: string; status: 'REVIEW' | 'RESEARCH_REVIEWED'; data: { description: string }; evidence: Evidence[]; canon_promotion_available: false };
@@ -15,6 +15,15 @@ export function researchLibraryClient(client: ExperimentalClient) {
     importFile: (metadata: ResearchMeta, filename: string, content_base64: string) => client.post<Source>(base + '/sources/import', { ...metadata, filename, content_base64 }),
     fetchWeb: (metadata: ResearchMeta, url: string) => client.post<Source>(base + '/sources/fetch-webpage', { ...metadata, url, confirm_fetch: true }),
     edit: (row: Source, metadata: ResearchMeta) => client.put<Source>(`${base}/sources/${seg(row.id)}`, { ...metadata, expected_version: row.version }),
+    historicalOriginal: (id: string, version: number) => client.blob(`${base}/sources/${seg(id)}/history/${version}/original`),
+    noteRepairs: (signal?: AbortSignal) => client.get<{ items: Note[] }>(base + '/note-repairs', signal),
+    archive: (signal?: AbortSignal) => client.get<{ items: Source[] }>(base + '/sources-archive', signal),
+    sourceHistory: (id: string) => client.get<{ items: Source[]; current_version: number }>(`${base}/sources/${seg(id)}/history`),
+    replaceFile: (row: Source, metadata: ResearchMeta, filename: string, content_base64: string) => client.put<Source>(`${base}/sources/${seg(row.id)}/file`, { ...metadata, filename, content_base64, expected_version: row.version }),
+    restoreSource: (row: Source, version: number) => client.post<Source>(`${base}/sources/${seg(row.id)}/restore`, { expected_version: row.version, restore_version: version }),
+    editNote: (row: Note, title: string, text: string, citations: Citation[]) => client.put<Note>(`${base}/notes/${seg(row.id)}`, { title, text, citations, expected_version: row.version }),
+    deleteNote: (row: Note) => client.post(`${base}/notes/${seg(row.id)}/delete`, { expected_version: row.version }),
+    noteHistory: (id: string) => client.get<{ items: Note[] }>(`${base}/notes/${seg(id)}/history`),
     remove: (row: Source, action: 'revoke' | 'delete') => client.post(`${base}/sources/${seg(row.id)}/${action}`, { expected_version: row.version }),
     search: (query: string) => client.get<{ items: Evidence[]; truncated: boolean }>(`${base}/search?q=${seg(query)}`),
     citation: (citation: Citation) => client.post<Evidence>(base + '/citation', citation),

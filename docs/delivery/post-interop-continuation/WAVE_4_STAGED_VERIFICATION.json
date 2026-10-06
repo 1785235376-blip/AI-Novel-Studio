@@ -1,0 +1,25 @@
+{
+  "kind": "INVENTORY_REVIEW_NOT_EXECUTION",
+  "previous_nodes": 7262,
+  "current_nodes": 7306,
+  "changed_source_files": [],
+  "old_skip_counts": {
+    "file": 2035,
+    "postgres": 2059
+  },
+  "manifest_sha256": "554e497d19166dc8127a36ebcd6d03658ebc65d3b6e9498003ecb79e65f8c402",
+  "added_node_count": 44,
+  "stage": "Wave4 media and production",
+  "tested_code_tree": "ac967d2a769b76c61bfb60ba01e12c0a2ca4ebc1",
+  "typescript": "PASS",
+  "complete_frontend": {
+    "passed": 1231,
+    "inherited_opt_in_skipped": 8
+  },
+  "focused_backend": {
+    "passed": 24,
+    "postgres_deselected": 20
+  },
+  "full_final_source_hosted_ci": "PENDING",
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts."
+}

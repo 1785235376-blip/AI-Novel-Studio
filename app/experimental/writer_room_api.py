@@ -37,6 +37,11 @@ def create_writer_room_router(service, authorize, require_flag):
         response.headers['Cache-Control'] = 'no-store'
         return call('overview', nid, x_session_token, x_branch_id)
 
+    @router.get('/presence-contract')
+    def presence_contract(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        return call('presence_contract', nid, x_session_token, x_branch_id)
+
     @router.get('/catalog')
     def catalog(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         response.headers['Cache-Control'] = 'no-store'
