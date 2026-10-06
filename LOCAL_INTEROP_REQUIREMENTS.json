@@ -179,16 +179,17 @@
     {
       "section": 17,
       "requirement": "事件撤权",
-      "status": "DONE",
+      "status": "PARTIAL",
       "evidence": [
         "LOCAL_INTEROP_TESTING.md",
         "contracts/local-interop/v1/parity-manifest.json",
         "tests/test_local_interop_host.py",
         "tests/test_local_interop_tcp.py",
         "tests/test_local_interop_cross_process_host.py",
-        "frontend/tests/e2e/local-interop.spec.ts"
+        "frontend/tests/e2e/local-interop.spec.ts",
+        "LOCAL_INTEROP_LIFECYCLE_LIMITS.md"
       ],
-      "implementation": "Host rechecks authority at event delivery and response send; membership/session/project/scope/disable revocation terminates affected subscriptions while independent authorized readers continue. Ongoing event sharing now requires separate positive preview approval; connect alone grants no events. Payload, event names and change timing honor the chosen field groups; diagnostic preview pauses and clears the grant."
+      "implementation": "Host rechecks authority at event delivery and response send; membership/session/project/scope/disable revocation terminates affected subscriptions while independent authorized readers continue. Ongoing event sharing now requires separate positive preview approval; connect alone grants no events. Payload, event names and change timing honor the chosen field groups; diagnostic preview pauses and clears the grant. Confirmed Host revocation is enforced; immediate revocation after an unreachable-Host UI close cannot be proven. Original fixed session expiry (maximum 24 hours; synthetic 10 minutes) bounds the existing explicit grant. See lifecycle limits."
     },
     {
       "section": 18,
@@ -419,9 +420,10 @@
         "tests/test_local_interop_host.py",
         "tests/test_local_interop_tcp.py",
         "tests/test_local_interop_cross_process_host.py",
-        "frontend/tests/e2e/local-interop.spec.ts"
+        "frontend/tests/e2e/local-interop.spec.ts",
+        "LOCAL_INTEROP_LIFECYCLE_LIMITS.md"
       ],
-      "implementation": "Independent server feature flag plus user opt-in default OFF. Disable clears bridge sessions/subscriptions without deleting projects or history."
+      "implementation": "Independent server feature flag plus user opt-in default OFF. Disable clears bridge sessions/subscriptions without deleting projects or history. Master OFF removes the backend enabled gate and revokes before a successful acknowledgement. Unacknowledged failure must remain UNKNOWN; UI close is best-effort, not proof of application shutdown."
     },
     {
       "section": 38,
@@ -477,7 +479,7 @@
         "contracts/local-interop/v1/parity-manifest.json",
         "tests/test_local_interop_contracts.py"
       ],
-      "implementation": "Product/instance/user/protocol/capability/nonce/time bindings are enforced; fresh host instance invalidates prior sessions. Protocol and local host-user/session binding are verified, but development HTTP ProductDescriptor is self-declared, not authenticated installed-product/OS-user identity; actual mutual desktop peer attestation remains LOCAL_REQUIRED."
+      "implementation": "Product/instance/user/protocol/capability/nonce/time bindings are enforced; fresh host instance invalidates prior sessions. Protocol and local host-user/session binding are verified, but development HTTP ProductDescriptor is self-declared, not authenticated installed-product/OS-user identity; actual mutual desktop peer attestation remains LOCAL_REQUIRED. Accepted maximum fixed TTL is 86,400 seconds; public synthetic 10 minutes/private HTTP reference 15 minutes; heartbeat never refreshes expiry."
     },
     {
       "section": 43,

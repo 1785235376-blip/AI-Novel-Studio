@@ -89,3 +89,7 @@ Preparing diagnostics pauses existing sharing and invalidates queued/prepared
 grants. No silent auto-resume occurs. The ordinary one-shot context preview does
 not erase an independently approved standing grant; its active categories and
 Stop control remain visible.
+
+See LOCAL_INTEROP_LIFECYCLE_LIMITS.md for exact expiry/heartbeat limits and the
+acknowledged-disable versus best-effort UI-close boundary. A failed disconnect
+can never be used as evidence that sharing stopped.

@@ -30,6 +30,7 @@ beforeEach(() => {
     if (path === '/context/preview') return response({ request_id: body.request_id, session_id: body.session_id, preview_id: 'preview', capsule: capsule(body.content_kind === 'SELECTION' ? 'SELECTED_TEXT' : body.content_kind === 'CHAPTER' ? 'CURRENT_CHAPTER' : 'NONE'), expires_at: expires() });
     if (path.startsWith('/context/sources')) return response({ session_id: 'session', items: [{ id: 'source-chapter', label: 'Chapter 2', version: 3 }] });
     if (path === '/diagnostics/preview') return response({ request_id: body.request_id, session_id: body.session_id, preview_id: 'diagnostic-preview', diagnostic: Object.fromEntries(body.fields.map((field: string) => [field, `safe-${field}`])), capsule: { ...capsule(), module: 'local-interop', surface: 'diagnostics', chapter_id: undefined, chapter_version: undefined }, expires_at: expires(), event_subscription_paused: true });
+    if (path === '/disconnect') return response({ session_id: body.session_id, status: 'DISCONNECTED' });
     if (path === '/events/preview') return response({ request_id: body.request_id, session_id: body.session_id, preview_id: 'event-preview', capsule: capsule(), metadata_fields: body.metadata_fields, expires_at: expires(), subscription_active: false });
     if (path === '/events/subscribe') return response({ request_id: body.request_id, session_id: body.session_id, subscription_active: true, metadata_fields: calls.filter(value => value.path === '/events/preview').at(-1)?.body.metadata_fields ?? [] });
     if (path === '/events/unsubscribe') return response({ request_id: body.request_id, session_id: body.session_id, subscription_active: false, metadata_fields: [] });
@@ -174,7 +175,7 @@ it('closing disconnects the session, restores focus, and clears opt-in on reopen
   render(<Harness {...props()} />); const trigger = screen.getByRole('button', { name: '问助手' }); trigger.focus(); fireEvent.click(trigger);
   await connect(); fireEvent.click(screen.getByRole('checkbox', { name: '选中文本' }));
   fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
-  expect(screen.queryByRole('dialog')).toBeNull(); expect(document.activeElement).toBe(trigger);
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull()); expect(document.activeElement).toBe(trigger);
   expect(calls.some(value => value.path === '/disconnect')).toBe(true);
   fireEvent.click(trigger); await screen.findByRole('checkbox', { name: '选中文本' });
   expect((screen.getByRole('checkbox', { name: '选中文本' }) as HTMLInputElement).checked).toBe(false);
@@ -345,6 +346,7 @@ it('rejects a host grant broader than the reviewed fields and revokes that grant
 it('reconnect leaves ongoing sharing unchecked even after a previously active grant', async () => {
   render(<Harness {...props()} />); fireEvent.click(screen.getByRole('button', { name: '问助手' })); await connect(); await authorizeOngoing();
   fireEvent.click(screen.getByRole('button', { name: '关闭并断开' }));
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
   fireEvent.click(screen.getByRole('button', { name: '问助手' })); await connect();
   expect(screen.getByText('持续共享关闭')).toBeTruthy();
   expect((screen.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）' }) as HTMLInputElement).checked).toBe(false);
@@ -376,4 +378,62 @@ it('leaving an unconfirmed event preview invalidates its receipt instead of reta
   await waitFor(() => expect(calls.some(value => value.path === '/events/unsubscribe')).toBe(true));
   await screen.findByText('持续共享关闭');
   expect(screen.queryByRole('button', { name: '确认开启本次会话持续共享' })).toBeNull();
+});
+
+it('keeps failed disconnect UNKNOWN with a retry and no false stopped claim', async () => {
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect(); await authorizeOngoing();
+  handler = path => path === '/disconnect' ? response({ code: 'TRANSPORT_ERROR' }, 503) : undefined;
+  fireEvent.click(screen.getByRole('button', { name: '断开连接' }));
+  await screen.findByText('连接撤销尚未确认，持续共享可能仍在运行。请重试断开或关闭集成。');
+  expect(screen.getAllByText('撤销状态 UNKNOWN').length).toBeGreaterThan(0);
+  expect(screen.queryByText('持续共享关闭')).toBeNull();
+  expect((screen.getByRole('button', { name: '连接本机 Tutor' }) as HTMLButtonElement).disabled).toBe(true);
+  handler = undefined; fireEvent.click(screen.getByRole('button', { name: '重试断开连接' }));
+  await screen.findByText('已确认连接撤销；再次共享需要重新连接和确认。');
+  expect(screen.queryAllByText('撤销状态 UNKNOWN')).toHaveLength(0);
+});
+it.each([{ session_id: 'wrong', status: 'DISCONNECTED' }, { session_id: 'session', status: 'PENDING' }, {}])('does not accept an ambiguous disconnect receipt %j', async receipt => {
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect();
+  handler = path => path === '/disconnect' ? response(receipt) : undefined;
+  fireEvent.click(screen.getByRole('button', { name: '断开连接' }));
+  await screen.findByText('连接撤销尚未确认，持续共享可能仍在运行。请重试断开或关闭集成。');
+  expect(screen.queryByText('持续共享关闭')).toBeNull();
+  expect(screen.getAllByText('撤销状态 UNKNOWN').length).toBeGreaterThan(0);
+});
+it('master OFF failure remains UNKNOWN and checked until an acknowledged retry resolves it', async () => {
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect(); await authorizeOngoing();
+  handler = path => path === '/settings' || path === '/disconnect' ? response({ code: 'TRANSPORT_ERROR' }, 503) : undefined;
+  const toggle = screen.getByRole('checkbox', { name: 'Enable Local Tutor Integration' }) as HTMLInputElement;
+  fireEvent.click(toggle); await screen.findByRole('button', { name: '重试关闭集成' });
+  await waitFor(() => expect((screen.getByRole('button', { name: '重试关闭集成' }) as HTMLButtonElement).disabled).toBe(false));
+  expect(toggle.checked).toBe(true); expect(screen.getAllByText('撤销状态 UNKNOWN').length).toBeGreaterThan(0);
+  expect(screen.queryByText('持续共享关闭')).toBeNull();
+  handler = undefined; fireEvent.click(screen.getByRole('button', { name: '重试关闭集成' }));
+  await waitFor(() => expect(toggle.checked).toBe(false));
+  expect(screen.queryAllByText('撤销状态 UNKNOWN')).toHaveLength(0);
+});
+it('a disconnect acknowledgment alone does not claim master OFF succeeded', async () => {
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect();
+  handler = path => path === '/settings' ? response({ code: 'TRANSPORT_ERROR' }, 503) : undefined;
+  fireEvent.click(screen.getByRole('checkbox', { name: 'Enable Local Tutor Integration' }));
+  await screen.findByRole('alert');
+  expect((screen.getByRole('checkbox', { name: 'Enable Local Tutor Integration' }) as HTMLInputElement).checked).toBe(true);
+  expect(screen.getAllByText('撤销状态 UNKNOWN').length).toBeGreaterThan(0);
+});
+it('Close waits for revocation and offers an explicitly unconfirmed panel dismissal on failure', async () => {
+  const onClose = vi.fn(); render(<LocalTutorDialog {...props()} onClose={onClose} />); await connect(); await authorizeOngoing();
+  handler = path => path === '/disconnect' ? response({ code: 'TRANSPORT_ERROR' }, 503) : undefined;
+  fireEvent.click(screen.getByRole('button', { name: '关闭并断开' }));
+  await screen.findByText('撤销结果未确认。仅关闭面板不代表持续共享已经停止。');
+  expect(onClose).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button', { name: '仅关闭面板（撤销未确认）' })); expect(onClose).toHaveBeenCalledOnce();
+});
+it('does not let a late disconnect failure undo an acknowledged master OFF', async () => {
+  let finish!: (response: Response) => void;
+  handler = path => path === '/disconnect' ? new Promise<Response>(resolve => { finish = resolve; }) : undefined;
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect();
+  fireEvent.click(screen.getByRole('checkbox', { name: 'Enable Local Tutor Integration' }));
+  await waitFor(() => expect((screen.getByRole('checkbox', { name: 'Enable Local Tutor Integration' }) as HTMLInputElement).checked).toBe(false));
+  await act(async () => finish(response({ code: 'TRANSPORT_ERROR' }, 503)));
+  expect(screen.queryAllByText('撤销状态 UNKNOWN')).toHaveLength(0);
 });

@@ -1,13 +1,22 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 const session = 'interop-browser-mock-session';
 const scope = { workspaceId: 'interop-browser-workspace', projectId: 'interop-browser-book', storylineId: 'interop-browser-story', branchId: 'interop-browser-branch' };
 const headers = { 'X-Session-Token': session, 'X-Branch-Id': scope.branchId };
 const tutor = 'http://127.0.0.1:8052';
+async function enableIntegration(page: Page, dialog: Locator) {
+  const toggle = dialog.getByRole('checkbox', { name: 'Enable Local Tutor Integration' });
+  await expect(toggle).not.toBeChecked();
+  // This controlled switch deliberately waits for Host acknowledgment. A check()
+  // action incorrectly requires optimistic state before the network roundtrip.
+  const acknowledged = page.waitForResponse(response => response.url().endsWith('/api/local-interop/settings') && response.request().method() === 'POST');
+  await toggle.click();
+  const receipt = await acknowledged; expect(receipt.ok()).toBe(true); expect((await receipt.json()).enabled).toBe(true);
+  await expect(toggle).toBeChecked();
+}
 async function enabledConnection(page: Page) {
   await page.getByRole('button', { name: '问助手', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: '问助手 · Local Tutor' });
-  const toggle = dialog.getByRole('checkbox', { name: 'Enable Local Tutor Integration' });
-  await expect(toggle).not.toBeChecked(); await toggle.check(); await expect(toggle).toBeChecked();
+  await enableIntegration(page, dialog);
   await dialog.getByRole('textbox', { name: '开发用本机 Tutor 地址' }).fill(tutor);
   await dialog.getByRole('button', { name: '连接本机 Tutor', exact: true }).click();
   await expect(dialog.getByText('Synthetic Tutor (MOCK_ONLY)', { exact: true })).toBeVisible();
@@ -83,7 +92,7 @@ test('diagnostic removal preview shares no hidden project context and remains ex
 
 test('Tutor absent leaves Studio usable and close restores the shared entry', async ({ page }) => {
   await page.getByRole('button', { name: '问助手', exact: true }).click();
-  const dialog = page.getByRole('dialog'); await dialog.getByRole('checkbox', { name: 'Enable Local Tutor Integration' }).check();
+  const dialog = page.getByRole('dialog'); await enableIntegration(page, dialog);
   await dialog.getByRole('textbox', { name: '开发用本机 Tutor 地址' }).fill('http://127.0.0.1:9');
   await dialog.getByRole('button', { name: '连接本机 Tutor', exact: true }).click();
   await expect(dialog.getByRole('alert')).toBeVisible();

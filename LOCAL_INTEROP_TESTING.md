@@ -84,3 +84,23 @@ contracts per repository;251 combined Studio Interop passes (43 PG variants
 NOT_RUN locally);1094 frontend passes/7 optional skips plus1 actual-client HTTP
 pass. Nine authored browser journeys require hosted verification. These later
 results supersede the earlier local source-freeze counts without erasing them.
+
+## Final feedback/readiness correction
+
+The disconnect UI now retains UNKNOWN until a matching revoked/disabled receipt
+proves completion. Failure and retry tests cover disconnect and master OFF;
+old-response fencing remains in place. Final local frontend tests: 1102 passed,
+7 optional tests skipped; 54 focused Interop DOM/client tests passed.
+
+At source ba69b12, both hosted frontend runs passed all 64 original browser cases,
+1094 unit tests and the real-client path, then all 9 new browser cases failed in
+setup because Playwright check() assumed an immediate master checkbox update.
+The control intentionally waits for backend acknowledgement. Only the new test
+helper was corrected to click once, await the successful settings receipt and
+retain its checked-state assertion. The two new client/browser steps now run
+after backend dependency installation, before the unchanged original business
+journeys, for faster feedback. All original test commands/assertions remain.
+
+The successor's hosted browser and full-suite results are required; predecessor
+results do not certify that successor. See LOCAL_INTEROP_LIFECYCLE_LIMITS.md for
+exact TTLs and acknowledged-stop versus unconfirmed UI-exit limits.

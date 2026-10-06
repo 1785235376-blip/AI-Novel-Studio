@@ -100,7 +100,7 @@ export function interopClient(context: CollaborationContext) {
     verify: (session_id: string, guidance_id: string, request_id: string, signal?: AbortSignal) => request<{ request_id: string; session_id: string; result: VerifierResult }>('/verify', { session_id, guidance_id, request_id }, signal),
     handoff: (session_id: string, handoff: HandoffTarget, request_id: string, signal?: AbortSignal) => request<{ request_id: string; session_id: string; route: HostRoute }>('/handoff', { session_id, handoff, request_id, explicit_click: true }, signal),
     cancel: (request_id: string, session_id?: string) => request('/cancel', { request_id, ...(session_id ? { session_id } : {}) }),
-    disconnect: (session_id: string) => request('/disconnect', { session_id, request_id: newInteropRequestId() }),
+    disconnect: (session_id: string, signal?: AbortSignal) => request<{ session_id: string; status: 'DISCONNECTED' }>('/disconnect', { session_id, request_id: newInteropRequestId() }, signal),
   };
 }
 export type InteropClient = ReturnType<typeof interopClient>;

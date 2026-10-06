@@ -81,6 +81,8 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
   const [guidance, setGuidance] = useState<TutorGuidance>();
   const [verification, setVerification] = useState<VerifierResult>();
   const currentSession = useRef<InteropSession>();
+  const revokingSession = useRef<{ session: InteropSession; pending?: Promise<boolean> }>();
+  const masterOffPending = useRef(false);
   const alive = useRef(true);
   const epoch = useRef(0);
   const pending = useRef<{ id: string; controller: AbortController; epoch: number; eventConsent: boolean }>();
@@ -100,16 +102,47 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
     }
     if (alive.current) { setBusy(''); if (showNotice) { clearReview(); setNotice('本次请求已取消，旧响应不会用于新请求。'); } }
   }
-  function disconnect(showNotice = true) {
-    cancelPending(false);
-    const previous = currentSession.current;
-    currentSession.current = undefined; eventRevision.current += 1;
-    if (alive.current) { markEventSharing('off'); setEventOptIn(false); setEventPreview(undefined); }
-    if (previous) void client.disconnect(previous.session_id).catch(() => undefined);
-    if (alive.current) { setSession(undefined); clearReview(); if (showNotice) setNotice('连接已断开；再次共享需要重新连接和确认。'); }
+  function confirmRevocation() {
+    currentSession.current = undefined; revokingSession.current = undefined; masterOffPending.current = false;
+    eventRevision.current += 1;
+    if (alive.current) { setSession(undefined); markEventSharing('off'); setEventOptIn(false); clearReview(); }
   }
-  function close() {
-    alive.current = false; disconnect(false); closeAction.current();
+  function disconnect(showNotice = true): Promise<boolean> {
+    cancelPending(false);
+    const record = revokingSession.current ?? (currentSession.current ? { session: currentSession.current, pending: undefined as Promise<boolean> | undefined } : undefined);
+    currentSession.current = undefined; eventRevision.current += 1;
+    if (!record) return Promise.resolve(!masterOffPending.current);
+    revokingSession.current = record;
+    if (alive.current) { setSession(undefined); markEventSharing('unknown'); setEventOptIn(false); clearReview(); }
+    if (record.pending) return record.pending;
+    const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 30_000);
+    record.pending = client.disconnect(record.session.session_id, controller.signal).then(receipt => {
+      if (receipt.session_id !== record.session.session_id || receipt.status !== 'DISCONNECTED')
+        throw new ApiError({ status: 409, code: 'INVALID_MESSAGE', message: '' });
+      if (revokingSession.current === record) {
+        revokingSession.current = undefined;
+        if (alive.current && !masterOffPending.current) {
+          markEventSharing('off');
+          if (showNotice) setNotice('已确认连接撤销；再次共享需要重新连接和确认。');
+        }
+      }
+      return true;
+    }).catch(() => {
+      if (alive.current && revokingSession.current === record) {
+        markEventSharing('unknown'); setError('连接撤销尚未确认，持续共享可能仍在运行。请重试断开或关闭集成。');
+      }
+      return false;
+    }).finally(() => { clearTimeout(timer); if (revokingSession.current === record) record.pending = undefined; });
+    return record.pending;
+  }
+  function dismissUnconfirmed() {
+    alive.current = false; cancelPending(false); closeAction.current();
+  }
+  async function close() {
+    const acknowledged = await disconnect(false);
+    if (!alive.current) return;
+    if (acknowledged && !masterOffPending.current) { alive.current = false; closeAction.current(); }
+    else setNotice('撤销结果未确认。仅关闭面板不代表持续共享已经停止。');
   }
   async function run(label: string, action: (id: string, signal: AbortSignal, current: () => boolean) => Promise<void>, eventConsent = false) {
     if (pending.current || !alive.current) return;
@@ -141,7 +174,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
       const value = await client.status(signal);
       if (!current()) return;
       setStatus(value);
-      if ((!value.enabled || !value.feature_enabled || value.acceptance_mode) && currentSession.current) disconnect(false);
+      if (!value.enabled || !value.feature_enabled || value.acceptance_mode) confirmRevocation();
     });
   }
   useEffect(() => {
@@ -218,7 +251,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
   };
   const has = (capability: string) => session?.capabilities.includes(capability) === true;
   const canConnect = !!status?.enabled && status.feature_enabled && !status.acceptance_mode
-    && !!props.context.sessionToken && !!props.context.scope;
+    && !!props.context.sessionToken && !!props.context.scope && !revokingSession.current && !masterOffPending.current;
   const selectionReady = props.sourceReady && !!props.selection?.text && Number.isInteger(props.selection.text_start) && Number.isInteger(props.selection.text_end);
   const canPreview = !!session && has('tutor.guidance.request') && (!content || content === 'NONE' || props.sourceReady)
     && (content !== 'SELECTION' || selectionReady) && (content !== 'SPECIFIC_CONTEXT' || sourceIds.length > 0);
@@ -242,11 +275,14 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
     eventRevision.current += 1; markEventSharing('off'); setEventOptIn(false); setEventFields([...metadataFields]);
   });
   const changeEnabled = (enabled: boolean) => {
-    if (!enabled) disconnect(false);
+    if (!enabled) { masterOffPending.current = true; markEventSharing('unknown'); void disconnect(false); }
     void run(enabled ? '启用本机集成' : '关闭本机集成', async (request_id, signal, current) => {
       await client.settings(enabled, request_id, signal);
       const value = await client.status(signal);
-      if (current()) { setStatus(value); if (!value.enabled) disconnect(false); }
+      if (current()) {
+        if (!enabled && value.enabled) throw new ApiError({ status: 409, code: 'INVALID_MESSAGE', message: '' });
+        setStatus(value); if (!value.enabled) confirmRevocation();
+      }
     });
   };
   const buildPreview = () => {
@@ -319,11 +355,12 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
       <div className="local-tutor-scroll">
         {error && <StatusMessage tone="error">{error}</StatusMessage>}
         {notice && <StatusMessage>{notice}</StatusMessage>}
+        {eventSharing === 'unknown' && !session && <StatusMessage tone="warning"><strong>撤销状态 UNKNOWN</strong><p>尚未确认主机已停止持续共享。关闭面板不会关闭 Studio 主机。</p>{revokingSession.current && <Button onClick={() => void disconnect()}>重试断开连接</Button>}{masterOffPending.current && <Button disabled={!!busy} onClick={() => changeEnabled(false)}>重试关闭集成</Button>}<Button onClick={dismissUnconfirmed}>仅关闭面板（撤销未确认）</Button></StatusMessage>}
         <div className="local-tutor-boundary"><Badge tone={session?.mode === 'MOCK_ONLY' ? 'warning' : 'neutral'}>{session?.mode ?? 'LOCAL_REQUIRED'}</Badge><span>真实 Tutor Desktop 接入与 Windows Named Pipe：LOCAL_REQUIRED。参考服务连接不代表桌面联调完成。</span></div>
         {(!props.context.sessionToken || !props.context.scope) && <StatusMessage>需已授权的工作区会话；当前文件模式仍可正常写作。</StatusMessage>}
         {!status && !busy && props.context.sessionToken && <Button onClick={refreshStatus}>重试读取集成状态</Button>}
         {status && <>
-          <Panel title="AI Tutor Integration" actions={<Badge tone={session ? 'success' : 'neutral'}>{session ? '已握手' : status.enabled ? '等待连接' : '关闭'}</Badge>}>
+          <Panel title="AI Tutor Integration" actions={<Badge tone={session ? 'success' : 'neutral'}>{eventSharing === 'unknown' && !session ? '撤销待确认' : session ? '已握手' : status.enabled ? '等待连接' : '关闭'}</Badge>}>
             <label className="local-tutor-choice"><input type="checkbox" checked={status.enabled && !status.acceptance_mode} disabled={!!busy && !status.enabled || !status.feature_enabled || status.acceptance_mode} onChange={event => changeEnabled(event.target.checked)} />Enable Local Tutor Integration</label>
             {status.acceptance_mode ? <p>V1 Acceptance Mode 强制关闭此实验功能。</p> : !status.feature_enabled ? <p>实验开关 local_tutor_interop_v1 当前关闭；需要主机明确启用后才能连接。</p> : !status.enabled ? <p>默认关闭。启用不会自动发现、启动或连接其他软件。</p> : null}
             <dl className="local-tutor-facts"><div><dt>Detected Tutor</dt><dd>{session?.product.display_name ?? '未连接'}</dd></div><div><dt>Protocol</dt><dd>{session ? 'PoemSeed Local Interop 1.0' : '待握手：1.0'}</dd></div><div><dt>当前范围</dt><dd>{props.module} / {props.surface}</dd></div></dl>
@@ -388,7 +425,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
           {verification && <div role="status"><Badge tone={verification.status === 'VERIFIED' ? 'success' : verification.status === 'FAILED' ? 'error' : 'warning'}>{verification.status}</Badge><p>{verification.reason}</p><p>依据主机状态和证据，不采用模型自报成功。</p><pre className="local-tutor-preview" aria-label="验证证据">{JSON.stringify(verification.evidence, null, 2)}</pre></div>}
         </Panel>}
       </div>
-      <footer className="local-tutor-footer"><span role="status">{busy || (session ? '已连接 · LOCAL_ONLY' : '未连接 · 持续共享关闭')}</span>{busy && <Button onClick={() => cancelPending()}>取消当前请求</Button>}<Button onClick={close}>关闭并断开</Button></footer>
+      <footer className="local-tutor-footer"><span role="status">{busy || (eventSharing === 'unknown' ? '撤销状态 UNKNOWN' : session ? '已连接 · LOCAL_ONLY' : '面板未连接')}</span>{busy && <Button onClick={() => cancelPending()}>取消当前请求</Button>}<Button onClick={close}>关闭并断开</Button></footer>
     </section>
   </div>;
   return createPortal(body, document.body);
