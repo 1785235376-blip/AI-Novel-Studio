@@ -24,6 +24,7 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
   const source = available ? catalog.data!.screenplays.find(s => s.id === document?.screenplay_id) : undefined;
   const sourceChanged = !!document && (!source || source.edit_version !== document.expected_screenplay_version);
   const savedCurrent = !!row && rowsReady && records.data!.items.some(r => r.id === row.id && r.version === row.version && !r.stale);
+  const savedStale = !!row && rowsReady && records.data!.items.some(r => r.id === row.id && r.stale);
   const asset = available ? catalog.data!.assets.find(a => a.id === assetId) : undefined;
   useEffect(() => () => { segments.forEach(URL.revokeObjectURL); }, [segments]);
   useEffect(() => () => { if (assetUrl) URL.revokeObjectURL(assetUrl); }, [assetUrl]);
@@ -53,7 +54,7 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
     <Panel title="布局草稿与手工编辑">
       <Field label="漫画来源剧本"><select disabled={!available || action.busy} value={document?.screenplay_id || ''} onChange={e => { const source = catalog.data?.screenplays.find(s => s.id === e.target.value); invalidate(); setRow(undefined); setDocument(source ? comicPreset(source, 'PAGE', catalog.data!.presets.PAGE) : undefined); setPast([]); setFuture([]); setDirty(true); }}><option value="">选择已有镜头的剧本</option>{available && catalog.data!.screenplays.map(s => <option key={s.id} value={s.id}>{s.title} · v{s.edit_version}</option>)}</select></Field>
       {available && !catalog.data!.screenplays.length && <EmptyState title="暂无镜头来源" detail="先在原剧本工作区建立剧本与镜头，再回来选择。" />}
-      {document && available && <>
+      {document && available && !savedStale && <>
         {sourceChanged && <StatusMessage tone="warning">来源版本已变化。草稿输入仍保留，请重新选择当前来源再保存；旧画面已隐藏。</StatusMessage>}
         <fieldset className="experimental-form" disabled={action.busy}>
           <Field label="漫画布局名称"><input maxLength={240} value={document.title} onChange={e => edit({ ...document, title: e.target.value })} /></Field>
@@ -67,7 +68,22 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
             <Field label={`格框 ${index + 1} 已批准图片`}><select value={panel.asset_id || ''} onChange={e => { const asset = catalog.data!.assets.find(a => a.id === e.target.value); patchPanel(panel.id, { asset_id: asset?.id || null, expected_asset_version: asset?.version || null }); }}><option value="">缺图，导出将阻止</option>{catalog.data!.assets.filter(a => a.approved).map(a => <option key={a.id} value={a.id}>{a.filename} · v{a.version}</option>)}</select></Field>
             <Field label={`格框 ${index + 1} 图片缩放`}><select value={panel.fit} onChange={e => patchPanel(panel.id, { fit: e.target.value as ComicPanel['fit'] })}><option value="CONTAIN">完整显示，允许留白</option><option value="COVER">居中裁切填满（需审核）</option></select></Field>
           </div><RectFields label={`格框 ${index + 1}`} value={panel} onChange={patch => patchPanel(panel.id, patch)} />
-            <Field label={`格框 ${index + 1} 关联人物`}><select multiple value={panel.character_ids} onChange={e => patchPanel(panel.id, { character_ids: Array.from(e.target.selectedOptions, o => o.value) })}>{catalog.data!.characters.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></Field>
+            <Field label={`格框 ${index + 1} 关联人物`}><select multiple value={panel.character_ids} onChange={e => patchPanel(panel.id, { character_ids: Array.from(e.target.selectedOptions, o => o.value), appearance_references: (panel.appearance_references || []).filter(ref => Array.from(e.target.selectedOptions, o => o.value).includes(ref.character_id)) })}>{catalog.data!.characters.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select></Field>
+            <p>场景引用：{source?.shots.find(shot => shot.id === panel.shot_id)?.scene_id || '未提供'}。镜头与场景版本沿用原剧本。</p>
+            <Field label={`格框 ${index + 1} 图片简报`}><textarea rows={3} maxLength={8000} value={panel.image_brief || ''} onChange={e => patchPanel(panel.id, { image_brief: e.target.value })} /></Field>
+            <p>图片简报只保存创作意图。人物外观引用须来自原图库中已批准的图片，并绑定当前版本；不会启动生成。</p>
+            {panel.character_ids.map(characterId => {
+              const reference = panel.appearance_references?.find(ref => ref.character_id === characterId);
+              const character = catalog.data!.characters.find(c => c.id === characterId);
+              return <div key={characterId} className="experimental-record">
+                <Field label={`格框 ${index + 1} ${character?.name || characterId} 外观参考`}><select value={reference?.asset_id || ''} onChange={e => {
+                  const asset = catalog.data!.assets.find(a => a.id === e.target.value);
+                  const rest = (panel.appearance_references || []).filter(ref => ref.character_id !== characterId);
+                  patchPanel(panel.id, { appearance_references: asset ? [...rest, { character_id: characterId, asset_id: asset.id, expected_asset_version: asset.version, note: reference?.note || '' }] : rest });
+                }}><option value="">未指定外观参考</option>{catalog.data!.assets.filter(a => a.approved).map(a => <option key={a.id} value={a.id}>{a.filename} · v{a.version}</option>)}</select></Field>
+                {reference && <Field label={`格框 ${index + 1} ${character?.name || characterId} 外观说明`}><textarea maxLength={2000} value={reference.note} onChange={e => patchPanel(panel.id, { appearance_references: panel.appearance_references!.map(ref => ref.character_id === characterId ? { ...ref, note: e.target.value } : ref) })} /></Field>}
+              </div>;
+            })}
             {panel.bubbles.map((bubble, bi) => <fieldset className="experimental-form" key={bubble.id}><legend>格框 {index + 1} 气泡 {bi + 1}</legend>
               <Field label={`格框 ${index + 1} 气泡 ${bi + 1} 文字`}><textarea maxLength={1000} value={bubble.text} onChange={e => patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, text: e.target.value } : b) })} /></Field>
               <Field label={`格框 ${index + 1} 气泡 ${bi + 1} 类型`}><select value={bubble.kind} onChange={e => patchPanel(panel.id, { bubbles: panel.bubbles.map(b => b.id === bubble.id ? { ...b, kind: e.target.value as 'DIALOGUE' | 'NARRATION' } : b) })}><option value="DIALOGUE">对白气泡</option><option value="NARRATION">旁白框</option></select></Field>
@@ -78,7 +94,7 @@ function ComicLayoutsContent({ client }: { client: ExperimentalClient }) {
             </fieldset>)}
             <div className="experimental-actions"><Button disabled={panel.bubbles.length >= 12} onClick={() => patchPanel(panel.id, { bubbles: [...panel.bubbles, { id: globalThis.crypto.randomUUID(), kind: 'DIALOGUE', text: '输入对白', character_id: null, font_size: 32, x: panel.x + 16, y: panel.y + 16, width: Math.max(48, panel.width - 32), height: Math.min(160, Math.max(48, panel.height - 32)) }] })}>添加格框 {index + 1} 气泡</Button><Button disabled={document.panels.length === 1} onClick={() => edit({ ...document, panels: document.panels.filter(p => p.id !== panel.id).map((p, i) => ({ ...p, order: i + 1 })) })}>移除格框 {index + 1}</Button></div>
           </article>)}
-          <Button disabled={document.panels.length >= 24 || !source?.shots.length} onClick={() => source && edit({ ...document, panels: [...document.panels, { id: globalThis.crypto.randomUUID(), shot_id: source.shots[0].id, order: document.panels.length + 1, x: document.safe_area, y: document.safe_area, width: document.width - document.safe_area * 2, height: 320, character_ids: [], asset_id: null, expected_asset_version: null, fit: 'CONTAIN', bubbles: [] }] })}>添加格框（手工定位）</Button>
+          <Button disabled={document.panels.length >= 24 || !source?.shots.length} onClick={() => source && edit({ ...document, panels: [...document.panels, { id: globalThis.crypto.randomUUID(), shot_id: source.shots[0].id, order: document.panels.length + 1, x: document.safe_area, y: document.safe_area, width: document.width - document.safe_area * 2, height: 320, character_ids: [], asset_id: null, expected_asset_version: null, fit: 'CONTAIN', bubbles: [], image_brief: '', appearance_references: [] }] })}>添加格框（手工定位）</Button>
         </fieldset>
         <p>安全区与坐标以页面像素为准，阅读顺序支持从上到下、同一行从左到右。新增格框或气泡可能重叠，预检会阻止越界与文字溢出。切换预设会重排草稿，可撤销。</p>
         <Button disabled={action.busy || sourceChanged || !document.panels.length || !document.title.trim()} onClick={() => void action.run(async isCurrent => { const saved = await api.save(document, row); if (isCurrent()) { load(saved); records.reload(); } }, '布局已保存为待审草稿。原剧本与图片未改写。')}>保存漫画布局草稿</Button>

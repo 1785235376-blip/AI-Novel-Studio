@@ -46,6 +46,13 @@ class Bubble(Rect):
         return self
 
 
+class AppearanceReference(StrictModel):
+    character_id: str = Field(min_length=1, max_length=240)
+    asset_id: str = Field(min_length=1, max_length=240)
+    expected_asset_version: int = Field(ge=1, strict=True)
+    note: str = Field(default='', max_length=2000)
+
+
 class ComicPanel(Rect):
     id: str = Field(pattern=r'^[A-Za-z0-9_-]{1,80}$')
     shot_id: str = Field(min_length=1, max_length=240)
@@ -55,6 +62,17 @@ class ComicPanel(Rect):
     expected_asset_version: int | None = Field(default=None, ge=1, strict=True)
     fit: Literal['CONTAIN', 'COVER'] = 'CONTAIN'
     bubbles: list[Bubble] = Field(default_factory=list, max_length=12)
+    image_brief: str = Field(default='', max_length=8000)
+    appearance_references: list[AppearanceReference] = Field(default_factory=list, max_length=20)
+
+    @model_validator(mode='after')
+    def references(self):
+        ids = [ref.character_id for ref in self.appearance_references]
+        if len(set(ids)) != len(ids): raise ValueError('COMIC_DUPLICATE_APPEARANCE_CHARACTER')
+        if set(ids) - set(self.character_ids): raise ValueError('COMIC_APPEARANCE_CHARACTER_NOT_IN_PANEL')
+        if any(ord(c) < 32 and c not in '\n\t' or 0xD800 <= ord(c) <= 0xDFFF for c in self.image_brief):
+            raise ValueError('COMIC_PLAIN_TEXT_REQUIRED')
+        return self
 
 
 class LayoutIn(StrictModel):
@@ -336,7 +354,9 @@ class ComicLayoutsService(DomainService):
             except (FileNotFoundError, ValueError): continue
             assets.append({k: row[k] for k in ('id', 'filename', 'version')} | {'approved': bool(row.get('approved_at')), 'manual_review_available': self._manual(row)})
         return {'screenplays': base['screenplays'], 'characters': base['characters'], 'assets': assets,
-                'presets': PRESETS, 'renderer': renderer_status(), 'font': font_status(), 'privacy_level': 'LOCAL_ONLY', 'automatic_generation': False}
+                'presets': PRESETS, 'renderer': renderer_status(), 'font': font_status(), 'privacy_level': 'LOCAL_ONLY', 'automatic_generation': False,
+                'appearance_reference_policy': 'ORIGINAL_APPROVED_ASSET_VERSION_PINNED',
+                'image_brief_policy': 'HUMAN_AUTHORED_DECLARATION_NO_GENERATION'}
 
     def _payload(self, nid, scope, actor, value):
         body = LayoutIn.model_validate(value); document = body.model_dump(); director = self._director()
@@ -352,6 +372,10 @@ class ComicLayoutsService(DomainService):
                 asset, _ = self._asset(nid, scope, actor, panel.asset_id)
                 if panel.expected_asset_version != asset['version']: raise StaleSourceError('COMIC_ASSET_VERSION_CHANGED')
                 assets[panel.asset_id] = self._binding(asset)
+            for reference in panel.appearance_references:
+                asset, _ = self._asset(nid, scope, actor, reference.asset_id)
+                if reference.expected_asset_version != asset['version']: raise StaleSourceError('COMIC_APPEARANCE_ASSET_VERSION_CHANGED')
+                assets[reference.asset_id] = self._binding(asset)
         return {'document': document, 'screenplay_version': source['edit_version'], 'source_evidence': director.evidence(nid, scope, source),
                 'character_sources': character_sources, 'asset_sources': assets,
                 'scene_ids': {p.id: shots[p.shot_id].get('scene_id') for p in body.panels}, 'status': 'DRAFT', 'approval': None}
@@ -446,8 +470,13 @@ class ComicLayoutsService(DomainService):
 
     def export(self, nid, scope, actor, rid, expected_version, guard=lambda: None):
         report, output = self._render(nid, scope, actor, rid, expected_version, approved=True, guard=guard)
+        row = self._row(nid, scope, actor, rid)
+        panel_sources = [{'panel_id': panel['id'], 'shot_id': panel['shot_id'], 'scene_id': row['scene_ids'].get(panel['id']),
+            'image_brief': panel.get('image_brief', ''), 'asset_id': panel.get('asset_id'),
+            'appearance_references': panel.get('appearance_references', [])} for panel in row['document']['panels']]
         stream = io.BytesIO(); manifest = {'format': 'comic-png-segments-v1', 'layout_version': expected_version, 'review_digest': report['review_digest'],
-                                          'status': 'APPROVED_LAYOUT_EXPORT_COPY', 'automatic_publication': False, 'segments': []}
+                                          'status': 'APPROVED_LAYOUT_EXPORT_COPY', 'automatic_publication': False, 'segments': [],
+                                          'panel_sources': panel_sources, 'asset_bindings': row['asset_sources'], 'privacy_level': 'LOCAL_ONLY'}
         def put(archive, name, data):
             info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0)); info.compress_type = zipfile.ZIP_STORED; archive.writestr(info, data)
         with zipfile.ZipFile(stream, 'w') as archive:

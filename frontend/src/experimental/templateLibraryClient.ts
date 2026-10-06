@@ -1,5 +1,5 @@
 import type { ExperimentalClient } from './api';
-export type TemplatePackage = { schema_version: 1; manifest: { id: string; version: string; type: string; title: string; description: string; author: string; license: string; dependencies: string[]; provenance: string }; content: Record<string, any> };
+export type TemplatePackage = { schema_version: 1; manifest: { id: string; version: string; type: string; title: string; description: string; author: string; license: string; dependencies: string[]; provenance: string; compatibility?: { protocol: string; schema_versions: number[]; import_mode: string }; permissions?: { execute: false; network: false; manuscript_write: false; grant_capabilities: false; executable_plugins: 'DENY_ALL' } }; content: Record<string, any> };
 export type CatalogEntry = { id: string; package: TemplatePackage; digest: string; builtin: boolean; installed: boolean; version: number; favorite: boolean; favorite_version: number; missing_dependencies: string[] };
 export type TemplateInstance = { id: string; version: number; package_id: string; package_version: string; manifest: TemplatePackage['manifest']; content: Record<string, any>; edited: boolean; linked_target: { id: string; feature: string; version: number } | null };
 export type TemplateDiff = { lines: string[]; truncated: boolean };
@@ -8,7 +8,7 @@ export type TemplateComparison = { preview_digest: string; expected_version: num
 export function templateLibraryClient(client: ExperimentalClient) {
   const base = '/template-library'; const segment = encodeURIComponent;
   return {
-    catalog: (signal?: AbortSignal) => client.get<{ items: CatalogEntry[]; types: string[]; remote_sync: string }>(base, signal),
+    catalog: (signal?: AbortSignal) => client.get<{ items: CatalogEntry[]; types: string[]; extended_items?: CatalogEntry[]; extended_types?: string[]; remote_sync: string }>(base, signal),
     preview: (text: string) => client.post<TemplatePreview>(base + '/preview', { package: text }),
     install: (text: string, preview: TemplatePreview) => client.post(base + '/install', { package: text, expected_version: preview.expected_version, preview_digest: preview.preview_digest }),
     favorite: (entry: CatalogEntry) => client.post(base + '/packages/' + segment(entry.id) + '/favorite', { expected_version: entry.favorite_version, favorite: !entry.favorite }),

@@ -263,12 +263,12 @@
     ]
   },
   "integration": {
-    "shared_files_changed_by_worker": false,
     "props": {
       "MediaPanel": "requestedTaskId?: string",
       "VoiceDirectionPanel": "requestedTaskId?: string",
       "AudiobookPanel": "requestedPlanId?: string"
-    }
+    },
+    "composition": "Existing ExperimentalWorkbench forwards only matching original media/audio task authorities."
   },
   "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts.",
   "post_review_source_sha256": {

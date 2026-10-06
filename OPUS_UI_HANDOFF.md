@@ -1,6 +1,6 @@
 # Post-Interop continuation target (2026-10-06)
 
-Current branch: `work/post-interop-r4-r5-ux-continuation`, stacked on frozen PR42 `e58c72b04182cd374af092314386b90f8250a173`. This initial checkpoint adds no visual redesign. Follow the current `POST_INTEROP_FEATURE_MATRIX.md`, `UX_ACCEPTANCE_MATRIX.md` and wave notes under `docs/delivery/post-interop-continuation/`. The historical handoff below remains intact. Each wave will append its new pages/components/APIs/state/permissions/flag and non-breakable behavior here. Historical independent review stays BLOCKED; the present work does not replace it.
+Current development is Draft [PR43](https://github.com/1785235376-blip/AI-Novel-Studio/pull/43), branch `work/post-interop-r4-r5-ux-continuation`, stacked on frozen PR42 `e58c72b04182cd374af092314386b90f8250a173`. Current feature and journey evidence is in `POST_INTEROP_FEATURE_MATRIX.md`, `UX_ACCEPTANCE_MATRIX.md` and `docs/delivery/post-interop-continuation/`. Earlier handoff sections retain their historical scope; appended Post-Interop wave sections describe the current pages/components/APIs/state/permissions and non-breakable behavior. No final visual redesign or full product acceptance is claimed. Historical independent review stays BLOCKED; this work does not replace it.
 
 ---
 
@@ -323,3 +323,13 @@ The existing AuthorRequestPreview/Controls source picker stores only original ID
 Keep original MediaPanel source pickers, cover/storyboard revision/CAS/history, explicit fixture-versus-registered route choice and source-stale labels. Cancellation stays independent of pending execute; navigation only selects the original authorized task/plan. Missing character references must leave independent work visible while prohibiting stale queue/approval. Brief edits retain reference identities, so explain fresh-brief recovery if the original source cannot be restored.
 
 Director suggestions are transparent source-local review aids, not inferred camera geometry or creative-quality scores. Production assurance labels remain independent; measured audio frames are segment evidence only, with unknown speaker/alignment review explicit. OTIO loss acknowledgements remain required. Preserve existing Panel/Button/Field/StatusMessage primitives, tokens, layout order, scope invalidation and default-OFF/server V1 gates; final visual redesign remains a later handoff.
+
+## Post-Interop Wave5 extended creation
+
+TranslationMemoryPanel remains inside the original edition owner. Keep exact source/target-version identity, locked-term reasons, explicit memory reuse and history-restore confirmation; literal drift checks are not translation quality. Comic image briefs/appearance references remain distinct from storyboard review, with approved asset versions and scene lineage visible. InteractiveStoryHistory restores through current original references and CAS, never stale content.
+
+SharedUniversePanel remains within ProjectForksPanel: selected immutable snapshot contents, explicit target work pin, source drift, incoming read-only pin view and human repin/release. Privacy withdrawal must withhold old content without silently merging or mutating target manuscript/Canon. WriterRoom presence stays explicitly unavailable while asynchronous assignment/comments/proposals remain usable. Templates expose version/compatibility and denied permissions; SDK previews never execute imported code. Preserve source-change invalidation, private draft cleanup, default-OFF/server V1 fences and existing shared design tokens/primitives. No final visual redesign is included.
+
+## Exact original model-task reopening
+
+Task Center uses the additive owner_navigation pointer while retaining the legacy source shape. Simulator/Judge/declarative panels select only the matching authorized original job receipt; translation shows the exact original receipt without overwriting dirty segment input. Opening its original segment is a separate action. Missing, withheld or out-of-window tasks remain unavailable instead of selecting unrelated output, and navigation never executes a model. Keep chapter/source scope fences and existing50-edition/50-run bounded translation visibility explicit.

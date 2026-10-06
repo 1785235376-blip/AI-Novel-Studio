@@ -1,5 +1,11 @@
 # Post-Interop R4/R5 UX continuation
 
+## Current source delivery
+
+Draft [PR43](https://github.com/1785235376-blip/AI-Novel-Studio/pull/43) deepens the original owners across Waves0–5. It retains F00 INTEGRATED and39 PARTIAL; this is engineering continuation, not a release or complete real-model/native product acceptance. Current per-feature and UX journey evidence is in `POST_INTEROP_FEATURE_MATRIX.md/json` and `UX_ACCEPTANCE_MATRIX.md`; original requirement traceability is in `docs/delivery/post-interop-continuation/TASK_REGISTER.json`.
+
+The source-specific staged receipts below were produced before publication. Exact final SHA/tree, commit/file list and terminal hosted results are supplied in the final PR43 verification receipt and user TXT/JSON delivery without changing the tested source afterward. A checkpoint’s pending or cancelled result is never promoted into a final pass. Read those exact-source receipts together with this implementation report.
+
 ## Wave 0: initial checkpoint, not completion
 
 Actual implementation/analysis model: **gpt-6-astra**.
@@ -34,7 +40,7 @@ Wave1 prioritizes durable save/recovery, workspace and review recovery, scoped e
 - Original project/manuscript/model/task/asset/permission owners remain unique.
 - Experimental flags default OFF; server V1 acceptance mode forces OFF.
 - Only additive schema changes, with migration/upgrade/rollback and File/PostgreSQL parity evidence. No real user data profile is used.
-- No paid API, credentials, model/software installation, real manuscript, production service, release, merge or deployment.
+- No paid API, private credentials, local model/runtime installation, real manuscript, production service, release, merge or deployment. Official pinned development/test dependencies are permitted and used.
 - Historical independent follow-up audit remains BLOCKED and is not restarted or replaced.
 
 ## Verification at this checkpoint
@@ -49,7 +55,7 @@ The Wave0 [Shared R123 evidence run 37485233196](https://github.com/1785235376-b
 
 The first runtime wave deepens existing save/recovery and workspace owners. It adds corruption-preserving local draft export, honest offline save behavior, real original-owner cancellation receipts, audio/video/review task projection, version-fenced original entity navigation and explicit local-AI error guidance. Exact original task IDs are retained; retries open the original domain UI and never dispatch a model automatically. Media-specific review target forwarding completes with Wave4. The optional scene author server path completes with Wave2.
 
-Local evidence:20 new mounted File cases (20 marked PG counterparts await hosted execution),92 related backend regressions,167 focused UI cases and5 parent composition cases passed in overlapping suites. TypeScript and token checks passed for the integration workspace. These are focused checks, not final-source full acceptance. The strict complete inventory is expanded only after independent exact-staged-tree collections and review; all original nodes/skip maps/assertions stay. See `docs/delivery/post-interop-continuation/WAVE_1_UX.md` and JSON.
+Local evidence:20 new mounted File cases (20 marked PG counterparts await hosted execution),92 related backend regressions,167 focused UI cases and5 composition cases passed in overlapping suites. TypeScript and token checks passed for the integration workspace. These are focused checks, not final-source full acceptance. The strict complete inventory is expanded only after independent exact-staged-tree collections and review; all original nodes/skip maps/assertions stay. See `docs/delivery/post-interop-continuation/WAVE_1_UX.md` and JSON.
 
 Wave1 isolated staged code tree `59f34b859221babea16c6c974dfe0ebb2554666d` independently passed TypeScript, the complete frontend unit suite (**1167 passed /8 inherited opt-in skips**) and20 new mounted File cases. Two separate full collections matched6839 ordered nodes, retaining all6799 original nodes in their original relative order and adding40 File/PG cases. No original backend test/source digest or skip map changed. The final wave commit additionally includes only the reviewed inventory/evidence update; hosted execution remains pending.
 
@@ -82,3 +88,27 @@ A fresh negative review found missing original cover characters could hide unrel
 No model/media quality or third-party NLE acceptance is inferred from synthetic candidates and generated WAV fixtures. Measured segment boundaries do not imply ASR, word alignment or lip synchronization. Production traceability, current replay preflight, approximate reproduction, synthetic determinism and actual byte comparison remain separate claims. No SQL migration or new authority/flag framework is introduced. Full final-source hosted verification remains pending.
 
 Fresh isolated Wave4 code tree `ac967d2a769b76c61bfb60ba01e12c0a2ca4ebc1` passed TypeScript, the complete frontend suite (**1231 passed /8 inherited opt-in skips**) and24 new File cases (20 PG variants deferred). Two independent complete collections matched7306 nodes, adding44 while preserving every prior node, source digest and skip map. The final checkpoint adds the reviewed inventory and engineering receipts. This is still a checkpoint, not final-source full acceptance.
+
+## Wave5 extended creation checkpoint
+
+Existing Translation Workspace adds exact accepted-segment memory, source/version-bound reuse, locked terms and original edition history/restore. Character/place/world terminology stays explicit; overlapping aliases wholly inside the preferred spelling do not create false drift. Literal terminology checks do not establish semantic omission detection or translation quality. Existing Comics/Webtoon retains its distinct panels, bubbles, vertical layout and scene references, adding image briefs and approved version-pinned appearance assets with export lineage.
+
+Existing Interactive Story gains current-source history restore and archived-entity visibility fences. Shared Universe lives in the existing structured-forks owner: immutable selected original character/location/relationship and approved world-record snapshots, explicit target-work version pins/repin/release/history, drift disclosure and permission/privacy withholding. Source edits do not mutate another work. Existing Fork/Compare/Conflict/Human Merge remains structured-only; no automatic manuscript merge. WriterRoom remains asynchronous comments, assignments and proposals; Presence explicitly reports NOT_IMPLEMENTED and does not impersonate realtime editing.
+
+The original Template Library gains declarative Novel/Genre/World/Agent/Story-Structure categories alongside existing ones, compatibility/version/permission manifests and explicit bounded instantiation. The original SDK keeps executable third-party extensions DENY_ALL and rejects unsupported capabilities/runtime schemas. No marketplace or production cloud service is introduced. These are original-owner application, storage and contract flows, not real translation/artwork/model/native-engine acceptance.
+
+## Upgrade and rollback scope
+
+No SQL migration or historical migration edit is introduced by this continuation. New metadata/collections use the existing File/PostgreSQL experimental store and original source owners. Old documents default absent optional fields; dedicated upgrade/restart cases exercise old scene-less graph/mind, revision/history, style and Judge records. History is append-only where the owner already supports it; restore creates a new current version after original source/permission/CAS checks. Before downgrade, export and preserve the existing store and source history; older strict schemas may reject new enum/grammar/template records, so do not silently rewrite history or open active new-form edits with an older executable. Real user V1 data and irreversible migrations were never used. Native upgrade/downgrade and real production datasets remain NOT_RUN.
+
+### Task Center exact original model-result continuation
+
+Original simulator, Judge, translation and declarative model jobs now expose an additive owner-navigation pointer while preserving their legacy source projection. Existing panels locate the authorized original job receipt and never replay it. Translation opens the exact edition/segment receipt read-only before an explicit segment switch, preserving dirty inputs. Absent or source-withheld receipts remain unavailable; bounded original translation lists may exclude older jobs beyond the latest 50 editions and 50 runs per edition. New backend/DOM coverage and an actual hosted Judge navigation/reload/no-replay journey accompany this change.
+
+### Verification discipline and retained failures
+
+All 37 frozen Interop files match the original manifest; 153 strict coverage-infrastructure self-tests pass freshly. No historical PR42 test file, original migration, CI timeout, skip map or assertion is edited. Backend inventory expansion retains every preceding node and relative order through two independent complete collections. PostgreSQL remains exactly two deterministic SHA-256 node-ID shards with independent union/source/outcome/JUnit/run/attempt proof; File remains one process plus its separate two-process TCP gate.
+
+The d18e874 hosted checkpoint passed unit/build/token/geometry and several earlier browser groups, but the new U08 source-picker browser case failed while locating a native select with an exact label-text query. Later checkpoint supersession cancelled the run; the observed failure is retained and is not dismissed as cancellation. The correction uses the existing exact accessible combobox selector, preserving citation, exclusion, stale-source and zero-dispatch assertions and the original timeout. Only final-source hosted results can verify the corrected complete journey. Earlier partial/cancelled runs are not final acceptance.
+
+Fresh isolated Wave5/core-task code tree `ba7265a3a4dcf0d411799974570979414df2d70d` passed TypeScript, design tokens, the complete frontend suite (**1259 passed /8 inherited opt-in skips**) and101 new File/pure backend cases (77 PG variants deferred). Two independent complete collections matched7484 nodes:178 added in this checkpoint and685 added since PR42, retaining every preceding node and relative order. No old source digest or skip map changed in this expansion. The U08 new-browser selector correction is independently collected and requires actual hosted execution. Full File/PostgreSQL/browser/native acceptance is recorded separately after actual execution, not inferred from this staged subset.

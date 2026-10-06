@@ -7,7 +7,7 @@ import { useReviewAction } from './styleReviewClient';
 import { storySimulatorClient, type SimulatorModelRoute, type SimulatorContext, type SimulatorEvent, type SimulatorInput, type SimulatorKnowledge, type SimulatorRoute, type SimulatorRouteInput, type SimulatorRun } from './storySimulatorClient';
 import type { WorkspaceNavigation } from './uxClient';
 
-type Props = { client: ExperimentalClient; chapter?: Chapter; onNavigate?: (target: WorkspaceNavigation) => void };
+type Props = { client: ExperimentalClient; requestedJobId?: string; chapter?: Chapter; onNavigate?: (target: WorkspaceNavigation) => void };
 type Amount = { key: string; value: string };
 type EventDraft = Omit<SimulatorEvent, 'resource_delta'> & { resource_delta: Amount[] };
 type RouteDraft = Omit<SimulatorRouteInput, 'events'> & { events: EventDraft[] };
@@ -20,12 +20,19 @@ export function StorySimulatorPanel(props: Props) {
   const identity = useMemo(() => ++scopeSequence, [props.client]);
   return <StorySimulatorBody key={identity} {...props} />;
 }
-function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
+function StorySimulatorBody({ client, chapter, onNavigate, requestedJobId }: Props) {
   const api = useMemo(() => storySimulatorClient(client), [client]);
   const catalog = useResource(signal => api.catalog(signal), [api]);
-  const runs = useResource(signal => api.runs(signal), [api]);
-  const [runId, setRunId] = useState('');
-  const detail = useResource(signal => runId ? api.run(runId, signal) : Promise.resolve(undefined), [api, runId]);
+  const runs = useResource(async signal => ({ ...(await api.runs(signal)), requestedJobId }), [api, requestedJobId]);
+  const [browsedRunId, setRunId] = useState('');
+  const [dismissedJob, setDismissedJob] = useState<string>();
+  useLayoutEffect(() => { setDismissedJob(undefined); }, [requestedJobId]);
+  const targetJob = requestedJobId && requestedJobId !== dismissedJob ? requestedJobId : undefined;
+  const matches = targetJob && !runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId
+    ? (runs.data?.items || []).filter(row => row.model_execution?.job_id === targetJob) : [];
+  const targetRun = matches.length === 1 ? matches[0] : undefined;
+  const runId = targetJob ? targetRun?.id || '' : browsedRunId;
+  const detail = useResource(signal => runId ? api.run(runId, signal) : Promise.resolve(undefined), [api, runId, targetJob, targetRun?.version]);
   const action = useReviewAction(), epoch = useRef(0), sequence = useRef(2);
   const [sourceVersions, setSourceVersions] = useState<Record<string, number>>(chapter ? { [chapter.id]: chapter.version } : {});
   const [chapterId, setChapterId] = useState(chapter?.id || ''), [characterId, setCharacterId] = useState(''), [sceneId, setSceneId] = useState(''), [worldTime, setWorldTime] = useState('');
@@ -37,6 +44,7 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
   const [routes, setRoutes] = useState<RouteDraft[]>(() => [newRoute(1), newRoute(2)]);
   const [chosen, setChosen] = useState(''), [reviewed, setReviewed] = useState(false), [needsRefresh, setNeedsRefresh] = useState(false), [savedProposal, setSavedProposal] = useState('');
   useLayoutEffect(() => { epoch.current++; setReceipt(undefined); setReviewed(false); if (runId) detail.reload(); }, [chapter?.id, chapter?.version]);
+  useLayoutEffect(() => { epoch.current++; }, [targetJob]);
   const ready = !catalog.loading && !catalog.error && !!catalog.data;
   const sources = ready ? catalog.data!.chapters.filter(row => row.id in sourceVersions) : [];
   const localSourceChanged = !!chapter && chapter.id in sourceVersions && chapter.version > sourceVersions[chapter.id];
@@ -48,7 +56,7 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
   const contextBinding = JSON.stringify([chapterId, sourceVersions[chapterId], characterId, sceneId, worldTime]);
   const context = ready && sourcesMatch && receipt?.binding === contextBinding ? receipt.value : undefined;
   const fresh = ready && !runs.loading && !runs.error && !detail.loading && !detail.error && !needsRefresh && !localSourceChanged;
-  const run = fresh && detail.data?.id === runId ? detail.data : undefined;
+  const run = fresh && detail.data?.id === runId && (!targetJob || detail.data.model_execution?.job_id === targetJob && detail.data.version === targetRun?.version) ? detail.data : undefined;
   const activeRun = run && !run.stale ? run : undefined;
   const selectedRoute = activeRun?.routes?.find(row => row.id === chosen);
   const branchLimit = catalog.data?.limits.max_branches || 8, stepLimit = catalog.data?.limits.max_steps || 32;
@@ -91,6 +99,9 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
     <div className="experimental-actions"><h3>剧情推演</h3><Badge>手动确定性检查</Badge><Button disabled={action.busy || catalog.loading || runs.loading || detail.loading} onClick={refresh}>刷新推演与来源（保留输入）</Button></div>
     <p>用作者提供的有限事件比较候选路线，每次只推进一步。手工检查不调用模型。检查结束后可另行预览已配置的本地模型候选；文学质量、动机与因果关系仍由作者判断。</p>
     <StatusMessage>路线选择只会另存为待审规划。正文、Canon、分支和发布状态不会自动改变。</StatusMessage>
+    {targetJob && <section aria-label="任务中心原剧情推演任务"><p>正在定位原模型任务 {targetJob}，仅重新读取原记录。</p>
+      {!runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId && !targetRun && <StatusMessage tone="warning">原模型任务在当前授权记录中不可用或身份不唯一；不会选择其他记录。</StatusMessage>}
+      <Button onClick={() => { setDismissedJob(targetJob); setRunId(''); }}>退出原任务定位</Button></section>}
     <ResourceState loading={catalog.loading} error={catalog.error} />
     {!!action.error && <ErrorMessage error={action.error} />}{action.notice && <StatusMessage tone="success">{action.notice}</StatusMessage>}
     {(!!catalog.error || !!runs.error || !!detail.error || needsRefresh) && <StatusMessage tone="warning">请核对本机会话、分支权限、功能开关和来源版本，再刷新重试。表单输入保留；旧结果不能继续推进或保存，不会自动重发请求。</StatusMessage>}
@@ -141,7 +152,7 @@ function StorySimulatorBody({ client, chapter, onNavigate }: Props) {
     <Panel title="4. 手动推进与候选比较">
       <ResourceState loading={runs.loading} error={runs.error} />
       {!runs.loading && !runs.error && !runs.data?.items.length && <EmptyState title="还没有剧情推演记录" detail="保存输入只创建等待中的记录，不会自动执行或调用模型。" />}
-      <Field label="查看剧情推演记录"><select value={runId} disabled={!ready || runs.loading || !!runs.error || action.busy} onChange={event => { epoch.current++; setRunId(event.target.value); setChosen(''); setReviewed(false); setSavedProposal(''); }}><option value="">选择一次推演</option>{ready && !runs.loading && !runs.error && runs.data?.items.map((row, index) => <option key={row.id} value={row.id}>推演 {index + 1} · {statuses[row.status]}{row.stale ? ' · 来源已变化' : ''} · {row.created_at || row.id.slice(0, 12)}</option>)}</select></Field>
+      <Field label="查看剧情推演记录"><select value={runId} disabled={!!targetJob || !ready || runs.loading || !!runs.error || action.busy} onChange={event => { epoch.current++; setRunId(event.target.value); setChosen(''); setReviewed(false); setSavedProposal(''); }}><option value="">选择一次推演</option>{ready && !runs.loading && !runs.error && runs.data?.items.map((row, index) => <option key={row.id} value={row.id}>推演 {index + 1} · {statuses[row.status]}{row.stale ? ' · 来源已变化' : ''} · {row.created_at || row.id.slice(0, 12)}</option>)}</select></Field>
       {runId && <ResourceState loading={detail.loading} error={detail.error} />}
       {runId && localSourceChanged && <StatusMessage tone="warning">当前章节版本已变化。旧结果已隐藏，请刷新并核对来源。</StatusMessage>}
       {run && <><div className="experimental-actions"><Badge tone={run.stale ? 'warning' : run.status === 'COMPLETED' ? 'success' : 'neutral'}>{run.stale ? '来源已变化' : statuses[run.status]}</Badge><span>v{run.version}</span></div>{run.stale ? <StatusMessage tone="warning">旧来源的路线与证据已隐藏，不能继续推进或另存规划。请核对最新来源并重新读取人物视角，再创建新的推演；历史记录保留。</StatusMessage> : <>

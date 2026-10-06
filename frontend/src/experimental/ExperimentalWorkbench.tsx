@@ -74,9 +74,9 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
     {active === 'model_broker_v2' && <ModelBrokerPanel client={client} novelId={novelId} context={context} chapter={chapter} benchmarkEnabled={enabled(flags, 'model_benchmark_v2')} onOpenGeneration={onOpenGeneration} />}
     {active === 'asset_lineage_v2' && <ProductionLineagePanel client={client} manifestsEnabled={enabled(flags, 'production_manifest_v2')} onNavigate={onNavigate} />}
     {active === 'style_dna_v2' && <StyleAnalysisPanel client={client} chapter={chapter} requestedJobId={requestedTask?.authority === 'style_model_job' ? requestedTask.id : undefined} onNavigate={onNavigate} onUseStyle={onUseStyle} />}
-    {active === 'narrative_quality_judge_v2' && <NarrativeJudgePanel client={client} chapter={chapter} onNavigate={onNavigate} />}
+    {active === 'narrative_quality_judge_v2' && <NarrativeJudgePanel client={client} requestedJobId={requestedTask?.authority === 'judge_model_job' ? requestedTask.id : undefined} chapter={chapter} onNavigate={onNavigate} />}
     {active === 'change_impact_v2' && <ChangeImpactPanel client={client} onNavigate={onNavigate} />}
-    {active === 'story_simulator_v2' && <StorySimulatorPanel client={client} chapter={chapter} onNavigate={onNavigate} />}
+    {active === 'story_simulator_v2' && <StorySimulatorPanel client={client} requestedJobId={requestedTask?.authority === 'simulator_model_job' ? requestedTask.id : undefined} chapter={chapter} onNavigate={onNavigate} />}
     {active === 'research_library_v2' && <ResearchLibraryPanel client={client} />}
     {active === 'reader_preflight_v2' && <ReaderPreflightPanel client={client} localDraftState={localDraftState} onNavigate={onNavigate} />}
     {active === 'writing_sessions_v2' && <WritingSessionPanel client={client} onNavigate={onNavigate} />}
@@ -86,8 +86,8 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
     {active === 'comic_layouts_v2' && <ComicLayoutsPanel client={client} />}
     {active === 'interactive_story_v2' && <InteractiveStoryPanel client={client} />}
     {active === 'template_library_v2' && <TemplateLibraryPanel client={client} onNavigate={onNavigate} />}
-    {active === 'declarative_agents_v2' && <DeclarativeAgentsPanel client={client} />}
-    {active === 'multilingual_editions_v2' && <MultilingualEditionsPanel client={client} />}
+    {active === 'declarative_agents_v2' && <DeclarativeAgentsPanel client={client} requestedJobId={requestedTask?.authority === 'declarative_model_job' ? requestedTask.id : undefined} />}
+    {active === 'multilingual_editions_v2' && <MultilingualEditionsPanel client={client} requestedJobId={requestedTask?.authority === 'translation_model_job' ? requestedTask.id : undefined} />}
     {active === 'portable_projects_v2' && <PortableProjectsPanel client={client} />}
     {active === 'safe_batches_v2' && <SafeBatchesPanel client={client} />}
     {active === 'ai_director_v2' && <DirectorPanel client={client} />}

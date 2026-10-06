@@ -65,5 +65,6 @@
     "manifest_sha256": "ba032d4debd68b63db3ca03842410c56cd735f2ac0b04b06ace54438d9268613"
   },
   "historical_skip_maps": "UNCHANGED",
-  "full_backend_and_hosted_browser": "PENDING_FINAL_SOURCE"
+  "full_backend_and_hosted_browser": "PENDING_FINAL_SOURCE",
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts."
 }

@@ -3,7 +3,7 @@
   "checkpoint": "original-owner UX continuation",
   "starting_sha": "e58c72b04182cd374af092314386b90f8250a173",
   "documentation_baseline": "8ed7afd9a66dce226468532feead14f3a172796c",
-  "source_scope": "Uncommitted Wave1 owned files in shared integration worktree; final SHA and hosted results belong to parent publication record.",
+  "source_scope": "Uncommitted Wave1 owned files in shared integration worktree; final SHA and hosted results belong to published revision receipt.",
   "features": [
     {
       "id": "U01",
@@ -105,8 +105,8 @@
     "docs/delivery/post-interop-continuation/WAVE_1_UX.json"
   ],
   "shared_integration_files": {
-    "app/experimental/api.py": "Only create_author_task_canceller import/TaskReader callback and extend_workspace_task_readers composition belong to Wave1. Other worker lines must stay unstaged until its wave.",
-    "frontend/src/experimental/ExperimentalWorkbench.tsx": "Parent owns requestedTask forwarding. Wave1 Import/Teams/Inbox; media/voice/audiobook targeted props land with Wave4. Optional scene callback signature is cross-Wave2."
+    "app/experimental/api.py": "Original task cancellation and task-reader composition, extended by later source/context waves.",
+    "frontend/src/experimental/ExperimentalWorkbench.tsx": "Original Import/Teams/Inbox task pointers in Wave1; Media/Voice/Audiobook in Wave4; exact original model-job pointers completed in Wave5."
   },
   "owned_runtime_sha256": {
     "app/experimental/author_task_projection.py": "e51afc4f3221d82bc1b4f0a4ba0ea0b6075cfca6a95f2f07a1998e9f6305eef9",
@@ -217,5 +217,6 @@
     "paid_cloud": "NOT_RUN, not called",
     "historical_independent_audit": "Unchanged; no restart or new claim"
   },
-  "opus_handoff": "See WAVE_1_UX.md; shared tokens/shell retained, explicit recovery/cancel/source/permission/privacy fences are protected."
+  "opus_handoff": "See WAVE_1_UX.md; shared tokens/shell retained, explicit recovery/cancel/source/permission/privacy fences are protected.",
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts."
 }

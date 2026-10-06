@@ -19,10 +19,10 @@ Revision model task navigation verifies the original generation ID, origin, chap
 
 ## Source handoff
 
-No stage, commit or push performed by this worker. Files owned here:
+Relevant source files:
 
 - `app/experimental/search_sources.py`
-- `app/experimental/ux.py` search-only additions; task-origin changes are the U08 worker's shared edits
+- `app/experimental/ux.py` search and original-task projections
 - `frontend/src/App.tsx`
 - `frontend/src/AppWorkspaceResume.test.tsx`
 - `frontend/src/experimental/WorkspaceSearch.tsx`

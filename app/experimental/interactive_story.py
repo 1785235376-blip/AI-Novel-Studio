@@ -127,6 +127,11 @@ class ReviewIn(VersionIn):
     preview_digest: str | None = Field(default=None, pattern=r'^[a-f0-9]{64}$')
 
 
+class RestoreIn(VersionIn):
+    restore_version: int = Field(ge=1, strict=True)
+    preview_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
+
+
 class PlayIn(VersionIn):
     choices: list[Name] = Field(default_factory=list, max_length=128)
 
@@ -332,6 +337,29 @@ class InteractiveStoryService(SourceFencedService):
             raise FileNotFoundError(aid)
         return row
 
+    @staticmethod
+    def _visible_entity(row, scope):
+        return bool(row and row.get('status') != 'ARCHIVED' and not row.get('hidden') and not row.get('secret')
+            and str(row.get('visibility', '')).upper() not in {'PRIVATE', 'SECRET', 'DENIED'}
+            and (not row.get('branch_id') or row['branch_id'] == scope.get('branch_id')))
+
+    def _visible_links(self, nid, scope, links, state):
+        captures = entity_sources(self, nid, scope, links, state)
+        for key in captures:
+            kind, rid = key.split(':', 1)
+            if kind == 'world': row = require_row(state, self.story_graph.RECORDS, rid)
+            else: row = next((r for r in self.novels.data_set(nid, kind) if str(r.get('id')) == rid), None)
+            if not self._visible_entity(row, scope): raise FileNotFoundError('interactive source entity unavailable')
+        return captures
+
+    @staticmethod
+    def engine_contract():
+        return {'schema': SCHEMA, 'input_schema': StorySpec.model_json_schema(), 'condition_language': 'BOUNDED_BOOL_INT_AST',
+                'supported_targets': ['ENGINE_NEUTRAL_JSON', 'RENPY_8_5_4_TEXT_MENU_SUBSET'],
+                'third_party_execution': 'DENY_ALL', 'runtime_status': 'NOT_RUN',
+                'media_policy': 'VERSIONED_REFERENCES_ONLY_NOT_DEPLOYED', 'adapter_policy': 'SHIPPED_TRUSTED_EXPORTERS_ONLY',
+                'max_steps': LIMITS['steps'], 'max_analysis_states': LIMITS['analysis_states']}
+
     def catalog(self, nid, scope):
         self.novels.get(nid); state = self.store.read(nid, scope); graphs = []
         for graph in collection(state, self.planning.GRAPHS).values():
@@ -343,13 +371,13 @@ class InteractiveStoryService(SourceFencedService):
                 try:
                     chain = [*self.planning._ancestors(state, n), n]
                     self.capture(nid, scope, sorted({cid for original in chain for cid in original['links']['chapter_ids']}))
-                    for original in chain: entity_sources(self, nid, scope, original['links'], state)
+                    for original in chain: self._visible_links(nid, scope, original['links'], state)
                 except (ValueError, FileNotFoundError): continue
                 nodes.append({'node_id': n['id'], 'node_version': n['version'], 'title': n['title']})
             if not nodes: continue
             graphs.append({'id': graph['id'], 'version': graph['version'], 'title': graph['title'], 'nodes': nodes[:100], 'truncated': len(nodes) > 100})
         characters = [r for r in self.novels.data_set(nid, 'characters') if not r.get('branch_id') or r['branch_id'] == scope.get('branch_id')]
-        characters = [{'id': r['id'], 'name': r.get('name', r['id'])} for r in characters if not r.get('hidden') and not r.get('secret')]
+        characters = [{'id': r['id'], 'name': r.get('name', r['id'])} for r in characters if self._visible_entity(r, scope)]
         graph_records = []
         for row in self.story_graph.records(nid, scope):
             if row['status'] == 'APPROVED' and not row.get('stale'):
@@ -371,17 +399,19 @@ class InteractiveStoryService(SourceFencedService):
                 raise StaleSourceError('planning node changed')
             chain = [*self.planning._ancestors(state, node), node]
             for original in chain:
-                captures[original['id']] = digest([{k: v for k, v in original.items() if k != 'history'}, entity_sources(self, nid, scope, original['links'], state)])
+                captures[original['id']] = digest([{k: v for k, v in original.items() if k != 'history'}, self._visible_links(nid, scope, original['links'], state)])
                 source_ids.update(original['links']['chapter_ids'])
         graph_refs = {}
         for rid in spec['graph_record_ids']:
             row = require_row(state, self.story_graph.RECORDS, rid)
             if row['status'] != 'APPROVED' or row['kind'] not in {'STORY_CONCEPT', 'STORY_RELATION', 'KNOWLEDGE_EVENT'}:
                 raise ValueError('story graph evidence must be approved')
+            if not self._visible_entity(row, scope): raise FileNotFoundError('graph evidence unavailable')
+            self._visible_links(nid, scope, row.get('links', {}), state)
             self.story_graph._assert_fresh(nid, scope, row, state)
             source_ids.update(row.get('sources', {})); graph_refs[rid] = digest({k: v for k, v in row.items() if k != 'history'})
         char_ids = sorted({n['character_id'] for n in spec['nodes'] if n['character_id']})
-        entities = entity_sources(self, nid, scope, {'character_ids': char_ids}, state)
+        entities = self._visible_links(nid, scope, {'character_ids': char_ids}, state)
         chars = {r['id']: r for r in self.novels.data_set(nid, 'characters')}
         if any(chars[c].get('hidden') or chars[c].get('secret') for c in char_ids): raise FileNotFoundError('character unavailable')
         names = {c: chars[c].get('name') or c for c in char_ids}
@@ -521,6 +551,30 @@ class InteractiveStoryService(SourceFencedService):
             reauthorize()
             change_row(row, actor, data.expected_version, lambda r: r.update(spec=spec, capture=capture,
                 status='ARCHIVED' if r['status'] == 'ARCHIVED' else 'DRAFT', reviewed_at=None, reviewed_by=None))
+            self._current(nid, scope, row, state); reauthorize(); result = deepcopy(row)
+        return self._view(nid, scope, result)
+
+    def revisions(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
+        data = VersionIn.model_validate(value); row = self._owned(nid, scope, actor, sid)
+        self._version(row, data.expected_version); self._current(nid, scope, row); result = []
+        for old in row.get('history', []):
+            try: self._current(nid, scope, old)
+            except (FileNotFoundError, ValueError): continue
+            result.append({'version': old['version'], 'status': old['status'], 'spec': deepcopy(old['spec']),
+                           'preview_digest': digest([self._receipt(row), self._receipt(old)])})
+        reauthorize(); return {'items': result[-100:], 'truncated': len(result) > 100, 'restore_as': 'NEW_DRAFT'}
+
+    def restore_revision(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
+        data = RestoreIn.model_validate(value); reauthorize()
+        with self.store.transaction(nid, scope) as state:
+            row = self._owned(nid, scope, actor, sid, state); self._version(row, data.expected_version); self._current(nid, scope, row, state)
+            if row['status'] == 'ARCHIVED': raise ValueError('restore the adaptation before restoring a revision')
+            old = next((h for h in row.get('history', []) if h['version'] == data.restore_version), None)
+            if old is None: raise FileNotFoundError('interactive revision')
+            self._current(nid, scope, old, state)
+            if data.preview_digest != digest([self._receipt(row), self._receipt(old)]): raise StaleSourceError('interactive historical preview changed')
+            change_row(row, actor, data.expected_version, lambda r: r.update(spec=deepcopy(old['spec']), capture=deepcopy(old['capture']),
+                status='DRAFT', reviewed_at=None, reviewed_by=None, restored_from_version=old['version']))
             self._current(nid, scope, row, state); reauthorize(); result = deepcopy(row)
         return self._view(nid, scope, result)
 

@@ -133,4 +133,67 @@ def create_project_forks_router(service, authorize, require_flag, require_host_s
     async def structured_restore(nid: str, mid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx, again, target = access(nid, x_session_token, x_branch_id, True); value = await body(request, ConfirmIn); response.headers['Cache-Control'] = 'no-store'
         return await run_in_threadpool(call, structured().restore_checkpoint, ctx, mid, value, again, target)
+    # Shared Universe reuses the original structured-fork and reviewed-world
+    # owners. The second gate remains enforced server-side and at commit.
+    from .structured_forks import UniverseSnapshotIn, UniverseSnapshotConfirm, UniversePinIn, UniversePinConfirm
+    def universe_access(nid, token, branch, write=False):
+        ctx, again, target = access(nid, token, branch, write)
+        def check():
+            again(); require_flag('world_character_engines_v2')
+        check(); return ctx, check, target
+
+    @router.get('/universe/catalog')
+    def universe_catalog(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again, target = universe_access(nid, x_session_token, x_branch_id); response.headers['Cache-Control'] = 'no-store'
+        result = call(structured().universe_catalog, ctx, target); again(); return result
+
+    @router.get('/universe/snapshots')
+    def universe_snapshots(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again, _ = universe_access(nid, x_session_token, x_branch_id); response.headers['Cache-Control'] = 'no-store'
+        return call(structured().universe_snapshots, ctx, again)
+
+    @router.post('/universe/snapshot-preview')
+    async def universe_snapshot_preview(nid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again, _ = universe_access(nid, x_session_token, x_branch_id, True); value = await body(request, UniverseSnapshotIn); response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(call, structured().universe_preview, ctx, value, again)
+
+    @router.post('/universe/snapshots', status_code=201)
+    async def universe_create_snapshot(nid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again, _ = universe_access(nid, x_session_token, x_branch_id, True); value = await body(request, UniverseSnapshotConfirm); response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(call, structured().create_universe_snapshot, ctx, value, again)
+
+    @router.get('/universe/pins')
+    def universe_pins(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again, target = universe_access(nid, x_session_token, x_branch_id); response.headers['Cache-Control'] = 'no-store'
+        return call(structured().universe_pins, ctx, again, target)
+
+    @router.post('/universe/pin-preview')
+    async def universe_pin_preview(nid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again, target = universe_access(nid, x_session_token, x_branch_id, True); value = await body(request, UniversePinIn); response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(call, structured().universe_pin_preview, ctx, value, again, target)
+
+    @router.post('/universe/pins')
+    async def universe_pin(nid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again, target = universe_access(nid, x_session_token, x_branch_id, True); value = await body(request, UniversePinConfirm); response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(call, structured().pin_universe, ctx, value, again, target)
+
+    @router.post('/universe/pins/{rid}/release')
+    async def universe_release(nid: str, rid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again, _ = universe_access(nid, x_session_token, x_branch_id, True); value = await body(request, VersionIn); response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(call, structured().release_universe_pin, ctx, rid, value, again)
+
+    @router.get('/universe/pins/{rid}/history')
+    def universe_pin_history(nid: str, rid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again, target = universe_access(nid, x_session_token, x_branch_id); response.headers['Cache-Control'] = 'no-store'
+        return call(structured().universe_pin_history, ctx, rid, again, target)
+
+    @router.get('/universe/incoming')
+    def universe_incoming(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again, target = universe_access(nid, x_session_token, x_branch_id); response.headers['Cache-Control'] = 'no-store'
+        return call(structured().universe_incoming, ctx, again, target)
+
+    @router.get('/universe/incoming/{source_nid}/{pin_id}')
+    def universe_incoming_snapshot(nid: str, source_nid: str, pin_id: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again, target = universe_access(nid, x_session_token, x_branch_id); response.headers['Cache-Control'] = 'no-store'
+        return call(structured().read_universe_incoming, ctx, source_nid, pin_id, again, target)
     return router

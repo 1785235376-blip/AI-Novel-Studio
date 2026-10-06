@@ -1,0 +1,300 @@
+{
+  "schema_version": 1,
+  "wave": 5,
+  "date": "2026-10-06",
+  "model": "gpt-6-astra",
+  "branch": "work/post-interop-r4-r5-ux-continuation",
+  "draft_pr": 43,
+  "starting_sha": "e58c72b04182cd374af092314386b90f8250a173",
+  "restored_source_head": "4d736c0d14bdcd12d0ad3cc7146553971654620b",
+  "features": [
+    {
+      "id": "B01",
+      "overall": "PARTIAL",
+      "before": "Existing local declarative catalog lacked Novel/Genre/World/Agent/Story Structure types.",
+      "after": "Five additive starters, strict compatibility/no-grant manifests; original mandatory-review Agent definition instantiation.",
+      "remaining": "General briefs remain readonly declarations; marketplace/remote sync unavailable."
+    },
+    {
+      "id": "B02",
+      "overall": "PARTIAL",
+      "before": "Trusted local SDK lacked explicit capability/runtime/schema contracts.",
+      "after": "Persisted Agent capability/runtime requirements; finite SDK input/output/runtime fences over original Workflow and JobManager.",
+      "remaining": "Executable third-party plugins DENY_ALL; real model/GPU quality NOT_RUN."
+    },
+    {
+      "id": "B05",
+      "overall": "PARTIAL",
+      "before": "Independent editions/local translator had no accepted Translation Memory, preferred-term locks or segment restore UI.",
+      "after": "Exact same-source/language accepted-segment projection, CAS draft reuse, locked preferred terms, place/world categories and version-bound historical restore.",
+      "remaining": "Literal checks are not semantic omission or translation quality verification. Real language quality NOT_RUN."
+    },
+    {
+      "id": "B06",
+      "overall": "PARTIAL",
+      "before": "Existing comic panels lacked explicit image brief and appearance references.",
+      "after": "Image brief plus original approved asset/character appearance references, pinned source/privacy and export lineage.",
+      "remaining": "Automatic artwork production and production typography/model quality NOT_RUN."
+    },
+    {
+      "id": "B07",
+      "overall": "PARTIAL",
+      "before": "Typed branching/reachability/export had inaccessible historical content and incomplete archived linked-entity filtering.",
+      "after": "Current-source history/restore to new DRAFT; planning-ancestor linked visibility guard; trusted engine-export contract.",
+      "remaining": "Bounded state-space/text-menu subset. RenPy/Godot runtime/media deployment NOT_RUN."
+    },
+    {
+      "id": "B08",
+      "overall": "PARTIAL",
+      "before": "Async comments/assignment/review were implemented, with absent Presence service.",
+      "after": "Explicit scoped Presence interface reports NOT_CONFIGURED and no occupants; original task/review_target_readers interface retained.",
+      "remaining": "Realtime co-editing and Presence transport remain unimplemented; no online inference from membership."
+    },
+    {
+      "id": "B09",
+      "overall": "PARTIAL",
+      "before": "Original project/structured fork and human CAS merge had no Shared Universe version pins.",
+      "after": "Immutable snapshots of selected original Character/Location/Relationship plus approved Organization/Rule/Timeline/Geography; exact reference closure, per-work role/CAS pin/repin/release/history and incoming readonly source reference.",
+      "remaining": "Local original-owner scope; source hidden/delete/archive/privacy changes withhold historical content. Incoming scan bounded100 projects/30 refs. No automatic Canon/context injection."
+    },
+    {
+      "id": "B10",
+      "overall": "PARTIAL",
+      "before": "Manual local exchange and original CAS/recovery existed.",
+      "after": "No new sync state; original offline-sync and mounted tests included in regression scope.",
+      "remaining": "Cloud/realtime transport and absent branch manuscript authority remain unavailable."
+    },
+    {
+      "id": "U15",
+      "overall": "PARTIAL",
+      "before": "Original writing goals, writing-session counters and controlled in-app notices.",
+      "after": "No Wave5 runtime delta. Original ownership remains writing_sessions.py and WritingSessionPanel.tsx; U15 is not a template-library ID.",
+      "remaining": "In-app notices only; no OS, background or external notification claim. This Wave5 slice supplies no new isolated U15 acceptance evidence."
+    }
+  ],
+  "source_recovery": {
+    "state": "OWNED_SOURCE_RECONSTRUCTED_AND_APPLIED_WITH_EXACT_EXISTING_ANCHORS",
+    "old_executor_replaced": true,
+    "old_raw_evidence_available": false,
+    "previous_passes_are_historical_only": true,
+    "interrupted_final_run": "INCONCLUSIVE",
+    "fresh_verification_performed_for_owned_scope": true,
+    "remaining_verification": "Exact published-head hosted gates and real environment/model acceptance remain separate",
+    "reconstruction_note": "Retained implementation commands restored with exact original-file anchors. Guarded UI rechecks clear cached plaintext before denied rechecks; fresh frontend, TypeScript and token checks subsequently passed."
+  },
+  "verification": {
+    "backend_new_reconstructed": {
+      "status": "PASS_AS_PART_OF_PRE_FIX_AGGREGATE",
+      "passed": 35
+    },
+    "backend_aggregate_reconstructed": {
+      "status": "PASS",
+      "passed": 327,
+      "postgres_parameters_deselected": 298,
+      "seconds": 49.01,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "source_relation": "Before the subsequent locked-alias fix; the changed translation scope has its own fresh followup below"
+    },
+    "locked_alias_followup": {
+      "status": "PASS",
+      "passed": 102,
+      "postgres_parameters_deselected": 78,
+      "seconds": 29.02,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "finding": "A target alias Ann nested within the correct locked preferred Anna was incorrectly rejected.",
+      "fix": "Only alias occurrences outside exact preferred spans are name drift; ordered spans preserve literal/Unicode word or substring policy without quadratic rescanning.",
+      "new_regressions": "17 pure cases plus one File/PG acceptance/export/memory flow; all original assertions retained",
+      "historical_blocked_audit": "Unrelated; remains BLOCKED and was not restarted"
+    },
+    "frontend_reconstructed": {
+      "status": "PASS",
+      "passed": 56,
+      "postgres_parameters_deselected": 0
+    },
+    "python_syntax": "PASS",
+    "diff_check": "PASS",
+    "postgres": "NOT_RUN locally; real hosted service required",
+    "browser": "AUTHORED_AND_COLLECTION_VERIFIED; execution NOT_RUN locally; existing platform restriction respected",
+    "frontend_toolchain": "PASS: official pinned development dependencies were restored through normal approved setup; installed tsc/vitest/token tools passed; no local Chromium launch",
+    "typescript": "PASS",
+    "token_guard": "PASS",
+    "browser_collection": "PASS: one extended-creation journey plus two template/SDK/comic journeys",
+    "models_gpu_native_windows_third_party": "NOT_RUN / LOCAL_REQUIRED",
+    "historical_independent_audit": "BLOCKED, unchanged and not restarted",
+    "official_ci": "Exact published-head results are recorded separately after hosted execution"
+  },
+  "storage": {
+    "new_sql_migrations": [],
+    "metadata_collections": [
+      "structured_universe_snapshots_v1 (immutable evidence)",
+      "structured_universe_pins_v1 (versioned pointers)"
+    ],
+    "authority": "Existing generic File/PostgreSQL scope store and original domain owners. No second manuscript, Canon, model registry, permission system or task store.",
+    "rollback": "Disable existing flags; preserve additive data/history. Older strict writers must fail closed on new fields/types instead of dropping data."
+  },
+  "api_changes": [
+    "POST /language-editions/{eid}/segments/{sid}/{memory,memory-adopt,history,restore}",
+    "POST /language-editions/{eid}/rules/{rid}/review: lock/unlock",
+    "GET/POST /project-forks/universe/{catalog,snapshot-preview,snapshots,pin-preview,pins}",
+    "GET /project-forks/universe/pins/{rid}/history; POST /pins/{rid}/release",
+    "GET /project-forks/universe/incoming; GET /incoming/{source_nid}/{pin_id}",
+    "GET /interactive-stories/engine-contract; POST /{sid}/{history,restore-revision}",
+    "GET /writer-room/presence-contract; additive overview presence_interface",
+    "Existing template/Agent/comic API fields; see WAVE_5_TEMPLATES_SDK_COMICS.json"
+  ],
+  "flags": [
+    "multilingual_editions_v2",
+    "project_forks_v2 AND world_character_engines_v2",
+    "interactive_story_v2",
+    "writer_room_v2",
+    "template_library_v2",
+    "declarative_agents_v2",
+    "comic_layouts_v2"
+  ],
+  "default_off": true,
+  "v1_force_off": true,
+  "owned_source_inventory": [
+    {
+      "path": "app/experimental/multilingual_editions.py",
+      "sha256": "87034ea5a4ba221b04dfc705fd4553d3345952ee51347cb74096651eac3a5e1c"
+    },
+    {
+      "path": "app/experimental/multilingual_editions_api.py",
+      "sha256": "72450793e4b6bc2de2d0a99c8121186bf47eac194735457696a263994229ca55"
+    },
+    {
+      "path": "app/experimental/structured_forks.py",
+      "sha256": "e827360e94cef6d910745db38f9d27eb7824e539f436e1ed6c93b0aeefc8c614"
+    },
+    {
+      "path": "app/experimental/project_forks_api.py",
+      "sha256": "e4c99eebb4b933406d27a170a6e05e58e78cc7bc9c3839c4748cf978763bda2f"
+    },
+    {
+      "path": "app/experimental/interactive_story.py",
+      "sha256": "b39849ab3e5be630a28d1a728ef2bb1a7f3d871bde6d562684977e5cab192427"
+    },
+    {
+      "path": "app/experimental/interactive_story_api.py",
+      "sha256": "92f84c78956c996d010f51f4f1ddf8f2536637fd0178cc0097b431c004583394"
+    },
+    {
+      "path": "app/experimental/writer_room.py",
+      "sha256": "96482cbb5c1fe9fc91cc1d37488e8d44b9ba988d330a3f7a9db4ee47032a9054"
+    },
+    {
+      "path": "app/experimental/writer_room_api.py",
+      "sha256": "bdbc6c4ffde765f2c89a6be77781d629007ef71d4e8bebfa51210342fa1557f3"
+    },
+    {
+      "path": "frontend/src/experimental/MultilingualEditionsPanel.tsx",
+      "sha256": "8dcb9b3c60214805055b6ed27017840e25723e6bae7191904a0e32cf59feff25"
+    },
+    {
+      "path": "frontend/src/experimental/multilingualEditionsClient.ts",
+      "sha256": "68288e36f4f058126d7eec007c27b94c65c6fb7ae5957308aac4db52e9f2f3c9"
+    },
+    {
+      "path": "frontend/src/experimental/TranslationMemoryPanel.tsx",
+      "sha256": "b556817f11ebdefdb2078ad2417376ceb71381351ceef13cd8815989e2b05f0f"
+    },
+    {
+      "path": "frontend/src/experimental/TranslationMemoryPanel.test.tsx",
+      "sha256": "92b2cc6e41a926351effefceab2170888403964b92b40dd9bff7138c131bf08a"
+    },
+    {
+      "path": "frontend/src/experimental/ProjectForksPanel.tsx",
+      "sha256": "dc544010fbbf1a4ba87c4bffaa1c95e1ffdc7c40c983703c40b1a306906846ce"
+    },
+    {
+      "path": "frontend/src/experimental/SharedUniversePanel.tsx",
+      "sha256": "4bd49085f749f8ed3c05648c3cbb8c20c603f3f24a2557e0b130ea7c76b4688b"
+    },
+    {
+      "path": "frontend/src/experimental/SharedUniversePanel.test.tsx",
+      "sha256": "32ef5dd6535cda52bd4be0a33c7951bdf0e4cd2c1a7a2a18da36aa3e5bcabafb"
+    },
+    {
+      "path": "frontend/src/experimental/sharedUniverseClient.ts",
+      "sha256": "5891366ed9df5e8859d08da41a4838107a236a4b43d2f523afb1542f9afe9cf4"
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryPanel.tsx",
+      "sha256": "8e2f9a093d6f2a40b0240af9975a454cc39324aa98898468e8eeb687a963794a"
+    },
+    {
+      "path": "frontend/src/experimental/interactiveStoryClient.ts",
+      "sha256": "5a059923c467db97e23b040479bad4fb7f8e4819fc45af3bc7fe839df147ff01"
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryHistory.tsx",
+      "sha256": "9660cbde9836b74155f712539465dddcee898fad41ad8d49e377363a621d16fb"
+    },
+    {
+      "path": "frontend/src/experimental/InteractiveStoryHistory.test.tsx",
+      "sha256": "599709301d4804a6f5a163f9929adbf387b0ca50b153b4efca610121a8dace86"
+    },
+    {
+      "path": "frontend/src/experimental/WriterRoomPanel.tsx",
+      "sha256": "79413cd98172d9e09ef1b975e52b5fa235538b0a5530f8f3e1bac1e95fb0c695"
+    },
+    {
+      "path": "frontend/src/experimental/writerRoomClient.ts",
+      "sha256": "d17e1fe5b217aa1831118f0d8282c7ca75faa7ec3984e30312e565cd29b598cd"
+    },
+    {
+      "path": "frontend/tests/e2e/r4-post-interop-extended-creation.spec.ts",
+      "sha256": "2cf21983b3f132407d3338420581e15caaf75744a44b8cf4711bae565b36e310"
+    },
+    {
+      "path": "tests/test_post_interop_translation_memory.py",
+      "sha256": "6fcd4f1a483289d94553179c2a0850bb13d4afb7edddc5744ae88ec7b77afa6e"
+    },
+    {
+      "path": "tests/test_post_interop_shared_universe.py",
+      "sha256": "2e9e36c3982354d91aa3c3bcb556b011083e2f8eebeec8a26b70707d375d2d08"
+    },
+    {
+      "path": "tests/test_post_interop_interactive_history.py",
+      "sha256": "2ba47eb3a5f869056f6e1b3528389637403aba273210738c386534c287cff283"
+    },
+    {
+      "path": "tests/test_post_interop_extended_mounted.py",
+      "sha256": "a1835280a0193bd7ba8a05ad8fd53512b1afa3f08b552ba78eb7dfcbcd5b254c"
+    }
+  ],
+  "opus_handoff": [
+    "Use existing Panel/Button/Field/Badge/StatusMessage and shell tokens. No shell/token redesign.",
+    "Keep translation memory reuse/restoration visibly draft-only with exact source versions, locks and consent receipts.",
+    "Never interpret source drift as permission to repin another work or rewrite Canon. Hide cached results on authorization failure.",
+    "Target works read original-owner frozen references; no implicit model context injection.",
+    "Keep WriterRoom async-only and Presence NOT_CONFIGURED; no membership-derived online badges.",
+    "Retain no-grant templates, original Agent review and executable-plugin DENY_ALL.",
+    "Keep comic references approved, source-versioned and privacy-bound; preserve original Asset Lineage."
+  ],
+  "commands": [
+    "python -m pytest -q tests/test_post_interop_translation_memory.py tests/test_r5_multilingual_editions.py tests/test_r5_multilingual_editions_mounted.py tests/test_r5_multilingual_translation.py -m \"not postgres_backend_only\"",
+    "python -m pytest -q tests/test_post_interop_translation_memory.py tests/test_post_interop_shared_universe.py tests/test_post_interop_interactive_history.py tests/test_post_interop_extended_mounted.py tests/test_r5_multilingual_editions.py tests/test_r5_multilingual_editions_mounted.py tests/test_r5_multilingual_translation.py tests/test_r5_interactive_story.py tests/test_r5_interactive_story_mounted.py tests/test_r5_project_forks.py tests/test_r5_project_forks_mounted.py tests/test_r5_structured_forks.py tests/test_r5_structured_forks_mounted.py tests/test_r5_writer_room_mounted.py tests/test_writer_room_comment_authority_seam.py tests/test_r5_offline_sync.py tests/test_r5_offline_sync_mounted.py -m \"not postgres_backend_only\"",
+    "./node_modules/.bin/vitest run src/experimental/TranslationMemoryPanel.test.tsx src/experimental/SharedUniversePanel.test.tsx src/experimental/InteractiveStoryHistory.test.tsx src/experimental/MultilingualEditionsPanel.test.tsx src/experimental/LanguageTranslationPanel.test.tsx src/experimental/InteractiveStoryPanel.test.tsx src/experimental/ProjectForksPanel.test.tsx src/experimental/StructuredForksPanel.test.tsx src/experimental/WriterRoomPanel.test.tsx",
+    "./node_modules/.bin/playwright test --config playwright.r4.config.ts --list tests/e2e/r4-post-interop-extended-creation.spec.ts",
+    "./node_modules/.bin/tsc --noEmit",
+    "node ../scripts/check_ui_design_tokens.mjs"
+  ],
+  "public_sources": [
+    "docs/delivery/post-v1-r4-r5-ux/FEATURE_MATRIX.md",
+    "docs/delivery/post-v1-r4-r5-ux/FEATURE_MATRIX.json",
+    "docs/delivery/post-v1-r4-r5-ux/FINAL_DELIVERY.md",
+    "docs/delivery/post-v1-r4-r5-ux/SCOPE_RECONCILIATION.md",
+    "docs/delivery/post-v1-r4-r5-ux/ACCEPTANCE_RESULTS.md",
+    "docs/delivery/post-v1-r4-r5-ux/KNOWN_LIMITATIONS.md",
+    "OPUS_UI_HANDOFF.md",
+    "docs/ui/design_system.md",
+    "docs/ui/protected_ui_surfaces.md",
+    "docs/ui/reference/novel_workspace.png"
+  ],
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts."
+}

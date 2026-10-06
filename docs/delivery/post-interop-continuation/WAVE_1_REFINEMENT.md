@@ -30,6 +30,6 @@ Commands are recorded in WAVE_1_REFINEMENT.json. Counts overlap related runs and
 
 ## Integration and remaining boundaries
 
-Retain the two narrow original-owner composition blocks in experimental/api.py (native source resolver and extended search readers). The shared jobs.py and author_context_api.py also contain independently owned A02/A11 origin/acceptance and scene-author changes; stage compatible integrated content or reviewed hunks, never overwrite those owner changes. Workbench exact requestedJobId/requestedRecordId props are coordinated by the parent. Hosted coverage manifests must enumerate the new suites before strict-lane verification.
+The original experimental/api.py composes native source resolution and extended search readers. Existing jobs.py and author_context_api.py retain A02/A11 origin/acceptance and scene-author safeguards. Workbench passes exact requestedJobId/requestedRecordId pointers to original owners. The strict hosted inventory explicitly includes every new backend case.
 
-No repository install, local Chromium retry, real manuscript, paid call, cloud model, auto replay, commit or push was performed by this worker. Parent owns publication and exact-head CI evidence.
+No real manuscript, paid/cloud model execution or automatic replay is used. Local Chromium remains unrun; publication and exact-head hosted evidence are recorded separately.

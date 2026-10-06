@@ -15,10 +15,16 @@ test('U08 original Research citation is pinned into exact request, excluded and 
     const file = { title: 'Native synthetic reference', filename: 'reference.txt', content_base64: Buffer.from('RESEARCH_SOURCE_CANARY').toString('base64') };
     const source = await checked(await request.post(`${base}/research-library/sources/import`, { data: file }));
     await page.goto(UI); await page.getByRole('button', { name: '切换本机作品', exact: true }).click(); await page.getByRole('button', { name: novel.title, exact: true }).click();
-    const panel = page.locator('.novel-ai-panel'); await expect(page.locator('.ProseMirror')).toBeVisible();
-    await panel.getByLabel('文本模型', { exact: true }).selectOption('deepseek:deepseek-chat');
-    await panel.getByLabel('正文范围', { exact: true }).selectOption('NONE');
-    await panel.getByLabel('添加来源类型').selectOption('RESEARCH'); await panel.getByRole('button', { name: '读取可添加来源', exact: true }).click();
+    const panel = page.locator('.novel-ai-panel'), editor = page.locator('.ProseMirror');
+    await expect(editor).toBeVisible(); await expect(editor).toContainText('PRIMARY_MANUSCRIPT_CANARY');
+    // The model's wrapping label includes native option text in Playwright's
+    // label-text engine. Use the exact accessible role/name, as the existing
+    // r4-author-scope-variants journey does, without changing the control.
+    const model = panel.getByRole('combobox', { name: '文本模型', exact: true });
+    await expect(model).toBeVisible(); await model.selectOption('deepseek:deepseek-chat');
+    await expect(panel.locator('.novel-ai-status [role="status"]')).toContainText(/模拟测试/);
+    await panel.getByRole('combobox', { name: '正文范围', exact: true }).selectOption('NONE');
+    await panel.getByRole('combobox', { name: '添加来源类型', exact: true }).selectOption('RESEARCH'); await panel.getByRole('button', { name: '读取可添加来源', exact: true }).click();
     await panel.getByRole('button', { name: '添加并固定 Native synthetic reference · 段落 1', exact: true }).click();
     let pending = page.waitForResponse(row => row.url().endsWith('/author-context/preview'));
     await panel.getByRole('button', { name: '检查真实生成请求', exact: true }).click(); const initial = await checked(await pending);

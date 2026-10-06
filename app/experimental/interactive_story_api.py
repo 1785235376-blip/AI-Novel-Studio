@@ -2,7 +2,7 @@
 from fastapi import APIRouter, Header, HTTPException, Request, Response
 from pydantic import ValidationError
 from .common import api_call
-from .interactive_story import FEATURE, CreateIn, SaveIn, VersionIn, ReviewIn, PlayIn, ExportIn
+from .interactive_story import FEATURE, CreateIn, SaveIn, VersionIn, ReviewIn, PlayIn, ExportIn, RestoreIn
 
 
 def create_interactive_story_router(service, authorize, require_flag):
@@ -35,6 +35,11 @@ def create_interactive_story_router(service, authorize, require_flag):
         actor, scope, again = access(nid, x_session_token, x_branch_id, response)
         result = api_call(service.stories, nid, scope, actor); again(); return result
 
+    @router.get('/engine-contract')
+    def engine_contract(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        _, _, again = access(nid, x_session_token, x_branch_id, response)
+        result = service.engine_contract(); again(); return result
+
     @router.get('/{sid}')
     def story(nid: str, sid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope, again = access(nid, x_session_token, x_branch_id, response)
@@ -63,4 +68,6 @@ def create_interactive_story_router(service, authorize, require_flag):
     post_route('refresh', service.refresh, ExportIn, 'domain.write')
     post_route('export-preview', service.export_preview, ExportIn, 'domain.review')
     post_route('export', service.export, ExportIn, 'domain.review')
+    post_route('history', service.revisions, VersionIn, 'domain.write')
+    post_route('restore-revision', service.restore_revision, RestoreIn, 'domain.write')
     return router

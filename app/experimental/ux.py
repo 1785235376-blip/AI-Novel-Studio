@@ -198,6 +198,11 @@ FEATURE_OWNED_GENERATION = {
     "style_analysis_model": ("style_dna_v2", "文风模型意见"),
     "revision_comparison_model": ("revision_intelligence_v2", "版本语义比较"),
 }
+FEATURE_JOB_OWNERS = {
+    'declarative_agent': 'declarative_model_job', 'story_simulator_model': 'simulator_model_job',
+    'multilingual_translation': 'translation_model_job', 'narrative_judge_model': 'judge_model_job',
+    'style_analysis_model': 'style_model_job', 'revision_comparison_model': 'revision_model_job',
+}
 
 
 def task_identifier(value):
@@ -228,8 +233,12 @@ def projected_task(reader, row):
     if owner:
         source = {'source': {'kind': 'feature', 'id': str(row['id']), 'feature': owner[0]}}
         if row.get('experimental_origin') in {'style_analysis_model', 'revision_comparison_model'}:
-            source['source'].update(task_authority='style_model_job' if row['experimental_origin'] == 'style_analysis_model' else 'revision_model_job',
+            source['source'].update(task_authority=FEATURE_JOB_OWNERS[row['experimental_origin']],
                                     chapter_id=row.get('chapter_id'), version=row.get('base_chapter_version'))
+        # Preserve the earlier feature pointer contract for existing readers.
+        # The additive owner pointer gives the current task UI an exact result.
+        source['owner_navigation'] = {**source['source'], 'task_authority': FEATURE_JOB_OWNERS[row['experimental_origin']],
+            'chapter_id': row.get('chapter_id'), 'version': row.get('base_chapter_version')}
     if (not owner and reader.name == 'author_generation' and isinstance(row.get('chapter_id'), str)
             and row['chapter_id'] and type(row.get('base_chapter_version')) is int
             and row['base_chapter_version'] > 0):

@@ -25,6 +25,7 @@ from ..services.v1_capability_service import CapabilityVersionConflict
 FEATURE = 'multilingual_editions_v2'
 MAX_SEGMENTS = 500
 MAX_TARGET_TEXT = 250_000
+MAX_MEMORY_EDITION_SCAN = 200
 
 
 def language_code(value):
@@ -80,7 +81,7 @@ class RuleIn(VersionIn):
     preferred: str = Field(min_length=1, max_length=160)
     target_aliases: list[str] = Field(default_factory=list, max_length=20)
     forbidden: list[str] = Field(default_factory=list, max_length=20)
-    category: Literal['term', 'character', 'title'] = 'term'
+    category: Literal['term', 'character', 'title', 'place', 'world'] = 'term'
     strategy: Literal['meaning', 'transliteration', 'preserve'] = 'meaning'
     match: Literal['substring', 'word'] = 'substring'
     note: str = Field(default='', max_length=1000)
@@ -100,7 +101,18 @@ class RuleIn(VersionIn):
 
 
 class RuleReviewIn(VersionIn):
-    action: Literal['approve', 'revoke']
+    action: Literal['approve', 'revoke', 'lock', 'unlock']
+
+
+class MemoryAdoptIn(VersionIn):
+    source_edition_id: str = Field(min_length=1, max_length=240)
+    source_segment_id: str = Field(min_length=1, max_length=240)
+    preview_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
+
+
+class RestoreSegmentIn(VersionIn):
+    restore_version: int = Field(ge=1)
+    preview_digest: str = Field(pattern=r'^[a-f0-9]{64}$')
 
 
 class RefreshIn(VersionIn):
@@ -125,14 +137,42 @@ def contains(text, term, mode):
     return False
 
 
+def locked_variant_present(text, preferred, alias, mode):
+    """A shorter alias inside an exact preferred occurrence is not name drift.
+
+    Retain the same literal, case-sensitive, Unicode-boundary match policy as
+    contains. Ordered spans avoid quadratic rescanning for repeated short terms.
+    """
+    def spans(term):
+        if not term: return
+        start = 0
+        while (index := text.find(term, start)) >= 0:
+            end = index + len(term)
+            if mode == 'substring' or ((not index or not (text[index - 1].isalnum() or text[index - 1] == '_')) and (end == len(text) or not (text[end].isalnum() or text[end] == '_'))):
+                yield index, end
+            start = index + 1
+    preferred_spans = list(spans(preferred)); current = -1
+    for start, end in spans(alias):
+        while current + 1 < len(preferred_spans) and preferred_spans[current + 1][0] <= start:
+            current += 1
+        if current < 0 or preferred_spans[current][1] < end:
+            return True
+    return False
+
+
 def terminology_issues(source, target, rules):
     approved = [r for r in rules if r['status'] == 'APPROVED']
     relevant = [r for r in approved if any(contains(source, t, r['match']) for t in [r['source_term'], *r['source_aliases']])]
     issues = []
     for rule in relevant:
         key = {'rule_id': rule['id'], 'rule_version': rule['version'], 'term': rule['source_term']}
-        if not any(contains(target, t, rule['match']) for t in [rule['preferred'], *rule['target_aliases']]):
+        allowed = [rule['preferred']] if rule.get('locked', False) else [rule['preferred'], *rule['target_aliases']]
+        if not any(contains(target, t, rule['match']) for t in allowed):
             issues.append({**key, 'code': 'TERM_REQUIRED', 'expected': rule['preferred']})
+        if rule.get('locked', False):
+            for alias in rule['target_aliases']:
+                if locked_variant_present(target, rule['preferred'], alias, rule['match']):
+                    issues.append({**key, 'code': 'LOCKED_TERM_VARIANT', 'found': alias, 'expected': rule['preferred']})
         for forbidden in rule['forbidden']:
             if contains(target, forbidden, rule['match']): issues.append({**key, 'code': 'TERM_FORBIDDEN', 'found': forbidden})
     for index, first in enumerate(relevant):
@@ -271,6 +311,7 @@ class MultilingualEditionsService(RevisionIntelligenceService):
                 raise ValueError('edition target character limit exceeded')
             segment.update(target_text=data.text, note=data.note, status='DRAFT', accepted_term_revision=None)
             segment.pop('reviewed_by', None); segment.pop('reviewed_at', None)
+            segment.pop('memory_provenance', None); segment.pop('translation_provenance', None)
             row['status'] = 'DRAFT'
         return self._mutate(nid, scope, actor, eid, data.expected_version, update, reauthorize)
 
@@ -324,12 +365,103 @@ class MultilingualEditionsService(RevisionIntelligenceService):
             if rule is None: raise FileNotFoundError(rid)
             if (data.action == 'approve' and rule['status'] != 'DRAFT') or (data.action == 'revoke' and rule['status'] != 'APPROVED'):
                 raise ValueError('rule transition requires a current draft or approval')
-            rule.update(status='APPROVED' if data.action == 'approve' else 'REVOKED', version=rule['version'] + 1,
-                        reviewed_by=actor, reviewed_at=now())
+            if data.action in {'lock', 'unlock'}:
+                if rule['status'] != 'APPROVED' or bool(rule.get('locked', False)) == (data.action == 'lock'):
+                    raise ValueError('lock transition requires a current approved rule and changed lock state')
+                rule['locked'] = data.action == 'lock'
+            else:
+                if rule.get('locked', False): raise ValueError('unlock this term explicitly before revoking it')
+                rule['status'] = 'APPROVED' if data.action == 'approve' else 'REVOKED'
+            rule.update(version=rule['version'] + 1, reviewed_by=actor, reviewed_at=now())
             row['term_revision'] += 1
             # A rule decision never silently blesses old translations.
             for segment in row['segments']:
                 if segment['status'] == 'ACCEPTED': segment.update(status='REVIEW', accepted_term_revision=None)
+            row['status'] = 'DRAFT'
+        return self._mutate(nid, scope, actor, eid, data.expected_version, update, reauthorize)
+
+    def _memory_candidates(self, nid, scope, actor, row, sid, state=None):
+        """Exact-match projection of accepted owner records, never another text store."""
+        texts = self._current(nid, scope, row); self._segment(row, sid)
+        candidates = []
+        rows = collection(state, self.COLLECTION).values() if state is not None else self.list(nid, scope, self.COLLECTION)
+        eligible = [r for r in rows if r['created_by'] == actor and r['source_language'] == row['source_language'] and r['target_language'] == row['target_language']]
+        for original in eligible[-MAX_MEMORY_EDITION_SCAN:]:
+            try: source_texts = self._current(nid, scope, original)
+            except (FileNotFoundError, ValueError): continue
+            for segment in original['segments']:
+                if original['id'] == row['id'] and segment['id'] == sid: continue
+                if segment['status'] != 'ACCEPTED' or segment.get('accepted_term_revision') != original['term_revision']: continue
+                if source_texts[segment['id']] != texts[sid] or not segment['target_text'].strip(): continue
+                issues = terminology_issues(texts[sid], segment['target_text'], row['rules'])
+                receipt = digest([row['id'], row['version'], sid, row['sources'], row['rules'], row['style_note'],
+                                  original['id'], original['version'], segment, original['sources'], original['rules']])
+                candidates.append({'source_edition_id': original['id'], 'source_edition_version': original['version'],
+                    'source_segment_id': segment['id'], 'source_chapter_id': segment['chapter_id'],
+                    'source_version': segment['source_version'], 'source_digest': digest(texts[sid]),
+                    'target_text': segment['target_text'], 'target_digest': digest(segment['target_text']),
+                    'style_matches': original['style_note'] == row['style_note'], 'issues': issues,
+                    'can_adopt': not issues, 'preview_digest': receipt, 'match': 'EXACT_SOURCE_TEXT'})
+        return candidates
+
+    def translation_memory(self, nid, scope, actor, eid, sid, value, *, reauthorize=lambda: None):
+        data = VersionIn.model_validate(value); row = self._owned(nid, scope, actor, eid)
+        self._version(row, data.expected_version); reauthorize()
+        result = self._memory_candidates(nid, scope, actor, row, sid)
+        eligible_count = sum(r['created_by'] == actor and r['source_language'] == row['source_language'] and r['target_language'] == row['target_language'] for r in self.list(nid, scope, self.COLLECTION))
+        reauthorize()
+        return {'items': result[:100], 'truncated': len(result) > 100 or eligible_count > MAX_MEMORY_EDITION_SCAN, 'edition_scan_limit': MAX_MEMORY_EDITION_SCAN, 'storage': 'ACCEPTED_EDITION_SEGMENTS',
+                'quality': 'EXACT_MATCH_NOT_TRANSLATION_QUALITY', 'automatic_reuse': False, 'model_called': False}
+
+    def adopt_memory(self, nid, scope, actor, eid, sid, value, *, reauthorize=lambda: None):
+        data = MemoryAdoptIn.model_validate(value); reauthorize()
+        with self.store.transaction(nid, scope) as state:
+            row = require_row(state, self.COLLECTION, eid)
+            if row['created_by'] != actor: raise FileNotFoundError(eid)
+            self._version(row, data.expected_version)
+            candidates = self._memory_candidates(nid, scope, actor, row, sid, state)
+            candidate = next((c for c in candidates if c['source_edition_id'] == data.source_edition_id and c['source_segment_id'] == data.source_segment_id), None)
+            if not candidate or candidate['preview_digest'] != data.preview_digest: raise StaleSourceError('translation memory source or destination changed')
+            if not candidate['can_adopt']: raise ValueError('resolve locked terminology before using memory')
+            if sum(len(s['target_text']) for s in row['segments'] if s['id'] != sid) + len(candidate['target_text']) > MAX_TARGET_TEXT:
+                raise ValueError('edition target character limit exceeded')
+            def update(current):
+                segment = self._segment(current, sid)
+                segment.update(target_text=candidate['target_text'], status='DRAFT', accepted_term_revision=None,
+                    memory_provenance={k: deepcopy(v) for k, v in candidate.items() if k not in {'target_text', 'issues', 'can_adopt'}})
+                for key in ('reviewed_by', 'reviewed_at', 'translation_provenance'): segment.pop(key, None)
+                current['status'] = 'DRAFT'
+            change_row(row, actor, data.expected_version, update)
+            self._current(nid, scope, row)
+            self._current(nid, scope, require_row(state, self.COLLECTION, data.source_edition_id)); reauthorize()
+            result = deepcopy(row)
+        return self._view(nid, scope, result)
+
+    def segment_history(self, nid, scope, actor, eid, sid, value, *, reauthorize=lambda: None):
+        data = VersionIn.model_validate(value); row = self._owned(nid, scope, actor, eid)
+        self._version(row, data.expected_version); self._current(nid, scope, row)
+        segment = self._segment(row, sid); items = []
+        for old in row.get('history', []):
+            prior = next((s for s in old['segments'] if s['id'] == sid), None)
+            if not prior or any(prior[k] != segment[k] for k in ('chapter_id', 'source_version', 'path', 'node_digest')): continue
+            try: self._current(nid, scope, old)
+            except (FileNotFoundError, ValueError): continue
+            items.append({'version': old['version'], 'target_text': prior['target_text'], 'note': prior['note'], 'status': prior['status'],
+                'preview_digest': digest([eid, row['version'], sid, old['version'], prior, row['sources']])})
+        reauthorize(); return {'items': items[-100:], 'truncated': len(items) > 100, 'restore_as': 'NEW_DRAFT'}
+
+    def restore_segment(self, nid, scope, actor, eid, sid, value, *, reauthorize=lambda: None):
+        data = RestoreSegmentIn.model_validate(value)
+        def update(row, texts):
+            segment = self._segment(row, sid)
+            old = next((h for h in row.get('history', []) if h['version'] == data.restore_version), None)
+            if old is None: raise FileNotFoundError('translation revision')
+            self._current(nid, scope, old); prior = self._segment(old, sid)
+            if any(prior[k] != segment[k] for k in ('chapter_id', 'source_version', 'path', 'node_digest')): raise StaleSourceError('translation historical anchor changed')
+            if data.preview_digest != digest([eid, row['version'], sid, old['version'], prior, row['sources']]): raise StaleSourceError('translation restore preview changed')
+            if sum(len(s['target_text']) for s in row['segments'] if s['id'] != sid) + len(prior['target_text']) > MAX_TARGET_TEXT: raise ValueError('edition target character limit exceeded')
+            segment.update(target_text=prior['target_text'], note=prior['note'], status='DRAFT', accepted_term_revision=None, restored_from_version=old['version'])
+            for key in ('reviewed_by', 'reviewed_at', 'translation_provenance', 'memory_provenance'): segment.pop(key, None)
             row['status'] = 'DRAFT'
         return self._mutate(nid, scope, actor, eid, data.expected_version, update, reauthorize)
 

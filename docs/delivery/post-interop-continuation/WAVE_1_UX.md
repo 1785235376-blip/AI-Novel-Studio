@@ -31,7 +31,6 @@ Source: new `work/post-interop-r4-r5-ux-continuation` successor, starting from f
 
 ## API and old-data compatibility
 
-`POST /novels/{nid}/experimental/workspace/tasks/{authority}/{task_id}/cancel` accepts only `expected_revision` (SHA-256 of the allowlisted task projection). Requires current project writer plus original owner authorization. Source/state drift is 409; invisible or unsupported owner is 404; feature OFF and V1 acceptance stay server-gated. Original task transitions decide terminal races. Responses contain only the workspace task projection.
 
 Search kind additions and task projection fields are additive. Existing routes, workspace keys and owner collections are reused. No SQL migration or old migration edits; File and PostgreSQL use the same existing original repositories and experimental JSON document CAS. New mounted tests inherit actual File/PG fixtures; PG is not silently replaced with File.
 

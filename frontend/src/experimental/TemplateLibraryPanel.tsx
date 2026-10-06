@@ -6,7 +6,7 @@ import { Details, Field, ResourceState, objectValue, useAction, useResource } fr
 import { templateLibraryClient, type TemplateComparison, type TemplateInstance, type TemplatePackage, type TemplatePreview } from './templateLibraryClient';
 let sequence = 0;
 const requestId = () => globalThis.crypto.randomUUID();
-const labels: Record<string, string> = { planning: '章节结构', character: '人物档案', screenplay: '剧本', storyboard: '分镜', review: '审核流程', workflow: 'Workflow', safe_batch: '安全批处理参数' };
+const labels: Record<string, string> = { planning: '章节结构', character: '人物档案', screenplay: '剧本', storyboard: '分镜', review: '审核流程', workflow: 'Workflow', safe_batch: '安全批处理参数', novel: '小说', genre: '类型', world: '世界', agent: 'Agent', story_structure: '故事结构' };
 export function TemplateLibraryPanel(props: { client: ExperimentalClient; onNavigate?: (value: WorkspaceNavigation) => void }) {
   const key = useMemo(() => ++sequence, [props.client]); return <LibraryBody key={key} {...props} />;
 }
@@ -20,6 +20,7 @@ function PackagePreview({ value }: { value: TemplatePackage }) {
     {value.content.nodes && <ol>{value.content.nodes.map((node: { id: string; name: string; type: string }) => <li key={node.id}>{node.name} · {node.type}</li>)}</ol>}
     {value.manifest.type === 'safe_batch' && <p>校对：{value.content.proof ? '开启' : '关闭'} · 导出：{value.content.export_format || '不导出'} · 跳过满意结果：{value.content.skip_satisfied ? '开启' : '关闭'}。不包含来源、预算或执行授权。</p>}
     <p>作者：{value.manifest.author} · 许可声明：{value.manifest.license}</p>
+    {value.manifest.compatibility && <p>兼容协议：{value.manifest.compatibility.protocol} · Schema {value.manifest.compatibility.schema_versions.join('、')} · 只读声明导入。权限授予：无。第三方可执行扩展：DENY_ALL。</p>}
     <p>依赖：{value.manifest.dependencies.join('、') || '无'} · 来源：{value.manifest.provenance}</p>
   </figure>;
 }
@@ -36,7 +37,9 @@ function LibraryBody({ client, onNavigate }: { client: ExperimentalClient; onNav
   const alive = useRef(true), epoch = useRef(0), importEpoch = useRef(0);
   useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; importEpoch.current++; }; }, []);
   const action = useAction();
-  const available = catalog.data?.items.filter(row => (!type || row.package.manifest.type === type) && (!favorites || row.favorite)) || [];
+  const allEntries = [...(catalog.data?.items || []), ...(catalog.data?.extended_items || [])];
+  const allTypes = [...new Set([...(catalog.data?.types || []), ...(catalog.data?.extended_types || [])])];
+  const available = allEntries.filter(row => (!type || row.package.manifest.type === type) && (!favorites || row.favorite));
   const entry = available.find(row => row.id === selected);
   const chooseCopy = (row?: TemplateInstance) => { epoch.current++; setCopy(row); setEdit(row ? JSON.stringify(row.content, null, 2) : ''); setCompare(undefined); setHistory([]); setRestore(''); setOverwrite(false); };
   const acceptCopy = (row: TemplateInstance, ticket: number) => { if (alive.current && epoch.current === ticket) { chooseCopy(row); copies.reload(); } };
@@ -44,8 +47,8 @@ function LibraryBody({ client, onNavigate }: { client: ExperimentalClient; onNav
     <div className="experimental-actions"><h3>本地模板库</h3><Badge>离线 · 声明式数据</Badge><Button disabled={action.busy} onClick={() => { catalog.reload(); copies.reload(); setPreview(undefined); setCompare(undefined); }}>刷新模板目录</Button></div>
     <p>模板安装不运行脚本、不启用工具或模型。只接收不超过 128 KB 的 JSON 目录包；ZIP、外部图片、路径与远程下载均不支持。许可是提供方声明，尚未进行商业法律审核。</p>
     <Panel title="离线目录与预览">
-      <ResourceState loading={catalog.loading} error={catalog.error} empty={!catalog.data?.items.length} />
-      <div className="experimental-grid"><Field label="模板类型"><select value={type} onChange={e => { setType(e.target.value); setSelected(''); }}><option value="">全部类型</option>{catalog.data?.types.map(t => <option key={t} value={t}>{labels[t] || t}</option>)}</select></Field><label><input type="checkbox" checked={favorites} onChange={e => { setFavorites(e.target.checked); setSelected(''); }} />只看收藏</label></div>
+      <ResourceState loading={catalog.loading} error={catalog.error} empty={!allEntries.length} />
+      <div className="experimental-grid"><Field label="模板类型"><select value={type} onChange={e => { setType(e.target.value); setSelected(''); }}><option value="">全部类型</option>{allTypes.map(t => <option key={t} value={t}>{labels[t] || t}</option>)}</select></Field><label><input type="checkbox" checked={favorites} onChange={e => { setFavorites(e.target.checked); setSelected(''); }} />只看收藏</label></div>
       <Field label="选择本地模板"><select value={selected} disabled={catalog.loading || !!catalog.error || action.busy} onChange={e => { setSelected(e.target.value); setConfirmUninstall(false); }}><option value="">请选择模板</option>{available.map(row => <option value={row.id} key={row.id}>{row.favorite ? '★ ' : ''}{row.package.manifest.title} · {row.package.manifest.version}</option>)}</select></Field>
       {entry && !catalog.loading && !catalog.error && <>
         <PackagePreview value={entry.package} />

@@ -8,7 +8,7 @@ import { ErrorMessage, Field, ResourceState, useResource } from './shared';
 import type { WorkspaceNavigation } from './uxClient';
 import { styleReviewClient, useReviewAction, type JudgeFinding, type JudgeRun, type StyleReviewClient } from './styleReviewClient';
 
-type Props = { client: ExperimentalClient; chapter?: Chapter; onNavigate?: (target: WorkspaceNavigation) => void };
+type Props = { client: ExperimentalClient; requestedJobId?: string; chapter?: Chapter; onNavigate?: (target: WorkspaceNavigation) => void };
 const decisions = { PENDING: '待核对', REVIEWED: '已核对', ACCEPTED: '已接受建议', IGNORED: '已忽略', INTENTIONAL: '有意安排' };
 const categoryLabels: Record<string, string> = { REPETITION: '重复', PARAGRAPH: '段落', PUNCTUATION: '标点', STRUCTURE: '结构', NARRATIVE: '叙事', STYLE: '文风', CONTINUITY: '连续性', READABILITY: '可读性', CHARACTER: '人物', WORLD_CONSISTENCY: '世界一致性', PACING: '节奏', DIALOGUE: '对白', FORESHADOWING: '伏笔', SCENE_PURPOSE: '场景目的', SUBPLOT: '支线' };
 const checkLabels: Record<string, string> = { EXACT_REPEATED_PARAGRAPH: '完全重复的段落', REVIEWED_WORLD_CONFLICT: '已审核世界资料的冲突' };
@@ -17,21 +17,29 @@ export function NarrativeJudgePanel(props: Props) {
   const identity = useMemo(() => ++scopeSequence, [props.client]);
   return <NarrativeJudgeBody key={identity} {...props} />;
 }
-function NarrativeJudgeBody({ client, chapter, onNavigate }: Props) {
+function NarrativeJudgeBody({ client, chapter, onNavigate, requestedJobId }: Props) {
   const api = useMemo(() => styleReviewClient(client), [client]);
   const catalog = useResource(signal => api.judgeCatalog(signal), [api]);
-  const runs = useResource(signal => api.runs(signal), [api]);
-  const [chapterIds, setChapterIds] = useState<string[]>(chapter ? [chapter.id] : []), [rubricId, setRubricId] = useState('narrative-rules-v1'), [runId, setRunId] = useState('');
+  const runs = useResource(async signal => ({ ...(await api.runs(signal)), requestedJobId }), [api, requestedJobId]);
+  const [chapterIds, setChapterIds] = useState<string[]>(chapter ? [chapter.id] : []), [rubricId, setRubricId] = useState('narrative-rules-v1'), [browsedRunId, setRunId] = useState('');
   const [decision, setDecision] = useState(''), [category, setCategory] = useState('');
   const [reviewDrafts, setReviewDrafts] = useState<Record<string, { reason: string; linkRevision: boolean }>>({});
-  const detail = useResource(signal => runId ? api.run(runId, signal) : Promise.resolve(undefined), [api, runId]);
+  const [dismissedJob, setDismissedJob] = useState<string>();
+  useLayoutEffect(() => { setDismissedJob(undefined); }, [requestedJobId]);
+  const targetJob = requestedJobId && requestedJobId !== dismissedJob ? requestedJobId : undefined;
+  const matches = targetJob && !runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId
+    ? (runs.data?.items || []).filter(row => row.model_execution?.job_id === targetJob) : [];
+  const targetRun = matches.length === 1 ? matches[0] : undefined;
+  const runId = targetJob ? targetRun?.id || '' : browsedRunId;
+  const detail = useResource(signal => runId ? api.run(runId, signal) : Promise.resolve(undefined), [api, runId, targetJob, targetRun?.version]);
   const action = useReviewAction(), epoch = useRef(0);
   useLayoutEffect(() => { epoch.current++; setReviewDrafts(drafts => Object.values(drafts).some(value => value.linkRevision) ? Object.fromEntries(Object.entries(drafts).map(([id, value]) => [id, { ...value, linkRevision: false }])) : drafts); }, [chapter?.id, chapter?.version]);
+  useLayoutEffect(() => { epoch.current++; }, [targetJob]);
   const ready = !catalog.loading && !catalog.error && !!catalog.data;
   const rubric = catalog.data?.rubrics.find(row => row.id === rubricId);
   const selectedChapters = catalog.data?.chapters.filter(row => chapterIds.includes(row.id)) || [];
   const fresh = ready && !runs.loading && !runs.error && !detail.loading && !detail.error;
-  const run = fresh && detail.data?.id === runId ? detail.data : undefined;
+  const run = fresh && detail.data?.id === runId && (!targetJob || detail.data.model_execution?.job_id === targetJob && detail.data.version === targetRun?.version) ? detail.data : undefined;
   const categories = [...new Set((run?.findings || []).map(row => row.category))];
   const filtered = (run?.findings || []).filter(row => (decision ? row.decision === decision : row.decision !== 'INTENTIONAL') && (!category || row.category === category));
   const refresh = () => { epoch.current++; catalog.reload(); runs.reload(); detail.reload(); };
@@ -43,6 +51,9 @@ function NarrativeJudgeBody({ client, chapter, onNavigate }: Props) {
   return <section className="experimental-section" aria-label="叙事证据审阅">
     <div className="experimental-actions"><h3>叙事证据审阅</h3><Badge>建议需要作者判断</Badge><Button disabled={catalog.loading || runs.loading || detail.loading || action.busy} onClick={refresh}>刷新审阅与来源（保留输入）</Button></div>
     <p>先运行确定性规则检查，再按需预览并单独发送给已注册的本地模型。规则与模型意见分别标注，没有文学总分，不自动改写正文或批准 Canon。</p>
+    {targetJob && <section aria-label="任务中心原叙事审阅任务"><p>正在定位原模型任务 {targetJob}，仅重新读取原记录。</p>
+      {!runs.loading && !runs.error && runs.data?.requestedJobId === requestedJobId && !targetRun && <StatusMessage tone="warning">原模型任务在当前授权记录中不可用或身份不唯一；不会选择其他记录。</StatusMessage>}
+      <Button onClick={() => { setDismissedJob(targetJob); setRunId(''); }}>退出原任务定位</Button></section>}
     <ResourceState loading={catalog.loading} error={catalog.error} />
     {!!catalog.error && <StatusMessage tone="warning">请核对本机会话、当前分支权限和功能开关后刷新；尚未提交的选择与审核理由保留在本页。</StatusMessage>}
     <Panel title="选择审阅范围">
@@ -60,7 +71,7 @@ function NarrativeJudgeBody({ client, chapter, onNavigate }: Props) {
     <Panel title="检查记录与证据">
       <ResourceState loading={runs.loading} error={runs.error} />
       {!runs.loading && !runs.error && !runs.data?.items.length && <EmptyState title="还没有审阅记录" detail="先选择章节并运行检查。打开页面不会调用模型或自动审稿。" />}
-      <Field label="查看审阅记录"><select disabled={!ready || runs.loading || !!runs.error || action.busy} value={runId} onChange={e => { epoch.current++; setRunId(e.target.value); setDecision(''); setCategory(''); }}><option value="">请选择一次检查</option>{ready && !runs.loading && !runs.error && runs.data?.items.map((row, index) => <option key={row.id} value={row.id}>检查 {index + 1} · {row.created_at || row.id.slice(0, 12)}{row.stale ? ' · 来源已变化' : ''}</option>)}</select></Field>
+      <Field label="查看审阅记录"><select disabled={!!targetJob || !ready || runs.loading || !!runs.error || action.busy} value={runId} onChange={e => { epoch.current++; setRunId(e.target.value); setDecision(''); setCategory(''); }}><option value="">请选择一次检查</option>{ready && !runs.loading && !runs.error && runs.data?.items.map((row, index) => <option key={row.id} value={row.id}>检查 {index + 1} · {row.created_at || row.id.slice(0, 12)}{row.stale ? ' · 来源已变化' : ''}</option>)}</select></Field>
       {runId && <ResourceState loading={detail.loading} error={detail.error} />}
       {!!detail.error && <StatusMessage tone="warning">记录不可用或权限发生变化。刷新可重新核对；不会使用旧的隐藏结果继续审核。</StatusMessage>}
       {run && <><div className="experimental-actions"><Badge tone={run.stale ? 'warning' : 'neutral'}>{run.stale ? '来源已变化' : '规则检查已完成'}</Badge><span>{run.stale ? '历史结果已隐藏' : `${run.findings.length} 条检查线索`} · {run.model_called ? '记录包含模型判断，请核对来源' : '未调用模型'}</span></div>

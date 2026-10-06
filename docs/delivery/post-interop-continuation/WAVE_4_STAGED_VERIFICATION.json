@@ -20,5 +20,6 @@
     "passed": 24,
     "postgres_deselected": 20
   },
-  "full_final_source_hosted_ci": "PENDING"
+  "full_final_source_hosted_ci": "PENDING",
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts."
 }

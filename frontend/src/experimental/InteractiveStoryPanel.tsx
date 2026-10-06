@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient } from './api';
 import { Field, ResourceState, useAction, useResource } from './shared';
+import { InteractiveStoryHistory } from './InteractiveStoryHistory';
 import { InteractiveStoryPreview } from './InteractiveStoryPreview';
 import { interactiveStoryClient, type InteractiveStory, type StoryAnalysis, type StoryCatalog, type StoryExportPreview, type StoryNode, type StoryReviewPreview, type StoryRefreshPreview, type StorySpec, type StoryVariable } from './interactiveStoryClient';
 import './interactiveStory.css';
@@ -42,6 +43,7 @@ function StoryBody({ client }: { client: ExperimentalClient }) {
   </Panel>
   {!story.stale && story.spec && catalog.data && <><StoryEditor key={`editor:${story.id}:${story.version}`} story={story} catalog={catalog.data} busy={action.busy} onDirty={setDirty} onSave={spec => perform(() => api.save(story, spec), '互动草稿已保存，需要重新审核。')} />
     {story.analysis && <Analysis analysis={story.analysis} />}
+    <InteractiveStoryHistory key={`history:${story.id}:${story.version}`} api={api} story={story} blocked={dirty || action.busy} perform={perform} />
     <InteractiveStoryPreview api={api} story={story} blocked={dirty || action.busy} />
     <StoryApproval key={`approval:${story.id}:${story.version}`} api={api} story={story} blocked={dirty || action.busy} perform={perform} />
   </>}
