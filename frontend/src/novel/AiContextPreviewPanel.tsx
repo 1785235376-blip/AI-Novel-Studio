@@ -241,6 +241,7 @@ function SourceRow({ source }: { source: SourceCard }) {
 export function AiContextPreviewPanel({
   novelId,
   chapterNumber,
+  chapterId,
   chapterVersion,
   operation,
   instruction,
@@ -249,6 +250,7 @@ export function AiContextPreviewPanel({
 }: {
   novelId?: string;
   chapterNumber?: number;
+  chapterId?: string;
   chapterVersion?: number;
   operation: ContextPreviewOperation;
   instruction: string;
@@ -264,11 +266,12 @@ export function AiContextPreviewPanel({
     target: ContextPreviewTarget;
     scopeKey: string;
     chapterVersion?: number;
+    chapterId?: string;
   }>();
   const [refreshNonce, setRefreshNonce] = useState(0);
   useEffect(() => {
     setRequest(undefined);
-  }, [novelId, chapterNumber, chapterVersion, scopeKey]);
+  }, [novelId, chapterNumber, chapterId, chapterVersion, scopeKey]);
   useEffect(() => {
     setTarget(defaultTarget);
   }, [defaultTarget]);
@@ -282,6 +285,7 @@ export function AiContextPreviewPanel({
       chapterVersion,
       novelId,
       chapterNumber,
+      chapterId,
       request?.operation,
       agentId,
       request?.instruction,
@@ -295,8 +299,9 @@ export function AiContextPreviewPanel({
         chapterNumber!,
         request?.instruction || "",
         request?.target || target,
+        ...(chapterId === undefined ? [] : [chapterId]),
       ),
-    enabled: canPreview && !!request && request.scopeKey === scopeKey && request.chapterVersion === chapterVersion,
+    enabled: canPreview && !!request && request.scopeKey === scopeKey && request.chapterVersion === chapterVersion && request.chapterId === chapterId,
     retry: false,
   });
   const secondaryEnabled = canPreview && !!request && !!contextQuery.data;
@@ -337,10 +342,10 @@ export function AiContextPreviewPanel({
     !!request &&
     request.operation === operation &&
     request.instruction === currentInstruction &&
-    request.target === target && request.scopeKey === scopeKey && request.chapterVersion === chapterVersion;
+    request.target === target && request.scopeKey === scopeKey && request.chapterVersion === chapterVersion && request.chapterId === chapterId;
   const refresh = () => {
     if (!canPreview) return;
-    setRequest({ operation, instruction: currentInstruction, target, scopeKey, chapterVersion });
+    setRequest({ operation, instruction: currentInstruction, target, scopeKey, chapterVersion, chapterId });
     setRefreshNonce((value) => value + 1);
   };
   const contextError = contextQuery.error
@@ -401,7 +406,7 @@ export function AiContextPreviewPanel({
           <Button type="button" onClick={refresh} disabled={disabled}>重试读取</Button>
         </StatusMessage>
       )}
-      {canPreview && request && request.scopeKey === scopeKey && request.chapterVersion === chapterVersion && contextQuery.data && !contextQuery.error && (
+      {canPreview && request && request.scopeKey === scopeKey && request.chapterVersion === chapterVersion && request.chapterId === chapterId && contextQuery.data && !contextQuery.error && (
         <>
           {!requestIsCurrent && (
             <StatusMessage tone="warning">写作方式、附加要求或目标已变化；刷新后才会得到对应上下文。</StatusMessage>

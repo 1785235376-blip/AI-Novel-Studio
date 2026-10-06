@@ -5,6 +5,7 @@ from datetime import datetime,timezone
 from pathlib import Path
 from .storage import atomic_write
 from .file_project_lifecycle import guard_project, project_operation
+from . import chapter_identity
 
 def now(): return datetime.now(timezone.utc).isoformat()
 def read_json(path:Path,default):
@@ -36,6 +37,7 @@ class FileRepository:
             for d in ("chapters","summaries","pending_canon","characters","locations","timeline","style","world","foreshadowing"):(root/d).mkdir(parents=True,exist_ok=True)
             meta={"id":nid,"title":payload["title"],"genre":payload.get("genre",""),"status":"Writing","created_at":now(),"updated_at":now()}; atomic_write(root/"novel.json",json.dumps(meta,ensure_ascii=False,indent=2))
             for path,value in ((root/"characters/characters.json",[]),(root/"locations/locations.json",[]),(root/"timeline/events.json",[]),(root/"foreshadowing.json",[]),(root/"relationships.json",[]),(root/"volumes.json",[]),(root/"scenes.json",[]),(root/"story_routes.json",[]),(root/"outline.json",{}),(root/"secrets.json",[]),(root/"canon.json",[]),(root/"summaries/index.json",[]),(root/"story_state.json",{"volume":1,"chapter":0,"active_characters":[]})): atomic_write(path,json.dumps(value,ensure_ascii=False,indent=2))
+            chapter_identity.write_ledger(root, chapter_identity.empty_ledger())
             return meta
     @guard_project("nid")
     def get_novel(self,nid):
@@ -55,7 +57,8 @@ class FileRepository:
         state=read_json(self.novels/nid/"chapter_state.json",{})
         for p in sorted(root.glob("chapter-*.md")):
             content=p.read_text(encoding="utf-8"); num=int(re.search(r"(\d+)",p.stem).group(1)); first=content.splitlines()[0].lstrip("# ") if content else f"Chapter {num}"
-            cid=f"{nid}:{num}"
+            chapter_identity.require_active(self.novels/nid, num)
+            cid=chapter_identity.public_id(self.novels/nid,num)
             out.append({"id":cid,"novel_id":nid,"number":num,"volume":1,"title":first,"word_count":len(re.sub(r"\s+","",content)),"status":"Draft","content":content,"is_archived":bool(state.get(cid,False))})
         order=read_json(self.novels/nid/"chapter_order.json",[]);rank={cid:i for i,cid in enumerate(order)};return sorted(out,key=lambda c:rank.get(c["id"],len(rank)+c["number"]))
     @guard_project("nid")
@@ -68,7 +71,7 @@ class FileRepository:
         state_path=self.novels/cid.rsplit(":",1)[0]/"chapter_state.json"
         state=read_json(state_path,{})
         current=bool(state.get(cid,False))
-        _,num,path=cid.rsplit(":",1)[0],int(cid.rsplit(":",1)[1]),self.novels/cid.rsplit(":",1)[0]/"documents"/f"chapter-{int(cid.rsplit(':',1)[1]):04d}.json"
+        num=chapter["number"];path=self.novels/chapter["novel_id"]/"documents"/f"chapter-{num:04d}.json"
         package=read_json(path,{"version":1})
         if expected_version is not None and expected_version != package.get("version",1):
             raise ValueError("VERSION_CONFLICT")
@@ -77,16 +80,33 @@ class FileRepository:
         return {**chapter,"is_archived":bool(archived)}
     @guard_project("cid", chapter=True)
     def chapter(self,cid):
-        nid,num=cid.rsplit(":",1); matches=[x for x in self.list_chapters(nid) if x["number"]==int(num)]
-        if not matches: raise FileNotFoundError(cid)
-        return matches[0]
+        nid,token=cid.rsplit(":",1)
+        root=self.novels/nid
+        num=chapter_identity.resolve(root,token)
+        path=root/"chapters"/f"chapter-{num:04d}.md"
+        if not path.is_file():raise FileNotFoundError(cid)
+        content=path.read_text(encoding="utf-8")
+        title=content.splitlines()[0].lstrip("# ") if content else f"Chapter {num}"
+        state=read_json(root/"chapter_state.json",{})
+        return {"id":chapter_identity.public_id(root,num),"novel_id":nid,"number":num,"volume":1,"title":title,
+                "word_count":len(re.sub(r"\s+","",content)),"status":"Draft","content":content,
+                "is_archived":bool(state.get(chapter_identity.public_id(root,num),False))}
     @guard_project("cid", chapter=True)
     def save_chapter(self,cid,payload):
         chapter=self.chapter(cid); content=payload.get("content",chapter["content"]); atomic_write(self.novels/chapter["novel_id"]/"chapters"/f"chapter-{chapter['number']:04d}.md",content); return self.chapter(cid)
     @committed_change("CHAPTER")
     @guard_project("nid")
     def create_chapter(self,nid,payload):
-        existing=self.list_chapters(nid); num=payload.get("number") or (max([x["number"] for x in existing],default=0)+1); title=payload.get("title",f"第 {num} 章"); atomic_write(self.novels/nid/"chapters"/f"chapter-{num:04d}.md",f"# {title}\n\n{payload.get('content','')}"); return self.chapter(f"{nid}:{num}")
+        root=self.novels/nid
+        num=chapter_identity.next_number(root,payload.get("number"))
+        title=payload.get("title",f"第 {num} 章")
+        # Reserve durably before creating bytes. Failed/partial creations burn
+        # their ID, so restart cannot mistake a former draft for a new object.
+        token=chapter_identity.allocation_token(root,num)
+        chapter_identity.reserve(root,num,token)
+        atomic_write(root/"chapters"/f"chapter-{num:04d}.md",f"# {title}\n\n{payload.get('content','')}")
+        chapter_identity.transition(root,num,"active")
+        return self.chapter(f"{nid}:{token}")
     @guard_project("nid")
     def data_set(self,nid,name):
         paths={"characters":"characters/characters.json","locations":"locations/locations.json","canon":"canon.json","foreshadowing":"foreshadowing.json","timeline":"timeline/events.json","relationships":"relationships.json","volumes":"volumes.json","scenes":"scenes.json","story_routes":"story_routes.json"}; return read_json(self.novels/nid/paths[name],[])

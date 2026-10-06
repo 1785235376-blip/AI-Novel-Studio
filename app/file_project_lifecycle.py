@@ -13,6 +13,13 @@ from pathlib import Path
 
 @contextmanager
 def project_operation(data: Path, novel_id: str, *, require_exists=True):
+    # Public project identifiers are one path component. Validate before even
+    # deriving a lock key or checking existence outside the novels directory.
+    # Generic dot directories remain valid legacy projects; only traversal
+    # components and actual separators/control terminators are rejected.
+    if (not isinstance(novel_id, str) or not novel_id or novel_id in {".", ".."}
+            or any(character in novel_id for character in ("/", "\\", "\x00"))):
+        raise FileNotFoundError(novel_id)
     # Import lazily: app.repositories imports FileRepository during startup.
     from .repositories.file.mutation_coordinator import workspace_mutation
 

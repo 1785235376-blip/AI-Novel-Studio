@@ -1,0 +1,63 @@
+{
+  "saved_version": 2,
+  "original_document_preserved": true,
+  "projected_content": "# 第一章\n\n普通段落保留\n\n\n\n\n\n前句后句\n\n",
+  "duplicate_document": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 1
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "第一章 Copy"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 1
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "第一章"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "普通段落保留"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "前句后句"
+          }
+        ]
+      }
+    ]
+  },
+  "duplicate_list_text_present": false,
+  "duplicate_quote_text_present": false,
+  "docx_list_text_present": false,
+  "docx_quote_text_present": false,
+  "plain_text": "第一章\n普通段落保留\n\n\n前句后句",
+  "root": "/tmp/pr43-doc-audit-qlh5di6l",
+  "original_novel_service_snapshot_export": {
+    "list_text_present": false,
+    "quote_text_present": false,
+    "snapshot_chapter_count": 2
+  }
+}

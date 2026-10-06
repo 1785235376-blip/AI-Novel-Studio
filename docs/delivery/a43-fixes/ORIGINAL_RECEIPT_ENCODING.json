@@ -1,0 +1,83 @@
+{
+  "kind": "LOSSLESS_DETERMINISTIC_GZIP_ORIGINAL_JUNIT_BYTES",
+  "note": "Generated original JUnit contains significant whitespace and traceback formatting. Decompress each file and verify original_sha256; no source receipt byte was rewritten. Selected JSON/text receipts remain verbatim. This is encoding, not altered assertions or reinterpreted outcomes.",
+  "receipts": [
+    {
+      "original_name": "supplemental/fixed-file-qualified-final.xml",
+      "file": "supplemental/fixed-file-qualified-final.xml.gz",
+      "original_bytes": 74192,
+      "original_sha256": "1506de667d220e62c86ad161bfe26ef71a55d4d84977671dcd0899db67158508",
+      "gzip_sha256": "fa753a2570e5ab6766441950b3a27cd573a961556d08080cbe08b27570717e21"
+    },
+    {
+      "original_name": "supplemental/context-consumer-file.xml",
+      "file": "supplemental/context-consumer-file.xml.gz",
+      "original_bytes": 23971,
+      "original_sha256": "489cabed8fba34f3fcac4cee7fa5c7d5d232a2cc81f00beef7a0c75b4bdd7f1f",
+      "gzip_sha256": "676231a31b3e9dce9fc57d32c422e6607f38cb3fa0b1472b1ade626c2a278cc4"
+    },
+    {
+      "original_name": "supplemental/legacy-contract-final-neighbors-v2.xml",
+      "file": "supplemental/legacy-contract-final-neighbors-v2.xml.gz",
+      "original_bytes": 5358,
+      "original_sha256": "485a2f377eeafa5843f97f1738be062a1c31e631e1454c3f88d673ceda981822",
+      "gzip_sha256": "61824b666e883f9960b07a081484b7d4ab2adab5d375d4d62bdeee273408d8fe"
+    },
+    {
+      "original_name": "supplemental/rich-final-file.xml",
+      "file": "supplemental/rich-final-file.xml.gz",
+      "original_bytes": 11659,
+      "original_sha256": "9d107eccfa396c80b5b3156432e718d7824e14dd228a39e48667df9e692b118b",
+      "gzip_sha256": "bbc43b166ad534d694c2c5e2ce58df4c6f1f7647117b21ba8d4574cf54e52da5"
+    },
+    {
+      "original_name": "supplemental/baseline-file-qualified-final.xml",
+      "file": "supplemental/baseline-file-qualified-final.xml.gz",
+      "original_bytes": 268004,
+      "original_sha256": "ac0a4a91de1af683f27ad7c024e749db8de6cc171cab24e0a83a224b764b0ada",
+      "gzip_sha256": "ebf9e454c2d05777792b8f26450f225fcba4c17bd649d0c171c3622aea7d7555"
+    },
+    {
+      "original_name": "supplemental/rich-final-baseline-red.xml",
+      "file": "supplemental/rich-final-baseline-red.xml.gz",
+      "original_bytes": 62071,
+      "original_sha256": "d55b844c8abed7a09cac743541f7c64846f9e0fd966de46f8454abcf5954dd46",
+      "gzip_sha256": "f56eccc0324de055bddd5b01622643911e05dd513b23dc4c38057232f2dc0564"
+    },
+    {
+      "original_name": "supplemental/frontend-targeted-green.xml",
+      "file": "supplemental/frontend-targeted-green.xml.gz",
+      "original_bytes": 2662,
+      "original_sha256": "db2b6c924d6fd6ce5c7a06e2a712dfb31506a505c18f409394b4ed36a079decf",
+      "gzip_sha256": "5abc4c927e749dc14c5dde8ec9e734fa5beb6b0ab7cb649edf67d7569856e05d"
+    },
+    {
+      "original_name": "supplemental/legacy-contract-impact-baseline-corrected.xml",
+      "file": "supplemental/legacy-contract-impact-baseline-corrected.xml.gz",
+      "original_bytes": 5406,
+      "original_sha256": "1420e5bfa9ac42515d7780843861b70ea15f6c52523ad78c8006266ac89f8d74",
+      "gzip_sha256": "f2d6880366917c33d26a1f17e4503f7948ce4e498dff1d077494183c03b1ac99"
+    },
+    {
+      "original_name": "supplemental/context-typed-file.xml",
+      "file": "supplemental/context-typed-file.xml.gz",
+      "original_bytes": 7664,
+      "original_sha256": "c450877eada9ccd6738e71e5814594b76ea7ade5e6dcd11bb15fb5ce5959b83f",
+      "gzip_sha256": "ea3ab1c70cb5ed3ca65f5d3bf90e07d226caf0ec870f0c549209b421419607c7"
+    },
+    {
+      "original_name": "supplemental/targeted-final-green.xml",
+      "file": "supplemental/targeted-final-green.xml.gz",
+      "original_bytes": 84033,
+      "original_sha256": "f13d2cf25aa3ea28cd4d75f44ad52a2ee759f5ed5abb3159dfd692586300bc9e",
+      "gzip_sha256": "37a155ab0824e68a6444496108c8e16d69fe6455000c391373a47d796aabe72d"
+    },
+    {
+      "original_name": "baseline/baseline-safety.xml",
+      "file": "baseline/baseline-safety.xml.gz",
+      "original_bytes": 4035,
+      "original_sha256": "42655a830ad92d11850f7ecb0e724185b4fe3c09e248ef5626c5f7e64cc762d2",
+      "gzip_sha256": "485bef4e886e1a5c94b6054db769074648c6045d549f73b14a8714da4f3fc8e1"
+    }
+  ]
+}

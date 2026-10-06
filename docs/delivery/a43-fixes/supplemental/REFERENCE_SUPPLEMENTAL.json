@@ -1,0 +1,101 @@
+{
+  "test_file": "tests/test_a43_identity_references.py",
+  "test_sha256": "0c1a4eab4244c8784b5b537dd1d20adf3cf24ff35986f848fc14ccf40f35ab4b",
+  "matrix": {
+    "contracts": 9,
+    "api_aliases": [
+      "/api",
+      "/api/v1"
+    ],
+    "feature_modes": [
+      "off",
+      "on",
+      "v1"
+    ],
+    "source_namespaces": [
+      "numeric",
+      "qualified_legacy_uuid"
+    ],
+    "backends": [
+      "file",
+      "real_postgres"
+    ],
+    "runtime_matrix_nodes": 216,
+    "additional_file_legacy_nodes": 11,
+    "total_nodes": 227
+  },
+  "local_python": "Python 3.12.14",
+  "local_postgres_status": "NOT_RUN; 108 cases correctly skipped by unchanged backend marker rules; hosted PostgreSQL owned by parent",
+  "baseline_head": "ad1a90dced36208c63bfd65f5e1d918d4a4f7695",
+  "results": [
+    {
+      "artifact": "baseline-file-qualified-final.xml",
+      "tests": 227,
+      "failures": 101,
+      "errors": 0,
+      "skipped": 108,
+      "passed": 18
+    },
+    {
+      "artifact": "fixed-file-qualified-final.xml",
+      "tests": 227,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 108,
+      "passed": 119
+    },
+    {
+      "artifact": "legacy-contract-impact-baseline-corrected.xml",
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 3,
+      "passed": 29
+    },
+    {
+      "artifact": "legacy-contract-final-neighbors-v2.xml",
+      "tests": 32,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 3,
+      "passed": 29
+    }
+  ],
+  "evidence_limits": [
+    "Queued generation tests use original prepare/outbound-source-validation/persist/result/accept owners with synthetic completion payloads; no model or provider run.",
+    "File results do not prove PostgreSQL; real PostgreSQL matrix is separate.",
+    "Baseline qualified namespaces fail explicit capability assertions rather than testing a fabricated UUID layer.",
+    "Initial local neighbor probes had PROMPT_PATH harness failures reproduced on baseline; corrected comparison uses absolute source/prompts while keeping writable runtime state isolated.",
+    "Original assertions, skip rules, timeout caps and source fixture data are unchanged.",
+    "The historical independent review remains BLOCKED; original 39 PARTIAL / F00 INTEGRATED labels and real environment NOT_RUN are unchanged.",
+    "Successful-deletion scenario uses an original polish task without a context snapshot. The existing PostgreSQL generation-to-snapshot RESTRICT constraint may independently block deletion of snapshot-bearing source chapters; move/accept with a snapshot is covered."
+  ],
+  "snapshot_deletion_boundary": {
+    "status": "CODE_INSPECTED_NOT_DYNAMICALLY_VERIFIED",
+    "sources": [
+      "database/migrations/006_context_intelligence.sql:11-19",
+      "database/migrations/015_collaboration_runtime_foundation.sql:41-43"
+    ],
+    "boundary": "chapter_context_snapshots.chapter_id is ON DELETE CASCADE; generation_jobs.context_snapshot_id is ON DELETE RESTRICT. A retained generation-to-snapshot reference may independently block source-chapter deletion. No real PostgreSQL deletion outcome is claimed from this source inspection.",
+    "tested_scope": "Move, queued outbound-source validation, callback persistence and acceptance with a context snapshot; successful source deletion uses a polish task without a context snapshot."
+  },
+  "source_status": "INTERMEDIATE_LOCAL_ASSERTIONS; actual final-source full File and PostgreSQL receipts remain separate",
+  "original_receipt_files": {
+    "baseline-file-qualified-final.xml": {
+      "bytes": 268004,
+      "sha256": "ac0a4a91de1af683f27ad7c024e749db8de6cc171cab24e0a83a224b764b0ada"
+    },
+    "fixed-file-qualified-final.xml": {
+      "bytes": 74192,
+      "sha256": "1506de667d220e62c86ad161bfe26ef71a55d4d84977671dcd0899db67158508"
+    },
+    "legacy-contract-impact-baseline-corrected.xml": {
+      "bytes": 5406,
+      "sha256": "1420e5bfa9ac42515d7780843861b70ea15f6c52523ad78c8006266ac89f8d74"
+    },
+    "legacy-contract-final-neighbors-v2.xml": {
+      "bytes": 5358,
+      "sha256": "485a2f377eeafa5843f97f1738be062a1c31e631e1454c3f88d673ceda981822"
+    }
+  }
+}

@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "status": "PRELIMINARY_IMPLEMENTATION_INVENTORY_NOT_CI_PASS",
+  "baseline_sha": "ad1a90dced36208c63bfd65f5e1d918d4a4f7695",
+  "new_shared_helpers": [
+    "app/chapter_identity.py"
+  ],
+  "new_sql_migrations": [
+    "database/migrations/020_stable_chapter_identity.sql"
+  ],
+  "old_sql_migrations_modified": [],
+  "api_contracts": {
+    "new_routes": [],
+    "existing_routes_with_additive_identity_field": [
+      "GET /api/agents/{agent_id}/context-preview",
+      "POST /api/agent-jobs",
+      "GET /api/harness/context",
+      "GET /api/context-preview",
+      "POST /context-packs"
+    ],
+    "aliases": "Existing /api/v1 aliases use the same original router; legacy POST /context-packs keeps its original route and numeric error contract",
+    "chapter_save": "Both chapter PUT aliases expose missing/tombstoned source as 404 and unsupported document projection as structured400; CAS409 remains",
+    "chapter_creation": "Occupied stable IDs/physicalpaths/tokens return409 without overwrite; legacy-new source returns typedUUID, old numericURL cannot resolve it"
+  },
+  "ui": "Existing editor/shell/design tokens/features unchanged; selected complete chapter_id travels through original Agent/preview request controls. New actual-editor tests validate supported rich data and positions.",
+  "boundaries": [
+    "F00 INTEGRATED +39 PARTIAL unchanged",
+    "Historical independent review BLOCKED unchanged",
+    "Real model/native interactive/target software NOT_RUN unchanged"
+  ],
+  "application_and_frontend_paths": [
+    {
+      "path": "app/api.py",
+      "change": "modified",
+      "sha256": "23cd01ebed6601998e152b5e08ec9cd912c67355663c144f5c433ca684994c2e",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/application/persistence.py",
+      "change": "modified",
+      "sha256": "d74f51d4bc8d9a87d14e863a128caa06484432976043588d00d4524902f5281c",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/chapter_identity.py",
+      "change": "added",
+      "sha256": "87949c7fb5313004a23d88af3556e1b0e2f0f74b3faa33e35aff6ae856e6559e",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/collaboration_api.py",
+      "change": "modified",
+      "sha256": "8d751ff4e009ba2edb2ab86c9b4f2cddf3ba728730b88506d4ee1811b2f6655c",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/context.py",
+      "change": "modified",
+      "sha256": "50e3835a564586ef5edc3a9de7eaaf5c7022472011107f8ddbeef8b4a5224052",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/document.py",
+      "change": "modified",
+      "sha256": "7db694a2c1e3c67b01296a6ced28172e525ac5b1e0e1d1a83a1753a732f5374a",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/experimental/search_sources.py",
+      "change": "modified",
+      "sha256": "1582ad513700db4e3231b2dfe1c1d558c620e416f6a78bd02f6aeddc6cc9824b",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/experimental/ux.py",
+      "change": "modified",
+      "sha256": "5e6b029dfdea3cecfe1e63049c5f37783b8f1e127ace68555e4d6e16e2068da0",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/export_formats.py",
+      "change": "modified",
+      "sha256": "c1e62d7c3cbebac42ff70a3e6f1c0e4ffecd3b5fc3fd355e7acd022e2f27a98a",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/file_project_lifecycle.py",
+      "change": "modified",
+      "sha256": "d043600912e6fb2809674d56925f4ccd1fc3b9431e6389573b531e9f55668d27",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/jobs.py",
+      "change": "modified",
+      "sha256": "f17f062f717d7b67956737ff1ff480edaf77698d14c8a1c7ab09a2e1f7c17c30",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/local_interop/provider.py",
+      "change": "modified",
+      "sha256": "79c2a9eb2e9a3436a3f44e4af3f64d797496940f74cb7b80656e660ffef2bc1c",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/main.py",
+      "change": "modified",
+      "sha256": "aae02f8a03213c909070e466c283907e2d026d3fdc72066eb59f3ebf3a563afa",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/migrate_file_to_postgres.py",
+      "change": "modified",
+      "sha256": "f1607b0ee9bba1de64c092cb080cb1fdf5e140626a8ad2bc520523467821f818",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/packaging/postgres_migrations.py",
+      "change": "modified",
+      "sha256": "00d5fc573dc5610aee0d371d665b6a1cf1f1b1c0300ac02c2ac023b0b12b617e",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/pdf_export.py",
+      "change": "modified",
+      "sha256": "d5cdd4b67b05d3ade30dc6f554b016520fb359c1dd39144a46a205ec2a8dde47",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/repositories/chapter_repository.py",
+      "change": "modified",
+      "sha256": "7a19fc85d9a127094559e857d2ff650bc491abf82dc42060c6e45ed422f0c522",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/repositories/file/chapter.py",
+      "change": "modified",
+      "sha256": "a03e81df19cddfece331b604d8965c07d9c5433bf4a0e11c40a24a20ae79c33f",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/repositories/file/novel.py",
+      "change": "modified",
+      "sha256": "1a00ed2a3e2f792b20047a692da16d072f49c232d6e74f129919b5cf05ee4b7c",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/repositories/interfaces.py",
+      "change": "modified",
+      "sha256": "01e14c4d1d8f7ef23430a73c3edf6577abc568dc381ae571b1c016fe8453dcf2",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/repositories/postgres/chapter.py",
+      "change": "modified",
+      "sha256": "5676d88e918076a0e1e909d8aeb79d36cd23752e7578e9513720c18b030570e6",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/repositories/postgres/common.py",
+      "change": "modified",
+      "sha256": "54e1fbaa934dd08dbb413f5570bbd7e24fe2110219fbc218cb14aa0fbbc9be7a",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/repositories/postgres/generation.py",
+      "change": "modified",
+      "sha256": "642dd3808545de4f52ad3372e7a9e6c68ee96bdbebd636a41b476d158e3cce87",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/repositories/postgres/lore.py",
+      "change": "modified",
+      "sha256": "28f9971be0e66d7bd9ff5a9ab90499858d695b8f867bbdbfdd951f63b8096757",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/repositories/postgres/models.py",
+      "change": "modified",
+      "sha256": "55c8184a6acad2d9bf4d7d3838f4bbb12a53c693ad157482c95049e348ea1966",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/repositories/postgres/novel.py",
+      "change": "modified",
+      "sha256": "663414a09f97a654acecc4268db0b12670a70946c943fcf7fc6961904b0d1d77",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/repository.py",
+      "change": "modified",
+      "sha256": "d39545ae797dd46ba97645d138864cb35544da75ce9b5a3842d6295fdd1544e8",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/services/agent_context_service.py",
+      "change": "modified",
+      "sha256": "bc925d2f139394b9d26fc012921c2219544a312636f9e1a7018ffa5b95a83107",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/services/agent_job_service.py",
+      "change": "modified",
+      "sha256": "60b5faf68d55c9c007699cf4ce7c00f256d72d6454333346b6d0bd9c4df6f492",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/services/chapter_service.py",
+      "change": "modified",
+      "sha256": "30430822dd30f6ef0eac50f708941797801d099f842c357d4bc25c04ecfd9900",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/services/context_service.py",
+      "change": "modified",
+      "sha256": "cd4ceaa9786115ed48531b4a43d8ee52060e17b1f3cab875f9224fd8fbbf5620",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/services/context_snapshot_service.py",
+      "change": "modified",
+      "sha256": "cc1c32a28725acb69cf732063233e4489868dc0b2b3b337c65dbee04912ed13c",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/services/export_job_service.py",
+      "change": "modified",
+      "sha256": "f09e4fcdbe2db05a7a294cb9eb8cb21c50ba782d404dc24a70df482515e792c1",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/services/novel_service.py",
+      "change": "modified",
+      "sha256": "95d57dfa03ab4ef8b80bb047f9ee5e222512f6287d80b739994cf6326d6f4b87",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "app/workflow.py",
+      "change": "modified",
+      "sha256": "c8f65bfcc73b454038a177aeb519b2e3cd032d8f9ed57fe4bb8b50d0d3e607ef",
+      "area": "Shared document/identity owner or bounded dependent consumer"
+    },
+    {
+      "path": "frontend/src/Editor.a43-rich.test.tsx",
+      "change": "added",
+      "sha256": "89f9ada1cbd420cb5cc29218a1262d6446594244288737c1d8aabecfb75a2078",
+      "area": "Frontend chapter-ID propagation/validation; no layout changes"
+    },
+    {
+      "path": "frontend/src/api.ts",
+      "change": "modified",
+      "sha256": "f4beccce3a28000923cbfa01b52e1ed55e095c712517952a61bda3baa7d659eb",
+      "area": "Frontend chapter-ID propagation/validation; no layout changes"
+    },
+    {
+      "path": "frontend/src/novel/A43ChapterIdentity.test.tsx",
+      "change": "added",
+      "sha256": "4661d0540677d2d379be64a454943f3f600c650aece83e553153610508f7c5cc",
+      "area": "Frontend chapter-ID propagation/validation; no layout changes"
+    },
+    {
+      "path": "frontend/src/novel/AgentTeamPanel.tsx",
+      "change": "modified",
+      "sha256": "e3c8981a9a9f23e0027c8ac27e9eff47394e5f9cd651a888a111abad88d800bd",
+      "area": "Frontend chapter-ID propagation/validation; no layout changes"
+    },
+    {
+      "path": "frontend/src/novel/AiContextPreviewPanel.tsx",
+      "change": "modified",
+      "sha256": "5c4900d1147f18e1fa4d025c36806f22df819ca0aaf17aa172915fa7ef3a7c79",
+      "area": "Frontend chapter-ID propagation/validation; no layout changes"
+    },
+    {
+      "path": "frontend/src/novel/AiWritingPanel.tsx",
+      "change": "modified",
+      "sha256": "c168ce6e4143e7b0e48172e45304da8520519761446ed5e7378db637e4fd4d21",
+      "area": "Frontend chapter-ID propagation/validation; no layout changes"
+    }
+  ],
+  "checkpoint_note": "Implementation checkpoint before hosted final-source regression; source hashes identify this code snapshot, not a test verdict."
+}

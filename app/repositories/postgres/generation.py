@@ -21,6 +21,12 @@ class PostgresGenerationRepository:
             iid=external_uuid(item["id"]);row=session.get(GenerationJobModel,iid);novel_uuid=chapter_uuid=None
             if item.get("novel_id"):novel_uuid=novel_or_raise(session,item["novel_id"]).id
             if item.get("chapter_id"):_,chapter=chapter_or_raise(session,item["chapter_id"]);chapter_uuid=chapter.id
+            if row is not None:
+                previous = dict((row.request or {}).get("_repository_payload", {}))
+                if ((row.chapter_id is not None and row.chapter_id != chapter_uuid)
+                        or (previous.get("chapter_id") and previous["chapter_id"] != item.get("chapter_id"))):
+                    from ...chapter_identity import ChapterIdentityConflict
+                    raise ChapterIdentityConflict("GENERATION_CHAPTER_IDENTITY_CHANGED")
             request=dict(item.get("request") or {});request["_repository_payload"]=dict(item)
             values={"novel_id":novel_uuid,"chapter_id":chapter_uuid,"operation":item.get("operation",item.get("agent","unknown")),"status":item.get("status","QUEUED"),"request":request,"draft_path":item.get("draft_path"),"provider":item.get("provider"),"model":item.get("model"),"fallback_used":bool(item.get("fallback_used",False)),"error_code":item.get("error_code"),"error_message":item.get("error_message") or item.get("error"),"result":item.get("result"),"retry_count":int(item.get("retry_count",0)),"timeout_seconds":int(item.get("timeout_seconds",120)),"context_snapshot_id":external_uuid(item["context_snapshot_id"]) if item.get("context_snapshot_id") else None,"updated_at":datetime.now(timezone.utc)}
             if row is None:row=GenerationJobModel(id=iid,**values);session.add(row)

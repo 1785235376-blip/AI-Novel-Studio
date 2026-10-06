@@ -337,3 +337,15 @@ Task Center uses the additive owner_navigation pointer while retaining the legac
 ## Browser contract compatibility correction
 
 Retain the inherited production evidence label “确定性协议可复现” and its separate explanation that determinism is established only for synthetic protocols, never arbitrary GPU/model bytes. Source-based controls and fixtures must use the authoritative versioned chapter read, including its exact Markdown heading/whitespace and Unicode offsets. Asset links keep the original required project query; do not weaken permission checks to accommodate missing navigation inputs.
+
+## A43 repair inheritance for a future UI pass
+
+The separate A43 repair branch is an engineering correction, with no UX-01 visual restructure. Any future UI work must inherit its final verified source and keep the original 39 PARTIAL/F00 INTEGRATED and blocked-review boundaries.
+
+- Treat chapter IDs as opaque full strings. Legacy projects can create new chapters with `project:~UUID` IDs; `number` is a display/storage locator and must never be used to reconstruct an ID. Move changes ordering while the ID, document/version and history owner stay fixed.
+- Pass the selected full chapter ID through Agent/context preview, queued jobs, retry, cache anchors, review and summary paths. Old numeric aliases must not target a newly created typed chapter.
+- Structured Editor JSON stays authoritative. Preserve nested lists, quotes, marks, code, hardBreak, Chinese and emoji in save/reopen/copy. Markdown and ProseMirror/Unicode coordinates are different contracts; use the existing shared mapping.
+- Unsupported document projection and unsupported PDF font characters must remain explicit errors with retained source. Do not show a successful download or erase unsupported nodes to hide the error.
+- Unresolved legacy history or contradictory identities stay retained and quarantined. Preserve the error and recovery explanation; do not relabel UNKNOWN as clean or drop history to simplify a screen.
+
+See `FIX_FINDINGS.md`, `SOURCE_IDENTITY_MIGRATION.md` and `RICH_DOCUMENT_ROUNDTRIP.md`. This handoff does not authorize a visual pass, merge, release, production migration or backport.

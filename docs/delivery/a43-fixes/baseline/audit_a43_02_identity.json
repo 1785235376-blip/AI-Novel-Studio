@@ -1,0 +1,71 @@
+{
+  "old_id": "identity:1",
+  "new_id": "identity:1",
+  "new_document_before_restore": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 1
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "全新章节"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "NEW-CONTENT"
+          }
+        ]
+      }
+    ]
+  },
+  "old_history_count": 1,
+  "new_history_count": 1,
+  "new_history_contains_old": true,
+  "restored_new_document": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 1
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "旧章节"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "OLD-CONTENT-NOT-NEW"
+          }
+        ]
+      }
+    ]
+  },
+  "restored_contains_old": true,
+  "after_restore_version": 2,
+  "explicit_duplicate_number": {
+    "same_id": true,
+    "listed_content": "# 第二次创建\n\nOVERWROTE",
+    "raise_conflict": false
+  },
+  "archive_inheritance": {
+    "new_id": "archived-reuse:1",
+    "new_is_archived": true,
+    "visible_chapters": []
+  }
+}

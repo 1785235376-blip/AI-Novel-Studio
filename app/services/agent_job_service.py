@@ -30,7 +30,7 @@ class AgentJobService:
     terminal={"COMPLETED","VALIDATED","FAILED","CANCELLED","ACCEPTED","REJECTED"}
     def __init__(self,generations,contexts,novels,runtime=None,agent_runner=None):self.generations,self.contexts,self.novels,self.runtime,self.agent_runner=generations,contexts,novels,runtime,agent_runner;self.lock=threading.RLock();self.cancellations={};self._timers={}
 
-    def create(self,agent_id,novel_id,chapter_number,instruction="",target="local",provider=None,model=None,execution_mode="deterministic",timeout_seconds=120,retry_of=None):
+    def create(self,agent_id,novel_id,chapter_number,instruction="",target="local",provider=None,model=None,execution_mode="deterministic",timeout_seconds=120,retry_of=None,chapter_id=None):
         agent=next((item for item in AGENTS if item["id"]==agent_id),None)
         if agent is None:raise KeyError(agent_id)
         if target not in {"local", "cloud"}:raise ValueError("invalid execution target")
@@ -38,7 +38,7 @@ class AgentJobService:
             if self.runtime is None:raise ValueError("agent model runtime is unavailable")
             # Provider registry, not the request's target label, determines egress.
             target = "cloud" if self.runtime.is_remote_text_provider(provider) else "local"
-        context=self.contexts.build(agent_id,novel_id,chapter_number,instruction,target=="cloud");jid=str(uuid.uuid4());now=utc()
+        context=self.contexts.build(agent_id,novel_id,chapter_number,instruction,target=="cloud",chapter_id);jid=str(uuid.uuid4());now=utc()
         if execution_mode not in {"deterministic","model"}:raise ValueError("invalid agent execution mode")
         if execution_mode=="model" and (not provider or not model):raise ValueError("model execution requires provider and model")
         if timeout_seconds<1 or timeout_seconds>3600:raise ValueError("timeout_seconds must be between 1 and 3600")
@@ -111,8 +111,8 @@ class AgentJobService:
         actual_target = "cloud" if self.runtime.is_remote_text_provider(job["provider"]) else "local"
         if actual_target != job.get("target"):
             raise AgentJobError("AGENT_ROUTE_CHANGED", "Agent provider egress changed")
-        context = self.contexts.build(job["agent_id"], job["novel_id"], int(str(job["chapter_id"]).rsplit(":", 1)[-1]), job.get("instruction", ""), actual_target == "cloud")
-        if context["context_hash"] != job["context_hash"] or context["chapter_version"] != job["chapter_version"]:
+        context = self.contexts.build(job["agent_id"], job["novel_id"], None, job.get("instruction", ""), actual_target == "cloud", job["chapter_id"])
+        if context["chapter_id"] != job["chapter_id"] or context["context_hash"] != job["context_hash"] or context["chapter_version"] != job["chapter_version"]:
             raise AgentJobError("AGENT_SOURCE_CHANGED", "Agent sources changed; review a fresh job")
         # Context repositories may themselves be slow. Membership must still
         # hold after they finish, and a callback may have cancelled the attempt.
@@ -216,7 +216,7 @@ class AgentJobService:
     def retry(self,jid):
         job=self.get(jid)
         if job["status"] not in {"FAILED","CANCELLED"}:raise ValueError("agent job is not retryable")
-        retried=self.create(job["agent_id"],job["novel_id"],int(str(job["chapter_id"]).rsplit(":",1)[-1]),job.get("instruction",""),job.get("target","local"),job.get("provider"),job.get("model"),job.get("execution_mode","deterministic"),job.get("timeout_seconds",120),jid)
+        retried=self.create(job["agent_id"],job["novel_id"],None,job.get("instruction",""),job.get("target","local"),job.get("provider"),job.get("model"),job.get("execution_mode","deterministic"),job.get("timeout_seconds",120),jid,job["chapter_id"])
         # Keep the authorization scope attached to the retry. Without this,
         # a branch-bound job silently became an unscoped legacy job and could
         # then be read or executed without the branch capability.
@@ -229,8 +229,8 @@ class AgentJobService:
         actual_target="cloud" if self.runtime.is_remote_text_provider(job["provider"]) else "local"
         if actual_target != job.get("target"):
             raise ValueError("provider egress changed; create and review a fresh agent job")
-        context=self.contexts.build(job["agent_id"],job["novel_id"],int(str(job["chapter_id"]).rsplit(":",1)[-1]),job.get("instruction",""),job.get("target")=="cloud")
-        if context["context_hash"] != job["context_hash"] or context["chapter_version"] != job["chapter_version"]:
+        context=self.contexts.build(job["agent_id"],job["novel_id"],None,job.get("instruction",""),job.get("target")=="cloud",job["chapter_id"])
+        if context["chapter_id"] != job["chapter_id"] or context["context_hash"] != job["context_hash"] or context["chapter_version"] != job["chapter_version"]:
             raise ValueError("agent source changed; create a fresh job for review")
         prompt=self.agent_runner.build_prompt(job["prompt_role"],context,job.get("instruction") or "Return a structured result.")+"\n\nReturn JSON only with keys: schema, agent_id, summary, proposals, findings, context_hash."
         node=self.runtime.prepare_text_route(job["provider"],job["model"],self.runtime.providers.get(job["provider"]))

@@ -26,7 +26,7 @@ from .dependencies import lore_service, memory_service, v1_capability_service, u
 from .services.harness_context_adapter import harness_context_adapter
 from .services.harness_access_audit_service import harness_access_audit_service
 from .authorization import AuthorizationScope,ScopeKind,ModalityDomain,DomainRole,DomainRoleAssignment
-from .document import markdown_to_document
+from .document import markdown_to_document, DocumentProjectionError
 from .credential_vault import VaultUnavailableError, credential_vault
 from .asset_providers import DEFAULT_IMAGE_ENDPOINTS,DEFAULT_IMAGE_MODELS,IMAGE_PROVIDER_CATALOG
 from .net_safety import OutboundURLRejected, validate_outbound_url
@@ -304,7 +304,7 @@ class StorylineIn(BaseModel): id:str;name:str;description:str=""
 class BranchIn(BaseModel): id:str;name:str;parent_branch_id:str|None=None
 class RevisionWriteIn(BaseModel): expected_revision:int|None=None
 class RevisionStatusIn(RevisionWriteIn): status:str;chapter_version_id:str|None=None
-class AgentJobIn(BaseModel): agent_id:str;novel_id:str;chapter:int=Field(ge=1);instruction:str="";target:str="local";provider_id:str|None=None;model_id:str|None=None;execution_mode:str="deterministic";timeout_seconds:int=Field(default=120,ge=1,le=3600);branch_id:str|None=None
+class AgentJobIn(BaseModel): agent_id:str;novel_id:str;chapter:int=Field(ge=1);chapter_id:str|None=None;instruction:str="";target:str="local";provider_id:str|None=None;model_id:str|None=None;execution_mode:str="deterministic";timeout_seconds:int=Field(default=120,ge=1,le=3600);branch_id:str|None=None
 class AgentJobReviewIn(BaseModel): decision:str;reviewed_by:str=Field(min_length=1);note:str="";actions:list[dict]=[]
 class AgentJobApplyIn(BaseModel): applied_by:str=Field(min_length=1)
 class LoreEvidenceApiIn(BaseModel):
@@ -528,6 +528,7 @@ def guard(fn,*args):
     except RevisionConflict as exc:raise _revision_error(exc)
     except FileNotFoundError as exc:raise HTTPException(404,f"Not found: {exc}")
     except FileExistsError as exc:raise HTTPException(409,f"Already exists: {exc}")
+    except DocumentProjectionError as exc:raise HTTPException(400,{"code":exc.code,"message":str(exc)})
     except (ValueError,KeyError) as exc:raise HTTPException(400,str(exc))
 
 def screenplay_guard(fn, *args):
@@ -847,13 +848,13 @@ def clear_harness_access_audit(confirm: bool = Query(default=False)):
         raise HTTPException(400, {"code": "AUDIT_CLEAR_CONFIRMATION_REQUIRED"})
     return harness_access_audit_service.clear()
 @router.get("/harness/context",dependencies=[Depends(_shared_project_read)])
-def harness_context(novel_id: str, chapter: int, agent_id: str = "writer", instruction: str = ""):
+def harness_context(novel_id: str, chapter: int, agent_id: str = "writer", instruction: str = "", chapter_id: str | None = None):
     """Expose the existing Agent Context to an authorized local Harness as read-only data."""
     if not user_preference_service.list()["harness_enabled"]:
         raise HTTPException(403, {"code": "HARNESS_NOT_AUTHORIZED"})
     try:
-        context = agent_context_service.build(agent_id, novel_id, chapter, instruction, False)
-    except KeyError as exc:
+        context = agent_context_service.build(agent_id, novel_id, chapter, instruction, False, chapter_id)
+    except (KeyError, FileNotFoundError) as exc:
         harness_access_audit_service.append(novel_id=novel_id, chapter=chapter, agent_id=agent_id, scopes=[], outcome="not_found")
         raise HTTPException(404, {"code": "CONTEXT_NOT_FOUND", "field": str(exc)}) from exc
     # The Harness receives the generated context, never the caller instruction as a
@@ -922,18 +923,18 @@ def agent_chat(body:AgentChatIn,x_session_token:str|None=Header(None,alias="X-Se
         raise HTTPException(503,{"code":exc.code.value,"message":exc.safe_message,"retryable":exc.retryable}) from exc
     return {"message":result.generated_text,"provider_id":result.response.provider_id,"model_id":result.response.model_id,"read_only":True,"preferences_used":preferences_used}
 @router.get("/agents/{agent_id}/context-preview")
-def agent_context_preview(agent_id:str,novel_id:str,chapter:int,instruction:str="",target:str="local",x_session_token:str|None=Header(default=None),x_branch_id:str|None=Header(default=None)):
+def agent_context_preview(agent_id:str,novel_id:str,chapter:int,instruction:str="",target:str="local",x_session_token:str|None=Header(default=None),x_branch_id:str|None=Header(default=None),chapter_id:str|None=None):
     if settings.enable_collaboration_runtime:
         actor=_agent_job_read_actor(x_session_token)
         _validate_agent_job_branch(actor,novel_id,x_branch_id,"domain.read")
     if target not in {"local","cloud"}:raise HTTPException(400,"target must be local or cloud")
-    return guard(agent_context_service.build,agent_id,novel_id,chapter,instruction,target=="cloud")
+    return guard(agent_context_service.build,agent_id,novel_id,chapter,instruction,target=="cloud",chapter_id)
 @router.post("/agent-jobs",status_code=202)
 def create_agent_job(body:AgentJobIn,x_session_token:str|None=Header(default=None,alias="X-Session-Token")):
     actor=_agent_job_read_actor(x_session_token)
     _validate_agent_job_branch(actor,body.novel_id,body.branch_id,"domain.write")
     if body.target not in {"local","cloud"}:raise HTTPException(400,"target must be local or cloud")
-    result=guard(agent_job_service.create,body.agent_id,body.novel_id,body.chapter,body.instruction,body.target,body.provider_id,body.model_id,body.execution_mode,body.timeout_seconds)
+    result=guard(agent_job_service.create,body.agent_id,body.novel_id,body.chapter,body.instruction,body.target,body.provider_id,body.model_id,body.execution_mode,body.timeout_seconds,None,body.chapter_id)
     result={**result,"owner":{"actor_id":actor.actor_id,"workspace_id":actor.workspace_id}}
     if body.branch_id:result["branch_id"]=body.branch_id
     agent_job_service.generations.save(result)
@@ -1215,6 +1216,8 @@ def update_chapter(chapter_id:str,body:ChapterUpdate,x_session_token:str|None=He
             return collaboration_application_service.update_chapter(actor=actor,scope=scope,chapter_id=chapter_id,document=document,expected_version=body.version,reason=reason)
         return chapter_service.save(chapter_id,body.model_dump(exclude_none=True))
     except PermissionError as exc:raise HTTPException(403,{"code":"FORBIDDEN","detail":str(exc)})
+    except FileNotFoundError as exc: raise HTTPException(404,f"Not found: {exc}")
+    except DocumentProjectionError as exc: raise HTTPException(400,{"code":exc.code,"message":str(exc)})
     except VersionConflict as exc: raise HTTPException(409,{"code":"VERSION_CONFLICT","server":exc.current,"conflict":exc.as_dict()})
 @router.post("/chapters/{chapter_id}/archive")
 def archive_chapter(chapter_id:str,expected_version:int|None=None,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
@@ -1498,8 +1501,8 @@ def reject(jid:str,x_session_token:str|None=Header(None)):
     require_generation_content(guard(jobs.get,jid))
     return guard(jobs.reject,jid).public()
 @router.get("/context-preview",dependencies=[Depends(_shared_project_read)])
-def context_preview(novel_id:str,chapter:int,instruction:str="",target:str="cloud"):
-    ctx=guard(context_service.build,novel_id,chapter,instruction,target=="cloud"); return {**ctx,"token_estimate":len(json.dumps(ctx,ensure_ascii=False))//3,"secrets_policy":"Secrets excluded/redacted" if target=="cloud" else "Local-only context"}
+def context_preview(novel_id:str,chapter:int,instruction:str="",target:str="cloud",chapter_id:str|None=None):
+    ctx=guard(lambda: context_service.build(novel_id,chapter,instruction,target=="cloud",chapter_id=chapter_id)) if chapter_id is not None else guard(context_service.build,novel_id,chapter,instruction,target=="cloud"); return {**ctx,"token_estimate":len(json.dumps(ctx,ensure_ascii=False))//3,"secrets_policy":"Secrets excluded/redacted" if target=="cloud" else "Local-only context"}
 @router.get("/pending-canon",dependencies=[Depends(_shared_project_read)])
 def pending(novel_id:str):
     return guard(canon_service.list_pending,novel_id)

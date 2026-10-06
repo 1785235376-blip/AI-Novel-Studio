@@ -519,6 +519,7 @@ export function AiWritingPanel({
         <AiContextPreviewPanel
           novelId={novelId}
           chapterNumber={chapterNumber}
+          chapterId={authorPreview?.chapterId}
           chapterVersion={authorPreview?.chapterVersion}
           operation={operation}
           instruction={instruction}

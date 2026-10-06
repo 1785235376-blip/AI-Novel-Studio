@@ -1,0 +1,45 @@
+# A43-01: rich manuscript projection and round-trip repair
+
+## Scope and authority
+
+This is a shared-core repair inherited from `ad1a90dced36208c63bfd65f5e1d918d4a4f7695`, not a claim that PR43 introduced the old defect. Structured TipTap JSON remains the manuscript authority. Markdown and plain text are derived views. No Editor feature or historical node is removed, no new rendering subsystem is introduced, and no model/provider is called.
+
+`app/document.py` now owns recursive projections for the actual StarterKit text nodes: paragraph, heading, nested bullet/ordered lists and list items, blockquote, hardBreak, codeBlock, text, and horizontalRule. Known marks are bold, italic, strike, and code. Chinese, astral emoji and decomposed Unicode are not normalized. Lists retain order/start; hardBreak retains a newline; nested containers cannot silently discard descendants. Inline style can degrade in text/Markdown exports, as it did previously; all text and the original JSON marks remain. Code fences grow when the original code contains literal fences.
+
+The shared validator rejects unknown nodes/marks or malformed node shapes with `DocumentProjectionError` (`DOCUMENT_PROJECTION_UNSUPPORTED`). A failed save projects before history/JSON/Markdown writes. Existing unsupported JSON is not rewritten, normalized, deleted or replaced by stale Markdown. Its read, duplicate and text export fail explicitly; lossless source recovery or an explicitly implemented adapter is required. Original chapter GET/duplicate/list paths use their existing guarded error response, and both chapter PUT aliases return a clear 400 error. The error contains no manuscript fragment. JSON-only artifacts can retain original structured data without pretending a supported text rendering exists.
+
+## Save, reopen, copy and export
+
+- File and PostgreSQL get/save use the same recursive Markdown projector.
+- File list/list_archived include the authoritative document, while retaining the old list-content terminal-newline compatibility. Export snapshots therefore contain original JSON rather than only a cached Markdown view.
+- File duplicate deep-copies the document and writes a version-1 document package. Both backends use `clone_document_with_title` to replace only a leading chapter-title H1, or insert one before other content. Nested lists, quote, code, marks, attributes and all other body nodes survive. A leading H2 is not deleted. Existing history is untouched.
+- Original `NovelService`, durable `ExportJobService`, and existing `/api` plus `/api/v1` routes remain the owners. No alternate queue was introduced. Snapshots stay immutable after later edits.
+- TXT/Markdown/DOCX/EPUB/PDF use structured data when present, even when cached `content` is stale. The separately rendered chapter title is removed from body text only when an exact leading H1 repeats it. Legacy content-only snapshots still work.
+- DOCX/EPUB are intentionally text/chapter exporters, not rich-style-fidelity renderers. They preserve full text, including lists/quotes and line breaks. Their original package and snapshot/download contracts remain unchanged.
+- PDF uses the original renderer/font selection. A CID UCS-2 fallback cannot encode astral emoji, so it now fails with `PDF_UNSUPPORTED_CHARACTERS` instead of substituting a box or producing a misleading successful artifact. Embedded fonts are checked against their real character-to-glyph table. The queue exposes the safe PDF error code and creates no downloadable successful artifact on failure. Supported CJK nested text is checked by parsing the generated PDF. This does not certify target-reader glyph appearance or arbitrary fonts.
+
+## Coordinate contracts
+
+1. Structured storage: exact saved JSON, with document version and digest. It is never reconstructed from a Markdown projection to duplicate a chapter.
+2. Editor/search/Interop: `plain_text` returns depth-first text blocks joined by exactly one LF. Every hardBreak is one LF. Empty text blocks count; containers and horizontalRule add no characters; marks add no characters. Offsets are Unicode codepoints, not UTF-8 bytes or JavaScript string indices. `experimental.ux.chapter_text` and `local_interop.provider.anchor_text` delegate to this projector. Interop1.0 schemas are unchanged.
+3. Selection/partial revision: original ProseMirror positions still count UTF-16 code units plus node boundaries. Original `text_blocks`/`selection_snapshot` maps them to exact saved block paths/text and applies the existing emoji/cluster fences. It does not use Markdown offsets. Unsupported nontext selections/comparisons still fail under their existing rules.
+4. Version comparison: original saved text blocks joined by LF, Unicode-codepoint evidence offsets and version/document digests. The existing diff and partial-adoption implementation is unchanged. A horizontal rule remains an explicitly unsupported comparison object, not a fabricated text diff.
+5. Context: legacy chapter `content` remains Markdown, including heading/list/quote/code syntax; inline marks do not introduce new syntax. Context budgets and the original AUTO last-2000-character cap are unchanged. Exact editor selections are checked against the saved document projection by `saved_source_matches`. There is no claim that Markdown positions equal editor positions or that token count is known without a tokenizer.
+
+`tests/fixtures/a43_rich_document_coordinates.json` pins one complex manuscript, its complete plain text, and original PM UTF-16 block positions. The additive Python tests and real TipTap/Editor tests consume the same fixture and independently verify those contracts, including emoji, Chinese, nested lists/quotes, hardBreak, code, marks, edits, save/reopen and selection.
+
+## Evidence and reproducibility
+
+Additive Python test: `tests/test_a43_rich_document.py`.
+Additive real-Editor test: `frontend/src/Editor.a43-rich.test.tsx`.
+No pre-existing assertion, skip rule or timeout was removed or weakened.
+
+Local runner: Python 3.12.14, Node 24.19.0, pnpm 10.6.5. These are explicitly local supplemental results, not the audited CI Python 3.12.9 environment or native-device acceptance. Python tests use isolated synthetic repositories, `NOVEL_DATA_PATH` and `XDG_DATA_HOME`, with repository `PROJECT_ROOT` to load the original prompt assets. PostgreSQL cases require the dedicated real test endpoint and retain the repository's existing backend skip rules; no synthetic Session is presented as PostgreSQL integration.
+
+Selected original safety JUnit and exact source/hash receipts are published under `docs/delivery/a43-fixes/supplemental/`; intermediate local failure history is preserved separately. The baseline is a complete `git archive ad1a90d` with only the additive test/fixture copied in. Formal safety failures are RED on that unchanged source; repaired results are GREEN on the fix branch. Initial environment/harness mistakes, intermediate failures, and their corrected runs are retained and labeled separately rather than erased. The original audit observation scripts remain unchanged and are collected separately by the integration owner.
+
+Final identical additive Python suite (45 cases): baseline **27 failed, 2 passed, 16 PostgreSQL skips**; fixed File **29 passed, 16 PostgreSQL skips**. The baseline's 333 app blobs were checked against the fixed audit commit and match; the test-file SHA-256 is identical in both runs. Combined targeted existing/new Python suite: **217 passed, 112 expected backend skips**. That combined suite overlaps the rich suite and must not be added to it. Real-Editor targeted: **3 new plus 7 original tests passed**; TypeScript typecheck passed. See `docs/delivery/a43-fixes/supplemental/RICH_SUPPLEMENTAL.json` and selected original JUnit. Actual PostgreSQL integration and full-suite results are owned by the overall repair receipt; local skips never become PostgreSQL passes.
+
+## Unchanged acceptance boundaries
+
+F00 remains INTEGRATED; the other 39 features remain PARTIAL. Real models, GPU, TTS/translation quality, Windows IME/vault/install/upgrade/interaction, target NLE/game-engine validation remain NOT_RUN/LOCAL_REQUIRED. Historical independent review remains BLOCKED. Experimental flags remain default OFF and V1 acceptance forces OFF. No PR37–43 rewrite, merge, release, deployment or V1 backport is authorized by these tests. No real user manuscripts, credentials, paid API calls, model downloads or user-runtime changes were used.

@@ -1,0 +1,86 @@
+{
+  "layer": "real File + original services; synthetic actor/authority callbacks and vectors; not HTTP membership/native/model verification",
+  "results": [
+    {
+      "name": "all experimental default OFF",
+      "status": "PASS"
+    },
+    {
+      "name": "V1 overrides explicit all feature request",
+      "status": "PASS"
+    },
+    {
+      "name": "missing dependencies do not auto-enable",
+      "status": "PASS"
+    },
+    {
+      "name": "wildcard does not enable",
+      "status": "PASS"
+    },
+    {
+      "name": "wrong version fails compare-and-swap",
+      "status": "PASS"
+    },
+    {
+      "name": "wrong CAS leaves original state",
+      "status": "PASS"
+    },
+    {
+      "name": "other project cannot address same scope row",
+      "status": "PASS"
+    },
+    {
+      "name": "transaction exception does not commit File metadata",
+      "status": "PASS"
+    },
+    {
+      "name": "private research hidden from different actor",
+      "status": "PASS"
+    },
+    {
+      "name": "owner sees private original exact bytes",
+      "status": "PASS"
+    },
+    {
+      "name": "explicit PROJECT share permits current text",
+      "status": "PASS"
+    },
+    {
+      "name": "public share never exposes old private history",
+      "status": "PASS"
+    },
+    {
+      "name": "historical restore creates new PRIVATE version",
+      "status": "PASS"
+    },
+    {
+      "name": "restore removes prior public reader access",
+      "status": "PASS"
+    },
+    {
+      "name": "unconfigured embedding explicitly no lexical fallback",
+      "status": "PASS"
+    },
+    {
+      "name": "found research is not proof of runnable embedding",
+      "status": "PASS"
+    },
+    {
+      "name": "private research index has owner gate",
+      "status": "PASS"
+    },
+    {
+      "name": "synthetic embedding activation explicitly labelled mock",
+      "status": "PASS"
+    },
+    {
+      "name": "research revocation invalidates index token",
+      "status": "PASS"
+    },
+    {
+      "name": "research revocation erases cached vectors",
+      "status": "PASS"
+    }
+  ],
+  "root": "/tmp/pr43-boundaries-l3l4u871"
+}
