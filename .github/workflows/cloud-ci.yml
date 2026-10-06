@@ -27,9 +27,10 @@ jobs:
   backend:
     name: Backend / ${{ matrix.backend }}
     runs-on: ubuntu-24.04
-    # The expanded marked PG suite reached 83% while still advancing at the
-    # former 20-minute cap; retain a finite cap without skipping contracts.
-    timeout-minutes: ${{ matrix.backend == 'postgres' && 30 || 20 }}
+    # The shared-repair suite adds 638 marked PG cases (1,982 total). Both
+    # 94e74 runs reached the 30-minute outer cap while still advancing at
+    # 87%/94%. Keep every test/timeout/no-skip assertion and a finite outer cap.
+    timeout-minutes: ${{ matrix.backend == 'postgres' && 45 || 20 }}
     strategy:
       fail-fast: false
       matrix:
