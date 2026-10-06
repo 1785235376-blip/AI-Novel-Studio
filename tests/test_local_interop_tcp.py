@@ -264,3 +264,34 @@ def test_transport_actual_deadline_and_cancellation():
         server.shutdown()
         server.server_close()
         thread.join(timeout=2)
+
+
+def test_real_diagnostics_rejects_missing_capsule_and_source_content(synthetic_endpoint):
+    from local_interop_protocol import create_diagnostic
+    async def run():
+        transport = LoopbackTransport(synthetic_endpoint)
+        opened = await handshake(transport)
+        now = datetime.now(timezone.utc)
+        diagnostic = create_diagnostic(
+            diagnostic_id="diagnostic-test", source_version="source-1",
+            software_id=STUDIO_PRODUCT_ID, software_version="0.7.0", feature="editor",
+            created_at=now, expires_at=now + timedelta(minutes=1))
+        missing = TutorRequest(request_id="diagnostic-missing", session_id=opened.session.session_id,
+                               context=capsule())
+        selected = TutorRequest(request_id="diagnostic-content", session_id=opened.session.session_id,
+                                context=capsule(ContextContent(level="SELECTED_TEXT",
+                                    text="Synthetic selection only.", consent_id="consent-test")),
+                                diagnostic=diagnostic)
+        for message in (missing, selected):
+            with pytest.raises(InteropFailure) as denied:
+                await transport.request("diagnostics", message, token=opened.session_token)
+            assert denied.value.code == "INVALID_MESSAGE"
+        with pytest.raises(InteropFailure) as bypass:
+            await transport.request("tutor", selected, token=opened.session_token)
+        assert bypass.value.code == "INVALID_MESSAGE"
+        valid = TutorRequest(request_id="diagnostic-valid", session_id=opened.session.session_id,
+                             context=capsule(), diagnostic=diagnostic)
+        result = parse_wire(TutorGuidance, await transport.request("diagnostics", valid,
+                            token=opened.session_token))
+        assert result.request_id == valid.request_id
+    asyncio.run(run())

@@ -100,6 +100,15 @@ class ContextPreviewInput(SessionInput):
     metadata_fields: list[Literal["task", "error", "model", "runtime"]] = Field(default_factory=lambda: sorted(METADATA_FIELDS), max_length=4)
 
 
+class EventPreviewInput(SessionInput):
+    metadata_fields: list[Literal["task", "error", "model", "runtime"]] = Field(default_factory=list, max_length=4)
+
+
+class EventSubscribeInput(SessionInput):
+    preview_id: OpaqueId
+    confirmed: bool
+
+
 class DiagnosticPreviewInput(SessionInput):
     fields: list[Literal["software_id", "software_version", "feature", "error_code", "task_state", "runtime", "model", "capability_state"]] = Field(default_factory=lambda: sorted(DIAGNOSTIC_FIELDS), max_length=8)
 
@@ -246,25 +255,46 @@ def create_local_interop_router(host, *, prefix="/api/local-interop"):
     async def case_approve(body: CaseApproveInput, x_session_token: str | None = Header(None)):
         return reply(host.case_approve(x_session_token, body), x_session_token, body.session_id)
 
+    @router.post("/events/preview")
+    async def event_preview(body: EventPreviewInput, x_session_token: str | None = Header(None)):
+        return reply(host.event_preview(x_session_token, body), x_session_token, body.session_id)
+
+    @router.post("/events/subscribe")
+    async def event_subscribe(body: EventSubscribeInput, x_session_token: str | None = Header(None)):
+        async def approve(): return host.event_subscribe(x_session_token, body)
+        result = await host.run(x_session_token, body.request_id, approve)
+        return reply(result, x_session_token, body.session_id)
+
+    @router.post("/events/unsubscribe")
+    async def event_unsubscribe(body: SessionInput, x_session_token: str | None = Header(None)):
+        return reply(host.event_unsubscribe(x_session_token, body), x_session_token, body.session_id)
+
     @router.get("/events")
     async def events(session_id: str, after: int = Query(0, ge=0), x_session_token: str | None = Header(None)):
-        return reply(host.events(x_session_token, session_id, after), x_session_token, session_id)
+        value = host.events(x_session_token, session_id, after)
+        session = host._session(x_session_token, session_id)
+        grant_id = session.event_grant_id
+        return AuthorityJSONResponse(value, lambda: host._event_guard(session, grant_id, x_session_token) if grant_id else host._session(x_session_token, session_id))
 
     @router.get("/events/stream")
     async def events_stream(request: Request, session_id: str, after: int = Query(0, ge=0), x_session_token: str | None = Header(None)):
-        host._session(x_session_token, session_id)
+        session = host._session(x_session_token, session_id)
+        grant_id = session.event_grant_id
+        host._event_guard(session, grant_id, x_session_token)
         async def stream():
             cursor = after
             while not await request.is_disconnected():
-                try: result = host.events(x_session_token, session_id, cursor)
+                try:
+                    host._event_guard(session, grant_id, x_session_token)
+                    result = host.events(x_session_token, session_id, cursor)
                 except (InteropFailure, ProtocolViolation): return
                 for event in result["events"]:
-                    try: host._session(x_session_token, session_id)
+                    try: host._event_guard(session, grant_id, x_session_token)
                     except (InteropFailure, ProtocolViolation): return
                     cursor = event["sequence"]
                     yield ("data: " + json.dumps(event, ensure_ascii=False, separators=(",", ":")) + "\n\n").encode()
                 await asyncio.sleep(host.event_interval)
-        return AuthorityEventResponse(stream(), lambda: host._session(x_session_token, session_id))
+        return AuthorityEventResponse(stream(), lambda: host._event_guard(session, grant_id, x_session_token))
 
     @router.post("/cancel")
     async def cancel(body: CancelInput, x_session_token: str | None = Header(None)):

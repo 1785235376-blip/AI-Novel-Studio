@@ -188,7 +188,7 @@
         "tests/test_local_interop_cross_process_host.py",
         "frontend/tests/e2e/local-interop.spec.ts"
       ],
-      "implementation": "Host rechecks authority at event delivery and response send; membership/session/project/scope/disable revocation terminates affected subscriptions while independent authorized readers continue."
+      "implementation": "Host rechecks authority at event delivery and response send; membership/session/project/scope/disable revocation terminates affected subscriptions while independent authorized readers continue. Ongoing event sharing now requires separate positive preview approval; connect alone grants no events. Payload, event names and change timing honor the chosen field groups; diagnostic preview pauses and clears the grant."
     },
     {
       "section": 18,
@@ -314,7 +314,7 @@
         "tests/test_local_interop_cross_process_host.py",
         "frontend/tests/e2e/local-interop.spec.ts"
       ],
-      "implementation": "Exact diagnostic/envelope preview supports removing fields before confirmation; snapshot is sanitized, versioned, bounded and LOCAL_ONLY."
+      "implementation": "Exact diagnostic/envelope preview supports removing fields before confirmation; snapshot is sanitized, versioned, bounded and LOCAL_ONLY. Canonical DIAGNOSTICS transport uses correlated TutorRequest with required DiagnosticCapsule and content NONE. Ongoing metadata sharing is paused before diagnostic preview."
     },
     {
       "section": 29,
@@ -466,7 +466,7 @@
         "tests/test_local_interop_cross_process_host.py",
         "frontend/tests/e2e/local-interop.spec.ts"
       ],
-      "implementation": "Bounded deadlines and cancellation cover waiting calls; old request/session responses are rejected and cannot populate new UI state."
+      "implementation": "Bounded deadlines and cancellation cover waiting calls; old request/session responses are rejected and cannot populate new UI state. Committed subscription cancellation revokes its exact grant; pre-canceled/replayed previews cannot authorize delivery."
     },
     {
       "section": 42,
@@ -739,7 +739,7 @@
   ],
   "status_scope": "Two-repository implementation and executed local contract/reference proof. Exact-head hosted results are recorded separately on the Draft PR; no future CI result is self-certified here.",
   "product_id": "poemseed.creative.studio",
-  "protocol_manifest_sha256": "9e3f77de6f169782c3fd25dfb298eda927832abfca2dd6210e871e73b37919b2",
+  "protocol_manifest_sha256": "77c1f82f0aec0ef385d95cacf6fe04530b83fb62d2403bc7341cbe6bf19c858c",
   "historical_boundaries": [
     "39 PARTIAL + F00 INTEGRATED unchanged",
     "Historical independent review BLOCKED unchanged",

@@ -31,7 +31,10 @@ from app.local_interop.api import (
     ConnectInput,
     ContextPreviewInput,
     DiagnosticPreviewInput,
+    EventPreviewInput,
+    EventSubscribeInput,
     HandoffInput,
+    SessionInput,
     VerifyInput,
     create_local_interop_router,
 )
@@ -99,7 +102,8 @@ def env(request, tmp_path, monkeypatch):
     recorded = []
     class InProcessTransport:
         def __init__(self, endpoint): assert_endpoint(endpoint)
-        async def request(self, operation, message=None, *, token=None):
+        async def request(self, operation, message=None, *, token=None, before_send=None):
+            if before_send: before_send()
             recorded.append((operation, message, token))
             async with httpx.AsyncClient(transport=httpx.ASGITransport(app=tutor_app, client=("127.0.0.1", 41000)), base_url="http://127.0.0.1") as client:
                 response = await client.request("GET" if operation == "discovery" else "POST", "/interop/v1/" + operation,
@@ -119,6 +123,10 @@ def env(request, tmp_path, monkeypatch):
         result = await host.run(token, b.request_id, lambda: host.connect(token, b))
         return result["session_id"]
     e.connect = connect
+    def subscribe(sid, token="author", fields=("task", "error", "model", "runtime")):
+        preview = host.event_preview(token, EventPreviewInput(session_id=sid, metadata_fields=list(fields)))
+        return host.event_subscribe(token, EventSubscribeInput(session_id=sid, preview_id=preview["preview_id"], confirmed=True))
+    e.subscribe = subscribe
     yield e
     if backend == "postgres":
         try: bundle.novels.delete(project_id)
@@ -126,6 +134,14 @@ def env(request, tmp_path, monkeypatch):
 
 
 def run(test): return asyncio.run(test())
+
+
+async def wait_for_observation(predicate, *, timeout=10):
+    """Wait for actual producer/peer evidence, not a File-speed sleep budget."""
+    deadline = asyncio.get_running_loop().time() + timeout
+    while not predicate():
+        assert asyncio.get_running_loop().time() < deadline, "Expected interop observation did not arrive"
+        await asyncio.sleep(.01)
 
 
 def test_real_authorization_metadata_preview_and_explicit_selection(env):
@@ -189,6 +205,8 @@ def test_revocation_stops_old_events_independent_reader_survives(env, monkeypatc
     e = env
     async def scenario():
         first, second = await e.connect(), await e.connect("reader")
+        e.subscribe(first)
+        e.subscribe(second, "reader")
         assert e.host.events("author", first)["events"]
         assert e.host.events("reader", second)["events"]
         if change == "session": e.sessions.revoke("author")
@@ -298,9 +316,9 @@ def test_cancellation_during_handshake_and_late_reply_isolation(env):
         gate = asyncio.Event()
         original = e.host.transport_factory
         class Delayed(original):
-            async def request(self, operation, message=None, *, token=None):
+            async def request(self, operation, message=None, *, token=None, before_send=None):
                 if operation == "hello": await gate.wait()
-                return await super().request(operation, message, token=token)
+                return await super().request(operation, message, token=token, before_send=before_send)
         e.host.transport_factory = Delayed
         e.host.configure("author", True)
         body = e.body()
@@ -353,12 +371,14 @@ def test_peer_event_cursor_independent_and_queue_bounded(env):
     e = env
     async def scenario():
         sid = await e.connect()
+        e.subscribe(sid)
         first = e.host.events("author", sid)
         first_again = e.host.events("author", sid)
         assert first_again == first
         # Polling first must not steal the peer's initial event.
-        await asyncio.sleep(.12)
         session = e.host.sessions[sid]
+        await wait_for_observation(lambda: e.peer.event_sequences.get(session.wire_session.session_id) == first["sequence"])
+        assert sid in e.host.sessions
         assert e.peer.event_sequences[session.wire_session.session_id] == first["sequence"]
         for i in range(45):
             row = e.bundle.chapters.get(e.chapter["id"])
@@ -379,8 +399,8 @@ def test_pending_guidance_cannot_cross_revocation_or_source_change(env, change):
         original = e.host.transport_factory
         entered, release = asyncio.Event(), asyncio.Event()
         class Delayed(original):
-            async def request(self, operation, message=None, *, token=None):
-                result = await super().request(operation, message, token=token)
+            async def request(self, operation, message=None, *, token=None, before_send=None):
+                result = await super().request(operation, message, token=token, before_send=before_send)
                 if operation == "tutor": entered.set(); await release.wait()
                 return result
         e.host.transport_factory = Delayed
@@ -510,8 +530,8 @@ def test_handshake_correlation_and_minimum_capabilities_fail_closed(env, attack,
     e = env
     original = e.host.transport_factory
     class Hostile(original):
-        async def request(self, operation, message=None, *, token=None):
-            raw = await super().request(operation, message, token=token)
+        async def request(self, operation, message=None, *, token=None, before_send=None):
+            raw = await super().request(operation, message, token=token, before_send=before_send)
             value = json.loads(raw)
             if attack == "hello-nonce" and operation == "hello": value["session_nonce"] = "different-" + "a" * 24
             if attack == "missing-capability" and operation == "negotiate": value["granted_capabilities"].remove("tutor.guidance.receive")
@@ -532,9 +552,9 @@ def test_slow_earlier_connect_cannot_replace_newer_session(env):
     async def scenario():
         entered, release = asyncio.Event(), asyncio.Event()
         class Slow(original):
-            async def request(self, operation, message=None, *, token=None):
+            async def request(self, operation, message=None, *, token=None, before_send=None):
                 if operation == "hello": entered.set(); await release.wait()
-                return await super().request(operation, message, token=token)
+                return await super().request(operation, message, token=token, before_send=before_send)
         e.host.transport_factory = Slow
         first = asyncio.create_task(e.connect())
         await entered.wait()
@@ -562,3 +582,142 @@ def test_old_cached_runtime_health_is_unknown_not_verified(env):
     e.host.provider.model_center = SimpleNamespace(models={model.id: model}, runtimes={runtime.id: runtime}, lifecycle=SimpleNamespace(instances={runtime.id: instance}))
     assert e.host.provider.model_rows()[0]["availability"] == "UNKNOWN"
     assert e.host.provider.model_rows()[0]["last_validated"] is None
+
+
+def test_connect_preview_cancel_and_one_shot_share_do_not_grant_events(env):
+    e = env
+    async def scenario():
+        sid = await e.connect()
+        await asyncio.sleep(.12)
+        assert not e.host.sessions[sid].events
+        assert e.host.events("author", sid)["events"] == []
+        assert not any(op == "events" for op, _, _ in e.recorded)
+        ordinary = e.host.context_preview("author", ContextPreviewInput(session_id=sid))
+        await e.host.ask("author", AskInput(session_id=sid, preview_id=ordinary["preview_id"], confirmed=True))
+        preview_body = EventPreviewInput(session_id=sid, metadata_fields=["task"])
+        preview = e.host.event_preview("author", preview_body)
+        assert preview["subscription_active"] is False
+        assert preview["capsule"]["content"]["level"] == "NONE"
+        e.host.cancel("author", preview_body.request_id, sid)
+        with pytest.raises(InteropFailure, match="CONTEXT_STALE"):
+            e.host.event_subscribe("author", EventSubscribeInput(session_id=sid, preview_id=preview["preview_id"], confirmed=True))
+        await asyncio.sleep(.12)
+        assert not any(op == "events" for op, _, _ in e.recorded)
+        assert not e.host.sessions[sid].events
+        await e.host.shutdown()
+    run(scenario)
+
+
+@pytest.mark.parametrize("invalidate", ["source", "unsubscribe", "diagnostic", "replay", "wrong-kind", "cancel-before-subscribe"])
+def test_event_subscription_requires_fresh_single_use_scoped_consent(env, invalidate):
+    e = env
+    async def scenario():
+        sid = await e.connect()
+        preview = e.host.event_preview("author", EventPreviewInput(session_id=sid, metadata_fields=["task"]))
+        body = EventSubscribeInput(session_id=sid, preview_id=preview["preview_id"], confirmed=True)
+        if invalidate == "source":
+            e.bundle.chapters.save(e.chapter["id"], {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Changed before consent"}]}]}, e.chapter["version"])
+        elif invalidate == "unsubscribe": e.host.event_unsubscribe("author", SessionInput(session_id=sid))
+        elif invalidate == "diagnostic": e.host.diagnostic_preview("author", DiagnosticPreviewInput(session_id=sid, fields=[]))
+        elif invalidate == "replay": e.host.event_subscribe("author", body)
+        elif invalidate == "wrong-kind":
+            ordinary = e.host.context_preview("author", ContextPreviewInput(session_id=sid))
+            body = body.model_copy(update={"preview_id": ordinary["preview_id"]})
+        else: e.host.cancel("author", body.request_id, sid)
+        with pytest.raises((InteropFailure, ProtocolViolation)):
+            e.host.event_subscribe("author", body)
+        if invalidate != "replay": assert e.host.sessions[sid].event_grant_id is None
+        await e.host.shutdown()
+    run(scenario)
+
+
+def test_event_projection_omits_unapproved_metadata_and_event_names(env):
+    e = env
+    task = {"id": "grant-task-" + e.suffix, "novel_id": e.project_id, "chapter_id": e.chapter["id"],
+        "actor_id": e.actor_ids["author"], "workspace_id": e.workspace_id, "scope": {"kind": "BRANCH", **e.scope},
+        "operation": "continue", "status": "FAILED", "error_code": "SYNTHETIC_ERROR", "updated_at": "1"}
+    e.bundle.generations.save(task)
+    async def scenario():
+        sid = await e.connect(task_id=task["id"])
+        preview = e.host.event_preview("author", EventPreviewInput(session_id=sid, metadata_fields=[]))
+        approved = e.host.event_subscribe("author", EventSubscribeInput(session_id=sid, preview_id=preview["preview_id"], confirmed=True))
+        assert approved["metadata_fields"] == []
+        initial = e.host.events("author", sid)
+        await wait_for_observation(lambda: len([op for op, _, _ in e.recorded if op == "events"]) >= 1)
+        sent = [message for op, message, _ in e.recorded if op == "events"]
+        assert len(sent) == 1
+        assert sent[0].context.task_status is None and sent[0].context.error_code is None
+        assert all(item.source_id != "task_status" for item in sent[0].context.evidence)
+        task.update(status="COMPLETED", error_code="DIFFERENT_ERROR", updated_at="2")
+        e.bundle.generations.save(task)
+        await asyncio.sleep(.12)
+        assert e.host.events("author", sid)["sequence"] == initial["sequence"]
+        assert len([op for op, _, _ in e.recorded if op == "events"]) == 1
+        row = e.bundle.chapters.get(e.chapter["id"])
+        e.bundle.chapters.save(e.chapter["id"], {"type": "doc", "content": [{"type": "paragraph", "content": [{"type": "text", "text": "Approved chapter version changed"}]}]}, row["version"])
+        await wait_for_observation(lambda: len([op for op, _, _ in e.recorded if op == "events"]) >= 2)
+        sent = [message for op, message, _ in e.recorded if op == "events"]
+        assert len(sent) == 2 and sent[-1].event_type == "CHAPTER_OPENED"
+        assert sent[-1].context.task_id is None and sent[-1].context.task_status is None
+        assert sent[-1].context.error_code is None and sent[-1].context.model_id is None
+        paused = e.host.diagnostic_preview("author", DiagnosticPreviewInput(session_id=sid, fields=[]))
+        assert paused["event_subscription_paused"] is True
+        assert e.host.sessions[sid].event_grant_id is None and not e.host.sessions[sid].events
+        await e.host.ask("author", AskInput(session_id=sid, preview_id=paused["preview_id"], confirmed=True), diagnostic=True)
+        await asyncio.sleep(.12)
+        assert len([op for op, _, _ in e.recorded if op == "events"]) == 2
+        await e.host.shutdown()
+    run(scenario)
+
+
+def test_unsubscribe_cancels_unsent_event_and_old_sse_grant(env):
+    from app.local_interop.api import AuthorityEventResponse
+    e = env
+    async def scenario():
+        entered, release = asyncio.Event(), asyncio.Event()
+        original = e.host.transport_factory
+        class Delayed(original):
+            async def request(self, operation, message=None, *, token=None, before_send=None):
+                if operation == "events": entered.set(); await release.wait()
+                return await super().request(operation, message, token=token, before_send=before_send)
+        e.host.transport_factory = Delayed
+        sid = await e.connect()
+        e.subscribe(sid, fields=["task"])
+        await asyncio.wait_for(entered.wait(), 2)
+        session = e.host.sessions[sid]
+        grant_id = session.event_grant_id
+        e.host.event_unsubscribe("author", SessionInput(session_id=sid))
+        release.set()
+        await asyncio.sleep(.12)
+        assert not any(op == "events" for op, _, _ in e.recorded)
+        assert not session.events and session.event_grant_id is None
+        assert sid in e.host.sessions  # Pause does not silently break/reconnect.
+        # A new grant cannot revive a queued frame from the previous grant.
+        e.subscribe(sid, fields=[])
+        sent = []
+        async def send(message): sent.append(message)
+        async def receive(): await asyncio.sleep(10)
+        async def frames(): yield b"data: OLD_APPROVAL_MUST_NOT_ESCAPE\n\n"
+        response = AuthorityEventResponse(frames(), lambda: e.host._event_guard(session, grant_id))
+        await response({"type": "http", "asgi": {"spec_version": "2.4"}}, receive, send)
+        assert all(not message.get("body") for message in sent)
+        await e.host.shutdown()
+    run(scenario)
+
+
+def test_cancel_subscribe_receipt_revokes_exact_committed_grant(env):
+    e = env
+    async def scenario():
+        sid = await e.connect()
+        preview = e.host.event_preview("author", EventPreviewInput(session_id=sid, metadata_fields=["task"]))
+        body = EventSubscribeInput(session_id=sid, preview_id=preview["preview_id"], confirmed=True)
+        e.host.event_subscribe("author", body)
+        assert e.host.sessions[sid].event_grant_id
+        e.host.cancel("author", body.request_id, sid)
+        await asyncio.sleep(.12)
+        assert e.host.sessions[sid].event_grant_id is None
+        assert not any(op == "events" for op, _, _ in e.recorded)
+        with pytest.raises(InteropFailure, match="CANCELLED"):
+            e.host.delivery_guard("author", sid, body.request_id)
+        await e.host.shutdown()
+    run(scenario)

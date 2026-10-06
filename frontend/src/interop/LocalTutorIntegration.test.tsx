@@ -26,10 +26,13 @@ beforeEach(() => {
     const custom = handler?.(path, body, init); if (custom) return custom;
     if (path === '/status') return response({ feature_enabled: true, enabled, acceptance_mode: false, product, capabilities, disabled_capabilities: ['model.execute', 'project.write'], desktop_status: 'LOCAL_REQUIRED', ...overrideStatus });
     if (path === '/settings') { enabled = body.enabled; return response({ enabled }); }
-    if (path === '/connect') return response({ request_id: body.request_id, session_id: 'session', protocol_session_id: 'session', product, capabilities, desktop_status: 'LOCAL_REQUIRED', mode: 'MOCK_ONLY' });
+    if (path === '/connect') return response({ request_id: body.request_id, session_id: 'session', protocol_session_id: 'session', product, capabilities, desktop_status: 'LOCAL_REQUIRED', mode: 'MOCK_ONLY', subscription_active: false, metadata_fields: [] });
     if (path === '/context/preview') return response({ request_id: body.request_id, session_id: body.session_id, preview_id: 'preview', capsule: capsule(body.content_kind === 'SELECTION' ? 'SELECTED_TEXT' : body.content_kind === 'CHAPTER' ? 'CURRENT_CHAPTER' : 'NONE'), expires_at: expires() });
     if (path.startsWith('/context/sources')) return response({ session_id: 'session', items: [{ id: 'source-chapter', label: 'Chapter 2', version: 3 }] });
-    if (path === '/diagnostics/preview') return response({ request_id: body.request_id, session_id: body.session_id, preview_id: 'diagnostic-preview', diagnostic: Object.fromEntries(body.fields.map((field: string) => [field, `safe-${field}`])), capsule: { ...capsule(), module: 'local-interop', surface: 'diagnostics', chapter_id: undefined, chapter_version: undefined }, expires_at: expires() });
+    if (path === '/diagnostics/preview') return response({ request_id: body.request_id, session_id: body.session_id, preview_id: 'diagnostic-preview', diagnostic: Object.fromEntries(body.fields.map((field: string) => [field, `safe-${field}`])), capsule: { ...capsule(), module: 'local-interop', surface: 'diagnostics', chapter_id: undefined, chapter_version: undefined }, expires_at: expires(), event_subscription_paused: true });
+    if (path === '/events/preview') return response({ request_id: body.request_id, session_id: body.session_id, preview_id: 'event-preview', capsule: capsule(), metadata_fields: body.metadata_fields, expires_at: expires(), subscription_active: false });
+    if (path === '/events/subscribe') return response({ request_id: body.request_id, session_id: body.session_id, subscription_active: true, metadata_fields: calls.filter(value => value.path === '/events/preview').at(-1)?.body.metadata_fields ?? [] });
+    if (path === '/events/unsubscribe') return response({ request_id: body.request_id, session_id: body.session_id, subscription_active: false, metadata_fields: [] });
     if (path === '/ask' || path === '/diagnostics/share') return response({ request_id: body.request_id, session_id: body.session_id, guidance: advice(body.request_id) });
     if (path === '/handoff') return response({ request_id: body.request_id, session_id: body.session_id, route: { action: 'OPEN_FEATURE', feature: 'model-center', project_id: 'project' } });
     if (path === '/verify') return response({ request_id: body.request_id, session_id: body.session_id, result: { ...protocol, request_id: body.request_id, session_id: body.session_id, result_id: 'result', status: 'UNKNOWN', reason: '缺少真实来源', evidence: [], created_at: new Date().toISOString() } });
@@ -152,7 +155,7 @@ it('cancels pending connects by request identity and disconnects a late-created 
   fireEvent.click(screen.getByRole('button', { name: '连接本机 Tutor' }));
   fireEvent.click(await screen.findByRole('button', { name: '取消当前请求' }));
   expect(calls.find(value => value.path === '/cancel')?.body.request_id).toBe(body.request_id);
-  await act(async () => resolve(response({ request_id: body.request_id, session_id: 'late-session', product, capabilities, mode: 'MOCK_ONLY' })));
+  await act(async () => resolve(response({ request_id: body.request_id, session_id: 'late-session', product, capabilities, mode: 'MOCK_ONLY', subscription_active: false, metadata_fields: [] })));
   await waitFor(() => expect(calls.some(value => value.path === '/disconnect' && value.body.session_id === 'late-session')).toBe(true));
   expect(screen.queryByText('Synthetic Tutor')).toBeNull();
 });
@@ -226,7 +229,7 @@ it('disables the bridge immediately during a pending request and suppresses its 
   expect(calls.some(value => value.path === '/settings' && value.body.enabled === false)).toBe(true);
 });
 it('preserves separate host authorization and peer protocol session identities', async () => {
-  handler = (path, body) => path === '/connect' ? response({ request_id: body.request_id, session_id: 'session', protocol_session_id: 'wire-session', product, capabilities, desktop_status: 'LOCAL_REQUIRED', mode: 'MOCK_ONLY' })
+  handler = (path, body) => path === '/connect' ? response({ request_id: body.request_id, session_id: 'session', protocol_session_id: 'wire-session', product, capabilities, desktop_status: 'LOCAL_REQUIRED', mode: 'MOCK_ONLY', subscription_active: false, metadata_fields: [] })
     : path === '/ask' ? response({ request_id: body.request_id, session_id: 'session', guidance: advice(body.request_id, 'wire-session') }) : undefined;
   render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect(); await ask();
   expect(screen.getByText('先核对运行时')).toBeTruthy();
@@ -241,10 +244,136 @@ it('does not send an expired preview', async () => {
   expect(calls.some(value => value.path === '/ask')).toBe(false);
 });
 it('keeps capabilities fail-closed when selection or diagnostic permissions are absent', async () => {
-  handler = (path, body) => path === '/connect' ? response({ request_id: body.request_id, session_id: 'session', protocol_session_id: 'session', product, capabilities: ['tutor.guidance.request', 'tutor.guidance.receive'], desktop_status: 'LOCAL_REQUIRED', mode: 'MOCK_ONLY' }) : undefined;
+  handler = (path, body) => path === '/connect' ? response({ request_id: body.request_id, session_id: 'session', protocol_session_id: 'session', product, capabilities: ['tutor.guidance.request', 'tutor.guidance.receive'], desktop_status: 'LOCAL_REQUIRED', mode: 'MOCK_ONLY', subscription_active: false, metadata_fields: [] }) : undefined;
   render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect();
   expect((screen.getByRole('checkbox', { name: '选中文本' }) as HTMLInputElement).disabled).toBe(true);
   expect((screen.getByRole('checkbox', { name: '当前章节' }) as HTMLInputElement).disabled).toBe(true);
   fireEvent.click(screen.getByRole('button', { name: '共享诊断' }));
   expect((screen.getByRole('button', { name: '生成诊断预览' }) as HTMLButtonElement).disabled).toBe(true);
+});
+
+async function previewOngoing() {
+  fireEvent.click(screen.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）' }));
+  fireEvent.click(screen.getByRole('button', { name: '预览持续状态共享' }));
+  await screen.findByLabelText('持续状态共享预览');
+}
+async function authorizeOngoing() {
+  await previewOngoing(); fireEvent.click(screen.getByRole('button', { name: '确认开启本次会话持续共享' }));
+  await screen.findByLabelText('正在共享的状态类别');
+}
+it('connect and one-shot Ask leave ongoing events OFF until a separate preview and confirmation', async () => {
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect();
+  expect((screen.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）' }) as HTMLInputElement).checked).toBe(false);
+  expect(screen.getByText('持续共享关闭')).toBeTruthy();
+  await ask(); expect(calls.some(value => value.path.startsWith('/events/'))).toBe(false);
+  await previewOngoing(); expect(calls.some(value => value.path === '/events/subscribe')).toBe(false);
+  const reviewed = JSON.parse(screen.getByLabelText('持续状态共享预览').textContent!);
+  expect(reviewed.capsule.content.level).toBe('NONE'); expect(reviewed.metadata_fields).toEqual(['task', 'error', 'model', 'runtime']);
+  fireEvent.click(screen.getByRole('button', { name: '确认开启本次会话持续共享' }));
+  await screen.findByLabelText('正在共享的状态类别');
+  expect(calls.find(value => value.path === '/events/subscribe')?.body).toMatchObject({ session_id: 'session', preview_id: 'event-preview', confirmed: true });
+});
+it('previews exact chosen ongoing fields and displays the acknowledged allowlist', async () => {
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect();
+  fireEvent.click(screen.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）' }));
+  fireEvent.click(screen.getByRole('checkbox', { name: '持续共享：当前模型元数据' }));
+  fireEvent.click(screen.getByRole('checkbox', { name: '持续共享：错误代码' }));
+  fireEvent.click(screen.getByRole('button', { name: '预览持续状态共享' }));
+  const preview = await screen.findByLabelText('持续状态共享预览');
+  expect(JSON.parse(preview.textContent!).metadata_fields).toEqual(['task', 'runtime']);
+  fireEvent.click(screen.getByRole('button', { name: '确认开启本次会话持续共享' }));
+  const active = await screen.findByLabelText('正在共享的状态类别');
+  expect(active.textContent).toContain('当前任务状态'); expect(active.textContent).toContain('当前模型运行状态');
+  expect(active.textContent).not.toContain('错误代码'); expect(active.textContent).not.toContain('当前模型元数据');
+});
+it('explicit stop clears grant and queued events without silently resuming', async () => {
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect(); await authorizeOngoing();
+  fireEvent.click(screen.getByRole('button', { name: '停止持续状态共享' }));
+  await screen.findByText('持续共享关闭');
+  expect(calls.some(value => value.path === '/events/unsubscribe')).toBe(true);
+  expect((screen.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）' }) as HTMLInputElement).checked).toBe(false);
+  await ask(); expect(calls.filter(value => value.path === '/events/subscribe')).toHaveLength(1);
+});
+it('diagnostic preview pauses ongoing sharing before omissions and never resumes it after sending', async () => {
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect(); await authorizeOngoing();
+  fireEvent.click(screen.getByRole('button', { name: '共享诊断' }));
+  fireEvent.click(screen.getByRole('checkbox', { name: '软件 ID' }));
+  fireEvent.click(screen.getByRole('checkbox', { name: '当前功能' }));
+  fireEvent.click(screen.getByRole('button', { name: '生成诊断预览' }));
+  const preview = await screen.findByLabelText('待确认的 Diagnostic Capsule');
+  expect(preview.textContent).not.toContain('safe-software_id'); expect(preview.textContent).not.toContain('safe-feature');
+  expect(screen.getByText('持续共享关闭')).toBeTruthy();
+  expect(screen.getByText('已停止持续状态共享，再生成最小化诊断预览；不会自动恢复。已发送的信息无法撤回。')).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: '确认并发送给 Tutor' })); await screen.findByText('先核对运行时');
+  expect(calls.filter(value => value.path === '/events/subscribe')).toHaveLength(1);
+  expect((screen.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）' }) as HTMLInputElement).checked).toBe(false);
+});
+it('cancelling an uncertain subscribe explicitly revokes it and ignores a late success', async () => {
+  let finish!: (response: Response) => void; let requestId = '';
+  handler = (path, body) => path === '/events/subscribe' ? (requestId = body.request_id, new Promise<Response>(resolve => { finish = resolve; })) : undefined;
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect(); await previewOngoing();
+  fireEvent.click(screen.getByRole('button', { name: '确认开启本次会话持续共享' }));
+  fireEvent.click(screen.getByRole('button', { name: '取消当前请求' }));
+  await screen.findByText('持续共享关闭');
+  expect(calls.some(value => value.path === '/events/unsubscribe')).toBe(true);
+  await act(async () => finish(response({ request_id: requestId, session_id: 'session', subscription_active: true, metadata_fields: ['task', 'error', 'model', 'runtime'] })));
+  expect(screen.queryByLabelText('正在共享的状态类别')).toBeNull();
+  expect(screen.getByText('持续共享关闭')).toBeTruthy();
+});
+it('does not claim a failed stop succeeded and permits an explicit retry', async () => {
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect(); await authorizeOngoing();
+  handler = path => path === '/events/unsubscribe' ? response({ code: 'TRANSPORT_ERROR' }, 503) : undefined;
+  fireEvent.click(screen.getByRole('button', { name: '停止持续状态共享' }));
+  await screen.findByRole('alert'); expect(screen.getByText('状态待确认')).toBeTruthy();
+  expect(screen.queryByText('持续共享关闭')).toBeNull();
+  handler = undefined; fireEvent.click(screen.getByRole('button', { name: '停止持续状态共享' })); await screen.findByText('持续共享关闭');
+});
+it('changing source version invalidates a standing grant and requires new consent', async () => {
+  const input = props(), view = render(<LocalTutorDialog {...input} onClose={vi.fn()} />); await connect(); await authorizeOngoing();
+  view.rerender(<LocalTutorDialog {...input} chapterVersion={8} onClose={vi.fn()} />);
+  await screen.findByText('持续共享关闭'); expect(calls.some(value => value.path === '/events/unsubscribe')).toBe(true);
+  expect((screen.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）' }) as HTMLInputElement).checked).toBe(false);
+});
+it('rejects a host grant broader than the reviewed fields and revokes that grant', async () => {
+  handler = (path, body) => path === '/events/subscribe' ? response({ request_id: body.request_id, session_id: body.session_id, subscription_active: true, metadata_fields: ['task', 'error', 'model', 'runtime', 'unknown'] }) : undefined;
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect(); await previewOngoing();
+  fireEvent.click(screen.getByRole('button', { name: '确认开启本次会话持续共享' }));
+  await screen.findByRole('alert'); await screen.findByText('持续共享关闭');
+  expect(calls.some(value => value.path === '/events/unsubscribe')).toBe(true);
+  expect(screen.queryByLabelText('正在共享的状态类别')).toBeNull();
+});
+it('reconnect leaves ongoing sharing unchecked even after a previously active grant', async () => {
+  render(<Harness {...props()} />); fireEvent.click(screen.getByRole('button', { name: '问助手' })); await connect(); await authorizeOngoing();
+  fireEvent.click(screen.getByRole('button', { name: '关闭并断开' }));
+  fireEvent.click(screen.getByRole('button', { name: '问助手' })); await connect();
+  expect(screen.getByText('持续共享关闭')).toBeTruthy();
+  expect((screen.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）' }) as HTMLInputElement).checked).toBe(false);
+  expect(calls.filter(value => value.path === '/events/subscribe')).toHaveLength(1);
+});
+
+it('rejects a connection that already granted ongoing sharing without consent', async () => {
+  handler = (path, body) => path === '/connect' ? response({ request_id: body.request_id, session_id: 'session', protocol_session_id: 'wire-session', product, capabilities, desktop_status: 'LOCAL_REQUIRED', mode: 'MOCK_ONLY', subscription_active: true, metadata_fields: ['task'] }) : undefined;
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />);
+  await screen.findByRole('checkbox', { name: 'Enable Local Tutor Integration' });
+  fireEvent.change(screen.getByRole('textbox', { name: '开发用本机 Tutor 地址' }), { target: { value: 'http://127.0.0.1:8123' } });
+  fireEvent.click(screen.getByRole('button', { name: '连接本机 Tutor' })); await screen.findByRole('alert');
+  expect(screen.queryByLabelText('正在共享的状态类别')).toBeNull();
+  expect(calls.some(value => value.path === '/disconnect' && value.body.session_id === 'session')).toBe(true);
+});
+
+it('explicitly cancelling an event preview invalidates its server receipt', async () => {
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect(); await previewOngoing();
+  fireEvent.click(screen.getByRole('button', { name: '取消持续共享预览' }));
+  await waitFor(() => expect(calls.some(value => value.path === '/events/unsubscribe')).toBe(true));
+  await screen.findByText('持续共享关闭');
+  expect(screen.queryByRole('button', { name: '确认开启本次会话持续共享' })).toBeNull();
+  expect(calls.some(value => value.path === '/events/subscribe')).toBe(false);
+});
+
+it('leaving an unconfirmed event preview invalidates its receipt instead of retaining a hidden grant path', async () => {
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect(); await previewOngoing();
+  fireEvent.click(screen.getByRole('button', { name: '共享诊断' }));
+  await waitFor(() => expect(calls.some(value => value.path === '/events/unsubscribe')).toBe(true));
+  await screen.findByText('持续共享关闭');
+  expect(screen.queryByRole('button', { name: '确认开启本次会话持续共享' })).toBeNull();
 });

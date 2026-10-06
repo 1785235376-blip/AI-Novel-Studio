@@ -77,3 +77,15 @@ The current Studio event publisher polls authorized snapshots on a bounded timer
 it is not a direct hook into every application event source. Its emitted
 project/task/chapter/model/runtime changes are exercised. Other protocol event
 types remain contract-level until their owning sources are connected.
+
+## Event consent correction
+
+Ongoing events require their own positive, session/peer/scope-bound preview
+approval. Merely connecting, viewing permissions, confirming one Ask request or
+requesting a preview grants no continuous sharing. Chosen field groups apply to
+payload, event names and change detection. In-flight delivery is guarded just
+before yielding HTTP body bytes; cancellation cannot recall bytes already sent.
+Preparing diagnostics pauses existing sharing and invalidates queued/prepared
+grants. No silent auto-resume occurs. The ordinary one-shot context preview does
+not erase an independently approved standing grant; its active categories and
+Stop control remain visible.

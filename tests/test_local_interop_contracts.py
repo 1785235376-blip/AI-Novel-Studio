@@ -746,3 +746,69 @@ def test_schema_rejects_cross_field_handoff_and_privacy_violations():
     schema = json.loads((CONTRACTS / "verifier-result.schema.json").read_text())
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.Draft202012Validator(schema).validate(result)
+
+
+def diagnostic_request():
+    return p.TutorRequest(
+        request_id="diagnostic-request-1",
+        session_id="diagnostic-session-1",
+        context=capsule(),
+        diagnostic=diagnostic(),
+    )
+
+
+def test_diagnostics_operation_matches_http_tutor_request_shape():
+    request = diagnostic_request()
+    wrapped = p.TransportRequest(operation="DIAGNOSTICS", payload=request)
+    data = wrapped.model_dump(mode="json")
+    schema = json.loads((CONTRACTS / "transport-request.schema.json").read_text())
+    jsonschema.Draft202012Validator(schema).validate(data)
+    validated = p.parse_wire(p.TransportRequest, data)
+    # HTTP sends exactly this payload, carrying the same session/request identity.
+    assert p.parse_wire(p.TutorRequest, data["payload"]) == request
+    assert isinstance(validated.payload, p.TutorRequest)
+    assert validated.payload.request_id == "diagnostic-request-1"
+    assert validated.payload.session_id == "diagnostic-session-1"
+    assert validated.payload.context.content.level == "NONE"
+
+
+@pytest.mark.parametrize("invalid_shape", ["bare_capsule", "missing", "null", "source_text"])
+def test_diagnostics_operation_rejects_inconsistent_wire_shapes(invalid_shape):
+    payload = diagnostic_request().model_dump(mode="json")
+    if invalid_shape == "bare_capsule":
+        payload = diagnostic().model_dump(mode="json")
+    elif invalid_shape == "missing":
+        del payload["diagnostic"]
+    elif invalid_shape == "null":
+        payload["diagnostic"] = None
+    else:
+        text = "Synthetic content cannot accompany diagnostics"
+        payload["context"] = capsule(
+            content=p.ContextContent(level="SELECTED_TEXT", text=text, consent_id="consent-1"),
+            selection_id="selection-1",
+            selection_hash=p.canonical_hash(text),
+        ).model_dump(mode="json")
+    data = {
+        "protocol_name": p.PROTOCOL_NAME,
+        "protocol_version": p.PROTOCOL_VERSION,
+        "operation": "DIAGNOSTICS",
+        "payload": payload,
+    }
+    schema = json.loads((CONTRACTS / "transport-request.schema.json").read_text())
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.Draft202012Validator(schema).validate(data)
+    with pytest.raises(p.ProtocolViolation) as caught:
+        p.parse_wire(p.TransportRequest, data)
+    assert caught.value.code == "INVALID_MESSAGE"
+
+
+@pytest.mark.parametrize("include_diagnostic", [False, True])
+def test_tutor_operation_retains_optional_diagnostic_behavior(include_diagnostic):
+    request = p.TutorRequest(
+        request_id="request-1",
+        session_id="session-1",
+        context=capsule(),
+        diagnostic=diagnostic() if include_diagnostic else None,
+    )
+    wrapped = p.TransportRequest(operation="TUTOR", payload=request)
+    assert p.parse_wire(p.TransportRequest, wrapped.model_dump(mode="json")).payload == request

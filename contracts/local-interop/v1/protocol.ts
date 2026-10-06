@@ -315,7 +315,7 @@ export interface TransportRequest {
   readonly protocol_name: "PoemSeed Local Interop";
   readonly protocol_version: "1.0";
   readonly operation: "HELLO" | "CAPABILITY_NEGOTIATION" | "SESSION" | "TUTOR" | "DIAGNOSTICS" | "VERIFY" | "HANDOFF" | "HEARTBEAT" | "CANCEL";
-  readonly payload: HandshakeHello | CapabilityNegotiation | SessionOpenRequest | TutorRequest | DiagnosticCapsule | VerifierRequest | HandoffRequest | Heartbeat | CancelRequest;
+  readonly payload: HandshakeHello | CapabilityNegotiation | SessionOpenRequest | TutorRequest | VerifierRequest | HandoffRequest | Heartbeat | CancelRequest;
 }
 
 export interface TransportResponse {

@@ -15,10 +15,13 @@ starts a model, calls a paid provider, writes prose, or uploads a case.
 4. Open “问助手” or AI Tutor Integration in Settings. Enable the user-level switch,
    then connect explicitly to `http://127.0.0.1:8052`. Capability and MOCK_ONLY notices
    must be visible. V1_ACCEPTANCE_MODE overrides both switches to OFF.
-5. Preview metadata. Content remains NONE unless you separately choose an exact
+5. Connection itself shares no context/events. Ongoing status sharing has its own
+   initially unchecked choice, exact field preview, confirmation and Stop control.
+   Preview metadata. Content remains NONE unless you separately choose an exact
    saved selection, current chapter or explicit bounded source set. Confirm the
    preview before sending. Guidance is inert advice; handoffs need their own click.
-6. Diagnostics allow removing each optional field and display both outgoing
+6. Preparing diagnostics pauses any ongoing event grant without auto-resume.
+   Diagnostics allow removing each optional field and display both outgoing
    envelopes. Close/disable disconnects and cancels pending sharing. Normal writing
    continues if the peer is missing or the bridge is disabled.
 

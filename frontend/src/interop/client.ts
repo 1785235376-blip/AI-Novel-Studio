@@ -17,9 +17,12 @@ export type InteropStatus = {
 export type InteropSession = {
   request_id: string; session_id: string; protocol_session_id: string; product: ProductDescriptor;
   capabilities: string[]; desktop_status: 'LOCAL_REQUIRED'; mode: 'MOCK_ONLY' | 'LOCAL_REFERENCE';
+  subscription_active: false; metadata_fields: MetadataField[];
 };
 export type ContextPreview = { request_id: string; session_id: string; preview_id: string; capsule: AppContextCapsule; expires_at: string };
-export type DiagnosticPreview = { request_id: string; session_id: string; preview_id: string; diagnostic: DiagnosticCapsule; capsule: AppContextCapsule; expires_at: string };
+export type DiagnosticPreview = { request_id: string; session_id: string; preview_id: string; diagnostic: DiagnosticCapsule; capsule: AppContextCapsule; expires_at: string; event_subscription_paused: true };
+export type EventSharingPreview = ContextPreview & { metadata_fields: MetadataField[]; subscription_active: false };
+export type EventSubscription = { request_id: string; session_id: string; subscription_active: boolean; metadata_fields: MetadataField[] };
 export type HostRoute = {
   action: 'OPEN_FEATURE' | 'OPEN_PROJECT' | 'OPEN_CHAPTER' | 'OPEN_TASK';
   feature?: string; project_id?: string; chapter_id?: string; task_id?: string;
@@ -89,6 +92,9 @@ export function interopClient(context: CollaborationContext) {
     sources: (session_id: string, signal?: AbortSignal) => request<{ session_id: string; items: ContextSource[] }>(`/context/sources?session_id=${encodeURIComponent(session_id)}`, undefined, signal),
     preview: (body: { request_id: string; session_id: string; chapter_id?: string; expected_chapter_version?: number; content_kind: ContentKind; selection_start?: number; selection_end?: number; context_ids?: string[]; metadata_fields: MetadataField[] }, signal?: AbortSignal) => request<ContextPreview>('/context/preview', body, signal),
     ask: (session_id: string, preview_id: string, request_id: string, signal?: AbortSignal) => request<{ request_id: string; session_id: string; guidance: TutorGuidance }>('/ask', { session_id, preview_id, request_id, confirmed: true }, signal),
+    eventPreview: (session_id: string, metadata_fields: MetadataField[], request_id: string, signal?: AbortSignal) => request<EventSharingPreview>('/events/preview', { session_id, metadata_fields, request_id }, signal),
+    eventSubscribe: (session_id: string, preview_id: string, request_id: string, signal?: AbortSignal) => request<EventSubscription>('/events/subscribe', { session_id, preview_id, request_id, confirmed: true }, signal),
+    eventUnsubscribe: (session_id: string, request_id: string, signal?: AbortSignal) => request<EventSubscription>('/events/unsubscribe', { session_id, request_id }, signal),
     diagnosticPreview: (session_id: string, fields: DiagnosticField[], request_id: string, signal?: AbortSignal) => request<DiagnosticPreview>('/diagnostics/preview', { session_id, fields, request_id }, signal),
     diagnosticShare: (session_id: string, preview_id: string, request_id: string, signal?: AbortSignal) => request<{ request_id: string; session_id: string; guidance: TutorGuidance }>('/diagnostics/share', { session_id, preview_id, request_id, confirmed: true }, signal),
     verify: (session_id: string, guidance_id: string, request_id: string, signal?: AbortSignal) => request<{ request_id: string; session_id: string; result: VerifierResult }>('/verify', { session_id, guidance_id, request_id }, signal),

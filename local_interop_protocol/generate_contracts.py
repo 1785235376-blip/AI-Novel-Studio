@@ -221,7 +221,7 @@ def _constraints(schema: dict) -> None:
                 "CAPABILITY_NEGOTIATION": "CapabilityNegotiation",
                 "SESSION": "SessionOpenRequest",
                 "TUTOR": "TutorRequest",
-                "DIAGNOSTICS": "DiagnosticCapsule",
+                "DIAGNOSTICS": "TutorRequest",
                 "VERIFY": "VerifierRequest",
                 "HANDOFF": "HandoffRequest",
                 "HEARTBEAT": "Heartbeat",
@@ -259,6 +259,27 @@ def _constraints(schema: dict) -> None:
             }
             for operation, dto in mapping.items()
         ]
+        if title == "TransportRequest":
+            schema["allOf"].append(
+                {
+                    "if": {"properties": {"operation": {"const": "DIAGNOSTICS"}}},
+                    "then": {
+                        "properties": {
+                            "payload": {
+                                "required": ["diagnostic"],
+                                "properties": {
+                                    "diagnostic": {"$ref": "#/$defs/DiagnosticCapsule"},
+                                    "context": {
+                                        "properties": {
+                                            "content": {"properties": {"level": {"const": "NONE"}}}
+                                        }
+                                    },
+                                },
+                            }
+                        }
+                    },
+                }
+            )
     if "properties" in schema and "protocol_name" in schema["properties"]:
         schema["required"] = sorted(
             set(schema.get("required", [])) | {"protocol_name", "protocol_version"}

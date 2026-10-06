@@ -108,3 +108,61 @@ for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900
     await page.screenshot({ path: info.outputPath('integration-settings.png'), fullPage: true });
   });
 }
+
+
+test('ongoing metadata events require their own preview and confirmation, preserve exclusions, and stop for diagnostics', async ({ page }, info) => {
+  const connectedResponse = page.waitForResponse(response => response.url().endsWith('/api/local-interop/connect'));
+  const dialog = await enabledConnection(page);
+  const connected = await (await connectedResponse).json();
+  const eventState = async () => (await page.request.get(`/api/local-interop/events?session_id=${encodeURIComponent(connected.session_id)}`, { headers })).json();
+  await expect(dialog.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）', exact: true })).not.toBeChecked();
+  expect(await eventState()).toMatchObject({ events: [], subscription_active: false });
+  await dialog.getByRole('button', { name: '生成共享预览', exact: true }).click();
+  await dialog.getByRole('button', { name: '确认并发送给 Tutor', exact: true }).click();
+  await expect(dialog.getByText('MOCK_ONLY: structured local guidance', { exact: true })).toBeVisible();
+  expect(await eventState()).toMatchObject({ events: [], subscription_active: false });
+  await dialog.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）', exact: true }).check();
+  await dialog.getByRole('checkbox', { name: '持续共享：错误代码', exact: true }).uncheck();
+  await dialog.getByRole('checkbox', { name: '持续共享：当前模型元数据', exact: true }).uncheck();
+  await dialog.getByRole('checkbox', { name: '持续共享：当前模型运行状态', exact: true }).uncheck();
+  await dialog.getByRole('button', { name: '预览持续状态共享', exact: true }).click();
+  await expect(dialog.getByLabel('持续状态共享预览')).toBeVisible();
+  expect(await eventState()).toMatchObject({ events: [], subscription_active: false });
+  await dialog.getByRole('button', { name: '确认开启本次会话持续共享', exact: true }).click();
+  await expect(dialog.getByLabel('正在共享的状态类别')).toContainText('当前任务状态');
+  await expect(dialog.getByLabel('正在共享的状态类别')).not.toContainText('错误代码');
+  const received = await eventState(); expect(received.subscription_active).toBe(true); expect(received.events.length).toBeGreaterThan(0);
+  for (const event of received.events) {
+    expect(event.context.content.level).toBe('NONE');
+    for (const field of ['error_code', 'model_id', 'runtime_id', 'runtime_status']) expect(event.context[field] ?? null).toBeNull();
+  }
+  await page.screenshot({ path: info.outputPath('explicit-ongoing-consent.png'), fullPage: true });
+  await dialog.getByRole('button', { name: '共享诊断', exact: true }).click();
+  await dialog.getByRole('checkbox', { name: '软件 ID', exact: true }).uncheck();
+  const diagnosticResponse = page.waitForResponse(response => response.url().endsWith('/diagnostics/preview'));
+  await dialog.getByRole('button', { name: '生成诊断预览', exact: true }).click();
+  const diagnostic = await (await diagnosticResponse).json(); expect(diagnostic.event_subscription_paused).toBe(true); expect(diagnostic.diagnostic.software_id).toBeNull();
+  await expect(dialog.getByText('持续共享关闭', { exact: true })).toBeVisible();
+  expect(await eventState()).toMatchObject({ events: [], subscription_active: false });
+  await dialog.getByRole('button', { name: '确认并发送给 Tutor', exact: true }).click();
+  await expect(dialog.getByText('MOCK_ONLY: structured local guidance', { exact: true })).toBeVisible();
+  expect(await eventState()).toMatchObject({ events: [], subscription_active: false });
+});
+
+test('explicit ongoing-sharing Stop revokes the grant and reconnect never restores it', async ({ page }) => {
+  const connectResponse = page.waitForResponse(response => response.url().endsWith('/api/local-interop/connect'));
+  const dialog = await enabledConnection(page); const connected = await (await connectResponse).json();
+  await dialog.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）', exact: true }).check();
+  await dialog.getByRole('button', { name: '预览持续状态共享', exact: true }).click();
+  await dialog.getByRole('button', { name: '确认开启本次会话持续共享', exact: true }).click();
+  await expect(dialog.getByLabel('正在共享的状态类别')).toBeVisible();
+  await dialog.getByRole('button', { name: '停止持续状态共享', exact: true }).click();
+  await expect(dialog.getByText('持续共享关闭', { exact: true })).toBeVisible();
+  const events = await (await page.request.get(`/api/local-interop/events?session_id=${encodeURIComponent(connected.session_id)}`, { headers })).json();
+  expect(events).toMatchObject({ events: [], subscription_active: false });
+  await dialog.getByRole('button', { name: '断开连接', exact: true }).click();
+  await dialog.getByRole('button', { name: '连接本机 Tutor', exact: true }).click();
+  await expect(dialog.getByText('Synthetic Tutor (MOCK_ONLY)', { exact: true })).toBeVisible();
+  await expect(dialog.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）', exact: true })).not.toBeChecked();
+  await expect(dialog.getByText('持续共享关闭', { exact: true })).toBeVisible();
+});

@@ -743,7 +743,6 @@ class TransportRequest(ProtocolMessage):
         | CapabilityNegotiation
         | SessionOpenRequest
         | TutorRequest
-        | DiagnosticCapsule
         | VerifierRequest
         | HandoffRequest
         | Heartbeat
@@ -757,7 +756,7 @@ class TransportRequest(ProtocolMessage):
             "CAPABILITY_NEGOTIATION": CapabilityNegotiation,
             "SESSION": SessionOpenRequest,
             "TUTOR": TutorRequest,
-            "DIAGNOSTICS": DiagnosticCapsule,
+            "DIAGNOSTICS": TutorRequest,
             "VERIFY": VerifierRequest,
             "HANDOFF": HandoffRequest,
             "HEARTBEAT": Heartbeat,
@@ -765,6 +764,11 @@ class TransportRequest(ProtocolMessage):
         }[self.operation]
         if not isinstance(self.payload, model):
             raise ValueError("Transport operation does not match payload type")
+        if self.operation == "DIAGNOSTICS":
+            if self.payload.diagnostic is None:
+                raise ValueError("Diagnostic requests require a diagnostic capsule")
+            if self.payload.context.content.level != "NONE":
+                raise ValueError("Diagnostic requests cannot contain source text")
         return self
 
 

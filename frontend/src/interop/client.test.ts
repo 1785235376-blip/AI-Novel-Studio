@@ -51,3 +51,16 @@ it('rejects a typed revocation error frame even after success headers were sent'
   vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ protocol_name: 'PoemSeed Local Interop', protocol_version: '1.0', code: 'SESSION_REVOKED', message: 'SESSION_REVOKED' }), { status: 200 })));
   await expect(interopClient(context).status()).rejects.toMatchObject({ problem: { code: 'SESSION_REVOKED' } });
 });
+
+it('keeps event preview, positive subscription and revocation separate from one-shot sends', async () => {
+  const fetch = vi.fn(async () => new Response('{}')); vi.stubGlobal('fetch', fetch);
+  const client = interopClient(context);
+  await client.eventPreview('host-session', ['task'], 'event-preview');
+  await client.eventSubscribe('host-session', 'immutable-preview', 'event-consent');
+  await client.eventUnsubscribe('host-session', 'event-stop');
+  const calls = fetch.mock.calls as unknown as [string, RequestInit][];
+  expect(calls.map(([url]) => url)).toEqual(['/api/local-interop/events/preview', '/api/local-interop/events/subscribe', '/api/local-interop/events/unsubscribe']);
+  expect(JSON.parse(String(calls[0][1].body))).toEqual({ session_id: 'host-session', metadata_fields: ['task'], request_id: 'event-preview' });
+  expect(JSON.parse(String(calls[1][1].body))).toEqual({ session_id: 'host-session', preview_id: 'immutable-preview', request_id: 'event-consent', confirmed: true });
+  expect(calls.every(([url]) => !url.includes('secret'))).toBe(true);
+});

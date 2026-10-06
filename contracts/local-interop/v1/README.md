@@ -88,7 +88,10 @@ projection, sanitization and user preview.
 ## Transport boundary
 
 `TransportRequest` and `TransportResponse` bind operations to exact typed
-payloads; the response may instead carry `InteropError`. A byte transport may
+payloads; the response may instead carry `InteropError`. `DIAGNOSTICS` carries
+a `TutorRequest` with `request_id`, `session_id`, a required non-null diagnostic
+capsule, and a context whose content level is `NONE`, matching the HTTP diagnostics
+endpoint. A bare diagnostic capsule is not a complete request. A byte transport may
 frame their JSON with an unsigned little-endian 32-bit byte length, at most
 1 MiB. The frame handler owns cancellation, authentication, replay protection,
 heartbeats, disconnection and liveness. No DTO opens a socket or another app.

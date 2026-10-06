@@ -21,7 +21,7 @@ from local_interop_protocol import (
     CancelResult, DiscoveryRecord, GuidanceStep, HandshakeHello,
     Heartbeat, HelloResult, HandoffTarget, InteropError, InteropEvent,
     ProductDescriptor, ProtocolViolation, SessionDescriptor, SessionOpenRequest,
-    SessionOpenResult, TutorGuidance, TutorRequest, VerificationCondition,
+    SessionOpenResult, TransportRequest, TutorGuidance, TutorRequest, VerificationCondition,
     VerifierRequest, VerifierResult, parse_wire, require_capabilities,
     validate_capsule,
 )
@@ -199,6 +199,8 @@ def create_synthetic_tutor_app(peer: SyntheticTutor | None = None) -> FastAPI:
                     require_capabilities(("tutor.guidance.request",), session.capabilities)
                     if message.request_id in peer.cancelled:
                         raise ProtocolViolation("CANCELLED", "Synthetic local protocol request rejected.")
+                    if operation == "diagnostics" or message.diagnostic is not None:
+                        TransportRequest(operation="DIAGNOSTICS", payload=message)
                     if operation == "diagnostics":
                         require_capabilities(("diagnostics.read",), session.capabilities)
                         if message.diagnostic is None:

@@ -7,7 +7,7 @@ import type { HandoffTarget, TutorGuidance, VerifierResult } from '../../../cont
 import {
   diagnosticFields, interopClient, interopErrorMessage, metadataFields, newInteropRequestId,
   type ContentKind, type ContextPreview, type ContextSource, type DiagnosticField, type DiagnosticPreview,
-  type HostRoute, type InteropSession, type InteropStatus, type MetadataField,
+  type EventSharingPreview, type HostRoute, type InteropSession, type InteropStatus, type MetadataField,
 } from './client';
 import './localTutor.css';
 
@@ -64,6 +64,16 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
   const [fields, setFields] = useState<MetadataField[]>([...metadataFields]);
   const [diagnostics, setDiagnostics] = useState<DiagnosticField[]>([...diagnosticFields]);
   const [content, setContent] = useState<ContentKind>('NONE');
+  const [eventOptIn, setEventOptIn] = useState(false);
+  const [eventFields, setEventFields] = useState<MetadataField[]>([...metadataFields]);
+  const [eventPreview, setEventPreview] = useState<EventSharingPreview>();
+  const [eventSharing, setEventSharing] = useState<'off' | 'active' | 'unknown'>('off');
+  const [sharedEventFields, setSharedEventFields] = useState<MetadataField[]>([]);
+  const eventSharingState = useRef<'off' | 'active' | 'unknown'>('off');
+  const eventRevision = useRef(0);
+  function markEventSharing(value: 'off' | 'active' | 'unknown', fields: MetadataField[] = []) {
+    eventSharingState.current = value; setEventSharing(value); setSharedEventFields(fields);
+  }
   const [sources, setSources] = useState<ContextSource[]>([]);
   const [sourceIds, setSourceIds] = useState<string[]>([]);
   const [preview, setPreview] = useState<ContextPreview>();
@@ -73,35 +83,37 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
   const currentSession = useRef<InteropSession>();
   const alive = useRef(true);
   const epoch = useRef(0);
-  const pending = useRef<{ id: string; controller: AbortController; epoch: number }>();
+  const pending = useRef<{ id: string; controller: AbortController; epoch: number; eventConsent: boolean }>();
   const dialog = useRef<HTMLElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const closeAction = useRef(props.onClose);
   closeAction.current = props.onClose;
 
-  const clearReview = () => { setPreview(undefined); setDiagnostic(undefined); setGuidance(undefined); setVerification(undefined); setNotice(''); };
+  const clearReview = () => { setEventPreview(undefined); setPreview(undefined); setDiagnostic(undefined); setGuidance(undefined); setVerification(undefined); setNotice(''); };
   function cancelPending(showNotice = true) {
     const operation = pending.current;
     epoch.current += 1; pending.current = undefined;
     if (operation) {
       operation.controller.abort();
       void client.cancel(operation.id, currentSession.current?.session_id).catch(() => undefined);
+      if (operation.eventConsent) pauseSharingAfterCancellation();
     }
     if (alive.current) { setBusy(''); if (showNotice) { clearReview(); setNotice('本次请求已取消，旧响应不会用于新请求。'); } }
   }
   function disconnect(showNotice = true) {
     cancelPending(false);
     const previous = currentSession.current;
-    currentSession.current = undefined;
+    currentSession.current = undefined; eventRevision.current += 1;
+    if (alive.current) { markEventSharing('off'); setEventOptIn(false); setEventPreview(undefined); }
     if (previous) void client.disconnect(previous.session_id).catch(() => undefined);
     if (alive.current) { setSession(undefined); clearReview(); if (showNotice) setNotice('连接已断开；再次共享需要重新连接和确认。'); }
   }
   function close() {
     alive.current = false; disconnect(false); closeAction.current();
   }
-  async function run(label: string, action: (id: string, signal: AbortSignal, current: () => boolean) => Promise<void>) {
+  async function run(label: string, action: (id: string, signal: AbortSignal, current: () => boolean) => Promise<void>, eventConsent = false) {
     if (pending.current || !alive.current) return;
-    const operation = { id: newInteropRequestId(), controller: new AbortController(), epoch: ++epoch.current };
+    const operation = { id: newInteropRequestId(), controller: new AbortController(), epoch: ++epoch.current, eventConsent };
     pending.current = operation; setBusy(label); setError(''); setNotice('');
     const current = () => alive.current && epoch.current === operation.epoch && !operation.controller.signal.aborted;
     const timer = setTimeout(() => {
@@ -112,6 +124,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
     catch (failure) {
       if (current()) {
         clearReview(); setError(interopErrorMessage(failure));
+        if (operation.eventConsent) pauseSharingAfterCancellation();
         if (failure instanceof ApiError && ['SESSION_REVOKED', 'PERMISSION_DENIED', 'SESSION_REQUIRED'].includes(failure.problem.code)) disconnect(false);
       }
     } finally {
@@ -147,8 +160,62 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
     if (sourceObserved.current === sourceIdentity) return;
     sourceObserved.current = sourceIdentity;
     cancelPending(false); clearReview(); setContent('NONE'); setSourceIds([]);
+    if (eventPreview || eventSharingState.current !== 'off') pauseSharingAfterCancellation();
   }, [sourceIdentity]);
 
+  function pauseSharingAfterCancellation() {
+    const origin = currentSession.current;
+    if (!origin) return;
+    const revision = ++eventRevision.current, requestId = newInteropRequestId();
+    if (alive.current) { markEventSharing('unknown'); setEventOptIn(false); setEventPreview(undefined); }
+    void client.eventUnsubscribe(origin.session_id, requestId).then(value => {
+      requireReceipt(value, requestId, origin.session_id);
+      if (value.subscription_active !== false || value.metadata_fields.length !== 0) throw new ApiError({ status: 409, code: 'INVALID_MESSAGE', message: '' });
+      if (alive.current && eventRevision.current === revision && currentSession.current?.session_id === origin.session_id) markEventSharing('off');
+    }).catch(() => {
+      if (alive.current && eventRevision.current === revision && currentSession.current?.session_id === origin.session_id)
+        setError('持续共享停止结果尚未确认，请再次停止共享或关闭集成。');
+    });
+  }
+  const stopEventSharing = () => {
+    cancelPending(false); clearReview(); setEventOptIn(false);
+    const origin = currentSession.current;
+    if (!origin) return;
+    eventRevision.current += 1; markEventSharing('unknown');
+    void run('停止持续状态共享', async (requestId, signal, current) => {
+      const value = await client.eventUnsubscribe(origin.session_id, requestId, signal);
+      if (!current()) return;
+      requireReceipt(value, requestId, origin.session_id);
+      if (value.subscription_active !== false || value.metadata_fields.length !== 0) throw new ApiError({ status: 409, code: 'INVALID_MESSAGE', message: '' });
+      markEventSharing('off'); setNotice('持续状态共享已停止；不会自动恢复。已发送的信息无法撤回。');
+    });
+  };
+  const previewEventSharing = () => {
+    if (!session || !eventOptIn || eventSharing !== 'off') return;
+    clearReview();
+    void run('预览持续状态共享', async (requestId, signal, current) => {
+      const value = await client.eventPreview(session.session_id, eventFields, requestId, signal);
+      if (!current()) return;
+      requireReceipt(value, requestId, session.session_id);
+      if (value.subscription_active !== false || value.metadata_fields.some(field => !eventFields.includes(field)) || value.capsule.content?.level !== 'NONE' || previewExpired(value.expires_at))
+        throw new ApiError({ status: 409, code: 'CONTEXT_STALE', message: '' });
+      eventRevision.current += 1; markEventSharing('off'); setEventPreview(value);
+    });
+  };
+  const subscribeEvents = () => {
+    if (!session || !eventPreview || !eventOptIn || eventSharing !== 'off') return;
+    if (previewExpired(eventPreview.expires_at)) { clearReview(); setError(interopErrorMessage(new ApiError({ status: 409, code: 'CONTEXT_STALE', message: '' }))); return; }
+    const reviewed = eventPreview;
+    setEventPreview(undefined); markEventSharing('unknown');
+    void run('确认持续状态共享', async (requestId, signal, current) => {
+      const value = await client.eventSubscribe(session.session_id, reviewed.preview_id, requestId, signal);
+      if (!current()) return;
+      requireReceipt(value, requestId, session.session_id);
+      if (value.subscription_active !== true || JSON.stringify([...value.metadata_fields].sort()) !== JSON.stringify([...reviewed.metadata_fields].sort()))
+        throw new ApiError({ status: 409, code: 'INVALID_MESSAGE', message: '' });
+      eventRevision.current += 1; markEventSharing('active', value.metadata_fields); setEventOptIn(false);
+    }, true);
+  };
   const has = (capability: string) => session?.capabilities.includes(capability) === true;
   const canConnect = !!status?.enabled && status.feature_enabled && !status.acceptance_mode
     && !!props.context.sessionToken && !!props.context.scope;
@@ -157,7 +224,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
     && (content !== 'SELECTION' || selectionReady) && (content !== 'SPECIFIC_CONTEXT' || sourceIds.length > 0);
   const previewExpired = (expires: string) => !Number.isFinite(Date.parse(expires)) || Date.parse(expires) <= Date.now();
   const changeContent = (value: ContentKind) => { cancelPending(false); clearReview(); setContent(content === value ? 'NONE' : value); };
-  const switchView = (next: View) => { cancelPending(false); clearReview(); setView(next); };
+  const switchView = (next: View) => { if (eventPreview) stopEventSharing(); else { cancelPending(false); clearReview(); } setView(next); };
   const connect = () => void run('连接本机 Tutor', async (request_id, signal, current) => {
     const scope = props.context.scope!;
     const value = await client.connect({ request_id, endpoint, project_id: props.projectId,
@@ -165,12 +232,14 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
       module: props.module, surface: props.surface, chapter_id: props.chapterId, task_id: props.taskId }, signal);
     if (!current()) { void client.disconnect(value.session_id).catch(() => undefined); return; }
     requireReceipt(value, request_id, value.session_id);
-    if (value.product.product_role !== 'AI_TUTOR' || !value.product.protocol_versions?.includes('1.0')
+    if (value.subscription_active !== false || !Array.isArray(value.metadata_fields) || value.metadata_fields.length !== 0
+      || value.product.product_role !== 'AI_TUTOR' || !value.product.protocol_versions?.includes('1.0')
       || value.capabilities.some(capability => ['model.execute', 'project.write'].includes(capability))) {
       void client.disconnect(value.session_id).catch(() => undefined);
       throw new ApiError({ status: 400, code: 'INVALID_MESSAGE', message: '' });
     }
     currentSession.current = value; setSession(value); clearReview();
+    eventRevision.current += 1; markEventSharing('off'); setEventOptIn(false); setEventFields([...metadataFields]);
   });
   const changeEnabled = (enabled: boolean) => {
     if (!enabled) disconnect(false);
@@ -182,6 +251,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
   };
   const buildPreview = () => {
     if (!session || !canPreview) return;
+    if (eventPreview) pauseSharingAfterCancellation();
     clearReview();
     void run('生成共享预览', async (request_id, signal, current) => {
       const value = await client.preview({ request_id, session_id: session.session_id, content_kind: content,
@@ -259,6 +329,22 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
             <dl className="local-tutor-facts"><div><dt>Detected Tutor</dt><dd>{session?.product.display_name ?? '未连接'}</dd></div><div><dt>Protocol</dt><dd>{session ? 'PoemSeed Local Interop 1.0' : '待握手：1.0'}</dd></div><div><dt>当前范围</dt><dd>{props.module} / {props.surface}</dd></div></dl>
             {!session ? <div className="local-tutor-connect"><label>开发用本机 Tutor 地址<input aria-label="开发用本机 Tutor 地址" placeholder="http://127.0.0.1:端口" value={endpoint} disabled={!!busy} onChange={event => setEndpoint(event.target.value)} /></label><Button disabled={!canConnect || !endpoint || !!busy} onClick={connect}>连接本机 Tutor</Button><small>仅 loopback HTTP 参考运行时。不会扫描网络、自动启动应用或共享正文。</small></div> : <Button disabled={!!busy} onClick={() => disconnect()}>断开连接</Button>}
           </Panel>
+          {session && <Panel title="持续状态共享 · 本次会话" aria-label="持续状态共享" actions={<Badge tone={eventSharing === 'active' ? 'info' : eventSharing === 'unknown' ? 'warning' : 'neutral'}>{eventSharing === 'active' ? '已授权持续共享' : eventSharing === 'unknown' ? '状态待确认' : '持续共享关闭'}</Badge>}>
+            <p>仅连接和单次问助手不会授权后续状态共享。持续共享仅包含本次会话的元数据，正文始终为 NONE。</p>
+            <p>范围：{props.module} / {props.surface}；仅当前项目、分支和章节。关闭、切换范围或重连后须重新确认。</p>
+            {eventSharing === 'unknown' && <p>共享状态尚未确认；可停止持续共享或关闭集成。</p>}
+            {eventSharing === 'active' && <p aria-label="正在共享的状态类别">已授权类别：软件、页面与范围 ID{sharedEventFields.map(field => ` · ${metadataNames[field]}`).join('')}</p>}
+            {eventSharing !== 'off' ? <Button onClick={stopEventSharing}>停止持续状态共享</Button> : <>
+              <label className="local-tutor-choice"><input type="checkbox" checked={eventOptIn} disabled={!!busy} onChange={event => { if (!event.target.checked && eventPreview) stopEventSharing(); else { setEventOptIn(event.target.checked); setEventPreview(undefined); } }} />准备持续共享状态（需另行预览和确认）</label>
+              {eventOptIn && <>
+                <p>软件身份、协议、当前页面和范围 ID 为必需元数据。选择允许后续更新的类别：</p>
+                {metadataFields.map(field => <label className="local-tutor-choice" key={field}><input type="checkbox" checked={eventFields.includes(field)} disabled={!!busy} onChange={() => { if (eventPreview) stopEventSharing(); else setEventPreview(undefined); setEventFields(values => values.includes(field) ? values.filter(value => value !== field) : [...values, field]); }} />持续共享：{metadataNames[field]}</label>)}
+                <Button disabled={!!busy} onClick={previewEventSharing}>预览持续状态共享</Button>
+              </>}
+            </>}
+            <p>停止后不会自动恢复；已经发送的信息无法撤回。</p>
+            {eventPreview && <div><h3>待确认的持续共享范围</h3><p>允许后续更新：软件、页面与范围 ID{eventPreview.metadata_fields.map(field => ` · ${metadataNames[field]}`).join('')}</p><pre className="local-tutor-preview" aria-label="持续状态共享预览" tabIndex={0}>{JSON.stringify({ metadata_fields: eventPreview.metadata_fields, capsule: eventPreview.capsule, expires_at: eventPreview.expires_at }, null, 2)}</pre><Button disabled={!!busy} onClick={stopEventSharing}>取消持续共享预览</Button><Button variant="primary" disabled={!!busy} onClick={subscribeEvents}>确认开启本次会话持续共享</Button></div>}
+          </Panel>}
           {view === 'settings' && <Panel title={session ? '当前协商权限' : '可用协议能力（尚未授予 Tutor）'}>
             <ul>{(session?.capabilities ?? status.capabilities).map(capability => <li key={capability}>{capabilityNames[capability] ?? capability} <small>{capability}</small></li>)}</ul>
             <p>选中文本、当前章节和其他资料每次均需重新勾选、预览和确认。</p>
@@ -266,6 +352,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
             <p>关闭集成会断开连接并停止后续事件；保留 Studio 项目与 Tutor 历史。</p>
           </Panel>}
           {view === 'ask' && <Panel title="将共享的内容">
+            {eventSharing === 'active' && <p>持续共享正在按上方已授权类别运行；本次额外内容仍需单独确认。</p>}
             <label className="local-tutor-choice"><input type="checkbox" checked disabled />当前软件与版本（协议必需）</label>
             <label className="local-tutor-choice"><input type="checkbox" checked disabled />当前页面与范围 ID（协议必需）</label>
             {metadataFields.map(field => <label className="local-tutor-choice" key={field}><input type="checkbox" checked={fields.includes(field)} disabled={!!busy} onChange={() => { clearReview(); setFields(values => values.includes(field) ? values.filter(value => value !== field) : [...values, field]); }} />{metadataNames[field]}</label>)}
@@ -282,9 +369,10 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
             <Button disabled={!canPreview || !!busy} onClick={buildPreview}>生成共享预览</Button>
           </Panel>}
           {view === 'diagnostics' && <Panel title="诊断字段预览选择">
+            <p>生成诊断预览前会先停止持续共享，之后不会自动恢复；已发送的信息无法撤回。</p>
             <p>仅限已清理、有限量的本机诊断；不包含正文、原始 Prompt、密钥、完整路径、截图或日志转储。</p>
             {diagnosticFields.map(field => <label key={field} className="local-tutor-choice"><input type="checkbox" checked={diagnostics.includes(field)} disabled={!!busy} onChange={() => { clearReview(); setDiagnostics(values => values.includes(field) ? values.filter(value => value !== field) : [...values, field]); }} />{diagnosticNames[field]}</label>)}
-            <Button disabled={!!busy || !session || !has('diagnostics.read') || !has('tutor.guidance.request')} onClick={() => { if (!session) return; clearReview(); void run('生成诊断预览', async (request_id, signal, current) => { const value = await client.diagnosticPreview(session.session_id, diagnostics, request_id, signal); if (!current()) return; requireReceipt(value, request_id, session.session_id); setDiagnostic(value); }); }}>生成诊断预览</Button>
+            <Button disabled={!!busy || !session || !has('diagnostics.read') || !has('tutor.guidance.request')} onClick={() => { if (!session) return; clearReview(); setEventOptIn(false); eventRevision.current += 1; markEventSharing('unknown'); void run('生成诊断预览', async (request_id, signal, current) => { const value = await client.diagnosticPreview(session.session_id, diagnostics, request_id, signal); if (!current()) return; requireReceipt(value, request_id, session.session_id); if (value.event_subscription_paused !== true) throw new ApiError({ status: 409, code: 'INVALID_MESSAGE', message: '' }); markEventSharing('off'); setNotice('已停止持续状态共享，再生成最小化诊断预览；不会自动恢复。已发送的信息无法撤回。'); setDiagnostic(value); }, true); }}>生成诊断预览</Button>
           </Panel>}
         </>}
         {preview && <Review title="待确认的 Context Capsule" expires={preview.expires_at} value={preview.capsule} busy={!!busy} onCancel={() => { clearReview(); setNotice('已取消共享。'); }} onConfirm={() => share('context')} />}
@@ -300,7 +388,7 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
           {verification && <div role="status"><Badge tone={verification.status === 'VERIFIED' ? 'success' : verification.status === 'FAILED' ? 'error' : 'warning'}>{verification.status}</Badge><p>{verification.reason}</p><p>依据主机状态和证据，不采用模型自报成功。</p><pre className="local-tutor-preview" aria-label="验证证据">{JSON.stringify(verification.evidence, null, 2)}</pre></div>}
         </Panel>}
       </div>
-      <footer className="local-tutor-footer"><span role="status">{busy || (session ? '已连接 · LOCAL_ONLY' : '未共享内容')}</span>{busy && <Button onClick={() => cancelPending()}>取消当前请求</Button>}<Button onClick={close}>关闭并断开</Button></footer>
+      <footer className="local-tutor-footer"><span role="status">{busy || (session ? '已连接 · LOCAL_ONLY' : '未连接 · 持续共享关闭')}</span>{busy && <Button onClick={() => cancelPending()}>取消当前请求</Button>}<Button onClick={close}>关闭并断开</Button></footer>
     </section>
   </div>;
   return createPortal(body, document.body);

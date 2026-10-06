@@ -42,7 +42,7 @@ class LoopbackTransport:
         self.endpoint = assert_endpoint(endpoint)
         self.timeout = min(max(float(timeout), 0.05), 10.0)
 
-    async def request(self, operation, message=None, *, token=None):
+    async def request(self, operation, message=None, *, token=None, before_send=None):
         if operation not in OPERATIONS: raise InteropFailure("TRANSPORT_ERROR", 400)
         payload = message.model_dump(mode="json") if hasattr(message, "model_dump") else message
         raw = json.dumps(payload, ensure_ascii=False, allow_nan=False).encode() if payload is not None else None
@@ -53,11 +53,20 @@ class LoopbackTransport:
                 raise InteropFailure("SESSION_REQUIRED", 401)
             headers["Authorization"] = "Bearer " + token
         if raw is not None: headers["Content-Type"] = "application/json"
+        body = raw
+        if before_send:
+            before_send()
+            class GuardedBody(httpx.AsyncByteStream):
+                async def __aiter__(self):
+                    before_send()  # Immediately before yielding unsent body bytes.
+                    if raw is not None: yield raw
+            body = GuardedBody()
+            headers["Content-Length"] = str(len(raw or b""))
         try:
             # A fresh cookie-free client prevents any credential/cookie carryover.
             async with httpx.AsyncClient(trust_env=False, follow_redirects=False, timeout=self.timeout) as client:  # noqa: SIM117 - lifetime explicitly encloses bounded streamed response
                 async with client.stream("GET" if operation == "discovery" else "POST",
-                        self.endpoint + "/interop/v1/" + operation, headers=headers, content=raw) as response:
+                        self.endpoint + "/interop/v1/" + operation, headers=headers, content=body) as response:
                     if response.headers.get("content-encoding", "identity") != "identity": raise InteropFailure("TRANSPORT_ERROR", 502)
                     if response.is_redirect: raise InteropFailure("TRANSPORT_ERROR", 502)
                     chunks = bytearray()

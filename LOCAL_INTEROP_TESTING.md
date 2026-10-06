@@ -50,7 +50,7 @@ No historical failed evidence is rewritten or weakened by this new feature work.
 
 - Strict shared contracts: 177 passed; both repository protocol bytes and wheel
   manifests agree (manifest SHA-256
-  `9e3f77de6f169782c3fd25dfb298eda927832abfca2dd6210e871e73b37919b2`).
+  `77c1f82f0aec0ef385d95cacf6fe04530b83fb62d2403bc7341cbe6bf19c858c`).
 - Host plus actual separate-process Host API suite: 42 passed, 33 marked
   PostgreSQL variants NOT_RUN locally. The separate transport suite: 14 passed.
 - Preserved original R1/R2/R3 plus project authorization subset: 657 passed,
@@ -74,3 +74,13 @@ BLOCKED status remain unchanged. No universal all-workflows-green claim is made.
 Full local File suite subsequently completed: **4624 passed, 2027 expected
 skips, 3 warnings**, 433.53 seconds. This is local File evidence only; PostgreSQL,
 Windows and hosted browser results remain separate exact-head gates.
+
+## Corrected consent/diagnostics candidate
+
+See LOCAL_INTEROP_CORRECTION_RECEIPT.md for the preserved two initial failures,
+explicit event-sharing grant, canonical diagnostics repair and the new PG test's
+evidence-based readiness correction. Corrected source-freeze counts:184 shared
+contracts per repository;251 combined Studio Interop passes (43 PG variants
+NOT_RUN locally);1094 frontend passes/7 optional skips plus1 actual-client HTTP
+pass. Nine authored browser journeys require hosted verification. These later
+results supersede the earlier local source-freeze counts without erasing them.

@@ -61,3 +61,15 @@ local_interop_protocol. See LOCAL_INTEROP_TESTING.md and
 LOCAL_INTEROP_REQUIREMENTS.json for exact implementation/evidence status.
 A schema alone is not DONE. A synthetic peer is MOCK_ONLY. Actual tutor desktop
 integration remains LOCAL_REQUIRED until real desktop source and runtime exist.
+
+## Explicit event-sharing grant
+
+Connection establishes only protocol/session/liveness. It does not subscribe to
+ongoing metadata. A separate preview shows the exact session-bound capsule and
+chosen metadata groups; explicit confirmation issues a scoped, single-use preview
+receipt for the ongoing grant. Every event uses that approved projection,
+including its event type and change detection. Stop/revoke/disable/reconnect
+clears the grant and queue and cancels unsent dispatch. Diagnostic preparation
+pauses the standing grant before its minimized preview and never resumes it
+automatically. A one-shot Ask request and a separately visible standing metadata
+grant are distinct permissions; the UI always exposes the active grant and Stop.

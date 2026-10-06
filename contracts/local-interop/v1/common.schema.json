@@ -3068,7 +3068,7 @@
           "then": {
             "properties": {
               "payload": {
-                "$ref": "#/$defs/DiagnosticCapsule"
+                "$ref": "#/$defs/TutorRequest"
               }
             }
           }
@@ -3136,6 +3136,40 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "operation": {
+                "const": "DIAGNOSTICS"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "properties": {
+                  "context": {
+                    "properties": {
+                      "content": {
+                        "properties": {
+                          "level": {
+                            "const": "NONE"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "diagnostic": {
+                    "$ref": "#/$defs/DiagnosticCapsule"
+                  }
+                },
+                "required": [
+                  "diagnostic"
+                ]
+              }
+            }
+          }
         }
       ],
       "properties": {
@@ -3167,9 +3201,6 @@
             },
             {
               "$ref": "#/$defs/TutorRequest"
-            },
-            {
-              "$ref": "#/$defs/DiagnosticCapsule"
             },
             {
               "$ref": "#/$defs/VerifierRequest"

@@ -777,11 +777,10 @@ pub enum TransportRequestPayload {
     V1(CapabilityNegotiation),
     V2(SessionOpenRequest),
     V3(TutorRequest),
-    V4(DiagnosticCapsule),
-    V5(VerifierRequest),
-    V6(HandoffRequest),
-    V7(Heartbeat),
-    V8(CancelRequest),
+    V4(VerifierRequest),
+    V5(HandoffRequest),
+    V6(Heartbeat),
+    V7(CancelRequest),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
