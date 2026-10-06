@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { currentDesktopConnection, permissionIds } from '../src/interop/desktop';
 import { interopClient } from '../src/interop/client';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -106,4 +107,39 @@ describe.skipIf(process.env.LOCAL_INTEROP_REAL_HOST_TEST !== '1')('real frontend
     await expect(client.preview({ request_id: id(), session_id: connected.session_id, content_kind: 'NONE', metadata_fields: [] })).rejects.toMatchObject({ problem: { code: 'SESSION_REVOKED' } });
     await client.settings(false, id()); expect((await client.status()).enabled).toBe(false);
   }, 20_000);
+  it('projects formal host authority and enforces independent permission revoke plus complete emergency cleanup', async () => {
+    const client = interopClient(context);
+    await client.settings(true, id());
+    const connect = () => client.connect({ request_id: id(), endpoint: 'http://127.0.0.1:8052', project_id: scope.projectId, scope: hostScope, module: 'NOVEL', surface: 'editor', chapter_id: chapter.id });
+    const connected = await connect();
+    const state = await client.status(undefined, connected.session_id);
+    expect(state.desktop?.state).toBe('UNTRUSTED'); expect(state.desktop?.boundary).toBe('LOCAL_REQUIRED');
+    const detail = currentDesktopConnection(state.desktop, connected.session_id)!;
+    expect(detail).toMatchObject({ trust_level: 'UNVERIFIED', peer_authenticated: false, handshake_complete: true, session_established: true, capabilities_negotiated: true });
+    expect(detail.permissions.map(value => value.id).sort()).toEqual([...permissionIds].sort());
+    expect(detail.permissions.every(value => value.state === 'AVAILABLE')).toBe(true);
+    const eventReview = await client.eventPreview(connected.session_id, ['task'], id());
+    await client.eventSubscribe(connected.session_id, eventReview.preview_id, id());
+    const active = currentDesktopConnection((await client.status(undefined, connected.session_id)).desktop, connected.session_id)!;
+    expect(active.standing_permissions).toEqual(['standing_metadata_events']); expect(active.standing_metadata_fields).toEqual(['task']);
+    const requestId = id();
+    const revoked = await client.revokePermission(connected.session_id, 'selection', requestId);
+    expect(revoked).toMatchObject({ request_id: requestId, session_id: connected.session_id, permission_id: 'selection', status: 'REVOKED' });
+    expect(revoked.permissions.filter(value => value.state === 'REVOKED').map(value => value.id)).toEqual(['selection']);
+    expect(currentDesktopConnection(revoked.desktop, connected.session_id)?.standing_permissions).toEqual([]);
+    const chapterPreview = await client.preview({ request_id: id(), session_id: connected.session_id, chapter_id: chapter.id, expected_chapter_version: chapter.version, content_kind: 'CHAPTER', metadata_fields: [] });
+    expect(chapterPreview.capsule.content?.level).toBe('CURRENT_CHAPTER');
+    await expect(client.preview({ request_id: id(), session_id: connected.session_id, chapter_id: chapter.id, expected_chapter_version: chapter.version, content_kind: 'SELECTION', selection_start: 0, selection_end: 5, metadata_fields: [] })).rejects.toBeTruthy();
+    const emergencyId = id(), stopped = await client.disconnectRevoke(connected.session_id, emergencyId);
+    expect(stopped).toEqual(expect.objectContaining({ request_id: emergencyId, session_id: connected.session_id, status: 'DISCONNECTED', revoked: true, subscriptions_stopped: true, pending_cancelled: true, standing_grants_cleared: true, transport_disconnected: true }));
+    expect(stopped.transport_close_state).toBe('CLOSED');
+    const retryId = id();
+    expect(await client.disconnectRevoke(connected.session_id, retryId)).toMatchObject({ request_id: retryId, session_id: connected.session_id, status: 'DISCONNECTED', transport_disconnected: true, transport_close_state: 'CLOSED' });
+    await expect(client.ask(connected.session_id, chapterPreview.preview_id, id())).rejects.toMatchObject({ problem: { code: 'SESSION_REVOKED' } });
+    const fresh = await connect(); expect(fresh.session_id).not.toBe(connected.session_id);
+    const freshDetail = currentDesktopConnection((await client.status(undefined, fresh.session_id)).desktop, fresh.session_id)!;
+    expect(freshDetail.permissions.every(value => value.state === 'AVAILABLE')).toBe(true); expect(freshDetail.standing_permissions).toEqual([]);
+    await client.disconnectRevoke(fresh.session_id, id()); await client.settings(false, id());
+  }, 20_000);
+
 });

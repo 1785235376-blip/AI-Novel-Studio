@@ -1,0 +1,233 @@
+{
+  "measurement": "built file bytes and gzip bytes, not runtime startup timing",
+  "baseline_sha": "bcd60afb96cc69bdfd81db619cb0121d8712f074",
+  "files": [
+    {
+      "file": "App-DPz_T8ms.js",
+      "bytes": 648850,
+      "gzip_bytes": 186306
+    },
+    {
+      "file": "App-efcxE0Bf.css",
+      "bytes": 123805,
+      "gzip_bytes": 16417
+    },
+    {
+      "file": "ExperimentalWorkbench-CXQNI_IM.js",
+      "bytes": 543431,
+      "gzip_bytes": 159877
+    },
+    {
+      "file": "ExperimentalWorkbench-Cb-g06tN.css",
+      "bytes": 3887,
+      "gzip_bytes": 993
+    },
+    {
+      "file": "Health-CfEoxRqJ.js",
+      "bytes": 961,
+      "gzip_bytes": 551
+    },
+    {
+      "file": "LocalTutorIntegration-Bg9pZcT3.css",
+      "bytes": 2933,
+      "gzip_bytes": 816
+    },
+    {
+      "file": "LocalTutorIntegration-IFMF8izW.js",
+      "bytes": 41542,
+      "gzip_bytes": 13428
+    },
+    {
+      "file": "editor-vendor-WoPbGn4i.js",
+      "bytes": 307091,
+      "gzip_bytes": 93106
+    },
+    {
+      "file": "index-C-QkWlSB.js",
+      "bytes": 30102,
+      "gzip_bytes": 9980
+    },
+    {
+      "file": "index-Cj-tLRQ5.css",
+      "bytes": 32292,
+      "gzip_bytes": 5899
+    },
+    {
+      "file": "query-vendor-CUnTvSIi.js",
+      "bytes": 45602,
+      "gzip_bytes": 13563
+    },
+    {
+      "file": "react-vendor-D3pO_op5.js",
+      "bytes": 142976,
+      "gzip_bytes": 45803
+    },
+    {
+      "file": "style-6MlQLGa4.css",
+      "bytes": 3788,
+      "gzip_bytes": 1388
+    },
+    {
+      "file": "style-Ci1yqfxq.js",
+      "bytes": 42422,
+      "gzip_bytes": 7488
+    }
+  ],
+  "current": {
+    "html_bootstrap_js": {
+      "files": [
+        "index-C-QkWlSB.js",
+        "query-vendor-CUnTvSIi.js",
+        "react-vendor-D3pO_op5.js"
+      ],
+      "bytes": 218680,
+      "gzip_bytes": 69346
+    },
+    "html_bootstrap_css": {
+      "files": [
+        "index-Cj-tLRQ5.css"
+      ],
+      "bytes": 32292,
+      "gzip_bytes": 5899
+    },
+    "app_route_js": {
+      "files": [
+        "App-DPz_T8ms.js"
+      ],
+      "bytes": 648850,
+      "gzip_bytes": 186306
+    },
+    "app_route_css": {
+      "files": [
+        "App-efcxE0Bf.css"
+      ],
+      "bytes": 123805,
+      "gzip_bytes": 16417
+    },
+    "tutor_deferred_js": {
+      "files": [
+        "LocalTutorIntegration-IFMF8izW.js"
+      ],
+      "bytes": 41542,
+      "gzip_bytes": 13428
+    },
+    "tutor_deferred_css": {
+      "files": [
+        "LocalTutorIntegration-Bg9pZcT3.css"
+      ],
+      "bytes": 2933,
+      "gzip_bytes": 816
+    }
+  },
+  "comparison": {
+    "html_bootstrap_js": {
+      "before": {
+        "files": [
+          "index-R-5JBqpH.js",
+          "query-vendor-CUnTvSIi.js",
+          "react-vendor-D3pO_op5.js"
+        ],
+        "bytes": 218680,
+        "gzip_bytes": 69345
+      },
+      "after": {
+        "files": [
+          "index-C-QkWlSB.js",
+          "query-vendor-CUnTvSIi.js",
+          "react-vendor-D3pO_op5.js"
+        ],
+        "bytes": 218680,
+        "gzip_bytes": 69346
+      },
+      "byte_delta": 0,
+      "gzip_byte_delta": 1
+    },
+    "html_bootstrap_css": {
+      "before": {
+        "files": [
+          "index-Cj-tLRQ5.css"
+        ],
+        "bytes": 32292,
+        "gzip_bytes": 5899
+      },
+      "after": {
+        "files": [
+          "index-Cj-tLRQ5.css"
+        ],
+        "bytes": 32292,
+        "gzip_bytes": 5899
+      },
+      "byte_delta": 0,
+      "gzip_byte_delta": 0
+    },
+    "app_route_js": {
+      "before": {
+        "files": [
+          "App-DwefnLEZ.js"
+        ],
+        "bytes": 676395,
+        "gzip_bytes": 194318
+      },
+      "after": {
+        "files": [
+          "App-DPz_T8ms.js"
+        ],
+        "bytes": 648850,
+        "gzip_bytes": 186306
+      },
+      "byte_delta": -27545,
+      "gzip_byte_delta": -8012
+    },
+    "app_route_css": {
+      "before": {
+        "files": [
+          "App-Deys37l6.css"
+        ],
+        "bytes": 126330,
+        "gzip_bytes": 16739
+      },
+      "after": {
+        "files": [
+          "App-efcxE0Bf.css"
+        ],
+        "bytes": 123805,
+        "gzip_bytes": 16417
+      },
+      "byte_delta": -2525,
+      "gzip_byte_delta": -322
+    },
+    "tutor_deferred_js": {
+      "before": {
+        "files": [],
+        "bytes": 0,
+        "gzip_bytes": 0
+      },
+      "after": {
+        "files": [
+          "LocalTutorIntegration-IFMF8izW.js"
+        ],
+        "bytes": 41542,
+        "gzip_bytes": 13428
+      },
+      "byte_delta": 41542,
+      "gzip_byte_delta": 13428
+    },
+    "tutor_deferred_css": {
+      "before": {
+        "files": [],
+        "bytes": 0,
+        "gzip_bytes": 0
+      },
+      "after": {
+        "files": [
+          "LocalTutorIntegration-Bg9pZcT3.css"
+        ],
+        "bytes": 2933,
+        "gzip_bytes": 816
+      },
+      "byte_delta": 2933,
+      "gzip_byte_delta": 816
+    }
+  },
+  "startup_timing": "NOT_RUN"
+}

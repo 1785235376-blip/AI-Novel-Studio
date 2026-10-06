@@ -122,7 +122,7 @@ def test_missing_architecture_protected_readback_is_none(tmp_path: Path):
 @pytest.mark.parametrize("value", [
     "x86_64",
     str(UUID(int=0)),
-    str(uuid4()),
+    pytest.param(str(uuid4()), id="unknown-uuid"),
     str(GPU_VENDOR_NVIDIA.taxonomy_id),
 ])
 def test_invalid_persisted_architecture_fails_closed_without_file_mutation(tmp_path: Path, value: str):

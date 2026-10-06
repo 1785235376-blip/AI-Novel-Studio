@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..runtime_events import committed_change
 import json
 from pathlib import Path
 from datetime import datetime,timezone
@@ -45,6 +46,7 @@ class ChapterRepository:
         if path.exists(): package=read_json(path,{})
         else: package={"chapter_id":cid,"version":1,"document":markdown_to_document(chapter["content"]),"updated_at":datetime.now(timezone.utc).isoformat(),"source":"MIGRATED"}; path.parent.mkdir(parents=True,exist_ok=True);atomic_write(path,json.dumps(package,ensure_ascii=False,indent=2))
         return {**chapter,"content":document_to_markdown(package["document"]),"version":package["version"],"document":package["document"],"updated_at":package.get("updated_at")}
+    @committed_change("CHAPTER")
     @guard_project("cid", chapter=True)
     def save(self,cid,document,expected_version,source="USER",operator="local-user",create_revision=True):
         root,num,path=self._paths(cid)
@@ -66,6 +68,7 @@ class ChapterRepository:
         root,num,_=self._paths(cid);item=read_json(root/"history"/f"chapter-{num:04d}"/f"v{version:06d}.json",None)
         if not item:raise FileNotFoundError(version)
         return self.save(cid,item["document"],expected_version,"RESTORE")
+    @committed_change("CHAPTER")
     @guard_project("cid", chapter=True)
     def delete(self,cid):
         root,num,path=self._paths(cid);md=root/"chapters"/f"chapter-{num:04d}.md";md.unlink();path.unlink(missing_ok=True);self._remove_order(root,cid)

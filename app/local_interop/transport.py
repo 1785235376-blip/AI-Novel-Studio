@@ -41,8 +41,30 @@ class LoopbackTransport:
     def __init__(self, endpoint, *, timeout=4.0):
         self.endpoint = assert_endpoint(endpoint)
         self.timeout = min(max(float(timeout), 0.05), 10.0)
+        self._closed = False
+        self._inflight = set()
 
     async def request(self, operation, message=None, *, token=None, before_send=None):
+        if self._closed: raise InteropFailure("TRANSPORT_ERROR", 503)
+        task = asyncio.current_task()
+        self._inflight.add(task)
+        try:
+            return await self._exchange(operation, message, token=token, before_send=before_send)
+        finally:
+            self._inflight.discard(task)
+
+    async def shutdown(self, *, timeout=.25):
+        """Prove local cookie-free client closure, not remote data recall."""
+        self._closed = True
+        pending = {task for task in self._inflight if task is not asyncio.current_task()}
+        for task in pending: task.cancel()
+        if pending:
+            _, pending = await asyncio.wait(pending, timeout=max(0.0, min(float(timeout), 1.0)))
+        # Each request leaves _inflight only after its AsyncClient context has
+        # closed. Cancellation-resistant requests therefore cannot claim CLOSED.
+        return not pending and not self._inflight
+
+    async def _exchange(self, operation, message=None, *, token=None, before_send=None):
         if operation not in OPERATIONS: raise InteropFailure("TRANSPORT_ERROR", 400)
         payload = message.model_dump(mode="json") if hasattr(message, "model_dump") else message
         raw = json.dumps(payload, ensure_ascii=False, allow_nan=False).encode() if payload is not None else None

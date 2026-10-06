@@ -1,0 +1,65 @@
+{
+  "scope": "Creative Studio Desktop Integration Preparation frontend",
+  "baseline_sha": "bcd60afb96cc69bdfd81db619cb0121d8712f074",
+  "source_state": "working tree; final publication SHA recorded by final integration delivery receipt",
+  "checks": [
+    {
+      "name": "Full frontend unit/component/contract suite",
+      "command": "npm test",
+      "status": "PASS",
+      "passed_tests": 1150,
+      "skipped_tests": 8,
+      "passed_files": 176,
+      "skipped_files": 2,
+      "skip_reason": "Six existing ExperimentalWorkbench HTTP opt-in cases and two opt-in Local Interop real-host cases; the latter were executed separately."
+    },
+    {
+      "name": "Focused interop and independent lazy-entry regression suite",
+      "command": "npm test -- --run src/interop tests/localInteropLayout.test.ts",
+      "status": "PASS",
+      "passed_tests": 104,
+      "passed_files": 6
+    },
+    {
+      "name": "Actual client to Studio host to Synthetic Tutor",
+      "command": "LOCAL_INTEROP_REAL_HOST_TEST=1 INTEROP_PYTHON=<isolated-test-python> npm test -- --run tests/localInteropRealHost.test.ts",
+      "status": "PASS",
+      "passed_tests": 2,
+      "boundary": "MOCK_ONLY; loopback HTTP; no native Desktop authentication"
+    },
+    {
+      "name": "TypeScript and production Vite bundle",
+      "command": "npm run build",
+      "status": "PASS",
+      "note": "Existing >500 kB chunk-size warning remains."
+    },
+    {
+      "name": "Design token guard",
+      "command": "npm run lint",
+      "status": "PASS"
+    },
+    {
+      "name": "Hosted browser scenario collection",
+      "command": "playwright test --config playwright.interop.config.ts --list",
+      "status": "PASS",
+      "collected_tests": 12
+    },
+    {
+      "name": "Local browser rendering and visual screenshots",
+      "status": "NOT_RUN",
+      "reason": "Previously denied Chromium OS IPC lane was not retried or bypassed. Authorized hosted CI execution is tracked separately."
+    },
+    {
+      "name": "Native Desktop, real Named Pipe and signed peer UI acceptance",
+      "status": "LOCAL_REQUIRED"
+    },
+    {
+      "name": "Runtime startup latency",
+      "status": "NOT_RUN",
+      "reason": "Bundle bytes and source/module-boundary checks are not runtime timing evidence."
+    }
+  ],
+  "bundle_evidence": "desktop-bundle-comparison.json",
+  "design_system": "DS-v1.0 consumer only; no protected shell, token or primitive changes",
+  "content": "Synthetic fixtures only; no real manuscript or credentials"
+}

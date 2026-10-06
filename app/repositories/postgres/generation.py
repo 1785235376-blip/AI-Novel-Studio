@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ...runtime_events import committed_change
 from datetime import datetime,timezone
 from sqlalchemy import select
 from .common import chapter_or_raise,external_uuid,novel_or_raise
@@ -14,6 +15,7 @@ class PostgresGenerationRepository:
         if row.error_code is not None:saved["error_code"]=row.error_code
         if row.error_message is not None:saved["error"]=row.error_message
         return saved
+    @committed_change("TASK")
     def save(self,item):
         with self.database.session() as session:
             iid=external_uuid(item["id"]);row=session.get(GenerationJobModel,iid);novel_uuid=chapter_uuid=None

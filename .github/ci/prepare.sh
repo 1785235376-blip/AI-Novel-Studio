@@ -15,6 +15,8 @@ git archive HEAD | tar -x -C "$project"
   printf 'platform=Linux; native Windows host/AppContainer/installer=NOT RUN\n'
 } > "$receipts/revision.txt"
 {
+  echo "CI_COVERAGE_SHA=$(git rev-parse HEAD)"
+  echo "CI_COVERAGE_TREE=$(git rev-parse HEAD^{tree})"
   echo "CI_SANDBOX=$sandbox"
   echo "CI_PROJECT=$project"
   echo "CI_RECEIPTS=$receipts"

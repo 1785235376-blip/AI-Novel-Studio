@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ...runtime_events import committed_change
 
 import hashlib
 from datetime import datetime, timezone
@@ -37,6 +38,7 @@ class PostgresChapterRepository:
             rows = session.scalars(select(ChapterModel).where(ChapterModel.novel_id == novel.id, ChapterModel.is_archived.is_(True)).order_by(ChapterModel.chapter_number)).all()
             return [self._external(novel, row) for row in rows]
 
+    @committed_change("CHAPTER")
     def _set_archived(self, chapter_id, archived, expected_version=None):
         with self.database.session() as session:
             novel, chapter = chapter_or_raise(session, chapter_id)
@@ -52,6 +54,7 @@ class PostgresChapterRepository:
     def archive(self, chapter_id, expected_version=None): return self._set_archived(chapter_id, True, expected_version)
     def restore_archive(self, chapter_id, expected_version=None): return self._set_archived(chapter_id, False, expected_version)
 
+    @committed_change("CHAPTER")
     def create(self, novel_id, payload):
         with self.database.session() as session:
             novel = novel_or_raise(session, novel_id)
@@ -71,6 +74,7 @@ class PostgresChapterRepository:
             novel, chapter = chapter_or_raise(session, chapter_id)
             return self._external(novel, chapter)
 
+    @committed_change("CHAPTER")
     def save(self, chapter_id, document, expected_version, source="USER", operator="local-user", create_revision=True):
         with self.database.session() as session:
             novel, chapter = chapter_or_raise(session, chapter_id)
@@ -108,6 +112,7 @@ class PostgresChapterRepository:
             session.refresh(chapter)
             return self._external(novel, chapter)
 
+    @committed_change("CHAPTER")
     def delete(self, chapter_id):
         with self.database.session() as session:
             _, chapter = chapter_or_raise(session, chapter_id); session.delete(chapter)

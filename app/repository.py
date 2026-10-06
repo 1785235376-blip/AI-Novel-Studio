@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .runtime_events import committed_change
 import json,re,shutil,uuid
 from datetime import datetime,timezone
 from pathlib import Path
@@ -27,6 +28,7 @@ class FileRepository:
                 meta=read_json(root/"novel.json",{}); chapters=self.list_chapters(root.name)
                 out.append({"id":root.name,"title":meta.get("title",root.name),"genre":meta.get("genre",""),"status":meta.get("status","Writing"),"chapter_count":len(chapters),"word_count":sum(x["word_count"] for x in chapters),"updated_at":meta.get("updated_at")})
         return out
+    @committed_change("PROJECT")
     def create_novel(self,payload):
         nid=slug(payload.get("id") or payload["title"]); root=self.novels/nid
         with project_operation(self.data, nid, require_exists=False):
@@ -40,9 +42,11 @@ class FileRepository:
         root=self.novels/nid
         if not root.exists(): raise FileNotFoundError(nid)
         return read_json(root/"novel.json",{})
+    @committed_change("PROJECT")
     @guard_project("nid")
     def update_novel(self,nid,payload):
         meta=self.get_novel(nid); meta.update({k:v for k,v in payload.items() if k in {"title","genre","status","long_term_summary","writing_goal"}}); meta["updated_at"]=now(); atomic_write(self.novels/nid/"novel.json",json.dumps(meta,ensure_ascii=False,indent=2)); return meta
+    @committed_change("PROJECT")
     @guard_project("nid")
     def delete_novel(self,nid): shutil.rmtree(self.novels/nid)
     @guard_project("nid")
@@ -57,6 +61,7 @@ class FileRepository:
     @guard_project("nid")
     def list_archived_chapters(self,nid):
         return [c for c in self.list_chapters(nid) if c.get("is_archived")]
+    @committed_change("CHAPTER")
     @guard_project("cid", chapter=True)
     def set_chapter_archived(self,cid,archived,expected_version):
         chapter=self.chapter(cid)
@@ -78,6 +83,7 @@ class FileRepository:
     @guard_project("cid", chapter=True)
     def save_chapter(self,cid,payload):
         chapter=self.chapter(cid); content=payload.get("content",chapter["content"]); atomic_write(self.novels/chapter["novel_id"]/"chapters"/f"chapter-{chapter['number']:04d}.md",content); return self.chapter(cid)
+    @committed_change("CHAPTER")
     @guard_project("nid")
     def create_chapter(self,nid,payload):
         existing=self.list_chapters(nid); num=payload.get("number") or (max([x["number"] for x in existing],default=0)+1); title=payload.get("title",f"第 {num} 章"); atomic_write(self.novels/nid/"chapters"/f"chapter-{num:04d}.md",f"# {title}\n\n{payload.get('content','')}"); return self.chapter(f"{nid}:{num}")

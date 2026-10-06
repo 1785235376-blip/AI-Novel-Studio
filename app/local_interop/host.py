@@ -10,10 +10,15 @@ from uuid import uuid4
 
 from app import __version__
 from app.experimental.flags import enabled_flags
+from app.runtime_events import runtime_events
+from local_interop_desktop.events import EventProvenance, InteropEventSourceRegistry
+from local_interop_desktop.lifecycle import InteropLifecycleCoordinator
 from local_interop_protocol import (
     CAPABILITIES,
     PROTOCOL_VERSION,
     STUDIO_PRODUCT_ID,
+    CancelRequest,
+    CancelResult,
     CapabilityNegotiation,
     CapabilityState,
     CaseCandidate,
@@ -25,20 +30,22 @@ from local_interop_protocol import (
     Heartbeat,
     HelloResult,
     InteropEvent,
-    ModelRegistry,
     ProductDescriptor,
+    ProtocolViolation,
     SessionOpenRequest,
     SessionOpenResult,
-    SharedModelDescriptor,
-    TutorGuidance,
     TutorRequest,
-    VerifierResult,
     create_capsule,
     create_diagnostic,
     parse_wire,
     validate_capsule,
 )
 
+from .desktop import (
+    PERMISSIONS,
+    CreativeStudioInteropAdapter,
+    StudioHostLifecycleBoundary,
+)
 from .errors import InteropFailure
 from .provider import FEATURES, anchor_text, digest
 from .transport import LoopbackTransport
@@ -93,6 +100,16 @@ class LocalSession:
     previous: dict | None = field(default=None, repr=False)
     pump: asyncio.Task | None = field(default=None, repr=False)
     revoked: bool = False
+    revoked_permissions: set[str] = field(default_factory=set)
+    permission_generation: int = 0
+    wake: asyncio.Event = field(default_factory=asyncio.Event, repr=False)
+    source_provenance: dict = field(default_factory=dict)
+    loop: object = field(default=None, repr=False)
+    source_subscriptions: dict = field(default_factory=dict, repr=False)
+    closing_task: asyncio.Task | None = field(default=None, repr=False)
+    transport_disconnected: bool = False
+    transport_close_state: str = "UNKNOWN"
+    peer_disconnect_acknowledged: bool = False
 
 
 class LocalInteropHost:
@@ -108,6 +125,36 @@ class LocalInteropHost:
         self.connect_epochs = {}
         self.seen = OrderedDict()
         self.closed = False
+        self.request_sessions = {}
+        self.closing_tasks = set()
+        self.closed_sessions = OrderedDict()
+        self.pending_changes = set()
+        self.delivery_bindings = OrderedDict()
+        self.desktop = CreativeStudioInteropAdapter(self)
+        self.event_sources = InteropEventSourceRegistry()
+        self.poll_sources = InteropEventSourceRegistry()
+        for module in InteropEventSourceRegistry.MODULES:
+            self.event_sources.register(module, provenance=EventProvenance.DIRECT_EVENT if module in {"PROJECT", "CHAPTER", "TASK"} else EventProvenance.POLLING)
+            self.poll_sources.register(module, provenance=EventProvenance.POLLING)
+        self._unsubscribe_runtime = runtime_events.subscribe(self._on_runtime_change)
+        self.lifecycle = InteropLifecycleCoordinator(StudioHostLifecycleBoundary(self),
+            revoke_subscriptions=self._revoke_subscriptions, flush_audit=self._flush_audit)
+        self.last_audit_count = 0
+
+    def _revoke_subscriptions(self):
+        for session in tuple(self.sessions.values()): self._pause_events(session)
+
+    def _flush_audit(self):
+        # Bounded metadata only. No durable session/grant or content is restored.
+        self.last_audit_count = len(self.desktop.audit)
+        self.desktop.audit.clear()
+
+    async def app_start(self):
+        if self.closed:
+            # A restarted backend receives a fresh instance and empty authority.
+            self.__init__(self.provider, transport_factory=self.transport_factory, event_interval=self.event_interval)
+        await self.lifecycle.app_start()
+        await self.lifecycle.app_ready()
 
     def _owner(self, token):
         actor = self.provider.actor(token)
@@ -119,7 +166,7 @@ class LocalInteropHost:
             self._revoke_owner(owner)
             raise InteropFailure("PERMISSION_DENIED", 403)
 
-    def status(self, token):
+    def status(self, token, session_id=None):
         owner = self._owner(token)
         feature_enabled = FLAG in enabled_flags()
         if not feature_enabled: self._revoke_owner(owner)
@@ -127,13 +174,50 @@ class LocalInteropHost:
             if session.owner == owner:
                 try: self._session(token, session.id)
                 except InteropFailure: pass
+        if session_id is not None:
+            closed = self.closed_sessions.get(session_id)
+            if closed:
+                if closed.owner != owner: raise InteropFailure("PERMISSION_DENIED", 403)
+            else:
+                self._session(token, session_id)
+        sessions = [item for item in self.sessions.values() if item.owner == owner and not item.revoked and (session_id is None or item.id == session_id)]
         import os
         return {"feature_enabled": feature_enabled, "enabled": feature_enabled and owner in self.enabled_owners,
             "acceptance_mode": os.getenv("V1_ACCEPTANCE_MODE", "").lower().strip() in {"true", "1", "yes", "on"},
             "product": self.product.model_dump(mode="json"), "capabilities": list(CAPABILITIES),
             "disabled_capabilities": ["model.execute", "project.write"], "desktop_status": "LOCAL_REQUIRED",
-            "sessions": [{"session_id": s.id, "product": s.peer.model_dump(mode="json"), "capabilities": list(s.wire_session.capabilities)}
-                         for s in self.sessions.values() if s.owner == owner and not s.revoked]}
+            "desktop": self.desktop.snapshot(owner, sessions, session_id=session_id),
+            "sessions": [{"session_id": s.id, "product": s.peer.model_dump(mode="json"), "capabilities": sorted(self._capabilities(s))}
+                         for s in sessions]}
+
+    def desktop_response_guard(self, token, value):
+        """Pin browser-only permission projections until their last ASGI frame."""
+        owner = self._owner(token)
+        desktop = value.get("desktop") or {}
+        bindings = []
+        for row in desktop.get("connections", []):
+            session = self._session(token, row["session_id"])
+            bindings.append((session.id, session.permission_generation, session.event_grant_generation))
+        enabled = owner in self.enabled_owners and FLAG in enabled_flags()
+        def guard():
+            self._owner(token)
+            if enabled != (owner in self.enabled_owners and FLAG in enabled_flags()):
+                raise InteropFailure("PERMISSION_DENIED", 403)
+            for sid, permissions, events in bindings:
+                current = self._session(token, sid)
+                if (current.permission_generation, current.event_grant_generation) != (permissions, events):
+                    raise InteropFailure("PERMISSION_DENIED", 403)
+        return guard
+
+    def status_guard(self, token, session_id=None):
+        owner = self._owner(token)
+        if session_id is None: return
+        if session_id in self.sessions:
+            self._session(token, session_id)
+            return
+        closed = self.closed_sessions.get(session_id)
+        if closed is None: raise InteropFailure("SESSION_REVOKED", 401)
+        if closed.owner != owner: raise InteropFailure("PERMISSION_DENIED", 403)
 
     def configure(self, token, enabled):
         owner = self._owner(token)
@@ -152,12 +236,31 @@ class LocalInteropHost:
             if request_owner == owner and task is not current_task(): task.cancel()
 
     def _revoke(self, session):
+        if session.revoked: return
         session.revoked = True
+        self.desktop.owner_states[session.owner] = "UNKNOWN"
+        self.desktop.record(session.owner, "DISCONNECT", session=session)
+        for key, sid in tuple(self.request_sessions.items()):
+            if sid == session.id:
+                self.seen[key] = "CANCELLED"
+                task = self.requests.get(key)
+                if task and task is not current_task(): task.cancel()
         self._pause_events(session)
         session.previews.clear(); session.guidance.clear(); session.results.clear(); session.candidates.clear(); session.events.clear()
         if session.pump and session.pump is not current_task(): session.pump.cancel()
+        peer_token = session.peer_token
         session.peer_token = ""
+        try:
+            loop = asyncio.get_running_loop()
+            session.closing_task = loop.create_task(self._close_peer(session, peer_token))
+            self.closing_tasks.add(session.closing_task)
+            session.closing_task.add_done_callback(self.closing_tasks.discard)
+        except RuntimeError:
+            pass
+        session.host_token = ""
         self.sessions.pop(session.id, None)
+        self.closed_sessions[session.id] = session
+        while len(self.closed_sessions) > MAX_SESSIONS: self.closed_sessions.popitem(last=False)
 
     def _session(self, token, sid, capability=None):
         owner = self._owner(token)
@@ -173,18 +276,23 @@ class LocalInteropHost:
         except InteropFailure:
             self._revoke(session)
             raise
-        if capability and capability not in session.wire_session.capabilities:
+        if capability and capability not in self._capabilities(session):
             raise InteropFailure("CAPABILITY_NOT_SUPPORTED", 403)
         return session
 
-    async def run(self, token, request_id, operation):
+    async def run(self, token, request_id, operation, session_id=None):
         owner = self._owner(token)
         key = (owner, request_id)
         if key in self.seen or key in self.requests: raise InteropFailure("CANCELLED", 409)
+        session = self._session(token, session_id) if session_id is not None else None
         self.seen[key] = "STARTED"
         while len(self.seen) > MAX_REQUESTS: self.seen.popitem(last=False)
         if len(self.requests) >= MAX_SESSIONS: raise InteropFailure("TIMEOUT", 429)
         self.requests[key] = asyncio.current_task()
+        if session is not None:
+            self.request_sessions[key] = session_id
+            self.delivery_bindings[key] = (session_id, session.permission_generation, None)
+            while len(self.delivery_bindings) > MAX_REQUESTS: self.delivery_bindings.popitem(last=False)
         try:
             async with asyncio.timeout(15):
                 result = await operation()
@@ -199,12 +307,26 @@ class LocalInteropHost:
             raise InteropFailure("TIMEOUT", 504) from None
         finally:
             self.requests.pop(key, None)
+            self.request_sessions.pop(key, None)
 
     def delivery_guard(self, token, sid=None, request_id=None):
         owner = self._owner(token)
         if request_id and self.seen.get((owner, request_id)) == "CANCELLED":
             raise InteropFailure("CANCELLED", 409)
-        if sid: self._session(token, sid)
+        if sid:
+            session = self._session(token, sid)
+            binding = self.delivery_bindings.get((owner, request_id)) if request_id else None
+            if binding:
+                if binding[:2] != (sid, session.permission_generation):
+                    raise InteropFailure("PERMISSION_DENIED", 403)
+                if binding[2] is not None and self._snapshot(session)["source_version"] != binding[2]:
+                    raise InteropFailure("SOURCE_CHANGED", 409)
+
+    def _bind_delivery(self, session, request_id, source_version=None):
+        key = (session.owner, request_id)
+        self.delivery_bindings[key] = (session.id, session.permission_generation, source_version)
+        while len(self.delivery_bindings) > MAX_REQUESTS: self.delivery_bindings.popitem(last=False)
+        if key in self.requests: self.request_sessions[key] = session.id
 
     def cancel(self, token, request_id, sid=None):
         owner = self._owner(token)
@@ -230,9 +352,22 @@ class LocalInteropHost:
         transport = self.transport_factory(body.endpoint)
         record = parse_wire(DiscoveryRecord, await transport.request("discovery"))
         self._enabled(owner); self._owner(token)
-        return {"request_id": body.request_id, "product": record.model_dump(mode="json")}
+        self.desktop.owner_states[owner] = "DETECTED"
+        self.desktop.record(owner, "DISCOVER")
+        return {"request_id": body.request_id, "product": record.model_dump(mode="json"), "trust_level": "UNVERIFIED", "peer_authenticated": False}
 
     async def connect(self, token, body):
+        owner = self._owner(token); self._enabled(owner)
+        try:
+            if not await self.lifecycle.bridge_start(): raise InteropFailure("TRANSPORT_ERROR", 503)
+            return await self.lifecycle.peer_found(body, token=token)
+        except (InteropFailure, ProtocolViolation) as exc:
+            if exc.code != "CANCELLED" and not any(s.owner == owner for s in self.sessions.values()):
+                self.desktop.owner_states[owner] = "DEGRADED"
+                self.desktop.owner_errors[owner] = [exc.code]
+            raise
+
+    async def _connect(self, token, body):
         owner = self._owner(token); self._enabled(owner)
         epoch = self.connect_epochs.get(owner, 0) + 1
         self.connect_epochs[owner] = epoch
@@ -245,7 +380,7 @@ class LocalInteropHost:
         if body.surface not in FEATURES: raise InteropFailure("HANDOFF_TARGET_NOT_FOUND", 404)
         snapshot = self.provider.snapshot(token, scope, module=body.module, surface=body.surface, chapter_id=body.chapter_id, task_id=body.task_id)
         transport = self.transport_factory(body.endpoint)
-        nonce = secrets.token_urlsafe(32)
+        nonce = secrets.token_hex(32)
         hello = parse_wire(HelloResult, await transport.request("hello", HandshakeHello(product=self.product, transport="LOOPBACK_HTTP", session_nonce=nonce)))
         pending_guard(); self.provider.authorize(token, scope)
         if hello.session_nonce != nonce or hello.product.product_role != "AI_TUTOR" or PROTOCOL_VERSION not in hello.product.protocol_versions:
@@ -273,7 +408,12 @@ class LocalInteropHost:
         # A changed browser scope replaces only that owner's prior sessions.
         self._revoke_owner(owner)
         self.sessions[session.id] = session
+        session.loop = asyncio.get_running_loop()
+        session.last_peer_seen = session.loop.time()
         session.pump = asyncio.create_task(self._event_pump(session))
+        self.desktop.owner_states[owner] = "UNTRUSTED"
+        self.desktop.owner_errors.pop(owner, None)
+        self.desktop.record(owner, "CONNECT", session=session)
         return {"request_id": body.request_id, "session_id": session.id, "protocol_session_id": wire.session_id, "product": hello.product.model_dump(mode="json"),
             "capabilities": list(wire.capabilities), "desktop_status": "LOCAL_REQUIRED",
             "mode": "MOCK_ONLY" if "MOCK_ONLY" in hello.product.display_name else "LOCAL_REFERENCE",
@@ -287,7 +427,7 @@ class LocalInteropHost:
     def _capsule(self, session, snapshot, *, content=None, metadata_fields=METADATA_FIELDS, selection_id=None):
         state = dict(snapshot["state"])
         metadata_fields = set(metadata_fields)
-        available = set(session.wire_session.capabilities)
+        available = self._capabilities(session)
         metadata_fields -= {group for group, cap in {"task": "task.status.read", "error": "task.error.read", "model": "model.registry.read", "runtime": "model.runtime.status.read"}.items() if cap not in available}
         if not metadata_fields.issubset(METADATA_FIELDS): raise InteropFailure("INVALID_MESSAGE", 400)
         for group, fields in {"task": ("task_id", "task_type", "task_status"), "error": ("error_code",), "model": ("model_id",), "runtime": ("runtime_id", "runtime_status")}.items():
@@ -322,6 +462,7 @@ class LocalInteropHost:
         bindings = None
         selection_id = None
         if body.content_kind != "NONE":
+            self._permission(session, {"SELECTION": "selection", "CHAPTER": "current_chapter", "SPECIFIC_CONTEXT": "specific_context"}[body.content_kind])
             chapter = snapshot["chapter"]
             if body.content_kind in {"SELECTION", "CHAPTER"} and (chapter is None or body.expected_chapter_version != chapter["version"]):
                 raise InteropFailure("SOURCE_CHANGED", 409)
@@ -344,9 +485,10 @@ class LocalInteropHost:
             raise InteropFailure("CONTEXT_NOT_AUTHORIZED", 403)
         capsule = self._capsule(session, snapshot, content=content, metadata_fields=body.metadata_fields, selection_id=selection_id)
         preview_id = uid("preview")
-        session.previews[preview_id] = {"kind": "context", "capsule": capsule, "source": snapshot["source_version"], "bindings": bindings, "diagnostic": None}
+        session.previews[preview_id] = {"kind": "context", "capsule": capsule, "source": snapshot["source_version"], "bindings": bindings, "diagnostic": None, "permission_generation": session.permission_generation}
         while len(session.previews) > MAX_PREVIEWS: session.previews.popitem(last=False)
         self._session(token, session.id)
+        self._bind_delivery(session, body.request_id, snapshot["source_version"])
         return {"request_id": body.request_id, "session_id": session.id, "preview_id": preview_id,
                 "capsule": capsule.model_dump(mode="json"), "expires_at": capsule.expires_at.isoformat()}
 
@@ -374,14 +516,17 @@ class LocalInteropHost:
         diagnostic = create_diagnostic(diagnostic_id=uid("diagnostic"), source_version=snapshot["source_version"], **values,
             privacy_scope="LOCAL_ONLY", created_at=now(), expires_at=now()+timedelta(minutes=5), evidence=(), sanitized=True)
         preview_id = uid("preview")
-        session.previews[preview_id] = {"kind": "diagnostic", "capsule": capsule, "source": snapshot["source_version"], "bindings": None, "diagnostic": diagnostic}
+        session.previews[preview_id] = {"kind": "diagnostic", "capsule": capsule, "source": snapshot["source_version"], "bindings": None, "diagnostic": diagnostic, "permission_generation": session.permission_generation}
         while len(session.previews) > MAX_PREVIEWS: session.previews.popitem(last=False)
         self._session(token, session.id)
+        self._bind_delivery(session, body.request_id, snapshot["source_version"])
         return {"request_id": body.request_id, "session_id": session.id, "preview_id": preview_id,
                 "diagnostic": diagnostic.model_dump(mode="json"), "capsule": capsule.model_dump(mode="json"), "expires_at": diagnostic.expires_at.isoformat(),
                 "event_subscription_paused": True}
 
     def _validate_preview(self, session, preview):
+        if preview.get("permission_generation", session.permission_generation) != session.permission_generation:
+            raise InteropFailure("PERMISSION_DENIED", 403)
         snapshot = self._snapshot(session)
         validate_capsule(preview["capsule"], source_version=snapshot["source_version"])
         if preview["source"] != snapshot["source_version"]: raise InteropFailure("SOURCE_CHANGED", 409)
@@ -396,9 +541,13 @@ class LocalInteropHost:
         preview = session.previews.pop(body.preview_id, None)
         if preview is None or preview.get("kind") != ("diagnostic" if diagnostic else "context"): raise InteropFailure("CONTEXT_STALE", 409)
         self._validate_preview(session, preview)
+        self._bind_delivery(session, body.request_id, preview["source"])
         request = TutorRequest(request_id=body.request_id, session_id=session.wire_session.session_id,
             context=preview["capsule"], question=body.question, diagnostic=preview["diagnostic"])
-        response = parse_wire(TutorGuidance, await session.transport.request("diagnostics" if diagnostic else "tutor", request, token=session.peer_token))
+        def guard():
+            self._session(token, session.id, "diagnostics.read" if diagnostic else "tutor.guidance.request")
+            self._validate_preview(session, preview)
+        response = await self.desktop.tutor(session, guard).request(request)
         self._session(token, session.id, "tutor.guidance.receive")
         self._validate_preview(session, preview)
         if response.request_id != request.request_id or response.session_id != request.session_id or response.privacy_scope != "LOCAL_ONLY":
@@ -413,28 +562,21 @@ class LocalInteropHost:
         if not stored: raise InteropFailure("CONTEXT_STALE", 409)
         condition = stored["guidance"].verification_condition
         capsule = self._capsule(session, self._snapshot(session))
-        evidence = ()
-        status = "UNKNOWN"
-        if condition:
-            actual = getattr(capsule, condition.field)
-            evidence = tuple(item for item in capsule.evidence if item.source_id == condition.field and item.source_id == condition.source_id)
-            if evidence and actual is not None and actual != "UNKNOWN":
-                matches = {"EQ": lambda: actual == condition.expected_value, "NE": lambda: actual != condition.expected_value,
-                           "GTE": lambda: isinstance(actual, int) and actual >= condition.expected_value}[condition.operator]()
-                status = "VERIFIED" if matches else "FAILED"
+        self._bind_delivery(session, body.request_id, capsule.source_version)
+        result = self.desktop.verifier(session, body.request_id, stored["capsule"]).verify(condition, capsule, capsule.evidence)
         # Verification is evaluated here from freshly authorized Host state.
         # No Tutor prose or wire-provided AUTHORITATIVE label is a proof.
         await asyncio.sleep(0)
         self._session(token, session.id, "verifier.result.receive")
         if capsule.source_version != self._snapshot(session)["source_version"]: raise InteropFailure("SOURCE_CHANGED", 409)
-        result = VerifierResult(request_id=body.request_id, session_id=session.wire_session.session_id, result_id=uid("verification"),
-            status=status, reason="Fresh Studio source satisfies the structured condition." if status == "VERIFIED" else "Fresh Studio state does not satisfy the condition." if status == "FAILED" else "No matching authoritative source is available.",
-            evidence=evidence, privacy_scope="LOCAL_ONLY", created_at=now())
         session.results[result.result_id] = {"result": result, "guidance_id": body.guidance_id, "source": capsule.source_version}
         while len(session.results) > MAX_PREVIEWS: session.results.popitem(last=False)
         return {"request_id": body.request_id, "session_id": session.id, "result": result.model_dump(mode="json")}
 
     def handoff(self, token, body):
+        return self.desktop.handoff.handle(token, body)
+
+    def _resolve_handoff(self, token, body):
         session = self._session(token, body.session_id)
         if not body.explicit_click: raise InteropFailure("PERMISSION_DENIED", 403)
         target = body.handoff
@@ -454,21 +596,28 @@ class LocalInteropHost:
             row = self.provider.chapter(session.scope, target.chapter_id)
             route.update(project_id=session.scope["project_id"], chapter_id=row["id"], chapter_version=row["version"])
         else:
+            # These existing panels own selection internally and expose no
+            # task-ID navigation port yet. Feature navigation remains supported.
+            if session.surface in {"export", "workflow"}:
+                raise InteropFailure("HANDOFF_TARGET_NOT_FOUND", 404)
             row = self.provider.task(token, session.scope, target.task_id)
             route.update(project_id=session.scope["project_id"], task_id=target.task_id, task_kind="generation", task_status=self.provider.task_status(row.get("status")))
         self._session(token, session.id)
+        self._bind_delivery(session, body.request_id, snapshot["source_version"])
         return {"request_id": body.request_id, "session_id": session.id, "route": route}
 
     def model_registry(self, token, sid):
         session = self._session(token, sid, "model.registry.read")
-        rows = self.provider.model_rows()
-        if "model.runtime.status.read" not in session.wire_session.capabilities:
-            rows = [{**item, "availability": "UNKNOWN", "last_validated": None} for item in rows]
-        registry = ModelRegistry(models=tuple(SharedModelDescriptor(**item) for item in rows), created_at=now())
+        registry = self.desktop.models.snapshot()
+        if "model.runtime.status.read" not in self._capabilities(session):
+            registry = registry.model_copy(update={"models": tuple(model.model_copy(update={"availability": "UNKNOWN", "last_validated": None}) for model in registry.models)})
         self._session(token, sid)
         return registry.model_dump(mode="json")
 
     def case_preview(self, token, body):
+        return self.desktop.case_gate.preview(token, body)
+
+    def _case_preview(self, token, body):
         session = self._session(token, body.session_id, "case.candidate.create")
         stored = session.results.get(body.result_id)
         if not stored or stored["result"].status != "VERIFIED": raise InteropFailure("CONTEXT_NOT_AUTHORIZED", 403)
@@ -484,6 +633,9 @@ class LocalInteropHost:
         return {"request_id": body.request_id, "session_id": session.id, "candidate": candidate.model_dump(mode="json"), "gate": "USER_APPROVAL_REQUIRED"}
 
     def case_approve(self, token, body):
+        return self.desktop.case_gate.submit(token, body)
+
+    def _case_approve(self, token, body):
         session = self._session(token, body.session_id, "case.candidate.create")
         item = session.candidates.get(body.candidate_id)
         if not item or not body.confirmed: raise InteropFailure("CONTEXT_NOT_AUTHORIZED", 403)
@@ -499,7 +651,12 @@ class LocalInteropHost:
             "module": session.module, "surface": session.surface})
 
     def _pause_events(self, session):
+        for registry, key in ((self.event_sources, "DIRECT_EVENT"), (self.poll_sources, "POLLING")):
+            source_id = session.source_subscriptions.pop(key, None)
+            if source_id: registry.revoke(source_id)
+        session.source_provenance.clear()
         session.event_grant_generation += 1
+        session.wake.set()
         session.event_grant_id = None
         session.event_grant_request_id = None
         session.event_grant_binding = None
@@ -513,6 +670,7 @@ class LocalInteropHost:
 
     def _event_guard(self, session, grant_id, token=None):
         self._session(token or session.host_token, session.id, "project.context.read")
+        self._permission(session, "standing_metadata_events")
         if not grant_id or session.event_grant_id != grant_id:
             raise InteropFailure("CANCELLED", 409)
         if session.event_grant_binding != self._event_binding(session):
@@ -521,6 +679,7 @@ class LocalInteropHost:
 
     def event_preview(self, token, body):
         session = self._session(token, body.session_id, "project.context.read")
+        self._permission(session, "standing_metadata_events")
         self.delivery_guard(token, session.id, body.request_id)
         self._session(token, body.session_id, "task.status.read")
         self._pause_events(session)
@@ -536,12 +695,14 @@ class LocalInteropHost:
             "generation": session.event_grant_generation, "event_binding": self._event_binding(session), "metadata_fields": fields}
         while len(session.previews) > MAX_PREVIEWS: session.previews.popitem(last=False)
         self._session(token, session.id)
+        self._bind_delivery(session, body.request_id, snapshot["source_version"])
         return {"request_id": body.request_id, "session_id": session.id, "preview_id": preview_id,
             "capsule": capsule.model_dump(mode="json"), "metadata_fields": sorted(fields),
             "expires_at": capsule.expires_at.isoformat(), "subscription_active": False}
 
     def event_subscribe(self, token, body):
         session = self._session(token, body.session_id, "project.context.read")
+        self._permission(session, "standing_metadata_events")
         self.delivery_guard(token, session.id, body.request_id)
         if not body.confirmed: raise InteropFailure("CONTEXT_NOT_AUTHORIZED", 403)
         preview = session.previews.pop(body.preview_id, None)
@@ -553,6 +714,15 @@ class LocalInteropHost:
         session.event_grant_request_id = body.request_id
         session.event_grant_binding = preview["event_binding"]
         session.event_metadata_fields = preview["metadata_fields"]
+        grant_id = session.event_grant_id
+        def authorize(capsule):
+            self._event_guard(session, grant_id)
+            return capsule.project_id == session.scope["project_id"] and capsule.chapter_id == session.chapter_id and capsule.content.level == "NONE"
+        for registry, key in ((self.event_sources, "DIRECT_EVENT"), (self.poll_sources, "POLLING")):
+            session.source_subscriptions[key] = registry.subscribe(session_id=session.wire_session.session_id,
+                peer_id=session.id, expires_at=session.wire_session.expires_at, authorize=authorize)
+        session.wake.set()
+        self.desktop.record(session.owner, "SUBSCRIBE", session=session)
         return {"request_id": body.request_id, "session_id": session.id,
             "subscription_id": session.event_grant_id, "subscription_active": True,
             "metadata_fields": sorted(session.event_metadata_fields)}
@@ -564,13 +734,15 @@ class LocalInteropHost:
             "subscription_active": False, "metadata_fields": []}
 
     async def _event_pump(self, session):
+        idle_delay = self.event_interval
         try:
             while not session.revoked:
                 self._session(session.host_token, session.id)
                 # Connection itself authorizes only protocol liveness. No source
                 # capture, event queue or publication exists before explicit grant.
                 if session.event_grant_id:
-                    self.capture_event(session.host_token, session.id)
+                    changed = self.capture_event(session.host_token, session.id)
+                    idle_delay = self.event_interval if changed else min(5.0, idle_delay * 2)
                     grant_id = session.event_grant_id
                     pending = tuple(event for event in session.events if event.sequence > session.sent_sequence)
                     for event in pending:
@@ -598,13 +770,23 @@ class LocalInteropHost:
                     self._session(session.host_token, session.id)
                     if acknowledged != heartbeat: raise InteropFailure("SESSION_REVOKED", 401)
                     session.last_peer_seen = asyncio.get_running_loop().time()
-                await asyncio.sleep(self.event_interval)
+                try:
+                    await asyncio.wait_for(session.wake.wait(), timeout=idle_delay if session.event_grant_id else 5.0)
+                    session.wake.clear()
+                    idle_delay = self.event_interval
+                except TimeoutError:
+                    pass
         except (InteropFailure, asyncio.CancelledError):
-            if not session.revoked: self._revoke(session)
+            if not session.revoked:
+                self._revoke(session)
+                self.desktop.owner_states[session.owner] = "DEGRADED"
+                self.desktop.owner_errors[session.owner] = ["TRANSPORT_ERROR"]
         except Exception:  # noqa: BLE001 - isolate background bridge/source failures
             self._revoke(session)
+            self.desktop.owner_states[session.owner] = "DEGRADED"
+            self.desktop.owner_errors[session.owner] = ["TRANSPORT_ERROR"]
 
-    def capture_event(self, token, sid):
+    def capture_event(self, token, sid, *, provenance="POLLING"):
         session = self._session(token, sid, "project.context.read")
         if not session.event_grant_id: return None
         self._event_guard(session, session.event_grant_id)
@@ -623,24 +805,38 @@ class LocalInteropHost:
             elif state["model_id"] != old["model_id"]: event_type = "MODEL_CHANGED"
             elif state["runtime_status"] != old["runtime_status"]: event_type = {"READY": "RUNTIME_AVAILABLE", "UNKNOWN": "VALIDATION_REQUIRED"}.get(state["runtime_status"], "RUNTIME_UNAVAILABLE")
             elif state["chapter_version"] != old["chapter_version"]: event_type = "CHAPTER_OPENED"
+        module = "TASK" if event_type.startswith("TASK_") else "CHAPTER" if event_type == "CHAPTER_OPENED" else "MODEL" if event_type == "MODEL_CHANGED" else "RUNTIME" if event_type.startswith("RUNTIME_") or event_type == "VALIDATION_REQUIRED" else "PROJECT"
+        if module == "TASK" and session.surface in {"export", "workflow"}: module = session.surface.upper()
+        registry = self.event_sources if provenance == "DIRECT_EVENT" else self.poll_sources
+        source_id = session.source_subscriptions.get(provenance)
+        if not source_id: return None
+        registry.publish(module, event_type, capsule, subscription_id=source_id)
+        projected = registry.drain(source_id)
+        if not projected: return None
+        capsule = projected[-1].event.context
+        self._event_guard(session, session.event_grant_id)
         session.sequence += 1
         event = InteropEvent(event_id=uid("event"), session_id=session.wire_session.session_id, sequence=session.sequence,
             event_type=event_type, created_at=now(), context=capsule)
         # Coalesce high frequency same-kind metadata, retaining terminal changes.
         if event_type == "TASK_UPDATED" and session.events and session.events[-1].event_type == event_type: session.events.pop()
         session.events.append(event)
+        session.source_provenance[event.event_id] = provenance
+        for key in tuple(session.source_provenance):
+            if not any(item.event_id == key for item in session.events): session.source_provenance.pop(key, None)
         session.previous = {"state": state, "source_version": snapshot["source_version"]}
         self._session(token, sid)
         return event
 
-    def events(self, token, sid, after=0):
+    def events(self, token, sid, after=0, *, capture=True):
         session = self._session(token, sid, "project.context.read")
-        self.capture_event(token, sid)
+        if capture: self.capture_event(token, sid)
         # Per-subscriber cursors: reading never consumes another subscriber's data.
         events = [event.model_dump(mode="json") for event in session.events if event.sequence > after]
         self._session(token, sid)
         return {"session_id": sid, "events": events, "sequence": session.sequence,
-            "subscription_active": bool(session.event_grant_id), "metadata_fields": sorted(session.event_metadata_fields)}
+            "subscription_active": bool(session.event_grant_id), "metadata_fields": sorted(session.event_metadata_fields),
+            "evidence": [{"event_id": item["event_id"], "provenance": session.source_provenance.get(item["event_id"], "POLLING")} for item in events]}
 
     def disconnect(self, token, sid):
         owner = self._owner(token)
@@ -649,11 +845,124 @@ class LocalInteropHost:
         if session: self._revoke(session)
         return {"session_id": sid, "status": "DISCONNECTED"}
 
-    async def shutdown(self):
+    def _capabilities(self, session):
+        revoked = {cap for permission in session.revoked_permissions for cap in PERMISSIONS[permission][1]}
+        return set(session.wire_session.capabilities) - revoked
+
+    @staticmethod
+    def _permission(session, permission):
+        if permission in session.revoked_permissions:
+            raise InteropFailure("PERMISSION_DENIED", 403)
+
+    def permission_revoke(self, token, body):
+        session = self._session(token, body.session_id)
+        if body.permission_id not in PERMISSIONS: raise InteropFailure("INVALID_MESSAGE", 400)
+        session.revoked_permissions.add(body.permission_id)
+        session.permission_generation += 1
+        # No old preview or late response can survive a changed consent scope.
+        session.previews.clear(); session.guidance.clear(); session.results.clear(); session.candidates.clear()
+        self._pause_events(session)
+        for key, sid in tuple(self.request_sessions.items()):
+            if sid == session.id:
+                self.seen[key] = "CANCELLED"
+                task = self.requests.get(key)
+                if task and task is not current_task(): task.cancel()
+        self.desktop.record(session.owner, "REVOKE", session=session, permission_id=body.permission_id)
+        return {"request_id": body.request_id, "session_id": session.id, "permission_id": body.permission_id,
+            "status": "REVOKED", "permissions": self.desktop.permissions(session),
+            "desktop": self.desktop.snapshot(session.owner, [session])}
+
+    async def disconnect_revoke(self, token, body):
+        owner = self._owner(token)
+        session = self.sessions.get(body.session_id) or self.closed_sessions.get(body.session_id)
+        if session is None: raise InteropFailure("SESSION_REVOKED", 401)
+        if session.owner != owner: raise InteropFailure("PERMISSION_DENIED", 403)
+        already_revoked = session.revoked
+        self._revoke(session)  # Revoke local authority before any peer round trip.
+        if already_revoked and not session.transport_disconnected and (session.closing_task is None or session.closing_task.done()):
+            session.closing_task = asyncio.create_task(self._close_local_transport(session))
+            self.closing_tasks.add(session.closing_task)
+            session.closing_task.add_done_callback(self.closing_tasks.discard)
+        if session.closing_task:
+            _, pending = await asyncio.wait({session.closing_task}, timeout=.55)
+            for task in pending:
+                session.transport_close_state = "TIMEOUT"
+                task.cancel()
+        return {"request_id": body.request_id, "session_id": body.session_id, "status": "DISCONNECTED" if session.transport_disconnected else "UNKNOWN", "revoked": True,
+            "subscriptions_stopped": True, "pending_cancelled": True, "standing_grants_cleared": True,
+            "transport_disconnected": session.transport_disconnected, "transport_close_state": session.transport_close_state,
+            "peer_disconnect_acknowledged": session.peer_disconnect_acknowledged}
+
+    async def _close_peer(self, session, peer_token):
+        try:
+            async with asyncio.timeout(.25):
+                request = CancelRequest(request_id=uid("disconnect"), session_id=session.wire_session.session_id)
+                response = parse_wire(CancelResult, await session.transport.request("disconnect", request, token=peer_token))
+                session.peer_disconnect_acknowledged = response.request_id == request.request_id and response.session_id == request.session_id
+        except (Exception, asyncio.CancelledError):  # noqa: BLE001,S110 - remote ACK is optional and cannot restore local authority
+            pass
+        finally:
+            await self._close_local_transport(session)
+
+    async def _close_local_transport(self, session):
+        close = getattr(session.transport, "shutdown", None)
+        if close:
+            try:
+                result = close()
+                if __import__("inspect").isawaitable(result):
+                    async with asyncio.timeout(.25): result = await result
+                session.transport_disconnected = result is True
+                session.transport_close_state = "CLOSED" if result is True else "UNKNOWN"
+            except (TimeoutError, asyncio.CancelledError):
+                session.transport_close_state = "TIMEOUT"
+            except Exception:  # noqa: BLE001 - optional platform close must not block application exit
+                session.transport_close_state = "FAILED"
+        if not any(s.owner == session.owner for s in self.sessions.values()):
+            self.desktop.owner_states[session.owner] = "DISCONNECTED" if session.transport_disconnected else "DEGRADED" if session.transport_close_state in {"FAILED", "TIMEOUT"} else "UNKNOWN"
+
+    def _on_runtime_change(self, change):
+        if self.closed: return
+        for session in tuple(self.sessions.values()):
+            if session.revoked or not session.event_grant_id or session.scope["project_id"] != change.project_id: continue
+            if change.module == "CHAPTER" and change.entity_id != session.chapter_id: continue
+            if change.module == "TASK" and (change.entity_id != session.task_id or not session.event_metadata_fields): continue
+            loop = session.loop
+            if loop is None or loop.is_closed(): continue
+            key = (session.id, change.module)
+            if key in self.pending_changes: continue
+            self.pending_changes.add(key)
+            def project(session=session, key=key):
+                self.pending_changes.discard(key)
+                try:
+                    if session.revoked or not session.event_grant_id: return
+                    self.capture_event(session.host_token, session.id, provenance="DIRECT_EVENT")
+                    session.wake.set()
+                except InteropFailure:
+                    if not session.revoked: self._revoke(session)
+                except Exception:  # noqa: BLE001 - one source failure cannot stop the product or another peer
+                    # Main program and other peers remain available.
+                    if not session.revoked: self._pause_events(session)
+            loop.call_soon_threadsafe(project)
+
+    async def shutdown(self, timeout=1.0):
         self.closed = True
+        if self._unsubscribe_runtime:
+            self._unsubscribe_runtime(); self._unsubscribe_runtime = None
         tasks = [s.pump for s in self.sessions.values() if s.pump]
         for session in tuple(self.sessions.values()): self._revoke(session)
         for task in tuple(self.requests.values()):
-            if task is not current_task(): task.cancel()
-        if tasks: await asyncio.gather(*tasks, return_exceptions=True)
+            if task is not current_task():
+                task.cancel()
+                tasks.append(task)
+        tasks.extend(self.closing_tasks)
+        tasks = list({task for task in tasks if task is not current_task()})
+        if tasks:
+            # asyncio.wait is bounded even for an uncooperative cancellation
+            # target; wait_for(gather) would wait for that target to terminate.
+            _, pending = await asyncio.wait(tasks, timeout=max(0.0, min(float(timeout), 2.0)))
+            for task in pending: task.cancel()
+        self.event_sources.shutdown(); self.poll_sources.shutdown()
         self.enabled_owners.clear(); self.requests.clear(); self.seen.clear(); self.connect_epochs.clear()
+        self.request_sessions.clear(); self.delivery_bindings.clear()
+        self.desktop.handoff.presence.clear()
+        self.pending_changes.clear()

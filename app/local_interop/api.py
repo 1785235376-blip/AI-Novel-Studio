@@ -128,6 +128,10 @@ class HandoffInput(SessionInput):
     explicit_click: bool
 
 
+class PermissionRevokeInput(SessionInput):
+    permission_id: Literal["app_status", "task_status", "model_metadata", "diagnostics", "selection", "current_chapter", "specific_context", "standing_metadata_events", "deep_link"]
+
+
 class CancelInput(BrowserInput):
     session_id: OpaqueId | None = None
 
@@ -191,12 +195,26 @@ class AuthorityEventResponse(StreamingResponse):
 def create_local_interop_router(host, *, prefix="/api/local-interop"):
     router = APIRouter(prefix=prefix, tags=["local-interop"], route_class=SafeRoute)
     def reply(value, token, sid=None):
-        guard = lambda: host.delivery_guard(token, sid, value.get("request_id") if isinstance(value, dict) else None)
+        represented = host._session(token, sid) if sid else None
+        generation = represented.permission_generation if represented else None
+        desktop_guard = host.desktop_response_guard(token, value) if isinstance(value, dict) and "desktop" in value else None
+        def guard():
+            host.delivery_guard(token, sid, value.get("request_id") if isinstance(value, dict) else None)
+            if represented and represented.permission_generation != generation:
+                raise InteropFailure("PERMISSION_DENIED", 403)
+            if desktop_guard: desktop_guard()
+            if represented and isinstance(value, dict) and value.get("subscription_active") and value.get("subscription_id"):
+                host._event_guard(represented, value["subscription_id"], token)
         return AuthorityJSONResponse(value, guard)
 
     @router.get("/status")
-    async def status(x_session_token: str | None = Header(None)):
-        return reply(host.status(x_session_token), x_session_token)
+    async def status(session_id: str | None = None, x_session_token: str | None = Header(None)):
+        value = host.status(x_session_token, session_id)
+        snapshot_guard = host.desktop_response_guard(x_session_token, value)
+        def guard():
+            host.status_guard(x_session_token, session_id)
+            snapshot_guard()
+        return AuthorityJSONResponse(value, guard)
 
     @router.post("/settings")
     async def settings(body: SettingsInput, x_session_token: str | None = Header(None)):
@@ -222,7 +240,7 @@ def create_local_interop_router(host, *, prefix="/api/local-interop"):
 
     @router.post("/ask")
     async def ask(body: AskInput, x_session_token: str | None = Header(None)):
-        result = await host.run(x_session_token, body.request_id, lambda: host.ask(x_session_token, body))
+        result = await host.run(x_session_token, body.request_id, lambda: host.ask(x_session_token, body), session_id=body.session_id)
         return reply(result, x_session_token, body.session_id)
 
     @router.post("/diagnostics/preview")
@@ -231,12 +249,12 @@ def create_local_interop_router(host, *, prefix="/api/local-interop"):
 
     @router.post("/diagnostics/share")
     async def diagnostic_share(body: AskInput, x_session_token: str | None = Header(None)):
-        result = await host.run(x_session_token, body.request_id, lambda: host.ask(x_session_token, body, diagnostic=True))
+        result = await host.run(x_session_token, body.request_id, lambda: host.ask(x_session_token, body, diagnostic=True), session_id=body.session_id)
         return reply(result, x_session_token, body.session_id)
 
     @router.post("/verify")
     async def verify(body: VerifyInput, x_session_token: str | None = Header(None)):
-        result = await host.run(x_session_token, body.request_id, lambda: host.verify(x_session_token, body))
+        result = await host.run(x_session_token, body.request_id, lambda: host.verify(x_session_token, body), session_id=body.session_id)
         return reply(result, x_session_token, body.session_id)
 
     @router.post("/handoff")
@@ -262,7 +280,7 @@ def create_local_interop_router(host, *, prefix="/api/local-interop"):
     @router.post("/events/subscribe")
     async def event_subscribe(body: EventSubscribeInput, x_session_token: str | None = Header(None)):
         async def approve(): return host.event_subscribe(x_session_token, body)
-        result = await host.run(x_session_token, body.request_id, approve)
+        result = await host.run(x_session_token, body.request_id, approve, session_id=body.session_id)
         return reply(result, x_session_token, body.session_id)
 
     @router.post("/events/unsubscribe")
@@ -286,7 +304,7 @@ def create_local_interop_router(host, *, prefix="/api/local-interop"):
             while not await request.is_disconnected():
                 try:
                     host._event_guard(session, grant_id, x_session_token)
-                    result = host.events(x_session_token, session_id, cursor)
+                    result = host.events(x_session_token, session_id, cursor, capture=False)
                 except (InteropFailure, ProtocolViolation): return
                 for event in result["events"]:
                     try: host._event_guard(session, grant_id, x_session_token)
@@ -299,6 +317,18 @@ def create_local_interop_router(host, *, prefix="/api/local-interop"):
     @router.post("/cancel")
     async def cancel(body: CancelInput, x_session_token: str | None = Header(None)):
         return AuthorityJSONResponse(host.cancel(x_session_token, body.request_id, body.session_id), lambda: host._owner(x_session_token))
+
+    @router.post("/permissions/revoke")
+    async def permission_revoke(body: PermissionRevokeInput, x_session_token: str | None = Header(None)):
+        return reply(host.permission_revoke(x_session_token, body), x_session_token, body.session_id)
+
+    @router.post("/events/pause")
+    async def event_pause(body: SessionInput, x_session_token: str | None = Header(None)):
+        return reply(host.event_unsubscribe(x_session_token, body), x_session_token, body.session_id)
+
+    @router.post("/disconnect-revoke")
+    async def disconnect_revoke(body: SessionInput, x_session_token: str | None = Header(None)):
+        return reply(await host.disconnect_revoke(x_session_token, body), x_session_token)
 
     @router.post("/disconnect")
     async def disconnect(body: SessionInput, x_session_token: str | None = Header(None)):

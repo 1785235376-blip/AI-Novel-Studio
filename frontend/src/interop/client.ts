@@ -1,3 +1,4 @@
+import type { DesktopSnapshot, EmergencyReceipt, PermissionId, PermissionRevokeReceipt } from './desktop';
 import { ApiError, type CollaborationContext } from '../api';
 import type {
   AppContextCapsule, DiagnosticCapsule, HandoffTarget, ProductDescriptor,
@@ -12,7 +13,7 @@ export type ContentKind = 'NONE' | 'SELECTION' | 'CHAPTER' | 'SPECIFIC_CONTEXT';
 export type InteropStatus = {
   feature_enabled: boolean; enabled: boolean; acceptance_mode: boolean;
   product: ProductDescriptor; capabilities: string[]; disabled_capabilities: string[];
-  desktop_status: 'LOCAL_REQUIRED';
+  desktop_status: 'LOCAL_REQUIRED'; desktop?: DesktopSnapshot;
 };
 export type InteropSession = {
   request_id: string; session_id: string; protocol_session_id: string; product: ProductDescriptor;
@@ -86,7 +87,7 @@ export function interopClient(context: CollaborationContext) {
     return value as T;
   }
   return {
-    status: (signal?: AbortSignal) => request<InteropStatus>('/status', undefined, signal),
+    status: (signal?: AbortSignal, session_id?: string) => request<InteropStatus>(`/status${session_id ? `?session_id=${encodeURIComponent(session_id)}` : ''}`, undefined, signal),
     settings: (enabled: boolean, request_id: string, signal?: AbortSignal) => request<InteropStatus>('/settings', { enabled, request_id }, signal),
     connect: (body: { request_id: string; endpoint: string; project_id: string; scope?: HostRoute['scope']; module: string; surface: string; chapter_id?: string; task_id?: string }, signal?: AbortSignal) => request<InteropSession>('/connect', body, signal),
     sources: (session_id: string, signal?: AbortSignal) => request<{ session_id: string; items: ContextSource[] }>(`/context/sources?session_id=${encodeURIComponent(session_id)}`, undefined, signal),
@@ -100,6 +101,8 @@ export function interopClient(context: CollaborationContext) {
     verify: (session_id: string, guidance_id: string, request_id: string, signal?: AbortSignal) => request<{ request_id: string; session_id: string; result: VerifierResult }>('/verify', { session_id, guidance_id, request_id }, signal),
     handoff: (session_id: string, handoff: HandoffTarget, request_id: string, signal?: AbortSignal) => request<{ request_id: string; session_id: string; route: HostRoute }>('/handoff', { session_id, handoff, request_id, explicit_click: true }, signal),
     cancel: (request_id: string, session_id?: string) => request('/cancel', { request_id, ...(session_id ? { session_id } : {}) }),
+    revokePermission: (session_id: string, permission_id: PermissionId, request_id: string, signal?: AbortSignal) => request<PermissionRevokeReceipt>('/permissions/revoke', { session_id, permission_id, request_id }, signal),
+    disconnectRevoke: (session_id: string, request_id: string, signal?: AbortSignal) => request<EmergencyReceipt>('/disconnect-revoke', { session_id, request_id }, signal),
     disconnect: (session_id: string, signal?: AbortSignal) => request<{ session_id: string; status: 'DISCONNECTED' }>('/disconnect', { session_id, request_id: newInteropRequestId() }, signal),
   };
 }
