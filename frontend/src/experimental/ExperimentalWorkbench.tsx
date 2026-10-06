@@ -102,10 +102,10 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
     {active === 'unified_review_inbox' && <InboxPanel client={client} requestedItemId={requestedTask?.authority === 'review_inbox' ? requestedTask.id : undefined} requestedDomain={requestedTask?.authority === 'review_inbox' ? requestedTask.parent_id : undefined} />}
     {active === 'agent_team_recipes' && <TeamsPanel client={client} chapter={chapter} requestedTaskId={requestedTask?.authority === 'agent_team' ? requestedTask.id : undefined} />}
     {active === 'media_adapter_registry' && <RegistryPanel client={client} />}
-    {active === 'cover_storyboard_generation' && <MediaPanel client={client} chapter={chapter} />}
+    {active === 'cover_storyboard_generation' && <MediaPanel client={client} chapter={chapter} requestedTaskId={requestedTask?.authority === 'media' ? requestedTask.id : undefined} />}
     {active === 'visual_embeddings' && <EmbeddingPanel client={client} />}
-    {active === 'voice_direction_v2' && <VoiceDirectionPanel client={client} onOpenAudiobook={() => setSelected('audiobook_v2')} />}
+    {active === 'voice_direction_v2' && <VoiceDirectionPanel client={client} requestedTaskId={requestedTask?.authority === 'voice_direction' ? requestedTask.id : undefined} onOpenAudiobook={() => setSelected('audiobook_v2')} />}
     {active === 'subtitle_timeline_v2' && <SubtitleTimelinePanel client={client} onOpenAudiobook={() => setSelected('audiobook_v2')} />}
-    {active === 'audiobook_v2' && <AudiobookPanel client={client} chapter={chapter} />}
+    {active === 'audiobook_v2' && <AudiobookPanel client={client} chapter={chapter} requestedPlanId={requestedTask?.authority === 'audiobook' ? requestedTask.id : undefined} />}
   </section>;
 }

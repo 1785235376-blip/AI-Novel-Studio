@@ -83,7 +83,12 @@ def _to_native(value):
 def _read_time(item, key, native):
     fallback = _native_time(native)
     metadata = item.metadata.get(NS, {}) if hasattr(item, "metadata") else {}
-    exact = dict(metadata.get(key, {})) if metadata else {}
+    if metadata and not hasattr(metadata, "get"):
+        raise ValueError("OTIO_EXACT_TIME_METADATA_INVALID")
+    try:
+        exact = dict(metadata.get(key, {})) if metadata else {}
+    except (TypeError, ValueError):
+        raise ValueError("OTIO_EXACT_TIME_METADATA_INVALID") from None
     if exact:
         try:
             exact = {k: dict(v) for k, v in exact.items()}
@@ -114,6 +119,10 @@ def _extras(item, path, report):
         _loss(report, path, code)
     if getattr(item, "markers", []):
         _loss(report, path, "MARKERS_NOT_REPRESENTED")
+    extension = getattr(item, "metadata", {}).get(NS, {})
+    supported = {"in_offset", "out_offset"} if getattr(item, "schema_name", lambda: "")() == "Transition" else {"start", "duration"} if getattr(item, "schema_name", lambda: "")() in {"Clip", "Gap"} else set()
+    if extension and (not hasattr(extension, "keys") or set(extension.keys()) - supported):
+        _loss(report, path, "UNKNOWN_EXCHANGE_METADATA_NOT_REPRESENTED")
     if any(key != NS for key in getattr(item, "metadata", {})):
         _loss(report, path, "APPLICATION_METADATA_MIX_SUBTITLES_NOT_REPRESENTED")
 
@@ -299,10 +308,10 @@ def summary(doc):
         cursor = Fraction(); cuts = []
         for item in track["items"]:
             if item["kind"] == "Transition": continue
-            cuts.append({"name": item["name"], "kind": item["kind"], "start_seconds": rational(cursor), "duration_seconds": rational(seconds(item["duration"]))})
+            cuts.append({"name": item["name"], "kind": item["kind"], "start_seconds": rational(cursor), "duration_seconds": rational(seconds(item["duration"])), "source_in_seconds": rational(seconds(item["start"])), "source_out_seconds": rational(seconds(item["start"]) + seconds(item["duration"]))})
             cursor += seconds(item["duration"])
         tracks.append({"name": track["name"], "kind": track["kind"], "duration_seconds": rational(cursor), "cuts": cuts})
-    return {"name": doc["name"], "tracks": tracks, "duration_semantics": "EXACT_RATIONAL_HALF_OPEN_SOURCE_RANGES", "renders_media": False}
+    return {"name": doc["name"], "tracks": tracks, "duration_semantics": "EXACT_RATIONAL_HALF_OPEN_SOURCE_RANGES", "renders_media": False, "audio_video_relation": "INDEPENDENT_TRACK_TIMING_ONLY_NO_LINKED_CLIP_CONTRACT"}
 
 
 class ImportOTIOIn(StrictModel):
@@ -414,6 +423,12 @@ class TimelineExchangeService(DomainService):
         transitions = {(row["from_shot_id"], row["to_shot_id"]): row for row in screenplay.get("transitions", [])}
         for index, binding in enumerate(body.shots):
             shot = shots[binding.shot_id]
+            for fields, code in ((("shot_size", "camera_angle", "camera_motion", "director"), "CAMERA_GRAMMAR_NOT_REPRESENTED"),
+                                 (("dialogue",), "DIALOGUE_SUBTITLES_NOT_REPRESENTED"),
+                                 (("sound_effect",), "SOUND_DESIGN_NOT_RENDERED_OR_LINKED"),
+                                 (("action", "subject_position"), "SHOT_DESCRIPTION_NOT_REPRESENTED")):
+                if any(shot.get(key) for key in fields):
+                    _loss(report, f"shots[{index}]", code)
             duration = Fraction(str(shot.get("duration_seconds", 0)))
             if not 0 < duration <= 600:
                 raise ValueError("OTIO_SHOT_DURATION_REQUIRED")

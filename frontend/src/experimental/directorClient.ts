@@ -1,6 +1,7 @@
 import type { ExperimentalClient } from './api';
 export type Point = { x: number; y: number };
 export type CameraGrammar = {
+  shot_function?: 'UNSPECIFIED' | 'ESTABLISHING' | 'OTS' | 'POV' | 'INSERT'; focus_intent?: 'UNSPECIFIED' | 'HOLD' | 'RACK_FOCUS';
   scene_purpose: string; viewpoint: string; screen_direction: 'UNKNOWN' | 'LEFT_TO_RIGHT' | 'RIGHT_TO_LEFT' | 'STATIONARY';
   coordinate_system: string; character_positions: Record<string, Point>; axis: string[]; camera_position: Point | null;
   subject_movement: { start: Point; end: Point } | null; intentional_axis_crossing: boolean; intentions: ('LONG_TAKE' | 'JUMP_CUT')[]; override_reason: string;
@@ -12,7 +13,7 @@ export type DirectorScreenplay = { id: string; title: string; edit_version: numb
 export type DirectorCatalog = { screenplays: DirectorScreenplay[]; characters: { id: string; name: string }[] };
 export type DirectorPlan = { id: string; title: string; version: number; status: string; stale: boolean; screenplay_id: string; screenplay_version: number; shots?: ShotPatch[]; checks?: CameraCheck[] };
 export type DirectorComparison = { screenplay_id: string; screenplay_version: number; original: DirectorShot[]; candidates: DirectorPlan[]; comparison_digest: string; application_digests: Record<string, string> };
-export const newGrammar = (): CameraGrammar => ({ scene_purpose: '', viewpoint: '', screen_direction: 'UNKNOWN', coordinate_system: '', character_positions: {}, axis: [], camera_position: null, subject_movement: null, intentional_axis_crossing: false, intentions: [], override_reason: '' });
+export const newGrammar = (): CameraGrammar => ({ shot_function: 'UNSPECIFIED', focus_intent: 'UNSPECIFIED', scene_purpose: '', viewpoint: '', screen_direction: 'UNKNOWN', coordinate_system: '', character_positions: {}, axis: [], camera_position: null, subject_movement: null, intentional_axis_crossing: false, intentions: [], override_reason: '' });
 export function directorClient(client: ExperimentalClient) {
   return {
     catalog: (signal?: AbortSignal) => client.get<DirectorCatalog>('/director/catalog', signal),

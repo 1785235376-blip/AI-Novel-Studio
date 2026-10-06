@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import type { ExperimentalClient, Row, Rows } from './api';
 import { segment } from './api';
-import { Field, Form, ids, ResourceState, useAction, useResource } from './shared';
+import { Details, Field, Form, ids, ResourceState, useAction, useResource } from './shared';
 import type { WorkspaceNavigation } from './uxClient';
 
 type Link = { id?: string; label?: string; version?: number; digest?: string; state: string };
@@ -15,7 +15,7 @@ type Props = { client: ExperimentalClient; manifestsEnabled?: boolean; onNavigat
 const origins: Record<string, string> = { ORIGINAL_INPUT: '原创输入', GENERATED_RESULT: '生成结果', DERIVED_PROCESSING: '派生处理', EXTERNAL_IMPORT: '外部导入', MANUAL_EDIT: '手工修改', UNDECLARED: '尚未声明', DERIVATION_UNDECLARED: '已有衍生关系，尚未补充声明' };
 const states: Record<string, string> = { CURRENT: '当前有效', STALE: '版本已变化', DELETED: '已删除，可恢复', UNAVAILABLE: '不可用或无权访问', UNVERIFIED: '缺少原始版本证据', VERIFIED: '内容摘要已校验', CONTENT_UNAVAILABLE: '内容缺失或摘要不符' };
 const reasons: Record<string, string> = { MODEL_BROKER_FEATURE_REQUIRED: '已登记本地图像重放需要启用模型路由和费用预检。', ORIGIN_AUTHORITY_CHANGED: '选择性更新的原来源、锁或权限已变化，需要重新预检。', SOURCE_CHANGED_OR_UNAVAILABLE: '来源内容、版本或权限已变化，需要重新准备源任务。', SOURCE_TASK_CHANGED: '原任务记录已变化。', CURRENT_PRIVACY_CHANGED: '来源隐私声明已变化，请重新审核。', ADAPTER_OR_MODEL_CHANGED: 'Adapter 或模型已变化，不能冒充原版重放。', CONFIGURED_ADAPTER_REQUIRED: '没有已配置的可执行 Adapter。发现模型不等于已配置工作流。', FRESH_CLOUD_AUTHORIZATION_NOT_INTEGRATED: '此重放入口尚未接入新的云端外发授权，已阻止调用。', ORIGINAL_RUNTIME_EVIDENCE_MISSING: '历史任务没有记录原始运行环境，无法从当前环境推定。', RUNTIME_OR_IMPLEMENTATION_CHANGED: 'App、Runtime、工具或实现摘要与原任务不一致。', EXACT_MODEL_IDENTITY_REQUIRED: '缺少模型精确哈希，尚不能验证原环境。', ORIGINAL_OUTPUT_UNAVAILABLE: '原始输出不可用，无法比较摘要。', ORIGINAL_OUTPUT_CHANGED: '原始输出摘要不符。', MODEL_BROKER_NOT_CONFIGURED: '已要求模型路由和预算检查，但服务未配置。', MODEL_BROKER_NO_LEGAL_ROUTE: '当前路由、预算或权限不允许重放，请检查模型路由面板。' };
-const stateLabels = { traceable: '输入可追溯', rebuildable: '环境可重建', replayable: '任务可重放', deterministic: '确定性协议可复现', byte_equal: '输出逐字节一致' };
+const stateLabels = { traceable: '输入可追溯', rebuildable: '环境可重建', replayable: '任务可重放', deterministic: '合成协议确定性', byte_equal: '输出逐字节一致' };
 const newKey = () => globalThis.crypto?.randomUUID?.() || `replay-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
 function LineageForm({ client, row, assets, saved }: { client: ExperimentalClient; row: Asset; assets: Asset[]; saved: () => void }) {
@@ -66,14 +66,15 @@ function ManifestDetail({ client, manifest, onReplay, onNavigate }: Props & { ma
   const check = () => action.run(async () => {
     setPreflight(undefined); setKey('');
     const result = await client.post<Preflight>(`/production/manifests/${segment(manifest.id)}/preflight`, { expected_version: manifest.version });
-    setPreflight(result); setKey(newKey());
+    if (alive.current) { setPreflight(result); setKey(newKey()); }
   }, '依赖、当前权限、隐私和预算已重新检查。');
   const replay = () => preflight && action.run(async () => {
     await client.post(`/production/manifests/${segment(manifest.id)}/replay`, { expected_version: manifest.version, preflight_digest: preflight.preflight_digest, idempotency_key: idempotencyKey, broker_decision_id: preflight.broker_decision_id, broker_decision_version: preflight.broker_decision_version });
-    setPreflight(undefined); onReplay();
+    if (alive.current) { setPreflight(undefined); onReplay(); }
   }, '已创建新的媒体任务。请在下方明确执行；结果仍需审核。');
   return <section className="experimental-section" aria-label="生产清单详情"><h3>任务 {manifest.task_id} 的生产清单</h3>{action.feedback}
     <StatusMessage tone="warning">合成 PNG Adapter 仅验证生产协议与确定性，不代表真实图片模型质量。有 seed 也不保证真实模型逐字节一致。</StatusMessage>
+    <section aria-label="生产复现证据级别"><p>可追溯表示已记录输入与输出；可重放需要当前预检。近似复现尚未评估；确定性只对合成协议成立。</p>{manifest.assurance && <Details label="独立复现证据级别" value={manifest.assurance} />}</section>
     <dl className="experimental-meta"><div><dt>Adapter / 模型</dt><dd>{manifest.adapter_id} / {manifest.model_id || '精确标识缺失'}</dd></div><div><dt>输入摘要</dt><dd>{manifest.input_digest}</dd></div><div><dt>清单摘要</dt><dd>{manifest.manifest_digest}</dd></div><div><dt>有界参数</dt><dd>{manifest.parameters.candidate_count} 个候选；seed：{manifest.seed?.value ?? '原任务未记录'}；{manifest.parameters.width ? `${manifest.parameters.width} × ${manifest.parameters.height}，${manifest.parameters.steps} 步` : '合成协议参数'}</dd></div><div><dt>App / Runtime</dt><dd>{manifest.environment ? `${manifest.environment.app_version} / Python ${manifest.environment.runtime.python} / zlib ${manifest.environment.runtime.zlib}` : '原任务未记录，不能补推'}</dd></div><div><dt>Workflow</dt><dd>{manifest.environment?.workflow_version || '缺失'}</dd></div></dl>
     <details><summary>输入版本、工具和结果摘要</summary><div className="experimental-section"><p>Adapter 实现：{manifest.environment?.adapter_digest || '缺失'}</p><p>Workflow 实现：{manifest.environment?.workflow_digest || '缺失'}</p><p>模型哈希：{manifest.environment?.model_digest || '缺少精确模型证据'}</p>{manifest.environment?.registration && <><p>哈希来源：{manifest.environment.registration.model_digest_source}。运行时报告不等于本机读取权重验证。</p><p>模型运行时版本：{manifest.environment.registration.runtime_version || '未报告，环境可重建性未知'}</p></>}{manifest.input_versions.map((v, i) => <p key={`${v.id || 'unavailable'}:${i}`}>{v.kind} · {v.id || '不可用或无权访问'}{v.version ? ` · v${v.version}` : ''} · {v.digest || '已隐藏'}</p>)}{manifest.outputs.map(o => <p key={o.proposal_id}>候选 {o.candidate_index + 1} · {o.digest}</p>)}</div></details>
     <div className="experimental-actions"><Button disabled={action.busy} onClick={check}>检查重放条件</Button><Button disabled={action.busy} onClick={exportManifest}>下载脱敏生产清单</Button>{onNavigate && <Button onClick={() => onNavigate({ kind: 'feature', id: 'cover_storyboard_generation', feature: 'cover_storyboard_generation' })}>打开原媒体审核</Button>}</div>

@@ -27,10 +27,15 @@ def create_media_router(service, authorize, require_flag):
         access(nid, x_session_token, x_branch_id, registry=True)
         return service.registry.definitions()
 
+    @router.get("/catalog")
+    def catalog(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        _, scope = access(nid, x_session_token, x_branch_id)
+        return api_call(service.catalog, nid, scope)
+
     @router.get("/cover-briefs")
     def briefs(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         _, scope = access(nid, x_session_token, x_branch_id)
-        return {"items": [r for r in api_call(service.list, nid, scope, service.BRIEFS) if r["kind"] == "COVER"]}
+        return {"items": api_call(service.briefs, nid, scope, "COVER")}
 
     @router.post("/cover-briefs", status_code=201)
     def create_cover(nid: str, body: CoverBriefIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -46,12 +51,18 @@ def create_media_router(service, authorize, require_flag):
     @router.get("/storyboard-briefs")
     def storyboard_briefs(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         _, scope = access(nid, x_session_token, x_branch_id)
-        return {"items": [r for r in api_call(service.list, nid, scope, service.BRIEFS) if r["kind"] == "STORYBOARD"]}
+        return {"items": api_call(service.briefs, nid, scope, "STORYBOARD")}
 
     @router.post("/storyboard-briefs", status_code=201)
     def create_storyboard(nid: str, body: StoryboardBriefIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope = access(nid, x_session_token, x_branch_id, "domain.write")
         return api_call(service.create_storyboard, nid, scope, actor, body)
+
+    @router.put("/storyboard-briefs/{rid}")
+    def update_storyboard(nid: str, rid: str, body: StoryboardBriefIn, expected_version: int,
+                          x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id, "domain.write")
+        return api_call(service.update_storyboard, nid, scope, actor, rid, expected_version, body)
 
     @router.get("/tasks")
     def tasks(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

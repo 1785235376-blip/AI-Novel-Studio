@@ -26,6 +26,8 @@ class Movement(StrictModel):
 class CameraGrammar(StrictModel):
     scene_purpose: str = Field(default="", max_length=2000)
     viewpoint: str = Field(default="", max_length=500)
+    shot_function: Literal["UNSPECIFIED", "ESTABLISHING", "OTS", "POV", "INSERT"] = "UNSPECIFIED"
+    focus_intent: Literal["UNSPECIFIED", "HOLD", "RACK_FOCUS"] = "UNSPECIFIED"
     screen_direction: Literal["UNKNOWN", "LEFT_TO_RIGHT", "RIGHT_TO_LEFT", "STATIONARY"] = "UNKNOWN"
     coordinate_system: str = Field(default="", max_length=120)
     character_positions: dict[str, Point] = Field(default_factory=dict, max_length=30)
@@ -115,6 +117,29 @@ def camera_checks(shots):
         computed = "LEFT_TO_RIGHT" if projection > 0 else "RIGHT_TO_LEFT" if projection < 0 else "STATIONARY"
         findings.append({**item, "state": "CONSISTENT" if computed == data["screen_direction"] else "DIRECTION_MISMATCH",
                          "computed": computed, "projection": str(projection), "message": "按机位朝向轴线中点、世界坐标 x 向右 y 向上的声明几何复算；不分析实际画面。"})
+    # Suggestions use authored metadata only. Thresholds describe a transparent
+    # review rule, not measured editing quality or inferred screen geography.
+    for previous, current in zip(shots, shots[1:]):
+        if previous.get("scene_id") != current.get("scene_id"):
+            continue
+        item = {"from_shot_id": previous["id"], "to_shot_id": current["id"]}
+        fields = ("shot_size", "camera_angle", "camera_motion")
+        if all(previous.get(k) and current.get(k) for k in fields) and all(previous[k] == current[k] for k in fields):
+            intentional = "JUMP_CUT" in (current.get("director") or {}).get("intentions", [])
+            findings.append({**item, "kind": "REPEATED_FRAMING", "state": "INTENTIONAL_OVERRIDE" if intentional else "REVIEW_SUGGESTION",
+                "evidence": {"fields": {k: current[k] for k in fields}},
+                "message": "相邻同场景镜头的景别、角度和运动相同；请核对节奏和构图重复，不代表画面错误。"})
+        before, after = previous.get("duration_seconds"), current.get("duration_seconds")
+        if type(before) in {int, float} and type(after) in {int, float} and min(before, after) > 0 and max(before, after) >= 3 * min(before, after):
+            findings.append({**item, "kind": "SHOT_RHYTHM", "state": "REVIEW_SUGGESTION",
+                "evidence": {"estimated_duration_seconds": [before, after], "review_threshold_ratio": 3},
+                "message": "相邻镜头的预计时长相差至少三倍；仅提示核对创作意图，不是实测剪辑评分。"})
+        first = (previous.get("director") or {}).get("screen_direction", "UNKNOWN")
+        second = (current.get("director") or {}).get("screen_direction", "UNKNOWN")
+        if {first, second} == {"LEFT_TO_RIGHT", "RIGHT_TO_LEFT"}:
+            findings.append({**item, "kind": "CONTINUITY", "state": "REVIEW_SUGGESTION",
+                "evidence": {"declared_screen_directions": [first, second]},
+                "message": "相邻镜头声明的屏幕方向相反；请确认是否为有意转向，不从文字推断实际连续性。"})
     return findings
 
 
@@ -251,7 +276,7 @@ class DirectorService(DomainService):
         # Character IDs are reused; no secret/world text becomes camera context.
         characters = [{"id": r["id"], "name": r.get("name", r["id"])} for r in self.novels.data_set(nid, "characters")
                       if r.get("branch_id") == scope.get("branch_id")]
-        return {"screenplays": rows, "characters": characters, "model_called": False, "automatic_generation": False}
+        return {"screenplays": rows, "characters": characters, "model_called": False, "automatic_generation": False, "grammar_vocabulary": {"shot_function": ["UNSPECIFIED", "ESTABLISHING", "OTS", "POV", "INSERT"], "camera_motion": ["STATIC", "TRACKING", "DOLLY", "PAN", "TILT"], "focus_intent": ["UNSPECIFIED", "HOLD", "RACK_FOCUS"]}}
 
     def plans(self, nid, scope, actor):
         items = [view for row in self.list(nid, scope, self.PLANS) if row["created_by"] == actor

@@ -141,6 +141,7 @@ class CoverBriefIn(StrictModel):
     character_ids: list[str] = Field(default_factory=list, max_length=50)
     palette: list[str] = Field(default_factory=list, max_length=20)
     composition: str = Field(default="", max_length=4000)
+    typography_intent: str = Field(default="", max_length=2000)
     safe_area: SafeArea = Field(default_factory=SafeArea)
     prompt: str = Field(default="", max_length=12000)
     chapter_ids: list[str] = Field(default_factory=list, max_length=500)
@@ -305,7 +306,7 @@ class RegisteredLocalImageWorkflowAdapter:
         # Keep original brief preparation as the source authority. The request
         # contains only bounded user-facing creative fields, no local paths.
         brief = request.brief
-        prompt = json.dumps({key: brief[key] for key in ('title', 'subtitle', 'genre', 'palette', 'composition',
+        prompt = json.dumps({key: brief[key] for key in ('title', 'subtitle', 'genre', 'palette', 'composition', 'typography_intent',
             'prompt', 'safe_area', 'character_snapshots', 'shot_snapshot', 'scene_snapshot') if key in brief}, ensure_ascii=False)
         result = self.original.generate(AssetGenerationRequest(self.provider_id, request.model_id, prompt,
             request.request_id, self.parameters(request.parameters), dispatch_guard=dispatch))
@@ -589,6 +590,42 @@ class MediaService(DomainService):
         scene_sources(nid, scope, scene, self.chapters)
         return screenplay, shot
 
+    def catalog(self, nid, scope):
+        """Project choices from the original owners; never a second shot store."""
+        self.novels.get(nid)
+        screenplays = []
+        for screenplay in self.screenplays.list(nid, branch_id=scope.get("branch_id")) if self.screenplays else []:
+            if screenplay.get("branch_id") != scope.get("branch_id"):
+                continue
+            shots = []
+            for shot in screenplay.get("shots", []):
+                try:
+                    self._shot(nid, scope, screenplay["id"], shot["id"])
+                except (FileNotFoundError, StaleSourceError, KeyError):
+                    continue
+                shots.append({k: shot[k] for k in ("id", "number", "scene_id", "shot_size", "duration_seconds") if k in shot})
+            if shots:
+                screenplays.append({"id": screenplay["id"], "title": screenplay["title"], "edit_version": screenplay["edit_version"], "shots": shots})
+        characters = [{"id": row["id"], "name": row.get("name", row["id"])} for row in self.novels.data_set(nid, "characters")
+                      if row.get("branch_id") == scope.get("branch_id")]
+        return {"screenplays": screenplays, "characters": characters, "source": "ORIGINAL_PROJECT_RECORDS", "automatic_generation": False}
+
+    def briefs(self, nid, scope, kind):
+        rows = [row for row in self.list(nid, scope, self.BRIEFS) if row["kind"] == kind]
+        for row in rows:
+            try:
+                self._assert_brief(nid, scope, row)
+                row["stale"] = False
+            except (FileNotFoundError, StaleSourceError):
+                row["stale"] = True
+            except ValueError as exc:
+                # A removed original character invalidates only this brief.
+                # Keep unexpected owner/configuration failures visible.
+                if str(exc) != "MEDIA_CHARACTER_REFERENCE_INVALID":
+                    raise
+                row["stale"] = True
+        return rows
+
     def prepare_cover(self, nid, scope, actor, body):
         """Build a current-source brief for an atomic caller-owned checkpoint."""
         data = CoverBriefIn.model_validate(body).model_dump()
@@ -637,6 +674,19 @@ class MediaService(DomainService):
             row = self.prepare_storyboard(nid, scope, actor, body)
             doc['collections'].setdefault(self.BRIEFS, {})[row['id']] = row
             return copy.deepcopy(row)
+
+    def update_storyboard(self, nid, scope, actor, rid, expected_version, body):
+        current = self.get(nid, scope, self.BRIEFS, rid)
+        if current.get("change_impact_refresh_id") or current.get("safe_batch_id"):
+            raise ValueError("MEDIA_OWNED_BRIEF_REQUIRES_FRESH_PREFLIGHT")
+        data = StoryboardBriefIn.model_validate(body)
+        if current["kind"] != "STORYBOARD" or current["screenplay_id"] != data.screenplay_id or current["shot_id"] != data.shot_id:
+            raise ValueError("MEDIA_STORYBOARD_SOURCE_IDENTITY_IMMUTABLE")
+        def change(row):
+            prepared = self.prepare_storyboard(nid, scope, actor, data)
+            for key in data.model_dump().keys() - {"expected_screenplay_version"} | {"shot_snapshot", "scene_snapshot", "screenplay_source", "sources", "asset_sources", "title"}:
+                row[key] = prepared[key]
+        return self.mutate(nid, scope, actor, self.BRIEFS, rid, expected_version, change)
 
     def _assert_brief(self, nid, scope, brief):
         self._scoped_sources(nid, scope, list(brief.get("sources", {})))
@@ -950,6 +1000,14 @@ class MediaService(DomainService):
             return False
         except (StaleSourceError, FileNotFoundError):
             return True
+        except ValueError as exc:
+            # Generated candidates retain their history when a referenced
+            # character disappears, just like the owning brief. This read
+            # projection must not relax queue/review source validation or
+            # conceal other owner/configuration/authorization failures.
+            if str(exc) != "MEDIA_CHARACTER_REFERENCE_INVALID":
+                raise
+            return True
 
     def preview(self, nid, scope, rid):
         row = self.get(nid, scope, self.PROPOSALS, rid)
@@ -964,8 +1022,11 @@ class MediaService(DomainService):
         rows = [self.get(nid, scope, self.PROPOSALS, rid) for rid in ids]
         if len({row["brief_id"] for row in rows}) != 1:
             raise ValueError("MEDIA_COMPARE_BRIEF_MISMATCH")
+        for row in rows:
+            row["stale"] = self._stale(nid, scope, row)
         return {"items": [{k: v for k, v in row.items() if k != "content_base64"} for row in rows],
-                "inference_performed": False, "comparison_fields": ["adapter_id", "model_id", "media", "content_sha256", "verification"]}
+                "same_source_version": len({(row["brief_version"], row["source_digest"]) for row in rows}) == 1,
+                "approval_requires_current_source": True, "inference_performed": False, "comparison_fields": ["adapter_id", "model_id", "media", "content_sha256", "verification"]}
 
     def review(self, nid, scope, actor, item_id, action, expected_version, safe_batch_guard=None):
         owned = self.get(nid, scope, self.PROPOSALS, item_id)

@@ -12,6 +12,7 @@ import hashlib
 import io
 import re
 import wave
+from fractions import Fraction
 from dataclasses import dataclass
 from typing import Literal, Protocol
 from uuid import uuid4
@@ -247,7 +248,7 @@ class AudiobookV2Service(DomainService):
         profile = profiles.get(mapping["profile_id"]) if mapping else None
         return {"id": str(uuid4()), "kind": kind, "text": text[start:end], "source_start": start, "source_end": end,
             "source_text_digest": hashlib.sha256(text[start:end].encode()).hexdigest(), "character_id": cid,
-            "attribution_status": "NARRATION" if kind == "NARRATION" else attribution.status,
+            "attribution_status": "NARRATION" if kind == "NARRATION" else attribution.status if cid else "NEEDS_REVIEW",
             "attribution_evidence": "" if kind == "NARRATION" else attribution.evidence,
             "profile_id": profile["id"] if profile else None, "profile_version": profile["version"] if profile else None,
             "mapping_id": mapping["id"] if mapping else None, "mapping_version": mapping["version"] if mapping else None,
@@ -369,7 +370,7 @@ class AudiobookV2Service(DomainService):
                 emotion=data.emotion, speaking_style=data.speaking_style,
                 attribution_status="NARRATION" if segment["kind"] == "NARRATION" else "REVIEWED" if data.attribution_reviewed else "NEEDS_REVIEW")
             # Changing a speaker or delivery invalidates previously rendered speech.
-            segment.update(audio_asset_id=None, audio_source=None, duration_ms=None, timing_status="UNMEASURED")
+            segment.update(audio_asset_id=None, audio_source=None, duration_ms=None, frame_timing=None, timing_status="UNMEASURED")
             self._timeline(row)
         return self.mutate(nid, scope, actor, self.PLANS, rid, data.expected_version, change)
 
@@ -384,16 +385,20 @@ class AudiobookV2Service(DomainService):
 
     @staticmethod
     def _timeline(plan):
-        position, measured = 0, 0
+        position, measured = Fraction(0), 0
         for segment in plan["segments"]:
             duration = segment.get("duration_ms")
+            frames = segment.get("frame_timing")
             if duration is not None:
                 measured += 1
-            segment["start_ms"] = position
-            segment["end_ms"] = position + duration if position is not None and duration is not None else None
-            # A duration must not imply precise start after an unmeasured gap.
-            position = segment["end_ms"]
-        plan["duration_ms"] = position
+                duration = Fraction(frames["frames"] * 1000, frames["sample_rate"]) if frames else Fraction(str(duration))
+            end = position + duration if position is not None and duration is not None else None
+            segment["start_ms"] = float(position) if position is not None else None
+            segment["end_ms"] = float(end) if end is not None else None
+            # Preserve measured frame arithmetic internally; display milliseconds
+            # are only a projection, never ASR/word/phoneme alignment.
+            position = end
+        plan["duration_ms"] = float(position) if position is not None else None
         plan["timing_status"] = "MEASURED" if measured == len(plan["segments"]) else "PARTIAL" if measured else "UNMEASURED"
 
     def bind_audio(self, nid, scope, actor, rid, sid, body):
@@ -446,8 +451,9 @@ class AudiobookV2Service(DomainService):
         plan = self.get(nid, scope, self.PLANS, rid)
         self._assert_plan(nid, scope, plan)
         return {"plan_id": rid, "plan_version": plan["version"], "timing_status": plan["timing_status"],
-                "duration_ms": plan["duration_ms"], "precision": "MEASURED_SEGMENT_BOUNDARIES",
-                "segments": [{k: s.get(k) for k in ("id", "audio_asset_id", "start_ms", "end_ms", "duration_ms", "timing_status")} for s in plan["segments"]]}
+                "duration_ms": plan["duration_ms"], "precision": "MEASURED_SEGMENT_BOUNDARIES" if plan["timing_status"] == "MEASURED" else "PARTIAL_SEGMENT_BOUNDARIES" if plan["timing_status"] == "PARTIAL" else "UNMEASURED",
+                "alignment_model": None, "word_alignment": "NOT_CONFIGURED",
+                "segments": [{k: s.get(k) for k in ("id", "audio_asset_id", "start_ms", "end_ms", "duration_ms", "timing_status", "frame_timing")} for s in plan["segments"]]}
 
     def subtitles(self, nid, scope, rid):
         plan = self.get(nid, scope, self.PLANS, rid)
