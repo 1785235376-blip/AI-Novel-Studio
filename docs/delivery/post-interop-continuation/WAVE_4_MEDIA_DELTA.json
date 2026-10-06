@@ -39,56 +39,56 @@
       "owner": "Director",
       "product_status": "PARTIAL",
       "implemented_delta": "Add optional shot function and focus intent; original screenplay proposals/CAS/history; transparent same-scene rhythm, repeated-framing and declared-direction continuity review suggestions.",
-      "current_reconstructed_runtime_verification": "FILE_API_REACT_CONTRACT_VERIFIED; FINAL_HOSTED_PENDING"
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
     },
     {
       "id": "A09",
       "owner": "Asset Lineage",
       "product_status": "PARTIAL",
       "implemented_delta": "Enrich original approved asset generation projection with observed adapter/workflow/model identity, seed, time, prompt digest and scene/shot pointers; preserve original DAG and public prompt redaction.",
-      "current_reconstructed_runtime_verification": "FILE_API_REACT_CONTRACT_VERIFIED; FINAL_HOSTED_PENDING"
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
     },
     {
       "id": "A12",
       "owner": "OTIO",
       "product_status": "PARTIAL",
       "implemented_delta": "Warn on lost camera/action/dialogue/sound and unknown exchange metadata; reject malformed exact-time metadata; separate timeline start from source in/out; label independent audio/video timing.",
-      "current_reconstructed_runtime_verification": "FILE_API_REACT_CONTRACT_VERIFIED; FINAL_HOSTED_PENDING"
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
     },
     {
       "id": "A13",
       "owner": "Production Manifest",
       "product_status": "PARTIAL",
       "implemented_delta": "Independent assurance labels for traceability, current preflight replayability, unassessed approximate reproduction, synthetic-only determinism and pending byte comparison.",
-      "current_reconstructed_runtime_verification": "FILE_API_REACT_CONTRACT_VERIFIED; FINAL_HOSTED_PENDING"
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
     },
     {
       "id": "B03",
       "owner": "Audiobook and Voice Direction",
       "product_status": "PARTIAL",
       "implemented_delta": "Unknown identity always NEEDS_REVIEW; accumulate measured WAV frames exactly; clear stale frame evidence on edits; truthful timing manifests; original-queue independent cancellation and scoped task navigation.",
-      "current_reconstructed_runtime_verification": "FILE_API_REACT_CONTRACT_VERIFIED; FINAL_HOSTED_PENDING"
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
     },
     {
       "id": "B04",
       "owner": "Subtitle Timeline",
       "product_status": "PARTIAL",
       "implemented_delta": "Keep original manual/measured cue authority; expose upstream measured-frame evidence and explicitly unknown word alignment; suppress old-version subtitle/manifest UI and partial misleading endpoints.",
-      "current_reconstructed_runtime_verification": "FILE_API_REACT_CONTRACT_VERIFIED; FINAL_HOSTED_PENDING"
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
     },
     {
       "id": "U06",
       "owner": "Selective media refresh and original Cover/Storyboard",
       "product_status": "PARTIAL",
       "implemented_delta": "Scoped original source picker, typography-aware cover and registered-adapter input, storyboard revision API/history, visible cover revision, stale/cross-version comparison, cancel/late-callback and scope fences; existing U06 fresh task retains typography and leaves original task unchanged.",
-      "current_reconstructed_runtime_verification": "FILE_API_REACT_CONTRACT_VERIFIED; FINAL_HOSTED_PENDING"
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
     },
     {
       "id": "U07",
       "owner": "Task-center owner integration seam",
       "product_status": "PARTIAL",
       "implemented_delta": "MediaPanel requestedTaskId, VoiceDirectionPanel requestedTaskId, AudiobookPanel requestedPlanId select/focus only owner-authorized original records; absent targets unavailable and navigation never executes.",
-      "current_reconstructed_runtime_verification": "FILE_API_REACT_CONTRACT_VERIFIED; FINAL_HOSTED_PENDING"
+      "current_reconstructed_runtime_verification": "FILE_API_CONTRACT_VERIFIED; EXACT_STAGE_FRONTEND_VERIFIED; CORRECTED_MEDIA_UI_AND_TYPES_VERIFIED; CORRECTED_BROWSER_PENDING"
     }
   ],
   "changed_files": [
@@ -112,7 +112,8 @@
     "frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts",
     "docs/delivery/post-interop-continuation/WAVE_4_MEDIA.md",
     "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
-    "tests/test_post_interop_media_visibility.py"
+    "tests/test_post_interop_media_visibility.py",
+    "frontend/src/experimental/ProductionLineagePanel.continuation.test.tsx"
   ],
   "apis_added": [
     "GET /api[/v1]/novels/{nid}/experimental/media/catalog",
@@ -192,12 +193,14 @@
       "command": "cd frontend && npx playwright test --config playwright.r4.config.ts r4-post-interop-media-continuation.spec.ts",
       "status": "NOT_RUN",
       "authored_tests": 1,
-      "reason": "Existing verified local Chromium platform blocker; not retried or bypassed. Hosted exact-source run required."
+      "reason": "Current correction awaits next exact-source hosted run. Prior superseded run37498190450 failed missing project query/new fixture and inherited wording; both repaired with local regressions. Local Chromium remains blocked and was not attempted.",
+      "previous_run": "37498190450",
+      "previous_result": "FAILED_BEFORE_SUPERSESSION"
     },
     {
       "name": "postgres",
       "status": "NOT_RUN",
-      "new_marked_cases": 10,
+      "new_marked_cases": 12,
       "reason": "No confirmed disposable DSN locally; hosted postgres_backend_only lane retained with unchanged skips.",
       "new_visibility_marked_cases": 10
     },
@@ -229,6 +232,41 @@
       "source_hashes": {
         "app/experimental/media.py": "461c03606d96915e52957ac945c483cf63c8569478453c21602c80d21ac38033",
         "tests/test_post_interop_media_visibility.py": "a014f3ac28c380d16876ff032facdb9a40948213a4dab7f3e412845da34cea7f"
+      }
+    },
+    {
+      "name": "hosted_media_correction_mounted_backend",
+      "status": "PASS",
+      "passed": 58,
+      "postgres_deselected": 36,
+      "skipped": 0,
+      "warnings": 1,
+      "seconds": 32.87,
+      "command": "python -m pytest -q tests/test_post_interop_media_continuation.py tests/test_post_interop_media_visibility.py tests/test_r4_registered_media_mounted.py tests/test_r4_production_mounted.py tests/test_phase1_media_project_authorization.py -m \"not postgres_backend_only\"",
+      "source_scope": "Current correction on c12f9b6; original mounted router requires correct project query. No runtime API change.",
+      "log_sha256": "afa0f167b63639f6b12b3dc69dd409027625f1f3e23a35737e33543f2906be20",
+      "source_hashes": {
+        "frontend/src/experimental/ProductionLineagePanel.tsx": "662f5161ed0577efaa66a99b95274690a7f89a6783a4923b7d1853ce5926013e",
+        "frontend/src/experimental/ProductionLineagePanel.continuation.test.tsx": "38384ac8673f63dd998a3180044a2aeda9c88ef22b21aff5ecb2de84b6d170fe",
+        "frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts": "7a38821c7676b00a66ac6734139759e087aea8b2646d3f5708f299d4d70d9538",
+        "tests/test_post_interop_media_continuation.py": "a9332d53ead1bf215fd6f39c16ac295082353555a616eef89d23833a4a863124"
+      }
+    },
+    {
+      "name": "hosted_media_correction_frontend",
+      "status": "PASS",
+      "passed": 30,
+      "test_files": 5,
+      "typescript": "PASS",
+      "design_token_guard": "PASS_42_FILES",
+      "command": "cd frontend && ./node_modules/.bin/vitest run src/experimental/ProductionLineagePanel.continuation.test.tsx src/experimental/ProductionLineagePanel.test.tsx src/experimental/RegisteredMediaPanel.test.tsx src/experimental/MediaPanel.continuation.test.tsx src/experimental/MediaPanel.recovery.test.tsx && ./node_modules/.bin/tsc -b --pretty false && npm run lint",
+      "scope": "Current correction using restored official dependencies; no browser launch.",
+      "log_sha256": "fb5a2b1efb7075ebacee4a5e94114a3fc7c84195a378a4c206f367bb58d69d81",
+      "source_hashes": {
+        "frontend/src/experimental/ProductionLineagePanel.tsx": "662f5161ed0577efaa66a99b95274690a7f89a6783a4923b7d1853ce5926013e",
+        "frontend/src/experimental/ProductionLineagePanel.continuation.test.tsx": "38384ac8673f63dd998a3180044a2aeda9c88ef22b21aff5ecb2de84b6d170fe",
+        "frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts": "7a38821c7676b00a66ac6734139759e087aea8b2646d3f5708f299d4d70d9538",
+        "tests/test_post_interop_media_continuation.py": "a9332d53ead1bf215fd6f39c16ac295082353555a616eef89d23833a4a863124"
       }
     }
   ],
@@ -295,5 +333,36 @@
       ],
       "independent_bounded_review": "PASS; original direct reproduction and focused checks on identical source hashes; historical blocked audit unchanged."
     }
-  ]
+  ],
+  "hosted_media_correction": {
+    "baseline_sha": "c12f9b61bf732b40181fabd88e432c6b8deb5bae",
+    "failed_hosted_run": "37498190450",
+    "failed_head": "dedb813",
+    "failed_merge_checkout": "4774ad6f",
+    "compact_artifact_id": "11429826185",
+    "findings": [
+      {
+        "kind": "NEW_TEST_FIXTURE_ERROR",
+        "path": "frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts",
+        "cause": "Original asset GET requires novel_id query. New test omitted it after successful approval.",
+        "fix": "Supply project query, preserve HTTP200 assertion, add asset/project identity assertion. API unchanged."
+      },
+      {
+        "kind": "INHERITED_VISIBLE_WORDING_REGRESSION",
+        "path": "frontend/src/experimental/ProductionLineagePanel.tsx",
+        "cause": "State label changed while original browser contract expected 确定性协议可复现.",
+        "fix": "Restore original label and retain independent synthetic-only/same-seed/byte-equality explanation. Inherited browser test unchanged."
+      }
+    ],
+    "source_hashes": {
+      "frontend/src/experimental/ProductionLineagePanel.tsx": "662f5161ed0577efaa66a99b95274690a7f89a6783a4923b7d1853ce5926013e",
+      "frontend/src/experimental/ProductionLineagePanel.continuation.test.tsx": "38384ac8673f63dd998a3180044a2aeda9c88ef22b21aff5ecb2de84b6d170fe",
+      "frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts": "7a38821c7676b00a66ac6734139759e087aea8b2646d3f5708f299d4d70d9538",
+      "tests/test_post_interop_media_continuation.py": "a9332d53ead1bf215fd6f39c16ac295082353555a616eef89d23833a4a863124"
+    },
+    "current_corrected_hosted_verification": "NOT_RUN_NEXT_COMMIT_CI_REQUIRED",
+    "local_chromium_launched": false,
+    "workflow_rerun_requested": false,
+    "asset_api_runtime_changed": false
+  }
 }

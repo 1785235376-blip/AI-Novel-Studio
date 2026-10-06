@@ -2349,7 +2349,8 @@
     "foundation": [
       "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
       "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
-      "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json",
+      "docs/delivery/post-interop-continuation/BROWSER_CORRECTION_RECEIPT.json"
     ],
     "ux": [
       "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
@@ -2434,5 +2435,28 @@
     "collections": 2,
     "old_skip_maps": "UNCHANGED",
     "acceptance": "SOURCE_SPECIFIC_STAGED_CHECKPOINT_NOT_FINAL_HOSTED_RESULT"
-  }
+  },
+  "hosted_browser_correction": {
+    "state": "SOURCE_FIXED_FRESH_LOCAL_CONTRACTS_FINAL_HOSTED_PENDING",
+    "prior_head": "dedb813bb297bb5fb95bac55440a71913b54ed10",
+    "prior_pr_run": 37498190450,
+    "completed_failures_before_cancellation": 7,
+    "receipt": "docs/delivery/post-interop-continuation/BROWSER_CORRECTION_RECEIPT.json",
+    "application_delta": "Restore inherited production determinism label; backend/API unchanged",
+    "fixture_delta": "Original GET version/Markdown baselines, exact saved Unicode offsets, required original asset project query",
+    "new_backend_cases": 8,
+    "complete_reviewed_inventory": 7492,
+    "previous_checkpoint_inventory": 7484,
+    "historical_assertions_and_skips": "UNCHANGED",
+    "additional_c12_r4": {
+      "passed": 49,
+      "failures": 10,
+      "errors": 4,
+      "total": 63,
+      "u08": "PASS",
+      "new_wave5_fixture": "PROXY_MATCH_AND_OWNED_CLEANUP_FIXED_HOSTED_PENDING"
+    },
+    "strict_profile_fixture": "29 new opposite-profile reason defects corrected with unchanged original guards and counts; no applicable-PG skip introduced"
+  },
+  "api_catalog": "docs/delivery/post-interop-continuation/API_CATALOG.json"
 }

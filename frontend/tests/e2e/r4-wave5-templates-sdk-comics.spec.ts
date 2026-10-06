@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { expect, test, type APIResponse, type Page } from '@playwright/test';
 import { createPageQuiescer } from './r3-fixture-lifecycle';
-async function body(response: APIResponse) { expect(response.ok(), `HTTP ${response.status()}: ${await response.text()}`).toBeTruthy(); return response.json(); }
+async function body(response: Pick<APIResponse, 'ok' | 'status' | 'text' | 'json'>) { expect(response.ok(), `HTTP ${response.status()}: ${await response.text()}`).toBeTruthy(); return response.json(); }
 async function workspace(page: Page, name: string) {
   if (!(await page.getByRole('navigation', { name: '实验功能' }).isVisible().catch(() => false))) {
     await page.getByRole('button', { name: /功能导航/ }).first().click();
@@ -11,19 +11,37 @@ async function workspace(page: Page, name: string) {
   }
   await page.getByRole('navigation', { name: '实验功能' }).getByRole('button', { name, exact: true }).click();
 }
-async function createNovel(page: Page, api: string, title: string) {
+async function createNovel(page: Page, title: string, owned: Set<string>) {
   await page.getByPlaceholder('小说名称').fill(title);
-  const response = page.waitForResponse(r => r.url() === `${api}/novels` && r.request().method() === 'POST');
-  await page.getByRole('button', { name: '创建小说', exact: true }).click(); return body(await response);
+  // React posts through the frontend proxy. Bind ownership to this exact
+  // creation request, without assuming the backend origin or scanning projects.
+  const creating = page.waitForResponse(r => new URL(r.url()).pathname === '/api/novels'
+    && r.request().method() === 'POST' && r.request().postDataJSON()?.title === title).then(async response => {
+    const novel = await response.json();
+    // Capture before assertions and later UI waits, so a setup failure still
+    // leaves an exact-owned ID for the quiesced teardown.
+    if (typeof novel?.id === 'string' && novel.id) owned.add(novel.id);
+    expect(response.status()).toBe(201);
+    expect(novel.id).toEqual(expect.any(String)); expect(novel.id).not.toBe('');
+    return novel;
+  });
+  // A click may reject after dispatch. Settle response capture before cleanup
+  // instead of abandoning an in-flight successful creation on that error path.
+  const [created, clicked] = await Promise.allSettled([
+    creating, page.getByRole('button', { name: '创建小说', exact: true }).click(),
+  ]);
+  if (created.status === 'rejected') throw created.reason;
+  if (clicked.status === 'rejected') throw clicked.reason;
+  return created.value;
 }
 test('Wave 5: extended read-only templates instantiate an original Agent with durable SDK contract and no dispatch', async ({ page, request }, info) => {
   const api = 'http://127.0.0.1:8022/api', headers = { 'X-Session-Token': 'r4-broker-test-session' };
-  const quiet = createPageQuiescer(page); let nid = ''; const dispatch: string[] = [];
+  const quiet = createPageQuiescer(page), owned = new Set<string>(); const dispatch: string[] = [];
   page.on('request', req => { if (req.method() === 'POST' && /\/generate|\/dispatch|\/execute|\/runs$/.test(req.url())) dispatch.push(req.url()); });
   info.annotations.push({ type: 'verification', description: 'Real React/File API hosted journey. Local browser NOT_RUN (known platform block, not retried). No model or third-party executable calls.' });
   try {
     await page.setExtraHTTPHeaders(headers); await page.goto('http://127.0.0.1:5182');
-    nid = (await createNovel(page, api, `Wave5 templates ${info.testId}`)).id;
+    const nid = (await createNovel(page, `Wave5 templates ${info.testId}`, owned)).id;
     await workspace(page, '本地模板库'); const library = page.getByRole('region', { name: '本地模板库', exact: true });
     const catalog = await body(await request.get(`${api}/novels/${nid}/experimental/template-library`, { headers }));
     expect(catalog.items).toHaveLength(9); expect(catalog.extended_items).toHaveLength(5); expect(catalog.permission_grants).toEqual([]);
@@ -49,15 +67,15 @@ test('Wave 5: extended read-only templates instantiate an original Agent with du
     await expect(agents.getByLabel('Adapter 运行时要求')).toHaveValue('TRUSTED_IN_PROCESS_LOCAL');
     expect(dispatch).toEqual([]);
     for (const [width, height] of [[1366, 768], [1440, 900], [1920, 1080]]) { await page.setViewportSize({ width, height }); await page.evaluate(() => document.fonts.ready); expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true); await page.screenshot({ path: info.outputPath(`wave5-sdk-${width}.png`) }); }
-  } finally { await quiet(); if (nid) expect([200, 204, 404]).toContain((await request.delete(`${api}/novels/${nid}`, { headers })).status()); }
+  } finally { await quiet(); for (const nid of owned) expect([200, 204, 404]).toContain((await request.delete(`${api}/novels/${encodeURIComponent(nid)}`, { headers })).status()); }
 });
 
 test('Wave 5: comic image brief, character appearance, scene chain, restart and source invalidation', async ({ page, request }, info) => {
-  const api = 'http://127.0.0.1:8019/api'; const quiet = createPageQuiescer(page); let nid = ''; const dispatch: string[] = [];
+  const api = 'http://127.0.0.1:8019/api'; const quiet = createPageQuiescer(page), owned = new Set<string>(); const dispatch: string[] = [];
   page.on('request', req => { if (req.method() === 'POST' && /\/generate|\/dispatch|\/execute/.test(req.url())) dispatch.push(req.url()); });
   info.annotations.push({ type: 'verification', description: 'Real React/File API original approved synthetic assets. No model, final-artwork or local-browser verification claim.' });
   try {
-    await page.goto('http://127.0.0.1:5179'); nid = (await createNovel(page, api, `Wave5 comic ${info.testId}`)).id;
+    await page.goto('http://127.0.0.1:5179'); const nid = (await createNovel(page, `Wave5 comic ${info.testId}`, owned)).id;
     const base = `${api}/novels/${nid}`;
     await body(await request.post(`${base}/chapters`, { data: { title: 'Synthetic scene', content: 'Alice studies a tide map.' } }));
     await body(await request.put(`${base}/characters/alice`, { data: { name: 'Alice', personality: 'Careful' } }));
@@ -91,5 +109,5 @@ test('Wave 5: comic image brief, character appearance, scene chain, restart and 
     expect(records.items[0].stale).toBe(true); expect(records.items[0].document).toBeUndefined();
     expect((await request.post(`${base}/experimental/comic-layouts/records/${row.id}/preflight`, { data: { expected_version: row.version } })).status()).toBe(409);
     expect(dispatch).toEqual([]);
-  } finally { await quiet(); if (nid) expect([200, 204, 404]).toContain((await request.delete(`${api}/novels/${nid}`)).status()); }
+  } finally { await quiet(); for (const nid of owned) expect([200, 204, 404]).toContain((await request.delete(`${api}/novels/${encodeURIComponent(nid)}`)).status()); }
 });

@@ -49,8 +49,9 @@ test('Wave 4: original Shot picker, persisted brief revision, compare, approve o
     const approving = page.waitForResponse(response => /\/media\/proposals\/[^/]+\/approve$/.test(response.url()));
     await page.getByRole('article', { name: '媒体候选 1', exact: true }).getByRole('button', { name: '批准媒体为资产', exact: true }).click();
     const approved = await (await approving).json(); expect(approved.lineage.shot_id).toBe(source.shots[0].id); expect(approved.asset_id).toBeTruthy();
-    const originalAsset = await page.request.get(`${API}/assets/${approved.asset_id}`);
+    const originalAsset = await page.request.get(`${API}/assets/${approved.asset_id}`, { params: { novel_id: nid } });
     expect(originalAsset.status()).toBe(200);
+    expect(await originalAsset.json()).toMatchObject({ id: approved.asset_id, novel_id: nid });
     await page.reload(); await openPanel(page, '封面与分镜');
     await expect(page.getByRole('article', { name: '媒体候选 1', exact: true })).toContainText('APPROVED');
     await expect(page.getByLabel('修订分镜图像说明')).toHaveValue('Keep empty foreground, synthetic fixture only.');

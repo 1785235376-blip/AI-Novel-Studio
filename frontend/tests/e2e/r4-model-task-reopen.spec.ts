@@ -9,7 +9,10 @@ test('Task Center reopens exact original Judge receipt after reload without mode
   info.annotations.push({ type: 'verification', description: 'Original File owner/AuthorPreparer/Broker/JobManager and real React task navigation. One explicitly created shipped synthetic fixture; no response mocks, paid inference or real model quality claim.' });
   try {
     const novel = await body(await request.post(`${API}/novels`, { headers, data: { title: `Exact original Judge ${Date.now()}` } })); nid = novel.id;
-    const chapter = await body(await request.post(`${API}/novels/${nid}/chapters`, { headers, data: { title: 'Synthetic evidence', content: '合成灯塔照亮门口。\n\n合成灯塔照亮门口。' } }));
+    const created = await body(await request.post(`${API}/novels/${nid}/chapters`, { headers, data: { title: 'Synthetic evidence', content: '合成灯塔照亮门口。\n\n合成灯塔照亮门口。' } }));
+    // Capture the original versioned document, not the legacy creation response.
+    const chapter = await body(await request.get(`${API}/chapters/${created.id}`, { headers }));
+    expect(Number.isInteger(chapter.version)).toBe(true); expect(chapter.version).toBeGreaterThanOrEqual(1);
     const base = `${API}/novels/${nid}/experimental`;
     const run = await body(await request.post(`${base}/narrative-judge/runs`, { headers, data: { chapter_ids: [chapter.id], expected_versions: { [chapter.id]: chapter.version }, rubric_id: 'narrative-rules-v1' } }));
     const catalog = await body(await request.get(`${base}/narrative-judge/model/catalog`, { headers }));
@@ -36,7 +39,8 @@ test('Task Center reopens exact original Judge receipt after reload without mode
       if (!visit) { await quiet.drain(); await page.reload(); }
     }
     expect(sends).toEqual([]); expect((await body(await request.get(`${base}/model-broker/history`, { headers }))).ledger).toHaveLength(1);
-    expect((await body(await request.get(`${API}/chapters/${chapter.id}`, { headers }))).version).toBe(chapter.version);
+    const afterReopening = await body(await request.get(`${API}/chapters/${chapter.id}`, { headers }));
+    expect(afterReopening.version).toBe(chapter.version); expect(afterReopening.content).toBe(chapter.content);
     await page.screenshot({ path: info.outputPath('exact-judge-task-after-reload.png'), fullPage: true });
   } finally {
     if (jobId) await request.post(`${API}/generation/${jobId}/cancel`, { headers }).catch(() => {});

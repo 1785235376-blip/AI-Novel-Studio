@@ -333,3 +333,7 @@ SharedUniversePanel remains within ProjectForksPanel: selected immutable snapsho
 ## Exact original model-task reopening
 
 Task Center uses the additive owner_navigation pointer while retaining the legacy source shape. Simulator/Judge/declarative panels select only the matching authorized original job receipt; translation shows the exact original receipt without overwriting dirty segment input. Opening its original segment is a separate action. Missing, withheld or out-of-window tasks remain unavailable instead of selecting unrelated output, and navigation never executes a model. Keep chapter/source scope fences and existing50-edition/50-run bounded translation visibility explicit.
+
+## Browser contract compatibility correction
+
+Retain the inherited production evidence label “确定性协议可复现” and its separate explanation that determinism is established only for synthetic protocols, never arbitrary GPU/model bytes. Source-based controls and fixtures must use the authoritative versioned chapter read, including its exact Markdown heading/whitespace and Unicode offsets. Asset links keep the original required project query; do not weaken permission checks to accommodate missing navigation inputs.

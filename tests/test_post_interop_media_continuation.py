@@ -16,10 +16,12 @@ from app.experimental.media_api import create_media_router
 from app.experimental.production_lineage import ProductionLineageService
 from app.experimental.store import ExperimentalStore
 from app.services.v1_capability_service import CapabilityVersionConflict
-from test_r3_media_support import rig, branch_scope
+from test_r3_media_support import branch_scope
+from post_interop_media_fixture_support import rig
 from test_r4_director import screenplay, plan_body
 from test_r4_change_impact import impact, edit, preflight, prepare
 from test_r4_registered_local_media import local_media, price
+from test_r3_mounted_contracts import mounted, prefix, checked
 
 
 def media(rig, store=None):
@@ -237,3 +239,31 @@ def test_otio_summary_exposes_distinct_source_in_out_and_timeline_position():
     assert cut['start_seconds'] == {'numerator': 0, 'denominator': 1}
     assert cut['source_in_seconds'] == {'numerator': 2, 'denominator': 1}
     assert cut['source_out_seconds'] == {'numerator': 5, 'denominator': 1}
+
+
+def test_approved_storyboard_asset_get_requires_original_project_query(mounted):
+    """The browser fixture must supply the existing required project authority."""
+    e = mounted
+    screenplay = e.screenplays.create(e.nid)
+    screenplay = e.screenplays.approve(e.nid, screenplay['id'], screenplay['edit_version'])
+    screenplay = e.screenplays.plan_shots(e.nid, screenplay['id'], screenplay['edit_version'])
+    shot_id = screenplay['shots'][0]['id']
+    brief = checked(e.client.post(e.base + '/media/storyboard-briefs', json={
+        'screenplay_id': screenplay['id'], 'shot_id': shot_id,
+        'expected_screenplay_version': screenplay['edit_version'], 'prompt': 'Synthetic asset route contract',
+    }), 201)
+    task = checked(e.client.post(e.base + '/media/tasks', json={
+        'brief_id': brief['id'], 'expected_brief_version': brief['version'], 'adapter_id': 'mock-image-v1',
+    }), 201)
+    completed = checked(e.client.post(e.base + f'/media/tasks/{task["id"]}/execute', json={'expected_version': task['version']}))
+    proposal_id = completed['proposal_ids'][0]
+    approved = checked(e.client.post(e.base + f'/media/proposals/{proposal_id}/approve', json={'expected_version': 1}))
+    assert approved['status'] == 'APPROVED' and approved['lineage']['shot_id'] == shot_id
+    path = e.prefix + f'/assets/{approved["asset_id"]}'
+    missing_query = e.client.get(path)
+    assert missing_query.status_code == 422
+    assert any(error['loc'] == ['query', 'novel_id'] and error['type'] == 'missing' for error in missing_query.json()['detail'])
+    actual = checked(e.client.get(path, params={'novel_id': e.nid}))
+    assert actual['id'] == approved['asset_id'] and actual['novel_id'] == e.nid
+    assert actual['sha256'] == e.assets.get(approved['asset_id'])['sha256']
+    assert e.client.get(path, params={'novel_id': 'another-project'}).status_code == 404

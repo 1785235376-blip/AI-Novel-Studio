@@ -48,12 +48,12 @@ Reconstructed journeys:
 
 Current post-reset verification:
 
-- Python AST syntax: PASS for 7 reconstructed backend files and the 14-function regression module.
+- Reconstruction checkpoint Python AST syntax: PASS for 7 backend files and the then-14-function regression module; subsequent mounted asset-contract regression is included in the current checks below.
 - Owned runtime diff whitespace: PASS.
 - Earlier post-reset backend union (before the later source-visibility correction): **288 passed, 205 PostgreSQL cases deselected, no skips**, 2 warnings, 107.35 seconds. Uses restored Python 3.12.14 and pinned official OTIO 0.18.1. Covers all reconstructed backend regressions plus original File/API/auth/CAS/history/restart/cancellation/late-result, U06 and batch owners. The exact command and log hash are in the machine-readable delta. No CJK-font-bound test was requested or skipped in this run.
 - Fresh exact staged frontend: **1231 passed /8 inherited opt-in skips**, TypeScript and design-token guard PASS. The official pinned environment was restored through normal approved setup. Tested code tree `ac967d2a769b76c61bfb60ba01e12c0a2ca4ebc1`; see WAVE_4_STAGED_VERIFICATION.json. Pre-reset counts are not reused; final-source hosted checks remain required.
-- PostgreSQL: NOT_RUN locally; no confirmed disposable DSN. The new regression module retains 10 inherited File/PostgreSQL parametrizations, and hosted `postgres_backend_only` must execute the PG cases.
-- Browser: NOT_RUN. Existing verified Chromium platform blocker was not bypassed or relaunched. `frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts` is matched by the original R4 config and contains actual API/UI, reload and 1366×768 / 1440×900 / 1920×1080 overflow/screenshot checks. Hosted exact-commit verification remains required.
+- PostgreSQL: NOT_RUN locally; no confirmed disposable DSN. The continuation regression module now has 12 PostgreSQL-parametrized cases, including the new asset-read contract under both API prefixes; the source-visibility module adds 10. Hosted `postgres_backend_only` must execute them.
+- Current corrected browser journey: NOT_RUN pending the next exact-source hosted run. The prior superseded hosted run exposed the two media failures documented below. Local Chromium remains platform-blocked and was not relaunched. `frontend/tests/e2e/r4-post-interop-media-continuation.spec.ts` is matched by the original R4 config and contains actual API/UI, reload and 1366×768 / 1440×900 / 1920×1080 overflow/screenshot checks. Hosted exact-commit verification remains required.
 - Historical independent review: BLOCKED and unchanged. Neither source reconstruction nor syntax checks are full product/native/creative acceptance.
 
 
@@ -68,7 +68,21 @@ The correction catches only that exact recognized error in `_stale()`, matching 
 - Pre-fix evidence: the added File regression failed with the exact missing-character error in `proposals() → _stale()`.
 - Fresh corrected focused run: **88 passed, 81 PostgreSQL cases deselected, no skips**, 1 warning, 73.23 seconds. Covers visibility, all Wave 4 continuation tests, original media workflow/evidence, U06 change impact, production lineage and registered-local media.
 - Independent bounded check on the same runtime/test hashes: **52 passed, 45 inherited PostgreSQL skips**, plus the original direct File reproduction yielding 2 briefs, 2 tasks and 4 candidates with correct stale flags. Counts overlap and are not summed. This closes the reported read-availability defect; it does not replace the historical blocked audit or full product acceptance.
-- Post-reset frontend runtime/types/browser and local PostgreSQL remain NOT_RUN. No new model, GPU or paid service execution occurred.
+- The earlier Node setup block was subsequently resolved through official pinned setup. Exact-stage frontend/TypeScript receipts are recorded above and fresh correction checks below; local browser and PostgreSQL remain NOT_RUN. No model, GPU or paid service execution occurred.
+
+## Hosted media compatibility corrections
+
+Verified hosted run `37498190450` (head `dedb813`, merge checkout `4774ad6f`, compact artifact `11429826185`) reported two media failures before being superseded. These are failures on that earlier source, not a passing final browser result.
+
+1. The new continuation journey successfully created the original Shot brief, revised it, generated and compared candidates, and approved an asset with the correct Shot lineage. Its next request incorrectly omitted the required `novel_id` query on `GET /api/assets/{asset_id}`, so the existing API correctly returned 422. The new browser fixture now supplies `params: { novel_id: nid }`, keeps the HTTP 200 assertion, and additionally checks returned asset/project identity. The runtime API and its required project authority are unchanged. A production-mounted regression proves missing query → 422 with the exact missing query field, correct project → 200 and matching stored asset digest, wrong project → 404, under both `/api` and `/api/v1`.
+2. The inherited registered-media journey expected `确定性协议可复现：否`, but the continuation changed that label to `合成协议确定性：否`. The original compatible label is restored. The separate synthetic-only determinism explanation, same-seed limitation and byte-equality status remain. A new UI regression tests both true/false evidence states. The inherited browser test and all its assertions are untouched.
+
+Fresh checks on these corrections:
+
+- Backend: **58 passed, 36 PostgreSQL cases deselected**, no skips, 1 warning, 32.87 seconds. Includes new mounted asset query cases, source visibility, continuation, original registered-media/production mounted routes and project authorization.
+- Frontend: **30 passed** across 5 focused media/lineage files; TypeScript **PASS**; token guard **PASS (42 files)**. These are real local tests using restored official dependencies, not reused pre-reset counts.
+- The previously recorded exact staged code tree `ac967d2a769b76c61bfb60ba01e12c0a2ca4ebc1` remains its own receipt: full frontend 1231 passed / 8 inherited opt-in skips, TypeScript/token checks, 24 new File cases / 20 PG deselected, and identical 7306-node collections with 44 additions and unchanged inherited test digests/skips. That receipt predates these two hosted-browser corrections and is not relabeled as a final corrected-browser pass.
+- No local Chromium, workflow rerun, real provider/GPU/model execution or runtime asset-permission relaxation occurred. The next correction commit requires its own full CI/browser results.
 
 ## Opus UI handoff
 

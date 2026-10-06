@@ -23,7 +23,10 @@ test('U03 structured results focus original world, rule, graph and asset records
   page.on('request', value => { if (value.method() === 'POST' && /\/(?:generate|dispatch|approve|reject)$/.test(value.url())) executions.push(value.url()); });
   try {
     const novel = await checked(await request.post(`${API}/novels`, { data: { title: `Structured search ${Date.now()}` } })); nid = novel.id;
-    const chapter = await checked(await request.post(`${API}/novels/${nid}/chapters`, { data: { title: '原资料来源', content: '合成测试正文，导航不会改写。' } }));
+    const created = await checked(await request.post(`${API}/novels/${nid}/chapters`, { data: { title: '原资料来源', content: '合成测试正文，导航不会改写。' } }));
+    // File creation returns legacy metadata; the original document read owns CAS.
+    const chapter = await checked(await request.get(`${API}/chapters/${created.id}`));
+    expect(Number.isInteger(chapter.version)).toBe(true); expect(chapter.version).toBeGreaterThanOrEqual(1);
     const base = `${API}/novels/${nid}/experimental`;
     for (const [kind, title] of [['CIVILIZATION', '星桥组织精确来源'], ['ABILITY', '记忆能力精确来源']])
       await checked(await request.post(base + '/world/records', { data: { kind, title, data: { name: title } } }));
@@ -39,7 +42,9 @@ test('U03 structured results focus original world, rule, graph and asset records
       await expect(original).toHaveAttribute('aria-current', 'true'); await expect(original).toBeFocused();
       await page.screenshot({ path: info.outputPath(`u03-original-${kind}-${sources.findIndex(row => row[1] === title)}.png`), fullPage: true });
     }
-    expect((await checked(await request.get(`${API}/chapters/${chapter.id}`))).version).toBe(chapter.version);
+    const afterNavigation = await checked(await request.get(`${API}/chapters/${chapter.id}`));
+    expect(afterNavigation.version).toBe(chapter.version);
+    expect(afterNavigation.content).toBe(chapter.content);
     expect(executions).toEqual([]);
     for (const [width, height] of [[1366, 768], [1440, 900], [1920, 1080]]) {
       await page.setViewportSize({ width, height }); await page.evaluate(() => document.fonts.ready);

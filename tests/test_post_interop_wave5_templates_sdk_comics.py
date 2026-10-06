@@ -24,7 +24,7 @@ from app.experimental.comic_layouts import ComicLayoutsService, LayoutIn
 from app.services.v1_capability_service import CapabilityVersionConflict
 from test_r4_reader_sessions import env as storage_env
 from test_r5_declarative_templates import env, install
-from test_r3_media_support import rig
+from post_interop_media_fixture_support import rig
 from test_r4_production_lineage import production, declaration
 from test_r5_comic_layouts import comic, image_asset, layout, save, preflight, approve, synthetic_png
 

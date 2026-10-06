@@ -44,3 +44,9 @@ Latest staged source evidence: [Wave5 staged receipt](docs/delivery/post-interop
 
 ## Protected behavior for final visual work
 Keep actual persistence receipts, unsaved/conflict draft recovery, current source/version/privacy, human review, original task/asset/model authority, honest unknown cost/progress, locked terms, immutable Universe pins and async-only collaboration. Preserve the shared shell/tokens and [Opus handoff](OPUS_UI_HANDOFF.md); visual polish must not remove these states or confirmations.
+
+## Source-specific hosted correction
+
+The superseded Wave4 run recorded seven R4 failures before cancellation, retained in [the correction receipt](docs/delivery/post-interop-continuation/BROWSER_CORRECTION_RECEIPT.json). New fixtures now bind the authoritative saved chapter/version/Unicode offsets and original asset project query; the one application change restores an unchanged inherited production-label contract while retaining its synthetic-only explanation. Two new mounted regressions expand the complete inventory from7484 to7492 without removing nodes, changing old assertions or widening skips. Fresh staged UI1261/8 and focused backend57/44-PG-deselected checks pass; actual corrected full hosted acceptance remains pending. These source-labelled results do not replace the final exact-head receipt.
+
+Complete c12 hosted R4 evidence is49 passes and14 failed/error cases, including owned-fixture cleanup cascades; U08 itself passes. Proxy-response ownership capture and new-fixture canonical profile handling are corrected in source. The original File test assertions all passed, but strict coverage correctly remained failed until the new opposite-profile reason defect is fixed; this is preserved rather than reclassified green. Final exact-source receipts remain authoritative.

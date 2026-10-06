@@ -61,6 +61,41 @@ def test_style_parser_exact_whitespace_unicode_and_range_boundaries():
     for change in ({'start':0,'end':7,'paragraph':1,'quote':'Hidden.'},{'chapter_version':3},{'quote':'invented'},{'chapter_id':'unselected'}):
         bad=deepcopy(opinion); bad['evidence'][0].update(change)
         with pytest.raises(ValueError): parse_style_opinions(json.dumps({'opinions':[opinion,bad]}),chapters,samples)
+
+def test_style_created_chapter_uses_saved_markdown_coordinates_and_preserves_exact_document(broker_app):
+    """Creation adds a heading; both API prefixes and backends use GET anchors."""
+    e = broker_app
+    selected = '  雨水敲着窗沿，她停下来听了一会儿。'
+    content = f'EXCLUDED_PRIVATE_OPENING\n{selected}\nEXCLUDED_PRIVATE_ENDING'
+    created = checked(e.client.post(e.prefix + f'/novels/{e.nid}/chapters', headers=e.headers,
+        json={'title': '合成😀雨声', 'content': content}), 201)
+    chapter = checked(e.client.get(e.prefix + f'/chapters/{created["id"]}', headers=e.headers))
+    assert isinstance(chapter['version'], int) and chapter['version'] >= 1
+    assert chapter['content'] == '# 合成😀雨声\n\n' + content + '\n\n'
+    start = chapter['content'].index(selected)
+    end = start + len(selected)
+    assert start != content.index(selected) and chapter['content'][start:end] == selected
+    profile = checked(e.client.post(e.base + '/style-analysis/profiles', headers=e.headers,
+        json={'title': 'Saved source coordinates', 'instructions': '保留具体动作与停顿。',
+              'chapter_ids': [chapter['id']]}), 201)
+    row = checked(e.client.post(e.base + '/style-analysis/analyses', headers=e.headers,
+        json={'style_id': profile['id'], 'expected_style_version': profile['version'], 'language': 'zh',
+              'samples': [{'chapter_id': chapter['id'], 'expected_version': chapter['version'],
+                           'start': start, 'end': end}]}), 201)
+    previewed = action(e, row, 'preview', route_id=route(e)['route_id'])
+    preview = previewed['model_preview']
+    exact = json.loads(preview['author']['instruction'].split(MARKER)[1])
+    assert exact['samples'] == [{'chapter_id': chapter['id'], 'chapter_version': chapter['version'],
+        'start': start, 'end': end,
+        'fragments': [{'paragraph': 3, 'start': start, 'end': end, 'quote': selected}]}]
+    assert preview['request']['context'] == {}
+    assert 'EXCLUDED_PRIVATE_OPENING' not in json.dumps(preview)
+    assert 'EXCLUDED_PRIVATE_ENDING' not in json.dumps(preview)
+    result = finish(e, dispatch(e, previewed))
+    assert result['model_execution']['status'] == 'COMPLETED'
+    assert result['model_assessments'][0]['evidence'][0]['quote'] == selected
+    assert result['metrics'] == row['metrics']
+    assert checked(e.client.get(e.prefix + f'/chapters/{chapter["id"]}', headers=e.headers)) == chapter
 @pytest.mark.parametrize('text',['[]','{"opinions":[],"score":99}','{"opinions":[],"opinions":[]}','{"opinions":NaN}','```json\n{"opinions":[]}\n```','{"opinions":"none"}'])
 def test_style_strict_output_rejects_scores_duplicates_fences_and_coercion(text):
     with pytest.raises(ValueError): parse_style_opinions(text,{},[])

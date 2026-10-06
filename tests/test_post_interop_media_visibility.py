@@ -7,7 +7,7 @@ from app.experimental.media import MediaService
 from app.experimental.media_api import create_media_router
 from app.experimental.flags import require_flag
 from app.storage import atomic_write
-from test_r3_media_support import rig
+from post_interop_media_fixture_support import rig
 
 
 def remove_original_character(e):
