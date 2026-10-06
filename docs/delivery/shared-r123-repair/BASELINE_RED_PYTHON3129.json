@@ -1,0 +1,117 @@
+{
+  "baseline_sha": "c6f2126115b52e17839d48efea091dc21ec08c61",
+  "baseline_tree": "eb80a9fa5f5aa6b8c2cbd0e1e67f7b7a48ac522f",
+  "python": "3.12.9 (main, Feb  5 2025, 03:22:31) [GCC 13.3.0]",
+  "result": "ALL_THREE_KNOWN_DEFECTS_REPRODUCED_RED",
+  "scripts_exit_zero_is_not_pass": true,
+  "reproductions": {
+    "repro_project_authority": {
+      "script_sha256": "b22a435f50db84262775476c046e95cdb600009ce9c357cd6c452fdc039e90a9",
+      "observations": {
+        "source": "c6f2126115b52e17839d48efea091dc21ec08c61",
+        "environment": "Linux Python 3.12.9 File TestClient; actual LocalSessionBootstrap issuance",
+        "real_model_calls": 0,
+        "control_project_write_authorization": {
+          "status": 403,
+          "detail": {
+            "code": "PROJECT_SCOPE_FORBIDDEN"
+          }
+        },
+        "aliases": {
+          "/api": {
+            "no_token": 401,
+            "protected_export": 403,
+            "goal_get": 200,
+            "goal_put": 200,
+            "goal_persisted": {
+              "target_words": 4321,
+              "target_chapters": 7,
+              "deadline": "audit-only"
+            },
+            "raw_novel_get": 200,
+            "chapters_get": 200,
+            "chapter_content_disclosed": true,
+            "overview": 200
+          },
+          "/api/v1": {
+            "no_token": 401,
+            "protected_export": 403,
+            "goal_get": 200,
+            "goal_put": 200,
+            "goal_persisted": {
+              "target_words": 4321,
+              "target_chapters": 7,
+              "deadline": "audit-only"
+            },
+            "raw_novel_get": 200,
+            "chapters_get": 200,
+            "chapter_content_disclosed": true,
+            "overview": 200
+          }
+        }
+      }
+    },
+    "repro_stream_revocation": {
+      "script_sha256": "3908834c6309ac24ab3369c81703049e3020953b291196a4e77f9232d98965ec",
+      "observations": {
+        "source": "c6f2126115b52e17839d48efea091dc21ec08c61",
+        "python": "3.12.9",
+        "scope": "Original API StreamingResponse iterator and membership/session services, synthetic File job",
+        "result": {
+          "initial_stream_chunk": "data: {\"job_id\": \"audit-stream-job\", \"status\": \"GENERATING\", \"chunk\": \"BEFORE_REVOCATION\", \"provider\": null, \"model\": null, \"error\": null, \"error_code\": null}\n\n",
+          "new_read_after_revocation": 401,
+          "existing_stream_after_revocation": "data: {\"job_id\": \"audit-stream-job\", \"status\": \"COMPLETED\", \"chunk\": \"_AFTER_REVOCATION\", \"provider\": null, \"model\": null, \"error\": null, \"error_code\": null}\n\n",
+          "post_revocation_output_disclosed": true
+        }
+      }
+    },
+    "repro_reject_running": {
+      "script_sha256": "c19e7977516e611661417c87f129822ed0a995981e453b3f5b064e9d9bbeb75e",
+      "observations": {
+        "source": "c6f2126115b52e17839d48efea091dc21ec08c61",
+        "python": "3.12.9",
+        "scope": "Synthetic provider + real File JobManager/HTTP API; no Windows/model test",
+        "results": [
+          {
+            "prefix": "/api",
+            "before": {
+              "status": "GENERATING",
+              "output": "SYNTHETIC_FIRST_CHUNK"
+            },
+            "reject": {
+              "http": 200,
+              "state": "REJECTED",
+              "cancelled": false
+            },
+            "final_http": 200,
+            "final_status": "COMPLETED",
+            "final_output": "SYNTHETIC_FIRST_CHUNK",
+            "persisted_status": "COMPLETED"
+          },
+          {
+            "prefix": "/api/v1",
+            "before": {
+              "status": "GENERATING",
+              "output": "SYNTHETIC_FIRST_CHUNK"
+            },
+            "reject": {
+              "http": 200,
+              "state": "REJECTED",
+              "cancelled": false
+            },
+            "final_http": 200,
+            "final_status": "COMPLETED",
+            "final_output": "SYNTHETIC_FIRST_CHUNK",
+            "persisted_status": "COMPLETED"
+          }
+        ]
+      }
+    }
+  },
+  "evidence_head": "1c88a7dfb821b9ba72425c180bd95ba3140fd079",
+  "ci_runs": {
+    "push": 37402995698,
+    "pull_request": 37403004721
+  },
+  "source": "unaltered original c6f2126; original scripts separately executed with pinned toolchain"
+}

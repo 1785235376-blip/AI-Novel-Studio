@@ -377,7 +377,10 @@ def _collaboration_unavailable():
     raise HTTPException(501,{"code":"COLLABORATION_MUTATION_NOT_SUPPORTED"})
 
 def _adaptation_context(novel_id:str,branch_id:str|None,session_token:str|None,permission:str):
-    if not branch_id:return None,None
+    if not branch_id:
+        if _shared_runtime_authority_enabled():
+            raise HTTPException(400,{"code":"BRANCH_SCOPE_REQUIRED"})
+        return None,None
     if not session_token:raise HTTPException(401,{"code":"SESSION_REQUIRED"})
     try:actor=trusted_session_resolver.resolve(session_token);branch=collaboration_scope_service.repository.get("branches",branch_id)
     except KeyError:raise HTTPException(401,{"code":"INVALID_SESSION_OR_BRANCH"})
@@ -492,19 +495,35 @@ def _require_agent_job_capability(actor_token, job, permission):
 def _generation_context(jid:str,session_token:str|None):
     if not session_token:raise HTTPException(401,{"code":"SESSION_REQUIRED"})
     try:actor=trusted_session_resolver.resolve(session_token)
-    except KeyError:raise HTTPException(401,{"code":"INVALID_SESSION"})
+    except (KeyError,ValueError):raise HTTPException(401,{"code":"INVALID_SESSION"})
     try:job=jobs.get(jid)
     except KeyError:raise HTTPException(404,"Generation job not found")
     if not job.actor_id or actor.actor_id!=job.actor_id or actor.workspace_id!=job.workspace_id:
         raise HTTPException(403,{"code":"FORBIDDEN"})
     if not job.scope:raise HTTPException(403,{"code":"UNSCOPED_LEGACY_JOB"})
-    raw=job.scope;scope=AuthorizationScope(ScopeKind(raw["kind"]),raw["workspace_id"],raw.get("project_id"),raw.get("storyline_id"),raw.get("branch_id"))
-    try:membership_authorization_service.require(actor,"domain.read",ModalityDomain.NOVEL,scope)
-    except PermissionError as exc:raise HTTPException(403,{"code":"FORBIDDEN","detail":str(exc)})
+    try:
+        raw=job.scope
+        scope=AuthorizationScope(ScopeKind(raw["kind"]),raw["workspace_id"],raw.get("project_id"),raw.get("storyline_id"),raw.get("branch_id"))
+        membership_authorization_service.require(actor,"domain.read",ModalityDomain.NOVEL,scope)
+    except (KeyError,ValueError,PermissionError,FileNotFoundError) as exc:
+        raise HTTPException(403,{"code":"FORBIDDEN"}) from exc
     return actor,scope,job
 
+
+def _generation_content_context(jid,session_token):
+    """A retained scope record cannot keep a deleted source readable."""
+    actor,scope,job=_generation_context(jid,session_token)
+    if scope.project_id!=job.novel_id or scope.workspace_id!=job.workspace_id:
+        raise HTTPException(403,{"code":"FORBIDDEN"})
+    try:novel_service.get(job.novel_id)
+    except (KeyError,FileNotFoundError):raise HTTPException(403,{"code":"FORBIDDEN"}) from None
+    return actor,scope,job
+
+
 def guard(fn,*args):
+    from .jobs import GenerationStateConflict
     try:return fn(*args)
+    except GenerationStateConflict as exc:raise HTTPException(409,exc.as_dict())
     except VersionConflict as exc:raise HTTPException(409,{"code":"VERSION_CONFLICT","server":exc.current,"conflict":exc.as_dict()})
     except RevisionConflict as exc:raise _revision_error(exc)
     except FileNotFoundError as exc:raise HTTPException(404,f"Not found: {exc}")
@@ -605,6 +624,148 @@ def plugin_catalog_guard(fn, *args, **kwargs):
             "message": "插件资源请求无效。",
             "error": "插件资源请求无效。",
         }) from None
+def _shared_runtime_authority_enabled():
+    return bool(getattr(settings, "enable_collaboration_runtime", False)
+                or getattr(settings, "enable_packaged_runtime", False))
+
+
+def _shared_actor(session_token):
+    if not session_token:
+        raise HTTPException(401, {"code": "SESSION_REQUIRED"})
+    try:
+        if getattr(settings, "enable_packaged_runtime", False):
+            from .dependencies import packaged_bootstrap_registry
+            from .packaging.local_session_bootstrap import BootstrapDenied
+            manager = packaged_bootstrap_registry.current()
+            if manager is None: raise KeyError("missing current Host")
+            try: return manager.resolve_issued_session(session_token)
+            except BootstrapDenied: raise KeyError("invalid current Host session") from None
+        return trusted_session_resolver.resolve(session_token)
+    except (KeyError, ValueError):
+        raise HTTPException(401, {"code": "INVALID_SESSION"}) from None
+
+
+def _require_shared_project(novel_id, session_token, permission, branch_id=None):
+    """Authorize project-global legacy data; never pretend it is a branch source.
+
+    The Host session only identifies an actor. Current membership, NOVEL grants
+    and the authoritative project/workspace mapping are checked on every call.
+    Existing branch-backed routes retain their separate source-specific gates.
+    """
+    if not _shared_runtime_authority_enabled():
+        if branch_id:
+            raise HTTPException(409, {"code": "BRANCH_SOURCE_UNAVAILABLE"})
+        return None
+    actor, scope = _authorize_novel_project(novel_id, session_token, permission)
+    guard(novel_service.get, novel_id)
+    if branch_id:
+        _authorize_novel_project(novel_id, session_token, permission, branch_id=branch_id)
+        raise HTTPException(409, {"code": "BRANCH_SOURCE_UNAVAILABLE"})
+    return actor, scope
+
+
+def _shared_project_access(permission, *, record=None, scoped=False, unavailable=False):
+    """Explicit dependency for original routes lacking a project authority gate.
+
+    No route-name/method inference and no allow-on-missing-project fallback.
+    Record routes derive ownership from storage, never a caller-supplied ID.
+    """
+    async def dependency(request: Request):
+        if not _shared_runtime_authority_enabled():
+            if request.headers.get("X-Branch-ID"):
+                raise HTTPException(409, {"code": "BRANCH_SOURCE_UNAVAILABLE"})
+            return
+        token = request.headers.get("X-Session-Token")
+        _shared_actor(token)
+        params = request.path_params
+        nid = params.get("nid") or params.get("project_id") or request.query_params.get("novel_id")
+        if record == "pending":
+            item = guard(canon_service.repository.get_pending, params["pid"])
+            nid = item.get("novel_id")
+        elif record == "release_gate":
+            item = capability_guard(v1_capability_service.get_release_gate, params["gate_id"])
+            nid = item.get("novel_id")
+        elif record == "asset":
+            item = guard(asset_library_service.get, params["asset_id"])
+            nid = item.get("novel_id")
+        elif record == "body":
+            body = await request.json()
+            nid = body.get("novel_id") if isinstance(body, dict) else None
+        if not isinstance(nid, str) or not nid:
+            raise HTTPException(403, {"code": "PROJECT_SCOPE_FORBIDDEN"})
+        branch = request.headers.get("X-Branch-ID")
+        if scoped:
+            path_branch = params.get("branch_id")
+            if branch and branch != path_branch:
+                raise HTTPException(403, {"code": "PROJECT_SCOPE_FORBIDDEN"})
+            actor = _shared_actor(token)
+            workspace = collaboration_scope_service.repository.project_workspace(nid)
+            storyline = params.get("storyline_id")
+            if not workspace or actor.workspace_id != workspace or params.get("workspace_id") != workspace:
+                raise HTTPException(403, {"code": "PROJECT_SCOPE_FORBIDDEN"})
+            try:
+                kind = ScopeKind.BRANCH if path_branch else ScopeKind.STORYLINE if storyline else ScopeKind.PROJECT
+                scope = AuthorizationScope(kind, workspace, nid, storyline, path_branch)
+                membership_authorization_service.require(actor, permission, ModalityDomain.NOVEL, scope)
+            except (KeyError, ValueError, PermissionError):
+                raise HTTPException(403, {"code": "PROJECT_SCOPE_FORBIDDEN"}) from None
+        else:
+            _require_shared_project(nid, token, permission, branch)
+        if unavailable:
+            raise HTTPException(501, {"code": "LEGACY_SHARED_SOURCE_UNAVAILABLE"})
+    # Inventory tests inspect these declarations without executing the guard.
+    dependency.shared_project_policy = (permission, record, scoped, unavailable)
+    return dependency
+
+
+_shared_project_read = _shared_project_access("domain.read")
+_shared_project_write = _shared_project_access("domain.write")
+_shared_project_review = _shared_project_access("domain.review")
+_shared_scope_read = _shared_project_access("domain.read", scoped=True)
+_shared_scope_write = _shared_project_access("domain.write", scoped=True)
+_shared_scope_review = _shared_project_access("domain.review", scoped=True)
+_shared_pending_review = _shared_project_access("domain.review", record="pending")
+_shared_gate_read = _shared_project_access("domain.read", record="release_gate")
+_shared_gate_write = _shared_project_access("domain.write", record="body")
+_shared_asset_read = _shared_project_access("domain.read", record="asset", unavailable=True)
+_shared_asset_write = _shared_project_access("domain.write", record="asset", unavailable=True)
+_shared_worker_read = _shared_project_access("domain.read", unavailable=True)
+_shared_worker_write = _shared_project_access("domain.write", unavailable=True)
+
+
+def _visible_shared_rows(rows, session_token, *, project_key="novel_id"):
+    """Filter before pagination/counting; unowned global records are not shared."""
+    if not _shared_runtime_authority_enabled():
+        return rows
+    _shared_actor(session_token)
+    visible = []
+    for row in rows:
+        nid = row.get(project_key)
+        if not isinstance(nid, str) or not nid:
+            continue
+        try:
+            _authorize_novel_project(nid, session_token, "domain.read")
+            guard(novel_service.get, nid)
+        except HTTPException as exc:
+            if exc.status_code in {403, 404}:
+                continue
+            raise
+        visible.append(row)
+    return visible
+
+
+def _shared_workspace_writer(token):
+    if not _shared_runtime_authority_enabled():
+        return None
+    actor = _shared_actor(token)
+    scope = AuthorizationScope(ScopeKind.WORKSPACE, actor.workspace_id)
+    try:
+        membership_authorization_service.require(actor, "domain.write", ModalityDomain.NOVEL, scope)
+    except (KeyError, ValueError, PermissionError):
+        raise HTTPException(403, {"code": "PROJECT_SCOPE_FORBIDDEN"}) from None
+    return actor
+
+
 def _legacy_revision_state(project_id,expected_revision):
     from .services.narrative_state_service import NarrativeStateService
     try:
@@ -660,23 +821,32 @@ def harness_process_status(): return harness_process_service.status()
 @router.get("/harness/context-contract")
 def harness_context_contract(): return harness_context_adapter.contract()
 @router.get("/harness/access-audit")
-def harness_access_audit(limit: int = Query(default=20, ge=1, le=100), novel_id: str | None = None, agent_id: str | None = None, outcome: str | None = None):
-    return {"items": harness_access_audit_service.list(limit, novel_id, agent_id, outcome)}
+def harness_access_audit(limit: int = Query(default=20, ge=1, le=100), novel_id: str | None = None, agent_id: str | None = None, outcome: str | None = None,
+                         x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    if not _shared_runtime_authority_enabled():
+        return {"items": harness_access_audit_service.list(limit, novel_id, agent_id, outcome)}
+    if novel_id:
+        _require_shared_project(novel_id, x_session_token, "domain.read")
+    rows = _visible_shared_rows(harness_access_audit_service.list(100, novel_id, agent_id, outcome), x_session_token)
+    return {"items": rows[:limit]}
 @router.get("/harness/access-audit.csv")
-def harness_access_audit_csv(limit: int = Query(default=100, ge=1, le=100), novel_id: str | None = None, agent_id: str | None = None, outcome: str | None = None):
+def harness_access_audit_csv(limit: int = Query(default=100, ge=1, le=100), novel_id: str | None = None, agent_id: str | None = None, outcome: str | None = None,
+                             x_session_token:str|None=Header(None,alias="X-Session-Token")):
     import csv
     from io import StringIO
     output = StringIO(); writer = csv.DictWriter(output, fieldnames=["at", "novel_id", "chapter", "agent_id", "scopes", "outcome"])
     writer.writeheader()
-    for item in harness_access_audit_service.list(limit, novel_id, agent_id, outcome):
+    for item in harness_access_audit(limit, novel_id, agent_id, outcome, x_session_token)["items"]:
         writer.writerow({**item, "scopes": ";".join(item.get("scopes", []))})
     return Response(content=output.getvalue(), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=harness-access-audit.csv"})
 @router.delete("/harness/access-audit")
 def clear_harness_access_audit(confirm: bool = Query(default=False)):
+    if _shared_runtime_authority_enabled():
+        raise HTTPException(501, {"code": "LEGACY_SHARED_SOURCE_UNAVAILABLE"})
     if not confirm:
         raise HTTPException(400, {"code": "AUDIT_CLEAR_CONFIRMATION_REQUIRED"})
     return harness_access_audit_service.clear()
-@router.get("/harness/context")
+@router.get("/harness/context",dependencies=[Depends(_shared_project_read)])
 def harness_context(novel_id: str, chapter: int, agent_id: str = "writer", instruction: str = ""):
     """Expose the existing Agent Context to an authorized local Harness as read-only data."""
     if not user_preference_service.list()["harness_enabled"]:
@@ -842,8 +1012,16 @@ def apply_agent_job(job_id:str,body:AgentJobApplyIn,x_session_token:str|None=Hea
 def create_workspace(body:WorkspaceIn):
     raise HTTPException(410,{"code":"LEGACY_WORKSPACE_MUTATION_DISABLED","detail":"Use /api/collaboration/admin/workspaces with a trusted session"})
 @router.get("/workspaces")
-def list_workspaces():return collaboration_scope_service.list_workspaces()
-@router.post("/workspaces/{workspace_id}/projects/{project_id}/storylines",status_code=201)
+def list_workspaces(x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    if not _shared_runtime_authority_enabled():
+        return collaboration_scope_service.list_workspaces()
+    actor = _shared_actor(x_session_token)
+    try:
+        membership_authorization_service.identity_service.require_active_membership(actor.actor_id, actor.workspace_id)
+        return [collaboration_scope_service.get_workspace(actor.workspace_id)]
+    except (KeyError, PermissionError):
+        return []
+@router.post("/workspaces/{workspace_id}/projects/{project_id}/storylines",status_code=201,dependencies=[Depends(_shared_scope_write)])
 def create_storyline(workspace_id:str,project_id:str,body:StorylineIn):
     from .collaboration import Storyline
     try:
@@ -851,23 +1029,23 @@ def create_storyline(workspace_id:str,project_id:str,body:StorylineIn):
         return collaboration_scope_service.create_storyline(Storyline(body.id,workspace_id,project_id,body.name,body.description))
     except (KeyError,FileNotFoundError):raise HTTPException(404,"Scope dependency not found")
     except ValueError as exc:raise HTTPException(400,str(exc))
-@router.get("/workspaces/{workspace_id}/projects/{project_id}/storylines")
+@router.get("/workspaces/{workspace_id}/projects/{project_id}/storylines",dependencies=[Depends(_shared_scope_read)])
 def list_storylines(workspace_id:str,project_id:str):
     try:return collaboration_scope_service.list_storylines(workspace_id,project_id)
     except (KeyError,FileNotFoundError):raise HTTPException(404,"Scope dependency not found")
     except ValueError as exc:raise HTTPException(400,str(exc))
-@router.post("/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches",status_code=201)
+@router.post("/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches",status_code=201,dependencies=[Depends(_shared_scope_write)])
 def create_branch(workspace_id:str,project_id:str,storyline_id:str,body:BranchIn):
     from .collaboration import Branch
     try:return collaboration_scope_service.create_branch(Branch(body.id,workspace_id,project_id,storyline_id,body.name,body.parent_branch_id))
     except KeyError:raise HTTPException(404,"Scope dependency not found")
     except ValueError as exc:raise HTTPException(400,str(exc))
-@router.get("/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches")
+@router.get("/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches",dependencies=[Depends(_shared_scope_read)])
 def list_branches(workspace_id:str,project_id:str,storyline_id:str):
     try:return collaboration_scope_service.list_branches(workspace_id,project_id,storyline_id)
     except KeyError:raise HTTPException(404,"Scope dependency not found")
     except ValueError as exc:raise HTTPException(400,str(exc))
-@router.get("/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}")
+@router.get("/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}",dependencies=[Depends(_shared_scope_read)])
 def get_branch(workspace_id:str,project_id:str,storyline_id:str,branch_id:str):
     from .collaboration import CollaborationScope
     try:
@@ -876,7 +1054,7 @@ def get_branch(workspace_id:str,project_id:str,storyline_id:str,branch_id:str):
     except ValueError as exc:raise HTTPException(400,str(exc))
 def _revision_error(exc):
     return HTTPException(409,{"error":"STALE_REVISION","expected_revision":exc.expected_revision,"current_revision":exc.current_revision})
-@router.post("/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/mysteries/{item_id}/transition")
+@router.post("/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/mysteries/{item_id}/transition",dependencies=[Depends(_shared_scope_write)])
 def scoped_mystery_transition(workspace_id:str,project_id:str,storyline_id:str,branch_id:str,item_id:str,body:RevisionStatusIn):
     from .collaboration import CollaborationScope,RevisionConflict
     from .services.narrative_state_service import NarrativeStateService
@@ -886,7 +1064,7 @@ def scoped_mystery_transition(workspace_id:str,project_id:str,storyline_id:str,b
     except RevisionConflict as exc:raise _revision_error(exc)
     except KeyError:raise HTTPException(404,"Scoped narrative dependency not found")
     except ValueError as exc:raise HTTPException(400,str(exc))
-@router.post("/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/proposals/{proposal_id}/accept")
+@router.post("/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/proposals/{proposal_id}/accept",dependencies=[Depends(_shared_scope_review)])
 def scoped_proposal_accept(workspace_id:str,project_id:str,storyline_id:str,branch_id:str,proposal_id:str,body:RevisionWriteIn):
     from .collaboration import CollaborationScope,RevisionConflict
     from .services.narrative_state_service import NarrativeStateService
@@ -993,21 +1171,27 @@ def credential_test(provider: str, x_session_token: str | None = Header(None)):
 @router.get("/models")
 def models(): return runtime.models()
 @router.get("/novels")
-def novels(): return novel_service.list()
+def novels(x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    return _visible_shared_rows(novel_service.list(), x_session_token, project_key="id")
 @router.post("/novels",status_code=201)
-def create_novel(body:NovelIn): return guard(novel_service.create,body.model_dump(exclude_none=True))
-@router.get("/novels/{nid}")
+def create_novel(body:NovelIn,x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    actor = _shared_workspace_writer(x_session_token)
+    result = guard(novel_service.create,body.model_dump(exclude_none=True))
+    if actor:
+        collaboration_scope_service.link_project(actor.workspace_id, result["id"])
+    return result
+@router.get("/novels/{nid}",dependencies=[Depends(_shared_project_read)])
 def get_novel(nid:str): return guard(novel_service.get,nid)
-@router.put("/novels/{nid}")
+@router.put("/novels/{nid}",dependencies=[Depends(_shared_project_write)])
 def update_novel(nid:str,body:NovelUpdate): return guard(novel_service.update,nid,body.model_dump(exclude_none=True))
 @router.delete("/novels/{nid}",status_code=204)
 def delete_novel(nid:str,x_session_token:str|None=Header(None,alias="X-Session-Token")):
     if settings.enable_collaboration_runtime:
         _authorize_novel_project(nid,x_session_token,"domain.write")
     guard(novel_service.delete,nid)
-@router.get("/novels/{nid}/chapters")
+@router.get("/novels/{nid}/chapters",dependencies=[Depends(_shared_project_read)])
 def chapters(nid:str): return guard(chapter_service.list,nid)
-@router.get("/novels/{nid}/chapters/archived")
+@router.get("/novels/{nid}/chapters/archived",dependencies=[Depends(_shared_project_read)])
 def archived_chapters(nid:str): return guard(chapter_service.list_archived,nid)
 @router.post("/novels/{nid}/chapters",status_code=201)
 def create_chapter(nid:str,body:ChapterIn):
@@ -1100,34 +1284,34 @@ def restore_chapter(chapter_id:str,version:int,expected_version:int,x_session_to
         except PermissionError as exc:raise HTTPException(403,{"code":"FORBIDDEN","detail":str(exc)})
     return guard(chapter_service.restore,chapter_id,version,expected_version)
 for resource in ("characters","locations","canon","foreshadowing","timeline","relationships","volumes","scenes","story_routes"):
-    router.add_api_route(f"/novels/{{nid}}/{resource}",lambda nid,r=resource:guard(novel_service.data_set,nid,r),methods=["GET"],name=f"get_{resource}")
-@router.put("/novels/{nid}/characters/{character_id}")
+    router.add_api_route(f"/novels/{{nid}}/{resource}",lambda nid,r=resource:guard(novel_service.data_set,nid,r),methods=["GET"],name=f"get_{resource}",dependencies=[Depends(_shared_project_read)])
+@router.put("/novels/{nid}/characters/{character_id}",dependencies=[Depends(_shared_project_write)])
 def upsert_character(nid:str,character_id:str,body:CharacterIn):return guard(novel_service.upsert_character,nid,character_id,body.model_dump(exclude_unset=True))
-@router.put("/novels/{nid}/locations/{location_id}")
+@router.put("/novels/{nid}/locations/{location_id}",dependencies=[Depends(_shared_project_write)])
 def upsert_location(nid:str,location_id:str,body:LocationIn):return guard(novel_service.upsert_location,nid,location_id,body.model_dump(exclude_unset=True))
-@router.put("/novels/{nid}/timeline/{event_id}")
+@router.put("/novels/{nid}/timeline/{event_id}",dependencies=[Depends(_shared_project_write)])
 def upsert_timeline_event(nid:str,event_id:str,body:TimelineEventIn):return guard(novel_service.upsert_timeline_event,nid,event_id,body.model_dump(exclude_unset=True))
-@router.put("/novels/{nid}/foreshadowing/{foreshadowing_id}")
+@router.put("/novels/{nid}/foreshadowing/{foreshadowing_id}",dependencies=[Depends(_shared_project_write)])
 def upsert_foreshadowing(nid:str,foreshadowing_id:str,body:ForeshadowingIn):return guard(novel_service.upsert_foreshadowing,nid,foreshadowing_id,body.model_dump(exclude_unset=True))
-@router.get("/novels/{nid}/foreshadowing/reminders")
+@router.get("/novels/{nid}/foreshadowing/reminders",dependencies=[Depends(_shared_project_read)])
 def foreshadowing_reminders(nid: str, chapter: int = Query(default=1, ge=1)):
     rows = guard(novel_service.data_set, nid, "foreshadowing")
     return summarize_foreshadowing(rows, chapter)
-@router.put("/novels/{nid}/relationships/{relationship_id}")
+@router.put("/novels/{nid}/relationships/{relationship_id}",dependencies=[Depends(_shared_project_write)])
 def upsert_relationship(nid:str,relationship_id:str,body:RelationshipIn):return guard(novel_service.upsert_relationship,nid,relationship_id,body.model_dump(exclude_unset=True))
-@router.get("/novels/{nid}/outline")
+@router.get("/novels/{nid}/outline",dependencies=[Depends(_shared_project_read)])
 def get_outline(nid:str):return guard(novel_service.outline,nid)
-@router.put("/novels/{nid}/outline")
+@router.put("/novels/{nid}/outline",dependencies=[Depends(_shared_project_write)])
 def update_outline(nid:str,body:OutlineIn):return guard(novel_service.update_outline,nid,body.model_dump())
-@router.put("/novels/{nid}/volumes/{volume_id}")
+@router.put("/novels/{nid}/volumes/{volume_id}",dependencies=[Depends(_shared_project_write)])
 def upsert_volume(nid:str,volume_id:str,body:VolumeIn):return guard(novel_service.upsert_volume,nid,volume_id,body.model_dump())
-@router.put("/novels/{nid}/scenes/{scene_id}")
+@router.put("/novels/{nid}/scenes/{scene_id}",dependencies=[Depends(_shared_project_write)])
 def upsert_scene(nid:str,scene_id:str,body:SceneIn):return guard(novel_service.upsert_scene,nid,scene_id,body.model_dump())
-@router.put("/novels/{nid}/story-routes/{route_id}")
+@router.put("/novels/{nid}/story-routes/{route_id}",dependencies=[Depends(_shared_project_write)])
 def upsert_story_route(nid:str,route_id:str,body:StoryRouteIn):return guard(novel_service.upsert_story_route,nid,route_id,body.model_dump())
-@router.get("/novels/{nid}/story-routes")
+@router.get("/novels/{nid}/story-routes",dependencies=[Depends(_shared_project_read)])
 def story_routes(nid:str):return guard(novel_service.data_set,nid,"story_routes")
-@router.get("/novels/{nid}/secrets")
+@router.get("/novels/{nid}/secrets",dependencies=[Depends(_shared_project_read)])
 def secrets(nid:str): return guard(novel_service.public_secrets,nid)
 def _generation_request_context(body, token, branch):
     actor = scope = None
@@ -1218,22 +1402,58 @@ def generation_group(group_id:str,x_session_token:str|None=Header(None)):
         raise HTTPException(404,"Generation variant group not found")
     from .jobs import require_generation_content
     for job in variants:
-        if settings.enable_collaboration_runtime: _generation_context(job.id, x_session_token)
+        if settings.enable_collaboration_runtime: _generation_content_context(job.id, x_session_token)
         require_generation_content(job)
     return {"group_id":group_id,"count":len(variants),"variants":[job.public() for job in variants]}
 @router.get("/generation/{jid}")
 def generation(jid:str,x_session_token:str|None=Header(None)):
-    if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
+    if settings.enable_collaboration_runtime:_generation_content_context(jid,x_session_token)
     job=guard(jobs.get,jid)
     from .jobs import require_generation_content
     require_generation_content(job)
-    return {**job.public(),"diff":jobs.diff(jid) if job.output else ""}
+    return {**job.public(),"diff":guard(jobs.diff,jid) if job.output else ""}
 @router.get("/generation/{jid}/events")
 def events(jid:str,x_session_token:str|None=Header(None)):
-    if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
     from .jobs import require_generation_content
-    require_generation_content(guard(jobs.get,jid))
-    return StreamingResponse(jobs.events(jid),media_type="text/event-stream",headers={"Cache-Control":"no-cache"})
+    from .generation_stream import AuthorizedGenerationResponse
+    from .dependencies import packaged_bootstrap_registry
+    from .packaging.local_session_bootstrap import BootstrapDenied
+    job=guard(jobs.get,jid)
+    require_generation_content(job)
+    # Capture the admission mode and exact session/scope. Turning a runtime
+    # flag off or re-registering a token cannot downgrade an existing stream.
+    secured=bool(settings.enable_collaboration_runtime)
+    packaged=bool(getattr(settings,"enable_packaged_runtime",False))
+    def stream_context():
+        return _generation_content_context(jid,x_session_token)
+    admission=stream_context() if secured else None
+    manager=packaged_bootstrap_registry.current() if packaged else None
+    if packaged:
+        try:
+            if manager is None:raise KeyError("no current host")
+            manager.resolve_issued_session(x_session_token)
+        except (BootstrapDenied,KeyError,ValueError):
+            raise HTTPException(401,{"code":"INVALID_SESSION"}) from None
+    stopped=threading.Event()
+    def authorize_observer():
+        try:
+            require_generation_content(job)
+            if jobs.get(jid) is not job:return False
+            if secured:
+                current=stream_context()
+                if current[0]!=admission[0] or current[1]!=admission[1]:return False
+            elif settings.enable_collaboration_runtime:
+                # Reopening under the new boundary is required.
+                return False
+            if packaged:
+                if packaged_bootstrap_registry.current() is not manager:return False
+                manager.resolve_issued_session(x_session_token)
+            elif getattr(settings,"enable_packaged_runtime",False):return False
+            return True
+        except (HTTPException,BootstrapDenied,KeyError,ValueError,PermissionError,FileNotFoundError):
+            return False
+    return AuthorizedGenerationResponse(jobs.events(jid,authorize=authorize_observer,stop_event=stopped),
+        authorize=authorize_observer,stop_event=stopped,media_type="text/event-stream",headers={"Cache-Control":"no-cache"})
 @router.post("/generation/{jid}/cancel")
 def cancel(jid:str,x_session_token:str|None=Header(None)):
     if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
@@ -1277,16 +1497,16 @@ def reject(jid:str,x_session_token:str|None=Header(None)):
     from .jobs import require_generation_content
     require_generation_content(guard(jobs.get,jid))
     return guard(jobs.reject,jid).public()
-@router.get("/context-preview")
+@router.get("/context-preview",dependencies=[Depends(_shared_project_read)])
 def context_preview(novel_id:str,chapter:int,instruction:str="",target:str="cloud"):
     ctx=guard(context_service.build,novel_id,chapter,instruction,target=="cloud"); return {**ctx,"token_estimate":len(json.dumps(ctx,ensure_ascii=False))//3,"secrets_policy":"Secrets excluded/redacted" if target=="cloud" else "Local-only context"}
-@router.get("/pending-canon")
+@router.get("/pending-canon",dependencies=[Depends(_shared_project_read)])
 def pending(novel_id:str):
     return guard(canon_service.list_pending,novel_id)
-@router.post("/pending-canon/{pid}/approve")
+@router.post("/pending-canon/{pid}/approve",dependencies=[Depends(_shared_pending_review)])
 def approve(pid:str,body:PendingEditIn|None=None):
     return guard(canon_service.approve,pid,body.proposals if body else None)
-@router.post("/pending-canon/{pid}/reject")
+@router.post("/pending-canon/{pid}/reject",dependencies=[Depends(_shared_pending_review)])
 def reject_pending(pid:str): return guard(canon_service.reject,pid)
 @router.get("/novels/{nid}/export")
 def export_novel(nid:str,format:str="json",x_session_token:str|None=Header(None,alias="X-Session-Token"),x_branch_id:str|None=Header(None,alias="X-Branch-Id")):
@@ -1307,12 +1527,7 @@ def _authorize_novel_project(
     branch_id: str | None = None,
     conceal: bool = False,
 ):
-    if not session_token:
-        raise HTTPException(401, {"code": "SESSION_REQUIRED"})
-    try:
-        actor = trusted_session_resolver.resolve(session_token)
-    except KeyError:
-        raise HTTPException(401, {"code": "INVALID_SESSION"})
+    actor = _shared_actor(session_token)
     try:
         workspace_id = collaboration_scope_service.repository.project_workspace(novel_id)
         if not workspace_id or actor.workspace_id != workspace_id:
@@ -1588,10 +1803,20 @@ def delete_asset(asset_id:str,novel_id:str=Query(min_length=1),x_session_token:s
     except FileNotFoundError: raise HTTPException(404,"asset not found")
     except ValueError: raise HTTPException(400,"invalid asset identifier")
 @router.post("/novels/import")
-def import_novel(body:ImportIn,idempotency_key:str|None=Header(None,alias="Idempotency-Key")):
+def import_novel(body:ImportIn,idempotency_key:str|None=Header(None,alias="Idempotency-Key"),
+                 x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    actor = _shared_workspace_writer(x_session_token)
+    if actor and idempotency_key:
+        idempotency_key = hashlib.sha256(json.dumps([actor.workspace_id, actor.actor_id, idempotency_key]).encode()).hexdigest()
     def attach_review(payload):
         if not isinstance(payload, dict) or not isinstance(payload.get("novel"), dict):
             return payload
+        if actor:
+            nid = str(payload["novel"].get("id"))
+            linked = collaboration_scope_service.repository.project_workspace(nid)
+            if linked is None:
+                collaboration_scope_service.link_project(actor.workspace_id, nid)
+            _authorize_novel_project(nid, x_session_token, "domain.write")
         preview = payload.get("preview") if isinstance(payload.get("preview"), dict) else {}
         knowledge = preview.get("knowledge_base") if isinstance(preview.get("knowledge_base"), dict) else {}
         candidates = knowledge.get("candidates") if isinstance(knowledge.get("candidates"), dict) else {}
@@ -2610,21 +2835,21 @@ def execute_asset_task(nid:str,screenplay_id:str,task_id:str,x_session_token:str
 def retry_asset_task(nid:str,screenplay_id:str,task_id:str):return screenplay_guard(screenplay_service.retry_asset_task,nid,screenplay_id,task_id)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/recover",dependencies=[Depends(_screenplay_route_guard)])
 def recover_asset_tasks(nid:str,screenplay_id:str):return screenplay_guard(screenplay_service.recover_asset_tasks,nid,screenplay_id)
-@router.post("/novels/{nid}/asset-tasks/recover")
+@router.post("/novels/{nid}/asset-tasks/recover",dependencies=[Depends(_shared_worker_write)])
 def recover_all_asset_tasks(nid:str):return screenplay_guard(screenplay_service.recover_all_asset_tasks,nid)
 @router.post("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/cleanup",dependencies=[Depends(_screenplay_route_guard)])
 def cleanup_asset_tasks(nid:str,screenplay_id:str):return screenplay_guard(screenplay_service.cleanup_asset_tasks,nid,screenplay_id)
-@router.get("/novels/{nid}/asset-tasks/stats")
+@router.get("/novels/{nid}/asset-tasks/stats",dependencies=[Depends(_shared_project_read)])
 def asset_task_stats(nid:str):return screenplay_guard(screenplay_service.asset_task_stats,nid)
 @router.get("/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/stats",dependencies=[Depends(_screenplay_route_guard)])
 def screenplay_asset_task_stats(nid:str,screenplay_id:str):return screenplay_guard(screenplay_service.asset_task_stats,nid,screenplay_id)
-@router.post("/novels/{nid}/asset-tasks/claim")
+@router.post("/novels/{nid}/asset-tasks/claim",dependencies=[Depends(_shared_worker_write)])
 def claim_asset_tasks(nid:str,limit:int=10,provider_id:str|None=None):return screenplay_guard(screenplay_service.claim_asset_tasks,nid,limit,provider_id)
-@router.post("/novels/{nid}/asset-tasks/dispatch")
+@router.post("/novels/{nid}/asset-tasks/dispatch",dependencies=[Depends(_shared_worker_write)])
 def dispatch_asset_tasks(nid:str,limit:int=10,execute:bool=False,provider_id:str|None=None):return screenplay_guard(screenplay_service.dispatch_asset_tasks,nid,limit,execute,provider_id)
-@router.post("/novels/{nid}/asset-tasks/timeout")
+@router.post("/novels/{nid}/asset-tasks/timeout",dependencies=[Depends(_shared_worker_write)])
 def timeout_asset_tasks(nid:str,timeout_seconds:int=3600):return screenplay_guard(screenplay_service.timeout_asset_tasks,nid,timeout_seconds)
-@router.post("/novels/{nid}/asset-tasks/worker/run-once")
+@router.post("/novels/{nid}/asset-tasks/worker/run-once",dependencies=[Depends(_shared_worker_write)])
 def run_asset_task_worker(nid:str,limit:int=10,execute:bool=False,provider_id:str|None=None,timeout_seconds:int=3600,x_session_token:str|None=Header(None)):
     if execute and settings.enable_packaged_runtime:
         if not x_session_token:
@@ -2632,7 +2857,7 @@ def run_asset_task_worker(nid:str,limit:int=10,execute:bool=False,provider_id:st
         try: trusted_session_resolver.resolve(x_session_token)
         except Exception as exc: raise HTTPException(401,{"code":"INVALID_SESSION"}) from exc
     return guard(asset_task_worker.run_once,nid,limit,execute,provider_id,timeout_seconds)
-@router.post("/novels/{nid}/asset-tasks/worker/start")
+@router.post("/novels/{nid}/asset-tasks/worker/start",dependencies=[Depends(_shared_worker_write)])
 def start_asset_task_worker(nid:str,limit:int|None=None,execute:bool|None=None,provider_id:str|None=None,timeout_seconds:int|None=None,interval_seconds:float|None=None,x_session_token:str|None=Header(None)):
     cfg=load_asset_worker_config(); limit=cfg["limit"] if limit is None else limit; execute=cfg["execute"] if execute is None else execute; timeout_seconds=cfg["timeout_seconds"] if timeout_seconds is None else timeout_seconds; interval_seconds=cfg["interval_seconds"] if interval_seconds is None else interval_seconds
     if execute and settings.enable_packaged_runtime:
@@ -2641,9 +2866,9 @@ def start_asset_task_worker(nid:str,limit:int|None=None,execute:bool|None=None,p
         try: trusted_session_resolver.resolve(x_session_token)
         except Exception as exc: raise HTTPException(401,{"code":"INVALID_SESSION"}) from exc
     return guard(asset_task_worker.start,nid,limit=limit,execute=execute,provider_id=provider_id,timeout_seconds=timeout_seconds,interval_seconds=interval_seconds)
-@router.post("/novels/{nid}/asset-tasks/worker/stop")
+@router.post("/novels/{nid}/asset-tasks/worker/stop",dependencies=[Depends(_shared_worker_write)])
 def stop_asset_task_worker(nid:str): return asset_task_worker.stop()
-@router.get("/novels/{nid}/asset-tasks/worker/status")
+@router.get("/novels/{nid}/asset-tasks/worker/status",dependencies=[Depends(_shared_worker_read)])
 def asset_task_worker_status(nid:str): return asset_task_worker.status()
 @router.get("/asset-tasks/worker/config")
 def asset_task_worker_config(): return load_asset_worker_config()
@@ -2652,7 +2877,7 @@ def update_asset_task_worker_config(body:AssetWorkerConfigIn):
     try: return save_asset_worker_config(**{k:v for k,v in body.model_dump().items() if v is not None})
     except (TypeError, ValueError) as exc: raise HTTPException(400,{"code":"INVALID_WORKER_CONFIG","message":str(exc)}) from exc
 
-@router.post("/projects/{project_id}/continuity/checks")
+@router.post("/projects/{project_id}/continuity/checks",dependencies=[Depends(_shared_project_write)])
 def continuity_checks(project_id:str, body:ContinuityCheckIn):
     if not settings.enable_continuity_rules:
         return {"status":"DISABLED","findings":[]}
@@ -2663,7 +2888,7 @@ def continuity_checks(project_id:str, body:ContinuityCheckIn):
     normalized=[f.model_dump(mode="json") if hasattr(f,"model_dump") else f for f in findings]
     return {"status":"COMPLETED","findings":normalized}
 
-@router.post("/novels/{nid}/continuity/scan-chapter")
+@router.post("/novels/{nid}/continuity/scan-chapter",dependencies=[Depends(_shared_project_write)])
 def scan_chapter_continuity(nid:str, body:ContinuityScanChapterIn|None=None):
     payload = body or ContinuityScanChapterIn()
     try:
@@ -2783,7 +3008,7 @@ def scan_chapter_continuity(nid:str, body:ContinuityScanChapterIn|None=None):
         "foreshadowing": reminders,
     }
 
-@router.post("/novels/{nid}/characters/consistency-check")
+@router.post("/novels/{nid}/characters/consistency-check",dependencies=[Depends(_shared_project_write)])
 def character_consistency_check(nid: str, body: CharacterConsistencyIn):
     try:
         novel_service.get(nid)
@@ -2793,79 +3018,79 @@ def character_consistency_check(nid: str, body: CharacterConsistencyIn):
     issues = deterministic_review(body.draft, {"characters": body.characters, "chapter": body.chapter, "forbidden_secrets": body.forbidden_secrets})
     return {"status": "COMPLETED", "findings": [{"id": f"CHARACTER:{index}:{item.get('code')}", "finding_type": "CHARACTER_CONSISTENCY", "severity": item.get("severity", "ERROR"), "description": item.get("message", ""), "code": item.get("code")} for index, item in enumerate(issues)]}
 
-@router.get("/projects/{project_id}/continuity/findings")
+@router.get("/projects/{project_id}/continuity/findings",dependencies=[Depends(_shared_project_read)])
 def continuity_findings(project_id:str, character_id:str|None=None, finding_type:str|None=None):
     rows=continuity_finding_service.list_findings(project_id)
     if character_id: rows=[x for x in rows if x.get("subject_id")==character_id]
     if finding_type: rows=[x for x in rows if x.get("finding_type")==finding_type]
     return rows
 
-@router.get("/projects/{project_id}/continuity/findings/{finding_id}")
+@router.get("/projects/{project_id}/continuity/findings/{finding_id}",dependencies=[Depends(_shared_project_read)])
 def continuity_finding(project_id:str, finding_id:str):
     row=guard(continuity_finding_service.get_finding,finding_id)
     if row.get("project_id")!=project_id: raise HTTPException(404,"Finding not found")
     return row
 
-@router.post("/projects/{project_id}/continuity/findings/{finding_id}/resolve")
+@router.post("/projects/{project_id}/continuity/findings/{finding_id}/resolve",dependencies=[Depends(_shared_project_review)])
 def resolve_continuity_finding(project_id:str,finding_id:str):
     try:return continuity_finding_service.resolve(project_id,finding_id)
     except KeyError:raise HTTPException(404,"Finding not found")
 
-@router.post("/projects/{project_id}/narrative/threads",status_code=201)
+@router.post("/projects/{project_id}/narrative/threads",status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_narrative_thread(project_id:str,body:NarrativeThreadIn):
     from .narrative import PlotThread
     return guard(narrative_state_service.create_thread,PlotThread(body.id,project_id,body.title,description=body.description))
 
-@router.post("/projects/{project_id}/narrative/foreshadowing",status_code=201)
+@router.post("/projects/{project_id}/narrative/foreshadowing",status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_narrative_foreshadowing(project_id:str,body:NarrativeForeshadowingIn):
     from .narrative import Foreshadowing
     return guard(narrative_state_service.create_foreshadowing,Foreshadowing(body.id,project_id,body.title,thread_id=body.thread_id))
 
-@router.get("/projects/{project_id}/narrative/state")
+@router.get("/projects/{project_id}/narrative/state",dependencies=[Depends(_shared_project_read)])
 def narrative_state(project_id:str):return narrative_state_service.state(project_id)
 
-@router.post("/projects/{project_id}/narrative/mysteries",status_code=201)
+@router.post("/projects/{project_id}/narrative/mysteries",status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_mystery(project_id:str,body:MysteryIn):
     from .narrative import Mystery
     return guard(narrative_state_service.create_mystery,Mystery(body.id,project_id,body.title,body.description,opened_chapter_version_id=body.opened_chapter_version_id))
-@router.get("/projects/{project_id}/narrative/mysteries")
+@router.get("/projects/{project_id}/narrative/mysteries",dependencies=[Depends(_shared_project_read)])
 def list_mysteries(project_id:str):return narrative_state_service.list_mysteries(project_id)
-@router.get("/projects/{project_id}/narrative/mysteries/{item_id}")
+@router.get("/projects/{project_id}/narrative/mysteries/{item_id}",dependencies=[Depends(_shared_project_read)])
 def get_mystery(project_id:str,item_id:str):
     try:return narrative_state_service.get_mystery(project_id,item_id)
     except KeyError:raise HTTPException(404,"Mystery not found")
-@router.post("/projects/{project_id}/narrative/mysteries/{item_id}/transition")
+@router.post("/projects/{project_id}/narrative/mysteries/{item_id}/transition",dependencies=[Depends(_shared_project_write)])
 def transition_mystery_api(project_id:str,item_id:str,body:NarrativeStatusIn):
     try:return _legacy_revision_state(project_id,body.expected_revision).transition_mystery(project_id,item_id,body.status,body.chapter_version_id)
     except KeyError:raise HTTPException(404,"Mystery not found")
     except RevisionConflict as exc:raise _revision_error(exc)
     except ValueError as exc:raise HTTPException(400,str(exc))
 
-@router.post("/projects/{project_id}/narrative/character-goals",status_code=201)
+@router.post("/projects/{project_id}/narrative/character-goals",status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_character_goal(project_id:str,body:CharacterGoalIn):
     from .narrative import CharacterGoal
     return guard(narrative_state_service.create_character_goal,CharacterGoal(body.id,project_id,body.character_id,body.title,body.description,started_chapter_version_id=body.started_chapter_version_id))
-@router.get("/projects/{project_id}/narrative/character-goals")
+@router.get("/projects/{project_id}/narrative/character-goals",dependencies=[Depends(_shared_project_read)])
 def list_character_goals(project_id:str):return narrative_state_service.list_character_goals(project_id)
-@router.get("/projects/{project_id}/narrative/character-goals/{item_id}")
+@router.get("/projects/{project_id}/narrative/character-goals/{item_id}",dependencies=[Depends(_shared_project_read)])
 def get_character_goal(project_id:str,item_id:str):
     try:return narrative_state_service.get_character_goal(project_id,item_id)
     except KeyError:raise HTTPException(404,"Character goal not found")
-@router.post("/projects/{project_id}/narrative/character-goals/{item_id}/transition")
+@router.post("/projects/{project_id}/narrative/character-goals/{item_id}/transition",dependencies=[Depends(_shared_project_write)])
 def transition_character_goal_api(project_id:str,item_id:str,body:NarrativeStatusIn):
     try:return _legacy_revision_state(project_id,body.expected_revision).transition_character_goal(project_id,item_id,body.status,body.chapter_version_id)
     except KeyError:raise HTTPException(404,"Character goal not found")
     except RevisionConflict as exc:raise _revision_error(exc)
     except ValueError as exc:raise HTTPException(400,str(exc))
 
-@router.post("/projects/{project_id}/narrative/chapter-progress",status_code=201)
+@router.post("/projects/{project_id}/narrative/chapter-progress",status_code=201,dependencies=[Depends(_shared_project_write)])
 def record_chapter_progress(project_id:str,body:ChapterNarrativeProgressIn):
     from .narrative import ChapterNarrativeLink,NarrativeEntityType,NarrativeProgressType
     try:return _legacy_revision_state(project_id,body.expected_revision).record_chapter_narrative_progress(ChapterNarrativeLink(body.id,project_id,body.chapter_id,body.chapter_version,NarrativeEntityType(body.entity_type),body.entity_id,NarrativeProgressType(body.progress_type),body.summary,tuple(body.evidence_ids),body.event_id))
     except (KeyError,FileNotFoundError):raise HTTPException(404,"Narrative progress dependency not found")
     except RevisionConflict as exc:raise _revision_error(exc)
     except ValueError as exc:raise HTTPException(400,str(exc))
-@router.get("/projects/{project_id}/narrative/chapter-progress")
+@router.get("/projects/{project_id}/narrative/chapter-progress",dependencies=[Depends(_shared_project_read)])
 def list_chapter_progress(project_id:str,chapter_id:str|None=None,entity_type:str|None=None,entity_id:str|None=None):
     rows=narrative_state_service.list_chapter_progress(project_id)
     if chapter_id:rows=[x for x in rows if x["chapter_id"]==chapter_id]
@@ -2873,21 +3098,21 @@ def list_chapter_progress(project_id:str,chapter_id:str|None=None,entity_type:st
     if entity_id:rows=[x for x in rows if x["entity_id"]==entity_id]
     return rows
 
-@router.post("/projects/{project_id}/narrative/proposals",status_code=201)
+@router.post("/projects/{project_id}/narrative/proposals",status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_narrative_proposal(project_id:str,body:NarrativeProposalIn):
     from .narrative import NarrativeChangeProposal,NarrativeEntityType,NarrativeProposalPayload,NarrativeProposalType
     try:return narrative_proposal_service.create_proposal(NarrativeChangeProposal(body.id,project_id,NarrativeProposalType(body.proposal_type),NarrativeEntityType(body.subject_type),body.subject_id,body.chapter_version_id,NarrativeProposalPayload(**body.payload),tuple(body.evidence_ids),body.summary))
     except (KeyError,FileNotFoundError):raise HTTPException(404,"Narrative proposal dependency not found")
     except (TypeError,ValueError) as exc:raise HTTPException(400,str(exc))
-@router.get("/projects/{project_id}/narrative/proposals")
+@router.get("/projects/{project_id}/narrative/proposals",dependencies=[Depends(_shared_project_read)])
 def list_narrative_proposals(project_id:str,status:str|None=None):
     try:return narrative_proposal_service.list_proposals(project_id,status)
     except ValueError as exc:raise HTTPException(400,str(exc))
-@router.get("/projects/{project_id}/narrative/proposals/{proposal_id}")
+@router.get("/projects/{project_id}/narrative/proposals/{proposal_id}",dependencies=[Depends(_shared_project_read)])
 def get_narrative_proposal(project_id:str,proposal_id:str):
     try:return narrative_proposal_service.get_proposal(project_id,proposal_id)
     except KeyError:raise HTTPException(404,"Narrative proposal not found")
-@router.post("/projects/{project_id}/narrative/proposals/{proposal_id}/accept")
+@router.post("/projects/{project_id}/narrative/proposals/{proposal_id}/accept",dependencies=[Depends(_shared_project_review)])
 def accept_narrative_proposal(project_id:str,proposal_id:str,body:RevisionWriteIn|None=None):
     from .services.narrative_proposal_service import NarrativeProposalService
     try:
@@ -2897,7 +3122,7 @@ def accept_narrative_proposal(project_id:str,proposal_id:str,body:RevisionWriteI
     except KeyError:raise HTTPException(404,"Narrative proposal not found")
     except RevisionConflict as exc:raise _revision_error(exc)
     except (FileNotFoundError,ValueError) as exc:raise HTTPException(400,str(exc))
-@router.post("/projects/{project_id}/narrative/proposals/{proposal_id}/reject")
+@router.post("/projects/{project_id}/narrative/proposals/{proposal_id}/reject",dependencies=[Depends(_shared_project_review)])
 def reject_narrative_proposal(project_id:str,proposal_id:str):
     try:return narrative_proposal_service.reject_proposal(project_id,proposal_id)
     except KeyError:raise HTTPException(404,"Narrative proposal not found")
@@ -2907,13 +3132,13 @@ def _narrative_event(project_id,subject_id,body):
     from .narrative import NarrativeEvent
     return NarrativeEvent(body.event_id,project_id,body.event_type,subject_id,body.chapter_version_id,tuple(body.evidence_ids),body.payload)
 
-@router.post("/projects/{project_id}/narrative/threads/{thread_id}/transition")
+@router.post("/projects/{project_id}/narrative/threads/{thread_id}/transition",dependencies=[Depends(_shared_project_write)])
 def transition_narrative_thread(project_id:str,thread_id:str,body:NarrativeTransitionIn):return guard(_legacy_revision_state(project_id,body.expected_revision).transition_thread,project_id,thread_id,body.status,_narrative_event(project_id,thread_id,body))
 
-@router.post("/projects/{project_id}/narrative/foreshadowing/{item_id}/transition")
+@router.post("/projects/{project_id}/narrative/foreshadowing/{item_id}/transition",dependencies=[Depends(_shared_project_write)])
 def transition_narrative_foreshadowing(project_id:str,item_id:str,body:NarrativeTransitionIn):return guard(_legacy_revision_state(project_id,body.expected_revision).transition_foreshadowing,project_id,item_id,body.status,_narrative_event(project_id,item_id,body))
 
-@router.post("/projects/{project_id}/narrative/expectations",status_code=201)
+@router.post("/projects/{project_id}/narrative/expectations",status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_narrative_expectation(project_id:str,body:NarrativeExpectationIn):
     from .narrative_detection import NarrativeExpectation
     try:narrative_state_service.get_subject(project_id,body.subject_type,body.subject_id)
@@ -2925,7 +3150,7 @@ def create_narrative_expectation(project_id:str,body:NarrativeExpectationIn):
         except ValueError as exc:raise HTTPException(400,str(exc))
     return guard(narrative_finding_service.create_expectation,NarrativeExpectation(body.id,project_id,body.subject_type,body.subject_id,body.expectation_type,body.deadline_chapter,tuple(body.evidence_ids),body.source_chapter_version_id,body.active))
 
-@router.post("/projects/{project_id}/narrative/checks")
+@router.post("/projects/{project_id}/narrative/checks",dependencies=[Depends(_shared_project_write)])
 def check_narrative_findings(project_id:str,body:NarrativeCheckIn):
     from .narrative_detection import NarrativeExpectation,NarrativeRuleContext
     expectations=[NarrativeExpectation(**x) for x in narrative_finding_service.repository.list(project_id,"expectations")]
@@ -2933,15 +3158,15 @@ def check_narrative_findings(project_id:str,body:NarrativeCheckIn):
     findings=narrative_finding_service.run_checks(NarrativeRuleContext(project_id,body.current_chapter,expectations,thread_last_progress=body.thread_last_progress,foreshadowing_payoff_chapter=body.foreshadowing_payoff_chapter,mysteries=state["mysteries"],character_goals=state["character_goals"],narrative_events=state["events"]))
     return [vars(x) for x in findings]
 
-@router.get("/projects/{project_id}/narrative/findings")
+@router.get("/projects/{project_id}/narrative/findings",dependencies=[Depends(_shared_project_read)])
 def list_narrative_findings(project_id:str):return narrative_finding_service.list_findings(project_id)
 
-@router.get("/projects/{project_id}/narrative/findings/{finding_id}")
+@router.get("/projects/{project_id}/narrative/findings/{finding_id}",dependencies=[Depends(_shared_project_read)])
 def get_narrative_finding(project_id:str,finding_id:str):
     try:return narrative_finding_service.get_finding(project_id,finding_id)
     except KeyError:raise HTTPException(404,"Finding not found")
 
-@router.post("/projects/{project_id}/narrative/findings/{finding_id}/resolve")
+@router.post("/projects/{project_id}/narrative/findings/{finding_id}/resolve",dependencies=[Depends(_shared_project_review)])
 def resolve_narrative_finding(project_id:str,finding_id:str):
     try:return narrative_finding_service.resolve(project_id,finding_id)
     except KeyError:raise HTTPException(404,"Finding not found")
@@ -2950,71 +3175,71 @@ def resolve_narrative_finding(project_id:str,finding_id:str):
 # V1 capability closures (metadata-only, local-first)
 # ---------------------------------------------------------------------------
 
-@router.get("/novels/{nid}/overview")
+@router.get("/novels/{nid}/overview",dependencies=[Depends(_shared_project_read)])
 def novel_overview(nid: str):
     return capability_guard(v1_capability_service.overview, nid)
-@router.get("/novels/{nid}/writing-goal")
+@router.get("/novels/{nid}/writing-goal",dependencies=[Depends(_shared_project_read)])
 def writing_goal(nid:str): return guard(novel_service.writing_goal,nid)
-@router.put("/novels/{nid}/writing-goal")
+@router.put("/novels/{nid}/writing-goal",dependencies=[Depends(_shared_project_write)])
 def update_writing_goal(nid:str,body:WritingGoalIn): return guard(novel_service.update_writing_goal,nid,body.model_dump())
 
 
-@router.get("/novels/{nid}/research")
+@router.get("/novels/{nid}/research",dependencies=[Depends(_shared_project_read)])
 def novel_research(nid: str, status: str | None = None, source_type: str | None = None, tag: str | None = None):
     return capability_guard(v1_capability_service.list_research, nid, status, source_type, tag)
 
 
-@router.post("/novels/{nid}/research", status_code=201)
+@router.post("/novels/{nid}/research", status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_novel_research(nid: str, body: ResearchRecordIn,
                           idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):
     return capability_guard(v1_capability_service.create_research, nid, body, idempotency_key)
 
 
-@router.get("/research")
+@router.get("/research",dependencies=[Depends(_shared_project_read)])
 def research_index(novel_id: str = Query(...), status: str | None = None, source_type: str | None = None,
                    tag: str | None = None):
     return capability_guard(v1_capability_service.list_research, novel_id, status, source_type, tag)
 
 
-@router.get("/novels/{nid}/research/{research_id}")
+@router.get("/novels/{nid}/research/{research_id}",dependencies=[Depends(_shared_project_read)])
 def get_novel_research(nid: str, research_id: str):
     return capability_guard(v1_capability_service._get, "research", research_id, nid)
 
 
-@router.put("/novels/{nid}/research/{research_id}")
+@router.put("/novels/{nid}/research/{research_id}",dependencies=[Depends(_shared_project_write)])
 def update_novel_research(nid: str, research_id: str, body: ResearchRecordIn,
                           expected_version: int | None = Query(default=None, ge=1)):
     return capability_guard(v1_capability_service.update_research, nid, research_id, body, expected_version)
 
 
-@router.delete("/novels/{nid}/research/{research_id}")
+@router.delete("/novels/{nid}/research/{research_id}",dependencies=[Depends(_shared_project_write)])
 def delete_novel_research(nid: str, research_id: str, expected_version: int | None = Query(default=None, ge=1)):
     return capability_guard(v1_capability_service.delete_research, nid, research_id, expected_version)
 
 
-@router.get("/novels/{nid}/character-evolution")
+@router.get("/novels/{nid}/character-evolution",dependencies=[Depends(_shared_project_read)])
 def character_evolution(nid: str, character_id: str | None = None, status: str | None = None):
     return capability_guard(v1_capability_service.list_character_evolution, nid, character_id, status)
 
 
-@router.post("/novels/{nid}/character-evolution", status_code=201)
+@router.post("/novels/{nid}/character-evolution", status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_character_evolution(nid: str, body: CharacterEvolutionIn,
                                idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):
     return capability_guard(v1_capability_service.create_character_evolution, nid, body, idempotency_key)
 
 
-@router.get("/novels/{nid}/character-evolution/{evolution_id}")
+@router.get("/novels/{nid}/character-evolution/{evolution_id}",dependencies=[Depends(_shared_project_read)])
 def get_character_evolution(nid: str, evolution_id: str):
     return capability_guard(v1_capability_service._get, "character_evolution", evolution_id, nid)
 
 
-@router.put("/novels/{nid}/character-evolution/{evolution_id}")
+@router.put("/novels/{nid}/character-evolution/{evolution_id}",dependencies=[Depends(_shared_project_write)])
 def update_character_evolution(nid: str, evolution_id: str, body: CharacterEvolutionIn,
                                expected_version: int | None = Query(default=None, ge=1)):
     return capability_guard(v1_capability_service.update_character_evolution, nid, evolution_id, body, expected_version)
 
 
-@router.delete("/novels/{nid}/character-evolution/{evolution_id}")
+@router.delete("/novels/{nid}/character-evolution/{evolution_id}",dependencies=[Depends(_shared_project_write)])
 def delete_character_evolution(nid: str, evolution_id: str,
                                expected_version: int | None = Query(default=None, ge=1)):
     return capability_guard(v1_capability_service._delete, "character_evolution", evolution_id,
@@ -3022,12 +3247,12 @@ def delete_character_evolution(nid: str, evolution_id: str,
                             action="CHARACTER_EVOLUTION_DELETED", target_type="CharacterEvolution")
 
 
-@router.get("/novels/{nid}/characters/{character_id}/evolution")
+@router.get("/novels/{nid}/characters/{character_id}/evolution",dependencies=[Depends(_shared_project_read)])
 def character_evolution_for_character(nid: str, character_id: str, status: str | None = None):
     return capability_guard(v1_capability_service.list_character_evolution, nid, character_id, status)
 
 
-@router.post("/novels/{nid}/characters/{character_id}/evolution", status_code=201)
+@router.post("/novels/{nid}/characters/{character_id}/evolution", status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_character_evolution_for_character(nid: str, character_id: str, body: CharacterEvolutionIn,
                                              idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):
     if body.character_id != character_id:
@@ -3035,23 +3260,23 @@ def create_character_evolution_for_character(nid: str, character_id: str, body: 
     return capability_guard(v1_capability_service.create_character_evolution, nid, body, idempotency_key)
 
 
-@router.get("/novels/{nid}/visual-memory")
+@router.get("/novels/{nid}/visual-memory",dependencies=[Depends(_shared_project_read)])
 def visual_memory(nid: str, entity_type: str | None = None, entity_id: str | None = None, status: str | None = None):
     return capability_guard(v1_capability_service.list_visual_memory, nid, entity_type, entity_id, status)
 
 
-@router.post("/novels/{nid}/visual-memory", status_code=201)
+@router.post("/novels/{nid}/visual-memory", status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_visual_memory(nid: str, body: VisualMemoryIn,
                          idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):
     return capability_guard(v1_capability_service.create_visual_memory, nid, body, idempotency_key)
 
 
-@router.get("/memory")
+@router.get("/memory",dependencies=[Depends(_shared_project_read)])
 def memory_index(novel_id: str = Query(...), entity_type: str | None = None, entity_id: str | None = None):
     return capability_guard(v1_capability_service.list_visual_memory, novel_id, entity_type, entity_id, None)
 
 
-@router.post("/memory", status_code=201)
+@router.post("/memory", status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_memory_index(novel_id: str = Query(...), body: VisualMemoryIn | None = None,
                         idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):
     if body is None:
@@ -3059,30 +3284,30 @@ def create_memory_index(novel_id: str = Query(...), body: VisualMemoryIn | None 
     return capability_guard(v1_capability_service.create_visual_memory, novel_id, body, idempotency_key)
 
 
-@router.get("/novels/{nid}/visual-memory/{memory_id}")
+@router.get("/novels/{nid}/visual-memory/{memory_id}",dependencies=[Depends(_shared_project_read)])
 def get_visual_memory(nid: str, memory_id: str):
     return capability_guard(v1_capability_service._get, "visual_memory", memory_id, nid)
 
 
-@router.put("/novels/{nid}/visual-memory/{memory_id}")
+@router.put("/novels/{nid}/visual-memory/{memory_id}",dependencies=[Depends(_shared_project_write)])
 def update_visual_memory(nid: str, memory_id: str, body: VisualMemoryIn,
                          expected_version: int | None = Query(default=None, ge=1)):
     return capability_guard(v1_capability_service.update_visual_memory, nid, memory_id, body, expected_version)
 
 
-@router.delete("/novels/{nid}/visual-memory/{memory_id}")
+@router.delete("/novels/{nid}/visual-memory/{memory_id}",dependencies=[Depends(_shared_project_write)])
 def delete_visual_memory(nid: str, memory_id: str, expected_version: int | None = Query(default=None, ge=1)):
     return capability_guard(v1_capability_service._delete, "visual_memory", memory_id,
                             novel_id=nid, expected_version=expected_version,
                             action="VISUAL_MEMORY_DELETED", target_type="VisualMemory")
 
 
-@router.get("/assets/{asset_id}/derivatives")
+@router.get("/assets/{asset_id}/derivatives",dependencies=[Depends(_shared_asset_read)])
 def asset_derivatives(asset_id: str):
     return asset_library_service.public(capability_guard(v1_capability_service.list_asset_derivatives, asset_id))
 
 
-@router.post("/assets/{asset_id}/derivatives", status_code=201)
+@router.post("/assets/{asset_id}/derivatives", status_code=201,dependencies=[Depends(_shared_asset_write)])
 def create_asset_derivative(asset_id: str, body: AssetDerivativeIn,
                             idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):
     return capability_guard(v1_capability_service.create_asset_derivative, asset_id, body, idempotency_key)
@@ -3091,7 +3316,7 @@ def create_asset_derivative(asset_id: str, body: AssetDerivativeIn,
 # Existing lore/memory repositories are exposed directly so file and
 # PostgreSQL profiles share the same evidence -> proposal -> approved-memory
 # contract.  These routes do not infer or auto-approve AI output.
-@router.get("/novels/{nid}/lore/evidence")
+@router.get("/novels/{nid}/lore/evidence",dependencies=[Depends(_shared_project_read)])
 def list_lore_evidence(nid: str):
     try:
         novel_service.get(nid)
@@ -3108,7 +3333,7 @@ def _raise_lore_error(exc):
     raise exc
 
 
-@router.post("/novels/{nid}/lore/evidence", status_code=201)
+@router.post("/novels/{nid}/lore/evidence", status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_lore_evidence(nid: str, body: LoreEvidenceApiIn):
     try:
         novel_service.get(nid)
@@ -3122,7 +3347,7 @@ def create_lore_evidence(nid: str, body: LoreEvidenceApiIn):
         return capability_guard(_raise_lore_error, exc)
 
 
-@router.get("/novels/{nid}/lore/proposals")
+@router.get("/novels/{nid}/lore/proposals",dependencies=[Depends(_shared_project_read)])
 def list_lore_proposals(nid: str, status: str | None = None):
     try:
         novel_service.get(nid)
@@ -3130,7 +3355,7 @@ def list_lore_proposals(nid: str, status: str | None = None):
     except Exception as exc:
         return capability_guard(_raise_lore_error, exc)
 
-@router.get("/novels/{nid}/world-rules")
+@router.get("/novels/{nid}/world-rules",dependencies=[Depends(_shared_project_read)])
 def list_world_rules(nid: str, status: str | None = None):
     """List structured world-rule proposals without auto-approving them."""
     try:
@@ -3140,7 +3365,7 @@ def list_world_rules(nid: str, status: str | None = None):
     except Exception as exc:
         return capability_guard(_raise_lore_error, exc)
 
-@router.post("/novels/{nid}/world-rules", status_code=201)
+@router.post("/novels/{nid}/world-rules", status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_world_rule(nid: str, body: LoreProposalApiIn):
     try:
         novel_service.get(nid)
@@ -3152,7 +3377,7 @@ def create_world_rule(nid: str, body: LoreProposalApiIn):
         return capability_guard(_raise_lore_error, exc)
 
 
-@router.post("/novels/{nid}/lore/proposals", status_code=201)
+@router.post("/novels/{nid}/lore/proposals", status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_lore_proposal(nid: str, body: LoreProposalApiIn):
     try:
         novel_service.get(nid)
@@ -3166,7 +3391,7 @@ def create_lore_proposal(nid: str, body: LoreProposalApiIn):
         return capability_guard(_raise_lore_error, exc)
 
 
-@router.post("/novels/{nid}/lore/proposals/{proposal_id}/approve")
+@router.post("/novels/{nid}/lore/proposals/{proposal_id}/approve",dependencies=[Depends(_shared_project_review)])
 def approve_lore_proposal(nid: str, proposal_id: str, body: LoreProposalReviewIn):
     try:
         proposal = lore_service.repository.get_proposal(proposal_id)
@@ -3177,7 +3402,7 @@ def approve_lore_proposal(nid: str, proposal_id: str, body: LoreProposalReviewIn
         return capability_guard(_raise_lore_error, exc)
 
 
-@router.post("/novels/{nid}/lore/proposals/{proposal_id}/reject")
+@router.post("/novels/{nid}/lore/proposals/{proposal_id}/reject",dependencies=[Depends(_shared_project_review)])
 def reject_lore_proposal(nid: str, proposal_id: str, body: LoreProposalReviewIn):
     try:
         proposal = lore_service.repository.get_proposal(proposal_id)
@@ -3188,7 +3413,7 @@ def reject_lore_proposal(nid: str, proposal_id: str, body: LoreProposalReviewIn)
         return capability_guard(_raise_lore_error, exc)
 
 
-@router.post("/novels/{nid}/lore/proposals/{proposal_id}/approve-memory")
+@router.post("/novels/{nid}/lore/proposals/{proposal_id}/approve-memory",dependencies=[Depends(_shared_project_review)])
 def approve_lore_memory(nid: str, proposal_id: str, body: MemoryApproveApiIn):
     try:
         proposal = lore_service.repository.get_proposal(proposal_id)
@@ -3205,7 +3430,7 @@ def approve_lore_memory(nid: str, proposal_id: str, body: MemoryApproveApiIn):
         return capability_guard(_raise_lore_error, exc)
 
 
-@router.get("/novels/{nid}/memories")
+@router.get("/novels/{nid}/memories",dependencies=[Depends(_shared_project_read)])
 def list_character_memories(nid: str, character_id: str | None = None, status: str | None = None):
     try:
         novel_service.get(nid)
@@ -3220,12 +3445,12 @@ def list_character_memories(nid: str, character_id: str | None = None, status: s
         return capability_guard(_raise_lore_error, exc)
 
 
-@router.get("/novels/{nid}/characters/{character_id}/memories")
+@router.get("/novels/{nid}/characters/{character_id}/memories",dependencies=[Depends(_shared_project_read)])
 def list_memories_for_character(nid: str, character_id: str, status: str | None = None):
     return list_character_memories(nid, character_id, status)
 
 
-@router.post("/novels/{nid}/memories/{memory_id}/retract")
+@router.post("/novels/{nid}/memories/{memory_id}/retract",dependencies=[Depends(_shared_project_review)])
 def retract_character_memory(nid: str, memory_id: str, body: MemoryRetractApiIn):
     try:
         current = memory_service.repository.get_memory(memory_id)
@@ -3236,7 +3461,7 @@ def retract_character_memory(nid: str, memory_id: str, body: MemoryRetractApiIn)
         return capability_guard(_raise_lore_error, exc)
 
 
-@router.get("/novels/{nid}/memory-snapshots")
+@router.get("/novels/{nid}/memory-snapshots",dependencies=[Depends(_shared_project_read)])
 def list_memory_snapshots(nid: str, scope: str | None = None):
     try:
         novel_service.get(nid)
@@ -3245,7 +3470,7 @@ def list_memory_snapshots(nid: str, scope: str | None = None):
         return capability_guard(_raise_lore_error, exc)
 
 
-@router.post("/novels/{nid}/memory-snapshots", status_code=201)
+@router.post("/novels/{nid}/memory-snapshots", status_code=201,dependencies=[Depends(_shared_project_write)])
 def create_memory_snapshot(nid: str, body: MemorySnapshotApiIn):
     try:
         novel_service.get(nid)
@@ -3326,24 +3551,38 @@ router.include_router(workflow_router)
 
 
 @router.get("/release-gates")
-def list_release_gates(novel_id: str | None = None):
-    return capability_guard(v1_capability_service.list_release_gates, novel_id)
+def list_release_gates(novel_id: str | None = None, x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    if novel_id:
+        _require_shared_project(novel_id, x_session_token, "domain.read")
+    result = capability_guard(v1_capability_service.list_release_gates, novel_id)
+    rows = _visible_shared_rows(result["items"], x_session_token)
+    return {**result, "items": rows, "total": len(rows)}
 
 
-@router.post("/release-gates", status_code=202)
+@router.post("/release-gates", status_code=202,dependencies=[Depends(_shared_gate_write)])
 def evaluate_release_gate(body: ReleaseGateIn,
                           idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")):
     return capability_guard(v1_capability_service.evaluate_release_gate, body.novel_id, body.evidence, True, idempotency_key)
 
 
-@router.get("/release-gates/{gate_id}")
+@router.get("/release-gates/{gate_id}",dependencies=[Depends(_shared_gate_read)])
 def get_release_gate(gate_id: str):
     return capability_guard(v1_capability_service.get_release_gate, gate_id)
 
 
 @router.get("/audit")
-def list_capability_audit(novel_id: str | None = None, limit: int = Query(default=100, ge=1, le=500)):
-    return capability_guard(v1_capability_service.list_audit, novel_id, limit)
+def list_capability_audit(novel_id: str | None = None, limit: int = Query(default=100, ge=1, le=500),
+                          x_session_token:str|None=Header(None,alias="X-Session-Token")):
+    if not _shared_runtime_authority_enabled():
+        return capability_guard(v1_capability_service.list_audit, novel_id, limit)
+    if novel_id:
+        _require_shared_project(novel_id, x_session_token, "domain.read")
+    # Read the retained journal once and filter before pagination and totals.
+    rows = _visible_shared_rows(v1_capability_service._read("audit"), x_session_token)
+    if novel_id:
+        rows = [row for row in rows if row.get("novel_id") == novel_id]
+    rows.sort(key=lambda row: str(row.get("created_at", "")), reverse=True)
+    return {"items": rows[:limit], "total": len(rows), "storage": v1_capability_service.storage_mode}
 
 # Versioned authoring records and review threads share the existing capability store.
 from .creation_workbench_api import create_workbench_router

@@ -1,0 +1,14 @@
+{
+  "kind": "supplemental local regression observation; not locked-toolchain CI",
+  "python": "3.12.14",
+  "file": "tests/test_shared_generation_stream_authority.py",
+  "initial_source_sha256": "b4bf285ae75ee0186b79f5eeb0d38203673b9c0198770ce3f05c10ca116eba0d",
+  "initial_source_reconstruction": "Exact original first patch, reconstructed by reversing the subsequent three test-only cleanup/helper/frontend-origin edits. Failing assertion was not changed.",
+  "failed_test": "test_idle_client_disconnect_releases_only_its_iterator[file-/api]",
+  "assertion": "assert e.iterator_exits[0].wait(2), \"Client disconnect must release its waiting worker\"",
+  "observed": "AssertionError: Client disconnect must release its waiting worker",
+  "initial_command_suffix": "-m pytest -q tests/test_shared_generation_stream_authority.py -k 'two_independent or idle_client or after_generator' --maxfail=1",
+  "initial_summary": "1 failed, 6 passed, 6 skipped, 112 deselected, 1 warning in 8.50s",
+  "after_fix_junit": "/tmp/r123-sse-tests/file-disconnect.xml",
+  "after_fix_summary": "2 passed, 2 skipped, 128 deselected, 1 warning in 3.72s"
+}
