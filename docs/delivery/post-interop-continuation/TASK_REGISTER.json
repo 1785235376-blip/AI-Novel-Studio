@@ -1,5 +1,5 @@
 {
-  "phase": "WAVE_0_INITIAL",
+  "phase": "WAVE_1_IMPLEMENTATION_CHECKPOINT",
   "source": "User request of 2026-10-06, sections 1–37",
   "waves": [
     {
@@ -7,7 +7,7 @@
       "feature_ids": [
         "F00"
       ],
-      "state": "IN_PROGRESS",
+      "state": "BASELINE_VERIFIED",
       "safe_cloud_closure": "Existing-owner implementation, actual persistence/API/UI journeys and tests; explicit local/paid/native/unsupported boundary labels."
     },
     {
@@ -25,7 +25,7 @@
         "U12",
         "U13"
       ],
-      "state": "IN_PROGRESS",
+      "state": "IMPLEMENTED_CHECKPOINT_REFINEMENT_ACTIVE",
       "safe_cloud_closure": "Existing-owner implementation, actual persistence/API/UI journeys and tests; explicit local/paid/native/unsupported boundary labels."
     },
     {
@@ -94,5 +94,536 @@
     "18-26": "Wave5 B01/B02/B05/B06/B07/B08/B09; Shared Universe existing-world pinning",
     "27-33": "Cross-cutting F00 flags/protocol/unique owners/migrations/tests/truth labels/UI handoff",
     "34-37": "Wave commits, honest stopping boundaries and final deliverables"
-  }
+  },
+  "requirements": [
+    {
+      "section": "1",
+      "requirement": "Verify live GitHub baseline",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "BASELINE_VERIFIED",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "2",
+      "requirement": "Preserve frozen PR37–42 evidence and R1/R2/R3",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "BASELINE_VERIFIED",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "3",
+      "requirement": "Create new stacked DraftPR and branch",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "BASELINE_VERIFIED",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "4",
+      "requirement": "Deepen existing owners and real closure",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "5",
+      "requirement": "Reconcile all39 PARTIAL in a new current matrix",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "6.1",
+      "requirement": "Durable save states, draft/version/crash/restart recovery",
+      "feature_ids": [
+        "U02"
+      ],
+      "wave": 1,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "6.2",
+      "requirement": "Restore workspace, references, drafts, tasks and Review Inbox without model dispatch",
+      "feature_ids": [
+        "U01",
+        "U04",
+        "U07"
+      ],
+      "wave": 1,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "6.3",
+      "requirement": "Scoped global entity search and accurate Command Palette navigation",
+      "feature_ids": [
+        "U03"
+      ],
+      "wave": 1,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "6.4",
+      "requirement": "Selection AI alternatives and version-CAS segmented acceptance",
+      "feature_ids": [
+        "U05",
+        "A11"
+      ],
+      "wave": 1,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "6.5",
+      "requirement": "Actual request context add/pin/exclude/preview and privacy/provider disclosure",
+      "feature_ids": [
+        "U08"
+      ],
+      "wave": 1,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "6.6",
+      "requirement": "All original task owners, honest stage/cost and explicit cancel/retry/resume/result/review",
+      "feature_ids": [
+        "U07",
+        "U12"
+      ],
+      "wave": 1,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "6.7",
+      "requirement": "Local AI diagnostics, explicit lifecycle and no automatic install/upgrade",
+      "feature_ids": [
+        "U09"
+      ],
+      "wave": 1,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "7.1",
+      "requirement": "Story Simulator uses world/mind/knowledge/Canon/timeline/constraints and returns proposals",
+      "feature_ids": [
+        "A01"
+      ],
+      "wave": 2,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "7.2",
+      "requirement": "Separate character knowledge/beliefs/secrets/intent and chapter/scene states",
+      "feature_ids": [
+        "A05"
+      ],
+      "wave": 2,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "7.3",
+      "requirement": "Typed temporal Story Graph entities/relations",
+      "feature_ids": [
+        "A04"
+      ],
+      "wave": 2,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "7.4",
+      "requirement": "Style deterministic metrics separated from model opinion",
+      "feature_ids": [
+        "A02"
+      ],
+      "wave": 2,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "7.5",
+      "requirement": "Evidence-based Judge, intentional dedup and explicit revision tasks",
+      "feature_ids": [
+        "A03"
+      ],
+      "wave": 2,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "8",
+      "requirement": "Model Broker policies with explicit cloud fallback, privacy/license/context/cost/admission",
+      "feature_ids": [
+        "A06"
+      ],
+      "wave": 3,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "9",
+      "requirement": "Model capability and benchmark evidence tiers",
+      "feature_ids": [
+        "A07"
+      ],
+      "wave": 3,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "10",
+      "requirement": "Research Library CRUD/import/citations/source/version/time/digest separate from Canon",
+      "feature_ids": [
+        "A10"
+      ],
+      "wave": 3,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "11",
+      "requirement": "Actual embedding adapter/vector CRUD/query/invalidate/rebuild, absent NOT_CONFIGURED",
+      "feature_ids": [
+        "A10",
+        "A09",
+        "A04"
+      ],
+      "wave": 3,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "12",
+      "requirement": "Director camera grammar, continuity and proposal review",
+      "feature_ids": [
+        "A08"
+      ],
+      "wave": 4,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "13",
+      "requirement": "Cover/storyboard brief-generation-compare-approve-asset workflow",
+      "feature_ids": [
+        "A08",
+        "A09",
+        "U06"
+      ],
+      "wave": 4,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "14",
+      "requirement": "Original asset lineage and transformation provenance",
+      "feature_ids": [
+        "A09"
+      ],
+      "wave": 4,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "15",
+      "requirement": "Production manifest and independent reproducibility assurance labels",
+      "feature_ids": [
+        "A13"
+      ],
+      "wave": 4,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "16",
+      "requirement": "Original Version A/B semantic change evidence with model-derived labels",
+      "feature_ids": [
+        "A11"
+      ],
+      "wave": 2,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "17",
+      "requirement": "Voice mapping/attribution/segments/mixer with unknown speakers and no fake alignment",
+      "feature_ids": [
+        "B03",
+        "B04"
+      ],
+      "wave": 4,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "18",
+      "requirement": "Translation memory, locked terms and source-linked language editions",
+      "feature_ids": [
+        "B05"
+      ],
+      "wave": 5,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "19",
+      "requirement": "Distinct comics/Webtoon panels/order/bubbles/references/layout",
+      "feature_ids": [
+        "B06"
+      ],
+      "wave": 5,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "20",
+      "requirement": "Interactive nodes/choices/conditions/variables/routes/endings and graph validation",
+      "feature_ids": [
+        "B07"
+      ],
+      "wave": 5,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "21",
+      "requirement": "OTIO tracks/clips/rational times/media/transitions/audio-video relations and explicit loss",
+      "feature_ids": [
+        "A12"
+      ],
+      "wave": 4,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "22",
+      "requirement": "Shared Universe immutable snapshots and explicit version pins across works",
+      "feature_ids": [
+        "A04",
+        "B09"
+      ],
+      "wave": 5,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "23",
+      "requirement": "Original project fork/compare/conflicts/human-approved merge",
+      "feature_ids": [
+        "B09"
+      ],
+      "wave": 5,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "24",
+      "requirement": "Async Writer Room comment/review/assignment/proposal/change requests with honest presence",
+      "feature_ids": [
+        "B08"
+      ],
+      "wave": 5,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "25",
+      "requirement": "Read-only template import and manifest/version/compatibility/permission",
+      "feature_ids": [
+        "B01"
+      ],
+      "wave": 5,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "26",
+      "requirement": "Declarative agent/workflow/adapter contracts, review/retry/cancel and DENY_ALL executable plugins",
+      "feature_ids": [
+        "B02"
+      ],
+      "wave": 5,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "27",
+      "requirement": "Reuse default-OFF flags with server V1 acceptance forced OFF",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "28",
+      "requirement": "Freeze PoemSeed Local Interop1.0 wire/authority/privacy/consent/product IDs",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "29",
+      "requirement": "Retain unique original project/manuscript/models/tasks/assets/permissions",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "30",
+      "requirement": "Additive metadata/migration parity, upgrade and rollback considerations",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "31",
+      "requirement": "Preserve original tests and exact final-source File/PG/API/UI/browser/permission/lifecycle/flag coverage",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "32",
+      "requirement": "Use scoped truth labels without code-exists or CI-green product claims",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "33",
+      "requirement": "Functional accessible UX within existing design; update Opus handoff",
+      "feature_ids": [
+        "U13",
+        "F00"
+      ],
+      "wave": 1,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "34",
+      "requirement": "Commit and push each integrated wave",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "35",
+      "requirement": "Stop unsafe/native/paid/model-only execution at honest boundaries and continue safe work",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "36",
+      "requirement": "Publish actual work and deliver branch/PR/SHAs/commits/files/APIs/UI/tests/matrix/reports",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    },
+    {
+      "section": "37",
+      "requirement": "Reach genuine data/permission/version/recovery/cancel/history/user-operation closure",
+      "feature_ids": [
+        "F00"
+      ],
+      "wave": 0,
+      "state": "IN_PROGRESS",
+      "current_verification": "NOT_RUN_FINAL_SOURCE",
+      "safe_closure": "Actual existing-owner API/persistence/UI/test evidence where available; explicit PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED/BLOCKED for the remaining boundary."
+    }
+  ],
+  "requirements_note": "Section6 and7 are registered at their original numbered subsection granularity; every other section1–37 is represented individually. No status upgrades historical PR39."
 }

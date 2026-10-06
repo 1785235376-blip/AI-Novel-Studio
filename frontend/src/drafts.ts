@@ -70,11 +70,25 @@ function loadJson<T>(key: string): T | undefined {
   } catch { return undefined; }
 }
 
+export type DraftInspection = { state: 'EMPTY' } | { state: 'READY'; value: LocalDraft } | { state: 'CORRUPT'; raw: string };
+function inspectDraft(id: string, namespace = 'file'): DraftInspection {
+  const raw = storage.getItem(scopedKey('draft', id, namespace));
+  if (raw === null) return { state: 'EMPTY' };
+  try {
+    const value = JSON.parse(raw) as LocalDraft;
+    if (value?.chapterId === id && typeof value.content === 'string'
+        && Number.isInteger(value.baseVersion) && value.baseVersion >= 0
+        && (value.document === undefined || value.document === null || typeof value.document === 'object' && !Array.isArray(value.document)))
+      return { state: 'READY', value };
+  } catch { /* Keep the raw candidate available for explicit local recovery. */ }
+  return { state: 'CORRUPT', raw };
+}
+
 export const drafts = {
+  inspect: inspectDraft,
   load(id: string, namespace = 'file') {
-    const value = loadJson<LocalDraft>(scopedKey('draft', id, namespace));
-    return value?.chapterId === id && typeof value.content === 'string'
-      && Number.isInteger(value.baseVersion) && value.baseVersion >= 0 ? value : undefined;
+    const result = inspectDraft(id, namespace);
+    return result.state === 'READY' ? result.value : undefined;
   },
   // One atomic versioned snapshot per chapter/scope is the local draft journal.
   // Existing records remain readable; no migration or server write is implied.
@@ -122,12 +136,12 @@ export const conflictResolutionDrafts = {
 };
 
 /** User-triggered local export only; prose never enters HTML or a network request. */
-export function exportDraftText(content: string) {
+export function exportDraftText(content: string, filename = 'writing-recovery.txt') {
   const url = URL.createObjectURL(new Blob([content], { type: 'text/plain;charset=utf-8' }));
   const revoke = URL.revokeObjectURL.bind(URL);
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'writing-recovery.txt';
+  link.download = filename;
   document.body.append(link);
   try { link.click(); } finally {
     link.remove();

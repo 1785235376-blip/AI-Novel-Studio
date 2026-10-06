@@ -11,6 +11,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 import hashlib
 import json
+import re
 from threading import RLock, Event
 from datetime import datetime, timezone
 from uuid import uuid4
@@ -24,7 +25,7 @@ from .planning import StrictModel, digest
 from .search_sources import SearchSource, chapter_manifest, project_ids
 from ..services.v1_capability_service import CapabilityVersionConflict
 
-FEATURES = frozenset({'editor', 'creation', 'story', 'history', 'workflow', 'screenplay', 'assets',
+FEATURES = frozenset({'overview', 'editor', 'creation', 'story', 'history', 'workflow', 'screenplay', 'assets',
                       'exports', 'knowledge', 'research', 'agents', 'diagnostics', 'settings',
                       'semantic_import_v2', 'audiobook_v2', 'cover_storyboard_generation'})
 MAX_RECORDS = 2000
@@ -41,7 +42,7 @@ class Layout(StrictModel):
     section: Literal['resume', 'search', 'tasks', 'diagnostics', 'guide'] = 'resume'
     show_failed_only: bool = False
     search_query: str = Field(default='', max_length=160)
-    search_kind: Literal['', 'chapter', 'character', 'location', 'foreshadowing', 'finding', 'task'] = ''
+    search_kind: Literal['', 'novel', 'chapter', 'volume', 'scene', 'character', 'location', 'timeline', 'foreshadowing', 'finding', 'review', 'task'] = ''
     search_scope: Literal['project', 'authorized'] = 'project'
     search_tag: str = Field(default='', max_length=80)
     search_recent_days: int = Field(default=0, ge=0, le=3650)
@@ -78,13 +79,17 @@ class ResumeResolveIn(VersionIn):
 
 
 class ResolveIn(StrictModel):
-    kind: Literal['chapter', 'character', 'location', 'foreshadowing', 'finding', 'task']
+    kind: Literal['novel', 'chapter', 'volume', 'scene', 'character', 'location', 'timeline', 'foreshadowing', 'finding', 'review', 'task']
     novel_id: str | None = Field(default=None, max_length=160)
     branch_id: str | None = Field(default=None, max_length=160)
     id: str = Field(min_length=1, max_length=160)
     revision: str = Field(min_length=1, max_length=80)
     offset: int = Field(default=0, ge=0, le=2_000_000)
     open_current: bool = False
+
+
+class TaskCancelIn(StrictModel):
+    expected_revision: str = Field(pattern=r'^[a-f0-9]{64}$')
 
 
 class DiagnosticIn(StrictModel):
@@ -114,9 +119,11 @@ class TaskReader:
     feature: str
     read: Callable[[ReadContext], object]
     flag: str | None = None
+    cancel: Callable[..., object] | None = None
+    cancel_states: frozenset[str] = frozenset({'QUEUED', 'PENDING', 'RUNNING', 'WORKING', 'PROCESSING', 'GENERATING'})
 
 
-STAGES = {'QUEUED': '排队', 'PENDING': '等待', 'DRAFT': '草稿', 'READY': '就绪',
+STAGES = {'ANALYZING': '分析中', 'NEEDS_REVIEW': '需要审核', 'QUEUED': '排队', 'PENDING': '等待', 'DRAFT': '草稿', 'READY': '就绪',
           'RUNNING': '运行中', 'WORKING': '运行中', 'PROCESSING': '处理中',
           'PREPARED': '准备就绪', 'GENERATING': '生成中', 'SETTLING': '结算确认中',
           'ACCEPTING': '接受处理中', 'ACCEPTANCE_UNCERTAIN': '接受结果未知',
@@ -191,6 +198,15 @@ FEATURE_OWNED_GENERATION = {
 }
 
 
+def task_identifier(value):
+    """Bounded provider/model identities only; never echo URLs or credentials."""
+    if not isinstance(value, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._:/@+ -]{0,159}', value):
+        return None
+    if '://' in value or value.lower().startswith(('sk-', 'bearer ', 'token ', 'password', 'secret')):
+        return None
+    return value
+
+
 def projected_task(reader, row):
     error = row.get('error_code') or (row.get('error', {}).get('code') if isinstance(row.get('error'), dict) else None)
     status = str(row.get('status', 'UNKNOWN')).upper()
@@ -214,13 +230,30 @@ def projected_task(reader, row):
             and row['base_chapter_version'] > 0):
         source = {'source': {'kind': 'generation', 'id': str(row['id']),
                   'chapter_id': row['chapter_id'], 'version': row['base_chapter_version']}}
-    return {**source, 'id': str(row['id']), 'authority': reader.name, 'label': owner[1] if owner else reader.label,
+    provider = task_identifier(row.get('provider'))
+    model = task_identifier(row.get('model'))
+    requested_provider = task_identifier(row.get('requested_provider') or row.get('provider_id'))
+    requested_model = task_identifier(row.get('requested_model') or row.get('model_id'))
+    if not source:
+        source = {'source': {'kind': 'feature', 'id': str(row['id']), 'feature': reader.feature, 'task_authority': reader.name}}
+        if reader.name == 'review_inbox': source['source'].update(id=row['review_id'], parent_id=row['review_domain'])
+        if reader.name == 'workflows' and isinstance(row.get('workflow_id'), str): source['source']['parent_id'] = row['workflow_id']
+        if reader.name == 'motion' and isinstance(row.get('screenplay_id'), str): source['source']['parent_id'] = row['screenplay_id']
+    cancel_allowed = bool(reader.cancel and str(row.get('status', '')).upper() in reader.cancel_states and not row.get('safe_batch_id'))
+    result = {**source, 'id': str(row['id']), 'authority': reader.name, 'label': owner[1] if owner else reader.label,
             'status': status, 'stage_label': STAGES[status], 'version': row.get('version'),
             'feature': owner[0] if owner else reader.feature, 'progress': progress, 'history': history,
             'stale': bool(row.get('stale')), 'cost': {'estimate': None, 'actual': None, 'state': 'UNKNOWN'},
             'error_code': safe_code(error) if error else None,
-            'actions': ['open_source'], 'retry_policy': 'SOURCE_AUTHORITY_ONLY',
+            'provider_id': provider or requested_provider, 'model_id': model or requested_model,
+            'route_state': 'OBSERVED' if reader.name == 'author_generation' and provider and model else 'REQUESTED' if (provider or requested_provider) and (model or requested_model) else 'UNKNOWN',
+            'actions': ['open_source'] + (['cancel'] if cancel_allowed else []),
+            'action_limits': {'cancel': None if cancel_allowed else 'ORIGIN_COORDINATOR_REQUIRED' if row.get('safe_batch_id') else 'TERMINAL_OR_UNSUPPORTED' if reader.cancel else 'SOURCE_AUTHORITY_ONLY',
+                              'retry': 'SOURCE_PREFLIGHT_REQUIRED', 'resume': 'SOURCE_RECOVERY_REQUIRED', 'review': 'SOURCE_REVIEW_REQUIRED'},
+            'retry_policy': 'SOURCE_AUTHORITY_ONLY',
             'lifecycle': '面板关闭不取消任务；继续执行和重启恢复取决于原任务服务。'}
+    result['revision'] = digest(result)
+    return result
 
 
 class WorkspaceToolsService(DomainService):
@@ -431,15 +464,19 @@ class WorkspaceToolsService(DomainService):
                'feature': 'editor' if kind == 'chapter' else row.get('feature', 'story'),
                'aliases': strings('aliases'), 'tags': strings('tags'), 'updated_at': str(row.get('updated_at') or ''),
                'status': str(row.get('status', '')), 'coordinate': COORDINATE}
+        if kind == 'novel':
+            doc['source'] = {'kind': 'feature', 'id': row['id'], 'feature': 'overview'}
+        elif kind in {'volume', 'scene', 'character', 'location', 'timeline', 'foreshadowing'}:
+            doc['source'] = {'kind': 'feature', 'id': row['id'], 'feature': 'story', 'record_kind': kind}
         if kind == 'task':
             doc['source'] = deepcopy(row.get('source') or {'kind': 'feature', 'id': row['id'], 'feature': row['feature']})
         # The digest and cache contain only this allowlisted searchable projection.
         # A chapter document/style change remains version fenced by the authority.
-        doc['revision'] = digest(doc)
+        doc['revision'] = digest({'projection': doc, 'source_digest': digest(row)})
         return doc
 
     def _search_manifest(self, ctx, check, require_flag):
-        self.novels.get(ctx.novel_id)
+        novel = self.novels.get(ctx.novel_id)
         sources = chapter_manifest(self, ctx, check)
         projected_rows = 0
         incremental = sources is not None
@@ -451,9 +488,26 @@ class WorkspaceToolsService(DomainService):
                     projected_rows += 1
                     doc = self._search_document(ctx, 'chapter', row)
                     sources.append(SearchSource('chapter:' + doc['id'], doc['revision'], lambda doc=doc: doc))
+        if ctx.scope.get('mode') == 'local' and self._visible_search_row(ctx, novel):
+            doc = self._search_document(ctx, 'novel', novel)
+            sources.append(SearchSource('novel:' + doc['id'], doc['revision'], lambda doc=doc: doc))
+            projected_rows += 1
         for kind, dataset in (('character', 'characters'), ('location', 'locations'), ('foreshadowing', 'foreshadowing')):
             rows = (self.entity_readers[kind](ctx) if kind in self.entity_readers else
                     self.novels.data_set(ctx.novel_id, dataset) if ctx.scope.get('mode') == 'local' else [])
+            for row in rows:
+                check()
+                if not self._visible_search_row(ctx, row): continue
+                projected_rows += 1
+                doc = self._search_document(ctx, kind, row)
+                sources.append(SearchSource(kind + ':' + doc['id'], doc['revision'], lambda doc=doc: doc))
+        for kind, dataset in (('volume', 'volumes'), ('scene', 'scenes'), ('timeline', 'timeline')):
+            if kind in self.entity_readers:
+                rows = self.entity_readers[kind](ctx)
+            elif ctx.scope.get('mode') == 'local' and hasattr(self.novels, 'novels'):
+                rows = self.novels.data_set(ctx.novel_id, dataset)
+            else:
+                rows = []
             for row in rows:
                 check()
                 if not self._visible_search_row(ctx, row): continue
@@ -473,11 +527,12 @@ class WorkspaceToolsService(DomainService):
             for row in self.tasks(ctx, require_flag)['items']:
                 check()
                 projected_rows += 1
-                doc = self._search_document(ctx, 'task', {**row, 'id': row['authority'] + ':' + row['id']})
+                kind = 'review' if row['authority'] == 'review_inbox' else 'task'
+                doc = self._search_document(ctx, kind, {**row, 'id': row['authority'] + ':' + row['id']})
                 # Source navigation must retain the original ID, not the index key.
                 doc['source'] = deepcopy(row.get('source') or {'kind': 'feature', 'id': row['id'], 'feature': row['feature']})
                 doc['revision'] = digest({k: v for k, v in doc.items() if k != 'revision'})
-                sources.append(SearchSource('task:' + doc['id'], doc['revision'], lambda doc=doc: doc))
+                sources.append(SearchSource(kind + ':' + doc['id'], doc['revision'], lambda doc=doc: doc))
         return sources, incremental, projected_rows
 
     def candidates(self, ctx):
@@ -511,7 +566,7 @@ class WorkspaceToolsService(DomainService):
     def search(self, ctx, query='', kind='', chapter_id=None, rebuild=False, *, tag='', recent_days=0,
                unresolved=False, fulltext=False, offset=0, request_id=None, reauthorize=lambda: None,
                require_flag=lambda flag: None, cancelled=lambda: False, limit=50):
-        if (len(query) > 160 or len(tag) > 80 or kind not in {'', 'chapter', 'character', 'location', 'foreshadowing', 'finding', 'task'}
+        if (len(query) > 160 or len(tag) > 80 or kind not in {'', 'novel', 'chapter', 'volume', 'scene', 'character', 'location', 'timeline', 'foreshadowing', 'finding', 'review', 'task'}
             or not 0 <= recent_days <= 3650 or not 0 <= offset <= MAX_RECORDS):
             raise ValueError('invalid search filter')
         key = self._index_key(ctx); operation = (key, request_id or str(uuid4()))
@@ -533,7 +588,11 @@ class WorkspaceToolsService(DomainService):
                 if cached and cached['_stamp'] == source.stamp:
                     doc = cached
                 else:
-                    row = source.read(); reads += 1
+                    row = source.read()
+                    # Project title is already read by the mandatory project
+                    # access/manifest lookup; count it in projection_rows_scanned,
+                    # not as an additional source-body read.
+                    reads += int(not source.key.startswith('novel:'))
                     if source.key.startswith('chapter:') and 'kind' not in row:
                         chapter_reads += 1
                         if row.get('novel_id') != ctx.novel_id or not self._visible_search_row(ctx, row): continue
@@ -637,9 +696,11 @@ class WorkspaceToolsService(DomainService):
             return row.get('scope') == ctx.scope or row.get('branch_id') == ctx.scope.get('branch_id')
         return not row.get('branch_id')
 
-    def tasks(self, ctx, require_flag, query='', failed_only=False):
+    def tasks(self, ctx, require_flag, query='', failed_only=False, reauthorize=lambda: None):
+        reauthorize()
         items, unavailable, truncated = [], [], False
         for reader in self.task_readers:
+            reauthorize()
             try:
                 if reader.flag:
                     require_flag(reader.flag)
@@ -666,10 +727,47 @@ class WorkspaceToolsService(DomainService):
                 # A denied source has no task identifiers, counts or titles.
             except Exception:
                 unavailable.append({'authority': reader.name, 'label': reader.label, 'reason': 'SOURCE_UNAVAILABLE'})
+        reauthorize()
         return {'items': items[:500], 'unavailable': unavailable, 'truncated': truncated or len(items) > 500,
                 'executor': False, 'refresh': 'MANUAL', 'automatic_retries': False}
 
-    def diagnostics(self, ctx, body, require_flag):
+    def cancel_task(self, ctx, authority, task_id, body, require_flag, reauthorize=lambda: None):
+        value = TaskCancelIn.model_validate(body)
+        reauthorize()
+        reader = next((item for item in self.task_readers if item.name == authority), None)
+        if reader is None or reader.cancel is None:
+            raise FileNotFoundError('task cancellation authority')
+        if reader.flag:
+            require_flag(reader.flag)
+        def original():
+            payload = reader.read(ctx)
+            rows = payload.get('items', []) if isinstance(payload, dict) else payload
+            row = next((row for row in rows[:200] if self._task_in_scope(ctx, reader, row)
+                        and row.get('id') == task_id), None)
+            if row is None:
+                raise FileNotFoundError('task')
+            return projected_task(reader, row)
+        before = original()
+        if before['revision'] != value.expected_revision:
+            raise StaleSourceError('task changed; refresh before requesting cancellation')
+        if 'cancel' not in before['actions']:
+            raise ValueError('source task does not permit cancellation')
+        reauthorize()
+        # The original executor owns the terminal race and cancellation signal.
+        # Its possibly prose-bearing response is never forwarded or persisted.
+        try:
+            reader.cancel(ctx, task_id, before['version'])
+        except CapabilityVersionConflict as exc:
+            # A source CAS failure may carry full prompt/lease fields. The task
+            # center only returns its authoritative version, never that payload.
+            raise CapabilityVersionConflict({'version': exc.current.get('version')}) from None
+        reauthorize()
+        after = original()
+        reauthorize()
+        return {'item': after, 'cancellation_requested': True, 'executor': False}
+
+    def diagnostics(self, ctx, body, require_flag, reauthorize=lambda: None):
+        reauthorize()
         options = DiagnosticIn.model_validate(body)
         result = {'schema': 'workspace-diagnostics-v1', 'contains_manuscript': False,
                   'contains_credentials': False, 'uploaded': False, 'sections': {}}
@@ -677,7 +775,7 @@ class WorkspaceToolsService(DomainService):
             result['sections']['environment'] = {'component': 'workspace_tools_v2', 'storage': self.store.storage_mode,
                 'scope_mode': ctx.scope['mode'], 'diagnostic_contract': 1}
         if options.include_task_states or options.include_error_codes:
-            tasks = self.tasks(ctx, require_flag)
+            tasks = self.tasks(ctx, require_flag, reauthorize=reauthorize)
             if options.include_task_states:
                 # No titles, IDs, timestamps, paths, prompts, host IDs or raw logs.
                 result['sections']['task_states'] = [{'authority': t['authority'], 'status': t['status'],
@@ -685,12 +783,13 @@ class WorkspaceToolsService(DomainService):
             if options.include_error_codes:
                 result['sections']['error_codes'] = sorted(set(t['error_code'] for t in tasks['items'] if t['error_code']))
             result['sections']['coverage'] = {'truncated': tasks['truncated'], 'raw_logs_included': False}
+        reauthorize()
         result['preview_digest'] = digest(result)
         return result
 
-    def export_diagnostics(self, ctx, body, require_flag):
+    def export_diagnostics(self, ctx, body, require_flag, reauthorize=lambda: None):
         value = DiagnosticExportIn.model_validate(body)
-        result = self.diagnostics(ctx, value.model_dump(exclude={'preview_digest'}), require_flag)
+        result = self.diagnostics(ctx, value.model_dump(exclude={'preview_digest'}), require_flag, reauthorize)
         if result['preview_digest'] != value.preview_digest:
             raise StaleSourceError('diagnostic state changed; create a fresh preview before exporting')
         return result

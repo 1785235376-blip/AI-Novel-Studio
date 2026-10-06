@@ -22,19 +22,20 @@ const formats=[
   {id:'storyboard',label:'分镜预览',detail:'确定性 Markdown 预览；图片资源待接入',available:true,icon:FileArchive},
 ] as const;
 
-export function ExportPanel({novelId,scope,sessionToken}:{novelId?:string;scope?:Scope|null;sessionToken?:string}){
+export function ExportPanel({novelId,scope,sessionToken,requestedTaskId}:{novelId?:string;scope?:Scope|null;sessionToken?:string;requestedTaskId?:string}){
   const context=getCollaborationContext();
   const activeScope=scope===undefined?context.scope:scope;
   const scopeKey=JSON.stringify([novelId||'',activeScope?.workspaceId||'',activeScope?.projectId||'',activeScope?.storylineId||'',activeScope?.branchId||'']);
   // Remount the job observer and mutations on every project, branch or session change.
   // Session credentials are used only for React identity, never in query cache keys.
-  return <ScopedExportPanel key={JSON.stringify([scopeKey,sessionToken??context.sessionToken])} novelId={novelId} scopeKey={scopeKey} requestContext={{sessionToken:sessionToken??context.sessionToken,scope:activeScope??undefined,actor:context.actor}}/>;
+  return <ScopedExportPanel key={JSON.stringify([scopeKey,sessionToken??context.sessionToken])} novelId={novelId} requestedTaskId={requestedTaskId} scopeKey={scopeKey} requestContext={{sessionToken:sessionToken??context.sessionToken,scope:activeScope??undefined,actor:context.actor}}/>;
 }
 
-function ScopedExportPanel({novelId,scopeKey,requestContext}:{novelId?:string;scopeKey:string;requestContext:CollaborationContext}){
+function ScopedExportPanel({novelId,scopeKey,requestContext,requestedTaskId}:{novelId?:string;scopeKey:string;requestContext:CollaborationContext;requestedTaskId?:string}){
   const active=useRef(true);
   useLayoutEffect(()=>{active.current=true;return()=>{active.current=false}},[]);
-  const [jobId,setJobId]=useState('');
+  const [jobId,setJobId]=useState(requestedTaskId || '');
+  useEffect(()=>{if(requestedTaskId)setJobId(requestedTaskId)},[requestedTaskId]);
   // A per-mount opaque identity prevents cached history crossing user sessions.
   // Never place the session token in query keys or browser storage.
   const [observerId]=useState(()=>globalThis.crypto?.randomUUID?.()||Math.random().toString(36));
@@ -44,7 +45,7 @@ function ScopedExportPanel({novelId,scopeKey,requestContext}:{novelId?:string;sc
   const history=useQuery({queryKey:[...historyKey,statusFilter,offset],queryFn:()=>api.exportHistory(novelId!,statusFilter,offset,requestContext),enabled:!!novelId,refetchInterval:(q)=>q.state.data?.items?.some(item=>['queued','running'].includes(item.status))?2000:false});
   useEffect(()=>{if(active.current&&!jobId&&history.data?.items?.length)setJobId(history.data.items[0].id)},[history.data,jobId]);
   const client=useQueryClient();
-  const selected=useQuery({queryKey:['export-job',scopeKey,observerId,jobId],queryFn:()=>api.exportJob(jobId,requestContext),enabled:!!jobId,refetchInterval:(q)=>['queued','running'].includes(q.state.data?.status||'')?700:false});
+  const selected=useQuery({queryKey:['export-job',scopeKey,observerId,jobId],queryFn:async()=>{const row=await api.exportJob(jobId,requestContext);if(row.novel_id!==novelId)throw new Error('EXPORT_PROJECT_CHANGED');return row},enabled:!!jobId,refetchInterval:(q)=>['queued','running'].includes(q.state.data?.status||'')?700:false});
   const start=useMutation({mutationFn:(format:string)=>api.createExport(novelId!,format,requestContext),onSuccess:(job)=>{if(active.current){setJobId(job.id);void client.invalidateQueries({queryKey:historyKey})}}});
   const cancel=useMutation({mutationFn:(id:string)=>api.cancelExport(id,requestContext),onSuccess:(next)=>{if(active.current){client.setQueryData(['export-job',scopeKey,observerId,next.id],next);void client.invalidateQueries({queryKey:historyKey})}}});
   const retry=useMutation({mutationFn:(id:string)=>api.retryExport(id,requestContext),onSuccess:(job)=>{if(active.current){setJobId(job.id);void client.invalidateQueries({queryKey:historyKey})}}});

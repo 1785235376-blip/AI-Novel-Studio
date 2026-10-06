@@ -5,7 +5,7 @@ from .common import api_call
 from .planning import StrictModel
 from pydantic import Field
 from typing import Literal
-from .ux import ReadContext, ResumeIn, VersionIn, ResumeResolveIn, ResolveIn, DiagnosticIn, DiagnosticExportIn
+from .ux import ReadContext, ResumeIn, VersionIn, ResumeResolveIn, ResolveIn, DiagnosticIn, DiagnosticExportIn, TaskCancelIn
 
 
 class SearchRequest(StrictModel):
@@ -54,7 +54,10 @@ def create_ux_router(service, authorize, require_flag):
 
     @router.get('/resume/history')
     def history(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return api_call(service.resume_history, access(nid, x_session_token, x_branch_id))
+        ctx = access(nid, x_session_token, x_branch_id)
+        result = api_call(service.resume_history, ctx)
+        current(ctx)
+        return result
 
     @router.post('/resume/reset-layout')
     def reset(nid: str, body: VersionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
@@ -148,15 +151,24 @@ def create_ux_router(service, authorize, require_flag):
     @router.get('/tasks')
     def tasks(nid: str, q: str = Query('', max_length=160), failed_only: bool = False,
               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return api_call(service.tasks, access(nid, x_session_token, x_branch_id), require_flag, q, failed_only)
+        ctx = access(nid, x_session_token, x_branch_id)
+        return api_call(service.tasks, ctx, require_flag, q, failed_only, lambda: current(ctx))
+
+    @router.post('/tasks/{authority}/{task_id}/cancel')
+    def cancel_task(nid: str, authority: str, task_id: str, body: TaskCancelIn,
+                    x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx = access(nid, x_session_token, x_branch_id, True)
+        return api_call(service.cancel_task, ctx, authority, task_id, body, require_flag, lambda: current(ctx, True))
 
     @router.post('/diagnostics/preview')
     def preview(nid: str, body: DiagnosticIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        return api_call(service.diagnostics, access(nid, x_session_token, x_branch_id), body, require_flag)
+        ctx = access(nid, x_session_token, x_branch_id)
+        return api_call(service.diagnostics, ctx, body, require_flag, lambda: current(ctx))
 
     @router.post('/diagnostics/export')
     def export(nid: str, body: DiagnosticExportIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-        data = api_call(service.export_diagnostics, access(nid, x_session_token, x_branch_id), body, require_flag)
+        ctx = access(nid, x_session_token, x_branch_id)
+        data = api_call(service.export_diagnostics, ctx, body, require_flag, lambda: current(ctx))
         return Response(json.dumps(data, ensure_ascii=False, indent=2), media_type='application/json',
                         headers={'Content-Disposition': 'attachment; filename="workspace-diagnostics.json"'})
 

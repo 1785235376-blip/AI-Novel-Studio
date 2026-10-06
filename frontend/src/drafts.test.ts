@@ -64,3 +64,12 @@ it('exports the exact Unicode candidate as a user-triggered text file, never HTM
   const text = await new Promise<string>(resolve => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.readAsText(blob); });
   expect(text).toBe(value.content); expect(blob.type).toBe('text/plain;charset=utf-8'); expect(click).toHaveBeenCalledOnce();
 });
+it('distinguishes an invalid retained record from an empty journal without deleting raw bytes', () => {
+  const value = draft(); const key = `ai-novel-studio:draft:file:${value.chapterId}`;
+  for (const raw of ['', 'null', '[]', '{broken', JSON.stringify({ ...value, document: '<unsafe>' })]) {
+    localStorage.setItem(key, raw);
+    expect(drafts.inspect(value.chapterId)).toEqual({ state: 'CORRUPT', raw });
+    expect(drafts.load(value.chapterId)).toBeUndefined(); expect(localStorage.getItem(key)).toBe(raw);
+  }
+  drafts.remove(value.chapterId); expect(drafts.inspect(value.chapterId)).toEqual({ state: 'EMPTY' });
+});

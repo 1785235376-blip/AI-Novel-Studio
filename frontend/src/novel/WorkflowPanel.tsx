@@ -9,7 +9,7 @@ import {
 import "./WorkflowConsole.css";
 import type { WorkflowInspection } from "./WorkflowInspector";
 
-type WorkflowPanelProps = { novelId?: string; onInspect?: (inspection: WorkflowInspection) => void };
+type WorkflowPanelProps = { novelId?: string; requestedRunId?: string; requestedWorkflowId?: string; onInspect?: (inspection: WorkflowInspection) => void };
 
 export function WorkflowPanel(props: WorkflowPanelProps) {
   const actor = useStudio((state) => state.actor);
@@ -21,11 +21,12 @@ export function WorkflowPanel(props: WorkflowPanelProps) {
   return <ScopedWorkflowPanel key={scopeKey} {...props} context={context} />;
 }
 
-function ScopedWorkflowPanel({ novelId, onInspect, context }: WorkflowPanelProps & { context: CollaborationContext }) {
+function ScopedWorkflowPanel({ novelId, onInspect, context, requestedRunId, requestedWorkflowId }: WorkflowPanelProps & { context: CollaborationContext }) {
   const branchId = context.scope?.branchId;
   // In local mode each API call captures the empty context synchronously. In
   // collaboration mode always bind the request to this observer's identity.
   const requestContext: [CollaborationContext?] = context.sessionToken || context.actor || context.scope?.workspaceId ? [context] : [];
+  const targetFocused = useRef('');
   const epoch = useRef(0);
   const listRequest = useRef(0);
   const runsRequest = useRef(0);
@@ -82,6 +83,11 @@ function ScopedWorkflowPanel({ novelId, onInspect, context }: WorkflowPanelProps
     void refresh();
     return () => { publishTaskSummary("workflow", []); };
   }, []);
+  useEffect(() => {
+    if (!requestedRunId || !requestedWorkflowId || loading) return;
+    if (!items.some(item => item.id === requestedWorkflowId)) { setError('请求的原工作流当前不可读或已移除。'); return; }
+    void loadRuns(requestedWorkflowId);
+  }, [requestedRunId, requestedWorkflowId, items]);
   useEffect(() => {
     publishTaskSummary(
       "workflow",
@@ -234,7 +240,7 @@ function ScopedWorkflowPanel({ novelId, onInspect, context }: WorkflowPanelProps
             启动运行
           </Button>
           {runs.map((run) => (
-            <div key={run.id} className="workflow-console__run">
+            <div key={run.id} className="workflow-console__run" aria-current={requestedRunId === run.id ? "true" : undefined} tabIndex={requestedRunId === run.id ? 0 : undefined} ref={element => { if (element && requestedRunId === run.id && targetFocused.current !== requestedRunId) { targetFocused.current = String(requestedRunId); element.focus(); element.scrollIntoView?.({ block: "nearest" }); } }}>
               运行 {run.id} · {run.status}{" "}
               <Button variant="ghost" onClick={() => onInspect?.({ kind: "run", id: String(run.id), status: run.status, workflowTitle: selected.title || selected.name || selected.id, currentNodeId: run.current_node_id, error: run.error || run.error_message })}>检查</Button>
               <Button

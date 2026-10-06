@@ -75,6 +75,7 @@ def create_author_task_reader(manager, authorize, require_flag, read_generation)
                 candidates.append({'id': jid, 'novel_id': ctx.novel_id, 'scope': deepcopy(ctx.scope),
                     'actor_id': ctx.actor, 'chapter_id': job.chapter_id,
                     'experimental_origin': job.experimental_origin,
+                    **{key: state.get(key) for key in ('provider', 'model', 'requested_provider', 'requested_model')},
                     'base_chapter_version': job.base_chapter_version, 'status': state.get('status', 'UNKNOWN'),
                     'stale': chapter.get('version') != job.base_chapter_version,
                     'error_code': safe_code(state['error_code']) if state.get('error_code') else None})
@@ -103,3 +104,17 @@ def create_author_task_reader(manager, authorize, require_flag, read_generation)
         current()
         return {'items': result[:MAX_AUTHOR_TASKS], 'has_more': len(result) > MAX_AUTHOR_TASKS}
     return read
+
+
+def create_author_task_canceller(manager, authorize, require_flag, cancel_generation):
+    """Cancellation dispatches to the existing job authority, never a new executor."""
+    def cancel(ctx, jid, version=None):
+        require_flag('workspace_tools_v2')
+        if authorize(ctx.novel_id, ctx.token, ctx.branch, 'domain.write') != (ctx.actor, ctx.scope):
+            raise HTTPException(403, {'code': 'AUTHOR_TASK_AUTHORITY_CHANGED'})
+        job = manager.get(jid)
+        if not _owned(ctx, job):
+            raise HTTPException(404, {'code': 'AUTHOR_TASK_UNAVAILABLE'})
+        require_generation_content(job)
+        return cancel_generation(jid, ctx.token)
+    return cancel

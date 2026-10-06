@@ -52,3 +52,7 @@ Status vocabulary: IMPLEMENTED, INTEGRATED, PARTIAL, CONTRACT_VERIFIED, MOCK_ONL
 The JSON companion retains inherited scope and will record each concrete continuation delta and evidence. Embedding maps to A10/A09/A04; Shared Universe maps to A04/B09; cover/storyboard generation maps to A08/A09/A13. These are extensions of existing owners, not new parallel state systems.
 
 Historical independent follow-up review remains BLOCKED. New implementation checks do not replace or close it.
+
+## Wave1 continuation checkpoint
+
+Current product totals remain F00 INTEGRATED +39 PARTIAL. Original-owner task cancellation/IDs, Review Inbox resume, richer literal search and draft integrity are implemented. Focused File/API/UI checks passed; exact-source full CI and native acceptance are separate. Native Research/Canon/Graph add/pin context and the remaining structured search kinds continue in a later scoped refinement.

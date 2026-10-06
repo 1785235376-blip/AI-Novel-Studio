@@ -34,3 +34,13 @@ it('does not carry a previous receipt into another character or a newer source v
   expect((screen.getByRole('button', { name: '生成创作下一章草稿' }) as HTMLButtonElement).disabled).toBe(true);
   expect(screen.queryByDisplayValue('KNOWN')).toBeNull(); expect(generate).not.toHaveBeenCalled();
 });
+it('binds exact scene identity into preview and invalidates it when scene changes', async () => {
+  const sent: any[] = [];
+  vi.stubGlobal('fetch', vi.fn(async (_url, init) => { sent.push(JSON.parse(init.body)); return new Response(JSON.stringify({ preview_digest: 'a'.repeat(64), chapter_version: 3, source_strategy: 'CHARACTER_KNOWLEDGE_ONLY', source_characters: 0, context_sections: [], privacy_omissions: [], creation_records: [], request: { prompt: 'SCENE_KNOWN', context: {}, parameters: {} } }), { status: 200 }); }));
+  const generate = vi.fn(); const view = render(<AiWritingPanel {...base} onGenerate={generate} authorPreview={{ ...options, sceneId: 'scene-one' }} />);
+  fireEvent.click(screen.getByRole('button', { name: '检查真实生成请求' })); await screen.findByText('请求已预检');
+  expect(sent[0]).toMatchObject({ character_id: 'hero', scene_id: 'scene-one', source: '', profile: 'LOCAL_ONLY' });
+  view.rerender(<AiWritingPanel {...base} onGenerate={generate} authorPreview={{ ...options, sceneId: 'scene-two' }} />);
+  expect((screen.getByRole('button', { name: '生成创作下一章草稿' }) as HTMLButtonElement).disabled).toBe(true);
+  expect(generate).not.toHaveBeenCalled(); expect(screen.queryByDisplayValue('SCENE_KNOWN')).toBeNull();
+});

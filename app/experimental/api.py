@@ -40,7 +40,7 @@ from .inbox import UnifiedReviewInbox, ReviewBinding
 from .inbox_api import create_inbox_router
 from .legacy_inbox import register_legacy_bindings
 from .ux import WorkspaceToolsService, TaskReader
-from .author_task_projection import create_author_task_reader
+from .author_task_projection import create_author_task_reader, create_author_task_canceller
 from .ux_api import create_ux_router
 from .search_sources import create_search_candidates
 from ..services.import_apply_service import ImportApplyService
@@ -166,7 +166,9 @@ workspace_tools_service = WorkspaceToolsService(
     task_readers=(
         TaskReader('author_generation', '正文生成', 'history',
                    create_author_task_reader(legacy_api.jobs, authorize, require_flag,
-                       lambda jid, token: legacy_api.generation(jid=jid, x_session_token=token))),
+                       lambda jid, token: legacy_api.generation(jid=jid, x_session_token=token)),
+                   cancel=create_author_task_canceller(legacy_api.jobs, authorize, require_flag,
+                       lambda jid, token: legacy_api.cancel(jid=jid, x_session_token=token))),
         TaskReader('workflows', 'Workflow 任务', 'workflow', read_legacy_workflow_tasks),
         TaskReader('semantic_import', '长篇导入', 'semantic_import_v2',
                    lambda ctx: import_service.jobs(ctx.novel_id, ctx.scope), 'semantic_import_v2'),
@@ -188,6 +190,10 @@ workspace_tools_service = WorkspaceToolsService(
             nid=ctx.novel_id, x_session_token=ctx.token, x_branch_id=ctx.branch)),
     ),
 )
+from .workspace_task_owners import extend_workspace_task_readers
+workspace_tools_service.task_readers = extend_workspace_task_readers(
+    workspace_tools_service.task_readers, legacy_api, import_service, team_service, media_service,
+    audiobook_service, inbox_service, authorize, require_flag)
 router.include_router(create_ux_router(workspace_tools_service, authorize, require_flag))
 
 

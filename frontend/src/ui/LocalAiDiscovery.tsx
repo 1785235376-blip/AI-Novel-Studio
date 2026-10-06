@@ -19,6 +19,36 @@ const activeScan = (scan: LocalDiscoveryScan | null | undefined) => !!scan && SC
 const text = (value: unknown) => typeof value === 'string' || typeof value === 'number' ? String(value) : '未检测';
 const bytes = (value: unknown) => typeof value === 'number' && value > 0 ? `${(value / 1024 ** 3).toFixed(1)} GiB` : '未检测';
 const tone = (status: string): 'neutral' | 'success' | 'warning' | 'error' => ['READY', 'RUNNING', 'COMPLETED'].includes(status) ? 'success' : ['INCOMPATIBLE', 'FAILED', 'UNSUPPORTED'].includes(status) ? 'error' : ['NOT_FOUND', 'DISABLED', 'CANCELLED'].includes(status) ? 'neutral' : 'warning';
+const DIAGNOSTIC_GUIDANCE: Record<string, string> = {
+  EXTERNAL_RUNTIME_NOT_RUNNING: '已发现文件，但服务尚未启动。请在已有安装中手动启动 Runtime，再重新检测；不会代你启动或升级。',
+  RUNTIME_REQUIRED: '缺少可用 Runtime。核对已有安装或服务配置，然后重新验证。',
+  MODEL_OR_RUNTIME_NOT_FOUND: '当前未找到模型或运行服务。先确认服务已启动，再核对模型 ID；不会自动下载模型。',
+  RUNTIME_MODEL_UNVERIFIED: '服务没有报告所选模型。核对模型 ID 与当前加载模型，再重新验证。',
+  RUNTIME_MODEL_PATH_MISMATCH: '当前 Runtime 的模型路径与候选不一致。先核对原配置，不会自动移动或替换文件。',
+  GGUF_HEADER_INVALID: '模型文件头未通过检查。核对文件是否完整、格式是否正确；不会覆盖已有模型。',
+  WORKFLOW_ADAPTER_REQUIRED: '缺少匹配的工作流、模型组件或节点绑定。核对已安装节点与已审核 Adapter；不会安装未知节点。',
+  ADAPTER_REQUIRED: '当前 Runtime 尚无可用 Adapter。保留候选，等待受支持的适配器；不执行第三方插件。',
+  LICENSE_VALIDATION_REQUIRED: '模型许可未确认。阅读原模型许可证后，在“配置接入条件”明确确认用途。',
+  VALIDATION_REQUIRED: '还没有验证此候选。点击“验证”检查已有服务的元数据；不会发起生成。',
+  REVALIDATION_REQUIRED: '之前的验证已失效。重新验证并核对许可与接入条件，然后再明确启用。',
+  MODEL_CHANGED_REVIEW_REQUIRED: '模型身份已变化。旧许可确认不再适用，请重新核对该版本。',
+  LOCAL_MODEL_EVIDENCE_CHANGED: '模型或环境元数据已变化，旧接入不能继续使用。重新验证后再确认启用。',
+  LOCAL_AI_CONNECTION_FAILED: 'Endpoint 无法连接。核对本机地址、端口和服务状态；此诊断不说明模型已损坏。',
+  LOCAL_AI_TIMEOUT: 'Endpoint 检查超时。确认服务负载和端口，再手动重试。',
+  CAPABILITY_UNVERIFIED: '尚无足够能力证据。模型目录声明不能代替接入验证或真实推理验收。',
+  CURRENT_GPU_NOT_VERIFIED: '当前 GPU 未实测。无法保证显存足够；请在本机验证，不会升级 Torch、CUDA 或驱动。',
+  CPU_OFFLOAD_MAY_BE_REQUIRED: 'GPU 分层配置可能需要 CPU 分担。当前未测显存余量，请在本机评估后调整原配置。',
+  MEMORY_AND_CONTEXT_NOT_VERIFIED: '模型文件大小与已检测内存提示容量风险；上下文和 KV 缓存尚未测量，不能保证可运行。',
+  CUDA_NOT_VERIFIED: 'CUDA 兼容性尚未实测。保留当前环境，后续本机验证；不会自动升级。',
+  INFERENCE_NOT_RUN: '这里只验证已有元数据，尚未运行真实模型。质量、速度与峰值内存仍待本机验收。',
+  TEXT_GENERATION_UNSUPPORTED: '该模型未报告文本续写能力；嵌入能力不能当作正文生成能力。',
+  OLLAMA_REMOTE_MODEL_BLOCKED: '该 Ollama 模型属于远程托管来源，禁止冒充本地模型或静默外发。',
+  OLLAMA_LOCALITY_UNVERIFIED: '尚未证明该 Ollama 模型会在本机执行，不能用于本地隐私路线。',
+  OLLAMA_IDENTITY_CHANGED: 'Ollama 模型身份已变化。重新验证并确认来源后才能恢复接入。',
+  LOCAL_AI_CREDENTIAL_BINDING_REQUIRED: '此 Runtime 需要独立的安全凭据绑定；不要把密钥粘贴到诊断或模型名称中。',
+};
+export function localAiDiagnostic(code: string): string | undefined { return DIAGNOSTIC_GUIDANCE[code]; }
+
 function groupOf(model: LocalModelCandidate) {
   const capabilities = [...(model.declared_capabilities || []), ...(model.verified_capabilities || []), model.modality];
   if (capabilities.some(value => ['RESTORATION', 'INTERPOLATION'].includes(value))) return GROUPS[4];
@@ -255,15 +285,15 @@ export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMuta
         <div className="local-ai__actions local-ai__wide"><Button type="submit" disabled={controlsLocked}>保存 Runtime</Button><Button type="button" variant="ghost" onClick={() => setRuntimeForm(undefined)}>取消</Button></div>
       </form>}
       {snapshot && <Hardware value={snapshot.hardware}/>}
-      {!!runtimeMap.size && <section className="local-ai__section" aria-label="发现的 Runtime"><h3>本地 Runtime（{runtimeMap.size}）</h3><div className="local-ai__list">{Array.from(runtimeMap.values()).map(runtime => <article key={runtime.id} aria-label={runtime.name || runtime.id}><header><strong>{runtime.name || runtime.id}</strong><Badge tone={tone(runtime.status || 'NOT_VERIFIED')}>{runtime.status || 'NOT_VERIFIED'}</Badge></header><p>{runtime.type || runtime.runtime_type} · {runtime.management || 'EXTERNAL'}</p><p>地址：{runtime.endpoint || '未配置'} · 版本：{runtime.version || '未检测'}</p><p>运行状态：{runtime.status === 'RUNNING' ? '正在运行' : runtime.status === 'NOT_FOUND' ? '未发现运行服务' : '未确认'}</p>{runtime.executable_exists !== undefined && <p>Executable：{runtime.executable_exists ? '已找到' : '未找到'} · CUDA：{runtime.cuda_status || '未验证'}</p>}{runtime.notes?.map((note, index) => <p key={index}>{note}</p>)}<Button disabled={controlsLocked} onClick={() => editRuntime(runtime)}>配置 Runtime</Button></article>)}</div></section>}
+      {!!runtimeMap.size && <section className="local-ai__section" aria-label="发现的 Runtime"><h3>本地 Runtime（{runtimeMap.size}）</h3><div className="local-ai__list">{Array.from(runtimeMap.values()).map(runtime => <article key={runtime.id} aria-label={runtime.name || runtime.id}><header><strong>{runtime.name || runtime.id}</strong><Badge tone={tone(runtime.status || 'NOT_VERIFIED')}>{runtime.status || 'NOT_VERIFIED'}</Badge></header><p>{runtime.type || runtime.runtime_type} · {runtime.management || 'EXTERNAL'}</p><p>地址：{runtime.endpoint || '未配置'} · 版本：{runtime.version || '未检测'}</p><p>运行状态：{runtime.status === 'RUNNING' ? '正在运行' : runtime.status === 'NOT_FOUND' ? '未发现运行服务' : '未确认'}</p>{runtime.executable_exists !== undefined && <p>Executable：{runtime.executable_exists ? '已找到' : '未找到'} · CUDA：{runtime.cuda_status || '未验证'}</p>}{runtime.notes?.map((note, index) => <p key={index}>{note}{localAiDiagnostic(note) ? `：${localAiDiagnostic(note)}` : ''}</p>)}<Button disabled={controlsLocked} onClick={() => editRuntime(runtime)}>配置 Runtime</Button></article>)}</div></section>}
       {!loading && !models.length && <EmptyState title={scan ? '尚未发现模型' : '尚未开始扫描'} detail="可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。"/>}
       {GROUPS.map(group => {const rows = models.filter(row => groupOf(row.model) === group); return rows.length ? <section className="local-ai__section" key={group} aria-label={group}><h3>{group}（{rows.length}）</h3><div className="local-ai__list">{rows.map(({model, registration}) => {const current = registration || model; return <article key={model.id} aria-label={`${model.display_name} ${model.local === false ? "非本地来源" : "本地模型"}`}>
         <header><strong>{model.display_name}</strong><Badge tone={stateUncertain ? 'warning' : tone(current.status)}>{stateUncertain ? 'NOT_VERIFIED' : current.status}</Badge></header>
         <div className="local-ai__actions"><Badge tone={model.local === false ? "warning" : "neutral"}>{model.local === false ? "云端或非本地来源 · 禁止本地路由" : "本地候选"}</Badge><Badge tone={stateUncertain ? 'warning' : registration?.enabled ? 'success' : 'neutral'}>{stateUncertain && registration ? '接入状态待确认' : registration?.enabled ? '已启用' : registration ? '已注册 · 未启用' : '候选 · 未注册'}</Badge><Badge tone={current.verified ? 'success' : 'warning'}>{current.verified ? '已通过实际生成验证' : '尚未实际生成验证'}</Badge></div>
         <dl className="local-ai__facts"><div><dt>Runtime / 来源</dt><dd>{model.runtime_type} · {model.runtime_id} · {model.source}</dd></div><div><dt>模型族 / 模型 ID</dt><dd>{model.family} · {model.model_id}</dd></div><div><dt>声明能力</dt><dd>{current.declared_capabilities.join(' · ') || 'UNKNOWN'}</dd></div><div><dt>已验证能力</dt><dd>{current.verified_capabilities.join(' · ') || 'CAPABILITY_UNVERIFIED'}</dd></div><div><dt>只读接入验证</dt><dd>{current.validated_at ? '已完成检查（不代表实际生成验证）' : '尚未验证 / 需重新验证'}</dd></div><div><dt>兼容性</dt><dd>{COMPATIBILITY[current.compatible] || current.compatible || 'Not Verified · 未验证'}</dd></div><div><dt>模型路径 / 文件 / 来源</dt><dd>{model.local_path || model.model_name || model.source}</dd></div></dl>
         <ModelEvidence model={current}/>
-        {!!current.validation_notes?.length && <ul className="local-ai__notes">{current.validation_notes.map((note, index) => <li key={index}>{note}</li>)}</ul>}
-        {!!current.enable_blockers?.length && <p>启用前仍需：{current.enable_blockers.join(' · ')}</p>}
+        {!!current.validation_notes?.length && <ul className="local-ai__notes">{current.validation_notes.map((note, index) => <li key={index}>{note}{localAiDiagnostic(note) ? `：${localAiDiagnostic(note)}` : ''}</li>)}</ul>}
+        {!!current.enable_blockers?.length && <section aria-label="启用前的诊断与下一步"><strong>启用前仍需：</strong><ul className="local-ai__notes">{current.enable_blockers.map(code => <li key={code}>{code}：{localAiDiagnostic(code) || '该检查尚未通过，请核对当前元数据并重新验证；不会自动修复环境。'}</li>)}</ul></section>}
         <div className="local-ai__actions">
           <Button disabled={controlsLocked} onClick={() => void candidateAction(model, 'validate')}>验证</Button>
           {!registration && <><Button disabled={controlsLocked || !model.validated_at} title={!model.validated_at ? '请先验证候选模型' : undefined} onClick={() => void candidateAction(model, 'register')}>注册</Button></>}
