@@ -1,0 +1,863 @@
+{
+  "schema_version": 1,
+  "phase": "WAVE_0_BASELINE_CHECKPOINT_NOT_COMPLETION",
+  "model": "gpt-6-astra",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "branch": "work/post-interop-r4-r5-ux-continuation",
+  "base_branch": "work/local-interop-desktop-prep",
+  "starting_sha": "e58c72b04182cd374af092314386b90f8250a173",
+  "baseline_verified_at_utc": "2026-10-06T15:02:39Z",
+  "historical_matrix_unchanged": true,
+  "historical_independent_review": "BLOCKED_NOT_RESTARTED",
+  "protocol_manifest_sha256": "77c1f82f0aec0ef385d95cacf6fe04530b83fb62d2403bc7341cbe6bf19c858c",
+  "packages": [
+    {
+      "id": "F00",
+      "name": "Foundation, reuse and dependency registry",
+      "wave": 0,
+      "historical_pr39_status": "INTEGRATED",
+      "current_status": "INTEGRATED",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "All 40 packages, seven waves, nine inherited gaps, explicit flags/dependencies and runtime descriptions.",
+      "sources": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py"
+      ],
+      "inherited_remaining_scope": "Independent follow-up review is platform-BLOCKED and not retried. No release/merge decision; documentation-only successor requires exact CI readback.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U02",
+      "name": "Loss-resistant editing and visible save state",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Durability receipts, volatile draft fallback, backend acknowledgement validation, conflict preservation, local export, scoped generation observers and task recovery chooser.",
+      "sources": [
+        "frontend/src/drafts.ts",
+        "frontend/src/App.tsx",
+        "frontend/src/Editor.tsx",
+        "frontend/src/ui/SaveControls.tsx",
+        "app/autosave/durable.py"
+      ],
+      "inherited_remaining_scope": "Native OS power-loss and Windows interactive validation are NOT_RUN; never-persisted input cannot be guaranteed recoverable.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U01",
+      "name": "Resume the previous workspace",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Actor/scope-private original workspace capture and current-authority reopen: exact chapter/anchor, saved filters, original preference/reference pointers, unresolved original task IDs; local last-project hint verified against fresh original inventory with missing/corrupt recovery and dirty-buffer fences.",
+      "sources": [
+        "frontend/src/store.ts",
+        "frontend/src/novel/EntryExperience.tsx",
+        "frontend/src/App.tsx",
+        "app/experimental/ux.py",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Browser storage can be cleared; fallback is explicit project selection plus the server workspace. Unsupported branch manuscript adapters remain fail-closed. Functional save/reopen/export and viewport/action-hit verification passed at bf0ec2b0; native desktop acceptance is separate.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U03",
+      "name": "Search, commands and recents",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Storage-manifest incremental chapter reads, bounded current-chapter/project/20 authorized-project search, filters/Chinese aliases/paging/cancel/rebuild, current-authority counts and version-resolved navigation; original small structured/task authorities reread.",
+      "sources": [
+        "frontend/src/ui/FeatureLauncher.tsx",
+        "app/services/visual_memory_index.py",
+        "app/lore/context_view.py",
+        "app/experimental/ux.py",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Cache bounded to 8 scopes, 2M characters/2000 records and 50 results per page. Collaboration branch manuscript storage is not implemented; no base-source fallback. Hosted incremental/search journeys and real PG passed at 4e476ce.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U07",
+      "name": "Unified task center and honest progress",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Read-only original task authorities, honest stages, filters, private diagnostic export; exact original author-job projection and scoped Draft/Diff/Accept navigation without a second executor. Feature-owned simulator/judge/translation/declarative jobs reopen their owning review panels, not generic manuscript acceptance.",
+      "sources": [
+        "app/jobs.py",
+        "app/application/task_service.py",
+        "frontend/src/ui/taskSummary.ts",
+        "frontend/src/novel/AgentActivityCenter.tsx",
+        "app/experimental/ux.py",
+        "app/experimental/api.py"
+      ],
+      "inherited_remaining_scope": "Original task projection and exact original Draft/Diff recovery passed hosted execution. Universal domain-specific deep links/retries remain bounded by each original authority.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U08",
+      "name": "Context and privacy inspector",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "One preview/final request authority with exact per-record source digests and exclusions, explicit STYLE/PLOT pins, conservative removal of potentially derived context, UI receipt invalidation and original local variants.",
+      "sources": [
+        "frontend/src/novel/AiContextPreviewPanel.tsx",
+        "app/services/agent_context_service.py",
+        "app/services/context_snapshot_service.py",
+        "app/source_privacy.py",
+        "app/author_request.py",
+        "app/experimental/author_context_api.py",
+        "frontend/src/novel/AuthorRequestPreviewPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Anonymous automatic source bundles cannot be decomposed and remain whole-bundle controls. Independent duplicate user/manuscript text is not semantic DLP. Cloud/budgeted variant group admission remains unavailable; real inference quality NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U09",
+      "name": "Local AI diagnostic and setup guidance",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Passive bounded imported Comfy API workflow inspection, existing metadata/registry comparison, honest blockers and explicit redacted report save/download.",
+      "sources": [
+        "app/model_center/discovery.py",
+        "app/model_center/discovery_probes.py",
+        "frontend/src/ui/LocalAiDiscovery.tsx",
+        "app/experimental/media.py",
+        "app/experimental/local_ai_inspection.py",
+        "frontend/src/experimental/WorkflowInspectionPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Unregistered runtime families stay ADAPTER_REQUIRED. No imported workflow execution or local environment modification; real GPU and model/runtime acceptance are NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U12",
+      "name": "Actionable errors and private diagnostic export",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Explicit allowlisted diagnosis preview, selected sections, state-bound local export, sanitized task status and actionable version/session errors.",
+      "sources": [
+        "app/structured_log.py",
+        "app/runtime_diagnostics.py",
+        "frontend/src/api.ts",
+        "frontend/src/novel/RuntimeDiagnostics.tsx",
+        "app/experimental/ux.py",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Diagnostic coverage is allowlisted and bounded, not complete cross-module event coverage. Export is explicit/local; no automatic upload.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U04",
+      "name": "Focus, reference split and inspiration",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Saved typography, focus, readonly split references, chapter bookmarks, private inspiration and reviewed planning copy; original-CAS paragraph locks shared with A11/U05.",
+      "sources": [
+        "frontend/src/Editor.tsx",
+        "frontend/src/App.tsx",
+        "frontend/src/novel/ResearchPanel.tsx",
+        "app/experimental/writing_focus.py",
+        "frontend/src/experimental/WritingFocusPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Persistent paragraph locks and restored original reference/preference pointers are implemented; native input remains NOT_RUN. Unsupported branch manuscript adapters fail closed.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U10",
+      "name": "Scenario onboarding and progressive disclosure",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Skippable five-scenario guide and real isolated no-key synthetic project through original local/scoped authorities; durable partial receipts, explicit recovery/open, original editor/save/reopen/TXT export guide and currently enabled-tool discovery.",
+      "sources": [
+        "frontend/src/novel/EntryExperience.tsx",
+        "frontend/src/ui/FeatureLauncher.tsx",
+        "frontend/src/ui/LocalAiDiscovery.tsx",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx"
+      ],
+      "inherited_remaining_scope": "One sample per actor/workspace. Original create without a returned receipt stays UNKNOWN rather than being replayed; confirmed partial projects remain available for manual recovery. Functional save/reopen/export and viewport/action-hit verification passed at bf0ec2b0; native desktop acceptance is separate.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U13",
+      "name": "Chinese input, accessibility and scale",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Actual 100k/500k/1m File/API processes plus hosted Chromium input-render and search samples, composition/Unicode, keyboard and CSS-zoom matrix; lazy experimental workbench.",
+      "sources": [
+        "frontend/src/Editor.tsx",
+        "frontend/tests/visual",
+        "scripts"
+      ],
+      "inherited_remaining_scope": "Source-specific Linux rendering/search measurements retained; visible-editor geometry and action targets passed hosted execution. Native Windows, physical latency, screen reader and OS zoom remain NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A04",
+      "name": "Temporal semantic story graph",
+      "wave": 2,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Typed temporal relations over existing IDs and world review, perspective filtering, persisted affected-index updates and evidence/version checks.",
+      "sources": [
+        "app/experimental/world.py",
+        "app/experimental/planning.py",
+        "app/experimental/imports.py",
+        "app/experimental/story_graph.py",
+        "frontend/src/experimental/StoryGraphPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Deterministic reviewed relations, not universal semantic understanding; branch manuscript source adapter remains unavailable.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A05",
+      "name": "Character knowledge and mind state",
+      "wave": 2,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Character-only continue/brainstorm preview and final adapter request; original user instruction only, no automatic manuscript tail, selection, omniscient context or derived STYLE/plan; final authority/source/LOCAL_ONLY fences.",
+      "sources": [
+        "app/experimental/world.py",
+        "app/lore/context_intelligence.py",
+        "app/services/agent_context_service.py",
+        "app/experimental/story_graph.py",
+        "frontend/src/experimental/StoryGraphPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Character-only continue/brainstorm uses reviewed local-only knowledge. Advanced character selection/rewrite and actual model-quality evaluation remain unavailable or unverified.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A06",
+      "name": "Explainable model broker",
+      "wave": 3,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Registered TEXT, IMAGE and AUDIO candidates, current quote/request receipts, original executor admission, atomic reservations/settlement and honest unknown holds; explicit zero-price local media batch admission.",
+      "sources": [
+        "app/provider_runtime_v2_routing_service.py",
+        "app/provider_routing_policy_v2.py",
+        "app/model_center/service.py",
+        "app/experimental/provider_profiles.py"
+      ],
+      "inherited_remaining_scope": "No fabricated quality ranking. Actual configured-model quality and paid-billing acceptance remain NOT_RUN. Optional cloud execution remains explicitly restricted.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A07",
+      "name": "Model benchmark and capability evidence",
+      "wave": 3,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Bounded registered text and supported original-local IMAGE benchmarks with original job/output receipts, current registration/config/model evidence, decoded dimensions, actual measured latency and budget admission; preference evidence remains separate.",
+      "sources": [
+        "app/model_center/discovery.py",
+        "app/model_center/runtime_profiles.py",
+        "tests/test_r4_registered_local_media.py"
+      ],
+      "inherited_remaining_scope": "VIDEO_WORKFLOW lacks equivalent proven-local current broker admission and remains explicit import-only. Missing hardware/usage/cold-start measurements are unknown; real GPU/model quality remains NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A09",
+      "name": "Asset lineage and derived relationships",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Existing asset DAG and metadata reused for scoped lineage view, versioned declarations, cycle/parent drift/deletion detection, exact impact records, legacy OFF/V1 projection hiding.",
+      "sources": [
+        "app/services/asset_library_service.py",
+        "app/experimental/media.py",
+        "app/services/export_resource_snapshot.py"
+      ],
+      "inherited_remaining_scope": "Only recorded dependency evidence is known; unmapped dependencies and license judgements remain unknown.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A13",
+      "name": "Production manifest and controlled replay",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Real media manifests with observed original local registration/runtime/model metadata, supported seed and parameters, source/current quote validation, new original replay tasks and origin-bound selected-refresh capture; synthetic byte equality remains separately labeled.",
+      "sources": [
+        "app/jobs.py",
+        "app/services/asset_library_service.py",
+        "app/experimental/media.py",
+        "tests/test_r4_registered_local_media.py"
+      ],
+      "inherited_remaining_scope": "Trusted original model hash is used only when observed; absent/historical hashes remain unknown and block exact reconstruction. A seed never promises GPU byte equality. Cloud replay coordinator remains optional unimplemented.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U06",
+      "name": "Change impact and selective refresh",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Selected recorded COVER/STORYBOARD refresh through original synthetic or supported registered-local image workflow, fresh original source preparation/quote, current registration/source fences, locked-result preservation and pending asset review.",
+      "sources": [
+        "app/experimental/common.py",
+        "app/services/asset_library_service.py",
+        "app/experimental/audiobook.py",
+        "tests/test_r4_registered_local_media.py"
+      ],
+      "inherited_remaining_scope": "Audio/subtitle/video nodes are not generically executable via image refresh. Unknown upstream money usage requires explicit original ledger reconciliation; no fake zero actual cost.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A02",
+      "name": "Style metrics and drift",
+      "wave": 2,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Existing STYLE records reused; explicit Chinese/English source ranges, reproducible metrics and chapter drift, approved rule/profile editing, fresh preview and handoff to original writing inputs.",
+      "sources": [
+        "app/services/creation_workbench_service.py",
+        "frontend/src/novel/CreationWorkbenchPanel.tsx"
+      ],
+      "inherited_remaining_scope": "No calibrated quality probabilities or real-model interpretation. Additional language metrics need separately defined methods.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A03",
+      "name": "Evidence-based narrative judge",
+      "wave": 2,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Versioned deterministic findings plus separately selected local-model opinion jobs through original author/broker/job authorities; exact source/rubric/evidence preview, strict quote validation, original review_threads, durable cancellation/recovery and advisory-only results.",
+      "sources": [
+        "app/experimental/world.py",
+        "app/lore/continuity.py",
+        "app/services/narrative_finding_service.py",
+        "app/experimental/narrative_judge_model.py",
+        "docs/r4_registered_judge_execution.md"
+      ],
+      "inherited_remaining_scope": "One bounded model job per rule run, 18k-character input, 32KiB output and120s deadline. Independence remains UNVERIFIED; actual literary quality is NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A01",
+      "name": "Bounded story simulation",
+      "wave": 2,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Original deterministic simulator plus explicit registered-local model preview/consent/job dispatch, bounded schema/evidence/step/branch checks, original A05 character-only context, durable recovery/cancel and explicit candidate selection into existing planning review.",
+      "sources": [
+        "app/experimental/planning.py",
+        "app/experimental/world.py",
+        "app/experimental/story_simulator_model.py",
+        "docs/r4_story_simulator_model_execution.md"
+      ],
+      "inherited_remaining_scope": "No automatic Canon/manuscript write or factual future probability. Local registered route/configuration and known zero rates are required; model/GPU quality remains NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A10",
+      "name": "Layered research library",
+      "wave": 3,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Bounded TXT/MD/DOCX/PDF/image sources, exact paragraph/page citations, local search/notes, explicit safe web fetch, source revocation and reviewed setting drafts using existing world authority.",
+      "sources": [
+        "frontend/src/novel/ResearchPanel.tsx",
+        "app/import_parsers.py",
+        "app/services/memory_service.py",
+        "app/experimental/imports.py"
+      ],
+      "inherited_remaining_scope": "OCR/vector/vision adapters absent; actual public-web compatibility and native Windows containment are not verified.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A11",
+      "name": "Revision intelligence and partial changes",
+      "wave": 2,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Exact ProseMirror/Unicode block anchors, preview/selected accept/reject, original CAS/history, partial remainder re-review, persistent paragraph locks with drift/empty recovery.",
+      "sources": [
+        "app/document_revision.py",
+        "app/repositories/screenplay_versions.py",
+        "app/services/chapter_service.py",
+        "frontend/src/RevisionPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Branch-isolated manuscript writing remains unavailable; local original-CAS partial changes are implemented. Model quality is NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U05",
+      "name": "Selection assistant and partial accept",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Original author preview/dispatch with trusted exact selection receipt and partial-only job origin; legacy accept is forbidden; reviewed original-CAS path preserves untouched blocks.",
+      "sources": [
+        "frontend/src/novel/AiWritingPanel.tsx",
+        "app/services/generation_service.py",
+        "frontend/src/Editor.tsx"
+      ],
+      "inherited_remaining_scope": "Actual model quality and native input are NOT_RUN; branch manuscript sources fail closed.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U11",
+      "name": "Reading, proofreading and publishing checks",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Continuous authorized saved-chapter reader, keyboard TOC, exact quote navigation, private annotations, literal proof rules/ignored reasons and read-only TXT/MD/DOCX/EPUB/PDF preflight linked to original immutable export.",
+      "sources": [
+        "frontend/src/novel/ExportPanel.tsx",
+        "app/services/export_job_service.py",
+        "app/release_readiness.py",
+        "app/experimental/reader_preflight.py",
+        "frontend/src/experimental/ReaderPreflightPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Native target reader/layout and full typography validation remain separate from deterministic preflight and internal reader.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U15",
+      "name": "Writing goals and controlled notices",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Original project goals plus optional actor-scoped sessions/checklists/stopping notes, persisted-event recap and deduplicated task-center notices; explicit timezone reminders live only while the panel is mounted.",
+      "sources": [
+        "frontend/src/novel/NovelOverviewPanel.tsx",
+        "frontend/src/ui/taskSummary.ts",
+        "app/services/v1_capability_service.py",
+        "app/experimental/writing_sessions.py",
+        "frontend/src/experimental/WritingSessionPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Reminders occur only while the task center is open; no OS/background/external notification claim.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A08",
+      "name": "Camera grammar and scene direction",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Versioned shot direction over original screenplay/shot IDs, bounded geometry/axis checks with insufficient-evidence states, deliberate override reasons and explicit original shot review.",
+      "sources": [
+        "app/services/screenplay_service.py",
+        "frontend/src/novel/DirectorShotCard.tsx",
+        "app/experimental/director.py",
+        "frontend/src/experimental/DirectorPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Manual reviewed shot direction is implemented; real visual/model production quality is NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "A12",
+      "name": "OTIO and NLE exchange",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Supported OTIO clip/track/gap/transition/media-reference import/export using rational time, actual official parser round-trip, loss reports and new-output export without changing external projects.",
+      "sources": [
+        "app/industry_export_formats.py",
+        "app/services/export_job_service.py",
+        "app/services/video_assembly_service.py",
+        "app/experimental/timeline_exchange.py",
+        "frontend/src/experimental/TimelineExchangePanel.tsx"
+      ],
+      "inherited_remaining_scope": "Official OTIO parser executes; target NLE applications and interoperability acceptance remain NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "B03",
+      "name": "Voice direction and speaker attribution",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Segment speaker/voice/emotion/rate/pause editing, original approved TTS queue and selected redo, measured frame-based per-segment pause/reorder assembly using existing PCM mixer, explicit WAV candidate preview/download and original asset review.",
+      "sources": [
+        "app/experimental/audiobook.py",
+        "frontend/src/experimental/AudiobookPanel.tsx",
+        "app/audio_production_store.py",
+        "app/experimental/voice_direction.py",
+        "frontend/src/experimental/VoiceDirectionPanel.tsx",
+        "tests/test_r5_pause_aware_audio.py",
+        "frontend/tests/e2e/r4-pause-aware-audio.spec.ts"
+      ],
+      "inherited_remaining_scope": "Real voice/TTS quality, cloned-reference voice consent, ASR/phoneme alignment and cloud-budgeted coordinator remain unavailable/unverified. Legacy bindings retain measured millisecond precision until rebound.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "B04",
+      "name": "Subtitle editing and timeline",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Version-bound manual/measured subtitle cues, character labels and SRT/WebVTT export with order/duration/overlap/reading checks; changed media invalidates prior alignment.",
+      "sources": [
+        "app/industry_export_formats.py",
+        "app/services/audiobook_service.py",
+        "app/experimental/audiobook.py",
+        "app/experimental/subtitle_timeline.py",
+        "frontend/src/experimental/SubtitleTimelinePanel.tsx"
+      ],
+      "inherited_remaining_scope": "ASR/forced alignment, subtitle burn-in and target subtitle applications are not implemented/verified.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U14",
+      "name": "Portable project, relink and safe cleanup",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Portable selected manuscript/media export and reviewed restore; retained expected missing-media digests, restart/re-export/relink verification, current-source conflicts and exact candidate/original hashes; authorized storage/history diagnostics.",
+      "sources": [
+        "app/backup_restore.py",
+        "app/services/export_resource_snapshot.py",
+        "app/services/asset_library_service.py",
+        "app/experimental/portable_projects.py",
+        "frontend/src/experimental/PortableProjectsPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Selected portable subset is not complete project backup; original backup remains authoritative for full history/Canon. Collaboration restore unsupported. Actual native packaging/large user archives remain acceptance gates.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "U16",
+      "name": "Safe batch preflight",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Reviewed proof/export, registered IMAGE and approved/queued AUDIO batches through original broker/executors; known-zero current quotes, durable approval/admission/settlement, no unknown replay, versioned presets and satisfied-result reuse.",
+      "sources": [
+        "app/workflow.py",
+        "app/experimental/inbox.py",
+        "app/services/asset_task_worker.py",
+        "app/experimental/safe_batches.py",
+        "frontend/src/experimental/SafeBatchesPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Paid/unknown-price routes are held or unavailable; no cloud execution, voice-quality or GPU claim. Unknown settlement remains an explicit reconciliation state.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "B01",
+      "name": "Declarative template library",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Eight versioned original local declarative templates with type/dependencies/licence, preview/copy/favourite/update comparison/rollback; real planning/workflow instances plus editable supported briefs and safe batch presets.",
+      "sources": [
+        "app/experimental/planning.py",
+        "app/experimental/teams.py",
+        "app/workflow_recipes.py",
+        "app/plugin_package_manager.py",
+        "app/experimental/template_library.py",
+        "frontend/src/experimental/TemplateLibraryPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Eight versioned local templates. Planning/workflow use real original records; other categories remain editable briefs. Remote market/sync disabled. ",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "B02",
+      "name": "Custom agents and workflow SDK",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Form-defined rooted declarative DAG with branching/join preflight, one registered bounded local-model agent task, original Workflow and JobManager execution, broker reservation, exact source/schema/role receipts and mandatory manual-review terminal.",
+      "sources": [
+        "app/experimental/teams.py",
+        "app/workflow.py",
+        "app/workflow_api.py",
+        "app/plugin_capability_policy.py",
+        "app/experimental/declarative_agents.py",
+        "frontend/src/experimental/DeclarativeAgentsPanel.tsx",
+        "app/experimental/declarative_model.py",
+        "docs/delivery/post-v1-r4-r5-ux/B02_BOUND_MODEL_RECEIPT.md"
+      ],
+      "inherited_remaining_scope": "Only registered allowlisted data nodes; no executable plugin, dynamic import or arbitrary tool authority. LOCAL_ONLY known-zero configured route required; model quality NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "B05",
+      "name": "Multilingual revisions and terminology",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Independent language-edition drafts with selected-segment translation preview/consent, current approved glossary/aliases/style, original local-model/broker/job dispatch, bounded output and explicit CAS adoption before existing paragraph review.",
+      "sources": [
+        "app/services/chapter_service.py",
+        "app/document_revision.py",
+        "app/experimental/store.py",
+        "app/experimental/multilingual_editions.py",
+        "frontend/src/experimental/MultilingualEditionsPanel.tsx",
+        "app/experimental/multilingual_translation.py",
+        "docs/r5_multilingual_translation_execution.md"
+      ],
+      "inherited_remaining_scope": "No auto-retranslation after source edits. Current source/edition/price/route receipts required; unknown jobs are not replayed. Actual translation/RTL/font/target-language quality acceptance remains source-specific NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "B06",
+      "name": "Comic and Webtoon layouts",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Reviewed page/Webtoon layouts over original approved images, reading-order/bubble/safe-area/glyph checks, local undo/redo and the same actual raster bytes for preview and segmented PNG ZIP export.",
+      "sources": [
+        "frontend/src/novel/ImageInfiniteCanvas.tsx",
+        "app/services/asset_library_service.py",
+        "app/experimental/comic_layouts.py",
+        "frontend/src/experimental/ComicLayoutsPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Actual approved-image raster and CJK preview/export browser loop passed at 4e476ce. Model art quality and external production typography acceptance remain NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "B07",
+      "name": "Interactive narrative export",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Versioned two-ending interactive story graph, reachability/cycle/variable checks, manual preview and supported neutral/RenPy text-menu export with source/media/loss manifests; no arbitrary script execution.",
+      "sources": [
+        "app/experimental/planning.py",
+        "frontend/src/novel/StoryRouteEditor.test.tsx",
+        "app/experimental/interactive_story.py",
+        "frontend/src/experimental/InteractiveStoryPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Bounded two-ending stories with neutral/RenPy text-menu export. Media references are manifests, not deployed assets; external engine runtime NOT_RUN.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "B08",
+      "name": "Writer room and team review",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Current-member async assignments, responsible reviewer/change requests, retained two-client conflicts, original version comments, current-authority notices and explicitly selected read-only review packages.",
+      "sources": [
+        "app/collaboration.py",
+        "app/collaboration_api.py",
+        "app/experimental/inbox.py",
+        "app/services/creation_workbench_service.py",
+        "app/experimental/writer_room.py",
+        "frontend/src/experimental/WriterRoomPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Asynchronous assignment/comment/review packages implemented; real-time co-editing and branch manuscript reader are unavailable. ",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "B09",
+      "name": "Project fork and merge",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Owned local-project manuscript forks with reviewed CAS merges, plus original character/location/relationship field-level merge attached to the same owned manuscript fork; exact endpoint closure, tombstones and partial checkpoints.",
+      "sources": [
+        "app/collaboration.py",
+        "app/document_revision.py",
+        "app/repositories/scoped_narrative.py",
+        "app/experimental/project_forks.py",
+        "frontend/src/experimental/ProjectForksPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Collaboration branch IDs have no branch-manuscript repository/writer authority. No substitution of base manuscript, new parallel manuscript store or arbitrary target-project merge. Unsupported entity domains remain explicit.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    },
+    {
+      "id": "B10",
+      "name": "Offline synchronization foundation",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "PARTIAL",
+      "current_verification": "NOT_RUN",
+      "inherited_scope": "Manual portable local exchange using exact source evidence, selection addition/withdrawal preview, current authority and independent-process conflicts, original manuscript CAS and pure source reads.",
+      "sources": [
+        "app/collaboration.py",
+        "app/backup_restore.py",
+        "app/experimental/store.py",
+        "app/experimental/offline_sync.py",
+        "frontend/src/experimental/OfflineSyncPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Automatic/cloud transport and real collaboration-branch manuscript sync require a distinct supported source authority/transport. No silent fallback or cross-domain inference.",
+      "continuation_delta": "Pending current source implementation and exact-source tests; no historical status upgrade.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED"
+    }
+  ],
+  "additional_scope_mappings": {
+    "visual_semantic_embedding": [
+      "A10",
+      "A09",
+      "A04"
+    ],
+    "shared_universe_version_pinning": [
+      "A04",
+      "B09"
+    ],
+    "cover_storyboard_generation": [
+      "A08",
+      "A09",
+      "A13"
+    ]
+  }
+}

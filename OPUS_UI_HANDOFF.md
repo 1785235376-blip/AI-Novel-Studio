@@ -1,3 +1,9 @@
+# Post-Interop continuation target (2026-10-06)
+
+Current branch: `work/post-interop-r4-r5-ux-continuation`, stacked on frozen PR42 `e58c72b04182cd374af092314386b90f8250a173`. This initial checkpoint adds no visual redesign. Follow the current `POST_INTEROP_FEATURE_MATRIX.md`, `UX_ACCEPTANCE_MATRIX.md` and wave notes under `docs/delivery/post-interop-continuation/`. The historical handoff below remains intact. Each wave will append its new pages/components/APIs/state/permissions/flag and non-breakable behavior here. Historical independent review stays BLOCKED; the present work does not replace it.
+
+---
+
 # Opus UI handoff · R4/R5/UX experimental continuation
 
 Current target: `1785235376-blip/AI-Novel-Studio` · branch `work/post-v1-r4-r5-ux` · Draft PR [#39](https://github.com/1785235376-blip/AI-Novel-Studio/pull/39), stacked on PR38 parent `d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b`.

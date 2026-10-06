@@ -1,0 +1,98 @@
+{
+  "phase": "WAVE_0_INITIAL",
+  "source": "User request of 2026-10-06, sections 1–37",
+  "waves": [
+    {
+      "wave": 0,
+      "feature_ids": [
+        "F00"
+      ],
+      "state": "IN_PROGRESS",
+      "safe_cloud_closure": "Existing-owner implementation, actual persistence/API/UI journeys and tests; explicit local/paid/native/unsupported boundary labels."
+    },
+    {
+      "wave": 1,
+      "feature_ids": [
+        "U01",
+        "U02",
+        "U03",
+        "U04",
+        "U05",
+        "U07",
+        "U08",
+        "U09",
+        "U10",
+        "U12",
+        "U13"
+      ],
+      "state": "IN_PROGRESS",
+      "safe_cloud_closure": "Existing-owner implementation, actual persistence/API/UI journeys and tests; explicit local/paid/native/unsupported boundary labels."
+    },
+    {
+      "wave": 2,
+      "feature_ids": [
+        "A01",
+        "A02",
+        "A03",
+        "A04",
+        "A05",
+        "A11"
+      ],
+      "state": "PENDING",
+      "safe_cloud_closure": "Existing-owner implementation, actual persistence/API/UI journeys and tests; explicit local/paid/native/unsupported boundary labels."
+    },
+    {
+      "wave": 3,
+      "feature_ids": [
+        "A06",
+        "A07",
+        "A10"
+      ],
+      "state": "PENDING",
+      "safe_cloud_closure": "Existing-owner implementation, actual persistence/API/UI journeys and tests; explicit local/paid/native/unsupported boundary labels."
+    },
+    {
+      "wave": 4,
+      "feature_ids": [
+        "A08",
+        "A09",
+        "A12",
+        "A13",
+        "B03",
+        "B04",
+        "U06",
+        "U11",
+        "U14",
+        "U16"
+      ],
+      "state": "PENDING",
+      "safe_cloud_closure": "Existing-owner implementation, actual persistence/API/UI journeys and tests; explicit local/paid/native/unsupported boundary labels."
+    },
+    {
+      "wave": 5,
+      "feature_ids": [
+        "B01",
+        "B02",
+        "B05",
+        "B06",
+        "B07",
+        "B08",
+        "B09",
+        "B10",
+        "U15"
+      ],
+      "state": "PENDING",
+      "safe_cloud_closure": "Existing-owner implementation, actual persistence/API/UI journeys and tests; explicit local/paid/native/unsupported boundary labels."
+    }
+  ],
+  "sections": {
+    "1-5": "F00: baseline, frozen historical evidence, new branch/current matrix and existing-owner depth",
+    "6": "Wave1 UX U01/U02/U03/U05/U07/U08/U09/U12",
+    "7": "Wave2 A01/A02/A03/A04/A05",
+    "8-11": "Wave3 A06/A07/A10; existing embeddings",
+    "12-17": "Wave4 A08/A09/A12/A13/B03/B04; Wave2 A11 semantic diff",
+    "18-26": "Wave5 B01/B02/B05/B06/B07/B08/B09; Shared Universe existing-world pinning",
+    "27-33": "Cross-cutting F00 flags/protocol/unique owners/migrations/tests/truth labels/UI handoff",
+    "34-37": "Wave commits, honest stopping boundaries and final deliverables"
+  }
+}
