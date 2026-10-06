@@ -509,6 +509,17 @@ def _generation_context(jid:str,session_token:str|None):
         raise HTTPException(403,{"code":"FORBIDDEN"}) from exc
     return actor,scope,job
 
+
+def _generation_content_context(jid,session_token):
+    """A retained scope record cannot keep a deleted source readable."""
+    actor,scope,job=_generation_context(jid,session_token)
+    if scope.project_id!=job.novel_id or scope.workspace_id!=job.workspace_id:
+        raise HTTPException(403,{"code":"FORBIDDEN"})
+    try:novel_service.get(job.novel_id)
+    except (KeyError,FileNotFoundError):raise HTTPException(403,{"code":"FORBIDDEN"}) from None
+    return actor,scope,job
+
+
 def guard(fn,*args):
     from .jobs import GenerationStateConflict
     try:return fn(*args)
@@ -1391,16 +1402,16 @@ def generation_group(group_id:str,x_session_token:str|None=Header(None)):
         raise HTTPException(404,"Generation variant group not found")
     from .jobs import require_generation_content
     for job in variants:
-        if settings.enable_collaboration_runtime: _generation_context(job.id, x_session_token)
+        if settings.enable_collaboration_runtime: _generation_content_context(job.id, x_session_token)
         require_generation_content(job)
     return {"group_id":group_id,"count":len(variants),"variants":[job.public() for job in variants]}
 @router.get("/generation/{jid}")
 def generation(jid:str,x_session_token:str|None=Header(None)):
-    if settings.enable_collaboration_runtime:_generation_context(jid,x_session_token)
+    if settings.enable_collaboration_runtime:_generation_content_context(jid,x_session_token)
     job=guard(jobs.get,jid)
     from .jobs import require_generation_content
     require_generation_content(job)
-    return {**job.public(),"diff":jobs.diff(jid) if job.output else ""}
+    return {**job.public(),"diff":guard(jobs.diff,jid) if job.output else ""}
 @router.get("/generation/{jid}/events")
 def events(jid:str,x_session_token:str|None=Header(None)):
     from .jobs import require_generation_content
@@ -1414,15 +1425,7 @@ def events(jid:str,x_session_token:str|None=Header(None)):
     secured=bool(settings.enable_collaboration_runtime)
     packaged=bool(getattr(settings,"enable_packaged_runtime",False))
     def stream_context():
-        actor,scope,current_job=_generation_context(jid,x_session_token)
-        if scope.project_id!=current_job.novel_id or scope.workspace_id!=current_job.workspace_id:
-            raise HTTPException(403,{"code":"FORBIDDEN"})
-        # Live observation requires an extant source as well as the original
-        # generation owner/membership contract; retained scope metadata alone
-        # does not keep a deleted project's body stream authorized.
-        try:novel_service.get(current_job.novel_id)
-        except (KeyError,FileNotFoundError):raise HTTPException(403,{"code":"FORBIDDEN"}) from None
-        return actor,scope,current_job
+        return _generation_content_context(jid,x_session_token)
     admission=stream_context() if secured else None
     manager=packaged_bootstrap_registry.current() if packaged else None
     if packaged:
