@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import socket
 from pathlib import Path
 import threading
 import sys
@@ -344,13 +345,18 @@ def test_managed_runtime_captures_bounded_logs_and_detects_crash():
 
 def test_owned_runtime_can_be_stopped_without_killing_external_processes():
     lifecycle = RuntimeLifecycle()
+    # Select an OS-assigned available loopback port rather than assuming a fixed
+    # port is free after the real PostgreSQL/network tests have run.
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as reservation:
+        reservation.bind(("127.0.0.1", 0))
+        port = reservation.getsockname()[1]
     definition = RuntimeDefinition(
         "sleeping",
         RuntimeType.LLAMA_CPP,
         sys.executable,
-        "http://127.0.0.1:54322",
+        f"http://127.0.0.1:{port}",
         "127.0.0.1",
-        54322,
+        port,
         launch_arguments=("-c", "import time;time.sleep(30)"),
     )
     started = lifecycle.start(definition, host_argv=("-c", "import time;time.sleep(30)"))
@@ -362,13 +368,18 @@ def test_owned_runtime_can_be_stopped_without_killing_external_processes():
 
 def test_double_start_is_idempotent_and_owns_one_process():
     lifecycle = RuntimeLifecycle()
+    # Match the ownership fixture's OS-assigned loopback allocation: this test
+    # checks process identity, not exclusive ownership of a fixed global port.
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as reservation:
+        reservation.bind(("127.0.0.1", 0))
+        port = reservation.getsockname()[1]
     definition = RuntimeDefinition(
         "single",
         RuntimeType.LLAMA_CPP,
         sys.executable,
-        "http://127.0.0.1:54324",
+        f"http://127.0.0.1:{port}",
         "127.0.0.1",
-        54324,
+        port,
         launch_arguments=("-c", "import time;time.sleep(30)"),
     )
     first = lifecycle.start(definition, host_argv=("-c", "import time;time.sleep(30)"))
