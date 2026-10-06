@@ -3,6 +3,18 @@ import { createPageQuiescer } from './r3-fixture-lifecycle';
 const API = 'http://127.0.0.1:8019/api';
 const owned = new WeakMap<Page, string[]>(), quiet = new WeakMap<Page, ReturnType<typeof createPageQuiescer>>();
 async function body(response: Pick<APIResponse, 'ok' | 'status' | 'text' | 'json'>) { expect(response.ok(), `HTTP ${response.status()}: ${await response.text()}`).toBeTruthy(); return response.json(); }
+async function editorReadsReady(page: Page, historyVersion?: number) {
+  // Prose visibility alone does not establish that the original history and
+  // privacy response bodies have been consumed by their mounted controls.
+  const history = page.locator('.revision-panel');
+  if (historyVersion === undefined) await expect(history.getByText('暂无历史版本', { exact: true })).toBeVisible();
+  else await expect(history.getByRole('navigation', { name: '版本记录时间线', exact: true })).toContainText(`版本 ${historyVersion}`);
+  const privacy = page.getByRole('region', { name: '正文外发策略', exact: true });
+  await privacy.locator('summary').click();
+  const choice = privacy.getByRole('combobox', { name: '当前章节正文与选区', exact: true });
+  await expect(choice).toBeEnabled(); await expect(choice).toHaveValue('LOCAL_ONLY');
+  await privacy.locator('summary').click();
+}
 async function createProject(page: Page, content: string) {
   await page.goto('/'); await page.getByPlaceholder('小说名称').fill(`Continuation style judge ${test.info().testId}`);
   const created = page.waitForResponse(r => r.url().endsWith('/api/novels') && r.request().method() === 'POST');
@@ -13,9 +25,15 @@ async function createProject(page: Page, content: string) {
   // File chapter creation returns raw metadata; GET owns the versioned document.
   const chapter = await body(await page.request.get(`${API}/chapters/${createdChapter.id}`));
   expect(Number.isInteger(chapter.version)).toBe(true);
+  await test.step('Finish original editor reads before changing the fixture source', async () => {
+    await expect(page.getByRole('textbox', { name: '章节正文', exact: true })).toContainText('合成回环');
+    await editorReadsReady(page);
+  });
   const saved = await body(await page.request.put(`${API}/chapters/${chapter.id}`, { data: { version: chapter.version, content } }));
-  await quiet.get(page)!.drain(); await page.reload(); await expect(page.locator('.editorbar')).toContainText('已保存');
+  await test.step('Drain existing page requests before the fixture reload', () => quiet.get(page)!.drain());
+  await page.reload(); await expect(page.locator('.editorbar')).toContainText('已保存');
   await expect(page.getByRole('textbox', { name: '章节正文', exact: true })).toContainText(content.split('\n')[0]);
+  await test.step('Finish reloaded history and privacy before leaving the editor', () => editorReadsReady(page, chapter.version));
   expect(await body(await page.request.get(`${API}/chapters/${chapter.id}`))).toEqual(saved);
   return { novel, chapter: saved, base: `${API}/novels/${novel.id}/experimental` };
 }
@@ -46,7 +64,10 @@ test('intentional decisions suppress a fresh exact-evidence finding while saved 
   const rerun = page.waitForResponse(r => r.url().endsWith('/narrative-judge/runs') && r.request().method() === 'POST'); await panel.getByRole('button', { name: '检查所选已保存章节', exact: true }).click(); const fresh = await (await rerun).json(); expect(fresh.findings[0].decision).toBe('INTENTIONAL'); expect(fresh.findings[0].evidence[0].chapter_version).toBe(current.version);
   await panel.getByLabel('按审核决定筛选', { exact: true }).selectOption('INTENTIONAL'); const inherited = panel.getByRole('article', { name: `检查线索 ${fresh.findings[0].id}`, exact: true }); await expect(inherited).toBeVisible(); await expect(inherited).toContainText('旧检查的私人理由未复制');
   for (const [width, height] of [[1366, 768], [1440, 900], [1920, 1080]]) { await page.setViewportSize({ width, height }); await page.evaluate(() => document.fonts.ready); expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true); await page.screenshot({ path: info.outputPath(`intentional-review-${width}.png`) }); }
-  await quiet.get(page)!.drain(); await page.reload(); await tools(page, '作品审稿'); await panel.getByLabel('查看审阅记录', { exact: true }).selectOption(fresh.id); await panel.getByLabel('按审核决定筛选', { exact: true }).selectOption('INTENTIONAL'); await expect(panel.getByRole('article', { name: `检查线索 ${fresh.findings[0].id}`, exact: true })).toBeVisible();
+  await test.step('Drain existing page requests before reopening persisted intentional decisions', () => quiet.get(page)!.drain());
+  await page.reload();
+  await test.step('Finish persisted chapter history and privacy before reopening Judge', () => editorReadsReady(page, chapter.version));
+  await tools(page, '作品审稿'); await panel.getByLabel('查看审阅记录', { exact: true }).selectOption(fresh.id); await panel.getByLabel('按审核决定筛选', { exact: true }).selectOption('INTENTIONAL'); await expect(panel.getByRole('article', { name: `检查线索 ${fresh.findings[0].id}`, exact: true })).toBeVisible();
 });
 test('two saved style samples retain independent sentence counts and native source positions', async ({ page }) => {
   const { novel, chapter, base } = await createProject(page, 'First unfinished sample'); const createdSecond = await body(await page.request.post(`${API}/novels/${novel.id}/chapters`, { data: { title: '第二份合成样本', content: 'Second unfinished sample' } }));

@@ -29,7 +29,14 @@ test('Task Center reopens exact original Judge receipt after reload without mode
     await page.setExtraHTTPHeaders(headers); await page.goto(UI);
     await page.getByRole('button', { name: '切换本机作品', exact: true }).click(); await page.getByRole('button', { name: novel.title, exact: true }).click();
     for (let visit = 0; visit < 2; visit++) {
+      // Navigation/reload completion precedes React's source and feature reads.
+      // The global shortcut routes to workspace search only after those flags load.
+      await expect(page.locator('.editorbar__identity')).toContainText(chapter.title);
+      await expect(page.locator('.ProseMirror')).toContainText('合成灯塔照亮门口。');
+      await expect(page.getByRole('region', { name: '当前项目上次工作', exact: true })).toBeVisible();
       await page.keyboard.press('Control+k');
+      await expect(page.getByRole('region', { name: '工作现场工具', exact: true })).toBeVisible();
+      await expect(page.getByLabel('搜索中文名称、别名或正文', { exact: true })).toBeFocused();
       await page.getByRole('navigation', { name: '工作现场工具分类' }).getByRole('button', { name: '任务中心', exact: true }).click();
       const card = page.getByRole('region', { name: '任务中心 · 原服务实时读取', exact: true }).locator('article.experimental-record').filter({ hasText: jobId });
       await card.getByRole('button', { name: '打开来源工具', exact: true }).click();

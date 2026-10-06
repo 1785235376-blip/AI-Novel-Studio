@@ -233,10 +233,25 @@ def test_real_two_sessions_event_revoke_isolated_and_restart_nonce(synthetic_end
 
 def test_transport_actual_deadline_and_cancellation():
     from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-    import time
+    from threading import Event, current_thread
+
+    response_release = Event()
+    response_wait_expired = Event()
+    handlers: Queue[Thread] = Queue()
+    arrived = asyncio.Event()
+    loop = None
+
     class Slow(BaseHTTPRequestHandler):
+        timeout = 2
+
         def do_GET(self):
-            time.sleep(.3)
+            handlers.put(current_thread())
+            loop.call_soon_threadsafe(arrived.set)
+            # Only test teardown releases responses. A slow test coroutine must
+            # not let a successful response win the cancellation race.
+            if not response_release.wait(timeout=2):
+                response_wait_expired.set()
+                return
             try:
                 self.send_response(200)
                 self.end_headers()
@@ -249,21 +264,43 @@ def test_transport_actual_deadline_and_cancellation():
     thread = Thread(target=server.serve_forever, daemon=True)
     thread.start()
     async def run():
+        nonlocal loop
+        loop = asyncio.get_running_loop()
         transport = LoopbackTransport(f"http://127.0.0.1:{server.server_port}", timeout=.05)
         with pytest.raises(InteropFailure) as timeout:
             await transport.request("discovery")
         assert timeout.value.code == "TIMEOUT"
-        task = asyncio.create_task(LoopbackTransport(transport.endpoint).request("discovery"))
+        await asyncio.wait_for(arrived.wait(), timeout=2)
+        assert not transport._inflight
+        arrived.clear()
+
+        cancellable = LoopbackTransport(transport.endpoint)
+        task = asyncio.create_task(cancellable.request("discovery"))
+        await asyncio.wait_for(arrived.wait(), timeout=2)
         await asyncio.sleep(.02)
-        task.cancel()
+        assert not response_release.is_set()
+        assert not task.done()
+        assert task in cancellable._inflight
+        assert task.cancel()
         with pytest.raises(asyncio.CancelledError):
             await task
+        assert task.cancelled()
+        assert not cancellable._inflight
     try:
         asyncio.run(run())
     finally:
+        response_release.set()
         server.shutdown()
         server.server_close()
         thread.join(timeout=2)
+        owned_handlers = []
+        while not handlers.empty():
+            owned_handlers.append(handlers.get_nowait())
+        for handler in owned_handlers:
+            handler.join(timeout=2)
+        assert not thread.is_alive()
+        assert all(not handler.is_alive() for handler in owned_handlers)
+        assert not response_wait_expired.is_set()
 
 
 def test_real_diagnostics_rejects_missing_capsule_and_source_content(synthetic_endpoint):

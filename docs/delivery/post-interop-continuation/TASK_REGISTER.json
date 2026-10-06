@@ -1717,5 +1717,18 @@
     },
     "strict_profile_fixture": "29 new opposite-profile reason defects corrected with unchanged original guards and counts; no applicable-PG skip introduced"
   },
-  "api_catalog": "docs/delivery/post-interop-continuation/API_CATALOG.json"
+  "api_catalog": "docs/delivery/post-interop-continuation/API_CATALOG.json",
+  "async_fixture_acceptance": {
+    "state": "SOURCE_FIXED_FRESH_FOCUSED_PASS_FINAL_HOSTED_PENDING",
+    "receipt": "docs/delivery/post-interop-continuation/ASYNC_FIXTURE_STABILIZATION.json",
+    "runtime_change": false,
+    "inherited_fixture_changes": [
+      "tests/test_local_interop_tcp.py",
+      "frontend/src/novel/ImageGenerationPanel.test.tsx"
+    ],
+    "original_assertions_skip_maps_and_deadlines": "PRESERVED",
+    "historical_image_status_interleaving": "UNVERIFIED",
+    "large_judge_trace": "NOT_INSPECTED_TOOL_SIZE_LIMIT",
+    "backend_inventory": 7492
+  }
 }
