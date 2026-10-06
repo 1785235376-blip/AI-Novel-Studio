@@ -4,7 +4,7 @@
 
 All forty packages have bounded implementations and applicable frontend/API entry points in the local integration. `FEATURE_MATRIX.json` distinguishes these implemented slices from the remaining scope. They are not forty fully validated product capabilities.
 
-The historical exact checkpoint `1da63f5` passed all five push/PR lanes. New original-scope refinement `f9173c2` is published and its exact CI is running; its current aggregate and source details are in EXECUTION_CHECKPOINT.md. Registered model/media and PCM assembly refinements are a further active local wave. Earlier green evidence is not automatically attributed to new code.
+Runtime 4e476ce passed all five push/PR lanes. Exact actual counts,1,344 marked PGpass inventory and64browserpass receipts are in FINAL_DELIVERY.md and evidence/refinement-4e476ce. Reopened registered model/media and PCM assembly seams are implemented; the documentation-only successor still requires its own exact CI readback.
 
 The independent follow-up review is **BLOCKED** by the recorded platform response. It has not been retried or routed elsewhere. Ordinary fixes and regression tests of its already reported findings do not close that review. See `SECOND_SLICE_REVIEW_STATUS.md`.
 
@@ -23,8 +23,8 @@ Shared HTTP error-header retention and original project-level asset authorizatio
 - U01 now restores current-authority workspace/reference/filter/task pointers and the last local project; U10 now creates a real isolated sample through original authorities. Their functional flows, visible-prose geometry and recovery toolbar hit targets passed at bf0ec2b0. Browser storage clearing, unavailable branch adapters and original create-without-receipt uncertainty remain explicit recovery boundaries.
 - Portable export restores a selected manuscript/media subset into a new project; the original backup remains the full-history/Canon backup. Fork/merge supports selected local rich-document sources and original character/location/relationship records attached to the same owned fork, with explicit review, original CAS, endpoint closure and unknown-write reconciliation. Offline exchange selection additions/withdrawals are previewed.
 - Offline synchronization has a real two-process loopback test and manual outbox/inbox protocol. No cloud transport is deployed or automatically contacted. Real-time co-editing is not implemented.
-- Declarative workflows now have a local registered model-node coordinator and rooted DAG joins in the next staging wave. Exact-head aggregate/hosted verification is pending. Executable plugins remain DENY_ALL and templates remain untrusted data.
-- Manual multilingual editions, reviewed comic layouts and interactive story exports have real deterministic workflows. Reviewed local segment translation is wired in the next staging wave; automatic source-change retranslations are intentionally absent. Actual translation/model-created art/voice quality, arbitrary engine execution and complete production typography remain unverified.
+- Declarative workflows now have a local registered model-node coordinator and rooted DAG joins in the verified4e476ce runtime. Exact-head aggregate/hosted verification passed. Executable plugins remain DENY_ALL and templates remain untrusted data.
+- Manual multilingual editions, reviewed comic layouts and interactive story exports have real deterministic workflows. Reviewed local segment translation is wired in the verified4e476ce runtime; automatic source-change retranslations are intentionally absent. Actual translation/model-created art/voice quality, arbitrary engine execution and complete production typography remain unverified.
 - ASR/forced alignment, OCR/vector/vision research adapters and unsupported media families remain explicit adapter boundaries. Literal checks, measured metrics and manual simulation are not literary-quality or semantic-understanding claims.
 
 ## Environment and quality

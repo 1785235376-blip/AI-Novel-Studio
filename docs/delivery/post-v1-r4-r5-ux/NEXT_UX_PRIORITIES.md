@@ -1,23 +1,25 @@
-# New work candidates after original-scope completion
+# Next useful work after reconciled engineering delivery
 
-These are recommendations, not newly executed tasks. The forty-package matrix remains the authoritative record of current limits. Independent follow-up review is BLOCKED, so this is an engineering prioritization, not an independent all-clear.
+Recommendations only; nothing here authorizes new providers, deployment, runtime installation, data sharing or an independent-review retry.
 
-## First close the remaining acceptance gates
+## Finish genuine acceptance gates
 
-1. Restore the supported independent-review route and review the final exact source. Preserve the prior report and already repaired findings; implementation regression is not a substitute for independent closure.
-2. Run native Windows acceptance on a real connected test machine: actual Chinese IME, WebView2 focus/zoom/multi-monitor, vault access, installer/upgrade/uninstall retention and crash/power-loss boundaries. Hosted compile/package smoke is insufficient evidence.
-3. Validate one registered local model per text/image/TTS family with recorded runtime/model fingerprints, current consent and real quality samples. Keep paid/cloud execution and environment changes separately authorized; never promote synthetic adapters into quality evidence.
+1. Use a supported authorized independent-review route when available; preserve the existing BLOCKED report. Do not rephrase or reroute the stopped request. Engineering regression is not audit closure.
+2. Run native Windows acceptance on an actually connected test machine: Chinese IME, WebView2 focus/zoom/multi-monitor, OS vault, upgrade/uninstall retention and crash/power-loss boundaries. Hosted build/package smoke is not this evidence.
+3. With explicit runtime configuration and consent, evaluate one real local text/image/TTS model family and actual target reader/NLE software. Record observed fingerprints, quality samples, resource use and truthful costs; no synthetic promotion.
 
-## Complete the original scope first
+## Improve old workflows based on observed friction
 
-U03/U08/U14/U16/B09/B10 refinement and remaining A01/A03/A07/A13/U06/B02/B03/B05 execution seams are active original requirements. See SCOPE_RECONCILIATION.md and FEATURE_MATRIX.json. They are not recommendations for a separate future project.
+- Prioritize cross-component request-contract regression: the actual lost App preview receipt was more consequential than visual polish. The current forwarding/guard tests are fixed; extend the same typed-boundary discipline to future consumers before adding more entry points.
+- Simplify advanced evidence presentation without hiding it: readable summaries first, exact hashes/JSON/identities on demand, preserving clear unknown-cost and stale/permission recovery actions.
+- Use real author feedback to group frequent workbench tools and shortcuts within the current shell; avoid a new top-level panel for every feature. Existing search, recents, filters and safe commands already work.
 
-Large-workbench navigation should continue to respond to observed flow defects within the current shell. No visual rewrite or unbounded aesthetic pass is required.
+The original in-scope search/exclusion/maintenance/fork/sync/model execution gaps are completed and are not listed as new work. Optional cloud/branch-manuscript storage expansions need explicit architectural/runtime scope, not a quiet extension of this delivery.
 
-## Separate new feature candidates
+## Genuinely new feature candidates
 
-- A local-only, opt-in usability session recorder with redacted interaction timing and explicit export, to identify repeated dead ends without collecting manuscript or uploading telemetry.
-- A guided publication rehearsal that opens the actual generated EPUB/DOCX/PDF in authorized target applications, captures compatibility receipts, and links each warning back to its existing source. This adds target-software acceptance, not another simulated preview.
-- An author-controlled comparison notebook for evaluated model/routing experiments, combining immutable request receipts, anonymized candidate votes and exact costs only where measurement exists. It should never silently rerun providers.
+- Local-only opt-in usability timing recorder with redacted events and explicit export, without manuscript capture or automatic telemetry.
+- Guided publication rehearsal using authorized real EPUB/DOCX/PDF target applications, with compatibility receipts linked to existing source warnings.
+- Author-controlled comparison notebook for existing benchmark/request/cost evidence and voluntary blind preferences, without automatic reruns or fabricated quality rankings.
 
-Order the next implementation by observed user friction and available verified environment, rather than the number of new panels. Do not merge, release, deploy, install runtimes or incur provider charges based only on this recommendation list.
+Order by observed user friction and the verified environment. Do not start unlimited new feature or aesthetic work from this recommendation list.

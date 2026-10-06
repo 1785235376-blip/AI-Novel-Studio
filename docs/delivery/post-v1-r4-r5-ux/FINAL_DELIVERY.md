@@ -1,60 +1,53 @@
-# Historical first bounded engineering checkpoint
+# R4/R5/UX reconciled engineering delivery
 
-The report below records the pre-reconciliation checkpoint, verified again at `1da63f5`. It is not final closure of the original forty-package scope. Current published refinement is `f9173c2bedf4866d8f28119baabc53ed2aa8d0dc`; see [SCOPE_RECONCILIATION.md](SCOPE_RECONCILIATION.md), [EXECUTION_CHECKPOINT.md](EXECUTION_CHECKPOINT.md) and the current matrix. Further adapter execution wiring is active. Historical evidence remains unchanged.
+## Exact source and verified checkpoint
 
-# R4/R5/UX bounded engineering delivery
+Repository: 1785235376-blip/AI-Novel-Studio, branch `work/post-v1-r4-r5-ux`, [Draft PR39](https://github.com/1785235376-blip/AI-Novel-Studio/pull/39), stacked on released R3 `d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b`. Frozen PR37 remains `1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0`.
 
-## Identity and baseline
+Verified runtime **4e476ce853aa26b395a9fe452d7d4a35b091e057**, tree **d112ece92c261b1a28c87c022d4c6e942a277412**. Both [push 37391403192](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37391403192) and [PR 37391407528](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37391407528) passed all five lanes, attempt 1. The PR checkout has the identical tree. The following documentation/evidence-only successor changes no runtime, tests, dependencies or CI configuration; its final SHA and own exact-head CI are recorded in PR39 after completion, avoiding a self-referential commit hash.
 
-- Repository: [1785235376-blip/AI-Novel-Studio](https://github.com/1785235376-blip/AI-Novel-Studio)
-- Branch: `work/post-v1-r4-r5-ux`; [Draft PR39](https://github.com/1785235376-blip/AI-Novel-Studio/pull/39), base `work/post-v1-feature-forward-r3`.
-- Start/parent: released R3 `d712ab81e9d87bfd5902d0a6bbd47c4edaccac5b`, tree `19180ad00035b9eda2baf0795ea947ea943b7e1f`.
-- Frozen V1 PR37 remains `1ad947e458a1ebb4b0f74e06b4e0e3fb3322bab0`. No backport, merge, release or deployment.
-- Verified engineering source: `bf0ec2b09ef03187536f0e9a677142e3e915aa44`, tree `b54040210916fc5a76bc94b79d7ab923d2647cfe`. The subsequent final commit changes only delivery documents/evidence; its exact remote SHA and exact-head CI are recorded in PR39, avoiding a self-referential commit hash.
-- Actual engineering model: gpt-6-astra. [Official commit index](COMMIT_INDEX.md).
+Actual implementation model: gpt-6-astra. [Commit index](COMMIT_INDEX.md). No merge, release, deployment, actual backport, paid provider, real user manuscript, private credential or automatic user-runtime change.
 
-## Actual scope and status
+## What was completed
 
-[The forty-package matrix](FEATURE_MATRIX.md) records F00, A01–A13, B01–B10 and U01–U16 separately, including actual implemented capability, reuse/dependencies, UI/API entry points and remaining scope. Every applicable package has a real bounded author workflow. Native/model/adapter boundaries stay PARTIAL rather than becoming forty “fully complete” checkmarks.
+All 40 IDs are individually registered and described in [FEATURE_MATRIX.md](FEATURE_MATRIX.md) and its machine-readable companion. Existing authorities and UI shell/tokens are reused. The first bounded checkpoint 1da63f5 was not treated as final scope closure: feasible original requirements were reopened and implemented.
 
-The engineering loops cover original writing/recovery/resume/search/tasks, reviewed source/privacy-aware requests, original Draft/Diff/Accept, graph/knowledge/budget/lineage/revision, manual production/read/export workflows, isolated no-key onboarding, and local reviewed collaboration/fork/sync. They are usable deterministic workflows, not a substitute for the unconfigured real-model portions. **Engineering loop tested; real model effect awaits acceptance.** Unregistered model families/adapters and unsupported branch manuscript sources remain unavailable and cannot complete those real tasks merely because a diagnostic or contract exists.
+- U03 now performs storage-manifest incremental chapter reads, authorized multi-project search, bounded filters/paging, cancellation/rebuild and dirty/version-fenced cross-project navigation.
+- U08 now binds exact identified-source digests/exclusions and conservative derived-context removal through actual preview and final dispatch. The real App receipt-forwarding defect observed in `9bdae` was repaired; no legacy-generation fallback is allowed for an enabled inspector without a reviewed receipt.
+- U14/U16/A06 now retain missing-media hashes/relink/conflict/storage receipts and admit registered IMAGE/AUDIO batch tasks through original broker/executor/approval/accounting paths. Unknown upstream usage remains unknown; no invented zero actual bill.
+- B09/B10 now include supported original structured-record CAS/three-way merges attached to an owned manuscript fork, explicit endpoint/ID closure and local sync selection addition/withdrawal with exact baselines.
+- A01/A03/B02/B05 now execute explicit registered-local simulator candidates, separately labelled Judge opinions, bounded rooted DAG/model nodes and selected-segment translation through original author/broker/job services. Results stay proposals/drafts and return to their owning human-review tools.
+- A07/U06/A13 now bridge supported original local A1111/ComfyUI registration into image generation, benchmarks, COVER/STORYBOARD refresh and observed manifests/replay. Real model identity is never synthesized from a name.
+- B03 now assembles measured per-segment pauses/reordering through the existing PCM mixer and original candidate/asset review, with actual WAV preview/export.
 
-Default-OFF exact flags, dependency checks, V1 server-force-OFF, isolated future data, original source/version/actor/branch/permission/privacy/final-dispatch checks and human approval remain. Templates/workflows are untrusted data; executable plugin policy remains DENY_ALL.
+Original editor/history/export, recovery/resume, graph/knowledge, budget/lineage, revision, research, reader/session, director/OTIO, subtitles, templates, comic raster, interactive export and asynchronous review workflows remain covered. [Scope reconciliation](SCOPE_RECONCILIATION.md) explains supported entities and genuine boundaries rather than relabeling implementation gaps as quality verification.
 
-## Layered verification at the exact engineering source
+## Actual test layers
 
-[PR CI 37372638988](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37372638988) finished **SUCCESS across all five lanes**, attempt 4. The merge checkout tree was independently verified equal to the head tree.
+| Layer | Exact runtime 4e476ce result |
+|---|---|
+| Frontend | 1,045 PASS; 6 optional HTTP skips; TypeScript/build/token guard PASS |
+| Hosted Chromium | 64 PASS, 0 skipped/failed: 45 R4 + 2 business + 9 geometry + 7 R3 + 1 immutable-export |
+| File | 3,754 PASS; 1,354 expected skips, primarily opposite-backend contracts; 2 separate real TCP tests PASS |
+| PostgreSQL 16 | 3,755 PASS; 1,353 expected non-PG/native/legacy skips; all 1,344 marked contracts present and PASS, 0 skipped/failed/missing |
+| Windows | Host compile/native contracts and fresh unsigned internal package PASS; interactive acceptance NOT_RUN |
+| Screenshots | 144 original PNG hashes checked; 12 representative original images directly inspected; 10 retained in repository |
+| Models | Synthetic protocol and captured registered-runtime HTTP contracts; real inference/GPU/voice/translation quality NOT_RUN |
 
-| Layer | Actual result | Boundary |
-|---|---|---|
-| Frontend unit/types/build/tokens | 981 passed, 6 optional HTTP skipped; types/build/token guard passed | Large App chunk warning retained: 634.90 kB; deferred workbench 477.48 kB |
-| File backend | 3,409 passed, 1,044 expected skips, 301.73 s | The skipped PG-only/platform cases are not File passes |
-| Real two-process TCP sync | 1 passed, 13.24 s | Actual separate local processes, not TestClient/mock transport; no cloud deployment |
-| Real PostgreSQL 16 | 3,411 passed, 1,042 expected skips, 633.69 s | Zero skipped marked-PG contract; zero failures/errors; 1,009 explicit PG parameter cases all executed |
-| Hosted Chromium | 35 R4 + 2 business + 9 geometry + 7 R3 + 1 immutable-export = 54 passed, none skipped | Synthetic data; mock model output explicitly labelled |
-| Native Windows build/package lanes | Both successful | Compile/contracts/unsigned internal package smoke, not interactive user acceptance |
+[Original source-specific receipts and screenshots](evidence/refinement-4e476ce/README.md) include the exact PG case inventory. App 641.11 kB and deferred workbench 543.43 kB minified remain an explicit large-chunk limitation. U13 measured synthetic scale/input receipts remain method- and source-specific, not promises for every computer.
 
-Queued jobs that did not execute and the interrupted PG attempt remain historical failures. The PG runner shutdown at 63% produced no complete test receipt; only the later successful retry establishes PG acceptance. No assertion was removed, no golden changed, and no skipped or cancelled lane was counted as passed.
+## Retained failures and corrections
 
-## Observed defects repaired
+`f9173c2` had two browser synchronization failures and one erroneously skipped marked PG test. The tests now use exact response/version barriers, preserve409/unchanged-editor/exclusion assertions, and execute the actual PG non-versioned-refresh contract.`9bdae` exposed the real App receipt forwarding bug and a missing creation-response version assumption; both are repaired and their journeys now pass. Its PG runs timed out at20 minutes while still progressing; a bounded PG-only30-minute cap retained all assertions and the strict gate, and actual runtime completed in 25:43/25:30. Previous failures, cancellation and unexecuted stages remain historical failures, never added to pass counts.
 
-- Inherited File project delete/lazy-read ghost resurrection: reproduced independently, repaired with shared lifecycle coordination and separate backport-candidate evidence. Frozen branches untouched.
-- Current-authority recovery, future-origin feature gating and acceptance/terminal settlement defects reported before the review block: implemented fixes with retained regressions. These fixes do not close independent review.
-- Broker reservation/cancellation versus final dispatch: exact bound state-transition repair; stale unrelated transitions remain rejected.
-- Actual frontend regressions: accessible request/source and task-region names; fresh original project/source fixtures; workspace chrome occupying the editor row; sidebar-toggle interception of Save/export controls. Real content, history, pointer-hit and downloaded-output assertions now pass.
+## Acceptance boundaries
 
-[Corrected original screenshots and receipts](evidence/browser-bf0ec2b0/README.md) show visible prose, intact recovery buttons and the unchanged shell at 1280/1366/1440/1920. Five unedited PNGs were directly inspected. [Historical failures](EDITOR_CHROME_REPAIR.md) remain documented. The current visual handoff is the original root [OPUS_UI_HANDOFF.md](../../../OPUS_UI_HANDOFF.md), not a duplicate.
+Independent follow-up review remains **BLOCKED** by the original platform response; no retry, rephrase, reroute or implementation-test substitute. See SECOND_SLICE_REVIEW_STATUS.md. This is an engineering delivery, not independent audit closure or permission to merge/release.
 
-U13 100k/500k/1m Han: 30-sample input-render proxy p95 **26.3/36.8/48.0 ms**; warm browser-to-File-search p95 **66.5/200.2/373.9 ms**. Raw source/method/host data are retained. These are not physical keyboard/display or native Windows IME measurements.
+Collaboration branch metadata does not provide a branch-owned manuscript repository. Local project forks and supported records work; no base manuscript is substituted for a branch. Optional OCR/vector/vision/ASR/alignment, unsupported media families/reference conditioning, cloud coordinators/production transport and real-time co-editing remain explicit unsupported/optional scope. Actual model/GPU quality, native Windows IME/vault/screen-reader/multi-monitor/installer retention and target NLE/reader/RenPy application acceptance require their real environments. No mock result is promoted to those claims.
 
-## Unaccepted boundaries and next checkpoint
+All future flags remain default OFF and V1 mode forces them OFF on the server. Exact dependencies, actor/source/version/privacy/final-dispatch checks, isolated experimental data, Draft/Diff/Accept and DENY_ALL executable plugins remain. Historical per-package local receipts stay labelled local; this central exact-source hosted evidence does not pretend local PG/browser execution occurred.
 
-The second-slice independent follow-up review is **BLOCKED** by the recorded platform response. It was not retried, rephrased or routed through another reviewer/tool. Implementation tests and this engineering report are not an independent all-clear. [Exact status](SECOND_SLICE_REVIEW_STATUS.md).
+## Handoff and next work
 
-Native interactive Windows/WebView2/IME/screenreader/multi-monitor, real GPU/text/image/TTS/translation quality, target NLE/EPUB-reader/RenPy acceptance, automatic cloud transport, unregistered model adapters and branch-specific manuscript writers remain NOT_RUN/unavailable as specified in [KNOWN_LIMITATIONS](KNOWN_LIMITATIONS.md). No paid provider, private credential or real manuscript was used.
-
-The immediate delivery checkpoint is exact CI on the documentation/evidence successor. The next acceptance work is a supported independent-review route and explicitly authorized real native/model/target-app environments. This delivery does not authorize deployment or automatic local runtime edits.
-
-## Separate recommendations
-
-[NEXT_UX_PRIORITIES.md](NEXT_UX_PRIORITIES.md) distinguishes unfinished acceptance gates, useful improvements to existing features, and genuinely new candidates. Prioritize incremental search, precise source provenance and budgeted variant reservations, reviewed asset/portable-project maintenance, and real branch adapters. New candidates are opt-in local usability measurements, target-application publication rehearsal and an author-controlled comparison notebook. These are recommendations only, not an additional open-ended implementation wave.
+[EXECUTION_CHECKPOINT.md](EXECUTION_CHECKPOINT.md) supplies resume steps, [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md) names remaining boundaries, and the original root OPUS_UI_HANDOFF.md links functional UI/evidence constraints. [NEXT_UX_PRIORITIES.md](NEXT_UX_PRIORITIES.md) separates acceptance gates, future old-workflow improvements and genuinely new suggestions. None are silently started as unlimited additional scope.

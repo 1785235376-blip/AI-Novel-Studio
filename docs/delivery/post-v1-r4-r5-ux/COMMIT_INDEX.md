@@ -64,3 +64,36 @@ Exact official Git history from released R3 parent `d712ab81e9d87bfd5902d0a6bbd4
 | `038c322d98f034b04ab27770239fbfed8570e604` | docs(delivery): retain real PostgreSQL, browser and layout-repair evidence |
 | `574ca0421df5c60be4f86aa9caff274a52dc71e3` | fix(ux): reserve inspector hit area and reflow original save controls |
 | `bf0ec2b09ef03187536f0e9a677142e3e915aa44` | docs: retain actual toolbar failure and stronger action-target verification |
+
+## Reconciled continuation: official publication history
+
+These bounded connector publication commits preserve complete exact trees. Intermediate transport parts are not separately accepted product snapshots; verification attaches to the named final checkpoint. Logical source changes were committed separately before publication, including storage CAS, registered coordinators, media last-hop guard, PCM assembly and App receipt repair. Local-to-official metadata changes never substitute for exact-tree comparison.
+
+| Official SHA | Commit |
+|---|---|
+| `544e6ea616005a7078be0d993e21bd573f6b9394` | docs(evidence): retain corrected original screenshots and verified PG/browser receipts |
+| `1da63f5b698a71ebb2a3e6a4e94f0634e8b8a487` | docs(delivery): reconcile all forty bounded capabilities, exact evidence and final UI handoff |
+| `29908cdbfb271aa8a1ae1c157bc1b6f95a4547be` | feat: close original search, source, portable and fork scope (1/10) |
+| `9d867863fb0bd2a4ed2b9c5a4d38aec52323c324` | feat: close original search, source, portable and fork scope (2/10) |
+| `f0a1646618959d151cd863eaaba777c8e762871a` | feat: close original search, source, portable and fork scope (3/10) |
+| `d7591862b18abaf96a0749f9c4e69c9600d1adbf` | feat: close original search, source, portable and fork scope (4/10) |
+| `717f19794013909972a6fad8ac0102954464d0f2` | feat: close original search, source, portable and fork scope (5/10) |
+| `feec13d969a3181a50884786999884762852c6aa` | feat: close original search, source, portable and fork scope (6/10) |
+| `aeaf86c7e7bd466860c48887a6d2d0a67840eb5c` | feat: close original search, source, portable and fork scope (7/10) |
+| `1b1ba6974fb5c3af3d1d974c68b093699a6d77fd` | feat: close original search, source, portable and fork scope (8/10) |
+| `774bcd93ff0bf43338add2e3329f9445733c1e65` | feat: close original search, source, portable and fork scope (9/10) |
+| `f9173c2bedf4866d8f28119baabc53ed2aa8d0dc` | feat: close original search, source, portable and fork scope (10/10) |
+| `71866b5298bab5b3911196383a54f3638eadf67c` | feat: complete original registered model, media and audio execution (1/10) |
+| `d8291aba990c8e52fe5a7bba3d1646be2cd07dee` | feat: complete original registered model, media and audio execution (2/10) |
+| `cb71c5878103caf4c94f9ace45fbfe23907c526e` | feat: complete original registered model, media and audio execution (3/10) |
+| `831a7c8132a3387ae025b78fb38a09b6e8c010d4` | feat: complete original registered model, media and audio execution (4/10) |
+| `3a4e9fd07f2c8998583e8f0ffe7548b8eec81199` | feat: complete original registered model, media and audio execution (5/10) |
+| `bca92c6bdcc868e2c09e85040297180f230183cc` | feat: complete original registered model, media and audio execution (6/10) |
+| `ba7b617620228dd9be9bcf307591fdac114fc5ea` | feat: complete original registered model, media and audio execution (7/10) |
+| `2300853b9f80b80c330c0902b024547eff00bc19` | feat: complete original registered model, media and audio execution (8/10) |
+| `0ac265676c1739f1f5ce82b80d43161c2819e756` | feat: complete original registered model, media and audio execution (9/10) |
+| `4d7b46a114beac85165432eadbba32436f402a5b` | feat: complete original registered model, media and audio execution (10/10) |
+| `9bdae526df25eaeef254c6992ddab5240d69fadc` | test: repair observed browser synchronization and execute real PG search contract |
+| `5f16e949a012265cce36609afff12c5edb19c28e` | fix(ux): preserve exact reviewed author request receipt through App |
+| `98a1a3c455601e38cc608c6fbac89bb011a68e63` | test: retain exact source checks and bounded original PNG evidence |
+| `4e476ce853aa26b395a9fe452d7d4a35b091e057` | ci: retain full expanded PostgreSQL contracts with a bounded 30-minute cap |

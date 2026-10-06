@@ -1,19 +1,15 @@
 # Execution checkpoint
 
-## Active original-scope reconciliation
+## Verified runtime
 
-Published remote: `f9173c2bedf4866d8f28119baabc53ed2aa8d0dc`, exact tree `292c4251dd01abf53b75979d9f11f39b0771e814`. Its source pin was local `126c317815b847297f1970dbb9974f7696d44fd4`. This includes U03/U08/U14/U16/A06/B09/B10 refinements. PR run 37386646774 and push 37386642938 are running. UI 1016 passed, six optional HTTP skips; types/build/tokens passed. Corrected File 3501 passed, 42 optional skips, 1145 PG parameters deselected; equipped parser/font full rerun pending. No local PG/browser claim.
+Remote/local source 4e476ce853aa26b395a9fe452d7d4a35b091e057, tree d112ece92c261b1a28c87c022d4c6e942a277412. Both push 37391403192 and PR 37391407528 passed all five lanes, attempt 1. Exact receipts are in evidence/refinement-4e476ce. All reopened feasible original-scope seams are implemented; no active feature-worker edits remain.
 
-The main integration branch contains a subsequent local wave: B02 model-node/DAG, A03 judge model opinions, B05 segment translation, A01 model candidates, registered image production/benchmark/refresh/replay, and B03 pause-aware assembly. Shared original job origins keep these outputs draft-only, and task-center navigation returns to each original review tool. Final aggregate and hosted verification of that wave remain pending. Do not reset the main worktree to the earlier remote while feature changes are active.
+File: 3,754 passed plus 2 real TCP tests. PostgreSQL: 3,755 passed, including all 1,344 marked contracts. Frontend: 1,045 passed and 6 optional HTTP skips. Browser: 64/64 passed. Both Windows build/package lanes passed. Actual model quality, native interaction, target-application acceptance and independent review remain separate.
 
-The previous exact remote `1da63f5b698a71ebb2a3e6a4e94f0634e8b8a487` remains green in history. Its old FINAL_DELIVERY.md is a source-specific report, not completion of all deterministic requirements. See SCOPE_RECONCILIATION.md for the active versus genuine external boundaries.
+## Documentation/evidence successor
 
-All forty packages remain registered; default OFF, server-authoritative V1 fence, explicit dependency allowlist, current source/actor/privacy/dispatch authority and DENY_ALL executable plugins are preserved. Independent follow-up review remains BLOCKED, with no retry/rerouting or engineering-test substitute. PR39 remains Draft. No frozen branch edits, backport, merge, release, deployment, paid call, real user manuscript or automatic user-runtime modification.
+This next checkpoint changes only delivery docs, the original OPUS_UI_HANDOFF.md and unmodified selected screenshots/receipts. It changes no app/frontend runtime, tests, dependency files or CI configuration. Read PR39 for its final remote SHA/tree and own exact-head CI. Do not call a new documentation head green until its actual run finishes. If interrupted, keep the current default-OFF Draft branch and resume by reading exact workflow jobs; repair only observed failures under the existing authorization.
 
-First-refinement equipped File completion: exact source `126c317` / remote-equivalent `f9173c2`, tree `292c4251dd01abf53b75979d9f11f39b0771e814`: **3533 passed, 10 explicit platform/manual-gate skips, 1145 real-PG parameters deselected**, 313.18 seconds. OTIO parser and pinned CJK font paths were supplied. This supersedes the earlier incomplete-optional-dependency invocation for that source; neither substitutes for hosted PostgreSQL/browser.
+## Remaining boundaries
 
-## Registered-execution validation boundary
-
-Runtime pin `e49a5cf`, tree `09dcdc686f68f154f35e11c3b0830e5e8ad65aa4`: full equipped File **3750 passed /10 explicit platform or manual-gate skips /1342 PostgreSQL parameters deselected**,459.10 seconds. Corrected frontend pin `804fb65`: **1043 passed /6 optional HTTP skips**, TypeScript/build/token guard passed. Later source differences are test/browser/docs only. See ADAPTER_REFINEMENT_RECEIPT.json for source-specific counts; new exact-head hosted verification remains pending.
-
-First-refinement f9173c2 hosted File3533PASS plus2realTCPPASS and bothWindowslanesPASS. Its frontend had37R4journeysPASS and2newtestfailures: U08 uncheck waited on the intentionally invalidated preview node; U03 matched editorH1 before the debounced search returned. Real trace evidence was used; tests now preserve exact next-request/source-version/409/current-editor assertions. Its PostgreSQL had3533PASS but the strict gate failed because one marked test skipped a File-specific branch. That test now executes the corresponding real PostgreSQL read-only/non-versioned-source-change contract. The gate and original assertions were not weakened. Historical failures remain failures.
+Independent follow-up review is BLOCKED and must not be retried/rerouted. Explicit optional adapters/cloud transport, absent original collaboration branch-manuscript authority and real native/model/target-app acceptance remain. The all 40 matrix retains these as product/acceptance PARTIAL rather than hiding missing wiring. No merge/release/deploy, actual backport, paid call or frozen PR37/38 edit.

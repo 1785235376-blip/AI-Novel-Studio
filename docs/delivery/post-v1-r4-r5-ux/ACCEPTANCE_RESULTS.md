@@ -1,3 +1,11 @@
+# Current exact-source acceptance layers
+
+Runtime 4e476ce853aa26b395a9fe452d7d4a35b091e057, tree d112ece92c261b1a28c87c022d4c6e942a277412: both push 37391403192 and PR 37391407528 all five lanes passed, attempt 1. Frontend1,045 PASS/6 optional HTTP skips;64 hosted browser cases passed/0 skipped/failed; File: 3,754 PASS/1,354 expected skips+2TCP; realPG: 3,755 PASS/1,353 expected skips with1,344 marked PGcontractsPASS/0 skipped/failed/missing; both Windows build/package lanes passed. Full layer definitions and original case/PNG hashes are in evidence/refinement-4e476ce/VERIFICATION.json and POSTGRES_CASE_RECEIPT.json.
+
+The document/evidence successor requires its own exact-head CI, read fromPR39. Independent follow-up review remains BLOCKED; native interactive/model quality/target-app acceptance NOT_RUN. The following older entries are historical source-specific receipts, not pending work or current acceptance claims. Their failures and skips remain preserved.
+
+---
+
 # Acceptance results
 
 This delivery distinguishes deterministic implementation, exact-source tests, native/runtime quality and user acceptance. All forty IDs, seven waves, exact allowlists/dependencies, default-OFF and server-enforced V1 override are registered and tested. A registered or locally tested package is not automatically a fully accepted product capability.
