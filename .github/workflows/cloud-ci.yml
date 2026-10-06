@@ -30,7 +30,10 @@ jobs:
     # The shared-repair suite adds 638 marked PG cases (1,982 total). Both
     # 94e74 runs reached the 30-minute outer cap while still advancing at
     # 87%/94%. Keep every test/timeout/no-skip assertion and a finite outer cap.
-    timeout-minutes: ${{ matrix.backend == 'postgres' && 45 || 20 }}
+    # Local Interop adds 6–7 minutes to the measured ~42-minute full PG
+    # baseline. This finite capacity adjustment preserves every test, command,
+    # per-test timeout and strict no-skip gate; it is not an observed timeout.
+    timeout-minutes: ${{ matrix.backend == 'postgres' && 55 || 20 }}
     strategy:
       fail-fast: false
       matrix:

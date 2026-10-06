@@ -184,7 +184,15 @@ export function LocalTutorDialog(props: LocalTutorProps & { initialView?: View; 
   useLayoutEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
     closeButton.current?.focus();
-    return () => { if (previous?.isConnected) previous.focus(); };
+    // Native buttons lose focus when disabled during an async request. Keep the
+    // modal keyboard boundary even when the browser falls back to document.body.
+    const outsideKey = (event: KeyboardEvent) => {
+      if (!alive.current || !dialog.current || dialog.current.contains(event.target as Node)) return;
+      if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); void close(); }
+      else if (event.key === 'Tab') { event.preventDefault(); event.stopPropagation(); closeButton.current?.focus(); }
+    };
+    document.addEventListener('keydown', outsideKey, true);
+    return () => { document.removeEventListener('keydown', outsideKey, true); if (previous?.isConnected) previous.focus(); };
   }, []);
   // A fresh version, changed selection or unsaved editor invalidates approval.
   const sourceIdentity = JSON.stringify([props.chapterVersion, props.sourceReady, props.selection?.text_start, props.selection?.text_end, props.selection?.text]);

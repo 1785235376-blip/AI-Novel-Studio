@@ -437,3 +437,25 @@ it('does not let a late disconnect failure undo an acknowledged master OFF', asy
   await act(async () => finish(response({ code: 'TRANSPORT_ERROR' }, 503)));
   expect(screen.queryAllByText('撤销状态 UNKNOWN')).toHaveLength(0);
 });
+
+it('Escape closes an unavailable-Tutor dialog after async button focus falls back to body', async () => {
+  handler = path => path === '/connect' ? response({ code: 'TUTOR_UNAVAILABLE' }, 503) : undefined;
+  render(<Harness {...props()} />);
+  const trigger = screen.getByRole('button', { name: '问助手' }); trigger.focus(); fireEvent.click(trigger);
+  await screen.findByRole('checkbox', { name: 'Enable Local Tutor Integration' });
+  fireEvent.change(screen.getByRole('textbox', { name: '开发用本机 Tutor 地址' }), { target: { value: 'http://127.0.0.1:9' } });
+  const connectButton = screen.getByRole('button', { name: '连接本机 Tutor' }); connectButton.focus(); fireEvent.click(connectButton);
+  await screen.findByRole('alert'); (document.activeElement as HTMLElement).blur();
+  expect(document.activeElement).toBe(document.body);
+  fireEvent.keyDown(document.body, { key: 'Escape' });
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+  expect(document.activeElement).toBe(trigger);
+});
+
+it('Tab returns escaped async focus to the active dialog without reaching the underlying workspace', async () => {
+  render(<Harness {...props()} />); fireEvent.click(screen.getByRole('button', { name: '问助手' }));
+  await screen.findByRole('checkbox', { name: 'Enable Local Tutor Integration' });
+  (document.activeElement as HTMLElement).blur(); expect(document.activeElement).toBe(document.body);
+  fireEvent.keyDown(document.body, { key: 'Tab' });
+  expect(document.activeElement).toBe(screen.getByRole('button', { name: '关闭本机 Tutor' }));
+});

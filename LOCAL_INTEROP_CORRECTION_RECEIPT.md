@@ -72,3 +72,9 @@ Synthetic peers remain MOCK_ONLY. Development HTTP peer identity is self-declare
 actual current-user/installed-product mutual attestation and Tutor Desktop wiring
 remain LOCAL_REQUIRED. Windows smoke verifies the standalone transport reference,
 not actual Tutor Desktop integration or a hostile cross-user attempt.
+
+## Hosted modal focus and finite PostgreSQL capacity
+
+Both `a1b42cf` frontend jobs passed 1102 unit tests (7 optional skips), all 64 original browser tests, the real-client roundtrip and eight of nine Interop scenarios. The remaining unavailable-Tutor Escape failure was reproduced locally: an asynchronously disabled button can leave focus on `document.body`, outside the modal handler. A narrow capture-phase Escape/Tab fallback now retains the active modal boundary when focus escapes its subtree. The hosted assertions remain unchanged. Local verification: 1104 passed / 7 skipped; 56 focused tests; TypeScript, production build and token checks passed. No local browser retry was attempted. The successor must run its own hosted tests.
+
+The full PostgreSQL job's outer limit is adjusted from 45 to a finite 55 minutes: its measured repaired baseline is approximately 42 minutes and the added Interop PostgreSQL suite takes 6–7 minutes. This is a capacity adjustment, not a claim that the current run timed out. All test commands, assertions, individual test timeouts, and the strict PostgreSQL skip gate remain unchanged. Other job limits are unchanged; a failure at 55 minutes requires investigation rather than automatic limit increases.
