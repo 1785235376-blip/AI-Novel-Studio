@@ -71,7 +71,20 @@ jobs:
           TEST_POSTGRES_DATABASE_URL: ${{ matrix.backend == 'postgres' && 'postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/interop_ci' || '' }}
         run: |
           set -o pipefail
-          python -m pytest -q -ra --tb=short tests/test_local_interop*.py --junitxml="$CI_RECEIPTS/local-interop.xml" 2>&1 | tee "$CI_RECEIPTS/local-interop.log"
+          PYTHONPATH="$CI_PROJECT/.github/ci:$CI_PROJECT" python -m pytest -p postgres_gate -p suite_coverage -q -ra --tb=short \
+            --ci-scope=interop --ci-shard-index=0 --ci-shard-count=1 --ci-coverage-dir="$CI_RECEIPTS" \
+            tests/test_local_interop*.py --junitxml="$CI_RECEIPTS/local-interop.xml" 2>&1 | tee "$CI_RECEIPTS/local-interop.log"
+      - name: Reject missing contracts and unexpected Interop skips
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python .github/ci/coverage_reconcile.py \
+            --manifest .github/ci/coverage_manifest.json.gz --scope interop \
+            --receipts-dir "$CI_RECEIPTS" --expected-shards ${{ matrix.backend }}=1 \
+            --expected-sha "$CI_COVERAGE_SHA" --expected-tree "$CI_COVERAGE_TREE" \
+            --expected-event-sha "$GITHUB_SHA" --expected-run "$GITHUB_RUN_ID" \
+            --expected-attempt "$GITHUB_RUN_ATTEMPT" --expected-repository "$GITHUB_REPOSITORY" \
+            --constraints .github/ci/python-constraints.txt --source-root "$CI_PROJECT" \
+            --output "$CI_RECEIPTS/interop-coverage.json"
       - name: Desktop preparation harness and frozen protocol parity
         working-directory: ${{ env.CI_PROJECT }}
         run: |

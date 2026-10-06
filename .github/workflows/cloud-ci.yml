@@ -24,20 +24,27 @@ env:
   TRANSFORMERS_OFFLINE: '1'
 
 jobs:
-  backend:
-    name: Backend / ${{ matrix.backend }}
+  backend-execution:
+    name: Backend execution / ${{ matrix.backend }} / shard ${{ matrix.shard_index }}
     runs-on: ubuntu-24.04
-    # The shared-repair suite adds 638 marked PG cases (1,982 total). Both
-    # 94e74 runs reached the 30-minute outer cap while still advancing at
-    # 87%/94%. Keep every test/timeout/no-skip assertion and a finite outer cap.
-    # Local Interop adds 6–7 minutes to the measured ~42-minute full PG
-    # baseline. This finite capacity adjustment preserves every test, command,
-    # per-test timeout and strict no-skip gate; it is not an observed timeout.
+    # File retains one original-order process. PostgreSQL uses two explicit
+    # deterministic node-ID shards; complete unfiltered collection, outcomes,
+    # JUnit identities and the unchanged strict PG gate are reconciled below.
+    # Every shard retains the original finite capacity limits.
     timeout-minutes: ${{ matrix.backend == 'postgres' && 55 || 20 }}
     strategy:
       fail-fast: false
       matrix:
-        backend: [file, postgres]
+        include:
+          - backend: file
+            shard_index: 0
+            shard_count: 1
+          - backend: postgres
+            shard_index: 0
+            shard_count: 2
+          - backend: postgres
+            shard_index: 1
+            shard_count: 2
     services:
       postgres:
         image: ${{ matrix.backend == 'postgres' && 'postgres:16-alpine' || '' }}
@@ -58,7 +65,7 @@ jobs:
         with:
           python-version: '3.12.9'
       - name: Prepare isolated checkout and receipt
-        run: bash .github/ci/prepare.sh backend-${{ matrix.backend }}
+        run: bash .github/ci/prepare.sh backend-${{ matrix.backend }}-shard-${{ matrix.shard_index }}
       - name: Install backend dependencies
         working-directory: ${{ env.CI_PROJECT }}
         run: |
@@ -99,7 +106,13 @@ jobs:
         run: |
           python scripts/prepare_pdf_font.py --output "$CI_SANDBOX/fonts" > "$CI_RECEIPTS/font-manifest.json"
           echo "R2_TEST_FONT_FILE=$CI_SANDBOX/fonts/NotoSansSC-Regular.ttf" >> "$GITHUB_ENV"
-      - name: Full backend suite
+      - name: Fail-closed coverage infrastructure self-tests
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/coverage-selftest" -q \
+            .github/ci/test_suite_coverage.py .github/ci/test_coverage_reconcile.py \
+            --junitxml="$CI_RECEIPTS/coverage-harness.xml"
+      - name: Complete backend collection / assigned shard execution
         working-directory: ${{ env.CI_PROJECT }}
         env:
           STORAGE_BACKEND: ${{ matrix.backend }}
@@ -107,8 +120,9 @@ jobs:
           TEST_POSTGRES_DATABASE_URL: ${{ matrix.backend == 'postgres' && 'postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/novel_ci' || '' }}
         run: |
           set -o pipefail
-          PYTHONPATH="$CI_PROJECT/.github/ci:$CI_PROJECT" python -m pytest -p postgres_gate -p no:cacheprovider --basetemp="$CI_SANDBOX/pytest" -q -ra --tb=short \
-            --junitxml="$CI_RECEIPTS/backend.xml" 2>&1 | tee "$CI_RECEIPTS/backend.log"
+          PYTHONPATH="$CI_PROJECT/.github/ci:$CI_PROJECT" python -m pytest -p postgres_gate -p suite_coverage -p no:cacheprovider --basetemp="$CI_SANDBOX/pytest" -q -ra --tb=short \
+            --ci-scope=backend --ci-shard-index=${{ matrix.shard_index }} --ci-shard-count=${{ matrix.shard_count }} \
+            --ci-coverage-dir="$CI_RECEIPTS" --junitxml="$CI_RECEIPTS/backend.xml" 2>&1 | tee "$CI_RECEIPTS/backend.log"
       - name: Real two-process loopback offline synchronization
         if: matrix.backend == 'file' && (success() || failure())
         working-directory: ${{ env.CI_PROJECT }}
@@ -125,8 +139,57 @@ jobs:
         if: always() && env.CI_RECEIPTS != ''
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: backend-${{ matrix.backend }}-${{ github.sha }}
+          name: backend-${{ matrix.backend }}-shard-${{ matrix.shard_index }}-${{ github.sha }}-attempt-${{ github.run_attempt }}
           path: ${{ env.CI_RECEIPTS }}
+          if-no-files-found: error
+          retention-days: 14
+
+
+  backend:
+    # Preserve both existing required-check names. Each independently checks
+    # all three execution receipts, so neither can pass on partial coverage.
+    name: Backend / ${{ matrix.backend }}
+    needs: backend-execution
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [file, postgres]
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Require every execution job including original File TCP gate
+        env:
+          EXECUTION_RESULT: ${{ needs.backend-execution.result }}
+        run: test "$EXECUTION_RESULT" = success
+      - name: Download this attempt's exact backend shard receipts
+        uses: actions/download-artifact@v4.3.0
+        with:
+          pattern: backend-*-shard-*-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: backend-receipts
+          merge-multiple: false
+      - name: Require exact complete collection and successful outcomes in both profiles
+        run: |
+          python .github/ci/coverage_reconcile.py \
+            --manifest .github/ci/coverage_manifest.json.gz --scope backend \
+            --receipts-dir backend-receipts --expected-shards file=1 postgres=2 \
+            --expected-sha "$(git rev-parse HEAD)" --expected-tree "$(git rev-parse HEAD^{tree})" \
+            --expected-event-sha "$GITHUB_SHA" --expected-run "$GITHUB_RUN_ID" \
+            --expected-attempt "$GITHUB_RUN_ATTEMPT" --expected-repository "$GITHUB_REPOSITORY" \
+            --constraints .github/ci/python-constraints.txt --source-root "$PWD" \
+            --output backend-coverage.json
+          cat backend-coverage.json >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload complete collected-coverage proof
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: backend-coverage-${{ matrix.backend }}-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: backend-coverage.json
           if-no-files-found: error
           retention-days: 14
 
