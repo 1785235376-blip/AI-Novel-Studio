@@ -3,6 +3,8 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testi
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { LocalTutorDialog, useLocalTutorIntegration, type LocalTutorProps } from './LocalTutorIntegration';
 import { diagnosticFields } from './client';
+import { desktopFixture } from '../../tests/fixtures/desktopInterop';
+import { permissionIds, permissionLabels } from './desktop';
 
 const scope = { workspaceId: 'workspace', projectId: 'project', storylineId: 'storyline', branchId: 'branch' };
 const context = { sessionToken: 'private-session-header-only', actor: { id: 'author', displayName: 'Author', workspaceId: 'workspace' }, scope };
@@ -24,7 +26,7 @@ beforeEach(() => {
     const path = String(url).replace('/api/local-interop', ''), body = init.body ? JSON.parse(String(init.body)) : {};
     calls.push({ path, body, init });
     const custom = handler?.(path, body, init); if (custom) return custom;
-    if (path === '/status') return response({ feature_enabled: true, enabled, acceptance_mode: false, product, capabilities, disabled_capabilities: ['model.execute', 'project.write'], desktop_status: 'LOCAL_REQUIRED', ...overrideStatus });
+    if (path === '/status' || path.startsWith('/status?')) return response({ feature_enabled: true, enabled, acceptance_mode: false, product, capabilities, disabled_capabilities: ['model.execute', 'project.write'], desktop_status: 'LOCAL_REQUIRED', ...overrideStatus });
     if (path === '/settings') { enabled = body.enabled; return response({ enabled }); }
     if (path === '/connect') return response({ request_id: body.request_id, session_id: 'session', protocol_session_id: 'session', product, capabilities, desktop_status: 'LOCAL_REQUIRED', mode: 'MOCK_ONLY', subscription_active: false, metadata_fields: [] });
     if (path === '/context/preview') return response({ request_id: body.request_id, session_id: body.session_id, preview_id: 'preview', capsule: capsule(body.content_kind === 'SELECTION' ? 'SELECTED_TEXT' : body.content_kind === 'CHAPTER' ? 'CURRENT_CHAPTER' : 'NONE'), expires_at: expires() });
@@ -458,4 +460,126 @@ it('Tab returns escaped async focus to the active dialog without reaching the un
   (document.activeElement as HTMLElement).blur(); expect(document.activeElement).toBe(document.body);
   fireEvent.keyDown(document.body, { key: 'Tab' });
   expect(document.activeElement).toBe(screen.getByRole('button', { name: '关闭本机 Tutor' }));
+});
+
+
+it('connection status comes from the host formal state, not successful HTTP or a peer product ID', async () => {
+  overrideStatus.desktop = desktopFixture('UNTRUSTED');
+  render(<LocalTutorDialog {...props()} initialView="settings" onClose={vi.fn()} />); await connect();
+  await waitFor(() => expect(screen.getByLabelText('桌面集成状态').textContent).toContain('Untrusted'));
+  expect(screen.getByText('Peer Authenticated：未确认')).toBeTruthy();
+  expect(calls.some(value => value.path === '/status?session_id=session')).toBe(true);
+  expect(screen.getByLabelText('权限中心').textContent).not.toContain('GRANTED只');
+});
+it.each(permissionIds)('independently revokes %s using a correlated host receipt, without revoking other permissions', async permissionId => {
+  const snapshot = desktopFixture(); overrideStatus.desktop = snapshot;
+  handler = (path, body) => {
+    if (path !== '/permissions/revoke') return;
+    const next = structuredClone(snapshot);
+    next.connections[0].permissions.find(value => value.id === body.permission_id)!.state = 'REVOKED';
+    return response({ request_id: body.request_id, session_id: body.session_id, permission_id: body.permission_id, status: 'REVOKED', permissions: next.connections[0].permissions, desktop: next });
+  };
+  render(<LocalTutorDialog {...props()} initialView="settings" onClose={vi.fn()} />); await connect();
+  const button = await screen.findByRole('button', { name: `撤销 ${permissionLabels[permissionId]}` });
+  await waitFor(() => expect((button as HTMLButtonElement).disabled).toBe(false)); fireEvent.click(button);
+  await screen.findByText('主机已确认撤销此权限；关联预览已清除，旧响应不会用于新请求。');
+  const center = screen.getByLabelText('权限中心');
+  expect(within(center).getAllByText('REVOKED')).toHaveLength(1);
+  expect(within(center).getAllByText('AVAILABLE')).toHaveLength(8);
+  expect(calls.find(value => value.path === '/permissions/revoke')?.body).toMatchObject({ session_id: 'session', permission_id: permissionId });
+});
+it('a stale permission receipt cannot change the current session or claim revocation', async () => {
+  overrideStatus.desktop = desktopFixture();
+  handler = (path, body) => path === '/permissions/revoke' ? response({ request_id: body.request_id, session_id: 'old-session', permission_id: body.permission_id, status: 'REVOKED', permissions: [], desktop: desktopFixture('AUTHORIZED', 'old-session') }) : undefined;
+  render(<LocalTutorDialog {...props()} initialView="settings" onClose={vi.fn()} />); await connect();
+  const button = screen.getByRole('button', { name: `撤销 ${permissionLabels.selection}` }); await waitFor(() => expect((button as HTMLButtonElement).disabled).toBe(false)); fireEvent.click(button);
+  await screen.findByRole('alert'); expect(screen.getByLabelText('桌面集成状态').textContent).toContain('Unknown');
+  expect(screen.queryByText('主机已确认撤销此权限；关联预览已清除，旧响应不会用于新请求。')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: '问助手' }));
+  expect((screen.getByRole('button', { name: '生成共享预览' }) as HTMLButtonElement).disabled).toBe(true);
+});
+it.each(['request_id', 'revoked', 'subscriptions_stopped', 'pending_cancelled', 'standing_grants_cleared', 'transport_disconnected'])('emergency disconnect never claims success without %s acknowledgment', async field => {
+  overrideStatus.desktop = desktopFixture();
+  handler = (path, body) => {
+    if (path !== '/disconnect-revoke') return;
+    const receipt: Record<string, unknown> = { request_id: body.request_id, session_id: body.session_id, status: 'DISCONNECTED', revoked: true, subscriptions_stopped: true, pending_cancelled: true, standing_grants_cleared: true, transport_disconnected: true };
+    delete receipt[field]; return response(receipt);
+  };
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect();
+  fireEvent.click(screen.getByRole('button', { name: 'Disconnect & Revoke' }));
+  await screen.findByText('连接撤销尚未确认，持续共享可能仍在运行。请重试断开或关闭集成。');
+  expect(screen.getByLabelText('桌面集成状态').textContent).toContain('Unknown');
+  expect(screen.queryByText('持续共享关闭')).toBeNull();
+  expect((screen.getByRole('button', { name: '连接本机 Tutor' }) as HTMLButtonElement).disabled).toBe(true);
+});
+it('emergency disconnect cancels the in-flight request and requires the complete acknowledgment before showing success', async () => {
+  let finish!: (response: Response) => void; let lateRequest = '';
+  overrideStatus.desktop = desktopFixture();
+  handler = (path, body) => {
+    if (path === '/ask') return new Promise<Response>(resolve => { finish = resolve; lateRequest = body.request_id; });
+    if (path === '/disconnect-revoke') return response({ request_id: body.request_id, session_id: body.session_id, status: 'DISCONNECTED', revoked: true, subscriptions_stopped: true, pending_cancelled: true, standing_grants_cleared: true, transport_disconnected: true });
+  };
+  render(<LocalTutorDialog {...props()} onClose={vi.fn()} />); await connect(); await preview();
+  fireEvent.click(screen.getByRole('button', { name: '确认并发送给 Tutor' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Disconnect & Revoke' }));
+  await screen.findByText('已确认 Disconnect & Revoke：会话、订阅、待处理请求和持续授权已撤销，Transport 已断开。作品与 Tutor 历史保留。');
+  expect(calls.some(value => value.path === '/cancel' && value.body.request_id === lateRequest)).toBe(true);
+  await act(async () => finish(response({ request_id: lateRequest, session_id: 'session', guidance: advice(lateRequest) })));
+  expect(screen.queryByText('先核对运行时')).toBeNull();
+});
+
+it('a revoke receipt cannot broaden another permission or restore an earlier revoked category', async () => {
+  const snapshot = desktopFixture(); snapshot.connections[0].permissions.find(value => value.id === 'deep_link')!.state = 'REVOKED'; overrideStatus.desktop = snapshot;
+  handler = (path, body) => {
+    if (path !== '/permissions/revoke') return;
+    const next = desktopFixture(); next.connections[0].permissions.find(value => value.id === body.permission_id)!.state = 'REVOKED';
+    return response({ request_id: body.request_id, session_id: body.session_id, permission_id: body.permission_id, status: 'REVOKED', permissions: next.connections[0].permissions, desktop: next });
+  };
+  render(<LocalTutorDialog {...props()} initialView="settings" onClose={vi.fn()} />); await connect();
+  fireEvent.click(screen.getByRole('button', { name: `撤销 ${permissionLabels.selection}` }));
+  await screen.findByRole('alert'); expect(screen.getByLabelText('桌面集成状态').textContent).toContain('Unknown');
+  expect(screen.queryByText('主机已确认撤销此权限；关联预览已清除，旧响应不会用于新请求。')).toBeNull();
+});
+it('a failed scoped status refresh cannot substitute another session detail or enable content sharing', async () => {
+  overrideStatus.desktop = desktopFixture('AUTHORIZED', 'different-session');
+  render(<LocalTutorDialog {...props()} initialView="settings" onClose={vi.fn()} />); await connect();
+  await screen.findByRole('alert'); expect(screen.getByLabelText('桌面集成状态').textContent).toContain('Unknown');
+  expect(screen.queryByText('Synthetic Tutor · MOCK_ONLY')).toBeNull();
+  for (const button of within(screen.getByLabelText('权限中心')).getAllByRole('button')) expect((button as HTMLButtonElement).disabled).toBe(true);
+});
+
+it('a late formal status response cannot undo acknowledged emergency revocation', async () => {
+  overrideStatus.desktop = desktopFixture();
+  render(<LocalTutorDialog {...props()} initialView="settings" onClose={vi.fn()} />); await connect();
+  let finish!: (response: Response) => void; let delayed = false;
+  handler = (path, body) => {
+    if (path === '/status?session_id=session' && !delayed) { delayed = true; return new Promise<Response>(resolve => { finish = resolve; }); }
+    if (path === '/disconnect-revoke') {
+      overrideStatus.desktop = { ...desktopFixture('DISCONNECTED'), connections: [] };
+      return response({ request_id: body.request_id, session_id: body.session_id, status: 'DISCONNECTED', revoked: true, subscriptions_stopped: true, pending_cancelled: true, standing_grants_cleared: true, transport_disconnected: true });
+    }
+  };
+  fireEvent.click(screen.getByRole('button', { name: '刷新主机状态' }));
+  await waitFor(() => expect(delayed).toBe(true));
+  fireEvent.click(screen.getByRole('button', { name: 'Disconnect & Revoke' }));
+  await waitFor(() => expect(screen.getByLabelText('桌面集成状态').textContent).toContain('Disconnected'));
+  await act(async () => finish(response({ feature_enabled: true, enabled: true, acceptance_mode: false, product, capabilities, disabled_capabilities: [], desktop_status: 'LOCAL_REQUIRED', desktop: desktopFixture('AUTHORIZED') })));
+  expect(screen.getByLabelText('桌面集成状态').textContent).toContain('Disconnected');
+  expect(screen.queryByText('Synthetic Tutor · MOCK_ONLY')).toBeNull();
+});
+
+it('refresh confirms an out-of-band standing revoke without ever silently restoring a grant', async () => {
+  const snapshot = desktopFixture(); overrideStatus.desktop = snapshot;
+  handler = (path) => {
+    if (path === '/events/subscribe') { snapshot.connections[0].permissions.find(value => value.id === 'standing_metadata_events')!.state = 'GRANTED'; snapshot.connections[0].standing_permissions = ['standing_metadata_events']; }
+    return undefined;
+  };
+  render(<LocalTutorDialog {...props()} initialView="settings" onClose={vi.fn()} />); await connect(); await authorizeOngoing();
+  snapshot.connections[0].permissions.find(value => value.id === 'standing_metadata_events')!.state = 'REVOKED'; snapshot.connections[0].standing_permissions = [];
+  await waitFor(() => expect((screen.getByRole('button', { name: '刷新主机状态' }) as HTMLButtonElement).disabled).toBe(false));
+  fireEvent.click(screen.getByRole('button', { name: '刷新主机状态' })); await screen.findByText('持续共享关闭');
+  snapshot.connections[0].permissions.find(value => value.id === 'standing_metadata_events')!.state = 'GRANTED'; snapshot.connections[0].standing_permissions = ['standing_metadata_events'];
+  fireEvent.click(screen.getByRole('button', { name: '刷新主机状态' })); await screen.findByText('状态待确认');
+  expect(screen.queryByLabelText('正在共享的状态类别')).toBeNull();
+  expect(calls.filter(value => value.path === '/events/subscribe')).toHaveLength(1);
 });

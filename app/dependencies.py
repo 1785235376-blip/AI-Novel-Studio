@@ -228,4 +228,8 @@ def _interop_jobs():
 
 local_interop_host = LocalInteropHost(InteropContextProvider(
     collaboration_read_service, model_center=model_center_service, jobs=_interop_jobs,
+    export_jobs=export_job_service,
+    # get_workflow_run() can mutate timeout state. This owner-level read-only
+    # projection intentionally does not call it or advance the workflow.
+    workflow_reader=lambda task_id: v1_capability_service._get("workflow_runs", task_id),
 ))

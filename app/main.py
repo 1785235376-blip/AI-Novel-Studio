@@ -51,9 +51,18 @@ def _model_center_mutation_authorization(token: str | None) -> dict:
 async def app_lifespan(_app):
     from .dependencies import agent_job_service
     agent_job_service.recover_interrupted()
-    yield
     from .dependencies import local_interop_host
-    await local_interop_host.shutdown()
+    try:
+        await local_interop_host.app_start()
+    except Exception:  # noqa: BLE001 - optional bridge cannot block app startup
+        # Optional bridge startup must never take down the writing application.
+        local_interop_host.closed = True
+    yield
+    try:
+        await local_interop_host.lifecycle.shutdown(timeout=1.0)
+    except Exception:  # noqa: BLE001 - optional bridge cannot block app shutdown
+        # Lifecycle failure does not stop the remaining product shutdown owners.
+        local_interop_host.closed = True
     harness_process_service.stop()
     model_center_service.lifecycle.stop_all()
 

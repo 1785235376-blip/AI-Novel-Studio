@@ -1,36 +1,32 @@
-using System.Buffers.Binary;
 using System.ComponentModel;
 using System.IO.Pipes;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.Win32.SafeHandles;
 
 namespace PoemSeed.LocalInterop.Pipes;
 
 /// <summary>
-/// Explicit-start, Windows-only transport reference. It is deliberately NOT wired
+/// Explicit-start, Windows-only callable transport boundary. It is deliberately NOT wired
 /// into either desktop application. Callers must run canonical DTO validation,
 /// HELLO -> negotiation -> session authorization and live revocation at every
 /// delivery. A pipe connection alone NEVER grants protocol capabilities.
 /// </summary>
 public static class CurrentUserPipe
 {
-    public const int MaximumFrameBytes = 1_048_576;
+    public const int MaximumFrameBytes = PipeFrames.MaximumFrameBytes;
     public const uint RejectRemoteClients = 0x00000008;
     private const uint Duplex = 0x00000003;
     private const uint Overlapped = 0x40000000;
     private const uint FirstInstance = 0x00080000;
-    private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
     public static string NewPipeName() => "poemseed-interop-v1-" + Guid.NewGuid().ToString("N");
 
-    private static void CheckName(string name)
+    public static void CheckName(string name)
     {
         if (!OperatingSystem.IsWindows())
-            throw new PlatformNotSupportedException("Windows named pipe reference only.");
+            throw new PlatformNotSupportedException("Windows named pipe transport only.");
         if (!Regex.IsMatch(name, "\\Apoemseed-interop-v1-[a-f0-9]{32}\\z",
                 RegexOptions.CultureInvariant))
             throw new ArgumentException("Invalid opaque pipe instance name.", nameof(name));
@@ -79,7 +75,7 @@ public static class CurrentUserPipe
         // Server name is fixed. There is no API accepting a remote machine.
         return new NamedPipeClientStream(".", name, PipeDirection.InOut,
             PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly,
-            TokenImpersonationLevel.Identification);
+            TokenImpersonationLevel.Identification, HandleInheritability.None);
     }
 
     public static void VerifyPeerUser(NamedPipeServerStream pipe)
@@ -91,44 +87,11 @@ public static class CurrentUserPipe
             throw new UnauthorizedAccessException("Pipe peer is not the current user.");
     }
 
-    public static async Task<string> ReadJsonAsync(Stream stream, CancellationToken cancellationToken)
-    {
-        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        deadline.CancelAfter(TimeSpan.FromSeconds(10));
-        byte[] prefix = new byte[4];
-        await stream.ReadExactlyAsync(prefix, deadline.Token);
-        int size = BinaryPrimitives.ReadInt32LittleEndian(prefix);
-        if (size is <= 0 or > MaximumFrameBytes)
-            throw new InvalidDataException("Frame exceeds the bounded transport contract.");
-        byte[] buffer = new byte[size];
-        await stream.ReadExactlyAsync(buffer, deadline.Token);
-        string json = StrictUtf8.GetString(buffer);
-        ValidateObject(json);
-        return json;
-    }
+    public static Task<string> ReadJsonAsync(Stream stream, CancellationToken cancellationToken) =>
+        PipeFrames.ReadAsync(stream, TimeSpan.FromSeconds(10), cancellationToken);
 
-    public static async Task WriteJsonAsync(Stream stream, string json, CancellationToken cancellationToken)
-    {
-        ValidateObject(json);
-        byte[] buffer = StrictUtf8.GetBytes(json);
-        if (buffer.Length is <= 0 or > MaximumFrameBytes)
-            throw new InvalidDataException("Frame exceeds the bounded transport contract.");
-        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        deadline.CancelAfter(TimeSpan.FromSeconds(10));
-        byte[] prefix = new byte[4];
-        BinaryPrimitives.WriteInt32LittleEndian(prefix, buffer.Length);
-        await stream.WriteAsync(prefix, deadline.Token);
-        await stream.WriteAsync(buffer, deadline.Token);
-        await stream.FlushAsync(deadline.Token);
-    }
-
-    private static void ValidateObject(string json)
-    {
-        using var parsed = JsonDocument.Parse(json, new JsonDocumentOptions { MaxDepth = 24 });
-        if (parsed.RootElement.ValueKind != JsonValueKind.Object)
-            throw new InvalidDataException("Protocol frame must be a JSON object.");
-        // No schema/authority inference here: use the canonical versioned DTOs.
-    }
+    public static Task WriteJsonAsync(Stream stream, string json, CancellationToken cancellationToken) =>
+        PipeFrames.WriteAsync(stream, json, TimeSpan.FromSeconds(10), cancellationToken);
 
     [StructLayout(LayoutKind.Sequential)]
     private struct SecurityAttributes

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ...runtime_events import committed_change
 
 import re
 import uuid
@@ -64,6 +65,7 @@ class PostgresNovelRepository:
         from ...document import document_to_markdown
         return document_to_markdown(document or {"type": "doc", "content": []})
 
+    @committed_change("PROJECT")
     def create(self, payload):
         novel_slug = slug(payload.get("id") or payload["title"])
         with self.database.session() as session:
@@ -81,6 +83,7 @@ class PostgresNovelRepository:
         with self.database.session() as session:
             return self._meta(novel_or_raise(session, novel_id))
 
+    @committed_change("PROJECT")
     def update(self, novel_id, payload):
         with self.database.session() as session:
             model = self._locked_metadata_model(session, novel_id)
@@ -95,6 +98,7 @@ class PostgresNovelRepository:
             session.flush()
             return self._meta(model)
 
+    @committed_change("PROJECT")
     def delete(self, novel_id):
         with self.database.session() as session:
             model = novel_or_raise(session, novel_id)

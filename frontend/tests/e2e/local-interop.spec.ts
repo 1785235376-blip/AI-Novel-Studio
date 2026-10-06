@@ -189,3 +189,65 @@ test('explicit ongoing-sharing Stop revokes the grant and reconnect never restor
   await expect(dialog.getByRole('checkbox', { name: '准备持续共享状态（需另行预览和确认）', exact: true })).not.toBeChecked();
   await expect(dialog.getByText('持续共享关闭', { exact: true })).toBeVisible();
 });
+
+test('Desktop Preparation is deferred until opened and renders host state, trust boundary, nine permissions and seven health parts', async ({ page }, info) => {
+  info.annotations.push({ type: 'boundary', description: 'Actual lazy Studio UI and real host; Synthetic Tutor is MOCK_ONLY, native Desktop acceptance remains LOCAL_REQUIRED.' });
+  const loadedBefore = await page.evaluate(() => performance.getEntriesByType('resource').map(value => value.name));
+  expect(loadedBefore.some(url => /LocalTutorIntegration\.(?:tsx|js)/.test(url))).toBe(false);
+  const dialog = await enabledConnection(page);
+  await expect(dialog.getByLabel('桌面集成状态', { exact: true })).toHaveText('Untrusted · 未信任');
+  await dialog.getByRole('button', { name: '集成设置', exact: true }).click();
+  const details = dialog.getByLabel('连接详情', { exact: true });
+  await expect(details).toContainText('连接成功 ≠ 已经授权正文');
+  await expect(details).toContainText('poemseed.tutor.desktop');
+  await expect(details).toContainText('UNVERIFIED');
+  await expect(details).toContainText('Peer Authenticated：未确认');
+  await expect(details.getByRole('listitem')).toHaveCount(5);
+  const permissions = dialog.getByLabel('权限中心', { exact: true });
+  await expect(permissions.getByRole('button')).toHaveCount(9);
+  await expect(permissions.getByText('AVAILABLE', { exact: true })).toHaveCount(9);
+  const health = dialog.getByLabel('集成健康', { exact: true });
+  for (const part of ['transport', 'peer', 'session', 'capabilities', 'events', 'tutor', 'verifier']) await expect(health.locator('dt').filter({ hasText: new RegExp(`^${part}$`) })).toHaveCount(1);
+  await expect(health).toContainText('MODEL · POLLING');
+  await expect(health).toContainText('CHAPTER · DIRECT_EVENT');
+  await page.screenshot({ path: info.outputPath('desktop-preparation-permissions.png'), fullPage: true });
+});
+
+test('independent selection revoke leaves chapter consent available and emergency revoke requires full host cleanup', async ({ page }, info) => {
+  const chapterBefore = await page.getByRole('textbox', { name: '章节正文', exact: true }).innerText();
+  const dialog = await enabledConnection(page);
+  await dialog.getByRole('button', { name: '集成设置', exact: true }).click();
+  const receipt = page.waitForResponse(response => response.url().endsWith('/permissions/revoke'));
+  await dialog.getByRole('button', { name: '撤销 Selection · 选中文本', exact: true }).click();
+  const revoked = await (await receipt).json();
+  expect(revoked.status).toBe('REVOKED'); expect(revoked.permission_id).toBe('selection');
+  expect(revoked.permissions.filter((value: { state: string }) => value.state === 'REVOKED').map((value: { id: string }) => value.id)).toEqual(['selection']);
+  await expect(dialog.getByLabel('权限中心', { exact: true }).getByText('REVOKED', { exact: true })).toHaveCount(1);
+  await dialog.getByRole('button', { name: '问助手', exact: true }).click();
+  await expect(dialog.getByRole('checkbox', { name: '选中文本', exact: true })).toBeDisabled();
+  await expect(dialog.getByRole('checkbox', { name: '当前章节', exact: true })).toBeEnabled();
+  await expect(dialog.getByRole('checkbox', { name: '当前章节', exact: true })).not.toBeChecked();
+  const stopped = page.waitForResponse(response => response.url().endsWith('/disconnect-revoke'));
+  await dialog.getByRole('button', { name: 'Disconnect & Revoke', exact: true }).click();
+  expect(await (await stopped).json()).toMatchObject({ status: 'DISCONNECTED', revoked: true, subscriptions_stopped: true, pending_cancelled: true, standing_grants_cleared: true, transport_disconnected: true });
+  await expect(dialog.getByLabel('桌面集成状态', { exact: true })).toHaveText('Disconnected · 已断开');
+  await page.screenshot({ path: info.outputPath('desktop-emergency-acknowledged.png'), fullPage: true });
+  await dialog.getByRole('button', { name: '关闭并断开', exact: true }).click();
+  expect(await page.getByRole('textbox', { name: '章节正文', exact: true }).innerText()).toBe(chapterBefore);
+});
+
+test('incomplete emergency acknowledgment stays Unknown and an explicit retry obtains a real host receipt', async ({ page }) => {
+  const dialog = await enabledConnection(page);
+  await page.route('**/api/local-interop/disconnect-revoke', async route => {
+    const body = route.request().postDataJSON();
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ request_id: body.request_id, session_id: body.session_id, status: 'DISCONNECTED', revoked: true }) });
+  });
+  await dialog.getByRole('button', { name: 'Disconnect & Revoke', exact: true }).click();
+  await expect(dialog.getByRole('alert')).toContainText('连接撤销尚未确认');
+  await expect(dialog.getByLabel('桌面集成状态', { exact: true })).toHaveText('Unknown · 状态未知');
+  await expect(dialog.getByRole('button', { name: '连接本机 Tutor', exact: true })).toBeDisabled();
+  await expect(dialog.getByText('持续共享关闭', { exact: true })).toHaveCount(0);
+  await page.unroute('**/api/local-interop/disconnect-revoke');
+  await dialog.getByRole('button', { name: '重试断开连接', exact: true }).click();
+  await expect(dialog.getByLabel('桌面集成状态', { exact: true })).toHaveText('Disconnected · 已断开');
+});

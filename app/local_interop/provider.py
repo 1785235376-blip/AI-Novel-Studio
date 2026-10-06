@@ -48,10 +48,12 @@ def anchor_text(doc: dict) -> str:
 
 
 class InteropContextProvider:
-    def __init__(self, collaboration, *, model_center=None, jobs: Callable | None = None):
+    def __init__(self, collaboration, *, model_center=None, jobs: Callable | None = None, export_jobs=None, workflow_reader: Callable | None = None):
         self.collaboration = collaboration
         self.model_center = model_center
         self.jobs = jobs
+        self.export_jobs = export_jobs
+        self.workflow_reader = workflow_reader
 
     def actor(self, token):
         try:
@@ -85,9 +87,11 @@ class InteropContextProvider:
             raise InteropFailure("PERMISSION_DENIED", 403)
         return row
 
-    def task(self, token, scope, task_id):
+    def task(self, token, scope, task_id, *, surface=None):
         if not task_id: return None
         actor = self.actor(token)
+        if surface in {"export", "workflow"}:
+            return self._owned_task(actor, scope, task_id, surface)
         try:
             obj = self.jobs().get(task_id) if self.jobs else None
             row = obj.public() if obj is not None and hasattr(obj, "public") else self.collaboration.generations.get(task_id)
@@ -101,10 +105,35 @@ class InteropContextProvider:
             raise InteropFailure("PERMISSION_DENIED", 403)
         return row
 
+    def _owned_task(self, actor, scope, task_id, surface):
+        """Read actual export/workflow owners without invoking mutation-on-read."""
+        try:
+            if surface == "export" and self.export_jobs is not None:
+                row = self.export_jobs.get(task_id)
+                authority = row.get("permission_context") or {}
+                valid = authority.get("mode") == "collaboration" and authority.get("actor_id") == actor.actor_id and authority.get("workspace_id") == actor.workspace_id
+                valid = valid and authority.get("novel_id") == scope["project_id"] and authority.get("branch_id") == scope["branch_id"] and authority.get("storyline_id") == scope["storyline_id"]
+            elif surface == "workflow" and self.workflow_reader is not None:
+                row = self.workflow_reader(task_id)
+                valid = row.get("owner") == {"actor_id": actor.actor_id, "workspace_id": actor.workspace_id} and row.get("branch_id") == scope["branch_id"]
+            else:
+                raise KeyError(task_id)
+        except (KeyError, FileNotFoundError, ValueError):
+            raise InteropFailure("HANDOFF_TARGET_NOT_FOUND", 404) from None
+        if not valid or row.get("novel_id") != scope["project_id"]:
+            raise InteropFailure("PERMISSION_DENIED", 403)
+        status = str(row.get("status", "UNKNOWN")).upper()
+        status = {"SUCCEEDED": "COMPLETED", "WAITING_APPROVAL": "WAITING", "PAUSED": "WAITING", "WORKING": "RUNNING"}.get(status, status)
+        error = row.get("error")
+        return {"id": task_id, "novel_id": scope["project_id"], "actor_id": actor.actor_id,
+            "workspace_id": actor.workspace_id, "scope": dict(scope), "operation": surface,
+            "status": self.task_status(status), "error_code": safe_label(error.get("code")) if isinstance(error, dict) else None,
+            "updated_at": row.get("updated_at") or row.get("version")}
+
     def snapshot(self, token, scope, *, module, surface, chapter_id=None, task_id=None):
         actor, fingerprint, project = self.authorize(token, scope)
         chapter = self.chapter(scope, chapter_id)
-        task = self.task(token, scope, task_id)
+        task = self.task(token, scope, task_id, surface=surface)
         model_id = safe_label((task or {}).get("model"))
         runtime_id = None
         runtime_status = None

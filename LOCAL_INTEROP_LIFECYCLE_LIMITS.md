@@ -14,11 +14,15 @@ or real Tutor Desktop claims.
   reference chooses **15 minutes**. Its separate Synthetic Studio unit fixture
   uses 30 minutes; that is not the HTTP reference default.
 - Event or heartbeat acknowledgements **never extend the original expiry**.
-- The Host pump defaults to a **250 ms** interval (constructor minimum 50 ms).
-  It rechecks live authorization each iteration.
+- The Host pump starts with a **250 ms** interval (constructor minimum 50 ms).
+  While an approved event grant is idle, it backs off to at most **5 seconds**;
+  direct PROJECT/CHAPTER/TASK notifications wake it sooner. Without an event
+  grant it waits up to 5 seconds and captures no business snapshot. The SSE
+  reader consumes the authorized queue rather than adding another snapshot poll.
+  The pump rechecks live authorization each iteration.
 - It sends a heartbeat after **10 seconds without a successful event or heartbeat
-  acknowledgement**. The first idle iteration can send one immediately because
-  the initial last-peer-success timestamp is zero.
+  acknowledgement**. A newly connected session initializes that timestamp to
+  the current monotonic time; it does not send an immediate initial heartbeat.
 - HTTP operations default to **4-second** timeouts; the transport constructor
   bounds that setting to 50 ms–10 seconds. Foreground Host operations have a
   **15-second overall** deadline. These do not constitute a guaranteed 14-second
@@ -47,11 +51,21 @@ authority/session revocation or its original negotiated expiry. This is a
 **PARTIAL development lifecycle boundary**. Closing or losing a UI alone is not
 proof of software exit or revocation.
 
-**Graceful Studio API/application shutdown:** the app lifespan awaits
-LocalInteropHost.shutdown(), revokes its sessions, cancels/gathers pumps and
-clears in-memory state. A dead Host process cannot send further events. A restart
+**Graceful Studio API/application shutdown:** the app lifespan uses the bounded
+InteropLifecycleCoordinator and LocalInteropHost.shutdown(), revokes local
+authority before external waits, cancels pending work and clears volatile state.
+Deadlines are bounded even when a peer does not acknowledge. A dead Host process
+cannot send further events. A restart
 has a new instance identity, is OFF by default and does not inherit a grant.
 Real desktop process/window lifecycle composition remains LOCAL_REQUIRED.
+
+**Disconnect & Revoke:** immediate local authority revocation is separate from
+confirmed local transport-resource closure and the peer's disconnect ACK. The
+complete receipt reports each fact independently. Unproven, failed or timed-out
+local closure remains UNKNOWN/DEGRADED; a failed peer ACK is not data recall.
+Owner-bound bounded retries can reconcile the same closed session without
+restoring its grants. Formal status and final-send guards cannot reassert an old
+permission or standing grant after a newer revoke.
 
 Bytes already received by a peer cannot be recalled. Preparing diagnostics
 pauses ongoing event sharing before presenting the minimized diagnostic; it never

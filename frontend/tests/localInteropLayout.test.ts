@@ -16,3 +16,13 @@ it('uses shared primitives and never gives guidance direct write or URI navigati
   expect(source).toContain("from '../ui/primitives'"); expect(source).toContain('createPortal(body, document.body)');
   expect(source).not.toMatch(/dangerouslySetInnerHTML|location\.(?:href|assign|replace)|window\.open|api\.saveChapter|api\.accept|modelCenterStartRuntime/);
 });
+it('defers the desktop integration implementation until the entry is opened', () => {
+  const app = fs.readFileSync(path.join(root, 'src/App.tsx'), 'utf8');
+  const entry = fs.readFileSync(path.join(root, 'src/interop/entry.tsx'), 'utf8');
+  expect(app).toContain("from './interop/entry'");
+  expect(app).not.toMatch(/import\s+\{[^}]*useLocalTutorIntegration[^}]*\}\s+from ['"]\.\/interop\/LocalTutorIntegration/);
+  expect(entry).toContain("import('./LocalTutorIntegration')");
+  expect(entry).not.toContain('interopClient(');
+  expect(entry).not.toContain('fetch(');
+  expect(entry).not.toContain('localStorage');
+});

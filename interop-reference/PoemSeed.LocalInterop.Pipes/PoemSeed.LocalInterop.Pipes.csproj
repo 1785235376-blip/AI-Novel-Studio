@@ -1,9 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <AssemblyName>PoemSeed.LocalInterop.Pipes.Reference</AssemblyName>
+    <PackageId>PoemSeed.LocalInterop.Pipes.Reference</PackageId>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../native/local_interop_desktop/PoemSeed.LocalInterop.Pipes/PoemSeed.LocalInterop.Pipes.csproj" />
+  </ItemGroup>
 </Project>

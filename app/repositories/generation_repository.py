@@ -1,9 +1,11 @@
 from __future__ import annotations
+from ..runtime_events import committed_change
 import json
 from pathlib import Path
 from ..storage import atomic_write
 class GenerationRepository:
     def __init__(self,root:Path):self.root=root/"runtime/jobs";self.root.mkdir(parents=True,exist_ok=True)
+    @committed_change("TASK")
     def save(self,item:dict):atomic_write(self.root/f"{item['id']}.json",json.dumps(item,ensure_ascii=False,indent=2))
     def load_all(self):
         out=[]

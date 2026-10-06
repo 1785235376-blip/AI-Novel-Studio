@@ -13,6 +13,12 @@ export function currentInteropSurface(module: StudioModule, panel: string, exper
   return panels[panel] ?? 'editor';
 }
 
+/** Do not send one task owner's ID to a different surface's host adapter. */
+export function currentInteropTaskId(surface: string, generationId?: string): string | undefined {
+  if (surface === 'export' || surface === 'workflow') return undefined;
+  return generationId && !['generation-failed', 'selection-required'].includes(generationId) ? generationId : undefined;
+}
+
 /** Defense in depth: an authorized host response is still not an arbitrary URI. */
 export function assertCurrentHandoff(route: HostRoute, context: CollaborationContext, projectId: string) {
   const scope = context.scope;

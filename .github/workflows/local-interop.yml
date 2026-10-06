@@ -72,6 +72,11 @@ jobs:
         run: |
           set -o pipefail
           python -m pytest -q -ra --tb=short tests/test_local_interop*.py --junitxml="$CI_RECEIPTS/local-interop.xml" 2>&1 | tee "$CI_RECEIPTS/local-interop.log"
+      - name: Desktop preparation harness and frozen protocol parity
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python scripts/check_desktop_integration.py
+          python -m local_interop_desktop.acceptance --mock-only --output "$CI_RECEIPTS/desktop-acceptance.json"
       - name: Summarize exact source
         if: always() && env.CI_RECEIPTS != ''
         run: python .github/ci/receipt.py "$CI_RECEIPTS"
@@ -101,6 +106,10 @@ jobs:
           "source=$(git rev-parse HEAD)" | Out-File receipts/revision.txt -Encoding utf8
           "scope=Windows transport reference only; actual Tutor Desktop LOCAL_REQUIRED; cross-user hostile attempt NOT_RUN" | Out-File receipts/revision.txt -Append -Encoding utf8
           dotnet run --project interop-reference/PoemSeed.LocalInterop.Pipes -c Release 2>&1 | Tee-Object receipts/named-pipe.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet build native/local_interop_desktop/PoemSeed.LocalInterop.Pipes -c Release 2>&1 | Tee-Object receipts/named-pipe-library-build.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet run --project native/local_interop_desktop/PoemSeed.LocalInterop.Pipes.Acceptance -c Release 2>&1 | Tee-Object receipts/named-pipe-desktop-boundary.log
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v4.6.2
         if: always()

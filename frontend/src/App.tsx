@@ -1,7 +1,7 @@
 import { Button } from './ui/primitives';
-import { useLocalTutorIntegration, type EditorSelection } from './interop/LocalTutorIntegration';
+import { useLocalTutorIntegration, type EditorSelection } from './interop/entry';
 import type { HostRoute } from './interop/client';
-import { assertCurrentHandoff, currentInteropSurface, interopFeatureRoutes } from './interop/navigation';
+import { assertCurrentHandoff, currentInteropSurface, currentInteropTaskId, interopFeatureRoutes } from './interop/navigation';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   QueryClient,
@@ -1136,11 +1136,12 @@ export default function App() {
     setInteropTask({ id: route.task_id, status: route.task_status!, chapterId: route.chapter_id });
     setStudioModule('NOVEL'); setPanel('agents');
   }
+  const localTutorSurface = studioModule === 'CONTROL' ? interopControlSurface : currentInteropSurface(studioModule, panel, experimentalTab);
   const localTutor = useLocalTutorIntegration({
     context: { sessionToken: s.sessionToken, scope: s.scope, actor: s.actor }, projectId: s.novelId,
-    module: studioModule, surface: studioModule === 'CONTROL' ? interopControlSurface : currentInteropSurface(studioModule, panel, experimentalTab),
+    module: studioModule, surface: localTutorSurface,
     chapterId: studioModule === 'NOVEL' ? s.chapterId || undefined : undefined,
-    chapterVersion: chapter.data?.version, taskId: job?.id && !['generation-failed', 'selection-required'].includes(job.id) ? job.id : undefined,
+    chapterVersion: chapter.data?.version, taskId: currentInteropTaskId(localTutorSurface, job?.id),
     selection: studioModule === 'NOVEL' ? selection : undefined,
     sourceReady: studioModule === 'NOVEL' && saveState === 'saved' && !composing && !savePending.current && hydratedIdentity === editorIdentity && !!chapter.data,
     onNavigate: navigateInterop,

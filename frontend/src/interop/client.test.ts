@@ -2,7 +2,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { ApiError } from '../api';
 import { interopClient, interopErrorMessage } from './client';
-import { assertCurrentHandoff, currentInteropSurface, interopFeatureRoutes } from './navigation';
+import { assertCurrentHandoff, currentInteropSurface, currentInteropTaskId, interopFeatureRoutes } from './navigation';
 const context = { sessionToken: 'secret-browser-session', scope: { workspaceId: 'w', projectId: 'p', storylineId: 's', branchId: 'b' } };
 afterEach(() => { vi.unstubAllGlobals(); });
 it('captures the originating session and sends tokens only in headers, never Tutor URLs', async () => {
@@ -63,4 +63,30 @@ it('keeps event preview, positive subscription and revocation separate from one-
   expect(JSON.parse(String(calls[0][1].body))).toEqual({ session_id: 'host-session', metadata_fields: ['task'], request_id: 'event-preview' });
   expect(JSON.parse(String(calls[1][1].body))).toEqual({ session_id: 'host-session', preview_id: 'immutable-preview', request_id: 'event-consent', confirmed: true });
   expect(calls.every(([url]) => !url.includes('secret'))).toBe(true);
+});
+
+it('sends scoped desktop status, independent revocation and emergency cleanup to the same authorized Studio host', async () => {
+  const fetch = vi.fn(async () => new Response('{}')); vi.stubGlobal('fetch', fetch);
+  const client = interopClient(context), controller = new AbortController();
+  await client.status(controller.signal, 'session/with?reserved');
+  await client.revokePermission('session', 'selection', 'permission-request', controller.signal);
+  await client.disconnectRevoke('session', 'emergency-request', controller.signal);
+  const calls = fetch.mock.calls as unknown as [string, RequestInit][];
+  expect(calls.map(([url]) => url)).toEqual(['/api/local-interop/status?session_id=session%2Fwith%3Freserved', '/api/local-interop/permissions/revoke', '/api/local-interop/disconnect-revoke']);
+  expect(JSON.parse(String(calls[1][1].body))).toEqual({ session_id: 'session', permission_id: 'selection', request_id: 'permission-request' });
+  expect(JSON.parse(String(calls[2][1].body))).toEqual({ session_id: 'session', request_id: 'emergency-request' });
+  for (const [url, init] of calls) {
+    expect(url).not.toContain('secret'); expect(init.headers).toMatchObject({ 'X-Session-Token': context.sessionToken, 'X-Branch-Id': context.scope.branchId });
+    expect(init.signal).toBe(controller.signal); expect(init.redirect).toBe('error'); expect(init.credentials).toBe('same-origin');
+  }
+});
+
+
+it('never lends a generation task ID to export/workflow owners or placeholder jobs', () => {
+  expect(currentInteropTaskId('export', 'generation-job')).toBeUndefined();
+  expect(currentInteropTaskId('workflow', 'generation-job')).toBeUndefined();
+  expect(currentInteropTaskId(currentInteropSurface('WORKFLOW', 'history'), 'generation-job')).toBeUndefined();
+  expect(currentInteropTaskId('editor', 'generation-failed')).toBeUndefined();
+  expect(currentInteropTaskId('editor', 'selection-required')).toBeUndefined();
+  expect(currentInteropTaskId('editor', 'generation-job')).toBe('generation-job');
 });

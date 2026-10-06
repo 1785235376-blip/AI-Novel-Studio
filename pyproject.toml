@@ -23,7 +23,7 @@ markers = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["app*", "local_interop_protocol*"]
+include = ["app*", "local_interop_protocol*", "local_interop_desktop*"]
 exclude = ["tests*", "frontend*", "novel_data*", "prompts*", "workflows*"]
 
 [tool.setuptools.data-files]
