@@ -31,6 +31,23 @@ def test_formal_application_stages_explicit_current_backend_inventory():
     assert "Assert-InventoriesMatch $backendSourceInventory $backendStageInventory 'Backend'" in source
 
 
+def test_formal_application_stages_and_inventories_both_interop_packages():
+    source = _source()
+    for name in ("local_interop_protocol", "local_interop_desktop"):
+        assert (
+            f"Copy-ProductTree (Join-Path $projectRoot '{name}') "
+            f"(Join-Path $stagedBackend '{name}') @('.py')"
+        ) in source
+    assert (
+        "foreach ($name in @('app', 'local_interop_protocol', 'local_interop_desktop', "
+        "'config', 'prompts', 'workflows'))"
+    ) in source
+    assert (
+        "$extensions = if ($name -in @('app', 'local_interop_protocol', "
+        "'local_interop_desktop')) { @('.py') } else { @() }"
+    ) in source
+
+
 def test_formal_application_fails_closed_and_records_all_product_components():
     source = _source()
     assert "--list-sdks" in source
