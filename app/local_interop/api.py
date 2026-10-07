@@ -194,7 +194,7 @@ class AuthorityEventResponse(StreamingResponse):
 
 def create_local_interop_router(host, *, prefix="/api/local-interop"):
     router = APIRouter(prefix=prefix, tags=["local-interop"], route_class=SafeRoute)
-    def reply(value, token, sid=None):
+    def reply(value, token, sid=None, source_guard=None):
         represented = host._session(token, sid) if sid else None
         generation = represented.permission_generation if represented else None
         desktop_guard = host.desktop_response_guard(token, value) if isinstance(value, dict) and "desktop" in value else None
@@ -205,6 +205,7 @@ def create_local_interop_router(host, *, prefix="/api/local-interop"):
             if desktop_guard: desktop_guard()
             if represented and isinstance(value, dict) and value.get("subscription_active") and value.get("subscription_id"):
                 host._event_guard(represented, value["subscription_id"], token)
+            if source_guard: source_guard()
         return AuthorityJSONResponse(value, guard)
 
     @router.get("/status")
@@ -236,7 +237,8 @@ def create_local_interop_router(host, *, prefix="/api/local-interop"):
 
     @router.get("/context/sources")
     async def context_sources(session_id: str, x_session_token: str | None = Header(None)):
-        return reply(host.sources(x_session_token, session_id), x_session_token, session_id)
+        value = host.sources(x_session_token, session_id)
+        return reply(value, x_session_token, session_id, lambda: host.sources_guard(x_session_token, session_id, value))
 
     @router.post("/ask")
     async def ask(body: AskInput, x_session_token: str | None = Header(None)):

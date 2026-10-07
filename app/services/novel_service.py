@@ -70,7 +70,7 @@ class NovelService:
             # A43 identity is the returned immutable chapter id, not its number.
             return {'kind':kind,'id':row['id'],'version':row['version'],
                     'digest':record_digest({'id':row['id'],'version':row['version'],'document':row.get('document'),'content':row.get('content')})}
-        if kind=='timeline':
+        if kind in {'timeline','characters','locations'}:
             row=next((row for row in self.data_set(nid,kind) if row['id']==record_id),None)
             if row is None:raise FileNotFoundError(record_id)
             return {'kind':kind,'id':row['id'],'digest':record_digest(row)}
@@ -89,6 +89,15 @@ class NovelService:
                 # A target can be a future planned chapter. Never guess an id.
                 if chapter:sources.append(self._story_source(nid,'chapter',chapter['id']))
             for event_id in payload.get('events',[]):sources.append(self._story_source(nid,'timeline',event_id))
+        if kind=='characters' and payload.get('current_location'):
+            # This legacy field permits free text. Bind only an exact existing id.
+            location=next((row for row in self.data_set(nid,'locations') if row['id']==payload['current_location']),None)
+            if location:sources.append(self._story_source(nid,'locations',location['id']))
+        if kind=='relationships':
+            for field in ('source_character_id','target_character_id'):
+                if payload.get(field):sources.append(self._story_source(nid,'characters',payload[field]))
+            for field in ('valid_from_event_id','valid_to_event_id'):
+                if payload.get(field):sources.append(self._story_source(nid,'timeline',payload[field]))
         return list({(source['kind'],source['id']):source for source in sources}.values())
 
     def save_story_record(self,nid,kind,record_id,payload,expected_digest,expected_version,*,
@@ -104,7 +113,8 @@ class NovelService:
         if action!='SAVE' and previous is None:raise FileNotFoundError(record_id)
         if previous and previous['stale_sources'] and not refresh_sources and action!='RESTORE':
             raise VersionConflict({'id':record_id,'version':previous['version']},resource_id=record_id,expected_version=expected_version)
-        sources=self._story_sources(nid,kind,payload) if action=='SAVE' else (previous or {}).get('source_versions',[])
+        source_payload={**((previous or {}).get('record',{}) if kind in {'characters','locations','relationships'} else {}),**payload}
+        sources=self._story_sources(nid,kind,source_payload) if action=='SAVE' else (previous or {}).get('source_versions',[])
         mutation={'expected_version':expected_version,'action':action,'actor_id':actor_id,
                   'source_versions':sources,'restore_version':restore_version,'feedback':feedback}
         def boundary():

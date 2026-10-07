@@ -7,9 +7,11 @@ async function checked(response: APIResponse) {
 }
 async function openStory(page: Page, kind: string, title: string) {
   await page.getByRole('button', { name: /功能导航/ }).first().click();
-  const group = page.getByRole('button', { name: '创作', exact: true });
+  const navigation = page.getByRole('navigation', { name: '功能面板导航', exact: true });
+  // The active group includes its 当前 badge in the accessible name.
+  const group = navigation.getByRole('button', { name: /^创作(?:\s*当前)?$/ });
   if (await group.getAttribute('aria-expanded') !== 'true') await group.click();
-  await page.getByRole('button', { name: '故事资料库', exact: true }).click();
+  await navigation.getByRole('button', { name: '故事资料库', exact: true }).click();
   await page.keyboard.press('Escape');
   await page.getByRole('tab', { name: kind === 'timeline' ? '时间线' : '伏笔', exact: true }).click();
   await page.locator('.novel-story-database .novel-record-list button').filter({ hasText: title }).click();

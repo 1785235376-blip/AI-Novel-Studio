@@ -44,9 +44,26 @@ test('two real browser writers retain branch CAS conflict and fork with no mainl
     await panel.getByLabel('已核对来源和版本，复制到当前分支', { exact: true }).check();
     await panel.getByRole('button', { name: '确认分叉到当前分支', exact: true }).click();
     await expect(panel.getByRole('button', { name: '在原编辑器打开 主线保留章节', exact: true })).toBeVisible();
-    const mainline = await checked(await request.get(`${API}/novels/${nid}/chapters`, { headers: { 'X-Session-Token': 'surface-writer-a' } }));
-    expect(mainline).toHaveLength(1); expect(mainline[0].version).toBe(1); expect(mainline[0].content).toContain('MAINLINE_UNCHANGED_SYNTHETIC');
-    await page.screenshot({ path: info.outputPath('branch-fork-real-api.png'), fullPage: true });
-    await second.screenshot({ path: info.outputPath('branch-cas-original-editor.png'), fullPage: true });
+    // The generic collaboration chapter route intentionally requires branch scope.
+    // Verify the mainline through the existing explicitly project-authorized source/compare surface.
+    const mainline = (await checked(await request.get(base + '/sources', { headers: headers('surface-writer-a') }))).items;
+    expect(mainline).toHaveLength(1); expect(mainline[0].version).toBe(1);
+    const forked = (await checked(await request.get(base + '/chapters', { headers: headers('surface-writer-a') }))).items.find((row: { title: string }) => row.title === '主线保留章节');
+    expect(forked).toBeTruthy();
+    const comparison = await checked(await request.post(base + '/compare', { headers: headers('surface-writer-a'), data: { chapter_id: forked.id, target_chapter_id: mainline[0].id } }));
+    expect(comparison.target.version).toBe(1); expect(comparison.target.branch_id).toBeNull();
+    expect(JSON.stringify(comparison.checkpoint)).toContain('MAINLINE_UNCHANGED_SYNTHETIC');
+    expect(comparison.conflicts).toHaveLength(0);
+    for (const [width, height] of [[1366, 768], [1440, 900], [1920, 1080]]) {
+      await page.setViewportSize({ width, height }); await second.setViewportSize({ width, height });
+      await page.emulateMedia({ reducedMotion: 'reduce' }); await second.emulateMedia({ reducedMotion: 'reduce' });
+      await page.evaluate(() => document.fonts.ready); await second.evaluate(() => document.fonts.ready);
+      for (const active of [page, second]) {
+        const bounds = await active.evaluate(() => ({ overflow: document.documentElement.scrollWidth - innerWidth, header: document.querySelector('.global-header')!.getBoundingClientRect().height, context: document.querySelector('.context-bar')!.getBoundingClientRect().height, status: document.querySelector('.status-bar')!.getBoundingClientRect().height }));
+        expect(bounds.overflow).toBeLessThanOrEqual(1); expect(bounds.header).toBe(56); expect(bounds.context).toBe(44); expect(bounds.status).toBe(32);
+      }
+      await page.screenshot({ path: info.outputPath(`branch-fork-real-api-${width}.png`), fullPage: true });
+      await second.screenshot({ path: info.outputPath(`branch-cas-original-editor-${width}.png`), fullPage: true });
+    }
   } finally { await secondContext.close(); }
 });

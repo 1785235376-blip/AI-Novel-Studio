@@ -303,8 +303,8 @@ class ResearchLibraryService(DomainService):
                     if vector.get('index_id') == row['id']: vector.update(status='INVALIDATED', vector=[])
         for job in collection(state, 'research_analysis_jobs').values():
             if job.get('request', {}).get('source_id') == rid:
-                change_row(job, 'research-source-invalidation', job['version'], lambda target: target.update(
-                    status='INVALIDATED', execution_token=None, result=None, error_code='RESEARCH_SOURCE_CHANGED'))
+                from .review_adapter_jobs import invalidate_receipt
+                invalidate_receipt(job)
         for name in (NOTES, 'world_records'):
             for row in collection(state, name).values():
                 refs = row.get('citations', row.get('research_sources', []))

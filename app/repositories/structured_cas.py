@@ -25,5 +25,5 @@ def assert_record_cas(kind, rid, current, payload, expected_digest):
     if (record_digest(current) if current is not None else None) != expected_digest:
         # Do not include private current content in a failed CAS response.
         raise VersionConflict({'id': rid, 'version': 0}, resource_id=rid)
-    if set(payload) - (FIELDS[kind] - {'id', 'privacy_status'}) or (kind not in {'timeline', 'foreshadowing'} and current and set(current) - FIELDS[kind]):
+    if set(payload) - (FIELDS[kind] - {'id', 'privacy_status'}):
         raise ValueError('structured CAS cannot discard unsupported extension fields')

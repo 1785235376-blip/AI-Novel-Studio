@@ -12,7 +12,7 @@ from ...privacy import privacy_for_update
 from ..screenplay_versions import versioned_screenplay
 from ..adaptation_versions import versioned_adaptation, MAX_PROPOSALS
 from ..structured_cas import UNGUARDED, assert_record_cas
-from ..story_record_versions import META, KINDS, envelope, prepare, finish
+from ..story_record_versions import META, KINDS, envelope, prepare, finish, core_record
 from .common import chapter_external_id, iso, novel_or_raise
 from .models import (CanonModel, ChapterModel, ChapterSummaryModel, CharacterModel,
                      ForeshadowingModel, LocationModel, NovelModel, SecretModel,
@@ -125,7 +125,7 @@ class PostgresNovelRepository:
                 return [self._serialize_story(session,"timeline",x) for x in sorted(rows, key=timeline_order)]
             if name == "relationships":
                 rows=session.scalars(select(RelationshipStateModel).where(RelationshipStateModel.project_id==novel.slug).order_by(RelationshipStateModel.created_at)).all()
-                return [{"id":dict(row.payload or {}).get("_source_id",row.id),"source_character_id":row.source_character_id,"target_character_id":row.target_character_id,**{key:value for key,value in dict(row.payload or {}).items() if not key.startswith("_")}} for row in rows]
+                return [self._serialize_story(session,"relationships",row) for row in rows]
             if name == "volumes":
                 return sorted(list((novel.metadata_json or {}).get("volumes",[])),key=lambda row:int(row.get("sequence",0)))
             if name == "scenes":
@@ -134,37 +134,22 @@ class PostgresNovelRepository:
                 return list((novel.metadata_json or {}).get("story_routes",[]))
             raise KeyError(name)
 
-    def upsert_character(self,novel_id,character_id,payload,*,expected_digest=UNGUARDED):
-        with self.database.session() as session:
-            novel=self._locked_metadata_model(session,novel_id);character_slug=slug(character_id or payload["name"])
-            model=session.scalar(select(CharacterModel).where(CharacterModel.novel_id==novel.id,CharacterModel.slug==character_slug))
-            assert_record_cas("characters", character_slug, serialize_character(model) if model is not None else None, payload, expected_digest)
-            policy=privacy_for_update(payload, serialize_character(model) if model is not None else None)
-            facts={key:payload.get(key,"") for key in ("role","personality","goal","current_location")}
-            if "privacy_level" not in payload and (model is None or (model.facts or {}).get("_source_privacy_present") is False):
-                facts["_source_privacy_present"]=False
-            if model is None:
-                model=CharacterModel(novel_id=novel.id,slug=character_slug,name=payload["name"],age=payload.get("age"),life_status=payload.get("status","ALIVE"),facts=facts,privacy=policy);session.add(model)
-            else:
-                model.name=payload["name"];model.age=payload.get("age");model.life_status=payload.get("status","ALIVE");model.facts=facts;model.privacy=policy
-            session.flush();return serialize_character(model)
+    def upsert_character(self,novel_id,character_id,payload,*,expected_digest=UNGUARDED,mutation=None,check=None):
+        return self._upsert_story_record(novel_id,'characters',character_id,payload,expected_digest,mutation,check)
 
-    def upsert_location(self,novel_id,location_id,payload,*,expected_digest=UNGUARDED):
-        with self.database.session() as session:
-            novel=self._locked_metadata_model(session,novel_id);location_slug=slug(location_id or payload["name"])
-            model=session.scalar(select(LocationModel).where(LocationModel.novel_id==novel.id,LocationModel.slug==location_slug))
-            assert_record_cas("locations", location_slug, serialize_location(model) if model is not None else None, payload, expected_digest)
-            policy=privacy_for_update(payload, serialize_location(model) if model is not None else None)
-            facts={key:payload.get(key,"") for key in ("location_type","description","rules","atmosphere","status")}
-            if "privacy_level" not in payload and (model is None or (model.facts or {}).get("_source_privacy_present") is False):
-                facts["_source_privacy_present"]=False
-            if model is None:
-                model=LocationModel(novel_id=novel.id,slug=location_slug,name=payload["name"],facts=facts,privacy=policy);session.add(model)
-            else:model.name=payload["name"];model.facts=facts;model.privacy=policy
-            session.flush();return serialize_location(model)
+    def upsert_location(self,novel_id,location_id,payload,*,expected_digest=UNGUARDED,mutation=None,check=None):
+        return self._upsert_story_record(novel_id,'locations',location_id,payload,expected_digest,mutation,check)
 
     @staticmethod
     def _serialize_story(session,kind,model):
+        if kind=='characters':return serialize_character(model)
+        if kind=='locations':return serialize_location(model)
+        if kind=='relationships':
+            from ...privacy import privacy_record
+            return privacy_record({'id':dict(model.payload or {}).get('_source_id',model.id),
+                                   'source_character_id':model.source_character_id,
+                                   'target_character_id':model.target_character_id,
+                                   **{key:value for key,value in dict(model.payload or {}).items() if not key.startswith('_')}})
         if kind=='foreshadowing': return serialize_foreshadowing(model)
         result=serialize_timeline(model)
         # Historical imports stored only a location FK. New rows retain the
@@ -176,6 +161,20 @@ class PostgresNovelRepository:
 
     @staticmethod
     def _story_model(session,novel,kind,rid):
+        if kind in {'characters','locations'}:
+            cls=CharacterModel if kind=='characters' else LocationModel
+            return session.scalar(select(cls).where(cls.novel_id==novel.id,cls.slug==rid)),uuid.uuid5(uuid.NAMESPACE_URL,f'ai-novel-studio:{novel.slug}:{kind}:{rid}')
+        if kind=='relationships':
+            target=f'{novel.slug}:{rid}'
+            model=session.scalar(select(RelationshipStateModel).where(RelationshipStateModel.project_id==novel.slug,
+                                  RelationshipStateModel.payload['_source_id'].astext==rid))
+            if model is None:
+                model=session.get(RelationshipStateModel,target)
+                if model is not None and model.project_id!=novel.slug:raise FileNotFoundError(rid)
+            if model is None:
+                candidate=session.get(RelationshipStateModel,rid)
+                if candidate is not None and candidate.project_id==novel.slug:model=candidate
+            return model,target
         cls=TimelineModel if kind=='timeline' else ForeshadowingModel
         target=uuid.uuid5(uuid.NAMESPACE_URL,f"ai-novel-studio:{novel.slug}:{kind}:{rid}")
         model=session.get(cls,target)
@@ -192,13 +191,17 @@ class PostgresNovelRepository:
         with self.database.session() as session:
             novel=novel_or_raise(session,novel_id);model,_=self._story_model(session,novel,kind,record_id)
             if model is None:raise FileNotFoundError(record_id)
-            return envelope(self._serialize_story(session,kind,model),(model.details or {}).get(META))
+            column='facts' if kind in {'characters','locations'} else 'payload' if kind=='relationships' else 'details'
+            return envelope(self._serialize_story(session,kind,model),(getattr(model,column) or {}).get(META))
 
     def _upsert_story_record(self,novel_id,kind,record_id,payload,expected_digest,mutation,check):
         with self.database.session() as session:
             novel=novel_or_raise(session,novel_id,True)
             exact=self._story_model(session,novel,kind,record_id)[0] if expected_digest is UNGUARDED and record_id else None
-            rid=record_id if expected_digest is not UNGUARDED or exact is not None else slug(record_id or payload['title'])
+            creation_id=payload.get('name') or payload.get('title') or f"{payload.get('source_character_id','')}-{payload.get('target_character_id','')}"
+            rid=record_id if expected_digest is not UNGUARDED or exact is not None else slug(record_id or creation_id)
+            if kind in {'characters','locations','relationships'}:
+                return self._write_core_story(session,novel,kind,rid,payload,expected_digest,mutation,check)
             if mutation and mutation['action']!='RESTORE':
                 # Keep captured chapter evidence stable through the same commit.
                 # Timeline sources share the novel lock already held here.
@@ -267,20 +270,43 @@ class PostgresNovelRepository:
     def upsert_foreshadowing(self,novel_id,foreshadowing_id,payload,*,expected_digest=UNGUARDED,mutation=None,check=None):
         return self._upsert_story_record(novel_id,'foreshadowing',foreshadowing_id,payload,expected_digest,mutation,check)
 
-    def upsert_relationship(self,novel_id,relationship_id,payload,*,expected_digest=UNGUARDED):
-        with self.database.session() as session:
-            novel=self._locked_metadata_model(session,novel_id);source_id=slug(relationship_id or f"{payload['source_character_id']}-{payload['target_character_id']}");rid=f"{novel.slug}:{source_id}";model=session.get(RelationshipStateModel,rid)
-            current={"id":dict(model.payload or {}).get("_source_id",model.id),"source_character_id":model.source_character_id,"target_character_id":model.target_character_id,**{key:value for key,value in dict(model.payload or {}).items() if not key.startswith("_")}} if model is not None else None
-            assert_record_cas("relationships",source_id,current,payload,expected_digest)
-            details={key:payload.get(key,"") for key in ("relationship_type","description","status","valid_from_event_id","valid_to_event_id","certainty","privacy_level")}
-            details["_source_id"]=source_id
-            details["privacy_level"]=privacy_for_update(payload, model.payload if model is not None else None)
-            values={"project_id":novel.slug,"source_character_id":payload["source_character_id"],"target_character_id":payload["target_character_id"],"payload":details}
-            if model is None:model=RelationshipStateModel(id=rid,**values);session.add(model)
-            else:
-                if model.project_id!=novel.slug:raise KeyError(rid)
-                for key,value in values.items():setattr(model,key,value)
-            session.flush();return {"id":source_id,"source_character_id":model.source_character_id,"target_character_id":model.target_character_id,**{key:value for key,value in details.items() if not key.startswith("_")}}
+    def upsert_relationship(self,novel_id,relationship_id,payload,*,expected_digest=UNGUARDED,mutation=None,check=None):
+        return self._upsert_story_record(novel_id,'relationships',relationship_id,payload,expected_digest,mutation,check)
+
+    def _write_core_story(self,session,novel,kind,rid,payload,expected_digest,mutation,check):
+        # The caller holds the same novel row lock used by every original writer.
+        model,target=self._story_model(session,novel,kind,rid)
+        column='payload' if kind=='relationships' else 'facts'
+        stored=dict(getattr(model,column) or {}) if model is not None else {}
+        current=self._serialize_story(session,kind,model) if model is not None else None
+        metadata=stored.get(META)
+        payload=prepare(kind,rid,current,metadata,payload,expected_digest,mutation)
+        legacy_defaults={key:'' for key in ('location_type','description','rules','atmosphere','status')} if kind=='locations' else {key:'' for key in ('relationship_type','description','status','valid_from_event_id','valid_to_event_id','certainty')} if kind=='relationships' else None
+        item=core_record(kind,rid,current,payload,mutation,legacy_defaults=legacy_defaults)
+        internal={key:value for key,value in stored.items() if key.startswith('_') and key!=META}
+        if kind in {'characters','locations'}:
+            columns={'id','name','age','privacy_level','privacy_status'} | ({'status'} if kind=='characters' else set())
+            facts={**internal,**{key:value for key,value in item.items() if key not in columns}}
+            if item.get('privacy_status')=='UNKNOWN':facts['_source_privacy_present']=False
+            else:facts.pop('_source_privacy_present',None)
+            values={'novel_id':novel.id,'slug':rid,'name':item['name'],'facts':facts,'privacy':item['privacy_level']}
+            if kind=='characters':values.update(age=item.get('age'),life_status=item.get('status','ALIVE'))
+            cls=CharacterModel if kind=='characters' else LocationModel
+        else:
+            facts={**internal,**{key:value for key,value in item.items() if key not in {'id','source_character_id','target_character_id'}},'_source_id':rid}
+            values={'project_id':novel.slug,'source_character_id':item['source_character_id'],
+                    'target_character_id':item['target_character_id'],'payload':facts}
+            cls=RelationshipStateModel
+        if model is None:model=cls(id=target,**values);session.add(model)
+        else:
+            for key,value in values.items():setattr(model,key,value)
+        session.flush()
+        result=self._serialize_story(session,kind,model)
+        meta=finish(current,metadata,result,mutation)
+        if meta is not None:setattr(model,column,{**facts,META:meta})
+        if check:check()
+        session.flush()
+        return envelope(result,meta) if mutation is not None else result
 
     def get_outline(self,novel_id):
         with self.database.session() as session:

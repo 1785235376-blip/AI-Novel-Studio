@@ -9,7 +9,7 @@ from .mutation_coordinator import workspace_mutation
 from ..screenplay_versions import versioned_screenplay
 from ..adaptation_versions import versioned_adaptation, MAX_PROPOSALS
 from ..structured_cas import UNGUARDED, assert_record_cas
-from ..story_record_versions import META, KINDS, public_record, envelope, prepare, finish
+from ..story_record_versions import META, KINDS, PATHS, public_record, envelope, prepare, finish, core_record
 
 class FileNovelRepository:
     def __init__(self,backend:FileRepository):self.backend=backend
@@ -26,36 +26,16 @@ class FileNovelRepository:
     def get_data_set(self,novel_id,name):
         rows=self.backend.data_set(novel_id,name)
         return [privacy_record(public_record(row)) for row in rows] if name in {"characters","locations","canon","foreshadowing","timeline","relationships"} else rows
-    @guard_project("novel_id")
-    def upsert_character(self,novel_id,character_id,payload,*,expected_digest=UNGUARDED):
-        root=self.backend.novels/novel_id
-        if not root.exists():raise FileNotFoundError(novel_id)
-        path=root/'characters/characters.json';rows=read_json(path,[]);cid=slug(character_id or payload['name'])
-        item={"id":cid,"name":payload["name"],"age":payload.get("age"),"role":payload.get("role",""),"personality":payload.get("personality",""),"goal":payload.get("goal",""),"current_location":payload.get("current_location",""),"status":payload.get("status","ALIVE"),"privacy_level":payload.get("privacy_level","CLOUD_ALLOWED")}
-        index=next((i for i,row in enumerate(rows) if str(row.get('id'))==cid),None)
-        assert_record_cas("characters", cid, privacy_record(rows[index]) if index is not None else None, payload, expected_digest)
-        item["privacy_level"]=privacy_for_update(payload, rows[index] if index is not None else None)
-        if "privacy_level" not in payload and (index is None or "privacy_level" not in rows[index] or rows[index].get("privacy_status") == "UNKNOWN"):item["privacy_status"]="UNKNOWN"
-        if index is None:rows.append(item)
-        else:rows[index]=item
-        atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
-    @guard_project("novel_id")
-    def upsert_location(self,novel_id,location_id,payload,*,expected_digest=UNGUARDED):
-        root=self.backend.novels/novel_id
-        if not root.exists():raise FileNotFoundError(novel_id)
-        path=root/'locations/locations.json';rows=read_json(path,[]);lid=slug(location_id or payload['name'])
-        item={"id":lid,"name":payload["name"],"location_type":payload.get("location_type",""),"description":payload.get("description",""),"rules":payload.get("rules",""),"atmosphere":payload.get("atmosphere",""),"status":payload.get("status","ACTIVE"),"privacy_level":payload.get("privacy_level","CLOUD_ALLOWED")}
-        index=next((i for i,row in enumerate(rows) if str(row.get('id'))==lid),None)
-        assert_record_cas("locations", lid, privacy_record(rows[index]) if index is not None else None, payload, expected_digest)
-        item["privacy_level"]=privacy_for_update(payload, rows[index] if index is not None else None)
-        if "privacy_level" not in payload and (index is None or "privacy_level" not in rows[index] or rows[index].get("privacy_status") == "UNKNOWN"):item["privacy_status"]="UNKNOWN"
-        if index is None:rows.append(item)
-        else:rows[index]=item
-        atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
+    def upsert_character(self,novel_id,character_id,payload,*,expected_digest=UNGUARDED,mutation=None,check=None):
+        return self._upsert_story_record(novel_id,'characters',character_id,payload,expected_digest,mutation,check)
+
+    def upsert_location(self,novel_id,location_id,payload,*,expected_digest=UNGUARDED,mutation=None,check=None):
+        return self._upsert_story_record(novel_id,'locations',location_id,payload,expected_digest,mutation,check)
+
     @guard_project("novel_id")
     def story_record(self,novel_id,kind,record_id):
         if kind not in KINDS: raise ValueError("unsupported story record kind")
-        rows=read_json(self.backend.novels/novel_id/('timeline/events.json' if kind=='timeline' else 'foreshadowing.json'),[])
+        rows=read_json(self.backend.novels/novel_id/PATHS[kind],[])
         row=next((row for row in rows if str(row.get('id'))==record_id),None)
         if row is None: raise FileNotFoundError(record_id)
         return envelope(privacy_record(public_record(row)),row.get(META))
@@ -63,38 +43,42 @@ class FileNovelRepository:
     @guard_project("novel_id")
     def _upsert_story_record(self,novel_id,kind,record_id,payload,expected_digest,mutation,check):
         root=self.backend.novels/novel_id
-        path=root/('timeline/events.json' if kind=='timeline' else 'foreshadowing.json')
+        path=root/PATHS[kind]
         rows=read_json(path,[])
         # Older clients must address an existing exact identity before applying
         # historical slug creation rules, including imported/non-ASCII ids.
         exact=any(str(row.get('id'))==record_id for row in rows)
-        rid=record_id if expected_digest is not UNGUARDED or exact else slug(record_id or payload['title'])
+        creation_id=payload.get('name') or payload.get('title') or f"{payload.get('source_character_id','')}-{payload.get('target_character_id','')}"
+        rid=record_id if expected_digest is not UNGUARDED or exact else slug(record_id or creation_id)
         index=next((i for i,row in enumerate(rows) if str(row.get('id'))==rid),None)
         raw=rows[index] if index is not None else None
         current=privacy_record(public_record(raw)) if raw is not None else None
         metadata=raw.get(META) if raw else None
         payload=prepare(kind,rid,current,metadata,payload,expected_digest,mutation)
-        # Preserve imported extension fields even on writes from older clients.
-        item={**(public_record(raw) if raw else {}),"id":rid,"title":payload["title"],
-              "description":payload.get("description",""),"characters":payload.get("characters",[]),
-              "privacy_level":privacy_for_update(payload,current)}
-        if kind=='timeline':
-            item.update(sequence=payload.get("sequence",len(rows)+1),time=payload.get("time",""),
-                        location=payload.get("location",""),chapter_id=payload.get("chapter_id",""),status=payload.get("status","CONFIRMED"))
+        if kind in {'characters','locations','relationships'}:
+            item=core_record(kind,rid,current,payload,mutation,legacy_defaults={} if kind=='relationships' else None)
         else:
-            item.update(planted_chapter=payload.get("planted_chapter"),target_chapter=payload.get("target_chapter"),
-                        status=payload.get("status","OPEN"),events=payload.get("events",[]))
-        if "privacy_level" not in payload and (current is None or current.get("privacy_status")=="UNKNOWN"):
-            item["privacy_status"]="UNKNOWN"
-        elif "privacy_level" in payload: item.pop("privacy_status",None)
-        if mutation and mutation["action"] in {"RESTORE","FEEDBACK"}:item={"id":rid,**payload}
+            # Preserve imported extension fields even on writes from older clients.
+            item={**(public_record(raw) if raw else {}),"id":rid,"title":payload["title"],
+                  "description":payload.get("description",""),"characters":payload.get("characters",[]),
+                  "privacy_level":privacy_for_update(payload,current)}
+            if kind=='timeline':
+                item.update(sequence=payload.get("sequence",len(rows)+1),time=payload.get("time",""),
+                            location=payload.get("location",""),chapter_id=payload.get("chapter_id",""),status=payload.get("status","CONFIRMED"))
+            else:
+                item.update(planted_chapter=payload.get("planted_chapter"),target_chapter=payload.get("target_chapter"),
+                            status=payload.get("status","OPEN"),events=payload.get("events",[]))
+            if "privacy_level" not in payload and (current is None or current.get("privacy_status")=="UNKNOWN"):
+                item["privacy_status"]="UNKNOWN"
+            elif "privacy_level" in payload: item.pop("privacy_status",None)
+            if mutation and mutation["action"] in {"RESTORE","FEEDBACK"}:item={"id":rid,**payload}
         meta=finish(current,metadata,privacy_record(item),mutation)
         if meta is not None: item[META]=meta
         if check: check()
         if index is None:rows.append(item)
         else:rows[index]=item
         if kind=='timeline':rows.sort(key=lambda row:int(row.get('sequence',0)))
-        else:rows.sort(key=lambda row:(row.get('planted_chapter') is None,row.get('planted_chapter') or 0))
+        elif kind=='foreshadowing':rows.sort(key=lambda row:(row.get('planted_chapter') is None,row.get('planted_chapter') or 0))
         atomic_write(path,json.dumps(rows,ensure_ascii=False,indent=2))
         return envelope(privacy_record(public_record(item)),meta) if mutation is not None else public_record(item)
 
@@ -103,19 +87,9 @@ class FileNovelRepository:
 
     def upsert_foreshadowing(self,novel_id,foreshadowing_id,payload,*,expected_digest=UNGUARDED,mutation=None,check=None):
         return self._upsert_story_record(novel_id,'foreshadowing',foreshadowing_id,payload,expected_digest,mutation,check)
-    @guard_project("novel_id")
-    def upsert_relationship(self,novel_id,relationship_id,payload,*,expected_digest=UNGUARDED):
-        root=self.backend.novels/novel_id
-        if not root.exists():raise FileNotFoundError(novel_id)
-        path=root/'relationships.json';rows=read_json(path,[]);rid=slug(relationship_id or f"{payload['source_character_id']}-{payload['target_character_id']}")
-        item={"id":rid,**payload}
-        index=next((i for i,row in enumerate(rows) if str(row.get('id'))==rid),None)
-        assert_record_cas("relationships", rid, privacy_record(rows[index]) if index is not None else None, payload, expected_digest)
-        item["privacy_level"]=privacy_for_update(payload, rows[index] if index is not None else None)
-        if "privacy_level" not in payload and (index is None or "privacy_level" not in rows[index] or rows[index].get("privacy_status") == "UNKNOWN"):item["privacy_status"]="UNKNOWN"
-        if index is None:rows.append(item)
-        else:rows[index]=item
-        atomic_write(path,__import__('json').dumps(rows,ensure_ascii=False,indent=2));return item
+    def upsert_relationship(self,novel_id,relationship_id,payload,*,expected_digest=UNGUARDED,mutation=None,check=None):
+        return self._upsert_story_record(novel_id,'relationships',relationship_id,payload,expected_digest,mutation,check)
+
     @guard_project("novel_id")
     def get_outline(self,novel_id):
         root=self.backend.novels/novel_id

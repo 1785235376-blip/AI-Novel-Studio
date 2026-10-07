@@ -649,3 +649,7 @@ router.include_router(create_story_record_router(legacy_api.novel_service,
 from .adaptation_projection import mount_adaptation_projections
 mount_adaptation_projections(workspace_tools_service, inbox_service,
     legacy_api.adaptation_service, legacy_api, require_flag)
+
+from .review_adapter_projection import mount_review_adapter_projections
+mount_review_adapter_projections(workspace_tools_service, inbox_service,
+    research_library_service, embedding_service, authorize, require_flag)

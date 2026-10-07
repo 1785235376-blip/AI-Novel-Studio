@@ -3,12 +3,12 @@
   "phase": "Feature Completion & Functional Surface Freeze",
   "status": "SOURCE_MAP_REVIEW_PENDING",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "observed_checkpoint_sha": "f25f08bd978a01aa32ecb713871b1a70ce1732ce",
+  "observed_checkpoint_sha": "d9d2df3a0a831a5bba6249793fd21946c17ce7d4",
   "branch": "work/feature-completion-surface-freeze",
   "draft_pr": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/45",
   "source_state": "ACTIVE_WORKTREE_NOT_PINNED_FINAL_HEAD",
   "final_sha": null,
-  "generated_at_utc": "2026-10-07T06:02:52.275680+00:00",
+  "generated_at_utc": "2026-10-07T07:21:07.933336+00:00",
   "product_areas": [
     "Write",
     "Story",
@@ -52,6 +52,11 @@
     "exception_scope": "Reviewed fixture-only true branch initialization; original test bodies/assertions/node IDs/skips unchanged; whole-file hash changed",
     "exception_receipt": "docs/delivery/functional-surface-freeze/ADAPTATION_FIXTURE_EXCEPTION.json",
     "other_original_tests": "Frozen; exact final-source manifest validation lead-owned",
+    "browser_fixture_exception": {
+      "file": "frontend/scripts/local_interop_browser_host.py",
+      "scope": "Reviewed synthetic-only fixture migration initializes actual branch through production fork; original HTTP tests/browser assertions unchanged",
+      "receipt": "docs/delivery/functional-surface-freeze/INTEROP_FIXTURE_EXCEPTION.json"
+    },
     "historical_migrations": "001-020 frozen"
   },
   "mounted_api_catalog": {
@@ -73,7 +78,32 @@
       "backend_profile_skipped": 50,
       "api_catalog_passed": 3
     },
-    "interpretation": "Focused corrected-source evidence is not the full immutable candidate verdict; no original assertion changed."
+    "interpretation": "Historical focused corrected-source evidence only. The later five-kind Story, adapter-receipt and Local Interop branch-owner follow-on changes require new immutable final-source verification; no original assertion changed."
+  },
+  "followon_correction_evidence": {
+    "report": "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md",
+    "earlier_published_head": "d9d2df3a0a831a5bba6249793fd21946c17ce7d4",
+    "earlier_published_tree": "cfa1d8c0c19a9e53addde538c52110ed445ea76f",
+    "earlier_push_and_pr_frontend": "FAILED_RETAINED",
+    "corrected_head_hosted_results": "PENDING",
+    "scope": "Five-kind Story original-owner versions, hybrid read permission and bounded adapter receipts/projections, true Local Interop branch authority/wire identity, and scoped new-browser route/source/viewport corrections. No original assertion weakened."
+  },
+  "retained_postgresql_failure": {
+    "published_head": "d9d2df3a0a831a5bba6249793fd21946c17ce7d4",
+    "status": "FAILED_STORED_FACTS_TIMELINE_IDENTITY_RETAINED",
+    "unchanged_assertion": "test_stored_facts_stale_without_chapter_change_and_cancel_does_not_write",
+    "correction": "Original Continuity repositories adapt opaque Timeline IDs and public project slugs to actual UUID storage/FK ownership; reject inconsistent/foreign/ambiguous records without rewrite or migration.",
+    "report": "docs/SURFACE_CONTINUITY_TIMELINE_IDENTITY.md",
+    "new_test": "tests/test_surface_continuity_timeline_identity.py",
+    "reported_local_matrix": {
+      "passed": 14,
+      "real_postgres_gated": 26
+    },
+    "reported_local_affected": {
+      "passed": 139,
+      "real_postgres_gated": 131
+    },
+    "real_postgres_corrected_head": "PENDING_HOSTED_NOT_VERIFIED_LOCALLY"
   },
   "browser_gate_configs": [
     "frontend/playwright.surface.config.ts",
@@ -106,10 +136,11 @@
       "former_gap_id": "GAP_STORY_RECORD_CAS",
       "surfaces": [
         "FS_TIMELINE",
-        "FS_FORESHADOWING"
+        "FS_FORESHADOWING",
+        "FS_STORY_DATABASE"
       ],
       "status": "IMPLEMENTED_SOURCE_MAPPED_FINAL_VERIFICATION_PENDING",
-      "detail": "Original Timeline/Foreshadowing rows and existing editors gain explicit flag-gated digest/version CAS, source snapshots, bounded history/restore, feedback and draft/exact-source recovery. Legacy compatibility remains: historical writes advance opted-in metadata; there is no claim every legacy structured write now requires CAS."
+      "detail": "All five original record kinds (Character, Location, Relationship, Timeline, Foreshadowing) now share mandatory digest/version CAS in their flag-ON current editors/versioned routes, source lineage, bounded history/restore, feedback and owner-keyed draft recovery. Original IDs, sparse shape and opaque imported fields survive. Legacy OFF/component-only/direct-client compatibility remains explicit; universal CAS on historical endpoints is not claimed."
     },
     {
       "former_gap_id": "GAP_ADAPTATION_LIFECYCLE",
@@ -180,6 +211,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#F00"
     },
     {
@@ -248,6 +281,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U02"
     },
     {
@@ -292,7 +327,8 @@
         "frontend/src/store.ts",
         "frontend/src/App.tsx",
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
-        "app/experimental/ux_api.py"
+        "app/experimental/ux_api.py",
+        "frontend/src/experimental/uxClient.ts"
       ],
       "api_sources": [
         "app/experimental/ux_api.py"
@@ -315,6 +351,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U01"
     },
     {
@@ -382,6 +420,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U03"
     },
     {
@@ -428,7 +468,9 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
         "frontend/src/experimental/ExperimentalWorkbench.tsx",
         "app/experimental/adaptation_projection.py",
-        "app/experimental/ux_api.py"
+        "app/experimental/review_adapter_projection.py",
+        "app/experimental/ux_api.py",
+        "frontend/src/experimental/uxClient.ts"
       ],
       "api_sources": [
         "app/experimental/ux_api.py"
@@ -449,6 +491,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U07"
     },
     {
@@ -519,6 +563,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U08"
     },
     {
@@ -587,6 +633,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U09"
     },
     {
@@ -652,6 +700,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U12"
     },
     {
@@ -718,6 +768,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U04"
     },
     {
@@ -784,6 +836,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U10"
     },
     {
@@ -846,6 +900,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U13"
     },
     {
@@ -923,6 +979,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A04"
     },
     {
@@ -1000,6 +1058,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A05"
     },
     {
@@ -1066,6 +1126,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A06"
     },
     {
@@ -1125,6 +1187,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A07"
     },
     {
@@ -1186,6 +1250,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A09"
     },
     {
@@ -1246,6 +1312,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A13"
     },
     {
@@ -1324,6 +1392,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U06"
     },
     {
@@ -1401,6 +1471,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A02"
     },
     {
@@ -1479,6 +1551,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A03"
     },
     {
@@ -1555,6 +1629,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A01"
     },
     {
@@ -1636,6 +1712,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A10"
     },
     {
@@ -1718,6 +1796,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A11"
     },
     {
@@ -1779,6 +1859,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U05"
     },
     {
@@ -1844,6 +1926,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U11"
     },
     {
@@ -1902,6 +1986,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U15"
     },
     {
@@ -1961,6 +2047,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A08"
     },
     {
@@ -2027,6 +2115,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A12"
     },
     {
@@ -2105,6 +2195,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B03"
     },
     {
@@ -2170,6 +2262,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B04"
     },
     {
@@ -2237,6 +2331,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U14"
     },
     {
@@ -2303,6 +2399,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U16"
     },
     {
@@ -2364,6 +2462,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B01"
     },
     {
@@ -2436,6 +2536,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B02"
     },
     {
@@ -2502,6 +2604,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B05"
     },
     {
@@ -2565,6 +2669,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B06"
     },
     {
@@ -2628,6 +2734,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B07"
     },
     {
@@ -2687,6 +2795,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B08"
     },
     {
@@ -2750,6 +2860,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B09"
     },
     {
@@ -2808,6 +2920,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B10"
     },
     {
@@ -2873,6 +2987,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_MANUSCRIPT"
     },
     {
@@ -2931,6 +3047,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_GENERATION"
     },
     {
@@ -2985,6 +3103,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_CREATION"
     },
     {
@@ -3061,6 +3181,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_PLANNING"
     },
     {
@@ -3148,6 +3270,8 @@
       "owner_evidence_files": [
         "docs/delivery/functional-surface-freeze/FINDINGS_AND_CANON_VERIFICATION.json"
       ],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_CANON"
     },
     {
@@ -3191,6 +3315,7 @@
         "app/experimental/finding_review_composition.py",
         "app/services/continuity_finding_service.py",
         "app/services/finding_review_service.py",
+        "app/lore/continuity.py",
         "app/lore/continuity_engine.py",
         "app/lore/continuity_rules.py",
         "app/repositories/file/continuity.py",
@@ -3234,8 +3359,11 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [
-        "docs/delivery/functional-surface-freeze/FINDINGS_AND_CANON_VERIFICATION.json"
+        "docs/delivery/functional-surface-freeze/FINDINGS_AND_CANON_VERIFICATION.json",
+        "docs/SURFACE_CONTINUITY_TIMELINE_IDENTITY.md"
       ],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_CONTINUITY"
     },
     {
@@ -3301,6 +3429,7 @@
         "finding_review_v1"
       ],
       "requirements": [
+        "FSR-276",
         "FSR-179",
         "FSR-180",
         "FSR-191",
@@ -3318,6 +3447,11 @@
         "FSR-204",
         "FSR-205",
         "FSR-206",
+        "FSR-266",
+        "FSR-267",
+        "FSR-292",
+        "FSR-293",
+        "FSR-294",
         "FSR-298"
       ],
       "remaining": [
@@ -3328,6 +3462,8 @@
         "docs/delivery/functional-surface-freeze/FINDINGS_AND_CANON_VERIFICATION.json",
         "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md"
       ],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_FORESHADOWING"
     },
     {
@@ -3371,6 +3507,9 @@
         "app/services/novel_service.py",
         "app/experimental/world.py",
         "app/narrative.py",
+        "app/lore/continuity.py",
+        "app/repositories/file/continuity.py",
+        "app/repositories/postgres/continuity.py",
         "app/repositories/story_record_versions.py",
         "app/repositories/file/novel.py",
         "app/repositories/postgres/novel.py",
@@ -3388,6 +3527,7 @@
         "world_character_engines_v2"
       ],
       "requirements": [
+        "FSR-276",
         "FSR-179",
         "FSR-180",
         "FSR-192",
@@ -3405,6 +3545,11 @@
         "FSR-204",
         "FSR-205",
         "FSR-206",
+        "FSR-266",
+        "FSR-267",
+        "FSR-292",
+        "FSR-293",
+        "FSR-294",
         "FSR-298"
       ],
       "remaining": [
@@ -3412,8 +3557,11 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [
-        "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md"
+        "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md",
+        "docs/SURFACE_CONTINUITY_TIMELINE_IDENTITY.md"
       ],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_TIMELINE"
     },
     {
@@ -3457,20 +3605,45 @@
         "app/services/novel_service.py",
         "app/services/lore_service.py",
         "app/repositories/structured_cas.py",
-        "app/api.py"
+        "app/repositories/story_record_versions.py",
+        "app/repositories/file/novel.py",
+        "app/repositories/postgres/novel.py",
+        "app/repositories/postgres/serialization.py",
+        "app/api.py",
+        "app/story_record_api.py"
       ],
       "api_sources": [
-        "app/api.py"
+        "app/api.py",
+        "app/story_record_api.py"
       ],
-      "flags": [],
+      "flags": [
+        "story_record_versions_v1"
+      ],
       "requirements": [
+        "FSR-275",
+        "FSR-276",
+        "FSR-277",
+        "FSR-266",
+        "FSR-267",
+        "FSR-292",
+        "FSR-293",
+        "FSR-294",
         "FSR-298"
       ],
       "remaining": [
         "LEGACY_STRUCTURED_CAS_COMPATIBILITY",
         "FINAL_SOURCE_CI"
       ],
-      "owner_evidence_files": [],
+      "owner_evidence_files": [
+        "docs/CORE_STORY_RECORD_VERSION_CLOSURE.md"
+      ],
+      "operation_permissions": {
+        "catalog_read": "Original PROJECT domain.read; no branch-authority promotion",
+        "versioned_save_restore": "Original PROJECT domain.write plus mandatory expected digest/version, current source and flag when versioned entry is used",
+        "feedback": "Original PROJECT domain.review plus snapshot CAS and terminal source-bound decision",
+        "legacy_compatibility": "Flag-OFF/component-only and historical direct writers retain original behavior; prior opted-in metadata advances history"
+      },
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_STORY_DATABASE"
     },
     {
@@ -3548,6 +3721,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_IMPORT"
     },
     {
@@ -3592,7 +3767,9 @@
         "app/experimental/legacy_inbox.py",
         "app/experimental/finding_review_composition.py",
         "app/experimental/adaptation_projection.py",
-        "app/experimental/inbox_api.py"
+        "app/experimental/review_adapter_projection.py",
+        "app/experimental/inbox_api.py",
+        "frontend/src/experimental/uxClient.ts"
       ],
       "api_sources": [
         "app/experimental/inbox_api.py"
@@ -3613,6 +3790,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_REVIEW"
     },
     {
@@ -3692,6 +3871,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_IMAGES"
     },
     {
@@ -3747,6 +3928,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_SCREENPLAY"
     },
     {
@@ -3829,6 +4012,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_VIDEO"
     },
     {
@@ -3898,6 +4083,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_AUDIO"
     },
     {
@@ -3963,6 +4150,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_ASSETS"
     },
     {
@@ -4030,6 +4219,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_MODELS"
     },
     {
@@ -4094,6 +4285,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_EXPORT"
     },
     {
@@ -4155,6 +4348,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_COLLAB"
     },
     {
@@ -4246,6 +4441,8 @@
       "owner_evidence_files": [
         "docs/delivery/functional-surface-freeze/BRANCH_MANUSCRIPT_VERIFICATION.json"
       ],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_BRANCH"
     },
     {
@@ -4322,6 +4519,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_REALTIME"
     },
     {
@@ -4405,7 +4604,14 @@
         "EXTERNAL_REAL_MODELS",
         "FINAL_SOURCE_CI"
       ],
-      "owner_evidence_files": [],
+      "owner_evidence_files": [
+        "docs/SURFACE_ADAPTER_RECOVERY_COMPLETION.md"
+      ],
+      "operation_permissions": {
+        "query_and_hybrid_query": "domain.read plus current original index/source visibility and scope; before/after feature and authority checks",
+        "index_mutations": "domain.write plus original source/creator, expected version and publication guards"
+      },
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_SEMANTIC"
     },
     {
@@ -4449,6 +4655,7 @@
         "app/experimental/visual_identity.py",
         "app/experimental/embeddings.py",
         "app/experimental/review_adapter_jobs.py",
+        "app/experimental/review_adapter_projection.py",
         "app/services/v1_capability_service.py",
         "app/experimental/embeddings_api.py",
         "app/api.py"
@@ -4461,6 +4668,8 @@
         "visual_embeddings"
       ],
       "requirements": [
+        "FSR-272",
+        "FSR-273",
         "FSR-107",
         "FSR-108",
         "FSR-109",
@@ -4486,6 +4695,11 @@
         "FSR-148",
         "FSR-149",
         "FSR-150",
+        "FSR-266",
+        "FSR-267",
+        "FSR-292",
+        "FSR-293",
+        "FSR-294",
         "FSR-302"
       ],
       "remaining": [
@@ -4493,7 +4707,26 @@
         "EXTERNAL_REAL_MODELS",
         "FINAL_SOURCE_CI"
       ],
-      "owner_evidence_files": [],
+      "owner_evidence_files": [
+        "docs/SURFACE_ADAPTER_RECOVERY_COMPLETION.md"
+      ],
+      "operation_permissions": {
+        "read": "domain.read plus receipt creator and approved current reference/asset visibility",
+        "cancel": "Current domain.write and original receipt CAS/state/capacity through original owner",
+        "generic_review": "No approve or batch approve; original inspector remains FORMAL_SOURCE_ONLY without rendered exact-open control"
+      },
+      "bounded_receipt_contract": {
+        "owner": "Existing ReviewAdapterJobs metadata of the original Research/Embedding service",
+        "history_entries": 100,
+        "receipt_bytes": 8388608,
+        "current_snapshot_bytes": 786432,
+        "result_bytes": 524288,
+        "run_free_revision_slots_required": 6,
+        "capacity_behavior": "Reserve claim/terminal/review/cancel/recover/source-invalidation tail before dispatch; no eviction/truncation. Explicit new receipt required after finite admission exhausted.",
+        "terminal_behavior": "Repeated same-state cancel/invalidate is an idempotent no-op; source replacement/revocation uses bounded invalidation.",
+        "revoked_payload_behavior": "Cancel/invalidate/stale responses withhold request/source snapshot/model/result digest; conflict only exposes ID/version/status. Projections contain receipt identity/version/status, no source lineage or result.",
+        "restart_behavior": "RUNNING reports recovery required; explicit recover/cancel fences token; no automatic replay or durable-worker claim"
+      },
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_VISUAL"
     },
     {
@@ -4570,6 +4803,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_SYNC"
     },
     {
@@ -4612,6 +4847,7 @@
       "authority_sources": [
         "app/experimental/research_vision.py",
         "app/experimental/review_adapter_jobs.py",
+        "app/experimental/review_adapter_projection.py",
         "app/experimental/research_library.py",
         "app/experimental/research_library_api.py"
       ],
@@ -4622,11 +4858,18 @@
         "research_library_v2"
       ],
       "requirements": [
+        "FSR-272",
+        "FSR-273",
         "FSR-217",
         "FSR-218",
         "FSR-219",
         "FSR-220",
         "FSR-226",
+        "FSR-266",
+        "FSR-267",
+        "FSR-292",
+        "FSR-293",
+        "FSR-294",
         "FSR-300"
       ],
       "remaining": [
@@ -4634,7 +4877,26 @@
         "EXTERNAL_REAL_MODELS",
         "FINAL_SOURCE_CI"
       ],
-      "owner_evidence_files": [],
+      "owner_evidence_files": [
+        "docs/SURFACE_ADAPTER_RECOVERY_COMPLETION.md"
+      ],
+      "operation_permissions": {
+        "read": "domain.write plus original Research source/creator visibility",
+        "cancel": "Current domain.write and original receipt CAS/state/capacity through original owner",
+        "generic_review": "No approve or batch approve; original inspector remains FORMAL_SOURCE_ONLY without rendered exact-open control"
+      },
+      "bounded_receipt_contract": {
+        "owner": "Existing ReviewAdapterJobs metadata of the original Research/Embedding service",
+        "history_entries": 100,
+        "receipt_bytes": 8388608,
+        "current_snapshot_bytes": 786432,
+        "result_bytes": 524288,
+        "run_free_revision_slots_required": 6,
+        "capacity_behavior": "Reserve claim/terminal/review/cancel/recover/source-invalidation tail before dispatch; no eviction/truncation. Explicit new receipt required after finite admission exhausted.",
+        "terminal_behavior": "Repeated same-state cancel/invalidate is an idempotent no-op; source replacement/revocation uses bounded invalidation.",
+        "revoked_payload_behavior": "Cancel/invalidate/stale responses withhold request/source snapshot/model/result digest; conflict only exposes ID/version/status. Projections contain receipt identity/version/status, no source lineage or result.",
+        "restart_behavior": "RUNNING reports recovery required; explicit recover/cancel fences token; no automatic replay or durable-worker claim"
+      },
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_RESEARCH_VISION"
     },
     {
@@ -4704,6 +4966,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_PROCESSING"
     },
     {
@@ -4776,6 +5040,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_ENGINES"
     },
     {
@@ -4862,6 +5128,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_SDK"
     },
     {
@@ -4920,6 +5188,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_UNIVERSE"
     },
     {
@@ -4986,6 +5256,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_INTERACTION"
     },
     {
@@ -5029,7 +5301,11 @@
         "app/local_interop/api.py",
         "app/local_interop/transport.py",
         "app/local_interop/host.py",
-        "app/local_interop/desktop.py"
+        "app/local_interop/desktop.py",
+        "app/local_interop/provider.py",
+        "app/local_interop/chapter_ids.py",
+        "frontend/src/interop/client.ts",
+        "frontend/src/interop/chapterIds.ts"
       ],
       "api_sources": [
         "app/local_interop/api.py"
@@ -5043,7 +5319,13 @@
       "remaining": [
         "FINAL_SOURCE_CI"
       ],
-      "owner_evidence_files": [],
+      "owner_evidence_files": [
+        "docs/LOCAL_INTEROP_BRANCH_OWNER_INTEGRATION.md",
+        "docs/delivery/functional-surface-freeze/INTEROP_FIXTURE_EXCEPTION.json",
+        "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
+      ],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_INTEROP"
     },
     {
@@ -5103,6 +5385,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_AUTOMATION"
     },
     {
@@ -5170,6 +5454,8 @@
       "owner_evidence_files": [
         "docs/delivery/functional-surface-freeze/ADAPTATION_LIFECYCLE_VERIFICATION.json"
       ],
+      "operation_permissions": null,
+      "bounded_receipt_contract": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_ADAPTATION"
     }
   ],
@@ -5182,8 +5468,8 @@
         "FS_FORESHADOWING"
       ],
       "classification": "EXPLICIT_LEGACY_COMPATIBILITY_BOUNDARY",
-      "detail": "Character/location/relationship legacy writes retain opt-in digest CAS. Timeline/Foreshadowing versioned surfaces require digest/version CAS, while flag-off legacy editor behavior remains compatible and advances existing opted-in metadata. Mandatory CAS is not claimed for every historical endpoint.",
-      "freeze_effect": "Preserve exact versioned-surface guarantees and legacy limitations. A decision to require CAS universally would be a separate backward-compatibility change, not a visual adjustment."
+      "detail": "All five current Story editor kinds require digest/version through the shared versioned surface when story_record_versions_v1 is ON. Flag-OFF/component-only callbacks and historical direct clients keep compatible behavior while existing version metadata advances history. This is retained legacy compatibility, not a missing version/history/recovery path in current Character/Location/Relationship forms.",
+      "freeze_effect": "Preserve the mandatory current-editor contract and explicit flag-OFF/old-client compatibility. Requiring CAS on every historical direct endpoint would be a separate backward-compatibility change; do not remove guarded current editors during visual work."
     },
     {
       "id": "ADAPTATION_UNKNOWN_CREATION_RECOVERY",
@@ -5329,7 +5615,7 @@
         "CORE_ADAPTATION"
       ],
       "classification": "PENDING_EXACT_FINAL_HEAD",
-      "detail": "Source is changing concurrently. First hosted candidate 13b9 failed original flag-discovery compatibility assertions; f25 is the compatibility-repair checkpoint, not a final-source verification receipt. A subsequent 8,626-node File snapshot reported an original erased-vector receipt regression and remains failed evidence. EmbeddingService.records now permits only same-source-owner/same-index-owner erased INVALIDATED receipts under current scope/feature authority; focused corrected coverage reported 51 File passes with 50 backend-profile skips plus 3 API catalog passes. The full corrected immutable snapshot remains PENDING here. Local Chromium/socket launch denied; real PostgreSQL unavailable locally.",
+      "detail": "Final source is not yet pinned to corrected hosted results. First hosted candidate 13b9 failed original flag-discovery compatibility assertions; f25 is the compatibility-repair checkpoint, not a final-source verification receipt. A subsequent 8,626-node File snapshot reported an original erased-vector receipt regression and remains failed evidence. EmbeddingService.records now permits only same-source-owner/same-index-owner erased INVALIDATED receipts under current scope/feature authority; focused corrected coverage reported 51 File passes with 50 backend-profile skips plus 3 API catalog passes. The subsequently published d9d2df3a checkpoint retains failed push/PR Frontend receipts, documented in BROWSER_INTEGRATION_CORRECTIONS.md; no earlier failed screenshot is acceptance evidence. Meanwhile the later five-kind Story editor, adapter-receipt and Local Interop branch-owner follow-on changes require a new source-bound immutable checkpoint. The d9 PostgreSQL stored-facts assertion also failed on opaque Timeline IDs/public-slug versus UUID storage/FK ownership; the original repository adapter is corrected without changing that assertion, and the new identity matrix is File-tested only locally. No result for the corrected checkpoint is inferred from previous focused or hosted checks. Local Chromium/socket launch denied; real PostgreSQL unavailable locally.",
       "freeze_effect": "Lead must pin source and verify actual hosted File/PostgreSQL/API/browser/full-regression checks for that source. Historical independent review remains BLOCKED and was not retried."
     }
   ],
@@ -5428,17 +5714,25 @@
       "requirement_id": "FSR-272",
       "name": "Unified Task Center",
       "surfaces": [
-        "U07"
+        "U07",
+        "FS_RESEARCH_VISION",
+        "FS_VISUAL"
       ],
-      "behavior": "Project existing owner task IDs/status/cancel and exact original review/resume routes; no second queue.",
+      "behavior": "Project original owner IDs/status and cancel through current write/CAS authority; no second queue. Exact opening exists only where implemented; Research/visual receipt navigation remains formal-only without a generic open/retry/approve action.",
       "api_kind": "ORIGINAL_SERVER_AND_OR_SCOPED_CLIENT_API",
       "api_sources": [
-        "app/experimental/ux_api.py"
+        "app/experimental/ux_api.py",
+        "app/experimental/research_library_api.py",
+        "app/experimental/embeddings_api.py",
+        "app/api.py"
       ],
       "server_persistence_claim": "Only original named owner; see per-surface API and store",
       "component_files": [
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
-        "frontend/src/experimental/ExperimentalWorkbench.tsx"
+        "frontend/src/experimental/ExperimentalWorkbench.tsx",
+        "frontend/src/experimental/ResearchLibraryPanel.tsx",
+        "frontend/src/novel/VisualReferencePanel.tsx",
+        "frontend/src/novel/VisualContextPanel.tsx"
       ],
       "verification": "SOURCE_MAPPED; EXACT_FINAL_HEAD_TESTS_PENDING"
     },
@@ -5446,18 +5740,26 @@
       "requirement_id": "FSR-273",
       "name": "Unified Review Inbox",
       "surfaces": [
-        "FS_REVIEW"
+        "FS_REVIEW",
+        "FS_RESEARCH_VISION",
+        "FS_VISUAL"
       ],
-      "behavior": "Original domain review bindings; pending/approved/applied distinct; unversioned gates are readonly links.",
+      "behavior": "Original domain review bindings retain source/creator permissions and distinct pending/approved/applied states. Adapter receipts have no generic or batch approval and no rendered exact-open control; formal targets remain labelled.",
       "api_kind": "ORIGINAL_SERVER_AND_OR_SCOPED_CLIENT_API",
       "api_sources": [
-        "app/experimental/inbox_api.py"
+        "app/experimental/inbox_api.py",
+        "app/experimental/research_library_api.py",
+        "app/experimental/embeddings_api.py",
+        "app/api.py"
       ],
       "server_persistence_claim": "Only original named owner; see per-surface API and store",
       "component_files": [
         "frontend/src/experimental/InboxPanel.tsx",
         "frontend/src/novel/AgentResultReview.tsx",
-        "frontend/src/RevisionPanel.tsx"
+        "frontend/src/RevisionPanel.tsx",
+        "frontend/src/experimental/ResearchLibraryPanel.tsx",
+        "frontend/src/novel/VisualReferencePanel.tsx",
+        "frontend/src/novel/VisualContextPanel.tsx"
       ],
       "verification": "SOURCE_MAPPED; EXACT_FINAL_HEAD_TESTS_PENDING"
     },
@@ -5489,14 +5791,16 @@
       "surfaces": [
         "U02",
         "CORE_MANUSCRIPT",
-        "FS_BRANCH"
+        "FS_BRANCH",
+        "FS_STORY_DATABASE"
       ],
-      "behavior": "Original document CAS, visible durable save state and explicit history/unknown-outcome recovery.",
+      "behavior": "Original document CAS and visible durable save state; current five-kind Story editors additionally use their original structured digest/version/history/restore owner. Uncertain outcomes are reread rather than replayed.",
       "api_kind": "ORIGINAL_SERVER_AND_OR_SCOPED_CLIENT_API",
       "api_sources": [
         "app/api.py",
         "app/collaboration_api.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "app/story_record_api.py"
       ],
       "server_persistence_claim": "Only original named owner; see per-surface API and store",
       "component_files": [
@@ -5507,7 +5811,11 @@
         "frontend/src/RevisionPanel.tsx",
         "frontend/src/novel/ChapterTree.tsx",
         "frontend/src/experimental/BranchManuscriptPanel.tsx",
-        "frontend/src/experimental/ProjectForksPanel.tsx"
+        "frontend/src/experimental/ProjectForksPanel.tsx",
+        "frontend/src/novel/StoryDatabase.tsx",
+        "frontend/src/novel/StoryRecordVersionEditor.tsx",
+        "frontend/src/novel/WorldBuildingDashboard.tsx",
+        "frontend/src/novel/WorldRelationshipGraph.tsx"
       ],
       "verification": "SOURCE_MAPPED; EXACT_FINAL_HEAD_TESTS_PENDING"
     },
@@ -5515,14 +5823,18 @@
       "requirement_id": "FSR-276",
       "name": "Local Draft",
       "surfaces": [
-        "U02"
+        "U02",
+        "FS_STORY_DATABASE",
+        "FS_TIMELINE",
+        "FS_FORESHADOWING"
       ],
-      "behavior": "Project/scope/chapter/version-keyed local draft, corrupt-byte recovery choice, no false backend saved state.",
+      "behavior": "Manuscript drafts retain original chapter/version owner; structured candidates use actor/workspace/project/branch/kind/record namespace. Access is rechecked before explicit recovery, secrets are excluded and no backend save is implied.",
       "api_kind": "BROWSER_LOCAL_STORAGE_API_WITH_ORIGINAL_CHAPTER_SERVICE",
       "api_sources": [
         "frontend/src/drafts.ts",
         "frontend/src/App.tsx",
-        "frontend/src/ui/SaveControls.tsx"
+        "frontend/src/ui/SaveControls.tsx",
+        "frontend/src/novel/StoryRecordVersionEditor.tsx"
       ],
       "server_persistence_claim": false,
       "component_files": [
@@ -5530,7 +5842,16 @@
         "frontend/src/App.tsx",
         "frontend/src/ui/SaveControls.tsx",
         "frontend/src/ConflictDialog.tsx",
-        "frontend/src/RevisionPanel.tsx"
+        "frontend/src/RevisionPanel.tsx",
+        "frontend/src/novel/StoryDatabase.tsx",
+        "frontend/src/novel/StoryRecordVersionEditor.tsx",
+        "frontend/src/novel/WorldBuildingDashboard.tsx",
+        "frontend/src/novel/WorldRelationshipGraph.tsx",
+        "frontend/src/novel/WorldTimelineView.tsx",
+        "frontend/src/experimental/WorldPanel.tsx",
+        "frontend/src/novel/StoryPlanningWorkspace.tsx",
+        "frontend/src/novel/ContinuityCheckPanel.tsx",
+        "frontend/src/novel/FindingReviewPanel.tsx"
       ],
       "verification": "SOURCE_MAPPED; EXACT_FINAL_HEAD_TESTS_PENDING"
     },
@@ -5540,14 +5861,16 @@
       "surfaces": [
         "U02",
         "FS_BRANCH",
-        "A11"
+        "A11",
+        "FS_STORY_DATABASE"
       ],
-      "behavior": "Preserve local intent; original 409/428/version/source conflict; explicit compare/rebase/human merge.",
+      "behavior": "Preserve local intent under original 409/428/version/source conflict. Five-kind Story forms retain structured candidates and require explicit latest-baseline/source refresh; prose compare/rebase/human merge stay with original owners.",
       "api_kind": "ORIGINAL_SERVER_AND_OR_SCOPED_CLIENT_API",
       "api_sources": [
         "app/api.py",
         "app/experimental/branch_manuscript_api.py",
-        "app/experimental/revision_intelligence_api.py"
+        "app/experimental/revision_intelligence_api.py",
+        "app/story_record_api.py"
       ],
       "server_persistence_claim": "Only original named owner; see per-surface API and store",
       "component_files": [
@@ -5559,7 +5882,11 @@
         "frontend/src/experimental/BranchManuscriptPanel.tsx",
         "frontend/src/experimental/ProjectForksPanel.tsx",
         "frontend/src/experimental/RevisionIntelligencePanel.tsx",
-        "frontend/src/experimental/RevisionComparisonModelPanel.tsx"
+        "frontend/src/experimental/RevisionComparisonModelPanel.tsx",
+        "frontend/src/novel/StoryDatabase.tsx",
+        "frontend/src/novel/StoryRecordVersionEditor.tsx",
+        "frontend/src/novel/WorldBuildingDashboard.tsx",
+        "frontend/src/novel/WorldRelationshipGraph.tsx"
       ],
       "verification": "SOURCE_MAPPED; EXACT_FINAL_HEAD_TESTS_PENDING"
     },
@@ -7467,6 +7794,7 @@
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7480,11 +7808,12 @@
           "execution": "PENDING_EXACT_FINAL_HEAD"
         },
         "provenance": {
-          "behavior": "Original deterministic rule/subject/evidence identity under exact scope; no mainline fallback for branch checks",
+          "behavior": "Original deterministic rule/subject/evidence under exact scope; stored Timeline facts validate public project slug, actual FK, payload ID and source alias. Storage UUID is not a public identity or scope grant; no mainline fallback for branch checks",
           "evidence": [
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7503,6 +7832,7 @@
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7521,6 +7851,7 @@
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7539,6 +7870,7 @@
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7557,6 +7889,7 @@
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7575,6 +7908,7 @@
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7593,6 +7927,7 @@
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7606,11 +7941,12 @@
           "execution": "PENDING_EXACT_FINAL_HEAD"
         },
         "evidence": {
-          "behavior": "Original evidence IDs and verified historical text; absent paragraph coordinates explicitly mean chapter-level evidence",
+          "behavior": "Original evidence IDs and verified historical text; stored Timeline fact reads reject foreign/ambiguous/inconsistent ownership without rewriting rows. Absent paragraph coordinates explicitly mean chapter-level evidence",
           "evidence": [
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7629,6 +7965,7 @@
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7647,6 +7984,7 @@
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7665,6 +8003,7 @@
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7683,6 +8022,7 @@
             "app/experimental/finding_review_composition.py",
             "app/services/continuity_finding_service.py",
             "app/services/finding_review_service.py",
+            "app/lore/continuity.py",
             "app/lore/continuity_engine.py",
             "app/lore/continuity_rules.py",
             "app/repositories/file/continuity.py",
@@ -7986,6 +8326,9 @@
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",
@@ -7997,11 +8340,14 @@
           "execution": "PENDING_EXACT_FINAL_HEAD"
         },
         "provenance": {
-          "behavior": "Original event metadata and retained source snapshots; unknown optional fields and existing external identity preserved",
+          "behavior": "Original event metadata/source snapshots and public IDs preserved. Continuity evidence persistence retains valid UUID event keys, adapts opaque IDs to deterministic storage UUIDs and resolves project slugs to their actual FK owner; mismatches are not rebound",
           "evidence": [
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",
@@ -8018,6 +8364,9 @@
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",
@@ -8034,6 +8383,9 @@
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",
@@ -8050,6 +8402,9 @@
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",
@@ -8066,6 +8421,9 @@
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",
@@ -8082,6 +8440,9 @@
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",
@@ -8098,6 +8459,9 @@
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",
@@ -8109,11 +8473,14 @@
           "execution": "PENDING_EXACT_FINAL_HEAD"
         },
         "evidence": {
-          "behavior": "Exact row/source digest and explicit time/calendar/order; source declarations are not proof of inferred chronology",
+          "behavior": "Exact row/source digest and explicit time/calendar/order; Continuity Timeline get/list/evidence checks payload, source alias, project slug and actual original owner. Source declarations are not proof of inferred chronology",
           "evidence": [
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",
@@ -8130,6 +8497,9 @@
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",
@@ -8146,6 +8516,9 @@
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",
@@ -8162,6 +8535,9 @@
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",
@@ -8178,6 +8554,9 @@
             "app/services/novel_service.py",
             "app/experimental/world.py",
             "app/narrative.py",
+            "app/lore/continuity.py",
+            "app/repositories/file/continuity.py",
+            "app/repositories/postgres/continuity.py",
             "app/repositories/story_record_versions.py",
             "app/repositories/file/novel.py",
             "app/repositories/postgres/novel.py",

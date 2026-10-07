@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-10-07T06:02:54.188504+00:00",
+  "generated_at_utc": "2026-10-07T07:21:11.044322+00:00",
   "kind": "STATIC_SOURCE_MAP_VALIDATION_NOT_RUNTIME_TEST",
   "status": "PASS",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "observed_checkpoint_sha": "f25f08bd978a01aa32ecb713871b1a70ce1732ce",
+  "observed_checkpoint_sha": "d9d2df3a0a831a5bba6249793fd21946c17ce7d4",
   "final_sha": null,
   "source_state": "ACTIVE_WORKTREE_NOT_FINAL_PIN",
   "counts": {
@@ -16,7 +16,7 @@
     "creative_lifecycle_dimensions_each": 13,
     "tsx_components": 156,
     "unassigned_tsx_components": 0,
-    "source_snapshot_files": 741
+    "source_snapshot_files": 790
   },
   "invariants": {
     "requirements_source_sha256": "MATCH",
@@ -29,25 +29,38 @@
     "original_test_exception": "tests/test_phase7_adaptation_authorization.py",
     "exception_test_function_sources_including_decorators": "UNCHANGED",
     "exception_whole_file_hash": "CHANGED_AND_MATCHES_REVIEWED_RECEIPT",
-    "historical_migrations": "UNCHANGED_FROM_STARTING_SHA"
+    "historical_migrations": "UNCHANGED_FROM_STARTING_SHA",
+    "protected_file_hashes": {
+      "count": 763,
+      "status": "ALL_CURRENT_AND_STARTING_HASHES_MATCH",
+      "explicit_changes": [
+        "app/local_interop/api.py",
+        "app/local_interop/host.py",
+        "app/local_interop/provider.py",
+        "frontend/scripts/local_interop_browser_host.py",
+        "tests/test_phase7_adaptation_authorization.py"
+      ]
+    },
+    "frozen_protocol_files": 37,
+    "interop_fixture_hash": "MATCHES_REVIEWED_BEFORE_AND_AFTER_RECEIPT"
   },
   "source_snapshot_changes_since_generation": [],
   "mounted_api_artifacts": [
     {
       "path": "API_CATALOG.json",
-      "sha256": "011c494e3e1558935fba183d1a5de720c3abae614aa290e4268320a46a9259a9"
+      "sha256": "fa175e6bb69cbee98123995859e28d63afd0c7872b17f4ea6f02855961d8350c"
     },
     {
       "path": "API_CATALOG.md",
-      "sha256": "d7cb7955f719ce1fcb21f33920a61351cd7a3bbf6cfa750b6605949ff0813165"
+      "sha256": "fb44189533952d39360d2a78ea7a388bb674bf1451c12630d2aee5627db2f730"
     },
     {
       "path": "API_CATALOG_DETAIL.json.gz",
-      "sha256": "eee55f97a59278a7c68b376b16123ef8b09a864fe160f8c1e062fd52ce3f5a20"
+      "sha256": "ef462e19377d2ae25068fa40b36a0201da5675abcc0012c6c046447fc0b320a9"
     },
     {
       "path": "API_OPENAPI.json.gz",
-      "sha256": "bc781005ae711da4a29d99b38c0c6ceca63a35a2406287b9701f21f6895f79cc"
+      "sha256": "4e4e2d515abbc0c5faa6dfe0c8e65e2352b6d71f983b2c747ca8ac662e95c2f3"
     },
     {
       "path": "tests/test_surface_api_catalog.py",
@@ -57,38 +70,38 @@
   "artifacts": [
     {
       "path": "FINAL_PRODUCT_SURFACE_MAP.md",
-      "sha256": "72c0a6b5251ee3a48bb7f935c267434cd6fc17ddc2b5fbbb2450f9da3a770eca",
-      "bytes": 261707
+      "sha256": "fdf15d61eb5a4c2857a975514566f32c6c9563226c9b7322649cd9c9db190279",
+      "bytes": 275612
     },
     {
       "path": "OPUS_UI_HANDOFF.md",
-      "sha256": "4ada5aff16b983e1d5cff0c14e68d29d3d69055b00305b62591872c1fe66d181",
-      "bytes": 64970
+      "sha256": "3fc6d7e643cb86c5b389f355201cf94e4c3288ee156a3826c0e28769adb68cf8",
+      "bytes": 66879
     },
     {
       "path": "FUNCTIONAL_SURFACE_MATRIX.json",
-      "sha256": "411073310ec1ddfcef53bba5198a65aeeecbf5143892c64f5c706c58c22bb7ec",
-      "bytes": 282253
+      "sha256": "a61c60cd0c67d419c123194dfe411ff309de90771708871b225cc9d4a5e35a8a",
+      "bytes": 302044
     },
     {
       "path": "FUNCTIONAL_SURFACE_MATRIX.md",
-      "sha256": "d39b069d543908ba83c240f7f9adaabe6ee1970ec41f144c47f14bf7a1c63584",
-      "bytes": 11254
+      "sha256": "d88d94df3fc211f280c558203b2a1ff7d3d44ab0c8b8ac28d9cbb5f18dd56bad",
+      "bytes": 11437
     },
     {
       "path": "UI_SURFACE_CATALOG.json",
-      "sha256": "25f16a8fb23f4c3dd380cfe3eab5afe329beceebc24f826c790b7f228b167010",
-      "bytes": 2295293
+      "sha256": "a101edb862b0582bf6e04174e5d0731648f8ca17eb57d56c4c619e61afe97d4f",
+      "bytes": 2355031
     },
     {
       "path": "UI_SURFACE_CATALOG.md",
-      "sha256": "342fe513421f3d41145990f0e293202cad68d231f2f29a85d2a3e0cb239504c4",
-      "bytes": 386537
+      "sha256": "079c3bdf23177ecddce915689615de3cb920ab3350d01feac211a582e5cfb60e",
+      "bytes": 391996
     },
     {
       "path": "docs/delivery/functional-surface-freeze/REQUIREMENTS_REGISTER.json",
-      "sha256": "ba2a5a94200041a3a61bfeb875c66a834c810b612e3826ec96faf91e23ff29b5",
-      "bytes": 395509
+      "sha256": "a94d6da4c656bb63512385c5cf3f2b999f416bc5e9caaa9a7b06628d71261605",
+      "bytes": 408122
     }
   ],
   "verification_boundary": "Only document/source invariants were checked by this validator. No unit/API/File/PostgreSQL/browser/model test is executed or passed by this receipt. Exact-final-head gates remain pending and owned by final hosted verification.",

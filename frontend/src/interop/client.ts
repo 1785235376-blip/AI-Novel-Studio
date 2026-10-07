@@ -1,5 +1,6 @@
 import type { DesktopSnapshot, EmergencyReceipt, PermissionId, PermissionRevokeReceipt } from './desktop';
 import { ApiError, type CollaborationContext } from '../api';
+import { chapterWireId } from './chapterIds';
 import type {
   AppContextCapsule, DiagnosticCapsule, HandoffTarget, ProductDescriptor,
   TutorGuidance, VerifierResult,
@@ -62,6 +63,8 @@ export function interopErrorMessage(error: unknown): string {
 
 export function interopClient(context: CollaborationContext) {
   const captured = { ...context, scope: context.scope ? { ...context.scope } : undefined };
+  const chapterScope = captured.scope ? { workspace_id: captured.scope.workspaceId, project_id: captured.scope.projectId,
+    storyline_id: captured.scope.storylineId, branch_id: captured.scope.branchId } : undefined;
   async function request<T>(path: string, body: unknown | undefined, signal?: AbortSignal): Promise<T> {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (captured.sessionToken) headers['X-Session-Token'] = captured.sessionToken;
@@ -89,9 +92,12 @@ export function interopClient(context: CollaborationContext) {
   return {
     status: (signal?: AbortSignal, session_id?: string) => request<InteropStatus>(`/status${session_id ? `?session_id=${encodeURIComponent(session_id)}` : ''}`, undefined, signal),
     settings: (enabled: boolean, request_id: string, signal?: AbortSignal) => request<InteropStatus>('/settings', { enabled, request_id }, signal),
-    connect: (body: { request_id: string; endpoint: string; project_id: string; scope?: HostRoute['scope']; module: string; surface: string; chapter_id?: string; task_id?: string }, signal?: AbortSignal) => request<InteropSession>('/connect', body, signal),
+    connect: async (body: { request_id: string; endpoint: string; project_id: string; scope?: HostRoute['scope']; module: string; surface: string; chapter_id?: string; task_id?: string }, signal?: AbortSignal) => request<InteropSession>('/connect', { ...body,
+      ...(body.chapter_id === undefined ? {} : { chapter_id: await chapterWireId(body.scope ?? chapterScope, body.chapter_id) }) }, signal),
     sources: (session_id: string, signal?: AbortSignal) => request<{ session_id: string; items: ContextSource[] }>(`/context/sources?session_id=${encodeURIComponent(session_id)}`, undefined, signal),
-    preview: (body: { request_id: string; session_id: string; chapter_id?: string; expected_chapter_version?: number; content_kind: ContentKind; selection_start?: number; selection_end?: number; context_ids?: string[]; metadata_fields: MetadataField[] }, signal?: AbortSignal) => request<ContextPreview>('/context/preview', body, signal),
+    preview: async (body: { request_id: string; session_id: string; chapter_id?: string; expected_chapter_version?: number; content_kind: ContentKind; selection_start?: number; selection_end?: number; context_ids?: string[]; metadata_fields: MetadataField[] }, signal?: AbortSignal) => request<ContextPreview>('/context/preview', { ...body,
+      ...(body.chapter_id === undefined ? {} : { chapter_id: await chapterWireId(chapterScope, body.chapter_id) }),
+      ...(body.context_ids === undefined ? {} : { context_ids: await Promise.all(body.context_ids.map(value => chapterWireId(chapterScope, value))) }) }, signal),
     ask: (session_id: string, preview_id: string, request_id: string, signal?: AbortSignal) => request<{ request_id: string; session_id: string; guidance: TutorGuidance }>('/ask', { session_id, preview_id, request_id, confirmed: true }, signal),
     eventPreview: (session_id: string, metadata_fields: MetadataField[], request_id: string, signal?: AbortSignal) => request<EventSharingPreview>('/events/preview', { session_id, metadata_fields, request_id }, signal),
     eventSubscribe: (session_id: string, preview_id: string, request_id: string, signal?: AbortSignal) => request<EventSubscription>('/events/subscribe', { session_id, preview_id, request_id, confirmed: true }, signal),

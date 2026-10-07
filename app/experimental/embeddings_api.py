@@ -18,7 +18,7 @@ def create_embeddings_router(service, authorize, require_flag):
             handler = super().get_route_handler()
             async def guarded(request):
                 nid, token, branch = request.path_params['nid'], request.headers.get('X-Session-Token'), request.headers.get('X-Branch-ID')
-                permission = 'domain.read' if request.method == 'GET' or request.url.path.endswith('/query') else 'domain.write'
+                permission = 'domain.read' if request.method == 'GET' or request.url.path.endswith(('/query', '/hybrid-query')) else 'domain.write'
                 require_flag('visual_embeddings')
                 authority = authorize(nid, token, branch, permission)
                 response = await handler(request)

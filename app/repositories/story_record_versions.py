@@ -10,7 +10,10 @@ from datetime import datetime, timezone
 from .chapter_repository import VersionConflict
 from .structured_cas import FIELDS, UNGUARDED, assert_record_cas, record_digest
 
-KINDS = frozenset({'timeline', 'foreshadowing'})
+KINDS = frozenset(FIELDS)
+PATHS = {'characters': 'characters/characters.json', 'locations': 'locations/locations.json',
+         'relationships': 'relationships.json', 'timeline': 'timeline/events.json',
+         'foreshadowing': 'foreshadowing.json'}
 META = '_story_record'
 HISTORY_LIMIT = 20
 
@@ -79,4 +82,33 @@ def finish(current, metadata, proposed, mutation):
     if action == 'FEEDBACK':
         result['feedback'] = {**deepcopy(mutation['feedback']), 'record_digest': record_digest(proposed),
                               'source_versions': sources, 'actor_id': result['actor_id'], 'at': result['updated_at']}
+    return result
+
+
+def core_record(kind, rid, current, payload, mutation, *, legacy_defaults=None):
+    """Original structured fields plus server-owned extensions, never a new store."""
+    from ..privacy import privacy_for_update
+    if mutation and mutation['action'] in {'RESTORE', 'FEEDBACK'}:
+        return {'id': rid, **deepcopy(payload)}
+    defaults = {
+        'characters': {'age': None, 'role': '', 'personality': '', 'goal': '',
+                       'current_location': '', 'status': 'ALIVE'},
+        'locations': {'location_type': '', 'description': '', 'rules': '',
+                      'atmosphere': '', 'status': 'ACTIVE'},
+        'relationships': {'relationship_type': '', 'description': '', 'status': 'ACTIVE',
+                          'valid_from_event_id': '', 'valid_to_event_id': '', 'certainty': 'CONFIRMED'},
+    }
+    # Plain V1/digest-only callers keep their established replace-known-fields
+    # semantics; versioned edits merge partial structured fields. Both retain
+    # opaque imports that clients cannot author.
+    retained = current or {}
+    if mutation is None:
+        retained = {key: value for key, value in retained.items() if key not in FIELDS[kind]}
+    initial = legacy_defaults if mutation is None and legacy_defaults is not None else defaults[kind]
+    result = {**initial, **deepcopy(retained), **deepcopy(payload), 'id': rid}
+    result['privacy_level'] = privacy_for_update(payload, current)
+    if 'privacy_level' not in payload and (current is None or current.get('privacy_status') == 'UNKNOWN'):
+        result['privacy_status'] = 'UNKNOWN'
+    elif 'privacy_level' in payload:
+        result.pop('privacy_status', None)
     return result

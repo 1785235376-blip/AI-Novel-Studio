@@ -47,7 +47,7 @@ Page: Write → Continue Working / Workspace resume; ENGINEERING_UI.
 
 Components: [`frontend/src/experimental/WorkspaceToolsPanel.tsx`](frontend/src/experimental/WorkspaceToolsPanel.tsx), [`frontend/src/App.tsx`](frontend/src/App.tsx).
 
-Authority: [`app/experimental/ux.py`](app/experimental/ux.py), [`frontend/src/store.ts`](frontend/src/store.ts), [`frontend/src/App.tsx`](frontend/src/App.tsx), [`frontend/src/experimental/WorkspaceToolsPanel.tsx`](frontend/src/experimental/WorkspaceToolsPanel.tsx), [`app/experimental/ux_api.py`](app/experimental/ux_api.py).
+Authority: [`app/experimental/ux.py`](app/experimental/ux.py), [`frontend/src/store.ts`](frontend/src/store.ts), [`frontend/src/App.tsx`](frontend/src/App.tsx), [`frontend/src/experimental/WorkspaceToolsPanel.tsx`](frontend/src/experimental/WorkspaceToolsPanel.tsx), [`app/experimental/ux_api.py`](app/experimental/ux_api.py), [`frontend/src/experimental/uxClient.ts`](frontend/src/experimental/uxClient.ts).
 
 Actor/project/scope-bound resume row stores chapter/version/anchor, layout, reference pointers and original unfinished-task IDs. Resolve rechecks original target authority before navigation.
 
@@ -416,7 +416,7 @@ Components: [`frontend/src/experimental/BranchManuscriptPanel.tsx`](frontend/src
 
 Authority: [`app/services/branch_manuscript_service.py`](app/services/branch_manuscript_service.py), [`app/repositories/branch_manuscript.py`](app/repositories/branch_manuscript.py), [`app/experimental/branch_manuscript_composition.py`](app/experimental/branch_manuscript_composition.py), [`app/manuscript_sources.py`](app/manuscript_sources.py), [`app/services/export_snapshot_authority.py`](app/services/export_snapshot_authority.py), [`app/application/collaboration_service.py`](app/application/collaboration_service.py), [`app/application/persistence.py`](app/application/persistence.py), [`app/repositories/postgres/generation.py`](app/repositories/postgres/generation.py), [`app/experimental/branch_manuscript_api.py`](app/experimental/branch_manuscript_api.py).
 
-Original BranchManuscriptService scoped repository owns actual independent rich prose, immutable chapter identity/version/order/history and receipts. Mainline remains ChapterService. Registered generation/context/GET/SSE/export source readers re-resolve the real branch owner even for retained old IDs; no mainline fallback or marker-only inference.
+Original BranchManuscriptService scoped repository owns actual independent rich prose, immutable chapter identity/version/order/history and receipts. Mainline remains ChapterService. Registered generation/context/GET/SSE/export and Local Interop source readers re-resolve the real branch owner even for retained old IDs; no mainline fallback or marker-only inference. Interop uses frozen-compatible scope-bound wire labels and live exact-owner reverse lookup; only an authorized editor handoff returns native IDs.
 
 Create/save/restore/archive/tombstone/move; confirmed fork, rich-block three-way compare, human merge and original-owner recovery. Branch transaction/journal is atomic; mainline uncertain write requires exact receipt reconciliation. Durable capacity ceilings fail before commit without silently evicting histories. Shared branch inbox is read-only with exact original review route; counterpart access is rechecked and cancellation stays in the original CAS/read+review endpoint. Collaboration retry needs fresh author preview; restart never dispatches automatically.
 
@@ -443,7 +443,7 @@ Create/save/restore/archive/tombstone/move; confirmed fork, rich-block three-way
 | GET | `/api[/v1]/novels/{nid}/experimental/branch-manuscript/sources` | [sources](app/experimental/branch_manuscript_api.py#L207) | Original access helper/default/middleware; see source |
 | POST | `/api[/v1]/novels/{nid}/experimental/branch-manuscript/{kind}/{rid}/cancel` | [cancel](app/experimental/branch_manuscript_api.py#L270) | domain.review |
 
-Navigation: CORE_MANUSCRIPT, CORE_GENERATION, B09, FS_REALTIME, FS_REVIEW, U07, CORE_ADAPTATION. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
+Navigation: CORE_MANUSCRIPT, CORE_GENERATION, B09, FS_REALTIME, FS_REVIEW, U07, CORE_ADAPTATION, CORE_INTEROP. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
 
 ## Story
 
@@ -482,7 +482,7 @@ Edit/review/archive/reopen/history and recompute are versioned; stale relations 
 | POST | `/api[/v1]/novels/{nid}/experimental/world/records/{rid}/{action}` | [review](app/experimental/world_api.py#L54) | domain.review, domain.write |
 | GET | `/api[/v1]/novels/{nid}/experimental/world/schema` | [schema](app/experimental/world_api.py#L22) | Original access helper/default/middleware; see source |
 
-Navigation: A05, FS_PLANNING, FS_CANON, U03, U06. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
+Navigation: A05, FS_PLANNING, FS_CANON, U03, U06, FS_STORY_DATABASE. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
 
 ### A05 · Character knowledge and mind state
 
@@ -509,7 +509,7 @@ History/CAS/review and stale tombstones come from A04; query abort does not chan
 | GET | `/api[/v1]/novels/{nid}/experimental/story-graph/records/{rid}/impact` | [impact](app/experimental/story_graph_api.py#L81) | domain.write |
 | POST | `/api[/v1]/novels/{nid}/experimental/story-graph/records/{rid}/{action}` | [action](app/experimental/story_graph_api.py#L92) | domain.write, domain.review |
 
-Navigation: A04, A01, U08, CORE_GENERATION. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
+Navigation: A04, A01, U08, CORE_GENERATION, FS_STORY_DATABASE. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
 
 ### A01 · Bounded story simulation
 
@@ -666,8 +666,8 @@ Retained 20-version history, restore to new version, explicit stale-source refre
 | GET | `/api[/v1]/novels/{nid}/experimental/story-records/catalog` | [catalog](app/story_record_api.py#L69) | domain.write, domain.review |
 | GET | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}` | [get](app/story_record_api.py#L83) | Original access helper/default/middleware; see source |
 | PUT | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}` | [save](app/story_record_api.py#L88) | domain.write |
-| POST | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}/feedback` | [feedback](app/story_record_api.py#L108) | domain.review |
-| POST | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}/restore` | [restore](app/story_record_api.py#L102) | domain.write |
+| POST | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}/feedback` | [feedback](app/story_record_api.py#L111) | domain.review |
+| POST | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}/restore` | [restore](app/story_record_api.py#L105) | domain.write |
 | GET | `/api[/v1]/novels/{nid}/foreshadowing/reminders` | [foreshadowing_reminders](app/api.py#L1340) | Original access helper/default/middleware; see source |
 | PUT | `/api[/v1]/novels/{nid}/foreshadowing/{foreshadowing_id}` | [upsert_foreshadowing](app/api.py#L1338) | Original access helper/default/middleware; see source |
 | GET | `/api[/v1]/projects/{project_id}/narrative/chapter-progress` | [list_chapter_progress](app/api.py#L3142) | Original access helper/default/middleware; see source |
@@ -712,19 +712,19 @@ Page: Story → Story timeline / World chronology; ENGINEERING_UI.
 
 Components: [`frontend/src/novel/StoryDatabase.tsx`](frontend/src/novel/StoryDatabase.tsx), [`frontend/src/novel/StoryRecordVersionEditor.tsx`](frontend/src/novel/StoryRecordVersionEditor.tsx), [`frontend/src/novel/WorldTimelineView.tsx`](frontend/src/novel/WorldTimelineView.tsx), [`frontend/src/experimental/WorldPanel.tsx`](frontend/src/experimental/WorldPanel.tsx).
 
-Authority: [`app/services/novel_service.py`](app/services/novel_service.py), [`app/experimental/world.py`](app/experimental/world.py), [`app/narrative.py`](app/narrative.py), [`app/repositories/story_record_versions.py`](app/repositories/story_record_versions.py), [`app/repositories/file/novel.py`](app/repositories/file/novel.py), [`app/repositories/postgres/novel.py`](app/repositories/postgres/novel.py), [`app/api.py`](app/api.py), [`app/story_record_api.py`](app/story_record_api.py), [`app/experimental/world_api.py`](app/experimental/world_api.py).
+Authority: [`app/services/novel_service.py`](app/services/novel_service.py), [`app/experimental/world.py`](app/experimental/world.py), [`app/narrative.py`](app/narrative.py), [`app/lore/continuity.py`](app/lore/continuity.py), [`app/repositories/file/continuity.py`](app/repositories/file/continuity.py), [`app/repositories/postgres/continuity.py`](app/repositories/postgres/continuity.py), [`app/repositories/story_record_versions.py`](app/repositories/story_record_versions.py), [`app/repositories/file/novel.py`](app/repositories/file/novel.py), [`app/repositories/postgres/novel.py`](app/repositories/postgres/novel.py), [`app/api.py`](app/api.py), [`app/story_record_api.py`](app/story_record_api.py), [`app/experimental/world_api.py`](app/experimental/world_api.py).
 
 Original Timeline row identity/public serialization remains authority; private version/source/provenance/history metadata adds expected-digest + expected-version CAS. World HISTORY is a separate reviewed chronology projection, and story time is distinct from media rational time.
 
-File atomic original-row replacement and PostgreSQL project/source locks; 20-version history, restore to new current version, current/stale/unlinked sources, terminal snapshot-bound feedback. Legacy saves advance opted-in history. Explicit draft/conflict recovery and exact source navigation retain manuscript dirty/IME guards; project-only authorization rejects branch headers.
+File atomic original-row replacement and PostgreSQL project/source locks; 20-version history, restore to new current version, current/stale/unlinked sources, terminal snapshot-bound feedback. Legacy saves advance opted-in history. Explicit draft/conflict recovery and exact source navigation retain manuscript dirty/IME guards; project-only authorization rejects branch headers. Continuity Timeline evidence uses the same original table through a narrow public-ID/storage-ID adapter: UUID events retain keys, opaque IDs use deterministic UUIDv5, public project IDs resolve as slugs, and same-owner retries are append-only. Collision, ambiguity or inconsistent/foreign owner metadata is rejected without rewrite.
 
 | Method | Path | Source handler | Permission evidence |
 |---|---|---|---|
 | GET | `/api[/v1]/novels/{nid}/experimental/story-records/catalog` | [catalog](app/story_record_api.py#L69) | domain.write, domain.review |
 | GET | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}` | [get](app/story_record_api.py#L83) | Original access helper/default/middleware; see source |
 | PUT | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}` | [save](app/story_record_api.py#L88) | domain.write |
-| POST | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}/feedback` | [feedback](app/story_record_api.py#L108) | domain.review |
-| POST | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}/restore` | [restore](app/story_record_api.py#L102) | domain.write |
+| POST | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}/feedback` | [feedback](app/story_record_api.py#L111) | domain.review |
+| POST | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}/restore` | [restore](app/story_record_api.py#L105) | domain.write |
 | GET | `/api[/v1]/novels/{nid}/experimental/world/canon` | [canon](app/experimental/world_api.py#L60) | Original access helper/default/middleware; see source |
 | GET | `/api[/v1]/novels/{nid}/experimental/world/character-state` | [character_state](app/experimental/world_api.py#L70) | Original access helper/default/middleware; see source |
 | GET | `/api[/v1]/novels/{nid}/experimental/world/continuity` | [continuity](app/experimental/world_api.py#L65) | Original access helper/default/middleware; see source |
@@ -745,13 +745,13 @@ Navigation: FS_CONTINUITY, A04, CORE_MANUSCRIPT. State contract: all shared stat
 
 Page: Story → Characters / Locations / Relationships / World rules; ENGINEERING_UI.
 
-Components: [`frontend/src/novel/StoryDatabase.tsx`](frontend/src/novel/StoryDatabase.tsx), [`frontend/src/novel/WorldBuildingDashboard.tsx`](frontend/src/novel/WorldBuildingDashboard.tsx), [`frontend/src/novel/WorldRelationshipGraph.tsx`](frontend/src/novel/WorldRelationshipGraph.tsx).
+Components: [`frontend/src/novel/StoryDatabase.tsx`](frontend/src/novel/StoryDatabase.tsx), [`frontend/src/novel/StoryRecordVersionEditor.tsx`](frontend/src/novel/StoryRecordVersionEditor.tsx), [`frontend/src/novel/WorldBuildingDashboard.tsx`](frontend/src/novel/WorldBuildingDashboard.tsx), [`frontend/src/novel/WorldRelationshipGraph.tsx`](frontend/src/novel/WorldRelationshipGraph.tsx).
 
-Authority: [`app/services/novel_service.py`](app/services/novel_service.py), [`app/services/lore_service.py`](app/services/lore_service.py), [`app/repositories/structured_cas.py`](app/repositories/structured_cas.py), [`app/api.py`](app/api.py).
+Authority: [`app/services/novel_service.py`](app/services/novel_service.py), [`app/services/lore_service.py`](app/services/lore_service.py), [`app/repositories/structured_cas.py`](app/repositories/structured_cas.py), [`app/repositories/story_record_versions.py`](app/repositories/story_record_versions.py), [`app/repositories/file/novel.py`](app/repositories/file/novel.py), [`app/repositories/postgres/novel.py`](app/repositories/postgres/novel.py), [`app/repositories/postgres/serialization.py`](app/repositories/postgres/serialization.py), [`app/api.py`](app/api.py), [`app/story_record_api.py`](app/story_record_api.py).
 
-Original dataset identities, explicit privacy, source evidence and advisory world-rule proposal review. Opt-in structured digest CAS exists for character/location/relationship merge writes.
+Original Character/Location/Relationship rows now share the existing five-kind StoryRecord version owner with Timeline/Foreshadowing. Flag-ON current project editors require exact digest and version; original IDs, sparse public shape, opaque imported fields and privacy survive guarded edits/history/restore. World-rule proposal review retains its original separate owner.
 
-Legacy editor upserts can remain unguarded; not all structured data writes have mandatory CAS. Do not represent opt-in digest checks as universal protection.
+Original File project lock/atomic replacement and PostgreSQL original-row transaction/CAS; 20 retained snapshots, restore to new current version, terminal source-bound feedback and explicit stale-source refresh. Relationships pin exact Character/Timeline identities; exact known Character location pins its digest, historical free text remains unlinked. Owner-keyed local draft/conflict recovery excludes secrets. Legacy OFF/component-only callbacks and historical direct clients remain compatible, advancing existing version metadata. Project Story authority rejects branch-only scope.
 
 | Method | Path | Source handler | Permission evidence |
 |---|---|---|---|
@@ -760,6 +760,11 @@ Legacy editor upserts can remain unguarded; not all structured data writes have 
 | GET | `/api[/v1]/novels/{nid}/characters/{character_id}/evolution` | [character_evolution_for_character](app/api.py#L3299) | Original access helper/default/middleware; see source |
 | POST | `/api[/v1]/novels/{nid}/characters/{character_id}/evolution` | [create_character_evolution_for_character](app/api.py#L3304) | Original access helper/default/middleware; see source |
 | GET | `/api[/v1]/novels/{nid}/characters/{character_id}/memories` | [list_memories_for_character](app/api.py#L3497) | Original access helper/default/middleware; see source |
+| GET | `/api[/v1]/novels/{nid}/experimental/story-records/catalog` | [catalog](app/story_record_api.py#L69) | domain.write, domain.review |
+| GET | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}` | [get](app/story_record_api.py#L83) | Original access helper/default/middleware; see source |
+| PUT | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}` | [save](app/story_record_api.py#L88) | domain.write |
+| POST | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}/feedback` | [feedback](app/story_record_api.py#L111) | domain.review |
+| POST | `/api[/v1]/novels/{nid}/experimental/story-records/{kind}/{rid}/restore` | [restore](app/story_record_api.py#L105) | domain.write |
 | PUT | `/api[/v1]/novels/{nid}/locations/{location_id}` | [upsert_location](app/api.py#L1334) | Original access helper/default/middleware; see source |
 | GET | `/api[/v1]/novels/{nid}/lore/evidence` | [list_lore_evidence](app/api.py#L3368) | Original access helper/default/middleware; see source |
 | POST | `/api[/v1]/novels/{nid}/lore/evidence` | [create_lore_evidence](app/api.py#L3385) | Original access helper/default/middleware; see source |
@@ -772,7 +777,7 @@ Legacy editor upserts can remain unguarded; not all structured data writes have 
 | GET | `/api[/v1]/novels/{nid}/world-rules` | [list_world_rules](app/api.py#L3407) | Original access helper/default/middleware; see source |
 | POST | `/api[/v1]/novels/{nid}/world-rules` | [create_world_rule](app/api.py#L3417) | Original access helper/default/middleware; see source |
 
-Navigation: FS_TIMELINE, FS_FORESHADOWING, FS_CANON, A05. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
+Navigation: FS_TIMELINE, FS_FORESHADOWING, FS_CANON, A05, A04, U02. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
 
 ### FS_UNIVERSE · Shared Universe / Selected snapshots
 
@@ -1078,9 +1083,9 @@ Page: Review → Continuity / Evidence / Author feedback; ENGINEERING_UI.
 
 Components: [`frontend/src/novel/ContinuityCheckPanel.tsx`](frontend/src/novel/ContinuityCheckPanel.tsx), [`frontend/src/novel/FindingReviewPanel.tsx`](frontend/src/novel/FindingReviewPanel.tsx), [`frontend/src/novel/findingReviewClient.ts`](frontend/src/novel/findingReviewClient.ts), [`frontend/src/experimental/WorldPanel.tsx`](frontend/src/experimental/WorldPanel.tsx).
 
-Authority: [`app/experimental/finding_review_composition.py`](app/experimental/finding_review_composition.py), [`app/services/continuity_finding_service.py`](app/services/continuity_finding_service.py), [`app/services/finding_review_service.py`](app/services/finding_review_service.py), [`app/lore/continuity_engine.py`](app/lore/continuity_engine.py), [`app/lore/continuity_rules.py`](app/lore/continuity_rules.py), [`app/repositories/file/continuity.py`](app/repositories/file/continuity.py), [`app/repositories/postgres/continuity.py`](app/repositories/postgres/continuity.py), [`app/experimental/world.py`](app/experimental/world.py), [`app/api.py`](app/api.py), [`app/finding_review_api.py`](app/finding_review_api.py), [`app/experimental/world_api.py`](app/experimental/world_api.py).
+Authority: [`app/experimental/finding_review_composition.py`](app/experimental/finding_review_composition.py), [`app/services/continuity_finding_service.py`](app/services/continuity_finding_service.py), [`app/services/finding_review_service.py`](app/services/finding_review_service.py), [`app/lore/continuity.py`](app/lore/continuity.py), [`app/lore/continuity_engine.py`](app/lore/continuity_engine.py), [`app/lore/continuity_rules.py`](app/lore/continuity_rules.py), [`app/repositories/file/continuity.py`](app/repositories/file/continuity.py), [`app/repositories/postgres/continuity.py`](app/repositories/postgres/continuity.py), [`app/experimental/world.py`](app/experimental/world.py), [`app/api.py`](app/api.py), [`app/finding_review_api.py`](app/finding_review_api.py), [`app/experimental/world_api.py`](app/experimental/world_api.py).
 
-Original continuity finding repository owns source-bound deterministic checks and OPEN/RESOLVED/INTENTIONAL decisions. Exact chapter owner/version/digest, facts digest and finding fingerprint bind feedback/reason/history; changed evidence becomes REVIEW_REQUIRED and identical source preserves intentional suppression.
+Original continuity finding repository owns source-bound deterministic checks and OPEN/RESOLVED/INTENTIONAL decisions. Exact chapter owner/version/digest, facts digest and finding fingerprint bind feedback/reason/history; changed evidence becomes REVIEW_REQUIRED and identical source preserves intentional suppression. Stored Timeline facts retain opaque public IDs while the original persistence adapter resolves real project-slug ownership and UUID storage keys; no unrelated Story row or foreign payload is adopted.
 
 Expected review version, operation ID and human confirmation; exact historical evidence snapshot verified before navigation. Reopen/feedback remain available on stale rows; resolve/intentional require current evidence. File coordination and PostgreSQL locks; history bounded at 100. Synchronous check cancellation discards an uncommitted result, restart rereads original decisions. No Canon auto-write.
 
@@ -1119,17 +1124,17 @@ Page: Review → Unified review inbox; ENGINEERING_UI.
 
 Components: [`frontend/src/experimental/InboxPanel.tsx`](frontend/src/experimental/InboxPanel.tsx), [`frontend/src/novel/AgentResultReview.tsx`](frontend/src/novel/AgentResultReview.tsx), [`frontend/src/RevisionPanel.tsx`](frontend/src/RevisionPanel.tsx).
 
-Authority: [`app/experimental/inbox.py`](app/experimental/inbox.py), [`app/experimental/legacy_inbox.py`](app/experimental/legacy_inbox.py), [`app/experimental/finding_review_composition.py`](app/experimental/finding_review_composition.py), [`app/experimental/adaptation_projection.py`](app/experimental/adaptation_projection.py), [`app/experimental/inbox_api.py`](app/experimental/inbox_api.py).
+Authority: [`app/experimental/inbox.py`](app/experimental/inbox.py), [`app/experimental/legacy_inbox.py`](app/experimental/legacy_inbox.py), [`app/experimental/finding_review_composition.py`](app/experimental/finding_review_composition.py), [`app/experimental/adaptation_projection.py`](app/experimental/adaptation_projection.py), [`app/experimental/review_adapter_projection.py`](app/experimental/review_adapter_projection.py), [`app/experimental/inbox_api.py`](app/experimental/inbox_api.py), [`frontend/src/experimental/uxClient.ts`](frontend/src/experimental/uxClient.ts).
 
 Read-through original-domain ReviewBinding with source, original ID, revision, permission, risk and allowed actions. Batch is explicitly restricted and does not invent missing selection/review consent.
 
-Unversioned legacy gates and shared branch-manuscript projections remain read-only exact-owner links; branch cancellation/review stays in the original scope/version/read+review endpoint and rechecks counterpart access. Finding/Canon generic Inbox navigation is FORMAL_TARGET_ONLY with manual original-panel route and no exact-open control. Adaptation Task/Review keeps exact original proposal/task/source/target pointers and no generic mutation; actual opening revalidates owner/source/target. Original detail must supply actual review evidence. Current forbidden/missing feature is unavailable, not an empty success. Restart rereads owners.
+Unversioned legacy gates and shared branch-manuscript projections remain read-only exact-owner links; branch cancellation/review stays in the original scope/version/read+review endpoint and rechecks counterpart access. Finding/Canon generic Inbox navigation is FORMAL_TARGET_ONLY with manual original-panel route and no exact-open control. Adaptation Task/Review keeps exact original proposal/task/source/target pointers and no generic mutation; actual opening revalidates owner/source/target. Research/visual adapter receipt projections retain original creator/source permissions; navigation is FORMAL_SOURCE_ONLY with no rendered exact-open control or generic approval. Original detail must supply actual review evidence. Current forbidden/missing feature is unavailable, not an empty success. Restart rereads owners.
 
 | Method | Path | Source handler | Permission evidence |
 |---|---|---|---|
 | Client/storage or composed adapter | Original owner contract | [`app/experimental/inbox.py`](app/experimental/inbox.py), [`app/experimental/legacy_inbox.py`](app/experimental/legacy_inbox.py), [`app/experimental/finding_review_composition.py`](app/experimental/finding_review_composition.py) | Original authority; no invented server route |
 
-Navigation: U07, A03, A11, FS_BRANCH, FS_PROCESSING, FS_CANON, FS_CONTINUITY, CORE_ADAPTATION. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
+Navigation: U07, A03, A11, FS_BRANCH, FS_PROCESSING, FS_CANON, FS_CONTINUITY, CORE_ADAPTATION, FS_RESEARCH_VISION, FS_VISUAL. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
 
 ## Research
 
@@ -1219,7 +1224,7 @@ Components: [`frontend/src/experimental/EmbeddingPanel.tsx`](frontend/src/experi
 
 Authority: [`app/experimental/embeddings.py`](app/experimental/embeddings.py), [`app/experimental/vector_index.py`](app/experimental/vector_index.py), [`app/experimental/embeddings_api.py`](app/experimental/embeddings_api.py).
 
-Existing EmbeddingProvider and persisted index/vector owner; bounded exact cosine and weighted reciprocal-rank fusion with live lexical scores. Character/Story/Research/Asset source version/digest and index version are pinned.
+Existing EmbeddingProvider and persisted index/vector owner; bounded exact cosine and weighted reciprocal-rank fusion with live lexical scores. Query and hybrid-query require domain.read plus current index/source visibility, while mutations retain domain.write; read-only permission does not bypass source privacy or branch scope. Character/Story/Research/Asset source version/digest and index version are pinned.
 
 Create/edit/rebuild/invalidate/remove/cancel; atomic publication checks token/source/provider/permission. After Research delete/revoke, only an actor who owns both source and index may inspect retained INVALIDATED receipts in the exact scope, under current feature authority; every stored vector must be erased and is never returned. Former shared readers remain denied; invalidated query remains blocked. Interrupted BUILDING requires explicit cancel/invalidate/rebuild. Missing embedding provider stays NOT_CONFIGURED; synthetic vectors MOCK_ONLY.
 
@@ -1250,11 +1255,11 @@ Page: Research → OCR / Scanned PDF / Image / Chart / Table; FORMAL_UI_SURFACE_
 
 Components: [`frontend/src/experimental/ResearchLibraryPanel.tsx`](frontend/src/experimental/ResearchLibraryPanel.tsx).
 
-Authority: [`app/experimental/research_vision.py`](app/experimental/research_vision.py), [`app/experimental/review_adapter_jobs.py`](app/experimental/review_adapter_jobs.py), [`app/experimental/research_library.py`](app/experimental/research_library.py), [`app/experimental/research_library_api.py`](app/experimental/research_library_api.py).
+Authority: [`app/experimental/research_vision.py`](app/experimental/research_vision.py), [`app/experimental/review_adapter_jobs.py`](app/experimental/review_adapter_jobs.py), [`app/experimental/review_adapter_projection.py`](app/experimental/review_adapter_projection.py), [`app/experimental/research_library.py`](app/experimental/research_library.py), [`app/experimental/research_library_api.py`](app/experimental/research_library_api.py).
 
 Original Research source ID/version/original digest and typed page/bbox/table-block result; private durable analysis review receipt and derived citation digest. Original bytes remain intact.
 
-Create/run/cancel/invalidate/recover/review; interruption reports recovery_required and requires fresh explicit run. Real adapter blocked until original model admission integration; NOT_CONFIGURED/MOCK_ONLY. Formal Research inspector contract.
+Create/run/cancel/invalidate/recover/review uses bounded original receipts with reserved terminal/recovery/invalidation capacity and token fences. Repeated terminal cancel/invalidate is idempotent; revoked-source responses omit request/lineage/results. Reads retain original Research domain.write plus source/creator visibility. Tasks/Review project original receipts; cancel delegates original owner write+CAS, no generic approval/retry. FORMAL_SOURCE_ONLY target, no rendered exact-open control. Real admission NOT_CONFIGURED/MOCK_ONLY; no durable worker or restart replay.
 
 | Method | Path | Source handler | Permission evidence |
 |---|---|---|---|
@@ -1289,7 +1294,7 @@ Create/run/cancel/invalidate/recover/review; interruption reports recovery_requi
 | POST | `/api[/v1]/novels/{nid}/experimental/research-library/sources/{rid}/restore` | [restore_source](app/experimental/research_library_api.py#L120) | Original access helper/default/middleware; see source |
 | POST | `/api[/v1]/novels/{nid}/experimental/research-library/sources/{rid}/{action}` | [transition](app/experimental/research_library_api.py#L142) | Original access helper/default/middleware; see source |
 
-Navigation: A10, FS_SEMANTIC. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
+Navigation: A10, FS_SEMANTIC, U07, FS_REVIEW. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
 
 ## Production
 
@@ -1966,11 +1971,11 @@ Page: Assets → Visual Identity / Similarity / Drift; FORMAL_UI_SURFACE_CONTRAC
 
 Components: [`frontend/src/novel/VisualReferencePanel.tsx`](frontend/src/novel/VisualReferencePanel.tsx), [`frontend/src/novel/VisualContextPanel.tsx`](frontend/src/novel/VisualContextPanel.tsx).
 
-Authority: [`app/experimental/visual_identity.py`](app/experimental/visual_identity.py), [`app/experimental/embeddings.py`](app/experimental/embeddings.py), [`app/experimental/review_adapter_jobs.py`](app/experimental/review_adapter_jobs.py), [`app/services/v1_capability_service.py`](app/services/v1_capability_service.py), [`app/experimental/embeddings_api.py`](app/experimental/embeddings_api.py), [`app/api.py`](app/api.py).
+Authority: [`app/experimental/visual_identity.py`](app/experimental/visual_identity.py), [`app/experimental/embeddings.py`](app/experimental/embeddings.py), [`app/experimental/review_adapter_jobs.py`](app/experimental/review_adapter_jobs.py), [`app/experimental/review_adapter_projection.py`](app/experimental/review_adapter_projection.py), [`app/services/v1_capability_service.py`](app/services/v1_capability_service.py), [`app/experimental/embeddings_api.py`](app/experimental/embeddings_api.py), [`app/api.py`](app/api.py).
 
 Appearance profile projects original approved CHARACTER visual-memory reference, appearance_version, clothing/hair/body/accessories and asset digest. Comparison adds only review receipt, never another profile store.
 
-Pinned candidate plus approved references, target IMAGE/VIDEO, explicit cosine threshold, review before selection. Source changes invalidate outputs; cancel/recover token fences. Real image embedding NOT_CONFIGURED/NOT_RUN; formal inspector contract.
+Pinned candidate plus approved current references, target IMAGE/VIDEO and explicit threshold require review before selection. Bounded receipt admission reserves terminal/recovery/invalidation capacity; restart never replays, cancel/recover fence tokens, source-revoked responses omit old request/lineage/results. Task/Review are original-owner read-through projections; creator/read visibility and write+CAS cancellation remain distinct. FORMAL_SOURCE_ONLY target, no rendered exact-open control. Real image embedding NOT_CONFIGURED/NOT_RUN.
 
 | Method | Path | Source handler | Permission evidence |
 |---|---|---|---|
@@ -1996,7 +2001,7 @@ Pinned candidate plus approved references, target IMAGE/VIDEO, explicit cosine t
 | GET | `/api[/v1]/novels/{nid}/visual-memory/{memory_id}` | [get_visual_memory](app/api.py#L3336) | Original access helper/default/middleware; see source |
 | PUT | `/api[/v1]/novels/{nid}/visual-memory/{memory_id}` | [update_visual_memory](app/api.py#L3341) | Original access helper/default/middleware; see source |
 
-Navigation: CORE_ASSETS, CORE_IMAGES, CORE_VIDEO, B06, FS_SEMANTIC. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
+Navigation: CORE_ASSETS, CORE_IMAGES, CORE_VIDEO, B06, FS_SEMANTIC, U07, FS_REVIEW. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
 
 ## Collaboration
 
@@ -2385,7 +2390,7 @@ Page: Tasks → Unified task center; ENGINEERING_UI.
 
 Components: [`frontend/src/experimental/WorkspaceToolsPanel.tsx`](frontend/src/experimental/WorkspaceToolsPanel.tsx), [`frontend/src/experimental/ExperimentalWorkbench.tsx`](frontend/src/experimental/ExperimentalWorkbench.tsx).
 
-Authority: [`app/experimental/ux.py`](app/experimental/ux.py), [`app/experimental/author_task_projection.py`](app/experimental/author_task_projection.py), [`app/experimental/workspace_task_owners.py`](app/experimental/workspace_task_owners.py), [`frontend/src/experimental/WorkspaceToolsPanel.tsx`](frontend/src/experimental/WorkspaceToolsPanel.tsx), [`frontend/src/experimental/ExperimentalWorkbench.tsx`](frontend/src/experimental/ExperimentalWorkbench.tsx), [`app/experimental/adaptation_projection.py`](app/experimental/adaptation_projection.py), [`app/experimental/ux_api.py`](app/experimental/ux_api.py).
+Authority: [`app/experimental/ux.py`](app/experimental/ux.py), [`app/experimental/author_task_projection.py`](app/experimental/author_task_projection.py), [`app/experimental/workspace_task_owners.py`](app/experimental/workspace_task_owners.py), [`frontend/src/experimental/WorkspaceToolsPanel.tsx`](frontend/src/experimental/WorkspaceToolsPanel.tsx), [`frontend/src/experimental/ExperimentalWorkbench.tsx`](frontend/src/experimental/ExperimentalWorkbench.tsx), [`app/experimental/adaptation_projection.py`](app/experimental/adaptation_projection.py), [`app/experimental/review_adapter_projection.py`](app/experimental/review_adapter_projection.py), [`app/experimental/ux_api.py`](app/experimental/ux_api.py), [`frontend/src/experimental/uxClient.ts`](frontend/src/experimental/uxClient.ts).
 
 Read-through TaskReader projection retains original authority and task IDs. Cancel/retry/review are routed to the original owner, never another queue.
 
@@ -2414,7 +2419,7 @@ Owner-specific cancel states and version/revision guard; cancelled lookups do no
 | GET | `/api[/v1]/novels/{nid}/experimental/workspace/tasks` | [tasks](app/experimental/ux_api.py#L199) | Original access helper/default/middleware; see source |
 | POST | `/api[/v1]/novels/{nid}/experimental/workspace/tasks/{authority}/{task_id}/cancel` | [cancel_task](app/experimental/ux_api.py#L205) | Original access helper/default/middleware; see source |
 
-Navigation: CORE_GENERATION, FS_REVIEW, A01, A02, A03, A11, FS_BRANCH, FS_PROCESSING, CORE_ADAPTATION. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
+Navigation: CORE_GENERATION, FS_REVIEW, A01, A02, A03, A11, FS_BRANCH, FS_PROCESSING, CORE_ADAPTATION, FS_RESEARCH_VISION, FS_VISUAL. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
 
 ### U16 · Safe batch preflight
 
@@ -2753,40 +2758,40 @@ Page: Settings → Frozen PoemSeed Local Interop 1.0; ENGINEERING_UI.
 
 Components: [`frontend/src/interop/entry.tsx`](frontend/src/interop/entry.tsx), [`frontend/src/interop/DesktopIntegrationDetails.tsx`](frontend/src/interop/DesktopIntegrationDetails.tsx), [`frontend/src/interop/LocalTutorIntegration.tsx`](frontend/src/interop/LocalTutorIntegration.tsx).
 
-Authority: [`app/local_interop/api.py`](app/local_interop/api.py), [`app/local_interop/transport.py`](app/local_interop/transport.py), [`app/local_interop/host.py`](app/local_interop/host.py), [`app/local_interop/desktop.py`](app/local_interop/desktop.py).
+Authority: [`app/local_interop/api.py`](app/local_interop/api.py), [`app/local_interop/transport.py`](app/local_interop/transport.py), [`app/local_interop/host.py`](app/local_interop/host.py), [`app/local_interop/desktop.py`](app/local_interop/desktop.py), [`app/local_interop/provider.py`](app/local_interop/provider.py), [`app/local_interop/chapter_ids.py`](app/local_interop/chapter_ids.py), [`frontend/src/interop/client.ts`](frontend/src/interop/client.ts), [`frontend/src/interop/chapterIds.ts`](frontend/src/interop/chapterIds.ts).
 
-Frozen local capability protocol, compatibility manifest and original host authorization remain unchanged. Synthetic tutor and desktop mapping are explicit adapters, not a second authoring runtime.
+Frozen PoemSeed 1.0 schemas/public fields/product IDs/opaque-ID alphabet remain compatible. Original InteropContextProvider resolves the registered branch manuscript via CollaborationReadService; empty/disabled/revoked branches never borrow mainline. One Host and original consent/session authorities remain. Native incompatible chapter IDs use full scope-bound SHA-256 wire labels, not a second editable store or authority.
 
-Existing permission/review, source digest, cancel/recovery and navigation constraints are retained. Actual native desktop/harness acceptance is LOCAL_REQUIRED/NOT_RUN. Frozen PR37 and protocol evidence are untouched.
+Reverse wire lookup enumerates live exact-scope owner rows and rejects missing/archive/tombstone/collision; only explicit authorized editor handoff returns validated native identity. Response-body context/source/selection/handoff and queued event frames recheck owner/consent. Host restart invalidates sessions; no alias registry or mainline fallback for registered production branches. Actual native Desktop LOCAL_REQUIRED, browser/real PostgreSQL hosted-pending; synthetic Tutor remains MOCK_ONLY. Frozen public protocol objects remain unchanged.
 
 | Method | Path | Source handler | Permission evidence |
 |---|---|---|---|
-| POST | `/api[/v1]/local-interop/ask` | [ask](app/local_interop/api.py#L242) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/cancel` | [cancel](app/local_interop/api.py#L318) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/case/approve` | [case_approve](app/local_interop/api.py#L273) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/case/preview` | [case_preview](app/local_interop/api.py#L269) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/connect` | [connect](app/local_interop/api.py#L229) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/context/preview` | [context_preview](app/local_interop/api.py#L234) | Original access helper/default/middleware; see source |
-| GET | `/api[/v1]/local-interop/context/sources` | [context_sources](app/local_interop/api.py#L238) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/diagnostics/preview` | [diagnostic_preview](app/local_interop/api.py#L247) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/diagnostics/share` | [diagnostic_share](app/local_interop/api.py#L251) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/disconnect` | [disconnect](app/local_interop/api.py#L334) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/disconnect-revoke` | [disconnect_revoke](app/local_interop/api.py#L330) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/discovery` | [discovery](app/local_interop/api.py#L224) | Original access helper/default/middleware; see source |
-| GET | `/api[/v1]/local-interop/events` | [events](app/local_interop/api.py#L291) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/events/pause` | [event_pause](app/local_interop/api.py#L326) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/events/preview` | [event_preview](app/local_interop/api.py#L277) | Original access helper/default/middleware; see source |
-| GET | `/api[/v1]/local-interop/events/stream` | [events_stream](app/local_interop/api.py#L298) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/events/subscribe` | [event_subscribe](app/local_interop/api.py#L281) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/events/unsubscribe` | [event_unsubscribe](app/local_interop/api.py#L287) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/handoff` | [handoff](app/local_interop/api.py#L261) | Original access helper/default/middleware; see source |
-| GET | `/api[/v1]/local-interop/models` | [models](app/local_interop/api.py#L265) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/permissions/revoke` | [permission_revoke](app/local_interop/api.py#L322) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/settings` | [settings](app/local_interop/api.py#L220) | Original access helper/default/middleware; see source |
-| GET | `/api[/v1]/local-interop/status` | [status](app/local_interop/api.py#L211) | Original access helper/default/middleware; see source |
-| POST | `/api[/v1]/local-interop/verify` | [verify](app/local_interop/api.py#L256) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/ask` | [ask](app/local_interop/api.py#L244) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/cancel` | [cancel](app/local_interop/api.py#L320) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/case/approve` | [case_approve](app/local_interop/api.py#L275) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/case/preview` | [case_preview](app/local_interop/api.py#L271) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/connect` | [connect](app/local_interop/api.py#L230) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/context/preview` | [context_preview](app/local_interop/api.py#L235) | Original access helper/default/middleware; see source |
+| GET | `/api[/v1]/local-interop/context/sources` | [context_sources](app/local_interop/api.py#L239) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/diagnostics/preview` | [diagnostic_preview](app/local_interop/api.py#L249) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/diagnostics/share` | [diagnostic_share](app/local_interop/api.py#L253) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/disconnect` | [disconnect](app/local_interop/api.py#L336) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/disconnect-revoke` | [disconnect_revoke](app/local_interop/api.py#L332) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/discovery` | [discovery](app/local_interop/api.py#L225) | Original access helper/default/middleware; see source |
+| GET | `/api[/v1]/local-interop/events` | [events](app/local_interop/api.py#L293) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/events/pause` | [event_pause](app/local_interop/api.py#L328) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/events/preview` | [event_preview](app/local_interop/api.py#L279) | Original access helper/default/middleware; see source |
+| GET | `/api[/v1]/local-interop/events/stream` | [events_stream](app/local_interop/api.py#L300) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/events/subscribe` | [event_subscribe](app/local_interop/api.py#L283) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/events/unsubscribe` | [event_unsubscribe](app/local_interop/api.py#L289) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/handoff` | [handoff](app/local_interop/api.py#L263) | Original access helper/default/middleware; see source |
+| GET | `/api[/v1]/local-interop/models` | [models](app/local_interop/api.py#L267) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/permissions/revoke` | [permission_revoke](app/local_interop/api.py#L324) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/settings` | [settings](app/local_interop/api.py#L221) | Original access helper/default/middleware; see source |
+| GET | `/api[/v1]/local-interop/status` | [status](app/local_interop/api.py#L212) | Original access helper/default/middleware; see source |
+| POST | `/api[/v1]/local-interop/verify` | [verify](app/local_interop/api.py#L258) | Original access helper/default/middleware; see source |
 
-Navigation: . State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
+Navigation: FS_BRANCH, CORE_MANUSCRIPT, U01, U07. State contract: all shared states, with owner-specific scope/CAS/cancel/recovery semantics above. Verification: PENDING exact final head.
 
 ## Complete frontend TSX component inventory
 
@@ -2919,7 +2924,7 @@ Includes shared infrastructure, fixtures and host components; this is not a coun
 | [`frontend/src/novel/SpeechSynthesisPanel.tsx`](frontend/src/novel/SpeechSynthesisPanel.tsx) | B03, CORE_AUDIO | DOMAIN_COMPONENT |
 | [`frontend/src/novel/StoryDatabase.tsx`](frontend/src/novel/StoryDatabase.tsx) | FS_CANON, FS_FORESHADOWING, FS_TIMELINE, FS_STORY_DATABASE | DOMAIN_COMPONENT |
 | [`frontend/src/novel/StoryPlanningWorkspace.tsx`](frontend/src/novel/StoryPlanningWorkspace.tsx) | FS_PLANNING, FS_FORESHADOWING | DOMAIN_COMPONENT |
-| [`frontend/src/novel/StoryRecordVersionEditor.tsx`](frontend/src/novel/StoryRecordVersionEditor.tsx) | FS_FORESHADOWING, FS_TIMELINE | DOMAIN_COMPONENT |
+| [`frontend/src/novel/StoryRecordVersionEditor.tsx`](frontend/src/novel/StoryRecordVersionEditor.tsx) | FS_FORESHADOWING, FS_TIMELINE, FS_STORY_DATABASE | DOMAIN_COMPONENT |
 | [`frontend/src/novel/VideoAssemblyPanel.tsx`](frontend/src/novel/VideoAssemblyPanel.tsx) | CORE_VIDEO | DOMAIN_COMPONENT |
 | [`frontend/src/novel/VideoTaskInspector.tsx`](frontend/src/novel/VideoTaskInspector.tsx) | CORE_VIDEO | DOMAIN_COMPONENT |
 | [`frontend/src/novel/VideoTimeline.tsx`](frontend/src/novel/VideoTimeline.tsx) | A12 | DOMAIN_COMPONENT |

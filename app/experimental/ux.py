@@ -256,7 +256,8 @@ def projected_task(reader, row):
         if reader.name == 'review_inbox': source['source'].update(id=row['review_id'], parent_id=row['review_domain'])
         if reader.name == 'workflows' and isinstance(row.get('workflow_id'), str): source['source']['parent_id'] = row['workflow_id']
         if reader.name == 'motion' and isinstance(row.get('screenplay_id'), str): source['source']['parent_id'] = row['screenplay_id']
-    cancel_allowed = bool(reader.cancel and str(row.get('status', '')).upper() in reader.cancel_states and not row.get('safe_batch_id'))
+    cancel_exhausted = bool(reader.cancel and str(row.get('status', '')).upper() in reader.cancel_states and row.get('cancel_available') is False)
+    cancel_allowed = bool(reader.cancel and str(row.get('status', '')).upper() in reader.cancel_states and not row.get('safe_batch_id') and row.get('cancel_available') is not False)
     result = {**source, 'id': str(row['id']), 'authority': reader.name, 'label': owner[1] if owner else reader.label,
             'status': status, 'stage_label': STAGES[status], 'version': row.get('version'),
             'feature': owner[0] if owner else reader.feature, 'progress': progress, 'history': history,
@@ -265,10 +266,24 @@ def projected_task(reader, row):
             'provider_id': provider or requested_provider, 'model_id': model or requested_model,
             'route_state': 'OBSERVED' if reader.name == 'author_generation' and provider and model else 'REQUESTED' if (provider or requested_provider) and (model or requested_model) else 'UNKNOWN',
             'actions': ['open_source'] + (['cancel'] if cancel_allowed else []),
-            'action_limits': {'cancel': None if cancel_allowed else 'ORIGIN_COORDINATOR_REQUIRED' if row.get('safe_batch_id') else 'TERMINAL_OR_UNSUPPORTED' if reader.cancel else 'SOURCE_AUTHORITY_ONLY',
+            'action_limits': {'cancel': None if cancel_allowed else 'RECEIPT_CAPACITY_EXHAUSTED' if cancel_exhausted else 'ORIGIN_COORDINATOR_REQUIRED' if row.get('safe_batch_id') else 'TERMINAL_OR_UNSUPPORTED' if reader.cancel else 'SOURCE_AUTHORITY_ONLY',
                               'retry': 'SOURCE_PREFLIGHT_REQUIRED', 'resume': 'SOURCE_RECOVERY_REQUIRED', 'review': 'SOURCE_REVIEW_REQUIRED'},
             'retry_policy': 'SOURCE_AUTHORITY_ONLY',
             'lifecycle': '面板关闭不取消任务；继续执行和重启恢复取决于原任务服务。'}
+    formal_domain = row.get('review_domain') if reader.name == 'review_inbox' else reader.name
+    if formal_domain in {'research_analysis', 'visual_identity'}:
+        # These inspectors are formal contracts only. Do not invent an exact
+        # navigation target, including for the aggregate inbox task projection.
+        result.pop('source', None)
+        result['navigation_contract'] = 'FORMAL_SOURCE_ONLY'
+        result['source_domain'] = formal_domain
+        if row.get('status') in {'REVIEWED', 'INVALIDATED', 'RUNNING'}:
+            result['status'], result['stage_label'] = {
+                'REVIEWED': ('REVIEWED', '已审核'), 'INVALIDATED': ('INVALIDATED', '已失效'),
+                'RUNNING': ('UNKNOWN', '等待原服务恢复'),
+            }[row['status']]
+        result['actions'] = [action for action in result['actions'] if action != 'open_source']
+        result['lifecycle'] = '仅投影原回执；不会自动运行、恢复或批准。真实模型接入尚未配置，持久工作器未实现。'
     result['revision'] = digest(result)
     return result
 
@@ -337,6 +352,8 @@ class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
 
     @staticmethod
     def _pending(task):
+        if task.get('navigation_contract') == 'FORMAL_SOURCE_ONLY' and task['status'] in {'REVIEWED', 'INVALIDATED'}:
+            return False
         if task['status'] in {'ACCEPTED', 'APPROVED', 'COMMITTED', 'APPLIED', 'REJECTED', 'CANCELLED', 'SUCCEEDED'}:
             return False
         return task['status'] != 'COMPLETED' or task['authority'] == 'author_generation'
@@ -560,6 +577,10 @@ class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
         if self.task_readers:
             for row in self.tasks(ctx, require_flag)['items']:
                 check()
+                # Search promises a resolvable exact target. Formal-only source
+                # inspectors must not acquire a fabricated fallback route.
+                if row.get('navigation_contract') == 'FORMAL_SOURCE_ONLY':
+                    continue
                 projected_rows += 1
                 kind = 'review' if row['authority'] == 'review_inbox' else 'task'
                 doc = self._search_document(ctx, kind, {**row, 'id': row['authority'] + ':' + row['id']})

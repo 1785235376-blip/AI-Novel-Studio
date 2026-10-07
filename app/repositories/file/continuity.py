@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 from copy import deepcopy
+from ...file_project_lifecycle import project_operation
 from ...storage import atomic_write
 from .finding_lock import continuity_write
 
@@ -29,6 +30,21 @@ class FileContinuityRepository:
 
     @continuity_write
     def create(self, kind: str, payload: dict[str, Any]) -> dict[str, Any]:
+        if kind == "timeline":
+            with project_operation(self.root.parent, payload["project_id"]):
+                if "novel_id" in payload and payload["novel_id"] != payload["project_id"]:
+                    raise ValueError("TIMELINE_PROJECT_MISMATCH")
+                rows = self._read(kind)
+                matching = [row for row in rows if row.get("id") == payload["id"]]
+                if len(matching) > 1:
+                    raise ValueError("TIMELINE_IDENTITY_CONFLICT")
+                if matching:
+                    if matching[0].get("project_id") != payload["project_id"]:
+                        raise ValueError("TIMELINE_PROJECT_MISMATCH")
+                    return self.get_by_id(kind, payload["id"])
+                rows.append(deepcopy(payload))
+                self._write(kind, rows)
+                return deepcopy(payload)
         rows = self._read(kind)
         for row in rows:
             if row.get("id") == payload.get("id"):
@@ -38,19 +54,32 @@ class FileContinuityRepository:
         return dict(payload)
 
     def get_by_id(self, kind: str, record_id: str) -> dict[str, Any]:
-        for row in self._read(kind):
+        rows = self._read(kind)
+        if kind == "timeline" and sum(row.get("id") == record_id for row in rows) > 1:
+            raise ValueError("TIMELINE_IDENTITY_CONFLICT")
+        for row in rows:
             if row.get("id") == record_id:
+                if kind == "timeline" and "novel_id" in row and row["novel_id"] != row.get("project_id"):
+                    raise ValueError("TIMELINE_PROJECT_MISMATCH")
                 return row
         raise KeyError(record_id)
 
     def list_by_project(self, kind: str, project_id: str) -> list[dict[str, Any]]:
-        return sorted([row for row in self._read(kind) if row.get("project_id") == project_id], key=lambda row: row.get("id", ""))
+        rows = [row for row in self._read(kind) if row.get("project_id") == project_id]
+        if kind == "timeline":
+            for row in rows:
+                self.get_by_id(kind, row["id"])
+        return sorted(rows, key=lambda row: row.get("id", ""))
 
     def list_by_character(self, kind: str, character_id: str) -> list[dict[str, Any]]:
         return sorted([row for row in self._read(kind) if row.get("character_id") == character_id or row.get("source_character_id") == character_id or row.get("target_character_id") == character_id], key=lambda row: row.get("id", ""))
 
     def list_by_evidence(self, kind: str, evidence_id: str) -> list[dict[str, Any]]:
-        return sorted([row for row in self._read(kind) if evidence_id in row.get("evidence_ids", [])], key=lambda row: row.get("id", ""))
+        rows = [row for row in self._read(kind) if evidence_id in row.get("evidence_ids", [])]
+        if kind == "timeline":
+            for row in rows:
+                self.get_by_id(kind, row["id"])
+        return sorted(rows, key=lambda row: row.get("id", ""))
 
     @continuity_write
     def set_finding_status(self, finding_id: str, status: str) -> dict[str, Any]:

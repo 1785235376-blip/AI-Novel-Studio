@@ -2,7 +2,7 @@
 
 Current additive source map. Historical forty-package matrix is unchanged. **All exact-final-head execution is PENDING.** No candidate/freeze declaration.
 
-Start: `6dc09ffc71ba47b6730df491186bfce429f0721a`. Observed checkpoint: `f25f08bd978a01aa32ecb713871b1a70ce1732ce`. Final SHA: PENDING. Exactly 10 logical areas, 73 surfaces.
+Start: `6dc09ffc71ba47b6730df491186bfce429f0721a`. Observed checkpoint: `d9d2df3a0a831a5bba6249793fd21946c17ce7d4`. Final SHA: PENDING. Exactly 10 logical areas, 73 surfaces.
 
 | ID | Product area | Surface | Implementation | Entry | Verification | Remaining |
 |---|---|---|---|---|---|---|
@@ -84,6 +84,7 @@ Start: `6dc09ffc71ba47b6730df491186bfce429f0721a`. Observed checkpoint: `f25f08b
 
 - Unit/File/PostgreSQL/API/permission/version/conflict/cancel/recovery/flag/browser/contract are separate gates. Authored and collected tests are not execution.
 - Actual model/GPU/quality/production-transport/engine/NLE/native acceptance remains NOT_RUN or LOCAL_REQUIRED where indicated. No new REAL_VERIFIED claim.
+- Earlier d9d2 push/PR Frontend failures are retained in docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md. All corrected-head hosted results remain PENDING.
 - Formal-only inspectors have actual owner APIs and written state/action contract; no fabricated new UI browser success.
 - Historical independent review remains BLOCKED.
 

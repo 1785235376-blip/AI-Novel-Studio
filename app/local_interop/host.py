@@ -110,6 +110,7 @@ class LocalSession:
     transport_disconnected: bool = False
     transport_close_state: str = "UNKNOWN"
     peer_disconnect_acknowledged: bool = False
+    chapter_identity: str | None = field(default=None, repr=False)
 
 
 class LocalInteropHost:
@@ -321,10 +322,12 @@ class LocalInteropHost:
                     raise InteropFailure("PERMISSION_DENIED", 403)
                 if binding[2] is not None and self._snapshot(session)["source_version"] != binding[2]:
                     raise InteropFailure("SOURCE_CHANGED", 409)
+                if len(binding) > 3 and binding[3]:
+                    self.provider.validate_chapter_bindings(token, session.scope, binding[3])
 
-    def _bind_delivery(self, session, request_id, source_version=None):
+    def _bind_delivery(self, session, request_id, source_version=None, chapter_bindings=None):
         key = (session.owner, request_id)
-        self.delivery_bindings[key] = (session.id, session.permission_generation, source_version)
+        self.delivery_bindings[key] = (session.id, session.permission_generation, source_version, chapter_bindings)
         while len(self.delivery_bindings) > MAX_REQUESTS: self.delivery_bindings.popitem(last=False)
         if key in self.requests: self.request_sessions[key] = session.id
 
@@ -402,9 +405,12 @@ class LocalInteropHost:
         pending_guard()
         latest = self.provider.snapshot(token, scope, module=body.module, surface=body.surface, chapter_id=body.chapter_id, task_id=body.task_id)
         if latest["authorization"] != snapshot["authorization"]: raise InteropFailure("PERMISSION_DENIED", 403)
+        if (latest["chapter"] or {}).get("id") != (snapshot["chapter"] or {}).get("id"):
+            raise InteropFailure("SOURCE_CHANGED", 409)
         if len(self.sessions) >= MAX_SESSIONS: raise InteropFailure("TIMEOUT", 429)
         session = LocalSession(uid("session"), owner, token, scope, body.module, body.surface, body.chapter_id, body.task_id,
             latest["authorization"], hello.product, wire, opened.session_token, transport)
+        session.chapter_identity = (latest["chapter"] or {}).get("id")
         # A changed browser scope replaces only that owner's prior sessions.
         self._revoke_owner(owner)
         self.sessions[session.id] = session
@@ -421,8 +427,11 @@ class LocalInteropHost:
 
     def _snapshot(self, session):
         self._session(session.host_token, session.id)
-        return self.provider.snapshot(session.host_token, session.scope, module=session.module, surface=session.surface,
+        snapshot = self.provider.snapshot(session.host_token, session.scope, module=session.module, surface=session.surface,
             chapter_id=session.chapter_id, task_id=session.task_id)
+        if (snapshot["chapter"] or {}).get("id") != session.chapter_identity:
+            raise InteropFailure("SOURCE_CHANGED", 409)
+        return snapshot
 
     def _capsule(self, session, snapshot, *, content=None, metadata_fields=METADATA_FIELDS, selection_id=None):
         state = dict(snapshot["state"])
@@ -449,10 +458,15 @@ class LocalInteropHost:
 
     def sources(self, token, sid):
         session = self._session(token, sid, "project.context.read")
-        rows = self.provider.collaboration.chapters.list(session.scope["project_id"])
-        result = [{"id": r["id"], "label": "Chapter " + str(index + 1), "version": self.provider.chapter(session.scope, r["id"])["version"]} for index, r in enumerate(rows[:64])]
+        entries = self.provider.chapter_entries(session.scope)
+        result = [{"id": wire_id, "label": "Chapter " + str(index + 1), "version": row["version"]}
+                  for index, (wire_id, row) in enumerate(entries[:64])]
         self._session(token, sid)
         return {"session_id": sid, "items": result, "max_selected": 4}
+
+    def sources_guard(self, token, sid, value):
+        if self.sources(token, sid) != value:
+            raise InteropFailure("SOURCE_CHANGED", 409)
 
     def context_preview(self, token, body):
         session = self._session(token, body.session_id, "project.context.read")
@@ -488,7 +502,7 @@ class LocalInteropHost:
         session.previews[preview_id] = {"kind": "context", "capsule": capsule, "source": snapshot["source_version"], "bindings": bindings, "diagnostic": None, "permission_generation": session.permission_generation}
         while len(session.previews) > MAX_PREVIEWS: session.previews.popitem(last=False)
         self._session(token, session.id)
-        self._bind_delivery(session, body.request_id, snapshot["source_version"])
+        self._bind_delivery(session, body.request_id, snapshot["source_version"], bindings)
         return {"request_id": body.request_id, "session_id": session.id, "preview_id": preview_id,
                 "capsule": capsule.model_dump(mode="json"), "expires_at": capsule.expires_at.isoformat()}
 
@@ -541,7 +555,7 @@ class LocalInteropHost:
         preview = session.previews.pop(body.preview_id, None)
         if preview is None or preview.get("kind") != ("diagnostic" if diagnostic else "context"): raise InteropFailure("CONTEXT_STALE", 409)
         self._validate_preview(session, preview)
-        self._bind_delivery(session, body.request_id, preview["source"])
+        self._bind_delivery(session, body.request_id, preview["source"], preview["bindings"])
         request = TutorRequest(request_id=body.request_id, session_id=session.wire_session.session_id,
             context=preview["capsule"], question=body.question, diagnostic=preview["diagnostic"])
         def guard():
@@ -588,6 +602,7 @@ class LocalInteropHost:
         if target.source_version and target.source_version != snapshot["source_version"]: raise InteropFailure("CONTEXT_STALE", 409)
         if target.project_id is not None and target.project_id != session.scope["project_id"]: raise InteropFailure("PERMISSION_DENIED", 403)
         route = {"action": target.action, "scope": session.scope}
+        chapter_bindings = None
         if target.action == "OPEN_FEATURE":
             if target.feature not in FEATURES: raise InteropFailure("HANDOFF_TARGET_NOT_FOUND", 404)
             route["feature"] = target.feature
@@ -595,6 +610,7 @@ class LocalInteropHost:
         elif target.action == "OPEN_CHAPTER":
             row = self.provider.chapter(session.scope, target.chapter_id)
             route.update(project_id=session.scope["project_id"], chapter_id=row["id"], chapter_version=row["version"])
+            chapter_bindings = {target.chapter_id: self.provider.chapter_binding(row)}
         else:
             # These existing panels own selection internally and expose no
             # task-ID navigation port yet. Feature navigation remains supported.
@@ -603,7 +619,7 @@ class LocalInteropHost:
             row = self.provider.task(token, session.scope, target.task_id)
             route.update(project_id=session.scope["project_id"], task_id=target.task_id, task_kind="generation", task_status=self.provider.task_status(row.get("status")))
         self._session(token, session.id)
-        self._bind_delivery(session, body.request_id, snapshot["source_version"])
+        self._bind_delivery(session, body.request_id, snapshot["source_version"], chapter_bindings)
         return {"request_id": body.request_id, "session_id": session.id, "route": route}
 
     def model_registry(self, token, sid):
@@ -670,6 +686,11 @@ class LocalInteropHost:
 
     def _event_guard(self, session, grant_id, token=None):
         self._session(token or session.host_token, session.id, "project.context.read")
+        # Queued metadata/SSE frames still refer to a live, exact owner object.
+        # A removed chapter cannot survive in a previously granted event queue.
+        chapter = self.provider.chapter(session.scope, session.chapter_id)
+        if (chapter or {}).get("id") != session.chapter_identity:
+            raise InteropFailure("SOURCE_CHANGED", 409)
         self._permission(session, "standing_metadata_events")
         if not grant_id or session.event_grant_id != grant_id:
             raise InteropFailure("CANCELLED", 409)
@@ -924,7 +945,7 @@ class LocalInteropHost:
         if self.closed: return
         for session in tuple(self.sessions.values()):
             if session.revoked or not session.event_grant_id or session.scope["project_id"] != change.project_id: continue
-            if change.module == "CHAPTER" and change.entity_id != session.chapter_id: continue
+            if change.module == "CHAPTER" and change.entity_id != session.chapter_identity: continue
             if change.module == "TASK" and (change.entity_id != session.task_id or not session.event_metadata_fields): continue
             loop = session.loop
             if loop is None or loop.is_closed(): continue

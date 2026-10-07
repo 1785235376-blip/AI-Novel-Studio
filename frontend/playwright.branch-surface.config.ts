@@ -11,7 +11,7 @@ export default defineConfig({
   outputDir: path.join(frontend, 'test-results', 'branch-surface'), workers: 1, timeout: 120000,
   reporter: [['list'], ['junit', { outputFile: process.env.CI_RECEIPTS ? path.join(process.env.CI_RECEIPTS, 'branch-surface-browser.xml') : 'test-results/branch-surface.xml' }]],
   expect: { timeout: 15000 }, use: { baseURL: 'http://127.0.0.1:5217', viewport: { width: 1440, height: 900 }, locale: 'zh-CN', screenshot: 'only-on-failure', trace: 'retain-on-failure' },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'], launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE } : undefined } }],
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE } : undefined } }],
   webServer: [
     { command: `"${python}" tests/branch_manuscript_browser_server.py`, cwd: root, url: 'http://127.0.0.1:8057/api/health', timeout: 60000, reuseExistingServer: false,
       env: { HOME: isolated, XDG_DATA_HOME: path.join(isolated, 'xdg'), NOVEL_DATA_PATH: path.join(isolated, 'novels'), STORAGE_BACKEND: 'file', ENABLE_COLLABORATION_RUNTIME: 'true', ENABLE_PACKAGED_RUNTIME: 'false', MOCK_PROVIDER: 'false', ENABLE_CLOUD: 'false', CREDENTIAL_VAULT_BACKEND: 'memory', CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: 'true', EXPERIMENTAL_FEATURES: 'branch_manuscript_v1,workspace_tools_v2', V1_ACCEPTANCE_MODE: 'false', FRONTEND_ORIGIN: 'http://127.0.0.1:5217',
