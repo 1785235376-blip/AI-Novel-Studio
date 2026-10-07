@@ -67,6 +67,10 @@ class DomainService:
     def __init__(self, store, novels, chapters):
         self.store, self.novels, self.chapters = store, novels, chapters
 
+    def chapters_for(self, scope):
+        from ..manuscript_sources import scoped_chapters
+        return scoped_chapters(self.chapters, scope)
+
     def list(self, nid, scope, collection):
         self.novels.get(nid)
         rows = list(self.store.read(nid, scope)["collections"].get(collection, {}).values())
@@ -97,27 +101,32 @@ class DomainService:
             change_row(row, actor, expected_version, callback)
             return copy.deepcopy(row)
 
-    def sources(self, nid, chapter_ids):
+    def sources(self, nid, chapter_ids, scope=None):
         sources = {}
         for cid in dict.fromkeys(chapter_ids):
-            chapter = self.chapters.get(cid)
+            chapter = self.chapters_for(scope).get(cid)
             if chapter.get("novel_id") != nid:
                 raise ValueError("chapter belongs to another project")
             sources[cid] = {"version": chapter["version"], "digest": content_digest(chapter)}
+            if scope and scope.get("mode") == "collaboration":
+                sources[cid]["scope"] = copy.deepcopy(scope)
         return sources
 
-    def assert_sources(self, nid, sources):
+    def assert_sources(self, nid, sources, scope=None):
         for cid, expected in sources.items():
             try:
-                chapter = self.chapters.get(cid)
+                if scope is not None and expected.get('scope') is not None and expected['scope'] != scope:
+                    raise StaleSourceError('source scope changed')
+                source_scope = scope if scope is not None else expected.get('scope')
+                chapter = self.chapters_for(source_scope).get(cid)
             except (FileNotFoundError, KeyError) as exc:
                 raise StaleSourceError("source chapter no longer exists") from exc
             if chapter.get("novel_id") != nid or chapter.get("version") != expected.get("version") or content_digest(chapter) != expected.get("digest"):
                 raise StaleSourceError("source chapter changed; review the current version")
 
-    def stale(self, nid, sources):
+    def stale(self, nid, sources, scope=None):
         try:
-            self.assert_sources(nid, sources)
+            self.assert_sources(nid, sources, scope)
             return False
         except StaleSourceError:
             return True

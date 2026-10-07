@@ -1,6 +1,6 @@
 import { ApiError, getCollaborationContext, type CollaborationContext } from '../api';
 
-export type ExperimentalFlags = { experimental: boolean; default_enabled: false; features: Record<string, boolean> };
+export type ExperimentalFlags = { experimental: boolean; default_enabled: false; features: Record<string, boolean>; schema_version?: number; runtime_features?: Record<string, boolean>; surface_features?: Record<string, boolean> };
 export type Row = Record<string, any> & { id: string; version: number; status?: string; stale?: boolean };
 export type Rows = { items: Row[]; total?: number };
 const requestId = () => globalThis.crypto?.randomUUID?.() || `experimental-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -23,7 +23,10 @@ async function request<T>(url: string, method: string, body?: unknown, context?:
   }
   return response.status === 204 ? undefined as T : asBlob ? response.blob() as Promise<T> : response.json();
 }
-export const experimentalFeatures = (signal?: AbortSignal, context?: CollaborationContext) => request<ExperimentalFlags>('/api/experimental/features', 'GET', undefined, context, signal);
+export const experimentalFeatures = async (signal?: AbortSignal, context?: CollaborationContext) => {
+  const value = await request<ExperimentalFlags>('/api/experimental/features', 'GET', undefined, context, signal);
+  return { ...value, features: value.runtime_features || { ...value.features, ...value.surface_features } };
+};
 export function experimentalClient(novelId: string, context: CollaborationContext) {
   // Capture the originating session/branch: a later navigation cannot redirect a request.
   const captured = { ...context, scope: context.scope ? { ...context.scope } : undefined };

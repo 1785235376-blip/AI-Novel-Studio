@@ -77,10 +77,10 @@ class ChangeImpactService(DomainService):
     def _source(self, nid, scope, ref):
         kind, rid = ref['kind'], ref['id']
         if kind == 'CHAPTER':
-            row = self.chapters.get(rid)
+            row = self.chapters_for(scope).get(rid)
             if row.get('novel_id') != nid or row.get('branch_id') != scope.get('branch_id'):
                 raise FileNotFoundError('source unavailable')
-            return {'kind': kind, 'id': rid, 'label': row.get('title', rid), 'binding': self.sources(nid, [rid])[rid]}
+            return {'kind': kind, 'id': rid, 'label': row.get('title', rid), 'binding': self.sources(nid, [rid], scope)[rid]}
         if kind in {'CHARACTER', 'LOCATION'}:
             row = next((r for r in self.novels.data_set(nid, 'characters' if kind == 'CHARACTER' else 'locations') if r['id'] == rid and r.get('branch_id') == scope.get('branch_id')), None)
             if row is None: raise FileNotFoundError('source unavailable')
@@ -95,7 +95,7 @@ class ChangeImpactService(DomainService):
 
     def catalog(self, nid, scope):
         self._active(); self.novels.get(nid)
-        refs = [{'kind': 'CHAPTER', 'id': r['id']} for r in self.chapters.list(nid) if r.get('branch_id') == scope.get('branch_id')]
+        refs = [{'kind': 'CHAPTER', 'id': r['id']} for r in self.chapters_for(scope).list(nid) if r.get('branch_id') == scope.get('branch_id')]
         refs += [{'kind': 'CHARACTER', 'id': r['id']} for r in self.novels.data_set(nid, 'characters') if r.get('branch_id') == scope.get('branch_id')]
         refs += [{'kind': 'WORLD_RECORD', 'id': r['id']} for r in self.graph.list(nid, scope, self.graph.RECORDS) if 'research_sources' not in r and (r['kind'] != 'KNOWLEDGE_EVENT' or self.enabled('character_mind_v2'))]
         refs += [{'kind': 'ASSET', 'id': r['id']} for r in self.production._asset_rows(nid, scope)]
@@ -346,7 +346,7 @@ class ChangeImpactService(DomainService):
             brief = self._prepare_brief(nid, scope, actor, old['kind'], recipe)
             if type(adapter) is RegisteredLocalImageWorkflowAdapter: adapter.validate_request(brief, task['candidate_count'])
             self.media._assert_brief(nid, scope, brief)
-            privacy = {cid: {k: v for k, v in source_privacy_status(self.chapters.get(cid), scope.get('branch_id'), self.store.root).items()
+            privacy = {cid: {k: v for k, v in source_privacy_status(self.chapters_for(scope).get(cid), scope.get('branch_id'), self.store.root).items()
                              if k in {'privacy_level', 'reviewed', 'stale'}} for cid in brief['sources']}
             guard(); self._active()
             result.update(recipe=recipe, state={'source': view['source']['binding'], 'node_fingerprint': node['fingerprint'],

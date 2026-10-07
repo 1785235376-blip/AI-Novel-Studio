@@ -30,10 +30,12 @@ class ContinuityFindingService:
             return []
 
     def get_finding(self, finding_id: str):
-        return self.repository.get_by_id("findings", finding_id)
+        row = self.repository.get_by_id("findings", finding_id)
+        if row.get("review_owner"): raise KeyError(finding_id)
+        return row
 
     def list_findings(self, project_id: str):
-        return self.repository.list_by_project("findings", project_id)
+        return [row for row in self.repository.list_by_project("findings", project_id) if not row.get("review_owner")]
 
     def resolve(self, project_id: str, finding_id: str):
         finding=self.get_finding(finding_id)

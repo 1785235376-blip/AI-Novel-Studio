@@ -311,7 +311,7 @@ class ComicLayoutsService(DomainService):
             seen.add(parent['id'])
             if len(seen) > 100: raise ValueError('COMIC_ASSET_LINEAGE_LIMIT')
             for cid in parent.get('parameters', {}).get('asset_lineage_v2', {}).get('sources', {}):
-                chapter = self.chapters.get(cid)
+                chapter = self.chapters_for(scope).get(cid)
                 if chapter.get('novel_id') != nid or chapter.get('branch_id') != scope.get('branch_id'): raise FileNotFoundError(cid)
                 privacy[cid] = source_privacy_status(chapter, scope.get('branch_id'), self.store.root)
             for pid in parent.get('source_asset_ids', []):

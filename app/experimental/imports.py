@@ -182,12 +182,12 @@ class SemanticImportService(DomainService):
             raise ValueError("invalid chunk size or overlap")
         if not chapter_ids or len(chapter_ids) > 2000 or len(set(chapter_ids)) != len(chapter_ids):
             raise ValueError("select 1-2000 unique source chapters")
-        sources = self.sources(nid, chapter_ids)
+        sources = self.sources(nid, chapter_ids, scope)
         job_id = str(uuid.uuid4())
         chunks = []
         total = 0
         for cid in chapter_ids:
-            chapter = self.chapters.get(cid)
+            chapter = self.chapters_for(scope).get(cid)
             text = str(chapter.get("content") or "")
             total += len(text)
             if total > MAX_CHARS:
@@ -209,7 +209,7 @@ class SemanticImportService(DomainService):
                     raise ValueError("semantic import chunk limit exceeded")
         if not chunks:
             raise ValueError("source chapters contain no text")
-        self.assert_sources(nid, sources)
+        self.assert_sources(nid, sources, scope)
         job = self._record(nid, scope, actor, job_id, {
             "status": "QUEUED", "sources": sources, "chapter_ids": chapter_ids,
             "adapter_id": adapter_id, "adapter_contract": adapter_contract, "verification": adapter_contract["verification"],
@@ -248,7 +248,7 @@ class SemanticImportService(DomainService):
 
     def _assert_fresh(self, nid, scope, job, actor):
         try:
-            self.assert_sources(nid, job["sources"])
+            self.assert_sources(nid, job["sources"], scope)
         except (StaleSourceError, FileNotFoundError):
             with self.store.transaction(nid, scope) as doc:
                 live = self._row(doc, JOBS, job["id"])
@@ -398,7 +398,7 @@ class SemanticImportService(DomainService):
                 with self.store.transaction(nid, scope) as doc:
                     if check_authority is not None:
                         check_authority()
-                    self.assert_sources(nid, job["sources"])
+                    self.assert_sources(nid, job["sources"], scope)
                     live = self._row(doc, JOBS, job_id)
                     pending = self._row(doc, CHUNKS, chunk["id"])
                     if live["status"] != "ANALYZING" or live["generation"] != captured_generation or pending.get("claim_token") != claim:
@@ -460,7 +460,7 @@ class SemanticImportService(DomainService):
         cache = {} if cache is None else cache
         verified_jobs = set() if verified_jobs is None else verified_jobs
         if row["job_id"] not in verified_jobs:
-            self.assert_sources(nid, row["sources"])
+            self.assert_sources(nid, row["sources"], row.get("scope"))
             verified_jobs.add(row["job_id"])
         if not row["source_evidence"]:
             raise ValueError("IMPORT_EVIDENCE_REQUIRED")
@@ -469,7 +469,7 @@ class SemanticImportService(DomainService):
             if cid not in row["sources"]:
                 raise ValueError("IMPORT_EVIDENCE_SCOPE_MISMATCH")
             if cid not in cache:
-                cache[cid] = self.chapters.get(cid)
+                cache[cid] = self.chapters_for(row.get("scope")).get(cid)
             chapter = cache[cid]
             text = str(chapter.get("content") or "")
             if chapter.get("novel_id") != nid or chapter["version"] != evidence["chapter_version"] or digest(text) != evidence["content_sha256"]:
@@ -585,7 +585,7 @@ class SemanticImportService(DomainService):
                     if reauthorize is not None:
                         reauthorize()
                     source_ids = {e["chapter_id"] for values in candidates.values() for value in values for e in value["source_evidence"]}
-                    owner.assert_sources(nid, {cid: job["sources"][cid] for cid in source_ids})
+                    owner.assert_sources(nid, {cid: job["sources"][cid] for cid in source_ids}, scope)
                     return underlying.review_import_knowledge(project, decision, candidates)
 
             if reauthorize is not None:
@@ -620,7 +620,7 @@ class SemanticImportService(DomainService):
         for row in self.candidates(nid, scope):
             stale = row.get("stale", False)
             try:
-                self.assert_sources(nid, row["sources"])
+                self.assert_sources(nid, row["sources"], row.get("scope"))
             except (StaleSourceError, FileNotFoundError):
                 stale = True
             job = self.job(nid, scope, row["job_id"])

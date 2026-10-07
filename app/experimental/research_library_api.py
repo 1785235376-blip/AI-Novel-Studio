@@ -6,6 +6,7 @@ import re
 from pydantic import Field
 
 from .common import api_call
+from .research_vision import ResearchAnalysisIn
 from .research_library import FileIn, WebIn, EditIn, CitationIn, NoteIn, AdoptIn, StrictInput, ReplaceFileIn, RestoreSourceIn, EditNoteIn
 
 
@@ -41,7 +42,9 @@ def create_research_library_router(service, authorize, require_flag):
                     except TimeoutError as exc:
                         raise HTTPException(408, {'code': 'RESEARCH_REQUEST_TIMEOUT'}) from exc
                     request._body = b''.join(chunks)
-                return await handler(request)
+                response = await handler(request)
+                response.headers['Cache-Control'] = 'no-store'
+                return response
             return bounded
 
     router = APIRouter(prefix='/novels/{nid}/experimental/research-library', tags=['experimental-research'], route_class=BoundedResearchRoute)
@@ -202,5 +205,25 @@ def create_research_library_router(service, authorize, require_flag):
         require_flag('research_library_v2')
         authorize(nid, x_session_token, x_branch_id, 'domain.write')
         return run(nid, x_session_token, x_branch_id, service.review_draft, rid, body.expected_version, action, mutation=True, permission='domain.review')
+
+    @router.get('/analysis/status')
+    def analysis_status(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return run(nid, x_session_token, x_branch_id, service.analysis_status)
+
+    @router.get('/analysis/jobs')
+    def analysis_jobs(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return run(nid, x_session_token, x_branch_id, service.analysis_jobs)
+
+    @router.get('/analysis/jobs/{rid}')
+    def analysis_job(nid: str, rid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return run(nid, x_session_token, x_branch_id, service.analysis_job, rid)
+
+    @router.post('/analysis/jobs', status_code=201)
+    def create_analysis(nid: str, body: ResearchAnalysisIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return run(nid, x_session_token, x_branch_id, service.create_analysis, body.model_dump(), mutation=True)
+
+    @router.post('/analysis/jobs/{rid}/{action}')
+    def analysis_action(nid: str, rid: str, action: str, body: VersionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return run(nid, x_session_token, x_branch_id, service.analysis_action, rid, action, body.expected_version, mutation=True)
 
     return router

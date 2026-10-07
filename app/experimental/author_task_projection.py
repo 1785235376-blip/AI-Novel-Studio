@@ -42,7 +42,7 @@ def create_author_task_reader(manager, authorize, require_flag, read_generation)
             if not _owned(ctx, job):
                 return None
             require_generation_content(job)
-            chapter = manager.chapters.get(job.chapter_id)
+            chapter = (manager.chapters_for_job(job) if hasattr(manager, "chapters_for_job") else manager.chapters).get(job.chapter_id)
             if (chapter.get('id') != job.chapter_id or chapter.get('novel_id') != ctx.novel_id
                     or chapter.get('is_archived') or type(job.base_chapter_version) is not int
                     or job.base_chapter_version < 1):

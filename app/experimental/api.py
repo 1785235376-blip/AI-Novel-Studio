@@ -124,6 +124,8 @@ subtitle_timeline_service = SubtitleTimelineService(store, legacy_api.novel_serv
 router.include_router(create_voice_direction_router(audiobook_service, authorize, require_flag))
 router.include_router(create_subtitle_timeline_router(subtitle_timeline_service, authorize, require_flag))
 register_legacy_bindings(inbox_service)
+from .finding_review_composition import register_finding_review_bindings
+register_finding_review_bindings(inbox_service, legacy_api, authorize, require_flag)
 router.include_router(create_inbox_router(inbox_service, authorize, require_flag))
 
 
@@ -589,3 +591,65 @@ from .first_use_api import create_first_use_router
 from ..dependencies import collaboration_read_service
 first_use_service = FirstUseService(store, OriginalFirstUseAuthorities(legacy_api, collaboration_read_service))
 router.include_router(create_first_use_router(first_use_service, require_flag))
+
+
+# Additive functional surfaces retain their original manuscript/task/review owners.
+from ..dependencies import branch_manuscript_service
+from .branch_manuscript_composition import mount_branch_manuscript
+mount_branch_manuscript(router, legacy_api, branch_manuscript_service, require_flag,
+    require_inspection_host_session, source_services=(writing_focus_service, workspace_tools_service),
+    inbox=inbox_service)
+writer_room_service.branch_documents = branch_manuscript_service
+embedding_service.chapter_authority = branch_manuscript_service.for_scope
+embedding_service.visual_memory = legacy_api.v1_capability_service
+
+from .subtitle_processing import processing_task_projection, processing_review_projection
+
+
+def subtitle_processing_guard(ctx, permission='domain.read'):
+    from fastapi import HTTPException
+    for feature in ('subtitle_timeline_v2', 'voice_direction_v2', 'audiobook_v2'):
+        require_flag(feature)
+    if authorize(ctx.novel_id, ctx.token, ctx.branch, permission) != (ctx.actor, ctx.scope):
+        raise HTTPException(403, {'code': 'SUBTITLE_PROCESSING_AUTHORITY_CHANGED'})
+
+
+def read_subtitle_processing_tasks(ctx):
+    subtitle_processing_guard(ctx)
+    result = audiobook_service.as_actor(ctx.actor, processing_task_projection, subtitle_timeline_service, ctx)
+    subtitle_processing_guard(ctx)
+    return result
+
+
+def cancel_subtitle_processing_task(ctx, rid, version):
+    guard = lambda: subtitle_processing_guard(ctx, 'domain.write')
+    guard()
+    return audiobook_service.as_actor(ctx.actor, subtitle_timeline_service.processing_action,
+        ctx.novel_id, ctx.scope, ctx.actor, rid, 'cancel', {'expected_version': version}, reauthorize=guard)
+
+
+def read_subtitle_processing_reviews(ctx):
+    subtitle_processing_guard(ctx)
+    result = audiobook_service.as_actor(ctx.actor, processing_review_projection, subtitle_timeline_service, ctx)
+    subtitle_processing_guard(ctx)
+    return result
+
+
+workspace_tools_service.task_readers += (TaskReader('subtitle_processing', '字幕与语音处理',
+    'subtitle_timeline_v2', read_subtitle_processing_tasks, 'subtitle_timeline_v2',
+    cancel=cancel_subtitle_processing_task,
+    cancel_states=frozenset({'QUEUED', 'RUNNING', 'NOT_CONFIGURED', 'NEEDS_REVIEW', 'INTERRUPTED', 'FAILED'})),)
+inbox_service.register(ReviewBinding('subtitle_processing', read_subtitle_processing_reviews,
+    None, 'subtitle_timeline_v2', frozenset()))
+
+from ..story_record_api import create_story_record_router
+router.include_router(create_story_record_router(legacy_api.novel_service,
+    legacy_api._require_shared_project, require_flag))
+
+from .adaptation_projection import mount_adaptation_projections
+mount_adaptation_projections(workspace_tools_service, inbox_service,
+    legacy_api.adaptation_service, legacy_api, require_flag)
+
+from .review_adapter_projection import mount_review_adapter_projections
+mount_review_adapter_projections(workspace_tools_service, inbox_service,
+    research_library_service, embedding_service, authorize, require_flag)

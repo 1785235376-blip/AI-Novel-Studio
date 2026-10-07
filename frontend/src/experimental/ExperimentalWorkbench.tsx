@@ -36,6 +36,7 @@ import { ComicLayoutsPanel } from './ComicLayoutsPanel';
 import { InteractiveStoryPanel } from './InteractiveStoryPanel';
 import { WriterRoomPanel } from './WriterRoomPanel';
 import { ProjectForksPanel } from './ProjectForksPanel';
+import { BranchManuscriptPanel } from './BranchManuscriptPanel';
 import { OfflineSyncPanel } from './OfflineSyncPanel';
 import { WritingSessionPanel } from './WritingSessionPanel';
 import type { DraftStatus } from './readerPreflightClient';
@@ -80,6 +81,7 @@ export function ExperimentalWorkbench({ novelId, chapter, context, flags, onNavi
     {active === 'research_library_v2' && <ResearchLibraryPanel client={client} />}
     {active === 'reader_preflight_v2' && <ReaderPreflightPanel client={client} localDraftState={localDraftState} onNavigate={onNavigate} />}
     {active === 'writing_sessions_v2' && <WritingSessionPanel client={client} onNavigate={onNavigate} />}
+    {active === 'branch_manuscript_v1' && <BranchManuscriptPanel client={client} onNavigate={onNavigate} />}
     {active === 'project_forks_v2' && <ProjectForksPanel client={client} />}
     {active === 'offline_sync_v2' && <OfflineSyncPanel client={client} />}
     {active === 'writer_room_v2' && <WriterRoomPanel client={client} onNavigate={onNavigate} />}

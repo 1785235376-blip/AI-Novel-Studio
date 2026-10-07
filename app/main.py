@@ -271,8 +271,8 @@ async def collaboration_fail_closed(request,call_next):
             normalized_path in {"/api/harness/process","/api/harness/process/start","/api/harness/process/stop"} and method in {"GET","POST"} or
             re.fullmatch(r"/api/user-preferences/[^/]+",normalized_path) is not None and method in {"PUT","DELETE"} or
             re.fullmatch(r"/api/generation/[^/]+(?:/events)?",normalized_path) is not None and method=="GET" or
-            re.fullmatch(r"/api/generation/[^/]+/(?:cancel|accept|reject)",normalized_path) is not None and method=="POST" or
-            re.fullmatch(r"/api/exports",normalized_path) is not None and method=="POST" or
+            re.fullmatch(r"/api/generation/[^/]+/(?:cancel|accept|reject|retry)",normalized_path) is not None and method=="POST" or
+            re.fullmatch(r"/api/exports",normalized_path) is not None and method in {"GET", "POST"} or
             re.fullmatch(r"/api/exports/[^/]+/(?:cancel|retry)",normalized_path) is not None and method=="POST" or
             re.fullmatch(r"/api/exports/[^/]+(?:/download)?",normalized_path) is not None and method=="GET" or
             re.fullmatch(r"/api/novels/[^/]+/export",normalized_path) is not None and method=="GET" or
@@ -307,6 +307,25 @@ async def collaboration_fail_closed(request,call_next):
         first_use_route = ((normalized_path == "/api/experimental/first-use/sample" and method in {"GET", "POST"})
                            or (normalized_path == "/api/experimental/first-use/sample/recover" and method == "POST"))
         if first_use_route and 'workspace_tools_v2' in enabled_flags():
+            allowed = True
+        finding_review_route = (
+            method == 'GET' and re.fullmatch(
+                r'/api/projects/[^/]+/(?:continuity|narrative)/review-findings(?:/[^/]+(?:/(?:history|evidence))?)?',
+                normalized_path) is not None
+        ) or (
+            method == 'POST' and re.fullmatch(
+                r'/api/projects/[^/]+/(?:continuity|narrative)/(?:review-checks|review-findings/[^/]+/review)',
+                normalized_path) is not None
+        )
+        if finding_review_route and 'finding_review_v1' in enabled_flags():
+            allowed = True
+        pending_canon_review_route = (
+            method == 'GET' and re.fullmatch(r'/api/projects/[^/]+/pending-canon/review', normalized_path) is not None
+        ) or (
+            method == 'POST' and re.fullmatch(
+                r'/api/projects/[^/]+/pending-canon/[^/]+/(?:preview|review|recover|cancel-recovery)', normalized_path) is not None
+        )
+        if pending_canon_review_route and 'finding_review_v1' in enabled_flags():
             allowed = True
         if not allowed:
             return JSONResponse({"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}},status_code=501)

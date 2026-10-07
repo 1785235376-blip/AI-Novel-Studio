@@ -194,7 +194,7 @@ class MultilingualEditionsService(RevisionIntelligenceService):
     def catalog(self, nid, scope):
         self.novels.get(nid)
         rows = []
-        for chapter in self.chapters.list(nid):
+        for chapter in self.chapters_for(scope).list(nid):
             if chapter.get('branch_id') != scope.get('branch_id'): continue
             try: current, _ = self.capture(nid, scope, chapter['id'])
             except (FileNotFoundError, ValueError): continue

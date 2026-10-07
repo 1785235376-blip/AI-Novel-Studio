@@ -61,6 +61,10 @@ class CreationWorkbenchService:
     def __init__(self, capabilities, chapters, novels):
         self.store, self.chapters, self.novels = capabilities, chapters, novels
 
+    def chapters_for(self, scope):
+        from ..manuscript_sources import scoped_chapters
+        return scoped_chapters(self.chapters, scope)
+
     @staticmethod
     def _now():
         return datetime.now(timezone.utc).isoformat()
@@ -113,7 +117,7 @@ class CreationWorkbenchService:
                 raise ValueError(f"{field} contain an unknown project entity")
         versions = {}
         for cid in body.chapter_ids:
-            chapter = self.chapters.get(cid)
+            chapter = self.chapters_for(scope).get(cid)
             if chapter.get("novel_id") != nid:
                 raise ValueError("chapter belongs to another project")
             versions[cid] = chapter["version"]
@@ -148,7 +152,7 @@ class CreationWorkbenchService:
             row.update(body.model_dump(mode="json"))
             row.update(id=rid, novel_id=nid, scope=copy.deepcopy(scope), status="DRAFT", version=version,
                        created_at=created, updated_at=now, actor_id=actor, source="USER", source_versions=refs,
-                       history=history, source_digests={cid: content_digest(self.chapters.get(cid)) for cid in refs})
+                       history=history, source_digests={cid: content_digest(self.chapters_for(scope).get(cid)) for cid in refs})
             self.store._write("creation_records", rows)
             return copy.deepcopy(row)
 
@@ -166,7 +170,7 @@ class CreationWorkbenchService:
             versions = self._references(nid, scope, body)
             digests = {}
             for source in provenance["sources"]:
-                chapter = self.chapters.get(source["chapter_id"])
+                chapter = self.chapters_for(scope).get(source["chapter_id"])
                 if chapter.get("novel_id") != nid or chapter.get("version") != source["chapter_version"] or content_digest(chapter) != source["content_sha256"]:
                     raise ValueError("source chapter changed; generate and review a new candidate")
                 digests[chapter["id"]] = source["content_sha256"]
@@ -192,7 +196,7 @@ class CreationWorkbenchService:
             if action == "approve":
                 # Referenced source edits must be reviewed before approval.
                 for cid, version in row["source_versions"].items():
-                    if self.chapters.get(cid)["version"] != version or (cid in row.get("source_digests", {}) and content_digest(self.chapters.get(cid)) != row["source_digests"][cid]):
+                    if self.chapters_for(scope).get(cid)["version"] != version or (cid in row.get("source_digests", {}) and content_digest(self.chapters_for(scope).get(cid)) != row["source_digests"][cid]):
                         raise ValueError("source chapter changed; edit the plan to refresh its source versions")
                 row["status"] = "APPROVED"
             elif action == "archive":
@@ -204,7 +208,7 @@ class CreationWorkbenchService:
                 body = WorkbenchRecordIn.model_validate({k: old[k] for k in WorkbenchRecordIn.model_fields if k in old})
                 row.update(body.model_dump(mode="json"))
                 row["source_versions"] = self._references(nid, scope, body)
-                row["source_digests"] = {cid: content_digest(self.chapters.get(cid)) for cid in row["source_versions"]}
+                row["source_digests"] = {cid: content_digest(self.chapters_for(scope).get(cid)) for cid in row["source_versions"]}
                 row["status"] = "DRAFT"
             else:
                 raise ValueError("unknown record action")
@@ -221,7 +225,7 @@ class CreationWorkbenchService:
             if row["kind"] != kind or row["status"] != "APPROVED":
                 raise ValueError("generation requires an approved style or plot record")
             for cid, version in row["source_versions"].items():
-                if self.chapters.get(cid)["version"] != version or (cid in row.get("source_digests", {}) and content_digest(self.chapters.get(cid)) != row["source_digests"][cid]):
+                if self.chapters_for(scope).get(cid)["version"] != version or (cid in row.get("source_digests", {}) and content_digest(self.chapters_for(scope).get(cid)) != row["source_digests"][cid]):
                     raise ValueError("source chapter changed; review the plan again before generation")
             if kind == "STYLE":
                 result["style"] = row["instructions"]
@@ -230,8 +234,13 @@ class CreationWorkbenchService:
             result["records"].append({"id": rid, "version": row["version"], "privacy_level": row["privacy_level"]})
         return result
 
-    def _anchor(self, nid, cid, version, quote):
-        chapter = self.chapters.get(cid)
+    def _anchor(self, nid, cid, version, quote, scope=None):
+        try: chapter = self.chapters_for(scope).get(cid)
+        except FileNotFoundError:
+            if scope and scope.get('mode') == 'collaboration':
+                from fastapi import HTTPException
+                raise HTTPException(403, {'code': 'COMMENT_SOURCE_OUTSIDE_BRANCH'}) from None
+            raise
         if chapter.get("novel_id") != nid:
             raise FileNotFoundError(cid)
         if chapter["version"] != version:
@@ -250,7 +259,7 @@ class CreationWorkbenchService:
             rows = [r for r in self._rows("review_threads") if self._match(r, nid, scope) and not r.get("narrative_judge")]
         for row in rows:
             try:
-                chapter = self.chapters.get(row["anchor"]["chapter_id"])
+                chapter = self.chapters_for(scope).get(row["anchor"]["chapter_id"])
                 row["anchor_state"] = "CURRENT" if chapter["version"] == row["anchor"]["chapter_version"] else "STALE"
             except FileNotFoundError:
                 row["anchor_state"] = "MISSING"
@@ -259,7 +268,7 @@ class CreationWorkbenchService:
     def create_comment(self, nid, scope, actor, body: CommentIn, *, reauthorize=None):
         self.novels.get(nid)
         with self.store._lock, workspace_mutation(self.store.root, "creation-workbench"):
-            anchor = self._anchor(nid, body.chapter_id, body.chapter_version, body.quote)
+            anchor = self._anchor(nid, body.chapter_id, body.chapter_version, body.quote, scope)
             rows = self._rows("review_threads")
             now = self._now()
             row = {"id": str(uuid.uuid4()), "novel_id": nid, "scope": copy.deepcopy(scope), "anchor": anchor,

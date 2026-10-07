@@ -311,6 +311,22 @@ jobs:
         run: |
           set -o pipefail
           pnpm exec playwright test --config playwright.export.config.ts --reporter=list,junit 2>&1 | tee "$CI_RECEIPTS/export-browser.log"
+      - name: Functional surface browser journeys
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          SURFACE_PYTHON: python
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.surface.config.ts 2>&1 | tee "$CI_RECEIPTS/functional-surface-browser.log"
+      - name: Branch manuscript two-client browser journeys
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          SURFACE_PYTHON: python
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.branch-surface.config.ts 2>&1 | tee "$CI_RECEIPTS/branch-surface-browser.log"
       - name: Summarize exact revision and test counts
         if: always() && env.CI_RECEIPTS != ''
         run: python3 .github/ci/receipt.py "$CI_RECEIPTS"

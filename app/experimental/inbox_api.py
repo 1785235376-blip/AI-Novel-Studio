@@ -1,5 +1,5 @@
 from typing import Literal
-from fastapi import APIRouter, Header, Query
+from fastapi import APIRouter, Header, Query, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 from .common import api_call
 from .inbox import ReviewContext
@@ -35,7 +35,10 @@ def create_inbox_router(service, authorize, require_flag):
               search: str | None = Query(None, max_length=400), stale: bool | None = None,
               x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx = context(nid, x_session_token, x_branch_id, 'domain.read')
-        return api_call(service.list, ctx, domain=domain, status=status, search=search, stale=stale)
+        result = api_call(service.list, ctx, domain=domain, status=status, search=search, stale=stale)
+        if context(nid, x_session_token, x_branch_id, 'domain.read') != ctx:
+            raise HTTPException(403, {'code': 'REVIEW_AUTHORITY_CHANGED'})
+        return result
 
     @router.post(prefix + '/batch')
     def batch(nid: str, body: BatchIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

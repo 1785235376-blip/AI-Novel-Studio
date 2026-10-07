@@ -35,7 +35,7 @@ def register_legacy_bindings(inbox):
             stale = False
             for cid, version in row.get('source_versions', {}).items():
                 try:
-                    current = api.chapter_service.get(cid)
+                    current = api.creation_workbench_service.chapters_for(ctx.scope).get(cid)
                     from ..source_privacy import content_digest
                     stale |= current.get('novel_id') != ctx.novel_id or current.get('version') != version or (cid in row.get('source_digests', {}) and content_digest(current) != row['source_digests'][cid])
                 except (FileNotFoundError, KeyError):
@@ -51,6 +51,11 @@ def register_legacy_bindings(inbox):
     inbox.register(ReviewBinding('legacy_planning', creation, review_creation))
 
     def canon(ctx):
+        from .flags import enabled_flags
+        from .finding_review_composition import CANON_DOMAIN, FEATURE
+        replacement = inbox.bindings.get(CANON_DOMAIN)
+        if FEATURE in enabled_flags() and replacement is not None and replacement.feature == FEATURE:
+            return []
         if ctx.scope['mode'] != 'local':
             return {'items': [], 'unavailable': [{'domain': 'legacy_canon', 'reason': 'LEGACY_CANON_HAS_NO_BRANCH_SCOPE'}]}
         from .. import api

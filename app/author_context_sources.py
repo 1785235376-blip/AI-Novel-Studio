@@ -195,14 +195,13 @@ class NativeAuthorSources:
         if kind == 'CHAPTER':
             from .experimental.planning import scoped_sources
             from .source_privacy import effective_source_privacy
-            for entry in self.legacy.chapter_service.list(ctx.novel_id):
+            from .manuscript_sources import scoped_chapters
+            chapters = scoped_chapters(self.legacy.chapter_service, ctx.scope)
+            for entry in chapters.list(ctx.novel_id):
                 if query.strip() and query.strip().casefold() not in (str(entry.get('title', '')) + ' ' + str(entry.get('content', ''))).casefold(): continue
-                row = self.legacy.chapter_service.get(entry['id'])
+                row = chapters.get(entry['id'])
                 if row.get('is_archived') or row.get('novel_id') != ctx.novel_id: continue
-                if ctx.scope.get('mode') != 'local':
-                    # Original branch manuscript adapter is still unavailable.
-                    continue
-                if row.get('branch_id'): continue
+                if row.get('branch_id') != ctx.scope.get('branch_id'): continue
                 scoped_sources(self.world, ctx.novel_id, ctx.scope, [row['id']])
                 rows.append(self._record(kind, row, str(row.get('content') or ''),
                     privacy=effective_source_privacy(row, ctx.branch), evidence={'chapter_id': row['id'], 'chapter_version': row['version']}))
@@ -268,7 +267,7 @@ class NativeAuthorSources:
                            'preview': row['text'][:500], 'characters': len(row['text']), 'preview_truncated': len(row['text']) > 500})
         self._guard(ctx, kind)
         return {'items': result, 'truncated': len(rows) > 30, 'limit': 30, 'model_called': False, 'automatic_add': False,
-                'branch_sources_available': kind != 'CHAPTER' or ctx.scope.get('mode') == 'local'}
+                'branch_sources_available': kind != 'CHAPTER' or ctx.scope.get('mode') == 'local' or bool(rows)}
 
     def resolve(self, ctx, refs, *, cloud=False, stored_job=None):
         if len(refs) > MAX_ADDED_SOURCES: raise ValueError('AUTHOR_ADDED_SOURCE_LIMIT')
@@ -281,8 +280,9 @@ class NativeAuthorSources:
             if kind == 'CHAPTER':
                 from .experimental.planning import scoped_sources
                 from .source_privacy import effective_source_privacy
-                original = self.legacy.chapter_service.get(ref['id'])
-                if (ctx.scope.get('mode') != 'local' or original.get('branch_id') or original.get('is_archived')
+                from .manuscript_sources import scoped_chapters
+                original = scoped_chapters(self.legacy.chapter_service, ctx.scope).get(ref['id'])
+                if (original.get('branch_id') != ctx.scope.get('branch_id') or original.get('is_archived')
                     or original.get('novel_id') != ctx.novel_id):
                     raise ValueError('AUTHOR_ADDED_SOURCE_UNAVAILABLE_OR_CHANGED')
                 scoped_sources(self.world, ctx.novel_id, ctx.scope, [original['id']])

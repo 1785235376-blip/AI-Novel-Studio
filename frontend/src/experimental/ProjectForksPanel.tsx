@@ -29,7 +29,7 @@ function ForksContent({ client }: { client: ExperimentalClient }) {
   return <section className="experimental-section" aria-label="项目分叉与合并">
     <div className="experimental-actions"><h3>项目分叉与合并</h3><Badge>本地新项目 · 逐项三方审核</Badge><Button disabled={action.busy} onClick={refresh}>刷新分叉与合并记录</Button></div>
     <p>从选中的已保存章节建立新项目，保留分叉基线。修改副本后，在这里比较基线、当前原稿与当前副本，明确选择冲突再合并回原稿。新旧项目都会保留。</p>
-    <StatusMessage>这不是 Git 分支或协作分支。协作分支正文尚无独立存储与写入服务，不能将基础正文当作分支内容。此正文入口不复制结构记录；人物、地点与关系可在下方单独选择和审核。Canon、Workflow、历史与权限不会复制。新增或改变的副本媒体引用需要另外的映射流程，当前会阻止合并。</StatusMessage>
+    <StatusMessage>这不是 Git 分支或协作分支。协作分支正文请使用独立的“协作分支正文”入口；未初始化的分支不会借用基础正文。此正文入口不复制结构记录；人物、地点与关系可在下方单独选择和审核。Canon、Workflow、历史与权限不会复制。新增或改变的副本媒体引用需要另外的映射流程，当前会阻止合并。</StatusMessage>
     <ResourceState loading={catalog.loading} error={catalog.error} />
     {!catalog.loading && !catalog.error && !catalog.data?.available && <StatusMessage tone="warning">当前协作范围不能建立或合并本地项目分叉。不会读取其他分支的基础正文。</StatusMessage>}
     {!!operationError && <ErrorMessage error={operationError} />}{receipt && <StatusMessage tone="success">{receipt}</StatusMessage>}

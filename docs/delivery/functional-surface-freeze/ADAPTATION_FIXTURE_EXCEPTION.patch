@@ -1,0 +1,51 @@
+diff --git a/tests/test_phase7_adaptation_authorization.py b/tests/test_phase7_adaptation_authorization.py
+index 9ad40cc..25b0ee2 100644
+--- a/tests/test_phase7_adaptation_authorization.py
++++ b/tests/test_phase7_adaptation_authorization.py
+@@ -1,5 +1,7 @@
+ from uuid import uuid4
+ 
++import pytest
++
+ from fastapi.testclient import TestClient
+ 
+ from app.actor_context import SessionContext
+@@ -10,6 +12,13 @@ from app.identity import User,WorkspaceMembership
+ from app.main import app
+ 
+ 
++@pytest.fixture(autouse=True)
++def enable_branch_owner(monkeypatch):
++    # Production branch ownership is opt-in and never falls back to mainline.
++    # Scoped only to this legacy authorization module; no assertion is changed.
++    monkeypatch.setenv("EXPERIMENTAL_FEATURES", "branch_manuscript_v1")
++
++
+ def setup_scope():
+     suffix=uuid4().hex;workspace=f"adapt-w-{suffix}";novel=f"adapt-n-{suffix}";story=f"adapt-s-{suffix}";branch=f"adapt-b-{suffix}"
+     collaboration_scope_service.create_workspace(Workspace(workspace,"Adaptation Workspace"))
+@@ -21,6 +30,24 @@ def setup_scope():
+         user=f"{role}-{suffix}";identity_service.create_user(User(user,role));identity_service.add_membership(WorkspaceMembership(f"m-{user}",user,workspace));token=f"t-{user}";trusted_session_resolver.register(token,SessionContext(f"s-{user}",f"c-{user}",user,workspace));headers[role]={'X-Session-Token':token}
+     authorization_service.assign_role(DomainRoleAssignment(f"lead-role-{suffix}",f"lead-{suffix}",DomainRole.DOMAIN_LEAD,ModalityDomain.NOVEL,scope,f"admin-{suffix}"))
+     authorization_service.assign_role(DomainRoleAssignment(f"admin-role-{suffix}",f"admin-{suffix}",DomainRole.ADMIN,ModalityDomain.NOVEL,AuthorizationScope(ScopeKind.WORKSPACE,workspace),f"admin-{suffix}"))
++    # Initialize the real branch through the production human-reviewed fork API.
++    # The existing branch-only lead grant remains unchanged; only the workspace
++    # admin can read mainline and approve copying these synthetic source chapters.
++    from app.dependencies import chapter_service
++    source_ids=[row['id'] for row in chapter_service.list(novel)]
++    branch_headers={**headers['admin'],'X-Branch-Id':branch}
++    base=f'/api/novels/{novel}/experimental/branch-manuscript'
++    from app.config import settings
++    original_runtime=settings.enable_collaboration_runtime
++    object.__setattr__(settings,'enable_collaboration_runtime',True)
++    try:
++        preview_response=client.post(base+'/forks/preview',headers=branch_headers,json={'chapter_ids':source_ids})
++        assert preview_response.status_code==200,preview_response.text
++        preview=preview_response.json()
++        applied=client.post(base+f"/forks/{preview['id']}/apply",headers=branch_headers,json={'expected_version':preview['version'],'preview_digest':preview['preview_digest'],'confirmed':True})
++        assert applied.status_code==200,applied.text
++    finally:
++        object.__setattr__(settings,'enable_collaboration_runtime',original_runtime)
+     return client,novel,branch,scope,headers
+ 
+ 

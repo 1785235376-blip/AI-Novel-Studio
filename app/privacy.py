@@ -31,7 +31,7 @@ def privacy_for_update(payload: Mapping, previous: Mapping | None = None) -> str
 def privacy_record(item: Mapping) -> dict:
     """Expose unknown historical policy for review without editing its source."""
     policy = item.get("privacy_level")
-    output = {**item, "privacy_level": normalize_privacy(policy)}
+    output = {**{key: value for key, value in item.items() if key != "_story_record"}, "privacy_level": normalize_privacy(policy)}
     if not isinstance(policy, str) or policy not in PRIVACY_LEVELS:
         output["privacy_status"] = "UNKNOWN"
     return output

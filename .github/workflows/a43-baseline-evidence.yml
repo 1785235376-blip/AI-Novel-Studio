@@ -1,9 +1,9 @@
 name: A43 baseline evidence
 on:
   push:
-    branches: [fix/a43-document-chapter-identity]
+    branches: [fix/a43-document-chapter-identity, work/feature-completion-surface-freeze]
   pull_request:
-    branches: [work/post-interop-r4-r5-ux-continuation]
+    branches: [work/post-interop-r4-r5-ux-continuation, fix/a43-document-chapter-identity]
 permissions:
   contents: read
 jobs:

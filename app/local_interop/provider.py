@@ -15,6 +15,7 @@ from datetime import UTC, datetime
 from fastapi import HTTPException
 
 from .errors import InteropFailure
+from .chapter_ids import WIRE_ID, chapter_wire_id
 
 ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
 SECRET = re.compile(r"(?i)(?:sk-[a-z0-9]{6}|bearer|password|api.?key|secret|token|dsn|cookie|-----BEGIN)")
@@ -55,6 +56,8 @@ class InteropContextProvider:
         try:
             actor, authorized = self.collaboration.context(token, **scope)
             project = self.collaboration.novels.get(scope["project_id"])
+            # A registered branch owner never falls back when its flag is OFF.
+            self._chapters_for(scope)
             # Retained scope rows are never authority for a deleted project.
             identity = self.collaboration.identity
             membership = identity.get_membership(actor.actor_id, actor.workspace_id)
@@ -66,15 +69,62 @@ class InteropContextProvider:
         except (HTTPException, KeyError, ValueError, FileNotFoundError, PermissionError):
             raise InteropFailure("PERMISSION_DENIED", 403) from None
 
-    def chapter(self, scope, chapter_id):
-        if not chapter_id: return None
+    def _chapters_for(self, scope):
+        resolver = getattr(self.collaboration, "chapters_for", None)
+        if resolver is not None:
+            return resolver(scope)
+        # Explicit compatibility for legacy adapters without a branch owner.
+        if getattr(self.collaboration, "branch_manuscripts", None) is not None:
+            raise InteropFailure("PERMISSION_DENIED", 403)
+        return self.collaboration.chapters
+
+    def chapter_entries(self, scope):
+        """Fresh labels over exact owner rows; no alias table or numeric lookup."""
         try:
-            row = self.collaboration.chapters.get(chapter_id)
+            owner = self._chapters_for(scope)
+            entries = []
+            seen = set()
+            for listed in owner.list(scope["project_id"]):
+                row = owner.get(listed["id"])
+                if row.get("id") != listed["id"] or row.get("is_archived") or row.get("deleted"):
+                    raise InteropFailure("HANDOFF_TARGET_NOT_FOUND", 404)
+                if row.get("novel_id") != scope["project_id"]:
+                    raise InteropFailure("PERMISSION_DENIED", 403)
+                if getattr(self.collaboration, "branch_manuscripts", None) is not None:
+                    expected = {"mode": "collaboration", "novel_id": scope["project_id"],
+                                **{key: scope[key] for key in ("workspace_id", "storyline_id", "branch_id")}}
+                    if row.get("scope") != expected or row.get("branch_id") != scope["branch_id"]:
+                        raise InteropFailure("PERMISSION_DENIED", 403)
+                wire_id = chapter_wire_id(scope, row["id"])
+                if wire_id in seen:
+                    raise InteropFailure("HANDOFF_TARGET_NOT_FOUND", 404)
+                seen.add(wire_id)
+                entries.append((wire_id, row))
+            return entries
+        except (HTTPException, PermissionError):
+            raise InteropFailure("PERMISSION_DENIED", 403) from None
         except (KeyError, FileNotFoundError, ValueError):
             raise InteropFailure("HANDOFF_TARGET_NOT_FOUND", 404) from None
-        if row.get("novel_id") != scope["project_id"]:
-            raise InteropFailure("PERMISSION_DENIED", 403)
-        return row
+
+    def chapter(self, scope, chapter_id):
+        if chapter_id is None: return None
+        if not isinstance(chapter_id, str) or not WIRE_ID.fullmatch(chapter_id):
+            raise InteropFailure("INVALID_MESSAGE", 400)
+        matches = [row for wire_id, row in self.chapter_entries(scope) if wire_id == chapter_id]
+        if len(matches) != 1:
+            raise InteropFailure("HANDOFF_TARGET_NOT_FOUND", 404)
+        return matches[0]
+
+    @staticmethod
+    def chapter_binding(row):
+        return {"identity": digest(row["id"]), "version": row["version"], "hash": digest(row["document"])}
+
+    def validate_chapter_bindings(self, token, scope, bindings):
+        self.authorize(token, scope)
+        for wire_id, expected in bindings.items():
+            if self.chapter_binding(self.chapter(scope, wire_id)) != expected:
+                raise InteropFailure("SOURCE_CHANGED", 409)
+        self.authorize(token, scope)
 
     def task(self, token, scope, task_id, *, surface=None):
         if not task_id: return None
@@ -153,7 +203,7 @@ class InteropContextProvider:
         rows = [self.chapter(scope, item) for item in context_ids]
         text = "\n\n".join(anchor_text(row["document"]) for row in rows)
         if len(text.encode()) > 65536: raise InteropFailure("CONTEXT_NOT_AUTHORIZED", 413)
-        versions = {row["id"]: {"version": row["version"], "hash": digest(row["document"])} for row in rows}
+        versions = {wire_id: self.chapter_binding(row) for wire_id, row in zip(context_ids, rows, strict=True)}
         self.authorize(token, scope)
         return text, versions
 

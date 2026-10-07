@@ -98,6 +98,7 @@ class ResearchLibraryService(DomainService):
     def __init__(self, store, novels, chapters, *, legacy=None, world=None):
         super().__init__(store, novels, chapters)
         self.legacy, self.world = legacy, world
+        self.vision_provider = None
 
     @staticmethod
     def _visible(row, actor):
@@ -300,6 +301,10 @@ class ResearchLibraryService(DomainService):
                     status='INVALIDATED', execution_token=None, error_code='EMBEDDING_RESEARCH_SOURCE_CHANGED'))
                 for vector in collection(state, 'embedding_vectors').values():
                     if vector.get('index_id') == row['id']: vector.update(status='INVALIDATED', vector=[])
+        for job in collection(state, 'research_analysis_jobs').values():
+            if job.get('request', {}).get('source_id') == rid:
+                from .review_adapter_jobs import invalidate_receipt
+                invalidate_receipt(job)
         for name in (NOTES, 'world_records'):
             for row in collection(state, name).values():
                 refs = row.get('citations', row.get('research_sources', []))
@@ -487,3 +492,28 @@ class ResearchLibraryService(DomainService):
                 if any(ref['source_id'] == rid for ref in row.get('citations', row.get('research_sources', []))):
                     result.append({'kind': kind, 'id': row['id'], 'title': row['title'], 'version': row['version']})
         return {'items': result, 'total': len(result)}
+
+    def analysis_status(self, nid, scope, actor):
+        self.novels.get(nid)
+        from .research_vision import ResearchVisionCapability
+        capability = ResearchVisionCapability.model_validate(self.vision_provider.capability).model_dump() if self.vision_provider else None
+        return {'status': 'CONFIGURED' if capability and capability['verification'] == 'MOCK_ONLY' and capability['local'] else 'NOT_CONFIGURED', 'capability': capability,
+                'runtime_admission': 'NOT_CONFIGURED', 'durable_worker': False,
+                'model_quality': 'NOT_RUN', 'automatic_canon': False, 'review_required': True,
+                'operations': ['OCR', 'SCAN_PDF_VISION', 'IMAGE_UNDERSTANDING', 'CHART_UNDERSTANDING', 'TABLE_UNDERSTANDING']}
+
+    def analysis_jobs(self, nid, scope, actor):
+        from .research_vision import research_analysis_jobs
+        return research_analysis_jobs(self).list(nid, scope, actor)
+
+    def analysis_job(self, nid, scope, actor, rid):
+        from .research_vision import research_analysis_jobs
+        return research_analysis_jobs(self).get(nid, scope, actor, rid)
+
+    def create_analysis(self, nid, scope, actor, value, *, guard):
+        from .research_vision import ResearchAnalysisIn, research_analysis_jobs
+        return research_analysis_jobs(self).create(nid, scope, actor, ResearchAnalysisIn.model_validate(value).model_dump(), guard)
+
+    def analysis_action(self, nid, scope, actor, rid, action, expected_version, *, guard):
+        from .research_vision import research_analysis_jobs
+        return research_analysis_jobs(self).action(nid, scope, actor, rid, action, expected_version, guard)

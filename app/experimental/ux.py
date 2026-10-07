@@ -5,6 +5,7 @@ by the composition root, re-authorized on every request, and never persisted as
 another domain database. Bounded lexical indexes are private to actor + scope.
 """
 from __future__ import annotations
+from ..manuscript_sources import reader_available
 
 from collections import OrderedDict
 from copy import deepcopy
@@ -24,6 +25,7 @@ from .common import DomainService, StaleSourceError, change_row, new_row
 from .planning import StrictModel, digest
 from .search_sources import SearchSource, chapter_manifest, project_ids
 from ..services.v1_capability_service import CapabilityVersionConflict
+from .workspace_interaction import WorkspaceInteractionMixin
 
 FEATURES = frozenset({'overview', 'editor', 'creation', 'story', 'history', 'workflow', 'screenplay', 'assets',
                       'exports', 'knowledge', 'research', 'agents', 'diagnostics', 'settings',
@@ -133,6 +135,7 @@ STAGES = {'ANALYZING': '分析中', 'NEEDS_REVIEW': '需要审核', 'QUEUED': '�
           'CANCELLING': '取消中', 'PAUSED': '已暂停', 'UNKNOWN': '结果未知',
           'WAITING_APPROVAL': '等待批准', 'PENDING_REVIEW': '待审核', 'REVIEW_REQUIRED': '需要审核',
           'RESULT_READY': '结果就绪', 'PROPOSED': '建议待审', 'PLANNED': '已规划',
+          'PENDING_REWRITE': '等待改写', 'APPLIED': '已应用', 'NOT_CONFIGURED': '未配置', 'INTERRUPTED': '等待恢复',
           'PARTIAL': '部分完成', 'STALE': '来源过期', 'APPLYING': '应用中', 'APPROVING': '批准处理中'}
 SAFE_CODES = frozenset({'TIMEOUT', 'CANCELLED', 'PERMISSION_DENIED', 'VERSION_CONFLICT',
     'SOURCE_STALE', 'ADAPTER_REQUIRED', 'PROVIDER_UNAVAILABLE', 'NETWORK_ERROR',
@@ -217,6 +220,18 @@ def projected_task(reader, row):
                for item in row.get('history', [])[-10:] if isinstance(item, dict)
                and str(item.get('status', '')).upper() in STAGES]
     source = {}
+    if reader.name == 'adaptation':
+        navigation = row.get('source_navigation')
+        if (isinstance(navigation, dict) and navigation.get('kind') == 'feature'
+                and navigation.get('feature') == 'adaptation_lifecycle_v1'
+                and navigation.get('task_authority') == 'adaptation'
+                and navigation.get('id') == str(row['id'])
+                and navigation.get('parent_id') == row.get('proposal_id')
+                and navigation.get('version') == row.get('proposal_revision')):
+            source = {'source': {key: deepcopy(navigation[key]) for key in (
+                'kind', 'feature', 'task_authority', 'id', 'parent_id', 'novel_id',
+                'branch_id', 'chapter_id', 'version', 'proposal_revision', 'source_version',
+                'source_digest', 'target_chapter_id', 'target_version', 'target_digest') if key in navigation}}
     owner = FEATURE_OWNED_GENERATION.get(row.get('experimental_origin')) if reader.name == 'author_generation' else None
     if owner:
         source = {'source': {'kind': 'feature', 'id': str(row['id']), 'feature': owner[0]}}
@@ -241,7 +256,8 @@ def projected_task(reader, row):
         if reader.name == 'review_inbox': source['source'].update(id=row['review_id'], parent_id=row['review_domain'])
         if reader.name == 'workflows' and isinstance(row.get('workflow_id'), str): source['source']['parent_id'] = row['workflow_id']
         if reader.name == 'motion' and isinstance(row.get('screenplay_id'), str): source['source']['parent_id'] = row['screenplay_id']
-    cancel_allowed = bool(reader.cancel and str(row.get('status', '')).upper() in reader.cancel_states and not row.get('safe_batch_id'))
+    cancel_exhausted = bool(reader.cancel and str(row.get('status', '')).upper() in reader.cancel_states and row.get('cancel_available') is False)
+    cancel_allowed = bool(reader.cancel and str(row.get('status', '')).upper() in reader.cancel_states and not row.get('safe_batch_id') and row.get('cancel_available') is not False)
     result = {**source, 'id': str(row['id']), 'authority': reader.name, 'label': owner[1] if owner else reader.label,
             'status': status, 'stage_label': STAGES[status], 'version': row.get('version'),
             'feature': owner[0] if owner else reader.feature, 'progress': progress, 'history': history,
@@ -250,15 +266,29 @@ def projected_task(reader, row):
             'provider_id': provider or requested_provider, 'model_id': model or requested_model,
             'route_state': 'OBSERVED' if reader.name == 'author_generation' and provider and model else 'REQUESTED' if (provider or requested_provider) and (model or requested_model) else 'UNKNOWN',
             'actions': ['open_source'] + (['cancel'] if cancel_allowed else []),
-            'action_limits': {'cancel': None if cancel_allowed else 'ORIGIN_COORDINATOR_REQUIRED' if row.get('safe_batch_id') else 'TERMINAL_OR_UNSUPPORTED' if reader.cancel else 'SOURCE_AUTHORITY_ONLY',
+            'action_limits': {'cancel': None if cancel_allowed else 'RECEIPT_CAPACITY_EXHAUSTED' if cancel_exhausted else 'ORIGIN_COORDINATOR_REQUIRED' if row.get('safe_batch_id') else 'TERMINAL_OR_UNSUPPORTED' if reader.cancel else 'SOURCE_AUTHORITY_ONLY',
                               'retry': 'SOURCE_PREFLIGHT_REQUIRED', 'resume': 'SOURCE_RECOVERY_REQUIRED', 'review': 'SOURCE_REVIEW_REQUIRED'},
             'retry_policy': 'SOURCE_AUTHORITY_ONLY',
             'lifecycle': '面板关闭不取消任务；继续执行和重启恢复取决于原任务服务。'}
+    formal_domain = row.get('review_domain') if reader.name == 'review_inbox' else reader.name
+    if formal_domain in {'research_analysis', 'visual_identity'}:
+        # These inspectors are formal contracts only. Do not invent an exact
+        # navigation target, including for the aggregate inbox task projection.
+        result.pop('source', None)
+        result['navigation_contract'] = 'FORMAL_SOURCE_ONLY'
+        result['source_domain'] = formal_domain
+        if row.get('status') in {'REVIEWED', 'INVALIDATED', 'RUNNING'}:
+            result['status'], result['stage_label'] = {
+                'REVIEWED': ('REVIEWED', '已审核'), 'INVALIDATED': ('INVALIDATED', '已失效'),
+                'RUNNING': ('UNKNOWN', '等待原服务恢复'),
+            }[row['status']]
+        result['actions'] = [action for action in result['actions'] if action != 'open_source']
+        result['lifecycle'] = '仅投影原回执；不会自动运行、恢复或批准。真实模型接入尚未配置，持久工作器未实现。'
     result['revision'] = digest(result)
     return result
 
 
-class WorkspaceToolsService(DomainService):
+class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
     RESUMES = 'workspace_resumes_v2'
 
     def __init__(self, store, novels, chapters, *, chapter_reader=None, entity_readers=None, task_readers=None, focus_reader=None, search_candidates=None, finding_reader=None):
@@ -322,7 +352,9 @@ class WorkspaceToolsService(DomainService):
 
     @staticmethod
     def _pending(task):
-        if task['status'] in {'ACCEPTED', 'APPROVED', 'COMMITTED', 'REJECTED', 'CANCELLED', 'SUCCEEDED'}:
+        if task.get('navigation_contract') == 'FORMAL_SOURCE_ONLY' and task['status'] in {'REVIEWED', 'INVALIDATED'}:
+            return False
+        if task['status'] in {'ACCEPTED', 'APPROVED', 'COMMITTED', 'APPLIED', 'REJECTED', 'CANCELLED', 'SUCCEEDED'}:
             return False
         return task['status'] != 'COMPLETED' or task['authority'] == 'author_generation'
 
@@ -545,6 +577,10 @@ class WorkspaceToolsService(DomainService):
         if self.task_readers:
             for row in self.tasks(ctx, require_flag)['items']:
                 check()
+                # Search promises a resolvable exact target. Formal-only source
+                # inspectors must not acquire a fabricated fallback route.
+                if row.get('navigation_contract') == 'FORMAL_SOURCE_ONLY':
+                    continue
                 projected_rows += 1
                 kind = 'review' if row['authority'] == 'review_inbox' else 'task'
                 doc = self._search_document(ctx, kind, {**row, 'id': row['authority'] + ':' + row['id']})
@@ -660,7 +696,7 @@ class WorkspaceToolsService(DomainService):
                     'updated_documents': changed, 'source_rows_read': reads, 'chapter_bodies_read': chapter_reads,
                     'projection_rows_scanned': projected_rows + latest_projected, 'metadata_checks': len(sources) + len(latest),
                     'incremental_chapters': incremental, 'limit': limit,
-                    'branch_sources_available': ctx.scope.get('mode') == 'local' or self.chapter_reader is not None}
+                    'branch_sources_available': reader_available(self.chapter_reader, ctx)}
         except HTTPException as exc:
             if exc.status_code in {401, 403, 404}: self.discard_search(ctx)
             raise

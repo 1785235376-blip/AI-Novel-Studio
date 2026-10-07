@@ -339,7 +339,7 @@ class ExportJobService:
         return item
 
     def list(self, novel_id: str, *, permission_context: dict, status: str | None = None,
-             limit: int = 50, offset: int = 0) -> dict:
+             limit: int = 50, offset: int = 0, authorize=None) -> dict:
         """Exact owner/scope history, with no secret session identifier saved."""
         if status is not None and status not in self.STATUSES:
             raise ValueError("invalid export status filter")
@@ -357,6 +357,10 @@ class ExportJobService:
                 if status and raw.get("status") != status:
                     continue
                 rows.append(self._normalise_job(raw))
+        # Source ownership can be stricter than a historical permission label.
+        # Filter before pagination so denied records contribute no count/hint.
+        if authorize is not None:
+            rows = [row for row in rows if authorize(row)]
         rows.sort(key=lambda row: (str(row.get("created_at", "")), str(row.get("id", ""))), reverse=True)
         page = rows[offset:offset + limit]
         return {"items": [self.public(row) for row in page], "next_offset": offset + limit if len(rows) > offset + limit else None}

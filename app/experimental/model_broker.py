@@ -382,10 +382,10 @@ class ModelBrokerService(DomainService):
     def _sources(self, nid, scope, ids):
         result = {}
         for cid in dict.fromkeys(ids):
-            chapter = self.chapters.get(cid)
+            chapter = self.chapters_for(scope).get(cid)
             if chapter.get('novel_id') != nid or chapter.get('branch_id') != scope.get('branch_id'):
                 raise ValueError('BROKER_SOURCE_SCOPE_MISMATCH')
-            result[cid] = {**self.sources(nid, [cid])[cid],
+            result[cid] = {**self.sources(nid, [cid], scope)[cid],
                            'privacy_level': effective_source_privacy(chapter, scope.get('branch_id'))}
         return result
 
@@ -415,7 +415,7 @@ class ModelBrokerService(DomainService):
                 if body.profile == 'LOCAL_ONLY': reasons.append('LOCAL_ONLY_POLICY')
                 for cid in sources:
                     try:
-                        assert_current_manuscript_egress(self.chapters, self.novels, nid, self.chapters.get(cid), scope.get('branch_id'))
+                        assert_current_manuscript_egress(self.chapters_for(scope), self.novels, nid, self.chapters_for(scope).get(cid), scope.get('branch_id'))
                     except (ValueError, FileNotFoundError): reasons.append('CURRENT_SOURCE_PRIVACY_BLOCKS_CLOUD')
             for required, available in ((body.min_host_ram_mib, hardware.get('ram_mib')), (body.min_host_vram_mib, hardware.get('vram_mib'))):
                 if required and (route['cloud'] or available is None or available < required): reasons.append('HOST_CAPACITY_UNKNOWN_OR_INSUFFICIENT')
@@ -503,7 +503,7 @@ class ModelBrokerService(DomainService):
             if constraints.get('policy') == 'LOCAL_FIRST' and not constraints.get('allow_cloud_fallback'): raise ValueError('BROKER_CLOUD_FALLBACK_NOT_APPROVED')
             if row['request']['profile'] == 'LOCAL_ONLY': raise ValueError('BROKER_LOCAL_ONLY')
             for cid in row['sources']:
-                assert_current_manuscript_egress(self.chapters, self.novels, nid, self.chapters.get(cid), scope.get('branch_id'))
+                assert_current_manuscript_egress(self.chapters_for(scope), self.novels, nid, self.chapters_for(scope).get(cid), scope.get('branch_id'))
         return current
 
     def reserve(self, nid, scope, actor, preview_id, expected_version, idempotency_key, job_id, guard=lambda: None, authorization_digest=None):

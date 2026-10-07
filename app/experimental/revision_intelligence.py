@@ -309,11 +309,13 @@ class RevisionIntelligenceService(DomainService):
 
     def capture(self, nid, scope, cid, expected=None):
         self.novels.get(nid)
-        chapter = self.chapters.get(cid)
-        if chapter.get('novel_id') != nid or chapter.get('is_archived') or cid not in {c['id'] for c in self.chapters.list(nid)}:
+        try: chapter = self.chapters_for(scope).get(cid)
+        except FileNotFoundError:
+            if scope.get('mode') == 'collaboration': raise ValueError('branch-isolated chapter authority unavailable') from None
+            raise
+        if chapter.get('novel_id') != nid or chapter.get('is_archived') or cid not in {c['id'] for c in self.chapters_for(scope).list(nid)}:
             raise FileNotFoundError(cid)
-        # Current legacy manuscript authority is not branch-isolated. Never
-        # project main manuscript into a distinct collaboration branch.
+        # Only the exact explicit scope authority can supply branch documents.
         if chapter.get('branch_id') != scope.get('branch_id'):
             raise ValueError('branch-isolated chapter authority unavailable')
         if expected is not None and chapter['version'] != expected:
@@ -336,7 +338,7 @@ class RevisionIntelligenceService(DomainService):
 
     def catalog(self, nid, scope, cid=None):
         chapters = [{'id': c['id'], 'title': c.get('title', c['id']), 'version': c['version']}
-                    for c in self.chapters.list(nid) if c.get('branch_id') == scope.get('branch_id')]
+                    for c in self.chapters_for(scope).list(nid) if c.get('branch_id') == scope.get('branch_id')]
         blocks = []; document_digest = None
         if cid:
             chapter, source = self.capture(nid, scope, cid)
@@ -345,7 +347,7 @@ class RevisionIntelligenceService(DomainService):
                 marker = (b['node'].get('attrs') or {}).get(LOCK_ATTRIBUTE)
                 blocks.append({'path': b['path'], 'from_pos': b['start'], 'to_pos': b['end'], 'text': b['text'], 'supported': b['supported'],
                                'lock_state': 'UNLOCKED' if marker is None or not active_lock(marker) else 'LOCKED' if isinstance(marker, dict) and marker.get('digest') == node_digest(b['node']) else 'STALE'})
-        return {'chapters': chapters, 'blocks': blocks, 'document_digest': document_digest, 'branch_sources_available': scope.get('branch_id') is None,
+        return {'chapters': chapters, 'blocks': blocks, 'document_digest': document_digest, 'branch_sources_available': scope.get('branch_id') is None or bool(chapters),
                 'model_called': False, 'range_limit': 50, 'chapter_character_limit': MAX_TEXT}
 
     def version_catalog(self, nid, scope, cid):
@@ -357,7 +359,7 @@ class RevisionIntelligenceService(DomainService):
             for version, row in sorted(versions.items(), reverse=True)], 'authority': 'ORIGINAL_CHAPTER_HISTORY'}
 
     def _original_versions(self, chapter):
-        history = self.chapters.history(chapter['id'])
+        history = self.chapters_for(chapter.get('scope')).history(chapter['id'])
         if len(history) > 2000: raise ValueError('original version history exceeds comparison limit')
         versions = {chapter['version']: chapter}
         for row in history:

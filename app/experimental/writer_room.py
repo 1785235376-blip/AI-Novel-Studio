@@ -17,6 +17,7 @@ from fastapi import HTTPException
 from pydantic import Field, model_validator
 
 from ..authorization import AuthorizationScope, ScopeKind, ModalityDomain
+from ..manuscript_sources import reader_available
 from ..services.creation_workbench_service import CommentIn
 from ..services.v1_capability_service import CapabilityVersionConflict
 from .common import DomainService, StaleSourceError, change_row, new_row, now, snapshot
@@ -106,6 +107,15 @@ class WriterRoomService(DomainService):
         super().__init__(store, novels, chapters)
         self.sources, self.creation, self.inbox = sources, creation, inbox
         self.assets, self.membership, self.asset_authorize = assets, membership, asset_authorize
+
+    @property
+    def realtime(self):
+        # Keep one process-local push transport; all durable records remain in
+        # this owner's existing scope document. Dependencies are resolved live.
+        if not hasattr(self, '_realtime'):
+            from .writer_room_realtime import RealtimeCollaboration
+            self._realtime = RealtimeCollaboration(self)
+        return self._realtime
 
     @staticmethod
     def _review_ctx(ctx):
@@ -215,7 +225,7 @@ class WriterRoomService(DomainService):
             if exc.status_code not in {401, 403, 404, 501}: raise
             asset_state = 'ORIGINAL_ASSET_AUTHORITY_REQUIRED'
         return {'chapters': [{'id': r['id'], 'title': r.get('title', ''), 'version': r['version'], 'revision': chapter_revision(r)} for r in rows[:MAX_ITEMS]],
-                'chapter_state': 'BRANCH_SOURCE_UNAVAILABLE' if ctx.scope['mode'] != 'local' and self.sources.chapter_reader is None else 'AVAILABLE',
+                'chapter_state': 'BRANCH_SOURCE_UNAVAILABLE' if not reader_available(self.sources.chapter_reader, ctx) else 'AVAILABLE',
                 'assets': [{'id': r['id'], 'filename': r['filename'], 'sha256': r['sha256'], 'size': r['size']} for r in assets[:MAX_ITEMS]],
                 'asset_state': asset_state,
                 'review_targets': [{'domain': r['domain'], 'id': r['id'], 'version': r['version'], 'preview': r['preview'][:200] if isinstance(r.get('preview'), str) else '原领域结构化审核项', 'status': r['status']} for r in targets['items'][:MAX_ITEMS]],

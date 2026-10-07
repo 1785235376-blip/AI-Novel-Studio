@@ -190,9 +190,19 @@ class AtomicPathMutationPort:
     def _event(self, actor, action, target_type, target_id, scope):
         return self.audit.build(actor, action, target_type, target_id, scope)
 
-    def create_project(self, workspace_id, title, genre, actor):
+    def create_project(self, workspace_id, title, genre, actor, *, project_id=None, storyline_id=None, branch_id=None):
         from ..authorization import AuthorizationScope, ScopeKind
-        project_id, storyline_id, branch_id = str(uuid4()), str(uuid4()), str(uuid4())
+        from uuid import UUID
+        # Only trusted coordinators reserve these identifiers; public creation
+        # request models do not expose them. Validate before building any path.
+        reserved = (project_id, storyline_id, branch_id)
+        if any(value is not None and (not isinstance(value, str) or str(UUID(value)) != value) for value in reserved):
+            raise ValueError("PROJECT_RESERVATION_ID_INVALID")
+        project_id, storyline_id, branch_id = (value or str(uuid4()) for value in reserved)
+        for kind, identity in (("storylines", storyline_id), ("branches", branch_id)):
+            try: self.scopes.get(kind, identity)
+            except (KeyError, FileNotFoundError): pass
+            else: raise FileExistsError(identity)
         scope = AuthorizationScope(ScopeKind.PROJECT, workspace_id, project_id)
         event = self._event(actor,"PROJECT_CREATED","Project",project_id,scope)
         if self.postgres:
@@ -207,8 +217,16 @@ class AtomicPathMutationPort:
                 session.execute(text("INSERT INTO authorization_audit_events(id,payload) VALUES (:id,CAST(:v AS jsonb))"),{"id":event["id"],"v":json.dumps(event)})
             return {"id":project_id,"title":title,"genre":genre}
         # Match audited chapter operations: authorization, then project.
-        with self.authorization.lock, project_operation(self.novels.backend.data, project_id, require_exists=False):
+        from ..repositories.file.mutation_coordinator import workspace_mutation
+        with self.authorization.lock, workspace_mutation(self.novels.backend.data, "reserved-project-creation"), project_operation(self.novels.backend.data, project_id, require_exists=False):
             root=self.novels.backend.data;novel_root=self.novels.backend.novels/project_id;paths=[self.scopes.path,self.authorization.path]
+            # A replay or colliding reservation is not this operation's data.
+            # Reject before the rollback block can remove an existing project.
+            if novel_root.exists(): raise FileExistsError(project_id)
+            for kind, identity in (("storylines", storyline_id), ("branches", branch_id)):
+                try: self.scopes.get(kind, identity)
+                except (KeyError, FileNotFoundError): pass
+                else: raise FileExistsError(identity)
             before={p:(p.read_bytes() if p.exists() else None) for p in paths}
             try:
                 created=self.novels.create({"id":project_id,"title":title,"genre":genre});self.scopes.link_project(project_id,workspace_id)
