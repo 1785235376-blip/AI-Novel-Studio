@@ -11,7 +11,7 @@ from ...repository import slug
 from ...privacy import privacy_for_update
 from ..screenplay_versions import versioned_screenplay
 from ..structured_cas import UNGUARDED, assert_record_cas
-from .common import iso, novel_or_raise
+from .common import chapter_external_id, iso, novel_or_raise
 from .models import (CanonModel, ChapterModel, ChapterSummaryModel, CharacterModel,
                      ForeshadowingModel, LocationModel, NovelModel, SecretModel,
                      RelationshipStateModel, StoryStateModel, TimelineModel)
@@ -281,7 +281,7 @@ class PostgresNovelRepository:
             state = session.scalar(select(StoryStateModel).where(StoryStateModel.novel_id == novel.id).order_by(StoryStateModel.chapter_number.desc()))
             secrets = session.scalars(select(SecretModel).where(SecretModel.novel_id == novel.id)).all()
             foreshadowing = session.scalars(select(ForeshadowingModel).where(ForeshadowingModel.novel_id == novel.id)).all()
-            summaries = session.execute(select(ChapterSummaryModel, ChapterModel).join(ChapterModel).where(ChapterModel.novel_id == novel.id).order_by(ChapterModel.chapter_number, ChapterSummaryModel.created_at)).all()
+            summaries = session.execute(select(ChapterSummaryModel, ChapterModel).join(ChapterModel).where(ChapterModel.novel_id == novel.id, ChapterModel.identity_status == "ACTIVE").order_by(func.coalesce(ChapterModel.sort_order, ChapterModel.chapter_number), ChapterSummaryModel.created_at)).all()
             secret_mapping = dict((novel.metadata_json or {}).get("context_source_ids", {}).get("secrets", {}))
             return {
                 "novel": self._meta(novel),
@@ -290,6 +290,6 @@ class PostgresNovelRepository:
                 "story_state": dict(state.state) if state else {"volume": 1, "chapter": 0, "active_characters": []},
                 "secrets": [serialize_secret(x, secret_mapping) for x in sorted(secrets, key=lambda item: secret_order(item, secret_mapping))],
                 "foreshadowing": [serialize_foreshadowing(x) for x in sorted(foreshadowing, key=foreshadowing_order)],
-                "summaries": [{"chapter": chapter.chapter_number, "summary": summary.summary} for summary, chapter in summaries],
+                "summaries": [{"chapter": chapter.chapter_number, "summary": summary.summary, **({"chapter_id": chapter_external_id(novel, chapter)} if chapter.public_token else {})} for summary, chapter in summaries],
                 "style_profile": dict((novel.metadata_json or {}).get("style_profile", {})),
             }

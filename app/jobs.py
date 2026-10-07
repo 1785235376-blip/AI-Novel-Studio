@@ -657,9 +657,13 @@ class JobManager:
                 require_generation_content(job)
                 require_whole_generation_acceptance(job)
                 require_generation_accounting(job)
+                # Resolve the original durable source before interpreting draft
+                # readiness. A refused late completion can leave an older job
+                # status persisted after its chapter was deleted; that missing
+                # owner must remain a not-found result on either backend.
+                chapter = self.chapters.get(job.chapter_id)
                 if job.status != "COMPLETED":
                     raise ValueError("Only completed drafts can be accepted; an interrupted acceptance requires manual review")
-                chapter = self.chapters.get(job.chapter_id)
                 # Caller-supplied versions may narrow the precondition, never rebase
                 # an old generation onto a newer manuscript. Legacy continuations
                 # create a new chapter; legacy replacements without a base fail shut.
@@ -718,8 +722,8 @@ class JobManager:
                         job.chapter_id,
                         {"title": title, "content": f"{original}\n\n{output}", "version": target_version, "source": "AI_ACCEPT"},
                     )
-            self.chapters.save_summary(job.novel_id, saved.get("number", chapter["number"] + 1), output[:240])
-            pending_canon={"id":str(uuid.uuid5(uuid.NAMESPACE_URL, f"novel-generation-accept:{jid}")),"novel_id":job.novel_id,"chapter":saved.get("number", chapter["number"] + 1),"status":"PENDING","proposals":[{"fact":"AI draft introduced a possible lasting story fact","source_job":jid}],"source":"archivist"}
+            self.chapters.save_summary(job.novel_id, (saved["id"] if ":~" in saved["id"] else saved.get("number", chapter["number"] + 1)), output[:240])
+            pending_canon={"id":str(uuid.uuid5(uuid.NAMESPACE_URL, f"novel-generation-accept:{jid}")),"novel_id":job.novel_id,"chapter":saved.get("number", chapter["number"] + 1),**({"chapter_id":saved["id"]} if ":~" in saved["id"] else {}),"status":"PENDING","proposals":[{"fact":"AI draft introduced a possible lasting story fact","source_job":jid}],"source":"archivist"}
             self.canon.save_pending(pending_canon)
             job.status="ACCEPTED";self._emit(job)
             return {"chapter": saved, "pending_canon": pending_canon}
@@ -730,7 +734,7 @@ class JobManager:
             stored_actor=ActorContext(job.actor_id,job.workspace_id or "",session,job.correlation_id);raw=job.scope;stored_scope=AuthorizationScope(ScopeKind(raw["kind"]),raw["workspace_id"],raw.get("project_id"),raw.get("storyline_id"),raw.get("branch_id"))
             saved=self.collaboration_updates.update_chapter(actor=stored_actor,scope=stored_scope,chapter_id=job.chapter_id,document=__import__("app.document",fromlist=["markdown_to_document"]).markdown_to_document(content),expected_version=target_version,reason="AI_ACCEPT")
         else:saved=self.chapters.save(job.chapter_id,{"content":content,"version":target_version,"source":"AI_ACCEPT"})
-        self.chapters.save_summary(job.novel_id,chapter["number"],content[:240]);pending={"id":str(uuid.uuid5(uuid.NAMESPACE_URL, f"novel-generation-accept:{jid}")),"novel_id":job.novel_id,"chapter":chapter["number"],"status":"PENDING","proposals":[{"fact":"AI draft introduced a possible lasting story fact","source_job":jid}],"source":"archivist"};self.canon.save_pending(pending);job.status="ACCEPTED";self._emit(job)
+        self.chapters.save_summary(job.novel_id,saved["id"] if ":~" in saved["id"] else chapter["number"],content[:240]);pending={"id":str(uuid.uuid5(uuid.NAMESPACE_URL, f"novel-generation-accept:{jid}")),"novel_id":job.novel_id,"chapter":chapter["number"],**({"chapter_id":saved["id"]} if ":~" in saved["id"] else {}),"status":"PENDING","proposals":[{"fact":"AI draft introduced a possible lasting story fact","source_job":jid}],"source":"archivist"};self.canon.save_pending(pending);job.status="ACCEPTED";self._emit(job)
         try:self.memory_extractor.enqueue(job.novel_id,job.chapter_id,saved["version"],job.profile)
         except Exception:pass
         return {"chapter":self.chapters.get(job.chapter_id),"pending_canon":pending}

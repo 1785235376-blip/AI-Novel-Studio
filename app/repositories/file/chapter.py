@@ -6,10 +6,13 @@ from ..chapter_repository import ChapterRepository, VersionConflict
 
 class FileChapterRepository(ChapterRepository):
     def __init__(self,backend:FileRepository):super().__init__(backend)
+    def _listed(self,cid):
+        chapter=self.get(cid)
+        return {**chapter,"content":chapter["content"].rstrip("\n")}
     @guard_project("novel_id")
-    def list(self,novel_id):return [{**c,"version":self.get(c["id"])["version"]} for c in self.backend.list_chapters(novel_id) if not c.get("is_archived",False)]
+    def list(self,novel_id):return [self._listed(c["id"]) for c in self.backend.list_chapters(novel_id) if not c.get("is_archived",False)]
     @guard_project("novel_id")
-    def list_archived(self,novel_id):return [{**c,"version":self.get(c["id"])["version"]} for c in self.backend.list_archived_chapters(novel_id)]
+    def list_archived(self,novel_id):return [self._listed(c["id"]) for c in self.backend.list_archived_chapters(novel_id)]
     @guard_project("chapter_id", chapter=True)
     def archive(self,chapter_id,expected_version=None):
         try:return self.backend.set_chapter_archived(chapter_id,True,expected_version)
@@ -22,5 +25,10 @@ class FileChapterRepository(ChapterRepository):
             raise VersionConflict(self.get(chapter_id),resource_id=chapter_id,expected_version=expected_version)
     def create(self,novel_id,payload):return self.backend.create_chapter(novel_id,payload)
     @guard_project("novel_id")
-    def save_summary(self,novel_id,chapter_number,summary):
-        path=self.backend.novels/novel_id/"summaries/index.json";items=read_json(path,[]);item={"chapter":chapter_number,"summary":summary};items=[x for x in items if x.get("chapter")!=chapter_number]+[item];atomic_write(path,json.dumps(items,ensure_ascii=False,indent=2));return item
+    def save_summary(self,novel_id,chapter_ref,summary):
+        chapter_id=chapter_ref if isinstance(chapter_ref,str) and ":" in chapter_ref else f"{novel_id}:{chapter_ref}"
+        chapter=self.get(chapter_id)
+        if chapter["novel_id"] != novel_id:
+            raise FileNotFoundError(chapter_id)
+        chapter_number=chapter["number"]
+        path=self.backend.novels/novel_id/"summaries/index.json";items=read_json(path,[]);item={"chapter":chapter_number,"summary":summary,**({"chapter_id":chapter["id"]} if ":~" in chapter["id"] else {})};items=[x for x in items if x.get("chapter")!=chapter_number]+[item];atomic_write(path,json.dumps(items,ensure_ascii=False,indent=2));return item

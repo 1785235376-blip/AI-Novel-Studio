@@ -12,10 +12,11 @@ from sqlalchemy import select
 
 from .document import markdown_to_document
 from .repository import FileRepository, read_json
+from .chapter_identity import load_ledger, require_history_owned, ChapterIdentityConflict
 from .privacy import merge_privacy, normalize_privacy
-from .repositories.postgres.common import external_uuid
+from .repositories.postgres.common import chapter_external_id, chapter_or_raise, external_uuid, lock_chapter_namespace, require_chapter_identity
 from .repositories.postgres.models import (
-    CanonModel, ChapterModel, ChapterSummaryModel, CharacterModel,
+    CanonModel, ChapterIdentityModel, ChapterModel, ChapterSummaryModel, CharacterModel,
     DocumentVersionModel, ForeshadowingModel, GenerationJobModel,
     LocationModel, NovelModel, PendingCanonModel, SecretModel,
     StoryStateModel, TimelineModel,
@@ -88,7 +89,8 @@ def _sync_novel(session, repo: FileRepository, source: dict, report: dict) -> No
     model = session.scalar(select(NovelModel).where(NovelModel.slug == novel_id))
     if model is None:
         desired_metadata["context_source_ids"] = {"secrets": secret_mapping}
-        model = NovelModel(slug=novel_id, title=file_meta.get("title", novel_id), metadata_json=desired_metadata)
+        provenance = "ALLOCATED" if load_ledger(root).get("legacy_provenance") == "ALLOCATED" else "LEGACY_UNKNOWN"
+        model = NovelModel(slug=novel_id, title=file_meta.get("title", novel_id), metadata_json=desired_metadata, chapter_identity_provenance=provenance)
         session.add(model); session.flush()
         _record(report, "imported", "novels", novel_id, model.id, "novel and context metadata created")
         return model
@@ -225,13 +227,33 @@ def _sync_story_state(session, root: Path, novel: NovelModel, report: dict) -> N
 
 def _sync_chapters(session, repo: FileRepository, root: Path, novel: NovelModel, report: dict) -> None:
     summaries = {int(item["chapter"]): item for item in read_json(root / "summaries/index.json", []) if item.get("chapter") is not None}
-    for item in repo.list_chapters(novel.slug):
+    lock_chapter_namespace(session, novel.slug)
+    ledger = load_ledger(root)
+    # Preserve source tombstones in the destination; never revive a deleted
+    # source because only its older references/history survived migration.
+    for number, entry in ledger["allocations"].items():
+        reservation = session.get(ChapterIdentityModel, (novel.id, int(number)))
+        if entry["state"] != "active" and reservation is None:
+            session.add(ChapterIdentityModel(novel_id=novel.id, chapter_number=int(number), chapter_id=None, public_token=entry.get("public_token") if str(entry.get("public_token", "")).startswith("~") else None,
+                                            state="AMBIGUOUS" if entry["state"] == "ambiguous" else "DELETED",
+                                            provenance="FILE_RESERVATION"))
+    session.flush()
+    for position, item in enumerate(repo.list_chapters(novel.slug), 1):
         number = int(item["number"]); source_id = item["id"]
         package = read_json(root / "documents" / f"chapter-{number:04d}.json", {})
         document = package.get("document") or markdown_to_document(item["content"]); file_version = int(package.get("version", 1))
         chapter = session.scalar(select(ChapterModel).where(ChapterModel.novel_id == novel.id, ChapterModel.chapter_number == number))
+        reservation = session.get(ChapterIdentityModel, (novel.id, number))
+        if reservation is not None and (chapter is None or reservation.state != "ACTIVE" or reservation.chapter_id != chapter.id):
+            _record(report, "conflicts", "chapters", source_id, reason="chapter identity is reserved or ambiguous")
+            continue
+        if chapter is not None:
+            require_chapter_identity(chapter)
+            if chapter_external_id(novel,chapter) != source_id:
+                _record(report, "conflicts", "chapters", source_id, chapter.id, "source public identity differs")
+                continue
         if chapter is None:
-            chapter = ChapterModel(novel_id=novel.id, chapter_number=number, title=item["title"], markdown_path=f"chapters/chapter-{number:04d}.md", content_hash=hashlib.sha256(item["content"].encode()).hexdigest(), document=document, version=file_version); session.add(chapter); session.flush(); _record(report, "imported", "chapters", source_id, chapter.id, "created")
+            chapter = ChapterModel(novel_id=novel.id, chapter_number=number, public_token=source_id.rsplit(":",1)[1] if ":~" in source_id else None, sort_order=position, identity_status="ACTIVE", title=item["title"], markdown_path=f"chapters/chapter-{number:04d}.md", content_hash=hashlib.sha256(item["content"].encode()).hexdigest(), document=document, version=file_version); session.add(chapter); session.flush(); _record(report, "imported", "chapters", source_id, chapter.id, "created")
         elif chapter.version > file_version:
             _record(report, "conflicts", "chapters", source_id, chapter.id, "PostgreSQL version is newer")
         elif chapter.version == file_version and not canonical_json_compare(chapter.document, document):
@@ -239,7 +261,18 @@ def _sync_chapters(session, repo: FileRepository, root: Path, novel: NovelModel,
         elif chapter.version < file_version:
             chapter.document, chapter.version, chapter.title = document, file_version, item["title"]; _record(report, "updated", "chapters", source_id, chapter.id, "File version is newer")
         else: _record(report, "skipped", "chapters", source_id, chapter.id, "unchanged")
-        for history_path in sorted((root / "history" / f"chapter-{number:04d}").glob("v*.json")):
+        if reservation is None:
+            session.add(ChapterIdentityModel(novel_id=novel.id, chapter_number=number, chapter_id=chapter.id, public_token=chapter.public_token,
+                                            state="ACTIVE", provenance="FILE_IMPORT"))
+            session.flush()
+        try:
+            require_history_owned(root, number)
+            history_paths = sorted((root / "history" / f"chapter-{number:04d}").glob("v*.json"))
+        except ChapterIdentityConflict:
+            history_paths = []
+            _record(report, "conflicts", "chapter_versions", source_id, chapter.id,
+                    "legacy history identity is unverified; source bytes retained")
+        for history_path in history_paths:
             history = read_json(history_path, {}); version = int(history["version"]); history_id = f"{source_id}:v{version}"
             existing = session.scalar(select(DocumentVersionModel).where(DocumentVersionModel.chapter_id == chapter.id, DocumentVersionModel.version == version))
             if existing is None:
@@ -295,8 +328,11 @@ def _sync_jobs(session, source: Path, novels: dict[str, NovelModel], report: dic
         novel = novels.get(item.get("novel_id")); chapter_id = None
         if novel and item.get("chapter_id"):
             try:
-                number = int(item["chapter_id"].rsplit(":", 1)[1]); chapter_id = session.scalar(select(ChapterModel.id).where(ChapterModel.novel_id == novel.id, ChapterModel.chapter_number == number))
-            except (ValueError, AttributeError): pass
+                owner, chapter = chapter_or_raise(session, item["chapter_id"])
+                if owner.id == novel.id:
+                    chapter_id = chapter.id
+            except (ValueError, AttributeError, FileNotFoundError):
+                _record(report, "conflicts", "generation_jobs", source_id, reason="chapter identity unresolved; job reference retained without reassignment")
         session.add(GenerationJobModel(id=target_id, novel_id=novel.id if novel else None, chapter_id=chapter_id, operation=item.get("operation", item.get("agent", "unknown")), status=item.get("status", "QUEUED"), request={"_repository_payload": item}, result=item.get("result"))); _record(report, "imported", "generation_jobs", source_id, target_id, "created")
 
 

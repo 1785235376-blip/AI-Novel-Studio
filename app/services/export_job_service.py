@@ -13,6 +13,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from ..industry_export_formats import IndustryExportError
+from ..pdf_export import PDFExportError
 from ..storage import atomic_write
 
 
@@ -674,7 +675,7 @@ class ExportJobService:
                     self._mark_cancelled_from_worker(job_id)
                     return
             error = {"code": "EXPORT_FAILED", "message": str(exc)}
-            if isinstance(exc, IndustryExportError):
+            if isinstance(exc, (IndustryExportError, PDFExportError)):
                 error.update(code=exc.code, details=exc.details)
             update = {"status": "failed", "result": None, "error": error, "progress_message": "失败", "finished_at": _now(), "updated_at": _now()}
         with self._lock:

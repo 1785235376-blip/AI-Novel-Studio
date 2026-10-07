@@ -1,0 +1,79 @@
+{
+  "kind": "SELECTED_ORIGINAL_BOUNDED_RECEIPTS",
+  "canonical_trigger": "push",
+  "all_events_verified_in": "ARTIFACTS.json and CHECKPOINT.json",
+  "full_raw_logs_published": false,
+  "executor_metadata_redaction": "See ../PUBLIC_RECEIPT_PROVENANCE.json; raw originals remain private.",
+  "files": [
+    {
+      "file": "hosted-d80e4dc0/backend-file/coverage.json.gz",
+      "artifact_id": 11452512196,
+      "original_sha256": "71ae5df52156e5a8d8834e76a6b3d07adaad3583617fa25eab3b911db03d4c0e"
+    },
+    {
+      "file": "hosted-d80e4dc0/backend-file/backend.xml.gz",
+      "artifact_id": 11452512196,
+      "original_sha256": "c8fa0d84dd17e6be06ea4df957258b72a583e4cfceb054dd2a24ba3d5430181e"
+    },
+    {
+      "file": "hosted-d80e4dc0/backend-file/sync-tcp.xml.gz",
+      "artifact_id": 11452512196,
+      "original_sha256": "1e537f0a89382b9755f88616560513bafc368478b80d223705e4d6925943f718"
+    },
+    {
+      "file": "hosted-d80e4dc0/backend-file/coverage-harness.xml.gz",
+      "artifact_id": 11452512196,
+      "original_sha256": "b08478ad8a05075bac8cac3a2ecf1b59d00a7ec10450f6965b2b16155d49a4ad"
+    },
+    {
+      "file": "hosted-d80e4dc0/backend-postgres-shard-0/coverage.json.gz",
+      "artifact_id": 11453270324,
+      "original_sha256": "c208277867a1a72dcdb98da58cd00d9bbc8adc4490a58f135e01b4da42a976b3"
+    },
+    {
+      "file": "hosted-d80e4dc0/backend-postgres-shard-0/backend.xml.gz",
+      "artifact_id": 11453270324,
+      "original_sha256": "6d4de2b36b2751dd73dfef0b3764caac24b0c2ae532eca65f3a05097073cac3a"
+    },
+    {
+      "file": "hosted-d80e4dc0/backend-postgres-shard-1/coverage.json.gz",
+      "artifact_id": 11452998191,
+      "original_sha256": "85875e71d547835c1d8055ef1013f43ae505ee716a9d0d309cfc94f700fb3160"
+    },
+    {
+      "file": "hosted-d80e4dc0/backend-postgres-shard-1/backend.xml.gz",
+      "artifact_id": 11452998191,
+      "original_sha256": "686fc2a6fb9ec356af29505845bab200087f1d4b3fd12b7b3a317a9bcfd89599"
+    },
+    {
+      "file": "hosted-d80e4dc0/frontend/frontend.xml.gz",
+      "artifact_id": 11452422698,
+      "original_sha256": "ccb3597baf7203cd712d0350eb5120c9008e6877bccff6441c458aa2f9e4f10b"
+    },
+    {
+      "file": "hosted-d80e4dc0/frontend/geometry.xml.gz",
+      "artifact_id": 11452422698,
+      "original_sha256": "ba06051f5e8f5a156ec8a61c5e06d9bda116a2eaf882e7b8c121a8d2466eaccb"
+    },
+    {
+      "file": "hosted-d80e4dc0/frontend/business.xml.gz",
+      "artifact_id": 11452422698,
+      "original_sha256": "16ada9df17fa998deab0464ba6aafd99d8d49db24b00c236830ab3ad6a0c04d5"
+    },
+    {
+      "file": "hosted-d80e4dc0/frontend/experimental.xml.gz",
+      "artifact_id": 11452422698,
+      "original_sha256": "20f7e481d634e3e7bcc872ac4f8fa8ff6057ba458bd3369f8b456e985436aa8e"
+    },
+    {
+      "file": "hosted-d80e4dc0/frontend/r4-ux.xml.gz",
+      "artifact_id": 11452422698,
+      "original_sha256": "8f22f5313da086de7d7a598fcd843b0529292b74f0b6e6bd64f84144d1212e0c"
+    },
+    {
+      "file": "hosted-d80e4dc0/frontend/export-browser.xml.gz",
+      "artifact_id": 11452422698,
+      "original_sha256": "b4ca2dd55fc12d950d7bcbcb2216be06ae6c35535af84203e9c261ce61620efa"
+    }
+  ]
+}

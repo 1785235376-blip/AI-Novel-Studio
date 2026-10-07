@@ -30,6 +30,7 @@ class NovelModel(Base):
     __tablename__ = "novels"
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     slug: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
+    chapter_identity_provenance: Mapped[str] = mapped_column(Text, nullable=False, default="ALLOCATED")
     title: Mapped[str] = mapped_column(Text, nullable=False)
     metadata_json: Mapped[dict] = mapped_column("metadata", JSONB, nullable=False, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
@@ -136,10 +137,14 @@ class SecretModel(Base):
 
 class ChapterModel(Base):
     __tablename__ = "chapters"
-    __table_args__ = (UniqueConstraint("novel_id", "chapter_number"),)
+    __table_args__ = (UniqueConstraint("novel_id", "chapter_number"), UniqueConstraint("novel_id", "public_token"))
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     novel_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("novels.id", ondelete="CASCADE"), nullable=False)
+    # Immutable public numeric identity. Reordering changes only sort_order.
     chapter_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    public_token: Mapped[str | None] = mapped_column(Text)
+    sort_order: Mapped[int | None] = mapped_column(Integer)
+    identity_status: Mapped[str] = mapped_column(Text, nullable=False, default="ACTIVE")
     title: Mapped[str | None] = mapped_column(Text)
     markdown_path: Mapped[str] = mapped_column(Text, nullable=False)
     content_hash: Mapped[str | None] = mapped_column(Text)
@@ -149,6 +154,19 @@ class ChapterModel(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
     document: Mapped[dict | None] = mapped_column(JSONB)
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+
+
+class ChapterIdentityModel(Base):
+    """Persistent reservations survive chapter deletion and server restart."""
+    __tablename__ = "chapter_identities"
+    __table_args__ = (UniqueConstraint("novel_id", "public_token"),)
+    novel_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("novels.id", ondelete="CASCADE"), primary_key=True)
+    chapter_number: Mapped[int] = mapped_column(Integer, primary_key=True)
+    # Deliberately no chapter FK: retain the old UUID after chapter deletion.
+    chapter_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    public_token: Mapped[str | None] = mapped_column(Text)
+    state: Mapped[str] = mapped_column(Text, nullable=False, default="ACTIVE")
+    provenance: Mapped[str] = mapped_column(Text, nullable=False, default="ALLOCATED")
 
 
 class ChapterSummaryModel(Base):

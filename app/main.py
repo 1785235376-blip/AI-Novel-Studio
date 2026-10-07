@@ -346,7 +346,7 @@ app.include_router(create_packaged_bootstrap_router(
     initial_workspace_provisioner=packaged_initial_workspace_provisioner,
     prefix="/api/v1/packaged",
 ))
-class ContextRequest(BaseModel): novel_id:str; chapter:int; instruction:str; cloud:bool=False
+class ContextRequest(BaseModel): novel_id:str; chapter:int; instruction:str; cloud:bool=False; chapter_id:str|None=None
 
 @app.get("/health")
 def health(): return {"status":"ok","version":__version__,"profile":settings.profile}
@@ -361,7 +361,11 @@ def context_pack(req:ContextRequest, request: Request):
     from .api import _require_shared_project
     _require_shared_project(req.novel_id, request.headers.get("X-Session-Token"),
                             "domain.read", request.headers.get("X-Branch-ID"))
-    try: return context_service.build(req.novel_id,req.chapter,req.instruction,req.cloud)
+    try:
+        if req.chapter_id is not None:
+            return context_service.build(req.novel_id,req.chapter,req.instruction,req.cloud,chapter_id=req.chapter_id)
+        return context_service.build(req.novel_id,req.chapter,req.instruction,req.cloud)
+    except FileNotFoundError as exc: raise HTTPException(404 if req.chapter_id is not None else 400,str(exc)) from exc
     except Exception as exc: raise HTTPException(400,str(exc)) from exc
 
 from .dependencies import local_interop_host

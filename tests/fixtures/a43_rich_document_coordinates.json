@@ -1,0 +1,330 @@
+{
+  "document": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 1
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "第一章"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "普通段落中文🙂é"
+          }
+        ]
+      },
+      {
+        "type": "bulletList",
+        "content": [
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "LISTSECRET"
+                  }
+                ]
+              },
+              {
+                "type": "orderedList",
+                "attrs": {
+                  "start": 3,
+                  "type": null
+                },
+                "content": [
+                  {
+                    "type": "listItem",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "content": [
+                          {
+                            "type": "text",
+                            "text": "ORDERSECRET"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "blockquote",
+                        "content": [
+                          {
+                            "type": "paragraph",
+                            "content": [
+                              {
+                                "type": "text",
+                                "text": "NESTEDQUOTE"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "listItem",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "content": [
+                          {
+                            "type": "text",
+                            "text": "SECONDORDER"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "blockquote",
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "QUOTESECRET"
+              }
+            ]
+          },
+          {
+            "type": "bulletList",
+            "content": [
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "QUOTELIST"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "前句"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "后句"
+          }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": {
+          "language": "python"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "CODESECRET\nprint(\"中文🙂\")"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "BOLDSECRET",
+            "marks": [
+              {
+                "type": "bold"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": "ITALICSECRET",
+            "marks": [
+              {
+                "type": "italic"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": "STRIKESECRET",
+            "marks": [
+              {
+                "type": "strike"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": "INLINESECRET",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "尾声"
+          }
+        ]
+      }
+    ]
+  },
+  "plain_text": "第一章\n普通段落中文🙂é\nLISTSECRET\nORDERSECRET\nNESTEDQUOTE\nSECONDORDER\nQUOTESECRET\nQUOTELIST\n前句\n后句\nCODESECRET\nprint(\"中文🙂\")\nBOLDSECRETITALICSECRETSTRIKESECRETINLINESECRET\n尾声",
+  "text_blocks": [
+    {
+      "path": [
+        0
+      ],
+      "start": 1,
+      "end": 4,
+      "text": "第一章"
+    },
+    {
+      "path": [
+        1
+      ],
+      "start": 6,
+      "end": 16,
+      "text": "普通段落中文🙂é"
+    },
+    {
+      "path": [
+        2,
+        0,
+        0
+      ],
+      "start": 20,
+      "end": 30,
+      "text": "LISTSECRET"
+    },
+    {
+      "path": [
+        2,
+        0,
+        1,
+        0,
+        0
+      ],
+      "start": 34,
+      "end": 45,
+      "text": "ORDERSECRET"
+    },
+    {
+      "path": [
+        2,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "start": 48,
+      "end": 59,
+      "text": "NESTEDQUOTE"
+    },
+    {
+      "path": [
+        2,
+        0,
+        1,
+        1,
+        0
+      ],
+      "start": 64,
+      "end": 75,
+      "text": "SECONDORDER"
+    },
+    {
+      "path": [
+        3,
+        0
+      ],
+      "start": 82,
+      "end": 93,
+      "text": "QUOTESECRET"
+    },
+    {
+      "path": [
+        3,
+        1,
+        0,
+        0
+      ],
+      "start": 97,
+      "end": 106,
+      "text": "QUOTELIST"
+    },
+    {
+      "path": [
+        4
+      ],
+      "start": 111,
+      "end": 116,
+      "text": "前句\n后句"
+    },
+    {
+      "path": [
+        5
+      ],
+      "start": 118,
+      "end": 142,
+      "text": "CODESECRET\nprint(\"中文🙂\")"
+    },
+    {
+      "path": [
+        6
+      ],
+      "start": 144,
+      "end": 190,
+      "text": "BOLDSECRETITALICSECRETSTRIKESECRETINLINESECRET"
+    },
+    {
+      "path": [
+        8
+      ],
+      "start": 193,
+      "end": 195,
+      "text": "尾声"
+    }
+  ]
+}

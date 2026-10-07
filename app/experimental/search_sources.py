@@ -73,15 +73,18 @@ def chapter_manifest(service, ctx, check):
         with project_operation(backend.data, ctx.novel_id):
             root = backend.novels / ctx.novel_id
             state = read_json(root / 'chapter_state.json', {})
+            from ..chapter_identity import LEDGER_NAME, require_active, public_id
             result = []
             for path in sorted((root / 'chapters').glob('chapter-*.md')):
                 check()
-                number = int(path.stem.split('-')[-1]); cid = f'{ctx.novel_id}:{number}'
+                number = int(path.stem.split('-')[-1]); cid = public_id(root, number)
                 if state.get(cid, False): continue
+                require_active(root, number)
                 package_path = root / 'documents' / f'chapter-{number:04d}.json'
-                stamp = digest([_stat(path), _stat(package_path)])
-                def read(path=path, package_path=package_path, cid=cid):
+                stamp = digest([_stat(path), _stat(package_path), _stat(root / LEDGER_NAME)])
+                def read(path=path, package_path=package_path, cid=cid, number=number):
                     with project_operation(backend.data, ctx.novel_id):
+                        require_active(root, number)
                         if read_json(root / 'chapter_state.json', {}).get(cid, False):
                             raise FileNotFoundError(cid)
                         package = read_json(package_path, None)
@@ -109,14 +112,15 @@ def chapter_manifest(service, ctx, check):
         from ..repositories.postgres.models import ChapterModel, NovelModel
         with repo.database.session() as session:
             rows = session.execute(select(ChapterModel.chapter_number, ChapterModel.version,
-                ChapterModel.content_hash, ChapterModel.updated_at, ChapterModel.title)
+                ChapterModel.content_hash, ChapterModel.updated_at, ChapterModel.title, ChapterModel.public_token)
                 .join(NovelModel, ChapterModel.novel_id == NovelModel.id)
-                .where(NovelModel.slug == ctx.novel_id, ChapterModel.is_archived.is_(False))
+                .where(NovelModel.slug == ctx.novel_id, ChapterModel.is_archived.is_(False),
+                       ChapterModel.identity_status == 'ACTIVE')
                 .order_by(ChapterModel.chapter_number)).all()
         result = []
-        for number, version, content_hash, updated, title in rows:
-            check(); cid = f'{ctx.novel_id}:{number}'
-            result.append(SearchSource('chapter:' + cid, digest([version, content_hash, str(updated), title]),
+        for number, version, content_hash, updated, title, token in rows:
+            check(); cid = f'{ctx.novel_id}:{token or number}'
+            result.append(SearchSource('chapter:' + cid, digest([version, content_hash, str(updated), title, token]),
                                        lambda cid=cid: repo.get(cid)))
         return result
     return None

@@ -2,6 +2,7 @@ from __future__ import annotations
 import json
 from ...repository import FileRepository,read_json,slug
 from ...storage import atomic_write
+from ...chapter_identity import current_summaries
 from ...file_project_lifecycle import guard_project
 from ...privacy import privacy_for_update, privacy_record
 from .mutation_coordinator import workspace_mutation
@@ -158,4 +159,4 @@ class FileNovelRepository:
     def get_context_sources(self,novel_id):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
-        return {"novel":read_json(root/"novel.json",{}),"characters":[privacy_record(row) for row in read_json(root/"characters/characters.json",[])],"locations":[privacy_record(row) for row in read_json(root/"locations/locations.json",[])],"story_state":read_json(root/"story_state.json",{}),"secrets":[privacy_record(row) for row in read_json(root/"secrets.json",[])],"foreshadowing":[privacy_record(row) for row in read_json(root/"foreshadowing.json",[])],"summaries":read_json(root/"summaries/index.json",[]),"style_profile":read_json(root/"style/profile.json",{})}
+        return {"novel":read_json(root/"novel.json",{}),"characters":[privacy_record(row) for row in read_json(root/"characters/characters.json",[])],"locations":[privacy_record(row) for row in read_json(root/"locations/locations.json",[])],"story_state":read_json(root/"story_state.json",{}),"secrets":[privacy_record(row) for row in read_json(root/"secrets.json",[])],"foreshadowing":[privacy_record(row) for row in read_json(root/"foreshadowing.json",[])],"summaries":current_summaries(root,read_json(root/"summaries/index.json",[])),"style_profile":read_json(root/"style/profile.json",{})}

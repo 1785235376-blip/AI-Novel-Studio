@@ -1,0 +1,216 @@
+{
+  "head_sha": "d80e4dc0429c219948e66abf2a8994cc706f3227",
+  "source_tree": "e686c25a81b4f62e7493a6dad8596b503e117f74",
+  "pr_checkout_sha": "6a05f858d7004449e81fa025860f788a18a10b9d",
+  "pr_checkout_same_tree_verified": true,
+  "observed_at": "2026-10-07T00:29:07Z",
+  "overall": "FAILURE",
+  "all_seven_workflows_terminal": true,
+  "runs": [
+    {
+      "id": 37549002256,
+      "name": "A43 baseline evidence",
+      "event": "pull_request",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37549002256"
+    },
+    {
+      "id": 37549002314,
+      "name": "Shared R123 evidence",
+      "event": "pull_request",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37549002314"
+    },
+    {
+      "id": 37549002336,
+      "name": "Local Interop V1",
+      "event": "pull_request",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37549002336"
+    },
+    {
+      "id": 37549002209,
+      "name": "Cloud CI",
+      "event": "pull_request",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37549002209"
+    },
+    {
+      "id": 37548998927,
+      "name": "A43 baseline evidence",
+      "event": "push",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37548998927"
+    },
+    {
+      "id": 37548998933,
+      "name": "Local Interop V1",
+      "event": "push",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37548998933"
+    },
+    {
+      "id": 37548998913,
+      "name": "Cloud CI",
+      "event": "push",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37548998913"
+    }
+  ],
+  "results_per_trigger": {
+    "backend_file": {
+      "collected": 7900,
+      "passed": 5346,
+      "skipped": 2554,
+      "failed": 0,
+      "errors": 0,
+      "coverage_harness_passed": 153,
+      "file_tcp_passed": 2
+    },
+    "backend_postgres": {
+      "shard0": {
+        "assigned": 3909,
+        "passed": 2652,
+        "skipped": 1252,
+        "failed": 5,
+        "errors": 0
+      },
+      "shard1": {
+        "assigned": 3991,
+        "passed": 2660,
+        "skipped": 1328,
+        "failed": 3,
+        "errors": 0
+      },
+      "combined": {
+        "assigned": 7900,
+        "passed": 5312,
+        "skipped": 2580,
+        "failed": 8,
+        "errors": 0
+      },
+      "coverage_harness_passed_per_shard": 153,
+      "initialization": "PASS",
+      "failure": "Rich-H1 queue export exact-text assertions fail for PostgreSQL literal LF/CRLF heading runs; test extractor itertext omits w:br that frozen DOCX exporter emits. Source-based diagnosis needs semantic artifact verification before attributing product loss.",
+      "failure_source": "tests/test_a43_duplicate_heading.py:111 and tests/test_a43_rich_document.py:161",
+      "full_aggregate": "FAIL_CLOSED_DEPENDENCY_GATE",
+      "aggregate_reconciler": "NOT_RUN",
+      "aggregate_proof_upload": "NOT_RUN",
+      "previous_deleted_generation_accept_failures": {
+        "postgres_variants": 12,
+        "passed": 12
+      }
+    },
+    "frontend_unit": {
+      "tests": 1277,
+      "passed": 1269,
+      "skipped": 8,
+      "failed": 0,
+      "errors": 0,
+      "skip_note": "Two opt-in actual TS client tests plus six ExperimentalWorkbench.http tests; original opt-in scope preserved"
+    },
+    "separate_actual_ts_client": {
+      "passed": 2
+    },
+    "browser": {
+      "geometry_passed": 9,
+      "business_passed": 2,
+      "experimental_passed": 7,
+      "r4_passed": 63,
+      "export_passed": 1,
+      "interop_passed": 12,
+      "total_distinct_passed": 94
+    },
+    "interop": {
+      "file": {
+        "collected": 413,
+        "passed": 345,
+        "skipped": 68,
+        "failed": 0,
+        "errors": 0
+      },
+      "postgres": {
+        "collected": 413,
+        "passed": 345,
+        "skipped": 68,
+        "failed": 0,
+        "errors": 0
+      },
+      "original_reconciler": "complete"
+    },
+    "windows": {
+      "host_contracts_passed": 59,
+      "named_pipe_reference_checks": [
+        8,
+        33
+      ],
+      "fresh_native_package_and_pg_recovery_smoke": "PASS",
+      "native_interactive_acceptance": "NOT_RUN",
+      "reference_scope": "MOCK_ONLY / LOCAL_REQUIRED"
+    }
+  },
+  "baseline_evidence": {
+    "a43": "Both runs successfully observed historical ad1 RED; not candidate product PASS",
+    "shared_r123": "Historical c6f2126 RED evidence; not candidate product PASS"
+  },
+  "evidence": {
+    "verified_zip_count": 25,
+    "registered_oversize_undownloaded_count": 4,
+    "all_downloaded_zip_sha256_match_github": true,
+    "all_downloaded_zip_crc_pass": true,
+    "full_job_log_fetches": 0,
+    "final_pr_pg_shard0_artifact_id": 11452634481,
+    "public_registry": "ARTIFACTS.json"
+  },
+  "limitations": [
+    "Ordinary implementation CI monitoring; not independent audit",
+    "Historical BLOCKED and 39 PARTIAL/F00 INTEGRATED remain",
+    "Real models and native interactive acceptance NOT_RUN"
+  ],
+  "source_manifest_sha256": "dfe8e7583a45205e3f666495e63eb5cf36d7c952af8a06fe531b3ad5d2da1f2b",
+  "kind": "PRESERVED_HOSTED_MEASUREMENT_FAILURE_CHECKPOINT_NOT_FINAL_PASS",
+  "diagnosis": {
+    "kind": "NEW_TEST_DOCX_EXTRACTOR_OMITTED_STRUCTURAL_LINE_BREAKS",
+    "actual_ci_docx_bytes_available": false,
+    "reproduction": "Equivalent synthetic PG-shaped snapshot, byte-identical frozen exporter; Word XML contains w:br and original product importer preserves the exact newline. TXT/EPUB sequences pass.",
+    "product_export_source_changed": false,
+    "test_assertions_and_45_rich_node_ids_changed": false,
+    "correction": "Only new test helper handles w:t/w:br/w:tab; eight independent OOXML measurement regressions are RED with old helper and GREEN with corrected helper.",
+    "actual_postgres_reverification": "Required at the next exact head; diagnosis is not a PG PASS."
+  },
+  "original_7492": {
+    "file": {
+      "passed": 5111,
+      "skipped": 2381
+    },
+    "postgres": {
+      "passed": 5112,
+      "skipped": 2380
+    },
+    "assertions_source_skips_unchanged": true
+  },
+  "previous_twelve_deleted_generation_pg_assertions": {
+    "push": "ALL12_PASSED",
+    "pull_request": "ALL12_PASSED",
+    "evidence": "Full original coverage outcomes verified against both exact run/attempt receipts."
+  },
+  "local_readonly_strict_gate": {
+    "push_exit": 1,
+    "pull_request_exit": 1,
+    "reason": "Unchanged gate rejects failed receipts; no complete aggregate proof exists."
+  }
+}

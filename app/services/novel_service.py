@@ -9,6 +9,7 @@ import uuid
 from datetime import datetime, timezone
 from ..import_parsers import decode_base64,docx_to_text,pdf_to_text
 from ..export_formats import novel_to_docx, novel_to_epub
+from ..document import chapter_body_text
 from ..pdf_export import novel_to_pdf
 from ..industry_export_formats import (
     screenplay_to_docx,
@@ -215,9 +216,9 @@ class NovelService:
 
     def _export_data(self, nid, meta, chapters, format, *, screenplays=None, progress_callback=None, snapshot=None, resource_loader=None, resource_policy="allow_missing", screenplay_id=None):
         format = str(format or "json").lower().strip()
-        if format=="markdown":return {"format":"markdown","filename":f"{nid}.md","content":"\n\n---\n\n".join(f"# {c.get('title','')}\n\n{c.get('content','')}" for c in chapters)}
+        if format=="markdown":return {"format":"markdown","filename":f"{nid}.md","content":"\n\n---\n\n".join(f"# {c.get('title','')}\n\n{chapter_body_text(c, markdown=True)}" for c in chapters)}
         if format in {"txt", "text"}:
-            content = "\n\n".join(f"{c.get('title','')}\n\n{c.get('content','')}" for c in chapters)
+            content = "\n\n".join(f"{c.get('title','')}\n\n{chapter_body_text(c)}" for c in chapters)
             return {"format":"txt","filename":f"{nid}.txt","content":content}
         if format in {"docx", "word"}:
             binary = novel_to_docx(meta.get("title", ""), chapters)

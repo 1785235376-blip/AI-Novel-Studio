@@ -32,19 +32,8 @@ def safe_label(value, fallback=None):
 
 def anchor_text(doc: dict) -> str:
     """ProseMirror textBetween(blockSeparator='\\n', hardBreak='\\n')."""
-    blocks = []
-    def walk(node):
-        kind = node.get("type")
-        if kind in {"paragraph", "heading", "codeBlock"}:
-            def inline(item):
-                if item.get("type") == "hardBreak": return "\n"
-                if item.get("type") == "text": return item.get("text", "")
-                return "".join(inline(child) for child in item.get("content", []))
-            blocks.append(inline(node))
-        else:
-            for child in node.get("content", []): walk(child)
-    walk(doc)
-    return "\n".join(blocks)
+    from ..document import plain_text
+    return plain_text(doc)
 
 
 class InteropContextProvider:

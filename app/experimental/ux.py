@@ -152,20 +152,8 @@ def chapter_text(row):
     document = row.get('document')
     if not isinstance(document, dict) or document.get('type') != 'doc':
         return str(row.get('content', ''))
-    def inline(node):
-        if node.get('type') == 'text':
-            return str(node.get('text', ''))
-        if node.get('type') == 'hardBreak':
-            return '\n'
-        return ''.join(inline(child) for child in node.get('content', []) if isinstance(child, dict))
-    def blocks(node):
-        if node.get('type') in {'paragraph', 'heading', 'codeBlock'}:
-            yield inline(node)
-        else:
-            for child in node.get('content', []):
-                if isinstance(child, dict):
-                    yield from blocks(child)
-    return '\n'.join(blocks(document))
+    from ..document import plain_text
+    return plain_text(document)
 
 
 def literal_offset(text, folded_query):

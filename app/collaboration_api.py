@@ -83,21 +83,24 @@ class CollaborationReadService:
         ) for permission in CAPABILITIES}
 
     def snapshots(self, chapter_id: str) -> list[dict[str, Any]]:
+        # Bind every read to the same live, unambiguous chapter authority.
+        self.chapters.get(chapter_id)
         repository = self.lore_repository
         if hasattr(repository, "backend"):
             novel_id = chapter_id.rsplit(":", 1)[0]
             root = Path(repository.backend.novels) / novel_id / "lore" / "context_snapshots"
-            return [json.loads(path.read_text(encoding="utf-8")) for path in sorted(root.glob("*.json"))]
+            rows = [json.loads(path.read_text(encoding="utf-8")) for path in sorted(root.glob("*.json"))]
+            return [row for row in rows if str(row.get("chapter_version_id", "")).startswith(chapter_id + ":v")]
         database = getattr(repository, "database", None)
         if database is None:
             return []
-        slug, number = chapter_id.rsplit(":", 1)
+        from .repositories.postgres.common import chapter_or_raise
         with database.session() as session:
+            _, chapter = chapter_or_raise(session, chapter_id)
             rows = session.execute(text(
                 "SELECT s.snapshot FROM chapter_context_snapshots s "
-                "JOIN chapters c ON c.id=s.chapter_id JOIN novels n ON n.id=c.novel_id "
-                "WHERE n.slug=:slug AND c.chapter_number=:number ORDER BY s.created_at DESC"
-            ), {"slug": slug, "number": int(number)}).all()
+                "WHERE s.chapter_id=:chapter_id ORDER BY s.created_at DESC"
+            ), {"chapter_id": chapter.id}).all()
         return [dict(row[0]) for row in rows]
 
     def visual_text_workflow(self, provider_id: str, model_id: str) -> VisualTextWorkflowView:

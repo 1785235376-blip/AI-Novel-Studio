@@ -57,7 +57,17 @@ class ContextSnapshotService:
         ).model_dump(mode="json")
         if hasattr(self.repository, "backend"):
             novel_id = chapter_id.rsplit(":", 1)[0]
-            root: Path = self.repository.backend.novels / novel_id / "lore" / "context_snapshots"
+            project_root: Path = self.repository.backend.novels / novel_id
+            if not project_root.is_dir():
+                raise FileNotFoundError(novel_id)
+            # Registered projects must resolve the live immutable source. A
+            # pre-existing detached provenance directory is a storage-only
+            # legacy port, not authority to read, generate or save a chapter.
+            resolver = getattr(self.repository.backend, "chapter", None)
+            if resolver is not None and ((project_root / "novel.json").is_file()
+                                         or (project_root / "chapter_identity.json").exists()):
+                resolver(chapter_id)
+            root: Path = project_root / "lore" / "context_snapshots"
             root.mkdir(parents=True, exist_ok=True)
             for path in root.glob("*.json"):
                 existing = json.loads(path.read_text(encoding="utf-8"))
@@ -70,14 +80,9 @@ class ContextSnapshotService:
         database = getattr(self.repository, "database", None)
         if database is None:
             raise RuntimeError("Context snapshot storage is unavailable")
-        novel_slug, chapter_number = chapter_id.rsplit(":", 1)
+        from ..repositories.postgres.common import chapter_or_raise
         with database.session() as session:
-            row = session.execute(text(
-                "SELECT c.id, c.novel_id FROM chapters c JOIN novels n ON n.id=c.novel_id "
-                "WHERE n.slug=:slug AND c.chapter_number=:number"
-            ), {"slug": novel_slug, "number": int(chapter_number)}).one_or_none()
-            if row is None:
-                raise FileNotFoundError(chapter_id)
+            _, row = chapter_or_raise(session, chapter_id)
             inserted = None
             if generation_id is None:
                 inserted = session.execute(text(

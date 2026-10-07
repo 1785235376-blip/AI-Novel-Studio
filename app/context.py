@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 
 from .privacy import cloud_safe_context, normalize_privacy
+from .chapter_identity import current_summaries
+from .file_project_lifecycle import project_operation
 
 
 def _read(path: Path, default):
@@ -21,6 +23,8 @@ def build_context(data_root: Path, novel_id: str, chapter: int, instruction: str
         ("secrets", "secrets.json", []), ("foreshadowing", "foreshadowing.json", []),
         ("summaries", "summaries/index.json", []), ("style_profile", "style/profile.json", {}),
     )}
+    with project_operation(data_root, novel_id):
+        sources["summaries"] = current_summaries(root, sources["summaries"])
     return build_context_from_sources(sources, novel_id, chapter, instruction, cloud)
 
 

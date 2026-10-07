@@ -321,6 +321,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
         agent_id: agentId,
         novel_id: chapter.novel_id,
         chapter: chapter.number,
+        chapter_id: chapter.id,
         instruction,
         target: mode === "model" ? "cloud" : "local",
         execution_mode: mode,

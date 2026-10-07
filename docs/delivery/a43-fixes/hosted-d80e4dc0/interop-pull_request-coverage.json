@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "scope": "interop",
+  "status": "complete",
+  "identity": {
+    "checked_out_sha": "6a05f858d7004449e81fa025860f788a18a10b9d",
+    "source_tree": "e686c25a81b4f62e7493a6dad8596b503e117f74",
+    "event_sha": "6a05f858d7004449e81fa025860f788a18a10b9d",
+    "run_id": "37549002336",
+    "run_attempt": "1",
+    "repository": "1785235376-blip/AI-Novel-Studio",
+    "python_version": "3.12.9",
+    "platform": "linux",
+    "source_manifest_sha256": "dfe8e7583a45205e3f666495e63eb5cf36d7c952af8a06fe531b3ad5d2da1f2b",
+    "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+  },
+  "unique_collected_per_profile": 413,
+  "profiles": {
+    "file": {
+      "collected": 413,
+      "passed": 345,
+      "skipped": 68,
+      "shards": 1
+    },
+    "postgres": {
+      "collected": 413,
+      "passed": 345,
+      "skipped": 68,
+      "shards": 1
+    }
+  },
+  "external_gates": {},
+  "evidence": "complete collected backend coverage; not monolithic PostgreSQL interaction equivalence"
+}

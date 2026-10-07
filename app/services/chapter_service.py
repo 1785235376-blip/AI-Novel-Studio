@@ -16,4 +16,4 @@ class ChapterService:
     def move(self,cid,direction):return self.repository.move(cid,direction)
     def history(self,cid):return self.repository.history(cid)
     def restore(self,cid,version,expected):return self.repository.restore(cid,version,expected)
-    def save_summary(self,nid,number,summary):return self.repository.save_summary(nid,number,summary)
+    def save_summary(self,nid,number:int|str,summary):return self.repository.save_summary(nid,number,summary)

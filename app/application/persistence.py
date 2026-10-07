@@ -16,6 +16,7 @@ from ..repositories.postgres.common import chapter_or_raise, novel_or_raise
 from ..repositories.postgres.models import ChapterModel, DocumentVersionModel
 from ..storage import atomic_write
 from ..file_project_lifecycle import project_operation
+from .. import chapter_identity
 from .audit_service import AuditService
 
 
@@ -75,19 +76,7 @@ class PostgresAtomicChapterAuditPort:
     def create_chapter_with_audit(self, project_id, title, operator, audit_event_factory):
         database = self.repository.database
         with database.session() as session:
-            novel = novel_or_raise(session, project_id)
-            session.execute(text("SELECT pg_advisory_xact_lock(hashtextextended(:key,0))"),
-                            {"key": f"chapter-create:{project_id}"})
-            number = (session.scalar(select(func.max(ChapterModel.chapter_number)).where(
-                ChapterModel.novel_id == novel.id)) or 0) + 1
-            markdown = f"# {title}\n"
-            chapter = ChapterModel(
-                novel_id=novel.id, chapter_number=number, title=title,
-                markdown_path=f"chapters/chapter-{number:04d}.md",
-                content_hash=hashlib.sha256(markdown.encode()).hexdigest(),
-                document=markdown_to_document(markdown), version=1,
-            )
-            session.add(chapter); session.flush()
+            novel, chapter = self.repository._create_in_session(session, project_id, {"title": title})
             created = self.repository._external(novel, chapter)
             event = audit_event_factory(created)
             session.execute(text(
@@ -150,9 +139,10 @@ class FileAtomicChapterAuditPort:
         del operator
         root = self.repository.backend.novels / project_id
         lock_path = root / "chapter_order.json"
-        with self.authorization.lock, _file_save_lock(lock_path):
-            current = self.repository.list(project_id)
-            number = max((row["number"] for row in current), default=0) + 1
+        # Validate the caller's project component before deriving any path or
+        # lazily initializing identity metadata.
+        with self.authorization.lock, project_operation(self.repository.backend.data, project_id):
+            number = chapter_identity.next_number(root)
             markdown_path = root / "chapters" / f"chapter-{number:04d}.md"
             package_path = root / "documents" / f"chapter-{number:04d}.json"
             snapshot = self._capture([markdown_path, package_path, lock_path, self.authorization.path])

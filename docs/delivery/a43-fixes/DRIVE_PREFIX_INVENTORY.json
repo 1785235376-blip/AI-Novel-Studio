@@ -1,0 +1,43 @@
+{
+  "kind": "EXPLICIT_A43_INVENTORY_REVIEW_NOT_EXECUTION",
+  "starting_sha": "ad1a90dced36208c63bfd65f5e1d918d4a4f7695",
+  "previous_manifest_sha256": "dfe8e7583a45205e3f666495e63eb5cf36d7c952af8a06fe531b3ad5d2da1f2b",
+  "previous_nodes": 7900,
+  "collected_count": 7911,
+  "added_this_checkpoint": 11,
+  "original_source_digests_unchanged": true,
+  "original_relative_node_order_unchanged": true,
+  "original_skip_maps_unchanged": true,
+  "evidence": "TWO_IDENTICAL_COMPLETE_COLLECTIONS_NOT_TEST_EXECUTION",
+  "added_nodes": [
+    "tests/test_a43_drive_prefix_identity.py::test_drive_qualified_project_rejected_before_path_or_lock[C:]",
+    "tests/test_a43_drive_prefix_identity.py::test_drive_qualified_project_rejected_before_path_or_lock[c:]",
+    "tests/test_a43_drive_prefix_identity.py::test_drive_qualified_project_rejected_before_path_or_lock[C:foo]",
+    "tests/test_a43_drive_prefix_identity.py::test_drive_qualified_project_rejected_before_path_or_lock[c:foo]",
+    "tests/test_a43_drive_prefix_identity.py::test_drive_qualified_project_rejected_before_path_or_lock[D:foo]",
+    "tests/test_a43_drive_prefix_identity.py::test_drive_qualified_project_rejected_before_path_or_lock[d:foo]",
+    "tests/test_a43_drive_prefix_identity.py::test_non_native_windows_lexical_join_exposes_drive_alias[C:-C:/synthetic/data/novels]",
+    "tests/test_a43_drive_prefix_identity.py::test_non_native_windows_lexical_join_exposes_drive_alias[C:foo-C:/synthetic/data/novels/foo]",
+    "tests/test_a43_drive_prefix_identity.py::test_non_native_windows_lexical_join_exposes_drive_alias[D:foo-D:foo]",
+    "tests/test_a43_drive_prefix_identity.py::test_normal_and_dot_legacy_project_components_stay_supported[normal-project]",
+    "tests/test_a43_drive_prefix_identity.py::test_normal_and_dot_legacy_project_components_stay_supported[.legacy-hidden]"
+  ],
+  "new_node_backend_classification": {
+    "tests/test_a43_drive_prefix_identity.py::test_drive_qualified_project_rejected_before_path_or_lock[C:]": "file",
+    "tests/test_a43_drive_prefix_identity.py::test_drive_qualified_project_rejected_before_path_or_lock[c:]": "file",
+    "tests/test_a43_drive_prefix_identity.py::test_drive_qualified_project_rejected_before_path_or_lock[C:foo]": "file",
+    "tests/test_a43_drive_prefix_identity.py::test_drive_qualified_project_rejected_before_path_or_lock[c:foo]": "file",
+    "tests/test_a43_drive_prefix_identity.py::test_drive_qualified_project_rejected_before_path_or_lock[D:foo]": "file",
+    "tests/test_a43_drive_prefix_identity.py::test_drive_qualified_project_rejected_before_path_or_lock[d:foo]": "file",
+    "tests/test_a43_drive_prefix_identity.py::test_non_native_windows_lexical_join_exposes_drive_alias[C:-C:/synthetic/data/novels]": "file",
+    "tests/test_a43_drive_prefix_identity.py::test_non_native_windows_lexical_join_exposes_drive_alias[C:foo-C:/synthetic/data/novels/foo]": "file",
+    "tests/test_a43_drive_prefix_identity.py::test_non_native_windows_lexical_join_exposes_drive_alias[D:foo-D:foo]": "file",
+    "tests/test_a43_drive_prefix_identity.py::test_normal_and_dot_legacy_project_components_stay_supported[normal-project]": "file",
+    "tests/test_a43_drive_prefix_identity.py::test_normal_and_dot_legacy_project_components_stay_supported[.legacy-hidden]": "file"
+  },
+  "old_skip_counts": {
+    "file": 2035,
+    "postgres": 2059
+  },
+  "manifest_sha256": "bb0efbd666113b84792ad8b4fbf378e59607d105adafd1a07ffebc52bc30b803"
+}

@@ -1,0 +1,24 @@
+{
+  "layer": "original move/get/_external code + synthetic Session/lookup; NO real PostgreSQL server",
+  "before_id": "book:1",
+  "before_title": "A",
+  "before_version": 1,
+  "returned_order": [
+    "book:1",
+    "book:2"
+  ],
+  "after_id": "book:1",
+  "after_title": "B",
+  "after_version": 1,
+  "same_id_and_version_now_different_document": true,
+  "internal_rows": [
+    {
+      "uuid": "uuid-A",
+      "number": 2
+    },
+    {
+      "uuid": "uuid-B",
+      "number": 1
+    }
+  ]
+}
