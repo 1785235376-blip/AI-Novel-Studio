@@ -6,6 +6,7 @@ from .planning import StrictModel
 from pydantic import Field
 from typing import Literal
 from .ux import ReadContext, ResumeIn, VersionIn, ResumeResolveIn, ResolveIn, DiagnosticIn, DiagnosticExportIn, TaskCancelIn
+from .workspace_interaction import InteractionIn, InteractionVersionIn, InteractionRestoreIn, CommandResolveIn
 
 
 class SearchRequest(StrictModel):
@@ -36,6 +37,52 @@ def create_ux_router(service, authorize, require_flag):
     def current(ctx, write=False):
         if access(ctx.novel_id, ctx.token, ctx.branch, write) != ctx:
             raise HTTPException(403, {'code': 'WORKSPACE_AUTHORITY_CHANGED'})
+
+    def interaction_access(nid, token, branch, write=False):
+        require_flag('workspace_interaction_v1')
+        return access(nid, token, branch, write)
+
+    def interaction_current(ctx, write=False):
+        require_flag('workspace_interaction_v1')
+        current(ctx, write)
+
+    @router.get('/interaction')
+    def interaction(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        ctx = interaction_access(nid, x_session_token, x_branch_id)
+        return api_call(service.interaction, ctx, lambda: interaction_current(ctx))
+
+    @router.put('/interaction')
+    def save_interaction(nid: str, body: InteractionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx = interaction_access(nid, x_session_token, x_branch_id, True)
+        return api_call(service.save_interaction, ctx, body, lambda: interaction_current(ctx, True))
+
+    @router.get('/interaction/history')
+    def interaction_history(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        ctx = interaction_access(nid, x_session_token, x_branch_id)
+        return api_call(service.interaction_history, ctx, lambda: interaction_current(ctx))
+
+    @router.post('/interaction/restore')
+    def restore_interaction(nid: str, body: InteractionRestoreIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx = interaction_access(nid, x_session_token, x_branch_id, True)
+        return api_call(service.restore_interaction, ctx, body, lambda: interaction_current(ctx, True))
+
+    @router.post('/interaction/reset')
+    def reset_interaction(nid: str, body: InteractionVersionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx = interaction_access(nid, x_session_token, x_branch_id, True)
+        return api_call(service.reset_interaction, ctx, body.expected_version, lambda: interaction_current(ctx, True))
+
+    @router.get('/commands')
+    def commands(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        ctx = interaction_access(nid, x_session_token, x_branch_id)
+        return api_call(service.workspace_commands, ctx, lambda: interaction_current(ctx))
+
+    @router.post('/commands/resolve')
+    def resolve_command(nid: str, body: CommandResolveIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx = interaction_access(nid, x_session_token, x_branch_id)
+        return api_call(service.resolve_workspace_command, ctx, body, lambda: interaction_current(ctx))
 
     @router.get('/resume')
     def resume(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):

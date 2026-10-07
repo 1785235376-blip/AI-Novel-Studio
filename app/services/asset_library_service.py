@@ -113,8 +113,8 @@ class AssetLibraryService:
                media_type: str | None = None, kind: str = "image",
                idempotency_key: str | None = None, *, branch_id: str | None = None,
                required_features: tuple[str, ...] = (), owner_actor_id: str | None = None):
-        from ..experimental.flags import FLAGS, enabled_flags
-        if set(required_features) - set(FLAGS) or not set(required_features).issubset(enabled_flags()):
+        from ..experimental.flags import RUNTIME_FLAGS, enabled_flags
+        if set(required_features) - set(RUNTIME_FLAGS) or not set(required_features).issubset(enabled_flags()):
             raise ValueError("asset origin feature unavailable")
         if owner_actor_id is not None and (not isinstance(owner_actor_id, str) or not owner_actor_id or len(owner_actor_id) > 240):
             raise ValueError("invalid asset owner")

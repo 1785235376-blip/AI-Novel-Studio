@@ -3,6 +3,7 @@ import { ApiError, type Chapter } from '../api';
 import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
 import { enabled, type ExperimentalClient, type ExperimentalFlags } from './api';
 import { WorkspaceSearch } from './WorkspaceSearch';
+import { WorkspaceInteractionPanel } from './WorkspaceInteractionPanel';
 import { NoticeCenterAddon } from './WritingSessionPanel';
 import { ErrorMessage, Field, ResourceState, useAction, useResource } from './shared';
 import { defaultLayout, defaultWorkspaceView, workspaceClient, type WorkspaceAnchor, type WorkspaceNavigation, type WorkspaceLayout, type WorkspaceView, type ResumeItem, type DiagnosticOptions, type DiagnosticResult, type TaskItem } from './uxClient';
@@ -89,6 +90,7 @@ function WorkspaceToolsBody({ client, chapter, flags, currentAnchor, initialSect
   return <section className="experimental-section" aria-label="工作现场工具">
     <div className="experimental-actions"><h3>工作现场</h3><Badge>本地确定性工具 · 不调用模型</Badge></div>
     <nav className="experimental-tabs" aria-label="工作现场工具分类">{[['resume', '继续工作'], ['search', '搜索与命令'], ['tasks', '任务中心'], ['diagnostics', '诊断包'], ['guide', '使用指引']].map(([id, label]) => <Button key={id} aria-pressed={section === id} onClick={() => selectSection(id)}>{label}</Button>)}</nav>
+    {enabled(flags, 'workspace_interaction_v1') && <WorkspaceInteractionPanel client={client} dirty={note !== (saved?.stopping_note || '') || filtersTouched.current} currentSection={section} onSection={selectSection} />}
     {(section === 'search' || section === 'tasks') && <div className="experimental-actions"><Button disabled={resume.loading || !!resume.error || action.busy} onClick={() => save()}>保存筛选到工作现场</Button>{action.feedback}</div>}
     {!onNavigate && <StatusMessage tone="warning">当前宿主未接入跳转；可以保存工作现场、搜索与查看任务。</StatusMessage>}
     {section === 'resume' && <Panel title="继续上次工作">

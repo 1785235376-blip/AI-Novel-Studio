@@ -24,6 +24,7 @@ from .common import DomainService, StaleSourceError, change_row, new_row
 from .planning import StrictModel, digest
 from .search_sources import SearchSource, chapter_manifest, project_ids
 from ..services.v1_capability_service import CapabilityVersionConflict
+from .workspace_interaction import WorkspaceInteractionMixin
 
 FEATURES = frozenset({'overview', 'editor', 'creation', 'story', 'history', 'workflow', 'screenplay', 'assets',
                       'exports', 'knowledge', 'research', 'agents', 'diagnostics', 'settings',
@@ -258,7 +259,7 @@ def projected_task(reader, row):
     return result
 
 
-class WorkspaceToolsService(DomainService):
+class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
     RESUMES = 'workspace_resumes_v2'
 
     def __init__(self, store, novels, chapters, *, chapter_reader=None, entity_readers=None, task_readers=None, focus_reader=None, search_candidates=None, finding_reader=None):
