@@ -802,7 +802,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -828,7 +829,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -854,7 +856,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -880,7 +883,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -906,7 +910,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -932,7 +937,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -958,7 +964,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -984,7 +991,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -1010,7 +1018,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -1036,7 +1045,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -1062,7 +1072,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -1088,7 +1099,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -1114,7 +1126,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -1140,7 +1153,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -1166,7 +1180,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -1192,7 +1207,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -1218,7 +1234,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -1244,7 +1261,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "FS_BRANCH"
@@ -6430,7 +6448,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "surface_ids": [
         "B09",
@@ -7144,6 +7163,7 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
         "app/experimental/ux_api.py",
         "frontend/src/experimental/uxClient.ts",
+        "frontend/src/ui/scopeLabels.ts",
         "frontend/src/drafts.ts",
         "frontend/src/ui/SaveControls.tsx",
         "app/autosave/durable.py",
@@ -7274,7 +7294,11 @@
         "app/experimental/first_use.py",
         "frontend/src/novel/EntryExperience.tsx",
         "app/experimental/first_use_api.py",
-        "frontend/src/ui/AppShell.tsx"
+        "frontend/src/ui/AppShell.tsx",
+        "app/services/adaptation_service.py",
+        "app/services/screenplay_service.py",
+        "app/repositories/adaptation_versions.py",
+        "app/adaptation_api.py"
       ],
       "surface_ids": [
         "U01",
@@ -7309,7 +7333,8 @@
         "U12",
         "CORE_ASSETS",
         "U10",
-        "U13"
+        "U13",
+        "CORE_ADAPTATION"
       ],
       "verification": "PENDING_EXACT_FINAL_HEAD; mapping is not execution evidence"
     },
@@ -7330,6 +7355,7 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
         "app/experimental/ux_api.py",
         "frontend/src/experimental/uxClient.ts",
+        "frontend/src/ui/scopeLabels.ts",
         "frontend/src/drafts.ts",
         "frontend/src/ui/SaveControls.tsx",
         "app/autosave/durable.py",
@@ -7460,7 +7486,11 @@
         "app/experimental/first_use.py",
         "frontend/src/novel/EntryExperience.tsx",
         "app/experimental/first_use_api.py",
-        "frontend/src/ui/AppShell.tsx"
+        "frontend/src/ui/AppShell.tsx",
+        "app/services/adaptation_service.py",
+        "app/services/screenplay_service.py",
+        "app/repositories/adaptation_versions.py",
+        "app/adaptation_api.py"
       ],
       "surface_ids": [
         "U01",
@@ -7495,7 +7525,8 @@
         "U12",
         "CORE_ASSETS",
         "U10",
-        "U13"
+        "U13",
+        "CORE_ADAPTATION"
       ],
       "verification": "PENDING_EXACT_FINAL_HEAD; mapping is not execution evidence"
     },
@@ -7516,6 +7547,7 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
         "app/experimental/ux_api.py",
         "frontend/src/experimental/uxClient.ts",
+        "frontend/src/ui/scopeLabels.ts",
         "frontend/src/drafts.ts",
         "frontend/src/ui/SaveControls.tsx",
         "app/autosave/durable.py",
@@ -7544,6 +7576,7 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
         "app/experimental/ux_api.py",
         "frontend/src/experimental/uxClient.ts",
+        "frontend/src/ui/scopeLabels.ts",
         "app/experimental/writing_focus.py",
         "frontend/src/experimental/WritingFocusPanel.tsx",
         "frontend/src/Editor.tsx",
@@ -7733,6 +7766,7 @@
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
         "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts",
         "app/services/lore_service.py",
         "app/repositories/structured_cas.py",
         "app/repositories/story_record_versions.py",
@@ -7820,6 +7854,7 @@
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
         "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts",
         "app/experimental/revision_intelligence.py",
         "app/experimental/revision_intelligence_model.py",
         "app/experimental/revision_intelligence_api.py",
@@ -8184,11 +8219,27 @@
         "frontend/src/ui/AppShell.tsx",
         "app/experimental/workspace_interaction.py",
         "app/experimental/ux.py",
-        "app/experimental/ux_api.py"
+        "app/experimental/ux_api.py",
+        "app/services/novel_service.py",
+        "app/services/lore_service.py",
+        "app/repositories/structured_cas.py",
+        "app/repositories/story_record_versions.py",
+        "app/repositories/file/novel.py",
+        "app/repositories/postgres/novel.py",
+        "app/repositories/postgres/serialization.py",
+        "app/api.py",
+        "app/story_record_api.py",
+        "app/services/adaptation_service.py",
+        "app/services/screenplay_service.py",
+        "app/experimental/adaptation_projection.py",
+        "app/repositories/adaptation_versions.py",
+        "app/adaptation_api.py"
       ],
       "surface_ids": [
         "U13",
-        "FS_INTERACTION"
+        "FS_INTERACTION",
+        "FS_STORY_DATABASE",
+        "CORE_ADAPTATION"
       ],
       "verification": "PENDING_EXACT_FINAL_HEAD; mapping is not execution evidence"
     },
@@ -8232,6 +8283,7 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
         "app/experimental/ux_api.py",
         "frontend/src/experimental/uxClient.ts",
+        "frontend/src/ui/scopeLabels.ts",
         "app/experimental/writing_focus.py",
         "frontend/src/experimental/WritingFocusPanel.tsx",
         "frontend/src/Editor.tsx",
@@ -8262,6 +8314,7 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
         "app/experimental/ux_api.py",
         "frontend/src/experimental/uxClient.ts",
+        "frontend/src/ui/scopeLabels.ts",
         "frontend/src/drafts.ts",
         "frontend/src/ui/SaveControls.tsx",
         "app/autosave/durable.py",
@@ -8392,7 +8445,11 @@
         "app/experimental/first_use.py",
         "frontend/src/novel/EntryExperience.tsx",
         "app/experimental/first_use_api.py",
-        "frontend/src/ui/AppShell.tsx"
+        "frontend/src/ui/AppShell.tsx",
+        "app/services/adaptation_service.py",
+        "app/services/screenplay_service.py",
+        "app/repositories/adaptation_versions.py",
+        "app/adaptation_api.py"
       ],
       "surface_ids": [
         "U01",
@@ -8427,7 +8484,8 @@
         "U12",
         "CORE_ASSETS",
         "U10",
-        "U13"
+        "U13",
+        "CORE_ADAPTATION"
       ],
       "verification": "PENDING_EXACT_FINAL_HEAD; mapping is not execution evidence"
     },
@@ -8448,6 +8506,7 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
         "app/experimental/ux_api.py",
         "frontend/src/experimental/uxClient.ts",
+        "frontend/src/ui/scopeLabels.ts",
         "frontend/src/drafts.ts",
         "frontend/src/ui/SaveControls.tsx",
         "app/autosave/durable.py",
@@ -8578,7 +8637,11 @@
         "app/experimental/first_use.py",
         "frontend/src/novel/EntryExperience.tsx",
         "app/experimental/first_use_api.py",
-        "frontend/src/ui/AppShell.tsx"
+        "frontend/src/ui/AppShell.tsx",
+        "app/services/adaptation_service.py",
+        "app/services/screenplay_service.py",
+        "app/repositories/adaptation_versions.py",
+        "app/adaptation_api.py"
       ],
       "surface_ids": [
         "U01",
@@ -8613,7 +8676,8 @@
         "U12",
         "CORE_ASSETS",
         "U10",
-        "U13"
+        "U13",
+        "CORE_ADAPTATION"
       ],
       "verification": "PENDING_EXACT_FINAL_HEAD; mapping is not execution evidence"
     },
@@ -8634,6 +8698,7 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
         "app/experimental/ux_api.py",
         "frontend/src/experimental/uxClient.ts",
+        "frontend/src/ui/scopeLabels.ts",
         "frontend/src/drafts.ts",
         "frontend/src/ui/SaveControls.tsx",
         "app/autosave/durable.py",
@@ -8764,7 +8829,11 @@
         "app/experimental/first_use.py",
         "frontend/src/novel/EntryExperience.tsx",
         "app/experimental/first_use_api.py",
-        "frontend/src/ui/AppShell.tsx"
+        "frontend/src/ui/AppShell.tsx",
+        "app/services/adaptation_service.py",
+        "app/services/screenplay_service.py",
+        "app/repositories/adaptation_versions.py",
+        "app/adaptation_api.py"
       ],
       "surface_ids": [
         "U01",
@@ -8799,7 +8868,8 @@
         "U12",
         "CORE_ASSETS",
         "U10",
-        "U13"
+        "U13",
+        "CORE_ADAPTATION"
       ],
       "verification": "PENDING_EXACT_FINAL_HEAD; mapping is not execution evidence"
     },
@@ -8854,6 +8924,7 @@
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
         "app/experimental/ux_api.py",
         "frontend/src/experimental/uxClient.ts",
+        "frontend/src/ui/scopeLabels.ts",
         "app/experimental/search_sources.py",
         "frontend/src/experimental/WorkspaceSearch.tsx",
         "frontend/src/ui/FeatureLauncher.tsx",
@@ -9241,6 +9312,7 @@
         "app/application/collaboration_service.py",
         "app/collaboration_api.py",
         "app/api.py",
+        "frontend/src/ui/scopeLabels.ts",
         "app/experimental/writer_room_realtime.py",
         "app/experimental/offline_sync_production.py"
       ],
@@ -9352,6 +9424,7 @@
         "app/experimental/api.py",
         "app/experimental/capabilities.py",
         "frontend/src/experimental/api.ts",
+        "frontend/src/ui/scopeLabels.ts",
         "app/experimental/ux.py",
         "app/experimental/ux_api.py",
         "app/runtime_diagnostics.py",

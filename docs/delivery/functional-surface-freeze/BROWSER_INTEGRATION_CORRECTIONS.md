@@ -29,3 +29,23 @@ The Playwright Desktop Chrome device preset had overridden the top-level 1440×9
 ## Verification boundary
 
 All corrections require a new immutable source, complete unchanged-original-node collection, full File/real PostgreSQL regression, exact-head push/PR browser runs, and original protocol checks. No local Chromium was retried. Partial focused results do not establish final hosted success or a formal surface freeze.
+
+# Retained 90f functional-browser failures and form correction
+
+Head `90f211065fed2e2cd7c440365c949d954077bc50`, tree `01d0220e7e0c55cb27dbd1b144096a0fe975c949`, passed the branch two-client journeys, the original Interop HTTP/browser steps, the original browser suites and hosted File regression. The new functional journeys still failed on both [push 37588007360](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37588007360) and [PR 37588011969](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37588011969). These are retained failures, not recovered successes. At correction preparation, real PostgreSQL was still running.
+
+## Exact label lookup
+
+The installed Playwright selector helper includes a nested textarea's initial text and a select's option text when matching an implicit wrapping label. Testing Library's label helper excludes nested controls. Thus passing unit lookups did not establish that the browser's exact label locator could find the prefilled controls. Native accessible names were not shown to be incorrect. Explicit `aria-label` values, equal to the visible labels, now provide stable exact targeting in the original Adaptation blueprint and Story forms. No browser selector, assertion, timeout, or details-open behavior is changed by this correction. The new adaptation control test asserts the explicit labels remain independent of both initial and edited values.
+
+## Save and refresh lifecycle
+
+Story controls previously remained editable while their draft change handler intentionally refused edits during save/restore/query invalidation. Such input could appear entered but never be persisted as a local recovery draft. The existing forms now disable those controls for the actual operation-and-refresh interval; added tests exercise delayed settlement and reopening recovery. See `docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md`.
+
+The original Adaptation blueprint now also disables all edited fields while its own save is pending, holds a synchronous duplicate-submit guard, and awaits authoritative proposal-query invalidation before releasing the guard. Parent proposal commands likewise retain their existing lock until that refresh finishes. Focused tests cover delayed save, delayed refresh, a subsequent edit using the new revision, conflict retention, and duplicate command suppression. Backend revision/CAS protection remains authoritative; there is no automatic retry or rebase.
+
+## Honest selected-owner breadcrumbs
+
+A selected collaboration scope that contained IDs without optional display names was labelled with invented `默认故事线` / `主分支` fallbacks. All modules now share a small label resolver that uses the actual supplied name or exact selected ID; absent owners remain unselected. Only actual local manuscript scope retains the local mainline labels. No scope, authorization, branch identity, shell geometry, tokens, or visual layout changes. Added tests cover named, unnamed, missing, opaque-distinct and local owners.
+
+The correction remains pending new immutable-source browser and full regression evidence. Local focused tests cannot replace the required hosted Chromium or real PostgreSQL gates.

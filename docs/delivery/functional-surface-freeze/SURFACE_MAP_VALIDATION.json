@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-10-07T07:21:11.044322+00:00",
+  "generated_at_utc": "2026-10-07T08:07:06.382901+00:00",
   "kind": "STATIC_SOURCE_MAP_VALIDATION_NOT_RUNTIME_TEST",
   "status": "PASS",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "observed_checkpoint_sha": "d9d2df3a0a831a5bba6249793fd21946c17ce7d4",
+  "observed_checkpoint_sha": "90f211065fed2e2cd7c440365c949d954077bc50",
   "final_sha": null,
   "source_state": "ACTIVE_WORKTREE_NOT_FINAL_PIN",
   "counts": {
@@ -16,7 +16,7 @@
     "creative_lifecycle_dimensions_each": 13,
     "tsx_components": 156,
     "unassigned_tsx_components": 0,
-    "source_snapshot_files": 790
+    "source_snapshot_files": 795
   },
   "invariants": {
     "requirements_source_sha256": "MATCH",
@@ -70,38 +70,38 @@
   "artifacts": [
     {
       "path": "FINAL_PRODUCT_SURFACE_MAP.md",
-      "sha256": "fdf15d61eb5a4c2857a975514566f32c6c9563226c9b7322649cd9c9db190279",
-      "bytes": 275612
+      "sha256": "e49671840dd361a72611d6f53c2984b80e0dd7dc64210a4f9591010aa6daae51",
+      "bytes": 284299
     },
     {
       "path": "OPUS_UI_HANDOFF.md",
-      "sha256": "3fc6d7e643cb86c5b389f355201cf94e4c3288ee156a3826c0e28769adb68cf8",
-      "bytes": 66879
+      "sha256": "3639b770741a4b97d79ec61db2fd2b074a77a5ec852833519038f0495e3e7ced",
+      "bytes": 67612
     },
     {
       "path": "FUNCTIONAL_SURFACE_MATRIX.json",
-      "sha256": "a61c60cd0c67d419c123194dfe411ff309de90771708871b225cc9d4a5e35a8a",
-      "bytes": 302044
+      "sha256": "30334c810d2d9fd98465abc38d8196566fbf7984c7bb22d5a58dc37ccd590504",
+      "bytes": 311349
     },
     {
       "path": "FUNCTIONAL_SURFACE_MATRIX.md",
-      "sha256": "d88d94df3fc211f280c558203b2a1ff7d3d44ab0c8b8ac28d9cbb5f18dd56bad",
+      "sha256": "47e509b0ebc8f3ccde4948503cdfec0817d4c760498a6a0e79eabd55e89e9c7b",
       "bytes": 11437
     },
     {
       "path": "UI_SURFACE_CATALOG.json",
-      "sha256": "a101edb862b0582bf6e04174e5d0731648f8ca17eb57d56c4c619e61afe97d4f",
-      "bytes": 2355031
+      "sha256": "b5447c7955a87e627782fb0254aa721f94f3b5099aa297a83e3a125ccc01d6c1",
+      "bytes": 2372012
     },
     {
       "path": "UI_SURFACE_CATALOG.md",
-      "sha256": "079c3bdf23177ecddce915689615de3cb920ab3350d01feac211a582e5cfb60e",
-      "bytes": 391996
+      "sha256": "f6562a51c985e597de5118ab203f392cd36823a56a91ba06e894889002ccee44",
+      "bytes": 394709
     },
     {
       "path": "docs/delivery/functional-surface-freeze/REQUIREMENTS_REGISTER.json",
-      "sha256": "a94d6da4c656bb63512385c5cf3f2b999f416bc5e9caaa9a7b06628d71261605",
-      "bytes": 408122
+      "sha256": "7546569b7644f76121c0dffcabb206e31f7cc14be7c3125a1ff47ccc6eccdf90",
+      "bytes": 411145
     }
   ],
   "verification_boundary": "Only document/source invariants were checked by this validator. No unit/API/File/PostgreSQL/browser/model test is executed or passed by this receipt. Exact-final-head gates remain pending and owned by final hosted verification.",

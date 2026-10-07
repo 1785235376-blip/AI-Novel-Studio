@@ -3,12 +3,12 @@
   "phase": "Feature Completion & Functional Surface Freeze",
   "status": "SOURCE_MAP_REVIEW_PENDING",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "observed_checkpoint_sha": "d9d2df3a0a831a5bba6249793fd21946c17ce7d4",
+  "observed_checkpoint_sha": "90f211065fed2e2cd7c440365c949d954077bc50",
   "branch": "work/feature-completion-surface-freeze",
   "draft_pr": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/45",
   "source_state": "ACTIVE_WORKTREE_NOT_PINNED_FINAL_HEAD",
   "final_sha": null,
-  "generated_at_utc": "2026-10-07T07:21:07.933336+00:00",
+  "generated_at_utc": "2026-10-07T08:07:03.437076+00:00",
   "product_areas": [
     "Write",
     "Story",
@@ -104,6 +104,26 @@
       "real_postgres_gated": 131
     },
     "real_postgres_corrected_head": "PENDING_HOSTED_NOT_VERIFIED_LOCALLY"
+  },
+  "retained_90f_ui_failure": {
+    "head": "90f211065fed2e2cd7c440365c949d954077bc50",
+    "tree": "01d0220e7e0c55cb27dbd1b144096a0fe975c949",
+    "cloud_frontend": "FAILED_RETAINED_PUSH_AND_PR",
+    "real_postgres_at_correction": "RUNNING_NOT_FINAL",
+    "reports": [
+      "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md",
+      "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
+    ],
+    "correction": "UI-only explicit label matching, native edit/command disabled barriers through commit plus authoritative refresh, immediate post-settlement Story draft persistence, and honest known-name-or-ID scope labels. Original browser specs/assertions unchanged.",
+    "native_label_nuance": "The installed exact implicit-label selector included nested initial textarea/select option text; native accessible names were not shown incorrect.",
+    "api_application_source": "UNCHANGED_FROM_PREVIOUS_API_CATALOG",
+    "new_focused_tests": {
+      "story_lifecycle": 20,
+      "adaptation_lifecycle": 4,
+      "scope_labels": 4
+    },
+    "corrected_head_hosted": "PENDING",
+    "candidate": "WITHHELD_UNTIL_FULL_EXACT_HEAD_VERIFICATION"
   },
   "browser_gate_configs": [
     "frontend/playwright.surface.config.ts",
@@ -207,7 +227,8 @@
         "app/experimental/store.py",
         "app/experimental/api.py",
         "app/experimental/capabilities.py",
-        "frontend/src/experimental/api.ts"
+        "frontend/src/experimental/api.ts",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "api_sources": [
         "app/experimental/api.py"
@@ -226,7 +247,7 @@
         "frontend/src/ui/moduleRegistry.tsx"
       ],
       "flags": [],
-      "behavior": "Discovery schema v2 preserves legacy features and exposes all RUNTIME_FLAGS through runtime_features plus surface_features. New flags require explicit opt-in and dependencies; frontend normalizes runtime_features. Discovery does not imply provider availability; V1 acceptance mode disables opt-in.",
+      "behavior": "Discovery schema v2 preserves legacy features and exposes all RUNTIME_FLAGS through runtime_features plus surface_features. New flags require explicit opt-in and dependencies; frontend normalizes runtime_features. Discovery does not imply provider availability; V1 acceptance mode disables opt-in. Shared selected-owner labels use supplied nonblank names or exact known IDs; a selected branch without metadata is never called mainline/default storyline. Missing owner IDs stay unselected; local mainline labels apply only to an actual unscoped local manuscript.",
       "lifecycle": "No external execution or mutation: cancel is request abort; restart rereads host configuration. Original forty-package inventory remains unchanged.",
       "navigation": [],
       "test_sources": [
@@ -235,6 +256,7 @@
         "tests/test_r4_capabilities.py",
         "frontend/src/experimental/api.surface-flags.test.ts",
         "tests/test_surface_api_catalog.py",
+        "frontend/src/ui/scopeLabels.test.ts",
         "frontend/src/experimental/DeferredExperimentalWorkbench.test.tsx",
         "frontend/src/experimental/shared.test.tsx",
         "frontend/src/ui/ModuleWorkspaceRoutes.test.tsx"
@@ -428,7 +450,8 @@
         "frontend/src/App.test.tsx",
         "frontend/src/ui/SaveControls.test.tsx",
         "frontend/src/ConflictDialog.test.tsx",
-        "frontend/src/RevisionPanel.test.tsx"
+        "frontend/src/RevisionPanel.test.tsx",
+        "frontend/src/novel/StoryRecordLifecycle.test.tsx"
       ],
       "entry_kind": "ENGINEERING_UI",
       "profile": "UI_INTERACTION",
@@ -782,7 +805,8 @@
         "frontend/src/App.tsx",
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
         "app/experimental/ux_api.py",
-        "frontend/src/experimental/uxClient.ts"
+        "frontend/src/experimental/uxClient.ts",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "api_sources": [
         "app/experimental/ux_api.py"
@@ -794,7 +818,7 @@
       "flags": [
         "workspace_tools_v2"
       ],
-      "behavior": "Actor/project/scope-bound resume row stores chapter/version/anchor, layout, reference pointers and original unfinished-task IDs. Resolve rechecks original target authority before navigation.",
+      "behavior": "Actor/project/scope-bound resume row stores chapter/version/anchor, layout, reference pointers and original unfinished-task IDs. Resolve rechecks original target authority before navigation. Shared selected-owner labels use supplied nonblank names or exact known IDs; a selected branch without metadata is never called mainline/default storyline. Missing owner IDs stay unselected; local mainline labels apply only to an actual unscoped local manuscript.",
       "lifecycle": "CAS save/reset-layout; persisted history; explicit reopen or open-current; dirty/IME/target-draft guards. Restart reads existing pointers and never dispatches a model.",
       "navigation": [
         "U02",
@@ -818,7 +842,8 @@
         "frontend/src/AppAdaptationNavigation.test.tsx",
         "frontend/src/AppAuthorTaskNavigation.test.tsx",
         "frontend/src/AppDraftRecovery.test.tsx",
-        "frontend/src/App.test.tsx"
+        "frontend/src/App.test.tsx",
+        "frontend/src/ui/scopeLabels.test.ts"
       ],
       "entry_kind": "ENGINEERING_UI",
       "profile": "UI_INTERACTION",
@@ -5639,7 +5664,9 @@
         "frontend/src/Editor.typography.test.ts",
         "frontend/src/ui/AppShell.test.tsx",
         "frontend/src/ui/primitives.test.tsx",
-        "frontend/src/experimental/WorkspaceInteractionPanel.test.tsx"
+        "frontend/src/experimental/WorkspaceInteractionPanel.test.tsx",
+        "frontend/src/novel/StoryRecordLifecycle.test.tsx",
+        "frontend/src/novel/AdaptationLifecycleControls.test.tsx"
       ],
       "entry_kind": "ENGINEERING_UI",
       "profile": "UI_INTERACTION",
@@ -5747,7 +5774,9 @@
         "FSR-294",
         "FSR-306"
       ],
-      "owner_evidence_files": [],
+      "owner_evidence_files": [
+        "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
+      ],
       "owner_evidence_note": "Prior/source-bound focused receipts only; do not promote reported passes to an unverified later or final SHA.",
       "api_inventory_authority": "API_CATALOG.json / API_CATALOG.md with digest-bound API_CATALOG_DETAIL.json.gz and API_OPENAPI.json.gz is the authoritative actual mounted inventory; these AST source handlers can omit generated routes and are not an independent endpoint count."
     },
@@ -32587,7 +32616,7 @@
         "finding_review_v1"
       ],
       "behavior": "Original foreshadowing row receives private version/source/provenance/history/feedback metadata; original narrative event/proposal identity stays distinct. Versioned editor save binds expected digest and version; narrative findings use source-bound original FindingReviewService, not a Judge substitute.",
-      "lifecycle": "Retained 20-version history, restore to new version, explicit stale-source refresh, snapshot-bound feedback and actor/project/record local draft recovery. Legacy saves advance opted-in version/history; flag OFF retains legacy editor. Branch headers cannot access project-global rows. Exact source navigation retains dirty/IME/new-navigation guards; synchronous cancel never rolls back a committed save.",
+      "lifecycle": "Retained 20-version history, restore to new version, explicit stale-source refresh, snapshot-bound feedback and actor/project/record local draft recovery. Legacy saves advance opted-in version/history; flag OFF retains legacy editor. Branch headers cannot access project-global rows. Exact source navigation retains dirty/IME/new-navigation guards; synchronous cancel never rolls back a committed save. Native controls remain disabled through SAVE/RESTORE/FEEDBACK and authoritative query settlement. The first allowed post-settlement edit is synchronously persisted under the returned digest/version for explicit local recovery; no accepted keystroke is silently ignored during a busy state. Explicit labels match visible text independently of prefilled values/options.",
       "navigation": [
         "FS_CONTINUITY",
         "FS_PLANNING",
@@ -32617,7 +32646,8 @@
         "frontend/src/novel/ContinuityCheckPanel.test.tsx",
         "frontend/src/novel/FindingReviewPanel.test.tsx",
         "frontend/src/novel/StoryRecordNavigation.test.tsx",
-        "frontend/tests/e2e/surface-freeze-story-records.spec.ts"
+        "frontend/tests/e2e/surface-freeze-story-records.spec.ts",
+        "frontend/src/novel/StoryRecordLifecycle.test.tsx"
       ],
       "entry_kind": "ENGINEERING_UI",
       "profile": "ORIGINAL_AUTHORITY",
@@ -32628,7 +32658,8 @@
       "current_entry": "Shared AppShell / existing Foreshadowing / Narrative progress",
       "contract_files": [
         "contracts/functional-surfaces/findings-canon.v1.json",
-        "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md"
+        "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md",
+        "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md"
       ],
       "data_model_and_operations": [
         {
@@ -33843,7 +33874,8 @@
       "state_contract": {
         "Loading": {
           "presentation": "Show loading and current captured scope; prevent duplicate mutation; do not erase recoverable draft.",
-          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING"
+          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING",
+          "owner_behavior": "Native fields/commands stay disabled until server mutation and authoritative query invalidation/settlement finish"
         },
         "Empty": {
           "presentation": "Distinguish no authorized/current rows from no project, disabled owner and missing provider. Provide original create/import/select entry only when allowed.",
@@ -33867,7 +33899,8 @@
         },
         "Conflict": {
           "presentation": "Keep unsaved intent, show original expected/current revision or stale-source explanation; no silent overwrite/rebase/replay.",
-          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING"
+          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING",
+          "owner_behavior": "Release busy controls and retain the user draft and original conflict/recovery semantics"
         },
         "Review": {
           "presentation": "Display exact original-owner source/result/version/evidence; require explicit allowed action. Review, approval and application remain separate.",
@@ -33875,7 +33908,8 @@
         },
         "Recovery": {
           "presentation": "Show interrupted/corrupt/uncertain state and original history/journal; explicit recovery is not automatic retry.",
-          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING"
+          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING",
+          "owner_behavior": "First new edit persists immediately with returned record digest/version for explicit restart recovery"
         },
         "PARTIAL": {
           "presentation": "Keep capability and verification limitation next to the operation; local/contract/mock evidence never implies real model or target-platform acceptance.",
@@ -33899,9 +33933,17 @@
         "flags": "Existing product/runtime gate, plus additive experimental feature opt-in where listed; unsupported provider/runtime stays missing configuration",
         "conflict": "Original 409/428/version errors preserve user work and require explicit resolution"
       },
-      "cancel": "Retained 20-version history, restore to new version, explicit stale-source refresh, snapshot-bound feedback and actor/project/record local draft recovery. Legacy saves advance opted-in version/history; flag OFF retains legacy editor. Branch headers cannot access project-global rows. Exact source navigation retains dirty/IME/new-navigation guards; synchronous cancel never rolls back a committed save.",
-      "resume_recovery": "Retained 20-version history, restore to new version, explicit stale-source refresh, snapshot-bound feedback and actor/project/record local draft recovery. Legacy saves advance opted-in version/history; flag OFF retains legacy editor. Branch headers cannot access project-global rows. Exact source navigation retains dirty/IME/new-navigation guards; synchronous cancel never rolls back a committed save.",
-      "restart": "Retained 20-version history, restore to new version, explicit stale-source refresh, snapshot-bound feedback and actor/project/record local draft recovery. Legacy saves advance opted-in version/history; flag OFF retains legacy editor. Branch headers cannot access project-global rows. Exact source navigation retains dirty/IME/new-navigation guards; synchronous cancel never rolls back a committed save.",
+      "ui_mutation_barrier": {
+        "scope": "Original five Story forms and their shared version wrapper",
+        "busy_boundary": "Native fields/commands stay disabled until server mutation and authoritative query invalidation/settlement finish",
+        "after_settlement": "First new edit persists immediately with returned record digest/version for explicit restart recovery",
+        "on_error": "Release busy controls and retain the user draft and original conflict/recovery semantics",
+        "labels": "Explicit aria-label equals visible label, independent of prefilled textarea text and select options",
+        "label_evidence_limit": "Installed Playwright exact implicit-label matching included nested initial/option text; native accessible names were not shown wrong. No generalized screen-reader defect or acceptance claim."
+      },
+      "cancel": "Retained 20-version history, restore to new version, explicit stale-source refresh, snapshot-bound feedback and actor/project/record local draft recovery. Legacy saves advance opted-in version/history; flag OFF retains legacy editor. Branch headers cannot access project-global rows. Exact source navigation retains dirty/IME/new-navigation guards; synchronous cancel never rolls back a committed save. Native controls remain disabled through SAVE/RESTORE/FEEDBACK and authoritative query settlement. The first allowed post-settlement edit is synchronously persisted under the returned digest/version for explicit local recovery; no accepted keystroke is silently ignored during a busy state. Explicit labels match visible text independently of prefilled values/options.",
+      "resume_recovery": "Retained 20-version history, restore to new version, explicit stale-source refresh, snapshot-bound feedback and actor/project/record local draft recovery. Legacy saves advance opted-in version/history; flag OFF retains legacy editor. Branch headers cannot access project-global rows. Exact source navigation retains dirty/IME/new-navigation guards; synchronous cancel never rolls back a committed save. Native controls remain disabled through SAVE/RESTORE/FEEDBACK and authoritative query settlement. The first allowed post-settlement edit is synchronously persisted under the returned digest/version for explicit local recovery; no accepted keystroke is silently ignored during a busy state. Explicit labels match visible text independently of prefilled values/options.",
+      "restart": "Retained 20-version history, restore to new version, explicit stale-source refresh, snapshot-bound feedback and actor/project/record local draft recovery. Legacy saves advance opted-in version/history; flag OFF retains legacy editor. Branch headers cannot access project-global rows. Exact source navigation retains dirty/IME/new-navigation guards; synchronous cancel never rolls back a committed save. Native controls remain disabled through SAVE/RESTORE/FEEDBACK and authoritative query settlement. The first allowed post-settlement edit is synchronously persisted under the returned digest/version for explicit local recovery; no accepted keystroke is silently ignored during a busy state. Explicit labels match visible text independently of prefilled values/options.",
       "implementation_status": "PARTIAL",
       "verification": {
         "unit": "PENDING_EXACT_FINAL_HEAD",
@@ -33923,7 +33965,8 @@
         "FINAL_PRODUCT_SURFACE_MAP.md",
         "OPUS_UI_HANDOFF.md",
         "contracts/functional-surfaces/findings-canon.v1.json",
-        "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md"
+        "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md",
+        "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md"
       ],
       "requirements": [
         "FSR-276",
@@ -33953,7 +33996,8 @@
       ],
       "owner_evidence_files": [
         "docs/delivery/functional-surface-freeze/FINDINGS_AND_CANON_VERIFICATION.json",
-        "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md"
+        "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md",
+        "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md"
       ],
       "owner_evidence_note": "Prior/source-bound focused receipts only; do not promote reported passes to an unverified later or final SHA.",
       "api_inventory_authority": "API_CATALOG.json / API_CATALOG.md with digest-bound API_CATALOG_DETAIL.json.gz and API_OPENAPI.json.gz is the authoritative actual mounted inventory; these AST source handlers can omit generated routes and are not an independent endpoint count."
@@ -33995,7 +34039,7 @@
         "world_character_engines_v2"
       ],
       "behavior": "Original Timeline row identity/public serialization remains authority; private version/source/provenance/history metadata adds expected-digest + expected-version CAS. World HISTORY is a separate reviewed chronology projection, and story time is distinct from media rational time.",
-      "lifecycle": "File atomic original-row replacement and PostgreSQL project/source locks; 20-version history, restore to new current version, current/stale/unlinked sources, terminal snapshot-bound feedback. Legacy saves advance opted-in history. Explicit draft/conflict recovery and exact source navigation retain manuscript dirty/IME guards; project-only authorization rejects branch headers. Continuity Timeline evidence uses the same original table through a narrow public-ID/storage-ID adapter: UUID events retain keys, opaque IDs use deterministic UUIDv5, public project IDs resolve as slugs, and same-owner retries are append-only. Collision, ambiguity or inconsistent/foreign owner metadata is rejected without rewrite.",
+      "lifecycle": "File atomic original-row replacement and PostgreSQL project/source locks; 20-version history, restore to new current version, current/stale/unlinked sources, terminal snapshot-bound feedback. Legacy saves advance opted-in history. Explicit draft/conflict recovery and exact source navigation retain manuscript dirty/IME guards; project-only authorization rejects branch headers. Continuity Timeline evidence uses the same original table through a narrow public-ID/storage-ID adapter: UUID events retain keys, opaque IDs use deterministic UUIDv5, public project IDs resolve as slugs, and same-owner retries are append-only. Collision, ambiguity or inconsistent/foreign owner metadata is rejected without rewrite. Native controls remain disabled through SAVE/RESTORE/FEEDBACK and authoritative query settlement. The first allowed post-settlement edit is synchronously persisted under the returned digest/version for explicit local recovery; no accepted keystroke is silently ignored during a busy state. Explicit labels match visible text independently of prefilled values/options.",
       "navigation": [
         "FS_CONTINUITY",
         "A04",
@@ -34032,7 +34076,8 @@
         "frontend/src/novel/WorldTimelineView.test.tsx",
         "frontend/src/experimental/WorldPanel.test.tsx",
         "frontend/src/novel/StoryRecordNavigation.test.tsx",
-        "frontend/tests/e2e/surface-freeze-story-records.spec.ts"
+        "frontend/tests/e2e/surface-freeze-story-records.spec.ts",
+        "frontend/src/novel/StoryRecordLifecycle.test.tsx"
       ],
       "entry_kind": "ENGINEERING_UI",
       "profile": "ORIGINAL_AUTHORITY",
@@ -34043,7 +34088,8 @@
       "current_entry": "Shared AppShell / NOVEL experimental workbench / Story timeline / World chronology",
       "contract_files": [
         "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md",
-        "docs/SURFACE_CONTINUITY_TIMELINE_IDENTITY.md"
+        "docs/SURFACE_CONTINUITY_TIMELINE_IDENTITY.md",
+        "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md"
       ],
       "data_model_and_operations": [
         {
@@ -35503,7 +35549,8 @@
       "state_contract": {
         "Loading": {
           "presentation": "Show loading and current captured scope; prevent duplicate mutation; do not erase recoverable draft.",
-          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING"
+          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING",
+          "owner_behavior": "Native fields/commands stay disabled until server mutation and authoritative query invalidation/settlement finish"
         },
         "Empty": {
           "presentation": "Distinguish no authorized/current rows from no project, disabled owner and missing provider. Provide original create/import/select entry only when allowed.",
@@ -35527,7 +35574,8 @@
         },
         "Conflict": {
           "presentation": "Keep unsaved intent, show original expected/current revision or stale-source explanation; no silent overwrite/rebase/replay.",
-          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING"
+          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING",
+          "owner_behavior": "Release busy controls and retain the user draft and original conflict/recovery semantics"
         },
         "Review": {
           "presentation": "Display exact original-owner source/result/version/evidence; require explicit allowed action. Review, approval and application remain separate.",
@@ -35535,7 +35583,8 @@
         },
         "Recovery": {
           "presentation": "Show interrupted/corrupt/uncertain state and original history/journal; explicit recovery is not automatic retry.",
-          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING"
+          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING",
+          "owner_behavior": "First new edit persists immediately with returned record digest/version for explicit restart recovery"
         },
         "PARTIAL": {
           "presentation": "Keep capability and verification limitation next to the operation; local/contract/mock evidence never implies real model or target-platform acceptance.",
@@ -35559,9 +35608,17 @@
         "flags": "Existing product/runtime gate, plus additive experimental feature opt-in where listed; unsupported provider/runtime stays missing configuration",
         "conflict": "Original 409/428/version errors preserve user work and require explicit resolution"
       },
-      "cancel": "File atomic original-row replacement and PostgreSQL project/source locks; 20-version history, restore to new current version, current/stale/unlinked sources, terminal snapshot-bound feedback. Legacy saves advance opted-in history. Explicit draft/conflict recovery and exact source navigation retain manuscript dirty/IME guards; project-only authorization rejects branch headers. Continuity Timeline evidence uses the same original table through a narrow public-ID/storage-ID adapter: UUID events retain keys, opaque IDs use deterministic UUIDv5, public project IDs resolve as slugs, and same-owner retries are append-only. Collision, ambiguity or inconsistent/foreign owner metadata is rejected without rewrite.",
-      "resume_recovery": "File atomic original-row replacement and PostgreSQL project/source locks; 20-version history, restore to new current version, current/stale/unlinked sources, terminal snapshot-bound feedback. Legacy saves advance opted-in history. Explicit draft/conflict recovery and exact source navigation retain manuscript dirty/IME guards; project-only authorization rejects branch headers. Continuity Timeline evidence uses the same original table through a narrow public-ID/storage-ID adapter: UUID events retain keys, opaque IDs use deterministic UUIDv5, public project IDs resolve as slugs, and same-owner retries are append-only. Collision, ambiguity or inconsistent/foreign owner metadata is rejected without rewrite.",
-      "restart": "File atomic original-row replacement and PostgreSQL project/source locks; 20-version history, restore to new current version, current/stale/unlinked sources, terminal snapshot-bound feedback. Legacy saves advance opted-in history. Explicit draft/conflict recovery and exact source navigation retain manuscript dirty/IME guards; project-only authorization rejects branch headers. Continuity Timeline evidence uses the same original table through a narrow public-ID/storage-ID adapter: UUID events retain keys, opaque IDs use deterministic UUIDv5, public project IDs resolve as slugs, and same-owner retries are append-only. Collision, ambiguity or inconsistent/foreign owner metadata is rejected without rewrite.",
+      "ui_mutation_barrier": {
+        "scope": "Original five Story forms and their shared version wrapper",
+        "busy_boundary": "Native fields/commands stay disabled until server mutation and authoritative query invalidation/settlement finish",
+        "after_settlement": "First new edit persists immediately with returned record digest/version for explicit restart recovery",
+        "on_error": "Release busy controls and retain the user draft and original conflict/recovery semantics",
+        "labels": "Explicit aria-label equals visible label, independent of prefilled textarea text and select options",
+        "label_evidence_limit": "Installed Playwright exact implicit-label matching included nested initial/option text; native accessible names were not shown wrong. No generalized screen-reader defect or acceptance claim."
+      },
+      "cancel": "File atomic original-row replacement and PostgreSQL project/source locks; 20-version history, restore to new current version, current/stale/unlinked sources, terminal snapshot-bound feedback. Legacy saves advance opted-in history. Explicit draft/conflict recovery and exact source navigation retain manuscript dirty/IME guards; project-only authorization rejects branch headers. Continuity Timeline evidence uses the same original table through a narrow public-ID/storage-ID adapter: UUID events retain keys, opaque IDs use deterministic UUIDv5, public project IDs resolve as slugs, and same-owner retries are append-only. Collision, ambiguity or inconsistent/foreign owner metadata is rejected without rewrite. Native controls remain disabled through SAVE/RESTORE/FEEDBACK and authoritative query settlement. The first allowed post-settlement edit is synchronously persisted under the returned digest/version for explicit local recovery; no accepted keystroke is silently ignored during a busy state. Explicit labels match visible text independently of prefilled values/options.",
+      "resume_recovery": "File atomic original-row replacement and PostgreSQL project/source locks; 20-version history, restore to new current version, current/stale/unlinked sources, terminal snapshot-bound feedback. Legacy saves advance opted-in history. Explicit draft/conflict recovery and exact source navigation retain manuscript dirty/IME guards; project-only authorization rejects branch headers. Continuity Timeline evidence uses the same original table through a narrow public-ID/storage-ID adapter: UUID events retain keys, opaque IDs use deterministic UUIDv5, public project IDs resolve as slugs, and same-owner retries are append-only. Collision, ambiguity or inconsistent/foreign owner metadata is rejected without rewrite. Native controls remain disabled through SAVE/RESTORE/FEEDBACK and authoritative query settlement. The first allowed post-settlement edit is synchronously persisted under the returned digest/version for explicit local recovery; no accepted keystroke is silently ignored during a busy state. Explicit labels match visible text independently of prefilled values/options.",
+      "restart": "File atomic original-row replacement and PostgreSQL project/source locks; 20-version history, restore to new current version, current/stale/unlinked sources, terminal snapshot-bound feedback. Legacy saves advance opted-in history. Explicit draft/conflict recovery and exact source navigation retain manuscript dirty/IME guards; project-only authorization rejects branch headers. Continuity Timeline evidence uses the same original table through a narrow public-ID/storage-ID adapter: UUID events retain keys, opaque IDs use deterministic UUIDv5, public project IDs resolve as slugs, and same-owner retries are append-only. Collision, ambiguity or inconsistent/foreign owner metadata is rejected without rewrite. Native controls remain disabled through SAVE/RESTORE/FEEDBACK and authoritative query settlement. The first allowed post-settlement edit is synchronously persisted under the returned digest/version for explicit local recovery; no accepted keystroke is silently ignored during a busy state. Explicit labels match visible text independently of prefilled values/options.",
       "implementation_status": "PARTIAL",
       "verification": {
         "unit": "PENDING_EXACT_FINAL_HEAD",
@@ -35583,7 +35640,8 @@
         "FINAL_PRODUCT_SURFACE_MAP.md",
         "OPUS_UI_HANDOFF.md",
         "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md",
-        "docs/SURFACE_CONTINUITY_TIMELINE_IDENTITY.md"
+        "docs/SURFACE_CONTINUITY_TIMELINE_IDENTITY.md",
+        "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md"
       ],
       "requirements": [
         "FSR-276",
@@ -35613,7 +35671,8 @@
       ],
       "owner_evidence_files": [
         "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md",
-        "docs/SURFACE_CONTINUITY_TIMELINE_IDENTITY.md"
+        "docs/SURFACE_CONTINUITY_TIMELINE_IDENTITY.md",
+        "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md"
       ],
       "owner_evidence_note": "Prior/source-bound focused receipts only; do not promote reported passes to an unverified later or final SHA.",
       "api_inventory_authority": "API_CATALOG.json / API_CATALOG.md with digest-bound API_CATALOG_DETAIL.json.gz and API_OPENAPI.json.gz is the authoritative actual mounted inventory; these AST source handlers can omit generated routes and are not an independent endpoint count."
@@ -35650,7 +35709,7 @@
         "story_record_versions_v1"
       ],
       "behavior": "Original Character/Location/Relationship rows now share the existing five-kind StoryRecord version owner with Timeline/Foreshadowing. Flag-ON current project editors require exact digest and version; original IDs, sparse public shape, opaque imported fields and privacy survive guarded edits/history/restore. World-rule proposal review retains its original separate owner.",
-      "lifecycle": "Original File project lock/atomic replacement and PostgreSQL original-row transaction/CAS; 20 retained snapshots, restore to new current version, terminal source-bound feedback and explicit stale-source refresh. Relationships pin exact Character/Timeline identities; exact known Character location pins its digest, historical free text remains unlinked. Owner-keyed local draft/conflict recovery excludes secrets. Legacy OFF/component-only callbacks and historical direct clients remain compatible, advancing existing version metadata. Project Story authority rejects branch-only scope.",
+      "lifecycle": "Original File project lock/atomic replacement and PostgreSQL original-row transaction/CAS; 20 retained snapshots, restore to new current version, terminal source-bound feedback and explicit stale-source refresh. Relationships pin exact Character/Timeline identities; exact known Character location pins its digest, historical free text remains unlinked. Owner-keyed local draft/conflict recovery excludes secrets. Legacy OFF/component-only callbacks and historical direct clients remain compatible, advancing existing version metadata. Project Story authority rejects branch-only scope. Native controls remain disabled through SAVE/RESTORE/FEEDBACK and authoritative query settlement. The first allowed post-settlement edit is synchronously persisted under the returned digest/version for explicit local recovery; no accepted keystroke is silently ignored during a busy state. Explicit labels match visible text independently of prefilled values/options.",
       "navigation": [
         "FS_TIMELINE",
         "FS_FORESHADOWING",
@@ -35676,7 +35735,8 @@
         "frontend/src/novel/StoryRecordNavigation.test.tsx",
         "tests/test_surface_core_story_records.py",
         "frontend/src/novel/StoryCoreRecordVersionEditor.test.tsx",
-        "frontend/tests/e2e/surface-freeze-core-story-records.spec.ts"
+        "frontend/tests/e2e/surface-freeze-core-story-records.spec.ts",
+        "frontend/src/novel/StoryRecordLifecycle.test.tsx"
       ],
       "entry_kind": "ENGINEERING_UI",
       "profile": "ORIGINAL_AUTHORITY",
@@ -35686,7 +35746,8 @@
       ],
       "current_entry": "Shared AppShell / existing Characters / Locations / Relationships / World rules",
       "contract_files": [
-        "docs/CORE_STORY_RECORD_VERSION_CLOSURE.md"
+        "docs/CORE_STORY_RECORD_VERSION_CLOSURE.md",
+        "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md"
       ],
       "data_model_and_operations": [
         {
@@ -36048,7 +36109,8 @@
       "state_contract": {
         "Loading": {
           "presentation": "Show loading and current captured scope; prevent duplicate mutation; do not erase recoverable draft.",
-          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING"
+          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING",
+          "owner_behavior": "Native fields/commands stay disabled until server mutation and authoritative query invalidation/settlement finish"
         },
         "Empty": {
           "presentation": "Distinguish no authorized/current rows from no project, disabled owner and missing provider. Provide original create/import/select entry only when allowed.",
@@ -36072,7 +36134,8 @@
         },
         "Conflict": {
           "presentation": "Keep unsaved intent, show original expected/current revision or stale-source explanation; no silent overwrite/rebase/replay.",
-          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING"
+          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING",
+          "owner_behavior": "Release busy controls and retain the user draft and original conflict/recovery semantics"
         },
         "Review": {
           "presentation": "Display exact original-owner source/result/version/evidence; require explicit allowed action. Review, approval and application remain separate.",
@@ -36080,7 +36143,8 @@
         },
         "Recovery": {
           "presentation": "Show interrupted/corrupt/uncertain state and original history/journal; explicit recovery is not automatic retry.",
-          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING"
+          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING",
+          "owner_behavior": "First new edit persists immediately with returned record digest/version for explicit restart recovery"
         },
         "PARTIAL": {
           "presentation": "Keep capability and verification limitation next to the operation; local/contract/mock evidence never implies real model or target-platform acceptance.",
@@ -36104,9 +36168,17 @@
         "flags": "Existing product/runtime gate, plus additive experimental feature opt-in where listed; unsupported provider/runtime stays missing configuration",
         "conflict": "Original 409/428/version errors preserve user work and require explicit resolution"
       },
-      "cancel": "Original File project lock/atomic replacement and PostgreSQL original-row transaction/CAS; 20 retained snapshots, restore to new current version, terminal source-bound feedback and explicit stale-source refresh. Relationships pin exact Character/Timeline identities; exact known Character location pins its digest, historical free text remains unlinked. Owner-keyed local draft/conflict recovery excludes secrets. Legacy OFF/component-only callbacks and historical direct clients remain compatible, advancing existing version metadata. Project Story authority rejects branch-only scope.",
-      "resume_recovery": "Original File project lock/atomic replacement and PostgreSQL original-row transaction/CAS; 20 retained snapshots, restore to new current version, terminal source-bound feedback and explicit stale-source refresh. Relationships pin exact Character/Timeline identities; exact known Character location pins its digest, historical free text remains unlinked. Owner-keyed local draft/conflict recovery excludes secrets. Legacy OFF/component-only callbacks and historical direct clients remain compatible, advancing existing version metadata. Project Story authority rejects branch-only scope.",
-      "restart": "Original File project lock/atomic replacement and PostgreSQL original-row transaction/CAS; 20 retained snapshots, restore to new current version, terminal source-bound feedback and explicit stale-source refresh. Relationships pin exact Character/Timeline identities; exact known Character location pins its digest, historical free text remains unlinked. Owner-keyed local draft/conflict recovery excludes secrets. Legacy OFF/component-only callbacks and historical direct clients remain compatible, advancing existing version metadata. Project Story authority rejects branch-only scope.",
+      "ui_mutation_barrier": {
+        "scope": "Original five Story forms and their shared version wrapper",
+        "busy_boundary": "Native fields/commands stay disabled until server mutation and authoritative query invalidation/settlement finish",
+        "after_settlement": "First new edit persists immediately with returned record digest/version for explicit restart recovery",
+        "on_error": "Release busy controls and retain the user draft and original conflict/recovery semantics",
+        "labels": "Explicit aria-label equals visible label, independent of prefilled textarea text and select options",
+        "label_evidence_limit": "Installed Playwright exact implicit-label matching included nested initial/option text; native accessible names were not shown wrong. No generalized screen-reader defect or acceptance claim."
+      },
+      "cancel": "Original File project lock/atomic replacement and PostgreSQL original-row transaction/CAS; 20 retained snapshots, restore to new current version, terminal source-bound feedback and explicit stale-source refresh. Relationships pin exact Character/Timeline identities; exact known Character location pins its digest, historical free text remains unlinked. Owner-keyed local draft/conflict recovery excludes secrets. Legacy OFF/component-only callbacks and historical direct clients remain compatible, advancing existing version metadata. Project Story authority rejects branch-only scope. Native controls remain disabled through SAVE/RESTORE/FEEDBACK and authoritative query settlement. The first allowed post-settlement edit is synchronously persisted under the returned digest/version for explicit local recovery; no accepted keystroke is silently ignored during a busy state. Explicit labels match visible text independently of prefilled values/options.",
+      "resume_recovery": "Original File project lock/atomic replacement and PostgreSQL original-row transaction/CAS; 20 retained snapshots, restore to new current version, terminal source-bound feedback and explicit stale-source refresh. Relationships pin exact Character/Timeline identities; exact known Character location pins its digest, historical free text remains unlinked. Owner-keyed local draft/conflict recovery excludes secrets. Legacy OFF/component-only callbacks and historical direct clients remain compatible, advancing existing version metadata. Project Story authority rejects branch-only scope. Native controls remain disabled through SAVE/RESTORE/FEEDBACK and authoritative query settlement. The first allowed post-settlement edit is synchronously persisted under the returned digest/version for explicit local recovery; no accepted keystroke is silently ignored during a busy state. Explicit labels match visible text independently of prefilled values/options.",
+      "restart": "Original File project lock/atomic replacement and PostgreSQL original-row transaction/CAS; 20 retained snapshots, restore to new current version, terminal source-bound feedback and explicit stale-source refresh. Relationships pin exact Character/Timeline identities; exact known Character location pins its digest, historical free text remains unlinked. Owner-keyed local draft/conflict recovery excludes secrets. Legacy OFF/component-only callbacks and historical direct clients remain compatible, advancing existing version metadata. Project Story authority rejects branch-only scope. Native controls remain disabled through SAVE/RESTORE/FEEDBACK and authoritative query settlement. The first allowed post-settlement edit is synchronously persisted under the returned digest/version for explicit local recovery; no accepted keystroke is silently ignored during a busy state. Explicit labels match visible text independently of prefilled values/options.",
       "implementation_status": "PARTIAL",
       "verification": {
         "unit": "PENDING_EXACT_FINAL_HEAD",
@@ -36127,12 +36199,14 @@
       "documents": [
         "FINAL_PRODUCT_SURFACE_MAP.md",
         "OPUS_UI_HANDOFF.md",
-        "docs/CORE_STORY_RECORD_VERSION_CLOSURE.md"
+        "docs/CORE_STORY_RECORD_VERSION_CLOSURE.md",
+        "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md"
       ],
       "requirements": [
         "FSR-275",
         "FSR-276",
         "FSR-277",
+        "FSR-289",
         "FSR-266",
         "FSR-267",
         "FSR-292",
@@ -36141,7 +36215,8 @@
         "FSR-298"
       ],
       "owner_evidence_files": [
-        "docs/CORE_STORY_RECORD_VERSION_CLOSURE.md"
+        "docs/CORE_STORY_RECORD_VERSION_CLOSURE.md",
+        "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md"
       ],
       "owner_evidence_note": "Prior/source-bound focused receipts only; do not promote reported passes to an unverified later or final SHA.",
       "api_inventory_authority": "API_CATALOG.json / API_CATALOG.md with digest-bound API_CATALOG_DETAIL.json.gz and API_OPENAPI.json.gz is the authoritative actual mounted inventory; these AST source handlers can omit generated routes and are not an independent endpoint count.",
@@ -43642,7 +43717,8 @@
         "app/collaboration_admin.py",
         "app/application/collaboration_service.py",
         "app/collaboration_api.py",
-        "app/api.py"
+        "app/api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "api_sources": [
         "app/collaboration_api.py",
@@ -43656,7 +43732,7 @@
       "flags": [
         "ENABLE_COLLABORATION_RUNTIME"
       ],
-      "behavior": "Trusted session/current membership and workspace/project/storyline/branch scope remain authority; roles or hidden controls in browser are never grants. Original audit and revision-CAS boundaries retained.",
+      "behavior": "Trusted session/current membership and workspace/project/storyline/branch scope remain authority; roles or hidden controls in browser are never grants. Original audit and revision-CAS boundaries retained. Shared selected-owner labels use supplied nonblank names or exact known IDs; a selected branch without metadata is never called mainline/default storyline. Missing owner IDs stay unselected; local mainline labels apply only to an actual unscoped local manuscript.",
       "lifecycle": "Missing branch document is unavailable, never mainline fallback. Revocation ends current access; reconnect reauthorizes. Administrative operations preserve their original confirmations/recovery semantics.",
       "navigation": [
         "FS_BRANCH",
@@ -43680,7 +43756,8 @@
         "tests/test_v059_collaboration_admin.py",
         "tests/test_v060_collaboration_content_api.py",
         "frontend/src/WorkspaceManagement.test.tsx",
-        "frontend/src/PermissionManagement.test.tsx"
+        "frontend/src/PermissionManagement.test.tsx",
+        "frontend/src/ui/scopeLabels.test.ts"
       ],
       "entry_kind": "ENGINEERING_UI",
       "profile": "ORIGINAL_AUTHORITY",
@@ -44130,7 +44207,9 @@
       "requirements": [
         "FSR-303"
       ],
-      "owner_evidence_files": [],
+      "owner_evidence_files": [
+        "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
+      ],
       "owner_evidence_note": "Prior/source-bound focused receipts only; do not promote reported passes to an unverified later or final SHA.",
       "api_inventory_authority": "API_CATALOG.json / API_CATALOG.md with digest-bound API_CATALOG_DETAIL.json.gz and API_OPENAPI.json.gz is the authoritative actual mounted inventory; these AST source handlers can omit generated routes and are not an independent endpoint count."
     },
@@ -44150,7 +44229,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "api_sources": [
         "app/experimental/branch_manuscript_api.py"
@@ -44162,7 +44242,7 @@
       "flags": [
         "branch_manuscript_v1"
       ],
-      "behavior": "Original BranchManuscriptService scoped repository owns actual independent rich prose, immutable chapter identity/version/order/history and receipts. Mainline remains ChapterService. Registered generation/context/GET/SSE/export and Local Interop source readers re-resolve the real branch owner even for retained old IDs; no mainline fallback or marker-only inference. Interop uses frozen-compatible scope-bound wire labels and live exact-owner reverse lookup; only an authorized editor handoff returns native IDs.",
+      "behavior": "Original BranchManuscriptService scoped repository owns actual independent rich prose, immutable chapter identity/version/order/history and receipts. Mainline remains ChapterService. Registered generation/context/GET/SSE/export and Local Interop source readers re-resolve the real branch owner even for retained old IDs; no mainline fallback or marker-only inference. Interop uses frozen-compatible scope-bound wire labels and live exact-owner reverse lookup; only an authorized editor handoff returns native IDs. Shared selected-owner labels use supplied nonblank names or exact known IDs; a selected branch without metadata is never called mainline/default storyline. Missing owner IDs stay unselected; local mainline labels apply only to an actual unscoped local manuscript.",
       "lifecycle": "Create/save/restore/archive/tombstone/move; confirmed fork, rich-block three-way compare, human merge and original-owner recovery. Branch transaction/journal is atomic; mainline uncertain write requires exact receipt reconciliation. Durable capacity ceilings fail before commit without silently evicting histories. Shared branch inbox is read-only with exact original review route; counterpart access is rechecked and cancellation stays in the original CAS/read+review endpoint. Collaboration retry needs fresh author preview; restart never dispatches automatically.",
       "navigation": [
         "CORE_MANUSCRIPT",
@@ -44206,7 +44286,8 @@
         "tests/test_surface_browser_authority_contracts.py",
         "tests/test_surface_interop_branch_authority.py",
         "frontend/src/interop/ChapterWireIdentity.test.ts",
-        "frontend/tests/e2e/branch-manuscript-live.spec.ts"
+        "frontend/tests/e2e/branch-manuscript-live.spec.ts",
+        "frontend/src/ui/scopeLabels.test.ts"
       ],
       "entry_kind": "ENGINEERING_UI",
       "profile": "ORIGINAL_AUTHORITY",
@@ -44724,7 +44805,8 @@
         "FSR-297"
       ],
       "owner_evidence_files": [
-        "docs/delivery/functional-surface-freeze/BRANCH_MANUSCRIPT_VERIFICATION.json"
+        "docs/delivery/functional-surface-freeze/BRANCH_MANUSCRIPT_VERIFICATION.json",
+        "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
       ],
       "owner_evidence_note": "Prior/source-bound focused receipts only; do not promote reported passes to an unverified later or final SHA.",
       "api_inventory_authority": "API_CATALOG.json / API_CATALOG.md with digest-bound API_CATALOG_DETAIL.json.gz and API_OPENAPI.json.gz is the authoritative actual mounted inventory; these AST source handlers can omit generated routes and are not an independent endpoint count."
@@ -56221,7 +56303,7 @@
         "adaptation_lifecycle_v1"
       ],
       "behavior": "Original NovelRepository adaptation_proposals owns revision/history and immutable source rich-document snapshots. Original endpoints delegate to the same adaptation router; explicit project versus branch authority never substitutes mainline. Source-bound drafts capture target version/digest and reviewed draft binding.",
-      "lifecycle": "Reserved target identities and durable write-intent/checkpoint before materialization; apply uses reviewed target version, including legacy flow. Cancel/recover are explicit flag-gated actions; uncertain writes require provable receipt reconciliation and are never replayed. Real model dispatch is NOT_CONFIGURED until original JobManager/broker admission. Original Task/Review projections carry exact proposal/task/source/target bindings and no generic mutations; App revalidates the exact task with namespace/epoch/abort/dirty guards before opening the existing panel. Capacity ceilings and terminal reserves are explicit; exact-head execution pending.",
+      "lifecycle": "Reserved target identities and durable write-intent/checkpoint before materialization; apply uses reviewed target version, including legacy flow. Cancel/recover are explicit flag-gated actions; uncertain writes require provable receipt reconciliation and are never replayed. Real model dispatch is NOT_CONFIGURED until original JobManager/broker admission. Original Task/Review projections carry exact proposal/task/source/target bindings and no generic mutations; App revalidates the exact task with namespace/epoch/abort/dirty guards before opening the existing panel. Capacity ceilings and terminal reserves are explicit; exact-head execution pending. Blueprint editing and proposal commands remain locked through both mutation and authoritative refresh; duplicate requests are suppressed. Errors release the barrier while preserving local conflict text, without silent rebase. Explicit blueprint labels remain exact when prefilled.",
       "navigation": [
         "FS_BRANCH",
         "CORE_MANUSCRIPT",
@@ -56252,7 +56334,8 @@
         "frontend/src/AppDraftRecovery.test.tsx",
         "frontend/src/App.test.tsx",
         "frontend/src/novel/AdaptationRouteMatching.test.ts",
-        "frontend/tests/e2e/surface-freeze-adaptation.spec.ts"
+        "frontend/tests/e2e/surface-freeze-adaptation.spec.ts",
+        "frontend/src/novel/AdaptationLifecycleControls.test.tsx"
       ],
       "entry_kind": "ENGINEERING_UI",
       "profile": "ORIGINAL_AUTHORITY",
@@ -56264,7 +56347,8 @@
       "current_entry": "Shared AppShell / existing Adaptation / Blueprint / Screenplay draft",
       "contract_files": [
         "docs/delivery/functional-surface-freeze/ADAPTATION_LIFECYCLE.md",
-        "docs/delivery/functional-surface-freeze/ADAPTATION_FIXTURE_EXCEPTION.json"
+        "docs/delivery/functional-surface-freeze/ADAPTATION_FIXTURE_EXCEPTION.json",
+        "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
       ],
       "data_model_and_operations": [
         {
@@ -57178,7 +57262,8 @@
       "state_contract": {
         "Loading": {
           "presentation": "Show loading and current captured scope; prevent duplicate mutation; do not erase recoverable draft.",
-          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING"
+          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING",
+          "owner_behavior": "Native fields/commands stay disabled until server mutation and authoritative query invalidation/settlement finish"
         },
         "Empty": {
           "presentation": "Distinguish no authorized/current rows from no project, disabled owner and missing provider. Provide original create/import/select entry only when allowed.",
@@ -57202,7 +57287,8 @@
         },
         "Conflict": {
           "presentation": "Keep unsaved intent, show original expected/current revision or stale-source explanation; no silent overwrite/rebase/replay.",
-          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING"
+          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING",
+          "owner_behavior": "Release busy controls and retain the user draft and original conflict/recovery semantics"
         },
         "Review": {
           "presentation": "Display exact original-owner source/result/version/evidence; require explicit allowed action. Review, approval and application remain separate.",
@@ -57210,7 +57296,8 @@
         },
         "Recovery": {
           "presentation": "Show interrupted/corrupt/uncertain state and original history/journal; explicit recovery is not automatic retry.",
-          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING"
+          "verification": "SOURCE_OR_FORMAL_CONTRACT; FINAL_UI_EXECUTION_PENDING",
+          "owner_behavior": "Next blueprint edit uses the authoritative proposal revision; stale/local conflict text is never silently rebased"
         },
         "PARTIAL": {
           "presentation": "Keep capability and verification limitation next to the operation; local/contract/mock evidence never implies real model or target-platform acceptance.",
@@ -57234,9 +57321,17 @@
         "flags": "Existing product/runtime gate, plus additive experimental feature opt-in where listed; unsupported provider/runtime stays missing configuration",
         "conflict": "Original 409/428/version errors preserve user work and require explicit resolution"
       },
-      "cancel": "Reserved target identities and durable write-intent/checkpoint before materialization; apply uses reviewed target version, including legacy flow. Cancel/recover are explicit flag-gated actions; uncertain writes require provable receipt reconciliation and are never replayed. Real model dispatch is NOT_CONFIGURED until original JobManager/broker admission. Original Task/Review projections carry exact proposal/task/source/target bindings and no generic mutations; App revalidates the exact task with namespace/epoch/abort/dirty guards before opening the existing panel. Capacity ceilings and terminal reserves are explicit; exact-head execution pending.",
-      "resume_recovery": "Reserved target identities and durable write-intent/checkpoint before materialization; apply uses reviewed target version, including legacy flow. Cancel/recover are explicit flag-gated actions; uncertain writes require provable receipt reconciliation and are never replayed. Real model dispatch is NOT_CONFIGURED until original JobManager/broker admission. Original Task/Review projections carry exact proposal/task/source/target bindings and no generic mutations; App revalidates the exact task with namespace/epoch/abort/dirty guards before opening the existing panel. Capacity ceilings and terminal reserves are explicit; exact-head execution pending.",
-      "restart": "Reserved target identities and durable write-intent/checkpoint before materialization; apply uses reviewed target version, including legacy flow. Cancel/recover are explicit flag-gated actions; uncertain writes require provable receipt reconciliation and are never replayed. Real model dispatch is NOT_CONFIGURED until original JobManager/broker admission. Original Task/Review projections carry exact proposal/task/source/target bindings and no generic mutations; App revalidates the exact task with namespace/epoch/abort/dirty guards before opening the existing panel. Capacity ceilings and terminal reserves are explicit; exact-head execution pending.",
+      "ui_mutation_barrier": {
+        "scope": "Original Adaptation blueprint editor and proposal commands",
+        "busy_boundary": "Native fields/commands stay disabled until server mutation and authoritative query invalidation/settlement finish",
+        "after_settlement": "Next blueprint edit uses the authoritative proposal revision; stale/local conflict text is never silently rebased",
+        "on_error": "Release busy controls and retain the user draft and original conflict/recovery semantics",
+        "labels": "Explicit aria-label equals visible label, independent of prefilled textarea text and select options",
+        "label_evidence_limit": "Installed Playwright exact implicit-label matching included nested initial/option text; native accessible names were not shown wrong. No generalized screen-reader defect or acceptance claim."
+      },
+      "cancel": "Reserved target identities and durable write-intent/checkpoint before materialization; apply uses reviewed target version, including legacy flow. Cancel/recover are explicit flag-gated actions; uncertain writes require provable receipt reconciliation and are never replayed. Real model dispatch is NOT_CONFIGURED until original JobManager/broker admission. Original Task/Review projections carry exact proposal/task/source/target bindings and no generic mutations; App revalidates the exact task with namespace/epoch/abort/dirty guards before opening the existing panel. Capacity ceilings and terminal reserves are explicit; exact-head execution pending. Blueprint editing and proposal commands remain locked through both mutation and authoritative refresh; duplicate requests are suppressed. Errors release the barrier while preserving local conflict text, without silent rebase. Explicit blueprint labels remain exact when prefilled.",
+      "resume_recovery": "Reserved target identities and durable write-intent/checkpoint before materialization; apply uses reviewed target version, including legacy flow. Cancel/recover are explicit flag-gated actions; uncertain writes require provable receipt reconciliation and are never replayed. Real model dispatch is NOT_CONFIGURED until original JobManager/broker admission. Original Task/Review projections carry exact proposal/task/source/target bindings and no generic mutations; App revalidates the exact task with namespace/epoch/abort/dirty guards before opening the existing panel. Capacity ceilings and terminal reserves are explicit; exact-head execution pending. Blueprint editing and proposal commands remain locked through both mutation and authoritative refresh; duplicate requests are suppressed. Errors release the barrier while preserving local conflict text, without silent rebase. Explicit blueprint labels remain exact when prefilled.",
+      "restart": "Reserved target identities and durable write-intent/checkpoint before materialization; apply uses reviewed target version, including legacy flow. Cancel/recover are explicit flag-gated actions; uncertain writes require provable receipt reconciliation and are never replayed. Real model dispatch is NOT_CONFIGURED until original JobManager/broker admission. Original Task/Review projections carry exact proposal/task/source/target bindings and no generic mutations; App revalidates the exact task with namespace/epoch/abort/dirty guards before opening the existing panel. Capacity ceilings and terminal reserves are explicit; exact-head execution pending. Blueprint editing and proposal commands remain locked through both mutation and authoritative refresh; duplicate requests are suppressed. Errors release the barrier while preserving local conflict text, without silent rebase. Explicit blueprint labels remain exact when prefilled.",
       "implementation_status": "PARTIAL",
       "verification": {
         "unit": "PENDING_EXACT_FINAL_HEAD",
@@ -57258,13 +57353,21 @@
         "FINAL_PRODUCT_SURFACE_MAP.md",
         "OPUS_UI_HANDOFF.md",
         "docs/delivery/functional-surface-freeze/ADAPTATION_LIFECYCLE.md",
-        "docs/delivery/functional-surface-freeze/ADAPTATION_FIXTURE_EXCEPTION.json"
+        "docs/delivery/functional-surface-freeze/ADAPTATION_FIXTURE_EXCEPTION.json",
+        "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
       ],
       "requirements": [
+        "FSR-289",
+        "FSR-266",
+        "FSR-267",
+        "FSR-292",
+        "FSR-293",
+        "FSR-294",
         "FSR-298"
       ],
       "owner_evidence_files": [
-        "docs/delivery/functional-surface-freeze/ADAPTATION_LIFECYCLE_VERIFICATION.json"
+        "docs/delivery/functional-surface-freeze/ADAPTATION_LIFECYCLE_VERIFICATION.json",
+        "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
       ],
       "owner_evidence_note": "Prior/source-bound focused receipts only; do not promote reported passes to an unverified later or final SHA.",
       "api_inventory_authority": "API_CATALOG.json / API_CATALOG.md with digest-bound API_CATALOG_DETAIL.json.gz and API_OPENAPI.json.gz is the authoritative actual mounted inventory; these AST source handlers can omit generated routes and are not an independent endpoint count."
@@ -58747,7 +58850,7 @@
         "FS_BRANCH",
         "FS_STORY_DATABASE"
       ],
-      "behavior": "Original document CAS and visible durable save state; current five-kind Story editors additionally use their original structured digest/version/history/restore owner. Uncertain outcomes are reread rather than replayed.",
+      "behavior": "Original document CAS and visible durable save state; current five-kind Story editors additionally use their original structured digest/version/history/restore owner, with fields disabled through mutation and query settlement, then immediate post-commit draft persistence. Uncertain outcomes are reread rather than replayed.",
       "api_kind": "ORIGINAL_SERVER_AND_OR_SCOPED_CLIENT_API",
       "api_sources": [
         "app/api.py",
@@ -59136,12 +59239,17 @@
       "name": "Accessibility States",
       "surfaces": [
         "U13",
-        "FS_INTERACTION"
+        "FS_INTERACTION",
+        "FS_STORY_DATABASE",
+        "CORE_ADAPTATION"
       ],
-      "behavior": "Labels/focus/live states/IME and versioned announcement/reduced-motion settings; native screen-reader NOT_RUN.",
+      "behavior": "Labels/focus/live states/IME and scoped announcement/reduced-motion preferences. Story/Adaptation use exact explicit visible labels and native disabled commit/refresh barriers. Playwright implicit-label matching differed from native accessible names; native screen-reader remains NOT_RUN.",
       "api_kind": "ORIGINAL_SERVER_AND_OR_SCOPED_CLIENT_API",
       "api_sources": [
-        "app/experimental/ux_api.py"
+        "app/experimental/ux_api.py",
+        "app/api.py",
+        "app/story_record_api.py",
+        "app/adaptation_api.py"
       ],
       "server_persistence_claim": "Only original named owner; see per-surface API and store",
       "component_files": [
@@ -59149,7 +59257,16 @@
         "frontend/src/ui/AppShell.tsx",
         "frontend/src/ui/primitives.tsx",
         "frontend/src/experimental/WorkspaceInteractionPanel.tsx",
-        "frontend/src/experimental/WorkspaceToolsPanel.tsx"
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx",
+        "frontend/src/novel/StoryDatabase.tsx",
+        "frontend/src/novel/StoryRecordVersionEditor.tsx",
+        "frontend/src/novel/WorldBuildingDashboard.tsx",
+        "frontend/src/novel/WorldRelationshipGraph.tsx",
+        "frontend/src/novel/AdaptationPanel.tsx",
+        "frontend/src/novel/ScreenplayPipelinePanel.tsx",
+        "frontend/src/novel/PipelineStatusPanel.tsx",
+        "frontend/src/novel/ConstraintImportPreview.tsx",
+        "frontend/src/App.tsx"
       ],
       "verification": "SOURCE_MAPPED; EXACT_FINAL_HEAD_TESTS_PENDING"
     },
@@ -61037,7 +61154,7 @@
           "execution": "PENDING_EXACT_FINAL_HEAD"
         },
         "history": {
-          "behavior": "Original row retains 20 prior version snapshots; legacy saves advance opted-in metadata; original narrative event history remains distinct",
+          "behavior": "Original row retains 20 prior version snapshots; legacy saves advance opted-in metadata; original narrative event history remains distinct. SAVE/RESTORE/FEEDBACK controls stay natively disabled through authoritative refresh, then accept/persist the next edit",
           "evidence": [
             "app/experimental/finding_review_composition.py",
             "app/services/novel_service.py",
@@ -61350,7 +61467,7 @@
           "execution": "PENDING_EXACT_FINAL_HEAD"
         },
         "recovery": {
-          "behavior": "Actor/project/kind/record local candidate plus original GET/history after restart; uncertain writes are read back and never auto-replayed",
+          "behavior": "Actor/project/kind/record local candidate plus original GET/history after restart; controls remain disabled through commit/query settlement, then the first allowed edit is synchronously persisted under returned digest/version. Uncertain writes are read back and never auto-replayed",
           "evidence": [
             "app/services/novel_service.py",
             "app/experimental/world.py",
@@ -61679,7 +61796,7 @@
         "CORE_ADAPTATION"
       ],
       "classification": "PENDING_EXACT_FINAL_HEAD",
-      "detail": "Final source is not yet pinned to corrected hosted results. First hosted candidate 13b9 failed original flag-discovery compatibility assertions; f25 is the compatibility-repair checkpoint, not a final-source verification receipt. A subsequent 8,626-node File snapshot reported an original erased-vector receipt regression and remains failed evidence. EmbeddingService.records now permits only same-source-owner/same-index-owner erased INVALIDATED receipts under current scope/feature authority; focused corrected coverage reported 51 File passes with 50 backend-profile skips plus 3 API catalog passes. The subsequently published d9d2df3a checkpoint retains failed push/PR Frontend receipts, documented in BROWSER_INTEGRATION_CORRECTIONS.md; no earlier failed screenshot is acceptance evidence. Meanwhile the later five-kind Story editor, adapter-receipt and Local Interop branch-owner follow-on changes require a new source-bound immutable checkpoint. The d9 PostgreSQL stored-facts assertion also failed on opaque Timeline IDs/public-slug versus UUID storage/FK ownership; the original repository adapter is corrected without changing that assertion, and the new identity matrix is File-tested only locally. No result for the corrected checkpoint is inferred from previous focused or hosted checks. Local Chromium/socket launch denied; real PostgreSQL unavailable locally.",
+      "detail": "Final source is not yet pinned to corrected hosted results. First hosted candidate 13b9 failed original flag-discovery compatibility assertions; f25 is the compatibility-repair checkpoint, not a final-source verification receipt. A subsequent 8,626-node File snapshot reported an original erased-vector receipt regression and remains failed evidence. EmbeddingService.records now permits only same-source-owner/same-index-owner erased INVALIDATED receipts under current scope/feature authority; focused corrected coverage reported 51 File passes with 50 backend-profile skips plus 3 API catalog passes. The subsequently published d9d2df3a checkpoint retains failed push/PR Frontend receipts, documented in BROWSER_INTEGRATION_CORRECTIONS.md; no earlier failed screenshot is acceptance evidence. Meanwhile the later five-kind Story editor, adapter-receipt and Local Interop branch-owner follow-on changes require a new source-bound immutable checkpoint. The d9 PostgreSQL stored-facts assertion also failed on opaque Timeline IDs/public-slug versus UUID storage/FK ownership; the original repository adapter is corrected without changing that assertion, and the new identity matrix is File-tested only locally. The later 90f push/PR Frontend failures are also retained: exact implicit-label matching and an actual edit-during-save/query-settlement gap required UI corrections. Explicit labels, native disabled barriers and honest scope labels are now source-mapped; app/API sources are unchanged, but corrected-head full CI remains PENDING. No result for the corrected checkpoint is inferred from previous focused or hosted checks. Local Chromium/socket launch denied; real PostgreSQL unavailable locally.",
       "freeze_effect": "Lead must pin source and verify actual hosted File/PostgreSQL/API/browser/full-regression checks for that source. Historical independent review remains BLOCKED and was not retried."
     }
   ],
@@ -62537,6 +62654,10 @@
       "sha256": "f83781f7815f6dcb926e4dac97ceb4f7fd7edfef132e539d5840f5873027398c"
     },
     {
+      "path": "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md",
+      "sha256": "4adf717e7380dcf375086f20adfc882a52f7d4c36fd8a570c120228046b972d9"
+    },
+    {
       "path": "docs/delivery/functional-surface-freeze/ADAPTATION_FIXTURE_EXCEPTION.json",
       "sha256": "4a26fb1ed0ab32433f86caba995470390f2cd26eb528e64283554eb6865cf372"
     },
@@ -62558,7 +62679,7 @@
     },
     {
       "path": "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md",
-      "sha256": "9e05b3a00eb50ff1c3c9f55d118ea4984bffc9b9c2e8fbd6b6b6a4950c88b67c"
+      "sha256": "3db0b22cb346e7b7f8a92a5cf84b5de2c8d3441b615b4529af2ef8dedbc30e98"
     },
     {
       "path": "docs/delivery/functional-surface-freeze/FINDINGS_AND_CANON.md",
@@ -62574,7 +62695,7 @@
     },
     {
       "path": "docs/delivery/functional-surface-freeze/INTEROP_FIXTURE_EXCEPTION.patch",
-      "sha256": "030c3b99a44bb43baaf524ed1f33a3108a1fd11d6f34a7d885c21c991bfd4c34"
+      "sha256": "c8a1535cfe4fc7883d0f089c366ebe10c56208f128ff34af831b557271575f4b"
     },
     {
       "path": "docs/delivery/functional-surface-freeze/MEDIA_ENGINE_SURFACES.md",
@@ -62606,7 +62727,7 @@
     },
     {
       "path": "frontend/src/App.tsx",
-      "sha256": "c75d8020402a19fac93f6664c5ee200e9f7f6138d6b4cf67a26dbc74b9754374"
+      "sha256": "e5ee5b9ebac4a2f2a531b7cd7f6603404a868be3bd09a7dc92c93a3d729218b4"
     },
     {
       "path": "frontend/src/AppAdaptationNavigation.test.tsx",
@@ -63217,12 +63338,16 @@
       "sha256": "e68f7350df6b20f255b1367fb89a860e5a2792e08ca298f43f4151e1bee46199"
     },
     {
+      "path": "frontend/src/novel/AdaptationLifecycleControls.test.tsx",
+      "sha256": "50507b52a8355e62f6555da4d0e541b1d9a25971db7810e7dbad2ad548ed430a"
+    },
+    {
       "path": "frontend/src/novel/AdaptationPanel.test.tsx",
       "sha256": "18f71b549829c995ca084d5659b9654901abc5780b0f9a426e613315bcbdd337"
     },
     {
       "path": "frontend/src/novel/AdaptationPanel.tsx",
-      "sha256": "bff95e9be2979d70de6320cf99dffc79b72640bc578cdab10731babc4f7934a9"
+      "sha256": "a5ef5385c7643346c6311f62915d1c4fb27903aac7617a1fd6b09f7ac444243d"
     },
     {
       "path": "frontend/src/novel/AdaptationRouteMatching.test.ts",
@@ -63678,7 +63803,7 @@
     },
     {
       "path": "frontend/src/novel/StoryDatabase.tsx",
-      "sha256": "3816b4bf85cbc596fba177ed3373d883711b47a0879861df140c965433a7d913"
+      "sha256": "a5336d3ddbe4351cdcb690f86be0792d3c64fc6afc6fd42a4f8694f594244312"
     },
     {
       "path": "frontend/src/novel/StoryPlanningWorkspace.test.tsx",
@@ -63687,6 +63812,10 @@
     {
       "path": "frontend/src/novel/StoryPlanningWorkspace.tsx",
       "sha256": "b00882d4f94ff6798afaddda1a44d678eadefd973b4a23fad3705054163f2ed6"
+    },
+    {
+      "path": "frontend/src/novel/StoryRecordLifecycle.test.tsx",
+      "sha256": "83e8a551c1f664b53f33ef4cdd762ac6ce256af1f70500b565011d0a2c869031"
     },
     {
       "path": "frontend/src/novel/StoryRecordNavigation.test.tsx",
@@ -63698,7 +63827,7 @@
     },
     {
       "path": "frontend/src/novel/StoryRecordVersionEditor.tsx",
-      "sha256": "38edd8649dc48b6a69caf51f9b905b26551252d6266d0bae0a9646f0aa3ccea4"
+      "sha256": "9fe558ff5253a4b26afc5a8064479ece1c4f38e5ac966e3173bf36869a5cbb9e"
     },
     {
       "path": "frontend/src/novel/VideoAssemblyPanel.test.tsx",
@@ -63927,6 +64056,14 @@
     {
       "path": "frontend/src/ui/primitives.tsx",
       "sha256": "1bc939c47d20553fa19df70828be22606374a604a369ce5e7ea8860fe7922e4e"
+    },
+    {
+      "path": "frontend/src/ui/scopeLabels.test.ts",
+      "sha256": "6566d6790adf299ba8b677989deaa0fe24bdf4b390dd0de151d38302c0da8dbc"
+    },
+    {
+      "path": "frontend/src/ui/scopeLabels.ts",
+      "sha256": "ab145849afc50e1d676c321eadb9217022fb614b9bd4cf0cfc6a69a8fd267eba"
     },
     {
       "path": "frontend/src/useScopedRequestConsent.tsx",

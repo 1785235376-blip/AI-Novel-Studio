@@ -40,6 +40,7 @@ import { ConflictDialog } from "./ConflictDialog";
 import { RevisionPanel, type RevisionDetail } from "./RevisionPanel";
 import { CollaborationPanel } from "./CollaborationPanels";
 import { AppShell, StudioModule } from "./ui/AppShell";
+import { selectedScopeLabels } from "./ui/scopeLabels";
 import { ModuleWorkspaceRoutes } from "./ui/ModuleWorkspaceRoutes";
 import { WorkflowPanel } from './novel/WorkflowPanel';
 import { ImageQueuePanel } from './novel/ImageQueuePanel';
@@ -1204,22 +1205,10 @@ export default function App() {
       />
     );
   const scope = s.scope;
-  if (studioModule !== "NOVEL") return <>{localTutor.dialog}<ModuleWorkspaceRoutes interopEntry={localTutor.entry} interopSettings={localTutor.settings} controlTab={interopControlTab} onControlSurfaceChange={setInteropControlSurface} key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={setStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={{workspace:scope?.workspaceName || "本机作品", project:scope?.projectName || "当前小说", storyline:scope?.storylineName || "默认故事线", branch:scope?.branchName || "主线"}} /></>;
   const localNovelTitle =
     novels.data?.find((n) => n.id === s.novelId)?.title || "当前小说";
-  const shellScope = scope
-    ? {
-        workspace: scope.workspaceName || "当前工作区",
-        project: scope.projectId ? scope.projectName || "当前小说" : "",
-        storyline: scope.storylineId ? scope.storylineName || "默认故事线" : "",
-        branch: scope.branchId ? scope.branchName || "主分支" : "",
-      }
-    : {
-        workspace: "本机作品",
-        project: localNovelTitle,
-        storyline: "默认故事线",
-        branch: "主线",
-      };
+  const shellScope = selectedScopeLabels(scope, localNovelTitle);
+  if (studioModule !== "NOVEL") return <>{localTutor.dialog}<ModuleWorkspaceRoutes interopEntry={localTutor.entry} interopSettings={localTutor.settings} controlTab={interopControlTab} onControlSurfaceChange={setInteropControlSurface} key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={setStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={shellScope} /></>;
   const saveDisplayLabel = chapter.data
     ? (writingRecovery ? recoveryStateLabel(saveState, durability, composing, recoveryOffline) : saveStateLabel(saveState))
     : "正在打开章节…";

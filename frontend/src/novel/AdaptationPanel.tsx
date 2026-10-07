@@ -14,19 +14,20 @@ function describe(error:unknown){
   }
   return '操作未完成。请保留草稿并读取最新状态，未知写入结果不能自动重试。';
 }
-function BlueprintEditor({item,novelId,branchId,onSaved,disabled}:{item:any;novelId:string;branchId?:string;onSaved:()=>void;disabled:boolean}){
-  const [draft,setDraft]=useState(()=>structuredClone(item.blueprint));const [revision,setRevision]=useState(item.revision);
-  const save=useMutation({mutationFn:()=>api.updateAdaptationBlueprint(novelId,item.id,{...draft,expected_revision:revision},branchId),onSuccess:row=>{setRevision(row.revision);setDraft(structuredClone(row.blueprint));onSaved();}});
+function BlueprintEditor({item,novelId,branchId,onSaved,disabled}:{item:any;novelId:string;branchId?:string;onSaved:()=>Promise<void>;disabled:boolean}){
+  const [draft,setDraft]=useState(()=>structuredClone(item.blueprint));const [revision,setRevision]=useState(item.revision);const saveLock=useRef(false);
+  const save=useMutation({mutationFn:()=>api.updateAdaptationBlueprint(novelId,item.id,{...draft,expected_revision:revision},branchId),onSuccess:async row=>{setRevision(row.revision);setDraft(structuredClone(row.blueprint));await onSaved();},onSettled:()=>{saveLock.current=false;}});
+  const busy=disabled||save.isPending;
   return <section className="novel-draft-review" aria-label="改编蓝图编辑">
     <p className="novel-help">方案版本 {revision} · 蓝图修订 v{item.blueprint_revision||1}</p>
     {save.isError&&<StatusMessage tone="error">{describe(save.error)}</StatusMessage>}
-    {item.revision!==revision&&<StatusMessage tone="warning">服务器已有版本 {item.revision}。当前编辑内容未被替换。<Button onClick={()=>{setDraft(structuredClone(item.blueprint));setRevision(item.revision);save.reset();}}>放弃本地编辑并加载最新蓝图</Button></StatusMessage>}
-    <label>改编重点<textarea value={draft.focus} disabled={disabled} onChange={event=>setDraft({...draft,focus:event.target.value})}/></label>
-    <label>节奏策略<textarea value={draft.pacing} disabled={disabled} onChange={event=>setDraft({...draft,pacing:event.target.value})}/></label>
-    <label>输出格式<input value={draft.format} disabled={disabled} onChange={event=>setDraft({...draft,format:event.target.value})}/></label>
-    <label>约束（每行一条）<textarea value={draft.constraints.join('\n')} disabled={disabled} onChange={event=>setDraft({...draft,constraints:event.target.value.split('\n')})}/></label>
-    <ol>{draft.chapter_map.map((mapping:any,index:number)=><li key={mapping.source_chapter_id}><strong>{mapping.source_title}</strong><label>目标单元<input value={mapping.unit} disabled={disabled} onChange={event=>{const chapter_map=[...draft.chapter_map];chapter_map[index]={...mapping,unit:event.target.value};setDraft({...draft,chapter_map});}}/></label><label>改编动作<textarea value={mapping.action} disabled={disabled} onChange={event=>{const chapter_map=[...draft.chapter_map];chapter_map[index]={...mapping,action:event.target.value};setDraft({...draft,chapter_map});}}/></label></li>)}</ol>
-    <Button disabled={disabled||save.isPending||item.revision!==revision} onClick={()=>save.mutate()}>{save.isPending?'正在保存…':'保存蓝图修订'}</Button>
+    {item.revision!==revision&&<StatusMessage tone="warning">服务器已有版本 {item.revision}。当前编辑内容未被替换。<Button disabled={busy} onClick={()=>{setDraft(structuredClone(item.blueprint));setRevision(item.revision);save.reset();}}>放弃本地编辑并加载最新蓝图</Button></StatusMessage>}
+    <label>改编重点<textarea aria-label="改编重点" value={draft.focus} disabled={busy} onChange={event=>setDraft({...draft,focus:event.target.value})}/></label>
+    <label>节奏策略<textarea aria-label="节奏策略" value={draft.pacing} disabled={busy} onChange={event=>setDraft({...draft,pacing:event.target.value})}/></label>
+    <label>输出格式<input aria-label="输出格式" value={draft.format} disabled={busy} onChange={event=>setDraft({...draft,format:event.target.value})}/></label>
+    <label>约束（每行一条）<textarea aria-label="约束（每行一条）" value={draft.constraints.join('\n')} disabled={busy} onChange={event=>setDraft({...draft,constraints:event.target.value.split('\n')})}/></label>
+    <ol>{draft.chapter_map.map((mapping:any,index:number)=><li key={mapping.source_chapter_id}><strong>{mapping.source_title}</strong><label>目标单元<input aria-label="目标单元" value={mapping.unit} disabled={busy} onChange={event=>{const chapter_map=[...draft.chapter_map];chapter_map[index]={...mapping,unit:event.target.value};setDraft({...draft,chapter_map});}}/></label><label>改编动作<textarea aria-label="改编动作" value={mapping.action} disabled={busy} onChange={event=>{const chapter_map=[...draft.chapter_map];chapter_map[index]={...mapping,action:event.target.value};setDraft({...draft,chapter_map});}}/></label></li>)}</ol>
+    <Button disabled={busy||item.revision!==revision} onClick={()=>{if(!saveLock.current){saveLock.current=true;save.mutate();}}}>{save.isPending?'正在保存…':'保存蓝图修订'}</Button>
   </section>;
 }
 function RevisionHistory({novelId,item,branchId}:{novelId:string;item:any;branchId?:string}){
@@ -46,7 +47,7 @@ export function AdaptationPanel(props:AdaptationProps){
 function AdaptationBody({novelId,branchId,requestedProposalId,requestedTaskId,requestedRevision}:AdaptationProps){
   const qc=useQueryClient();const [target,setTarget]=useState('COMMERCIAL'),[title,setTitle]=useState(''),[instruction,setInstruction]=useState('');
   const [error,setError]=useState('');const commandLock=useRef(false);const verifiedRequest=useRef('');const context=getCollaborationContext();const identity=[novelId,branchId,context.sessionToken,context.actor?.id];
-  const refresh=()=>void qc.invalidateQueries({queryKey:['adaptation-proposals']});
+  const refresh=()=>qc.invalidateQueries({queryKey:['adaptation-proposals']});
   const catalog=useQuery({queryKey:['adaptation-catalog',...identity],queryFn:()=>api.adaptationCatalog(novelId!,branchId),enabled:!!novelId,retry:false});
   const proposals=useQuery({queryKey:['adaptation-proposals',...identity],queryFn:()=>api.adaptationProposals(novelId!,branchId),enabled:!!novelId&&catalog.isSuccess,retry:false});
   const mutation=useMutation({mutationFn:async(command:()=>Promise<unknown>)=>command(),onMutate:()=>setError(''),onSuccess:refresh,onError:reason=>{setError(describe(reason));refresh();},onSettled:()=>{commandLock.current=false;}});

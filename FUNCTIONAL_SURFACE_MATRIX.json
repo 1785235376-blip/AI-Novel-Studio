@@ -3,12 +3,12 @@
   "phase": "Feature Completion & Functional Surface Freeze",
   "status": "SOURCE_MAP_REVIEW_PENDING",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "observed_checkpoint_sha": "d9d2df3a0a831a5bba6249793fd21946c17ce7d4",
+  "observed_checkpoint_sha": "90f211065fed2e2cd7c440365c949d954077bc50",
   "branch": "work/feature-completion-surface-freeze",
   "draft_pr": "https://github.com/1785235376-blip/AI-Novel-Studio/pull/45",
   "source_state": "ACTIVE_WORKTREE_NOT_PINNED_FINAL_HEAD",
   "final_sha": null,
-  "generated_at_utc": "2026-10-07T07:21:07.933336+00:00",
+  "generated_at_utc": "2026-10-07T08:07:03.437076+00:00",
   "product_areas": [
     "Write",
     "Story",
@@ -105,6 +105,26 @@
     },
     "real_postgres_corrected_head": "PENDING_HOSTED_NOT_VERIFIED_LOCALLY"
   },
+  "retained_90f_ui_failure": {
+    "head": "90f211065fed2e2cd7c440365c949d954077bc50",
+    "tree": "01d0220e7e0c55cb27dbd1b144096a0fe975c949",
+    "cloud_frontend": "FAILED_RETAINED_PUSH_AND_PR",
+    "real_postgres_at_correction": "RUNNING_NOT_FINAL",
+    "reports": [
+      "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md",
+      "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
+    ],
+    "correction": "UI-only explicit label matching, native edit/command disabled barriers through commit plus authoritative refresh, immediate post-settlement Story draft persistence, and honest known-name-or-ID scope labels. Original browser specs/assertions unchanged.",
+    "native_label_nuance": "The installed exact implicit-label selector included nested initial textarea/select option text; native accessible names were not shown incorrect.",
+    "api_application_source": "UNCHANGED_FROM_PREVIOUS_API_CATALOG",
+    "new_focused_tests": {
+      "story_lifecycle": 20,
+      "adaptation_lifecycle": 4,
+      "scope_labels": 4
+    },
+    "corrected_head_hosted": "PENDING",
+    "candidate": "WITHHELD_UNTIL_FULL_EXACT_HEAD_VERIFICATION"
+  },
   "browser_gate_configs": [
     "frontend/playwright.surface.config.ts",
     "frontend/playwright.branch-surface.config.ts"
@@ -198,7 +218,8 @@
         "app/experimental/store.py",
         "app/experimental/api.py",
         "app/experimental/capabilities.py",
-        "frontend/src/experimental/api.ts"
+        "frontend/src/experimental/api.ts",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "api_sources": [
         "app/experimental/api.py"
@@ -213,6 +234,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#F00"
     },
     {
@@ -283,6 +305,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U02"
     },
     {
@@ -328,7 +351,8 @@
         "frontend/src/App.tsx",
         "frontend/src/experimental/WorkspaceToolsPanel.tsx",
         "app/experimental/ux_api.py",
-        "frontend/src/experimental/uxClient.ts"
+        "frontend/src/experimental/uxClient.ts",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "api_sources": [
         "app/experimental/ux_api.py"
@@ -353,6 +377,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U01"
     },
     {
@@ -422,6 +447,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U03"
     },
     {
@@ -493,6 +519,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U07"
     },
     {
@@ -565,6 +592,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U08"
     },
     {
@@ -635,6 +663,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U09"
     },
     {
@@ -702,6 +731,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U12"
     },
     {
@@ -770,6 +800,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U04"
     },
     {
@@ -838,6 +869,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U10"
     },
     {
@@ -899,9 +931,12 @@
         "EXTERNAL_TARGETS",
         "FINAL_SOURCE_CI"
       ],
-      "owner_evidence_files": [],
+      "owner_evidence_files": [
+        "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
+      ],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U13"
     },
     {
@@ -981,6 +1016,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A04"
     },
     {
@@ -1060,6 +1096,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A05"
     },
     {
@@ -1128,6 +1165,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A06"
     },
     {
@@ -1189,6 +1227,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A07"
     },
     {
@@ -1252,6 +1291,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A09"
     },
     {
@@ -1314,6 +1354,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A13"
     },
     {
@@ -1394,6 +1435,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U06"
     },
     {
@@ -1473,6 +1515,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A02"
     },
     {
@@ -1553,6 +1596,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A03"
     },
     {
@@ -1631,6 +1675,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A01"
     },
     {
@@ -1714,6 +1759,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A10"
     },
     {
@@ -1798,6 +1844,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A11"
     },
     {
@@ -1861,6 +1908,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U05"
     },
     {
@@ -1928,6 +1976,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U11"
     },
     {
@@ -1988,6 +2037,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U15"
     },
     {
@@ -2049,6 +2099,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A08"
     },
     {
@@ -2117,6 +2168,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#A12"
     },
     {
@@ -2197,6 +2249,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B03"
     },
     {
@@ -2264,6 +2317,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B04"
     },
     {
@@ -2333,6 +2387,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U14"
     },
     {
@@ -2401,6 +2456,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#U16"
     },
     {
@@ -2464,6 +2520,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B01"
     },
     {
@@ -2538,6 +2595,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B02"
     },
     {
@@ -2606,6 +2664,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B05"
     },
     {
@@ -2671,6 +2730,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B06"
     },
     {
@@ -2736,6 +2796,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B07"
     },
     {
@@ -2797,6 +2858,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B08"
     },
     {
@@ -2862,6 +2924,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B09"
     },
     {
@@ -2922,6 +2985,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#B10"
     },
     {
@@ -2989,6 +3053,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_MANUSCRIPT"
     },
     {
@@ -3049,6 +3114,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_GENERATION"
     },
     {
@@ -3105,6 +3171,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_CREATION"
     },
     {
@@ -3183,6 +3250,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_PLANNING"
     },
     {
@@ -3272,6 +3340,7 @@
       ],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_CANON"
     },
     {
@@ -3364,6 +3433,7 @@
       ],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_CONTINUITY"
     },
     {
@@ -3460,10 +3530,19 @@
       ],
       "owner_evidence_files": [
         "docs/delivery/functional-surface-freeze/FINDINGS_AND_CANON_VERIFICATION.json",
-        "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md"
+        "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md",
+        "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md"
       ],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": {
+        "scope": "Original five Story forms and their shared version wrapper",
+        "busy_boundary": "Native fields/commands stay disabled until server mutation and authoritative query invalidation/settlement finish",
+        "after_settlement": "First new edit persists immediately with returned record digest/version for explicit restart recovery",
+        "on_error": "Release busy controls and retain the user draft and original conflict/recovery semantics",
+        "labels": "Explicit aria-label equals visible label, independent of prefilled textarea text and select options",
+        "label_evidence_limit": "Installed Playwright exact implicit-label matching included nested initial/option text; native accessible names were not shown wrong. No generalized screen-reader defect or acceptance claim."
+      },
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_FORESHADOWING"
     },
     {
@@ -3558,10 +3637,19 @@
       ],
       "owner_evidence_files": [
         "docs/delivery/functional-surface-freeze/STORY_RECORD_VERSIONING.md",
-        "docs/SURFACE_CONTINUITY_TIMELINE_IDENTITY.md"
+        "docs/SURFACE_CONTINUITY_TIMELINE_IDENTITY.md",
+        "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md"
       ],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": {
+        "scope": "Original five Story forms and their shared version wrapper",
+        "busy_boundary": "Native fields/commands stay disabled until server mutation and authoritative query invalidation/settlement finish",
+        "after_settlement": "First new edit persists immediately with returned record digest/version for explicit restart recovery",
+        "on_error": "Release busy controls and retain the user draft and original conflict/recovery semantics",
+        "labels": "Explicit aria-label equals visible label, independent of prefilled textarea text and select options",
+        "label_evidence_limit": "Installed Playwright exact implicit-label matching included nested initial/option text; native accessible names were not shown wrong. No generalized screen-reader defect or acceptance claim."
+      },
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_TIMELINE"
     },
     {
@@ -3623,6 +3711,7 @@
         "FSR-275",
         "FSR-276",
         "FSR-277",
+        "FSR-289",
         "FSR-266",
         "FSR-267",
         "FSR-292",
@@ -3635,7 +3724,8 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [
-        "docs/CORE_STORY_RECORD_VERSION_CLOSURE.md"
+        "docs/CORE_STORY_RECORD_VERSION_CLOSURE.md",
+        "docs/SURFACE_FORM_LIFECYCLE_CORRECTION.md"
       ],
       "operation_permissions": {
         "catalog_read": "Original PROJECT domain.read; no branch-authority promotion",
@@ -3644,6 +3734,14 @@
         "legacy_compatibility": "Flag-OFF/component-only and historical direct writers retain original behavior; prior opted-in metadata advances history"
       },
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": {
+        "scope": "Original five Story forms and their shared version wrapper",
+        "busy_boundary": "Native fields/commands stay disabled until server mutation and authoritative query invalidation/settlement finish",
+        "after_settlement": "First new edit persists immediately with returned record digest/version for explicit restart recovery",
+        "on_error": "Release busy controls and retain the user draft and original conflict/recovery semantics",
+        "labels": "Explicit aria-label equals visible label, independent of prefilled textarea text and select options",
+        "label_evidence_limit": "Installed Playwright exact implicit-label matching included nested initial/option text; native accessible names were not shown wrong. No generalized screen-reader defect or acceptance claim."
+      },
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_STORY_DATABASE"
     },
     {
@@ -3723,6 +3821,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_IMPORT"
     },
     {
@@ -3792,6 +3891,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_REVIEW"
     },
     {
@@ -3873,6 +3973,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_IMAGES"
     },
     {
@@ -3930,6 +4031,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_SCREENPLAY"
     },
     {
@@ -4014,6 +4116,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_VIDEO"
     },
     {
@@ -4085,6 +4188,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_AUDIO"
     },
     {
@@ -4152,6 +4256,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_ASSETS"
     },
     {
@@ -4221,6 +4326,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_MODELS"
     },
     {
@@ -4287,6 +4393,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_EXPORT"
     },
     {
@@ -4332,7 +4439,8 @@
         "app/collaboration_admin.py",
         "app/application/collaboration_service.py",
         "app/collaboration_api.py",
-        "app/api.py"
+        "app/api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "api_sources": [
         "app/collaboration_api.py",
@@ -4347,9 +4455,12 @@
       "remaining": [
         "FINAL_SOURCE_CI"
       ],
-      "owner_evidence_files": [],
+      "owner_evidence_files": [
+        "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
+      ],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_COLLAB"
     },
     {
@@ -4398,7 +4509,8 @@
         "app/application/collaboration_service.py",
         "app/application/persistence.py",
         "app/repositories/postgres/generation.py",
-        "app/experimental/branch_manuscript_api.py"
+        "app/experimental/branch_manuscript_api.py",
+        "frontend/src/ui/scopeLabels.ts"
       ],
       "api_sources": [
         "app/experimental/branch_manuscript_api.py"
@@ -4439,10 +4551,12 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [
-        "docs/delivery/functional-surface-freeze/BRANCH_MANUSCRIPT_VERIFICATION.json"
+        "docs/delivery/functional-surface-freeze/BRANCH_MANUSCRIPT_VERIFICATION.json",
+        "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
       ],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_BRANCH"
     },
     {
@@ -4521,6 +4635,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_REALTIME"
     },
     {
@@ -4612,6 +4727,7 @@
         "index_mutations": "domain.write plus original source/creator, expected version and publication guards"
       },
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_SEMANTIC"
     },
     {
@@ -4727,6 +4843,7 @@
         "revoked_payload_behavior": "Cancel/invalidate/stale responses withhold request/source snapshot/model/result digest; conflict only exposes ID/version/status. Projections contain receipt identity/version/status, no source lineage or result.",
         "restart_behavior": "RUNNING reports recovery required; explicit recover/cancel fences token; no automatic replay or durable-worker claim"
       },
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_VISUAL"
     },
     {
@@ -4805,6 +4922,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_SYNC"
     },
     {
@@ -4897,6 +5015,7 @@
         "revoked_payload_behavior": "Cancel/invalidate/stale responses withhold request/source snapshot/model/result digest; conflict only exposes ID/version/status. Projections contain receipt identity/version/status, no source lineage or result.",
         "restart_behavior": "RUNNING reports recovery required; explicit recover/cancel fences token; no automatic replay or durable-worker claim"
       },
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_RESEARCH_VISION"
     },
     {
@@ -4968,6 +5087,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_PROCESSING"
     },
     {
@@ -5042,6 +5162,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_ENGINES"
     },
     {
@@ -5130,6 +5251,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_SDK"
     },
     {
@@ -5190,6 +5312,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_UNIVERSE"
     },
     {
@@ -5258,6 +5381,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#FS_INTERACTION"
     },
     {
@@ -5326,6 +5450,7 @@
       ],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_INTEROP"
     },
     {
@@ -5387,6 +5512,7 @@
       "owner_evidence_files": [],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": null,
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_AUTOMATION"
     },
     {
@@ -5444,6 +5570,12 @@
         "adaptation_lifecycle_v1"
       ],
       "requirements": [
+        "FSR-289",
+        "FSR-266",
+        "FSR-267",
+        "FSR-292",
+        "FSR-293",
+        "FSR-294",
         "FSR-298"
       ],
       "remaining": [
@@ -5452,10 +5584,19 @@
         "FINAL_SOURCE_CI"
       ],
       "owner_evidence_files": [
-        "docs/delivery/functional-surface-freeze/ADAPTATION_LIFECYCLE_VERIFICATION.json"
+        "docs/delivery/functional-surface-freeze/ADAPTATION_LIFECYCLE_VERIFICATION.json",
+        "docs/delivery/functional-surface-freeze/BROWSER_INTEGRATION_CORRECTIONS.md"
       ],
       "operation_permissions": null,
       "bounded_receipt_contract": null,
+      "ui_mutation_barrier": {
+        "scope": "Original Adaptation blueprint editor and proposal commands",
+        "busy_boundary": "Native fields/commands stay disabled until server mutation and authoritative query invalidation/settlement finish",
+        "after_settlement": "Next blueprint edit uses the authoritative proposal revision; stale/local conflict text is never silently rebased",
+        "on_error": "Release busy controls and retain the user draft and original conflict/recovery semantics",
+        "labels": "Explicit aria-label equals visible label, independent of prefilled textarea text and select options",
+        "label_evidence_limit": "Installed Playwright exact implicit-label matching included nested initial/option text; native accessible names were not shown wrong. No generalized screen-reader defect or acceptance claim."
+      },
       "catalog_ref": "UI_SURFACE_CATALOG.json#CORE_ADAPTATION"
     }
   ],
@@ -5615,7 +5756,7 @@
         "CORE_ADAPTATION"
       ],
       "classification": "PENDING_EXACT_FINAL_HEAD",
-      "detail": "Final source is not yet pinned to corrected hosted results. First hosted candidate 13b9 failed original flag-discovery compatibility assertions; f25 is the compatibility-repair checkpoint, not a final-source verification receipt. A subsequent 8,626-node File snapshot reported an original erased-vector receipt regression and remains failed evidence. EmbeddingService.records now permits only same-source-owner/same-index-owner erased INVALIDATED receipts under current scope/feature authority; focused corrected coverage reported 51 File passes with 50 backend-profile skips plus 3 API catalog passes. The subsequently published d9d2df3a checkpoint retains failed push/PR Frontend receipts, documented in BROWSER_INTEGRATION_CORRECTIONS.md; no earlier failed screenshot is acceptance evidence. Meanwhile the later five-kind Story editor, adapter-receipt and Local Interop branch-owner follow-on changes require a new source-bound immutable checkpoint. The d9 PostgreSQL stored-facts assertion also failed on opaque Timeline IDs/public-slug versus UUID storage/FK ownership; the original repository adapter is corrected without changing that assertion, and the new identity matrix is File-tested only locally. No result for the corrected checkpoint is inferred from previous focused or hosted checks. Local Chromium/socket launch denied; real PostgreSQL unavailable locally.",
+      "detail": "Final source is not yet pinned to corrected hosted results. First hosted candidate 13b9 failed original flag-discovery compatibility assertions; f25 is the compatibility-repair checkpoint, not a final-source verification receipt. A subsequent 8,626-node File snapshot reported an original erased-vector receipt regression and remains failed evidence. EmbeddingService.records now permits only same-source-owner/same-index-owner erased INVALIDATED receipts under current scope/feature authority; focused corrected coverage reported 51 File passes with 50 backend-profile skips plus 3 API catalog passes. The subsequently published d9d2df3a checkpoint retains failed push/PR Frontend receipts, documented in BROWSER_INTEGRATION_CORRECTIONS.md; no earlier failed screenshot is acceptance evidence. Meanwhile the later five-kind Story editor, adapter-receipt and Local Interop branch-owner follow-on changes require a new source-bound immutable checkpoint. The d9 PostgreSQL stored-facts assertion also failed on opaque Timeline IDs/public-slug versus UUID storage/FK ownership; the original repository adapter is corrected without changing that assertion, and the new identity matrix is File-tested only locally. The later 90f push/PR Frontend failures are also retained: exact implicit-label matching and an actual edit-during-save/query-settlement gap required UI corrections. Explicit labels, native disabled barriers and honest scope labels are now source-mapped; app/API sources are unchanged, but corrected-head full CI remains PENDING. No result for the corrected checkpoint is inferred from previous focused or hosted checks. Local Chromium/socket launch denied; real PostgreSQL unavailable locally.",
       "freeze_effect": "Lead must pin source and verify actual hosted File/PostgreSQL/API/browser/full-regression checks for that source. Historical independent review remains BLOCKED and was not retried."
     }
   ],
@@ -5794,7 +5935,7 @@
         "FS_BRANCH",
         "FS_STORY_DATABASE"
       ],
-      "behavior": "Original document CAS and visible durable save state; current five-kind Story editors additionally use their original structured digest/version/history/restore owner. Uncertain outcomes are reread rather than replayed.",
+      "behavior": "Original document CAS and visible durable save state; current five-kind Story editors additionally use their original structured digest/version/history/restore owner, with fields disabled through mutation and query settlement, then immediate post-commit draft persistence. Uncertain outcomes are reread rather than replayed.",
       "api_kind": "ORIGINAL_SERVER_AND_OR_SCOPED_CLIENT_API",
       "api_sources": [
         "app/api.py",
@@ -6183,12 +6324,17 @@
       "name": "Accessibility States",
       "surfaces": [
         "U13",
-        "FS_INTERACTION"
+        "FS_INTERACTION",
+        "FS_STORY_DATABASE",
+        "CORE_ADAPTATION"
       ],
-      "behavior": "Labels/focus/live states/IME and versioned announcement/reduced-motion settings; native screen-reader NOT_RUN.",
+      "behavior": "Labels/focus/live states/IME and scoped announcement/reduced-motion preferences. Story/Adaptation use exact explicit visible labels and native disabled commit/refresh barriers. Playwright implicit-label matching differed from native accessible names; native screen-reader remains NOT_RUN.",
       "api_kind": "ORIGINAL_SERVER_AND_OR_SCOPED_CLIENT_API",
       "api_sources": [
-        "app/experimental/ux_api.py"
+        "app/experimental/ux_api.py",
+        "app/api.py",
+        "app/story_record_api.py",
+        "app/adaptation_api.py"
       ],
       "server_persistence_claim": "Only original named owner; see per-surface API and store",
       "component_files": [
@@ -6196,7 +6342,16 @@
         "frontend/src/ui/AppShell.tsx",
         "frontend/src/ui/primitives.tsx",
         "frontend/src/experimental/WorkspaceInteractionPanel.tsx",
-        "frontend/src/experimental/WorkspaceToolsPanel.tsx"
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx",
+        "frontend/src/novel/StoryDatabase.tsx",
+        "frontend/src/novel/StoryRecordVersionEditor.tsx",
+        "frontend/src/novel/WorldBuildingDashboard.tsx",
+        "frontend/src/novel/WorldRelationshipGraph.tsx",
+        "frontend/src/novel/AdaptationPanel.tsx",
+        "frontend/src/novel/ScreenplayPipelinePanel.tsx",
+        "frontend/src/novel/PipelineStatusPanel.tsx",
+        "frontend/src/novel/ConstraintImportPreview.tsx",
+        "frontend/src/App.tsx"
       ],
       "verification": "SOURCE_MAPPED; EXACT_FINAL_HEAD_TESTS_PENDING"
     },
@@ -8084,7 +8239,7 @@
           "execution": "PENDING_EXACT_FINAL_HEAD"
         },
         "history": {
-          "behavior": "Original row retains 20 prior version snapshots; legacy saves advance opted-in metadata; original narrative event history remains distinct",
+          "behavior": "Original row retains 20 prior version snapshots; legacy saves advance opted-in metadata; original narrative event history remains distinct. SAVE/RESTORE/FEEDBACK controls stay natively disabled through authoritative refresh, then accept/persist the next edit",
           "evidence": [
             "app/experimental/finding_review_composition.py",
             "app/services/novel_service.py",
@@ -8397,7 +8552,7 @@
           "execution": "PENDING_EXACT_FINAL_HEAD"
         },
         "recovery": {
-          "behavior": "Actor/project/kind/record local candidate plus original GET/history after restart; uncertain writes are read back and never auto-replayed",
+          "behavior": "Actor/project/kind/record local candidate plus original GET/history after restart; controls remain disabled through commit/query settlement, then the first allowed edit is synchronously persisted under returned digest/version. Uncertain writes are read back and never auto-replayed",
           "evidence": [
             "app/services/novel_service.py",
             "app/experimental/world.py",
