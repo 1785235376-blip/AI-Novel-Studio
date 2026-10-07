@@ -1,0 +1,6 @@
+{
+  "stage": "05b-memory-extraction",
+  "status": "FAIL",
+  "seconds": 6.264,
+  "error": "{\"id\": \"f3adbe86-efb6-5f86-ab4a-338ecb41d09c\", \"operation\": \"MEMORY_EXTRACTION\", \"novel_id\": \"52a95860\", \"chapter_id\": \"52a95860:2\", \"status\": \"FAILED\", \"request\": {\"chapter_version\": 1, \"profile\": \"LOCAL_ONLY\"}, \"created_at\": \"2026-10-07T09:38:08.873368+00:00\", \"error_code\": \"MEMORY_EXTRACTION_FAILED\", \"error\": \"ValidationError: 1 validation error for MemoryAgentOutput\\nproposals\\n  Field required [type=missing, input_value={'$defs': {'AgentEvidence...tput', 'type': 'object'}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/missing\"}"
+}

@@ -1,0 +1,463 @@
+{
+  "stage": "07-consistency",
+  "status": "PASS",
+  "seconds": 0.041,
+  "evidence": {
+    "findings": {
+      "status": "COMPLETED",
+      "placeholder": false,
+      "engine_status": "COMPLETED",
+      "execution_label": "契约校验，未调用模型",
+      "model_called": false,
+      "chapter": {
+        "id": "52a95860:2",
+        "number": 2,
+        "title": "零睁开眼时，世界已不再是灰白，而是一片黏稠的铅色死寂。",
+        "word_count": 1227
+      },
+      "scanned": {
+        "characters": 1,
+        "locations": 3,
+        "timeline": 0,
+        "world_rules": 5,
+        "foreshadowing": 0
+      },
+      "findings": [],
+      "foreshadowing": {
+        "chapter": 2,
+        "pending": [],
+        "overdue": [],
+        "paid_off": []
+      }
+    },
+    "context": {
+      "novel": "废城回声 · 完整产品验收",
+      "novel_id": "52a95860",
+      "volume": 1,
+      "chapter": 2,
+      "chapter_goal": "",
+      "pov": null,
+      "story_time": null,
+      "characters": [
+        {
+          "age": null,
+          "role": "失忆的探索者 / 前城市毁灭者",
+          "personality": "谨慎、孤独、对自我身份充满困惑，内心深处隐藏着巨大的痛苦与恐惧，习惯压抑一切情绪以避免触发‘静默’法则。",
+          "goal": "在废墟中寻找关于自己过去的记忆碎片，试图拼凑出完整的自我认知，同时躲避‘回声兽’的追捕。",
+          "current_location": "",
+          "status": "ALIVE",
+          "name": "零",
+          "privacy_level": "LOCAL_ONLY",
+          "id": "8b97764b-e8df-53b3-a247-f3d2820da0de"
+        }
+      ],
+      "relationships": [],
+      "world": {
+        "summary": "故事发生在一个被未知力量彻底摧毁后遗弃的巨型都市。城市表面覆盖着厚重的灰雾和变异植被，地下则隐藏着毁灭发生时的残骸与数据核心。空气中弥漫着一种名为‘静默’的法则，任何试图回忆或大声呼喊的行为都会引发局部的空间崩塌。主角在废墟中拾捡记忆碎片，逐渐拼凑出真相：他并非受害者，而是这场灾难的源头。",
+        "privacy_level": "LOCAL_ONLY"
+      },
+      "outline": {
+        "theme": "身份认同与自我救赎：真正的救赎不是遗忘罪恶，而是直面并接纳破碎的自我。",
+        "premise": "在一个因‘静默’法则而禁止一切声音与剧烈情绪波动的废弃都市中，失忆者零为了寻找过去的记忆碎片而冒险前行。随着他深入城市核心，他逐渐拼凑出真相：他并非无辜的幸存者，而是当年引发城市毁灭的罪魁祸首。",
+        "structure": "THREE_ACT",
+        "beginning": "零在灰雾边缘醒来，依靠本能小心翼翼地避开‘回声兽’和空间崩塌。他在废弃的广告牌下拾获第一块记忆碎片，模糊地感知到‘毁灭’与‘声音’的关联。为了生存，他必须前往中央广场获取更多信息，但每一步都伴随着对未知恐惧的压抑。",
+        "middle": "零闯入中央广场·静默区，接触服务器阵列并承受精神反噬，解锁了更多记忆：他曾是城市的最高指挥官，因一次失控的‘自我毁灭协议’测试而导致了灾难。此时，‘回声兽’开始模仿他的声音进行诱捕，零在逃亡中意识到，只要他还逃避真相，内心的恐惧就会喂养怪物，加速城市的崩塌。",
+        "ending": "零抵达核心残骸·审判庭，面对封印着他毁灭者意识的终极数据。他必须主动承受巨大的精神冲击来读取完整记忆。在真相大白的那一刻，他不再逃避，而是选择接纳自己作为毁灭者的身份，用最后的意志力平息了城市的防御机制，让废墟重归死寂的宁静，完成了自我审判。",
+        "main_conflict": "零必须在‘逃避痛苦记忆以维持生存’和‘直面毁灭真相以获得完整人性’之间做出选择，同时对抗以恐惧为食的‘回声兽’和随时可能因情绪波动而崩塌的空间。",
+        "climax": "在核心残骸的深处，零彻底解锁了所有记忆，看到了自己毁灭城市的瞬间。‘回声兽’群拥而至，模仿着他最恐惧的声音。零不再沉默或逃跑，而是主动发出了一声包含悔恨与接纳的呐喊，这股纯粹的情感波动瞬间瓦解了‘静默’法则的束缚，也终结了‘回声兽’的威胁，他成为了废墟新的守护者。",
+        "privacy_level": "LOCAL_ONLY"
+      },
+      "canon": [],
+      "timeline": [],
+      "world_rules": [
+        {
+          "id": "1496ae59-616f-5e9c-bf77-ec2febd4b4db",
+          "payload": {
+            "statement": "时间在城市废墟中是混乱的，不同区域的毁灭程度对应着不同的时间流速，导致因果律在局部失效。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "privacy_level": "LOCAL_ONLY",
+          "status": "APPROVED",
+          "evidence_ids": [
+            "c93d3336-10c9-595a-a04a-7ce6dfbb6685"
+          ]
+        },
+        {
+          "id": "26f432a7-1f33-5f9e-ab3f-e0259b5052e5",
+          "payload": {
+            "statement": "失忆者无法通过常规手段恢复记忆，必须通过接触‘核心残骸’并承受精神反噬来解锁片段。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "privacy_level": "LOCAL_ONLY",
+          "status": "APPROVED",
+          "evidence_ids": [
+            "357460af-e556-5aba-bfbc-bfc62de17cbf"
+          ]
+        },
+        {
+          "id": "47f16e43-19d5-54b7-9cf3-3c40a6136e06",
+          "payload": {
+            "statement": "任何试图重建城市的行为都会触发‘自我毁灭协议’，这是城市防御机制的最后防线。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "privacy_level": "LOCAL_ONLY",
+          "status": "APPROVED",
+          "evidence_ids": [
+            "07f350b2-66ec-5f75-852f-451158b5cf43"
+          ]
+        },
+        {
+          "id": "5ed419b9-1f8d-5a59-bdd8-34f9117caa05",
+          "payload": {
+            "statement": "城市中的变异生物（‘回声兽’）以人类的恐惧和记忆碎片为食，它们会模仿失忆者的声音来诱捕猎物。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "privacy_level": "LOCAL_ONLY",
+          "status": "APPROVED",
+          "evidence_ids": [
+            "d95c67cc-97cb-517a-bf2a-a65130f40de8"
+          ]
+        },
+        {
+          "id": "a069bd5b-181c-5996-af72-006e3d436508",
+          "payload": {
+            "statement": "城市禁止任何形式的‘声音’传播，包括语言、音乐和心跳的剧烈共鸣，否则会导致局部区域瞬间坍塌。",
+            "forbidden_terms": [],
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "privacy_level": "LOCAL_ONLY",
+          "status": "APPROVED",
+          "evidence_ids": [
+            "a14993f0-39ee-5605-8d72-2a26faaa2eb7"
+          ]
+        }
+      ],
+      "locations": [
+        {
+          "location_type": "",
+          "description": "城市的最外围，灰雾最浓重的地方。这里生长着巨大的金属藤蔓，偶尔能看到被遗忘的旧时代广告牌在雾中闪烁。是失忆者最初的栖息地，也是他第一次发现‘回声兽’的地方。",
+          "rules": "禁止大声呼吸，否则会被灰雾吞噬。",
+          "atmosphere": "压抑、潮湿、充满未知的恐惧。",
+          "status": "ACTIVE",
+          "name": "灰雾边缘",
+          "privacy_level": "LOCAL_ONLY",
+          "id": "fa63163e-f458-5508-a464-f298fe9b4094"
+        },
+        {
+          "location_type": "",
+          "description": "曾经繁华的商业中心，现在是一片巨大的空洞。地面裂开，露出下方仍在运转的旧时代服务器阵列，不断发出无声的蓝光。这里是记忆碎片最集中的地方。",
+          "rules": "禁止触碰任何发光的物体，否则会被强制植入虚假记忆。",
+          "atmosphere": "诡异的宁静，伴随着低频的嗡嗡声。",
+          "status": "ACTIVE",
+          "name": "中央广场·静默区",
+          "privacy_level": "LOCAL_ONLY",
+          "id": "b0f2bff9-5b1f-5056-a984-eec0f2b44bd9"
+        },
+        {
+          "location_type": "",
+          "description": "城市地底深处，毁灭发生时的指挥中心。这里保存着主角过去所有的记忆数据，但也封印着他作为毁灭者的意识。只有直面真相才能通过这里。",
+          "rules": "禁止携带任何武器，因为武器会加速空间的崩塌。",
+          "atmosphere": "冰冷、宏大、令人窒息的绝望感。",
+          "status": "ACTIVE",
+          "name": "核心残骸·审判庭",
+          "privacy_level": "LOCAL_ONLY",
+          "id": "b22707d8-cbd8-5b0d-be5f-db13747e7369"
+        }
+      ],
+      "current_story_state": {
+        "volume": 1,
+        "chapter": 0,
+        "active_characters": []
+      },
+      "active_foreshadowing": [],
+      "forbidden_secrets": [],
+      "privacy_omissions": [],
+      "recent_chapter_summary": [
+        {
+          "chapter": 2,
+          "summary": "零睁开眼时，世界已不再是灰白，而是一片黏稠的铅色死寂。\n\n意识像从深海高压区猛然上浮的气泡，带着撕裂耳膜的刺痛。他试图抬手遮挡视网膜上残留的幻光，指尖却触碰到冰冷滑腻的金属——那是断裂的立柱，表面爬满了类似血管的锈红纹路，正渗出某种发酵已久的腥气。那是“灰雾边缘”特有的味道，混合着腐烂植被的甜腻与臭氧烧焦的苦涩，每一次呼吸都像是在吞咽陈年的灰烬。\n\n厚重的灰雾并非静止，它们像是有生命的潮水，缓慢而贪婪地蠕动，吞噬着光线。几根巨大的金属藤蔓从雾中探出，尖端挂满变异的苔藓，在无声"
+        }
+      ],
+      "long_term_summary": "",
+      "style_profile": {},
+      "must_include": [],
+      "must_not_include": [
+        "未经批准改变 Canon",
+        "提前揭露受保护秘密"
+      ],
+      "lore_memory": {
+        "short_memory": [],
+        "medium_memory": [],
+        "long_memory": [],
+        "evidence_summary": [],
+        "memory_version": {
+          "active_memory_ids": [],
+          "volume_snapshot": null,
+          "novel_snapshot": null
+        }
+      },
+      "narrative_context": {
+        "project_id": "52a95860",
+        "plot_threads": [],
+        "foreshadowing": [],
+        "mysteries": [],
+        "character_goals": [],
+        "findings": [],
+        "selection_reasons": [],
+        "token_budget": 800,
+        "estimated_tokens": 0,
+        "truncated": false
+      },
+      "context_policy": {
+        "authoritative": [
+          {
+            "metadata": {
+              "source_type": "CANON",
+              "authority_level": "AUTHORITATIVE",
+              "source_id": "1496ae59-616f-5e9c-bf77-ec2febd4b4db",
+              "project_id": "52a95860",
+              "chapter_version_id": null,
+              "evidence_ids": [
+                "c93d3336-10c9-595a-a04a-7ce6dfbb6685"
+              ],
+              "selection_reasons": [
+                "APPROVED_WORLD_RULE"
+              ],
+              "locality": "LOCAL_ONLY",
+              "fact_key": null
+            },
+            "value": {
+              "id": "1496ae59-616f-5e9c-bf77-ec2febd4b4db",
+              "payload": {
+                "statement": "时间在城市废墟中是混乱的，不同区域的毁灭程度对应着不同的时间流速，导致因果律在局部失效。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "c93d3336-10c9-595a-a04a-7ce6dfbb6685"
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "source_type": "CANON",
+              "authority_level": "AUTHORITATIVE",
+              "source_id": "26f432a7-1f33-5f9e-ab3f-e0259b5052e5",
+              "project_id": "52a95860",
+              "chapter_version_id": null,
+              "evidence_ids": [
+                "357460af-e556-5aba-bfbc-bfc62de17cbf"
+              ],
+              "selection_reasons": [
+                "APPROVED_WORLD_RULE"
+              ],
+              "locality": "LOCAL_ONLY",
+              "fact_key": null
+            },
+            "value": {
+              "id": "26f432a7-1f33-5f9e-ab3f-e0259b5052e5",
+              "payload": {
+                "statement": "失忆者无法通过常规手段恢复记忆，必须通过接触‘核心残骸’并承受精神反噬来解锁片段。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "357460af-e556-5aba-bfbc-bfc62de17cbf"
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "source_type": "CANON",
+              "authority_level": "AUTHORITATIVE",
+              "source_id": "47f16e43-19d5-54b7-9cf3-3c40a6136e06",
+              "project_id": "52a95860",
+              "chapter_version_id": null,
+              "evidence_ids": [
+                "07f350b2-66ec-5f75-852f-451158b5cf43"
+              ],
+              "selection_reasons": [
+                "APPROVED_WORLD_RULE"
+              ],
+              "locality": "LOCAL_ONLY",
+              "fact_key": null
+            },
+            "value": {
+              "id": "47f16e43-19d5-54b7-9cf3-3c40a6136e06",
+              "payload": {
+                "statement": "任何试图重建城市的行为都会触发‘自我毁灭协议’，这是城市防御机制的最后防线。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "07f350b2-66ec-5f75-852f-451158b5cf43"
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "source_type": "CANON",
+              "authority_level": "AUTHORITATIVE",
+              "source_id": "5ed419b9-1f8d-5a59-bdd8-34f9117caa05",
+              "project_id": "52a95860",
+              "chapter_version_id": null,
+              "evidence_ids": [
+                "d95c67cc-97cb-517a-bf2a-a65130f40de8"
+              ],
+              "selection_reasons": [
+                "APPROVED_WORLD_RULE"
+              ],
+              "locality": "LOCAL_ONLY",
+              "fact_key": null
+            },
+            "value": {
+              "id": "5ed419b9-1f8d-5a59-bdd8-34f9117caa05",
+              "payload": {
+                "statement": "城市中的变异生物（‘回声兽’）以人类的恐惧和记忆碎片为食，它们会模仿失忆者的声音来诱捕猎物。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "d95c67cc-97cb-517a-bf2a-a65130f40de8"
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "source_type": "CANON",
+              "authority_level": "AUTHORITATIVE",
+              "source_id": "a069bd5b-181c-5996-af72-006e3d436508",
+              "project_id": "52a95860",
+              "chapter_version_id": null,
+              "evidence_ids": [
+                "a14993f0-39ee-5605-8d72-2a26faaa2eb7"
+              ],
+              "selection_reasons": [
+                "APPROVED_WORLD_RULE"
+              ],
+              "locality": "LOCAL_ONLY",
+              "fact_key": null
+            },
+            "value": {
+              "id": "a069bd5b-181c-5996-af72-006e3d436508",
+              "payload": {
+                "statement": "城市禁止任何形式的‘声音’传播，包括语言、音乐和心跳的剧烈共鸣，否则会导致局部区域瞬间坍塌。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "a14993f0-39ee-5605-8d72-2a26faaa2eb7"
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "source_type": "ACCEPTED_CHAPTER",
+              "authority_level": "AUTHORITATIVE",
+              "source_id": "52a95860:2",
+              "project_id": "52a95860",
+              "chapter_version_id": "52a95860:2:v2",
+              "evidence_ids": [],
+              "selection_reasons": [
+                "CURRENT_CHAPTER"
+              ],
+              "locality": "CLOUD_ALLOWED",
+              "fact_key": "accepted_chapter_state"
+            },
+            "value": {
+              "volume": 1,
+              "chapter": 0,
+              "active_characters": []
+            }
+          }
+        ],
+        "constraining": [],
+        "supporting": [],
+        "advisory": [],
+        "conflicts": [],
+        "duplicate_count": 0,
+        "budget_usage": {
+          "AUTHORITATIVE": 822,
+          "CONSTRAINING": 0,
+          "SUPPORTING": 0,
+          "ADVISORY": 0
+        },
+        "truncated_sources": [],
+        "authoritative_context_truncated": false,
+        "total_token_budget": 2400,
+        "writer_contract": [
+          "Higher-authority context overrides lower-authority context.",
+          "Advisories are warnings, not facts.",
+          "Do not guess through unresolved authoritative conflicts.",
+          "Context does not permit source-state mutation."
+        ]
+      },
+      "context_pack_v2": {
+        "enabled": true,
+        "chunks": [
+          {
+            "chunk_id": "RECENT_CHAPTER:52a95860:2:0",
+            "source_id": "52a95860:2",
+            "source_type": "RECENT_CHAPTER",
+            "content": {
+              "volume": 1,
+              "chapter": 0,
+              "active_characters": []
+            },
+            "estimated_tokens": 12,
+            "score": 10100,
+            "selection_reasons": [
+              "SOURCE_PRIORITY:RECENT_CHAPTER",
+              "CHAPTER_RECENCY"
+            ]
+          },
+          {
+            "chunk_id": "CHARACTER:8b97764b-e8df-53b3-a247-f3d2820da0de:0",
+            "source_id": "8b97764b-e8df-53b3-a247-f3d2820da0de",
+            "source_type": "CHARACTER",
+            "content": {
+              "age": null,
+              "role": "失忆的探索者 / 前城市毁灭者",
+              "personality": "谨慎、孤独、对自我身份充满困惑，内心深处隐藏着巨大的痛苦与恐惧，习惯压抑一切情绪以避免触发‘静默’法则。",
+              "goal": "在废墟中寻找关于自己过去的记忆碎片，试图拼凑出完整的自我认知，同时躲避‘回声兽’的追捕。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "零",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "8b97764b-e8df-53b3-a247-f3d2820da0de",
+              "character_ids": [
+                "8b97764b-e8df-53b3-a247-f3d2820da0de"
+              ]
+            },
+            "estimated_tokens": 85,
+            "score": 9000,
+            "selection_reasons": [
+              "SOURCE_PRIORITY:CHARACTER"
+            ]
+          }
+        ],
+        "estimated_tokens": 97,
+        "token_budget": 2400,
+        "omitted_local_only": [],
+        "deduplicated_count": 0,
+        "truncated_sources": []
+      },
+      "token_estimate": 3347,
+      "secrets_policy": "Local-only context"
+    }
+  }
+}

@@ -1,0 +1,40 @@
+FFFFF                                                                    [100%]
+================================== FAILURES ===================================
+_____________ test_author_parameters_reach_cloud_transport[False] _____________
+tests\test_full_recovery_provider_transport.py:47: in test_author_parameters_reach_cloud_transport
+    assert sent[0]['temperature'] == 0.3
+           ^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'temperature'
+_____________ test_author_parameters_reach_cloud_transport[True] ______________
+tests\test_full_recovery_provider_transport.py:47: in test_author_parameters_reach_cloud_transport
+    assert sent[0]['temperature'] == 0.3
+           ^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'temperature'
+__________ test_cancelled_dispatch_never_opens_cloud_request[False] ___________
+tests\test_full_recovery_provider_transport.py:60: in test_cancelled_dispatch_never_opens_cloud_request
+    result = (value.stream if stream else value.generate)('prompt', 'model', cancellation=cancellation)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\providers.py:163: in generate
+    with urlopen(request,timeout=kwargs.get("timeout",120)) as r: data=json.load(r)
+E   TypeError: 'NoneType' object does not support the context manager protocol
+___________ test_cancelled_dispatch_never_opens_cloud_request[True] ___________
+tests\test_full_recovery_provider_transport.py:62: in test_cancelled_dispatch_never_opens_cloud_request
+    list(result)
+app\providers.py:186: in stream
+    with urlopen(request, timeout=kwargs.get("timeout", 120)) as response:
+E   TypeError: 'NoneType' object does not support the context manager protocol
+_______________ test_stream_usage_and_dispatch_reauthorization ________________
+tests\test_full_recovery_provider_transport.py:73: in test_stream_usage_and_dispatch_reauthorization
+    assert ''.join(provider(monkeypatch).stream('prompt', 'model',
+app\providers.py:195: in stream
+    delta = item.get("choices", [{}])[0].get("delta", {}).get("content", "")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   IndexError: list index out of range
+- generated xml file: D:\С˵\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\verification\provider-before.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_full_recovery_provider_transport.py::test_author_parameters_reach_cloud_transport[False]
+FAILED tests/test_full_recovery_provider_transport.py::test_author_parameters_reach_cloud_transport[True]
+FAILED tests/test_full_recovery_provider_transport.py::test_cancelled_dispatch_never_opens_cloud_request[False]
+FAILED tests/test_full_recovery_provider_transport.py::test_cancelled_dispatch_never_opens_cloud_request[True]
+FAILED tests/test_full_recovery_provider_transport.py::test_stream_usage_and_dispatch_reauthorization
+5 failed in 1.99s

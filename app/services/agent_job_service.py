@@ -10,8 +10,8 @@ from datetime import datetime, timezone
 from dataclasses import asdict
 from pydantic import BaseModel,Field
 
-from ..agent_catalog import AGENTS
-from ..model_runtime import ModelRuntimeError,TextGenerationParameters,TextGenerationRequest,TextModelNodeInput
+from ..agent_catalog import resolve_agent
+from ..model_runtime import Modality,ModelRuntimeError,TextGenerationParameters,TextGenerationRequest,TextModelNodeInput
 
 
 def utc():return datetime.now(timezone.utc).isoformat()
@@ -31,8 +31,7 @@ class AgentJobService:
     def __init__(self,generations,contexts,novels,runtime=None,agent_runner=None):self.generations,self.contexts,self.novels,self.runtime,self.agent_runner=generations,contexts,novels,runtime,agent_runner;self.lock=threading.RLock();self.cancellations={};self._timers={}
 
     def create(self,agent_id,novel_id,chapter_number,instruction="",target="local",provider=None,model=None,execution_mode="deterministic",timeout_seconds=120,retry_of=None,chapter_id=None):
-        agent=next((item for item in AGENTS if item["id"]==agent_id),None)
-        if agent is None:raise KeyError(agent_id)
+        agent=resolve_agent(agent_id)
         if target not in {"local", "cloud"}:raise ValueError("invalid execution target")
         if execution_mode == "model":
             if self.runtime is None:raise ValueError("agent model runtime is unavailable")
@@ -232,10 +231,17 @@ class AgentJobService:
         context=self.contexts.build(job["agent_id"],job["novel_id"],None,job.get("instruction",""),job.get("target")=="cloud",job["chapter_id"])
         if context["chapter_id"] != job["chapter_id"] or context["context_hash"] != job["context_hash"] or context["chapter_version"] != job["chapter_version"]:
             raise ValueError("agent source changed; create a fresh job for review")
-        prompt=self.agent_runner.build_prompt(job["prompt_role"],context,job.get("instruction") or "Return a structured result.")+"\n\nReturn JSON only with keys: schema, agent_id, summary, proposals, findings, context_hash."
+        contract={"schema":job["output_schema"],"agent_id":job["agent_id"],"context_hash":job["context_hash"]}
+        prompt=self.agent_runner.build_prompt(job["prompt_role"],context,job.get("instruction") or "Return a structured result.")
+        prompt+="\n\nReturn ONLY JSON, no Markdown fences or commentary. The final response must match this JSON schema: "
+        prompt+=json.dumps(StructuredAgentOutput.model_json_schema(by_alias=True),ensure_ascii=False)
+        prompt+="\nUse these exact required values (copy them verbatim): "+json.dumps(contract,ensure_ascii=False)
+        prompt+="\nsummary is text; proposals and findings are arrays of objects, including [] when there are none. Do not invent references or perform domain writes."
         node=self.runtime.prepare_text_route(job["provider"],job["model"],self.runtime.providers.get(job["provider"]))
+        registry=getattr(self.runtime,"model_registry",None)
+        schema=StructuredAgentOutput.model_json_schema(by_alias=True) if registry is not None and registry.resolve(job["provider"],job["model"],Modality.TEXT).structured_output else None
         dispatch_guard=lambda:self._check_dispatch(job,check_authority)
-        request=TextGenerationRequest(provider_id=job["provider"],model_id=job["model"],prompt=prompt,context=context,parameters=TextGenerationParameters(temperature=0.2),metadata={"purpose":"agent_task"},job_id=job["id"],cancellation=self.cancellations.setdefault(job["id"],threading.Event()),dispatch_guard=dispatch_guard)
+        request=TextGenerationRequest(provider_id=job["provider"],model_id=job["model"],prompt=prompt,context=context,parameters=TextGenerationParameters(temperature=0.2,max_output_tokens=4000),structured_output_schema=schema,metadata={"purpose":"agent_task"},job_id=job["id"],cancellation=self.cancellations.setdefault(job["id"],threading.Event()),dispatch_guard=dispatch_guard)
         dispatch_guard()
         response=node.execute(TextModelNodeInput(request)).response;parsed=StructuredAgentOutput.model_validate_json(response.text).model_dump(by_alias=True)
         if parsed["schema"]!=job["output_schema"] or parsed["agent_id"]!=job["agent_id"] or parsed["context_hash"]!=job["context_hash"]:raise ValueError("structured agent output contract mismatch")

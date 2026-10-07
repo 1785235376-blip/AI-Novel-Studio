@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 D:/小说/AI-Novel-Studio-Latest-Product/frontend
+
+ ✓ src/AppProjectStory.test.tsx (4 tests) 365ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  17:37:03
+   Duration  2.56s (transform 852ms, setup 0ms, collect 1.52s, tests 365ms, environment 471ms, prepare 64ms)
+

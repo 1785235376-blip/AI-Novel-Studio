@@ -33,7 +33,7 @@
     "contracts/local-interop/v1/verifier-request.schema.json": "155d4c09973995e6970922ed842aac3ec80a66e9e0eed7143a363aa358e29f85",
     "contracts/local-interop/v1/verifier-result.schema.json": "32db45c63c70bcd0c100be8de5c3ba39541bae65abdd1c16051ab816aa429ec7",
     "local_interop_protocol/__init__.py": "c2365dfc6bb8cc5cc7cb023864d8cccafb84b7a09b4073db05566a28239dd5dc",
-    "local_interop_protocol/generate_contracts.py": "b5ef94a27b2ee85b31491af83720fa854648d1295769310f47266d21959fafc7",
+    "local_interop_protocol/generate_contracts.py": "ea401dcbbb1bcf6e9599c1a49b62e708f979ae04f71bf7102181d3010165baf3",
     "local_interop_protocol/models.py": "69879b7cdeda28f64b3189e1046c6f45398f5b45ef15414066d5674e0e9aeea0",
     "local_interop_protocol/validation.py": "b45f2521c7776e246092ea05e3e5a9f6471bb105f2360e1445a2b0406c43e3bc"
   },

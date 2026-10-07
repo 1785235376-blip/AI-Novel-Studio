@@ -6,7 +6,7 @@ from .chapter_repository import VersionConflict
 
 UNGUARDED = object()
 FIELDS = {
-    'timeline': {'id', 'sequence', 'time', 'title', 'description', 'location', 'characters', 'chapter_id', 'status', 'privacy_level', 'privacy_status'},
+    'timeline': {'id', 'sequence', 'time', 'start_time', 'end_time', 'title', 'description', 'location', 'characters', 'chapter_id', 'status', 'privacy_level', 'privacy_status'},
     'foreshadowing': {'id', 'title', 'description', 'planted_chapter', 'target_chapter', 'status', 'characters', 'events', 'privacy_level', 'privacy_status'},
     'characters': {'id', 'name', 'age', 'role', 'personality', 'goal', 'current_location', 'status', 'privacy_level', 'privacy_status'},
     'locations': {'id', 'name', 'location_type', 'description', 'rules', 'atmosphere', 'status', 'privacy_level', 'privacy_status'},

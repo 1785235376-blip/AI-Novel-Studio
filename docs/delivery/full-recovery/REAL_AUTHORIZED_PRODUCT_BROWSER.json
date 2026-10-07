@@ -1,0 +1,696 @@
+{
+  "novel_id": "f4b8c9ee",
+  "title": "废城回声 · 完整产品验收",
+  "frontend": "http://127.0.0.1:5209",
+  "api": "http://127.0.0.1:8051",
+  "mock_interception": false,
+  "chapter_count": 2,
+  "world_summary_verified": true,
+  "character_names_verified": [
+    "林渊",
+    "回声",
+    "老陈"
+  ],
+  "outline_entry_reachable": true,
+  "outline_submit_enabled": true,
+  "selected_model": {
+    "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+    "model_id": "local-cbe5fff59c25ef0f728e0e8c"
+  },
+  "model_options": [
+    "选择已配置的 Provider / 模型",
+    "DeepSeek Chat · deepseek（不可用）",
+    "DeepSeek Reasoner · deepseek（不可用）",
+    "Qwen3.5-9B-Q4_K_M.gguf · discovery-local-cbe5fff59c25ef0f728e0e8c",
+    "qwen2.5:7b-instruct-q4_K_M · ollama（不可用）"
+  ],
+  "planning_runs": [
+    {
+      "id": "78fb3aa5-a35b-4bef-87d6-ff87cb8bfbcb",
+      "kind": "OUTLINE",
+      "status": "READY",
+      "execution_mode": "real",
+      "candidates": [
+        {
+          "id": "9195dc32-79c7-5a70-9d76-3b05fee177ef",
+          "status": "APPLIED"
+        }
+      ]
+    },
+    {
+      "id": "71f9e7ab-6637-46b0-b9fd-cc7a66201fda",
+      "kind": "CHARACTERS",
+      "status": "READY",
+      "execution_mode": "real",
+      "candidates": [
+        {
+          "id": "1d2bc578-4891-508e-95a6-5f74d7d62559",
+          "status": "APPLIED"
+        }
+      ]
+    },
+    {
+      "id": "a5a64027-2ac9-48c0-b602-286292f5edd1",
+      "kind": "WORLD",
+      "status": "READY",
+      "execution_mode": "real",
+      "candidates": [
+        {
+          "id": "2f0f8f63-5626-5f4a-ada9-4a11f0ff47a1",
+          "status": "APPLIED"
+        }
+      ]
+    }
+  ],
+  "page_errors": [],
+  "network": [
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/first-use/sample",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/13dbbcda/experimental/workspace/resume",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/13dbbcda/chapters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/first-use/sample",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/13dbbcda/writing-goal",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/13dbbcda/chapters/archived",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/13dbbcda/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/first-use/sample",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/experimental/workspace/resume",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/first-use/sample",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/chapters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/chapters/archived",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/writing-goal",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/chapters/f4b8c9ee:1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/chapters/f4b8c9ee%3A1/history",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/chapters/f4b8c9ee%3A1/privacy",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/chapters/f4b8c9ee%3A1/privacy",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/outline",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/characters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/canon",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/chapters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/locations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/timeline",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/foreshadowing",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/relationships",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/volumes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/scenes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/story-routes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/world-rules",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/experimental/story-records/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/creation-records",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/review-threads",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/review-threads",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/creation-records",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/creation-reference-data",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/creation-reference-data",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/planning-runs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/planning-runs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/text-models",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/text-models",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/text-models",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/canon",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/outline",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/chapters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/locations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/characters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/timeline",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/foreshadowing",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/relationships",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/volumes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/scenes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/story-routes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/chapters/f4b8c9ee:2",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/chapters/f4b8c9ee%3A2/privacy",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/chapters/f4b8c9ee%3A2/privacy",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/text-runtime-diagnostics",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/f4b8c9ee/continuity/findings",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/world-rules",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/f4b8c9ee/continuity/review-findings",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/f4b8c9ee/pending-canon/review",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/chapters/f4b8c9ee%3A2/history",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/exports",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/exports/fcb6ab74-3e2d-4f43-b26c-958af2c9b18a",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/exports/fcb6ab74-3e2d-4f43-b26c-958af2c9b18a/download",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/agents",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agents",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/agent-jobs",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/api/local-session",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agents",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agents",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/agent-jobs",
+      "status": 202
+    },
+    {
+      "method": "POST",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b/start",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/text-models",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/f4b8c9ee/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/agent-jobs/4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+      "status": 200
+    }
+  ],
+  "geometry": {
+    "width": 1440,
+    "pageWidth": 1440
+  },
+  "entry_checks": {
+    "world": true,
+    "characters": true,
+    "project_planning": true,
+    "outline_proposal_ready": true,
+    "adopted_outline": true,
+    "chapter_open": true,
+    "manual_save": true,
+    "ai_rewrite": true,
+    "consistency": true,
+    "history_compare": true,
+    "restore_confirmation": true,
+    "export": true,
+    "existing_export_download": true,
+    "agent_roles": [
+      "reviewer",
+      "verifier"
+    ],
+    "explicit_local_host_binding": true,
+    "real_reviewer_ui_start": true,
+    "explicit_local_host_unlink": true
+  },
+  "history_versions": [
+    3,
+    2,
+    1
+  ],
+  "selected_chapter": {
+    "id": "f4b8c9ee:2",
+    "version": 4
+  },
+  "download": {
+    "filename": "real-product-browser-f4b8c9ee.md",
+    "bytes": 3695,
+    "sha256": "31c28ce219e9c1656d8dd573378864a2b8b122976c942198c8d2a4891aaad2ef"
+  },
+  "authorized_agent": {
+    "id": "4953fb9c-6fdc-4cee-bf1a-e43d9c7be26b",
+    "status": "COMPLETED",
+    "agent_id": "reviewer",
+    "execution_mode": "model",
+    "model_called": true,
+    "provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+    "model": "local-cbe5fff59c25ef0f728e0e8c",
+    "context_hash": "fcd3eb46b474d3fb5cd65395fd476c60f860a264102607af47b4a86b55db348f",
+    "empty": false,
+    "summary": "Chapter 2 v4 成功执行了失忆者林渊的身份揭示。章节准确呈现了主角对身份的无知（符合角色状态），并通过老陈的警告和‘回声’的幻象，确认了记忆缺失是城市防御机制的植入（符合已批准的世界规则）。林渊手中持有的量子芯片作为其主导实验的物证，逻辑自洽地连接了当前行动与最终结局的伏笔。未发现严重连续性错误或未经批准的 Canon 变更。",
+    "anonymous_start_status": 401,
+    "binding_status": 200,
+    "binding_mode": "LOCAL_HOST",
+    "credential_persistence": false,
+    "automatic_browser_header_injection": false,
+    "network_after_binding_failures": []
+  }
+}

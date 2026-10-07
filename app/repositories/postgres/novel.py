@@ -50,6 +50,7 @@ class PostgresNovelRepository:
             "updated_at": iso(model.updated_at),
             **({"long_term_summary": extra["long_term_summary"]} if "long_term_summary" in extra else {}),
             **({"writing_goal": extra["writing_goal"]} if "writing_goal" in extra else {}),
+            **({"world_summary": extra["world_summary"],"world_summary_privacy_level":extra.get("world_summary_privacy_level","LOCAL_ONLY")} if "world_summary" in extra else {}),
         }
 
     def list(self):
@@ -92,7 +93,7 @@ class PostgresNovelRepository:
             if payload.get("title") is not None:
                 model.title = payload["title"]
             metadata = dict(model.metadata_json or {})
-            for key in ("genre", "status", "long_term_summary", "writing_goal"):
+            for key in ("genre", "status", "long_term_summary", "writing_goal", "world_summary", "world_summary_privacy_level"):
                 if payload.get(key) is not None:
                     metadata[key] = payload[key]
             model.metadata_json = metadata
@@ -242,6 +243,8 @@ class PostgresNovelRepository:
                 if location_slug:location=session.scalar(select(LocationModel).where(LocationModel.novel_id==novel.id,LocationModel.slug==location_slug))
                 if not snapshot:
                     details.update(location=location_slug,chapter_id=payload.get('chapter_id',''),status=payload.get('status','CONFIRMED'))
+                    for key in ('start_time','end_time'):
+                        if key in payload:details[key]=payload[key]
                 # Clear stale imported policy after an explicit user change.
                 if 'privacy_level' in details:details['privacy_level']=policy
                 values={'novel_id':novel.id,'event_time':payload.get('time',''),'sequence':payload.get('sequence',1),
@@ -312,9 +315,25 @@ class PostgresNovelRepository:
         with self.database.session() as session:
             model=novel_or_raise(session,novel_id);return dict((model.metadata_json or {}).get("outline",{}))
 
-    def update_outline(self,novel_id,payload):
+    def update_outline(self,novel_id,payload,*,expected_digest=UNGUARDED):
         with self.database.session() as session:
-            model=self._locked_metadata_model(session,novel_id);metadata=dict(model.metadata_json or {});metadata["outline"]={**payload};model.metadata_json=metadata;model.updated_at=datetime.now(timezone.utc);session.flush();return dict(metadata["outline"])
+            model=self._locked_metadata_model(session,novel_id);metadata=dict(model.metadata_json or {})
+            if expected_digest is not UNGUARDED:
+                from ..structured_cas import record_digest
+                from ..chapter_repository import VersionConflict
+                if record_digest(metadata.get("outline", {})) != expected_digest:
+                    raise VersionConflict({"id":novel_id,"version":0},resource_id=novel_id)
+            metadata["outline"]={**payload};model.metadata_json=metadata;model.updated_at=datetime.now(timezone.utc);session.flush();return dict(metadata["outline"])
+
+    def update_world_summary(self,novel_id,summary,expected_digest):
+        from ..structured_cas import record_digest
+        from ..chapter_repository import VersionConflict
+        with self.database.session() as session:
+            model=self._locked_metadata_model(session,novel_id);metadata=dict(model.metadata_json or {})
+            if record_digest(metadata.get("world_summary", "")) != expected_digest:
+                raise VersionConflict({"id":novel_id,"version":0},resource_id=novel_id)
+            metadata.update(world_summary=summary,world_summary_privacy_level="LOCAL_ONLY")
+            model.metadata_json=metadata;model.updated_at=datetime.now(timezone.utc);session.flush();return self._meta(model)
 
     def upsert_volume(self,novel_id,volume_id,payload):
         with self.database.session() as session:
@@ -388,6 +407,8 @@ class PostgresNovelRepository:
             foreshadowing = session.scalars(select(ForeshadowingModel).where(ForeshadowingModel.novel_id == novel.id)).all()
             summaries = session.execute(select(ChapterSummaryModel, ChapterModel).join(ChapterModel).where(ChapterModel.novel_id == novel.id, ChapterModel.identity_status == "ACTIVE").order_by(func.coalesce(ChapterModel.sort_order, ChapterModel.chapter_number), ChapterSummaryModel.created_at)).all()
             secret_mapping = dict((novel.metadata_json or {}).get("context_source_ids", {}).get("secrets", {}))
+            timeline = session.scalars(select(TimelineModel).where(TimelineModel.novel_id == novel.id)).all()
+            relationships = session.scalars(select(RelationshipStateModel).where(RelationshipStateModel.project_id == novel.slug).order_by(RelationshipStateModel.created_at)).all()
             return {
                 "novel": self._meta(novel),
                 "characters": [serialize_character(x) for x in sorted(characters, key=character_order)],
@@ -397,4 +418,8 @@ class PostgresNovelRepository:
                 "foreshadowing": [serialize_foreshadowing(x) for x in sorted(foreshadowing, key=foreshadowing_order)],
                 "summaries": [{"chapter": chapter.chapter_number, "summary": summary.summary, **({"chapter_id": chapter_external_id(novel, chapter)} if chapter.public_token else {})} for summary, chapter in summaries],
                 "style_profile": dict((novel.metadata_json or {}).get("style_profile", {})),
+                "outline": dict((novel.metadata_json or {}).get("outline", {})),
+                "canon": self._canon(session, novel.id),
+                "timeline": [self._serialize_story(session, "timeline", x) for x in sorted(timeline, key=timeline_order)],
+                "relationships": [self._serialize_story(session, "relationships", x) for x in relationships],
             }

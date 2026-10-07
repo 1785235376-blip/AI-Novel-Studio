@@ -1,0 +1,25 @@
+
+ RUN  v2.1.9 D:/小说/AI-Novel-Studio-Latest-Product/frontend
+
+ ❯ src/novel/LocalHostSessionPanel.test.tsx (6 tests | 1 failed) 165ms
+   × never continues Agent start under another identity after an in-flight create loses its Host session 33ms
+     → finish is not a function
+ ✓ src/novel/AgentTeamPanel.additional.test.tsx (5 tests) 225ms
+ ✓ src/localHostSession.test.ts (6 tests) 11ms
+ ✓ src/novel/AgentTeamPanel.test.tsx (2 tests) 157ms
+ ✓ src/AuditColdStorage.test.ts (4 tests) 37ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/novel/LocalHostSessionPanel.test.tsx > never continues Agent start under another identity after an in-flight create loses its Host session
+TypeError: finish is not a function
+ ❯ src/novel/LocalHostSessionPanel.test.tsx:35:668
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 22 passed (23)
+   Start at  17:56:56
+   Duration  3.08s (transform 175ms, setup 0ms, collect 794ms, tests 594ms, environment 2.66s, prepare 322ms)
+

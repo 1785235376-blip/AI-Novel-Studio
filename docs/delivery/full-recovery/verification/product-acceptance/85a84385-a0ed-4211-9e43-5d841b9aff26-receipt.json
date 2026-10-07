@@ -1,0 +1,3980 @@
+{
+  "run_id": "85a84385-a0ed-4211-9e43-5d841b9aff26",
+  "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+  "model": {
+    "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+    "id": "local-cbe5fff59c25ef0f728e0e8c",
+    "model_name": "Qwen3.5-9B-Q4_K_M.gguf"
+  },
+  "stages": [
+    {
+      "stage": "01-project",
+      "status": "PASS",
+      "seconds": 1.429,
+      "evidence": {
+        "id": "f4b8c9ee",
+        "title": "废城回声 · 完整产品验收",
+        "genre": "悬疑科幻",
+        "status": "Writing",
+        "created_at": "2026-10-07T09:49:29.265122+00:00",
+        "updated_at": "2026-10-07T09:49:29.265122+00:00"
+      }
+    },
+    {
+      "stage": "02-world",
+      "status": "PASS",
+      "seconds": 7.015,
+      "evidence": {
+        "proposal": {
+          "id": "a5a64027-2ac9-48c0-b602-286292f5edd1",
+          "novel_id": "f4b8c9ee",
+          "scope": {
+            "mode": "local",
+            "novel_id": "f4b8c9ee"
+          },
+          "actor_id": "local-author",
+          "version": 4,
+          "status": "READY",
+          "request": {
+            "kind": "WORLD",
+            "mode": "MODEL",
+            "sources": [],
+            "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+            "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+            "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+            "candidate_count": 1,
+            "timeout_seconds": 180
+          },
+          "sources": [],
+          "candidates": [
+            {
+              "id": "2f0f8f63-5626-5f4a-ada9-4a11f0ff47a1",
+              "record": {
+                "kind": "WORLD",
+                "title": "废城回声 · 完整产品验收",
+                "description": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+                "instructions": "",
+                "acts": [],
+                "conflict": "",
+                "climax": "",
+                "ending": "",
+                "rules": [],
+                "character_ids": [],
+                "location_ids": [],
+                "chapter_ids": [],
+                "related_record_ids": [],
+                "story_route_id": null,
+                "privacy_level": "LOCAL_ONLY",
+                "world_summary": "故事发生在一座被巨大灾难摧毁后陷入永恒停滞的巨型都市“新巴别塔”。城市表面覆盖着厚厚的尘埃与变异植被，内部结构错综复杂，充满了旧时代的科技残骸与未知的辐射区。空气中弥漫着臭氧与腐烂金属的味道。这座城市的毁灭并非自然原因，而是源于一次失控的量子实验，而实验的主导者正是主角本人。城市现在由一种名为“回声”的集体潜意识现象笼罩，居民（或幸存者）的行为受过去记忆碎片的影响，导致社会秩序混乱。主角在寻找自我身份的过程中，逐渐揭开城市毁灭的真相，并面临是否要阻止“回声”完全吞噬现实，或是接受自己作为毁灭者的命运。",
+                "world_rules": [
+                  {
+                    "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                    "forbidden_terms": []
+                  },
+                  {
+                    "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                    "forbidden_terms": []
+                  },
+                  {
+                    "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                    "forbidden_terms": []
+                  },
+                  {
+                    "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                    "forbidden_terms": []
+                  },
+                  {
+                    "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                    "forbidden_terms": []
+                  }
+                ],
+                "locations": [
+                  {
+                    "name": "记忆回廊",
+                    "description": "城市边缘的一条废弃地铁隧道，墙壁上投射着无数模糊的人脸和破碎的记忆片段。这里是主角最常出现的地方，也是他试图拼凑自己过去的起点。",
+                    "rules": "进入回廊的人可能会陷入无限循环的梦境中，无法分辨现实与幻觉。",
+                    "atmosphere": "压抑、神秘、充满心理暗示"
+                  },
+                  {
+                    "name": "静默区",
+                    "description": "城市中心的一片绝对安静区域，没有任何声音传播。这里是旧时代实验的核心地带，也是主角最终发现真相的地方。",
+                    "rules": "任何声音都会引发剧烈的空间扭曲和物理伤害。",
+                    "atmosphere": "死寂、寒冷、令人不安"
+                  },
+                  {
+                    "name": "废墟广场",
+                    "description": "曾经繁华的商业中心，现在只剩下倒塌的高楼和扭曲的金属结构。这里聚集着少数幸存者，他们依靠旧时代的自动售货机维持生命。",
+                    "rules": "自动售货机有时会吐出带有记忆碎片的食物或物品。",
+                    "atmosphere": "荒凉、混乱、充满生存本能"
+                  }
+                ],
+                "characters": [],
+                "outline": null
+              },
+              "evidence": [],
+              "record_id": null,
+              "status": "DRAFT",
+              "analysis_source": "AI_SUGGESTION",
+              "source_provenance": {
+                "kind": "USER_PREMISE_AND_PROJECT_CONTEXT",
+                "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+                "project_context_hash": "33a3e566df07f28b3d585ddcd8a106f532b26d56b6704883c9b8dd72332eb2e4"
+              }
+            }
+          ],
+          "findings": [],
+          "created_at": "2026-10-07T09:49:29.408329+00:00",
+          "updated_at": "2026-10-07T09:49:35.855487+00:00",
+          "error": null,
+          "error_code": null,
+          "usage": {
+            "input_tokens": 1956,
+            "output_tokens": 666,
+            "total_tokens": 2622
+          },
+          "usage_status": "REPORTED",
+          "execution_mode": "real",
+          "project_context_hash": "33a3e566df07f28b3d585ddcd8a106f532b26d56b6704883c9b8dd72332eb2e4",
+          "project_context_snapshot": {
+            "project": {
+              "id": "f4b8c9ee",
+              "title": "废城回声 · 完整产品验收",
+              "genre": "悬疑科幻",
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "world": {},
+            "outline": {},
+            "characters": [],
+            "locations": [],
+            "world_rules": []
+          },
+          "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+          "applied": false,
+          "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+          "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+          "provider_reference_id": null
+        },
+        "application": {
+          "run": {
+            "id": "a5a64027-2ac9-48c0-b602-286292f5edd1",
+            "novel_id": "f4b8c9ee",
+            "scope": {
+              "mode": "local",
+              "novel_id": "f4b8c9ee"
+            },
+            "actor_id": "local-author",
+            "version": 15,
+            "status": "READY",
+            "request": {
+              "kind": "WORLD",
+              "mode": "MODEL",
+              "sources": [],
+              "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+              "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+              "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+              "candidate_count": 1,
+              "timeout_seconds": 180
+            },
+            "sources": [],
+            "candidates": [
+              {
+                "id": "2f0f8f63-5626-5f4a-ada9-4a11f0ff47a1",
+                "record": {
+                  "kind": "WORLD",
+                  "title": "废城回声 · 完整产品验收",
+                  "description": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+                  "instructions": "",
+                  "acts": [],
+                  "conflict": "",
+                  "climax": "",
+                  "ending": "",
+                  "rules": [],
+                  "character_ids": [],
+                  "location_ids": [],
+                  "chapter_ids": [],
+                  "related_record_ids": [],
+                  "story_route_id": null,
+                  "privacy_level": "LOCAL_ONLY",
+                  "world_summary": "故事发生在一座被巨大灾难摧毁后陷入永恒停滞的巨型都市“新巴别塔”。城市表面覆盖着厚厚的尘埃与变异植被，内部结构错综复杂，充满了旧时代的科技残骸与未知的辐射区。空气中弥漫着臭氧与腐烂金属的味道。这座城市的毁灭并非自然原因，而是源于一次失控的量子实验，而实验的主导者正是主角本人。城市现在由一种名为“回声”的集体潜意识现象笼罩，居民（或幸存者）的行为受过去记忆碎片的影响，导致社会秩序混乱。主角在寻找自我身份的过程中，逐渐揭开城市毁灭的真相，并面临是否要阻止“回声”完全吞噬现实，或是接受自己作为毁灭者的命运。",
+                  "world_rules": [
+                    {
+                      "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                      "forbidden_terms": []
+                    },
+                    {
+                      "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                      "forbidden_terms": []
+                    },
+                    {
+                      "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                      "forbidden_terms": []
+                    },
+                    {
+                      "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                      "forbidden_terms": []
+                    },
+                    {
+                      "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                      "forbidden_terms": []
+                    }
+                  ],
+                  "locations": [
+                    {
+                      "name": "记忆回廊",
+                      "description": "城市边缘的一条废弃地铁隧道，墙壁上投射着无数模糊的人脸和破碎的记忆片段。这里是主角最常出现的地方，也是他试图拼凑自己过去的起点。",
+                      "rules": "进入回廊的人可能会陷入无限循环的梦境中，无法分辨现实与幻觉。",
+                      "atmosphere": "压抑、神秘、充满心理暗示"
+                    },
+                    {
+                      "name": "静默区",
+                      "description": "城市中心的一片绝对安静区域，没有任何声音传播。这里是旧时代实验的核心地带，也是主角最终发现真相的地方。",
+                      "rules": "任何声音都会引发剧烈的空间扭曲和物理伤害。",
+                      "atmosphere": "死寂、寒冷、令人不安"
+                    },
+                    {
+                      "name": "废墟广场",
+                      "description": "曾经繁华的商业中心，现在只剩下倒塌的高楼和扭曲的金属结构。这里聚集着少数幸存者，他们依靠旧时代的自动售货机维持生命。",
+                      "rules": "自动售货机有时会吐出带有记忆碎片的食物或物品。",
+                      "atmosphere": "荒凉、混乱、充满生存本能"
+                    }
+                  ],
+                  "characters": [],
+                  "outline": null
+                },
+                "evidence": [],
+                "record_id": null,
+                "status": "APPLIED",
+                "analysis_source": "AI_SUGGESTION",
+                "source_provenance": {
+                  "kind": "USER_PREMISE_AND_PROJECT_CONTEXT",
+                  "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+                  "project_context_hash": "33a3e566df07f28b3d585ddcd8a106f532b26d56b6704883c9b8dd72332eb2e4"
+                },
+                "applied_by": "local-author",
+                "applied_at": "2026-10-07T09:49:36.332007+00:00"
+              }
+            ],
+            "findings": [],
+            "created_at": "2026-10-07T09:49:29.408329+00:00",
+            "updated_at": "2026-10-07T09:49:36.332007+00:00",
+            "error": null,
+            "error_code": null,
+            "usage": {
+              "input_tokens": 1956,
+              "output_tokens": 666,
+              "total_tokens": 2622
+            },
+            "usage_status": "REPORTED",
+            "execution_mode": "real",
+            "project_context_hash": "33a3e566df07f28b3d585ddcd8a106f532b26d56b6704883c9b8dd72332eb2e4",
+            "project_context_snapshot": {
+              "project": {
+                "id": "f4b8c9ee",
+                "title": "废城回声 · 完整产品验收",
+                "genre": "悬疑科幻",
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "world": {},
+              "outline": {},
+              "characters": [],
+              "locations": [],
+              "world_rules": []
+            },
+            "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+            "applied": true,
+            "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+            "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+            "provider_reference_id": null,
+            "application": {
+              "status": "APPLIED",
+              "candidate_id": "2f0f8f63-5626-5f4a-ada9-4a11f0ff47a1",
+              "actor_id": "local-author",
+              "receipts": {
+                "world_summary": {
+                  "id": "f4b8c9ee",
+                  "title": "废城回声 · 完整产品验收",
+                  "genre": "悬疑科幻",
+                  "status": "Writing",
+                  "created_at": "2026-10-07T09:49:29.265122+00:00",
+                  "updated_at": "2026-10-07T09:49:35.933942+00:00",
+                  "world_summary": "故事发生在一座被巨大灾难摧毁后陷入永恒停滞的巨型都市“新巴别塔”。城市表面覆盖着厚厚的尘埃与变异植被，内部结构错综复杂，充满了旧时代的科技残骸与未知的辐射区。空气中弥漫着臭氧与腐烂金属的味道。这座城市的毁灭并非自然原因，而是源于一次失控的量子实验，而实验的主导者正是主角本人。城市现在由一种名为“回声”的集体潜意识现象笼罩，居民（或幸存者）的行为受过去记忆碎片的影响，导致社会秩序混乱。主角在寻找自我身份的过程中，逐渐揭开城市毁灭的真相，并面临是否要阻止“回声”完全吞噬现实，或是接受自己作为毁灭者的命运。",
+                  "world_summary_privacy_level": "LOCAL_ONLY"
+                },
+                "location:0": {
+                  "location_type": "",
+                  "description": "城市边缘的一条废弃地铁隧道，墙壁上投射着无数模糊的人脸和破碎的记忆片段。这里是主角最常出现的地方，也是他试图拼凑自己过去的起点。",
+                  "rules": "进入回廊的人可能会陷入无限循环的梦境中，无法分辨现实与幻觉。",
+                  "atmosphere": "压抑、神秘、充满心理暗示",
+                  "status": "ACTIVE",
+                  "name": "记忆回廊",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "47da53ed-985b-5215-a16f-1edcc35f7ef7"
+                },
+                "location:1": {
+                  "location_type": "",
+                  "description": "城市中心的一片绝对安静区域，没有任何声音传播。这里是旧时代实验的核心地带，也是主角最终发现真相的地方。",
+                  "rules": "任何声音都会引发剧烈的空间扭曲和物理伤害。",
+                  "atmosphere": "死寂、寒冷、令人不安",
+                  "status": "ACTIVE",
+                  "name": "静默区",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "b8d9faf9-24e6-5c5a-a8f5-1557912dd6f6"
+                },
+                "location:2": {
+                  "location_type": "",
+                  "description": "曾经繁华的商业中心，现在只剩下倒塌的高楼和扭曲的金属结构。这里聚集着少数幸存者，他们依靠旧时代的自动售货机维持生命。",
+                  "rules": "自动售货机有时会吐出带有记忆碎片的食物或物品。",
+                  "atmosphere": "荒凉、混乱、充满生存本能",
+                  "status": "ACTIVE",
+                  "name": "废墟广场",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "2cc830e3-3d1a-5a66-9922-2fdda0760c51"
+                },
+                "world-rule:0": {
+                  "schema_version": 1,
+                  "id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+                  "novel_id": "f4b8c9ee",
+                  "proposal_type": "WORLD_RULE",
+                  "payload": {
+                    "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "approved_payload": {
+                    "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "status": "APPROVED",
+                  "source_chapter_id": null,
+                  "source_version": null,
+                  "agent_name": "plot_planner",
+                  "generation_job_id": null,
+                  "confidence": null,
+                  "reviewed_by": "local-author",
+                  "reviewed_at": "2026-10-07T09:49:36.073488Z",
+                  "rejection_reason": null,
+                  "created_at": "2026-10-07T09:49:36.055868Z",
+                  "updated_at": "2026-10-07T09:49:36.073488Z"
+                },
+                "world-rule:1": {
+                  "schema_version": 1,
+                  "id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+                  "novel_id": "f4b8c9ee",
+                  "proposal_type": "WORLD_RULE",
+                  "payload": {
+                    "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "approved_payload": {
+                    "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "status": "APPROVED",
+                  "source_chapter_id": null,
+                  "source_version": null,
+                  "agent_name": "plot_planner",
+                  "generation_job_id": null,
+                  "confidence": null,
+                  "reviewed_by": "local-author",
+                  "reviewed_at": "2026-10-07T09:49:36.133220Z",
+                  "rejection_reason": null,
+                  "created_at": "2026-10-07T09:49:36.117022Z",
+                  "updated_at": "2026-10-07T09:49:36.133220Z"
+                },
+                "world-rule:2": {
+                  "schema_version": 1,
+                  "id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+                  "novel_id": "f4b8c9ee",
+                  "proposal_type": "WORLD_RULE",
+                  "payload": {
+                    "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "approved_payload": {
+                    "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "status": "APPROVED",
+                  "source_chapter_id": null,
+                  "source_version": null,
+                  "agent_name": "plot_planner",
+                  "generation_job_id": null,
+                  "confidence": null,
+                  "reviewed_by": "local-author",
+                  "reviewed_at": "2026-10-07T09:49:36.185057Z",
+                  "rejection_reason": null,
+                  "created_at": "2026-10-07T09:49:36.170210Z",
+                  "updated_at": "2026-10-07T09:49:36.185057Z"
+                },
+                "world-rule:3": {
+                  "schema_version": 1,
+                  "id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+                  "novel_id": "f4b8c9ee",
+                  "proposal_type": "WORLD_RULE",
+                  "payload": {
+                    "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "approved_payload": {
+                    "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "status": "APPROVED",
+                  "source_chapter_id": null,
+                  "source_version": null,
+                  "agent_name": "plot_planner",
+                  "generation_job_id": null,
+                  "confidence": null,
+                  "reviewed_by": "local-author",
+                  "reviewed_at": "2026-10-07T09:49:36.244189Z",
+                  "rejection_reason": null,
+                  "created_at": "2026-10-07T09:49:36.232205Z",
+                  "updated_at": "2026-10-07T09:49:36.244189Z"
+                },
+                "world-rule:4": {
+                  "schema_version": 1,
+                  "id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+                  "novel_id": "f4b8c9ee",
+                  "proposal_type": "WORLD_RULE",
+                  "payload": {
+                    "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "approved_payload": {
+                    "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "status": "APPROVED",
+                  "source_chapter_id": null,
+                  "source_version": null,
+                  "agent_name": "plot_planner",
+                  "generation_job_id": null,
+                  "confidence": null,
+                  "reviewed_by": "local-author",
+                  "reviewed_at": "2026-10-07T09:49:36.301723Z",
+                  "rejection_reason": null,
+                  "created_at": "2026-10-07T09:49:36.287943Z",
+                  "updated_at": "2026-10-07T09:49:36.301723Z"
+                }
+              },
+              "started_at": "2026-10-07T09:49:35.903869+00:00",
+              "project_context_hash": "4fcaeb494bbc83691eafccab4911bc8e2859b4f6897e6b65d890a29a6067de99",
+              "completed_at": "2026-10-07T09:49:36.332007+00:00",
+              "applied": {
+                "world_summary": "故事发生在一座被巨大灾难摧毁后陷入永恒停滞的巨型都市“新巴别塔”。城市表面覆盖着厚厚的尘埃与变异植被，内部结构错综复杂，充满了旧时代的科技残骸与未知的辐射区。空气中弥漫着臭氧与腐烂金属的味道。这座城市的毁灭并非自然原因，而是源于一次失控的量子实验，而实验的主导者正是主角本人。城市现在由一种名为“回声”的集体潜意识现象笼罩，居民（或幸存者）的行为受过去记忆碎片的影响，导致社会秩序混乱。主角在寻找自我身份的过程中，逐渐揭开城市毁灭的真相，并面临是否要阻止“回声”完全吞噬现实，或是接受自己作为毁灭者的命运。",
+                "world_rule_ids": [
+                  "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+                  "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+                  "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+                  "8948137b-8178-5d62-b936-2b21b6c3967c",
+                  "a11b1ee3-6314-56e3-8154-c123da3a6214"
+                ],
+                "location_ids": [
+                  "47da53ed-985b-5215-a16f-1edcc35f7ef7",
+                  "b8d9faf9-24e6-5c5a-a8f5-1557912dd6f6",
+                  "2cc830e3-3d1a-5a66-9922-2fdda0760c51"
+                ],
+                "character_ids": [],
+                "outline": null
+              }
+            }
+          },
+          "applied": {
+            "world_summary": "故事发生在一座被巨大灾难摧毁后陷入永恒停滞的巨型都市“新巴别塔”。城市表面覆盖着厚厚的尘埃与变异植被，内部结构错综复杂，充满了旧时代的科技残骸与未知的辐射区。空气中弥漫着臭氧与腐烂金属的味道。这座城市的毁灭并非自然原因，而是源于一次失控的量子实验，而实验的主导者正是主角本人。城市现在由一种名为“回声”的集体潜意识现象笼罩，居民（或幸存者）的行为受过去记忆碎片的影响，导致社会秩序混乱。主角在寻找自我身份的过程中，逐渐揭开城市毁灭的真相，并面临是否要阻止“回声”完全吞噬现实，或是接受自己作为毁灭者的命运。",
+            "world_rule_ids": [
+              "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+              "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+              "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+              "8948137b-8178-5d62-b936-2b21b6c3967c",
+              "a11b1ee3-6314-56e3-8154-c123da3a6214"
+            ],
+            "location_ids": [
+              "47da53ed-985b-5215-a16f-1edcc35f7ef7",
+              "b8d9faf9-24e6-5c5a-a8f5-1557912dd6f6",
+              "2cc830e3-3d1a-5a66-9922-2fdda0760c51"
+            ],
+            "character_ids": [],
+            "outline": null
+          }
+        }
+      }
+    },
+    {
+      "stage": "03-characters",
+      "status": "PASS",
+      "seconds": 5.133,
+      "evidence": {
+        "proposal": {
+          "id": "71f9e7ab-6637-46b0-b9fd-cc7a66201fda",
+          "novel_id": "f4b8c9ee",
+          "scope": {
+            "mode": "local",
+            "novel_id": "f4b8c9ee"
+          },
+          "actor_id": "local-author",
+          "version": 4,
+          "status": "READY",
+          "request": {
+            "kind": "CHARACTERS",
+            "mode": "MODEL",
+            "sources": [],
+            "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+            "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+            "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+            "candidate_count": 1,
+            "timeout_seconds": 180
+          },
+          "sources": [],
+          "candidates": [
+            {
+              "id": "1d2bc578-4891-508e-95a6-5f74d7d62559",
+              "record": {
+                "kind": "CHARACTERS",
+                "title": "失忆的毁灭者",
+                "description": "主角在废墟中探索，试图找回失去的记忆，却逐渐意识到自己就是城市的毁灭者。",
+                "instructions": "",
+                "acts": [],
+                "conflict": "",
+                "climax": "",
+                "ending": "",
+                "rules": [],
+                "character_ids": [],
+                "location_ids": [],
+                "chapter_ids": [],
+                "related_record_ids": [],
+                "story_route_id": null,
+                "privacy_level": "LOCAL_ONLY",
+                "world_summary": "",
+                "world_rules": [],
+                "locations": [],
+                "characters": [
+                  {
+                    "name": "林渊",
+                    "role": "失忆的探索者 / 前实验主导者",
+                    "personality": "冷静、执着，但内心深处隐藏着对未知的恐惧和对自己身份的抗拒。他习惯性地回避直接的情感交流，更倾向于通过观察环境来理解世界。",
+                    "goal": "找回自己失去的记忆，弄清楚自己是谁，以及为何这座城市会陷入永恒的停滞。",
+                    "age": null,
+                    "status": "ALIVE"
+                  },
+                  {
+                    "name": "回声",
+                    "role": "集体潜意识的具象化 / 城市意志",
+                    "personality": "冷漠、扭曲，由无数破碎的记忆碎片组成。它既是城市的守护者也是囚禁者，不断试图将林渊拉回过去的创伤中。",
+                    "goal": "维持城市的现状，阻止林渊完全恢复记忆并可能再次‘修复’城市，因为那意味着‘回声’的终结。",
+                    "age": null,
+                    "status": "ALIVE"
+                  },
+                  {
+                    "name": "老陈",
+                    "role": "废墟广场的幸存者 / 向导",
+                    "personality": "悲观、圆滑，依靠旧时代的自动售货机维持生计。他对林渊既好奇又警惕，试图从他身上寻找自己失去亲人的答案。",
+                    "goal": "在混乱的废墟中生存下去，并帮助林渊找到通往城市核心的路径，尽管他并不完全信任林渊。",
+                    "age": 58,
+                    "status": "ALIVE"
+                  }
+                ],
+                "outline": null
+              },
+              "evidence": [],
+              "record_id": null,
+              "status": "DRAFT",
+              "analysis_source": "AI_SUGGESTION",
+              "source_provenance": {
+                "kind": "USER_PREMISE_AND_PROJECT_CONTEXT",
+                "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+                "project_context_hash": "4fcaeb494bbc83691eafccab4911bc8e2859b4f6897e6b65d890a29a6067de99"
+              }
+            }
+          ],
+          "findings": [],
+          "created_at": "2026-10-07T09:49:36.365657+00:00",
+          "updated_at": "2026-10-07T09:49:41.196944+00:00",
+          "error": null,
+          "error_code": null,
+          "usage": {
+            "input_tokens": 3176,
+            "output_tokens": 438,
+            "total_tokens": 3614
+          },
+          "usage_status": "REPORTED",
+          "execution_mode": "real",
+          "project_context_hash": "4fcaeb494bbc83691eafccab4911bc8e2859b4f6897e6b65d890a29a6067de99",
+          "project_context_snapshot": {
+            "project": {
+              "id": "f4b8c9ee",
+              "title": "废城回声 · 完整产品验收",
+              "genre": "悬疑科幻",
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "world": {
+              "summary": "故事发生在一座被巨大灾难摧毁后陷入永恒停滞的巨型都市“新巴别塔”。城市表面覆盖着厚厚的尘埃与变异植被，内部结构错综复杂，充满了旧时代的科技残骸与未知的辐射区。空气中弥漫着臭氧与腐烂金属的味道。这座城市的毁灭并非自然原因，而是源于一次失控的量子实验，而实验的主导者正是主角本人。城市现在由一种名为“回声”的集体潜意识现象笼罩，居民（或幸存者）的行为受过去记忆碎片的影响，导致社会秩序混乱。主角在寻找自我身份的过程中，逐渐揭开城市毁灭的真相，并面临是否要阻止“回声”完全吞噬现实，或是接受自己作为毁灭者的命运。",
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "outline": {},
+            "characters": [],
+            "locations": [
+              {
+                "location_type": "",
+                "description": "城市边缘的一条废弃地铁隧道，墙壁上投射着无数模糊的人脸和破碎的记忆片段。这里是主角最常出现的地方，也是他试图拼凑自己过去的起点。",
+                "rules": "进入回廊的人可能会陷入无限循环的梦境中，无法分辨现实与幻觉。",
+                "atmosphere": "压抑、神秘、充满心理暗示",
+                "status": "ACTIVE",
+                "name": "记忆回廊",
+                "privacy_level": "LOCAL_ONLY",
+                "id": "47da53ed-985b-5215-a16f-1edcc35f7ef7"
+              },
+              {
+                "location_type": "",
+                "description": "城市中心的一片绝对安静区域，没有任何声音传播。这里是旧时代实验的核心地带，也是主角最终发现真相的地方。",
+                "rules": "任何声音都会引发剧烈的空间扭曲和物理伤害。",
+                "atmosphere": "死寂、寒冷、令人不安",
+                "status": "ACTIVE",
+                "name": "静默区",
+                "privacy_level": "LOCAL_ONLY",
+                "id": "b8d9faf9-24e6-5c5a-a8f5-1557912dd6f6"
+              },
+              {
+                "location_type": "",
+                "description": "曾经繁华的商业中心，现在只剩下倒塌的高楼和扭曲的金属结构。这里聚集着少数幸存者，他们依靠旧时代的自动售货机维持生命。",
+                "rules": "自动售货机有时会吐出带有记忆碎片的食物或物品。",
+                "atmosphere": "荒凉、混乱、充满生存本能",
+                "status": "ACTIVE",
+                "name": "废墟广场",
+                "privacy_level": "LOCAL_ONLY",
+                "id": "2cc830e3-3d1a-5a66-9922-2fdda0760c51"
+              }
+            ],
+            "world_rules": [
+              {
+                "id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+                "payload": {
+                  "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                  "forbidden_terms": [],
+                  "privacy_level": "LOCAL_ONLY"
+                },
+                "privacy_level": "LOCAL_ONLY",
+                "status": "APPROVED",
+                "evidence_ids": [
+                  "dddb1d4c-71f7-5382-9514-7e3db7d582aa"
+                ]
+              },
+              {
+                "id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+                "payload": {
+                  "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                  "forbidden_terms": [],
+                  "privacy_level": "LOCAL_ONLY"
+                },
+                "privacy_level": "LOCAL_ONLY",
+                "status": "APPROVED",
+                "evidence_ids": [
+                  "6ca7f1d5-d0a7-561b-afb4-53772d734e56"
+                ]
+              },
+              {
+                "id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+                "payload": {
+                  "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                  "forbidden_terms": [],
+                  "privacy_level": "LOCAL_ONLY"
+                },
+                "privacy_level": "LOCAL_ONLY",
+                "status": "APPROVED",
+                "evidence_ids": [
+                  "b35f254e-729d-5899-8ab0-1ce1bcf1d49b"
+                ]
+              },
+              {
+                "id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+                "payload": {
+                  "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                  "forbidden_terms": [],
+                  "privacy_level": "LOCAL_ONLY"
+                },
+                "privacy_level": "LOCAL_ONLY",
+                "status": "APPROVED",
+                "evidence_ids": [
+                  "86ae6141-3964-5b27-9a73-cd65b393f340"
+                ]
+              },
+              {
+                "id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+                "payload": {
+                  "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                  "forbidden_terms": [],
+                  "privacy_level": "LOCAL_ONLY"
+                },
+                "privacy_level": "LOCAL_ONLY",
+                "status": "APPROVED",
+                "evidence_ids": [
+                  "692ea674-00b0-5b4e-8bb3-79bd4168bab0"
+                ]
+              }
+            ]
+          },
+          "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+          "applied": false,
+          "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+          "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+          "provider_reference_id": null
+        },
+        "application": {
+          "run": {
+            "id": "71f9e7ab-6637-46b0-b9fd-cc7a66201fda",
+            "novel_id": "f4b8c9ee",
+            "scope": {
+              "mode": "local",
+              "novel_id": "f4b8c9ee"
+            },
+            "actor_id": "local-author",
+            "version": 9,
+            "status": "READY",
+            "request": {
+              "kind": "CHARACTERS",
+              "mode": "MODEL",
+              "sources": [],
+              "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+              "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+              "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+              "candidate_count": 1,
+              "timeout_seconds": 180
+            },
+            "sources": [],
+            "candidates": [
+              {
+                "id": "1d2bc578-4891-508e-95a6-5f74d7d62559",
+                "record": {
+                  "kind": "CHARACTERS",
+                  "title": "失忆的毁灭者",
+                  "description": "主角在废墟中探索，试图找回失去的记忆，却逐渐意识到自己就是城市的毁灭者。",
+                  "instructions": "",
+                  "acts": [],
+                  "conflict": "",
+                  "climax": "",
+                  "ending": "",
+                  "rules": [],
+                  "character_ids": [],
+                  "location_ids": [],
+                  "chapter_ids": [],
+                  "related_record_ids": [],
+                  "story_route_id": null,
+                  "privacy_level": "LOCAL_ONLY",
+                  "world_summary": "",
+                  "world_rules": [],
+                  "locations": [],
+                  "characters": [
+                    {
+                      "name": "林渊",
+                      "role": "失忆的探索者 / 前实验主导者",
+                      "personality": "冷静、执着，但内心深处隐藏着对未知的恐惧和对自己身份的抗拒。他习惯性地回避直接的情感交流，更倾向于通过观察环境来理解世界。",
+                      "goal": "找回自己失去的记忆，弄清楚自己是谁，以及为何这座城市会陷入永恒的停滞。",
+                      "age": null,
+                      "status": "ALIVE"
+                    },
+                    {
+                      "name": "回声",
+                      "role": "集体潜意识的具象化 / 城市意志",
+                      "personality": "冷漠、扭曲，由无数破碎的记忆碎片组成。它既是城市的守护者也是囚禁者，不断试图将林渊拉回过去的创伤中。",
+                      "goal": "维持城市的现状，阻止林渊完全恢复记忆并可能再次‘修复’城市，因为那意味着‘回声’的终结。",
+                      "age": null,
+                      "status": "ALIVE"
+                    },
+                    {
+                      "name": "老陈",
+                      "role": "废墟广场的幸存者 / 向导",
+                      "personality": "悲观、圆滑，依靠旧时代的自动售货机维持生计。他对林渊既好奇又警惕，试图从他身上寻找自己失去亲人的答案。",
+                      "goal": "在混乱的废墟中生存下去，并帮助林渊找到通往城市核心的路径，尽管他并不完全信任林渊。",
+                      "age": 58,
+                      "status": "ALIVE"
+                    }
+                  ],
+                  "outline": null
+                },
+                "evidence": [],
+                "record_id": null,
+                "status": "APPLIED",
+                "analysis_source": "AI_SUGGESTION",
+                "source_provenance": {
+                  "kind": "USER_PREMISE_AND_PROJECT_CONTEXT",
+                  "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+                  "project_context_hash": "4fcaeb494bbc83691eafccab4911bc8e2859b4f6897e6b65d890a29a6067de99"
+                },
+                "applied_by": "local-author",
+                "applied_at": "2026-10-07T09:49:41.473820+00:00"
+              }
+            ],
+            "findings": [],
+            "created_at": "2026-10-07T09:49:36.365657+00:00",
+            "updated_at": "2026-10-07T09:49:41.473820+00:00",
+            "error": null,
+            "error_code": null,
+            "usage": {
+              "input_tokens": 3176,
+              "output_tokens": 438,
+              "total_tokens": 3614
+            },
+            "usage_status": "REPORTED",
+            "execution_mode": "real",
+            "project_context_hash": "4fcaeb494bbc83691eafccab4911bc8e2859b4f6897e6b65d890a29a6067de99",
+            "project_context_snapshot": {
+              "project": {
+                "id": "f4b8c9ee",
+                "title": "废城回声 · 完整产品验收",
+                "genre": "悬疑科幻",
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "world": {
+                "summary": "故事发生在一座被巨大灾难摧毁后陷入永恒停滞的巨型都市“新巴别塔”。城市表面覆盖着厚厚的尘埃与变异植被，内部结构错综复杂，充满了旧时代的科技残骸与未知的辐射区。空气中弥漫着臭氧与腐烂金属的味道。这座城市的毁灭并非自然原因，而是源于一次失控的量子实验，而实验的主导者正是主角本人。城市现在由一种名为“回声”的集体潜意识现象笼罩，居民（或幸存者）的行为受过去记忆碎片的影响，导致社会秩序混乱。主角在寻找自我身份的过程中，逐渐揭开城市毁灭的真相，并面临是否要阻止“回声”完全吞噬现实，或是接受自己作为毁灭者的命运。",
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "outline": {},
+              "characters": [],
+              "locations": [
+                {
+                  "location_type": "",
+                  "description": "城市边缘的一条废弃地铁隧道，墙壁上投射着无数模糊的人脸和破碎的记忆片段。这里是主角最常出现的地方，也是他试图拼凑自己过去的起点。",
+                  "rules": "进入回廊的人可能会陷入无限循环的梦境中，无法分辨现实与幻觉。",
+                  "atmosphere": "压抑、神秘、充满心理暗示",
+                  "status": "ACTIVE",
+                  "name": "记忆回廊",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "47da53ed-985b-5215-a16f-1edcc35f7ef7"
+                },
+                {
+                  "location_type": "",
+                  "description": "城市中心的一片绝对安静区域，没有任何声音传播。这里是旧时代实验的核心地带，也是主角最终发现真相的地方。",
+                  "rules": "任何声音都会引发剧烈的空间扭曲和物理伤害。",
+                  "atmosphere": "死寂、寒冷、令人不安",
+                  "status": "ACTIVE",
+                  "name": "静默区",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "b8d9faf9-24e6-5c5a-a8f5-1557912dd6f6"
+                },
+                {
+                  "location_type": "",
+                  "description": "曾经繁华的商业中心，现在只剩下倒塌的高楼和扭曲的金属结构。这里聚集着少数幸存者，他们依靠旧时代的自动售货机维持生命。",
+                  "rules": "自动售货机有时会吐出带有记忆碎片的食物或物品。",
+                  "atmosphere": "荒凉、混乱、充满生存本能",
+                  "status": "ACTIVE",
+                  "name": "废墟广场",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "2cc830e3-3d1a-5a66-9922-2fdda0760c51"
+                }
+              ],
+              "world_rules": [
+                {
+                  "id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+                  "payload": {
+                    "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "dddb1d4c-71f7-5382-9514-7e3db7d582aa"
+                  ]
+                },
+                {
+                  "id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+                  "payload": {
+                    "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "6ca7f1d5-d0a7-561b-afb4-53772d734e56"
+                  ]
+                },
+                {
+                  "id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+                  "payload": {
+                    "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "b35f254e-729d-5899-8ab0-1ce1bcf1d49b"
+                  ]
+                },
+                {
+                  "id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+                  "payload": {
+                    "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "86ae6141-3964-5b27-9a73-cd65b393f340"
+                  ]
+                },
+                {
+                  "id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+                  "payload": {
+                    "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "692ea674-00b0-5b4e-8bb3-79bd4168bab0"
+                  ]
+                }
+              ]
+            },
+            "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+            "applied": true,
+            "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+            "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+            "provider_reference_id": null,
+            "application": {
+              "status": "APPLIED",
+              "candidate_id": "1d2bc578-4891-508e-95a6-5f74d7d62559",
+              "actor_id": "local-author",
+              "receipts": {
+                "character:0": {
+                  "age": null,
+                  "role": "失忆的探索者 / 前实验主导者",
+                  "personality": "冷静、执着，但内心深处隐藏着对未知的恐惧和对自己身份的抗拒。他习惯性地回避直接的情感交流，更倾向于通过观察环境来理解世界。",
+                  "goal": "找回自己失去的记忆，弄清楚自己是谁，以及为何这座城市会陷入永恒的停滞。",
+                  "current_location": "",
+                  "status": "ALIVE",
+                  "name": "林渊",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "225a179a-9466-5e5b-95bd-3bb321de7e7e"
+                },
+                "character:1": {
+                  "age": null,
+                  "role": "集体潜意识的具象化 / 城市意志",
+                  "personality": "冷漠、扭曲，由无数破碎的记忆碎片组成。它既是城市的守护者也是囚禁者，不断试图将林渊拉回过去的创伤中。",
+                  "goal": "维持城市的现状，阻止林渊完全恢复记忆并可能再次‘修复’城市，因为那意味着‘回声’的终结。",
+                  "current_location": "",
+                  "status": "ALIVE",
+                  "name": "回声",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "3aca0456-9ef0-5890-a743-1857b674e44f"
+                },
+                "character:2": {
+                  "age": 58,
+                  "role": "废墟广场的幸存者 / 向导",
+                  "personality": "悲观、圆滑，依靠旧时代的自动售货机维持生计。他对林渊既好奇又警惕，试图从他身上寻找自己失去亲人的答案。",
+                  "goal": "在混乱的废墟中生存下去，并帮助林渊找到通往城市核心的路径，尽管他并不完全信任林渊。",
+                  "current_location": "",
+                  "status": "ALIVE",
+                  "name": "老陈",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "0992a4ed-41b7-5a68-baaa-6fe863224795"
+                }
+              },
+              "started_at": "2026-10-07T09:49:41.332754+00:00",
+              "project_context_hash": "50962695ca717178904049ef240649ae460624e241a896a6f5e992124fac9e31",
+              "completed_at": "2026-10-07T09:49:41.473820+00:00",
+              "applied": {
+                "world_summary": null,
+                "world_rule_ids": [],
+                "location_ids": [],
+                "character_ids": [
+                  "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+                  "3aca0456-9ef0-5890-a743-1857b674e44f",
+                  "0992a4ed-41b7-5a68-baaa-6fe863224795"
+                ],
+                "outline": null
+              }
+            }
+          },
+          "applied": {
+            "world_summary": null,
+            "world_rule_ids": [],
+            "location_ids": [],
+            "character_ids": [
+              "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+              "3aca0456-9ef0-5890-a743-1857b674e44f",
+              "0992a4ed-41b7-5a68-baaa-6fe863224795"
+            ],
+            "outline": null
+          }
+        }
+      }
+    },
+    {
+      "stage": "04-outline",
+      "status": "PASS",
+      "seconds": 6.827,
+      "evidence": {
+        "proposal": {
+          "id": "78fb3aa5-a35b-4bef-87d6-ff87cb8bfbcb",
+          "novel_id": "f4b8c9ee",
+          "scope": {
+            "mode": "local",
+            "novel_id": "f4b8c9ee"
+          },
+          "actor_id": "local-author",
+          "version": 4,
+          "status": "READY",
+          "request": {
+            "kind": "OUTLINE",
+            "mode": "MODEL",
+            "sources": [],
+            "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+            "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+            "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+            "candidate_count": 1,
+            "timeout_seconds": 180
+          },
+          "sources": [],
+          "candidates": [
+            {
+              "id": "9195dc32-79c7-5a70-9d76-3b05fee177ef",
+              "record": {
+                "kind": "OUTLINE",
+                "title": "废城回声：毁灭者的觉醒",
+                "description": "失忆者林渊在充满心理幻象的废弃都市中探寻自我，最终直面自己作为城市毁灭者的真相，并在集体潜意识“回声”的阻挠下做出终极抉择。",
+                "instructions": "",
+                "acts": [],
+                "conflict": "",
+                "climax": "",
+                "ending": "",
+                "rules": [],
+                "character_ids": [],
+                "location_ids": [],
+                "chapter_ids": [],
+                "related_record_ids": [],
+                "story_route_id": null,
+                "privacy_level": "LOCAL_ONLY",
+                "world_summary": "",
+                "world_rules": [],
+                "locations": [],
+                "characters": [],
+                "outline": {
+                  "theme": "记忆与身份的代价，以及面对自身罪孽时的救赎与毁灭。",
+                  "premise": "失忆者林渊在永恒停滞的巨型都市“新巴别塔”中流浪，试图找回过去。随着调查深入，他发现城市的毁灭源于自己主导的一次失控量子实验，而城市意志“回声”正试图通过扭曲现实来阻止他恢复记忆。",
+                  "structure": "THREE_ACT",
+                  "beginning": "林渊在记忆回廊的无限循环中醒来，依靠老陈提供的线索开始探索城市边缘。他遭遇了由碎片记忆构成的幻象，初次感受到“回声”的干扰，意识到自己的记忆缺失并非偶然，而是某种防御机制。",
+                  "middle": "林渊深入城市腹地，穿越废墟广场和危险的辐射区。他逐渐拼凑出实验失败的真相：他为了追求完美秩序而启动了量子实验，却导致了灾难。与此同时，“回声”具象化并试图将他拉回过去的创伤时刻，老陈在保护他的过程中牺牲，揭示了修复城市的代价是彻底抹杀所有幸存者的意识。",
+                  "ending": "林渊抵达静默区，面对核心反应堆和“回声”的最终形态。他必须选择是接受自己作为毁灭者的身份并让城市彻底崩溃，还是利用自己的记忆重塑城市，但这将意味着牺牲所有幸存者的自由意志。他选择了前者，拥抱毁灭以终结永恒的停滞。",
+                  "main_conflict": "林渊恢复记忆并试图修复城市的愿望，与“回声”维持现状、阻止真相被揭露的意志之间的冲突。",
+                  "climax": "在静默区，林渊直面“回声”的具象化自我，在巨大的精神冲击下确认了自己毁灭城市的身份。他利用核心反应堆的能量，主动引爆了维持城市停滞的量子锁，让“回声”消散，城市在废墟中迎来了真正的终结。"
+                }
+              },
+              "evidence": [],
+              "record_id": null,
+              "status": "DRAFT",
+              "analysis_source": "AI_SUGGESTION",
+              "source_provenance": {
+                "kind": "USER_PREMISE_AND_PROJECT_CONTEXT",
+                "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+                "project_context_hash": "50962695ca717178904049ef240649ae460624e241a896a6f5e992124fac9e31"
+              }
+            }
+          ],
+          "findings": [],
+          "created_at": "2026-10-07T09:49:41.501939+00:00",
+          "updated_at": "2026-10-07T09:49:47.987678+00:00",
+          "error": null,
+          "error_code": null,
+          "usage": {
+            "input_tokens": 3760,
+            "output_tokens": 504,
+            "total_tokens": 4264
+          },
+          "usage_status": "REPORTED",
+          "execution_mode": "real",
+          "project_context_hash": "50962695ca717178904049ef240649ae460624e241a896a6f5e992124fac9e31",
+          "project_context_snapshot": {
+            "project": {
+              "id": "f4b8c9ee",
+              "title": "废城回声 · 完整产品验收",
+              "genre": "悬疑科幻",
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "world": {
+              "summary": "故事发生在一座被巨大灾难摧毁后陷入永恒停滞的巨型都市“新巴别塔”。城市表面覆盖着厚厚的尘埃与变异植被，内部结构错综复杂，充满了旧时代的科技残骸与未知的辐射区。空气中弥漫着臭氧与腐烂金属的味道。这座城市的毁灭并非自然原因，而是源于一次失控的量子实验，而实验的主导者正是主角本人。城市现在由一种名为“回声”的集体潜意识现象笼罩，居民（或幸存者）的行为受过去记忆碎片的影响，导致社会秩序混乱。主角在寻找自我身份的过程中，逐渐揭开城市毁灭的真相，并面临是否要阻止“回声”完全吞噬现实，或是接受自己作为毁灭者的命运。",
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "outline": {},
+            "characters": [
+              {
+                "age": null,
+                "role": "失忆的探索者 / 前实验主导者",
+                "personality": "冷静、执着，但内心深处隐藏着对未知的恐惧和对自己身份的抗拒。他习惯性地回避直接的情感交流，更倾向于通过观察环境来理解世界。",
+                "goal": "找回自己失去的记忆，弄清楚自己是谁，以及为何这座城市会陷入永恒的停滞。",
+                "current_location": "",
+                "status": "ALIVE",
+                "name": "林渊",
+                "privacy_level": "LOCAL_ONLY",
+                "id": "225a179a-9466-5e5b-95bd-3bb321de7e7e"
+              },
+              {
+                "age": null,
+                "role": "集体潜意识的具象化 / 城市意志",
+                "personality": "冷漠、扭曲，由无数破碎的记忆碎片组成。它既是城市的守护者也是囚禁者，不断试图将林渊拉回过去的创伤中。",
+                "goal": "维持城市的现状，阻止林渊完全恢复记忆并可能再次‘修复’城市，因为那意味着‘回声’的终结。",
+                "current_location": "",
+                "status": "ALIVE",
+                "name": "回声",
+                "privacy_level": "LOCAL_ONLY",
+                "id": "3aca0456-9ef0-5890-a743-1857b674e44f"
+              },
+              {
+                "age": 58,
+                "role": "废墟广场的幸存者 / 向导",
+                "personality": "悲观、圆滑，依靠旧时代的自动售货机维持生计。他对林渊既好奇又警惕，试图从他身上寻找自己失去亲人的答案。",
+                "goal": "在混乱的废墟中生存下去，并帮助林渊找到通往城市核心的路径，尽管他并不完全信任林渊。",
+                "current_location": "",
+                "status": "ALIVE",
+                "name": "老陈",
+                "privacy_level": "LOCAL_ONLY",
+                "id": "0992a4ed-41b7-5a68-baaa-6fe863224795"
+              }
+            ],
+            "locations": [
+              {
+                "location_type": "",
+                "description": "城市边缘的一条废弃地铁隧道，墙壁上投射着无数模糊的人脸和破碎的记忆片段。这里是主角最常出现的地方，也是他试图拼凑自己过去的起点。",
+                "rules": "进入回廊的人可能会陷入无限循环的梦境中，无法分辨现实与幻觉。",
+                "atmosphere": "压抑、神秘、充满心理暗示",
+                "status": "ACTIVE",
+                "name": "记忆回廊",
+                "privacy_level": "LOCAL_ONLY",
+                "id": "47da53ed-985b-5215-a16f-1edcc35f7ef7"
+              },
+              {
+                "location_type": "",
+                "description": "城市中心的一片绝对安静区域，没有任何声音传播。这里是旧时代实验的核心地带，也是主角最终发现真相的地方。",
+                "rules": "任何声音都会引发剧烈的空间扭曲和物理伤害。",
+                "atmosphere": "死寂、寒冷、令人不安",
+                "status": "ACTIVE",
+                "name": "静默区",
+                "privacy_level": "LOCAL_ONLY",
+                "id": "b8d9faf9-24e6-5c5a-a8f5-1557912dd6f6"
+              },
+              {
+                "location_type": "",
+                "description": "曾经繁华的商业中心，现在只剩下倒塌的高楼和扭曲的金属结构。这里聚集着少数幸存者，他们依靠旧时代的自动售货机维持生命。",
+                "rules": "自动售货机有时会吐出带有记忆碎片的食物或物品。",
+                "atmosphere": "荒凉、混乱、充满生存本能",
+                "status": "ACTIVE",
+                "name": "废墟广场",
+                "privacy_level": "LOCAL_ONLY",
+                "id": "2cc830e3-3d1a-5a66-9922-2fdda0760c51"
+              }
+            ],
+            "world_rules": [
+              {
+                "id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+                "payload": {
+                  "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                  "forbidden_terms": [],
+                  "privacy_level": "LOCAL_ONLY"
+                },
+                "privacy_level": "LOCAL_ONLY",
+                "status": "APPROVED",
+                "evidence_ids": [
+                  "dddb1d4c-71f7-5382-9514-7e3db7d582aa"
+                ]
+              },
+              {
+                "id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+                "payload": {
+                  "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                  "forbidden_terms": [],
+                  "privacy_level": "LOCAL_ONLY"
+                },
+                "privacy_level": "LOCAL_ONLY",
+                "status": "APPROVED",
+                "evidence_ids": [
+                  "6ca7f1d5-d0a7-561b-afb4-53772d734e56"
+                ]
+              },
+              {
+                "id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+                "payload": {
+                  "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                  "forbidden_terms": [],
+                  "privacy_level": "LOCAL_ONLY"
+                },
+                "privacy_level": "LOCAL_ONLY",
+                "status": "APPROVED",
+                "evidence_ids": [
+                  "b35f254e-729d-5899-8ab0-1ce1bcf1d49b"
+                ]
+              },
+              {
+                "id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+                "payload": {
+                  "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                  "forbidden_terms": [],
+                  "privacy_level": "LOCAL_ONLY"
+                },
+                "privacy_level": "LOCAL_ONLY",
+                "status": "APPROVED",
+                "evidence_ids": [
+                  "86ae6141-3964-5b27-9a73-cd65b393f340"
+                ]
+              },
+              {
+                "id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+                "payload": {
+                  "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                  "forbidden_terms": [],
+                  "privacy_level": "LOCAL_ONLY"
+                },
+                "privacy_level": "LOCAL_ONLY",
+                "status": "APPROVED",
+                "evidence_ids": [
+                  "692ea674-00b0-5b4e-8bb3-79bd4168bab0"
+                ]
+              }
+            ]
+          },
+          "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+          "applied": false,
+          "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+          "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+          "provider_reference_id": null
+        },
+        "application": {
+          "run": {
+            "id": "78fb3aa5-a35b-4bef-87d6-ff87cb8bfbcb",
+            "novel_id": "f4b8c9ee",
+            "scope": {
+              "mode": "local",
+              "novel_id": "f4b8c9ee"
+            },
+            "actor_id": "local-author",
+            "version": 7,
+            "status": "READY",
+            "request": {
+              "kind": "OUTLINE",
+              "mode": "MODEL",
+              "sources": [],
+              "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+              "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+              "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+              "candidate_count": 1,
+              "timeout_seconds": 180
+            },
+            "sources": [],
+            "candidates": [
+              {
+                "id": "9195dc32-79c7-5a70-9d76-3b05fee177ef",
+                "record": {
+                  "kind": "OUTLINE",
+                  "title": "废城回声：毁灭者的觉醒",
+                  "description": "失忆者林渊在充满心理幻象的废弃都市中探寻自我，最终直面自己作为城市毁灭者的真相，并在集体潜意识“回声”的阻挠下做出终极抉择。",
+                  "instructions": "",
+                  "acts": [],
+                  "conflict": "",
+                  "climax": "",
+                  "ending": "",
+                  "rules": [],
+                  "character_ids": [],
+                  "location_ids": [],
+                  "chapter_ids": [],
+                  "related_record_ids": [],
+                  "story_route_id": null,
+                  "privacy_level": "LOCAL_ONLY",
+                  "world_summary": "",
+                  "world_rules": [],
+                  "locations": [],
+                  "characters": [],
+                  "outline": {
+                    "theme": "记忆与身份的代价，以及面对自身罪孽时的救赎与毁灭。",
+                    "premise": "失忆者林渊在永恒停滞的巨型都市“新巴别塔”中流浪，试图找回过去。随着调查深入，他发现城市的毁灭源于自己主导的一次失控量子实验，而城市意志“回声”正试图通过扭曲现实来阻止他恢复记忆。",
+                    "structure": "THREE_ACT",
+                    "beginning": "林渊在记忆回廊的无限循环中醒来，依靠老陈提供的线索开始探索城市边缘。他遭遇了由碎片记忆构成的幻象，初次感受到“回声”的干扰，意识到自己的记忆缺失并非偶然，而是某种防御机制。",
+                    "middle": "林渊深入城市腹地，穿越废墟广场和危险的辐射区。他逐渐拼凑出实验失败的真相：他为了追求完美秩序而启动了量子实验，却导致了灾难。与此同时，“回声”具象化并试图将他拉回过去的创伤时刻，老陈在保护他的过程中牺牲，揭示了修复城市的代价是彻底抹杀所有幸存者的意识。",
+                    "ending": "林渊抵达静默区，面对核心反应堆和“回声”的最终形态。他必须选择是接受自己作为毁灭者的身份并让城市彻底崩溃，还是利用自己的记忆重塑城市，但这将意味着牺牲所有幸存者的自由意志。他选择了前者，拥抱毁灭以终结永恒的停滞。",
+                    "main_conflict": "林渊恢复记忆并试图修复城市的愿望，与“回声”维持现状、阻止真相被揭露的意志之间的冲突。",
+                    "climax": "在静默区，林渊直面“回声”的具象化自我，在巨大的精神冲击下确认了自己毁灭城市的身份。他利用核心反应堆的能量，主动引爆了维持城市停滞的量子锁，让“回声”消散，城市在废墟中迎来了真正的终结。"
+                  }
+                },
+                "evidence": [],
+                "record_id": null,
+                "status": "APPLIED",
+                "analysis_source": "AI_SUGGESTION",
+                "source_provenance": {
+                  "kind": "USER_PREMISE_AND_PROJECT_CONTEXT",
+                  "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+                  "project_context_hash": "50962695ca717178904049ef240649ae460624e241a896a6f5e992124fac9e31"
+                },
+                "applied_by": "local-author",
+                "applied_at": "2026-10-07T09:49:48.282665+00:00"
+              }
+            ],
+            "findings": [],
+            "created_at": "2026-10-07T09:49:41.501939+00:00",
+            "updated_at": "2026-10-07T09:49:48.282665+00:00",
+            "error": null,
+            "error_code": null,
+            "usage": {
+              "input_tokens": 3760,
+              "output_tokens": 504,
+              "total_tokens": 4264
+            },
+            "usage_status": "REPORTED",
+            "execution_mode": "real",
+            "project_context_hash": "50962695ca717178904049ef240649ae460624e241a896a6f5e992124fac9e31",
+            "project_context_snapshot": {
+              "project": {
+                "id": "f4b8c9ee",
+                "title": "废城回声 · 完整产品验收",
+                "genre": "悬疑科幻",
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "world": {
+                "summary": "故事发生在一座被巨大灾难摧毁后陷入永恒停滞的巨型都市“新巴别塔”。城市表面覆盖着厚厚的尘埃与变异植被，内部结构错综复杂，充满了旧时代的科技残骸与未知的辐射区。空气中弥漫着臭氧与腐烂金属的味道。这座城市的毁灭并非自然原因，而是源于一次失控的量子实验，而实验的主导者正是主角本人。城市现在由一种名为“回声”的集体潜意识现象笼罩，居民（或幸存者）的行为受过去记忆碎片的影响，导致社会秩序混乱。主角在寻找自我身份的过程中，逐渐揭开城市毁灭的真相，并面临是否要阻止“回声”完全吞噬现实，或是接受自己作为毁灭者的命运。",
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "outline": {},
+              "characters": [
+                {
+                  "age": null,
+                  "role": "失忆的探索者 / 前实验主导者",
+                  "personality": "冷静、执着，但内心深处隐藏着对未知的恐惧和对自己身份的抗拒。他习惯性地回避直接的情感交流，更倾向于通过观察环境来理解世界。",
+                  "goal": "找回自己失去的记忆，弄清楚自己是谁，以及为何这座城市会陷入永恒的停滞。",
+                  "current_location": "",
+                  "status": "ALIVE",
+                  "name": "林渊",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "225a179a-9466-5e5b-95bd-3bb321de7e7e"
+                },
+                {
+                  "age": null,
+                  "role": "集体潜意识的具象化 / 城市意志",
+                  "personality": "冷漠、扭曲，由无数破碎的记忆碎片组成。它既是城市的守护者也是囚禁者，不断试图将林渊拉回过去的创伤中。",
+                  "goal": "维持城市的现状，阻止林渊完全恢复记忆并可能再次‘修复’城市，因为那意味着‘回声’的终结。",
+                  "current_location": "",
+                  "status": "ALIVE",
+                  "name": "回声",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "3aca0456-9ef0-5890-a743-1857b674e44f"
+                },
+                {
+                  "age": 58,
+                  "role": "废墟广场的幸存者 / 向导",
+                  "personality": "悲观、圆滑，依靠旧时代的自动售货机维持生计。他对林渊既好奇又警惕，试图从他身上寻找自己失去亲人的答案。",
+                  "goal": "在混乱的废墟中生存下去，并帮助林渊找到通往城市核心的路径，尽管他并不完全信任林渊。",
+                  "current_location": "",
+                  "status": "ALIVE",
+                  "name": "老陈",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "0992a4ed-41b7-5a68-baaa-6fe863224795"
+                }
+              ],
+              "locations": [
+                {
+                  "location_type": "",
+                  "description": "城市边缘的一条废弃地铁隧道，墙壁上投射着无数模糊的人脸和破碎的记忆片段。这里是主角最常出现的地方，也是他试图拼凑自己过去的起点。",
+                  "rules": "进入回廊的人可能会陷入无限循环的梦境中，无法分辨现实与幻觉。",
+                  "atmosphere": "压抑、神秘、充满心理暗示",
+                  "status": "ACTIVE",
+                  "name": "记忆回廊",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "47da53ed-985b-5215-a16f-1edcc35f7ef7"
+                },
+                {
+                  "location_type": "",
+                  "description": "城市中心的一片绝对安静区域，没有任何声音传播。这里是旧时代实验的核心地带，也是主角最终发现真相的地方。",
+                  "rules": "任何声音都会引发剧烈的空间扭曲和物理伤害。",
+                  "atmosphere": "死寂、寒冷、令人不安",
+                  "status": "ACTIVE",
+                  "name": "静默区",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "b8d9faf9-24e6-5c5a-a8f5-1557912dd6f6"
+                },
+                {
+                  "location_type": "",
+                  "description": "曾经繁华的商业中心，现在只剩下倒塌的高楼和扭曲的金属结构。这里聚集着少数幸存者，他们依靠旧时代的自动售货机维持生命。",
+                  "rules": "自动售货机有时会吐出带有记忆碎片的食物或物品。",
+                  "atmosphere": "荒凉、混乱、充满生存本能",
+                  "status": "ACTIVE",
+                  "name": "废墟广场",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "2cc830e3-3d1a-5a66-9922-2fdda0760c51"
+                }
+              ],
+              "world_rules": [
+                {
+                  "id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+                  "payload": {
+                    "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "dddb1d4c-71f7-5382-9514-7e3db7d582aa"
+                  ]
+                },
+                {
+                  "id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+                  "payload": {
+                    "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "6ca7f1d5-d0a7-561b-afb4-53772d734e56"
+                  ]
+                },
+                {
+                  "id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+                  "payload": {
+                    "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "b35f254e-729d-5899-8ab0-1ce1bcf1d49b"
+                  ]
+                },
+                {
+                  "id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+                  "payload": {
+                    "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "86ae6141-3964-5b27-9a73-cd65b393f340"
+                  ]
+                },
+                {
+                  "id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+                  "payload": {
+                    "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "692ea674-00b0-5b4e-8bb3-79bd4168bab0"
+                  ]
+                }
+              ]
+            },
+            "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+            "applied": true,
+            "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+            "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+            "provider_reference_id": null,
+            "application": {
+              "status": "APPLIED",
+              "candidate_id": "9195dc32-79c7-5a70-9d76-3b05fee177ef",
+              "actor_id": "local-author",
+              "receipts": {
+                "outline": {
+                  "theme": "记忆与身份的代价，以及面对自身罪孽时的救赎与毁灭。",
+                  "premise": "失忆者林渊在永恒停滞的巨型都市“新巴别塔”中流浪，试图找回过去。随着调查深入，他发现城市的毁灭源于自己主导的一次失控量子实验，而城市意志“回声”正试图通过扭曲现实来阻止他恢复记忆。",
+                  "structure": "THREE_ACT",
+                  "beginning": "林渊在记忆回廊的无限循环中醒来，依靠老陈提供的线索开始探索城市边缘。他遭遇了由碎片记忆构成的幻象，初次感受到“回声”的干扰，意识到自己的记忆缺失并非偶然，而是某种防御机制。",
+                  "middle": "林渊深入城市腹地，穿越废墟广场和危险的辐射区。他逐渐拼凑出实验失败的真相：他为了追求完美秩序而启动了量子实验，却导致了灾难。与此同时，“回声”具象化并试图将他拉回过去的创伤时刻，老陈在保护他的过程中牺牲，揭示了修复城市的代价是彻底抹杀所有幸存者的意识。",
+                  "ending": "林渊抵达静默区，面对核心反应堆和“回声”的最终形态。他必须选择是接受自己作为毁灭者的身份并让城市彻底崩溃，还是利用自己的记忆重塑城市，但这将意味着牺牲所有幸存者的自由意志。他选择了前者，拥抱毁灭以终结永恒的停滞。",
+                  "main_conflict": "林渊恢复记忆并试图修复城市的愿望，与“回声”维持现状、阻止真相被揭露的意志之间的冲突。",
+                  "climax": "在静默区，林渊直面“回声”的具象化自我，在巨大的精神冲击下确认了自己毁灭城市的身份。他利用核心反应堆的能量，主动引爆了维持城市停滞的量子锁，让“回声”消散，城市在废墟中迎来了真正的终结。",
+                  "privacy_level": "LOCAL_ONLY"
+                }
+              },
+              "started_at": "2026-10-07T09:49:48.225199+00:00",
+              "project_context_hash": "5283264fe65c6c74762ae5a4dc973d74003343c994b81405450f1013b4d65bf0",
+              "completed_at": "2026-10-07T09:49:48.282665+00:00",
+              "applied": {
+                "world_summary": null,
+                "world_rule_ids": [],
+                "location_ids": [],
+                "character_ids": [],
+                "outline": {
+                  "theme": "记忆与身份的代价，以及面对自身罪孽时的救赎与毁灭。",
+                  "premise": "失忆者林渊在永恒停滞的巨型都市“新巴别塔”中流浪，试图找回过去。随着调查深入，他发现城市的毁灭源于自己主导的一次失控量子实验，而城市意志“回声”正试图通过扭曲现实来阻止他恢复记忆。",
+                  "structure": "THREE_ACT",
+                  "beginning": "林渊在记忆回廊的无限循环中醒来，依靠老陈提供的线索开始探索城市边缘。他遭遇了由碎片记忆构成的幻象，初次感受到“回声”的干扰，意识到自己的记忆缺失并非偶然，而是某种防御机制。",
+                  "middle": "林渊深入城市腹地，穿越废墟广场和危险的辐射区。他逐渐拼凑出实验失败的真相：他为了追求完美秩序而启动了量子实验，却导致了灾难。与此同时，“回声”具象化并试图将他拉回过去的创伤时刻，老陈在保护他的过程中牺牲，揭示了修复城市的代价是彻底抹杀所有幸存者的意识。",
+                  "ending": "林渊抵达静默区，面对核心反应堆和“回声”的最终形态。他必须选择是接受自己作为毁灭者的身份并让城市彻底崩溃，还是利用自己的记忆重塑城市，但这将意味着牺牲所有幸存者的自由意志。他选择了前者，拥抱毁灭以终结永恒的停滞。",
+                  "main_conflict": "林渊恢复记忆并试图修复城市的愿望，与“回声”维持现状、阻止真相被揭露的意志之间的冲突。",
+                  "climax": "在静默区，林渊直面“回声”的具象化自我，在巨大的精神冲击下确认了自己毁灭城市的身份。他利用核心反应堆的能量，主动引爆了维持城市停滞的量子锁，让“回声”消散，城市在废墟中迎来了真正的终结。",
+                  "privacy_level": "LOCAL_ONLY"
+                }
+              }
+            }
+          },
+          "applied": {
+            "world_summary": null,
+            "world_rule_ids": [],
+            "location_ids": [],
+            "character_ids": [],
+            "outline": {
+              "theme": "记忆与身份的代价，以及面对自身罪孽时的救赎与毁灭。",
+              "premise": "失忆者林渊在永恒停滞的巨型都市“新巴别塔”中流浪，试图找回过去。随着调查深入，他发现城市的毁灭源于自己主导的一次失控量子实验，而城市意志“回声”正试图通过扭曲现实来阻止他恢复记忆。",
+              "structure": "THREE_ACT",
+              "beginning": "林渊在记忆回廊的无限循环中醒来，依靠老陈提供的线索开始探索城市边缘。他遭遇了由碎片记忆构成的幻象，初次感受到“回声”的干扰，意识到自己的记忆缺失并非偶然，而是某种防御机制。",
+              "middle": "林渊深入城市腹地，穿越废墟广场和危险的辐射区。他逐渐拼凑出实验失败的真相：他为了追求完美秩序而启动了量子实验，却导致了灾难。与此同时，“回声”具象化并试图将他拉回过去的创伤时刻，老陈在保护他的过程中牺牲，揭示了修复城市的代价是彻底抹杀所有幸存者的意识。",
+              "ending": "林渊抵达静默区，面对核心反应堆和“回声”的最终形态。他必须选择是接受自己作为毁灭者的身份并让城市彻底崩溃，还是利用自己的记忆重塑城市，但这将意味着牺牲所有幸存者的自由意志。他选择了前者，拥抱毁灭以终结永恒的停滞。",
+              "main_conflict": "林渊恢复记忆并试图修复城市的愿望，与“回声”维持现状、阻止真相被揭露的意志之间的冲突。",
+              "climax": "在静默区，林渊直面“回声”的具象化自我，在巨大的精神冲击下确认了自己毁灭城市的身份。他利用核心反应堆的能量，主动引爆了维持城市停滞的量子锁，让“回声”消散，城市在废墟中迎来了真正的终结。",
+              "privacy_level": "LOCAL_ONLY"
+            }
+          }
+        }
+      }
+    },
+    {
+      "stage": "05-chapter",
+      "status": "PASS",
+      "seconds": 8.341,
+      "evidence": {
+        "job": {
+          "id": "257085f1-a535-429a-ad9c-4ee03739f331",
+          "operation": "continue",
+          "novel_id": "f4b8c9ee",
+          "chapter_id": "f4b8c9ee:1",
+          "instruction": "根据已批准世界观、角色、大纲写第一章700–900字中文正文。失忆者在废弃城市醒来，埋下毁城身份线索，暂不揭示结局。只返回正文，不要标题或说明。",
+          "profile": "LOCAL_ONLY",
+          "source": "# 醒于废墟\n\n",
+          "requested_provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+          "requested_model": "local-cbe5fff59c25ef0f728e0e8c",
+          "style": "",
+          "status": "COMPLETED",
+          "output": "刺耳的尖啸撕裂了死寂，紧接着是某种沉重金属扭曲的轰鸣。林渊在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣，上面爬满了灰白色的变异苔藓，像是一只只窥视的眼睛。空气中弥漫着臭氧烧焦后的腥甜与腐烂金属的混合气味，每一次呼吸都带着铁锈的涩味。\n\n他试图坐起，却发现手中紧紧攥着一枚破碎的银色芯片，边缘刻着早已失传的量子编码。这不是普通人的物品，而是他潜意识里最恐惧的烙印。林渊迅速环顾四周，这里是“记忆回廊”的入口，废弃的地铁隧道墙壁上投影着无数模糊的人脸，它们在空气中无声地尖叫、哭泣，随即被风吹散。这些不是幻觉，是这座被称为“新巴别塔”的城市在通过集体潜意识向他求救，或是……嘲弄。\n\n“醒了？这可是个稀罕玩意儿。”\n\n一个苍老而沙哑的声音打断了他的沉思。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着绿灯。老人手里夹着一根早已熄灭的烟斗，眼神浑浊却锐利，死死盯着林渊手中的芯片。\n\n“那是旧时代的钥匙，”老陈缓缓说道，声音里透着深深的疲惫与警惕，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”\n\n林渊没有立刻回答，他的目光扫过隧道深处。那里的光线昏暗，但隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。他心中涌起一股莫名的寒意。根据城市规则，核心从未真正关闭，它正以微弱的频率运转，维持着这座死城永恒的停滞。而他手中这块芯片，似乎正是控制频率的密钥。\n\n“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”\n\n老陈冷笑一声，将烟斗在满是灰尘的地面上磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”\n\n话音未落，周围的空气突然凝固。那些墙壁上的人脸瞬间扭曲，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被电流击中。\n\n“别看了，”老陈厉声喝止，伸手按住林渊的肩膀，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”\n\n林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。\n\n“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，“我要找到通往核心的路。”\n\n老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”\n\n林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。",
+          "error": null,
+          "error_code": null,
+          "provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+          "model": "local-cbe5fff59c25ef0f728e0e8c",
+          "issues": [],
+          "latency_ms": 8077,
+          "base_chapter_version": 1,
+          "variant_group_id": null,
+          "variant_index": null,
+          "actor_id": null,
+          "session_id": null,
+          "client_id": null,
+          "workspace_id": null,
+          "scope": null,
+          "scope_type": null,
+          "scope_id": null,
+          "correlation_id": null,
+          "context_snapshot_id": null,
+          "created_at": "2026-10-07T09:49:48.387543+00:00",
+          "updated_at": "2026-10-07T09:49:56.470999+00:00",
+          "creation_records": [],
+          "usage": {
+            "input_tokens": 5376,
+            "output_tokens": 763,
+            "total_tokens": 6139
+          },
+          "usage_status": "REPORTED",
+          "execution_mode": "real",
+          "provider_reference_id": null,
+          "route_decisions": [
+            {
+              "provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+              "model": "local-cbe5fff59c25ef0f728e0e8c",
+              "cloud": false,
+              "status": "COMPLETED"
+            }
+          ],
+          "diff": "--- original\n+++ generated\n@@ -1,2 +1,27 @@\n-# 醒于废墟\n+刺耳的尖啸撕裂了死寂，紧接着是某种沉重金属扭曲的轰鸣。林渊在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣，上面爬满了灰白色的变异苔藓，像是一只只窥视的眼睛。空气中弥漫着臭氧烧焦后的腥甜与腐烂金属的混合气味，每一次呼吸都带着铁锈的涩味。\n \n+他试图坐起，却发现手中紧紧攥着一枚破碎的银色芯片，边缘刻着早已失传的量子编码。这不是普通人的物品，而是他潜意识里最恐惧的烙印。林渊迅速环顾四周，这里是“记忆回廊”的入口，废弃的地铁隧道墙壁上投影着无数模糊的人脸，它们在空气中无声地尖叫、哭泣，随即被风吹散。这些不是幻觉，是这座被称为“新巴别塔”的城市在通过集体潜意识向他求救，或是……嘲弄。\n+\n+“醒了？这可是个稀罕玩意儿。”\n+\n+一个苍老而沙哑的声音打断了他的沉思。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着绿灯。老人手里夹着一根早已熄灭的烟斗，眼神浑浊却锐利，死死盯着林渊手中的芯片。\n+\n+“那是旧时代的钥匙，”老陈缓缓说道，声音里透着深深的疲惫与警惕，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”\n+\n+林渊没有立刻回答，他的目光扫过隧道深处。那里的光线昏暗，但隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。他心中涌起一股莫名的寒意。根据城市规则，核心从未真正关闭，它正以微弱的频率运转，维持着这座死城永恒的停滞。而他手中这块芯片，似乎正是控制频率的密钥。\n+\n+“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”\n+\n+老陈冷笑一声，将烟斗在满是灰尘的地面上磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”\n+\n+话音未落，周围的空气突然凝固。那些墙壁上的人脸瞬间扭曲，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被电流击中。\n+\n+“别看了，”老陈厉声喝止，伸手按住林渊的肩膀，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”\n+\n+林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。\n+\n+“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，“我要找到通往核心的路。”\n+\n+老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”\n+\n+林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。"
+        },
+        "accepted": {
+          "chapter": {
+            "id": "f4b8c9ee:2",
+            "novel_id": "f4b8c9ee",
+            "number": 2,
+            "volume": 1,
+            "title": "第2章",
+            "word_count": 1215,
+            "status": "Draft",
+            "content": "# 第2章\n\n刺耳的尖啸撕裂了死寂，紧接着是某种沉重金属扭曲的轰鸣。林渊在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣，上面爬满了灰白色的变异苔藓，像是一只只窥视的眼睛。空气中弥漫着臭氧烧焦后的腥甜与腐烂金属的混合气味，每一次呼吸都带着铁锈的涩味。\n\n他试图坐起，却发现手中紧紧攥着一枚破碎的银色芯片，边缘刻着早已失传的量子编码。这不是普通人的物品，而是他潜意识里最恐惧的烙印。林渊迅速环顾四周，这里是“记忆回廊”的入口，废弃的地铁隧道墙壁上投影着无数模糊的人脸，它们在空气中无声地尖叫、哭泣，随即被风吹散。这些不是幻觉，是这座被称为“新巴别塔”的城市在通过集体潜意识向他求救，或是……嘲弄。\n\n“醒了？这可是个稀罕玩意儿。”\n\n一个苍老而沙哑的声音打断了他的沉思。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着绿灯。老人手里夹着一根早已熄灭的烟斗，眼神浑浊却锐利，死死盯着林渊手中的芯片。\n\n“那是旧时代的钥匙，”老陈缓缓说道，声音里透着深深的疲惫与警惕，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”\n\n林渊没有立刻回答，他的目光扫过隧道深处。那里的光线昏暗，但隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。他心中涌起一股莫名的寒意。根据城市规则，核心从未真正关闭，它正以微弱的频率运转，维持着这座死城永恒的停滞。而他手中这块芯片，似乎正是控制频率的密钥。\n\n“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”\n\n老陈冷笑一声，将烟斗在满是灰尘的地面上磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”\n\n话音未落，周围的空气突然凝固。那些墙壁上的人脸瞬间扭曲，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被电流击中。\n\n“别看了，”老陈厉声喝止，伸手按住林渊的肩膀，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”\n\n林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。\n\n“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，“我要找到通往核心的路。”\n\n老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”\n\n林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。",
+            "is_archived": false
+          },
+          "pending_canon": {
+            "id": "d24469cc-b41b-5272-9ff4-459150e516c1",
+            "novel_id": "f4b8c9ee",
+            "chapter": 2,
+            "status": "PENDING",
+            "proposals": [
+              {
+                "fact": "AI draft introduced a possible lasting story fact",
+                "source_job": "257085f1-a535-429a-ad9c-4ee03739f331"
+              }
+            ],
+            "source": "archivist"
+          }
+        }
+      }
+    },
+    {
+      "stage": "05b-memory-extraction",
+      "status": "PASS",
+      "seconds": 11.292,
+      "evidence": {
+        "persisted_job": {
+          "id": "32f3acd6-dbe9-5b91-8cf4-42d26ab1ce2d",
+          "operation": "MEMORY_EXTRACTION",
+          "novel_id": "f4b8c9ee",
+          "chapter_id": "f4b8c9ee:2",
+          "status": "COMPLETED",
+          "request": {
+            "chapter_version": 1,
+            "profile": "LOCAL_ONLY"
+          },
+          "created_at": "2026-10-07T09:49:56.661074+00:00",
+          "provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+          "model": "local-cbe5fff59c25ef0f728e0e8c",
+          "execution_mode": "real",
+          "result": {
+            "proposal_ids": [
+              "84a1fdb0-4dc1-5261-83cc-20cb62b41d4d",
+              "cc8d153c-161e-5a85-9b09-1b10cb8156bd",
+              "de2c92c6-3923-51f1-aae5-62fda28d427c"
+            ]
+          }
+        },
+        "proposals": {
+          "items": [
+            {
+              "schema_version": 1,
+              "id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+              "novel_id": "f4b8c9ee",
+              "proposal_type": "WORLD_RULE",
+              "payload": {
+                "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "approved_payload": {
+                "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "status": "APPROVED",
+              "source_chapter_id": null,
+              "source_version": null,
+              "agent_name": "plot_planner",
+              "generation_job_id": null,
+              "confidence": null,
+              "reviewed_by": "local-author",
+              "reviewed_at": "2026-10-07T09:49:36.133220Z",
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:49:36.117022Z",
+              "updated_at": "2026-10-07T09:49:36.133220Z"
+            },
+            {
+              "schema_version": 1,
+              "id": "84a1fdb0-4dc1-5261-83cc-20cb62b41d4d",
+              "novel_id": "f4b8c9ee",
+              "proposal_type": "CHARACTER_MEMORY",
+              "payload": {
+                "character_id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+                "memory_type": "STATE_CHANGE",
+                "content": {
+                  "state": "amnesia_confirmed",
+                  "details": "The character Lin Yuan explicitly states he does not remember his identity, and this is confirmed by the city's defense mechanism ('echo') as a deliberate suppression of truth."
+                }
+              },
+              "approved_payload": null,
+              "status": "PENDING",
+              "source_chapter_id": "f4b8c9ee:2",
+              "source_version": 1,
+              "agent_name": "memory_agent",
+              "generation_job_id": "32f3acd6-dbe9-5b91-8cf4-42d26ab1ce2d",
+              "confidence": 0.95,
+              "reviewed_by": null,
+              "reviewed_at": null,
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:50:07.788130Z",
+              "updated_at": "2026-10-07T09:50:07.788130Z"
+            },
+            {
+              "schema_version": 1,
+              "id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+              "novel_id": "f4b8c9ee",
+              "proposal_type": "WORLD_RULE",
+              "payload": {
+                "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "approved_payload": {
+                "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "status": "APPROVED",
+              "source_chapter_id": null,
+              "source_version": null,
+              "agent_name": "plot_planner",
+              "generation_job_id": null,
+              "confidence": null,
+              "reviewed_by": "local-author",
+              "reviewed_at": "2026-10-07T09:49:36.185057Z",
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:49:36.170210Z",
+              "updated_at": "2026-10-07T09:49:36.185057Z"
+            },
+            {
+              "schema_version": 1,
+              "id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+              "novel_id": "f4b8c9ee",
+              "proposal_type": "WORLD_RULE",
+              "payload": {
+                "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "approved_payload": {
+                "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "status": "APPROVED",
+              "source_chapter_id": null,
+              "source_version": null,
+              "agent_name": "plot_planner",
+              "generation_job_id": null,
+              "confidence": null,
+              "reviewed_by": "local-author",
+              "reviewed_at": "2026-10-07T09:49:36.244189Z",
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:49:36.232205Z",
+              "updated_at": "2026-10-07T09:49:36.244189Z"
+            },
+            {
+              "schema_version": 1,
+              "id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+              "novel_id": "f4b8c9ee",
+              "proposal_type": "WORLD_RULE",
+              "payload": {
+                "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "approved_payload": {
+                "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "status": "APPROVED",
+              "source_chapter_id": null,
+              "source_version": null,
+              "agent_name": "plot_planner",
+              "generation_job_id": null,
+              "confidence": null,
+              "reviewed_by": "local-author",
+              "reviewed_at": "2026-10-07T09:49:36.301723Z",
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:49:36.287943Z",
+              "updated_at": "2026-10-07T09:49:36.301723Z"
+            },
+            {
+              "schema_version": 1,
+              "id": "cc8d153c-161e-5a85-9b09-1b10cb8156bd",
+              "novel_id": "f4b8c9ee",
+              "proposal_type": "CHARACTER_MEMORY",
+              "payload": {
+                "character_id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+                "memory_type": "KNOWLEDGE_CHANGE",
+                "content": {
+                  "knowledge": "self_destruction_role",
+                  "details": "Lin Yuan realizes he is the culprit who initiated the city's destruction and the source of the 'echo' phenomenon, specifically recalling being pushed off a control panel and pressing a switch."
+                }
+              },
+              "approved_payload": null,
+              "status": "PENDING",
+              "source_chapter_id": "f4b8c9ee:2",
+              "source_version": 1,
+              "agent_name": "memory_agent",
+              "generation_job_id": "32f3acd6-dbe9-5b91-8cf4-42d26ab1ce2d",
+              "confidence": 0.9,
+              "reviewed_by": null,
+              "reviewed_at": null,
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:50:07.813781Z",
+              "updated_at": "2026-10-07T09:50:07.813781Z"
+            },
+            {
+              "schema_version": 1,
+              "id": "de2c92c6-3923-51f1-aae5-62fda28d427c",
+              "novel_id": "f4b8c9ee",
+              "proposal_type": "EVENT",
+              "payload": {
+                "event": "memory_flashback_trigger",
+                "details": "The 'echo' phenomenon triggered a forced flashback for Lin Yuan, revealing suppressed memories of a quantum experiment, energy loss, and his own role in the incident, causing physical pain."
+              },
+              "approved_payload": null,
+              "status": "PENDING",
+              "source_chapter_id": "f4b8c9ee:2",
+              "source_version": 1,
+              "agent_name": "memory_agent",
+              "generation_job_id": "32f3acd6-dbe9-5b91-8cf4-42d26ab1ce2d",
+              "confidence": 0.95,
+              "reviewed_by": null,
+              "reviewed_at": null,
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:50:07.834815Z",
+              "updated_at": "2026-10-07T09:50:07.834815Z"
+            },
+            {
+              "schema_version": 1,
+              "id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+              "novel_id": "f4b8c9ee",
+              "proposal_type": "WORLD_RULE",
+              "payload": {
+                "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "approved_payload": {
+                "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "status": "APPROVED",
+              "source_chapter_id": null,
+              "source_version": null,
+              "agent_name": "plot_planner",
+              "generation_job_id": null,
+              "confidence": null,
+              "reviewed_by": "local-author",
+              "reviewed_at": "2026-10-07T09:49:36.073488Z",
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:49:36.055868Z",
+              "updated_at": "2026-10-07T09:49:36.073488Z"
+            }
+          ],
+          "storage": "file"
+        }
+      }
+    },
+    {
+      "stage": "06-ai-revision",
+      "status": "PASS",
+      "seconds": 9.194,
+      "evidence": {
+        "job": {
+          "id": "701ebc28-5a84-4b4e-8687-cfaee42c159e",
+          "operation": "rewrite",
+          "novel_id": "f4b8c9ee",
+          "chapter_id": "f4b8c9ee:2",
+          "instruction": "保留全部已建立事实与人物身份，改写现有第一章，加强废城的感官细节与悬疑伏笔。600–900字中文。只返回完整修订正文。",
+          "profile": "LOCAL_ONLY",
+          "source": "# 第2章\n\n刺耳的尖啸撕裂了死寂，紧接着是某种沉重金属扭曲的轰鸣。林渊在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣，上面爬满了灰白色的变异苔藓，像是一只只窥视的眼睛。空气中弥漫着臭氧烧焦后的腥甜与腐烂金属的混合气味，每一次呼吸都带着铁锈的涩味。\n\n他试图坐起，却发现手中紧紧攥着一枚破碎的银色芯片，边缘刻着早已失传的量子编码。这不是普通人的物品，而是他潜意识里最恐惧的烙印。林渊迅速环顾四周，这里是“记忆回廊”的入口，废弃的地铁隧道墙壁上投影着无数模糊的人脸，它们在空气中无声地尖叫、哭泣，随即被风吹散。这些不是幻觉，是这座被称为“新巴别塔”的城市在通过集体潜意识向他求救，或是……嘲弄。\n\n“醒了？这可是个稀罕玩意儿。”\n\n一个苍老而沙哑的声音打断了他的沉思。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着绿灯。老人手里夹着一根早已熄灭的烟斗，眼神浑浊却锐利，死死盯着林渊手中的芯片。\n\n“那是旧时代的钥匙，”老陈缓缓说道，声音里透着深深的疲惫与警惕，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”\n\n林渊没有立刻回答，他的目光扫过隧道深处。那里的光线昏暗，但隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。他心中涌起一股莫名的寒意。根据城市规则，核心从未真正关闭，它正以微弱的频率运转，维持着这座死城永恒的停滞。而他手中这块芯片，似乎正是控制频率的密钥。\n\n“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”\n\n老陈冷笑一声，将烟斗在满是灰尘的地面上磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”\n\n话音未落，周围的空气突然凝固。那些墙壁上的人脸瞬间扭曲，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被电流击中。\n\n“别看了，”老陈厉声喝止，伸手按住林渊的肩膀，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”\n\n林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。\n\n“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，“我要找到通往核心的路。”\n\n老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”\n\n林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。\n\n",
+          "requested_provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+          "requested_model": "local-cbe5fff59c25ef0f728e0e8c",
+          "style": "",
+          "status": "COMPLETED",
+          "output": "刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。\n\n空气中弥漫着臭氧烧焦后的腥甜，混合着腐烂金属特有的涩味。每一次呼吸，那铁锈般的颗粒感都粗糙地刮擦着肺叶，带来一种令人窒息的沉重感。\n\n他试图坐起，指尖却死死攥着一枚破碎的银色芯片。芯片边缘刻着早已失传的量子编码，在昏暗的光线下流淌着诡异的微光。这不是普通人的物品，而是他潜意识里最恐惧的烙印，此刻正透过掌心灼烧着他的神经。\n\n“醒了？这可是个稀罕玩意儿。”\n\n苍老沙哑的声音穿透了死寂。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着不祥的绿灯。老人手中的烟斗早已熄灭，但缭绕的余烟却违背物理常识地悬浮在半空，缓缓盘旋。他浑浊的眼眸死死盯着林渊手中的芯片，那眼神里透着一种看透生死的疲惫与警惕。\n\n“那是旧时代的钥匙，”老陈缓缓说道，声音像是从深井底部传来，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”\n\n林渊没有立刻回答。他的目光越过老陈，投向隧道深处。那里的黑暗并非空洞，而是充满了令人不安的波动。隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。它像一颗未冷却的心脏，维持着这座城市永恒的停滞。根据这条铁律，核心从未真正关闭，它正以微弱的频率运转，而林渊手中这块芯片，似乎正是控制频率的密钥。\n\n“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”\n\n老陈冷笑一声，将烟斗在满是灰尘的地面上重重磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”\n\n话音未落，周围的空气突然凝固。那些墙壁上原本模糊的人脸瞬间扭曲、拉长，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被高压电流击中，每一根神经都在尖叫。\n\n“别看了，”老陈厉声喝止，伸手按住林渊滚烫的肩膀，力道大得仿佛要将他捏碎，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”\n\n林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。\n\n“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，那是对自身罪孽的无声宣战，“我要找到通往核心的路。”\n\n老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”\n\n林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。",
+          "error": null,
+          "error_code": null,
+          "provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+          "model": "local-cbe5fff59c25ef0f728e0e8c",
+          "issues": [],
+          "latency_ms": 9031,
+          "base_chapter_version": 1,
+          "variant_group_id": null,
+          "variant_index": null,
+          "actor_id": null,
+          "session_id": null,
+          "client_id": null,
+          "workspace_id": null,
+          "scope": null,
+          "scope_type": null,
+          "scope_id": null,
+          "correlation_id": null,
+          "context_snapshot_id": null,
+          "created_at": "2026-10-07T09:50:07.976074+00:00",
+          "updated_at": "2026-10-07T09:50:17.018606+00:00",
+          "creation_records": [],
+          "usage": {
+            "input_tokens": 6286,
+            "output_tokens": 838,
+            "total_tokens": 7124
+          },
+          "usage_status": "REPORTED",
+          "execution_mode": "real",
+          "provider_reference_id": null,
+          "route_decisions": [
+            {
+              "provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+              "model": "local-cbe5fff59c25ef0f728e0e8c",
+              "cloud": false,
+              "status": "COMPLETED"
+            }
+          ],
+          "diff": "--- original\n+++ generated\n@@ -1,30 +1,29 @@\n-# 第2章\n+刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。\n \n-刺耳的尖啸撕裂了死寂，紧接着是某种沉重金属扭曲的轰鸣。林渊在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣，上面爬满了灰白色的变异苔藓，像是一只只窥视的眼睛。空气中弥漫着臭氧烧焦后的腥甜与腐烂金属的混合气味，每一次呼吸都带着铁锈的涩味。\n+空气中弥漫着臭氧烧焦后的腥甜，混合着腐烂金属特有的涩味。每一次呼吸，那铁锈般的颗粒感都粗糙地刮擦着肺叶，带来一种令人窒息的沉重感。\n \n-他试图坐起，却发现手中紧紧攥着一枚破碎的银色芯片，边缘刻着早已失传的量子编码。这不是普通人的物品，而是他潜意识里最恐惧的烙印。林渊迅速环顾四周，这里是“记忆回廊”的入口，废弃的地铁隧道墙壁上投影着无数模糊的人脸，它们在空气中无声地尖叫、哭泣，随即被风吹散。这些不是幻觉，是这座被称为“新巴别塔”的城市在通过集体潜意识向他求救，或是……嘲弄。\n+他试图坐起，指尖却死死攥着一枚破碎的银色芯片。芯片边缘刻着早已失传的量子编码，在昏暗的光线下流淌着诡异的微光。这不是普通人的物品，而是他潜意识里最恐惧的烙印，此刻正透过掌心灼烧着他的神经。\n \n “醒了？这可是个稀罕玩意儿。”\n \n-一个苍老而沙哑的声音打断了他的沉思。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着绿灯。老人手里夹着一根早已熄灭的烟斗，眼神浑浊却锐利，死死盯着林渊手中的芯片。\n+苍老沙哑的声音穿透了死寂。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着不祥的绿灯。老人手中的烟斗早已熄灭，但缭绕的余烟却违背物理常识地悬浮在半空，缓缓盘旋。他浑浊的眼眸死死盯着林渊手中的芯片，那眼神里透着一种看透生死的疲惫与警惕。\n \n-“那是旧时代的钥匙，”老陈缓缓说道，声音里透着深深的疲惫与警惕，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”\n+“那是旧时代的钥匙，”老陈缓缓说道，声音像是从深井底部传来，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”\n \n-林渊没有立刻回答，他的目光扫过隧道深处。那里的光线昏暗，但隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。他心中涌起一股莫名的寒意。根据城市规则，核心从未真正关闭，它正以微弱的频率运转，维持着这座死城永恒的停滞。而他手中这块芯片，似乎正是控制频率的密钥。\n+林渊没有立刻回答。他的目光越过老陈，投向隧道深处。那里的黑暗并非空洞，而是充满了令人不安的波动。隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。它像一颗未冷却的心脏，维持着这座城市永恒的停滞。根据这条铁律，核心从未真正关闭，它正以微弱的频率运转，而林渊手中这块芯片，似乎正是控制频率的密钥。\n \n “我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”\n \n-老陈冷笑一声，将烟斗在满是灰尘的地面上磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”\n+老陈冷笑一声，将烟斗在满是灰尘的地面上重重磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”\n \n-话音未落，周围的空气突然凝固。那些墙壁上的人脸瞬间扭曲，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被电流击中。\n+话音未落，周围的空气突然凝固。那些墙壁上原本模糊的人脸瞬间扭曲、拉长，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被高压电流击中，每一根神经都在尖叫。\n \n-“别看了，”老陈厉声喝止，伸手按住林渊的肩膀，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”\n+“别看了，”老陈厉声喝止，伸手按住林渊滚烫的肩膀，力道大得仿佛要将他捏碎，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”\n \n 林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。\n \n-“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，“我要找到通往核心的路。”\n+“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，那是对自身罪孽的无声宣战，“我要找到通往核心的路。”\n \n 老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”\n \n 林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。\n-"
+        },
+        "accepted": {
+          "chapter": {
+            "id": "f4b8c9ee:2",
+            "novel_id": "f4b8c9ee",
+            "number": 2,
+            "volume": 1,
+            "title": "刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。",
+            "word_count": 1320,
+            "status": "Draft",
+            "content": "刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。\n\n空气中弥漫着臭氧烧焦后的腥甜，混合着腐烂金属特有的涩味。每一次呼吸，那铁锈般的颗粒感都粗糙地刮擦着肺叶，带来一种令人窒息的沉重感。\n\n他试图坐起，指尖却死死攥着一枚破碎的银色芯片。芯片边缘刻着早已失传的量子编码，在昏暗的光线下流淌着诡异的微光。这不是普通人的物品，而是他潜意识里最恐惧的烙印，此刻正透过掌心灼烧着他的神经。\n\n“醒了？这可是个稀罕玩意儿。”\n\n苍老沙哑的声音穿透了死寂。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着不祥的绿灯。老人手中的烟斗早已熄灭，但缭绕的余烟却违背物理常识地悬浮在半空，缓缓盘旋。他浑浊的眼眸死死盯着林渊手中的芯片，那眼神里透着一种看透生死的疲惫与警惕。\n\n“那是旧时代的钥匙，”老陈缓缓说道，声音像是从深井底部传来，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”\n\n林渊没有立刻回答。他的目光越过老陈，投向隧道深处。那里的黑暗并非空洞，而是充满了令人不安的波动。隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。它像一颗未冷却的心脏，维持着这座城市永恒的停滞。根据这条铁律，核心从未真正关闭，它正以微弱的频率运转，而林渊手中这块芯片，似乎正是控制频率的密钥。\n\n“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”\n\n老陈冷笑一声，将烟斗在满是灰尘的地面上重重磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”\n\n话音未落，周围的空气突然凝固。那些墙壁上原本模糊的人脸瞬间扭曲、拉长，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被高压电流击中，每一根神经都在尖叫。\n\n“别看了，”老陈厉声喝止，伸手按住林渊滚烫的肩膀，力道大得仿佛要将他捏碎，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”\n\n林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。\n\n“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，那是对自身罪孽的无声宣战，“我要找到通往核心的路。”\n\n老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”\n\n林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。\n\n",
+            "is_archived": false,
+            "version": 2,
+            "document": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "空气中弥漫着臭氧烧焦后的腥甜，混合着腐烂金属特有的涩味。每一次呼吸，那铁锈般的颗粒感都粗糙地刮擦着肺叶，带来一种令人窒息的沉重感。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "他试图坐起，指尖却死死攥着一枚破碎的银色芯片。芯片边缘刻着早已失传的量子编码，在昏暗的光线下流淌着诡异的微光。这不是普通人的物品，而是他潜意识里最恐惧的烙印，此刻正透过掌心灼烧着他的神经。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“醒了？这可是个稀罕玩意儿。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "苍老沙哑的声音穿透了死寂。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着不祥的绿灯。老人手中的烟斗早已熄灭，但缭绕的余烟却违背物理常识地悬浮在半空，缓缓盘旋。他浑浊的眼眸死死盯着林渊手中的芯片，那眼神里透着一种看透生死的疲惫与警惕。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“那是旧时代的钥匙，”老陈缓缓说道，声音像是从深井底部传来，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "林渊没有立刻回答。他的目光越过老陈，投向隧道深处。那里的黑暗并非空洞，而是充满了令人不安的波动。隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。它像一颗未冷却的心脏，维持着这座城市永恒的停滞。根据这条铁律，核心从未真正关闭，它正以微弱的频率运转，而林渊手中这块芯片，似乎正是控制频率的密钥。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "老陈冷笑一声，将烟斗在满是灰尘的地面上重重磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "话音未落，周围的空气突然凝固。那些墙壁上原本模糊的人脸瞬间扭曲、拉长，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被高压电流击中，每一根神经都在尖叫。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“别看了，”老陈厉声喝止，伸手按住林渊滚烫的肩膀，力道大得仿佛要将他捏碎，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，那是对自身罪孽的无声宣战，“我要找到通往核心的路。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。"
+                    }
+                  ]
+                }
+              ]
+            },
+            "updated_at": "2026-10-07T09:50:17.123899+00:00"
+          },
+          "pending_canon": {
+            "id": "b8efc578-4feb-5d42-802e-f7641f4182b9",
+            "novel_id": "f4b8c9ee",
+            "chapter": 2,
+            "status": "PENDING",
+            "proposals": [
+              {
+                "fact": "AI draft introduced a possible lasting story fact",
+                "source_job": "701ebc28-5a84-4b4e-8687-cfaee42c159e"
+              }
+            ],
+            "source": "archivist"
+          }
+        }
+      }
+    },
+    {
+      "stage": "07-consistency",
+      "status": "PASS",
+      "seconds": 0.064,
+      "evidence": {
+        "findings": {
+          "status": "COMPLETED",
+          "placeholder": false,
+          "engine_status": "COMPLETED",
+          "execution_label": "契约校验，未调用模型",
+          "model_called": false,
+          "chapter": {
+            "id": "f4b8c9ee:2",
+            "number": 2,
+            "title": "刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。",
+            "word_count": 1320
+          },
+          "scanned": {
+            "characters": 3,
+            "locations": 3,
+            "timeline": 0,
+            "world_rules": 5,
+            "foreshadowing": 0
+          },
+          "findings": [],
+          "foreshadowing": {
+            "chapter": 2,
+            "pending": [],
+            "overdue": [],
+            "paid_off": []
+          }
+        },
+        "context": {
+          "novel": "废城回声 · 完整产品验收",
+          "novel_id": "f4b8c9ee",
+          "volume": 1,
+          "chapter": 2,
+          "chapter_goal": "",
+          "pov": null,
+          "story_time": null,
+          "characters": [
+            {
+              "age": null,
+              "role": "失忆的探索者 / 前实验主导者",
+              "personality": "冷静、执着，但内心深处隐藏着对未知的恐惧和对自己身份的抗拒。他习惯性地回避直接的情感交流，更倾向于通过观察环境来理解世界。",
+              "goal": "找回自己失去的记忆，弄清楚自己是谁，以及为何这座城市会陷入永恒的停滞。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "林渊",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "225a179a-9466-5e5b-95bd-3bb321de7e7e"
+            },
+            {
+              "age": null,
+              "role": "集体潜意识的具象化 / 城市意志",
+              "personality": "冷漠、扭曲，由无数破碎的记忆碎片组成。它既是城市的守护者也是囚禁者，不断试图将林渊拉回过去的创伤中。",
+              "goal": "维持城市的现状，阻止林渊完全恢复记忆并可能再次‘修复’城市，因为那意味着‘回声’的终结。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "回声",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "3aca0456-9ef0-5890-a743-1857b674e44f"
+            },
+            {
+              "age": 58,
+              "role": "废墟广场的幸存者 / 向导",
+              "personality": "悲观、圆滑，依靠旧时代的自动售货机维持生计。他对林渊既好奇又警惕，试图从他身上寻找自己失去亲人的答案。",
+              "goal": "在混乱的废墟中生存下去，并帮助林渊找到通往城市核心的路径，尽管他并不完全信任林渊。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "老陈",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "0992a4ed-41b7-5a68-baaa-6fe863224795"
+            }
+          ],
+          "relationships": [],
+          "world": {
+            "summary": "故事发生在一座被巨大灾难摧毁后陷入永恒停滞的巨型都市“新巴别塔”。城市表面覆盖着厚厚的尘埃与变异植被，内部结构错综复杂，充满了旧时代的科技残骸与未知的辐射区。空气中弥漫着臭氧与腐烂金属的味道。这座城市的毁灭并非自然原因，而是源于一次失控的量子实验，而实验的主导者正是主角本人。城市现在由一种名为“回声”的集体潜意识现象笼罩，居民（或幸存者）的行为受过去记忆碎片的影响，导致社会秩序混乱。主角在寻找自我身份的过程中，逐渐揭开城市毁灭的真相，并面临是否要阻止“回声”完全吞噬现实，或是接受自己作为毁灭者的命运。",
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "outline": {
+            "theme": "记忆与身份的代价，以及面对自身罪孽时的救赎与毁灭。",
+            "premise": "失忆者林渊在永恒停滞的巨型都市“新巴别塔”中流浪，试图找回过去。随着调查深入，他发现城市的毁灭源于自己主导的一次失控量子实验，而城市意志“回声”正试图通过扭曲现实来阻止他恢复记忆。",
+            "structure": "THREE_ACT",
+            "beginning": "林渊在记忆回廊的无限循环中醒来，依靠老陈提供的线索开始探索城市边缘。他遭遇了由碎片记忆构成的幻象，初次感受到“回声”的干扰，意识到自己的记忆缺失并非偶然，而是某种防御机制。",
+            "middle": "林渊深入城市腹地，穿越废墟广场和危险的辐射区。他逐渐拼凑出实验失败的真相：他为了追求完美秩序而启动了量子实验，却导致了灾难。与此同时，“回声”具象化并试图将他拉回过去的创伤时刻，老陈在保护他的过程中牺牲，揭示了修复城市的代价是彻底抹杀所有幸存者的意识。",
+            "ending": "林渊抵达静默区，面对核心反应堆和“回声”的最终形态。他必须选择是接受自己作为毁灭者的身份并让城市彻底崩溃，还是利用自己的记忆重塑城市，但这将意味着牺牲所有幸存者的自由意志。他选择了前者，拥抱毁灭以终结永恒的停滞。",
+            "main_conflict": "林渊恢复记忆并试图修复城市的愿望，与“回声”维持现状、阻止真相被揭露的意志之间的冲突。",
+            "climax": "在静默区，林渊直面“回声”的具象化自我，在巨大的精神冲击下确认了自己毁灭城市的身份。他利用核心反应堆的能量，主动引爆了维持城市停滞的量子锁，让“回声”消散，城市在废墟中迎来了真正的终结。",
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "canon": [],
+          "timeline": [],
+          "world_rules": [
+            {
+              "id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+              "payload": {
+                "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "dddb1d4c-71f7-5382-9514-7e3db7d582aa"
+              ]
+            },
+            {
+              "id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+              "payload": {
+                "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "6ca7f1d5-d0a7-561b-afb4-53772d734e56"
+              ]
+            },
+            {
+              "id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+              "payload": {
+                "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "b35f254e-729d-5899-8ab0-1ce1bcf1d49b"
+              ]
+            },
+            {
+              "id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+              "payload": {
+                "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "86ae6141-3964-5b27-9a73-cd65b393f340"
+              ]
+            },
+            {
+              "id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+              "payload": {
+                "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "692ea674-00b0-5b4e-8bb3-79bd4168bab0"
+              ]
+            }
+          ],
+          "locations": [
+            {
+              "location_type": "",
+              "description": "城市边缘的一条废弃地铁隧道，墙壁上投射着无数模糊的人脸和破碎的记忆片段。这里是主角最常出现的地方，也是他试图拼凑自己过去的起点。",
+              "rules": "进入回廊的人可能会陷入无限循环的梦境中，无法分辨现实与幻觉。",
+              "atmosphere": "压抑、神秘、充满心理暗示",
+              "status": "ACTIVE",
+              "name": "记忆回廊",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "47da53ed-985b-5215-a16f-1edcc35f7ef7"
+            },
+            {
+              "location_type": "",
+              "description": "城市中心的一片绝对安静区域，没有任何声音传播。这里是旧时代实验的核心地带，也是主角最终发现真相的地方。",
+              "rules": "任何声音都会引发剧烈的空间扭曲和物理伤害。",
+              "atmosphere": "死寂、寒冷、令人不安",
+              "status": "ACTIVE",
+              "name": "静默区",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "b8d9faf9-24e6-5c5a-a8f5-1557912dd6f6"
+            },
+            {
+              "location_type": "",
+              "description": "曾经繁华的商业中心，现在只剩下倒塌的高楼和扭曲的金属结构。这里聚集着少数幸存者，他们依靠旧时代的自动售货机维持生命。",
+              "rules": "自动售货机有时会吐出带有记忆碎片的食物或物品。",
+              "atmosphere": "荒凉、混乱、充满生存本能",
+              "status": "ACTIVE",
+              "name": "废墟广场",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "2cc830e3-3d1a-5a66-9922-2fdda0760c51"
+            }
+          ],
+          "current_story_state": {
+            "volume": 1,
+            "chapter": 0,
+            "active_characters": []
+          },
+          "active_foreshadowing": [],
+          "forbidden_secrets": [],
+          "privacy_omissions": [],
+          "recent_chapter_summary": [
+            {
+              "chapter": 2,
+              "summary": "刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。\n\n空气中弥漫着臭氧烧焦后的腥甜，混合着腐烂金属特有的涩味。每一次呼吸，那铁锈般的颗粒感都粗糙地刮擦着肺叶，带来一种令人窒息的沉重感。\n\n他试图坐起，指尖却死死攥着一枚破碎的银色芯片。芯"
+            }
+          ],
+          "long_term_summary": "",
+          "style_profile": {},
+          "must_include": [],
+          "must_not_include": [
+            "未经批准改变 Canon",
+            "提前揭露受保护秘密"
+          ],
+          "lore_memory": {
+            "short_memory": [],
+            "medium_memory": [],
+            "long_memory": [],
+            "evidence_summary": [],
+            "memory_version": {
+              "active_memory_ids": [],
+              "volume_snapshot": null,
+              "novel_snapshot": null
+            }
+          },
+          "narrative_context": {
+            "project_id": "f4b8c9ee",
+            "plot_threads": [],
+            "foreshadowing": [],
+            "mysteries": [],
+            "character_goals": [],
+            "findings": [],
+            "selection_reasons": [],
+            "token_budget": 800,
+            "estimated_tokens": 0,
+            "truncated": false
+          },
+          "context_policy": {
+            "authoritative": [
+              {
+                "metadata": {
+                  "source_type": "CANON",
+                  "authority_level": "AUTHORITATIVE",
+                  "source_id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+                  "project_id": "f4b8c9ee",
+                  "chapter_version_id": null,
+                  "evidence_ids": [
+                    "dddb1d4c-71f7-5382-9514-7e3db7d582aa"
+                  ],
+                  "selection_reasons": [
+                    "APPROVED_WORLD_RULE"
+                  ],
+                  "locality": "LOCAL_ONLY",
+                  "fact_key": null
+                },
+                "value": {
+                  "id": "12fa9fa6-1d4b-5c39-8e62-743e10106ad7",
+                  "payload": {
+                    "statement": "旧时代的科技设备在接触特定频率的声波时会自我激活或爆炸。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "dddb1d4c-71f7-5382-9514-7e3db7d582aa"
+                  ]
+                }
+              },
+              {
+                "metadata": {
+                  "source_type": "CANON",
+                  "authority_level": "AUTHORITATIVE",
+                  "source_id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+                  "project_id": "f4b8c9ee",
+                  "chapter_version_id": null,
+                  "evidence_ids": [
+                    "6ca7f1d5-d0a7-561b-afb4-53772d734e56"
+                  ],
+                  "selection_reasons": [
+                    "APPROVED_WORLD_RULE"
+                  ],
+                  "locality": "LOCAL_ONLY",
+                  "fact_key": null
+                },
+                "value": {
+                  "id": "868f7be4-1077-5dfc-b99c-94d802d6aec5",
+                  "payload": {
+                    "statement": "主角的记忆缺失并非偶然，而是城市防御系统为了掩盖真相而植入的。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "6ca7f1d5-d0a7-561b-afb4-53772d734e56"
+                  ]
+                }
+              },
+              {
+                "metadata": {
+                  "source_type": "CANON",
+                  "authority_level": "AUTHORITATIVE",
+                  "source_id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+                  "project_id": "f4b8c9ee",
+                  "chapter_version_id": null,
+                  "evidence_ids": [
+                    "b35f254e-729d-5899-8ab0-1ce1bcf1d49b"
+                  ],
+                  "selection_reasons": [
+                    "APPROVED_WORLD_RULE"
+                  ],
+                  "locality": "LOCAL_ONLY",
+                  "fact_key": null
+                },
+                "value": {
+                  "id": "8948137b-8178-5d62-b936-2b21b6c3967c",
+                  "payload": {
+                    "statement": "城市中心的核心反应堆从未真正关闭，它仍在以微弱但致命的频率运转。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "b35f254e-729d-5899-8ab0-1ce1bcf1d49b"
+                  ]
+                }
+              },
+              {
+                "metadata": {
+                  "source_type": "CANON",
+                  "authority_level": "AUTHORITATIVE",
+                  "source_id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+                  "project_id": "f4b8c9ee",
+                  "chapter_version_id": null,
+                  "evidence_ids": [
+                    "86ae6141-3964-5b27-9a73-cd65b393f340"
+                  ],
+                  "selection_reasons": [
+                    "APPROVED_WORLD_RULE"
+                  ],
+                  "locality": "LOCAL_ONLY",
+                  "fact_key": null
+                },
+                "value": {
+                  "id": "a11b1ee3-6314-56e3-8154-c123da3a6214",
+                  "payload": {
+                    "statement": "任何试图修复城市的行为都会触发‘回声’的强烈反弹，导致记忆混乱。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "86ae6141-3964-5b27-9a73-cd65b393f340"
+                  ]
+                }
+              },
+              {
+                "metadata": {
+                  "source_type": "CANON",
+                  "authority_level": "AUTHORITATIVE",
+                  "source_id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+                  "project_id": "f4b8c9ee",
+                  "chapter_version_id": null,
+                  "evidence_ids": [
+                    "692ea674-00b0-5b4e-8bb3-79bd4168bab0"
+                  ],
+                  "selection_reasons": [
+                    "APPROVED_WORLD_RULE"
+                  ],
+                  "locality": "LOCAL_ONLY",
+                  "fact_key": null
+                },
+                "value": {
+                  "id": "f52f70c8-98d2-5523-8d6a-5c9bb62a2f29",
+                  "payload": {
+                    "statement": "城市中的‘回声’现象会强制重现过去的关键时刻，干扰当前行动。",
+                    "forbidden_terms": [],
+                    "privacy_level": "LOCAL_ONLY"
+                  },
+                  "privacy_level": "LOCAL_ONLY",
+                  "status": "APPROVED",
+                  "evidence_ids": [
+                    "692ea674-00b0-5b4e-8bb3-79bd4168bab0"
+                  ]
+                }
+              },
+              {
+                "metadata": {
+                  "source_type": "ACCEPTED_CHAPTER",
+                  "authority_level": "AUTHORITATIVE",
+                  "source_id": "f4b8c9ee:2",
+                  "project_id": "f4b8c9ee",
+                  "chapter_version_id": "f4b8c9ee:2:v2",
+                  "evidence_ids": [],
+                  "selection_reasons": [
+                    "CURRENT_CHAPTER"
+                  ],
+                  "locality": "CLOUD_ALLOWED",
+                  "fact_key": "accepted_chapter_state"
+                },
+                "value": {
+                  "volume": 1,
+                  "chapter": 0,
+                  "active_characters": []
+                }
+              }
+            ],
+            "constraining": [],
+            "supporting": [],
+            "advisory": [],
+            "conflicts": [],
+            "duplicate_count": 0,
+            "budget_usage": {
+              "AUTHORITATIVE": 805,
+              "CONSTRAINING": 0,
+              "SUPPORTING": 0,
+              "ADVISORY": 0
+            },
+            "truncated_sources": [],
+            "authoritative_context_truncated": false,
+            "total_token_budget": 2400,
+            "writer_contract": [
+              "Higher-authority context overrides lower-authority context.",
+              "Advisories are warnings, not facts.",
+              "Do not guess through unresolved authoritative conflicts.",
+              "Context does not permit source-state mutation."
+            ]
+          },
+          "context_pack_v2": {
+            "enabled": true,
+            "chunks": [
+              {
+                "chunk_id": "RECENT_CHAPTER:f4b8c9ee:2:0",
+                "source_id": "f4b8c9ee:2",
+                "source_type": "RECENT_CHAPTER",
+                "content": {
+                  "volume": 1,
+                  "chapter": 0,
+                  "active_characters": []
+                },
+                "estimated_tokens": 12,
+                "score": 10100,
+                "selection_reasons": [
+                  "SOURCE_PRIORITY:RECENT_CHAPTER",
+                  "CHAPTER_RECENCY"
+                ]
+              },
+              {
+                "chunk_id": "CHARACTER:0992a4ed-41b7-5a68-baaa-6fe863224795:0",
+                "source_id": "0992a4ed-41b7-5a68-baaa-6fe863224795",
+                "source_type": "CHARACTER",
+                "content": {
+                  "age": 58,
+                  "role": "废墟广场的幸存者 / 向导",
+                  "personality": "悲观、圆滑，依靠旧时代的自动售货机维持生计。他对林渊既好奇又警惕，试图从他身上寻找自己失去亲人的答案。",
+                  "goal": "在混乱的废墟中生存下去，并帮助林渊找到通往城市核心的路径，尽管他并不完全信任林渊。",
+                  "current_location": "",
+                  "status": "ALIVE",
+                  "name": "老陈",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "0992a4ed-41b7-5a68-baaa-6fe863224795",
+                  "character_ids": [
+                    "0992a4ed-41b7-5a68-baaa-6fe863224795"
+                  ]
+                },
+                "estimated_tokens": 84,
+                "score": 9000,
+                "selection_reasons": [
+                  "SOURCE_PRIORITY:CHARACTER"
+                ]
+              },
+              {
+                "chunk_id": "CHARACTER:225a179a-9466-5e5b-95bd-3bb321de7e7e:0",
+                "source_id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+                "source_type": "CHARACTER",
+                "content": {
+                  "age": null,
+                  "role": "失忆的探索者 / 前实验主导者",
+                  "personality": "冷静、执着，但内心深处隐藏着对未知的恐惧和对自己身份的抗拒。他习惯性地回避直接的情感交流，更倾向于通过观察环境来理解世界。",
+                  "goal": "找回自己失去的记忆，弄清楚自己是谁，以及为何这座城市会陷入永恒的停滞。",
+                  "current_location": "",
+                  "status": "ALIVE",
+                  "name": "林渊",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "225a179a-9466-5e5b-95bd-3bb321de7e7e",
+                  "character_ids": [
+                    "225a179a-9466-5e5b-95bd-3bb321de7e7e"
+                  ]
+                },
+                "estimated_tokens": 86,
+                "score": 9000,
+                "selection_reasons": [
+                  "SOURCE_PRIORITY:CHARACTER"
+                ]
+              },
+              {
+                "chunk_id": "CHARACTER:3aca0456-9ef0-5890-a743-1857b674e44f:0",
+                "source_id": "3aca0456-9ef0-5890-a743-1857b674e44f",
+                "source_type": "CHARACTER",
+                "content": {
+                  "age": null,
+                  "role": "集体潜意识的具象化 / 城市意志",
+                  "personality": "冷漠、扭曲，由无数破碎的记忆碎片组成。它既是城市的守护者也是囚禁者，不断试图将林渊拉回过去的创伤中。",
+                  "goal": "维持城市的现状，阻止林渊完全恢复记忆并可能再次‘修复’城市，因为那意味着‘回声’的终结。",
+                  "current_location": "",
+                  "status": "ALIVE",
+                  "name": "回声",
+                  "privacy_level": "LOCAL_ONLY",
+                  "id": "3aca0456-9ef0-5890-a743-1857b674e44f",
+                  "character_ids": [
+                    "3aca0456-9ef0-5890-a743-1857b674e44f"
+                  ]
+                },
+                "estimated_tokens": 85,
+                "score": 9000,
+                "selection_reasons": [
+                  "SOURCE_PRIORITY:CHARACTER"
+                ]
+              }
+            ],
+            "estimated_tokens": 267,
+            "token_budget": 2400,
+            "omitted_local_only": [],
+            "deduplicated_count": 0,
+            "truncated_sources": []
+          },
+          "token_estimate": 3889,
+          "secrets_policy": "Local-only context"
+        }
+      }
+    },
+    {
+      "stage": "08-version-save-compare-conflict",
+      "status": "PASS",
+      "seconds": 0.053,
+      "evidence": {
+        "save": {
+          "id": "f4b8c9ee:2",
+          "novel_id": "f4b8c9ee",
+          "number": 2,
+          "volume": 1,
+          "title": "刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。",
+          "word_count": 1328,
+          "status": "Draft",
+          "content": "刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。\n\n空气中弥漫着臭氧烧焦后的腥甜，混合着腐烂金属特有的涩味。每一次呼吸，那铁锈般的颗粒感都粗糙地刮擦着肺叶，带来一种令人窒息的沉重感。\n\n他试图坐起，指尖却死死攥着一枚破碎的银色芯片。芯片边缘刻着早已失传的量子编码，在昏暗的光线下流淌着诡异的微光。这不是普通人的物品，而是他潜意识里最恐惧的烙印，此刻正透过掌心灼烧着他的神经。\n\n“醒了？这可是个稀罕玩意儿。”\n\n苍老沙哑的声音穿透了死寂。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着不祥的绿灯。老人手中的烟斗早已熄灭，但缭绕的余烟却违背物理常识地悬浮在半空，缓缓盘旋。他浑浊的眼眸死死盯着林渊手中的芯片，那眼神里透着一种看透生死的疲惫与警惕。\n\n“那是旧时代的钥匙，”老陈缓缓说道，声音像是从深井底部传来，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”\n\n林渊没有立刻回答。他的目光越过老陈，投向隧道深处。那里的黑暗并非空洞，而是充满了令人不安的波动。隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。它像一颗未冷却的心脏，维持着这座城市永恒的停滞。根据这条铁律，核心从未真正关闭，它正以微弱的频率运转，而林渊手中这块芯片，似乎正是控制频率的密钥。\n\n“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”\n\n老陈冷笑一声，将烟斗在满是灰尘的地面上重重磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”\n\n话音未落，周围的空气突然凝固。那些墙壁上原本模糊的人脸瞬间扭曲、拉长，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被高压电流击中，每一根神经都在尖叫。\n\n“别看了，”老陈厉声喝止，伸手按住林渊滚烫的肩膀，力道大得仿佛要将他捏碎，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”\n\n林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。\n\n“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，那是对自身罪孽的无声宣战，“我要找到通往核心的路。”\n\n老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”\n\n林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。\n\n（作者校订存档）\n\n",
+          "is_archived": false,
+          "version": 3,
+          "document": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "空气中弥漫着臭氧烧焦后的腥甜，混合着腐烂金属特有的涩味。每一次呼吸，那铁锈般的颗粒感都粗糙地刮擦着肺叶，带来一种令人窒息的沉重感。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "他试图坐起，指尖却死死攥着一枚破碎的银色芯片。芯片边缘刻着早已失传的量子编码，在昏暗的光线下流淌着诡异的微光。这不是普通人的物品，而是他潜意识里最恐惧的烙印，此刻正透过掌心灼烧着他的神经。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "“醒了？这可是个稀罕玩意儿。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "苍老沙哑的声音穿透了死寂。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着不祥的绿灯。老人手中的烟斗早已熄灭，但缭绕的余烟却违背物理常识地悬浮在半空，缓缓盘旋。他浑浊的眼眸死死盯着林渊手中的芯片，那眼神里透着一种看透生死的疲惫与警惕。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "“那是旧时代的钥匙，”老陈缓缓说道，声音像是从深井底部传来，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "林渊没有立刻回答。他的目光越过老陈，投向隧道深处。那里的黑暗并非空洞，而是充满了令人不安的波动。隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。它像一颗未冷却的心脏，维持着这座城市永恒的停滞。根据这条铁律，核心从未真正关闭，它正以微弱的频率运转，而林渊手中这块芯片，似乎正是控制频率的密钥。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "老陈冷笑一声，将烟斗在满是灰尘的地面上重重磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "话音未落，周围的空气突然凝固。那些墙壁上原本模糊的人脸瞬间扭曲、拉长，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被高压电流击中，每一根神经都在尖叫。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "“别看了，”老陈厉声喝止，伸手按住林渊滚烫的肩膀，力道大得仿佛要将他捏碎，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，那是对自身罪孽的无声宣战，“我要找到通往核心的路。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "（作者校订存档）"
+                  }
+                ]
+              }
+            ]
+          },
+          "updated_at": "2026-10-07T09:50:17.254286+00:00"
+        },
+        "history": [
+          {
+            "version": 2,
+            "document": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "空气中弥漫着臭氧烧焦后的腥甜，混合着腐烂金属特有的涩味。每一次呼吸，那铁锈般的颗粒感都粗糙地刮擦着肺叶，带来一种令人窒息的沉重感。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "他试图坐起，指尖却死死攥着一枚破碎的银色芯片。芯片边缘刻着早已失传的量子编码，在昏暗的光线下流淌着诡异的微光。这不是普通人的物品，而是他潜意识里最恐惧的烙印，此刻正透过掌心灼烧着他的神经。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“醒了？这可是个稀罕玩意儿。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "苍老沙哑的声音穿透了死寂。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着不祥的绿灯。老人手中的烟斗早已熄灭，但缭绕的余烟却违背物理常识地悬浮在半空，缓缓盘旋。他浑浊的眼眸死死盯着林渊手中的芯片，那眼神里透着一种看透生死的疲惫与警惕。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“那是旧时代的钥匙，”老陈缓缓说道，声音像是从深井底部传来，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "林渊没有立刻回答。他的目光越过老陈，投向隧道深处。那里的黑暗并非空洞，而是充满了令人不安的波动。隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。它像一颗未冷却的心脏，维持着这座城市永恒的停滞。根据这条铁律，核心从未真正关闭，它正以微弱的频率运转，而林渊手中这块芯片，似乎正是控制频率的密钥。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "老陈冷笑一声，将烟斗在满是灰尘的地面上重重磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "话音未落，周围的空气突然凝固。那些墙壁上原本模糊的人脸瞬间扭曲、拉长，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被高压电流击中，每一根神经都在尖叫。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“别看了，”老陈厉声喝止，伸手按住林渊滚烫的肩膀，力道大得仿佛要将他捏碎，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，那是对自身罪孽的无声宣战，“我要找到通往核心的路。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。"
+                    }
+                  ]
+                }
+              ]
+            },
+            "timestamp": "2026-10-07T09:50:17.123899+00:00",
+            "source": "USER",
+            "reason": "MANUAL_SAVE",
+            "operator": "local-user"
+          },
+          {
+            "version": 1,
+            "document": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "heading",
+                  "attrs": {
+                    "level": 1
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "第2章"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "刺耳的尖啸撕裂了死寂，紧接着是某种沉重金属扭曲的轰鸣。林渊在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣，上面爬满了灰白色的变异苔藓，像是一只只窥视的眼睛。空气中弥漫着臭氧烧焦后的腥甜与腐烂金属的混合气味，每一次呼吸都带着铁锈的涩味。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "他试图坐起，却发现手中紧紧攥着一枚破碎的银色芯片，边缘刻着早已失传的量子编码。这不是普通人的物品，而是他潜意识里最恐惧的烙印。林渊迅速环顾四周，这里是“记忆回廊”的入口，废弃的地铁隧道墙壁上投影着无数模糊的人脸，它们在空气中无声地尖叫、哭泣，随即被风吹散。这些不是幻觉，是这座被称为“新巴别塔”的城市在通过集体潜意识向他求救，或是……嘲弄。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“醒了？这可是个稀罕玩意儿。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "一个苍老而沙哑的声音打断了他的沉思。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着绿灯。老人手里夹着一根早已熄灭的烟斗，眼神浑浊却锐利，死死盯着林渊手中的芯片。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“那是旧时代的钥匙，”老陈缓缓说道，声音里透着深深的疲惫与警惕，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "林渊没有立刻回答，他的目光扫过隧道深处。那里的光线昏暗，但隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。他心中涌起一股莫名的寒意。根据城市规则，核心从未真正关闭，它正以微弱的频率运转，维持着这座死城永恒的停滞。而他手中这块芯片，似乎正是控制频率的密钥。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "老陈冷笑一声，将烟斗在满是灰尘的地面上磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "话音未落，周围的空气突然凝固。那些墙壁上的人脸瞬间扭曲，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被电流击中。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“别看了，”老陈厉声喝止，伸手按住林渊的肩膀，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，“我要找到通往核心的路。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。"
+                    }
+                  ]
+                }
+              ]
+            },
+            "timestamp": "2026-10-07T09:49:56.638496+00:00",
+            "source": "AI_ACCEPT",
+            "reason": "AI_ACCEPT",
+            "operator": "local-user"
+          }
+        ],
+        "conflict_http_status": 409,
+        "comparison": [
+          "--- original\n",
+          "+++ current\n",
+          "@@ -1,30 +1,32 @@\n",
+          "-# 第2章",
+          "+刺耳的尖啸并非来自外部，而是从林渊骨髓深处被强行挤压出来的。紧接着，沉重的金属扭曲声像是巨兽的咀嚼，啃噬着周围的空间。他在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣。灰白色的变异苔藓疯狂地爬满墙壁，每一片叶状结构都微微颤动，仿佛无数只窥视的眼睛，正贪婪地吞噬着微弱的光线。",
+          " ",
+          "-刺耳的尖啸撕裂了死寂，紧接着是某种沉重金属扭曲的轰鸣。林渊在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣，上面爬满了灰白色的变异苔藓，像是一只只窥视的眼睛。空气中弥漫着臭氧烧焦后的腥甜与腐烂金属的混合气味，每一次呼吸都带着铁锈的涩味。",
+          "+空气中弥漫着臭氧烧焦后的腥甜，混合着腐烂金属特有的涩味。每一次呼吸，那铁锈般的颗粒感都粗糙地刮擦着肺叶，带来一种令人窒息的沉重感。",
+          " ",
+          "-他试图坐起，却发现手中紧紧攥着一枚破碎的银色芯片，边缘刻着早已失传的量子编码。这不是普通人的物品，而是他潜意识里最恐惧的烙印。林渊迅速环顾四周，这里是“记忆回廊”的入口，废弃的地铁隧道墙壁上投影着无数模糊的人脸，它们在空气中无声地尖叫、哭泣，随即被风吹散。这些不是幻觉，是这座被称为“新巴别塔”的城市在通过集体潜意识向他求救，或是……嘲弄。",
+          "+他试图坐起，指尖却死死攥着一枚破碎的银色芯片。芯片边缘刻着早已失传的量子编码，在昏暗的光线下流淌着诡异的微光。这不是普通人的物品，而是他潜意识里最恐惧的烙印，此刻正透过掌心灼烧着他的神经。",
+          " ",
+          " “醒了？这可是个稀罕玩意儿。”",
+          " ",
+          "-一个苍老而沙哑的声音打断了他的沉思。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着绿灯。老人手里夹着一根早已熄灭的烟斗，眼神浑浊却锐利，死死盯着林渊手中的芯片。",
+          "+苍老沙哑的声音穿透了死寂。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着不祥的绿灯。老人手中的烟斗早已熄灭，但缭绕的余烟却违背物理常识地悬浮在半空，缓缓盘旋。他浑浊的眼眸死死盯着林渊手中的芯片，那眼神里透着一种看透生死的疲惫与警惕。",
+          " ",
+          "-“那是旧时代的钥匙，”老陈缓缓说道，声音里透着深深的疲惫与警惕，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”",
+          "+“那是旧时代的钥匙，”老陈缓缓说道，声音像是从深井底部传来，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”",
+          " ",
+          "-林渊没有立刻回答，他的目光扫过隧道深处。那里的光线昏暗，但隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。他心中涌起一股莫名的寒意。根据城市规则，核心从未真正关闭，它正以微弱的频率运转，维持着这座死城永恒的停滞。而他手中这块芯片，似乎正是控制频率的密钥。",
+          "+林渊没有立刻回答。他的目光越过老陈，投向隧道深处。那里的黑暗并非空洞，而是充满了令人不安的波动。隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。它像一颗未冷却的心脏，维持着这座城市永恒的停滞。根据这条铁律，核心从未真正关闭，它正以微弱的频率运转，而林渊手中这块芯片，似乎正是控制频率的密钥。",
+          " ",
+          " “我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”",
+          " ",
+          "-老陈冷笑一声，将烟斗在满是灰尘的地面上磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”",
+          "+老陈冷笑一声，将烟斗在满是灰尘的地面上重重磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”",
+          " ",
+          "-话音未落，周围的空气突然凝固。那些墙壁上的人脸瞬间扭曲，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被电流击中。",
+          "+话音未落，周围的空气突然凝固。那些墙壁上原本模糊的人脸瞬间扭曲、拉长，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被高压电流击中，每一根神经都在尖叫。",
+          " ",
+          "-“别看了，”老陈厉声喝止，伸手按住林渊的肩膀，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”",
+          "+“别看了，”老陈厉声喝止，伸手按住林渊滚烫的肩膀，力道大得仿佛要将他捏碎，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”",
+          " ",
+          " 林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。",
+          " ",
+          "-“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，“我要找到通往核心的路。”",
+          "+“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，那是对自身罪孽的无声宣战，“我要找到通往核心的路。”",
+          " ",
+          " 老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”",
+          " ",
+          " 林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。",
+          " ",
+          "+（作者校订存档）",
+          "+"
+        ]
+      }
+    },
+    {
+      "stage": "09-history-restore",
+      "status": "PASS",
+      "seconds": 0.038,
+      "evidence": {
+        "restore": {
+          "id": "f4b8c9ee:2",
+          "novel_id": "f4b8c9ee",
+          "number": 2,
+          "volume": 1,
+          "title": "第2章",
+          "word_count": 1215,
+          "status": "Draft",
+          "content": "# 第2章\n\n刺耳的尖啸撕裂了死寂，紧接着是某种沉重金属扭曲的轰鸣。林渊在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣，上面爬满了灰白色的变异苔藓，像是一只只窥视的眼睛。空气中弥漫着臭氧烧焦后的腥甜与腐烂金属的混合气味，每一次呼吸都带着铁锈的涩味。\n\n他试图坐起，却发现手中紧紧攥着一枚破碎的银色芯片，边缘刻着早已失传的量子编码。这不是普通人的物品，而是他潜意识里最恐惧的烙印。林渊迅速环顾四周，这里是“记忆回廊”的入口，废弃的地铁隧道墙壁上投影着无数模糊的人脸，它们在空气中无声地尖叫、哭泣，随即被风吹散。这些不是幻觉，是这座被称为“新巴别塔”的城市在通过集体潜意识向他求救，或是……嘲弄。\n\n“醒了？这可是个稀罕玩意儿。”\n\n一个苍老而沙哑的声音打断了他的沉思。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着绿灯。老人手里夹着一根早已熄灭的烟斗，眼神浑浊却锐利，死死盯着林渊手中的芯片。\n\n“那是旧时代的钥匙，”老陈缓缓说道，声音里透着深深的疲惫与警惕，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”\n\n林渊没有立刻回答，他的目光扫过隧道深处。那里的光线昏暗，但隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。他心中涌起一股莫名的寒意。根据城市规则，核心从未真正关闭，它正以微弱的频率运转，维持着这座死城永恒的停滞。而他手中这块芯片，似乎正是控制频率的密钥。\n\n“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”\n\n老陈冷笑一声，将烟斗在满是灰尘的地面上磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”\n\n话音未落，周围的空气突然凝固。那些墙壁上的人脸瞬间扭曲，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被电流击中。\n\n“别看了，”老陈厉声喝止，伸手按住林渊的肩膀，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”\n\n林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。\n\n“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，“我要找到通往核心的路。”\n\n老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”\n\n林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。\n\n",
+          "is_archived": false,
+          "version": 4,
+          "document": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "heading",
+                "attrs": {
+                  "level": 1
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "第2章"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "刺耳的尖啸撕裂了死寂，紧接着是某种沉重金属扭曲的轰鸣。林渊在剧烈的眩晕中睁眼，入目并非熟悉的天花板，而是高达百米的混凝土残垣，上面爬满了灰白色的变异苔藓，像是一只只窥视的眼睛。空气中弥漫着臭氧烧焦后的腥甜与腐烂金属的混合气味，每一次呼吸都带着铁锈的涩味。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "他试图坐起，却发现手中紧紧攥着一枚破碎的银色芯片，边缘刻着早已失传的量子编码。这不是普通人的物品，而是他潜意识里最恐惧的烙印。林渊迅速环顾四周，这里是“记忆回廊”的入口，废弃的地铁隧道墙壁上投影着无数模糊的人脸，它们在空气中无声地尖叫、哭泣，随即被风吹散。这些不是幻觉，是这座被称为“新巴别塔”的城市在通过集体潜意识向他求救，或是……嘲弄。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "“醒了？这可是个稀罕玩意儿。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "一个苍老而沙哑的声音打断了他的沉思。老陈坐在一台生锈的自动售货机后，那机器半嵌在倒塌的立柱中，指示灯诡异地闪烁着绿灯。老人手里夹着一根早已熄灭的烟斗，眼神浑浊却锐利，死死盯着林渊手中的芯片。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "“那是旧时代的钥匙，”老陈缓缓说道，声音里透着深深的疲惫与警惕，“在这个地方，拥有钥匙的人往往意味着灾难的开端。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "林渊没有立刻回答，他的目光扫过隧道深处。那里的光线昏暗，但隐约可见城市的核心轮廓——一座巨大的、仍在微微搏动的反应堆结构。他心中涌起一股莫名的寒意。根据城市规则，核心从未真正关闭，它正以微弱的频率运转，维持着这座死城永恒的停滞。而他手中这块芯片，似乎正是控制频率的密钥。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "“我记不起我是谁，”林渊的声音平静得可怕，只有他自己能听出那底下压抑的颤抖，“只知道我想弄清楚，为什么这座城市会陷入这种停滞。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "老陈冷笑一声，将烟斗在满是灰尘的地面上磕了磕：“停滞？那是‘回声’的杰作。它把所有人的记忆都锁在了过去，谁试图修复，谁就会被撕碎。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "话音未落，周围的空气突然凝固。那些墙壁上的人脸瞬间扭曲，无数破碎的画面强行涌入林渊的脑海：巨大的量子实验舱、失控的能量读数、以及一个被推下控制台的身影——那是他自己。画面戛然而止，伴随着一阵剧烈的头痛，仿佛大脑皮层被电流击中。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "“别看了，”老陈厉声喝止，伸手按住林渊的肩膀，“那是‘回声’的反弹。你的记忆缺失不是偶然，是这城市为了掩盖真相而植入的防御。继续深究，你会疯的。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "林渊甩开老陈的手，低头再次审视手中的芯片。在昏暗的光线下，芯片表面浮现出一行微小的红色警告，与他此刻的心跳频率完全同步。毁城的源头，或许就藏在这枚小小的芯片里，而他自己，正是那个按下开关的罪魁祸首。但他不能停下，因为只要真相被掩盖，这座城市就永远不会迎来终结，也永远不会得到救赎。"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "“带我去废墟广场，”林渊站起身，眼中的恐惧逐渐被一种冷硬的执拗取代，“我要找到通往核心的路。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "老陈叹了口气，从售货机里掏出一瓶浑浊的水递给他：“路长着呢，小伙子。而且，小心别让那些‘回声’把你拉进过去。一旦你开始修复，我们就都得死。”"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "林渊接过水瓶，指尖触碰到冰冷的瓶身，心中默念：不管代价是什么，真相必须被揭开。"
+                  }
+                ]
+              }
+            ]
+          },
+          "updated_at": "2026-10-07T09:50:17.310336+00:00"
+        },
+        "verified_content_sha256": "aa34d5a68d325a8b382d52effa39f8b146436f3c9f5e478d15e3dfbe9c5c7bf1",
+        "new_version": 4
+      }
+    },
+    {
+      "stage": "10-export",
+      "status": "PASS",
+      "seconds": 0.322,
+      "evidence": {
+        "job": {
+          "id": "fcb6ab74-3e2d-4f43-b26c-958af2c9b18a",
+          "novel_id": "f4b8c9ee",
+          "format": "markdown",
+          "status": "succeeded",
+          "created_at": "2026-10-07T09:50:17.365152+00:00",
+          "updated_at": "2026-10-07T09:50:17.403836+00:00",
+          "result": {
+            "format": "markdown",
+            "filename": "f4b8c9ee.md"
+          },
+          "error": null,
+          "progress": 100,
+          "progress_message": "已完成",
+          "retry_of": null,
+          "attempt": 1,
+          "cancel_requested": false,
+          "recovery_count": 0,
+          "snapshot_id": "ed83ee03-8d27-4cac-acde-c4ef29b8fdd4",
+          "resource_manifest": {
+            "referenced": [],
+            "available": [],
+            "missing": [],
+            "missing_count": 0
+          },
+          "missing_resources": [],
+          "permission_context": {
+            "mode": "local",
+            "novel_id": "f4b8c9ee"
+          },
+          "started_at": "2026-10-07T09:50:17.371200+00:00",
+          "finished_at": "2026-10-07T09:50:17.403836+00:00",
+          "source_versions": {
+            "novel_updated_at": "2026-10-07T09:49:35.933942+00:00",
+            "chapters": [
+              {
+                "id": "f4b8c9ee:1",
+                "version": 1,
+                "updated_at": "2026-10-07T09:49:48.371781+00:00"
+              },
+              {
+                "id": "f4b8c9ee:2",
+                "version": 4,
+                "updated_at": "2026-10-07T09:50:17.310336+00:00"
+              }
+            ],
+            "screenplays": []
+          },
+          "captured_at": "2026-10-07T09:50:17.365152+00:00"
+        },
+        "download_bytes": 3695,
+        "sha256": "31c28ce219e9c1656d8dd573378864a2b8b122976c942198c8d2a4891aaad2ef",
+        "artifact": "85a84385-a0ed-4211-9e43-5d841b9aff26-novel.md"
+      }
+    },
+    {
+      "stage": "11-agent-planner",
+      "status": "PASS",
+      "seconds": 14.714,
+      "evidence": {
+        "id": "7ac301cc-7bf8-4653-b0c2-3adbb0b6ddca",
+        "operation": "AGENT_TASK",
+        "agent_id": "planner",
+        "agent_name": "策划 Agent",
+        "prompt_role": "plot_planner",
+        "novel_id": "f4b8c9ee",
+        "chapter_id": "f4b8c9ee:2",
+        "chapter_version": 4,
+        "instruction": "针对本作品现有章节执行你的职责；给出简短中文建议或检查发现，不自动修改作品。严格遵守要求的JSON输出结构。",
+        "target": "local",
+        "execution_mode": "model",
+        "timeout_seconds": 180,
+        "retry_of": null,
+        "status": "COMPLETED",
+        "context_hash": "f2adcf3ae3d76b52466e1576eee2e865d373ec1fdb9ef824381fa1e420e2acbb",
+        "context_contract_version": "1.0",
+        "source_manifest": [
+          {
+            "section": "outline",
+            "item_count": 1
+          },
+          {
+            "section": "volumes",
+            "item_count": 0
+          },
+          {
+            "section": "scenes",
+            "item_count": 0
+          },
+          {
+            "section": "story_routes",
+            "item_count": 0
+          },
+          {
+            "section": "characters",
+            "item_count": 3
+          },
+          {
+            "section": "locations",
+            "item_count": 3
+          },
+          {
+            "section": "timeline",
+            "item_count": 0
+          },
+          {
+            "section": "foreshadowing",
+            "item_count": 0
+          },
+          {
+            "section": "relationships",
+            "item_count": 0
+          },
+          {
+            "section": "writing_context",
+            "item_count": 1
+          },
+          {
+            "section": "chapter_source",
+            "item_count": 1,
+            "chapter_id": "f4b8c9ee:2",
+            "chapter_version": 4,
+            "source_available": true
+          }
+        ],
+        "provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+        "model": "local-cbe5fff59c25ef0f728e0e8c",
+        "output_schema": "story_plan_proposal",
+        "requires_approval": true,
+        "created_at": "2026-10-07T09:50:17.706045+00:00",
+        "updated_at": "2026-10-07T09:50:32.374172+00:00",
+        "owner": {
+          "actor_id": "recovery-author",
+          "workspace_id": "recovery-workspace"
+        },
+        "execution_label": "真实模型执行",
+        "execution_token": "05f7712a-d7f2-4bbb-9ee0-dd2b50e97231",
+        "attempt": 1,
+        "model_called": true,
+        "result": {
+          "structured_output": {
+            "schema": "story_plan_proposal",
+            "agent_id": "planner",
+            "summary": "第2章成功确立了主角林渊的失忆状态与核心冲突，通过‘回声’的初次具象化（量子实验幻象）和老陈的警告，有效推进了剧情。建议后续章节需强化‘回声’干扰的视觉化描写，并明确老陈牺牲的具体伏笔，以呼应大纲中‘修复城市代价’的主题。",
+            "proposals": [
+              {
+                "type": "scene_enhancement",
+                "description": "在‘回声’具象化场景中，增加环境对声音规则的反馈描写（如规则：任何声音引发空间扭曲），以体现世界观的压迫感。"
+              },
+              {
+                "type": "foreshadowing_setup",
+                "description": "让老陈在对话中提及‘自动售货机’吐出的物品不仅是食物，还包含主角童年或实验相关的特定记忆碎片，为后续老陈牺牲做情感铺垫。"
+              },
+              {
+                "type": "character_arc",
+                "description": "强化林渊对‘芯片’的恐惧反应，通过生理细节（如指尖颤抖、呼吸急促）外化他潜意识里对自己作为‘毁灭者’身份的抗拒。"
+              }
+            ],
+            "findings": [
+              {
+                "type": "canon_alignment",
+                "description": "章节中提到的‘核心反应堆从未真正关闭’与世界观规则（World Rule ID: 8948137b）完全一致，保持了设定的一致性。"
+              },
+              {
+                "type": "plot_progression",
+                "description": "主角已明确目标（寻找通往核心的路）并获得了关键道具（芯片），符合三幕式结构中‘激励事件’后的‘第一幕高潮’节点。"
+              },
+              {
+                "type": "tone_consistency",
+                "description": "整体氛围成功营造了压抑、神秘且充满心理暗示的感觉，符合‘记忆回廊’的设定描述。"
+              }
+            ],
+            "context_hash": "f2adcf3ae3d76b52466e1576eee2e865d373ec1fdb9ef824381fa1e420e2acbb"
+          },
+          "empty": false
+        },
+        "fallback_used": false,
+        "provider_execution_mode": "real",
+        "usage": {
+          "input_tokens": 8284,
+          "output_tokens": 530,
+          "total_tokens": 8814
+        },
+        "usage_status": "REPORTED"
+      }
+    },
+    {
+      "stage": "11-agent-writer",
+      "status": "PASS",
+      "seconds": 6.229,
+      "evidence": {
+        "id": "5ecb3638-c69b-447e-a4cc-b912149e4f63",
+        "operation": "AGENT_TASK",
+        "agent_id": "writer",
+        "agent_name": "作家 Agent",
+        "prompt_role": "writer",
+        "novel_id": "f4b8c9ee",
+        "chapter_id": "f4b8c9ee:2",
+        "chapter_version": 4,
+        "instruction": "针对本作品现有章节执行你的职责；给出简短中文建议或检查发现，不自动修改作品。严格遵守要求的JSON输出结构。",
+        "target": "local",
+        "execution_mode": "model",
+        "timeout_seconds": 180,
+        "retry_of": null,
+        "status": "COMPLETED",
+        "context_hash": "f2adcf3ae3d76b52466e1576eee2e865d373ec1fdb9ef824381fa1e420e2acbb",
+        "context_contract_version": "1.0",
+        "source_manifest": [
+          {
+            "section": "outline",
+            "item_count": 1
+          },
+          {
+            "section": "volumes",
+            "item_count": 0
+          },
+          {
+            "section": "scenes",
+            "item_count": 0
+          },
+          {
+            "section": "story_routes",
+            "item_count": 0
+          },
+          {
+            "section": "characters",
+            "item_count": 3
+          },
+          {
+            "section": "locations",
+            "item_count": 3
+          },
+          {
+            "section": "timeline",
+            "item_count": 0
+          },
+          {
+            "section": "foreshadowing",
+            "item_count": 0
+          },
+          {
+            "section": "relationships",
+            "item_count": 0
+          },
+          {
+            "section": "writing_context",
+            "item_count": 1
+          },
+          {
+            "section": "chapter_source",
+            "item_count": 1,
+            "chapter_id": "f4b8c9ee:2",
+            "chapter_version": 4,
+            "source_available": true
+          }
+        ],
+        "provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+        "model": "local-cbe5fff59c25ef0f728e0e8c",
+        "output_schema": "chapter_draft",
+        "requires_approval": true,
+        "created_at": "2026-10-07T09:50:32.421456+00:00",
+        "updated_at": "2026-10-07T09:50:38.606648+00:00",
+        "owner": {
+          "actor_id": "recovery-author",
+          "workspace_id": "recovery-workspace"
+        },
+        "execution_label": "真实模型执行",
+        "execution_token": "f2577ac2-e765-419e-abef-c7326b5908c5",
+        "attempt": 1,
+        "model_called": true,
+        "result": {
+          "structured_output": {
+            "schema": "chapter_draft",
+            "agent_id": "writer",
+            "summary": "第2章成功确立了林渊失忆但手握关键芯片的开局，通过老陈的警告和‘回声’的幻象初步构建了世界观。章节氛围营造出色，符合‘记忆与身份’的主题。建议后续章节需更明确地展示‘回声’干扰的具体机制，并强化林渊对芯片恐惧的心理描写，以呼应其潜意识中的罪孽感。",
+            "proposals": [
+              {
+                "type": "suggestion",
+                "content": "建议在林渊观察芯片时，增加一段关于芯片上‘量子编码’的具体视觉描写，暗示其与他过去实验的关联，而不仅仅是‘潜意识里的烙印’。"
+              },
+              {
+                "type": "suggestion",
+                "content": "老陈的台词‘一旦你开始修复，我们就都得死’非常有力，建议在下一章中通过环境细节（如自动售货机吐出带有警告信息的物品）来具象化这一威胁，而非仅靠对话。"
+              }
+            ],
+            "findings": [
+              {
+                "type": "canon_check",
+                "status": "PASS",
+                "note": "章节内容符合‘主角记忆缺失是防御机制’及‘核心反应堆从未关闭’的 Canon 设定。"
+              },
+              {
+                "type": "character_consistency",
+                "status": "PASS",
+                "note": "林渊的冷静与恐惧并存、老陈的圆滑与警惕均符合角色 Profile。"
+              },
+              {
+                "type": "atmosphere_check",
+                "status": "PASS",
+                "note": "臭氧、铁锈、变异苔藓等感官描写成功营造了压抑、神秘的氛围。"
+              }
+            ],
+            "context_hash": "f2adcf3ae3d76b52466e1576eee2e865d373ec1fdb9ef824381fa1e420e2acbb"
+          },
+          "empty": false
+        },
+        "fallback_used": false,
+        "provider_execution_mode": "real",
+        "usage": {
+          "input_tokens": 8282,
+          "output_tokens": 472,
+          "total_tokens": 8754
+        },
+        "usage_status": "REPORTED"
+      }
+    },
+    {
+      "stage": "11-agent-editor",
+      "status": "PASS",
+      "seconds": 6.271,
+      "evidence": {
+        "id": "f280ce0a-a45f-4a61-bcd0-8fb8032a6068",
+        "operation": "AGENT_TASK",
+        "agent_id": "editor",
+        "agent_name": "编辑 Agent",
+        "prompt_role": "editor",
+        "novel_id": "f4b8c9ee",
+        "chapter_id": "f4b8c9ee:2",
+        "chapter_version": 4,
+        "instruction": "针对本作品现有章节执行你的职责；给出简短中文建议或检查发现，不自动修改作品。严格遵守要求的JSON输出结构。",
+        "target": "local",
+        "execution_mode": "model",
+        "timeout_seconds": 180,
+        "retry_of": null,
+        "status": "COMPLETED",
+        "context_hash": "c396ca3aa6efa35ffea8b4229787eee068563afb889547cde78fc73d623fa88e",
+        "context_contract_version": "1.0",
+        "source_manifest": [
+          {
+            "section": "outline",
+            "item_count": 1
+          },
+          {
+            "section": "scenes",
+            "item_count": 0
+          },
+          {
+            "section": "characters",
+            "item_count": 3
+          },
+          {
+            "section": "writing_context",
+            "item_count": 1
+          },
+          {
+            "section": "chapter_source",
+            "item_count": 1,
+            "chapter_id": "f4b8c9ee:2",
+            "chapter_version": 4,
+            "source_available": true
+          }
+        ],
+        "provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+        "model": "local-cbe5fff59c25ef0f728e0e8c",
+        "output_schema": "editor_revision_proposal",
+        "requires_approval": true,
+        "created_at": "2026-10-07T09:50:38.647359+00:00",
+        "updated_at": "2026-10-07T09:50:44.878329+00:00",
+        "owner": {
+          "actor_id": "recovery-author",
+          "workspace_id": "recovery-workspace"
+        },
+        "execution_label": "真实模型执行",
+        "execution_token": "ea0d4757-55f5-4dda-99a1-ed73feab91d2",
+        "attempt": 1,
+        "model_called": true,
+        "result": {
+          "structured_output": {
+            "schema": "editor_revision_proposal",
+            "agent_id": "editor",
+            "summary": "本章成功确立了主角林渊的失忆状态与核心冲突，环境描写极具压迫感。建议强化‘回声’对主角生理层面的直接干扰，以体现记忆缺失的防御机制；同时需确保老陈的警告与后续剧情中‘修复城市即抹杀意识’的设定逻辑严密衔接。",
+            "proposals": [
+              {
+                "type": "suggestion",
+                "content": "在主角查看芯片或回忆画面时，增加具体的生理反应（如幻听、肢体痉挛、时间感知错乱），以具象化‘回声’的干扰，避免仅靠心理描写，增强沉浸感。"
+              },
+              {
+                "type": "suggestion",
+                "content": "老陈关于‘修复城市即抹杀意识’的警告在文中仅作为台词出现，建议在后续章节或本章结尾处，通过环境细节（如自动售货机吐出的物品带有他人记忆碎片）侧面印证这一残酷设定，为老陈的牺牲埋下伏笔。"
+              },
+              {
+                "type": "check",
+                "content": "确认主角手中芯片的‘量子编码’与世界观中‘旧时代科技设备’的规则（接触特定频率声波会激活/爆炸）是否将在后续章节形成具体的互动机制，避免道具功能悬空。"
+              }
+            ],
+            "findings": [
+              {
+                "type": "canon_check",
+                "content": "已确认本章未提前揭露主角毁灭城市的完整真相，仅通过碎片化画面暗示，符合‘禁止提前揭密’的要求。"
+              },
+              {
+                "type": "character_consistency",
+                "content": "老陈的悲观与警惕性格与设定一致，其作为向导的角色功能（提供线索、警告风险）已清晰展现。"
+              }
+            ],
+            "context_hash": "c396ca3aa6efa35ffea8b4229787eee068563afb889547cde78fc73d623fa88e"
+          },
+          "empty": false
+        },
+        "fallback_used": false,
+        "provider_execution_mode": "real",
+        "usage": {
+          "input_tokens": 7761,
+          "output_tokens": 492,
+          "total_tokens": 8253
+        },
+        "usage_status": "REPORTED"
+      }
+    },
+    {
+      "stage": "11-agent-reviewer",
+      "status": "PASS",
+      "seconds": 7.19,
+      "evidence": {
+        "id": "ed0bb836-bd4b-466d-ac1e-b6bf0530f67b",
+        "operation": "AGENT_TASK",
+        "agent_id": "reviewer",
+        "agent_name": "审核 Agent",
+        "prompt_role": "continuity_reviewer",
+        "novel_id": "f4b8c9ee",
+        "chapter_id": "f4b8c9ee:2",
+        "chapter_version": 4,
+        "instruction": "针对本作品现有章节执行你的职责；给出简短中文建议或检查发现，不自动修改作品。严格遵守要求的JSON输出结构。",
+        "target": "local",
+        "execution_mode": "model",
+        "timeout_seconds": 180,
+        "retry_of": null,
+        "status": "COMPLETED",
+        "context_hash": "efa7b0e9aededd32937291ceb52f5549a64d15c1f11754d4632f8813ebbae4e6",
+        "context_contract_version": "1.0",
+        "source_manifest": [
+          {
+            "section": "outline",
+            "item_count": 1
+          },
+          {
+            "section": "characters",
+            "item_count": 3
+          },
+          {
+            "section": "locations",
+            "item_count": 3
+          },
+          {
+            "section": "timeline",
+            "item_count": 0
+          },
+          {
+            "section": "relationships",
+            "item_count": 0
+          },
+          {
+            "section": "writing_context",
+            "item_count": 1
+          },
+          {
+            "section": "chapter_source",
+            "item_count": 1,
+            "chapter_id": "f4b8c9ee:2",
+            "chapter_version": 4,
+            "source_available": true
+          }
+        ],
+        "provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+        "model": "local-cbe5fff59c25ef0f728e0e8c",
+        "output_schema": "continuity_findings",
+        "requires_approval": false,
+        "created_at": "2026-10-07T09:50:44.925126+00:00",
+        "updated_at": "2026-10-07T09:50:52.078361+00:00",
+        "owner": {
+          "actor_id": "recovery-author",
+          "workspace_id": "recovery-workspace"
+        },
+        "execution_label": "真实模型执行",
+        "execution_token": "4ad59a5b-9230-4971-bda2-0949c763b43d",
+        "attempt": 1,
+        "model_called": true,
+        "result": {
+          "structured_output": {
+            "schema": "continuity_findings",
+            "agent_id": "reviewer",
+            "summary": "第2章成功建立了核心冲突与世界观基调。林渊在记忆回廊醒来并持有芯片，老陈警告其身份危险，两者均符合大纲设定。关键伏笔（芯片、回声干扰、老陈的牺牲暗示）已自然植入，未出现严重逻辑断裂或 canon 冲突。",
+            "proposals": [
+              {
+                "type": "suggestion",
+                "priority": "medium",
+                "content": "建议在描写林渊看到‘核心轮廓’时，增加一句关于该结构‘违背物理常识地悬浮’或‘违背重力法则’的细节，以更早地暗示‘回声’扭曲现实的能力，强化悬疑感。"
+              },
+              {
+                "type": "suggestion",
+                "priority": "low",
+                "content": "老陈的台词‘一旦你开始修复，我们就都得死’非常有力，建议后续章节中让林渊在内心独白中对此产生具体的恐惧或犹豫，以深化人物弧光。"
+              }
+            ],
+            "findings": [
+              {
+                "type": "canon_check",
+                "status": "passed",
+                "details": "林渊手中的芯片与大纲中‘前实验主导者’的身份一致，且符合‘记忆缺失是防御机制’的设定。"
+              },
+              {
+                "type": "character_consistency",
+                "status": "passed",
+                "details": "老陈的悲观、圆滑及警惕性格在对话中体现得当；林渊冷静但压抑颤抖的状态符合人物小传。"
+              },
+              {
+                "type": "foreshadowing_check",
+                "status": "passed",
+                "details": "芯片上的红色警告与林渊的心跳同步，成功伏笔了‘毁城源头就在主角手中’这一核心秘密。"
+              },
+              {
+                "type": "world_rule_check",
+                "status": "passed",
+                "details": "‘回声’强制重现过去画面（量子实验舱、推人下台）符合世界规则中关于记忆干扰的描述。"
+              }
+            ],
+            "context_hash": "efa7b0e9aededd32937291ceb52f5549a64d15c1f11754d4632f8813ebbae4e6"
+          },
+          "empty": false
+        },
+        "fallback_used": false,
+        "provider_execution_mode": "real",
+        "usage": {
+          "input_tokens": 8196,
+          "output_tokens": 563,
+          "total_tokens": 8759
+        },
+        "usage_status": "REPORTED"
+      }
+    },
+    {
+      "stage": "11-agent-verifier",
+      "status": "PASS",
+      "seconds": 8.138,
+      "evidence": {
+        "id": "231258a8-8011-47c3-a687-6a98d1b6daf3",
+        "operation": "AGENT_TASK",
+        "agent_id": "verifier",
+        "agent_name": "核验 Agent",
+        "prompt_role": "verifier",
+        "novel_id": "f4b8c9ee",
+        "chapter_id": "f4b8c9ee:2",
+        "chapter_version": 4,
+        "instruction": "针对本作品现有章节执行你的职责；给出简短中文建议或检查发现，不自动修改作品。严格遵守要求的JSON输出结构。",
+        "target": "local",
+        "execution_mode": "model",
+        "timeout_seconds": 180,
+        "retry_of": null,
+        "status": "COMPLETED",
+        "context_hash": "25a78c5b3306785cddcedf25c7257521f5182751ca75ad2532bde5577cae731e",
+        "context_contract_version": "1.0",
+        "source_manifest": [
+          {
+            "section": "outline",
+            "item_count": 1
+          },
+          {
+            "section": "characters",
+            "item_count": 3
+          },
+          {
+            "section": "locations",
+            "item_count": 3
+          },
+          {
+            "section": "canon",
+            "item_count": 0
+          },
+          {
+            "section": "timeline",
+            "item_count": 0
+          },
+          {
+            "section": "relationships",
+            "item_count": 0
+          },
+          {
+            "section": "writing_context",
+            "item_count": 1
+          },
+          {
+            "section": "chapter_source",
+            "item_count": 1,
+            "chapter_id": "f4b8c9ee:2",
+            "chapter_version": 4,
+            "source_available": true
+          }
+        ],
+        "provider": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+        "model": "local-cbe5fff59c25ef0f728e0e8c",
+        "output_schema": "verification_findings",
+        "requires_approval": false,
+        "created_at": "2026-10-07T09:50:52.116281+00:00",
+        "updated_at": "2026-10-07T09:51:00.220067+00:00",
+        "owner": {
+          "actor_id": "recovery-author",
+          "workspace_id": "recovery-workspace"
+        },
+        "execution_label": "真实模型执行",
+        "execution_token": "f5794d7d-e793-4969-b475-c8fbedcce6ba",
+        "attempt": 1,
+        "model_called": true,
+        "result": {
+          "structured_output": {
+            "schema": "verification_findings",
+            "agent_id": "verifier",
+            "summary": "第2章开篇成功建立氛围与核心冲突，林渊在记忆回廊苏醒并持有芯片，老陈作为向导介入。章节准确遵循了‘回声’干扰记忆、核心反应堆未关闭等既定规则。主要发现在于老陈的‘牺牲’设定与当前章节状态存在时间线冲突，需通过叙事技巧（如闪回或预知）解决，而非直接修改当前存活状态。",
+            "proposals": [
+              {
+                "type": "narrative_advice",
+                "content": "建议在描写老陈警告‘一旦你开始修复，我们就都得死’时，增加林渊对老陈‘已牺牲’状态的模糊认知（例如老陈提及‘如果’或‘本该’），以缓解与当前‘ALIVE’状态的直接矛盾，或明确本章为老陈牺牲前的最后时刻。"
+              }
+            ],
+            "findings": [
+              {
+                "type": "rule_conflict",
+                "severity": "high",
+                "description": "角色状态冲突：大纲中间部分明确设定‘老陈在保护他的过程中牺牲’，但当前章节（第2章）中老陈仍作为活跃向导出现且状态为 ALIVE。",
+                "source_evidence": "大纲中间：'老陈在保护他的过程中牺牲'；当前章节：老陈与林渊对话且状态为 ALIVE。",
+                "resolution_note": "需通过叙事结构（如倒叙、梦境或时间跳跃）解释老陈的生死状态，避免直接违反大纲时间线。"
+              },
+              {
+                "type": "rule_compliance",
+                "severity": "none",
+                "description": "世界规则符合：章节中提及‘核心从未真正关闭’及‘回声’的干扰，完全符合已批准的 Canon 规则。",
+                "source_evidence": "Canon 规则 8948137b: '城市中心的核心反应堆从未真正关闭'；Canon 规则 868f7be4: '主角的记忆缺失并非偶然'；章节内容：'核心从未真正关闭'、'那是回声的反弹'。",
+                "resolution_note": "无冲突。"
+              },
+              {
+                "type": "character_consistency",
+                "severity": "low",
+                "description": "角色目标一致：林渊寻找记忆与老陈引导主角的动机在当前章节中表现一致，符合角色设定。",
+                "source_evidence": "角色设定：林渊'找回自己失去的记忆'；老陈'帮助林渊找到通往城市核心的路径'。",
+                "resolution_note": "无冲突。"
+              }
+            ],
+            "context_hash": "25a78c5b3306785cddcedf25c7257521f5182751ca75ad2532bde5577cae731e"
+          },
+          "empty": false
+        },
+        "fallback_used": false,
+        "provider_execution_mode": "real",
+        "usage": {
+          "input_tokens": 8249,
+          "output_tokens": 680,
+          "total_tokens": 8929
+        },
+        "usage_status": "REPORTED"
+      }
+    }
+  ]
+}

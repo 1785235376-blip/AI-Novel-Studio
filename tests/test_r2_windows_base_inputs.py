@@ -20,7 +20,9 @@ def archive(*names: str) -> zipfile.ZipFile:
     stream = io.BytesIO()
     with zipfile.ZipFile(stream, "w") as value:
         for name in names:
-            value.writestr(name, b"synthetic")
+            info = zipfile.ZipInfo(name)
+            info.filename = name
+            value.writestr(info, b"synthetic")
     stream.seek(0)
     return zipfile.ZipFile(stream)
 

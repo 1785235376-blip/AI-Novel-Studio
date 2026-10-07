@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { api, type Chapter } from "../api";
+import { api, apiErrorView, creativeAgentCatalogItems, type Chapter } from "../api";
 import { useStudio } from "../store";
-import { Badge, Button, EmptyState, Panel } from "../ui/primitives";
+import { Badge, Button, EmptyState, Panel, StatusMessage } from "../ui/primitives";
+import { useLocalHostSession } from "../localHostSession";
+import { LocalHostSessionPanel } from "./LocalHostSessionPanel";
 import { AgentResultReview, type AgentReviewJob } from "./AgentResultReview";
 import { AgentJobDetail } from "./AgentJobDetail";
 
@@ -13,12 +15,13 @@ function AgentJobHistoryLegacy({
   novelId?: string;
   agents?: { id: string; name: string }[];
 }) {
+  const localHostEpoch=useLocalHostSession(value=>value.epoch);
   const [agentId, setAgentId] = useState(""),
     [status, setStatus] = useState(""),
     [page, setPage] = useState(1),
     [selectedJobId, setSelectedJobId] = useState<string>();
   const history = useQuery({
-    queryKey: ["agent-job-history", novelId, agentId, status, page],
+    queryKey: ["agent-job-history", localHostEpoch, novelId, agentId, status, page],
     queryFn: () =>
       api.agentJobs({
         novelId,
@@ -129,6 +132,11 @@ function AgentJobHistoryLegacy({
 }
 
 export function AgentJobHistory({ novelId, requestedTaskId }: { novelId?: string; requestedTaskId?: string }) {
+  const epoch=useLocalHostSession(value=>value.epoch);
+  return <AgentJobHistoryBody key={epoch} novelId={novelId} requestedTaskId={requestedTaskId}/>;
+}
+function AgentJobHistoryBody({ novelId, requestedTaskId }: { novelId?: string; requestedTaskId?: string }) {
+  const localHostEpoch=useLocalHostSession(value=>value.epoch);
   const branchId = useStudio((value) => value.scope?.branchId);
   const [status, setStatus] = useState(""),
     [agentId, setAgentId] = useState(""),
@@ -143,7 +151,7 @@ export function AgentJobHistory({ novelId, requestedTaskId }: { novelId?: string
   useEffect(() => { setSelected(requestedTaskId); }, [requestedTaskId, novelId, branchId]);
   const catalog = useQuery({ queryKey: ["agent-job-history-catalog"], queryFn: api.agents, retry: false });
   const history = useQuery({
-    queryKey: ["agent-job-history-v2", novelId, branchId, status, agentId, createdAfter, createdBefore, page],
+    queryKey: ["agent-job-history-v2", localHostEpoch, novelId, branchId, status, agentId, createdAfter, createdBefore, page],
     queryFn: () =>
       api.agentJobs({
         novelId,
@@ -158,7 +166,7 @@ export function AgentJobHistory({ novelId, requestedTaskId }: { novelId?: string
     enabled: !!novelId,
   });
   const audit = useQuery({
-    queryKey: ["agent-job-export-audit", novelId, branchId, auditAfter, auditBefore, auditPage],
+    queryKey: ["agent-job-export-audit", localHostEpoch, novelId, branchId, auditAfter, auditBefore, auditPage],
     queryFn: () => api.agentJobAudit(novelId!, branchId!, { createdAfter: auditAfter || undefined, createdBefore: auditBefore || undefined, page: auditPage, pageSize: 10 }),
     enabled: !!novelId && !!branchId,
     retry: false,
@@ -171,7 +179,7 @@ export function AgentJobHistory({ novelId, requestedTaskId }: { novelId?: string
             Agent 筛选
             <select aria-label="历史 Agent 筛选" value={agentId} onChange={(e) => { setAgentId(e.target.value); setPage(1); }}>
               <option value="">全部 Agent</option>
-              {catalog.data?.agents.map((agent) => <option key={agent.id} value={agent.id}>{agent.name}</option>)}
+              {creativeAgentCatalogItems(catalog.data).map((agent) => <option key={agent.id} value={agent.id}>{agent.name}</option>)}
             </select>
           </label>
           <label>
@@ -297,6 +305,10 @@ export function AgentJobHistory({ novelId, requestedTaskId }: { novelId?: string
 }
 
 export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
+  const epoch=useLocalHostSession(value=>value.epoch);
+  return <><LocalHostSessionPanel/><AgentTeamBody key={epoch} chapter={chapter}/></>;
+}
+function AgentTeamBody({ chapter }: { chapter?: Chapter }) {
   const query = useQuery({
       queryKey: ["creative-agent-catalog"],
       queryFn: api.agents,
@@ -310,10 +322,19 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
   const actor = useStudio((value) => value.actor),
     scope = useStudio((value) => value.scope),
     selectedModel = useStudio((value) => value.textModel);
+  const localHost=useLocalHostSession.getState();
+  const requestContext:[]|[{sessionToken:string;localHostToken:string}]=localHost.token&&!scope&&!useStudio.getState().sessionToken?[{sessionToken:'',localHostToken:localHost.token}]:[];
+  const alive=useRef(true);
+  useEffect(()=>{alive.current=true;return()=>{alive.current=false}},[]);
+  function stillCurrent(){return alive.current&&useLocalHostSession.getState().epoch===localHost.epoch;}
   const [agentId, setAgentId] = useState("planner"),
     [instruction, setInstruction] = useState(""),
     [mode, setMode] = useState<"deterministic" | "model">("deterministic"),
     [job, setJob] = useState<any>();
+  const agents = creativeAgentCatalogItems(query.data);
+  useEffect(() => {
+    if (agents.length && !agents.some(agent => agent.id === agentId)) setAgentId(agents[0].id);
+  }, [query.data, agentId]);
   const create = useMutation({
     mutationFn: async () => {
       if (!chapter) throw new Error("请先选择章节");
@@ -328,31 +349,33 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
         provider_id: mode === "model" ? selectedModel?.providerId : undefined,
         model_id: mode === "model" ? selectedModel?.modelId : undefined,
         branch_id: scope?.branchId,
-      });
+      },...requestContext);
+      if(!stillCurrent())throw new Error('会话已切换；任务创建回执未继续执行，请在原身份的历史中核对。');
       setJob(created);
-      return api.startAgentJob(created.id);
+      return api.startAgentJob(created.id,...requestContext);
     },
     onSuccess: setJob,
   });
   const cancel = useMutation({
-      mutationFn: () => api.cancelAgentJob(job.id),
+      mutationFn: () => api.cancelAgentJob(job.id,...requestContext),
       onSuccess: setJob,
     }),
     retry = useMutation({
       mutationFn: async () => {
-        const next = await api.retryAgentJob(job.id);
+        const next = await api.retryAgentJob(job.id,...requestContext);
+        if(!stillCurrent())throw new Error('会话已切换；重试回执未继续执行，请在原身份的历史中核对。');
         setJob(next);
-        return api.startAgentJob(next.id);
+        return api.startAgentJob(next.id,...requestContext);
       },
       onSuccess: setJob,
     }),
     review = useMutation({
       mutationFn: (decision: "ACCEPTED" | "REJECTED") =>
-        api.reviewAgentJob(job.id, decision, actor?.id || "local-author"),
+        api.reviewAgentJob(job.id, decision, actor?.id || localHost.actorId || "local-author"),
       onSuccess: setJob,
     }),
     apply = useMutation({
-      mutationFn: () => api.applyAgentJob(job.id, actor?.id || "local-author"),
+      mutationFn: () => api.applyAgentJob(job.id, actor?.id || localHost.actorId || "local-author"),
       onSuccess: setJob,
     });
   useEffect(() => {
@@ -366,7 +389,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
     const timer = setInterval(
       () =>
         api
-          .agentJob(job.id)
+          .agentJob(job.id,...requestContext)
           .then(setJob)
           .catch(() => {}),
       500,
@@ -388,7 +411,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
         </div>
       </Panel>
     );
-  if (!query.data?.agents.length)
+  if (!agents.length)
     return (
       <Panel title="Creative Agent 团队">
         <EmptyState title="暂无 Agent" detail="当前没有已注册的创作角色。" />
@@ -399,7 +422,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
       !["COMPLETED", "VALIDATED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED"].includes(
         job.status,
       ),
-    selected = query.data.agents.find((item) => item.id === agentId);
+    selected = agents.find((item) => item.id === agentId);
   return (
     <>
       <Panel title="Creative Agent 任务">
@@ -418,7 +441,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
               disabled={!!busy}
               onChange={(event) => setAgentId(event.target.value)}
             >
-              {query.data.agents.map((agent) => (
+              {agents.map((agent) => (
                 <option key={agent.id} value={agent.id}>
                   {agent.name}
                 </option>
@@ -493,6 +516,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
               {job.error}
             </p>
           )}
+          {[create.error,cancel.error,retry.error,review.error,apply.error].filter(Boolean).map((error,index)=><StatusMessage key={index} tone="error">{apiErrorView(error,'Agent 操作未完成，请核对本机可信会话后重试。').message}</StatusMessage>)}
         </section>
       </Panel>
       {job?.status === "COMPLETED" && job?.execution_mode !== "deterministic" && (
@@ -523,7 +547,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
       )}
       <Panel title="Agent 角色目录">
         <ul className="novel-record-list" aria-label="Creative Agent 角色">
-          {query.data.agents.map((agent) => (
+          {agents.map((agent) => (
             <li key={agent.id}>
               <article>
                 <header>

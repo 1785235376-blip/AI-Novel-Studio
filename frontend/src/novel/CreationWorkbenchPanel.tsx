@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState} from 'react';
-import {api,apiErrorView,type Chapter,type CreationRecord,type ReviewThread,type CollaborationContext} from '../api';
+import {api,apiErrorView,type Chapter,type CreationRecord,type ReviewThread,type CollaborationContext,type PlanningApplied} from '../api';
 import {useStudio} from '../store';
 import {Badge,Button,EmptyState,Panel,StatusMessage} from '../ui/primitives';
 import './creationWorkbench.css';
@@ -10,7 +10,7 @@ const blank=(kind='STYLE')=>({kind,title:'',description:'',instructions:'',acts:
 type Draft=ReturnType<typeof blank>;
 const editable=(row:CreationRecord):Draft=>Object.fromEntries(Object.keys(blank()).map(k=>[k,(row as any)[k]])) as Draft;
 
-export function CreationWorkbenchPanel({novelId,chapter,initialComments=false,context}:{novelId:string;chapter?:Chapter;initialComments?:boolean;context?:CollaborationContext}){
+export function CreationWorkbenchPanel({novelId,chapter,initialComments=false,context,onPlanningApplied}:{novelId:string;chapter?:Chapter;initialComments?:boolean;context?:CollaborationContext;onPlanningApplied?:(result:PlanningApplied)=>void}){
  const [comments,setComments]=useState(initialComments),[records,setRecords]=useState<CreationRecord[]>([]),[threads,setThreads]=useState<ReviewThread[]>([]),[draft,setDraft]=useState<Draft>(blank),[editing,setEditing]=useState<CreationRecord>(),[busy,setBusy]=useState(false),[loading,setLoading]=useState(true),[error,setError]=useState(''),[message,setMessage]=useState(''),[text,setText]=useState(''),[quote,setQuote]=useState(''),[reply,setReply]=useState<Record<string,string>>({}),[compare,setCompare]=useState<string[]>([]);
  const [planningOpen,setPlanningOpen]=useState(false);
  const [references,setReferences]=useState<{characters:{id:string;name:string}[];locations:{id:string;name:string}[];story_routes:{id:string;name:string}[]}>({characters:[],locations:[],story_routes:[]});
@@ -46,7 +46,7 @@ export function CreationWorkbenchPanel({novelId,chapter,initialComments=false,co
  <details><summary>审核记录（{thread.history.length}）</summary>{thread.history.map((event,i)=><p key={i}>{event.action} · {event.actor_id} · {event.at}</p>)}</details>
  </article>)}
  </>:<>
- <details onToggle={event=>setPlanningOpen(event.currentTarget.open)}><summary>AI 结构化方案与明确规则提取</summary>{planningOpen&&<AIPlanningPanel novelId={novelId} chapter={chapter} context={context} onSaved={row=>{setRecords(current=>[row,...current.filter(value=>value.id!==row.id)]);setMessage(`已保存${kinds[row.kind]}草稿：${row.title}`)}}/>}</details>
+ <details onToggle={event=>setPlanningOpen(event.currentTarget.open)}><summary>AI 结构化方案与明确规则提取</summary><p className="novel-help">从故事创意开始：选择模型生成世界观 → 角色 → 大纲，逐步审阅并采用到故事资料库。</p>{planningOpen&&<AIPlanningPanel novelId={novelId} chapter={chapter} context={context} onApplied={result=>{onPlanningApplied?.(result);void reload()}} onSaved={row=>{setRecords(current=>[row,...current.filter(value=>value.id!==row.id)]);setMessage(`已保存${kinds[row.kind]}草稿：${row.title}`)}}/>}</details>
  <p className="novel-help">手工方案保存为草稿，审核后可复用。风格与三幕方案可加入 AI 写作输入；AI 输出仍需预览、Diff 和明确采用。其他世界结构保留独立版本与关联记录。</p>
  {(selected?.styleProfileId||selected?.plotPlanId)&&<p role="status">已选写作输入：{records.filter(r=>r.id===selected.styleProfileId||r.id===selected.plotPlanId).map(r=>r.title).join('、')} <Button onClick={()=>setSelected({})}>清除选择</Button></p>}
  <label>记录类型<select value={draft.kind} disabled={!!editing||busy} onChange={e=>reset(e.target.value)}>{Object.entries(kinds).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select></label>

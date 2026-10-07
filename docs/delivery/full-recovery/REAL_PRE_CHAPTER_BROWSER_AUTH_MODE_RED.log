@@ -1,0 +1,4 @@
+locator.waitFor: Timeout 20000ms exceeded.
+Call log:
+  - waiting for getByRole('button', { name: '切换本机作品', exact: true }) to be visible
+

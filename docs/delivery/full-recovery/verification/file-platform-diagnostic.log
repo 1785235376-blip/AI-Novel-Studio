@@ -1,0 +1,35 @@
+F.FF                                                                     [100%]
+================================== FAILURES ===================================
+____________ test_contract_manifest_matches_bytes_and_regeneration ____________
+tests\test_local_interop_contracts.py:709: in test_contract_manifest_matches_bytes_and_regeneration
+    assert (generated / name).read_bytes() == (CONTRACTS / name).read_bytes(), name
+E   AssertionError: handshake.schema.json
+E   assert b'{\r\n  "$de...ect"\r\n}\r\n' == b'{\n  "$defs..."object"\n}\n'
+E     
+E     At index 1 diff: b'\r' != b'\n'
+E     Use -v to get more diff
+______________________________ test_worker_crash ______________________________
+tests\test_plugin_runtime_phase2a_test_worker.py:262: in test_worker_crash
+    assert outcome.worker_exit_status == 17
+E   AssertionError: assert None == 17
+E    +  where None = HostTestJobOutcome(accepted=False, reason_code='WORKER_CRASH', lifecycle_state=<ExecutionLifecycleState.FAILED: 'FAILE...n_attempt_id='b56a3240-7a7f-4f36-9ecd-e6a9e004f13f', result_payload=None, stderr_byte_count=0, worker_exit_status=None).worker_exit_status
+__________ test_spawned_worker_environ_has_no_inherited_python_star ___________
+tests\test_plugin_runtime_phase2a_worker_isolation.py:135: in test_spawned_worker_environ_has_no_inherited_python_star
+    child_env = _child_environ(session.pid)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_plugin_runtime_phase2a_worker_isolation.py:76: in _child_environ
+    raw = Path(f"/proc/{pid}/environ").read_bytes()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1050: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1044: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '\\proc\\39420\\environ'
+- generated xml file: D:\小说\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\verification\file-platform-diagnostic.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_local_interop_contracts.py::test_contract_manifest_matches_bytes_and_regeneration
+FAILED tests/test_plugin_runtime_phase2a_test_worker.py::test_worker_crash - ...
+FAILED tests/test_plugin_runtime_phase2a_worker_isolation.py::test_spawned_worker_environ_has_no_inherited_python_star
+3 failed, 1 passed in 2.86s

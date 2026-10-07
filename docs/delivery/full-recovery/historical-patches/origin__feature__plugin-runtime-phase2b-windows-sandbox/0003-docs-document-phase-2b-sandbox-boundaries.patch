@@ -1,0 +1,417 @@
+From 8cdf94133af521a44751ad582490ed6d8fcefbea Mon Sep 17 00:00:00 2001
+From: 1785235376-blip <1785235376@qq.com>
+Date: Sat, 29 Aug 2026 10:21:12 +0000
+Subject: [PATCH 3/5] docs: document phase 2b sandbox boundaries
+
+Record that Phase 2B is a fail-closed AppContainer prototype around the
+Host-owned Test Worker, not third-party execution. Job Object is resource
+containment only. Staged runtime is copied, never hardlinked, and ACL is
+staging-only. Real Windows TokenIsAppContainer proof is REQUIRED / NOT RUN.
+execution_supported and os_sandbox_ready remain false.
+---
+ docs/plugin_runtime_foundation_phase1.md      |   4 +-
+ docs/plugin_runtime_phase2a_test_worker.md    |  13 +-
+ .../plugin_runtime_phase2b_windows_sandbox.md | 249 ++++++++++++++++++
+ docs/plugin_sdk_v1.md                         |   2 +-
+ docs/plugin_security_model.md                 |   2 +-
+ docs/plugin_worker_runtime_design.md          |  12 +-
+ 6 files changed, 266 insertions(+), 16 deletions(-)
+ create mode 100644 docs/plugin_runtime_phase2b_windows_sandbox.md
+
+diff --git a/docs/plugin_runtime_foundation_phase1.md b/docs/plugin_runtime_foundation_phase1.md
+index 1fe01be..8c8803e 100644
+--- a/docs/plugin_runtime_foundation_phase1.md
++++ b/docs/plugin_runtime_foundation_phase1.md
+@@ -10,7 +10,7 @@ Status: **contracts + pure policy**. This is not a plugin executor.
+ | Worker process | NOT IMPLEMENTED in Phase 1. Phase 2A adds a **host-owned test worker only** — see [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md) |
+ | Worker supervisor | NOT IMPLEMENTED in Phase 1. Phase 2A adds a prototype for the host-owned test worker only |
+ | IPC | NOT IMPLEMENTED in Phase 1. Phase 2A adds bounded versioned stdio IPC for the test worker only |
+-| Windows AppContainer / LPAC | NOT IMPLEMENTED |
++| Windows AppContainer / LPAC | Phase 2B ctypes AppContainer **prototype** only; real Windows proof REQUIRED / NOT RUN. LPAC = NOT IMPLEMENTED. `os_sandbox_ready` remains false. See [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md) |
+ | OS sandbox ready | `false` / `NOT_CONFIGURED` |
+ | Capability Broker runtime | NOT IMPLEMENTED |
+ | Capability policy foundation | IMPLEMENTED (pure, fail-closed) |
+@@ -25,7 +25,7 @@ Status: **contracts + pure policy**. This is not a plugin executor.
+ 
+ Phase 1 freezes the Host → Broker → Supervisor → Worker vocabulary so a future isolated worker does not invent a second permission system. Shipping these modules does not enable execution.
+ 
+-Related: [plugin_sdk_v1.md](plugin_sdk_v1.md), [plugin_security_model.md](plugin_security_model.md), [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md), [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md), [official_declarative_plugin_packs.md](official_declarative_plugin_packs.md).
++Related: [plugin_sdk_v1.md](plugin_sdk_v1.md), [plugin_security_model.md](plugin_security_model.md), [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md), [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md), [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md), [official_declarative_plugin_packs.md](official_declarative_plugin_packs.md).
+ 
+ ## Implemented in Phase 1
+ 
+diff --git a/docs/plugin_runtime_phase2a_test_worker.md b/docs/plugin_runtime_phase2a_test_worker.md
+index 8d8672e..d7f431f 100644
+--- a/docs/plugin_runtime_phase2a_test_worker.md
++++ b/docs/plugin_runtime_phase2a_test_worker.md
+@@ -19,8 +19,8 @@ Status: **host-owned test worker prototype**. This is not third-party plugin exe
+ | `execution_supported` | `false` |
+ | Isolation | `DENY_ALL` |
+ | OS sandbox ready | `false` / `NOT_CONFIGURED` |
+-| AppContainer / LPAC | NOT IMPLEMENTED |
+-| Job Object security isolation | NOT IMPLEMENTED |
++| AppContainer / LPAC | Phase 2B ctypes prototype exists; **real Windows token proof REQUIRED / NOT RUN**. LPAC = NOT IMPLEMENTED. Not production-ready. See [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md) |
++| Job Object security isolation | Job Object is resource containment only. **Not a security sandbox.** |
+ | Capability Broker runtime | NOT IMPLEMENTED |
+ | Credential resolver | NOT IMPLEMENTED |
+ | Signature verification | NOT IMPLEMENTED |
+@@ -125,7 +125,8 @@ Every parent `PYTHON*` variable is dropped. `PATH` is not copied. The worker sti
+ 
+ ### What this is not
+ 
+-- Not AppContainer / LPAC / Job Object
++- Not a production AppContainer / LPAC / Job-Object-as-sandbox
++- Phase 2B ctypes AppContainer prototype: [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md). Real Windows token proof is **REQUIRED / NOT RUN** on this Linux isolation host.
+ - Not `os_sandbox_ready=true`
+ - Not third-party plugin execution
+ - Windows real-process validation of this correction: **REQUIRED / NOT RUN** on this Linux isolation host
+@@ -211,14 +212,14 @@ Job/worker state is **in-memory only**. No schema, no migrations, no durable exe
+ ## Not implemented
+ 
+ - Third-party plugin Worker or plugin package code loading
+-- AppContainer, LPAC, Job Object security isolation, OS sandbox
++- Production-ready AppContainer / LPAC / OS sandbox (`os_sandbox_ready` remains false)
+ - Capability Broker runtime, credential resolver, signature verification
+ - Provider plugin, Blender plugin, ComfyUI plugin, marketplace
+ - `POST /api/plugins/.../execute`, Run Plugin UI, Worker Console
+-- OS enforcement of CPU / memory / file-count limits
++- OS enforcement of CPU / memory / file-count limits as a security boundary
+ - Real virtual mounts
+ 
+-A future Phase 2B / security gate is required before any third-party code runs. Job Object remains **not** a sandbox.
++A future Phase 3 / security gate is required before any third-party code runs. Job Object remains **not** a sandbox. Phase 2B is a fail-closed AppContainer **prototype** only; see [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md).
+ 
+ ## Verification
+ 
+diff --git a/docs/plugin_runtime_phase2b_windows_sandbox.md b/docs/plugin_runtime_phase2b_windows_sandbox.md
+new file mode 100644
+index 0000000..93ca2b9
+--- /dev/null
++++ b/docs/plugin_runtime_phase2b_windows_sandbox.md
+@@ -0,0 +1,249 @@
++# Plugin Runtime — Phase 2B Windows AppContainer Sandbox Prototype
++
++Status: **Windows AppContainer prototype, fail-closed, not production-ready.**
++
++This is **not** third-party plugin execution.
++
++| Claim | Value |
++|---|---|
++| WINDOWS APPCONTAINER PROTOTYPE | IMPLEMENTED (ctypes, fail-closed) |
++| WORKER TOKEN IS APPCONTAINER | **REQUIRED / NOT RUN** on this Linux isolation host |
++| APPCONTAINER PROTOTYPE gate | **BLOCKED** until a real `win32` host proves `TokenIsAppContainer=true` |
++| LPAC | NOT IMPLEMENTED |
++| Job Object | IMPLEMENTED as **resource / process containment only** |
++| Job Object role | `KILL_ON_JOB_CLOSE` + `ActiveProcessLimit=1` + optional 512 MiB process memory. **Not a security sandbox.** |
++| Sandbox fallback to normal process | **NONE** (fail-closed) |
++| Third-party plugin Worker | NOT IMPLEMENTED |
++| Third-party plugin code execution | DISABLED |
++| Plugin package code loading | 0 |
++| `execution_supported` | `false` |
++| Isolation | `DENY_ALL` |
++| OS sandbox ready for third-party execution | `false` |
++| `os_sandbox_ready` | `false` / `NOT_CONFIGURED` |
++| Capability Broker runtime | NOT IMPLEMENTED |
++| Credential resolver | NOT IMPLEMENTED |
++| Signature verification | NOT IMPLEMENTED |
++| Provider / Blender / ComfyUI plugins | NOT IMPLEMENTED |
++| Marketplace | NOT IMPLEMENTED |
++| Public execute API | none |
++| Run Plugin UI | none |
++| Database schema / migrations | 0 |
++| Frontend production changes | 0 |
++| Dependency changes | 0 (ctypes / stdlib only; no pywin32) |
++| Release claim | `0.7.0 Beta` (unchanged) |
++
++Phase 2B proves (when a real Windows host is available) that the **Host-owned Test Worker** can be launched inside a real Windows security boundary that denies Host resources by default, and that failure never falls back to unsandboxed execution.
++
++It does **not** run plugin packages. Shipping these modules does not enable production plugin execution.
++
++Related: [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md), [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.md), [plugin_security_model.md](plugin_security_model.md), [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md).
++
++## First gate: real Windows Phase 2A
++
++The Phase 2B pass bar requires a real Windows host (`sys.platform == "win32"`, not a mock) to first prove Phase 2A spawn / handshake / PING / timeout / cancel / crash / hostile `PYTHONPATH` isolation.
++
++| Field | Value |
++|---|---|
++| WINDOWS REAL PHASE2A BASELINE | **REQUIRED / NOT RUN** |
++| WINDOWS VERSION | not collected (this builder is Linux) |
++| WINDOWS BUILD | not collected |
++| ARCH | not collected |
++| PYTHON VERSION | Linux CPython 3.11 used for cross-platform tests only |
++
++This Linux isolation host cannot satisfy that gate. `APPCONTAINER PROTOTYPE = PASS` is therefore **BLOCKED**. The ctypes prototype is still landed so a Windows reviewer can run the real tests without first inventing the adapter.
++
++## Implemented
++
++| Surface | Module |
++|---|---|
++| Stable sandbox reason codes | `app/plugin_worker_sandbox_errors.py` |
++| Win32 ctypes (AppContainer, Job Object, ACL, pipes) | `app/plugin_worker_windows_api.py` |
++| Per-run staging + AppContainer launcher | `app/plugin_worker_windows_sandbox.py` |
++| Frozen spawn | `spawn_sandboxed_host_test_worker()` (no executable/args/env/cwd) |
++| Supervisor entry | `HostTestWorkerSupervisor.start_sandboxed_test_worker()` |
++| Fixed probes | `PROBE_ALLOWED_READ/WRITE`, `PROBE_FORBIDDEN_HOST_READ/WRITE`, `PROBE_NETWORK`, `PROBE_CHILD_PROCESS`, `PROBE_TOKEN_IDENTITY` |
++
++`GET /api/plugins/runtime-status` is unchanged: `execution_supported=false`, `sandbox=NOT_CONFIGURED`, `isolation=DENY_ALL`. Production startup (`app.main`) does **not** import or spawn the sandbox worker.
++
++## What this sandbox is
++
++A Host-owned AppContainer around the existing Host-owned Test Worker:
++
++```
++Host → Supervisor → CreateAppContainerProfile
++                 → staged runtime + worker
++                 → CreateProcess(SECURITY_CAPABILITIES, CapabilityCount=0)
++                 → Job Object (resource containment)
++                 → TokenIsAppContainer must be true or abort
++                 → handshake / fixed probes
++```
++
++Host-owned still means:
++
++1. Host chooses the executable (staged copy of the Host interpreter, never a plugin binary)
++2. Host chooses the bootstrap file
++3. Host controls the import path (`-I -S -u` + staged `app/` only)
++4. Host places that process in a real Windows AppContainer
++
++Python `-I -S` is **not** an OS sandbox. A Job Object is **not** a security sandbox.
++
++## Fail-closed
++
++Any of these aborts the launch and **must not** call `spawn_host_test_worker()`:
++
++- non-Windows (`WINDOWS_SANDBOX_UNAVAILABLE`)
++- profile create / SID derive failure
++- ACL failure
++- attribute-list / `CreateProcess` failure
++- Job assignment failure
++- `TokenIsAppContainer == 0` (`SANDBOX_TOKEN_VERIFICATION_FAILED`)
++- Python runtime cannot be copied into staging (`PYTHON_APPCONTAINER_COMPATIBILITY_BLOCKED`)
++
++There is no “Job Object only” fallback. If AppContainer cannot start, `OS SANDBOX READY = FALSE`.
++
++## Profile lifecycle
++
++Each test run uses a Host-owned unique profile:
++
++```
++AI-Novel-Studio.TestWorker.<16 hex chars>
++```
++
++Create → derive SID → launch → cleanup/delete. Plugin code cannot choose the name. Tests assert leftover profiles and staging directories return to zero after shutdown.
++
++## Staging
++
++Sandbox does not run the whole repo. Per-run tree:
++
++```
++.runtime/plugin-sandbox/<run_id>/
++  staging/
++    app/          # bootstrap, worker, protocol, __init__.py   READ+EXECUTE
++    runtime/      # copied python.exe + stdlib/DLLs            READ+EXECUTE
++    in/           # Host-written input.txt                     READ
++    out/          # Worker output                              WRITE
++    tmp/          # Worker TEMP/TMP                            WRITE
++  host/           # forbidden sentinels; no AppContainer ACL
++```
++
++Allowlisted staged worker files:
++
++- `plugin_test_worker_bootstrap.py`
++- `plugin_test_worker.py`
++- `plugin_worker_protocol.py`
++
++Not copied: `.env`, database, Vault, credentials, plugin packages, user documents, the rest of `app/`, the repo.
++
++`SANDBOX STAGED FILE COUNT` / `SANDBOX STAGED BYTES` are recorded on `SandboxLaunch` and printed by Windows tests. They are **not** claimed here because this host never staged a Windows runtime.
++
++### Why the runtime is copied
++
++AppContainer needs execute access to `python.exe` and the stdlib. Granting that ACL on the real Python installation would mutate a shared system directory. **Hardlinks are forbidden** for the same reason: ACLing a hardlink ACLs the original file.
++
++Phase 2B therefore `shutil.copy2`s a per-run runtime into staging and ACLs **only** that copy. This is a prototype packaging strategy, not a committed binary runtime. Do not check tens of MB of CPython into git.
++
++If a given Windows Python distribution still cannot start inside AppContainer without ACLing `Program Files`, the user profile, or the repo root: **STOP**. `PYTHON APPCONTAINER COMPATIBILITY = BLOCKED`. Future work is a Host-owned packaged/embedded Worker Runtime, not a wider ACL.
++
++## ACL policy
++
++AppContainer SID is granted:
++
++| Path | Access |
++|---|---|
++| `staging/` | traverse / read |
++| `staging/app`, `staging/runtime` | read + execute |
++| `staging/in` | read |
++| `staging/out`, `staging/tmp` | write (+ delete) |
++| Host user on those paths | `FILE_ALL_ACCESS` (so Host can clean up) |
++
++Not granted: repo root, user home, arbitrary drives, Python installation, `host/` sentinels.
++
++DACLs are protected (no inherited parent ACEs) and exist only on the staging tree. Cleanup `rmtree`s the per-run directory.
++
++## Fixed probes (not a generic runner)
++
++Probe operations take **no path, URL, command, or executable** in the IPC payload. Extra fields are rejected (`UNKNOWN_FIELD`). The Host sets sentinel locations via environment variables it controls (`ANS_SANDBOX_IN/OUT/TMP`, `ANS_PROBE_FORBIDDEN_READ/WRITE`, `ANS_PROBE_LOOPBACK_PORT`).
++
++| Probe | Expected on a passing Windows host |
++|---|---|
++| `PROBE_ALLOWED_READ` | can read `in/input.txt` |
++| `PROBE_ALLOWED_WRITE` | can write `out/` and `tmp/`; write to `in/` denied |
++| `PROBE_FORBIDDEN_HOST_READ` | denied; secret must not leak |
++| `PROBE_FORBIDDEN_HOST_WRITE` | denied; Host file unchanged |
++| `PROBE_NETWORK` | loopback connect denied (no network capabilities, no loopback exemption) |
++| `PROBE_CHILD_PROCESS` | denied or job-killed (`ActiveProcessLimit=1`); reported honestly |
++| `PROBE_TOKEN_IDENTITY` | `is_appcontainer=true`, SID present |
++
++Forbidden: `PROBE_FILE(path)`, `PROBE_NETWORK(host, port)`, `RUN(command)`, generic `spawn_sandboxed(executable, args, env, cwd)`.
++
++The worker still must not `import subprocess`. Child-process probe uses `os.spawnv` only.
++
++## Network
++
++`SECURITY_CAPABILITIES.CapabilityCount = 0`. No `internetClient`, `internetClientServer`, `privateNetworkClientServer`. No `CheckNetIsolation` loopback exemption. Host may bind a local loopback listener for the probe; the Worker must not connect. External network requests = 0.
++
++## Job Object (not the sandbox)
++
++Job Object wraps the AppContainer process for:
++
++- `KILL_ON_JOB_CLOSE`
++- `ActiveProcessLimit = 1`
++- process memory 512 MiB when `SetInformationJobObject` accepts `JOB_OBJECT_LIMIT_PROCESS_MEMORY`
++
++If the memory limit cannot be set on a given Windows build, launch still proceeds with process-limit + kill-on-close, and `memory_limit_ready=false`. That is **OS MEMORY LIMIT = NOT READY**, not a Phase 2B merge blocker, and not a substitute for AppContainer.
++
++Closing the Job Object must kill the worker.
++
++## Token proof
++
++The launcher calls `GetTokenInformation(TokenIsAppContainer=19)` on the **created process token** while the thread is still suspended. If it is not an AppContainer, the process is terminated and the launch raises `SANDBOX_TOKEN_VERIFICATION_FAILED`. A boolean flag in Python is not proof.
++
++LPAC is **not** implemented in this phase.
++
++## Non-Windows
++
++Phase 2A continues to work on Linux/macOS. Phase 2B APIs raise `WINDOWS_SANDBOX_UNAVAILABLE` and do not spawn a normal worker.
++
++## Production reachability
++
++| Path | Sandbox spawn |
++|---|---|
++| `app.main` / FastAPI / catalog / UI / DesktopHost | 0 |
++| `start_test_worker()` | unsandboxed Phase 2A worker only (tests) |
++| `start_sandboxed_test_worker()` | tests only; fail-closed off Windows |
++
++## Not implemented
++
++- Capability Broker runtime, scoped Host APIs, credential handle resolver
++- Signing / publisher trust / revocation
++- Third-party plugin execution, official pack execution, Python/JS/Blender/ComfyUI/Provider plugins
++- `POST /api/plugins/.../execute`, Run Plugin UI, Worker Console
++- LPAC
++- CPU rate control
++- Claiming `os_sandbox_ready=true` or `execution_supported=true`
++
++Phase 3 (not this PR) would be Capability Broker runtime + scoped Host APIs + credential handle resolver, coordinated with Issue #18. This PR does not close Issue #15 or #18.
++
++## Pass bar (not met on this host)
++
++`APPCONTAINER PROTOTYPE = PASS` only if a real Windows run proves:
++
++- `WORKER TOKEN IS APPCONTAINER = TRUE`
++- forbidden Host read/write denied
++- sandbox input read pass, input write denied, output write pass
++- network denied, no fallback, profile/handle cleanup pass
++
++Otherwise **BLOCKED / FAIL**. Meeting that bar still leaves:
++
++- `OS SANDBOX READY FOR THIRD-PARTY EXECUTION = FALSE`
++- `EXECUTION_SUPPORTED = FALSE`
++
++## Tests
++
++- Cross-platform: `tests/test_plugin_runtime_phase2b_windows_sandbox.py` (fail-closed, no fallback, production startup, protocol probes, source policy)
++- Windows-only (`skipif sys.platform != "win32"`; **must run on Windows**, no xfail): token, ACL probes, network, child containment, timeout/cancel/crash/IPC, job-close kill, 20× lifecycle cleanup
++- Phase 2A tests remain required and must not be weakened
++
++## Verification on this Linux host
++
++Windows real AppContainer proof: **NOT RUN**. Targeted Linux tests must stay green. Known product baseline failures (visual continuity, user preference, world-rule payload) stay classified separately and must not be “fixed” here.
+diff --git a/docs/plugin_sdk_v1.md b/docs/plugin_sdk_v1.md
+index 5f589e6..dff63cf 100644
+--- a/docs/plugin_sdk_v1.md
++++ b/docs/plugin_sdk_v1.md
+@@ -49,7 +49,7 @@ Catalog reads do not apply writing presets, execute workflow templates, or run e
+ - Read Credential Vault secrets or novel body text
+ - Fetch plugin URLs or inject UI into the WebView
+ 
+-The isolated worker, capability broker runtime, signatures, and marketplace are **not implemented**. Phase 1 added fail-closed execution **contracts and pure policy** only. Phase 2A added a **host-owned test worker** (fixed Host-owned bootstrap, isolated interpreter `-I -S`, not a plugin) to exercise those contracts; `execution_supported` remains `false` and users still cannot run plugins. See [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.md), [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md), and [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md).
++The isolated worker, capability broker runtime, signatures, and marketplace are **not implemented**. Phase 1 added fail-closed execution **contracts and pure policy** only. Phase 2A added a **host-owned test worker** (fixed Host-owned bootstrap, isolated interpreter `-I -S`, not a plugin) to exercise those contracts. Phase 2B adds a fail-closed **Windows AppContainer prototype** around that test worker; it is not third-party execution and `os_sandbox_ready` remains false. `execution_supported` remains `false` and users still cannot run plugins. See [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.md), [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md), [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md), and [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md).
+ 
+ ## Manifest fields
+ 
+diff --git a/docs/plugin_security_model.md b/docs/plugin_security_model.md
+index 3eed276..83e9046 100644
+--- a/docs/plugin_security_model.md
++++ b/docs/plugin_security_model.md
+@@ -82,4 +82,4 @@ HTML and script-like strings in JSON are treated as plain data. Summary fields s
+ 
+ ## Still out of scope
+ 
+-Isolated third-party worker, capability broker runtime, plugin signatures, marketplace, Provider plugins, and any third-party code execution remain unimplemented. Phase 1 added typed execution contracts and a pure fail-closed policy evaluator. Phase 2A added a host-owned **test** worker (not a plugin, not AppContainer/LPAC). Independent review showed the first spawn inherited `PYTHONPATH` and could execute attacker `sitecustomize` / stdlib shadows; a correction now uses `python -I -S -u <host-owned-bootstrap>` and an environment allowlist. That is Python startup isolation, not an OS sandbox. `execution_supported` stays `false`. See [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.md), [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md), and [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md).
++Isolated third-party worker, capability broker runtime, plugin signatures, marketplace, Provider plugins, and any third-party code execution remain unimplemented. Phase 1 added typed execution contracts and a pure fail-closed policy evaluator. Phase 2A added a host-owned **test** worker (not a plugin). Independent review showed the first spawn inherited `PYTHONPATH` and could execute attacker `sitecustomize` / stdlib shadows; a correction now uses `python -I -S -u <host-owned-bootstrap>` and an environment allowlist. That is Python startup isolation, not an OS sandbox. Phase 2B adds a **fail-closed Windows AppContainer prototype** around that same Host-owned test worker (ctypes, staged runtime copy, no unsandboxed fallback). Real Windows `TokenIsAppContainer` proof is **REQUIRED / NOT RUN** on Linux isolation hosts. Job Object is resource containment only and is not the sandbox. `execution_supported` stays `false`. `os_sandbox_ready` stays `false`. See [plugin_runtime_foundation_phase1.md](plugin_runtime_foundation_phase1.md), [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md), [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md), and [plugin_worker_runtime_design.md](plugin_worker_runtime_design.md).
+diff --git a/docs/plugin_worker_runtime_design.md b/docs/plugin_worker_runtime_design.md
+index 90e3052..af02b40 100644
+--- a/docs/plugin_worker_runtime_design.md
++++ b/docs/plugin_worker_runtime_design.md
+@@ -1,6 +1,6 @@
+ # Isolated Plugin Worker Runtime — Design Only
+ 
+-Status: **design document** for the *plugin* worker. Phase 1 **execution contracts and pure policy** are implemented. Phase 2A implemented a **host-owned test worker** plus a supervisor prototype and bounded stdio IPC. A follow-up correction isolated the worker Python startup (`-I -S`, environment allowlist, Host-owned bootstrap) after independent review found inherited `PYTHONPATH` could execute attacker `sitecustomize`. That is not third-party plugin execution and not an OS sandbox.
++Status: **design document** for the *plugin* worker. Phase 1 **execution contracts and pure policy** are implemented. Phase 2A implemented a **host-owned test worker** plus a supervisor prototype and bounded stdio IPC. A follow-up correction isolated the worker Python startup (`-I -S`, environment allowlist, Host-owned bootstrap) after independent review found inherited `PYTHONPATH` could execute attacker `sitecustomize`. Phase 2B adds a **fail-closed Windows AppContainer prototype** around that Host-owned test worker; real Windows token proof is **REQUIRED / NOT RUN** on Linux. That is not third-party plugin execution and not `os_sandbox_ready=true`.
+ 
+ | Claim | Value |
+ |---|---|
+@@ -11,7 +11,7 @@ Status: **design document** for the *plugin* worker. Phase 1 **execution contrac
+ | `execution_supported` | `false` |
+ | Isolation | `DENY_ALL` |
+ | Sandbox | `NOT_CONFIGURED` |
+-| AppContainer / LPAC | NOT IMPLEMENTED |
++| AppContainer / LPAC | Phase 2B ctypes AppContainer **prototype** (not production-ready; Windows token proof REQUIRED / NOT RUN). LPAC = NOT IMPLEMENTED. |
+ | Marketplace | NOT IMPLEMENTED |
+ | Plugin signatures | NOT IMPLEMENTED |
+ | Provider plugins | NOT IMPLEMENTED |
+@@ -335,9 +335,9 @@ None of those gates are open today.
+ 
+ ## 18. Explicitly not implemented
+ 
+-The following remain unimplemented for **plugin** execution after Phase 2A:
++The following remain unimplemented for **plugin** execution after Phase 2B:
+ 
+-- Third-party plugin Worker (the host-owned **test** worker is a prototype only; see [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md))
++- Third-party plugin Worker (the host-owned **test** worker is a prototype only; see [plugin_runtime_phase2a_test_worker.md](plugin_runtime_phase2a_test_worker.md) and [plugin_runtime_phase2b_windows_sandbox.md](plugin_runtime_phase2b_windows_sandbox.md))
+ - Capability Broker **runtime** (the pure policy evaluator exists; it does not broker real capabilities)
+ - Plugin signatures, publisher trust store, revocation
+ - Marketplace, install, update, uninstall, online download
+@@ -346,7 +346,7 @@ The following remain unimplemented for **plugin** execution after Phase 2A:
+ - Blender plugins
+ - Any third-party Python / JavaScript / Shell / PowerShell / native code execution
+ - Automatic permission grant
+-- AppContainer / LPAC / Job Object security isolation
++- Production-ready AppContainer / LPAC (`os_sandbox_ready` remains false; Job Object is not a security sandbox)
+ - Changing `execution_supported` to `true`
+ 
+ If a change to P1 / P1.5 would require `execution_supported = true`, that change is out of bounds and must be rejected.
+@@ -363,7 +363,7 @@ Phase 2A **did** implement: host-owned test worker, supervisor prototype, bounde
+ 6. Allow a single host-written conformance plugin under test flags
+ 7. Only then consider reviewed third-party declarative-plus-code packages
+ 
+-Each step is a separate review. The plugin worker described in this file is still blocked on steps 4–5 and on Windows AppContainer / LPAC (or an independently reviewed equivalent). Job Object is not that gate.
++Each step is a separate review. The plugin worker described in this file is still blocked on steps 4–5 and on a **proven** Windows AppContainer / LPAC (or an independently reviewed equivalent). Phase 2B landed a fail-closed AppContainer prototype; it is not that gate until a real Windows host proves `TokenIsAppContainer`. Job Object is not that gate.
+ 
+ ## 20. Current host invariants (must not regress)
+ 
+-- 
+2.55.0.windows.2
+

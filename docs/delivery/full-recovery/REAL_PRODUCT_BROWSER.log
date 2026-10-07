@@ -1,0 +1,1 @@
+{"novel_id":"df4544f1","chapter_count":2,"world_summary_verified":true,"character_count":3,"outline_entry_reachable":true,"page_errors":0,"network_failures":[{"method":"GET","path":"/api/agent-jobs","status":401},{"method":"GET","path":"/api/agent-jobs","status":401}]}

@@ -18,9 +18,51 @@ from ..source_privacy import content_digest
 from ..repositories.file.mutation_coordinator import workspace_mutation
 
 
+class PlanningWorldRuleIn(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    statement: str = Field(min_length=1, max_length=2000)
+    forbidden_terms: list[str] = Field(default_factory=list, max_length=30)
+
+    @model_validator(mode="after")
+    def bounded_terms(self):
+        if any(not term or len(term) > 200 for term in self.forbidden_terms):
+            raise ValueError("forbidden terms must contain 1–200 characters")
+        return self
+
+
+class PlanningLocationIn(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    name: str = Field(min_length=1, max_length=200)
+    description: str = Field(default="", max_length=4000)
+    rules: str = Field(default="", max_length=4000)
+    atmosphere: str = Field(default="", max_length=2000)
+
+
+class PlanningCharacterIn(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    name: str = Field(min_length=1, max_length=200)
+    role: str = Field(default="", max_length=2000)
+    personality: str = Field(default="", max_length=2000)
+    goal: str = Field(default="", max_length=2000)
+    age: int | None = Field(default=None, ge=0, le=999)
+    status: Literal["ALIVE", "DEAD", "MISSING"] = "ALIVE"
+
+
+class PlanningOutlineIn(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    theme: str = Field(min_length=1, max_length=2000)
+    premise: str = Field(min_length=1, max_length=4000)
+    structure: Literal["THREE_ACT"] = "THREE_ACT"
+    beginning: str = Field(min_length=1, max_length=4000)
+    middle: str = Field(min_length=1, max_length=4000)
+    ending: str = Field(min_length=1, max_length=4000)
+    main_conflict: str = Field(min_length=1, max_length=4000)
+    climax: str = Field(min_length=1, max_length=4000)
+
+
 class WorkbenchRecordIn(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
-    kind: Literal["STYLE", "PLOT", "HISTORY", "GEOGRAPHY", "CIVILIZATION", "ABILITY", "PSYCHOLOGY"]
+    kind: Literal["STYLE", "PLOT", "HISTORY", "GEOGRAPHY", "CIVILIZATION", "ABILITY", "PSYCHOLOGY", "WORLD", "CHARACTERS", "OUTLINE"]
     title: str = Field(min_length=1, max_length=200)
     description: str = Field(default="", max_length=12000)
     instructions: str = Field(default="", max_length=120)
@@ -35,6 +77,11 @@ class WorkbenchRecordIn(BaseModel):
     related_record_ids: list[str] = Field(default_factory=list, max_length=50)
     story_route_id: str | None = Field(default=None, max_length=240)
     privacy_level: Literal["LOCAL_ONLY", "REDACT_BEFORE_CLOUD", "CLOUD_ALLOWED"] = "LOCAL_ONLY"
+    world_summary: str = Field(default="", max_length=12000)
+    world_rules: list[PlanningWorldRuleIn] = Field(default_factory=list, max_length=20)
+    locations: list[PlanningLocationIn] = Field(default_factory=list, max_length=20)
+    characters: list[PlanningCharacterIn] = Field(default_factory=list, max_length=20)
+    outline: PlanningOutlineIn | None = None
 
     @model_validator(mode="after")
     def structure(self):
@@ -46,6 +93,21 @@ class WorkbenchRecordIn(BaseModel):
             raise ValueError("world and psychology records require a description")
         if any(not x.strip() or len(x) > 4000 for x in self.rules + self.acts):
             raise ValueError("rules and acts must be 1–4000 characters")
+        if self.kind == "WORLD" and (not self.world_summary or not self.world_rules or not self.locations):
+            raise ValueError("world requires summary, explicit rules and locations")
+        if self.kind == "CHARACTERS" and not self.characters:
+            raise ValueError("characters requires at least one character")
+        if self.kind == "OUTLINE" and self.outline is None:
+            raise ValueError("outline requires a complete three-act outline")
+        if self.kind != "WORLD" and (self.world_summary or self.world_rules or self.locations):
+            raise ValueError("world payload is only allowed for WORLD")
+        if self.kind != "CHARACTERS" and self.characters:
+            raise ValueError("character payload is only allowed for CHARACTERS")
+        if self.kind != "OUTLINE" and self.outline is not None:
+            raise ValueError("outline payload is only allowed for OUTLINE")
+        for rows in (self.characters, self.locations):
+            if len({row.name.casefold() for row in rows}) != len(rows):
+                raise ValueError("proposed entity names must be unique")
         return self
 
 

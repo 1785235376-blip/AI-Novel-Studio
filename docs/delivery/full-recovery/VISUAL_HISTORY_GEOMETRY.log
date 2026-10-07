@@ -1,0 +1,78 @@
+[WebServer] (node:40260) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:42976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1024x768 (258ms)
+  ok 2 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1366x768 (219ms)
+  ok 3 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1440x900 (225ms)
+  ok 4 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1920x1080 (218ms)
+  ok 5 [chromium] › tests\visual\design-system.spec.ts:75:1 › production conflict compare and manual resolution visual (1.6s)
+  x  6 [chromium] › tests\visual\design-system.spec.ts:83:1 › production revision detail restore preview and conflict visual (1.2s)
+
+
+  1) [chromium] › tests\visual\design-system.spec.ts:83:1 › production revision detail restore preview and conflict visual 
+
+    Error: expect(locator).toHaveScreenshot(expected) failed
+
+    Locator: locator('.revision-panel')
+      Expected an image 802px by 742px, received 802px by 383px. 14663 pixels (ratio 0.03 of all image pixels) are different.
+
+      Snapshot: production-revision-restore-conflict.png
+
+    Call log:
+      - Expect "toHaveScreenshot(production-revision-restore-conflict.png)" with timeout 5000ms
+        - verifying given screenshot expectation
+      - waiting for locator('.revision-panel')
+        - locator resolved to <section class="ui-panel revision-panel">…</section>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - Expected an image 802px by 742px, received 802px by 383px. 14663 pixels (ratio 0.03 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - waiting for locator('.revision-panel')
+        - locator resolved to <section class="ui-panel revision-panel">…</section>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - captured a stable screenshot
+      - Expected an image 802px by 742px, received 802px by 383px. 14663 pixels (ratio 0.03 of all image pixels) are different.
+
+
+      91 |   await page.locator('.revision-confirm .ui-button--primary').click();
+      92 |   await expect(page.locator('.revision-restore-message[role="alert"]')).toBeVisible();
+    > 93 |   await expect(page.locator('.revision-panel')).toHaveScreenshot('production-revision-restore-conflict.png');
+         |                                                 ^
+      94 | });
+      95 |
+        at D:\小说\AI-Novel-Studio-Latest-Product\frontend\tests\visual\design-system.spec.ts:93:49
+
+    attachment #1: production-revision-restore-conflict (image/png) ────────────────────────────────
+    Expected: tests\visual\design-system.spec.ts-snapshots\production-revision-restore-conflict-chromium-win32.png
+    Received: ..\docs\delivery\full-recovery\visual-history-geometry\design-system-production-r-548a3-preview-and-conflict-visual-chromium\production-revision-restore-conflict-actual.png
+    Diff:     ..\docs\delivery\full-recovery\visual-history-geometry\design-system-production-r-548a3-preview-and-conflict-visual-chromium\production-revision-restore-conflict-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\docs\delivery\full-recovery\visual-history-geometry\design-system-production-r-548a3-preview-and-conflict-visual-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\docs\delivery\full-recovery\visual-history-geometry\design-system-production-r-548a3-preview-and-conflict-visual-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\docs\delivery\full-recovery\visual-history-geometry\design-system-production-r-548a3-preview-and-conflict-visual-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\visual\design-system.spec.ts:83:1 › production revision detail restore preview and conflict visual 
+  5 passed (5.6s)

@@ -26,7 +26,7 @@ def catalog():
 
 def test_catalog_is_bound_to_every_current_application_source():
     value = catalog()
-    sources = {str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
+    sources = {path.relative_to(ROOT).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
                for path in sorted((ROOT / "app").rglob("*.py"))}
     assert value["application_python_source_hashes"] == sources
     assert value["application_source_fingerprint_sha256"] == hashlib.sha256(encoded(sources)).hexdigest()

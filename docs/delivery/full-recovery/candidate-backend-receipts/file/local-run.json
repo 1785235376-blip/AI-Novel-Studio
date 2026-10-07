@@ -1,0 +1,42 @@
+{
+  "evidence_boundary": "Local Windows/Python 3.11 supplemental run of uncommitted reviewed candidate; NOT hosted GitHub Actions",
+  "start_utc": "2026-10-07T09:38:25.233609+00:00",
+  "platform": "Windows-10-10.0.26100-SP0",
+  "python": "3.11.9",
+  "identity_environment": {
+    "CI_COVERAGE_SHA": "665817243cad59eef0d4140f17c2ea644f46971e",
+    "CI_COVERAGE_TREE": "local-working-source-f3e7fcb3e7044b0d1ded1771641530939399cef7e0ec79f68aa60ccc3075677c",
+    "GITHUB_SHA": "665817243cad59eef0d4140f17c2ea644f46971e",
+    "GITHUB_RUN_ID": "local-recovery-20261007-final",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_REPOSITORY": "1785235376-blip/AI-Novel-Studio"
+  },
+  "manifest_sha256": "da5d7570f86e37dd9b7464defdb03dec5fa11f47882778778e92b9004ac0ae2d",
+  "arguments": [
+    "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "-p",
+    "postgres_gate",
+    "-p",
+    "suite_coverage",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\file-ci-final\\pytest",
+    "-q",
+    "-ra",
+    "--tb=short",
+    "--ci-scope=backend",
+    "--ci-shard-index=0",
+    "--ci-shard-count=1",
+    "--ci-coverage-manifest=D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.github\\ci\\coverage_manifest.json.gz",
+    "--ci-coverage-dir=D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\docs\\delivery\\full-recovery\\candidate-backend-receipts\\file",
+    "--junitxml=D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\docs\\delivery\\full-recovery\\candidate-backend-receipts\\file\\backend.xml"
+  ],
+  "timeout_seconds": 1200,
+  "font_sha256": "eeb06b8a64fd04a2744d95579db1571b51027cda61ed78c62e4b730791525461",
+  "timed_out": true,
+  "elapsed_seconds": 1200.75,
+  "process_exitcode": 1,
+  "end_utc": "2026-10-07T09:58:26.035688+00:00"
+}

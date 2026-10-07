@@ -1,0 +1,17 @@
+{
+  "status": "PRE_FREEZE_SOURCE_DRIFT_RED",
+  "junit_path": "docs/delivery/full-recovery/catalog-portability-baseline-red.xml",
+  "log_path": "docs/delivery/full-recovery/catalog-portability-baseline-red.log",
+  "clarification": "The file name records the intended attempt. The running code had already received as_posix before pytest executed; the actual red result was one changed app/jobs.py SHA while implementation was still active. It is not pure path-portability baseline evidence and is not a final-source failure.",
+  "observed_source": "app/jobs.py",
+  "catalog_hash": "9e68ab582cee0960c5160bab517d32a9f3dedbbde200de276b1c75774342ec20",
+  "actual_hash": "c16b85236171c188ac529ebc560b1b3be79caa124d791a2a245eeb32222e2794",
+  "identical_source_entries": 360,
+  "independent_path_representation_observation": {
+    "catalog_source_keys": 361,
+    "native_windows_keys_match": false,
+    "native_windows_missing_keys": 361,
+    "canonical_as_posix_keys_match": true
+  },
+  "assertion_policy": "All original full-map and fingerprint equality assertions remain mandatory. No source is filtered out. Final freeze requires refreshed actual catalog and a fresh successful run."
+}

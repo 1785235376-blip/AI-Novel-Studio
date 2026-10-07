@@ -390,7 +390,8 @@ def generate(root: Path | None = None) -> None:
         schema["$id"] = f"https://schemas.poemseed.dev/local-interop/v1/{slug}.schema.json"
         _constraints(schema)
         (destination / f"{slug}.schema.json").write_text(
-            json.dumps(schema, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
+            json.dumps(schema, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
+            encoding="utf-8", newline="\n",
         )
         definitions.update(schema.get("$defs", {}))
         definitions[model.__name__] = {
@@ -402,7 +403,8 @@ def generate(root: Path | None = None) -> None:
         "$defs": definitions,
     }
     (destination / "common.schema.json").write_text(
-        json.dumps(common, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
+        json.dumps(common, indent=2, ensure_ascii=False, sort_keys=True) + "\n",
+        encoding="utf-8", newline="\n",
     )
     lines = [
         "// Generated public Local Interop 1.0 DTOs. Validate Schema + semantics at ingress.",
@@ -415,8 +417,8 @@ def generate(root: Path | None = None) -> None:
             required = "" if key in definition.get("required", []) else "?"
             lines.append(f"  readonly {key}{required}: {_ts_type(node)};")
         lines.extend(["}", ""])
-    (destination / "protocol.ts").write_text("\n".join(lines))
-    (destination / "protocol.rs").write_text(_rust_types(definitions))
+    (destination / "protocol.ts").write_text("\n".join(lines), encoding="utf-8", newline="\n")
+    (destination / "protocol.rs").write_text(_rust_types(definitions), encoding="utf-8", newline="\n")
     paths = sorted(
         list((root / "local_interop_protocol").glob("*.py"))
         + [
@@ -430,11 +432,12 @@ def generate(root: Path | None = None) -> None:
         "protocol_version": models.PROTOCOL_VERSION,
         "hash_algorithm": "sha256",
         "files": {
-            str(path.relative_to(root)): sha256(path.read_bytes()).hexdigest() for path in paths
+            path.relative_to(root).as_posix(): sha256(path.read_bytes()).hexdigest() for path in paths
         },
     }
     (destination / "parity-manifest.json").write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n"
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8", newline="\n",
     )
 
 

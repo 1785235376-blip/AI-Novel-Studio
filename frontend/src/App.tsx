@@ -1216,6 +1216,9 @@ export default function App() {
   const archivedItems = Array.isArray(archived.data)
     ? archived.data
     : ((archived.data as unknown as { items?: Chapter[] } | undefined)?.items || []);
+  const writingGoalValue = writingGoal.data && [writingGoal.data.current_words, writingGoal.data.target_words,
+    writingGoal.data.current_chapters, writingGoal.data.target_chapters, writingGoal.data.words_progress]
+    .every(value => typeof value === 'number' && Number.isFinite(value) && value >= 0) ? writingGoal.data : undefined;
   const sidebar = (
     <div className="tree sidebar-layout">
       <div className="novel-sidebar-heading"><span>小说结构</span><strong>章节导航</strong></div>
@@ -1540,14 +1543,15 @@ export default function App() {
         <div className="novel-editor-metadata">
         <div className="editorbar__identity"><span>当前章节</span><b>{chapter.data?.title || "未选择章节"}</b></div>
         <small>{text.trim() ? `${text.trim().length} 字` : "0 字"}</small>
-        {writingGoal.data && (
+        {writingGoal.data && !writingGoalValue && <p className="notice" role="status">写作目标数据不完整，请刷新后重试。正文仍可编辑和保存。</p>}
+        {writingGoalValue && (
           <div className="writing-goal" aria-label="写作目标进度">
-            <span>目标 {writingGoal.data.current_words.toLocaleString()} / {writingGoal.data.target_words.toLocaleString()} 字</span>
-            <span>第 {writingGoal.data.current_chapters} / {writingGoal.data.target_chapters} 章</span>
-            <div className="writing-goal__bar" role="progressbar" aria-valuenow={Math.round(writingGoal.data.words_progress)} aria-valuemin={0} aria-valuemax={100}>
-              <i style={{ width: `${Math.min(100, Math.max(0, writingGoal.data.words_progress))}%` }} />
+            <span>目标 {writingGoalValue.current_words.toLocaleString()} / {writingGoalValue.target_words.toLocaleString()} 字</span>
+            <span>第 {writingGoalValue.current_chapters} / {writingGoalValue.target_chapters} 章</span>
+            <div className="writing-goal__bar" role="progressbar" aria-valuenow={Math.round(writingGoalValue.words_progress)} aria-valuemin={0} aria-valuemax={100}>
+              <i style={{ width: `${Math.min(100, Math.max(0, writingGoalValue.words_progress))}%` }} />
             </div>
-            <strong>{Math.round(writingGoal.data.words_progress)}%</strong>
+            <strong>{Math.round(writingGoalValue.words_progress)}%</strong>
           </div>
         )}
         </div>
@@ -1815,6 +1819,7 @@ function Panel({
   onRestored: (chapter: Chapter) => void;
   sessionToken: string;
 }) {
+  const queryClient = useQueryClient();
   if (!scope && ["members", "permissions", "audit", "snapshots"].includes(type))
     return (
       <section className="panel">
@@ -1826,13 +1831,13 @@ function Panel({
     return chapter ? <RevisionHistory chapter={chapter} scope={scope} sessionToken={sessionToken} onRestored={onRestored} /> : null;
   if (type === "story" && taskTarget?.authority === "world_rule") return <WorldRulesPanel novelId={novelId} requestedRuleId={taskTarget.id} />;
   if (type === "story")
-    return chapter ? (
-      <StoryDatabasePanel key={`${novelId}:${scope?.branchId || 'local'}`} chapter={chapter} scope={scope} target={storyTarget} onOpenChapter={onOpenChapter} onOpenStorySourceChapter={onOpenStorySourceChapter} />
+    return novelId ? (
+      <StoryDatabasePanel key={`${novelId}:${scope?.branchId || 'local'}`} novelId={novelId} chapter={chapter} scope={scope} target={storyTarget} onOpenChapter={onOpenChapter} onOpenStorySourceChapter={onOpenStorySourceChapter} />
     ) : (
       <section className="panel">
         <h2>故事资料库</h2>
         <p className="notice">
-          请先新建或选择一个章节，再查看当前小说的人物和世界设定。
+          请先打开小说项目，再查看人物、世界设定和大纲。
         </p>
       </section>
     );
@@ -1850,7 +1855,7 @@ function Panel({
   if (type === "assets") return <AssetLibraryPanel novelId={novelId} requestedAssetId={taskTarget?.authority === "asset_record" ? taskTarget.id : undefined} />;
   if (type === "exports") return <ExportPanel requestedTaskId={taskTarget?.authority === 'exports' ? taskTarget.id : undefined} novelId={chapter?.novel_id || useStudio.getState().novelId || ""} scope={scope||null} sessionToken={sessionToken} />;
   if (type === "knowledge") return <NovelImportPanel key={`${novelId}:${scope?.branchId||"local"}:${sessionToken}`} requestContext={{sessionToken,scope}} novelId={chapter?.novel_id || useStudio.getState().novelId || ""} chapterId={chapter?.id} />;
-  if (type === "creation" || type === "comments") return <CreationWorkbenchPanel key={`${novelId}:${scope?.branchId||"local"}:${sessionToken}`} novelId={novelId} chapter={chapter} initialComments={type === "comments"} context={{sessionToken,scope}} />;
+  if (type === "creation" || type === "comments") return <CreationWorkbenchPanel key={`${novelId}:${scope?.branchId||"local"}:${sessionToken}`} novelId={novelId} chapter={chapter} initialComments={type === "comments"} context={{sessionToken,scope}} onPlanningApplied={() => { for (const queryKey of [["novel-detail",novelId],["novel-outline",novelId],["story-database"],["world-rules",novelId],["ai-context-preview"],["ai-context-preview-world-rules"],["ai-context-preview-canon"]]) void queryClient.invalidateQueries({queryKey}); }} />;
   if (type === "research") return <ResearchPanel novelId={novelId} />;
   if (type === "settings") return <><AiControlCenter /><MediaProviderSettings /><VideoCallbackSecurityStatus /></>;
   if (type === "roadmap") return <CapabilityRoadmapPanel />;
@@ -1909,18 +1914,21 @@ function RuntimeDiagnosticsPanel({ scope }: { scope?: Scope }) {
 }
 export function StoryDatabasePanel({
   chapter,
+  novelId,
   target,
   scope,
   onOpenChapter,
   onOpenStorySourceChapter,
 }: {
-  chapter: Chapter;
+  chapter?: Chapter;
+  novelId?: string;
   target?: StorySearchTarget;
   scope?: Scope;
   onOpenChapter:(id:string)=>void;
   onOpenStorySourceChapter?:(id:string, signal?:AbortSignal)=>void;
 }) {
   const queryClient=useQueryClient();
+  const storyNovelId=novelId||chapter?.novel_id||scope?.projectId||'';
   const [kind, setKind] = useState<StoryDatabaseKind>("characters");
   const [selectedCharacter,setSelectedCharacter]=useState<Partial<CharacterDraft>>();
   const [selectedLocation,setSelectedLocation]=useState<Partial<LocationDraft>>();
@@ -1930,11 +1938,11 @@ export function StoryDatabasePanel({
   const [selectedVolume,setSelectedVolume]=useState<Partial<VolumeDraft>>();
   const [selectedScene,setSelectedScene]=useState<Partial<SceneDraft>>();
   const [selectedStoryRoute,setSelectedStoryRoute]=useState<Partial<StoryRouteDraft>>();
-  const novel=useQuery({queryKey:["novel-detail",chapter.novel_id],queryFn:()=>api.novel(chapter.novel_id),enabled:!scope});
-  const outline=useQuery({queryKey:["novel-outline",chapter.novel_id],queryFn:()=>api.outline(chapter.novel_id),enabled:!scope});
-  const storyChapters=useQuery({queryKey:["story-chapters",chapter.novel_id],queryFn:()=>api.chapters(chapter.novel_id),enabled:!scope});
-  const saveWorld=useMutation({mutationFn:(value:string)=>api.updateNovel(chapter.novel_id,{long_term_summary:value}),onSuccess:(value)=>queryClient.setQueryData(["novel-detail",chapter.novel_id],value)});
-  const saveOutline=useMutation({mutationFn:(value:OutlineDraft)=>api.updateOutline(chapter.novel_id,value),onSuccess:(value)=>queryClient.setQueryData(["novel-outline",chapter.novel_id],value)});
+  const novel=useQuery({queryKey:["novel-detail",storyNovelId],queryFn:()=>api.novel(storyNovelId),enabled:!scope});
+  const outline=useQuery({queryKey:["novel-outline",storyNovelId],queryFn:()=>api.outline(storyNovelId),enabled:!scope});
+  const storyChapters=useQuery({queryKey:["story-chapters",storyNovelId],queryFn:()=>api.chapters(storyNovelId),enabled:!scope});
+  const saveWorld=useMutation({mutationFn:(value:string)=>api.updateNovel(storyNovelId,{world_summary:value}),onSuccess:(value)=>queryClient.setQueryData(["novel-detail",storyNovelId],value)});
+  const saveOutline=useMutation({mutationFn:(value:OutlineDraft)=>api.updateOutline(storyNovelId,value),onSuccess:(value)=>queryClient.setQueryData(["novel-outline",storyNovelId],value)});
     const resources = [
       "characters",
       "canon",
@@ -1948,11 +1956,11 @@ export function StoryDatabasePanel({
   ] as const;
   const queries = useQueries({
     queries: resources.map((resource) => ({
-      queryKey: ["story-database", scope, chapter.novel_id, resource],
+      queryKey: ["story-database", scope, storyNovelId, resource],
       queryFn: async () =>
         scope
           ? (await api.storyDatabase(scope, resource)).items
-          : resource==='story_routes'?api.storyRoutes(chapter.novel_id):api.resource(chapter.novel_id, resource),
+          : resource==='story_routes'?api.storyRoutes(storyNovelId):api.resource(storyNovelId, resource),
     })),
   });
   const [targetState, setTargetState] = useState('');
@@ -1975,15 +1983,15 @@ export function StoryDatabasePanel({
       setTargetState(`已定位当前记录：${String(row.name || row.title || target.id)}。未更改资料。`);
     }).catch(() => { if (active && ticket === targetNavigationEpoch.current) setTargetState('来源核对失败，请返回搜索刷新结果。'); });
     return () => { active = false; };
-  }, [target?.requestId, target?.id, target?.record_kind, chapter.novel_id, scope?.branchId]);
-  const saveCharacter=useMutation({mutationFn:(value:CharacterDraft)=>api.upsertCharacter(chapter.novel_id,value.id,value),onSuccess:()=>{setSelectedCharacter(undefined);return queries[0].refetch();}});
-  const saveLocation=useMutation({mutationFn:(value:LocationDraft)=>api.upsertLocation(chapter.novel_id,value.id,value),onSuccess:()=>{setSelectedLocation(undefined);return queries[2].refetch();}});
-  const saveTimeline=useMutation({mutationFn:(value:TimelineDraft)=>api.upsertTimelineEvent(chapter.novel_id,value.id,value),onSuccess:()=>{setSelectedTimeline(undefined);return queries[3].refetch();}});
-  const saveForeshadowing=useMutation({mutationFn:(value:ForeshadowingDraft)=>api.upsertForeshadowing(chapter.novel_id,value.id,value),onSuccess:()=>{setSelectedForeshadowing(undefined);return queries[4].refetch();}});
-  const saveRelationship=useMutation({mutationFn:(value:RelationshipDraft)=>api.upsertRelationship(chapter.novel_id,value.id,value),onSuccess:()=>{setSelectedRelationship(undefined);return queries[5].refetch();}});
-  const saveVolume=useMutation({mutationFn:(value:VolumeDraft)=>api.upsertVolume(chapter.novel_id,value.id,value),onSuccess:()=>{setSelectedVolume(undefined);return queries[6].refetch();}});
-  const saveScene=useMutation({mutationFn:(value:SceneDraft)=>api.upsertScene(chapter.novel_id,value.id,value),onSuccess:()=>{setSelectedScene(undefined);return queries[7].refetch();}});
-  const saveStoryRoute=useMutation({mutationFn:(value:StoryRouteDraft)=>api.upsertStoryRoute(chapter.novel_id,value.id,value),onSuccess:()=>{setSelectedStoryRoute(undefined);return queries[8].refetch();}});
+  }, [target?.requestId, target?.id, target?.record_kind, storyNovelId, scope?.branchId]);
+  const saveCharacter=useMutation({mutationFn:(value:CharacterDraft)=>api.upsertCharacter(storyNovelId,value.id,value),onSuccess:()=>{setSelectedCharacter(undefined);return queries[0].refetch();}});
+  const saveLocation=useMutation({mutationFn:(value:LocationDraft)=>api.upsertLocation(storyNovelId,value.id,value),onSuccess:()=>{setSelectedLocation(undefined);return queries[2].refetch();}});
+  const saveTimeline=useMutation({mutationFn:(value:TimelineDraft)=>api.upsertTimelineEvent(storyNovelId,value.id,value),onSuccess:()=>{setSelectedTimeline(undefined);return queries[3].refetch();}});
+  const saveForeshadowing=useMutation({mutationFn:(value:ForeshadowingDraft)=>api.upsertForeshadowing(storyNovelId,value.id,value),onSuccess:()=>{setSelectedForeshadowing(undefined);return queries[4].refetch();}});
+  const saveRelationship=useMutation({mutationFn:(value:RelationshipDraft)=>api.upsertRelationship(storyNovelId,value.id,value),onSuccess:()=>{setSelectedRelationship(undefined);return queries[5].refetch();}});
+  const saveVolume=useMutation({mutationFn:(value:VolumeDraft)=>api.upsertVolume(storyNovelId,value.id,value),onSuccess:()=>{setSelectedVolume(undefined);return queries[6].refetch();}});
+  const saveScene=useMutation({mutationFn:(value:SceneDraft)=>api.upsertScene(storyNovelId,value.id,value),onSuccess:()=>{setSelectedScene(undefined);return queries[7].refetch();}});
+  const saveStoryRoute=useMutation({mutationFn:(value:StoryRouteDraft)=>api.upsertStoryRoute(storyNovelId,value.id,value),onSuccess:()=>{setSelectedStoryRoute(undefined);return queries[8].refetch();}});
   const kinds: StoryDatabaseKind[] = [
     "outline",
     "volumes",
@@ -2044,23 +2052,23 @@ export function StoryDatabasePanel({
         {kind==="volumes"&&!scope&&<VolumeEditor value={selectedVolume} saving={saveVolume.isPending} onSave={async(value)=>{await saveVolume.mutateAsync(value);}}/>}
         {kind==="scenes"&&!scope&&<>
           <SceneEditor value={selectedScene} volumes={((queries[6].data||[]) as any[]).map(row=>({id:String(row.id),title:String(row.title)}))} chapters={(storyChapters.data||[]).map(row=>({id:row.id,title:row.title}))} locations={((queries[2].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} characters={((queries[0].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} saving={saveScene.isPending} onSave={async(value)=>{await saveScene.mutateAsync(value);}}/>
-          {selectedScene?.id&&<EntityAssetPanel novelId={chapter.novel_id} sceneId={String(selectedScene.id)}/>} 
-          {selectedScene?.id&&<VisionAnalysisPanel novelId={chapter.novel_id} sceneId={String(selectedScene.id)}/>} 
+          {selectedScene?.id&&<EntityAssetPanel novelId={storyNovelId} sceneId={String(selectedScene.id)}/>}
+          {selectedScene?.id&&<VisionAnalysisPanel novelId={storyNovelId} sceneId={String(selectedScene.id)}/>}
         </>}
         {kind==="story_routes"&&!scope&&<StoryRouteEditor value={selectedStoryRoute} routes={((queries[8].data||[]) as any[]).map(row=>({id:String(row.id),title:String(row.title)}))} saving={saveStoryRoute.isPending} onSave={async(value)=>{await saveStoryRoute.mutateAsync(value);}}/>}
         {kind==="characters"&&!scope&&<>
-          <CharacterEditor novelId={chapter.novel_id} value={selectedCharacter} locations={((queries[2].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} saving={saveCharacter.isPending} onSave={async(value)=>{await saveCharacter.mutateAsync(value);}}/>
-          <CharacterEvolutionPanel novelId={chapter.novel_id} characterId={selectedCharacter?.id as string|undefined} characterName={selectedCharacter?.name as string|undefined}/>
-          <CharacterConsistencyPanel novelId={chapter.novel_id} draft={chapter.content||''} chapter={chapter.number} characters={(queries[0].data||[]) as any[]}/>
-          {selectedCharacter?.id&&<EntityAssetPanel novelId={chapter.novel_id} characterId={String(selectedCharacter.id)}/>} 
-          {selectedCharacter?.id&&<VisionAnalysisPanel novelId={chapter.novel_id} characterId={String(selectedCharacter.id)}/>} 
-          {selectedCharacter?.id&&<SpeechSynthesisPanel novelId={chapter.novel_id} characterId={String(selectedCharacter.id)}/>} 
+          <CharacterEditor novelId={storyNovelId} value={selectedCharacter} locations={((queries[2].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} saving={saveCharacter.isPending} onSave={async(value)=>{await saveCharacter.mutateAsync(value);}}/>
+          <CharacterEvolutionPanel novelId={storyNovelId} characterId={selectedCharacter?.id as string|undefined} characterName={selectedCharacter?.name as string|undefined}/>
+          {chapter&&<CharacterConsistencyPanel novelId={storyNovelId} draft={chapter.content||''} chapter={chapter.number} characters={(queries[0].data||[]) as any[]}/>}
+          {selectedCharacter?.id&&<EntityAssetPanel novelId={storyNovelId} characterId={String(selectedCharacter.id)}/>}
+          {selectedCharacter?.id&&<VisionAnalysisPanel novelId={storyNovelId} characterId={String(selectedCharacter.id)}/>}
+          {selectedCharacter?.id&&<SpeechSynthesisPanel novelId={storyNovelId} characterId={String(selectedCharacter.id)}/>}
         </>}
-        {kind==="locations"&&!scope&&<LocationEditor novelId={chapter.novel_id} value={selectedLocation} saving={saveLocation.isPending} onSave={async(value)=>{await saveLocation.mutateAsync(value);}}/>}
-        {kind==="timeline"&&!scope&&<TimelineEditor novelId={chapter.novel_id} onOpenChapter={onOpenStorySourceChapter} value={selectedTimeline} locations={((queries[2].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} characters={((queries[0].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} chapters={(storyChapters.data||[]).map(row=>({id:row.id,title:row.title}))} saving={saveTimeline.isPending} onSave={async(value)=>{await saveTimeline.mutateAsync(value);}}/>}
-        {kind==="foreshadowing"&&!scope&&<><ForeshadowingTrackerPanel novelId={chapter.novel_id} records={(queries[4].data||[]) as any[]} currentChapter={chapter.number}/><ForeshadowingEditor novelId={chapter.novel_id} onOpenChapter={onOpenStorySourceChapter} value={selectedForeshadowing} characters={((queries[0].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} events={((queries[3].data||[]) as any[]).map(row=>({id:String(row.id),title:String(row.title)}))} saving={saveForeshadowing.isPending} onSave={async(value)=>{await saveForeshadowing.mutateAsync(value);}}/></>}
-        {kind==="relationships"&&!scope&&<RelationshipEditor novelId={chapter.novel_id} value={selectedRelationship} characters={((queries[0].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} events={((queries[3].data||[]) as any[]).map(row=>({id:String(row.id),title:String(row.title)}))} saving={saveRelationship.isPending} onSave={async(value)=>{await saveRelationship.mutateAsync(value);}}/>}
-        {kind==="world"&&!scope&&<><WorldSummaryEditor value={novel.data?.long_term_summary||""} saving={saveWorld.isPending} onSave={async(value)=>{await saveWorld.mutateAsync(value);}}/><WorldRulesPanel novelId={novel.data?.id || ""}/></>}
+        {kind==="locations"&&!scope&&<LocationEditor novelId={storyNovelId} value={selectedLocation} saving={saveLocation.isPending} onSave={async(value)=>{await saveLocation.mutateAsync(value);}}/>}
+        {kind==="timeline"&&!scope&&<TimelineEditor novelId={storyNovelId} onOpenChapter={onOpenStorySourceChapter} value={selectedTimeline} locations={((queries[2].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} characters={((queries[0].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} chapters={(storyChapters.data||[]).map(row=>({id:row.id,title:row.title}))} saving={saveTimeline.isPending} onSave={async(value)=>{await saveTimeline.mutateAsync(value);}}/>}
+        {kind==="foreshadowing"&&!scope&&<>{chapter&&<ForeshadowingTrackerPanel novelId={storyNovelId} records={(queries[4].data||[]) as any[]} currentChapter={chapter.number}/>}<ForeshadowingEditor novelId={storyNovelId} onOpenChapter={onOpenStorySourceChapter} value={selectedForeshadowing} characters={((queries[0].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} events={((queries[3].data||[]) as any[]).map(row=>({id:String(row.id),title:String(row.title)}))} saving={saveForeshadowing.isPending} onSave={async(value)=>{await saveForeshadowing.mutateAsync(value);}}/></>}
+        {kind==="relationships"&&!scope&&<RelationshipEditor novelId={storyNovelId} value={selectedRelationship} characters={((queries[0].data||[]) as any[]).map(row=>({id:String(row.id),name:String(row.name)}))} events={((queries[3].data||[]) as any[]).map(row=>({id:String(row.id),title:String(row.title)}))} saving={saveRelationship.isPending} onSave={async(value)=>{await saveRelationship.mutateAsync(value);}}/>}
+        {kind==="world"&&!scope&&<><WorldSummaryEditor value={novel.data?.world_summary??novel.data?.long_term_summary??""} saving={saveWorld.isPending} onSave={async(value)=>{await saveWorld.mutateAsync(value);}}/><WorldRulesPanel novelId={novel.data?.id || ""}/></>}
       </>
     );
 }

@@ -1,0 +1,47 @@
+[WebServer] (node:42528) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:42856) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42856) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\visual\design-system.spec.ts:67:1 › production conflict compare and manual resolution visual (5.3s)
+
+
+  1) [chromium] › tests\visual\design-system.spec.ts:67:1 › production conflict compare and manual resolution visual 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[role="dialog"]')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('[role="dialog"]')
+
+
+      67 | test('production conflict compare and manual resolution visual', async ({page}) => {
+      68 |   await seedV058Production(page,true); await page.goto('/');
+    > 69 |   await expect(page.locator('[role="dialog"]')).toBeVisible();
+         |                                                 ^
+      70 |   await expect(page.locator('[role="dialog"]')).toContainText('Local resolution draft');
+      71 |   await expect(page.locator('[role="dialog"]')).toContainText('Latest server content');
+      72 |   await expect(page.locator('[role="dialog"]')).toHaveScreenshot('production-conflict-resolution.png');
+        at D:\小说\AI-Novel-Studio-Latest-Product\.tmp-pr45-visual-baseline\frontend\tests\visual\design-system.spec.ts:69:49
+
+    Error Context: ..\..\docs\delivery\full-recovery\pr45-original-visual-red\design-system-production-c-eb287-nd-manual-resolution-visual-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\..\docs\delivery\full-recovery\pr45-original-visual-red\design-system-production-c-eb287-nd-manual-resolution-visual-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\..\docs\delivery\full-recovery\pr45-original-visual-red\design-system-production-c-eb287-nd-manual-resolution-visual-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\visual\design-system.spec.ts:67:1 › production conflict compare and manual resolution visual 

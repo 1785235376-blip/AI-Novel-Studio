@@ -66,8 +66,16 @@ def terminate_owned_command(process, environment: dict[str, str], stdout, stderr
         evidence["parent_exited"] = True
         return evidence
     if sys.platform == "win32":
-        taskkill = Path(environment["SystemRoot"]) / "System32/taskkill.exe"
         try:
+            # os.environ is case insensitive on Windows, but a copied plain
+            # dict can retain SYSTEMROOT. Keep lookup semantics when receiving
+            # that explicit child environment and retain direct-handle cleanup
+            # evidence if no Windows root was supplied.
+            windows_root = next((value for key, value in environment.items()
+                                 if key.upper() == "SYSTEMROOT"), None)
+            if not windows_root:
+                raise OSError("SystemRoot is required for Windows tree cleanup")
+            taskkill = Path(windows_root) / "System32/taskkill.exe"
             terminated = subprocess.run(
                 [str(taskkill), "/PID", str(process.pid), "/T", "/F"],
                 env=environment, stdin=subprocess.DEVNULL, stdout=stdout, stderr=stderr,

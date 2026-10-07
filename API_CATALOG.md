@@ -1,2005 +1,2009 @@
 # API Catalog
 
-Complete mounted source inventory. No endpoint is a test verdict or permission grant. See `API_CATALOG.json` for the complete operation index, source fingerprint and digest-bound `API_CATALOG_DETAIL.json.gz` for request/response schemas, source-defined validators and exact owners; `API_OPENAPI.json.gz` retains the complete original OpenAPI schema.
+Complete mounted source inventory. This catalog is a source map, not a runtime verification verdict.
 
-Starting method/path operations: 1833. Current: 1995. Added: 162. Removed: 0.
+Starting method/path operations: 1833. Current: 1999. Added: 166. Removed: 0.
 
-Original aliases are listed separately. Dynamic action routes are not expanded into fictitious endpoints. Unknown response bodies remain unspecified.
+The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json.gz; API_CATALOG.json binds its digest and all application sources. Original aliases are listed separately.
 
 | Method | Mounted path | Source owner | Changes |
 |---|---|---|---|
-| DELETE | `/api/asset-providers/{provider_id}` | `app/api.py:1146` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/assets/{asset_id}` | `app/api.py:1893` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/audio/providers/{provider_id}` | `app/api.py:2503` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/chapters/{chapter_id}` | `app/api.py:1281` | DIRECT_IMPLEMENTATION_CHANGED |
-| DELETE | `/api/collaboration/admin/workspaces/{w}/permissions/{assignment_id}` | `app/collaboration_admin.py:231` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/collaboration/admin/workspaces/{w}/projects/{p}` | `app/collaboration_admin.py:125` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/collaboration/admin/workspaces/{w}/roles/{assignment_id}` | `app/collaboration_admin.py:208` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/credentials/{provider}` | `app/api.py:1187` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/harness/access-audit` | `app/api.py:879` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/model-center/local-ai/registrations/{registration_id}` | `app/model_center/discovery_api.py:46` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/novels/{nid}` | `app/api.py:1224` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/novels/{nid}/character-evolution/{evolution_id}` | `app/api.py:3290` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/tracks/{tid}` | `app/experimental/audiobook_api.py:76` | DIRECT_IMPLEMENTATION_CHANGED |
-| DELETE | `/api/novels/{nid}/research/{research_id}` | `app/api.py:3263` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/novels/{nid}/visual-memory/{memory_id}` | `app/api.py:3346` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/plugin-packages/{plugin_id}` | `app/plugin_management_api.py:49` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/user-preferences/{key}` | `app/api.py:915` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/asset-providers/{provider_id}` | `app/api.py:1146` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/assets/{asset_id}` | `app/api.py:1893` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/audio/providers/{provider_id}` | `app/api.py:2503` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/chapters/{chapter_id}` | `app/api.py:1281` | DIRECT_IMPLEMENTATION_CHANGED |
-| DELETE | `/api/v1/collaboration/admin/workspaces/{w}/permissions/{assignment_id}` | `app/collaboration_admin.py:231` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/collaboration/admin/workspaces/{w}/projects/{p}` | `app/collaboration_admin.py:125` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/collaboration/admin/workspaces/{w}/roles/{assignment_id}` | `app/collaboration_admin.py:208` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/credentials/{provider}` | `app/api.py:1187` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/harness/access-audit` | `app/api.py:879` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/model-center/local-ai/registrations/{registration_id}` | `app/model_center/discovery_api.py:46` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/novels/{nid}` | `app/api.py:1224` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/novels/{nid}/character-evolution/{evolution_id}` | `app/api.py:3290` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/tracks/{tid}` | `app/experimental/audiobook_api.py:76` | DIRECT_IMPLEMENTATION_CHANGED |
-| DELETE | `/api/v1/novels/{nid}/research/{research_id}` | `app/api.py:3263` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/novels/{nid}/visual-memory/{memory_id}` | `app/api.py:3346` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/plugin-packages/{plugin_id}` | `app/plugin_management_api.py:49` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/user-preferences/{key}` | `app/api.py:915` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/v1/video-providers/{provider_id}/config` | `app/api.py:2293` | UNCHANGED_DECLARED_SURFACE |
-| DELETE | `/api/video-providers/{provider_id}/config` | `app/api.py:2293` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/agent-jobs` | `app/api.py:1019` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/agent-jobs/audit` | `app/api.py:996` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/agent-jobs/audit.csv` | `app/api.py:1007` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/agent-jobs/export.csv` | `app/api.py:987` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/agent-jobs/{job_id}` | `app/api.py:1014` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/agent-queue` | `app/workflow_api.py:161` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/agents` | `app/api.py:817` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/agents/{agent_id}/context-preview` | `app/api.py:961` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/asset-providers` | `app/api.py:1117` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/asset-tasks/worker/config` | `app/api.py:2921` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/assets/{asset_id}` | `app/api.py:1879` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/assets/{asset_id}/derivatives` | `app/api.py:3353` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/assets/{asset_id}/download` | `app/api.py:1886` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/audio/providers` | `app/api.py:2488` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/audit` | `app/api.py:3621` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/chapters/{chapter_id}` | `app/api.py:1237` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/chapters/{chapter_id}/history` | `app/api.py:1312` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/collaboration/admin/workspaces` | `app/collaboration_admin.py:86` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/admin/workspaces/{w}/explain` | `app/collaboration_admin.py:240` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/admin/workspaces/{w}/members` | `app/collaboration_admin.py:165` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/admin/workspaces/{w}/navigation` | `app/collaboration_admin.py:105` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/admin/workspaces/{w}/projects` | `app/collaboration_admin.py:114` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/admin/workspaces/{w}/projects/{p}/storylines` | `app/collaboration_admin.py:139` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/admin/workspaces/{w}/projects/{p}/storylines/{s}/branches` | `app/collaboration_admin.py:152` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/audit` | `app/collaboration_api.py:205` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/bootstrap` | `app/collaboration_api.py:145` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters` | `app/collaboration_api.py:176` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/revisions` | `app/collaboration_api.py:214` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/revisions/{version}` | `app/collaboration_api.py:222` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/snapshots` | `app/collaboration_api.py:231` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/snapshots/{snapshot_id}` | `app/collaboration_api.py:237` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/generations/{generation_id}/snapshot` | `app/collaboration_api.py:246` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/members` | `app/collaboration_api.py:161` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/permissions` | `app/collaboration_api.py:171` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/story-database/{resource}` | `app/collaboration_api.py:194` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/text-runtime-diagnostics` | `app/collaboration_api.py:156` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/visual-text-workflow` | `app/collaboration_api.py:151` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/context-preview` | `app/api.py:1566` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/credentials/{provider}` | `app/api.py:1170` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/experimental/capabilities` | `app/experimental/api.py:11` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/experimental/features` | `app/experimental/api.py:7` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/experimental/first-use/sample` | `app/experimental/first_use_api.py:14` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/exports` | `app/api.py:1649` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/exports/{job_id}` | `app/api.py:1845` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/exports/{job_id}/download` | `app/api.py:1809` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/generation-groups/{group_id}` | `app/api.py:1456` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/generation/{jid}` | `app/api.py:1466` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/generation/{jid}/events` | `app/api.py:1473` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/harness/access-audit` | `app/api.py:860` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/harness/access-audit.csv` | `app/api.py:869` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/harness/context` | `app/api.py:886` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/harness/context-contract` | `app/api.py:858` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/harness/launch-readiness` | `app/api.py:846` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/harness/process` | `app/api.py:856` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/harness/status` | `app/api.py:823` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/health` | `app/api.py:811` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/local-interop/context/sources` | `app/local_interop/api.py:238` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/local-interop/events` | `app/local_interop/api.py:292` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/local-interop/events/stream` | `app/local_interop/api.py:299` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/local-interop/models` | `app/local_interop/api.py:266` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/local-interop/status` | `app/local_interop/api.py:211` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/memory` | `app/api.py:3322` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/model-center/health` | `app/model_center/api.py:142` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/model-center/local-ai` | `app/model_center/discovery_api.py:22` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/model-center/local-ai/scan/{scan_id}` | `app/model_center/discovery_api.py:26` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/model-center/models` | `app/model_center/api.py:67` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/model-center/models/{model_id}` | `app/model_center/api.py:73` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/model-center/pipelines` | `app/model_center/api.py:139` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/model-center/runtimes` | `app/model_center/api.py:80` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/model-center/runtimes/{runtime_id}` | `app/model_center/api.py:84` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/model-center/runtimes/{runtime_id}/capabilities` | `app/model_center/api.py:134` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/model-center/runtimes/{runtime_id}/configuration` | `app/model_center/api.py:112` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/model-center/runtimes/{runtime_id}/diagnostics` | `app/model_center/api.py:124` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/model-center/runtimes/{runtime_id}/logs` | `app/model_center/api.py:129` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/models` | `app/api.py:1208` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/multimodal/health` | `app/api.py:2320` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels` | `app/api.py:1210` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}` | `app/api.py:1220` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/adaptations` | `app/adaptation_api.py:94` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/adaptations/catalog` | `app/adaptation_api.py:82` | ADDED |
-| GET | `/api/novels/{nid}/adaptations/{proposal_id}/history` | `app/adaptation_api.py:165` | ADDED |
-| GET | `/api/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}` | `app/adaptation_api.py:149` | ADDED |
-| GET | `/api/novels/{nid}/asset-tasks/stats` | `app/api.py:2890` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/asset-tasks/worker/status` | `app/api.py:2919` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/asset-trash` | `app/asset_lifecycle_api.py:50` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/assets` | `app/api.py:1865` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/assets/{asset_id}/references` | `app/asset_lifecycle_api.py:63` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/audio-production/settings` | `app/api.py:2542` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/audiobook/jobs` | `app/api.py:2615` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/audiobook/jobs/{job_id}/subtitles.{format}` | `app/api.py:2632` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/audiobook/manifest` | `app/api.py:2554` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/audiobook/mix-plan` | `app/api.py:2574` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/canon` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/chapters` | `app/api.py:1229` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/chapters/archived` | `app/api.py:1231` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/chapters/{cid}/privacy` | `app/api.py:3704` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/character-evolution` | `app/api.py:3268` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/character-evolution/{evolution_id}` | `app/api.py:3279` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/characters` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/characters/{character_id}/evolution` | `app/api.py:3298` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/characters/{character_id}/memories` | `app/api.py:3496` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/creation-records` | `app/creation_workbench_api.py:33` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/creation-reference-data` | `app/creation_workbench_api.py:28` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/experimental/audiobook/capabilities` | `app/experimental/audiobook_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/audiobook/mappings` | `app/experimental/audiobook_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/audiobook/mixes` | `app/experimental/audiobook_api.py:104` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/audiobook/plans` | `app/experimental/audiobook_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/duration-manifest` | `app/experimental/audiobook_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/subtitles` | `app/experimental/audiobook_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/audiobook/profiles` | `app/experimental/audiobook_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/branch-manuscript/catalog` | `app/experimental/branch_manuscript_api.py:133` | ADDED |
-| GET | `/api/novels/{nid}/experimental/branch-manuscript/chapters` | `app/experimental/branch_manuscript_api.py:144` | ADDED |
-| GET | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}` | `app/experimental/branch_manuscript_api.py:155` | ADDED |
-| GET | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/history` | `app/experimental/branch_manuscript_api.py:165` | ADDED |
-| GET | `/api/novels/{nid}/experimental/branch-manuscript/merges/{rid}/review` | `app/experimental/branch_manuscript_api.py:244` | ADDED |
-| GET | `/api/novels/{nid}/experimental/branch-manuscript/records` | `app/experimental/branch_manuscript_api.py:190` | ADDED |
-| GET | `/api/novels/{nid}/experimental/branch-manuscript/sources` | `app/experimental/branch_manuscript_api.py:206` | ADDED |
-| GET | `/api/novels/{nid}/experimental/change-impact/refreshes` | `app/experimental/change_impact_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/change-impact/sources` | `app/experimental/change_impact_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/comic-layouts/catalog` | `app/experimental/comic_layouts_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/comic-layouts/images/{aid}` | `app/experimental/comic_layouts_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/comic-layouts/records` | `app/experimental/comic_layouts_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/export` | `app/experimental/comic_layouts_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/segments/{index}` | `app/experimental/comic_layouts_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/declarative-agents/catalog` | `app/experimental/declarative_agents_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/declarative-agents/runs` | `app/experimental/declarative_agents_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/declarative-agents/runs/{rid}` | `app/experimental/declarative_agents_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/director/catalog` | `app/experimental/director_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/director/plans` | `app/experimental/director_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/embeddings/indexes` | `app/experimental/embeddings_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/embeddings/indexes/{rid}/records` | `app/experimental/embeddings_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/embeddings/providers` | `app/experimental/embeddings_api.py:55` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/embeddings/sources` | `app/experimental/embeddings_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/embeddings/status` | `app/experimental/embeddings_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/embeddings/visual-identity/checks` | `app/experimental/embeddings_api.py:108` | ADDED |
-| GET | `/api/novels/{nid}/experimental/embeddings/visual-identity/checks/{rid}` | `app/experimental/embeddings_api.py:113` | ADDED |
-| GET | `/api/novels/{nid}/experimental/embeddings/visual-identity/checks/{rid}/selection` | `app/experimental/embeddings_api.py:118` | ADDED |
-| GET | `/api/novels/{nid}/experimental/embeddings/visual-identity/profiles` | `app/experimental/embeddings_api.py:103` | ADDED |
-| GET | `/api/novels/{nid}/experimental/imports/candidates` | `app/experimental/imports_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/imports/jobs` | `app/experimental/imports_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/imports/jobs/{job_id}` | `app/experimental/imports_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/imports/jobs/{job_id}/chunks` | `app/experimental/imports_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/interactive-stories` | `app/experimental/interactive_story_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/interactive-stories/catalog` | `app/experimental/interactive_story_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/interactive-stories/engine-contract` | `app/experimental/interactive_story_api.py:38` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/interactive-stories/{sid}` | `app/experimental/interactive_story_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/language-editions` | `app/experimental/multilingual_editions_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/language-editions/catalog` | `app/experimental/multilingual_editions_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/language-editions/translation/routes` | `app/experimental/multilingual_editions_api.py:108` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/language-editions/{eid}` | `app/experimental/multilingual_editions_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/language-editions/{eid}/translations` | `app/experimental/multilingual_editions_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/local-ai/workflow-inspections` | `app/experimental/local_ai_inspection_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/local-ai/workflow-inspections/reports` | `app/experimental/local_ai_inspection_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/media/adapters` | `app/experimental/media_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/media/catalog` | `app/experimental/media_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/media/cover-briefs` | `app/experimental/media_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/media/proposals` | `app/experimental/media_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/media/proposals/{rid}/preview` | `app/experimental/media_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/media/storyboard-briefs` | `app/experimental/media_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/media/tasks` | `app/experimental/media_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/model-benchmarks/profiles` | `app/experimental/model_benchmark_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/model-benchmarks/status` | `app/experimental/model_benchmark_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/model-broker/history` | `app/experimental/model_broker_api.py:132` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/model-broker/jobs/{reservation_id}` | `app/experimental/model_broker_api.py:194` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/model-broker/status` | `app/experimental/model_broker_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/narrative-judge/catalog` | `app/experimental/narrative_judge_api.py:26` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/narrative-judge/model/catalog` | `app/experimental/narrative_judge_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}` | `app/experimental/narrative_judge_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/offline-sync/catalog` | `app/experimental/offline_sync_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/offline-sync/outbox/{mid}` | `app/experimental/offline_sync_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/offline-sync/production` | `app/experimental/offline_sync_api.py:138` | ADDED |
-| GET | `/api/novels/{nid}/experimental/offline-sync/production/manifests/{rid}` | `app/experimental/offline_sync_api.py:163` | ADDED |
-| GET | `/api/novels/{nid}/experimental/offline-sync/production/records` | `app/experimental/offline_sync_api.py:143` | ADDED |
-| GET | `/api/novels/{nid}/experimental/offline-sync/records` | `app/experimental/offline_sync_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/planning/graphs` | `app/experimental/planning_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/planning/graphs/{gid}` | `app/experimental/planning_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/planning/proposals` | `app/experimental/planning_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/planning/proposals/{pid}` | `app/experimental/planning_api.py:100` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/planning/proposals/{pid}/history` | `app/experimental/planning_api.py:105` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/planning/templates` | `app/experimental/planning_api.py:70` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/portable-projects/catalog` | `app/experimental/portable_projects_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/portable-projects/records` | `app/experimental/portable_projects_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/portable-projects/records/{rid}/file` | `app/experimental/portable_projects_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/portable-projects/storage` | `app/experimental/portable_projects_api.py:83` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/production/assets` | `app/experimental/production_lineage_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/production/assets/{aid}` | `app/experimental/production_lineage_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/production/assets/{aid}/impact` | `app/experimental/production_lineage_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/production/manifests` | `app/experimental/production_lineage_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/production/manifests/{rid}/export` | `app/experimental/production_lineage_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/production/replays` | `app/experimental/production_lineage_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/project-forks/catalog` | `app/experimental/project_forks_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/project-forks/records` | `app/experimental/project_forks_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/project-forks/structured/catalog` | `app/experimental/project_forks_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/project-forks/structured/records` | `app/experimental/project_forks_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/project-forks/universe/catalog` | `app/experimental/project_forks_api.py:145` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/project-forks/universe/incoming` | `app/experimental/project_forks_api.py:190` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/project-forks/universe/incoming/{source_nid}/{pin_id}` | `app/experimental/project_forks_api.py:195` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/project-forks/universe/pins` | `app/experimental/project_forks_api.py:165` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/project-forks/universe/pins/{rid}/history` | `app/experimental/project_forks_api.py:185` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/project-forks/universe/snapshots` | `app/experimental/project_forks_api.py:150` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/reader-preflight/proof` | `app/experimental/reader_preflight_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/reader-preflight/read` | `app/experimental/reader_preflight_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/reader-preflight/settings` | `app/experimental/reader_preflight_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/research-library/analysis/jobs` | `app/experimental/research_library_api.py:213` | ADDED |
-| GET | `/api/novels/{nid}/experimental/research-library/analysis/jobs/{rid}` | `app/experimental/research_library_api.py:217` | ADDED |
-| GET | `/api/novels/{nid}/experimental/research-library/analysis/status` | `app/experimental/research_library_api.py:209` | ADDED |
-| GET | `/api/novels/{nid}/experimental/research-library/note-repairs` | `app/experimental/research_library_api.py:174` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/research-library/notes` | `app/experimental/research_library_api.py:165` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/research-library/notes/{rid}/history` | `app/experimental/research_library_api.py:187` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/research-library/search` | `app/experimental/research_library_api.py:150` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/research-library/setting-drafts` | `app/experimental/research_library_api.py:192` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/research-library/sources` | `app/experimental/research_library_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/research-library/sources-archive` | `app/experimental/research_library_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/research-library/sources/{rid}` | `app/experimental/research_library_api.py:123` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/research-library/sources/{rid}/backrefs` | `app/experimental/research_library_api.py:145` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/research-library/sources/{rid}/history` | `app/experimental/research_library_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/research-library/sources/{rid}/history/{version}/original` | `app/experimental/research_library_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/research-library/sources/{rid}/original` | `app/experimental/research_library_api.py:128` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/review-inbox` | `app/experimental/inbox_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/revisions/catalog` | `app/experimental/revision_intelligence_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/revisions/comparisons` | `app/experimental/revision_intelligence_api.py:68` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/revisions/comparisons-model/catalog` | `app/experimental/revision_intelligence_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}` | `app/experimental/revision_intelligence_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/revisions/milestones` | `app/experimental/revision_intelligence_api.py:189` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/revisions/original-versions` | `app/experimental/revision_intelligence_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/revisions/proposals` | `app/experimental/revision_intelligence_api.py:137` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/revisions/proposals/{rid}` | `app/experimental/revision_intelligence_api.py:142` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/safe-batches` | `app/experimental/safe_batches_api.py:32` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/safe-batches/catalog` | `app/experimental/safe_batches_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/safe-batches/{rid}/items/{index}/audio` | `app/experimental/safe_batches_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/safe-batches/{rid}/items/{index}/file` | `app/experimental/safe_batches_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/safe-batches/{rid}/proposals/{pid}/preview` | `app/experimental/safe_batches_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/story-graph/catalog` | `app/experimental/story_graph_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/story-graph/query` | `app/experimental/story_graph_api.py:109` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/story-graph/records` | `app/experimental/story_graph_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/story-graph/records/{rid}` | `app/experimental/story_graph_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/story-graph/records/{rid}/history` | `app/experimental/story_graph_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/story-graph/records/{rid}/impact` | `app/experimental/story_graph_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/story-records/catalog` | `app/story_record_api.py:68` | ADDED |
-| GET | `/api/novels/{nid}/experimental/story-records/{kind}/{rid}` | `app/story_record_api.py:82` | ADDED |
-| GET | `/api/novels/{nid}/experimental/story-simulator/catalog` | `app/experimental/story_simulator_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/story-simulator/runs` | `app/experimental/story_simulator_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}` | `app/experimental/story_simulator_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/style-analysis/analyses` | `app/experimental/style_analysis_api.py:47` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}` | `app/experimental/style_analysis_api.py:55` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/style-analysis/catalog` | `app/experimental/style_analysis_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/style-analysis/model/catalog` | `app/experimental/style_analysis_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/subtitle-timeline/catalog` | `app/experimental/subtitle_timeline_api.py:18` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/subtitle-timeline/processing/catalog` | `app/experimental/subtitle_timeline_api.py:40` | ADDED |
-| GET | `/api/novels/{nid}/experimental/subtitle-timeline/processing/tasks` | `app/experimental/subtitle_timeline_api.py:43` | ADDED |
-| GET | `/api/novels/{nid}/experimental/subtitle-timeline/processing/tasks/{rid}/file` | `app/experimental/subtitle_timeline_api.py:53` | ADDED |
-| GET | `/api/novels/{nid}/experimental/subtitle-timeline/records` | `app/experimental/subtitle_timeline_api.py:21` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/subtitle-timeline/records/{rid}/file.{format}` | `app/experimental/subtitle_timeline_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/teams/catalog` | `app/experimental/teams_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/teams/runs` | `app/experimental/teams_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/teams/runs/{run_id}` | `app/experimental/teams_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/teams/runs/{run_id}/history` | `app/experimental/teams_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/template-library` | `app/experimental/template_library_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/template-library/instances` | `app/experimental/template_library_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/template-library/instances/{rid}/history` | `app/experimental/template_library_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/timeline-exchange/catalog` | `app/experimental/timeline_exchange_api.py:21` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/timeline-exchange/records` | `app/experimental/timeline_exchange_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/timeline-exchange/records/{rid}/file` | `app/experimental/timeline_exchange_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/voice-direction/catalog` | `app/experimental/voice_direction_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/voice-direction/jobs` | `app/experimental/voice_direction_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/voice-direction/jobs/{jid}/audio` | `app/experimental/voice_direction_api.py:115` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/voice-direction/mixes/{rid}/audio` | `app/experimental/voice_direction_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/workspace/commands` | `app/experimental/ux_api.py:76` | ADDED |
-| GET | `/api/novels/{nid}/experimental/workspace/interaction` | `app/experimental/ux_api.py:49` | ADDED |
-| GET | `/api/novels/{nid}/experimental/workspace/interaction/history` | `app/experimental/ux_api.py:60` | ADDED |
-| GET | `/api/novels/{nid}/experimental/workspace/resume` | `app/experimental/ux_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/workspace/resume/history` | `app/experimental/ux_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/workspace/search` | `app/experimental/ux_api.py:171` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/workspace/tasks` | `app/experimental/ux_api.py:198` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/world/canon` | `app/experimental/world_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/world/character-state` | `app/experimental/world_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/world/continuity` | `app/experimental/world_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/world/records` | `app/experimental/world_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/world/records/{rid}` | `app/experimental/world_api.py:38` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/world/records/{rid}/history` | `app/experimental/world_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/world/schema` | `app/experimental/world_api.py:21` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writer-room` | `app/experimental/writer_room_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writer-room/catalog` | `app/experimental/writer_room_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writer-room/chapters/{cid}` | `app/experimental/writer_room_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writer-room/comments` | `app/experimental/writer_room_api.py:88` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writer-room/conflicts` | `app/experimental/writer_room_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writer-room/index` | `app/experimental/writer_room_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writer-room/notices` | `app/experimental/writer_room_api.py:66` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writer-room/presence-contract` | `app/experimental/writer_room_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writer-room/realtime` | `app/experimental/writer_room_api.py:143` | ADDED |
-| GET | `/api/novels/{nid}/experimental/writer-room/realtime/operations/{rid}` | `app/experimental/writer_room_api.py:177` | ADDED |
-| GET | `/api/novels/{nid}/experimental/writer-room/realtime/participants` | `app/experimental/writer_room_api.py:148` | ADDED |
-| GET | `/api/novels/{nid}/experimental/writing-focus/notes` | `app/experimental/writing_focus_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writing-focus/overview` | `app/experimental/writing_focus_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writing-focus/pins` | `app/experimental/writing_focus_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writing-focus/planning-targets` | `app/experimental/writing_focus_api.py:76` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writing-focus/preferences` | `app/experimental/writing_focus_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writing-focus/references` | `app/experimental/writing_focus_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writing-sessions` | `app/experimental/writing_sessions_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writing-sessions/notices` | `app/experimental/writing_sessions_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/experimental/writing-sessions/preferences/notices` | `app/experimental/writing_sessions_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/export` | `app/api.py:1577` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/foreshadowing` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/foreshadowing/reminders` | `app/api.py:1339` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/image-generations` | `app/api.py:2529` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/image-jobs` | `app/api.py:2389` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/import/knowledge-base/review` | `app/api.py:1988` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/import/knowledge-base/review/{review_id}` | `app/api.py:2016` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/locations` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/lore/evidence` | `app/api.py:3367` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/lore/proposals` | `app/api.py:3398` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/media-tasks` | `app/api.py:2620` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/memories` | `app/api.py:3481` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/memory-snapshots` | `app/api.py:3512` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/outline` | `app/api.py:1345` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/overview` | `app/api.py:3226` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/planning-runs` | `app/ai_planning_api.py:27` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/planning-runs/{rid}` | `app/ai_planning_api.py:41` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/relationships` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/research` | `app/api.py:3235` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/research/{research_id}` | `app/api.py:3252` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/review-threads` | `app/creation_workbench_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/novels/{nid}/scenes` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays` | `app/api.py:2177` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/stats` | `app/api.py:2892` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets` | `app/api.py:2844` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/asset-reference` | `app/api.py:2833` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frame-history` | `app/api.py:2857` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset` | `app/api.py:2840` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy` | `app/api.py:3689` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result-history` | `app/api.py:2829` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/pipeline-status` | `app/api.py:2863` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/revisions` | `app/api.py:2189` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt` | `app/api.py:2215` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/prompt` | `app/api.py:2211` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/suggestion` | `app/api.py:2213` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/video-assemblies` | `app/video_assembly_api.py:18` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/visual-continuity` | `app/api.py:2861` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/secrets` | `app/api.py:1357` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/speech-generations` | `app/api.py:2536` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/story-routes` | `app/api.py:1355` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/story_routes` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/text-runtime-diagnostics` | `app/api.py:3728` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/timeline` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/visual-memories` | `app/api.py:2763` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/visual-memory` | `app/api.py:3311` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/visual-memory/{memory_id}` | `app/api.py:3335` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/visual-reference-search` | `app/asset_lifecycle_api.py:101` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/visual-references` | `app/asset_lifecycle_api.py:69` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/volumes` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/world-rules` | `app/api.py:3406` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/novels/{nid}/writing-goal` | `app/api.py:3229` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/pending-canon` | `app/api.py:1569` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/plugins` | `app/api.py:3534` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/plugins/discover` | `app/api.py:3537` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/plugins/runtime-status` | `app/api.py:3540` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/plugins/{plugin_id}` | `app/api.py:3562` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/plugins/{plugin_id}/resources` | `app/api.py:3583` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/plugins/{plugin_id}/resources/{resource_id}` | `app/api.py:3588` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/continuity/findings` | `app/api.py:3069` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/continuity/findings/{finding_id}` | `app/api.py:3076` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/narrative/chapter-progress` | `app/api.py:3141` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/narrative/character-goals` | `app/api.py:3121` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/narrative/character-goals/{item_id}` | `app/api.py:3123` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/narrative/findings` | `app/api.py:3209` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/narrative/findings/{finding_id}` | `app/api.py:3212` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/narrative/mysteries` | `app/api.py:3104` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/narrative/mysteries/{item_id}` | `app/api.py:3106` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/narrative/proposals` | `app/api.py:3155` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/narrative/proposals/{proposal_id}` | `app/api.py:3159` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/narrative/state` | `app/api.py:3097` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/projects/{project_id}/pending-canon/review` | `app/pending_canon_review_api.py:26` | ADDED |
-| GET | `/api/projects/{project_id}/{kind}/review-findings` | `app/finding_review_api.py:23` | ADDED |
-| GET | `/api/projects/{project_id}/{kind}/review-findings/{finding_id}` | `app/finding_review_api.py:40` | ADDED |
-| GET | `/api/projects/{project_id}/{kind}/review-findings/{finding_id}/evidence` | `app/finding_review_api.py:54` | ADDED |
-| GET | `/api/projects/{project_id}/{kind}/review-findings/{finding_id}/history` | `app/finding_review_api.py:47` | ADDED |
-| GET | `/api/providers` | `app/api.py:1115` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/release-gates` | `app/api.py:3601` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/release-gates/{gate_id}` | `app/api.py:3616` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/release/readiness` | `app/api.py:3543` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/research` | `app/api.py:3246` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/text-models` | `app/api.py:815` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/user-preferences` | `app/api.py:821` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/agent-jobs` | `app/api.py:1019` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/agent-jobs/audit` | `app/api.py:996` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/agent-jobs/audit.csv` | `app/api.py:1007` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/agent-jobs/export.csv` | `app/api.py:987` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/agent-jobs/{job_id}` | `app/api.py:1014` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/agent-queue` | `app/workflow_api.py:161` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/agents` | `app/api.py:817` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/agents/{agent_id}/context-preview` | `app/api.py:961` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/asset-providers` | `app/api.py:1117` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/asset-tasks/worker/config` | `app/api.py:2921` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/assets/{asset_id}` | `app/api.py:1879` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/assets/{asset_id}/derivatives` | `app/api.py:3353` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/assets/{asset_id}/download` | `app/api.py:1886` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/audio/providers` | `app/api.py:2488` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/audit` | `app/api.py:3621` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/chapters/{chapter_id}` | `app/api.py:1237` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/chapters/{chapter_id}/history` | `app/api.py:1312` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/collaboration/admin/workspaces` | `app/collaboration_admin.py:86` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/admin/workspaces/{w}/explain` | `app/collaboration_admin.py:240` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/admin/workspaces/{w}/members` | `app/collaboration_admin.py:165` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/admin/workspaces/{w}/navigation` | `app/collaboration_admin.py:105` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/admin/workspaces/{w}/projects` | `app/collaboration_admin.py:114` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/admin/workspaces/{w}/projects/{p}/storylines` | `app/collaboration_admin.py:139` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/admin/workspaces/{w}/projects/{p}/storylines/{s}/branches` | `app/collaboration_admin.py:152` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/audit` | `app/collaboration_api.py:205` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/bootstrap` | `app/collaboration_api.py:145` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters` | `app/collaboration_api.py:176` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/revisions` | `app/collaboration_api.py:214` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/revisions/{version}` | `app/collaboration_api.py:222` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/snapshots` | `app/collaboration_api.py:231` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/snapshots/{snapshot_id}` | `app/collaboration_api.py:237` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/generations/{generation_id}/snapshot` | `app/collaboration_api.py:246` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/members` | `app/collaboration_api.py:161` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/permissions` | `app/collaboration_api.py:171` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/story-database/{resource}` | `app/collaboration_api.py:194` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/text-runtime-diagnostics` | `app/collaboration_api.py:156` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/visual-text-workflow` | `app/collaboration_api.py:151` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/context-preview` | `app/api.py:1566` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/credentials/{provider}` | `app/api.py:1170` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/experimental/capabilities` | `app/experimental/api.py:11` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/experimental/features` | `app/experimental/api.py:7` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/experimental/first-use/sample` | `app/experimental/first_use_api.py:14` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/exports` | `app/api.py:1649` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/exports/{job_id}` | `app/api.py:1845` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/exports/{job_id}/download` | `app/api.py:1809` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/generation-groups/{group_id}` | `app/api.py:1456` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/generation/{jid}` | `app/api.py:1466` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/generation/{jid}/events` | `app/api.py:1473` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/harness/access-audit` | `app/api.py:860` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/harness/access-audit.csv` | `app/api.py:869` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/harness/context` | `app/api.py:886` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/harness/context-contract` | `app/api.py:858` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/harness/launch-readiness` | `app/api.py:846` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/harness/process` | `app/api.py:856` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/harness/status` | `app/api.py:823` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/health` | `app/api.py:811` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/local-interop/context/sources` | `app/local_interop/api.py:238` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/local-interop/events` | `app/local_interop/api.py:292` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/local-interop/events/stream` | `app/local_interop/api.py:299` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/local-interop/models` | `app/local_interop/api.py:266` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/local-interop/status` | `app/local_interop/api.py:211` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/memory` | `app/api.py:3322` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/model-center/health` | `app/model_center/api.py:142` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/model-center/local-ai` | `app/model_center/discovery_api.py:22` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/model-center/local-ai/scan/{scan_id}` | `app/model_center/discovery_api.py:26` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/model-center/models` | `app/model_center/api.py:67` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/model-center/models/{model_id}` | `app/model_center/api.py:73` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/model-center/pipelines` | `app/model_center/api.py:139` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/model-center/runtimes` | `app/model_center/api.py:80` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/model-center/runtimes/{runtime_id}` | `app/model_center/api.py:84` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/model-center/runtimes/{runtime_id}/capabilities` | `app/model_center/api.py:134` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/model-center/runtimes/{runtime_id}/configuration` | `app/model_center/api.py:112` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/model-center/runtimes/{runtime_id}/diagnostics` | `app/model_center/api.py:124` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/model-center/runtimes/{runtime_id}/logs` | `app/model_center/api.py:129` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/models` | `app/api.py:1208` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/multimodal/health` | `app/api.py:2320` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels` | `app/api.py:1210` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}` | `app/api.py:1220` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/adaptations` | `app/adaptation_api.py:94` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/adaptations/catalog` | `app/adaptation_api.py:82` | ADDED |
-| GET | `/api/v1/novels/{nid}/adaptations/{proposal_id}/history` | `app/adaptation_api.py:165` | ADDED |
-| GET | `/api/v1/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}` | `app/adaptation_api.py:149` | ADDED |
-| GET | `/api/v1/novels/{nid}/asset-tasks/stats` | `app/api.py:2890` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/asset-tasks/worker/status` | `app/api.py:2919` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/asset-trash` | `app/asset_lifecycle_api.py:50` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/assets` | `app/api.py:1865` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/assets/{asset_id}/references` | `app/asset_lifecycle_api.py:63` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/audio-production/settings` | `app/api.py:2542` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/audiobook/jobs` | `app/api.py:2615` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/audiobook/jobs/{job_id}/subtitles.{format}` | `app/api.py:2632` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/audiobook/manifest` | `app/api.py:2554` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/audiobook/mix-plan` | `app/api.py:2574` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/canon` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/chapters` | `app/api.py:1229` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/chapters/archived` | `app/api.py:1231` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/chapters/{cid}/privacy` | `app/api.py:3704` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/character-evolution` | `app/api.py:3268` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/character-evolution/{evolution_id}` | `app/api.py:3279` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/characters` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/characters/{character_id}/evolution` | `app/api.py:3298` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/characters/{character_id}/memories` | `app/api.py:3496` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/creation-records` | `app/creation_workbench_api.py:33` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/creation-reference-data` | `app/creation_workbench_api.py:28` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/experimental/audiobook/capabilities` | `app/experimental/audiobook_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/audiobook/mappings` | `app/experimental/audiobook_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/audiobook/mixes` | `app/experimental/audiobook_api.py:104` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/audiobook/plans` | `app/experimental/audiobook_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/duration-manifest` | `app/experimental/audiobook_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/subtitles` | `app/experimental/audiobook_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/audiobook/profiles` | `app/experimental/audiobook_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/catalog` | `app/experimental/branch_manuscript_api.py:133` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters` | `app/experimental/branch_manuscript_api.py:144` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}` | `app/experimental/branch_manuscript_api.py:155` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/history` | `app/experimental/branch_manuscript_api.py:165` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/merges/{rid}/review` | `app/experimental/branch_manuscript_api.py:244` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/records` | `app/experimental/branch_manuscript_api.py:190` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/sources` | `app/experimental/branch_manuscript_api.py:206` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/change-impact/refreshes` | `app/experimental/change_impact_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/change-impact/sources` | `app/experimental/change_impact_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/comic-layouts/catalog` | `app/experimental/comic_layouts_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/comic-layouts/images/{aid}` | `app/experimental/comic_layouts_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/comic-layouts/records` | `app/experimental/comic_layouts_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/export` | `app/experimental/comic_layouts_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/segments/{index}` | `app/experimental/comic_layouts_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/declarative-agents/catalog` | `app/experimental/declarative_agents_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/declarative-agents/runs` | `app/experimental/declarative_agents_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/declarative-agents/runs/{rid}` | `app/experimental/declarative_agents_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/director/catalog` | `app/experimental/director_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/director/plans` | `app/experimental/director_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/embeddings/indexes` | `app/experimental/embeddings_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/embeddings/indexes/{rid}/records` | `app/experimental/embeddings_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/embeddings/providers` | `app/experimental/embeddings_api.py:55` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/embeddings/sources` | `app/experimental/embeddings_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/embeddings/status` | `app/experimental/embeddings_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/embeddings/visual-identity/checks` | `app/experimental/embeddings_api.py:108` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/embeddings/visual-identity/checks/{rid}` | `app/experimental/embeddings_api.py:113` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/embeddings/visual-identity/checks/{rid}/selection` | `app/experimental/embeddings_api.py:118` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/embeddings/visual-identity/profiles` | `app/experimental/embeddings_api.py:103` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/imports/candidates` | `app/experimental/imports_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/imports/jobs` | `app/experimental/imports_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/imports/jobs/{job_id}` | `app/experimental/imports_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/imports/jobs/{job_id}/chunks` | `app/experimental/imports_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/interactive-stories` | `app/experimental/interactive_story_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/interactive-stories/catalog` | `app/experimental/interactive_story_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/interactive-stories/engine-contract` | `app/experimental/interactive_story_api.py:38` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}` | `app/experimental/interactive_story_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/language-editions` | `app/experimental/multilingual_editions_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/language-editions/catalog` | `app/experimental/multilingual_editions_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/language-editions/translation/routes` | `app/experimental/multilingual_editions_api.py:108` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/language-editions/{eid}` | `app/experimental/multilingual_editions_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/translations` | `app/experimental/multilingual_editions_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/local-ai/workflow-inspections` | `app/experimental/local_ai_inspection_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/local-ai/workflow-inspections/reports` | `app/experimental/local_ai_inspection_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/media/adapters` | `app/experimental/media_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/media/catalog` | `app/experimental/media_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/media/cover-briefs` | `app/experimental/media_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/media/proposals` | `app/experimental/media_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/media/proposals/{rid}/preview` | `app/experimental/media_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/media/storyboard-briefs` | `app/experimental/media_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/media/tasks` | `app/experimental/media_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/model-benchmarks/profiles` | `app/experimental/model_benchmark_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/model-benchmarks/status` | `app/experimental/model_benchmark_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/model-broker/history` | `app/experimental/model_broker_api.py:132` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/model-broker/jobs/{reservation_id}` | `app/experimental/model_broker_api.py:194` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/model-broker/status` | `app/experimental/model_broker_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/catalog` | `app/experimental/narrative_judge_api.py:26` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/model/catalog` | `app/experimental/narrative_judge_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}` | `app/experimental/narrative_judge_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/offline-sync/catalog` | `app/experimental/offline_sync_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/offline-sync/outbox/{mid}` | `app/experimental/offline_sync_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/offline-sync/production` | `app/experimental/offline_sync_api.py:138` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/offline-sync/production/manifests/{rid}` | `app/experimental/offline_sync_api.py:163` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/offline-sync/production/records` | `app/experimental/offline_sync_api.py:143` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/offline-sync/records` | `app/experimental/offline_sync_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/planning/graphs` | `app/experimental/planning_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/planning/graphs/{gid}` | `app/experimental/planning_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/planning/proposals` | `app/experimental/planning_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/planning/proposals/{pid}` | `app/experimental/planning_api.py:100` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/planning/proposals/{pid}/history` | `app/experimental/planning_api.py:105` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/planning/templates` | `app/experimental/planning_api.py:70` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/portable-projects/catalog` | `app/experimental/portable_projects_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/portable-projects/records` | `app/experimental/portable_projects_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/portable-projects/records/{rid}/file` | `app/experimental/portable_projects_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/portable-projects/storage` | `app/experimental/portable_projects_api.py:83` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/production/assets` | `app/experimental/production_lineage_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/production/assets/{aid}` | `app/experimental/production_lineage_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/production/assets/{aid}/impact` | `app/experimental/production_lineage_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/production/manifests` | `app/experimental/production_lineage_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/production/manifests/{rid}/export` | `app/experimental/production_lineage_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/production/replays` | `app/experimental/production_lineage_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/project-forks/catalog` | `app/experimental/project_forks_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/project-forks/records` | `app/experimental/project_forks_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/project-forks/structured/catalog` | `app/experimental/project_forks_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/project-forks/structured/records` | `app/experimental/project_forks_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/project-forks/universe/catalog` | `app/experimental/project_forks_api.py:145` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/project-forks/universe/incoming` | `app/experimental/project_forks_api.py:190` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/project-forks/universe/incoming/{source_nid}/{pin_id}` | `app/experimental/project_forks_api.py:195` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/project-forks/universe/pins` | `app/experimental/project_forks_api.py:165` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/project-forks/universe/pins/{rid}/history` | `app/experimental/project_forks_api.py:185` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/project-forks/universe/snapshots` | `app/experimental/project_forks_api.py:150` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/reader-preflight/proof` | `app/experimental/reader_preflight_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/reader-preflight/read` | `app/experimental/reader_preflight_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/reader-preflight/settings` | `app/experimental/reader_preflight_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/analysis/jobs` | `app/experimental/research_library_api.py:213` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/analysis/jobs/{rid}` | `app/experimental/research_library_api.py:217` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/analysis/status` | `app/experimental/research_library_api.py:209` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/note-repairs` | `app/experimental/research_library_api.py:174` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/notes` | `app/experimental/research_library_api.py:165` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/notes/{rid}/history` | `app/experimental/research_library_api.py:187` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/search` | `app/experimental/research_library_api.py:150` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/setting-drafts` | `app/experimental/research_library_api.py:192` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/sources` | `app/experimental/research_library_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/sources-archive` | `app/experimental/research_library_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}` | `app/experimental/research_library_api.py:123` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/backrefs` | `app/experimental/research_library_api.py:145` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/history` | `app/experimental/research_library_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/history/{version}/original` | `app/experimental/research_library_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/original` | `app/experimental/research_library_api.py:128` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/review-inbox` | `app/experimental/inbox_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/revisions/catalog` | `app/experimental/revision_intelligence_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/revisions/comparisons` | `app/experimental/revision_intelligence_api.py:68` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/revisions/comparisons-model/catalog` | `app/experimental/revision_intelligence_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}` | `app/experimental/revision_intelligence_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/revisions/milestones` | `app/experimental/revision_intelligence_api.py:189` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/revisions/original-versions` | `app/experimental/revision_intelligence_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/revisions/proposals` | `app/experimental/revision_intelligence_api.py:137` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/revisions/proposals/{rid}` | `app/experimental/revision_intelligence_api.py:142` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/safe-batches` | `app/experimental/safe_batches_api.py:32` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/safe-batches/catalog` | `app/experimental/safe_batches_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/items/{index}/audio` | `app/experimental/safe_batches_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/items/{index}/file` | `app/experimental/safe_batches_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/proposals/{pid}/preview` | `app/experimental/safe_batches_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/story-graph/catalog` | `app/experimental/story_graph_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/story-graph/query` | `app/experimental/story_graph_api.py:109` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/story-graph/records` | `app/experimental/story_graph_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/story-graph/records/{rid}` | `app/experimental/story_graph_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/story-graph/records/{rid}/history` | `app/experimental/story_graph_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/story-graph/records/{rid}/impact` | `app/experimental/story_graph_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/story-records/catalog` | `app/story_record_api.py:68` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/story-records/{kind}/{rid}` | `app/story_record_api.py:82` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/story-simulator/catalog` | `app/experimental/story_simulator_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/story-simulator/runs` | `app/experimental/story_simulator_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}` | `app/experimental/story_simulator_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/style-analysis/analyses` | `app/experimental/style_analysis_api.py:47` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}` | `app/experimental/style_analysis_api.py:55` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/style-analysis/catalog` | `app/experimental/style_analysis_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/style-analysis/model/catalog` | `app/experimental/style_analysis_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/subtitle-timeline/catalog` | `app/experimental/subtitle_timeline_api.py:18` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/subtitle-timeline/processing/catalog` | `app/experimental/subtitle_timeline_api.py:40` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/subtitle-timeline/processing/tasks` | `app/experimental/subtitle_timeline_api.py:43` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/subtitle-timeline/processing/tasks/{rid}/file` | `app/experimental/subtitle_timeline_api.py:53` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/subtitle-timeline/records` | `app/experimental/subtitle_timeline_api.py:21` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/subtitle-timeline/records/{rid}/file.{format}` | `app/experimental/subtitle_timeline_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/teams/catalog` | `app/experimental/teams_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/teams/runs` | `app/experimental/teams_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/teams/runs/{run_id}` | `app/experimental/teams_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/teams/runs/{run_id}/history` | `app/experimental/teams_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/template-library` | `app/experimental/template_library_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/template-library/instances` | `app/experimental/template_library_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/template-library/instances/{rid}/history` | `app/experimental/template_library_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/timeline-exchange/catalog` | `app/experimental/timeline_exchange_api.py:21` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/timeline-exchange/records` | `app/experimental/timeline_exchange_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/timeline-exchange/records/{rid}/file` | `app/experimental/timeline_exchange_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/voice-direction/catalog` | `app/experimental/voice_direction_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/voice-direction/jobs` | `app/experimental/voice_direction_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/voice-direction/jobs/{jid}/audio` | `app/experimental/voice_direction_api.py:115` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/voice-direction/mixes/{rid}/audio` | `app/experimental/voice_direction_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/workspace/commands` | `app/experimental/ux_api.py:76` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/workspace/interaction` | `app/experimental/ux_api.py:49` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/workspace/interaction/history` | `app/experimental/ux_api.py:60` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/workspace/resume` | `app/experimental/ux_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/workspace/resume/history` | `app/experimental/ux_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/workspace/search` | `app/experimental/ux_api.py:171` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/workspace/tasks` | `app/experimental/ux_api.py:198` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/world/canon` | `app/experimental/world_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/world/character-state` | `app/experimental/world_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/world/continuity` | `app/experimental/world_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/world/records` | `app/experimental/world_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/world/records/{rid}` | `app/experimental/world_api.py:38` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/world/records/{rid}/history` | `app/experimental/world_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/world/schema` | `app/experimental/world_api.py:21` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writer-room` | `app/experimental/writer_room_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writer-room/catalog` | `app/experimental/writer_room_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writer-room/chapters/{cid}` | `app/experimental/writer_room_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writer-room/comments` | `app/experimental/writer_room_api.py:88` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writer-room/conflicts` | `app/experimental/writer_room_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writer-room/index` | `app/experimental/writer_room_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writer-room/notices` | `app/experimental/writer_room_api.py:66` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writer-room/presence-contract` | `app/experimental/writer_room_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writer-room/realtime` | `app/experimental/writer_room_api.py:143` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/writer-room/realtime/operations/{rid}` | `app/experimental/writer_room_api.py:177` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/writer-room/realtime/participants` | `app/experimental/writer_room_api.py:148` | ADDED |
-| GET | `/api/v1/novels/{nid}/experimental/writing-focus/notes` | `app/experimental/writing_focus_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writing-focus/overview` | `app/experimental/writing_focus_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writing-focus/pins` | `app/experimental/writing_focus_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writing-focus/planning-targets` | `app/experimental/writing_focus_api.py:76` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writing-focus/preferences` | `app/experimental/writing_focus_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writing-focus/references` | `app/experimental/writing_focus_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writing-sessions` | `app/experimental/writing_sessions_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writing-sessions/notices` | `app/experimental/writing_sessions_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/experimental/writing-sessions/preferences/notices` | `app/experimental/writing_sessions_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/export` | `app/api.py:1577` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/foreshadowing` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/foreshadowing/reminders` | `app/api.py:1339` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/image-generations` | `app/api.py:2529` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/image-jobs` | `app/api.py:2389` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/import/knowledge-base/review` | `app/api.py:1988` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/import/knowledge-base/review/{review_id}` | `app/api.py:2016` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/locations` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/lore/evidence` | `app/api.py:3367` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/lore/proposals` | `app/api.py:3398` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/media-tasks` | `app/api.py:2620` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/memories` | `app/api.py:3481` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/memory-snapshots` | `app/api.py:3512` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/outline` | `app/api.py:1345` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/overview` | `app/api.py:3226` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/planning-runs` | `app/ai_planning_api.py:27` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/planning-runs/{rid}` | `app/ai_planning_api.py:41` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/relationships` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/research` | `app/api.py:3235` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/research/{research_id}` | `app/api.py:3252` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/review-threads` | `app/creation_workbench_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED |
-| GET | `/api/v1/novels/{nid}/scenes` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays` | `app/api.py:2177` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/stats` | `app/api.py:2892` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets` | `app/api.py:2844` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/asset-reference` | `app/api.py:2833` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frame-history` | `app/api.py:2857` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset` | `app/api.py:2840` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy` | `app/api.py:3689` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result-history` | `app/api.py:2829` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/pipeline-status` | `app/api.py:2863` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/revisions` | `app/api.py:2189` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt` | `app/api.py:2215` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/prompt` | `app/api.py:2211` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/suggestion` | `app/api.py:2213` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/video-assemblies` | `app/video_assembly_api.py:18` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/visual-continuity` | `app/api.py:2861` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/secrets` | `app/api.py:1357` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/speech-generations` | `app/api.py:2536` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/story-routes` | `app/api.py:1355` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/story_routes` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/text-runtime-diagnostics` | `app/api.py:3728` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/timeline` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/visual-memories` | `app/api.py:2763` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/visual-memory` | `app/api.py:3311` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/visual-memory/{memory_id}` | `app/api.py:3335` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/visual-reference-search` | `app/asset_lifecycle_api.py:101` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/visual-references` | `app/asset_lifecycle_api.py:69` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/volumes` | `app/api.py:1330` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/world-rules` | `app/api.py:3406` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/novels/{nid}/writing-goal` | `app/api.py:3229` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/pending-canon` | `app/api.py:1569` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/plugins` | `app/api.py:3534` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/plugins/discover` | `app/api.py:3537` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/plugins/runtime-status` | `app/api.py:3540` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/plugins/{plugin_id}` | `app/api.py:3562` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/plugins/{plugin_id}/resources` | `app/api.py:3583` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/plugins/{plugin_id}/resources/{resource_id}` | `app/api.py:3588` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/continuity/findings` | `app/api.py:3069` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/continuity/findings/{finding_id}` | `app/api.py:3076` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/narrative/chapter-progress` | `app/api.py:3141` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/narrative/character-goals` | `app/api.py:3121` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/narrative/character-goals/{item_id}` | `app/api.py:3123` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/narrative/findings` | `app/api.py:3209` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/narrative/findings/{finding_id}` | `app/api.py:3212` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/narrative/mysteries` | `app/api.py:3104` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/narrative/mysteries/{item_id}` | `app/api.py:3106` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/narrative/proposals` | `app/api.py:3155` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/narrative/proposals/{proposal_id}` | `app/api.py:3159` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/narrative/state` | `app/api.py:3097` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/projects/{project_id}/pending-canon/review` | `app/pending_canon_review_api.py:26` | ADDED |
-| GET | `/api/v1/projects/{project_id}/{kind}/review-findings` | `app/finding_review_api.py:23` | ADDED |
-| GET | `/api/v1/projects/{project_id}/{kind}/review-findings/{finding_id}` | `app/finding_review_api.py:40` | ADDED |
-| GET | `/api/v1/projects/{project_id}/{kind}/review-findings/{finding_id}/evidence` | `app/finding_review_api.py:54` | ADDED |
-| GET | `/api/v1/projects/{project_id}/{kind}/review-findings/{finding_id}/history` | `app/finding_review_api.py:47` | ADDED |
-| GET | `/api/v1/providers` | `app/api.py:1115` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/release-gates` | `app/api.py:3601` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/release-gates/{gate_id}` | `app/api.py:3616` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/release/readiness` | `app/api.py:3543` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/research` | `app/api.py:3246` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/text-models` | `app/api.py:815` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/user-preferences` | `app/api.py:821` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/video-callback/security` | `app/api.py:2327` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/video-providers` | `app/api.py:2224` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/video-providers/{provider_id}/config` | `app/api.py:2308` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/video-providers/{provider_id}/credential-status` | `app/api.py:2316` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/video-providers/{provider_id}/health` | `app/api.py:2310` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/workflow-runs/{run_id}` | `app/workflow_api.py:138` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/workflows` | `app/workflow_api.py:89` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/workflows/recipes` | `app/workflow_api.py:77` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/workflows/{workflow_id}` | `app/workflow_api.py:113` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/workflows/{workflow_id}/runs` | `app/workflow_api.py:118` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/workspaces` | `app/api.py:1051` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines` | `app/api.py:1069` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches` | `app/api.py:1080` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}` | `app/api.py:1085` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/video-callback/security` | `app/api.py:2327` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/video-providers` | `app/api.py:2224` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/video-providers/{provider_id}/config` | `app/api.py:2308` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/video-providers/{provider_id}/credential-status` | `app/api.py:2316` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/video-providers/{provider_id}/health` | `app/api.py:2310` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/workflow-runs/{run_id}` | `app/workflow_api.py:138` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/workflows` | `app/workflow_api.py:89` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/workflows/recipes` | `app/workflow_api.py:77` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/workflows/{workflow_id}` | `app/workflow_api.py:113` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/workflows/{workflow_id}/runs` | `app/workflow_api.py:118` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/workspaces` | `app/api.py:1051` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines` | `app/api.py:1069` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches` | `app/api.py:1080` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}` | `app/api.py:1085` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/health` | `app/main.py:370` | UNCHANGED_DECLARED_SURFACE |
-| GET | `/novels` | `app/main.py:372` | UNCHANGED_DECLARED_SURFACE |
-| PATCH | `/api/collaboration/admin/workspaces/{w}` | `app/collaboration_admin.py:101` | UNCHANGED_DECLARED_SURFACE |
-| PATCH | `/api/collaboration/admin/workspaces/{w}/members/{user_id}/status` | `app/collaboration_admin.py:186` | UNCHANGED_DECLARED_SURFACE |
-| PATCH | `/api/v1/collaboration/admin/workspaces/{w}` | `app/collaboration_admin.py:101` | UNCHANGED_DECLARED_SURFACE |
-| PATCH | `/api/v1/collaboration/admin/workspaces/{w}/members/{user_id}/status` | `app/collaboration_admin.py:186` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/agent-jobs` | `app/api.py:968` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/agent-jobs/{job_id}/apply` | `app/api.py:1044` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/agent-jobs/{job_id}/cancel` | `app/api.py:1032` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/agent-jobs/{job_id}/execute` | `app/api.py:1024` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/agent-jobs/{job_id}/retry` | `app/api.py:1036` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/agent-jobs/{job_id}/review` | `app/api.py:1040` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/agent-jobs/{job_id}/start` | `app/api.py:1028` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/agent-queue/{run_id}/{node_id}/execute` | `app/workflow_api.py:174` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/agent-queue/{run_id}/{node_id}/sync` | `app/workflow_api.py:194` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/agent/chat` | `app/api.py:923` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/assets/{asset_id}/derivatives` | `app/api.py:3358` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/audio/generate` | `app/api.py:2513` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/chapters/{chapter_id}/archive` | `app/api.py:1259` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/chapters/{chapter_id}/duplicate` | `app/api.py:1292` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/chapters/{chapter_id}/history/{version}/restore` | `app/api.py:1320` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/chapters/{chapter_id}/move` | `app/api.py:1307` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/chapters/{chapter_id}/rename` | `app/api.py:1296` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/chapters/{chapter_id}/restore-archive` | `app/api.py:1270` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/collaboration/admin/workspaces` | `app/collaboration_admin.py:97` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/collaboration/admin/workspaces/{w}/members/{user_id}` | `app/collaboration_admin.py:176` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/collaboration/admin/workspaces/{w}/permissions` | `app/collaboration_admin.py:221` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/collaboration/admin/workspaces/{w}/projects` | `app/collaboration_admin.py:119` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/collaboration/admin/workspaces/{w}/projects/{p}/storylines` | `app/collaboration_admin.py:145` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/collaboration/admin/workspaces/{w}/projects/{p}/storylines/{s}/branches` | `app/collaboration_admin.py:158` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/collaboration/admin/workspaces/{w}/roles` | `app/collaboration_admin.py:198` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters` | `app/collaboration_api.py:183` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/credentials/{provider}/test` | `app/api.py:1196` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/experimental/first-use/sample` | `app/experimental/first_use_api.py:20` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/experimental/first-use/sample/recover` | `app/experimental/first_use_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/exports` | `app/api.py:1684` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/exports/{job_id}/cancel` | `app/api.py:1752` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/exports/{job_id}/retry` | `app/api.py:1774` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/generate/{operation}` | `app/api.py:1403` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/generate/{operation}/variants` | `app/api.py:1438` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/generation/{jid}/accept` | `app/api.py:1549` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/generation/{jid}/cancel` | `app/api.py:1515` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/generation/{jid}/reject` | `app/api.py:1560` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/generation/{jid}/retry` | `app/api.py:1523` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/harness/process/start` | `app/api.py:902` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/harness/process/stop` | `app/api.py:908` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/images/edits` | `app/api.py:2446` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/images/generate` | `app/api.py:2429` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/local-interop/ask` | `app/local_interop/api.py:243` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/cancel` | `app/local_interop/api.py:319` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/local-interop/case/approve` | `app/local_interop/api.py:274` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/case/preview` | `app/local_interop/api.py:270` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/connect` | `app/local_interop/api.py:229` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/context/preview` | `app/local_interop/api.py:234` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/diagnostics/preview` | `app/local_interop/api.py:248` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/diagnostics/share` | `app/local_interop/api.py:252` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/disconnect` | `app/local_interop/api.py:335` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/disconnect-revoke` | `app/local_interop/api.py:331` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/discovery` | `app/local_interop/api.py:224` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/events/pause` | `app/local_interop/api.py:327` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/events/preview` | `app/local_interop/api.py:278` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/events/subscribe` | `app/local_interop/api.py:282` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/events/unsubscribe` | `app/local_interop/api.py:288` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/handoff` | `app/local_interop/api.py:262` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/permissions/revoke` | `app/local_interop/api.py:323` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/settings` | `app/local_interop/api.py:220` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/local-interop/verify` | `app/local_interop/api.py:257` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/memory` | `app/api.py:3327` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/model-center/local-ai/candidates/{candidate_id}/register` | `app/model_center/discovery_api.py:38` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/model-center/local-ai/candidates/{candidate_id}/validate` | `app/model_center/discovery_api.py:36` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/model-center/local-ai/registrations/{registration_id}/disable` | `app/model_center/discovery_api.py:44` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/model-center/local-ai/registrations/{registration_id}/enable` | `app/model_center/discovery_api.py:42` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/model-center/local-ai/runtimes` | `app/model_center/discovery_api.py:32` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/model-center/local-ai/scan` | `app/model_center/discovery_api.py:24` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/model-center/local-ai/scan/{scan_id}/cancel` | `app/model_center/discovery_api.py:28` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/model-center/runtimes/{runtime_id}/start` | `app/model_center/api.py:101` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/model-center/runtimes/{runtime_id}/stop` | `app/model_center/api.py:106` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/model-center/runtimes/{runtime_id}/validate` | `app/model_center/api.py:88` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels` | `app/api.py:1213` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/import` | `app/api.py:1900` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/adaptations` | `app/adaptation_api.py:99` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/adaptations/{proposal_id}/actions/{action}` | `app/adaptation_api.py:170` | ADDED |
-| POST | `/api/novels/{nid}/adaptations/{proposal_id}/approve` | `app/adaptation_api.py:110` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/adaptations/{proposal_id}/materialize` | `app/adaptation_api.py:115` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/actions/{action}` | `app/adaptation_api.py:175` | ADDED |
-| POST | `/api/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/apply` | `app/adaptation_api.py:141` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/generate` | `app/adaptation_api.py:128` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/review` | `app/adaptation_api.py:135` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/asset-tasks/claim` | `app/api.py:2894` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/asset-tasks/dispatch` | `app/api.py:2896` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/asset-tasks/recover` | `app/api.py:2886` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/asset-tasks/timeout` | `app/api.py:2898` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/asset-tasks/worker/run-once` | `app/api.py:2900` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/asset-tasks/worker/start` | `app/api.py:2908` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/asset-tasks/worker/stop` | `app/api.py:2917` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/assets` | `app/api.py:1855` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/assets/{asset_id}/restore` | `app/asset_lifecycle_api.py:57` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/audiobook/chapters/{chapter_id}/export` | `app/api.py:2704` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/audiobook/chapters/{chapter_id}/queue` | `app/api.py:2583` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/audiobook/chapters/{chapter_id}/queue-segments` | `app/api.py:2597` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/audiobook/jobs/consume` | `app/api.py:2683` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/audiobook/jobs/{job_id}/cancel` | `app/api.py:2653` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/audiobook/jobs/{job_id}/execute` | `app/api.py:2662` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/audiobook/jobs/{job_id}/retry` | `app/api.py:2644` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/chapters` | `app/api.py:1233` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/chapters/{chapter_id}/knowledge-base/review` | `app/api.py:2005` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/character-evolution` | `app/api.py:3273` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/characters/consistency-check` | `app/api.py:3059` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/characters/{character_id}/evolution` | `app/api.py:3303` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/continuity/scan-chapter` | `app/api.py:2939` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/creation-records` | `app/creation_workbench_api.py:38` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/creation-records/{rid}/{action}` | `app/creation_workbench_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/audiobook/mappings` | `app/experimental/audiobook_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/audiobook/mixes/{rid}/{action}` | `app/experimental/audiobook_api.py:110` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/audiobook/plans` | `app/experimental/audiobook_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/tracks` | `app/experimental/audiobook_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/{action}` | `app/experimental/audiobook_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/audiobook/profiles` | `app/experimental/audiobook_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/author-context/generate` | `app/experimental/author_context_api.py:377` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/author-context/generate-variants` | `app/experimental/author_context_api.py:442` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/author-context/preview` | `app/experimental/author_context_api.py:340` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/author-context/preview-variants` | `app/experimental/author_context_api.py:414` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/author-context/sources` | `app/experimental/author_context_api.py:322` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/branch-manuscript/chapters` | `app/experimental/branch_manuscript_api.py:150` | ADDED |
-| POST | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/archive/{action}` | `app/experimental/branch_manuscript_api.py:175` | ADDED |
-| POST | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/delete` | `app/experimental/branch_manuscript_api.py:180` | ADDED |
-| POST | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/move` | `app/experimental/branch_manuscript_api.py:185` | ADDED |
-| POST | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/restore` | `app/experimental/branch_manuscript_api.py:170` | ADDED |
-| POST | `/api/novels/{nid}/experimental/branch-manuscript/compare` | `app/experimental/branch_manuscript_api.py:227` | ADDED |
-| POST | `/api/novels/{nid}/experimental/branch-manuscript/forks/preview` | `app/experimental/branch_manuscript_api.py:215` | ADDED |
-| POST | `/api/novels/{nid}/experimental/branch-manuscript/forks/{rid}/apply` | `app/experimental/branch_manuscript_api.py:221` | ADDED |
-| POST | `/api/novels/{nid}/experimental/branch-manuscript/merges` | `app/experimental/branch_manuscript_api.py:233` | ADDED |
-| POST | `/api/novels/{nid}/experimental/branch-manuscript/merges/{rid}/apply` | `app/experimental/branch_manuscript_api.py:256` | ADDED |
-| POST | `/api/novels/{nid}/experimental/branch-manuscript/merges/{rid}/recovery` | `app/experimental/branch_manuscript_api.py:263` | ADDED |
-| POST | `/api/novels/{nid}/experimental/branch-manuscript/{kind}/{rid}/cancel` | `app/experimental/branch_manuscript_api.py:269` | ADDED |
-| POST | `/api/novels/{nid}/experimental/change-impact/preflights` | `app/experimental/change_impact_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/change-impact/preflights/{rid}/prepare` | `app/experimental/change_impact_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/change-impact/query` | `app/experimental/change_impact_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/change-impact/refreshes/{rid}/cancel` | `app/experimental/change_impact_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/change-impact/refreshes/{rid}/execute` | `app/experimental/change_impact_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/images/{aid}/approve` | `app/experimental/comic_layouts_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/records` | `app/experimental/comic_layouts_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/approve` | `app/experimental/comic_layouts_api.py:81` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/preflight` | `app/experimental/comic_layouts_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/restore` | `app/experimental/comic_layouts_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/declarative-agents/definitions/{rid}/runs` | `app/experimental/declarative_agents_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/declarative-agents/preflight` | `app/experimental/declarative_agents_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/declarative-agents/runs/{rid}/model/dispatch` | `app/experimental/declarative_agents_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/declarative-agents/runs/{rid}/model/preview` | `app/experimental/declarative_agents_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/declarative-agents/runs/{rid}/model/refresh` | `app/experimental/declarative_agents_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/declarative-agents/runs/{rid}/{action}` | `app/experimental/declarative_agents_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/director/compare` | `app/experimental/director_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/director/plans` | `app/experimental/director_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/director/plans/{rid}/{action}` | `app/experimental/director_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/embeddings/hybrid-query` | `app/experimental/embeddings_api.py:98` | ADDED |
-| POST | `/api/novels/{nid}/experimental/embeddings/indexes` | `app/experimental/embeddings_api.py:66` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/embeddings/indexes/{rid}/{action}` | `app/experimental/embeddings_api.py:83` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/embeddings/query` | `app/experimental/embeddings_api.py:93` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/embeddings/visual-identity/checks` | `app/experimental/embeddings_api.py:123` | ADDED |
-| POST | `/api/novels/{nid}/experimental/embeddings/visual-identity/checks/{rid}/{action}` | `app/experimental/embeddings_api.py:129` | ADDED |
-| POST | `/api/novels/{nid}/experimental/imports/candidates/{candidate_id}/review` | `app/experimental/imports_api.py:123` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/imports/jobs` | `app/experimental/imports_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/imports/jobs/{job_id}/commit` | `app/experimental/imports_api.py:95` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/imports/jobs/{job_id}/process` | `app/experimental/imports_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/imports/jobs/{job_id}/review-batch` | `app/experimental/imports_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/imports/jobs/{job_id}/{action}` | `app/experimental/imports_api.py:111` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/interactive-stories` | `app/experimental/interactive_story_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/export` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/export-preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/history` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/refresh` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/refresh-preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/restore-revision` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/review` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/review-preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/language-editions` | `app/experimental/multilingual_editions_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/export` | `app/experimental/multilingual_editions_api.py:94` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/export-preview` | `app/experimental/multilingual_editions_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/refresh` | `app/experimental/multilingual_editions_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/refresh-preview` | `app/experimental/multilingual_editions_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/rules` | `app/experimental/multilingual_editions_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/rules/{rid}/review` | `app/experimental/multilingual_editions_api.py:74` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/preview` | `app/experimental/multilingual_editions_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/review` | `app/experimental/multilingual_editions_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/translation-preview` | `app/experimental/multilingual_editions_api.py:118` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/{action}` | `app/experimental/multilingual_editions_api.py:130` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/translations/{rid}/{action}` | `app/experimental/multilingual_editions_api.py:123` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/local-ai/workflow-inspections/inspect` | `app/experimental/local_ai_inspection_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/local-ai/workflow-inspections/reports` | `app/experimental/local_ai_inspection_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/media/cover-briefs` | `app/experimental/media_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/media/proposals/compare` | `app/experimental/media_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/media/proposals/{rid}/{action}` | `app/experimental/media_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/media/storyboard-briefs` | `app/experimental/media_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/media/tasks` | `app/experimental/media_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/media/tasks/{rid}/{action}` | `app/experimental/media_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/model-benchmarks/comparisons` | `app/experimental/model_benchmark_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/model-benchmarks/comparisons/{rid}/vote` | `app/experimental/model_benchmark_api.py:120` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/model-benchmarks/evidence/import` | `app/experimental/model_benchmark_api.py:94` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/model-benchmarks/evidence/{rid}/invalidate` | `app/experimental/model_benchmark_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/model-benchmarks/evidence/{rid}/review` | `app/experimental/model_benchmark_api.py:101` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/model-benchmarks/runs` | `app/experimental/model_benchmark_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/model-benchmarks/runs/{rid}/{action}` | `app/experimental/model_benchmark_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/model-benchmarks/sets` | `app/experimental/model_benchmark_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/model-broker/generate` | `app/experimental/model_broker_api.py:138` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/model-broker/jobs/{reservation_id}/cancel` | `app/experimental/model_broker_api.py:206` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/model-broker/ledger/{reservation_id}/reconcile` | `app/experimental/model_broker_api.py:183` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/model-broker/preview` | `app/experimental/model_broker_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/narrative-judge/findings/{rid}/review` | `app/experimental/narrative_judge_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/cancel` | `app/experimental/narrative_judge_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/dispatch` | `app/experimental/narrative_judge_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/preview` | `app/experimental/narrative_judge_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/refresh` | `app/experimental/narrative_judge_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/channels` | `app/experimental/offline_sync_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/channels/{rid}/queue` | `app/experimental/offline_sync_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/channels/{rid}/receive` | `app/experimental/offline_sync_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/channels/{rid}/revoke` | `app/experimental/offline_sync_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/channels/{rid}/selection` | `app/experimental/offline_sync_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/channels/{rid}/selection/preview` | `app/experimental/offline_sync_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/inbox/{mid}/apply` | `app/experimental/offline_sync_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/inbox/{mid}/recovery` | `app/experimental/offline_sync_api.py:125` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/inbox/{mid}/review` | `app/experimental/offline_sync_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/outbox/{mid}/delivery` | `app/experimental/offline_sync_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/outbox/{mid}/export` | `app/experimental/offline_sync_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/production/devices` | `app/experimental/offline_sync_api.py:148` | ADDED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/production/devices/{rid}/revoke` | `app/experimental/offline_sync_api.py:153` | ADDED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/production/manifests` | `app/experimental/offline_sync_api.py:158` | ADDED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/production/transfers` | `app/experimental/offline_sync_api.py:168` | ADDED |
-| POST | `/api/novels/{nid}/experimental/offline-sync/production/transfers/{rid}/actions` | `app/experimental/offline_sync_api.py:173` | ADDED |
-| POST | `/api/novels/{nid}/experimental/planning/generate` | `app/experimental/planning_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/planning/graphs` | `app/experimental/planning_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/planning/graphs/{gid}/{action}` | `app/experimental/planning_api.py:60` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/planning/nodes` | `app/experimental/planning_api.py:50` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/planning/nodes/{node_id}/{action}` | `app/experimental/planning_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/planning/proposals` | `app/experimental/planning_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/planning/proposals/compare` | `app/experimental/planning_api.py:95` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/planning/proposals/{pid}/restore` | `app/experimental/planning_api.py:110` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/planning/proposals/{pid}/{action}` | `app/experimental/planning_api.py:115` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/planning/templates` | `app/experimental/planning_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/portable-projects/cleanup` | `app/experimental/portable_projects_api.py:88` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/portable-projects/export` | `app/experimental/portable_projects_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/portable-projects/import-preflight` | `app/experimental/portable_projects_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/portable-projects/records/{rid}/relink` | `app/experimental/portable_projects_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/portable-projects/records/{rid}/restore` | `app/experimental/portable_projects_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/portable-projects/relink-preflight` | `app/experimental/portable_projects_api.py:73` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/production/manifests` | `app/experimental/production_lineage_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/production/manifests/{rid}/preflight` | `app/experimental/production_lineage_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/production/manifests/{rid}/replay` | `app/experimental/production_lineage_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/production/replays/{rid}/cancel` | `app/experimental/production_lineage_api.py:122` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/production/replays/{rid}/execute` | `app/experimental/production_lineage_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/merges/{mid}/recovery` | `app/experimental/project_forks_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/merges/{mid}/restore` | `app/experimental/project_forks_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/preflight` | `app/experimental/project_forks_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/structured/merges/{mid}/recovery` | `app/experimental/project_forks_api.py:127` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/structured/merges/{mid}/restore` | `app/experimental/project_forks_api.py:132` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/structured/preflight` | `app/experimental/project_forks_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/structured/{rid}/apply` | `app/experimental/project_forks_api.py:122` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/structured/{rid}/compare` | `app/experimental/project_forks_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/structured/{rid}/create` | `app/experimental/project_forks_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/universe/pin-preview` | `app/experimental/project_forks_api.py:170` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/universe/pins` | `app/experimental/project_forks_api.py:175` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/universe/pins/{rid}/release` | `app/experimental/project_forks_api.py:180` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/universe/snapshot-preview` | `app/experimental/project_forks_api.py:155` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/universe/snapshots` | `app/experimental/project_forks_api.py:160` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/{rid}/apply` | `app/experimental/project_forks_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/{rid}/compare` | `app/experimental/project_forks_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/project-forks/{rid}/create` | `app/experimental/project_forks_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/reader-preflight/annotations` | `app/experimental/reader_preflight_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/reader-preflight/check` | `app/experimental/reader_preflight_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/reader-preflight/ignore` | `app/experimental/reader_preflight_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/reader-preflight/open` | `app/experimental/reader_preflight_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/research-library/analysis/jobs` | `app/experimental/research_library_api.py:221` | ADDED |
-| POST | `/api/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/{action}` | `app/experimental/research_library_api.py:225` | ADDED |
-| POST | `/api/novels/{nid}/experimental/research-library/citation` | `app/experimental/research_library_api.py:155` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/research-library/context-preview` | `app/experimental/research_library_api.py:160` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/research-library/notes` | `app/experimental/research_library_api.py:170` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/research-library/notes/{rid}/delete` | `app/experimental/research_library_api.py:183` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/research-library/setting-drafts` | `app/experimental/research_library_api.py:197` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/research-library/setting-drafts/{rid}/{action}` | `app/experimental/research_library_api.py:201` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/research-library/sources/fetch-webpage` | `app/experimental/research_library_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/research-library/sources/import` | `app/experimental/research_library_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/research-library/sources/{rid}/restore` | `app/experimental/research_library_api.py:119` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/research-library/sources/{rid}/{action}` | `app/experimental/research_library_api.py:141` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/review-inbox/batch` | `app/experimental/inbox_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/review-inbox/{domain}/{item_id}/{action}` | `app/experimental/inbox_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/comparisons` | `app/experimental/revision_intelligence_api.py:73` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/comparisons/preview` | `app/experimental/revision_intelligence_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}/model/cancel` | `app/experimental/revision_intelligence_api.py:127` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}/model/dispatch` | `app/experimental/revision_intelligence_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}/model/opinions/{oid}/{action}` | `app/experimental/revision_intelligence_api.py:132` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}/model/preview` | `app/experimental/revision_intelligence_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}/model/refresh` | `app/experimental/revision_intelligence_api.py:122` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}/review` | `app/experimental/revision_intelligence_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/locks` | `app/experimental/revision_intelligence_api.py:177` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/locks/unlock` | `app/experimental/revision_intelligence_api.py:183` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/milestones` | `app/experimental/revision_intelligence_api.py:194` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/proposals` | `app/experimental/revision_intelligence_api.py:153` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/proposals/{rid}/apply` | `app/experimental/revision_intelligence_api.py:165` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/proposals/{rid}/preview` | `app/experimental/revision_intelligence_api.py:159` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/proposals/{rid}/rebase` | `app/experimental/revision_intelligence_api.py:171` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/revisions/selection` | `app/experimental/revision_intelligence_api.py:147` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/safe-batches/preflight` | `app/experimental/safe_batches_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/approve-media` | `app/experimental/safe_batches_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/approve-voice` | `app/experimental/safe_batches_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/confirm` | `app/experimental/safe_batches_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/dispatch-next` | `app/experimental/safe_batches_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/reconcile` | `app/experimental/safe_batches_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/retry-failed` | `app/experimental/safe_batches_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/stop` | `app/experimental/safe_batches_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-graph/character-context` | `app/experimental/story_graph_api.py:116` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-graph/records` | `app/experimental/story_graph_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-graph/records/{rid}/{action}` | `app/experimental/story_graph_api.py:91` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-records/{kind}/{rid}/feedback` | `app/story_record_api.py:110` | ADDED |
-| POST | `/api/novels/{nid}/experimental/story-records/{kind}/{rid}/restore` | `app/story_record_api.py:104` | ADDED |
-| POST | `/api/novels/{nid}/experimental/story-simulator/context` | `app/experimental/story_simulator_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-simulator/runs` | `app/experimental/story_simulator_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/cancel` | `app/experimental/story_simulator_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/model/cancel` | `app/experimental/story_simulator_api.py:95` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/model/dispatch` | `app/experimental/story_simulator_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/model/preview` | `app/experimental/story_simulator_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/model/refresh` | `app/experimental/story_simulator_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/model/select` | `app/experimental/story_simulator_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/save` | `app/experimental/story_simulator_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/step` | `app/experimental/story_simulator_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/style-analysis/analyses` | `app/experimental/style_analysis_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/cancel` | `app/experimental/style_analysis_api.py:83` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/dispatch` | `app/experimental/style_analysis_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/preview` | `app/experimental/style_analysis_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/refresh` | `app/experimental/style_analysis_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}/opinions/{opinion_id}/review` | `app/experimental/style_analysis_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/style-analysis/profiles` | `app/experimental/style_analysis_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/style-analysis/profiles/{rid}/preview` | `app/experimental/style_analysis_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/style-analysis/profiles/{rid}/{action}` | `app/experimental/style_analysis_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/subtitle-timeline/processing/tasks` | `app/experimental/subtitle_timeline_api.py:46` | ADDED |
-| POST | `/api/novels/{nid}/experimental/subtitle-timeline/processing/tasks/{rid}/{action}` | `app/experimental/subtitle_timeline_api.py:49` | ADDED |
-| POST | `/api/novels/{nid}/experimental/subtitle-timeline/records` | `app/experimental/subtitle_timeline_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/subtitle-timeline/records/{rid}/cues/{cid}/merge` | `app/experimental/subtitle_timeline_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/subtitle-timeline/records/{rid}/cues/{cid}/split` | `app/experimental/subtitle_timeline_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/teams/runs` | `app/experimental/teams_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/teams/runs/{run_id}/nodes/{node_id}/claim` | `app/experimental/teams_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/teams/runs/{run_id}/nodes/{node_id}/complete` | `app/experimental/teams_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/teams/runs/{run_id}/review/{action}` | `app/experimental/teams_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/teams/runs/{run_id}/{action}` | `app/experimental/teams_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/template-library/install` | `app/experimental/template_library_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/template-library/instances` | `app/experimental/template_library_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/template-library/instances/{rid}/compare` | `app/experimental/template_library_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/template-library/instances/{rid}/revert` | `app/experimental/template_library_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/template-library/instances/{rid}/update` | `app/experimental/template_library_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/template-library/packages/{pid}/favorite` | `app/experimental/template_library_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/template-library/packages/{pid}/uninstall` | `app/experimental/template_library_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/template-library/preview` | `app/experimental/template_library_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/timeline-exchange/from-screenplay` | `app/experimental/timeline_exchange_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/timeline-exchange/import` | `app/experimental/timeline_exchange_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/voice-direction/jobs/{jid}/approve` | `app/experimental/voice_direction_api.py:126` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/voice-direction/jobs/{jid}/cancel` | `app/experimental/voice_direction_api.py:99` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/voice-direction/jobs/{jid}/execute` | `app/experimental/voice_direction_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/voice-direction/jobs/{jid}/retry` | `app/experimental/voice_direction_api.py:108` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/voice-direction/plans/{rid}/mix` | `app/experimental/voice_direction_api.py:50` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/voice-direction/plans/{rid}/queue` | `app/experimental/voice_direction_api.py:74` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/voice-direction/plans/{rid}/reorder` | `app/experimental/voice_direction_api.py:70` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/voice-direction/plans/{rid}/segments/{sid}/lock` | `app/experimental/voice_direction_api.py:66` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/workspace/commands/resolve` | `app/experimental/ux_api.py:82` | ADDED |
-| POST | `/api/novels/{nid}/experimental/workspace/diagnostics/export` | `app/experimental/ux_api.py:215` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/workspace/diagnostics/preview` | `app/experimental/ux_api.py:210` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/workspace/interaction/reset` | `app/experimental/ux_api.py:71` | ADDED |
-| POST | `/api/novels/{nid}/experimental/workspace/interaction/restore` | `app/experimental/ux_api.py:66` | ADDED |
-| POST | `/api/novels/{nid}/experimental/workspace/resume/reset-layout` | `app/experimental/ux_api.py:109` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/workspace/resume/resolve` | `app/experimental/ux_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/workspace/search/cancel` | `app/experimental/ux_api.py:184` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/workspace/search/rebuild` | `app/experimental/ux_api.py:180` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/workspace/search/resolve` | `app/experimental/ux_api.py:188` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/workspace/tasks/{authority}/{task_id}/cancel` | `app/experimental/ux_api.py:204` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/world/records` | `app/experimental/world_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/world/records/{rid}/{action}` | `app/experimental/world_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writer-room/comments` | `app/experimental/writer_room_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writer-room/comments/{rid}` | `app/experimental/writer_room_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writer-room/packages/download` | `app/experimental/writer_room_api.py:106` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writer-room/packages/preview` | `app/experimental/writer_room_api.py:101` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writer-room/realtime/operations` | `app/experimental/writer_room_api.py:171` | ADDED |
-| POST | `/api/novels/{nid}/experimental/writer-room/realtime/operations/{rid}/actions` | `app/experimental/writer_room_api.py:182` | ADDED |
-| POST | `/api/novels/{nid}/experimental/writer-room/realtime/participants` | `app/experimental/writer_room_api.py:153` | ADDED |
-| POST | `/api/novels/{nid}/experimental/writer-room/realtime/participants/{rid}/actions` | `app/experimental/writer_room_api.py:159` | ADDED |
-| POST | `/api/novels/{nid}/experimental/writer-room/tasks` | `app/experimental/writer_room_api.py:76` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writer-room/tasks/{rid}/transition` | `app/experimental/writer_room_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writing-focus/bookmarks/open` | `app/experimental/writing_focus_api.py:47` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writing-focus/notes` | `app/experimental/writing_focus_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writing-focus/notes/{note_id}/planning/copy` | `app/experimental/writing_focus_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writing-focus/notes/{note_id}/planning/preview` | `app/experimental/writing_focus_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writing-focus/notes/{note_id}/{action}` | `app/experimental/writing_focus_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writing-sessions` | `app/experimental/writing_sessions_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/experimental/writing-sessions/notices/acknowledge` | `app/experimental/writing_sessions_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/image-generations/import` | `app/api.py:2739` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/image-jobs` | `app/api.py:2394` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/image-jobs/{job_id}/accept` | `app/api.py:2423` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/image-jobs/{job_id}/cancel` | `app/api.py:2413` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/image-jobs/{job_id}/execute` | `app/api.py:2407` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/image-jobs/{job_id}/retry` | `app/api.py:2418` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/import/knowledge-base/review` | `app/api.py:1945` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/import/knowledge-base/review/{review_id}/ai-analyze` | `app/api.py:2071` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/knowledge-base/review` | `app/api.py:1995` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/lore/evidence` | `app/api.py:3384` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/lore/proposals` | `app/api.py:3428` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/lore/proposals/{proposal_id}/approve` | `app/api.py:3442` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/lore/proposals/{proposal_id}/approve-memory` | `app/api.py:3464` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/lore/proposals/{proposal_id}/reject` | `app/api.py:3453` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/memories/{memory_id}/retract` | `app/api.py:3501` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/memory-snapshots` | `app/api.py:3521` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/planning-runs` | `app/ai_planning_api.py:32` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/planning-runs/{rid}/cancel` | `app/ai_planning_api.py:46` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/planning-runs/{rid}/candidates/{cid}/save-draft` | `app/ai_planning_api.py:51` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/research` | `app/api.py:3240` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/review-threads` | `app/creation_workbench_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/novels/{nid}/review-threads/{rid}/{action}` | `app/creation_workbench_api.py:63` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays` | `app/api.py:2181` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/approve` | `app/api.py:2187` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks` | `app/api.py:2875` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/cleanup` | `app/api.py:2888` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/recover` | `app/api.py:2884` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/execute` | `app/api.py:2879` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/retry` | `app/api.py:2882` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/assets` | `app/api.py:2869` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/assets/approve` | `app/api.py:2871` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks` | `app/api.py:2221` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets/retry` | `app/api.py:2848` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/callback` | `app/api.py:2811` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/cancel` | `app/api.py:2788` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/execute` | `app/api.py:2785` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset` | `app/api.py:2837` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/download` | `app/api.py:2851` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/retry` | `app/api.py:2854` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/retry` | `app/api.py:2791` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/sync` | `app/api.py:2826` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance` | `app/api.py:2865` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance-until-gate` | `app/api.py:2867` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/revise` | `app/api.py:2191` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/shots` | `app/api.py:2193` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/shots/approve` | `app/api.py:2195` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/storyboard` | `app/api.py:2199` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/storyboard/approve` | `app/api.py:2201` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions` | `app/api.py:2205` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions/approve` | `app/api.py:2207` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/video-assemblies` | `app/video_assembly_api.py:22` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/speech-generations/import` | `app/api.py:2718` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/visual-memory` | `app/api.py:3316` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/visual-references` | `app/asset_lifecycle_api.py:80` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/visual-references/{memory_id}/approve` | `app/asset_lifecycle_api.py:94` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/novels/{nid}/world-rules` | `app/api.py:3416` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/packaged/bootstrap` | `app/packaging/bootstrap_api.py:68` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/packaged/initial-workspace` | `app/packaging/bootstrap_api.py:91` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/pending-canon/{pid}/approve` | `app/api.py:1572` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/pending-canon/{pid}/reject` | `app/api.py:1575` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/plugin-packages/install` | `app/plugin_management_api.py:37` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/plugin-packages/{plugin_id}/rollback` | `app/plugin_management_api.py:43` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/plugins` | `app/api.py:3556` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/plugins/{plugin_id}/disable` | `app/api.py:3578` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/plugins/{plugin_id}/enable` | `app/api.py:3573` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/continuity/checks` | `app/api.py:2928` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/continuity/findings/{finding_id}/resolve` | `app/api.py:3082` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/chapter-progress` | `app/api.py:3134` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/character-goals` | `app/api.py:3117` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/character-goals/{item_id}/transition` | `app/api.py:3127` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/checks` | `app/api.py:3201` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/expectations` | `app/api.py:3189` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/findings/{finding_id}/resolve` | `app/api.py:3217` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/foreshadowing` | `app/api.py:3092` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/foreshadowing/{item_id}/transition` | `app/api.py:3186` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/mysteries` | `app/api.py:3100` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/mysteries/{item_id}/transition` | `app/api.py:3110` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/proposals` | `app/api.py:3149` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/proposals/{proposal_id}/accept` | `app/api.py:3163` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/proposals/{proposal_id}/reject` | `app/api.py:3173` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/threads` | `app/api.py:3087` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/narrative/threads/{thread_id}/transition` | `app/api.py:3183` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/projects/{project_id}/pending-canon/{pending_id}/cancel-recovery` | `app/pending_canon_review_api.py:58` | ADDED |
-| POST | `/api/projects/{project_id}/pending-canon/{pending_id}/preview` | `app/pending_canon_review_api.py:33` | ADDED |
-| POST | `/api/projects/{project_id}/pending-canon/{pending_id}/recover` | `app/pending_canon_review_api.py:49` | ADDED |
-| POST | `/api/projects/{project_id}/pending-canon/{pending_id}/review` | `app/pending_canon_review_api.py:40` | ADDED |
-| POST | `/api/projects/{project_id}/{kind}/review-checks` | `app/finding_review_api.py:30` | ADDED |
-| POST | `/api/projects/{project_id}/{kind}/review-findings/{finding_id}/review` | `app/finding_review_api.py:61` | ADDED |
-| POST | `/api/release-gates` | `app/api.py:3610` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/speech/synthesize` | `app/api.py:2467` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/agent-jobs` | `app/api.py:968` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/agent-jobs/{job_id}/apply` | `app/api.py:1044` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/agent-jobs/{job_id}/cancel` | `app/api.py:1032` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/agent-jobs/{job_id}/execute` | `app/api.py:1024` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/agent-jobs/{job_id}/retry` | `app/api.py:1036` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/agent-jobs/{job_id}/review` | `app/api.py:1040` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/agent-jobs/{job_id}/start` | `app/api.py:1028` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/agent-queue/{run_id}/{node_id}/execute` | `app/workflow_api.py:174` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/agent-queue/{run_id}/{node_id}/sync` | `app/workflow_api.py:194` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/agent/chat` | `app/api.py:923` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/assets/{asset_id}/derivatives` | `app/api.py:3358` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/audio/generate` | `app/api.py:2513` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/chapters/{chapter_id}/archive` | `app/api.py:1259` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/chapters/{chapter_id}/duplicate` | `app/api.py:1292` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/chapters/{chapter_id}/history/{version}/restore` | `app/api.py:1320` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/chapters/{chapter_id}/move` | `app/api.py:1307` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/chapters/{chapter_id}/rename` | `app/api.py:1296` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/chapters/{chapter_id}/restore-archive` | `app/api.py:1270` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/collaboration/admin/workspaces` | `app/collaboration_admin.py:97` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/collaboration/admin/workspaces/{w}/members/{user_id}` | `app/collaboration_admin.py:176` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/collaboration/admin/workspaces/{w}/permissions` | `app/collaboration_admin.py:221` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/collaboration/admin/workspaces/{w}/projects` | `app/collaboration_admin.py:119` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/collaboration/admin/workspaces/{w}/projects/{p}/storylines` | `app/collaboration_admin.py:145` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/collaboration/admin/workspaces/{w}/projects/{p}/storylines/{s}/branches` | `app/collaboration_admin.py:158` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/collaboration/admin/workspaces/{w}/roles` | `app/collaboration_admin.py:198` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters` | `app/collaboration_api.py:183` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/credentials/{provider}/test` | `app/api.py:1196` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/experimental/first-use/sample` | `app/experimental/first_use_api.py:20` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/experimental/first-use/sample/recover` | `app/experimental/first_use_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/exports` | `app/api.py:1684` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/exports/{job_id}/cancel` | `app/api.py:1752` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/exports/{job_id}/retry` | `app/api.py:1774` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/generate/{operation}` | `app/api.py:1403` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/generate/{operation}/variants` | `app/api.py:1438` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/generation/{jid}/accept` | `app/api.py:1549` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/generation/{jid}/cancel` | `app/api.py:1515` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/generation/{jid}/reject` | `app/api.py:1560` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/generation/{jid}/retry` | `app/api.py:1523` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/harness/process/start` | `app/api.py:902` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/harness/process/stop` | `app/api.py:908` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/images/edits` | `app/api.py:2446` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/images/generate` | `app/api.py:2429` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/local-interop/ask` | `app/local_interop/api.py:243` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/cancel` | `app/local_interop/api.py:319` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/local-interop/case/approve` | `app/local_interop/api.py:274` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/case/preview` | `app/local_interop/api.py:270` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/connect` | `app/local_interop/api.py:229` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/context/preview` | `app/local_interop/api.py:234` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/diagnostics/preview` | `app/local_interop/api.py:248` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/diagnostics/share` | `app/local_interop/api.py:252` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/disconnect` | `app/local_interop/api.py:335` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/disconnect-revoke` | `app/local_interop/api.py:331` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/discovery` | `app/local_interop/api.py:224` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/events/pause` | `app/local_interop/api.py:327` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/events/preview` | `app/local_interop/api.py:278` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/events/subscribe` | `app/local_interop/api.py:282` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/events/unsubscribe` | `app/local_interop/api.py:288` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/handoff` | `app/local_interop/api.py:262` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/permissions/revoke` | `app/local_interop/api.py:323` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/settings` | `app/local_interop/api.py:220` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/local-interop/verify` | `app/local_interop/api.py:257` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/memory` | `app/api.py:3327` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/model-center/local-ai/candidates/{candidate_id}/register` | `app/model_center/discovery_api.py:38` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/model-center/local-ai/candidates/{candidate_id}/validate` | `app/model_center/discovery_api.py:36` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/model-center/local-ai/registrations/{registration_id}/disable` | `app/model_center/discovery_api.py:44` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/model-center/local-ai/registrations/{registration_id}/enable` | `app/model_center/discovery_api.py:42` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/model-center/local-ai/runtimes` | `app/model_center/discovery_api.py:32` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/model-center/local-ai/scan` | `app/model_center/discovery_api.py:24` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/model-center/local-ai/scan/{scan_id}/cancel` | `app/model_center/discovery_api.py:28` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/model-center/runtimes/{runtime_id}/start` | `app/model_center/api.py:101` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/model-center/runtimes/{runtime_id}/stop` | `app/model_center/api.py:106` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/model-center/runtimes/{runtime_id}/validate` | `app/model_center/api.py:88` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels` | `app/api.py:1213` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/import` | `app/api.py:1900` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/adaptations` | `app/adaptation_api.py:99` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/actions/{action}` | `app/adaptation_api.py:170` | ADDED |
-| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/approve` | `app/adaptation_api.py:110` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/materialize` | `app/adaptation_api.py:115` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/actions/{action}` | `app/adaptation_api.py:175` | ADDED |
-| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/apply` | `app/adaptation_api.py:141` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/generate` | `app/adaptation_api.py:128` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/review` | `app/adaptation_api.py:135` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/asset-tasks/claim` | `app/api.py:2894` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/asset-tasks/dispatch` | `app/api.py:2896` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/asset-tasks/recover` | `app/api.py:2886` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/asset-tasks/timeout` | `app/api.py:2898` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/asset-tasks/worker/run-once` | `app/api.py:2900` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/asset-tasks/worker/start` | `app/api.py:2908` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/asset-tasks/worker/stop` | `app/api.py:2917` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/assets` | `app/api.py:1855` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/assets/{asset_id}/restore` | `app/asset_lifecycle_api.py:57` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/audiobook/chapters/{chapter_id}/export` | `app/api.py:2704` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/audiobook/chapters/{chapter_id}/queue` | `app/api.py:2583` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/audiobook/chapters/{chapter_id}/queue-segments` | `app/api.py:2597` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/audiobook/jobs/consume` | `app/api.py:2683` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/audiobook/jobs/{job_id}/cancel` | `app/api.py:2653` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/audiobook/jobs/{job_id}/execute` | `app/api.py:2662` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/audiobook/jobs/{job_id}/retry` | `app/api.py:2644` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/chapters` | `app/api.py:1233` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/chapters/{chapter_id}/knowledge-base/review` | `app/api.py:2005` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/character-evolution` | `app/api.py:3273` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/characters/consistency-check` | `app/api.py:3059` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/characters/{character_id}/evolution` | `app/api.py:3303` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/continuity/scan-chapter` | `app/api.py:2939` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/creation-records` | `app/creation_workbench_api.py:38` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/creation-records/{rid}/{action}` | `app/creation_workbench_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/audiobook/mappings` | `app/experimental/audiobook_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/audiobook/mixes/{rid}/{action}` | `app/experimental/audiobook_api.py:110` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/audiobook/plans` | `app/experimental/audiobook_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/tracks` | `app/experimental/audiobook_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/{action}` | `app/experimental/audiobook_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/audiobook/profiles` | `app/experimental/audiobook_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/author-context/generate` | `app/experimental/author_context_api.py:377` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/author-context/generate-variants` | `app/experimental/author_context_api.py:442` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/author-context/preview` | `app/experimental/author_context_api.py:340` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/author-context/preview-variants` | `app/experimental/author_context_api.py:414` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/author-context/sources` | `app/experimental/author_context_api.py:322` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters` | `app/experimental/branch_manuscript_api.py:150` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/archive/{action}` | `app/experimental/branch_manuscript_api.py:175` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/delete` | `app/experimental/branch_manuscript_api.py:180` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/move` | `app/experimental/branch_manuscript_api.py:185` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/restore` | `app/experimental/branch_manuscript_api.py:170` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/compare` | `app/experimental/branch_manuscript_api.py:227` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/forks/preview` | `app/experimental/branch_manuscript_api.py:215` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/forks/{rid}/apply` | `app/experimental/branch_manuscript_api.py:221` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/merges` | `app/experimental/branch_manuscript_api.py:233` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/merges/{rid}/apply` | `app/experimental/branch_manuscript_api.py:256` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/merges/{rid}/recovery` | `app/experimental/branch_manuscript_api.py:263` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/{kind}/{rid}/cancel` | `app/experimental/branch_manuscript_api.py:269` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/change-impact/preflights` | `app/experimental/change_impact_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/change-impact/preflights/{rid}/prepare` | `app/experimental/change_impact_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/change-impact/query` | `app/experimental/change_impact_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/change-impact/refreshes/{rid}/cancel` | `app/experimental/change_impact_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/change-impact/refreshes/{rid}/execute` | `app/experimental/change_impact_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/images/{aid}/approve` | `app/experimental/comic_layouts_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records` | `app/experimental/comic_layouts_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/approve` | `app/experimental/comic_layouts_api.py:81` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/preflight` | `app/experimental/comic_layouts_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/restore` | `app/experimental/comic_layouts_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions/{rid}/runs` | `app/experimental/declarative_agents_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/preflight` | `app/experimental/declarative_agents_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/runs/{rid}/model/dispatch` | `app/experimental/declarative_agents_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/runs/{rid}/model/preview` | `app/experimental/declarative_agents_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/runs/{rid}/model/refresh` | `app/experimental/declarative_agents_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/runs/{rid}/{action}` | `app/experimental/declarative_agents_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/director/compare` | `app/experimental/director_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/director/plans` | `app/experimental/director_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/director/plans/{rid}/{action}` | `app/experimental/director_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/embeddings/hybrid-query` | `app/experimental/embeddings_api.py:98` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/embeddings/indexes` | `app/experimental/embeddings_api.py:66` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/embeddings/indexes/{rid}/{action}` | `app/experimental/embeddings_api.py:83` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/embeddings/query` | `app/experimental/embeddings_api.py:93` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/embeddings/visual-identity/checks` | `app/experimental/embeddings_api.py:123` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/embeddings/visual-identity/checks/{rid}/{action}` | `app/experimental/embeddings_api.py:129` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/imports/candidates/{candidate_id}/review` | `app/experimental/imports_api.py:123` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/imports/jobs` | `app/experimental/imports_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/imports/jobs/{job_id}/commit` | `app/experimental/imports_api.py:95` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/imports/jobs/{job_id}/process` | `app/experimental/imports_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/imports/jobs/{job_id}/review-batch` | `app/experimental/imports_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/imports/jobs/{job_id}/{action}` | `app/experimental/imports_api.py:111` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/interactive-stories` | `app/experimental/interactive_story_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/export` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/export-preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/history` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/refresh` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/refresh-preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/restore-revision` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/review` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/review-preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/language-editions` | `app/experimental/multilingual_editions_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/export` | `app/experimental/multilingual_editions_api.py:94` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/export-preview` | `app/experimental/multilingual_editions_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/refresh` | `app/experimental/multilingual_editions_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/refresh-preview` | `app/experimental/multilingual_editions_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/rules` | `app/experimental/multilingual_editions_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/rules/{rid}/review` | `app/experimental/multilingual_editions_api.py:74` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/preview` | `app/experimental/multilingual_editions_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/review` | `app/experimental/multilingual_editions_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/translation-preview` | `app/experimental/multilingual_editions_api.py:118` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/{action}` | `app/experimental/multilingual_editions_api.py:130` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/translations/{rid}/{action}` | `app/experimental/multilingual_editions_api.py:123` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/local-ai/workflow-inspections/inspect` | `app/experimental/local_ai_inspection_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/local-ai/workflow-inspections/reports` | `app/experimental/local_ai_inspection_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/media/cover-briefs` | `app/experimental/media_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/media/proposals/compare` | `app/experimental/media_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/media/proposals/{rid}/{action}` | `app/experimental/media_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/media/storyboard-briefs` | `app/experimental/media_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/media/tasks` | `app/experimental/media_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/media/tasks/{rid}/{action}` | `app/experimental/media_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/comparisons` | `app/experimental/model_benchmark_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/comparisons/{rid}/vote` | `app/experimental/model_benchmark_api.py:120` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/evidence/import` | `app/experimental/model_benchmark_api.py:94` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/evidence/{rid}/invalidate` | `app/experimental/model_benchmark_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/evidence/{rid}/review` | `app/experimental/model_benchmark_api.py:101` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/runs` | `app/experimental/model_benchmark_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/runs/{rid}/{action}` | `app/experimental/model_benchmark_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/sets` | `app/experimental/model_benchmark_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/model-broker/generate` | `app/experimental/model_broker_api.py:138` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/model-broker/jobs/{reservation_id}/cancel` | `app/experimental/model_broker_api.py:206` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/model-broker/ledger/{reservation_id}/reconcile` | `app/experimental/model_broker_api.py:183` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/model-broker/preview` | `app/experimental/model_broker_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/findings/{rid}/review` | `app/experimental/narrative_judge_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/cancel` | `app/experimental/narrative_judge_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/dispatch` | `app/experimental/narrative_judge_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/preview` | `app/experimental/narrative_judge_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/refresh` | `app/experimental/narrative_judge_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels` | `app/experimental/offline_sync_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels/{rid}/queue` | `app/experimental/offline_sync_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels/{rid}/receive` | `app/experimental/offline_sync_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels/{rid}/revoke` | `app/experimental/offline_sync_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels/{rid}/selection` | `app/experimental/offline_sync_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels/{rid}/selection/preview` | `app/experimental/offline_sync_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/inbox/{mid}/apply` | `app/experimental/offline_sync_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/inbox/{mid}/recovery` | `app/experimental/offline_sync_api.py:125` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/inbox/{mid}/review` | `app/experimental/offline_sync_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/outbox/{mid}/delivery` | `app/experimental/offline_sync_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/outbox/{mid}/export` | `app/experimental/offline_sync_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/production/devices` | `app/experimental/offline_sync_api.py:148` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/production/devices/{rid}/revoke` | `app/experimental/offline_sync_api.py:153` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/production/manifests` | `app/experimental/offline_sync_api.py:158` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/production/transfers` | `app/experimental/offline_sync_api.py:168` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/offline-sync/production/transfers/{rid}/actions` | `app/experimental/offline_sync_api.py:173` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/planning/generate` | `app/experimental/planning_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/planning/graphs` | `app/experimental/planning_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/planning/graphs/{gid}/{action}` | `app/experimental/planning_api.py:60` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/planning/nodes` | `app/experimental/planning_api.py:50` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/planning/nodes/{node_id}/{action}` | `app/experimental/planning_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/planning/proposals` | `app/experimental/planning_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/planning/proposals/compare` | `app/experimental/planning_api.py:95` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/planning/proposals/{pid}/restore` | `app/experimental/planning_api.py:110` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/planning/proposals/{pid}/{action}` | `app/experimental/planning_api.py:115` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/planning/templates` | `app/experimental/planning_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/portable-projects/cleanup` | `app/experimental/portable_projects_api.py:88` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/portable-projects/export` | `app/experimental/portable_projects_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/portable-projects/import-preflight` | `app/experimental/portable_projects_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/portable-projects/records/{rid}/relink` | `app/experimental/portable_projects_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/portable-projects/records/{rid}/restore` | `app/experimental/portable_projects_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/portable-projects/relink-preflight` | `app/experimental/portable_projects_api.py:73` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/production/manifests` | `app/experimental/production_lineage_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/production/manifests/{rid}/preflight` | `app/experimental/production_lineage_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/production/manifests/{rid}/replay` | `app/experimental/production_lineage_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/production/replays/{rid}/cancel` | `app/experimental/production_lineage_api.py:122` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/production/replays/{rid}/execute` | `app/experimental/production_lineage_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/merges/{mid}/recovery` | `app/experimental/project_forks_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/merges/{mid}/restore` | `app/experimental/project_forks_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/preflight` | `app/experimental/project_forks_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/structured/merges/{mid}/recovery` | `app/experimental/project_forks_api.py:127` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/structured/merges/{mid}/restore` | `app/experimental/project_forks_api.py:132` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/structured/preflight` | `app/experimental/project_forks_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/structured/{rid}/apply` | `app/experimental/project_forks_api.py:122` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/structured/{rid}/compare` | `app/experimental/project_forks_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/structured/{rid}/create` | `app/experimental/project_forks_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/universe/pin-preview` | `app/experimental/project_forks_api.py:170` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/universe/pins` | `app/experimental/project_forks_api.py:175` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/universe/pins/{rid}/release` | `app/experimental/project_forks_api.py:180` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/universe/snapshot-preview` | `app/experimental/project_forks_api.py:155` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/universe/snapshots` | `app/experimental/project_forks_api.py:160` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/{rid}/apply` | `app/experimental/project_forks_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/{rid}/compare` | `app/experimental/project_forks_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/project-forks/{rid}/create` | `app/experimental/project_forks_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/reader-preflight/annotations` | `app/experimental/reader_preflight_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/reader-preflight/check` | `app/experimental/reader_preflight_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/reader-preflight/ignore` | `app/experimental/reader_preflight_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/reader-preflight/open` | `app/experimental/reader_preflight_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/research-library/analysis/jobs` | `app/experimental/research_library_api.py:221` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/{action}` | `app/experimental/research_library_api.py:225` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/research-library/citation` | `app/experimental/research_library_api.py:155` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/research-library/context-preview` | `app/experimental/research_library_api.py:160` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/research-library/notes` | `app/experimental/research_library_api.py:170` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/research-library/notes/{rid}/delete` | `app/experimental/research_library_api.py:183` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/research-library/setting-drafts` | `app/experimental/research_library_api.py:197` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/research-library/setting-drafts/{rid}/{action}` | `app/experimental/research_library_api.py:201` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/research-library/sources/fetch-webpage` | `app/experimental/research_library_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/research-library/sources/import` | `app/experimental/research_library_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/restore` | `app/experimental/research_library_api.py:119` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/{action}` | `app/experimental/research_library_api.py:141` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/review-inbox/batch` | `app/experimental/inbox_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/review-inbox/{domain}/{item_id}/{action}` | `app/experimental/inbox_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons` | `app/experimental/revision_intelligence_api.py:73` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/preview` | `app/experimental/revision_intelligence_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}/model/cancel` | `app/experimental/revision_intelligence_api.py:127` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}/model/dispatch` | `app/experimental/revision_intelligence_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}/model/opinions/{oid}/{action}` | `app/experimental/revision_intelligence_api.py:132` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}/model/preview` | `app/experimental/revision_intelligence_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}/model/refresh` | `app/experimental/revision_intelligence_api.py:122` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}/review` | `app/experimental/revision_intelligence_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/locks` | `app/experimental/revision_intelligence_api.py:177` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/locks/unlock` | `app/experimental/revision_intelligence_api.py:183` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/milestones` | `app/experimental/revision_intelligence_api.py:194` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/proposals` | `app/experimental/revision_intelligence_api.py:153` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/proposals/{rid}/apply` | `app/experimental/revision_intelligence_api.py:165` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/proposals/{rid}/preview` | `app/experimental/revision_intelligence_api.py:159` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/proposals/{rid}/rebase` | `app/experimental/revision_intelligence_api.py:171` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/revisions/selection` | `app/experimental/revision_intelligence_api.py:147` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/safe-batches/preflight` | `app/experimental/safe_batches_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/approve-media` | `app/experimental/safe_batches_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/approve-voice` | `app/experimental/safe_batches_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/confirm` | `app/experimental/safe_batches_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/dispatch-next` | `app/experimental/safe_batches_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/reconcile` | `app/experimental/safe_batches_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/retry-failed` | `app/experimental/safe_batches_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/stop` | `app/experimental/safe_batches_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-graph/character-context` | `app/experimental/story_graph_api.py:116` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-graph/records` | `app/experimental/story_graph_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-graph/records/{rid}/{action}` | `app/experimental/story_graph_api.py:91` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-records/{kind}/{rid}/feedback` | `app/story_record_api.py:110` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/story-records/{kind}/{rid}/restore` | `app/story_record_api.py:104` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/story-simulator/context` | `app/experimental/story_simulator_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs` | `app/experimental/story_simulator_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/cancel` | `app/experimental/story_simulator_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/model/cancel` | `app/experimental/story_simulator_api.py:95` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/model/dispatch` | `app/experimental/story_simulator_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/model/preview` | `app/experimental/story_simulator_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/model/refresh` | `app/experimental/story_simulator_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/model/select` | `app/experimental/story_simulator_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/save` | `app/experimental/story_simulator_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/step` | `app/experimental/story_simulator_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses` | `app/experimental/style_analysis_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/cancel` | `app/experimental/style_analysis_api.py:83` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/dispatch` | `app/experimental/style_analysis_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/preview` | `app/experimental/style_analysis_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/refresh` | `app/experimental/style_analysis_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}/opinions/{opinion_id}/review` | `app/experimental/style_analysis_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/style-analysis/profiles` | `app/experimental/style_analysis_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/style-analysis/profiles/{rid}/preview` | `app/experimental/style_analysis_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/style-analysis/profiles/{rid}/{action}` | `app/experimental/style_analysis_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/subtitle-timeline/processing/tasks` | `app/experimental/subtitle_timeline_api.py:46` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/subtitle-timeline/processing/tasks/{rid}/{action}` | `app/experimental/subtitle_timeline_api.py:49` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/subtitle-timeline/records` | `app/experimental/subtitle_timeline_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/subtitle-timeline/records/{rid}/cues/{cid}/merge` | `app/experimental/subtitle_timeline_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/subtitle-timeline/records/{rid}/cues/{cid}/split` | `app/experimental/subtitle_timeline_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/teams/runs` | `app/experimental/teams_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/teams/runs/{run_id}/nodes/{node_id}/claim` | `app/experimental/teams_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/teams/runs/{run_id}/nodes/{node_id}/complete` | `app/experimental/teams_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/teams/runs/{run_id}/review/{action}` | `app/experimental/teams_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/teams/runs/{run_id}/{action}` | `app/experimental/teams_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/template-library/install` | `app/experimental/template_library_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/template-library/instances` | `app/experimental/template_library_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/template-library/instances/{rid}/compare` | `app/experimental/template_library_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/template-library/instances/{rid}/revert` | `app/experimental/template_library_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/template-library/instances/{rid}/update` | `app/experimental/template_library_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/template-library/packages/{pid}/favorite` | `app/experimental/template_library_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/template-library/packages/{pid}/uninstall` | `app/experimental/template_library_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/template-library/preview` | `app/experimental/template_library_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/timeline-exchange/from-screenplay` | `app/experimental/timeline_exchange_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/timeline-exchange/import` | `app/experimental/timeline_exchange_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/voice-direction/jobs/{jid}/approve` | `app/experimental/voice_direction_api.py:126` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/voice-direction/jobs/{jid}/cancel` | `app/experimental/voice_direction_api.py:99` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/voice-direction/jobs/{jid}/execute` | `app/experimental/voice_direction_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/voice-direction/jobs/{jid}/retry` | `app/experimental/voice_direction_api.py:108` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/voice-direction/plans/{rid}/mix` | `app/experimental/voice_direction_api.py:50` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/voice-direction/plans/{rid}/queue` | `app/experimental/voice_direction_api.py:74` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/voice-direction/plans/{rid}/reorder` | `app/experimental/voice_direction_api.py:70` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/voice-direction/plans/{rid}/segments/{sid}/lock` | `app/experimental/voice_direction_api.py:66` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/workspace/commands/resolve` | `app/experimental/ux_api.py:82` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/workspace/diagnostics/export` | `app/experimental/ux_api.py:215` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/workspace/diagnostics/preview` | `app/experimental/ux_api.py:210` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/workspace/interaction/reset` | `app/experimental/ux_api.py:71` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/workspace/interaction/restore` | `app/experimental/ux_api.py:66` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/workspace/resume/reset-layout` | `app/experimental/ux_api.py:109` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/workspace/resume/resolve` | `app/experimental/ux_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/workspace/search/cancel` | `app/experimental/ux_api.py:184` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/workspace/search/rebuild` | `app/experimental/ux_api.py:180` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/workspace/search/resolve` | `app/experimental/ux_api.py:188` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/workspace/tasks/{authority}/{task_id}/cancel` | `app/experimental/ux_api.py:204` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/world/records` | `app/experimental/world_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/world/records/{rid}/{action}` | `app/experimental/world_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writer-room/comments` | `app/experimental/writer_room_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writer-room/comments/{rid}` | `app/experimental/writer_room_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writer-room/packages/download` | `app/experimental/writer_room_api.py:106` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writer-room/packages/preview` | `app/experimental/writer_room_api.py:101` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writer-room/realtime/operations` | `app/experimental/writer_room_api.py:171` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/writer-room/realtime/operations/{rid}/actions` | `app/experimental/writer_room_api.py:182` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/writer-room/realtime/participants` | `app/experimental/writer_room_api.py:153` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/writer-room/realtime/participants/{rid}/actions` | `app/experimental/writer_room_api.py:159` | ADDED |
-| POST | `/api/v1/novels/{nid}/experimental/writer-room/tasks` | `app/experimental/writer_room_api.py:76` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writer-room/tasks/{rid}/transition` | `app/experimental/writer_room_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writing-focus/bookmarks/open` | `app/experimental/writing_focus_api.py:47` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writing-focus/notes` | `app/experimental/writing_focus_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writing-focus/notes/{note_id}/planning/copy` | `app/experimental/writing_focus_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writing-focus/notes/{note_id}/planning/preview` | `app/experimental/writing_focus_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writing-focus/notes/{note_id}/{action}` | `app/experimental/writing_focus_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writing-sessions` | `app/experimental/writing_sessions_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/experimental/writing-sessions/notices/acknowledge` | `app/experimental/writing_sessions_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/image-generations/import` | `app/api.py:2739` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/image-jobs` | `app/api.py:2394` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/image-jobs/{job_id}/accept` | `app/api.py:2423` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/image-jobs/{job_id}/cancel` | `app/api.py:2413` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/image-jobs/{job_id}/execute` | `app/api.py:2407` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/image-jobs/{job_id}/retry` | `app/api.py:2418` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/import/knowledge-base/review` | `app/api.py:1945` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/import/knowledge-base/review/{review_id}/ai-analyze` | `app/api.py:2071` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/knowledge-base/review` | `app/api.py:1995` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/lore/evidence` | `app/api.py:3384` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/lore/proposals` | `app/api.py:3428` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/lore/proposals/{proposal_id}/approve` | `app/api.py:3442` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/lore/proposals/{proposal_id}/approve-memory` | `app/api.py:3464` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/lore/proposals/{proposal_id}/reject` | `app/api.py:3453` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/memories/{memory_id}/retract` | `app/api.py:3501` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/memory-snapshots` | `app/api.py:3521` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/planning-runs` | `app/ai_planning_api.py:32` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/planning-runs/{rid}/cancel` | `app/ai_planning_api.py:46` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/planning-runs/{rid}/candidates/{cid}/save-draft` | `app/ai_planning_api.py:51` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/research` | `app/api.py:3240` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/review-threads` | `app/creation_workbench_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED |
-| POST | `/api/v1/novels/{nid}/review-threads/{rid}/{action}` | `app/creation_workbench_api.py:63` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays` | `app/api.py:2181` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/approve` | `app/api.py:2187` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks` | `app/api.py:2875` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/cleanup` | `app/api.py:2888` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/recover` | `app/api.py:2884` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/execute` | `app/api.py:2879` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/retry` | `app/api.py:2882` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/assets` | `app/api.py:2869` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/assets/approve` | `app/api.py:2871` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks` | `app/api.py:2221` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets/retry` | `app/api.py:2848` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/callback` | `app/api.py:2811` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/cancel` | `app/api.py:2788` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/execute` | `app/api.py:2785` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset` | `app/api.py:2837` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/download` | `app/api.py:2851` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/retry` | `app/api.py:2854` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/retry` | `app/api.py:2791` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/sync` | `app/api.py:2826` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance` | `app/api.py:2865` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance-until-gate` | `app/api.py:2867` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/revise` | `app/api.py:2191` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/shots` | `app/api.py:2193` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/shots/approve` | `app/api.py:2195` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/storyboard` | `app/api.py:2199` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/storyboard/approve` | `app/api.py:2201` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions` | `app/api.py:2205` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions/approve` | `app/api.py:2207` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/video-assemblies` | `app/video_assembly_api.py:22` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/speech-generations/import` | `app/api.py:2718` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/visual-memory` | `app/api.py:3316` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/visual-references` | `app/asset_lifecycle_api.py:80` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/visual-references/{memory_id}/approve` | `app/asset_lifecycle_api.py:94` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/novels/{nid}/world-rules` | `app/api.py:3416` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/packaged/bootstrap` | `app/packaging/bootstrap_api.py:68` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/packaged/initial-workspace` | `app/packaging/bootstrap_api.py:91` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/pending-canon/{pid}/approve` | `app/api.py:1572` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/pending-canon/{pid}/reject` | `app/api.py:1575` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/plugin-packages/install` | `app/plugin_management_api.py:37` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/plugin-packages/{plugin_id}/rollback` | `app/plugin_management_api.py:43` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/plugins` | `app/api.py:3556` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/plugins/{plugin_id}/disable` | `app/api.py:3578` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/plugins/{plugin_id}/enable` | `app/api.py:3573` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/continuity/checks` | `app/api.py:2928` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/continuity/findings/{finding_id}/resolve` | `app/api.py:3082` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/chapter-progress` | `app/api.py:3134` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/character-goals` | `app/api.py:3117` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/character-goals/{item_id}/transition` | `app/api.py:3127` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/checks` | `app/api.py:3201` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/expectations` | `app/api.py:3189` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/findings/{finding_id}/resolve` | `app/api.py:3217` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/foreshadowing` | `app/api.py:3092` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/foreshadowing/{item_id}/transition` | `app/api.py:3186` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/mysteries` | `app/api.py:3100` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/mysteries/{item_id}/transition` | `app/api.py:3110` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/proposals` | `app/api.py:3149` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/proposals/{proposal_id}/accept` | `app/api.py:3163` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/proposals/{proposal_id}/reject` | `app/api.py:3173` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/threads` | `app/api.py:3087` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/narrative/threads/{thread_id}/transition` | `app/api.py:3183` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/projects/{project_id}/pending-canon/{pending_id}/cancel-recovery` | `app/pending_canon_review_api.py:58` | ADDED |
-| POST | `/api/v1/projects/{project_id}/pending-canon/{pending_id}/preview` | `app/pending_canon_review_api.py:33` | ADDED |
-| POST | `/api/v1/projects/{project_id}/pending-canon/{pending_id}/recover` | `app/pending_canon_review_api.py:49` | ADDED |
-| POST | `/api/v1/projects/{project_id}/pending-canon/{pending_id}/review` | `app/pending_canon_review_api.py:40` | ADDED |
-| POST | `/api/v1/projects/{project_id}/{kind}/review-checks` | `app/finding_review_api.py:30` | ADDED |
-| POST | `/api/v1/projects/{project_id}/{kind}/review-findings/{finding_id}/review` | `app/finding_review_api.py:61` | ADDED |
-| POST | `/api/v1/release-gates` | `app/api.py:3610` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/speech/synthesize` | `app/api.py:2467` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/vision/analyze` | `app/api.py:2352` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workflow-runs/{run_id}/nodes/{node_id}/approve` | `app/workflow_api.py:143` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workflow-runs/{run_id}/nodes/{node_id}/reject` | `app/workflow_api.py:149` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workflow-runs/{run_id}/nodes/{node_id}/trigger-agent` | `app/workflow_api.py:155` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workflow-runs/{run_id}/retry` | `app/workflow_api.py:208` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workflow-runs/{run_id}/{action}` | `app/workflow_api.py:216` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workflows` | `app/workflow_api.py:102` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workflows/recipes/{recipe_id}` | `app/workflow_api.py:83` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workflows/{workflow_id}/runs` | `app/workflow_api.py:127` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workspaces` | `app/api.py:1048` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines` | `app/api.py:1061` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches` | `app/api.py:1074` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/mysteries/{item_id}/transition` | `app/api.py:1094` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/proposals/{proposal_id}/accept` | `app/api.py:1104` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/vision/analyze` | `app/api.py:2352` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workflow-runs/{run_id}/nodes/{node_id}/approve` | `app/workflow_api.py:143` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workflow-runs/{run_id}/nodes/{node_id}/reject` | `app/workflow_api.py:149` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workflow-runs/{run_id}/nodes/{node_id}/trigger-agent` | `app/workflow_api.py:155` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workflow-runs/{run_id}/retry` | `app/workflow_api.py:208` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workflow-runs/{run_id}/{action}` | `app/workflow_api.py:216` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workflows` | `app/workflow_api.py:102` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workflows/recipes/{recipe_id}` | `app/workflow_api.py:83` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workflows/{workflow_id}/runs` | `app/workflow_api.py:127` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workspaces` | `app/api.py:1048` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines` | `app/api.py:1061` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches` | `app/api.py:1074` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/mysteries/{item_id}/transition` | `app/api.py:1094` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/proposals/{proposal_id}/accept` | `app/api.py:1104` | UNCHANGED_DECLARED_SURFACE |
-| POST | `/context-packs` | `app/main.py:378` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/asset-providers/{provider_id}` | `app/api.py:1137` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/asset-tasks/worker/config` | `app/api.py:2923` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/audio/providers/{provider_id}` | `app/api.py:2496` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/chapters/{chapter_id}` | `app/api.py:1245` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/credentials/{provider}` | `app/api.py:1176` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/harness-enabled` | `app/api.py:921` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/model-center/local-ai/registrations/{registration_id}` | `app/model_center/discovery_api.py:40` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/model-center/local-ai/runtimes/{runtime_id}` | `app/model_center/discovery_api.py:34` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/model-center/local-ai/settings` | `app/model_center/discovery_api.py:30` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/model-center/runtimes/{runtime_id}/configuration` | `app/model_center/api.py:117` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}` | `app/api.py:1222` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/adaptations/{proposal_id}/blueprint` | `app/adaptation_api.py:105` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/audio-production/settings` | `app/api.py:2548` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/chapters/{cid}/privacy` | `app/api.py:3714` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/character-evolution/{evolution_id}` | `app/api.py:3284` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/characters/{character_id}` | `app/api.py:1331` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/creation-records/{rid}` | `app/creation_workbench_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/segments/{sid}` | `app/experimental/audiobook_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/segments/{sid}/audio` | `app/experimental/audiobook_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}` | `app/experimental/branch_manuscript_api.py:160` | ADDED |
-| PUT | `/api/novels/{nid}/experimental/change-impact/locks` | `app/experimental/change_impact_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}` | `app/experimental/comic_layouts_api.py:73` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/declarative-agents/definitions/{rid}` | `app/experimental/declarative_agents_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/embeddings/indexes/{rid}` | `app/experimental/embeddings_api.py:72` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/interactive-stories/{sid}` | `app/experimental/interactive_story_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}` | `app/experimental/multilingual_editions_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/media/cover-briefs/{rid}` | `app/experimental/media_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/media/storyboard-briefs/{rid}` | `app/experimental/media_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/model-benchmarks/sets/{rid}` | `app/experimental/model_benchmark_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/model-broker/budget` | `app/experimental/model_broker_api.py:120` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/model-broker/price` | `app/experimental/model_broker_api.py:126` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/planning/nodes/{node_id}` | `app/experimental/planning_api.py:55` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/production/assets/{aid}/lineage` | `app/experimental/production_lineage_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/reader-preflight/settings` | `app/experimental/reader_preflight_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/research-library/notes/{rid}` | `app/experimental/research_library_api.py:179` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/research-library/sources/{rid}` | `app/experimental/research_library_api.py:137` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/research-library/sources/{rid}/file` | `app/experimental/research_library_api.py:115` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}` | `app/experimental/revision_intelligence_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/story-graph/records/{rid}` | `app/experimental/story_graph_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/story-records/{kind}/{rid}` | `app/story_record_api.py:87` | ADDED |
-| PUT | `/api/novels/{nid}/experimental/style-analysis/profiles/{rid}` | `app/experimental/style_analysis_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/subtitle-timeline/records/{rid}` | `app/experimental/subtitle_timeline_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/template-library/instances/{rid}` | `app/experimental/template_library_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/voice-direction/plans/{rid}/segments/{sid}` | `app/experimental/voice_direction_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/workspace/interaction` | `app/experimental/ux_api.py:55` | ADDED |
-| PUT | `/api/novels/{nid}/experimental/workspace/resume` | `app/experimental/ux_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/world/records/{rid}` | `app/experimental/world_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/writer-room/realtime/participants/{rid}/cursor` | `app/experimental/writer_room_api.py:165` | ADDED |
-| PUT | `/api/novels/{nid}/experimental/writer-room/tasks/{rid}` | `app/experimental/writer_room_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/writing-focus/notes/{note_id}` | `app/experimental/writing_focus_api.py:66` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/writing-focus/preferences` | `app/experimental/writing_focus_api.py:32` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/writing-sessions/preferences/notices` | `app/experimental/writing_sessions_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/experimental/writing-sessions/{sid}` | `app/experimental/writing_sessions_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/novels/{nid}/foreshadowing/{foreshadowing_id}` | `app/api.py:1337` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/import/knowledge-base/review/{review_id}` | `app/api.py:2024` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/locations/{location_id}` | `app/api.py:1333` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/outline` | `app/api.py:1347` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/relationships/{relationship_id}` | `app/api.py:1343` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/research/{research_id}` | `app/api.py:3257` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/scenes/{scene_id}` | `app/api.py:1351` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}` | `app/api.py:2877` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/assets/{asset_id}` | `app/api.py:2873` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}` | `app/api.py:2774` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frames` | `app/api.py:2777` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy` | `app/api.py:3694` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/provider` | `app/api.py:2782` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/remote-id` | `app/api.py:2823` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result` | `app/api.py:2808` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/scenes/{scene_id}` | `app/api.py:2185` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/shots/{shot_id}` | `app/api.py:2197` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/storyboard/{card_id}` | `app/api.py:2203` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}` | `app/api.py:2209` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt` | `app/api.py:2218` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/story-routes/{route_id}` | `app/api.py:1353` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/timeline/{event_id}` | `app/api.py:1335` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/visual-memory/{memory_id}` | `app/api.py:3340` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/visual-references/{memory_id}` | `app/asset_lifecycle_api.py:87` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/volumes/{volume_id}` | `app/api.py:1349` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/novels/{nid}/writing-goal` | `app/api.py:3231` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/plugins/{plugin_id}/permissions` | `app/api.py:3567` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/user-preferences-enabled` | `app/api.py:917` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/user-preferences-share-enabled` | `app/api.py:919` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/user-preferences/{key}` | `app/api.py:910` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/asset-providers/{provider_id}` | `app/api.py:1137` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/asset-tasks/worker/config` | `app/api.py:2923` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/audio/providers/{provider_id}` | `app/api.py:2496` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/chapters/{chapter_id}` | `app/api.py:1245` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/credentials/{provider}` | `app/api.py:1176` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/harness-enabled` | `app/api.py:921` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/model-center/local-ai/registrations/{registration_id}` | `app/model_center/discovery_api.py:40` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/model-center/local-ai/runtimes/{runtime_id}` | `app/model_center/discovery_api.py:34` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/model-center/local-ai/settings` | `app/model_center/discovery_api.py:30` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/model-center/runtimes/{runtime_id}/configuration` | `app/model_center/api.py:117` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}` | `app/api.py:1222` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/adaptations/{proposal_id}/blueprint` | `app/adaptation_api.py:105` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/audio-production/settings` | `app/api.py:2548` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/chapters/{cid}/privacy` | `app/api.py:3714` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/character-evolution/{evolution_id}` | `app/api.py:3284` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/characters/{character_id}` | `app/api.py:1331` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/creation-records/{rid}` | `app/creation_workbench_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/segments/{sid}` | `app/experimental/audiobook_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/segments/{sid}/audio` | `app/experimental/audiobook_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}` | `app/experimental/branch_manuscript_api.py:160` | ADDED |
-| PUT | `/api/v1/novels/{nid}/experimental/change-impact/locks` | `app/experimental/change_impact_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}` | `app/experimental/comic_layouts_api.py:73` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions/{rid}` | `app/experimental/declarative_agents_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/embeddings/indexes/{rid}` | `app/experimental/embeddings_api.py:72` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}` | `app/experimental/interactive_story_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}` | `app/experimental/multilingual_editions_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/media/cover-briefs/{rid}` | `app/experimental/media_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/media/storyboard-briefs/{rid}` | `app/experimental/media_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/model-benchmarks/sets/{rid}` | `app/experimental/model_benchmark_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/model-broker/budget` | `app/experimental/model_broker_api.py:120` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/model-broker/price` | `app/experimental/model_broker_api.py:126` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/planning/nodes/{node_id}` | `app/experimental/planning_api.py:55` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/production/assets/{aid}/lineage` | `app/experimental/production_lineage_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/reader-preflight/settings` | `app/experimental/reader_preflight_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/research-library/notes/{rid}` | `app/experimental/research_library_api.py:179` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}` | `app/experimental/research_library_api.py:137` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/file` | `app/experimental/research_library_api.py:115` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}` | `app/experimental/revision_intelligence_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/story-graph/records/{rid}` | `app/experimental/story_graph_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/story-records/{kind}/{rid}` | `app/story_record_api.py:87` | ADDED |
-| PUT | `/api/v1/novels/{nid}/experimental/style-analysis/profiles/{rid}` | `app/experimental/style_analysis_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/subtitle-timeline/records/{rid}` | `app/experimental/subtitle_timeline_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/template-library/instances/{rid}` | `app/experimental/template_library_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/voice-direction/plans/{rid}/segments/{sid}` | `app/experimental/voice_direction_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/workspace/interaction` | `app/experimental/ux_api.py:55` | ADDED |
-| PUT | `/api/v1/novels/{nid}/experimental/workspace/resume` | `app/experimental/ux_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/world/records/{rid}` | `app/experimental/world_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/writer-room/realtime/participants/{rid}/cursor` | `app/experimental/writer_room_api.py:165` | ADDED |
-| PUT | `/api/v1/novels/{nid}/experimental/writer-room/tasks/{rid}` | `app/experimental/writer_room_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/writing-focus/notes/{note_id}` | `app/experimental/writing_focus_api.py:66` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/writing-focus/preferences` | `app/experimental/writing_focus_api.py:32` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/writing-sessions/preferences/notices` | `app/experimental/writing_sessions_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/experimental/writing-sessions/{sid}` | `app/experimental/writing_sessions_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED |
-| PUT | `/api/v1/novels/{nid}/foreshadowing/{foreshadowing_id}` | `app/api.py:1337` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/import/knowledge-base/review/{review_id}` | `app/api.py:2024` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/locations/{location_id}` | `app/api.py:1333` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/outline` | `app/api.py:1347` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/relationships/{relationship_id}` | `app/api.py:1343` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/research/{research_id}` | `app/api.py:3257` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/scenes/{scene_id}` | `app/api.py:1351` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}` | `app/api.py:2877` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/assets/{asset_id}` | `app/api.py:2873` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}` | `app/api.py:2774` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frames` | `app/api.py:2777` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy` | `app/api.py:3694` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/provider` | `app/api.py:2782` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/remote-id` | `app/api.py:2823` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result` | `app/api.py:2808` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/scenes/{scene_id}` | `app/api.py:2185` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/shots/{shot_id}` | `app/api.py:2197` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/storyboard/{card_id}` | `app/api.py:2203` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}` | `app/api.py:2209` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt` | `app/api.py:2218` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/story-routes/{route_id}` | `app/api.py:1353` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/timeline/{event_id}` | `app/api.py:1335` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/visual-memory/{memory_id}` | `app/api.py:3340` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/visual-references/{memory_id}` | `app/asset_lifecycle_api.py:87` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/volumes/{volume_id}` | `app/api.py:1349` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/novels/{nid}/writing-goal` | `app/api.py:3231` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/plugins/{plugin_id}/permissions` | `app/api.py:3567` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/user-preferences-enabled` | `app/api.py:917` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/user-preferences-share-enabled` | `app/api.py:919` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/user-preferences/{key}` | `app/api.py:910` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/v1/video-providers/{provider_id}/config` | `app/api.py:2277` | UNCHANGED_DECLARED_SURFACE |
-| PUT | `/api/video-providers/{provider_id}/config` | `app/api.py:2277` | UNCHANGED_DECLARED_SURFACE |
+| DELETE | `/api/asset-providers/{provider_id}` | `app/api.py:1140` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/assets/{asset_id}` | `app/api.py:1887` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/audio/providers/{provider_id}` | `app/api.py:2497` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/chapters/{chapter_id}` | `app/api.py:1275` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/collaboration/admin/workspaces/{w}/permissions/{assignment_id}` | `app/collaboration_admin.py:231` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/collaboration/admin/workspaces/{w}/projects/{p}` | `app/collaboration_admin.py:125` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/collaboration/admin/workspaces/{w}/roles/{assignment_id}` | `app/collaboration_admin.py:208` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/credentials/{provider}` | `app/api.py:1181` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/harness/access-audit` | `app/api.py:873` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/model-center/local-ai/registrations/{registration_id}` | `app/model_center/discovery_api.py:46` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/novels/{nid}` | `app/api.py:1218` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/novels/{nid}/character-evolution/{evolution_id}` | `app/api.py:3284` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/tracks/{tid}` | `app/experimental/audiobook_api.py:76` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/novels/{nid}/research/{research_id}` | `app/api.py:3257` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/novels/{nid}/visual-memory/{memory_id}` | `app/api.py:3340` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/plugin-packages/{plugin_id}` | `app/plugin_management_api.py:49` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/user-preferences/{key}` | `app/api.py:909` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/asset-providers/{provider_id}` | `app/api.py:1140` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/assets/{asset_id}` | `app/api.py:1887` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/audio/providers/{provider_id}` | `app/api.py:2497` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/chapters/{chapter_id}` | `app/api.py:1275` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/collaboration/admin/workspaces/{w}/permissions/{assignment_id}` | `app/collaboration_admin.py:231` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/collaboration/admin/workspaces/{w}/projects/{p}` | `app/collaboration_admin.py:125` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/collaboration/admin/workspaces/{w}/roles/{assignment_id}` | `app/collaboration_admin.py:208` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/credentials/{provider}` | `app/api.py:1181` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/harness/access-audit` | `app/api.py:873` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/model-center/local-ai/registrations/{registration_id}` | `app/model_center/discovery_api.py:46` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/novels/{nid}` | `app/api.py:1218` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/novels/{nid}/character-evolution/{evolution_id}` | `app/api.py:3284` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/tracks/{tid}` | `app/experimental/audiobook_api.py:76` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/novels/{nid}/research/{research_id}` | `app/api.py:3257` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/novels/{nid}/visual-memory/{memory_id}` | `app/api.py:3340` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/plugin-packages/{plugin_id}` | `app/plugin_management_api.py:49` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/user-preferences/{key}` | `app/api.py:909` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/v1/video-providers/{provider_id}/config` | `app/api.py:2287` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| DELETE | `/api/video-providers/{provider_id}/config` | `app/api.py:2287` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/agent-jobs` | `app/api.py:1013` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/agent-jobs/audit` | `app/api.py:990` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/agent-jobs/audit.csv` | `app/api.py:1001` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/agent-jobs/export.csv` | `app/api.py:981` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/agent-jobs/{job_id}` | `app/api.py:1008` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/agent-queue` | `app/workflow_api.py:161` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/agents` | `app/api.py:798` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/agents/{agent_id}/context-preview` | `app/api.py:955` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/asset-providers` | `app/api.py:1111` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/asset-tasks/worker/config` | `app/api.py:2915` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/assets/{asset_id}` | `app/api.py:1873` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/assets/{asset_id}/derivatives` | `app/api.py:3347` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/assets/{asset_id}/download` | `app/api.py:1880` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/audio/providers` | `app/api.py:2482` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/audit` | `app/api.py:3615` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/chapters/{chapter_id}` | `app/api.py:1231` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/chapters/{chapter_id}/history` | `app/api.py:1306` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/admin/workspaces` | `app/collaboration_admin.py:86` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/admin/workspaces/{w}/explain` | `app/collaboration_admin.py:240` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/admin/workspaces/{w}/members` | `app/collaboration_admin.py:165` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/admin/workspaces/{w}/navigation` | `app/collaboration_admin.py:105` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/admin/workspaces/{w}/projects` | `app/collaboration_admin.py:114` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/admin/workspaces/{w}/projects/{p}/storylines` | `app/collaboration_admin.py:139` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/admin/workspaces/{w}/projects/{p}/storylines/{s}/branches` | `app/collaboration_admin.py:152` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/audit` | `app/collaboration_api.py:205` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/bootstrap` | `app/collaboration_api.py:145` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters` | `app/collaboration_api.py:176` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/revisions` | `app/collaboration_api.py:214` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/revisions/{version}` | `app/collaboration_api.py:222` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/snapshots` | `app/collaboration_api.py:231` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/snapshots/{snapshot_id}` | `app/collaboration_api.py:237` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/generations/{generation_id}/snapshot` | `app/collaboration_api.py:246` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/members` | `app/collaboration_api.py:161` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/permissions` | `app/collaboration_api.py:171` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/story-database/{resource}` | `app/collaboration_api.py:194` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/text-runtime-diagnostics` | `app/collaboration_api.py:156` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/visual-text-workflow` | `app/collaboration_api.py:151` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/context-preview` | `app/api.py:1560` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/credentials/{provider}` | `app/api.py:1164` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/experimental/capabilities` | `app/experimental/api.py:11` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/experimental/features` | `app/experimental/api.py:7` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/experimental/first-use/sample` | `app/experimental/first_use_api.py:14` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/exports` | `app/api.py:1643` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/exports/{job_id}` | `app/api.py:1839` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/exports/{job_id}/download` | `app/api.py:1803` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/generation-groups/{group_id}` | `app/api.py:1450` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/generation/{jid}` | `app/api.py:1460` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/generation/{jid}/events` | `app/api.py:1467` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/harness/access-audit` | `app/api.py:854` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/harness/access-audit.csv` | `app/api.py:863` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/harness/context` | `app/api.py:880` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/harness/context-contract` | `app/api.py:852` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/harness/launch-readiness` | `app/api.py:840` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/harness/process` | `app/api.py:850` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/harness/status` | `app/api.py:817` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/health` | `app/api.py:792` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/local-interop/context/sources` | `app/local_interop/api.py:238` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/local-interop/events` | `app/local_interop/api.py:292` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/local-interop/events/stream` | `app/local_interop/api.py:299` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/local-interop/models` | `app/local_interop/api.py:266` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/local-interop/status` | `app/local_interop/api.py:211` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/local-session` | `app/api.py:802` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/memory` | `app/api.py:3316` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/health` | `app/model_center/api.py:142` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/local-ai` | `app/model_center/discovery_api.py:22` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/local-ai/scan/{scan_id}` | `app/model_center/discovery_api.py:26` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/models` | `app/model_center/api.py:67` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/models/{model_id}` | `app/model_center/api.py:73` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/pipelines` | `app/model_center/api.py:139` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/runtimes` | `app/model_center/api.py:80` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/runtimes/{runtime_id}` | `app/model_center/api.py:84` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/runtimes/{runtime_id}/capabilities` | `app/model_center/api.py:134` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/runtimes/{runtime_id}/configuration` | `app/model_center/api.py:112` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/runtimes/{runtime_id}/diagnostics` | `app/model_center/api.py:124` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/model-center/runtimes/{runtime_id}/logs` | `app/model_center/api.py:129` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/models` | `app/api.py:1202` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/multimodal/health` | `app/api.py:2314` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels` | `app/api.py:1204` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}` | `app/api.py:1214` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/adaptations` | `app/adaptation_api.py:94` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/adaptations/catalog` | `app/adaptation_api.py:82` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/adaptations/{proposal_id}/history` | `app/adaptation_api.py:165` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}` | `app/adaptation_api.py:149` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/asset-tasks/stats` | `app/api.py:2884` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/asset-tasks/worker/status` | `app/api.py:2913` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/asset-trash` | `app/asset_lifecycle_api.py:50` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/assets` | `app/api.py:1859` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/assets/{asset_id}/references` | `app/asset_lifecycle_api.py:63` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/audio-production/settings` | `app/api.py:2536` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/audiobook/jobs` | `app/api.py:2609` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/audiobook/jobs/{job_id}/subtitles.{format}` | `app/api.py:2626` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/audiobook/manifest` | `app/api.py:2548` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/audiobook/mix-plan` | `app/api.py:2568` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/canon` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/chapters` | `app/api.py:1223` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/chapters/archived` | `app/api.py:1225` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/chapters/{cid}/privacy` | `app/api.py:3698` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/character-evolution` | `app/api.py:3262` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/character-evolution/{evolution_id}` | `app/api.py:3273` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/characters` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/characters/{character_id}/evolution` | `app/api.py:3292` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/characters/{character_id}/memories` | `app/api.py:3490` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/creation-records` | `app/creation_workbench_api.py:33` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/creation-reference-data` | `app/creation_workbench_api.py:28` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/audiobook/capabilities` | `app/experimental/audiobook_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/audiobook/mappings` | `app/experimental/audiobook_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/audiobook/mixes` | `app/experimental/audiobook_api.py:104` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/audiobook/plans` | `app/experimental/audiobook_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/duration-manifest` | `app/experimental/audiobook_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/subtitles` | `app/experimental/audiobook_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/audiobook/profiles` | `app/experimental/audiobook_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/branch-manuscript/catalog` | `app/experimental/branch_manuscript_api.py:133` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/branch-manuscript/chapters` | `app/experimental/branch_manuscript_api.py:144` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}` | `app/experimental/branch_manuscript_api.py:155` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/history` | `app/experimental/branch_manuscript_api.py:165` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/branch-manuscript/merges/{rid}/review` | `app/experimental/branch_manuscript_api.py:244` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/branch-manuscript/records` | `app/experimental/branch_manuscript_api.py:190` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/branch-manuscript/sources` | `app/experimental/branch_manuscript_api.py:206` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/change-impact/refreshes` | `app/experimental/change_impact_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/change-impact/sources` | `app/experimental/change_impact_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/comic-layouts/catalog` | `app/experimental/comic_layouts_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/comic-layouts/images/{aid}` | `app/experimental/comic_layouts_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/comic-layouts/records` | `app/experimental/comic_layouts_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/export` | `app/experimental/comic_layouts_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/segments/{index}` | `app/experimental/comic_layouts_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/declarative-agents/catalog` | `app/experimental/declarative_agents_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/declarative-agents/runs` | `app/experimental/declarative_agents_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/declarative-agents/runs/{rid}` | `app/experimental/declarative_agents_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/director/catalog` | `app/experimental/director_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/director/plans` | `app/experimental/director_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/embeddings/indexes` | `app/experimental/embeddings_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/embeddings/indexes/{rid}/records` | `app/experimental/embeddings_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/embeddings/providers` | `app/experimental/embeddings_api.py:55` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/embeddings/sources` | `app/experimental/embeddings_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/embeddings/status` | `app/experimental/embeddings_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/embeddings/visual-identity/checks` | `app/experimental/embeddings_api.py:108` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/embeddings/visual-identity/checks/{rid}` | `app/experimental/embeddings_api.py:113` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/embeddings/visual-identity/checks/{rid}/selection` | `app/experimental/embeddings_api.py:118` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/embeddings/visual-identity/profiles` | `app/experimental/embeddings_api.py:103` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/imports/candidates` | `app/experimental/imports_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/imports/jobs` | `app/experimental/imports_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/imports/jobs/{job_id}` | `app/experimental/imports_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/imports/jobs/{job_id}/chunks` | `app/experimental/imports_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/interactive-stories` | `app/experimental/interactive_story_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/interactive-stories/catalog` | `app/experimental/interactive_story_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/interactive-stories/engine-contract` | `app/experimental/interactive_story_api.py:38` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/interactive-stories/{sid}` | `app/experimental/interactive_story_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/language-editions` | `app/experimental/multilingual_editions_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/language-editions/catalog` | `app/experimental/multilingual_editions_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/language-editions/translation/routes` | `app/experimental/multilingual_editions_api.py:108` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/language-editions/{eid}` | `app/experimental/multilingual_editions_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/language-editions/{eid}/translations` | `app/experimental/multilingual_editions_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/local-ai/workflow-inspections` | `app/experimental/local_ai_inspection_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/local-ai/workflow-inspections/reports` | `app/experimental/local_ai_inspection_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/media/adapters` | `app/experimental/media_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/media/catalog` | `app/experimental/media_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/media/cover-briefs` | `app/experimental/media_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/media/proposals` | `app/experimental/media_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/media/proposals/{rid}/preview` | `app/experimental/media_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/media/storyboard-briefs` | `app/experimental/media_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/media/tasks` | `app/experimental/media_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/model-benchmarks/profiles` | `app/experimental/model_benchmark_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/model-benchmarks/status` | `app/experimental/model_benchmark_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/model-broker/history` | `app/experimental/model_broker_api.py:132` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/model-broker/jobs/{reservation_id}` | `app/experimental/model_broker_api.py:194` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/model-broker/status` | `app/experimental/model_broker_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/narrative-judge/catalog` | `app/experimental/narrative_judge_api.py:26` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/narrative-judge/model/catalog` | `app/experimental/narrative_judge_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}` | `app/experimental/narrative_judge_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/offline-sync/catalog` | `app/experimental/offline_sync_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/offline-sync/outbox/{mid}` | `app/experimental/offline_sync_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/offline-sync/production` | `app/experimental/offline_sync_api.py:138` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/offline-sync/production/manifests/{rid}` | `app/experimental/offline_sync_api.py:163` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/offline-sync/production/records` | `app/experimental/offline_sync_api.py:143` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/offline-sync/records` | `app/experimental/offline_sync_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/planning/graphs` | `app/experimental/planning_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/planning/graphs/{gid}` | `app/experimental/planning_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/planning/proposals` | `app/experimental/planning_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/planning/proposals/{pid}` | `app/experimental/planning_api.py:100` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/planning/proposals/{pid}/history` | `app/experimental/planning_api.py:105` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/planning/templates` | `app/experimental/planning_api.py:70` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/portable-projects/catalog` | `app/experimental/portable_projects_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/portable-projects/records` | `app/experimental/portable_projects_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/portable-projects/records/{rid}/file` | `app/experimental/portable_projects_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/portable-projects/storage` | `app/experimental/portable_projects_api.py:83` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/production/assets` | `app/experimental/production_lineage_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/production/assets/{aid}` | `app/experimental/production_lineage_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/production/assets/{aid}/impact` | `app/experimental/production_lineage_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/production/manifests` | `app/experimental/production_lineage_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/production/manifests/{rid}/export` | `app/experimental/production_lineage_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/production/replays` | `app/experimental/production_lineage_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/project-forks/catalog` | `app/experimental/project_forks_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/project-forks/records` | `app/experimental/project_forks_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/project-forks/structured/catalog` | `app/experimental/project_forks_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/project-forks/structured/records` | `app/experimental/project_forks_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/project-forks/universe/catalog` | `app/experimental/project_forks_api.py:145` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/project-forks/universe/incoming` | `app/experimental/project_forks_api.py:190` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/project-forks/universe/incoming/{source_nid}/{pin_id}` | `app/experimental/project_forks_api.py:195` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/project-forks/universe/pins` | `app/experimental/project_forks_api.py:165` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/project-forks/universe/pins/{rid}/history` | `app/experimental/project_forks_api.py:185` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/project-forks/universe/snapshots` | `app/experimental/project_forks_api.py:150` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/reader-preflight/proof` | `app/experimental/reader_preflight_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/reader-preflight/read` | `app/experimental/reader_preflight_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/reader-preflight/settings` | `app/experimental/reader_preflight_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/analysis/jobs` | `app/experimental/research_library_api.py:213` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/analysis/jobs/{rid}` | `app/experimental/research_library_api.py:217` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/analysis/status` | `app/experimental/research_library_api.py:209` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/note-repairs` | `app/experimental/research_library_api.py:174` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/notes` | `app/experimental/research_library_api.py:165` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/notes/{rid}/history` | `app/experimental/research_library_api.py:187` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/search` | `app/experimental/research_library_api.py:150` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/setting-drafts` | `app/experimental/research_library_api.py:192` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/sources` | `app/experimental/research_library_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/sources-archive` | `app/experimental/research_library_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/sources/{rid}` | `app/experimental/research_library_api.py:123` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/sources/{rid}/backrefs` | `app/experimental/research_library_api.py:145` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/sources/{rid}/history` | `app/experimental/research_library_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/sources/{rid}/history/{version}/original` | `app/experimental/research_library_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/research-library/sources/{rid}/original` | `app/experimental/research_library_api.py:128` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/review-inbox` | `app/experimental/inbox_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/revisions/catalog` | `app/experimental/revision_intelligence_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/revisions/comparisons` | `app/experimental/revision_intelligence_api.py:68` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/revisions/comparisons-model/catalog` | `app/experimental/revision_intelligence_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}` | `app/experimental/revision_intelligence_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/revisions/milestones` | `app/experimental/revision_intelligence_api.py:189` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/revisions/original-versions` | `app/experimental/revision_intelligence_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/revisions/proposals` | `app/experimental/revision_intelligence_api.py:137` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/revisions/proposals/{rid}` | `app/experimental/revision_intelligence_api.py:142` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/safe-batches` | `app/experimental/safe_batches_api.py:32` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/safe-batches/catalog` | `app/experimental/safe_batches_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/safe-batches/{rid}/items/{index}/audio` | `app/experimental/safe_batches_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/safe-batches/{rid}/items/{index}/file` | `app/experimental/safe_batches_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/safe-batches/{rid}/proposals/{pid}/preview` | `app/experimental/safe_batches_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/story-graph/catalog` | `app/experimental/story_graph_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/story-graph/query` | `app/experimental/story_graph_api.py:109` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/story-graph/records` | `app/experimental/story_graph_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/story-graph/records/{rid}` | `app/experimental/story_graph_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/story-graph/records/{rid}/history` | `app/experimental/story_graph_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/story-graph/records/{rid}/impact` | `app/experimental/story_graph_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/story-records/catalog` | `app/story_record_api.py:68` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/story-records/{kind}/{rid}` | `app/story_record_api.py:82` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/story-simulator/catalog` | `app/experimental/story_simulator_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/story-simulator/runs` | `app/experimental/story_simulator_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}` | `app/experimental/story_simulator_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/style-analysis/analyses` | `app/experimental/style_analysis_api.py:47` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}` | `app/experimental/style_analysis_api.py:55` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/style-analysis/catalog` | `app/experimental/style_analysis_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/style-analysis/model/catalog` | `app/experimental/style_analysis_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/subtitle-timeline/catalog` | `app/experimental/subtitle_timeline_api.py:18` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/subtitle-timeline/processing/catalog` | `app/experimental/subtitle_timeline_api.py:40` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/subtitle-timeline/processing/tasks` | `app/experimental/subtitle_timeline_api.py:43` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/subtitle-timeline/processing/tasks/{rid}/file` | `app/experimental/subtitle_timeline_api.py:53` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/subtitle-timeline/records` | `app/experimental/subtitle_timeline_api.py:21` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/subtitle-timeline/records/{rid}/file.{format}` | `app/experimental/subtitle_timeline_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/teams/catalog` | `app/experimental/teams_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/teams/runs` | `app/experimental/teams_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/teams/runs/{run_id}` | `app/experimental/teams_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/teams/runs/{run_id}/history` | `app/experimental/teams_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/template-library` | `app/experimental/template_library_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/template-library/instances` | `app/experimental/template_library_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/template-library/instances/{rid}/history` | `app/experimental/template_library_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/timeline-exchange/catalog` | `app/experimental/timeline_exchange_api.py:21` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/timeline-exchange/records` | `app/experimental/timeline_exchange_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/timeline-exchange/records/{rid}/file` | `app/experimental/timeline_exchange_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/voice-direction/catalog` | `app/experimental/voice_direction_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/voice-direction/jobs` | `app/experimental/voice_direction_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/voice-direction/jobs/{jid}/audio` | `app/experimental/voice_direction_api.py:115` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/voice-direction/mixes/{rid}/audio` | `app/experimental/voice_direction_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/workspace/commands` | `app/experimental/ux_api.py:76` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/workspace/interaction` | `app/experimental/ux_api.py:49` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/workspace/interaction/history` | `app/experimental/ux_api.py:60` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/workspace/resume` | `app/experimental/ux_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/workspace/resume/history` | `app/experimental/ux_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/workspace/search` | `app/experimental/ux_api.py:171` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/workspace/tasks` | `app/experimental/ux_api.py:198` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/world/canon` | `app/experimental/world_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/world/character-state` | `app/experimental/world_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/world/continuity` | `app/experimental/world_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/world/records` | `app/experimental/world_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/world/records/{rid}` | `app/experimental/world_api.py:38` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/world/records/{rid}/history` | `app/experimental/world_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/world/schema` | `app/experimental/world_api.py:21` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writer-room` | `app/experimental/writer_room_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writer-room/catalog` | `app/experimental/writer_room_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writer-room/chapters/{cid}` | `app/experimental/writer_room_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writer-room/comments` | `app/experimental/writer_room_api.py:88` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writer-room/conflicts` | `app/experimental/writer_room_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writer-room/index` | `app/experimental/writer_room_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writer-room/notices` | `app/experimental/writer_room_api.py:66` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writer-room/presence-contract` | `app/experimental/writer_room_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writer-room/realtime` | `app/experimental/writer_room_api.py:143` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writer-room/realtime/operations/{rid}` | `app/experimental/writer_room_api.py:177` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writer-room/realtime/participants` | `app/experimental/writer_room_api.py:148` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writing-focus/notes` | `app/experimental/writing_focus_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writing-focus/overview` | `app/experimental/writing_focus_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writing-focus/pins` | `app/experimental/writing_focus_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writing-focus/planning-targets` | `app/experimental/writing_focus_api.py:76` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writing-focus/preferences` | `app/experimental/writing_focus_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writing-focus/references` | `app/experimental/writing_focus_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writing-sessions` | `app/experimental/writing_sessions_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writing-sessions/notices` | `app/experimental/writing_sessions_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/writing-sessions/preferences/notices` | `app/experimental/writing_sessions_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/export` | `app/api.py:1571` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/foreshadowing` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/foreshadowing/reminders` | `app/api.py:1333` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/image-generations` | `app/api.py:2523` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/image-jobs` | `app/api.py:2383` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/import/knowledge-base/review` | `app/api.py:1982` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/import/knowledge-base/review/{review_id}` | `app/api.py:2010` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/locations` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/lore/evidence` | `app/api.py:3361` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/lore/proposals` | `app/api.py:3392` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/media-tasks` | `app/api.py:2614` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/memories` | `app/api.py:3475` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/memory-snapshots` | `app/api.py:3506` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/outline` | `app/api.py:1339` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/overview` | `app/api.py:3220` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/planning-runs` | `app/ai_planning_api.py:30` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/planning-runs/{rid}` | `app/ai_planning_api.py:44` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/relationships` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/research` | `app/api.py:3229` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/research/{research_id}` | `app/api.py:3246` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/review-threads` | `app/creation_workbench_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/scenes` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays` | `app/api.py:2171` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/stats` | `app/api.py:2886` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets` | `app/api.py:2838` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/asset-reference` | `app/api.py:2827` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frame-history` | `app/api.py:2851` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset` | `app/api.py:2834` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy` | `app/api.py:3683` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result-history` | `app/api.py:2823` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/pipeline-status` | `app/api.py:2857` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/revisions` | `app/api.py:2183` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt` | `app/api.py:2209` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/prompt` | `app/api.py:2205` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/suggestion` | `app/api.py:2207` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/video-assemblies` | `app/video_assembly_api.py:18` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/screenplays/{screenplay_id}/visual-continuity` | `app/api.py:2855` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/secrets` | `app/api.py:1351` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/speech-generations` | `app/api.py:2530` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/story-routes` | `app/api.py:1349` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/story_routes` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/text-runtime-diagnostics` | `app/api.py:3722` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/timeline` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/visual-memories` | `app/api.py:2757` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/visual-memory` | `app/api.py:3305` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/visual-memory/{memory_id}` | `app/api.py:3329` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/visual-reference-search` | `app/asset_lifecycle_api.py:101` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/visual-references` | `app/asset_lifecycle_api.py:69` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/volumes` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/world-rules` | `app/api.py:3400` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/writing-goal` | `app/api.py:3223` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/pending-canon` | `app/api.py:1563` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/plugins` | `app/api.py:3528` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/plugins/discover` | `app/api.py:3531` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/plugins/runtime-status` | `app/api.py:3534` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/plugins/{plugin_id}` | `app/api.py:3556` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/plugins/{plugin_id}/resources` | `app/api.py:3577` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/plugins/{plugin_id}/resources/{resource_id}` | `app/api.py:3582` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/continuity/findings` | `app/api.py:3063` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/continuity/findings/{finding_id}` | `app/api.py:3070` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/narrative/chapter-progress` | `app/api.py:3135` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/narrative/character-goals` | `app/api.py:3115` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/narrative/character-goals/{item_id}` | `app/api.py:3117` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/narrative/findings` | `app/api.py:3203` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/narrative/findings/{finding_id}` | `app/api.py:3206` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/narrative/mysteries` | `app/api.py:3098` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/narrative/mysteries/{item_id}` | `app/api.py:3100` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/narrative/proposals` | `app/api.py:3149` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/narrative/proposals/{proposal_id}` | `app/api.py:3153` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/narrative/state` | `app/api.py:3091` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/pending-canon/review` | `app/pending_canon_review_api.py:26` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/{kind}/review-findings` | `app/finding_review_api.py:23` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/{kind}/review-findings/{finding_id}` | `app/finding_review_api.py:40` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/{kind}/review-findings/{finding_id}/evidence` | `app/finding_review_api.py:54` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/projects/{project_id}/{kind}/review-findings/{finding_id}/history` | `app/finding_review_api.py:47` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/providers` | `app/api.py:1109` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/release-gates` | `app/api.py:3595` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/release-gates/{gate_id}` | `app/api.py:3610` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/release/readiness` | `app/api.py:3537` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/research` | `app/api.py:3240` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/text-models` | `app/api.py:796` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/user-preferences` | `app/api.py:815` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/agent-jobs` | `app/api.py:1013` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/agent-jobs/audit` | `app/api.py:990` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/agent-jobs/audit.csv` | `app/api.py:1001` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/agent-jobs/export.csv` | `app/api.py:981` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/agent-jobs/{job_id}` | `app/api.py:1008` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/agent-queue` | `app/workflow_api.py:161` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/agents` | `app/api.py:798` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/agents/{agent_id}/context-preview` | `app/api.py:955` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/asset-providers` | `app/api.py:1111` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/asset-tasks/worker/config` | `app/api.py:2915` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/assets/{asset_id}` | `app/api.py:1873` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/assets/{asset_id}/derivatives` | `app/api.py:3347` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/assets/{asset_id}/download` | `app/api.py:1880` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/audio/providers` | `app/api.py:2482` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/audit` | `app/api.py:3615` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/chapters/{chapter_id}` | `app/api.py:1231` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/chapters/{chapter_id}/history` | `app/api.py:1306` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/admin/workspaces` | `app/collaboration_admin.py:86` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/admin/workspaces/{w}/explain` | `app/collaboration_admin.py:240` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/admin/workspaces/{w}/members` | `app/collaboration_admin.py:165` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/admin/workspaces/{w}/navigation` | `app/collaboration_admin.py:105` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/admin/workspaces/{w}/projects` | `app/collaboration_admin.py:114` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/admin/workspaces/{w}/projects/{p}/storylines` | `app/collaboration_admin.py:139` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/admin/workspaces/{w}/projects/{p}/storylines/{s}/branches` | `app/collaboration_admin.py:152` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/audit` | `app/collaboration_api.py:205` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/bootstrap` | `app/collaboration_api.py:145` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters` | `app/collaboration_api.py:176` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/revisions` | `app/collaboration_api.py:214` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/revisions/{version}` | `app/collaboration_api.py:222` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/snapshots` | `app/collaboration_api.py:231` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters/{chapter_id}/snapshots/{snapshot_id}` | `app/collaboration_api.py:237` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/generations/{generation_id}/snapshot` | `app/collaboration_api.py:246` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/members` | `app/collaboration_api.py:161` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/permissions` | `app/collaboration_api.py:171` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/story-database/{resource}` | `app/collaboration_api.py:194` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/text-runtime-diagnostics` | `app/collaboration_api.py:156` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/visual-text-workflow` | `app/collaboration_api.py:151` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/context-preview` | `app/api.py:1560` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/credentials/{provider}` | `app/api.py:1164` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/experimental/capabilities` | `app/experimental/api.py:11` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/experimental/features` | `app/experimental/api.py:7` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/experimental/first-use/sample` | `app/experimental/first_use_api.py:14` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/exports` | `app/api.py:1643` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/exports/{job_id}` | `app/api.py:1839` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/exports/{job_id}/download` | `app/api.py:1803` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/generation-groups/{group_id}` | `app/api.py:1450` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/generation/{jid}` | `app/api.py:1460` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/generation/{jid}/events` | `app/api.py:1467` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/harness/access-audit` | `app/api.py:854` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/harness/access-audit.csv` | `app/api.py:863` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/harness/context` | `app/api.py:880` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/harness/context-contract` | `app/api.py:852` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/harness/launch-readiness` | `app/api.py:840` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/harness/process` | `app/api.py:850` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/harness/status` | `app/api.py:817` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/health` | `app/api.py:792` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/local-interop/context/sources` | `app/local_interop/api.py:238` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/local-interop/events` | `app/local_interop/api.py:292` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/local-interop/events/stream` | `app/local_interop/api.py:299` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/local-interop/models` | `app/local_interop/api.py:266` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/local-interop/status` | `app/local_interop/api.py:211` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/local-session` | `app/api.py:802` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/memory` | `app/api.py:3316` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/health` | `app/model_center/api.py:142` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/local-ai` | `app/model_center/discovery_api.py:22` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/local-ai/scan/{scan_id}` | `app/model_center/discovery_api.py:26` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/models` | `app/model_center/api.py:67` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/models/{model_id}` | `app/model_center/api.py:73` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/pipelines` | `app/model_center/api.py:139` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/runtimes` | `app/model_center/api.py:80` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/runtimes/{runtime_id}` | `app/model_center/api.py:84` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/runtimes/{runtime_id}/capabilities` | `app/model_center/api.py:134` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/runtimes/{runtime_id}/configuration` | `app/model_center/api.py:112` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/runtimes/{runtime_id}/diagnostics` | `app/model_center/api.py:124` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/model-center/runtimes/{runtime_id}/logs` | `app/model_center/api.py:129` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/models` | `app/api.py:1202` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/multimodal/health` | `app/api.py:2314` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels` | `app/api.py:1204` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}` | `app/api.py:1214` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/adaptations` | `app/adaptation_api.py:94` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/adaptations/catalog` | `app/adaptation_api.py:82` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/adaptations/{proposal_id}/history` | `app/adaptation_api.py:165` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}` | `app/adaptation_api.py:149` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/asset-tasks/stats` | `app/api.py:2884` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/asset-tasks/worker/status` | `app/api.py:2913` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/asset-trash` | `app/asset_lifecycle_api.py:50` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/assets` | `app/api.py:1859` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/assets/{asset_id}/references` | `app/asset_lifecycle_api.py:63` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/audio-production/settings` | `app/api.py:2536` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/audiobook/jobs` | `app/api.py:2609` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/audiobook/jobs/{job_id}/subtitles.{format}` | `app/api.py:2626` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/audiobook/manifest` | `app/api.py:2548` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/audiobook/mix-plan` | `app/api.py:2568` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/canon` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/chapters` | `app/api.py:1223` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/chapters/archived` | `app/api.py:1225` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/chapters/{cid}/privacy` | `app/api.py:3698` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/character-evolution` | `app/api.py:3262` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/character-evolution/{evolution_id}` | `app/api.py:3273` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/characters` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/characters/{character_id}/evolution` | `app/api.py:3292` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/characters/{character_id}/memories` | `app/api.py:3490` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/creation-records` | `app/creation_workbench_api.py:33` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/creation-reference-data` | `app/creation_workbench_api.py:28` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/audiobook/capabilities` | `app/experimental/audiobook_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/audiobook/mappings` | `app/experimental/audiobook_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/audiobook/mixes` | `app/experimental/audiobook_api.py:104` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/audiobook/plans` | `app/experimental/audiobook_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/duration-manifest` | `app/experimental/audiobook_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/subtitles` | `app/experimental/audiobook_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/audiobook/profiles` | `app/experimental/audiobook_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/catalog` | `app/experimental/branch_manuscript_api.py:133` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters` | `app/experimental/branch_manuscript_api.py:144` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}` | `app/experimental/branch_manuscript_api.py:155` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/history` | `app/experimental/branch_manuscript_api.py:165` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/merges/{rid}/review` | `app/experimental/branch_manuscript_api.py:244` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/records` | `app/experimental/branch_manuscript_api.py:190` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/branch-manuscript/sources` | `app/experimental/branch_manuscript_api.py:206` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/change-impact/refreshes` | `app/experimental/change_impact_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/change-impact/sources` | `app/experimental/change_impact_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/comic-layouts/catalog` | `app/experimental/comic_layouts_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/comic-layouts/images/{aid}` | `app/experimental/comic_layouts_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/comic-layouts/records` | `app/experimental/comic_layouts_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/export` | `app/experimental/comic_layouts_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/segments/{index}` | `app/experimental/comic_layouts_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/declarative-agents/catalog` | `app/experimental/declarative_agents_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/declarative-agents/runs` | `app/experimental/declarative_agents_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/declarative-agents/runs/{rid}` | `app/experimental/declarative_agents_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/director/catalog` | `app/experimental/director_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/director/plans` | `app/experimental/director_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/embeddings/indexes` | `app/experimental/embeddings_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/embeddings/indexes/{rid}/records` | `app/experimental/embeddings_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/embeddings/providers` | `app/experimental/embeddings_api.py:55` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/embeddings/sources` | `app/experimental/embeddings_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/embeddings/status` | `app/experimental/embeddings_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/embeddings/visual-identity/checks` | `app/experimental/embeddings_api.py:108` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/embeddings/visual-identity/checks/{rid}` | `app/experimental/embeddings_api.py:113` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/embeddings/visual-identity/checks/{rid}/selection` | `app/experimental/embeddings_api.py:118` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/embeddings/visual-identity/profiles` | `app/experimental/embeddings_api.py:103` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/imports/candidates` | `app/experimental/imports_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/imports/jobs` | `app/experimental/imports_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/imports/jobs/{job_id}` | `app/experimental/imports_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/imports/jobs/{job_id}/chunks` | `app/experimental/imports_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/interactive-stories` | `app/experimental/interactive_story_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/interactive-stories/catalog` | `app/experimental/interactive_story_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/interactive-stories/engine-contract` | `app/experimental/interactive_story_api.py:38` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}` | `app/experimental/interactive_story_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/language-editions` | `app/experimental/multilingual_editions_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/language-editions/catalog` | `app/experimental/multilingual_editions_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/language-editions/translation/routes` | `app/experimental/multilingual_editions_api.py:108` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/language-editions/{eid}` | `app/experimental/multilingual_editions_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/translations` | `app/experimental/multilingual_editions_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/local-ai/workflow-inspections` | `app/experimental/local_ai_inspection_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/local-ai/workflow-inspections/reports` | `app/experimental/local_ai_inspection_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/media/adapters` | `app/experimental/media_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/media/catalog` | `app/experimental/media_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/media/cover-briefs` | `app/experimental/media_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/media/proposals` | `app/experimental/media_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/media/proposals/{rid}/preview` | `app/experimental/media_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/media/storyboard-briefs` | `app/experimental/media_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/media/tasks` | `app/experimental/media_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/model-benchmarks/profiles` | `app/experimental/model_benchmark_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/model-benchmarks/status` | `app/experimental/model_benchmark_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/model-broker/history` | `app/experimental/model_broker_api.py:132` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/model-broker/jobs/{reservation_id}` | `app/experimental/model_broker_api.py:194` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/model-broker/status` | `app/experimental/model_broker_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/catalog` | `app/experimental/narrative_judge_api.py:26` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/model/catalog` | `app/experimental/narrative_judge_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}` | `app/experimental/narrative_judge_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/offline-sync/catalog` | `app/experimental/offline_sync_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/offline-sync/outbox/{mid}` | `app/experimental/offline_sync_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/offline-sync/production` | `app/experimental/offline_sync_api.py:138` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/offline-sync/production/manifests/{rid}` | `app/experimental/offline_sync_api.py:163` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/offline-sync/production/records` | `app/experimental/offline_sync_api.py:143` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/offline-sync/records` | `app/experimental/offline_sync_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/planning/graphs` | `app/experimental/planning_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/planning/graphs/{gid}` | `app/experimental/planning_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/planning/proposals` | `app/experimental/planning_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/planning/proposals/{pid}` | `app/experimental/planning_api.py:100` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/planning/proposals/{pid}/history` | `app/experimental/planning_api.py:105` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/planning/templates` | `app/experimental/planning_api.py:70` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/portable-projects/catalog` | `app/experimental/portable_projects_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/portable-projects/records` | `app/experimental/portable_projects_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/portable-projects/records/{rid}/file` | `app/experimental/portable_projects_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/portable-projects/storage` | `app/experimental/portable_projects_api.py:83` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/production/assets` | `app/experimental/production_lineage_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/production/assets/{aid}` | `app/experimental/production_lineage_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/production/assets/{aid}/impact` | `app/experimental/production_lineage_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/production/manifests` | `app/experimental/production_lineage_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/production/manifests/{rid}/export` | `app/experimental/production_lineage_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/production/replays` | `app/experimental/production_lineage_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/project-forks/catalog` | `app/experimental/project_forks_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/project-forks/records` | `app/experimental/project_forks_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/project-forks/structured/catalog` | `app/experimental/project_forks_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/project-forks/structured/records` | `app/experimental/project_forks_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/project-forks/universe/catalog` | `app/experimental/project_forks_api.py:145` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/project-forks/universe/incoming` | `app/experimental/project_forks_api.py:190` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/project-forks/universe/incoming/{source_nid}/{pin_id}` | `app/experimental/project_forks_api.py:195` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/project-forks/universe/pins` | `app/experimental/project_forks_api.py:165` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/project-forks/universe/pins/{rid}/history` | `app/experimental/project_forks_api.py:185` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/project-forks/universe/snapshots` | `app/experimental/project_forks_api.py:150` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/reader-preflight/proof` | `app/experimental/reader_preflight_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/reader-preflight/read` | `app/experimental/reader_preflight_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/reader-preflight/settings` | `app/experimental/reader_preflight_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/analysis/jobs` | `app/experimental/research_library_api.py:213` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/analysis/jobs/{rid}` | `app/experimental/research_library_api.py:217` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/analysis/status` | `app/experimental/research_library_api.py:209` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/note-repairs` | `app/experimental/research_library_api.py:174` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/notes` | `app/experimental/research_library_api.py:165` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/notes/{rid}/history` | `app/experimental/research_library_api.py:187` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/search` | `app/experimental/research_library_api.py:150` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/setting-drafts` | `app/experimental/research_library_api.py:192` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/sources` | `app/experimental/research_library_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/sources-archive` | `app/experimental/research_library_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}` | `app/experimental/research_library_api.py:123` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/backrefs` | `app/experimental/research_library_api.py:145` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/history` | `app/experimental/research_library_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/history/{version}/original` | `app/experimental/research_library_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/original` | `app/experimental/research_library_api.py:128` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/review-inbox` | `app/experimental/inbox_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/revisions/catalog` | `app/experimental/revision_intelligence_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/revisions/comparisons` | `app/experimental/revision_intelligence_api.py:68` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/revisions/comparisons-model/catalog` | `app/experimental/revision_intelligence_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}` | `app/experimental/revision_intelligence_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/revisions/milestones` | `app/experimental/revision_intelligence_api.py:189` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/revisions/original-versions` | `app/experimental/revision_intelligence_api.py:57` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/revisions/proposals` | `app/experimental/revision_intelligence_api.py:137` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/revisions/proposals/{rid}` | `app/experimental/revision_intelligence_api.py:142` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/safe-batches` | `app/experimental/safe_batches_api.py:32` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/safe-batches/catalog` | `app/experimental/safe_batches_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/items/{index}/audio` | `app/experimental/safe_batches_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/items/{index}/file` | `app/experimental/safe_batches_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/proposals/{pid}/preview` | `app/experimental/safe_batches_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/story-graph/catalog` | `app/experimental/story_graph_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/story-graph/query` | `app/experimental/story_graph_api.py:109` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/story-graph/records` | `app/experimental/story_graph_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/story-graph/records/{rid}` | `app/experimental/story_graph_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/story-graph/records/{rid}/history` | `app/experimental/story_graph_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/story-graph/records/{rid}/impact` | `app/experimental/story_graph_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/story-records/catalog` | `app/story_record_api.py:68` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/story-records/{kind}/{rid}` | `app/story_record_api.py:82` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/story-simulator/catalog` | `app/experimental/story_simulator_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/story-simulator/runs` | `app/experimental/story_simulator_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}` | `app/experimental/story_simulator_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/style-analysis/analyses` | `app/experimental/style_analysis_api.py:47` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}` | `app/experimental/style_analysis_api.py:55` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/style-analysis/catalog` | `app/experimental/style_analysis_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/style-analysis/model/catalog` | `app/experimental/style_analysis_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/subtitle-timeline/catalog` | `app/experimental/subtitle_timeline_api.py:18` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/subtitle-timeline/processing/catalog` | `app/experimental/subtitle_timeline_api.py:40` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/subtitle-timeline/processing/tasks` | `app/experimental/subtitle_timeline_api.py:43` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/subtitle-timeline/processing/tasks/{rid}/file` | `app/experimental/subtitle_timeline_api.py:53` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/subtitle-timeline/records` | `app/experimental/subtitle_timeline_api.py:21` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/subtitle-timeline/records/{rid}/file.{format}` | `app/experimental/subtitle_timeline_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/teams/catalog` | `app/experimental/teams_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/teams/runs` | `app/experimental/teams_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/teams/runs/{run_id}` | `app/experimental/teams_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/teams/runs/{run_id}/history` | `app/experimental/teams_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/template-library` | `app/experimental/template_library_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/template-library/instances` | `app/experimental/template_library_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/template-library/instances/{rid}/history` | `app/experimental/template_library_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/timeline-exchange/catalog` | `app/experimental/timeline_exchange_api.py:21` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/timeline-exchange/records` | `app/experimental/timeline_exchange_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/timeline-exchange/records/{rid}/file` | `app/experimental/timeline_exchange_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/voice-direction/catalog` | `app/experimental/voice_direction_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/voice-direction/jobs` | `app/experimental/voice_direction_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/voice-direction/jobs/{jid}/audio` | `app/experimental/voice_direction_api.py:115` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/voice-direction/mixes/{rid}/audio` | `app/experimental/voice_direction_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/workspace/commands` | `app/experimental/ux_api.py:76` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/workspace/interaction` | `app/experimental/ux_api.py:49` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/workspace/interaction/history` | `app/experimental/ux_api.py:60` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/workspace/resume` | `app/experimental/ux_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/workspace/resume/history` | `app/experimental/ux_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/workspace/search` | `app/experimental/ux_api.py:171` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/workspace/tasks` | `app/experimental/ux_api.py:198` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/world/canon` | `app/experimental/world_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/world/character-state` | `app/experimental/world_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/world/continuity` | `app/experimental/world_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/world/records` | `app/experimental/world_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/world/records/{rid}` | `app/experimental/world_api.py:38` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/world/records/{rid}/history` | `app/experimental/world_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/world/schema` | `app/experimental/world_api.py:21` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writer-room` | `app/experimental/writer_room_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writer-room/catalog` | `app/experimental/writer_room_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writer-room/chapters/{cid}` | `app/experimental/writer_room_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writer-room/comments` | `app/experimental/writer_room_api.py:88` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writer-room/conflicts` | `app/experimental/writer_room_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writer-room/index` | `app/experimental/writer_room_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writer-room/notices` | `app/experimental/writer_room_api.py:66` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writer-room/presence-contract` | `app/experimental/writer_room_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writer-room/realtime` | `app/experimental/writer_room_api.py:143` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writer-room/realtime/operations/{rid}` | `app/experimental/writer_room_api.py:177` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writer-room/realtime/participants` | `app/experimental/writer_room_api.py:148` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writing-focus/notes` | `app/experimental/writing_focus_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writing-focus/overview` | `app/experimental/writing_focus_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writing-focus/pins` | `app/experimental/writing_focus_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writing-focus/planning-targets` | `app/experimental/writing_focus_api.py:76` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writing-focus/preferences` | `app/experimental/writing_focus_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writing-focus/references` | `app/experimental/writing_focus_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writing-sessions` | `app/experimental/writing_sessions_api.py:19` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writing-sessions/notices` | `app/experimental/writing_sessions_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/writing-sessions/preferences/notices` | `app/experimental/writing_sessions_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/export` | `app/api.py:1571` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/foreshadowing` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/foreshadowing/reminders` | `app/api.py:1333` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/image-generations` | `app/api.py:2523` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/image-jobs` | `app/api.py:2383` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/import/knowledge-base/review` | `app/api.py:1982` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/import/knowledge-base/review/{review_id}` | `app/api.py:2010` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/locations` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/lore/evidence` | `app/api.py:3361` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/lore/proposals` | `app/api.py:3392` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/media-tasks` | `app/api.py:2614` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/memories` | `app/api.py:3475` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/memory-snapshots` | `app/api.py:3506` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/outline` | `app/api.py:1339` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/overview` | `app/api.py:3220` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/planning-runs` | `app/ai_planning_api.py:30` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/planning-runs/{rid}` | `app/ai_planning_api.py:44` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/relationships` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/research` | `app/api.py:3229` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/research/{research_id}` | `app/api.py:3246` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/review-threads` | `app/creation_workbench_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/scenes` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays` | `app/api.py:2171` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/stats` | `app/api.py:2886` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets` | `app/api.py:2838` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/asset-reference` | `app/api.py:2827` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frame-history` | `app/api.py:2851` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset` | `app/api.py:2834` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy` | `app/api.py:3683` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result-history` | `app/api.py:2823` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/pipeline-status` | `app/api.py:2857` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/revisions` | `app/api.py:2183` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt` | `app/api.py:2209` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/prompt` | `app/api.py:2205` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/suggestion` | `app/api.py:2207` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/video-assemblies` | `app/video_assembly_api.py:18` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/visual-continuity` | `app/api.py:2855` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/secrets` | `app/api.py:1351` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/speech-generations` | `app/api.py:2530` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/story-routes` | `app/api.py:1349` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/story_routes` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/text-runtime-diagnostics` | `app/api.py:3722` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/timeline` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/visual-memories` | `app/api.py:2757` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/visual-memory` | `app/api.py:3305` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/visual-memory/{memory_id}` | `app/api.py:3329` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/visual-reference-search` | `app/asset_lifecycle_api.py:101` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/visual-references` | `app/asset_lifecycle_api.py:69` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/volumes` | `app/api.py:1324` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/world-rules` | `app/api.py:3400` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/writing-goal` | `app/api.py:3223` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/pending-canon` | `app/api.py:1563` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/plugins` | `app/api.py:3528` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/plugins/discover` | `app/api.py:3531` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/plugins/runtime-status` | `app/api.py:3534` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/plugins/{plugin_id}` | `app/api.py:3556` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/plugins/{plugin_id}/resources` | `app/api.py:3577` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/plugins/{plugin_id}/resources/{resource_id}` | `app/api.py:3582` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/continuity/findings` | `app/api.py:3063` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/continuity/findings/{finding_id}` | `app/api.py:3070` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/narrative/chapter-progress` | `app/api.py:3135` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/narrative/character-goals` | `app/api.py:3115` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/narrative/character-goals/{item_id}` | `app/api.py:3117` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/narrative/findings` | `app/api.py:3203` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/narrative/findings/{finding_id}` | `app/api.py:3206` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/narrative/mysteries` | `app/api.py:3098` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/narrative/mysteries/{item_id}` | `app/api.py:3100` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/narrative/proposals` | `app/api.py:3149` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/narrative/proposals/{proposal_id}` | `app/api.py:3153` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/narrative/state` | `app/api.py:3091` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/pending-canon/review` | `app/pending_canon_review_api.py:26` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/{kind}/review-findings` | `app/finding_review_api.py:23` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/{kind}/review-findings/{finding_id}` | `app/finding_review_api.py:40` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/{kind}/review-findings/{finding_id}/evidence` | `app/finding_review_api.py:54` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/projects/{project_id}/{kind}/review-findings/{finding_id}/history` | `app/finding_review_api.py:47` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/providers` | `app/api.py:1109` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/release-gates` | `app/api.py:3595` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/release-gates/{gate_id}` | `app/api.py:3610` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/release/readiness` | `app/api.py:3537` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/research` | `app/api.py:3240` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/text-models` | `app/api.py:796` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/user-preferences` | `app/api.py:815` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/video-callback/security` | `app/api.py:2321` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/video-providers` | `app/api.py:2218` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/video-providers/{provider_id}/config` | `app/api.py:2302` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/video-providers/{provider_id}/credential-status` | `app/api.py:2310` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/video-providers/{provider_id}/health` | `app/api.py:2304` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/workflow-runs/{run_id}` | `app/workflow_api.py:138` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/workflows` | `app/workflow_api.py:89` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/workflows/recipes` | `app/workflow_api.py:77` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/workflows/{workflow_id}` | `app/workflow_api.py:113` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/workflows/{workflow_id}/runs` | `app/workflow_api.py:118` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/workspaces` | `app/api.py:1045` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines` | `app/api.py:1063` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches` | `app/api.py:1074` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}` | `app/api.py:1079` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/video-callback/security` | `app/api.py:2321` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/video-providers` | `app/api.py:2218` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/video-providers/{provider_id}/config` | `app/api.py:2302` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/video-providers/{provider_id}/credential-status` | `app/api.py:2310` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/video-providers/{provider_id}/health` | `app/api.py:2304` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/workflow-runs/{run_id}` | `app/workflow_api.py:138` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/workflows` | `app/workflow_api.py:89` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/workflows/recipes` | `app/workflow_api.py:77` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/workflows/{workflow_id}` | `app/workflow_api.py:113` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/workflows/{workflow_id}/runs` | `app/workflow_api.py:118` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/workspaces` | `app/api.py:1045` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines` | `app/api.py:1063` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches` | `app/api.py:1074` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}` | `app/api.py:1079` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/health` | `app/main.py:370` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/novels` | `app/main.py:372` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PATCH | `/api/collaboration/admin/workspaces/{w}` | `app/collaboration_admin.py:101` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PATCH | `/api/collaboration/admin/workspaces/{w}/members/{user_id}/status` | `app/collaboration_admin.py:186` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PATCH | `/api/v1/collaboration/admin/workspaces/{w}` | `app/collaboration_admin.py:101` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PATCH | `/api/v1/collaboration/admin/workspaces/{w}/members/{user_id}/status` | `app/collaboration_admin.py:186` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/agent-jobs` | `app/api.py:962` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/agent-jobs/{job_id}/apply` | `app/api.py:1038` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/agent-jobs/{job_id}/cancel` | `app/api.py:1026` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/agent-jobs/{job_id}/execute` | `app/api.py:1018` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/agent-jobs/{job_id}/retry` | `app/api.py:1030` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/agent-jobs/{job_id}/review` | `app/api.py:1034` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/agent-jobs/{job_id}/start` | `app/api.py:1022` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/agent-queue/{run_id}/{node_id}/execute` | `app/workflow_api.py:174` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/agent-queue/{run_id}/{node_id}/sync` | `app/workflow_api.py:194` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/agent/chat` | `app/api.py:917` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/assets/{asset_id}/derivatives` | `app/api.py:3352` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/audio/generate` | `app/api.py:2507` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/chapters/{chapter_id}/archive` | `app/api.py:1253` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/chapters/{chapter_id}/duplicate` | `app/api.py:1286` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/chapters/{chapter_id}/history/{version}/restore` | `app/api.py:1314` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/chapters/{chapter_id}/move` | `app/api.py:1301` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/chapters/{chapter_id}/rename` | `app/api.py:1290` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/chapters/{chapter_id}/restore-archive` | `app/api.py:1264` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/collaboration/admin/workspaces` | `app/collaboration_admin.py:97` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/collaboration/admin/workspaces/{w}/members/{user_id}` | `app/collaboration_admin.py:176` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/collaboration/admin/workspaces/{w}/permissions` | `app/collaboration_admin.py:221` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/collaboration/admin/workspaces/{w}/projects` | `app/collaboration_admin.py:119` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/collaboration/admin/workspaces/{w}/projects/{p}/storylines` | `app/collaboration_admin.py:145` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/collaboration/admin/workspaces/{w}/projects/{p}/storylines/{s}/branches` | `app/collaboration_admin.py:158` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/collaboration/admin/workspaces/{w}/roles` | `app/collaboration_admin.py:198` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters` | `app/collaboration_api.py:183` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/credentials/{provider}/test` | `app/api.py:1190` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/experimental/first-use/sample` | `app/experimental/first_use_api.py:20` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/experimental/first-use/sample/recover` | `app/experimental/first_use_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/exports` | `app/api.py:1678` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/exports/{job_id}/cancel` | `app/api.py:1746` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/exports/{job_id}/retry` | `app/api.py:1768` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/generate/{operation}` | `app/api.py:1397` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/generate/{operation}/variants` | `app/api.py:1432` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/generation/{jid}/accept` | `app/api.py:1543` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/generation/{jid}/cancel` | `app/api.py:1509` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/generation/{jid}/reject` | `app/api.py:1554` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/generation/{jid}/retry` | `app/api.py:1517` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/harness/process/start` | `app/api.py:896` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/harness/process/stop` | `app/api.py:902` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/images/edits` | `app/api.py:2440` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/images/generate` | `app/api.py:2423` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/ask` | `app/local_interop/api.py:243` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/cancel` | `app/local_interop/api.py:319` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/case/approve` | `app/local_interop/api.py:274` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/case/preview` | `app/local_interop/api.py:270` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/connect` | `app/local_interop/api.py:229` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/context/preview` | `app/local_interop/api.py:234` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/diagnostics/preview` | `app/local_interop/api.py:248` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/diagnostics/share` | `app/local_interop/api.py:252` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/disconnect` | `app/local_interop/api.py:335` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/disconnect-revoke` | `app/local_interop/api.py:331` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/discovery` | `app/local_interop/api.py:224` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/events/pause` | `app/local_interop/api.py:327` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/events/preview` | `app/local_interop/api.py:278` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/events/subscribe` | `app/local_interop/api.py:282` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/events/unsubscribe` | `app/local_interop/api.py:288` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/handoff` | `app/local_interop/api.py:262` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/permissions/revoke` | `app/local_interop/api.py:323` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/settings` | `app/local_interop/api.py:220` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/local-interop/verify` | `app/local_interop/api.py:257` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/memory` | `app/api.py:3321` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/model-center/local-ai/candidates/{candidate_id}/register` | `app/model_center/discovery_api.py:38` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/model-center/local-ai/candidates/{candidate_id}/validate` | `app/model_center/discovery_api.py:36` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/model-center/local-ai/registrations/{registration_id}/disable` | `app/model_center/discovery_api.py:44` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/model-center/local-ai/registrations/{registration_id}/enable` | `app/model_center/discovery_api.py:42` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/model-center/local-ai/runtimes` | `app/model_center/discovery_api.py:32` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/model-center/local-ai/scan` | `app/model_center/discovery_api.py:24` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/model-center/local-ai/scan/{scan_id}/cancel` | `app/model_center/discovery_api.py:28` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/model-center/runtimes/{runtime_id}/start` | `app/model_center/api.py:101` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/model-center/runtimes/{runtime_id}/stop` | `app/model_center/api.py:106` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/model-center/runtimes/{runtime_id}/validate` | `app/model_center/api.py:88` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels` | `app/api.py:1207` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/import` | `app/api.py:1894` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/adaptations` | `app/adaptation_api.py:99` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/adaptations/{proposal_id}/actions/{action}` | `app/adaptation_api.py:170` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/adaptations/{proposal_id}/approve` | `app/adaptation_api.py:110` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/adaptations/{proposal_id}/materialize` | `app/adaptation_api.py:115` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/actions/{action}` | `app/adaptation_api.py:175` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/apply` | `app/adaptation_api.py:141` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/generate` | `app/adaptation_api.py:128` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/review` | `app/adaptation_api.py:135` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/asset-tasks/claim` | `app/api.py:2888` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/asset-tasks/dispatch` | `app/api.py:2890` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/asset-tasks/recover` | `app/api.py:2880` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/asset-tasks/timeout` | `app/api.py:2892` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/asset-tasks/worker/run-once` | `app/api.py:2894` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/asset-tasks/worker/start` | `app/api.py:2902` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/asset-tasks/worker/stop` | `app/api.py:2911` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/assets` | `app/api.py:1849` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/assets/{asset_id}/restore` | `app/asset_lifecycle_api.py:57` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/audiobook/chapters/{chapter_id}/export` | `app/api.py:2698` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/audiobook/chapters/{chapter_id}/queue` | `app/api.py:2577` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/audiobook/chapters/{chapter_id}/queue-segments` | `app/api.py:2591` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/audiobook/jobs/consume` | `app/api.py:2677` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/audiobook/jobs/{job_id}/cancel` | `app/api.py:2647` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/audiobook/jobs/{job_id}/execute` | `app/api.py:2656` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/audiobook/jobs/{job_id}/retry` | `app/api.py:2638` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/chapters` | `app/api.py:1227` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/chapters/{chapter_id}/knowledge-base/review` | `app/api.py:1999` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/character-evolution` | `app/api.py:3267` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/characters/consistency-check` | `app/api.py:3053` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/characters/{character_id}/evolution` | `app/api.py:3297` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/continuity/scan-chapter` | `app/api.py:2933` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/creation-records` | `app/creation_workbench_api.py:38` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/creation-records/{rid}/{action}` | `app/creation_workbench_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/audiobook/mappings` | `app/experimental/audiobook_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/audiobook/mixes/{rid}/{action}` | `app/experimental/audiobook_api.py:110` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/audiobook/plans` | `app/experimental/audiobook_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/tracks` | `app/experimental/audiobook_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/{action}` | `app/experimental/audiobook_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/audiobook/profiles` | `app/experimental/audiobook_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/author-context/generate` | `app/experimental/author_context_api.py:377` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/author-context/generate-variants` | `app/experimental/author_context_api.py:442` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/author-context/preview` | `app/experimental/author_context_api.py:340` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/author-context/preview-variants` | `app/experimental/author_context_api.py:414` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/author-context/sources` | `app/experimental/author_context_api.py:322` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/branch-manuscript/chapters` | `app/experimental/branch_manuscript_api.py:150` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/archive/{action}` | `app/experimental/branch_manuscript_api.py:175` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/delete` | `app/experimental/branch_manuscript_api.py:180` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/move` | `app/experimental/branch_manuscript_api.py:185` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/restore` | `app/experimental/branch_manuscript_api.py:170` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/branch-manuscript/compare` | `app/experimental/branch_manuscript_api.py:227` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/branch-manuscript/forks/preview` | `app/experimental/branch_manuscript_api.py:215` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/branch-manuscript/forks/{rid}/apply` | `app/experimental/branch_manuscript_api.py:221` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/branch-manuscript/merges` | `app/experimental/branch_manuscript_api.py:233` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/branch-manuscript/merges/{rid}/apply` | `app/experimental/branch_manuscript_api.py:256` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/branch-manuscript/merges/{rid}/recovery` | `app/experimental/branch_manuscript_api.py:263` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/branch-manuscript/{kind}/{rid}/cancel` | `app/experimental/branch_manuscript_api.py:269` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/change-impact/preflights` | `app/experimental/change_impact_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/change-impact/preflights/{rid}/prepare` | `app/experimental/change_impact_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/change-impact/query` | `app/experimental/change_impact_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/change-impact/refreshes/{rid}/cancel` | `app/experimental/change_impact_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/change-impact/refreshes/{rid}/execute` | `app/experimental/change_impact_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/images/{aid}/approve` | `app/experimental/comic_layouts_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/records` | `app/experimental/comic_layouts_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/approve` | `app/experimental/comic_layouts_api.py:81` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/preflight` | `app/experimental/comic_layouts_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/restore` | `app/experimental/comic_layouts_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/declarative-agents/definitions/{rid}/runs` | `app/experimental/declarative_agents_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/declarative-agents/preflight` | `app/experimental/declarative_agents_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/declarative-agents/runs/{rid}/model/dispatch` | `app/experimental/declarative_agents_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/declarative-agents/runs/{rid}/model/preview` | `app/experimental/declarative_agents_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/declarative-agents/runs/{rid}/model/refresh` | `app/experimental/declarative_agents_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/declarative-agents/runs/{rid}/{action}` | `app/experimental/declarative_agents_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/director/compare` | `app/experimental/director_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/director/plans` | `app/experimental/director_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/director/plans/{rid}/{action}` | `app/experimental/director_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/embeddings/hybrid-query` | `app/experimental/embeddings_api.py:98` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/embeddings/indexes` | `app/experimental/embeddings_api.py:66` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/embeddings/indexes/{rid}/{action}` | `app/experimental/embeddings_api.py:83` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/embeddings/query` | `app/experimental/embeddings_api.py:93` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/embeddings/visual-identity/checks` | `app/experimental/embeddings_api.py:123` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/embeddings/visual-identity/checks/{rid}/{action}` | `app/experimental/embeddings_api.py:129` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/imports/candidates/{candidate_id}/review` | `app/experimental/imports_api.py:123` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/imports/jobs` | `app/experimental/imports_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/imports/jobs/{job_id}/commit` | `app/experimental/imports_api.py:95` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/imports/jobs/{job_id}/process` | `app/experimental/imports_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/imports/jobs/{job_id}/review-batch` | `app/experimental/imports_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/imports/jobs/{job_id}/{action}` | `app/experimental/imports_api.py:111` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/interactive-stories` | `app/experimental/interactive_story_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/export` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/export-preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/history` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/refresh` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/refresh-preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/restore-revision` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/review` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/interactive-stories/{sid}/review-preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/language-editions` | `app/experimental/multilingual_editions_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/export` | `app/experimental/multilingual_editions_api.py:94` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/export-preview` | `app/experimental/multilingual_editions_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/refresh` | `app/experimental/multilingual_editions_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/refresh-preview` | `app/experimental/multilingual_editions_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/rules` | `app/experimental/multilingual_editions_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/rules/{rid}/review` | `app/experimental/multilingual_editions_api.py:74` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/preview` | `app/experimental/multilingual_editions_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/review` | `app/experimental/multilingual_editions_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/translation-preview` | `app/experimental/multilingual_editions_api.py:118` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/{action}` | `app/experimental/multilingual_editions_api.py:130` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/language-editions/{eid}/translations/{rid}/{action}` | `app/experimental/multilingual_editions_api.py:123` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/local-ai/workflow-inspections/inspect` | `app/experimental/local_ai_inspection_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/local-ai/workflow-inspections/reports` | `app/experimental/local_ai_inspection_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/media/cover-briefs` | `app/experimental/media_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/media/proposals/compare` | `app/experimental/media_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/media/proposals/{rid}/{action}` | `app/experimental/media_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/media/storyboard-briefs` | `app/experimental/media_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/media/tasks` | `app/experimental/media_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/media/tasks/{rid}/{action}` | `app/experimental/media_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/model-benchmarks/comparisons` | `app/experimental/model_benchmark_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/model-benchmarks/comparisons/{rid}/vote` | `app/experimental/model_benchmark_api.py:120` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/model-benchmarks/evidence/import` | `app/experimental/model_benchmark_api.py:94` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/model-benchmarks/evidence/{rid}/invalidate` | `app/experimental/model_benchmark_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/model-benchmarks/evidence/{rid}/review` | `app/experimental/model_benchmark_api.py:101` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/model-benchmarks/runs` | `app/experimental/model_benchmark_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/model-benchmarks/runs/{rid}/{action}` | `app/experimental/model_benchmark_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/model-benchmarks/sets` | `app/experimental/model_benchmark_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/model-broker/generate` | `app/experimental/model_broker_api.py:138` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/model-broker/jobs/{reservation_id}/cancel` | `app/experimental/model_broker_api.py:206` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/model-broker/ledger/{reservation_id}/reconcile` | `app/experimental/model_broker_api.py:183` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/model-broker/preview` | `app/experimental/model_broker_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/findings/{rid}/review` | `app/experimental/narrative_judge_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/cancel` | `app/experimental/narrative_judge_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/dispatch` | `app/experimental/narrative_judge_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/preview` | `app/experimental/narrative_judge_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/refresh` | `app/experimental/narrative_judge_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/channels` | `app/experimental/offline_sync_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/channels/{rid}/queue` | `app/experimental/offline_sync_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/channels/{rid}/receive` | `app/experimental/offline_sync_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/channels/{rid}/revoke` | `app/experimental/offline_sync_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/channels/{rid}/selection` | `app/experimental/offline_sync_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/channels/{rid}/selection/preview` | `app/experimental/offline_sync_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/inbox/{mid}/apply` | `app/experimental/offline_sync_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/inbox/{mid}/recovery` | `app/experimental/offline_sync_api.py:125` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/inbox/{mid}/review` | `app/experimental/offline_sync_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/outbox/{mid}/delivery` | `app/experimental/offline_sync_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/outbox/{mid}/export` | `app/experimental/offline_sync_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/production/devices` | `app/experimental/offline_sync_api.py:148` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/production/devices/{rid}/revoke` | `app/experimental/offline_sync_api.py:153` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/production/manifests` | `app/experimental/offline_sync_api.py:158` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/production/transfers` | `app/experimental/offline_sync_api.py:168` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/offline-sync/production/transfers/{rid}/actions` | `app/experimental/offline_sync_api.py:173` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/planning/generate` | `app/experimental/planning_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/planning/graphs` | `app/experimental/planning_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/planning/graphs/{gid}/{action}` | `app/experimental/planning_api.py:60` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/planning/nodes` | `app/experimental/planning_api.py:50` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/planning/nodes/{node_id}/{action}` | `app/experimental/planning_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/planning/proposals` | `app/experimental/planning_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/planning/proposals/compare` | `app/experimental/planning_api.py:95` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/planning/proposals/{pid}/restore` | `app/experimental/planning_api.py:110` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/planning/proposals/{pid}/{action}` | `app/experimental/planning_api.py:115` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/planning/templates` | `app/experimental/planning_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/portable-projects/cleanup` | `app/experimental/portable_projects_api.py:88` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/portable-projects/export` | `app/experimental/portable_projects_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/portable-projects/import-preflight` | `app/experimental/portable_projects_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/portable-projects/records/{rid}/relink` | `app/experimental/portable_projects_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/portable-projects/records/{rid}/restore` | `app/experimental/portable_projects_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/portable-projects/relink-preflight` | `app/experimental/portable_projects_api.py:73` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/production/manifests` | `app/experimental/production_lineage_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/production/manifests/{rid}/preflight` | `app/experimental/production_lineage_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/production/manifests/{rid}/replay` | `app/experimental/production_lineage_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/production/replays/{rid}/cancel` | `app/experimental/production_lineage_api.py:122` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/production/replays/{rid}/execute` | `app/experimental/production_lineage_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/merges/{mid}/recovery` | `app/experimental/project_forks_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/merges/{mid}/restore` | `app/experimental/project_forks_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/preflight` | `app/experimental/project_forks_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/structured/merges/{mid}/recovery` | `app/experimental/project_forks_api.py:127` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/structured/merges/{mid}/restore` | `app/experimental/project_forks_api.py:132` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/structured/preflight` | `app/experimental/project_forks_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/structured/{rid}/apply` | `app/experimental/project_forks_api.py:122` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/structured/{rid}/compare` | `app/experimental/project_forks_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/structured/{rid}/create` | `app/experimental/project_forks_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/universe/pin-preview` | `app/experimental/project_forks_api.py:170` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/universe/pins` | `app/experimental/project_forks_api.py:175` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/universe/pins/{rid}/release` | `app/experimental/project_forks_api.py:180` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/universe/snapshot-preview` | `app/experimental/project_forks_api.py:155` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/universe/snapshots` | `app/experimental/project_forks_api.py:160` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/{rid}/apply` | `app/experimental/project_forks_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/{rid}/compare` | `app/experimental/project_forks_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/project-forks/{rid}/create` | `app/experimental/project_forks_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/reader-preflight/annotations` | `app/experimental/reader_preflight_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/reader-preflight/check` | `app/experimental/reader_preflight_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/reader-preflight/ignore` | `app/experimental/reader_preflight_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/reader-preflight/open` | `app/experimental/reader_preflight_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/research-library/analysis/jobs` | `app/experimental/research_library_api.py:221` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/{action}` | `app/experimental/research_library_api.py:225` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/research-library/citation` | `app/experimental/research_library_api.py:155` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/research-library/context-preview` | `app/experimental/research_library_api.py:160` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/research-library/notes` | `app/experimental/research_library_api.py:170` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/research-library/notes/{rid}/delete` | `app/experimental/research_library_api.py:183` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/research-library/setting-drafts` | `app/experimental/research_library_api.py:197` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/research-library/setting-drafts/{rid}/{action}` | `app/experimental/research_library_api.py:201` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/research-library/sources/fetch-webpage` | `app/experimental/research_library_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/research-library/sources/import` | `app/experimental/research_library_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/research-library/sources/{rid}/restore` | `app/experimental/research_library_api.py:119` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/research-library/sources/{rid}/{action}` | `app/experimental/research_library_api.py:141` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/review-inbox/batch` | `app/experimental/inbox_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/review-inbox/{domain}/{item_id}/{action}` | `app/experimental/inbox_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/comparisons` | `app/experimental/revision_intelligence_api.py:73` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/comparisons/preview` | `app/experimental/revision_intelligence_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}/model/cancel` | `app/experimental/revision_intelligence_api.py:127` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}/model/dispatch` | `app/experimental/revision_intelligence_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}/model/opinions/{oid}/{action}` | `app/experimental/revision_intelligence_api.py:132` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}/model/preview` | `app/experimental/revision_intelligence_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}/model/refresh` | `app/experimental/revision_intelligence_api.py:122` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}/review` | `app/experimental/revision_intelligence_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/locks` | `app/experimental/revision_intelligence_api.py:177` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/locks/unlock` | `app/experimental/revision_intelligence_api.py:183` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/milestones` | `app/experimental/revision_intelligence_api.py:194` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/proposals` | `app/experimental/revision_intelligence_api.py:153` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/proposals/{rid}/apply` | `app/experimental/revision_intelligence_api.py:165` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/proposals/{rid}/preview` | `app/experimental/revision_intelligence_api.py:159` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/proposals/{rid}/rebase` | `app/experimental/revision_intelligence_api.py:171` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/revisions/selection` | `app/experimental/revision_intelligence_api.py:147` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/safe-batches/preflight` | `app/experimental/safe_batches_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/approve-media` | `app/experimental/safe_batches_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/approve-voice` | `app/experimental/safe_batches_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/confirm` | `app/experimental/safe_batches_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/dispatch-next` | `app/experimental/safe_batches_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/reconcile` | `app/experimental/safe_batches_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/retry-failed` | `app/experimental/safe_batches_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/safe-batches/{rid}/stop` | `app/experimental/safe_batches_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-graph/character-context` | `app/experimental/story_graph_api.py:116` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-graph/records` | `app/experimental/story_graph_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-graph/records/{rid}/{action}` | `app/experimental/story_graph_api.py:91` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-records/{kind}/{rid}/feedback` | `app/story_record_api.py:110` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-records/{kind}/{rid}/restore` | `app/story_record_api.py:104` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-simulator/context` | `app/experimental/story_simulator_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-simulator/runs` | `app/experimental/story_simulator_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/cancel` | `app/experimental/story_simulator_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/model/cancel` | `app/experimental/story_simulator_api.py:95` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/model/dispatch` | `app/experimental/story_simulator_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/model/preview` | `app/experimental/story_simulator_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/model/refresh` | `app/experimental/story_simulator_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/model/select` | `app/experimental/story_simulator_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/save` | `app/experimental/story_simulator_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/story-simulator/runs/{rid}/step` | `app/experimental/story_simulator_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/style-analysis/analyses` | `app/experimental/style_analysis_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/cancel` | `app/experimental/style_analysis_api.py:83` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/dispatch` | `app/experimental/style_analysis_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/preview` | `app/experimental/style_analysis_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/refresh` | `app/experimental/style_analysis_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/style-analysis/analyses/{rid}/opinions/{opinion_id}/review` | `app/experimental/style_analysis_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/style-analysis/profiles` | `app/experimental/style_analysis_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/style-analysis/profiles/{rid}/preview` | `app/experimental/style_analysis_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/style-analysis/profiles/{rid}/{action}` | `app/experimental/style_analysis_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/subtitle-timeline/processing/tasks` | `app/experimental/subtitle_timeline_api.py:46` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/subtitle-timeline/processing/tasks/{rid}/{action}` | `app/experimental/subtitle_timeline_api.py:49` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/subtitle-timeline/records` | `app/experimental/subtitle_timeline_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/subtitle-timeline/records/{rid}/cues/{cid}/merge` | `app/experimental/subtitle_timeline_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/subtitle-timeline/records/{rid}/cues/{cid}/split` | `app/experimental/subtitle_timeline_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/teams/runs` | `app/experimental/teams_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/teams/runs/{run_id}/nodes/{node_id}/claim` | `app/experimental/teams_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/teams/runs/{run_id}/nodes/{node_id}/complete` | `app/experimental/teams_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/teams/runs/{run_id}/review/{action}` | `app/experimental/teams_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/teams/runs/{run_id}/{action}` | `app/experimental/teams_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/template-library/install` | `app/experimental/template_library_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/template-library/instances` | `app/experimental/template_library_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/template-library/instances/{rid}/compare` | `app/experimental/template_library_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/template-library/instances/{rid}/revert` | `app/experimental/template_library_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/template-library/instances/{rid}/update` | `app/experimental/template_library_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/template-library/packages/{pid}/favorite` | `app/experimental/template_library_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/template-library/packages/{pid}/uninstall` | `app/experimental/template_library_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/template-library/preview` | `app/experimental/template_library_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/timeline-exchange/from-screenplay` | `app/experimental/timeline_exchange_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/timeline-exchange/import` | `app/experimental/timeline_exchange_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/voice-direction/jobs/{jid}/approve` | `app/experimental/voice_direction_api.py:126` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/voice-direction/jobs/{jid}/cancel` | `app/experimental/voice_direction_api.py:99` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/voice-direction/jobs/{jid}/execute` | `app/experimental/voice_direction_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/voice-direction/jobs/{jid}/retry` | `app/experimental/voice_direction_api.py:108` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/voice-direction/plans/{rid}/mix` | `app/experimental/voice_direction_api.py:50` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/voice-direction/plans/{rid}/queue` | `app/experimental/voice_direction_api.py:74` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/voice-direction/plans/{rid}/reorder` | `app/experimental/voice_direction_api.py:70` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/voice-direction/plans/{rid}/segments/{sid}/lock` | `app/experimental/voice_direction_api.py:66` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/workspace/commands/resolve` | `app/experimental/ux_api.py:82` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/workspace/diagnostics/export` | `app/experimental/ux_api.py:215` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/workspace/diagnostics/preview` | `app/experimental/ux_api.py:210` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/workspace/interaction/reset` | `app/experimental/ux_api.py:71` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/workspace/interaction/restore` | `app/experimental/ux_api.py:66` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/workspace/resume/reset-layout` | `app/experimental/ux_api.py:109` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/workspace/resume/resolve` | `app/experimental/ux_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/workspace/search/cancel` | `app/experimental/ux_api.py:184` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/workspace/search/rebuild` | `app/experimental/ux_api.py:180` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/workspace/search/resolve` | `app/experimental/ux_api.py:188` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/workspace/tasks/{authority}/{task_id}/cancel` | `app/experimental/ux_api.py:204` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/world/records` | `app/experimental/world_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/world/records/{rid}/{action}` | `app/experimental/world_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writer-room/comments` | `app/experimental/writer_room_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writer-room/comments/{rid}` | `app/experimental/writer_room_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writer-room/packages/download` | `app/experimental/writer_room_api.py:106` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writer-room/packages/preview` | `app/experimental/writer_room_api.py:101` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writer-room/realtime/operations` | `app/experimental/writer_room_api.py:171` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writer-room/realtime/operations/{rid}/actions` | `app/experimental/writer_room_api.py:182` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writer-room/realtime/participants` | `app/experimental/writer_room_api.py:153` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writer-room/realtime/participants/{rid}/actions` | `app/experimental/writer_room_api.py:159` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writer-room/tasks` | `app/experimental/writer_room_api.py:76` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writer-room/tasks/{rid}/transition` | `app/experimental/writer_room_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writing-focus/bookmarks/open` | `app/experimental/writing_focus_api.py:47` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writing-focus/notes` | `app/experimental/writing_focus_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writing-focus/notes/{note_id}/planning/copy` | `app/experimental/writing_focus_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writing-focus/notes/{note_id}/planning/preview` | `app/experimental/writing_focus_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writing-focus/notes/{note_id}/{action}` | `app/experimental/writing_focus_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writing-sessions` | `app/experimental/writing_sessions_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/writing-sessions/notices/acknowledge` | `app/experimental/writing_sessions_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/image-generations/import` | `app/api.py:2733` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/image-jobs` | `app/api.py:2388` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/image-jobs/{job_id}/accept` | `app/api.py:2417` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/image-jobs/{job_id}/cancel` | `app/api.py:2407` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/image-jobs/{job_id}/execute` | `app/api.py:2401` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/image-jobs/{job_id}/retry` | `app/api.py:2412` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/import/knowledge-base/review` | `app/api.py:1939` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/import/knowledge-base/review/{review_id}/ai-analyze` | `app/api.py:2065` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/knowledge-base/review` | `app/api.py:1989` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/lore/evidence` | `app/api.py:3378` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/lore/proposals` | `app/api.py:3422` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/lore/proposals/{proposal_id}/approve` | `app/api.py:3436` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/lore/proposals/{proposal_id}/approve-memory` | `app/api.py:3458` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/lore/proposals/{proposal_id}/reject` | `app/api.py:3447` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/memories/{memory_id}/retract` | `app/api.py:3495` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/memory-snapshots` | `app/api.py:3515` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/planning-runs` | `app/ai_planning_api.py:35` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/planning-runs/{rid}/cancel` | `app/ai_planning_api.py:49` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/planning-runs/{rid}/candidates/{cid}/apply` | `app/ai_planning_api.py:59` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/planning-runs/{rid}/candidates/{cid}/save-draft` | `app/ai_planning_api.py:54` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/research` | `app/api.py:3234` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/review-threads` | `app/creation_workbench_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/review-threads/{rid}/{action}` | `app/creation_workbench_api.py:63` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays` | `app/api.py:2175` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/approve` | `app/api.py:2181` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks` | `app/api.py:2869` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/cleanup` | `app/api.py:2882` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/recover` | `app/api.py:2878` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/execute` | `app/api.py:2873` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/retry` | `app/api.py:2876` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/assets` | `app/api.py:2863` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/assets/approve` | `app/api.py:2865` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks` | `app/api.py:2215` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets/retry` | `app/api.py:2842` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/callback` | `app/api.py:2805` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/cancel` | `app/api.py:2782` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/execute` | `app/api.py:2779` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset` | `app/api.py:2831` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/download` | `app/api.py:2845` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/retry` | `app/api.py:2848` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/retry` | `app/api.py:2785` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/sync` | `app/api.py:2820` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance` | `app/api.py:2859` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance-until-gate` | `app/api.py:2861` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/revise` | `app/api.py:2185` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/shots` | `app/api.py:2187` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/shots/approve` | `app/api.py:2189` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/storyboard` | `app/api.py:2193` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/storyboard/approve` | `app/api.py:2195` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions` | `app/api.py:2199` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions/approve` | `app/api.py:2201` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/screenplays/{screenplay_id}/video-assemblies` | `app/video_assembly_api.py:22` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/speech-generations/import` | `app/api.py:2712` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/visual-memory` | `app/api.py:3310` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/visual-references` | `app/asset_lifecycle_api.py:80` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/visual-references/{memory_id}/approve` | `app/asset_lifecycle_api.py:94` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/world-rules` | `app/api.py:3410` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/packaged/bootstrap` | `app/packaging/bootstrap_api.py:68` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/packaged/initial-workspace` | `app/packaging/bootstrap_api.py:91` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/pending-canon/{pid}/approve` | `app/api.py:1566` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/pending-canon/{pid}/reject` | `app/api.py:1569` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/plugin-packages/install` | `app/plugin_management_api.py:37` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/plugin-packages/{plugin_id}/rollback` | `app/plugin_management_api.py:43` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/plugins` | `app/api.py:3550` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/plugins/{plugin_id}/disable` | `app/api.py:3572` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/plugins/{plugin_id}/enable` | `app/api.py:3567` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/continuity/checks` | `app/api.py:2922` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/continuity/findings/{finding_id}/resolve` | `app/api.py:3076` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/chapter-progress` | `app/api.py:3128` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/character-goals` | `app/api.py:3111` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/character-goals/{item_id}/transition` | `app/api.py:3121` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/checks` | `app/api.py:3195` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/expectations` | `app/api.py:3183` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/findings/{finding_id}/resolve` | `app/api.py:3211` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/foreshadowing` | `app/api.py:3086` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/foreshadowing/{item_id}/transition` | `app/api.py:3180` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/mysteries` | `app/api.py:3094` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/mysteries/{item_id}/transition` | `app/api.py:3104` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/proposals` | `app/api.py:3143` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/proposals/{proposal_id}/accept` | `app/api.py:3157` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/proposals/{proposal_id}/reject` | `app/api.py:3167` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/threads` | `app/api.py:3081` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/narrative/threads/{thread_id}/transition` | `app/api.py:3177` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/pending-canon/{pending_id}/cancel-recovery` | `app/pending_canon_review_api.py:58` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/pending-canon/{pending_id}/preview` | `app/pending_canon_review_api.py:33` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/pending-canon/{pending_id}/recover` | `app/pending_canon_review_api.py:49` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/pending-canon/{pending_id}/review` | `app/pending_canon_review_api.py:40` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/{kind}/review-checks` | `app/finding_review_api.py:30` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/projects/{project_id}/{kind}/review-findings/{finding_id}/review` | `app/finding_review_api.py:61` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/release-gates` | `app/api.py:3604` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/speech/synthesize` | `app/api.py:2461` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/agent-jobs` | `app/api.py:962` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/agent-jobs/{job_id}/apply` | `app/api.py:1038` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/agent-jobs/{job_id}/cancel` | `app/api.py:1026` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/agent-jobs/{job_id}/execute` | `app/api.py:1018` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/agent-jobs/{job_id}/retry` | `app/api.py:1030` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/agent-jobs/{job_id}/review` | `app/api.py:1034` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/agent-jobs/{job_id}/start` | `app/api.py:1022` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/agent-queue/{run_id}/{node_id}/execute` | `app/workflow_api.py:174` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/agent-queue/{run_id}/{node_id}/sync` | `app/workflow_api.py:194` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/agent/chat` | `app/api.py:917` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/assets/{asset_id}/derivatives` | `app/api.py:3352` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/audio/generate` | `app/api.py:2507` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/chapters/{chapter_id}/archive` | `app/api.py:1253` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/chapters/{chapter_id}/duplicate` | `app/api.py:1286` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/chapters/{chapter_id}/history/{version}/restore` | `app/api.py:1314` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/chapters/{chapter_id}/move` | `app/api.py:1301` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/chapters/{chapter_id}/rename` | `app/api.py:1290` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/chapters/{chapter_id}/restore-archive` | `app/api.py:1264` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/collaboration/admin/workspaces` | `app/collaboration_admin.py:97` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/collaboration/admin/workspaces/{w}/members/{user_id}` | `app/collaboration_admin.py:176` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/collaboration/admin/workspaces/{w}/permissions` | `app/collaboration_admin.py:221` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/collaboration/admin/workspaces/{w}/projects` | `app/collaboration_admin.py:119` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/collaboration/admin/workspaces/{w}/projects/{p}/storylines` | `app/collaboration_admin.py:145` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/collaboration/admin/workspaces/{w}/projects/{p}/storylines/{s}/branches` | `app/collaboration_admin.py:158` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/collaboration/admin/workspaces/{w}/roles` | `app/collaboration_admin.py:198` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/collaboration/workspaces/{w}/projects/{p}/storylines/{s}/branches/{b}/chapters` | `app/collaboration_api.py:183` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/credentials/{provider}/test` | `app/api.py:1190` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/experimental/first-use/sample` | `app/experimental/first_use_api.py:20` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/experimental/first-use/sample/recover` | `app/experimental/first_use_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/exports` | `app/api.py:1678` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/exports/{job_id}/cancel` | `app/api.py:1746` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/exports/{job_id}/retry` | `app/api.py:1768` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/generate/{operation}` | `app/api.py:1397` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/generate/{operation}/variants` | `app/api.py:1432` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/generation/{jid}/accept` | `app/api.py:1543` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/generation/{jid}/cancel` | `app/api.py:1509` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/generation/{jid}/reject` | `app/api.py:1554` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/generation/{jid}/retry` | `app/api.py:1517` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/harness/process/start` | `app/api.py:896` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/harness/process/stop` | `app/api.py:902` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/images/edits` | `app/api.py:2440` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/images/generate` | `app/api.py:2423` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/ask` | `app/local_interop/api.py:243` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/cancel` | `app/local_interop/api.py:319` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/case/approve` | `app/local_interop/api.py:274` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/case/preview` | `app/local_interop/api.py:270` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/connect` | `app/local_interop/api.py:229` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/context/preview` | `app/local_interop/api.py:234` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/diagnostics/preview` | `app/local_interop/api.py:248` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/diagnostics/share` | `app/local_interop/api.py:252` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/disconnect` | `app/local_interop/api.py:335` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/disconnect-revoke` | `app/local_interop/api.py:331` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/discovery` | `app/local_interop/api.py:224` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/events/pause` | `app/local_interop/api.py:327` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/events/preview` | `app/local_interop/api.py:278` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/events/subscribe` | `app/local_interop/api.py:282` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/events/unsubscribe` | `app/local_interop/api.py:288` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/handoff` | `app/local_interop/api.py:262` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/permissions/revoke` | `app/local_interop/api.py:323` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/settings` | `app/local_interop/api.py:220` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/local-interop/verify` | `app/local_interop/api.py:257` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/memory` | `app/api.py:3321` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/model-center/local-ai/candidates/{candidate_id}/register` | `app/model_center/discovery_api.py:38` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/model-center/local-ai/candidates/{candidate_id}/validate` | `app/model_center/discovery_api.py:36` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/model-center/local-ai/registrations/{registration_id}/disable` | `app/model_center/discovery_api.py:44` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/model-center/local-ai/registrations/{registration_id}/enable` | `app/model_center/discovery_api.py:42` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/model-center/local-ai/runtimes` | `app/model_center/discovery_api.py:32` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/model-center/local-ai/scan` | `app/model_center/discovery_api.py:24` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/model-center/local-ai/scan/{scan_id}/cancel` | `app/model_center/discovery_api.py:28` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/model-center/runtimes/{runtime_id}/start` | `app/model_center/api.py:101` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/model-center/runtimes/{runtime_id}/stop` | `app/model_center/api.py:106` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/model-center/runtimes/{runtime_id}/validate` | `app/model_center/api.py:88` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels` | `app/api.py:1207` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/import` | `app/api.py:1894` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/adaptations` | `app/adaptation_api.py:99` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/actions/{action}` | `app/adaptation_api.py:170` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/approve` | `app/adaptation_api.py:110` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/materialize` | `app/adaptation_api.py:115` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/actions/{action}` | `app/adaptation_api.py:175` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/apply` | `app/adaptation_api.py:141` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/generate` | `app/adaptation_api.py:128` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/review` | `app/adaptation_api.py:135` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/asset-tasks/claim` | `app/api.py:2888` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/asset-tasks/dispatch` | `app/api.py:2890` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/asset-tasks/recover` | `app/api.py:2880` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/asset-tasks/timeout` | `app/api.py:2892` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/asset-tasks/worker/run-once` | `app/api.py:2894` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/asset-tasks/worker/start` | `app/api.py:2902` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/asset-tasks/worker/stop` | `app/api.py:2911` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/assets` | `app/api.py:1849` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/assets/{asset_id}/restore` | `app/asset_lifecycle_api.py:57` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/audiobook/chapters/{chapter_id}/export` | `app/api.py:2698` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/audiobook/chapters/{chapter_id}/queue` | `app/api.py:2577` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/audiobook/chapters/{chapter_id}/queue-segments` | `app/api.py:2591` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/audiobook/jobs/consume` | `app/api.py:2677` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/audiobook/jobs/{job_id}/cancel` | `app/api.py:2647` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/audiobook/jobs/{job_id}/execute` | `app/api.py:2656` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/audiobook/jobs/{job_id}/retry` | `app/api.py:2638` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/chapters` | `app/api.py:1227` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/chapters/{chapter_id}/knowledge-base/review` | `app/api.py:1999` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/character-evolution` | `app/api.py:3267` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/characters/consistency-check` | `app/api.py:3053` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/characters/{character_id}/evolution` | `app/api.py:3297` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/continuity/scan-chapter` | `app/api.py:2933` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/creation-records` | `app/creation_workbench_api.py:38` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/creation-records/{rid}/{action}` | `app/creation_workbench_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/audiobook/mappings` | `app/experimental/audiobook_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/audiobook/mixes/{rid}/{action}` | `app/experimental/audiobook_api.py:110` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/audiobook/plans` | `app/experimental/audiobook_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/tracks` | `app/experimental/audiobook_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/{action}` | `app/experimental/audiobook_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/audiobook/profiles` | `app/experimental/audiobook_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/author-context/generate` | `app/experimental/author_context_api.py:377` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/author-context/generate-variants` | `app/experimental/author_context_api.py:442` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/author-context/preview` | `app/experimental/author_context_api.py:340` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/author-context/preview-variants` | `app/experimental/author_context_api.py:414` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/author-context/sources` | `app/experimental/author_context_api.py:322` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters` | `app/experimental/branch_manuscript_api.py:150` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/archive/{action}` | `app/experimental/branch_manuscript_api.py:175` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/delete` | `app/experimental/branch_manuscript_api.py:180` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/move` | `app/experimental/branch_manuscript_api.py:185` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}/restore` | `app/experimental/branch_manuscript_api.py:170` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/compare` | `app/experimental/branch_manuscript_api.py:227` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/forks/preview` | `app/experimental/branch_manuscript_api.py:215` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/forks/{rid}/apply` | `app/experimental/branch_manuscript_api.py:221` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/merges` | `app/experimental/branch_manuscript_api.py:233` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/merges/{rid}/apply` | `app/experimental/branch_manuscript_api.py:256` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/merges/{rid}/recovery` | `app/experimental/branch_manuscript_api.py:263` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/branch-manuscript/{kind}/{rid}/cancel` | `app/experimental/branch_manuscript_api.py:269` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/change-impact/preflights` | `app/experimental/change_impact_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/change-impact/preflights/{rid}/prepare` | `app/experimental/change_impact_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/change-impact/query` | `app/experimental/change_impact_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/change-impact/refreshes/{rid}/cancel` | `app/experimental/change_impact_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/change-impact/refreshes/{rid}/execute` | `app/experimental/change_impact_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/images/{aid}/approve` | `app/experimental/comic_layouts_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records` | `app/experimental/comic_layouts_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/approve` | `app/experimental/comic_layouts_api.py:81` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/preflight` | `app/experimental/comic_layouts_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/restore` | `app/experimental/comic_layouts_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions/{rid}/runs` | `app/experimental/declarative_agents_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/preflight` | `app/experimental/declarative_agents_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/runs/{rid}/model/dispatch` | `app/experimental/declarative_agents_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/runs/{rid}/model/preview` | `app/experimental/declarative_agents_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/runs/{rid}/model/refresh` | `app/experimental/declarative_agents_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/declarative-agents/runs/{rid}/{action}` | `app/experimental/declarative_agents_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/director/compare` | `app/experimental/director_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/director/plans` | `app/experimental/director_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/director/plans/{rid}/{action}` | `app/experimental/director_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/embeddings/hybrid-query` | `app/experimental/embeddings_api.py:98` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/embeddings/indexes` | `app/experimental/embeddings_api.py:66` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/embeddings/indexes/{rid}/{action}` | `app/experimental/embeddings_api.py:83` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/embeddings/query` | `app/experimental/embeddings_api.py:93` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/embeddings/visual-identity/checks` | `app/experimental/embeddings_api.py:123` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/embeddings/visual-identity/checks/{rid}/{action}` | `app/experimental/embeddings_api.py:129` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/imports/candidates/{candidate_id}/review` | `app/experimental/imports_api.py:123` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/imports/jobs` | `app/experimental/imports_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/imports/jobs/{job_id}/commit` | `app/experimental/imports_api.py:95` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/imports/jobs/{job_id}/process` | `app/experimental/imports_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/imports/jobs/{job_id}/review-batch` | `app/experimental/imports_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/imports/jobs/{job_id}/{action}` | `app/experimental/imports_api.py:111` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/interactive-stories` | `app/experimental/interactive_story_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/export` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/export-preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/history` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/refresh` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/refresh-preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/restore-revision` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/review` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}/review-preview` | `app/experimental/interactive_story_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/language-editions` | `app/experimental/multilingual_editions_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/export` | `app/experimental/multilingual_editions_api.py:94` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/export-preview` | `app/experimental/multilingual_editions_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/refresh` | `app/experimental/multilingual_editions_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/refresh-preview` | `app/experimental/multilingual_editions_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/rules` | `app/experimental/multilingual_editions_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/rules/{rid}/review` | `app/experimental/multilingual_editions_api.py:74` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/preview` | `app/experimental/multilingual_editions_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/review` | `app/experimental/multilingual_editions_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/translation-preview` | `app/experimental/multilingual_editions_api.py:118` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}/{action}` | `app/experimental/multilingual_editions_api.py:130` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/translations/{rid}/{action}` | `app/experimental/multilingual_editions_api.py:123` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/local-ai/workflow-inspections/inspect` | `app/experimental/local_ai_inspection_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/local-ai/workflow-inspections/reports` | `app/experimental/local_ai_inspection_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/media/cover-briefs` | `app/experimental/media_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/media/proposals/compare` | `app/experimental/media_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/media/proposals/{rid}/{action}` | `app/experimental/media_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/media/storyboard-briefs` | `app/experimental/media_api.py:56` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/media/tasks` | `app/experimental/media_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/media/tasks/{rid}/{action}` | `app/experimental/media_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/comparisons` | `app/experimental/model_benchmark_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/comparisons/{rid}/vote` | `app/experimental/model_benchmark_api.py:120` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/evidence/import` | `app/experimental/model_benchmark_api.py:94` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/evidence/{rid}/invalidate` | `app/experimental/model_benchmark_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/evidence/{rid}/review` | `app/experimental/model_benchmark_api.py:101` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/runs` | `app/experimental/model_benchmark_api.py:78` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/runs/{rid}/{action}` | `app/experimental/model_benchmark_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/model-benchmarks/sets` | `app/experimental/model_benchmark_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/model-broker/generate` | `app/experimental/model_broker_api.py:138` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/model-broker/jobs/{reservation_id}/cancel` | `app/experimental/model_broker_api.py:206` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/model-broker/ledger/{reservation_id}/reconcile` | `app/experimental/model_broker_api.py:183` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/model-broker/preview` | `app/experimental/model_broker_api.py:113` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/findings/{rid}/review` | `app/experimental/narrative_judge_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/cancel` | `app/experimental/narrative_judge_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/dispatch` | `app/experimental/narrative_judge_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/preview` | `app/experimental/narrative_judge_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs/{rid}/model/refresh` | `app/experimental/narrative_judge_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels` | `app/experimental/offline_sync_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels/{rid}/queue` | `app/experimental/offline_sync_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels/{rid}/receive` | `app/experimental/offline_sync_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels/{rid}/revoke` | `app/experimental/offline_sync_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels/{rid}/selection` | `app/experimental/offline_sync_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/channels/{rid}/selection/preview` | `app/experimental/offline_sync_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/inbox/{mid}/apply` | `app/experimental/offline_sync_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/inbox/{mid}/recovery` | `app/experimental/offline_sync_api.py:125` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/inbox/{mid}/review` | `app/experimental/offline_sync_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/outbox/{mid}/delivery` | `app/experimental/offline_sync_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/outbox/{mid}/export` | `app/experimental/offline_sync_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/production/devices` | `app/experimental/offline_sync_api.py:148` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/production/devices/{rid}/revoke` | `app/experimental/offline_sync_api.py:153` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/production/manifests` | `app/experimental/offline_sync_api.py:158` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/production/transfers` | `app/experimental/offline_sync_api.py:168` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/offline-sync/production/transfers/{rid}/actions` | `app/experimental/offline_sync_api.py:173` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/planning/generate` | `app/experimental/planning_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/planning/graphs` | `app/experimental/planning_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/planning/graphs/{gid}/{action}` | `app/experimental/planning_api.py:60` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/planning/nodes` | `app/experimental/planning_api.py:50` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/planning/nodes/{node_id}/{action}` | `app/experimental/planning_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/planning/proposals` | `app/experimental/planning_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/planning/proposals/compare` | `app/experimental/planning_api.py:95` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/planning/proposals/{pid}/restore` | `app/experimental/planning_api.py:110` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/planning/proposals/{pid}/{action}` | `app/experimental/planning_api.py:115` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/planning/templates` | `app/experimental/planning_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/portable-projects/cleanup` | `app/experimental/portable_projects_api.py:88` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/portable-projects/export` | `app/experimental/portable_projects_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/portable-projects/import-preflight` | `app/experimental/portable_projects_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/portable-projects/records/{rid}/relink` | `app/experimental/portable_projects_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/portable-projects/records/{rid}/restore` | `app/experimental/portable_projects_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/portable-projects/relink-preflight` | `app/experimental/portable_projects_api.py:73` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/production/manifests` | `app/experimental/production_lineage_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/production/manifests/{rid}/preflight` | `app/experimental/production_lineage_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/production/manifests/{rid}/replay` | `app/experimental/production_lineage_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/production/replays/{rid}/cancel` | `app/experimental/production_lineage_api.py:122` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/production/replays/{rid}/execute` | `app/experimental/production_lineage_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/merges/{mid}/recovery` | `app/experimental/project_forks_api.py:82` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/merges/{mid}/restore` | `app/experimental/project_forks_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/preflight` | `app/experimental/project_forks_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/structured/merges/{mid}/recovery` | `app/experimental/project_forks_api.py:127` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/structured/merges/{mid}/restore` | `app/experimental/project_forks_api.py:132` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/structured/preflight` | `app/experimental/project_forks_api.py:107` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/structured/{rid}/apply` | `app/experimental/project_forks_api.py:122` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/structured/{rid}/compare` | `app/experimental/project_forks_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/structured/{rid}/create` | `app/experimental/project_forks_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/universe/pin-preview` | `app/experimental/project_forks_api.py:170` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/universe/pins` | `app/experimental/project_forks_api.py:175` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/universe/pins/{rid}/release` | `app/experimental/project_forks_api.py:180` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/universe/snapshot-preview` | `app/experimental/project_forks_api.py:155` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/universe/snapshots` | `app/experimental/project_forks_api.py:160` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/{rid}/apply` | `app/experimental/project_forks_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/{rid}/compare` | `app/experimental/project_forks_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/project-forks/{rid}/create` | `app/experimental/project_forks_api.py:67` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/reader-preflight/annotations` | `app/experimental/reader_preflight_api.py:34` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/reader-preflight/check` | `app/experimental/reader_preflight_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/reader-preflight/ignore` | `app/experimental/reader_preflight_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/reader-preflight/open` | `app/experimental/reader_preflight_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/research-library/analysis/jobs` | `app/experimental/research_library_api.py:221` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/research-library/analysis/jobs/{rid}/{action}` | `app/experimental/research_library_api.py:225` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/research-library/citation` | `app/experimental/research_library_api.py:155` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/research-library/context-preview` | `app/experimental/research_library_api.py:160` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/research-library/notes` | `app/experimental/research_library_api.py:170` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/research-library/notes/{rid}/delete` | `app/experimental/research_library_api.py:183` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/research-library/setting-drafts` | `app/experimental/research_library_api.py:197` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/research-library/setting-drafts/{rid}/{action}` | `app/experimental/research_library_api.py:201` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/research-library/sources/fetch-webpage` | `app/experimental/research_library_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/research-library/sources/import` | `app/experimental/research_library_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/restore` | `app/experimental/research_library_api.py:119` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/{action}` | `app/experimental/research_library_api.py:141` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/review-inbox/batch` | `app/experimental/inbox_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/review-inbox/{domain}/{item_id}/{action}` | `app/experimental/inbox_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons` | `app/experimental/revision_intelligence_api.py:73` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/preview` | `app/experimental/revision_intelligence_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}/model/cancel` | `app/experimental/revision_intelligence_api.py:127` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}/model/dispatch` | `app/experimental/revision_intelligence_api.py:117` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}/model/opinions/{oid}/{action}` | `app/experimental/revision_intelligence_api.py:132` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}/model/preview` | `app/experimental/revision_intelligence_api.py:112` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}/model/refresh` | `app/experimental/revision_intelligence_api.py:122` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}/review` | `app/experimental/revision_intelligence_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/locks` | `app/experimental/revision_intelligence_api.py:177` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/locks/unlock` | `app/experimental/revision_intelligence_api.py:183` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/milestones` | `app/experimental/revision_intelligence_api.py:194` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/proposals` | `app/experimental/revision_intelligence_api.py:153` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/proposals/{rid}/apply` | `app/experimental/revision_intelligence_api.py:165` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/proposals/{rid}/preview` | `app/experimental/revision_intelligence_api.py:159` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/proposals/{rid}/rebase` | `app/experimental/revision_intelligence_api.py:171` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/revisions/selection` | `app/experimental/revision_intelligence_api.py:147` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/safe-batches/preflight` | `app/experimental/safe_batches_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/approve-media` | `app/experimental/safe_batches_api.py:72` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/approve-voice` | `app/experimental/safe_batches_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/confirm` | `app/experimental/safe_batches_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/dispatch-next` | `app/experimental/safe_batches_api.py:42` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/reconcile` | `app/experimental/safe_batches_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/retry-failed` | `app/experimental/safe_batches_api.py:48` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/safe-batches/{rid}/stop` | `app/experimental/safe_batches_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-graph/character-context` | `app/experimental/story_graph_api.py:116` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-graph/records` | `app/experimental/story_graph_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-graph/records/{rid}/{action}` | `app/experimental/story_graph_api.py:91` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-records/{kind}/{rid}/feedback` | `app/story_record_api.py:110` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-records/{kind}/{rid}/restore` | `app/story_record_api.py:104` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-simulator/context` | `app/experimental/story_simulator_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs` | `app/experimental/story_simulator_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/cancel` | `app/experimental/story_simulator_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/model/cancel` | `app/experimental/story_simulator_api.py:95` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/model/dispatch` | `app/experimental/story_simulator_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/model/preview` | `app/experimental/story_simulator_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/model/refresh` | `app/experimental/story_simulator_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/model/select` | `app/experimental/story_simulator_api.py:90` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/save` | `app/experimental/story_simulator_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/story-simulator/runs/{rid}/step` | `app/experimental/story_simulator_api.py:49` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses` | `app/experimental/style_analysis_api.py:51` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/cancel` | `app/experimental/style_analysis_api.py:83` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/dispatch` | `app/experimental/style_analysis_api.py:75` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/preview` | `app/experimental/style_analysis_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}/model/refresh` | `app/experimental/style_analysis_api.py:79` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/style-analysis/analyses/{rid}/opinions/{opinion_id}/review` | `app/experimental/style_analysis_api.py:87` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/style-analysis/profiles` | `app/experimental/style_analysis_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/style-analysis/profiles/{rid}/preview` | `app/experimental/style_analysis_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/style-analysis/profiles/{rid}/{action}` | `app/experimental/style_analysis_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/subtitle-timeline/processing/tasks` | `app/experimental/subtitle_timeline_api.py:46` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/subtitle-timeline/processing/tasks/{rid}/{action}` | `app/experimental/subtitle_timeline_api.py:49` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/subtitle-timeline/records` | `app/experimental/subtitle_timeline_api.py:24` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/subtitle-timeline/records/{rid}/cues/{cid}/merge` | `app/experimental/subtitle_timeline_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/subtitle-timeline/records/{rid}/cues/{cid}/split` | `app/experimental/subtitle_timeline_api.py:30` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/teams/runs` | `app/experimental/teams_api.py:44` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/teams/runs/{run_id}/nodes/{node_id}/claim` | `app/experimental/teams_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/teams/runs/{run_id}/nodes/{node_id}/complete` | `app/experimental/teams_api.py:64` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/teams/runs/{run_id}/review/{action}` | `app/experimental/teams_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/teams/runs/{run_id}/{action}` | `app/experimental/teams_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/template-library/install` | `app/experimental/template_library_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/template-library/instances` | `app/experimental/template_library_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/template-library/instances/{rid}/compare` | `app/experimental/template_library_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/template-library/instances/{rid}/revert` | `app/experimental/template_library_api.py:52` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/template-library/instances/{rid}/update` | `app/experimental/template_library_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/template-library/packages/{pid}/favorite` | `app/experimental/template_library_api.py:28` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/template-library/packages/{pid}/uninstall` | `app/experimental/template_library_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/template-library/preview` | `app/experimental/template_library_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/timeline-exchange/from-screenplay` | `app/experimental/timeline_exchange_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/timeline-exchange/import` | `app/experimental/timeline_exchange_api.py:29` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/voice-direction/jobs/{jid}/approve` | `app/experimental/voice_direction_api.py:126` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/voice-direction/jobs/{jid}/cancel` | `app/experimental/voice_direction_api.py:99` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/voice-direction/jobs/{jid}/execute` | `app/experimental/voice_direction_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/voice-direction/jobs/{jid}/retry` | `app/experimental/voice_direction_api.py:108` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/voice-direction/plans/{rid}/mix` | `app/experimental/voice_direction_api.py:50` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/voice-direction/plans/{rid}/queue` | `app/experimental/voice_direction_api.py:74` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/voice-direction/plans/{rid}/reorder` | `app/experimental/voice_direction_api.py:70` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/voice-direction/plans/{rid}/segments/{sid}/lock` | `app/experimental/voice_direction_api.py:66` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/workspace/commands/resolve` | `app/experimental/ux_api.py:82` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/workspace/diagnostics/export` | `app/experimental/ux_api.py:215` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/workspace/diagnostics/preview` | `app/experimental/ux_api.py:210` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/workspace/interaction/reset` | `app/experimental/ux_api.py:71` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/workspace/interaction/restore` | `app/experimental/ux_api.py:66` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/workspace/resume/reset-layout` | `app/experimental/ux_api.py:109` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/workspace/resume/resolve` | `app/experimental/ux_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/workspace/search/cancel` | `app/experimental/ux_api.py:184` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/workspace/search/rebuild` | `app/experimental/ux_api.py:180` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/workspace/search/resolve` | `app/experimental/ux_api.py:188` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/workspace/tasks/{authority}/{task_id}/cancel` | `app/experimental/ux_api.py:204` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/world/records` | `app/experimental/world_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/world/records/{rid}/{action}` | `app/experimental/world_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writer-room/comments` | `app/experimental/writer_room_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writer-room/comments/{rid}` | `app/experimental/writer_room_api.py:97` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writer-room/packages/download` | `app/experimental/writer_room_api.py:106` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writer-room/packages/preview` | `app/experimental/writer_room_api.py:101` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writer-room/realtime/operations` | `app/experimental/writer_room_api.py:171` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writer-room/realtime/operations/{rid}/actions` | `app/experimental/writer_room_api.py:182` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writer-room/realtime/participants` | `app/experimental/writer_room_api.py:153` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writer-room/realtime/participants/{rid}/actions` | `app/experimental/writer_room_api.py:159` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writer-room/tasks` | `app/experimental/writer_room_api.py:76` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writer-room/tasks/{rid}/transition` | `app/experimental/writer_room_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writing-focus/bookmarks/open` | `app/experimental/writing_focus_api.py:47` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writing-focus/notes` | `app/experimental/writing_focus_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writing-focus/notes/{note_id}/planning/copy` | `app/experimental/writing_focus_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writing-focus/notes/{note_id}/planning/preview` | `app/experimental/writing_focus_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writing-focus/notes/{note_id}/{action}` | `app/experimental/writing_focus_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writing-sessions` | `app/experimental/writing_sessions_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/writing-sessions/notices/acknowledge` | `app/experimental/writing_sessions_api.py:37` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/image-generations/import` | `app/api.py:2733` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/image-jobs` | `app/api.py:2388` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/image-jobs/{job_id}/accept` | `app/api.py:2417` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/image-jobs/{job_id}/cancel` | `app/api.py:2407` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/image-jobs/{job_id}/execute` | `app/api.py:2401` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/image-jobs/{job_id}/retry` | `app/api.py:2412` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/import/knowledge-base/review` | `app/api.py:1939` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/import/knowledge-base/review/{review_id}/ai-analyze` | `app/api.py:2065` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/knowledge-base/review` | `app/api.py:1989` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/lore/evidence` | `app/api.py:3378` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/lore/proposals` | `app/api.py:3422` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/lore/proposals/{proposal_id}/approve` | `app/api.py:3436` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/lore/proposals/{proposal_id}/approve-memory` | `app/api.py:3458` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/lore/proposals/{proposal_id}/reject` | `app/api.py:3447` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/memories/{memory_id}/retract` | `app/api.py:3495` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/memory-snapshots` | `app/api.py:3515` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/planning-runs` | `app/ai_planning_api.py:35` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/planning-runs/{rid}/cancel` | `app/ai_planning_api.py:49` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/planning-runs/{rid}/candidates/{cid}/apply` | `app/ai_planning_api.py:59` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/planning-runs/{rid}/candidates/{cid}/save-draft` | `app/ai_planning_api.py:54` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/research` | `app/api.py:3234` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/review-threads` | `app/creation_workbench_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/review-threads/{rid}/{action}` | `app/creation_workbench_api.py:63` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays` | `app/api.py:2175` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/approve` | `app/api.py:2181` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks` | `app/api.py:2869` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/cleanup` | `app/api.py:2882` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/recover` | `app/api.py:2878` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/execute` | `app/api.py:2873` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}/retry` | `app/api.py:2876` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/assets` | `app/api.py:2863` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/assets/approve` | `app/api.py:2865` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks` | `app/api.py:2215` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/import-assets/retry` | `app/api.py:2842` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/callback` | `app/api.py:2805` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/cancel` | `app/api.py:2782` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/execute` | `app/api.py:2779` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset` | `app/api.py:2831` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/download` | `app/api.py:2845` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/import-asset/retry` | `app/api.py:2848` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/retry` | `app/api.py:2785` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/sync` | `app/api.py:2820` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance` | `app/api.py:2859` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/pipeline-advance-until-gate` | `app/api.py:2861` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/revise` | `app/api.py:2185` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/shots` | `app/api.py:2187` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/shots/approve` | `app/api.py:2189` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/storyboard` | `app/api.py:2193` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/storyboard/approve` | `app/api.py:2195` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions` | `app/api.py:2199` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions/approve` | `app/api.py:2201` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/video-assemblies` | `app/video_assembly_api.py:22` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/speech-generations/import` | `app/api.py:2712` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/visual-memory` | `app/api.py:3310` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/visual-references` | `app/asset_lifecycle_api.py:80` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/visual-references/{memory_id}/approve` | `app/asset_lifecycle_api.py:94` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/world-rules` | `app/api.py:3410` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/packaged/bootstrap` | `app/packaging/bootstrap_api.py:68` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/packaged/initial-workspace` | `app/packaging/bootstrap_api.py:91` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/pending-canon/{pid}/approve` | `app/api.py:1566` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/pending-canon/{pid}/reject` | `app/api.py:1569` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/plugin-packages/install` | `app/plugin_management_api.py:37` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/plugin-packages/{plugin_id}/rollback` | `app/plugin_management_api.py:43` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/plugins` | `app/api.py:3550` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/plugins/{plugin_id}/disable` | `app/api.py:3572` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/plugins/{plugin_id}/enable` | `app/api.py:3567` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/continuity/checks` | `app/api.py:2922` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/continuity/findings/{finding_id}/resolve` | `app/api.py:3076` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/chapter-progress` | `app/api.py:3128` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/character-goals` | `app/api.py:3111` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/character-goals/{item_id}/transition` | `app/api.py:3121` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/checks` | `app/api.py:3195` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/expectations` | `app/api.py:3183` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/findings/{finding_id}/resolve` | `app/api.py:3211` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/foreshadowing` | `app/api.py:3086` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/foreshadowing/{item_id}/transition` | `app/api.py:3180` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/mysteries` | `app/api.py:3094` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/mysteries/{item_id}/transition` | `app/api.py:3104` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/proposals` | `app/api.py:3143` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/proposals/{proposal_id}/accept` | `app/api.py:3157` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/proposals/{proposal_id}/reject` | `app/api.py:3167` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/threads` | `app/api.py:3081` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/narrative/threads/{thread_id}/transition` | `app/api.py:3177` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/pending-canon/{pending_id}/cancel-recovery` | `app/pending_canon_review_api.py:58` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/pending-canon/{pending_id}/preview` | `app/pending_canon_review_api.py:33` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/pending-canon/{pending_id}/recover` | `app/pending_canon_review_api.py:49` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/pending-canon/{pending_id}/review` | `app/pending_canon_review_api.py:40` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/{kind}/review-checks` | `app/finding_review_api.py:30` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/projects/{project_id}/{kind}/review-findings/{finding_id}/review` | `app/finding_review_api.py:61` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/release-gates` | `app/api.py:3604` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/speech/synthesize` | `app/api.py:2461` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/vision/analyze` | `app/api.py:2346` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workflow-runs/{run_id}/nodes/{node_id}/approve` | `app/workflow_api.py:143` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workflow-runs/{run_id}/nodes/{node_id}/reject` | `app/workflow_api.py:149` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workflow-runs/{run_id}/nodes/{node_id}/trigger-agent` | `app/workflow_api.py:155` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workflow-runs/{run_id}/retry` | `app/workflow_api.py:208` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workflow-runs/{run_id}/{action}` | `app/workflow_api.py:216` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workflows` | `app/workflow_api.py:102` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workflows/recipes/{recipe_id}` | `app/workflow_api.py:83` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workflows/{workflow_id}/runs` | `app/workflow_api.py:127` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workspaces` | `app/api.py:1042` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines` | `app/api.py:1055` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches` | `app/api.py:1068` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/mysteries/{item_id}/transition` | `app/api.py:1088` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/proposals/{proposal_id}/accept` | `app/api.py:1098` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/vision/analyze` | `app/api.py:2346` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workflow-runs/{run_id}/nodes/{node_id}/approve` | `app/workflow_api.py:143` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workflow-runs/{run_id}/nodes/{node_id}/reject` | `app/workflow_api.py:149` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workflow-runs/{run_id}/nodes/{node_id}/trigger-agent` | `app/workflow_api.py:155` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workflow-runs/{run_id}/retry` | `app/workflow_api.py:208` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workflow-runs/{run_id}/{action}` | `app/workflow_api.py:216` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workflows` | `app/workflow_api.py:102` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workflows/recipes/{recipe_id}` | `app/workflow_api.py:83` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workflows/{workflow_id}/runs` | `app/workflow_api.py:127` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workspaces` | `app/api.py:1042` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines` | `app/api.py:1055` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches` | `app/api.py:1068` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/mysteries/{item_id}/transition` | `app/api.py:1088` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/workspaces/{workspace_id}/projects/{project_id}/storylines/{storyline_id}/branches/{branch_id}/narrative/proposals/{proposal_id}/accept` | `app/api.py:1098` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/context-packs` | `app/main.py:378` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/asset-providers/{provider_id}` | `app/api.py:1131` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/asset-tasks/worker/config` | `app/api.py:2917` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/audio/providers/{provider_id}` | `app/api.py:2490` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/chapters/{chapter_id}` | `app/api.py:1239` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/credentials/{provider}` | `app/api.py:1170` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/harness-enabled` | `app/api.py:915` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/model-center/local-ai/registrations/{registration_id}` | `app/model_center/discovery_api.py:40` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/model-center/local-ai/runtimes/{runtime_id}` | `app/model_center/discovery_api.py:34` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/model-center/local-ai/settings` | `app/model_center/discovery_api.py:30` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/model-center/runtimes/{runtime_id}/configuration` | `app/model_center/api.py:117` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}` | `app/api.py:1216` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/adaptations/{proposal_id}/blueprint` | `app/adaptation_api.py:105` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/audio-production/settings` | `app/api.py:2542` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/chapters/{cid}/privacy` | `app/api.py:3708` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/character-evolution/{evolution_id}` | `app/api.py:3278` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/characters/{character_id}` | `app/api.py:1325` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/creation-records/{rid}` | `app/creation_workbench_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/segments/{sid}` | `app/experimental/audiobook_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/audiobook/plans/{rid}/segments/{sid}/audio` | `app/experimental/audiobook_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/branch-manuscript/chapters/{cid}` | `app/experimental/branch_manuscript_api.py:160` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/change-impact/locks` | `app/experimental/change_impact_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}` | `app/experimental/comic_layouts_api.py:73` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/declarative-agents/definitions/{rid}` | `app/experimental/declarative_agents_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/embeddings/indexes/{rid}` | `app/experimental/embeddings_api.py:72` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/interactive-stories/{sid}` | `app/experimental/interactive_story_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}` | `app/experimental/multilingual_editions_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/media/cover-briefs/{rid}` | `app/experimental/media_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/media/storyboard-briefs/{rid}` | `app/experimental/media_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/model-benchmarks/sets/{rid}` | `app/experimental/model_benchmark_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/model-broker/budget` | `app/experimental/model_broker_api.py:120` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/model-broker/price` | `app/experimental/model_broker_api.py:126` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/planning/nodes/{node_id}` | `app/experimental/planning_api.py:55` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/production/assets/{aid}/lineage` | `app/experimental/production_lineage_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/reader-preflight/settings` | `app/experimental/reader_preflight_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/research-library/notes/{rid}` | `app/experimental/research_library_api.py:179` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/research-library/sources/{rid}` | `app/experimental/research_library_api.py:137` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/research-library/sources/{rid}/file` | `app/experimental/research_library_api.py:115` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/revisions/comparisons/{rid}` | `app/experimental/revision_intelligence_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/story-graph/records/{rid}` | `app/experimental/story_graph_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/story-records/{kind}/{rid}` | `app/story_record_api.py:87` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/style-analysis/profiles/{rid}` | `app/experimental/style_analysis_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/subtitle-timeline/records/{rid}` | `app/experimental/subtitle_timeline_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/template-library/instances/{rid}` | `app/experimental/template_library_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/voice-direction/plans/{rid}/segments/{sid}` | `app/experimental/voice_direction_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/workspace/interaction` | `app/experimental/ux_api.py:55` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/workspace/resume` | `app/experimental/ux_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/world/records/{rid}` | `app/experimental/world_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/writer-room/realtime/participants/{rid}/cursor` | `app/experimental/writer_room_api.py:165` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/writer-room/tasks/{rid}` | `app/experimental/writer_room_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/writing-focus/notes/{note_id}` | `app/experimental/writing_focus_api.py:66` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/writing-focus/preferences` | `app/experimental/writing_focus_api.py:32` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/writing-sessions/preferences/notices` | `app/experimental/writing_sessions_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/experimental/writing-sessions/{sid}` | `app/experimental/writing_sessions_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/foreshadowing/{foreshadowing_id}` | `app/api.py:1331` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/import/knowledge-base/review/{review_id}` | `app/api.py:2018` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/locations/{location_id}` | `app/api.py:1327` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/outline` | `app/api.py:1341` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/relationships/{relationship_id}` | `app/api.py:1337` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/research/{research_id}` | `app/api.py:3251` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/scenes/{scene_id}` | `app/api.py:1345` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}` | `app/api.py:2871` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/assets/{asset_id}` | `app/api.py:2867` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}` | `app/api.py:2768` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frames` | `app/api.py:2771` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy` | `app/api.py:3688` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/provider` | `app/api.py:2776` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/remote-id` | `app/api.py:2817` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result` | `app/api.py:2802` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/scenes/{scene_id}` | `app/api.py:2179` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/shots/{shot_id}` | `app/api.py:2191` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/storyboard/{card_id}` | `app/api.py:2197` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}` | `app/api.py:2203` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt` | `app/api.py:2212` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/story-routes/{route_id}` | `app/api.py:1347` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/timeline/{event_id}` | `app/api.py:1329` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/visual-memory/{memory_id}` | `app/api.py:3334` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/visual-references/{memory_id}` | `app/asset_lifecycle_api.py:87` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/volumes/{volume_id}` | `app/api.py:1343` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/novels/{nid}/writing-goal` | `app/api.py:3225` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/plugins/{plugin_id}/permissions` | `app/api.py:3561` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/user-preferences-enabled` | `app/api.py:911` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/user-preferences-share-enabled` | `app/api.py:913` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/user-preferences/{key}` | `app/api.py:904` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/asset-providers/{provider_id}` | `app/api.py:1131` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/asset-tasks/worker/config` | `app/api.py:2917` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/audio/providers/{provider_id}` | `app/api.py:2490` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/chapters/{chapter_id}` | `app/api.py:1239` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/credentials/{provider}` | `app/api.py:1170` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/harness-enabled` | `app/api.py:915` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/model-center/local-ai/registrations/{registration_id}` | `app/model_center/discovery_api.py:40` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/model-center/local-ai/runtimes/{runtime_id}` | `app/model_center/discovery_api.py:34` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/model-center/local-ai/settings` | `app/model_center/discovery_api.py:30` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/model-center/runtimes/{runtime_id}/configuration` | `app/model_center/api.py:117` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}` | `app/api.py:1216` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/adaptations/{proposal_id}/blueprint` | `app/adaptation_api.py:105` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/audio-production/settings` | `app/api.py:2542` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/chapters/{cid}/privacy` | `app/api.py:3708` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/character-evolution/{evolution_id}` | `app/api.py:3278` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/characters/{character_id}` | `app/api.py:1325` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/creation-records/{rid}` | `app/creation_workbench_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/segments/{sid}` | `app/experimental/audiobook_api.py:59` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/audiobook/plans/{rid}/segments/{sid}/audio` | `app/experimental/audiobook_api.py:65` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/branch-manuscript/chapters/{cid}` | `app/experimental/branch_manuscript_api.py:160` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/change-impact/locks` | `app/experimental/change_impact_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}` | `app/experimental/comic_layouts_api.py:73` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions/{rid}` | `app/experimental/declarative_agents_api.py:36` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/embeddings/indexes/{rid}` | `app/experimental/embeddings_api.py:72` | DECLARED_CONTRACT_CHANGED, DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/interactive-stories/{sid}` | `app/experimental/interactive_story_api.py:53` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/language-editions/{eid}/segments/{sid}` | `app/experimental/multilingual_editions_api.py:54` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/media/cover-briefs/{rid}` | `app/experimental/media_api.py:45` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/media/storyboard-briefs/{rid}` | `app/experimental/media_api.py:61` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/model-benchmarks/sets/{rid}` | `app/experimental/model_benchmark_api.py:71` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/model-broker/budget` | `app/experimental/model_broker_api.py:120` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/model-broker/price` | `app/experimental/model_broker_api.py:126` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/planning/nodes/{node_id}` | `app/experimental/planning_api.py:55` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/production/assets/{aid}/lineage` | `app/experimental/production_lineage_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/reader-preflight/settings` | `app/experimental/reader_preflight_api.py:22` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/research-library/notes/{rid}` | `app/experimental/research_library_api.py:179` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}` | `app/experimental/research_library_api.py:137` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/research-library/sources/{rid}/file` | `app/experimental/research_library_api.py:115` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/revisions/comparisons/{rid}` | `app/experimental/revision_intelligence_api.py:84` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/story-graph/records/{rid}` | `app/experimental/story_graph_api.py:69` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/story-records/{kind}/{rid}` | `app/story_record_api.py:87` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/style-analysis/profiles/{rid}` | `app/experimental/style_analysis_api.py:35` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/subtitle-timeline/records/{rid}` | `app/experimental/subtitle_timeline_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/template-library/instances/{rid}` | `app/experimental/template_library_api.py:40` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/voice-direction/plans/{rid}/segments/{sid}` | `app/experimental/voice_direction_api.py:62` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/workspace/interaction` | `app/experimental/ux_api.py:55` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/workspace/resume` | `app/experimental/ux_api.py:92` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/world/records/{rid}` | `app/experimental/world_api.py:43` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/writer-room/realtime/participants/{rid}/cursor` | `app/experimental/writer_room_api.py:165` | ADDED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/writer-room/tasks/{rid}` | `app/experimental/writer_room_api.py:80` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/writing-focus/notes/{note_id}` | `app/experimental/writing_focus_api.py:66` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/writing-focus/preferences` | `app/experimental/writing_focus_api.py:32` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/writing-sessions/preferences/notices` | `app/experimental/writing_sessions_api.py:31` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/experimental/writing-sessions/{sid}` | `app/experimental/writing_sessions_api.py:25` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/foreshadowing/{foreshadowing_id}` | `app/api.py:1331` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/import/knowledge-base/review/{review_id}` | `app/api.py:2018` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/locations/{location_id}` | `app/api.py:1327` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/outline` | `app/api.py:1341` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/relationships/{relationship_id}` | `app/api.py:1337` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/research/{research_id}` | `app/api.py:3251` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/scenes/{scene_id}` | `app/api.py:1345` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/asset-tasks/{task_id}` | `app/api.py:2871` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/assets/{asset_id}` | `app/api.py:2867` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}` | `app/api.py:2768` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/frames` | `app/api.py:2771` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/privacy` | `app/api.py:3688` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/provider` | `app/api.py:2776` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/remote-id` | `app/api.py:2817` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/motion-tasks/{task_id}/result` | `app/api.py:2802` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/scenes/{scene_id}` | `app/api.py:2179` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/shots/{shot_id}` | `app/api.py:2191` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/storyboard/{card_id}` | `app/api.py:2197` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}` | `app/api.py:2203` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/screenplays/{screenplay_id}/transitions/{transition_id}/motion-prompt` | `app/api.py:2212` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/story-routes/{route_id}` | `app/api.py:1347` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/timeline/{event_id}` | `app/api.py:1329` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/visual-memory/{memory_id}` | `app/api.py:3334` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/visual-references/{memory_id}` | `app/asset_lifecycle_api.py:87` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/volumes/{volume_id}` | `app/api.py:1343` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/novels/{nid}/writing-goal` | `app/api.py:3225` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/plugins/{plugin_id}/permissions` | `app/api.py:3561` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/user-preferences-enabled` | `app/api.py:911` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/user-preferences-share-enabled` | `app/api.py:913` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/user-preferences/{key}` | `app/api.py:904` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/v1/video-providers/{provider_id}/config` | `app/api.py:2271` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
+| PUT | `/api/video-providers/{provider_id}/config` | `app/api.py:2271` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |

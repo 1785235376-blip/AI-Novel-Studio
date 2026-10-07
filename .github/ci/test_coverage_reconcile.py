@@ -905,7 +905,7 @@ def test_real_pytest_plugin_shards_reconcile(tmp_path):
         "product_nodes": nodes,
         "added_nodes": [],
         "source_files": {
-            str(path.relative_to(tmp_path)): gate._digest(path)
+            path.relative_to(tmp_path).as_posix(): gate._digest(path)
             for path in tests.glob("*.py")
         },
         "skips": {

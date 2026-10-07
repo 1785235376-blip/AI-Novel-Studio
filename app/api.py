@@ -75,7 +75,7 @@ def _store_idempotent(key:str|None, operation:str, value):
     if key: return _idempotency_store.put(f"{operation}:{key}",value)
     return value
 class NovelIn(BaseModel): title:str=Field(min_length=1,max_length=200); genre:str=""; id:str|None=None
-class NovelUpdate(BaseModel): title:str|None=None; genre:str|None=None; status:str|None=None; long_term_summary:str|None=None
+class NovelUpdate(BaseModel): title:str|None=None; genre:str|None=None; status:str|None=None; long_term_summary:str|None=None; world_summary:str|None=Field(default=None,max_length=12000)
 class WritingGoalIn(BaseModel):
     target_words:int=Field(default=0,ge=0)
     target_chapters:int=Field(default=0,ge=0)
@@ -122,34 +122,15 @@ def normalize_world_rule_payload(payload: dict) -> dict:
     return payload
 
 def world_rule_violations(project_id: str, haystack: str, rules: list[dict]) -> list[dict]:
-    serialized = (haystack or "").casefold()
-    findings = []
-    for rule in rules:
-        payload = rule.get("payload") or rule
-        terms = payload.get("forbidden_terms") or payload.get("forbidden") or []
-        if isinstance(terms, str):
-            terms = [terms]
-        hits = [str(term) for term in terms if str(term) and str(term).casefold() in serialized]
-        if hits:
-            findings.append({
-                "id": f"WORLD_RULE:{rule.get('id', 'unknown')}",
-                "project_id": project_id,
-                "finding_type": "WORLD_RULE_VIOLATION",
-                "severity": "HIGH",
-                "description": f"内容触发世界规则：{payload.get('statement', '未命名规则')}",
-                "rule_id": rule.get("id"),
-                "subject_type": "WORLD_RULE",
-                "subject_id": rule.get("id"),
-                "evidence_ids": hits,
-            })
-    return findings
+    from .review import world_rule_violations as evaluate
+    return evaluate(project_id, haystack, rules)
 
 def summarize_foreshadowing(rows: list[dict], chapter: int) -> dict:
     pending = [row for row in rows if row.get("status") in {"OPEN", "PLANTED"}]
     overdue = [row for row in pending if row.get("target_chapter") and int(row["target_chapter"]) <= chapter]
     return {"chapter": chapter, "pending": pending, "overdue": overdue, "paid_off": [row for row in rows if row.get("status") == "PAID_OFF"]}
 class LocationIn(BaseModel): name:str=Field(min_length=1,max_length=160);location_type:str="";description:str="";rules:str="";atmosphere:str="";status:str="ACTIVE";privacy_level:str="CLOUD_ALLOWED"
-class TimelineEventIn(BaseModel): title:str=Field(min_length=1,max_length=200);sequence:int=Field(default=1,ge=0);time:str="";description:str="";location:str="";characters:list[str]=[];chapter_id:str="";status:str="CONFIRMED";privacy_level:str="CLOUD_ALLOWED"
+class TimelineEventIn(BaseModel): title:str=Field(min_length=1,max_length=200);sequence:int=Field(default=1,ge=0);time:str="";start_time:str|None=None;end_time:str|None=None;description:str="";location:str="";characters:list[str]=[];chapter_id:str="";status:str="CONFIRMED";privacy_level:str="CLOUD_ALLOWED"
 class ForeshadowingIn(BaseModel): title:str=Field(min_length=1,max_length=200);description:str="";planted_chapter:int|None=Field(default=None,ge=1);target_chapter:int|None=Field(default=None,ge=1);status:str="OPEN";characters:list[str]=[];events:list[str]=[];privacy_level:str="CLOUD_ALLOWED"
 class RelationshipIn(BaseModel): source_character_id:str=Field(min_length=1);target_character_id:str=Field(min_length=1);relationship_type:str=Field(min_length=1,max_length=80);description:str="";status:str="ACTIVE";valid_from_event_id:str="";valid_to_event_id:str="";certainty:str="CONFIRMED";privacy_level:str="CLOUD_ALLOWED"
 class OutlineIn(BaseModel): theme:str="";premise:str="";structure:str="THREE_ACT";beginning:str="";middle:str="";ending:str="";main_conflict:str="";climax:str="";status:str="DRAFT"
@@ -818,6 +799,19 @@ def text_models(): return {"items":runtime.text_models()}
 def agents():
     from .agent_catalog import public_agent_catalog
     return public_agent_catalog()
+@router.get("/local-session")
+def local_session(request: Request, response: Response, x_session_token: str | None = Header(default=None)):
+    """Validate an explicitly supplied development Host credential, without granting new authority."""
+    if _shared_runtime_authority_enabled():
+        raise HTTPException(404, {"code": "LOCAL_HOST_SESSION_DISABLED"})
+    origin = request.headers.get("Origin")
+    if origin and origin.rstrip("/") != settings.frontend_origin.rstrip("/"):
+        raise HTTPException(403, {"code": "LOCAL_HOST_ORIGIN_DENIED"})
+    actor = _shared_actor(x_session_token)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    return {"session_mode": "LOCAL_HOST", "actor_id": actor.actor_id}
 @router.get("/user-preferences")
 def user_preferences(): return user_preference_service.list()
 @router.get("/harness/status")
@@ -3736,5 +3730,5 @@ def local_text_runtime_diagnostics(nid: str, provider_id: str, model_id: str, x_
 
 from .services.ai_planning_service import AIPlanningService
 from .ai_planning_api import create_ai_planning_router
-ai_planning_service = AIPlanningService(creation_workbench_service, runtime)
+ai_planning_service = AIPlanningService(creation_workbench_service, runtime, lore_service)
 router.include_router(create_ai_planning_router(ai_planning_service, _workbench_authorize))

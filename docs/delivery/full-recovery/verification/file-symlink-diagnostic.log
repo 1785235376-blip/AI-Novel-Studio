@@ -1,0 +1,18 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+___________________ test_symlink_assets_are_never_followed ____________________
+tests\test_asset_lifecycle_r2.py:69: in test_symlink_assets_are_never_followed
+    (assets.root / (item["id"] + ".bin")).symlink_to(target)
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1198: in symlink_to
+    os.symlink(target, self, target_is_directory)
+E   OSError: [WinError 1314] �ͻ���û���������Ȩ��: 'C:\\Windows\\Temp\\pytest-of-admin\\pytest-25\\test_symlink_assets_are_never_0\\unrelated' -> 'C:\\Windows\\Temp\\pytest-of-admin\\pytest-25\\test_symlink_assets_are_never_0\\assets\\01dd3e60-dd87-4bae-bd1c-08ba32357d7e.bin'
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\С˵\AI-Novel-Studio-Latest-Product\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: D:\С˵\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\verification\file-symlink-diagnostic.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_asset_lifecycle_r2.py::test_symlink_assets_are_never_followed
+1 failed, 1 warning in 2.09s
