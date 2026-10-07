@@ -19,7 +19,7 @@ NEW_FLAGS = ("local_tutor_interop_v1", "writing_recovery_v2", "workspace_tools_v
 # Keep the published forty-package opt-in list stable for older clients.
 # New product surfaces require their own explicit opt-in; discovery reports all.
 FLAGS = LEGACY_FLAGS + NEW_FLAGS
-SURFACE_FLAGS = ('branch_manuscript_v1', 'realtime_collaboration_v1', 'production_sync_v1', 'workspace_interaction_v1')
+SURFACE_FLAGS = ('branch_manuscript_v1', 'realtime_collaboration_v1', 'production_sync_v1', 'workspace_interaction_v1', 'finding_review_v1', 'story_record_versions_v1', 'adaptation_lifecycle_v1')
 RUNTIME_FLAGS = FLAGS + SURFACE_FLAGS
 FLAG_DEPENDENCIES: dict[str, tuple[str, ...]] = {name: () for name in FLAGS}
 FLAG_DEPENDENCIES.update(temporal_story_graph_v2=('world_character_engines_v2',),
@@ -48,6 +48,9 @@ SURFACE_FLAG_DEPENDENCIES = {
     'realtime_collaboration_v1': ('writer_room_v2', 'branch_manuscript_v1'),
     'production_sync_v1': ('offline_sync_v2',),
     'workspace_interaction_v1': ('workspace_tools_v2',),
+    'finding_review_v1': (),
+    'story_record_versions_v1': (),
+    'adaptation_lifecycle_v1': (),
 }
 
 
@@ -76,6 +79,12 @@ def require_flag(name: str) -> None:
 def flag_status() -> dict:
     enabled = enabled_flags()
     dependencies = runtime_dependencies()
-    return {"experimental": True, "default_enabled": False,
-            "features": {f"experimental.{name}": name in enabled for name in RUNTIME_FLAGS},
+    # `features` is the established forty-package client contract. Extending
+    # that map would change the meaning of an older client's complete opt-in.
+    # New clients use the explicitly complete versioned runtime inventory; every
+    # disabled new surface remains discoverable without being implicitly enabled.
+    return {"schema_version": 2, "experimental": True, "default_enabled": False,
+            "features": {f"experimental.{name}": name in enabled for name in FLAGS},
+            "surface_features": {f"experimental.{name}": name in enabled for name in SURFACE_FLAGS},
+            "runtime_features": {f"experimental.{name}": name in enabled for name in RUNTIME_FLAGS},
             "dependencies": {f"experimental.{name}": list(dependencies[name]) for name in RUNTIME_FLAGS}}
