@@ -132,6 +132,14 @@ export_job_service=ExportJobService(
     snapshotter=_export_snapshot,
 )
 chapter_service=ChapterService(repositories.chapters)
+from .experimental.store import ExperimentalStore
+from .services.branch_manuscript_service import BranchManuscriptService
+branch_manuscript_service = BranchManuscriptService(
+    ExperimentalStore(settings.data_path(), settings.storage_backend, settings.database_url),
+    novel_service, chapter_service)
+chapter_service.branch_authority = branch_manuscript_service.for_scope
+novel_service.branch_authority = branch_manuscript_service.for_scope
+adaptation_service.branch_authority = branch_manuscript_service.for_scope
 memory_service=MemoryService(repositories.lore)
 user_preference_service=UserPreferenceService(settings.data_path())
 harness_process_service=HarnessProcessService()
@@ -159,12 +167,14 @@ narrative_state_service=NarrativeStateService(repositories.narrative,repositorie
 narrative_finding_service=NarrativeFindingService(repositories.narrative)
 narrative_proposal_service=NarrativeProposalService(repositories.narrative,narrative_state_service)
 collaboration_scope_service=CollaborationScopeService(repositories.scope,repositories.novels)
+branch_manuscript_service.scopes = collaboration_scope_service
 authorization_service=AuthorizationService(repositories.authorization,collaboration_scope_service)
 identity_service=IdentityService(repositories.identity,collaboration_scope_service)
 membership_authorization_service=MembershipAuthorizationService(identity_service,authorization_service)
 audit_service=AuditService(repositories.authorization)
 atomic_chapter_audit_port=create_atomic_chapter_audit_port(repositories.chapters,repositories.authorization)
 collaboration_application_service=CollaborationApplicationService(membership_authorization_service,atomic_chapter_audit_port,audit_service)
+collaboration_application_service.branch_manuscripts = branch_manuscript_service
 trusted_session_resolver=create_runtime_session_resolver(
     packaged_runtime=settings.enable_packaged_runtime,
     dev_sessions_json=settings.collaboration_dev_sessions_json,
@@ -200,6 +210,7 @@ collaboration_read_service=CollaborationReadService(
     visual_workflows=VisualTextWorkflowAdapter(runtime.provider_registry, runtime.model_registry),
     runtime_diagnostics=TextRuntimeDiagnosticsAdapter(runtime.provider_registry, runtime.model_registry),
 )
+collaboration_read_service.branch_manuscripts = branch_manuscript_service
 collaboration_admin_service=CollaborationAdminService(
     sessions=trusted_session_resolver,
     identity=identity_service,

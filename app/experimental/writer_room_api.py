@@ -1,8 +1,14 @@
 """Every B08 request re-resolves its existing trusted session and current scope."""
-from fastapi import APIRouter, Header, HTTPException, Query, Response
+from fastapi import APIRouter, Header, HTTPException, Query, Response, Request
+from pydantic import ValidationError
+from starlette.concurrency import run_in_threadpool
+from .portable_projects import _json
 from ..services.creation_workbench_service import CommentIn
+from ..repositories.chapter_repository import VersionConflict
+from ..revision_constraints import RevisionConstraintError
 from .common import api_call as domain_call
 from .ux import ReadContext
+from .writer_room_realtime import FEATURE as REALTIME_FEATURE, JoinIn, ParticipantActionIn, CursorIn, EditIn, OperationIn
 from .writer_room import FEATURE, WriterRoomConflict, TaskIn, TaskUpdate, TransitionIn, ThreadAction, PackageIn, PackageConfirm
 
 
@@ -101,5 +107,82 @@ def create_writer_room_router(service, authorize, require_flag):
     def download(nid: str, body: PackageConfirm, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         response.headers['Cache-Control'] = 'no-store'
         return call('package_download', nid, x_session_token, x_branch_id, body)
+
+    def realtime_call(name, nid, token, branch, *args, write=False, permission=None):
+        require_flag(REALTIME_FEATURE)
+        ctx, original_check = access(nid, token, branch, write, permission)
+        def check():
+            require_flag(REALTIME_FEATURE)
+            original_check()
+        try:
+            result = domain_call(getattr(service.realtime, name), ctx, *args, check)
+            check()
+            return result
+        except (VersionConflict, RevisionConstraintError):
+            check()
+            raise HTTPException(409, {'code': 'REALTIME_DOCUMENT_CONFLICT_OR_LOCKED'}) from None
+        except HTTPException as exc:
+            # A CAS exception may carry a repository row. Never return stale
+            # manuscript material through an error or after authority loss.
+            if exc.status_code == 409:
+                check()
+                raise HTTPException(409, {'code': 'REALTIME_VERSION_OR_SOURCE_CONFLICT',
+                    'message': 'Refresh the scoped document and inspect preserved operations.'}) from None
+            raise
+
+    async def realtime_body(nid, token, branch, request, model, write=False):
+        require_flag(REALTIME_FEATURE)
+        access(nid, token, branch, write)
+        data = bytearray()
+        async for chunk in request.stream():
+            data.extend(chunk)
+            if len(data) > 512 * 1024: raise HTTPException(413, {'code': 'REALTIME_INPUT_LIMIT'})
+        try: return model.model_validate(_json(bytes(data)))
+        except (ValueError, ValidationError, RecursionError): raise HTTPException(422, {'code': 'REALTIME_INPUT_INVALID'}) from None
+
+    @router.get('/realtime')
+    def realtime_contract(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        return realtime_call('contract', nid, x_session_token, x_branch_id)
+
+    @router.get('/realtime/participants')
+    def realtime_presence(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        return realtime_call('presence', nid, x_session_token, x_branch_id)
+
+    @router.post('/realtime/participants', status_code=201)
+    async def realtime_join(nid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        body = await realtime_body(nid, x_session_token, x_branch_id, request, JoinIn, write=False)
+        response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(realtime_call, 'join', nid, x_session_token, x_branch_id, body)
+
+    @router.post('/realtime/participants/{rid}/actions')
+    async def realtime_transition(nid: str, rid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        body = await realtime_body(nid, x_session_token, x_branch_id, request, ParticipantActionIn, write=False)
+        response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(realtime_call, 'transition', nid, x_session_token, x_branch_id, rid, body, permission='domain.read')
+
+    @router.put('/realtime/participants/{rid}/cursor')
+    async def realtime_cursor(nid: str, rid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        body = await realtime_body(nid, x_session_token, x_branch_id, request, CursorIn, write=False)
+        response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(realtime_call, 'cursor', nid, x_session_token, x_branch_id, rid, body)
+
+    @router.post('/realtime/operations', status_code=201)
+    async def realtime_prepare(nid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        body = await realtime_body(nid, x_session_token, x_branch_id, request, EditIn, write=True)
+        response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(realtime_call, 'prepare', nid, x_session_token, x_branch_id, body, write=True)
+
+    @router.get('/realtime/operations/{rid}')
+    def realtime_operation(nid: str, rid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        response.headers['Cache-Control'] = 'no-store'
+        return realtime_call('operation', nid, x_session_token, x_branch_id, rid)
+
+    @router.post('/realtime/operations/{rid}/actions')
+    async def realtime_action(nid: str, rid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        body = await realtime_body(nid, x_session_token, x_branch_id, request, OperationIn, write=True)
+        response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(realtime_call, 'act', nid, x_session_token, x_branch_id, rid, body, write=True)
 
     return router

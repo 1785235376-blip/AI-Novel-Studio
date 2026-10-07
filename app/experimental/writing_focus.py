@@ -4,6 +4,7 @@ No manuscript, Canon, model or research-store writes. Copy is an explicit,
 preview-fenced PlanningService proposal in the same experimental transaction.
 """
 from __future__ import annotations
+from ..manuscript_sources import reader_available
 
 from copy import deepcopy
 import hashlib
@@ -187,7 +188,7 @@ class WritingFocusService(DomainService):
                     break
                 items.append(self._project(source_kind, row))
         return {'items': items, 'truncated': truncated,
-                'branch_sources_available': ctx.scope.get('mode') == 'local' or bool(self.chapter_reader or self.entity_readers)}
+                'branch_sources_available': reader_available(self.chapter_reader, ctx) or bool(self.entity_readers)}
 
     def pinned(self, ctx):
         result = []
@@ -237,7 +238,7 @@ class WritingFocusService(DomainService):
                             'outcome': str(scene.get('outcome', ''))[:2000]}
                            for scene in related[:20]], 'scenes_truncated': len(related) > 20})
         return {'items': projected, 'truncated': len(chapters) > 100, 'read_only': True,
-                'chapter_sources_available': ctx.scope.get('mode') == 'local' or bool(self.chapter_reader),
+                'chapter_sources_available': reader_available(self.chapter_reader, ctx),
                 'scene_sources_available': ctx.scope.get('mode') == 'local' or 'scene' in self.entity_readers}
 
     def _note(self, ctx, note_id, state=None):

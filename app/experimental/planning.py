@@ -152,10 +152,12 @@ def require_row(state: dict, name: str, rid: str) -> dict:
 def scoped_sources(service: DomainService, nid: str, scope: dict, chapter_ids: list[str]) -> dict:
     if scope.get("mode") == "collaboration":
         for cid in chapter_ids:
-            chapter = service.chapters.get(cid)
+            try: chapter = service.chapters_for(scope).get(cid)
+            except FileNotFoundError:
+                raise ValueError("BRANCH_SOURCE_ADAPTER_REQUIRED: authorized branch source unavailable") from None
             if chapter.get("branch_id") != scope.get("branch_id"):
                 raise ValueError("BRANCH_SOURCE_ADAPTER_REQUIRED: base manuscript is not branch evidence")
-    return service.sources(nid, chapter_ids)
+    return service.sources(nid, chapter_ids, scope)
 
 
 def entity_sources(service: DomainService, nid: str, scope: dict, links: dict, state: dict | None = None) -> dict:
@@ -221,7 +223,7 @@ class PlanningService(DomainService):
     def _assert_fresh(self, nid, scope, row, state=None, allow_applied=False):
         self._assert_simulation(nid, scope, row, state)
         state = state if state is not None else self.store.read(nid, scope)
-        self.assert_sources(nid, row.get("sources", {}))
+        self.assert_sources(nid, row.get("sources", {}), scope)
         try:
             scoped_sources(self, nid, scope, list(row.get("sources", {})))
             refs = entity_sources(self, nid, scope, row["links"], state)
@@ -388,7 +390,7 @@ class PlanningService(DomainService):
         output = PlanningAdapterOutput.model_validate(output.model_dump())
         rows = []
         with self.store.transaction(nid, scope) as state:
-            self.assert_sources(nid, captured_sources)
+            self.assert_sources(nid, captured_sources, scope)
             current_node = require_row(state, self.NODES, node["id"])
             if {ancestor["id"]: ancestor["version"] for ancestor in self._ancestors(state, current_node)} != captured_ancestors:
                 raise StaleSourceError("planning ancestor context changed during adapter execution")

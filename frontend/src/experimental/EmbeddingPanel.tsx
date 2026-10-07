@@ -13,6 +13,7 @@ function EmbeddingBody({ client }: { client: ExperimentalClient }) {
   const [title, setTitle] = useState(''), [type, setType] = useState('ASSET'), [entity, setEntity] = useState(''), [screenplay, setScreenplay] = useState('');
   const [registration, setRegistration] = useState(''), [dimensions, setDimensions] = useState('768'), [editing, setEditing] = useState<Row>();
   const [indexId, setIndexId] = useState(''), [query, setQuery] = useState(''), [result, setResult] = useState<any>();
+  const [queryMode, setQueryMode] = useState('VECTOR');
   const epoch = useRef(0), alive = useRef(true);
   useEffect(() => { alive.current = true; return () => { alive.current = false; epoch.current++; }; }, []);
   const configured = resource.data?.status.status === 'CONFIGURED' && !!resource.data.status.capability;
@@ -38,7 +39,7 @@ function EmbeddingBody({ client }: { client: ExperimentalClient }) {
       if (alive.current) { choose(value); reset(); }
     }, '索引定义已持久化，尚未生成向量')}>
       <Field label="向量索引标题"><input required value={title} onChange={event => setTitle(event.target.value)} /></Field>
-      <Field label="索引实体类型"><select value={type} onChange={event => { setType(event.target.value); setScreenplay(''); }}>{['ASSET', 'CHARACTER', 'SCENE', 'RESEARCH'].map(value => <option key={value}>{value}</option>)}</select></Field>
+      <Field label="索引实体类型"><select value={type} onChange={event => { setType(event.target.value); setScreenplay(''); }}>{['ASSET', 'CHARACTER', 'STORY', 'SCENE', 'RESEARCH'].map(value => <option key={value}>{value}</option>)}</select></Field>
       <Field label="选择当前范围中的索引来源"><select value={JSON.stringify([type, entity, screenplay])} onChange={event => { if (!event.target.value) { setEntity(''); setScreenplay(''); return; } const [kind, id, script] = JSON.parse(event.target.value); setType(kind); setEntity(id); setScreenplay(script); }}><option value="">请选择来源</option>{resource.data?.sources?.filter(row => row.entity.entity_type === type).map(row => <option key={JSON.stringify(row.entity)} value={JSON.stringify([row.entity.entity_type, row.entity.entity_id, row.entity.screenplay_id || ''])} disabled={!row.available || (!!registration && row.input_type !== 'TEXT')}>{row.title} · {row.entity.entity_id} · v{row.source_version ?? '无版本号'}{row.reason ? ` · ${row.reason}` : ''}{registration && row.input_type !== 'TEXT' ? ' · 当前本地 Adapter 不支持图片' : ''}</option>)}</select></Field>
       <details><summary>高级：手动填写精确来源标识</summary><Field label="索引实体 ID"><input required value={entity} onChange={event => setEntity(event.target.value)} /></Field>
       {type === 'SCENE' && <Field label="索引场景所属剧本 ID"><input required value={screenplay} onChange={event => setScreenplay(event.target.value)} /></Field>}</details>
@@ -53,7 +54,9 @@ function EmbeddingBody({ client }: { client: ExperimentalClient }) {
       <Button disabled={busy || row.status === 'REMOVED'} onClick={() => transition(row, 'invalidate')}>标记索引失效</Button><Button disabled={busy || row.status === 'REMOVED'} onClick={() => transition(row, 'remove')}>移除索引记录</Button>
       <Button disabled={busy || ['BUILDING', 'REMOVED'].includes(row.status || '') || row.entities.length !== 1} onClick={() => { setEditing(row); setTitle(row.title); setType(row.entities[0].entity_type); setEntity(row.entities[0].entity_id); setScreenplay(row.entities[0].screenplay_id || ''); setRegistration(row.registration_id || ''); setDimensions(String(row.dimensions || 768)); }}>编辑索引定义</Button><Button onClick={() => choose(row)}>选用此索引</Button>
     </div></article>)}</div>
-    <Form onSubmit={() => action.run(async () => { const ticket = epoch.current; const value = await client.post('/embeddings/query', { index_id: indexId, text: query, limit: 10 }); if (alive.current && ticket === epoch.current) setResult(value); }, '向量查询已完成')}>
+    <Form onSubmit={() => action.run(async () => { const ticket = epoch.current; const value = await client.post(queryMode === 'HYBRID' ? '/embeddings/hybrid-query' : '/embeddings/query', { index_id: indexId, text: query, limit: 10, ...(selectedIndex?.index_version ? { expected_index_version: selectedIndex.index_version } : {}) }); if (alive.current && ticket === epoch.current) setResult(value); }, '向量查询已完成')}>
+      <Field label="检索方式"><select value={queryMode} onChange={event => { resetResult(); setQueryMode(event.target.value); }}><option value="VECTOR">向量相似度</option><option value="HYBRID">词法 + 向量混合检索</option></select></Field>
+      {queryMode === 'HYBRID' && <StatusMessage>混合检索同时显示词法与向量贡献；必须配置支持向量的 Provider。MOCK_ONLY 仅表示合成契约测试，未验证语义质量。</StatusMessage>}
       <Field label="查询向量索引"><select value={indexId} onChange={event => { resetResult(); setIndexId(event.target.value); }}><option value="">选择索引</option>{available && resource.data!.indexes.map(row => <option key={row.id} value={row.id}>{row.title}</option>)}</select></Field><Field label="视觉向量查询"><input value={query} onChange={event => { resetResult(); setQuery(event.target.value); }} /></Field><Button type="submit" disabled={busy || !queryReady || !query}>查询向量</Button>
     </Form>{available && result && <Details value={result} label="向量相似度与来源" />}
   </Panel>;

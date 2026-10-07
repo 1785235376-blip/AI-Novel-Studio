@@ -5,6 +5,7 @@ by the composition root, re-authorized on every request, and never persisted as
 another domain database. Bounded lexical indexes are private to actor + scope.
 """
 from __future__ import annotations
+from ..manuscript_sources import reader_available
 
 from collections import OrderedDict
 from copy import deepcopy
@@ -134,6 +135,7 @@ STAGES = {'ANALYZING': '分析中', 'NEEDS_REVIEW': '需要审核', 'QUEUED': '�
           'CANCELLING': '取消中', 'PAUSED': '已暂停', 'UNKNOWN': '结果未知',
           'WAITING_APPROVAL': '等待批准', 'PENDING_REVIEW': '待审核', 'REVIEW_REQUIRED': '需要审核',
           'RESULT_READY': '结果就绪', 'PROPOSED': '建议待审', 'PLANNED': '已规划',
+          'PENDING_REWRITE': '等待改写', 'APPLIED': '已应用', 'NOT_CONFIGURED': '未配置', 'INTERRUPTED': '等待恢复',
           'PARTIAL': '部分完成', 'STALE': '来源过期', 'APPLYING': '应用中', 'APPROVING': '批准处理中'}
 SAFE_CODES = frozenset({'TIMEOUT', 'CANCELLED', 'PERMISSION_DENIED', 'VERSION_CONFLICT',
     'SOURCE_STALE', 'ADAPTER_REQUIRED', 'PROVIDER_UNAVAILABLE', 'NETWORK_ERROR',
@@ -218,6 +220,18 @@ def projected_task(reader, row):
                for item in row.get('history', [])[-10:] if isinstance(item, dict)
                and str(item.get('status', '')).upper() in STAGES]
     source = {}
+    if reader.name == 'adaptation':
+        navigation = row.get('source_navigation')
+        if (isinstance(navigation, dict) and navigation.get('kind') == 'feature'
+                and navigation.get('feature') == 'adaptation_lifecycle_v1'
+                and navigation.get('task_authority') == 'adaptation'
+                and navigation.get('id') == str(row['id'])
+                and navigation.get('parent_id') == row.get('proposal_id')
+                and navigation.get('version') == row.get('proposal_revision')):
+            source = {'source': {key: deepcopy(navigation[key]) for key in (
+                'kind', 'feature', 'task_authority', 'id', 'parent_id', 'novel_id',
+                'branch_id', 'chapter_id', 'version', 'proposal_revision', 'source_version',
+                'source_digest', 'target_chapter_id', 'target_version', 'target_digest') if key in navigation}}
     owner = FEATURE_OWNED_GENERATION.get(row.get('experimental_origin')) if reader.name == 'author_generation' else None
     if owner:
         source = {'source': {'kind': 'feature', 'id': str(row['id']), 'feature': owner[0]}}
@@ -323,7 +337,7 @@ class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
 
     @staticmethod
     def _pending(task):
-        if task['status'] in {'ACCEPTED', 'APPROVED', 'COMMITTED', 'REJECTED', 'CANCELLED', 'SUCCEEDED'}:
+        if task['status'] in {'ACCEPTED', 'APPROVED', 'COMMITTED', 'APPLIED', 'REJECTED', 'CANCELLED', 'SUCCEEDED'}:
             return False
         return task['status'] != 'COMPLETED' or task['authority'] == 'author_generation'
 
@@ -661,7 +675,7 @@ class WorkspaceToolsService(WorkspaceInteractionMixin, DomainService):
                     'updated_documents': changed, 'source_rows_read': reads, 'chapter_bodies_read': chapter_reads,
                     'projection_rows_scanned': projected_rows + latest_projected, 'metadata_checks': len(sources) + len(latest),
                     'incremental_chapters': incremental, 'limit': limit,
-                    'branch_sources_available': ctx.scope.get('mode') == 'local' or self.chapter_reader is not None}
+                    'branch_sources_available': reader_available(self.chapter_reader, ctx)}
         except HTTPException as exc:
             if exc.status_code in {401, 403, 404}: self.discard_search(ctx)
             raise

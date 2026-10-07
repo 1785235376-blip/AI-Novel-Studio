@@ -5,6 +5,7 @@ rule and ignore metadata use the existing isolated, scope-atomic store. The
 original export queue continues to capture and render its own frozen snapshot.
 """
 from __future__ import annotations
+from ..manuscript_sources import reader_available
 import re
 from typing import Literal
 from pydantic import Field
@@ -149,7 +150,7 @@ class ReaderPreflightService(DomainService):
             stale = chapter_revision(source) != item['revision']
             annotations.append({**item, 'note': item['note'], 'quote': '' if stale else item['quote'], 'stale': stale})
         return {'chapters': chapters, 'annotations': annotations, 'source_digest': digest([[r['id'], chapter_revision(r)] for r in rows]),
-                'branch_sources_available': ctx.scope['mode'] == 'local' or bool(self.sources.chapter_reader),
+                'branch_sources_available': reader_available(self.sources.chapter_reader, ctx),
                 'rendering': 'APP_LAYOUT_SIMULATION', 'target_renderer_verified': False, 'read_only': True}
 
     def proof(self, ctx):
@@ -199,7 +200,7 @@ class ReaderPreflightService(DomainService):
                 body_row = {**row, 'document': {**document, 'content': document['content'][1:]}}
             if not chapter_text(body_row).strip(): add('EMPTY_CHAPTER', 'WARNING', '章节正文为空。', 'editor', row['id'])
         if not rows: add('NO_CHAPTERS', 'BLOCKER', '没有可导出的已授权章节。', 'editor')
-        if ctx.scope['mode'] != 'local' and not self.sources.chapter_reader:
+        if not reader_available(self.sources.chapter_reader, ctx):
             add('BRANCH_SOURCE_UNAVAILABLE', 'BLOCKER', '当前分支章节适配器不可用；不会借用主分支。', 'editor')
         # Reuse export reference discovery and its byte/digest validator, but
         # only over already-authorized chapters. No raw paths or bytes leave.

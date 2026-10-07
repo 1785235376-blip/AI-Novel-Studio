@@ -174,8 +174,8 @@ class DirectorService(DomainService):
     def evidence(self, nid, scope, screenplay):
         sources = {}
         for scene in screenplay.get("scenes", []):
-            sources.update(scene_sources(nid, scope, scene, self.chapters))
-        privacy = {cid: source_privacy_status(self.chapters.get(cid), scope.get("branch_id"), self.store.root) for cid in sources}
+            sources.update(scene_sources(nid, scope, scene, self.chapters_for(scope)))
+        privacy = {cid: source_privacy_status(self.chapters_for(scope).get(cid), scope.get("branch_id"), self.store.root) for cid in sources}
         return {"sources": sources, "privacy": privacy}
 
     def _character_sources(self, nid, scope, ids):
@@ -239,7 +239,7 @@ class DirectorService(DomainService):
         try:
             row = self.screenplay(nid, scope, plan["screenplay_id"])
             for cid in plan["evidence"]["sources"]:
-                chapter = self.chapters.get(cid)
+                chapter = self.chapters_for(scope).get(cid)
                 if chapter.get("novel_id") != nid or chapter.get("branch_id") != scope.get("branch_id"):
                     return None
             characters = self._character_sources(nid, scope, plan.get('character_sources', {}))

@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "verified_at_utc": "2026-10-07T04:37:51Z",
+  "source_state": "UNCOMMITTED_WORKTREE",
+  "base_head": "13b9f9171205b0e8a97d0b081a6b7e85c434a7b1",
+  "scope": "Branch Manuscript Authority restart completion; actual File/API/source ownership and synthetic provider tests",
+  "checks": [
+    {
+      "name": "branch_manuscript_generation_and_historical_export",
+      "status": "PASSED",
+      "passed": 132,
+      "deselected": 72,
+      "selection": "tests/test_surface_branch_manuscript.py tests/test_surface_branch_manuscript_mounted.py tests/test_surface_branch_generation_stream.py tests/test_export_jobs.py tests/test_industry_export_queue.py tests/test_export_resource_packages.py tests/test_export_history_recovery.py -m 'not postgres_backend_only'",
+      "receipt": "final-branch-dispatch-export.log"
+    },
+    {
+      "name": "original_generation_and_collaboration_regression",
+      "status": "PASSED",
+      "passed": 355,
+      "deselected": 258,
+      "receipt": "original-generation-collaboration-regression.log"
+    },
+    {
+      "name": "branch_original_fork_and_workbench_frontend",
+      "status": "PASSED",
+      "passed": 25,
+      "files": 3,
+      "receipt": "frontend-branch.log"
+    },
+    {
+      "name": "real_browser_collection",
+      "status": "COLLECTED_ONLY",
+      "collected": 1,
+      "receipt": "browser-collection.log"
+    },
+    {
+      "name": "git_diff_check",
+      "status": "PASSED"
+    },
+    {
+      "name": "branch_slice_original_tests_migrations_and_frozen_protocol_diff",
+      "status": "UNCHANGED",
+      "detail": "This branch slice changes no historical test or assertion. A concurrent adaptation slice subsequently updated the original authorization fixture to initialize a real branch; original assertions/skips remain intact. Frozen migrations/protocol unchanged."
+    },
+    {
+      "name": "branch_readonly_inbox_original_owner_integration",
+      "status": "PASSED",
+      "passed": 83,
+      "deselected": 74,
+      "receipt": "branch-inbox-readonly.log",
+      "selection": "tests/test_surface_branch_manuscript.py tests/test_surface_branch_manuscript_mounted.py tests/test_surface_branch_generation_stream.py tests/test_r3_inbox.py -m 'not postgres_backend_only'"
+    },
+    {
+      "name": "readonly_inbox_contract",
+      "status": "IMPLEMENTED",
+      "behavior": "No generic or batch branch review action. Exact original panel/API navigation is metadata only; original versioned cancellation remains under domain.read and domain.review. Counterpart visibility is reauthorized."
+    },
+    {
+      "name": "branch_readonly_inbox_frontend_and_original_navigation",
+      "status": "PASSED",
+      "passed": 30,
+      "files": 4,
+      "receipt": "frontend-branch-inbox.log"
+    },
+    {
+      "name": "retained_mainline_generation_owner_dispatch_and_original_stream_regression",
+      "status": "PASSED",
+      "passed": 297,
+      "deselected": 295,
+      "receipt": "final-retained-mainline-owner-dispatch.log",
+      "selection": "tests/test_surface_branch_manuscript.py tests/test_surface_branch_manuscript_mounted.py tests/test_surface_branch_generation_stream.py tests/test_shared_generation_stream_authority.py tests/test_shared_generation_terminal_protocol.py tests/test_generation_restart_recovery.py -m 'not postgres_backend_only'"
+    },
+    {
+      "name": "project_qualified_branch_id_classification",
+      "status": "PASSED",
+      "behavior": "Canonical branch UUID recognition is bound to the full exact project prefix; registered BRANCH jobs read through their authoritative owner regardless of stored chapter ID. Retained old mainline IDs deny GET/SSE/retry without mutation."
+    }
+  ],
+  "remaining": {
+    "real_postgresql": "NOT_RUN locally; includes added legacy project-slug branch-marker regression. Existing PostgreSQL markers retained and hosted execution required.",
+    "real_browser_body": "BLOCKED locally by earlier Chromium socket launch denial; no retry or bypass, collection only after restart; hosted scenario configured",
+    "real_model_or_gpu": "NOT_RUN; no paid API or private model credentials used",
+    "independent_audit": "Historical BLOCKED state unchanged",
+    "final_visual_acceptance": "NOT_RUN; engineering UI only"
+  },
+  "preserved_failures": [
+    {
+      "receipt": "export-retry-capacity.log",
+      "failed": 2,
+      "cause": "existing collaboration middleware denied GET /exports with 501; fixed in main.py by lead and fully rerun"
+    }
+  ],
+  "limitations": [
+    "Scope-atomic JSON/JSONB manuscript storage with explicit hard capacities, no production sharding claim",
+    "Mainline merge recovery cannot infer exactly-once commit from matching content",
+    "Branch Canon/memory extraction remains explicit reviewed adapter requirement",
+    "Legacy unregistered injected source adapters retain historical contract; registered production branch readers never fall back"
+  ]
+}

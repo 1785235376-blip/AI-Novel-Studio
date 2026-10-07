@@ -1,0 +1,414 @@
+{
+  "schema_version": 1,
+  "models": {
+    "JoinIn": {
+      "additionalProperties": false,
+      "properties": {
+        "device_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:~\\-]{0,239}$",
+          "title": "Device Id",
+          "type": "string"
+        },
+        "chapter_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:~\\-]{0,239}$",
+          "title": "Chapter Id",
+          "type": "string"
+        },
+        "document_version": {
+          "minimum": 1,
+          "title": "Document Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "device_id",
+        "chapter_id",
+        "document_version"
+      ],
+      "title": "JoinIn",
+      "type": "object",
+      "$id": "urn:ai-novel-studio:realtime-sync:v1:JoinIn"
+    },
+    "ParticipantActionIn": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_version": {
+          "minimum": 1,
+          "title": "Expected Version",
+          "type": "integer"
+        },
+        "action": {
+          "enum": [
+            "heartbeat",
+            "disconnect",
+            "reconnect",
+            "leave",
+            "revoke"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "document_version": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Version"
+        }
+      },
+      "required": [
+        "expected_version",
+        "action"
+      ],
+      "title": "ParticipantActionIn",
+      "type": "object",
+      "$id": "urn:ai-novel-studio:realtime-sync:v1:ParticipantActionIn"
+    },
+    "CursorIn": {
+      "$defs": {
+        "Position": {
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 30,
+              "minItems": 1,
+              "title": "Path",
+              "type": "array"
+            },
+            "offset": {
+              "maximum": 512000,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "path",
+            "offset"
+          ],
+          "title": "Position",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "expected_version": {
+          "minimum": 1,
+          "title": "Expected Version",
+          "type": "integer"
+        },
+        "document_version": {
+          "minimum": 1,
+          "title": "Document Version",
+          "type": "integer"
+        },
+        "anchor": {
+          "$ref": "#/$defs/Position"
+        },
+        "focus": {
+          "$ref": "#/$defs/Position"
+        }
+      },
+      "required": [
+        "expected_version",
+        "document_version",
+        "anchor",
+        "focus"
+      ],
+      "title": "CursorIn",
+      "type": "object",
+      "$id": "urn:ai-novel-studio:realtime-sync:v1:CursorIn"
+    },
+    "EditIn": {
+      "$defs": {
+        "TextEdit": {
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "items": {
+                "type": "integer"
+              },
+              "maxItems": 30,
+              "minItems": 1,
+              "title": "Path",
+              "type": "array"
+            },
+            "start": {
+              "maximum": 512000,
+              "minimum": 0,
+              "title": "Start",
+              "type": "integer"
+            },
+            "end": {
+              "maximum": 512000,
+              "minimum": 0,
+              "title": "End",
+              "type": "integer"
+            },
+            "text": {
+              "maxLength": 64000,
+              "title": "Text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "path",
+            "start",
+            "end",
+            "text"
+          ],
+          "title": "TextEdit",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "participant_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:~\\-]{0,239}$",
+          "title": "Participant Id",
+          "type": "string"
+        },
+        "participant_version": {
+          "minimum": 1,
+          "title": "Participant Version",
+          "type": "integer"
+        },
+        "request_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:~\\-]{0,239}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "document_version": {
+          "minimum": 1,
+          "title": "Document Version",
+          "type": "integer"
+        },
+        "document_digest": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Document Digest",
+          "type": "string"
+        },
+        "edits": {
+          "items": {
+            "$ref": "#/$defs/TextEdit"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Edits",
+          "type": "array"
+        }
+      },
+      "required": [
+        "participant_id",
+        "participant_version",
+        "request_id",
+        "document_version",
+        "document_digest",
+        "edits"
+      ],
+      "title": "EditIn",
+      "type": "object",
+      "$id": "urn:ai-novel-studio:realtime-sync:v1:EditIn"
+    },
+    "OperationIn": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_version": {
+          "minimum": 1,
+          "title": "Expected Version",
+          "type": "integer"
+        },
+        "action": {
+          "enum": [
+            "apply",
+            "cancel",
+            "inspect_recovery",
+            "adopt",
+            "close_without_replay"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "recovery_digest": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recovery Digest"
+        }
+      },
+      "required": [
+        "expected_version",
+        "action"
+      ],
+      "title": "OperationIn",
+      "type": "object",
+      "$id": "urn:ai-novel-studio:realtime-sync:v1:OperationIn"
+    },
+    "DeviceIn": {
+      "additionalProperties": false,
+      "properties": {
+        "device_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$",
+          "title": "Device Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "device_id",
+        "label"
+      ],
+      "title": "DeviceIn",
+      "type": "object",
+      "$id": "urn:ai-novel-studio:realtime-sync:v1:DeviceIn"
+    },
+    "ManifestIn": {
+      "additionalProperties": false,
+      "properties": {
+        "channel_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$",
+          "title": "Channel Id",
+          "type": "string"
+        },
+        "channel_version": {
+          "minimum": 1,
+          "title": "Channel Version",
+          "type": "integer"
+        },
+        "device_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$",
+          "title": "Device Id",
+          "type": "string"
+        },
+        "request_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "base_manifest_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Base Manifest Id"
+        }
+      },
+      "required": [
+        "channel_id",
+        "channel_version",
+        "device_id",
+        "request_id"
+      ],
+      "title": "ManifestIn",
+      "type": "object",
+      "$id": "urn:ai-novel-studio:realtime-sync:v1:ManifestIn"
+    },
+    "TransferIn": {
+      "additionalProperties": false,
+      "properties": {
+        "manifest_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$",
+          "title": "Manifest Id",
+          "type": "string"
+        },
+        "message_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Message Ids",
+          "type": "array"
+        },
+        "request_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "acknowledge_copy_boundary": {
+          "const": true,
+          "title": "Acknowledge Copy Boundary",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "manifest_id",
+        "message_ids",
+        "request_id",
+        "acknowledge_copy_boundary"
+      ],
+      "title": "TransferIn",
+      "type": "object",
+      "$id": "urn:ai-novel-studio:realtime-sync:v1:TransferIn"
+    },
+    "TransferActionIn": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_version": {
+          "minimum": 1,
+          "title": "Expected Version",
+          "type": "integer"
+        },
+        "action": {
+          "enum": [
+            "dispatch",
+            "resume",
+            "cancel"
+          ],
+          "title": "Action",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expected_version",
+        "action"
+      ],
+      "title": "TransferActionIn",
+      "type": "object",
+      "$id": "urn:ai-novel-studio:realtime-sync:v1:TransferActionIn"
+    },
+    "VersionIn": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_version": {
+          "minimum": 1,
+          "title": "Expected Version",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "expected_version"
+      ],
+      "title": "VersionIn",
+      "type": "object",
+      "$id": "urn:ai-novel-studio:realtime-sync:v1:VersionIn"
+    }
+  }
+}

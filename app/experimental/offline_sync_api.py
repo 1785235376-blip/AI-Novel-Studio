@@ -15,6 +15,7 @@ from .offline_sync import (FEATURE, MAX_BYTES, ChannelIn, VersionIn, QueueIn, Re
                            ReviewIn, ApplyIn, ExportIn, DeliveryIn, RecoverIn, SelectionIn, SelectionApplyIn)
 from .portable_projects import _json
 from .ux import ReadContext
+from .offline_sync_production import (FEATURE as PRODUCTION_FEATURE, DeviceIn, ManifestIn, TransferIn, TransferActionIn)
 
 
 def call(fn, *args, **kwargs):
@@ -125,5 +126,53 @@ def create_offline_sync_router(service, authorize, require_flag, require_host_se
     async def recovery(nid: str, mid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         ctx, again = access(nid, x_session_token, x_branch_id, True); value = await body(request, RecoverIn); response.headers['Cache-Control'] = 'no-store'
         return await run_in_threadpool(call, service.recover, ctx, mid, value, again)
+
+    def production_access(nid, token, branch, write=False):
+        require_flag(PRODUCTION_FEATURE)
+        ctx, original = access(nid, token, branch, write)
+        def again():
+            require_flag(PRODUCTION_FEATURE)
+            original()
+        return ctx, again
+
+    @router.get('/production')
+    def production_contract(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again = production_access(nid, x_session_token, x_branch_id); response.headers['Cache-Control'] = 'no-store'
+        return call(service.production.contract, ctx, again)
+
+    @router.get('/production/records')
+    def production_records(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again = production_access(nid, x_session_token, x_branch_id); response.headers['Cache-Control'] = 'no-store'
+        return call(service.production.records, ctx, again)
+
+    @router.post('/production/devices', status_code=201)
+    async def production_device(nid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again = production_access(nid, x_session_token, x_branch_id, True); value = await body(request, DeviceIn); response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(call, service.production.register_device, ctx, value, again)
+
+    @router.post('/production/devices/{rid}/revoke')
+    async def production_revoke(nid: str, rid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again = production_access(nid, x_session_token, x_branch_id, True); value = await body(request, VersionIn); response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(call, service.production.revoke_device, ctx, rid, value, again)
+
+    @router.post('/production/manifests', status_code=201)
+    async def production_manifest(nid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again = production_access(nid, x_session_token, x_branch_id, True); value = await body(request, ManifestIn); response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(call, service.production.manifest, ctx, value, again)
+
+    @router.get('/production/manifests/{rid}')
+    def production_manifest_detail(nid: str, rid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again = production_access(nid, x_session_token, x_branch_id); response.headers['Cache-Control'] = 'no-store'
+        return call(service.production.manifest_detail, ctx, rid, again)
+
+    @router.post('/production/transfers', status_code=201)
+    async def production_transfer(nid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again = production_access(nid, x_session_token, x_branch_id, True); value = await body(request, TransferIn); response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(call, service.production.prepare_transfer, ctx, value, again)
+
+    @router.post('/production/transfers/{rid}/actions')
+    async def production_action(nid: str, rid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        ctx, again = production_access(nid, x_session_token, x_branch_id, True); value = await body(request, TransferActionIn); response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(call, service.production.action, ctx, rid, value, again)
 
     return router

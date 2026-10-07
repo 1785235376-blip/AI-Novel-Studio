@@ -99,7 +99,8 @@ class WritingSessionsService(DomainService):
         value = StartIn.model_validate(body); data = value.model_dump()
         if len({t.id for t in value.tasks}) != len(value.tasks): raise ValueError('duplicate checklist item')
         rows = self._rows(ctx)
-        if ctx.scope['mode'] != 'local' and not self.sources.chapter_reader: raise ValueError('authorized branch chapter reader unavailable')
+        from ..manuscript_sources import reader_available
+        if not reader_available(self.sources.chapter_reader, ctx): raise ValueError('authorized branch chapter reader unavailable')
         baseline = {r['id']: {'version': r['version'], 'characters': self._count(r)} for r in rows}
         with self.store.transaction(ctx.novel_id, ctx.scope) as state:
             owned = self._owned(ctx, self.SESSIONS, state)

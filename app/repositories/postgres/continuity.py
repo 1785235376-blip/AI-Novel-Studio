@@ -59,3 +59,18 @@ class PostgresContinuityRepository:
             row=conn.execute("UPDATE continuity_findings SET payload=jsonb_set(payload,'{status}',to_jsonb(%s::text)) WHERE id=%s RETURNING payload",(status,finding_id)).fetchone(); conn.commit()
         if not row: raise KeyError(finding_id)
         return row[0]
+
+    def mutate_finding(self, project, finding_id, callback):
+        with self.session_factory() as conn:
+            conn.execute("SELECT pg_advisory_xact_lock(hashtextextended(%s, 0))", ("continuity:" + project + ":" + finding_id,))
+            existing = conn.execute("SELECT project_id,payload FROM continuity_findings WHERE id=%s FOR UPDATE", (finding_id,)).fetchone()
+            if existing and existing[0] != project: raise FileNotFoundError(finding_id)
+            result = callback(existing[1] if existing else None)
+            if result.get("project_id") != project or result.get("id") != finding_id: raise ValueError("FINDING_SCOPE_MISMATCH")
+            if existing:
+                conn.execute("UPDATE continuity_findings SET payload=%s WHERE project_id=%s AND id=%s", (json.dumps(result), project, finding_id))
+            else:
+                conn.execute("INSERT INTO continuity_findings (id,project_id,fingerprint,finding_type,payload) VALUES (%s,%s,%s,%s,%s)",
+                             (finding_id, project, finding_id, result["finding_type"], json.dumps(result)))
+            conn.commit()
+        return result

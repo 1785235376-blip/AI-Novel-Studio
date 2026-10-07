@@ -3,6 +3,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, ApiError, type Chapter } from "../api";
 import { Badge, Button, EmptyState, Panel } from "../ui/primitives";
 
+import {PendingCanonReviewPanel} from "./PendingCanonReviewPanel";
+import {FindingReviewPanel} from "./FindingReviewPanel";
+
 type Finding = {
   id: string;
   finding_type?: string;
@@ -119,6 +122,8 @@ export function ContinuityCheckPanel({ projectId, chapter }: { projectId: string
           </p>
         ))}
       </div>
+      <FindingReviewPanel projectId={projectId} chapter={chapter}/>
+      <PendingCanonReviewPanel projectId={projectId} chapterId={chapter?.id}/>
       <details>
         <summary>高级：粘贴事实 JSON</summary>
         <p className="novel-help">仅在需要手工注入时间线/地点/知识事实时使用。日常检查请点「检查当前章节」。</p>

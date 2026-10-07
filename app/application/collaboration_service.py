@@ -42,11 +42,27 @@ class CollaborationApplicationService:
         self.atomic_updates = atomic_updates
         self.audit = audit
 
+    def _branch_context(self, actor, scope, chapter_id=None):
+        owner = getattr(self, "branch_manuscripts", None)
+        if owner is None or not scope.branch_id: return None
+        from ..experimental.flags import enabled_flags, require_flag
+        from ..services.branch_manuscript_service import experimental_scope
+        from ..experimental.ux import ReadContext
+        def check():
+            require_flag("branch_manuscript_v1")
+            self.authorization.require(actor, "domain.write", ModalityDomain.NOVEL, scope)
+        check()
+        return owner, ReadContext(scope.project_id, experimental_scope(scope), actor.actor_id, None, scope.branch_id), check
+
     def create_chapter(self, *, actor: ActorContext, scope: AuthorizationScope,
                        title: str) -> dict[str, Any]:
         self.authorization.require(actor, "domain.write", ModalityDomain.NOVEL, scope)
         if not scope.project_id:
             raise ValueError("project scope is required")
+        branch = self._branch_context(actor, scope)
+        if branch:
+            owner, ctx, check = branch
+            return owner.create(ctx, {"title": title, "content": ""}, check)
 
         def event_for(created: dict[str, Any]) -> dict[str, Any]:
             return self.audit.build(
@@ -70,6 +86,10 @@ class CollaborationApplicationService:
         }
         if reason not in allowed_reasons:
             raise ValueError("unsupported chapter update reason")
+        branch = self._branch_context(actor, scope, chapter_id)
+        if branch:
+            owner, ctx, check = branch
+            return owner.save(ctx, chapter_id, document, expected_version, check, reason)
         success = self.audit.build(
             actor, "CHAPTER_UPDATED", "Chapter", chapter_id, scope,
             {"expected_version": expected_version, "result_version": expected_version + 1, "reason": reason},
@@ -97,6 +117,10 @@ class CollaborationApplicationService:
     def set_chapter_archived(self, *, actor: ActorContext, scope: AuthorizationScope,
                              chapter_id: str, expected_version: int, archived: bool) -> dict[str, Any]:
         self.authorization.require(actor, "domain.write", ModalityDomain.NOVEL, scope)
+        branch = self._branch_context(actor, scope, chapter_id)
+        if branch:
+            owner, ctx, check = branch
+            return owner.archive(ctx, chapter_id, archived, expected_version, check)
         action = "CHAPTER_ARCHIVED" if archived else "CHAPTER_RESTORED"
         event = self.audit.build(actor, action, "Chapter", chapter_id, scope, {"expected_version": expected_version})
         return self.atomic_updates.set_chapter_archived_with_audit(chapter_id, expected_version, archived, event)

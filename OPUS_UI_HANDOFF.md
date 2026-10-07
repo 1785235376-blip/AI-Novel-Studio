@@ -1,3 +1,50 @@
+# Current Functional Surface Completion handoff · 2026-10-07
+
+Current development target: Draft [PR #45](https://github.com/1785235376-blip/AI-Novel-Studio/pull/45), branch `work/feature-completion-surface-freeze`, starting from PR44-containing SHA `6dc09ffc71ba47b6730df491186bfce429f0721a`. Observed checkpoint `f25f08bd978a01aa32ecb713871b1a70ce1732ce` is not the final verified head. The older sections below are preserved historical handoffs and their “current” wording applies only to their original source pins.
+
+**Final visual redesign remains paused. No freeze candidate or formal freeze is declared by this handoff.** Current product-map and test gates remain PENDING until the lead reconciles source changes and exact-head execution. The first 13b9 hosted candidate failed legacy flag-discovery compatibility assertions; f25 is the repair checkpoint and is not a green final-source receipt. Historical independent review remains BLOCKED, untouched and not retried.
+
+Read [FINAL_PRODUCT_SURFACE_MAP.md](FINAL_PRODUCT_SURFACE_MAP.md), [FUNCTIONAL_SURFACE_MATRIX.md](FUNCTIONAL_SURFACE_MATRIX.md), [UI_SURFACE_CATALOG.md](UI_SURFACE_CATALOG.md) and the complete JSON companions before implementation. They cover all 406 registered requirement lines, 24 UX requirements and 12 creative domains × 13 lifecycle dimensions. Actual mounted routes are recorded in [API_CATALOG.json](API_CATALOG.json), [API_CATALOG.md](API_CATALOG.md), [API_CATALOG_DETAIL.json.gz](API_CATALOG_DETAIL.json.gz) and [API_OPENAPI.json.gz](API_OPENAPI.json.gz), with tests/test_surface_api_catalog.py checking source-bound consistency. Per-surface AST references stay subordinate; neither inventory is a runtime verdict.
+
+## Final information architecture boundary
+
+Exactly ten logical first-level areas: Write, Story, Review, Research, Production, Assets, Collaboration, Models, Tasks, Settings. Current legacy module-switcher entries and the existing experimental workbench remain the engineering hosts. This mapping does not redesign the shared shell or claim ten new tabs were implemented. No additional first-level workspace is planned.
+
+## Additive completion contracts
+
+- Branch manuscript: original BranchManuscriptService owns branch-specific text, chapter versions/history/save/restore/fork/compare/review/human merge; mainline ChapterService remains mainline. Never restore the former mainline-as-branch shortcut.
+- Realtime: WriterRoom participant leases, cursor/selection, document versions and strict-CAS operations use actual synthetic callback transport. Production transport remains NOT_CONFIGURED/PARTIAL; no CRDT/OT or deployed realtime claim. Restart disconnects leases; uncertain outcomes require explicit evidence recovery.
+- Search: original EmbeddingService/VectorIndex performs actual vector ranking and hybrid lexical+semantic RRF. Character/Story/Research/Asset indexes retain source/index/provider version, citation and permission fences. No model means NOT_CONFIGURED, never lexical-as-semantic. Deleted/revoked Research retains erased INVALIDATED receipts only for an actor who owns both source and index in the exact scope under current feature authority; former shared readers and invalidated queries remain denied.
+- Visual identity: appearance/clothing/hair/body/accessories and approved references remain original visual-memory/AssetLibrary identity. Similarity/drift/IMAGE-VIDEO selection is a reviewed source-versioned receipt. Real visual embedding remains NOT_CONFIGURED/NOT_RUN.
+- Production sync: original offline outbox/inbox plus device/manifest/delta/checkpoint/version/revocation and transport/encryption seams. Local/synthetic only; production cloud and branch sync remain unavailable. No automatic replay or mainline fallback.
+- Research: original bytes/version/citations/notes/replacement/restore/invalidation plus typed OCR/scanned-PDF/image/chart/table analysis receipts. Original source and Canon remain distinct. Synthetic-only providers cannot bypass original real-model admission.
+- Media: original SubtitleTimelineService gains ASR/forced-alignment/burn-in task/claim/recovery/review contract. Real model/GPU/burn-in quality remains NOT_RUN/NOT_CONFIGURED. Godot data export and Ren'Py text/menu subset are original InteractiveStory exporters, not installed engines or runtime acceptance.
+- Interaction: scoped command catalog/resolve and versioned keyboard/announcement/reduced-motion preferences retain dirty/IME guards/history/recovery. Local Draft remains browser Storage API; no duplicate server manuscript buffer.
+- Original Continuity/Narrative feedback now has source/fingerprint CAS, intentional suppression, reason/history and exact evidence on its own repositories. Pending Canon now has project-authorized preview/CAS, terminal idempotence and explicit File recovery. Timeline/Foreshadowing now use their original versioned rows/editors with history/restore/source feedback and navigation. These are source-inspected closures awaiting exact-final-head execution, not substitutes from Judge/world owners.
+- Adaptation now has original-owner source snapshots/revision history, reserved-target checkpoints, reviewed-target CAS and explicit cancel/recover. Original Task/Review projection and actual exact-task opening are integrated with current source/target permission, revision/digest, namespace/epoch/cancel and dirty-buffer guards. Known receipts recover without a second write; unprovable creation intents require operator reconciliation. Bounded capacity and terminal reserves are explicit. Real-model admission is NOT_CONFIGURED.
+- Flag discovery schema v2 exposes legacy features plus complete runtime_features and surface_features. Frontend selects runtime_features; RUNTIME_FLAGS is the actual registry. New flags and dependencies stay explicit/default-off; no hidden opt-ins.
+- One reviewed original adaptation fixture-only edit initializes true branch prose. Original bodies/assertions/node IDs/skips are unchanged, but the whole-file hash changed; see ADAPTATION_FIXTURE_EXCEPTION.json and .patch. All other original tests and migrations 001–020 stay frozen; [SOURCE_PRESERVATION.json](docs/delivery/functional-surface-freeze/SOURCE_PRESERVATION.json) records the protected-file evidence.
+
+New Realtime/Sync/Visual Identity/OCR-Vision/Subtitle Processing inspectors include formal functional UI contracts. Existing nearby React components are hosts; the catalog distinguishes new controls that are not yet actually rendered. Formal contracts are allowed by this request, but cannot be described as browser-tested UI.
+
+## What later visual work may change
+
+After separate user authorization, improve domain grouping, labels, hierarchy, spacing, responsive content, status visibility and accessible interactions using existing tokens/primitives and one AppShell/ModuleWorkspace contract. Preserve every supported page, subpage, state/action and exact owner-navigation destination. Protected shell/tokens/primitives still require the repository design-system change process.
+
+## What visual work must preserve
+
+- Unique data/job/source authorities; original mainline and branch ownership; exact Chapter/Scene/Shot/entity identities.
+- Trusted identity, permission, scope, source privacy, current authorization, credentials, DENY_ALL executable plugins and frozen PoemSeed Local Interop 1.0.
+- Expected versions/CAS/digests, stale-source conflict input, history/restore and partial-apply/recovery journals.
+- Original job attempt/claim/cancel/late-response/UNKNOWN/restart behavior; no hidden replay or unsolicited paid dispatch.
+- Human Review, Draft/Diff/Accept and exact task/review/source navigation. Review is not automatic apply; Research is not Canon.
+- Loading, Empty, Error, Unauthorized, NOT_CONFIGURED, Disabled, Conflict, Review, Recovery, Cancelled, Stale and honest PARTIAL/MOCK_ONLY/NOT_RUN/LOCAL_REQUIRED evidence labels.
+- Existing tests/assertions/skips/source-specific evidence. Never weaken tests or replace visual baselines solely for green CI.
+
+Real model/quality/GPU, production services, native Windows/IME/screen-reader and actual Godot/Ren'Py/NLE acceptance remain separate engineering/target gates. They are not silently reassigned to visual polish. The lead final report owns final SHA, commits, Draft PR and actual hosted test results; this source map does not assert those results.
+
+<!-- FUNCTIONAL_SURFACE_FREEZE_CURRENT_SUPPLEMENT_END -->
+
 # Post-Interop continuation target (2026-10-06)
 
 Current development is Draft [PR43](https://github.com/1785235376-blip/AI-Novel-Studio/pull/43), branch `work/post-interop-r4-r5-ux-continuation`, stacked on frozen PR42 `e58c72b04182cd374af092314386b90f8250a173`. Current feature and journey evidence is in `POST_INTEROP_FEATURE_MATRIX.md`, `UX_ACCEPTANCE_MATRIX.md` and `docs/delivery/post-interop-continuation/`. Earlier handoff sections retain their historical scope; appended Post-Interop wave sections describe the current pages/components/APIs/state/permissions and non-breakable behavior. No final visual redesign or full product acceptance is claimed. Historical independent review stays BLOCKED; this work does not replace it.

@@ -18,6 +18,7 @@ from typing import Literal, Protocol
 from uuid import uuid4
 
 from pydantic import Field, model_validator
+from starlette.exceptions import HTTPException
 
 from ..media_files import inspect_media
 from ..source_privacy import content_digest
@@ -207,7 +208,18 @@ class AudiobookV2Service(DomainService):
         return row
 
     def _source(self, nid, scope, chapter_id):
-        chapter = self.chapters.get(chapter_id)
+        try:
+            chapter = self.chapters_for(scope).get(chapter_id)
+        except FileNotFoundError:
+            if scope.get("mode") == "collaboration":
+                raise StaleSourceError("BRANCH_SOURCE_ADAPTER_REQUIRED") from None
+            raise
+        except HTTPException as exc:
+            if scope.get("mode") == "collaboration" and exc.status_code == 404:
+                # Preserve the original audio source-conflict contract. Never
+                # consult mainline when the branch owner is absent/disabled.
+                raise StaleSourceError("BRANCH_SOURCE_ADAPTER_REQUIRED") from None
+            raise
         if chapter.get("novel_id") != nid:
             raise FileNotFoundError(chapter_id)
         if chapter.get("branch_id") != scope.get("branch_id"):
@@ -259,7 +271,8 @@ class AudiobookV2Service(DomainService):
         data = AudiobookPlanIn.model_validate(body).model_dump()
         chapter = self._source(nid, scope, data["chapter_id"])
         text = chapter.get("content", "")
-        source_snapshot = {chapter["id"]: {"version": chapter["version"], "digest": content_digest(chapter)}}
+        source_snapshot = {chapter["id"]: {"version": chapter["version"], "digest": content_digest(chapter),
+            **({"scope": copy.deepcopy(scope)} if scope.get("mode") == "collaboration" else {})}}
         if not text.strip():
             raise ValueError("AUDIO_CHAPTER_EMPTY")
         if len(text) > 200000:
@@ -295,12 +308,12 @@ class AudiobookV2Service(DomainService):
             segments=segments, tracks=[], status="PENDING_REVIEW", timing_status="UNMEASURED",
             character_snapshots={r["id"]: digest(r) for r in characters}, verification="CONTRACT_VERIFIED",
             inference_performed=False, duration_ms=None)
-        self.assert_sources(nid, source_snapshot)
+        self.assert_sources(nid, source_snapshot, scope)
         return self.create(nid, scope, actor, self.PLANS, data)
 
     def _assert_plan(self, nid, scope, plan):
         chapter = self._source(nid, scope, plan["chapter_id"])
-        self.assert_sources(nid, plan["sources"])
+        self.assert_sources(nid, plan["sources"], scope)
         source = plan["sources"].get(plan["chapter_id"], {})
         if chapter.get("version") != source.get("version") or content_digest(chapter) != source.get("digest"):
             raise StaleSourceError("AUDIO_CHAPTER_SNAPSHOT_CHANGED")
@@ -354,7 +367,7 @@ class AudiobookV2Service(DomainService):
         def change(row):
             self._editable(row)
             self._source(nid, scope, row["chapter_id"])
-            self.assert_sources(nid, row["sources"])
+            self.assert_sources(nid, row["sources"], scope)
             segment = next((s for s in row["segments"] if s["id"] == sid), None)
             if segment is None:
                 raise FileNotFoundError(sid)

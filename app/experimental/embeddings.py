@@ -105,7 +105,7 @@ class LocalOllamaEmbeddingProvider:
 
 
 class EntityRef(StrictModel):
-    entity_type: Literal["ASSET", "CHARACTER", "SCENE", "RESEARCH"]
+    entity_type: Literal["ASSET", "CHARACTER", "SCENE", "RESEARCH", "STORY"]
     entity_id: str = Field(min_length=1, max_length=240)
     screenplay_id: str | None = Field(default=None, max_length=240)
 
@@ -142,6 +142,13 @@ class EmbeddingQueryIn(StrictModel):
     index_id: str = Field(min_length=1, max_length=240)
     text: str = Field(min_length=1, max_length=12000)
     limit: int = Field(default=10, ge=1, le=100)
+    mode: Literal['VECTOR', 'HYBRID'] = 'VECTOR'
+    lexical_weight: float = Field(default=0.35, gt=0, lt=1)
+    expected_index_version: int | None = Field(default=None, ge=1)
+
+
+class HybridQueryIn(EmbeddingQueryIn):
+    mode: Literal['HYBRID'] = 'HYBRID'
 
 
 class VectorRecord(StrictModel):
@@ -169,6 +176,10 @@ class EmbeddingService(DomainService):
         self.provider, self.assets, self.screenplays = provider, assets, screenplays
         self.research, self.discovery_bridge = research, discovery_bridge
         self.research_guard = lambda: None
+        self.chapter_authority = None
+        self.visual_memory = None
+        from .vector_index import ExactCosineVectorIndex
+        self.vector_index = ExactCosineVectorIndex()
 
     def status(self):
         return {"status": "NOT_CONFIGURED" if self.provider is None else "CONFIGURED",
@@ -188,6 +199,18 @@ class EmbeddingService(DomainService):
             rows.append({'entity': {'entity_type': kind, 'entity_id': eid, 'screenplay_id': screenplay_id},
                 'title': title, 'source_version': version, 'input_type': input_type,
                 'available': reason is None, 'reason': reason})
+        from fastapi import HTTPException
+        try: chapter_view = self._story_view(scope)
+        except (ValueError, HTTPException) as exc:
+            if isinstance(exc, ValueError) and str(exc) != 'EMBEDDING_BRANCH_MANUSCRIPT_AUTHORITY_NOT_CONFIGURED': raise
+            if isinstance(exc, HTTPException) and (exc.status_code != 404 or not isinstance(exc.detail, dict)
+                or exc.detail.get('feature') != 'branch_manuscript_v1'): raise
+            chapter_view = None
+        if chapter_view is not None:
+            for row in chapter_view.list(nid):
+                if row.get('novel_id') == nid and row.get('branch_id') == branch and not row.get('is_archived'):
+                    add('STORY', row['id'], row.get('title') or row['id'], row.get('version'))
+        else: unavailable.append('BRANCH_MANUSCRIPT_AUTHORITY_NOT_CONFIGURED')
         for row in self.novels.data_set(nid, 'characters'):
             if row.get('branch_id') == branch:
                 add('CHARACTER', row['id'], row.get('name') or row['id'], row.get('version'))
@@ -244,13 +267,31 @@ class EmbeddingService(DomainService):
     def owned_index(self, nid, scope, rid, actor=None):
         row = self.get(nid, scope, self.INDEXES, rid)
         if any(ref.get('entity_type') == 'RESEARCH' for ref in row['entities']): self.research_guard()
+        if scope.get('mode') == 'collaboration' and any(ref.get('entity_type') == 'STORY' for ref in row['entities']):
+            self._story_view(scope)
         if self._requires_owner(row):
             if actor != row['created_by']: raise FileNotFoundError(rid)
         return row
 
+    def _story_view(self, scope):
+        if scope.get('mode') == 'local': return self.chapters
+        if self.chapter_authority is None: raise ValueError('EMBEDDING_BRANCH_MANUSCRIPT_AUTHORITY_NOT_CONFIGURED')
+        from .flags import require_flag
+        require_flag('branch_manuscript_v1')
+        return self.chapter_authority(scope)
+
     def _source(self, nid, scope, ref, actor=None):
         ref = EntityRef.model_validate(ref).model_dump()
         kind, eid = ref["entity_type"], ref["entity_id"]
+        if kind == "STORY":
+            from ..source_privacy import content_digest
+            from ..document import document_to_markdown
+            view = self._story_view(scope)
+            row = view.get(eid)
+            if row.get('novel_id') != nid or row.get('branch_id') != scope.get('branch_id') or row.get('is_archived'):
+                raise FileNotFoundError(eid)
+            text = document_to_markdown(row['document']) if row.get('document') else row.get('content', '')
+            return {'version': row['version'], 'digest': content_digest(row)}, EmbeddingInput('TEXT', text=text)
         if kind == "RESEARCH":
             self.research_guard()
             if self.research is None: raise ValueError('EMBEDDING_RESEARCH_NOT_CONFIGURED')
@@ -285,7 +326,8 @@ class EmbeddingService(DomainService):
         row = next((r for r in screenplay.get("scenes", []) if r["id"] == eid), None)
         if row is None:
             raise FileNotFoundError(eid)
-        sources = scene_sources(nid, scope, row, self.chapters)
+        chapters = self._story_view(scope) if row.get('source_chapter_id') else self.chapters
+        sources = scene_sources(nid, scope, row, chapters)
         return {"version": screenplay.get("edit_version"), "digest": digest([row, sources])}, EmbeddingInput("TEXT", text=self._json(row))
 
     @staticmethod
@@ -336,18 +378,20 @@ class EmbeddingService(DomainService):
         for row in self.list(nid, scope, self.INDEXES):
             if self._requires_owner(row) and row["created_by"] != actor: continue
             research = any(ref.get('entity_type') == 'RESEARCH' for ref in row['entities'])
+            branch_story = scope.get('mode') == 'collaboration' and any(ref.get('entity_type') == 'STORY' for ref in row['entities'])
             try:
                 if research: self.research_guard()
+                if branch_story: self._story_view(scope)
                 row["stale"] = self._index_stale(nid, scope, row, actor)
                 if research: self.research_guard()
             except HTTPException as exc:
-                # A disabled dependency hides only its rows, including a flag
-                # change during stale-source checking. Direct access still uses
-                # owned_index's fail-closed guard. Never swallow project/session
+                # A disabled Research/branch dependency hides only its rows.
+                # Direct access remains fail-closed. Never swallow project/session
                 # denial or an unrelated/malformed 404 from another authority.
-                if (research and exc.status_code == 404 and isinstance(exc.detail, dict)
+                if (exc.status_code == 404 and isinstance(exc.detail, dict)
                     and exc.detail.get('code') == 'EXPERIMENTAL_FEATURE_DISABLED'
-                    and exc.detail.get('feature') == 'research_library_v2'):
+                    and ((research and exc.detail.get('feature') == 'research_library_v2')
+                         or (branch_story and exc.detail.get('feature') == 'branch_manuscript_v1'))):
                     continue
                 raise
             try: self._provider(row).capability; row['provider_status'] = 'CONFIGURED'
@@ -501,12 +545,33 @@ class EmbeddingService(DomainService):
             return copy.deepcopy(row)
 
     def records(self, nid, scope, index_id, actor=None):
-        self.owned_index(nid, scope, index_id, actor)
-        return [{k: v for k, v in r.items() if k != "vector"} for r in self.list(nid, scope, self.VECTORS) if r["index_id"] == index_id]
+        index = self.owned_index(nid, scope, index_id, actor)
+        archived_receipt = False
+        for ref in index['entities']:
+            try:
+                self._source(nid, scope, ref, actor)
+            except FileNotFoundError:
+                # Research invalidation deliberately retains erased-vector receipts.
+                # Only the original source owner can inspect that tombstone; an
+                # index creator whose formerly shared source was revoked cannot.
+                if (ref['entity_type'] != 'RESEARCH' or index['status'] != 'INVALIDATED'
+                        or actor is None or index['created_by'] != actor or self.research is None):
+                    raise
+                owned = self.research.archived_sources(nid, scope, actor)['items']
+                if not any(row['id'] == ref['entity_id'] and row.get('created_by') == actor
+                           and row.get('novel_id') == nid and row.get('scope') == scope for row in owned):
+                    raise
+                archived_receipt = True
+        records = [r for r in self.list(nid, scope, self.VECTORS) if r['index_id'] == index_id]
+        if archived_receipt and any(r.get('status') != 'INVALIDATED' or r.get('vector') for r in records):
+            raise StaleSourceError('EMBEDDING_INVALIDATION_RECEIPT_UNSAFE')
+        return [{k: v for k, v in r.items() if k != 'vector'} for r in records]
 
     def query(self, nid, scope, body, check_authority=None, check_egress=None, actor=None):
         data = EmbeddingQueryIn.model_validate(body)
         index = self.owned_index(nid, scope, data.index_id, actor)
+        if data.expected_index_version is not None and data.expected_index_version != index['index_version']:
+            raise StaleSourceError('EMBEDDING_INDEX_VERSION_CHANGED')
         provider = self._provider(index)
         capability = EmbeddingCapability.model_validate(provider.capability)
         if index["status"] != "ACTIVE" or self._index_stale(nid, scope, index, actor):
@@ -534,21 +599,88 @@ class EmbeddingService(DomainService):
         current = self.get(nid, scope, self.INDEXES, data.index_id)
         if current["version"] != index["version"] or self._index_stale(nid, scope, current, actor):
             raise StaleSourceError("EMBEDDING_INDEX_CHANGED")
-        norm = math.sqrt(sum(v * v for v in vector))
-        results = []
+        active = []
         for row in self.list(nid, scope, self.VECTORS):
-            if row["index_id"] != data.index_id or row["index_version"] != index["index_version"] or row["status"] != "ACTIVE":
+            if row['index_id'] != data.index_id or row['index_version'] != index['index_version'] or row['status'] != 'ACTIVE':
                 continue
-            stored = self._vectors([row["vector"]], 1, capability.dimensions)[0]
-            if digest(stored) != row["vector_digest"]:
-                raise ValueError("EMBEDDING_VECTOR_INTEGRITY_FAILED")
-            score = sum(a * b for a, b in zip(vector, stored)) / (norm * math.sqrt(sum(v * v for v in stored)))
-            results.append({"record_id": row["id"], "entity": row["entity"], "score": max(-1.0, min(1.0, score)),
-                            "source_digest": row["source_digest"], "verification": row["verification"]})
+            stored = self._vectors([row['vector']], 1, capability.dimensions)[0]
+            if digest(stored) != row['vector_digest']: raise ValueError('EMBEDDING_VECTOR_INTEGRITY_FAILED')
+            if row['entity'] not in index['entities'] or row['id'] not in index['record_ids']:
+                raise ValueError('EMBEDDING_VECTOR_MEMBERSHIP_INVALID')
+            source = index['source_snapshots'].get(digest(row['entity']))
+            if source != {'version': row['source_version'], 'digest': row['source_digest']}:
+                raise ValueError('EMBEDDING_VECTOR_SOURCE_INTEGRITY_FAILED')
+            if any(row.get(key) != index['model'][key] for key in ('provider_id', 'model_id', 'model_revision', 'dimensions', 'verification')):
+                raise ValueError('EMBEDDING_VECTOR_MODEL_INTEGRITY_FAILED')
+            active.append({**row, 'vector': stored})
+        if {row['id'] for row in active} != set(index['record_ids']): raise ValueError('EMBEDDING_VECTOR_MEMBERSHIP_INVALID')
+        results = self.vector_index.search(vector, active, len(active))
+        lexical, citations = {}, {}
+        from ..services.visual_memory_index import VisualMemoryIndex
+        terms = set(VisualMemoryIndex.terms(data.text))
+        for result in results:
+            if check_authority: check_authority()
+            ref = result['entity']
+            source, value = self._source(nid, scope, ref, actor)
+            if source != index['source_snapshots'].get(digest(ref)): raise StaleSourceError('EMBEDDING_SOURCE_CHANGED')
+            text = value.text
+            if ref['entity_type'] == 'ASSET':
+                asset = self.assets.get(ref['entity_id'], branch_id=scope.get('branch_id'), actor_id=actor)
+                text = self._json({k: asset.get(k) for k in ('filename', 'title', 'description', 'tags', 'kind')})
+            from collections import Counter
+            counts = Counter(VisualMemoryIndex.terms(text))
+            score = sum(min(8, counts.get(term, 0)) for term in terms)
+            if score: lexical[result['record_id']] = score
+            citation = {'entity': ref, 'source_version': source['version'], 'source_digest': source['digest'],
+                        'novel_id': nid, 'branch_id': scope.get('branch_id'),
+                        'navigation': {'owner': ref['entity_type'], 'id': ref['entity_id'], 'screenplay_id': ref.get('screenplay_id')}}
+            if ref['entity_type'] == 'RESEARCH':
+                research = self.research.source(nid, scope, actor, ref['entity_id'])
+                paragraphs = research.get('paragraphs', [])
+                if paragraphs:
+                    paragraph = max(paragraphs, key=lambda p: sum(term in set(VisualMemoryIndex.terms(p['text'])) for term in terms))
+                    citation['paragraph_citation'] = paragraph['citation']
+            citations[result['record_id']] = citation
+        if data.mode == 'HYBRID':
+            from .vector_index import hybrid_rank
+            results = hybrid_rank(results, lexical, data.lexical_weight)
+        results = [{**item, 'citation': citations[item['record_id']]} for item in results]
         if check_authority: check_authority()
         latest = self.owned_index(nid, scope, data.index_id, actor)
         if latest['version'] != index['version'] or self._index_stale(nid, scope, latest, actor):
             raise StaleSourceError('EMBEDDING_INDEX_CHANGED')
-        return {"items": sorted(results, key=lambda r: (-r["score"], r["record_id"]))[:data.limit],
+        return {"items": results[:data.limit],
                 "index_id": index["id"], "index_version": index["index_version"], "model": index["model"],
-                "metric": "COSINE", "lexical_fallback": False}
+                "metric": "WEIGHTED_RRF" if data.mode == 'HYBRID' else "COSINE", "lexical_fallback": False,
+                "retrieval_mode": "HYBRID_LEXICAL_VECTOR" if data.mode == 'HYBRID' else "VECTOR",
+                "verification": capability.verification, "model_quality": "NOT_RUN",
+                "lexical_weight": data.lexical_weight if data.mode == 'HYBRID' else None,
+                "source_digest": digest(index['source_snapshots'])}
+
+    def visual_profiles(self, nid, scope, actor):
+        from .visual_identity import profiles
+        return profiles(self, nid, scope, actor)
+
+    def visual_checks(self, nid, scope, actor):
+        from .visual_identity import visual_identity_jobs
+        return visual_identity_jobs(self).list(nid, scope, actor)
+
+    def visual_check(self, nid, scope, actor, rid):
+        from .visual_identity import visual_identity_jobs
+        return visual_identity_jobs(self).get(nid, scope, actor, rid)
+
+    def create_visual_check(self, nid, scope, actor, body, check_authority):
+        from .visual_identity import visual_identity_jobs, VisualIdentityCheckIn
+        return visual_identity_jobs(self).create(nid, scope, actor, VisualIdentityCheckIn.model_validate(body).model_dump(), check_authority)
+
+    def visual_action(self, nid, scope, actor, rid, action, expected_version, check_authority):
+        from .visual_identity import visual_identity_jobs
+        return visual_identity_jobs(self).action(nid, scope, actor, rid, action, expected_version, check_authority)
+
+    def visual_selection(self, nid, scope, actor, rid):
+        row = self.visual_check(nid, scope, actor, rid)
+        if row['status'] != 'REVIEWED': raise StaleSourceError('VISUAL_SELECTION_REVIEW_REQUIRED')
+        return {'check_id': row['id'], 'check_version': row['version'], 'target_media': row['request']['target_media'],
+                'character_id': row['request']['character_id'], 'source_lineage': row['source_snapshot'],
+                'reviewed_by': row['reviewed_by'], 'verification': row['model']['verification'],
+                'model_quality': 'NOT_RUN', 'production_dispatch': False}

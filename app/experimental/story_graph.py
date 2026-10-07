@@ -150,7 +150,7 @@ def capture_graph(service, nid, scope, payload, state):
     if end is not None and end <= start:
         raise ValueError('end chapter must follow the originating chapter')
     for item in data['evidence']:
-        content = service.chapters.get(item['chapter_id']).get('content', '')
+        content = service.chapters_for(scope).get(item['chapter_id']).get('content', '')
         if content[item['start']:item['start'] + len(item['quote'])] != item['quote']:
             raise ValueError('evidence quote does not match source at the selected offset')
     links = {'character_ids': [], 'location_ids': []}
@@ -249,7 +249,7 @@ class StoryGraphService(WorldService):
             for row in self.novels.data_set(nid, dataset):
                 if row.get('branch_id') and row['branch_id'] != scope.get('branch_id'): continue
                 result.append({'kind': kind, 'id': row['id'], 'label': row.get('name') or row['id']})
-        for row in self.chapters.list(nid):
+        for row in self.chapters_for(scope).list(nid):
             if scope.get('mode') == 'collaboration' and row.get('branch_id') != scope.get('branch_id'): continue
             result.append({'kind': 'CHAPTER', 'id': row['id'], 'label': row.get('title') or str(row['number'])})
         for row in collection(state, 'planning_nodes').values():

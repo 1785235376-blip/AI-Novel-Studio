@@ -356,20 +356,39 @@ class MemorySnapshotApiIn(BaseModel):
     range_start:int|None=Field(default=None,ge=1)
     range_end:int|None=Field(default=None,ge=1)
 
+def _branch_chapter_owner(chapter_id=None, scope=None):
+    resolver = getattr(chapter_service, "branch_authority", None)
+    if not callable(resolver): return None
+    from .experimental.flags import enabled_flags, require_flag
+    owner = getattr(resolver, "__self__", None)
+    require_flag("branch_manuscript_v1")
+    return owner
+
+
+def _scoped_chapter_view(scope, chapter_id=None):
+    owner = _branch_chapter_owner(chapter_id, scope)
+    return owner.for_scope(scope) if owner is not None else chapter_service
+
+
 def _collaboration_context(chapter_id:str,session_token:str|None,branch_id:str|None):
     if not session_token:raise HTTPException(401,{"code":"SESSION_REQUIRED"})
     try:
         actor=trusted_session_resolver.resolve(session_token)
         if not branch_id:raise HTTPException(400,{"code":"BRANCH_SCOPE_REQUIRED"})
-        chapter=chapter_service.get(chapter_id)
-        project_id=chapter["novel_id"]
-        workspace_id=collaboration_scope_service.repository.project_workspace(project_id)
-        if workspace_id is None:raise PermissionError("project collaboration scope is not configured")
         branch=collaboration_scope_service.repository.get("branches",branch_id)
-        if branch.get("workspace_id")!=workspace_id or branch.get("project_id")!=project_id:
-            raise PermissionError("branch does not contain this chapter project")
+        project_id=branch["project_id"]
+        workspace_id=collaboration_scope_service.repository.project_workspace(project_id)
+        if workspace_id is None or branch.get("workspace_id") != workspace_id:
+            raise PermissionError("project collaboration scope is not configured")
         scope=AuthorizationScope(ScopeKind.BRANCH,workspace_id,project_id,branch["storyline_id"],branch["id"])
+        # The new branch adapter authorizes before its source read. Historical
+        # application adapters retain their own existing permission boundary.
+        if _branch_chapter_owner(chapter_id, scope) is not None:
+            membership_authorization_service.require(actor,"domain.read",ModalityDomain.NOVEL,scope)
+        chapter=_scoped_chapter_view(scope,chapter_id).get(chapter_id)
+        if chapter["novel_id"] != project_id: raise PermissionError("chapter is outside branch project")
         return actor,scope,chapter
+    except FileNotFoundError:raise HTTPException(404,{"code":"CHAPTER_NOT_FOUND"}) from None
     except KeyError:raise HTTPException(401,{"code":"INVALID_SESSION"})
     except PermissionError as exc:raise HTTPException(403,{"code":"FORBIDDEN","detail":str(exc)})
 
@@ -515,8 +534,25 @@ def _generation_content_context(jid,session_token):
     actor,scope,job=_generation_context(jid,session_token)
     if scope.project_id!=job.novel_id or scope.workspace_id!=job.workspace_id:
         raise HTTPException(403,{"code":"FORBIDDEN"})
-    try:novel_service.get(job.novel_id)
-    except (KeyError,FileNotFoundError):raise HTTPException(403,{"code":"FORBIDDEN"}) from None
+    try:
+        novel_service.get(job.novel_id)
+        from .repositories.branch_manuscript import OWNER, is_branch_chapter_id
+        resolver = getattr(getattr(jobs, 'chapters', None), 'branch_authority', None)
+        registered_branch = scope.kind == ScopeKind.BRANCH and callable(resolver)
+        if registered_branch or is_branch_chapter_id(job.novel_id, job.chapter_id):
+            if not registered_branch: raise FileNotFoundError(job.chapter_id)
+            from .experimental.flags import require_flag
+            from .services.branch_manuscript_service import experimental_scope
+            require_flag('branch_manuscript_v1')
+            expected_scope = experimental_scope(scope)
+            # A historical BRANCH label does not grant the current branch
+            # authority over a mainline source ID or its retained output.
+            source = resolver(expected_scope).get(job.chapter_id)
+            if (source.get('id') != job.chapter_id or source.get('novel_id') != job.novel_id
+                    or source.get('authority') != OWNER or source.get('scope') != expected_scope
+                    or source.get('branch_id') != scope.branch_id or source.get('is_archived') or source.get('deleted')):
+                raise FileNotFoundError(job.chapter_id)
+    except (KeyError,ValueError,FileNotFoundError):raise HTTPException(403,{"code":"FORBIDDEN"}) from None
     return actor,scope,job
 
 
@@ -1201,9 +1237,10 @@ def create_chapter(nid:str,body:ChapterIn):
 @router.get("/chapters/{chapter_id}")
 def chapter(chapter_id:str,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     if settings.enable_collaboration_runtime:
-        actor,scope,_=_collaboration_context(chapter_id,x_session_token,x_branch_id)
+        actor,scope,current=_collaboration_context(chapter_id,x_session_token,x_branch_id)
         try:membership_authorization_service.require(actor,"domain.read",ModalityDomain.NOVEL,scope)
         except PermissionError as exc:raise HTTPException(403,{"code":"FORBIDDEN","detail":str(exc)})
+        return current
     return guard(chapter_service.get,chapter_id)
 @router.put("/chapters/{chapter_id}")
 def update_chapter(chapter_id:str,body:ChapterUpdate,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
@@ -1249,6 +1286,8 @@ def delete_chapter(chapter_id:str,x_session_token:str|None=Header(None),x_branch
         except PermissionError as exc: raise HTTPException(403,{"code":"FORBIDDEN","detail":str(exc)})
         if not current.get("is_archived"):
             raise HTTPException(409,{"code":"CHAPTER_ARCHIVE_REQUIRED","message":"永久删除前必须先归档章节。"})
+        if _branch_chapter_owner(chapter_id, scope) is not None:
+            raise HTTPException(428,{"code":"BRANCH_VERSIONED_DELETE_REQUIRED"})
     return guard(chapter_service.delete,chapter_id)
 @router.post("/chapters/{chapter_id}/duplicate",status_code=201)
 def duplicate_chapter(chapter_id:str):
@@ -1276,12 +1315,13 @@ def chapter_history(chapter_id:str,x_session_token:str|None=Header(None),x_branc
         actor,scope,_=_collaboration_context(chapter_id,x_session_token,x_branch_id)
         try:membership_authorization_service.require(actor,"domain.read",ModalityDomain.NOVEL,scope)
         except PermissionError as exc:raise HTTPException(403,{"code":"FORBIDDEN","detail":str(exc)})
+        return guard(_scoped_chapter_view(scope,chapter_id).history,chapter_id)
     return guard(chapter_service.history,chapter_id)
 @router.post("/chapters/{chapter_id}/history/{version}/restore")
 def restore_chapter(chapter_id:str,version:int,expected_version:int,x_session_token:str|None=Header(None),x_branch_id:str|None=Header(None)):
     if settings.enable_collaboration_runtime:
         actor,scope,_=_collaboration_context(chapter_id,x_session_token,x_branch_id)
-        item=next((x for x in chapter_service.history(chapter_id) if x["version"]==version),None)
+        item=next((x for x in _scoped_chapter_view(scope,chapter_id).history(chapter_id) if x["version"]==version),None)
         if item is None:raise HTTPException(404,"Revision not found")
         try:return collaboration_application_service.update_chapter(actor=actor,scope=scope,chapter_id=chapter_id,document=item["document"],expected_version=expected_version,reason="RESTORE")
         except PermissionError as exc:raise HTTPException(403,{"code":"FORBIDDEN","detail":str(exc)})
@@ -1318,16 +1358,28 @@ def story_routes(nid:str):return guard(novel_service.data_set,nid,"story_routes"
 def secrets(nid:str): return guard(novel_service.public_secrets,nid)
 def _generation_request_context(body, token, branch):
     actor = scope = None
-    chapter = guard(chapter_service.get, body.chapter_id)
-    if chapter["novel_id"] != body.novel_id:
-        raise HTTPException(404, {"code": "CHAPTER_OUTSIDE_PROJECT"})
     if settings.enable_collaboration_runtime:
-        actor, scope, _ = _collaboration_context(body.chapter_id, token, branch)
+        actor, scope, chapter = _collaboration_context(body.chapter_id, token, branch)
         try:
             membership_authorization_service.require(actor, "domain.read", ModalityDomain.NOVEL, scope)
         except PermissionError as exc:
             raise HTTPException(403, {"code": "FORBIDDEN"}) from exc
+    else:
+        chapter = guard(chapter_service.get, body.chapter_id)
+    if chapter["novel_id"] != body.novel_id:
+        raise HTTPException(404, {"code": "CHAPTER_OUTSIDE_PROJECT"})
     return actor, scope
+
+
+def _registered_branch_generation_authorization(body, token, branch, actor, scope):
+    if scope is None or not callable(getattr(chapter_service, 'branch_authority', None)):
+        return {}
+    def reauthorize():
+        current_actor, current_scope = _generation_request_context(body, token, branch)
+        if current_actor != actor or current_scope != scope:
+            raise HTTPException(403, {'code': 'GENERATION_AUTHORITY_CHANGED'})
+    # The existing hook is transient: the token is never stored in job data.
+    return {'request_authorization': reauthorize}
 
 
 def _generation_payload(body, token, branch):
@@ -1358,7 +1410,8 @@ def generate(operation:str,body:GenerateIn,x_session_token:str|None=Header(None)
     cache_scope = "generate:" + operation + ":" + hashlib.sha256(json.dumps(authority).encode()).hexdigest()
     digest = hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
     def create():
-        job = jobs.create(operation, payload, actor=actor, scope=scope)
+        job = jobs.create(operation, payload, actor=actor, scope=scope,
+                          **_registered_branch_generation_authorization(body, x_session_token, x_branch_id, actor, scope))
         return {"job_id":job.id,"status":job.status,"events_url":f"/api/generation/{job.id}/events","base_chapter_version":job.base_chapter_version}
     if idempotency_key:
         with _idempotency_execution_lock:
@@ -1377,7 +1430,8 @@ def generate(operation:str,body:GenerateIn,x_session_token:str|None=Header(None)
 
 def _generate_once(operation,body,x_session_token,x_branch_id):
     actor, scope = _generation_request_context(body, x_session_token, x_branch_id)
-    job = jobs.create(operation, _generation_payload(body, x_session_token, x_branch_id), actor=actor, scope=scope)
+    job = jobs.create(operation, _generation_payload(body, x_session_token, x_branch_id), actor=actor, scope=scope,
+                      **_registered_branch_generation_authorization(body, x_session_token, x_branch_id, actor, scope))
     return {"job_id":job.id,"status":job.status,"events_url":f"/api/generation/{job.id}/events","base_chapter_version":job.base_chapter_version}
 
 
@@ -1393,7 +1447,8 @@ def generate_variants(operation:str,body:GenerateVariantsIn,x_session_token:str|
         item = dict(payload)
         item.update(variant_group_id=group_id, variant_index=index + 1,
                     instruction=(payload["instruction"] + f"\n候选方案 {index+1}：请提供与其他候选明显不同但同样符合要求的方向。").strip())
-        job = jobs.create(operation, item, actor=actor, scope=scope)
+        job = jobs.create(operation, item, actor=actor, scope=scope,
+                          **_registered_branch_generation_authorization(body, x_session_token, x_branch_id, actor, scope))
         created.append({"job_id":job.id,"status":job.status,"events_url":f"/api/generation/{job.id}/events","base_chapter_version":job.base_chapter_version,"variant_index":index+1})
     return {"operation":operation,"group_id":group_id,"count":len(created),"variants":created}
 
@@ -1469,10 +1524,18 @@ def cancel(jid:str,x_session_token:str|None=Header(None)):
 def retry_generation(jid:str,x_session_token:str|None=Header(None)):
     actor=scope=None
     if settings.enable_collaboration_runtime:
-        actor,scope,job=_generation_context(jid,x_session_token)
+        actor,scope,job=_generation_content_context(jid,x_session_token)
     else:job=guard(jobs.get,jid)
     from .jobs import require_generation_content, generation_required_features
     require_generation_content(job)
+    if settings.enable_collaboration_runtime:
+        source = guard(jobs.chapters_for_job(job).get, job.chapter_id)
+        if (source.get('novel_id') != job.novel_id or source.get('branch_id') != scope.branch_id
+                or source.get('is_archived')):
+            raise HTTPException(403, {'code': 'GENERATION_SOURCE_UNAVAILABLE'})
+        # Every collaborative retry needs a new reviewed request, including
+        # retained jobs predating experimental origin stamps. No implicit replay.
+        raise HTTPException(409, {'code': 'AUTHOR_PREVIEW_REQUIRED'})
     if generation_required_features(job):
         raise HTTPException(409, {'code': 'AUTHOR_PREVIEW_REQUIRED'})
     if job.status not in {"FAILED","CANCELLED"}:raise HTTPException(409,{"code":"GENERATION_NOT_RETRYABLE","status":job.status})
@@ -1596,9 +1659,21 @@ def list_exports(
     context = _export_request_context(novel_id, branch_id or x_branch_id, x_session_token)
     try:
         novel_service.get(novel_id)
-        page = export_job_service.list(novel_id, permission_context=context, status=status, limit=limit, offset=offset)
+        extra = {}
+        if context.get('branch_id') and callable(getattr(novel_service, 'branch_authority', None)):
+            def permitted(row):
+                try:
+                    _authorize_export_record(row, x_session_token, 'domain.read', context['branch_id'])
+                except HTTPException as exc:
+                    if exc.status_code not in {403, 404}: raise
+                    return False
+                return True
+            extra['authorize'] = permitted
+        page = export_job_service.list(novel_id, permission_context=context, status=status, limit=limit, offset=offset, **extra)
         # The trusted actor and membership are resolved again on every request.
         # Individual reads/downloads retain their own fresh authorization gate.
+        if _export_request_context(novel_id, branch_id or x_branch_id, x_session_token) != context:
+            raise HTTPException(403, {'code': 'EXPORT_SCOPE_FORBIDDEN'})
         return page
     except FileNotFoundError:
         raise HTTPException(404, "novel not found")
@@ -1642,6 +1717,11 @@ def _authorize_export_job(
         job = export_job_service.get(job_id)
     except (FileNotFoundError, ExportJobResultInvalid):
         raise HTTPException(404, "export job not found")
+    return _authorize_export_record(job, session_token, permission, requested_branch)
+
+
+def _authorize_export_record(job, session_token, permission, requested_branch=None):
+    """Authorize one immutable queue read before disclosure or pagination."""
     context = job.get("permission_context") or {}
     if not settings.enable_collaboration_runtime and context.get("mode") != "collaboration":
         return job
@@ -1655,6 +1735,18 @@ def _authorize_export_job(
         or context.get("storyline_id") != scope.storyline_id
         or (requested_branch is not None and requested_branch != branch_id)):
         raise HTTPException(404, "export job not found")
+    if branch_id and callable(getattr(novel_service, 'branch_authority', None)):
+        snapshot = job.get('snapshot') or {}
+        expected_scope = {'mode': 'collaboration', 'novel_id': job['novel_id'],
+                          'workspace_id': scope.workspace_id, 'storyline_id': scope.storyline_id, 'branch_id': branch_id}
+        from .services.export_snapshot_authority import branch_snapshot_owned
+        if branch_snapshot_owned(snapshot, expected_scope):
+            from .experimental.flags import require_flag
+            require_flag('branch_manuscript_v1')
+        else:
+            # Historical branch labels are not evidence of branch-owned prose.
+            # Reading/retrying such an artifact needs independent PROJECT rights.
+            _authorize_novel_project(job['novel_id'], session_token, permission, conceal=True)
     return job
 
 @router.post("/exports/{job_id}/cancel")
@@ -2062,56 +2154,9 @@ def ai_analyze_import_knowledge(nid: str, review_id: str, body: ImportAiReviewIn
         raise HTTPException(503, {"code": exc.code.value, "message": exc.safe_message, "retryable": exc.retryable}) from exc
     except ValueError as exc:
         raise HTTPException(422, {"code": "IMPORT_AI_REVIEW_INVALID", "message": str(exc)}) from exc
-@router.get("/novels/{nid}/adaptations")
-def adaptation_proposals(nid:str,branch_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _adaptation_context(nid,branch_id,x_session_token,"domain.read");return guard(adaptation_service.list,nid)
-@router.post("/novels/{nid}/adaptations",status_code=201)
-def create_adaptation_proposal(nid:str,body:AdaptationProposalIn,branch_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    actor,scope=_adaptation_context(nid,branch_id,x_session_token,"domain.write");result=guard(adaptation_service.create,nid,body.target,body.title,body.instruction)
-    if actor:audit_service.append(audit_service.build(actor,"ADAPTATION_PROPOSAL_CREATED","AdaptationProposal",result["id"],scope,{"novel_id":nid,"branch_id":branch_id,"target":result["target"],"status":result["status"]}))
-    return result
-@router.put("/novels/{nid}/adaptations/{proposal_id}/blueprint")
-def update_adaptation_blueprint(nid:str,proposal_id:str,body:AdaptationBlueprintUpdateIn,branch_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    actor,scope=_adaptation_context(nid,branch_id,x_session_token,"domain.write");result=guard(adaptation_service.update_blueprint,nid,proposal_id,body.model_dump())
-    if actor:audit_service.append(audit_service.build(actor,"ADAPTATION_BLUEPRINT_UPDATED","AdaptationProposal",proposal_id,scope,{"novel_id":nid,"branch_id":branch_id,"target":result["target"],"status":result["status"],"result_version":result["blueprint_revision"]}))
-    return result
-@router.post("/novels/{nid}/adaptations/{proposal_id}/approve")
-def approve_adaptation_proposal(nid:str,proposal_id:str,branch_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    actor,scope=_adaptation_context(nid,branch_id,x_session_token,"domain.review");result=guard(adaptation_service.approve,nid,proposal_id)
-    if actor:audit_service.append(audit_service.build(actor,"ADAPTATION_PROPOSAL_APPROVED","AdaptationProposal",proposal_id,scope,{"novel_id":nid,"branch_id":branch_id,"target":result["target"],"status":result["status"]}))
-    return result
-@router.post("/novels/{nid}/adaptations/{proposal_id}/materialize",status_code=201)
-def materialize_adaptation(nid:str,proposal_id:str,branch_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    if branch_id:
-        actor,source_scope=_adaptation_context(nid,branch_id,x_session_token,"domain.write");proposal=guard(adaptation_service.get,nid,proposal_id)
-        if proposal.get("adapted_scope"):
-            target=proposal["adapted_scope"]
-        else:
-            created=collaboration_admin_service.path_mutations.create_project(actor.workspace_id,proposal["title"],f"Adaptation:{proposal['target']}",actor)
-            story=collaboration_scope_service.repository.list("storylines",workspace_id=actor.workspace_id,project_id=created["id"])[0];branch=collaboration_scope_service.repository.list("branches",workspace_id=actor.workspace_id,project_id=created["id"],storyline_id=story["id"])[0]
-            target={"workspace_id":actor.workspace_id,"project_id":created["id"],"storyline_id":story["id"],"branch_id":branch["id"]};adaptation_service.record_team_materialization(nid,proposal_id,target)
-            authorization_service.assign_role(DomainRoleAssignment(str(__import__('uuid').uuid4()),actor.actor_id,DomainRole.DOMAIN_LEAD,ModalityDomain.NOVEL,AuthorizationScope(ScopeKind.PROJECT,actor.workspace_id,created["id"]),actor.actor_id))
-        target_scope=AuthorizationScope(ScopeKind.BRANCH,target["workspace_id"],target["project_id"],target["storyline_id"],target["branch_id"]);snapshots=guard(adaptation_service.snapshot_chapters,nid,proposal_id);existing=chapter_service.list(target["project_id"])
-        for snapshot in snapshots[len(existing):]:
-            created=collaboration_application_service.create_chapter(actor=actor,scope=target_scope,title=snapshot["title"]);collaboration_application_service.update_chapter(actor=actor,scope=target_scope,chapter_id=created["id"],document=snapshot["document"],expected_version=created["version"],reason="MANUAL_SAVE")
-        target_chapters=chapter_service.list(target["project_id"]);adaptation_service.record_execution_manifest(nid,proposal_id,target_chapters);adaptation_service.record_team_materialization(nid,proposal_id,target,True);audit_service.append(audit_service.build(actor,"ADAPTATION_MATERIALIZED","AdaptationProposal",proposal_id,source_scope,{"novel_id":nid,"branch_id":branch_id,"target":proposal["target"],"status":"MATERIALIZED"}))
-        return {"id":target["project_id"],"title":proposal["title"],"scope":target}
-    return guard(adaptation_service.materialize,nid,proposal_id)
-@router.post("/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/generate")
-def generate_adaptation_draft(nid:str,proposal_id:str,task_id:str,body:AdaptationDraftGenerateIn,branch_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _adaptation_context(nid,branch_id,x_session_token,"domain.write");return guard(adaptation_service.generate_draft,nid,proposal_id,task_id,body.mode,body.provider_id,body.model_id,branch_id,lambda: _adaptation_context(nid,branch_id,x_session_token,"domain.write"))
-@router.post("/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/review")
-def review_adaptation_draft(nid:str,proposal_id:str,task_id:str,body:AdaptationDraftReviewIn,branch_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    _adaptation_context(nid,branch_id,x_session_token,"domain.review");return guard(adaptation_service.review_draft,nid,proposal_id,task_id,body.decision,body.note)
-@router.post("/novels/{nid}/adaptations/{proposal_id}/tasks/{task_id}/apply")
-def apply_adaptation_draft(nid:str,proposal_id:str,task_id:str,branch_id:str|None=None,x_session_token:str|None=Header(None,alias="X-Session-Token")):
-    actor,source_scope=_adaptation_context(nid,branch_id,x_session_token,"domain.write")
-    if not branch_id:return guard(adaptation_service.apply_draft,nid,proposal_id,task_id)
-    item,tasks,index,task=guard(adaptation_service.prepare_apply,nid,proposal_id,task_id);target=item.get("adapted_scope")
-    if not target:raise HTTPException(400,{"code":"ADAPTATION_TARGET_SCOPE_MISSING"})
-    target_scope=AuthorizationScope(ScopeKind.BRANCH,target["workspace_id"],target["project_id"],target["storyline_id"],target["branch_id"]);current=chapter_service.get(task["target_chapter_id"]);body=re.sub(r"^#{1,6}\s+[^\n]+\n+","",task["draft"]["content"].strip(),count=1).strip();document=markdown_to_document(f"# {current['title']}\n\n{body}")
-    saved=collaboration_application_service.update_chapter(actor=actor,scope=target_scope,chapter_id=current["id"],document=document,expected_version=current["version"],reason="AI_ACCEPT");result=adaptation_service.mark_applied(nid,proposal_id,tasks,index,saved["version"])
-    audit_service.append(audit_service.build(actor,"ADAPTATION_DRAFT_APPLIED","AdaptationProposal",proposal_id,source_scope,{"novel_id":nid,"branch_id":branch_id,"status":"APPLIED","result_version":saved["version"]}));return result
+from .adaptation_api import create_adaptation_router
+router.include_router(create_adaptation_router(adaptation_service, globals()))
+
 async def _screenplay_route_guard(request: Request, nid: str, screenplay_id: str,
                             x_session_token: str | None = Header(None, alias="X-Session-Token"),
                             x_branch_id: str | None = Header(None, alias="X-Branch-Id")):
@@ -3604,6 +3649,28 @@ def _workbench_authorize(nid, token, branch, permission):
 
 router.include_router(create_workbench_router(creation_workbench_service, _workbench_authorize))
 
+from .finding_review_api import create_finding_review_router
+from .services.finding_review_service import FindingReviewService
+finding_review_service = FindingReviewService(continuity_finding_service, narrative_finding_service,
+                                             chapter_service, novel_service)
+router.include_router(create_finding_review_router(finding_review_service, _workbench_authorize))
+
+from .pending_canon_review_api import create_pending_canon_review_router
+from .services.pending_canon_review_service import PendingCanonReviewService
+pending_canon_review_service = PendingCanonReviewService(canon_service, chapter_service, novel_service)
+
+
+def _pending_canon_review_authorize(nid, token, permission):
+    if _shared_runtime_authority_enabled():
+        actor, _ = _authorize_novel_project(nid, token, permission)
+        return actor.actor_id
+    guard(novel_service.get, nid)
+    return 'local-author'
+
+
+router.include_router(create_pending_canon_review_router(pending_canon_review_service,
+                                                       _pending_canon_review_authorize))
+
 from .asset_lifecycle_api import create_asset_lifecycle_router
 router.include_router(create_asset_lifecycle_router(asset_library_service,v1_capability_service))
 
@@ -3636,8 +3703,9 @@ class SourcePrivacyIn(BaseModel):
 
 @router.get("/novels/{nid}/chapters/{cid}/privacy")
 def get_source_privacy(nid: str, cid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-    _workbench_authorize(nid, x_session_token, x_branch_id, "domain.read")
-    chapter = guard(chapter_service.get, cid)
+    _, scope = _workbench_authorize(nid, x_session_token, x_branch_id, "domain.read")
+    from .manuscript_sources import scoped_chapters
+    chapter = guard(scoped_chapters(chapter_service, scope).get, cid)
     if chapter.get("novel_id") != nid:
         raise HTTPException(404, "chapter not found")
     from .source_privacy import source_privacy_status
@@ -3645,8 +3713,9 @@ def get_source_privacy(nid: str, cid: str, x_session_token: str | None = Header(
 
 @router.put("/novels/{nid}/chapters/{cid}/privacy")
 def set_source_privacy(nid: str, cid: str, body: SourcePrivacyIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
-    actor, _ = _workbench_authorize(nid, x_session_token, x_branch_id, "domain.write")
-    chapter = guard(chapter_service.get, cid)
+    actor, scope = _workbench_authorize(nid, x_session_token, x_branch_id, "domain.write")
+    from .manuscript_sources import scoped_chapters
+    chapter = guard(scoped_chapters(chapter_service, scope).get, cid)
     if chapter.get("novel_id") != nid:
         raise HTTPException(404, "chapter not found")
     from .source_privacy import review_source_privacy

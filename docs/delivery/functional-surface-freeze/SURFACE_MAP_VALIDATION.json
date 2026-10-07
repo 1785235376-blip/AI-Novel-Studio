@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-07T06:02:54.188504+00:00",
+  "kind": "STATIC_SOURCE_MAP_VALIDATION_NOT_RUNTIME_TEST",
+  "status": "PASS",
+  "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
+  "observed_checkpoint_sha": "f25f08bd978a01aa32ecb713871b1a70ce1732ce",
+  "final_sha": null,
+  "source_state": "ACTIVE_WORKTREE_NOT_FINAL_PIN",
+  "counts": {
+    "surfaces": 73,
+    "logical_areas": 10,
+    "exact_requirement_texts_and_source_lines": 406,
+    "ux_requirements": 24,
+    "creative_domains": 12,
+    "creative_lifecycle_dimensions_each": 13,
+    "tsx_components": 156,
+    "unassigned_tsx_components": 0,
+    "source_snapshot_files": 741
+  },
+  "invariants": {
+    "requirements_source_sha256": "MATCH",
+    "catalog_file_references": "ALL_EXIST",
+    "navigation_surface_ids": "ALL_VALID",
+    "required_states_each": 12,
+    "historical_opus_handoff": "BYTE_IDENTICAL_TO_STARTING_SHA",
+    "historical_post_interop_matrices": "BYTE_IDENTICAL_TO_STARTING_SHA",
+    "other_original_tests": "UNCHANGED_FROM_STARTING_SHA",
+    "original_test_exception": "tests/test_phase7_adaptation_authorization.py",
+    "exception_test_function_sources_including_decorators": "UNCHANGED",
+    "exception_whole_file_hash": "CHANGED_AND_MATCHES_REVIEWED_RECEIPT",
+    "historical_migrations": "UNCHANGED_FROM_STARTING_SHA"
+  },
+  "source_snapshot_changes_since_generation": [],
+  "mounted_api_artifacts": [
+    {
+      "path": "API_CATALOG.json",
+      "sha256": "011c494e3e1558935fba183d1a5de720c3abae614aa290e4268320a46a9259a9"
+    },
+    {
+      "path": "API_CATALOG.md",
+      "sha256": "d7cb7955f719ce1fcb21f33920a61351cd7a3bbf6cfa750b6605949ff0813165"
+    },
+    {
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "sha256": "eee55f97a59278a7c68b376b16123ef8b09a864fe160f8c1e062fd52ce3f5a20"
+    },
+    {
+      "path": "API_OPENAPI.json.gz",
+      "sha256": "bc781005ae711da4a29d99b38c0c6ceca63a35a2406287b9701f21f6895f79cc"
+    },
+    {
+      "path": "tests/test_surface_api_catalog.py",
+      "sha256": "c3c1e0a90fcafbebd6a98e8643bb7367199da75b9213e9cec4eecb7de495e373"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "FINAL_PRODUCT_SURFACE_MAP.md",
+      "sha256": "72c0a6b5251ee3a48bb7f935c267434cd6fc17ddc2b5fbbb2450f9da3a770eca",
+      "bytes": 261707
+    },
+    {
+      "path": "OPUS_UI_HANDOFF.md",
+      "sha256": "4ada5aff16b983e1d5cff0c14e68d29d3d69055b00305b62591872c1fe66d181",
+      "bytes": 64970
+    },
+    {
+      "path": "FUNCTIONAL_SURFACE_MATRIX.json",
+      "sha256": "411073310ec1ddfcef53bba5198a65aeeecbf5143892c64f5c706c58c22bb7ec",
+      "bytes": 282253
+    },
+    {
+      "path": "FUNCTIONAL_SURFACE_MATRIX.md",
+      "sha256": "d39b069d543908ba83c240f7f9adaabe6ee1970ec41f144c47f14bf7a1c63584",
+      "bytes": 11254
+    },
+    {
+      "path": "UI_SURFACE_CATALOG.json",
+      "sha256": "25f16a8fb23f4c3dd380cfe3eab5afe329beceebc24f826c790b7f228b167010",
+      "bytes": 2295293
+    },
+    {
+      "path": "UI_SURFACE_CATALOG.md",
+      "sha256": "342fe513421f3d41145990f0e293202cad68d231f2f29a85d2a3e0cb239504c4",
+      "bytes": 386537
+    },
+    {
+      "path": "docs/delivery/functional-surface-freeze/REQUIREMENTS_REGISTER.json",
+      "sha256": "ba2a5a94200041a3a61bfeb875c66a834c810b612e3826ec96faf91e23ff29b5",
+      "bytes": 395509
+    }
+  ],
+  "verification_boundary": "Only document/source invariants were checked by this validator. No unit/API/File/PostgreSQL/browser/model test is executed or passed by this receipt. Exact-final-head gates remain pending and owned by final hosted verification.",
+  "candidate_declaration": "WITHHELD",
+  "historical_independent_review": "BLOCKED_UNCHANGED_NOT_RETRIED"
+}

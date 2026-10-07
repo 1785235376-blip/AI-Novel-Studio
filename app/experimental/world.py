@@ -174,11 +174,11 @@ class WorldService(DomainService):
 
     def _chapter(self, nid, scope, cid):
         scoped_sources(self, nid, scope, [cid])
-        chapter = self.chapters.get(cid)
+        chapter = self.chapters_for(scope).get(cid)
         number = chapter.get("number")
         if type(number) is not int or number < 1:
             raise ValueError("chapter has no valid narrative sequence")
-        ordered = self.chapters.list(nid)
+        ordered = self.chapters_for(scope).list(nid)
         ids = [row["id"] for row in ordered]
         if cid not in ids or len(ids) != len(set(ids)):
             raise ValueError("chapter is archived or narrative order is ambiguous")

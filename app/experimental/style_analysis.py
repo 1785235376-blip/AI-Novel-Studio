@@ -147,10 +147,10 @@ class SourceFencedService(DomainService):
         self.novels.get(nid)
         if len(chapter_ids) > 20 or len(set(chapter_ids)) != len(chapter_ids):
             raise ValueError("select at most 20 unique chapter sources")
-        available = {r["id"] for r in self.chapters.list(nid)}
+        available = {r["id"] for r in self.chapters_for(scope).list(nid)}
         sources, chapters = {}, {}
         for cid in chapter_ids:
-            chapter = self.chapters.get(cid)
+            chapter = self.chapters_for(scope).get(cid)
             if chapter.get("novel_id") != nid or chapter.get("branch_id") != scope.get("branch_id") or cid not in available:
                 raise FileNotFoundError(cid)
             if expected is not None and chapter.get("version") != expected.get(cid):
@@ -176,7 +176,7 @@ class SourceFencedService(DomainService):
         self.novels.get(nid)
         return [{"id": row["id"], "title": row.get("title", str(row.get("number", row["id"]))),
                  "version": row["version"], "characters": len(row.get("content", ""))}
-                for row in self.chapters.list(nid) if row.get("novel_id") == nid and row.get("branch_id") == scope.get("branch_id")]
+                for row in self.chapters_for(scope).list(nid) if row.get("novel_id") == nid and row.get("branch_id") == scope.get("branch_id")]
 
 
 class StyleAnalysisService(SourceFencedService):

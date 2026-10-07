@@ -14,7 +14,7 @@ import hashlib
 import io
 import json
 import re
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Protocol
 import zipfile
 
 from pydantic import ConfigDict, Field, StrictBool, StrictInt, field_validator, model_validator
@@ -318,6 +318,156 @@ def renpy_export(spec, characters):
     return '\n'.join(lines) + '\n'
 
 
+class EngineExportAdapter(Protocol):
+    """Shipped pure exporters. An ID is a selection, never executable code."""
+    target: str
+    def validate(self, spec: dict) -> dict: ...
+    def files(self, spec: dict, characters: dict) -> dict[str, bytes]: ...
+
+
+class EngineLiteral(StrictModel):
+    op: Literal['literal']
+    value: Scalar
+
+
+class EngineVariable(StrictModel):
+    op: Literal['var']
+    name: Name
+
+
+class EngineNot(StrictModel):
+    op: Literal['not']
+    arg: 'EngineCondition'
+
+
+class EngineBoolean(StrictModel):
+    op: Literal['and', 'or']
+    args: list['EngineCondition'] = Field(min_length=2, max_length=64)
+
+
+class EngineComparison(StrictModel):
+    op: Literal['eq', 'ne', 'lt', 'le', 'gt', 'ge']
+    left: 'EngineCondition'
+    right: 'EngineCondition'
+
+
+EngineCondition = Annotated[EngineLiteral | EngineVariable | EngineNot | EngineBoolean | EngineComparison, Field(discriminator='op')]
+for _engine_condition_model in (EngineNot, EngineBoolean, EngineComparison):
+    _engine_condition_model.model_rebuild()
+
+
+class GodotChoice(StrictModel):
+    id: Name
+    label: str = Field(min_length=1, max_length=240)
+    target_index: int = Field(ge=0, le=99, strict=True)
+    condition_tree: EngineCondition
+    assignments: dict[Name, Scalar]
+
+
+class GodotNode(StrictModel):
+    model_config = ConfigDict(extra='forbid', str_strip_whitespace=False)
+    source_node_id: Identifier
+    text: str = Field(max_length=8000)
+    speaker: str | None = Field(default=None, max_length=2000)
+    ending: str = Field(max_length=240)
+    choices: list[GodotChoice] = Field(max_length=8)
+    background_asset_id: Identifier | None = None
+    music_asset_id: Identifier | None = None
+
+
+class GodotStoryResource(StrictModel):
+    model_config = ConfigDict(extra='forbid', str_strip_whitespace=False, serialize_by_alias=True, validate_by_name=True)
+    schema_id: Literal['ai-novel-godot-story/1'] = Field(default='ai-novel-godot-story/1', alias='schema')
+    engine_target: Literal['GODOT_4_DATA_ADAPTER'] = 'GODOT_4_DATA_ADAPTER'
+    runtime_verification: Literal['NOT_RUN'] = 'NOT_RUN'
+    importer_status: Literal['TARGET_INTEGRATION_REQUIRED'] = 'TARGET_INTEGRATION_REQUIRED'
+    title: str = Field(min_length=1, max_length=160)
+    entry_index: int = Field(ge=0, le=99, strict=True)
+    max_steps: int = Field(ge=1, le=128, strict=True)
+    variables: list[Variable] = Field(max_length=16)
+    nodes: list[GodotNode] = Field(min_length=1, max_length=100)
+
+    @model_validator(mode='after')
+    def references(self):
+        if self.entry_index >= len(self.nodes) or len({n.source_node_id for n in self.nodes}) != len(self.nodes):
+            raise ValueError('GODOT_NODE_REFERENCE_INVALID')
+        variables = {v.name: v.model_dump() for v in self.variables}
+        if len(variables) != len(self.variables): raise ValueError('GODOT_VARIABLE_DUPLICATE')
+        for node in self.nodes:
+            if len({c.id for c in node.choices}) != len(node.choices) or (node.ending and node.choices):
+                raise ValueError('GODOT_CHOICE_INVALID')
+            for choice in node.choices:
+                if choice.target_index >= len(self.nodes): raise ValueError('GODOT_TARGET_INVALID')
+                condition_tree = choice.condition_tree.model_dump()
+                validate_condition_tree(condition_tree)
+                if expression_type(condition_tree, variables) is not bool: raise ValueError('GODOT_CONDITION_INVALID')
+                for name, value in choice.assignments.items():
+                    var = variables.get(name)
+                    if not var or type(value) is not (bool if var['type'] == 'bool' else int): raise ValueError('GODOT_ASSIGNMENT_INVALID')
+                    if var['type'] == 'int' and not var['minimum'] <= value <= var['maximum']: raise ValueError('GODOT_ASSIGNMENT_INVALID')
+        return self
+
+
+def validate_condition_tree(tree, depth=0, budget=None):
+    """Validate imported/round-tripped AST data without eval or target code."""
+    budget = [64] if budget is None else budget
+    budget[0] -= 1
+    if not isinstance(tree, dict) or depth > 12 or budget[0] < 0: raise ValueError('ENGINE_CONDITION_INVALID')
+    op = tree.get('op')
+    if op == 'literal':
+        if set(tree) != {'op', 'value'} or type(tree['value']) not in {bool, int} or (type(tree['value']) is int and not -10000 <= tree['value'] <= 10000): raise ValueError('ENGINE_CONDITION_INVALID')
+        return
+    if op == 'var':
+        if set(tree) != {'op', 'name'} or not isinstance(tree['name'], str) or not re.fullmatch(r'[a-z][a-z0-9_]{0,31}', tree['name']): raise ValueError('ENGINE_CONDITION_INVALID')
+        return
+    if op == 'not':
+        if set(tree) != {'op', 'arg'}: raise ValueError('ENGINE_CONDITION_INVALID')
+        children = [tree['arg']]
+    elif op in {'and', 'or'}:
+        if set(tree) != {'op', 'args'} or not isinstance(tree['args'], list) or not 2 <= len(tree['args']) <= 64: raise ValueError('ENGINE_CONDITION_INVALID')
+        children = tree['args']
+    elif op in {'eq', 'ne', 'lt', 'le', 'gt', 'ge'}:
+        if set(tree) != {'op', 'left', 'right'}: raise ValueError('ENGINE_CONDITION_INVALID')
+        children = [tree['left'], tree['right']]
+    else: raise ValueError('ENGINE_CONDITION_INVALID')
+    for child in children: validate_condition_tree(child, depth + 1, budget)
+
+
+class RenPyExportAdapter:
+    target = 'RENPY_8_5_4_TEXT_MENU_SUBSET'
+    def validate(self, spec): return analyze(StorySpec.model_validate(spec).model_dump())
+    def files(self, spec, characters):
+        if not self.validate(spec)['can_review']: raise ValueError('ENGINE_STORY_INVALID')
+        return {'game/story.rpy': renpy_export(spec, characters).encode('utf-8')}
+
+
+class GodotExportAdapter:
+    target = 'GODOT_4_DATA_ADAPTER'
+    def validate(self, spec): return analyze(StorySpec.model_validate(spec).model_dump())
+    def resource(self, spec, characters):
+        spec = StorySpec.model_validate(spec).model_dump()
+        if not self.validate(spec)['can_review']: raise ValueError('ENGINE_STORY_INVALID')
+        indices = {node['node_id']: i for i, node in enumerate(spec['nodes'])}
+        resource = GodotStoryResource(title=spec['title'], entry_index=indices[spec['entry_node_id']],
+            max_steps=spec['max_steps'], variables=spec['variables'], nodes=[{
+                'source_node_id': n['node_id'], 'text': n['dialogue'], 'speaker': characters.get(n['character_id']),
+                'ending': n['ending'], 'background_asset_id': n['background_asset_id'], 'music_asset_id': n['music_asset_id'],
+                'choices': [{'id': c['id'], 'label': c['label'], 'target_index': indices[c['target']],
+                    'condition_tree': parse_condition(c['condition']), 'assignments': c['assignments']} for c in n['choices']]
+                } for n in spec['nodes']])
+        return resource.model_dump()
+    def files(self, spec, characters):
+        encode = lambda x: json.dumps(x, ensure_ascii=False, sort_keys=True, indent=2).encode('utf-8')
+        resource = self.resource(spec, characters)
+        content = encode(resource)
+        if GodotStoryResource.model_validate_json(content).model_dump() != resource: raise ValueError('GODOT_ROUND_TRIP_FAILED')
+        return {'godot/story.json': content, 'godot/story.schema.json': encode(GodotStoryResource.model_json_schema()),
+            'godot/README.txt': b'Godot 4 data adapter, not a playable Godot project. Target runtime NOT_RUN.\nImport story.json using a trusted target integration; consume typed conditions, never eval them.\nUse plain text Labels, not BBCode. Indices are zero-based. Enforce max_steps and typed variable bounds.\nMedia references remain manifest-only. No engine, addons, arbitrary scripts or user code are included.\n'}
+
+
+ENGINE_ADAPTERS: tuple[EngineExportAdapter, ...] = (RenPyExportAdapter(), GodotExportAdapter())
+
+
 class InteractiveStoryService(SourceFencedService):
     COLLECTION = 'interactive_story_adaptations'
 
@@ -355,10 +505,18 @@ class InteractiveStoryService(SourceFencedService):
     @staticmethod
     def engine_contract():
         return {'schema': SCHEMA, 'input_schema': StorySpec.model_json_schema(), 'condition_language': 'BOUNDED_BOOL_INT_AST',
-                'supported_targets': ['ENGINE_NEUTRAL_JSON', 'RENPY_8_5_4_TEXT_MENU_SUBSET'],
+                'supported_targets': ['ENGINE_NEUTRAL_JSON', *[a.target for a in ENGINE_ADAPTERS]],
+                'target_schemas': {'GODOT_4_DATA_ADAPTER': GodotStoryResource.model_json_schema()},
+                'target_limits': {'GODOT_4_DATA_ADAPTER': 'DATA_ONLY_TARGET_IMPORTER_REQUIRED', 'RENPY_8_5_4_TEXT_MENU_SUBSET': 'GENERATED_TEXT_MENU_NO_MEDIA_RUNTIME'},
                 'third_party_execution': 'DENY_ALL', 'runtime_status': 'NOT_RUN',
                 'media_policy': 'VERSIONED_REFERENCES_ONLY_NOT_DEPLOYED', 'adapter_policy': 'SHIPPED_TRUSTED_EXPORTERS_ONLY',
-                'max_steps': LIMITS['steps'], 'max_analysis_states': LIMITS['analysis_states']}
+                'max_steps': LIMITS['steps'], 'max_analysis_states': LIMITS['analysis_states'],
+                'lifecycle': {'execution': 'BOUNDED_SYNCHRONOUS_PURE_EXPORT', 'cancel': 'DISCARD_RESPONSE_NO_EXTERNAL_WRITE',
+                    'resume': 'REGENERATE_WITH_CURRENT_SOURCE_AND_REVIEW_RECEIPT', 'restart': 'PERSISTED_ADAPTATION_REVALIDATED'},
+                'surface': {'workspace': 'Production', 'page': 'interactive_story_v2',
+                    'states': ['LOADING', 'EMPTY', 'ERROR', 'UNAUTHORIZED', 'DISABLED', 'CONFLICT', 'REVIEW', 'RECOVERY', 'PARTIAL', 'NOT_CONFIGURED'],
+                    'permission': 'domain.review', 'feature_flag': FEATURE,
+                    'target_runtime': 'NOT_RUN'}}
 
     def catalog(self, nid, scope):
         self.novels.get(nid); state = self.store.read(nid, scope); graphs = []
@@ -595,7 +753,8 @@ class InteractiveStoryService(SourceFencedService):
         manifest = self._manifest(nid, scope, row); analysis = analyze(row['spec'])
         result = {'can_export': row['status'] == 'APPROVED' and analysis['can_review'], 'media_manifest': manifest,
             'losses': ['MEDIA_REFERENCES_NOT_EMBEDDED_OR_PLAYED', 'NO_TARGET_CUSTOM_SCREENS_ANIMATION_OR_PLUGINS', 'TARGET_WHITESPACE_AND_FONT_RENDERING_NOT_VERIFIED'],
-            'target_runtime': 'NOT_RUN', 'schema': SCHEMA, 'analysis': analysis}
+            'target_runtime': 'NOT_RUN', 'schema': SCHEMA, 'analysis': analysis,
+            'engine_adapters': [{'target': a.target, 'schema_validation': 'CONTRACT_VERIFIED', 'runtime': 'NOT_RUN'} for a in ENGINE_ADAPTERS]}
         result['preview_digest'] = digest([self._receipt(row), result]); self._current(nid, scope, row); reauthorize(); return result
 
     def export(self, nid, scope, actor, sid, value, *, reauthorize=lambda: None):
@@ -613,6 +772,8 @@ class InteractiveStoryService(SourceFencedService):
         files = {'story.json': encode(neutral), 'media-manifest.json': encode(preview['media_manifest']), 'compatibility.json': encode(preview),
             'game/story.rpy': renpy_export(row['spec'], row['capture']['characters']).encode('utf-8'),
             'README.txt': ('Experimental B07 independent export, not a manuscript or Canon write.\nExtract into a NEW empty directory.\nstory.json is the versioned engine-neutral story.\ngame/story.rpy is a generated Ren\'Py 8.5.4 documented text/menu subset.\nTarget runtime NOT_RUN. No runtime, plugins, media bytes or third-party scripts included.\nUse a new Ren\'Py project to inspect the generated file. Never overwrite an existing project.\nMedia references, missing resources and compatibility losses are listed separately.\nThe in-app preview uses bounded deterministic playback; character names and dialogue are escaped.\n').encode('utf-8')}
+        for adapter in ENGINE_ADAPTERS:
+            files.update(adapter.files(row['spec'], row['capture']['characters']))
         files['checksums.json'] = encode({name: hashlib.sha256(content).hexdigest() for name, content in files.items()})
         buffer = io.BytesIO()
         with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:

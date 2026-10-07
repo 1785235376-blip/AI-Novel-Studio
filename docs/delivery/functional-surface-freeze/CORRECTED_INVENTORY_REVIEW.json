@@ -1,0 +1,48 @@
+{
+  "kind": "EXPLICIT_SURFACE_INVENTORY_REVIEW_NOT_EXECUTION",
+  "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
+  "previous_manifest_sha256": "36e5736456e4d6cc18511bf28567a8ceb826e882523ea73b7872aefd5accab41",
+  "previous_nodes": 8626,
+  "collected_count": 8634,
+  "added_this_checkpoint": 8,
+  "original_source_digests_unchanged": false,
+  "reviewed_fixture_changes": [
+    {
+      "after_sha256": "afaf87eae08a712245e87f5d2a43414b006c7f20c5df63ce3e78b00f7e742a0a",
+      "all_original_test_function_ast_unchanged": true,
+      "before_sha256": "2676b4751771e6b523d0ff703a1ec265c3f58ce67117aa1798958ae1bf44f5c0",
+      "path": "tests/test_phase7_adaptation_authorization.py",
+      "receipt": "docs/delivery/functional-surface-freeze/ADAPTATION_FIXTURE_EXCEPTION.json",
+      "scope": "Explicit approved true-branch setup only; original assertions/node IDs/skips retained"
+    }
+  ],
+  "newly_reviewed_fixture_changes": [],
+  "original_relative_node_order_unchanged": true,
+  "original_skip_maps_unchanged": true,
+  "evidence": "TWO_IDENTICAL_COMPLETE_COLLECTIONS_NOT_TEST_EXECUTION",
+  "added_nodes": [
+    "tests/test_surface_embedding_invalidation_receipts.py::test_source_owner_can_read_erased_receipt_after_restart_but_cannot_query[file-delete]",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_source_owner_can_read_erased_receipt_after_restart_but_cannot_query[file-revoke]",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_source_owner_can_read_erased_receipt_after_restart_but_cannot_query[postgres-delete]",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_source_owner_can_read_erased_receipt_after_restart_but_cannot_query[postgres-revoke]",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_former_shared_reader_cannot_inspect_source_owner_tombstone[file]",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_former_shared_reader_cannot_inspect_source_owner_tombstone[postgres]",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_receipt_requires_complete_vector_erasure_and_current_feature_authority[file]",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_receipt_requires_complete_vector_erasure_and_current_feature_authority[postgres]"
+  ],
+  "new_node_backend_classification": {
+    "tests/test_surface_embedding_invalidation_receipts.py::test_source_owner_can_read_erased_receipt_after_restart_but_cannot_query[file-delete]": "file",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_source_owner_can_read_erased_receipt_after_restart_but_cannot_query[file-revoke]": "file",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_source_owner_can_read_erased_receipt_after_restart_but_cannot_query[postgres-delete]": "postgres",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_source_owner_can_read_erased_receipt_after_restart_but_cannot_query[postgres-revoke]": "postgres",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_former_shared_reader_cannot_inspect_source_owner_tombstone[file]": "file",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_former_shared_reader_cannot_inspect_source_owner_tombstone[postgres]": "postgres",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_receipt_requires_complete_vector_erasure_and_current_feature_authority[file]": "file",
+    "tests/test_surface_embedding_invalidation_receipts.py::test_receipt_requires_complete_vector_erasure_and_current_feature_authority[postgres]": "postgres"
+  },
+  "old_skip_counts": {
+    "file": 2035,
+    "postgres": 2059
+  },
+  "manifest_sha256": "777aa5fc40c6a6a06fd13e90fc752fcd6b0311e96e0b62eb7cb22121ece63a7e"
+}

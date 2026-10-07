@@ -219,7 +219,7 @@ class AuthorPreparer:
         job.author_input_digest = digest([body.model_dump(exclude={"preview_digest", "generation_request_id"}), authorization])
         if job.base_chapter_version != body.chapter_version:
             raise HTTPException(409, {'code': 'AUTHOR_CHAPTER_CHANGED'})
-        chapter = self.manager.chapters.get(job.chapter_id)
+        chapter = (self.manager.chapters_for_job(job) if hasattr(self.manager, "chapters_for_job") else self.manager.chapters).get(job.chapter_id)
         if source and not saved_source_matches(chapter, source):
             raise HTTPException(409, {'code': 'AUTHOR_SELECTION_NOT_SAVED'})
 
@@ -354,7 +354,7 @@ def create_author_context_router(manager, authorize, require_flag, generation_co
             'target': 'cloud' if runtime.is_remote_text_provider(assembled.provider_id) else 'local',
             'provider_id': assembled.provider_id, 'model_id': assembled.model_id,
             'request': payload, 'prompt_characters': len(assembled.prompt), 'token_count': None, 'token_count_state': 'UNKNOWN',
-            'source_characters': 0 if character else len(author_source(job, manager.chapters.get(job.chapter_id))),
+            'source_characters': 0 if character else len(author_source(job, (manager.chapters_for_job(job) if hasattr(manager, "chapters_for_job") else manager.chapters).get(job.chapter_id))),
             'source_strategy': 'CHARACTER_KNOWLEDGE_ONLY' if character else 'NO_MANUSCRIPT' if (job.request_scope or {}).get('source_mode') == 'NONE' else 'EXACT_SAVED_SELECTION' if job.source else 'LAST_2000_SAVED_CHARACTERS',
             'truncation': 'NONE' if character or job.source or (job.request_scope or {}).get('source_mode') == 'NONE' else 'SOURCE_TAIL_2000',
             'privacy_omissions': [{'reason': 'CHARACTER_VIEWPOINT_BOUNDARY'}] if character else [{'reason': 'SOURCE_PRIVACY_POLICY'}] if context.get('privacy_omissions') else [],

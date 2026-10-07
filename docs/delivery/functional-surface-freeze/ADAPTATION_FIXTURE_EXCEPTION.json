@@ -1,0 +1,18 @@
+{
+  "file": "tests/test_phase7_adaptation_authorization.py",
+  "authorization": "Reviewed fixture-only migration to authoritative branch initialization; original test bodies, assertions, node IDs and skips are unchanged.",
+  "before_sha256": "2676b4751771e6b523d0ff703a1ec265c3f58ce67117aa1798958ae1bf44f5c0",
+  "after_sha256": "afaf87eae08a712245e87f5d2a43414b006c7f20c5df63ce3e78b00f7e742a0a",
+  "test_bodies_unchanged": true,
+  "test_body_sha256": {
+    "test_team_adaptation_capability_matrix_and_cross_workspace_rejection": "41e36bcfe87b75408be7fc26d9f427a8676567fda47f0ae67488c7977e96e7c1",
+    "test_team_adaptation_audit_is_content_free": "eac87ab39ff4c34b229b137d53cebb3e9cd185be236e9e1f3b1449953af148d0",
+    "test_team_adaptation_materializes_scoped_project_and_is_idempotent": "43199d85449f759ee7e1792e651522de95fc363c0271afaa188621ec560b1fec"
+  },
+  "fixture_changes": [
+    "Scoped autouse monkeypatch enables branch_manuscript_v1 only for this module.",
+    "setup_scope calls production fork preview/apply as existing workspace admin.",
+    "Existing branch-only lead rights and all original test function source remain unchanged.",
+    "Fork fixture temporarily enables collaboration runtime only around production preview/apply, then restores it in finally."
+  ]
+}

@@ -10,7 +10,9 @@ from sqlalchemy import delete, func, select
 from ...repository import slug
 from ...privacy import privacy_for_update
 from ..screenplay_versions import versioned_screenplay
+from ..adaptation_versions import versioned_adaptation, MAX_PROPOSALS
 from ..structured_cas import UNGUARDED, assert_record_cas
+from ..story_record_versions import META, KINDS, envelope, prepare, finish
 from .common import chapter_external_id, iso, novel_or_raise
 from .models import (CanonModel, ChapterModel, ChapterSummaryModel, CharacterModel,
                      ForeshadowingModel, LocationModel, NovelModel, SecretModel,
@@ -25,10 +27,10 @@ class PostgresNovelRepository:
     def __init__(self, database):
         self.database = database
 
-    def compare_and_swap_record(self,novel_id,kind,record_id,payload,expected_digest):
-        methods={"characters":self.upsert_character,"locations":self.upsert_location,"relationships":self.upsert_relationship}
+    def compare_and_swap_record(self,novel_id,kind,record_id,payload,expected_digest,*,mutation=None,check=None):
+        methods={"characters":self.upsert_character,"locations":self.upsert_location,"relationships":self.upsert_relationship,"timeline":self.upsert_timeline_event,"foreshadowing":self.upsert_foreshadowing}
         if kind not in methods: raise ValueError("unsupported structured record kind")
-        return methods[kind](novel_id,record_id,payload,expected_digest=expected_digest)
+        return methods[kind](novel_id,record_id,payload,expected_digest=expected_digest,**({"mutation":mutation,"check":check} if kind in KINDS else {}))
 
     @staticmethod
     def _locked_metadata_model(session, novel_id):
@@ -120,7 +122,7 @@ class PostgresNovelRepository:
                 return [serialize_foreshadowing(x) for x in sorted(rows, key=foreshadowing_order)]
             if name == "timeline":
                 rows = session.scalars(select(TimelineModel).where(TimelineModel.novel_id == novel.id)).all()
-                return [serialize_timeline(x) for x in sorted(rows, key=timeline_order)]
+                return [self._serialize_story(session,"timeline",x) for x in sorted(rows, key=timeline_order)]
             if name == "relationships":
                 rows=session.scalars(select(RelationshipStateModel).where(RelationshipStateModel.project_id==novel.slug).order_by(RelationshipStateModel.created_at)).all()
                 return [{"id":dict(row.payload or {}).get("_source_id",row.id),"source_character_id":row.source_character_id,"target_character_id":row.target_character_id,**{key:value for key,value in dict(row.payload or {}).items() if not key.startswith("_")}} for row in rows]
@@ -161,36 +163,109 @@ class PostgresNovelRepository:
             else:model.name=payload["name"];model.facts=facts;model.privacy=policy
             session.flush();return serialize_location(model)
 
-    def upsert_timeline_event(self,novel_id,event_id,payload):
-        with self.database.session() as session:
-            novel=novel_or_raise(session,novel_id);source_id=slug(event_id or payload["title"]);target_id=uuid.uuid5(uuid.NAMESPACE_URL,f"ai-novel-studio:{novel.slug}:timeline:{source_id}")
-            model=session.get(TimelineModel,target_id)
-            if model is None:model=session.scalar(select(TimelineModel).where(TimelineModel.novel_id==novel.id,TimelineModel.details["_source_id"].astext==source_id))
-            location_slug=payload.get("location");location=None
-            if location_slug:location=session.scalar(select(LocationModel).where(LocationModel.novel_id==novel.id,LocationModel.slug==location_slug))
-            details={key:payload.get(key,[] if key=="characters" else "") for key in ("description","characters","chapter_id","status")};details["_source_id"]=source_id
-            if "privacy_level" not in payload and (model is None or (model.details or {}).get("privacy_status") == "UNKNOWN"):
-                details["privacy_status"]="UNKNOWN"
-            values={"novel_id":novel.id,"event_time":payload.get("time",""),"sequence":payload.get("sequence",1),"location_id":location.id if location else None,"title":payload["title"],"details":details,"privacy":privacy_for_update(payload, serialize_timeline(model) if model is not None else None)}
-            if model is None:model=TimelineModel(id=target_id,**values);session.add(model)
-            else:
-                for key,value in values.items():setattr(model,key,value)
-            session.flush();result=serialize_timeline(model);result["location"]=location_slug or "";return result
+    @staticmethod
+    def _serialize_story(session,kind,model):
+        if kind=='foreshadowing': return serialize_foreshadowing(model)
+        result=serialize_timeline(model)
+        # Historical imports stored only a location FK. New rows retain the
+        # original slug in JSONB too, so every write receipt equals public GET.
+        if 'location' not in result:
+            location=session.get(LocationModel,model.location_id) if model.location_id else None
+            result['location']=location.slug if location is not None else ''
+        return result
 
-    def upsert_foreshadowing(self,novel_id,foreshadowing_id,payload):
+    @staticmethod
+    def _story_model(session,novel,kind,rid):
+        cls=TimelineModel if kind=='timeline' else ForeshadowingModel
+        target=uuid.uuid5(uuid.NAMESPACE_URL,f"ai-novel-studio:{novel.slug}:{kind}:{rid}")
+        model=session.get(cls,target)
+        if model is None:model=session.scalar(select(cls).where(cls.novel_id==novel.id,cls.details['_source_id'].astext==rid))
+        if model is None:
+            # Existing pre-migration UUID records remain addressable by GET id.
+            try: candidate=session.get(cls,uuid.UUID(rid))
+            except ValueError: candidate=None
+            if candidate is not None and candidate.novel_id==novel.id:model=candidate
+        return model,target
+
+    def story_record(self,novel_id,kind,record_id):
+        if kind not in KINDS: raise ValueError("unsupported story record kind")
         with self.database.session() as session:
-            novel=novel_or_raise(session,novel_id);source_id=slug(foreshadowing_id or payload["title"]);target_id=uuid.uuid5(uuid.NAMESPACE_URL,f"ai-novel-studio:{novel.slug}:foreshadowing:{source_id}")
-            model=session.get(ForeshadowingModel,target_id)
-            if model is None:model=session.scalar(select(ForeshadowingModel).where(ForeshadowingModel.novel_id==novel.id,ForeshadowingModel.details["_source_id"].astext==source_id))
-            details={key:payload.get(key,[] if key in ("characters","events") else "") for key in ("description","characters","events")};details["_source_id"]=source_id
-            details["privacy_level"]=privacy_for_update(payload, model.details if model is not None else None)
-            if "privacy_level" not in payload and (model is None or (model.details or {}).get("privacy_status") == "UNKNOWN"):
-                details["privacy_status"]="UNKNOWN"
-            values={"novel_id":novel.id,"title":payload["title"],"planted_chapter":payload.get("planted_chapter"),"target_chapter":payload.get("target_chapter"),"status":payload.get("status","OPEN"),"details":details}
-            if model is None:model=ForeshadowingModel(id=target_id,**values);session.add(model)
+            novel=novel_or_raise(session,novel_id);model,_=self._story_model(session,novel,kind,record_id)
+            if model is None:raise FileNotFoundError(record_id)
+            return envelope(self._serialize_story(session,kind,model),(model.details or {}).get(META))
+
+    def _upsert_story_record(self,novel_id,kind,record_id,payload,expected_digest,mutation,check):
+        with self.database.session() as session:
+            novel=novel_or_raise(session,novel_id,True)
+            exact=self._story_model(session,novel,kind,record_id)[0] if expected_digest is UNGUARDED and record_id else None
+            rid=record_id if expected_digest is not UNGUARDED or exact is not None else slug(record_id or payload['title'])
+            if mutation and mutation['action']!='RESTORE':
+                # Keep captured chapter evidence stable through the same commit.
+                # Timeline sources share the novel lock already held here.
+                from .common import chapter_or_raise, require_chapter_identity
+                from .chapter import PostgresChapterRepository
+                from ..structured_cas import record_digest
+                from ..chapter_repository import VersionConflict
+                for source in sorted(mutation.get('source_versions',[]),key=lambda row:(row['kind'],row['id'])):
+                    if source['kind']!='chapter':continue
+                    try:
+                        source_novel,chapter=chapter_or_raise(session,source['id'])
+                        chapter=session.scalar(select(ChapterModel).where(ChapterModel.id==chapter.id).with_for_update().execution_options(populate_existing=True))
+                        require_chapter_identity(chapter)
+                        row=PostgresChapterRepository._external(source_novel,chapter)
+                        fingerprint=record_digest({'id':row['id'],'version':row['version'],'document':row.get('document'),'content':row.get('content')})
+                        if source_novel.id!=novel.id or row['is_archived'] or fingerprint!=source['digest']:raise FileNotFoundError(source['id'])
+                    except FileNotFoundError:
+                        raise VersionConflict({'id':rid,'version':mutation['expected_version']},resource_id=rid,expected_version=mutation['expected_version']) from None
+            model,target=self._story_model(session,novel,kind,rid)
+            current=self._serialize_story(session,kind,model) if model is not None else None
+            details=dict(model.details or {}) if model is not None else {}
+            metadata=details.get(META)
+            payload=prepare(kind,rid,current,metadata,payload,expected_digest,mutation)
+            snapshot=bool(mutation and mutation['action'] in {'RESTORE','FEEDBACK'})
+            if snapshot:
+                details={**{key:value for key,value in details.items() if key.startswith('_')},
+                         **{key:value for key,value in payload.items() if key not in {'id','title','time','sequence','planted_chapter','target_chapter'}}}
+            if not snapshot:
+                details.update({key:payload.get(key,[] if key=='characters' else '') for key in ('description','characters')})
+            details['_source_id']=rid
+            if 'privacy_level' not in payload and (current is None or current.get('privacy_status')=='UNKNOWN'):
+                details['privacy_status']='UNKNOWN'
+            elif 'privacy_level' in payload and 'privacy_status' not in payload:details.pop('privacy_status',None)
+            from ...privacy import privacy_for_update
+            policy=privacy_for_update(payload,current)
+            if kind=='timeline':
+                location_slug=payload.get('location','');location=None
+                if location_slug:location=session.scalar(select(LocationModel).where(LocationModel.novel_id==novel.id,LocationModel.slug==location_slug))
+                if not snapshot:
+                    details.update(location=location_slug,chapter_id=payload.get('chapter_id',''),status=payload.get('status','CONFIRMED'))
+                # Clear stale imported policy after an explicit user change.
+                if 'privacy_level' in details:details['privacy_level']=policy
+                values={'novel_id':novel.id,'event_time':payload.get('time',''),'sequence':payload.get('sequence',1),
+                        'location_id':location.id if location else None,'title':payload['title'],'details':details,'privacy':policy}
+                cls=TimelineModel
+            else:
+                details['privacy_level']=policy
+                if not snapshot:details['events']=payload.get('events',[])
+                values={'novel_id':novel.id,'title':payload['title'],'planted_chapter':payload.get('planted_chapter'),
+                        'target_chapter':payload.get('target_chapter'),'status':payload.get('status','OPEN'),'details':details}
+                cls=ForeshadowingModel
+            if model is None:model=cls(id=target,**values);session.add(model)
             else:
                 for key,value in values.items():setattr(model,key,value)
-            session.flush();return serialize_foreshadowing(model)
+            # Serialize the actual columns, not request data, for exact CAS.
+            session.flush();result=self._serialize_story(session,kind,model)
+            meta=finish(current,metadata,result,mutation)
+            if meta is not None:model.details={**details,META:meta}
+            if check:check()
+            session.flush()
+            return envelope(result,meta) if mutation is not None else result
+
+    def upsert_timeline_event(self,novel_id,event_id,payload,*,expected_digest=UNGUARDED,mutation=None,check=None):
+        return self._upsert_story_record(novel_id,'timeline',event_id,payload,expected_digest,mutation,check)
+
+    def upsert_foreshadowing(self,novel_id,foreshadowing_id,payload,*,expected_digest=UNGUARDED,mutation=None,check=None):
+        return self._upsert_story_record(novel_id,'foreshadowing',foreshadowing_id,payload,expected_digest,mutation,check)
 
     def upsert_relationship(self,novel_id,relationship_id,payload,*,expected_digest=UNGUARDED):
         with self.database.session() as session:
@@ -254,12 +329,16 @@ class PostgresNovelRepository:
         with self.database.session() as session:
             model=novel_or_raise(session,novel_id);return list((model.metadata_json or {}).get("adaptation_proposals",[]))
 
-    def save_adaptation_proposal(self,novel_id,proposal):
+    def save_adaptation_proposal(self,novel_id,proposal,*,expected_revision=None,check=None,finalize=False):
         with self.database.session() as session:
-            model=self._locked_metadata_model(session,novel_id);metadata=dict(model.metadata_json or {});rows=list(metadata.get("adaptation_proposals",[]));index=next((i for i,row in enumerate(rows) if row.get("id")==proposal["id"]),None)
-            if index is None:rows.append(proposal)
-            else:rows[index]=proposal
-            metadata["adaptation_proposals"]=rows;model.metadata_json=metadata;model.updated_at=datetime.now(timezone.utc);session.flush();return proposal
+            model=self._locked_metadata_model(session,novel_id);metadata=dict(model.metadata_json or {})
+            rows=list(metadata.get("adaptation_proposals",[]));index=next((i for i,row in enumerate(rows) if row.get("id")==proposal["id"]),None)
+            if index is None and len(rows)>=MAX_PROPOSALS:raise ValueError('ADAPTATION_CAPACITY_PROPOSAL_LIMIT')
+            saved=versioned_adaptation(rows[index] if index is not None else None,proposal,expected_revision,finalize=finalize)
+            if check:check()
+            if index is None:rows.append(saved)
+            else:rows[index]=saved
+            metadata["adaptation_proposals"]=rows;model.metadata_json=metadata;model.updated_at=datetime.now(timezone.utc);session.flush();return saved
 
     def list_screenplays(self,novel_id):
         with self.database.session() as session:

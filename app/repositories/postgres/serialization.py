@@ -10,7 +10,7 @@ MAX_SOURCE_ORDER = 2**31 - 1
 RESERVED_FIELDS = frozenset({
     "id", "name", "age", "status", "privacy_level", "facts", "details",
 })
-INTERNAL_FIELDS = frozenset({"_source_id", "_source_order", "_source_privacy_present"})
+INTERNAL_FIELDS = frozenset({"_source_id", "_source_order", "_source_privacy_present", "_story_record"})
 
 
 def split_internal_fields(payload: Mapping[str, Any] | None) -> tuple[dict[str, Any], str | None, int]:
@@ -81,6 +81,7 @@ def serialize_timeline(model: Any) -> dict[str, Any]:
         "sequence": model.sequence,
         "time": model.event_time,
         "title": model.title,
+        **({"status": model.details["status"]} if "status" in (model.details or {}) else {}),
     }
     policies = [model.privacy]
     if "privacy_level" in (model.details or {}):

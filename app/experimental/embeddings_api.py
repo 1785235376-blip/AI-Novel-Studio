@@ -2,8 +2,9 @@ from fastapi import APIRouter, Header, Response
 from fastapi.routing import APIRoute
 from pydantic import Field
 from .common import api_call
-from .embeddings import EmbeddingIndexIn, EmbeddingIndexEditIn, EmbeddingQueryIn
+from .embeddings import EmbeddingIndexIn, EmbeddingIndexEditIn, EmbeddingQueryIn, HybridQueryIn
 from .media import StrictModel
+from .visual_identity import VisualIdentityCheckIn
 
 
 class EmbeddingActionIn(StrictModel):
@@ -93,5 +94,42 @@ def create_embeddings_router(service, authorize, require_flag):
     def query(nid: str, body: EmbeddingQueryIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope = access(nid, x_session_token, x_branch_id)
         return api_call(service.query, nid, scope, body, guard(nid, x_session_token, x_branch_id, actor, scope, "domain.read"), actor=actor)
+
+    @router.post('/hybrid-query')
+    def hybrid_query(nid: str, body: HybridQueryIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id)
+        return api_call(service.query, nid, scope, body, guard(nid, x_session_token, x_branch_id, actor, scope, 'domain.read'), actor=actor)
+
+    @router.get('/visual-identity/profiles')
+    def profiles(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id)
+        return api_call(service.visual_profiles, nid, scope, actor)
+
+    @router.get('/visual-identity/checks')
+    def visual_checks(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id)
+        return api_call(service.visual_checks, nid, scope, actor)
+
+    @router.get('/visual-identity/checks/{rid}')
+    def visual_check(nid: str, rid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id)
+        return api_call(service.visual_check, nid, scope, actor, rid)
+
+    @router.get('/visual-identity/checks/{rid}/selection')
+    def visual_selection(nid: str, rid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id)
+        return api_call(service.visual_selection, nid, scope, actor, rid)
+
+    @router.post('/visual-identity/checks', status_code=201)
+    def create_visual_check(nid: str, body: VisualIdentityCheckIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id, 'domain.write')
+        return api_call(service.create_visual_check, nid, scope, actor, body,
+                        guard(nid, x_session_token, x_branch_id, actor, scope, 'domain.write'))
+
+    @router.post('/visual-identity/checks/{rid}/{action}')
+    def visual_action(nid: str, rid: str, action: str, body: EmbeddingActionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = access(nid, x_session_token, x_branch_id, 'domain.write')
+        return api_call(service.visual_action, nid, scope, actor, rid, action, body.expected_version,
+                        guard(nid, x_session_token, x_branch_id, actor, scope, 'domain.write'))
 
     return router

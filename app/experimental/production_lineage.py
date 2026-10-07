@@ -80,10 +80,10 @@ class ProductionLineageService(DomainService):
     def _chapters(self, nid, scope, ids):
         result = {}
         for cid in dict.fromkeys(ids):
-            chapter = self.chapters.get(cid)
+            chapter = self.chapters_for(scope).get(cid)
             if chapter.get("novel_id") != nid or chapter.get("branch_id") != scope.get("branch_id"):
                 raise FileNotFoundError(cid)
-            result.update(self.sources(nid, [cid]))
+            result.update(self.sources(nid, [cid], scope))
         return result
 
     def annotate(self, nid, scope, actor, aid, value, guard=lambda: None):
@@ -100,7 +100,7 @@ class ProductionLineageService(DomainService):
             raise ValueError("LINEAGE_EXISTING_PARENT_REMOVAL_NOT_SUPPORTED")
         guard()
         self._chapters(nid, scope, body.chapter_ids)
-        self.assert_sources(nid, sources)
+        self.assert_sources(nid, sources, scope)
         declaration = {"schema": "asset-lineage-v2", "origin": body.origin, "license": body.license.model_dump(),
                        "license_verification": "AUTHOR_DECLARATION_NOT_LEGAL_VERIFICATION", "operation": body.operation,
                        "declared_by": actor, "declared_at": now(), "sources": sources}
@@ -108,7 +108,7 @@ class ProductionLineageService(DomainService):
             guard()
             self._asset(nid, scope, aid)
             self._chapters(nid, scope, body.chapter_ids)
-            self.assert_sources(nid, sources)
+            self.assert_sources(nid, sources, scope)
         try:
             self.assets.annotate_lineage(aid, declaration, body.parent_asset_ids, branch_id=scope.get("branch_id"),
                                         expected_version=body.expected_version, guard=before_commit)
@@ -237,7 +237,7 @@ class ProductionLineageService(DomainService):
         result = {"brief": task["brief_snapshot"].get("privacy_level", "LOCAL_ONLY"), "chapters": {}}
         for cid in task.get("sources", {}):
             self._chapters(nid, scope, [cid])
-            state = source_privacy_status(self.chapters.get(cid), scope.get("branch_id"), self.store.root)
+            state = source_privacy_status(self.chapters_for(scope).get(cid), scope.get("branch_id"), self.store.root)
             result["chapters"][cid] = {k: state[k] for k in ("privacy_level", "reviewed", "stale")}
         return result
 

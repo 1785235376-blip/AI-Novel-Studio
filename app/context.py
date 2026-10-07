@@ -35,7 +35,8 @@ def build_context_from_sources(sources: dict, novel_id: str, chapter: int, instr
     selected = [c for c in sources.get("characters", [])
                 if c.get("id") in relevant_names or c.get("name", "\x00") in instruction]
     locations = sources.get("locations", [])
-    foreshadowing = [f for f in sources.get("foreshadowing", []) if f.get("status") == "OPEN"]
+    foreshadowing = [{key: value for key, value in f.items() if key != "_story_record"}
+                    for f in sources.get("foreshadowing", []) if f.get("status") == "OPEN"]
     secrets = [s for s in sources.get("secrets", [])
                if chapter < s.get("earliest_reveal_chapter", 10**9) or s.get("status") == "ACTIVE"]
     summaries = sources.get("summaries", [])[-3:]

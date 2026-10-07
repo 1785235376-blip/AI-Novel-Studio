@@ -22,6 +22,7 @@ from typing import Any, Callable, Literal, Protocol
 from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from starlette.exceptions import HTTPException
 
 from ..media_files import inspect_image
 from ..source_privacy import content_digest
@@ -34,6 +35,8 @@ OPERATIONS = {
     "VIDEO": ("text_to_video", "image_to_video", "start_end_frame", "continuation", "storyboard_to_clip"),
     "AUDIO": ("tts", "character_voice", "emotion_tts", "dialogue_sequence", "chapter_audiobook"),
 }
+PROCESSING_OPERATIONS = {"POST": ("upscale", "frame_interpolation"),
+                         "SOUND_DESIGN": ("background_music", "ambience", "sound_effect")}
 FAMILIES = {
     "qwen-image": ("Qwen-Image", "IMAGE", OPERATIONS["IMAGE"]),
     "flux": ("FLUX / FLUX.2", "IMAGE", OPERATIONS["IMAGE"]),
@@ -63,7 +66,8 @@ def scene_sources(nid, scope, scene, chapters):
         raise StaleSourceError("BRANCH_SOURCE_ADAPTER_REQUIRED")
     if chapter.get("version") != version:
         raise StaleSourceError("MEDIA_SCENE_SOURCE_VERSION_CHANGED")
-    return {cid: {"version": version, "digest": content_digest(chapter)}}
+    return {cid: {"version": version, "digest": content_digest(chapter),
+                  **({"scope": copy.deepcopy(scope)} if scope.get("mode") == "collaboration" else {})}}
 
 
 def checkpoint_promotion_asset(service, nid, scope, actor, collection, current, asset):
@@ -91,7 +95,7 @@ class MediaOperationInput(StrictModel):
     operation: Literal["text_to_image", "image_edit", "multi_reference_image", "character_reference_image",
         "scene_reference_image", "cover_generation", "storyboard_card_generation", "text_to_video", "image_to_video",
         "start_end_frame", "continuation", "storyboard_to_clip", "tts", "character_voice", "emotion_tts",
-        "dialogue_sequence", "chapter_audiobook"]
+        "dialogue_sequence", "chapter_audiobook", "upscale", "frame_interpolation", "background_music", "ambience", "sound_effect"]
     prompt: str = Field(default="", max_length=20000)
     reference_asset_ids: list[str] = Field(default_factory=list, max_length=20)
     character_id: str | None = Field(default=None, max_length=240)
@@ -105,6 +109,11 @@ class MediaOperationInput(StrictModel):
     emotion: str | None = Field(default=None, max_length=80)
     segment_ids: list[str] = Field(default_factory=list, max_length=2000)
     chapter_id: str | None = Field(default=None, max_length=240)
+
+    source_asset_id: str | None = Field(default=None, min_length=1, max_length=240)
+    duration_seconds: float | None = Field(default=None, gt=0, le=600, allow_inf_nan=False)
+    upscale_factor: int | None = Field(default=None, ge=2, le=8, strict=True)
+    target_fps: int | None = Field(default=None, ge=1, le=240, strict=True)
 
     @model_validator(mode="after")
     def operation_requirements(self):
@@ -120,6 +129,11 @@ class MediaOperationInput(StrictModel):
             "tts": [self.prompt, self.profile_id], "character_voice": [self.prompt, self.character_id, self.profile_id],
             "emotion_tts": [self.prompt, self.profile_id, self.emotion],
             "dialogue_sequence": [self.segment_ids], "chapter_audiobook": [self.chapter_id, self.segment_ids],
+            "upscale": [self.source_asset_id, self.upscale_factor],
+            "frame_interpolation": [self.source_asset_id, self.target_fps],
+            "background_music": [self.prompt, self.duration_seconds],
+            "ambience": [self.prompt, self.duration_seconds],
+            "sound_effect": [self.prompt, self.duration_seconds],
         }
         if not all(required[self.operation]):
             raise ValueError("MEDIA_OPERATION_REQUIRED_INPUT_MISSING")
@@ -372,7 +386,15 @@ class MediaAdapterRegistry:
                     state="ADAPTER_REQUIRED", limitations=["Family contract only. Model discovery does not install a workflow."]).model_dump()
                 for key, (label, modality, operations) in FAMILIES.items()]
         rows.extend(AdapterDefinition.model_validate(adapter.definition).model_dump() for adapter in list(self._adapters.values()))
-        return {"items": rows, "operations": OPERATIONS, "request_schema": MediaOperationInput.model_json_schema(), "verification": "CONTRACT_VERIFIED"}
+        return {"items": rows, "operations": {**OPERATIONS, **PROCESSING_OPERATIONS}, "request_schema": MediaOperationInput.model_json_schema(),
+            "verification": "CONTRACT_VERIFIED", "real_model_verification": "NOT_RUN",
+            "execution_boundary": {
+                "family_declaration": "ADAPTER_REQUIRED_NOT_AN_EXECUTABLE_WORKFLOW",
+                "registered_local_image": "ORIGINAL_MODEL_BROKER_AND_PROVIDER_GUARDS_SINGLE_IMAGE_NO_REFERENCE_CONDITIONING",
+                "video": "ORIGINAL_SCREENPLAY_MOTION_OWNER_CONFIGURED_PROVIDER_REQUIRED",
+                "post": "SOURCE_VIDEO_REQUIRED_CONFIGURED_HOST_WORKFLOW_REQUIRED_NO_GENERATION_FALLBACK",
+                "sound_design": "ORIGINAL_AUDIO_PROVIDER_AND_AUDIOBOOK_TRACK_OWNERS",
+                "third_party_execution": "DENY_ALL"}}
 
     def resolve(self, adapter_id, operation):
         self.refresh_original()
@@ -549,10 +571,19 @@ class MediaService(DomainService):
 
     def _scoped_sources(self, nid, scope, chapter_ids):
         for cid in chapter_ids:
-            chapter = self.chapters.get(cid)
+            try:
+                chapter = self.chapters_for(scope).get(cid)
+            except FileNotFoundError:
+                if scope.get("mode") == "collaboration":
+                    raise StaleSourceError("BRANCH_SOURCE_ADAPTER_REQUIRED") from None
+                raise
+            except HTTPException as exc:
+                if scope.get("mode") == "collaboration" and exc.status_code == 404:
+                    raise StaleSourceError("BRANCH_SOURCE_ADAPTER_REQUIRED") from None
+                raise
             if chapter.get("branch_id") != scope.get("branch_id"):
                 raise StaleSourceError("BRANCH_SOURCE_ADAPTER_REQUIRED")
-        return self.sources(nid, chapter_ids)
+        return self.sources(nid, chapter_ids, scope)
 
     def _character_snapshots(self, nid, scope, character_ids):
         rows = {r["id"]: r for r in self.novels.data_set(nid, "characters") if r.get("branch_id") == scope.get("branch_id")}
@@ -587,7 +618,7 @@ class MediaService(DomainService):
         scene = next((row for row in screenplay.get("scenes", []) if row["id"] == shot.get("scene_id")), None)
         if scene is None or shot.get("source_chapter_id") != scene.get("source_chapter_id"):
             raise StaleSourceError("MEDIA_SHOT_SCENE_SOURCE_MISMATCH")
-        scene_sources(nid, scope, scene, self.chapters)
+        scene_sources(nid, scope, scene, self.chapters_for(scope))
         return screenplay, shot
 
     def catalog(self, nid, scope):
@@ -662,11 +693,11 @@ class MediaService(DomainService):
         if screenplay.get("edit_version", 0) != data.pop("expected_screenplay_version"):
             raise StaleSourceError("MEDIA_SCREENPLAY_VERSION_CHANGED")
         scene = next(row for row in screenplay["scenes"] if row["id"] == shot["scene_id"])
-        sources = scene_sources(nid, scope, scene, self.chapters)
+        sources = scene_sources(nid, scope, scene, self.chapters_for(scope))
         data.update(kind="STORYBOARD", title=f"Shot {shot.get('number', shot['id'])}", shot_snapshot=copy.deepcopy(shot), scene_snapshot=copy.deepcopy(scene),
                     screenplay_source={"id": screenplay["id"], "version": screenplay.get("edit_version", 0), "shot_digest": digest(shot)},
                     sources=sources, asset_sources=self._references(nid, scope, data), status="DRAFT")
-        self.assert_sources(nid, sources)
+        self.assert_sources(nid, sources, scope)
         return new_row(nid, scope, actor, data)
 
     def create_storyboard(self, nid, scope, actor, body):
@@ -694,7 +725,7 @@ class MediaService(DomainService):
         characters = self._character_snapshots(nid, scope, brief.get("character_ids", []))
         if {cid: digest(row) for cid, row in characters.items()} != brief.get("character_sources", {}):
             raise StaleSourceError("MEDIA_CHARACTER_SOURCE_CHANGED")
-        self.assert_sources(nid, brief.get("sources", {}))
+        self.assert_sources(nid, brief.get("sources", {}), scope)
         for aid, original in brief.get("asset_sources", {}).items():
             asset = self.assets.get(aid, branch_id=scope.get("branch_id"))
             if asset.get("novel_id") != nid or asset.get("branch_id") != scope.get("branch_id"):

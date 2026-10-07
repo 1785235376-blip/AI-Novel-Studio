@@ -136,6 +136,13 @@ class OfflineSyncService(DomainService):
         super().__init__(store, novels, chapters)
         self.source_reader = sources
 
+    @property
+    def production(self):
+        if not hasattr(self, '_production'):
+            from .offline_sync_production import ProductionSync
+            self._production = ProductionSync(self)
+        return self._production
+
     @staticmethod
     def _local(ctx):
         if ctx.scope != {'mode': 'local', 'novel_id': ctx.novel_id} or ctx.branch:

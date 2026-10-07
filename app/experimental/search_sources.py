@@ -66,7 +66,8 @@ def _stat(path):
 def chapter_manifest(service, ctx, check):
     """Return None for an unknown/branch authority so callers stay fail-closed."""
     repo = repository(service)
-    if ctx.scope.get('mode') != 'local' or service.chapter_reader is not None:
+    from ..manuscript_sources import mainline_reader
+    if ctx.scope.get('mode') != 'local' or not mainline_reader(service.chapter_reader):
         return None
     if isinstance(repo, FileChapterRepository):
         backend = repo.backend

@@ -5,6 +5,7 @@ reading/preflight we use the same project guard and existing metadata, deriving
 the identical markdown document in memory when a legacy package is absent.
 No new source store, IDs, writes, migrations or branch fallback are introduced.
 """
+from ..manuscript_sources import mainline_reader
 from ..document import markdown_to_document, document_to_markdown
 from ..file_project_lifecycle import project_operation
 from ..repository import read_json
@@ -14,7 +15,7 @@ from ..repositories.file.chapter import FileChapterRepository
 def authorized_chapter_rows(ctx, sources, chapters):
     sources.novels.get(ctx.novel_id)
     repo = getattr(chapters, 'repository', None)
-    if ctx.scope.get('mode') == 'local' and sources.chapter_reader is None and isinstance(repo, FileChapterRepository):
+    if ctx.scope.get('mode') == 'local' and mainline_reader(sources.chapter_reader) and isinstance(repo, FileChapterRepository):
         backend = repo.backend
         with project_operation(backend.data, ctx.novel_id):
             rows = []
@@ -55,11 +56,11 @@ def authorized_chapter(ctx, sources, chapters, cid, *, include_archived=False):
     import re
     if (ctx.scope.get('novel_id') != ctx.novel_id or ctx.scope.get('mode') not in {'local', 'collaboration'}
             or ctx.scope.get('mode') == 'collaboration' and not ctx.scope.get('branch_id')
-            or not isinstance(cid, str) or not re.fullmatch(re.escape(ctx.novel_id) + r':[1-9][0-9]{0,6}', cid)):
+            or not isinstance(cid, str) or not re.fullmatch(re.escape(ctx.novel_id) + r':(?:[1-9][0-9]{0,6}|~(?:b)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', cid)):
         raise FileNotFoundError('chapter unavailable')
     sources.novels.get(ctx.novel_id)
     repo = getattr(chapters, 'repository', None)
-    if sources.chapter_reader is not None:
+    if sources.chapter_reader is not None and not (ctx.scope.get('mode') == 'local' and mainline_reader(sources.chapter_reader)):
         row = next((r for r in sources.chapter_reader(ctx) if r.get('id') == cid), None)
         if row is None: raise FileNotFoundError('chapter unavailable')
     elif ctx.scope.get('mode') == 'local' and not ctx.branch and isinstance(repo, FileChapterRepository):

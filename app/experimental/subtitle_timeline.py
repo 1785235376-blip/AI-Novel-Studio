@@ -1,7 +1,8 @@
 """B04: versioned captions bound to existing measured media and R3 speakers.
 
 All times are integer ticks at a rational rate. Manual timings are explicitly
-manual. No ASR, forced/word alignment, burn-in renderer or model quality claim.
+manual. Optional trusted processing adapters add reviewed ASR/alignment/burn-in
+contracts; no real-model, phoneme, lip-sync or rendering quality claim.
 """
 from __future__ import annotations
 import array
@@ -18,6 +19,7 @@ from .common import DomainService, StaleSourceError, check_version
 from .flags import require_flag
 from .media import StrictModel, digest
 from ..media_files import inspect_media
+from .subtitle_processing import SubtitleProcessingMixin
 
 SUBTITLE_FLAG = "subtitle_timeline_v2"
 
@@ -120,12 +122,13 @@ def render_captions(row, format):
     return output.encode("utf-8")
 
 
-class SubtitleTimelineService(DomainService):
+class SubtitleTimelineService(SubtitleProcessingMixin, DomainService):
     COLLECTION = "subtitle_timeline_v2"
 
-    def __init__(self, store, novels, chapters, audiobook, assets):
+    def __init__(self, store, novels, chapters, audiobook, assets, processing_adapters=()):
         super().__init__(store, novels, chapters)
         self.audiobook, self.assets = audiobook, assets
+        self._initialize_processing(processing_adapters)
 
     def media(self, nid, scope, aid, waveform=False):
         asset = self.assets.get(aid, branch_id=scope.get("branch_id"))
@@ -201,7 +204,7 @@ class SubtitleTimelineService(DomainService):
         snapshots, speakers, sources = self._snapshot(nid, scope, actor, row.get("plan_id"), row["cues"])
         if snapshots != row["segment_snapshots"] or sources != row["sources"] or speakers != row["speakers"]:
             raise StaleSourceError("CAPTION_SPEAKER_SOURCE_CHANGED")
-        self.assert_sources(nid, row["sources"])
+        self.assert_sources(nid, row["sources"], scope)
         return row
 
     def catalog(self, nid, scope, actor):
@@ -250,6 +253,10 @@ class SubtitleTimelineService(DomainService):
             row["cues"] = [c.model_dump() for c in data.cues]
             row["segment_snapshots"], row["speakers"], row["sources"] = self._snapshot(nid, scope, actor, row.get("plan_id"), row["cues"])
             row["warnings"] = self._validate(row)
+            row["status"] = "DRAFT"
+            row["timing_origin"] = "MANUAL"
+            row["alignment_model"] = None
+            row["processing_task_id"] = None
         return self.mutate(nid, scope, actor, self.COLLECTION, rid, data.expected_version, change)
 
     def split(self, nid, scope, actor, rid, cid, body):

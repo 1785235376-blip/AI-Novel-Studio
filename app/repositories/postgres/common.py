@@ -22,8 +22,9 @@ def external_uuid(value: str) -> uuid.UUID:
         return uuid.uuid5(EXTERNAL_ID_NAMESPACE, str(value))
 
 
-def novel_or_raise(session, slug: str) -> NovelModel:
-    model = session.scalar(select(NovelModel).where(NovelModel.slug == slug))
+def novel_or_raise(session, slug: str, for_update: bool = False) -> NovelModel:
+    statement = select(NovelModel).where(NovelModel.slug == slug)
+    model = session.scalar(statement.with_for_update() if for_update else statement)
     if model is None:
         raise FileNotFoundError(slug)
     return model

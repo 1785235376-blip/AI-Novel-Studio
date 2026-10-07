@@ -45,6 +45,82 @@ class NovelService:
         return self.writing_goal(nid)
     def delete(self,nid):return self.novels.delete(nid)
     def compare_and_swap_record(self,nid,kind,record_id,payload,expected_digest):return self.novels.compare_and_swap_record(nid,kind,record_id,payload,expected_digest)
+    def story_record(self,nid,kind,record_id):
+        return self._story_record_view(nid,kind,record_id,self.novels.story_record(nid,kind,record_id))
+
+    def _story_record_view(self,nid,kind,record_id,result):
+        result['scope']={'kind':'PROJECT','novel_id':nid,'branch_id':None}
+        result['navigation']={'module':'Story','kind':kind,'record_id':record_id,'novel_id':nid}
+        stale=[]
+        for source in result['source_versions']:
+            try: current=self._story_source(nid,source['kind'],source['id'])
+            except (FileNotFoundError,KeyError): current=None
+            if current is None or current['digest']!=source['digest']:stale.append(source['id'])
+        result['stale_sources']=stale
+        result['source_state']='STALE' if stale else 'CURRENT' if result['source_versions'] else 'UNLINKED'
+        feedback=result.get('feedback')
+        result['feedback_stale']=bool(feedback and (feedback['record_digest']!=result['digest'] or feedback.get('source_versions',[])!=result['source_versions'] or stale))
+        return result
+
+    def _story_source(self,nid,kind,record_id):
+        from ..repositories.structured_cas import record_digest
+        if kind=='chapter':
+            row=self.chapters.get(record_id)
+            if row.get('novel_id')!=nid or row.get('is_archived'):raise FileNotFoundError(record_id)
+            # A43 identity is the returned immutable chapter id, not its number.
+            return {'kind':kind,'id':row['id'],'version':row['version'],
+                    'digest':record_digest({'id':row['id'],'version':row['version'],'document':row.get('document'),'content':row.get('content')})}
+        if kind=='timeline':
+            row=next((row for row in self.data_set(nid,kind) if row['id']==record_id),None)
+            if row is None:raise FileNotFoundError(record_id)
+            return {'kind':kind,'id':row['id'],'digest':record_digest(row)}
+        raise ValueError('unsupported story source')
+
+    def _story_sources(self,nid,kind,payload):
+        sources=[]
+        if kind=='timeline' and payload.get('chapter_id'):
+            sources.append(self._story_source(nid,'chapter',payload['chapter_id']))
+        if kind=='foreshadowing':
+            chapters=self.chapters.list(nid)
+            for field in ('planted_chapter','target_chapter'):
+                number=payload.get(field)
+                if number is None:continue
+                chapter=next((row for row in chapters if row.get('number')==number and not row.get('is_archived')),None)
+                # A target can be a future planned chapter. Never guess an id.
+                if chapter:sources.append(self._story_source(nid,'chapter',chapter['id']))
+            for event_id in payload.get('events',[]):sources.append(self._story_source(nid,'timeline',event_id))
+        return list({(source['kind'],source['id']):source for source in sources}.values())
+
+    def save_story_record(self,nid,kind,record_id,payload,expected_digest,expected_version,*,
+                          actor_id='local-user',action='SAVE',restore_version=None,feedback=None,
+                          refresh_sources=False,check=None):
+        from ..repositories.story_record_versions import KINDS
+        from ..repositories.chapter_repository import VersionConflict
+        if kind not in KINDS:raise ValueError('unsupported story record kind')
+        if check:check()
+        previous=None
+        try:previous=self.story_record(nid,kind,record_id)
+        except FileNotFoundError:pass
+        if action!='SAVE' and previous is None:raise FileNotFoundError(record_id)
+        if previous and previous['stale_sources'] and not refresh_sources and action!='RESTORE':
+            raise VersionConflict({'id':record_id,'version':previous['version']},resource_id=record_id,expected_version=expected_version)
+        sources=self._story_sources(nid,kind,payload) if action=='SAVE' else (previous or {}).get('source_versions',[])
+        mutation={'expected_version':expected_version,'action':action,'actor_id':actor_id,
+                  'source_versions':sources,'restore_version':restore_version,'feedback':feedback}
+        def boundary():
+            if check:check()
+            if action!='RESTORE':
+                for source in sources:
+                    try: current=self._story_source(nid,source['kind'],source['id'])
+                    except (FileNotFoundError,KeyError):current=None
+                    if current is None or current['digest']!=source['digest']:
+                        raise VersionConflict({'id':record_id,'version':expected_version},resource_id=record_id,expected_version=expected_version)
+        result=self.novels.compare_and_swap_record(nid,kind,record_id,payload,expected_digest,mutation=mutation,check=boundary)
+        # Read after mutation is a receipt; a later writer may already have won.
+        # Keep this operation's exact resulting digest/version in the response.
+        if check:check()
+        return self._story_record_view(nid,kind,result['record']['id'],result)
+
     def data_set(self,nid,name):return self.novels.get_data_set(nid,name)
     def upsert_character(self,nid,character_id,payload):return self.novels.upsert_character(nid,character_id,payload)
     def upsert_location(self,nid,location_id,payload):return self.novels.upsert_location(nid,location_id,payload)
@@ -131,9 +207,30 @@ class NovelService:
         is running cannot change its output.
         """
         meta = dict(self.get(nid))
-        chapters = [dict(item) for item in self.chapters.list(nid)]
+        scoped_manuscript = bool(permission_context and permission_context.get('mode') == 'collaboration'
+                                 and permission_context.get('branch_id') and callable(getattr(self, 'branch_authority', None)))
+        chapter_owner = self.chapters
+        manuscript_scope = None
+        if scoped_manuscript:
+            from ..experimental.flags import require_flag
+            require_flag('branch_manuscript_v1')
+            manuscript_scope = {'mode': 'collaboration', 'novel_id': nid,
+                                **{key: permission_context.get(key) for key in ('workspace_id', 'storyline_id', 'branch_id')}}
+            chapter_owner = self.branch_authority(manuscript_scope)
+            meta = {key: meta[key] for key in ('id', 'title') if key in meta}
+        chapters = [dict(item) for item in chapter_owner.list(nid)]
+        if scoped_manuscript and any(
+                item.get('branch_id') != manuscript_scope['branch_id'] or item.get('scope') != manuscript_scope
+                or item.get('novel_id') != nid or item.get('authority') != 'BRANCH_MANUSCRIPT_V1'
+                or item.get('deleted') or item.get('is_archived') for item in chapters):
+            raise ValueError('BRANCH_EXPORT_SOURCE_MISMATCH')
         datasets = {}
         for name in ("characters", "locations", "canon", "foreshadowing", "timeline", "relationships", "volumes", "scenes", "story_routes", "outline"):
+            if scoped_manuscript:
+                # These are PROJECT-owned stores. A branch label on a project
+                # record cannot turn it into an independently authorized source.
+                datasets[name] = {} if name == 'outline' else []
+                continue
             try:
                 value = self.data_set(nid, name) if name != "outline" else self.outline(nid)
             except (FileNotFoundError, KeyError):
@@ -200,10 +297,14 @@ class NovelService:
             "branch_id": resource_branch,
             "format": str(format or "").lower().strip() or None,
             "source": source,
+            'manuscript_authority': 'BRANCH_MANUSCRIPT_V1' if scoped_manuscript else 'PROJECT_MANUSCRIPT_V1',
+            'manuscript_scope': manuscript_scope if scoped_manuscript else {'mode': 'local', 'novel_id': nid},
             **({"resource_payloads": resource_payloads, "resource_policy": "require_all"} if package else {}),
             "source_versions": {
                 "novel_updated_at": source["novel"].get("updated_at"),
-                "chapters": [{"id": c.get("id"), "version": c.get("version"), "updated_at": c.get("updated_at")} for c in source["chapters"]],
+                "chapters": [{"id": c.get("id"), "version": c.get("version"), "updated_at": c.get("updated_at"),
+                              **({'authority': c['authority'], 'scope': c['scope'], 'document_digest': c['document_digest']}
+                                 if scoped_manuscript else {})} for c in source["chapters"]],
                 "screenplays": [{"id": row.get("id"), "version": row.get("version"), "edit_version": row.get("edit_version"), "revision": row.get("revision"), "shot_revision": row.get("shot_revision"), "storyboard_revision": row.get("storyboard_revision"), "transition_revision": row.get("transition_revision"), "updated_at": row.get("updated_at")} for row in source["screenplays"]],
             },
             "resource_manifest": {

@@ -544,7 +544,8 @@ class PortableProjectsService(DomainService):
 
     def _history_measurement(self, ctx, rows):
         result = {'kind': 'HISTORY', 'bytes': None, 'measurement': 'ORIGINAL_REVISION_AUTHORITY_NOT_ENUMERATED', 'cleanable': False}
-        if ctx.scope['mode'] != 'local' or self.sources.chapter_reader is not None: return result
+        from ..manuscript_sources import mainline_reader
+        if ctx.scope['mode'] != 'local' or not mainline_reader(self.sources.chapter_reader): return result
         total = 0
         try:
             for chapter in rows:
