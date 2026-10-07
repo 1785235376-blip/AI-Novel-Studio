@@ -763,6 +763,13 @@ class JobManager:
             pending_canon={"id":str(uuid.uuid5(uuid.NAMESPACE_URL, f"novel-generation-accept:{jid}")),"novel_id":job.novel_id,"chapter":saved.get("number", chapter["number"] + 1),**({"chapter_id":saved["id"]} if ":~" in saved["id"] else {}),"status":"PENDING","proposals":[{"fact":"AI draft introduced a possible lasting story fact","source_job":jid}],"source":"archivist"}
             self.canon.save_pending(pending_canon)
             job.status="ACCEPTED";self._emit(job)
+            try:
+                # The original File create contract returns a list projection;
+                # resolve its durable identity to read the actual version.
+                accepted_version=saved.get("version")
+                if accepted_version is None:accepted_version=self.chapters.get(saved["id"])["version"]
+                self.memory_extractor.enqueue(job.novel_id,saved["id"],accepted_version,job.profile)
+            except Exception:pass  # Independent extraction cannot undo author acceptance.
             return {"chapter": saved, "pending_canon": pending_canon}
         if actor is not None and scope is not None:
             saved=self.collaboration_updates.update_chapter(actor=actor,scope=scope,chapter_id=job.chapter_id,document=__import__("app.document",fromlist=["markdown_to_document"]).markdown_to_document(content),expected_version=target_version,reason="AI_ACCEPT")

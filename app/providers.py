@@ -138,7 +138,27 @@ class OllamaProvider(LLMProvider):
         except Exception as exc:raise ProviderError(f"Ollama unavailable: {type(exc).__name__}") from exc
 
 class OpenAICompatibleProvider(LLMProvider):
+    supports_dispatch_guard = True
+    supports_stream_usage = True
     def __init__(self,name:str,base_url:str,api_key_env:str): self.name=name; self.base_url=base_url.rstrip("/"); self.api_key_env=api_key_env
+    @staticmethod
+    def _dispatch(kwargs):
+        cancellation = kwargs.get("cancellation")
+        if cancellation is not None and cancellation.is_set():
+            raise ProviderError("Cloud request cancelled")
+        guard = kwargs.get("dispatch_guard")
+        if guard is not None: guard()
+        if cancellation is not None and cancellation.is_set():
+            raise ProviderError("Cloud request cancelled")
+
+    @staticmethod
+    def _payload(prompt, model, kwargs, *, stream=False):
+        payload = {"model": model, "messages": [{"role": "user", "content": prompt}]}
+        for key in ("temperature", "max_tokens", "stop"):
+            if kwargs.get(key) is not None: payload[key] = kwargs[key]
+        if stream:
+            payload.update(stream=True, stream_options={"include_usage": True})
+        return json.dumps(payload).encode()
     def _key(self)->str:
         packaged = os.getenv('PACKAGED_WINDOWS_MODE','').lower() in {'1','true','yes','on'}
         try:
@@ -154,13 +174,16 @@ class OpenAICompatibleProvider(LLMProvider):
     def generate(self,prompt:str,model:str,**kwargs)->Generation:
         key=self._key(); 
         if not key: raise ProviderError(f"{self.name} API key missing")
-        started=time.monotonic(); body=json.dumps({"model":model,"messages":[{"role":"user","content":prompt}]}).encode()
+        started=time.monotonic(); body=self._payload(prompt, model, kwargs)
         retries = max(0, min(int(kwargs.get("retries", 0)), 5))
         backoff = max(0.0, min(float(kwargs.get("backoff", 0.35)), 10.0))
         request = Request(self.base_url+"/chat/completions",body,{"Content-Type":"application/json","Authorization":"Bearer "+key})
         for attempt in range(retries + 1):
             try:
+                self._dispatch(kwargs)
                 with urlopen(request,timeout=kwargs.get("timeout",120)) as r: data=json.load(r)
+                cancellation = kwargs.get("cancellation")
+                if cancellation is not None and cancellation.is_set(): raise ProviderError("Cloud request cancelled")
                 break
             except HTTPError as exc:
                 transient = exc.code == 429 or 500 <= exc.code < 600
@@ -176,26 +199,34 @@ class OpenAICompatibleProvider(LLMProvider):
     def stream(self, prompt: str, model: str, **kwargs):
         key = self._key()
         if not key: raise ProviderError(f"{self.name} API key missing")
-        payload = json.dumps({"model": model, "messages": [{"role": "user", "content": prompt}], "stream": True}).encode()
+        payload = self._payload(prompt, model, kwargs, stream=True)
         retries = max(0, min(int(kwargs.get("retries", 0)), 5))
         emitted = False
         completed = False
         for attempt in range(retries + 1):
             try:
+                self._dispatch(kwargs)
                 request = Request(self.base_url + "/chat/completions", payload, {"Content-Type": "application/json", "Authorization": "Bearer " + key, "Accept": "text/event-stream"})
                 with urlopen(request, timeout=kwargs.get("timeout", 120)) as response:
                     for raw in response:
+                        cancellation = kwargs.get("cancellation")
+                        if cancellation is not None and cancellation.is_set(): raise ProviderError("Cloud request cancelled")
                         line = raw.decode("utf-8", "ignore").strip()
                         if not line.startswith("data:"):continue
                         if line[5:].strip() == "[DONE]":
                             completed=True
                             break
                         item = json.loads(line[5:].strip())
-                        if any(choice.get("finish_reason") for choice in item.get("choices",[])):completed=True
-                        delta = item.get("choices", [{}])[0].get("delta", {}).get("content", "")
-                        if delta:
-                            emitted = True
-                            yield delta
+                        if item.get("error"): raise ProviderError(f"{self.name} stream failed")
+                        usage = item.get("usage")
+                        if isinstance(usage, dict) and kwargs.get("usage_callback"):
+                            kwargs["usage_callback"]({"input_tokens": usage.get("prompt_tokens"), "output_tokens": usage.get("completion_tokens")})
+                        for choice in item.get("choices", []):
+                            if choice.get("finish_reason"): completed=True
+                            delta = (choice.get("delta") or {}).get("content", "")
+                            if delta:
+                                emitted = True
+                                yield delta
                 if not completed:raise ProviderError(f"{self.name} stream ended without completion")
                 return
             except (HTTPError, URLError, TimeoutError) as exc:

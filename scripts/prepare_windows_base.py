@@ -102,7 +102,9 @@ def safe_members(archive: zipfile.ZipFile) -> list[zipfile.ZipInfo]:
     for member in archive.infolist():
         name = member.filename
         parts = name.rstrip("/").split("/")
-        if (not name or "\\" in name or name.startswith("/") or
+        # ZipInfo normalizes Windows separators in filename while preserving
+        # orig_filename. Enforce the same raw-entry policy on both platforms.
+        if (not name or "\\" in name or "\\" in member.orig_filename or name.startswith("/") or
                 any(part in ("", "..", ".") or ":" in part or part.endswith((" ", ".")) for part in parts) or
                 any(re.fullmatch(r"(?i)(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\..*)?", part) for part in parts)):
             raise ValueError(f"Unsafe archive path: {name}")

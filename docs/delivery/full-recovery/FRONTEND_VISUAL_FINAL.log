@@ -1,0 +1,68 @@
+[WebServer] (node:38592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 15 tests using 1 worker
+
+(node:35112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [chromium] › tests\visual\design-system.spec.ts:8:31 › novel workspace visual baseline (391ms)
+  ok  2 [chromium] › tests\visual\design-system.spec.ts:8:31 › image workspace visual baseline (321ms)
+  ok  3 [chromium] › tests\visual\design-system.spec.ts:8:31 › video workspace visual baseline (291ms)
+  ok  4 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1024x768 (206ms)
+  ok  5 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1366x768 (210ms)
+  ok  6 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1440x900 (207ms)
+  ok  7 [chromium] › tests\visual\design-system.spec.ts:14:124 › shell geometry 1920x1080 (207ms)
+  ok  8 [chromium] › tests\visual\design-system.spec.ts:25:1 › compact desktop keeps the workspace within the viewport (198ms)
+  x   9 [chromium] › tests\visual\design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell (6.6s)
+(node:18844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 10 [chromium] › tests\visual\design-system.spec.ts:75:1 › production conflict compare and manual resolution visual (747ms)
+  ok 11 [chromium] › tests\visual\design-system.spec.ts:83:1 › production revision detail restore preview and conflict visual (894ms)
+  ok 12 [chromium] › tests\visual\local-ai-discovery.spec.ts:50:1 › Local AI requires each explicit lifecycle action before routing (1.1s)
+  ok 13 [chromium] › tests\visual\local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1366x768 (622ms)
+  ok 14 [chromium] › tests\visual\local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1440x900 (646ms)
+  ok 15 [chromium] › tests\visual\local-ai-discovery.spec.ts:78:3 › Local AI preserves shell and model geometry 1920x1080 (656ms)
+
+
+  1) [chromium] › tests\visual\design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.context-bar')
+    Expected substring: "当前工作区"
+    Received string:    "创作空间：workspace-real/小说：project-real/故事线：storyline-real/创作分支：branch-real"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('.context-bar')
+        14 × locator resolved to <nav class="context-bar" aria-label="当前创作范围">…</nav>
+           - unexpected value "创作空间：workspace-real/小说：project-real/故事线：storyline-real/创作分支：branch-real"
+
+
+      35 |   await page.goto('/');
+      36 |   await expect(page.locator('.app-shell[data-module="NOVEL"]')).toBeVisible();
+    > 37 |   await expect(page.locator('.context-bar')).toContainText('当前工作区');
+         |                                              ^
+      38 |   await expect(page.locator('.context-bar')).not.toContainText('workspace-real');
+      39 |   await expect(page.locator('.context-bar')).not.toContainText('星海残章');
+      40 |   await expect(page.locator('.app-shell')).toHaveScreenshot('production-novel-shell.png');
+        at D:\小说\AI-Novel-Studio-Latest-Product\frontend\tests\visual\design-system.spec.ts:37:46
+
+    Error Context: ..\docs\delivery\full-recovery\visual-final\design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\docs\delivery\full-recovery\visual-final\design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\docs\delivery\full-recovery\visual-final\design-system-production-N-025c5-te-uses-the-frozen-AppShell-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\visual\design-system.spec.ts:33:1 › production NOVEL route uses the frozen AppShell 
+  14 passed (15.5s)

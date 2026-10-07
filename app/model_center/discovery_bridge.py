@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import threading
 import time
+import json
 from dataclasses import replace
 from urllib.parse import urlsplit
 
@@ -17,6 +18,21 @@ from .discovery_probes import LocalProbeClient, ProbeFailure, ollama_token_count
 from .discovery_types import LocalRuntimeInput, local_endpoint
 from .domain import Capability, RuntimeDefinition, RuntimeManagement, RuntimeType
 from .runtime_profiles import resynthesize_runtime_argv
+
+
+def _llama_grammar_schema(value):
+    """Keep shape/refs/enums; enforce numeric/length bounds on the host.
+
+    Large bounded strings expand into thousands of grammar repetitions on
+    llama.cpp. This wire projection avoids its grammar compiler capacity limit;
+    the original complete schema remains mandatory for response validation.
+    """
+    if isinstance(value, dict):
+        return {key: _llama_grammar_schema(item) for key, item in value.items()
+                if key not in {'minLength', 'maxLength', 'minItems', 'maxItems', 'minimum', 'maximum'}}
+    if isinstance(value, list):
+        return [_llama_grammar_schema(item) for item in value]
+    return value
 
 
 class _LocalImageTransport:
@@ -60,6 +76,8 @@ class LocalTextAdapter:
         with self.execution_lock:
             candidate = self.bridge.guard(self.candidate['id'])
             config = candidate['runtime_config']
+            if request.structured_output_schema is not None and config['type'] != 'LLAMA_CPP':
+                raise ModelRuntimeError(RuntimeErrorCode.CAPABILITY_NOT_SUPPORTED, '当前本地接口不支持结构化输出')
             if request.cancellation and request.cancellation.is_set():
                 raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, '已停止生成')
             managed = None
@@ -105,10 +123,29 @@ class LocalTextAdapter:
                     if request.parameters.temperature is not None: body['temperature'] = request.parameters.temperature
                     if request.parameters.max_output_tokens is not None: body['max_tokens'] = request.parameters.max_output_tokens
                     if request.parameters.stop_sequences: body['stop'] = list(request.parameters.stop_sequences)
+                    if request.structured_output_schema is not None:
+                        body['response_format'] = {'type': 'json_object', 'schema': _llama_grammar_schema(request.structured_output_schema)}
                     path = '/chat/completions' if config['endpoint'].endswith('/v1') else '/v1/chat/completions'
                     data = self.client.json(config['endpoint'], path, body=body)
+                    finish = (data.get('choices') or [{}])[0].get('finish_reason')
+                    if finish in {'length', 'content_filter'}:
+                        raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED, '本地模型输出未完整结束，请检查上下文容量或输出预算')
                     text = ((data.get('choices') or [{}])[0].get('message') or {}).get('content')
+                    if request.structured_output_schema is not None:
+                        from jsonschema import validate, ValidationError, SchemaError
+                        try:
+                            validate(json.loads(text), dict(request.structured_output_schema))
+                        except (ValueError, TypeError, ValidationError, SchemaError) as exc:
+                            raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED, '本地模型输出未满足完整结构化契约') from exc
+                    measured = data.get('usage')
                     usage = None
+                    if isinstance(measured, dict):
+                        def count(key):
+                            value = measured.get(key)
+                            return value if type(value) is int and value >= 0 else None
+                        inputs, outputs, total = count('prompt_tokens'), count('completion_tokens'), count('total_tokens')
+                        if inputs is not None or outputs is not None or total is not None:
+                            usage = GenerationUsage(inputs, outputs, total)
                 if request.cancellation and request.cancellation.is_set():
                     raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, '已停止生成')
                 if not isinstance(text, str) or not text.strip():
@@ -193,7 +230,7 @@ class LocalDiscoveryBridge:
                 frozenset({Modality.TEXT}), enabled, enabled, 'metadata_validated_inference_not_run' if enabled else 'disabled'), adapter, replace=True)
             self.runtime.model_registry.register(ModelDescriptor(candidate['id'], provider_id, candidate['display_name'],
                 Modality.TEXT, frozenset({'generate', 'stream', 'buffered_stream'}), candidate['runtime_config'].get('context_size'),
-                streaming=True, enabled=enabled), replace=True)
+                structured_output=candidate['runtime_type']=='LLAMA_CPP', streaming=True, enabled=enabled), replace=True)
         if enabled and 'IMAGE' in candidate['verified_capabilities']:
             if candidate['runtime_type'] not in {'COMFYUI','AUTOMATIC1111'}:
                 raise ValueError('LOCAL_AI_IMAGE_ADAPTER_REQUIRED')

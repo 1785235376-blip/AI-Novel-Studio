@@ -1,0 +1,60 @@
+{
+  "stage": "10-export",
+  "status": "PASS",
+  "seconds": 0.322,
+  "evidence": {
+    "job": {
+      "id": "fcb6ab74-3e2d-4f43-b26c-958af2c9b18a",
+      "novel_id": "f4b8c9ee",
+      "format": "markdown",
+      "status": "succeeded",
+      "created_at": "2026-10-07T09:50:17.365152+00:00",
+      "updated_at": "2026-10-07T09:50:17.403836+00:00",
+      "result": {
+        "format": "markdown",
+        "filename": "f4b8c9ee.md"
+      },
+      "error": null,
+      "progress": 100,
+      "progress_message": "已完成",
+      "retry_of": null,
+      "attempt": 1,
+      "cancel_requested": false,
+      "recovery_count": 0,
+      "snapshot_id": "ed83ee03-8d27-4cac-acde-c4ef29b8fdd4",
+      "resource_manifest": {
+        "referenced": [],
+        "available": [],
+        "missing": [],
+        "missing_count": 0
+      },
+      "missing_resources": [],
+      "permission_context": {
+        "mode": "local",
+        "novel_id": "f4b8c9ee"
+      },
+      "started_at": "2026-10-07T09:50:17.371200+00:00",
+      "finished_at": "2026-10-07T09:50:17.403836+00:00",
+      "source_versions": {
+        "novel_updated_at": "2026-10-07T09:49:35.933942+00:00",
+        "chapters": [
+          {
+            "id": "f4b8c9ee:1",
+            "version": 1,
+            "updated_at": "2026-10-07T09:49:48.371781+00:00"
+          },
+          {
+            "id": "f4b8c9ee:2",
+            "version": 4,
+            "updated_at": "2026-10-07T09:50:17.310336+00:00"
+          }
+        ],
+        "screenplays": []
+      },
+      "captured_at": "2026-10-07T09:50:17.365152+00:00"
+    },
+    "download_bytes": 3695,
+    "sha256": "31c28ce219e9c1656d8dd573378864a2b8b122976c942198c8d2a4891aaad2ef",
+    "artifact": "85a84385-a0ed-4211-9e43-5d841b9aff26-novel.md"
+  }
+}

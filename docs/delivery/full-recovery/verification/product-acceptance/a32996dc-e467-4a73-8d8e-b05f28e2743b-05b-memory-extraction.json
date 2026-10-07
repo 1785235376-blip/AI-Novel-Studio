@@ -1,0 +1,6 @@
+{
+  "stage": "05b-memory-extraction",
+  "status": "FAIL",
+  "seconds": 6.013,
+  "error": "{\"id\": \"a1ce9ab7-32da-5035-9e32-be7bb12eb229\", \"operation\": \"MEMORY_EXTRACTION\", \"novel_id\": \"6402cc47\", \"chapter_id\": \"6402cc47:2\", \"status\": \"FAILED\", \"request\": {\"chapter_version\": 1, \"profile\": \"LOCAL_ONLY\"}, \"created_at\": \"2026-10-07T09:47:28.487829+00:00\", \"error_code\": \"MEMORY_EXTRACTION_FAILED\", \"error\": \"ValueError: memory evidence quote does not occur in the accepted chapter version\"}"
+}

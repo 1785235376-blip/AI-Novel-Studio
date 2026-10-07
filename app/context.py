@@ -22,6 +22,8 @@ def build_context(data_root: Path, novel_id: str, chapter: int, instruction: str
         ("locations", "locations/locations.json", []), ("story_state", "story_state.json", {}),
         ("secrets", "secrets.json", []), ("foreshadowing", "foreshadowing.json", []),
         ("summaries", "summaries/index.json", []), ("style_profile", "style/profile.json", {}),
+        ("outline", "outline.json", {}), ("canon", "canon.json", []),
+        ("timeline", "timeline/events.json", []), ("relationships", "relationships.json", []),
     )}
     with project_operation(data_root, novel_id):
         sources["summaries"] = current_summaries(root, sources["summaries"])
@@ -33,7 +35,7 @@ def build_context_from_sources(sources: dict, novel_id: str, chapter: int, instr
     state = sources.get("story_state", {})
     relevant_names = {str(x) for x in state.get("active_characters", [])}
     selected = [c for c in sources.get("characters", [])
-                if c.get("id") in relevant_names or c.get("name", "\x00") in instruction]
+                if not relevant_names or c.get("id") in relevant_names or c.get("name", "\x00") in instruction]
     locations = sources.get("locations", [])
     foreshadowing = [{key: value for key, value in f.items() if key != "_story_record"}
                     for f in sources.get("foreshadowing", []) if f.get("status") == "OPEN"]
@@ -42,6 +44,13 @@ def build_context_from_sources(sources: dict, novel_id: str, chapter: int, instr
     summaries = sources.get("summaries", [])[-3:]
     style = sources.get("style_profile", {})
     long_summary = meta.get("long_term_summary", "")
+    world = {"summary":meta["world_summary"],"privacy_level":meta.get("world_summary_privacy_level","LOCAL_ONLY")} if meta.get("world_summary") else {}
+    outline = sources.get("outline", {})
+    canon = [row for row in sources.get("canon", []) if row.get("status") not in {"PENDING", "REJECTED", "ARCHIVED"}]
+    timeline = sources.get("timeline", [])
+    relationship_records = sources.get("relationships") or []
+    relationships = relationship_records or state.get("relationships", [])
+    world_rules = sources.get("world_rules", [])
     omitted: list[str] = []
     if cloud:
         def safe(records):
@@ -59,11 +68,20 @@ def build_context_from_sources(sources: dict, novel_id: str, chapter: int, instr
         style = style_records[0] if style_records else {}
         if normalize_privacy(meta.get("privacy_level")) != "CLOUD_ALLOWED":
             long_summary = ""
+        outline_records = safe([outline]) if outline else []
+        outline = outline_records[0] if outline_records else {}
+        canon, timeline, world_rules = (safe(records) for records in (canon, timeline, world_rules))
+        # Empty canonical storage is common for pre-upgrade projects. Preserve
+        # legacy relationships under the already-filtered state authority.
+        relationships = safe(relationship_records) if relationship_records else state.get("relationships", [])
+        world_records = safe([world]) if world else []
+        world = world_records[0] if world_records else {}
     return {
         "novel": meta.get("title", novel_id), "novel_id": novel_id,
         "volume": state.get("volume", 1), "chapter": chapter, "chapter_goal": instruction,
         "pov": state.get("pov"), "story_time": state.get("story_time"),
-        "characters": selected, "relationships": state.get("relationships", []),
+        "characters": selected, "relationships": relationships,
+        "world": world, "outline": outline, "canon": canon, "timeline": timeline, "world_rules": world_rules,
         "locations": locations, "current_story_state": state,
         "active_foreshadowing": foreshadowing, "forbidden_secrets": secrets,
         "privacy_omissions": list(dict.fromkeys(omitted)),

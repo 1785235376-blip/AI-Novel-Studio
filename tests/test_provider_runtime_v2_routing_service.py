@@ -81,14 +81,15 @@ def test_production_request_only_and_current_profile_never_allows(facts, monkeyp
 
 
 def test_host_absent_does_not_import_initialize_or_collect(facts, monkeypatch):
-    monkeypatch.delitem(sys.modules, "app.dependencies", raising=False)
     def forbidden(*args, **kwargs):
         raise AssertionError("unexpected initialization")
-    monkeypatch.setattr(service, "build_provider_runtime_snapshot", forbidden)
-    monkeypatch.setattr(builtins, "__import__", forbidden)
-    report = service.route_provider_request(facts.request)
-    assert report.service_codes == (service.ServiceCode.HOST_NOT_INITIALIZED,)
-    assert not report.snapshot_complete
+    with monkeypatch.context() as guarded:
+        guarded.delitem(sys.modules, "app.dependencies", raising=False)
+        guarded.setattr(service, "build_provider_runtime_snapshot", forbidden)
+        guarded.setattr(builtins, "__import__", forbidden)
+        report = service.route_provider_request(facts.request)
+        assert report.service_codes == (service.ServiceCode.HOST_NOT_INITIALIZED,)
+        assert not report.snapshot_complete
 
 
 @pytest.mark.parametrize("raw_request", [None, {}, "prompt-with-secret", 1])

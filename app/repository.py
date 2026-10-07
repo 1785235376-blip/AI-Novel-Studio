@@ -47,7 +47,7 @@ class FileRepository:
     @committed_change("PROJECT")
     @guard_project("nid")
     def update_novel(self,nid,payload):
-        meta=self.get_novel(nid); meta.update({k:v for k,v in payload.items() if k in {"title","genre","status","long_term_summary","writing_goal"}}); meta["updated_at"]=now(); atomic_write(self.novels/nid/"novel.json",json.dumps(meta,ensure_ascii=False,indent=2)); return meta
+        meta=self.get_novel(nid); meta.update({k:v for k,v in payload.items() if k in {"title","genre","status","long_term_summary","writing_goal","world_summary","world_summary_privacy_level"}}); meta["updated_at"]=now(); atomic_write(self.novels/nid/"novel.json",json.dumps(meta,ensure_ascii=False,indent=2)); return meta
     @committed_change("PROJECT")
     @guard_project("nid")
     def delete_novel(self,nid): shutil.rmtree(self.novels/nid)

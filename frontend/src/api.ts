@@ -3,7 +3,7 @@ export type VisualReferenceSearch={items:{id:string;version:number;entity_type:s
 export type AssetReferences={asset_id:string;items:{collection:string;id:string;field:string;version:number;status:string}[];total:number;coverage:string[];other_project_references_scanned:false;deletion_policy:string};
 export type Scope={workspaceId:string;projectId:string;storylineId:string;branchId:string;workspaceName?:string;projectName?:string;storylineName?:string;branchName?:string};
 export type Actor={id:string;displayName:string;workspaceId:string};
-export type CollaborationContext={sessionToken:string;actor?:Actor;scope?:Scope};
+export type CollaborationContext={sessionToken:string;actor?:Actor;scope?:Scope;localHostToken?:string};
 export type Novel={id:string;title:string;genre:string;chapter_count:number;word_count:number;status:string};
 export type Asset={id:string;novel_id:string;filename:string;kind:string;media_type:string;size:number;sha256:string;created_at:string;updated_at:string};
 export type Chapter={id:string;novel_id:string;number:number;title:string;content:string;document:any;version:number;word_count:number;status:string;is_archived?:boolean};
@@ -41,12 +41,26 @@ export type ReleaseReadiness={status:'READY'|'DEGRADED'|'BLOCKED';profile:'local
 export type ImportReview={version?:number;id:string;novel_id:string;status:'PENDING'|'ACCEPTED'|'REJECTED'|'SKIPPED'|string;source_format?:string;import_id?:string|null;title?:string;scope?:'chapter'|'project'|string;chapter_id?:string|null;candidates:Record<string,Record<string,unknown>[]>;selected?:Record<string,boolean[]>;analysis?:{source:string;provider_id?:string;model_id?:string;chapter_count?:number;content_characters?:number};history?:Record<string,unknown>[];decision?:string;created_at?:string;updated_at?:string};
 export type ExportJob={id:string;novel_id:string;format:string;status:'queued'|'running'|'succeeded'|'failed'|'cancelled';created_at:string;updated_at:string;progress?:number;progress_message?:string;retry_of?:string|null;attempt?:number;snapshot_id?:string|null;captured_at?:string;source_versions?:Record<string,unknown>;recovery_count?:number;missing_resources?:{id:string;reason?:string}[];result?:{format:string;filename:string;content?:string;content_base64?:string;content_encoding?:string;media_type?:string}|null;error?:{code:string;message:string}|null};
 export type CreativeAgent={id:string;name:string;description:string;prompt_role:string;tools:string[];output_schema:string;requires_approval:boolean};
+export type CreativeAgentCatalog={catalog_version:string;agents:CreativeAgent[];additional_agents?:CreativeAgent[]};
+export function creativeAgentCatalogItems(catalog?:CreativeAgentCatalog):CreativeAgent[]{
+ const seen=new Set<string>();
+ return [...(Array.isArray(catalog?.agents)?catalog.agents:[]),...(Array.isArray(catalog?.additional_agents)?catalog.additional_agents:[])]
+  .filter(agent=>{if(seen.has(agent.id))return false;seen.add(agent.id);return true});
+}
 export type ContextPreviewSource={section:string;item_count:number};
 export type AgentContextPreview={context_contract_version?:string;agent_id?:string;agent_name?:string;novel_id?:string;chapter_id?:string;chapter_version?:number;target?:'local'|'cloud'|string;instruction?:string;sections:Record<string,unknown>;source_manifest?:ContextPreviewSource[];context_hash?:string;created_at?:string};
 
+import {clearLocalHostSession,useLocalHostSession,type LocalHostReceipt} from './localHostSession';
+import {isPackagedDesktopHost} from './packagedHost';
 let collaboration:CollaborationContext={sessionToken:''};
-export function setCollaborationContext(value:CollaborationContext){collaboration=value}
+export function setCollaborationContext(value:CollaborationContext){if(value.sessionToken||value.scope)clearLocalHostSession();collaboration=value}
 export function getCollaborationContext(){return collaboration}
+function requestToken(context:CollaborationContext,url:string){
+ if(context.sessionToken)return context.sessionToken;
+ if(context.scope||context.actor||isPackagedDesktopHost()||/^\/api\/(?:v1\/)?(?:collaboration|packaged)\//.test(url))return '';
+ // Explicit captured credentials (including an empty one) never borrow a later identity.
+ return context.localHostToken??useLocalHostSession.getState().token;
+}
 
 export class ApiError extends Error{constructor(public problem:ApiProblem){super(problem.message)}get status(){return this.problem.status}}
 
@@ -74,7 +88,7 @@ async function call<T>(url:string,init?:RequestInit,contextOverride?:Collaborati
  const headers:Record<string,string>={'Content-Type':'application/json',...(init?.headers as Record<string,string>||{})};
  if(init?.method&&init.method!=='GET'&&!headers['Idempotency-Key']) headers['Idempotency-Key']=globalThis.crypto?.randomUUID?.()||`desktop-${Date.now()}-${Math.random().toString(16).slice(2)}`;
  if(!headers['X-Request-ID']) headers['X-Request-ID']=globalThis.crypto?.randomUUID?.()||`desktop-${Date.now()}-${Math.random().toString(16).slice(2)}`;
- if(context.sessionToken)headers['X-Session-Token']=context.sessionToken;
+ const token=requestToken(context,url);if(token)headers['X-Session-Token']=token;
  if(scope?.branchId)headers['X-Branch-Id']=scope.branchId;
  const r=await fetch(url,{...init,headers});
  if(!r.ok){const body=await r.text();let raw:any=body;try{raw=body?JSON.parse(body):body}catch{}const detail=raw?.detail??raw;const code=raw?.code??detail?.code??raw?.error?.code??(r.status===403?'FORBIDDEN':'HTTP_ERROR');throw new ApiError({status:r.status,code,message:raw?.message??detail?.message??detail?.detail??raw?.error?.message??(body||`HTTP ${r.status}`),details:raw?.details??raw,request_id:raw?.request_id??(r.headers.get('X-Request-ID')||undefined)})}
@@ -84,7 +98,7 @@ async function downloadCall(url:string,extraHeaders:Record<string,string>={},con
  const context=contextOverride??collaboration;
  const scope=context.scope;
  const headers:Record<string,string>={'X-Request-ID':globalThis.crypto?.randomUUID?.()||`desktop-${Date.now()}-${Math.random().toString(16).slice(2)}`};
- if(context.sessionToken)headers['X-Session-Token']=context.sessionToken;
+ const token=requestToken(context,url);if(token)headers['X-Session-Token']=token;
  if(scope?.branchId)headers['X-Branch-Id']=scope.branchId;
  Object.assign(headers,extraHeaders);
  const r=await fetch(url,{...init,headers});
@@ -101,6 +115,7 @@ export type CreationRecord = {source?:string;source_provenance?:{execution_mode?
 export type ReviewThread = {id:string;version:number;status:string;anchor_state?:string;anchor:{chapter_id:string;chapter_version:number;quote:string};messages:{id:string;actor_id:string;text:string;at:string}[];history:{action:string;actor_id:string;at:string}[]};
 export type SourcePrivacy={novel_id:string;chapter_id:string;chapter_version:number;content_sha256:string;privacy_level:string;reviewed:boolean;stale:boolean;reviewed_by?:string;reviewed_at?:string};
 export const api={
+ validateLocalHostSession:(token:string)=>call<LocalHostReceipt>('/api/local-session',undefined,{sessionToken:token}),
  localTextRuntimeDiagnostics:(nid:string,providerId:string,modelId:string,context?:CollaborationContext)=>call<TextRuntimeDiagnostics>(query(`/api/novels/${encodeURIComponent(nid)}/text-runtime-diagnostics`,{provider_id:providerId,model_id:modelId}),undefined,context),
  creationReferenceData:(nid:string,context?:CollaborationContext)=>call<{characters:{id:string;name:string}[];locations:{id:string;name:string}[];story_routes:{id:string;name:string}[]}>(`/api/novels/${encodeURIComponent(nid)}/creation-reference-data`,undefined,context),
  sourcePrivacy:(nid:string,cid:string,context?:CollaborationContext)=>call<SourcePrivacy>(`/api/novels/${encodeURIComponent(nid)}/chapters/${encodeURIComponent(cid)}/privacy`,undefined,context),
@@ -145,13 +160,13 @@ export const api={
  adminRevokePermission:(workspaceId:string,id:string)=>call<any>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/permissions/${encodeURIComponent(id)}`,{method:'DELETE'}),
  adminExplain:(workspaceId:string,principalId:string,permission:string,domain:string,scope:Scope)=>call<PermissionExplanation>(query(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/explain`,{principal_id:principalId,permission,domain,kind:'BRANCH',project_id:scope.projectId,storyline_id:scope.storylineId,branch_id:scope.branchId})),
  bootstrap:(scope:Scope)=>call<Bootstrap>(scoped(scope,'bootstrap')),members:(scope:Scope)=>items(call<{items:Member[]}>(scoped(scope,'members'))),permissions:(scope:Scope)=>call<PermissionSummary>(scoped(scope,'permissions')),audit:(scope:Scope)=>items(call<{items:AuditEntry[]}>(scoped(scope,'audit'))),snapshots:(scope:Scope,chapterId:string)=>items(call<{items:Snapshot[]}>(scoped(scope,`chapters/${encodeURIComponent(chapterId)}/snapshots`))),snapshotDetail:(scope:Scope,chapterId:string,snapshotId:string)=>call<Snapshot>(scoped(scope,`chapters/${encodeURIComponent(chapterId)}/snapshots/${encodeURIComponent(snapshotId)}`)),scopedChapters:(scope:Scope)=>items(call<{items:Chapter[]}>(scoped(scope,'chapters'))),scopedCreateChapter:(scope:Scope,title:string)=>call<Chapter>(scoped(scope,'chapters'),{method:'POST',body:JSON.stringify({title})}),storyDatabase:(scope:Scope,resource:string)=>call<{resource:string;items:any[]}>(scoped(scope,`story-database/${encodeURIComponent(resource)}`)),
- novels:()=>call<Novel[]>('/api/novels'),novel:(id:string)=>call<Novel&{long_term_summary?:string}>(`/api/novels/${id}`),writingGoal:(id:string)=>call<{target_words:number;target_chapters:number;current_words:number;current_chapters:number;words_progress:number;chapters_progress:number;deadline:string}>(`/api/novels/${encodeURIComponent(id)}/writing-goal`),updateWritingGoal:(id:string,body:{target_words:number;target_chapters:number;deadline?:string})=>call<any>(`/api/novels/${encodeURIComponent(id)}/writing-goal`,{method:'PUT',body:JSON.stringify(body)}),
+ novels:()=>call<Novel[]>('/api/novels'),novel:(id:string)=>call<Novel&{long_term_summary?:string;world_summary?:string}>(`/api/novels/${id}`),writingGoal:(id:string)=>call<{target_words:number;target_chapters:number;current_words:number;current_chapters:number;words_progress:number;chapters_progress:number;deadline:string}>(`/api/novels/${encodeURIComponent(id)}/writing-goal`),updateWritingGoal:(id:string,body:{target_words:number;target_chapters:number;deadline?:string})=>call<any>(`/api/novels/${encodeURIComponent(id)}/writing-goal`,{method:'PUT',body:JSON.stringify(body)}),
  novelOverview:(id:string)=>call<{novel:any;counts:Record<string,number>;content:{word_count:number;has_chapters:boolean;latest_chapter:any};writing_goal:any;pending_items:{kind:string;label:string;count?:number}[];recent_activity:any[];readiness:any;storage:string;placeholder:boolean}>(`/api/novels/${encodeURIComponent(id)}/overview`),
  listResearch:(novelId:string,filters?:{status?:string;source_type?:string;tag?:string})=>call<{items:any[];total:number;storage:string;external_fetch:boolean}>(query(`/api/novels/${encodeURIComponent(novelId)}/research`,filters||{})),
  createResearch:(novelId:string,body:Record<string,unknown>)=>call<any>(`/api/novels/${encodeURIComponent(novelId)}/research`,{method:'POST',body:JSON.stringify(body)}),
  updateResearch:(novelId:string,researchId:string,body:Record<string,unknown>,expectedVersion?:number)=>call<any>(query(`/api/novels/${encodeURIComponent(novelId)}/research/${encodeURIComponent(researchId)}`,expectedVersion?{expected_version:String(expectedVersion)}:{}),{method:'PUT',body:JSON.stringify(body)}),
  deleteResearch:(novelId:string,researchId:string,expectedVersion?:number)=>call<any>(query(`/api/novels/${encodeURIComponent(novelId)}/research/${encodeURIComponent(researchId)}`,expectedVersion?{expected_version:String(expectedVersion)}:{}),{method:'DELETE'}),
- updateNovel:(id:string,body:{title?:string;genre?:string;status?:string;long_term_summary?:string})=>call<Novel&{long_term_summary?:string}>(`/api/novels/${id}`,{method:'PUT',body:JSON.stringify(body)}),createNovel:(title:string,genre:string)=>call<Novel>('/api/novels',{method:'POST',body:JSON.stringify({title,genre})}),deleteNovel:(id:string)=>call<void>(`/api/novels/${id}`,{method:'DELETE'}),
+ updateNovel:(id:string,body:{title?:string;genre?:string;status?:string;long_term_summary?:string;world_summary?:string})=>call<Novel&{long_term_summary?:string;world_summary?:string}>(`/api/novels/${id}`,{method:'PUT',body:JSON.stringify(body)}),createNovel:(title:string,genre:string)=>call<Novel>('/api/novels',{method:'POST',body:JSON.stringify({title,genre})}),deleteNovel:(id:string)=>call<void>(`/api/novels/${id}`,{method:'DELETE'}),
    assets:(novelId:string,kind?:string,characterId?:string,sceneId?:string)=>{const params=new URLSearchParams();if(kind)params.set('kind',kind);if(characterId)params.set('character_id',characterId);if(sceneId)params.set('scene_id',sceneId);const query=params.toString();return call<Asset[]>(`/api/novels/${encodeURIComponent(novelId)}/assets${query?`?${query}`:''}`)},
  uploadAsset:(novelId:string,body:{filename:string;content_base64:string;media_type?:string;kind?:string})=>call<Asset>(`/api/novels/${encodeURIComponent(novelId)}/assets`,{method:'POST',body:JSON.stringify({novel_id:novelId,...body})}),
  asset:(assetId:string)=>call<Asset>(`/api/assets/${encodeURIComponent(assetId)}`),
@@ -192,10 +207,10 @@ searchVisualReferences:(novelId:string,query:string)=>call<VisualReferenceSearch
   harnessAccessAudit:(filters?:{novel_id?:string;agent_id?:string;outcome?:string})=>call<{items:{at:string;novel_id:string;chapter:number;agent_id:string;scopes:string[];outcome:string}[]}>(`/api/harness/access-audit?${new URLSearchParams(Object.entries(filters || {}).filter(([, value]) => Boolean(value)) as [string,string][]).toString()}`),
   harnessAccessAuditCsv:(filters?:{novel_id?:string;agent_id?:string;outcome?:string})=>`/api/harness/access-audit.csv?${new URLSearchParams(Object.entries(filters || {}).filter(([, value]) => Boolean(value)) as [string,string][]).toString()}`,
   clearHarnessAccessAudit:()=>call<{cleared:boolean}>('/api/harness/access-audit?confirm=true',{method:'DELETE'}),
- agents:()=>call<{catalog_version:string;agents:CreativeAgent[]}>('/api/agents'),
+ agents:()=>call<CreativeAgentCatalog>('/api/agents'),
  agentContext:(agentId:string,novelId:string,chapter:number,instruction:string='',target:'local'|'cloud'='local',chapterId?:string)=>call<AgentContextPreview>(query(`/api/agents/${encodeURIComponent(agentId)}/context-preview`,{novel_id:novelId,chapter:String(chapter),instruction,target,chapter_id:chapterId})),
- createAgentJob:(body:object)=>call<any>('/api/agent-jobs',{method:'POST',body:JSON.stringify(body)}),
- agentJob:(id:string)=>call<any>(`/api/agent-jobs/${encodeURIComponent(id)}`),
+ createAgentJob:(body:object,context?:CollaborationContext)=>call<any>('/api/agent-jobs',{method:'POST',body:JSON.stringify(body)},context),
+ agentJob:(id:string,context?:CollaborationContext)=>call<any>(`/api/agent-jobs/${encodeURIComponent(id)}`,undefined,context),
  agentJobs:(params:{novelId?:string;agentId?:string;status?:string;createdAfter?:string;createdBefore?:string;branchId?:string;page?:number;pageSize?:number}={})=>call<{items:any[];page:number;page_size:number;total:number;has_more:boolean}>(query('/api/agent-jobs',{novel_id:params.novelId,agent_id:params.agentId,status:params.status,created_after:params.createdAfter,created_before:params.createdBefore,branch_id:params.branchId,page:params.page?.toString(),page_size:params.pageSize?.toString()})),
  agentJobsExportUrl:(params:{novelId?:string;agentId?:string;status?:string;createdAfter?:string;createdBefore?:string}={})=>query('/api/agent-jobs/export.csv',{novel_id:params.novelId,agent_id:params.agentId,status:params.status,created_after:params.createdAfter,created_before:params.createdBefore}),
  agentJobsExport:(params:{novelId?:string;agentId?:string;status?:string;createdAfter?:string;createdBefore?:string;branchId?:string}={})=>downloadCall(query('/api/agent-jobs/export.csv',{novel_id:params.novelId,agent_id:params.agentId,status:params.status,created_after:params.createdAfter,created_before:params.createdBefore,branch_id:params.branchId}),params.branchId?{'X-Branch-Id':params.branchId}:{}),
@@ -235,9 +250,9 @@ searchVisualReferences:(novelId:string,query:string)=>call<VisualReferenceSearch
   updateAssetTask:(novelId:string,screenplayId:string,taskId:string,body:object)=>call<any>(`/api/novels/${encodeURIComponent(novelId)}/screenplays/${encodeURIComponent(screenplayId)}/asset-tasks/${encodeURIComponent(taskId)}`,{method:'PUT',body:JSON.stringify(body)}),
   executeAssetTask:(novelId:string,screenplayId:string,taskId:string)=>call<any>(`/api/novels/${encodeURIComponent(novelId)}/screenplays/${encodeURIComponent(screenplayId)}/asset-tasks/${encodeURIComponent(taskId)}/execute`,{method:'POST'}),
  executeAgentJob:(id:string)=>call<any>(`/api/agent-jobs/${encodeURIComponent(id)}/execute`,{method:'POST'}),
- startAgentJob:(id:string)=>call<any>(`/api/agent-jobs/${encodeURIComponent(id)}/start`,{method:'POST'}),
- cancelAgentJob:(id:string)=>call<any>(`/api/agent-jobs/${encodeURIComponent(id)}/cancel`,{method:'POST'}),
- retryAgentJob:(id:string)=>call<any>(`/api/agent-jobs/${encodeURIComponent(id)}/retry`,{method:'POST'}),
+ startAgentJob:(id:string,context?:CollaborationContext)=>call<any>(`/api/agent-jobs/${encodeURIComponent(id)}/start`,{method:'POST'},context),
+ cancelAgentJob:(id:string,context?:CollaborationContext)=>call<any>(`/api/agent-jobs/${encodeURIComponent(id)}/cancel`,{method:'POST'},context),
+ retryAgentJob:(id:string,context?:CollaborationContext)=>call<any>(`/api/agent-jobs/${encodeURIComponent(id)}/retry`,{method:'POST'},context),
  reviewAgentJob:(id:string,decision:'ACCEPTED'|'REJECTED',reviewedBy:string,note='',actions:object[]=[])=>call<any>(`/api/agent-jobs/${encodeURIComponent(id)}/review`,{method:'POST',body:JSON.stringify({decision,reviewed_by:reviewedBy,note,actions})}),
  applyAgentJob:(id:string,appliedBy:string)=>call<any>(`/api/agent-jobs/${encodeURIComponent(id)}/apply`,{method:'POST',body:JSON.stringify({applied_by:appliedBy})}),
  upsertCharacter:(novelId:string,id:string,body:object)=>call<any>(`/api/novels/${encodeURIComponent(novelId)}/characters/${encodeURIComponent(id)}`,{method:'PUT',body:JSON.stringify(body)}),
@@ -384,11 +399,13 @@ searchVisualReferences:(novelId:string,query:string)=>call<VisualReferenceSearch
 };
 
 export type PlanningEvidence={chapter_id:string;chapter_version:number;content_sha256:string;start:number;end:number;quote:string};
-export type PlanningCandidate={id:string;record:Record<string,unknown>;evidence:PlanningEvidence[];record_id:string|null;status:string;analysis_source:string};
-export type PlanningRun={id:string;novel_id:string;version:number;status:string;request:{kind:string;mode:'MODEL'|'LOCAL_EXPLICIT';provider_id?:string|null;model_id?:string|null;candidate_count:number};sources:{chapter_id:string;chapter_version:number;content_sha256:string;truncated:boolean;excerpt_characters:number}[];candidates:PlanningCandidate[];findings:{code:string;chapter_id:string;missing_fields:string[];duplicate_fields:string[];fields:Record<string,string>;evidence:PlanningEvidence[]}[];execution_mode?:string|null;error?:string|null;error_code?:string|null;created_at:string;usage_status:string;provider_id?:string;model_id?:string};
+export type PlanningCandidate={id:string;record:Record<string,unknown>;evidence:PlanningEvidence[];record_id:string|null;status:string;analysis_source:string;applied?:PlanningApplied};
+export type PlanningApplied={world_summary?:string;world_rule_ids?:string[];location_ids?:string[];character_ids?:string[];outline?:Record<string,unknown>};
+export type PlanningRun={id:string;novel_id:string;version:number;status:string;request:{kind:string;mode:'MODEL'|'LOCAL_EXPLICIT';premise?:string;provider_id?:string|null;model_id?:string|null;candidate_count:number};sources:{chapter_id:string;chapter_version:number;content_sha256:string;truncated:boolean;excerpt_characters:number}[];candidates:PlanningCandidate[];findings:{code:string;chapter_id:string;missing_fields:string[];duplicate_fields:string[];fields:Record<string,string>;evidence:PlanningEvidence[]}[];execution_mode?:string|null;error?:string|null;error_code?:string|null;created_at:string;usage_status:string;provider_id?:string;model_id?:string};
 export const planningApi={
  list:(nid:string,context?:CollaborationContext)=>call<{items:PlanningRun[]}>(`/api/novels/${encodeURIComponent(nid)}/planning-runs`,undefined,context),
  create:(nid:string,body:Record<string,unknown>,context?:CollaborationContext)=>call<PlanningRun>(`/api/novels/${encodeURIComponent(nid)}/planning-runs`,{method:'POST',body:JSON.stringify(body)},context),
  cancel:(nid:string,id:string,version:number,context?:CollaborationContext)=>call<PlanningRun>(`/api/novels/${encodeURIComponent(nid)}/planning-runs/${encodeURIComponent(id)}/cancel`,{method:'POST',body:JSON.stringify({expected_version:version})},context),
  save:(nid:string,id:string,candidateId:string,version:number,context?:CollaborationContext)=>call<{run:PlanningRun;record:CreationRecord}>(`/api/novels/${encodeURIComponent(nid)}/planning-runs/${encodeURIComponent(id)}/candidates/${encodeURIComponent(candidateId)}/save-draft`,{method:'POST',body:JSON.stringify({expected_version:version})},context),
+ apply:(nid:string,id:string,candidateId:string,version:number,context?:CollaborationContext)=>call<{run:PlanningRun;applied:PlanningApplied}>(`/api/novels/${encodeURIComponent(nid)}/planning-runs/${encodeURIComponent(id)}/candidates/${encodeURIComponent(candidateId)}/apply`,{method:'POST',body:JSON.stringify({expected_version:version})},context),
 };

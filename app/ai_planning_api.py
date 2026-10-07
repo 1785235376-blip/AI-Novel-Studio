@@ -4,6 +4,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from .services.ai_planning_service import PlanningRunIn
 from .services.v1_capability_service import CapabilityVersionConflict
+from .repositories.chapter_repository import VersionConflict
 
 
 class PlanningActionIn(BaseModel):
@@ -19,6 +20,8 @@ def create_ai_planning_router(service, authorize):
             return fn(*args, **kwargs)
         except CapabilityVersionConflict as exc:
             raise HTTPException(409, {"code": "PLANNING_VERSION_CONFLICT", "message": "任务已更新，请刷新后重试。", "current": exc.current}) from exc
+        except VersionConflict as exc:
+            raise HTTPException(409,{"code":"PLANNING_TARGET_CONFLICT","message":"作品内容已经改变，请重新生成并审核。"}) from exc
         except FileNotFoundError as exc:
             raise HTTPException(404, {"code": "PLANNING_NOT_FOUND"}) from exc
         except ValueError as exc:
@@ -52,5 +55,13 @@ def create_ai_planning_router(service, authorize):
     def save(nid: str, rid: str, cid: str, body: PlanningActionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         actor, scope = authorize(nid, x_session_token, x_branch_id, "domain.write")
         return call(service.save_candidate, nid, scope, actor, rid, cid, body.expected_version)
+
+    @router.post("/novels/{nid}/planning-runs/{rid}/candidates/{cid}/apply")
+    def apply(nid: str, rid: str, cid: str, body: PlanningActionIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        actor, scope = authorize(nid, x_session_token, x_branch_id, "domain.write")
+        def reauthorize():
+            if authorize(nid, x_session_token, x_branch_id, "domain.write") != (actor, scope):
+                raise ValueError("planning authority changed")
+        return call(service.apply_candidate,nid,scope,actor,rid,cid,body.expected_version,reauthorize=reauthorize)
 
     return router

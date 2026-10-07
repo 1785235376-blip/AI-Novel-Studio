@@ -1,0 +1,186 @@
+..ss..ss..ss....ssss..ss.....ssss...........................ssssss...... [  0%]
+......ssssssssssss..........................sss....ssss....ssss....ssss. [  1%]
+...ssss....ssss....ssss....ssss....ssss....ssss....ssss....ssss....ssss. [  2%]
+...ssss....ssss....ssss....ssss....ssss....ssss....ssss....ssss....ssss. [  3%]
+...ssss....ssss....ssss....ssss....ssss....ssss.................sss...ss [  3%]
+s...............ssssss........s.s.......ssssss....ss..s.s...sss.s....... [  4%]
+........................................................................ [  5%]
+....................................s................................... [  6%]
+..............s.s.......ss.............................................. [  7%]
+...........................s............................................ [  7%]
+........................................................................ [  8%]
+..................................................ss.................... [  9%]
+................s....................................................... [ 10%]
+........................................................................ [ 11%]
+........................................................................ [ 11%]
+........................................................................ [ 12%]
+........................................................................ [ 13%]
+......................................................................s. [ 14%]
+.......ss.s............................................................. [ 14%]
+.s.........sssssssss.s..s.s.s.s.s...sss..s.s.s.s...sss......ssssss.s.s.s [ 15%]
+.s.........s.s..s....ssss.s.s.s.s.s....ssss.s.s.s......ssssss.s.s.s..... [ 16%]
+..............ss......ssss.............................................. [ 17%]
+........................................................................ [ 18%]
+........................................................................ [ 18%]
+........................................................................ [ 19%]
+........................................................................ [ 20%]
+........................................................................ [ 21%]
+........................................................................ [ 22%]
+........................................................................ [ 22%]
+........................................................................ [ 23%]
+........................................................................ [ 24%]
+.................................ss..ss....ssss......ssssss..ss..ss..ss. [ 25%]
+.ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss....ssss.s.s.s.s.s..ss....sss [ 25%]
+s.s..ss..ss..ss......ssssss..ss..ss..ss.s.s.s..s.s.s.s.s.s..s..s.s.s...s [ 26%]
+s.s..ss.s.s..ss...sss.s.......sssssss....ssss.s.s.s.s.s.s..ss..ss....... [ 27%]
+.ss..ss..ss..ss..ss..ss..ss..ss..s.s.s.s.s.......sssssss.s.s.s.s.s.s..ss [ 28%]
+.s.s.s....ssss.s.s.s.s..ss..ss..ss..ss..ss.s.s.s.s.s.s.s.s.s.s..ss..ss.. [ 29%]
+ss..ss...ss.........ss......ssssss..ss..ss..ss..ss..ss..ss....ssss..ss.. [ 29%]
+ss.........ssssssss..ss.s.s.s.s.s..................s.s.s.s.....sssss.s.s [ 30%]
+.s........s.s.s.s.s.s.s.s.s.s.s.s....ssss..........ssssssssss.s.s....... [ 31%]
+s..s.s......ssssss.s.s.s..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss.... [ 32%]
+ssss...............s....ssss..ss..ss....ssss....ssss..ss....ssss..ss..ss [ 33%]
+..ss..ss....ssss........................................................ [ 33%]
+.......................................s..........................INTERNALERROR> Traceback (most recent call last):
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/main.py", line 289, in wrap_session
+INTERNALERROR>     session.exitstatus = doit(config, session) or 0
+INTERNALERROR>                          ^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/main.py", line 343, in _main
+INTERNALERROR>     config.hook.pytest_runtestloop(session=session)
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512, in __call__
+INTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120, in _hookexec
+INTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+INTERNALERROR>     raise exception
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 139, in _multicall
+INTERNALERROR>     teardown.throw(exception)
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/logging.py", line 801, in pytest_runtestloop
+INTERNALERROR>     return (yield)  # Run all the tests.
+INTERNALERROR>             ^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 139, in _multicall
+INTERNALERROR>     teardown.throw(exception)
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/terminal.py", line 688, in pytest_runtestloop
+INTERNALERROR>     result = yield
+INTERNALERROR>              ^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121, in _multicall
+INTERNALERROR>     res = hook_impl.function(*args)
+INTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/main.py", line 367, in pytest_runtestloop
+INTERNALERROR>     item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512, in __call__
+INTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120, in _hookexec
+INTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+INTERNALERROR>     raise exception
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 139, in _multicall
+INTERNALERROR>     teardown.throw(exception)
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/warnings.py", line 90, in pytest_runtest_protocol
+INTERNALERROR>     return (yield)
+INTERNALERROR>             ^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 139, in _multicall
+INTERNALERROR>     teardown.throw(exception)
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/assertion/__init__.py", line 192, in pytest_runtest_protocol
+INTERNALERROR>     return (yield)
+INTERNALERROR>             ^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 139, in _multicall
+INTERNALERROR>     teardown.throw(exception)
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/unittest.py", line 475, in pytest_runtest_protocol
+INTERNALERROR>     return (yield)
+INTERNALERROR>             ^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 139, in _multicall
+INTERNALERROR>     teardown.throw(exception)
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/faulthandler.py", line 88, in pytest_runtest_protocol
+INTERNALERROR>     return (yield)
+INTERNALERROR>             ^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121, in _multicall
+INTERNALERROR>     res = hook_impl.function(*args)
+INTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/runner.py", line 117, in pytest_runtest_protocol
+INTERNALERROR>     runtestprotocol(item, nextitem=nextitem)
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/runner.py", line 136, in runtestprotocol
+INTERNALERROR>     reports.append(call_and_report(item, "call", log))
+INTERNALERROR>                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/runner.py", line 250, in call_and_report
+INTERNALERROR>     ihook.pytest_runtest_logreport(report=report)
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512, in __call__
+INTERNALERROR>     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120, in _hookexec
+INTERNALERROR>     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+INTERNALERROR>     raise exception
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121, in _multicall
+INTERNALERROR>     res = hook_impl.function(*args)
+INTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/project/.github/ci/suite_coverage.py", line 329, in pytest_runtest_logreport
+INTERNALERROR>     with (self.output / "coverage-events.jsonl").open(
+INTERNALERROR>           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/usr/lib/python3.12/pathlib.py", line 721, in __truediv__
+INTERNALERROR>     return self.joinpath(key)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/usr/lib/python3.12/pathlib.py", line 717, in joinpath
+INTERNALERROR>     return self.with_segments(self, *pathsegments)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/usr/lib/python3.12/pathlib.py", line 385, in with_segments
+INTERNALERROR>     return type(self)(*pathsegments)
+INTERNALERROR>            ^^^^^^^^^^^^^^^^^^^^^^^^^
+INTERNALERROR>   File "/usr/lib/python3.12/pathlib.py", line 1164, in __init__
+INTERNALERROR>     super().__init__(*args)
+INTERNALERROR>   File "/usr/lib/python3.12/pathlib.py", line 358, in __init__
+INTERNALERROR>     import ntpath
+INTERNALERROR>   File "/tmp/ai-novel-full-recovery-j3hg2js6/project/tests/test_provider_runtime_v2_routing_service.py", line 86, in forbidden/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/main.py:324: PluggyTeardownRaisedWarning: A plugin raised an exception during an old-style hookwrapper teardown.
+Plugin: exact-suite-coverage, Hook: pytest_sessionfinish
+AssertionError: unexpected initialization
+For more information see https://pluggy.readthedocs.io/en/stable/api_reference.html#pluggy.PluggyTeardownRaisedWarning
+Traceback (most recent call last):
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/config/__init__.py", line 175, in main
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512, in __call__
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120, in _hookexec
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121, in _multicall
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/main.py", line 336, in pytest_cmdline_main
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/main.py", line 324, in wrap_session
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512, in __call__
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120, in _hookexec
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 139, in _multicall
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/logging.py", line 873, in pytest_sessionfinish
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 139, in _multicall
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 43, in run_old_style_hookwrapper
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/project/.github/ci/suite_coverage.py", line 361, in pytest_sessionfinish
+  File "/usr/lib/python3.12/pathlib.py", line 1164, in __init__
+  File "/usr/lib/python3.12/pathlib.py", line 358, in __init__
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/project/tests/test_provider_runtime_v2_routing_service.py", line 86, in forbidden
+AssertionError: unexpected initialization
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pytest/__main__.py", line 9, in <module>
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/config/__init__.py", line 201, in console_main
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/config/__init__.py", line 181, in main
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/config/__init__.py", line 1126, in _ensure_unconfigure
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512, in __call__
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120, in _hookexec
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 167, in _multicall
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121, in _multicall
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/faulthandler.py", line 42, in pytest_unconfigure
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/project/tests/test_provider_runtime_v2_routing_service.py", line 86, in forbidden
+AssertionError: unexpected initialization
+Exception ignored in atexit callback: <bound method finalize._exitfunc of <class 'weakref.finalize'>>
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/weakref.py", line 649, in _exitfunc
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/project/tests/test_provider_runtime_v2_routing_service.py", line 86, in forbidden
+AssertionError: unexpected initialization
+
+INTERNALERROR>     raise AssertionError("unexpected initialization")
+INTERNALERROR> AssertionError: unexpected initialization

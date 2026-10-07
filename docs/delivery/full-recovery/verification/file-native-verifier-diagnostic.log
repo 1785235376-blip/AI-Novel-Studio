@@ -1,0 +1,35 @@
+...F..........................F.........                                 [100%]
+================================== FAILURES ===================================
+____________ test_archive_path_rejected_before_write[dir\\escape] _____________
+tests\test_r2_windows_base_inputs.py:30: in test_archive_path_rejected_before_write
+    with archive("good/file", name) as value, pytest.raises(ValueError, match="Unsafe archive path"):
+E   Failed: DID NOT RAISE <class 'ValueError'>
+______ test_real_timeout_stays_failed_with_bounded_direct_child_cleanup _______
+scripts\verify_windows_base.py:119: in run_native_command
+    code = process.wait(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\subprocess.py:1264: in wait
+    return self._wait(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\subprocess.py:1593: in _wait
+    raise TimeoutExpired(self.args, timeout)
+E   subprocess.TimeoutExpired: Command '['D:\\小说\\AI-Novel-Studio-Latest-Product\\.venv\\Scripts\\python.exe', '-c', "import time; print('started',flush=True); time.sleep(30)"]' timed out after 0.2 seconds
+
+During handling of the above exception, another exception occurred:
+tests\test_r2_windows_native_verifier.py:53: in test_real_timeout_stays_failed_with_bounded_direct_child_cleanup
+    verifier.run_native_command([sys.executable, "-c", "import time; print('started',flush=True); time.sleep(30)"],
+scripts\verify_windows_base.py:123: in run_native_command
+    entry["timeout_cleanup"] = terminate_owned_command(process, environment, stdout, stderr)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts\verify_windows_base.py:69: in terminate_owned_command
+    taskkill = Path(environment["SystemRoot"]) / "System32/taskkill.exe"
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'SystemRoot'
+---------------------------- Captured stdout call -----------------------------
+NATIVE_BASE_PROGRESS {"executable": "python.exe", "number": 1, "stage": "command_start"}
+NATIVE_BASE_PROGRESS {"executable": "python.exe", "number": 1, "stage": "command_timeout", "timeout_seconds": 0.2}
+- generated xml file: D:\小说\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\verification\file-native-verifier-diagnostic.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_r2_windows_base_inputs.py::test_archive_path_rejected_before_write[dir\\escape]
+FAILED tests/test_r2_windows_native_verifier.py::test_real_timeout_stays_failed_with_bounded_direct_child_cleanup
+2 failed, 38 passed in 2.97s

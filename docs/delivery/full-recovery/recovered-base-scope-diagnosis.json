@@ -1,0 +1,39 @@
+{
+  "original_pr45": {
+    "files": 4876,
+    "top_level_scopes": {
+      "Licenses": 8,
+      "PostgreSQL": 2818,
+      "PREREQUISITES.txt": 1,
+      "Runtime": 2049
+    },
+    "source_overlay_entries": []
+  },
+  "recovered_extended": {
+    "files": 5089,
+    "top_level_scopes": {
+      "Launcher": 3,
+      "Licenses": 8,
+      "PostgreSQL": 2818,
+      "PREREQUISITES.txt": 1,
+      "Runtime": 2259
+    },
+    "source_overlay_entries": [
+      {
+        "path": "Launcher/Launch-AI-Novel-Studio.cmd",
+        "size": 176,
+        "sha256": "fb889c53937f15f1cb21d7edb965f7befd7ee8c0385a91c4288266ee7ee9775c"
+      },
+      {
+        "path": "Launcher/Launch-AI-Novel-Studio.ps1",
+        "size": 3062,
+        "sha256": "9691596119b816a7198b72e0e1f6d0ab8e9e708b432d2588cebd2b7311ca1dde"
+      },
+      {
+        "path": "Launcher/Uninstall-AI-Novel-Studio.ps1",
+        "size": 2469,
+        "sha256": "7dc574133c249a230d572424f65dc6dc1be89b717a11d3479370abab0d2b5927"
+      }
+    ]
+  }
+}

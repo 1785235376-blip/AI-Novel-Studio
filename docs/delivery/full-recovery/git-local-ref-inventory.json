@@ -1,0 +1,44 @@
+[
+  {
+    "ref": "refs/heads/feature/provider-runtime-stable-identity-foundation",
+    "sha": "ea394756614bde225d20a2058b417213a98ba5f7",
+    "ancestor": true,
+    "baseline_unique": 186,
+    "ref_unique": 0
+  },
+  {
+    "ref": "refs/heads/feature/provider-runtime-v2-authoritative-snapshot-bridge",
+    "sha": "e994e7e5c11a9ad05daa3e36c035479445ee6b1e",
+    "ancestor": true,
+    "baseline_unique": 181,
+    "ref_unique": 0
+  },
+  {
+    "ref": "refs/heads/feature/provider-runtime-v2-host-hardware-inventory",
+    "sha": "ad38ac70d238dde8411e1c636a0f97f2cf07426d",
+    "ancestor": true,
+    "baseline_unique": 175,
+    "ref_unique": 0
+  },
+  {
+    "ref": "refs/heads/feature/provider-runtime-v2-runtime-requirements-authority",
+    "sha": "7e24be1765085b99352a39c8b5887e62221560f9",
+    "ancestor": true,
+    "baseline_unique": 178,
+    "ref_unique": 0
+  },
+  {
+    "ref": "refs/heads/main",
+    "sha": "8d52f3cb998080ee6eefc44d1d435303a46d12cb",
+    "ancestor": true,
+    "baseline_unique": 193,
+    "ref_unique": 0
+  },
+  {
+    "ref": "refs/heads/work/full-recovery-product-candidate",
+    "sha": "665817243cad59eef0d4140f17c2ea644f46971e",
+    "ancestor": true,
+    "baseline_unique": 0,
+    "ref_unique": 0
+  }
+]

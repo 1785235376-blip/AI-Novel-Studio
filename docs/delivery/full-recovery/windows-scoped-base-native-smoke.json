@@ -1,0 +1,270 @@
+{
+  "kind": "native-windows-base-smoke",
+  "status": "PASS",
+  "public_release": false,
+  "interactive_desktop": "NOT_RUN",
+  "user_acceptance": "NOT_RUN",
+  "commands": [
+    {
+      "executable": "python.exe",
+      "arguments": [
+        "-I",
+        "-c",
+        "import json,sys,importlib.metadata as m; import fastapi,uvicorn,psycopg,sqlalchemy,httpx,pydantic_settings,reportlab,PIL; from psycopg import pq; from reportlab.pdfgen.canvas import Canvas; names=['annotated-doc', 'annotated-types', 'anyio', 'attrs', 'certifi', 'charset-normalizer', 'click', 'colorama', 'fastapi', 'h11', 'httpcore', 'httpx', 'idna', 'jsonschema', 'jsonschema-specifications', 'opentelemetry-api', 'pillow', 'psycopg', 'psycopg-binary', 'pydantic', 'pydantic-settings', 'pydantic_core', 'pypdf', 'python-dotenv', 'referencing', 'reportlab', 'rpds-py', 'SQLAlchemy', 'starlette', 'typing-inspection', 'typing_extensions', 'tzdata', 'uvicorn']; print(json.dumps({'python':list(sys.version_info[:3]),'isolated':sys.flags.isolated,'psycopg_impl':pq.__impl__,'packages':{n:m.version(n) for n in names}}))"
+      ],
+      "status": "PASS",
+      "stdout_file": "command-logs/001.stdout.log",
+      "stderr_file": "command-logs/001.stderr.log",
+      "exit_code": 0,
+      "elapsed_seconds": 2.094,
+      "stdout": "{\"python\": [3, 12, 9], \"isolated\": 1, \"psycopg_impl\": \"binary\", \"packages\": {\"annotated-doc\": \"0.0.5\", \"annotated-types\": \"0.8.0\", \"anyio\": \"4.15.1\", \"attrs\": \"26.1.0\", \"certifi\": \"2026.7.22\", \"charset-normalizer\": \"3.5.2\", \"click\": \"8.5.0\", \"colorama\": \"0.4.6\", \"fastapi\": \"0.142.2\", \"h11\": \"0.16.0\", \"httpcore\": \"1.0.9\", \"httpx\": \"0.28.1\", \"idna\": \"3.20\", \"jsonschema\": \"4.26.0\", \"jsonschema-specifications\": \"2025.9.1\", \"opentelemetry-api\": \"1.45.0\", \"pillow\": \"12.3.0\", \"psycopg\": \"3.3.6\", \"psycopg-binary\": \"3.3.6\", \"pydantic\": \"2.13.5\", \"pydantic-settings\": \"2.15.0\", \"pydantic_core\": \"2.46.5\", \"pypdf\": \"6.19.0\", \"python-dotenv\": \"1.2.4\", \"referencing\": \"0.37.0\", \"reportlab\": \"4.5.1\", \"rpds-py\": \"2026.9.1\", \"SQLAlchemy\": \"2.1.3\", \"starlette\": \"1.7.0\", \"typing-inspection\": \"0.4.4\", \"typing_extensions\": \"4.16.0\", \"tzdata\": \"2026.3\", \"uvicorn\": \"0.54.0\"}}\r\n",
+      "stderr": ""
+    },
+    {
+      "executable": "postgres.exe",
+      "arguments": [
+        "--version"
+      ],
+      "status": "PASS",
+      "stdout_file": "command-logs/002.stdout.log",
+      "stderr_file": "command-logs/002.stderr.log",
+      "exit_code": 0,
+      "elapsed_seconds": 1.891,
+      "stdout": "postgres (PostgreSQL) 16.15\r\n",
+      "stderr": ""
+    },
+    {
+      "executable": "initdb.exe",
+      "arguments": [
+        "-D",
+        "D:\\小说\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\windows-scoped-base-native-smoke\\postgres-data",
+        "-U",
+        "novel_ci",
+        "--encoding=UTF8",
+        "--locale=C",
+        "--auth=trust"
+      ],
+      "status": "PASS",
+      "stdout_file": "command-logs/003.stdout.log",
+      "stderr_file": "command-logs/003.stderr.log",
+      "exit_code": 0,
+      "elapsed_seconds": 3.234,
+      "stdout": "���ڴ����ݿ�ϵͳ���ļ�����Ϊ�û� \"admin\".\r\n���û�Ҳ����Ϊ���������̵�����.\r\n���ݿ�ؽ�ʹ�ñ��ػ����� \"C\"���г�ʼ��.\r\nȱʡ���ı��������ý��ᱻ���õ�\"english\"\r\n\r\n��ֹΪ����ҳ����У���.\r\n\r\n����Ŀ¼ D:/С˵/AI-Novel-Studio-Latest-Product/.runtime/full-recovery/windows-scoped-base-native-smoke/postgres-data ... �ɹ�\r\n���ڴ�����Ŀ¼ ... �ɹ�\r\nѡ��̬�����ڴ�ʵ�� ......windows\r\nѡ��Ĭ����������� (max_connections) ... 100\r\nѡ��Ĭ�Ϲ�����������С (shared_buffers) ... 128MB\r\nѡ��Ĭ��ʱ�� ... Asia/Shanghai\r\n���������ļ� ... �ɹ�\r\n���������Ծٽű� ...�ɹ�\r\n����ִ���Ծٺ��ʼ�� ...�ɹ�\r\nͬ�����ݵ�����...�ɹ�\r\n\r\n�ɹ��������ڿ������������������ݿ��������\r\n\r\n    ^\"D^:^\\^�^�^�^�^\\AI^-Novel^-Studio^-Latest^-Product^\\^.runtime^\\full^-recovery^\\windows^-base^-final^\\PostgreSQL^\\bin^\\pg^_ctl^\" -D ^\"D^:^\\^�^�^�^�^\\AI^-Novel^-Studio^-Latest^-Product^\\^.runtime^\\full^-recovery^\\windows^-scoped^-base^-native^-smoke^\\postgres^-data^\" -l ��־�ļ� start\r\n\r\n",
+      "stderr": ""
+    },
+    {
+      "executable": "pg_ctl.exe",
+      "arguments": [
+        "-D",
+        "D:\\小说\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\windows-scoped-base-native-smoke\\postgres-data",
+        "-l",
+        "D:\\小说\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\windows-scoped-base-native-smoke\\postgres.log",
+        "-w",
+        "-t",
+        "60",
+        "-o",
+        "-h 127.0.0.1 -p 63689",
+        "start"
+      ],
+      "status": "PASS",
+      "stdout_file": "command-logs/004.stdout.log",
+      "stderr_file": "command-logs/004.stderr.log",
+      "exit_code": 0,
+      "elapsed_seconds": 0.437,
+      "stdout": "�ȴ��������������� .... ���\r\n�����������Ѿ�����\r\n",
+      "stderr": ""
+    },
+    {
+      "executable": "psql.exe",
+      "arguments": [
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "63689",
+        "-U",
+        "novel_ci",
+        "-d",
+        "postgres",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-c",
+        "CREATE EXTENSION pgcrypto; CREATE TABLE r2_package_smoke (id integer PRIMARY KEY, body text); INSERT INTO r2_package_smoke VALUES (1, convert_from(decode('e4b8ade69687e9aa8ce8af81','hex'),'UTF8')); SELECT encode(digest(body, 'sha256'),'hex') FROM r2_package_smoke;"
+      ],
+      "status": "PASS",
+      "stdout_file": "command-logs/005.stdout.log",
+      "stderr_file": "command-logs/005.stderr.log",
+      "exit_code": 0,
+      "elapsed_seconds": 0.188,
+      "stdout": "CREATE EXTENSION\r\nCREATE TABLE\r\nINSERT 0 1\r\n                              encode                              \r\n------------------------------------------------------------------\r\n 12c21cf606f284aabafc296e3f0d157641dbe5272d39423684a57573b97fdfd5\r\n(1 �м�¼)\r\n\r\n",
+      "stderr": ""
+    },
+    {
+      "executable": "pg_dump.exe",
+      "arguments": [
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "63689",
+        "-U",
+        "novel_ci",
+        "-d",
+        "postgres",
+        "--format=custom",
+        "--no-owner",
+        "--file",
+        "D:\\小说\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\windows-scoped-base-native-smoke\\synthetic.backup"
+      ],
+      "status": "PASS",
+      "stdout_file": "command-logs/006.stdout.log",
+      "stderr_file": "command-logs/006.stderr.log",
+      "exit_code": 0,
+      "elapsed_seconds": 0.156,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "executable": "createdb.exe",
+      "arguments": [
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "63689",
+        "-U",
+        "novel_ci",
+        "r2_restore"
+      ],
+      "status": "PASS",
+      "stdout_file": "command-logs/007.stdout.log",
+      "stderr_file": "command-logs/007.stderr.log",
+      "exit_code": 0,
+      "elapsed_seconds": 0.219,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "executable": "pg_restore.exe",
+      "arguments": [
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "63689",
+        "-U",
+        "novel_ci",
+        "-d",
+        "r2_restore",
+        "--exit-on-error",
+        "--no-owner",
+        "D:\\小说\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\windows-scoped-base-native-smoke\\synthetic.backup"
+      ],
+      "status": "PASS",
+      "stdout_file": "command-logs/008.stdout.log",
+      "stderr_file": "command-logs/008.stderr.log",
+      "exit_code": 0,
+      "elapsed_seconds": 0.14,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "executable": "psql.exe",
+      "arguments": [
+        "-h",
+        "127.0.0.1",
+        "-p",
+        "63689",
+        "-U",
+        "novel_ci",
+        "-d",
+        "r2_restore",
+        "-v",
+        "ON_ERROR_STOP=1",
+        "-tAc",
+        "SELECT body FROM r2_package_smoke WHERE id=1"
+      ],
+      "status": "PASS",
+      "stdout_file": "command-logs/009.stdout.log",
+      "stderr_file": "command-logs/009.stderr.log",
+      "exit_code": 0,
+      "elapsed_seconds": 0.047,
+      "stdout": "中文验证\r\n",
+      "stderr": ""
+    },
+    {
+      "executable": "pg_ctl.exe",
+      "arguments": [
+        "-D",
+        "D:\\小说\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\windows-scoped-base-native-smoke\\postgres-data",
+        "-w",
+        "-t",
+        "30",
+        "-m",
+        "fast",
+        "stop"
+      ],
+      "status": "PASS",
+      "stdout_file": "command-logs/010.stdout.log",
+      "stderr_file": "command-logs/010.stderr.log",
+      "exit_code": 0,
+      "elapsed_seconds": 1.0,
+      "stdout": "�ȴ����������̹ر� .... ���\r\n�����������Ѿ��ر�\r\n",
+      "stderr": ""
+    }
+  ],
+  "python": {
+    "python": [
+      3,
+      12,
+      9
+    ],
+    "isolated": 1,
+    "psycopg_impl": "binary",
+    "packages": {
+      "annotated-doc": "0.0.5",
+      "annotated-types": "0.8.0",
+      "anyio": "4.15.1",
+      "attrs": "26.1.0",
+      "certifi": "2026.7.22",
+      "charset-normalizer": "3.5.2",
+      "click": "8.5.0",
+      "colorama": "0.4.6",
+      "fastapi": "0.142.2",
+      "h11": "0.16.0",
+      "httpcore": "1.0.9",
+      "httpx": "0.28.1",
+      "idna": "3.20",
+      "jsonschema": "4.26.0",
+      "jsonschema-specifications": "2025.9.1",
+      "opentelemetry-api": "1.45.0",
+      "pillow": "12.3.0",
+      "psycopg": "3.3.6",
+      "psycopg-binary": "3.3.6",
+      "pydantic": "2.13.5",
+      "pydantic-settings": "2.15.0",
+      "pydantic_core": "2.46.5",
+      "pypdf": "6.19.0",
+      "python-dotenv": "1.2.4",
+      "referencing": "0.37.0",
+      "reportlab": "4.5.1",
+      "rpds-py": "2026.9.1",
+      "SQLAlchemy": "2.1.3",
+      "starlette": "1.7.0",
+      "typing-inspection": "0.4.4",
+      "typing_extensions": "4.16.0",
+      "tzdata": "2026.3",
+      "uvicorn": "0.54.0"
+    }
+  },
+  "vc_runtime": {
+    "msvcp140.dll": {
+      "location": "C:\\Windows\\System32\\msvcp140.dll",
+      "sha256": "def46aa6a8f72f27bafac0c43334419486a4d1dcdb6c479a8ef7034b3e1fa4cb"
+    },
+    "vcruntime140.dll": {
+      "location": "C:\\Windows\\System32\\vcruntime140.dll",
+      "sha256": "184146852727a9db4eea06178716bec3cdbb1015c911f6b0f915b184ad7775b2"
+    }
+  },
+  "postgres_version": "postgres (PostgreSQL) 16.15",
+  "pgcrypto": "PASS",
+  "custom_dump_restore": "PASS",
+  "utf8_roundtrip": "PASS"
+}

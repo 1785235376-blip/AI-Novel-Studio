@@ -1,0 +1,320 @@
+{
+  "novel_id": "91ccf654",
+  "title": "废城回声 · 完整产品验收",
+  "frontend": "http://127.0.0.1:5209",
+  "api": "http://127.0.0.1:8051",
+  "mock_interception": false,
+  "chapter_count": 0,
+  "world_summary_verified": true,
+  "character_names_verified": [
+    "林渊"
+  ],
+  "outline_entry_reachable": true,
+  "outline_submit_enabled": true,
+  "selected_model": {
+    "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+    "model_id": "local-cbe5fff59c25ef0f728e0e8c"
+  },
+  "model_options": [
+    "选择已配置的 Provider / 模型",
+    "DeepSeek Chat · deepseek（不可用）",
+    "DeepSeek Reasoner · deepseek（不可用）",
+    "Qwen3.5-9B-Q4_K_M.gguf · discovery-local-cbe5fff59c25ef0f728e0e8c",
+    "qwen2.5:7b-instruct-q4_K_M · ollama（不可用）"
+  ],
+  "planning_runs": [
+    {
+      "id": "cd7ada97-8459-4d83-82ff-1aa467802968",
+      "kind": "OUTLINE",
+      "status": "FAILED",
+      "execution_mode": "real",
+      "candidates": []
+    },
+    {
+      "id": "edf53abd-0524-4fcf-995c-84600202f084",
+      "kind": "CHARACTERS",
+      "status": "READY",
+      "execution_mode": "real",
+      "candidates": [
+        {
+          "id": "df7603ab-77c3-5f19-8717-ffeb2c51336a",
+          "status": "APPLIED"
+        }
+      ]
+    },
+    {
+      "id": "df5b5d5d-1ff4-452f-9c43-d6819903ceed",
+      "kind": "WORLD",
+      "status": "READY",
+      "execution_mode": "real",
+      "candidates": [
+        {
+          "id": "214f3c0e-69b9-5262-b390-71f3c5dd790a",
+          "status": "APPLIED"
+        }
+      ]
+    }
+  ],
+  "page_errors": [],
+  "network": [
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/first-use/sample",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/52a95860/experimental/workspace/resume",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/first-use/sample",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/52a95860/chapters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/52a95860/chapters/archived",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/52a95860/writing-goal",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/52a95860/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/chapters/52a95860:1",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/chapters/52a95860%3A1/history",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/52a95860/chapters/52a95860%3A1/privacy",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/52a95860/chapters/52a95860%3A1/privacy",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/first-use/sample",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/chapters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/experimental/workspace/resume",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/first-use/sample",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/chapters/archived",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/writing-goal",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/outline",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/characters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/canon",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/chapters",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/locations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/timeline",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/foreshadowing",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/relationships",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/volumes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/scenes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/story-routes",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/world-rules",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/experimental/features",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/experimental/story-records/catalog",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/review-threads",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/creation-records",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/review-threads",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/creation-records",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/creation-reference-data",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/creation-reference-data",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/planning-runs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/planning-runs",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/text-models",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/text-models",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/91ccf654/media-tasks",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/text-models",
+      "status": 200
+    }
+  ],
+  "geometry": {
+    "width": 1440,
+    "pageWidth": 1440
+  }
+}

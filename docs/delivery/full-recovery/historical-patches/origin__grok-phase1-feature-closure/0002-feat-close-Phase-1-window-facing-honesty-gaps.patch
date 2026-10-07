@@ -1,0 +1,1289 @@
+From 48b0b46a89331d51dd56edf50028d2c1c2debbdb Mon Sep 17 00:00:00 2001
+From: 1785235376-blip <1785235376-blip@users.noreply.github.com>
+Date: Thu, 27 Aug 2026 15:59:37 +0000
+Subject: [PATCH 2/2] feat: close Phase 1 window-facing honesty gaps
+
+Replace overview and research placeholders with real sidecar-backed
+windows, report deterministic agent jobs as VALIDATED without review
+or apply, and keep unconfigured video tasks PENDING with
+VIDEO_PROVIDER_NOT_CONFIGURED instead of placeholder success URIs.
+
+Not a DesktopHost DH-01..DH-08 window pass and not V1.0. The four
+known Python baseline defects are left untouched.
+
+See docs/grok_phase1_feature_handoff.md for Codex merge notes.
+---
+ app/asset_providers.py                        |  12 +-
+ app/dependencies.py                           |   2 +
+ app/services/agent_job_service.py             |  21 ++-
+ app/services/screenplay_service.py            |  44 ++++-
+ app/services/v1_capability_service.py         |  71 +++++++
+ docs/grok_phase1_feature_handoff.md           |  91 +++++++++
+ docs/v1_acceptance_status.md                  |   4 +-
+ docs/v1_implementation_status.md              |   6 +-
+ frontend/src/App.tsx                          |   7 +-
+ frontend/src/api.ts                           |   8 +-
+ frontend/src/novel/AgentJobDetail.tsx         |   5 +-
+ frontend/src/novel/AgentTeamPanel.test.tsx    |   2 +-
+ frontend/src/novel/AgentTeamPanel.tsx         |  13 +-
+ .../src/novel/MotionTaskWorkspace.test.tsx    |  14 ++
+ frontend/src/novel/MotionTaskWorkspace.tsx    |   6 +-
+ .../src/novel/NovelOverviewPanel.test.tsx     |  31 ++++
+ frontend/src/novel/NovelOverviewPanel.tsx     | 107 +++++++++++
+ frontend/src/novel/ResearchPanel.test.tsx     |  19 ++
+ frontend/src/novel/ResearchPanel.tsx          | 175 ++++++++++++++++++
+ frontend/src/novel/novel.css                  |   4 +
+ frontend/src/ui/CapabilityRoadmapPanel.tsx    |   2 +-
+ tests/test_phase1_feature_closure.py          | 137 ++++++++++++++
+ tests/test_phase6_agent_jobs.py               |  42 +++--
+ 23 files changed, 780 insertions(+), 43 deletions(-)
+ create mode 100644 docs/grok_phase1_feature_handoff.md
+ create mode 100644 frontend/src/novel/NovelOverviewPanel.test.tsx
+ create mode 100644 frontend/src/novel/NovelOverviewPanel.tsx
+ create mode 100644 frontend/src/novel/ResearchPanel.test.tsx
+ create mode 100644 frontend/src/novel/ResearchPanel.tsx
+ create mode 100644 tests/test_phase1_feature_closure.py
+
+diff --git a/app/asset_providers.py b/app/asset_providers.py
+index 41715c1..c65536a 100644
+--- a/app/asset_providers.py
++++ b/app/asset_providers.py
+@@ -105,11 +105,17 @@ class VideoProvider(Protocol):
+     def capabilities(self) -> dict[str, bool]: ...
+ 
+ class DeterministicVideoProvider:
+-    def health_check(self) -> bool: return True
++    """Honesty adapter: never emits a fake success URI.
++
++    DesktopHost Phase 1 requires unconfigured video providers to stay
++    ``VIDEO_PROVIDER_NOT_CONFIGURED`` / PENDING. A placeholder success would
++    fail the window gate.
++    """
++    def health_check(self) -> bool: return False
+     def capabilities(self) -> dict[str, bool]:
+-        return {"text_to_video": True, "image_to_video": True, "start_frame": True, "end_frame": True, "polling": False, "cancellation": False}
++        return {"text_to_video": False, "image_to_video": False, "start_frame": True, "end_frame": True, "polling": False, "cancellation": False}
+     def generate(self, request: VideoGenerationRequest) -> VideoGenerationResult:
+-        return VideoGenerationResult(request.provider_id, request.model_id, f"placeholder://video/{request.task_id}", status="SUCCEEDED")
++        raise ValueError("VIDEO_PROVIDER_NOT_CONFIGURED")
+ 
+ class HttpVideoProvider:
+     def __init__(self,transport,endpoint,api_key,default_model=''):
+diff --git a/app/dependencies.py b/app/dependencies.py
+index e11c734..c4a89fe 100644
+--- a/app/dependencies.py
++++ b/app/dependencies.py
+@@ -136,8 +136,10 @@ v1_capability_service=V1CapabilityService(
+ canon_service=CanonService(repositories.canon)
+ generation_service=GenerationService(repositories.generations)
+ lore_service=LoreService(repositories.lore)
++v1_capability_service.bind_lore(lore_service)
+ continuity_repository=repositories.continuity
+ continuity_finding_service=ContinuityFindingService(continuity_repository)
++v1_capability_service.bind_continuity(continuity_finding_service)
+ narrative_state_service=NarrativeStateService(repositories.narrative,repositories.chapters,repositories.novels,repositories.lore)
+ narrative_finding_service=NarrativeFindingService(repositories.narrative)
+ narrative_proposal_service=NarrativeProposalService(repositories.narrative,narrative_state_service)
+diff --git a/app/services/agent_job_service.py b/app/services/agent_job_service.py
+index 5b56e3a..80bd00d 100644
+--- a/app/services/agent_job_service.py
++++ b/app/services/agent_job_service.py
+@@ -20,7 +20,7 @@ class StructuredAgentOutput(BaseModel):
+ 
+ 
+ class AgentJobService:
+-    terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED"}
++    terminal={"COMPLETED","VALIDATED","FAILED","CANCELLED","ACCEPTED","REJECTED"}
+     def __init__(self,generations,contexts,novels,runtime=None,agent_runner=None):self.generations,self.contexts,self.novels,self.runtime,self.agent_runner=generations,contexts,novels,runtime,agent_runner;self.lock=threading.RLock();self.cancellations={}
+ 
+     def create(self,agent_id,novel_id,chapter_number,instruction="",target="local",provider=None,model=None,execution_mode="deterministic",timeout_seconds=120,retry_of=None):
+@@ -69,12 +69,21 @@ class AgentJobService:
+             if job["status"]!="QUEUED":raise ValueError("agent job is not queued")
+             cancellation=self.cancellations.setdefault(jid,threading.Event());working={**job,"status":"WORKING","updated_at":utc()};self.generations.save(working)
+         try:
+-            if job.get("execution_mode","deterministic")=="model":output,provider,model=self._execute_model(job)
+-            else:output={"schema":job["output_schema"],"agent_id":job["agent_id"],"summary":f"{job['agent_name']} 已完成结构化任务准备。","proposals":[],"findings":[],"context_hash":job["context_hash"]};provider,model=job.get("provider") or "deterministic-local",job.get("model") or "contract-validator-v1"
++            if job.get("execution_mode","deterministic")=="model":
++                output,provider,model=self._execute_model(job)
++                status="COMPLETED"
++                execution_label="真实模型执行"
++                model_called=True
++            else:
++                output={"schema":job["output_schema"],"agent_id":job["agent_id"],"summary":"契约校验通过，未调用模型，未生成可应用正文。","proposals":[],"findings":[],"context_hash":job["context_hash"]}
++                provider,model=job.get("provider") or "deterministic-local",job.get("model") or "contract-validator-v1"
++                status="VALIDATED"
++                execution_label="契约校验，未调用模型"
++                model_called=False
+             with self.lock:
+                 current=self.get(jid)
+                 if current["status"] in {"CANCELLED","FAILED"}:return current
+-                completed={**working,"status":"COMPLETED","result":{"structured_output":output},"provider":provider,"model":model,"fallback_used":False,"updated_at":utc()};self.generations.save(completed);return completed
++                completed={**working,"status":status,"execution_label":execution_label,"model_called":model_called,"result":{"structured_output":output,"empty":not output.get("proposals") and not output.get("findings")},"provider":provider,"model":model,"fallback_used":False,"updated_at":utc()};self.generations.save(completed);return completed
+         except Exception as exc:
+             code=exc.code.value if isinstance(exc,ModelRuntimeError) else ("INVALID_STRUCTURED_OUTPUT" if isinstance(exc,(ValueError,json.JSONDecodeError)) else "AGENT_EXECUTION_FAILED")
+             with self.lock:
+@@ -125,6 +134,8 @@ class AgentJobService:
+ 
+     def review(self,jid,decision,reviewed_by,note="",actions=None):
+         job=self.get(jid)
++        if job.get("execution_mode","deterministic")!="model" or job["status"]=="VALIDATED":
++            raise ValueError("deterministic agent jobs are validated only and have no review or apply path")
+         if decision not in {"ACCEPTED","REJECTED"}:raise ValueError("invalid agent review decision")
+         if job["status"]!="COMPLETED":raise ValueError("agent job is not awaiting review")
+         output=(job.get("result") or {}).get("structured_output")
+@@ -135,6 +146,8 @@ class AgentJobService:
+ 
+     def apply(self,jid,applied_by):
+         job=self.get(jid);review=job.get("review") or {}
++        if job.get("execution_mode","deterministic")!="model" or job["status"]=="VALIDATED":
++            raise ValueError("deterministic agent jobs are validated only and have no review or apply path")
+         if job["status"]!="ACCEPTED" or review.get("decision")!="ACCEPTED":raise ValueError("agent job is not accepted")
+         if review.get("applied"):raise ValueError("agent job is already applied")
+         output=(job.get("result") or {}).get("structured_output");current_hash=hashlib.sha256(json.dumps(output,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode()).hexdigest()
+diff --git a/app/services/screenplay_service.py b/app/services/screenplay_service.py
+index f93c159..1a11605 100644
+--- a/app/services/screenplay_service.py
++++ b/app/services/screenplay_service.py
+@@ -29,9 +29,17 @@ def validate_visual_continuity(shots: list[dict]) -> list[dict]:
+             findings.append({'code':'EMOTION_DISCONTINUITY','severity':'WARNING','from_shot_id':previous.get('id'),'to_shot_id':current.get('id'),'message':'情绪发生跳变，建议补充动作或转场说明。'})
+     return findings
+ 
++def is_traceable_frame(value) -> bool:
++    text=str(value or "").strip()
++    if not text: return False
++    lowered=text.lower()
++    if lowered.startswith("placeholder://"): return False
++    if lowered.startswith(("http://","https://","asset:","shot:","storyboard:")): return True
++    return False
++
+ def require_motion_frames(task: dict) -> None:
+-    if not task.get('start_frame') or not task.get('end_frame'):
+-        raise ValueError('motion task requires start_frame and end_frame before execution')
++    if not is_traceable_frame(task.get("start_frame")) or not is_traceable_frame(task.get("end_frame")):
++        raise ValueError("motion task requires traceable start_frame and end_frame before execution")
+ 
+ class ScreenplayService:
+     def __init__(self,novels,chapters,asset_providers=None,video_providers=None):self.novels=novels;self.chapters=chapters;self.asset_providers=asset_providers or AssetProviderRegistry();self.video_providers=video_providers or {'deterministic':DeterministicVideoProvider()}
+@@ -175,8 +183,24 @@ class ScreenplayService:
+         for row in screenplay.get('transitions',[]):
+             if row.get('motion_prompt') and row.get('id') not in existing:
+                 configured=next(((provider_id,getattr(provider,'default_model','')) for provider_id,provider in self.video_providers.items() if provider_id!='deterministic' and getattr(provider,'health_check',lambda:False)()),(None,None))
+-                tasks.append({'id':str(uuid4()),'transition_id':row['id'],'prompt':row['motion_prompt'],'provider_id':configured[0],'model_id':configured[1],'start_frame':None,'end_frame':None,'status':'PENDING','progress':0,'error':None if configured[0] else 'VIDEO_PROVIDER_NOT_CONFIGURED','created_at':utc()})
++                start_frame,end_frame=self._frames_for_transition(screenplay,row)
++                tasks.append({'id':str(uuid4()),'transition_id':row['id'],'prompt':row['motion_prompt'],'provider_id':configured[0],'model_id':configured[1],'start_frame':start_frame,'end_frame':end_frame,'status':'PENDING','progress':0,'error':None if configured[0] else 'VIDEO_PROVIDER_NOT_CONFIGURED','created_at':utc()})
+         return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':tasks,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':utc()})
++    def _frames_for_transition(self,screenplay,transition):
++        from_id=str(transition.get('from_shot_id') or '')
++        to_id=str(transition.get('to_shot_id') or '')
++        shots={str(row.get('id')):row for row in screenplay.get('shots') or []}
++        cards={str(row.get('shot_id')):row for row in screenplay.get('storyboard') or []}
++        def ref(shot_id):
++            shot=shots.get(shot_id) or {}
++            card=cards.get(shot_id) or {}
++            for candidate in (shot.get('frame_asset_id'),shot.get('asset_id'),card.get('asset_id'),card.get('frame_asset_id')):
++                if candidate:
++                    text=str(candidate).strip()
++                    return text if is_traceable_frame(text) else f'asset:{text}'
++            return f'shot:{shot_id}' if shot_id else None
++        start,end=ref(from_id),ref(to_id)
++        return start,end
+     def update_motion_task(self,novel_id,screenplay_id,task_id,status):
+         screenplay=next((r for r in self.list(novel_id) if r['id']==screenplay_id),None)
+         if screenplay is None: raise KeyError(screenplay_id)
+@@ -196,7 +220,7 @@ class ScreenplayService:
+         def validate(value):
+             if value is None or value == '': return value
+             value=str(value).strip()
+-            if not value.lower().startswith(('http://','https://')): raise ValueError('frame URL must use http or https')
++            if not is_traceable_frame(value): raise ValueError('frame must be an http(s) URL or a traceable asset/shot/storyboard reference')
+             return value
+         row=rows[index]; new_start=validate(start_frame) if start_frame is not None else row.get('start_frame'); new_end=validate(end_frame) if end_frame is not None else row.get('end_frame'); frame_history=list(row.get('frame_history',[]));
+         if row.get('start_frame')!=new_start or row.get('end_frame')!=new_end: frame_history.append({'start_frame':row.get('start_frame'),'end_frame':row.get('end_frame'),'changed_at':utc()})
+@@ -218,7 +242,13 @@ class ScreenplayService:
+         task=rows[index]
+         if task.get('status')!='PENDING': raise ValueError('motion task must be PENDING before execution')
+         require_motion_frames(task)
+-        provider_id=task.get('provider_id') or 'deterministic'; model_id=task.get('model_id') or 'video-placeholder'; provider=self.video_providers.get(provider_id)
++        provider_id=task.get('provider_id')
++        if not provider_id or provider_id=='deterministic':
++            failed_at=utc(); message='VIDEO_PROVIDER_NOT_CONFIGURED'
++            history=list(task.get('history',[])); history.append({'status':'PENDING','phase':'PROVIDER_MISSING','at':failed_at,'error':message})
++            rows[index]={**task,'status':'PENDING','progress':0,'error':message,'history':history,'updated_at':failed_at}
++            return self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':failed_at})
++        model_id=task.get('model_id') or 'video-model'; provider=self.video_providers.get(provider_id)
+         if provider is None: raise ValueError(f'video provider is not configured: {provider_id}')
+         started=utc(); history=list(task.get('history',[])); history.append({'status':'RUNNING','phase':'SUBMITTING','at':started,'error':None})
+         submission_key=task.get('submission_key') or task_id
+@@ -232,6 +262,8 @@ class ScreenplayService:
+             self.novels.save_screenplay(novel_id,{**screenplay,'motion_tasks':rows,'motion_task_revision':int(screenplay.get('motion_task_revision',0))+1,'updated_at':failed_at})
+             raise
+         status=str(generated.status or ('SUCCEEDED' if generated.video_uri else 'RUNNING')).upper()
++        if str(generated.video_uri or '').lower().startswith('placeholder://'):
++            raise ValueError('placeholder video URI is not allowed')
+         if status not in {'PENDING','RUNNING','SUCCEEDED'}: status='RUNNING'
+         if generated.video_uri: status='SUCCEEDED'
+         result={'kind':'VIDEO','task_id':task_id,'prompt':task.get('prompt',''),'asset_id':f"motion-{task_id}",'url':generated.video_uri,'provider_id':generated.provider_id,'model_id':generated.model_id,'created_at':utc()}
+@@ -272,6 +304,7 @@ class ScreenplayService:
+         rows=list(screenplay.get('motion_tasks',[])); index=next((i for i,r in enumerate(rows) if r['id']==task_id),None)
+         if index is None: raise KeyError(task_id)
+         if rows[index].get('status') == 'CANCELLED': raise ValueError('cancelled motion task cannot accept a result')
++        if str(url).lower().startswith('placeholder://'): raise ValueError('placeholder video URI is not allowed')
+         stamp=utc(); result={**rows[index].get('result',{}),'url':str(url).strip(),'media_type':media_type,'attached_at':stamp}
+         history=list(rows[index].get('result_history',[])); previous=rows[index].get('result');
+         if previous: history.append({**previous,'replaced_at':stamp})
+@@ -289,6 +322,7 @@ class ScreenplayService:
+         allowed={'PENDING':{'PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'},'RUNNING':{'RUNNING','SUCCEEDED','FAILED','CANCELLED'}}
+         if current not in {'SUCCEEDED','FAILED','CANCELLED'} and status not in allowed.get(current,set()): raise ValueError(f'invalid motion callback transition: {current} -> {status}')
+         if status=='SUCCEEDED' and not (url or (row.get('result') or {}).get('url')): raise ValueError('successful motion callback requires a video URL')
++        if url and str(url).lower().startswith('placeholder://'): raise ValueError('placeholder video URI is not allowed')
+         stamp=utc(); history=list(row.get('history',[])); history.append({'status':status,'phase':'PROVIDER_UPDATE','at':stamp,'error':error})
+         updated={**row,'status':status,'progress':100 if status=='SUCCEEDED' else max(0,min(100,int(progress))),'error':error,'history':history,'updated_at':stamp}
+         if url:
+diff --git a/app/services/v1_capability_service.py b/app/services/v1_capability_service.py
+index cabd1f7..90e3527 100644
+--- a/app/services/v1_capability_service.py
++++ b/app/services/v1_capability_service.py
+@@ -707,11 +707,14 @@ class V1CapabilityService:
+         counts.update({
+             "chapters": len(chapters), "assets": len(self.assets.list(novel_id)),
+             "research": self.list_research(novel_id)["total"],
++            "world_rules": self._count_world_rules(novel_id),
+             "character_evolution": self.list_character_evolution(novel_id)["total"],
+             "visual_memory": self.list_visual_memory(novel_id)["total"],
+             "workflows": self.list_workflows(novel_id)["total"],
+         })
+         word_count = sum(int(chapter.get("word_count", 0) or 0) for chapter in chapters)
++        if not word_count:
++            word_count = sum(len(str(chapter.get("content") or "").replace(" ", "")) for chapter in chapters)
+         missing: list[str] = []
+         if not chapters:
+             missing.append("chapters")
+@@ -723,16 +726,84 @@ class V1CapabilityService:
+             outline = {}
+         if not outline:
+             missing.append("outline")
++        writing_goal = self._writing_goal(novel_id, chapters, word_count)
++        pending_items = self._pending_items(novel_id, missing, writing_goal)
+         recent = self.list_audit(novel_id, 10)["items"]
+         return {
+             "novel": novel, "counts": counts,
+             "content": {"word_count": word_count, "has_chapters": bool(chapters),
+                         "latest_chapter": chapters[-1] if chapters else None},
++            "writing_goal": writing_goal,
++            "pending_items": pending_items,
+             "readiness": {"state": "CONTENT_READY" if chapters else "NEEDS_CONTENT", "missing": missing,
+                           "release_gate_required": True},
+             "recent_activity": recent, "storage": self.storage_mode,
++            "placeholder": False,
+         }
+ 
++    def bind_lore(self, lore_service) -> None:
++        self._lore = lore_service
++
++    def bind_continuity(self, continuity_finding_service) -> None:
++        self._continuity = continuity_finding_service
++
++    def _count_world_rules(self, novel_id: str) -> int:
++        lore = getattr(self, "_lore", None)
++        if lore is None:
++            try:
++                rows = list(self.novels.data_set(novel_id, "world_rules"))
++            except (AttributeError, KeyError, FileNotFoundError, TypeError):
++                rows = []
++            return len(rows)
++        try:
++            rows = lore.repository.list_proposals(novel_id)
++        except Exception:
++            return 0
++        return len([row for row in rows if row.get("proposal_type") == "WORLD_RULE" and not row.get("deleted_at")])
++
++    def _writing_goal(self, novel_id: str, chapters: list[dict[str, Any]], word_count: int) -> dict[str, Any]:
++        if hasattr(self.novels, "writing_goal"):
++            try:
++                return self.novels.writing_goal(novel_id)
++            except Exception:
++                pass
++        novel = self._require_novel(novel_id)
++        goal = novel.get("writing_goal") or {"target_words": 0, "target_chapters": 0, "deadline": ""}
++        target_words = int(goal.get("target_words") or 0)
++        target_chapters = int(goal.get("target_chapters") or 0)
++        return {
++            "target_words": target_words, "target_chapters": target_chapters,
++            "deadline": str(goal.get("deadline") or ""),
++            "current_words": word_count, "current_chapters": len(chapters),
++            "words_progress": round(min(word_count / target_words, 1), 4) if target_words else 0,
++            "chapters_progress": round(min(len(chapters) / target_chapters, 1), 4) if target_chapters else 0,
++        }
++
++    def _pending_items(self, novel_id: str, missing: list[str], writing_goal: dict[str, Any]) -> list[dict[str, Any]]:
++        items: list[dict[str, Any]] = [{"kind": "missing", "label": name} for name in missing]
++        if int(writing_goal.get("target_words") or 0) <= 0:
++            items.append({"kind": "writing_goal", "label": "未设置写作目标字数"})
++        lore = getattr(self, "_lore", None)
++        if lore is not None:
++            try:
++                pending_rules = [
++                    row for row in lore.repository.list_proposals(novel_id, "PENDING")
++                    if row.get("proposal_type") == "WORLD_RULE"
++                ]
++                if pending_rules:
++                    items.append({"kind": "world_rules", "label": f"{len(pending_rules)} 条待审核世界规则", "count": len(pending_rules)})
++            except Exception:
++                pass
++        continuity = getattr(self, "_continuity", None)
++        if continuity is not None:
++            try:
++                findings = [row for row in continuity.list_findings(novel_id) if str(row.get("status", "")).upper() not in {"RESOLVED", "ACCEPTED"}]
++                if findings:
++                    items.append({"kind": "continuity", "label": f"{len(findings)} 条未处理一致性问题", "count": len(findings)})
++            except Exception:
++                pass
++        return items
++
+     def _release_checks(self, novel_id: str | None) -> list[dict[str, Any]]:
+         version = {"version": "unknown", "channel": "development"}
+         version_path = self.project_root / "release" / "version.json"
+diff --git a/docs/grok_phase1_feature_handoff.md b/docs/grok_phase1_feature_handoff.md
+new file mode 100644
+index 0000000..d6c723b
+--- /dev/null
++++ b/docs/grok_phase1_feature_handoff.md
+@@ -0,0 +1,91 @@
++# Grok Phase 1 功能侧收口（给 Codex 合并）
++
++> 日期：2026-08-28  
++> 分支：`grok-phase1-feature-closure`（基于 `grok-phase1-acceptance`）  
++> 操作者：Grok  
++> 目的：把第一阶段窗口业务缺口补到功能侧，明天 Codex 只做合并与总结，不必再实现同一批能力。
++
++## 先读这 8 行
++
++1. **不要把 DesktopHost 窗口门禁写成 PASS。** DH-01 至 DH-08 仍是 `BLOCKED`，直到真实 Windows DesktopHost（构建 `0.7.0`，DLL SHA-256 `98F02E42A9E7A50CE94D6A748F3D226E869890396D1256AC8CEABCC81A08A740`）在人工窗口里跑完。
++2. **当前版本不是 V1.0 正式发行物。** 仍是 `0.7.0` beta 工程版。
++3. **不要用 Playwright / 后端 API / 启动截图替代窗口证据。**
++4. **不要修改、删除或跳过四个既有 Python 基线缺陷：** 并发生成幂等性、visual continuity scene jump、user preference 返回字段契约、world rule payload normalization。
++5. **不要进入第二阶段。** 本分支只收口 Phase 1 窗口诚实性：概览、研究资料、Agent `VALIDATED`、视频 fail-closed。
++6. **确定性 Agent 不再是 `COMPLETED`。** 默认/deterministic 执行为 `VALIDATED`，文案「契约校验，未调用模型」，没有审核/应用到正文入口。`review`/`apply` 测试已改为 mock 的 `execution_mode=model`。
++7. **未配置视频 Provider 时不得出现 `SUCCEEDED` 或 `placeholder://video/*`。** `DeterministicVideoProvider` 现在 `health_check=False` 且 `generate` 抛 `VIDEO_PROVIDER_NOT_CONFIGURED`。
++8. **研究资料走 durable sidecar：** File 与 PostgreSQL profile 都是 `v1_capabilities/research.json`，不是 PostgreSQL 原生表。
++
++## 相对 `grok-phase1-acceptance` 的功能变更
++
++### DH-02 项目概览
++
++- 窗口从 `WritingGoalPanel` 换成 [`frontend/src/novel/NovelOverviewPanel.tsx`](../frontend/src/novel/NovelOverviewPanel.tsx)。
++- `GET /api/novels/{id}/overview` 现在返回：
++  - 真实计数：章节、人物、地点、时间线、伏笔、世界规则、研究资料
++  - `content.word_count`（章节 `word_count` 为空时回退正文长度）
++  - `writing_goal`、`pending_items`、`recent_activity`
++  - `placeholder: false`（禁止「服务尚未接入」伪装成已实现）
++- 世界规则计数通过 `v1_capability_service.bind_lore` 读取 lore proposals，避免循环导入。
++
++### DH-03 研究资料
++
++- 窗口从 `CapabilityPlaceholder` 换成 [`frontend/src/novel/ResearchPanel.tsx`](../frontend/src/novel/ResearchPanel.tsx)。
++- 已覆盖：新建、来源/状态/标签筛选、编辑保存、409 版本冲突、删除二次确认、小说隔离。
++- API 客户端：`api.listResearch / createResearch / updateResearch / deleteResearch`。
++- 路线图卡片改为「部分接入」，API 前缀改为 `/api/v1/novels/{id}/research`。
++
++### DH-05 Agent 诚实状态
++
++- [`app/services/agent_job_service.py`](../app/services/agent_job_service.py)：
++  - terminal 集合加入 `VALIDATED`
++  - deterministic execute → `VALIDATED`，`execution_label="契约校验，未调用模型"`，`model_called=False`，空 proposals/findings
++  - `review`/`apply` 拒绝 deterministic / `VALIDATED`
++- 前端 [`AgentTeamPanel.tsx`](../frontend/src/novel/AgentTeamPanel.tsx) / [`AgentJobDetail.tsx`](../frontend/src/novel/AgentJobDetail.tsx)：
++  - 轮询/busy 把 `VALIDATED` 当终态
++  - 不渲染审核/应用入口
++  - 明确展示「空结果不是创作完成」
++
++### DH-06 视频 fail-closed
++
++- [`app/asset_providers.py`](../app/asset_providers.py)：`DeterministicVideoProvider` 不再返回 `placeholder://video/{task_id}` 成功。
++- [`app/services/screenplay_service.py`](../app/services/screenplay_service.py)：
++  - 创建 Motion Task 时写入可追踪首尾帧（`shot:` / `asset:` / 已有 http(s)）
++  - 未配置真实 Provider 时任务保持 `PENDING` + `VIDEO_PROVIDER_NOT_CONFIGURED`
++  - `generate` / attach / callback 拒绝 `placeholder://`
++- 前端 [`MotionTaskWorkspace.tsx`](../frontend/src/novel/MotionTaskWorkspace.tsx) 不渲染 placeholder 视频，并展示配置缺失。
++
++## Codex 合并时需要知道的测试契约变化
++
++| 测试 | 变化 |
++| --- | --- |
++| `tests/test_phase6_agent_jobs.py` | 默认 deterministic 生命周期断言改为 `VALIDATED`；review/apply 走 `complete_model_job()` |
++| `tests/test_phase1_feature_closure.py` | **新增**：overview / research 隔离冲突删除 / VALIDATED / motion PENDING |
++| `frontend/src/novel/NovelOverviewPanel.test.tsx` | **新增** |
++| `frontend/src/novel/ResearchPanel.test.tsx` | **新增** |
++| `frontend/src/novel/AgentTeamPanel.test.tsx` | 期望 `VALIDATED`，且没有「采纳结果」「应用已审核修改」 |
++| `frontend/src/novel/MotionTaskWorkspace.test.tsx` | 增加 placeholder 不渲染断言 |
++
++聚焦验证（Linux 沙箱，2026-08-28）：
++
++- `pytest tests/test_phase1_feature_closure.py tests/test_phase6_agent_jobs.py tests/test_p1_regression.py tests/test_phase1_video_runtime.py` → **40 passed**
++- 唯一失败仍是既有基线缺陷 `test_visual_continuity_reports_scene_jumps`（缺 `TIME_JUMP_CUT`）。**未改该测试，也未改 `validate_visual_continuity`。**
++- `vitest` 聚焦 NovelOverview / Research / AgentTeam / MotionTaskWorkspace → **9 passed**
++
++四个基线缺陷测试不要改、不要 skip、不要 xfail。
++
++## 建议合并方式
++
++1. 从本分支 `grok-phase1-feature-closure` 向 `grok-phase1-acceptance`（或你们约定的集成分支）开 PR。
++2. 不要 squash 掉 handoff 与测试契约说明。
++3. 冲突时优先保留本分支的 Agent `VALIDATED` 与视频 fail-closed；不要把 `DeterministicVideoProvider` 的 placeholder 成功 URI 加回来。
++4. 合并后更新总结：功能侧已收口，窗口门禁仍待 Windows 操作员。
++
++## 明确未完成（不要在总结里写成已完成）
++
++- DH-01 启动窗口可见 / WebView2 / loopback
++- DH-04 正常关闭后重启持久化
++- DH-07 单实例 mutex 回收
++- DH-08 本轮 DesktopHost/Backend/PostgreSQL 日志审计
++- 真实视频 Provider 配置后的 SUCCEEDED 路径（本阶段要求 fail-closed，不是假成功）
++- 第二阶段能力（角色成长轨迹、视觉记忆、外部网络研究检索、真实模型创作闭环等）
+diff --git a/docs/v1_acceptance_status.md b/docs/v1_acceptance_status.md
+index 929e9d8..ac8f589 100644
+--- a/docs/v1_acceptance_status.md
++++ b/docs/v1_acceptance_status.md
+@@ -54,9 +54,9 @@
+ 
+ | 窗口 | 归属服务 | 当前 API/状态 |
+ | --- | --- | --- |
+-| 项目概览 | Project Overview / workspace summary | `/api/v1/novels/{id}/overview`，待设计 |
++| 项目概览 | Project Overview / workspace summary | `/api/v1/novels/{id}/overview`，已接入真实计数/待处理项/近期活动/写作目标；DesktopHost 窗口项仍待 Windows 人工验收 |
+ | 一致性检查 | Narrative Consistency Engine | `/api/v1/projects/{project_id}/continuity/*`，基础检查已存在，证据定位仍需补齐 |
+-| 研究资料 | Research Assistant | `/api/v1/research`，预留 |
++| 研究资料 | Research Assistant | `/api/v1/novels/{id}/research`，sidecar CRUD 已接入；窗口级 DH-03/DH-04 仍待 DesktopHost 验收 |
+ | 设置与插件 | Provider / Plugin / Permission Manager | `/api/v1/providers` 已有基础状态；插件权限管理预留 |
+ | PDF 与标准影视导出 | Document Export Service | `/api/v1/exports` 已有异步生命周期；PDF 基础闭环已接入，行业标准排版仍待发行门禁 |
+ | 角色成长与视觉记忆 | Character Evolution / Visual Memory | `/api/v1/characters/{id}/evolution`、`/api/v1/memory`，预留 |
+diff --git a/docs/v1_implementation_status.md b/docs/v1_implementation_status.md
+index 4c086d8..ff7e615 100644
+--- a/docs/v1_implementation_status.md
++++ b/docs/v1_implementation_status.md
+@@ -32,7 +32,7 @@
+ 
+ ### P2：已预留，后续接入
+ 
+-- Research Assistant、评论与通用工作流/DAG、插件与权限管理。
++- Research Assistant 本地 sidecar CRUD 已接入窗口（筛选/编辑/版本冲突/删除确认，不读取外部网络）；评论与通用工作流/DAG、插件与权限管理仍待增强。
+ - Character Evolution，以及 voice/audio/video/vision/embedding 运行时和 visual memory。
+ - 资产实体关联、派生缩略图和压缩包安全限制（基础单文件大小、文件名和 MIME 校验已完成）。
+ - Transition 的 camera motion、emotional reason、motion prompt 与连续性约束。
+@@ -44,9 +44,9 @@
+ 
+ | 窗口 | 服务归属 | 预留 API |
+ | --- | --- | --- |
+-| 项目概览 | Project Overview / workspace summary | `/api/v1/novels/{id}/overview`（待设计） |
++| 项目概览 | Project Overview / workspace summary | `/api/v1/novels/{id}/overview`（已接入真实计数、待处理项、近期活动和写作目标；不是占位） |
+ | 一致性检查 | Narrative Consistency Engine | `/api/v1/projects/{project_id}/continuity/*` |
+-| 研究资料 | Research Assistant | `/api/v1/research` |
++| 研究资料 | Research Assistant | `/api/v1/novels/{id}/research`（durable sidecar `v1_capabilities/research.json` 已接入窗口；不读取外部网络） |
+ | 项目设置 | Provider / Plugin / Permission Manager | `/api/v1/providers`、`/api/v1/plugins` |
+ | 导出中心中的 PDF | Document Export Service | `/api/v1/exports`（PDF 已接入；严格嵌入字体与行业排版仍受发行门禁约束） |
+ | 能力路线图 | 多个待接入服务的统一导航 | 各卡片标注对应 `/api/v1` 前缀 |
+diff --git a/frontend/src/App.tsx b/frontend/src/App.tsx
+index ea6afbf..98116d8 100644
+--- a/frontend/src/App.tsx
++++ b/frontend/src/App.tsx
+@@ -65,8 +65,9 @@ import { NovelImportPanel } from "./novel/NovelImportPanel";
+ import { AdaptationPanel } from "./novel/AdaptationPanel";
+ import { ScreenplayPanel } from "./novel/ScreenplayPanel";
+ import { ExportPanel } from "./novel/ExportPanel";
+-import { CapabilityPlaceholder } from "./ui/CapabilityPlaceholder";
+ import { CapabilityRoadmapPanel } from "./ui/CapabilityRoadmapPanel";
++import { NovelOverviewPanel } from "./novel/NovelOverviewPanel";
++import { ResearchPanel } from "./novel/ResearchPanel";
+ import { FeatureLauncher } from "./ui/FeatureLauncher";
+ import { AiControlCenter } from "./ui/AiControlCenter";
+ import { MediaProviderSettings } from "./ui/MediaProviderSettings";
+@@ -1226,7 +1227,7 @@ function Panel({
+       </section>
+     );
+   if (type === "workflow") return <VisualWorkflowPanel scope={scope} />;
+-  if (type === "overview") return <WritingGoalPanel novelId={novelId} />;
++  if (type === "overview") return <NovelOverviewPanel novelId={novelId} />;
+   if (type === "check") return <ContinuityCheckPanel projectId={novelId} />;
+   if (type === "diagnostics") return <RuntimeDiagnosticsPanel scope={scope} />;
+   if (type === "agents") return <>{chapter&&<AgentActivityCenter novelId={chapter.novel_id} />}{chapter&&<AgentJobHistory novelId={chapter.novel_id} />}<AgentTeamPanel chapter={chapter} /></>;
+@@ -1235,7 +1236,7 @@ function Panel({
+   if (type === "assets") return <AssetLibraryPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
+   if (type === "exports") return <ExportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} />;
+   if (type === "knowledge") return <NovelImportPanel novelId={chapter?.novel_id || useStudio.getState().novelId || ""} chapterId={chapter?.id} />;
+-  if (type === "research") return <CapabilityPlaceholder title="研究资料" service="Research Assistant" description="资料库、参考文献与研究笔记窗口已预留，暂不读取外部网络。" apiPrefix="/api/v1/research" />;
++  if (type === "research") return <ResearchPanel novelId={novelId} />;
+   if (type === "settings") return <><AiControlCenter /><MediaProviderSettings /><VideoCallbackSecurityStatus /></>;
+   if (type === "roadmap") return <CapabilityRoadmapPanel />;
+   return (
+diff --git a/frontend/src/api.ts b/frontend/src/api.ts
+index 18de63d..8b98cc0 100644
+--- a/frontend/src/api.ts
++++ b/frontend/src/api.ts
+@@ -108,7 +108,13 @@ export const api={
+  adminRevokePermission:(workspaceId:string,id:string)=>call<any>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/permissions/${encodeURIComponent(id)}`,{method:'DELETE'}),
+  adminExplain:(workspaceId:string,principalId:string,permission:string,domain:string,scope:Scope)=>call<PermissionExplanation>(query(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/explain`,{principal_id:principalId,permission,domain,kind:'BRANCH',project_id:scope.projectId,storyline_id:scope.storylineId,branch_id:scope.branchId})),
+  bootstrap:(scope:Scope)=>call<Bootstrap>(scoped(scope,'bootstrap')),members:(scope:Scope)=>items(call<{items:Member[]}>(scoped(scope,'members'))),permissions:(scope:Scope)=>call<PermissionSummary>(scoped(scope,'permissions')),audit:(scope:Scope)=>items(call<{items:AuditEntry[]}>(scoped(scope,'audit'))),snapshots:(scope:Scope,chapterId:string)=>items(call<{items:Snapshot[]}>(scoped(scope,`chapters/${encodeURIComponent(chapterId)}/snapshots`))),snapshotDetail:(scope:Scope,chapterId:string,snapshotId:string)=>call<Snapshot>(scoped(scope,`chapters/${encodeURIComponent(chapterId)}/snapshots/${encodeURIComponent(snapshotId)}`)),scopedChapters:(scope:Scope)=>items(call<{items:Chapter[]}>(scoped(scope,'chapters'))),scopedCreateChapter:(scope:Scope,title:string)=>call<Chapter>(scoped(scope,'chapters'),{method:'POST',body:JSON.stringify({title})}),storyDatabase:(scope:Scope,resource:string)=>call<{resource:string;items:any[]}>(scoped(scope,`story-database/${encodeURIComponent(resource)}`)),
+- novels:()=>call<Novel[]>('/api/novels'),novel:(id:string)=>call<Novel&{long_term_summary?:string}>(`/api/novels/${id}`),writingGoal:(id:string)=>call<{target_words:number;target_chapters:number;current_words:number;current_chapters:number;words_progress:number;chapters_progress:number;deadline:string}>(`/api/novels/${encodeURIComponent(id)}/writing-goal`),updateWritingGoal:(id:string,body:{target_words:number;target_chapters:number;deadline?:string})=>call<any>(`/api/novels/${encodeURIComponent(id)}/writing-goal`,{method:'PUT',body:JSON.stringify(body)}),updateNovel:(id:string,body:{title?:string;genre?:string;status?:string;long_term_summary?:string})=>call<Novel&{long_term_summary?:string}>(`/api/novels/${id}`,{method:'PUT',body:JSON.stringify(body)}),createNovel:(title:string,genre:string)=>call<Novel>('/api/novels',{method:'POST',body:JSON.stringify({title,genre})}),deleteNovel:(id:string)=>call<void>(`/api/novels/${id}`,{method:'DELETE'}),
++ novels:()=>call<Novel[]>('/api/novels'),novel:(id:string)=>call<Novel&{long_term_summary?:string}>(`/api/novels/${id}`),writingGoal:(id:string)=>call<{target_words:number;target_chapters:number;current_words:number;current_chapters:number;words_progress:number;chapters_progress:number;deadline:string}>(`/api/novels/${encodeURIComponent(id)}/writing-goal`),updateWritingGoal:(id:string,body:{target_words:number;target_chapters:number;deadline?:string})=>call<any>(`/api/novels/${encodeURIComponent(id)}/writing-goal`,{method:'PUT',body:JSON.stringify(body)}),
++ novelOverview:(id:string)=>call<{novel:any;counts:Record<string,number>;content:{word_count:number;has_chapters:boolean;latest_chapter:any};writing_goal:any;pending_items:{kind:string;label:string;count?:number}[];recent_activity:any[];readiness:any;storage:string;placeholder:boolean}>(`/api/novels/${encodeURIComponent(id)}/overview`),
++ listResearch:(novelId:string,filters?:{status?:string;source_type?:string;tag?:string})=>call<{items:any[];total:number;storage:string;external_fetch:boolean}>(query(`/api/novels/${encodeURIComponent(novelId)}/research`,filters||{})),
++ createResearch:(novelId:string,body:Record<string,unknown>)=>call<any>(`/api/novels/${encodeURIComponent(novelId)}/research`,{method:'POST',body:JSON.stringify(body)}),
++ updateResearch:(novelId:string,researchId:string,body:Record<string,unknown>,expectedVersion?:number)=>call<any>(query(`/api/novels/${encodeURIComponent(novelId)}/research/${encodeURIComponent(researchId)}`,expectedVersion?{expected_version:String(expectedVersion)}:{}),{method:'PUT',body:JSON.stringify(body)}),
++ deleteResearch:(novelId:string,researchId:string,expectedVersion?:number)=>call<any>(query(`/api/novels/${encodeURIComponent(novelId)}/research/${encodeURIComponent(researchId)}`,expectedVersion?{expected_version:String(expectedVersion)}:{}),{method:'DELETE'}),
++ updateNovel:(id:string,body:{title?:string;genre?:string;status?:string;long_term_summary?:string})=>call<Novel&{long_term_summary?:string}>(`/api/novels/${id}`,{method:'PUT',body:JSON.stringify(body)}),createNovel:(title:string,genre:string)=>call<Novel>('/api/novels',{method:'POST',body:JSON.stringify({title,genre})}),deleteNovel:(id:string)=>call<void>(`/api/novels/${id}`,{method:'DELETE'}),
+    assets:(novelId:string,kind?:string,characterId?:string,sceneId?:string)=>{const params=new URLSearchParams();if(kind)params.set('kind',kind);if(characterId)params.set('character_id',characterId);if(sceneId)params.set('scene_id',sceneId);const query=params.toString();return call<Asset[]>(`/api/novels/${encodeURIComponent(novelId)}/assets${query?`?${query}`:''}`)},
+  uploadAsset:(novelId:string,body:{filename:string;content_base64:string;media_type?:string;kind?:string})=>call<Asset>(`/api/novels/${encodeURIComponent(novelId)}/assets`,{method:'POST',body:JSON.stringify({novel_id:novelId,...body})}),
+  asset:(assetId:string)=>call<Asset>(`/api/assets/${encodeURIComponent(assetId)}`),
+diff --git a/frontend/src/novel/AgentJobDetail.tsx b/frontend/src/novel/AgentJobDetail.tsx
+index c753fc8..db33375 100644
+--- a/frontend/src/novel/AgentJobDetail.tsx
++++ b/frontend/src/novel/AgentJobDetail.tsx
+@@ -8,6 +8,7 @@ export function AgentJobDetail({jobId}:{jobId?:string}){
+   if(query.isLoading)return <Panel title="任务详情"><p role="status">正在加载任务详情…</p></Panel>;
+   if(query.error)return <Panel title="任务详情"><p className="novel-error" role="alert">无法加载任务详情</p></Panel>;
+   const job=query.data;
+-  const executionLabel=job.execution_mode==='deterministic'?'契约校验，未调用模型':'真实模型执行';
+-  return <Panel title="Agent Job 详情"><article className="novel-draft-review"><header><strong>{job.agent_name}</strong><Badge>{job.status}</Badge></header><p>任务说明：{job.instruction||'未填写说明'}</p><p className="novel-help">执行模式：{job.execution_mode} · {executionLabel} · 目标：{job.target}</p><p className="novel-help">Provider / 模型：{job.provider||'未指定'} / {job.model||'未指定'}</p><p className="novel-help">上下文哈希：{job.context_hash}</p><p className="novel-help">输出契约：{job.output_schema}</p>{job.error_code&&<p className="novel-error">错误：{job.error_code} · {job.error}</p>}{job.result?.structured_output&&<><h4>结构化输出</h4><pre>{JSON.stringify(job.result.structured_output,null,2)}</pre></>}{job.review&&<><h4>审核记录</h4><p>{job.review.decision} · {job.review.reviewed_by} · {job.review.note||'无备注'}</p></>}{job.application&&<><h4>应用快照</h4><pre>{JSON.stringify(job.application,null,2)}</pre></>}</article></Panel>;
++  const executionLabel=job.execution_label || (job.execution_mode==='deterministic'?'契约校验，未调用模型':'真实模型执行');
++  const validated=job.status==='VALIDATED' || job.execution_mode==='deterministic';
++  return <Panel title="Agent Job 详情"><article className="novel-draft-review"><header><strong>{job.agent_name}</strong><Badge tone={validated?'info':'neutral'}>{job.status}</Badge></header><p>任务说明：{job.instruction||'未填写说明'}</p><p className="novel-help">执行模式：{job.execution_mode} · {executionLabel} · 目标：{job.target}</p>{validated&&<p className="novel-help" role="status">VALIDATED · 契约校验，未调用模型。没有审核或应用到正文入口。</p>}<p className="novel-help">Provider / 模型：{job.provider||'未指定'} / {job.model||'未指定'}</p><p className="novel-help">上下文哈希：{job.context_hash}</p><p className="novel-help">输出契约：{job.output_schema}</p>{job.error_code&&<p className="novel-error">错误：{job.error_code} · {job.error}</p>}{job.result?.structured_output&&<><h4>结构化输出</h4><pre>{JSON.stringify(job.result.structured_output,null,2)}</pre></>}{!validated&&job.review&&<><h4>审核记录</h4><p>{job.review.decision} · {job.review.reviewed_by} · {job.review.note||'无备注'}</p></>}{!validated&&job.application&&<><h4>应用快照</h4><pre>{JSON.stringify(job.application,null,2)}</pre></>}</article></Panel>;
+ }
+diff --git a/frontend/src/novel/AgentTeamPanel.test.tsx b/frontend/src/novel/AgentTeamPanel.test.tsx
+index 80d2133..64454ee 100644
+--- a/frontend/src/novel/AgentTeamPanel.test.tsx
++++ b/frontend/src/novel/AgentTeamPanel.test.tsx
+@@ -1,4 +1,4 @@
+ // @vitest-environment jsdom
+ import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';import {QueryClient,QueryClientProvider} from '@tanstack/react-query';import {afterEach,describe,expect,it,vi} from 'vitest';import {AgentTeamPanel} from './AgentTeamPanel';import {api} from '../api';afterEach(()=>{cleanup();vi.restoreAllMocks()});
+ describe('agent team panel',()=>{it('shows bounded roles and approval requirements',async()=>{vi.spyOn(api,'agents').mockResolvedValue({catalog_version:'1.0',agents:[{id:'planner',name:'策划 Agent',description:'负责大纲。',prompt_role:'plot_planner',tools:['outline.read'],output_schema:'story_plan_proposal',requires_approval:true},{id:'continuity',name:'连贯性 Agent',description:'检查冲突。',prompt_role:'continuity_reviewer',tools:['continuity.check'],output_schema:'continuity_findings',requires_approval:false}]});render(<QueryClientProvider client={new QueryClient()}><AgentTeamPanel/></QueryClientProvider>);expect((await screen.findAllByText('策划 Agent')).length).toBeGreaterThanOrEqual(1);expect(screen.getAllByText('连贯性 Agent').length).toBeGreaterThanOrEqual(1);expect(screen.getByText('需要作者确认')).toBeTruthy();expect(screen.getByText('只读检查')).toBeTruthy();expect(screen.getByText(/outline.read/)).toBeTruthy();});});
+-describe('agent job controls',()=>{it('creates and starts a job for the selected chapter',async()=>{vi.spyOn(api,'agents').mockResolvedValue({catalog_version:'1.0',agents:[{id:'planner',name:'策划 Agent',description:'负责大纲。',prompt_role:'plot_planner',tools:['outline.read'],output_schema:'story_plan_proposal',requires_approval:true}]});vi.spyOn(api,'textModels').mockResolvedValue([]);const create=vi.spyOn(api,'createAgentJob').mockResolvedValue({id:'j1',status:'QUEUED'});const start=vi.spyOn(api,'startAgentJob').mockResolvedValue({id:'j1',status:'COMPLETED',agent_name:'策划 Agent',output_schema:'story_plan_proposal',requires_approval:true,result:{structured_output:{summary:'完成',proposals:[],findings:[]}}});render(<QueryClientProvider client={new QueryClient()}><AgentTeamPanel chapter={{id:'n:1',novel_id:'n',number:1,title:'第一章'} as any}/></QueryClientProvider>);fireEvent.change(await screen.findByLabelText('任务说明'),{target:{value:'规划第二幕'}});fireEvent.click(screen.getByRole('button',{name:'启动任务'}));await waitFor(()=>expect(create).toHaveBeenCalledWith(expect.objectContaining({agent_id:'planner',novel_id:'n',chapter:1,instruction:'规划第二幕'})));await waitFor(()=>expect(start).toHaveBeenCalledWith('j1'));expect(await screen.findByText('完成')).toBeTruthy();});});
++describe('agent job controls',()=>{it('creates and starts a job for the selected chapter',async()=>{vi.spyOn(api,'agents').mockResolvedValue({catalog_version:'1.0',agents:[{id:'planner',name:'策划 Agent',description:'负责大纲。',prompt_role:'plot_planner',tools:['outline.read'],output_schema:'story_plan_proposal',requires_approval:true}]});vi.spyOn(api,'textModels').mockResolvedValue([]);const create=vi.spyOn(api,'createAgentJob').mockResolvedValue({id:'j1',status:'QUEUED'});const start=vi.spyOn(api,'startAgentJob').mockResolvedValue({id:'j1',status:'VALIDATED',execution_mode:'deterministic',execution_label:'契约校验，未调用模型',agent_name:'策划 Agent',output_schema:'story_plan_proposal',requires_approval:true,result:{structured_output:{summary:'契约校验通过，未调用模型，未生成可应用正文。',proposals:[],findings:[]}}});render(<QueryClientProvider client={new QueryClient()}><AgentTeamPanel chapter={{id:'n:1',novel_id:'n',number:1,title:'第一章'} as any}/></QueryClientProvider>);fireEvent.change(await screen.findByLabelText('任务说明'),{target:{value:'规划第二幕'}});fireEvent.click(screen.getByRole('button',{name:'启动任务'}));await waitFor(()=>expect(create).toHaveBeenCalledWith(expect.objectContaining({agent_id:'planner',novel_id:'n',chapter:1,instruction:'规划第二幕'})));await waitFor(()=>expect(start).toHaveBeenCalledWith('j1'));expect((await screen.findAllByText(/VALIDATED/)).length).toBeGreaterThanOrEqual(1);expect(screen.getByText(/契约校验，未调用模型/)).toBeTruthy();expect(screen.queryByRole('button',{name:'采纳结果'})).toBeNull();expect(screen.queryByRole('button',{name:'应用已审核修改'})).toBeNull();});});
+diff --git a/frontend/src/novel/AgentTeamPanel.tsx b/frontend/src/novel/AgentTeamPanel.tsx
+index 7dcd98b..0822442 100644
+--- a/frontend/src/novel/AgentTeamPanel.tsx
++++ b/frontend/src/novel/AgentTeamPanel.tsx
+@@ -65,6 +65,7 @@ function AgentJobHistoryLegacy({
+               {[
+                 "QUEUED",
+                 "WORKING",
++                "VALIDATED",
+                 "COMPLETED",
+                 "FAILED",
+                 "CANCELLED",
+@@ -186,6 +187,7 @@ export function AgentJobHistory({ novelId }: { novelId?: string }) {
+               {[
+                 "QUEUED",
+                 "WORKING",
++                "VALIDATED",
+                 "COMPLETED",
+                 "FAILED",
+                 "CANCELLED",
+@@ -354,7 +356,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
+   useEffect(() => {
+     if (
+       !job?.id ||
+-      ["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED"].includes(
++      ["COMPLETED", "VALIDATED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED"].includes(
+         job.status,
+       )
+     )
+@@ -392,7 +394,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
+     );
+   const busy =
+       job &&
+-      !["COMPLETED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED"].includes(
++      !["COMPLETED", "VALIDATED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED"].includes(
+         job.status,
+       ),
+     selected = query.data.agents.find((item) => item.id === agentId);
+@@ -479,6 +481,11 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
+               </Button>
+             )}
+           </div>
++          {job?.status === "VALIDATED" && (
++            <p className="novel-help" role="status">
++              状态 VALIDATED · 契约校验，未调用模型。空结果不是创作完成，因此没有审核或应用到正文入口。
++            </p>
++          )}
+           {job?.error && (
+             <p className="novel-error" role="alert">
+               {job.error}
+@@ -486,7 +493,7 @@ export function AgentTeamPanel({ chapter }: { chapter?: Chapter }) {
+           )}
+         </section>
+       </Panel>
+-      {job?.status === "COMPLETED" && (
++      {job?.status === "COMPLETED" && job?.execution_mode !== "deterministic" && (
+         <AgentResultReview
+           job={job as AgentReviewJob}
+           reviewing={review.isPending}
+diff --git a/frontend/src/novel/MotionTaskWorkspace.test.tsx b/frontend/src/novel/MotionTaskWorkspace.test.tsx
+index c977e8c..075d2bd 100644
+--- a/frontend/src/novel/MotionTaskWorkspace.test.tsx
++++ b/frontend/src/novel/MotionTaskWorkspace.test.tsx
+@@ -27,6 +27,20 @@ describe("MotionTaskWorkspace", () => {
+     expect(sortVideoProviders([cloud, local]).map((item) => item.id)).toEqual(["local", "cloud"]);
+   });
+ 
++  it("shows VIDEO_PROVIDER_NOT_CONFIGURED and never renders placeholder video", async () => {
++    vi.mocked(api.videoProviders).mockResolvedValue({ items: [] });
++    vi.mocked(api.screenplays).mockResolvedValue([{ id: "sp", motion_tasks: [{
++      id: "task", status: "PENDING", error: "VIDEO_PROVIDER_NOT_CONFIGURED",
++      start_frame: "shot:from", end_frame: "shot:to",
++      result: { url: "placeholder://video/task" },
++    }] }]);
++    render(<MotionTaskWorkspace novelId="novel" screenplayId="sp" />);
++    expect(await screen.findByText(/VIDEO_PROVIDER_NOT_CONFIGURED/)).toBeTruthy();
++    expect((screen.getByRole("button", { name: "执行生成" }) as HTMLButtonElement).disabled).toBe(true);
++    expect(document.querySelector("video")).toBeNull();
++    expect(screen.getByText("尚无真实视频结果。")).toBeTruthy();
++  });
++
+   it("shows real unavailability and does not enable execution", async () => {
+     vi.mocked(api.screenplays).mockResolvedValue([{ id: "sp", motion_tasks: [{ id: "task", status: "PENDING", provider_id: "cloud", model_id: "cloud-model", start_frame: "https://a/start.png", end_frame: "https://a/end.png" }] }]);
+     render(<MotionTaskWorkspace novelId="novel" screenplayId="sp" />);
+diff --git a/frontend/src/novel/MotionTaskWorkspace.tsx b/frontend/src/novel/MotionTaskWorkspace.tsx
+index 7dc849e..c822214 100644
+--- a/frontend/src/novel/MotionTaskWorkspace.tsx
++++ b/frontend/src/novel/MotionTaskWorkspace.tsx
+@@ -98,7 +98,7 @@ export function MotionTaskWorkspace({ novelId, screenplayId, taskIds, onInspect
+             {providers.map((item) => <option key={item.id} value={item.id} disabled={!item.available}>{item.local ? "本地 · " : "云端 · "}{item.display_name || item.id}{item.available ? "" : "（不可用）"}</option>)}
+           </select>
+         </label>
+-        {!provider?.available && <p role="alert">当前 Provider 未配置或不可达，执行已禁用。请先在 AI 主控的 Provider 设置中完成配置。</p>}
++        {!provider?.available && <p role="alert">{task.error === "VIDEO_PROVIDER_NOT_CONFIGURED" ? "VIDEO_PROVIDER_NOT_CONFIGURED · 未配置视频 Provider，任务保持 PENDING，不会出现 SUCCEEDED 或 placeholder://video/*。" : "当前 Provider 未配置或不可达，执行已禁用。请先在 AI 主控的 Provider 设置中完成配置。"}</p>}
+         <div className="novel-split-fields">
+           <label>起始帧 URL<input value={draft.start_frame} onChange={(event) => setFrames((current) => ({ ...current, [task.id]: { ...draft, start_frame: event.target.value } }))} /></label>
+           <label>结束帧 URL<input value={draft.end_frame} onChange={(event) => setFrames((current) => ({ ...current, [task.id]: { ...draft, end_frame: event.target.value } }))} /></label>
+@@ -110,8 +110,8 @@ export function MotionTaskWorkspace({ novelId, screenplayId, taskIds, onInspect
+         {task.remote_task_id && ["PENDING", "RUNNING"].includes(status) && <Button variant="ghost" disabled={busy[task.id]} onClick={() => void act(task.id, () => api.syncMotionTask(novelId, screenplayId, task.id), "已同步 Provider 状态。")}>立即同步</Button>}
+         <progress aria-label={`任务 ${task.id} 进度`} max={100} value={Math.max(0, Math.min(100, Number(task.progress || 0)))} />
+         <small>{Math.max(0, Math.min(100, Number(task.progress || 0)))}% · {task.model_id || "未选择模型"}</small>
+-        {task.error && <p role="alert">{task.error}</p>}
+-        {task.result?.url ? <video className="motion-runtime__video" controls src={task.result.url} aria-label={`任务 ${task.id} 视频结果`} /> : <p className="novel-help">尚无真实视频结果。</p>}
++        {task.error && task.error !== "VIDEO_PROVIDER_NOT_CONFIGURED" && <p role="alert">{task.error}</p>}
++        {task.result?.url && !String(task.result.url).toLowerCase().startsWith("placeholder://") ? <video className="motion-runtime__video" controls src={task.result.url} aria-label={`任务 ${task.id} 视频结果`} /> : <p className="novel-help">尚无真实视频结果。</p>}
+         {status === "SUCCEEDED" && task.result?.url && <Button variant="primary" disabled={busy[task.id] || task.asset_import?.import_status === "COMPLETED"} onClick={() => void importAsset(task)}>{task.asset_import?.import_status === "COMPLETED" ? "已进入资产库" : "下载并导入资产库"}</Button>}
+         <small>资产导入：{task.asset_import?.import_status || "NOT_REQUESTED"}{task.asset_import?.asset?.id ? ` · ${task.asset_import.asset.id}` : ""}</small>
+         <Button variant="ghost" onClick={() => {
+diff --git a/frontend/src/novel/NovelOverviewPanel.test.tsx b/frontend/src/novel/NovelOverviewPanel.test.tsx
+new file mode 100644
+index 0000000..355611e
+--- /dev/null
++++ b/frontend/src/novel/NovelOverviewPanel.test.tsx
+@@ -0,0 +1,31 @@
++// @vitest-environment jsdom
++import {cleanup,render,screen} from '@testing-library/react';
++import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
++import {afterEach,describe,expect,it,vi} from 'vitest';
++import {NovelOverviewPanel} from './NovelOverviewPanel';
++import {api} from '../api';
++
++afterEach(()=>{cleanup();vi.restoreAllMocks()});
++
++describe('novel overview panel',()=>{
++  it('renders real counts instead of a reserved-service placeholder',async()=>{
++    vi.spyOn(api,'novelOverview').mockResolvedValue({
++      novel:{id:'n1',title:'雾港'},
++      counts:{chapters:2,characters:3,locations:1,timeline:4,foreshadowing:2,world_rules:1,research:1},
++      content:{word_count:1200,has_chapters:true,latest_chapter:null},
++      writing_goal:{target_words:5000,target_chapters:10,words_progress:0.24,chapters_progress:0.2,deadline:''},
++      pending_items:[{kind:'missing',label:'outline'}],
++      recent_activity:[{id:'a1',action:'RESEARCH_CREATED',target_type:'ResearchRecord',target_id:'r1',created_at:'2026-08-28'}],
++      readiness:{state:'CONTENT_READY',missing:[]},
++      storage:'durable_sidecar',
++      placeholder:false,
++    } as any);
++    vi.spyOn(api,'writingGoal').mockResolvedValue({target_words:5000,target_chapters:10,current_words:1200,current_chapters:2,words_progress:0.24,chapters_progress:0.2,deadline:''});
++    render(<QueryClientProvider client={new QueryClient()}><NovelOverviewPanel novelId="n1"/></QueryClientProvider>);
++    expect(await screen.findByText('1200')).toBeTruthy();
++    expect(screen.getByText('研究资料')).toBeTruthy();
++    expect(screen.getByText('待处理项')).toBeTruthy();
++    expect(screen.getByText('outline')).toBeTruthy();
++    expect(screen.getByText(/不是“服务尚未接入”占位/)).toBeTruthy();
++  });
++});
+diff --git a/frontend/src/novel/NovelOverviewPanel.tsx b/frontend/src/novel/NovelOverviewPanel.tsx
+new file mode 100644
+index 0000000..e5cf5ad
+--- /dev/null
++++ b/frontend/src/novel/NovelOverviewPanel.tsx
+@@ -0,0 +1,107 @@
++import { useEffect, useState } from "react";
++import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
++import { api, ApiError } from "../api";
++import { Badge, EmptyState, Panel } from "../ui/primitives";
++
++const COUNT_LABELS: { key: string; label: string }[] = [
++  { key: "chapters", label: "章节" },
++  { key: "characters", label: "人物" },
++  { key: "locations", label: "地点" },
++  { key: "timeline", label: "时间线" },
++  { key: "foreshadowing", label: "伏笔" },
++  { key: "world_rules", label: "规则" },
++  { key: "research", label: "研究资料" },
++];
++
++export function NovelOverviewPanel({ novelId }: { novelId: string }) {
++  const qc = useQueryClient();
++  const overview = useQuery({
++    queryKey: ["novel-overview", novelId],
++    queryFn: () => api.novelOverview(novelId),
++    enabled: !!novelId,
++  });
++  const goal = useQuery({
++    queryKey: ["writing-goal", novelId],
++    queryFn: () => api.writingGoal(novelId),
++    enabled: !!novelId,
++  });
++  const [targetWords, setTargetWords] = useState(100000);
++  const [targetChapters, setTargetChapters] = useState(50);
++  const [deadline, setDeadline] = useState("");
++  useEffect(() => {
++    const data = goal.data || overview.data?.writing_goal;
++    if (data) {
++      setTargetWords(Number(data.target_words) || 0);
++      setTargetChapters(Number(data.target_chapters) || 0);
++      setDeadline(data.deadline || "");
++    }
++  }, [goal.data, overview.data]);
++  const save = useMutation({
++    mutationFn: () =>
++      api.updateWritingGoal(novelId, {
++        target_words: targetWords,
++        target_chapters: targetChapters,
++        deadline: deadline || undefined,
++      }),
++    onSuccess: () => {
++      qc.invalidateQueries({ queryKey: ["writing-goal", novelId] });
++      qc.invalidateQueries({ queryKey: ["novel-overview", novelId] });
++    },
++  });
++  if (!novelId) return <EmptyState title="未选择小说" detail="先打开一部小说再查看概览。" />;
++  if (overview.isLoading) return <Panel title="项目概览"><p role="status">正在加载真实项目计数…</p></Panel>;
++  if (overview.error) {
++    const view = overview.error instanceof ApiError ? overview.error.problem.message : "概览加载失败";
++    return <Panel title="项目概览"><p className="novel-error" role="alert">{view}</p></Panel>;
++  }
++  const data = overview.data!;
++  const counts = data.counts || {};
++  return (
++    <>
++      <Panel title="项目概览">
++        <p className="novel-help">计数来自当前小说的持久化数据，不是“服务尚未接入”占位。</p>
++        <dl className="novel-overview-counts" aria-label="项目计数">
++          <div><dt>字数</dt><dd>{data.content?.word_count ?? 0}</dd></div>
++          {COUNT_LABELS.map((item) => (
++            <div key={item.key}><dt>{item.label}</dt><dd>{counts[item.key] ?? 0}</dd></div>
++          ))}
++        </dl>
++        <h3>待处理项</h3>
++        {data.pending_items?.length ? (
++          <ul className="novel-record-list" aria-label="待处理项">
++            {data.pending_items.map((item, index) => (
++              <li key={`${item.kind}-${index}`}><article><p>{item.label}</p></article></li>
++            ))}
++          </ul>
++        ) : (
++          <p className="novel-help">当前没有待处理项。</p>
++        )}
++        <h3>近期活动</h3>
++        {data.recent_activity?.length ? (
++          <ul className="novel-record-list" aria-label="近期活动">
++            {data.recent_activity.map((event) => (
++              <li key={event.id}>
++                <article>
++                  <header><strong>{event.action}</strong><Badge>{event.target_type}</Badge></header>
++                  <p className="novel-help">{event.created_at} · {event.target_id}</p>
++                </article>
++              </li>
++            ))}
++          </ul>
++        ) : (
++          <p className="novel-help">还没有审计活动。</p>
++        )}
++      </Panel>
++      <section className="panel writing-goal-panel">
++        <h2>写作目标</h2>
++        <p>目标进度：字数 {Math.round((goal.data?.words_progress || data.writing_goal?.words_progress || 0) * 100)}% · 章节 {Math.round((goal.data?.chapters_progress || data.writing_goal?.chapters_progress || 0) * 100)}%</p>
++        <label>目标字数<input type="number" min={1} value={targetWords} onChange={(e) => setTargetWords(Number(e.target.value))} /></label>
++        <label>目标章节<input type="number" min={1} value={targetChapters} onChange={(e) => setTargetChapters(Number(e.target.value))} /></label>
++        <label>截止日期<input type="date" value={deadline ? deadline.slice(0, 10) : ""} onChange={(e) => setDeadline(e.target.value)} /></label>
++        <button className="primary" disabled={save.isPending || targetWords < 1 || targetChapters < 1} onClick={() => save.mutate()}>{save.isPending ? "保存中…" : "保存写作目标"}</button>
++        {save.isSuccess && <small className="notice">目标已更新</small>}
++        {save.error && <small className="notice">保存失败，请重试</small>}
++      </section>
++    </>
++  );
++}
+diff --git a/frontend/src/novel/ResearchPanel.test.tsx b/frontend/src/novel/ResearchPanel.test.tsx
+new file mode 100644
+index 0000000..18f687c
+--- /dev/null
++++ b/frontend/src/novel/ResearchPanel.test.tsx
+@@ -0,0 +1,19 @@
++// @vitest-environment jsdom
++import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
++import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
++import {afterEach,describe,expect,it,vi} from 'vitest';
++import {ResearchPanel} from './ResearchPanel';
++import {api} from '../api';
++
++afterEach(()=>{cleanup();vi.restoreAllMocks()});
++
++describe('research panel',()=>{
++  it('creates a research record from the window form',async()=>{
++    vi.spyOn(api,'listResearch').mockResolvedValue({items:[],total:0,storage:'durable_sidecar',external_fetch:false});
++    const create=vi.spyOn(api,'createResearch').mockResolvedValue({id:'r1',title:'Phase1 Desktop 验收资料',version:1});
++    render(<QueryClientProvider client={new QueryClient()}><ResearchPanel novelId="n1"/></QueryClientProvider>);
++    fireEvent.change(await screen.findByLabelText('标题'),{target:{value:'Phase1 Desktop 验收资料'}});
++    fireEvent.click(screen.getByRole('button',{name:'新建资料'}));
++    await waitFor(()=>expect(create).toHaveBeenCalled());
++  });
++});
+diff --git a/frontend/src/novel/ResearchPanel.tsx b/frontend/src/novel/ResearchPanel.tsx
+new file mode 100644
+index 0000000..07f0a71
+--- /dev/null
++++ b/frontend/src/novel/ResearchPanel.tsx
+@@ -0,0 +1,175 @@
++import { useMemo, useState } from "react";
++import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
++import { api, ApiError } from "../api";
++import { Badge, Button, EmptyState, Panel } from "../ui/primitives";
++
++const SOURCE_TYPES = ["NOTE", "BOOK", "ARTICLE", "WEBSITE", "ARCHIVE", "INTERVIEW", "OTHER"] as const;
++
++type Draft = {
++  title: string;
++  source_type: (typeof SOURCE_TYPES)[number];
++  status: "ACTIVE" | "ARCHIVED";
++  tags: string;
++  excerpt: string;
++  notes: string;
++};
++
++const emptyDraft = (): Draft => ({ title: "", source_type: "NOTE", status: "ACTIVE", tags: "", excerpt: "", notes: "" });
++
++function parseTags(value: string) {
++  return value.split(/[,，]/).map((item) => item.trim()).filter(Boolean);
++}
++
++export function ResearchPanel({ novelId }: { novelId: string }) {
++  const qc = useQueryClient();
++  const [status, setStatus] = useState("");
++  const [sourceType, setSourceType] = useState("");
++  const [tag, setTag] = useState("");
++  const [draft, setDraft] = useState<Draft>(emptyDraft);
++  const [editingId, setEditingId] = useState<string>();
++  const [editingVersion, setEditingVersion] = useState<number>();
++  const [pendingDelete, setPendingDelete] = useState<{ id: string; version: number; title: string }>();
++  const [message, setMessage] = useState("");
++  const query = useQuery({
++    queryKey: ["research", novelId, status, sourceType, tag],
++    queryFn: () => api.listResearch(novelId, { status: status || undefined, source_type: sourceType || undefined, tag: tag || undefined }),
++    enabled: !!novelId,
++  });
++  const refresh = () => qc.invalidateQueries({ queryKey: ["research", novelId] });
++  const bodyFromDraft = () => ({
++    title: draft.title.trim(),
++    source_type: draft.source_type,
++    status: draft.status,
++    tags: parseTags(draft.tags),
++    excerpt: draft.excerpt,
++    notes: draft.notes,
++  });
++  const create = useMutation({
++    mutationFn: () => api.createResearch(novelId, bodyFromDraft()),
++    onSuccess: (item) => {
++      setMessage(`已新建资料 ${item.id}`);
++      setDraft(emptyDraft());
++      refresh();
++    },
++    onError: (error) => setMessage(error instanceof ApiError ? error.problem.message : "新建失败"),
++  });
++  const save = useMutation({
++    mutationFn: () => api.updateResearch(novelId, editingId!, bodyFromDraft(), editingVersion),
++    onSuccess: () => {
++      setMessage("资料已保存");
++      setEditingId(undefined);
++      setDraft(emptyDraft());
++      refresh();
++    },
++    onError: (error) => {
++      if (error instanceof ApiError && error.status === 409) {
++        setMessage("版本冲突：记录已被更新，请重新加载后再编辑。");
++        refresh();
++        return;
++      }
++      setMessage(error instanceof ApiError ? error.problem.message : "保存失败");
++    },
++  });
++  const remove = useMutation({
++    mutationFn: () => api.deleteResearch(novelId, pendingDelete!.id, pendingDelete!.version),
++    onSuccess: () => {
++      setMessage("资料已删除");
++      setPendingDelete(undefined);
++      refresh();
++    },
++    onError: (error) => {
++      if (error instanceof ApiError && error.status === 409) setMessage("删除冲突：请刷新后重试。");
++      else setMessage(error instanceof ApiError ? error.problem.message : "删除失败");
++    },
++  });
++  const items = query.data?.items || [];
++  const filteredHint = useMemo(() => [status, sourceType, tag].filter(Boolean).join(" / ") || "未筛选", [status, sourceType, tag]);
++  if (!novelId) return <EmptyState title="未选择小说" detail="研究资料按小说隔离，请先打开一部小说。" />;
++  return (
++    <Panel title="研究资料" actions={<Badge tone="info">{query.data?.storage || "durable_sidecar"}</Badge>}>
++      <p className="novel-help">本地 sidecar（v1_capabilities/research.json），不读取外部网络。筛选：{filteredHint}</p>
++      <div className="novel-actions">
++        <label>状态
++          <select aria-label="研究资料状态筛选" value={status} onChange={(e) => setStatus(e.target.value)}>
++            <option value="">全部状态</option>
++            <option value="ACTIVE">ACTIVE</option>
++            <option value="ARCHIVED">ARCHIVED</option>
++          </select>
++        </label>
++        <label>来源
++          <select aria-label="研究资料来源筛选" value={sourceType} onChange={(e) => setSourceType(e.target.value)}>
++            <option value="">全部来源</option>
++            {SOURCE_TYPES.map((item) => <option key={item} value={item}>{item}</option>)}
++          </select>
++        </label>
++        <label>标签<input aria-label="研究资料标签筛选" value={tag} onChange={(e) => setTag(e.target.value)} /></label>
++      </div>
++      {query.isLoading && <p role="status">正在加载研究资料…</p>}
++      {query.error && <p className="novel-error" role="alert">加载失败，请稍后重试。</p>}
++      {!query.isLoading && !items.length && <EmptyState title="暂无研究资料" detail="新建一条记录后可以筛选、编辑、处理版本冲突并删除。" />}
++      <ul className="novel-record-list" aria-label="研究资料列表">
++        {items.map((item) => (
++          <li key={item.id}>
++            <article>
++              <header>
++                <strong>{item.title}</strong>
++                <Badge>{item.status}</Badge>
++              </header>
++              <p className="novel-help">{item.source_type} · v{item.version} · {(item.tags || []).join("、") || "无标签"}</p>
++              <p>{item.excerpt || item.notes || "无摘要"}</p>
++              <div className="novel-actions">
++                <Button onClick={() => {
++                  setEditingId(item.id);
++                  setEditingVersion(item.version);
++                  setDraft({
++                    title: item.title || "",
++                    source_type: item.source_type || "NOTE",
++                    status: item.status === "ARCHIVED" ? "ARCHIVED" : "ACTIVE",
++                    tags: (item.tags || []).join(","),
++                    excerpt: item.excerpt || "",
++                    notes: item.notes || "",
++                  });
++                }}>编辑</Button>
++                <Button variant="danger" onClick={() => setPendingDelete({ id: item.id, version: item.version, title: item.title })}>删除</Button>
++              </div>
++            </article>
++          </li>
++        ))}
++      </ul>
++      {pendingDelete && (
++        <section className="novel-dialog" role="alertdialog" aria-label="删除确认">
++          <p>确认删除「{pendingDelete.title}」？此操作写入 sidecar 删除标记，不能从其他小说访问。</p>
++          <div className="novel-actions">
++            <Button onClick={() => setPendingDelete(undefined)}>取消</Button>
++            <Button variant="danger" disabled={remove.isPending} onClick={() => remove.mutate()}>再次确认删除</Button>
++          </div>
++        </section>
++      )}
++      <form className="novel-ai-panel" onSubmit={(event) => { event.preventDefault(); editingId ? save.mutate() : create.mutate(); }}>
++        <h3>{editingId ? "编辑资料" : "新建资料"}</h3>
++        <label>标题<input required value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} /></label>
++        <label>来源类型
++          <select value={draft.source_type} onChange={(e) => setDraft({ ...draft, source_type: e.target.value as Draft["source_type"] })}>
++            {SOURCE_TYPES.map((item) => <option key={item} value={item}>{item}</option>)}
++          </select>
++        </label>
++        <label>状态
++          <select value={draft.status} onChange={(e) => setDraft({ ...draft, status: e.target.value as Draft["status"] })}>
++            <option value="ACTIVE">ACTIVE</option>
++            <option value="ARCHIVED">ARCHIVED</option>
++          </select>
++        </label>
++        <label>标签<input value={draft.tags} onChange={(e) => setDraft({ ...draft, tags: e.target.value })} placeholder="用逗号分隔，需唯一" /></label>
++        <label>摘要<textarea value={draft.excerpt} onChange={(e) => setDraft({ ...draft, excerpt: e.target.value })} /></label>
++        <label>笔记<textarea value={draft.notes} onChange={(e) => setDraft({ ...draft, notes: e.target.value })} /></label>
++        <div className="novel-actions">
++          {editingId && <Button type="button" onClick={() => { setEditingId(undefined); setDraft(emptyDraft()); }}>取消编辑</Button>}
++          <Button variant="primary" type="submit" disabled={create.isPending || save.isPending || !draft.title.trim()}>
++            {editingId ? "保存修改" : "新建资料"}
++          </Button>
++        </div>
++      </form>
++      {message && <p role="status" className="novel-help">{message}</p>}
++    </Panel>
++  );
++}
+diff --git a/frontend/src/novel/novel.css b/frontend/src/novel/novel.css
+index 4beae8b..3aa74e1 100644
+--- a/frontend/src/novel/novel.css
++++ b/frontend/src/novel/novel.css
+@@ -1,3 +1,7 @@
++.novel-overview-counts{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:var(--space-3);margin:var(--space-3) 0}
++.novel-overview-counts div{display:grid;gap:var(--space-1);padding:var(--space-3);border:var(--border-default);border-radius:var(--radius-md);background:var(--color-bg-subtle)}
++.novel-overview-counts dt{font-size:12px;color:var(--color-text-muted)}
++.novel-overview-counts dd{margin:0;font-size:20px;color:var(--color-text-primary)}
+ .novel-chapter-tree{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--space-3)}.novel-story-database,.novel-ai-panel{display:grid;gap:var(--space-3)}
+ .novel-chapter-tree ol{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:minmax(0,1fr);gap:var(--space-1)}.novel-record-list{list-style:none;padding:0;margin:0;display:grid;gap:var(--space-1)}
+ .novel-tree-row{position:relative;display:flex;align-items:center;min-width:0;min-height:36px;border-left:3px solid transparent;border-radius:var(--radius-md)}.novel-tree-row.is-selected{border-left-color:var(--color-accent-primary);background:var(--color-accent-subtle)}.novel-tree-row.is-selected .novel-tree-title{font-weight:600}
+diff --git a/frontend/src/ui/CapabilityRoadmapPanel.tsx b/frontend/src/ui/CapabilityRoadmapPanel.tsx
+index 2e0c1e5..f8237c3 100644
+--- a/frontend/src/ui/CapabilityRoadmapPanel.tsx
++++ b/frontend/src/ui/CapabilityRoadmapPanel.tsx
+@@ -6,7 +6,7 @@ type RoadmapItem={title:string;service:string;api:string;description:string;stat
+ 
+ const items:RoadmapItem[]=[
+   {title:'知识库候选审核',service:'Knowledge Base Review',api:'/api/v1/novels/{id}/import/knowledge-base/review',description:'导入预览、持久化待审队列、逐项选择与编辑、接受/拒绝/跳过已接入；更丰富的批量历史筛选仍待增强。',state:'部分接入',icon:BookOpenCheck},
+-  {title:'研究资料',service:'Research Assistant',api:'/api/v1/research',description:'资料检索、来源卡片和研究笔记将从这里进入。当前不读取外部网络。',state:'后端预留',icon:Search},
++  {title:'研究资料',service:'Research Assistant',api:'/api/v1/novels/{id}/research',description:'本地 sidecar 资料卡：新建、筛选、编辑、版本冲突和删除确认已接入。不读取外部网络。',state:'部分接入',icon:Search},
+   {title:'角色成长轨迹',service:'Character Evolution Service',api:'/api/v1/novels/{id}/character-evolution',description:'角色阶段、关系变化和证据回溯的专用窗口。',state:'后端预留',icon:GitBranch},
+   {title:'音视频与多模态',service:'Voice / Video / Vision Runtime',api:'/api/v1/media/*',description:'配音、视频、视觉理解和向量能力的统一任务入口。',state:'后端预留',icon:AudioLines},
+   {title:'资产派生与记忆',service:'Visual Memory & Asset Derivation',api:'/api/v1/assets/{id}/derivatives',description:'缩略图、实体关联、派生资源和视觉记忆将在这里管理。',state:'后端预留',icon:Image},
+diff --git a/tests/test_phase1_feature_closure.py b/tests/test_phase1_feature_closure.py
+new file mode 100644
+index 0000000..7810ed4
+--- /dev/null
++++ b/tests/test_phase1_feature_closure.py
+@@ -0,0 +1,137 @@
++from uuid import uuid4
++
++from fastapi.testclient import TestClient
++
++from app.actor_context import SessionContext
++from app.asset_providers import DeterministicVideoProvider, VideoGenerationRequest
++from app.dependencies import trusted_session_resolver, v1_capability_service
++from app.main import app
++from app.services.screenplay_service import is_traceable_frame, require_motion_frames
++
++
++def agent_headers():
++    token = f"phase1-feature-{uuid4()}"
++    trusted_session_resolver.register(
++        token,
++        SessionContext(actor_id="phase1-feature", workspace_id="workspace-a", session_id="session", client_id="test"),
++    )
++    return {"X-Session-Token": token}
++
++
++def test_overview_exposes_real_counts_and_writing_goal():
++    client = TestClient(app)
++    novel = client.post("/api/novels", json={"title": f"Overview {uuid4()}"}).json()
++    nid = novel["id"]
++    client.post(f"/api/novels/{nid}/chapters", json={"title": "第一章", "content": "迷雾封锁港口。" * 20})
++    client.put(f"/api/novels/{nid}/writing-goal", json={"target_words": 1000, "target_chapters": 10})
++    created = client.post(
++        f"/api/novels/{nid}/research",
++        json={"title": "Phase1 Desktop 验收资料", "source_type": "NOTE", "status": "ACTIVE", "tags": ["phase1-desktop"]},
++    )
++    assert created.status_code == 201
++    overview = client.get(f"/api/novels/{nid}/overview").json()
++    assert overview["placeholder"] is False
++    assert overview["storage"] == "durable_sidecar"
++    for key in ("chapters", "characters", "locations", "timeline", "foreshadowing", "world_rules", "research"):
++        assert key in overview["counts"]
++    assert overview["counts"]["chapters"] == 1
++    assert overview["counts"]["research"] == 1
++    assert overview["content"]["word_count"] > 0
++    assert overview["writing_goal"]["target_words"] == 1000
++    assert "pending_items" in overview and "recent_activity" in overview
++
++
++def test_research_filter_edit_conflict_delete_and_novel_isolation(tmp_path=None):
++    client = TestClient(app)
++    a = client.post("/api/novels", json={"title": f"Research A {uuid4()}"}).json()["id"]
++    b = client.post("/api/novels", json={"title": f"Research B {uuid4()}"}).json()["id"]
++    created = client.post(
++        f"/api/novels/{a}/research",
++        json={"title": "Phase1 Desktop 验收资料", "source_type": "NOTE", "status": "ACTIVE", "tags": ["phase1-desktop"], "excerpt": "初稿"},
++    ).json()
++    listed = client.get(f"/api/novels/{a}/research", params={"tag": "phase1-desktop"}).json()
++    assert listed["total"] == 1 and listed["items"][0]["id"] == created["id"]
++    updated = client.put(
++        f"/api/novels/{a}/research/{created['id']}",
++        params={"expected_version": created["version"]},
++        json={"title": "Phase1 Desktop 验收资料-修订", "source_type": "NOTE", "status": "ACTIVE", "tags": ["phase1-desktop"], "excerpt": "修订摘要"},
++    )
++    assert updated.status_code == 200 and updated.json()["version"] == created["version"] + 1
++    conflict = client.put(
++        f"/api/novels/{a}/research/{created['id']}",
++        params={"expected_version": created["version"]},
++        json={"title": "stale", "source_type": "NOTE", "status": "ACTIVE", "tags": ["phase1-desktop"]},
++    )
++    assert conflict.status_code == 409
++    assert client.get(f"/api/novels/{b}/research").json()["total"] == 0
++    assert client.delete(f"/api/novels/{b}/research/{created['id']}").status_code == 404
++    temp = client.post(
++        f"/api/novels/{a}/research",
++        json={"title": "临时删除", "source_type": "NOTE", "status": "ACTIVE", "tags": ["temp"]},
++    ).json()
++    deleted = client.delete(f"/api/novels/{a}/research/{temp['id']}", params={"expected_version": temp["version"]})
++    assert deleted.status_code == 200 and deleted.json()["deleted"] is True
++    titles = [item["title"] for item in client.get(f"/api/novels/{a}/research").json()["items"]]
++    assert "临时删除" not in titles
++    sidecar = v1_capability_service._path("research")
++    assert sidecar.name == "research.json"
++    assert created["id"] in sidecar.read_text(encoding="utf-8")
++
++
++def test_deterministic_agent_job_is_validated_without_review_apply():
++    client = TestClient(app)
++    client.headers.update(agent_headers())
++    novel = client.post("/api/novels", json={"title": f"Agent {uuid4()}"}).json()
++    nid = novel["id"]
++    client.post(f"/api/novels/{nid}/chapters", json={"title": "第一章", "content": "雾港封锁。"})
++    created = client.post("/api/agent-jobs", json={"agent_id": "planner", "novel_id": nid, "chapter": 1, "execution_mode": "deterministic"}).json()
++    executed = client.post(f"/api/agent-jobs/{created['id']}/execute").json()
++    assert executed["status"] == "VALIDATED"
++    assert executed["execution_label"] == "契约校验，未调用模型"
++    assert executed["result"]["structured_output"]["proposals"] == []
++    assert client.post(f"/api/agent-jobs/{created['id']}/review", json={"decision": "ACCEPTED", "reviewed_by": "author"}).status_code == 400
++    assert client.post(f"/api/agent-jobs/{created['id']}/apply", json={"applied_by": "author"}).status_code == 400
++
++
++def test_motion_task_stays_pending_without_provider_and_rejects_placeholder():
++    client = TestClient(app)
++    nid = client.post("/api/novels", json={"title": f"Video {uuid4()}"}).json()["id"]
++    client.post(f"/api/novels/{nid}/chapters", json={"title": "第一章", "content": "港口夜色。"})
++    client.post(f"/api/novels/{nid}/chapters", json={"title": "第二章", "content": "灯塔亮起。"})
++    screenplay = client.post(f"/api/novels/{nid}/screenplays", json={"title": "验收剧本"}).json()
++    sid = screenplay["id"]
++    client.post(f"/api/novels/{nid}/screenplays/{sid}/approve")
++    client.post(f"/api/novels/{nid}/screenplays/{sid}/shots")
++    client.post(f"/api/novels/{nid}/screenplays/{sid}/shots/approve")
++    client.post(f"/api/novels/{nid}/screenplays/{sid}/storyboard")
++    client.post(f"/api/novels/{nid}/screenplays/{sid}/storyboard/approve")
++    client.post(f"/api/novels/{nid}/screenplays/{sid}/transitions")
++    screenplay = client.get(f"/api/novels/{nid}/screenplays").json()[0]
++    transition = screenplay["transitions"][0]
++    client.put(
++        f"/api/novels/{nid}/screenplays/{sid}/transitions/{transition['id']}/motion-prompt",
++        json={"motion_prompt": "镜头缓慢前推，保持人物轮廓稳定。"},
++    )
++    created = client.post(f"/api/novels/{nid}/screenplays/{sid}/motion-tasks")
++    assert created.status_code == 201
++    tasks = created.json()["motion_tasks"]
++    assert tasks and tasks[0]["status"] == "PENDING"
++    assert tasks[0]["error"] == "VIDEO_PROVIDER_NOT_CONFIGURED"
++    assert is_traceable_frame(tasks[0]["start_frame"]) and is_traceable_frame(tasks[0]["end_frame"])
++    assert str(tasks[0]["start_frame"]).startswith(("shot:", "asset:", "http://", "https://", "storyboard:"))
++    assert str(tasks[0]["end_frame"]).startswith(("shot:", "asset:", "http://", "https://", "storyboard:"))
++    executed = client.post(f"/api/novels/{nid}/screenplays/{sid}/motion-tasks/{tasks[0]['id']}/execute")
++    body = executed.json() if executed.headers.get("content-type", "").startswith("application/json") else {}
++    if executed.status_code == 200:
++        task = next(item for item in executed.json()["motion_tasks"] if item["id"] == tasks[0]["id"])
++        assert task["status"] == "PENDING"
++        assert task["error"] == "VIDEO_PROVIDER_NOT_CONFIGURED"
++        assert not str((task.get("result") or {}).get("url") or "").startswith("placeholder://")
++    else:
++        assert executed.status_code >= 400
++    require_motion_frames({"start_frame": "shot:from", "end_frame": "shot:to"})
++    try:
++        DeterministicVideoProvider().generate(VideoGenerationRequest("deterministic", "none", "p", "shot:a", "shot:b", "t1"))
++        raise AssertionError("placeholder success must not be produced")
++    except ValueError as exc:
++        assert "VIDEO_PROVIDER_NOT_CONFIGURED" in str(exc)
+diff --git a/tests/test_phase6_agent_jobs.py b/tests/test_phase6_agent_jobs.py
+index c0853ea..f105406 100644
+--- a/tests/test_phase6_agent_jobs.py
++++ b/tests/test_phase6_agent_jobs.py
+@@ -26,6 +26,23 @@ def trusted_agent_headers():
+ def create_agent_job(client,payload):
+     return client.post('/api/agent-jobs',json=payload,headers=trusted_agent_headers())
+ 
++def complete_model_job(client, monkeypatch, nid, agent_id='planner'):
++    schema={
++        'planner':'story_plan_proposal','editor':'editor_revision_proposal','director':'direction_proposal',
++        'writer':'chapter_draft','continuity':'continuity_findings'
++    }.get(agent_id,'story_plan_proposal')
++    created=client.post('/api/agent-jobs',json={'agent_id':agent_id,'novel_id':nid,'chapter':1,'provider_id':'deepseek','model_id':'deepseek-chat','execution_mode':'model'}).json()
++    class Node:
++        def execute(self,_):
++            payload='{"schema":"%s","agent_id":"%s","summary":"model","proposals":[],"findings":[],"context_hash":"%s"}'%(schema,agent_id,created['context_hash'])
++            response=TextGenerationResponse(payload,'completed','deepseek','deepseek-chat')
++            return TextModelNodeOutput(payload,response,created['id'])
++    monkeypatch.setattr(agent_job_service.runtime,'prepare_text_route',lambda *_:Node())
++    executed=client.post(f"/api/agent-jobs/{created['id']}/execute").json()
++    assert executed['status']=='COMPLETED'
++    return created
++
++
+ def test_agent_job_read_endpoints_require_trusted_session():
+     client=TestClient(app)
+     assert client.get('/api/agent-jobs').status_code==401
+@@ -111,7 +128,8 @@ def test_agent_job_lifecycle_records_context_and_structured_output():
+     client=TestClient(app);nid=setup_novel(client);created=create_agent_job(client,{'agent_id':'planner','novel_id':nid,'chapter':1,'instruction':'规划第二幕'}).json()
+     assert created['status']=='QUEUED' and len(created['context_hash'])==64 and created['chapter_version']==1
+     completed=client.post(f"/api/agent-jobs/{created['id']}/execute").json();stored=client.get(f"/api/agent-jobs/{created['id']}",headers=trusted_agent_headers()).json()
+-    assert completed['status']=='COMPLETED' and stored['provider']=='deterministic-local'
++    assert completed['status']=='VALIDATED' and stored['provider']=='deterministic-local'
++    assert stored['execution_label']=='契约校验，未调用模型' and stored.get('model_called') is False
+     output=stored['result']['structured_output'];assert output['schema']=='story_plan_proposal' and output['context_hash']==created['context_hash']
+ 
+ 
+@@ -125,15 +143,15 @@ def test_completed_agent_job_cannot_execute_twice():
+     assert client.post(f"/api/agent-jobs/{created['id']}/execute").status_code==400
+ 
+ 
+-def test_agent_job_review_accepts_without_applying_output():
+-    client=TestClient(app);nid=setup_novel(client);created=client.post('/api/agent-jobs',json={'agent_id':'planner','novel_id':nid,'chapter':1}).json();client.post(f"/api/agent-jobs/{created['id']}/execute")
++def test_agent_job_review_accepts_without_applying_output(monkeypatch):
++    client=TestClient(app);nid=setup_novel(client);created=complete_model_job(client,monkeypatch,nid)
+     accepted=client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author-1','note':'方向可用'}).json()
+     assert accepted['status']=='ACCEPTED' and accepted['review']['applied'] is False
+     assert accepted['review']['reviewed_by']=='author-1' and len(accepted['review']['output_hash'])==64
+ 
+ 
+-def test_agent_job_review_rejects_and_prevents_second_decision():
+-    client=TestClient(app);nid=setup_novel(client);created=client.post('/api/agent-jobs',json={'agent_id':'editor','novel_id':nid,'chapter':1}).json();client.post(f"/api/agent-jobs/{created['id']}/execute")
++def test_agent_job_review_rejects_and_prevents_second_decision(monkeypatch):
++    client=TestClient(app);nid=setup_novel(client);created=complete_model_job(client,monkeypatch,nid,'planner')
+     rejected=client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'REJECTED','reviewed_by':'author-1'}).json();assert rejected['status']=='REJECTED'
+     assert client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author-1'}).status_code==400
+ 
+@@ -143,8 +161,8 @@ def test_agent_job_cannot_be_reviewed_before_completion():
+     assert client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author-1'}).status_code==400
+ 
+ 
+-def test_accepted_agent_actions_apply_with_before_after_snapshots():
+-    client=TestClient(app);nid=setup_novel(client);created=client.post('/api/agent-jobs',json={'agent_id':'planner','novel_id':nid,'chapter':1}).json();client.post(f"/api/agent-jobs/{created['id']}/execute")
++def test_accepted_agent_actions_apply_with_before_after_snapshots(monkeypatch):
++    client=TestClient(app);nid=setup_novel(client);created=complete_model_job(client,monkeypatch,nid)
+     actions=[{'type':'outline.update','payload':{'theme':'信任','premise':'追查雾港','structure':'THREE_ACT','beginning':'抵达','middle':'背叛','ending':'公开真相','main_conflict':'真相与安全','climax':'灯塔','status':'ACTIVE'}},{'type':'volume.upsert','id':'fog','payload':{'title':'迷雾卷','sequence':1,'goal':'建立悬念','summary':'进入雾港','start_chapter':1,'end_chapter':8,'status':'WRITING'}},{'type':'scene.upsert','id':'arrival','payload':{'title':'抵达雾港','sequence':1,'volume_id':'fog','chapter_id':f'{nid}:1','location_id':'','characters':[],'purpose':'展示封锁','conflict':'证件失效','outcome':'潜入码头','status':'PLANNED'}}]
+     client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author-1','actions':actions});applied=client.post(f"/api/agent-jobs/{created['id']}/apply",json={'applied_by':'author-1'}).json()
+     assert applied['review']['applied'] is True and len(applied['application']['actions'])==3
+@@ -152,10 +170,10 @@ def test_accepted_agent_actions_apply_with_before_after_snapshots():
+     assert client.get(f'/api/novels/{nid}/volumes').json()[0]['id']=='fog' and client.get(f'/api/novels/{nid}/scenes').json()[0]['id']=='arrival'
+ 
+ 
+-def test_agent_application_rejects_unknown_action_and_repeat_apply():
+-    client=TestClient(app);nid=setup_novel(client);created=client.post('/api/agent-jobs',json={'agent_id':'planner','novel_id':nid,'chapter':1}).json();client.post(f"/api/agent-jobs/{created['id']}/execute");client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author','actions':[{'type':'chapter.overwrite','payload':{}}]})
++def test_agent_application_rejects_unknown_action_and_repeat_apply(monkeypatch):
++    client=TestClient(app);nid=setup_novel(client);created=complete_model_job(client,monkeypatch,nid);client.post(f"/api/agent-jobs/{created['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author','actions':[{'type':'chapter.overwrite','payload':{}}]})
+     assert client.post(f"/api/agent-jobs/{created['id']}/apply",json={'applied_by':'author'}).status_code==400
+-    second=client.post('/api/agent-jobs',json={'agent_id':'planner','novel_id':nid,'chapter':1}).json();client.post(f"/api/agent-jobs/{second['id']}/execute");client.post(f"/api/agent-jobs/{second['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author','actions':[]});assert client.post(f"/api/agent-jobs/{second['id']}/apply",json={'applied_by':'author'}).status_code==200;assert client.post(f"/api/agent-jobs/{second['id']}/apply",json={'applied_by':'author'}).status_code==400
++    second=complete_model_job(client,monkeypatch,nid);client.post(f"/api/agent-jobs/{second['id']}/review",json={'decision':'ACCEPTED','reviewed_by':'author','actions':[]});assert client.post(f"/api/agent-jobs/{second['id']}/apply",json={'applied_by':'author'}).status_code==200;assert client.post(f"/api/agent-jobs/{second['id']}/apply",json={'applied_by':'author'}).status_code==400
+ 
+ 
+ def test_model_execution_uses_requested_route_and_validates_structure(monkeypatch):
+@@ -186,9 +204,9 @@ def test_async_agent_job_completes_and_can_be_polled():
+     client=TestClient(app);nid=setup_novel(client);created=client.post('/api/agent-jobs',json={'agent_id':'planner','novel_id':nid,'chapter':1}).json();client.post(f"/api/agent-jobs/{created['id']}/start")
+     for _ in range(50):
+         stored=client.get(f"/api/agent-jobs/{created['id']}",headers=trusted_agent_headers()).json()
+-        if stored['status']=='COMPLETED':break
++        if stored['status'] in {'COMPLETED','VALIDATED'}:break
+         time.sleep(.01)
+-    assert stored['status']=='COMPLETED'
++    assert stored['status']=='VALIDATED'
+ 
+ 
+ def test_agent_job_cancel_is_terminal_against_late_model_result(monkeypatch):
+-- 
+2.55.0.windows.2
+

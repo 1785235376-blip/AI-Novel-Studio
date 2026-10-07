@@ -1,0 +1,106 @@
+From cd9ad447a2eddd1ca1348928e1bd2f7c757f89d2 Mon Sep 17 00:00:00 2001
+From: 1785235376-blip <1785235376@qq.com>
+Date: Sat, 29 Aug 2026 20:48:24 +0800
+Subject: [PATCH 4/5] fix: stabilize worker crash exit status on windows
+
+---
+ app/plugin_test_worker_supervisor.py          | 14 +++++++-
+ ...test_plugin_runtime_phase2a_test_worker.py | 36 +++++++++++++++++++
+ 2 files changed, 49 insertions(+), 1 deletion(-)
+
+diff --git a/app/plugin_test_worker_supervisor.py b/app/plugin_test_worker_supervisor.py
+index f20ab46..b229f9d 100644
+--- a/app/plugin_test_worker_supervisor.py
++++ b/app/plugin_test_worker_supervisor.py
+@@ -18,6 +18,7 @@ import threading
+ import time
+ from dataclasses import dataclass, field
+ from queue import Empty, Queue
++from subprocess import TimeoutExpired
+ from typing import Any, IO, Literal
+ 
+ from app.plugin_capability_policy import REASON_ACCEPTED, begin_retry, evaluate_late_result
+@@ -124,6 +125,7 @@ class HostTestWorkerSupervisor:
+ 
+     handshake_timeout_s: float = 2.0
+     sandbox_handshake_timeout_s: float = 30.0
++    crash_exit_observation_timeout_s: float = 0.25
+ 
+     def start_test_worker(self) -> WorkerSession:
+         owned = spawn_host_test_worker()
+@@ -352,7 +354,7 @@ class HostTestWorkerSupervisor:
+         return self._outcome(session, accepted=False, reason=REASON_WORKER_TIMEOUT)
+ 
+     def _on_crash(self, session: WorkerSession) -> HostTestJobOutcome:
+-        exit_status = session.owned.poll()
++        exit_status = self._observe_exit_status(session.owned)
+         with session._lock:
+             session.lifecycle = ExecutionLifecycleState.FAILED
+         self._kill(session)
+@@ -360,6 +362,16 @@ class HostTestWorkerSupervisor:
+         outcome.worker_exit_status = exit_status
+         return outcome
+ 
++    def _observe_exit_status(self, owned: OwnedWorkerProcess) -> int | None:
++        """Observe a natural child exit without delaying crash cleanup unboundedly."""
++        exit_status = owned.poll()
++        if exit_status is not None:
++            return exit_status
++        try:
++            return owned.wait(timeout=self.crash_exit_observation_timeout_s)
++        except TimeoutExpired:
++            return None
++
+     def _fail(self, session: WorkerSession, reason: str, *, kill: bool) -> HostTestJobOutcome:
+         with session._lock:
+             if session.lifecycle is ExecutionLifecycleState.RUNNING:
+diff --git a/tests/test_plugin_runtime_phase2a_test_worker.py b/tests/test_plugin_runtime_phase2a_test_worker.py
+index 5f85d94..27b4894 100644
+--- a/tests/test_plugin_runtime_phase2a_test_worker.py
++++ b/tests/test_plugin_runtime_phase2a_test_worker.py
+@@ -264,6 +264,42 @@ def test_worker_crash(supervisor):
+     assert b"api_key" not in bytes(session.stderr)
+ 
+ 
++def test_crash_exit_observation_already_exited_without_wait():
++    class FakeOwned:
++        def poll(self):
++            return 17
++
++        def wait(self, timeout=None):
++            raise AssertionError("already exited process must not wait")
++
++    assert HostTestWorkerSupervisor()._observe_exit_status(FakeOwned()) == 17
++
++
++def test_crash_exit_observation_waits_for_delayed_exit():
++    class FakeOwned:
++        def poll(self):
++            return None
++
++        def wait(self, timeout=None):
++            assert timeout is not None and timeout < 1
++            return 17
++
++    assert HostTestWorkerSupervisor()._observe_exit_status(FakeOwned()) == 17
++
++
++def test_crash_exit_observation_is_bounded_when_still_alive():
++    from subprocess import TimeoutExpired
++
++    class FakeOwned:
++        def poll(self):
++            return None
++
++        def wait(self, timeout=None):
++            raise TimeoutExpired(cmd="worker", timeout=timeout)
++
++    assert HostTestWorkerSupervisor()._observe_exit_status(FakeOwned()) is None
++
++
+ def test_malformed_and_oversized_and_truncated_frames(supervisor):
+     sup, start = supervisor
+     malformed = start()
+-- 
+2.55.0.windows.2
+

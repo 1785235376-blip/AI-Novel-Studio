@@ -65,6 +65,8 @@ class FileNovelRepository:
             if kind=='timeline':
                 item.update(sequence=payload.get("sequence",len(rows)+1),time=payload.get("time",""),
                             location=payload.get("location",""),chapter_id=payload.get("chapter_id",""),status=payload.get("status","CONFIRMED"))
+                for key in ("start_time","end_time"):
+                    if key in payload: item[key]=payload[key]
             else:
                 item.update(planted_chapter=payload.get("planted_chapter"),target_chapter=payload.get("target_chapter"),
                             status=payload.get("status","OPEN"),events=payload.get("events",[]))
@@ -96,10 +98,23 @@ class FileNovelRepository:
         if not root.exists():raise FileNotFoundError(novel_id)
         return read_json(root/'outline.json',{})
     @guard_project("novel_id")
-    def update_outline(self,novel_id,payload):
+    def update_outline(self,novel_id,payload,*,expected_digest=UNGUARDED):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
+        if expected_digest is not UNGUARDED:
+            from ..structured_cas import record_digest
+            from ..chapter_repository import VersionConflict
+            if record_digest(self.get_outline(novel_id)) != expected_digest:
+                raise VersionConflict({"id":novel_id,"version":0},resource_id=novel_id)
         item={**payload};atomic_write(root/'outline.json',__import__('json').dumps(item,ensure_ascii=False,indent=2));return item
+
+    @guard_project("novel_id")
+    def update_world_summary(self,novel_id,summary,expected_digest):
+        from ..structured_cas import record_digest
+        from ..chapter_repository import VersionConflict
+        if record_digest(self.get(novel_id).get("world_summary", "")) != expected_digest:
+            raise VersionConflict({"id":novel_id,"version":0},resource_id=novel_id)
+        return self.update(novel_id,{"world_summary":summary,"world_summary_privacy_level":"LOCAL_ONLY"})
     @guard_project("novel_id")
     def upsert_volume(self,novel_id,volume_id,payload):
         root=self.backend.novels/novel_id
@@ -165,4 +180,5 @@ class FileNovelRepository:
     def get_context_sources(self,novel_id):
         root=self.backend.novels/novel_id
         if not root.exists():raise FileNotFoundError(novel_id)
-        return {"novel":read_json(root/"novel.json",{}),"characters":[privacy_record(row) for row in read_json(root/"characters/characters.json",[])],"locations":[privacy_record(row) for row in read_json(root/"locations/locations.json",[])],"story_state":read_json(root/"story_state.json",{}),"secrets":[privacy_record(row) for row in read_json(root/"secrets.json",[])],"foreshadowing":[privacy_record(public_record(row)) for row in read_json(root/"foreshadowing.json",[])],"summaries":current_summaries(root,read_json(root/"summaries/index.json",[])),"style_profile":read_json(root/"style/profile.json",{})}
+        return {"novel":read_json(root/"novel.json",{}),"characters":[privacy_record(row) for row in read_json(root/"characters/characters.json",[])],"locations":[privacy_record(row) for row in read_json(root/"locations/locations.json",[])],"story_state":read_json(root/"story_state.json",{}),"secrets":[privacy_record(row) for row in read_json(root/"secrets.json",[])],"foreshadowing":[privacy_record(public_record(row)) for row in read_json(root/"foreshadowing.json",[])],"summaries":current_summaries(root,read_json(root/"summaries/index.json",[])),"style_profile":read_json(root/"style/profile.json",{}),
+                "outline":self.get_outline(novel_id),"canon":self.get_data_set(novel_id,"canon"),"timeline":self.get_data_set(novel_id,"timeline"),"relationships":self.get_data_set(novel_id,"relationships")}
