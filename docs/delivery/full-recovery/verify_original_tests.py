@@ -42,8 +42,9 @@ for name, digest in zip(paths, hashes):
         changed.append(row)
         continue
     if name.endswith(".py"):
-        assertions = lambda source: [ast.dump(node, include_attributes=False) for node in ast.walk(ast.parse(source))
-                                     if isinstance(node, ast.Assert)]
+        assertions = lambda source: [ast.dump(node, include_attributes=False) for node in
+                                     sorted((node for node in ast.walk(ast.parse(source)) if isinstance(node, ast.Assert)),
+                                            key=lambda node: (node.lineno, node.col_offset))]
         original_assertions, current_assertions = assertions(before), assertions(current)
         row.update(assertions_identical=original_assertions == current_assertions,
                    original_assertions=len(original_assertions), current_assertions=len(current_assertions),

@@ -1,0 +1,21 @@
+PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, 64-bit
+Applied 001_initial.sql
+Applied 002_runtime_jobs.sql
+Applied 003_document_versions.sql
+Applied 004_lore_foundation.sql
+Applied 005_lore_memory.sql
+Applied 006_context_intelligence.sql
+Applied 007_continuity_foundations.sql
+Applied 008_narrative_state.sql
+Applied 009_narrative_findings.sql
+Applied 010_narrative_progress.sql
+Applied 011_narrative_change_proposals.sql
+Applied 012_collaboration_scope_foundation.sql
+Applied 013_branch_revision_optimistic_concurrency.sql
+Applied 014_scope_authorization_foundation.sql
+Applied 015_collaboration_runtime_foundation.sql
+Applied 016_generation_snapshot_ownership.sql
+Applied 017_chapter_archive_state.sql
+Applied 018_context_privacy.sql
+Applied 019_experimental_scope_documents.sql
+Applied 020_stable_chapter_identity.sql

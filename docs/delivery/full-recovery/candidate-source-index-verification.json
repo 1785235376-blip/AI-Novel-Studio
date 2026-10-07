@@ -1,5 +1,5 @@
 {
-  "source_inputs": 1523,
+  "source_inputs": 1567,
   "manifest_hash_mismatches": [],
   "index_byte_mismatches": [],
   "files": [
@@ -3141,9 +3141,9 @@
     },
     {
       "path": "contracts/local-interop/v1/parity-manifest.json",
-      "expected_sha256": "f27eeb98c1dc1112cd2865db52066e4c7f9b16d71afef437bcbdceea892c0ae7",
-      "working_sha256": "f27eeb98c1dc1112cd2865db52066e4c7f9b16d71afef437bcbdceea892c0ae7",
-      "index_sha256": "f27eeb98c1dc1112cd2865db52066e4c7f9b16d71afef437bcbdceea892c0ae7",
+      "expected_sha256": "77c1f82f0aec0ef385d95cacf6fe04530b83fb62d2403bc7341cbe6bf19c858c",
+      "working_sha256": "77c1f82f0aec0ef385d95cacf6fe04530b83fb62d2403bc7341cbe6bf19c858c",
+      "index_sha256": "77c1f82f0aec0ef385d95cacf6fe04530b83fb62d2403bc7341cbe6bf19c858c",
       "index_present": true,
       "bytes_equal": true
     },
@@ -3248,6 +3248,46 @@
       "expected_sha256": "32db45c63c70bcd0c100be8de5c3ba39541bae65abdd1c16051ab816aa429ec7",
       "working_sha256": "32db45c63c70bcd0c100be8de5c3ba39541bae65abdd1c16051ab816aa429ec7",
       "index_sha256": "32db45c63c70bcd0c100be8de5c3ba39541bae65abdd1c16051ab816aa429ec7",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "desktop-host/AI.NovelStudio.DesktopHost/AI.NovelStudio.DesktopHost.csproj",
+      "expected_sha256": "4a0d174e3d606b7f84d38746ceaa0f575abb07c12fbb1b7fba75dcc8ad2e3d33",
+      "working_sha256": "4a0d174e3d606b7f84d38746ceaa0f575abb07c12fbb1b7fba75dcc8ad2e3d33",
+      "index_sha256": "4a0d174e3d606b7f84d38746ceaa0f575abb07c12fbb1b7fba75dcc8ad2e3d33",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "desktop-host/AI.NovelStudio.DesktopHost/HostControlRuntime.cs",
+      "expected_sha256": "dabf2a06361e8e68505144bc46e81f30fb25fb3301470b3de608b51c6244f401",
+      "working_sha256": "dabf2a06361e8e68505144bc46e81f30fb25fb3301470b3de608b51c6244f401",
+      "index_sha256": "dabf2a06361e8e68505144bc46e81f30fb25fb3301470b3de608b51c6244f401",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "desktop-host/AI.NovelStudio.DesktopHost/Program.cs",
+      "expected_sha256": "d8c14cd067a2d23ad3615045c1f28085a74d574f17cb0e52c56d24448ebbb9b7",
+      "working_sha256": "d8c14cd067a2d23ad3615045c1f28085a74d574f17cb0e52c56d24448ebbb9b7",
+      "index_sha256": "d8c14cd067a2d23ad3615045c1f28085a74d574f17cb0e52c56d24448ebbb9b7",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "desktop-host/WebView2ControllerProbe/Program.cs",
+      "expected_sha256": "cc9b1b9f85e759c5bae0081265b8cb715caa0bc382474309ce1f2afbdfde9a43",
+      "working_sha256": "cc9b1b9f85e759c5bae0081265b8cb715caa0bc382474309ce1f2afbdfde9a43",
+      "index_sha256": "cc9b1b9f85e759c5bae0081265b8cb715caa0bc382474309ce1f2afbdfde9a43",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "desktop-host/WebView2ControllerProbe/WebView2ControllerProbe.csproj",
+      "expected_sha256": "f1bbfc0f813f54aafcb3ed13aee5584fbbde63092569525d8078aabb2c021bf8",
+      "working_sha256": "f1bbfc0f813f54aafcb3ed13aee5584fbbde63092569525d8078aabb2c021bf8",
+      "index_sha256": "f1bbfc0f813f54aafcb3ed13aee5584fbbde63092569525d8078aabb2c021bf8",
       "index_present": true,
       "bytes_equal": true
     },
@@ -8036,6 +8076,14 @@
       "bytes_equal": true
     },
     {
+      "path": "global.json",
+      "expected_sha256": "613d8088b6ee7dc9df930863d12b2434ce927363431d863b1bef09a726f8833d",
+      "working_sha256": "613d8088b6ee7dc9df930863d12b2434ce927363431d863b1bef09a726f8833d",
+      "index_sha256": "613d8088b6ee7dc9df930863d12b2434ce927363431d863b1bef09a726f8833d",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
       "path": "local_interop_protocol/__init__.py",
       "expected_sha256": "c2365dfc6bb8cc5cc7cb023864d8cccafb84b7a09b4073db05566a28239dd5dc",
       "working_sha256": "c2365dfc6bb8cc5cc7cb023864d8cccafb84b7a09b4073db05566a28239dd5dc",
@@ -8045,9 +8093,9 @@
     },
     {
       "path": "local_interop_protocol/generate_contracts.py",
-      "expected_sha256": "ea401dcbbb1bcf6e9599c1a49b62e708f979ae04f71bf7102181d3010165baf3",
-      "working_sha256": "ea401dcbbb1bcf6e9599c1a49b62e708f979ae04f71bf7102181d3010165baf3",
-      "index_sha256": "ea401dcbbb1bcf6e9599c1a49b62e708f979ae04f71bf7102181d3010165baf3",
+      "expected_sha256": "b5ef94a27b2ee85b31491af83720fa854648d1295769310f47266d21959fafc7",
+      "working_sha256": "b5ef94a27b2ee85b31491af83720fa854648d1295769310f47266d21959fafc7",
+      "index_sha256": "b5ef94a27b2ee85b31491af83720fa854648d1295769310f47266d21959fafc7",
       "index_present": true,
       "bytes_equal": true
     },
@@ -8188,6 +8236,14 @@
       "bytes_equal": true
     },
     {
+      "path": "release/version.json",
+      "expected_sha256": "1fde3763efd2feaa03bff73ba0d7a6db7bd5eee3da42fbf59c0f34770e1105ed",
+      "working_sha256": "1fde3763efd2feaa03bff73ba0d7a6db7bd5eee3da42fbf59c0f34770e1105ed",
+      "index_sha256": "1fde3763efd2feaa03bff73ba0d7a6db7bd5eee3da42fbf59c0f34770e1105ed",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
       "path": "scripts/apply_authorization_migration.py",
       "expected_sha256": "88e4a9b21db12fcb0c90123434c225c1572efae092d8ca43a0309ba610348034",
       "working_sha256": "88e4a9b21db12fcb0c90123434c225c1572efae092d8ca43a0309ba610348034",
@@ -8268,10 +8324,26 @@
       "bytes_equal": true
     },
     {
+      "path": "scripts/backup.ps1",
+      "expected_sha256": "033810ef7102f658188af102179dec5e59e1fa67a6bf19510e3c91ac1917fc2a",
+      "working_sha256": "033810ef7102f658188af102179dec5e59e1fa67a6bf19510e3c91ac1917fc2a",
+      "index_sha256": "033810ef7102f658188af102179dec5e59e1fa67a6bf19510e3c91ac1917fc2a",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
       "path": "scripts/benchmark_synthetic_project.py",
       "expected_sha256": "33cb9230e0a06006e52cf61e3e80d92c7a0b5352b870938a4420df78d2564b5b",
       "working_sha256": "33cb9230e0a06006e52cf61e3e80d92c7a0b5352b870938a4420df78d2564b5b",
       "index_sha256": "33cb9230e0a06006e52cf61e3e80d92c7a0b5352b870938a4420df78d2564b5b",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/build_windows_application.ps1",
+      "expected_sha256": "994bbf056ef14636f909c4ec571259dc2e180cca9c2fd32ebd14eece344f7a61",
+      "working_sha256": "994bbf056ef14636f909c4ec571259dc2e180cca9c2fd32ebd14eece344f7a61",
+      "index_sha256": "994bbf056ef14636f909c4ec571259dc2e180cca9c2fd32ebd14eece344f7a61",
       "index_present": true,
       "bytes_equal": true
     },
@@ -8288,6 +8360,22 @@
       "expected_sha256": "c828934c5ca2267b74907db95f4f87da7f5660710014098772a63918ac869137",
       "working_sha256": "c828934c5ca2267b74907db95f4f87da7f5660710014098772a63918ac869137",
       "index_sha256": "c828934c5ca2267b74907db95f4f87da7f5660710014098772a63918ac869137",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/check_postgres_ready.ps1",
+      "expected_sha256": "eab91a96202711d1a4274735f446199f67fe818e62436504eee7f7b0298e6cce",
+      "working_sha256": "eab91a96202711d1a4274735f446199f67fe818e62436504eee7f7b0298e6cce",
+      "index_sha256": "eab91a96202711d1a4274735f446199f67fe818e62436504eee7f7b0298e6cce",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/common.ps1",
+      "expected_sha256": "f2cdd3f4249245d5bdb743fcb5740d34596997b58e045f7d8b7dccd86c1fb4c3",
+      "working_sha256": "f2cdd3f4249245d5bdb743fcb5740d34596997b58e045f7d8b7dccd86c1fb4c3",
+      "index_sha256": "f2cdd3f4249245d5bdb743fcb5740d34596997b58e045f7d8b7dccd86c1fb4c3",
       "index_present": true,
       "bytes_equal": true
     },
@@ -8312,6 +8400,14 @@
       "expected_sha256": "eb3c3e8a352df9cf45bd1d7511b73d032ab49bcb04b53279fcb00e9491a66b87",
       "working_sha256": "eb3c3e8a352df9cf45bd1d7511b73d032ab49bcb04b53279fcb00e9491a66b87",
       "index_sha256": "eb3c3e8a352df9cf45bd1d7511b73d032ab49bcb04b53279fcb00e9491a66b87",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/compare_context_backends.ps1",
+      "expected_sha256": "333b8ac0809799d04381f46837ed343ad92b9ad34aca561b7ac3a5552a57f387",
+      "working_sha256": "333b8ac0809799d04381f46837ed343ad92b9ad34aca561b7ac3a5552a57f387",
+      "index_sha256": "333b8ac0809799d04381f46837ed343ad92b9ad34aca561b7ac3a5552a57f387",
       "index_present": true,
       "bytes_equal": true
     },
@@ -8428,6 +8524,22 @@
       "bytes_equal": true
     },
     {
+      "path": "scripts/dev.ps1",
+      "expected_sha256": "e471faf15a663a39814ba5d581f014f670fe0f56d6c9873f360d8dd3e5883b9e",
+      "working_sha256": "e471faf15a663a39814ba5d581f014f670fe0f56d6c9873f360d8dd3e5883b9e",
+      "index_sha256": "e471faf15a663a39814ba5d581f014f670fe0f56d6c9873f360d8dd3e5883b9e",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/export-project.ps1",
+      "expected_sha256": "a2f2198df512c6697f22809b1fa1942f9a741cf77b8a7a44b673d719ef0f66ce",
+      "working_sha256": "a2f2198df512c6697f22809b1fa1942f9a741cf77b8a7a44b673d719ef0f66ce",
+      "index_sha256": "a2f2198df512c6697f22809b1fa1942f9a741cf77b8a7a44b673d719ef0f66ce",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
       "path": "scripts/full_recovery_acceptance.py",
       "expected_sha256": "89379b78cd2f055ab09e94161026025a327936a13186b3c1072f17f8323ff0a8",
       "working_sha256": "89379b78cd2f055ab09e94161026025a327936a13186b3c1072f17f8323ff0a8",
@@ -8444,6 +8556,62 @@
       "bytes_equal": true
     },
     {
+      "path": "scripts/health-check.ps1",
+      "expected_sha256": "12d7961012853d411ee5e715806c689203878dc0bb468ce3590c2c530a7da93e",
+      "working_sha256": "12d7961012853d411ee5e715806c689203878dc0bb468ce3590c2c530a7da93e",
+      "index_sha256": "12d7961012853d411ee5e715806c689203878dc0bb468ce3590c2c530a7da93e",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/health.ps1",
+      "expected_sha256": "b73c985bfa63ce05c615d4c289e7557d8897754c589fee550d357da8740b7309",
+      "working_sha256": "b73c985bfa63ce05c615d4c289e7557d8897754c589fee550d357da8740b7309",
+      "index_sha256": "b73c985bfa63ce05c615d4c289e7557d8897754c589fee550d357da8740b7309",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/import-project.ps1",
+      "expected_sha256": "96680502e553190aa065754dbd40f0f5d467bc2b6fa627da7609b02cf991a02c",
+      "working_sha256": "96680502e553190aa065754dbd40f0f5d467bc2b6fa627da7609b02cf991a02c",
+      "index_sha256": "96680502e553190aa065754dbd40f0f5d467bc2b6fa627da7609b02cf991a02c",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/installer/Install-AI-Novel-Studio.ps1",
+      "expected_sha256": "88cc04c089bc9b08411a8b84a467da062f7bacaf5b291d5e7bc2a0a4e0bcb6c9",
+      "working_sha256": "88cc04c089bc9b08411a8b84a467da062f7bacaf5b291d5e7bc2a0a4e0bcb6c9",
+      "index_sha256": "88cc04c089bc9b08411a8b84a467da062f7bacaf5b291d5e7bc2a0a4e0bcb6c9",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/installer/Launch-AI-Novel-Studio.cmd",
+      "expected_sha256": "f602b804cf82a2fa6d5f7ee8cf6febe743cbc828b2c95bae9c526069dd298ca0",
+      "working_sha256": "f602b804cf82a2fa6d5f7ee8cf6febe743cbc828b2c95bae9c526069dd298ca0",
+      "index_sha256": "f602b804cf82a2fa6d5f7ee8cf6febe743cbc828b2c95bae9c526069dd298ca0",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/installer/Launch-AI-Novel-Studio.ps1",
+      "expected_sha256": "cffd5ab1eb16ccda9dea22c2221da0343f96aaf6ef44eb7a86552a525333b244",
+      "working_sha256": "cffd5ab1eb16ccda9dea22c2221da0343f96aaf6ef44eb7a86552a525333b244",
+      "index_sha256": "cffd5ab1eb16ccda9dea22c2221da0343f96aaf6ef44eb7a86552a525333b244",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/installer/Uninstall-AI-Novel-Studio.ps1",
+      "expected_sha256": "acc1ffb55287ce8f9cc0e172c3949e0493e3f83e72e9845c2adb3fc04c990660",
+      "working_sha256": "acc1ffb55287ce8f9cc0e172c3949e0493e3f83e72e9845c2adb3fc04c990660",
+      "index_sha256": "acc1ffb55287ce8f9cc0e172c3949e0493e3f83e72e9845c2adb3fc04c990660",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
       "path": "scripts/interop_protocol_probe.py",
       "expected_sha256": "ca8260a92c5c1e92c4c626002b3ad850b5669c67e521c41128a6f31a4112c2e4",
       "working_sha256": "ca8260a92c5c1e92c4c626002b3ad850b5669c67e521c41128a6f31a4112c2e4",
@@ -8456,6 +8624,46 @@
       "expected_sha256": "379b6af274ed2fb9fd5e28e141b975b8aa375a66bf8a6cb57a4390ac8ef20a5a",
       "working_sha256": "379b6af274ed2fb9fd5e28e141b975b8aa375a66bf8a6cb57a4390ac8ef20a5a",
       "index_sha256": "379b6af274ed2fb9fd5e28e141b975b8aa375a66bf8a6cb57a4390ac8ef20a5a",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/migrate-db.ps1",
+      "expected_sha256": "df4759380c05bc1581b88cf9a855e37983a288c3fbf1f82bac8cee238c35ae6a",
+      "working_sha256": "df4759380c05bc1581b88cf9a855e37983a288c3fbf1f82bac8cee238c35ae6a",
+      "index_sha256": "df4759380c05bc1581b88cf9a855e37983a288c3fbf1f82bac8cee238c35ae6a",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/migrate.ps1",
+      "expected_sha256": "ce9332cfbdc8896a26983655b35d597316421a566979a327859792d76e343640",
+      "working_sha256": "ce9332cfbdc8896a26983655b35d597316421a566979a327859792d76e343640",
+      "index_sha256": "ce9332cfbdc8896a26983655b35d597316421a566979a327859792d76e343640",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/migrate_file_to_postgres.ps1",
+      "expected_sha256": "04bb05c7d470a025b1ca8902cb13c1546ab26e242c806f02d046b41b6863f414",
+      "working_sha256": "04bb05c7d470a025b1ca8902cb13c1546ab26e242c806f02d046b41b6863f414",
+      "index_sha256": "04bb05c7d470a025b1ca8902cb13c1546ab26e242c806f02d046b41b6863f414",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/model-check.ps1",
+      "expected_sha256": "ce6dffe1de2afb58ec7064d9a2830722b194a41a1c960240e135c0c908c99472",
+      "working_sha256": "ce6dffe1de2afb58ec7064d9a2830722b194a41a1c960240e135c0c908c99472",
+      "index_sha256": "ce6dffe1de2afb58ec7064d9a2830722b194a41a1c960240e135c0c908c99472",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/package_windows_acceptance.ps1",
+      "expected_sha256": "43744b577bc73d7d8a9659203ac916ef067c1e5e5bf25f6cbb4bb145a623bb6e",
+      "working_sha256": "43744b577bc73d7d8a9659203ac916ef067c1e5e5bf25f6cbb4bb145a623bb6e",
+      "index_sha256": "43744b577bc73d7d8a9659203ac916ef067c1e5e5bf25f6cbb4bb145a623bb6e",
       "index_present": true,
       "bytes_equal": true
     },
@@ -8508,10 +8716,26 @@
       "bytes_equal": true
     },
     {
+      "path": "scripts/restore.ps1",
+      "expected_sha256": "8788386690adf032c6701bfb71b7d52556ed81bee0bfa32b805fbd0e7376b6f3",
+      "working_sha256": "8788386690adf032c6701bfb71b7d52556ed81bee0bfa32b805fbd0e7376b6f3",
+      "index_sha256": "8788386690adf032c6701bfb71b7d52556ed81bee0bfa32b805fbd0e7376b6f3",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
       "path": "scripts/run_latest_product.py",
       "expected_sha256": "c9faca24216c14cb795bc70f1d8a431c8e2f5481f1757573fcd5bbcd433a4b99",
       "working_sha256": "c9faca24216c14cb795bc70f1d8a431c8e2f5481f1757573fcd5bbcd433a4b99",
       "index_sha256": "c9faca24216c14cb795bc70f1d8a431c8e2f5481f1757573fcd5bbcd433a4b99",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/run_real_postgres_full.ps1",
+      "expected_sha256": "9ae6d42d76106c9e2d3911c8b07b1ba446989da0aebf027212648c60347af78f",
+      "working_sha256": "9ae6d42d76106c9e2d3911c8b07b1ba446989da0aebf027212648c60347af78f",
+      "index_sha256": "9ae6d42d76106c9e2d3911c8b07b1ba446989da0aebf027212648c60347af78f",
       "index_present": true,
       "bytes_equal": true
     },
@@ -8540,6 +8764,22 @@
       "bytes_equal": true
     },
     {
+      "path": "scripts/show_acceptance_identity.ps1",
+      "expected_sha256": "52400cff5fd72f74673984dc53703c652b24d3560d753223c0c1c0dcdbb46d71",
+      "working_sha256": "52400cff5fd72f74673984dc53703c652b24d3560d753223c0c1c0dcdbb46d71",
+      "index_sha256": "52400cff5fd72f74673984dc53703c652b24d3560d753223c0c1c0dcdbb46d71",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/smoke_acceptance.ps1",
+      "expected_sha256": "d48172809ad6ceda494a3cd41dde48a9f6c74eb8f646801b6698e43766a74cb4",
+      "working_sha256": "d48172809ad6ceda494a3cd41dde48a9f6c74eb8f646801b6698e43766a74cb4",
+      "index_sha256": "d48172809ad6ceda494a3cd41dde48a9f6c74eb8f646801b6698e43766a74cb4",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
       "path": "scripts/smoke_deepseek.py",
       "expected_sha256": "0cb0f36e911cde30b8eca260fdb55cc72d1b935031dded7f3cb9d4f8e092edd2",
       "working_sha256": "0cb0f36e911cde30b8eca260fdb55cc72d1b935031dded7f3cb9d4f8e092edd2",
@@ -8548,10 +8788,74 @@
       "bytes_equal": true
     },
     {
+      "path": "scripts/start.ps1",
+      "expected_sha256": "fef2c4afdea7fd5b12d589378168e1f64012379d4f01965f0ad732f30bdc5266",
+      "working_sha256": "fef2c4afdea7fd5b12d589378168e1f64012379d4f01965f0ad732f30bdc5266",
+      "index_sha256": "fef2c4afdea7fd5b12d589378168e1f64012379d4f01965f0ad732f30bdc5266",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/start_acceptance.ps1",
+      "expected_sha256": "441b05c663892bb3b7ab2ce33a574dfdefa09932bd25bde9def4bb541a743783",
+      "working_sha256": "441b05c663892bb3b7ab2ce33a574dfdefa09932bd25bde9def4bb541a743783",
+      "index_sha256": "441b05c663892bb3b7ab2ce33a574dfdefa09932bd25bde9def4bb541a743783",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/start_v061_browser_acceptance.ps1",
+      "expected_sha256": "6f49f291a72a7b581cbf776d46d058756f2690e61935731991404992af374fb3",
+      "working_sha256": "6f49f291a72a7b581cbf776d46d058756f2690e61935731991404992af374fb3",
+      "index_sha256": "6f49f291a72a7b581cbf776d46d058756f2690e61935731991404992af374fb3",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/status.ps1",
+      "expected_sha256": "2176a0911c1d62b4ab5cf0a9d713475bcd326420dd4c2b9bde83cfeb104e5b59",
+      "working_sha256": "2176a0911c1d62b4ab5cf0a9d713475bcd326420dd4c2b9bde83cfeb104e5b59",
+      "index_sha256": "2176a0911c1d62b4ab5cf0a9d713475bcd326420dd4c2b9bde83cfeb104e5b59",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/stop.ps1",
+      "expected_sha256": "1caebdd1c7e3e0284e2035df32da554a2d9bc64900cea36812ab5bd20998b95c",
+      "working_sha256": "1caebdd1c7e3e0284e2035df32da554a2d9bc64900cea36812ab5bd20998b95c",
+      "index_sha256": "1caebdd1c7e3e0284e2035df32da554a2d9bc64900cea36812ab5bd20998b95c",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/stop_acceptance.ps1",
+      "expected_sha256": "46a957e7ce9889f20a5f9f98dee2b08f740108923ec0e16d6030f4b3d4bc7684",
+      "working_sha256": "46a957e7ce9889f20a5f9f98dee2b08f740108923ec0e16d6030f4b3d4bc7684",
+      "index_sha256": "46a957e7ce9889f20a5f9f98dee2b08f740108923ec0e16d6030f4b3d4bc7684",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/stop_v061_browser_acceptance.ps1",
+      "expected_sha256": "c0f9de41654ebe965ed62be21942d8e64a9b93fe7e69c5703e1d68290f9accde",
+      "working_sha256": "c0f9de41654ebe965ed62be21942d8e64a9b93fe7e69c5703e1d68290f9accde",
+      "index_sha256": "c0f9de41654ebe965ed62be21942d8e64a9b93fe7e69c5703e1d68290f9accde",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/sync-knowledge.ps1",
+      "expected_sha256": "2545fedc68a5a7a6e3773f291a3263133091a1feb1340ea0117e5e9e48639681",
+      "working_sha256": "2545fedc68a5a7a6e3773f291a3263133091a1feb1340ea0117e5e9e48639681",
+      "index_sha256": "2545fedc68a5a7a6e3773f291a3263133091a1feb1340ea0117e5e9e48639681",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
       "path": "scripts/update_recovery_coverage_manifest.py",
-      "expected_sha256": "5327f8121af6e4eafc3cfbd42357cc65b74cd1c71c612a5112564fbdd7dffd8b",
-      "working_sha256": "5327f8121af6e4eafc3cfbd42357cc65b74cd1c71c612a5112564fbdd7dffd8b",
-      "index_sha256": "5327f8121af6e4eafc3cfbd42357cc65b74cd1c71c612a5112564fbdd7dffd8b",
+      "expected_sha256": "3065b19b61e48ec379b617374ca379b9367ab4605ef5ba0b06e5311d63efb932",
+      "working_sha256": "3065b19b61e48ec379b617374ca379b9367ab4605ef5ba0b06e5311d63efb932",
+      "index_sha256": "3065b19b61e48ec379b617374ca379b9367ab4605ef5ba0b06e5311d63efb932",
       "index_present": true,
       "bytes_equal": true
     },
@@ -8608,6 +8912,14 @@
       "expected_sha256": "57bc819f646d660625dfe9109c3e0f006b512e0206f10919e091bf2bfd96ce26",
       "working_sha256": "57bc819f646d660625dfe9109c3e0f006b512e0206f10919e091bf2bfd96ce26",
       "index_sha256": "57bc819f646d660625dfe9109c3e0f006b512e0206f10919e091bf2bfd96ce26",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/validate_postgres_backend.ps1",
+      "expected_sha256": "f8e88e5b6563e68912d8ad27d0ec5df87fc8a9a821c2df7ef7cf6ec3b93d7af1",
+      "working_sha256": "f8e88e5b6563e68912d8ad27d0ec5df87fc8a9a821c2df7ef7cf6ec3b93d7af1",
+      "index_sha256": "f8e88e5b6563e68912d8ad27d0ec5df87fc8a9a821c2df7ef7cf6ec3b93d7af1",
       "index_present": true,
       "bytes_equal": true
     },
@@ -8696,6 +9008,46 @@
       "expected_sha256": "ba16a7f04d616afa946e823e4f6cbd9f1435987d65f4d9833f76dc60a4031838",
       "working_sha256": "ba16a7f04d616afa946e823e4f6cbd9f1435987d65f4d9833f76dc60a4031838",
       "index_sha256": "ba16a7f04d616afa946e823e4f6cbd9f1435987d65f4d9833f76dc60a4031838",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/verify_phase3_creation.ps1",
+      "expected_sha256": "db929e357676e0e4ce87e67c0205c061b58a065ac7a23184c3be656362edb941",
+      "working_sha256": "db929e357676e0e4ce87e67c0205c061b58a065ac7a23184c3be656362edb941",
+      "index_sha256": "db929e357676e0e4ce87e67c0205c061b58a065ac7a23184c3be656362edb941",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/verify_phase4_story_database.ps1",
+      "expected_sha256": "c0364eea06952323297f42b41299903661c807c713b98bd02fb4ac20748d2506",
+      "working_sha256": "c0364eea06952323297f42b41299903661c807c713b98bd02fb4ac20748d2506",
+      "index_sha256": "c0364eea06952323297f42b41299903661c807c713b98bd02fb4ac20748d2506",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/verify_phase5_story_planning.ps1",
+      "expected_sha256": "b6c216314813821697cfb49b76aa515d56585163c309d01320a94d8841cfd8a2",
+      "working_sha256": "b6c216314813821697cfb49b76aa515d56585163c309d01320a94d8841cfd8a2",
+      "index_sha256": "b6c216314813821697cfb49b76aa515d56585163c309d01320a94d8841cfd8a2",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/verify_phase6_agent_foundation.ps1",
+      "expected_sha256": "4688b288df44f067c0ab185d147c502997c5dc5489e169d1b3b26b00c7c72a11",
+      "working_sha256": "4688b288df44f067c0ab185d147c502997c5dc5489e169d1b3b26b00c7c72a11",
+      "index_sha256": "4688b288df44f067c0ab185d147c502997c5dc5489e169d1b3b26b00c7c72a11",
+      "index_present": true,
+      "bytes_equal": true
+    },
+    {
+      "path": "scripts/verify_phase7_import_adaptation.ps1",
+      "expected_sha256": "a7946fa9a7949c6e77a6a84f8174aaf1574c97a5cad3d208907c387e18ae76bd",
+      "working_sha256": "a7946fa9a7949c6e77a6a84f8174aaf1574c97a5cad3d208907c387e18ae76bd",
+      "index_sha256": "a7946fa9a7949c6e77a6a84f8174aaf1574c97a5cad3d208907c387e18ae76bd",
       "index_present": true,
       "bytes_equal": true
     },
@@ -10629,9 +10981,9 @@
     },
     {
       "path": "tests/test_provider_runtime_v2_routing_service.py",
-      "expected_sha256": "f4d076782972c9c4462e9964df256aad571c793dc1aa594516f1cbae479020b4",
-      "working_sha256": "f4d076782972c9c4462e9964df256aad571c793dc1aa594516f1cbae479020b4",
-      "index_sha256": "f4d076782972c9c4462e9964df256aad571c793dc1aa594516f1cbae479020b4",
+      "expected_sha256": "22a782f56f708a476c72313796a8629c935e93296e298fba63859d4610b28e40",
+      "working_sha256": "22a782f56f708a476c72313796a8629c935e93296e298fba63859d4610b28e40",
+      "index_sha256": "22a782f56f708a476c72313796a8629c935e93296e298fba63859d4610b28e40",
       "index_present": true,
       "bytes_equal": true
     },

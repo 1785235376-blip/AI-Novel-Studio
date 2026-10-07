@@ -16,3 +16,5 @@
 - BLOCKED仅环境：本机Windows无SeCreateSymbolicLinkPrivilege，原symlinktests不能创建fixture；Linux /proc原检查在Windows不存在，原ZIP路径问题已通过生产orig_filename拒绝和原断言不变的真实raw ZIP fixture修复、29/29通过。保留真实失败，不通过跳过或改断言伪造Windows fullgreen；最后Linux严格suite用于完整验证。
 
 原DENY_ALL插件执行隔离、unsigned acceptance package和外部model配置等原产品边界保持。没有把旧Windows AppContainer prototype重新激活为生产执行能力，没有签名/公开release/合并main。
+
+已关闭恢复过程缺陷：冻结V1 generator/parity-manifest精确回到PR45，原37 V1文件+26 shared-prep hash checker与184 Linux契约测试通过；scope正确的新runtime base原4876记录全保持，仅增加6wheel的210声明文件与1独立许可索引。新的最终完整suite/package仍在执行。单节点冷启动合成diagnostic曾因Pydantic延迟serializer import在全局forbidden补丁下失败；该RED保留，原routing完整43测试及原顺序2节点报告生命周期证明通过，不能将辅助冷诊断写成GREEN。

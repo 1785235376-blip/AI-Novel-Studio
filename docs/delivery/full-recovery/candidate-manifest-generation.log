@@ -53,9 +53,19 @@
       "after_sha256": "ae87295026bbd0ff92aa21db268b1f77405a69b2a15ed849cbe82ed8bee9741c",
       "all_original_assertion_ast_unchanged": true,
       "assertion_count": 20,
-      "assertion_ast_sha256": "9b111e8908ccbf2c01fcc09e2b0242c8e3b3f588ef91d055d87560ed64edbf70",
+      "assertion_ast_sha256": "d7c88c6c95a3eb2b9b6c4449551d5e6af30f09d3265e8254b0cdbc88e33ba4a7",
       "scope": "Synthetic selftest source-path serialization only: relative_to(tmp_path).as_posix(); all strict assertions unchanged",
       "receipt": "docs/delivery/full-recovery/coverage-harness-portability-green.xml"
+    },
+    {
+      "path": "tests/test_provider_runtime_v2_routing_service.py",
+      "before_sha256": "f4d076782972c9c4462e9964df256aad571c793dc1aa594516f1cbae479020b4",
+      "after_sha256": "22a782f56f708a476c72313796a8629c935e93296e298fba63859d4610b28e40",
+      "all_original_assertion_ast_unchanged": true,
+      "assertion_count": 49,
+      "assertion_ast_sha256": "0ea8a4bbabd393703e366be0e1140e94c057c2ad018aa103de784f19b09994b2",
+      "scope": "Original forbidden import/initialization guard remains active for the original route call and both original assertions; monkeypatch context restores it before pytest reporters; every original assertion AST and node preserved",
+      "receipt": "docs/delivery/full-recovery/original-test-preservation.json"
     },
     {
       "path": "tests/test_r2_windows_base_inputs.py",
@@ -63,7 +73,7 @@
       "after_sha256": "23948dfd01787e11b20857a077238fa8ba3672b6ba225bbbdf3de31f1d5bf555",
       "all_original_assertion_ast_unchanged": true,
       "assertion_count": 34,
-      "assertion_ast_sha256": "ab2824613bda84311e200be10fbd520c22077aaf29c1c27103739926d7a72647",
+      "assertion_ast_sha256": "ddeb824410c57dbf5b5f0c1725b8a31c0beff60b5eb5151da39eb7f124066fe2",
       "scope": "Archive fixture serializes the actual raw malicious ZIP entry before Windows ZipInfo normalization; all assertions/parameters unchanged",
       "receipt": "docs/delivery/full-recovery/original-test-preservation.json"
     },
@@ -73,7 +83,7 @@
       "after_sha256": "9a987d689d0cf4d4fae0924fcb3e7ed4c423a9c83a9160fa6e7703db4ae8c964",
       "all_original_assertion_ast_unchanged": true,
       "assertion_count": 18,
-      "assertion_ast_sha256": "2ea1cbcd31356532753449040ad4a0a679816ca4541a0c6a6eb5232ac66d1a04",
+      "assertion_ast_sha256": "58a91a903942dc7af8703505e61a67732ed942ea288d9216c15a0c74e30d0ec3",
       "scope": "Exactly str(relative_to(ROOT)) -> relative_to(ROOT).as_posix(); full map/fingerprint assertions unchanged",
       "receipt": "docs/delivery/full-recovery/original-test-preservation.json"
     }
@@ -86,11 +96,11 @@
       "scope": "Add jsonschema to production dependencies; every original dependency pin, optional dependency and pytest configuration unchanged"
     }
   ],
-  "source_files_count": 1523,
-  "source_files_fingerprint_sha256": "7bdd12fc2e2eed8acd0410f8dc059bdad01651ed1a02eab26f6a1c70dac1cb62",
-  "git_head_when_generated": "665817243cad59eef0d4140f17c2ea644f46971e",
+  "source_files_count": 1567,
+  "source_files_fingerprint_sha256": "ce2fbe8ad342fe1969e8c26d729023f7b66352bed95113f98ffa4d847b3f764b",
+  "git_head_when_generated": "3efa0393861c0dcddab7bd74e6d12e5ec483e7b1",
   "working_tree_provenance": "Frozen current file hashes, not an assertion that uncommitted changes belong to the old Git SHA",
   "platform": "Local Windows/Python supplemental inventory; not hosted Linux execution evidence",
   "suite_coverage_reconciler_postgres_gate_changed": false,
-  "candidate_manifest_sha256": "7e03e639ce4cd99230bcfe18efcf7703f5fd939f4e83ace2308b4284b38d49f9"
+  "candidate_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262"
 }

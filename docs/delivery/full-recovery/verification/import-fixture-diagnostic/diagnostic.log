@@ -1,0 +1,225 @@
+FE                                                                       [100%]
+==================================== ERRORS ====================================
+_ ERROR at teardown of test_host_absent_does_not_import_initialize_or_collect __
+
+args = ('tracemalloc', {'__builtins__': {'ArithmeticError': <class 'ArithmeticError'>, 'AssertionError': <class 'AssertionErr...: '/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/tracemalloc.py', ...}, None, None, 0)
+kwargs = {}
+
+    def forbidden(*args, **kwargs):
+>       raise AssertionError("unexpected initialization")
+E       AssertionError: unexpected initialization
+
+tests/test_provider_runtime_v2_routing_service.py:85: AssertionError
+
+The above exception was the direct cause of the following exception:
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x7c4698bf5c60>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pluggy/_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/logging.py:858: in pytest_runtest_teardown
+    yield
+/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/unraisableexception.py:163: in pytest_runtest_teardown
+    collect_unraisable(item.config)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+config = <_pytest.config.Config object at 0x7c469a492e10>
+
+    def collect_unraisable(config: Config) -> None:
+        pop_unraisable = config.stash[unraisable_exceptions].pop
+        errors: list[pytest.PytestUnraisableExceptionWarning | RuntimeError] = []
+        meta = None
+        hook_error = None
+        try:
+            while True:
+                try:
+                    meta = pop_unraisable()
+                except IndexError:
+                    break
+    
+                if isinstance(meta, BaseException):
+                    hook_error = RuntimeError("Failed to process unraisable exception")
+                    hook_error.__cause__ = meta
+                    errors.append(hook_error)
+                    continue
+    
+                msg = meta.msg
+                try:
+                    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+                except pytest.PytestUnraisableExceptionWarning as e:
+                    # This except happens when the warning is treated as an error (e.g. `-Werror`).
+                    if meta.exc_value is not None:
+                        # Exceptions have a better way to show the traceback, but
+                        # warnings do not, so hide the traceback from the msg and
+                        # set the cause so the traceback shows up in the right place.
+                        e.args = (meta.cause_msg,)
+                        e.__cause__ = meta.exc_value
+                    errors.append(e)
+    
+            if len(errors) == 1:
+>               raise errors[0]
+E               RuntimeError: Failed to process unraisable exception
+
+/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/unraisableexception.py:79: RuntimeError
+----------------------------- Captured stderr call -----------------------------
+Exception ignored in sys.unraisablehook: functools.partial(<function unraisable_hook at 0x7c469a1dda80>, append=<built-in method append of collections.deque object at 0x7c469a1f9030>)
+Traceback (most recent call last):
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/unraisableexception.py", line 123, in unraisable_hook
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/tracemalloc.py", line 9, in tracemalloc_message
+  File "/mnt/d/小说/AI-Novel-Studio-Latest-Product/tests/test_provider_runtime_v2_routing_service.py", line 85, in forbidden
+AssertionError: unexpected initialization
+
+thread '<unnamed>' (158204) panicked at src/common/missing_sentinel.rs:12:18:
+called `Result::unwrap()` on an `Err` value: PyErr { type: <class 'AssertionError'>, value: AssertionError('unexpected initialization'), traceback: Some("<unformattable <traceback object at 0x7c46993f3040>>") }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+=================================== FAILURES ===================================
+____________ test_host_absent_does_not_import_initialize_or_collect ____________
+
+facts = namespace(request=ProviderRoutingRequest(modality=<Modality.TEXT: 'TEXT'>, required=RequiredCapabilities(input_asset_t...69b0958f0>, model_registry=<object object at 0x7c469b0969d0>), model_center_service=<object object at 0x7c469b0969b0>))
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7c4698bd7410>
+
+    def test_host_absent_does_not_import_initialize_or_collect(facts, monkeypatch):
+        def forbidden(*args, **kwargs):
+            raise AssertionError("unexpected initialization")
+        with monkeypatch.context() as guarded:
+            guarded.delitem(sys.modules, "app.dependencies", raising=False)
+            guarded.setattr(service, "build_provider_runtime_snapshot", forbidden)
+            guarded.setattr(builtins, "__import__", forbidden)
+>           report = service.route_provider_request(facts.request)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_provider_runtime_v2_routing_service.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/provider_runtime_v2_routing_service.py:228: in route_provider_request
+    validated = _validated_request(request)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/provider_runtime_v2_routing_service.py:104: in _validated_request
+    return ProviderRoutingRequest.model_validate(request.model_dump(mode="python", warnings=False))
+                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = ProviderRoutingRequest(modality=<Modality.TEXT: 'TEXT'>, required=RequiredCapabilities(input_asset_types=frozenset(), ...'DEVICE'>}), preferences=(<Preference.COST: 'COST'>, <Preference.LATENCY: 'LATENCY'>, <Preference.QUALITY: 'QUALITY'>))
+
+    def model_dump(
+        self,
+        *,
+        mode: Literal['json', 'python'] | str = 'python',
+        include: IncEx | None = None,
+        exclude: IncEx | None = None,
+        context: Any | None = None,
+        by_alias: bool | None = None,
+        exclude_unset: bool = False,
+        exclude_defaults: bool = False,
+        exclude_none: bool = False,
+        exclude_computed_fields: bool = False,
+        round_trip: bool = False,
+        warnings: bool | Literal['none', 'warn', 'error'] = True,
+        fallback: Callable[[Any], Any] | None = None,
+        serialize_as_any: bool = False,
+        polymorphic_serialization: bool | None = None,
+    ) -> dict[str, Any]:
+        """!!! abstract "Usage Documentation"
+            [`model_dump`](../concepts/serialization.md#python-mode)
+    
+        Generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+    
+        Args:
+            mode: The mode in which `to_python` should run.
+                If mode is 'json', the output will only contain JSON serializable types.
+                If mode is 'python', the output may contain non-JSON-serializable Python objects.
+            include: A set of fields to include in the output.
+            exclude: A set of fields to exclude from the output.
+            context: Additional context to pass to the serializer.
+            by_alias: Whether to use the field's alias in the dictionary key if defined.
+            exclude_unset: Whether to exclude fields that have not been explicitly set.
+            exclude_defaults: Whether to exclude fields that are set to their default value.
+            exclude_none: Whether to exclude fields that have a value of `None`.
+            exclude_computed_fields: Whether to exclude computed fields.
+                While this can be useful for round-tripping, it is usually recommended to use the dedicated
+                `round_trip` parameter instead.
+            round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
+            warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
+                "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
+            fallback: A function to call when an unknown value is encountered. If not provided,
+                a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError] error is raised.
+            serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
+            polymorphic_serialization: Whether to use model and dataclass polymorphic serialization for this call.
+    
+        Returns:
+            A dictionary representation of the model.
+        """
+>       return self.__pydantic_serializer__.to_python(
+            self,
+            mode=mode,
+            by_alias=by_alias,
+            include=include,
+            exclude=exclude,
+            context=context,
+            exclude_unset=exclude_unset,
+            exclude_defaults=exclude_defaults,
+            exclude_none=exclude_none,
+            exclude_computed_fields=exclude_computed_fields,
+            round_trip=round_trip,
+            warnings=warnings,
+            fallback=fallback,
+            serialize_as_any=serialize_as_any,
+            polymorphic_serialization=polymorphic_serialization,
+        )
+E       pyo3_runtime.PanicException: called `Result::unwrap()` on an `Err` value: PyErr { type: <class 'AssertionError'>, value: AssertionError('unexpected initialization'), traceback: Some("<unformattable <traceback object at 0x7c46993f3040>>") }
+
+/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/pydantic/main.py:475: PanicException
+----------------------------- Captured stderr call -----------------------------
+Exception ignored in sys.unraisablehook: functools.partial(<function unraisable_hook at 0x7c469a1dda80>, append=<built-in method append of collections.deque object at 0x7c469a1f9030>)
+Traceback (most recent call last):
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/unraisableexception.py", line 123, in unraisable_hook
+  File "/tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/_pytest/tracemalloc.py", line 9, in tracemalloc_message
+  File "/mnt/d/小说/AI-Novel-Studio-Latest-Product/tests/test_provider_runtime_v2_routing_service.py", line 85, in forbidden
+AssertionError: unexpected initialization
+
+thread '<unnamed>' (158204) panicked at src/common/missing_sentinel.rs:12:18:
+called `Result::unwrap()` on an `Err` value: PyErr { type: <class 'AssertionError'>, value: AssertionError('unexpected initialization'), traceback: Some("<unformattable <traceback object at 0x7c46993f3040>>") }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+- generated xml file: /mnt/d/小说/AI-Novel-Studio-Latest-Product/docs/delivery/full-recovery/verification/import-fixture-diagnostic/diagnostic.xml -
+=========================== short test summary info ============================
+FAILED tests/test_provider_runtime_v2_routing_service.py::test_host_absent_does_not_import_initialize_or_collect
+ERROR tests/test_provider_runtime_v2_routing_service.py::test_host_absent_does_not_import_initialize_or_collect
+1 failed, 1 error in 2.71s

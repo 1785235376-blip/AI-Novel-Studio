@@ -1,0 +1,62 @@
+{
+  "boundary": "TRANSITION_2_INCOMPLETE; actual events and partial JUnit only; not a complete suite receipt",
+  "reason": "Original global builtins.__import__ test monkeypatch remains active during Python3.12 Path/coverage call-report; original guards reject pytest INTERNALERROR; source later restored immutable V1 and changes package provenance",
+  "unique_observed_nodes": 3162,
+  "phase_counts": {
+    "setup:passed": 2549,
+    "call:passed": 2548,
+    "teardown:passed": 3161,
+    "setup:skipped": 613
+  },
+  "failed_event_count": 0,
+  "run": {
+    "boundary": "Local WSL Ubuntu 24.04/Python 3.12.3 supplemental validation; not hosted Actions/Python 3.12.9; strict guards unchanged",
+    "start_utc": "2026-10-07T10:12:20.977511+00:00",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "backend": "file",
+    "shard": 0,
+    "project": "/tmp/ai-novel-full-recovery-j3hg2js6/project",
+    "arguments": [
+      "/tmp/ai-novel-full-recovery-j3hg2js6/venv/bin/python",
+      "-m",
+      "pytest",
+      "-p",
+      "postgres_gate",
+      "-p",
+      "suite_coverage",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp=/tmp/ai-novel-full-recovery-j3hg2js6/sandbox-file-0/pytest",
+      "-q",
+      "-ra",
+      "--tb=short",
+      "--ci-scope=backend",
+      "--ci-shard-index=0",
+      "--ci-shard-count=1",
+      "--ci-coverage-manifest=/tmp/ai-novel-full-recovery-j3hg2js6/project/.github/ci/coverage_manifest.json.gz",
+      "--ci-coverage-dir=/tmp/ai-novel-full-recovery-j3hg2js6/receipts/file",
+      "--junitxml=/tmp/ai-novel-full-recovery-j3hg2js6/receipts/file/backend.xml"
+    ],
+    "timeout_seconds": 1200,
+    "manifest_sha256": "7e03e639ce4cd99230bcfe18efcf7703f5fd939f4e83ace2308b4284b38d49f9",
+    "source_tree": "local-working-source-7bdd12fc2e2eed8acd0410f8dc059bdad01651ed1a02eab26f6a1c70dac1cb62",
+    "checked_out_sha": "3efa0393861c0dcddab7bd74e6d12e5ec483e7b1",
+    "timed_out": false,
+    "elapsed_seconds": 350.516,
+    "process_exitcode": 1,
+    "end_utc": "2026-10-07T10:18:16.917946+00:00"
+  },
+  "junit": [
+    {
+      "name": "pytest",
+      "errors": "1",
+      "failures": "0",
+      "skipped": "613",
+      "tests": "3163",
+      "time": "346.454",
+      "timestamp": "2026-10-07T18:12:21.487385+08:00",
+      "hostname": "localhost"
+    }
+  ]
+}

@@ -16,6 +16,8 @@
 | 历史资产/PR恢复 | ALL_VERSION_MAP、完整Git后继、新branch、8旧独有commit patch、33exact-head artifact CRC/SHA验证 | PR36–45全部祖先保留、322历史commits/1431artifact索引 | DONE元数据/相关exact-headbytes；剩余历史artifactbytes未全部下载 |
 | 双存储完整回归/最新候选包 | 原strict suite/reconcile/PG gate保持，sourcefreeze manifest；officialSDK/pinnedfont/approvedbase依赖补齐 | 本地过渡完整suite保留RED、Linux final与最新Windows package在进行 | PENDING |
 
-每项代码路径和边界：[CORE_CHAIN_EVIDENCE](docs/delivery/full-recovery/CORE_CHAIN_EVIDENCE.md)、[PRODUCT_SURFACE_EVIDENCE](docs/delivery/full-recovery/PRODUCT_SURFACE_EVIDENCE.md)、[独立源/测试保护审核](docs/delivery/full-recovery/INDEPENDENT_SOURCE_REVIEW.md)。没有删除原9,116节点、旧skip dictionaries或失败证据。两路径fixture仅POSIX序列化；visual原expect保留，两旧gold迁移有原PR45同图证据。三个strict guards不变。
+每项代码路径和边界：[CORE_CHAIN_EVIDENCE](docs/delivery/full-recovery/CORE_CHAIN_EVIDENCE.md)、[PRODUCT_SURFACE_EVIDENCE](docs/delivery/full-recovery/PRODUCT_SURFACE_EVIDENCE.md)、[独立源/测试保护审核](docs/delivery/full-recovery/INDEPENDENT_SOURCE_REVIEW.md)。没有删除原9,116节点、旧skip dictionaries或失败证据。两路径fixture仅POSIX序列化；ZIP fixture仅真实恶意raw entry序列化；routing fixture仅在原SUT/原assert范围内限制import并在pytest报告前恢复，49原assert保留；visual原expect保留，两旧gold迁移有原PR45同图证据。三个strict guards不变。
 
 可信local UI已完成；最终严格suite和candidatepackage仍在执行，结果确认后更新。
+
+最终冻结第二版：9151节点（原9116+35），1567输入，source ce2fbe8ad342fe1969e8c26d729023f7b66352bed95113f98ffa4d847b3f764b。原V1生成器/清单已恢复PR45固定字节；原硬编码V1校验不变。第一候选3efa039的Interop RED和本机过渡INTERNALERROR全部保留，不能当最终全绿。实际AI/API/browser证明的application fingerprint为4b3b6a662294e324e31e8d068b17db886269eb865442bf5b10bdd606e4bd035e；此轮仅协议工具恢复、fixture清理和恢复材料清单修正，app实现未再改变。

@@ -1,7 +1,7 @@
 {
   "baseline_sha": "665817243cad59eef0d4140f17c2ea644f46971e",
   "original_test_fixture_files": 743,
-  "byte_identical_git_blobs": 738,
+  "byte_identical_git_blobs": 737,
   "changed_original_files": [
     {
       "path": "frontend/tests/visual/design-system.spec.ts",
@@ -45,6 +45,20 @@
       "review_scope": "Explicit visual golden update; original assertion/source audit remains separate"
     },
     {
+      "path": "tests/test_provider_runtime_v2_routing_service.py",
+      "baseline_git_blob": "1dd5be746b474bbf01a970eb8a11596c34820d11",
+      "current_git_blob": "d42b74d2ba69efeaf545d9eae90f5eaf5dfd1c76",
+      "baseline_bytes": 18220,
+      "current_bytes": 18275,
+      "baseline_sha256": "f4d076782972c9c4462e9964df256aad571c793dc1aa594516f1cbae479020b4",
+      "current_sha256": "22a782f56f708a476c72313796a8629c935e93296e298fba63859d4610b28e40",
+      "assertions_identical": true,
+      "original_assertions": 49,
+      "current_assertions": 49,
+      "baseline_assertion_sha256": "e1718cae790b3cd8e0e8bfe18608c072eb6f6082837b9d72e6ca71034c3340f3",
+      "current_assertion_sha256": "e1718cae790b3cd8e0e8bfe18608c072eb6f6082837b9d72e6ca71034c3340f3"
+    },
+    {
       "path": "tests/test_r2_windows_base_inputs.py",
       "baseline_git_blob": "a9f40178e2154f0bf3d1c7f45b0536a3a6470fdf",
       "current_git_blob": "b0ae174f5f62b2e0ab3f809a3e8d2a72e7bce435",
@@ -55,8 +69,8 @@
       "assertions_identical": true,
       "original_assertions": 34,
       "current_assertions": 34,
-      "baseline_assertion_sha256": "7f8561f8b006192d7e1aeee42bfc2166a95f4c4f3f21d926c17d6eafb317abb0",
-      "current_assertion_sha256": "7f8561f8b006192d7e1aeee42bfc2166a95f4c4f3f21d926c17d6eafb317abb0"
+      "baseline_assertion_sha256": "1edfd6b41333813a4f57dc535948f0b214669a58dfe670dc97b92ada73f98688",
+      "current_assertion_sha256": "1edfd6b41333813a4f57dc535948f0b214669a58dfe670dc97b92ada73f98688"
     },
     {
       "path": "tests/test_surface_api_catalog.py",
@@ -69,8 +83,8 @@
       "assertions_identical": true,
       "original_assertions": 18,
       "current_assertions": 18,
-      "baseline_assertion_sha256": "329f04a9eeb34ae9b53aac5cab40b8f7f16ffaf47150428b2f0cf660beffb3b3",
-      "current_assertion_sha256": "329f04a9eeb34ae9b53aac5cab40b8f7f16ffaf47150428b2f0cf660beffb3b3"
+      "baseline_assertion_sha256": "df4de78ef94ea05c738dcbcb34f6c9980ffdfb20f1ab5f103ab59b1be1f48d3c",
+      "current_assertion_sha256": "df4de78ef94ea05c738dcbcb34f6c9980ffdfb20f1ab5f103ab59b1be1f48d3c"
     }
   ],
   "status": "EXCEPTIONS_REQUIRING_EXPLICIT_REVIEW"

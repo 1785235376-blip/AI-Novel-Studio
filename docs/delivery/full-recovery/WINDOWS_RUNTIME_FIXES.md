@@ -7,7 +7,7 @@
 | 问题 | 实际原因与补全 | 原测试证据 |
 | --- | --- | --- |
 | 跨进程 File CAS 不等待锁，原四个 lifecycle race 失败 | Windows 字节锁同时禁止读取被锁字节；`mutation_coordinator._lock_file` 在锁前 `read(1)` 立即 PermissionError。改为 `os.fstat(fd).st_size` 检查是否需要初始化，原 msvcrt 锁与解锁不变。 | `verification/file-lifecycle-diagnostic.log/.xml` 四项 RED；`file-lifecycle-utf8-after.log/.xml` 原全部 lifecycle 加两项 index 共 29 passed，13.30s。 |
-| Interop 合约生成字节不等于已登记原合约 | Windows 默认文本换行写出 CRLF；原 schema/TS/Rust 采用 LF。原 generator 所有写入明确 UTF-8 与 LF，parity key 采用 `as_posix`，重新生成只更新 generator 源文件摘要。 | `verification/file-platform-diagnostic.log/.xml` 原 byte-equality RED；`interop-worker-windows-after.log/.xml` 原完整 contracts + worker 206 passed，9.85s。原所有 schema、TS、Rust 字节未改。 |
+| Interop 合约生成字节不等于已登记原合约；最初修复已撤回 | Windows 默认文本换行写出 CRLF，原 schema/TS/Rust 采用 LF。最初修改 generator 写入和 parity key，focused tests 虽过，却违反原 Desktop V1 immutable 37-file 合约。Hosted 原冻结 checker 正确拒绝；最终精确恢复 PR45 generator 和 parity-manifest 两原 blob，不改冻结 hash/assert。规范生成工具限定 Linux，消费既有合约不需生成。 | 原 Windows byte-equality RED 和 `interop-worker-windows-after.*` 206 passed 保留为被撤回实现证据；`verification/hosted-interop-file-red.log` 为原冻结 gate RED。恢复后的原 checker 全 37 V1 + 26 shared 文件 PASS（`frozen-interop-restore-check.log`），Linux 原 contracts 184 passed，14.77s（`frozen-interop-restore-contracts.xml`）。 |
 | Worker 真实 exit 17 被记录为 None | Windows 管道 EOF 先于 process handle signaled；`_on_crash` 在 cleanup 前有限等待 0.1s 回收真实退出码，随后仍执行原 bounded owned-process cleanup。 | 同上 worker 原 `test_worker_crash` RED → 原完整 worker 测试 PASS；原 exit 17、FAILED、stderr 隐私断言不变。 |
 | Windows native timeout 被 KeyError 覆盖 | `os.environ.copy()` 产生普通 dict，实际 key 为 `SYSTEMROOT`；原 cleanup 索引 `SystemRoot`。改为 Windows case-insensitive 查找，缺少来源时保留 tree NOT_VERIFIED 并执行原直接 owned handle cleanup，保持原 TimeoutExpired。 | `verification/file-native-verifier-diagnostic.log/.xml` RED；`file-native-verifier-after.log/.xml` 原完整 11 passed，2.89s，原 0.2s timeout 不变。 |
 
@@ -32,3 +32,9 @@
 实际结果：1200.75s 达到原 1200s 外限后终止，process exit 1，`timed_out=true`。观测 6,306 个 unique nodes；call phase 为 4,405 passed、34 failed、1 skipped，另有 2 setup failures 与 2 teardown failures，共 36 个失败节点。未完成剩余节点，未产生最终 JUnit，coverage `complete=false`。`partial-events-summary.json` 只是原事件的分类摘要，不是补造的完整测试证据。
 
 最终验证采用全新 WSL Ubuntu 24.04 原生 ext4 候选副本，复制实际源码字节且核对每个 source digest，原 Git history 留在主 Windows 工作树。Python 3.12.3、真实 ffmpeg/ffprobe 6.1.1、真实 PostgreSQL 16.15 只作为本机 Linux 补充证据；不等同于 hosted Python 3.12.9。uv 二进制来自 [官方 immutable release](https://github.com/astral-sh/uv/releases/tag/0.12.23)，校验其官方 SHA256。所有 Ubuntu 工具只下载并解包至本轮 runtime；没有安装系统包或修改已有数据库。
+
+## TRANSITION_2_INCOMPLETE：首次 native source freeze
+
+`3efa0393861c0dcddab7bd74e6d12e5ec483e7b1` / source `7bdd12fc...` 的实际原字节副本核对 2,467 files，全部 1,523 manifest source inputs 原字节相等；证据 `transition-2-native/environment/wsl-source-copy-proof.json`。原完整 File 收集/分配 9,151 nodes，原 strict guards 不变，但运行于 350.516s 自行 exit 1。原 test 的全局 `builtins.__import__` monkeypatch 在 call-report 前尚未 teardown，Python 3.12 Path 构造内导入 `ntpath` 被拒绝，导致 coverage hook 和 pytest 自身 INTERNALERROR。该运行没有正常 session-finish，coverage `complete=false`，不能当完整通过；原事件、日志、部分 JUnit 均在 `transition-2-native/file` 保留。随后 immutable V1 restore 与 package provenance 的源修复使其成为过渡版本，最终须重新冻结并完整回归。
+
+同一过渡副本原 153 coverage infrastructure selftests PASS（2.69s），原双独立 uvicorn/loopback TCP gate 2 passed（29.55s），全部属于该源版本的独立证据，不用于替代最终完整 File suite。

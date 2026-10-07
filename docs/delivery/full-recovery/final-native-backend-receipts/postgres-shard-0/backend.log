@@ -1,0 +1,149 @@
+ss...s.ss...sssss..sssssssss....sssss.......ssssssssss......ss..s.ssss.. [  1%]
+..sss..ss..s.s..ss....ss.s..ss..sss..sss...ss..ss..sss..s...ss..ss...sss [  3%]
+ss.s.s.....ssss..s..ss......ss..........s.ssss...s.s.sss................ [  4%]
+........................................................................ [  6%]
+........s........s..ssss..........................s..................... [  7%]
+.............................ssssssssssssss..............s.............. [  9%]
+.................................................ss..................... [ 11%]
+........................................................................ [ 12%]
+........................................................................ [ 14%]
+.................................................sssss.....s.s.s.sss.ss. [ 15%]
+s.ss.sss....s..s.ss.ss.s.s.s..s.sssss....s..........ss....s....s........ [ 17%]
+.............................................................ssss....... [ 18%]
+...s.................................................................... [ 20%]
+........................................................................ [ 22%]
+........................................................................ [ 23%]
+....................................................ss....ssss..sss..s.s [ 25%]
+s..s..s..sss..s..sss..s..s...ss...ss..ss....sss.s.sss...ss.ss..ss..ss.s. [ 26%]
+.ss.s..s..s..s...s..s..sss..s...ss.ss.ss.....ss.ss..ss.ss.s.ss.sss...s.. [ 28%]
+s..s.s.s..ss.s...sss..s..s...s..ss.s.ss.s.s..s....ss.ss.....ss.ss.ss.s.. [ 29%]
+ss..sss.ss.sssss....ss....ss.......s.ss.s.....s......s.s.s..ss..sssssss. [ 31%]
+...s...s..ssss...ss.ssssss..s.s...s.ssss..........sss.ss.ss..sss...s.ss. [ 33%]
+.ss..s.s...........................................s.................... [ 34%]
+........................................................................ [ 36%]
+........................................................................ [ 37%]
+.........................................................F..........s... [ 39%]
+...s.s.s.....ss.s.s.................................s
+=================================== FAILURES ===================================
+_________ test_real_locked_metadata_closes_windows_dependency_markers __________
+tests/test_r2_windows_base_inputs.py:148: in test_real_locked_metadata_closes_windows_dependency_markers
+    base.validate_dependency_closure(lock)
+scripts/prepare_windows_base.py:181: in validate_dependency_closure
+    from pip._vendor.packaging.markers import default_environment
+E   ModuleNotFoundError: No module named 'pip'
+=============================== warnings summary ===============================
+../venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /tmp/ai-novel-full-recovery-j3hg2js6/venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /tmp/ai-novel-full-recovery-j3hg2js6/final-backend-receipts/postgres-shard-0/backend.xml -
+=========================== short test summary info ============================
+SKIPPED [5] tests/test_a43_context_identity.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_a43_context_identity.py:133: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_a43_context_identity.py:178: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_a43_drive_prefix_identity.py:16: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_a43_drive_prefix_identity.py:38: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_a43_drive_prefix_identity.py:51: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [4] tests/test_a43_duplicate_heading.py:44: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [5] tests/test_a43_duplicate_heading.py:64: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [10] tests/test_a43_file_identity.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [47] tests/test_a43_identity_references.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_a43_identity_references.py:525: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_a43_known_document_nodes.py:53: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_a43_known_document_nodes.py:67: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_a43_known_document_nodes.py:113: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_a43_rich_document.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [4] tests/test_a43_rich_document.py:197: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_a43_rich_document.py:261: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_a43_rich_document.py:326: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_context_intelligence.py:153: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_context_pack_v2.py:103: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_continuity_api.py:16: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_continuity_api.py:24: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_continuity_api.py:38: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_continuity_api.py:49: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_credential_vault.py:229: manual Windows Credential Manager integration only
+SKIPPED [2] tests/test_file_project_lifecycle.py:67: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [4] tests/test_file_project_lifecycle.py:101: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_file_project_lifecycle.py:169: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_file_project_lifecycle.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_file_project_lifecycle.py:327: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_file_project_lifecycle.py:376: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_generation_snapshot_runtime_v056.py:55: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_jobs_v03.py:15: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_jobs_v03.py:27: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [5] tests/test_local_interop_desktop_runtime.py:60: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [6] tests/test_local_interop_desktop_runtime.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_local_interop_desktop_runtime.py:261: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [9] tests/test_local_interop_host.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_local_interop_host.py:173: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_local_interop_host.py:203: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_local_interop_host.py:395: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_local_interop_host.py:528: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [5] tests/test_local_interop_host.py:611: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_lore_context_contract.py:78: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_lore_context_contract.py:89: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_lore_contract.py:79: Migration 004 is intentionally absent in Phase 1
+SKIPPED [1] tests/test_memory_agent_contract.py:49: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_narrative_api.py:8: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_narrative_api.py:18: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_narrative_context.py:29: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_narrative_context.py:66: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_narrative_progress_api.py:19: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_post_interop_author_added_sources.py:87: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [4] tests/test_post_interop_author_added_sources.py:106: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [11] tests/test_post_interop_author_added_sources.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [5] tests/test_post_interop_creation_mounted.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_post_interop_creation_tasks.py:9: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_post_interop_creation_upgrade.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_post_interop_embedding_feature_isolation.py:54: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_post_interop_embedding_feature_isolation.py:76: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_post_interop_embedding_feature_isolation.py:99: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [8] tests/test_post_interop_extended_mounted.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_post_interop_extended_mounted.py:51: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_post_interop_interactive_history.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [6] tests/test_post_interop_media_continuation.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_post_interop_media_visibility.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_post_interop_media_visibility.py:125: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_post_interop_media_visibility.py:158: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_post_interop_revision_compare.py:40: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_post_interop_revision_compare.py:50: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [4] tests/test_post_interop_revision_compare.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [9] tests/test_post_interop_revision_model.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [6] tests/test_post_interop_scene_mind.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_post_interop_scene_mind.py:85: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_post_interop_scene_mind.py:174: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [4] tests/test_post_interop_shared_universe.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_post_interop_shared_universe.py:97: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [4] tests/test_post_interop_structured_search.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [5] tests/test_post_interop_style_judge.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_post_interop_style_judge_mounted.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [16] tests/test_post_interop_style_model.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_post_interop_style_model.py:112: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_post_interop_style_model.py:227: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [4] tests/test_post_interop_task_reopen.py:16: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_post_interop_task_reopen.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_post_interop_translation_memory.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_post_interop_wave3_broker.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_post_interop_wave3_broker.py:36: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [4] tests/test_post_interop_wave3_research.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [6] tests/test_post_interop_wave5_templates_sdk_comics.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [7] tests/test_post_interop_wave5_templates_sdk_comics.py:77: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_post_interop_wave5_templates_sdk_comics.py:217: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [9] tests/test_post_interop_workspace_ux.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [4] tests/test_post_interop_workspace_ux.py:206: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_project_authority_validation.py:75: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [8] tests/test_project_authority_validation.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_project_authority_validation.py:123: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [3] tests/test_project_authority_validation.py:133: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [2] tests/test_project_authority_validation.py:155: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_provider_runtime_v2_host_hardware_inventory.py:407: real Windows native acceptance
+SKIPPED [3] tests/test_r3_audiobook_preparation.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [5] tests/test_r3_embedding_contracts.py: File-backend implementation contract; covered by the default/File full suite
+SKIPPED [1] tests/test_r3_media_workflows.py: File-backend implementation contract; covered by the default/File full suite
+FAILED tests/test_r2_windows_base_inputs.py::test_real_locked_metadata_closes_windows_dependency_markers
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! KeyboardInterrupt !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+/usr/lib/python3.12/threading.py:355: KeyboardInterrupt
+(to show a full traceback on KeyboardInterrupt use --full-trace)
+1 failed, 1494 passed, 358 skipped, 4580 deselected, 1 warning in 422.28s (0:07:02)

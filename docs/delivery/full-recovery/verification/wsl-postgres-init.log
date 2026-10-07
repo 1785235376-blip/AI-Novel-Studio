@@ -6,7 +6,7 @@ The default text search configuration will be set to "english".
 
 Data page checksums are disabled.
 
-creating directory /tmp/ai-novel-full-recovery-j3hg2js6/pgdata ... ok
+creating directory /tmp/ai-novel-full-recovery-g632rn7e/pgdata ... ok
 creating subdirectories ... ok
 selecting dynamic shared memory implementation ... posix
 selecting default max_connections ... 100
@@ -19,7 +19,7 @@ syncing data to disk ... ok
 
 Success. You can now start the database server using:
 
-    pg_ctl -D /tmp/ai-novel-full-recovery-j3hg2js6/pgdata -l logfile start
+    pg_ctl -D /tmp/ai-novel-full-recovery-g632rn7e/pgdata -l logfile start
 
 waiting for server to start.... done
 server started

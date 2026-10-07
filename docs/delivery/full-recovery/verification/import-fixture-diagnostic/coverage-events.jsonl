@@ -1,0 +1,3 @@
+{"nodeid":"tests/test_provider_runtime_v2_routing_service.py::test_host_absent_does_not_import_initialize_or_collect","when":"setup","outcome":"passed","wasxfail":false,"skip_reason":null}
+{"nodeid":"tests/test_provider_runtime_v2_routing_service.py::test_host_absent_does_not_import_initialize_or_collect","when":"call","outcome":"failed","wasxfail":false,"skip_reason":null}
+{"nodeid":"tests/test_provider_runtime_v2_routing_service.py::test_host_absent_does_not_import_initialize_or_collect","when":"teardown","outcome":"failed","wasxfail":false,"skip_reason":null}

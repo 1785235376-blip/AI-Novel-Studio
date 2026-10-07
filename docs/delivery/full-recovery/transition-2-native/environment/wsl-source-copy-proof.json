@@ -1,0 +1,17 @@
+{
+  "origin": "Current Windows actual source bytes; no checkout/smudge",
+  "destination": "/tmp/ai-novel-full-recovery-j3hg2js6/project",
+  "files": 2467,
+  "origin_inventory_digest": "97507ab4ee581a9f0d93d1ccdb4f4115afde864e10fe1e7f85ee2938c1ab8aa5",
+  "native_copy_inventory_digest": "97507ab4ee581a9f0d93d1ccdb4f4115afde864e10fe1e7f85ee2938c1ab8aa5",
+  "all_file_sha256_equal": true,
+  "tar_sha256": "84cb56d4f04e51d21c1e2c7b8342c7d1091359c18fcbaaa3e0c4ac8f7f99cf5b",
+  "boundary": "Native ext4 copy of final candidate; original Git history stays in Windows baseline; no userdata/runtime/node_modules/venv copied",
+  "source_freeze_commit": "3efa0393861c0dcddab7bd74e6d12e5ec483e7b1",
+  "source_freeze_git_tree": "764aa6e3373aa39103919ac01faaebf15a9373ae",
+  "manifest_sha256": "7e03e639ce4cd99230bcfe18efcf7703f5fd939f4e83ace2308b4284b38d49f9",
+  "manifest_source_inputs": 1523,
+  "all_manifest_source_inputs_sha256_equal": true,
+  "source_fingerprint": "7bdd12fc2e2eed8acd0410f8dc059bdad01651ed1a02eab26f6a1c70dac1cb62",
+  "run_id": "local-recovery-20261007-linux-final"
+}

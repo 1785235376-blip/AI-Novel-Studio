@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "original_base_records": 4876,
+  "extended_records": 5087,
+  "all_original_entries_sizes_hashes_and_order_exact": true,
+  "every_extended_file_sha256_verified": true,
+  "original_runtime_inputs_unchanged": true,
+  "original_wheel_records_unchanged": true,
+  "original_provenance_sha256": "a80ba85e077b0191edaf91f8c82d59dc507e0dd4d84f4c22e05382dd94e85fa0",
+  "extended_provenance_sha256": "a4eeffdd0269da86394cf91a3652bc4a41a19289350e0910dad7f7ebfdfa1f4a",
+  "top_level_scopes": {
+    "Licenses": 9,
+    "PostgreSQL": 2818,
+    "PREREQUISITES.txt": 1,
+    "Runtime": 2259
+  },
+  "source_payload_in_base": false
+}

@@ -67,7 +67,11 @@ def collect(path: Path) -> int:
 
 
 def assertions(source: str) -> list[str]:
-    return [ast.dump(node, include_attributes=False) for node in ast.walk(ast.parse(source)) if isinstance(node, ast.Assert)]
+    # Compare the real lexical order. ast.walk's breadth-first order changes
+    # when an unchanged assertion is enclosed in a fixture cleanup context.
+    nodes = sorted((node for node in ast.walk(ast.parse(source)) if isinstance(node, ast.Assert)),
+                   key=lambda node: (node.lineno, node.col_offset))
+    return [ast.dump(node, include_attributes=False) for node in nodes]
 
 
 def baseline_manifest() -> tuple[dict, bytes]:
@@ -155,14 +159,18 @@ def build(output: Path) -> dict:
                 '    with zipfile.ZipFile(stream, "w") as value:\n        for name in names:\n            value.writestr(name, b"synthetic")',
                 '    with zipfile.ZipFile(stream, "w") as value:\n        for name in names:\n            info = zipfile.ZipInfo(name)\n            info.filename = name\n            value.writestr(info, b"synthetic")',
                 "Archive fixture serializes the actual raw malicious ZIP entry before Windows ZipInfo normalization; all assertions/parameters unchanged"),
+            "tests/test_provider_runtime_v2_routing_service.py": (
+                'def test_host_absent_does_not_import_initialize_or_collect(facts, monkeypatch):\n    monkeypatch.delitem(sys.modules, "app.dependencies", raising=False)\n    def forbidden(*args, **kwargs):\n        raise AssertionError("unexpected initialization")\n    monkeypatch.setattr(service, "build_provider_runtime_snapshot", forbidden)\n    monkeypatch.setattr(builtins, "__import__", forbidden)\n    report = service.route_provider_request(facts.request)\n    assert report.service_codes == (service.ServiceCode.HOST_NOT_INITIALIZED,)\n    assert not report.snapshot_complete',
+                'def test_host_absent_does_not_import_initialize_or_collect(facts, monkeypatch):\n    def forbidden(*args, **kwargs):\n        raise AssertionError("unexpected initialization")\n    with monkeypatch.context() as guarded:\n        guarded.delitem(sys.modules, "app.dependencies", raising=False)\n        guarded.setattr(service, "build_provider_runtime_snapshot", forbidden)\n        guarded.setattr(builtins, "__import__", forbidden)\n        report = service.route_provider_request(facts.request)\n        assert report.service_codes == (service.ServiceCode.HOST_NOT_INITIALIZED,)\n        assert not report.snapshot_complete',
+                "Original forbidden import/initialization guard remains active for the original route call and both original assertions; monkeypatch context restores it before pytest reporters; every original assertion AST and node preserved"),
         }
         if name not in reviewed_replacements:
             raise ValueError("unreviewed original frozen source changed: " + name)
         before = subprocess.check_output(["git", "show", BASELINE_SHA + ":" + name], cwd=ROOT).decode("utf-8")
         after = (ROOT / name).read_text(encoding="utf-8")
         old, new, scope = reviewed_replacements[name]
-        if name == "tests/test_r2_windows_base_inputs.py" and before.count(old) != 1:
-            raise ValueError("reviewed malicious archive fixture context is not unique")
+        if name != "tests/test_surface_api_catalog.py" and before.count(old) != 1:
+            raise ValueError("reviewed fixture context is not unique")
         required = before.replace(old, new)
         if after != required or assertions(before) != assertions(after):
             raise ValueError("source fixture exception exceeds the exact reviewed correction: " + name)
@@ -187,6 +195,8 @@ def build(output: Path) -> dict:
                          *sorted(path for path in (ROOT / "contracts/local-interop/v1").rglob("*") if path.is_file()),
                          *sorted((ROOT / "scripts").glob("*.py")),
                          *sorted((ROOT / "scripts").glob("*.cjs")),
+                         *sorted((ROOT / "scripts").glob("*.ps1")),
+                         *sorted(path for path in (ROOT / "scripts/installer").rglob("*") if path.is_file()),
                          *sorted((ROOT / "packaging").glob("*.json")),
                          *sorted((ROOT / "packaging").glob("*.txt")),
                          *sorted(path for path in (ROOT / "frontend/src").rglob("*") if path.is_file()),
@@ -198,6 +208,12 @@ def build(output: Path) -> dict:
                          *sorted((ROOT).glob("API_CATALOG*")), ROOT / "API_OPENAPI.json.gz",
                          *sorted(path for path in (ROOT / "prompts").rglob("*") if path.is_file()),
                          ROOT / "pyproject.toml",
+                         ROOT / "global.json",
+                         *sorted(path for path in (ROOT / "desktop-host").rglob("*")
+                                 if path.is_file() and not {"bin", "obj"}.intersection(path.relative_to(ROOT / "desktop-host").parts)
+                                 and path.suffix in {".cs", ".csproj", ".props", ".targets", ".json", ".config"}),
+                         *sorted(path for path in (ROOT / "release").rglob("*") if path.is_file()),
+                         *sorted(ROOT.glob("*.ps1")), *sorted(ROOT.glob("*.cmd")),
                          Path(__file__).resolve()]
     for path in additional_inputs:
         candidate["source_files"][path.relative_to(ROOT).as_posix()] = sha(path.read_bytes())
