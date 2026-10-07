@@ -1,0 +1,159 @@
+{
+  "kind": "A43_TEST_ONLY_MEASUREMENT_AST_AND_NODE_PRESERVATION",
+  "old_commit": "d80e4dc0429c219948e66abf2a8994cc706f3227",
+  "old_file_sha256": "fc75e35365adcdde89ae3c5531c317de63d924067aefe1385e7fa2412de7e45f",
+  "new_file_sha256": "7425bfd8b017de1bf89954914b0c10df6d325d8267e5cb4f4a6b0827a75c4238",
+  "only_modified_existing_module_member": "export_text",
+  "entire_module_excluding_export_text_ast_sha256": "a5b615793ad3fc7d0f15f7a0ff87940fa348da5ef5fdbe0342db6670bbb6fc38",
+  "before_after_excluding_helper_ast_identical": true,
+  "functions": [
+    {
+      "name": "rich_env",
+      "before_after_ast_sha256": "714656349a6baedab066734e0f22a400d83b8d7648e26a48b3bd4a4109baa09a",
+      "identical": true
+    },
+    {
+      "name": "test_recursive_projection_contains_every_editor_text_node_and_hardbreak",
+      "before_after_ast_sha256": "4811ac0dc4c8a2f00ab14cfbc016cfa12900d5b0853ead81e0a3f80efa7ec11e",
+      "identical": true
+    },
+    {
+      "name": "test_unknown_nodes_and_marks_fail_explicitly",
+      "before_after_ast_sha256": "7959b81a2e4881b26647276d889ed5dd41971230318a0a378f56ba4693c3646b",
+      "identical": true
+    },
+    {
+      "name": "test_save_reopen_duplicate_preserve_full_structure_and_single_title",
+      "before_after_ast_sha256": "a38e21688271a9b3c7eff315001a5a37e587dc6f2d6ec1e3a3b09511881d2603",
+      "identical": true
+    },
+    {
+      "name": "test_unsupported_save_keeps_document_version_and_history_unchanged",
+      "before_after_ast_sha256": "ad46109b793bdce7d491f95cf8acf3e17df98acf3f433c5b4e6dacbfda59b417",
+      "identical": true
+    },
+    {
+      "name": "test_plain_search_interop_diff_and_pm_selection_coordinates_agree",
+      "before_after_ast_sha256": "026ab0ea49dcbec9e77641c4990b6393d3cc5bed1e6dfdc3566bdf2a1b23c757",
+      "identical": true
+    },
+    {
+      "name": "test_original_api_aliases_and_export_queue_keep_entire_rich_text",
+      "before_after_ast_sha256": "8a19d8dc46eb6d265940dcf1cf7e7cb5cb6b49a60db681ed9a7af0688016fc9a",
+      "identical": true
+    },
+    {
+      "name": "test_exporters_prefer_document_over_stale_projection_and_reject_unknown",
+      "before_after_ast_sha256": "82c5f9f51eade85d5cacedf42e830b32d2ed12f3b39c9214eb4d7794c19882e7",
+      "identical": true
+    },
+    {
+      "name": "test_pdf_cid_fallback_rejects_unrepresentable_emoji_instead_of_success",
+      "before_after_ast_sha256": "9c29118d7db773746771008b29f3c609566199f697695ee3b44a9064e62fb907",
+      "identical": true
+    },
+    {
+      "name": "test_unknown_put_is_clear_client_error_and_keeps_original_authority",
+      "before_after_ast_sha256": "4e01c8a6eabd491a25a4bc6c72550405d0c585fe8d3d942059d8d964ba42f57c",
+      "identical": true
+    },
+    {
+      "name": "test_legacy_unknown_document_read_copy_export_leave_original_json_untouched",
+      "before_after_ast_sha256": "257069bb2a1dcfc521e8468112591090278aa41c05340c18eacabedbdc073c08",
+      "identical": true
+    },
+    {
+      "name": "test_source_context_and_exact_selection_use_full_saved_projection",
+      "before_after_ast_sha256": "3727c49ce126badd145ab93bb754fbf5b03687f2d0980e42bbc871b4cb8aa207",
+      "identical": true
+    },
+    {
+      "name": "test_export_snapshot_is_frozen_after_later_rich_edits",
+      "before_after_ast_sha256": "5abaa1a0cb31039b0324cab104524ac14fa5099e18ac21b374653b1deb96cb57",
+      "identical": true
+    },
+    {
+      "name": "test_duplicate_title_does_not_remove_body_nodes",
+      "before_after_ast_sha256": "57a3b56b0690625bb3a1c7f3c4c896610700d6e642eafb10bf4d0baee862f5d6",
+      "identical": true
+    },
+    {
+      "name": "test_original_pdf_queue_rejects_emoji_and_exports_supported_nested_text",
+      "before_after_ast_sha256": "8544d7e420d4dc592f77399502abdf6a8cc3a9896fc1dc4b15c5c1b925763414",
+      "identical": true
+    },
+    {
+      "name": "test_shared_frontend_fixture_pins_plain_and_pm_coordinates",
+      "before_after_ast_sha256": "fd7bd2b2b32e6fef592e381464f37a815d9e35924f93f05348b7dbe722bc1ebc",
+      "identical": true
+    },
+    {
+      "name": "test_empty_blocks_and_literal_code_whitespace_are_not_collapsed",
+      "before_after_ast_sha256": "483e7ea9b6ebdf8de6630a3a80b1dcb2645e4c4421240f61bb99cb562a487829",
+      "identical": true
+    }
+  ],
+  "same_45_node_ids": [
+    "tests.test_a43_rich_document::test_duplicate_title_does_not_remove_body_nodes[file-empty]",
+    "tests.test_a43_rich_document::test_duplicate_title_does_not_remove_body_nodes[file-marked-title]",
+    "tests.test_a43_rich_document::test_duplicate_title_does_not_remove_body_nodes[file-non-title-heading]",
+    "tests.test_a43_rich_document::test_duplicate_title_does_not_remove_body_nodes[postgres-empty]",
+    "tests.test_a43_rich_document::test_duplicate_title_does_not_remove_body_nodes[postgres-marked-title]",
+    "tests.test_a43_rich_document::test_duplicate_title_does_not_remove_body_nodes[postgres-non-title-heading]",
+    "tests.test_a43_rich_document::test_empty_blocks_and_literal_code_whitespace_are_not_collapsed",
+    "tests.test_a43_rich_document::test_export_snapshot_is_frozen_after_later_rich_edits[file]",
+    "tests.test_a43_rich_document::test_export_snapshot_is_frozen_after_later_rich_edits[postgres]",
+    "tests.test_a43_rich_document::test_exporters_prefer_document_over_stale_projection_and_reject_unknown",
+    "tests.test_a43_rich_document::test_legacy_unknown_document_read_copy_export_leave_original_json_untouched",
+    "tests.test_a43_rich_document::test_original_api_aliases_and_export_queue_keep_entire_rich_text[file-/api-OFF]",
+    "tests.test_a43_rich_document::test_original_api_aliases_and_export_queue_keep_entire_rich_text[file-/api-ON]",
+    "tests.test_a43_rich_document::test_original_api_aliases_and_export_queue_keep_entire_rich_text[file-/api-V1]",
+    "tests.test_a43_rich_document::test_original_api_aliases_and_export_queue_keep_entire_rich_text[file-/api/v1-OFF]",
+    "tests.test_a43_rich_document::test_original_api_aliases_and_export_queue_keep_entire_rich_text[file-/api/v1-ON]",
+    "tests.test_a43_rich_document::test_original_api_aliases_and_export_queue_keep_entire_rich_text[file-/api/v1-V1]",
+    "tests.test_a43_rich_document::test_original_api_aliases_and_export_queue_keep_entire_rich_text[postgres-/api-OFF]",
+    "tests.test_a43_rich_document::test_original_api_aliases_and_export_queue_keep_entire_rich_text[postgres-/api-ON]",
+    "tests.test_a43_rich_document::test_original_api_aliases_and_export_queue_keep_entire_rich_text[postgres-/api-V1]",
+    "tests.test_a43_rich_document::test_original_api_aliases_and_export_queue_keep_entire_rich_text[postgres-/api/v1-OFF]",
+    "tests.test_a43_rich_document::test_original_api_aliases_and_export_queue_keep_entire_rich_text[postgres-/api/v1-ON]",
+    "tests.test_a43_rich_document::test_original_api_aliases_and_export_queue_keep_entire_rich_text[postgres-/api/v1-V1]",
+    "tests.test_a43_rich_document::test_original_pdf_queue_rejects_emoji_and_exports_supported_nested_text[file]",
+    "tests.test_a43_rich_document::test_original_pdf_queue_rejects_emoji_and_exports_supported_nested_text[postgres]",
+    "tests.test_a43_rich_document::test_pdf_cid_fallback_rejects_unrepresentable_emoji_instead_of_success",
+    "tests.test_a43_rich_document::test_plain_search_interop_diff_and_pm_selection_coordinates_agree",
+    "tests.test_a43_rich_document::test_recursive_projection_contains_every_editor_text_node_and_hardbreak",
+    "tests.test_a43_rich_document::test_save_reopen_duplicate_preserve_full_structure_and_single_title[file]",
+    "tests.test_a43_rich_document::test_save_reopen_duplicate_preserve_full_structure_and_single_title[postgres]",
+    "tests.test_a43_rich_document::test_shared_frontend_fixture_pins_plain_and_pm_coordinates",
+    "tests.test_a43_rich_document::test_source_context_and_exact_selection_use_full_saved_projection[file]",
+    "tests.test_a43_rich_document::test_source_context_and_exact_selection_use_full_saved_projection[postgres]",
+    "tests.test_a43_rich_document::test_unknown_nodes_and_marks_fail_explicitly[node0-document_to_markdown]",
+    "tests.test_a43_rich_document::test_unknown_nodes_and_marks_fail_explicitly[node0-plain_text]",
+    "tests.test_a43_rich_document::test_unknown_nodes_and_marks_fail_explicitly[node1-document_to_markdown]",
+    "tests.test_a43_rich_document::test_unknown_nodes_and_marks_fail_explicitly[node1-plain_text]",
+    "tests.test_a43_rich_document::test_unknown_nodes_and_marks_fail_explicitly[node2-document_to_markdown]",
+    "tests.test_a43_rich_document::test_unknown_nodes_and_marks_fail_explicitly[node2-plain_text]",
+    "tests.test_a43_rich_document::test_unknown_put_is_clear_client_error_and_keeps_original_authority[file-/api/v1]",
+    "tests.test_a43_rich_document::test_unknown_put_is_clear_client_error_and_keeps_original_authority[file-/api]",
+    "tests.test_a43_rich_document::test_unknown_put_is_clear_client_error_and_keeps_original_authority[postgres-/api/v1]",
+    "tests.test_a43_rich_document::test_unknown_put_is_clear_client_error_and_keeps_original_authority[postgres-/api]",
+    "tests.test_a43_rich_document::test_unsupported_save_keeps_document_version_and_history_unchanged[file]",
+    "tests.test_a43_rich_document::test_unsupported_save_keeps_document_version_and_history_unchanged[postgres]"
+  ],
+  "inventory_count": 45,
+  "inventory_sha256": "35e93dfd22583d6a5964a475975331c95b9645b1afff8e3ffdfd496b9498c1c5",
+  "junit_sources": {
+    "historical_before_helper": {
+      "basename": "rich-final-file.xml",
+      "sha256": "9d107eccfa396c80b5b3156432e718d7824e14dd228a39e48667df9e692b118b"
+    },
+    "final_same_helper_baseline": {
+      "basename": "final-rich-same-test-baseline-red.xml",
+      "sha256": "af4651a0bacfb54783be0832c65f33badfe5303cd5fa0f9bc1e681c2e1df439f"
+    },
+    "final_same_helper_fixed": {
+      "basename": "final-rich-same-test-fixed-green.xml",
+      "sha256": "6ad0115d4bca037e505e68b986bdc68224c13d09f7582682bd13e2800b078678"
+    }
+  }
+}

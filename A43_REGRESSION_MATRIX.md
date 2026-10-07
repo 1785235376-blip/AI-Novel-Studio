@@ -39,3 +39,10 @@ F00 remains INTEGRATED; 39 features remain PARTIAL. Historical independent revie
 - Complete 1d9 frontend: 1269 pass/8 original skips; separate actual TS client 2 pass; 94 distinct browser journeys. Both backend-profile Interop lanes 345 pass/68 opposite skips; Windows Host 59, reference pipe 8+33 and bounded native base recovery smoke passed. Trigger duplicates and overlapping suites are not summed.
 
 Original/public receipt hashes and executor-metadata-only redaction are separately recorded. The old failure history is retained. The final corrected-head verdict must cite its own SHA/tree/run/attempt and original strict aggregate receipt, not these earlier checkpoint counts.
+
+
+## Final added evidence
+
+The final collection is 7,919 nodes: original 7,492 plus 427 additive cases. Added since the completed d80 run: eleven File-only drive-prefix cases and eight shared DOCX measurement cases. The latter fix only a new test extractor; all existing assertions and the complete 45-case rich-test inventory remain unchanged, with an independent AST proof and refreshed identical-test baseline RED/repair File GREEN.
+
+The d80 checkpoint remains failed: File 5,346 passed/2,554 skipped; PostgreSQL 5,312 passed/2,580 skipped/8 measurement failures. Its twelve prior stale-task acceptance failures are now passes. A corrected-source final PASS requires all original workflows and strict source/run/attempt/node/outcome/JUnit reconciliation on that newer head. Use the exact final PR44 and workflow receipts, not earlier counts, as the acceptance record.

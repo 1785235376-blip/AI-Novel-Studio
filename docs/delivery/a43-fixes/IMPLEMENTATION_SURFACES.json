@@ -95,7 +95,7 @@
     {
       "path": "app/file_project_lifecycle.py",
       "change": "modified",
-      "sha256": "d043600912e6fb2809674d56925f4ccd1fc3b9431e6389573b531e9f55668d27",
+      "sha256": "75d23e972b8302e3a711c75ba950a96cccc301f59ba580bfb8efc5dd4e121c62",
       "area": "Original shared document, chapter repository, identity or lifecycle owner.",
       "role": "shared_owner"
     },
@@ -322,9 +322,9 @@
   "shared_owner_paths": 13,
   "bounded_dependent_consumer_paths": 26,
   "new_frontend_regression_files": 2,
-  "runtime_source_fingerprint_sha256": "c00f7b4244de673ba9f8f5834f8cd709ca306206581a1215a3aeee57fdd18580",
+  "runtime_source_fingerprint_sha256": "ecfff49910ddc5090b674a2b204d566144bac030d48501de4ae6fde62a7e7b47",
   "new_sql_migration_sha256": {
     "database/migrations/020_stable_chapter_identity.sql": "92774a1b26f4e79056e7f0d5d3fedf76b77887a109de7a1251bd6b16081722f7"
   },
-  "repair_source_fingerprint_sha256": "e7e051f8b1779bc18d89e6f74fd391622efd3921ed2f3ea5e2746136e93b4911"
+  "repair_source_fingerprint_sha256": "dee584d993d371fc8b983807dff88d6ffb17b4192c76e683ee912d2efd814fb7"
 }

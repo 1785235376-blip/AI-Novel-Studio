@@ -162,7 +162,21 @@ def export_text(payload, format):
     if format in {'docx', 'word'}:
         with ZipFile(BytesIO(payload)) as archive:
             root = ET.fromstring(archive.read('word/document.xml'))
-            return '\n'.join(''.join(p.itertext()) for p in root.iter('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}p'))
+            # Word represents hard line breaks/tabs as empty elements, not
+            # text nodes. itertext() alone silently joins the adjacent runs.
+            word = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
+            paragraphs = []
+            for paragraph in root.iter(word + 'p'):
+                parts = []
+                for node in paragraph.iter():
+                    if node.tag == word + 't':
+                        parts.append(node.text or '')
+                    elif node.tag == word + 'br':
+                        parts.append('\n')
+                    elif node.tag == word + 'tab':
+                        parts.append('\t')
+                paragraphs.append(''.join(parts))
+            return '\n'.join(paragraphs)
     if format == 'epub':
         with ZipFile(BytesIO(payload)) as archive:
             root = ET.fromstring(archive.read('OEBPS/content.xhtml'))

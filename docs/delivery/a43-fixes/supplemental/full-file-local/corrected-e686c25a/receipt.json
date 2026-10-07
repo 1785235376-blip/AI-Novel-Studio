@@ -1,0 +1,68 @@
+{
+  "kind": "SUPPLEMENTAL_LOCAL_PYTHON31214_CHANGED_SOURCE_FULL_FILE_REGRESSION",
+  "source_tree": "e686c25a81b4f62e7493a6dad8596b503e117f74",
+  "source_snapshot": "${SOURCE_ROOT}",
+  "source_manifest_sha256": "e3685280348d9ac57e83b34fdc677bb04548c5f353f3760ce04bb64682fe0f92",
+  "tracked_source_files": 2261,
+  "tracked_source_unchanged": true,
+  "main": {
+    "tests": 7900,
+    "passed": 5346,
+    "skipped": 2554,
+    "failed": 0,
+    "errors": 0,
+    "pytest_seconds": 570.4,
+    "wall_seconds": 577.2710766689997,
+    "outer_cap_seconds": 1200,
+    "runs_with_test_execution": 1,
+    "mode": "ONE_UNFILTERED_ORIGINAL_ORDER_PROCESS"
+  },
+  "original_nodes": {
+    "tests": 7492,
+    "passed": 5111,
+    "skipped": 2381
+  },
+  "new_a43_nodes": {
+    "tests": 408,
+    "passed": 235,
+    "skipped": 173,
+    "all_skips": "opposite PostgreSQL profile"
+  },
+  "tcp": {
+    "tests": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "pytest_seconds": 24.87,
+    "wall_seconds": 26.711071569003252,
+    "outer_cap_seconds": 300
+  },
+  "posthoc_reconciliation": {
+    "complete_junit_identity_mapping": true,
+    "unexpected_skips": [],
+    "source_manifest_files_checked": 401,
+    "issues": [],
+    "strict_hosted_gate": false
+  },
+  "earlier_receipts_preserved": [
+    "${PRIVATE_PRIOR_FILE_EVIDENCE}/receipt.json",
+    "${PRIVATE_PRIOR_FILE_EVIDENCE}/receipt.json"
+  ],
+  "execution_limitations": [
+    "Python 3.12.14 local, not locked hosted 3.12.9",
+    "Frozen corrected tree only",
+    "No PostgreSQL run or hosted strict plugin/source/shard/phase reconciliation",
+    "No real data, user credentials, paid/model calls, native interactive acceptance"
+  ],
+  "setup_incidents": [],
+  "untracked_generated_files": [
+    "app/__pycache__/__init__.cpython-312.pyc",
+    "app/__pycache__/plugin_test_worker.cpython-312.pyc",
+    "app/__pycache__/plugin_worker_protocol.cpython-312.pyc",
+    "data/harness_access_audit.json",
+    "logs/runtime.jsonl",
+    "tests/fixtures/.workspace-mutation-locks/468fade4b6b4071de9f737a8dc5690881ae1756d463a35287c23e6026baabf5e.lock",
+    "tests/fixtures/novels/sample_novel/chapter_identity.json"
+  ],
+  "public_policy": "Full raw logs and source inventories remain private. Selected original JUnit is encoded; executor metadata-only redaction has separate hashes and counts."
+}

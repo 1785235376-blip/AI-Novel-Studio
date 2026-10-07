@@ -58,3 +58,10 @@ The untouched real PostgreSQL baseline established same-version wrong-object sav
 After a deleted-source PG completion write is refused, the durable generation row can correctly retain an older status. Acceptance now resolves that original durable chapter before interpreting completion status, after the existing content/accounting/security checks. A missing owner remains 404/409 rather than an unrelated incomplete-draft400; an existing unfinished draft retains its original400 contract. The existing real-PG matrix and a separately labelled File refusal fixture test both conditions. No old source alias is rebound and no detached result is made writable to achieve a passing status.
 
 Prospective non-reuse and immutable owner/order separation do not reconstruct unknowable pre-upgrade generations. Existing UNKNOWN provenance is not upgraded to trusted ownership merely because current IDs/versions look consistent. Only evidenced contradictions can be quarantined automatically; uncertain historical ownership still needs independent backup evidence and explicit reconciliation. This uncertainty does not block safe new typed-ID creation in an otherwise readable legacy project.
+
+
+## Drive-qualified legacy project components
+
+File identifiers such as `C:`, `C:foo` and `D:foo` are rejected before deriving a path or lock on every platform. PureWindowsPath demonstrates that these relative drive forms may resolve to the novels directory, alias another project or change drives; checking only `is_absolute()` is insufficient. Ordinary slug-generated IDs and existing supported dot-directory IDs remain valid. This is a narrow namespace guard, not a general filesystem sandbox or native-device certification.
+
+A manually created POSIX legacy directory with such a literal ID requires explicit operator reconciliation from an isolated backup before normal application access. Its bytes are retained, with no automatic rename or ownership reassignment. This specific unsafe project-name boundary is distinct from ordinary readable legacy projects, where safe typed-UUID chapter creation remains available.

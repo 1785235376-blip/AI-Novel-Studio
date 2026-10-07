@@ -48,6 +48,30 @@
       "replacement": "${CORRECTED_TEST_RUNTIME}"
     },
     {
+      "name": "private_drive_evidence_root",
+      "replacement": "${PRIVATE_DRIVE_EVIDENCE}"
+    },
+    {
+      "name": "drive_test_home",
+      "replacement": "${TEST_HOME}"
+    },
+    {
+      "name": "drive_test_xdg",
+      "replacement": "${TEST_XDG}"
+    },
+    {
+      "name": "drive_test_data",
+      "replacement": "${TEST_DATA}"
+    },
+    {
+      "name": "private_measurement_evidence_root",
+      "replacement": "${PRIVATE_MEASUREMENT_EVIDENCE}"
+    },
+    {
+      "name": "private_prior_file_evidence",
+      "replacement": "${PRIVATE_PRIOR_FILE_EVIDENCE}"
+    },
+    {
       "name": "executor_hostname",
       "replacement": "${EXECUTOR}"
     }
@@ -237,6 +261,141 @@
       "test_identities_counts_properties_unchanged": true
     },
     {
+      "file": "hosted-d80e4dc0/backend-file/backend.xml.gz",
+      "private_original_bytes": 13049179,
+      "private_original_sha256": "c8fa0d84dd17e6be06ea4df957258b72a583e4cfceb054dd2a24ba3d5430181e",
+      "public_decoded_bytes": 12911261,
+      "public_decoded_sha256": "d06eb7d766c8395f8cf351fe3c9ffe546195b3baf56265c165bca52c8ba62295",
+      "public_file_sha256": "5b69dd7a1d7434c49820b87aec991bed3c3c278c7070c32945996102a398bb73",
+      "replacements": {
+        "hosted_checkout_root": 2554,
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "hosted-d80e4dc0/backend-file/coverage-harness.xml.gz",
+      "private_original_bytes": 20961,
+      "private_original_sha256": "b08478ad8a05075bac8cac3a2ecf1b59d00a7ec10450f6965b2b16155d49a4ad",
+      "public_decoded_bytes": 20959,
+      "public_decoded_sha256": "93fe0f3dfdf728d126057104faee4a5c46ed499d4069b9d574d91d81cc79edcf",
+      "public_file_sha256": "87ff4f3a5fe34976ee7a004314bc968c52d62839cd646ab7c96ad903dbe83727",
+      "replacements": {
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "hosted-d80e4dc0/backend-file/sync-tcp.xml.gz",
+      "private_original_bytes": 582,
+      "private_original_sha256": "1e537f0a89382b9755f88616560513bafc368478b80d223705e4d6925943f718",
+      "public_decoded_bytes": 580,
+      "public_decoded_sha256": "8fe6a42a0151047304108b042836e6c8c9d1339a3edf3ff0f89948494a709e59",
+      "public_file_sha256": "a24a30fb0d3969d14cec085db61f80a66a64b700b806e72a5d3e3c81df927d0d",
+      "replacements": {
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "hosted-d80e4dc0/backend-postgres-shard-0/backend.xml.gz",
+      "private_original_bytes": 1810523,
+      "private_original_sha256": "6d4de2b36b2751dd73dfef0b3764caac24b0c2ae532eca65f3a05097073cac3a",
+      "public_decoded_bytes": 1737905,
+      "public_decoded_sha256": "c6a49c136ea8e2c08707fcbc07c0b992a366b84d6c0e7b6a2c9c5c93e376ddac",
+      "public_file_sha256": "12a2c0b416858a38b2f9fbc62e1f333964b379d99153a687158abbcf7cef4dad",
+      "replacements": {
+        "hosted_checkout_root": 1252,
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "hosted-d80e4dc0/backend-postgres-shard-1/backend.xml.gz",
+      "private_original_bytes": 11269169,
+      "private_original_sha256": "686fc2a6fb9ec356af29505845bab200087f1d4b3fd12b7b3a317a9bcfd89599",
+      "public_decoded_bytes": 11192143,
+      "public_decoded_sha256": "f08fcd4a5329d4e7dfba6ff9121c52fe1dbd438677ec5c4b6ab4a98f1e8ace34",
+      "public_file_sha256": "5b8fea68367f0751622274145e9625a2fa4bc762cb247e1537120cbeda007391",
+      "replacements": {
+        "hosted_checkout_root": 1328,
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "hosted-d80e4dc0/frontend/business.xml.gz",
+      "private_original_bytes": 878,
+      "private_original_sha256": "16ada9df17fa998deab0464ba6aafd99d8d49db24b00c236830ab3ad6a0c04d5",
+      "public_decoded_bytes": 881,
+      "public_decoded_sha256": "e627fe1afb46410cc445bf2399f655270f44254b76d500855bd5d378a05d58c9",
+      "public_file_sha256": "bd906d6a59404c3a306efe7c60b3c83b857005de5264c0da687980483ba012d5",
+      "replacements": {
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "hosted-d80e4dc0/frontend/experimental.xml.gz",
+      "private_original_bytes": 2934,
+      "private_original_sha256": "20f7e481d634e3e7bcc872ac4f8fa8ff6057ba458bd3369f8b456e985436aa8e",
+      "public_decoded_bytes": 2937,
+      "public_decoded_sha256": "0d29906edbb10b2bc69e09836e932ce218d77b2efe3e8e48ae89fb726a7baa3c",
+      "public_file_sha256": "413b0713ed3c2da7b814f291894e20ffaff06b9637157b0e1acd35398ef7d94b",
+      "replacements": {
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "hosted-d80e4dc0/frontend/export-browser.xml.gz",
+      "private_original_bytes": 453,
+      "private_original_sha256": "b4ca2dd55fc12d950d7bcbcb2216be06ae6c35535af84203e9c261ce61620efa",
+      "public_decoded_bytes": 456,
+      "public_decoded_sha256": "40b52bd74142caa517fb63060b9c93fe5d53f57147b0ef573c02cb0e2d106006",
+      "public_file_sha256": "ce71d28bd2502bda5b5e3cf8aaa8c464465ed6430c25d9d15465136fb6f491f5",
+      "replacements": {
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "hosted-d80e4dc0/frontend/frontend.xml.gz",
+      "private_original_bytes": 300532,
+      "private_original_sha256": "ccb3597baf7203cd712d0350eb5120c9008e6877bccff6441c458aa2f9e4f10b",
+      "public_decoded_bytes": 300134,
+      "public_decoded_sha256": "f86b5565bec597e60516830c999d0afdd9f30ab8dae2adc82af648fde0e74f34",
+      "public_file_sha256": "aed4b84996425c962b968dee76f2a5a2c9342cdc1bbcef7242cf09e126a7dbc9",
+      "replacements": {
+        "executor_hostname": 199
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "hosted-d80e4dc0/frontend/geometry.xml.gz",
+      "private_original_bytes": 1545,
+      "private_original_sha256": "ba06051f5e8f5a156ec8a61c5e06d9bda116a2eaf882e7b8c121a8d2466eaccb",
+      "public_decoded_bytes": 1551,
+      "public_decoded_sha256": "4665e4f4747812ff9296e7ee09581c327620846bb37117a511bf2ea23d91f11d",
+      "public_file_sha256": "a759f066dca4e4a364e6a25cc67fc867a042101e58f910dc70ee1c2ce2a0677e",
+      "replacements": {
+        "executor_hostname": 2
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "hosted-d80e4dc0/frontend/r4-ux.xml.gz",
+      "private_original_bytes": 36935,
+      "private_original_sha256": "8f22f5313da086de7d7a598fcd843b0529292b74f0b6e6bd64f84144d1212e0c",
+      "public_decoded_bytes": 37067,
+      "public_decoded_sha256": "75b9bd801746757f33c782378b9f6359ce9fa717d7612396af81af90b8f16154",
+      "public_file_sha256": "773ea5ad7713ac89b592d1a943a81ee36f107ae5d4d532ce3f12a167687ecb8f",
+      "replacements": {
+        "executor_hostname": 44
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
       "file": "supplemental/baseline-file-qualified-final.xml.gz",
       "private_original_bytes": 268004,
       "private_original_sha256": "ac0a4a91de1af683f27ad7c024e749db8de6cc171cab24e0a83a224b764b0ada",
@@ -319,6 +478,100 @@
       "test_identities_counts_properties_unchanged": null
     },
     {
+      "file": "supplemental/docx-measurement/final-rich-same-test-baseline-red.xml.gz",
+      "private_original_bytes": 62071,
+      "private_original_sha256": "af4651a0bacfb54783be0832c65f33badfe5303cd5fa0f9bc1e681c2e1df439f",
+      "public_decoded_bytes": 61215,
+      "public_decoded_sha256": "a71f86a837d931a49a48508dd290cbca2f1d2a124649c61d25ed65051db35212",
+      "public_file_sha256": "8b327b3895345119d0268618e730e88f5608c02b6bb9fc2141737f2e46ed7aef",
+      "replacements": {
+        "task_virtualenv": 23,
+        "baseline_checkout": 16,
+        "task_temporary_test_root": 2,
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "supplemental/docx-measurement/final-rich-same-test-fixed-green.xml.gz",
+      "private_original_bytes": 11659,
+      "private_original_sha256": "6ad0115d4bca037e505e68b986bdc68224c13d09f7582682bd13e2800b078678",
+      "public_decoded_bytes": 11114,
+      "public_decoded_sha256": "53f0a0f7e411053071e8fd6e5cbb78ac0bf3ccee3dd01dd4c1de1ca372105f40",
+      "public_file_sha256": "30c2989a770beb7c8af92648574e6bc0ddd4a3963eee27cf0e9d5c1341e4627b",
+      "replacements": {
+        "task_checkout": 16,
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "supplemental/docx-measurement/measurement-focused-green.xml.gz",
+      "private_original_bytes": 36702,
+      "private_original_sha256": "312a9fce49db4d3bceb220c66581949a99b6c16297d771c7bc4eb535f866f890",
+      "public_decoded_bytes": 35137,
+      "public_decoded_sha256": "bf6810756e03292d69d9057189fe692f86feea1999d5728c75a579ad16fa80eb",
+      "public_file_sha256": "8eda4b7f2843ee9e6d3ec54ee6ab5e4882c6fb3f5329fdb7e0b7c7d17e579a2a",
+      "replacements": {
+        "task_checkout": 46,
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "supplemental/docx-measurement/measurement-red.xml.gz",
+      "private_original_bytes": 19594,
+      "private_original_sha256": "4b4ab264afd91201abc0f7ba6c8d3a84326dc0e64b7ba0a557997388b1c7d31c",
+      "public_decoded_bytes": 19593,
+      "public_decoded_sha256": "a97b381fe0ab5e1ca695eceb826df9784a1e8b900784711c22499804f5778f2a",
+      "public_file_sha256": "e1971112e041c174e6167d3cece3edf9632b0cdbbd829aceded55f479db0f8a4",
+      "replacements": {
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "supplemental/drive-prefix-identity/d80-red.xml.gz",
+      "private_original_bytes": 14647,
+      "private_original_sha256": "ad7f1d1be2380f439aa33020fb8d4c49e44b79cb1d8489a3c1963409c45b86a7",
+      "public_decoded_bytes": 14646,
+      "public_decoded_sha256": "01f70afbbef96cf2344c33f859ab630ebb8fba7972e4b286c1107ef8710ed79c",
+      "public_file_sha256": "e10cc5c8b0b4e3b5b3327d504c3dd862db89535d76475ac53f486af912ae7a70",
+      "replacements": {
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "supplemental/drive-prefix-identity/guard-green.xml.gz",
+      "private_original_bytes": 91735,
+      "private_original_sha256": "865500b533c702e7ec4ae61f668ac5e3c4c02dd1417e18297a2c6eb2c50a33f1",
+      "public_decoded_bytes": 87518,
+      "public_decoded_sha256": "a123f1e7e1ce07eefa1087fe14a4e1d1f365e273cb61f24591b021e21a624334",
+      "public_file_sha256": "c8f23f44278a8443cc12d172ee928d1ecfb051c48d9222593f7897d484da153e",
+      "replacements": {
+        "task_checkout": 124,
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "supplemental/drive-prefix-identity/receipt.json",
+      "private_original_bytes": 2853,
+      "private_original_sha256": "017b2613fa720c6952dd3415f5807fdabf5eebddc4fa307cd8027e148ba22be1",
+      "public_decoded_bytes": 2645,
+      "public_decoded_sha256": "7c5bad29ac1c87181a72a69d8c053147e7e867dbd0285476e92f7ce4b0f2f619",
+      "public_file_sha256": "7c5bad29ac1c87181a72a69d8c053147e7e867dbd0285476e92f7ce4b0f2f619",
+      "replacements": {
+        "task_virtualenv": 2,
+        "private_drive_evidence_root": 4,
+        "drive_test_home": 2,
+        "drive_test_xdg": 2,
+        "drive_test_data": 2
+      },
+      "test_identities_counts_properties_unchanged": null
+    },
+    {
       "file": "supplemental/fixed-file-qualified-final.xml.gz",
       "private_original_bytes": 74192,
       "private_original_sha256": "1506de667d220e62c86ad161bfe26ef71a55d4d84977671dcd0899db67158508",
@@ -363,6 +616,44 @@
       "public_decoded_bytes": 579,
       "public_decoded_sha256": "d453c6e1bf28065ad4ff97271097aba35625e03ec089791fe4617bd4fc64ca95",
       "public_file_sha256": "7262e418cd5be93bcd616d0fdf945ee013b5c2119f2695a71ebe295d33b689b1",
+      "replacements": {
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "supplemental/full-file-local/corrected-e686c25a/backend.xml.gz",
+      "private_original_bytes": 6752885,
+      "private_original_sha256": "5649aa080548ea184d0f2899a562cb0a0466d37f9ee926fd7707ee2eacb71a1f",
+      "public_decoded_bytes": 6686480,
+      "public_decoded_sha256": "38c0ac9c85c0760202bbba2444dac7950592e2f305c223b594b9d3cccad4fb9a",
+      "public_file_sha256": "50e47151124dbc4bfc1104034850c6fd46bcdb4238cb44a565b035db5672826e",
+      "replacements": {
+        "task_snapshot_root": 2554,
+        "executor_hostname": 1
+      },
+      "test_identities_counts_properties_unchanged": true
+    },
+    {
+      "file": "supplemental/full-file-local/corrected-e686c25a/receipt.json",
+      "private_original_bytes": 2399,
+      "private_original_sha256": "10d026649ca5b136987deb5eb94293ae0380d04bfe8f31adb2ce924bc9bb6355",
+      "public_decoded_bytes": 2325,
+      "public_decoded_sha256": "0b7db9f48332428f61a3657f944af137c8fac6838fdaa502b265fb7b18f99023",
+      "public_file_sha256": "0b7db9f48332428f61a3657f944af137c8fac6838fdaa502b265fb7b18f99023",
+      "replacements": {
+        "task_snapshot_root": 1,
+        "private_prior_file_evidence": 2
+      },
+      "test_identities_counts_properties_unchanged": null
+    },
+    {
+      "file": "supplemental/full-file-local/corrected-e686c25a/sync-tcp.xml.gz",
+      "private_original_bytes": 580,
+      "private_original_sha256": "2d5630a1d12098529aa93983e5392e561ff7db055c028b717ad16d29b2947b18",
+      "public_decoded_bytes": 579,
+      "public_decoded_sha256": "be48e8f1271dea970504ac6a44f20b6efd13f3dd94a6ba8d34906271461d894b",
+      "public_file_sha256": "e08d61b0c7df3746f1f727655c8214dea1059181af8e744765a5468151be7587",
       "replacements": {
         "executor_hostname": 1
       },

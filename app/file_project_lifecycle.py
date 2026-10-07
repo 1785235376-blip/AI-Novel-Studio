@@ -8,17 +8,18 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from functools import wraps
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 
 @contextmanager
 def project_operation(data: Path, novel_id: str, *, require_exists=True):
     # Public project identifiers are one path component. Validate before even
     # deriving a lock key or checking existence outside the novels directory.
-    # Generic dot directories remain valid legacy projects; only traversal
-    # components and actual separators/control terminators are rejected.
+    # Generic dot directories remain valid legacy projects. Drive-qualified
+    # Windows components can alias a parent/project even when not absolute.
     if (not isinstance(novel_id, str) or not novel_id or novel_id in {".", ".."}
-            or any(character in novel_id for character in ("/", "\\", "\x00"))):
+            or any(character in novel_id for character in ("/", "\\", "\x00"))
+            or PureWindowsPath(novel_id).drive):
         raise FileNotFoundError(novel_id)
     # Import lazily: app.repositories imports FileRepository during startup.
     from .repositories.file.mutation_coordinator import workspace_mutation
