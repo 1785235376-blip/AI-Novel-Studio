@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "4b3b6a662294e324e31e8d068b17db886269eb865442bf5b10bdd606e4bd035e",
+  "application_source_fingerprint_sha256": "833bf102537dae7d473133a02fd76753be65be786697c2038fe94f8cd1aeac56",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -10,7 +10,7 @@
     "app/agent_catalog.py": "3372978dba5ef3c0752fa5cea7486b41cab1cc56e652dc766c8b9ee10080b599",
     "app/agents.py": "634a140d1f84d07400e47c9ba502cc6174b1cc5aa82cad480a314f2c7baa3687",
     "app/ai_planning_api.py": "1396e13bce5664317cd5d1d85b2f27e17eadc8ccb2147e422106843f73dd418c",
-    "app/api.py": "a5a5d9472ea3ca9ff579ca2d744a5a6b158ff1cef3e092eadcaa67566cf98beb",
+    "app/api.py": "dc1e94ba8ae214e4d2bd65540482072c177de40157ee656556bf20c8d71334fc",
     "app/application/audit_service.py": "ebaf8b5089dad466d4e165c58d027f254db6fa7a99d468ac200bb656454346a8",
     "app/application/collaboration_service.py": "836ed233d4bbfe2b9deb718509e0501ec023b95b3be9a972a911204bd21c78d2",
     "app/application/contracts.py": "52bf5a0312fc6e83d64f8347d33c25e3f332d133211c26b4f077e39064079e32",
@@ -46,13 +46,17 @@
     "app/context_pack_v2.py": "4b53ebb7e479854a2c1079af3f5fada27548521b86252ab172c6f04c30026e4f",
     "app/context_policy.py": "057d0c4663189101e8ee44bbe7f2b3ecb3a93f437f25e7e0317fa06a3d0d3cb9",
     "app/creation_workbench_api.py": "28d4cb80ef1f45374ceda4bb0d5513be3fc0aea471d3ca8f0738ac8543429879",
+    "app/creative/__init__.py": "22e9cdc335f433a18299dd63f82c0b68ca05af9e9cd0570b20baecac2624d0c4",
+    "app/creative/api.py": "7078129793391e85db70191c040d88b8e1f5aa0faf22e41900b6fc44d0430190",
+    "app/creative/models.py": "1af92d2a07560b43430c4b3f521c9ffc6bea3d8e216d6b05fb0b42033974d474",
+    "app/creative/service.py": "286807221f99e18423ce2c0217abb2dc3d1878d23e7bfe43872efb4f8e31a39d",
     "app/credential_vault.py": "986bbc6fe63a7658a0bd22e0223677a63448e1b6ab46603bb11cdc530558ab26",
     "app/dependencies.py": "2a6bc47c6399d874e2a5e33e713f3159192853a5ded3c2aae832b6b411468dc7",
     "app/document.py": "70ecdf6f175cada0f0bcbcf0dfc1d7aa7a419895263741154dc4f0e7717d4f49",
     "app/document_revision.py": "d0a3085d6c453d78196b93eae9ae66b775db9508c53ab49961513f5bc33036f5",
     "app/experimental/__init__.py": "737a87c497146972d1cc905f0076f076d5414a8093066146a5bac6b190d788f3",
     "app/experimental/adaptation_projection.py": "dbc51d4bbf0f44b0defb57d7f9a19491d4abf9f18645c13f6241e1600682e91e",
-    "app/experimental/api.py": "ac377f41a0e7847fdbe0c049cf2315c2dffad9317b20d800897b43b31b6da7be",
+    "app/experimental/api.py": "34125038e2955f7da6296270df82fec4df58c27e4e2ad7260fd21dd0bf34e06a",
     "app/experimental/audiobook.py": "822155147b635156fcca184155b80846a7c39efde5b025df7688337d98c63115",
     "app/experimental/audiobook_api.py": "02b07bb4bf12c169d4fc73e0033cc7e558f5fed4f966d3cbf54f4cf65b205ef7",
     "app/experimental/author_context_api.py": "00b8f1a33e4220bb2b1f3b1def6a1ec8ae7d20a8cbc87530304c5c0b87e4fc5a",
@@ -77,7 +81,7 @@
     "app/experimental/finding_review_composition.py": "8ee90bbc383c54ea68f51252bd62f688d53b93f6bbb3e586e5ee81c057fb8a7a",
     "app/experimental/first_use.py": "33995cb079550cbc6af1fb0f4e7dbfb913d50465af0fe9e4d034627c028f4b20",
     "app/experimental/first_use_api.py": "2182868df74a2522f13daf1cdd823512a636eeef847eea03e0059004d5440da9",
-    "app/experimental/flags.py": "f321466a41e380c0be9d9f8912695d3e82fa4736fe7c50315e89ea667b357aa1",
+    "app/experimental/flags.py": "b4d6b18d7c0c14bacf8ad2f6584d94f7623f0d64d35a455d532ffd64b9e5fcda",
     "app/experimental/imports.py": "f2e4c70e380fce1af9b3f5701f90a393cf0b305a43c1f9fa0c05cca99d50dae2",
     "app/experimental/imports_api.py": "606f9bd163ec316f7868e933709b1d5bdd2eba509c4624ffdab022d2d09031bd",
     "app/experimental/inbox.py": "d78e577eaa3ddac02fc6161e176938d733309c96565ec6df54cc7a630769ff72",
@@ -226,11 +230,11 @@
     "app/packaging/initial_workspace.py": "7b4113912a4d17d1122017103911c8ac1e43cce93fb48d0ebbf68ac48b7fdc0b",
     "app/packaging/local_session_bootstrap.py": "19f4f1280d6194e9e8d1ed04a458478977a88157046f04b83e3ece935b5b3fd0",
     "app/packaging/packaged_desktop_host.py": "86a2be5b1f302469af6048a46a40047e3a038c1ad5b85a1eb6ab73c1a8614041",
-    "app/packaging/packaged_desktop_launcher.py": "f16f72f0585cc43ad92227b16add0ac8c8e2847baaa96b4c8eacea1b92acba54",
+    "app/packaging/packaged_desktop_launcher.py": "712870eff8f10998c44a5b980e7fbb0fbe502d97dcd51185053d20f5d20b5ea5",
     "app/packaging/packaged_launcher.py": "39df9b31166dac5d922a4e5763bde32b09b7edb497fa8a6f95e0314fa636bec5",
-    "app/packaging/packaged_processes.py": "c01be1b6f38ef5dc2bd1ec9a718a975fe7ebade48a97b505774da4485da9397c",
+    "app/packaging/packaged_processes.py": "4fbdc2ab89cc3fe61941531b59487b8e10eea38281a1b339e81591e33d494f59",
     "app/packaging/paths.py": "c2e971d22cdec482c915cb5850621f290c5c71ce533ec5d0f5118bfb9153eec0",
-    "app/packaging/postgres_migrations.py": "00d5fc573dc5610aee0d371d665b6a1cf1f1b1c0300ac02c2ac023b0b12b617e",
+    "app/packaging/postgres_migrations.py": "5a85e98353ac6266e4bcce85b89facf901a9a39cff4ef8f3c7a4a4ad84e1e60d",
     "app/packaging/runtime_identity.py": "c8fcf5ff5150abbab0f44b8cf6316ab0c9448629934039599202fb3ccc9ca2b3",
     "app/packaging/runtime_lifecycle.py": "09dd6992c295220223805a3f41d5f2a28fc0fb60ebd0ef2e9e3aa0bf1a5e1e58",
     "app/packaging/static_frontend.py": "e37af49288d6bbb5651599114525bd2dceea7a7f0da8b12d1089096e2c045a94",
@@ -316,7 +320,7 @@
     "app/services/adaptation_service.py": "2ac6124cffab0d6cdcae0d851b61aeaf61c83d97e5f99d34021e7db0b8225242",
     "app/services/agent_context_service.py": "647b09c44bf8b54f1545cd1d0ac2e2a7afb9183f54103140d6ef4d2332c4c297",
     "app/services/agent_job_service.py": "894983ea8de02effb5e6bd05b1ab4daccbeb41404b6abea1b06b18ccafa780e7",
-    "app/services/ai_planning_service.py": "fb248818d356416a1c371572cdba84b712fb3bf027b61c654698b51d14e62fbb",
+    "app/services/ai_planning_service.py": "1b7f2b06bd62ae4d378ca1809a6003b6db1e1b5b3d449f88b2b929c8dad8c9fa",
     "app/services/asset_library_service.py": "a01044455bedcc67183e238808b7dc61c8fb0940e38f440fe41de951c4d4c874",
     "app/services/asset_task_worker.py": "8f0f6a64af0bfb0a6d1e50dfd42511cfb5262b7dde530153237d18ee270bfd3c",
     "app/services/audiobook_service.py": "dec4c65ecd28b2d72859fb2b98bdf7cba3a61ed96396e2b323bb809a22499aea",
@@ -358,7 +362,7 @@
     "app/stable_identity.py": "6e87a8aeb85e4040774c461719115230f1e6e82928816173aa6f4c44962f1b59",
     "app/storage.py": "5375c80375270fe90caa20770d5dd88589793fe8785712755c382dc99e20d1ec",
     "app/story_record_api.py": "838455f0373f6722c9d9486b8b1151185de1e66d7811fac76fd30dd2b3192599",
-    "app/structured_log.py": "83dfd3fe772e5b2c1d0238321acec8bf6b190eac611c5d1653dd18c01a2c9def",
+    "app/structured_log.py": "05185e38aa5f8b7caf2fb8a3b9b96c9de44f76a415308ad3f074e9973cc3723f",
     "app/trusted_sessions.py": "60e1f45a005b4a2122724446aad0be3cb7cc82e4ab8cdbd3bad31464b8417ad8",
     "app/video_assembly_api.py": "4b9fafc79e883ae13824289ebb75c87efcd8fc6c7a7204275c676555597b55a4",
     "app/visual_workflow.py": "a5ad2b66b50289603df914bead47ecc12e351d15c4fc957192af9693382206c7",
@@ -367,9 +371,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 166,
+    "added": 182,
     "changed_contract": 24,
-    "current_method_paths": 1999,
+    "current_method_paths": 2015,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -386,7 +390,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "8005546e39ded22d4031f70b0a4caa7a22f2774428beda6a3d9fa2c029cd547a",
+    "sha256": "82be074af84834f7c7ba6595584e67ac248c03320bc58b4c6494274bf2afe92a",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -549,6 +553,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "90758bec2f09864b721f4963a9cba550a469ccd6e1815f2a57b6cb92a6aec8db",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/novels/{nid}/experimental/creative/documents/{rid}",
+      "operation_id": "archive_api_novels__nid__experimental_creative_documents__rid__delete",
+      "owner_ref": "725f268727d3add34b04847a8a1de5e806db451671113ffc4d611a4626b2024a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "ab9de63fad3c19c4af2042eb5dce169fb235b59bb4353d8ef7b92a808be6ef54",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -753,6 +768,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "13993dd54c70b11a7e4c9725d53cd7f0b3bf18aecc9d4d4c7b2da73856fcdd45",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/novels/{nid}/experimental/creative/documents/{rid}",
+      "operation_id": "archive_api_v1_novels__nid__experimental_creative_documents__rid__delete",
+      "owner_ref": "725f268727d3add34b04847a8a1de5e806db451671113ffc4d611a4626b2024a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "beb3a1d58d740aab15825cf851c3337029f49e39836490b95d0f8fc5c2af15c2",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -1565,7 +1591,8 @@
       "operation_id": "local_session_api_local_session_get",
       "owner_ref": "b146031997844df71d4f46bb184dfc307dbb1ef00a57163aa652c591c77a56c3",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "8d6de8c91d3572f921e3f4282b2840ccfdee09741f06050fdb6b94ac0bd06825",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -2325,6 +2352,61 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "bfa6ed3bdc03070fc22abdc751eb14f1dd68b2d968b2aa7b09a981f5e973b973",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/capabilities",
+      "operation_id": "capabilities_api_novels__nid__experimental_creative_capabilities_get",
+      "owner_ref": "9d7230c209dd795265e51553c9e638a9f521d4c098f4a8783aae55a70cb24db4",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "b6db3a04b395cf75d6fc8c00ae53c2d21262ab8370892ba6508c68f39f2273e2",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/documents",
+      "operation_id": "documents_api_novels__nid__experimental_creative_documents_get",
+      "owner_ref": "e44d68dfa7f760d130d5e725ed89adb43ef6491e5f8b649415a64a88d9e65c60",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "bee2688bcf45b2dbcab341687ac133111256d096faf7eb11d566ffd1f0e5568e",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/documents/{rid}",
+      "operation_id": "document_api_novels__nid__experimental_creative_documents__rid__get",
+      "owner_ref": "e2e1d5d34eb3ce4acfd7c3054b94480ffa847a3ea042d58f81a0548a4d8dac8c",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "ec38e08eeabcf21d7403804ec275897da6a48c9bf6ec41ed32f0845f0ef12a2f",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/documents/{rid}/export",
+      "operation_id": "export_api_novels__nid__experimental_creative_documents__rid__export_get",
+      "owner_ref": "d6e0d3ee0cba814bc599ee9a02947aeac0a386c2cbbdd119177d06be7e620c1b",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "aad8a91c5e435bb7e3a0bf2c3e338533e74656ac6b151273e980837ad55079fc",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/documents/{rid}/history",
+      "operation_id": "history_api_novels__nid__experimental_creative_documents__rid__history_get",
+      "owner_ref": "19ad09d9dfa9764416fe9fa4a9b8fb1580d57b3648209e16cafe35495331f85c",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "60556aa3b92a7b7d3ea5525f28bc540ca5b48f6f99b7c4e617ef12f75a738017",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -6209,7 +6291,8 @@
       "operation_id": "local_session_api_v1_local_session_get",
       "owner_ref": "b146031997844df71d4f46bb184dfc307dbb1ef00a57163aa652c591c77a56c3",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "434ad9dc3531bda3a689c1fbdedaea5435e1323a7ab88b234ae312bc632e287b",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -6969,6 +7052,61 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "f46d69573066bed678f945bf068a8df95c8403f476e523240698dc19c147a624",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/capabilities",
+      "operation_id": "capabilities_api_v1_novels__nid__experimental_creative_capabilities_get",
+      "owner_ref": "9d7230c209dd795265e51553c9e638a9f521d4c098f4a8783aae55a70cb24db4",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "7e35da89bd98a747a9a59c0391f8798372f330039ee7d7852260528302b11c0a",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/documents",
+      "operation_id": "documents_api_v1_novels__nid__experimental_creative_documents_get",
+      "owner_ref": "e44d68dfa7f760d130d5e725ed89adb43ef6491e5f8b649415a64a88d9e65c60",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "6eb1300bf28b8be9486633f3b881224aac6895f8b82ec2279196bd90eba50a3b",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/documents/{rid}",
+      "operation_id": "document_api_v1_novels__nid__experimental_creative_documents__rid__get",
+      "owner_ref": "e2e1d5d34eb3ce4acfd7c3054b94480ffa847a3ea042d58f81a0548a4d8dac8c",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "c3f68b7909600d2368d5f74663514be859f8367f60b946a4fcf0349e8c7825a4",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/documents/{rid}/export",
+      "operation_id": "export_api_v1_novels__nid__experimental_creative_documents__rid__export_get",
+      "owner_ref": "d6e0d3ee0cba814bc599ee9a02947aeac0a386c2cbbdd119177d06be7e620c1b",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "4081685696d781efa135266e2f7a4625d9c2b08007e6236840093593253c71e4",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/documents/{rid}/history",
+      "operation_id": "history_api_v1_novels__nid__experimental_creative_documents__rid__history_get",
+      "owner_ref": "19ad09d9dfa9764416fe9fa4a9b8fb1580d57b3648209e16cafe35495331f85c",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "bf77a9894170af6b607f0c3416451498cf0d09a5637f245f1a65e43fd18d0550",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -12197,6 +12335,17 @@
       ],
       "operation_sha256": "a26e526caad738a036a4686d5925bd52704c1d5e7bd223c294398d2006fe6e58",
       "schema_graph_sha256": "cca0767e1850389c967e85a7b70fd4cd3b9e85c7e81546c416fd2daf51886ed2"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/documents",
+      "operation_id": "create_api_novels__nid__experimental_creative_documents_post",
+      "owner_ref": "5cd3417a2f6366f10d1e9ea0594cba8823b1bdfaddaa99cb2637ce35ca6618dc",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "40fae695cae3956b47ce22da851c2228e75e800a810dcbd780c20244cb36725b",
+      "schema_graph_sha256": "9e940e12d1a6f97ebbadeb51e86716dd601cb1251ba7654d04473b97d1c5d521"
     },
     {
       "method": "POST",
@@ -17957,6 +18106,17 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/documents",
+      "operation_id": "create_api_v1_novels__nid__experimental_creative_documents_post",
+      "owner_ref": "5cd3417a2f6366f10d1e9ea0594cba8823b1bdfaddaa99cb2637ce35ca6618dc",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "22617f45287f7a21df564a8984080533dd2f15b1624c6995ce95ffa18c331dc8",
+      "schema_graph_sha256": "9e940e12d1a6f97ebbadeb51e86716dd601cb1251ba7654d04473b97d1c5d521"
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/novels/{nid}/experimental/declarative-agents/definitions",
       "operation_id": "create_api_v1_novels__nid__experimental_declarative_agents_definitions_post",
       "owner_ref": "52337738ac84099491b96924732085f01da97eceb3f36b3d85258e446b128af5",
@@ -22652,6 +22812,17 @@
     },
     {
       "method": "PUT",
+      "path": "/api/novels/{nid}/experimental/creative/documents/{rid}",
+      "operation_id": "update_api_novels__nid__experimental_creative_documents__rid__put",
+      "owner_ref": "72cf995942879b93cb6355b30ccb1cf88151c4ff66538d916a9fc7e77413cfc3",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "d1211ee1c44c8757877f03f6bde100ccd4e9f52fdcea141e9a04bfa6210b75a3",
+      "schema_graph_sha256": "5fe11eab32a88d52adcf8534fc8e090c10cebd5e6f1da650b4eee19f82185da6"
+    },
+    {
+      "method": "PUT",
       "path": "/api/novels/{nid}/experimental/declarative-agents/definitions/{rid}",
       "operation_id": "save_api_novels__nid__experimental_declarative_agents_definitions__rid__put",
       "owner_ref": "30be15f51ea421ec57442d84eb55c3fb5f289a488e91c2b7b41ed8825e7d719d",
@@ -23647,6 +23818,17 @@
       ],
       "operation_sha256": "291eb521642972bde7c51533fef8a50f42b1649e3551d38f63a027f2b301602b",
       "schema_graph_sha256": "c8e47883dee7d93e58143a9c21eee9a91a77ba68213db2286ec5cf16c9d047e5"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/novels/{nid}/experimental/creative/documents/{rid}",
+      "operation_id": "update_api_v1_novels__nid__experimental_creative_documents__rid__put",
+      "owner_ref": "72cf995942879b93cb6355b30ccb1cf88151c4ff66538d916a9fc7e77413cfc3",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "c70ac95ea89c2a4b231b0a11e7165f59fd31d893e95622ce771bf75f1d8974ab",
+      "schema_graph_sha256": "5fe11eab32a88d52adcf8534fc8e090c10cebd5e6f1da650b4eee19f82185da6"
     },
     {
       "method": "PUT",

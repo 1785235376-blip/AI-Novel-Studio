@@ -18,6 +18,7 @@ __pycache__/
 .pytest*/
 .tmp*/
 .vite/
+.vite-creative/
 /.phase*.png
 /.tmp-webview-status.txt
 /frontend-dist-v1-check/

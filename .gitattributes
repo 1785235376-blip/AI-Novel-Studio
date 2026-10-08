@@ -1,0 +1,2 @@
+# Verification hashes describe exact bytes, including captured log line endings.
+docs/delivery/v2-development/** -text

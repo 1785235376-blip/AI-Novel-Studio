@@ -653,3 +653,9 @@ mount_adaptation_projections(workspace_tools_service, inbox_service,
 from .review_adapter_projection import mount_review_adapter_projections
 mount_review_adapter_projections(workspace_tools_service, inbox_service,
     research_library_service, embedding_service, authorize, require_flag)
+
+from ..creative.service import CreativeService
+from ..creative.api import create_creative_router
+
+creative_service = CreativeService(store, legacy_api.novel_service, legacy_api.chapter_service)
+router.include_router(create_creative_router(creative_service, authorize, require_flag))
