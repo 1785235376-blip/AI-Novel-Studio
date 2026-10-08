@@ -23,7 +23,7 @@ The wrapper checks the required components, changes into the staged Backend
 directory, and runs the bundled Python in isolated mode:
 
 ```text
-python.exe -I -m app.packaging.packaged_desktop_launcher --application-root <Application>
+python.exe -B -I -m app.packaging.packaged_desktop_launcher --application-root <Application>
 ```
 
 The launcher owns loopback ports, the local PostgreSQL process, the backend,
@@ -36,4 +36,3 @@ Use `scripts/build_windows_application.ps1` to produce a provenance-checked
 staging tree when the approved .NET SDK and bundled runtimes are available.
 That process is separate from this entry point. A signed installer, package,
 auto-update channel, and final V1.0 release still require a later release gate.
-

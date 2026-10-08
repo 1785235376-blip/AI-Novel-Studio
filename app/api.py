@@ -2316,7 +2316,7 @@ def multimodal_health():
     import shutil
     from .dependencies import asset_provider_registry
     image_ids=list(asset_provider_registry._providers.keys())
-    vision=[{'id':pid,'configured':bool(endpoint and credential_vault.has(pid))} for pid,endpoint in DEFAULT_IMAGE_ENDPOINTS.items() if pid!='custom']
+    vision=[{'id':pid,'configured':bool(endpoint and credential_vault.supports_provider(pid) and credential_vault.has(pid))} for pid,endpoint in DEFAULT_IMAGE_ENDPOINTS.items() if pid!='custom']
     return {'image_providers':[{"id":pid,"registered":True} for pid in image_ids],"vision_providers":vision,"vision_credentials":any(item['configured'] for item in vision),"speech_credentials":any(item['configured'] for item in vision),"video_provider_configs":len(_video_provider_configs),"media_validation":{"pcm_wav":True,"ffmpeg":bool(shutil.which("ffmpeg")),"ffprobe":bool(shutil.which("ffprobe")),"image_video_ingestion":bool(shutil.which("ffmpeg") and shutil.which("ffprobe")),"video_assembly_profile":"REVIEW_640x360_24FPS_VIDEO_ONLY","codec_binaries_bundled":False}}
 @router.get("/video-callback/security")
 def video_callback_security(): return {"configured":bool(os.getenv('VIDEO_CALLBACK_TOKEN','').strip()),"header":"X-Video-Callback-Token","secret_exposed":False}

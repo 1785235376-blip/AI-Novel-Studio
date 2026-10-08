@@ -88,7 +88,7 @@ class PackagedRuntimeLayout:
         if any(not path.is_file() for path in required):
             raise RuntimeError(RUNTIME_INCOMPLETE)
         validate_frontend_dist(self.frontend_dist)
-        version = _run([self.python, "-I", "-c", "import sys;print(sys.version_info[:2])"])
+        version = _run([self.python, "-B", "-I", "-c", "import sys;print(sys.version_info[:2])"])
         if "(3, 12)" not in version.stdout:
             raise RuntimeError(RUNTIME_INCOMPLETE)
         postgres = _run([self.postgres_bin / "postgres.exe", "--version"])
@@ -125,9 +125,13 @@ class PackagedProcessConfig:
             "FRONTEND_ORIGIN": f"http://127.0.0.1:{backend_port}",
             "ENABLE_PACKAGED_RUNTIME": "true",
             "ENABLE_COLLABORATION_RUNTIME": "true",
+            # This existing packaged chapter owner requires its explicit flag.
+            # Do not inherit unrelated developer opt-ins into the product.
+            "EXPERIMENTAL_FEATURES": "branch_manuscript_v1",
             "COLLABORATION_DEV_SESSIONS_JSON": "",
             "ENABLE_PROVIDER_FALLBACK": "false",
             "PACKAGED_WINDOWS_MODE": "true",
+            "PACKAGED_LOGS_ROOT": str(self.paths.logs),
             "PACKAGED_FRONTEND_DIST": str(self.layout.frontend_dist),
             "PYTHONUTF8": "1",
             "PYTHONNOUSERSITE": "1",
@@ -307,6 +311,10 @@ class PackagedProcessFactory:
             migrations_path=self.config.layout.migrations,
             execute_sql=execute,
             log=log,
+            # The packaged backend explicitly uses branch_manuscript_v1 and
+            # its original scope-document owner even when launcher flags are
+            # empty. Apply the existing 019 dependency before backend startup.
+            include_experimental=True,
         ).run()
 
     def _psql(self, port: int, database: str, extra: list[str]) -> list[Path | str]:
@@ -334,7 +342,7 @@ class PackagedProcessFactory:
         environment["CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK"] = "false"
         stream = log.open("ab")
         process = subprocess.Popen(
-            [str(executable), "-I", "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", str(port), "--no-access-log"],
+            [str(executable), "-B", "-I", "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", str(port), "--no-access-log"],
             cwd=self.config.layout.backend, env=environment, stdin=subprocess.PIPE,
             stdout=stream, stderr=subprocess.STDOUT,
             creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0),

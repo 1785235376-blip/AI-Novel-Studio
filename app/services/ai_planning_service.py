@@ -8,7 +8,7 @@ import uuid
 from dataclasses import asdict
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from ..model_runtime import Modality, ModelRuntimeError, TextGenerationParameters, TextGenerationRequest, TextModelNodeInput
 from ..planning_extraction import extract_explicit_planning
@@ -82,6 +82,48 @@ class StartupCandidateIn(BaseModel):
 class StartupPlanningOutput(BaseModel):
     model_config = ConfigDict(extra="forbid")
     candidates: list[StartupCandidateIn] = Field(min_length=1, max_length=3)
+
+
+def startup_output_schema(kind, candidate_count):
+    """Narrow the model's contract without relaxing the original host model.
+
+    WorkbenchRecordIn's after-validator requires kind-specific fields which its
+    general JSON Schema cannot express. Advertise just the requested payload,
+    and keep the original models as the mandatory response validation owner.
+    """
+    payloads = {"WORLD": ("world_summary", "world_rules", "locations"),
+                "CHARACTERS": ("characters",), "OUTLINE": ("outline",)}
+    fields = ("kind", "title", "description") + payloads[kind]
+    schema = StartupPlanningOutput.model_json_schema()
+    record = schema["$defs"]["WorkbenchRecordIn"]
+    record["properties"] = {field: record["properties"][field] for field in fields}
+    record["properties"]["kind"]["enum"] = [kind]
+    record["properties"]["description"]["minLength"] = 1
+    record["required"] = list(fields)
+    if kind == "WORLD":
+        record["properties"]["world_summary"]["minLength"] = 1
+        for field in ("world_rules", "locations"):
+            record["properties"][field]["minItems"] = 1
+    elif kind == "CHARACTERS":
+        record["properties"]["characters"]["minItems"] = 1
+    else:
+        # The host allows None only for non-OUTLINE records.
+        record["properties"]["outline"] = {"$ref": "#/$defs/PlanningOutlineIn"}
+    schema["properties"]["candidates"]["maxItems"] = candidate_count
+    return schema
+
+
+def _validation_issues(exc):
+    """Only bounded schema locations/types; no prompt, values or error messages."""
+    allowed = {"candidates", "record", "evidence"}
+    for model in (WorkbenchRecordIn, EvidenceIn):
+        schema = model.model_json_schema()
+        allowed.update(schema.get("properties", {}))
+        for definition in schema.get("$defs", {}).values():
+            allowed.update(definition.get("properties", {}))
+    return [{"loc": [part if isinstance(part, int) or part in allowed else "<field>"
+                     for part in issue["loc"][:8]], "type": issue["type"]}
+            for issue in exc.errors(include_input=False, include_context=False, include_url=False)[:20]]
 
 
 class AIPlanningService:
@@ -251,8 +293,9 @@ class AIPlanningService:
         if request["sources"]:
             context["chapter_sources"] = [{"chapter_id":source["chapter_id"],"content":str(self._source(nid,scope,source,cloud).get("content") or "")[:16000]} for source in row["sources"]]
         kind = request["kind"]
+        output_schema = startup_output_schema(kind, request["candidate_count"])
         prompt = "Plan the next fiction creation step of kind " + kind + ". Return ONLY a JSON object, no Markdown or commentary, matching this schema:\n"
-        prompt += json.dumps(StartupPlanningOutput.model_json_schema(), ensure_ascii=False)
+        prompt += json.dumps(output_schema, ensure_ascii=False)
         prompt += "\nEach candidate record must have the exact requested kind, title and description. WORLD requires world_summary, world_rules with statement and optional forbidden_terms, and locations. CHARACTERS requires characters with name, role, personality, goal and optional age/status. OUTLINE requires outline with theme, premise, structure THREE_ACT, beginning, middle, ending, main_conflict and climax. Leave fields of other kinds empty. Never assign IDs, source references, permissions or approval status. Existing context constrains your proposals; preserve established facts. Suggestions are fiction proposals awaiting human review, not accepted facts. Return " + str(request["candidate_count"]) + " distinct candidates. Use the language of the premise."
         if kind == "OUTLINE":
             prompt += '\nOUTLINE nesting is mandatory: all outline fields belong inside record.outline. Never put theme, premise, structure, beginning, middle or main_conflict directly in record. Required JSON shape (replace text placeholders with your proposal): ' + json.dumps({"candidates":[{"record":{"kind":"OUTLINE","title":"<proposal title>","description":"<proposal summary>","outline":{"theme":"<theme>","premise":"<premise>","structure":"THREE_ACT","beginning":"<beginning>","middle":"<middle>","ending":"<ending>","main_conflict":"<main conflict>","climax":"<climax>"}}}]})
@@ -269,7 +312,7 @@ class AIPlanningService:
             for source in row["sources"]: self._source(nid, scope, source, cloud)
         node = self.runtime.prepare_text_route(provider, model)
         registry = getattr(self.runtime, 'model_registry', None)
-        schema = StartupPlanningOutput.model_json_schema() if registry is not None and registry.resolve(provider, model, Modality.TEXT).structured_output else None
+        schema = output_schema if registry is not None and registry.resolve(provider, model, Modality.TEXT).structured_output else None
         guard()
         result = node.execute(TextModelNodeInput(TextGenerationRequest(provider_id=provider,model_id=model,prompt=prompt,context=context,
             parameters=TextGenerationParameters(temperature=0.2,max_output_tokens=6000),
@@ -350,7 +393,8 @@ class AIPlanningService:
         except Exception as exc:
             code = exc.code.value if isinstance(exc, ModelRuntimeError) else "PLANNING_VALIDATION_FAILED" if isinstance(exc, ValueError) else "PLANNING_EXECUTION_FAILED"
             message = "生成失败。请检查模型配置、来源版本、隐私授权和结构化输出；没有写入正文或正式事实。"
-            return self._finish(nid, scope, rid, status="FAILED", error_code=code, error=message)
+            diagnostic = {"validation_issues": _validation_issues(exc)} if isinstance(exc, ValidationError) else {}
+            return self._finish(nid, scope, rid, status="FAILED", error_code=code, error=message, **diagnostic)
         finally:
             if timer:
                 timer.cancel()

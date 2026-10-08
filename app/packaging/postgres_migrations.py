@@ -289,9 +289,14 @@ class PackagedPostgresMigrationRunner:
         execute_sql: Callable[[str], object],
         log: Callable[[str], None] | None = None,
         migrations: tuple[PackagedMigration, ...] | None = None,
+        include_experimental: bool | None = None,
     ):
         from ..experimental.flags import enabled_flags
-        self.migrations = migrations or load_packaged_migrations(migrations_path, include_experimental=bool(enabled_flags()))
+        # The packaged launcher and its backend can have different feature
+        # environments. The owner must select the schema required by the child
+        # before that child starts; ambient launcher opt-ins remain the default.
+        include_experimental = bool(enabled_flags()) if include_experimental is None else include_experimental
+        self.migrations = migrations or load_packaged_migrations(migrations_path, include_experimental=include_experimental)
         self.identity_migrations = () if migrations is not None else load_identity_migrations(migrations_path)
         self.execute_sql = execute_sql
         self.log = log or (lambda _message: None)

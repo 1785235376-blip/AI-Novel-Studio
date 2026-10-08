@@ -15,7 +15,7 @@ def _source() -> str:
 def test_portable_entry_is_a_fixed_staged_application_launcher():
     source = _source()
     assert 'set "APPLICATION_ROOT=%~dp0Application"' in source
-    assert '"%PYTHON%" -I -m app.packaging.packaged_desktop_launcher --application-root "%APPLICATION_ROOT%"' in source
+    assert '"%PYTHON%" -B -I -m app.packaging.packaged_desktop_launcher --application-root "%APPLICATION_ROOT%"' in source
     assert "Backend\\app\\packaging\\packaged_desktop_launcher.py" in source
     assert "DesktopHost\\AI-Novel-Studio.DesktopHost.exe" in source
     assert "Frontend\\dist\\index.html" in source
