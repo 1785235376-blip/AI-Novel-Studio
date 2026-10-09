@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/localAiEnvironmentApi.test.ts (2 tests) 7ms
+ ✓ src/localAiDiscoveryApi.test.ts (3 tests) 9ms
+
+ Test Files  2 passed (2)
+      Tests  5 passed (5)
+   Start at  22:01:47
+   Duration  722ms (transform 139ms, setup 0ms, collect 266ms, tests 16ms, environment 617ms, prepare 122ms)
+
+JUNIT report written to /workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-environment-api-preservation.xml

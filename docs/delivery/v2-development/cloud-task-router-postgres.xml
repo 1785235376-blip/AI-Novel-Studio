@@ -1,0 +1,1025 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="32" failures="0" skipped="32" tests="64" time="1.786" timestamp="2026-10-08T21:45:26.611480-07:00" hostname="c3dd9d71b9bb"><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[file-NOVEL_WRITING]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_task_router.py:21: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[file-SCREENPLAY_ADAPTATION]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_task_router.py:21: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[file-DIRECTOR_NOTES]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_task_router.py:21: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[file-FRAME_ANALYSIS]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_task_router.py:21: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[file-STORYBOARD_IMAGE]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_task_router.py:21: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[file-VIDEO_CLIP]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_task_router.py:21: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[file-DIALOGUE_AUDIO]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_task_router.py:21: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[postgres-NOVEL_WRITING]" time="0.382"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_task_routes_only_exact_capability_and_never_dispatches[postgres-NOVEL_WRITING]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b9ea90d0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[postgres-SCREENPLAY_ADAPTATION]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_task_routes_only_exact_capability_and_never_dispatches[postgres-SCREENPLAY_ADAPTATION]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b8521280&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[postgres-DIRECTOR_NOTES]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_task_routes_only_exact_capability_and_never_dispatches[postgres-DIRECTOR_NOTES]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b8523b60&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[postgres-FRAME_ANALYSIS]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_task_routes_only_exact_capability_and_never_dispatches[postgres-FRAME_ANALYSIS]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85dc410&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[postgres-STORYBOARD_IMAGE]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_task_routes_only_exact_capability_and_never_dispatches[postgres-STORYBOARD_IMAGE]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85df1d0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[postgres-VIDEO_CLIP]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_task_routes_only_exact_capability_and_never_dispatches[postgres-VIDEO_CLIP]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b8521be0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_v2_task_router" name="test_task_routes_only_exact_capability_and_never_dispatches[postgres-DIALOGUE_AUDIO]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_task_routes_only_exact_capability_and_never_dispatches[postgres-DIALOGUE_AUDIO]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85de360&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_v2_task_router" name="test_task_cannot_override_capability_locality_or_spending[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_task_router.py:41: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_v2_task_router" name="test_task_cannot_override_capability_locality_or_spending[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_task_cannot_override_capability_locality_or_spending[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85926f0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_v2_task_router" name="test_absent_vision_does_not_mislabel_text_or_discovery_as_inference[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_task_router.py:52: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_v2_task_router" name="test_absent_vision_does_not_mislabel_text_or_discovery_as_inference[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_absent_vision_does_not_mislabel_text_or_discovery_as_inference[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85dc230&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_v2_task_router" name="test_vision_provider_owner_binding_review_boundary_and_restart_fence[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_task_router.py:59: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_v2_task_router" name="test_vision_provider_owner_binding_review_boundary_and_restart_fence[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_vision_provider_owner_binding_review_boundary_and_restart_fence[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b8593140&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_v2_task_router" name="test_task_refuses_implicit_cloud_and_fences_source_and_authority[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_task_router.py:78: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_v2_task_router" name="test_task_refuses_implicit_cloud_and_fences_source_and_authority[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_task_refuses_implicit_cloud_and_fences_source_and_authority[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85d1940&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_v2_task_router" name="test_mounted_task_preview_requires_both_flags_and_host_session[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_v2_task_router.py:91: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_v2_task_router" name="test_mounted_task_preview_requires_both_flags_and_host_session[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_mounted_task_preview_requires_both_flags_and_host_session[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85d3980&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_candidates_are_actual_registered_adapters_not_static_families[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:45: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_candidates_are_actual_registered_adapters_not_static_families[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_candidates_are_actual_registered_adapters_not_static_families[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85d2ed0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_disabled_model_replaced_adapter_and_changed_sources_fence_reservation[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:61: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_disabled_model_replaced_adapter_and_changed_sources_fence_reservation[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_disabled_model_replaced_adapter_and_changed_sources_fence_reservation[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85bce60&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_atomic_idempotent_reserve_and_concurrency_limit[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:75: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_atomic_idempotent_reserve_and_concurrency_limit[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_atomic_idempotent_reserve_and_concurrency_limit[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85d26f0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_guard_reauthorization_blocks_and_synthetic_settlement_is_exact[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:89: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_guard_reauthorization_blocks_and_synthetic_settlement_is_exact[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_guard_reauthorization_blocks_and_synthetic_settlement_is_exact[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85dc2c0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_unknown_cost_not_free_and_dispatched_unknown_retains_hold[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:100: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_unknown_cost_not_free_and_dispatched_unknown_retains_hold[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_unknown_cost_not_free_and_dispatched_unknown_retains_hold[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b8564d40&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_local_only_never_selects_cloud_even_with_forged_privacy_request[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:119: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_local_only_never_selects_cloud_even_with_forged_privacy_request[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_local_only_never_selects_cloud_even_with_forged_privacy_request[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85bdee0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_price_changes_and_version_conflicts_do_not_dispatch[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:128: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_price_changes_and_version_conflicts_do_not_dispatch[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_price_changes_and_version_conflicts_do_not_dispatch[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b8566690&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_benchmark_runs_actual_adapter_captures_exact_payload_and_invalidates[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:145: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_benchmark_runs_actual_adapter_captures_exact_payload_and_invalidates[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_benchmark_runs_actual_adapter_captures_exact_payload_and_invalidates[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85e4590&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_benchmark_budget_bounds_cancel_and_import_is_not_authority[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:172: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_benchmark_budget_bounds_cancel_and_import_is_not_authority[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_benchmark_budget_bounds_cancel_and_import_is_not_authority[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85bdf10&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_benchmark_late_cancel_does_not_publish_output_or_new_evidence[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:188: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_benchmark_late_cancel_does_not_publish_output_or_new_evidence[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_benchmark_late_cancel_does_not_publish_output_or_new_evidence[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85d3bc0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_router_host_project_feature_gates_and_safe_validation[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:202: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_router_host_project_feature_gates_and_safe_validation[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_router_host_project_feature_gates_and_safe_validation[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b81c01a0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_credential_rotation_changes_opaque_route_fence_without_leaking_secret[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:224: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_credential_rotation_changes_opaque_route_fence_without_leaking_secret[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_credential_rotation_changes_opaque_route_fence_without_leaking_secret[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85e40e0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_usage_settlement_releases_only_known_difference_and_overrun_fences_admission[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:246: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_usage_settlement_releases_only_known_difference_and_overrun_fences_admission[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_usage_settlement_releases_only_known_difference_and_overrun_fences_admission[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85d2ed0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_blind_small_sample_preference_persists_without_fabricated_quality_score[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:264: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_blind_small_sample_preference_persists_without_fabricated_quality_score[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_blind_small_sample_preference_persists_without_fabricated_quality_score[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b81c3650&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_hardware_hard_constraint_requires_current_real_capacity[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:279: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_hardware_hard_constraint_requires_current_real_capacity[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_hardware_hard_constraint_requires_current_real_capacity[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b81c24e0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_manual_upstream_reconciliation_requires_terminal_confirmation_and_cas[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:291: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_manual_upstream_reconciliation_requires_terminal_confirmation_and_cas[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_manual_upstream_reconciliation_requires_terminal_confirmation_and_cas[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85d3a40&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_registered_local_adapter_executes_real_loopback_transport_with_exact_limits[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:312: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_registered_local_adapter_executes_real_loopback_transport_with_exact_limits[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_registered_local_adapter_executes_real_loopback_transport_with_exact_limits[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b8156870&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_broker_generate_coordinator_contract_duplicate_receipt_starts_original_job_once[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:352: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_broker_generate_coordinator_contract_duplicate_receipt_starts_original_job_once[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_broker_generate_coordinator_contract_duplicate_receipt_starts_original_job_once[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b81579b0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_http_benchmark_cancel_remains_responsive_during_adapter_call[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:384: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_http_benchmark_cancel_remains_responsive_during_adapter_call[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_http_benchmark_cancel_remains_responsive_during_adapter_call[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b85d3830&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase><testcase classname="tests.test_r4_model_broker" name="test_orphaned_executor_projection_requires_explicit_confirmed_reconciliation[file]" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/test_r4_model_broker.py:415: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_r4_model_broker" name="test_orphaned_executor_projection_requires_explicit_confirmed_reconciliation[postgres]" time="0.002"><error message="failed on setup with &quot;ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file&quot;">request = &lt;SubRequest 'restore_global_settings' for &lt;Function test_orphaned_executor_projection_requires_explicit_confirmed_reconciliation[postgres]&gt;&gt;
+
+    @pytest.fixture(autouse=True)
+    def restore_global_settings(request):
+        """Snapshot/restore settings, listed env vars, runtime attributes, and FastAPI overrides.
+    
+        Does not force CREDENTIAL_VAULT_BACKEND=memory and does not replace vault
+        private state. Tests that need a process-local credential store inject an
+        explicit memory vault in a narrow fixture.
+        """
+        from app.config import settings
+&gt;       from app.main import app
+
+tests/conftest.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/main.py:9: in &lt;module&gt;
+    from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
+app/dependencies.py:50: in &lt;module&gt;
+    repositories=create_repository_bundle()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/factory.py:14: in create_repository_bundle
+    database=Database(config.database_url);database.require_healthy()
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;app.repositories.postgres.session.Database object at 0x7fc2b81711c0&gt;
+
+    def require_healthy(self):
+&gt;       if not self.health_check():raise ConnectionError("PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ConnectionError: PostgreSQL is unavailable; STORAGE_BACKEND=postgres will not fall back to file
+
+app/repositories/postgres/session.py:21: ConnectionError</error></testcase></testsuite></testsuites>

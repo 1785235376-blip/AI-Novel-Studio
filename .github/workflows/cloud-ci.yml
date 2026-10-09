@@ -66,6 +66,28 @@ jobs:
           python-version: '3.12.9'
       - name: Prepare isolated checkout and receipt
         run: bash .github/ci/prepare.sh backend-${{ matrix.backend }}-shard-${{ matrix.shard_index }}
+      - name: Keep V2 backend state inside its owned checkout
+        run: |
+          runtime="$CI_PROJECT/.runtime/ci-backend"
+          mkdir -p "$runtime"/{home,config,cache,data,state,tmp,appdata,localappdata}
+          {
+            echo "CI_V2_RUNTIME=$runtime"
+            echo "HOME=$runtime/home"
+            echo "USERPROFILE=$runtime/home"
+            echo "APPDATA=$runtime/appdata"
+            echo "LOCALAPPDATA=$runtime/localappdata"
+            echo "XDG_CONFIG_HOME=$runtime/config"
+            echo "XDG_CACHE_HOME=$runtime/cache"
+            echo "XDG_DATA_HOME=$runtime/data"
+            echo "XDG_STATE_HOME=$runtime/state"
+            echo "TMPDIR=$runtime/tmp"
+            echo "TMP=$runtime/tmp"
+            echo "TEMP=$runtime/tmp"
+            echo "NOVEL_DATA_PATH=$runtime/data/novels"
+            echo "BACKUP_PATH=$runtime/data/backups"
+            echo "DATABASE_BACKUP_PATH=$runtime/data/database-backups"
+            echo "KNOWLEDGE_SOURCE_PATH=$runtime/data/novels"
+          } >> "$GITHUB_ENV"
       - name: Install backend dependencies
         working-directory: ${{ env.CI_PROJECT }}
         run: |
@@ -111,6 +133,7 @@ jobs:
         run: |
           python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/coverage-selftest" -q \
             .github/ci/test_suite_coverage.py .github/ci/test_coverage_reconcile.py \
+            .github/ci/test_v2_manifest_extension.py .github/ci/test_v2_check_runner.py \
             --junitxml="$CI_RECEIPTS/coverage-harness.xml"
       - name: Complete backend collection / assigned shard execution
         working-directory: ${{ env.CI_PROJECT }}
@@ -120,7 +143,8 @@ jobs:
           TEST_POSTGRES_DATABASE_URL: ${{ matrix.backend == 'postgres' && 'postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/novel_ci' || '' }}
         run: |
           set -o pipefail
-          PYTHONPATH="$CI_PROJECT/.github/ci:$CI_PROJECT" python -m pytest -p postgres_gate -p suite_coverage -p no:cacheprovider --basetemp="$CI_SANDBOX/pytest" -q -ra --tb=short \
+          PYTHONPATH="$CI_PROJECT/.github/ci:$CI_PROJECT" python -m pytest -p postgres_gate -p suite_coverage -p no:cacheprovider --basetemp="$CI_V2_RUNTIME/pytest" -q -ra --tb=short \
+            --ci-coverage-manifest=.github/ci/coverage_manifest_v2.json.gz \
             --ci-scope=backend --ci-shard-index=${{ matrix.shard_index }} --ci-shard-count=${{ matrix.shard_count }} \
             --ci-coverage-dir="$CI_RECEIPTS" --junitxml="$CI_RECEIPTS/backend.xml" 2>&1 | tee "$CI_RECEIPTS/backend.log"
       - name: Real two-process loopback offline synchronization
@@ -177,7 +201,7 @@ jobs:
       - name: Require exact complete collection and successful outcomes in both profiles
         run: |
           python .github/ci/coverage_reconcile.py \
-            --manifest .github/ci/coverage_manifest.json.gz --scope backend \
+            --manifest .github/ci/coverage_manifest_v2.json.gz --scope backend \
             --receipts-dir backend-receipts --expected-shards file=1 postgres=2 \
             --expected-sha "$(git rev-parse HEAD)" --expected-tree "$(git rev-parse HEAD^{tree})" \
             --expected-event-sha "$GITHUB_SHA" --expected-run "$GITHUB_RUN_ID" \
@@ -250,6 +274,15 @@ jobs:
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}
         run: python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
+      - name: V2 creative live workflows and fixture geometry (mock providers)
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          status=0
+          V2_PYTHON=python CI_RECEIPTS="$CI_RECEIPTS/v2-creative-live" pnpm exec playwright test --config playwright.v2-live.config.ts 2>&1 | tee "$CI_RECEIPTS/v2-creative-live.log" || status=1
+          PLAYWRIGHT_JUNIT_OUTPUT_FILE="$CI_RECEIPTS/v2-creative-workbench.xml" pnpm exec playwright test --config playwright.creative.config.ts --reporter=list,junit 2>&1 | tee "$CI_RECEIPTS/v2-creative-workbench.log" || status=1
+          exit "$status"
       - name: Local Interop actual TypeScript client and independent peer
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}/frontend
@@ -431,6 +464,13 @@ jobs:
         run: |
           python -m pytest -q -ra --tb=short tests/test_runtime_ownership_foundation_v070.py tests/test_webview2_host_contract_v070.py tests/test_packaged_process_factory_v070.py tests/test_packaged_local_session_bootstrap_v070.py tests/test_packaged_desktop_bridge_v070.py tests/test_packaged_postgres_migrations_v070.py tests/test_windows_packaging_host_provenance_v070.py --junitxml="$env:CI_RECEIPTS/windows.xml" 2>&1 | Tee-Object "$env:CI_RECEIPTS/windows-tests.log"
           exit $LASTEXITCODE
+      - name: V2 Windows environment fixture contracts (no GPU or inference acceptance)
+        shell: pwsh
+        run: |
+          python scripts/run_v2_checks.py cloud-windows-v2-environment-contracts -- python -m pytest -q -ra --tb=short -p no:cacheprovider --basetemp=.runtime/v2-checks/cloud-windows-v2-environment-contracts/pytest tests/test_local_ai_environment_v2.py::test_common_roots_are_fixed_scoped_windows_locations tests/test_local_ai_environment_v2.py::test_system_component_presence_is_not_a_driver_or_inference_claim tests/test_local_ai_environment_v2.py::test_environment_get_is_session_protected_and_never_scans --junitxml="$env:CI_RECEIPTS/windows-v2-environment.xml"
+          $testExit = $LASTEXITCODE
+          Copy-Item docs/delivery/v2-development/cloud-windows-v2-environment-contracts.* "$env:CI_RECEIPTS/"
+          exit $testExit
       - name: Upload internal Host build and receipts
         if: always()
         uses: actions/upload-artifact@v4.6.2

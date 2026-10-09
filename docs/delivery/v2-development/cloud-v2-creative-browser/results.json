@@ -1,0 +1,457 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.v2-live.config.ts"
+    ],
+    "configFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/playwright.v2-live.config.ts",
+    "rootDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/1791522035682-6",
+      "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-creative-browser/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/1791522035682-6",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
+          "actualWorkers": 1
+        },
+        "id": "v2-live-chromium",
+        "name": "v2-live-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-creative-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-creative-browser/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-browser/1791522035682-6",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch.",
+          "actualWorkers": 1
+        },
+        "id": "v1-chromium",
+        "name": "v1-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-creative-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-creative-browser/junit.xml"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-creative-browser/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "v2-creative-live.spec.ts",
+      "file": "v2-creative-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 3,
+                  "error": {
+                    "message": "Error: browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-DYCJE0 --remote-debugging-pipe --no-startup-window\n<launched> pid=89\n[pid=89][err] [89:89:1008/220044.027075:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=89][err] [1008/220044.027285:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-DYCJE0 --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=89\u001b[22m\n\u001b[2m  - [pid=89][err] [89:89:1008/220044.027075:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=89][err] [1008/220044.027285:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=89] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=89] <kill>\u001b[22m\n\u001b[2m  - [pid=89] <will force kill>\u001b[22m\n\u001b[2m  - [pid=89] <process did exit: exitCode=null, signal=SIGABRT>\u001b[22m\n\u001b[2m  - [pid=89] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=89] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=89] <gracefully close end>\u001b[22m\n",
+                    "stack": "Error: browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-DYCJE0 --remote-debugging-pipe --no-startup-window\n<launched> pid=89\n[pid=89][err] [89:89:1008/220044.027075:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=89][err] [1008/220044.027285:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-DYCJE0 --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=89\u001b[22m\n\u001b[2m  - [pid=89][err] [89:89:1008/220044.027075:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=89][err] [1008/220044.027285:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=89] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=89] <kill>\u001b[22m\n\u001b[2m  - [pid=89] <will force kill>\u001b[22m\n\u001b[2m  - [pid=89] <process did exit: exitCode=null, signal=SIGABRT>\u001b[22m\n\u001b[2m  - [pid=89] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=89] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=89] <gracefully close end>\u001b[22m\n"
+                  },
+                  "errors": [
+                    {
+                      "message": "Error: browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-DYCJE0 --remote-debugging-pipe --no-startup-window\n<launched> pid=89\n[pid=89][err] [89:89:1008/220044.027075:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=89][err] [1008/220044.027285:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-DYCJE0 --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=89\u001b[22m\n\u001b[2m  - [pid=89][err] [89:89:1008/220044.027075:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=89][err] [1008/220044.027285:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=89] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=89] <kill>\u001b[22m\n\u001b[2m  - [pid=89] <will force kill>\u001b[22m\n\u001b[2m  - [pid=89] <process did exit: exitCode=null, signal=SIGABRT>\u001b[22m\n\u001b[2m  - [pid=89] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=89] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=89] <gracefully close end>\u001b[22m\n"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T05:00:43.818Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-creative-browser/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-creative-browser/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-072b7f78308d6223f073",
+          "file": "v2-creative-live.spec.ts",
+          "line": 72,
+          "column": 1
+        },
+        {
+          "title": "real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1,
+                  "error": {
+                    "message": "Error: browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-ZissUi --remote-debugging-pipe --no-startup-window\n<launched> pid=123\n[pid=123][err] [123:123:1008/220044.588097:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=123][err] [1008/220044.588393:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-ZissUi --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=123\u001b[22m\n\u001b[2m  - [pid=123][err] [123:123:1008/220044.588097:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=123][err] [1008/220044.588393:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=123] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=123] <kill>\u001b[22m\n\u001b[2m  - [pid=123] <will force kill>\u001b[22m\n\u001b[2m  - [pid=123] <process did exit: exitCode=null, signal=SIGABRT>\u001b[22m\n\u001b[2m  - [pid=123] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=123] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=123] <gracefully close end>\u001b[22m\n",
+                    "stack": "Error: browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-ZissUi --remote-debugging-pipe --no-startup-window\n<launched> pid=123\n[pid=123][err] [123:123:1008/220044.588097:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=123][err] [1008/220044.588393:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-ZissUi --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=123\u001b[22m\n\u001b[2m  - [pid=123][err] [123:123:1008/220044.588097:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=123][err] [1008/220044.588393:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=123] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=123] <kill>\u001b[22m\n\u001b[2m  - [pid=123] <will force kill>\u001b[22m\n\u001b[2m  - [pid=123] <process did exit: exitCode=null, signal=SIGABRT>\u001b[22m\n\u001b[2m  - [pid=123] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=123] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=123] <gracefully close end>\u001b[22m\n"
+                  },
+                  "errors": [
+                    {
+                      "message": "Error: browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-ZissUi --remote-debugging-pipe --no-startup-window\n<launched> pid=123\n[pid=123][err] [123:123:1008/220044.588097:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=123][err] [1008/220044.588393:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-ZissUi --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=123\u001b[22m\n\u001b[2m  - [pid=123][err] [123:123:1008/220044.588097:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=123][err] [1008/220044.588393:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=123] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=123] <kill>\u001b[22m\n\u001b[2m  - [pid=123] <will force kill>\u001b[22m\n\u001b[2m  - [pid=123] <process did exit: exitCode=null, signal=SIGABRT>\u001b[22m\n\u001b[2m  - [pid=123] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=123] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=123] <gracefully close end>\u001b[22m\n"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T05:00:44.453Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-creative-browser/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-creative-browser/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-40d5dfded221add74dc7",
+          "file": "v2-creative-live.spec.ts",
+          "line": 167,
+          "column": 1
+        },
+        {
+          "title": "real File V2 scope and stale-write fencing keeps the browser draft and rejects foreign sources",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 2,
+                  "error": {
+                    "message": "Error: browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-15UewH --remote-debugging-pipe --no-startup-window\n<launched> pid=157\n[pid=157][err] [157:157:1008/220045.181932:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=157][err] [1008/220045.182192:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-15UewH --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=157\u001b[22m\n\u001b[2m  - [pid=157][err] [157:157:1008/220045.181932:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=157][err] [1008/220045.182192:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=157] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=157] <kill>\u001b[22m\n\u001b[2m  - [pid=157] <will force kill>\u001b[22m\n\u001b[2m  - [pid=157] <process did exit: exitCode=null, signal=SIGABRT>\u001b[22m\n\u001b[2m  - [pid=157] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=157] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=157] <gracefully close end>\u001b[22m\n",
+                    "stack": "Error: browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-15UewH --remote-debugging-pipe --no-startup-window\n<launched> pid=157\n[pid=157][err] [157:157:1008/220045.181932:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=157][err] [1008/220045.182192:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-15UewH --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=157\u001b[22m\n\u001b[2m  - [pid=157][err] [157:157:1008/220045.181932:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=157][err] [1008/220045.182192:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=157] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=157] <kill>\u001b[22m\n\u001b[2m  - [pid=157] <will force kill>\u001b[22m\n\u001b[2m  - [pid=157] <process did exit: exitCode=null, signal=SIGABRT>\u001b[22m\n\u001b[2m  - [pid=157] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=157] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=157] <gracefully close end>\u001b[22m\n"
+                  },
+                  "errors": [
+                    {
+                      "message": "Error: browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-15UewH --remote-debugging-pipe --no-startup-window\n<launched> pid=157\n[pid=157][err] [157:157:1008/220045.181932:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=157][err] [1008/220045.182192:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-15UewH --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=157\u001b[22m\n\u001b[2m  - [pid=157][err] [157:157:1008/220045.181932:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=157][err] [1008/220045.182192:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=157] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=157] <kill>\u001b[22m\n\u001b[2m  - [pid=157] <will force kill>\u001b[22m\n\u001b[2m  - [pid=157] <process did exit: exitCode=null, signal=SIGABRT>\u001b[22m\n\u001b[2m  - [pid=157] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=157] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=157] <gracefully close end>\u001b[22m\n"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T05:00:45.038Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-creative-browser/test-results/v2-creative-live-real-File-55744-and-rejects-foreign-sources-v2-live-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-creative-browser/test-results/v2-creative-live-real-File-55744-and-rejects-foreign-sources-v2-live-chromium/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-10181042a927215ee465",
+          "file": "v2-creative-live.spec.ts",
+          "line": 197,
+          "column": 1
+        },
+        {
+          "title": "real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "verification",
+                  "description": "Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference."
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1984,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T05:00:45.610Z",
+                  "annotations": [
+                    {
+                      "type": "verification",
+                      "description": "Real uvicorn HTTP/File test; no browser fixture; synthetic local rule-assisted data, no model inference."
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "http-file-lifecycle-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJ2ZXJpZmljYXRpb24iOiAiSFRUUC9GaWxlIG9ubHksIGJyb3dzZXIgbGF1bmNoIHZlcmlmaWVkIHNlcGFyYXRlbHkiLAogICJub3ZlbF9pZCI6ICJ2Mi1odHRwLXJlYWwtZmlsZS1saWZlY3ljbGUiLAogICJjaGFwdGVyX2lkIjogInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZToxIiwKICAibWFudXNjcmlwdF91bmNoYW5nZWQiOiB0cnVlLAogICJjcmVhdGVkX2RvY3VtZW50cyI6IFsKICAgICIyYjc2ZjY1YS1hYmJkLTRjM2EtOTU1YS1jYjUwYTgwMTkzMDIiLAogICAgIjQ2MmMxNTlhLTVjOWUtNGE2OS1hNzNlLTZlNWYxNzNiOWEzNSIsCiAgICAiNDI2ZWZjNDUtMzY0Ny00NTNkLTg1ZjctNTFjZGRhNDU0MjExIiwKICAgICJmMDkzYjA5Mi1jNTBhLTQ2NzgtYWM2MS04YjY2MWJiYjNjMmIiCiAgXSwKICAiY29uY3VycmVudF9yZXZpZXdfc3RhdHVzZXMiOiBbCiAgICAyMDAsCiAgICA0MDkKICBdLAogICJ2ZXJzaW9ucyI6IFsKICAgIDEsCiAgICAyLAogICAgMwogIF0sCiAgIm1vZGVsX2NhbGxlZCI6IGZhbHNlLAogICJleHBvcnQiOiB7CiAgICAiYm91bmRhcnkiOiAiU3RydWN0dXJlZCBkcmFmdC9wbGFubmluZyBKU09OOyBhY2NlcHRlZCBwcm9wb3NhbHMgcmV0YWluIGdlbmVyYXRpb24gcHJvdmVuYW5jZS4gTm8gbWVkaWEgcmVuZGVyaW5nLiIsCiAgICAiZG9jdW1lbnQiOiB7CiAgICAgICJjcmVhdGVkX2F0IjogIjIwMjYtMTAtMDlUMDU6MDA6NDcuMjA4ODc3KzAwOjAwIiwKICAgICAgImNyZWF0ZWRfYnkiOiAibG9jYWwtYXV0aG9yIiwKICAgICAgImRpcmVjdG9yX25vdGVzIjogWwogICAgICAgIHsKICAgICAgICAgICJibG9ja2luZyI6ICLlvoXkurrlt6Xnoa7orqTkurrniankvY3nva7jgIHop4bnur/lkozlh7rlhaXmlrnlkJHvvJvmloflrZfkuI3otrPku6Xnoa7lrprlrp7pmYXnqbrpl7TjgIIiLAogICAgICAgICAgImNhbWVyYV9hbmdsZSI6ICJFWUVfTEVWRUwiLAogICAgICAgICAgImNhbWVyYV9tb3Rpb24iOiAiU1RBVElDIiwKICAgICAgICAgICJkdXJhdGlvbl9zZWNvbmRzIjogNSwKICAgICAgICAgICJlbW90aW9uIjogIiIsCiAgICAgICAgICAiaWQiOiAiZjM3MzdmOWQtZTg1ZC00NzQyLWJkZDktYjUwNDM0YzJiOGI3IiwKICAgICAgICAgICJub3RlIjogIuW+heWuoeW7uuiuru+8muWFiOaguOWvueWcuuaZr+ebrueahOS4juS6uueJqeWFs+ezu++8jOWGjemAieaLqeaZr+WIq+WSjOacuuS9jeOAgiIsCiAgICAgICAgICAibnVtYmVyIjogMSwKICAgICAgICAgICJwYWNpbmciOiAi5b6F5a6h5bu66K6u77ya5a+555m95ZCO5L+d55WZ5Y+N5bqU5YGc6aG/77yb5pe26ZW/55Sx6KGo5ryU5LiO5Ymq6L6R6K+V5o6S56Gu5a6a44CCIiwKICAgICAgICAgICJwZXJmb3JtYW5jZSI6ICJIdW1hbi1yZXZpZXdlZCBibG9ja2luZyBhbmQgcGVyZm9ybWFuY2UiLAogICAgICAgICAgInNjZW5lX2lkIjogInNjZW5lLXBvcnQiLAogICAgICAgICAgInNob3Rfc2l6ZSI6ICJNRURJVU0iCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAiYmxvY2tpbmciOiAi5b6F5Lq65bel56Gu6K6k5Lq654mp5L2N572u44CB6KeG57q/5ZKM5Ye65YWl5pa55ZCR77yb5paH5a2X5LiN6Laz5Lul56Gu5a6a5a6e6ZmF56m66Ze044CCIiwKICAgICAgICAgICJjYW1lcmFfYW5nbGUiOiAiRVlFX0xFVkVMIiwKICAgICAgICAgICJjYW1lcmFfbW90aW9uIjogIlNUQVRJQyIsCiAgICAgICAgICAiZHVyYXRpb25fc2Vjb25kcyI6IDUsCiAgICAgICAgICAiZW1vdGlvbiI6ICIiLAogICAgICAgICAgImlkIjogIjM4MmIxNzQ0LTRjNWUtNGIxMS04MDNhLTk1Y2FiZWI1N2EwYiIsCiAgICAgICAgICAibm90ZSI6ICLlvoXlrqHlu7rorq7vvJrlhYjmoLjlr7nlnLrmma/nm67nmoTkuI7kurrnianlhbPns7vvvIzlho3pgInmi6nmma/liKvlkozmnLrkvY3jgIIiLAogICAgICAgICAgIm51bWJlciI6IDIsCiAgICAgICAgICAicGFjaW5nIjogIuW+heWuoeW7uuiuru+8muWvueeZveWQjuS/neeVmeWPjeW6lOWBnOmhv++8m+aXtumVv+eUseihqOa8lOS4juWJqui+keivleaOkuehruWumuOAgiIsCiAgICAgICAgICAicGVyZm9ybWFuY2UiOiAiIiwKICAgICAgICAgICJzY2VuZV9pZCI6ICJzY2VuZS1yb29tIiwKICAgICAgICAgICJzaG90X3NpemUiOiAiTUVESVVNIgogICAgICAgIH0KICAgICAgXSwKICAgICAgImlkIjogImYwOTNiMDkyLWM1MGEtNDY3OC1hYzYxLThiNjYxYmJiM2MyYiIsCiAgICAgICJtb2RlIjogIlBST0RVQ1RJT04iLAogICAgICAibm92ZWxfaWQiOiAidjItaHR0cC1yZWFsLWZpbGUtbGlmZWN5Y2xlIiwKICAgICAgInByaXZhY3lfbGV2ZWwiOiAiTE9DQUxfT05MWSIsCiAgICAgICJwcm92ZW5hbmNlIjogewogICAgICAgICJpbnB1dF9kaWdlc3QiOiAiZmRhOTcwYWYwM2IwOWNjOGQzZmVmMjI2YTc0ODk2NmFmYWE5YTY5NDc3NmRjMmIzMzBkYjQxODFjYzViMWZmMCIsCiAgICAgICAgIm1ldGhvZCI6ICJTVFJVQ1RVUkVEX0RFUklWQVRJT04iLAogICAgICAgICJtb2RlbF9jYWxsZWQiOiBmYWxzZSwKICAgICAgICAicGFyYW1ldGVycyI6IHsKICAgICAgICAgICJydWxlX3ZlcnNpb24iOiAiY3JlYXRpdmUtc3RhZ2UtY29weS12MSIKICAgICAgICB9LAogICAgICAgICJxdWFsaXR5X3ZlcmlmaWNhdGlvbiI6ICJIVU1BTl9SRVZJRVdfUkVRVUlSRUQiLAogICAgICAgICJzb3VyY2VfZG9jdW1lbnRfaWQiOiAiNDI2ZWZjNDUtMzY0Ny00NTNkLTg1ZjctNTFjZGRhNDU0MjExIiwKICAgICAgICAic291cmNlX21vZGUiOiAiU1RPUllCT0FSRCIsCiAgICAgICAgInNvdXJjZV92ZXJzaW9uIjogMgogICAgICB9LAogICAgICAicmVzdG9yZWRfZnJvbV92ZXJzaW9uIjogMSwKICAgICAgInNjZW5lcyI6IFsKICAgICAgICB7CiAgICAgICAgICAiYWN0aW9uIjogIuWQiOaIkOmqjOaUtuato+aWh++8muael+m7mOi1sOWIsOS6kea4r+OAguWlueivtO+8muKAnOS4i+S4gOW5leeUseaIkeS7rOiHquW3seWGs+WumuOAguKAnSIsCiAgICAgICAgICAiY2hhcmFjdGVycyI6IFtdLAogICAgICAgICAgImRpYWxvZ3VlIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgImRlbGl2ZXJ5IjogIiIsCiAgICAgICAgICAgICAgInNwZWFrZXIiOiAi5p6X6buYIiwKICAgICAgICAgICAgICAidGV4dCI6ICLkuIvkuIDluZXnlLHmiJHku6zoh6rlt7HlhrPlrprjgIIiCiAgICAgICAgICAgIH0KICAgICAgICAgIF0sCiAgICAgICAgICAiZGlyZWN0b3Jfbm90ZXMiOiBbXSwKICAgICAgICAgICJlbW90aW9uIjogIiIsCiAgICAgICAgICAiaGVhZGluZyI6ICJFWFQuIOS6kea4ryIsCiAgICAgICAgICAiaWQiOiAic2NlbmUtcG9ydCIsCiAgICAgICAgICAibG9jYXRpb24iOiAiIiwKICAgICAgICAgICJzZXF1ZW5jZSI6IDEsCiAgICAgICAgICAic291cmNlX2NoYXB0ZXJfaWQiOiAidjItaHR0cC1yZWFsLWZpbGUtbGlmZWN5Y2xlOjEiLAogICAgICAgICAgInRpbWUiOiAiIgogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgImFjdGlvbiI6ICLlpbnlnKjnqpfovrnmlbTnkIboiKrmtbflm77jgIIiLAogICAgICAgICAgImNoYXJhY3RlcnMiOiBbXSwKICAgICAgICAgICJkaWFsb2d1ZSI6IFtdLAogICAgICAgICAgImRpcmVjdG9yX25vdGVzIjogW10sCiAgICAgICAgICAiZW1vdGlvbiI6ICIiLAogICAgICAgICAgImhlYWRpbmciOiAiSU5ULiDnga/loZQiLAogICAgICAgICAgImlkIjogInNjZW5lLXJvb20iLAogICAgICAgICAgImxvY2F0aW9uIjogIiIsCiAgICAgICAgICAic2VxdWVuY2UiOiAyLAogICAgICAgICAgInNvdXJjZV9jaGFwdGVyX2lkIjogInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZToxIiwKICAgICAgICAgICJ0aW1lIjogIiIKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJzY2hlbWFfdmVyc2lvbiI6IDEsCiAgICAgICJzY29wZSI6IHsKICAgICAgICAibW9kZSI6ICJsb2NhbCIsCiAgICAgICAgIm5vdmVsX2lkIjogInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZSIKICAgICAgfSwKICAgICAgInNob3RzIjogWwogICAgICAgIHsKICAgICAgICAgICJhY3Rpb24iOiAi5aW55Zyo56qX6L655pW055CG6Iiq5rW35Zu+44CCIiwKICAgICAgICAgICJjYW1lcmFfYW5nbGUiOiAiRVlFX0xFVkVMIiwKICAgICAgICAgICJjYW1lcmFfbW90aW9uIjogIlNUQVRJQyIsCiAgICAgICAgICAiY29sb3IiOiAiIiwKICAgICAgICAgICJjb21wb3NpdGlvbiI6ICIiLAogICAgICAgICAgImRpYWxvZ3VlIjogW10sCiAgICAgICAgICAiZGlyZWN0b3Jfbm90ZXMiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAiYmxvY2tpbmciOiAi5b6F5Lq65bel56Gu6K6k5Lq654mp5L2N572u44CB6KeG57q/5ZKM5Ye65YWl5pa55ZCR77yb5paH5a2X5LiN6Laz5Lul56Gu5a6a5a6e6ZmF56m66Ze044CCIiwKICAgICAgICAgICAgICAiY2FtZXJhX2FuZ2xlIjogIkVZRV9MRVZFTCIsCiAgICAgICAgICAgICAgImNhbWVyYV9tb3Rpb24iOiAiU1RBVElDIiwKICAgICAgICAgICAgICAiZHVyYXRpb25fc2Vjb25kcyI6IDUsCiAgICAgICAgICAgICAgImVtb3Rpb24iOiAiIiwKICAgICAgICAgICAgICAiaWQiOiAiMzgyYjE3NDQtNGM1ZS00YjExLTgwM2EtOTVjYWJlYjU3YTBiIiwKICAgICAgICAgICAgICAibm90ZSI6ICLlvoXlrqHlu7rorq7vvJrlhYjmoLjlr7nlnLrmma/nm67nmoTkuI7kurrnianlhbPns7vvvIzlho3pgInmi6nmma/liKvlkozmnLrkvY3jgIIiLAogICAgICAgICAgICAgICJwYWNpbmciOiAi5b6F5a6h5bu66K6u77ya5a+555m95ZCO5L+d55WZ5Y+N5bqU5YGc6aG/77yb5pe26ZW/55Sx6KGo5ryU5LiO5Ymq6L6R6K+V5o6S56Gu5a6a44CCIiwKICAgICAgICAgICAgICAicGVyZm9ybWFuY2UiOiAiIiwKICAgICAgICAgICAgICAic2hvdF9zaXplIjogIk1FRElVTSIKICAgICAgICAgICAgfQogICAgICAgICAgXSwKICAgICAgICAgICJkdXJhdGlvbl9zZWNvbmRzIjogNSwKICAgICAgICAgICJlbnZpcm9ubWVudCI6ICIiLAogICAgICAgICAgImZyYW1lX3Byb21wdCI6ICIiLAogICAgICAgICAgImlkIjogIjJhYzJhNWU2LTBhMmEtNGY4YS05NGQ3LThiMWJlZmFhYmFmMSIsCiAgICAgICAgICAibGVucyI6ICI1MG1tIiwKICAgICAgICAgICJsaWdodGluZyI6ICIiLAogICAgICAgICAgIm51bWJlciI6IDEsCiAgICAgICAgICAic2NlbmVfaWQiOiAic2NlbmUtcm9vbSIsCiAgICAgICAgICAic2hvdF9zaXplIjogIk1FRElVTSIsCiAgICAgICAgICAic291bmQiOiAiIiwKICAgICAgICAgICJzb3VuZF9lZmZlY3QiOiAiIgogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgImFjdGlvbiI6ICLlkIjmiJDpqozmlLbmraPmlofvvJrmnpfpu5jotbDliLDkupHmuK/jgILlpbnor7TvvJrigJzkuIvkuIDluZXnlLHmiJHku6zoh6rlt7HlhrPlrprjgILigJ0iLAogICAgICAgICAgImNhbWVyYV9hbmdsZSI6ICJFWUVfTEVWRUwiLAogICAgICAgICAgImNhbWVyYV9tb3Rpb24iOiAiU1RBVElDIiwKICAgICAgICAgICJjb2xvciI6ICIiLAogICAgICAgICAgImNvbXBvc2l0aW9uIjogIiIsCiAgICAgICAgICAiZGlhbG9ndWUiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAiZGVsaXZlcnkiOiAiIiwKICAgICAgICAgICAgICAic3BlYWtlciI6ICLmnpfpu5giLAogICAgICAgICAgICAgICJ0ZXh0IjogIuS4i+S4gOW5leeUseaIkeS7rOiHquW3seWGs+WumuOAgiIKICAgICAgICAgICAgfQogICAgICAgICAgXSwKICAgICAgICAgICJkaXJlY3Rvcl9ub3RlcyI6IFsKICAgICAgICAgICAgewogICAgICAgICAgICAgICJibG9ja2luZyI6ICLlvoXkurrlt6Xnoa7orqTkurrniankvY3nva7jgIHop4bnur/lkozlh7rlhaXmlrnlkJHvvJvmloflrZfkuI3otrPku6Xnoa7lrprlrp7pmYXnqbrpl7TjgIIiLAogICAgICAgICAgICAgICJjYW1lcmFfYW5nbGUiOiAiRVlFX0xFVkVMIiwKICAgICAgICAgICAgICAiY2FtZXJhX21vdGlvbiI6ICJTVEFUSUMiLAogICAgICAgICAgICAgICJkdXJhdGlvbl9zZWNvbmRzIjogNSwKICAgICAgICAgICAgICAiZW1vdGlvbiI6ICIiLAogICAgICAgICAgICAgICJpZCI6ICJmMzczN2Y5ZC1lODVkLTQ3NDItYmRkOS1iNTA0MzRjMmI4YjciLAogICAgICAgICAgICAgICJub3RlIjogIuW+heWuoeW7uuiuru+8muWFiOaguOWvueWcuuaZr+ebrueahOS4juS6uueJqeWFs+ezu++8jOWGjemAieaLqeaZr+WIq+WSjOacuuS9jeOAgiIsCiAgICAgICAgICAgICAgInBhY2luZyI6ICLlvoXlrqHlu7rorq7vvJrlr7nnmb3lkI7kv53nlZnlj43lupTlgZzpob/vvJvml7bplb/nlLHooajmvJTkuI7liarovpHor5XmjpLnoa7lrprjgIIiLAogICAgICAgICAgICAgICJwZXJmb3JtYW5jZSI6ICJIdW1hbi1yZXZpZXdlZCBibG9ja2luZyBhbmQgcGVyZm9ybWFuY2UiLAogICAgICAgICAgICAgICJzaG90X3NpemUiOiAiTUVESVVNIgogICAgICAgICAgICB9CiAgICAgICAgICBdLAogICAgICAgICAgImR1cmF0aW9uX3NlY29uZHMiOiA1LAogICAgICAgICAgImVudmlyb25tZW50IjogIiIsCiAgICAgICAgICAiZnJhbWVfcHJvbXB0IjogIiIsCiAgICAgICAgICAiaWQiOiAiZDdkMWQ2MTYtZGY3YS00MTk0LTg2MDYtZGViMDQ2NjUyOTY5IiwKICAgICAgICAgICJsZW5zIjogIjM1bW0iLAogICAgICAgICAgImxpZ2h0aW5nIjogIiIsCiAgICAgICAgICAibnVtYmVyIjogMiwKICAgICAgICAgICJzY2VuZV9pZCI6ICJzY2VuZS1wb3J0IiwKICAgICAgICAgICJzaG90X3NpemUiOiAiTUVESVVNIiwKICAgICAgICAgICJzb3VuZCI6ICIiLAogICAgICAgICAgInNvdW5kX2VmZmVjdCI6ICIiCiAgICAgICAgfQogICAgICBdLAogICAgICAic291cmNlX2NoYXB0ZXJfaWRzIjogWwogICAgICAgICJ2Mi1odHRwLXJlYWwtZmlsZS1saWZlY3ljbGU6MSIKICAgICAgXSwKICAgICAgInNvdXJjZV9kb2N1bWVudHMiOiB7CiAgICAgICAgIjQyNmVmYzQ1LTM2NDctNDUzZC04NWY3LTUxY2RkYTQ1NDIxMSI6IHsKICAgICAgICAgICJkaWdlc3QiOiAiZmRhOTcwYWYwM2IwOWNjOGQzZmVmMjI2YTc0ODk2NmFmYWE5YTY5NDc3NmRjMmIzMzBkYjQxODFjYzViMWZmMCIsCiAgICAgICAgICAidmVyc2lvbiI6IDIKICAgICAgICB9CiAgICAgIH0sCiAgICAgICJzb3VyY2VfZXZpZGVuY2UiOiB7CiAgICAgICAgInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZToxIjogewogICAgICAgICAgImRpZ2VzdCI6ICIyMzg3ZmY5M2VkODkyNmUzZDU1M2YwYTZkMmY5ZjlkODZkYjY2OTczZmFhNDY2OGQwZjYzMTgzMjVmMjVlMzA5IiwKICAgICAgICAgICJ2ZXJzaW9uIjogMQogICAgICAgIH0KICAgICAgfSwKICAgICAgInNvdXJjZV9pbmRlcGVuZGVudCI6IGZhbHNlLAogICAgICAic291cmNlX3ByaXZhY3kiOiB7CiAgICAgICAgInYyLWh0dHAtcmVhbC1maWxlLWxpZmVjeWNsZToxIjogewogICAgICAgICAgImJyYW5jaF9pZCI6IG51bGwsCiAgICAgICAgICAiY2hhcHRlcl9pZCI6ICJ2Mi1odHRwLXJlYWwtZmlsZS1saWZlY3ljbGU6MSIsCiAgICAgICAgICAiY2hhcHRlcl92ZXJzaW9uIjogMSwKICAgICAgICAgICJjb250ZW50X3NoYTI1NiI6ICIyMzg3ZmY5M2VkODkyNmUzZDU1M2YwYTZkMmY5ZjlkODZkYjY2OTczZmFhNDY2OGQwZjYzMTgzMjVmMjVlMzA5IiwKICAgICAgICAgICJub3ZlbF9pZCI6ICJ2Mi1odHRwLXJlYWwtZmlsZS1saWZlY3ljbGUiLAogICAgICAgICAgInByaXZhY3lfbGV2ZWwiOiAiTE9DQUxfT05MWSIsCiAgICAgICAgICAicmV2aWV3ZWQiOiBmYWxzZSwKICAgICAgICAgICJyZXZpZXdlZF9hdCI6IG51bGwsCiAgICAgICAgICAicmV2aWV3ZWRfYnkiOiBudWxsLAogICAgICAgICAgInN0YWxlIjogZmFsc2UKICAgICAgICB9CiAgICAgIH0sCiAgICAgICJzdGF0dXMiOiAiRFJBRlQiLAogICAgICAidGl0bGUiOiAiSFRUUCDkurrlt6XlrqHmoLjlr7zmvJTnqL8gwrcg5YiG6ZWcIMK3IOWItuS9nCIsCiAgICAgICJ1cGRhdGVkX2F0IjogIjIwMjYtMTAtMDlUMDU6MDA6NDcuMzU4NDM1KzAwOjAwIiwKICAgICAgInVwZGF0ZWRfYnkiOiAibG9jYWwtYXV0aG9yIiwKICAgICAgInZlcnNpb24iOiAzLAogICAgICAidmlkZW9fcGxhbiI6IHsKICAgICAgICAiZnJhbWVfcmF0ZSI6IDI0LAogICAgICAgICJoZWlnaHQiOiAxMDgwLAogICAgICAgICJub3RlcyI6ICIiLAogICAgICAgICJzZWdtZW50cyI6IFsKICAgICAgICAgIHsKICAgICAgICAgICAgImR1cmF0aW9uX3NlY29uZHMiOiA1LAogICAgICAgICAgICAibm90ZSI6ICIiLAogICAgICAgICAgICAic2hvdF9pZCI6ICIyYWMyYTVlNi0wYTJhLTRmOGEtOTRkNy04YjFiZWZhYWJhZjEiCiAgICAgICAgICB9LAogICAgICAgICAgewogICAgICAgICAgICAiZHVyYXRpb25fc2Vjb25kcyI6IDUsCiAgICAgICAgICAgICJub3RlIjogIiIsCiAgICAgICAgICAgICJzaG90X2lkIjogImQ3ZDFkNjE2LWRmN2EtNDE5NC04NjA2LWRlYjA0NjY1Mjk2OSIKICAgICAgICAgIH0KICAgICAgICBdLAogICAgICAgICJ3aWR0aCI6IDE5MjAKICAgICAgfQogICAgfSwKICAgICJkb2N1bWVudF9kaWdlc3QiOiAiYjM5Mjc0YWI1NjhjNGY0NGQxMTcyMWI3ODYwYTU1OTgwMzQyYWI1ZDRhZWE1M2MxMDJhMWJkNGI1ZjFmM2ZlMCIsCiAgICAiZm9ybWF0IjogImFpLW5vdmVsLWNyZWF0aXZlLWRvY3VtZW50IiwKICAgICJmb3JtYXRfdmVyc2lvbiI6IDEKICB9Cn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-1e070ac283621e75b30b",
+          "file": "v2-creative-live.spec.ts",
+          "line": 242,
+          "column": 1
+        },
+        {
+          "title": "real HTTP File V2 scope, cancel and stale source fences remain authoritative",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 335,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T05:00:47.638Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "http-source-fence-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJmb3JlaWduX2JpbmRpbmciOiA0MjIsCiAgImNhbmNlbGxlZF9yZXZpZXciOiA0MjIsCiAgInNpbXVsdGFuZW91c191cGRhdGVfc3RhdHVzZXMiOiBbCiAgICAyMDAsCiAgICA0MDkKICBdLAogICJzdGFsZV9zb3VyY2VfcmVhZCI6IDQwOSwKICAic3RhbGVfc291cmNlX2Rlcml2ZSI6IDQwOSwKICAibW9kZWxfY2FsbGVkIjogZmFsc2UKfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-8e13202c7684f91556e9",
+          "file": "v2-creative-live.spec.ts",
+          "line": 306,
+          "column": 1
+        },
+        {
+          "title": "V1 default-off backend and browser never expose the V2 workbench or accept creative writes",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v1-chromium",
+              "projectName": "v1-chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 2,
+                  "error": {
+                    "message": "Error: browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-NuNBBZ --remote-debugging-pipe --no-startup-window\n<launched> pid=204\n[pid=204][err] [204:204:1008/220048.476968:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=204][err] [1008/220048.477180:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-NuNBBZ --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=204\u001b[22m\n\u001b[2m  - [pid=204][err] [204:204:1008/220048.476968:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=204][err] [1008/220048.477180:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=204] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=204] <kill>\u001b[22m\n\u001b[2m  - [pid=204] <will force kill>\u001b[22m\n\u001b[2m  - [pid=204] <process did exit: exitCode=null, signal=SIGABRT>\u001b[22m\n\u001b[2m  - [pid=204] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=204] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=204] <gracefully close end>\u001b[22m\n",
+                    "stack": "Error: browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-NuNBBZ --remote-debugging-pipe --no-startup-window\n<launched> pid=204\n[pid=204][err] [204:204:1008/220048.476968:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=204][err] [1008/220048.477180:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-NuNBBZ --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=204\u001b[22m\n\u001b[2m  - [pid=204][err] [204:204:1008/220048.476968:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=204][err] [1008/220048.477180:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=204] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=204] <kill>\u001b[22m\n\u001b[2m  - [pid=204] <will force kill>\u001b[22m\n\u001b[2m  - [pid=204] <process did exit: exitCode=null, signal=SIGABRT>\u001b[22m\n\u001b[2m  - [pid=204] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=204] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=204] <gracefully close end>\u001b[22m\n"
+                  },
+                  "errors": [
+                    {
+                      "message": "Error: browserType.launch: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-NuNBBZ --remote-debugging-pipe --no-startup-window\n<launched> pid=204\n[pid=204][err] [204:204:1008/220048.476968:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\n[pid=204][err] [1008/220048.477180:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\nCall log:\n\u001b[2m  - <launching> /usr/bin/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-live-runner/tmp/playwright_chromiumdev_profile-NuNBBZ --remote-debugging-pipe --no-startup-window\u001b[22m\n\u001b[2m  - <launched> pid=204\u001b[22m\n\u001b[2m  - [pid=204][err] [204:204:1008/220048.476968:FATAL:chrome/browser/process_singleton_posix.cc:297] Check failed: . socket() failed: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=204][err] [1008/220048.477180:ERROR:third_party/crashpad/crashpad/util/linux/scoped_ptrace_attach.cc:27] ptrace: Operation not permitted (1)\u001b[22m\n\u001b[2m  - [pid=204] <gracefully close start>\u001b[22m\n\u001b[2m  - [pid=204] <kill>\u001b[22m\n\u001b[2m  - [pid=204] <will force kill>\u001b[22m\n\u001b[2m  - [pid=204] <process did exit: exitCode=null, signal=SIGABRT>\u001b[22m\n\u001b[2m  - [pid=204] starting temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=204] finished temporary directories cleanup\u001b[22m\n\u001b[2m  - [pid=204] <gracefully close end>\u001b[22m\n"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T05:00:48.356Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-creative-browser/test-results/v2-creative-live-V1-defaul-2304c-h-or-accept-creative-writes-v1-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/cloud-v2-creative-browser/test-results/v2-creative-live-V1-defaul-2304c-h-or-accept-creative-writes-v1-chromium/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-47445c522eb6152c78bd",
+          "file": "v2-creative-live.spec.ts",
+          "line": 228,
+          "column": 1
+        },
+        {
+          "title": "real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v1-chromium",
+              "projectName": "v1-chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1172,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-09T05:00:48.883Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "http-default-off-receipt",
+                      "contentType": "application/json",
+                      "body": "eyJlbmFibGVkIjpmYWxzZSwibW9kZXMiOlsiU0NSRUVOUExBWSIsIlNUT1JZQk9BUkQiLCJWSURFT19QTEFOTklORyJdLCJjYW5fbXV0YXRlIjpmYWxzZX0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-4f3549875235122bf681",
+          "file": "v2-creative-live.spec.ts",
+          "line": 339,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-09T05:00:35.690Z",
+    "duration": 14417.86,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

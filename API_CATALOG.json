@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "833bf102537dae7d473133a02fd76753be65be786697c2038fe94f8cd1aeac56",
+  "application_source_fingerprint_sha256": "d509c8d48e2f4ecb477235dff10034d380cf71ee532e1513c5a6e4664553feb0",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -47,16 +47,18 @@
     "app/context_policy.py": "057d0c4663189101e8ee44bbe7f2b3ecb3a93f437f25e7e0317fa06a3d0d3cb9",
     "app/creation_workbench_api.py": "28d4cb80ef1f45374ceda4bb0d5513be3fc0aea471d3ca8f0738ac8543429879",
     "app/creative/__init__.py": "22e9cdc335f433a18299dd63f82c0b68ca05af9e9cd0570b20baecac2624d0c4",
-    "app/creative/api.py": "7078129793391e85db70191c040d88b8e1f5aa0faf22e41900b6fc44d0430190",
-    "app/creative/models.py": "1af92d2a07560b43430c4b3f521c9ffc6bea3d8e216d6b05fb0b42033974d474",
-    "app/creative/service.py": "286807221f99e18423ce2c0217abb2dc3d1878d23e7bfe43872efb4f8e31a39d",
+    "app/creative/api.py": "d5e5543031cf86771f34f048bf3eed42dee5b86c95a43370406ae785a7c71623",
+    "app/creative/generation.py": "e34616fbfd7b686615f3b0eab674e7f2f988650471850ef7fc5285774a0a2d61",
+    "app/creative/models.py": "4b27d20080c6d8c6f141e9cfe8d3381f6ed4b3ef1d8009e08fcc30a5464723d6",
+    "app/creative/proposals.py": "ba15fa5d7d7b7a161f160fed71e864ca656d46ea6225738c7efd687593a82ac4",
+    "app/creative/service.py": "47cdc4899be8c13e30f283622b9645bc2d6e9a3340ccd84aeb0489d98ce7797d",
     "app/credential_vault.py": "986bbc6fe63a7658a0bd22e0223677a63448e1b6ab46603bb11cdc530558ab26",
     "app/dependencies.py": "2a6bc47c6399d874e2a5e33e713f3159192853a5ded3c2aae832b6b411468dc7",
     "app/document.py": "70ecdf6f175cada0f0bcbcf0dfc1d7aa7a419895263741154dc4f0e7717d4f49",
     "app/document_revision.py": "d0a3085d6c453d78196b93eae9ae66b775db9508c53ab49961513f5bc33036f5",
     "app/experimental/__init__.py": "737a87c497146972d1cc905f0076f076d5414a8093066146a5bac6b190d788f3",
     "app/experimental/adaptation_projection.py": "dbc51d4bbf0f44b0defb57d7f9a19491d4abf9f18645c13f6241e1600682e91e",
-    "app/experimental/api.py": "34125038e2955f7da6296270df82fec4df58c27e4e2ad7260fd21dd0bf34e06a",
+    "app/experimental/api.py": "d35410689402c6f3c3a7d8f80658dd264299b04a24b741b998bb9d6d77d42e40",
     "app/experimental/audiobook.py": "822155147b635156fcca184155b80846a7c39efde5b025df7688337d98c63115",
     "app/experimental/audiobook_api.py": "02b07bb4bf12c169d4fc73e0033cc7e558f5fed4f966d3cbf54f4cf65b205ef7",
     "app/experimental/author_context_api.py": "00b8f1a33e4220bb2b1f3b1def6a1ec8ae7d20a8cbc87530304c5c0b87e4fc5a",
@@ -95,8 +97,8 @@
     "app/experimental/media_api.py": "f6ae47cabb59d127172397984b6a075b2db6d5b2c9043590db3beb1d7decc082",
     "app/experimental/model_benchmark.py": "6e83e208626a0db55b8f6111421aedae2ecca1dfcba782cc70979205ee6a9a53",
     "app/experimental/model_benchmark_api.py": "d88856750b9fdb4b9226422783c811e77740723fcdab343b0d1263391c6965c0",
-    "app/experimental/model_broker.py": "c7c8aff2708fa80b740b206be5e7acf2cdd6156079613295dc59821db7650e55",
-    "app/experimental/model_broker_api.py": "19df4dd5fad766cef98193f3b87c386315d6fe6d2f40a8376651842ff4083f74",
+    "app/experimental/model_broker.py": "b74a67ac7413dadc9fd81a24a71a605320e6b35461bfafc77ff5582bd73eff70",
+    "app/experimental/model_broker_api.py": "9c68cc383f7d21d6068ac8155a86badea6f6bab0cd867b7bb95db54aa7a826a4",
     "app/experimental/multilingual_editions.py": "a7c5c1db905462ed41d9e3c89465f6e9b407c8fd902b556b6c2d255ebde010f1",
     "app/experimental/multilingual_editions_api.py": "72450793e4b6bc2de2d0a99c8121186bf47eac194735457696a263994229ca55",
     "app/experimental/multilingual_translation.py": "05c748da13d81848f24a1ff3ad0f7c8864509a169b11e6f9298b962087f9e0a3",
@@ -176,7 +178,7 @@
     "app/identity.py": "66387f126e24040c7b145cd25f8b83e38e3386cf4d2d2c06d15f9eb5a34a30b9",
     "app/import_parsers.py": "8838eba5abe4909cb507749ef67d7a6690ebaca7ccffaa09aabff5aa4b168576",
     "app/industry_export_formats.py": "4e26f355faa3b8d5c4b496f5537c317e01ad9784cdad055cc8bf1c2503794134",
-    "app/jobs.py": "c16b85236171c188ac529ebc560b1b3be79caa124d791a2a245eeb32222e2794",
+    "app/jobs.py": "80b972b06fd234fb87ad9ee0565539b94f7094a6323f015b283c60299226481e",
     "app/knowledge_extraction.py": "b5b2cc447d16bb7768a28c6e96872fdc25b97a3a3d947ab497448858c7f77f73",
     "app/local_interop/__init__.py": "a36a95760b06e4987f0301349edcdb62ccf003c9c10ececaba8fbd3eac87e51a",
     "app/local_interop/api.py": "5c6e1c57ec1fe87c740b6b3abe4f5b010d915a363e7ea6a454921bfdcb2e76fd",
@@ -204,11 +206,12 @@
     "app/migrate_file_to_postgres.py": "f1607b0ee9bba1de64c092cb080cb1fdf5e140626a8ad2bc520523467821f818",
     "app/model_center/__init__.py": "034f5d7bcdc5a548765d66dfe6442411e8680b3f761e6c38f310b475c3a8ac0b",
     "app/model_center/api.py": "001094aea2c2191348ff6b17d1ace8098fd9de2817e6d1bb9657566d353622c1",
-    "app/model_center/discovery.py": "ffc235b8a7c44608ff014bf36dfef79e08773f1457ca83b5f71429d84c1d67a2",
-    "app/model_center/discovery_api.py": "d20a75fed9c517c96d768239c25261bba0c879fcdf0ca42931089f6f4b498493",
+    "app/model_center/discovery.py": "af3c5eaf9cc17efdb3fac4deca2313bd9d5b425229186b77a23bbf49dd3eb3b0",
+    "app/model_center/discovery_api.py": "788994267fe97ad183df3a346056c471cbd0d07fb5bc4343b29aa226f9e53f20",
     "app/model_center/discovery_bridge.py": "cdb91ddee41252ec5dfd4ee3b9afa74c171dbff4f16534e4ff67aeb376d5a3e5",
-    "app/model_center/discovery_probes.py": "57cd65d95b3f483844a20e34c8da18d62bda4acd7c81bd3291e2cdbe956dfe93",
-    "app/model_center/discovery_types.py": "0be88512eeb4a45ade7328b8e008e49c89bf8d5ca01b62053f8763677280dca2",
+    "app/model_center/discovery_environment.py": "207a7c91b34235ec842e086cf4533f1841e42d36380a5e950d0036d7204d3a85",
+    "app/model_center/discovery_probes.py": "3b77f1bd223a8d76b8cfa6f44735cb932739a3d683ab28a27f2430bde4ba4f13",
+    "app/model_center/discovery_types.py": "abaee0886657318690286f2ffec5e6f5f95a3159274e4c32b21bb0080c24488d",
     "app/model_center/domain.py": "5d413844f4282ede2c212abe9938d97bbf378956e158011f7bef308896176fc9",
     "app/model_center/runtime_profiles.py": "e47f7bc7f05f025563bf4a35fda8311b2d3509a4d1e73e3dbd4c8026f3ce61f8",
     "app/model_center/service.py": "1aaf758a05f8188759371919aad7dd2ed1bd95c0d1f7d4cff5c98388cb124362",
@@ -371,9 +374,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 182,
+    "added": 210,
     "changed_contract": 24,
-    "current_method_paths": 2015,
+    "current_method_paths": 2043,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -390,7 +393,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "82be074af84834f7c7ba6595584e67ac248c03320bc58b4c6494274bf2afe92a",
+    "sha256": "091bdae6cb6db6cc661615bad74c74d26785b8afa6ed7bad8f9d10b4a6f3152f",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -561,7 +564,8 @@
       "operation_id": "archive_api_novels__nid__experimental_creative_documents__rid__delete",
       "owner_ref": "725f268727d3add34b04847a8a1de5e806db451671113ffc4d611a4626b2024a",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "ab9de63fad3c19c4af2042eb5dce169fb235b59bb4353d8ef7b92a808be6ef54",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -776,7 +780,8 @@
       "operation_id": "archive_api_v1_novels__nid__experimental_creative_documents__rid__delete",
       "owner_ref": "725f268727d3add34b04847a8a1de5e806db451671113ffc4d611a4626b2024a",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "beb3a1d58d740aab15825cf851c3337029f49e39836490b95d0f8fc5c2af15c2",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -1635,6 +1640,17 @@
     },
     {
       "method": "GET",
+      "path": "/api/model-center/local-ai/environment",
+      "operation_id": "environment_api_model_center_local_ai_environment_get",
+      "owner_ref": "69f5bf57eff7e95ec27eb3318cfc05cf480882c871923e1654214a46b86d5c09",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "cda3c70f250e191a19adb64d5da1edd2fd9d670bed8bf2f63ac8657cf96b876b",
+      "schema_graph_sha256": "5b142e60618727700612217e1873640051a5bcc3d064802d0092783840c28ff9"
+    },
+    {
+      "method": "GET",
       "path": "/api/model-center/local-ai/scan/{scan_id}",
       "operation_id": "get_scan_api_model_center_local_ai_scan__scan_id__get",
       "owner_ref": "b24ca11e0aa8ea223b982031e5fec2e78fe0abd09fca51d57ebfa129257ef33b",
@@ -2360,9 +2376,43 @@
       "operation_id": "capabilities_api_novels__nid__experimental_creative_capabilities_get",
       "owner_ref": "9d7230c209dd795265e51553c9e638a9f521d4c098f4a8783aae55a70cb24db4",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "b6db3a04b395cf75d6fc8c00ae53c2d21262ab8370892ba6508c68f39f2273e2",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/director-proposals",
+      "operation_id": "proposals_api_novels__nid__experimental_creative_director_proposals_get",
+      "owner_ref": "b8db8423ab8ded8b8c56ff6838d9edcfd795374d30086845e31d215591186b69",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "bb0b54f2479d3ccc28ecdd6c9b5200ad360444a1cef78eb791a16d252d1b4d77",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/director-proposals/model-routes",
+      "operation_id": "model_routes_api_novels__nid__experimental_creative_director_proposals_model_routes_get",
+      "owner_ref": "7ee4be7cbc20a22c1c6c1d223281c9f3e6ab42032ab6c3b81d9d930935450da6",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "0d7eed5b3802ba7d7d799a6c06d62fea6b44f738cfa867eefab4b6d67b9ff466",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/director-proposals/{rid}",
+      "operation_id": "proposal_api_novels__nid__experimental_creative_director_proposals__rid__get",
+      "owner_ref": "ba7232d32faa361e078490c425c2a82f7362594c91dfbdca130c2416e3bc91db",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "9f77de6a20feb7e8ec746fee2ad2793f443e6b360f02ba0a71ddd8fd5b947deb",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -2371,7 +2421,8 @@
       "operation_id": "documents_api_novels__nid__experimental_creative_documents_get",
       "owner_ref": "e44d68dfa7f760d130d5e725ed89adb43ef6491e5f8b649415a64a88d9e65c60",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "bee2688bcf45b2dbcab341687ac133111256d096faf7eb11d566ffd1f0e5568e",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -2382,7 +2433,8 @@
       "operation_id": "document_api_novels__nid__experimental_creative_documents__rid__get",
       "owner_ref": "e2e1d5d34eb3ce4acfd7c3054b94480ffa847a3ea042d58f81a0548a4d8dac8c",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "ec38e08eeabcf21d7403804ec275897da6a48c9bf6ec41ed32f0845f0ef12a2f",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -2393,7 +2445,8 @@
       "operation_id": "export_api_novels__nid__experimental_creative_documents__rid__export_get",
       "owner_ref": "d6e0d3ee0cba814bc599ee9a02947aeac0a386c2cbbdd119177d06be7e620c1b",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "aad8a91c5e435bb7e3a0bf2c3e338533e74656ac6b151273e980837ad55079fc",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -2404,7 +2457,8 @@
       "operation_id": "history_api_novels__nid__experimental_creative_documents__rid__history_get",
       "owner_ref": "19ad09d9dfa9764416fe9fa4a9b8fb1580d57b3648209e16cafe35495331f85c",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "60556aa3b92a7b7d3ea5525f28bc540ca5b48f6f99b7c4e617ef12f75a738017",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -2911,6 +2965,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a3dd4d0f4a21f1a612b9dbe87d33d3ebad40367ed1482e43ee4fcaa5b750999e",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/model-broker/task-capabilities",
+      "operation_id": "task_capabilities_api_novels__nid__experimental_model_broker_task_capabilities_get",
+      "owner_ref": "c19ba3f472d8084e742664c640f01260bb4c74c186467ffb974f6104593e92f9",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "5928ee88d0e1e161d709bca91caa8584bcaab260816933705deda37357a6e09f",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -6335,6 +6400,17 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/model-center/local-ai/environment",
+      "operation_id": "environment_api_v1_model_center_local_ai_environment_get",
+      "owner_ref": "69f5bf57eff7e95ec27eb3318cfc05cf480882c871923e1654214a46b86d5c09",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "fbbe30bbd5baa3c15ae05b6650e09f0e451145438b031ac5f630bc1ae70b8b1e",
+      "schema_graph_sha256": "5b142e60618727700612217e1873640051a5bcc3d064802d0092783840c28ff9"
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/model-center/local-ai/scan/{scan_id}",
       "operation_id": "get_scan_api_v1_model_center_local_ai_scan__scan_id__get",
       "owner_ref": "b24ca11e0aa8ea223b982031e5fec2e78fe0abd09fca51d57ebfa129257ef33b",
@@ -7060,9 +7136,43 @@
       "operation_id": "capabilities_api_v1_novels__nid__experimental_creative_capabilities_get",
       "owner_ref": "9d7230c209dd795265e51553c9e638a9f521d4c098f4a8783aae55a70cb24db4",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "7e35da89bd98a747a9a59c0391f8798372f330039ee7d7852260528302b11c0a",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-proposals",
+      "operation_id": "proposals_api_v1_novels__nid__experimental_creative_director_proposals_get",
+      "owner_ref": "b8db8423ab8ded8b8c56ff6838d9edcfd795374d30086845e31d215591186b69",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "1165a8107dbfbf5f67ca0e8fd1986b3d3ebc3baa18bb96adaabe9f5b1b8ccc38",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-proposals/model-routes",
+      "operation_id": "model_routes_api_v1_novels__nid__experimental_creative_director_proposals_model_routes_get",
+      "owner_ref": "7ee4be7cbc20a22c1c6c1d223281c9f3e6ab42032ab6c3b81d9d930935450da6",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "98dcbbdf2d9868dfb91f59cf2a02af9b7491ea96a2936af8f193a330d4de328c",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}",
+      "operation_id": "proposal_api_v1_novels__nid__experimental_creative_director_proposals__rid__get",
+      "owner_ref": "ba7232d32faa361e078490c425c2a82f7362594c91dfbdca130c2416e3bc91db",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "53d3ca1f6213449e4a8c6a77ceddc4004d00d5862e87540f8168dc3872a45ca5",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -7071,7 +7181,8 @@
       "operation_id": "documents_api_v1_novels__nid__experimental_creative_documents_get",
       "owner_ref": "e44d68dfa7f760d130d5e725ed89adb43ef6491e5f8b649415a64a88d9e65c60",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "6eb1300bf28b8be9486633f3b881224aac6895f8b82ec2279196bd90eba50a3b",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -7082,7 +7193,8 @@
       "operation_id": "document_api_v1_novels__nid__experimental_creative_documents__rid__get",
       "owner_ref": "e2e1d5d34eb3ce4acfd7c3054b94480ffa847a3ea042d58f81a0548a4d8dac8c",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "c3f68b7909600d2368d5f74663514be859f8367f60b946a4fcf0349e8c7825a4",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -7093,7 +7205,8 @@
       "operation_id": "export_api_v1_novels__nid__experimental_creative_documents__rid__export_get",
       "owner_ref": "d6e0d3ee0cba814bc599ee9a02947aeac0a386c2cbbdd119177d06be7e620c1b",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "4081685696d781efa135266e2f7a4625d9c2b08007e6236840093593253c71e4",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -7104,7 +7217,8 @@
       "operation_id": "history_api_v1_novels__nid__experimental_creative_documents__rid__history_get",
       "owner_ref": "19ad09d9dfa9764416fe9fa4a9b8fb1580d57b3648209e16cafe35495331f85c",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "bf77a9894170af6b607f0c3416451498cf0d09a5637f245f1a65e43fd18d0550",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -7611,6 +7725,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "7ad5e9fac2bb00754c57686cc106a6d2378cdcaa455e36c5f9d727252bcc1af6",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/model-broker/task-capabilities",
+      "operation_id": "task_capabilities_api_v1_novels__nid__experimental_model_broker_task_capabilities_get",
+      "owner_ref": "c19ba3f472d8084e742664c640f01260bb4c74c186467ffb974f6104593e92f9",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "77a43c9859ca0541b6e94901553ac963c46a7caccf3b0395af34a01c1a4c3661",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -12338,14 +12463,103 @@
     },
     {
       "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-proposals",
+      "operation_id": "propose_api_novels__nid__experimental_creative_director_proposals_post",
+      "owner_ref": "9317304e5bfcd6bcfb13bbdc2891009889fe8bf1103e75bbc47ea24bdd059062",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "23c4e3d2ae36f41a2547b3eeba43423ece738899c3fac18db863d3d6276db4d0",
+      "schema_graph_sha256": "d59e2e8f2fc43101d5b0d183c363852ecb7f90e946aa946fb4a4af00d83d2ab9"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-proposals/{rid}/cancel",
+      "operation_id": "cancel_proposal_api_novels__nid__experimental_creative_director_proposals__rid__cancel_post",
+      "owner_ref": "0677e85c92c8c41a5737176f0c3eb09923e9152aa1075469b7dd181ad22210f5",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "1d24d08bac29ce80b49f30f7f7a93e16e3bf7db5ec7460d209e85ad4a29a0440",
+      "schema_graph_sha256": "73f522fd0c18ebb0f9c35a3ed503d176f14f9bf904754d6f5c879e0c6defeb60"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-proposals/{rid}/dispatch",
+      "operation_id": "dispatch_model_api_novels__nid__experimental_creative_director_proposals__rid__dispatch_post",
+      "owner_ref": "feeb1dc68b521c6110cf928a238222cf79b25256e25770c1ec777be56a74b863",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "be75039112f4c4031366fcc71bc3af92f126fdd33b781e43d254f33ebdcbd875",
+      "schema_graph_sha256": "050992e79963002eca03b579ee0778cccd7519315ecc49c40d9f9450406184ae"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-proposals/{rid}/preview",
+      "operation_id": "preview_model_api_novels__nid__experimental_creative_director_proposals__rid__preview_post",
+      "owner_ref": "4ae4c66bc150fc48f4d2d08193543ec45f9405459b0ebf2618f209b053b3e44c",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "55df965733befc27382fd49c1a2ce8ed32bd9573c517dac3a7a7a9930efc2d70",
+      "schema_graph_sha256": "35a787b9fdff5d191c1cbfd13adc2ddbaeed33abce5fdc6d6db3ee0e70b099c7"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-proposals/{rid}/refresh",
+      "operation_id": "refresh_model_api_novels__nid__experimental_creative_director_proposals__rid__refresh_post",
+      "owner_ref": "c07cc66cf58b3452fbeb50244a2b5b74d7eb36923173c0904b8bc89dea9bb5ac",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "b56a3139670d15e2433714bcc9ec10bab3e9783071509cfdb8a80c6c560f8a3f",
+      "schema_graph_sha256": "73f522fd0c18ebb0f9c35a3ed503d176f14f9bf904754d6f5c879e0c6defeb60"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/director-proposals/{rid}/review",
+      "operation_id": "review_proposal_api_novels__nid__experimental_creative_director_proposals__rid__review_post",
+      "owner_ref": "47b6100073c224c2e882de12e141e9e7e94e4f227b3924c16f0d67d5c7840c62",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "bd91db37c76819cfae9ecb662c5de458f389f315315880389c1881a05b5baf1a",
+      "schema_graph_sha256": "1cf37a5c39756450288e6dd3ac330e28b6eb493d8a2496f17f92a32b0239148b"
+    },
+    {
+      "method": "POST",
       "path": "/api/novels/{nid}/experimental/creative/documents",
       "operation_id": "create_api_novels__nid__experimental_creative_documents_post",
       "owner_ref": "5cd3417a2f6366f10d1e9ea0594cba8823b1bdfaddaa99cb2637ce35ca6618dc",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "40fae695cae3956b47ce22da851c2228e75e800a810dcbd780c20244cb36725b",
-      "schema_graph_sha256": "9e940e12d1a6f97ebbadeb51e86716dd601cb1251ba7654d04473b97d1c5d521"
+      "schema_graph_sha256": "c7182866e7743fd3dd1d9eda7f12f38702006f246c9b1afb2fba87a80a81a1d9"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/documents/{rid}/derive",
+      "operation_id": "derive_api_novels__nid__experimental_creative_documents__rid__derive_post",
+      "owner_ref": "a525cfd740d7622f7e1147f83c70f04249f2f7b8987b1029943330a3346960b6",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "9d66f4ee18cfb63e264363fe769669acc9378ad1fd70146edc6692af4b4e9750",
+      "schema_graph_sha256": "9df4f4ed6913c1f286819003268fe99d8e901cf914f1366545e4ad99d3e78b1b"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/creative/documents/{rid}/restore",
+      "operation_id": "restore_api_novels__nid__experimental_creative_documents__rid__restore_post",
+      "owner_ref": "a531439bc97b442ab174c352400735747bac11ff0e339ae55c8fcebf60b4aae6",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "c4d0e4e780b7ea3af127105fd4774040ac1d6d6eb29ce535a965e499aaea5703",
+      "schema_graph_sha256": "00fe2a32e38e9fb43d2a34e12688152813f146bdfbc6ba2c1d89795827a3ab49"
     },
     {
       "method": "POST",
@@ -13115,6 +13329,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "0b40ba4607529bdb67d1b2509f2418bf9b8366b140961ed0ba45b19691f6cc55",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "POST",
+      "path": "/api/novels/{nid}/experimental/model-broker/task-preview",
+      "operation_id": "task_preview_api_novels__nid__experimental_model_broker_task_preview_post",
+      "owner_ref": "23d6d78c1f922a39f6e4c2d8b11560fbf3580f6908594a8b7ea60db3844126a8",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "2ebfe5f1427200813e51c906bc156ff77848e14b4a4af240f9c8e3288ff14374",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -18106,14 +18331,103 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-proposals",
+      "operation_id": "propose_api_v1_novels__nid__experimental_creative_director_proposals_post",
+      "owner_ref": "9317304e5bfcd6bcfb13bbdc2891009889fe8bf1103e75bbc47ea24bdd059062",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "8631315bc19966415abdc5e0f5283afaa61ccdf0fdad01736fed4abcc755552a",
+      "schema_graph_sha256": "d59e2e8f2fc43101d5b0d183c363852ecb7f90e946aa946fb4a4af00d83d2ab9"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/cancel",
+      "operation_id": "cancel_proposal_api_v1_novels__nid__experimental_creative_director_proposals__rid__cancel_post",
+      "owner_ref": "0677e85c92c8c41a5737176f0c3eb09923e9152aa1075469b7dd181ad22210f5",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "6988e4535796b261991da95fbc91293de55f27a52e151f617c56360943566093",
+      "schema_graph_sha256": "73f522fd0c18ebb0f9c35a3ed503d176f14f9bf904754d6f5c879e0c6defeb60"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/dispatch",
+      "operation_id": "dispatch_model_api_v1_novels__nid__experimental_creative_director_proposals__rid__dispatch_post",
+      "owner_ref": "feeb1dc68b521c6110cf928a238222cf79b25256e25770c1ec777be56a74b863",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "a474c71ade483c5f0a11c8bdd41105dcbc0694da346763e0395797c6ede533e1",
+      "schema_graph_sha256": "050992e79963002eca03b579ee0778cccd7519315ecc49c40d9f9450406184ae"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/preview",
+      "operation_id": "preview_model_api_v1_novels__nid__experimental_creative_director_proposals__rid__preview_post",
+      "owner_ref": "4ae4c66bc150fc48f4d2d08193543ec45f9405459b0ebf2618f209b053b3e44c",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "f9bd1a71d7a2eab282f0d6140be9e500704fb2193f9fa71dd9e7ddfff4e969fb",
+      "schema_graph_sha256": "35a787b9fdff5d191c1cbfd13adc2ddbaeed33abce5fdc6d6db3ee0e70b099c7"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/refresh",
+      "operation_id": "refresh_model_api_v1_novels__nid__experimental_creative_director_proposals__rid__refresh_post",
+      "owner_ref": "c07cc66cf58b3452fbeb50244a2b5b74d7eb36923173c0904b8bc89dea9bb5ac",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "f6ad5644b60d5d49a9b4f0abd60ade59438924386043c001cacd4b63534d2a16",
+      "schema_graph_sha256": "73f522fd0c18ebb0f9c35a3ed503d176f14f9bf904754d6f5c879e0c6defeb60"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/review",
+      "operation_id": "review_proposal_api_v1_novels__nid__experimental_creative_director_proposals__rid__review_post",
+      "owner_ref": "47b6100073c224c2e882de12e141e9e7e94e4f227b3924c16f0d67d5c7840c62",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "c82ab86ee5432b2c427464f4171717205363e1131f5b5f4d93bf5d9b77baa078",
+      "schema_graph_sha256": "1cf37a5c39756450288e6dd3ac330e28b6eb493d8a2496f17f92a32b0239148b"
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/novels/{nid}/experimental/creative/documents",
       "operation_id": "create_api_v1_novels__nid__experimental_creative_documents_post",
       "owner_ref": "5cd3417a2f6366f10d1e9ea0594cba8823b1bdfaddaa99cb2637ce35ca6618dc",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "22617f45287f7a21df564a8984080533dd2f15b1624c6995ce95ffa18c331dc8",
-      "schema_graph_sha256": "9e940e12d1a6f97ebbadeb51e86716dd601cb1251ba7654d04473b97d1c5d521"
+      "schema_graph_sha256": "c7182866e7743fd3dd1d9eda7f12f38702006f246c9b1afb2fba87a80a81a1d9"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/documents/{rid}/derive",
+      "operation_id": "derive_api_v1_novels__nid__experimental_creative_documents__rid__derive_post",
+      "owner_ref": "a525cfd740d7622f7e1147f83c70f04249f2f7b8987b1029943330a3346960b6",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "f1b8ae7c7568d37959a8da6ee287fb45efcfbe2f1673f4ac5fce21ce6534109b",
+      "schema_graph_sha256": "9df4f4ed6913c1f286819003268fe99d8e901cf914f1366545e4ad99d3e78b1b"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/creative/documents/{rid}/restore",
+      "operation_id": "restore_api_v1_novels__nid__experimental_creative_documents__rid__restore_post",
+      "owner_ref": "a531439bc97b442ab174c352400735747bac11ff0e339ae55c8fcebf60b4aae6",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "87490bda674e4a73fd9f9d15b2a83d0463e9f26e86cabe170b46243f2991781d",
+      "schema_graph_sha256": "00fe2a32e38e9fb43d2a34e12688152813f146bdfbc6ba2c1d89795827a3ab49"
     },
     {
       "method": "POST",
@@ -18883,6 +19197,17 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "b8fc00eb1cfeca302b638549412db3658afcd41dfdb05bd4b34ade5579330425",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/novels/{nid}/experimental/model-broker/task-preview",
+      "operation_id": "task_preview_api_v1_novels__nid__experimental_model_broker_task_preview_post",
+      "owner_ref": "23d6d78c1f922a39f6e4c2d8b11560fbf3580f6908594a8b7ea60db3844126a8",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "35e11e960b67d6e1e7a06ddceac702a5216af5bb86dcad303fe5362d86c644fa",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -22651,7 +22976,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "0f07f26004b9817cc8090e80d50ea48de798b615e9b0029d39cee7db75b281b3",
-      "schema_graph_sha256": "09666961079c96542e5fc27e85b801cd793961081292cab8186989e77e5f0894"
+      "schema_graph_sha256": "0c0ec674340ebe14ba286c60f32f7f49b461e545c11f7cd492e27b0bc569362b"
     },
     {
       "method": "PUT",
@@ -22816,10 +23141,11 @@
       "operation_id": "update_api_novels__nid__experimental_creative_documents__rid__put",
       "owner_ref": "72cf995942879b93cb6355b30ccb1cf88151c4ff66538d916a9fc7e77413cfc3",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d1211ee1c44c8757877f03f6bde100ccd4e9f52fdcea141e9a04bfa6210b75a3",
-      "schema_graph_sha256": "5fe11eab32a88d52adcf8534fc8e090c10cebd5e6f1da650b4eee19f82185da6"
+      "schema_graph_sha256": "9700bd0292341d48390595cc79b6c3eebf808dfc6c9c6d266ef9dbecf213141d"
     },
     {
       "method": "PUT",
@@ -23660,7 +23986,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "02068b823277976cae7cdb8785296d8a2930e071e083d1f15aeadd34a2a45912",
-      "schema_graph_sha256": "09666961079c96542e5fc27e85b801cd793961081292cab8186989e77e5f0894"
+      "schema_graph_sha256": "0c0ec674340ebe14ba286c60f32f7f49b461e545c11f7cd492e27b0bc569362b"
     },
     {
       "method": "PUT",
@@ -23825,10 +24151,11 @@
       "operation_id": "update_api_v1_novels__nid__experimental_creative_documents__rid__put",
       "owner_ref": "72cf995942879b93cb6355b30ccb1cf88151c4ff66538d916a9fc7e77413cfc3",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "c70ac95ea89c2a4b231b0a11e7165f59fd31d893e95622ce771bf75f1d8974ab",
-      "schema_graph_sha256": "5fe11eab32a88d52adcf8534fc8e090c10cebd5e6f1da650b4eee19f82185da6"
+      "schema_graph_sha256": "9700bd0292341d48390595cc79b6c3eebf808dfc6c9c6d266ef9dbecf213141d"
     },
     {
       "method": "PUT",
