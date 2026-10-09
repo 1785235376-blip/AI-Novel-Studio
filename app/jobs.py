@@ -142,6 +142,13 @@ def generation_content_available(job):
     if not required: return True
     from .experimental.flags import enabled_flags
     if not required.issubset(enabled_flags()): return False
+    if getattr(job, "experimental_origin", None) in {"creative_director_model", "narrative_task_model"}:
+        # V2 model drafts keep the live originating authority through reads and
+        # every emitted chunk. Restart never reconstructs this trusted closure.
+        guard = getattr(job, "request_authorization", None)
+        if not callable(guard): return False
+        try: guard()
+        except Exception: return False
     from .author_context_sources import added_source_content_available
     return added_source_content_available(job)
 
@@ -204,6 +211,12 @@ def validate_generation_bounds(job):
 
 
 def check_generation_bounds(job, *, delta="", completion_text=None):
+    if (getattr(job, "experimental_origin", None) in {"creative_director_model", "narrative_task_model"}
+            and not job.cancelled.is_set() and not generation_content_available(job)):
+        job.generation_bound_failure = "GENERATION_AUTHORITY_REVOKED"
+        job.output = ""
+        job.cancelled.set()
+        raise ValueError("GENERATION_AUTHORITY_REVOKED")
     expected = getattr(job, "_generation_bounds", None)
     changed = expected is not None and expected != (job.generation_max_output_bytes, job.generation_deadline)
     if changed:
@@ -610,7 +623,7 @@ class JobManager:
                     return  # Late failure cannot undo an already published terminal state.
                 if job.generation_bound_failure:
                     job.output="";job.status="FAILED";job.execution_outcome="FAILED";job.error_code=job.generation_bound_failure
-                    job.error="生成超出已审核的时间或输出限额，未完成内容已丢弃。"
+                    job.error="生成授权已失效，未完成内容已丢弃。" if job.generation_bound_failure == "GENERATION_AUTHORITY_REVOKED" else "生成超出已审核的时间或输出限额，未完成内容已丢弃。"
                     self._emit(job);return
                 if job.cancelled.is_set():self._cancel_execution(job);return
                 if isinstance(exc,ModelRuntimeError):safe_error=exc.safe_message;error_code=exc.code.value

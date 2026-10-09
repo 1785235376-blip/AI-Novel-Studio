@@ -200,6 +200,14 @@ def create_model_broker_router(service, authorize, require_flag, require_host_se
             return {'job_id': reservation['job_id'], 'reservation_id': reservation['id'], 'status': reservation['status'], 'replayed': True}
         from ..jobs import mark_generation_origin
         mark_generation_origin(job, 'narrative_task_model' if row['request'].get('task_type') else 'model_broker')
+        if row['request'].get('task_type'):
+            original_authority = job.request_authorization
+            def task_authority():
+                guard_now()
+                if not callable(original_authority):
+                    raise ValueError('BROKER_TASK_LIVE_AUTHORITY_REQUIRED')
+                original_authority()
+            job.request_authorization = task_authority
         job.before_dispatch = lambda: service.guard_dispatch(nid, scope, actor, reservation['id'], job.id, guard_now)
         job.on_terminal = lambda: service.finalize(nid, scope, actor, reservation['id'], job.id, getattr(job, 'execution_outcome', None) or 'UNKNOWN', job.usage)
         try:

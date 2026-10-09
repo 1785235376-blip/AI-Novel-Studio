@@ -541,7 +541,7 @@ class ModelBrokerService(DomainService):
         chosen = sorted(eligible, key=rank)[0] if eligible else None
         guard()
         if sources != self._sources(nid, scope, body.chapter_ids): raise StaleSourceError('BROKER_SOURCES_CHANGED')
-        payload = {'request': body.model_dump(), 'sources': sources, 'budget_version': budget['version'],
+        payload = {'request': body.model_dump(exclude={'task_type'} if body.task_type is None else set()), 'sources': sources, 'budget_version': budget['version'],
                    'chosen': chosen, 'candidates': candidates, 'status': 'PREVIEW' if chosen else 'NO_LEGAL_ROUTE',
                    'decision_reason': 'CURRENT_ELIGIBLE_ROUTE_WITH_POLICY_ORDER' if chosen else 'NO_REGISTERED_ROUTE_SATISFIES_CURRENT_CONSTRAINTS',
                    'warnings': (['QUALITY_EVIDENCE_UNAVAILABLE_NO_QUALITY_RANKING'] if body.policy in {'QUALITY', 'QUALITY_FIRST'} else []),

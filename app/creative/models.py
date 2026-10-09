@@ -10,8 +10,10 @@ from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-CreativeMode = Literal["SCREENPLAY", "STORYBOARD", "VIDEO_PLANNING"]
-MODES = ("SCREENPLAY", "STORYBOARD", "VIDEO_PLANNING")
+CreativeMode = Literal["SCREENPLAY", "DIRECTOR", "STORYBOARD", "PRODUCTION", "VIDEO_PLANNING"]
+MODES = ("SCREENPLAY", "DIRECTOR", "STORYBOARD", "PRODUCTION", "VIDEO_PLANNING")
+USER_MODES = ("NOVEL", "SCREENPLAY", "DIRECTOR", "STORYBOARD", "PRODUCTION")
+LEGACY_MODES = ("SCREENPLAY", "STORYBOARD", "VIDEO_PLANNING")
 Identifier = Annotated[str, Field(min_length=1, max_length=240, strict=True)]
 
 
@@ -39,6 +41,13 @@ class DirectorNote(StrictCreativeModel):
     emotion: str = Field(default="", max_length=2000, strict=True)
     pacing: str = Field(default="", max_length=2000, strict=True)
     performance: str = Field(default="", max_length=4000, strict=True)
+    blocking: str = Field(default="", max_length=4000, strict=True)
+
+
+class DirectorSceneNote(DirectorNote):
+    """An ordered, individually editable direction linked to a screenplay scene."""
+    number: int = Field(ge=1, le=10000, strict=True)
+    scene_id: Identifier
 
 
 class Scene(StrictCreativeModel):
@@ -65,6 +74,10 @@ class ShotCard(StrictCreativeModel):
     duration_seconds: int = Field(default=5, ge=1, le=600, strict=True)
     frame_prompt: str = Field(default="", max_length=16000, strict=True)
     composition: str = Field(default="", max_length=4000, strict=True)
+    lens: str = Field(default="", max_length=1000, strict=True)
+    lighting: str = Field(default="", max_length=4000, strict=True)
+    environment: str = Field(default="", max_length=4000, strict=True)
+    sound: str = Field(default="", max_length=4000, strict=True)
     color: str = Field(default="", max_length=2000, strict=True)
     action: str = Field(default="", max_length=16000, strict=True)
     dialogue: list[Dialogue] = Field(default_factory=list, max_length=200)
@@ -93,6 +106,7 @@ class CreativeDocumentIn(StrictCreativeModel):
     source_independent: bool = Field(default=False, strict=True)
     scenes: list[Scene] = Field(default_factory=list, max_length=200)
     shots: list[ShotCard] = Field(default_factory=list, max_length=200)
+    director_notes: list[DirectorSceneNote] = Field(default_factory=list, max_length=200)
     video_plan: VideoPlan | None = None
 
     @model_validator(mode="after")
@@ -105,6 +119,14 @@ class CreativeDocumentIn(StrictCreativeModel):
             raise ValueError("CREATIVE_DUPLICATE_SCENE")
         if len({shot.id for shot in self.shots}) != len(self.shots) or len({shot.number for shot in self.shots}) != len(self.shots):
             raise ValueError("CREATIVE_DUPLICATE_SHOT")
+        if len({note.id for note in self.director_notes}) != len(self.director_notes) or len({note.number for note in self.director_notes}) != len(self.director_notes):
+            raise ValueError("CREATIVE_DUPLICATE_DIRECTOR_NOTE")
+        if any(note.scene_id not in {scene.id for scene in self.scenes} for note in self.director_notes):
+            raise ValueError("CREATIVE_DIRECTOR_UNKNOWN_SCENE")
+        if self.mode == "DIRECTOR" and (self.shots or self.video_plan is not None):
+            raise ValueError("CREATIVE_DIRECTOR_FIELDS_INVALID")
+        if self.mode == "SCREENPLAY" and self.director_notes:
+            raise ValueError("CREATIVE_SCREENPLAY_FIELDS_INVALID")
         if any(scene.source_chapter_id is not None and scene.source_chapter_id not in self.source_chapter_ids for scene in self.scenes):
             raise ValueError("CREATIVE_SCENE_SOURCE_NOT_BOUND")
         if any(shot.scene_id not in {scene.id for scene in self.scenes} for shot in self.shots):
@@ -120,3 +142,47 @@ class CreativeDocumentIn(StrictCreativeModel):
 
 class CreativeDocumentUpdate(CreativeDocumentIn):
     expected_version: int = Field(ge=1, strict=True)
+
+
+class CreativeDocumentRestore(StrictCreativeModel):
+    expected_version: int = Field(ge=1, strict=True)
+    restore_version: int = Field(ge=1, strict=True)
+
+
+class DirectorProposalIn(StrictCreativeModel):
+    source_document_id: Identifier
+    expected_source_version: int = Field(ge=1, strict=True)
+    title: str | None = Field(default=None, min_length=1, max_length=240, strict=True)
+
+
+class ProposalAction(StrictCreativeModel):
+    expected_version: int = Field(ge=1, strict=True)
+
+
+class DirectorProposalReview(ProposalAction):
+    reviewed_output_digest: str = Field(pattern=r"^[0-9a-f]{64}$", strict=True)
+    title: str = Field(min_length=1, max_length=240, strict=True)
+    director_notes: list[DirectorSceneNote] = Field(min_length=1, max_length=200)
+
+
+class DirectorModelPreview(ProposalAction):
+    route_id: Identifier
+
+
+class DirectorModelDispatch(ProposalAction):
+    reviewed_preview_digest: str = Field(pattern=r"^[0-9a-f]{64}$", strict=True)
+
+
+class DirectorModelNote(DirectorSceneNote):
+    # Stable model IDs are required so reparsing cannot mint a new output digest.
+    id: Identifier
+
+
+class DirectorModelOutput(StrictCreativeModel):
+    director_notes: list[DirectorModelNote] = Field(min_length=1, max_length=200)
+
+
+class CreativeDocumentDerive(StrictCreativeModel):
+    expected_version: int = Field(ge=1, strict=True)
+    mode: Literal["STORYBOARD", "PRODUCTION"]
+    title: str | None = Field(default=None, min_length=1, max_length=240, strict=True)

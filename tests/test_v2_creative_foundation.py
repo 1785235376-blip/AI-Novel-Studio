@@ -21,8 +21,7 @@ from test_r3_mounted_contracts import mounted, prefix, scoped
 TEST_URL = os.getenv("TEST_POSTGRES_DATABASE_URL", "")
 
 @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
-                       pytest.param("postgres", marks=[pytest.mark.postgres_backend_only,
-                           pytest.mark.skipif(not TEST_URL, reason="NOT_RUN: owned V2 PostgreSQL endpoint not configured")])])
+                       pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
 def rig(request, tmp_path):
     from app.config import Settings
     from app.creative.service import CreativeService

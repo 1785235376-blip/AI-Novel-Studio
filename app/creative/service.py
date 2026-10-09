@@ -8,7 +8,7 @@ import re
 from ..experimental.common import DomainService, StaleSourceError, change_row, new_row
 from ..experimental.store import canonical
 from ..source_privacy import source_privacy_status
-from .models import CreativeDocumentIn
+from .models import CreativeDocumentIn, CreativeDocumentDerive, DirectorNote
 
 COLLECTION = "creative_documents_v2"
 MAX_DOCUMENTS = 100
@@ -27,6 +27,15 @@ def document_digest(row: dict) -> str:
 
 class CreativeService(DomainService):
     COLLECTION = COLLECTION
+
+    def __init__(self, store, novels, chapters):
+        super().__init__(store, novels, chapters)
+        from .proposals import DirectorProposalService
+        self.proposals = DirectorProposalService(self)
+
+    def configure_generation(self, broker, preparer, manager):
+        from .generation import DirectorModelCoordinator
+        self.proposals.generation = DirectorModelCoordinator(self.proposals, broker, preparer, manager)
 
     @staticmethod
     def document_digest(row):
@@ -80,6 +89,10 @@ class CreativeService(DomainService):
         self.store.key(nid, scope)
         body = CreativeDocumentIn.model_validate(value)
         payload = body.model_dump()
+        # Author-assigned order is persistent and independent of input array order.
+        payload["scenes"].sort(key=lambda item: item["sequence"])
+        payload["shots"].sort(key=lambda item: item["number"])
+        payload["director_notes"].sort(key=lambda item: item["number"])
         bindings = self._document_evidence(nid, scope, {} if source_documents is None else source_documents)
         if body.source_independent and (body.source_chapter_ids or bindings):
             raise ValueError("CREATIVE_INDEPENDENT_SOURCE_CONFLICT")
@@ -104,7 +117,7 @@ class CreativeService(DomainService):
         if _budget[0] < 0:
             raise StaleSourceError("CREATIVE_SOURCE_GRAPH_CAPACITY")
         try:
-            body = CreativeDocumentIn.model_validate({key: row[key] for key in CreativeDocumentIn.model_fields})
+            body = CreativeDocumentIn.model_validate({key: row[key] for key in CreativeDocumentIn.model_fields if key in row})
         except (ValueError, KeyError):
             raise ValueError("CREATIVE_DOCUMENT_CORRUPT") from None
         if not isinstance(row.get("source_evidence"), dict) or set(row["source_evidence"]) != set(body.source_chapter_ids):
@@ -211,6 +224,84 @@ class CreativeService(DomainService):
             reauthorize()
             return {"id": row["id"], "version": row["version"], "status": row["status"]}
 
+    def derive(self, nid, scope, actor, rid, value, *, reauthorize=lambda: None):
+        """Advance a reviewed creative stage into a separate editable draft.
+
+        Existing authored data is copied transparently. Missing visual decisions
+        remain blank, and this operation never invokes a model or renderer.
+        """
+        body = CreativeDocumentDerive.model_validate(value)
+        with self.store.transaction(nid, scope) as state:
+            reauthorize()
+            source = self.get(nid, scope, rid)
+            from ..experimental.common import check_version
+            check_version(source, body.expected_version)
+            if ((body.mode == "STORYBOARD" and source["mode"] not in {"SCREENPLAY", "DIRECTOR"})
+                    or (body.mode == "PRODUCTION" and source["mode"] != "STORYBOARD")):
+                raise ValueError("CREATIVE_DERIVATION_STAGE_INVALID")
+            if not source.get("scenes") or (body.mode == "PRODUCTION" and not source.get("shots")):
+                raise ValueError("CREATIVE_DERIVATION_ASSETS_REQUIRED")
+            title = body.title or (source["title"][:220] + (" · 分镜" if body.mode == "STORYBOARD" else " · 制作"))
+            content = {"mode": body.mode, "title": title, "source_chapter_ids": source["source_chapter_ids"],
+                       "scenes": source["scenes"], "director_notes": source.get("director_notes", [])}
+            if body.mode == "STORYBOARD":
+                shots = []
+                for number, scene in enumerate(sorted(source["scenes"], key=lambda item: item["sequence"]), 1):
+                    notes = sorted((note for note in source.get("director_notes", []) if note["scene_id"] == scene["id"]),
+                                   key=lambda note: note["number"])
+                    direction = notes[0] if notes else {}
+                    shots.append({"number": number, "scene_id": scene["id"], "action": scene["action"],
+                        "dialogue": scene["dialogue"], "environment": scene["location"][:4000],
+                        "shot_size": direction.get("shot_size") or "MEDIUM",
+                        "camera_angle": direction.get("camera_angle") or "EYE_LEVEL",
+                        "camera_motion": direction.get("camera_motion") or "STATIC",
+                        "duration_seconds": direction.get("duration_seconds", 5),
+                        "director_notes": [{key: note[key] for key in DirectorNote.model_fields if key in note} for note in notes]})
+                content["shots"] = shots
+            else:
+                content["shots"] = source["shots"]
+                content["video_plan"] = {"segments": [{"shot_id": shot["id"], "duration_seconds": shot["duration_seconds"]}
+                    for shot in sorted(source["shots"], key=lambda item: item["number"])]}
+            source_digest = document_digest(source)
+            payload = self.prepare_content(nid, scope, content,
+                source_documents={source["id"]: {"version": source["version"], "digest": source_digest}})
+            payload["provenance"] = {"method": "STRUCTURED_DERIVATION", "model_called": False,
+                "source_mode": source["mode"], "source_document_id": source["id"],
+                "source_version": source["version"], "input_digest": source_digest,
+                "parameters": {"rule_version": "creative-stage-copy-v1"}, "quality_verification": "HUMAN_REVIEW_REQUIRED"}
+            row = new_row(nid, scope, actor, payload)
+            state["collections"].setdefault(self.COLLECTION, {})[row["id"]] = row
+            self.assert_current(nid, scope, row)
+            self.assert_capacity(state)
+            reauthorize()
+            return copy.deepcopy(row)
+
+    def restore(self, nid, scope, actor, rid, expected_version, restore_version, *, reauthorize=lambda: None):
+        """Restore an earlier current-source draft as a new CAS revision."""
+        self._expected(expected_version)
+        self._expected(restore_version)
+        with self.store.transaction(nid, scope) as state:
+            row = state["collections"].get(self.COLLECTION, {}).get(rid)
+            if row is None or row.get("novel_id") != nid or row.get("scope") != scope:
+                raise FileNotFoundError(rid)
+            self.assert_current(nid, scope, row)
+            target = next((item for item in [*row.get("history", []), row]
+                           if item.get("version") == restore_version), None)
+            if target is None or target.get("status") == "ARCHIVED":
+                raise ValueError("CREATIVE_RESTORE_DRAFT_VERSION_REQUIRED")
+            self.assert_current(nid, scope, target)
+            if target.get("mode") != row.get("mode") or target.get("source_documents", {}) != row.get("source_documents", {}):
+                raise ValueError("CREATIVE_RESTORE_SOURCE_BINDING_CHANGED")
+            value = {key: target[key] for key in CreativeDocumentIn.model_fields if key in target}
+            payload = self.prepare_content(nid, scope, value, source_documents=row.get("source_documents", {}))
+            reauthorize()
+            change_row(row, actor, expected_version, lambda current: current.update(
+                payload, status="DRAFT", restored_from_version=restore_version))
+            self.assert_current(nid, scope, row)
+            self.assert_capacity(state)
+            reauthorize()
+            return copy.deepcopy(row)
+
     def history(self, nid, scope, rid):
         row = self._raw(nid, scope, rid)
         self.assert_current(nid, scope, row)
@@ -224,4 +315,4 @@ class CreativeService(DomainService):
         snapshot = {key: value for key, value in row.items() if key != "history"}
         return {"format": "ai-novel-creative-document", "format_version": 1,
                 "document_digest": document_digest(row), "document": snapshot,
-                "boundary": "Structured draft/planning JSON; no media rendering or model execution."}
+                "boundary": "Structured draft/planning JSON; accepted proposals retain generation provenance. No media rendering."}
