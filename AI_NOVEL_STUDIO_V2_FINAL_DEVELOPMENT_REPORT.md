@@ -1,8 +1,10 @@
 # AI Novel Studio V2 开发交付报告
 
-证据快照：2026 年 10 月 9 日 07:56 UTC。当前结论是 **首轮 fe4d250 托管后端与有限 Windows 检查通过，两个 Cloud workflow 因 frontend 25 分钟上限取消；实际浏览器缺陷已有有限修复与已完成的本地验证；后继发布的精确 SHA 和托管结果由 PR 47 维护**。本报告记录实际代码、执行结果和未完成项；文件名中的 FINAL 不代表全量通过、可合并或可发布。
+证据快照：2026 年 10 月 9 日 08:49 UTC。**99e3c63 的五个 workflows 已终态：3 SUCCESS / 2 FAILURE。全部四条真实 PostgreSQL shards 通过；push 的严格完整后端 gates 通过；PR File 完整 pytest 通过，但其独立 TCP step 被原 20 分钟 cap 取消，PR 两个 aggregate gates 正确拒绝。** 两次原 frontend、两 Interop、Shared R123 与四个有限 Windows jobs 均通过；独立 V2 live suite 仍为 **5 passed / 2 failed（其中 HTTP 3 passed，UI 2 passed / 2 failed）**，mocked **5/5 passed**。实际重开与叠层缺陷、TCP 预算问题已有限定修复和本地验证，后继精确 SHA 的托管结果尚未取得，由 PR 47 维护。本报告中的 FINAL 不代表全量通过、可合并或可发布。
 
-修复后的本地证据：完整前端 **1,556 passed / 8 existing skips**；生命周期选定回归 File **131 passed / 97 skipped**、真实 PostgreSQL **98 passed / 103 skipped**；同标题同 ID 的实际 HTTP/File 重复流程 **6 passed**；基础设施 **174 passed**、原 API catalog 测试 **3 passed**，TypeScript/build/token 检查通过。新 **9,449 节点** manifest 已完成收集，**只代表 inventory，不是修复后全量托管通过**。下述首轮严格完整结果保留其原 source 身份。
+最新 UI 修复后的本地证据：完整前端 **1,567 passed / 8 existing skips，235 files passed / 2 skipped**，TypeScript/build/token 检查通过；其 08:20 UTC UI-only 检查点为基础设施 **174 passed**、**1,659 hashes / 0 errors**。随后针对 PR File/TCP cap 的限定编排修复已完成，最终基础设施 **276 passed（原 174 + 新增 102）**、**1,661 hashes / 0 errors**；后端 **9,449 节点**与 99e3c63 完全同序、skip/external gates 不变。此处 source/inventory 核对不是修复后完整托管通过，新增 TCP producer/join 与三项 mocked hit-test 仍需后继 SHA 实际执行。
+
+上一轮生命周期修复的本地结果仍保留：File **131 passed / 97 skipped**、真实 PostgreSQL **98 passed / 103 skipped**、同标题同 ID HTTP/File 重复流程 **6 passed**；当时完整前端 **1,556 passed / 8 existing skips**、基础设施 **174 passed**、原 API catalog 测试 **3 passed**。这些收据绑定原运行时 source，不因本次 UI 修复而自动成为整工作树的当前等价证明。
 
 06:56 UTC、候选 tree `0b0971ad6574aafe7c2f72135f7317e5b0e43715` 的历史本地严格证明为 **File 6,176 passed / 3,251 精确获准 skips**、**真实 PostgreSQL 6,151 passed / 3,276 精确获准 skips**；两个 profile 各完整收集 **9,427 节点**，原 `file=1/postgres=2` reconciliation **PASS**，原独立 TCP gate **2/2 passed**。完整前端为 **1,554 passed / 8 既有 opt-in skips**，独立基础设施自测 **170 passed**。不同 profile 与独立 gate 不相加为唯一产品用例总数。
 
@@ -15,7 +17,7 @@
 - 四模块代码检查点：[`d444901ab8e65a7296b559c890d758fc2e0dd10e`](https://github.com/1785235376-blip/AI-Novel-Studio/commit/d444901ab8e65a7296b559c890d758fc2e0dd10e)，[Draft PR 47](https://github.com/1785235376-blip/AI-Novel-Studio/pull/47)。本轮没有合并、创建 Release、部署或修改 main。本地快照核对时 PR 为 draft、未合并；`mergeable:true` 只表示 GitHub 合并冲突判定，不是 CI 通过或合并批准。
 - 本次开发和本地验证使用 dot 的云端 Linux 工作区；没有连接或操作用户电脑，没有执行付费模型调用。
 - 首轮四模块、CI/目录配套与完整证据已发布为 [`fe4d2505ade9a161689313dea50555408ba4b511`](https://github.com/1785235376-blip/AI-Novel-Studio/commit/fe4d2505ade9a161689313dea50555408ba4b511)。PR synthetic merge 为 `57503d7e354224398124211f8656fbbd0bb1ba40`，两者 source tree 同为 `f81ab92d808e1e6c0a83264d3845b5e615b7aefa`。本地严格执行仍绑定其原候选 tree `0b0971...`，不能改写成另一执行身份。
-- 本报告新增的有限收尾修复属于 fe4d250 之后的源码；最终修复发布 SHA、完整 CI 终态及剩余边界继续由 PR 47 记录。不能把旧检查点或本地修复测试写成新 SHA 的托管浏览器通过。
+- 上一轮有限修复已发布为 [`99e3c636bc59f45f5faa4b7af84b80981f1ec2e5`](https://github.com/1785235376-blip/AI-Novel-Studio/commit/99e3c636bc59f45f5faa4b7af84b80981f1ec2e5)，source tree `b0595aaccb9c42437f3d61aaf209a61de94d584d`；PR merge `42d8355c00eb545d40ab503c4429315bb7eef74e` 具有同一 tree。本次 readiness/叠层修复属于 99e3c63 之后的源码；最终修复发布 SHA、完整 CI 终态及剩余边界继续由 PR 47 记录。不能把旧检查点、本地修复测试或 99 的 mocked 成功写成后继 SHA 的托管 live 通过。
 - `narrative_production_v2` 服务端默认关闭，前端按真实 capabilities 显示入口；`V1_ACCEPTANCE_MODE` 继续禁止实验能力。原 NOVEL / IMAGE / VIDEO 全局壳体及小说正文写入责任保留。
 
 历史结论原样保留：**39 PARTIAL + F00 INTEGRATED，独立审查 BLOCKED**。本轮开发没有重新分类、重开或替代该审查；V1.X、RC1、PoemSeed LocalInterop 1.0 的历史资产和证据不被本报告覆盖。原 [功能矩阵](POST_INTEROP_FEATURE_MATRIX.md) 与 [历史延续报告](POST_INTEROP_R4_R5_CONTINUATION_REPORT.md) 的字节仍与本轮基线一致。
@@ -180,13 +182,13 @@ fe4d250 后重复真实 HTTP case 确认：公共 project ID 是可复用的标�
 
 ### 5.1 增量清单保持原门禁
 
-V2 additive manifest 与原 frozen manifest 分开保存。首轮 fe4d250 的清单为原 9,151 节点 + 276 = **9,427 collected nodes**。本轮缺陷修复后的完整 collection 已写入 **9,449 nodes / 1,658 source inputs**，相对 fe4 只新增 `test_v2_creative_project_lifecycle.py` 的 **22 cases**；原 9,427 相对顺序、原冻结 9,151 相对顺序、历史 skip maps 和 external gates 全部保留。Interop 仍为原 413 节点范围，不新增 skip 例外。
+V2 additive manifest 与原 frozen manifest 分开保存。首轮 fe4d250 的清单为原 9,151 节点 + 276 = **9,427 collected nodes**。已发布 99e3c63 的生命周期修复 collection 为 **9,449 nodes / 1,658 source inputs**，相对 fe4 只新增 `test_v2_creative_project_lifecycle.py` 的 **22 cases**；原 9,427 相对顺序、原冻结 9,151 相对顺序、历史 skip maps 和 external gates 全部保留。Interop 仍为原 413 节点范围，不新增 skip 例外。
 
 原 `coverage_manifest.json.gz`、`postgres_gate.py`、`suite_coverage.py`、`coverage_reconcile.py` 的字节均与本轮基线相同。V2 generator 记录新增 source identity，继续使用原完整 collection、分片、JUnit/phase、源码 digest、真实 PostgreSQL 与严格 unexpected-skip 校验。不会在 CI 中自动重新生成并接受漂移后的 manifest。
 
 唯一显式登记的旧测试迁移来自本轮开始之前的 V2 基线提交 `1b7ff50...`：`tests/test_windows_portable_entry.py` 的固定 launcher 预期增加 `-B` 再 `-I`。原/新双 hash 和逐字节单一替换规则保存在 collection receipt；这不是历史审查的批准。
 
-首轮 manifest 验证为 `INVENTORY_AND_SOURCE_INTEGRITY_ONLY`；本轮收尾 collection 仍为 `INVENTORY_ONLY`、`tests_executed:false`，不能当成修复后完整测试通过。本轮 manifest SHA256 为 `5b116d31c45b2fc9bc1434303be9b9e93beaef824f622d913b86b84be96e9e34`，原冻结 SHA256 `6457dd4c...040262` 不变。首轮 manifest/runner 的 source inputs 为 1,654/1,592，本轮为 1,658/1,596，各自范围不同；旧 source maps 仍仅绑定原身份。生成的未跟踪 fixture lock / chapter identity 状态不被误当成 source，Git-tracked fixture 与历史来源仍保留。
+首轮 manifest 验证为 `INVENTORY_AND_SOURCE_INTEGRITY_ONLY`；99e3c63 前的收尾 collection 为 `INVENTORY_ONLY`、`tests_executed:false`，对应 manifest SHA256 `5b116d31c45b2fc9bc1434303be9b9e93beaef824f622d913b86b84be96e9e34`。08:20 UTC 仅前端修复阶段的 manifest 为 `0093adc97d202dbb4bae5328226485c06d01daa2d58363e1d02f933ce7d82c1e`，source gate 已独立核对 **1,659 hashes / 0 errors**，全部 **9,449 后端节点与 99e3c63 完全同序**，历史 skip/external-gate maps 不变；没有新增后端节点。原冻结 SHA256 `6457dd4c...040262` 不变。首轮 manifest/runner source inputs 为 1,654/1,592，上一轮为 1,658/1,596，UI-only 检查点为 1,659/1,597，TCP 编排修复后的最终检查点为 1,661/1,599；最终 manifest `df72d854d942b0759b9d02229c33523bb1dd11470dd95c5c12a405a73c9a66ab` 的 9,449 节点顺序与 skip/external gates 同样不变。范围不同，旧 source maps 仍仅绑定原身份。生成的未跟踪 fixture lock / chapter identity 状态不被误当成 source，Git-tracked fixture 与历史来源仍保留。任何 collection/source gate 均不替代执行结果。
 
 ### 5.2 四模块检查点 d444901 的历史托管结果
 
@@ -223,13 +225,59 @@ Cloud File job 日志及 Interop File job 日志都明确记录 `frozen product 
 
 生命周期首轮 PostgreSQL 开发运行原样保留为 **92 passed / 3 failed / 94 skipped / 4 errors**：新回归 fixture 捕获了最初 nid，而测试切换为固定同标题 slug，造成 teardown 遗留。仅修正新测试 fixture 的固定 slug 捕获和精确自有行清理断言，没有改旧断言或 skip。已先归档一个已知 synthetic owner 和一个 scope（6 documents / 3 proposals），再按精确键清理并验证零残留，见 [原失败](docs/delivery/v2-development/creative-lifecycle-postgres.json)、[快照](docs/delivery/v2-development/creative-lifecycle-failed-fixture-snapshot.json)、[清理回执](docs/delivery/v2-development/creative-lifecycle-fixture-cleanup.json)。这不覆盖原失败结果。
 
-修复后的托管浏览器与完整后段原套件仍须在后继精确 SHA 执行；不预填成功。此次只完成已发现缺陷与现有任务交付，不扩展功能，不执行用户 Windows 验收、合并或 Release。
+上述 fe4d250 后继修复已在 99e3c63 取得实际托管执行；新增事实见下一节，不能回填覆盖 fe4 的失败、取消或 NOT_REACHED。此次只完成已发现缺陷与现有任务交付，不扩展功能，不执行用户 Windows 验收、合并或 Release。
+
+### 5.4 99e3c63 实际浏览器缺陷与第二轮限定修复
+
+99e3c63 的独立 V2 browser jobs 在 push 与 PR 均为 **FAILED**：真实 File/backend/Chromium live **5 passed / 2 failed / 0 skipped**（HTTP 3 passed，UI 2 passed / 2 failed），mocked workbench **5 passed / 0 failed**，含 1366×768、1440×900、1920×1080 三个 geometry cases。PR [run 37902141902 / job 113726946074](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37902141902/job/113726946074) 实际 checkout 为 merge `42d8355c...`。artifact **11602858790** 的 [身份与摘要](docs/delivery/v2-development/ci-99e3c63-browser-failure/source-identity.json)、[原始日志/JUnit 与 12 张未编辑 PNG](docs/delivery/v2-development/ci-99e3c63-browser-failure/README.md) 已保留，并逐项核对 28 份保留文件 hash。原 24,361,394-byte ZIP 与两个 raw trace ZIP 仅留 runtime，提交的身份表保留 digest 与来源，不虚称这些大文件已随仓库发布。
+
+两张失败截图均显示左侧已保存资产、中央却是未命名空草稿：[Production](docs/delivery/v2-development/ci-99e3c63-browser-failure/screenshots/failure-production-reopen.png) 左侧为 v3 / 2 场景，中央时间线 0 段；[Screenplay](docs/delivery/v2-development/ci-99e3c63-browser-failure/screenshots/failure-screenplay-reopen.png) 左侧为 v1 / 2 场景，中央标题为空。成功阶段截图只证明场景曾进入已保存剧本、已审阅导演和 Production，不证明随后恢复/重开场景通过。截图本身只证明选择/载入不一致；结合源码和延迟读取回归，确认切换阶段时把尚未完成初始读取的空数组误当成真实空项目，提前创建空草稿。另有原始 Production 截图显示滚动后的 reorder arrows 绘制到 sticky header 上，已作为独立局部布局问题记录。
+
+限定修改仅涉及五个前端 source/test 文件：
+
+- `CreativeWorkspace.tsx` 增加成功读取的 readiness 状态，仅在当前 scope 的 list 成功、loading 完成、权限有效且该阶段没有既有草稿时初始化。初读失败不创建空项目草稿，显式 retry 后可读取保存版本；阶段快速切换使用最新选择。显式新建（包括未修改草稿）、dirty/blocked 草稿、scope 切换、撤权及迟到 callback 的保护保留，不自动覆盖未知写入的本地草稿。
+- `creative.css` 只在制作时间线内部建立 isolated stacking context，sticky header 使用既有 `--z-dropdown` token。不改共享壳体、尺寸或全局 z-index 系统。
+- 新增 **10 项 recovery 单元 case + 1 项 CSS contract**。mocked browser 新增 **3 项**原生 hit-test，分别验证三个分辨率下 header 屏蔽滚入其区域的 reorder 控件、滚回后原按钮仍可点击；下次 mocked suite 为 **8 cases**。原 live spec、业务断言、原生手势和 timeout 未变。这里的新增 browser cases 尚未执行，不把旧 5/5 扩写为 8/8。
+
+[最新修复回执](docs/delivery/v2-development/creative-recovery-99e3c63-20261009.json) / [原 log](docs/delivery/v2-development/creative-recovery-99e3c63-20261009.log) 于 **08:11:15–08:13:35 UTC** 完成 TypeScript build、Vite production build、42-file token guard 和完整 Vitest：**1,567 passed / 8 existing skips，235 files passed / 2 skipped**，Vitest 118.31 秒。命令 exit 0、`sources_changed_during_check:false`，1,597 个 source inputs 运行前后相同且于 08:20 UTC 与该时工作树核对零差异；log digest 已复核。保留 ExperimentalWorkbench **647.28 kB** / App **775.35 kB** 非阻断 chunk warning，没有声明无警告或引入打包重构。
+
+[基础设施回执](docs/delivery/v2-development/creative-recovery-infrastructure.json) / [JUnit](docs/delivery/v2-development/creative-recovery-infrastructure.xml) 于 **08:17:08–08:17:13 UTC** 得到 **174 passed**、运行期源码稳定；[source gate](docs/delivery/v2-development/creative-recovery-source-gate.json) 是 `SOURCE_AND_INVENTORY_VERIFIED_NOT_EXECUTION`。9,449 后端节点和 skip/external gates 与 99 完全一致，全部 369 个 app Python 输入、API catalog/OpenAPI bytes 及 fingerprint `97fbdb682942e7a5cf5547ccc6a1389d90f5630cdbcc19b42708c061f184888b` 不变。这些证据证明本次局部修复及 source 身份，不是后继 SHA 的 hosted browser PASS。
+
+**99 托管终态（08:46 UTC）：** [push Cloud 37902136098](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37902136098) 与 [PR Cloud 37902141902](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37902141902) 均 **FAILURE**；五个 workflows 总计 **3 SUCCESS / 2 FAILURE**。25 jobs 中 **20 SUCCESS / 4 FAILURE / 1 CANCELLED**；四个 failure 是两个 V2 browser 和两个 PR backend precondition gates，取消的是 PR File job。两个 Cloud 均非全绿，push 仅因 V2 browser 失败，PR 还包含 File/TCP cap 和由此产生的 aggregate 拒绝。
+
+两次原 frontend 均 **SUCCESS**，各自单元 1,556/8；原 browser groups 为 geometry 9、real client 2、Interop 12、business 2、R3 7、R4 63、export 1、surface 9、branch 1，全数实际通过。此前 fe4 未到达的 export/surface/branch 在 99 已真实执行。两 Interop、Shared R123 与四个 Windows jobs 均 **SUCCESS**；Windows 仍仅原 59 tests + 3 V2 fixtures 和 embedded Python 3.12.9 / PG16.15 / UTF-8 / dump-restore smoke。
+
+四条真实 PG shard 均 **SUCCESS**：push/PR 各自 shard-0 **3,100 passed / 1,612 精确 skips / 4,737 deselected**，分配 4,712 节点；各自 shard-1 **3,059 passed / 1,678 精确 skips / 4,712 deselected**，分配 4,737 节点。每个事件两分片合计 **6,159 passed / 3,290 精确 skips，9,449 nodes**。push 两个独立严格 aggregate gates **SUCCESS**，核对 File **6,190 passed / 3,259 精确 skips**、PG **6,159/3,290**，每 profile 9,449 节点，原独立 TCP **2 passed**；这些统计不跨 profile 相加为唯一总量。
+
+PR File job **113726946131 CANCELLED**：完整 pytest 已完成同样 **6,190/3,259**，但随后 TCP step 没有终态。PR gates **113742205784 / 113742205835 FAILURE**，因 `EXECUTION_RESULT=cancelled` 在任何 reconciliation 前即拒绝，没有 PR coverage artifact。不能用 PR 其他 jobs 的成功、完整 pytest body、两个 PG 分片或 push 的独立完整证明替代 PR 自身所缺 TCP/aggregate。原失败、取消与成功证据都保留其精确 event/SHA/run/attempt 身份，不与后继运行拼接。
+
+[99 精确托管终态收据](docs/delivery/v2-development/ci-99e3c63-terminal.json)（观测时间 **08:46:21 UTC**）与 [无损日志/metadata 归档](docs/delivery/v2-development/ci-99e3c63-terminal-evidence.tar.gz) 保存全部 **25 份实际 job logs**、strict push receipts、PR 取消/拒绝、原 step/artifact 身份及依赖对照。归档 **542,748 bytes**，SHA256 `731df56f39bf7741fa60e3785081a8836031a630362a385dd5b153d40a2b3fa1`；已独立核对内部 **50 份** member hashes 和两个 push reconciliation JSON。当前六个 File/PG execution jobs 的实际 package receipts 为相同 **38 rows / 709 bytes**，SHA256 `74cf563c7bc414940db61b6c9e84d500b0507b0b559590452b040b57a5738b12`；其中包含 PR cancelled File 的安装收据，这不升级它的执行结果。历史 fe4 package 对照单列，未与当前测试结果/JUnit 拼接。远端完整 artifact binaries 仍以真实 IDs/digests 引用，不能把这份有界归档说成已下载了所有 binaries。
+
+针对该 cap 的限定 CI 编排修复已完成并取得独立收据，详见 5.5；上述 1,659-hash UI-only 检查点保持其原时点身份，不替代修复后的最终 source gate。
+
+### 5.5 原 TCP 测试的独立预算与精确证据合并
+
+99 PR File 的完整原顺序 pytest 用时 **1,080.84 秒**，对应 workflow step 为 1,089 秒；setup、依赖、字体和原基础设施步骤后，随后的 TCP step 只运行了 **32 秒**便达到原 20 分钟 job cap。该取消仍为不完整证据，不通过重试到绿、增大 cap 或削弱 gate 消除。原 metadata/timing 回执与 artifact 身份保留于 [预算问题记录](docs/delivery/v2-development/ci-tcp-budget-20261009/README.md)。其中 artifact ZIP digest 来自 GitHub metadata，未声称此修复检查已下载核对其 ZIP。
+
+仅将原 `tests/test_r5_offline_sync_tcp.py` 的 **两项真实 loopback 测试**移到独立 `backend-tcp` job，外层上限 **10 分钟**。File 保持单进程原顺序、**20 分钟** cap，两条 PG shard 保持原确定性分配和 **55 分钟** cap。原 File 完整执行 step、174 项基础设施检查、产品测试/断言、skip/external-gate maps，以及 `prepare.sh` / `postgres_gate.py` / `suite_coverage.py` / `coverage_reconcile.py` 不变；新增 102 项编排自测安排在 TCP job，不占原 File 预算。
+
+新增 [tcp_evidence.py](.github/ci/tcp_evidence.py) 只负责证据生产与不可变输入的布局适配，设计见 [TCP_EVIDENCE.md](.github/ci/TCP_EVIDENCE.md)：
+
+- producer 使用原 tracked-source archive / isolated profile、相同 Python 与依赖约束，实际冻结安装包并执行 pip check；原 pytest scope/options、真实分进程 uvicorn/loopback/data roots 保留。记录实际 checkout SHA/tree、event、repository、run、attempt、Python/platform、manifest/dependency digests；执行前后核对 source 与安装包。先写 incomplete receipt，再执行一次原命令；中断不能产生完成标记。原 JUnit validator 仍要求两项精确身份、零 skip/error/failure，拒绝覆盖旧 receipt/log/XML。
+- 两个原 Backend aggregate checks 均要求整条 full-suite matrix 与 TCP job 的 `needs.result` **精确为 success**。缺失、失败、取消、skipped、pending 或外来证据不产生条件通过。joiner 对所有 shard/TCP 核对相同 checkout/tree/event/repo/run/attempt、manifest、constraints、Python/platform、实际安装包 bytes、源码前后 hash 和原始 JUnit/log。
+- 下载的原目录不改写。只在全新 aggregation 目录中排他创建逐字节副本，并把独立 `sync-tcp.xml` 的相同 bytes 放在 File receipt 旁以满足原 verifier 布局；记录输入和副本 SHA256，拒绝既有目录、重复 XML、symlink 或改写，校验前后重新核对摘要。随后调用原未改动 reconciler，workflow 另独立执行原 CLI。此布局关联不会把 TCP 变成 File 单进程执行，也不改变唯一节点数；旧失败不能与新 run 拼接。
+
+[最终基础设施回执](docs/delivery/v2-development/ci-tcp-budget-infrastructure-fixed.json) / [log](docs/delivery/v2-development/ci-tcp-budget-infrastructure-fixed.log) / [JUnit](docs/delivery/v2-development/ci-tcp-budget-infrastructure-fixed.xml) 于 **08:34:55–08:35:01 UTC** 得到 **276 passed，5.82 秒**（原 174 + 新增 102），1,599 个 source inputs 前后稳定，并于 08:37 UTC 逐项核对。保留 [第一次 owned-profile 失败](docs/delivery/v2-development/ci-tcp-budget-infrastructure.json) / [log](docs/delivery/v2-development/ci-tcp-budget-infrastructure.log)：**275 passed / 1 failed，5.94 秒**，合成 pytest fixture 继承外围 root，导致合成 JUnit classname 带前缀，被未改动 validator 拒绝。仅新增合成 fixture 配置自己的最小 `pytest.ini` 后独立重跑；不改产品 runner/断言，不覆盖失败。
+
+[最终 collection](docs/delivery/v2-development/ci-tcp-closeout-collection.json) 仍为 `INVENTORY_ONLY / tests_executed:false`；[source gate](docs/delivery/v2-development/ci-tcp-closeout-source-gate.json) 于 **08:37:12 UTC** 核对 **1,661 hashes / 0 errors**，manifest `df72d854d942b0759b9d02229c33523bb1dd11470dd95c5c12a405a73c9a66ab`，9,449 后端节点与 99 完全同序、历史 skip/external gates 不变。369 个 app Python 输入、catalog/OpenAPI bytes 与原 live spec/TCP 产品测试均未变。最终改动范围为五个前端 source/test、两个新增 CI helper/test 和 workflow 编排；不是新增产品功能。
+
+原两项真实分进程 loopback TCP 已于 **08:37:32–08:38:03 UTC** 独立运行，**2 passed / 0 skipped / 0 failures / 0 errors，28.04 秒**，见 [实际回执](docs/delivery/v2-development/ci-tcp-budget-real-loopback.json)、[原 log](docs/delivery/v2-development/ci-tcp-budget-real-loopback.log)、[原 JUnit](docs/delivery/v2-development/ci-tcp-budget-real-loopback.xml) 和 [精确校验](docs/delivery/v2-development/ci-tcp-budget-20261009/real-loopback-validation.json)。runner 的 **1,599** source inputs 前后一致；另据最终 manifest 校验 **1,661** 项 source 匹配，原 reconciler 独立接受两个精确 node 的原始 JUnit。此为原产品 TCP 的实际本地执行，不是新 hosted producer 身份或 same-run join 证据。新 hosted producer/aggregate、V2 live 7 项 / mocked 8 项仍须由后继精确 SHA 取得终态；不与 profile 唯一总数相加。
 
 ## 6 已知限制与下一阶段
 
-1. **保留已完成的本地严格证明。** File 原顺序进程、PG 两分片、独立 TCP 及 file=1/postgres=2 reconciliation 已全部完成；完整前端也已通过。保留先前失败及独立补验，不删除 skip、不改旧测试以掩盖问题。上述结果限定于原 06:56 UTC 源码身份。fe4d250 实际失败的有限修复及本地回归已按上节完成，剩余交付只继续本次授权发布与后继精确 SHA CI 核对。
+1. **保留已完成的本地严格证明。** File 原顺序进程、PG 两分片、独立 TCP 及 file=1/postgres=2 reconciliation 已全部完成；完整前端也已通过。保留先前失败及独立补验，不删除 skip、不改旧测试以掩盖问题。上述结果限定于原 06:56 UTC 源码身份。fe4d250 与 99e3c63 实际失败的有限修复及各自本地回归已按上节完成，剩余交付只继续本次授权发布与后继精确 SHA CI 核对。
 2. **完成本次授权发布与托管验证。** 本次交付范围为将有效代码、修复、基础设施、目录、检查、报告与证据发布到 V2 分支，并在 PR 47 记录最终 SHA、CI 和剩余边界；按精确 SHA 核对 File、两条 PostgreSQL shards、Interop、前端和适用 Windows jobs。完成本任务后停止功能扩展；不执行本机 Windows 验收、合并或 Release。
-3. **重新验证已失败的 V2 浏览器与未到达的原套件。** 在后继精确 SHA 执行独立 V2 live/geometry job，核对入口点击、case 隔离、项目生命周期、default-off、草稿、冲突/取消、历史恢复和正文不变；原 frontend 后段 export/surface/branch 必须实际执行。没有新终态前不声明修复后的 hosted browser PASS。
+3. **重新验证已失败的 V2 浏览器与 PR File 余下门禁。** 后继精确 SHA 必须实际执行独立 V2 live 和 8 项 mocked/geometry/hit-test，重点核对恢复后重开与 timeline header，并保留 scope/撤权/草稿/正文不变边界。99 的原 frontend 全部后段已经通过；99 PR File/TCP 的 cap 取消不能被 push 成功替代。99 的四条 PG 与 aggregate 已取得终态；后继还须实际证明新 TCP producer 和同 run/attempt join，完成本次授权验证。没有新终态前不声明修复后的 hosted browser PASS。
 4. **真实 Windows 本机验收需要单独授权。** 本轮用户安装、升级、交互窗口、输入法、用户目录模型发现、GPU/驱动与本地模型启动均为 **LOCAL_REQUIRED / NOT_RUN**；不能由托管 Windows 合约代替。
 5. **真实模型质量仍为 NOT_RUN。** 需要选定并验证可用模型，另行评测剧本/导演建议质量、中文长文本一致性、吞吐、延迟、显存峰值及多模态输出。检测到格式或可选 route 不足以证明模型适配。
 6. **恢复与规模限制仍明确。** 未保存草稿仅在页面内存；模型未知 admission 不自动重放；创作文档/提案和历史有容量上限。导演模型路径暂需来源章节锚点，独立剧本可继续手工编辑及规则建议。

@@ -3,7 +3,7 @@ const scope = { workspaceId: 'workspace-v2', projectId: 'project-v2', storylineI
 const scene = { id: 'scene', sequence: 1, source_chapter_id: null, heading: 'INT. 旧车站 - 夜', time: '夜间', location: '旧车站', characters: [], action: '她在空旷的月台上停下，远处传来列车的回声。', dialogue: [], emotion: '警觉', director_notes: [] };
 const shot = { id: 'shot', number: 1, scene_id: 'scene', shot_size: 'MEDIUM', camera_angle: 'EYE_LEVEL', camera_motion: 'STATIC', duration_seconds: 5, frame_prompt: '站台远景，人物独自站在灯光边缘。', composition: '人物位于画面左侧', color: '冷色', action: '人物回头', dialogue: [], sound_effect: '', lens: '35mm', lighting: '低调侧光', environment: '夜间旧车站', sound: '风声与列车回声', director_notes: [] };
 const document = { id: 'storyboard', mode: 'STORYBOARD', title: '车站 · 分镜', source_chapter_ids: [], source_independent: true, scenes: [scene], director_notes: [], shots: [shot], video_plan: null, version: 1, status: 'DRAFT', source_evidence: {}, created_at: '2026-10-09T00:00:00Z', updated_at: '2026-10-09T00:00:00Z', actor_id: 'author' };
-async function seed(page: Page, enabled = true) {
+async function seed(page: Page, enabled = true, documents: unknown[] = [document]) {
   const creativeRequests: string[] = [];
   await page.addInitScript(scope => { localStorage.setItem('studio.session', 'visual-session'); localStorage.setItem('studio.scope', JSON.stringify(scope)); }, scope);
   await page.route('**/api/**', async route => {
@@ -11,7 +11,7 @@ async function seed(page: Page, enabled = true) {
     if (path.includes('/experimental/creative')) {
       creativeRequests.push(path); expect(route.request().headers()['x-session-token']).toBe('visual-session'); expect(route.request().headers()['x-branch-id']).toBe(scope.branchId);
       if (path.endsWith('/capabilities')) return route.fulfill({ json: { enabled, modes: ['SCREENPLAY', 'DIRECTOR', 'STORYBOARD', 'PRODUCTION'], can_mutate: true } });
-      if (path.endsWith('/documents')) return route.fulfill({ json: { items: [document] } });
+      if (path.endsWith('/documents')) return route.fulfill({ json: { items: documents } });
       return route.fulfill({ json: { items: [] } });
     }
     if (path.endsWith('/bootstrap')) return route.fulfill({ json: { actor: { actor_id: 'author', session_id: 'session', client_id: 'client' }, scope: { workspace_id: scope.workspaceId, project_id: scope.projectId, storyline_id: scope.storylineId, branch_id: scope.branchId }, capabilities: {} } });
@@ -51,3 +51,32 @@ test('V2 remains off with no creative API requests', async ({ page }) => { const
 test('keyboard stages and cancelled exit preserve unsaved creative content', async ({ page }) => { await seed(page); await open(page); const novel = page.getByRole('tab', { name: /^小说 Novel/ }); await novel.focus(); await page.keyboard.press('ArrowRight'); await expect(page.getByRole('tab', { name: /^剧本 Screenplay/ })).toBeFocused(); await page.getByLabel('文档标题', { exact: true }).fill('保留此草稿'); await page.getByRole('button', { name: '返回经典工作区' }).click(); await expect(page.getByText('离开会关闭未保存的创作草稿。可以取消离开，先保存或导出。')).toBeVisible(); await page.getByRole('button', { name: '继续编辑', exact: true }).click(); await expect(page.getByLabel('文档标题', { exact: true })).toHaveValue('保留此草稿'); await page.getByRole('tab', { name: /^制作 Production/ }).click(); await page.getByRole('tab', { name: /^剧本 Screenplay/ }).click(); await expect(page.getByLabel('文档标题', { exact: true })).toHaveValue('保留此草稿'); });
 
 for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) test(`V2 shared-shell geometry ${viewport.width}x${viewport.height}`, async ({ page }, info) => { await page.setViewportSize(viewport); await seed(page); await open(page); await page.getByRole('tab', { name: /^分镜 Storyboard/ }).click(); await page.evaluate(() => document.fonts.ready); const sizes = await page.evaluate(() => { const rect = (selector: string) => { const bounds = document.querySelector(selector)!.getBoundingClientRect(); return { width: bounds.width, height: bounds.height }; }; return { header: rect('.global-header'), context: rect('.context-bar'), sidebar: rect('.workspace-sidebar'), inspector: rect('.workspace-inspector'), status: rect('.status-bar'), scroll: document.documentElement.scrollWidth, viewport: innerWidth }; }); expect(sizes.header.height).toBe(56); expect(sizes.context.height).toBe(44); expect(sizes.sidebar.width).toBe(248); expect(sizes.inspector.width).toBe(340); expect(sizes.status.height).toBe(32); expect(sizes.scroll).toBeLessThanOrEqual(sizes.viewport); await page.screenshot({ path: info.outputPath(`storyboard-${viewport.width}.png`), fullPage: true }); });
+
+for (const viewport of [{ width: 1366, height: 768 }, { width: 1440, height: 900 }, { width: 1920, height: 1080 }]) test(`V2 timeline header shields scrolled reorder controls ${viewport.width}x${viewport.height}`, async ({ page }, info) => {
+  await page.setViewportSize(viewport);
+  const shots = [shot, { ...shot, id: 'shot-2', number: 2 }];
+  await seed(page, true, [{ ...document, id: 'production', mode: 'PRODUCTION', title: '车站 · 制作', shots, video_plan: { frame_rate: 24, width: 1920, height: 1080, notes: '仅用于结构化计划', segments: shots.map(row => ({ shot_id: row.id, duration_seconds: row.duration_seconds, note: '' })) } }]);
+  await open(page); await page.getByRole('tab', { name: /^制作 Production/ }).click();
+  await expect(page.getByLabel('文档标题', { exact: true })).toHaveValue('车站 · 制作');
+  const timeline = page.getByRole('region', { name: '制作时间轴', exact: true });
+  await timeline.evaluate(element => {
+    const header = element.querySelector(':scope > header')!.getBoundingClientRect();
+    const button = element.querySelector('.creative-clip-controls button')!.getBoundingClientRect();
+    element.scrollTop += button.bottom - header.bottom + 2;
+  });
+  const hitTargets = () => timeline.evaluate(element => {
+    const header = element.querySelector(':scope > header')!, bounds = header.getBoundingClientRect();
+    return Array.from(element.querySelectorAll('.creative-clip-controls button')).slice(0, 2).map(button => {
+      const rect = button.getBoundingClientRect(), x = rect.left + rect.width / 2, y = rect.top + rect.height / 2;
+      return { x, y, intersectsHeader: rect.top < bounds.bottom && rect.bottom > bounds.top, headerReceivesPointer: header.contains(document.elementFromPoint(x, y)) };
+    });
+  });
+  await expect.poll(async () => (await hitTargets()).every(point => point.intersectsHeader && point.headerReceivesPointer)).toBe(true);
+  const coveredReorder = (await hitTargets())[1];
+  await page.mouse.click(coveredReorder.x, coveredReorder.y);
+  await expect(timeline.locator('.creative-timeline-clip strong').first()).toHaveText('镜头 1');
+  await page.screenshot({ path: info.outputPath(`production-header-${viewport.width}.png`), fullPage: true });
+  await timeline.evaluate(element => { element.scrollTop -= element.querySelector(':scope > header')!.getBoundingClientRect().height; });
+  await timeline.getByRole('button', { name: '后移第 1 段', exact: true }).click();
+  await expect(timeline.locator('.creative-timeline-clip strong').first()).toHaveText('镜头 2');
+});

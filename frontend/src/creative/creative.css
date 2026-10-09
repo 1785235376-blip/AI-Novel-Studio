@@ -67,8 +67,8 @@
 .creative-workspace{height:100%;box-sizing:border-box;min-height:0;overflow:hidden}
 .creative-project-timeline{flex-shrink:0}
 .creative-workspace>[role=tabpanel]{flex:1;min-height:0;overflow:auto}
-.creative-production-timeline{flex:0 1 auto;max-height:calc(var(--space-12)*5);overflow:auto}
-.creative-production-timeline>header{position:sticky;top:0;background:var(--color-bg-surface)}
+.creative-production-timeline{flex:0 1 auto;max-height:calc(var(--space-12)*5);overflow:auto;isolation:isolate}
+.creative-production-timeline>header{position:sticky;top:0;z-index:var(--z-dropdown);background:var(--color-bg-surface)}
 .creative-workspace>.ui-status-message,.creative-workspace>.creative-navigation-confirm{flex-shrink:0}
 .creative-document-toolbar>div{min-width:0}.creative-workspace h2,.creative-director-panel :is(p,small,strong){overflow-wrap:anywhere}
 

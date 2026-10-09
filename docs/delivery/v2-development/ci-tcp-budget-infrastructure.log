@@ -1,0 +1,49 @@
+........................................................................ [ 26%]
+........................................................................ [ 52%]
+........................................................................ [ 78%]
+........................................F...................             [100%]
+=================================== FAILURES ===================================
+________ test_runner_retains_actual_synthetic_subprocess_outcomes[pass] ________
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-checks/ci-tcp-budget-infrastructure/pytest/test_runner_retains_actual_syn0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb680657aa0>
+outcome = 'pass'
+
+    @pytest.mark.parametrize("outcome", ["pass", "fail", "skip", "source-change"])
+    def test_runner_retains_actual_synthetic_subprocess_outcomes(tmp_path, monkeypatch, outcome):
+        evidence = Evidence(tmp_path)
+        # This is an actual pytest subprocess over explicitly synthetic functions;
+        # real product TCP execution is tested separately and never inferred here.
+        source = tmp_path / "tests/test_r5_offline_sync_tcp.py"
+        body = "import pytest\nfrom pathlib import Path\n"
+        for node in gate.TCP_NODES:
+            statement = {"pass": "assert True", "fail": "assert False", "skip": "pytest.skip('not permitted')",
+                         "source-change": "Path(__file__).write_text(Path(__file__).read_text() + '# mutation\\n')"}[outcome]
+            body += "def " + node.split("::")[1] + "():\n    " + statement + "\n"
+        source.write_text(body)
+        evidence.base.manifest["source_files"][source.relative_to(tmp_path).as_posix()] = gate._digest(source)
+        evidence.base.save_manifest()
+        for name in (tcp.RECEIPT, tcp.LOG, gate.TCP_JUNIT_FILENAME):
+            (evidence.tcp / name).unlink()
+        monkeypatch.setenv("RUN_B10_TCP_SYNC_TEST", "1")
+        monkeypatch.setenv("STORAGE_BACKEND", "file")
+        monkeypatch.setenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", "1")
+        monkeypatch.delenv("PYTEST_ADDOPTS", raising=False)
+        monkeypatch.setattr(tcp, "actual_identity", lambda *args: copy.deepcopy(evidence.identity))
+        monkeypatch.setattr(tcp.subprocess, "check_output", lambda *args, **kwargs: b"pytest==8.4.2\n")
+        code = tcp.run_tcp(tmp_path, evidence.base.manifest_path, evidence.base.constraints, evidence.tcp, tmp_path / "pytest")
+        receipt = gate._read_json(evidence.tcp / tcp.RECEIPT)
+>       assert receipt["complete"] is (outcome == "pass")
+E       AssertionError: assert False is ('pass' == 'pass'
+E         
+E           pass)
+
+.github/ci/test_tcp_evidence.py:252: AssertionError
+----------------------------- Captured stdout call -----------------------------
+..                                                                       [100%]
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-checks/ci-tcp-budget-infrastructure/pytest/test_runner_retains_actual_syn0/tcp/sync-tcp.xml -
+2 passed in 0.08s
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio/docs/delivery/v2-development/ci-tcp-budget-infrastructure.xml -
+=========================== short test summary info ============================
+FAILED .github/ci/test_tcp_evidence.py::test_runner_retains_actual_synthetic_subprocess_outcomes[pass]
+1 failed, 275 passed in 5.94s

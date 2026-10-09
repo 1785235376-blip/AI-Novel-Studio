@@ -1,0 +1,27 @@
+{
+  "utc": "2026-10-09T08:37:12.723182+00:00",
+  "status": "SOURCE_AND_INVENTORY_VERIFIED_NOT_EXECUTION",
+  "previous_head": "99e3c636bc59f45f5faa4b7af84b80981f1ec2e5",
+  "v2_manifest_sha256": "df72d854d942b0759b9d02229c33523bb1dd11470dd95c5c12a405a73c9a66ab",
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "source_hashes_checked": 1661,
+  "source_errors": [],
+  "previous_nodes": 9449,
+  "current_nodes": 9449,
+  "product_nodes_identical_in_order": true,
+  "skip_and_external_gate_maps_unchanged": true,
+  "application_and_catalog_sources_unchanged": true,
+  "application_python_sources_checked": 369,
+  "application_source_fingerprint_sha256": "97fbdb682942e7a5cf5547ccc6a1389d90f5630cdbcc19b42708c061f184888b",
+  "original_gates_tcp_and_live_spec_unchanged": true,
+  "changed_source_paths": [
+    ".github/ci/tcp_evidence.py",
+    ".github/ci/test_tcp_evidence.py",
+    ".github/workflows/cloud-ci.yml",
+    "frontend/src/creative/CreativeWorkspace.test.tsx",
+    "frontend/src/creative/CreativeWorkspace.tsx",
+    "frontend/src/creative/ProductionTimeline.css.test.ts",
+    "frontend/src/creative/creative.css",
+    "frontend/tests/visual/creative-workbench.spec.ts"
+  ]
+}

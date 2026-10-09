@@ -1,6 +1,6 @@
 # V2 开发证据索引
 
-本索引对应 [V2 开发交付报告](../../../AI_NOVEL_STUDIO_V2_FINAL_DEVELOPMENT_REPORT.md)，快照日期为 2026-10-09 07:56 UTC。四模块代码检查点为 `d444901ab8e65a7296b559c890d758fc2e0dd10e`，[Draft PR 47](https://github.com/1785235376-blip/AI-Novel-Studio/pull/47)。首轮完整发布 commit 为 `fe4d2505ade9a161689313dea50555408ba4b511`，PR merge 为 `57503d7e354224398124211f8656fbbd0bb1ba40`；历史本地源码验证绑定候选 tree `0b0971ad6574aafe7c2f72135f7317e5b0e43715`，最终发布 SHA 与其托管 CI 在 PR 47 维护，不能把最终包的新增步骤回填为代码检查点已执行的成果。
+本索引对应 [V2 开发交付报告](../../../AI_NOVEL_STUDIO_V2_FINAL_DEVELOPMENT_REPORT.md)，快照日期为 2026-10-09 08:49 UTC，99e3c63 五个托管 workflows 已全部终态。四模块代码检查点为 `d444901ab8e65a7296b559c890d758fc2e0dd10e`，[Draft PR 47](https://github.com/1785235376-blip/AI-Novel-Studio/pull/47)。首轮完整发布 commit 为 `fe4d2505ade9a161689313dea50555408ba4b511`，PR merge 为 `57503d7e354224398124211f8656fbbd0bb1ba40`；上一轮修复发布为 `99e3c636bc59f45f5faa4b7af84b80981f1ec2e5`，tree `b0595aaccb9c42437f3d61aaf209a61de94d584d`，PR merge `42d8355c00eb545d40ab503c4429315bb7eef74e` 具有同一 tree；历史本地源码验证绑定候选 tree `0b0971ad6574aafe7c2f72135f7317e5b0e43715`，最终发布 SHA 与其托管 CI 在 PR 47 维护，不能把最终包的新增步骤回填为代码检查点已执行的成果。
 
 ## 阅读规则
 
@@ -115,12 +115,57 @@ catalog 首次失败仅在执行工具 traceback 中观察到 `OSError errno 30`
 
 代际隔离恢复边界：旧/unbound V2 rows 和 history 的 JSON 值保留；只读不改 scope bytes，新写入会重写 scope envelope。没有可靠 incarnation 的旧资产 fail closed，不自动迁移/rebind；删除 File marker 产生新身份，损坏 marker 报错。恢复需另行审阅 owner 证据，未新增恢复工具。
 
+## 99e3c63 实际失败与第二轮限定修复
+
+E21–E32 保留其原执行与源码身份；本次五个前端 source/test 文件已变化，不把旧整份 source map 宣称为当前工作树等价。旧本地完整后端与 fe4 的严格证明继续有效于各自原身份。
+
+| ID | 证据 | 结论与边界 |
+| --- | --- | --- |
+| E33 | [99 浏览器原始证据说明](ci-99e3c63-browser-failure/README.md) · [source/artifact 身份](ci-99e3c63-browser-failure/source-identity.json) · [live JUnit](ci-99e3c63-browser-failure/receipts/live/junit.xml) · [mocked JUnit](ci-99e3c63-browser-failure/receipts/v2-creative-workbench.xml) | PR artifact 11602858790 / run 37902141902 / job 113726946074，真实 checkout 为 merge 42d8355c；live 5 passed / 2 failed（HTTP3 passed、UI2 passed/2 failed），mocked 5/5（含三尺寸 geometry）；28 份保留文件 hash 已核对，含 12 张未编辑 PNG；保存阶段截图不证明后续恢复/重开通过 |
+| E34 | [readiness/叠层修复 JSON](creative-recovery-99e3c63-20261009.json) · [log](creative-recovery-99e3c63-20261009.log) | 08:11:15–08:13:35 UTC；TypeScript/Vite/token 42 files PASS，完整前端 1,567 passed / 8 existing skips，235 files passed / 2 skipped，Vitest 118.31 秒；1,597 source inputs 前后稳定，08:20 UTC 当时逐项零差异；保留 647.28/775.35 kB chunk warnings；不证明新 SHA browser PASS |
+| E35 | [基础设施 JSON](creative-recovery-infrastructure.json) · [log](creative-recovery-infrastructure.log) · [JUnit](creative-recovery-infrastructure.xml) | 08:17:08–08:17:13 UTC；174 passed，1,597 source inputs 前后稳定，08:20 UTC 当时逐项零差异；独立于产品 suite，不计入总数 |
+| E36 | [readiness 修复 source gate](creative-recovery-source-gate.json) | 08:20 UTC UI-only 检查点；SOURCE_AND_INVENTORY_VERIFIED_NOT_EXECUTION；1,659 hashes / 0 errors，9,449 后端节点与 99 完全同序，skip/external gates 不变；仅五个前端 source/test 文件变化；manifest SHA256 0093adc97d202dbb4bae5328226485c06d01daa2d58363e1d02f933ce7d82c1e；369 个 app Python、Catalog/OpenAPI bytes/fingerprint 不变 |
+
+E33 原始 ZIP 为 24,361,394 bytes，SHA256 `94f0714b851b341f58f87d897c44b5f9f60295b128224d35cffd6ad3252b937f`。ZIP 与两份 raw trace ZIP 仅保存在 runtime，提交的 source-identity 保留其来源和 digest；仓库中的保留文件是实际原日志、JUnit/JSON、revision 和未编辑截图，不能声称整个 raw ZIP/trace 已随此索引交付。
+
+[Production 重开失败](ci-99e3c63-browser-failure/screenshots/failure-production-reopen.png) 左栏仍为已保存 v3 / 2 场景，中央未命名/空标题/0 段；[Screenplay 重开失败](ci-99e3c63-browser-failure/screenshots/failure-screenplay-reopen.png) 左栏为已保存 v1 / 2 场景、中央为空。截图证明选取/载入不一致，源码及延迟读取回归进一步定位为初始 list 未完成时创建空草稿。已修复为当前 scope 的 list 成功后才初始化缺失阶段，保留显式新建、dirty/blocked 草稿、撤权与迟到 callback 防护。时间线只用局部 isolation 和既有 z-index token 修复 sticky header 叠层；不改共享壳体。新增 10 项 recovery 单元 + 1 项 CSS contract 已包含于 E34；另加 3 项 mocked header hit-test 后下次 suite 为 8 项，尚无其新 SHA 托管终态。原 live spec/业务断言/手势/timeout 未改变。
+
+截至 08:20 UTC，99 的两次原 frontend、两 Interop、Shared R123、四 Windows jobs 均 SUCCESS。原 frontend 各自 1,556/8；旧 browser groups geometry9、real client2、Interop12、business2、R3 7、R4 63、export1、surface9、branch1 全部实际通过，fe4 的 NOT_REACHED 不再误写为 99 的缺失。Windows 仍仅 59 原 tests + 3 V2 fixtures、embedded Python3.12.9/PG16.15/UTF-8/dump-restore smoke。
+
+99 的五个 workflows 已于 08:46 UTC 全部终态：3 SUCCESS / 2 FAILURE，25 jobs 为20 SUCCESS / 4 FAILURE / 1 CANCELLED。两个 Cloud 均 FAILURE；两个 failure 来自 V2 browser，另两个来自 PR backend precondition gates；唯一 cancelled 是 PR File/TCP。四条 PG shards 全部成功，各事件 shard-0 为3,100 passed/1,612精确skips/4,737deselected，shard-1为3,059/1,678/4,712deselected，合计6,159 passed/3,290精确skips，完整9,449节点。
+
+Push File job113726928343 SUCCESS，完整6,190 passed/3,259精确skips/9,449节点 + 独立TCP2 passed；两个push严格aggregate gates实际SUCCESS，File和PG各9,449节点。PR File job113726946131的完整pytest同样6,190/3,259，但随后TCP step因原20分钟cap取消、没有终态。PR gates113742205784/113742205835因EXECUTION_RESULT=cancelled在reconciliation前失败，没有PR coverage artifacts。PR完整pytest和PG分片成功不能替代缺失的同事件TCP/aggregate；不以push结果回填。原两项 TCP 测试的有界编排修复已完成，独立收据见 E37–E38；E36 仅为其之前的 UI-only 检查点，不延伸为后续整份源码证明。
+
+## 原 TCP 独立预算修复
+
+| ID | 证据 | 结论与边界 |
+| --- | --- | --- |
+| E37 | [修复设计与历史 cap](ci-tcp-budget-20261009/README.md) · [精确证据规则](../../../.github/ci/TCP_EVIDENCE.md) · [最终基础设施 JSON](ci-tcp-budget-infrastructure-fixed.json) · [log](ci-tcp-budget-infrastructure-fixed.log) · [JUnit](ci-tcp-budget-infrastructure-fixed.xml) | 08:34:55–08:35:01 UTC；276 passed / 5.82 秒 = 原174 + 新102，1,599 source inputs 前后稳定，08:37 当时逐项相符；合成反例覆盖身份/依赖/源漂移、伪造/重复/中断/非success/非法JUnit/覆盖拒绝；不冒充产品或 hosted 执行 |
+| E38 | [collection review](ci-tcp-closeout-collection-review.json) · [最终 collection](ci-tcp-closeout-collection.json) · [最终 source gate](ci-tcp-closeout-source-gate.json) · [受保护文件身份](ci-tcp-budget-20261009/source-identities.json) | 08:37:12 UTC；1,661 hashes / 0 errors；最终manifest df72d854d942b0759b9d02229c33523bb1dd11470dd95c5c12a405a73c9a66ab，9,449节点与99完全同序，skip/external gates精确不变；原TCP/live spec/冻结gate/prepare及369appPython/catalog不变；inventory/source only |
+| E39 | [真实 loopback TCP JSON](ci-tcp-budget-real-loopback.json) · [log](ci-tcp-budget-real-loopback.log) · [JUnit](ci-tcp-budget-real-loopback.xml) · [原 validator / manifest 校验](ci-tcp-budget-20261009/real-loopback-validation.json) | 08:37:32–08:38:03 UTC；原两项分进程 TCP 2 passed / 0 skip/error/failure，28.04秒；runner 1,599 source inputs 前后稳定，另行最终 manifest 1,661项匹配；原 reconciler 接受精确 node JUnit；本地产品实际执行，不是 hosted producer/aggregate，独立于 profile 总数 |
+
+原 PR File 完整 pytest 为 1,080.84 秒、workflow step 1,089 秒，随后 TCP 仅32秒便达原20分钟 cap。新增 `backend-tcp` job 独立10分钟，File原顺序单进程20分钟与两PG55分钟不变；原174基础设施留在File，新102项放入TCP job。两个原 Backend aggregates 要求全matrix与TCP `needs.result` 均精确success。producer检查checkout/tree/event/repo/run/attempt/manifest/dependency/source/实际安装包与原两节点JUnit；join只建立全新逐字节副本布局，关联独立TCP XML供原未改动reconciler验证，并保留下载原件/副本hash。不存在把旧取消receipt修好或跨run拼接，也不把独立TCP加入File唯一总数。实际新hosted producer/join尚待后继SHA；实际本地原两项 real TCP 已单独通过，见 E39；此结果不替代新 hosted producer 身份或 same-run join。
+
+保留 [第一次 owned-profile infrastructure JSON](ci-tcp-budget-infrastructure.json) · [log](ci-tcp-budget-infrastructure.log) · [JUnit](ci-tcp-budget-infrastructure.xml)：275 passed / 1 failed / 5.94秒，合成fixture继承外围root导致JUnit classname带前缀，被原validator拒绝。仅新增fixture补最小pytest.ini；原产品和生产runner/validator不改。E37是修正合成fixture后的独立结果，不覆盖该失败。预算修复README的原artifact ZIP大小/digest是GitHub metadata，并非此修复检查下载ZIP后的独立hash证明。
+
+
+## 99e3c63 精确托管终态
+
+| ID | 证据 | 结论与边界 |
+| --- | --- | --- |
+| E40 | [99 全部托管终态 JSON](ci-99e3c63-terminal.json) · [25 份 job logs / metadata / strict receipts 归档](ci-99e3c63-terminal-evidence.tar.gz) | 08:46:21 UTC 观测，5 workflows 全终态（3 success/2 failure），25 jobs（20 success/4 failure/1 cancelled）；4/4 PG shards 成功，push两个strict gates成功；PR gates因File/TCP cancelled在reconciliation前失败；新修复不在此证据覆盖范围 |
+
+E40 JSON SHA256 `adfb6cb9caaf4199647035dcbad8edf72fd066cc9ce62a95cf283d6faf5205fa`；归档 542,748 bytes，SHA256 `731df56f39bf7741fa60e3785081a8836031a630362a385dd5b153d40a2b3fa1`。已核对归档内部50份member hashes、25个job身份/终态、两个push strict reconciliation JSON及PR precondition失败log。原远端完整artifact binaries以ID/digest引用，不声称全部已下载并纳入此有界归档。
+
+实际push证明为File6,190/3,259、PG6,159/3,290，每profile9,449节点，独立TCP2；PR同样完成File pytest与两个PG shards，但没有TCP终态/coverage artifact，两个aggregate正确FAIL。六个当前File/PG execution jobs的实际package receipts逐字节一致：38rows/709bytes，SHA256 `74cf563c7bc414940db61b6c9e84d500b0507b0b559590452b040b57a5738b12`。依赖相同不升级PR取消结果；历史fe4依赖对照分开保留，未跨run拼接测试/JUnit。
+
+
 ## 必须保留的失败与过渡材料
 
 - [完整 File collection 失败](cloud-backend-full-file.json) · [log](cloud-backend-full-file.log)：exit 2，runner 测试迁移期间 ImportError，源变动 true。
 - [完整 File 初跑](cloud-backend-full-file-stable.json) · [log](cloud-backend-full-file-stable.log) · [JUnit](cloud-backend-full-file-stable.xml.gz)：6,173 passed / 3,253 skipped / 1 failed，exit 1，源变动 true。名称含 stable 也不能当最终稳定收据。失败是 `.venv` 缺 pip；后续 ensurepip 25.0.1、E06 依赖闭合与 E08 独立完整重跑通过，没有覆写旧失败、环境问题或源变动记录。
 - `phase1-foundation-red*`、`cloud-task-router*`、`creative-workflows-*`、`cloud-v2-authority`、早期 infrastructure/frontend receipts 均保留其原始状态。引用前须检查 commit、源变动与实际 command，优先使用 E01–E06 的相应稳定后继。
-- 普通完整 File、完整前端、独立严格 PG 及最终 File/PG/TCP 合并严格终态已收入 E08/E04/E18/E20；fe4d250 真实终态、失败与有限修复见 E21–E32；后继修复 SHA 的完整托管结果继续在 PR 47 记录。用户 Windows/GPU/真实模型/安装验收仍 NOT_RUN / LOCAL_REQUIRED。
+- 普通完整 File、完整前端、独立严格 PG 及最终 File/PG/TCP 合并严格终态已收入 E08/E04/E18/E20；fe4d250 真实终态、失败与有限修复见 E21–E32；99 浏览器实际失败和本次局部修复见 E33–E36，TCP 编排与实际本地执行见 E37–E39，99 完整托管终态见 E40；后继修复 SHA 的完整托管结果继续在 PR 47 记录。用户 Windows/GPU/真实模型/安装验收仍 NOT_RUN / LOCAL_REQUIRED。
 
 发布后的精确 SHA 托管 CI 状态在已核验的 [PR 47](https://github.com/1785235376-blip/AI-Novel-Studio/pull/47) 中维护；本索引是带时间戳的本地证据快照，不预写远端通过结论。本次任务完成后停止功能扩展，不进行本机 Windows 验收、合并或 Release。
 

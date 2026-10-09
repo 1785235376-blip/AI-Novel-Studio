@@ -148,15 +148,6 @@ jobs:
             --ci-coverage-manifest=.github/ci/coverage_manifest_v2.json.gz \
             --ci-scope=backend --ci-shard-index=${{ matrix.shard_index }} --ci-shard-count=${{ matrix.shard_count }} \
             --ci-coverage-dir="$CI_RECEIPTS" --junitxml="$CI_RECEIPTS/backend.xml" 2>&1 | tee "$CI_RECEIPTS/backend.log"
-      - name: Real two-process loopback offline synchronization
-        if: matrix.backend == 'file' && (success() || failure())
-        working-directory: ${{ env.CI_PROJECT }}
-        env:
-          RUN_B10_TCP_SYNC_TEST: '1'
-          STORAGE_BACKEND: file
-        run: |
-          set -o pipefail
-          python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/sync-tcp-pytest" -q -ra --tb=short tests/test_r5_offline_sync_tcp.py --junitxml="$CI_RECEIPTS/sync-tcp.xml" 2>&1 | tee "$CI_RECEIPTS/sync-tcp.log"
       - name: Summarize exact revision and test counts
         if: always() && env.CI_RECEIPTS != ''
         run: python .github/ci/receipt.py "$CI_RECEIPTS"
@@ -170,11 +161,57 @@ jobs:
           retention-days: 14
 
 
+  backend-tcp:
+    name: Backend execution / original File TCP
+    runs-on: ubuntu-24.04
+    # Independent finite budget: do not consume File's original 20-minute cap.
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Prepare isolated checkout and receipt
+        run: bash .github/ci/prepare.sh backend-tcp
+      - name: Install identical pinned backend dependencies
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
+          python -m pip check
+          python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+      - name: Fail-closed TCP evidence and joiner self-tests
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/tcp-selftest" -q .github/ci/test_tcp_evidence.py --junitxml="$CI_RECEIPTS/tcp-harness.xml"
+      - name: Original two-process loopback tests and fail-closed provenance
+        working-directory: ${{ env.CI_PROJECT }}
+        env:
+          RUN_B10_TCP_SYNC_TEST: '1'
+          STORAGE_BACKEND: file
+        run: |
+          python .github/ci/tcp_evidence.py run \
+            --manifest .github/ci/coverage_manifest_v2.json.gz \
+            --constraints .github/ci/python-constraints.txt --source-root "$CI_PROJECT" \
+            --receipts "$CI_RECEIPTS" --basetemp "$CI_SANDBOX/sync-tcp-pytest"
+      - name: Summarize exact revision and test counts
+        if: always() && env.CI_RECEIPTS != ''
+        run: python .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Upload original TCP receipts unchanged
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: backend-tcp-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: ${{ env.CI_RECEIPTS }}
+          if-no-files-found: error
+          retention-days: 14
+
   backend:
     # Preserve both existing required-check names. Each independently checks
-    # all three execution receipts, so neither can pass on partial coverage.
+    # all three full shards AND the original TCP job, rejecting partial coverage.
     name: Backend / ${{ matrix.backend }}
-    needs: backend-execution
+    needs: [backend-execution, backend-tcp]
     if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -192,18 +229,40 @@ jobs:
       - name: Require every execution job including original File TCP gate
         env:
           EXECUTION_RESULT: ${{ needs.backend-execution.result }}
-        run: test "$EXECUTION_RESULT" = success
+          TCP_RESULT: ${{ needs.backend-tcp.result }}
+        run: |
+          test "$EXECUTION_RESULT" = success
+          test "$TCP_RESULT" = success
       - name: Download this attempt's exact backend shard receipts
         uses: actions/download-artifact@v4.3.0
         with:
           pattern: backend-*-shard-*-${{ github.sha }}-attempt-${{ github.run_attempt }}
           path: backend-receipts
           merge-multiple: false
+      - name: Download this attempt's exact original TCP receipts
+        uses: actions/download-artifact@v4.3.0
+        with:
+          name: backend-tcp-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: tcp-receipts
+      - name: Validate provenance and create byte-identical aggregation copies
+        env:
+          EXECUTION_RESULT: ${{ needs.backend-execution.result }}
+          TCP_RESULT: ${{ needs.backend-tcp.result }}
+        run: |
+          python .github/ci/tcp_evidence.py join \
+            --manifest .github/ci/coverage_manifest_v2.json.gz \
+            --constraints .github/ci/python-constraints.txt --source-root "$PWD" \
+            --backend-dir backend-receipts --tcp-dir tcp-receipts \
+            --output-dir joined-backend-receipts --report tcp-join.json \
+            --execution-result "$EXECUTION_RESULT" --tcp-result "$TCP_RESULT" \
+            --expected-checked-out-sha "$(git rev-parse HEAD)" --expected-source-tree "$(git rev-parse HEAD^{tree})" \
+            --expected-event-sha "$GITHUB_SHA" --expected-run-id "$GITHUB_RUN_ID" \
+            --expected-run-attempt "$GITHUB_RUN_ATTEMPT" --expected-repository "$GITHUB_REPOSITORY"
       - name: Require exact complete collection and successful outcomes in both profiles
         run: |
           python .github/ci/coverage_reconcile.py \
             --manifest .github/ci/coverage_manifest_v2.json.gz --scope backend \
-            --receipts-dir backend-receipts --expected-shards file=1 postgres=2 \
+            --receipts-dir joined-backend-receipts --expected-shards file=1 postgres=2 \
             --expected-sha "$(git rev-parse HEAD)" --expected-tree "$(git rev-parse HEAD^{tree})" \
             --expected-event-sha "$GITHUB_SHA" --expected-run "$GITHUB_RUN_ID" \
             --expected-attempt "$GITHUB_RUN_ATTEMPT" --expected-repository "$GITHUB_REPOSITORY" \
@@ -214,7 +273,9 @@ jobs:
         uses: actions/upload-artifact@v4.6.2
         with:
           name: backend-coverage-${{ matrix.backend }}-${{ github.sha }}-attempt-${{ github.run_attempt }}
-          path: backend-coverage.json
+          path: |
+            backend-coverage.json
+            tcp-join.json
           if-no-files-found: error
           retention-days: 14
 

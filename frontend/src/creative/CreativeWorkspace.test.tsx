@@ -45,6 +45,140 @@ describe('creative workspace protected manuscript and request boundaries', () =>
     server({ capabilities: { ...caps, enabled: false, modes: [] } }); render(<CreativeWorkspace {...props()} />); await ready();
     expect(screen.getByText('服务端尚未启用创作 V2')).toBeTruthy(); expect(fetchMock).toHaveBeenCalledTimes(1); expect(mutations()).toHaveLength(0);
   });
+  it.each([
+    ['SCREENPLAY', /Screenplay/], ['PRODUCTION', /Production/], ['VIDEO_PLANNING', /Production/],
+  ] as const)('recovers saved %s when its stage is selected before the initial reads finish', async (mode, stage) => {
+    const permission = deferred<ReturnType<typeof response>>(), listing = deferred<ReturnType<typeof response>>();
+    const document = saved({ ...newDocument(mode, 'chapter-1'), title: `Recovered ${mode}`, version: 3 });
+    if (document.video_plan) document.video_plan.notes = 'Saved production plan, not an empty replacement';
+    server({ override: (url, init) => {
+      if (url.endsWith('/capabilities')) return permission.promise;
+      if (url.endsWith('/documents') && init.method === 'GET') return listing.promise;
+      if (init.method === 'PUT') return response({ ...document, ...JSON.parse(String(init.body)), version: 4 });
+    } });
+    render(<CreativeWorkspace {...props()} />);
+    const allowed = { ...caps, modes: [...caps.modes, 'VIDEO_PLANNING'] };
+    if (mode === 'PRODUCTION') await act(async () => permission.resolve(response(allowed)));
+    fireEvent.click(tab(stage));
+    expect(tab(stage).getAttribute('aria-selected')).toBe('true');
+    expect(screen.queryByLabelText('文档标题')).toBeNull();
+    if (mode !== 'PRODUCTION') await act(async () => permission.resolve(response(allowed)));
+    expect(screen.queryByLabelText('文档标题')).toBeNull();
+    await act(async () => listing.resolve(response({ items: [document] })));
+    expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe(document.title);
+    expect(screen.getByText('已保存 · v3')).toBeTruthy();
+    if (document.video_plan) expect((screen.getByLabelText('制作备注') as HTMLTextAreaElement).value).toBe(document.video_plan.notes);
+    expect(mutations()).toHaveLength(0);
+    fireEvent.change(screen.getByLabelText('文档标题'), { target: { value: 'Edit recovered document' } });
+    fireEvent.click(screen.getByRole('button', { name: '保存草稿' }));
+    await screen.findByText('已保存“Edit recovered document” · v4');
+    expect(mutations()).toHaveLength(1);
+    expect(mutations()[0][0]).toContain(`/documents/${document.id}`);
+    expect(mutations()[0][1].method).toBe('PUT');
+    expect(JSON.parse(mutations()[0][1].body)).toMatchObject({ mode, expected_version: 3 });
+  });
+  it('initializes only the latest selected stage after a delayed successful empty list', async () => {
+    const listing = deferred<ReturnType<typeof response>>();
+    server({ override: (url, init) => url.endsWith('/documents') && init.method === 'GET' ? listing.promise : undefined });
+    render(<CreativeWorkspace {...props()} />);
+    fireEvent.click(tab(/Screenplay/)); fireEvent.click(tab(/Production/)); fireEvent.click(tab(/Director/));
+    expect(screen.queryByLabelText('文档标题')).toBeNull();
+    await act(async () => listing.resolve(response({ items: [] })));
+    expect(tab(/Director/).getAttribute('aria-selected')).toBe('true');
+    expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe('');
+    expect(screen.getByText('新草稿')).toBeTruthy();
+    fireEvent.change(screen.getByLabelText('文档标题'), { target: { value: 'Manual director draft' } });
+    fireEvent.click(tab(/Screenplay/)); fireEvent.click(tab(/Director/));
+    expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe('Manual director draft');
+    expect(mutations()).toHaveLength(0);
+  });
+  it('keeps an explicit new document, including an untouched draft, across stage and source changes', async () => {
+    server({ documents: [saved()] });
+    const original = props(), view = render(<CreativeWorkspace {...original} />); await screenplay();
+    fireEvent.click(screen.getByRole('button', { name: '新建文档' }));
+    fireEvent.click(tab(/Production/)); fireEvent.click(tab(/Screenplay/));
+    view.rerender(<CreativeWorkspace {...original} chapter={{ ...original.chapter!, id: 'chapter-2' }} />);
+    expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe('');
+    expect(screen.getByText('新草稿')).toBeTruthy();
+    fireEvent.change(screen.getByLabelText('文档标题'), { target: { value: 'Intentional new draft' } });
+    fireEvent.click(tab(/Novel/)); fireEvent.click(tab(/Screenplay/));
+    expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe('Intentional new draft');
+    expect(mutations()).toHaveLength(0);
+  });
+  it('does not treat a failed list read as an empty project and recovers on explicit retry', async () => {
+    let reads = 0;
+    server({ override: (url, init) => url.endsWith('/documents') && init.method === 'GET' ? ++reads === 1 ? response({ code: 'SERVER_ERROR' }, 500) : response({ items: [saved()] }) : undefined });
+    render(<CreativeWorkspace {...props()} />); fireEvent.click(tab(/Screenplay/)); await ready();
+    expect(screen.queryByLabelText('文档标题')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '重试读取工作台' }));
+    await screen.findByLabelText('文档标题');
+    expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe('Saved screenplay');
+    expect(reads).toBe(2); expect(mutations()).toHaveLength(0);
+  });
+  it('reloads saved content after confirmed discard and immediate workbench reopen', async () => {
+    const listing = deferred<ReturnType<typeof response>>(); let reads = 0;
+    server({ documents: [saved()], override: (url, init) => url.endsWith('/documents') && init.method === 'GET' && ++reads > 1 ? listing.promise : undefined });
+    function Route() {
+      const [open, setOpen] = useState(true);
+      return open ? <CreativeWorkspace {...props({ onExit: () => setOpen(false) })} /> : <button onClick={() => setOpen(true)}>Reopen workspace</button>;
+    }
+    render(<Route />); await screenplay();
+    fireEvent.change(screen.getByLabelText('文档标题'), { target: { value: 'Discard this edit only' } });
+    fireEvent.click(screen.getByRole('button', { name: '返回经典工作区' }));
+    fireEvent.click(screen.getByRole('button', { name: '继续编辑' }));
+    expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe('Discard this edit only');
+    fireEvent.click(screen.getByRole('button', { name: '返回经典工作区' }));
+    fireEvent.click(screen.getByLabelText('确认放弃未保存草稿并离开'));
+    fireEvent.click(screen.getByRole('button', { name: '确认离开' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Reopen workspace' })); fireEvent.click(tab(/Screenplay/));
+    expect(screen.queryByLabelText('文档标题')).toBeNull();
+    await act(async () => listing.resolve(response({ items: [saved()] })));
+    expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe('Saved screenplay');
+    expect((screen.getByLabelText('动作与叙事') as HTMLTextAreaElement).value).toBe('Original scene action');
+    expect(screen.getByText('已保存 · v7')).toBeTruthy(); expect(mutations()).toHaveLength(0);
+  });
+  it('does not replace a blocked dirty draft when a recovery reread discovers its uncertain creation', async () => {
+    let reads = 0;
+    server({ override: (url, init) => {
+      if (url.endsWith('/documents') && init.method === 'GET') return response({ items: ++reads > 1 ? [saved({ title: 'Server accepted title', version: 1 })] : [] });
+      if (init.method === 'POST') return response({ code: 'SERVER_ERROR' }, 500);
+    } });
+    render(<CreativeWorkspace {...props()} />); await screenplay();
+    fireEvent.change(screen.getByLabelText('文档标题'), { target: { value: 'Keep uncertain local draft' } });
+    fireEvent.click(screen.getByRole('button', { name: '保存草稿' })); await screen.findByText('需要核对版本 · 本地草稿仍保留');
+    fireEvent.click(screen.getByRole('button', { name: '核对服务端版本' })); await ready();
+    expect(screen.getByRole('button', { name: /Server accepted title/ })).toBeTruthy();
+    fireEvent.click(tab(/Production/)); fireEvent.click(tab(/Screenplay/));
+    expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe('Keep uncertain local draft');
+    expect(screen.getByLabelText('文档标题').closest('fieldset')!.disabled).toBe(true);
+    expect(screen.getByText('需要核对版本 · 本地草稿仍保留')).toBeTruthy(); expect(mutations()).toHaveLength(1);
+  });
+  it('initializes the new scope only when its list succeeds and ignores the old pending list', async () => {
+    const oldList = deferred<ReturnType<typeof response>>(), newList = deferred<ReturnType<typeof response>>();
+    server({ override: (url, init) => url.endsWith('/documents') && init.method === 'GET' ? (init.headers as Record<string, string>)['X-Branch-Id'] === 'branch-original' ? oldList.promise : newList.promise : undefined });
+    const original = props(), view = render(<CreativeWorkspace {...original} />); fireEvent.click(tab(/Screenplay/));
+    await waitFor(() => expect(fetchMock.mock.calls.some(([url]) => url.endsWith('/documents'))).toBe(true));
+    view.rerender(<CreativeWorkspace {...original} context={{ ...original.context, scope: { ...original.context.scope!, branchId: 'branch-new' } }} />);
+    fireEvent.click(tab(/Screenplay/));
+    await act(async () => oldList.resolve(response({ items: [saved({ title: 'Old branch secret' })] })));
+    expect(screen.queryByLabelText('文档标题')).toBeNull(); expect(screen.queryByText('Old branch secret')).toBeNull();
+    await act(async () => newList.resolve(response({ items: [saved({ id: 'new-scope-doc', title: 'Current branch document', version: 2 })] })));
+    expect((screen.getByLabelText('文档标题') as HTMLInputElement).value).toBe('Current branch document');
+    expect(screen.getByText('已保存 · v2')).toBeTruthy(); expect(mutations()).toHaveLength(0);
+  });
+  it('does not initialize a delayed list after access is revoked during bootstrap', async () => {
+    const listing = deferred<ReturnType<typeof response>>(), proposals = deferred<ReturnType<typeof response>>();
+    server({ override: (url, init) => {
+      if (url.endsWith('/documents') && init.method === 'GET') return listing.promise;
+      if (url.endsWith('/director-proposals')) return proposals.promise;
+    } });
+    render(<CreativeWorkspace {...props()} />); fireEvent.click(tab(/Screenplay/));
+    await waitFor(() => expect(fetchMock.mock.calls.some(([url]) => url.endsWith('/director-proposals'))).toBe(true));
+    await act(async () => proposals.resolve(response({ code: 'FORBIDDEN' }, 403))); await screen.findByText('访问已锁定');
+    await act(async () => listing.resolve(response({ items: [saved({ title: 'Revoked document' })] })));
+    expect(screen.queryByLabelText('文档标题')).toBeNull(); expect(screen.queryByText('Revoked document')).toBeNull();
+    expect(screen.queryByRole('button', { name: '重试读取工作台' })).toBeNull(); expect(mutations()).toHaveLength(0);
+  });
   it('exposes all five keyboard-accessible modes while the manuscript stays mounted', async () => {
     const mounted = vi.fn(), unmounted = vi.fn();
     function Manuscript() { const [value, setValue] = useState('Existing unsaved manuscript'); useEffect(() => { mounted(); return unmounted; }, []); return <textarea aria-label="Original manuscript" value={value} onChange={event => setValue(event.target.value)} />; }
