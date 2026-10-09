@@ -85,6 +85,8 @@ class Job:
 # These stamps are set by trusted server coordinators, never from GenerateIn or
 # an unvalidated payload. Intrinsic receipt fields retain older-job fencing.
 GENERATION_ORIGINS = {
+    "narrative_task_model": frozenset({"narrative_production_v2", "author_context_inspector_v2", "model_broker_v2"}),
+    "creative_director_model": frozenset({"narrative_production_v2", "author_context_inspector_v2", "model_broker_v2"}),
     "branch_manuscript": frozenset({"branch_manuscript_v1"}),
     "style_analysis_model": frozenset({"author_context_inspector_v2", "model_broker_v2", "style_dna_v2"}),
     "revision_comparison_model": frozenset({"author_context_inspector_v2", "model_broker_v2", "revision_intelligence_v2"}),
@@ -153,6 +155,9 @@ def require_generation_content(job):
 def require_whole_generation_acceptance(job):
     required = generation_required_features(job)
     origin = getattr(job, "experimental_origin", None)
+    if "narrative_production_v2" in required:
+        from fastapi import HTTPException
+        raise HTTPException(409, {"code": "CREATIVE_DRAFT_ONLY"})
     if origin in {"style_analysis_model", "revision_comparison_model"}:
         from fastapi import HTTPException
         raise HTTPException(409, {"code": "STYLE_OPINION_REVIEW_ONLY" if origin == "style_analysis_model" else "REVISION_COMPARISON_REVIEW_ONLY"})

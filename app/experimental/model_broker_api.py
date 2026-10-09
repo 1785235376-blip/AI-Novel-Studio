@@ -4,7 +4,7 @@ from starlette.concurrency import run_in_threadpool
 from fastapi import APIRouter, Header, HTTPException, Request, Response
 from pydantic import Field, ValidationError
 from .common import api_call, check_version
-from .model_broker import FEATURE, Strict, BrokerRequest, BudgetInput, PriceInput, ReconcileInput, digest
+from .model_broker import FEATURE, Strict, BrokerRequest, BudgetInput, PriceInput, ReconcileInput, NarrativeTaskRequest, NARRATIVE_TASK_CAPABILITIES, digest
 from .author_context_api import AuthorPreviewInput
 
 
@@ -110,6 +110,31 @@ def create_model_broker_router(service, authorize, require_flag, require_host_se
                 'supports': ['TEXT_AUTHOR_EXECUTOR', 'IMAGE_AUDIO_PREFLIGHT_FOR_SAFE_BATCHES'], 'unsupported_capabilities': ['VIDEO', 'EMBEDDING'],
                 'source_privacy': 'CURRENT_CHAPTER_AND_PROJECT_AUTHORITY', 'auto_fallback': False}
 
+    @router.get('/task-capabilities')
+    def task_capabilities(nid: str, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        require_flag('narrative_production_v2')
+        authority = access(nid, x_session_token, x_branch_id)
+        routes = api_call(service.candidates)
+        guard(nid, x_session_token, x_branch_id, authority, 'domain.read')()
+        response.headers['Cache-Control'] = 'no-store'
+        return {'tasks': [{'task_type': task, 'capability': capability,
+                           'registered_routes': sum(row['capability'] == capability for row in routes)}
+                          for task, capability in NARRATIVE_TASK_CAPABILITIES.items()],
+                'profile': 'LOCAL_ONLY', 'automatic_fallback': False,
+                'execution_authorized': False, 'human_review_required': True}
+
+    @router.post('/task-preview')
+    async def task_preview(nid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        require_flag('narrative_production_v2')
+        authority = access(nid, x_session_token, x_branch_id, 'domain.write')
+        value = await body(request, NarrativeTaskRequest)
+        original_guard = guard(nid, x_session_token, x_branch_id, authority)
+        def task_guard():
+            require_flag('narrative_production_v2')
+            original_guard()
+        response.headers['Cache-Control'] = 'no-store'
+        return await run_in_threadpool(api_call, service.preview_task, nid, authority[1], authority[0], value, task_guard)
+
     @router.post('/preview')
     async def preview(nid: str, request: Request, response: Response, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         authority = access(nid, x_session_token, x_branch_id, 'domain.write')
@@ -145,6 +170,8 @@ def create_model_broker_router(service, authorize, require_flag, require_host_se
         api_call(check_version, row, value.expected_version)
         await run_in_threadpool(api_call, service._assert_preview, nid, scope, actor, row)
         chosen = row['chosen']
+        if row['request'].get('task_type'):
+            require_flag('narrative_production_v2')
         if chosen['capability'] != 'TEXT': raise HTTPException(409, {'code': 'BROKER_USE_ORIGINAL_MEDIA_OR_AUDIO_BATCH_EXECUTOR'})
         if (row['request']['chapter_ids'] != [value.author.chapter_id] or value.author.novel_id != nid
             or row['request']['profile'] != value.author.profile
@@ -154,7 +181,11 @@ def create_model_broker_router(service, authorize, require_flag, require_host_se
         # Shared coordinator validates the exact prompt/context receipt and makes
         # the existing job's late author authorization guard. No second builder.
         job = await run_in_threadpool(prepare_author, nid, value.author, x_session_token, x_branch_id)
-        guard_now = guard(nid, x_session_token, x_branch_id, authority)
+        original_guard = guard(nid, x_session_token, x_branch_id, authority)
+        def guard_now():
+            if row['request'].get('task_type'):
+                require_flag('narrative_production_v2')
+            original_guard()
         guard_now()
         receipt = digest(value.author.model_dump(mode='json'))
         key = digest([actor, value.request_id])
@@ -168,7 +199,7 @@ def create_model_broker_router(service, authorize, require_flag, require_host_se
         if reservation['job_id'] != job.id:
             return {'job_id': reservation['job_id'], 'reservation_id': reservation['id'], 'status': reservation['status'], 'replayed': True}
         from ..jobs import mark_generation_origin
-        mark_generation_origin(job, 'model_broker')
+        mark_generation_origin(job, 'narrative_task_model' if row['request'].get('task_type') else 'model_broker')
         job.before_dispatch = lambda: service.guard_dispatch(nid, scope, actor, reservation['id'], job.id, guard_now)
         job.on_terminal = lambda: service.finalize(nid, scope, actor, reservation['id'], job.id, getattr(job, 'execution_outcome', None) or 'UNKNOWN', job.usage)
         try:

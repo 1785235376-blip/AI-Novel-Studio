@@ -342,6 +342,7 @@ from .research_library_api import create_research_library_router
 research_library_service = ResearchLibraryService(store, legacy_api.novel_service, legacy_api.chapter_service,
     legacy=legacy_api.v1_capability_service, world=world_service)
 embedding_service.research = research_library_service
+model_broker_service.vision_resolver = lambda: research_library_service.vision_provider if 'research_library_v2' in enabled_flags() else None
 from ..author_context_sources import NativeAuthorSources
 author_preparer.native_sources = NativeAuthorSources(legacy_api, world_service, story_graph_service,
     research_library_service, authorize, require_flag)

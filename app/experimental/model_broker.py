@@ -30,6 +30,16 @@ from .store import canonical
 
 FEATURE = 'model_broker_v2'
 
+# Routing recipes reference the existing owners; they are never model entries.
+NARRATIVE_TASK_CAPABILITIES = {
+    'NOVEL_WRITING': 'TEXT', 'SCREENPLAY_ADAPTATION': 'TEXT',
+    'DIRECTOR_NOTES': 'TEXT', 'FRAME_ANALYSIS': 'VISION',
+    'STORYBOARD_IMAGE': 'IMAGE', 'VIDEO_CLIP': 'VIDEO',
+    'DIALOGUE_AUDIO': 'AUDIO',
+}
+NarrativeTask = Literal['NOVEL_WRITING', 'SCREENPLAY_ADAPTATION', 'DIRECTOR_NOTES',
+                        'FRAME_ANALYSIS', 'STORYBOARD_IMAGE', 'VIDEO_CLIP', 'DIALOGUE_AUDIO']
+
 
 def digest(value):
     return hashlib.sha256(canonical(value).encode()).hexdigest()
@@ -68,7 +78,8 @@ class Strict(BaseModel):
 
 
 class BrokerRequest(Strict):
-    capability: Literal['TEXT', 'IMAGE', 'VIDEO', 'AUDIO', 'EMBEDDING'] = 'TEXT'
+    capability: Literal['TEXT', 'VISION', 'IMAGE', 'VIDEO', 'AUDIO', 'EMBEDDING'] = 'TEXT'
+    task_type: NarrativeTask | None = None
     chapter_ids: list[str] = Field(default_factory=list, max_length=20)
     policy: Literal['LOCAL_FIRST', 'COST', 'QUALITY', 'SPEED', 'CUSTOM', 'PRIVACY_FIRST', 'BALANCED', 'COST_FIRST', 'QUALITY_FIRST', 'SPEED_FIRST'] = 'LOCAL_FIRST'
     profile: Literal['LOCAL_ONLY', 'HYBRID', 'QUALITY'] = 'LOCAL_ONLY'
@@ -82,6 +93,23 @@ class BrokerRequest(Strict):
     require_confirmed_license: bool = False
     min_host_ram_mib: int | None = Field(default=None, ge=1, le=10**7)
     min_host_vram_mib: int | None = Field(default=None, ge=1, le=10**7)
+
+
+    @model_validator(mode='after')
+    def task_capability_matches(self):
+        if self.task_type and NARRATIVE_TASK_CAPABILITIES[self.task_type] != self.capability:
+            raise ValueError('BROKER_TASK_CAPABILITY_MISMATCH')
+        return self
+
+
+class NarrativeTaskRequest(Strict):
+    task_type: NarrativeTask
+    chapter_ids: list[str] = Field(default_factory=list, max_length=20)
+    preferred_route: str | None = Field(default=None, max_length=160)
+    context_tokens: int = Field(default=0, ge=0, le=10000000)
+    allow_synthetic: bool = False
+    # This workbench is explicitly local-only and carries no payment authority.
+    max_cost_microusd: Literal[0] = 0
 
 
 class BudgetInput(Strict):
@@ -127,10 +155,11 @@ class ModelBrokerService(DomainService):
     BUDGET = 'broker_budget_v2'
     PRICES = 'broker_prices_v2'
 
-    def __init__(self, store, novels, chapters, *, runtime, model_center=None, media_registry=None, audio_resolver=None):
+    def __init__(self, store, novels, chapters, *, runtime, model_center=None, media_registry=None, audio_resolver=None, vision_resolver=None):
         super().__init__(store, novels, chapters)
         self.runtime, self.model_center, self.media_registry = runtime, model_center, media_registry
         self.audio_resolver = audio_resolver
+        self.vision_resolver = vision_resolver
         self.evidence_reader = None
         self._credential_salt = secrets.token_bytes(32)
         self._credential_bindings = {}
@@ -289,7 +318,48 @@ class ModelBrokerService(DomainService):
                         'available': not reasons, 'reasons': reasons, 'verification': 'ADAPTER_CONFIG_ONLY_RUNTIME_NOT_PROBED'})
                 except (ValueError, RuntimeError):
                     continue  # Missing credentials/configuration are never a runnable route.
+        if self.vision_resolver is not None:
+            # Original ResearchLibrary owns this provider and its guarded jobs.
+            # Discovery metadata or VISION in a filename cannot create a route.
+            from .research_vision import ResearchVisionCapability, SyntheticResearchVisionProvider
+            try:
+                adapter = self.vision_resolver()
+                if adapter is not None:
+                    capability = ResearchVisionCapability.model_validate(adapter.capability)
+                    synthetic = type(adapter) is SyntheticResearchVisionProvider
+                    reasons = []
+                    if not callable(getattr(adapter, 'analyze', None)):
+                        reasons.append('VISION_EXECUTOR_UNAVAILABLE')
+                    if not capability.local:
+                        reasons.append('VISION_CLOUD_BUDGET_EGRESS_NOT_INTEGRATED')
+                    if capability.verification == 'MOCK_ONLY' and not synthetic:
+                        reasons.append('VISION_SYNTHETIC_ADAPTER_NOT_VERIFIED')
+                    identity = {'adapter': f'{type(adapter).__module__}.{type(adapter).__qualname__}',
+                        'adapter_hash': implementation_hash(type(adapter)),
+                        'model_version': capability.model_revision,
+                        'capability': capability.model_dump(),
+                        'execution_node_id': str(self.runtime.execution_node_identity.store.get('execution_node', 'local') or ''),
+                        'workflow_hash': digest({'executor': 'original.research_analysis', 'contract': 1})}
+                    items.append({'route_id': digest(['vision', capability.provider_id, capability.model_id]),
+                        'provider_id': 'vision:' + capability.provider_id, 'model_id': capability.model_id,
+                        'display_name': capability.model_id, 'capability': 'VISION', 'context_window': None,
+                        'cloud': not capability.local, 'synthetic': synthetic,
+                        'fingerprint': digest(identity), 'binding_hash': digest([id(adapter), digest(identity)]),
+                        'identity': identity, 'available': not reasons, 'reasons': reasons,
+                        'verification': 'SYNTHETIC_PROTOCOL_ONLY' if synthetic else 'ADAPTER_CONTRACT_ONLY',
+                        'executor': 'original.research_analysis'})
+            except (ValueError, RuntimeError, AttributeError, TypeError):
+                # Invalid/missing host registration stays unavailable.
+                pass
         return items
+
+    def preview_task(self, nid, scope, actor, value, guard=lambda: None):
+        body = NarrativeTaskRequest.model_validate(value)
+        request = BrokerRequest(**body.model_dump(),
+            capability=NARRATIVE_TASK_CAPABILITIES[body.task_type],
+            profile='LOCAL_ONLY', policy='CUSTOM' if body.preferred_route else 'LOCAL_FIRST',
+            allow_cloud_fallback=False)
+        return self.preview(nid, scope, actor, request, guard)
 
     def audio_identity(self, provider_id, model_id, adapter):
         """Metadata-only identity of the original resolver, never a health call.
@@ -403,6 +473,13 @@ class ModelBrokerService(DomainService):
         for route in candidates:
             reasons = list(route['reasons'])
             if body.capability != route['capability']: reasons.append('CAPABILITY_EXECUTOR_NOT_INTEGRATED')
+            required_operation = {'FRAME_ANALYSIS': 'IMAGE_UNDERSTANDING',
+                'VIDEO_CLIP': 'text_to_video', 'STORYBOARD_IMAGE': 'storyboard_card_generation'}.get(body.task_type)
+            if required_operation and body.capability == route['capability']:
+                identity = route.get('identity', {})
+                operations = identity.get('capability', {}).get('operations', []) if body.capability == 'VISION' else identity.get('definition', {}).get('operations', [])
+                if required_operation not in operations:
+                    reasons.append('TASK_OPERATION_NOT_SUPPORTED')
             if route['provider_id'] in body.excluded_providers: reasons.append('EXCLUDED_BY_USER')
             if body.policy == 'CUSTOM' and body.preferred_route != route['route_id']: reasons.append('CUSTOM_ROUTE_NOT_SELECTED')
             if route['synthetic'] and not body.allow_synthetic: reasons.append('SYNTHETIC_NOT_REQUESTED')
