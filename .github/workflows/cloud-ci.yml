@@ -507,13 +507,6 @@ jobs:
           python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
           python -m pip check
           python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
-          # Independent media imports use real decoders; do not replace this
-          # acceptance prerequisite with a fixture MIME label or silent skip.
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends ffmpeg
-          ffmpeg -version > "$CI_RECEIPTS/v2-ffmpeg-version.txt"
-          ffprobe -version > "$CI_RECEIPTS/v2-ffprobe-version.txt"
-          python -c "import shutil; assert shutil.which('ffmpeg') and shutil.which('ffprobe')"
       - name: V2 live creative workflows (real File and HTTP; mock providers)
         working-directory: ${{ env.CI_PROJECT }}/frontend
         run: |
@@ -542,6 +535,66 @@ jobs:
           path: |
             ${{ env.CI_RECEIPTS }}
             ${{ env.CI_PROJECT }}/frontend/test-results/creative-workbench
+          if-no-files-found: error
+          retention-days: 14
+
+  v2-independent-media:
+    # Explicit additive media prerequisites; original V2 and frontend jobs stay
+    # byte-identical. This job cannot substitute for either protected check.
+    name: V2 / Independent studio live media
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: '22.14.0'
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Prepare isolated checkout and receipt
+        run: bash .github/ci/prepare.sh v2-independent-media
+      - name: Install locked V2 browser dependencies
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          npm install --global pnpm@10.6.5
+          pnpm install --frozen-lockfile
+          { node --version; pnpm --version; sha256sum pnpm-lock.yaml; } > "$CI_RECEIPTS/frontend-tools.txt"
+          pnpm exec playwright install --with-deps chromium
+      - name: Install isolated backend for real File and HTTP journeys
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
+          python -m pip check
+          python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+      - name: Install and record explicit independent-media decoders
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          ffmpeg -version > "$CI_RECEIPTS/ffmpeg-version.txt"
+          ffprobe -version > "$CI_RECEIPTS/ffprobe-version.txt"
+          dpkg-query -W ffmpeg > "$CI_RECEIPTS/media-package-provenance.txt"
+      - name: Independent studios live media (real File and HTTP; mock providers)
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          V2_PYTHON=python CI_RECEIPTS="$CI_RECEIPTS/v2-independent-live" pnpm exec playwright test --config playwright.independent-live.config.ts 2>&1 | tee "$CI_RECEIPTS/v2-independent-live.log"
+      - name: Summarize exact revision and test counts
+        if: always() && env.CI_RECEIPTS != ''
+        run: |
+          if [ -f "$CI_RECEIPTS/v2-independent-live/junit.xml" ]; then
+            cp "$CI_RECEIPTS/v2-independent-live/junit.xml" "$CI_RECEIPTS/v2-independent-live.xml"
+          fi
+          python3 .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Upload independent-media receipts and first failure evidence
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: v2-independent-media-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: |
+            ${{ env.CI_RECEIPTS }}
           if-no-files-found: error
           retention-days: 14
 

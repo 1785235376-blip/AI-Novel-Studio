@@ -1,0 +1,14 @@
+Listing tests:
+  [v2-live-chromium] › v2-asset-relationships-live.spec.ts:14:1 › real File optional asset relationships persist, protect targets and remove explicitly with no chapter prerequisite
+  [v2-live-chromium] › v2-creative-live.spec.ts:111:1 › real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript
+  [v2-live-chromium] › v2-creative-live.spec.ts:206:1 › real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals
+  [v2-live-chromium] › v2-creative-live.spec.ts:236:1 › real File V2 scope and stale-write fencing keeps the browser draft and rejects foreign sources
+  [v2-live-chromium] › v2-creative-live.spec.ts:282:1 › real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript
+  [v2-live-chromium] › v2-creative-live.spec.ts:346:1 › real HTTP File V2 scope, cancel and stale source fences remain authoritative
+  [v2-live-chromium] › v2-independent-studio-live.spec.ts:88:1 › real File independent studio imports, persists, reopens and exports an image with no chapters or model mutation
+  [v2-live-chromium] › v2-independent-studio-live.spec.ts:207:1 › real File independent VIDEO imports, decodes, reopens and exports original bytes without chapters or director
+  [v1-chromium] › v2-creative-live.spec.ts:267:1 › V1 default-off backend and browser never expose the V2 workbench or accept creative writes
+  [v1-chromium] › v2-creative-live.spec.ts:379:1 › real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes
+  [v1-chromium] › v2-independent-studio-live.spec.ts:281:1 › default-off independent studio entry is absent and neutral project writes are rejected
+  [v1-acceptance-chromium] › v2-independent-studio-live.spec.ts:285:1 › acceptance-mode independent studio stays absent despite an enabled narrative feature setting
+Total: 12 tests in 3 files

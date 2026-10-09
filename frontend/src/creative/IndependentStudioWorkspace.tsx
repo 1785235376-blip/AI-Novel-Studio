@@ -10,6 +10,7 @@ import { AssetInspector } from '../novel/AssetInspector';
 import { AssetLineageForm, type LineageAsset } from '../experimental/ProductionLineagePanel';
 import { studioClient, type CreativeIntent, type StudioAsset, type StudioOverview, type StudioPreferences, type StudioStorage, type WorkspacePreset } from './studioClient';
 import { rememberLocalStudioSelection, rememberLocalWorkspaceSelection, type LocalStudioModule } from '../workspaceSelection';
+import { useStudioGraphEditor } from './useStudioGraphEditor';
 import { AssetRelationshipsPanel } from './AssetRelationshipsPanel';
 import './independentStudio.css';
 
@@ -43,6 +44,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   const [overview, setOverview] = useState<StudioOverview>(), [preferences, setPreferences] = useState<StudioPreferences>(), [rows, setRows] = useState<StudioAsset[]>([]);
   const [selected, setSelected] = useState<Asset>(), [loading, setLoading] = useState(true), [error, setError] = useState(''), [notice, setNotice] = useState(''), [denied, setDenied] = useState(false), [busy, setBusy] = useState(false), [readingAsset, setReadingAsset] = useState(false), [storageLoading, setStorageLoading] = useState(false);
   const [pendingDeclaration, setPendingDeclaration] = useState<StudioAsset>(), [lineageDirty, setLineageDirty] = useState(false), [relationshipDirty, setRelationshipDirty] = useState(false), [formRevision, setFormRevision] = useState(0), [storage, setStorage] = useState<StudioStorage>();
+  const [graphView, setGraphView] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState<() => void>(), [discard, setDiscard] = useState(false);
   const selectionEpoch = useRef(0), storageReading = useRef(false);
   const lastImport = useRef<{ body: string; key: string }>();
@@ -59,7 +61,14 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
   }, [current, deny]);
   const writable = overview?.capabilities.can_mutate === true && !denied;
   const preferenceDirty = !!preferences && !!overview && JSON.stringify(preferences) !== JSON.stringify(overview.preferences);
-  const dirty = preferenceDirty || lineageDirty || relationshipDirty;
+  const graphMutation = useCallback(async <T,>(operation: () => Promise<T>): Promise<T> => {
+    if (busyRef.current || !current()) throw new Error('当前操作尚未结束，请先核对结果。');
+    busyRef.current = true; setBusy(true);
+    try { return await guarded(operation); }
+    finally { busyRef.current = false; if (alive.current) setBusy(false); }
+  }, [current, guarded]);
+  const graph = useStudioGraphEditor({ active: graphView && overview?.project.entry_kind === 'NEUTRAL_STUDIO', denied, identity: cacheKey, client, canMutate: writable, canReview: overview?.capabilities.can_review === true && !denied, busy, externalDirty: preferenceDirty || lineageDirty || relationshipDirty, isCurrent: current, read: guarded, mutate: graphMutation });
+  const dirty = preferenceDirty || lineageDirty || relationshipDirty || graph.dirty;
   const dirtyRef = useRef(dirty); dirtyRef.current = dirty;
   const lineageDirtyRef = useRef(lineageDirty); lineageDirtyRef.current = lineageDirty;
   const relationshipDirtyRef = useRef(relationshipDirty); relationshipDirtyRef.current = relationshipDirty;
@@ -147,7 +156,7 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     finally { busyRef.current = false; if (alive.current) setBusy(false); }
   };
   const sidebar = <div className="independent-studio-sidebar"><h2>独立创作</h2><p>图片、视频和声音共享项目资产。连接其它模块由你决定。</p><Button onClick={() => navigate(onProjectChoice)}>返回项目列表</Button>
-    {preferences && <details><summary>创作意图与推荐布局</summary><p>可跳过、可多选。布局选项仅保存偏好，当前不会调整界面。偏好不限制模块和权限，也不会执行任务。</p><fieldset disabled={!writable || busy}><legend>这次想做什么？</legend>{intents.map(([id, label]) => <label key={id}><input type="checkbox" checked={preferences.intents.includes(id)} onChange={event => setPreferences({ ...preferences, intents: event.target.checked ? [...preferences.intents, id] : preferences.intents.filter(value => value !== id) })} />{label}</label>)}<label>自定义意图<input maxLength={240} value={preferences.custom_intent} onChange={event => setPreferences({ ...preferences, custom_intent: event.target.value })} /></label><label>布局偏好（仅保存）<select value={preferences.preset} onChange={event => setPreferences({ ...preferences, preset: event.target.value as WorkspacePreset })}>{presets.map(([id, label]) => <option value={id} key={id}>{label}</option>)}</select></label><Button disabled={!preferenceDirty} onClick={() => void savePreferences()}>保存创作偏好</Button></fieldset>{preferenceDirty && <p role="status">创作偏好未保存。</p>}</details>}
+    {preferences && <details><summary>创作意图与推荐布局</summary><p>可跳过、可多选。布局选项仅保存偏好，当前不会调整界面。偏好不限制模块和权限，也不会执行任务。</p><fieldset disabled={!writable || busy || graph.dirty}><legend>这次想做什么？</legend>{intents.map(([id, label]) => <label key={id}><input type="checkbox" checked={preferences.intents.includes(id)} onChange={event => setPreferences({ ...preferences, intents: event.target.checked ? [...preferences.intents, id] : preferences.intents.filter(value => value !== id) })} />{label}</label>)}<label>自定义意图<input maxLength={240} value={preferences.custom_intent} onChange={event => setPreferences({ ...preferences, custom_intent: event.target.value })} /></label><label>布局偏好（仅保存）<select value={preferences.preset} onChange={event => setPreferences({ ...preferences, preset: event.target.value as WorkspacePreset })}>{presets.map(([id, label]) => <option value={id} key={id}>{label}</option>)}</select></label><Button disabled={!preferenceDirty} onClick={() => void savePreferences()}>保存创作偏好</Button></fieldset>{preferenceDirty && <p role="status">创作偏好未保存。</p>}</details>}
     <details onToggle={event => { if (event.currentTarget.open && !storage && overview) void loadStorage(); }}><summary>项目存储</summary>{storageLoading && <StatusMessage>正在核对项目存储…</StatusMessage>}{storage ? <><p>有效资产 {storage.assets.count} 项 · {storage.assets.bytes} 字节</p><p>回收站 {storage.trash.count} 项 · {storage.trash.bytes} 字节</p>
       {storage.admission?.state === 'READY' && <p>当前可导入容量估算：{storage.admission.available_import_bytes} 字节；已扣除安全预留空间和项目配额。</p>}
       {storage.admission?.state === 'LOW_SPACE_OR_QUOTA' && <StatusMessage tone="warning">空间或项目配额不足，当前无法继续导入。已有资产仍可查看和导出。</StatusMessage>}
@@ -156,12 +165,14 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
       <p>以上为查询时估算；实际上传会再次校验。回收站仍占用空间，不会自动清理。</p><p>模型目录仅引用；缓存单独管理；导出位置由下载时选择。</p><p>本入口不清理或移动任何外部模型文件。</p></> : <p>展开后读取服务端统计。</p>}<Button disabled={!overview || storageLoading} onClick={() => void loadStorage()}>刷新存储统计</Button></details>
   </div>;
   const main = <div className="independent-studio">
-    <Panel title="独立素材工作区"><p>无需小说、章节或模型，导入素材即可保存和导出。</p><p>上传会保存文件，并记录“外部导入”；许可默认未指定，可在来源声明中补充。下载原始文件保留原格式，不进行重新编码。</p>{overview && <Badge tone="info">{!writable ? overview.capabilities.can_review === true ? '仅审核与读取' : '只读' : overview.capabilities.media_validator_configured ? '手工导入可用' : '媒体校验工具缺失'} · 不需要模型</Badge>}{overview && !overview.capabilities.media_validator_configured && <p>图片、视频和音频导入需要 FFmpeg / ffprobe 校验工具。当前可查看和导出已保存资产，未调用模型。</p>}</Panel>
+    {overview && !denied && <div className="studio-graph-actions" aria-label="独立工作区内容"><Button aria-pressed={!graphView} onClick={() => navigate(() => setGraphView(false))}>素材工作区</Button><Button aria-pressed={graphView} onClick={() => navigate(() => setGraphView(true))}>创作图</Button></div>}
+    {!graphView && <Panel title="独立素材工作区"><p>无需小说、章节或模型，导入素材即可保存和导出。</p><p>上传会保存文件，并记录“外部导入”；许可默认未指定，可在来源声明中补充。下载原始文件保留原格式，不进行重新编码。</p>{overview && <Badge tone="info">{!writable ? overview.capabilities.can_review === true ? '仅审核与读取' : '只读' : overview.capabilities.media_validator_configured ? '手工导入可用' : '媒体校验工具缺失'} · 不需要模型</Badge>}{overview && !overview.capabilities.media_validator_configured && <p>图片、视频和音频导入需要 FFmpeg / ffprobe 校验工具。当前可查看和导出已保存资产，未调用模型。</p>}</Panel>}
     {loading && <StatusMessage>正在核对项目与权限…</StatusMessage>}{error && <StatusMessage tone="error">{error}</StatusMessage>}{notice && <StatusMessage>{notice}</StatusMessage>}
     {denied ? <EmptyState title="当前会话无权访问此项目" detail="私人预览已关闭。重新核对身份与范围后再打开。" /> : !overview && !loading ? <Button onClick={() => void refresh()}>重新读取项目</Button> : null}
-    {pendingNavigation && <section className="creative-navigation-confirm" role="alert"><p>有未保存的偏好、来源声明或资产关联。可以继续编辑，或确认放弃后离开。</p><label><input type="checkbox" checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label><Button disabled={!discard} onClick={() => { const action = pendingNavigation; setPendingNavigation(undefined); setLineageDirty(false); setRelationshipDirty(false); setFormRevision(value => value + 1); setPreferences(overview?.preferences); action(); }}>确认离开</Button><Button onClick={() => setPendingNavigation(undefined)}>继续编辑</Button></section>}
-    {pendingDeclaration && !denied && <Button disabled={!writable || busy || lineageDirty || relationshipDirty} onClick={() => { if (busyRef.current || lineageDirtyRef.current || relationshipDirtyRef.current) return; busyRef.current = true; setBusy(true); void guarded(() => declared(pendingDeclaration)).then(asset => { refreshedAsset(asset); setPendingDeclaration(undefined); setNotice('资产与外部导入来源已保存。'); }).catch(reason => { if (current()) setNotice(apiErrorView(reason, '来源声明仍未保存，文件已保留。').message); }).finally(() => { busyRef.current = false; if (alive.current) setBusy(false); }); }}>仅重试外部导入声明</Button>}
-    {overview && !denied && <AssetLibraryPanel novelId={projectId} adapter={adapter} selectedAssetId={selected?.id} onSelectAsset={asset => navigate(() => { selectionEpoch.current += 1; setSelected(asset); setLineageDirty(false); setRelationshipDirty(false); })} />}
+    {pendingNavigation && <section className="creative-navigation-confirm" role="alert"><p>{graph.dirty ? '有未保存的创作图输入。可以继续编辑，或确认放弃后离开。' : '有未保存的偏好、来源声明或资产关联。可以继续编辑，或确认放弃后离开。'}</p><label><input type="checkbox" checked={discard} onChange={event => setDiscard(event.target.checked)} />确认放弃未保存输入</label><Button disabled={!discard} onClick={() => { const action = pendingNavigation; setPendingNavigation(undefined); setLineageDirty(false); setRelationshipDirty(false); setFormRevision(value => value + 1); setPreferences(overview?.preferences); graph.discard(); action(); }}>确认离开</Button><Button onClick={() => setPendingNavigation(undefined)}>继续编辑</Button></section>}
+    {pendingDeclaration && !denied && !graphView && <Button disabled={!writable || busy || lineageDirty || relationshipDirty} onClick={() => { if (busyRef.current || lineageDirtyRef.current || relationshipDirtyRef.current) return; busyRef.current = true; setBusy(true); void guarded(() => declared(pendingDeclaration)).then(asset => { refreshedAsset(asset); setPendingDeclaration(undefined); setNotice('资产与外部导入来源已保存。'); }).catch(reason => { if (current()) setNotice(apiErrorView(reason, '来源声明仍未保存，文件已保留。').message); }).finally(() => { busyRef.current = false; if (alive.current) setBusy(false); }); }}>仅重试外部导入声明</Button>}
+    {graphView && overview && !denied && graph.content}
+    {!graphView && overview && !denied && <AssetLibraryPanel novelId={projectId} adapter={adapter} selectedAssetId={selected?.id} onSelectAsset={asset => navigate(() => { selectionEpoch.current += 1; setSelected(asset); setLineageDirty(false); setRelationshipDirty(false); })} />}
   </div>;
   const extra = selected && <>{selected.provenance && <section className="independent-studio-lineage" aria-label="独立资产来源"><p>版本 v{selected.version} · {selected.provenance.origin} · {selected.provenance.integrity}</p><p>许可：{selected.provenance.license.label}（作者声明，未作法律验证）</p>{selected.provenance.stale && <StatusMessage tone="warning">来源已变化或不可用，请核对后再复用。</StatusMessage>}
     <AssetLineageForm key={`${selected.id}:${selected.version}:${formRevision}`} row={lineageAsset(selected)} assets={rows.map(lineageAsset)} readOnly={!writable || busy || relationshipDirty} onDirtyChange={setLineageDirty} saved={() => {}} saveLineage={async body => { if (busyRef.current || !writable || relationshipDirtyRef.current) throw new Error('请先保存或放弃关联输入，再保存来源声明。'); busyRef.current = true; setBusy(true); try { const value = await guarded(() => client.lineage(selected.id, body)); refreshedAsset(value); setNotice('来源声明已保存。'); return value; } finally { busyRef.current = false; if (alive.current) setBusy(false); } }} />
@@ -175,6 +186,6 @@ function IndependentStudioSession({ projectId, context, scope, actor, module, re
     }} />
   </>;
   return <AppShell module={module} onModuleChange={next => navigate(() => onModuleChange(next))} scope={{ ...scope, project: overview?.project.title || scope.project }} projectNoun={overview?.project.entry_kind === 'NEUTRAL_STUDIO' ? '项目' : undefined} actor={actor} sidebar={sidebar} main={main}
-    inspector={<AssetInspector asset={denied ? undefined : selected} novelId={projectId} downloadAsset={adapter.download} isCurrent={current} showReferences={false} extra={extra} />}
+    inspector={graphView && !denied ? graph.inspector : <AssetInspector asset={denied ? undefined : selected} novelId={projectId} downloadAsset={adapter.download} isCurrent={current} showReferences={false} extra={extra} />}
     status={<>{denied ? '权限失效' : loading ? '正在核对' : busy ? readingAsset ? '读取中' : '保存中' : dirty || pendingDeclaration ? '未保存' : '已保存'} · 独立素材 · 无模型调用{status}</>} />;
 }

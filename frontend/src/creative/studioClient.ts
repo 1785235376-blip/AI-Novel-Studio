@@ -1,6 +1,7 @@
 import { ApiError, type Asset, type AssetProvenance, type AssetRelationship, type AssetRelationshipKind, type AssetRelationshipReference, type AssetRelationshipReferenceKind, type AssetRelationshipTarget, type CollaborationContext } from '../api';
 import { useLocalHostSession } from '../localHostSession';
 import { isPackagedDesktopHost } from '../packagedHost';
+import { createStudioGraphClient } from './studioGraphClient';
 
 export type CreativeIntent = 'NOVEL_WRITING' | 'NOVEL_ADAPTATION' | 'AI_SHORT_FILM' | 'COMMERCIAL_CG'
   | 'ADVERTISEMENT' | 'MUSIC_VIDEO' | 'GAME_PREVIS' | 'IMAGE_DESIGN' | 'PODCAST_VOICE' | 'BLANK' | 'CUSTOM';
@@ -306,6 +307,7 @@ export function studioClient(projectId: string, context: CollaborationContext) {
     return value;
   }
   return {
+    graphs: createStudioGraphClient(projectId, { scope }, transport),
     overview: (signal?: AbortSignal) => transport.json<StudioOverview>(base, 'GET', undefined, signal).then(checkedProject),
     activate: () => transport.json<StudioActivation>(`${base}/activate`, 'POST').then(checkedProject),
     preferences: (signal?: AbortSignal) => transport.json<StudioPreferences>(`${base}/preferences`, 'GET', undefined, signal),

@@ -303,3 +303,93 @@ permitted` / `SIGABRT`; no new M1 browser attempt occurred. Exact M0 terminal
 receipt is [recorded separately](docs/delivery/v2-development/m0-ci-terminal.json):
 push Cloud **FAILURE**, PR Cloud **CANCELLED**, both PR strict aggregates failed
 despite successful PG shard execution. Neither is current-M1 hosted evidence.
+
+## 10. M2-A in-progress graph delta — 2026-10-09 13:50 UTC
+
+**M2 PARTIAL.** Published M1 baseline is
+`57986cb13d452731baf82bbc242bfc79f9cfd145`; M2 end SHA/tree is uncommitted and
+unrecorded. Earlier M0/M1 sections remain historical. The
+[M2 report](MILESTONE_M2_REPORT.md) records source contracts, development receipts,
+full-roadmap gaps and the distinct M1 hosted compatibility correction.
+
+- `graph_models.py` supplies seven closed versioned node definitions and four
+  current port types, strict schemas/edge validation and original DAG ordering.
+  Empty independent graphs can persist without chapter/Director/model.
+- `graph.py` uses original `CreativeProjectStore` collections for actor-private,
+  exact-scope/incarnation definitions/runs; CAS, request identity, digest validation
+  and final authorization checks remain mandatory. It creates no project/asset DB.
+- `graph_execution.py` drives `_ScopedOriginalWorkflowHost` trigger/claim/complete
+  and review transitions through a trusted local adapter. Text/manual/rule outputs
+  do not invoke JobManager/providers or models, publish assets or overwrite prose.
+  Preflight admission and exact output review are separate explicit actions.
+- Original WorkflowRun default **3,600-second admission deadline** is retained
+  through queued execution/pause/resume/review; node budget is **5 seconds**.
+  Application timeouts are unrelated to unchanged CI budgets. Frontend currently
+  parses/displays timing fields; final integrated verification is pending.
+- Bounds: **16 nodes / 40 edges / 96,000 definition bytes / 64,000 output bytes**,
+  **25 graphs / 100 runs / 20 history entries**; bytes are decimal. No general
+  Storage Manager or scalable graph resource scheduler is implied.
+- Cache is same-graph-version, same actor/scope/incarnation, digest-verified local
+  output from successful reviewed ancestors only. Approval is never cached;
+  cross-version descendant-only invalidation and binary cache are absent.
+- `asset_reference` is read-only metadata with original-owner current/stale/hidden
+  projection. It is **not** an AssetLibrary parent/provenance/dependency edge;
+  original delete/restore may make it unavailable. Saved references cannot yet
+  detach/rebind; selected execution is blocked pending an atomic original-owner
+  input adapter. M1 relationship deletion guards do not automatically cover it.
+- Optional canvas/run/inspector consumers use the existing Studio shell. Real
+  positioned nodes, pointer/keyboard movement, pan/zoom and form-based typed
+  connections exist; persistent draft autosave, drag-connect, templates, MiniMap,
+  professional Director/Tutor and large-graph acceptance remain missing/partial.
+
+Development deadline suite is **257 passed / 44 PG variants deselected**;
+first mounted API **16 passed / 16 skipped** predates later auth cases. Earlier
+241-pass run explicitly recorded source drift. Final File/actual-PG/full frontend,
+build and hosted/browser results remain pending; no M2 visual PASS or final SHA.
+Full M2's image generation/material conversion/JobManager/model gate remains open.
+M1 storage/preset gaps continue to block dependent work and M12 remains gated.
+
+### 10.1 Later terminal checks, 13:55 UTC
+
+Source-stable, agreeing 1,660-input receipts now establish full frontend **1,923
+passed / 8 existing skips**, TypeScript/Vite/43-file token **PASS**, and complete
+CI infrastructure/catalog **279 passed** (276 infrastructure, including original
+102 TCP checks, plus 3 catalog). Catalog is **2,107 operations, M2 +30/−0**.
+Independent collection is **10,178 nodes, INVENTORY_ONLY**, original 9,151 order
+and historical skips retained; written manifest and integrated File/actual PG
+remain pending. [M2 report §7](MILESTONE_M2_REPORT.md#7-integrated-checkpoint-receipts--2026-10-09-1355-utc)
+retains exact source identity. No browser/visual, full M2 gate or published end SHA
+is inferred from these checks.
+
+### 10.2 Integrated File update, 13:59 UTC
+
+[Original-owner File](docs/delivery/v2-development/stage-m2-integrated-owner-file.json)
+finished **PASS: 1,490 passed / 1,098 skipped**, 299.01 seconds. It selects 33
+original-owner/M1/M2/media-contract files; it is not the full backend manifest.
+The stable 1,660-input map matches frontend/build/279-check evidence. Real PG
+remains pending; no profile combination, browser PASS or full M2 completion is
+inferred. Exact log/source binding is in [M2 report](MILESTONE_M2_REPORT.md).
+
+### 10.3 Written inventory update, 14:01 UTC
+
+[Manifest review](docs/delivery/v2-development/stage-m2-manifest-change-review.json)
+and [independent recollection/write](docs/delivery/v2-development/stage-m2-manifest-written.json)
+verify **10,178 nodes = M1 9,823 + 355**, preserved old order/skips/external gates,
+and actual manifest SHA256
+`acefe60873bd452ff663b254cb4c25a910c99dcb140732171105b7ba0b687d62`.
+The frozen manifest remains unchanged. [Actual browser collection](docs/delivery/v2-development/m2-browser-inventory-review.json)
+retains all prior 12 cases: **7 original + 8 independent (5 M1 + 3 M2)**, no overlap.
+Both are **inventory only**; no browser launched or full backend execution inferred.
+Real PG completion remains pending at this observation.
+
+### 10.4 Final local M2-A checkpoint, 14:07 UTC
+
+Actual PostgreSQL 17.11 is now **PASS: 1,457 passed / 1,131 skipped**, 830.19 s,
+with matching normal shutdown. Its stable 1,660-input map agrees with File
+**1,490/1,098**, frontend **1,923/8**, build/token and **279** infrastructure/catalog
+checks. Earlier pending observations are historical; exact final evidence is in
+[M2 report §7.5](MILESTONE_M2_REPORT.md#75-integrated-postgresql-and-final-local-checkpoint-1407-utc).
+These are selected local checks, not full hosted backend/browser acceptance.
+M2 remains PARTIAL; missing execution adapters, full canvas/Tutor and M1 storage
+semantics remain explicit. Final published SHA will be bound through PR47 after
+commit; no source-independent end SHA, Windows result or visual PASS is claimed.

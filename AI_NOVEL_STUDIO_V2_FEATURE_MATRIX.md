@@ -580,3 +580,78 @@ push Cloud **FAILURE** and PR Cloud **CANCELLED**, including failed PR File/PG
 aggregates despite PG execution success. Prior local Chromium socket denial / SIGABRT
 explains the carried browser environment block; no new M1 local attempt or trace
 retrieval around the M0 **403 TRACE_ACCESS_BLOCKED** occurred.
+
+## 33. Append-only M2-A development delta
+
+Checkpoint **2026-10-09 13:50 UTC**, baseline M1
+`57986cb13d452731baf82bbc242bfc79f9cfd145`; M2 is uncommitted, **PARTIAL**.
+All 325 M0 rows and preceding M1 snapshots remain unchanged. This delta describes
+implemented source, not a final promoted status or full-stage test verdict.
+See [M2 report](MILESTONE_M2_REPORT.md) for exact owners and execution evidence.
+
+| M0 IDs | Implemented M2-A slice | Remaining gap |
+| --- | --- | --- |
+| GRAPH-01/11/15 | Closed seven-node/four-port graph registry, empty actor-private scoped graph, strict typed edges and CAS persistence. | Full multimodal port/adapters, shared ordinary/professional views; original Project/Asset/Workflow owners remain authoritative. |
+| GRAPH-02/03/07 | Positioned node canvas, pan/zoom, marquee/multiselect, keyboard movement, typed port buttons/form connection and invalid-edge feedback. | Drag-to-connect, richer highlighting/conversion/error focus, actual browser/a11y/visual acceptance. |
+| GRAPH-04/05/06/08/09/10 | Explicit save/reopen, in-memory undo/redo, conflict/dirty guards and bounded deletion. | Persistent draft autosave/reload recovery, command search, copy/paste/groups/MiniMap/templates and large-graph performance remain missing/partial. |
+| GRAPH-12/13/14/16 | Original WorkflowRun host executes local text/rule/manual outputs; optional Director note and exact human review. | No JobManager/provider/model dispatch, generated-asset lineage, Asset Save/Export/Timeline adapter or professional Console/Tutor. |
+| GRAPH-17/18/19/21/22 | Selected dependency closure/preflight, explicit queued execution, original review/pause/resume/cancel and fixed admission deadline. | Model capability/cost/privacy admission, parallel/VRAM scheduling, provider retry/cancellation reconciliation and full resource UI. |
+| GRAPH-20 | Same-version, same-owner reviewed-ancestor local output cache; approval never reused. | Cross-version descendant invalidation, binary cache and storage cleanup/reservation absent. |
+| CORE-17; GRAPH-11/14 | Asset reference displays original ID/version/digest and CURRENT/STALE/UNAVAILABLE state. | It is metadata, not an original parent/provenance/dependency edge. No graph-aware strong delete guard, atomic input CAS or output publication; saved detach/rebind and selected execution are blocked. |
+| GATE-M2 | Independent manual graph foundation with no compulsory Director/model/chapter. | **PARTIAL**: actual image generation/material conversion, missing graph features/adapters and final integrated/browser gates remain open. |
+
+Finite bounds are 16 nodes, 40 edges, **96,000/64,000 decimal bytes** for graph
+and output, 25 graphs/100 runs/20 history entries. Original run deadline is
+3,600 seconds from admission; node budget 5 seconds. These are not CI budget
+changes, large-graph performance proof or M1 Storage Manager completion.
+
+Verified development receipts include **257 passed / 44 PG deselected** for the
+latest File/contracts deadline slice; first API **16 passed / 16 skipped** is an
+earlier snapshot. Preserve the 241-pass run's explicit source drift and the wrong
+interpreter's `No module named pytest` failure. Final integrated counts, actual
+PG, full frontend/build, browser and current hosted M2 remain pending. The
+separate M1 compatibility/media correction preserves its first TCP/browser
+failures and **403 TRACE_ACCESS_BLOCKED** artifact, not a new whole-CI PASS.
+
+### 33.1 Terminal-check delta, 13:55 UTC
+
+Full frontend **1,923 passed / 8 existing skips**, build/token **PASS**, and
+**279 CI-infrastructure/catalog checks** now have agreeing source-stable receipts.
+Mounted API File **20 passed / 20 skips** is a separate earlier snapshot.
+Current catalog **2,107 operations, +30/−0**; collection **10,178 nodes** is
+inventory only, preserving original 9,151 order and skips. Written manifest,
+integrated File/PG and actual browser/visual remain pending. See the
+[M2 report](MILESTONE_M2_REPORT.md); none of these results promotes full GATE-M2.
+
+### 33.2 Integrated File update, 13:59 UTC
+
+[Original-owner File](docs/delivery/v2-development/stage-m2-integrated-owner-file.json)
+finished **PASS: 1,490 passed / 1,098 skipped**, 299.01 seconds. It selects 33
+original-owner/M1/M2/media-contract files; it is not the full backend manifest.
+The stable 1,660-input map matches frontend/build/279-check evidence. Real PG
+remains pending; no profile combination, browser PASS or full M2 completion is
+inferred. Exact log/source binding is in [M2 report](MILESTONE_M2_REPORT.md).
+
+### 33.3 Written inventory update, 14:01 UTC
+
+[Manifest review](docs/delivery/v2-development/stage-m2-manifest-change-review.json)
+and [independent recollection/write](docs/delivery/v2-development/stage-m2-manifest-written.json)
+verify **10,178 nodes = M1 9,823 + 355**, preserved old order/skips/external gates,
+and actual manifest SHA256
+`acefe60873bd452ff663b254cb4c25a910c99dcb140732171105b7ba0b687d62`.
+The frozen manifest remains unchanged. [Actual browser collection](docs/delivery/v2-development/m2-browser-inventory-review.json)
+retains all prior 12 cases: **7 original + 8 independent (5 M1 + 3 M2)**, no overlap.
+Both are **inventory only**; no browser launched or full backend execution inferred.
+Real PG completion remains pending at this observation.
+
+### 33.4 Current M2-A evidence summary, 14:07 UTC
+
+Selected 33-file owner regression is terminal in both profiles: File **1,490
+passed / 1,098 skipped**, real PG 17.11 **1,457 passed / 1,131 skipped**, normal
+shutdown. Their stable 1,660-input maps match full frontend **1,923/8**, build/token
+PASS and **279** infrastructure/catalog passes. Inventory remains distinct:
+10,178 backend nodes and 7+8 browser cases were collected, not all executed.
+[M2 report](MILESTONE_M2_REPORT.md) contains the final binding; **GATE-M2 remains
+PARTIAL**, current hosted/browser NOT_RUN and visual acceptance unverified.
+Final end SHA is deferred to the actual PR publication receipt. M0/M1 inventory,
+all failures and M12 approval boundary remain unchanged.

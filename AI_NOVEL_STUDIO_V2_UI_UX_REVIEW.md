@@ -179,3 +179,81 @@ backend aggregates despite successful PG execution. M0 trace access remains 403
 blocked with no inspected trace or alternate retrieval. Preset layouts and full Storage Manager UX remain partial;
 M1 minimum-path closure does not establish full visual or functional acceptance.
 No published end SHA or M12 authority is inferred.
+
+## 9. M2-A canvas source review — 2026-10-09 13:50 UTC
+
+**PARTIAL / in progress; no M2 visual PASS.** Baseline is published M1
+`57986cb13d452731baf82bbc242bfc79f9cfd145`; the canvas changes are uncommitted.
+The existing UI skill/DS layout and component rules were re-read. Protected
+shell approval remains the narrow project noun; graph content consumes existing
+Studio/main/inspector slots and shared primitives, not a new shell permission.
+
+`GraphCanvas.tsx`/`graphCanvasGeometry.ts` provide real positioned node cards/SVG
+edges, pointer drag, bounded pan/zoom, marquee/multiselect and keyboard movement,
+delete and Escape. Blur, lost capture, owner/source changes and readonly/busy
+transitions cancel gestures. `useStudioGraphEditor.tsx` provides current-node
+inspector, 50-snapshot in-memory undo/redo, explicit graph save/reopen, typed port
+selection/forms and dirty/conflict choices. `GraphRunPanel.tsx` separates preflight
+review, run creation, execution and exact human output review; source now displays
+the original admission deadline. No final integrated receipt for these latest UI
+changes has yet been read.
+
+Truthful limits are required in the actual UX: local text/manual/rule execution,
+zero model/external calls, no implicit asset/prose publication, and optional
+Director notes only. Asset references display original metadata/current state;
+they are not dependency/lineage edges or executable media inputs. Saved bindings
+cannot yet detach/rebind. An unavailable binding stays redacted/read-only rather
+than silently vanishing from a replacement save.
+
+Remaining UX requirements include drag-connect, node search, copy/paste, grouping,
+collapse/MiniMap/alignment, template import/export, persistent draft autosave and
+reload recovery, full ordinary/professional views, professional Director Console,
+disconnected Tutor placeholder and large-graph virtualization/performance.
+In-memory dirty protection does not establish crash/reload recovery; a 16-node cap
+does not establish infinite-canvas scalability.
+
+The new `v2-independent-graph-live.spec.ts` is an authored acceptance input, not
+executed evidence. It must separately cover actual pointer/keyboard/viewport,
+save/reopen/local review, illegal connections, authority/stale/uncertain states,
+interruptions and required screenshot geometry. Final full frontend/build and
+actual browser review remain pending. Focused development unit counts are not
+visual acceptance.
+
+The distinct [M1 media compatibility correction](docs/delivery/v2-development/M1_CI_MEDIA_COMPATIBILITY_FIX.md)
+restores the protected old browser job/config and adds a separate explicit media
+job. Its first relationship timeout remains unproven; readiness/isolated cleanup
+changes are fixture hardening requiring actual execution, not an established
+root-cause correction. Artifact **11618169199** remains **403
+TRACE_ACCESS_BLOCKED**, with no inspected trace/screenshot or alternate retrieval.
+Neither this correction nor the graph canvas permits old golden/assertion changes.
+
+### 9.1 Actual unit/build update, 13:55 UTC
+
+[Full frontend](docs/delivery/v2-development/stage-m2-full-frontend.json) is now
+**PASS: 1,923 passed / 8 existing skips**; [build](docs/delivery/v2-development/stage-m2-build.json)
+is **PASS: TypeScript/Vite/43-file token guard**, retaining App 886.52 kB and
+ExperimentalWorkbench 628.01 kB chunk warnings. Log hashes and identical stable
+1,660-input maps were verified. This includes the latest timing-field consumer
+source, but provides **no native browser, actual screenshot, geometry or full
+accessibility PASS**. Earlier pending statements remain their 13:50 snapshot.
+
+### 9.2 Browser inventory verified, execution still open
+
+The [14:00:44 collection receipt](docs/delivery/v2-development/m2-browser-inventory-review.json)
+confirms **7 original live + 8 independent live** cases, with all 12 prior cases
+preserved and no overlap. Independent cases comprise 5 M1 media and 3 M2 graph
+journey/gating cases. Both actual list outputs/config hashes match the receipt.
+`browser_launched:false`: this is inventory, not functional or visual PASS.
+Existing 8 mocked/geometry cases remain separate; blocked trace access and first
+M1 failures are not replaced by collection.
+
+### 9.3 Final local checkpoint, 14:07 UTC
+
+The matching integrated File and real PG owner regressions are now terminal,
+with the same 1,660-input map as the **1,923-pass frontend** and passing build.
+[M2 report](MILESTONE_M2_REPORT.md) records counts/shutdown and keeps these unit/API
+results distinct from browser/visual acceptance. Local browser remains blocked;
+current M2 hosted/browser execution is NOT_RUN, and no M2 screenshot/geometry
+PASS is asserted. PNG diagnostics now include a real cloud decoder PASS for the
+exact fixture, without identifying the unresolved hosted timeout cause. Final
+published SHA will be bound after commit; no full M2 or Windows acceptance claim.

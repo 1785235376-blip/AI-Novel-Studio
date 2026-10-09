@@ -195,3 +195,101 @@ aggregates. Push same-run joins reconcile **9,449 nodes per profile**:
 File **6,190 passed / 3,259 skips**, PG **6,159 passed / 3,290 skips**, original
 TCP **2 passed**. These remain M0-only counts, not final M1 execution; the excerpts
 are not complete downloaded artifacts or proof of monolithic PG equivalence.
+
+## 8. M2-A development checkpoint — 2026-10-09 13:50 UTC
+
+M1 checkpoint publication is now the baseline
+`57986cb13d452731baf82bbc242bfc79f9cfd145`, tree
+`7b06f7eb213893ec41e4ded14810b82b070b7dc7`; M1 remains **PARTIAL**. M2-A is
+**IN_PROGRESS / PARTIAL**, with end SHA/tree **UNCOMMITTED / NOT RECORDED**.
+Earlier ledger sections retain their time-bound source/publication statements.
+
+Implemented slice: actor-private typed graph definitions over original scope
+persistence; empty independent graph/CAS; original WorkflowRun local text/manual
+execution, optional Director note, exact review and same-version reviewed-ancestor
+cache; initial real node canvas/inspector/run consumer. Bounds are 16 nodes/40
+edges, 96,000/64,000 decimal bytes, 25 graphs/100 runs/20 history. Original
+3,600-second deadline begins at admission without queued-execute reset; node
+budget 5 seconds. No new provider, JobManager or model execution is present.
+
+External graph references are metadata rather than original lineage/dependency
+edges: original soft-delete/restore remains authoritative; stale/unavailable
+projection, saved binding restrictions and blocked atomic input execution are
+explicit. No graph-wide strong deletion guard, generated-asset lineage or Asset
+Save publication is claimed. Full canvas, multimodal adapters, M1 storage/preset
+semantics and the full M2 image-generation/material-conversion gate remain open.
+
+[M2 report](MILESTONE_M2_REPORT.md) preserves separate development receipts:
+213 contract passes; wrong-interpreter failure before pytest; corrected File
+21 passed/21 deselected; 241 passed/28 deselected **with recorded source drift**;
+latest deadline File **257 passed/44 PG deselected**; earlier mounted API **16
+passed/16 skips**, before later auth cases. These are not final integrated totals.
+Actual PG, full frontend/build, browser/visual and current-M2 hosted checks remain
+pending. No authored test or schema is counted as executed product acceptance.
+
+### 8.1 Published M1 hosted failures carried into the correction
+
+[Detailed correction record](docs/delivery/v2-development/M1_CI_MEDIA_COMPATIBILITY_FIX.md):
+push **37936615942** and PR **37936623135**, attempt 1, each have the protected
+V2-job invariant failure (**101 passed/1 failed**); actual TCP execution was not
+reached. Both browser jobs also retain **8 live failures/4 passes**, geometry
+**8 passes**; first relationship timeout is unproven, then closed-context cleanup
+left a synthetic project and later empty-server guards failed. No failure is erased.
+
+The approved repair restores the old 7-case live job/config unchanged and adds
+an explicit new media job for 5 independent cases; graph cases are additional.
+Inventory migration is collection-only. The separate source-stable additive-media
+contract selection has **121 passed**, not hosted/browser success. Artifact
+**11618169199** is **403 TRACE_ACCESS_BLOCKED**, bytes unavailable, no alternate
+route or trace inspection. Cloud terminal metadata is still pending at this
+checkpoint; Interop/Shared success does not repair these failures. M12 remains
+**USER_APPROVAL_REQUIRED / LOCAL_REQUIRED / NOT_RUN**.
+
+### 8.2 Terminal local checks appended at 13:55 UTC
+
+Full frontend **1,923 passed / 8 existing skips**, TypeScript/Vite/token **PASS**,
+and complete infrastructure/catalog **279 passed** now have terminal, agreeing
+source-stable receipts. That 279 includes all 276 infrastructure tests, including
+the original 102 TCP harness, plus 3 catalog tests. Mounted API File **20/20**
+belongs to its earlier source. Catalog now has **2,107 operations, M2 +30/−0**.
+Collection review records **10,178 nodes**, original 9,151 order/skips preserved,
+**INVENTORY_ONLY**. Written manifest and integrated File/real-PG completion are
+still pending. Exact evidence is appended in [M2 report](MILESTONE_M2_REPORT.md);
+no final M2 SHA, hosted/browser PASS or full-stage completion is asserted.
+
+### 8.3 Integrated File update, 13:59 UTC
+
+[Original-owner File](docs/delivery/v2-development/stage-m2-integrated-owner-file.json)
+finished **PASS: 1,490 passed / 1,098 skipped**, 299.01 seconds. It selects 33
+original-owner/M1/M2/media-contract files; it is not the full backend manifest.
+The stable 1,660-input map matches frontend/build/279-check evidence. Real PG
+remains pending; no profile combination, browser PASS or full M2 completion is
+inferred. Exact log/source binding is in [M2 report](MILESTONE_M2_REPORT.md).
+
+### 8.4 Written inventory update, 14:01 UTC
+
+[Manifest review](docs/delivery/v2-development/stage-m2-manifest-change-review.json)
+and [independent recollection/write](docs/delivery/v2-development/stage-m2-manifest-written.json)
+verify **10,178 nodes = M1 9,823 + 355**, preserved old order/skips/external gates,
+and actual manifest SHA256
+`acefe60873bd452ff663b254cb4c25a910c99dcb140732171105b7ba0b687d62`.
+The frozen manifest remains unchanged. [Actual browser collection](docs/delivery/v2-development/m2-browser-inventory-review.json)
+retains all prior 12 cases: **7 original + 8 independent (5 M1 + 3 M2)**, no overlap.
+Both are **inventory only**; no browser launched or full backend execution inferred.
+Real PG completion remains pending at this observation.
+
+### 8.5 Final local M2-A checkpoint, 14:07 UTC
+
+[Actual PG receipt](docs/delivery/v2-development/stage-m2-integrated-owner-postgres.json)
+finished **1,457 passed / 1,131 skipped**, 830.19 s, real 17.11 and matching normal
+shutdown. It shares the stable 1,660-input map with File **1,490/1,098**, frontend
+**1,923/8**, build/token and **279** infrastructure/catalog checks. All selected
+local checks are terminal; earlier PG-pending entries remain time-bound history.
+Catalog 2,107 (+30/−0), written 10,178-node inventory and 7+8 browser collection
+retain their separate execution levels. Full M2 stays **PARTIAL**.
+
+M1 hosted PG jobs are still pending alongside known TCP/browser nonpasses; exact
+terminal history will be a separate receipt. M2 hosted/browser remains **NOT_RUN**,
+local browser blocked, no visual approval. The actual end SHA will be bound in
+PR47 after publication, not invented inside its own commit. Full graph/model/media,
+canvas/Tutor and inherited storage gaps remain; M12 still requires user approval.

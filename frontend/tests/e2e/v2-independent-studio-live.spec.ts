@@ -5,6 +5,7 @@ import path from 'node:path';
 import { promisify } from 'node:util';
 import { expect, test, type APIRequestContext, type APIResponse, type Page, type TestInfo } from '@playwright/test';
 import type { StudioAsset, StudioCreatedProject, StudioOverview } from '../../src/creative/studioClient';
+import { verifyInstalledMediaTools } from '../../../scripts/v2_media_prerequisites.mjs';
 
 // These tests must run against their own initially empty File server. Inventory
 // is never treated as ownership: only successful create responses are cleaned.
@@ -23,6 +24,10 @@ async function makeSyntheticVideo(info: TestInfo): Promise<Buffer> {
   await fs.mkdir(path.dirname(destination), { recursive: true });
   const bounded = { timeout: 20000, maxBuffer: 64 * 1024, killSignal: 'SIGTERM' as const };
   try {
+    // Only this new VIDEO fixture probes installed decoders. The protected CI
+    // job and legacy browser journeys do not acquire provisioning side effects.
+    const tools = await verifyInstalledMediaTools();
+    await info.attach('independent-video-installed-tools', { body: JSON.stringify(tools, null, 2), contentType: 'application/json' });
     await executeFixtureTool('ffprobe', ['-version'], bounded);
     await executeFixtureTool('ffmpeg', ['-nostdin', '-hide_banner', '-loglevel', 'error', '-y', '-f', 'lavfi', '-i', 'color=c=blue:s=32x32:r=5:d=0.4', '-an', '-c:v', 'libx264', '-threads', '1', '-filter_threads', '1', '-preset', 'ultrafast', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', destination], bounded);
     const probe = await executeFixtureTool('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=codec_name,width,height:format=duration', '-of', 'json', destination], bounded);
@@ -30,6 +35,9 @@ async function makeSyntheticVideo(info: TestInfo): Promise<Buffer> {
     expect(metadata.streams[0]).toMatchObject({ codec_name: 'h264', width: 32, height: 32 });
     expect(Number(metadata.format.duration)).toBeGreaterThan(0); expect(Number(metadata.format.duration)).toBeLessThan(1);
   } catch (cause) {
+    if (cause && typeof cause === 'object' && 'receipt' in cause) {
+      await info.attach('independent-video-prerequisite-failure', { body: JSON.stringify(cause.receipt, null, 2), contentType: 'application/json' });
+    }
     throw new Error('Real VIDEO acceptance requires installed FFmpeg/ffprobe with libx264 and a decodable 32×32, sub-second H.264/yuv420p MP4. The prerequisite failed; no playback or MIME stub is substituted.', { cause });
   }
   const bytes = await fs.readFile(destination);

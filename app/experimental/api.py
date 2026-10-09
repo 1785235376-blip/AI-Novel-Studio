@@ -665,10 +665,12 @@ router.include_router(create_creative_router(creative_service, authorize, requir
 
 from ..creative.workspace import IndependentWorkspaceService
 from ..creative.workspace_api import create_independent_workspace_router
+from ..creative.graph import CreativeGraphService
 
 independent_workspace_service = IndependentWorkspaceService(creative_service,
     legacy_api.asset_library_service, production_lineage_service)
+creative_graph_service = CreativeGraphService(creative_service.store, independent_workspace_service)
 router.include_router(create_independent_workspace_router(independent_workspace_service, authorize, require_flag,
     create_project=lambda body, token: legacy_api.create_novel(
         legacy_api.NovelIn(**body.model_dump(exclude_none=True)), token),
-    workspace_writer=legacy_api._shared_workspace_writer))
+    workspace_writer=legacy_api._shared_workspace_writer, graph_service=creative_graph_service))

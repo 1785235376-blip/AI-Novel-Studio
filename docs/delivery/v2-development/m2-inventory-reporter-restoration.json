@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-09T14:01:46.104059+00:00",
+  "reason": "Playwright --list wrote configured default reporter paths; restore exact published historical evidence bytes. Current inventory is retained in dedicated m2-browser-inventory text and JSON files. No browser launched.",
+  "files": [
+    {
+      "path": "docs/delivery/v2-development/cloud-v2-creative-browser/junit.xml",
+      "head_sha256": "1a9cb9eda6c3066b75dd46e5afa7b31aba983789af3172eaf6125f49a7ca2f0c",
+      "list_side_effect_sha256": "43530ecb291aa3fc52c07166eeaa6befaf9970a3a62f1e42711899949cf9560f"
+    },
+    {
+      "path": "docs/delivery/v2-development/cloud-v2-creative-browser/results.json",
+      "head_sha256": "32b2f5505006534c55718bc14f87b1ef9d40a3b2c0a672d81aebe0cca1675da4",
+      "list_side_effect_sha256": "f312411aecdb34493778edf9e0dc0f42819b01c2223f470377496eb42baec7ae"
+    }
+  ]
+}

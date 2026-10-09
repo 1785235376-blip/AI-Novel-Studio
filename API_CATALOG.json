@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "a06abe220e300bad702981085001c7bd0259ba6d81a519bb3f855c1f8db56292",
+  "application_source_fingerprint_sha256": "320dfff4a919037b544a3662d719001f4e145545925600870993e972be4d9944",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -49,13 +49,17 @@
     "app/creative/__init__.py": "22e9cdc335f433a18299dd63f82c0b68ca05af9e9cd0570b20baecac2624d0c4",
     "app/creative/api.py": "d5e5543031cf86771f34f048bf3eed42dee5b86c95a43370406ae785a7c71623",
     "app/creative/generation.py": "e34616fbfd7b686615f3b0eab674e7f2f988650471850ef7fc5285774a0a2d61",
+    "app/creative/graph.py": "6212fbae96e0ca9f8d09a5f8f1fa91d9fb1e60d37ec194f255437311b7d51fc2",
+    "app/creative/graph_api.py": "ee744886463c592159517ce2878e75655a580467d7457b262d2b167593af6f3a",
+    "app/creative/graph_execution.py": "492a9fdf55063ed41546914e90e97988ed74943f2890d515f2f52c8ba629bd21",
+    "app/creative/graph_models.py": "e5f31037f8054f56d0ef36d1123df8470d438b285f426f16daefc804a7c8c275",
     "app/creative/models.py": "4b27d20080c6d8c6f141e9cfe8d3381f6ed4b3ef1d8009e08fcc30a5464723d6",
-    "app/creative/project_store.py": "b6eb16080c73cf985283b2fb9948c251195b15784335a8e0fa2af8b6a1be8dbb",
+    "app/creative/project_store.py": "2d928a2e440c60f7badc8aebe1bdf635c3b4464b43ed34231bd465c7b72ad1c8",
     "app/creative/proposals.py": "4e8b93d2408b214165b01beda496b9dfbfee2b0bd400c414b2794da20262fd96",
     "app/creative/service.py": "5ce1d0f12b44b934dfc347dc68fb7d067f4702522f0a9190a84f5efb6320e29b",
     "app/creative/storage_admission.py": "055cc172c00063f9dad333e7d4815174bd3c3e6b8f3af742a548c4427f0acf86",
     "app/creative/workspace.py": "cd5eb340e6d4835ac1dfa51f46d6c5ac40fe485b7c026e01c1fc1834c016af15",
-    "app/creative/workspace_api.py": "53a177db02a502a001df0252da65430ab9c17cde2dc2faae09973f9b2f0ab899",
+    "app/creative/workspace_api.py": "5dea10fa82fe79208a69fcf98251d85fec3f31342a085ac5fb2a79b2b717a5f9",
     "app/creative/workspace_models.py": "95d8652d9492613876eb39ab06b07e48eb7a0436f967e248261a976e5f5c01e9",
     "app/creative/workspace_relationships.py": "e33cd0076d2e6aec5685b8007992ce298664cf035edf9ca4bb87d319407de310",
     "app/credential_vault.py": "986bbc6fe63a7658a0bd22e0223677a63448e1b6ab46603bb11cdc530558ab26",
@@ -64,7 +68,7 @@
     "app/document_revision.py": "d0a3085d6c453d78196b93eae9ae66b775db9508c53ab49961513f5bc33036f5",
     "app/experimental/__init__.py": "737a87c497146972d1cc905f0076f076d5414a8093066146a5bac6b190d788f3",
     "app/experimental/adaptation_projection.py": "dbc51d4bbf0f44b0defb57d7f9a19491d4abf9f18645c13f6241e1600682e91e",
-    "app/experimental/api.py": "cfc2e9f01ad46dbce8e8bc146429a7a534520887945aba47d440b8cc86b67df6",
+    "app/experimental/api.py": "04ad7085fa8389d94b62daa627230075c9323aaaf561bbd9930ce9d3320742a1",
     "app/experimental/audiobook.py": "822155147b635156fcca184155b80846a7c39efde5b025df7688337d98c63115",
     "app/experimental/audiobook_api.py": "02b07bb4bf12c169d4fc73e0033cc7e558f5fed4f966d3cbf54f4cf65b205ef7",
     "app/experimental/author_context_api.py": "00b8f1a33e4220bb2b1f3b1def6a1ec8ae7d20a8cbc87530304c5c0b87e4fc5a",
@@ -380,9 +384,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 244,
+    "added": 274,
     "changed_contract": 24,
-    "current_method_paths": 2077,
+    "current_method_paths": 2107,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -399,7 +403,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "ef16fe60c98f3d0c45138ce349e96a74d574e5871b550306ff129336103788a7",
+    "sha256": "ea3e63208cb5375e5d00658ee58585682ea49a705ea9233f126d071128f6f734",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -618,7 +622,8 @@
       "operation_id": "remove_api_projects__nid__studio_assets__aid__delete",
       "owner_ref": "7e4de6b8baee0292c47a3ae1814ccc623c810461a84946890839dee3dde106f9",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "8c19e92ceb4044c5f7d3bce6d0958e8b04e2a9a461541385da8dc8021ba86c99",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -629,7 +634,8 @@
       "operation_id": "remove_relationship_api_projects__nid__studio_assets__aid__relationships__rid__delete",
       "owner_ref": "a690bc219891a5d93d0e94c938d87237b2081c2b8fe9a0462683f7d320f3d2b0",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "97815991f6747552330ab7953373452666702a0bfbe5d93438fa0bf20cd18a63",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -856,7 +862,8 @@
       "operation_id": "remove_api_v1_projects__nid__studio_assets__aid__delete",
       "owner_ref": "7e4de6b8baee0292c47a3ae1814ccc623c810461a84946890839dee3dde106f9",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "6efd3bf6d98dcf6d660d17c43eb69b1b7e742b8e1b32fc16177bea2aa542fb27",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -867,7 +874,8 @@
       "operation_id": "remove_relationship_api_v1_projects__nid__studio_assets__aid__relationships__rid__delete",
       "owner_ref": "a690bc219891a5d93d0e94c938d87237b2081c2b8fe9a0462683f7d320f3d2b0",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "f36cbeb91f45d2d0d15fd9fc7d52f985cb9cb60256127e71876078c028d37f16",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -5391,7 +5399,8 @@
       "operation_id": "project_api_projects__nid__studio_get",
       "owner_ref": "09a6f0e69f1f74f431e3598962677ab77de5ca6b87eda9840641c363618a495e",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "ab6e72dcb26240e6737c68ef752b061e5b4f33232cbf9d320582ecaadfcc1bd9",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -5402,7 +5411,8 @@
       "operation_id": "assets_api_projects__nid__studio_assets_get",
       "owner_ref": "3d9beff606a11b2d5c0412e6704b2a3cd12b022dd4bfb2a129a28db671eef859",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "fb22cdcee7543def43411e29a9ebd34fbc32c1381071d476b6422de8b28d67a4",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -5413,7 +5423,8 @@
       "operation_id": "asset_api_projects__nid__studio_assets__aid__get",
       "owner_ref": "47d0a8ab18a7fb47c030dcc74235517f9ea84a4dc5b189f41e9476ae936b3fe1",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a4596c6cf59c4b6d328ace1907173c54c993dbbc4b98f32de90ea8d6ac038174",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -5424,9 +5435,65 @@
       "operation_id": "download_api_projects__nid__studio_assets__aid__download_get",
       "owner_ref": "f1741dc6650a1ef666a25a1b799bcc21e5e51289fe692a09e77c1052f68aa339",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d86d223c631bd3c1121b0c6ed8a688d46c0ef334493d31bb1c08fd345841c854",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/graph-runs/{rid}",
+      "operation_id": "run_api_projects__nid__studio_graph_runs__rid__get",
+      "owner_ref": "366f24e42143ca2d73caf338a0b713cce4dfa6d23cc8f9f1f29fb643d3068261",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "055a2de2a6af215b4c69edb44de374dcf5e71fffa98e9868fa62b0c964d97c61",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/graphs",
+      "operation_id": "graphs_api_projects__nid__studio_graphs_get",
+      "owner_ref": "c0e18a1c63a020c1ced5fadba5119f3139e1d682e3d617ab69a29c3ed6d6b443",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "cabac9f9d0d63c54bacd6747aac884f089e7bccd8dd285128548845a8e0b8e3c",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/graphs/catalog",
+      "operation_id": "catalog_api_projects__nid__studio_graphs_catalog_get",
+      "owner_ref": "a814ec66a466f72f010941a81feb17504702ac17c2fb1499fce90449a2532ef7",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "6d3b90f6d4ea2565ed4143ed7552c1d890b3bbec33d7e9b0ada9f8128785a69b",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/graphs/{gid}",
+      "operation_id": "graph_api_projects__nid__studio_graphs__gid__get",
+      "owner_ref": "451aec3f7a94582e7667ecebf4a7d079036da6442ad250cc46529333c40d3f56",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "c5c522dde9bed3202ef29a27c5a537066e1e80cc97f089faee523156c7b3453e",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/graphs/{gid}/runs",
+      "operation_id": "runs_api_projects__nid__studio_graphs__gid__runs_get",
+      "owner_ref": "008ad391e00ce6c83235d88fa0569f38382304e11cf1d6ea4b16f98441cc6999",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "fc89450f6cdb469f25cfeff4d329ef58ab6555d112377543162b427fa0c73b6e",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -5435,7 +5502,8 @@
       "operation_id": "preferences_api_projects__nid__studio_preferences_get",
       "owner_ref": "b80cf367e1a9a30173827bfb9ff236c187735c4cf50433556d2146de7854ca6f",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "744ac183e7b3df5c5b0462f2fbf43119a10ad9ae8afc1b2948cde19371115740",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -5446,7 +5514,8 @@
       "operation_id": "references_api_projects__nid__studio_references_get",
       "owner_ref": "0ae6a266b9a5e49c1005669ecc641940165531c75286f009a1dde42dae0b73f7",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d703fdceec9b307b7909cd474d991cbdb03b2c548b28f527f80a9dfd680b5b6f",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -5457,7 +5526,8 @@
       "operation_id": "relationships_api_projects__nid__studio_relationships_get",
       "owner_ref": "72e3f3536280e074d6f9d97b30ce0906c88e96aad4cec4a4c97732916281e175",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "dff36a21595f40363e36a55de7587338fe849380624146841ae4819d43feae4b",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -5468,7 +5538,8 @@
       "operation_id": "storage_api_projects__nid__studio_storage_get",
       "owner_ref": "dce99230d614ec81325536e7471cddb9d71b29bee5611f5d54bf1bd8ccebad0c",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "3960bcfbeab955bd14a6e49b6a7626723f5073b669feed9720437dba4a492fcf",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -10244,7 +10315,8 @@
       "operation_id": "project_api_v1_projects__nid__studio_get",
       "owner_ref": "09a6f0e69f1f74f431e3598962677ab77de5ca6b87eda9840641c363618a495e",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "e5076fa4e59e1ad31e05737a23a9a8fc785c02fbb1e5b2dcc41f49956fc34ccf",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -10255,7 +10327,8 @@
       "operation_id": "assets_api_v1_projects__nid__studio_assets_get",
       "owner_ref": "3d9beff606a11b2d5c0412e6704b2a3cd12b022dd4bfb2a129a28db671eef859",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d05f5004795b6f6d849d0ecaa4fb5b9b415773bfc020ca0f0aea9e2263130d97",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -10266,7 +10339,8 @@
       "operation_id": "asset_api_v1_projects__nid__studio_assets__aid__get",
       "owner_ref": "47d0a8ab18a7fb47c030dcc74235517f9ea84a4dc5b189f41e9476ae936b3fe1",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "8d7cd95aeef0cc005feaa1e2d75c115e5c11d1e054c32142f61f3cc860f37a38",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -10277,9 +10351,65 @@
       "operation_id": "download_api_v1_projects__nid__studio_assets__aid__download_get",
       "owner_ref": "f1741dc6650a1ef666a25a1b799bcc21e5e51289fe692a09e77c1052f68aa339",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a1fa36c612a84dca7335cd6279f35b03add0af72ab320cafdec2d24542967df4",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/graph-runs/{rid}",
+      "operation_id": "run_api_v1_projects__nid__studio_graph_runs__rid__get",
+      "owner_ref": "366f24e42143ca2d73caf338a0b713cce4dfa6d23cc8f9f1f29fb643d3068261",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "0dc158c676c553b1b1ade0a42ef0717047863f9fe7252f6738891ea7298553e1",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/graphs",
+      "operation_id": "graphs_api_v1_projects__nid__studio_graphs_get",
+      "owner_ref": "c0e18a1c63a020c1ced5fadba5119f3139e1d682e3d617ab69a29c3ed6d6b443",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "e5ff3a881be2e3ede68b3c8980b4d2e14556d9bf3341a64dfdd8b1996f348b2e",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/graphs/catalog",
+      "operation_id": "catalog_api_v1_projects__nid__studio_graphs_catalog_get",
+      "owner_ref": "a814ec66a466f72f010941a81feb17504702ac17c2fb1499fce90449a2532ef7",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "476d903b3679027fb8ca00ead99f2ab39c44a1124743b8399d3cee86a96dc306",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/graphs/{gid}",
+      "operation_id": "graph_api_v1_projects__nid__studio_graphs__gid__get",
+      "owner_ref": "451aec3f7a94582e7667ecebf4a7d079036da6442ad250cc46529333c40d3f56",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "7097c4466744a435645762ef4569c32c3d2eb43ca9d49c789daf72179de6a02c",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/graphs/{gid}/runs",
+      "operation_id": "runs_api_v1_projects__nid__studio_graphs__gid__runs_get",
+      "owner_ref": "008ad391e00ce6c83235d88fa0569f38382304e11cf1d6ea4b16f98441cc6999",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "bb5fc70426c10b94dec4d9706d65c4ef19cf4fffda9973aec50fc878a864e07c",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -10288,7 +10418,8 @@
       "operation_id": "preferences_api_v1_projects__nid__studio_preferences_get",
       "owner_ref": "b80cf367e1a9a30173827bfb9ff236c187735c4cf50433556d2146de7854ca6f",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "7ab1ef4a8212f3a24ad4ac025a123c4bd80d46d683d993f272e565424c6b3017",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -10299,7 +10430,8 @@
       "operation_id": "references_api_v1_projects__nid__studio_references_get",
       "owner_ref": "0ae6a266b9a5e49c1005669ecc641940165531c75286f009a1dde42dae0b73f7",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "f7b39427c2ddcd33ae3ecdca48995755fae09af605e1b8f5fc49b38c934b187b",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -10310,7 +10442,8 @@
       "operation_id": "relationships_api_v1_projects__nid__studio_relationships_get",
       "owner_ref": "72e3f3536280e074d6f9d97b30ce0906c88e96aad4cec4a4c97732916281e175",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "cc19622294b5eb671e586f7a06b70378cec2669a6ae8d962f226a5adf6e43739",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -10321,7 +10454,8 @@
       "operation_id": "storage_api_v1_projects__nid__studio_storage_get",
       "owner_ref": "dce99230d614ec81325536e7471cddb9d71b29bee5611f5d54bf1bd8ccebad0c",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "379eb7f6b933716c859f3f51283ac7bdb75f28f5af208aab243da799be67f1d0",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -11376,7 +11510,8 @@
       "operation_id": "blank_project_api_experimental_projects_post",
       "owner_ref": "9c13ed39ac5a376713e99d60e2cef1d1e0e2d24c202e033a34680e0d4fd3c67a",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d217f28edc6900b4d8db8cd90e930df246ffe379d6f7b529f786aae02c92386e",
       "schema_graph_sha256": "b314a114bbf137ec216310a808c4f8388f079bc0e9c4f9e9c439573c3af84692"
@@ -16616,7 +16751,8 @@
       "operation_id": "activate_api_projects__nid__studio_activate_post",
       "owner_ref": "562c4968849c9d961e4987c503069e923e8ec71a330e7fd29dc663ee4aee49c7",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "3c040d306ef1d3a3e8fc33fc0519f560eff4fd4b0ab02131f2c1e1ed61cb7c29",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -16627,7 +16763,8 @@
       "operation_id": "upload_api_projects__nid__studio_assets_post",
       "owner_ref": "67eb7a78984df9838208adb2d40966a8f93d3da1e385d9eddc054b68ebccf553",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "e141f8ebac305c37b2ed3ca5ce3bb9402ab28b95f200b2446a9586a005453464",
       "schema_graph_sha256": "f56843a57f818a1749624e0e40a13e7e3b6880c4f570fa57f698adc76f53d208"
@@ -16638,7 +16775,8 @@
       "operation_id": "add_relationship_api_projects__nid__studio_assets__aid__relationships_post",
       "owner_ref": "759eb83aee440951454dd398b1367045d8f29c60aa6a27502fc329b827e606a8",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "38668334936c49849636d042a4b138fe105d18dcf7250b67c9e21647a7318535",
       "schema_graph_sha256": "0dbf9b0ad6fb9cf8a7b3f5180e80670c7be821db4000dd615f89fd09438b0542"
@@ -16649,10 +16787,110 @@
       "operation_id": "restore_api_projects__nid__studio_assets__aid__restore_post",
       "owner_ref": "701b86f0f496797831744073dc231937edf22feaef31b445ccef2f968cb5ad49",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "55213fa5fb08a75087c606497f53c987fd71f974e5629ab8599b07641f49fb18",
       "schema_graph_sha256": "45168114ed0c5c5183bd181e8db13824ab373780e92017232de7969b8ec41674"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/graph-runs/{rid}/approve",
+      "operation_id": "creative_graph_approve_api_projects__nid__studio_graph_runs__rid__approve_post",
+      "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "a9adb66c2ce07917204b535d6b805ad22862440c1c867882fef3300ba9c5adba",
+      "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/graph-runs/{rid}/cancel",
+      "operation_id": "creative_graph_cancel_api_projects__nid__studio_graph_runs__rid__cancel_post",
+      "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "7aa32b2cebb28e6b069ad82ae4b8b9d70b35bad2ce60ea72e319c992ad45228f",
+      "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/graph-runs/{rid}/execute",
+      "operation_id": "creative_graph_execute_api_projects__nid__studio_graph_runs__rid__execute_post",
+      "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "627dc6ad0f1d560178e6397df8806f433665ec49bf2119d541dbad16046ec494",
+      "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/graph-runs/{rid}/pause",
+      "operation_id": "creative_graph_pause_api_projects__nid__studio_graph_runs__rid__pause_post",
+      "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "c510d58ec3b474ec25dfa1a374274bda2cfbc78e042f23fbb985586bf7c053eb",
+      "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/graph-runs/{rid}/reject",
+      "operation_id": "creative_graph_reject_api_projects__nid__studio_graph_runs__rid__reject_post",
+      "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "eb0051eb7c51afdd8ea46c662e0f81b2073f3c8e28039a217cfda49574f985ee",
+      "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/graph-runs/{rid}/resume",
+      "operation_id": "creative_graph_resume_api_projects__nid__studio_graph_runs__rid__resume_post",
+      "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "a0ed662c9d914d0e971efb6e06b7b73722301c9eb071c3e955c63ec6ae99926e",
+      "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/graphs",
+      "operation_id": "create_api_projects__nid__studio_graphs_post",
+      "owner_ref": "005917ffe8f9a6ba39d12c1c2fb23448f4cbebd68c5b75e209d3b671ea1b6516",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "a72e76d1aee067c74267cc0803858593e6fb164b9fe4b601b575499551e2cf42",
+      "schema_graph_sha256": "c588cd83a104dd2ae861cb8ad3a01d5a0b6154d60cf04d61f1d58787cfbb59f7"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/graphs/{gid}/preflight",
+      "operation_id": "preflight_api_projects__nid__studio_graphs__gid__preflight_post",
+      "owner_ref": "511bb444c5d5322233d49aaa792c0954e6eb0268413671417562a0b166d39b2a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "7008ab18845849a0410645a0b9519080699cbc4fdbcc5ee0b23b05896f6af20c",
+      "schema_graph_sha256": "d56125af7c2a0acdba63c96c81b6b21b93f1b1d7fe7c8448971410b17dc502a7"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/graphs/{gid}/runs",
+      "operation_id": "create_run_api_projects__nid__studio_graphs__gid__runs_post",
+      "owner_ref": "1c39503ed1353fb4658c94aa0ffe7e8d14bc7b08c80be867df5be139808265d2",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "6fb2cb3ab135149ccf85644b9dfa65600ad55ad10a786b473d8b1ae71aa163e9",
+      "schema_graph_sha256": "6db143a6ff900f2d91044e1274ccdd099c73f14270d7064985f68f9c3a020f78"
     },
     {
       "method": "POST",
@@ -17308,7 +17546,8 @@
       "operation_id": "blank_project_api_v1_experimental_projects_post",
       "owner_ref": "9c13ed39ac5a376713e99d60e2cef1d1e0e2d24c202e033a34680e0d4fd3c67a",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "f333aae0e5eddf922fe71e2470455f796f0ad5e6840df7e402705951fa8cf778",
       "schema_graph_sha256": "b314a114bbf137ec216310a808c4f8388f079bc0e9c4f9e9c439573c3af84692"
@@ -22548,7 +22787,8 @@
       "operation_id": "activate_api_v1_projects__nid__studio_activate_post",
       "owner_ref": "562c4968849c9d961e4987c503069e923e8ec71a330e7fd29dc663ee4aee49c7",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "e2ec0ada6566c034a6cd97381590dda7582f1ba6713ccb0391257632eee8eb50",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -22559,7 +22799,8 @@
       "operation_id": "upload_api_v1_projects__nid__studio_assets_post",
       "owner_ref": "67eb7a78984df9838208adb2d40966a8f93d3da1e385d9eddc054b68ebccf553",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "e3e56559c50705eddf810346f7eed48fab39c7c174673053ea6e595dec0fca43",
       "schema_graph_sha256": "f56843a57f818a1749624e0e40a13e7e3b6880c4f570fa57f698adc76f53d208"
@@ -22570,7 +22811,8 @@
       "operation_id": "add_relationship_api_v1_projects__nid__studio_assets__aid__relationships_post",
       "owner_ref": "759eb83aee440951454dd398b1367045d8f29c60aa6a27502fc329b827e606a8",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "48f870cb7943ab5062410ef2f28acfbb6eede8e6e1b847cb04f30730b57da606",
       "schema_graph_sha256": "0dbf9b0ad6fb9cf8a7b3f5180e80670c7be821db4000dd615f89fd09438b0542"
@@ -22581,10 +22823,110 @@
       "operation_id": "restore_api_v1_projects__nid__studio_assets__aid__restore_post",
       "owner_ref": "701b86f0f496797831744073dc231937edf22feaef31b445ccef2f968cb5ad49",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d3633624523e75a49f57ebc94a4d3f0975d6a338d05b6eb7146d1b3d5069d777",
       "schema_graph_sha256": "45168114ed0c5c5183bd181e8db13824ab373780e92017232de7969b8ec41674"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/graph-runs/{rid}/approve",
+      "operation_id": "creative_graph_approve_api_v1_projects__nid__studio_graph_runs__rid__approve_post",
+      "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "458860f3aa412a5cb2dbd2a8d863f3b9eab0f1676921841b5fbeea51c1f891d4",
+      "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/graph-runs/{rid}/cancel",
+      "operation_id": "creative_graph_cancel_api_v1_projects__nid__studio_graph_runs__rid__cancel_post",
+      "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "c4399fa07e3117ec54ef5c30cc87d857a39aebce687737e3ed84f4b9db0a6c3a",
+      "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/graph-runs/{rid}/execute",
+      "operation_id": "creative_graph_execute_api_v1_projects__nid__studio_graph_runs__rid__execute_post",
+      "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "b185b988de28f372eb8360a348e344ce13002e0103def7d00471efa379ce521e",
+      "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/graph-runs/{rid}/pause",
+      "operation_id": "creative_graph_pause_api_v1_projects__nid__studio_graph_runs__rid__pause_post",
+      "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "f29d8e001dc6a4fa742352fdc55af5215b861adb7364bb38f6da3d8dc2e1c84e",
+      "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/graph-runs/{rid}/reject",
+      "operation_id": "creative_graph_reject_api_v1_projects__nid__studio_graph_runs__rid__reject_post",
+      "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "7181f9f6c64e6e18dbe8775928e7c7fa73d9947e4403eff2dae3c3beaae7260f",
+      "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/graph-runs/{rid}/resume",
+      "operation_id": "creative_graph_resume_api_v1_projects__nid__studio_graph_runs__rid__resume_post",
+      "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "4fd1d6b8b759a578f1b25ebf3fdf175a10d48cea06cb03c20fd92f4a54176931",
+      "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/graphs",
+      "operation_id": "create_api_v1_projects__nid__studio_graphs_post",
+      "owner_ref": "005917ffe8f9a6ba39d12c1c2fb23448f4cbebd68c5b75e209d3b671ea1b6516",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "a68b8c0a92f97a6d10c4cc9f1af553af506d3454bd61438932ec0a002bd40bce",
+      "schema_graph_sha256": "c588cd83a104dd2ae861cb8ad3a01d5a0b6154d60cf04d61f1d58787cfbb59f7"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/graphs/{gid}/preflight",
+      "operation_id": "preflight_api_v1_projects__nid__studio_graphs__gid__preflight_post",
+      "owner_ref": "511bb444c5d5322233d49aaa792c0954e6eb0268413671417562a0b166d39b2a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "0968e04067b0538646e035f2a171ce248323dbe18f95f2248ba45b9101bb3438",
+      "schema_graph_sha256": "d56125af7c2a0acdba63c96c81b6b21b93f1b1d7fe7c8448971410b17dc502a7"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/graphs/{gid}/runs",
+      "operation_id": "create_run_api_v1_projects__nid__studio_graphs__gid__runs_post",
+      "owner_ref": "1c39503ed1353fb4658c94aa0ffe7e8d14bc7b08c80be867df5be139808265d2",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "d20fc1feef3f1d72ba76283f625a26e85a245c7c7bba3590c76cbeaf151d246e",
+      "schema_graph_sha256": "6db143a6ff900f2d91044e1274ccdd099c73f14270d7064985f68f9c3a020f78"
     },
     {
       "method": "POST",
@@ -24214,10 +24556,22 @@
       "operation_id": "lineage_api_projects__nid__studio_assets__aid__lineage_put",
       "owner_ref": "942e98ec3f7462a16933f9e45af77fbe6319feac03d00660ac17f03067df7478",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "db1ffc57d760574db5c639ddf997d113f9a7f3b1f9fabb025774859226483de5",
       "schema_graph_sha256": "6f96b125ba9e7d1aa7ed773fa4ea2acceecee3b97582bba88f012ac6fc1b1d5a"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/projects/{nid}/studio/graphs/{gid}",
+      "operation_id": "save_api_projects__nid__studio_graphs__gid__put",
+      "owner_ref": "b3cf45ffb15bbe8937c56d3f5e989e1525a14f7dc0b546c07a3e0cdb4b0fe10a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "8b7b12bef4932e89ff4ae20b2ac690567a38c54df6d2410b472b3d91f57f3018",
+      "schema_graph_sha256": "80c978a32b681256a242812b64efb2ba571d154fb8b5be51abb1fbfdcdf82204"
     },
     {
       "method": "PUT",
@@ -24225,7 +24579,8 @@
       "operation_id": "update_preferences_api_projects__nid__studio_preferences_put",
       "owner_ref": "979baed3476d0033c02cb3321f38f4f84fd456a07fc5efc1f6ae2e057428cd07",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "087a07f503d2abab1b02dab37a612219a6be77694c057618c869223cf91d7225",
       "schema_graph_sha256": "57703d31e9a947a1a813e06d23bc945ee294a7c14259e92c075a812b80679753"
@@ -25246,10 +25601,22 @@
       "operation_id": "lineage_api_v1_projects__nid__studio_assets__aid__lineage_put",
       "owner_ref": "942e98ec3f7462a16933f9e45af77fbe6319feac03d00660ac17f03067df7478",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d572f0153387990d881f79428cd51743a5f781fa93c0dee8c0fc2aff38e488d8",
       "schema_graph_sha256": "6f96b125ba9e7d1aa7ed773fa4ea2acceecee3b97582bba88f012ac6fc1b1d5a"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/projects/{nid}/studio/graphs/{gid}",
+      "operation_id": "save_api_v1_projects__nid__studio_graphs__gid__put",
+      "owner_ref": "b3cf45ffb15bbe8937c56d3f5e989e1525a14f7dc0b546c07a3e0cdb4b0fe10a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "ac5670aff22b389f803e870c4564e900168a824a2f675b2d3f87394ff5968ec5",
+      "schema_graph_sha256": "80c978a32b681256a242812b64efb2ba571d154fb8b5be51abb1fbfdcdf82204"
     },
     {
       "method": "PUT",
@@ -25257,7 +25624,8 @@
       "operation_id": "update_preferences_api_v1_projects__nid__studio_preferences_put",
       "owner_ref": "979baed3476d0033c02cb3321f38f4f84fd456a07fc5efc1f6ae2e057428cd07",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "761a8e710480776aef19cda323beea28f2112eae1a0c72d94da48c1d468cb5fc",
       "schema_graph_sha256": "57703d31e9a947a1a813e06d23bc945ee294a7c14259e92c075a812b80679753"
