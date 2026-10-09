@@ -293,3 +293,176 @@ terminal history will be a separate receipt. M2 hosted/browser remains **NOT_RUN
 local browser blocked, no visual approval. The actual end SHA will be bound in
 PR47 after publication, not invented inside its own commit. Full graph/model/media,
 canvas/Tutor and inherited storage gaps remain; M12 still requires user approval.
+
+## 9. Published M2-A and M3-A development checkpoint — 2026-10-09 14:44 UTC
+
+Published parent is now HEAD `99c43b6892038233c390be2ae61acb669163d0b5`, tree
+`69d69ffe71838263069d164a0a07b39b5f4a4333`, on Draft PR 47. Earlier M2 end-SHA and
+hosted-pending statements remain the historical observations at their stated times.
+M2 stays PARTIAL; publication does not close its full graph/media/storage gates.
+
+Push run **37943398984** and PR run **37943412489** are separate events. Original
+V2 workflow/geometry and TCP jobs were observed passing in both; independent-media
+jobs each finished **6 PASS / 2 FAIL**. The saved PR media log records merge SHA
+`7f0d911549b04e8dbb7cf078316ad74c42095449` with the same tree, rather than the push
+commit. Exact-label failures at `关联目标` / `已保存创作图` are retained in both raw
+logs. A narrow nine-attribute production label correction has new unit RED
+**3 FAIL / 1 PASS**, then **4 PASS** and **47 PASS** nearby; hosted revalidation is
+pending. No old browser selector, timeout or golden was weakened. Local browser
+remains blocked and denied artifact routes were not retried. These findings and
+verified log hashes are recorded in [M3 report §6](MILESTONE_M3_REPORT.md#6-separate-m2-hosted-finding-and-correction-under-development).
+
+Current M3-A implements host-private discovery authorization plus V2 bounded
+preview/consent through existing owners. Entire production discovery, including
+cached reads with V2 off, now requires actual current Host authority. This
+intentional compatibility/security tightening does not change the shared Model
+Center collaboration helper. Scope discloses configured/registered GGUF and
+executable metadata and existing stale-registration safety persistence; consent
+is not inference or a pure-observation guarantee. Existing scanner/cancel/deadline
+and separate Register/Enable/dispatch lifecycle remain authoritative.
+
+Development history is retained: host-cache reproduction **4 FAIL** → correction
+**23 PASS**; initial scope **27 PASS**; legacy cancellation **1 FAIL / 158 PASS** →
+legacy/scope **186 PASS**; host-authority matrix **296 PASS**; mounted onboarding
+**14 PASS**; mutation guards **223 PASS**; service hardening **209 PASS**; mounted
+precommit **23 PASS**; newest service concurrency/replay **215 PASS**. Logs/hashes
+were checked against their receipts. Source maps were stable within each run but
+differed between runs (1,662–1,671 inputs), with overlapping selections; no aggregate
+or final-source pass is asserted.
+
+M3 source is not frozen; end SHA/tree remain UNCOMMITTED / NOT RECORDED. Final
+integrated File/real-PG/full frontend/build/catalog/manifest and hosted/browser
+proof are pending. Full M3 model-component validation/profiles/real inference,
+complete install guidance and optional API consent/budget remain PARTIAL. Actual
+user Windows/GPU stays LOCAL_REQUIRED / NOT_RUN; M12 still requires authorization.
+
+### 9.1 Planning hardening checkpoint, 14:55 UTC
+
+M3 preview/confirmation planning adds a fixed **5-second cooperative budget**,
+per-operation authority/deadline checks and at-most-50-ms existing-owner lock waits.
+`planning_budget_seconds` / `LOCAL_AI_SCOPE_BUDGET_REACHED` expose this admission
+bound; scan 45 seconds and receipt TTL 120 seconds remain unchanged. No new preview
+or scan admission follows revoked/over-budget planning. OS calls already in flight
+are not forcibly interrupted.
+
+The **14:51:47–14:51:59** [planning receipt](docs/delivery/v2-development/m3-scope-planning-dev-01.json)
+finished **224 PASS** (65 new scope + 159 existing selected cases), with the raw
+log hash verified. It records **source drift, 1,673 → 1,674 inputs**, solely the
+concurrent addition of `tests/test_v2_discovery_browser_fixture.py`; service-owned
+files stayed stable. This is retained as development evidence, not final-source
+PASS. Source freeze still awaits the original HTTP/File/UI, original-session,
+synthetic-discovery-only hosted acceptance input. No browser execution, real model,
+paid API or user Windows result is implied. Full M3 remains PARTIAL.
+
+### 9.2 Frozen-source terminal-check update, 15:05 UTC
+
+Source froze at 15:01 UTC with **1,676 inputs**, canonical map SHA256
+`aefdbfd9884879ab2e17b42754c8ae7cbb6ecd54de4b8e192c9b158e6fe22259`.
+Verified stable agreeing receipts now establish frontend **1,981 PASS / 8 existing
+skips**, TypeScript/Vite/45-file token **PASS**, infrastructure/catalog **279 PASS**
+and corrected current-discovery catalog-owner regression **3 PASS**. Generation
+from staged tree `8cbb5bc7af09e7d40165312e64b13c0175d5792a` yields **2,111
+operations (+4/−0)** and app source fingerprint
+`6a6bfbc80bf2ee2f5d6f536f6d038cf43ec25c92ec357b5aee768a04dbfa83e7`.
+The stale shared-helper annotation is corrected narrowly; other owner metadata
+and the actual shared Model Center authorization contract are preserved.
+
+Independent recollection and manifest write are now terminal at **10,335 nodes =
+10,178 + 157**, preserving every old published node/order/test/gate/skip contract.
+Written manifest SHA is
+`498c3059954528fc4db2676b3aedce8bed6fff3b758f55f45bb943bebaebe36a`;
+this remains INVENTORY_ONLY. Actual browser listing preserves **7 original + 11
+independent** cases and adds three synthetic-discovery M3 cases; no browser was
+launched. [M3 report §9](MILESTONE_M3_REPORT.md#9-source-freeze-and-terminal-local-checks--2026-10-09-1505-utc)
+retains exact receipt/log hashes and large-chunk warnings. Selected 52-file File
+and actual PostgreSQL 17.11 integration are still running. Published M3 identity,
+hosted/browser revalidation and full M3/user-Windows/model gates remain pending.
+
+### 9.3 Integrated File result, 15:08 UTC
+
+At 15:07:32 UTC, the [52-file selected owner File integration](docs/delivery/v2-development/stage-m3-integrated-owner-file.json)
+finished **2,082 PASS / 1,099 skips / 1 warning**, 310.49 s. Its stable 1,676-input
+map matches the frozen frontend/build/catalog receipts, and raw log SHA256 is
+`a36f7980a53bafc66b1067c5b9359c24bba2c4268183f936c67d95c26bc253d0`.
+Skips retain 1,098 opposite-profile cases and the existing real Windows-native
+acceptance case. This does not execute the full 10,335-node manifest, browser or
+Windows/model acceptance. Actual PostgreSQL remains running; full M3 stays PARTIAL.
+
+### 9.4 Published-M2 terminal record and first M3 PG failure, 15:20 UTC
+
+[M2 terminal manifest](docs/delivery/v2-development/m2-ci-terminal.json), SHA256
+`f69554807ecf8e43b291eaa42ae81ef902baf807a85cbabfa7dd6e93cbee325a`,
+records all five workflows naturally terminal, without rerun/cancellation by the
+agent. All 29 saved logs were hash/byte-verified. Both Cloud events FAIL: File jobs
+cancelled at the 20-minute budget with no complete test count; all four PG execution
+shards succeeded but both strict aggregates failed their prerequisite. Per event,
+frontend is 1,923 unit PASS / 8 skips, **104 browser PASS + 2 separate real-client
+PASS**; original V2 is 7 live + 8 geometry PASS, independent media 6 PASS / 2 FAIL,
+TCP 2 original + 102 harness PASS. Windows package/contracts and MOCK_ONLY Local
+Interop passes retain their stated scope. Shared R123 workflow success reproduces
+three historical RED defects on `c6f2126`, not current-head acceptance. M2 remains
+PARTIAL; exact push/merge identities and counts are in [M3 report §10](MILESTONE_M3_REPORT.md#10-terminal-published-m2-hosted-record--2026-10-09-1520-utc).
+
+The first M3 real-PG 52-file integration finished at 15:15:57 UTC **FAIL: 2 failed /
+2,047 passed / 1,132 skipped**, 811.97 s. Two unchanged original workflow API tests
+failed at missing create-response `id`; source maps remain stable at 1,676 inputs.
+Verified raw log SHA is
+`c754654a4221918105b75c1b23a56c748749ebc0569d20487ad01690e74eb0cf`.
+PG 17.11 SQL is verified; normal stop and diagnosis remain pending. A brief
+evidence-upload transport interruption recovered on the same executor without
+restarting this original test run or moving the branch. The failure is retained,
+not converted to PASS by the successful File/UI checks. Full M3 remains PARTIAL.
+
+### 9.5 Confirmed PG harness isolation issue, 15:24 UTC
+
+The two first-PG failures are now traced to reused test data: SQL shows both
+fixed-title rows created at 14:04:35 UTC during M2; the unchanged original API
+correctly returns 409. The first diagnostic's unused-import failure is retained,
+and the corrected diagnostic proves the conflict. Normal original-run shutdown
+is verified at 15:15:57 UTC. [M3 report §11.1](MILESTONE_M3_REPORT.md#111-confirmed-reused-database-cause-and-normal-shutdown-1524-utc)
+records hashes and exact evidence. A narrow runner-only fresh-database mode and
+new isolation tests are being prepared, preserving existing data and original
+assertions/titles. New source freeze and complete selected checks are required;
+the first failed run and prior 1,676-input results remain historical, not rewritten.
+
+### 9.6 Fresh-source File and local-check checkpoint, 15:42 UTC
+
+After the runner-only fresh-database correction, current receipts bind **1,677
+inputs**, map SHA256
+`964ad4a0c317f43d65e2aa8793d6f87b5e6630b977ee269803c42c6248fd143f`.
+The **complete selected 53-file File owner range** is **2,109 PASS / 1,099 skips**,
+317.00 s; it is not all **10,362** product nodes. Freshly rerun frontend is
+**1,981 PASS / 8 existing skips**, build/45-file token PASS, infrastructure/catalog
+**279 PASS** and browser collection **7 original + 11 independent, inventory only**.
+All these maps and logs were verified, rather than borrowing initial-source runs.
+
+Fresh smoke reruns the original two failed tests unchanged: **2 PASS**, with
+actual PG 17.11 database OID 31259, empty-before-migration proof, all 20 original
+SQL files, normal stop and retained data. Runner/helper regressions are **32 PASS**;
+the first integration failure remains preserved. New written inventory is
+**10,362 = 10,335 + 27**, SHA256
+`bc15318b92cae0ee7a3c581321de95f3577c684b0ced26daf9f7228ccda57715`,
+with old tests/gates/order/skips intact. Catalog stays **2,111 operations (+4/−0)**
+and application source is unchanged. Exact fresh receipt/source/log hashes are in
+[M3 report §12](MILESTONE_M3_REPORT.md#12-fresh-database-correction-and-current-source-checks--1542-utc).
+The complete fresh PG owner run is still pending. M3 stays PARTIAL; full-product
+hosted CI awaits publication, and browser/user-Windows/inference proof is separate.
+
+### 9.7 Final local M3-A checkpoint, 15:47 UTC
+
+The fresh real PostgreSQL 17.11 run is now **PASS: 2,076 passed / 1,132 skipped**,
+831.24 s, with the same stable **1,677-input** map as File **2,109/1,099**, full
+frontend **1,981/8**, passing build/45-file token and **279** infrastructure/catalog
+checks. Actual fresh DB OID **32129**, empty-before-migration proof, all 20 original
+SQL hashes, retained data and normal shutdown at 15:45:46 UTC were verified.
+[M3 report §13](MILESTONE_M3_REPORT.md#13-final-local-m3-a-checkpoint--1547-utc)
+contains exact current receipts/log hashes and publication identity rules.
+
+This completes the **selected 53-file owner range**, not full-product execution
+of all **10,362** manifest nodes. Catalog 2,111 (+4/−0), written manifest and 7+11
+browser collection retain their separate inventory level. Earlier failed attempts,
+including the diagnosed reused-database run and M2 hosted failures, remain intact.
+M3-A is a publishable **PARTIAL** checkpoint. Exact end SHA/tree will be bound via
+PR 47's publication receipt, not self-embedded or replaced with the M2 parent.
+New-SHA full-product hosted CI and M3 browser/visual results remain pending; actual
+user Windows, real inference/quality and full M3 model/API gates remain open.

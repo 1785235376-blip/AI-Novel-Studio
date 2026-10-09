@@ -655,3 +655,136 @@ PASS and **279** infrastructure/catalog passes. Inventory remains distinct:
 PARTIAL**, current hosted/browser NOT_RUN and visual acceptance unverified.
 Final end SHA is deferred to the actual PR publication receipt. M0/M1 inventory,
 all failures and M12 approval boundary remain unchanged.
+
+## 34. Append-only M3-A host authority and consent delta
+
+**2026-10-09 14:44 UTC; development source, full M3 PARTIAL.** Parent HEAD
+`99c43b6892038233c390be2ae61acb669163d0b5`, tree
+`69d69ffe71838263069d164a0a07b39b5f4a4333`. Original baseline rows and all earlier
+milestone deltas remain unchanged. [M3 report](MILESTONE_M3_REPORT.md) supplies
+source owners, exact bounds and per-run evidence rather than rewriting M0 status.
+
+| Baseline IDs | Current source advancement | Remaining boundary |
+| --- | --- | --- |
+| START-02; MODEL-01/02/03/04 | Host-authorized preview and explicit strict-digest confirmation over existing discovery; known/saved loopback services; common roots default false; configured/registered file and executable metadata fully disclosed. | Development-only checks; actual Windows/runtime observation LOCAL_REQUIRED. No whole-disk, LAN/public or generic port scan. |
+| START-03; MODEL-07/09 | Preview, Detect, Validate, Register, configuration/license review and Enable stay distinct; inference explicitly NOT_RUN. | Metadata/protocol checks never establish working inference, model fit or quality; full lifecycle projection remains PARTIAL. |
+| START-05/06; MODEL-08/19/20/21 | Model Center can preview existing configuration or skip; advanced path/port forms and current blockers remain available. | Complete needs-driven sources/licenses/sizes/dependencies/install/download/resume/cleanup guidance remains PARTIAL/MISSING. |
+| MODEL-05/10/12/13/14/15/17/18 | Original modality adapters and hardware inventory reused; unknown facts preserved. | Complete component validation and measured 8/12/16-GB profiles, actual generation/quality still missing or LOCAL_REQUIRED. |
+| MODEL-23/24/25/26 | Broker, Vault, routing and budget owners preserved; no paid fallback or credential creation. | Full optional API consent/budget/reconciliation journey and paid proof not supplied by discovery. |
+| GATE-M3 | Useful bounded M3-A host-private onboarding foundation. | **PARTIAL**. Source freeze, integrated final receipts, browser acceptance and full model/API scope still open. |
+
+This is an intentional discovery compatibility/security tightening: all production
+routes, cached reads included and V2 off included, require actual current Host
+provenance. Nonpackaged project collaboration alone is rejected. The separate
+shared Model Center role helper is unchanged. Before/after/precommit rechecks and
+original trusted-session binding generations fence stale authority; a digest is
+not a new access credential. Scanning may disable and persist stale registrations,
+which is disclosed before consent; it is not an observation-only guarantee.
+
+Verified development subsets include first cache reproduction **4 FAIL**, later
+**23 PASS**, host-authority **296 PASS**, mounted precommit **23 PASS**, mutation
+**223 PASS** and newest service/legacy **215 PASS**. Their overlapping, differing
+source maps must not be summed or promoted to final integrated evidence. M3 final
+File/real-PG/full frontend/build/catalog/manifest and hosted/browser are pending;
+user Windows/inference remain NOT_RUN. Separate published M2 independent-media
+jobs each retained **6 PASS / 2 FAIL**; the select-label correction's unit evidence
+does not establish hosted/browser revalidation. See report §§5–7 for exact limits.
+
+### 34.1 Bounded planning delta, 14:55 UTC
+
+START-02 / MODEL-01–04 now also have a **5-second cooperative preview/replanning
+budget** and at-most-50-ms owner-lock wait intervals with live guard checks.
+`planning_budget_seconds` and `LOCAL_AI_SCOPE_BUDGET_REACHED` expose the bound;
+45-second scanning and 120-second consent TTL are unchanged. The latest
+[224-pass development receipt](docs/delivery/v2-development/m3-scope-planning-dev-01.json)
+records concurrent addition of a browser-fixture test (1,673 → 1,674 inputs), so it
+is not final-source proof. No browser has executed; full M3 remains PARTIAL.
+
+### 34.2 Frozen-source evidence delta, 15:05 UTC
+
+Final local source map is **1,676 inputs** (`aefdbfd9884879ab2e17b42754c8ae7cbb6ecd54de4b8e192c9b158e6fe22259`).
+Stable agreeing receipts now show frontend **1,981 PASS / 8 existing skips**,
+build/45-file token **PASS**, complete infrastructure/catalog **279 PASS** and
+current-discovery catalog-owner regression **3 PASS**. Catalog has **2,111
+operations, M3 +4/−0**; written backend inventory is **10,335 = 10,178 + 157**,
+with all published old nodes/order/test/gate/skip contracts preserved. Actual
+browser list output is **7 original + 11 independent**, not execution. See
+[M3 report §9](MILESTONE_M3_REPORT.md#9-source-freeze-and-terminal-local-checks--2026-10-09-1505-utc)
+for exact hashes. The selected 52-file File/real-PG integration remains pending;
+full M3 PARTIAL and all real-model/user-Windows/paid-provider boundaries remain.
+
+### 34.3 Integrated File update, 15:08 UTC
+
+The [52-file selected File owner run](docs/delivery/v2-development/stage-m3-integrated-owner-file.json)
+finished **2,082 PASS / 1,099 skips** (1,098 opposite-profile + one existing actual
+Windows native check), 310.49 s, on the matching stable 1,676-input map. It is not
+full-manifest/Windows/browser execution. Real PG remains pending; full M3 stays
+PARTIAL. [M3 report §9.5](MILESTONE_M3_REPORT.md#95-integrated-file-result-1508-utc)
+retains exact evidence and skip boundaries.
+
+### 34.4 First integrated PG failure retained, 15:20 UTC
+
+M3 real-PG selected integration is **FAIL: 2 failed / 2,047 passed / 1,132 skips**,
+811.97 s, despite stable matching 1,676-input maps. Two unchanged original workflow
+API tests failed on missing create-response `id`; diagnosis and normal-stop
+verification remain pending. The transient evidence transport disconnect did not
+restart tests or change source. Separately, the final M2 hosted manifest records
+both Cloud events FAIL (File incomplete; PG execution successful but aggregate
+prerequisite FAIL), with narrower passing browser/TCP/Windows/Interop selections.
+[M3 report §§10–11](MILESTONE_M3_REPORT.md#10-terminal-published-m2-hosted-record--2026-10-09-1520-utc)
+keeps each evidence level distinct. GATE-M3 remains PARTIAL; no PG aggregate or
+full-roadmap completion is inferred.
+
+### 34.5 Confirmed PG harness isolation issue, 15:24 UTC
+
+The two first-PG failures are now traced to reused test data: SQL shows both
+fixed-title rows created at 14:04:35 UTC during M2; the unchanged original API
+correctly returns 409. The first diagnostic's unused-import failure is retained,
+and the corrected diagnostic proves the conflict. Normal original-run shutdown
+is verified at 15:15:57 UTC. [M3 report §11.1](MILESTONE_M3_REPORT.md#111-confirmed-reused-database-cause-and-normal-shutdown-1524-utc)
+records hashes and exact evidence. A narrow runner-only fresh-database mode and
+new isolation tests are being prepared, preserving existing data and original
+assertions/titles. New source freeze and complete selected checks are required;
+the first failed run and prior 1,676-input results remain historical, not rewritten.
+
+### 34.6 Fresh-source File and local-check checkpoint, 15:42 UTC
+
+After the runner-only fresh-database correction, current receipts bind **1,677
+inputs**, map SHA256
+`964ad4a0c317f43d65e2aa8793d6f87b5e6630b977ee269803c42c6248fd143f`.
+The **complete selected 53-file File owner range** is **2,109 PASS / 1,099 skips**,
+317.00 s; it is not all **10,362** product nodes. Freshly rerun frontend is
+**1,981 PASS / 8 existing skips**, build/45-file token PASS, infrastructure/catalog
+**279 PASS** and browser collection **7 original + 11 independent, inventory only**.
+All these maps and logs were verified, rather than borrowing initial-source runs.
+
+Fresh smoke reruns the original two failed tests unchanged: **2 PASS**, with
+actual PG 17.11 database OID 31259, empty-before-migration proof, all 20 original
+SQL files, normal stop and retained data. Runner/helper regressions are **32 PASS**;
+the first integration failure remains preserved. New written inventory is
+**10,362 = 10,335 + 27**, SHA256
+`bc15318b92cae0ee7a3c581321de95f3577c684b0ced26daf9f7228ccda57715`,
+with old tests/gates/order/skips intact. Catalog stays **2,111 operations (+4/−0)**
+and application source is unchanged. Exact fresh receipt/source/log hashes are in
+[M3 report §12](MILESTONE_M3_REPORT.md#12-fresh-database-correction-and-current-source-checks--1542-utc).
+The complete fresh PG owner run is still pending. M3 stays PARTIAL; full-product
+hosted CI awaits publication, and browser/user-Windows/inference proof is separate.
+
+### 34.7 Final local M3-A checkpoint, 15:47 UTC
+
+The fresh real PostgreSQL 17.11 run is now **PASS: 2,076 passed / 1,132 skipped**,
+831.24 s, with the same stable **1,677-input** map as File **2,109/1,099**, full
+frontend **1,981/8**, passing build/45-file token and **279** infrastructure/catalog
+checks. Actual fresh DB OID **32129**, empty-before-migration proof, all 20 original
+SQL hashes, retained data and normal shutdown at 15:45:46 UTC were verified.
+[M3 report §13](MILESTONE_M3_REPORT.md#13-final-local-m3-a-checkpoint--1547-utc)
+contains exact current receipts/log hashes and publication identity rules.
+
+This completes the **selected 53-file owner range**, not full-product execution
+of all **10,362** manifest nodes. Catalog 2,111 (+4/−0), written manifest and 7+11
+browser collection retain their separate inventory level. Earlier failed attempts,
+including the diagnosed reused-database run and M2 hosted failures, remain intact.
+M3-A is a publishable **PARTIAL** checkpoint. Exact end SHA/tree will be bound via
+PR 47's publication receipt, not self-embedded or replaced with the M2 parent.
+New-SHA full-product hosted CI and M3 browser/visual results remain pending; actual
+user Windows, real inference/quality and full M3 model/API gates remain open.

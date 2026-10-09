@@ -8,6 +8,7 @@ import platform
 import stat
 import struct
 import time
+from contextlib import contextmanager
 from pathlib import Path
 from threading import Event
 
@@ -53,30 +54,86 @@ def environment_roots(configured: list[str], include_common: bool = True) -> lis
     return roots[:MAX_ROOTS]
 
 
-def _metadata_bytes(path: Path, limit: int, *, safetensors_header: bool = False) -> tuple[bytes, os.stat_result]:
-    """Check links twice and use no-follow open where supported; read only bounded metadata."""
-    safe_local_path(str(path))
-    descriptor = os.open(path, os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
+def _check_cancel(cancel):
+    if cancel is not None and cancel.is_set(): raise ValueError('LOCAL_AI_CANCELLED')
+
+
+def _open_nofollow(path: Path, *, directory=False, cancel=None):
+    """Open relative to no-follow ancestor descriptors where the OS supports it."""
+    _check_cancel(cancel)
+    canonical = Path(safe_local_path(str(path)))
+    flags = os.O_RDONLY | getattr(os, 'O_BINARY', 0) | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
+    if directory: flags |= getattr(os, 'O_DIRECTORY', 0)
+    parent_fd = None
+    try:
+        if os.name == 'posix' and os.open in os.supports_dir_fd and hasattr(os, 'O_NOFOLLOW'):
+            parent_fd = os.open(canonical.anchor, os.O_RDONLY | os.O_DIRECTORY)
+            for part in canonical.parts[1:-1]:
+                _check_cancel(cancel)
+                child_fd = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=parent_fd)
+                os.close(parent_fd)
+                parent_fd = child_fd
+            _check_cancel(cancel)
+            return os.open(canonical.name, flags, dir_fd=parent_fd)
+        _check_cancel(cancel)
+        return os.open(canonical, flags)
+    finally:
+        if parent_fd is not None: os.close(parent_fd)
+
+
+@contextmanager
+def _scoped_scandir(path: Path, cancel=None):
+    """Bounded callers enumerate an opened directory, never follow a linked swap.
+
+    Windows keeps reparse checks around its pathname API; that platform does not
+    provide the same atomic no-follow ancestor semantics as POSIX dir_fd opens.
+    """
+    _check_cancel(cancel)
+    if os.name == 'posix' and os.scandir in os.supports_fd:
+        descriptor = _open_nofollow(path, directory=True, cancel=cancel)
+        try:
+            _check_cancel(cancel)
+            with os.scandir(descriptor) as entries: yield entries
+        finally:
+            os.close(descriptor)
+    else:
+        safe_local_path(str(path))
+        _check_cancel(cancel)
+        with os.scandir(path) as entries:
+            safe_local_path(str(path))
+            _check_cancel(cancel)
+            yield entries
+
+
+def _metadata_bytes(path: Path, limit: int, *, safetensors_header: bool = False, cancel=None) -> tuple[bytes, os.stat_result]:
+    """Bounded regular-file read, with no-follow traversal on supported POSIX hosts."""
+    descriptor = _open_nofollow(path, cancel=cancel)
     with os.fdopen(descriptor, 'rb') as file:
         facts = os.fstat(file.fileno())
         if not stat.S_ISREG(facts.st_mode): raise ValueError('not a regular file')
         safe_local_path(str(path))
+        _check_cancel(cancel)
         if safetensors_header:
             prefix = file.read(8)
+            _check_cancel(cancel)
             length = struct.unpack('<Q', prefix)[0] if len(prefix) == 8 else 0
-            return prefix + (file.read(length) if 2 <= length <= limit else b''), facts
-        return file.read(limit), facts
+            data = prefix + (file.read(length) if 2 <= length <= limit else b'')
+        else:
+            data = file.read(limit)
+        _check_cancel(cancel)
+        return data, facts
 
 
-def safetensors_metadata(path: Path) -> dict:
+def safetensors_metadata(path: Path, *, cancel=None, max_bytes=None) -> dict:
     """Inspect the bounded JSON header. Never deserialize tensors or pickle formats."""
     result = {'file_exists': False, 'header_valid': False}
+    limit = MAX_METADATA_BYTES if max_bytes is None else max_bytes
     try:
-        data, facts = _metadata_bytes(path, MAX_METADATA_BYTES, safetensors_header=True)
+        data, facts = _metadata_bytes(path, limit, safetensors_header=True, cancel=cancel)
         result.update(file_exists=True, size=facts.st_size, modified_ns=facts.st_mtime_ns)
         if len(data) < 8: return result
         length = struct.unpack('<Q', data[:8])[0]
-        if not 2 <= length <= MAX_METADATA_BYTES or 8 + length > len(data): return result
+        if not 2 <= length <= limit or 8 + length > len(data): return result
         def unique_pairs(pairs):
             value = {}
             for key, item in pairs:
@@ -114,13 +171,14 @@ def safetensors_metadata(path: Path) -> dict:
     return result
 
 
-def diffusion_metadata(path: Path) -> dict:
+def diffusion_metadata(path: Path, *, cancel=None, max_bytes=None) -> dict:
     """A Diffusers model_index is metadata, never an instruction to import its classes."""
     result = {'file_exists': False, 'header_valid': False}
+    limit = MAX_METADATA_BYTES if max_bytes is None else max_bytes
     try:
-        data, facts = _metadata_bytes(path, MAX_METADATA_BYTES + 1)
+        data, facts = _metadata_bytes(path, limit + 1, cancel=cancel)
         result.update(file_exists=True, size=facts.st_size, modified_ns=facts.st_mtime_ns)
-        if len(data) > MAX_METADATA_BYTES: return result
+        if len(data) > limit: return result
         payload = json.loads(data)
         name = payload.get('_class_name') if isinstance(payload, dict) else None
         if isinstance(name, str) and 0 < len(name) <= 128 and name.isidentifier():
@@ -130,13 +188,18 @@ def diffusion_metadata(path: Path) -> dict:
     return result
 
 
-def scan_environment_files(roots: list[dict], cancel: Event, deadline: float, errors: list[dict]):
+def scan_environment_files(roots: list[dict], cancel: Event, deadline: float, errors: list[dict], *, limits=None):
     """Shared global entry/file/depth budgets. Unreadable subtrees do not hide other roots."""
+    limits = limits or {}
+    max_entries = limits.get('max_entries', MAX_ENTRIES)
+    max_files = limits.get('max_files', MAX_FILES)
+    max_depth = limits.get('max_depth', MAX_DEPTH)
+    max_metadata = limits.get('max_metadata_bytes', MAX_METADATA_BYTES)
     entries = files = 0
     seen = set()
     for root in roots:
         if cancel.is_set(): root['status'] = 'CANCELLED'; continue
-        if time.monotonic() >= deadline or entries >= MAX_ENTRIES or files >= MAX_FILES:
+        if time.monotonic() >= deadline or entries >= max_entries or files >= max_files:
             root['status'] = 'BOUNDED'; continue
         try:
             base = Path(safe_local_path(root['path']))
@@ -150,25 +213,25 @@ def scan_environment_files(roots: list[dict], cancel: Event, deadline: float, er
         stack = [(base, 0)]
         while stack:
             if cancel.is_set(): root['status'] = 'CANCELLED'; break
-            if time.monotonic() >= deadline or entries >= MAX_ENTRIES or files >= MAX_FILES:
+            if time.monotonic() >= deadline or entries >= max_entries or files >= max_files:
                 root['status'] = 'BOUNDED'; break
             directory, depth = stack.pop()
             try:
                 safe_local_path(str(directory))
-                with os.scandir(directory) as children:
+                with _scoped_scandir(directory, cancel) as children:
                     for item in children:
-                        if cancel.is_set() or time.monotonic() >= deadline or entries >= MAX_ENTRIES or files >= MAX_FILES:
+                        if cancel.is_set() or time.monotonic() >= deadline or entries >= max_entries or files >= max_files:
                             root['status'] = 'CANCELLED' if cancel.is_set() else 'BOUNDED'; break
                         entries += 1
                         try:
                             facts = item.stat(follow_symlinks=False)
                             if item.is_symlink() or (getattr(facts, 'st_file_attributes', 0) & 0x400): continue
                             if item.is_dir(follow_symlinks=False):
-                                if depth < MAX_DEPTH: stack.append((Path(item.path), depth + 1))
+                                if depth < max_depth: stack.append((directory / item.name, depth + 1))
                                 else: root['status'] = 'BOUNDED'
                                 continue
                             if not item.is_file(follow_symlinks=False): continue
-                            path = Path(item.path)
+                            path = directory / item.name
                             kind = {'.gguf':'GGUF', '.safetensors':'SAFETENSORS'}.get(path.suffix.casefold())
                             if path.name == 'model_index.json': kind = 'DIFFUSERS'
                             if not kind: continue
@@ -176,7 +239,8 @@ def scan_environment_files(roots: list[dict], cancel: Event, deadline: float, er
                             if os.path.normcase(canonical) in seen: continue
                             seen.add(os.path.normcase(canonical)); files += 1
                             inspect = {'GGUF':gguf_metadata, 'SAFETENSORS':safetensors_metadata, 'DIFFUSERS':diffusion_metadata}[kind]
-                            evidence = inspect(path)
+                            evidence = inspect(path, cancel=cancel, max_bytes=max_metadata)
+                            if cancel.is_set(): break
                             if not evidence.get('file_exists'):
                                 errors.append({'code':'LOCAL_AI_MODEL_FILE_UNREADABLE','root':root['path']}); continue
                             family, capabilities = infer_family(path.parent.name if kind == 'DIFFUSERS' else path.name)
@@ -193,11 +257,11 @@ def scan_environment_files(roots: list[dict], cancel: Event, deadline: float, er
     if any(root['status'] == 'BOUNDED' for root in roots): errors.append({'code':'LOCAL_AI_FILESYSTEM_BUDGET_REACHED'})
 
 
-def windows_acceleration_components() -> dict:
+def windows_acceleration_components(*, cancel=None) -> dict:
     """Trusted system DLL presence only; never load CUDA, DirectML or user model code."""
     unknown = {'status':'NOT_RUN','source':'NOT_RUN','inference_verified':False}
     result = {'cuda':dict(unknown), 'directml':dict(unknown)}
-    if platform.system() != 'Windows': return result
+    if platform.system() != 'Windows' or (cancel is not None and cancel.is_set()): return result
     try:
         import ctypes
         from ctypes import wintypes
@@ -211,6 +275,7 @@ def windows_acceleration_components() -> dict:
         if not 0 < length < len(buffer): raise OSError('system directory unavailable')
         directory = Path(safe_local_path(buffer.value))
         for key, filename in [('cuda','nvcuda.dll'), ('directml','DirectML.dll')]:
+            _check_cancel(cancel)
             path = Path(safe_local_path(str(directory / filename)))
             result[key] = {'status':'COMPONENT_FOUND_NOT_VERIFIED' if path.is_file() else 'NOT_FOUND',
                            'source':'WINDOWS_SYSTEM_COMPONENT_METADATA','inference_verified':False}

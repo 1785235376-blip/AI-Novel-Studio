@@ -1,0 +1,14 @@
+{
+  "utc": "2026-10-09T15:13:15Z",
+  "action": "Read bounded chunks of source-bound test evidence before Git blob upload",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "branch": "feature/v2-narrative-platform",
+  "error": "Failed to create unified exec process: exec-server transport disconnected",
+  "secondary_effect": "One partial JSON chunk failed length/base64 validation and was discarded before blob creation",
+  "recovery": "Same executor pwd succeeded; original PostgreSQL session48002 remained running; no process or test restart",
+  "confirmed_blob_count_after_inflight_completion": 26,
+  "branch_moved": false,
+  "source_inputs": 1676,
+  "source_map_matches_completed_file_receipt": true,
+  "postgres_result": "PENDING; no terminal receipt at time of connection recovery"
+}

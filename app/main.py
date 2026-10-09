@@ -8,7 +8,8 @@ from . import __version__
 from .config import settings
 from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
 from .model_center.api import create_model_center_router
-from .model_center.discovery_api import create_local_discovery_router
+from .model_center.discovery_api import PRIVATE_HEADERS as DISCOVERY_PRIVATE_HEADERS, create_local_discovery_router
+from .model_center.discovery_authority import resolve_discovery_authority
 from .collaboration_api import create_collaboration_router
 from .collaboration_admin import create_collaboration_admin_router
 from .packaging.bootstrap_api import create_packaged_bootstrap_router
@@ -45,6 +46,12 @@ def _model_center_mutation_authorization(token: str | None) -> dict:
         except (KeyError, ValueError):
             can_mutate = False
     return {"can_mutate": can_mutate, "mutation_auth_mode": mode}
+
+
+def _local_discovery_host_authority(request: Request, token: str | None):
+    return resolve_discovery_authority(request, token,
+        settings_getter=lambda: settings, resolver_getter=lambda: trusted_session_resolver,
+        bootstrap_getter=lambda: packaged_bootstrap_registry.current())
 
 
 @asynccontextmanager
@@ -353,8 +360,17 @@ app.include_router(experimental_router, prefix="/api")
 app.include_router(experimental_router, prefix="/api/v1")
 app.include_router(create_model_center_router(model_center_service, mutation_authorization=_model_center_mutation_authorization))
 app.include_router(create_model_center_router(model_center_service, prefix="/api/v1/model-center", mutation_authorization=_model_center_mutation_authorization))
-app.include_router(create_local_discovery_router(local_ai_discovery, mutation_authorization=_model_center_mutation_authorization))
-app.include_router(create_local_discovery_router(local_ai_discovery, prefix="/api/v1/model-center/local-ai", mutation_authorization=_model_center_mutation_authorization))
+@app.middleware("http")
+async def local_discovery_private_cache(request: Request, call_next):
+    response = await call_next(request)
+    path = _normalized_api_path(request.url.path)
+    if path == "/api/model-center/local-ai" or path.startswith("/api/model-center/local-ai/"):
+        response.headers.update(DISCOVERY_PRIVATE_HEADERS)
+    return response
+
+
+app.include_router(create_local_discovery_router(local_ai_discovery, host_authorization=_local_discovery_host_authority))
+app.include_router(create_local_discovery_router(local_ai_discovery, prefix="/api/v1/model-center/local-ai", host_authorization=_local_discovery_host_authority))
 app.include_router(create_collaboration_router(collaboration_read_service))
 app.include_router(create_collaboration_router(collaboration_read_service, prefix="/api/v1/collaboration"))
 app.include_router(create_collaboration_admin_router(collaboration_admin_service))

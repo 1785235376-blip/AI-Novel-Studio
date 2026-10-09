@@ -257,3 +257,147 @@ current M2 hosted/browser execution is NOT_RUN, and no M2 screenshot/geometry
 PASS is asserted. PNG diagnostics now include a real cloud decoder PASS for the
 exact fixture, without identifying the unresolved hosted timeout cause. Final
 published SHA will be bound after commit; no full M2 or Windows acceptance claim.
+
+## 10. Append-only M3-A preview/consent UX development review
+
+**2026-10-09 14:44 UTC; source review, not visual acceptance.** Published parent
+`99c43b6892038233c390be2ae61acb669163d0b5`; current M3 work remains uncommitted and
+full M3 **PARTIAL**. [M3 report](MILESTONE_M3_REPORT.md) preserves precise contracts,
+per-run development evidence and final-check gaps.
+
+V2 Model Center now puts a scope preview before explicit detection. Common model
+directories start unchecked and require a replacement preview when selected.
+The confirmation shows BACKEND_HOST, exact service/probe scope, hardware
+categories, defensive limits, advanced paths and configured/registered GGUF plus
+executable-metadata inspections. It explicitly warns that stale registrations and
+routes may be disabled and their safety state saved. No automatic model enable,
+installation, runtime launch, cloud call or inference claim follows from consent.
+The ordinary path can inspect existing configuration without typing a path/port;
+advanced configuration remains optional. Skip/collapse keeps manual work available.
+
+Captured existing owner/session clients, project/session-epoch remounts,
+AbortController cleanup and current-owner checks fence late previews and polling
+results. Permission loss clears protected results; scope expiry/drift/conflict
+requests fresh review without automatic scan retry. Settings/runtime edits
+invalidate a preview. Environment summary only reads previous explicit results
+and states that backend/cloud observations do not describe the user's computer.
+Inference and actual Windows acceptance remain NOT_RUN. This is implemented source,
+not a claim of complete first-run/no-model or install/API guidance.
+
+Separate M2 browser evidence is now available for the published parent: push and
+PR independent-media jobs each finished **6 passed / 2 failed**, at exact select
+labels `关联目标` and `已保存创作图`. The diagnosis reproduces option text becoming
+part of the implicit label. A nine-attribute production `aria-label` fix preserves
+existing browser selectors, timeouts, styles and geometry. Its retained development
+logs are **3 FAIL / 1 PASS → 4 PASS**, with **47 PASS** nearby; full source maps
+were not captured for those worker logs. Hosted revalidation is still pending.
+Original V2 workflow/geometry and TCP job passes are separate, narrower results.
+
+Local browser remains BLOCKED; no denied artifact/trace route was retried. No M3
+screenshot, real-browser keyboard/accessibility/responsiveness or visual approval
+has been inspected here. Full frontend/build and source-stable integration remain
+pending at this checkpoint. Hosted Windows contracts are not user Windows/GPU
+acceptance, and neither passing unit checks nor new UI labels close those gates.
+
+### 10.1 Planning-budget and acceptance-input update, 14:55 UTC
+
+The preview contract now includes a **5-second cooperative planning budget**;
+revoked/over-budget planning does not produce usable consent or start a scan.
+`LOCAL_AI_SCOPE_BUDGET_REACHED` requires fresh review through the existing scope
+error path. Scanning remains bounded to 45 seconds and preview TTL to 120 seconds.
+The **224-pass** backend development receipt records unrelated browser-fixture
+source drift and is not UI/browser proof. A new original HTTP/File/UI acceptance
+fixture is being prepared with original session binding and synthetic
+**discovery-only** adapter/hardware in the independent hosted-browser configuration.
+It has not been browser-executed; no visual acceptance, actual model or user
+Windows result is claimed. See [M3 report §8](MILESTONE_M3_REPORT.md#8-append-only-planning-hardening-update--2026-10-09-1455-utc).
+
+### 10.2 Actual frontend/build and browser inventory, 15:05 UTC
+
+Frozen-source [full frontend](docs/delivery/v2-development/stage-m3-full-frontend.json)
+is **1,981 PASS / 8 existing skips**; [build](docs/delivery/v2-development/stage-m3-build.json)
+is **PASS** for TypeScript/Vite and 45 token-guard files, retaining App 900.90 kB /
+ExperimentalWorkbench 628.01 kB chunk warnings. Both share the stable 1,676-input
+map and verified hashes in [M3 report §9](MILESTONE_M3_REPORT.md#9-source-freeze-and-terminal-local-checks--2026-10-09-1505-utc).
+Actual browser collection lists **7 original + 11 independent** cases, retaining
+all prior cases and adding three M3 enabled/default-off/acceptance projects.
+They use original HTTP/File/UI and original session binding with closed synthetic
+**discovery-only** metadata/hardware. Collection and the 7-pass development fixture
+self-check (which recorded drift) are not browser execution. No viewport screenshot
+or visual approval has been captured here; local browser remains blocked and M3
+hosted revalidation remains pending. File/real-PG owner integration is still running.
+
+### 10.3 Integrated File checkpoint, 15:08 UTC
+
+The matching 52-file File owner integration is now **2,082 PASS / 1,099 skips**,
+including one existing actual Windows-native skip, with the same stable source
+map as frontend/build. [M3 report §9.5](MILESTONE_M3_REPORT.md#95-integrated-file-result-1508-utc)
+records its log/hash. It does not execute Chromium or approve screenshots; browser
+and real PG outcomes remain open at this observation.
+
+### 10.4 Preserved backend failure and exact hosted browser counts, 15:20 UTC
+
+The final published-M2 hosted record has **104 frontend browser passes + 2
+separate real TypeScript-client tests** per event, alongside 1,923 unit passes /
+8 skips. Original V2 remains a separate **7 live + 8 geometry PASS**, while each
+independent-media job remains **6 PASS / 2 FAIL**. Both Cloud workflows failed;
+these passing subsets do not establish correction revalidation or M3 visual
+acceptance. The first current-M3 PG owner run also failed two unchanged workflow
+API tests; current 1,981-pass frontend/build results remain separate. Exact logs,
+source identities and transport recovery are in
+[M3 report §§10–11](MILESTONE_M3_REPORT.md#10-terminal-published-m2-hosted-record--2026-10-09-1520-utc).
+No local browser, denied artifact route or user Windows model execution occurred.
+
+### 10.5 Confirmed PG harness isolation issue, 15:24 UTC
+
+The two first-PG failures are now traced to reused test data: SQL shows both
+fixed-title rows created at 14:04:35 UTC during M2; the unchanged original API
+correctly returns 409. The first diagnostic's unused-import failure is retained,
+and the corrected diagnostic proves the conflict. Normal original-run shutdown
+is verified at 15:15:57 UTC. [M3 report §11.1](MILESTONE_M3_REPORT.md#111-confirmed-reused-database-cause-and-normal-shutdown-1524-utc)
+records hashes and exact evidence. A narrow runner-only fresh-database mode and
+new isolation tests are being prepared, preserving existing data and original
+assertions/titles. New source freeze and complete selected checks are required;
+the first failed run and prior 1,676-input results remain historical, not rewritten.
+
+### 10.6 Fresh-source File and local-check checkpoint, 15:42 UTC
+
+After the runner-only fresh-database correction, current receipts bind **1,677
+inputs**, map SHA256
+`964ad4a0c317f43d65e2aa8793d6f87b5e6630b977ee269803c42c6248fd143f`.
+The **complete selected 53-file File owner range** is **2,109 PASS / 1,099 skips**,
+317.00 s; it is not all **10,362** product nodes. Freshly rerun frontend is
+**1,981 PASS / 8 existing skips**, build/45-file token PASS, infrastructure/catalog
+**279 PASS** and browser collection **7 original + 11 independent, inventory only**.
+All these maps and logs were verified, rather than borrowing initial-source runs.
+
+Fresh smoke reruns the original two failed tests unchanged: **2 PASS**, with
+actual PG 17.11 database OID 31259, empty-before-migration proof, all 20 original
+SQL files, normal stop and retained data. Runner/helper regressions are **32 PASS**;
+the first integration failure remains preserved. New written inventory is
+**10,362 = 10,335 + 27**, SHA256
+`bc15318b92cae0ee7a3c581321de95f3577c684b0ced26daf9f7228ccda57715`,
+with old tests/gates/order/skips intact. Catalog stays **2,111 operations (+4/−0)**
+and application source is unchanged. Exact fresh receipt/source/log hashes are in
+[M3 report §12](MILESTONE_M3_REPORT.md#12-fresh-database-correction-and-current-source-checks--1542-utc).
+The complete fresh PG owner run is still pending. M3 stays PARTIAL; full-product
+hosted CI awaits publication, and browser/user-Windows/inference proof is separate.
+
+### 10.7 Final local M3-A checkpoint, 15:47 UTC
+
+The fresh real PostgreSQL 17.11 run is now **PASS: 2,076 passed / 1,132 skipped**,
+831.24 s, with the same stable **1,677-input** map as File **2,109/1,099**, full
+frontend **1,981/8**, passing build/45-file token and **279** infrastructure/catalog
+checks. Actual fresh DB OID **32129**, empty-before-migration proof, all 20 original
+SQL hashes, retained data and normal shutdown at 15:45:46 UTC were verified.
+[M3 report §13](MILESTONE_M3_REPORT.md#13-final-local-m3-a-checkpoint--1547-utc)
+contains exact current receipts/log hashes and publication identity rules.
+
+This completes the **selected 53-file owner range**, not full-product execution
+of all **10,362** manifest nodes. Catalog 2,111 (+4/−0), written manifest and 7+11
+browser collection retain their separate inventory level. Earlier failed attempts,
+including the diagnosed reused-database run and M2 hosted failures, remain intact.
+M3-A is a publishable **PARTIAL** checkpoint. Exact end SHA/tree will be bound via
+PR 47's publication receipt, not self-embedded or replaced with the M2 parent.
+New-SHA full-product hosted CI and M3 browser/visual results remain pending; actual
+user Windows, real inference/quality and full M3 model/API gates remain open.

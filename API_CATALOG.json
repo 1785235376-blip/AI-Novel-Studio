@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "320dfff4a919037b544a3662d719001f4e145545925600870993e972be4d9944",
+  "application_source_fingerprint_sha256": "6a6bfbc80bf2ee2f5d6f536f6d038cf43ec25c92ec357b5aee768a04dbfa83e7",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -209,18 +209,21 @@
     "app/lore/memory_agent.py": "00449fdafa51de7790400fa083cd69fa1e9cf92f2ce524cd80c6c4c40d53031b",
     "app/lore/schemas.py": "2f03db0d13c096551f69b76906ca48289bb0e1f7c21830b605ab2f9984ed21e5",
     "app/lore/validators.py": "4caa6681df7497b34eed9386200527fe15ea38e19923c86e43d496c07299ffb5",
-    "app/main.py": "5955d796f01366bc5e408d3c033ffe70d7b0dcf8875a2c7aa488327f0ff0b84d",
+    "app/main.py": "bc79694e1bafa16cb41d2ed65bd4648e7f3cb502452a48af16adfb3ff52bb0c8",
     "app/manuscript_sources.py": "3095bcbe132ab3ff2507e008c6cfd2f8a98da87364a3c983f4e2f43ef27d27a7",
     "app/media_files.py": "b08e6c9d501f0769427a7ed79ec01fb98ac2f6f8289af8cf82e69e585e8218f8",
     "app/media_frames.py": "478cf6c2af5268cb7fea3a7547d9fb60531636e56e0ed2caaf5b3fd8587dacc0",
     "app/migrate_file_to_postgres.py": "f1607b0ee9bba1de64c092cb080cb1fdf5e140626a8ad2bc520523467821f818",
     "app/model_center/__init__.py": "034f5d7bcdc5a548765d66dfe6442411e8680b3f761e6c38f310b475c3a8ac0b",
     "app/model_center/api.py": "001094aea2c2191348ff6b17d1ace8098fd9de2817e6d1bb9657566d353622c1",
-    "app/model_center/discovery.py": "af3c5eaf9cc17efdb3fac4deca2313bd9d5b425229186b77a23bbf49dd3eb3b0",
-    "app/model_center/discovery_api.py": "788994267fe97ad183df3a346056c471cbd0d07fb5bc4343b29aa226f9e53f20",
+    "app/model_center/discovery.py": "eb4fa6affecada8bf046aea15783e14527c3cfd53a308de718ec7b5f1d593460",
+    "app/model_center/discovery_api.py": "9e1f85d34a9e7df8d0e3faeace6cbbb82c5fa7129a522240a50a3cb2e75b51f6",
+    "app/model_center/discovery_authority.py": "752a810dad0001d4239516a4e76ae08dfd0f5a74e0fffe15236a6fe125c605c9",
     "app/model_center/discovery_bridge.py": "cdb91ddee41252ec5dfd4ee3b9afa74c171dbff4f16534e4ff67aeb376d5a3e5",
-    "app/model_center/discovery_environment.py": "207a7c91b34235ec842e086cf4533f1841e42d36380a5e950d0036d7204d3a85",
-    "app/model_center/discovery_probes.py": "3b77f1bd223a8d76b8cfa6f44735cb932739a3d683ab28a27f2430bde4ba4f13",
+    "app/model_center/discovery_environment.py": "eef9b1c4f0910ad9468b1e5fb6a54a8a6814a7a28dcd9bc4d2ee6b07f57d07c6",
+    "app/model_center/discovery_onboarding_types.py": "51b65d835b8414220d4790417a97889410914a488b9df04382c9952d53f12cce",
+    "app/model_center/discovery_probes.py": "b8430890a7bbae1422106089932d5f2ea748becbf28c18f67370aabf5b1c1448",
+    "app/model_center/discovery_scope.py": "afdbd1268c6a9322396efbeb8a6fbb82f86f395d82b2e6b24776d7a65ba4c321",
     "app/model_center/discovery_types.py": "abaee0886657318690286f2ffec5e6f5f95a3159274e4c32b21bb0080c24488d",
     "app/model_center/domain.py": "5d413844f4282ede2c212abe9938d97bbf378956e158011f7bef308896176fc9",
     "app/model_center/runtime_profiles.py": "e47f7bc7f05f025563bf4a35fda8311b2d3509a4d1e73e3dbd4c8026f3ce61f8",
@@ -376,7 +379,7 @@
     "app/storage.py": "5375c80375270fe90caa20770d5dd88589793fe8785712755c382dc99e20d1ec",
     "app/story_record_api.py": "838455f0373f6722c9d9486b8b1151185de1e66d7811fac76fd30dd2b3192599",
     "app/structured_log.py": "05185e38aa5f8b7caf2fb8a3b9b96c9de44f76a415308ad3f074e9973cc3723f",
-    "app/trusted_sessions.py": "60e1f45a005b4a2122724446aad0be3cb7cc82e4ab8cdbd3bad31464b8417ad8",
+    "app/trusted_sessions.py": "c43a09552f3b940b02df2119dd7d060927c6eaeaed9502fdcdebb57bd17b3394",
     "app/video_assembly_api.py": "4b9fafc79e883ae13824289ebb75c87efcd8fc6c7a7204275c676555597b55a4",
     "app/visual_workflow.py": "a5ad2b66b50289603df914bead47ecc12e351d15c4fc957192af9693382206c7",
     "app/workflow.py": "c8f65bfcc73b454038a177aeb519b2e3cd032d8f9ed57fe4bb8b50d0d3e607ef",
@@ -384,9 +387,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 274,
+    "added": 278,
     "changed_contract": 24,
-    "current_method_paths": 2107,
+    "current_method_paths": 2111,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -403,7 +406,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "ea3e63208cb5375e5d00658ee58585682ea49a705ea9233f126d071128f6f734",
+    "sha256": "28b2bf8860f34aa78bc0cc8bfe38912812b1934a10796aeb765bf6008b844fc7",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -1707,6 +1710,17 @@
       ],
       "operation_sha256": "cda3c70f250e191a19adb64d5da1edd2fd9d670bed8bf2f63ac8657cf96b876b",
       "schema_graph_sha256": "5b142e60618727700612217e1873640051a5bcc3d064802d0092783840c28ff9"
+    },
+    {
+      "method": "GET",
+      "path": "/api/model-center/local-ai/onboarding/scan-scope",
+      "operation_id": "scan_scope_api_model_center_local_ai_onboarding_scan_scope_get",
+      "owner_ref": "0ba08df9b9659a9b0886be87946b53451535ca419c2e50c916b644c82e2d04c0",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "8fd4df43691f15c1d57f5191d156aed8e227ffa6c39d64a01687c20c336e891e",
+      "schema_graph_sha256": "635f2c57c8007d022f3bfc0b00677b2396e51eaf5e55eedabbd1acf0ec0d606d"
     },
     {
       "method": "GET",
@@ -5447,7 +5461,8 @@
       "operation_id": "run_api_projects__nid__studio_graph_runs__rid__get",
       "owner_ref": "366f24e42143ca2d73caf338a0b713cce4dfa6d23cc8f9f1f29fb643d3068261",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "055a2de2a6af215b4c69edb44de374dcf5e71fffa98e9868fa62b0c964d97c61",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -5458,7 +5473,8 @@
       "operation_id": "graphs_api_projects__nid__studio_graphs_get",
       "owner_ref": "c0e18a1c63a020c1ced5fadba5119f3139e1d682e3d617ab69a29c3ed6d6b443",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "cabac9f9d0d63c54bacd6747aac884f089e7bccd8dd285128548845a8e0b8e3c",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -5469,7 +5485,8 @@
       "operation_id": "catalog_api_projects__nid__studio_graphs_catalog_get",
       "owner_ref": "a814ec66a466f72f010941a81feb17504702ac17c2fb1499fce90449a2532ef7",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "6d3b90f6d4ea2565ed4143ed7552c1d890b3bbec33d7e9b0ada9f8128785a69b",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -5480,7 +5497,8 @@
       "operation_id": "graph_api_projects__nid__studio_graphs__gid__get",
       "owner_ref": "451aec3f7a94582e7667ecebf4a7d079036da6442ad250cc46529333c40d3f56",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "c5c522dde9bed3202ef29a27c5a537066e1e80cc97f089faee523156c7b3453e",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -5491,7 +5509,8 @@
       "operation_id": "runs_api_projects__nid__studio_graphs__gid__runs_get",
       "owner_ref": "008ad391e00ce6c83235d88fa0569f38382304e11cf1d6ea4b16f98441cc6999",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "fc89450f6cdb469f25cfeff4d329ef58ab6555d112377543162b427fa0c73b6e",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -6623,6 +6642,17 @@
       ],
       "operation_sha256": "fbbe30bbd5baa3c15ae05b6650e09f0e451145438b031ac5f630bc1ae70b8b1e",
       "schema_graph_sha256": "5b142e60618727700612217e1873640051a5bcc3d064802d0092783840c28ff9"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/model-center/local-ai/onboarding/scan-scope",
+      "operation_id": "scan_scope_api_v1_model_center_local_ai_onboarding_scan_scope_get",
+      "owner_ref": "0ba08df9b9659a9b0886be87946b53451535ca419c2e50c916b644c82e2d04c0",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "94cd4b6d769d7c97c0b954257dc89e0d290171e4fa687615d183e5077b394635",
+      "schema_graph_sha256": "635f2c57c8007d022f3bfc0b00677b2396e51eaf5e55eedabbd1acf0ec0d606d"
     },
     {
       "method": "GET",
@@ -10363,7 +10393,8 @@
       "operation_id": "run_api_v1_projects__nid__studio_graph_runs__rid__get",
       "owner_ref": "366f24e42143ca2d73caf338a0b713cce4dfa6d23cc8f9f1f29fb643d3068261",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "0dc158c676c553b1b1ade0a42ef0717047863f9fe7252f6738891ea7298553e1",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -10374,7 +10405,8 @@
       "operation_id": "graphs_api_v1_projects__nid__studio_graphs_get",
       "owner_ref": "c0e18a1c63a020c1ced5fadba5119f3139e1d682e3d617ab69a29c3ed6d6b443",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "e5ff3a881be2e3ede68b3c8980b4d2e14556d9bf3341a64dfdd8b1996f348b2e",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -10385,7 +10417,8 @@
       "operation_id": "catalog_api_v1_projects__nid__studio_graphs_catalog_get",
       "owner_ref": "a814ec66a466f72f010941a81feb17504702ac17c2fb1499fce90449a2532ef7",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "476d903b3679027fb8ca00ead99f2ab39c44a1124743b8399d3cee86a96dc306",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -10396,7 +10429,8 @@
       "operation_id": "graph_api_v1_projects__nid__studio_graphs__gid__get",
       "owner_ref": "451aec3f7a94582e7667ecebf4a7d079036da6442ad250cc46529333c40d3f56",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "7097c4466744a435645762ef4569c32c3d2eb43ca9d49c789daf72179de6a02c",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -10407,7 +10441,8 @@
       "operation_id": "runs_api_v1_projects__nid__studio_graphs__gid__runs_get",
       "owner_ref": "008ad391e00ce6c83235d88fa0569f38382304e11cf1d6ea4b16f98441cc6999",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "bb5fc70426c10b94dec4d9706d65c4ef19cf4fffda9973aec50fc878a864e07c",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
@@ -11936,6 +11971,17 @@
       ],
       "operation_sha256": "de2862a4e9a0fac2ecfd7cd0c7622782a5945b4248b5415bc147d7865ff10ad3",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "POST",
+      "path": "/api/model-center/local-ai/onboarding/scan",
+      "operation_id": "consented_scan_api_model_center_local_ai_onboarding_scan_post",
+      "owner_ref": "7ad2ac9485094a10afdc642f10dedc7962f43ee7b3d4f41771b5958b83cf79ec",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "95c81c6f0438156a17a7ff0f227726f0b465c1c0b64a16dc99fbc4d481d18e3e",
+      "schema_graph_sha256": "a26fdbbb1db0a9edd2ec9482c46b41eecd1f9dba95c6fa0aa3ebf9309c05cd8a"
     },
     {
       "method": "POST",
@@ -16799,7 +16845,8 @@
       "operation_id": "creative_graph_approve_api_projects__nid__studio_graph_runs__rid__approve_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a9adb66c2ce07917204b535d6b805ad22862440c1c867882fef3300ba9c5adba",
       "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
@@ -16810,7 +16857,8 @@
       "operation_id": "creative_graph_cancel_api_projects__nid__studio_graph_runs__rid__cancel_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "7aa32b2cebb28e6b069ad82ae4b8b9d70b35bad2ce60ea72e319c992ad45228f",
       "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
@@ -16821,7 +16869,8 @@
       "operation_id": "creative_graph_execute_api_projects__nid__studio_graph_runs__rid__execute_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "627dc6ad0f1d560178e6397df8806f433665ec49bf2119d541dbad16046ec494",
       "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
@@ -16832,7 +16881,8 @@
       "operation_id": "creative_graph_pause_api_projects__nid__studio_graph_runs__rid__pause_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "c510d58ec3b474ec25dfa1a374274bda2cfbc78e042f23fbb985586bf7c053eb",
       "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
@@ -16843,7 +16893,8 @@
       "operation_id": "creative_graph_reject_api_projects__nid__studio_graph_runs__rid__reject_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "eb0051eb7c51afdd8ea46c662e0f81b2073f3c8e28039a217cfda49574f985ee",
       "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
@@ -16854,7 +16905,8 @@
       "operation_id": "creative_graph_resume_api_projects__nid__studio_graph_runs__rid__resume_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a0ed662c9d914d0e971efb6e06b7b73722301c9eb071c3e955c63ec6ae99926e",
       "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
@@ -16865,7 +16917,8 @@
       "operation_id": "create_api_projects__nid__studio_graphs_post",
       "owner_ref": "005917ffe8f9a6ba39d12c1c2fb23448f4cbebd68c5b75e209d3b671ea1b6516",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a72e76d1aee067c74267cc0803858593e6fb164b9fe4b601b575499551e2cf42",
       "schema_graph_sha256": "c588cd83a104dd2ae861cb8ad3a01d5a0b6154d60cf04d61f1d58787cfbb59f7"
@@ -16876,7 +16929,8 @@
       "operation_id": "preflight_api_projects__nid__studio_graphs__gid__preflight_post",
       "owner_ref": "511bb444c5d5322233d49aaa792c0954e6eb0268413671417562a0b166d39b2a",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "7008ab18845849a0410645a0b9519080699cbc4fdbcc5ee0b23b05896f6af20c",
       "schema_graph_sha256": "d56125af7c2a0acdba63c96c81b6b21b93f1b1d7fe7c8448971410b17dc502a7"
@@ -16887,7 +16941,8 @@
       "operation_id": "create_run_api_projects__nid__studio_graphs__gid__runs_post",
       "owner_ref": "1c39503ed1353fb4658c94aa0ffe7e8d14bc7b08c80be867df5be139808265d2",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "6fb2cb3ab135149ccf85644b9dfa65600ad55ad10a786b473d8b1ae71aa163e9",
       "schema_graph_sha256": "6db143a6ff900f2d91044e1274ccdd099c73f14270d7064985f68f9c3a020f78"
@@ -17972,6 +18027,17 @@
       ],
       "operation_sha256": "f79a71026896d2180a90047e44b233362029a512ddc10365a6bf330132aaf313",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/model-center/local-ai/onboarding/scan",
+      "operation_id": "consented_scan_api_v1_model_center_local_ai_onboarding_scan_post",
+      "owner_ref": "7ad2ac9485094a10afdc642f10dedc7962f43ee7b3d4f41771b5958b83cf79ec",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "75356a0a7abfc79457c991ae1b83e6c25dac41b09cabbb7555a9d4c5c4b41b5f",
+      "schema_graph_sha256": "a26fdbbb1db0a9edd2ec9482c46b41eecd1f9dba95c6fa0aa3ebf9309c05cd8a"
     },
     {
       "method": "POST",
@@ -22835,7 +22901,8 @@
       "operation_id": "creative_graph_approve_api_v1_projects__nid__studio_graph_runs__rid__approve_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "458860f3aa412a5cb2dbd2a8d863f3b9eab0f1676921841b5fbeea51c1f891d4",
       "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
@@ -22846,7 +22913,8 @@
       "operation_id": "creative_graph_cancel_api_v1_projects__nid__studio_graph_runs__rid__cancel_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "c4399fa07e3117ec54ef5c30cc87d857a39aebce687737e3ed84f4b9db0a6c3a",
       "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
@@ -22857,7 +22925,8 @@
       "operation_id": "creative_graph_execute_api_v1_projects__nid__studio_graph_runs__rid__execute_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "b185b988de28f372eb8360a348e344ce13002e0103def7d00471efa379ce521e",
       "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
@@ -22868,7 +22937,8 @@
       "operation_id": "creative_graph_pause_api_v1_projects__nid__studio_graph_runs__rid__pause_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "f29d8e001dc6a4fa742352fdc55af5215b861adb7364bb38f6da3d8dc2e1c84e",
       "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
@@ -22879,7 +22949,8 @@
       "operation_id": "creative_graph_reject_api_v1_projects__nid__studio_graph_runs__rid__reject_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "7181f9f6c64e6e18dbe8775928e7c7fa73d9947e4403eff2dae3c3beaae7260f",
       "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
@@ -22890,7 +22961,8 @@
       "operation_id": "creative_graph_resume_api_v1_projects__nid__studio_graph_runs__rid__resume_post",
       "owner_ref": "010ed87559fb30508b6d5e623b5644d3254df263a605ce27c7f543448a5bbe90",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "4fd1d6b8b759a578f1b25ebf3fdf175a10d48cea06cb03c20fd92f4a54176931",
       "schema_graph_sha256": "b168b25eb0de2f6f883f94014d3a063160191bcdae15f606e7572731030dc91d"
@@ -22901,7 +22973,8 @@
       "operation_id": "create_api_v1_projects__nid__studio_graphs_post",
       "owner_ref": "005917ffe8f9a6ba39d12c1c2fb23448f4cbebd68c5b75e209d3b671ea1b6516",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a68b8c0a92f97a6d10c4cc9f1af553af506d3454bd61438932ec0a002bd40bce",
       "schema_graph_sha256": "c588cd83a104dd2ae861cb8ad3a01d5a0b6154d60cf04d61f1d58787cfbb59f7"
@@ -22912,7 +22985,8 @@
       "operation_id": "preflight_api_v1_projects__nid__studio_graphs__gid__preflight_post",
       "owner_ref": "511bb444c5d5322233d49aaa792c0954e6eb0268413671417562a0b166d39b2a",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "0968e04067b0538646e035f2a171ce248323dbe18f95f2248ba45b9101bb3438",
       "schema_graph_sha256": "d56125af7c2a0acdba63c96c81b6b21b93f1b1d7fe7c8448971410b17dc502a7"
@@ -22923,7 +22997,8 @@
       "operation_id": "create_run_api_v1_projects__nid__studio_graphs__gid__runs_post",
       "owner_ref": "1c39503ed1353fb4658c94aa0ffe7e8d14bc7b08c80be867df5be139808265d2",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d20fc1feef3f1d72ba76283f625a26e85a245c7c7bba3590c76cbeaf151d246e",
       "schema_graph_sha256": "6db143a6ff900f2d91044e1274ccdd099c73f14270d7064985f68f9c3a020f78"
@@ -24568,7 +24643,8 @@
       "operation_id": "save_api_projects__nid__studio_graphs__gid__put",
       "owner_ref": "b3cf45ffb15bbe8937c56d3f5e989e1525a14f7dc0b546c07a3e0cdb4b0fe10a",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "8b7b12bef4932e89ff4ae20b2ac690567a38c54df6d2410b472b3d91f57f3018",
       "schema_graph_sha256": "80c978a32b681256a242812b64efb2ba571d154fb8b5be51abb1fbfdcdf82204"
@@ -25613,7 +25689,8 @@
       "operation_id": "save_api_v1_projects__nid__studio_graphs__gid__put",
       "owner_ref": "b3cf45ffb15bbe8937c56d3f5e989e1525a14f7dc0b546c07a3e0cdb4b0fe10a",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "ac5670aff22b389f803e870c4564e900168a824a2f675b2d3f87394ff5968ec5",
       "schema_graph_sha256": "80c978a32b681256a242812b64efb2ba571d154fb8b5be51abb1fbfdcdf82204"

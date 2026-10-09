@@ -13,6 +13,7 @@ import tempfile
 import threading
 import time
 from dataclasses import replace
+from contextlib import nullcontext
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -21,6 +22,8 @@ from uuid import uuid4
 from .discovery_probes import LocalProbeClient, ProbeFailure, candidate_id, executable_metadata, gguf_metadata, host_hardware, infer_family, scan_gguf_roots, ollama_remote_declaration, ollama_locality_evidence, read_ollama_local_metadata
 from .discovery_types import AIEnvironmentReport, DiscoverySettingsInput, LocalRuntimeInput, RegistrationInput, safe_local_path
 from .discovery_environment import environment_roots, scan_environment_files
+from .discovery_scope import (PREVIEW_LIMIT, PREVIEW_TTL_SECONDS, SCAN_BUDGET_SECONDS, PLANNING_BUDGET_SECONDS,
+    ScopeCancellation, build_plan, fingerprint, require_guard, planning_check, planning_lock)
 from .domain import Capability, ModelDefinition, ModelStatus, RuntimeDefinition, RuntimeManagement, RuntimeType
 
 
@@ -45,6 +48,8 @@ class LocalDiscoveryService:
         self._control_epochs: dict[str, int] = {}
         self.scan: dict | None = None
         self.cancel_event = threading.Event()
+        self._scope_instance = uuid4().hex
+        self._scope_previews: dict[str, dict] = {}
         self.hardware = {'status': 'NOT_VERIFIED', 'notes': ['SCAN_REQUIRED'], 'gpus': []}
         self.persistence_error = None
         self.workflow_adapters = [{'id': 'comfy-sd-checkpoint-v1', 'display_name': 'Stable Diffusion checkpoint (T2I)',
@@ -78,7 +83,12 @@ class LocalDiscoveryService:
             self.settings = {'scan_roots': [], 'runtimes': []}
             self.registrations = {}
 
-    def _persist(self, settings=None, registrations=None):
+    @staticmethod
+    def _guard(guard):
+        if guard is not None: require_guard(guard)
+
+    def _persist(self, settings=None, registrations=None, *, guard=None):
+        self._guard(guard)
         if not self.path: return
         payload = {'schema_version': 1, 'settings': settings if settings is not None else self.settings,
                    'registrations': registrations if registrations is not None else self.registrations}
@@ -89,6 +99,7 @@ class LocalDiscoveryService:
                 temporary = Path(file.name)
                 json.dump(payload, file, ensure_ascii=False, indent=2)
                 file.flush(); os.fsync(file.fileno())
+            self._guard(guard)
             os.replace(temporary, self.path)
             temporary = None
         except OSError as exc:
@@ -104,15 +115,17 @@ class LocalDiscoveryService:
                 'settings': self.settings, 'hardware': self.hardware, 'workflow_adapters': self.workflow_adapters,
                 'persistence_error': self.persistence_error})
 
-    def configure_roots(self, values: DiscoverySettingsInput):
+    def configure_roots(self, values: DiscoverySettingsInput, *, guard=None):
+        self._guard(guard)
         with self.lock:
             settings = {**self.settings, 'scan_roots': values.scan_roots}
             if 'include_common_model_dirs' in values.model_fields_set:
                 settings['include_common_model_dirs'] = values.include_common_model_dirs
-            self._persist(settings=settings); self.settings = settings
+            self._persist(settings=settings, guard=guard); self.settings = settings
             return copy.deepcopy(settings)
 
-    def configure_runtime(self, value: LocalRuntimeInput, runtime_id: str | None = None):
+    def configure_runtime(self, value: LocalRuntimeInput, runtime_id: str | None = None, *, guard=None):
+        self._guard(guard)
         with self.lock:
             runtimes = list(self.settings['runtimes'])
             if runtime_id and not any(r['id'] == runtime_id for r in runtimes): raise KeyError(runtime_id)
@@ -126,7 +139,7 @@ class LocalDiscoveryService:
             for r in changed:
                 r.update(enabled=False, status='DISABLED', validated_at=None, enable_eligible=False,
                          enable_blockers=['REVALIDATION_REQUIRED'], verified_capabilities=[])
-            self._persist(settings=settings, registrations=records)
+            self._persist(settings=settings, registrations=records, guard=guard)
             self.settings, self.registrations = settings, records
             for r in changed:
                 self._control_epochs[r['id']] = self._control_epochs.get(r['id'], 0) + 1
@@ -154,15 +167,20 @@ class LocalDiscoveryService:
                 services=services, model_files=copy.deepcopy(job.get('model_files', [])),
                 roots=copy.deepcopy(job.get('roots', [])), errors=copy.deepcopy(job.get('errors', []))).model_dump()
 
-    def _runtimes(self):
+    def _runtimes(self, *, center_runtimes=None, settings=None, configured_sources=None, environment=None, plan_check=None):
+        if plan_check is not None: plan_check()
+        settings = self.settings if settings is None else settings
+        configured_sources = self.configured_runtime_sources if configured_sources is None else configured_sources
+        environment = self._environment_enabled() if environment is None else environment
         defaults = [LocalRuntimeInput(name='Ollama', type='OLLAMA', endpoint='http://127.0.0.1:11434', modality='TEXT'),
                     LocalRuntimeInput(name='ComfyUI', type='COMFYUI', endpoint='http://127.0.0.1:8188'),
                     LocalRuntimeInput(name='Automatic1111', type='AUTOMATIC1111', endpoint='http://127.0.0.1:7860', modality='IMAGE')]
-        if self._environment_enabled():
+        if environment:
             defaults += [LocalRuntimeInput(name='LM Studio', type='OPENAI_COMPATIBLE_LOCAL', endpoint='http://127.0.0.1:1234', modality='TEXT'),
                          LocalRuntimeInput(name='llama.cpp', type='LLAMA_CPP', endpoint='http://127.0.0.1:8080', modality='TEXT')]
         result = [{'id': 'discovery-' + item.type.lower(), **item.model_dump()} for item in defaults]
-        for item in self.center.runtimes.values():
+        for item in (self.center.runtimes.values() if center_runtimes is None else center_runtimes):
+            if plan_check is not None: plan_check()
             if item.runtime_type not in {RuntimeType.LLAMA_CPP, RuntimeType.COMFYUI} or item.id.startswith('local-'): continue
             try:
                 config = LocalRuntimeInput(name=item.id, type=str(item.runtime_type), endpoint=item.base_url,
@@ -171,25 +189,159 @@ class LocalDiscoveryService:
                     threads=item.threads, batch_size=item.batch_size, health_endpoint=item.health_endpoint)
                 result.append({'id': item.id, **config.model_dump()})
             except ValueError: continue
+            if plan_check is not None: plan_check()
         # Explicit user entries supersede default endpoint probes, without duplicate candidates.
-        result += self.configured_runtime_sources
-        result += self.settings['runtimes']
+        result += configured_sources
+        result += settings['runtimes']
         unique = {}
-        for item in result: unique[(item['type'], item['endpoint'], item.get('model_path', ''))] = item
+        for item in result:
+            if plan_check is not None: plan_check()
+            unique[(item['type'], item['endpoint'], item.get('model_path', ''))] = item
         return list(unique.values())[:20]
 
+    def _scope_plan(self, include_common_model_dirs, guard=None, deadline=None):
+        deadline = time.monotonic() + PLANNING_BUDGET_SECONDS if deadline is None else deadline
+        check = lambda: planning_check(guard, deadline)
+        check()
+        # Never hold a discovery lock while taking the ModelCenter lock. The
+        # resulting immutable inputs, not live owners, are passed to the worker.
+        with planning_lock(getattr(self.center, '_config_lock', None), guard, deadline):
+            center_runtimes = copy.deepcopy(list(self.center.runtimes.values()))
+        with planning_lock(self.lock, guard, deadline):
+            settings = copy.deepcopy(self.settings)
+            sources = copy.deepcopy(self.configured_runtime_sources)
+            environment = self._environment_enabled()
+            runtimes = self._runtimes(center_runtimes=center_runtimes, settings=settings,
+                                      configured_sources=sources, environment=environment, plan_check=check)
+            plan = build_plan(runtimes, settings, include_common_model_dirs, environment=environment,
+                              timeout=getattr(self.client, 'timeout', 2.0),
+                              response_bytes=getattr(self.client, 'max_response_bytes', 4 * 1024 * 1024), registrations=self.registrations, guard=guard, deadline=deadline)
+            plan['adapter_identity'] = {'client': id(self.client), 'hardware_probe': id(self.hardware_probe)}
+            plan['configured_sources'] = sources
+            check()
+            return plan
+
+    @staticmethod
+    def _scope_principal(principal):
+        if not isinstance(principal, str) or not 0 < len(principal) <= 1024:
+            raise ValueError('LOCAL_AI_SCOPE_PRINCIPAL_MISMATCH')
+
+    def preview_scan_scope(self, include_common_model_dirs: bool, principal: str, guard):
+        deadline = time.monotonic() + PLANNING_BUDGET_SECONDS
+        self._scope_principal(principal)
+        require_guard(guard)
+        try:
+            plan = self._scope_plan(include_common_model_dirs, guard, deadline)
+        except (OSError, ValueError, TypeError) as exc:
+            if str(exc) in {'LOCAL_AI_SCOPE_REVOKED', 'LOCAL_AI_SCOPE_BUDGET_REACHED'}: raise
+            raise ValueError('LOCAL_AI_SCOPE_INVALID') from exc
+        require_guard(guard)
+        with planning_lock(self.lock, guard, deadline):
+            timestamp = time.monotonic()
+            self._scope_previews = {key: row for key, row in self._scope_previews.items()
+                                    if row['expires'] > timestamp}
+            current_digest = (self.scan or {}).get('consent', {}).get('scope_digest')
+            while len(self._scope_previews) >= PREVIEW_LIMIT:
+                oldest = next(key for key in self._scope_previews if key != current_digest)
+                del self._scope_previews[oldest]
+            token = fingerprint([self._scope_instance, principal, uuid4().hex, plan])
+            planning_check(guard, deadline)
+            self._scope_previews[token] = {'principal': principal, 'plan': plan,
+                                           'expires': timestamp + PREVIEW_TTL_SECONDS, 'scan_id': None}
+            return {**copy.deepcopy(plan['public']), 'scope_digest': token}
+
+    def _issued_scope(self, scope_digest, principal):
+        if not isinstance(scope_digest, str) or not scope_digest:
+            raise ValueError('LOCAL_AI_SCOPE_REQUIRED')
+        row = self._scope_previews.get(scope_digest)
+        if row is None: raise ValueError('LOCAL_AI_SCOPE_INVALID')
+        if row['principal'] != principal: raise ValueError('LOCAL_AI_SCOPE_PRINCIPAL_MISMATCH')
+        if time.monotonic() >= row['expires']: raise ValueError('LOCAL_AI_SCOPE_EXPIRED')
+        if row.get('stale'): raise ValueError('LOCAL_AI_SCOPE_STALE')
+        if row['scan_id'] and (not self.scan or row['scan_id'] != self.scan['id']):
+            raise ValueError('LOCAL_AI_SCOPE_CONSUMED')
+        return row
+
+    def start_consented_scan(self, scope_digest: str, principal: str, guard):
+        deadline = time.monotonic() + PLANNING_BUDGET_SECONDS
+        self._scope_principal(principal)
+        require_guard(guard)
+        with planning_lock(self.lock, guard, deadline):
+            row = self._issued_scope(scope_digest, principal)
+            if row['scan_id']:
+                require_guard(guard)
+                return copy.deepcopy(self.scan)
+            expected = copy.deepcopy(row['plan'])
+        try:
+            effective = self._scope_plan(expected['public']['include_common_model_dirs'], guard, deadline)
+        except (OSError, ValueError, TypeError) as exc:
+            if str(exc) in {'LOCAL_AI_SCOPE_REVOKED', 'LOCAL_AI_SCOPE_BUDGET_REACHED'}: raise
+            effective = None
+        require_guard(guard)
+        with planning_lock(self.lock, guard, deadline):
+            row = self._issued_scope(scope_digest, principal)
+            if row['scan_id']: return copy.deepcopy(self.scan)
+            if (effective != expected or self.settings != expected['settings']
+                    or self.configured_runtime_sources != expected['configured_sources']
+                    or id(self.client) != expected['adapter_identity']['client']
+                    or id(self.hardware_probe) != expected['adapter_identity']['hardware_probe']
+                    or not self._environment_enabled()):
+                row['stale'] = True
+                raise ValueError('LOCAL_AI_SCOPE_STALE')
+            if self.scan and self.scan['status'] == 'RUNNING':
+                raise ValueError('LOCAL_AI_SCOPE_CONFLICT')
+            def scan_guard():
+                require_guard(guard)
+                if not self._environment_enabled(): raise ValueError('LOCAL_AI_SCOPE_REVOKED')
+            cancel = ScopeCancellation(scan_guard, expected, self.client, self.hardware_probe)
+            cancel.verify_paths(deadline=deadline)
+            planning_check(guard, deadline)  # Last admission check before publishing or starting work.
+            job = {'id': uuid4().hex, 'status': 'RUNNING', 'runtimes': [], 'candidates': [], 'errors': [],
+                   'started_at': now(), 'finished_at': None, 'environment_schema_version': 2,
+                   'model_files': [], 'roots': copy.deepcopy(expected['roots']),
+                   'consent': {'scope_digest': scope_digest, 'confirmed_at': now(), 'execution_scope': 'BACKEND_HOST'}}
+            self.hardware = {'status': 'NOT_VERIFIED', 'notes': ['SCAN_PENDING'], 'gpus': []}
+            self.cancel_event, self.scan, row['scan_id'] = cancel, job, job['id']
+            try:
+                threading.Thread(target=self._scan, args=(job, copy.deepcopy(expected['runtimes']),
+                    list(expected['configured_roots']), cancel), daemon=True, name='local-ai-discovery').start()
+            except Exception:
+                cancel.set()
+                job.update(status='CANCELLED', finished_at=now())
+                job['errors'].append({'code': 'LOCAL_AI_SCAN_FAILED'})
+            return copy.deepcopy(job)
+
     def start_scan(self):
+        return self._start_scan()
+
+    def start_legacy_http_scan(self, guard):
+        require_guard(guard)
+        if self._environment_enabled(): raise ValueError('LOCAL_AI_SCOPE_CONFIRMATION_REQUIRED')
+        def legacy_guard():
+            require_guard(guard)
+            if self._environment_enabled(): raise ValueError('LOCAL_AI_SCOPE_CONFIRMATION_REQUIRED')
+        return self._start_scan(legacy_guard=legacy_guard)
+
+    def _start_scan(self, *, legacy_guard=None):
+        with getattr(self.center, '_config_lock', nullcontext()):
+            center_runtimes = copy.deepcopy(list(self.center.runtimes.values()))
         with self.lock:
+            environment = self._environment_enabled()
+            if legacy_guard is not None:
+                if environment: raise ValueError('LOCAL_AI_SCOPE_CONFIRMATION_REQUIRED')
+                require_guard(legacy_guard)
+
             if self.scan and self.scan['status'] == 'RUNNING': return copy.deepcopy(self.scan)
-            self.cancel_event = threading.Event()
+            self.cancel_event = (ScopeCancellation(legacy_guard, None, self.client, self.hardware_probe)
+                                 if legacy_guard is not None else threading.Event())
             job = {'id': uuid4().hex, 'status': 'RUNNING', 'runtimes': [], 'candidates': [], 'errors': [],
                    'started_at': now(), 'finished_at': None}
-            if self._environment_enabled():
+            if environment:
                 self.hardware = {'status': 'NOT_VERIFIED', 'notes': ['SCAN_PENDING'], 'gpus': []}
                 job.update(environment_schema_version=2, model_files=[], roots=environment_roots(
                     self.settings['scan_roots'], self.settings.get('include_common_model_dirs', True)))
             self.scan = job
-            runtimes, roots = copy.deepcopy(self._runtimes()), list(self.settings['scan_roots'])
+            runtimes, roots = copy.deepcopy(self._runtimes(environment=environment, center_runtimes=center_runtimes)), list(self.settings['scan_roots'])
             threading.Thread(target=self._scan, args=(job, runtimes, roots, self.cancel_event), daemon=True, name='local-ai-discovery').start()
             return copy.deepcopy(job)
 
@@ -206,14 +358,19 @@ class LocalDiscoveryService:
             return copy.deepcopy(self.scan)
 
     def _scan(self, job, runtimes, roots, cancel):
-        deadline = time.monotonic() + 45
+        limits = cancel.plan['public']['limits'] if isinstance(cancel, ScopeCancellation) and cancel.plan else None
+        deadline = time.monotonic() + (limits['scan_budget_seconds'] if limits else SCAN_BUDGET_SECONDS)
         try:
+            if isinstance(cancel, ScopeCancellation): cancel.verify_paths()
             if not cancel.is_set():
                 try:
-                    hardware = self.hardware_probe()
-                    with self.lock: self.hardware = hardware
+                    probe = cancel.hardware_probe if isinstance(cancel, ScopeCancellation) else self.hardware_probe
+                    hardware = probe(cancel=cancel) if probe is host_hardware else probe()
+                    with self.lock:
+                        if not cancel.is_set(): self.hardware = hardware
                 except Exception:
                     with self.lock:
+                        if cancel.is_set(): raise ValueError('LOCAL_AI_CANCELLED')
                         self.hardware = {'status': 'NOT_VERIFIED', 'notes': ['HOST_HARDWARE_UNAVAILABLE'], 'gpus': []}
                         job['errors'].append({'code': 'LOCAL_AI_HARDWARE_UNAVAILABLE'})
             candidates = {}
@@ -226,44 +383,56 @@ class LocalDiscoveryService:
                     report.update(status='NOT_FOUND', version=None, notes=['LOCAL_AI_PROBE_INVALID'])
                     found = []
                 with self.lock:
+                    if isinstance(cancel, ScopeCancellation) and cancel.is_set(): break
                     job['runtimes'].append(report)
-                    self._reconcile_detected_runtime(runtime, report, found)
+                    self._reconcile_detected_runtime(runtime, report, found,
+                        cancel=cancel if isinstance(cancel, ScopeCancellation) else None, deadline=deadline)
                     for candidate in found: candidates[candidate['id']] = candidate
                     job['candidates'] = list(candidates.values())
                     if report['status'] not in {'RUNNING', 'DISCOVERED'}:
                         job['errors'].append({'runtime_id': runtime['id'], 'code': report['notes'][-1] if report['notes'] else report['status']})
+            if isinstance(cancel, ScopeCancellation):
+                cancel.verify_paths([row['path'] for row in cancel.plan['roots']] if cancel.plan else [])
             llama = next((r for r in runtimes if r['type'] == 'LLAMA_CPP'), None)
             if job.get('environment_schema_version') == 2:
                 # Work on private copies; publish coherent partial observations under the lock.
                 scan_roots, file_errors = copy.deepcopy(job['roots']), []
-                for item in scan_environment_files(scan_roots, cancel, deadline, file_errors):
+                for item in scan_environment_files(scan_roots, cancel, deadline, file_errors, limits=limits):
+                    if cancel.is_set(): break
                     if llama and item['format'] == 'GGUF':
                         path = Path(item['path'])
                         matches = [c for c in candidates.values() if os.path.normcase(c.get('local_path', '')) == os.path.normcase(str(path))]
                         if not matches:
-                            candidate = self._candidate(llama, path.name, local_path=str(path), evidence=gguf_metadata(path))
+                            candidate = self._candidate(llama, path.name, local_path=str(path), evidence=gguf_metadata(path, cancel=cancel, max_bytes=limits['max_metadata_bytes'] if limits else None))
                             candidates.setdefault(candidate['id'], candidate)
                             matches = [candidate]
                         item['candidate_ids'] = [c['id'] for c in matches]
                     with self.lock:
+                        if cancel.is_set(): break
                         job['model_files'].append(item)
                         job['candidates'] = list(candidates.values())
                         job['roots'] = copy.deepcopy(scan_roots)
                 with self.lock:
+                    if cancel.is_set(): raise ValueError('LOCAL_AI_CANCELLED')
                     job['roots'] = scan_roots
                     job['errors'].extend(file_errors)
             elif llama:
                 for path in scan_gguf_roots(roots, cancel, deadline):
-                    candidate = self._candidate(llama, path.name, local_path=str(path), evidence=gguf_metadata(path))
+                    if cancel.is_set(): break
+                    candidate = self._candidate(llama, path.name, local_path=str(path), evidence=gguf_metadata(path, cancel=cancel, max_bytes=limits['max_metadata_bytes'] if limits else None))
                     with self.lock:
+                        if cancel.is_set(): break
                         candidates.setdefault(candidate['id'], candidate)
                         job['candidates'] = list(candidates.values())
             with self.lock:
                 if time.monotonic() >= deadline: job['errors'].append({'code': 'LOCAL_AI_SCAN_BUDGET_REACHED'})
         except Exception:
-            with self.lock: job['errors'].append({'code': 'LOCAL_AI_SCAN_FAILED'})
+            with self.lock:
+                if not cancel.is_set(): job['errors'].append({'code': 'LOCAL_AI_SCAN_FAILED'})
         finally:
             with self.lock:
+                if cancel.is_set() and getattr(cancel, 'reason', None):
+                    job['errors'].append({'code': cancel.reason})
                 job['status'] = 'CANCELLED' if cancel.is_set() else ('PARTIAL' if job['errors'] else 'COMPLETED')
                 job['finished_at'] = now()
 
@@ -296,7 +465,13 @@ class LocalDiscoveryService:
         def get(path):
             if cancel.is_set(): raise ProbeFailure('LOCAL_AI_CANCELLED')
             if deadline is not None and time.monotonic() >= deadline: raise ProbeFailure('LOCAL_AI_SCAN_BUDGET_REACHED')
-            return self.client.json(runtime['endpoint'], path)
+            if isinstance(cancel, ScopeCancellation):
+                cancel.allow_request(runtime, path)
+                result = cancel.client.json(runtime['endpoint'], path)
+            else:
+                result = self.client.json(runtime['endpoint'], path)
+            if isinstance(cancel, ScopeCancellation) and cancel.is_set(): raise ProbeFailure('LOCAL_AI_CANCELLED')
+            return result
         try:
             kind = runtime['type']
             if runtime.get('credential_required'):
@@ -352,10 +527,12 @@ class LocalDiscoveryService:
             elif kind == 'LLAMA_CPP':
                 path = runtime.get('model_path')
                 executable = runtime.get('executable')
-                report.update(executable_metadata(executable or ''))
+                if isinstance(cancel, ScopeCancellation):
+                    cancel.verify_paths([value for value in (path, executable, str(Path(executable).parent) if executable else '') if value])
+                report.update(executable_metadata(executable or '', cancel=cancel))
                 report['notes'].append('EXECUTABLE_NOT_EXECUTED')
                 if path:
-                    found.append(self._candidate(runtime, Path(path).name, local_path=path, evidence=gguf_metadata(Path(path))))
+                    found.append(self._candidate(runtime, Path(path).name, local_path=path, evidence=gguf_metadata(Path(path), cancel=cancel)))
                 try:
                     payload = get(runtime.get('health_endpoint') or '/v1/models')
                     if not isinstance(payload, dict): raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
@@ -397,7 +574,8 @@ class LocalDiscoveryService:
         if identifier in self.registrations: return copy.deepcopy(self.registrations[identifier])
         raise KeyError(identifier)
 
-    def validate(self, identifier):
+    def validate(self, identifier, *, guard=None):
+        self._guard(guard)
         with self.lock:
             candidate = self._find(identifier)
             expected_epoch = self._control_epochs.get(identifier, 0)
@@ -407,13 +585,16 @@ class LocalDiscoveryService:
             runtime = next((r for r in self._runtimes() if r['id'] == candidate['runtime_id']), candidate['runtime_config'])
             fingerprint = digest(runtime)
         # Metadata-only validation; never generation or --version.
-        report, detected = self._probe(runtime, threading.Event())
+        validation_cancel = ScopeCancellation(guard, None, self.client, self.hardware_probe) if guard is not None else threading.Event()
+        self._guard(guard)
+        report, detected = self._probe(runtime, validation_cancel)
+        self._guard(guard)
         current = next((item for item in detected if item['id'] == identifier), None)
         evidence = current['evidence'] if current else {}
         notes, verified = ['INFERENCE_NOT_RUN', 'CURRENT_GPU_NOT_VERIFIED'], []
         kind = runtime['type']
         if kind == 'LLAMA_CPP':
-            evidence = gguf_metadata(Path(candidate['local_path'])) if candidate['local_path'] else {'header_valid': False}
+            evidence = gguf_metadata(Path(candidate['local_path']), cancel=validation_cancel) if candidate['local_path'] else {'header_valid': False}
             architecture = str(evidence.get('general.architecture', '')).casefold()
             if evidence.get('header_valid') and architecture.startswith(('qwen', 'llama', 'gemma', 'mistral', 'phi', 'deepseek')):
                 verified = ['TEXT']
@@ -431,7 +612,7 @@ class LocalDiscoveryService:
                 notes.append('MEMORY_AND_CONTEXT_NOT_VERIFIED')
         elif current and report['status'] == 'RUNNING':
             if kind == 'OLLAMA':
-                checked = self.ollama_metadata_check(runtime, candidate['model_name'])
+                checked = self.ollama_metadata_check(runtime, candidate['model_name'], cancel=validation_cancel)
                 evidence.update(checked)
                 notes.extend(checked['locality_blockers'])
                 candidate['source_locality'] = checked['source_locality']
@@ -469,26 +650,29 @@ class LocalDiscoveryService:
             status='VALIDATION_REQUIRED', compatible='POSSIBLY_COMPATIBLE' if verified else 'NOT_VERIFIED',
             validation_notes=list(dict.fromkeys(notes)))
         self._eligibility(candidate)
+        self._guard(guard)
         with self.lock:
+            self._guard(guard)
             latest_runtime = next((r for r in self._runtimes() if r['id'] == runtime['id']), runtime)
             if fingerprint != digest(latest_runtime) or expected_epoch != self._control_epochs.get(identifier, 0):
                 raise ValueError('LOCAL_AI_CONFIGURATION_CHANGED')
-            if self.scan:
-                self.scan['candidates'] = [candidate if item['id'] == identifier else item for item in self.scan['candidates']]
             if identifier in self.registrations:
                 records = {**self.registrations, identifier: candidate}
-                self._persist(registrations=records); self.registrations = records
+                self._persist(registrations=records, guard=guard); self.registrations = records
                 self._control_epochs[identifier] = expected_epoch + 1
                 self._publish_model(candidate); self._bridge(candidate)
+            if self.scan:
+                self.scan['candidates'] = [candidate if item['id'] == identifier else item for item in self.scan['candidates']]
             return copy.deepcopy(candidate)
 
-    def ollama_metadata_check(self, runtime, model_name):
+    def ollama_metadata_check(self, runtime, model_name, *, cancel=None):
         from ..providers import OllamaProvider
         return read_ollama_local_metadata(self.client, runtime['endpoint'], model_name,
-                                          OllamaProvider(runtime['endpoint']).list_models)
+                                          OllamaProvider(runtime['endpoint']).list_models, cancel=cancel)
 
-    def _invalidate_registration(self, identifier, reason, evidence=None):
+    def _invalidate_registration(self, identifier, reason, evidence=None, *, cancel=None):
         with self.lock:
+            if cancel is not None: cancel.check()
             live = self.registrations.get(identifier)
             if not live: return
             blocked = copy.deepcopy(live)
@@ -500,18 +684,22 @@ class LocalDiscoveryService:
             if evidence: blocked['evidence'].update(evidence)
             if blocked['source_locality'] == 'REMOTE': blocked['source'] = 'OLLAMA_HOSTED'
             records = {**self.registrations, identifier: blocked}
+            if cancel is not None: cancel.check()
+            try: self._persist(registrations=records, guard=cancel.check if cancel is not None else None)
+            except ValueError:
+                if cancel is not None: cancel.check()
+                self.persistence_error = 'LOCAL_AI_CONFIG_WRITE_FAILED'
             self.registrations = records
             self._control_epochs[identifier] = self._control_epochs.get(identifier, 0) + 1
-            try: self._persist(registrations=records)
-            except ValueError: self.persistence_error = 'LOCAL_AI_CONFIG_WRITE_FAILED'
             self._publish_model(blocked); self._bridge(blocked)
 
-    def _observed_registration(self, record, found):
+    def _observed_registration(self, record, found, *, cancel=None):
         current = next((item for item in found if item['id'] == record['id']), None)
         if record['runtime_type'] == 'LLAMA_CPP':
             # Registered GGUFs may come from bounded roots rather than the
             # runtime's single configured default file. Recheck their own path.
-            return {**record, 'evidence': gguf_metadata(Path(record['local_path']))}
+            if cancel is not None: cancel.allow_registration(record['id'], record)
+            return {**record, 'evidence': gguf_metadata(Path(record['local_path']), cancel=cancel)}
         return current
 
     def _observation_problem(self, record, report, current):
@@ -545,15 +733,19 @@ class LocalDiscoveryService:
         if any(evidence.get(key) != previous.get(key) for key in keys): return 'LOCAL_MODEL_EVIDENCE_CHANGED'
         return None
 
-    def _reconcile_detected_runtime(self, runtime, report, found):
+    def _reconcile_detected_runtime(self, runtime, report, found, *, cancel=None, deadline=None):
         for identifier, record in list(self.registrations.items()):
+            if cancel is not None: cancel.check()
+            if deadline is not None and time.monotonic() >= deadline: break
             if not record.get('enabled') or record['runtime_id'] != runtime['id']: continue
-            current = self._observed_registration(record, found)
+            current = self._observed_registration(record, found, cancel=cancel)
+            if cancel is not None: cancel.check()
             reason = self._observation_problem(record, report, current)
             if reason:
                 evidence = dict(current['evidence']) if current else {}
                 if reason == 'OLLAMA_REMOTE_MODEL_BLOCKED': evidence['source_locality'] = 'REMOTE'
-                self._invalidate_registration(identifier, reason, evidence)
+                if cancel is not None: cancel.check()
+                self._invalidate_registration(identifier, reason, evidence, cancel=cancel)
 
     def check_model_dispatch(self, candidate):
         if candidate['runtime_type'] == 'OLLAMA': return self.check_ollama_dispatch(candidate)
@@ -590,19 +782,21 @@ class LocalDiscoveryService:
             candidate['status'] = 'INCOMPATIBLE'; candidate['compatible'] = 'UNSUPPORTED'
         elif blockers: candidate['status'] = 'VALIDATION_REQUIRED'
 
-    def register(self, identifier):
+    def register(self, identifier, *, guard=None):
+        self._guard(guard)
         with self.lock:
             if identifier in self.registrations: return copy.deepcopy(self.registrations[identifier])
             candidate = self._find(identifier)
             if not candidate.get('validated_at'): raise ValueError('LOCAL_AI_VALIDATE_BEFORE_REGISTER')
             candidate.update(enabled=False, registered_at=now())
             records = {**self.registrations, identifier: candidate}
-            self._persist(registrations=records); self.registrations = records
+            self._persist(registrations=records, guard=guard); self.registrations = records
             self._control_epochs[identifier] = self._control_epochs.get(identifier, 0) + 1
             self._publish_model(candidate)
             return copy.deepcopy(candidate)
 
-    def configure_registration(self, identifier, value: RegistrationInput):
+    def configure_registration(self, identifier, value: RegistrationInput, *, guard=None):
+        self._guard(guard)
         with self.lock:
             candidate = copy.deepcopy(self.registrations[identifier])
             if value.workflow_adapter_id and not any(a['id'] == value.workflow_adapter_id for a in self.workflow_adapters):
@@ -612,17 +806,18 @@ class LocalDiscoveryService:
             if changed: candidate.update(validated_at=None, verified_capabilities=[])
             self._eligibility(candidate)
             records = {**self.registrations, identifier: candidate}
-            self._persist(registrations=records); self.registrations = records
+            self._persist(registrations=records, guard=guard); self.registrations = records
             self._control_epochs[identifier] = self._control_epochs.get(identifier, 0) + 1
             self._publish_model(candidate); self._bridge(candidate)
             return copy.deepcopy(candidate)
 
-    def enable(self, identifier):
+    def enable(self, identifier, *, guard=None):
+        self._guard(guard)
         # Revalidate immediately before explicit enable; newer controls win by CAS.
         with self.lock:
             if identifier not in self.registrations: raise KeyError(identifier)
             expected_epoch = self._control_epochs.get(identifier, 0)
-        candidate = self.validate(identifier)
+        candidate = self.validate(identifier, guard=guard)
         with self.lock:
             if identifier not in self.registrations: raise KeyError(identifier)
             if self._control_epochs.get(identifier, 0) != expected_epoch + 1:
@@ -630,9 +825,10 @@ class LocalDiscoveryService:
             if not candidate['enable_eligible']: raise ValueError('LOCAL_AI_ENABLE_BLOCKED:' + ','.join(candidate['enable_blockers']))
             candidate.update(enabled=True, status='DEGRADED', enabled_at=now())
             # Validate adapters before committing enabled state; callback never launches.
+            self._guard(guard)
             self._bridge(candidate)
             records = {**self.registrations, identifier: candidate}
-            try: self._persist(registrations=records)
+            try: self._persist(registrations=records, guard=guard)
             except ValueError:
                 self._bridge({**candidate, 'enabled': False}); raise
             self.registrations = records
@@ -640,20 +836,22 @@ class LocalDiscoveryService:
             self._publish_model(candidate)
             return copy.deepcopy(candidate)
 
-    def disable(self, identifier):
+    def disable(self, identifier, *, guard=None):
+        self._guard(guard)
         with self.lock:
             candidate = {**self.registrations[identifier], 'enabled': False, 'status': 'DISABLED'}
             records = {**self.registrations, identifier: candidate}
-            self._persist(registrations=records); self.registrations = records
+            self._persist(registrations=records, guard=guard); self.registrations = records
             self._control_epochs[identifier] = self._control_epochs.get(identifier, 0) + 1
             self._bridge(candidate); self._publish_model(candidate)
             return copy.deepcopy(candidate)
 
-    def remove(self, identifier):
+    def remove(self, identifier, *, guard=None):
+        self._guard(guard)
         with self.lock:
             candidate = self.registrations[identifier]
             records = {key:value for key,value in self.registrations.items() if key != identifier}
-            self._persist(registrations=records); self.registrations = records
+            self._persist(registrations=records, guard=guard); self.registrations = records
             self._control_epochs[identifier] = self._control_epochs.get(identifier, 0) + 1
             self._bridge({**candidate, 'enabled': False})
             self.center.models.pop(identifier, None)

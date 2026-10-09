@@ -1,7 +1,10 @@
 import {useEffect, useRef, useState, type FormEvent} from 'react';
 import {ApiError} from '../api';
+import {useLocalAiDiscoveryOwner, useLocalAiOwnerKey, type LocalAiOnboardingOwner} from '../localAiDiscoveryOwner';
+export type {LocalAiOnboardingOwner} from '../localAiDiscoveryOwner';
 import {
-  localAiDiscoveryApi as discovery,
+  localAiDiscoveryApi as legacyDiscovery,
+  type LocalAiDiscoveryClient, type LocalAiScanScope,
   type LocalDiscoverySnapshot, type LocalDiscoveryScan, type LocalModelCandidate,
   type LocalModelRegistration, type LocalRuntime, type LocalRuntimeConfiguration, type LocalRuntimeType,
 } from '../localAiDiscoveryApi';
@@ -83,7 +86,57 @@ function ModelEvidence({model}: {model: LocalModelCandidate}) {
   </dl>;
 }
 
-export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMutate?: boolean; onRegistryChange?: () => void}) {
+type DiscoveryProps = {canMutate?: boolean; onRegistryChange?: () => void; onboarding?: LocalAiOnboardingOwner; scopeRevision?: number};
+/** The legacy path stays default-off. V2 consumes the same discovery registry. */
+export function LocalAiDiscovery(props: DiscoveryProps) {
+  return props.onboarding ? <OwnedLocalAiDiscovery {...props} onboarding={props.onboarding}/> : <LocalAiDiscoveryContent {...props}/>;
+}
+function OwnedLocalAiDiscovery(props: DiscoveryProps & {onboarding: LocalAiOnboardingOwner}) {
+  const ownerKey = useLocalAiOwnerKey(props.onboarding);
+  return <LocalAiDiscoveryOwner key={ownerKey} {...props}/>;
+}
+function LocalAiDiscoveryOwner(props: DiscoveryProps & {onboarding: LocalAiOnboardingOwner}) {
+  const owner = useLocalAiDiscoveryOwner(props.onboarding);
+  return <LocalAiDiscoveryContent {...props} canMutate={props.canMutate && !owner.invalidated} v2={owner.client} isCurrentOwner={owner.current} ownerInvalidated={owner.invalidated}/>;
+}
+
+function ScanScopeDetails({scope}: {scope: LocalAiScanScope}) {
+  return <>
+    <p>检测位置：BACKEND_HOST · 运行后端的主机。云端主机的结果不代表你的电脑。</p>
+    <p>仅检查下列已有服务、目录与文件元数据，不搜索其他端口。不启动程序、不加载模型、不调用云端模型，真实推理仍为 NOT_RUN。</p>
+    <p>发现服务或模型已失效时，可能停用旧注册及路由，并保存该安全状态；不会自动注册或启用模型。</p>
+    <div className="local-ai__section"><h3>将检查的服务（{scope.services.length}）</h3>
+      {scope.services.length ? <ul className="local-ai__notes">{scope.services.map(service => <li key={service.id}>{service.name} · {service.type} · {service.endpoint}<br/>读取：{service.probe_paths.join('、') || '无 HTTP 探测路径'}</li>)}</ul> : <p>未配置可检查的服务。仍可手动使用创作功能。</p>}
+    </div>
+    <dl className="local-ai__facts">
+      <div><dt>模型目录</dt><dd>{scope.roots.filter(root => root.source === 'CONFIGURED').length} 个已配置目录 · {scope.roots.filter(root => root.source === 'COMMON').length} 个常用目录</dd></div>
+      <div><dt>文件元数据检查</dt><dd>{scope.metadata_inspections.length} 项范围内检查；只读取有界元数据</dd></div>
+      <div><dt>硬件信息类别</dt><dd>{scope.hardware_categories.map(scopeHardwareLabel).join(' · ') || '无硬件检查'}</dd></div>
+      <div><dt>常用目录</dt><dd>{scope.include_common_model_dirs ? '本次明确选择包含' : '本次不包含'}；不会更改已保存设置</dd></div>
+    </dl>
+    <section aria-label="检测范围限制" className="local-ai__section"><h3>本次检测上限</h3><dl className="local-ai__facts">{Object.entries(scope.limits).map(([key, value]) => <div key={key}><dt>{scopeLimitLabel(key)}</dt><dd>{value}</dd></div>)}</dl></section>
+    <details className="local-ai__section"><summary>高级：查看具体路径与文件检查</summary>
+      {scope.roots.length ? <ul className="local-ai__notes">{scope.roots.map((root, index) => <li key={index}>{root.source === 'COMMON' ? '常用目录' : '已配置目录'}：{root.path}</li>)}</ul> : <p>没有目录扫描。</p>}
+      <p>递归目录共享上面的文件数与条目数限制；字节上限适用于单文件 / 单次读取。</p>
+      <ul className="local-ai__notes">{scope.metadata_inspections.map((item, index) => <li key={index}>{scopeInspectionLabel(item.kind)}：{item.path} · 最多 {item.max_entries} 项，单文件 / 单次最多 {item.max_bytes} bytes</li>)}</ul>
+    </details>
+  </>;
+}
+function scopeHardwareLabel(key: string) {
+  const labels: Record<string, string> = {OS_PLATFORM: '操作系统', CPU_ARCHITECTURE: 'CPU 架构', CPU_LOGICAL_COUNT: 'CPU 逻辑核心数', PHYSICAL_RAM: '物理内存', WINDOWS_DXGI_GPU_AND_VRAM: 'Windows GPU 与显存', WINDOWS_SYSTEM_CUDA_DIRECTML_COMPONENT_METADATA: 'Windows CUDA / DirectML 系统组件元数据'};
+  return labels[key] || key;
+}
+function scopeInspectionLabel(key: string) {
+  const labels: Record<string, string> = {CONFIGURED_GGUF_HEADER: '已配置 GGUF 文件头', REGISTERED_GGUF_HEADER: '已注册 GGUF 安全复查', EXECUTABLE_VERSION_RESOURCE: '已配置程序的版本元数据', EXECUTABLE_DIRECTORY_SIBLINGS: '已配置程序的同目录组件', RECURSIVE_MODEL_METADATA: '目录内模型元数据（有界递归）'};
+  return labels[key] || key;
+}
+function scopeLimitLabel(key: string) {
+  const labels: Record<string, string> = {planning_budget_seconds: '范围预览时间（秒）', scan_budget_seconds: '总时间（秒）', request_timeout_seconds: '单次请求（秒）', max_services: '服务数', max_models_per_service: '每项服务模型数', max_response_bytes: '响应大小（bytes）', max_roots: '目录数', max_entries: '目录条目数', max_files: '模型文件数', max_depth: '递归深度', max_metadata_bytes: '文件元数据（bytes）', max_metadata_read_bytes: '单次元数据读取（bytes）', max_executable_siblings: '程序同目录条目数', max_executable_version_bytes: '程序版本元数据（bytes）', max_windows_gpu_adapters: 'Windows GPU 数', max_registration_metadata_inspections: '已注册模型安全复查数', preview_ttl_seconds: '预览有效期（秒）'};
+  return labels[key] || key;
+}
+
+function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCurrentOwner = () => true, ownerInvalidated = false, scopeRevision = 0}: DiscoveryProps & {v2?: LocalAiDiscoveryClient; isCurrentOwner?: () => boolean; ownerInvalidated?: boolean}) {
+  const discovery = v2 || legacyDiscovery;
   const [snapshot, setSnapshot] = useState<LocalDiscoverySnapshot>();
   const [scan, setScan] = useState<LocalDiscoveryScan | null>(null);
   const [loading, setLoading] = useState(true), [busy, setBusy] = useState(''), [error, setError] = useState('');
@@ -93,15 +146,32 @@ export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMuta
   const [confirmation, setConfirmation] = useState<{kind: 'enable' | 'remove'; model: LocalModelRegistration}>();
   const [registrationForm, setRegistrationForm] = useState<{id: string; workflow_adapter_id: string; license_confirmed: boolean}>();
   const mounted = useRef(false), generation = useRef(0), pollGeneration = useRef(0), busyRef = useRef(false);
-  const mutable = canMutate && !expired;
+  const [previewOpen, setPreviewOpen] = useState(false), [scopePreview, setScopePreview] = useState<LocalAiScanScope>(), [includeCommon, setIncludeCommon] = useState(false), [previewBusy, setPreviewBusy] = useState(false);
+  const previousScopeRevision = useRef(scopeRevision);
+  const previewEpoch = useRef(0), previewController = useRef<AbortController>(), previewFlight = useRef(false);
+  const permission = useRef(canMutate), previouslyMutable = useRef(canMutate), ownerDenied = useRef(false);
+  if (v2 && previouslyMutable.current && !canMutate) ownerDenied.current = true;
+  permission.current = canMutate;
+  const isCurrent = () => mounted.current && isCurrentOwner() && (!v2 || !ownerDenied.current);
+  const mutable = canMutate && !expired && !ownerDenied.current && isCurrentOwner();
   const scanning = activeScan(scan);
   const locked = !mutable || loading || !snapshot || stateUncertain || !!busy;
 
   function report(caught: unknown) {
-    if (!mounted.current || (caught instanceof Error && caught.name === 'AbortError')) return;
-    if (caught instanceof ApiError && (caught.status === 401 || caught.status === 403 || AUTH_ERRORS.has(caught.problem.code))) {
-      setExpired(true); setPollPaused(true); setConfirmation(undefined);
-      setError('受信任的桌面会话已失效或权限不足，本地 AI 操作已禁用。请重新连接桌面会话。');
+    if (!isCurrent() || (caught instanceof Error && caught.name === 'AbortError')) return;
+    if (caught instanceof ApiError && caught.problem.code !== 'LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE' && (caught.status === 401 || caught.status === 403 || AUTH_ERRORS.has(caught.problem.code))) {
+      setExpired(true); setPollPaused(true); setConfirmation(undefined); invalidatePreview();
+      if (v2) ownerDenied.current = true;
+      if (v2) {setSnapshot(undefined); setScan(null);}
+      setError(v2 ? '后端主机授权已失效或权限不足，检测与接入操作已禁用。可继续手动创作。' : '受信任的桌面会话已失效或权限不足，本地 AI 操作已禁用。请重新连接桌面会话。');
+    } else if (v2 && caught instanceof ApiError && caught.problem.code === 'LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE') {
+      invalidatePreview(); ownerDenied.current = true; setExpired(true); setPollPaused(true); setSnapshot(undefined); setScan(null);
+      setError('此后端未提供本地 AI 主机授权，无法检测主机环境。协作项目权限不能授权主机扫描；可继续手动创作。');
+    } else if (v2 && caught instanceof ApiError && caught.problem.code.startsWith('LOCAL_AI_SCOPE_')) {
+      invalidatePreview();
+      setError('检测范围、预览时效或授权已变化。请重新预览并确认；未自动重试检测。');
+    } else if (v2 && caught instanceof ApiError && caught.problem.code === 'EXPERIMENTAL_FEATURE_DISABLED') {
+      invalidatePreview(); setExpired(true); setError('此后端尚未开启 V2 环境检测，可继续手动创作。');
     } else {
       const code = caught instanceof ApiError && /^[A-Z0-9_]{1,80}$/.test(caught.problem.code) ? `（${caught.problem.code}）` : '';
       setError(`本地 AI 操作未完成${code}。已有结果已保留，请重试。`);
@@ -110,15 +180,45 @@ export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMuta
   async function refresh(signal?: AbortSignal) {
     const current = ++generation.current;
     const result = await discovery.snapshot(signal);
-    if (!mounted.current || current !== generation.current) return;
+    if (!isCurrent() || current !== generation.current) return;
     setSnapshot(result); setScan(result.scan); setRoots(result.settings.scan_roots.join('\n')); setLoading(false);
   }
   useEffect(() => {
     mounted.current = true;
     const controller = new AbortController();
-    void refresh(controller.signal).catch(caught => {if (controller.signal.aborted) return; report(caught); if (mounted.current) setLoading(false);});
-    return () => {mounted.current = false; generation.current++; pollGeneration.current++; controller.abort();};
+    void refresh(controller.signal).catch(caught => {if (controller.signal.aborted) return; report(caught); if (mounted.current && isCurrentOwner()) setLoading(false);});
+    return () => {mounted.current = false; generation.current++; pollGeneration.current++; previewEpoch.current++; previewController.current?.abort(); controller.abort();};
   }, []);
+
+  function invalidatePreview() {
+    previewEpoch.current++; previewController.current?.abort(); previewFlight.current = false;
+    setScopePreview(undefined); setPreviewBusy(false); setPreviewOpen(false);
+  }
+  useEffect(() => {
+    if (!v2) return;
+    if (previouslyMutable.current && !canMutate) {
+      invalidatePreview(); generation.current++; pollGeneration.current++; setExpired(true); setPollPaused(true);
+      setSnapshot(undefined); setScan(null); setConfirmation(undefined); setRuntimeForm(undefined); setRegistrationForm(undefined);
+      setError(ownerInvalidated ? '项目或会话已改变，原检测确认已清除。请重新打开模型中心。' : '后端主机权限已撤回，检测与接入操作已禁用。可继续手动创作。');
+    }
+    previouslyMutable.current = canMutate;
+  }, [canMutate, v2, ownerInvalidated]);
+  useEffect(() => {
+    if (v2 && previousScopeRevision.current !== scopeRevision) invalidatePreview();
+    previousScopeRevision.current = scopeRevision;
+  }, [scopeRevision, v2]);
+  async function loadPreview(common: boolean, replacing = false) {
+    if (!v2 || !isCurrent() || !permission.current || expired || scanning || runtimeForm || editRoots || busyRef.current || (previewFlight.current && !replacing)) return;
+    previewController.current?.abort();
+    const ticket = ++previewEpoch.current, controller = new AbortController();
+    previewController.current = controller; previewFlight.current = true;
+    setScopePreview(undefined); setIncludeCommon(common); setPreviewOpen(true); setPreviewBusy(true); setError('');
+    try {
+      const value = await v2.previewScope(common, controller.signal);
+      if (isCurrent() && permission.current && !controller.signal.aborted && ticket === previewEpoch.current) setScopePreview(value);
+    } catch (caught) {if (isCurrent() && permission.current && !controller.signal.aborted && ticket === previewEpoch.current) report(caught);}
+    finally {if (isCurrent() && ticket === previewEpoch.current) {previewFlight.current = false; setPreviewBusy(false);}}
+  }
 
   // Only the current scan owns updates. Cancel/restart and unmount invalidate
   // pending requests; a late RUNNING response cannot revive a cancelled scan.
@@ -130,7 +230,7 @@ export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMuta
     const poll = async () => {
       try {
         const result = await discovery.scanStatus(scanId, controller.signal);
-        if (!mounted.current || controller.signal.aborted || current !== pollGeneration.current) return;
+        if (!isCurrent() || controller.signal.aborted || current !== pollGeneration.current) return;
         setScan(result);
         if (!activeScan(result)) setCancelRequested(false);
         if (activeScan(result)) timer = setTimeout(poll, 1000);
@@ -151,7 +251,7 @@ export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMuta
     if (!scan || activeScan(scan) || expired) return;
     const current = generation.current, controller = new AbortController();
     void discovery.snapshot(controller.signal).then(result => {
-      if (mounted.current && !controller.signal.aborted && current === generation.current) setSnapshot(result);
+      if (isCurrent() && !controller.signal.aborted && current === generation.current) setSnapshot(result);
     }).catch(caught => {if (!controller.signal.aborted && current === generation.current) report(caught);});
     return () => controller.abort();
   }, [scan?.id, scanning, expired]);
@@ -160,37 +260,39 @@ export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMuta
     const current = ++generation.current;
     try {
       const result = await discovery.snapshot();
-      if (!mounted.current || current !== generation.current) return;
+      if (!isCurrent() || current !== generation.current) return;
       setSnapshot(result); setScan(result.scan); setStateUncertain(false);
       setConfirmation(undefined); setRegistrationForm(undefined);
       onRegistryChange?.();
     } catch (caught) {
-      if (!mounted.current || current !== generation.current) return;
+      if (!isCurrent() || current !== generation.current) return;
       setStateUncertain(true);
       if (caught instanceof ApiError && (caught.status === 401 || caught.status === 403 || AUTH_ERRORS.has(caught.problem.code))) report(caught);
       else setError(previous => `${previous} 状态重新读取失败，请重新读取后再操作。`.trim());
     }
   }
   async function run(key: string, task: () => Promise<void>, recoverOnFailure = false) {
-    if (!mutable || !snapshot || loading || busyRef.current || (scanning && key !== 'cancel') || (stateUncertain && key !== 'refresh-state')) return;
+    if (!mutable || (v2 && (!permission.current || !isCurrent())) || !snapshot || loading || busyRef.current || (scanning && key !== 'cancel') || (stateUncertain && key !== 'refresh-state')) return;
+    if (v2) invalidatePreview();
     generation.current++; busyRef.current = true; setBusy(key); setError('');
     try {await task();} catch (caught) {
       report(caught);
-      if (recoverOnFailure && mounted.current) {
+      if (recoverOnFailure && isCurrent()) {
         // Validation can revoke a registration before a failed response arrives.
         // Never retain routing authority or an old license confirmation on error.
         setStateUncertain(true); setConfirmation(undefined); setRegistrationForm(undefined);
         if (!(caught instanceof ApiError && (caught.status === 401 || caught.status === 403 || AUTH_ERRORS.has(caught.problem.code)))) await recoverProtectedState();
       }
-    } finally {busyRef.current = false; if (mounted.current) setBusy('');}
+    } finally {busyRef.current = false; if (isCurrent()) setBusy('');}
   }
-  async function scanAction(cancel = false) {
+  async function scanAction(cancel = false, scope?: LocalAiScanScope) {
+    if (v2 && !cancel && (!scope || scope !== scopePreview || !permission.current)) return;
     await run(cancel ? 'cancel' : 'scan', async () => {
       pollGeneration.current++; setPollPaused(true); setPollVersion(value => value + 1); generation.current++;
       try {
-        const result = cancel && scan ? await discovery.cancelScan(scan.id) : await discovery.scan();
-        if (mounted.current) {setScan(result); setCancelRequested(cancel && activeScan(result)); setCollapsed(false); setConfirmation(undefined);}
-      } finally {if (mounted.current) setPollPaused(false);}
+        const result = cancel && scan ? await discovery.cancelScan(scan.id) : v2 && scope ? await v2.confirmScan(scope.scope_digest) : await legacyDiscovery.scan();
+        if (isCurrent()) {setScan(result); setCancelRequested(cancel && activeScan(result)); if (!v2) setCollapsed(false); setConfirmation(undefined);}
+      } finally {if (isCurrent()) setPollPaused(false);}
     });
   }
   function updateRegistration(registration: LocalModelRegistration) {
@@ -201,14 +303,14 @@ export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMuta
     await run(`${model.id}:${action}`, async () => {
       if (action === 'validate') {
         const result = await discovery.validate(model.id);
-        if (mounted.current) {
+        if (isCurrent()) {
           setScan(current => current ? {...current, candidates: current.candidates.map(item => item.id === result.id ? result : item)} : current);
           const registered = snapshot?.registrations.find(item => item.id === result.id || item.candidate_id === result.id);
           if (registered) updateRegistration({...registered, ...result, id: registered.id, enabled: false});
         }
       } else {
         const result = await discovery.register(model.id);
-        if (mounted.current) updateRegistration(result);
+        if (isCurrent()) updateRegistration(result);
       }
     }, true);
   }
@@ -216,15 +318,16 @@ export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMuta
     await run(`${model.id}:${action}`, async () => {
       if (action === 'remove') {
         await discovery.remove(model.id);
-        if (mounted.current) {setSnapshot(current => current ? {...current, registrations: current.registrations.filter(item => item.id !== model.id)} : current); onRegistryChange?.();}
+        if (isCurrent()) {setSnapshot(current => current ? {...current, registrations: current.registrations.filter(item => item.id !== model.id)} : current); onRegistryChange?.();}
       } else {
         const result = await discovery[action](model.id);
-        if (mounted.current) updateRegistration(result);
+        if (isCurrent()) updateRegistration(result);
       }
-      if (mounted.current) setConfirmation(undefined);
+      if (isCurrent()) setConfirmation(undefined);
     }, true);
   }
   function editRuntime(runtime?: LocalRuntime) {
+    if (v2) invalidatePreview();
     const configured = snapshot?.settings.runtimes.find(item => item.id === runtime?.id);
     const saved = configured || scan?.candidates.find(item => item.runtime_id === runtime?.id)?.runtime_config;
     setRuntimeId(configured?.id);
@@ -236,7 +339,7 @@ export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMuta
   }
   async function saveRuntime(event: FormEvent) {
     event.preventDefault(); if (!runtimeForm) return;
-    await run('runtime', async () => {await discovery.saveRuntime(runtimeForm, runtimeId); if (mounted.current) {setRuntimeForm(undefined); await refresh();}}, true);
+    await run('runtime', async () => {await discovery.saveRuntime(runtimeForm, runtimeId); if (isCurrent()) {setRuntimeForm(undefined); await refresh();}}, true);
   }
   const runtimeField = (key: 'name' | 'endpoint' | 'model_id' | 'health_endpoint' | 'executable' | 'model_path' | 'context_size' | 'gpu_layers' | 'threads' | 'batch_size', label: string, numeric = false, required = false) => <label>{label}<input type={numeric ? 'number' : 'text'} required={required} min={numeric ? key === 'gpu_layers' ? 0 : key === 'context_size' ? 512 : 1 : undefined} max={numeric ? ({context_size: 131072, gpu_layers: 999, threads: 512, batch_size: 4096} as Record<string, number>)[key] : undefined} value={runtimeForm?.[key] ?? ''} onChange={event => setRuntimeForm(current => current ? {...current, [key]: numeric ? event.target.value === '' ? undefined : Number(event.target.value) : event.target.value} : current)}/></label>;
   const registrations = snapshot?.registrations || [];
@@ -248,27 +351,36 @@ export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMuta
   registrations.filter(item => !models.some(row => row.registration?.id === item.id)).forEach(registration => models.push({model: registration, registration}));
   const controlsLocked = locked || scanning;
 
-  return <Panel title="Local AI · 本地 AI 发现" className="local-ai" actions={<Button variant="ghost" onClick={() => setCollapsed(value => !value)} aria-expanded={!collapsed}>{collapsed ? '展开本地 AI' : !scan && !registrations.length ? '跳过 / 收起' : '收起'}</Button>}>
+  return <Panel title="Local AI · 本地 AI 发现" className="local-ai" actions={<Button variant="ghost" onClick={() => {if (v2) invalidatePreview(); setCollapsed(value => !value);}} aria-expanded={!collapsed}>{collapsed ? '展开本地 AI' : !scan && !registrations.length ? '跳过 / 收起' : '收起'}</Button>}>
     {!collapsed && <div className="local-ai__body">
-      <p>只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。</p>
-      <p className="local-ai__muted">扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。</p>
+      <p>{v2 ? '先预览后端主机的检测范围，再明确确认。发现 → 验证 → 注册 → 确认启用；不会启动 Runtime 或加载模型。无需填写路径或端口即可查看已有配置。' : '只读检测本机 Runtime 和指定模型目录。发现 → 验证 → 注册 → 确认启用 → 按需启动；扫描不会启动 Runtime 或加载模型。'}</p>
+      <p className="local-ai__muted">{v2 ? '范围仅限运行后端的主机（BACKEND_HOST），云端结果不代表你的电脑。未配置模型或跳过检测时，仍可手动创作。' : '扫描结果保留在本地，不上传路径、文件名或硬件信息到云 Provider；不会读取小说正文或私人文档。'}</p>
       {error && <StatusMessage tone="error">{error}</StatusMessage>}
       {snapshot?.persistence_error && <StatusMessage tone="warning">本地 AI 配置无法完整读取，请检查本地服务。已有模型文件不受影响。</StatusMessage>}
       {stateUncertain && <StatusMessage tone="warning">当前启用状态尚未确认；重新读取成功前，所有接入变更已暂时禁用。</StatusMessage>}
-      {!mutable && !error && <StatusMessage tone="warning">本地 AI 操作需要受信任的桌面会话。</StatusMessage>}
+      {!mutable && !error && <StatusMessage tone="warning">{v2 ? '本地 AI 检测需要后端主机授权。未授权时可继续手动创作。' : '本地 AI 操作需要受信任的桌面会话。'}</StatusMessage>}
       <div className="local-ai__actions">
-        <Button variant="primary" disabled={locked || scanning} loading={busy === 'scan'} onClick={() => void scanAction()}>{scan ? '重新扫描' : '检测本机 AI 环境'}</Button>
+        <Button variant="primary" disabled={locked || scanning || previewBusy || (!!v2 && (!!runtimeForm || editRoots))} loading={busy === 'scan'} onClick={() => v2 ? void loadPreview(false) : void scanAction()}>{v2 ? scan ? '重新预览检测范围' : '预览 AI 检测范围' : scan ? '重新扫描' : '检测本机 AI 环境'}</Button>
         {scanning && <Button disabled={locked || cancelRequested} loading={busy === 'cancel'} onClick={() => void scanAction(true)}>{cancelRequested ? '正在取消扫描…' : '取消扫描'}</Button>}
-        <Button disabled={controlsLocked} onClick={() => editRuntime()}>添加本地 Runtime</Button>
-        <Button disabled={controlsLocked} onClick={() => setEditRoots(value => !value)}>配置扫描目录</Button>
+        <Button disabled={controlsLocked} onClick={() => editRuntime()}>{v2 ? '高级：添加本地 Runtime' : '添加本地 Runtime'}</Button>
+        <Button disabled={controlsLocked} onClick={() => {if (v2) invalidatePreview(); setEditRoots(value => !value);}}>{v2 ? '高级：配置扫描目录' : '配置扫描目录'}</Button>
         {stateUncertain && <Button disabled={!!busy || !mutable} onClick={() => void run('refresh-state', recoverProtectedState)}>重新读取状态</Button>}
-        {!snapshot && !loading && <Button disabled={!!busy || expired} onClick={() => {setLoading(true); setError(''); void refresh().catch(caught => {report(caught); if (mounted.current) setLoading(false);});}}>重试读取</Button>}
+        {!snapshot && !loading && <Button disabled={!!busy || expired} onClick={() => {setLoading(true); setError(''); void refresh().catch(caught => {report(caught); if (mounted.current && isCurrentOwner()) setLoading(false);});}}>重试读取</Button>}
       </div>
+      {v2 && (!!runtimeForm || editRoots) && <p role="status">先保存或取消高级配置，再预览检测范围。</p>}
+      {v2 && previewOpen && <section className="local-ai__confirmation" aria-label="确认后端主机检测范围">
+        <h3>确认本次检测范围</h3>
+        <label className="local-ai__check"><input type="checkbox" checked={includeCommon} disabled={!mutable || !!busy} onChange={event => void loadPreview(event.target.checked, true)}/>本次包含后端主机的常用模型目录（可选）</label>
+        {previewBusy && <p role="status">正在读取有效范围，尚未开始检测…</p>}
+        {scopePreview && <ScanScopeDetails scope={scopePreview}/>}
+        <p>确认仅适用于当前范围和主机授权，预览短期有效；取消或更改范围后需重新确认。</p>
+        <div className="local-ai__actions"><Button variant="primary" disabled={locked || scanning || previewBusy || !scopePreview} onClick={() => scopePreview && void scanAction(false, scopePreview)}>确认此范围并检测</Button><Button variant="ghost" onClick={invalidatePreview}>取消预览</Button></div>
+      </section>}
       {loading && <p role="status">正在读取本地 AI 状态…</p>}
       {scan && <div className="local-ai__summary" role="status"><Badge tone={tone(scan.status)}>{scan.status}</Badge><span>发现 {candidates.length} 个模型 · 已注册 {registrations.length} 个 · {stateUncertain ? '启用状态待确认' : `已启用 ${registrations.filter(item => item.enabled).length} 个`} · {scan.runtimes.filter(item => item.status === 'RUNNING').length} 个 Runtime 可用 · {scan.errors.length} 个检测问题</span>{scanning && <span>{cancelRequested ? '已请求取消，等待当前只读探测结束…' : '扫描中，已显示当前部分结果…'}</span>}{scan.status === 'CANCELLED' && <span>扫描已取消，保留已发现结果。</span>}</div>}
       {!!scan?.errors.length && <StatusMessage tone="warning">部分检测未完成，不影响其他结果。{scan.errors.map((item, index) => <p key={index}>{typeof item === 'string' ? item : [item.runtime_id, item.code].filter(Boolean).join(' · ') || 'Runtime 检测未完成'}</p>)}</StatusMessage>}
-      {editRoots && <form className="local-ai__form" aria-label="扫描目录配置" onSubmit={event => {event.preventDefault(); void run('roots', async () => {await discovery.settings(roots.split(/\r?\n/).map(value => value.trim()).filter(Boolean)); if (mounted.current) {setEditRoots(false); await refresh();}}, true);}}>
-        <label className="local-ai__wide">模型目录（每行一个完整路径）<textarea rows={4} value={roots} placeholder="D:\AI\models" onChange={event => setRoots(event.target.value)}/></label>
+      {editRoots && <form className="local-ai__form" aria-label="扫描目录配置" onSubmit={event => {event.preventDefault(); void run('roots', async () => {await discovery.settings(roots.split(/\r?\n/).map(value => value.trim()).filter(Boolean)); if (isCurrent()) {setEditRoots(false); await refresh();}}, true);}}>
+        <label className="local-ai__wide">模型目录（每行一个完整路径）<textarea rows={4} value={roots} placeholder="D:\AI\models" onChange={event => {if (v2) invalidatePreview(); setRoots(event.target.value);}}/></label>
         <p className="local-ai__wide">仅扫描明确配置的目录，受深度和数量限制；保存目录不会开始扫描。请勿选择磁盘根目录或私人文档目录。</p>
         <div className="local-ai__actions local-ai__wide"><Button type="submit" disabled={controlsLocked}>保存扫描目录</Button><Button type="button" variant="ghost" onClick={() => {setEditRoots(false); setRoots(snapshot?.settings.scan_roots.join('\n') || '');}}>取消</Button></div>
       </form>}
@@ -286,11 +398,11 @@ export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMuta
       </form>}
       {snapshot && <Hardware value={snapshot.hardware}/>}
       {!!runtimeMap.size && <section className="local-ai__section" aria-label="发现的 Runtime"><h3>本地 Runtime（{runtimeMap.size}）</h3><div className="local-ai__list">{Array.from(runtimeMap.values()).map(runtime => <article key={runtime.id} aria-label={runtime.name || runtime.id}><header><strong>{runtime.name || runtime.id}</strong><Badge tone={tone(runtime.status || 'NOT_VERIFIED')}>{runtime.status || 'NOT_VERIFIED'}</Badge></header><p>{runtime.type || runtime.runtime_type} · {runtime.management || 'EXTERNAL'}</p><p>地址：{runtime.endpoint || '未配置'} · 版本：{runtime.version || '未检测'}</p><p>运行状态：{runtime.status === 'RUNNING' ? '正在运行' : runtime.status === 'NOT_FOUND' ? '未发现运行服务' : '未确认'}</p>{runtime.executable_exists !== undefined && <p>Executable：{runtime.executable_exists ? '已找到' : '未找到'} · CUDA：{runtime.cuda_status || '未验证'}</p>}{runtime.notes?.map((note, index) => <p key={index}>{note}{localAiDiagnostic(note) ? `：${localAiDiagnostic(note)}` : ''}</p>)}<Button disabled={controlsLocked} onClick={() => editRuntime(runtime)}>配置 Runtime</Button></article>)}</div></section>}
-      {!loading && !models.length && <EmptyState title={scan ? '尚未发现模型' : '尚未开始扫描'} detail="可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。"/>}
+      {!loading && !models.length && (!v2 || !!snapshot) && <EmptyState title={scan ? '尚未发现模型' : '尚未开始扫描'} detail={v2 ? '未配置或未发现可用模型时，可继续手动创作。可先预览已有服务；自定义路径与端口仅用于高级配置。' : '可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。'}/>}
       {GROUPS.map(group => {const rows = models.filter(row => groupOf(row.model) === group); return rows.length ? <section className="local-ai__section" key={group} aria-label={group}><h3>{group}（{rows.length}）</h3><div className="local-ai__list">{rows.map(({model, registration}) => {const current = registration || model; return <article key={model.id} aria-label={`${model.display_name} ${model.local === false ? "非本地来源" : "本地模型"}`}>
         <header><strong>{model.display_name}</strong><Badge tone={stateUncertain ? 'warning' : tone(current.status)}>{stateUncertain ? 'NOT_VERIFIED' : current.status}</Badge></header>
         <div className="local-ai__actions"><Badge tone={model.local === false ? "warning" : "neutral"}>{model.local === false ? "云端或非本地来源 · 禁止本地路由" : "本地候选"}</Badge><Badge tone={stateUncertain ? 'warning' : registration?.enabled ? 'success' : 'neutral'}>{stateUncertain && registration ? '接入状态待确认' : registration?.enabled ? '已启用' : registration ? '已注册 · 未启用' : '候选 · 未注册'}</Badge><Badge tone={current.verified ? 'success' : 'warning'}>{current.verified ? '已通过实际生成验证' : '尚未实际生成验证'}</Badge></div>
-        <dl className="local-ai__facts"><div><dt>Runtime / 来源</dt><dd>{model.runtime_type} · {model.runtime_id} · {model.source}</dd></div><div><dt>模型族 / 模型 ID</dt><dd>{model.family} · {model.model_id}</dd></div><div><dt>声明能力</dt><dd>{current.declared_capabilities.join(' · ') || 'UNKNOWN'}</dd></div><div><dt>已验证能力</dt><dd>{current.verified_capabilities.join(' · ') || 'CAPABILITY_UNVERIFIED'}</dd></div><div><dt>只读接入验证</dt><dd>{current.validated_at ? '已完成检查（不代表实际生成验证）' : '尚未验证 / 需重新验证'}</dd></div><div><dt>兼容性</dt><dd>{COMPATIBILITY[current.compatible] || current.compatible || 'Not Verified · 未验证'}</dd></div><div><dt>模型路径 / 文件 / 来源</dt><dd>{model.local_path || model.model_name || model.source}</dd></div></dl>
+        <dl className="local-ai__facts"><div><dt>Runtime / 来源</dt><dd>{model.runtime_type} · {model.runtime_id} · {model.source}</dd></div><div><dt>模型族 / 模型 ID</dt><dd>{model.family} · {model.model_id}</dd></div><div><dt>声明能力</dt><dd>{current.declared_capabilities.join(' · ') || 'UNKNOWN'}</dd></div><div><dt>已验证能力</dt><dd>{current.verified_capabilities.join(' · ') || 'CAPABILITY_UNVERIFIED'}</dd></div><div><dt>只读接入验证</dt><dd>{current.validated_at ? '已完成检查（不代表实际生成验证）' : '尚未验证 / 需重新验证'}</dd></div><div><dt>兼容性</dt><dd>{COMPATIBILITY[current.compatible] || current.compatible || 'Not Verified · 未验证'}</dd></div><div><dt>模型路径 / 文件 / 来源</dt><dd>{v2 ? <details><summary>高级：查看模型来源详情</summary>{model.local_path || model.model_name || model.source}</details> : model.local_path || model.model_name || model.source}</dd></div></dl>
         <ModelEvidence model={current}/>
         {!!current.validation_notes?.length && <ul className="local-ai__notes">{current.validation_notes.map((note, index) => <li key={index}>{note}{localAiDiagnostic(note) ? `：${localAiDiagnostic(note)}` : ''}</li>)}</ul>}
         {!!current.enable_blockers?.length && <section aria-label="启用前的诊断与下一步"><strong>启用前仍需：</strong><ul className="local-ai__notes">{current.enable_blockers.map(code => <li key={code}>{code}：{localAiDiagnostic(code) || '该检查尚未通过，请核对当前元数据并重新验证；不会自动修复环境。'}</li>)}</ul></section>}
@@ -299,7 +411,7 @@ export function LocalAiDiscovery({canMutate = false, onRegistryChange}: {canMuta
           {!registration && <><Button disabled={controlsLocked || !model.validated_at} title={!model.validated_at ? '请先验证候选模型' : undefined} onClick={() => void candidateAction(model, 'register')}>注册</Button></>}
           {registration && <>{registration.enabled ? <Button disabled={controlsLocked} onClick={() => void registrationAction(registration, 'disable')}>停用</Button> : <Button disabled={controlsLocked || !registration.enable_eligible} onClick={() => setConfirmation({kind: 'enable', model: registration})}>启用</Button>}<Button disabled={controlsLocked} onClick={() => setRegistrationForm({id: registration.id, workflow_adapter_id: registration.workflow_adapter_id || '', license_confirmed: registration.license_confirmed ?? false})}>配置接入条件</Button><Button variant="ghost" disabled={controlsLocked} onClick={() => setConfirmation({kind: 'remove', model: registration})}>移除注册</Button></>}
         </div>
-        {registrationForm?.id === registration?.id && registrationForm && <form className="local-ai__form" aria-label={`${model.display_name} 接入条件`} onSubmit={event => {event.preventDefault(); void run('registration-config', async () => {const result = await discovery.configureRegistration(registrationForm.id, {workflow_adapter_id: registrationForm.workflow_adapter_id, license_confirmed: registrationForm.license_confirmed}); if (mounted.current) {updateRegistration(result); setRegistrationForm(undefined);}}, true);}}>
+        {registrationForm?.id === registration?.id && registrationForm && <form className="local-ai__form" aria-label={`${model.display_name} 接入条件`} onSubmit={event => {event.preventDefault(); void run('registration-config', async () => {const result = await discovery.configureRegistration(registrationForm.id, {workflow_adapter_id: registrationForm.workflow_adapter_id, license_confirmed: registrationForm.license_confirmed}); if (isCurrent()) {updateRegistration(result); setRegistrationForm(undefined);}}, true);}}>
           <label className="local-ai__wide">Workflow Adapter<select value={registrationForm.workflow_adapter_id} onChange={event => setRegistrationForm({...registrationForm, workflow_adapter_id: event.target.value})}><option value="">未选择</option>{snapshot?.workflow_adapters?.map(adapter => <option value={adapter.id} key={adapter.id}>{adapter.display_name || adapter.id}{adapter.capability ? ` · ${adapter.capability}` : ''}</option>)}</select></label>
           <label className="local-ai__check local-ai__wide"><input type="checkbox" checked={registrationForm.license_confirmed} onChange={event => setRegistrationForm({...registrationForm, license_confirmed: event.target.checked})}/>我已核对该模型授权，允许在约定用途内使用</label><p className="local-ai__wide">发现模型不代表获得商业授权；勾选仅记录你的确认，不提供商业使用保证。无兼容工作流时仍无法启用。</p>
           <div className="local-ai__actions local-ai__wide"><Button type="submit" disabled={controlsLocked}>保存接入条件</Button><Button type="button" variant="ghost" onClick={() => setRegistrationForm(undefined)}>取消</Button></div>

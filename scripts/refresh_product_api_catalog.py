@@ -37,6 +37,34 @@ def references(value):
             yield from references(item)
 
 
+def refresh_discovery_authority(owner, route):
+    """Rebind this changed surface's annotations to its mounted host dependency.
+
+    Other historical owner annotations remain intact. This is source inventory,
+    not a claim that endpoint inspection constitutes authorization acceptance.
+    """
+    if route.endpoint.__module__ != 'app.model_center.discovery_api':
+        return
+    dependencies = [item.call for item in route.dependant.dependencies]
+    require = next((item for item in dependencies if item.__name__ == 'require_session'), None)
+    host = inspect.getclosurevars(require).nonlocals.get('host_authorization') if require else None
+    resolver = host.__globals__.get('resolve_discovery_authority') if callable(host) else None
+    if not callable(require) or not callable(host) or not callable(resolver):
+        raise RuntimeError('Mounted discovery catalog requires current host-authority provenance')
+    name = lambda function: function.__module__ + '.' + function.__qualname__
+    gated = route.path.endswith('/environment') or '/onboarding/' in route.path
+    owner.update(
+        authority_read_method='Mounted dependency closure and current Host resolver source inspection; not runtime verification or a complete authorization proof.',
+        observed_authority_functions=[name(host), name(resolver), name(require)],
+        router_dependency_functions=[name(item) for item in dependencies],
+        conditional_feature_checks=[{'conditional': False, 'expression': "'narrative_production_v2'",
+            'function': name(route.endpoint) if route.path.endswith('/environment') else
+            'app.model_center.discovery_api.create_local_discovery_router.<locals>.onboarding'}] if gated else [],
+        observed_reused_feature_flags=['narrative_production_v2'] if gated else [],
+        original_service_classes=['app.model_center.discovery.LocalDiscoveryService'],
+    )
+
+
 def main():
     old = json.loads(gzip.decompress((ROOT / 'API_CATALOG_DETAIL.json.gz').read_bytes()))
     previous = {(item['method'], item['path']): item for item in old['operations']}
@@ -91,6 +119,7 @@ def main():
             'original_service_classes': [], 'router_dependency_functions': [],
         })
         owner.update(endpoint=endpoint.__module__ + '.' + endpoint.__qualname__, source_file=file, source_line=line)
+        refresh_discovery_authority(owner, route)
         refs = set(references(operation))
         pending = list(refs)
         while pending:

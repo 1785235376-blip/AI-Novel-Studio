@@ -30,6 +30,7 @@ class ProbeFailure(ValueError):
 class LocalProbeClient:
     def __init__(self, timeout: float = 2.0):
         self.timeout = timeout
+        self.max_response_bytes = MAX_RESPONSE_BYTES
         self.open = _runtime_probe_opener().open
 
     def json(self, endpoint: str, path: str, *, body: dict | None = None) -> Any:
@@ -48,10 +49,10 @@ class LocalProbeClient:
                 while True:
                     if time.monotonic() >= deadline:
                         raise ProbeFailure('LOCAL_AI_PROBE_TIMEOUT')
-                    block = read(min(65536, MAX_RESPONSE_BYTES + 1 - len(chunks)))
+                    block = read(min(65536, self.max_response_bytes + 1 - len(chunks)))
                     if not block: break
                     chunks.extend(block)
-                    if len(chunks) > MAX_RESPONSE_BYTES:
+                    if len(chunks) > self.max_response_bytes:
                         raise ProbeFailure('LOCAL_AI_RESPONSE_TOO_LARGE')
                 payload = bytes(chunks)
                 def reject_constant(_value): raise ValueError('non-finite JSON')
@@ -87,17 +88,17 @@ def infer_family(name: str) -> tuple[str, list[str]]:
     return 'UNKNOWN', []
 
 
-def gguf_metadata(path: Path) -> dict:
+def gguf_metadata(path: Path, *, cancel=None, max_bytes=None) -> dict:
     """Header and limited metadata only: never tensor contents or whole model hashes."""
     result = {'file_exists': False, 'header_valid': False, 'metadata_complete': False}
     try:
+        if cancel is not None and cancel.is_set(): return result
         safe_local_path(str(path))
         if not path.is_file() or path.suffix.casefold() != '.gguf':
             return result
-        stat = path.stat()
-        result.update(file_exists=True, size=stat.st_size, modified_ns=stat.st_mtime_ns)
-        with path.open('rb') as file:
-            data = file.read(min(stat.st_size, 256 * 1024))
+        from .discovery_environment import _metadata_bytes
+        data, facts = _metadata_bytes(path, 256 * 1024 if max_bytes is None else max_bytes, cancel=cancel)
+        result.update(file_exists=True, size=facts.st_size, modified_ns=facts.st_mtime_ns)
         if len(data) < 24 or data[:4] != b'GGUF':
             return result
         version, tensors, count = struct.unpack_from('<IQQ', data, 4)
@@ -145,7 +146,8 @@ def scan_gguf_roots(roots: list[str], cancel: Event, deadline: float):
             stack = [(base, 0)]
             while stack and not cancel.is_set() and time.monotonic() < deadline:
                 directory, depth = stack.pop()
-                with os.scandir(directory) as children:
+                from .discovery_environment import _scoped_scandir
+                with _scoped_scandir(directory, cancel) as children:
                     for item in children:
                         entries += 1
                         if entries > MAX_ENTRIES or files >= MAX_FILES or cancel.is_set() or time.monotonic() >= deadline:
@@ -153,19 +155,22 @@ def scan_gguf_roots(roots: list[str], cancel: Event, deadline: float):
                         if item.is_symlink() or (getattr(item.stat(follow_symlinks=False), 'st_file_attributes', 0) & 0x400):
                             continue
                         if item.is_dir(follow_symlinks=False) and depth < MAX_DEPTH:
-                            stack.append((Path(item.path), depth+1))
+                            stack.append((directory / item.name, depth+1))
                         elif item.is_file(follow_symlinks=False) and item.name.casefold().endswith('.gguf'):
                             files += 1
-                            yield Path(item.path)
+                            yield directory / item.name
         except (OSError, ValueError):
             continue
 
 
-def host_hardware() -> dict:
-    result = {'platform': platform.system(), 'architecture': platform.machine(), 'cpu': platform.processor() or platform.machine(),
+def host_hardware(*, cancel=None) -> dict:
+    if cancel is not None and cancel.is_set(): raise ProbeFailure('LOCAL_AI_CANCELLED')
+    # platform.processor() may execute uname on POSIX; discovery stays passive.
+    result = {'platform': platform.system(), 'architecture': platform.machine(), 'cpu': platform.machine(),
               'ram_bytes': None, 'logical_cpu_count': os.cpu_count(), 'gpus': [], 'status': 'NOT_VERIFIED', 'notes': []}
     from .discovery_environment import windows_acceleration_components
-    result.update(windows_acceleration_components())
+    result.update(windows_acceleration_components(cancel=cancel))
+    if cancel is not None and cancel.is_set(): raise ProbeFailure('LOCAL_AI_CANCELLED')
     if platform.system() == 'Windows':
         try:
             from ..provider_runtime_v2_host_hardware_inventory import WindowsHostHardwareProbe
@@ -184,20 +189,26 @@ def host_hardware() -> dict:
     return result
 
 
-def executable_metadata(path_value: str) -> dict:
+def executable_metadata(path_value: str, *, cancel=None) -> dict:
     """Passive filesystem/Windows version-resource metadata, never --version."""
     result = {'executable_exists': False, 'version': None, 'version_source': 'NOT_VERIFIED', 'cuda_status': 'NOT_VERIFIED'}
-    if not path_value: return result
+    if not path_value or (cancel is not None and cancel.is_set()): return result
     try:
         path = Path(safe_local_path(path_value))
         if not path.is_file(): return result
         result['executable_exists'] = True
         result['executable_size'] = path.stat().st_size
         # CUDA DLL presence is a component hint, not proof of a functional CUDA device.
-        for index, sibling in enumerate(path.parent.iterdir()):
-            if index >= 256: break
-            if sibling.name.casefold().startswith('ggml-cuda') and sibling.suffix.casefold() == '.dll' and not sibling.is_symlink():
-                result['cuda_status'] = 'COMPONENT_FOUND_NOT_VERIFIED'; break
+        from itertools import islice
+        safe_local_path(str(path.parent))
+        if cancel is not None and cancel.is_set(): return result
+        from .discovery_environment import _scoped_scandir
+        with _scoped_scandir(path.parent, cancel) as children:
+            for sibling in islice(children, 256):
+                if cancel is not None and cancel.is_set(): return result
+                if sibling.name.casefold().startswith('ggml-cuda') and Path(sibling.name).suffix.casefold() == '.dll' and not sibling.is_symlink():
+                    result['cuda_status'] = 'COMPONENT_FOUND_NOT_VERIFIED'; break
+        if cancel is not None and cancel.is_set(): return result
         if platform.system() == 'Windows':
             import ctypes
             from ctypes import wintypes
@@ -206,12 +217,16 @@ def executable_metadata(path_value: str) -> dict:
             size_function.argtypes = [wintypes.LPCWSTR, ctypes.POINTER(wintypes.DWORD)]
             size_function.restype = wintypes.DWORD
             ignored = wintypes.DWORD()
+            if cancel is not None and cancel.is_set(): return result
+            safe_local_path(str(path))
             size = size_function(str(path), ctypes.byref(ignored))
             if not 0 < size <= 1024 * 1024: return result
             data = ctypes.create_string_buffer(size)
             get = version.GetFileVersionInfoW
             get.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD, ctypes.c_void_p]
             get.restype = wintypes.BOOL
+            if cancel is not None and cancel.is_set(): return result
+            safe_local_path(str(path))
             if not get(str(path), 0, size, data): return result
             query = version.VerQueryValueW
             query.argtypes = [ctypes.c_void_p, wintypes.LPCWSTR, ctypes.POINTER(ctypes.c_void_p), ctypes.POINTER(wintypes.UINT)]
@@ -274,17 +289,22 @@ def ollama_locality_evidence(tag: Any, show: Any) -> dict:
     return result
 
 
-def read_ollama_local_metadata(client, endpoint: str, model_name: str, enumerate_models) -> dict:
+def read_ollama_local_metadata(client, endpoint: str, model_name: str, enumerate_models, *, cancel=None) -> dict:
     """One common strict proof for discovery and every legacy Ollama prompt leaf."""
     endpoint = local_endpoint(endpoint)
+    def read(path, *, body=None):
+        if cancel is not None and cancel.is_set(): raise ProbeFailure('LOCAL_AI_CANCELLED')
+        value = client.json(endpoint, path, body=body)
+        if cancel is not None and cancel.is_set(): raise ProbeFailure('LOCAL_AI_CANCELLED')
+        return value
     def tag():
-        rows = enumerate_models(read_json=lambda path: client.json(endpoint, path), include_details=True, strict=True)
+        rows = enumerate_models(read_json=read, include_details=True, strict=True)
         matches = [item for item in rows if item.get('name') == model_name]
         return matches[0] if len(matches) == 1 else None
     try:
         before = tag()
         if ollama_remote_declaration(before) == 'REMOTE': return ollama_locality_evidence(before, None)
-        show = client.json(endpoint, '/api/show', body={'model': model_name, 'verbose': False})
+        show = read('/api/show', body={'model': model_name, 'verbose': False})
         checked = ollama_locality_evidence(before, show)
         if checked['source_locality'] != 'LOCAL_VERIFIED': return checked
         after_checked = ollama_locality_evidence(tag(), show)

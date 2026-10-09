@@ -1,0 +1,20 @@
+{
+  "status": "REVIEWED_FOR_ADDITIVE_V2_MANIFEST_ONLY",
+  "parent_head": "99c43b6892038233c390be2ae61acb669163d0b5",
+  "previous_nodes": 10178,
+  "current_nodes": 10335,
+  "added_nodes": 157,
+  "added_by_file": {
+    "tests/test_v2_discovery_browser_fixture.py": 7,
+    "tests/test_v2_discovery_catalog.py": 3,
+    "tests/test_v2_discovery_host_authority.py": 59,
+    "tests/test_v2_discovery_onboarding_api.py": 23,
+    "tests/test_v2_discovery_scope.py": 65
+  },
+  "all_published_m2_nodes_preserved_in_order": true,
+  "published_test_and_gate_bytes_changed": [],
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "historical_skip_policy_unchanged": true,
+  "approved_source_scope": "M3 bounded host consent; original session binding incarnation; guarded metadata IO; gated owner UI; additive synthetic browser fixture; M2 accessible select-name bugfix; accurate discovery catalog authority annotations. No original tests, protected jobs, or timeouts changed.",
+  "execution_claim": "Inventory and source review only; execution is separately receipted."
+}
