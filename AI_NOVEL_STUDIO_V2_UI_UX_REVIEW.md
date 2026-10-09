@@ -401,3 +401,32 @@ M3-A is a publishable **PARTIAL** checkpoint. Exact end SHA/tree will be bound v
 PR 47's publication receipt, not self-embedded or replaced with the M2 parent.
 New-SHA full-product hosted CI and M3 browser/visual results remain pending; actual
 user Windows, real inference/quality and full M3 model/API gates remain open.
+
+## 11. M3-B file-observation UI delta
+
+The [M3-B view](MILESTONE_M3B_REPORT.md#2-actual-bounded-implementation) uses existing
+primitives/styles and 20-item local pagination. Schema-2 file observations remain
+visible without a runnable candidate; the empty state says no connectable
+candidate rather than no models. Missing fields, partial/cancelled scans, unknown
+binding and uncertain registration evidence remain explicit. Paths are advanced,
+collapsed details; index sizes, name-based hints and `NOT_RUN` generation labels
+avoid overstating readiness. Existing host/project/session lifetime fences remain.
+
+[Verification and browser limits](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+separate focused unit/build checks, first full-frontend failure and new 7+12
+browser inventory from actual execution. The additive hosted journey includes
+three viewport geometries and reload/rebinding with no repeat scan; these are test
+inputs until executed on the new SHA. Local browser remains BLOCKED, with no
+alternate artifact route. No new screenshot, keyboard or visual approval is claimed.
+
+The subsequent [corrected-source checkpoint](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+verifies full frontend **2,040 PASS / 8 skips** and build/49-file token checks.
+Legacy private drafts/cache now clear on authority loss; rebinding uses the
+original owner and does not scan automatically. Agent role display/submission
+also agree. The independent inventory grows to 14 with two legacy journeys;
+these local checks still do not establish browser or screenshot acceptance.
+
+[Final local verification](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+now includes the matching selected File/PG results and normal PG stop. This does
+not raise the 7+14 browser collection to execution or visual approval. Older
+M3-A's actual 11-case hosted pass covers only its earlier source.

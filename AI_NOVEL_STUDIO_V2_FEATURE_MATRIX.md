@@ -788,3 +788,32 @@ M3-A is a publishable **PARTIAL** checkpoint. Exact end SHA/tree will be bound v
 PR 47's publication receipt, not self-embedded or replaced with the M2 parent.
 New-SHA full-product hosted CI and M3 browser/visual results remain pending; actual
 user Windows, real inference/quality and full M3 model/API gates remain open.
+
+## 35. Append-only M3-B file-observation delta
+
+This updates evidence for only the rows below; original row text remains the
+historical baseline. Source, tests, retained failures and execution limits are in
+[MILESTONE_M3B_REPORT.md](MILESTONE_M3B_REPORT.md).
+
+| Row | Current M3-B delta; status boundary |
+| --- | --- |
+| START-03 / MODEL-04 | **EXISTS**, now exposed in the V2/schema-2 Model Center view from the existing scan. Files/indexes, runtime candidates and generation evidence are visibly distinct. Metadata/header checks still do not verify weights or inference. |
+| MODEL-05 | **PARTIAL**. Format, exact file/index byte size and family/capability hints are displayed. Diffusers size/path are only `model_index.json`; complete component/runtime compatibility is not established. |
+| MODEL-06 | **PARTIAL, unchanged**. Path-based IDs and separate locations are retained. No content digest grouping, cross-location deduplication or physical merge is implemented. |
+| MODEL-09 | **PARTIAL**. Same-scan candidate/registration associations, authorized-route state, unknown binding, missing/partial observations and uncertain registration state are projected honestly. Complete unified lifecycle vocabulary remains open. |
+| MODEL-01 / MODEL-07 / STORE-02 | **EXISTS, preserved**. Original discovery/registry owners and explicit register/configure/enable/dispatch boundaries remain; the new view never copies weights or triggers actions. |
+
+No broader MODEL/install/API/hardware or GATE-M3 row is promoted to complete.
+New browser collection is inventory only; current source and published M3-A hosted
+results retain separate identities. Full M3 remains **PARTIAL**.
+
+The [corrected-source continuation](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+adds **START-02 / MODEL-02 (still PARTIAL)** compatibility evidence for legal
+legacy host scanning and **MODEL-09 (still PARTIAL)** all-mode private-state
+purging on denial/owner change. It restores existing owner reuse rather than
+expanding host access. Browser 7+14 remains inventory only at that checkpoint.
+
+The [final local M3-B ledger](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+now includes matching 56-file File/real-PG passes. Written 10,380-node and 7+14
+browser inventories remain inventory only. No additional feature status or
+GATE-M3 status is promoted by these results.

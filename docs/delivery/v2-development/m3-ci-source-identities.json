@@ -1,0 +1,115 @@
+{
+  "source": "GitHub connector Git commit read API",
+  "commits": [
+    {
+      "sha": "9851bdd2d692df983664bc8f4597fbc05c0e2ceb",
+      "node_id": "C_kwDOUEnaNNoAKDk4NTFiZGQyZDY5MmRmOTgzNjY0YmM4ZjQ1OTdmYmMwNWMwZTJjZWI",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/9851bdd2d692df983664bc8f4597fbc05c0e2ceb",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/9851bdd2d692df983664bc8f4597fbc05c0e2ceb",
+      "author": {
+        "name": "1785235376-blip",
+        "email": "1785235376@qq.com",
+        "date": "2026-10-09T15:51:01Z"
+      },
+      "committer": {
+        "name": "1785235376-blip",
+        "email": "1785235376@qq.com",
+        "date": "2026-10-09T15:51:01Z"
+      },
+      "tree": {
+        "sha": "cd6989a19e5fd5e2400f2325fe696cae03d8eda7",
+        "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/trees/cd6989a19e5fd5e2400f2325fe696cae03d8eda7"
+      },
+      "message": "Add M3 host-authorized discovery consent and isolated regression evidence\n\nReuse discovery/session owners, preserve private scan authority across flag and lifecycle changes, add bounded preview/confirmation UX, fix exact select labels, and isolate PostgreSQL verification databases. M3 remains partial; historical CI failures and new-source pending hosted acceptance remain explicit.",
+      "parents": [
+        {
+          "sha": "99c43b6892038233c390be2ae61acb669163d0b5",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/99c43b6892038233c390be2ae61acb669163d0b5",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/99c43b6892038233c390be2ae61acb669163d0b5"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    },
+    {
+      "sha": "02a3f6e9908f785a308a4605e362f8876aed4d8b",
+      "node_id": "C_kwDOUEnaNNoAKDAyYTNmNmU5OTA4Zjc4NWEzMDhhNDYwNWUzNjJmODg3NmFlZDRkOGI",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/02a3f6e9908f785a308a4605e362f8876aed4d8b",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/02a3f6e9908f785a308a4605e362f8876aed4d8b",
+      "author": {
+        "name": "1785235376-blip",
+        "email": "1785235376@qq.com",
+        "date": "2026-10-09T15:51:25Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2026-10-09T15:51:25Z"
+      },
+      "tree": {
+        "sha": "cd6989a19e5fd5e2400f2325fe696cae03d8eda7",
+        "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/trees/cd6989a19e5fd5e2400f2325fe696cae03d8eda7"
+      },
+      "message": "Merge 9851bdd2d692df983664bc8f4597fbc05c0e2ceb into fed2404c8e30b44061b7139dced45b7f3301601c",
+      "parents": [
+        {
+          "sha": "fed2404c8e30b44061b7139dced45b7f3301601c",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/fed2404c8e30b44061b7139dced45b7f3301601c",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/fed2404c8e30b44061b7139dced45b7f3301601c"
+        },
+        {
+          "sha": "9851bdd2d692df983664bc8f4597fbc05c0e2ceb",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/9851bdd2d692df983664bc8f4597fbc05c0e2ceb",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/9851bdd2d692df983664bc8f4597fbc05c0e2ceb"
+        }
+      ],
+      "verification": {
+        "verified": true,
+        "reason": "valid",
+        "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJqyQ19CRC1aQ7uu5UhlAAAXz4QAK5OSIMoPg1EPowS1+H8S2GC\n7Q5apjwZwAkxT2fBfZb193oAu7c5tehSuwi1f62v/lFI1FnFv+InLd2alfPLmMLK\naT7fgOqOjU9RAz6tKZRTVBAM+WXP0hSkNC5qiTe2Aht+dBpDtz97vKOriROTXbJn\nqgGNIHJWwnLsRFXp+fI2jY9tFmjvvjOuQs2Ru65/loyL88okKXtAMe8HlxCt6TRH\nUXAaFgQVpSsuoi3lc6ciPr0bXtsF3eDVv0F14ljkRLz1UWHea0f0Ja21UMNvbR1q\n7lQYvZh1VSBNp/xyptPfel8Mnz4EVFUz0Rx1NAhYjt2ouT2cwk15I8tTZ/qMA+Y7\nt/h6SzKgfJgUUX6Wwbnzgl1c7PisaMkxqUs4y4KB/Em1CXETVNH64jK4qOHcjGmR\n7fN+3cBW2GcT0+toA7gQ1lqCixPAIMJ/7pa/VWUUg/yXkkvOA4DvSi7B9Namg8ci\nyiA3qWArcWHEj07ly2ZNnSyog/Yb3yQvARQ4Bpb6OnUct60zbW7lc7WLu5pOzCd5\nIL1XQqC1ZaOOlz49tqLneAyrJHuekY5tijXg13NuGynfvMgey0SwpJU5qoaPmBmu\nyd+7npjWqkKnb57Zy5WaEjDH8DF1dN9y3vervqrfcVoz+QXHzhw5PzH/or5UhuAL\nr6/Ps94Y2AC6yyvP3w0Q\n=g6vr\n-----END PGP SIGNATURE-----\n",
+        "payload": "tree cd6989a19e5fd5e2400f2325fe696cae03d8eda7\nparent fed2404c8e30b44061b7139dced45b7f3301601c\nparent 9851bdd2d692df983664bc8f4597fbc05c0e2ceb\nauthor 1785235376-blip <1785235376@qq.com> 1791561085 +0000\ncommitter GitHub <noreply@github.com> 1791561085 +0000\n\nMerge 9851bdd2d692df983664bc8f4597fbc05c0e2ceb into fed2404c8e30b44061b7139dced45b7f3301601c\n",
+        "verified_at": "2026-10-09T15:51:26Z"
+      }
+    },
+    {
+      "sha": "c6f2126115b52e17839d48efea091dc21ec08c61",
+      "node_id": "C_kwDOUEnaNNoAKGM2ZjIxMjYxMTViNTJlMTc4MzlkNDhlZmVhMDkxZGMyMWVjMDhjNjE",
+      "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/c6f2126115b52e17839d48efea091dc21ec08c61",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/c6f2126115b52e17839d48efea091dc21ec08c61",
+      "author": {
+        "name": "1785235376-blip",
+        "email": "1785235376@qq.com",
+        "date": "2026-10-06T00:50:25Z"
+      },
+      "committer": {
+        "name": "1785235376-blip",
+        "email": "1785235376@qq.com",
+        "date": "2026-10-06T00:50:25Z"
+      },
+      "tree": {
+        "sha": "eb80a9fa5f5aa6b8c2cbd0e1e67f7b7a48ac522f",
+        "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/trees/eb80a9fa5f5aa6b8c2cbd0e1e67f7b7a48ac522f"
+      },
+      "message": "docs(delivery): reconcile forty packages and retain exact hosted evidence",
+      "parents": [
+        {
+          "sha": "4e476ce853aa26b395a9fe452d7d4a35b091e057",
+          "url": "https://api.github.com/repos/1785235376-blip/AI-Novel-Studio/git/commits/4e476ce853aa26b395a9fe452d7d4a35b091e057",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/commit/4e476ce853aa26b395a9fe452d7d4a35b091e057"
+        }
+      ],
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  ]
+}

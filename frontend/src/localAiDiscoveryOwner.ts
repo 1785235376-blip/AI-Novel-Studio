@@ -11,19 +11,20 @@ let observer = 0;
 /** Opaque React owner key; credentials are never placed in query keys or storage. */
 export function useLocalAiOwnerKey(owner?: LocalAiOnboardingOwner) {
   const epoch = useLocalHostSession(value => value.epoch);
-  const contextKey = owner ? signature(owner.context) : '';
-  return useMemo(() => owner ? `local-ai-owner-${++observer}` : 'legacy', [contextKey, owner?.projectId, epoch]);
+  const contextKey = signature(owner?.context ?? getCollaborationContext());
+  const projectId = owner?.projectId ?? useStudio.getState().novelId;
+  return useMemo(() => `local-ai-owner-${++observer}`, [contextKey, projectId, epoch]);
 }
 /** Existing in-memory session owner, frozen for one mounted consumer. The
  * surrounding key remounts on identity/epoch changes; the synchronous guards
  * also reject responses during React transitions and switch-away/back races. */
-export function useLocalAiDiscoveryOwner(origin: LocalAiOnboardingOwner) {
+export function useLocalAiDiscoveryOwner(origin?: LocalAiOnboardingOwner) {
   const [invalidated, setInvalidated] = useState(false);
   const owner = useMemo(() => {
-    const context = origin.context, host = useLocalHostSession.getState();
+    const context = origin?.context ?? getCollaborationContext(), host = useLocalHostSession.getState();
     const watchHost = !context.sessionToken && !context.scope && !context.actor && !isPackagedDesktopHost();
     const contextKey = signature(context), watchGlobal = contextKey === signature(getCollaborationContext());
-    const projectId = origin.projectId, watchProject = projectId !== undefined && projectId === useStudio.getState().novelId;
+    const projectId = origin?.projectId ?? useStudio.getState().novelId, watchProject = projectId !== undefined && projectId === useStudio.getState().novelId;
     const captured = {...context, actor: context.actor && {...context.actor}, scope: context.scope && {...context.scope}, localHostToken: context.localHostToken ?? (watchHost ? host.token : '')};
     let revoked = false;
     const current = () => !revoked && (!watchHost || (host.epoch === useLocalHostSession.getState().epoch && host.token === useLocalHostSession.getState().token))

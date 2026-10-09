@@ -466,3 +466,29 @@ M3-A is a publishable **PARTIAL** checkpoint. Exact end SHA/tree will be bound v
 PR 47's publication receipt, not self-embedded or replaced with the M2 parent.
 New-SHA full-product hosted CI and M3 browser/visual results remain pending; actual
 user Windows, real inference/quality and full M3 model/API gates remain open.
+
+## 10. M3-B file-observation continuation — 2026-10-09
+
+Published M3-A HEAD `9851bdd2d692df983664bc8f4597fbc05c0e2ceb`, tree
+`cd6989a19e5fd5e2400f2325fe696cae03d8eda7`, is the parent of the new metadata
+reuse slice. [M3-B report](MILESTONE_M3B_REPORT.md) preserves its own source maps,
+first fixture/UI/full-frontend failures and subsequent verification receipts.
+Its publication SHA/tree will be recorded through PR 47 rather than self-embedded.
+All earlier milestone conclusions remain historical, including M2 hosted failure.
+M3-B browser evidence must come from its own published source; M3-A's 11-case
+independent hosted result cannot cover the new twelfth case. Full M3 stays PARTIAL.
+
+The first 1,682-input attempt finished File 2,125/1,099 and real PG 2,092/1,132,
+while full frontend failed one existing Agent selection race. The separate
+[1,688-input correction checkpoint](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+retains that history and verifies new full frontend 2,040/8, build/49-file token,
+279 infrastructure and 7+14 browser inventory. Corrected backend outcomes are
+recorded only when terminal in the main report.
+
+At **16:46 UTC**, [final local M3-B](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+records the complete selected 56-file File **2,127 PASS / 1,099 skips** and fresh
+real PG **2,094 PASS / 1,132 skips**, with the same stable 1,688-input map and
+normal PG stop. Written inventory is 10,380, not full-product execution. Older
+[M3-A hosted CI](MILESTONE_M3B_REPORT.md#6-terminal-published-m3-a-hosted-record-separate-from-m3-b)
+is terminal full-Cloud FAIL: File cancellation blocks mandatory joins despite
+all four passing PG shards. New M3-B hosted/browser acceptance remains pending.

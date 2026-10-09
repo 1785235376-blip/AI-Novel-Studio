@@ -406,7 +406,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "28b2bf8860f34aa78bc0cc8bfe38912812b1934a10796aeb765bf6008b844fc7",
+    "sha256": "37ed9d83263d4d476b1e596db946bbf026a9aae9de6f8b3e9f8e9c6a60400607",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -1717,7 +1717,8 @@
       "operation_id": "scan_scope_api_model_center_local_ai_onboarding_scan_scope_get",
       "owner_ref": "0ba08df9b9659a9b0886be87946b53451535ca419c2e50c916b644c82e2d04c0",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "8fd4df43691f15c1d57f5191d156aed8e227ffa6c39d64a01687c20c336e891e",
       "schema_graph_sha256": "635f2c57c8007d022f3bfc0b00677b2396e51eaf5e55eedabbd1acf0ec0d606d"
@@ -6649,7 +6650,8 @@
       "operation_id": "scan_scope_api_v1_model_center_local_ai_onboarding_scan_scope_get",
       "owner_ref": "0ba08df9b9659a9b0886be87946b53451535ca419c2e50c916b644c82e2d04c0",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "94cd4b6d769d7c97c0b954257dc89e0d290171e4fa687615d183e5077b394635",
       "schema_graph_sha256": "635f2c57c8007d022f3bfc0b00677b2396e51eaf5e55eedabbd1acf0ec0d606d"
@@ -11978,7 +11980,8 @@
       "operation_id": "consented_scan_api_model_center_local_ai_onboarding_scan_post",
       "owner_ref": "7ad2ac9485094a10afdc642f10dedc7962f43ee7b3d4f41771b5958b83cf79ec",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "95c81c6f0438156a17a7ff0f227726f0b465c1c0b64a16dc99fbc4d481d18e3e",
       "schema_graph_sha256": "a26fdbbb1db0a9edd2ec9482c46b41eecd1f9dba95c6fa0aa3ebf9309c05cd8a"
@@ -18034,7 +18037,8 @@
       "operation_id": "consented_scan_api_v1_model_center_local_ai_onboarding_scan_post",
       "owner_ref": "7ad2ac9485094a10afdc642f10dedc7962f43ee7b3d4f41771b5958b83cf79ec",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "75356a0a7abfc79457c991ae1b83e6c25dac41b09cabbb7555a9d4c5c4b41b5f",
       "schema_graph_sha256": "a26fdbbb1db0a9edd2ec9482c46b41eecd1f9dba95c6fa0aa3ebf9309c05cd8a"

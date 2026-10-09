@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/ui/LocalAiModelFiles.test.tsx (18 tests) 578ms
+
+ Test Files  1 passed (1)
+      Tests  18 passed (18)
+   Start at  09:00:10
+   Duration  1.42s (transform 203ms, setup 0ms, collect 319ms, tests 578ms, environment 301ms, prepare 61ms)
+

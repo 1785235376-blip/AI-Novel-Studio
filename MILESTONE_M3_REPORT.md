@@ -712,3 +712,26 @@ hashes, PostgreSQL identity/migrations and both manifest/catalog identities. It
 also verifies the unchanged tracked original test/workflow bytes and protected
 AppShell, tokens and primitives. Its browser entry explicitly records
 `tests_executed: false`; verification before publication is not a hosted-CI result.
+
+## 14. M3-B continuation: same-scan file observations
+
+**2026-10-09; full M3 remains PARTIAL.** Published M3-A is HEAD
+`9851bdd2d692df983664bc8f4597fbc05c0e2ceb`, tree
+`cd6989a19e5fd5e2400f2325fe696cae03d8eda7`. Sections 1–13 retain their original
+M3-A source and timed evidence. The subsequent [M3-B report](MILESTONE_M3B_REPORT.md)
+records the additive, display-only reuse of existing scan file/index metadata,
+current-source verification and retained first failures. Its future publication
+receipt must bind its own SHA/tree. Hosted M3-A results cannot validate the newer
+file view or its new browser journey; component/install/API/inference gates stay open.
+
+The later M3-B [corrected-source checkpoint](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+also records the minimal Agent selection/submission race fix and restoration of
+legacy local-host credential/owner reuse with all-mode private-cache purging.
+Those checks use a separate 1,688-input map; M3-A evidence is unchanged.
+
+Final M3-B local verification at **16:46 UTC** is recorded in
+[M3-B §12](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc):
+selected 56-file File **2,127/1,099** and real PG **2,094/1,132** pass on the
+corrected map. M3 remains PARTIAL; new-SHA hosted acceptance is pending, and
+[M3-A terminal CI](MILESTONE_M3B_REPORT.md#6-terminal-published-m3-a-hosted-record-separate-from-m3-b)
+retains full-Cloud FAIL despite passing subsets.

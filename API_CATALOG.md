@@ -116,7 +116,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/model-center/health` | `app/model_center/api.py:142` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/model-center/local-ai` | `app/model_center/discovery_api.py:95` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/model-center/local-ai/environment` | `app/model_center/discovery_api.py:97` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/model-center/local-ai/onboarding/scan-scope` | `app/model_center/discovery_api.py:103` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/model-center/local-ai/onboarding/scan-scope` | `app/model_center/discovery_api.py:103` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/model-center/local-ai/scan/{scan_id}` | `app/model_center/discovery_api.py:116` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/model-center/models` | `app/model_center/api.py:67` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/model-center/models/{model_id}` | `app/model_center/api.py:73` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -527,7 +527,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/model-center/health` | `app/model_center/api.py:142` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/model-center/local-ai` | `app/model_center/discovery_api.py:95` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/model-center/local-ai/environment` | `app/model_center/discovery_api.py:97` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/model-center/local-ai/onboarding/scan-scope` | `app/model_center/discovery_api.py:103` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/model-center/local-ai/onboarding/scan-scope` | `app/model_center/discovery_api.py:103` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/model-center/local-ai/scan/{scan_id}` | `app/model_center/discovery_api.py:116` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/model-center/models` | `app/model_center/api.py:67` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/model-center/models/{model_id}` | `app/model_center/api.py:73` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -971,7 +971,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/memory` | `app/api.py:3321` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/model-center/local-ai/candidates/{candidate_id}/register` | `app/model_center/discovery_api.py:128` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/model-center/local-ai/candidates/{candidate_id}/validate` | `app/model_center/discovery_api.py:126` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/model-center/local-ai/onboarding/scan` | `app/model_center/discovery_api.py:107` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/model-center/local-ai/onboarding/scan` | `app/model_center/discovery_api.py:107` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/model-center/local-ai/registrations/{registration_id}/disable` | `app/model_center/discovery_api.py:134` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/model-center/local-ai/registrations/{registration_id}/enable` | `app/model_center/discovery_api.py:132` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/model-center/local-ai/runtimes` | `app/model_center/discovery_api.py:122` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1475,7 +1475,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/memory` | `app/api.py:3321` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/model-center/local-ai/candidates/{candidate_id}/register` | `app/model_center/discovery_api.py:128` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/model-center/local-ai/candidates/{candidate_id}/validate` | `app/model_center/discovery_api.py:126` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/model-center/local-ai/onboarding/scan` | `app/model_center/discovery_api.py:107` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/model-center/local-ai/onboarding/scan` | `app/model_center/discovery_api.py:107` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/model-center/local-ai/registrations/{registration_id}/disable` | `app/model_center/discovery_api.py:134` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/model-center/local-ai/registrations/{registration_id}/enable` | `app/model_center/discovery_api.py:132` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/model-center/local-ai/runtimes` | `app/model_center/discovery_api.py:122` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |

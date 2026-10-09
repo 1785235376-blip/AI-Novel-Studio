@@ -1,0 +1,244 @@
+{
+  "kind": "development correction evidence; focused validation only, not final shared-tree acceptance",
+  "created_utc": "2026-10-09T16:26:19.878011+00:00",
+  "head": "9851bdd2d692df983664bc8f4597fbc05c0e2ceb",
+  "owned_files_frozen": {
+    "frontend/src/novel/AgentTeamPanel.tsx": "89edbd3dfca9a0c77b10a27bea91e468924b4951b347d16c48540ac2b8dbb454",
+    "frontend/src/novel/AgentTeamPanel.selectionBoundary.test.tsx": "28861ffc7401b5c8870367e14353adbe531d0a806aa36fb58842c97c1d736dcb"
+  },
+  "correction": [
+    "Derive selected registered role synchronously: retained requested role when present, otherwise first catalog role.",
+    "Use that same selected role for the controlled select and description.",
+    "Pass selected.id explicitly to create.mutate, and use submittedAgentId inside the mutation function.",
+    "Retain existing passive selection persistence, request context, chapter, instruction, execution mode, model, scope, session guard, polling interval, approval/review behavior and backend validation."
+  ],
+  "original_failure_preserved": {
+    "receipt": "stage-m3b-full-frontend.json",
+    "receipt_sha256": "5b502f99e31f20901c5d87662558b0e697bd441b6e1878a37858d3d83db5fae9",
+    "log": "stage-m3b-full-frontend.log",
+    "log_sha256": "66c804962a43b336de7ffd4f5df0bb7ed6d6184b2360363c0cd9d2580ad63bb2",
+    "status": "FAIL",
+    "tests": "1 failed; 2000 passed; 8 skipped",
+    "incorrect_submitted_agent": "planner",
+    "displayed_agent": "verifier",
+    "artifact_hashes_match_diagnosis": true
+  },
+  "new_regression_evidence": {
+    "initial_red": {
+      "tests": "3 failed, 4 passed",
+      "caveat": "First test-only run also used an unsupported Vitest toHaveBeenCalledExactlyOnceWith matcher; first receipt retained. Matcher replaced with separate unchanged-strength count/arguments assertions; typed onMutate spy argument also corrected before clean RED."
+    },
+    "clean_red": {
+      "tests": "3 failed, 4 passed",
+      "product_observations": [
+        "First usable verifier-only commit showed verifier with missing description.",
+        "First commit after replacement showed verifier with missing description.",
+        "Real MutationCache received undefined submit variables. During a controlled onMutate wait, catalog replacement caused actual API submission of reviewer although the author clicked verifier."
+      ],
+      "timing_scope": "The controlled catalog-replacement request failure is deterministic at a real mutation boundary. It does not claim to reconstruct the exact original full-suite planner/verifier event interleaving. The first-commit tests received verifier API requests on the old code; their deterministic RED was the missing description."
+    },
+    "green": {
+      "tests": "7 passed",
+      "test_file_sha256": "28861ffc7401b5c8870367e14353adbe531d0a806aa36fb58842c97c1d736dcb",
+      "same_test_bytes_as_clean_red": true
+    },
+    "coverage": [
+      "First usable verifier-only catalog commit",
+      "Explicit mutation input held across catalog replacement before execution",
+      "Selected role removed from catalog",
+      "Author explicit choice retained on reorder",
+      "Registered planner default retained when not first",
+      "Initially empty catalog cannot create",
+      "Replacement empty catalog cannot create"
+    ]
+  },
+  "validation": [
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3b-agent-selection-red.json",
+      "receipt_sha256": "d57df9cf26e91173269e4fcaeeb0401efeac8e395d9d72009caa13ab3dcd6f0a",
+      "status": "FAIL",
+      "exit_code": 1,
+      "started_utc": "2026-10-09T16:24:08.639381+00:00",
+      "finished_utc": "2026-10-09T16:24:10.024655+00:00",
+      "sources_changed_during_check": false,
+      "changed_source_paths": [],
+      "owned_files_stable": true,
+      "owned_source_sha256": {
+        "frontend/src/novel/AgentTeamPanel.tsx": "657a036affa3682a1e7363273cfebe3f705c74de8f4f0bc406a4bf8318386635",
+        "frontend/src/novel/AgentTeamPanel.selectionBoundary.test.tsx": "e93b4bbba218af87f14e5342445bdf1062117a0321766f3086ee7e437fbf9271"
+      },
+      "log": "docs/delivery/v2-development/dev-m3b-agent-selection-red.log",
+      "log_sha256": "4f0a0b6b5d6482e5cf5db6810be9972ed4a18b8b889a692efc3b0a9ba58b1b8e"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3b-agent-selection-clean-red.json",
+      "receipt_sha256": "b5e2c945fa9e42fb441f1ca8a88ab36cc3881ea81c183260cfa9d0b9d343d174",
+      "status": "FAIL",
+      "exit_code": 1,
+      "started_utc": "2026-10-09T16:24:25.259397+00:00",
+      "finished_utc": "2026-10-09T16:24:26.745610+00:00",
+      "sources_changed_during_check": false,
+      "changed_source_paths": [],
+      "owned_files_stable": true,
+      "owned_source_sha256": {
+        "frontend/src/novel/AgentTeamPanel.tsx": "657a036affa3682a1e7363273cfebe3f705c74de8f4f0bc406a4bf8318386635",
+        "frontend/src/novel/AgentTeamPanel.selectionBoundary.test.tsx": "28861ffc7401b5c8870367e14353adbe531d0a806aa36fb58842c97c1d736dcb"
+      },
+      "log": "docs/delivery/v2-development/dev-m3b-agent-selection-clean-red.log",
+      "log_sha256": "c3594491971952f6b8f5ba4301a8fb81d7d2fa9a5e638e5ddce7f12d84cc862f"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3b-agent-selection-green.json",
+      "receipt_sha256": "0537b57a7da8a9ccc118775c03dfb345207b46f681d974750025204b18e7b389",
+      "status": "PASS",
+      "exit_code": 0,
+      "started_utc": "2026-10-09T16:24:45.693825+00:00",
+      "finished_utc": "2026-10-09T16:24:47.094122+00:00",
+      "sources_changed_during_check": false,
+      "changed_source_paths": [],
+      "owned_files_stable": true,
+      "owned_source_sha256": {
+        "frontend/src/novel/AgentTeamPanel.tsx": "89edbd3dfca9a0c77b10a27bea91e468924b4951b347d16c48540ac2b8dbb454",
+        "frontend/src/novel/AgentTeamPanel.selectionBoundary.test.tsx": "28861ffc7401b5c8870367e14353adbe531d0a806aa36fb58842c97c1d736dcb"
+      },
+      "log": "docs/delivery/v2-development/dev-m3b-agent-selection-green.log",
+      "log_sha256": "b11bd0abb9ff2eb83aff4405e417f787aa941e8c0180c3920f4fecfa48745745"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3b-agent-selection-regression.json",
+      "receipt_sha256": "f914744fc5bda7771a7d4abe520c31bb6c527987fa827b207d61f6429e11979b",
+      "status": "PASS",
+      "exit_code": 0,
+      "started_utc": "2026-10-09T16:25:08.774278+00:00",
+      "finished_utc": "2026-10-09T16:25:11.542443+00:00",
+      "sources_changed_during_check": false,
+      "changed_source_paths": [],
+      "owned_files_stable": true,
+      "owned_source_sha256": {
+        "frontend/src/novel/AgentTeamPanel.tsx": "89edbd3dfca9a0c77b10a27bea91e468924b4951b347d16c48540ac2b8dbb454",
+        "frontend/src/novel/AgentTeamPanel.selectionBoundary.test.tsx": "28861ffc7401b5c8870367e14353adbe531d0a806aa36fb58842c97c1d736dcb"
+      },
+      "log": "docs/delivery/v2-development/dev-m3b-agent-selection-regression.log",
+      "log_sha256": "6f4850d848a70ef1e646980954d573d6edc37894d56fa631f6aff6e4a129c857"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3b-agent-selection-typecheck.json",
+      "receipt_sha256": "907315000a1630eb413272fae2990d80958518d42164b4ed385c361b5db41849",
+      "status": "PASS",
+      "exit_code": 0,
+      "started_utc": "2026-10-09T16:25:08.786229+00:00",
+      "finished_utc": "2026-10-09T16:25:28.591521+00:00",
+      "sources_changed_during_check": true,
+      "changed_source_paths": [
+        "frontend/src/localAiDiscoveryLegacyOwner.test.ts",
+        "frontend/src/ui/LocalAiDiscoveryLegacyOwner.test.tsx",
+        "frontend/src/ui/ModelCenterLegacyOwner.test.tsx"
+      ],
+      "owned_files_stable": true,
+      "owned_source_sha256": {
+        "frontend/src/novel/AgentTeamPanel.tsx": "89edbd3dfca9a0c77b10a27bea91e468924b4951b347d16c48540ac2b8dbb454",
+        "frontend/src/novel/AgentTeamPanel.selectionBoundary.test.tsx": "28861ffc7401b5c8870367e14353adbe531d0a806aa36fb58842c97c1d736dcb"
+      },
+      "log": "docs/delivery/v2-development/dev-m3b-agent-selection-typecheck.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "receipt": "docs/delivery/v2-development/dev-m3b-agent-selection-token-lint.json",
+      "receipt_sha256": "460a9062325e2b4fddc9b1ee699c700288ee60901db3ae4bacb3a65e98ef20db",
+      "status": "PASS",
+      "exit_code": 0,
+      "started_utc": "2026-10-09T16:25:08.755959+00:00",
+      "finished_utc": "2026-10-09T16:25:08.825725+00:00",
+      "sources_changed_during_check": false,
+      "changed_source_paths": [],
+      "owned_files_stable": true,
+      "owned_source_sha256": {
+        "frontend/src/novel/AgentTeamPanel.tsx": "89edbd3dfca9a0c77b10a27bea91e468924b4951b347d16c48540ac2b8dbb454",
+        "frontend/src/novel/AgentTeamPanel.selectionBoundary.test.tsx": "28861ffc7401b5c8870367e14353adbe531d0a806aa36fb58842c97c1d736dcb"
+      },
+      "log": "docs/delivery/v2-development/dev-m3b-agent-selection-token-lint.log",
+      "log_sha256": "c412ce2913d49346202243e6aaef25e57d13f5503399aa5f913d568ab38028c0"
+    }
+  ],
+  "existing_tests_unchanged": {
+    "frontend/src/novel/AgentTeamPanel.additional.test.tsx": {
+      "sha256": "929afebb75f34bbda928ad73e056447289b860edce48eddbd127593e8f85ab53",
+      "byte_equal_published_head": true
+    },
+    "frontend/src/novel/AgentTeamPanel.test.tsx": {
+      "sha256": "117b74be78708769450533e402ff7095b6c1f422a5f09a4fe4ebf38fbdc5ad30",
+      "byte_equal_published_head": true
+    },
+    "frontend/src/novel/AgentActivityCenter.test.tsx": {
+      "sha256": "9fed6f370c19b9038433249ffe38560f10ee095574f424754ea39bfea88d02a3",
+      "byte_equal_published_head": true
+    },
+    "frontend/src/novel/AgentQueuePanel.test.tsx": {
+      "sha256": "828298329b452457c1ae4888ba82eeeb47c739ded371513ba940721f276e0b33",
+      "byte_equal_published_head": true
+    },
+    "frontend/src/novel/AgentResultReview.test.tsx": {
+      "sha256": "826193738d42e0c525c89779cccddb6d19dffe303a41610dfd0f50c64a2cf7d7",
+      "byte_equal_published_head": true
+    },
+    "frontend/src/novel/A43ChapterIdentity.test.tsx": {
+      "sha256": "4661d0540677d2d379be64a454943f3f600c650aece83e553153610508f7c5cc",
+      "byte_equal_published_head": true
+    },
+    "frontend/src/novel/LocalHostSessionPanel.test.tsx": {
+      "sha256": "36926a754349092dff992c257198fcb3cf474a4e0f300e05d12dc4dff198d4f2",
+      "byte_equal_published_head": true
+    },
+    "frontend/src/localHostSession.test.ts": {
+      "sha256": "792a8d67aa8808a43c44c07e1b85122e88f537037a58d548645b65a9851ca61e",
+      "byte_equal_published_head": true
+    }
+  },
+  "protected_source_checks": {
+    "frontend/pnpm-lock.yaml": {
+      "sha256": "1caf25e7cc3d1d11be011c2ca14cd26720a0b93857c17d7c68d15fb041cd1d6f",
+      "byte_equal_published_head": true
+    },
+    "frontend/vite.config.ts": {
+      "sha256": "870f3b91acd3e5154eceeff4ac7a6d6fb79abd2c0ca4ed95ee8e75dfc34279b9",
+      "byte_equal_published_head": true
+    },
+    "scripts/run_v2_checks.py": {
+      "sha256": "539f04a8f4774ac0fb437521ca7f9fb8bc352e90140c394724bc38c1f0305f54",
+      "byte_equal_published_head": true
+    },
+    "frontend/src/localHostSession.ts": {
+      "sha256": "0fd6e62146077f1180a47d73639f6055148835e079f7c2a71f2ac7b9a0f34907",
+      "byte_equal_published_head": true
+    },
+    "frontend/src/store.ts": {
+      "sha256": "5cae319687eb3e56d5313479d08553700d7dc94ec36ebf2402ed9281bf46c572",
+      "byte_equal_published_head": true
+    },
+    "frontend/src/ui/tokens.css": {
+      "sha256": "5b1a2610ec0c81f4cb79e5fa04ac9bb3d905782380e8d976d7cee8c2359c57e1",
+      "byte_equal_published_head": true
+    },
+    "frontend/src/ui/primitives.tsx": {
+      "sha256": "1bc939c47d20553fa19df70828be22606374a604a369ce5e7ea8860fe7922e4e",
+      "byte_equal_published_head": true
+    },
+    "frontend/src/ui/AppShell.tsx": {
+      "sha256": "0707e0a04288e0267f07a1b9ac509985d579f22877069ab272a84f8d05751073",
+      "byte_equal_published_head": true
+    }
+  },
+  "result_summary": {
+    "new_regressions": "7/7 PASS",
+    "focused_existing_and_new": "37/37 PASS across 9 files",
+    "typecheck": "exit 0; shared source-map drift from 3 other-owner new test files, owned files stable; not frozen final acceptance",
+    "token_lint": "PASS (47 files)",
+    "full_frontend": "not rerun by this worker; original full failure retained; main owns next frozen aggregate",
+    "browser_geometry_visual": "not run by this worker per scope; no markup geometry, shell, primitive, token or styling changes"
+  },
+  "remaining_main_actions": [
+    "Final shared-tree frozen typecheck and aggregate validation",
+    "Git/PR operations remain main-owned"
+  ],
+  "authority_and_scope": "Only assigned dot-cloud source, one new regression file and new development evidence written; no user computer, paid API, browser, dependency install or Git mutation."
+}

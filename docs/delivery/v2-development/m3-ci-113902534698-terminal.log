@@ -1,0 +1,255 @@
+﻿2026-10-09T15:51:26.4849862Z Current runner version: '2.337.0'
+2026-10-09T15:51:26.4869736Z ##[group]Runner Image Provisioner
+2026-10-09T15:51:26.4870350Z Hosted Compute Agent
+2026-10-09T15:51:26.4870768Z Version: 20261002.596
+2026-10-09T15:51:26.4871230Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-09T15:51:26.4871750Z Build Date: 2026-10-02T22:28:27Z
+2026-10-09T15:51:26.4872217Z Worker ID: {1d2d5370-26af-4934-990c-e5855ba8ddf4}
+2026-10-09T15:51:26.4872736Z Region: northcentralus
+2026-10-09T15:51:26.4873159Z Cloud: Azure
+2026-10-09T15:51:26.4873567Z ##[endgroup]
+2026-10-09T15:51:26.4874566Z ##[group]Operating System
+2026-10-09T15:51:26.4875005Z Microsoft Windows Server 2022
+2026-10-09T15:51:26.4875452Z 10.0.20348
+2026-10-09T15:51:26.4875815Z Datacenter
+2026-10-09T15:51:26.4876205Z ##[endgroup]
+2026-10-09T15:51:26.4876645Z ##[group]Runner Image
+2026-10-09T15:51:26.4877051Z Image: windows-2022
+2026-10-09T15:51:26.4877445Z Version: 20261004.326.1
+2026-10-09T15:51:26.4878587Z Included Software: https://github.com/actions/runner-images/blob/win22/20261004.326/images/windows/Windows2022-Readme.md
+2026-10-09T15:51:26.4879740Z Image Release: https://github.com/actions/runner-images/releases/tag/win22%2F20261004.326
+2026-10-09T15:51:26.4880418Z ##[endgroup]
+2026-10-09T15:51:26.4881218Z ##[group]GITHUB_TOKEN Permissions
+2026-10-09T15:51:26.4882646Z Contents: read
+2026-10-09T15:51:26.4883097Z Metadata: read
+2026-10-09T15:51:26.4883508Z ##[endgroup]
+2026-10-09T15:51:26.4885122Z Secret source: Actions
+2026-10-09T15:51:26.4885787Z Cache mode: write
+2026-10-09T15:51:26.4886284Z Prepare workflow directory
+2026-10-09T15:51:26.5181404Z Prepare all required actions
+2026-10-09T15:51:26.5219488Z Getting action download info
+2026-10-09T15:51:26.7622051Z Download action repository 'actions/checkout@v4.2.2' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2026-10-09T15:51:26.8461502Z Download action repository 'actions/setup-dotnet@v4' (SHA:67a3573c9a986a3f9c594539f4ab511d57bb3ce9)
+2026-10-09T15:51:27.3694315Z Download action repository 'actions/upload-artifact@v4.6.2' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-09T15:51:27.6441185Z Complete job name: Windows current-user pipe reference (MOCK_ONLY)
+2026-10-09T15:51:27.8065086Z ##[group]Run actions/checkout@v4.2.2
+2026-10-09T15:51:27.8066166Z with:
+2026-10-09T15:51:27.8066547Z   persist-credentials: false
+2026-10-09T15:51:27.8067023Z   repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T15:51:27.8070368Z   token: ***
+2026-10-09T15:51:27.8070724Z   ssh-strict: true
+2026-10-09T15:51:27.8071092Z   ssh-user: git
+2026-10-09T15:51:27.8071434Z   clean: true
+2026-10-09T15:51:27.8071808Z   sparse-checkout-cone-mode: true
+2026-10-09T15:51:27.8072239Z   fetch-depth: 1
+2026-10-09T15:51:27.8072597Z   fetch-tags: false
+2026-10-09T15:51:27.8072951Z   show-progress: true
+2026-10-09T15:51:27.8073317Z   lfs: false
+2026-10-09T15:51:27.8073666Z   submodules: false
+2026-10-09T15:51:27.8074046Z   set-safe-directory: true
+2026-10-09T15:51:27.8074604Z env:
+2026-10-09T15:51:27.8074964Z   MOCK_PROVIDER: true
+2026-10-09T15:51:27.8075334Z   ENABLE_CLOUD: false
+2026-10-09T15:51:27.8075719Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:51:27.8076233Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:51:27.8076716Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:51:27.8077080Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:51:27.8077461Z ##[endgroup]
+2026-10-09T15:51:27.9157606Z Syncing repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T15:51:27.9159100Z ##[group]Getting Git version info
+2026-10-09T15:51:27.9159685Z Working directory is 'D:\a\AI-Novel-Studio\AI-Novel-Studio'
+2026-10-09T15:51:27.9819589Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-09T15:51:28.3766303Z git version 2.56.0.windows.1
+2026-10-09T15:51:28.3795210Z ##[endgroup]
+2026-10-09T15:51:28.3809214Z Temporarily overriding HOME='D:\a\_temp\eada208b-b4f9-45e4-8ef0-056f1c2d9ccf' before making global git config changes
+2026-10-09T15:51:28.3810627Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T15:51:28.3818012Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\AI-Novel-Studio\AI-Novel-Studio
+2026-10-09T15:51:28.4373730Z Deleting the contents of 'D:\a\AI-Novel-Studio\AI-Novel-Studio'
+2026-10-09T15:51:28.4377621Z ##[group]Initializing the repository
+2026-10-09T15:51:28.4385390Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\AI-Novel-Studio\AI-Novel-Studio
+2026-10-09T15:51:28.5309429Z Initialized empty Git repository in D:/a/AI-Novel-Studio/AI-Novel-Studio/.git/
+2026-10-09T15:51:28.5342439Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T15:51:28.5924395Z ##[endgroup]
+2026-10-09T15:51:28.5926384Z ##[group]Disabling automatic garbage collection
+2026-10-09T15:51:28.5928545Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-10-09T15:51:28.6163109Z ##[endgroup]
+2026-10-09T15:51:28.6164526Z ##[group]Setting up auth
+2026-10-09T15:51:28.6166182Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:51:28.6392654Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-09T15:51:30.0304129Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:51:30.0526807Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-09T15:51:30.4296910Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-09T15:51:30.4526989Z ##[endgroup]
+2026-10-09T15:51:30.4527748Z ##[group]Fetching the repository
+2026-10-09T15:51:30.4539874Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9851bdd2d692df983664bc8f4597fbc05c0e2ceb:refs/remotes/origin/feature/v2-narrative-platform
+2026-10-09T15:51:33.1540775Z From https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T15:51:33.1541609Z  * [new ref]         9851bdd2d692df983664bc8f4597fbc05c0e2ceb -> origin/feature/v2-narrative-platform
+2026-10-09T15:51:33.1563428Z ##[endgroup]
+2026-10-09T15:51:33.1564375Z ##[group]Determining the checkout info
+2026-10-09T15:51:33.1565881Z ##[endgroup]
+2026-10-09T15:51:33.1573310Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-10-09T15:51:33.2044208Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-10-09T15:51:33.2261084Z ##[group]Checking out the ref
+2026-10-09T15:51:33.2267547Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B feature/v2-narrative-platform refs/remotes/origin/feature/v2-narrative-platform
+2026-10-09T15:51:34.2843816Z Updating files:  57% (2113/3681)
+2026-10-09T15:51:34.3045854Z Updating files:  58% (2135/3681)
+2026-10-09T15:51:34.3093338Z Updating files:  59% (2172/3681)
+2026-10-09T15:51:34.3165389Z Updating files:  60% (2209/3681)
+2026-10-09T15:51:34.3220878Z Updating files:  61% (2246/3681)
+2026-10-09T15:51:34.3271368Z Updating files:  62% (2283/3681)
+2026-10-09T15:51:34.3329507Z Updating files:  63% (2320/3681)
+2026-10-09T15:51:34.3388475Z Updating files:  64% (2356/3681)
+2026-10-09T15:51:34.3446433Z Updating files:  65% (2393/3681)
+2026-10-09T15:51:34.3507977Z Updating files:  66% (2430/3681)
+2026-10-09T15:51:34.3576440Z Updating files:  67% (2467/3681)
+2026-10-09T15:51:34.3642309Z Updating files:  68% (2504/3681)
+2026-10-09T15:51:34.3696137Z Updating files:  69% (2540/3681)
+2026-10-09T15:51:34.3749440Z Updating files:  70% (2577/3681)
+2026-10-09T15:51:34.3803686Z Updating files:  71% (2614/3681)
+2026-10-09T15:51:34.3854526Z Updating files:  72% (2651/3681)
+2026-10-09T15:51:34.3909325Z Updating files:  73% (2688/3681)
+2026-10-09T15:51:34.3967321Z Updating files:  74% (2724/3681)
+2026-10-09T15:51:34.4018425Z Updating files:  75% (2761/3681)
+2026-10-09T15:51:34.4068569Z Updating files:  76% (2798/3681)
+2026-10-09T15:51:34.4122538Z Updating files:  77% (2835/3681)
+2026-10-09T15:51:34.4170182Z Updating files:  78% (2872/3681)
+2026-10-09T15:51:34.4229767Z Updating files:  79% (2908/3681)
+2026-10-09T15:51:34.4289965Z Updating files:  80% (2945/3681)
+2026-10-09T15:51:34.4364729Z Updating files:  81% (2982/3681)
+2026-10-09T15:51:34.4415179Z Updating files:  82% (3019/3681)
+2026-10-09T15:51:34.4460806Z Updating files:  83% (3056/3681)
+2026-10-09T15:51:34.4508084Z Updating files:  84% (3093/3681)
+2026-10-09T15:51:34.4558665Z Updating files:  85% (3129/3681)
+2026-10-09T15:51:34.4612234Z Updating files:  86% (3166/3681)
+2026-10-09T15:51:34.4665974Z Updating files:  87% (3203/3681)
+2026-10-09T15:51:34.4716413Z Updating files:  88% (3240/3681)
+2026-10-09T15:51:34.4766554Z Updating files:  89% (3277/3681)
+2026-10-09T15:51:34.4823294Z Updating files:  90% (3313/3681)
+2026-10-09T15:51:34.4875043Z Updating files:  91% (3350/3681)
+2026-10-09T15:51:34.4927268Z Updating files:  92% (3387/3681)
+2026-10-09T15:51:34.4987341Z Updating files:  93% (3424/3681)
+2026-10-09T15:51:34.5043206Z Updating files:  94% (3461/3681)
+2026-10-09T15:51:34.5105007Z Updating files:  95% (3497/3681)
+2026-10-09T15:51:34.5169563Z Updating files:  96% (3534/3681)
+2026-10-09T15:51:34.5226580Z Updating files:  97% (3571/3681)
+2026-10-09T15:51:34.5286949Z Updating files:  98% (3608/3681)
+2026-10-09T15:51:34.5343170Z Updating files:  99% (3645/3681)
+2026-10-09T15:51:34.5345486Z Updating files: 100% (3681/3681)
+2026-10-09T15:51:34.5346062Z Updating files: 100% (3681/3681), done.
+2026-10-09T15:51:34.5474447Z Switched to a new branch 'feature/v2-narrative-platform'
+2026-10-09T15:51:34.5516930Z branch 'feature/v2-narrative-platform' set up to track 'origin/feature/v2-narrative-platform'.
+2026-10-09T15:51:34.5604058Z ##[endgroup]
+2026-10-09T15:51:34.6135924Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-10-09T15:51:34.6356841Z 9851bdd2d692df983664bc8f4597fbc05c0e2ceb
+2026-10-09T15:51:34.6381422Z ##[group]Removing auth
+2026-10-09T15:51:34.6387643Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:51:34.6608496Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-09T15:51:35.0376588Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:51:35.0573275Z http.https://github.com/.extraheader
+2026-10-09T15:51:35.0597318Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-10-09T15:51:35.0819751Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-09T15:51:35.4883607Z ##[endgroup]
+2026-10-09T15:51:35.5213548Z ##[group]Run actions/setup-dotnet@v4
+2026-10-09T15:51:35.5213807Z with:
+2026-10-09T15:51:35.5213964Z   dotnet-version: 8.0.424
+2026-10-09T15:51:35.5214137Z   cache: false
+2026-10-09T15:51:35.5214274Z env:
+2026-10-09T15:51:35.5214406Z   MOCK_PROVIDER: true
+2026-10-09T15:51:35.5214560Z   ENABLE_CLOUD: false
+2026-10-09T15:51:35.5214740Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:51:35.5214957Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:51:35.5215167Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:51:35.5215331Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:51:35.5215489Z ##[endgroup]
+2026-10-09T15:51:35.6450936Z (node:196) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:51:35.6451479Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:51:35.7167974Z [command]"C:\Program Files\PowerShell\7\pwsh.exe" -NoLogo -Sta -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command & 'D:\a\_actions\actions\setup-dotnet\v4\externals\install-dotnet.ps1' -SkipNonVersionedFiles -Runtime dotnet -Channel LTS
+2026-10-09T15:51:37.8256943Z dotnet-install: .NET Core Runtime with version '10.0.12' is already installed.
+2026-10-09T15:51:37.9264550Z [command]"C:\Program Files\PowerShell\7\pwsh.exe" -NoLogo -Sta -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command & 'D:\a\_actions\actions\setup-dotnet\v4\externals\install-dotnet.ps1' -SkipNonVersionedFiles -Version 8.0.424
+2026-10-09T15:51:46.6881271Z dotnet-install: Downloaded file https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.424/dotnet-sdk-8.0.424-win-x64.zip size is 285090820 bytes.
+2026-10-09T15:51:46.6884716Z dotnet-install: Either downloaded or local package size can not be measured. One of them may be corrupted.
+2026-10-09T15:51:46.6904231Z dotnet-install: Extracting the archive.
+2026-10-09T15:52:01.5675775Z dotnet-install: Note that the script does not ensure your Windows version is supported during the installation.
+2026-10-09T15:52:01.5678584Z dotnet-install: To check the list of supported versions, go to https://learn.microsoft.com/dotnet/core/install/windows#supported-versions
+2026-10-09T15:52:01.5682469Z dotnet-install: Installed version is 8.0.424
+2026-10-09T15:52:01.5686239Z dotnet-install: Installation finished
+2026-10-09T15:52:01.6219096Z ##[group]Run New-Item -ItemType Directory -Force -Path receipts | Out-Null
+2026-10-09T15:52:01.6219611Z [36;1mNew-Item -ItemType Directory -Force -Path receipts | Out-Null[0m
+2026-10-09T15:52:01.6220021Z [36;1m"source=$(git rev-parse HEAD)" | Out-File receipts/revision.txt -Encoding utf8[0m
+2026-10-09T15:52:01.6220684Z [36;1m"scope=Windows transport reference only; actual Tutor Desktop LOCAL_REQUIRED; cross-user hostile attempt NOT_RUN" | Out-File receipts/revision.txt -Append -Encoding utf8[0m
+2026-10-09T15:52:01.6221456Z [36;1mdotnet run --project interop-reference/PoemSeed.LocalInterop.Pipes -c Release 2>&1 | Tee-Object receipts/named-pipe.log[0m
+2026-10-09T15:52:01.6221920Z [36;1mif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }[0m
+2026-10-09T15:52:01.6222623Z [36;1mdotnet build native/local_interop_desktop/PoemSeed.LocalInterop.Pipes -c Release 2>&1 | Tee-Object receipts/named-pipe-library-build.log[0m
+2026-10-09T15:52:01.6223518Z [36;1mif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }[0m
+2026-10-09T15:52:01.6224092Z [36;1mdotnet run --project native/local_interop_desktop/PoemSeed.LocalInterop.Pipes.Acceptance -c Release 2>&1 | Tee-Object receipts/named-pipe-desktop-boundary.log[0m
+2026-10-09T15:52:01.6224647Z [36;1mif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }[0m
+2026-10-09T15:52:01.8224662Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-09T15:52:01.8224969Z env:
+2026-10-09T15:52:01.8225130Z   MOCK_PROVIDER: true
+2026-10-09T15:52:01.8225304Z   ENABLE_CLOUD: false
+2026-10-09T15:52:01.8225472Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:52:01.8225686Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:52:01.8225900Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:52:01.8226056Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:52:01.8226243Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-09T15:52:01.8226434Z ##[endgroup]
+2026-10-09T15:52:14.1894705Z {"status":"CONTRACT_VERIFIED","scope":"WINDOWS_TRANSPORT_REFERENCE_ONLY","checks":8,"counterparty":"MOCK_ONLY","desktop_integration":"LOCAL_REQUIRED","cross_user_attempt":"NOT_RUN"}
+2026-10-09T15:52:14.6368544Z   Determining projects to restore...
+2026-10-09T15:52:14.7906728Z   All projects are up-to-date for restore.
+2026-10-09T15:52:15.0011008Z   PoemSeed.LocalInterop.Pipes -> D:\a\AI-Novel-Studio\AI-Novel-Studio\native\local_interop_desktop\PoemSeed.LocalInterop.Pipes\bin\Release\net8.0-windows\PoemSeed.LocalInterop.Pipes.dll
+2026-10-09T15:52:15.0075099Z 
+2026-10-09T15:52:15.0080005Z Build succeeded.
+2026-10-09T15:52:15.0081752Z     0 Warning(s)
+2026-10-09T15:52:15.0083403Z     0 Error(s)
+2026-10-09T15:52:15.0085750Z 
+2026-10-09T15:52:15.0087636Z Time Elapsed 00:00:00.63
+2026-10-09T15:52:17.9277960Z {"status":"CONTRACT_VERIFIED","scope":"CALLABLE_NATIVE_BOUNDARY","checks":33,"passed":["frame_roundtrip","fragmented_frame","coalesced_frames","frame_length_reject_0","frame_length_reject_1048577","frame_length_reject_4294967295","truncated_prefix","truncated_body","invalid_utf8","non_object","duplicate_members","invalid_json","excessive_depth","multibyte_size_limit","frame_timeout","frame_cancellation","queue_config_bound","identity_claims_and_required_loaded_image_proof","attestation_timeout_retains_bounded_outstanding_slot","same_user_separate_process_identity_and_echo","server_handle_not_inheritable","remote_and_arbitrary_name_rejected","first_instance_collision_rejected","accept_cancel_and_shutdown","missing_endpoint_connect_timeout","receive_cancel_invalidates_stream","malformed_peer_frame_closes_connection","single_active_connection_limit","queue_backpressure_and_bounded_shutdown","fake_product_id_rejected_without_installation","mock_attestation_requires_registration_publisher_and_approval","timed_out_attestation_backpressure_survives_reconnect","reconnect_has_new_identity_and_no_trust"],"windows_transport":"CONTRACT_VERIFIED","counterparty":"MOCK_ONLY","real_signed_binary_trust":"LOCAL_REQUIRED","actual_install_registration":"LOCAL_REQUIRED","cross_user_attempt":"NOT_RUN","desktop_integration":"LOCAL_REQUIRED"}
+2026-10-09T15:52:17.9906163Z ##[group]Run actions/upload-artifact@v4.6.2
+2026-10-09T15:52:17.9906453Z with:
+2026-10-09T15:52:17.9906705Z   name: named-pipe-reference-9851bdd2d692df983664bc8f4597fbc05c0e2ceb
+2026-10-09T15:52:17.9906993Z   path: receipts/
+2026-10-09T15:52:17.9907176Z   if-no-files-found: error
+2026-10-09T15:52:17.9907344Z   retention-days: 14
+2026-10-09T15:52:17.9907503Z   compression-level: 6
+2026-10-09T15:52:17.9907660Z   overwrite: false
+2026-10-09T15:52:17.9907816Z   include-hidden-files: false
+2026-10-09T15:52:17.9907985Z env:
+2026-10-09T15:52:17.9908119Z   MOCK_PROVIDER: true
+2026-10-09T15:52:17.9908274Z   ENABLE_CLOUD: false
+2026-10-09T15:52:17.9908435Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:52:17.9908643Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:52:17.9908859Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:52:17.9909013Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:52:17.9909195Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-09T15:52:17.9909417Z ##[endgroup]
+2026-10-09T15:52:18.1695915Z (node:7236) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:52:18.1696874Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:52:18.1758386Z With the provided path, there will be 4 files uploaded
+2026-10-09T15:52:18.1764049Z Artifact name is valid!
+2026-10-09T15:52:18.1765774Z Root directory input is valid!
+2026-10-09T15:52:18.4814087Z Beginning upload of artifact content to blob storage
+2026-10-09T15:52:18.5031803Z (node:7236) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-09T15:52:18.6006271Z Uploaded bytes 1763
+2026-10-09T15:52:18.6325600Z Finished uploading artifact content to blob storage!
+2026-10-09T15:52:18.6326580Z SHA256 digest of uploaded artifact zip is c4b3e7ce6f742ddee44a02b389a3e5768578d20c93a6028a57136dc104acbaf8
+2026-10-09T15:52:18.6327926Z Finalizing artifact upload
+2026-10-09T15:52:18.8684205Z Artifact named-pipe-reference-9851bdd2d692df983664bc8f4597fbc05c0e2ceb.zip successfully finalized. Artifact ID 11626754336
+2026-10-09T15:52:18.8687172Z Artifact named-pipe-reference-9851bdd2d692df983664bc8f4597fbc05c0e2ceb has been successfully uploaded! Final size is 1763 bytes. Artifact ID is 11626754336
+2026-10-09T15:52:18.8696323Z Artifact download URL: https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37954818409/artifacts/11626754336
+2026-10-09T15:52:18.8920890Z Post job cleanup.
+2026-10-09T15:52:19.0232151Z (node:6936) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:52:19.0233033Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:52:19.0472707Z Post job cleanup.
+2026-10-09T15:52:19.2203502Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-09T15:52:19.2522116Z git version 2.56.0.windows.1
+2026-10-09T15:52:19.2567336Z Temporarily overriding HOME='D:\a\_temp\5c9f9a64-98a8-4fe7-a87d-438b476832e1' before making global git config changes
+2026-10-09T15:52:19.2568359Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T15:52:19.2576429Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\AI-Novel-Studio\AI-Novel-Studio
+2026-10-09T15:52:19.2840888Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:52:19.3081229Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-09T15:52:19.7253111Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:52:19.7486924Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-09T15:52:20.5348966Z Cleaning up orphan processes
+2026-10-09T15:52:20.5682853Z Terminate orphan process: pid (5636) (dotnet)
+2026-10-09T15:52:20.5818389Z Terminate orphan process: pid (4320) (conhost)
+2026-10-09T15:52:20.5835830Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4.2.2, actions/setup-dotnet@v4, actions/upload-artifact@v4.6.2. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

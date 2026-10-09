@@ -1,6 +1,5 @@
-import {ApiError, getCollaborationContext, type CollaborationContext} from './api';
+import {ApiError, getCollaborationContext, requestToken, type CollaborationContext} from './api';
 import {useLocalHostSession} from './localHostSession';
-import {isPackagedDesktopHost} from './packagedHost';
 
 export type LocalRuntimeType = 'OLLAMA' | 'LLAMA_CPP' | 'COMFYUI' | 'AUTOMATIC1111' | 'OPENAI_COMPATIBLE_LOCAL' | 'CUSTOM_HTTP';
 export type LocalRuntimeConfiguration = {
@@ -66,6 +65,10 @@ export type LocalDiscoveryScan = {
   errors: (string | {runtime_id?: string; code?: string; message?: string})[];
   started_at?: string | null;
   finished_at?: string | null;
+  // Additive scan evidence: historical snapshots may not include these fields.
+  environment_schema_version?: number;
+  model_files?: EnvironmentModelFile[];
+  roots?: AIEnvironmentReport['roots'];
 };
 export type LocalDiscoverySettings = {scan_roots: string[]; runtimes: LocalRuntime[]; include_common_model_dirs?: boolean};
 export type HardwareComponentEvidence = {
@@ -144,19 +147,34 @@ const requestId = () => globalThis.crypto?.randomUUID?.() || `local-ai-${Date.no
 // here or sent to arbitrary endpoints by the frontend.
 async function call<T>(path: string, method = 'GET', body?: unknown, signal?: AbortSignal, captured?: {sessionToken: string; branchId?: string}): Promise<T> {
   const headers: Record<string, string> = {'Content-Type': 'application/json', 'X-Request-ID': requestId()};
-  const {sessionToken} = captured ?? getCollaborationContext();
+  // Legacy singleton requests capture the same in-memory owner as api.ts.
+  // Captured clients already resolved their token, including an explicit empty one.
+  const context = getCollaborationContext(), host = useLocalHostSession.getState();
+  const contextKey = JSON.stringify(context);
+  const checkCurrent = () => {
+    if (signal?.aborted || (!captured && (host.epoch !== useLocalHostSession.getState().epoch
+      || host.token !== useLocalHostSession.getState().token || contextKey !== JSON.stringify(getCollaborationContext())))) {
+      throw new DOMException('检测会话已改变。', 'AbortError');
+    }
+  };
+  const sessionToken = captured ? captured.sessionToken : requestToken(context, `${BASE}${path}`);
   if (sessionToken) headers['X-Session-Token'] = sessionToken;
   if (captured?.branchId) headers['X-Branch-Id'] = captured.branchId;
   if (method !== 'GET') headers['Idempotency-Key'] = requestId();
+  checkCurrent();
   const response = await fetch(`${BASE}${path}`, {method, headers, signal, ...(body === undefined ? {} : {body: JSON.stringify(body)})});
+  checkCurrent();
   if (!response.ok) {
     let raw: Record<string, any> = {};
     try {raw = await response.json();} catch { /* Do not echo arbitrary server output. */ }
+    checkCurrent();
     const detail = raw.detail ?? raw.error ?? raw;
     const code = raw.code ?? detail?.code ?? (response.status === 401 ? 'SESSION_REQUIRED' : response.status === 403 ? 'FORBIDDEN' : 'LOCAL_AI_REQUEST_FAILED');
     throw new ApiError({status: response.status, code: typeof code === 'string' ? code : 'LOCAL_AI_REQUEST_FAILED', message: '本地 AI 操作未完成。', request_id: raw.request_id ?? response.headers.get('X-Request-ID') ?? undefined});
   }
-  return response.status === 204 ? undefined as T : response.json();
+  const result = response.status === 204 ? undefined as T : await response.json() as T;
+  checkCurrent();
+  return result;
 }
 const id = encodeURIComponent;
 export const localAiDiscoveryApi = {
@@ -213,10 +231,9 @@ function checkedScope(value: LocalAiScanScope, includeCommon: boolean): LocalAiS
 }
 
 /** Gated V2 transport freezes the original owner once, including an explicitly
- * empty LOCAL_HOST credential. Legacy singleton behavior remains unchanged. */
+ * empty LOCAL_HOST credential, using the same fallback policy as the singleton. */
 export function localAiDiscoveryClient(context: CollaborationContext, isCurrent: () => boolean = () => true) {
-  const sessionToken = context.sessionToken || (!context.scope && !context.actor && !isPackagedDesktopHost()
-    ? (context.localHostToken ?? useLocalHostSession.getState().token) : '');
+  const sessionToken = requestToken(context, BASE);
   const captured = {sessionToken, branchId: context.scope?.branchId};
   async function request<T>(path: string, method = 'GET', body?: unknown, signal?: AbortSignal): Promise<T> {
     if (!isCurrent()) throw new DOMException('检测会话已改变。', 'AbortError');

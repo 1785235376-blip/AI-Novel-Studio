@@ -9,6 +9,7 @@ import {
   type LocalModelRegistration, type LocalRuntime, type LocalRuntimeConfiguration, type LocalRuntimeType,
 } from '../localAiDiscoveryApi';
 import {Badge, Button, EmptyState, Panel, StatusMessage} from './primitives';
+import {LocalAiModelFiles} from './LocalAiModelFiles';
 import './LocalAiDiscovery.css';
 
 const SCANNING = new Set(['QUEUED', 'RUNNING', 'SCANNING', 'CANCELLING']);
@@ -87,17 +88,14 @@ function ModelEvidence({model}: {model: LocalModelCandidate}) {
 }
 
 type DiscoveryProps = {canMutate?: boolean; onRegistryChange?: () => void; onboarding?: LocalAiOnboardingOwner; scopeRevision?: number};
-/** The legacy path stays default-off. V2 consumes the same discovery registry. */
+/** Both presentations share ownership; only V2 adds the consent transport. */
 export function LocalAiDiscovery(props: DiscoveryProps) {
-  return props.onboarding ? <OwnedLocalAiDiscovery {...props} onboarding={props.onboarding}/> : <LocalAiDiscoveryContent {...props}/>;
-}
-function OwnedLocalAiDiscovery(props: DiscoveryProps & {onboarding: LocalAiOnboardingOwner}) {
   const ownerKey = useLocalAiOwnerKey(props.onboarding);
   return <LocalAiDiscoveryOwner key={ownerKey} {...props}/>;
 }
-function LocalAiDiscoveryOwner(props: DiscoveryProps & {onboarding: LocalAiOnboardingOwner}) {
+function LocalAiDiscoveryOwner(props: DiscoveryProps) {
   const owner = useLocalAiDiscoveryOwner(props.onboarding);
-  return <LocalAiDiscoveryContent {...props} canMutate={props.canMutate && !owner.invalidated} v2={owner.client} isCurrentOwner={owner.current} ownerInvalidated={owner.invalidated}/>;
+  return <LocalAiDiscoveryContent {...props} canMutate={props.canMutate && !owner.invalidated} v2={props.onboarding ? owner.client : undefined} isCurrentOwner={owner.current} ownerInvalidated={owner.invalidated}/>;
 }
 
 function ScanScopeDetails({scope}: {scope: LocalAiScanScope}) {
@@ -150,23 +148,20 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
   const previousScopeRevision = useRef(scopeRevision);
   const previewEpoch = useRef(0), previewController = useRef<AbortController>(), previewFlight = useRef(false);
   const permission = useRef(canMutate), previouslyMutable = useRef(canMutate), ownerDenied = useRef(false);
-  if (v2 && previouslyMutable.current && !canMutate) ownerDenied.current = true;
+  if (ownerInvalidated || (previouslyMutable.current && !canMutate)) ownerDenied.current = true;
   permission.current = canMutate;
-  const isCurrent = () => mounted.current && isCurrentOwner() && (!v2 || !ownerDenied.current);
+  const isCurrent = () => mounted.current && isCurrentOwner() && !ownerDenied.current;
   const mutable = canMutate && !expired && !ownerDenied.current && isCurrentOwner();
   const scanning = activeScan(scan);
   const locked = !mutable || loading || !snapshot || stateUncertain || !!busy;
 
   function report(caught: unknown) {
     if (!isCurrent() || (caught instanceof Error && caught.name === 'AbortError')) return;
-    if (caught instanceof ApiError && caught.problem.code !== 'LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE' && (caught.status === 401 || caught.status === 403 || AUTH_ERRORS.has(caught.problem.code))) {
-      setExpired(true); setPollPaused(true); setConfirmation(undefined); invalidatePreview();
-      if (v2) ownerDenied.current = true;
-      if (v2) {setSnapshot(undefined); setScan(null);}
-      setError(v2 ? '后端主机授权已失效或权限不足，检测与接入操作已禁用。可继续手动创作。' : '受信任的桌面会话已失效或权限不足，本地 AI 操作已禁用。请重新连接桌面会话。');
-    } else if (v2 && caught instanceof ApiError && caught.problem.code === 'LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE') {
-      invalidatePreview(); ownerDenied.current = true; setExpired(true); setPollPaused(true); setSnapshot(undefined); setScan(null);
-      setError('此后端未提供本地 AI 主机授权，无法检测主机环境。协作项目权限不能授权主机扫描；可继续手动创作。');
+    if (caught instanceof ApiError && (caught.status === 401 || caught.status === 403 || AUTH_ERRORS.has(caught.problem.code) || caught.problem.code === 'LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE')) {
+      purgePrivateState();
+      setError(caught.problem.code === 'LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE'
+        ? '此后端未提供本地 AI 主机授权，无法检测主机环境。协作项目权限不能授权主机扫描；可继续手动创作。'
+        : v2 ? '后端主机授权已失效或权限不足，检测与接入操作已禁用。可继续手动创作。' : '受信任的桌面会话已失效或权限不足，本地 AI 操作已禁用。请重新连接桌面会话。');
     } else if (v2 && caught instanceof ApiError && caught.problem.code.startsWith('LOCAL_AI_SCOPE_')) {
       invalidatePreview();
       setError('检测范围、预览时效或授权已变化。请重新预览并确认；未自动重试检测。');
@@ -178,6 +173,7 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
     }
   }
   async function refresh(signal?: AbortSignal) {
+    if (!isCurrent() || signal?.aborted) return;
     const current = ++generation.current;
     const result = await discovery.snapshot(signal);
     if (!isCurrent() || current !== generation.current) return;
@@ -194,11 +190,16 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
     previewEpoch.current++; previewController.current?.abort(); previewFlight.current = false;
     setScopePreview(undefined); setPreviewBusy(false); setPreviewOpen(false);
   }
+  function purgePrivateState() {
+    ownerDenied.current = true; generation.current++; pollGeneration.current++; invalidatePreview();
+    setExpired(true); setPollPaused(true); setLoading(false); setBusy(''); busyRef.current = false;
+    setSnapshot(undefined); setScan(null); setRoots(''); setEditRoots(false);
+    setRuntimeForm(undefined); setRuntimeId(undefined); setRegistrationForm(undefined); setConfirmation(undefined);
+    setStateUncertain(false); setCancelRequested(false);
+  }
   useEffect(() => {
-    if (!v2) return;
-    if (previouslyMutable.current && !canMutate) {
-      invalidatePreview(); generation.current++; pollGeneration.current++; setExpired(true); setPollPaused(true);
-      setSnapshot(undefined); setScan(null); setConfirmation(undefined); setRuntimeForm(undefined); setRegistrationForm(undefined);
+    if (ownerInvalidated || (previouslyMutable.current && !canMutate)) {
+      purgePrivateState();
       setError(ownerInvalidated ? '项目或会话已改变，原检测确认已清除。请重新打开模型中心。' : '后端主机权限已撤回，检测与接入操作已禁用。可继续手动创作。');
     }
     previouslyMutable.current = canMutate;
@@ -223,11 +224,12 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
   // Only the current scan owns updates. Cancel/restart and unmount invalidate
   // pending requests; a late RUNNING response cannot revive a cancelled scan.
   useEffect(() => {
-    if (!scan || !activeScan(scan) || pollPaused || expired) return;
+    if (!isCurrent() || !scan || !activeScan(scan) || pollPaused || expired) return;
     const scanId = scan.id, current = ++pollGeneration.current;
     const controller = new AbortController();
     let timer: ReturnType<typeof setTimeout>;
     const poll = async () => {
+      if (!isCurrent() || controller.signal.aborted || current !== pollGeneration.current) return;
       try {
         const result = await discovery.scanStatus(scanId, controller.signal);
         if (!isCurrent() || controller.signal.aborted || current !== pollGeneration.current) return;
@@ -235,7 +237,7 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
         if (!activeScan(result)) setCancelRequested(false);
         if (activeScan(result)) timer = setTimeout(poll, 1000);
       } catch (caught) {
-        if (controller.signal.aborted || current !== pollGeneration.current) return;
+        if (!isCurrent() || controller.signal.aborted || current !== pollGeneration.current) return;
         report(caught);
         if (!(caught instanceof ApiError && (caught.status === 401 || caught.status === 403))) timer = setTimeout(poll, 3000);
       }
@@ -248,7 +250,7 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
   // Refresh them once a scan reaches a terminal state without replacing the
   // current candidate state or allowing an older read to overwrite a mutation.
   useEffect(() => {
-    if (!scan || activeScan(scan) || expired) return;
+    if (!isCurrent() || !scan || activeScan(scan) || expired) return;
     const current = generation.current, controller = new AbortController();
     void discovery.snapshot(controller.signal).then(result => {
       if (isCurrent() && !controller.signal.aborted && current === generation.current) setSnapshot(result);
@@ -257,6 +259,7 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
   }, [scan?.id, scanning, expired]);
 
   async function recoverProtectedState() {
+    if (!isCurrent()) return;
     const current = ++generation.current;
     try {
       const result = await discovery.snapshot();
@@ -272,7 +275,7 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
     }
   }
   async function run(key: string, task: () => Promise<void>, recoverOnFailure = false) {
-    if (!mutable || (v2 && (!permission.current || !isCurrent())) || !snapshot || loading || busyRef.current || (scanning && key !== 'cancel') || (stateUncertain && key !== 'refresh-state')) return;
+    if (!mutable || !permission.current || !isCurrent() || !snapshot || loading || busyRef.current || (scanning && key !== 'cancel') || (stateUncertain && key !== 'refresh-state')) return;
     if (v2) invalidatePreview();
     generation.current++; busyRef.current = true; setBusy(key); setError('');
     try {await task();} catch (caught) {
@@ -350,6 +353,7 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
   const models: {model: LocalModelCandidate; registration?: LocalModelRegistration}[] = candidates.map(model => ({model, registration: registrations.find(item => item.id === model.id || item.candidate_id === model.id)}));
   registrations.filter(item => !models.some(row => row.registration?.id === item.id)).forEach(registration => models.push({model: registration, registration}));
   const controlsLocked = locked || scanning;
+  const showFileObservations = !!v2 && scan?.environment_schema_version === 2;
 
   return <Panel title="Local AI · 本地 AI 发现" className="local-ai" actions={<Button variant="ghost" onClick={() => {if (v2) invalidatePreview(); setCollapsed(value => !value);}} aria-expanded={!collapsed}>{collapsed ? '展开本地 AI' : !scan && !registrations.length ? '跳过 / 收起' : '收起'}</Button>}>
     {!collapsed && <div className="local-ai__body">
@@ -377,7 +381,7 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
         <div className="local-ai__actions"><Button variant="primary" disabled={locked || scanning || previewBusy || !scopePreview} onClick={() => scopePreview && void scanAction(false, scopePreview)}>确认此范围并检测</Button><Button variant="ghost" onClick={invalidatePreview}>取消预览</Button></div>
       </section>}
       {loading && <p role="status">正在读取本地 AI 状态…</p>}
-      {scan && <div className="local-ai__summary" role="status"><Badge tone={tone(scan.status)}>{scan.status}</Badge><span>发现 {candidates.length} 个模型 · 已注册 {registrations.length} 个 · {stateUncertain ? '启用状态待确认' : `已启用 ${registrations.filter(item => item.enabled).length} 个`} · {scan.runtimes.filter(item => item.status === 'RUNNING').length} 个 Runtime 可用 · {scan.errors.length} 个检测问题</span>{scanning && <span>{cancelRequested ? '已请求取消，等待当前只读探测结束…' : '扫描中，已显示当前部分结果…'}</span>}{scan.status === 'CANCELLED' && <span>扫描已取消，保留已发现结果。</span>}</div>}
+      {scan && <div className="local-ai__summary" role="status"><Badge tone={tone(scan.status)}>{scan.status}</Badge><span>{showFileObservations ? `${scan.model_files ? `${scan.model_files.length} 条文件 / 索引观察` : '文件观察未提供'} · ${candidates.length} 个 Runtime 候选` : `发现 ${candidates.length} 个模型`} · 已注册 {registrations.length} 个 · {stateUncertain ? '启用状态待确认' : `${showFileObservations ? '已授权路由' : '已启用'} ${registrations.filter(item => item.enabled).length} 个`} · {scan.runtimes.filter(item => item.status === 'RUNNING').length} 个 Runtime 可用 · {scan.errors.length} 个检测问题</span>{scanning && <span>{cancelRequested ? '已请求取消，等待当前只读探测结束…' : '扫描中，已显示当前部分结果…'}</span>}{scan.status === 'CANCELLED' && <span>扫描已取消，保留已发现结果。</span>}</div>}
       {!!scan?.errors.length && <StatusMessage tone="warning">部分检测未完成，不影响其他结果。{scan.errors.map((item, index) => <p key={index}>{typeof item === 'string' ? item : [item.runtime_id, item.code].filter(Boolean).join(' · ') || 'Runtime 检测未完成'}</p>)}</StatusMessage>}
       {editRoots && <form className="local-ai__form" aria-label="扫描目录配置" onSubmit={event => {event.preventDefault(); void run('roots', async () => {await discovery.settings(roots.split(/\r?\n/).map(value => value.trim()).filter(Boolean)); if (isCurrent()) {setEditRoots(false); await refresh();}}, true);}}>
         <label className="local-ai__wide">模型目录（每行一个完整路径）<textarea rows={4} value={roots} placeholder="D:\AI\models" onChange={event => {if (v2) invalidatePreview(); setRoots(event.target.value);}}/></label>
@@ -398,7 +402,9 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
       </form>}
       {snapshot && <Hardware value={snapshot.hardware}/>}
       {!!runtimeMap.size && <section className="local-ai__section" aria-label="发现的 Runtime"><h3>本地 Runtime（{runtimeMap.size}）</h3><div className="local-ai__list">{Array.from(runtimeMap.values()).map(runtime => <article key={runtime.id} aria-label={runtime.name || runtime.id}><header><strong>{runtime.name || runtime.id}</strong><Badge tone={tone(runtime.status || 'NOT_VERIFIED')}>{runtime.status || 'NOT_VERIFIED'}</Badge></header><p>{runtime.type || runtime.runtime_type} · {runtime.management || 'EXTERNAL'}</p><p>地址：{runtime.endpoint || '未配置'} · 版本：{runtime.version || '未检测'}</p><p>运行状态：{runtime.status === 'RUNNING' ? '正在运行' : runtime.status === 'NOT_FOUND' ? '未发现运行服务' : '未确认'}</p>{runtime.executable_exists !== undefined && <p>Executable：{runtime.executable_exists ? '已找到' : '未找到'} · CUDA：{runtime.cuda_status || '未验证'}</p>}{runtime.notes?.map((note, index) => <p key={index}>{note}{localAiDiagnostic(note) ? `：${localAiDiagnostic(note)}` : ''}</p>)}<Button disabled={controlsLocked} onClick={() => editRuntime(runtime)}>配置 Runtime</Button></article>)}</div></section>}
-      {!loading && !models.length && (!v2 || !!snapshot) && <EmptyState title={scan ? '尚未发现模型' : '尚未开始扫描'} detail={v2 ? '未配置或未发现可用模型时，可继续手动创作。可先预览已有服务；自定义路径与端口仅用于高级配置。' : '可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。'}/>}
+      {showFileObservations && scan && <LocalAiModelFiles key={scan.id} scan={scan} registrations={registrations} stateUncertain={stateUncertain}/>}
+      {v2 && scan && !showFileObservations && <p className="local-ai__muted">此扫描未提供 V2 文件观察字段；候选列表不能代表文件或索引清单。</p>}
+      {!loading && !models.length && (!v2 || !!snapshot) && <EmptyState title={showFileObservations ? '尚无可接入候选' : scan ? '尚未发现模型' : '尚未开始扫描'} detail={showFileObservations ? '文件或索引观察不等于可运行候选。Runtime 绑定仍未知时，可核对已有服务后明确预览并检测；可继续手动创作。' : v2 ? '未配置或未发现可用模型时，可继续手动创作。可先预览已有服务；自定义路径与端口仅用于高级配置。' : '可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。'}/>}
       {GROUPS.map(group => {const rows = models.filter(row => groupOf(row.model) === group); return rows.length ? <section className="local-ai__section" key={group} aria-label={group}><h3>{group}（{rows.length}）</h3><div className="local-ai__list">{rows.map(({model, registration}) => {const current = registration || model; return <article key={model.id} aria-label={`${model.display_name} ${model.local === false ? "非本地来源" : "本地模型"}`}>
         <header><strong>{model.display_name}</strong><Badge tone={stateUncertain ? 'warning' : tone(current.status)}>{stateUncertain ? 'NOT_VERIFIED' : current.status}</Badge></header>
         <div className="local-ai__actions"><Badge tone={model.local === false ? "warning" : "neutral"}>{model.local === false ? "云端或非本地来源 · 禁止本地路由" : "本地候选"}</Badge><Badge tone={stateUncertain ? 'warning' : registration?.enabled ? 'success' : 'neutral'}>{stateUncertain && registration ? '接入状态待确认' : registration?.enabled ? '已启用' : registration ? '已注册 · 未启用' : '候选 · 未注册'}</Badge><Badge tone={current.verified ? 'success' : 'warning'}>{current.verified ? '已通过实际生成验证' : '尚未实际生成验证'}</Badge></div>

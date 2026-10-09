@@ -255,3 +255,30 @@ M3-A is a publishable **PARTIAL** checkpoint. Exact end SHA/tree will be bound v
 PR 47's publication receipt, not self-embedded or replaced with the M2 parent.
 New-SHA full-product hosted CI and M3 browser/visual results remain pending; actual
 user Windows, real inference/quality and full M3 model/API gates remain open.
+
+## 9. M3-B existing metadata reuse
+
+[M3-B](MILESTONE_M3B_REPORT.md) exposes the existing schema-2 scan's bounded file
+observations without another scan/read, registration store or API. Runtime binding
+requires exact candidate IDs from that same scan; missing bindings remain unknown.
+Safetensors/GGUF checks are metadata-only, Diffusers bytes/path describe
+`model_index.json` only, family/capability names are hints, and path IDs are not
+content hashes. Register, license/configuration review, Enable and authorized
+execution remain separate original actions. File observations cannot establish
+component completeness, weight integrity or generation readiness.
+
+The report preserves development failures, current-source receipts and the new
+hosted-browser input separately from published M3-A CI. This does not close all
+LM-01–12 cases, MODEL-06 deduplication, install/API workflows or real-user Windows,
+hardware/performance and inference acceptance. Full M3 remains **PARTIAL**.
+
+[Corrected-source M3-B](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+restores the legacy client's use of the existing local-host credential policy,
+retains explicit-empty/collaboration/packaged exclusions, and applies owner
+fencing plus private-cache/form purging across modes. Server permission is not
+weakened; actual legacy HTTP/UI browser journeys still need hosted execution.
+
+The [final source-bound checks](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+include real PostgreSQL 17.11, fresh database OID 36708, 20 original migrations
+and verified normal shutdown. Selected-owner success does not complete real
+model, full-product/browser, install/API or user Windows acceptance.

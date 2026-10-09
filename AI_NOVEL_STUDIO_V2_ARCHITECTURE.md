@@ -540,3 +540,26 @@ M3-A is a publishable **PARTIAL** checkpoint. Exact end SHA/tree will be bound v
 PR 47's publication receipt, not self-embedded or replaced with the M2 parent.
 New-SHA full-product hosted CI and M3 browser/visual results remain pending; actual
 user Windows, real inference/quality and full M3 model/API gates remain open.
+
+## 12. Append-only M3-B same-scan file projection
+
+The [M3-B report](MILESTONE_M3B_REPORT.md#2-actual-bounded-implementation) records
+an additive consumer of the original discovery scan: optional typed file/root
+fields and `LocalAiModelFiles`, V2/schema-2 gated, with 20-item local pages over
+the original bounded result. Exact same-scan candidate IDs and existing registry
+IDs bind displayed associations; names and paths grant no authority. Existing
+host/session/project/epoch fencing remains in charge. No production backend API,
+registry, filesystem read or scan is added. MODEL-06 content deduplication remains
+partial. Source-bound evidence and hosted-parent separation are in that report;
+this does not supersede earlier M3-A outcomes or complete full M3.
+
+The later [M3-B correction](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+also reuses the original request-token policy and React owner for legacy
+presentation, fencing epoch/ABA/late-body responses and purging cached private
+forms on denial. Server authority, credential storage and protected App keys are
+unchanged; the Agent selection fix binds display and mutation to the same role.
+
+[Final M3-B verification](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze-and-terminal-frontend-checks--1634-utc)
+now binds the selected 56-file File/real-PG range to that corrected source, with
+normal PG shutdown and original source/inventory contracts preserved. It is not
+full-product or new-SHA hosted acceptance; M3 remains PARTIAL.

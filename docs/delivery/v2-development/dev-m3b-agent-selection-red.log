@@ -1,0 +1,174 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ❯ src/novel/AgentTeamPanel.selectionBoundary.test.tsx (7 tests | 3 failed) 213ms
+   × shows the registered default and its description together at the first usable commit 63ms
+     → expected [ { id: 'verifier', description: '' } ] to deeply equal [ { id: 'verifier', …(1) } ]
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+   × captures the displayed role as mutation input even if the catalog changes before execution 76ms
+     → expected undefined to be 'verifier' // Object.is equality
+     → expected "createAgentJob" to be called with arguments: [ ObjectContaining{…} ]
+
+Received: 
+
+  1st createAgentJob call:
+
+  Array [
+-   ObjectContaining {
+-     "agent_id": "verifier",
++   Object {
++     "agent_id": "reviewer",
++     "branch_id": undefined,
++     "chapter": 1,
++     "chapter_id": "n:1",
++     "execution_mode": "deterministic",
++     "instruction": "",
++     "model_id": undefined,
++     "novel_id": "n",
++     "provider_id": undefined,
++     "target": "local",
+    },
+  ]
+
+
+Number of calls: 1
+
+   × uses the new registered fallback at the first commit after the selected role is removed 24ms
+     → expected [ { id: 'verifier', description: '' } ] to deeply equal [ { id: 'verifier', …(1) } ]
+     → Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 4 passed (7)
+   Start at  09:24:08
+   Duration  1.04s (transform 157ms, setup 0ms, collect 283ms, tests 213ms, environment 294ms, prepare 62ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/novel/AgentTeamPanel.selectionBoundary.test.tsx > shows the registered default and its description together at the first usable commit
+AssertionError: expected [ { id: 'verifier', description: '' } ] to deeply equal [ { id: 'verifier', …(1) } ]
+
+- Expected
++ Received
+
+  Array [
+    Object {
+-     "description": "核验世界与人物。",
++     "description": "",
+      "id": "verifier",
+    },
+  ]
+
+ ❯ src/novel/AgentTeamPanel.selectionBoundary.test.tsx:98:24
+     96|     start.click();
+     97|   });
+     98|   expect.soft(commits).toEqual([{ id: verifier.id, description: verifi…
+       |                        ^
+     99|   await waitFor(() => expect(api.createAgentJob).toHaveBeenCalledTimes…
+    100|   expect(api.createAgentJob).toHaveBeenCalledWith(expect.objectContain…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/novel/AgentTeamPanel.selectionBoundary.test.tsx > shows the registered default and its description together at the first usable commit
+Error: Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+ ❯ src/novel/AgentTeamPanel.selectionBoundary.test.tsx:104:27
+    102|     chapter_id: chapter.id, execution_mode: 'deterministic', target: '…
+    103|   }));
+    104|   expect(api.startAgentJob).toHaveBeenCalledExactlyOnceWith('selection…
+       |                           ^
+    105| });
+    106| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/novel/AgentTeamPanel.selectionBoundary.test.tsx > captures the displayed role as mutation input even if the catalog changes before execution
+AssertionError: expected undefined to be 'verifier' // Object.is equality
+
+- Expected: 
+"verifier"
+
++ Received: 
+undefined
+
+ ❯ src/novel/AgentTeamPanel.selectionBoundary.test.tsx:117:55
+    115|   expect((screen.getByLabelText('Agent 角色') as HTMLSelectElement).va…
+    116|   // Global MutationCache receives variables plus the mutation and con…
+    117|   expect.soft(vi.mocked(onMutate).mock.calls[0]?.[0]).toBe(verifier.id…
+       |                                                       ^
+    118|   release();
+    119|   await waitFor(() => expect(api.createAgentJob).toHaveBeenCalledTimes…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/novel/AgentTeamPanel.selectionBoundary.test.tsx > captures the displayed role as mutation input even if the catalog changes before execution
+AssertionError: expected "createAgentJob" to be called with arguments: [ ObjectContaining{…} ]
+
+Received: 
+
+  1st createAgentJob call:
+
+  Array [
+-   ObjectContaining {
+-     "agent_id": "verifier",
++   Object {
++     "agent_id": "reviewer",
++     "branch_id": undefined,
++     "chapter": 1,
++     "chapter_id": "n:1",
++     "execution_mode": "deterministic",
++     "instruction": "",
++     "model_id": undefined,
++     "novel_id": "n",
++     "provider_id": undefined,
++     "target": "local",
+    },
+  ]
+
+
+Number of calls: 1
+
+ ❯ src/novel/AgentTeamPanel.selectionBoundary.test.tsx:120:30
+    118|   release();
+    119|   await waitFor(() => expect(api.createAgentJob).toHaveBeenCalledTimes…
+    120|   expect(api.createAgentJob).toHaveBeenCalledWith(expect.objectContain…
+       |                              ^
+    121|   expect(api.startAgentJob).toHaveBeenCalledExactlyOnceWith('selection…
+    122| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/novel/AgentTeamPanel.selectionBoundary.test.tsx > uses the new registered fallback at the first commit after the selected role is removed
+AssertionError: expected [ { id: 'verifier', description: '' } ] to deeply equal [ { id: 'verifier', …(1) } ]
+
+- Expected
++ Received
+
+  Array [
+    Object {
+-     "description": "核验世界与人物。",
++     "description": "",
+      "id": "verifier",
+    },
+  ]
+
+ ❯ src/novel/AgentTeamPanel.selectionBoundary.test.tsx:131:24
+    129|     start.click();
+    130|   });
+    131|   expect.soft(commits).toEqual([{ id: verifier.id, description: verifi…
+       |                        ^
+    132|   await waitFor(() => expect(api.createAgentJob).toHaveBeenCalledTimes…
+    133|   expect(api.createAgentJob).toHaveBeenCalledWith(expect.objectContain…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/novel/AgentTeamPanel.selectionBoundary.test.tsx > uses the new registered fallback at the first commit after the selected role is removed
+Error: Invalid Chai property: toHaveBeenCalledExactlyOnceWith
+ ❯ src/novel/AgentTeamPanel.selectionBoundary.test.tsx:134:27
+    132|   await waitFor(() => expect(api.createAgentJob).toHaveBeenCalledTimes…
+    133|   expect(api.createAgentJob).toHaveBeenCalledWith(expect.objectContain…
+    134|   expect(api.startAgentJob).toHaveBeenCalledExactlyOnceWith('selection…
+       |                           ^
+    135| });
+    136| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+

@@ -1,0 +1,62 @@
+F...F..................                                                  [100%]
+=================================== FAILURES ===================================
+_ test_explicit_fixture_seed_contains_only_fixed_tiny_metadata_and_never_scans _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-checks/dev-m3b-file-fixture-first/pytest/test_explicit_fixture_seed_con0')
+
+    def test_explicit_fixture_seed_contains_only_fixed_tiny_metadata_and_never_scans(tmp_path):
+        fixture = SyntheticDiscoveryFixture(tmp_path / "adapter", delay_seconds=0)
+        discovery = service(tmp_path)
+        fixture.install(discovery)
+        guard = Mock()
+        rows = fixture.seed_model_metadata(discovery, guard)
+        assert {row["name"] for row in rows} == {
+            "synthetic-metadata.gguf", "synthetic-metadata.safetensors", "model_index.json"}
+        assert sum(row["bytes"] for row in rows) < 512
+        assert all(len(row["sha256"]) == 64 for row in rows)
+>       assert gguf_metadata(fixture.common / "synthetic-metadata.gguf")["header_valid"]
+E       assert False
+
+tests/test_v2_discovery_file_browser_fixture.py:28: AssertionError
+_ test_real_mounted_fixture_seed_and_explicit_scan_keep_metadata_inference_separate[enabled] _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-checks/dev-m3b-file-fixture-first/pytest/test_real_mounted_fixture_seed0')
+mode = 'enabled'
+
+    @pytest.mark.parametrize("mode", ["enabled", "default-off", "acceptance"])
+    def test_real_mounted_fixture_seed_and_explicit_scan_keep_metadata_inference_separate(tmp_path, mode):
+        root = Path(__file__).resolve().parents[1]
+        owned = tmp_path / "file-observation-process"
+        env = {**os.environ, **isolated_environment(root, owned),
+            "V2_DISCOVERY_FIXTURE_ROOT": str(owned), "NOVEL_DATA_PATH": str(owned / "novel-data"),
+            "EXPERIMENTAL_FEATURES": "" if mode == "default-off" else "narrative_production_v2",
+            "V1_ACCEPTANCE_MODE": str(mode == "acceptance").lower(),
+            "COLLABORATION_DEV_SESSIONS_JSON": "", "FRONTEND_ORIGIN": "http://127.0.0.1:5187",
+            "ENABLE_PROVIDER_FALLBACK": "false", "CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK": "true"}
+        result = subprocess.run([sys.executable, str(root / "tests/v2_discovery_browser_server.py"), "--self-check-files"],
+            env=env, capture_output=True, text=True, timeout=45)
+>       assert result.returncode == 0, result.stdout + result.stderr
+E       AssertionError: /workspace/scratch/b8734129d01d/AI-Novel-Studio/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+E           from starlette.testclient import TestClient as TestClient  # noqa
+E         Traceback (most recent call last):
+E           File "/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/v2_discovery_browser_server.py", line 301, in <module>
+E             self_check_files(app, fixture)
+E           File "/workspace/scratch/b8734129d01d/AI-Novel-Studio/tests/v2_discovery_browser_server.py", line 284, in self_check_files
+E             assert all(row["header_valid"] and not row["inference_verified"] for row in report["model_files"])
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         AssertionError
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/workspace/scratch/b8734129d01d/AI-Novel-Studio/.venv/bin/python', '/workspace/scratch/b873412...        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n').returncode
+
+tests/test_v2_discovery_file_browser_fixture.py:85: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_discovery_file_browser_fixture.py::test_explicit_fixture_seed_contains_only_fixed_tiny_metadata_and_never_scans
+FAILED tests/test_v2_discovery_file_browser_fixture.py::test_real_mounted_fixture_seed_and_explicit_scan_keep_metadata_inference_separate[enabled]
+2 failed, 21 passed, 1 warning in 53.90s

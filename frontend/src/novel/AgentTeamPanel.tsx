@@ -332,14 +332,15 @@ function AgentTeamBody({ chapter }: { chapter?: Chapter }) {
     [mode, setMode] = useState<"deterministic" | "model">("deterministic"),
     [job, setJob] = useState<any>();
   const agents = creativeAgentCatalogItems(query.data);
+  const selected = agents.find((agent) => agent.id === agentId) ?? agents[0];
   useEffect(() => {
     if (agents.length && !agents.some(agent => agent.id === agentId)) setAgentId(agents[0].id);
   }, [query.data, agentId]);
   const create = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (submittedAgentId: string) => {
       if (!chapter) throw new Error("请先选择章节");
       const created = await api.createAgentJob({
-        agent_id: agentId,
+        agent_id: submittedAgentId,
         novel_id: chapter.novel_id,
         chapter: chapter.number,
         chapter_id: chapter.id,
@@ -421,8 +422,7 @@ function AgentTeamBody({ chapter }: { chapter?: Chapter }) {
       job &&
       !["COMPLETED", "VALIDATED", "FAILED", "CANCELLED", "ACCEPTED", "REJECTED"].includes(
         job.status,
-      ),
-    selected = agents.find((item) => item.id === agentId);
+      );
   return (
     <>
       <Panel title="Creative Agent 任务">
@@ -437,7 +437,7 @@ function AgentTeamBody({ chapter }: { chapter?: Chapter }) {
           <label>
             Agent 角色
             <select
-              value={agentId}
+              value={selected.id}
               disabled={!!busy}
               onChange={(event) => setAgentId(event.target.value)}
             >
@@ -495,7 +495,7 @@ function AgentTeamBody({ chapter }: { chapter?: Chapter }) {
                   create.isPending ||
                   (mode === "model" && !selectedModel)
                 }
-                onClick={() => create.mutate()}
+                onClick={() => create.mutate(selected.id)}
               >
                 启动任务
               </Button>

@@ -63,7 +63,7 @@ import {isPackagedDesktopHost} from './packagedHost';
 let collaboration:CollaborationContext={sessionToken:''};
 export function setCollaborationContext(value:CollaborationContext){if(value.sessionToken||value.scope)clearLocalHostSession();collaboration=value}
 export function getCollaborationContext(){return collaboration}
-function requestToken(context:CollaborationContext,url:string){
+export function requestToken(context:CollaborationContext,url:string){
  if(context.sessionToken)return context.sessionToken;
  if(context.scope||context.actor||isPackagedDesktopHost()||/^\/api\/(?:v1\/)?(?:collaboration|packaged)\//.test(url))return '';
  // Explicit captured credentials (including an empty one) never borrow a later identity.

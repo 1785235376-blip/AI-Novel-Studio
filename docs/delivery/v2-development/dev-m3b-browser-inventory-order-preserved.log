@@ -1,0 +1,14 @@
+Listing tests:
+  [v2-live-chromium] › v2-asset-relationships-live.spec.ts:41:1 › real File optional asset relationships persist, protect targets and remove explicitly with no chapter prerequisite
+  [v2-live-chromium] › v2-independent-graph-live.spec.ts:35:1 › real independent typed graph saves empty and disconnected drafts, reopens, and reviews an original local workflow without model calls
+  [v2-live-chromium] › v2-independent-studio-live.spec.ts:88:1 › real File independent studio imports, persists, reopens and exports an image with no chapters or model mutation
+  [v2-live-chromium] › v2-independent-studio-live.spec.ts:207:1 › real File independent VIDEO imports, decodes, reopens and exports original bytes without chapters or director
+  [v1-chromium] › v2-independent-graph-live.spec.ts:106:3 › default-off: independent graph remains unavailable without its server gate
+  [v1-chromium] › v2-independent-studio-live.spec.ts:281:1 › default-off independent studio entry is absent and neutral project writes are rejected
+  [v1-acceptance-chromium] › v2-independent-graph-live.spec.ts:106:3 › acceptance-mode: independent graph remains unavailable without its server gate
+  [v1-acceptance-chromium] › v2-independent-studio-live.spec.ts:285:1 › acceptance-mode independent studio stays absent despite an enabled narrative feature setting
+  [m3-consent-chromium] › v2-local-ai-consent-live.spec.ts:48:1 › M3 enabled original File HTTP UI reviews synthetic host scope before explicit confirmation
+  [m3-consent-chromium] › v2-local-ai-files-live.spec.ts:45:1 › M3 files original File HTTP UI reuses observed metadata without claiming inference
+  [m3-default-off-chromium] › v2-local-ai-consent-live.spec.ts:82:62 › M3 default-off keeps original UI and rejects new onboarding routes without probes
+  [m3-acceptance-chromium] › v2-local-ai-consent-live.spec.ts:82:62 › M3 acceptance-mode keeps original UI and rejects new onboarding routes without probes
+Total: 12 tests in 5 files
