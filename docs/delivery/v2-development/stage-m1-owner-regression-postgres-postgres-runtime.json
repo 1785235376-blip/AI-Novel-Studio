@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-09T12:46:56.141469+00:00",
+  "version": "PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+  "endpoint": "127.0.0.1:55432/v2_creative_tests",
+  "probe_sql": "SELECT version(), current_database(), host(inet_server_addr()), inet_server_port(), 1",
+  "probe_result": [
+    "PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "v2_creative_tests",
+    "127.0.0.1",
+    55432,
+    1
+  ],
+  "data_path": ".runtime/postgresql/data",
+  "boundary": "real disposable PostgreSQL; loopback only; no model calls"
+}

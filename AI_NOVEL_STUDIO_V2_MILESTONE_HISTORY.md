@@ -97,3 +97,101 @@ Refer to the stage-specific [architecture](AI_NOVEL_STUDIO_V2_ARCHITECTURE.md), 
 2. Record unresolved scope as PARTIAL or blocked with exact reason, not a future-tense claim of completion. A model/hardware block need not stop unrelated manual capability development.
 3. Commit only authorized V2 work; push only the existing development branch and update Draft PR truthfully. New hosted runs remain separate from local evidence and prior failures.
 4. Continue the next safe dependency-bound task. No automatic Windows execution, fee, destructive migration, permission expansion or release follows from reaching a milestone.
+
+## 6. Appended M1 checkpoint — 2026-10-09 13:00 UTC
+
+Sections 1–5 remain their earlier time-bound ledger. **M1 remains PARTIAL**; this
+records a useful as-built slice, not a full-stage completion or release receipt.
+The [M1 report](MILESTONE_M1_REPORT.md) contains the complete requirement delta,
+original commands/logs, source maps, failed attempts and outstanding gates.
+
+| Identity / scope | Recorded state |
+| --- | --- |
+| Original engineering start | `4350a61fb9f61acccb845fef96b24b9b1275bbd3` |
+| M0 documentation baseline | `0df2640c4c1a2d3052bb0a84d14445744d04046f`, tree `f800c0e8a6d920e8836a027707c8078c5a8421f2` |
+| M1 implementation end SHA/tree | **UNCOMMITTED / UNKNOWN** at this checkpoint; forthcoming exact PR47 publication receipt required |
+| As-built minimum slice | Neutral original-owner project entry, nonbinding preferences, independent manual image/video/audio assets, original ID/version/provenance/export, typed read-only Chapter/Screenplay bridge, descriptive relationships, bounded import storage admission and shared-shell consumer |
+| Full M1 blockers | Applied presets; configurable paths/export destination; full occupancy/cache limits/preview-confirm cleanup; verified reference/copy migration with interruption recovery; running-job low-space pause/resume; actual browser/visual and published-source CI evidence |
+
+### 6.1 Subsequent local evidence, without erasing earlier attempts
+
+- [Original-owner File regression](docs/delivery/v2-development/stage-m1-owner-regression-file.json): **PASS**, 1,047 passed / 954 skipped, 232.85 s; includes 3 browser-job infrastructure guard tests.
+- [Original-owner PG regression](docs/delivery/v2-development/stage-m1-owner-regression-postgres.json): **PASS**, 1,011 passed / 987 skipped, 678.29 s, actual PostgreSQL 17.11. Matching own-run log ends in normal shutdown at 12:58:21 UTC. These are selected regressions, not complete backend execution.
+- [API catalog check](docs/delivery/v2-development/stage-m1-api-catalog.json): **PASS**, 3 tests. [Generation receipt](docs/delivery/v2-development/catalog-25061dfa7a78.json) hashes match all four catalog outputs; 2,077 operations, M1-only **+34 / −0** relative to M0. Its staged tree is not the final published commit.
+- Director fast-receipt reproduction retains **RED: 1 failed / 2 passed**, then **GREEN: 45 passed**. It demonstrates and fixes a controlled unit-level defect; the blocked historical browser trace's exact cause remains unestablished.
+- First final frontend: **PASS**, 1,773 passed / 8 existing skips. First final build: **FAIL**, two invalid options in the new Director test; TypeScript stopped before build/token execution. Both receipts remain intact.
+- [Corrected final build](docs/delivery/v2-development/stage-m1-final-build-corrected.json): **PASS**, TypeScript/Vite/43-file token guard, existing chunk warning retained. [Corrected full frontend](docs/delivery/v2-development/stage-m1-final-frontend-corrected.json): **PASS**, 1,773 passed / 8 existing skips. Each finished with unchanged source; corrected source maps agree and differ from owner regression only in that new test file.
+- [Independent collection review](docs/delivery/v2-development/stage-m1-collection-review.json): **INVENTORY_ONLY**, no tests executed; 9,809 collected, original 9,151 preserved in order, 658 additions relative to the frozen baseline and historical skips unchanged. It does not reopen historical independent review.
+- Actual new image/video browser import/reopen/export, relationship browser acceptance, screenshot/geometry review and current M1 hosted CI are **pending / NOT_RUN** at this cutoff. Service roundtrips and jsdom do not replace them.
+
+### 6.2 Separate M0 hosted checkpoint and next safe work
+
+[Persisted observation, 12:49:12 UTC](docs/delivery/v2-development/m0-ci-checkpoint-1249.json):
+M0 PR Cloud **37928446079** has File/frontend cancellations, browser/TCP/native
+successes, PG shard 1 success and shard 0 pending; M0 push Cloud **37928438685**
+has File/frontend/TCP/native successes, live-browser failure and both PG shards
+pending. Push V2 live is **6 passed / 1 failed**, geometry **8 passed**. The first
+failure archive records **403 TRACE_ACCESS_BLOCKED**; no trace inspected, no
+rerun and no timeout change. This is an incomplete M0 observation, not M1 CI.
+
+Safe, nondependent M2/M3 work may proceed from this documented bounded checkpoint.
+The minimum independent path still needs its actual browser receipt; missing
+storage/preset semantics remain explicit blockers for dependent operations rather
+than deferred-complete requirements. Keep original Project/Asset/Job/Model owners,
+optional connections and no-model manual use. Historical **PARTIAL_CI_CAPACITY**,
+**39 PARTIAL + F00 INTEGRATED**, independent review **BLOCKED**, and M12
+**USER_APPROVAL_REQUIRED / LOCAL_REQUIRED / NOT_RUN** remain unchanged. No end SHA,
+all-green CI, Windows-user acceptance, merge or release is invented by this ledger.
+
+## 7. Final M1 metadata-guard checkpoint
+
+After the 13:00 snapshot, V2's original-owner adapter gained a strict positive
+integer revision guard; legacy asset metadata semantics are unchanged. The
+seven-value File corruption reproduction is retained as **FAIL: 7 failed / 7
+opposite-profile skipped / 150 deselected**. Final focused File and real PG 17.11
+each have **215 passed / 186 opposite-profile skipped**, stable source maps and
+matching normal PostgreSQL shutdown. Exact commands and source/log evidence are
+in [M1 report §11](MILESTONE_M1_REPORT.md#11-final-metadata-guard-delta-and-bounded-m1-closure).
+
+The larger owner regressions and frontend/build in §6 remain successful at their
+own **pre-final-guard snapshots**; they are not current-tree full regression.
+[Final catalog regeneration](docs/delivery/v2-development/catalog-80d041f1ef1c.json)
+retains **2,077 operations, M1 +34/−0**, with backend fingerprint
+`a06abe220e300bad702981085001c7bd0259ba6d81a519bb3f855c1f8db56292`.
+Final API catalog check is **3 passed**; coverage infrastructure **174 passed**.
+[Actual final inventory](docs/delivery/v2-development/stage-m1-version-guard-collection-written.json)
+is **9,823 nodes**, **14 new** since 9,809, with original 9,151 ordered nodes and
+historical skips preserved; `tests_executed:false`. Written manifest hash is
+`3e86bfabbdcb2c494968cf89d6efdd3ff2cc10edf921fa47f6a9669474dfce9f`.
+Earlier inventory/CI checkpoints remain historical.
+
+M1 is **PARTIAL / bounded minimum-path closure**. Local browser **BLOCKED**;
+hosted current-M1 browser **NOT_RUN**; actual screenshot/geometry review remains
+unverified. Storage migration, general cache cleanup, global reservation/job
+pause and applied preset gaps persist and block dependent operations. Safe
+nondependent M2/M3 may continue. Baseline stays `0df2640c4c1a2d3052bb0a84d14445744d04046f`;
+final published M1 SHA/tree is not yet recorded. Historical review classifications
+and M12 **USER_APPROVAL_REQUIRED / LOCAL_REQUIRED / NOT_RUN** remain unchanged.
+
+### 7.1 M0 terminal record, distinct from current M1
+
+[Observed 13:17 UTC](docs/delivery/v2-development/m0-ci-terminal.json), all attempt 1:
+PR Cloud **37928446079 CANCELLED**, with File/frontend cancellations and both
+strict backend aggregates failed despite successful PG shard execution; push
+Cloud **37928438685 FAILURE**, with failed V2 browser and successful File/PG
+execution plus aggregates. PR Interop **37928446071**, push Interop **37928438655**
+and Shared R123 **37928446211** are **SUCCESS**, with their original fixture/RED
+boundaries. No rerun, timeout change or silent replacement of failures occurred.
+The M0 trace is still **403 TRACE_ACCESS_BLOCKED**, uninspected.
+
+Local browser carries the preserved prior Chromium `process_singleton_posix.cc:297`
+socket permission denial and `SIGABRT`; no new M1 local browser attempt occurred.
+Current M1 hosted execution remains **NOT_RUN** until an actual published revision
+and event-bound receipt exist. This ledger grants no Windows execution or release.
+
+The [13:21 aggregate excerpts](docs/delivery/v2-development/m0-ci-aggregate-log-excerpts.json)
+record cancelled execution/successful TCP inputs in both PR fail-closed
+aggregates. Push same-run joins reconcile **9,449 nodes per profile**:
+File **6,190 passed / 3,259 skips**, PG **6,159 passed / 3,290 skips**, original
+TCP **2 passed**. These remain M0-only counts, not final M1 execution; the excerpts
+are not complete downloaded artifacts or proof of monolithic PG equivalence.

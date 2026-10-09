@@ -308,6 +308,9 @@ async def collaboration_fail_closed(request,call_next):
                            or (normalized_path == "/api/experimental/first-use/sample/recover" and method == "POST"))
         if first_use_route and 'workspace_tools_v2' in enabled_flags():
             allowed = True
+        from .creative.workspace_api import is_independent_studio_route
+        if 'narrative_production_v2' in enabled_flags() and is_independent_studio_route(method, normalized_path):
+            allowed = True
         finding_review_route = (
             method == 'GET' and re.fullmatch(
                 r'/api/projects/[^/]+/(?:continuity|narrative)/review-findings(?:/[^/]+(?:/(?:history|evidence))?)?',

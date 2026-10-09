@@ -11,6 +11,7 @@ import re
 import tempfile
 import threading
 import uuid
+from contextlib import contextmanager
 from pathlib import Path
 
 from ..repository import atomic_write, now
@@ -49,10 +50,14 @@ class AssetLibraryService:
         lineage_enabled = "asset_lineage_v2" in enabled_flags()
         def redact(item):
             if isinstance(item, dict):
-                for key in ("_required_features", "_owner_actor_id", "_origin_provenance"):
+                for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding"):
                     item.pop(key, None)
                 if not lineage_enabled and isinstance(item.get("parameters"), dict):
                     item["parameters"].pop("asset_lineage_v2", None)
+                if isinstance(item.get("parameters"), dict):
+                    # Relationships require a current, scoped target projection;
+                    # raw stored IDs cannot bypass a target's later privacy.
+                    item["parameters"].pop("asset_relationships_v2", None)
                 for child in item.values(): redact(child)
             elif isinstance(item, list):
                 for child in item: redact(child)
@@ -63,6 +68,36 @@ class AssetLibraryService:
         self.root = root / "assets"
         self.root.mkdir(parents=True, exist_ok=True)
         self._lock = threading.RLock()
+        self._scope = threading.local()
+
+    @contextmanager
+    def project_scope(self, novel_id: str, branch_id: str | None, owner_lease, *, scope_key: str):
+        """Lease the existing owner for new, incarnation-bound studio assets.
+
+        This is a server-only adapter, not a client-supplied identity. The
+        callable must hold the original project owner's lifecycle lease and
+        yield its actual incarnation. Acquire asset -> owner, matching the
+        established lineage guard's order. Never open a scope-document write
+        transaction inside this lease. The old unbound asset contract remains
+        unchanged outside it; neither side silently adopts the other's data.
+        """
+        self._identifier(novel_id, "novel_id")
+        if branch_id is not None:
+            self._identifier(branch_id, "branch_id")
+        if not isinstance(scope_key, str) or not re.fullmatch(r"[a-f0-9]{64}", scope_key):
+            raise ValueError("ASSET_PROJECT_SCOPE_INVALID")
+        if getattr(self._scope, "binding", None) is not None:
+            raise ValueError("ASSET_PROJECT_SCOPE_NESTED")
+        with self._lock, workspace_mutation(self.root, "asset-library"), owner_lease() as incarnation:
+            if not isinstance(incarnation, str) or not re.fullmatch(
+                    r"(?:file|postgres):[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", incarnation):
+                raise ValueError("ASSET_PROJECT_IDENTITY_INVALID")
+            self._scope.binding = {"novel_id": novel_id, "branch_id": branch_id,
+                                   "incarnation": incarnation, "scope_key": scope_key}
+            try:
+                yield
+            finally:
+                del self._scope.binding
 
     @staticmethod
     def _identifier(value: str, field: str = "asset_id") -> str:
@@ -97,8 +132,17 @@ class AssetLibraryService:
             raise AssetIntegrityError("asset metadata is invalid")
         return meta
 
-    @staticmethod
-    def _in_scope(meta: dict, branch_id: str | None, actor_id: str | None = None) -> bool:
+    def _in_scope(self, meta: dict, branch_id: str | None, actor_id: str | None = None) -> bool:
+        binding, active = meta.get("_project_binding"), getattr(self._scope, "binding", None)
+        if "narrative_production_v2" in meta.get("_required_features", []) and binding is None:
+            # A missing new binding is corruption, not permission to fall back
+            # to the historical unbound contract or adopt a recreated owner.
+            return False
+        if binding is not None or active is not None:
+            if (not isinstance(binding, dict) or binding != active
+                    or meta.get("novel_id") != binding.get("novel_id")
+                    or meta.get("branch_id") != branch_id or binding.get("branch_id") != branch_id):
+                return False
         if meta.get("_required_features"):
             from ..experimental.flags import enabled_flags
             if not set(meta["_required_features"]).issubset(enabled_flags()): return False
@@ -112,7 +156,7 @@ class AssetLibraryService:
     def create(self, novel_id: str, filename: str, content_base64: str,
                media_type: str | None = None, kind: str = "image",
                idempotency_key: str | None = None, *, branch_id: str | None = None,
-               required_features: tuple[str, ...] = (), owner_actor_id: str | None = None):
+               required_features: tuple[str, ...] = (), owner_actor_id: str | None = None, guard=None):
         from ..experimental.flags import RUNTIME_FLAGS, enabled_flags
         if set(required_features) - set(RUNTIME_FLAGS) or not set(required_features).issubset(enabled_flags()):
             raise ValueError("asset origin feature unavailable")
@@ -145,6 +189,13 @@ class AssetLibraryService:
             raise ValueError("invalid asset idempotency key")
         identity = {"filename": safe_name, "kind": str(kind or "file")[:40], "media_type": media_type,
                     "size": len(data), "sha256": hashlib.sha256(data).hexdigest(), "branch_id": branch_id}
+        binding = getattr(self._scope, "binding", None)
+        if "narrative_production_v2" in required_features and binding is None:
+            raise ValueError("ASSET_PROJECT_BINDING_REQUIRED")
+        if binding is not None:
+            if binding["novel_id"] != novel_id or binding["branch_id"] != branch_id:
+                raise ValueError("ASSET_PROJECT_SCOPE_MISMATCH")
+            identity["_project_binding"] = copy.deepcopy(binding)
         if required_features or owner_actor_id:
             identity.update(_required_features=sorted(set(required_features)), _owner_actor_id=owner_actor_id)
         with self._lock, workspace_mutation(self.root, "asset-library"):
@@ -157,6 +208,8 @@ class AssetLibraryService:
                     if existing.get("deleted_at"):
                         raise AssetIdempotencyConflict("asset was deleted; restore it or use a new idempotency key")
                     self.content(existing["id"], branch_id=branch_id, actor_id=owner_actor_id)
+                    if guard:
+                        guard()
                     return existing
             asset_id = str(uuid.uuid4())
             meta = {"id": asset_id, "novel_id": novel_id, **identity, "created_at": now(), "updated_at": now(),
@@ -168,8 +221,18 @@ class AssetLibraryService:
                     stream.write(data)
                     stream.flush()
                     os.fsync(stream.fileno())
+                if guard:
+                    guard()
                 os.replace(temporary, target)
                 self._write_meta(meta)
+            except Exception:
+                # This UUID was allocated by this operation under the existing
+                # owner lock. If metadata never committed, keep no unindexed
+                # binary. A metadata commit followed by an error is recoverable
+                # through the idempotency key and must retain its original bytes.
+                if not self._meta_path(asset_id).exists():
+                    target.unlink(missing_ok=True)
+                raise
             finally:
                 if os.path.exists(temporary):
                     os.unlink(temporary)
@@ -217,7 +280,8 @@ class AssetLibraryService:
             return self._verified_content(self.get(asset_id, branch_id=branch_id, actor_id=actor_id))
 
     def update_metadata(self, asset_id: str, fields: dict, *, branch_id: str | None = None,
-                        expected_version: int | None = None, _lineage_write: bool = False, actor_id: str | None = None):
+                        expected_version: int | None = None, _lineage_write: bool = False, actor_id: str | None = None,
+                        guard=None, _relationships_write: bool = False):
         allowed = {"source_job_id", "provider_id", "model_id", "parameters", "approved_at",
                    "character_id", "scene_id", "source_asset_ids"}
         if not isinstance(fields, dict) or set(fields) - allowed:
@@ -239,15 +303,19 @@ class AssetLibraryService:
             if expected_version is not None and meta["version"] != expected_version:
                 from .v1_capability_service import CapabilityVersionConflict
                 raise CapabilityVersionConflict(self.public(meta))
-            if "parameters" in fields and not _lineage_write:
+            if "parameters" in fields:
                 # Legacy generation parameters are caller-controlled. They
                 # cannot manufacture or erase the gated provenance authority.
-                protected = meta.get("parameters", {}).get("asset_lineage_v2")
-                provided = fields["parameters"].get("asset_lineage_v2")
-                if "asset_lineage_v2" in fields["parameters"] and (protected is None or provided != protected):
-                    raise ValueError("asset_lineage_v2 requires scoped versioned annotation")
-                if protected is not None:
-                    fields = {**fields, "parameters": {**fields["parameters"], "asset_lineage_v2": protected}}
+                for name, privileged in (("asset_lineage_v2", _lineage_write),
+                                         ("asset_relationships_v2", _relationships_write)):
+                    if privileged:
+                        continue
+                    protected = meta.get("parameters", {}).get(name)
+                    provided = fields["parameters"].get(name)
+                    if name in fields["parameters"] and (protected is None or provided != protected):
+                        raise ValueError(f"{name} requires scoped versioned annotation")
+                    if protected is not None:
+                        fields = {**fields, "parameters": {**fields["parameters"], name: protected}}
             self._verified_content(meta)
             inherited_features = set(meta.get("_required_features", []))
             inherited_owner = meta.get("_owner_actor_id")
@@ -272,6 +340,8 @@ class AssetLibraryService:
                 source = self.get(source_id, branch_id=branch_id, include_deleted=True, actor_id=actor_id)
                 pending.extend(source.get("source_asset_ids") or [])
             origin_changed = inherited_features != set(meta.get("_required_features", [])) or inherited_owner != meta.get("_owner_actor_id")
+            if guard:
+                guard()
             if any(meta.get(key) != value for key, value in fields.items()) or origin_changed:
                 meta.update(fields)
                 if inherited_features or inherited_owner:
@@ -326,11 +396,13 @@ class AssetLibraryService:
             if guard:
                 guard()
             return self.update_metadata(asset_id, {"parameters": parameters, "source_asset_ids": list(parents)},
-                                        branch_id=branch_id, expected_version=expected_version, _lineage_write=True)
+                                        branch_id=branch_id, expected_version=expected_version, _lineage_write=True, guard=guard)
 
-    def delete(self, asset_id: str, *, branch_id: str | None = None):
+    def delete(self, asset_id: str, *, branch_id: str | None = None, guard=None):
         with self._lock, workspace_mutation(self.root, "asset-library"):
             meta = self.get(asset_id, branch_id=branch_id, include_deleted=True)
+            if guard:
+                guard()
             if not meta.get("deleted_at"):
                 meta.update(deleted_at=now(), updated_at=now(), version=int(meta.get("version", 1)) + 1)
                 self._write_meta(meta)
@@ -338,10 +410,12 @@ class AssetLibraryService:
             return {"id": asset_id, "deleted": True, "recoverable": True,
                     "sha256": meta["sha256"], "version": meta["version"]}
 
-    def restore(self, asset_id: str, *, branch_id: str | None = None):
+    def restore(self, asset_id: str, *, branch_id: str | None = None, guard=None):
         with self._lock, workspace_mutation(self.root, "asset-library"):
             meta = self.get(asset_id, branch_id=branch_id, include_deleted=True)
             self._verified_content(meta)
+            if guard:
+                guard()
             if meta.get("deleted_at"):
                 meta.update(deleted_at=None, updated_at=now(), version=int(meta.get("version", 1)) + 1)
                 self._write_meta(meta)

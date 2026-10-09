@@ -7,6 +7,20 @@ import { useRequestedRecord } from "../experimental/useRequestedRecord";
 import { useStudio } from "../store";
 
 export const MAX_ASSET_BYTES = 25 * 1024 * 1024;
+/** Explicit owner adapter. Omitted consumers retain the original asset API. */
+export type AssetLibraryAdapter = {
+  cacheKey: string;
+  canMutate: boolean;
+  canImport?: boolean;
+  mutationsBlocked?: boolean;
+  isCurrent: () => boolean;
+  list: () => Promise<Asset[]>;
+  upload: (body: { filename: string; content_base64: string; media_type?: string; kind: string }) => Promise<Asset>;
+  download: (asset: Asset) => Promise<Blob>;
+  remove: (asset: Asset) => Promise<unknown>;
+  trash: () => Promise<{ items: Asset[]; total: number }>;
+  restore: (asset: Asset) => Promise<unknown>;
+};
 let requestedAssetSequence = 0;
 // A local, non-network placeholder keeps the accessible image node present
 // while the authenticated DesktopHost download is in flight.
@@ -20,6 +34,7 @@ export function AssetLibraryPanel({
   selectedAssetId,
   requestedAssetId,
   onSelectAsset,
+  adapter,
 }: {
   novelId: string;
   characterId?: string;
@@ -27,6 +42,7 @@ export function AssetLibraryPanel({
   selectedAssetId?: string;
   requestedAssetId?: string;
   onSelectAsset?: (asset?: Asset) => void;
+  adapter?: AssetLibraryAdapter;
 }) {
   const authority = useStudio(state => JSON.stringify([state.sessionToken, state.actor?.id, state.actor?.workspaceId,
     state.scope?.workspaceId, state.scope?.projectId, state.scope?.storylineId, state.scope?.branchId]));
@@ -35,13 +51,19 @@ export function AssetLibraryPanel({
   const observer = useMemo(() => ++requestedAssetSequence, [authority, novelId, requestedAssetId]);
   const client = useQueryClient(),
     input = useRef<HTMLInputElement>(null),
+    uploadPending = useRef(false),
     [error, setError] = useState<unknown>(),
     [uploading, setUploading] = useState(false),
     [kind, setKind] = useState(""),
-    [showTrash, setShowTrash] = useState(false);
+    [showTrash, setShowTrash] = useState(false),
+    [search, setSearch] = useState("");
+  const assetPrefix = adapter ? [adapter.cacheKey, novelId, 'assets'] : ['assets', novelId];
+  const trashPrefix = adapter ? [adapter.cacheKey, novelId, 'trash'] : ['asset-trash', novelId];
+  const canMutate = !adapter || adapter.canMutate;
+  const canImport = canMutate && adapter?.canImport !== false && !adapter?.mutationsBlocked;
   const assets = useQuery({
-    queryKey: ["assets", novelId, kind, characterId, sceneId, ...(requestedAssetId ? [observer] : [])],
-    queryFn: () => api.assets(novelId, kind || undefined, characterId, sceneId),
+    queryKey: [...assetPrefix, kind, characterId, sceneId, ...(requestedAssetId ? [observer] : [])],
+    queryFn: () => adapter ? adapter.list().then(rows => rows.filter(row => !kind || row.kind === kind)) : api.assets(novelId, kind || undefined, characterId, sceneId),
     enabled: !!novelId,
     refetchOnMount: requestedAssetId ? 'always' : true,
   });
@@ -49,27 +71,31 @@ export function AssetLibraryPanel({
   const requestedReady = assets.isFetchedAfterMount && !assets.isFetching && !assets.error;
   const requested = useRequestedRecord(requestedAssetId, assets.data, !!requestedReady, observer);
   const remove = useMutation({
-    mutationFn: (assetId: string) => api.deleteAsset(assetId, novelId),
-    onSuccess: async (_, assetId) => {
-      if (selectedAssetId === assetId) onSelectAsset?.();
-      await client.invalidateQueries({ queryKey: ["assets", novelId] });
-      await client.invalidateQueries({ queryKey: ["asset-trash", novelId] });
+    mutationFn: (asset: Asset) => adapter ? adapter.remove(asset) : api.deleteAsset(asset.id, novelId),
+    onSuccess: async (_, asset) => {
+      if (adapter && !adapter.isCurrent()) return;
+      if (selectedAssetId === asset.id) onSelectAsset?.();
+      await client.invalidateQueries({ queryKey: assetPrefix });
+      await client.invalidateQueries({ queryKey: trashPrefix });
     },
   });
   const trash = useQuery({
-    queryKey: ["asset-trash", novelId],
-    queryFn: () => api.assetTrash(novelId),
+    queryKey: trashPrefix,
+    queryFn: () => adapter ? adapter.trash() : api.assetTrash(novelId),
     enabled: !!novelId && showTrash,
   });
   const restore = useMutation({
-    mutationFn: (assetId: string) => api.restoreAsset(novelId, assetId),
+    mutationFn: (asset: Asset) => adapter ? adapter.restore(asset) : api.restoreAsset(novelId, asset.id),
     onSuccess: async () => {
-      await client.invalidateQueries({ queryKey: ["assets", novelId] });
-      await client.invalidateQueries({ queryKey: ["asset-trash", novelId] });
+      if (adapter && !adapter.isCurrent()) return;
+      await client.invalidateQueries({ queryKey: assetPrefix });
+      await client.invalidateQueries({ queryKey: trashPrefix });
     },
   });
   async function upload(file?: File) {
-    if (!file || !novelId || uploading) return;
+    if (!file || !novelId || uploading || uploadPending.current || !canImport) return;
+    const originAdapter = adapter;
+    const current = () => !originAdapter || originAdapter.isCurrent();
     setError(undefined);
     if (file.size === 0) {
       setError(new Error("不能上传空文件。"));
@@ -79,25 +105,31 @@ export function AssetLibraryPanel({
       setError(new Error("资产不能超过 25 MiB。"));
       return;
     }
+    uploadPending.current = true;
     setUploading(true);
     try {
       const bytes = new Uint8Array(await file.arrayBuffer());
+      if (!current()) return;
       let binary = "";
       for (let offset = 0; offset < bytes.length; offset += 0x8000)
         binary += String.fromCharCode(
           ...bytes.subarray(offset, offset + 0x8000),
         );
-      await api.uploadAsset(novelId, {
+      const body = {
         filename: file.name,
         media_type: file.type || undefined,
-        kind: file.type.startsWith("image/") ? "image" : "file",
+        kind: file.type.startsWith("image/") || originAdapter && !file.type && /\.(png|jpe?g|webp)$/i.test(file.name) ? "image" : originAdapter && file.type.startsWith('video/') ? 'video' : originAdapter && file.type.startsWith('audio/') ? 'audio' : "file",
         content_base64: btoa(binary),
-      });
-      await client.invalidateQueries({ queryKey: ["assets", novelId] });
+      };
+      const saved = originAdapter ? await originAdapter.upload(body) : await api.uploadAsset(novelId, body);
+      if (!current()) return;
+      await client.invalidateQueries({ queryKey: assetPrefix });
+      if (originAdapter) onSelectAsset?.(saved);
     } catch (reason) {
-      setError(reason);
+      if (current()) setError(reason);
     } finally {
-      setUploading(false);
+      uploadPending.current = false;
+      if (current()) setUploading(false);
     }
   }
   return (
@@ -108,7 +140,7 @@ export function AssetLibraryPanel({
         <Button
           type="button"
           variant="primary"
-          disabled={uploading || !novelId}
+          disabled={uploading || !novelId || !canImport}
           onClick={() => input.current?.click()}
         >
           <Upload aria-hidden="true" />
@@ -120,9 +152,9 @@ export function AssetLibraryPanel({
         ref={input}
         hidden
         type="file"
-        accept="image/*,audio/*,video/*,.txt,.md,.markdown,.json,.docx,.pdf"
+        accept={adapter ? 'image/png,image/jpeg,image/webp,audio/*,video/*' : "image/*,audio/*,video/*,.txt,.md,.markdown,.json,.docx,.pdf"}
         aria-label="选择要上传的资产文件"
-        disabled={uploading || !novelId}
+        disabled={uploading || !novelId || !canImport}
         onChange={(e) => {
           const file = e.target.files?.[0];
           e.target.value = "";
@@ -148,6 +180,7 @@ export function AssetLibraryPanel({
           正在安全写入资产…
         </p>
       )}
+      {adapter && !canMutate && <p role="status">资产文件当前只读，可以查看和导出已有资产。</p>}
       {assets.isLoading && (
         <p role="status" aria-live="polite">
           正在加载资产…
@@ -169,6 +202,7 @@ export function AssetLibraryPanel({
           <EmptyState title="暂无资产" detail="上传图片或其他创作素材。" />
         )}
       <div className="asset-library__toolbar">
+        {adapter && <label>查找资产<input type="search" aria-label="查找资产" value={search} maxLength={200} onChange={event => setSearch(event.target.value)} /></label>}
         <label>
           类型筛选
           <select value={kind} onChange={(e) => setKind(e.target.value)}>
@@ -192,14 +226,15 @@ export function AssetLibraryPanel({
         {!trash.isLoading && !trash.error && trash.data?.total === 0 && <p role="status">回收站为空。</p>}
         {trash.data?.items.map(asset => <article key={asset.id}>
           <span>{asset.filename}</span>
-          <Button variant="ghost" disabled={restore.isPending} onClick={() => restore.mutate(asset.id)}>
-            {restore.isPending && restore.variables === asset.id ? "恢复中…" : "恢复资产"}
+          <Button variant="ghost" disabled={restore.isPending || !canMutate || adapter?.mutationsBlocked} onClick={() => restore.mutate(asset)}>
+            {restore.isPending && restore.variables?.id === asset.id ? "恢复中…" : "恢复资产"}
           </Button>
         </article>)}
       </section>}
       <div className="novel-record-list asset-library__grid">
+        {adapter && search.trim() && assets.data?.length && !assets.data.some(asset => asset.filename.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())) ? <p role="status">没有匹配资产。</p> : null}
         {requested.missing && <p role="status">请求的原资产当前不可读或已移除，请刷新搜索。</p>}
-        {(!requestedAssetId || requestedReady) && assets.data?.map((asset) => (
+        {(!requestedAssetId || requestedReady) && assets.data?.filter(asset => !search.trim() || asset.filename.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())).map((asset) => (
           <AssetCard
             key={asset.id}
             asset={asset}
@@ -207,9 +242,10 @@ export function AssetLibraryPanel({
             focusRef={requestedAssetId === asset.id ? requested.ref : undefined}
             onSelect={() => onSelectAsset?.(asset)}
             onDelete={() => {
-              remove.mutate(asset.id);
+              remove.mutate(asset);
             }}
-            deleting={remove.isPending && remove.variables === asset.id}
+            deleting={remove.isPending && remove.variables?.id === asset.id}
+            adapter={adapter}
           />
         ))}
       </div>
@@ -230,6 +266,7 @@ function AssetCard({
   selected,
   deleting,
   focusRef,
+  adapter,
 }: {
   asset: Asset;
   onDelete: () => void;
@@ -237,6 +274,7 @@ function AssetCard({
   selected: boolean;
   deleting: boolean;
   focusRef?: RefObject<HTMLElement>;
+  adapter?: AssetLibraryAdapter;
 }) {
   const [previewUrl, setPreviewUrl] = useState("");
   const [previewLoading, setPreviewLoading] = useState(
@@ -253,10 +291,9 @@ function AssetCard({
     }
     setPreviewLoading(true);
     setPreviewUrl("");
-    void api
-      .assetDownload(asset.id,asset.novel_id)
+    void (adapter ? adapter.download(asset) : api.assetDownload(asset.id,asset.novel_id))
       .then((blob) => {
-        if (!active) return;
+        if (!active || adapter && !adapter.isCurrent()) return;
         try {
           setPreviewUrl(URL.createObjectURL(blob));
         } catch {
@@ -272,7 +309,7 @@ function AssetCard({
     return () => {
       active = false;
     };
-  }, [asset.id, asset.media_type, asset.novel_id, asset.sha256]);
+  }, [asset.id, asset.media_type, asset.novel_id, asset.sha256, adapter]);
   useEffect(
     () => () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -282,7 +319,8 @@ function AssetCard({
   async function download() {
     setDownloadError(undefined);
     try {
-      const blob = await api.assetDownload(asset.id,asset.novel_id);
+      const blob = await (adapter ? adapter.download(asset) : api.assetDownload(asset.id,asset.novel_id));
+      if (adapter && !adapter.isCurrent()) return;
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url;
@@ -336,6 +374,7 @@ function AssetCard({
       <p>
         {asset.media_type} · {asset.sha256.slice(0, 12)}
       </p>
+      {adapter && <p>已保存 · v{asset.version} · {asset.provenance?.origin === 'EXTERNAL_IMPORT' ? '外部导入' : '来源待声明'}</p>}
       </button>
       {Boolean(downloadError) && (
         <AssetError error={downloadError} fallback="下载失败，请重试。" />
@@ -350,7 +389,7 @@ function AssetCard({
           <Download aria-hidden="true" />
           下载
         </Button>
-        <IconButton label="删除资产" disabled={deleting} onClick={onDelete}>
+        <IconButton label="删除资产" disabled={deleting || !!adapter && (!adapter.canMutate || adapter.mutationsBlocked)} onClick={onDelete}>
           <Trash2 aria-hidden="true" />
         </IconButton>
       </footer>

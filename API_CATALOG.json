@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "97fbdb682942e7a5cf5547ccc6a1389d90f5630cdbcc19b42708c061f184888b",
+  "application_source_fingerprint_sha256": "a06abe220e300bad702981085001c7bd0259ba6d81a519bb3f855c1f8db56292",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -50,16 +50,21 @@
     "app/creative/api.py": "d5e5543031cf86771f34f048bf3eed42dee5b86c95a43370406ae785a7c71623",
     "app/creative/generation.py": "e34616fbfd7b686615f3b0eab674e7f2f988650471850ef7fc5285774a0a2d61",
     "app/creative/models.py": "4b27d20080c6d8c6f141e9cfe8d3381f6ed4b3ef1d8009e08fcc30a5464723d6",
-    "app/creative/project_store.py": "6ae069c460cf1b324e536f981f869652919d681989f40efd464112a5fae5eee6",
+    "app/creative/project_store.py": "b6eb16080c73cf985283b2fb9948c251195b15784335a8e0fa2af8b6a1be8dbb",
     "app/creative/proposals.py": "4e8b93d2408b214165b01beda496b9dfbfee2b0bd400c414b2794da20262fd96",
     "app/creative/service.py": "5ce1d0f12b44b934dfc347dc68fb7d067f4702522f0a9190a84f5efb6320e29b",
+    "app/creative/storage_admission.py": "055cc172c00063f9dad333e7d4815174bd3c3e6b8f3af742a548c4427f0acf86",
+    "app/creative/workspace.py": "cd5eb340e6d4835ac1dfa51f46d6c5ac40fe485b7c026e01c1fc1834c016af15",
+    "app/creative/workspace_api.py": "53a177db02a502a001df0252da65430ab9c17cde2dc2faae09973f9b2f0ab899",
+    "app/creative/workspace_models.py": "95d8652d9492613876eb39ab06b07e48eb7a0436f967e248261a976e5f5c01e9",
+    "app/creative/workspace_relationships.py": "e33cd0076d2e6aec5685b8007992ce298664cf035edf9ca4bb87d319407de310",
     "app/credential_vault.py": "986bbc6fe63a7658a0bd22e0223677a63448e1b6ab46603bb11cdc530558ab26",
     "app/dependencies.py": "2a6bc47c6399d874e2a5e33e713f3159192853a5ded3c2aae832b6b411468dc7",
     "app/document.py": "70ecdf6f175cada0f0bcbcf0dfc1d7aa7a419895263741154dc4f0e7717d4f49",
     "app/document_revision.py": "d0a3085d6c453d78196b93eae9ae66b775db9508c53ab49961513f5bc33036f5",
     "app/experimental/__init__.py": "737a87c497146972d1cc905f0076f076d5414a8093066146a5bac6b190d788f3",
     "app/experimental/adaptation_projection.py": "dbc51d4bbf0f44b0defb57d7f9a19491d4abf9f18645c13f6241e1600682e91e",
-    "app/experimental/api.py": "d35410689402c6f3c3a7d8f80658dd264299b04a24b741b998bb9d6d77d42e40",
+    "app/experimental/api.py": "cfc2e9f01ad46dbce8e8bc146429a7a534520887945aba47d440b8cc86b67df6",
     "app/experimental/audiobook.py": "822155147b635156fcca184155b80846a7c39efde5b025df7688337d98c63115",
     "app/experimental/audiobook_api.py": "02b07bb4bf12c169d4fc73e0033cc7e558f5fed4f966d3cbf54f4cf65b205ef7",
     "app/experimental/author_context_api.py": "00b8f1a33e4220bb2b1f3b1def6a1ec8ae7d20a8cbc87530304c5c0b87e4fc5a",
@@ -113,7 +118,7 @@
     "app/experimental/planning_api.py": "e2955c425a2742aeeeead66c981092c76b0615ed041c754f9c3ee6e5ce63dbf2",
     "app/experimental/portable_projects.py": "57378f5cfb1a23baba14f5a38a61ac0b650d15255269958aeb038a313733a553",
     "app/experimental/portable_projects_api.py": "1815f81bff750283f38ee3efbcab74dd5e913ba64acc999ea30e5576a92ca09c",
-    "app/experimental/production_lineage.py": "2f11c0846d4c616f18f336d003b2467294c8483e4190575443d2fa9327dc5483",
+    "app/experimental/production_lineage.py": "56b97f2de1d1e56cd3a68d8576a77ec175086fdcc393ae8479fac10ed81e8cdb",
     "app/experimental/production_lineage_api.py": "4554b2b5204c0e75f19814dbf38991b39828fde2b46e0fa932d4a2c46a02e787",
     "app/experimental/project_forks.py": "d8e190bcc635c1c473e4de1bdcdd76435ba7eaecd89ca2578f4c77c19a57b364",
     "app/experimental/project_forks_api.py": "e4c99eebb4b933406d27a170a6e05e58e78cc7bc9c3839c4748cf978763bda2f",
@@ -200,7 +205,7 @@
     "app/lore/memory_agent.py": "00449fdafa51de7790400fa083cd69fa1e9cf92f2ce524cd80c6c4c40d53031b",
     "app/lore/schemas.py": "2f03db0d13c096551f69b76906ca48289bb0e1f7c21830b605ab2f9984ed21e5",
     "app/lore/validators.py": "4caa6681df7497b34eed9386200527fe15ea38e19923c86e43d496c07299ffb5",
-    "app/main.py": "4fcf2dfc6c4b8369f48d9373b8f470949166d356b1e8a5d374049dedc8aab266",
+    "app/main.py": "5955d796f01366bc5e408d3c033ffe70d7b0dcf8875a2c7aa488327f0ff0b84d",
     "app/manuscript_sources.py": "3095bcbe132ab3ff2507e008c6cfd2f8a98da87364a3c983f4e2f43ef27d27a7",
     "app/media_files.py": "b08e6c9d501f0769427a7ed79ec01fb98ac2f6f8289af8cf82e69e585e8218f8",
     "app/media_frames.py": "478cf6c2af5268cb7fea3a7547d9fb60531636e56e0ed2caaf5b3fd8587dacc0",
@@ -325,7 +330,7 @@
     "app/services/agent_context_service.py": "647b09c44bf8b54f1545cd1d0ac2e2a7afb9183f54103140d6ef4d2332c4c297",
     "app/services/agent_job_service.py": "894983ea8de02effb5e6bd05b1ab4daccbeb41404b6abea1b06b18ccafa780e7",
     "app/services/ai_planning_service.py": "1b7f2b06bd62ae4d378ca1809a6003b6db1e1b5b3d449f88b2b929c8dad8c9fa",
-    "app/services/asset_library_service.py": "a01044455bedcc67183e238808b7dc61c8fb0940e38f440fe41de951c4d4c874",
+    "app/services/asset_library_service.py": "039f5e204c41e152a7a7da1dbd99e2e0c68ca3fbeacd10f438f7c3c5027ee7c8",
     "app/services/asset_task_worker.py": "8f0f6a64af0bfb0a6d1e50dfd42511cfb5262b7dde530153237d18ee270bfd3c",
     "app/services/audiobook_service.py": "dec4c65ecd28b2d72859fb2b98bdf7cba3a61ed96396e2b323bb809a22499aea",
     "app/services/authorization_service.py": "b115f9b906bb7d09d0ec0dbdf5d8f10637e7ec77447de4ff7b90daed97a759ef",
@@ -375,9 +380,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 210,
+    "added": 244,
     "changed_contract": 24,
-    "current_method_paths": 2043,
+    "current_method_paths": 2077,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -394,7 +399,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "4156bb588b4b4a24993e8b0fb438816a14d3e2b5a95e9d93e9904b6fcfaa2e61",
+    "sha256": "ef16fe60c98f3d0c45138ce349e96a74d574e5871b550306ff129336103788a7",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -605,6 +610,28 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "0cc6b08d78e71d2f27f3edb24787e39f46d6bc860d2a6c5d2cfb752bd0af6b78",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/projects/{nid}/studio/assets/{aid}",
+      "operation_id": "remove_api_projects__nid__studio_assets__aid__delete",
+      "owner_ref": "7e4de6b8baee0292c47a3ae1814ccc623c810461a84946890839dee3dde106f9",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "8c19e92ceb4044c5f7d3bce6d0958e8b04e2a9a461541385da8dc8021ba86c99",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/projects/{nid}/studio/assets/{aid}/relationships/{rid}",
+      "operation_id": "remove_relationship_api_projects__nid__studio_assets__aid__relationships__rid__delete",
+      "owner_ref": "a690bc219891a5d93d0e94c938d87237b2081c2b8fe9a0462683f7d320f3d2b0",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "97815991f6747552330ab7953373452666702a0bfbe5d93438fa0bf20cd18a63",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -821,6 +848,28 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "07b264ed438816336d8903293a8a243011c867da8aa2f4b7ca7ce972d23ee35c",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/projects/{nid}/studio/assets/{aid}",
+      "operation_id": "remove_api_v1_projects__nid__studio_assets__aid__delete",
+      "owner_ref": "7e4de6b8baee0292c47a3ae1814ccc623c810461a84946890839dee3dde106f9",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "6efd3bf6d98dcf6d660d17c43eb69b1b7e742b8e1b32fc16177bea2aa542fb27",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/projects/{nid}/studio/assets/{aid}/relationships/{rid}",
+      "operation_id": "remove_relationship_api_v1_projects__nid__studio_assets__aid__relationships__rid__delete",
+      "owner_ref": "a690bc219891a5d93d0e94c938d87237b2081c2b8fe9a0462683f7d320f3d2b0",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "f36cbeb91f45d2d0d15fd9fc7d52f985cb9cb60256127e71876078c028d37f16",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -5334,6 +5383,94 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "77768858e0d809d2f8a33693ce45b6beabde335ac40ac3e39088405d1fc8e4bb",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio",
+      "operation_id": "project_api_projects__nid__studio_get",
+      "owner_ref": "09a6f0e69f1f74f431e3598962677ab77de5ca6b87eda9840641c363618a495e",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "ab6e72dcb26240e6737c68ef752b061e5b4f33232cbf9d320582ecaadfcc1bd9",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/assets",
+      "operation_id": "assets_api_projects__nid__studio_assets_get",
+      "owner_ref": "3d9beff606a11b2d5c0412e6704b2a3cd12b022dd4bfb2a129a28db671eef859",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "fb22cdcee7543def43411e29a9ebd34fbc32c1381071d476b6422de8b28d67a4",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/assets/{aid}",
+      "operation_id": "asset_api_projects__nid__studio_assets__aid__get",
+      "owner_ref": "47d0a8ab18a7fb47c030dcc74235517f9ea84a4dc5b189f41e9476ae936b3fe1",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "a4596c6cf59c4b6d328ace1907173c54c993dbbc4b98f32de90ea8d6ac038174",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/assets/{aid}/download",
+      "operation_id": "download_api_projects__nid__studio_assets__aid__download_get",
+      "owner_ref": "f1741dc6650a1ef666a25a1b799bcc21e5e51289fe692a09e77c1052f68aa339",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "d86d223c631bd3c1121b0c6ed8a688d46c0ef334493d31bb1c08fd345841c854",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/preferences",
+      "operation_id": "preferences_api_projects__nid__studio_preferences_get",
+      "owner_ref": "b80cf367e1a9a30173827bfb9ff236c187735c4cf50433556d2146de7854ca6f",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "744ac183e7b3df5c5b0462f2fbf43119a10ad9ae8afc1b2948cde19371115740",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/references",
+      "operation_id": "references_api_projects__nid__studio_references_get",
+      "owner_ref": "0ae6a266b9a5e49c1005669ecc641940165531c75286f009a1dde42dae0b73f7",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "d703fdceec9b307b7909cd474d991cbdb03b2c548b28f527f80a9dfd680b5b6f",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/relationships",
+      "operation_id": "relationships_api_projects__nid__studio_relationships_get",
+      "owner_ref": "72e3f3536280e074d6f9d97b30ce0906c88e96aad4cec4a4c97732916281e175",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "dff36a21595f40363e36a55de7587338fe849380624146841ae4819d43feae4b",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/projects/{nid}/studio/storage",
+      "operation_id": "storage_api_projects__nid__studio_storage_get",
+      "owner_ref": "dce99230d614ec81325536e7471cddb9d71b29bee5611f5d54bf1bd8ccebad0c",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "3960bcfbeab955bd14a6e49b6a7626723f5073b669feed9720437dba4a492fcf",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -10103,6 +10240,94 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio",
+      "operation_id": "project_api_v1_projects__nid__studio_get",
+      "owner_ref": "09a6f0e69f1f74f431e3598962677ab77de5ca6b87eda9840641c363618a495e",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "e5076fa4e59e1ad31e05737a23a9a8fc785c02fbb1e5b2dcc41f49956fc34ccf",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/assets",
+      "operation_id": "assets_api_v1_projects__nid__studio_assets_get",
+      "owner_ref": "3d9beff606a11b2d5c0412e6704b2a3cd12b022dd4bfb2a129a28db671eef859",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "d05f5004795b6f6d849d0ecaa4fb5b9b415773bfc020ca0f0aea9e2263130d97",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/assets/{aid}",
+      "operation_id": "asset_api_v1_projects__nid__studio_assets__aid__get",
+      "owner_ref": "47d0a8ab18a7fb47c030dcc74235517f9ea84a4dc5b189f41e9476ae936b3fe1",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "8d7cd95aeef0cc005feaa1e2d75c115e5c11d1e054c32142f61f3cc860f37a38",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/assets/{aid}/download",
+      "operation_id": "download_api_v1_projects__nid__studio_assets__aid__download_get",
+      "owner_ref": "f1741dc6650a1ef666a25a1b799bcc21e5e51289fe692a09e77c1052f68aa339",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "a1fa36c612a84dca7335cd6279f35b03add0af72ab320cafdec2d24542967df4",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/preferences",
+      "operation_id": "preferences_api_v1_projects__nid__studio_preferences_get",
+      "owner_ref": "b80cf367e1a9a30173827bfb9ff236c187735c4cf50433556d2146de7854ca6f",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "7ab1ef4a8212f3a24ad4ac025a123c4bd80d46d683d993f272e565424c6b3017",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/references",
+      "operation_id": "references_api_v1_projects__nid__studio_references_get",
+      "owner_ref": "0ae6a266b9a5e49c1005669ecc641940165531c75286f009a1dde42dae0b73f7",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "f7b39427c2ddcd33ae3ecdca48995755fae09af605e1b8f5fc49b38c934b187b",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/relationships",
+      "operation_id": "relationships_api_v1_projects__nid__studio_relationships_get",
+      "owner_ref": "72e3f3536280e074d6f9d97b30ce0906c88e96aad4cec4a4c97732916281e175",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "cc19622294b5eb671e586f7a06b70378cec2669a6ae8d962f226a5adf6e43739",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects/{nid}/studio/storage",
+      "operation_id": "storage_api_v1_projects__nid__studio_storage_get",
+      "owner_ref": "dce99230d614ec81325536e7471cddb9d71b29bee5611f5d54bf1bd8ccebad0c",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "379eb7f6b933716c859f3f51283ac7bdb75f28f5af208aab243da799be67f1d0",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/projects/{project_id}/continuity/findings",
       "operation_id": "continuity_findings_api_v1_projects__project_id__continuity_findings_get",
       "owner_ref": "7209e4e02df4cff7d50945aa9e8567f054d2060ce1ba430fc37eb503e04b3afa",
@@ -11144,6 +11369,17 @@
       ],
       "operation_sha256": "d09c4614b5cd5e5fce4d169465e5b9e0c7e176e61d7550ed4522615aaeb58ba4",
       "schema_graph_sha256": "a93052664610a66394e03426fbc32811fdeb659258684dbd082eae11fc430f16"
+    },
+    {
+      "method": "POST",
+      "path": "/api/experimental/projects",
+      "operation_id": "blank_project_api_experimental_projects_post",
+      "owner_ref": "9c13ed39ac5a376713e99d60e2cef1d1e0e2d24c202e033a34680e0d4fd3c67a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "d217f28edc6900b4d8db8cd90e930df246ffe379d6f7b529f786aae02c92386e",
+      "schema_graph_sha256": "b314a114bbf137ec216310a808c4f8388f079bc0e9c4f9e9c439573c3af84692"
     },
     {
       "method": "POST",
@@ -16376,6 +16612,50 @@
     },
     {
       "method": "POST",
+      "path": "/api/projects/{nid}/studio/activate",
+      "operation_id": "activate_api_projects__nid__studio_activate_post",
+      "owner_ref": "562c4968849c9d961e4987c503069e923e8ec71a330e7fd29dc663ee4aee49c7",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "3c040d306ef1d3a3e8fc33fc0519f560eff4fd4b0ab02131f2c1e1ed61cb7c29",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/assets",
+      "operation_id": "upload_api_projects__nid__studio_assets_post",
+      "owner_ref": "67eb7a78984df9838208adb2d40966a8f93d3da1e385d9eddc054b68ebccf553",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "e141f8ebac305c37b2ed3ca5ce3bb9402ab28b95f200b2446a9586a005453464",
+      "schema_graph_sha256": "f56843a57f818a1749624e0e40a13e7e3b6880c4f570fa57f698adc76f53d208"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/assets/{aid}/relationships",
+      "operation_id": "add_relationship_api_projects__nid__studio_assets__aid__relationships_post",
+      "owner_ref": "759eb83aee440951454dd398b1367045d8f29c60aa6a27502fc329b827e606a8",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "38668334936c49849636d042a4b138fe105d18dcf7250b67c9e21647a7318535",
+      "schema_graph_sha256": "0dbf9b0ad6fb9cf8a7b3f5180e80670c7be821db4000dd615f89fd09438b0542"
+    },
+    {
+      "method": "POST",
+      "path": "/api/projects/{nid}/studio/assets/{aid}/restore",
+      "operation_id": "restore_api_projects__nid__studio_assets__aid__restore_post",
+      "owner_ref": "701b86f0f496797831744073dc231937edf22feaef31b445ccef2f968cb5ad49",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "55213fa5fb08a75087c606497f53c987fd71f974e5629ab8599b07641f49fb18",
+      "schema_graph_sha256": "45168114ed0c5c5183bd181e8db13824ab373780e92017232de7969b8ec41674"
+    },
+    {
+      "method": "POST",
       "path": "/api/projects/{project_id}/continuity/checks",
       "operation_id": "continuity_checks_api_projects__project_id__continuity_checks_post",
       "owner_ref": "ec1d6fb6488bcae049a90335b1114c6b5976bb7d90515f860b940043bdbdfbe7",
@@ -17021,6 +17301,17 @@
       ],
       "operation_sha256": "42d5c065120accc25e7dfa714489958daf8bba692d5ffc4a7117b88335567f44",
       "schema_graph_sha256": "a93052664610a66394e03426fbc32811fdeb659258684dbd082eae11fc430f16"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/experimental/projects",
+      "operation_id": "blank_project_api_v1_experimental_projects_post",
+      "owner_ref": "9c13ed39ac5a376713e99d60e2cef1d1e0e2d24c202e033a34680e0d4fd3c67a",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "f333aae0e5eddf922fe71e2470455f796f0ad5e6840df7e402705951fa8cf778",
+      "schema_graph_sha256": "b314a114bbf137ec216310a808c4f8388f079bc0e9c4f9e9c439573c3af84692"
     },
     {
       "method": "POST",
@@ -22253,6 +22544,50 @@
     },
     {
       "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/activate",
+      "operation_id": "activate_api_v1_projects__nid__studio_activate_post",
+      "owner_ref": "562c4968849c9d961e4987c503069e923e8ec71a330e7fd29dc663ee4aee49c7",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "e2ec0ada6566c034a6cd97381590dda7582f1ba6713ccb0391257632eee8eb50",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/assets",
+      "operation_id": "upload_api_v1_projects__nid__studio_assets_post",
+      "owner_ref": "67eb7a78984df9838208adb2d40966a8f93d3da1e385d9eddc054b68ebccf553",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "e3e56559c50705eddf810346f7eed48fab39c7c174673053ea6e595dec0fca43",
+      "schema_graph_sha256": "f56843a57f818a1749624e0e40a13e7e3b6880c4f570fa57f698adc76f53d208"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/assets/{aid}/relationships",
+      "operation_id": "add_relationship_api_v1_projects__nid__studio_assets__aid__relationships_post",
+      "owner_ref": "759eb83aee440951454dd398b1367045d8f29c60aa6a27502fc329b827e606a8",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "48f870cb7943ab5062410ef2f28acfbb6eede8e6e1b847cb04f30730b57da606",
+      "schema_graph_sha256": "0dbf9b0ad6fb9cf8a7b3f5180e80670c7be821db4000dd615f89fd09438b0542"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/projects/{nid}/studio/assets/{aid}/restore",
+      "operation_id": "restore_api_v1_projects__nid__studio_assets__aid__restore_post",
+      "owner_ref": "701b86f0f496797831744073dc231937edf22feaef31b445ccef2f968cb5ad49",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "d3633624523e75a49f57ebc94a4d3f0975d6a338d05b6eb7146d1b3d5069d777",
+      "schema_graph_sha256": "45168114ed0c5c5183bd181e8db13824ab373780e92017232de7969b8ec41674"
+    },
+    {
+      "method": "POST",
       "path": "/api/v1/projects/{project_id}/continuity/checks",
       "operation_id": "continuity_checks_api_v1_projects__project_id__continuity_checks_post",
       "owner_ref": "ec1d6fb6488bcae049a90335b1114c6b5976bb7d90515f860b940043bdbdfbe7",
@@ -23875,6 +24210,28 @@
     },
     {
       "method": "PUT",
+      "path": "/api/projects/{nid}/studio/assets/{aid}/lineage",
+      "operation_id": "lineage_api_projects__nid__studio_assets__aid__lineage_put",
+      "owner_ref": "942e98ec3f7462a16933f9e45af77fbe6319feac03d00660ac17f03067df7478",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "db1ffc57d760574db5c639ddf997d113f9a7f3b1f9fabb025774859226483de5",
+      "schema_graph_sha256": "6f96b125ba9e7d1aa7ed773fa4ea2acceecee3b97582bba88f012ac6fc1b1d5a"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/projects/{nid}/studio/preferences",
+      "operation_id": "update_preferences_api_projects__nid__studio_preferences_put",
+      "owner_ref": "979baed3476d0033c02cb3321f38f4f84fd456a07fc5efc1f6ae2e057428cd07",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "087a07f503d2abab1b02dab37a612219a6be77694c057618c869223cf91d7225",
+      "schema_graph_sha256": "57703d31e9a947a1a813e06d23bc945ee294a7c14259e92c075a812b80679753"
+    },
+    {
+      "method": "PUT",
       "path": "/api/user-preferences-enabled",
       "operation_id": "user_preferences_enabled_api_user_preferences_enabled_put",
       "owner_ref": "f7ca04c9a9555f705602b57e0a502f4aa729dc095782cf968dbf56d0e21f39df",
@@ -24882,6 +25239,28 @@
       ],
       "operation_sha256": "be29ddbc06944ec04e4ab96d97e9ae7a77936a50266a130db05ebd07bb5e9b8b",
       "schema_graph_sha256": "7fd5c18e9d0a05943f4a372ebd2e8bc4fa63a3d0ae80f0700ad0152c36eb353a"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/projects/{nid}/studio/assets/{aid}/lineage",
+      "operation_id": "lineage_api_v1_projects__nid__studio_assets__aid__lineage_put",
+      "owner_ref": "942e98ec3f7462a16933f9e45af77fbe6319feac03d00660ac17f03067df7478",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "d572f0153387990d881f79428cd51743a5f781fa93c0dee8c0fc2aff38e488d8",
+      "schema_graph_sha256": "6f96b125ba9e7d1aa7ed773fa4ea2acceecee3b97582bba88f012ac6fc1b1d5a"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/projects/{nid}/studio/preferences",
+      "operation_id": "update_preferences_api_v1_projects__nid__studio_preferences_put",
+      "owner_ref": "979baed3476d0033c02cb3321f38f4f84fd456a07fc5efc1f6ae2e057428cd07",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "761a8e710480776aef19cda323beea28f2112eae1a0c72d94da48c1d468cb5fc",
+      "schema_graph_sha256": "57703d31e9a947a1a813e06d23bc945ee294a7c14259e92c075a812b80679753"
     },
     {
       "method": "PUT",

@@ -86,7 +86,7 @@ class ProductionLineageService(DomainService):
             result.update(self.sources(nid, [cid], scope))
         return result
 
-    def annotate(self, nid, scope, actor, aid, value, guard=lambda: None):
+    def annotate(self, nid, scope, actor, aid, value, guard=lambda: None, *, include_impact=True):
         body = LineageInput.model_validate(value)
         current = self._asset(nid, scope, aid)
         if current["version"] != body.expected_version:
@@ -115,7 +115,7 @@ class ProductionLineageService(DomainService):
         except CapabilityVersionConflict:
             raise CapabilityVersionConflict(self._project_asset(nid, scope, self._asset(nid, scope, aid))) from None
         guard()
-        return self.asset(nid, scope, aid)
+        return self.asset(nid, scope, aid, include_impact=include_impact)
 
     def _project_asset(self, nid, scope, row):
         evidence = row.get("parameters", {}).get("asset_lineage_v2", {})
@@ -190,9 +190,10 @@ class ProductionLineageService(DomainService):
         return {"items": [self._project_asset(nid, scope, r) for r in self._asset_rows(nid, scope)],
                 "coverage": "EXISTING_ASSET_DAG_AND_MEDIA_REFERENCES", "inferred_dependencies": False}
 
-    def asset(self, nid, scope, aid):
+    def asset(self, nid, scope, aid, *, include_impact=True):
         row = self._project_asset(nid, scope, self._asset(nid, scope, aid, deleted=True))
-        row["impact"] = self.impact(nid, scope, aid)
+        if include_impact:
+            row["impact"] = self.impact(nid, scope, aid)
         return row
 
     def impact(self, nid, scope, aid):

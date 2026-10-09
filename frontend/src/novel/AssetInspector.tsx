@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Download, File, Image, Music2, Video } from "lucide-react";
 import { api, type Asset } from "../api";
 import { Button, EmptyState, StatusMessage } from "../ui/primitives";
@@ -16,7 +16,7 @@ const assetIcon = (mediaType: string) =>
   mediaType.startsWith("video/") ? <Video aria-hidden="true" /> :
   mediaType.startsWith("audio/") ? <Music2 aria-hidden="true" /> : <File aria-hidden="true" />;
 
-export function AssetInspector({ asset, novelId }: { asset?: Asset; novelId?: string }) {
+export function AssetInspector({ asset, novelId, downloadAsset, isCurrent, extra, showReferences = true }: { asset?: Asset; novelId?: string; downloadAsset?: (asset: Asset) => Promise<Blob>; isCurrent?: () => boolean; extra?: ReactNode; showReferences?: boolean }) {
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,18 +28,19 @@ export function AssetInspector({ asset, novelId }: { asset?: Asset; novelId?: st
     setLoading(false);
     if (!asset || !previewable) return () => { active = false; };
     setLoading(true);
-    api.assetDownload(asset.id,asset.novel_id).then((blob) => {
-      if (!active) return;
+    (downloadAsset ? downloadAsset(asset) : api.assetDownload(asset.id,asset.novel_id)).then((blob) => {
+      if (!active || isCurrent && !isCurrent()) return;
       objectUrl = URL.createObjectURL(blob); setPreviewUrl(objectUrl);
     }).catch(() => { if (active) setError("媒体预览读取失败，可尝试下载原始文件。"); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); };
-  }, [asset?.id, asset?.novel_id, asset?.sha256, previewable]);
+  }, [asset?.id, asset?.novel_id, asset?.sha256, previewable, downloadAsset, isCurrent]);
   async function download() {
     if (!asset) return;
     setError("");
     try {
-      const blob = await api.assetDownload(asset.id,asset.novel_id);
+      const blob = await (downloadAsset ? downloadAsset(asset) : api.assetDownload(asset.id,asset.novel_id));
+      if (isCurrent && !isCurrent()) return;
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url; anchor.download = asset.filename.replace(/[\\/\r\n\0]/g, "_").slice(0, 255) || "asset";
@@ -61,6 +62,7 @@ export function AssetInspector({ asset, novelId }: { asset?: Asset; novelId?: st
     {error && <StatusMessage tone="error">{error}</StatusMessage>}
     <dl className="asset-inspector__facts"><div><dt>文件大小</dt><dd>{formatBytes(asset.size)}</dd></div><div><dt>资产 ID</dt><dd title={asset.id}>{asset.id}</dd></div><div><dt>SHA-256</dt><dd title={asset.sha256}>{asset.sha256}</dd></div><div><dt>更新时间</dt><dd>{asset.updated_at ? new Date(asset.updated_at).toLocaleString() : "未记录"}</dd></div></dl>
     <Button variant="ghost" onClick={download}><Download aria-hidden="true" size={15}/>下载原始文件</Button>
-    <VisualReferencePanel key={`${asset.novel_id}:${asset.id}`} asset={asset}/>
+    {showReferences && <VisualReferencePanel key={`${asset.novel_id}:${asset.id}`} asset={asset}/>}
+    {extra}
   </section>;
 }

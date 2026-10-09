@@ -17,6 +17,7 @@ import {
 } from "./taskSummary";
 
 export type { StudioModule };
+export type ProjectNoun = "小说" | "项目";
 export interface ScopeLabels {
   workspace: string;
   project: string;
@@ -97,13 +98,13 @@ export function ModuleSwitcher({
   );
 }
 
-export function ContextBar({ scope }: { scope: ScopeLabels }) {
+export function ContextBar({ scope, projectNoun = "小说" }: { scope: ScopeLabels; projectNoun?: ProjectNoun }) {
   const fallback = "未选择";
   return (
     <nav className="context-bar" aria-label="当前创作范围">
       <span>创作空间：{scope.workspace || fallback}</span>
       <i>/</i>
-      <span>小说：{scope.project || fallback}</span>
+      <span>{`${projectNoun}：`}{scope.project || fallback}</span>
       <i>/</i>
       <span>故事线：{scope.storyline || fallback}</span>
       <i>/</i>
@@ -116,6 +117,7 @@ export function AppShell({
   module,
   onModuleChange,
   scope,
+  projectNoun,
   actor,
   sidebar,
   sidebarClassName,
@@ -129,6 +131,7 @@ export function AppShell({
   module: StudioModule;
   onModuleChange: (value: StudioModule) => void;
   scope: ScopeLabels;
+  projectNoun?: ProjectNoun;
   actor: string;
   sidebar: ReactNode;
   sidebarClassName?: string;
@@ -339,7 +342,7 @@ export function AppShell({
           <span>{actor}</span>
         </span>
       </header>
-      <ContextBar scope={scope} />
+      <ContextBar scope={scope} projectNoun={projectNoun} />
       <main className="workspace-body">
         <aside
           className={`workspace-sidebar${sidebarClassName ? ` ${sidebarClassName}` : ""}`}

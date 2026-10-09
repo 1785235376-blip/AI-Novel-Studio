@@ -2,12 +2,12 @@
 
 ## Status and review identity
 
-- Status: **APPROVED for the exact narrow extension; implementation validation pending**.
+- Status: **APPROVED for the exact narrow extension; source-bound frontend/build verification PASS; visual verification pending**.
 - Scope: one optional project noun in the existing shared ContextBar.
 - Inspection baseline: `4350a61fb9f61acccb845fef96b24b9b1275bbd3`.
-- Approval covers only the optional noun plumbing and its focused renderer tests. New feature-entry integration awaits its separate backend contract.
+- Approval covers only the optional noun plumbing and its focused renderer tests. M1 module-content consumers select the neutral noun only after the authorized server-backed project marker resolves; no broader protected-surface change is implied.
 - The implementation changes no tokens, canonical references, or visual baselines.
-- Existing historical CI and independent-review outcomes remain unchanged; this request is not verification evidence or a restart of those reviews.
+- Existing historical CI and independent-review outcomes remain unchanged; this request does not replace execution evidence or restart those reviews.
 
 ## Repository approval rule
 
@@ -27,11 +27,11 @@ It also states:
 
 > Feature agents are consumers. They may supply module content through existing contracts but may not redesign, relocate, duplicate or introduce parallel styles for protected surfaces.
 
-The repository assigns approval to the Root/Design System Owner; it does not state that every such change additionally requires end-user approval. This request does not confer that role, assume an approval, or override a separate user authorization boundary. The parent must establish its design-owner authority and record a decision before protected code is edited. If that authority is not established, the change remains pending.
+The repository assigns approval to the Root/Design System Owner; it does not state that every such change additionally requires end-user approval. This request does not confer that role, assume an approval, or override a separate user authorization boundary. Design-owner authority and the decision must be recorded before protected code is edited. The approval record below provides the decision for this exact scope; any broader change requires a new review.
 
 ## Requested Change
 
-Add a narrowly typed, optional presentation input to the existing `AppShell` → `ContextBar` contract, provisionally named `projectNoun?: '小说' | '项目'`.
+Add a narrowly typed, optional presentation input to the existing `AppShell` → `ContextBar` contract, named `projectNoun?: '小说' | '项目'`.
 
 - Omission must produce the existing `小说：` text exactly.
 - Explicit `projectNoun="项目"` may produce `项目：` only for the newly enabled, neutral-project M1 entry after its server-backed project adapter has resolved the current authorized project.
@@ -109,15 +109,20 @@ No data migration, ID change, schema change, permission change, asset copy, loca
 ## Approval and implementation record
 
 - Root/Design System Owner decision: **APPROVED**, with the exact scope below.
-- Decision authority and date: Root design review, relayed by the coordinating parent on **2026-10-09 11:48 UTC**.
+- Decision authority and date: Root/Design System Owner review on **2026-10-09 11:48 UTC**.
 - Approved scope: optional `ContextBar` project noun, default-preserving `AppShell` plumbing, and focused renderer tests. Broader protected changes require a new review.
-- Implementation SHA: **UNCOMMITTED**; based on inspection baseline above.
-- Focused/visual verification: **NOT_RUN**.
-- Changelog update: recorded in `design_system_changelog.md`; verification pending.
+- Implementation source: the verified working tree is bound by the exact per-file source hashes in the receipts below; the recorded HEAD is `0df2640c4c1a2d3052bb0a84d14445744d04046f`. HEAD alone is not treated as the complete working-tree identity.
+- Focused renderer and complete frontend verification: **PASS**, 1773 tests passed and 8 existing tests skipped. Corrected TypeScript/Vite/token checks: **PASS**. Both source-bound receipts record `sources_changed_during_check: false`.
+- Local browser execution: **BLOCKED**, as retained in the existing Chromium socket EPERM evidence. Hosted execution of the new M1 states: **NOT_RUN**. Actual geometry/screenshot review remains pending.
+- Changelog update: recorded in `design_system_changelog.md`; automated verification and browser/visual boundaries recorded separately.
 - Existing-baseline refresh: **NOT REQUESTED**; any actual need must be separately reviewed rather than accepted automatically.
 
 Verbatim approval:
 
 > Root design review approves this exact scoped DS change: optional ContextBar project-noun prop, default 小说 preserves existing V1 rendered text/DOM/accessibility, 项目 only explicitly selected gated neutral V2 project, no geometry/styles/tokens/tab/module ordering changes. Record request approval and design_system_changelog per repo process. Add default-off/V1_ACCEPTANCE_MODE and V2 renderer assertions, correct selected project scope behavior, existing geometry/browser regression. Refresh only demonstrably affected legitimate V2 text baseline after actual visual review; never blanket refresh old failing baselines. If implementation needs broader protected change return for review.
 
-The focused renderer checks are authored in `frontend/src/ui/AppShell.projectNoun.test.tsx`; they are not yet executed. Actual feature-flag/V1-acceptance consumer tests await M1 entry integration rather than simulating an unimplemented gate in the shell. Geometry/browser validation and actual screenshot review remain pending. No existing baseline has been refreshed.
+The focused renderer checks in `frontend/src/ui/AppShell.projectNoun.test.tsx` are included in the latest [source-bound frontend verification](../delivery/v2-development/stage-m1-final-frontend-corrected.json): **1773 passed / 8 existing skips**. The [corrected TypeScript/Vite/token receipt](../delivery/v2-development/stage-m1-final-build-corrected.json) is **PASS**. Both receipts record unchanged sources during execution and retain the exact source hashes. Earlier failed build and test receipts remain available; they have not been replaced with passing results.
+
+The M1 consumer uses the authoritative neutral-project marker. Real Image and Video file-picker import, provenance, reload/reopen, original-byte export, default-off, V1-acceptance, and geometry cases are authored in `frontend/tests/e2e/v2-independent-studio-live.spec.ts`. The Video case requires a real bounded FFmpeg/libx264 fixture and positive Chromium video metadata, dimensions, and duration. Optional relationship persistence/removal is authored in `frontend/tests/e2e/v2-asset-relationships-live.spec.ts`. Authored or collected cases are not browser execution evidence.
+
+The [retained local browser boundary](../delivery/v2-development/cloud-v2-evidence-index.md#真实-http-file-与浏览器边界) remains **BLOCKED**. Hosted execution of these new M1 states remains **NOT_RUN** at this checkpoint. Geometry validation and actual screenshot review are pending; no visual PASS is claimed and no existing baseline has been refreshed. Historical CI and independent-review outcomes retain their original scope and status.

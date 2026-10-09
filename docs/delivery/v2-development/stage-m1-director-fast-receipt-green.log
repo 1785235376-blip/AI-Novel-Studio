@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 203ms
+ ✓ src/creative/AIDirectorFastReceipt.test.tsx (3 tests) 352ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 517ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 4377ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved SCREENPLAY when its stage is selected before the initial reads finish 305ms
+   ✓ creative workspace protected manuscript and request boundaries > does not replace a blocked dirty draft when a recovery reread discovers its uncertain creation 303ms
+
+ Test Files  4 passed (4)
+      Tests  45 passed (45)
+   Start at  05:46:53
+   Duration  5.54s (transform 403ms, setup 0ms, collect 1.68s, tests 5.45s, environment 1.55s, prepare 278ms)
+

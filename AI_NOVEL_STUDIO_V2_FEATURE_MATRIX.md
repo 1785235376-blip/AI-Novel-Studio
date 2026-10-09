@@ -503,3 +503,80 @@ separate even after that minimum path passes.
 [E24]: #e24
 [E25]: #e25
 [E26]: #e26
+
+## 31. Append-only M1 delta — 2026-10-09 13:00 UTC
+
+**Full M1: PARTIAL.** The 325 M0 inventory rows above remain unchanged, including
+**47 EXISTS / 196 PARTIAL / 60 MISSING / 7 BLOCKED / 15 LOCAL_REQUIRED**. The delta
+below does not silently promote those baseline classifications. Source baseline:
+`0df2640c4c1a2d3052bb0a84d14445744d04046f`; M1 is uncommitted at this checkpoint,
+with no end SHA or published M1 CI claimed. Detailed contracts, exact receipt
+links, preserved failures and unmet requirements: [M1 report](MILESTONE_M1_REPORT.md).
+
+| Baseline requirement IDs | M1 implemented delta | Current evidence / remaining gap |
+| --- | --- | --- |
+| CORE-01/08/10; START-08 | Blank/neutral original project entry and independent manual IMAGE/VIDEO/AUDIO/ASSETS consumer; no compulsory chapter/model/graph. | Real decoded image/video/audio owner roundtrips and current unit contracts verified. Actual image/video file-picker, reopen/export browser acceptance **PENDING**. Full independent Studios remain **PARTIAL**. |
+| CORE-03/04; START-07 | Bounded multiple/empty/custom intents and preset metadata, CAS and saved-preference UI. | Unit-tested preservation of modules and absence of implicit mutation on local selection. Applied preset-specific layouts/suggested graphs **MISSING**; no permission or execution authority derives from intent. |
+| CORE-11/12/13; IMAGE-05 | Original asset ID/version/digest, actual media validation, author-declared external provenance/license and original-byte export. | Selected File/PG regressions pass. 25 MiB/asset and 512 MiB/scope bounds; declaration is a second write. Full cross-kind/generated-job catalog, large-media handling and transcode/export formats remain **PARTIAL**. |
+| CORE-18/19 | Original-owner project-incarnation/exact-scope fences, old-route denial, feature/V1 exclusion and redaction. | Included in selected original-owner regressions. No automatic adoption of old unbound assets. Final hosted/source-bound gates still pending. |
+| CORE-15/16/20/21 | Seven optional typed relationships, existing-parent constraints, version/digest snapshots and redacted current-state projection; original Chapter/Screenplay read-only bridge. | Integrated and original-owner File/PG plus frontend units pass. Browser acceptance remains pending. This list/overview is neither an executable M2 canvas nor a completed knowledge graph. |
+| CORE-17 | Version-aware trash/restore, original dependencies and new active incoming-relation protection; relationship removal tombstones. | Bounded lifecycle regressions pass. General retention/purge/physical cleanup **PARTIAL/MISSING**. |
+| CORE-09; START-09; STORE-01/02/10 | Existing packaging/storage owners retained; browser download destination; descriptive storage category projection. | No new configurable project/model/cache/export directory contract or default export path. Full path management/migration **PARTIAL/MISSING**. |
+| STORE-03 | Current bound-asset active/trash record counts/bytes; trash consumes quota. | Not total disk occupancy across DB/history/proxies/cache/filesystem allocation; original unbound assets excluded from this view. **PARTIAL**. |
+| STORE-04/09 | Real asset-filesystem free-space estimate, 64 MiB reserve, import-byte preflight, recheck and fail-closed 507; truthful capacity UI. | Current negative tests pass in File/PG and units. No task-sized reservation or running-job low-space pause/resume. **PARTIAL**. |
+| STORE-05/06 | Existing import quotas and narrowly scoped original portable-export-cache cleanup retained. | No generalized cache/proxy/thumbnail limits or Studio preview-confirm cleanup. Do not reclassify narrow M0 STORE-06 EXISTS as a full Storage Manager. |
+| STORE-07/08 | Existing original roots remain authoritative and are not automatically moved or cleaned. | Verified reference/copy migration, interruption journal/recovery and safe rollback **MISSING** for full Studio storage management. External model files are never cleanup targets. |
+| GATE-M1 | Implemented minimum no-model path plus original-owner regression and corrected frontend/build evidence. | **PARTIAL**: actual browser/visual proof, full storage/preset semantics and final published source/CI receipts remain open. Safe nondependent M2/M3 may proceed; dependent operations remain blocked. |
+
+Evidence checkpoint: File **1,047 passed / 954 skipped**; actual PG 17.11
+**1,011 passed / 987 skipped**, normal shutdown; corrected frontend **1,773 passed
+/ 8 existing skips**; corrected TypeScript/Vite/token **PASS**; catalog check
+**3 passed**. Each receipt is source-stable and separately scoped; backend runs
+are selected regressions, not the full manifest. The mounted API catalog has
+**2,077 operations**, M1-only delta **+34 / −0**. Independent collection review
+is **INVENTORY_ONLY**: **9,809 collected**, original **9,151** preserved in order,
+**658** additions relative to the frozen baseline, historical skips unchanged;
+no claim those 9,809 nodes executed.
+
+All earlier failures remain archived, including M1's test-fixture/assertion/build
+failures and the distinct M0 push browser failure with **403 TRACE_ACCESS_BLOCKED**.
+M0 hosted CI was still `IN_PROGRESS_WITH_NONPASS` at its persisted 12:49 checkpoint.
+Historical `PARTIAL_CI_CAPACITY`, `39 PARTIAL + F00 INTEGRATED`, independent-review
+`BLOCKED` and M12 `USER_APPROVAL_REQUIRED / LOCAL_REQUIRED / NOT_RUN` remain intact.
+
+## 32. Final M1 evidence delta: strict asset revisions
+
+The M0 inventory and §31's 13:00 snapshot remain unchanged. Final
+`IndependentWorkspaceService._row` adds a V2-only positive-actual-integer revision
+boundary; seven corrupt values across both profiles are covered without changing
+legacy owner semantics or repairing data implicitly. RED is **7 failed / 7 skipped
+/ 150 deselected**; final focused File and actual PG 17.11 are each **215 passed /
+186 opposite-profile skipped**, unchanged-source, with normal PG shutdown. This
+strengthens bounded CORE-11/12/18/19 version/identity safety; it does not complete
+every asset kind or full M1.
+
+Earlier **1,047/1,011** owner-regression passes and **1,773/8** frontend evidence
+are **pre-final-guard snapshots**. They are not advertised as a full regression
+of the final backend adapter. Final catalog generation is **2,077 operations,
+M1 +34/−0**, fingerprint
+`a06abe220e300bad702981085001c7bd0259ba6d81a519bb3f855c1f8db56292`.
+Final API catalog check is **3 passed**; coverage infrastructure **174 passed**.
+Actual final inventory has **9,823 nodes**, including exactly 14 new corruption
+variants since 9,809, original 9,151 ordered nodes and historical skips preserved.
+Written manifest SHA256
+`3e86bfabbdcb2c494968cf89d6efdd3ff2cc10edf921fa47f6a9669474dfce9f`
+is verified; collection remains **INVENTORY_ONLY**, not execution. Detailed receipts:
+[M1 report §11](MILESTONE_M1_REPORT.md#11-final-metadata-guard-delta-and-bounded-m1-closure).
+
+**GATE-M1 remains PARTIAL**, bounded minimum-path closure only. Local browser is
+**BLOCKED**, hosted current-M1 browser **NOT_RUN**, visual acceptance unverified.
+Storage migration/recovery, generalized cache cleanup/limits, global reservation,
+running-job low-space pause and applied presets remain missing/partial. Safe
+nondependent M2/M3 work can continue while dependent operations remain blocked.
+No final published SHA or user-Windows acceptance is claimed.
+
+Separate M0 terminal state is [preserved](docs/delivery/v2-development/m0-ci-terminal.json):
+push Cloud **FAILURE** and PR Cloud **CANCELLED**, including failed PR File/PG
+aggregates despite PG execution success. Prior local Chromium socket denial / SIGABRT
+explains the carried browser environment block; no new M1 local attempt or trace
+retrieval around the M0 **403 TRACE_ACCESS_BLOCKED** occurred.

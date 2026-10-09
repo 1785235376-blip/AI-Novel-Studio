@@ -96,3 +96,86 @@ CI_RECEIPTS="$PWD/docs/delivery/v2-development/m1-live-$(date -u +%Y%m%dT%H%M%SZ
 These existing suites are regression inputs, not substitutes for a new M1 live journey. Attach its exact test file/command once authored. Full File/PostgreSQL and original frontend/native/Interop gates remain required according to the stage's change impact.
 
 Every review receipt needs UTC time, commit/tree and dirty-tree digest where applicable, feature flags, backend/browser/runtime, command/exit code/counts, screenshot viewport/route/state, source hashes, reviewer findings, and unresolved checks. Current overall UI/UX status: **PARTIAL; M1 visual acceptance NOT_RUN; native UX LOCAL_REQUIRED**. Historical `39 PARTIAL + F00 INTEGRATED` and independent-review `BLOCKED` are unchanged.
+
+## 7. M1 as-built UI checkpoint — 2026-10-09 13:00 UTC
+
+**UI implementation/unit evidence PARTIAL; new browser/visual acceptance still
+PENDING / NOT_RUN at this checkpoint.** Sections 1–6 preserve the earlier review.
+The current source baseline is `0df2640c4c1a2d3052bb0a84d14445744d04046f`, with
+uncommitted M1 changes; no published end SHA is supplied. See the
+[M1 report](MILESTONE_M1_REPORT.md) §§9–10 for exact source-bound receipts.
+
+### 7.1 Actual consumer behavior and unit coverage
+
+- `BlankProjectEntry.tsx`, `EntryExperience.tsx`, `App.tsx` and Studio routing provide explicit neutral entry over the original Project owner. `IndependentStudioWorkspace.tsx` uses the same shell and original asset list/inspector/provenance forms for IMAGE, VIDEO, AUDIO and ASSETS. A current server `NEUTRAL_STUDIO` receipt determines presentation; client hints and zero chapters do not grant it.
+- The approved optional project noun is default-preserving. The scope remains the [narrow approved request](docs/ui/design_system_change_request_v2_project_label.md); module order, dimensions, tokens and shared-shell authority are unchanged by that permission. Renderer units are evidence of DOM/text behavior, not final visual approval.
+- Manual import requires configured FFmpeg/ffprobe validation, but no model or manuscript. Existing assets remain viewable/exportable when import is unavailable. The UI describes original-format download honestly. File save and provenance declaration have distinct success/failure states, with declaration-only retry rather than duplicate upload.
+- Preset wording now explicitly says the choice **only saves a preference and does not adjust the interface yet**. Intent/preset selection does not restrict the eight registered modules or grant permission. Applied layouts are still a requirement gap.
+- `IndependentStudioReadFences.test.tsx` covers delayed asset recovery after explicit new selection, mutation-input locking during refresh and preservation of the next draft after refresh, reviewer-only capability and capacity states. The earlier whole-inspector text assertion is replaced by selected-identity/draft checks; a legitimate `source.png` provenance-parent option remains allowed. Its earlier FAIL remains in the report.
+- Relationship UI is an optional version-aware list/overview with typed read-only source references, stale/unavailable redaction and separate `domain.review` capability for `APPROVED_FOR`. It is not an infinite canvas or an execution graph. Reviewer-only text distinguishes review/read from asset-write authority.
+- Storage UI distinguishes available estimate, low space/quota and unavailable measurement without exposing filesystem paths or offering imaginary cleanup/migration. The backend rechecks actual imports. The UI does not represent complete project occupancy, cache management, migration or job pause/resume.
+- `AIDirectorFastReceipt.test.tsx` demonstrates a fast-response multi-click defect in a controlled jsdom scenario, then verifies the correction: one multi-click gesture retains its first proposal while keyboard activation and later distinct clicks continue to work. This does not establish the inaccessible historical CI trace's exact cause or substitute for native browser reproduction.
+
+### 7.2 Verified unit/build ledger, separate from real browser review
+
+[Corrected full frontend](docs/delivery/v2-development/stage-m1-final-frontend-corrected.json)
+finished 12:59:34 UTC with **1,773 passed / 8 existing skips**, 249 passed / 2 skipped
+files. [Corrected build](docs/delivery/v2-development/stage-m1-final-build-corrected.json)
+finished 12:59:16 UTC: **TypeScript/Vite/43-file token guard PASS**, retaining the
+chunk-size warning. Both original logs match recorded hashes, both have unchanged
+1,630-input source maps, and both maps agree. This is actual unit/compiler/token
+evidence, not a screenshot review, geometry execution or screen-reader acceptance.
+
+Keep the earlier integrated frontend **1 failed / 1,769 passed / 8 skips**, Director
+RED **1 failed / 2 passed**, and final-build TypeScript failure from two new-test
+unsupported `exact` options. Later correction receipts supersede those defects for
+their own source snapshots but never erase the failures. The controlled Director
+GREEN ran **45 unit tests** before the subsequent full frontend passes.
+
+The separate M0 documentation-commit push retains its **6/7 live / 8/8 geometry**
+result and **TRACE_ACCESS_BLOCKED (403)**; its screenshots and trace were not
+inspected. PR browser success does not repair that push failure. The persisted
+12:49 observation also records M0 PR frontend/File cancellation and incomplete
+hosted PG execution; it is not a terminal M1 result.
+
+### 7.3 Required next browser/visual evidence
+
+The actual acceptance sources are
+`frontend/tests/e2e/v2-independent-studio-live.spec.ts` and
+`frontend/tests/e2e/v2-asset-relationships-live.spec.ts`, through the existing
+`playwright.v2-live.config.ts`. Their presence is **not execution**. Required
+outcomes remain external PNG and real MP4 file-picker import, verified original
+bytes after reload/export, no forced chapter/model/Director, optional references,
+permission/feature/V1 negative paths, actual dirty-state recovery and browser
+multi-click behavior. Record source, command, result and preserved failure evidence.
+
+Then inspect actual new empty/imported/read-only/error states at the required
+viewports, including 2560×1440, and compare the shell/canonical hierarchy and
+existing baselines without automatic golden updates. Run geometry and keyboard
+checks and inspect actual screenshots before changing the visual verdict. Current
+verdict stays **PARTIAL; no new M1 visual PASS**. Full Storage Manager and applied
+preset semantics remain open; M12 remains **USER_APPROVAL_REQUIRED**.
+
+## 8. Final M1 evidence qualification
+
+The **1,773 passed / 8 existing skips** frontend result and corrected build in §7
+are verified **pre-final-backend-guard snapshots**, not a full current-tree
+acceptance claim. The final changes add strict asset revision validation in
+`app/creative/workspace.py` and its backend regression; they do not alter the
+inspected UI source. Actual focused File and PG 17.11 each pass **215 / 186
+opposite-profile skips**. Full source/execution relationships and preserved RED
+are in [M1 report §11](MILESTONE_M1_REPORT.md#11-final-metadata-guard-delta-and-bounded-m1-closure).
+
+Local M1 browser execution is now recorded as **BLOCKED**; hosted current-M1
+browser remains **NOT_RUN**. No new PNG/MP4 file-picker acceptance, native
+multi-click result, geometry approval or visually inspected M1 screenshot is
+claimed. Keep these distinct from original-byte service roundtrips, jsdom tests
+and historical M0 browser outcomes. The preserved [prior cloud launch log](docs/delivery/v2-development/cloud-v2-creative-browser-run.log)
+records `process_singleton_posix.cc:297`, `socket() failed: Operation not permitted (1)`
+and `SIGABRT`; **no new local M1 attempt** occurred. This environment failure is
+not a product-browser verdict. Separate [M0 terminal evidence](docs/delivery/v2-development/m0-ci-terminal.json)
+retains push Cloud FAILURE and PR Cloud CANCELLED, including failed PR strict
+backend aggregates despite successful PG execution. M0 trace access remains 403
+blocked with no inspected trace or alternate retrieval. Preset layouts and full Storage Manager UX remain partial;
+M1 minimum-path closure does not establish full visual or functional acceptance.
+No published end SHA or M12 authority is inferred.

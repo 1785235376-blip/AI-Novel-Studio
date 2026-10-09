@@ -18,7 +18,7 @@ from uuid import UUID, uuid4
 from ..file_project_lifecycle import project_operation
 from ..storage import atomic_write
 
-COLLECTIONS = ("creative_documents_v2", "creative_director_proposals_v2")
+COLLECTIONS = ("creative_documents_v2", "creative_director_proposals_v2", "creative_project_preferences_v2")
 BINDING = "project_incarnation"
 MAX_MARKER_BYTES = 256
 
@@ -101,6 +101,10 @@ class CreativeProjectStore:
     def incarnation(self, nid):
         with self._owner(nid) as identity:
             return identity
+
+    def owner_lease(self, nid):
+        """Hold the existing owner through an asset operation, without a new registry."""
+        return self._owner(nid)
 
     @staticmethod
     def _view(document, identity):

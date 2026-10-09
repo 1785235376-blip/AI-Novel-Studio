@@ -16,10 +16,11 @@
 - Standardized tactile hover, active, focus, disabled and loading behavior across legacy and shared controls.
 - Preserved the 56 / 44 / 32 shell bands, fixed module order, collaboration behavior and capability gating.
 
-## 2026-10-09 - Approved V2 project noun extension (verification pending)
+## 2026-10-09 - Approved V2 project noun extension (automated checks passed; visual review pending)
 
 - Root design review approved the narrow [V2 project-label request](design_system_change_request_v2_project_label.md).
 - Added optional `projectNoun` plumbing from the existing AppShell to ContextBar. The default remains `小说`; only an explicit gated neutral-project consumer may request `项目`.
 - Preserved default V1 markup, accessibility strings, scope values/fallbacks, geometry, tokens, and module order. No styles or parallel shell were introduced.
-- Authored focused renderer assertions for exact legacy markup/text-node preservation, opt-in noun changes, and selected-scope replacement. Test execution, M1 caller feature-gate/V1-acceptance checks, and browser/visual validation remain **NOT_RUN**.
+- Source-bound frontend verification, including exact legacy markup/text-node preservation, opt-in noun changes, selected-scope replacement, and M1 content regression coverage: **1773 passed / 8 existing skips**. Corrected TypeScript/Vite/token verification: **PASS**. See the [frontend receipt](../delivery/v2-development/stage-m1-final-frontend-corrected.json) and [build receipt](../delivery/v2-development/stage-m1-final-build-corrected.json); both record unchanged sources during execution. Earlier failure receipts are retained.
+- Real Image/Video import, reopen, original-byte export, relationship, default-off/V1-acceptance, and geometry cases are authored. The retained local browser route remains **BLOCKED**; hosted execution of the new M1 states is **NOT_RUN**. Actual screenshot/geometry review remains pending. Test collection and unit/build success are not visual approval.
 - No canonical reference or existing visual baseline was refreshed. Broader protected changes require a new review.

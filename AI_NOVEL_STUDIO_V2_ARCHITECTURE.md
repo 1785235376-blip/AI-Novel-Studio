@@ -223,3 +223,83 @@ that the capacity issue has been fixed.
 The user's staged authorization permits a serialized, owner-preserving M1
 implementation using the above seams. M0 does not approve merge, release, deployment, paid APIs,
 Windows access, protocol expansion or protected shell redesign.
+
+## 8. M1 as-built delta — 2026-10-09 13:00 UTC
+
+**M1 PARTIAL.** Sections above remain the M0 inventory at `4350a61`; this is an
+append-only description of the subsequent implementation. Its documentation
+baseline is `0df2640c4c1a2d3052bb0a84d14445744d04046f`; M1 end commit/tree and
+published [PR 47](https://github.com/1785235376-blip/AI-Novel-Studio/pull/47)
+execution receipt are still pending. [M1 report](MILESTONE_M1_REPORT.md) §§9–10
+bind the following contracts to actual local evidence and retain earlier failures.
+
+| Implemented adapter / consumer | Original authority and current boundary |
+| --- | --- |
+| `app/creative/workspace_api.py`, `workspace_models.py`, `workspace.py` | Blank creation delegates to the original project owner; explicit `NEUTRAL_STUDIO` activation and bounded multi-intent/custom/preset preferences reuse original creative scope storage. Server actor/scope/incarnation and V2/V1 gates determine authority. Preferences grant no permissions, hide no modules and run no tasks. |
+| `CreativeProjectStore.owner_lease` and `AssetLibraryService.project_scope` | New binary records bind to the original project incarnation and exact branch/scope. The original asset service owns UUID, bytes, SHA256, metadata versions, recoverable deletion and lineage. Legacy paths cannot bypass the bound scope; old unbound records are not silently adopted. No second asset registry or project database exists. |
+| Manual image/video/audio import and download | Actual media decoding precedes persistence. Bounded limits: 25 MiB/asset, 1,000 assets and 512 MiB recorded bytes including trash per scope. Import and `EXTERNAL_IMPORT` declaration are separate writes with declaration-only retry. Download returns verified original bytes, not a format conversion. No chapter, model or relationship is required. Generated-job asset adoption is a later adapter. |
+| `app/creative/workspace_relationships.py` | Seven optional declarations use reserved versioned original asset metadata; target ASSET/CHAPTER/SCREENPLAY uses original owners. Chapter/Screenplay bridge is typed, read-only and digest/version bound; it does not duplicate prose. CAS, review permission for `APPROVED_FOR`, redaction, stale/deleted states, tombstones and original-lineage constraints remain authoritative. Projection is explicitly nonexecutable, not a new knowledge graph or workflow scheduler. |
+| `app/creative/storage_admission.py` | Measures the existing asset filesystem, subtracts a 64 MiB safety reserve and intersects project quota for import admission; low/unavailable capacity fails safely. Descriptive owner categories expose no client-controlled paths, model scan, automatic cleanup or migration. Existing packaging path and portable-cache owners remain unchanged. |
+| `BlankProjectEntry`, `IndependentStudioWorkspace`, `AssetRelationshipsPanel`, Studio client and original asset components | One shared shell and original asset list/inspector/lineage forms. Explicit current server receipt selects the neutral noun; legacy/default rendering stays novel. Authority-scoped async readers, current selection/draft fences, reviewer-only state, admission states and saved-preference wording have unit coverage. Real browser/geometry/visual acceptance is pending. |
+
+### 8.1 Verified evidence and remaining architecture work
+
+Selected original-owner regressions pass separately: File **1,047 / 954 skips**;
+real PostgreSQL 17.11 **1,011 / 987 skips**, with matching normal shutdown.
+Corrected full frontend is **1,773 passed / 8 existing skips**; corrected
+TypeScript/Vite/43-file token guard passes. Catalog consistency is **3 passed**;
+current mounted surface is **2,077 operations**, **34 added / 0 removed** relative
+to the M0 baseline. These are bounded, source-fingerprinted results, not full
+hosted CI, browser evidence or full M1 completion. Collection inventory preserves
+all 9,151 original nodes in order and historical skips; inventory is not execution.
+
+The architectural gap remains a **full Storage Manager**: configurable separated
+roots/default export path, complete occupancy, cache/proxy limits, general
+preview-confirm cleanup, verified reference/copy relocation with journal/recovery,
+and running-job low-space pause/resume are absent or partial. The admission
+adapter must not be expanded into an unreviewed filesystem owner or used to claim
+those guarantees. Existing portable-export-cache cleanup remains its narrow
+bounded capability. Presets currently save metadata; applied layouts and editable
+suggested graphs are still missing.
+
+Safe nondependent M2/M3 work can extend original Workflow/Job/Model owners using
+these bounded contracts. Operations requiring missing migration, cleanup,
+reservation or running-job pause guarantees remain blocked on those contracts.
+Independent image/video browser acceptance and final publication/CI still need
+exact receipts. No mandatory novel pipeline, automatic graph execution, model
+launch, paid fallback, Tutor control, real NLE or user-Windows authority follows
+from this checkpoint. Historical classifications and M12 approval gate remain
+unchanged.
+
+## 9. Final M1 metadata-boundary update
+
+The final V2 `IndependentWorkspaceService._row` now admits only actual positive
+integer asset revisions (`type(version) is int`, at least 1). It rejects corrupt
+or coerced counters with `CREATIVE_ASSET_VERSION_INVALID` without mutating the
+original files or changing the permissive legacy asset owner. The seven-value,
+both-profile regression is preserved as RED before the correction. See
+[M1 report §11](MILESTONE_M1_REPORT.md#11-final-metadata-guard-delta-and-bounded-m1-closure).
+
+Final focused File and real PostgreSQL 17.11 checks each pass **215 / 186
+opposite-profile skips**, with identical unchanged-source maps and normal PG
+shutdown. The earlier larger owner regressions, frontend and build results in §8
+remain bound to their **pre-final-guard snapshots**; no current-tree full
+regression verdict follows. Final catalog generation still has **2,077 operations,
++34/−0**, backend fingerprint
+`a06abe220e300bad702981085001c7bd0259ba6d81a519bb3f855c1f8db56292`.
+Final catalog check is **3 passed**, coverage infrastructure **174 passed**.
+Actual final collection is **9,823 nodes, INVENTORY_ONLY**, with original 9,151
+ordered nodes and historical skips retained. Written manifest SHA256:
+`3e86bfabbdcb2c494968cf89d6efdd3ff2cc10edf921fa47f6a9669474dfce9f`.
+
+M1 is **PARTIAL / bounded minimum-path closure**. Browser acceptance is **BLOCKED
+locally / NOT_RUN on hosted current M1**, with no new visual PASS. Full migration,
+cache cleanup/limits, global reservation/job pause and applied presets remain
+missing or partial and block dependent behavior. Safe nondependent M2/M3 may
+continue. Final publication SHA/tree remains unrecorded; M12 approval is unchanged.
+
+The preserved prior local Chromium launch is blocked by `socket() Operation not
+permitted` / `SIGABRT`; no new M1 browser attempt occurred. Exact M0 terminal
+receipt is [recorded separately](docs/delivery/v2-development/m0-ci-terminal.json):
+push Cloud **FAILURE**, PR Cloud **CANCELLED**, both PR strict aggregates failed
+despite successful PG shard execution. Neither is current-M1 hosted evidence.

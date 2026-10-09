@@ -5,7 +5,15 @@ export type Scope={workspaceId:string;projectId:string;storylineId:string;branch
 export type Actor={id:string;displayName:string;workspaceId:string};
 export type CollaborationContext={sessionToken:string;actor?:Actor;scope?:Scope;localHostToken?:string};
 export type Novel={id:string;title:string;genre:string;chapter_count:number;word_count:number;status:string};
-export type Asset={id:string;novel_id:string;filename:string;kind:string;media_type:string;size:number;sha256:string;created_at:string;updated_at:string};
+export type AssetProvenance={origin:string;version:number;digest:string;integrity:string;license:{label:string;source:string;note:string};license_verification:string;operation?:string;parents:{id?:string;label?:string;version?:number;digest?:string;state:string}[];sources:{id?:string;version?:number;digest?:string;state:string}[];stale:boolean;producer?:{declared_by?:string|null;provider_id?:string|null;model_id?:string|null};declaration_history_versions?:number[]};
+export type AssetRelationshipKind='SOURCE_OF'|'DERIVED_FROM'|'REFERENCES'|'USED_IN'|'ALTERNATE_VERSION'|'APPROVED_FOR'|'LINKED_CONTEXT';
+export type AssetRelationshipReferenceKind='ASSET'|'CHAPTER'|'SCREENPLAY';
+export type AssetRelationshipTarget={kind:AssetRelationshipReferenceKind;id:string;version:number;digest:string};
+export type AssetRelationshipReference=AssetRelationshipTarget&{label:string;deleted:boolean};
+export type AssetRelationship=
+ | {id:string;type:AssetRelationshipKind;state:'CURRENT'|'STALE'|'DELETED';target:AssetRelationshipReference;expected:AssetRelationshipTarget;reason:string;created_by:string;created_at:string;semantics:'DECLARED_LINK_NOT_RIGHTS_GRANT_OR_EXECUTION'}
+ | {id:string;type:AssetRelationshipKind;state:'UNAVAILABLE';target:{label:string}};
+export type Asset={id:string;novel_id:string;filename:string;kind:string;media_type:string;size:number;sha256:string;created_at:string;updated_at:string;version?:number;branch_id?:string|null;deleted_at?:string|null;provenance?:AssetProvenance;relationships?:AssetRelationship[]};
 export type Chapter={id:string;novel_id:string;number:number;title:string;content:string;document:any;version:number;word_count:number;status:string;is_archived?:boolean};
 export type VersionEntry={version:number;timestamp?:string;created_at?:string;source?:string;reason?:string;operator?:string;actor_id?:string;document?:any};
 export type Member={id:string;user_id?:string;display_name?:string;status:string};
@@ -143,9 +151,9 @@ export const api={
  adminWorkspaces:()=>items(call<{items:AdminWorkspace[]}>('/api/collaboration/admin/workspaces')),
  adminCreateWorkspace:(workspaceId:string,name:string)=>call<AdminWorkspace>('/api/collaboration/admin/workspaces',{method:'POST',body:JSON.stringify({id:workspaceId,name})}),
  adminRenameWorkspace:(workspaceId:string,name:string)=>call<AdminWorkspace>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}`,{method:'PATCH',body:JSON.stringify({name})}),
- adminWorkspaceNavigation:(workspaceId:string)=>call<WorkspaceNavigationContext>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/navigation`),
+ adminWorkspaceNavigation:(workspaceId:string,context?:CollaborationContext)=>call<WorkspaceNavigationContext>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/navigation`,undefined,context),
  adminProjects:(workspaceId:string)=>call<AdminProject[]>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/projects`),
- adminCreateProject:(workspaceId:string,title:string,genre='')=>call<AdminProject>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/projects`,{method:'POST',body:JSON.stringify({title,genre})}),
+ adminCreateProject:(workspaceId:string,title:string,genre='',context?:CollaborationContext)=>call<AdminProject>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/projects`,{method:'POST',body:JSON.stringify({title,genre})},context),
  adminDeleteProject:(workspaceId:string,projectId:string)=>call<void>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/projects/${encodeURIComponent(projectId)}`,{method:'DELETE'}),
  adminStorylines:(workspaceId:string,projectId:string)=>call<AdminStoryline[]>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/projects/${encodeURIComponent(projectId)}/storylines`),
  adminCreateStoryline:(workspaceId:string,projectId:string,name:string)=>call<AdminStoryline>(`/api/collaboration/admin/workspaces/${encodeURIComponent(workspaceId)}/projects/${encodeURIComponent(projectId)}/storylines`,{method:'POST',body:JSON.stringify({name})}),

@@ -1,0 +1,62 @@
+.s...sss.s.s.s.s.s.......sssssss.........sssssssss.s.s.s.s.............s [ 20%]
+ssssssssssss.....sssss.s.s.s..ss.s.s.s.s.....sssss.s.s.s..ss.s.s.s.s.s.s [ 40%]
+.s.s.s..ss....ssss..ss..ss..ss..ss....ssss..ss..ss..ss..ss........ssssss [ 60%]
+ss.......sssssss...sss..ss.s.s..........ssssssssss..ss.s..ss...sss.s.s.s [ 80%]
+.........sssssssss.s.s.s.s..ss..ss..ss..ss.s...sss.s.s...sss.sFFss..ss   [100%]
+=================================== FAILURES ===================================
+__ test_mounted_low_space_is_507_no_private_path_or_partial_import[file-/api] __
+
+client = namespace(client=<starlette.testclient.TestClient object at 0x7f3ab04f3f50>, prefix='/api', base='/api/novels/r3-mount...spaceService object at 0x7f3ab4268ef0>, studio_base='/api/projects/r3-mounted-9a8a8ded9bef4d47917f9142d4de7bda/studio')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3ab05c65a0>
+
+    def test_mounted_low_space_is_507_no_private_path_or_partial_import(client, monkeypatch):
+        import app.creative.storage_admission as module
+        e = client
+        monkeypatch.setattr(module.shutil, "disk_usage", lambda path: SimpleNamespace(free=0))
+        response = e.client.post(e.studio_base + "/assets", json=upload_body())
+        assert response.status_code == 507
+>       assert response.json() == {"detail": {"code": "CREATIVE_STORAGE_LOW_SPACE"}}
+E       AssertionError: assert {'code': 'CRE...W_SPACE', ...} == {'detail': {'...E_LOW_SPACE'}}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Left contains 4 more items:
+E         {'code': 'CREATIVE_STORAGE_LOW_SPACE',
+E          'details': {'code': 'CREATIVE_STORAGE_LOW_SPACE'},
+E          'message': 'CREATIVE_STORAGE_LOW_SPACE',
+E          'request_id': '3747ded4-9cfd-4afc-85e6-6344153bdcf8'}
+E         Use -v to get more diff
+
+tests/test_v2_storage_admission.py:117: AssertionError
+_ test_mounted_low_space_is_507_no_private_path_or_partial_import[file-/api/v1] _
+
+client = namespace(client=<starlette.testclient.TestClient object at 0x7f3ab05c23f0>, prefix='/api/v1', base='/api/v1/novels/r3...ceService object at 0x7f3ab4268ef0>, studio_base='/api/v1/projects/r3-mounted-21515d0d7dbc4d52bad96258fe7c5cdf/studio')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3ab23fc9b0>
+
+    def test_mounted_low_space_is_507_no_private_path_or_partial_import(client, monkeypatch):
+        import app.creative.storage_admission as module
+        e = client
+        monkeypatch.setattr(module.shutil, "disk_usage", lambda path: SimpleNamespace(free=0))
+        response = e.client.post(e.studio_base + "/assets", json=upload_body())
+        assert response.status_code == 507
+>       assert response.json() == {"detail": {"code": "CREATIVE_STORAGE_LOW_SPACE"}}
+E       AssertionError: assert {'code': 'CRE...W_SPACE', ...} == {'detail': {'...E_LOW_SPACE'}}
+E         
+E         Omitting 1 identical items, use -vv to show
+E         Left contains 4 more items:
+E         {'code': 'CREATIVE_STORAGE_LOW_SPACE',
+E          'details': {'code': 'CREATIVE_STORAGE_LOW_SPACE'},
+E          'message': 'CREATIVE_STORAGE_LOW_SPACE',
+E          'request_id': 'a59ad66e-d9b1-485a-9bce-bf9a781f526a'}
+E         Use -v to get more diff
+
+tests/test_v2_storage_admission.py:117: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_storage_admission.py::test_mounted_low_space_is_507_no_private_path_or_partial_import[file-/api]
+FAILED tests/test_v2_storage_admission.py::test_mounted_low_space_is_507_no_private_path_or_partial_import[file-/api/v1]
+2 failed, 177 passed, 179 skipped, 1 warning in 75.26s (0:01:15)

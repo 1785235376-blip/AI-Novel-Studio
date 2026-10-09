@@ -2,7 +2,7 @@ import { Button } from './ui/primitives';
 import { useLocalTutorIntegration, type EditorSelection } from './interop/entry';
 import type { HostRoute } from './interop/client';
 import { assertCurrentHandoff, currentInteropSurface, currentInteropTaskId, interopFeatureRoutes } from './interop/navigation';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   QueryClient,
   useMutation,
@@ -20,7 +20,7 @@ import {
   setCollaborationContext,
 } from "./api";
 import { useStudio } from "./store";
-import { readLocalWorkspaceSelection, rememberLocalWorkspaceSelection } from "./workspaceSelection";
+import { readLocalWorkspaceSelection, rememberLocalWorkspaceSelection, readLocalStudioSelection } from "./workspaceSelection";
 import { ChapterEditor, proseDocument } from "./Editor";
 import {
   drafts,
@@ -43,6 +43,9 @@ import { AppShell, StudioModule } from "./ui/AppShell";
 import { selectedScopeLabels } from "./ui/scopeLabels";
 import { ModuleWorkspaceRoutes } from "./ui/ModuleWorkspaceRoutes";
 import { CreativeWorkspace } from "./creative/CreativeWorkspace";
+import { BlankProjectEntry } from './creative/BlankProjectEntry';
+import { IndependentStudioWorkspace, isManualStudioModule } from './creative/IndependentStudioWorkspace';
+import { createStudioProject, studioClient } from './creative/studioClient';
 import { WorkflowPanel } from './novel/WorkflowPanel';
 import { ImageQueuePanel } from './novel/ImageQueuePanel';
 import { MotionTaskWorkspace } from './novel/MotionTaskWorkspace';
@@ -191,6 +194,7 @@ export default function App() {
   const hasExperimental = Object.entries(experimentalFlags.data?.features || {}).some(([key, value]) => value === true && key !== 'experimental.local_tutor_interop_v1');
   const writingRecovery = experimentalFlags.data?.features['experimental.writing_recovery_v2'] === true;
   const workspaceTools = experimentalFlags.data?.features['experimental.workspace_tools_v2'] === true;
+  const independentStudios = experimentalFlags.data?.features['experimental.narrative_production_v2'] === true;
   const writingFocus = experimentalFlags.data?.features['experimental.writing_focus_v2'] === true;
   const characterMind = experimentalFlags.data?.features['experimental.character_mind_v2'] === true && experimentalFlags.data?.features['experimental.author_context_inspector_v2'] === true;
   const [characterViewpoint, setCharacterViewpoint] = useState<{ identity: string; chapterId: string; characterId: string; sceneId?: string; epoch: number }>();
@@ -268,6 +272,9 @@ export default function App() {
   const [interopTask, setInteropTask] = useState<{ id: string; status: string; chapterId?: string }>();
   useLayoutEffect(() => { setInteropTask(undefined); }, [namespace, s.novelId, s.chapterId]);
   const [creativeWorkbenchOpen, setCreativeWorkbenchOpen] = useState(false);
+  const [requestedStudioProject, setRequestedStudioProject] = useState<string>();
+  const [requestedStudioAsset, setRequestedStudioAsset] = useState<string>();
+  const studioEntryApplied = useRef('');
   const [studioModule, setStudioModule] = useState<StudioModule>("NOVEL"),
     [draftAction, setDraftAction] = useState<"accept" | "reject">(),
     [generationStarting, setGenerationStarting] = useState(false),
@@ -275,6 +282,19 @@ export default function App() {
     [generationRecovering, setGenerationRecovering] = useState(false),
     [variantDrafts, setVariantDrafts] = useState<AiVariantDraft[]>([]),
     [activeVariant, setActiveVariant] = useState(0);
+  const independentClient = useMemo(() => studioClient(s.novelId, { sessionToken: s.sessionToken, actor: s.actor, scope: s.scope }), [namespace, s.novelId, s.actor?.id]);
+  const studioProject = useQuery({ queryKey: ['independent-project', namespace, s.novelId], queryFn: ({ signal }) => independentClient.overview(signal), enabled: independentStudios && !!s.novelId, retry: false });
+  const neutralStudio = independentStudios && studioProject.data?.project?.id === s.novelId && studioProject.data.project.entry_kind === 'NEUTRAL_STUDIO';
+  useEffect(() => {
+    const identity = `${namespace}:${s.novelId}`;
+    if (!independentStudios || !s.novelId || studioEntryApplied.current === identity || !studioProject.isSuccess) return;
+    studioEntryApplied.current = identity;
+    if (!neutralStudio) return;
+    const hint = !s.sessionToken && !s.scope && !packagedHost ? readLocalStudioSelection(s.novelId) : undefined;
+    setRequestedStudioProject(s.novelId); setRequestedStudioAsset(hint?.state === 'SAVED' ? hint.assetId : undefined);
+    setStudioModule(hint?.state === 'SAVED' ? hint.module : 'IMAGE');
+  }, [independentStudios, namespace, s.novelId, s.sessionToken, s.scope, packagedHost, studioProject.isSuccess, neutralStudio]);
+  const studioVerified = useCallback((id: string) => { void qc.invalidateQueries({ queryKey: ['independent-project', namespace, id] }); }, [qc, namespace]);
   useEffect(
     () =>
       setCollaborationContext({
@@ -464,7 +484,7 @@ export default function App() {
     // Wait for current server flags and the original project inventory. A hint
     // cannot select a foreign/missing project or redirect an authenticated scope.
     if (packagedHost || !shouldLoadLocalNovels(s.sessionToken, s.scope) || experimentalFlags.isPending) return;
-    if (!workspaceTools) { if (!s.novelId && novels.data?.[0]) s.setNovel(novels.data[0].id); return; }
+    if (!workspaceTools && !independentStudios) { if (!s.novelId && novels.data?.[0]) s.setNovel(novels.data[0].id); return; }
     if (novels.isFetching || !novels.isSuccess) return;
     if (s.novelId) {
       if (novels.data.some(row => row.id === s.novelId) && !rememberLocalWorkspaceSelection(s.novelId))
@@ -479,7 +499,7 @@ export default function App() {
     } else if (selected.state === 'EMPTY') {
       if (novels.data[0]) s.setNovel(novels.data[0].id);
     } else setProjectRecoveryNotice('上次项目选择损坏或浏览器存储不可用。请选择作品；正文和服务端工作现场未改变。');
-  }, [novels.data, novels.isFetching, novels.isSuccess, experimentalFlags.isPending, workspaceTools, packagedHost, s.novelId, s.sessionToken, s.scope, projectChoiceOpen]);
+  }, [novels.data, novels.isFetching, novels.isSuccess, experimentalFlags.isPending, workspaceTools, independentStudios, packagedHost, s.novelId, s.sessionToken, s.scope, projectChoiceOpen]);
   useEffect(() => {
     if (!s.chapterId && chapters.data?.[0]) s.setChapter(chapters.data[0].id);
   }, [chapters.data]);
@@ -1197,20 +1217,29 @@ export default function App() {
   if (!s.novelId && !s.scope?.workspaceId)
     return (
       <EntryExperience
+        independentStudioEnabled={independentStudios}
         packagedHost={packagedHost}
         initialToken={s.sessionToken}
         onOpenLocalSample={id => { void openLocalSample(id); }}
         onEnter={(nextToken, nextScope) =>
           s.setCollaboration(nextToken, undefined, nextScope)
         }
-        localHome={<>{workspaceTools && projectRecoveryNotice && <section className="notice" role="status">{projectRecoveryNotice}</section>}<NovelHome onCreated={id => { setProjectChoiceOpen(false); setProjectRecoveryNotice(''); s.setNovel(id); }} /></>}
+        localHome={<>{(workspaceTools || independentStudios) && projectRecoveryNotice && <section className="notice" role="status">{projectRecoveryNotice}</section>}<NovelHome onCreated={id => { setProjectChoiceOpen(false); setProjectRecoveryNotice(''); s.setNovel(id); }} />{independentStudios && !s.sessionToken && !s.scope && !packagedHost && <BlankProjectEntry createProject={async title => {
+          const origin = revisionStoreIdentity(useStudio.getState());
+          const row = await createStudioProject(title, { sessionToken: s.sessionToken, actor: s.actor, scope: s.scope });
+          if (origin !== revisionStoreIdentity(useStudio.getState())) throw new Error('会话已改变。项目已保留，请从原项目列表打开。');
+          if (!row.studio_ready || row.requires_scope_selection) throw new Error('项目已创建，需要从授权创作空间选择后打开。');
+          cacheCreatedNovel(qc, { ...row, genre: '', chapter_count: 0, word_count: 0, status: 'Writing' });
+          setProjectChoiceOpen(false); setRequestedStudioProject(row.id); setRequestedStudioAsset(undefined); setStudioModule('IMAGE'); s.setNovel(row.id);
+        }} />}</>}
       />
     );
   const scope = s.scope;
   const localNovelTitle =
     novels.data?.find((n) => n.id === s.novelId)?.title || "当前小说";
   const shellScope = selectedScopeLabels(scope, localNovelTitle);
-  if (studioModule !== "NOVEL") return <>{localTutor.dialog}<ModuleWorkspaceRoutes interopEntry={localTutor.entry} interopSettings={localTutor.settings} controlTab={interopControlTab} onControlSurfaceChange={setInteropControlSurface} key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={setStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={shellScope} /></>;
+  if (independentStudios && isManualStudioModule(studioModule) && (neutralStudio || requestedStudioProject === s.novelId)) return <>{localTutor.dialog}<IndependentStudioWorkspace projectId={s.novelId} context={{ sessionToken: s.sessionToken, actor: s.actor, scope }} scope={shellScope} actor={s.actor?.displayName || '本机作者'} module={studioModule} requestedAssetId={requestedStudioAsset} onModuleChange={setStudioModule} onVerified={studioVerified} status={localTutor.entry} onProjectChoice={() => { setProjectChoiceOpen(true); setRequestedStudioProject(undefined); setRequestedStudioAsset(undefined); studioEntryApplied.current = ''; if (scope) s.setCollaboration(s.sessionToken, s.actor, undefined); else s.setNovel(''); }} /></>;
+  if (studioModule !== "NOVEL") return <>{localTutor.dialog}<ModuleWorkspaceRoutes projectNoun={neutralStudio ? '项目' : undefined} interopEntry={localTutor.entry} interopSettings={localTutor.settings} controlTab={interopControlTab} onControlSurfaceChange={setInteropControlSurface} key={JSON.stringify([s.sessionToken,s.actor?.id,s.novelId,scope?.workspaceId,scope?.projectId,scope?.storylineId,scope?.branchId])} module={studioModule} onModuleChange={setStudioModule} novelId={s.novelId} actor={s.actor?.displayName || "本机作者"} scope={shellScope} /></>;
   const saveDisplayLabel = chapter.data
     ? (writingRecovery ? recoveryStateLabel(saveState, durability, composing, recoveryOffline) : saveStateLabel(saveState))
     : "正在打开章节…";
@@ -1710,6 +1739,7 @@ export default function App() {
           module={studioModule}
           onModuleChange={setStudioModule}
           scope={shellScope}
+          projectNoun={neutralStudio ? '项目' : undefined}
           actor={s.actor?.displayName || "本机作者"}
           onGlobalSearch={openWorkspaceSearch}
           focusMode={writingFocus && focusActive}

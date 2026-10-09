@@ -1,0 +1,313 @@
+{
+  "observed_utc": "2026-10-09T13:17:00Z",
+  "runs": [
+    {
+      "run_id": 37928446079,
+      "run_attempt": 1,
+      "event": "pull_request",
+      "head_sha": "0df2640c4c1a2d3052bb0a84d14445744d04046f",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079",
+      "created_at": "2026-10-09T12:11:44Z",
+      "updated_at": "2026-10-09T13:01:05Z",
+      "jobs": [
+        {
+          "id": 113812964417,
+          "name": "V2 / Creative live workflows and geometry",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:47Z",
+          "completed_at": "2026-10-09T12:13:59Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079/job/113812964417"
+        },
+        {
+          "id": 113812964607,
+          "name": "Backend execution / original File TCP",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:47Z",
+          "completed_at": "2026-10-09T12:13:20Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079/job/113812964607"
+        },
+        {
+          "id": 113812964618,
+          "name": "Backend execution / postgres / shard 0",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:47Z",
+          "completed_at": "2026-10-09T13:00:43Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079/job/113812964618"
+        },
+        {
+          "id": 113812964642,
+          "name": "Windows / Host compile and native contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:47Z",
+          "completed_at": "2026-10-09T12:14:38Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079/job/113812964642"
+        },
+        {
+          "id": 113812964708,
+          "name": "Backend execution / postgres / shard 1",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:47Z",
+          "completed_at": "2026-10-09T12:41:35Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079/job/113812964708"
+        },
+        {
+          "id": 113812964711,
+          "name": "Frontend / unit-type-build-tokens",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-09T12:11:47Z",
+          "completed_at": "2026-10-09T12:37:16Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079/job/113812964711"
+        },
+        {
+          "id": 113812964718,
+          "name": "Backend execution / file / shard 0",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "started_at": "2026-10-09T12:11:47Z",
+          "completed_at": "2026-10-09T12:32:16Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079/job/113812964718"
+        },
+        {
+          "id": 113812964787,
+          "name": "Windows / Fresh base and acceptance package",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:47Z",
+          "completed_at": "2026-10-09T12:16:35Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079/job/113812964787"
+        },
+        {
+          "id": 113830882073,
+          "name": "Backend / file",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-09T13:00:46Z",
+          "completed_at": "2026-10-09T13:01:04Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079/job/113830882073"
+        },
+        {
+          "id": 113830882074,
+          "name": "Backend / postgres",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-09T13:00:45Z",
+          "completed_at": "2026-10-09T13:01:03Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446079/job/113830882074"
+        }
+      ]
+    },
+    {
+      "run_id": 37928438685,
+      "run_attempt": 1,
+      "event": "push",
+      "head_sha": "0df2640c4c1a2d3052bb0a84d14445744d04046f",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685",
+      "created_at": "2026-10-09T12:11:40Z",
+      "updated_at": "2026-10-09T12:52:44Z",
+      "jobs": [
+        {
+          "id": 113812939711,
+          "name": "Windows / Host compile and native contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:44Z",
+          "completed_at": "2026-10-09T12:14:30Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113812939711"
+        },
+        {
+          "id": 113812939999,
+          "name": "Backend execution / postgres / shard 0",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:43Z",
+          "completed_at": "2026-10-09T12:50:09Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113812939999"
+        },
+        {
+          "id": 113812940040,
+          "name": "Backend execution / postgres / shard 1",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:43Z",
+          "completed_at": "2026-10-09T12:52:15Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113812940040"
+        },
+        {
+          "id": 113812940056,
+          "name": "Frontend / unit-type-build-tokens",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:43Z",
+          "completed_at": "2026-10-09T12:31:50Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113812940056"
+        },
+        {
+          "id": 113812940110,
+          "name": "Backend execution / file / shard 0",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:43Z",
+          "completed_at": "2026-10-09T12:24:54Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113812940110"
+        },
+        {
+          "id": 113812940140,
+          "name": "Windows / Fresh base and acceptance package",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:43Z",
+          "completed_at": "2026-10-09T12:16:06Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113812940140"
+        },
+        {
+          "id": 113812940144,
+          "name": "V2 / Creative live workflows and geometry",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-09T12:11:42Z",
+          "completed_at": "2026-10-09T12:16:35Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113812940144"
+        },
+        {
+          "id": 113812940231,
+          "name": "Backend execution / original File TCP",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:43Z",
+          "completed_at": "2026-10-09T12:13:15Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113812940231"
+        },
+        {
+          "id": 113827700271,
+          "name": "Backend / file",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:52:17Z",
+          "completed_at": "2026-10-09T12:52:40Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113827700271"
+        },
+        {
+          "id": 113827700370,
+          "name": "Backend / postgres",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:52:17Z",
+          "completed_at": "2026-10-09T12:52:43Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438685/job/113827700370"
+        }
+      ]
+    },
+    {
+      "run_id": 37928446211,
+      "run_attempt": 1,
+      "event": "pull_request",
+      "head_sha": "0df2640c4c1a2d3052bb0a84d14445744d04046f",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446211",
+      "created_at": "2026-10-09T12:11:45Z",
+      "updated_at": "2026-10-09T12:12:42Z",
+      "jobs": [
+        {
+          "id": 113812964102,
+          "name": "Original c6f2126 RED / Python 3.12.9",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:47Z",
+          "completed_at": "2026-10-09T12:12:41Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446211/job/113812964102"
+        }
+      ]
+    },
+    {
+      "run_id": 37928446071,
+      "run_attempt": 1,
+      "event": "pull_request",
+      "head_sha": "0df2640c4c1a2d3052bb0a84d14445744d04046f",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446071",
+      "created_at": "2026-10-09T12:11:44Z",
+      "updated_at": "2026-10-09T12:23:55Z",
+      "jobs": [
+        {
+          "id": 113812964839,
+          "name": "Protocol and local transport / file",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:12:42Z",
+          "completed_at": "2026-10-09T12:13:42Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446071/job/113812964839"
+        },
+        {
+          "id": 113812965110,
+          "name": "Protocol and local transport / postgres",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:12:52Z",
+          "completed_at": "2026-10-09T12:23:55Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446071/job/113812965110"
+        },
+        {
+          "id": 113812965171,
+          "name": "Windows current-user pipe reference (MOCK_ONLY)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:12:54Z",
+          "completed_at": "2026-10-09T12:13:47Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928446071/job/113812965171"
+        }
+      ]
+    },
+    {
+      "run_id": 37928438655,
+      "run_attempt": 1,
+      "event": "push",
+      "head_sha": "0df2640c4c1a2d3052bb0a84d14445744d04046f",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438655",
+      "created_at": "2026-10-09T12:11:40Z",
+      "updated_at": "2026-10-09T12:24:41Z",
+      "jobs": [
+        {
+          "id": 113812939599,
+          "name": "Protocol and local transport / file",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:43Z",
+          "completed_at": "2026-10-09T12:12:50Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438655/job/113812939599"
+        },
+        {
+          "id": 113812939860,
+          "name": "Windows current-user pipe reference (MOCK_ONLY)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:43Z",
+          "completed_at": "2026-10-09T12:12:52Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438655/job/113812939860"
+        },
+        {
+          "id": 113812939897,
+          "name": "Protocol and local transport / postgres",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-09T12:11:43Z",
+          "completed_at": "2026-10-09T12:24:40Z",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37928438655/job/113812939897"
+        }
+      ]
+    }
+  ]
+}

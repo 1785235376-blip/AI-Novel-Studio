@@ -507,6 +507,13 @@ jobs:
           python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
           python -m pip check
           python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+          # Independent media imports use real decoders; do not replace this
+          # acceptance prerequisite with a fixture MIME label or silent skip.
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          ffmpeg -version > "$CI_RECEIPTS/v2-ffmpeg-version.txt"
+          ffprobe -version > "$CI_RECEIPTS/v2-ffprobe-version.txt"
+          python -c "import shutil; assert shutil.which('ffmpeg') and shutil.which('ffprobe')"
       - name: V2 live creative workflows (real File and HTTP; mock providers)
         working-directory: ${{ env.CI_PROJECT }}/frontend
         run: |

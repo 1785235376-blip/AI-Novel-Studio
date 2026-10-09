@@ -1,6 +1,6 @@
 import {useEffect, useState, type ReactNode} from 'react';
 import type {Asset} from '../api';
-import {AppShell, type ScopeLabels, type StudioModule} from './AppShell';
+import {AppShell, type ScopeLabels, type StudioModule, type ProjectNoun} from './AppShell';
 import {VisionAnalysisPanel} from '../novel/VisionAnalysisPanel';
 import {ImageGenerationPanel} from '../novel/ImageGenerationPanel';
 import {VisualContextPanel} from '../novel/VisualContextPanel';
@@ -26,7 +26,7 @@ import {MultimodalDirectorWorkspace} from '../novel/MultimodalDirectorWorkspace'
 import {EmptyState} from './primitives';
 
 type WorkspaceModule=Exclude<StudioModule,'NOVEL'>;
-interface Props {module: WorkspaceModule; onModuleChange:(value:StudioModule)=>void; scope:ScopeLabels; actor:string; novelId?:string; interopEntry?:ReactNode; interopSettings?:ReactNode; controlTab?:'models'; onControlSurfaceChange?:(surface:string)=>void;}
+interface Props {module: WorkspaceModule; onModuleChange:(value:StudioModule)=>void; scope:ScopeLabels; actor:string; novelId?:string; projectNoun?:ProjectNoun; interopEntry?:ReactNode; interopSettings?:ReactNode; controlTab?:'models'; onControlSurfaceChange?:(surface:string)=>void;}
 const moduleLabels: Record<WorkspaceModule, string> = { IMAGE: '图片', VIDEO: '视频', AUDIO: '声音', CONTROL: '主控', PLUGIN: '插件', WORKFLOW: '工作流', ASSETS: '资产' };
 function WorkspaceRail({ module }: { module: WorkspaceModule }) {
   return <nav className="workspace-rail" aria-label={`${moduleLabels[module]}工作区导航`}><div className="workspace-rail__eyebrow">当前工作区</div><strong>{moduleLabels[module]}</strong><button className="is-active" aria-current="page">工作区概览</button><button disabled title="最近编辑尚未开放">最近编辑</button><button disabled title="待处理任务尚未开放">待处理任务</button><div className="workspace-rail__future"><span>预留入口</span><small>AI Copilot</small><small>Provider 状态</small><small>审批队列</small></div></nav>;
@@ -49,7 +49,7 @@ function ControlWorkspace({interopSettings,requestedTab,onSurfaceChange}:{intero
   useEffect(()=>{onSurfaceChange?.(tab==='models'?'model-center':'settings')},[tab,onSurfaceChange]);
   return <div className="control-workspace"><div className="control-workspace__tabs" role="tablist" aria-label="主控设置"><button type="button" role="tab" aria-selected={tab==='assistant'} onClick={()=>setTab('assistant')}>AI 主控</button><button type="button" role="tab" aria-selected={tab==='models'} onClick={()=>setTab('models')}>模型中心</button><button type="button" role="tab" aria-selected={tab==='providers'} onClick={()=>setTab('providers')}>媒体 Provider</button></div>{tab==='assistant'?<>{interopSettings}<AiControlCenter/></>:tab==='models'?<ModelCenter/>:<MediaProviderSettings/>}</div>;
 }
-export function ModuleWorkspaceRoutes({module,onModuleChange,scope,actor,novelId,interopEntry,interopSettings,controlTab,onControlSurfaceChange}:Props){
+export function ModuleWorkspaceRoutes({module,onModuleChange,scope,actor,novelId,projectNoun,interopEntry,interopSettings,controlTab,onControlSurfaceChange}:Props){
   const [selectedAsset,setSelectedAsset]=useState<Asset>();
   const [workflowInspection,setWorkflowInspection]=useState<WorkflowInspection>();
   const [imageInspection,setImageInspection]=useState<ImageInspection>();
@@ -67,5 +67,5 @@ export function ModuleWorkspaceRoutes({module,onModuleChange,scope,actor,novelId
     case 'ASSETS': main=novelId?<AssetLibraryPanel novelId={novelId} selectedAssetId={selectedAsset?.id} onSelectAsset={setSelectedAsset}/>:<EmptyState title="请先打开小说项目" detail="资产库中的文件和引用关系按小说项目隔离。"/>; status='资产库'; break;
   }
   const inspector=module==='ASSETS'?<AssetInspector asset={selectedAsset} novelId={novelId}/>:module==='WORKFLOW'?<WorkflowInspector inspection={workflowInspection} novelId={novelId}/>:module==='IMAGE'?<ImageTaskInspector inspection={imageInspection} novelId={novelId}/>:module==='VIDEO'?<VideoTaskInspector inspection={videoInspection} novelId={novelId}/>:module==='AUDIO'?<AudioTaskInspector inspection={audioInspection} novelId={novelId}/>:module==='PLUGIN'?<PluginInspector inspection={pluginInspection}/>:<WorkspaceInspector module={module} novelId={novelId}/>;
-  return <AppShell module={module} onModuleChange={onModuleChange} scope={scope} actor={actor} sidebar={<WorkspaceRail module={module}/>} main={<><CapabilityStatusCenter module={module} novelId={novelId}/>{main}</>} inspector={inspector} status={<>{status}{interopEntry}</>}/>;
+  return <AppShell module={module} onModuleChange={onModuleChange} scope={scope} projectNoun={projectNoun} actor={actor} sidebar={<WorkspaceRail module={module}/>} main={<><CapabilityStatusCenter module={module} novelId={novelId}/>{main}</>} inspector={inspector} status={<>{status}{interopEntry}</>}/>;
 }
