@@ -12,6 +12,22 @@ from datetime import datetime, timezone
 from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parents[1]
+if __package__ in (None, ""):
+    sys.path.insert(0, str(ROOT))
+from scripts.run_v2_checks import isolated_environment
+
+
+def staged_environment(folder):
+    """Catalog imports may initialize identity stores; own every state path."""
+    env = os.environ.copy()
+    for key in list(env):
+        if key.endswith(("_API_KEY", "_TOKEN", "_SECRET")) or key in {
+            "DATABASE_URL", "TEST_POSTGRES_DATABASE_URL", "E2E_DATABASE_URL",
+            "COLLABORATION_DEV_SESSIONS_JSON", "PACKAGED_CONTROL_PIPE",
+        }:
+            env.pop(key, None)
+    env.update(isolated_environment(folder, folder / '.profile'))
+    return env
 
 def main():
     tree = subprocess.check_output(['git', 'write-tree'], cwd=ROOT, text=True).strip()
@@ -20,15 +36,7 @@ def main():
     archive = subprocess.check_output(['git', 'archive', '--format=tar', tree], cwd=ROOT)
     with tarfile.open(fileobj=io.BytesIO(archive)) as contents:
         contents.extractall(folder, filter='data')
-    env = os.environ.copy()
-    for key in ('DATABASE_URL', 'TEST_POSTGRES_DATABASE_URL', 'COLLABORATION_DEV_SESSIONS_JSON'):
-        env.pop(key, None)
-    env.update(PROJECT_ROOT=str(folder), PYTHONPATH=str(folder),
-               NOVEL_DATA_PATH=str(folder / '.profile' / 'data'),
-               LOCALAPPDATA=str(folder / '.profile' / 'Local'),
-               CREDENTIAL_VAULT_BACKEND='memory', STORAGE_BACKEND='file',
-               ENABLE_PACKAGED_RUNTIME='false', ENABLE_COLLABORATION_RUNTIME='false',
-               PYTHONDONTWRITEBYTECODE='1')
+    env = staged_environment(folder)
     result = subprocess.run([sys.executable, '-B', 'scripts/refresh_product_api_catalog.py'],
                             cwd=folder, env=env, capture_output=True, text=True, encoding='utf-8',
                             creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)

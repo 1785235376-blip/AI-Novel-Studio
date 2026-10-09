@@ -65,3 +65,25 @@ def test_v2_snapshot_does_not_guess_untracked_status_without_git(tmp_path, monke
     path.write_text("fixture", encoding="utf-8")
     monkeypatch.setattr("scripts.run_v2_checks.tracked_source_paths", lambda root: None)
     assert name in source_snapshot(tmp_path)
+
+
+def test_staged_catalog_imports_cannot_write_to_host_home_or_use_host_secrets(tmp_path, monkeypatch):
+    from scripts.refresh_v2_staged_catalog import staged_environment
+
+    for key in ("HOME", "USERPROFILE", "XDG_DATA_HOME", "LOCALAPPDATA", "APPDATA"):
+        monkeypatch.setenv(key, "/host-state-not-owned")
+    sensitive = ("OPENAI_API_KEY", "MODEL_TOKEN", "PROVIDER_SECRET", "DATABASE_URL",
+                 "TEST_POSTGRES_DATABASE_URL", "E2E_DATABASE_URL",
+                 "COLLABORATION_DEV_SESSIONS_JSON", "PACKAGED_CONTROL_PIPE")
+    for key in sensitive:
+        monkeypatch.setenv(key, "synthetic-do-not-inherit")
+    environment = staged_environment(tmp_path)
+    assert not set(sensitive).intersection(environment)
+    for key in ("HOME", "USERPROFILE", "XDG_DATA_HOME", "XDG_CONFIG_HOME",
+                "XDG_CACHE_HOME", "LOCALAPPDATA", "APPDATA", "NOVEL_DATA_PATH"):
+        path = Path(environment[key])
+        assert path.is_dir() and path.is_relative_to(tmp_path / ".profile")
+    assert environment["PROJECT_ROOT"] == environment["PYTHONPATH"] == str(tmp_path)
+    assert environment["MOCK_PROVIDER"] == "true"
+    assert environment["ENABLE_CLOUD"] == "false"
+    assert environment["STORAGE_BACKEND"] == "file"

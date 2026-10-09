@@ -1225,6 +1225,7 @@ export default function App() {
     <div className="tree sidebar-layout">
       <div className="novel-sidebar-heading"><span>小说结构</span><strong>章节导航</strong></div>
       <div className="sidebar-chapter-scroll" data-testid="chapter-tree-scroll">
+        {!creativeWorkbenchOpen && experimentalFlags.data?.features["experimental.narrative_production_v2"] === true && <div className="creative-workbench-entry"><Button disabled={composing} onClick={() => setCreativeWorkbenchOpen(true)}>打开 V2 创作工作台</Button></div>}
         <ChapterTree
           chapters={(chapters.data || []).map((c) => ({
             id: c.id,
@@ -1316,7 +1317,6 @@ export default function App() {
         />
       </div>
       <div className="novel-sidebar-heading novel-sidebar-heading--tools"><span>工作区</span><strong>创作工具</strong></div>
-      {!creativeWorkbenchOpen && experimentalFlags.data?.features["experimental.narrative_production_v2"] === true && <Button disabled={composing} onClick={() => setCreativeWorkbenchOpen(true)}>打开 V2 创作工作台</Button>}
       <FeatureLauncher
         selectedId={panel}
         extraGroups={hasExperimental ? EXPERIMENTAL_GROUPS : undefined}

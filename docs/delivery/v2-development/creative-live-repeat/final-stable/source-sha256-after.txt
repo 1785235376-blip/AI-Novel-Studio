@@ -1,0 +1,5 @@
+dbbf62ee540feed65c69e7cd1a16d732220c240b0b016b868de24e91bfc14a36  frontend/playwright.v2-live.config.ts
+732794dde5a1e64734578956dcbb061f15d6ef3110f87b07cf7a71a07927336d  frontend/tests/e2e/v2-creative-live.spec.ts
+6ae069c460cf1b324e536f981f869652919d681989f40efd464112a5fae5eee6  app/creative/project_store.py
+5ce1d0f12b44b934dfc347dc68fb7d067f4702522f0a9190a84f5efb6320e29b  app/creative/service.py
+4e8b93d2408b214165b01beda496b9dfbfee2b0bd400c414b2794da20262fd96  app/creative/proposals.py

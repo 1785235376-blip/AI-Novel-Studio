@@ -71,3 +71,7 @@
 .creative-production-timeline>header{position:sticky;top:0;background:var(--color-bg-surface)}
 .creative-workspace>.ui-status-message,.creative-workspace>.creative-navigation-confirm{flex-shrink:0}
 .creative-document-toolbar>div{min-width:0}.creative-workspace h2,.creative-director-panel :is(p,small,strong){overflow-wrap:anywhere}
+
+/* The V2 entry belongs to chapter scroll flow, above the anchored feature launcher. */
+.creative-workbench-entry{padding:var(--space-2) 0}
+.creative-workbench-entry>.ui-button{width:100%}

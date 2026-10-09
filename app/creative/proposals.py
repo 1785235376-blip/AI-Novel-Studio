@@ -119,6 +119,7 @@ class DirectorProposalService:
                 "model_id": None, "model_version": None, "parameters": {"rule_version": "director-planning-v1"},
                 "input_digest": self.documents.document_digest(source), "quality_verification": "HUMAN_REVIEW_REQUIRED"}
             row = new_row(nid, scope, actor, {"status": "NEEDS_REVIEW", "title": title,
+                "project_incarnation": self.documents.store.incarnation(nid),
                 "source_document_id": source["id"], "source_version": source["version"],
                 "source_digest": self.documents.document_digest(source), "director_notes": notes,
                 "output_digest": digest(notes), "provenance": provenance, "model_preview": None,

@@ -134,6 +134,7 @@ jobs:
           python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/coverage-selftest" -q \
             .github/ci/test_suite_coverage.py .github/ci/test_coverage_reconcile.py \
             .github/ci/test_v2_manifest_extension.py .github/ci/test_v2_check_runner.py \
+            .github/ci/test_v2_browser_job.py \
             --junitxml="$CI_RECEIPTS/coverage-harness.xml"
       - name: Complete backend collection / assigned shard execution
         working-directory: ${{ env.CI_PROJECT }}
@@ -274,15 +275,6 @@ jobs:
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}
         run: python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
-      - name: V2 creative live workflows and fixture geometry (mock providers)
-        if: success() || failure()
-        working-directory: ${{ env.CI_PROJECT }}/frontend
-        run: |
-          set -o pipefail
-          status=0
-          V2_PYTHON=python CI_RECEIPTS="$CI_RECEIPTS/v2-creative-live" pnpm exec playwright test --config playwright.v2-live.config.ts 2>&1 | tee "$CI_RECEIPTS/v2-creative-live.log" || status=1
-          PLAYWRIGHT_JUNIT_OUTPUT_FILE="$CI_RECEIPTS/v2-creative-workbench.xml" pnpm exec playwright test --config playwright.creative.config.ts --reporter=list,junit 2>&1 | tee "$CI_RECEIPTS/v2-creative-workbench.log" || status=1
-          exit "$status"
       - name: Local Interop actual TypeScript client and independent peer
         if: success() || failure()
         working-directory: ${{ env.CI_PROJECT }}/frontend
@@ -420,6 +412,68 @@ jobs:
             ${{ env.CI_RECEIPTS }}
             ${{ env.CI_PROJECT }}/frontend/test-results
             !${{ env.CI_RECEIPTS }}/png-evidence/**
+          if-no-files-found: error
+          retention-days: 14
+
+  v2-creative-browser:
+    # Keep additive V2 journeys independent of the unchanged legacy frontend
+    # budget. Both suites must pass; neither masks failure or updates goldens.
+    name: V2 / Creative live workflows and geometry
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: '22.14.0'
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Prepare isolated checkout and receipt
+        run: bash .github/ci/prepare.sh v2-creative-browser
+      - name: Install locked V2 browser dependencies
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          npm install --global pnpm@10.6.5
+          pnpm install --frozen-lockfile
+          { node --version; pnpm --version; sha256sum pnpm-lock.yaml; } > "$CI_RECEIPTS/frontend-tools.txt"
+          pnpm exec playwright install --with-deps chromium
+      - name: Install isolated backend for real File and HTTP journeys
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
+          python -m pip check
+          python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+      - name: V2 live creative workflows (real File and HTTP; mock providers)
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          V2_PYTHON=python CI_RECEIPTS="$CI_RECEIPTS/v2-creative-live" pnpm exec playwright test --config playwright.v2-live.config.ts 2>&1 | tee "$CI_RECEIPTS/v2-creative-live.log"
+      - name: V2 keyboard recovery and fixture geometry (no golden updates)
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          PLAYWRIGHT_JUNIT_OUTPUT_FILE: ${{ env.CI_RECEIPTS }}/v2-creative-workbench.xml
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.creative.config.ts --update-snapshots=none --reporter=list,junit 2>&1 | tee "$CI_RECEIPTS/v2-creative-workbench.log"
+      - name: Summarize exact revision and test counts
+        if: always() && env.CI_RECEIPTS != ''
+        run: |
+          if [ -f "$CI_RECEIPTS/v2-creative-live/junit.xml" ]; then
+            cp "$CI_RECEIPTS/v2-creative-live/junit.xml" "$CI_RECEIPTS/v2-creative-live.xml"
+          fi
+          python3 .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Upload V2 browser receipts and unchanged failure evidence
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: v2-creative-browser-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: |
+            ${{ env.CI_RECEIPTS }}
+            ${{ env.CI_PROJECT }}/frontend/test-results/creative-workbench
           if-no-files-found: error
           retention-days: 14
 

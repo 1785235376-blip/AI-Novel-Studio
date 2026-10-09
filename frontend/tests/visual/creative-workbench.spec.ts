@@ -25,7 +25,26 @@ async function seed(page: Page, enabled = true) {
   });
   return creativeRequests;
 }
-async function open(page: Page) { await page.goto('/'); await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click(); await expect(page.getByRole('tablist', { name: '创作模式', exact: true })).toBeVisible(); }
+async function open(page: Page) {
+  await page.goto('/');
+  const entry = page.getByTestId('chapter-tree-scroll').getByRole('button', { name: '打开 V2 创作工作台', exact: true });
+  await expect(entry).toBeVisible();
+  await entry.scrollIntoViewIfNeeded();
+  const placement = await entry.evaluate(element => {
+    const rect = element.getBoundingClientRect();
+    const launcher = document.querySelector('.feature-launcher__toggle')!.getBoundingClientRect();
+    const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    return { receivesPointer: hit === element || (hit !== null && element.contains(hit)), overlapsLauncher: rect.left < launcher.right && rect.right > launcher.left && rect.top < launcher.bottom && rect.bottom > launcher.top };
+  });
+  expect(placement.receivesPointer).toBe(true);
+  expect(placement.overlapsLauncher).toBe(false);
+  await page.getByRole('button', { name: '打开功能导航', exact: true }).click();
+  await expect(page.getByRole('navigation', { name: '功能面板导航', exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', { name: '打开功能导航', exact: true })).toBeFocused();
+  await entry.click();
+  await expect(page.getByRole('tablist', { name: '创作模式', exact: true })).toBeVisible();
+}
 
 test('V2 remains off with no creative API requests', async ({ page }) => { const requests = await seed(page, false); await page.goto('/'); await expect(page.locator('.app-shell')).toBeVisible(); await expect(page.getByRole('button', { name: '打开 V2 创作工作台' })).toHaveCount(0); expect(requests).toHaveLength(0); });
 

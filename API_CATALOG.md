@@ -111,7 +111,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/memory` | `app/api.py:3316` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/model-center/health` | `app/model_center/api.py:142` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/model-center/local-ai` | `app/model_center/discovery_api.py:22` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/model-center/local-ai/environment` | `app/model_center/discovery_api.py:24` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/model-center/local-ai/environment` | `app/model_center/discovery_api.py:24` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/model-center/local-ai/scan/{scan_id}` | `app/model_center/discovery_api.py:31` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/model-center/models` | `app/model_center/api.py:67` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/model-center/models/{model_id}` | `app/model_center/api.py:73` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -173,9 +173,9 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/export` | `app/experimental/comic_layouts_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/segments/{index}` | `app/experimental/comic_layouts_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/capabilities` | `app/creative/api.py:47` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/novels/{nid}/experimental/creative/director-proposals` | `app/creative/api.py:118` | FULL_RECOVERY_ADDED_ROUTE |
-| GET | `/api/novels/{nid}/experimental/creative/director-proposals/model-routes` | `app/creative/api.py:150` | FULL_RECOVERY_ADDED_ROUTE |
-| GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}` | `app/creative/api.py:154` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/novels/{nid}/experimental/creative/director-proposals` | `app/creative/api.py:118` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/creative/director-proposals/model-routes` | `app/creative/api.py:150` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}` | `app/creative/api.py:154` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/documents` | `app/creative/api.py:68` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/documents/{rid}` | `app/creative/api.py:78` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/creative/documents/{rid}/export` | `app/creative/api.py:110` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -222,7 +222,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/novels/{nid}/experimental/model-broker/history` | `app/experimental/model_broker_api.py:157` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/model-broker/jobs/{reservation_id}` | `app/experimental/model_broker_api.py:233` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/model-broker/status` | `app/experimental/model_broker_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/novels/{nid}/experimental/model-broker/task-capabilities` | `app/experimental/model_broker_api.py:113` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/novels/{nid}/experimental/model-broker/task-capabilities` | `app/experimental/model_broker_api.py:113` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/narrative-judge/catalog` | `app/experimental/narrative_judge_api.py:26` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/novels/{nid}/experimental/narrative-judge/model/catalog` | `app/experimental/narrative_judge_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -508,7 +508,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/memory` | `app/api.py:3316` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/model-center/health` | `app/model_center/api.py:142` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/model-center/local-ai` | `app/model_center/discovery_api.py:22` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/model-center/local-ai/environment` | `app/model_center/discovery_api.py:24` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/model-center/local-ai/environment` | `app/model_center/discovery_api.py:24` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/model-center/local-ai/scan/{scan_id}` | `app/model_center/discovery_api.py:31` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/model-center/models` | `app/model_center/api.py:67` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/model-center/models/{model_id}` | `app/model_center/api.py:73` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -570,9 +570,9 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/export` | `app/experimental/comic_layouts_api.py:93` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/segments/{index}` | `app/experimental/comic_layouts_api.py:89` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/capabilities` | `app/creative/api.py:47` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals` | `app/creative/api.py:118` | FULL_RECOVERY_ADDED_ROUTE |
-| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/model-routes` | `app/creative/api.py:150` | FULL_RECOVERY_ADDED_ROUTE |
-| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}` | `app/creative/api.py:154` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals` | `app/creative/api.py:118` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/model-routes` | `app/creative/api.py:150` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| GET | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}` | `app/creative/api.py:154` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/documents` | `app/creative/api.py:68` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}` | `app/creative/api.py:78` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/export` | `app/creative/api.py:110` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -619,7 +619,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/novels/{nid}/experimental/model-broker/history` | `app/experimental/model_broker_api.py:157` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/model-broker/jobs/{reservation_id}` | `app/experimental/model_broker_api.py:233` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/model-broker/status` | `app/experimental/model_broker_api.py:102` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/novels/{nid}/experimental/model-broker/task-capabilities` | `app/experimental/model_broker_api.py:113` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/novels/{nid}/experimental/model-broker/task-capabilities` | `app/experimental/model_broker_api.py:113` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/narrative-judge/catalog` | `app/experimental/narrative_judge_api.py:26` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:58` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/novels/{nid}/experimental/narrative-judge/model/catalog` | `app/experimental/narrative_judge_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1013,15 +1013,15 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/approve` | `app/experimental/comic_layouts_api.py:81` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/preflight` | `app/experimental/comic_layouts_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/comic-layouts/records/{rid}/restore` | `app/experimental/comic_layouts_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals` | `app/creative/api.py:123` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/cancel` | `app/creative/api.py:164` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/dispatch` | `app/creative/api.py:173` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/preview` | `app/creative/api.py:169` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/refresh` | `app/creative/api.py:177` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/review` | `app/creative/api.py:159` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals` | `app/creative/api.py:123` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/cancel` | `app/creative/api.py:164` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/dispatch` | `app/creative/api.py:173` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/preview` | `app/creative/api.py:169` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/refresh` | `app/creative/api.py:177` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/director-proposals/{rid}/review` | `app/creative/api.py:159` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/creative/documents` | `app/creative/api.py:73` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/derive` | `app/creative/api.py:94` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/restore` | `app/creative/api.py:99` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/derive` | `app/creative/api.py:94` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/novels/{nid}/experimental/creative/documents/{rid}/restore` | `app/creative/api.py:99` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/declarative-agents/definitions/{rid}/runs` | `app/experimental/declarative_agents_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/declarative-agents/preflight` | `app/experimental/declarative_agents_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1086,7 +1086,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/novels/{nid}/experimental/model-broker/jobs/{reservation_id}/cancel` | `app/experimental/model_broker_api.py:245` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/model-broker/ledger/{reservation_id}/reconcile` | `app/experimental/model_broker_api.py:222` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/model-broker/preview` | `app/experimental/model_broker_api.py:138` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/novels/{nid}/experimental/model-broker/task-preview` | `app/experimental/model_broker_api.py:126` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/novels/{nid}/experimental/model-broker/task-preview` | `app/experimental/model_broker_api.py:126` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/narrative-judge/findings/{rid}/review` | `app/experimental/narrative_judge_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1502,15 +1502,15 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/approve` | `app/experimental/comic_layouts_api.py:81` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/preflight` | `app/experimental/comic_layouts_api.py:77` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/comic-layouts/records/{rid}/restore` | `app/experimental/comic_layouts_api.py:85` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals` | `app/creative/api.py:123` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/cancel` | `app/creative/api.py:164` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/dispatch` | `app/creative/api.py:173` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/preview` | `app/creative/api.py:169` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/refresh` | `app/creative/api.py:177` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/review` | `app/creative/api.py:159` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals` | `app/creative/api.py:123` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/cancel` | `app/creative/api.py:164` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/dispatch` | `app/creative/api.py:173` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/preview` | `app/creative/api.py:169` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/refresh` | `app/creative/api.py:177` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/director-proposals/{rid}/review` | `app/creative/api.py:159` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/creative/documents` | `app/creative/api.py:73` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/derive` | `app/creative/api.py:94` | FULL_RECOVERY_ADDED_ROUTE |
-| POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/restore` | `app/creative/api.py:99` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/derive` | `app/creative/api.py:94` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
+| POST | `/api/v1/novels/{nid}/experimental/creative/documents/{rid}/restore` | `app/creative/api.py:99` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions` | `app/experimental/declarative_agents_api.py:33` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/declarative-agents/definitions/{rid}/runs` | `app/experimental/declarative_agents_api.py:39` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/declarative-agents/preflight` | `app/experimental/declarative_agents_api.py:27` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1575,7 +1575,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/novels/{nid}/experimental/model-broker/jobs/{reservation_id}/cancel` | `app/experimental/model_broker_api.py:245` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/model-broker/ledger/{reservation_id}/reconcile` | `app/experimental/model_broker_api.py:222` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/model-broker/preview` | `app/experimental/model_broker_api.py:138` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/novels/{nid}/experimental/model-broker/task-preview` | `app/experimental/model_broker_api.py:126` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/novels/{nid}/experimental/model-broker/task-preview` | `app/experimental/model_broker_api.py:126` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/narrative-judge/findings/{rid}/review` | `app/experimental/narrative_judge_api.py:46` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/narrative-judge/findings/{rid}/revision-task` | `app/experimental/narrative_judge_api.py:63` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/novels/{nid}/experimental/narrative-judge/runs` | `app/experimental/narrative_judge_api.py:41` | DIRECT_IMPLEMENTATION_CHANGED, FULL_RECOVERY_SOURCE_REBOUND |

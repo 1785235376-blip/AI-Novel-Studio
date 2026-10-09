@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "commit_base": "fe4d2505ade9a161689313dea50555408ba4b511",
+  "run_start": "2026-10-09T07:43:33.371Z",
+  "duration_ms": 14755.975,
+  "passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "command": "node node_modules/@playwright/test/cli.js test --config playwright.v2-live.config.ts --grep \"real HTTP\" --repeat-each=2",
+  "sources_unchanged_during_run": true,
+  "source_sha256": {
+    "frontend/playwright.v2-live.config.ts": "dbbf62ee540feed65c69e7cd1a16d732220c240b0b016b868de24e91bfc14a36",
+    "frontend/tests/e2e/v2-creative-live.spec.ts": "732794dde5a1e64734578956dcbb061f15d6ef3110f87b07cf7a71a07927336d",
+    "app/creative/project_store.py": "6ae069c460cf1b324e536f981f869652919d681989f40efd464112a5fae5eee6",
+    "app/creative/service.py": "5ce1d0f12b44b934dfc347dc68fb7d067f4702522f0a9190a84f5efb6320e29b",
+    "app/creative/proposals.py": "4e8b93d2408b214165b01beda496b9dfbfee2b0bd400c414b2794da20262fd96"
+  },
+  "verification_boundary": "Real HTTP/File only; same title-derived novel IDs; no browser fixtures, PostgreSQL, or model inference",
+  "captured_at": "2026-10-09T07:44:09.984902+00:00"
+}

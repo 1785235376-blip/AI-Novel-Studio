@@ -33,6 +33,15 @@ class CreativeService(DomainService):
         from .proposals import DirectorProposalService
         self.proposals = DirectorProposalService(self)
 
+    @property
+    def store(self):
+        return self._store
+
+    @store.setter
+    def store(self, value):
+        from .project_store import CreativeProjectStore
+        self._store = value if isinstance(value, CreativeProjectStore) else CreativeProjectStore(value)
+
     def configure_generation(self, broker, preparer, manager):
         from .generation import DirectorModelCoordinator
         self.proposals.generation = DirectorModelCoordinator(self.proposals, broker, preparer, manager)
@@ -101,11 +110,14 @@ class CreativeService(DomainService):
         if len(canonical(payload).encode("utf-8")) > MAX_PAYLOAD_BYTES:
             raise ValueError("CREATIVE_PAYLOAD_CAPACITY")
         sources, privacy = self._chapter_evidence(nid, scope, body.source_chapter_ids)
-        payload.update(schema_version=1, source_evidence=sources, source_privacy=privacy, source_documents=bindings)
+        payload.update(schema_version=1, source_evidence=sources, source_privacy=privacy, source_documents=bindings,
+                       project_incarnation=self.store.incarnation(nid))
         return payload
 
     def assert_current(self, nid, scope, row, *, _stack=(), _budget=None):
         """Fence chapter changes, scope changes and derived-document ancestry."""
+        if row.get("project_incarnation") != self.store.incarnation(nid):
+            raise StaleSourceError("CREATIVE_PROJECT_CHANGED")
         if row.get("novel_id") != nid or row.get("scope") != scope:
             raise StaleSourceError("CREATIVE_SCOPE_CHANGED")
         if _budget is None:

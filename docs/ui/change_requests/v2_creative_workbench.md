@@ -21,3 +21,9 @@ Migration Required: None. Existing V1 paths and default-off flags remain unchang
 Proposed Tests: Default-off/no-call behavior, five stage modes, scoped HTTP calls, create/update and version conflict preservation, duplicate clicks, cancelled navigation, stale response isolation, model-unconfigured status, proposal approval, timeline reorder, shared shell geometry at 1366x768, 1440x900 and 1920x1080, and existing design-system regression checks.
 
 Review: Submitted to the parent/design-system owner. This implementation consumes current DS-v1.0; no protected-system override is required.
+
+## Hosted acceptance correction: V2 entry hit target
+
+The first hosted Chromium run confirmed that the new V2 button, inserted immediately before the existing bottom-anchored FeatureLauncher, was covered by that launcher's toggle. The opt-in entry now lives in the existing chapter scroll region above ChapterTree. Its spacing uses the existing token scale. The FeatureLauncher, its focus/keyboard behavior, its fixed-in-sidebar placement, shell geometry and the default-off V1 structure are unchanged.
+
+Regression coverage checks the gated entry's placement in normal scroll flow. The V2 browser suite additionally checks its center-point hit target and nonintersection with the launcher at all three existing geometry viewports, then exercises the original launcher open/Escape/focus-return flow before using a normal, unforced V2 click. Existing scenario assertions and timeouts are preserved.

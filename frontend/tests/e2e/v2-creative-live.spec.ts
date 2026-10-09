@@ -1,6 +1,10 @@
 import { test, expect, type APIRequestContext, type Locator, type Page, type TestInfo } from '@playwright/test';
 
 type Row = Record<string, any>;
+// The enabled tests share one real File server. Own only IDs returned by this
+// test's successful create responses; never infer ownership from an inventory.
+const ownedNovels = new WeakMap<APIRequestContext, Set<string>>();
+const ownedPages = new WeakMap<APIRequestContext, Page>();
 const manuscript = '合成验收正文：林默走到云港。她说：“下一幕由我们自己决定。”';
 const creative = (novelId: string) => `/api/novels/${novelId}/experimental/creative`;
 const canvas = (page: Page) => page.getByRole('region', { name: '创作画布', exact: true });
@@ -14,14 +18,49 @@ async function read(request: APIRequestContext, url: string): Promise<Row> {
 async function write(request: APIRequestContext, url: string, data: Row): Promise<Row> {
   const response = await request.post(url, { data });
   expect(response.ok(), `${url}: ${response.status()} ${await response.text()}`).toBeTruthy();
-  return response.json();
+  const row = await response.json();
+  if (url === '/api/novels') {
+    expect(response.status()).toBe(201);
+    rememberNovel(request, row);
+  }
+  return row;
 }
+function rememberNovel(request: APIRequestContext, novel: Row) {
+  expect(typeof novel.id, 'A successful synthetic novel create must return its exact ID.').toBe('string');
+  expect(novel.id.length).toBeGreaterThan(0);
+  const owned = ownedNovels.get(request);
+  expect(owned, 'Synthetic novel ownership must be initialized by the fixture.').toBeDefined();
+  owned!.add(novel.id);
+}
+test.beforeEach(async ({ request }) => {
+  expect(await read(request, '/api/novels'), 'V2 live tests require an empty isolated server; unexpected novels are unowned and must not be deleted.').toEqual([]);
+  ownedNovels.set(request, new Set());
+});
+test.afterEach(async ({ request }, info) => {
+  const page = ownedPages.get(request);
+  if (page && !page.isClosed()) {
+    if (info.status !== info.expectedStatus) await page.screenshot({ path: info.outputPath('failure-before-owned-cleanup.png'), fullPage: true }).catch(() => {});
+    // Stop the mounted UI before deleting fixtures, after all business assertions.
+    await page.close();
+  }
+  const owned = ownedNovels.get(request);
+  for (const id of owned || []) {
+    const response = await request.delete(`/api/novels/${encodeURIComponent(id)}`);
+    expect(response.status(), `Delete only this test's confirmed synthetic novel ${id}: ${await response.text()}`).toBe(204);
+    expect(await response.text()).toBe('');
+  }
+  if (owned) expect(await read(request, '/api/novels'), 'Owned synthetic fixtures must be removed; any unowned inventory is preserved and reported.').toEqual([]);
+});
 async function fixture(page: Page, request: APIRequestContext) {
+  ownedPages.set(request, page);
   await page.goto('/');
   await page.getByPlaceholder('小说名称').fill(`V2 浏览器合成验收 ${Date.now()}`);
   const creating = page.waitForResponse(response => response.url().endsWith('/api/novels') && response.request().method() === 'POST');
   await page.getByRole('button', { name: '创建小说', exact: true }).click();
-  const novel = await (await creating).json();
+  const created = await creating;
+  expect(created.status()).toBe(201);
+  const novel = await created.json();
+  rememberNovel(request, novel);
   await page.getByRole('button', { name: '新建章节', exact: true }).click();
   await page.getByLabel('章节标题', { exact: true }).fill('第一章 合成海港');
   await page.getByRole('button', { name: '创建章节', exact: true }).click();
@@ -226,6 +265,7 @@ test('real File V2 scope and stale-write fencing keeps the browser draft and rej
 });
 
 test('V1 default-off backend and browser never expose the V2 workbench or accept creative writes', async ({ page, request }, info) => {
+  ownedPages.set(request, page);
   await page.goto('/');
   await expect(page.getByPlaceholder('小说名称')).toBeVisible();
   await expect(page.getByRole('button', { name: '打开 V2 创作工作台', exact: true })).toHaveCount(0);
