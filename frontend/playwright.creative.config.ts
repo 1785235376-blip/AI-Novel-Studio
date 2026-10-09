@@ -1,0 +1,5 @@
+import { defineConfig, devices } from '@playwright/test';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const frontend = path.dirname(fileURLToPath(import.meta.url));
+export default defineConfig({ testDir: path.join(frontend, 'tests', 'visual'), testMatch: /creative-workbench\.spec\.ts/, outputDir: path.join(frontend, 'test-results', 'creative-workbench'), timeout: 60_000, workers: 1, fullyParallel: false, reporter: 'list', use: { baseURL: 'http://127.0.0.1:5175', locale: 'zh-CN', timezoneId: 'Asia/Shanghai', colorScheme: 'light', viewport: { width: 1440, height: 900 }, trace: 'retain-on-failure', launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE } : {} }, projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 } }], webServer: { command: `"${process.execPath}" node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5175`, cwd: frontend, url: 'http://127.0.0.1:5175', timeout: 60_000, reuseExistingServer: false } });

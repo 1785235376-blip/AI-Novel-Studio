@@ -42,6 +42,7 @@ import { CollaborationPanel } from "./CollaborationPanels";
 import { AppShell, StudioModule } from "./ui/AppShell";
 import { selectedScopeLabels } from "./ui/scopeLabels";
 import { ModuleWorkspaceRoutes } from "./ui/ModuleWorkspaceRoutes";
+import { CreativeWorkspace } from "./creative/CreativeWorkspace";
 import { WorkflowPanel } from './novel/WorkflowPanel';
 import { ImageQueuePanel } from './novel/ImageQueuePanel';
 import { MotionTaskWorkspace } from './novel/MotionTaskWorkspace';
@@ -266,6 +267,7 @@ export default function App() {
   const [interopControlSurface, setInteropControlSurface] = useState('settings');
   const [interopTask, setInteropTask] = useState<{ id: string; status: string; chapterId?: string }>();
   useLayoutEffect(() => { setInteropTask(undefined); }, [namespace, s.novelId, s.chapterId]);
+  const [creativeWorkbenchOpen, setCreativeWorkbenchOpen] = useState(false);
   const [studioModule, setStudioModule] = useState<StudioModule>("NOVEL"),
     [draftAction, setDraftAction] = useState<"accept" | "reject">(),
     [generationStarting, setGenerationStarting] = useState(false),
@@ -1314,6 +1316,7 @@ export default function App() {
         />
       </div>
       <div className="novel-sidebar-heading novel-sidebar-heading--tools"><span>工作区</span><strong>创作工具</strong></div>
+      {!creativeWorkbenchOpen && experimentalFlags.data?.features["experimental.narrative_production_v2"] === true && <Button disabled={composing} onClick={() => setCreativeWorkbenchOpen(true)}>打开 V2 创作工作台</Button>}
       <FeatureLauncher
         selectedId={panel}
         extraGroups={hasExperimental ? EXPERIMENTAL_GROUPS : undefined}
@@ -1698,7 +1701,12 @@ export default function App() {
     <>
       {localTutor.dialog}
       {
-        <AppShell
+        creativeWorkbenchOpen && experimentalFlags.data?.features["experimental.narrative_production_v2"] === true ? <CreativeWorkspace
+          enabled={true} novelId={s.novelId} context={{ sessionToken: s.sessionToken, actor: s.actor, scope: s.scope }} scope={shellScope} actor={s.actor?.displayName || "本机作者"}
+          chapter={chapter.data} chapterCount={chapters.data?.length || 0} manuscriptReady={saveState === 'saved' && !composing && !savePending.current && hydratedIdentity === editorIdentity}
+          novelMain={mainWorkspace} novelSidebar={sidebar} novelInspector={inspector} novelStatus={<>保存：{saveDisplayLabel} · 连接：{scope ? "协作服务" : "本机"}{localTutor.entry}</>}
+          onExit={() => setCreativeWorkbenchOpen(false)} onModuleChange={value => { setCreativeWorkbenchOpen(false); setStudioModule(value); }} onGlobalSearch={openWorkspaceSearch}
+        /> : <AppShell
           module={studioModule}
           onModuleChange={setStudioModule}
           scope={shellScope}
