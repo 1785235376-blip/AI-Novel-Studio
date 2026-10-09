@@ -65,7 +65,67 @@ export type LocalDiscoveryScan = {
   started_at?: string | null;
   finished_at?: string | null;
 };
-export type LocalDiscoverySettings = {scan_roots: string[]; runtimes: LocalRuntime[]};
+export type LocalDiscoverySettings = {scan_roots: string[]; runtimes: LocalRuntime[]; include_common_model_dirs?: boolean};
+export type HardwareComponentEvidence = {
+  status: 'NOT_RUN' | 'NOT_FOUND' | 'COMPONENT_FOUND_NOT_VERIFIED' | 'NOT_VERIFIED';
+  source: string;
+  inference_verified: false;
+};
+export type EnvironmentModelFile = {
+  id: string;
+  path: string;
+  name: string;
+  format: 'GGUF' | 'SAFETENSORS' | 'DIFFUSERS';
+  source: 'CONFIGURED' | 'COMMON';
+  root: string;
+  size_bytes: number;
+  modified_ns: number;
+  header_valid: boolean;
+  family: string;
+  declared_capabilities: string[];
+  candidate_ids: string[];
+  notes: string[];
+  inference_verified: false;
+};
+export type AIEnvironmentReport = {
+  schema_version: 2;
+  execution_scope: 'BACKEND_HOST';
+  inference_status: 'NOT_RUN';
+  windows_acceptance: 'NOT_RUN';
+  scan_id: string | null;
+  status: 'NOT_SCANNED' | 'RUNNING' | 'COMPLETED' | 'PARTIAL' | 'CANCELLED';
+  started_at: string | null;
+  finished_at: string | null;
+  hardware: {
+    platform: string;
+    architecture: string;
+    cpu: string;
+    logical_cpu_count: number | null;
+    ram_bytes: number | null;
+    gpus: {vendor: string; name: string; dedicated_vram_bytes: number | null}[];
+    status: string;
+    notes: string[];
+    cuda: HardwareComponentEvidence;
+    directml: HardwareComponentEvidence;
+  };
+  services: {
+    id: string; name: string; type: string; endpoint: string; status: string;
+    version: string | null; notes: string[]; available_models: string[];
+    candidate_ids: string[]; inference_verified: false;
+  }[];
+  model_files: EnvironmentModelFile[];
+  roots: {
+    path: string; source: 'CONFIGURED' | 'COMMON';
+    status: 'PENDING' | 'SCANNED' | 'NOT_FOUND' | 'UNREADABLE' | 'REJECTED' | 'BOUNDED' | 'CANCELLED';
+  }[];
+  errors: {code: string; runtime_id: string | null; root: string | null}[];
+  limits: {
+    scan_budget_seconds: number; request_timeout_seconds: number; max_services: number;
+    max_models_per_service: number; max_response_bytes: number; max_roots: number;
+    max_entries: number; max_files: number; max_depth: number; max_metadata_bytes: number;
+  };
+  notes: string[];
+};
 export type LocalDiscoverySnapshot = {
   scan: LocalDiscoveryScan | null;
   registrations: LocalModelRegistration[];
@@ -97,11 +157,12 @@ async function call<T>(path: string, method = 'GET', body?: unknown, signal?: Ab
 }
 const id = encodeURIComponent;
 export const localAiDiscoveryApi = {
+  environment: (signal?: AbortSignal) => call<AIEnvironmentReport>('/environment', 'GET', undefined, signal),
   snapshot: (signal?: AbortSignal) => call<LocalDiscoverySnapshot>('', 'GET', undefined, signal),
   scan: () => call<LocalDiscoveryScan>('/scan', 'POST', {}),
   scanStatus: (scanId: string, signal?: AbortSignal) => call<LocalDiscoveryScan>(`/scan/${id(scanId)}`, 'GET', undefined, signal),
   cancelScan: (scanId: string) => call<LocalDiscoveryScan>(`/scan/${id(scanId)}/cancel`, 'POST', {}),
-  settings: (scan_roots: string[]) => call<LocalDiscoverySettings>('/settings', 'PUT', {scan_roots}),
+  settings: (scan_roots: string[], include_common_model_dirs?: boolean) => call<LocalDiscoverySettings>('/settings', 'PUT', {scan_roots, ...(include_common_model_dirs === undefined ? {} : {include_common_model_dirs})}),
   saveRuntime: (body: LocalRuntimeConfiguration, runtimeId?: string) => call<LocalRuntime>(runtimeId ? `/runtimes/${id(runtimeId)}` : '/runtimes', runtimeId ? 'PUT' : 'POST', body),
   validate: (candidateId: string) => call<LocalModelCandidate>(`/candidates/${id(candidateId)}/validate`, 'POST', {}),
   register: (candidateId: string) => call<LocalModelRegistration>(`/candidates/${id(candidateId)}/register`, 'POST', {}),

@@ -163,7 +163,9 @@ def scan_gguf_roots(roots: list[str], cancel: Event, deadline: float):
 
 def host_hardware() -> dict:
     result = {'platform': platform.system(), 'architecture': platform.machine(), 'cpu': platform.processor() or platform.machine(),
-              'ram_bytes': None, 'gpus': [], 'status': 'NOT_VERIFIED', 'notes': []}
+              'ram_bytes': None, 'logical_cpu_count': os.cpu_count(), 'gpus': [], 'status': 'NOT_VERIFIED', 'notes': []}
+    from .discovery_environment import windows_acceleration_components
+    result.update(windows_acceleration_components())
     if platform.system() == 'Windows':
         try:
             from ..provider_runtime_v2_host_hardware_inventory import WindowsHostHardwareProbe
@@ -171,7 +173,8 @@ def host_hardware() -> dict:
             result['ram_bytes'] = facts.physical_ram_bytes
             result['gpus'] = [{'vendor': {0x10DE:'NVIDIA',0x1002:'AMD',0x8086:'INTEL'}.get(g.pci_vendor_id, 'UNKNOWN'),
                                'name': getattr(g, 'name', '') or 'NOT_VERIFIED', 'dedicated_vram_bytes': g.dedicated_vram_bytes} for g in facts.gpus or ()]
-            result['status'] = 'DETECTED'
+            result['status'] = 'DETECTED' if facts.gpus is not None else 'PARTIAL'
+            if facts.gpus is None: result['notes'].append('WINDOWS_GPU_INVENTORY_UNAVAILABLE')
         except Exception:
             result['notes'].append('HOST_HARDWARE_UNAVAILABLE')
     else:

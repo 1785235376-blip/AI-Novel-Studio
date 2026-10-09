@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Header, HTTPException
 
-from .discovery_types import DiscoverySettingsInput, EnableInput, LocalRuntimeInput, RegistrationInput
+from .discovery_types import AIEnvironmentReport, DiscoverySettingsInput, EnableInput, LocalRuntimeInput, RegistrationInput
 
 
 def create_local_discovery_router(service, *, prefix='/api/model-center/local-ai', mutation_authorization=None):
@@ -21,6 +21,11 @@ def create_local_discovery_router(service, *, prefix='/api/model-center/local-ai
             raise HTTPException(409, {'code':code}) from exc
     @router.get('')
     def snapshot(): return service.snapshot()
+    @router.get('/environment', response_model=AIEnvironmentReport)
+    def environment():
+        from ..experimental.flags import require_flag
+        require_flag('narrative_production_v2')
+        return call(service.environment_report)
     @router.post('/scan', status_code=202)
     def scan(): return call(service.start_scan)
     @router.get('/scan/{scan_id}')

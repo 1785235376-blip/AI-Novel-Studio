@@ -19,7 +19,8 @@ from typing import Any, Callable
 from uuid import uuid4
 
 from .discovery_probes import LocalProbeClient, ProbeFailure, candidate_id, executable_metadata, gguf_metadata, host_hardware, infer_family, scan_gguf_roots, ollama_remote_declaration, ollama_locality_evidence, read_ollama_local_metadata
-from .discovery_types import DiscoverySettingsInput, LocalRuntimeInput, RegistrationInput, safe_local_path
+from .discovery_types import AIEnvironmentReport, DiscoverySettingsInput, LocalRuntimeInput, RegistrationInput, safe_local_path
+from .discovery_environment import environment_roots, scan_environment_files
 from .domain import Capability, ModelDefinition, ModelStatus, RuntimeDefinition, RuntimeManagement, RuntimeType
 
 
@@ -56,7 +57,7 @@ class LocalDiscoveryService:
             if self.path.stat().st_size > 4 * 1024 * 1024: raise ValueError('oversize')
             data = json.loads(self.path.read_text(encoding='utf-8'))
             if data.get('schema_version') != 1: raise ValueError('schema')
-            roots = DiscoverySettingsInput(scan_roots=data['settings']['scan_roots']).model_dump()
+            roots = DiscoverySettingsInput(scan_roots=data['settings']['scan_roots'], include_common_model_dirs=data['settings'].get('include_common_model_dirs', True)).model_dump()
             runtimes = data['settings'].get('runtimes', [])
             if not isinstance(runtimes, list) or len(runtimes) > 16: raise ValueError('runtimes')
             roots['runtimes'] = [{'id': item['id'], **LocalRuntimeInput.model_validate({k:v for k,v in item.items() if k != 'id'}).model_dump()} for item in runtimes]
@@ -106,6 +107,8 @@ class LocalDiscoveryService:
     def configure_roots(self, values: DiscoverySettingsInput):
         with self.lock:
             settings = {**self.settings, 'scan_roots': values.scan_roots}
+            if 'include_common_model_dirs' in values.model_fields_set:
+                settings['include_common_model_dirs'] = values.include_common_model_dirs
             self._persist(settings=settings); self.settings = settings
             return copy.deepcopy(settings)
 
@@ -130,10 +133,34 @@ class LocalDiscoveryService:
                 self._publish_model(r); self._bridge(r)
             return copy.deepcopy(item)
 
+    @staticmethod
+    def _environment_enabled():
+        from ..experimental.flags import enabled_flags
+        return 'narrative_production_v2' in enabled_flags()
+
+    def environment_report(self):
+        # This reads the last explicit scan; it never probes on GET or at startup.
+        with self.lock:
+            job = self.scan or {}
+            services = []
+            for report in job.get('runtimes', []):
+                candidates = [item for item in job.get('candidates', []) if item['runtime_id'] == report['id']]
+                services.append({key: report.get(key) for key in ('id', 'name', 'type', 'endpoint', 'status', 'version')})
+                services[-1].update(notes=report.get('notes', []), available_models=list(dict.fromkeys(
+                    [*report.get('available_models', []), *[item['model_name'] for item in candidates]]))[:512],
+                    candidate_ids=[item['id'] for item in candidates])
+            return AIEnvironmentReport(scan_id=job.get('id'), status=job.get('status', 'NOT_SCANNED'),
+                started_at=job.get('started_at'), finished_at=job.get('finished_at'), hardware=copy.deepcopy(self.hardware),
+                services=services, model_files=copy.deepcopy(job.get('model_files', [])),
+                roots=copy.deepcopy(job.get('roots', [])), errors=copy.deepcopy(job.get('errors', []))).model_dump()
+
     def _runtimes(self):
         defaults = [LocalRuntimeInput(name='Ollama', type='OLLAMA', endpoint='http://127.0.0.1:11434', modality='TEXT'),
                     LocalRuntimeInput(name='ComfyUI', type='COMFYUI', endpoint='http://127.0.0.1:8188'),
                     LocalRuntimeInput(name='Automatic1111', type='AUTOMATIC1111', endpoint='http://127.0.0.1:7860', modality='IMAGE')]
+        if self._environment_enabled():
+            defaults += [LocalRuntimeInput(name='LM Studio', type='OPENAI_COMPATIBLE_LOCAL', endpoint='http://127.0.0.1:1234', modality='TEXT'),
+                         LocalRuntimeInput(name='llama.cpp', type='LLAMA_CPP', endpoint='http://127.0.0.1:8080', modality='TEXT')]
         result = [{'id': 'discovery-' + item.type.lower(), **item.model_dump()} for item in defaults]
         for item in self.center.runtimes.values():
             if item.runtime_type not in {RuntimeType.LLAMA_CPP, RuntimeType.COMFYUI} or item.id.startswith('local-'): continue
@@ -157,6 +184,10 @@ class LocalDiscoveryService:
             self.cancel_event = threading.Event()
             job = {'id': uuid4().hex, 'status': 'RUNNING', 'runtimes': [], 'candidates': [], 'errors': [],
                    'started_at': now(), 'finished_at': None}
+            if self._environment_enabled():
+                self.hardware = {'status': 'NOT_VERIFIED', 'notes': ['SCAN_PENDING'], 'gpus': []}
+                job.update(environment_schema_version=2, model_files=[], roots=environment_roots(
+                    self.settings['scan_roots'], self.settings.get('include_common_model_dirs', True)))
             self.scan = job
             runtimes, roots = copy.deepcopy(self._runtimes()), list(self.settings['scan_roots'])
             threading.Thread(target=self._scan, args=(job, runtimes, roots, self.cancel_event), daemon=True, name='local-ai-discovery').start()
@@ -177,12 +208,23 @@ class LocalDiscoveryService:
     def _scan(self, job, runtimes, roots, cancel):
         deadline = time.monotonic() + 45
         try:
-            hardware = self.hardware_probe()
-            with self.lock: self.hardware = hardware
+            if not cancel.is_set():
+                try:
+                    hardware = self.hardware_probe()
+                    with self.lock: self.hardware = hardware
+                except Exception:
+                    with self.lock:
+                        self.hardware = {'status': 'NOT_VERIFIED', 'notes': ['HOST_HARDWARE_UNAVAILABLE'], 'gpus': []}
+                        job['errors'].append({'code': 'LOCAL_AI_HARDWARE_UNAVAILABLE'})
             candidates = {}
             for runtime in runtimes:
                 if cancel.is_set() or time.monotonic() >= deadline: break
-                report, found = self._probe(runtime, cancel)
+                try:
+                    report, found = self._probe(runtime, cancel, deadline=deadline)
+                except Exception:
+                    report = {key: runtime[key] for key in ('id', 'name', 'type', 'endpoint', 'management')}
+                    report.update(status='NOT_FOUND', version=None, notes=['LOCAL_AI_PROBE_INVALID'])
+                    found = []
                 with self.lock:
                     job['runtimes'].append(report)
                     self._reconcile_detected_runtime(runtime, report, found)
@@ -191,7 +233,26 @@ class LocalDiscoveryService:
                     if report['status'] not in {'RUNNING', 'DISCOVERED'}:
                         job['errors'].append({'runtime_id': runtime['id'], 'code': report['notes'][-1] if report['notes'] else report['status']})
             llama = next((r for r in runtimes if r['type'] == 'LLAMA_CPP'), None)
-            if llama:
+            if job.get('environment_schema_version') == 2:
+                # Work on private copies; publish coherent partial observations under the lock.
+                scan_roots, file_errors = copy.deepcopy(job['roots']), []
+                for item in scan_environment_files(scan_roots, cancel, deadline, file_errors):
+                    if llama and item['format'] == 'GGUF':
+                        path = Path(item['path'])
+                        matches = [c for c in candidates.values() if os.path.normcase(c.get('local_path', '')) == os.path.normcase(str(path))]
+                        if not matches:
+                            candidate = self._candidate(llama, path.name, local_path=str(path), evidence=gguf_metadata(path))
+                            candidates.setdefault(candidate['id'], candidate)
+                            matches = [candidate]
+                        item['candidate_ids'] = [c['id'] for c in matches]
+                    with self.lock:
+                        job['model_files'].append(item)
+                        job['candidates'] = list(candidates.values())
+                        job['roots'] = copy.deepcopy(scan_roots)
+                with self.lock:
+                    job['roots'] = scan_roots
+                    job['errors'].extend(file_errors)
+            elif llama:
                 for path in scan_gguf_roots(roots, cancel, deadline):
                     candidate = self._candidate(llama, path.name, local_path=str(path), evidence=gguf_metadata(path))
                     with self.lock:
@@ -228,12 +289,13 @@ class LocalDiscoveryService:
             'license_status': 'REVIEW_REQUIRED', 'license_confirmed': False, 'workflow_adapter_id': '', 'enable_eligible': False,
             'enable_blockers': ['VALIDATION_REQUIRED']}
 
-    def _probe(self, runtime, cancel):
+    def _probe(self, runtime, cancel, *, deadline=None):
         report = {key: runtime[key] for key in ('id', 'name', 'type', 'endpoint', 'management')}
         report.update(status='NOT_FOUND', version=None, notes=[])
         found = []
         def get(path):
             if cancel.is_set(): raise ProbeFailure('LOCAL_AI_CANCELLED')
+            if deadline is not None and time.monotonic() >= deadline: raise ProbeFailure('LOCAL_AI_SCAN_BUDGET_REACHED')
             return self.client.json(runtime['endpoint'], path)
         try:
             kind = runtime['type']
@@ -275,10 +337,11 @@ class LocalDiscoveryService:
                                 if len(names) >= 512 and name not in names: continue
                                 names.setdefault(name, []).append(str(node))
                                 bindings.setdefault(name, []).append({'node_class': str(node), 'input_field': field})
+                nodes_fingerprint = digest(info)
                 for name, loaders in names.items():
                     found.append(self._candidate(runtime, name, family_hint=' '.join(loaders), evidence={
                         'model_listed': True, 'model_file_exists': None, 'loader_nodes': loaders, 'loader_bindings': bindings[name],
-                        'node_classes': nodes, 'nodes_fingerprint': digest(info), 'workflow_status': 'NOT_CONFIGURED', 'generation_verified': False}))
+                        'node_classes': nodes, 'nodes_fingerprint': nodes_fingerprint, 'workflow_status': 'NOT_CONFIGURED', 'generation_verified': False}))
             elif kind == 'AUTOMATIC1111':
                 payload = get('/sdapi/v1/sd-models')
                 if not isinstance(payload, list): raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
@@ -297,8 +360,13 @@ class LocalDiscoveryService:
                     payload = get(runtime.get('health_endpoint') or '/v1/models')
                     if not isinstance(payload, dict): raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
                     listed = payload.get('data', [])
-                    report['available_models'] = [item['id'] for item in listed[:512] if isinstance(item, dict) and isinstance(item.get('id'), str)] if isinstance(listed, list) else []
+                    report['available_models'] = [item['id'] for item in listed[:512] if isinstance(item, dict) and isinstance(item.get('id'), str) and 0 < len(item['id']) <= 256] if isinstance(listed, list) else []
                     for item in found: item['evidence']['runtime_advertised_models'] = report['available_models']
+                    # A model-list-only server has no verified local file or architecture.
+                    if not path:
+                        for name in report['available_models']:
+                            if 0 < len(name) <= 256:
+                                found.append(self._candidate(runtime, name, evidence={'model_listed': True, 'runtime_advertised_models': report['available_models']}))
                     if isinstance(payload, dict) and payload.get('version'):
                         report['version'] = str(payload['version'])[:100]
                 except ProbeFailure:
@@ -310,7 +378,7 @@ class LocalDiscoveryService:
                 payload = get('/models' if runtime['endpoint'].endswith('/v1') else '/v1/models')
                 if not isinstance(payload, dict) or not isinstance(payload.get('data'), list): raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
                 for model in payload['data'][:512]:
-                    if isinstance(model, dict) and isinstance(model.get('id'), str) and len(model['id']) <= 256:
+                    if isinstance(model, dict) and isinstance(model.get('id'), str) and 0 < len(model['id']) <= 256:
                         found.append(self._candidate(runtime, model['id'], evidence={'model_listed': True, 'protocol': 'OPENAI_COMPATIBLE'}))
             else:
                 if not runtime.get('health_endpoint'): raise ProbeFailure('LOCAL_AI_HEALTH_ENDPOINT_REQUIRED')
@@ -345,11 +413,12 @@ class LocalDiscoveryService:
         notes, verified = ['INFERENCE_NOT_RUN', 'CURRENT_GPU_NOT_VERIFIED'], []
         kind = runtime['type']
         if kind == 'LLAMA_CPP':
-            evidence = gguf_metadata(Path(candidate['local_path']))
+            evidence = gguf_metadata(Path(candidate['local_path'])) if candidate['local_path'] else {'header_valid': False}
             architecture = str(evidence.get('general.architecture', '')).casefold()
             if evidence.get('header_valid') and architecture.startswith(('qwen', 'llama', 'gemma', 'mistral', 'phi', 'deepseek')):
                 verified = ['TEXT']
-            if not evidence.get('header_valid'): notes.append('GGUF_HEADER_INVALID')
+            if not candidate['local_path']: notes.append('RUNTIME_MODEL_FILE_UNVERIFIED')
+            elif not evidence.get('header_valid'): notes.append('GGUF_HEADER_INVALID')
             if not report.get('executable_exists') and report['status'] != 'RUNNING': notes.append('RUNTIME_REQUIRED')
             if runtime['management'] == 'EXTERNAL':
                 if runtime.get('model_path') != candidate['local_path']: notes.append('RUNTIME_MODEL_PATH_MISMATCH')
@@ -511,7 +580,7 @@ class LocalDiscoveryService:
         if not candidate.get('validated_at'): blockers.append('VALIDATION_REQUIRED')
         if not candidate.get('verified_capabilities'): blockers.append('CAPABILITY_UNVERIFIED')
         for note in candidate.get('validation_notes', []):
-            if note in {'RUNTIME_REQUIRED','GGUF_HEADER_INVALID','RUNTIME_MODEL_PATH_MISMATCH','RUNTIME_MODEL_UNVERIFIED','MODEL_OR_RUNTIME_NOT_FOUND','WORKFLOW_ADAPTER_REQUIRED','ADAPTER_REQUIRED','OLLAMA_REMOTE_MODEL_BLOCKED','OLLAMA_LOCALITY_UNVERIFIED','OLLAMA_IDENTITY_CHANGED','LOCAL_MODEL_EVIDENCE_CHANGED'}: blockers.append(note)
+            if note in {'RUNTIME_REQUIRED','GGUF_HEADER_INVALID','RUNTIME_MODEL_FILE_UNVERIFIED','RUNTIME_MODEL_PATH_MISMATCH','RUNTIME_MODEL_UNVERIFIED','MODEL_OR_RUNTIME_NOT_FOUND','WORKFLOW_ADAPTER_REQUIRED','ADAPTER_REQUIRED','OLLAMA_REMOTE_MODEL_BLOCKED','OLLAMA_LOCALITY_UNVERIFIED','OLLAMA_IDENTITY_CHANGED','LOCAL_MODEL_EVIDENCE_CHANGED'}: blockers.append(note)
         if candidate.get('license_required') and not candidate.get('license_confirmed'): blockers.append('LICENSE_VALIDATION_REQUIRED')
         if candidate['runtime_config'].get('credential_required'): blockers.append('LOCAL_AI_CREDENTIAL_BINDING_REQUIRED')
         candidate['enable_blockers'] = list(dict.fromkeys(blockers))
