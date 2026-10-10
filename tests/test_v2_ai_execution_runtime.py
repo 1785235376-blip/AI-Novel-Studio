@@ -7,7 +7,7 @@ threads. No model process, paid/live provider, install or network is used.
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from copy import deepcopy
-from threading import Event, get_ident
+from threading import Event, Thread, current_thread, get_ident
 import time
 from uuid import uuid4
 
@@ -185,7 +185,7 @@ def spy_transport(e, monkeypatch, *, blocked=False, callback=None):
     entered, release = Event(), Event()
     e.releases.append(release)
     def stream(prompt, model, **kwargs):
-        e.calls.append({"prompt": prompt, "model": model, "thread": get_ident()})
+        e.calls.append({"prompt": prompt, "model": model, "thread": get_ident(), "worker": current_thread()})
         entered.set()
         if blocked: assert release.wait(6), "fixture transport release missing"
         if callback: callback()
@@ -410,22 +410,129 @@ def test_broker_mutations_hold_original_scope_then_project_lease_through_commit(
     assert set(seen) == {"preview", "reserve", "guard_dispatch", "finalize"}
 
 
+class RefreshProgress:
+    """Hold one real worker for 32 explicit, individually bounded checkpoints.
+
+    This replaces a single six-second budget for all database transactions.
+    The 120-second fixture cutoff remains below the unchanged 180-second model
+    deadline, with room for bounded worker cleanup even on a failed assertion.
+    The injectable clock belongs only to this test controller.
+    """
+    def __init__(self, clock=time.monotonic):
+        self.clock = clock
+        self.deadline = clock() + 120
+        self.checkpoints = [Event() for _ in range(32)]
+        self.failure = None
+
+    def remaining(self):
+        remaining = self.deadline - self.clock()
+        assert remaining > 0, "fixture refresh deadline exceeded"
+        return remaining
+
+    def check(self):
+        if self.failure is not None:
+            raise self.failure
+        self.remaining()
+
+    def wait(self):
+        try:
+            for index, checkpoint in enumerate(self.checkpoints):
+                assert checkpoint.wait(min(6, self.remaining())), f"fixture refresh checkpoint {index} missing"
+                self.remaining()
+        except AssertionError as error:
+            self.failure = error
+            raise
+
+    def advance(self, index):
+        self.check()
+        self.checkpoints[index].set()
+
+    def release(self):
+        for checkpoint in self.checkpoints:
+            checkpoint.set()
+
+
+def test_refresh_progress_checkpoint_bounds_and_deadline_cleanup(monkeypatch):
+    # Prove both the per-step six-second cap and its truncation at the overall
+    # fixture deadline without changing product clocks or waiting two minutes.
+    for elapsed, expected in ((0, 6), (118, 2)):
+        now = [0]
+        progress = RefreshProgress(clock=lambda: now[0])
+        now[0] = elapsed
+        waits = []
+        def missing(timeout):
+            waits.append(timeout)
+            return False
+        monkeypatch.setattr(progress.checkpoints[0], "wait", missing)
+        with pytest.raises(AssertionError, match="checkpoint 0 missing"):
+            progress.wait()
+        assert waits == [expected]
+        with pytest.raises(AssertionError, match="checkpoint 0 missing"):
+            progress.check()
+
+    now = [0]
+    progress = RefreshProgress(clock=lambda: now[0])
+    entered, failures = Event(), []
+    def work():
+        entered.set()
+        try:
+            progress.wait()
+        except AssertionError as error:
+            failures.append(error)
+    worker = Thread(target=work)
+    worker.start()
+    with pytest.raises(AssertionError, match="fixture refresh deadline exceeded"):
+        try:
+            assert entered.wait(3)
+            now[0] = progress.deadline
+            progress.advance(0)
+        finally:
+            progress.release()
+            worker.join(8)
+            assert not worker.is_alive(), "fixture deadline cleanup left a worker alive"
+    assert len(failures) == 1 and "fixture refresh deadline exceeded" in str(failures[0])
+    assert all(checkpoint.is_set() for checkpoint in progress.checkpoints)
+
+
 def test_repeated_unchanged_refresh_preserves_bounded_history_and_cancellation(model_rig, monkeypatch):
-    e = model_rig; entered, release = spy_transport(e, monkeypatch, blocked=True)
-    row = dispatch(e, preview(e, admit(e)))
+    e = model_rig
+    progress = RefreshProgress()
+    entered, release = spy_transport(e, monkeypatch, blocked=True, callback=progress.wait)
     try:
+        row = dispatch(e, preview(e, admit(e)))
         assert entered.wait(3)
+        # Keep the original six-second transport handshake; the checkpoint
+        # callback now holds output until all refreshes and cancellation finish.
+        release.set()
         row = refresh(e, row)
         before = raw(e, row)
-        for _ in range(30):
+        progress.advance(0)
+        for index in range(30):
             newer = refresh(e, row)
             assert newer == row
+            progress.advance(index + 1)
         after = raw(e, row)
         assert after["version"] == before["version"] and after["history"] == before["history"]
         cancelled = action(e, row, "cancel")
         assert cancelled["status"] == "CANCELLED"
-    finally: release.set()
-    for job in owned_jobs(e).values(): wait_job(e, job)
+        progress.advance(31)
+    finally:
+        release.set()
+        progress.release()
+        try:
+            for job in owned_jobs(e).values():
+                if job.status not in e.manager.terminal:
+                    e.manager.cancel(job.id)
+                wait_job(e, job)
+        finally:
+            for call in e.calls:
+                call["worker"].join(8)
+                assert not call["worker"].is_alive(), "fixture refresh cleanup left an original worker alive"
+        progress.check()
+    assert len(e.calls) == len(owned_jobs(e)) == 1
+    for job in owned_jobs(e).values():
+        assert job.status == "CANCELLED" and job.cancelled.is_set()
+        assert job.output == "" and job.error_code is None
 
 
 @pytest.mark.parametrize("status,actual", [("UNKNOWN_UPSTREAM", None), ("SETTLED", 1), ("SETTLED", None), ("DISPATCHED", 0)])

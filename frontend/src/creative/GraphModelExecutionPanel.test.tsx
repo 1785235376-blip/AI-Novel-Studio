@@ -48,6 +48,29 @@ describe('explicit local graph model execution UI', () => {
     expect(client.previewModel).not.toHaveBeenCalled(); expect(client.dispatchModel).not.toHaveBeenCalled(); expect(client.refreshModel).not.toHaveBeenCalled();
     expect(screen.getByText(/云端 API：预留，当前不可执行/)).toBeTruthy(); expect(screen.getByText(/实际推理质量验收：未运行/)).toBeTruthy();
   });
+  it('keeps the exact model-route label stable with populated options and explicit route changes', async () => {
+    const { client } = setup(); await selectRun(); click('读取本地模型能力');
+    await screen.findByRole('option', { name: '测试写作适配器 · mock / mock_writer · 测试适配器' });
+    const name = '本地文字模型路由';
+    const namedRoute = () => {
+      const select = screen.getByLabelText(name, { exact: true }) as HTMLSelectElement;
+      expect(select.tagName).toBe('SELECT');
+      // Playwright's exact label fallback includes nested option text. This
+      // explicit DOM contract protects the browser locator; jsdom is not browser proof.
+      expect(select.getAttribute('aria-label')).toBe(name);
+      expect(select.labels?.[0]?.firstChild?.textContent).toBe(name);
+      expect(screen.getByRole('combobox', { name })).toBe(select);
+      expect(select.options).toHaveLength(3);
+      return select;
+    };
+    expect(namedRoute().value).toBe('');
+    for (const route of modelCapabilities().routes) {
+      fireEvent.change(namedRoute(), { target: { value: route.route_id } });
+      expect(namedRoute().value).toBe(route.route_id);
+    }
+    expect(client.modelCapabilities).toHaveBeenCalledTimes(1);
+    expect(client.previewModel).not.toHaveBeenCalled(); expect(client.dispatchModel).not.toHaveBeenCalled(); expect(client.refreshModel).not.toHaveBeenCalled();
+  });
   it('prepares the original local workflow separately from model dispatch', async () => {
     const initial = modelRun({ status: 'QUEUED', model_runtime: modelRuntime({ status: 'PENDING' }) });
     const { client } = setup(initial); client.action.mockResolvedValue(modelRun()); await selectRun();

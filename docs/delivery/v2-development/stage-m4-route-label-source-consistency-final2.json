@@ -1,0 +1,150 @@
+{
+  "status": "PASS",
+  "created_utc": "2026-10-10T08:10:09.794555+00:00",
+  "base_head": "a880c22509091e1f085a06ad6ef0360cedce57c5",
+  "current_head": "a880c22509091e1f085a06ad6ef0360cedce57c5",
+  "scope": "Narrow M4 model-route accessible-label fix and additive regression. Five green receipts bind to the same source snapshot. Source-snapshot files and separately observed non-snapshot deltas are distinguished. No historical backend/browser/geometry/real-inference/quality/independent-audit result is promoted.",
+  "canonicalization": "SHA256 of json.dumps(source_map,sort_keys=True,separators=(comma,colon)).encode UTF-8",
+  "source_count": 1711,
+  "current_source_map_sha256": "823c74e9b2394e392bbb72cdb76c96a71771a26211ccc56fdcbf5d23d3c2e642",
+  "checks": [
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-route-label-focused-green.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 1711,
+      "before_sha256": "823c74e9b2394e392bbb72cdb76c96a71771a26211ccc56fdcbf5d23d3c2e642",
+      "after_sha256": "823c74e9b2394e392bbb72cdb76c96a71771a26211ccc56fdcbf5d23d3c2e642",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-route-label-frontend-final1.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 1711,
+      "before_sha256": "823c74e9b2394e392bbb72cdb76c96a71771a26211ccc56fdcbf5d23d3c2e642",
+      "after_sha256": "823c74e9b2394e392bbb72cdb76c96a71771a26211ccc56fdcbf5d23d3c2e642",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-route-label-build-final1.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 1711,
+      "before_sha256": "823c74e9b2394e392bbb72cdb76c96a71771a26211ccc56fdcbf5d23d3c2e642",
+      "after_sha256": "823c74e9b2394e392bbb72cdb76c96a71771a26211ccc56fdcbf5d23d3c2e642",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-route-label-browser-collection-original1.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 1711,
+      "before_sha256": "823c74e9b2394e392bbb72cdb76c96a71771a26211ccc56fdcbf5d23d3c2e642",
+      "after_sha256": "823c74e9b2394e392bbb72cdb76c96a71771a26211ccc56fdcbf5d23d3c2e642",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m4-route-label-browser-collection-independent1.json",
+      "status": "PASS",
+      "exit_code": 0,
+      "source_count": 1711,
+      "before_sha256": "823c74e9b2394e392bbb72cdb76c96a71771a26211ccc56fdcbf5d23d3c2e642",
+      "after_sha256": "823c74e9b2394e392bbb72cdb76c96a71771a26211ccc56fdcbf5d23d3c2e642",
+      "before_after_match": true,
+      "matches_current": true,
+      "source_differences": [],
+      "log_sha256_verified": true,
+      "recorded_sources_changed": false
+    }
+  ],
+  "source_changes": [
+    "frontend/src/creative/GraphModelExecutionPanel.test.tsx",
+    "frontend/src/creative/GraphModelExecutionPanel.tsx"
+  ],
+  "component_change_only_matching_aria_label": true,
+  "regression_test_is_additive": true,
+  "unchanged_files": [
+    {
+      "path": "frontend/tests/e2e/v2-ai-execution-live.spec.ts",
+      "byte_identical_to_base": true,
+      "sha256": "4a11bf2b62445aa287fe883034e5c4a72800c880cbc18b85e91f0a134fd1d6a6"
+    },
+    {
+      "path": "frontend/playwright.independent-live.config.ts",
+      "byte_identical_to_base": true,
+      "sha256": "24a8f5f2b63c72d0a9261113ca9892af7592c464fde2efb0156fe38f641e9a9e"
+    },
+    {
+      "path": "frontend/playwright.v2-live.config.ts",
+      "byte_identical_to_base": true,
+      "sha256": "dbbf62ee540feed65c69e7cd1a16d732220c240b0b016b868de24e91bfc14a36"
+    },
+    {
+      "path": "frontend/src/creative/StudioSelectLabels.test.tsx",
+      "byte_identical_to_base": true,
+      "sha256": "defc7f6ed0a212916e8d3f655544cf5c3aed372ff86e19d90d2a4101dbafd90b"
+    },
+    {
+      "path": "frontend/src/ui/tokens.css",
+      "byte_identical_to_base": true,
+      "sha256": "5b1a2610ec0c81f4cb79e5fa04ac9bb3d905782380e8d976d7cee8c2359c57e1"
+    },
+    {
+      "path": "frontend/src/ui/AppShell.tsx",
+      "byte_identical_to_base": true,
+      "sha256": "0707e0a04288e0267f07a1b9ac509985d579f22877069ab272a84f8d05751073"
+    },
+    {
+      "path": "scripts/run_v2_checks.py",
+      "byte_identical_to_base": true,
+      "sha256": "539f04a8f4774ac0fb437521ca7f9fb8bc352e90140c394724bc38c1f0305f54"
+    }
+  ],
+  "focused_red_receipt": "docs/delivery/v2-development/stage-m4-route-label-focused-red.json",
+  "focused_red_expected_failure": "17 passed, 1 failed: absent aria-label returned null; source stable during test.",
+  "frontend_results": {
+    "files_passed": 270,
+    "files_existing_skipped": 2,
+    "tests_passed": 2165,
+    "tests_existing_skipped": 8
+  },
+  "build_results": {
+    "typescript": "PASS",
+    "vite": "PASS",
+    "token_guard": "PASS",
+    "token_guard_files": 52
+  },
+  "browser_collection_only": {
+    "original": 7,
+    "independent_additive": 16
+  },
+  "actual_browser_execution": "NOT_RUN; no retry of known Chromium EPERM",
+  "geometry_execution": "NOT_RUN",
+  "real_inference": "NOT_RUN",
+  "quality_verification": "NOT_RUN",
+  "historical_independent_audit": "BLOCKED; unchanged",
+  "publication": "Not committed or pushed by this worker",
+  "separately_observed_non_snapshot_delta": {
+    "path": ".github/ci/coverage_manifest_v2.json.gz",
+    "edited_by_this_worker": false,
+    "note": "Observed concurrently while preparing consistency summary; reported to the lead. This manifest is excluded by the original source_snapshot contract and is not evaluated by these frontend checks."
+  },
+  "prior_summary": "stage-m4-route-label-source-consistency-final1.json recorded a conservative FAIL because its all-.github delta check included the separately owned manifest; all source-map and test checks were already PASS. This final2 summary narrows source scope to the original runner snapshot and discloses that extra manifest separately."
+}

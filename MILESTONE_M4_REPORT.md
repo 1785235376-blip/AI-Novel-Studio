@@ -1,9 +1,149 @@
 # M4 AI Execution Layer
 
-**Bounded M4 execution checkpoint ready for publication. Full M4 remains PARTIAL;
-new-SHA hosted CI is pending publication. No real-model quality acceptance is claimed.**
+**M4 implementation was published as `a880c22509091e1f085a06ad6ef0360cedce57c5`.
+Full M4 remains PARTIAL. Narrow route-selector accessibility and new-test
+synchronization corrections are ready; corrected-source hosted CI remains
+pending publication. No
+real-model quality acceptance is claimed.**
 
-## Final current-tree verification — 07:45 UTC
+## Final correction source and targeted verification — 09:05 UTC
+
+Current 1,711-input source map:
+`07806b50d62bde0300dee44285d126147eab60760deda309ccbe4ea004b8115e`.
+There are exactly three changed runner inputs against `a880c225`: the route
+component, its additive UI regression and the new M4 runtime test module.
+Production backend owners and original CI/gate/runner sources are unchanged.
+[Correction publication verification](docs/delivery/v2-development/stage-m4-corrections-publish-verification.json)
+records each check's actual source identity; it does not combine earlier
+whole-tree maps into a claim of a rerun full suite.
+
+The entire affected `test_v2_ai_execution_runtime.py` passes **31 / 30 profile
+skips in File (26.35 s)** and **31 / 30 profile skips on new empty PostgreSQL
+17.11 (90.92 s)**. PostgreSQL applied all 20 unchanged migrations, stopped
+normally, and its new database is retained. These are selected-module results;
+the corrected source's full backend CI remains pending. The route correction's
+full frontend **2,165 pass / 8 old skips**, build/token checks and browser
+inventory bind the unchanged final UI inputs, but precede the unrelated Python
+test-only change; they are not described as whole-tree reruns.
+
+The push failure was a test-control error: one six-second transport hold
+incorrectly covered 31 real refresh transactions. The corrected new fixture
+uses 32 explicit progress checkpoints, each capped at six seconds, with a
+**120-second overall fixture cutoff**, failure propagation and finally-release,
+original cancellation/completion and bounded actual worker joins. **Its overall
+fixture waiting budget changed**; this is not a production performance
+relaxation. The product's 180-second model deadline, existing eight-second
+completion tests, all 30 full-snapshot equalities, history/version invariants,
+and original cancellation assertions remain. Final CANCELLED/empty-output/no-error
+assertions and a negative deadline/cleanup test are additive.
+
+The archived diagnostic script adds 0.25 seconds before each real refresh.
+With identical diagnostic latency, the original fixture fails after 22 calls
+(9.66 s), while the correction passes all 31 calls (12.58 s). A separate negative
+check proves the six-second per-step cap, its truncation by remaining time,
+deadline failure propagation, release and actual thread join without changing
+the product clock. These synthetic contracts do not measure model quality.
+
+The final separate inventory has **10,728 nodes**, one additive negative
+controller test, with the original 10,727-node order and exact skip/gate maps
+preserved. Manifest SHA256:
+`dd845e0714269306356d0600d66700751dd4efbc24eddb88eb8e7f41e98add1b`.
+All four API catalogue files and the frozen V1 manifest remain byte-identical
+to `a880c225`. The failed first initdb command used a relative share path and
+stopped before creating a cluster; its error and the corrected absolute-path
+initialization are retained as setup evidence, not test results.
+
+## Route-selector correction — earlier UI verification source
+
+The first hosted M4 browser journey reached graph execution and capability
+inspection, then failed the unchanged exact label lookup for the populated
+local-text route selector. Its nested option text changed the computed label.
+The correction adds the existing visible label as an explicit `aria-label` on
+that selector. One new unit regression covers its populated options, exact
+label/role, initial empty selection, both route changes and absence of implicit
+preview, dispatch or refresh. Browser assertions, waits, retries, skip rules and
+all runtime safety boundaries are unchanged.
+
+The corrected 1,711-input source map is
+`823c74e9b2394e392bbb72cdb76c96a71771a26211ccc56fdcbf5d23d3c2e642`.
+[Publication verification](docs/delivery/v2-development/stage-m4-route-label-publish-verification.json)
+binds all six successful current-tree checks and their raw hashes:
+
+| Actual corrected-source scope | Result |
+|---|---|
+| Focused component regression | Red reproduced: 17 pass / 1 fail; corrected: 18 pass |
+| Full frontend | 2,165 passed / 8 existing skips |
+| TypeScript / Vite / design-token guard | PASS / PASS / 52 files PASS |
+| API catalogue and infrastructure | 279 passed |
+| Browser collection only | Original 7; additive 16, no inventory/skip change |
+
+Only the component and its unit test changed among runner-bound source inputs.
+All 1,017 backend/test/workflow/runner inputs and four generated API catalogue
+files are byte-identical to `a880c225`; no new whole-tree backend execution is
+claimed from that equivalence. The separate V2 inventory still contains 10,727
+nodes, preserving node order and skip/gate contracts, and now binds the two
+corrected frontend hashes: SHA256
+`706912e6df88fee3366e0b797a8ac315d1f07b995f9185f52edd15c2be5fcd62`.
+The frozen V1 inventory is unchanged. The earlier source-consistency report that
+conservatively reported a concurrent generated-manifest delta is retained;
+the final verification distinguishes that manifest from runner source inputs.
+
+The corrected live-browser journey and its three viewport checks are **NOT_RUN**
+locally because the earlier Chromium EPERM restriction remains in effect. They
+must be evaluated by the original hosted job after publication. Earlier hosted
+or local results below are retained with their original source identities and
+do not establish acceptance for this corrected full tree.
+
+## Published `a880c225` hosted CI — all terminal at 08:54 UTC
+
+[Exact workflow/job records](docs/delivery/v2-development/stage-m4-a880-hosted-ci-terminal.json)
+and the [hashed original decoded-log/archive package](docs/delivery/v2-development/stage-m4-a880-hosted-ci-evidence.zip)
+retain all five workflows and 29 jobs: **23 success / 6 failure / 0 cancelled**.
+Every result is attempt 1. Feature tree is `2bc7e4d8cf1c7523b2ed43031bba36fbee60b546`;
+the PR merge checkout `c8f9ee2292a954bf016fe11c2be7fb0974f03dcc` has that same tree.
+
+- [PR Cloud run 38036271715](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38036271715):
+  both original strict backend joins actually report `complete`, bound to the
+  exact merge checkout, tree, run, attempt and original 10,727-node manifest.
+  File: **7,126 pass / 3,601 skip / 1 shard**. PostgreSQL: **7,094 pass /
+  3,633 skip / 2 shards**. Both original File TCP cases are joined. This is
+  complete collected coverage, not monolithic PostgreSQL interaction equivalence.
+- [Push Cloud run 38036268462](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38036268462):
+  File **7,126 pass / 3,601 skip**; PG shard 0 **3,570 pass / 1,784 skip**;
+  PG shard 1 **3,523 pass / 1 fail / 1,849 skip**. The new M4 repeated-refresh
+  test observed its worker changing from RUNNING to FAILED during an assumed
+  unchanged interval. Both strict joins failed the successful-execution
+  prerequisite; reconciliation was **NOT_REACHED**, not a capacity timeout.
+  The same test passed in the separately bound PR event. That pass does not
+  replace or excuse this push failure; diagnosis and correction are recorded
+  separately.
+- Each event's protected original V2 browser **7 live + 8 geometry** passed.
+  Each additive browser had **15 pass / 1 fail**, exactly the route-label issue
+  above. M4 preview/dispatch/review, its geometry, reopen/cancel/revoke checks
+  were **NOT_REACHED** in those failed journeys.
+- Each event's full frontend had **2,164 pass / 8 old skips**, plus the separate
+  two actual TypeScript client cases and **104** original browser cases
+  (9 geometry, 12 Interop, 2 business, 7 experimental, 63 R4, 1 export,
+  9 surface, 1 branch). TypeScript/Vite/token checks passed.
+- Both Interop workflows passed their distinct File and PostgreSQL scopes
+  (**345 pass / 68 opposite-profile skips each**) and Windows pipe reference.
+  Original Windows host/fresh-base packaging passed within its hosted scope;
+  user-machine acceptance remains **LOCAL_REQUIRED**.
+- [Shared R123 run 38036271722](https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38036271722)
+  failed its unchanged assertion against fixed historical source `c6f2126`:
+  `/api` had in-memory/final HTTP COMPLETED but persisted REJECTED; `/api/v1`
+  had both COMPLETED. All three reproduction commands exited zero, but the
+  final `baseline-red.json` was not produced. The original assertion and
+  baseline remain unchanged. Allowed artifact 11663926647 was verified and
+  retained; no earlier denied artifacts were retrieved.
+
+No cross-event aggregate is substituted for either failed Cloud workflow.
+Historical M3-C **PARTIAL_PR_CI_CAPACITY** stays historical; this M4 source's
+observed failures above are recorded by their actual cause, not relabelled as
+capacity failures. Real-model quality and independent security certification
+remain outside these results.
+
+## Published `a880c225` local verification — 07:45 UTC
 
 All following final runners bind the same 1,711-input source map:
 `4bdd24881be53dec5454739eb29de28369260f66574bab853b83d44dbcc444d4`.
