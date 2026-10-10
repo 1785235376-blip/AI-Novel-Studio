@@ -1,6 +1,7 @@
 import { ApiError } from '../api';
 import type { StudioGraphRun } from './studioGraphTypes';
 import type { StudioGraphResultStorage, StudioGraphTextAssetOutput, StudioGraphTextAssetSource } from './studioGraphTextAssetTypes';
+import { graphTextExecutionReceipt } from './studioGraphTextExecutionReceipt';
 const contract = 'creative-graph-text-asset/1';
 function invalid(): never { throw new ApiError({ status: 200, code: 'STUDIO_RESPONSE_INVALID', message: '服务返回的私有文字资产回执不可用，请重新读取当前运行。' }); }
 function object(value: unknown): Record<string, unknown> { if (!value || typeof value !== 'object' || Array.isArray(value)) invalid(); return value as Record<string, unknown>; }
@@ -27,7 +28,7 @@ export function graphTextAssetOutput(value: unknown, run: StudioGraphRun, graph?
     if (row.state === 'INCOMPLETE') { reason = text(row.reason, 120); if (!/^[A-Z][A-Z0-9_]{0,119}$/.test(reason)) invalid(); }
     return { ...boundary, state: row.state as 'PENDING' | 'INCOMPLETE' | 'NO_ACCEPTED_RESULT', asset_id: null, version: null, ...(reason === undefined ? {} : { reason }) };
   }
-  keys(row, [...common, 'sha256', 'size', 'kind', 'media_type', 'created_at', 'updated_at', 'provider_id', 'model_id', 'parameters', 'source']);
+  keys(row, [...common, 'sha256', 'size', 'kind', 'media_type', 'created_at', 'updated_at', 'provider_id', 'model_id', 'parameters', 'source', 'execution_receipt']);
   if (!['DRAFT', 'APPROVED', 'REJECTED'].includes(row.state as string) || run.stale || !run.model_called
     || !run.model_runtime.execution.model_called || run.model_runtime.execution.receipt_state !== 'RECORDED'
     || run.model_runtime.execution.status !== 'COMPLETED' || !['RESULT_REVIEW', 'TERMINAL'].includes(run.model_runtime.status)
@@ -52,7 +53,11 @@ export function graphTextAssetOutput(value: unknown, run: StudioGraphRun, graph?
     || preview.route?.provider_id !== provider || preview.route.model_id !== model || preview.route.synthetic !== parameters.synthetic || preview.limits.max_output_tokens !== maxTokens)) invalid();
   const modelText = run.node_states[run.model_runtime.node_id]?.output?.draft?.text;
   if (modelText !== undefined && new TextEncoder().encode(modelText).length !== size) invalid();
+  const receipt = Object.hasOwn(row, 'execution_receipt') ? graphTextExecutionReceipt(row.execution_receipt, {
+    provider_id: provider, model_id: model, max_output_tokens: maxTokens, synthetic: parameters.synthetic, source: checkedSource,
+  }, preview) : undefined;
   return { ...boundary, state: row.state as 'DRAFT' | 'APPROVED' | 'REJECTED', asset_id: text(row.asset_id), version: integer(row.version), sha256, size, kind: 'text', media_type: 'text/plain',
     created_at: created, updated_at: updated, provider_id: provider, model_id: model,
-    parameters: { max_output_tokens: maxTokens, temperature: 0, synthetic: parameters.synthetic, quality_verification: 'NOT_RUN' }, source: checkedSource };
+    parameters: { max_output_tokens: maxTokens, temperature: 0, synthetic: parameters.synthetic, quality_verification: 'NOT_RUN' }, source: checkedSource,
+    ...(receipt === undefined ? {} : { execution_receipt: receipt }) };
 }

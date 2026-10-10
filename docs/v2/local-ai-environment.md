@@ -44,6 +44,31 @@ GET only reads the latest explicit scan. It performs no discovery or network req
 
 Bounds: 45-second scan budget checked between bounded operations, 2-second network I/O timeout, 20 runtime observations, 512 models per service, 4 MiB response limit, 32 roots, 5,000 total directory entries, 2,000 model files, three subdirectory levels, and 256 KiB metadata. Existing filesystem and request calls may complete before cancellation or the deadline becomes terminal. Symlinks, junctions, network roots, and linked ancestors are rejected or skipped. A depth/entry/file budget hit is explicitly reported as partial.
 
+## External llama.cpp locality evidence
+
+The original Model Center validator marks an external `LLAMA_CPP` candidate
+`source_locality: LOCAL_VERIFIED` only when bounded metadata identifies a valid
+TEXT-capable GGUF at the exact configured safe absolute local path, and the
+configured numeric-loopback runtime is running and advertises the configured
+model alias (or the configured filename when no alias is set). A loopback URL,
+model listing, or model name alone does not qualify. Managed runtimes retain
+their separate lifecycle contract and gain no external-locality marker.
+
+This classification is configured local-file metadata plus external runtime
+metadata/alias agreement. It is not executable/process attestation, proof that
+the server loaded those complete weights, or an inference/quality certificate.
+Validation preserves `verified: false` and `INFERENCE_NOT_RUN`; executable
+version and GPU usability remain unverified. The separate real CPU acceptance
+owns its official-server provenance, PID/argv, full GGUF hash, and actual
+generation receipts rather than inferring those facts from discovery.
+
+Failed revalidation clears earlier positive locality. Existing dispatch-time
+file/metadata/alias checks, license review after model-evidence changes, explicit
+Enable, revoke/configuration fencing, and restart revalidation remain mandatory.
+No new registry, scan path, process launch, or inference transport is introduced.
+`tests/test_v2_llama_locality_validation.py` covers the original invocation gate
+and these fail-closed cases using synthetic metadata only.
+
 ## Verification
 
 `tests/test_local_ai_environment_v2.py` uses cloud fixtures and synthetic protocol/file/Windows-component doubles. Coverage includes default-off/V1 isolation, API authorization, no GET-triggered scan, service enumeration, disabled LM Studio registration, common-root opt-out persistence, metadata-only inspection, malformed/oversized inputs, private-file exclusion, symlink/duplicate protection, cancellation, bounds, permission errors, hardware partial failures, and no implicit process launch.

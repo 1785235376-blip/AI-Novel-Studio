@@ -56,7 +56,7 @@ class AssetLibraryService:
         def redact(item):
             if isinstance(item, dict):
                 for key in ("_required_features", "_owner_actor_id", "_origin_provenance", "_project_binding",
-                            "_text_result_origin", "_text_result_review"):
+                            "_text_result_origin", "_text_result_review", "_text_execution_receipt"):
                     item.pop(key, None)
                 if not lineage_enabled and isinstance(item.get("parameters"), dict):
                     item["parameters"].pop("asset_lineage_v2", None)
@@ -297,6 +297,9 @@ class AssetLibraryService:
     @classmethod
     def _text_initial(cls, initial, data):
         expected = {"_text_result_origin", "source_job_id", "provider_id", "model_id", "parameters"}
+        from ..creative.text_execution_receipt import PRIVATE_FIELD, MAX_BYTES, validate_receipt
+        if isinstance(initial, dict) and PRIVATE_FIELD in initial:
+            expected.add(PRIVATE_FIELD)
         if not isinstance(initial, dict) or set(initial) != expected:
             raise ValueError("TEXT_RESULT_METADATA_INVALID")
         origin = cls._text_source(initial["_text_result_origin"])
@@ -319,17 +322,20 @@ class AssetLibraryService:
         if not isinstance(parameters, dict) or set(parameters).intersection(
                 {"asset_lineage_v2", "asset_relationships_v2", "experimental_media_lineage"}):
             raise ValueError("TEXT_RESULT_PARAMETERS_INVALID")
+        if PRIVATE_FIELD in initial:
+            validate_receipt(initial[PRIVATE_FIELD], source=origin, provider_id=initial["provider_id"],
+                model_id=initial["model_id"], parameters=parameters)
         try:
             encoded = json.dumps(initial, ensure_ascii=False, allow_nan=False).encode("utf-8")
         except (TypeError, ValueError, UnicodeError):
             raise ValueError("TEXT_RESULT_METADATA_INVALID") from None
-        if len(encoded) > 16_000:
+        if len(encoded) > (MAX_BYTES if PRIVATE_FIELD in initial else 16_000):
             raise ValueError("TEXT_RESULT_METADATA_LIMIT")
         return copy.deepcopy(initial)
 
     def create_text_result(self, novel_id, filename, text, *, source_receipt, provider_id, model_id,
                            source_job_id, parameters, idempotency_key, branch_id, owner_actor_id,
-                           required_features, guard):
+                           required_features, guard, execution_receipt=None):
         """Archive one server-validated result in the existing asset owner.
 
         The caller owns source/runtime authorization. Its guard is required and
@@ -348,10 +354,11 @@ class AssetLibraryService:
             idempotency_key, branch_id=branch_id, owner_actor_id=owner_actor_id,
             required_features=required_features, guard=guard,
             _initial_text_result={"_text_result_origin": source_receipt, "source_job_id": source_job_id,
-                "provider_id": provider_id, "model_id": model_id, "parameters": parameters})
+                "provider_id": provider_id, "model_id": model_id, "parameters": parameters,
+                **({"_text_execution_receipt": execution_receipt} if execution_receipt is not None else {})})
 
     def review_text_result(self, asset_id, *, actor_id, branch_id, expected_version, output_digest,
-                           status, review_receipt, guard):
+                           status, review_receipt, guard, execution_receipt=None):
         """Project an original WorkflowRun decision without publishing ownership."""
         if (type(expected_version) is not int or expected_version < 1
                 or status not in {"APPROVED", "REJECTED"} or not callable(guard)):
@@ -376,6 +383,12 @@ class AssetLibraryService:
             if type(meta.get("version")) is not int or meta["version"] < 1:
                 raise ValueError("TEXT_RESULT_VERSION_INVALID")
             origin = self._text_source(meta.get("_text_result_origin"))
+            from ..creative.text_execution_receipt import PRIVATE_FIELD, validate_receipt
+            if meta.get(PRIVATE_FIELD) != execution_receipt:
+                raise ValueError("TEXT_EXECUTION_RECEIPT_CHANGED")
+            if execution_receipt is not None:
+                validate_receipt(execution_receipt, source=origin, provider_id=meta.get("provider_id"),
+                    model_id=meta.get("model_id"), parameters=meta.get("parameters", {}))
             if (meta.get("kind") != "text" or meta.get("media_type") != "text/plain"
                     or not self.TEXT_RESULT_FEATURES.issubset(meta.get("_required_features", []))
                     or not meta.get("_project_binding") or origin["output_digest"] != output_digest

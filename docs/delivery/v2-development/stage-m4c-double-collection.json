@@ -1,0 +1,11 @@
+{
+  "status": "INVENTORY_ONLY",
+  "first_nodes": 11293,
+  "second_nodes": 11293,
+  "ordered_nodes_and_classifications_identical": true,
+  "collection_classifications_sha256": "bd74f2fc05b336a522ddd87fcf5963a81183c0f48332d78ad4eb5efa95dd659a",
+  "tests_executed": false,
+  "prior_m4b_nodes": 11079,
+  "new_m4c_nodes": 214,
+  "v1_frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262"
+}

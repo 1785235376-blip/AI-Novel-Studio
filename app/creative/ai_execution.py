@@ -232,7 +232,11 @@ class CreativeGraphNodeRuntime:
             "node_id": self.node(row)["id"], "project_incarnation": row[BINDING],
             "input_digest": row["model_preview"]["input_digest"],
             "reviewed_preview_digest": row["model_preview"]["preview_digest"]}
-        if (job.novel_id != row["novel_id"] or job.actor_id != row["created_by"] or job.scope != row["scope"]
+        receipt_contract = (row.get("model_asset_intent") or {}).get("execution_receipt_contract")
+        if (binding.get("execution_receipt_contract") != receipt_contract
+                or binding.get("execution_receipt_source_version") != (
+                    row["model_asset_intent"]["source_run_version"] if receipt_contract else None)
+                or job.novel_id != row["novel_id"] or job.actor_id != row["created_by"] or job.scope != row["scope"]
                 or any(binding.get(key) != value for key, value in expected.items())
                 or (job.requested_provider, job.requested_model) != (row["model_preview"]["route"]["provider_id"],
                     row["model_preview"]["route"]["model_id"])):
@@ -334,11 +338,16 @@ class CreativeGraphNodeRuntime:
         deadline = min(datetime.now(timezone.utc) + timedelta(seconds=NODE_SECONDS),
                        datetime.fromisoformat(self.service.executor._timing(row))).isoformat()
         incarnation = row[BINDING]
+        from .text_execution_receipt import CONTRACT as RECEIPT_CONTRACT
         asset_intent = {"contract": "creative-graph-text-asset/1", "job_id": None,
-            "source_run_version": body.expected_version + 1, "preview_digest": preview["preview_digest"]} if body.archive_result else None
+            "source_run_version": body.expected_version + 1, "preview_digest": preview["preview_digest"],
+            "execution_receipt_contract": RECEIPT_CONTRACT} if body.archive_result else None
         binding = {"graph_id": row["graph_id"], "graph_version": row["graph_version"], "run_id": rid,
             "node_id": node["id"], "project_incarnation": incarnation, "input_digest": input_digest,
             "reviewed_preview_digest": body.reviewed_preview_digest, "route_fingerprint": route["fingerprint"]}
+        if asset_intent is not None:
+            binding["execution_receipt_contract"] = RECEIPT_CONTRACT
+            binding["execution_receipt_source_version"] = asset_intent["source_run_version"]
         job = None
         def live_authority():
             live = self.row(nid, scope, actor, rid, current)

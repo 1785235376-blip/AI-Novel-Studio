@@ -20,7 +20,7 @@ from typing import Any, Callable
 from uuid import uuid4
 
 from .discovery_probes import LocalProbeClient, ProbeFailure, candidate_id, executable_metadata, gguf_metadata, host_hardware, infer_family, scan_gguf_roots, ollama_remote_declaration, ollama_locality_evidence, read_ollama_local_metadata
-from .discovery_types import AIEnvironmentReport, DiscoverySettingsInput, LocalRuntimeInput, RegistrationInput, safe_local_path
+from .discovery_types import AIEnvironmentReport, DiscoverySettingsInput, LocalRuntimeInput, RegistrationInput, local_endpoint, safe_local_path
 from .discovery_environment import environment_roots, scan_environment_files
 from .discovery_prerequisites import (catalog_requirements, prerequisite_template, observe_object_info,
     unknown_observations, failed_evidence_status)
@@ -641,6 +641,9 @@ class LocalDiscoveryService:
         notes, verified = ['INFERENCE_NOT_RUN', 'CURRENT_GPU_NOT_VERIFIED'], []
         kind = runtime['type']
         if kind == 'LLAMA_CPP':
+            # Revalidation must never inherit this external-locality proof;
+            # managed runtimes retain their existing, separate lifecycle contract.
+            candidate.pop('source_locality', None)
             evidence = gguf_metadata(Path(candidate['local_path']), cancel=validation_cancel) if candidate['local_path'] else {'header_valid': False}
             architecture = str(evidence.get('general.architecture', '')).casefold()
             if evidence.get('header_valid') and architecture.startswith(('qwen', 'llama', 'gemma', 'mistral', 'phi', 'deepseek')):
@@ -649,9 +652,21 @@ class LocalDiscoveryService:
             elif not evidence.get('header_valid'): notes.append('GGUF_HEADER_INVALID')
             if not report.get('executable_exists') and report['status'] != 'RUNNING': notes.append('RUNTIME_REQUIRED')
             if runtime['management'] == 'EXTERNAL':
+                candidate['source_locality'] = 'NOT_VERIFIED'
                 if runtime.get('model_path') != candidate['local_path']: notes.append('RUNTIME_MODEL_PATH_MISMATCH')
                 expected = runtime.get('model_id') or Path(candidate['local_path']).name
-                if expected not in report.get('available_models', []): notes.append('RUNTIME_MODEL_UNVERIFIED')
+                advertised = report['status'] == 'RUNNING' and expected in report.get('available_models', [])
+                if not advertised: notes.append('RUNTIME_MODEL_UNVERIFIED')
+                try:
+                    scoped = (bool(candidate['local_path']) and
+                        safe_local_path(candidate['local_path']) == runtime.get('model_path') == candidate['local_path'] and
+                        local_endpoint(runtime['endpoint']) == runtime['endpoint'])
+                except (ValueError, OSError, TypeError):
+                    scoped = False
+                # A loopback model list alone proves neither local weights nor
+                # TEXT capability. Bind it to this exact safe configured GGUF.
+                candidate['local'] = bool(scoped and evidence.get('file_exists') and verified and advertised)
+                if candidate['local']: candidate['source_locality'] = 'LOCAL_VERIFIED'
             notes.extend(['EXECUTABLE_VERSION_NOT_VERIFIED', 'CUDA_NOT_VERIFIED'])
             if runtime.get('gpu_layers', 0) > 0:
                 notes.append('CPU_OFFLOAD_MAY_BE_REQUIRED')

@@ -18,6 +18,8 @@ from ..experimental.common import StaleSourceError, check_version
 from ..experimental.store import canonical
 from .graph_models import validate_output_ports
 from .project_store import BINDING
+from .text_execution_receipt import (CONTRACT as EXECUTION_CONTRACT, PRIVATE_FIELD,
+    model_evidence, public_receipt, request_payload, validate_receipt)
 
 CONTRACT = "creative-graph-text-asset/1"
 _phase = ContextVar("graph_text_asset_read_authority", default=None)
@@ -40,7 +42,12 @@ class GraphTextAssets:
         if intent is None:
             return
         execution, preview = row.get("model_execution") or {}, row.get("model_preview") or {}
-        if (not isinstance(intent, dict) or set(intent) != {"contract", "job_id", "source_run_version", "preview_digest"}
+        expected = {"contract", "job_id", "source_run_version", "preview_digest"}
+        if isinstance(intent, dict) and "execution_receipt_contract" in intent:
+            expected.add("execution_receipt_contract")
+            if intent["execution_receipt_contract"] != EXECUTION_CONTRACT:
+                raise StaleSourceError("CREATIVE_TEXT_EXECUTION_CONTRACT_CHANGED")
+        if (not isinstance(intent, dict) or set(intent) != expected
                 or intent["contract"] != CONTRACT or intent["job_id"] != execution.get("job_id")
                 or type(intent["source_run_version"]) is not int or not 1 <= intent["source_run_version"] <= row["version"]
                 or intent["preview_digest"] != preview.get("preview_digest")):
@@ -60,6 +67,8 @@ class GraphTextAssets:
         fields = ("id", "novel_id", "actor_id", "scope", "operation", "experimental_origin", "graph_binding",
             "requested_provider", "requested_model", "provider", "model", "output", "status", "execution_outcome",
             "terminal_hook_status", "expected_request_digest", "created_at", "updated_at")
+        if row["model_asset_intent"].get("execution_receipt_contract"):
+            fields += ("execution_mode", "profile", "chapter_id", "generation_max_output_bytes", "generation_deadline")
         if any(saved.get(key) != getattr(job, key, None) for key in fields):
             raise StaleSourceError("CREATIVE_TEXT_ASSET_DURABLE_JOB_CHANGED")
         if (saved.get("status") != "COMPLETED" or saved.get("execution_outcome") != "COMPLETED"
@@ -140,6 +149,53 @@ class GraphTextAssets:
             "output_digest": sha256(job.output.encode()).hexdigest(), "preview_digest": row["model_preview"]["preview_digest"],
             "produced_at": ledger["updated_at"]}
 
+    def _execution_receipt(self, row, job, origin):
+        """Verify passive provenance against the original durable owners.
+
+        No adapter, prepared invocation, callback or dispatch permission is
+        reconstructed. Legacy v1 archives remain byte-for-byte unextended.
+        """
+        if "execution_receipt_contract" not in row["model_asset_intent"]:
+            return None
+        from ..model_execution import graph_request_payload_digest
+        preview = row["model_preview"]
+        payload = request_payload(preview, self.runtime.node(row))
+        if (job.graph_binding.get("execution_receipt_contract") != EXECUTION_CONTRACT
+                or graph_request_payload_digest(job, payload, preview["allow_synthetic"]) != job.expected_request_digest):
+            raise StaleSourceError("CREATIVE_TEXT_EXECUTION_REQUEST_CHANGED")
+        decision = self.runtime.broker.get(row["novel_id"], row["scope"], self.runtime.broker.DECISIONS,
+            preview["broker_preview_id"])
+        check_version(decision, preview["broker_preview_version"])
+        chosen = decision.get("chosen") or {}
+        identity = chosen.get("identity") or {}
+        ledger = self.runtime.broker.get(row["novel_id"], row["scope"], self.runtime.broker.LEDGER,
+            row["model_execution"]["reservation_id"])
+        if (decision.get("created_by") != row["created_by"] or decision.get("novel_id") != row["novel_id"]
+                or decision.get("scope") != row["scope"] or decision.get("status") != "PREVIEW"
+                or any(chosen.get(key) != preview["route"][key] for key in
+                    ("route_id", "provider_id", "model_id", "synthetic", "verification"))
+                or chosen.get("fingerprint") != job.graph_binding["route_fingerprint"]
+                or ledger.get("preview_id") != decision["id"]
+                or ledger.get("authorization_digest") != preview["preview_digest"]
+                or ledger.get("route_fingerprint") != chosen.get("fingerprint")
+                or any(ledger.get(key) != chosen.get(key) for key in ("route_id", "provider_id", "model_id"))):
+            raise StaleSourceError("CREATIVE_TEXT_EXECUTION_ROUTE_CHANGED")
+        value = {"schema_version": 1, "contract": EXECUTION_CONTRACT,
+            "prompt": payload["prompt"], "prompt_sha256": sha256(payload["prompt"].encode()).hexdigest(),
+            "provider_id": job.provider, "model_id": job.model,
+            "route_id": chosen["route_id"], "route_fingerprint": chosen["fingerprint"],
+            "route_identity": deepcopy(identity), "model_evidence": model_evidence(identity),
+            "parameters": payload["parameters"], "execution_mode": job.execution_mode,
+            "request_digest": job.expected_request_digest, "workflow": deepcopy(origin),
+            "terminal": {"status": "COMPLETED", "settlement_id": ledger["id"], "settled_at": ledger["updated_at"]},
+            "quality_verification": "NOT_RUN"}
+        return validate_receipt(value, source=origin, provider_id=job.provider, model_id=job.model,
+            parameters=self._parameters(row))
+
+    def _parameters(self, row):
+        return {"max_output_tokens": self.runtime.node(row)["parameters"]["max_output_tokens"],
+            "temperature": 0.0, "synthetic": row["model_preview"]["route"]["synthetic"], "quality_verification": "NOT_RUN"}
+
     def ensure(self, nid, scope, actor, rid, guard, *, create):
         row = self._source(nid, scope, actor, rid, guard)
         # Slow metadata checks are outside the source/asset persistence lease.
@@ -150,6 +206,7 @@ class GraphTextAssets:
                 raise StaleSourceError("CREATIVE_TEXT_ASSET_SOURCE_CHANGED")
             job = self._job(current)
             origin = self._origin(current, job)
+            execution_receipt = self._execution_receipt(current, job, origin)
             def fresh():
                 guard()
                 live = self._source(nid, scope, actor, rid, guard)
@@ -160,6 +217,8 @@ class GraphTextAssets:
                 route_guard()
                 if self._origin(live, self._job(live)) != origin:
                     raise StaleSourceError("CREATIVE_TEXT_ASSET_COMPLETION_CHANGED")
+                if self._execution_receipt(live, job, origin) != execution_receipt:
+                    raise StaleSourceError("CREATIVE_TEXT_EXECUTION_RECEIPT_CHANGED")
             asset = self._find(current)
             if asset is None and create:
                 usage = self.assets.project_usage(nid, branch_id=scope.get("branch_id"))
@@ -172,15 +231,18 @@ class GraphTextAssets:
                     fresh(); self.workspace.storage_admission.require(1)
                 asset = self.assets.create_text_result(nid, "graph-" + rid + ".txt", job.output,
                     source_receipt=origin, provider_id=preview["route"]["provider_id"], model_id=preview["route"]["model_id"],
-                    source_job_id=job.id, parameters={"max_output_tokens": self.runtime.node(current)["parameters"]["max_output_tokens"],
-                        "temperature": 0.0, "synthetic": preview["route"]["synthetic"], "quality_verification": "NOT_RUN"},
+                    source_job_id=job.id, parameters=self._parameters(current), execution_receipt=execution_receipt,
                     idempotency_key=self._key(current), branch_id=scope.get("branch_id"), owner_actor_id=actor,
                     required_features=FLAGS, guard=before_commit)
             if asset is None:
                 raise StaleSourceError("CREATIVE_TEXT_ASSET_ARCHIVE_INCOMPLETE")
             if (asset.get("deleted_at") or asset.get("kind") != "text" or asset.get("media_type") != "text/plain"
-                    or asset.get("_text_result_origin") != origin):
+                    or asset.get("_text_result_origin") != origin or asset.get(PRIVATE_FIELD) != execution_receipt):
                 raise StaleSourceError("CREATIVE_TEXT_ASSET_ORIGIN_CHANGED")
+            if execution_receipt is not None and (asset.get("source_job_id") != job.id
+                    or asset.get("provider_id") != job.provider or asset.get("model_id") != job.model
+                    or asset.get("parameters") != self._parameters(current)):
+                raise StaleSourceError("CREATIVE_TEXT_EXECUTION_RECEIPT_CHANGED")
             if self.assets.content(asset["id"], branch_id=scope.get("branch_id"), actor_id=actor) != job.output.encode():
                 raise StaleSourceError("CREATIVE_TEXT_ASSET_BYTES_CHANGED")
             fresh()
@@ -190,6 +252,7 @@ class GraphTextAssets:
     def phase(self, nid, scope, actor, rid, guard, *, create=True):
         asset, row, origin, route_guard = self.ensure(nid, scope, actor, rid, guard, create=create)
         proof = {"runtime": self.runtime, "run_id": rid, "incarnation": row[BINDING], "origin": origin,
+            "execution_receipt": deepcopy(asset.get(PRIVATE_FIELD)),
             "actor": actor, "scope": deepcopy(scope), "guard": guard, "route_guard": route_guard}
         token = _phase.set(proof)
         try:
@@ -207,6 +270,8 @@ class GraphTextAssets:
         job = self._job(row)
         if proof["origin"] != self._origin(row, job):
             raise StaleSourceError("CREATIVE_TEXT_ASSET_OUTPUT_CHANGED")
+        if proof["execution_receipt"] != self._execution_receipt(row, job, proof["origin"]):
+            raise StaleSourceError("CREATIVE_TEXT_EXECUTION_RECEIPT_CHANGED")
         output = row.get("typed_outputs", {}).get(self.runtime.node(row)["id"])
         if output is not None and output.get("draft", {}).get("text") != job.output:
             raise StaleSourceError("CREATIVE_TEXT_ASSET_OUTPUT_CHANGED")
@@ -248,16 +313,18 @@ class GraphTextAssets:
                     guard(); route_guard()
                     live = self._source(nid, scope, actor, rid, guard)
                     if (live != current or self._origin(live, self._job(live)) != origin
+                            or self._execution_receipt(live, self._job(live), origin) != asset.get(PRIVATE_FIELD)
                             or self._decision(live, origin["output_digest"]) != (status, decision)):
                         raise StaleSourceError("CREATIVE_TEXT_ASSET_REVIEW_CHANGED")
                 asset = self.assets.review_text_result(asset["id"], actor_id=actor, branch_id=scope.get("branch_id"),
                     expected_version=asset["version"], output_digest=origin["output_digest"], status=status,
-                    review_receipt=decision, guard=before_review_commit)
+                    review_receipt=decision, guard=before_review_commit, execution_receipt=asset.get(PRIVATE_FIELD))
         guard()
         return {"contract": CONTRACT, "state": status, "asset_id": asset["id"], "version": asset["version"],
             "sha256": asset["sha256"], "size": asset["size"], "kind": "text", "media_type": "text/plain",
             "created_at": asset["created_at"], "updated_at": asset["updated_at"], "source": origin,
             "provider_id": asset["provider_id"], "model_id": asset["model_id"], "parameters": deepcopy(asset["parameters"]),
+            **({"execution_receipt": public_receipt(asset[PRIVATE_FIELD])} if PRIVATE_FIELD in asset else {}),
             "actor_private": True, "applied": False, "quality_verification": "NOT_RUN", "automatic_model_retry": False}
 
     @staticmethod

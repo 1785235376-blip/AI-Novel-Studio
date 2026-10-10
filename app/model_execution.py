@@ -10,9 +10,9 @@ from dataclasses import dataclass, replace
 from hashlib import sha256
 import json
 import math
-from typing import Annotated, Iterable, Protocol
+from typing import Annotated, Iterable, Literal, Protocol
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_serializer, model_validator
 
 from .model_runtime import (GenerationEvent, LegacyTextProviderAdapter, Modality,
     ModelRuntimeError, RuntimeErrorCode, TextGenerationRequest, TextModelNodeInput)
@@ -32,6 +32,24 @@ class GraphRequestBinding(BaseModel):
     input_digest: Digest
     reviewed_preview_digest: Digest
     route_fingerprint: Digest
+    execution_receipt_contract: Literal["creative-graph-text-execution/1"] | None = None
+    execution_receipt_source_version: int | None = Field(default=None, ge=1, le=2**53 - 1)
+
+    @model_validator(mode="after")
+    def _receipt_pair(self):
+        if (self.execution_receipt_contract is None) != (self.execution_receipt_source_version is None):
+            raise ValueError("GRAPH_EXECUTION_RECEIPT_BINDING_INVALID")
+        return self
+
+    @model_serializer(mode="wrap")
+    def _omit_legacy_receipt_marker(self, handler):
+        result = handler(self)
+        # Existing request digests predate this marker. Missing consent must
+        # retain exactly the old canonical binding, never an injected null.
+        if self.execution_receipt_contract is None:
+            result.pop("execution_receipt_contract", None)
+            result.pop("execution_receipt_source_version", None)
+        return result
 
 
 class ModelProviderAdapter(Protocol):
@@ -129,8 +147,9 @@ def _payload(request):
     return request_payload(request)
 
 
-def _binding_digest(job, request, synthetic_allowed):
-    value = {"request": _payload(request), "job_id": job.id, "project_id": job.novel_id,
+def graph_request_payload_digest(job, payload, synthetic_allowed):
+    """Hash passive request data for verification; never recreate an invocation."""
+    value = {"request": payload, "job_id": job.id, "project_id": job.novel_id,
         "actor_id": job.actor_id, "scope": job.scope, "graph_binding": job.graph_binding,
         "profile": job.profile, "operation": job.operation, "chapter_id": job.chapter_id,
         "provider_id": job.requested_provider, "model_id": job.requested_model,
@@ -138,6 +157,10 @@ def _binding_digest(job, request, synthetic_allowed):
         "synthetic_allowed": synthetic_allowed}
     return sha256(json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"),
                              allow_nan=False).encode()).hexdigest()
+
+
+def _binding_digest(job, request, synthetic_allowed):
+    return graph_request_payload_digest(job, _payload(request), synthetic_allowed)
 
 
 @dataclass(frozen=True, slots=True)

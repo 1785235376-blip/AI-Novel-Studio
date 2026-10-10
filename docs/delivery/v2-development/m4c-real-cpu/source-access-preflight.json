@@ -1,0 +1,17 @@
+{
+  "checked_utc": "2026-10-10T15:06:07.764471+00:00",
+  "items": [
+    {
+      "name": "runtime",
+      "status": 200,
+      "content_length": "17693462",
+      "content_type": "application/octet-stream"
+    },
+    {
+      "name": "model",
+      "status": 200,
+      "content_length": "491400032",
+      "content_type": "application/octet-stream"
+    }
+  ]
+}

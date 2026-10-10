@@ -880,3 +880,17 @@ source-bound results. Original owners and historical feature rows are preserved.
 - Real local inference/quality remains NOT_RUN; actual user Windows/GPU remains
   LOCAL_REQUIRED. Historical PARTIAL_PR_CI_CAPACITY and independent review BLOCKED
   remain. Full M4 and broader MODEL/API/install/image/video gates are not promoted.
+
+## 39. Append-only M4-C real CPU text delta
+
+[M4-C report](MILESTONE_M4C_REPORT.md) records the first actual owned CPU
+TextNode → original Router/JobManager → private TextAsset v1 → review v2 run,
+using official Qwen GGUF and llama.cpp. Exact prompt/parameters/model evidence
+and Workflow/settlement receipts are persisted and shown in the existing UI.
+Repeated admission/reads do not replay inference; manuscript/Canon remain untouched.
+
+This replaces the **NOT_RUN** boundary only for that explicit local CPU text
+acceptance case. Other model families, quality, real-model browser flows,
+Windows/GPU and full hosted CI remain separately qualified in the report.
+API/Image/Video/global scheduling remain reserved or partial. The historical
+M4-B File-capacity cancellations and independent-review BLOCKED are preserved.
