@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/creative/SourceAdaptationPanel.test.tsx (6 tests) 431ms
+ ✓ src/creative/CreativeSelectLabels.test.tsx (3 tests) 137ms
+
+ Test Files  2 passed (2)
+      Tests  9 passed (9)
+   Start at  13:02:31
+   Duration  3.42s (transform 264ms, setup 0ms, collect 901ms, tests 568ms, environment 1.36s, prepare 182ms)
+
+JUNIT report written to /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-adaptation-ui-r1.xml

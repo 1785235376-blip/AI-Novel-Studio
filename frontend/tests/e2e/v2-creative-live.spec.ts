@@ -516,3 +516,16 @@ test('real HTTP generic Script persists exact text and CAS history without a man
   expect((await read(request,`${base}/documents/${first.id}/history`)).items.map((row:Row)=>row.version)).toEqual([1,2,3]);expect((await read(request,`${base}/documents/${first.id}/export`)).document.script).toEqual(input.script);expect(await read(request,`/api/novels/${novel.id}/chapters`)).toEqual([]);expect((await read(request,`${base}/documents`)).items).toEqual([restored]);
   await info.attach('http-generic-script-receipt',{body:JSON.stringify({verification:'Real HTTP/File only; browser launch is separate',versions:[1,2,3],model_called:false,receipts}),contentType:'application/json'});
 });
+
+test('ordinary Creative without trusted Host keeps manual screenplay usable and gates private adaptation', async ({ page, request }, info) => {
+  const { base } = await fixture(page, request);
+  expect((await read(request, `${base}/capabilities`)).source_adaptation).toBe('HOST_SESSION_REQUIRED');
+  await expect(page.getByText('来源改编需要已验证的可信 Host 会话。普通手工创作仍可使用。', { exact: true })).toBeVisible();
+  await expect(canvas(page).getByLabel('文档标题', { exact: true })).toBeEnabled();
+  await expect(page.locator('details[aria-label="来源感知剧本改编"]')).toHaveCount(0);
+  expect((await request.get(`${base}/adaptation-proposals`)).status()).toBe(401);
+  await canvas(page).getByLabel('文档标题', { exact: true }).fill('普通手工剧本仍可编辑');
+  await expect(canvas(page).getByLabel('文档标题', { exact: true })).toHaveValue('普通手工剧本仍可编辑');
+  await capture(page, info, 'source-adaptation-host-required');
+  await info.attach('source-adaptation-host-gate', { body: JSON.stringify({ private_api_status: 401, manual_editor_available: true, model_called: false }), contentType: 'application/json' });
+});

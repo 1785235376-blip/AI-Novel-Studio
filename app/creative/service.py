@@ -32,6 +32,8 @@ class CreativeService(DomainService):
         super().__init__(store, novels, chapters)
         from .proposals import DirectorProposalService
         self.proposals = DirectorProposalService(self)
+        from .adaptation import AdaptationService
+        self.adaptations = AdaptationService(self)
 
     @property
     def store(self):
@@ -45,6 +47,8 @@ class CreativeService(DomainService):
     def configure_generation(self, broker, preparer, manager):
         from .generation import DirectorModelCoordinator
         self.proposals.generation = DirectorModelCoordinator(self.proposals, broker, preparer, manager)
+        from .adaptation_generation import AdaptationModelCoordinator
+        self.adaptations.generation = AdaptationModelCoordinator(self.adaptations, broker, preparer, manager)
 
     @staticmethod
     def document_digest(row):

@@ -1,0 +1,297 @@
+{
+  "status": "OBSERVED_NO_HITS",
+  "observed_utc": "2026-10-10T20:40:03.602568+00:00",
+  "head_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+  "jobs": [
+    {
+      "run_id": 38080738263,
+      "event": "push",
+      "job_id": 114296945609,
+      "name": "Backend execution / original File TCP",
+      "conclusion": "success",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945609",
+      "cache_restore": "MISS",
+      "cache_save": "SAVED",
+      "post_step_conclusion": "success",
+      "steps": [
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T19:40:48Z",
+          "completed_at": "2026-10-10T19:41:00Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install identical pinned backend dependencies",
+          "started_at": "2026-10-10T19:41:01Z",
+          "completed_at": "2026-10-10T19:41:23Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T19:42:21Z",
+          "completed_at": "2026-10-10T19:42:23Z",
+          "conclusion": "success"
+        }
+      ],
+      "evidence_lines": [
+        "2026-10-10T19:41:00.2349386Z pip cache is not found",
+        "2026-10-10T19:42:23.1600625Z Cache saved with the key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8"
+      ],
+      "log_sha256": "e1cb8de5e5c9feba696ecaef29a8abcdb629c528961f9652f91a379339630614"
+    },
+    {
+      "run_id": 38080738263,
+      "event": "push",
+      "job_id": 114296945651,
+      "name": "Backend execution / file / shard 0",
+      "conclusion": "cancelled",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945651",
+      "cache_restore": "MISS",
+      "cache_save": "SKIPPED_WITH_CANCELLED_JOB",
+      "post_step_conclusion": "skipped",
+      "steps": [
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T19:40:49Z",
+          "completed_at": "2026-10-10T19:40:58Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install backend dependencies",
+          "started_at": "2026-10-10T19:40:59Z",
+          "completed_at": "2026-10-10T19:41:21Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T20:00:52Z",
+          "completed_at": "2026-10-10T20:00:52Z",
+          "conclusion": "skipped"
+        }
+      ],
+      "evidence_lines": [
+        "2026-10-10T19:40:58.0782109Z pip cache is not found"
+      ],
+      "log_sha256": "736b0728e40b82c85bc248b4cc9bae222cf4cb04d51c58b687fad382e04b1f06"
+    },
+    {
+      "run_id": 38080738263,
+      "event": "push",
+      "job_id": 114296945687,
+      "name": "Backend execution / postgres / shard 1",
+      "conclusion": "success",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945687",
+      "cache_restore": "MISS",
+      "cache_save": "NOT_SAVED_RESERVATION_CONFLICT",
+      "post_step_conclusion": "success",
+      "steps": [
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T19:40:59Z",
+          "completed_at": "2026-10-10T19:41:09Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install backend dependencies",
+          "started_at": "2026-10-10T19:41:10Z",
+          "completed_at": "2026-10-10T19:41:30Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T20:32:13Z",
+          "completed_at": "2026-10-10T20:32:13Z",
+          "conclusion": "success"
+        }
+      ],
+      "evidence_lines": [
+        "2026-10-10T19:41:09.6343660Z pip cache is not found",
+        "2026-10-10T20:32:13.6507492Z Failed to save: Unable to reserve cache with key setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8, another job may be creating this cache."
+      ],
+      "log_sha256": "dcce50598a5737407e669e9a9a1e5e45073c1052ce634f0bedb885a67a1127fe"
+    },
+    {
+      "run_id": 38080738263,
+      "event": "push",
+      "job_id": 114296945710,
+      "name": "Backend execution / postgres / shard 0",
+      "conclusion": "cancelled",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945710",
+      "cache_restore": "MISS",
+      "cache_save": "SKIPPED_WITH_CANCELLED_JOB",
+      "post_step_conclusion": "skipped",
+      "steps": [
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T19:40:53Z",
+          "completed_at": "2026-10-10T19:41:04Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install backend dependencies",
+          "started_at": "2026-10-10T19:41:05Z",
+          "completed_at": "2026-10-10T19:41:24Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T20:35:52Z",
+          "completed_at": "2026-10-10T20:35:52Z",
+          "conclusion": "skipped"
+        }
+      ],
+      "evidence_lines": [
+        "2026-10-10T19:41:04.3553953Z pip cache is not found"
+      ],
+      "log_sha256": "6af80e8983f819ef42f0cbde7868c43910655058355e237e27b3a3df47c25372"
+    },
+    {
+      "run_id": 38080743645,
+      "event": "pr",
+      "job_id": 114296961337,
+      "name": "Backend execution / original File TCP",
+      "conclusion": "success",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961337",
+      "cache_restore": "MISS",
+      "cache_save": "SAVED",
+      "post_step_conclusion": "success",
+      "steps": [
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T19:41:49Z",
+          "completed_at": "2026-10-10T19:41:59Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install identical pinned backend dependencies",
+          "started_at": "2026-10-10T19:42:00Z",
+          "completed_at": "2026-10-10T19:42:20Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T19:43:18Z",
+          "completed_at": "2026-10-10T19:43:20Z",
+          "conclusion": "success"
+        }
+      ],
+      "evidence_lines": [
+        "2026-10-10T19:41:59.6839305Z pip cache is not found",
+        "2026-10-10T19:43:20.1778508Z Cache saved with the key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8"
+      ],
+      "log_sha256": "c04d6fe78e1b34b200e639cc501347342a089c7f4e535b58e334ef2eeb2c90b0"
+    },
+    {
+      "run_id": 38080743645,
+      "event": "pr",
+      "job_id": 114296961374,
+      "name": "Backend execution / postgres / shard 1",
+      "conclusion": "success",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961374",
+      "cache_restore": "MISS",
+      "cache_save": "NOT_SAVED_RESERVATION_CONFLICT",
+      "post_step_conclusion": "success",
+      "steps": [
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T19:42:09Z",
+          "completed_at": "2026-10-10T19:42:19Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install backend dependencies",
+          "started_at": "2026-10-10T19:42:20Z",
+          "completed_at": "2026-10-10T19:42:40Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T20:35:02Z",
+          "completed_at": "2026-10-10T20:35:02Z",
+          "conclusion": "success"
+        }
+      ],
+      "evidence_lines": [
+        "2026-10-10T19:42:19.3541332Z pip cache is not found",
+        "2026-10-10T20:35:02.4146181Z Failed to save: Unable to reserve cache with key setup-python-Linux-x64-24.04-Ubuntu-python-3.12.9-pip-c7fc125ee9ed5386f2028b52a4f51d44bd1601e5466dcdc13df4ca8f420f01d8, another job may be creating this cache."
+      ],
+      "log_sha256": "6052ee9a84763f3f4925e40f40b7100a7acb8874dc5c0ebb40457cd16ec2680c"
+    },
+    {
+      "run_id": 38080743645,
+      "event": "pr",
+      "job_id": 114296961404,
+      "name": "Backend execution / file / shard 0",
+      "conclusion": "cancelled",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961404",
+      "cache_restore": "MISS",
+      "cache_save": "SKIPPED_WITH_CANCELLED_JOB",
+      "post_step_conclusion": "skipped",
+      "steps": [
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T19:42:16Z",
+          "completed_at": "2026-10-10T19:42:28Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install backend dependencies",
+          "started_at": "2026-10-10T19:42:30Z",
+          "completed_at": "2026-10-10T19:42:51Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T20:02:20Z",
+          "completed_at": "2026-10-10T20:02:20Z",
+          "conclusion": "skipped"
+        }
+      ],
+      "evidence_lines": [
+        "2026-10-10T19:42:28.9237413Z pip cache is not found"
+      ],
+      "log_sha256": "46e00b11f5ebe8bf8da06ac8bb892135af2d0db0ff9085a0dcc87ba1c8fa2a78"
+    },
+    {
+      "run_id": 38080743645,
+      "event": "pr",
+      "job_id": 114296961431,
+      "name": "Backend execution / postgres / shard 0",
+      "conclusion": "cancelled",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961431",
+      "cache_restore": "MISS",
+      "cache_save": "SKIPPED_WITH_CANCELLED_JOB",
+      "post_step_conclusion": "skipped",
+      "steps": [
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T19:42:09Z",
+          "completed_at": "2026-10-10T19:42:20Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install backend dependencies",
+          "started_at": "2026-10-10T19:42:21Z",
+          "completed_at": "2026-10-10T19:42:40Z",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "started_at": "2026-10-10T20:37:08Z",
+          "completed_at": "2026-10-10T20:37:08Z",
+          "conclusion": "skipped"
+        }
+      ],
+      "evidence_lines": [
+        "2026-10-10T19:42:20.3053978Z pip cache is not found"
+      ],
+      "log_sha256": "f936bcf61f9feb18f3e393bbeb5f6e7b1d549506ae6747a29c7afad57b75bc29"
+    }
+  ],
+  "speed_benefit": "NOT_EVALUATED",
+  "limits": [
+    "Original logs only. No job was cancelled or rerun for this measurement.",
+    "Post-step success is not treated as successful cache upload.",
+    "Job conclusions and strict backend join remain distinct."
+  ]
+}

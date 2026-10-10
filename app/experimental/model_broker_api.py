@@ -71,7 +71,8 @@ def create_model_broker_router(service, authorize, require_flag, require_host_se
     def public_job(current):
         if current is None: return None
         from ..jobs import generation_content_available
-        if (getattr(current, 'experimental_origin', None) != 'creative_graph_model'
+        if (getattr(current, 'experimental_origin', None) not in {'creative_graph_model', 'creative_adaptation_model'}
+                and getattr(current, 'adaptation_binding', None) is None
                 and getattr(current, 'graph_binding', None) is None
                 and content_enabled() and generation_content_available(current)):
             return current.public()

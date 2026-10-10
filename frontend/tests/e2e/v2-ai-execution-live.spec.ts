@@ -42,6 +42,50 @@ test.afterEach(async ({ page, request }, info) => {
   expect(await (await request.get('/api/novels')).json()).toEqual([]);
 });
 
+test('source adaptation reuses the trusted Host and reopens an exact saved-selection draft without inference', async ({ page, request }, info) => {
+  const before = await receipt(request); expect(before.mock_calls).toBe(0); expect(before.blocked_attempts).toEqual([]);
+  await page.goto('/'); await page.getByLabel('空白项目名称', { exact: true }).fill('来源改编独立合成验收');
+  const project = await responseFor(page, '/api/experimental/projects', () => page.getByRole('button', { name: '创建空白项目', exact: true }).click());
+  owned.get(request)!.add(project.id); await bindHost(page);
+  await page.getByRole('tablist', { name: '创作模块', exact: true }).getByRole('tab', { name: '小说', exact: true }).click();
+  await page.getByRole('button', { name: '新建章节', exact: true }).click();
+  await page.getByLabel('章节标题', { exact: true }).fill('合成来源');
+  await page.getByRole('button', { name: '创建章节', exact: true }).click();
+  const text = '林默走到云港。她在门前停下。';
+  await page.locator('.ProseMirror').fill(text); await page.getByRole('button', { name: '保存', exact: true }).click();
+  await expect(page.locator('.editorbar')).toContainText('已保存');
+  const chapters = await (await request.get(`/api/novels/${project.id}/chapters`)).json();
+  const chapter = await (await request.get(`/api/chapters/${chapters[0].id}`)).json();
+  const base = `/api/novels/${project.id}/experimental/creative`;
+  const open = async () => {
+    await page.getByRole('button', { name: '打开 V2 创作工作台', exact: true }).click();
+    await page.getByRole('tablist', { name: '创作模式', exact: true }).getByRole('tab', { name: /^剧本/ }).click();
+  };
+  await open(); const panel = page.locator('details[aria-label="来源感知剧本改编"]');
+  await panel.locator('summary').first().click();
+  await panel.getByLabel('改编剧本标题', { exact: true }).fill('来源感知改编合成建议');
+  await panel.getByLabel('已保存章节中的选段（留空使用整章）', { exact: true }).fill('林默走到云港。');
+  await panel.getByLabel('已选择以上已保存版本作为改编来源', { exact: true }).check();
+  const proposal = await responseFor(page, `${base}/adaptation-proposals`, () => panel.getByRole('button', { name: '建立改编建议（尚不调用模型）', exact: true }).click());
+  expect(proposal.chapter_id).toBe(chapter.id); expect(proposal.source_version).toBe(chapter.version);
+  expect(proposal.selected_text).toBe('林默走到云港。'); expect(proposal.model_execution).toBeNull();
+  await expect(panel.getByRole('button', { name: '预览改编模型输入', exact: true })).toBeDisabled();
+  await page.getByRole('tablist', { name: '创作模式', exact: true }).getByRole('tab', { name: /^导演/ }).click();
+  await page.getByRole('tablist', { name: '创作模式', exact: true }).getByRole('tab', { name: /^剧本/ }).click();
+  await expect(panel).toContainText('来源感知改编合成建议 · 建议 v1');
+  await page.reload(); await bindHost(page);
+  await page.getByRole('tablist', { name: '创作模块', exact: true }).getByRole('tab', { name: '小说', exact: true }).click();
+  await open(); await panel.locator('summary').first().click();
+  await panel.getByRole('button', { name: '来源感知改编合成建议 · DRAFT', exact: true }).click();
+  await expect(panel).toContainText('来源感知改编合成建议 · 建议 v1');
+  expect(await (await request.get(`/api/chapters/${chapter.id}`)).json()).toEqual(chapter);
+  expect(await (await request.get(`${base}/documents`)).json()).toEqual({ items: [] });
+  expect((await receipt(request)).mock_calls).toBe(before.mock_calls);
+  expect((await receipt(request)).blocked_attempts).toEqual([]);
+  await info.attach('source-adaptation-draft', { body: await page.screenshot({ fullPage: true }), contentType: 'image/png' });
+  await info.attach('source-adaptation-draft-receipt', { body: JSON.stringify({ proposal_id: proposal.id, source_version: proposal.source_version, selection_digest: proposal.selection_digest, trusted_host_fixture: true, model_called: false, real_inference: 'NOT_RUN' }), contentType: 'application/json' });
+});
+
 test('M4 original File HTTP UI explicitly dispatches one built-in mock graph task, reviews, reopens, cancels and revokes without replay', async ({ page, request }, info) => {
   info.annotations.push({ type: 'verification', description: 'Original File/API/UI/WorkflowRun/JobManager; exact built-in MockProvider only. No route mocks, real models, model weights, paid/cloud API, installation or runtime launch. Real inference quality remains NOT_RUN.' });
   const modelRequests: string[] = [], errors: string[] = [];

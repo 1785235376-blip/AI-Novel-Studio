@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="2" tests="4" time="7.415" timestamp="2026-10-10T13:26:51.151939-07:00" hostname="7abb01f187ba"><testcase classname="tests.test_v2_source_adaptation" name="test_capability_does_not_mount_private_adaptation_without_host_authority[file-/api]" time="5.496"><failure message="AssertionError: assert 'REVIEWED_LOCAL_MODEL' == 'HOST_SESSION_REQUIRED'&#10;  &#10;  - HOST_SESSION_REQUIRED&#10;  + REVIEWED_LOCAL_MODEL">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7fee471ab320&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fee47928530&gt;, creative_base='/api/novels/r3-mounted-bdec8af6766643c2a4257beec6a3c7ca/experimental/creative')
+
+    def test_capability_does_not_mount_private_adaptation_without_host_authority(creative_model):
+        e = creative_model
+        ordinary = checked(e.client.get(e.creative_base + '/capabilities'))
+        assert ordinary['enabled'] and ordinary['can_mutate']
+&gt;       assert ordinary['source_adaptation'] == 'HOST_SESSION_REQUIRED'
+E       AssertionError: assert 'REVIEWED_LOCAL_MODEL' == 'HOST_SESSION_REQUIRED'
+E         
+E         - HOST_SESSION_REQUIRED
+E         + REVIEWED_LOCAL_MODEL
+
+tests/test_v2_source_adaptation.py:411: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_capability_does_not_mount_private_adaptation_without_host_authority[file-/api/v1]" time="0.764"><failure message="AssertionError: assert 'REVIEWED_LOCAL_MODEL' == 'HOST_SESSION_REQUIRED'&#10;  &#10;  - HOST_SESSION_REQUIRED&#10;  + REVIEWED_LOCAL_MODEL">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7fee45b448f0&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fee47928530&gt;, creative_base='/api/v1/novels/r3-mounted-5c59c6da7c964b3d80eff0078e34d2cb/experimental/creative')
+
+    def test_capability_does_not_mount_private_adaptation_without_host_authority(creative_model):
+        e = creative_model
+        ordinary = checked(e.client.get(e.creative_base + '/capabilities'))
+        assert ordinary['enabled'] and ordinary['can_mutate']
+&gt;       assert ordinary['source_adaptation'] == 'HOST_SESSION_REQUIRED'
+E       AssertionError: assert 'REVIEWED_LOCAL_MODEL' == 'HOST_SESSION_REQUIRED'
+E         
+E         - HOST_SESSION_REQUIRED
+E         + REVIEWED_LOCAL_MODEL
+
+tests/test_v2_source_adaptation.py:411: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_capability_does_not_mount_private_adaptation_without_host_authority[postgres-/api]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:407: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_capability_does_not_mount_private_adaptation_without_host_authority[postgres-/api/v1]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:407: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase></testsuite></testsuites>

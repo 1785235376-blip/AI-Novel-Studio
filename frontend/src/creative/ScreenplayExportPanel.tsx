@@ -44,7 +44,7 @@ export function ScreenplayExportPanel({ client, document, available, onDenied }:
   };
   return <section aria-label={script ? '通用脚本文本格式导出' : '剧本文本格式导出'}>
     <div className="creative-actions"><label className="creative-field"><span>{noun}导出格式</span>
-      <select value={format} disabled={!available || busy} onChange={event => setFormat(event.target.value as ScreenplayExportFormat | ScriptExportFormat)}>
+      <select aria-label={`${noun}导出格式`} value={format} disabled={!available || busy} onChange={event => setFormat(event.target.value as ScreenplayExportFormat | ScriptExportFormat)}>
         {script ? <option value="txt">纯文本 TXT</option> : <option value="fountain">Fountain 剧本文本</option>}<option value="docx">Word DOCX</option><option value="markdown">Markdown</option>
       </select></label><Button disabled={!available || busy || (script ? !document.script?.body : !document.scenes.length)} onClick={() => void download()}><Download aria-hidden="true" />{busy ? `正在导出${noun}…` : `导出${noun}文本`}</Button></div>
     <p>{script ? `导出已保存的 v${document.version} 通用脚本。TXT/Markdown 保留原文；Word 包含标题与原文。完整版本与来源信息请保留 JSON；不会修改小说正文。` : `导出已保存的 v${document.version} 场景、动作、对白和表演提示。结构化角色引用、镜头与导演元数据请保留 JSON 导出；不会生成或修改正文。`}</p>

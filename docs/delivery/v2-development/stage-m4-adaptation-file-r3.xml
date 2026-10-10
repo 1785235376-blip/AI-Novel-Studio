@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="18" skipped="20" tests="40" time="20.653" timestamp="2026-10-10T12:57:18.589255-07:00" hostname="7abb01f187ba"><testcase classname="tests.test_v2_source_adaptation" name="test_exact_saved_source_original_execution_and_separate_reviewed_screenplay[file-/api]" time="6.458"><failure message="AssertionError: {'chapter_id': 'r3-mounted-1f9b3cb2b04e47918edb7132f6dff6b4:1', 'created_at': '2026-10-10T19:57:25.454871+00:00', 'created_by': 'local-author', 'document_id': None, ...}&#10;assert 'MODEL_UNAVAILABLE' == 'NEEDS_REVIEW'&#10;  &#10;  - NEEDS_REVIEW&#10;  + MODEL_UNAVAILABLE">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64fbf9a1b0&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f64fc51e0c0&gt;, creative_base='/api/novels/r3-mounted-1f9b3cb2b04e47918edb7132f6dff6b4/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64fbef7a40&gt;
+
+    def test_exact_saved_source_original_execution_and_separate_reviewed_screenplay(creative_model, monkeypatch):
+        e = creative_model
+        before = copy.deepcopy(e.chapters.get(e.chapter["id"]))
+        row, calls = ready(e, monkeypatch)
+        preview = row["model_preview"]
+        assert not calls and not e.manager.jobs
+        assert preview["author"]["request_scope"]["source_mode"] == "SELECTION_ONLY"
+        assert preview["author"]["source"] == before["content"]
+        assert before["content"] in preview["request"]["prompt"]
+        assert preview["request"]["context"] == {}
+        running = dispatch(e, row)
+        assert dispatch(e, row)["model_execution"]["job_id"] == running["model_execution"]["job_id"]
+        result = settle(e, running)
+&gt;       assert result["status"] == "NEEDS_REVIEW", result
+E       AssertionError: {'chapter_id': 'r3-mounted-1f9b3cb2b04e47918edb7132f6dff6b4:1', 'created_at': '2026-10-10T19:57:25.454871+00:00', 'created_by': 'local-author', 'document_id': None, ...}
+E       assert 'MODEL_UNAVAILABLE' == 'NEEDS_REVIEW'
+E         
+E         - NEEDS_REVIEW
+E         + MODEL_UNAVAILABLE
+
+tests/test_v2_source_adaptation.py:78: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_exact_saved_source_original_execution_and_separate_reviewed_screenplay[file-/api/v1]" time="2.083"><failure message="AssertionError: {'chapter_id': 'r3-mounted-af2e5af1e06e45d591b0ebd8b0e26933:1', 'created_at': '2026-10-10T19:57:27.671349+00:00', 'created_by': 'local-author', 'document_id': None, ...}&#10;assert 'MODEL_UNAVAILABLE' == 'NEEDS_REVIEW'&#10;  &#10;  - NEEDS_REVIEW&#10;  + MODEL_UNAVAILABLE">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64fbe9d5b0&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f64fc51e0c0&gt;, creative_base='/api/v1/novels/r3-mounted-af2e5af1e06e45d591b0ebd8b0e26933/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f9ae24b0&gt;
+
+    def test_exact_saved_source_original_execution_and_separate_reviewed_screenplay(creative_model, monkeypatch):
+        e = creative_model
+        before = copy.deepcopy(e.chapters.get(e.chapter["id"]))
+        row, calls = ready(e, monkeypatch)
+        preview = row["model_preview"]
+        assert not calls and not e.manager.jobs
+        assert preview["author"]["request_scope"]["source_mode"] == "SELECTION_ONLY"
+        assert preview["author"]["source"] == before["content"]
+        assert before["content"] in preview["request"]["prompt"]
+        assert preview["request"]["context"] == {}
+        running = dispatch(e, row)
+        assert dispatch(e, row)["model_execution"]["job_id"] == running["model_execution"]["job_id"]
+        result = settle(e, running)
+&gt;       assert result["status"] == "NEEDS_REVIEW", result
+E       AssertionError: {'chapter_id': 'r3-mounted-af2e5af1e06e45d591b0ebd8b0e26933:1', 'created_at': '2026-10-10T19:57:27.671349+00:00', 'created_by': 'local-author', 'document_id': None, ...}
+E       assert 'MODEL_UNAVAILABLE' == 'NEEDS_REVIEW'
+E         
+E         - NEEDS_REVIEW
+E         + MODEL_UNAVAILABLE
+
+tests/test_v2_source_adaptation.py:78: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_exact_saved_source_original_execution_and_separate_reviewed_screenplay[postgres-/api]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:65: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_exact_saved_source_original_execution_and_separate_reviewed_screenplay[postgres-/api/v1]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:65: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api-invalid]" time="0.658"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64fbdd2030&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f64fc51e0c0&gt;, creative_base='/api/novels/r3-mounted-c3c0a7bd791f471387b18563ce71b750/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f87c5b80&gt;
+kind = 'invalid'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api-duplicate-key]" time="0.674"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64fb50a1b0&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f64fc51e0c0&gt;, creative_base='/api/novels/r3-mounted-2dac92573d3146e08c664577a94fd8ce/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f9814650&gt;
+kind = 'duplicate-key'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api-missing-id]" time="0.663"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f99bf350&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f64fc51e0c0&gt;, creative_base='/api/novels/r3-mounted-a0e6470692974cc3ac18aaa3a7f12dd0/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f97f9190&gt;
+kind = 'missing-id'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api-foreign-quote]" time="0.629"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f8777740&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f64fc51e0c0&gt;, creative_base='/api/novels/r3-mounted-b1cf7fac16684dffbeba334b2cc69fd5/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f8e14410&gt;
+kind = 'foreign-quote'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api-unknown-scene]" time="0.617"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f8776300&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f64fc51e0c0&gt;, creative_base='/api/novels/r3-mounted-1e2e9aa71cca47cc8442f6e208b1c5df/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f9816b70&gt;
+kind = 'unknown-scene'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api-tool]" time="0.647"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f87c4b90&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f64fc51e0c0&gt;, creative_base='/api/novels/r3-mounted-04030c4c886e48288270add78c83d0fb/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f86e81d0&gt;
+kind = 'tool'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api-nan]" time="0.690"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f863a900&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f64fc51e0c0&gt;, creative_base='/api/novels/r3-mounted-f6e127ab56fc4e0a81afd55e0a8ed67a/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f8776ae0&gt;
+kind = 'nan'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-invalid]" time="0.649"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f8604f20&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f64fc51e0c0&gt;, creative_base='/api/v1/novels/r3-mounted-7d558e2afc0349a7b58687ae5ec8fde8/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f8776a50&gt;
+kind = 'invalid'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-duplicate-key]" time="0.675"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f866c4d0&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f64fc51e0c0&gt;, creative_base='/api/v1/novels/r3-mounted-6521add8096d4687b8f565d45a371de2/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f866db80&gt;
+kind = 'duplicate-key'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-missing-id]" time="0.603"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f85e5580&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f64fc51e0c0&gt;, creative_base='/api/v1/novels/r3-mounted-9dd95332ce1b4e89a056da2a8b216d6b/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f87c61b0&gt;
+kind = 'missing-id'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-foreign-quote]" time="0.623"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f84d5bb0&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f64fc51e0c0&gt;, creative_base='/api/v1/novels/r3-mounted-fa093b26a25d421b89e74ee6fc3a1a1d/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f84d75f0&gt;
+kind = 'foreign-quote'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-unknown-scene]" time="0.684"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f85244a0&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f64fc51e0c0&gt;, creative_base='/api/v1/novels/r3-mounted-7ab7ba88dd54444387ef269e2cf40bf6/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f85273b0&gt;
+kind = 'unknown-scene'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-tool]" time="0.594"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f866cda0&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f64fc51e0c0&gt;, creative_base='/api/v1/novels/r3-mounted-1a9a6caa8d0b45a281b71d41d2fe6eb6/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f866c590&gt;
+kind = 'tool'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[file-/api/v1-nan]" time="0.600"><failure message="assert (None is None and 0 == 1)&#10; +  where 0 = len([])">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f86071d0&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f64fc51e0c0&gt;, creative_base='/api/v1/novels/r3-mounted-8f485ca5d1914faaa3fcfaff35e6f269/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f85e5b20&gt;
+kind = 'nan'
+
+    @pytest.mark.parametrize("kind", ["invalid", "duplicate-key", "missing-id", "foreign-quote", "unknown-scene", "tool", "nan"])
+    def test_invalid_model_output_is_discarded_without_screenplay(creative_model, monkeypatch, kind):
+        e = creative_model
+        value = output(e)
+        if kind == "missing-id": value["scenes"][0].pop("id")
+        elif kind == "foreign-quote": value["report"]["changes"][0]["source_quote"] = "NOT IN SOURCE"
+        elif kind == "unknown-scene": value["report"]["changes"][0]["scene_ids"] = ["not-a-scene"]
+        elif kind == "tool": value["apply"] = "overwrite manuscript"
+        text = {"invalid": "not json", "duplicate-key": '{"scenes":[],"scenes":[]}', "nan": '{"scenes":NaN}'}.get(kind, json.dumps(value))
+        row, calls = ready(e, monkeypatch, text)
+        result = settle(e, dispatch(e, row))
+        assert result["status"] == "MODEL_UNAVAILABLE" and result["model_execution"]["status"] == "DISCARDED"
+&gt;       assert result["output"] is None and len(calls) == 1
+E       assert (None is None and 0 == 1)
+E        +  where 0 = len([])
+
+tests/test_v2_source_adaptation.py:113: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api-invalid]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api-duplicate-key]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api-missing-id]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api-foreign-quote]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api-unknown-scene]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api-tool]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api-nan]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api/v1-invalid]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api/v1-duplicate-key]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api/v1-missing-id]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api/v1-foreign-quote]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api/v1-unknown-scene]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api/v1-tool]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_invalid_model_output_is_discarded_without_screenplay[postgres-/api/v1-nan]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:101: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_synthetic_requires_explicit_permission_and_preview_never_executes[file-/api]" time="0.090" /><testcase classname="tests.test_v2_source_adaptation" name="test_synthetic_requires_explicit_permission_and_preview_never_executes[file-/api/v1]" time="0.110" /><testcase classname="tests.test_v2_source_adaptation" name="test_synthetic_requires_explicit_permission_and_preview_never_executes[postgres-/api]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:117: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_synthetic_requires_explicit_permission_and_preview_never_executes[postgres-/api/v1]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:117: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_source_change_and_restart_never_replay_or_adopt[file-/api]" time="0.738"><failure message="AssertionError: assert 422 == 409&#10; +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code&#10; +    where &lt;Response [422 Unprocessable Entity]&gt; = review(namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f855be30&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f64fc51e0c0&gt;, creative_base='/api/novels/r3-mounted-bba6b5bcd83440faa820572b1a5fa867/experimental/creative'), {'chapter_id': 'r3-mounted-bba6b5bcd83440faa820572b1a5fa867:1', 'created_at': '2026-10-10T19:57:37.837106+00:00', 'created_by': 'local-author', 'document_id': None, ...})">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f855be30&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f64fc51e0c0&gt;, creative_base='/api/novels/r3-mounted-bba6b5bcd83440faa820572b1a5fa867/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f850f110&gt;
+
+    def test_source_change_and_restart_never_replay_or_adopt(creative_model, monkeypatch):
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        result = settle(e, dispatch(e, row))
+        monkeypatch.setattr(e.manager, "jobs", {})
+        view = checked(e.client.get(e.creative_base + f'/adaptation-proposals/{row["id"]}', headers=e.headers))
+        assert view["output"] is None and view["model_preview"] is None
+&gt;       assert review(e, result).status_code == 409
+E       AssertionError: assert 422 == 409
+E        +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code
+E        +    where &lt;Response [422 Unprocessable Entity]&gt; = review(namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f855be30&gt;, prefix='/api', base='/api/novels/r3-mount...ject at 0x7f64fc51e0c0&gt;, creative_base='/api/novels/r3-mounted-bba6b5bcd83440faa820572b1a5fa867/experimental/creative'), {'chapter_id': 'r3-mounted-bba6b5bcd83440faa820572b1a5fa867:1', 'created_at': '2026-10-10T19:57:37.837106+00:00', 'created_by': 'local-author', 'document_id': None, ...})
+
+tests/test_v2_source_adaptation.py:134: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_source_change_and_restart_never_replay_or_adopt[file-/api/v1]" time="0.710"><failure message="AssertionError: assert 422 == 409&#10; +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code&#10; +    where &lt;Response [422 Unprocessable Entity]&gt; = review(namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f85260f0&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f64fc51e0c0&gt;, creative_base='/api/v1/novels/r3-mounted-fe47a564076b439ca9559ea5c11c704f/experimental/creative'), {'chapter_id': 'r3-mounted-fe47a564076b439ca9559ea5c11c704f:1', 'created_at': '2026-10-10T19:57:38.567347+00:00', 'created_by': 'local-author', 'document_id': None, ...})">creative_model = namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f85260f0&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f64fc51e0c0&gt;, creative_base='/api/v1/novels/r3-mounted-fe47a564076b439ca9559ea5c11c704f/experimental/creative')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f64f85e6510&gt;
+
+    def test_source_change_and_restart_never_replay_or_adopt(creative_model, monkeypatch):
+        e = creative_model
+        row, calls = ready(e, monkeypatch)
+        result = settle(e, dispatch(e, row))
+        monkeypatch.setattr(e.manager, "jobs", {})
+        view = checked(e.client.get(e.creative_base + f'/adaptation-proposals/{row["id"]}', headers=e.headers))
+        assert view["output"] is None and view["model_preview"] is None
+&gt;       assert review(e, result).status_code == 409
+E       AssertionError: assert 422 == 409
+E        +  where 422 = &lt;Response [422 Unprocessable Entity]&gt;.status_code
+E        +    where &lt;Response [422 Unprocessable Entity]&gt; = review(namespace(client=&lt;starlette.testclient.TestClient object at 0x7f64f85260f0&gt;, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7f64fc51e0c0&gt;, creative_base='/api/v1/novels/r3-mounted-fe47a564076b439ca9559ea5c11c704f/experimental/creative'), {'chapter_id': 'r3-mounted-fe47a564076b439ca9559ea5c11c704f:1', 'created_at': '2026-10-10T19:57:38.567347+00:00', 'created_by': 'local-author', 'document_id': None, ...})
+
+tests/test_v2_source_adaptation.py:134: AssertionError</failure></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_source_change_and_restart_never_replay_or_adopt[postgres-/api]" time="0.001"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:127: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase><testcase classname="tests.test_v2_source_adaptation" name="test_source_change_and_restart_never_replay_or_adopt[postgres-/api/v1]" time="0.000"><skipped type="pytest.skip" message="PostgreSQL implementation contract; covered by the real PostgreSQL full suite">/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/tests/test_v2_source_adaptation.py:127: PostgreSQL implementation contract; covered by the real PostgreSQL full suite</skipped></testcase></testsuite></testsuites>

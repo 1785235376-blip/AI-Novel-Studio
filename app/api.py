@@ -1450,7 +1450,8 @@ def generate_variants(operation:str,body:GenerateVariantsIn,x_session_token:str|
 def _require_original_generation_route(job):
     # Graph proposals have a separate scoped, host-bound projection and review.
     # Legacy dev-mode generation URLs must not become an unguarded side door.
-    if (getattr(job, "experimental_origin", None) == "creative_graph_model"
+    if (getattr(job, "experimental_origin", None) in {"creative_graph_model", "creative_adaptation_model"}
+            or getattr(job, "adaptation_binding", None) is not None
             or getattr(job, "graph_binding", None) is not None
             or getattr(job, "operation", None) == "graph_text"):
         raise HTTPException(404, {"code": "GENERATION_NOT_FOUND"})

@@ -1,0 +1,79 @@
+........FFF......................                                        [100%]
+=================================== FAILURES ===================================
+_______ test_snapshot_reads_the_named_tree_not_current_index_or_worktree _______
+
+repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3/test_snapshot_reads_the_named_0/repository')
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3/test_snapshot_reads_the_named_0')
+
+    def test_snapshot_reads_the_named_tree_not_current_index_or_worktree(repository, tmp_path):
+        root = repository
+        put(root, 'docs/delivery-next/file', 'retained evidence-like name')
+        put(root, 'frontend/test.ts', 'frontend remains included')
+        original_tree = stage(root)
+        put(root, 'app/current.py', 'later staged source')
+        git(root, 'add', 'app/current.py')
+        put(root, 'app/current.py', 'unstaged source')
+>       old_receipt = root / f'docs/delivery/v2-development/catalog-{tree[:12]}.json'
+                                                                     ^^^^
+E       NameError: name 'tree' is not defined
+
+.github/ci/test_compact_staged_catalog.py:70: NameError
+__________ test_refresh_runs_staged_generator_and_source_only[False] ___________
+
+repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3/test_refresh_runs_staged_gener0/repository')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f490efe7d70>
+compact = False
+
+    @pytest.mark.parametrize('compact', [False, True])
+    def test_refresh_runs_staged_generator_and_source_only(repository, monkeypatch, compact):
+        root = repository
+        tree = git(root, 'write-tree')
+        put(root, 'scripts/refresh_product_api_catalog.py', "raise RuntimeError('unstaged generator')")
+        put(root, 'app/current.py', 'unstaged source')
+        monkeypatch.setattr(catalog, 'ROOT', root)
+        catalog.main(['--compact'] if compact else [])
+        assert all((root / name).read_text() == 'generated: staged source' for name in catalog.OUTPUTS)
+        if compact:
+            assert old_receipt.read_text() == 'existing full receipt must remain unchanged'
+            receipts = list((root / 'docs/delivery/v2-development').glob(f'catalog-{tree[:12]}-compact-*.json'))
+            assert len(receipts) == 1
+            receipt = json.loads(receipts[0].read_text())
+        else:
+>           receipt = json.loads(old_receipt.read_text())
+                                 ^^^^^^^^^^^
+E           NameError: name 'old_receipt' is not defined
+
+.github/ci/test_compact_staged_catalog.py:107: NameError
+----------------------------- Captured stdout call -----------------------------
+
+{"snapshot": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3/test_refresh_runs_staged_gener0/repository/.runtime/v2-staged/6a405ef418354ab6b4647cbd49889b79", "receipt": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3/test_refresh_runs_staged_gener0/repository/docs/delivery/v2-development/catalog-3f9fe682f57d.json"}
+___________ test_refresh_runs_staged_generator_and_source_only[True] ___________
+
+repository = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3/test_refresh_runs_staged_gener1/repository')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f490ee10d70>
+compact = True
+
+    @pytest.mark.parametrize('compact', [False, True])
+    def test_refresh_runs_staged_generator_and_source_only(repository, monkeypatch, compact):
+        root = repository
+        tree = git(root, 'write-tree')
+        put(root, 'scripts/refresh_product_api_catalog.py', "raise RuntimeError('unstaged generator')")
+        put(root, 'app/current.py', 'unstaged source')
+        monkeypatch.setattr(catalog, 'ROOT', root)
+        catalog.main(['--compact'] if compact else [])
+        assert all((root / name).read_text() == 'generated: staged source' for name in catalog.OUTPUTS)
+        if compact:
+>           assert old_receipt.read_text() == 'existing full receipt must remain unchanged'
+                   ^^^^^^^^^^^
+E           NameError: name 'old_receipt' is not defined
+
+.github/ci/test_compact_staged_catalog.py:102: NameError
+----------------------------- Captured stdout call -----------------------------
+
+{"snapshot": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3/test_refresh_runs_staged_gener1/repository/.runtime/v2-staged/5dab9a547e484bb0a5ed183546661d3c", "receipt": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3/test_refresh_runs_staged_gener1/repository/docs/delivery/v2-development/catalog-3f9fe682f57d-compact-5dab9a547e484bb0a5ed183546661d3c.json"}
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-ci-capacity/.runtime/ci-capacity/compact-tests-r3.xml -
+=========================== short test summary info ============================
+FAILED .github/ci/test_compact_staged_catalog.py::test_snapshot_reads_the_named_tree_not_current_index_or_worktree
+FAILED .github/ci/test_compact_staged_catalog.py::test_refresh_runs_staged_generator_and_source_only[False]
+FAILED .github/ci/test_compact_staged_catalog.py::test_refresh_runs_staged_generator_and_source_only[True]
+3 failed, 30 passed in 1.27s

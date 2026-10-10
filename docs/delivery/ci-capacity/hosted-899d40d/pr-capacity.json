@@ -1,0 +1,1510 @@
+{
+  "schema_version": 1,
+  "status": "DIAGNOSTIC_ONLY",
+  "coverage_verdict": "NOT_EVALUATED",
+  "tool_sha256": "81eaeb8ef1d5324ef2d794c4d944daec663ac7e4e150d825210505a7d828d224",
+  "run_id": 38080743645,
+  "run_attempt": 1,
+  "event": "pull_request",
+  "head_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "jobs": [
+    {
+      "job_id": 114296961374,
+      "name": "Backend execution / postgres / shard 1",
+      "conclusion": "success",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961374",
+      "job_seconds": 3199.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Initialize containers",
+          "conclusion": "success",
+          "seconds": 13.0
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "conclusion": "success",
+          "seconds": 9.0
+        },
+        {
+          "name": "Select isolated pip download cache",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "conclusion": "success",
+          "seconds": 10.0
+        },
+        {
+          "name": "Prepare isolated checkout and receipt",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Keep V2 backend state inside its owned checkout",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Install backend dependencies",
+          "conclusion": "success",
+          "seconds": 20.0
+        },
+        {
+          "name": "Install real media decoding and assembly tools",
+          "conclusion": "success",
+          "seconds": 17.0
+        },
+        {
+          "name": "Install matching PostgreSQL recovery tools",
+          "conclusion": "success",
+          "seconds": 2.0
+        },
+        {
+          "name": "Initialize disposable PostgreSQL",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Prepare pinned OFL CJK font and receipt",
+          "conclusion": "success",
+          "seconds": 21.0
+        },
+        {
+          "name": "Fail-closed coverage infrastructure self-tests",
+          "conclusion": "success",
+          "seconds": 13.0
+        },
+        {
+          "name": "Complete backend collection / assigned shard execution",
+          "conclusion": "success",
+          "seconds": 3086.0
+        },
+        {
+          "name": "Summarize exact revision and test counts",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Upload backend receipts",
+          "conclusion": "success",
+          "seconds": 2.0
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Stop containers",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success",
+          "seconds": 0.0
+        }
+      ],
+      "budget_seconds": 3300,
+      "receipt_status": "OBSERVED",
+      "identity": {
+        "checked_out_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+        "source_tree": "01e338ea26b120f364919a94bc42ad14feb9d448",
+        "event_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+        "run_id": "38080743645",
+        "run_attempt": "1",
+        "repository": "1785235376-blip/AI-Novel-Studio",
+        "python_version": "3.12.9",
+        "platform": "linux",
+        "source_manifest_sha256": "5274119f03e054ee71d35eb39fcf00dd65454efd555d0d4c66501c96eb52a608",
+        "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+      },
+      "receipt_complete": true,
+      "pytest_exitstatus": 0,
+      "artifact_id": 11681925132,
+      "events": {
+        "assigned_nodes": 5704,
+        "event_rows": 15151,
+        "observed_event_nodes": 5704,
+        "nodes_with_teardown_event": 5704,
+        "unobserved_nodes": 0,
+        "observed_call_outcomes": {
+          "passed": 3743
+        },
+        "observed_setup_skips": 1961,
+        "failed_events": [],
+        "last_observed_node": {
+          "preview": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api]",
+          "preview_truncated": false,
+          "utf8_sha256": "dd0b3dc7c0cf7ec7240af305056a904766185ec78099b19ab2d8dfc1a70a78ff"
+        },
+        "boundary": "Event observations only; teardown presence is not gate acceptance."
+      },
+      "progress_timing": {
+        "matched_terminal_statuses": 5704,
+        "unmatched_tail_statuses": 0,
+        "largest_windows": [
+          {
+            "seconds": 222.524422,
+            "start_utc": "2026-10-10T19:44:52.8125717Z",
+            "end_utc": "2026-10-10T19:48:35.3369931Z",
+            "first_terminal_ordinal": 649,
+            "last_terminal_ordinal": 720,
+            "first_node": {
+              "preview": "tests/test_local_interop_cross_process_host.py::test_real_host_api_metadata_guidance_diagnostics_verifier_and_revocation[file]",
+              "preview_truncated": false,
+              "utf8_sha256": "662d83a5698fb9884e0bb15d1100e7f00e26d50503db2ec4a0626f31d9c631dd"
+            },
+            "last_node": {
+              "preview": "tests/test_local_interop_host.py::test_case_and_verifier_only_accept_real_current_task_state[postgres]",
+              "preview_truncated": false,
+              "utf8_sha256": "03c935043700e921a0f5f2d24145f78edb5d3bce1c5df48dd6b8916deba97287"
+            },
+            "module_status_counts": {
+              "tests/test_local_interop_cross_process_host.py": 1,
+              "tests/test_local_interop_desktop_acceptance.py": 3,
+              "tests/test_local_interop_desktop_api_projection_races.py": 4,
+              "tests/test_local_interop_desktop_core.py": 27,
+              "tests/test_local_interop_desktop_runtime.py": 22,
+              "tests/test_local_interop_host.py": 15
+            }
+          },
+          {
+            "seconds": 210.959365,
+            "start_utc": "2026-10-10T20:10:47.6757518Z",
+            "end_utc": "2026-10-10T20:14:18.6351161Z",
+            "first_terminal_ordinal": 3745,
+            "last_terminal_ordinal": 3816,
+            "first_node": {
+              "preview": "tests/test_shared_project_route_authority.py::test_local_noncollaboration_original_semantics_are_preserved[postgres-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "e9e16f88600c644418472c86c95046ceb385658d8622ec8c2423f2df558456fd"
+            },
+            "last_node": {
+              "preview": "tests/test_shared_project_route_authority.py::test_supported_creation_links_new_project_to_authorized_workspace[file-collaboration-off-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "4292bc85cd65d43a452b105868f9d55747982763ae02c97026569d630c9b8eff"
+            },
+            "module_status_counts": {
+              "tests/test_shared_project_route_authority.py": 72
+            }
+          },
+          {
+            "seconds": 149.346528,
+            "start_utc": "2026-10-10T19:55:43.8148559Z",
+            "end_utc": "2026-10-10T19:58:13.1613837Z",
+            "first_terminal_ordinal": 2017,
+            "last_terminal_ordinal": 2088,
+            "first_node": {
+              "preview": "tests/test_r4_author_task_projection.py::test_current_original_actor_branch_and_revocation[postgres-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "264501d8382f9846e06bc0513503c0c14040f236356734f30f1111144e140f35"
+            },
+            "last_node": {
+              "preview": "tests/test_r4_change_impact.py::test_real_screenplay_source_versions_propagate_to_shots_storyboards_and_motion[postgres]",
+              "preview_truncated": false,
+              "utf8_sha256": "357228d2b3924c42b7b9a19b900023ad096391a69e72abdda8e61e6a77292b2b"
+            },
+            "module_status_counts": {
+              "tests/test_r4_author_task_projection.py": 16,
+              "tests/test_r4_batch_admission.py": 16,
+              "tests/test_r4_batch_admission_mounted.py": 12,
+              "tests/test_r4_broker_cancel_dispatch.py": 5,
+              "tests/test_r4_broker_mounted.py": 8,
+              "tests/test_r4_capabilities.py": 1,
+              "tests/test_r4_change_impact.py": 14
+            }
+          },
+          {
+            "seconds": 134.342103,
+            "start_utc": "2026-10-10T20:16:21.8902759Z",
+            "end_utc": "2026-10-10T20:18:36.2323786Z",
+            "first_terminal_ordinal": 4033,
+            "last_terminal_ordinal": 4104,
+            "first_node": {
+              "preview": "tests/test_surface_adapter_capacity.py::test_late_provider_result_after_recovery_returns_only_minimal_receipt[file-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "06ffa5e1a65fd4403d77edab3fcc2999c7bfdb6296fbb7d030f21f452b2ba435"
+            },
+            "last_node": {
+              "preview": "tests/test_surface_adapter_projection.py::test_exhausted_original_cancel_capacity_is_not_advertised[postgres-/api/v1-research_analysis]",
+              "preview_truncated": false,
+              "utf8_sha256": "01fe48f89e6eaa95991faa3502e28c18ed3669d261da51d6008fd7cf250b40a1"
+            },
+            "module_status_counts": {
+              "tests/test_surface_adapter_capacity.py": 2,
+              "tests/test_surface_adapter_projection.py": 70
+            }
+          },
+          {
+            "seconds": 131.066429,
+            "start_utc": "2026-10-10T20:30:01.0408215Z",
+            "end_utc": "2026-10-10T20:32:12.1072505Z",
+            "first_terminal_ordinal": 5185,
+            "last_terminal_ordinal": 5256,
+            "first_node": {
+              "preview": "tests/test_v2_generic_script.py::test_new_script_field_does_not_rewrite_legacy_snapshots_on_read[postgres]",
+              "preview_truncated": false,
+              "utf8_sha256": "c34e74dbbd0a4724e85c32f155f56b9f96fcbbcf5ab066899186a793965adb8d"
+            },
+            "last_node": {
+              "preview": "tests/test_v2_independent_workspace.py::test_invalid_preferences_do_not_write_or_grant_capabilities[postgres-bad6]",
+              "preview_truncated": false,
+              "utf8_sha256": "aa34870e6cda381270aef08fba9363779ccfa28f447a54abe5b1705de5178561"
+            },
+            "module_status_counts": {
+              "tests/test_v2_generic_script.py": 9,
+              "tests/test_v2_graph_text_assets.py": 24,
+              "tests/test_v2_graph_text_assets_api.py": 16,
+              "tests/test_v2_independent_workspace.py": 23
+            }
+          },
+          {
+            "seconds": 108.475709,
+            "start_utc": "2026-10-10T20:24:24.1815008Z",
+            "end_utc": "2026-10-10T20:26:12.6572098Z",
+            "first_terminal_ordinal": 4609,
+            "last_terminal_ordinal": 4680,
+            "first_node": {
+              "preview": "tests/test_v2_ai_execution_api.py::test_schema_two_reads_require_current_host_and_block_forwarded_origin[postgres-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "f61d6bbd68cd4a8a75c550fb8ab0f644dcb116fd9a7e9f9da2d86f956ab17c0d"
+            },
+            "last_node": {
+              "preview": "tests/test_v2_ai_execution_runtime.py::test_restarted_published_review_is_masked_and_cannot_be_approved[file]",
+              "preview_truncated": false,
+              "utf8_sha256": "6793156e977603f54456e48306cea8fb44819f38551f96ec47bddb52654df14b"
+            },
+            "module_status_counts": {
+              "tests/test_v2_ai_execution_api.py": 18,
+              "tests/test_v2_ai_execution_browser_fixture.py": 5,
+              "tests/test_v2_ai_execution_contracts.py": 20,
+              "tests/test_v2_ai_execution_runtime.py": 29
+            }
+          },
+          {
+            "seconds": 107.174463,
+            "start_utc": "2026-10-10T20:33:05.1044952Z",
+            "end_utc": "2026-10-10T20:34:52.2789584Z",
+            "first_terminal_ordinal": 5617,
+            "last_terminal_ordinal": 5688,
+            "first_node": {
+              "preview": "tests/test_v2_text_asset_owner.py::test_closed_source_receipt_and_bounded_text[postgres-changes3]",
+              "preview_truncated": false,
+              "utf8_sha256": "fd5579489f978967005b79c730330f794c137b512b7215c7b6c64a616f8f369f"
+            },
+            "last_node": {
+              "preview": "tests/test_windows_portable_entry.py::test_portable_entry_has_no_secret_or_installer_claims",
+              "preview_truncated": false,
+              "utf8_sha256": "24c1705b32b363c10ee1a4e1eac4e1dbb0589ebfc3d2439faad558846f730d4b"
+            },
+            "module_status_counts": {
+              "tests/test_v2_text_asset_owner.py": 15,
+              "tests/test_v2_text_execution_admission.py": 17,
+              "tests/test_v2_text_execution_receipts.py": 22,
+              "tests/test_visual_continuity_contracts.py": 5,
+              "tests/test_visual_text_workflow_contract_v070.py": 2,
+              "tests/test_webview2_host_contract_v070.py": 1,
+              "tests/test_windows_installer_scripts.py": 3,
+              "tests/test_windows_packaging_host_provenance_v070.py": 1,
+              "tests/test_windows_packaging_sync_v070.py": 4,
+              "tests/test_windows_portable_entry.py": 2
+            }
+          },
+          {
+            "seconds": 104.576564,
+            "start_utc": "2026-10-10T20:28:01.4860396Z",
+            "end_utc": "2026-10-10T20:29:46.0626036Z",
+            "first_terminal_ordinal": 4969,
+            "last_terminal_ordinal": 5040,
+            "first_node": {
+              "preview": "tests/test_v2_creative_workflows.py::test_proposal_api_authority_private_response_and_restore[file]",
+              "preview_truncated": false,
+              "utf8_sha256": "3e0238cd721df44c5611ea88654461947ebc50b39b9a6660f485b8d86f921253"
+            },
+            "last_node": {
+              "preview": "tests/test_v2_discovery_host_authority.py::test_every_production_discovery_surface_denies_nonpackaged_collaboration[POST-/onboarding/scan-body3-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "34ae80c791de8dd87e3afa13c84eb1cd487c8d081e874be4599557f7f59e3cf5"
+            },
+            "module_status_counts": {
+              "tests/test_v2_creative_workflows.py": 46,
+              "tests/test_v2_discovery_browser_fixture.py": 2,
+              "tests/test_v2_discovery_catalog.py": 3,
+              "tests/test_v2_discovery_file_browser_fixture.py": 3,
+              "tests/test_v2_discovery_file_projection.py": 2,
+              "tests/test_v2_discovery_host_authority.py": 16
+            }
+          },
+          {
+            "seconds": 98.120077,
+            "start_utc": "2026-10-10T19:51:06.6804743Z",
+            "end_utc": "2026-10-10T19:52:44.8005513Z",
+            "first_terminal_ordinal": 1297,
+            "last_terminal_ordinal": 1368,
+            "first_node": {
+              "preview": "tests/test_post_interop_scene_mind.py::test_requested_relation_types_are_metadata_never_implicit_character_knowledge[file-HATES]",
+              "preview_truncated": false,
+              "utf8_sha256": "640bdd32132802c2cebba3cfe4e7a45fbd3d3028b9ff4cca4302d38fccc1b199"
+            },
+            "last_node": {
+              "preview": "tests/test_post_interop_style_model.py::test_style_restart_uses_original_job_without_admitting_untrusted_persisted_output[postgres-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "b8f92530324571e5d38765d4a972b025c5a6a78cc6535354c7bfc4e91d6cb595"
+            },
+            "module_status_counts": {
+              "tests/test_post_interop_scene_mind.py": 14,
+              "tests/test_post_interop_shared_universe.py": 9,
+              "tests/test_post_interop_structured_search.py": 9,
+              "tests/test_post_interop_style_judge.py": 11,
+              "tests/test_post_interop_style_judge_mounted.py": 8,
+              "tests/test_post_interop_style_model.py": 21
+            }
+          },
+          {
+            "seconds": 90.441495,
+            "start_utc": "2026-10-10T19:48:35.3369931Z",
+            "end_utc": "2026-10-10T19:50:05.7784883Z",
+            "first_terminal_ordinal": 721,
+            "last_terminal_ordinal": 792,
+            "first_node": {
+              "preview": "tests/test_local_interop_host.py::test_handoff_requires_click_exists_scope_and_source[file]",
+              "preview_truncated": false,
+              "utf8_sha256": "56768616cb9bddb96b10e2ac6abc7493397b9f4289ddaf0044c7dc595a290349"
+            },
+            "last_node": {
+              "preview": "tests/test_model_center_phase1.py::test_runtime_probe_rejects_redirect_without_requesting_target[308-http://example.com/public]",
+              "preview_truncated": false,
+              "utf8_sha256": "c08b7139084e9a6fb881e638e934843c2d505f9f5b6015a4e6cb3866a9dda8a9"
+            },
+            "module_status_counts": {
+              "tests/test_local_interop_host.py": 35,
+              "tests/test_local_interop_tcp.py": 6,
+              "tests/test_lore_context_contract.py": 3,
+              "tests/test_lore_contract.py": 3,
+              "tests/test_lore_postgres_contract.py": 2,
+              "tests/test_lore_service.py": 3,
+              "tests/test_memory_agent_contract.py": 1,
+              "tests/test_memory_contract.py": 2,
+              "tests/test_model_center_phase1.py": 17
+            }
+          },
+          {
+            "seconds": 86.077492,
+            "start_utc": "2026-10-10T19:52:59.3646839Z",
+            "end_utc": "2026-10-10T19:54:25.4421752Z",
+            "first_terminal_ordinal": 1441,
+            "last_terminal_ordinal": 1512,
+            "first_node": {
+              "preview": "tests/test_post_interop_wave5_templates_sdk_comics.py::test_manifest_compatibility_and_permission_claims_never_grant_authority[postgres-<lambda>4]",
+              "preview_truncated": false,
+              "utf8_sha256": "44cc266c9055b7ce100654a2bef77305910e7d712993807d5cc022bd3e56e0a3"
+            },
+            "last_node": {
+              "preview": "tests/test_project_authority_validation.py::test_project_permission_and_domain_are_not_inferred_from_branch_role[file-/api/v1-domain.read-IMAGE]",
+              "preview_truncated": false,
+              "utf8_sha256": "176e5eab3fd78d1b6a2ca5f010d4eb62a6e0a5e22abcab7a3973454ddbf836ef"
+            },
+            "module_status_counts": {
+              "tests/test_post_interop_wave5_templates_sdk_comics.py": 27,
+              "tests/test_post_interop_workspace_ux.py": 25,
+              "tests/test_postgres_context_serialization.py": 6,
+              "tests/test_postgres_parity_independent_audit.py": 2,
+              "tests/test_postgres_repository_contracts.py": 1,
+              "tests/test_project_authority_validation.py": 11
+            }
+          },
+          {
+            "seconds": 85.957833,
+            "start_utc": "2026-10-10T20:20:57.6902355Z",
+            "end_utc": "2026-10-10T20:22:23.6480689Z",
+            "first_terminal_ordinal": 4321,
+            "last_terminal_ordinal": 4392,
+            "first_node": {
+              "preview": "tests/test_surface_freeze_media_engine_adapters.py::test_permission_revocation_during_processing_discards_result[postgres]",
+              "preview_truncated": false,
+              "utf8_sha256": "7cfd9e22d54845051df9a5344eefe6fd0076e6e9eebd7d95ae1fba4321d1f5dd"
+            },
+            "last_node": {
+              "preview": "tests/test_surface_pending_canon_review.py::test_canon_exact_preview_evidence_and_archived_source_withheld[postgres-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "0606eae12a5582e8817552ad1d8acfb96efa0105c0683184d58ef0e5faf11a2b"
+            },
+            "module_status_counts": {
+              "tests/test_surface_freeze_media_engine_adapters.py": 27,
+              "tests/test_surface_hybrid_read_authority.py": 8,
+              "tests/test_surface_interop_branch_authority.py": 19,
+              "tests/test_surface_pending_canon_review.py": 18
+            }
+          }
+        ],
+        "boundary": "Timestamped progress chunks include inter-test overhead; the first includes collection/startup. No per-node duration is inferred."
+      },
+      "junit_timing": {
+        "summed_testcase_seconds": 3048.919,
+        "slowest_modules": [
+          {
+            "module": "tests/test_shared_project_route_authority.py",
+            "seconds": 436.829
+          },
+          {
+            "module": "tests/test_local_interop_host.py",
+            "seconds": 180.536
+          },
+          {
+            "module": "tests/test_surface_adapter_projection.py",
+            "seconds": 141.301
+          },
+          {
+            "module": "tests/test_local_interop_desktop_runtime.py",
+            "seconds": 115.125
+          },
+          {
+            "module": "tests/test_r4_story_simulator_model.py",
+            "seconds": 97.874
+          },
+          {
+            "module": "tests/test_v2_ai_execution_api.py",
+            "seconds": 90.192
+          },
+          {
+            "module": "tests/test_v2_ai_execution_runtime.py",
+            "seconds": 88.013
+          },
+          {
+            "module": "tests/test_v2_graph_text_assets.py",
+            "seconds": 81.213
+          },
+          {
+            "module": "tests/test_v2_text_execution_receipts.py",
+            "seconds": 79.346
+          },
+          {
+            "module": "tests/test_v2_creative_workflows.py",
+            "seconds": 78.106
+          },
+          {
+            "module": "tests/test_post_interop_workspace_ux.py",
+            "seconds": 76.268
+          },
+          {
+            "module": "tests/test_post_interop_structured_search.py",
+            "seconds": 73.666
+          },
+          {
+            "module": "tests/test_surface_interop_branch_authority.py",
+            "seconds": 64.819
+          },
+          {
+            "module": "tests/test_shared_generation_stream_authority.py",
+            "seconds": 51.671
+          },
+          {
+            "module": "tests/test_r4_change_impact.py",
+            "seconds": 44.812
+          }
+        ],
+        "slowest_cases": [
+          {
+            "node": {
+              "preview": "tests/test_post_interop_workspace_ux.py::test_broader_original_search_precise_record_navigation_source_fence_and_branch_isolation[postgres-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "8b5ed73f089d8cb7cbde2500120b5423f32b1f2602869f2d955ad5ab16cfd6cb"
+            },
+            "seconds": 52.708
+          },
+          {
+            "node": {
+              "preview": "tests/test_post_interop_structured_search.py::test_asset_branch_reader_matches_original_owner_and_deleted_assets_disappear[postgres-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "23976df490f51f472b8556e4193825bb6915a32ef4724f3ab8a34863de3d6f31"
+            },
+            "seconds": 39.227
+          },
+          {
+            "node": {
+              "preview": "tests/test_post_interop_structured_search.py::test_scoped_structured_sources_do_not_borrow_local_or_foreign_branch_authority[postgres-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "6723581215d74b528f33047f0977201229a5789e37cf2f8ea2f42a2e9574db43"
+            },
+            "seconds": 31.56
+          },
+          {
+            "node": {
+              "preview": "tests/test_v2_creative_graph_api.py::test_original_review_permission_is_distinct_from_graph_write[postgres-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "dcb028f06fd9d56244b288748657139ab6b47d701281c8fa23991b3a9aace341"
+            },
+            "seconds": 31.519
+          },
+          {
+            "node": {
+              "preview": "tests/test_surface_adapter_projection.py::test_current_creator_branch_and_permission_fences[postgres-/api-research_analysis]",
+              "preview_truncated": false,
+              "utf8_sha256": "3fbad39bdd6aeff61b8f47751f6a60dfd821e31fa72680cf74155aa3186eb8e1"
+            },
+            "seconds": 25.713
+          },
+          {
+            "node": {
+              "preview": "tests/test_r4_registered_local_media.py::test_registered_refresh_manifest_and_replay_keep_origin_seed_budget_and_review[postgres]",
+              "preview_truncated": false,
+              "utf8_sha256": "6224790926798dd1e6f0c2b1e1cf45d40dc3df91863d2f269a48ec5d480dc115"
+            },
+            "seconds": 25.263
+          },
+          {
+            "node": {
+              "preview": "tests/test_surface_adapter_projection.py::test_current_creator_branch_and_permission_fences[postgres-/api/v1-visual_identity]",
+              "preview_truncated": false,
+              "utf8_sha256": "fc794a73a6cfaa2ce3372713f9b14a1e3c544400ebc0bbfa68ca3f8f82cb3f9f"
+            },
+            "seconds": 24.938
+          },
+          {
+            "node": {
+              "preview": "tests/test_surface_interop_branch_authority.py::test_actual_branch_metadata_content_and_exact_handoff_preserve_mainline[postgres]",
+              "preview_truncated": false,
+              "utf8_sha256": "86b1eb60f7defe66c0f920252a20bbf88ce0208102d27483577a3793b615ae7d"
+            },
+            "seconds": 20.544
+          },
+          {
+            "node": {
+              "preview": "tests/test_r4_mounted_workspaces.py::test_mounted_workspace_actor_separation_and_current_revocation[postgres-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "6b634745ea73a6d19dc5a774a1452061fea9a14b92f82abd9d266c216c20d557"
+            },
+            "seconds": 18.156
+          },
+          {
+            "node": {
+              "preview": "tests/test_r4_mounted_workspaces.py::test_mounted_workspace_actor_separation_and_current_revocation[postgres-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "6aaa4616211d883f61796f827aee6e552a3a67e6976b04cc601fdb16925c160b"
+            },
+            "seconds": 18.018
+          },
+          {
+            "node": {
+              "preview": "tests/test_local_interop_host.py::test_revocation_stops_old_events_independent_reader_survives[postgres-branch]",
+              "preview_truncated": false,
+              "utf8_sha256": "3fc797071d2fca97e22654a1a80166c01c925b5e08d2163a3b2cf063b5fd056b"
+            },
+            "seconds": 17.5
+          },
+          {
+            "node": {
+              "preview": "tests/test_local_interop_host.py::test_revocation_stops_old_events_independent_reader_survives[postgres-session]",
+              "preview_truncated": false,
+              "utf8_sha256": "b2418fca7ecd97b46043f8055c02ef83f80ed0ed48febf769abe92b9aad4112d"
+            },
+            "seconds": 17.448
+          },
+          {
+            "node": {
+              "preview": "tests/test_local_interop_host.py::test_revocation_stops_old_events_independent_reader_survives[postgres-membership]",
+              "preview_truncated": false,
+              "utf8_sha256": "a0241537744d8f01e4d594966d8bfa7a0bdb49482a0db52bd84b9307a79b3a1d"
+            },
+            "seconds": 17.441
+          },
+          {
+            "node": {
+              "preview": "tests/test_local_interop_host.py::test_revocation_stops_old_events_independent_reader_survives[postgres-disabled]",
+              "preview_truncated": false,
+              "utf8_sha256": "32bd0929b792697a096abf4dbe027f5b91122b2e8444a0278606dfcdb5712825"
+            },
+            "seconds": 17.44
+          },
+          {
+            "node": {
+              "preview": "tests/test_local_interop_desktop_runtime.py::test_every_permission_revoke_stops_only_its_session_and_fences_previews[postgres-model_metadata]",
+              "preview_truncated": false,
+              "utf8_sha256": "a1e081232ddd6c5ec7b3eef08ba70b6688db851de2e113cbc77a2881775e06a5"
+            },
+            "seconds": 16.217
+          }
+        ],
+        "boundary": "JUnit durations are observed testcase totals, not an independent coverage verdict."
+      }
+    },
+    {
+      "job_id": 114296961404,
+      "name": "Backend execution / file / shard 0",
+      "conclusion": "cancelled",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961404",
+      "job_seconds": 1224.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "conclusion": "success",
+          "seconds": 9.0
+        },
+        {
+          "name": "Select isolated pip download cache",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "conclusion": "success",
+          "seconds": 12.0
+        },
+        {
+          "name": "Prepare isolated checkout and receipt",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Keep V2 backend state inside its owned checkout",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Install backend dependencies",
+          "conclusion": "success",
+          "seconds": 21.0
+        },
+        {
+          "name": "Install real media decoding and assembly tools",
+          "conclusion": "success",
+          "seconds": 18.0
+        },
+        {
+          "name": "Install matching PostgreSQL recovery tools",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Initialize disposable PostgreSQL",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Prepare pinned OFL CJK font and receipt",
+          "conclusion": "success",
+          "seconds": 19.0
+        },
+        {
+          "name": "Fail-closed coverage infrastructure self-tests",
+          "conclusion": "success",
+          "seconds": 14.0
+        },
+        {
+          "name": "Complete backend collection / assigned shard execution",
+          "conclusion": "cancelled",
+          "seconds": 1116.0
+        },
+        {
+          "name": "Summarize exact revision and test counts",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Upload backend receipts",
+          "conclusion": "success",
+          "seconds": 2.0
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success",
+          "seconds": 0.0
+        }
+      ],
+      "budget_seconds": 1200,
+      "receipt_status": "OBSERVED",
+      "identity": {
+        "checked_out_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+        "source_tree": "01e338ea26b120f364919a94bc42ad14feb9d448",
+        "event_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+        "run_id": "38080743645",
+        "run_attempt": "1",
+        "repository": "1785235376-blip/AI-Novel-Studio",
+        "python_version": "3.12.9",
+        "platform": "linux",
+        "source_manifest_sha256": "5274119f03e054ee71d35eb39fcf00dd65454efd555d0d4c66501c96eb52a608",
+        "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+      },
+      "receipt_complete": false,
+      "pytest_exitstatus": null,
+      "artifact_id": 11681130687,
+      "events": {
+        "assigned_nodes": 11417,
+        "event_rows": 26439,
+        "observed_event_nodes": 9953,
+        "nodes_with_teardown_event": 9952,
+        "unobserved_nodes": 1464,
+        "observed_call_outcomes": {
+          "passed": 6534
+        },
+        "observed_setup_skips": 3418,
+        "failed_events": [],
+        "last_observed_node": {
+          "preview": "tests/test_v2_creative_workflows.py::test_model_restart_loses_execution_authority_and_never_replays[file-/api]",
+          "preview_truncated": false,
+          "utf8_sha256": "0fd6c69fbe622d49848ab5ca8f930af4afea1137a13bc6ab950750d609d3db0a"
+        },
+        "boundary": "Event observations only; teardown presence is not gate acceptance."
+      },
+      "progress_timing": {
+        "matched_terminal_statuses": 9936,
+        "unmatched_tail_statuses": 16,
+        "largest_windows": [
+          {
+            "seconds": 122.956482,
+            "start_utc": "2026-10-10T19:56:50.8523196Z",
+            "end_utc": "2026-10-10T19:58:53.8088018Z",
+            "first_terminal_ordinal": 7777,
+            "last_terminal_ordinal": 7848,
+            "first_node": {
+              "preview": "tests/test_shared_project_route_authority.py::test_existing_chapter_routes_reject_arbitrary_and_foreign_branch_ownership[file-packaged-on-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "7352b8a49b005b5af01fc157b3e39b7acadd2c1b8a4e24e33d7ddcda68f1cbb4"
+            },
+            "last_node": {
+              "preview": "tests/test_structured_record_cas.py::test_record_cas_serializes_two_original_clients_and_rechecks_after_legacy_upsert[file]",
+              "preview_truncated": false,
+              "utf8_sha256": "212472e40cb3b842df959ec43ce9bf13f6c5e32c439970b91eb469f124ae3003"
+            },
+            "module_status_counts": {
+              "tests/test_shared_project_route_authority.py": 22,
+              "tests/test_stability_v04.py": 4,
+              "tests/test_stable_identity_foundation.py": 39,
+              "tests/test_structured_record_cas.py": 7
+            }
+          },
+          {
+            "seconds": 71.284615,
+            "start_utc": "2026-10-10T19:52:23.1105690Z",
+            "end_utc": "2026-10-10T19:53:34.3951846Z",
+            "first_terminal_ordinal": 5257,
+            "last_terminal_ordinal": 5328,
+            "first_node": {
+              "preview": "tests/test_r4_story_simulator_model.py::test_model_schema_evidence_and_user_step_branch_bounds_discard_untrusted_results[postgres-/api/v1-{\"routes\": [{\"id\": \"0\", \"title\": \"Synthetic alternate gate\", \"motivation_hypothesis\": \"Unverified auth",
+              "preview_truncated": true,
+              "utf8_sha256": "6d70cd005840b40df9321af7567139e5dc5499c3639b81fa199bfd69e89fbe88"
+            },
+            "last_node": {
+              "preview": "tests/test_r4_story_simulator_model.py::test_configured_route_revocation_or_real_price_edit_blocks_send_and_adoption[postgres-/api/v1-dispatch-disable]",
+              "preview_truncated": false,
+              "utf8_sha256": "4d113b7f2f8c0c0fed785d1e5c8f0ade2ceae3fda3d15d8dbe2b1ea24a388a30"
+            },
+            "module_status_counts": {
+              "tests/test_r4_story_simulator_model.py": 72
+            }
+          },
+          {
+            "seconds": 44.702425,
+            "start_utc": "2026-10-10T19:51:38.4081443Z",
+            "end_utc": "2026-10-10T19:52:23.1105690Z",
+            "first_terminal_ordinal": 5185,
+            "last_terminal_ordinal": 5256,
+            "first_node": {
+              "preview": "tests/test_r4_story_simulator.py::test_current_source_privacy_target_and_deletion_invalidate_every_result[postgres-text]",
+              "preview_truncated": false,
+              "utf8_sha256": "6e24f83f251057b5b6664fc2209935c81e819ff748968be4e6916f460bd61366"
+            },
+            "last_node": {
+              "preview": "tests/test_r4_story_simulator_model.py::test_model_schema_evidence_and_user_step_branch_bounds_discard_untrusted_results[postgres-/api/v1-{\"routes\": [{\"id\": \"model-a\", \"title\": \"Synthetic alternate gate\", \"motivation_hypothesis\": \"Unverifie",
+              "preview_truncated": true,
+              "utf8_sha256": "2c91cfb0f8829b156db1f1737f8fe1063ab1ed3c46a3cd7786e119236c924ecc"
+            },
+            "module_status_counts": {
+              "tests/test_r4_story_simulator.py": 30,
+              "tests/test_r4_story_simulator_model.py": 42
+            }
+          },
+          {
+            "seconds": 43.26079,
+            "start_utc": "2026-10-10T19:48:50.8704569Z",
+            "end_utc": "2026-10-10T19:49:34.1312460Z",
+            "first_terminal_ordinal": 4105,
+            "last_terminal_ordinal": 4176,
+            "first_node": {
+              "preview": "tests/test_r4_batch_admission_mounted.py::test_mounted_audio_original_resolver_executor_invoice_reconciliation_and_review[file-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "27526c2db2088e1e76e8973a5a2cd0ad381403bb6caa51337139c27e07345a62"
+            },
+            "last_node": {
+              "preview": "tests/test_r4_change_impact_mounted.py::test_change_impact_actual_composition_selects_one_refresh_and_preserves_original[postgres-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "e11e017786ba86ddac0a4aa25e9d1a4884c1fc327f7eb72b303b132c921c0d9f"
+            },
+            "module_status_counts": {
+              "tests/test_r4_batch_admission_mounted.py": 4,
+              "tests/test_r4_broker_cancel_dispatch.py": 13,
+              "tests/test_r4_broker_mounted.py": 16,
+              "tests/test_r4_capabilities.py": 4,
+              "tests/test_r4_change_impact.py": 32,
+              "tests/test_r4_change_impact_mounted.py": 3
+            }
+          },
+          {
+            "seconds": 38.872185,
+            "start_utc": "2026-10-10T19:48:11.9982717Z",
+            "end_utc": "2026-10-10T19:48:50.8704569Z",
+            "first_terminal_ordinal": 4033,
+            "last_terminal_ordinal": 4104,
+            "first_node": {
+              "preview": "tests/test_r4_author_task_projection.py::test_origin_disabled_during_original_read_returns_no_rows[file-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "5cea02c4db330f560b0a77d14a4504ad961cef146ebe57d4729404b13c42634e"
+            },
+            "last_node": {
+              "preview": "tests/test_r4_batch_admission_mounted.py::test_mounted_broker_revocation_blocks_before_media_dispatch[postgres-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "43bf4fb2e92173e1d9cf9c346f2cefb47f1f4a34d18c06d2acfdd06c17827a53"
+            },
+            "module_status_counts": {
+              "tests/test_r4_author_task_projection.py": 26,
+              "tests/test_r4_batch_admission.py": 34,
+              "tests/test_r4_batch_admission_mounted.py": 12
+            }
+          },
+          {
+            "seconds": 35.981583,
+            "start_utc": "2026-10-10T20:01:38.0559037Z",
+            "end_utc": "2026-10-10T20:02:14.0374865Z",
+            "first_terminal_ordinal": 9865,
+            "last_terminal_ordinal": 9936,
+            "first_node": {
+              "preview": "tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[file]",
+              "preview_truncated": false,
+              "utf8_sha256": "5f7c855181812d7dee09bbd778f0bd4a8874a570ed2d1846024f0386755b0910"
+            },
+            "last_node": {
+              "preview": "tests/test_v2_creative_workflows.py::test_untrusted_model_json_is_discarded_without_derived_write[file-/api/v1-{\"director_notes\": [{\"id\": \"direction-1\", \"number\": 1, \"scene_id\": \"scene-1\", \"note\": \"Start with a held frame\", \"shot_size\": \"CL",
+              "preview_truncated": true,
+              "utf8_sha256": "da5ea77a44bcec70ef7eb53eae00854595b2bf745d9b2321ad86c1a0a06117bf"
+            },
+            "module_status_counts": {
+              "tests/test_v2_creative_project_lifecycle.py": 22,
+              "tests/test_v2_creative_workflows.py": 50
+            }
+          },
+          {
+            "seconds": 33.525069,
+            "start_utc": "2026-10-10T19:43:42Z",
+            "end_utc": "2026-10-10T19:44:15.5250695Z",
+            "first_terminal_ordinal": 1,
+            "last_terminal_ordinal": 72,
+            "first_node": {
+              "preview": "tests/test_a43_context_identity.py::test_typed_context_keeps_narrative_policy_and_pack_identity[file-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "b52b6bc13b0b390ca51f6d8dc8f9bac1cace04ee69e139071c067af8b57e51aa"
+            },
+            "last_node": {
+              "preview": "tests/test_a43_duplicate_heading.py::test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api-run-ends-with-lf]",
+              "preview_truncated": false,
+              "utf8_sha256": "4d63d81f8df97e077feeb263aaf9264ac7d7d05337485475cd6bacd0ed47aaff"
+            },
+            "module_status_counts": {
+              "tests/test_a43_context_identity.py": 33,
+              "tests/test_a43_detached_generation_acceptance.py": 2,
+              "tests/test_a43_docx_text_measurement.py": 8,
+              "tests/test_a43_drive_prefix_identity.py": 11,
+              "tests/test_a43_duplicate_heading.py": 18
+            }
+          },
+          {
+            "seconds": 26.763942,
+            "start_utc": "2026-10-10T20:00:47.2283316Z",
+            "end_utc": "2026-10-10T20:01:13.9922739Z",
+            "first_terminal_ordinal": 9289,
+            "last_terminal_ordinal": 9360,
+            "first_node": {
+              "preview": "tests/test_v2_ai_execution_contracts.py::test_managed_or_unproven_runtime_never_launches[postgres-REMOTE]",
+              "preview_truncated": false,
+              "utf8_sha256": "2659731dc8dc9784c93908e92ec3f607c18d0685772cf7010226e641398473ec"
+            },
+            "last_node": {
+              "preview": "tests/test_v2_asset_relationships.py::test_all_seven_relationship_kinds_are_versioned_declarations_on_original_assets[postgres-SOURCE_OF]",
+              "preview_truncated": false,
+              "utf8_sha256": "24a403399a5df0a798433f69a73ee4e39b79f923bcc85d38a353738b50b05286"
+            },
+            "module_status_counts": {
+              "tests/test_v2_ai_execution_contracts.py": 3,
+              "tests/test_v2_ai_execution_runtime.py": 61,
+              "tests/test_v2_asset_relationships.py": 8
+            }
+          },
+          {
+            "seconds": 22.716894,
+            "start_utc": "2026-10-10T19:54:02.0622251Z",
+            "end_utc": "2026-10-10T19:54:24.7791194Z",
+            "first_terminal_ordinal": 5617,
+            "last_terminal_ordinal": 5688,
+            "first_node": {
+              "preview": "tests/test_r5_comic_mounted.py::test_mounted_stale_projection_hides_all_dialogue_and_old_asset_ids[file-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "2912f00bd402115d4b7395a6a4aff93de73ebdeee6c62847289615d487166a7d"
+            },
+            "last_node": {
+              "preview": "tests/test_r5_declarative_model.py::test_model_last_hop_feature_revocation_prevents_provider_send[postgres-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "f8d9434dc86200070c3f51479bf9701544ad16a1d5911bb267034f8b8bd264bc"
+            },
+            "module_status_counts": {
+              "tests/test_r5_comic_mounted.py": 4,
+              "tests/test_r5_declarative_job_bounds.py": 17,
+              "tests/test_r5_declarative_model.py": 51
+            }
+          },
+          {
+            "seconds": 21.498813,
+            "start_utc": "2026-10-10T20:00:25.7295184Z",
+            "end_utc": "2026-10-10T20:00:47.2283316Z",
+            "first_terminal_ordinal": 9217,
+            "last_terminal_ordinal": 9288,
+            "first_node": {
+              "preview": "tests/test_v2_ai_execution_api.py::test_upgrading_schema_one_to_model_graph_requires_host_before_save[postgres-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "837b1e8a7e54c5163efedc5a29e5da8338908fb9c51101d6c3979dc4a6bba9f1"
+            },
+            "last_node": {
+              "preview": "tests/test_v2_ai_execution_contracts.py::test_managed_or_unproven_runtime_never_launches[postgres-MANAGED]",
+              "preview_truncated": false,
+              "utf8_sha256": "5aec915265b3d8610371d3b35c86b0652f72ee6a58029670beff72422a652123"
+            },
+            "module_status_counts": {
+              "tests/test_v2_ai_execution_api.py": 22,
+              "tests/test_v2_ai_execution_browser_fixture.py": 11,
+              "tests/test_v2_ai_execution_contracts.py": 39
+            }
+          },
+          {
+            "seconds": 20.375025,
+            "start_utc": "2026-10-10T19:54:49.9695291Z",
+            "end_utc": "2026-10-10T19:55:10.3445546Z",
+            "first_terminal_ordinal": 5977,
+            "last_terminal_ordinal": 6048,
+            "first_node": {
+              "preview": "tests/test_r5_multilingual_translation.py::test_cancel_late_output_and_source_revocation[postgres-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "18f546dfa8dcf8592dcbd3d3c473630cc710d53230509694e4f5bb6da7c84cef"
+            },
+            "last_node": {
+              "preview": "tests/test_r5_offline_sync.py::test_retry_cap_bounded_history_and_invalid_receipt[file]",
+              "preview_truncated": false,
+              "utf8_sha256": "c49eb4318b31381fd445fe448712973b431ac6fc4a3913ac1e53de82a4247077"
+            },
+            "module_status_counts": {
+              "tests/test_r5_multilingual_translation.py": 53,
+              "tests/test_r5_offline_sync.py": 19
+            }
+          },
+          {
+            "seconds": 18.811355,
+            "start_utc": "2026-10-10T19:51:07.8445752Z",
+            "end_utc": "2026-10-10T19:51:26.6559307Z",
+            "first_terminal_ordinal": 4897,
+            "last_terminal_ordinal": 4968,
+            "first_node": {
+              "preview": "tests/test_r4_registered_local_media.py::test_local_task_rejects_references_and_multiple_candidates[postgres]",
+              "preview_truncated": false,
+              "utf8_sha256": "331aa71c8db1e94d0e610a1ccd8b508e939b5e73aae8165b648cffc3e641fae1"
+            },
+            "last_node": {
+              "preview": "tests/test_r4_research_library.py::test_guard_failure_inside_adoption_transaction_rolls_back[file]",
+              "preview_truncated": false,
+              "utf8_sha256": "712fe4d6340c8216f954d1691fc961667b36731b888cc00dde97301faeb52caa"
+            },
+            "module_status_counts": {
+              "tests/test_r4_registered_local_media.py": 15,
+              "tests/test_r4_registered_media_mounted.py": 4,
+              "tests/test_r4_research_extract.py": 36,
+              "tests/test_r4_research_library.py": 17
+            }
+          }
+        ],
+        "boundary": "Timestamped progress chunks include inter-test overhead; the first includes collection/startup. No per-node duration is inferred."
+      },
+      "junit_timing": {
+        "status": "MISSING",
+        "per_case_durations": "UNKNOWN"
+      }
+    },
+    {
+      "job_id": 114296961431,
+      "name": "Backend execution / postgres / shard 0",
+      "conclusion": "cancelled",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961431",
+      "job_seconds": 3317.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Initialize containers",
+          "conclusion": "success",
+          "seconds": 11.0
+        },
+        {
+          "name": "Run actions/checkout@v4.2.2",
+          "conclusion": "success",
+          "seconds": 3.0
+        },
+        {
+          "name": "Select isolated pip download cache",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Run actions/setup-python@v5.6.0",
+          "conclusion": "success",
+          "seconds": 11.0
+        },
+        {
+          "name": "Prepare isolated checkout and receipt",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Keep V2 backend state inside its owned checkout",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Install backend dependencies",
+          "conclusion": "success",
+          "seconds": 19.0
+        },
+        {
+          "name": "Install real media decoding and assembly tools",
+          "conclusion": "success",
+          "seconds": 18.0
+        },
+        {
+          "name": "Install matching PostgreSQL recovery tools",
+          "conclusion": "success",
+          "seconds": 2.0
+        },
+        {
+          "name": "Initialize disposable PostgreSQL",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Prepare pinned OFL CJK font and receipt",
+          "conclusion": "success",
+          "seconds": 20.0
+        },
+        {
+          "name": "Fail-closed coverage infrastructure self-tests",
+          "conclusion": "success",
+          "seconds": 14.0
+        },
+        {
+          "name": "Complete backend collection / assigned shard execution",
+          "conclusion": "cancelled",
+          "seconds": 3212.0
+        },
+        {
+          "name": "Summarize exact revision and test counts",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Upload backend receipts",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Post Run actions/setup-python@v5.6.0",
+          "conclusion": "skipped",
+          "seconds": 0.0
+        },
+        {
+          "name": "Post Run actions/checkout@v4.2.2",
+          "conclusion": "success",
+          "seconds": 0.0
+        },
+        {
+          "name": "Stop containers",
+          "conclusion": "success",
+          "seconds": 1.0
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success",
+          "seconds": 0.0
+        }
+      ],
+      "budget_seconds": 3300,
+      "receipt_status": "OBSERVED",
+      "identity": {
+        "checked_out_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+        "source_tree": "01e338ea26b120f364919a94bc42ad14feb9d448",
+        "event_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+        "run_id": "38080743645",
+        "run_attempt": "1",
+        "repository": "1785235376-blip/AI-Novel-Studio",
+        "python_version": "3.12.9",
+        "platform": "linux",
+        "source_manifest_sha256": "5274119f03e054ee71d35eb39fcf00dd65454efd555d0d4c66501c96eb52a608",
+        "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+      },
+      "receipt_complete": false,
+      "pytest_exitstatus": null,
+      "artifact_id": 11680904502,
+      "events": {
+        "assigned_nodes": 5713,
+        "event_rows": 15111,
+        "observed_event_nodes": 5664,
+        "nodes_with_teardown_event": 5663,
+        "unobserved_nodes": 49,
+        "observed_call_outcomes": {
+          "passed": 3784
+        },
+        "observed_setup_skips": 1879,
+        "failed_events": [],
+        "last_observed_node": {
+          "preview": "tests/test_v2_text_execution_receipts.py::test_new_contract_cannot_be_stripped_or_source_version_rewritten[postgres-binding_marker]",
+          "preview_truncated": false,
+          "utf8_sha256": "22a77f93294694e8ec741dada2f6f05b816e6ffe5180dff79ceda4e079396ff0"
+        },
+        "boundary": "Event observations only; teardown presence is not gate acceptance."
+      },
+      "progress_timing": {
+        "matched_terminal_statuses": 5616,
+        "unmatched_tail_statuses": 47,
+        "largest_windows": [
+          {
+            "seconds": 342.262464,
+            "start_utc": "2026-10-10T19:46:05.5122358Z",
+            "end_utc": "2026-10-10T19:51:47.7746996Z",
+            "first_terminal_ordinal": 721,
+            "last_terminal_ordinal": 792,
+            "first_node": {
+              "preview": "tests/test_local_interop_desktop_runtime.py::test_every_permission_revoke_stops_only_its_session_and_fences_previews[postgres-diagnostics]",
+              "preview_truncated": false,
+              "utf8_sha256": "1984a3b6bc085adc1fd9c57d8593486c9dfd073d02659e65581a5086d778d5dc"
+            },
+            "last_node": {
+              "preview": "tests/test_lore_context_contract.py::test_file_and_postgres_lore_context_match",
+              "preview_truncated": false,
+              "utf8_sha256": "e887bfa3b6100e652205f37a1864c0a548c2dc00743afe19c4c7e1cde504b336"
+            },
+            "module_status_counts": {
+              "tests/test_local_interop_desktop_runtime.py": 17,
+              "tests/test_local_interop_host.py": 43,
+              "tests/test_local_interop_tcp.py": 9,
+              "tests/test_lore_context_contract.py": 3
+            }
+          },
+          {
+            "seconds": 213.616171,
+            "start_utc": "2026-10-10T20:11:02.8064099Z",
+            "end_utc": "2026-10-10T20:14:36.4225808Z",
+            "first_terminal_ordinal": 3673,
+            "last_terminal_ordinal": 3744,
+            "first_node": {
+              "preview": "tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[file-packaged-on-/api-nonmember]",
+              "preview_truncated": false,
+              "utf8_sha256": "fd2a5b01eda9e1f047c39cde25b35836b81421c0cb66c90977ca91b7c0950932"
+            },
+            "last_node": {
+              "preview": "tests/test_shared_project_route_authority.py::test_every_declared_original_route_policy_uses_real_authority[postgres-collaboration-v1-/api/v1-reader]",
+              "preview_truncated": false,
+              "utf8_sha256": "144d532abc7b3ee711c4c173a28861c0ba37059f446a01888b95ec26e44e818c"
+            },
+            "module_status_counts": {
+              "tests/test_shared_project_route_authority.py": 72
+            }
+          },
+          {
+            "seconds": 161.644636,
+            "start_utc": "2026-10-10T20:15:13.1225891Z",
+            "end_utc": "2026-10-10T20:17:54.7672255Z",
+            "first_terminal_ordinal": 3817,
+            "last_terminal_ordinal": 3888,
+            "first_node": {
+              "preview": "tests/test_shared_project_route_authority.py::test_existing_chapter_authority_cas_and_history_remain_valid[file-packaged-v1-/api-member]",
+              "preview_truncated": false,
+              "utf8_sha256": "935377f2b9e68f8bc7edb7281d6ff01828f87e8f6da26f8143653f9c77231eb6"
+            },
+            "last_node": {
+              "preview": "tests/test_structured_record_cas.py::test_original_record_create_compare_swap_and_no_private_conflict_payload[postgres-locations-harbor-payload1]",
+              "preview_truncated": false,
+              "utf8_sha256": "65f9d9c3607eb2e439b1a5f66316337cf59a0cf41fc8f27d8b8d539c42b5b084"
+            },
+            "module_status_counts": {
+              "tests/test_shared_project_route_authority.py": 47,
+              "tests/test_stability_v04.py": 2,
+              "tests/test_stable_identity_foundation.py": 19,
+              "tests/test_structured_record_cas.py": 4
+            }
+          },
+          {
+            "seconds": 154.728555,
+            "start_utc": "2026-10-10T20:01:32.6680457Z",
+            "end_utc": "2026-10-10T20:04:07.3966001Z",
+            "first_terminal_ordinal": 2593,
+            "last_terminal_ordinal": 2664,
+            "first_node": {
+              "preview": "tests/test_r4_story_simulator_model.py::test_original_production_candidate_flow_exact_character_request_manual_selection_and_review[postgres-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "cf26fa94ddb851efae9b44a0c2a2bb564bdb6d22feba05c6cb89bc29917584ac"
+            },
+            "last_node": {
+              "preview": "tests/test_r4_story_simulator_mounted.py::test_mounted_default_off_dependency_v1_and_no_unconfigured_model[file-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "7dee784bbb855f5b3f156fa99237a01ba9b1c339e7086ad0bbaaabe8c43a0542"
+            },
+            "module_status_counts": {
+              "tests/test_r4_story_simulator_model.py": 69,
+              "tests/test_r4_story_simulator_mounted.py": 3
+            }
+          },
+          {
+            "seconds": 138.662477,
+            "start_utc": "2026-10-10T20:18:25.3774542Z",
+            "end_utc": "2026-10-10T20:20:44.0399318Z",
+            "first_terminal_ordinal": 3961,
+            "last_terminal_ordinal": 4032,
+            "first_node": {
+              "preview": "tests/test_surface_adapter_capacity.py::test_bounded_change_preflight_never_mutates_argument_on_failure",
+              "preview_truncated": false,
+              "utf8_sha256": "b49ab82c4afda03a4724c8ec11dceb4b33e4658c2537dcf0a32d2140b0343eec"
+            },
+            "last_node": {
+              "preview": "tests/test_surface_adapter_projection.py::test_late_cancel_authority_revocation_rolls_back_original_receipt[file-/api-feature-visual_identity]",
+              "preview_truncated": false,
+              "utf8_sha256": "b544bb8b739433fca10b21ad01fd47983926cbb3b4087aee2c1f9706f81a857a"
+            },
+            "module_status_counts": {
+              "tests/test_surface_adapter_capacity.py": 20,
+              "tests/test_surface_adapter_projection.py": 52
+            }
+          },
+          {
+            "seconds": 134.80134,
+            "start_utc": "2026-10-10T19:53:15.1171342Z",
+            "end_utc": "2026-10-10T19:55:29.9184745Z",
+            "first_terminal_ordinal": 1297,
+            "last_terminal_ordinal": 1368,
+            "first_node": {
+              "preview": "tests/test_post_interop_revision_model.py::test_actual_membership_revocation_and_cross_branch_cannot_read_model_sources[postgres-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "9fcd623cfb9e58d484b0b433adf01d2589b2c1131642390338124b333d68db24"
+            },
+            "last_node": {
+              "preview": "tests/test_post_interop_style_model.py::test_style_strict_output_rejects_scores_duplicates_fences_and_coercion[{\"opinions\":NaN}]",
+              "preview_truncated": false,
+              "utf8_sha256": "444f5ab702b449385da583ec05234da9cfc42ed883204cd9096d1bdb44185bd2"
+            },
+            "module_status_counts": {
+              "tests/test_post_interop_revision_model.py": 6,
+              "tests/test_post_interop_scene_mind.py": 21,
+              "tests/test_post_interop_shared_universe.py": 13,
+              "tests/test_post_interop_structured_search.py": 11,
+              "tests/test_post_interop_style_judge.py": 9,
+              "tests/test_post_interop_style_judge_mounted.py": 4,
+              "tests/test_post_interop_style_model.py": 8
+            }
+          },
+          {
+            "seconds": 114.13525,
+            "start_utc": "2026-10-10T20:23:53.6556656Z",
+            "end_utc": "2026-10-10T20:25:47.7909159Z",
+            "first_terminal_ordinal": 4321,
+            "last_terminal_ordinal": 4392,
+            "first_node": {
+              "preview": "tests/test_surface_freeze_media_engine_adapters.py::test_adapter_exception_never_leaks_provider_text_to_http_or_task[file-StaleSourceError]",
+              "preview_truncated": false,
+              "utf8_sha256": "170f39ebd31961c256b3e23c9af27770b631ad657bf89c13687f8c52f9a03034"
+            },
+            "last_node": {
+              "preview": "tests/test_surface_pending_canon_review.py::test_actual_main_canon_recovery_and_cancel_routes[file-/api/v1-cancel-recovery-False]",
+              "preview_truncated": false,
+              "utf8_sha256": "e1b3bdab84e580f0ebe1b2365252d0931841bd97c53b0e50f957306f73306fe8"
+            },
+            "module_status_counts": {
+              "tests/test_surface_freeze_media_engine_adapters.py": 12,
+              "tests/test_surface_hybrid_read_authority.py": 8,
+              "tests/test_surface_interop_branch_authority.py": 19,
+              "tests/test_surface_pending_canon_review.py": 33
+            }
+          },
+          {
+            "seconds": 103.759282,
+            "start_utc": "2026-10-10T20:32:42.6209100Z",
+            "end_utc": "2026-10-10T20:34:26.3801924Z",
+            "first_terminal_ordinal": 5113,
+            "last_terminal_ordinal": 5184,
+            "first_node": {
+              "preview": "tests/test_v2_discovery_scope.py::test_mutation_late_guard_blocks_atomic_replace_and_keeps_saved_memory",
+              "preview_truncated": false,
+              "utf8_sha256": "6ced1feb497e35a49775182c3c6f310f4fbe0918e62885efaef05539c7cb5ae4"
+            },
+            "last_node": {
+              "preview": "tests/test_v2_graph_text_assets_api.py::test_existing_manual_refresh_stays_current_across_completion_then_returns_one_asset[file-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "524a46ab3cd7e98a6e08caf289fd5b05048f640f9643b7f03471cd34034d7af6"
+            },
+            "module_status_counts": {
+              "tests/test_v2_discovery_scope.py": 9,
+              "tests/test_v2_generation_incarnation.py": 7,
+              "tests/test_v2_generic_script.py": 20,
+              "tests/test_v2_graph_text_assets.py": 22,
+              "tests/test_v2_graph_text_assets_api.py": 14
+            }
+          },
+          {
+            "seconds": 81.174229,
+            "start_utc": "2026-10-10T20:31:00.0836860Z",
+            "end_utc": "2026-10-10T20:32:21.2579154Z",
+            "first_terminal_ordinal": 4969,
+            "last_terminal_ordinal": 5040,
+            "first_node": {
+              "preview": "tests/test_v2_creative_workflows.py::test_model_source_update_blocks_review_and_reused_preview[postgres-/api]",
+              "preview_truncated": false,
+              "utf8_sha256": "955efe9dfc2148e62088718871a36f3d43c4be92215bbe34a37b8895f767a6d2"
+            },
+            "last_node": {
+              "preview": "tests/test_v2_discovery_onboarding_api.py::test_scope_digest_is_an_exact_closed_64_character_receipt[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]",
+              "preview_truncated": false,
+              "utf8_sha256": "d91a8692c7013d0d80125179d60ea6dd585b319e20c1ac7dfb1c2d8751780c20"
+            },
+            "module_status_counts": {
+              "tests/test_v2_creative_workflows.py": 24,
+              "tests/test_v2_discovery_browser_fixture.py": 5,
+              "tests/test_v2_discovery_file_browser_fixture.py": 4,
+              "tests/test_v2_discovery_file_projection.py": 7,
+              "tests/test_v2_discovery_host_authority.py": 23,
+              "tests/test_v2_discovery_onboarding_api.py": 9
+            }
+          },
+          {
+            "seconds": 78.462731,
+            "start_utc": "2026-10-10T20:20:44.0399318Z",
+            "end_utc": "2026-10-10T20:22:02.5026625Z",
+            "first_terminal_ordinal": 4033,
+            "last_terminal_ordinal": 4104,
+            "first_node": {
+              "preview": "tests/test_surface_adapter_projection.py::test_late_cancel_authority_revocation_rolls_back_original_receipt[file-/api/v1-role-visual_identity]",
+              "preview_truncated": false,
+              "utf8_sha256": "0af140c38bf9d9a57ea86ed62d09b3d7e163bf7fe9954e57bedaba9ad4f940d2"
+            },
+            "last_node": {
+              "preview": "tests/test_surface_branch_manuscript.py::test_fork_rich_snapshot_source_drift_and_cancel_are_real[file]",
+              "preview_truncated": false,
+              "utf8_sha256": "98a857f233e937c4c3b5076be5d149d762aae52d45b3daca324faf860b0a7372"
+            },
+            "module_status_counts": {
+              "tests/test_surface_adapter_projection.py": 33,
+              "tests/test_surface_api_catalog.py": 2,
+              "tests/test_surface_branch_generation_stream.py": 34,
+              "tests/test_surface_branch_manuscript.py": 3
+            }
+          },
+          {
+            "seconds": 74.822283,
+            "start_utc": "2026-10-10T19:44:50.6899528Z",
+            "end_utc": "2026-10-10T19:46:05.5122358Z",
+            "first_terminal_ordinal": 649,
+            "last_terminal_ordinal": 720,
+            "first_node": {
+              "preview": "tests/test_local_interop_contracts.py::test_no_credential_shaped_text_is_transferred[postgresql://user:password@localhost/database]",
+              "preview_truncated": false,
+              "utf8_sha256": "fadc80e2abd952a592caa57d34b24988e53817779b6db0b9e5a62130765b2328"
+            },
+            "last_node": {
+              "preview": "tests/test_local_interop_desktop_runtime.py::test_every_permission_revoke_stops_only_its_session_and_fences_previews[postgres-app_status]",
+              "preview_truncated": false,
+              "utf8_sha256": "0e220a4d53ce88b8902170cfb334bf228c927e6241f54b49a23013a0f36f6af8"
+            },
+            "module_status_counts": {
+              "tests/test_local_interop_contracts.py": 25,
+              "tests/test_local_interop_cross_process_host.py": 1,
+              "tests/test_local_interop_desktop_acceptance.py": 3,
+              "tests/test_local_interop_desktop_api_projection_races.py": 2,
+              "tests/test_local_interop_desktop_core.py": 34,
+              "tests/test_local_interop_desktop_runtime.py": 7
+            }
+          },
+          {
+            "seconds": 73.558429,
+            "start_utc": "2026-10-10T20:29:46.5252575Z",
+            "end_utc": "2026-10-10T20:31:00.0836860Z",
+            "first_terminal_ordinal": 4897,
+            "last_terminal_ordinal": 4968,
+            "first_node": {
+              "preview": "tests/test_v2_creative_graph_execution.py::test_reviewed_local_cache_never_reuses_approval_or_foreign_actor[file]",
+              "preview_truncated": false,
+              "utf8_sha256": "5959189f38bb1a83b3a91deb01843b5ec358d1aa72b2fc5eaf786c817e9775f4"
+            },
+            "last_node": {
+              "preview": "tests/test_v2_creative_workflows.py::test_model_restart_loses_execution_authority_and_never_replays[postgres-/api/v1]",
+              "preview_truncated": false,
+              "utf8_sha256": "01e8e651dfb7465e3ec3220ba691f5c74b9bc43db0eb160cfc986fda1eb430b8"
+            },
+            "module_status_counts": {
+              "tests/test_v2_creative_graph_execution.py": 25,
+              "tests/test_v2_creative_graph_persistence.py": 6,
+              "tests/test_v2_creative_project_lifecycle.py": 10,
+              "tests/test_v2_creative_workflows.py": 31
+            }
+          }
+        ],
+        "boundary": "Timestamped progress chunks include inter-test overhead; the first includes collection/startup. No per-node duration is inferred."
+      },
+      "junit_timing": {
+        "status": "MISSING",
+        "per_case_durations": "UNKNOWN"
+      }
+    }
+  ],
+  "input_sha256": {
+    "artifact-11680904502/coverage-events.jsonl": "086ee4cd31447976f7473b223fecd6b8e7b2fa69606fa592d9f0dd97d13061bd",
+    "artifact-11680904502/coverage.json": "d2f0147a1fad45d0958bd141a012649dbb664af73804a7f19d6e23d044031e3b",
+    "artifact-11681130687/coverage-events.jsonl": "56a1698cd9d2e4a4552c52b89f3e054910857a626d5c440c1a194656e6c7d4aa",
+    "artifact-11681130687/coverage.json": "229826a27d8abace638a706e2e269c4db7e55ed5020d2043d118cdd3ad501215",
+    "artifact-11681925132/backend.xml": "0ea22462498eab3bd4484c64b063c6b25f795efe0ee7659c6704161b4568116e",
+    "artifact-11681925132/coverage-events.jsonl": "d2e7c8d14da02148b815b34dce02b5fef0bd89fe30c918715f24883fbf47585a",
+    "artifact-11681925132/coverage.json": "920e1d682ba23d617d552f0248742ef761bcec396857510363166b21a5da575b",
+    "artifacts-final.json": "d52266a52dcd6e61b6720dea5f5dcd322b58be74e5561513505ca0e1fdb63649",
+    "job-114296961374.log": "6052ee9a84763f3f4925e40f40b7100a7acb8874dc5c0ebb40457cd16ec2680c",
+    "job-114296961404.log": "46e00b11f5ebe8bf8da06ac8bb892135af2d0db0ff9085a0dcc87ba1c8fa2a78",
+    "job-114296961431.log": "f936bcf61f9feb18f3e393bbeb5f6e7b1d549506ae6747a29c7afad57b75bc29",
+    "jobs-final.json": "cccdabf8cd0582bf6819cd7b8b0d9103b137147900938a98fcda4458a2e01501",
+    "run-final.json": "d257078a3d8c09edadefd554c8c28e498abcdbf02581cd41c1b1547a6d38488d"
+  },
+  "limits": [
+    "Does not execute or replace the frozen coverage reconciler.",
+    "Does not merge push, PR, attempts or backend profiles.",
+    "No runtime is extrapolated from partial completion.",
+    "Cancellation and observed failed phases remain separate facts.",
+    "Input digests identify local archive bytes; this tool does not independently authenticate GitHub downloads."
+  ]
+}

@@ -1,0 +1,43 @@
+FFss                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_capability_does_not_mount_private_adaptation_without_host_authority[file-/api] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fee471ab320>, prefix='/api', base='/api/novels/r3-mount...ject at 0x7fee47928530>, creative_base='/api/novels/r3-mounted-bdec8af6766643c2a4257beec6a3c7ca/experimental/creative')
+
+    def test_capability_does_not_mount_private_adaptation_without_host_authority(creative_model):
+        e = creative_model
+        ordinary = checked(e.client.get(e.creative_base + '/capabilities'))
+        assert ordinary['enabled'] and ordinary['can_mutate']
+>       assert ordinary['source_adaptation'] == 'HOST_SESSION_REQUIRED'
+E       AssertionError: assert 'REVIEWED_LOCAL_MODEL' == 'HOST_SESSION_REQUIRED'
+E         
+E         - HOST_SESSION_REQUIRED
+E         + REVIEWED_LOCAL_MODEL
+
+tests/test_v2_source_adaptation.py:411: AssertionError
+_ test_capability_does_not_mount_private_adaptation_without_host_authority[file-/api/v1] _
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7fee45b448f0>, prefix='/api/v1', base='/api/v1/novels/r3...t at 0x7fee47928530>, creative_base='/api/v1/novels/r3-mounted-5c59c6da7c964b3d80eff0078e34d2cb/experimental/creative')
+
+    def test_capability_does_not_mount_private_adaptation_without_host_authority(creative_model):
+        e = creative_model
+        ordinary = checked(e.client.get(e.creative_base + '/capabilities'))
+        assert ordinary['enabled'] and ordinary['can_mutate']
+>       assert ordinary['source_adaptation'] == 'HOST_SESSION_REQUIRED'
+E       AssertionError: assert 'REVIEWED_LOCAL_MODEL' == 'HOST_SESSION_REQUIRED'
+E         
+E         - HOST_SESSION_REQUIRED
+E         + REVIEWED_LOCAL_MODEL
+
+tests/test_v2_source_adaptation.py:411: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-adaptation-host-api-red.xml -
+=========================== short test summary info ============================
+FAILED tests/test_v2_source_adaptation.py::test_capability_does_not_mount_private_adaptation_without_host_authority[file-/api]
+FAILED tests/test_v2_source_adaptation.py::test_capability_does_not_mount_private_adaptation_without_host_authority[file-/api/v1]
+2 failed, 2 skipped, 100 deselected, 1 warning in 7.42s

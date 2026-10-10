@@ -1,0 +1,2133 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-10-10T20:40:05.002351+00:00",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "branch": "feature/v2-narrative-platform",
+  "draft_pr": 47,
+  "published_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+  "published_parent": "c491d1b0227a877eaa5bad7651ed22ba67463439",
+  "published_tree": "01e338ea26b120f364919a94bc42ad14feb9d448",
+  "pr_actual_checkout_event_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+  "pr_merge_tree": "01e338ea26b120f364919a94bc42ad14feb9d448",
+  "runs": [
+    {
+      "id": 38080738263,
+      "name": "Cloud CI",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T19:40:35Z",
+      "updated_at": "2026-10-10T20:36:21Z",
+      "head_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263",
+      "expected_workflow_checkout_event_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+      "jobs": [
+        {
+          "id": 114296945473,
+          "name": "V2 / Creative live workflows and geometry",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945473",
+          "started_at": "2026-10-10T19:40:37Z",
+          "completed_at": "2026-10-10T19:49:05Z",
+          "wall_seconds": 508.0,
+          "evidence_classification": "FAILED_OBSERVED",
+          "failed_or_cancelled_steps": [
+            "V2 live creative workflows (real File and HTTP; mock providers)"
+          ],
+          "skipped_steps": [
+            "Post Run actions/setup-python@v5.6.0",
+            "Post Run actions/setup-node@v4.4.0"
+          ],
+          "log": {
+            "path": "job-114296945473.log",
+            "present": true,
+            "bytes": 99401,
+            "sha256": "0294092c4930443c74935102f773eb53cea844e32bb1ccf3a0a598b9eedc841b"
+          },
+          "error_lines": [
+            "2026-10-10T19:48:38.5426011Z ##[error]Process completed with exit code 1."
+          ]
+        },
+        {
+          "id": 114296945573,
+          "name": "Frontend / unit-type-build-tokens",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945573",
+          "started_at": "2026-10-10T19:40:37Z",
+          "completed_at": "2026-10-10T20:00:23Z",
+          "wall_seconds": 1186.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [
+            "Upload source-labelled PNG evidence part 3",
+            "Upload source-labelled PNG evidence part 4"
+          ],
+          "log": {
+            "path": "job-114296945573.log",
+            "present": true,
+            "bytes": 301565,
+            "sha256": "ff2c2745958ef2e62944a1ea89f630b0a669cd519e3e0715e82e6945f6e13eb1"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296945609,
+          "name": "Backend execution / original File TCP",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945609",
+          "started_at": "2026-10-10T19:40:38Z",
+          "completed_at": "2026-10-10T19:42:25Z",
+          "wall_seconds": 107.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296945609.log",
+            "present": true,
+            "bytes": 57058,
+            "sha256": "e1cb8de5e5c9feba696ecaef29a8abcdb629c528961f9652f91a379339630614"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296945610,
+          "name": "V2 / Independent studio live media",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945610",
+          "started_at": "2026-10-10T19:40:38Z",
+          "completed_at": "2026-10-10T19:45:13Z",
+          "wall_seconds": 275.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296945610.log",
+            "present": true,
+            "bytes": 140761,
+            "sha256": "1b77a8d8c696293260178ccd2ef33381ac5f27e94e5b5483350c96ebeac78002"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296945633,
+          "name": "Windows / Host compile and native contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945633",
+          "started_at": "2026-10-10T19:40:37Z",
+          "completed_at": "2026-10-10T19:43:15Z",
+          "wall_seconds": 158.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296945633.log",
+            "present": true,
+            "bytes": 64242,
+            "sha256": "d44ceb374ec10358ceed2b682c7eca11ce521eb2f1d01088d6479eab6a813459"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296945651,
+          "name": "Backend execution / file / shard 0",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945651",
+          "started_at": "2026-10-10T19:40:37Z",
+          "completed_at": "2026-10-10T20:01:07Z",
+          "wall_seconds": 1230.0,
+          "evidence_classification": "CANCELLED / INCOMPLETE_HOSTED_CI",
+          "file_original_event_observed_assertion_failure": false,
+          "failed_or_cancelled_steps": [
+            "Complete backend collection / assigned shard execution"
+          ],
+          "skipped_steps": [
+            "Install matching PostgreSQL recovery tools",
+            "Initialize disposable PostgreSQL",
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "log": {
+            "path": "job-114296945651.log",
+            "present": true,
+            "bytes": 141582,
+            "sha256": "736b0728e40b82c85bc248b4cc9bae222cf4cb04d51c58b687fad382e04b1f06"
+          },
+          "error_lines": [
+            "2026-10-10T20:00:50.4645612Z ##[error]The operation was canceled."
+          ]
+        },
+        {
+          "id": 114296945687,
+          "name": "Backend execution / postgres / shard 1",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945687",
+          "started_at": "2026-10-10T19:40:38Z",
+          "completed_at": "2026-10-10T20:32:18Z",
+          "wall_seconds": 3100.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296945687.log",
+            "present": true,
+            "bytes": 237804,
+            "sha256": "dcce50598a5737407e669e9a9a1e5e45073c1052ce634f0bedb885a67a1127fe"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296945710,
+          "name": "Backend execution / postgres / shard 0",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945710",
+          "started_at": "2026-10-10T19:40:38Z",
+          "completed_at": "2026-10-10T20:35:56Z",
+          "wall_seconds": 3318.0,
+          "evidence_classification": "CANCELLED / INCOMPLETE_HOSTED_CI",
+          "failed_or_cancelled_steps": [
+            "Complete backend collection / assigned shard execution"
+          ],
+          "skipped_steps": [
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "log": {
+            "path": "job-114296945710.log",
+            "present": true,
+            "bytes": 166091,
+            "sha256": "6af80e8983f819ef42f0cbde7868c43910655058355e237e27b3a3df47c25372"
+          },
+          "error_lines": [
+            "2026-10-10T20:35:50.7776312Z ##[error]The operation was canceled."
+          ],
+          "additional_evidence_classification": "FAILED_OBSERVED_CALL",
+          "observed_failed_call": "tests/test_v2_graph_text_assets.py::test_manual_refresh_completion_boundary_requires_archive_before_review[postgres-settling]"
+        },
+        {
+          "id": 114296945746,
+          "name": "Windows / Fresh base and acceptance package",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114296945746",
+          "started_at": "2026-10-10T19:40:37Z",
+          "completed_at": "2026-10-10T19:45:00Z",
+          "wall_seconds": 263.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296945746.log",
+            "present": true,
+            "bytes": 89795,
+            "sha256": "e02358cbb63807183b8e998f2732f3b1ab8cc1e1ef6b3c494eeb12e9d14ad0b4"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114307655555,
+          "name": "Backend / file",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114307655555",
+          "started_at": "2026-10-10T20:35:58Z",
+          "completed_at": "2026-10-10T20:36:19Z",
+          "wall_seconds": 21.0,
+          "evidence_classification": "FAILED_OBSERVED",
+          "failed_or_cancelled_steps": [
+            "Require every execution job including original File TCP gate"
+          ],
+          "skipped_steps": [
+            "Download this attempt's exact backend shard receipts",
+            "Download this attempt's exact original TCP receipts",
+            "Validate provenance and create byte-identical aggregation copies",
+            "Require exact complete collection and successful outcomes in both profiles",
+            "Upload complete collected-coverage proof",
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "log": {
+            "path": "job-114307655555.log",
+            "present": true,
+            "bytes": 16172,
+            "sha256": "c1bc185db98e3af446b920dbfea477ee93be0199f6b0c6afea6744c3ee4ee843"
+          },
+          "error_lines": [
+            "2026-10-10T20:36:17.5427487Z ##[error]Process completed with exit code 1."
+          ]
+        },
+        {
+          "id": 114307655586,
+          "name": "Backend / postgres",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/job/114307655586",
+          "started_at": "2026-10-10T20:35:58Z",
+          "completed_at": "2026-10-10T20:36:20Z",
+          "wall_seconds": 22.0,
+          "evidence_classification": "FAILED_OBSERVED",
+          "failed_or_cancelled_steps": [
+            "Require every execution job including original File TCP gate"
+          ],
+          "skipped_steps": [
+            "Download this attempt's exact backend shard receipts",
+            "Download this attempt's exact original TCP receipts",
+            "Validate provenance and create byte-identical aggregation copies",
+            "Require exact complete collection and successful outcomes in both profiles",
+            "Upload complete collected-coverage proof",
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "log": {
+            "path": "job-114307655586.log",
+            "present": true,
+            "bytes": 16173,
+            "sha256": "690acf51c7e255c24bdec436f2016521ca2aabe6498d12a7b5445c05b7b86c74"
+          },
+          "error_lines": [
+            "2026-10-10T20:36:19.0591021Z ##[error]Process completed with exit code 1."
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11681660865,
+          "name": "backend-postgres-shard-0-899d40df5273413d987f9ee98d41a7405ed16d0a-attempt-1",
+          "size_in_bytes": 393208,
+          "digest": "sha256:9e1f265cf79b685c58251b4acd540908fc88585cbc805474e3a6ad865dc52792",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11681660865",
+          "downloaded": true,
+          "junit": {
+            "coverage-harness.xml": {
+              "tests": 174,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 174
+            }
+          },
+          "coverage": {
+            "schema_version": 1,
+            "scope": "backend",
+            "backend": "postgres",
+            "shard": {
+              "index": 0,
+              "count": 2
+            },
+            "inventory_digest": "8528c2dbc8d54180eb187ec24b0c828833cd17029a33a12e48b92fe3d56f95c8",
+            "pytest_exitstatus": null,
+            "complete": false,
+            "junit_filename": "backend.xml",
+            "inventory_count": 11417,
+            "assigned_count": 5713,
+            "collection_error_count": 0,
+            "validation_error_count": 0,
+            "junit_present": false,
+            "raw_events_are_not_final_test_counts": true
+          }
+        },
+        {
+          "id": 11681438504,
+          "name": "backend-postgres-shard-1-899d40df5273413d987f9ee98d41a7405ed16d0a-attempt-1",
+          "size_in_bytes": 708066,
+          "digest": "sha256:f02b7a79dabae675618c1fa2f55e338143feafbbbac13a7113641549f9ed34bb",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11681438504",
+          "downloaded": true,
+          "junit": {
+            "backend.xml": {
+              "tests": 5704,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 1961,
+              "passed": 3743
+            },
+            "coverage-harness.xml": {
+              "tests": 174,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 174
+            }
+          },
+          "coverage": {
+            "schema_version": 1,
+            "scope": "backend",
+            "backend": "postgres",
+            "shard": {
+              "index": 1,
+              "count": 2
+            },
+            "inventory_digest": "8528c2dbc8d54180eb187ec24b0c828833cd17029a33a12e48b92fe3d56f95c8",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "backend.xml",
+            "inventory_count": 11417,
+            "assigned_count": 5704,
+            "collection_error_count": 0,
+            "validation_error_count": 0,
+            "junit_present": true,
+            "raw_events_are_not_final_test_counts": true
+          }
+        },
+        {
+          "id": 11681145441,
+          "name": "frontend-899d40df5273413d987f9ee98d41a7405ed16d0a",
+          "size_in_bytes": 40788338,
+          "digest": "sha256:5ac2c11805461135a96f18770c8baa745f62349f9ab2e047619ee7494457d997",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11681145441",
+          "downloaded": false,
+          "boundary": "DUPLICATE_FRONTEND_FULL_PAYLOAD_NOT_DOWNLOADED"
+        },
+        {
+          "id": 11681065515,
+          "name": "frontend-png-2-899d40df5273413d987f9ee98d41a7405ed16d0a",
+          "size_in_bytes": 15711304,
+          "digest": "sha256:affcbf38565d4e44ad7dd552e00eadfa494a766f9d892a601105d1692e2a998b",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11681065515",
+          "downloaded": false,
+          "boundary": "LARGE_PNG_LEFT_REMOTE"
+        },
+        {
+          "id": 11680940968,
+          "name": "frontend-compact-899d40df5273413d987f9ee98d41a7405ed16d0a",
+          "size_in_bytes": 790122,
+          "digest": "sha256:75d8c76e3f9ec942e36dbc8a4145cb000340d90027217e81701186b7586142ab",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11680940968",
+          "downloaded": true,
+          "junit": {
+            "receipts/export-browser.xml": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 1
+            },
+            "receipts/functional-surface-browser.xml": {
+              "tests": 9,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 9
+            },
+            "receipts/geometry.xml": {
+              "tests": 9,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 9
+            },
+            "receipts/frontend.xml": {
+              "tests": 2436,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 8,
+              "passed": 2428
+            },
+            "receipts/business.xml": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 2
+            },
+            "receipts/r4-ux.xml": {
+              "tests": 63,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 63
+            },
+            "receipts/experimental.xml": {
+              "tests": 7,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 7
+            },
+            "receipts/branch-surface-browser.xml": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 1
+            }
+          }
+        },
+        {
+          "id": 11680875820,
+          "name": "windows-host-899d40df5273413d987f9ee98d41a7405ed16d0a",
+          "size_in_bytes": 698642,
+          "digest": "sha256:3126ab57b41c8276c8a801be2b3a5bca66399fb35c470deeeae24ec4b01ea350",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11680875820",
+          "downloaded": false,
+          "boundary": "WINDOWS_BINARY_NOT_DOWNLOADED"
+        },
+        {
+          "id": 11680771116,
+          "name": "windows-acceptance-899d40df5273413d987f9ee98d41a7405ed16d0a",
+          "size_in_bytes": 163781600,
+          "digest": "sha256:ebf873e7f6490b004f1561cc103403629ed04802e5da8af0ba6aa5627351ddaf",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11680771116",
+          "downloaded": false,
+          "boundary": "WINDOWS_BINARY_NOT_DOWNLOADED"
+        },
+        {
+          "id": 11680666681,
+          "name": "v2-creative-browser-899d40df5273413d987f9ee98d41a7405ed16d0a-attempt-1",
+          "size_in_bytes": 28605605,
+          "digest": "sha256:b3857236dbc47d129dc504568ac1fbe7f4df6c00f6e56942c53d19c17001116a",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11680666681",
+          "downloaded": true,
+          "junit": {
+            "receipts/v2-creative-workbench.xml": {
+              "tests": 8,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 8
+            },
+            "receipts/v2-creative-live.xml": {
+              "tests": 11,
+              "failures": 0,
+              "errors": 2,
+              "skipped": 0,
+              "passed": 9
+            },
+            "receipts/v2-creative-live/junit.xml": {
+              "tests": 11,
+              "failures": 0,
+              "errors": 2,
+              "skipped": 0,
+              "passed": 9
+            }
+          }
+        },
+        {
+          "id": 11680466682,
+          "name": "windows-native-receipts-899d40df5273413d987f9ee98d41a7405ed16d0a",
+          "size_in_bytes": 582856,
+          "digest": "sha256:89dcfbf43cd49015d5e1ff9198e7ff5dd84a926880b79ee4be5ffea16416f918",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11680466682",
+          "downloaded": true,
+          "junit": {},
+          "native_smoke": {
+            "kind": "native-windows-base-smoke",
+            "status": "PASS",
+            "public_release": false,
+            "interactive_desktop": "NOT_RUN",
+            "user_acceptance": "NOT_RUN",
+            "command_count": 11,
+            "command_statuses": {
+              "PASS": 11
+            }
+          }
+        },
+        {
+          "id": 11680374881,
+          "name": "frontend-png-1-899d40df5273413d987f9ee98d41a7405ed16d0a",
+          "size_in_bytes": 24229669,
+          "digest": "sha256:4ecc58e48a7f22b2dae423b03a33f9efff1f918d8f742c217bb020f4a188292c",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11680374881",
+          "downloaded": false,
+          "boundary": "LARGE_PNG_LEFT_REMOTE"
+        },
+        {
+          "id": 11680283183,
+          "name": "v2-independent-media-899d40df5273413d987f9ee98d41a7405ed16d0a-attempt-1",
+          "size_in_bytes": 8688032,
+          "digest": "sha256:b8e3f084075fbc8c81edb3a9639c50be73b7b974292695ea9a5a2bb1f4c1e0d4",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11680283183",
+          "downloaded": true,
+          "junit": {
+            "v2-independent-live.xml": {
+              "tests": 17,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 17
+            },
+            "v2-independent-live/junit.xml": {
+              "tests": 17,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 17
+            }
+          }
+        },
+        {
+          "id": 11680273331,
+          "name": "backend-file-shard-0-899d40df5273413d987f9ee98d41a7405ed16d0a-attempt-1",
+          "size_in_bytes": 530050,
+          "digest": "sha256:dee6155c05296d8421c2337f1da76f5a429edbf641aebf51c7c81d8a8df74cfc",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11680273331",
+          "downloaded": true,
+          "junit": {
+            "coverage-harness.xml": {
+              "tests": 174,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 174
+            }
+          },
+          "coverage": {
+            "schema_version": 1,
+            "scope": "backend",
+            "backend": "file",
+            "shard": {
+              "index": 0,
+              "count": 1
+            },
+            "inventory_digest": "8528c2dbc8d54180eb187ec24b0c828833cd17029a33a12e48b92fe3d56f95c8",
+            "pytest_exitstatus": null,
+            "complete": false,
+            "junit_filename": "backend.xml",
+            "inventory_count": 11417,
+            "assigned_count": 11417,
+            "collection_error_count": 0,
+            "validation_error_count": 0,
+            "junit_present": false,
+            "raw_events_are_not_final_test_counts": true
+          }
+        },
+        {
+          "id": 11679993378,
+          "name": "backend-tcp-899d40df5273413d987f9ee98d41a7405ed16d0a-attempt-1",
+          "size_in_bytes": 175588,
+          "digest": "sha256:329cc82fa3b55581146334ccb7523f052ef70aa801dd78f20de2910b32ccf72f",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738263/artifacts/11679993378",
+          "downloaded": true,
+          "junit": {
+            "tcp-harness.xml": {
+              "tests": 110,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 110
+            },
+            "sync-tcp.xml": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 2
+            }
+          }
+        }
+      ],
+      "metadata": {
+        "run": "run-38080738263-terminal.json",
+        "jobs_and_steps": "run-38080738263-jobs-terminal.json",
+        "artifacts": "run-38080738263-artifacts-terminal.json"
+      }
+    },
+    {
+      "id": 38080743645,
+      "name": "Cloud CI",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T19:40:40Z",
+      "updated_at": "2026-10-10T20:37:37Z",
+      "head_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645",
+      "expected_workflow_checkout_event_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+      "jobs": [
+        {
+          "id": 114296961138,
+          "name": "V2 / Creative live workflows and geometry",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961138",
+          "started_at": "2026-10-10T19:40:43Z",
+          "completed_at": "2026-10-10T19:49:25Z",
+          "wall_seconds": 522.0,
+          "evidence_classification": "FAILED_OBSERVED",
+          "failed_or_cancelled_steps": [
+            "V2 live creative workflows (real File and HTTP; mock providers)"
+          ],
+          "skipped_steps": [
+            "Post Run actions/setup-python@v5.6.0",
+            "Post Run actions/setup-node@v4.4.0"
+          ],
+          "log": {
+            "path": "job-114296961138.log",
+            "present": true,
+            "bytes": 100931,
+            "sha256": "468c784254fab12cd54a25f67e6bc09c36d02cac48c676ca344073266456fe0c"
+          },
+          "error_lines": [
+            "2026-10-10T19:48:56.7180060Z ##[error]Process completed with exit code 1."
+          ]
+        },
+        {
+          "id": 114296961315,
+          "name": "Windows / Fresh base and acceptance package",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961315",
+          "started_at": "2026-10-10T19:40:42Z",
+          "completed_at": "2026-10-10T19:44:55Z",
+          "wall_seconds": 253.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296961315.log",
+            "present": true,
+            "bytes": 90731,
+            "sha256": "36a2001eec2e2e7bf2cde0fd22365dae5ebb888915daaaea19a1aeaa22f78a53"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296961329,
+          "name": "V2 / Independent studio live media",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961329",
+          "started_at": "2026-10-10T19:40:42Z",
+          "completed_at": "2026-10-10T19:44:45Z",
+          "wall_seconds": 243.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296961329.log",
+            "present": true,
+            "bytes": 141558,
+            "sha256": "ccf4fc2007bb690e8e64d6afe605a850871dde054004d8c4b4335c19d43e287b"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296961333,
+          "name": "Windows / Host compile and native contracts",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961333",
+          "started_at": "2026-10-10T19:41:33Z",
+          "completed_at": "2026-10-10T19:44:35Z",
+          "wall_seconds": 182.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296961333.log",
+            "present": true,
+            "bytes": 65281,
+            "sha256": "61f7d156951bd53f69f9bd2f338772c0c7d561386f309bd04d317fac1e3a49b5"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296961334,
+          "name": "Frontend / unit-type-build-tokens",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961334",
+          "started_at": "2026-10-10T19:40:43Z",
+          "completed_at": "2026-10-10T20:01:01Z",
+          "wall_seconds": 1218.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [
+            "Upload source-labelled PNG evidence part 3",
+            "Upload source-labelled PNG evidence part 4"
+          ],
+          "log": {
+            "path": "job-114296961334.log",
+            "present": true,
+            "bytes": 312342,
+            "sha256": "0187b389f0803c4ae27b794963be8192eaff1dd5e16541915f3d73e9351b5120"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296961337,
+          "name": "Backend execution / original File TCP",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961337",
+          "started_at": "2026-10-10T19:41:37Z",
+          "completed_at": "2026-10-10T19:43:22Z",
+          "wall_seconds": 105.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296961337.log",
+            "present": true,
+            "bytes": 57952,
+            "sha256": "c04d6fe78e1b34b200e639cc501347342a089c7f4e535b58e334ef2eeb2c90b0"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296961374,
+          "name": "Backend execution / postgres / shard 1",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961374",
+          "started_at": "2026-10-10T19:41:46Z",
+          "completed_at": "2026-10-10T20:35:05Z",
+          "wall_seconds": 3199.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296961374.log",
+            "present": true,
+            "bytes": 238675,
+            "sha256": "6052ee9a84763f3f4925e40f40b7100a7acb8874dc5c0ebb40457cd16ec2680c"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296961404,
+          "name": "Backend execution / file / shard 0",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961404",
+          "started_at": "2026-10-10T19:42:06Z",
+          "completed_at": "2026-10-10T20:02:30Z",
+          "wall_seconds": 1224.0,
+          "evidence_classification": "CANCELLED / INCOMPLETE_HOSTED_CI",
+          "file_original_event_observed_assertion_failure": false,
+          "failed_or_cancelled_steps": [
+            "Complete backend collection / assigned shard execution"
+          ],
+          "skipped_steps": [
+            "Install matching PostgreSQL recovery tools",
+            "Initialize disposable PostgreSQL",
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "log": {
+            "path": "job-114296961404.log",
+            "present": true,
+            "bytes": 143471,
+            "sha256": "46e00b11f5ebe8bf8da06ac8bb892135af2d0db0ff9085a0dcc87ba1c8fa2a78"
+          },
+          "error_lines": [
+            "2026-10-10T20:02:18.7309546Z ##[error]The operation was canceled."
+          ]
+        },
+        {
+          "id": 114296961431,
+          "name": "Backend execution / postgres / shard 0",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114296961431",
+          "started_at": "2026-10-10T19:41:54Z",
+          "completed_at": "2026-10-10T20:37:11Z",
+          "wall_seconds": 3317.0,
+          "evidence_classification": "CANCELLED / INCOMPLETE_HOSTED_CI",
+          "failed_or_cancelled_steps": [
+            "Complete backend collection / assigned shard execution"
+          ],
+          "skipped_steps": [
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "log": {
+            "path": "job-114296961431.log",
+            "present": true,
+            "bytes": 167375,
+            "sha256": "f936bcf61f9feb18f3e393bbeb5f6e7b1d549506ae6747a29c7afad57b75bc29"
+          },
+          "error_lines": [
+            "2026-10-10T20:37:07.1527986Z ##[error]The operation was canceled."
+          ]
+        },
+        {
+          "id": 114307902596,
+          "name": "Backend / file",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114307902596",
+          "started_at": "2026-10-10T20:37:13Z",
+          "completed_at": "2026-10-10T20:37:36Z",
+          "wall_seconds": 23.0,
+          "evidence_classification": "FAILED_OBSERVED",
+          "failed_or_cancelled_steps": [
+            "Require every execution job including original File TCP gate"
+          ],
+          "skipped_steps": [
+            "Download this attempt's exact backend shard receipts",
+            "Download this attempt's exact original TCP receipts",
+            "Validate provenance and create byte-identical aggregation copies",
+            "Require exact complete collection and successful outcomes in both profiles",
+            "Upload complete collected-coverage proof",
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "log": {
+            "path": "job-114307902596.log",
+            "present": true,
+            "bytes": 17062,
+            "sha256": "aecae1b0663a1ebdb796f083bc0e12be10a787e4570ea58fd679d6546877449c"
+          },
+          "error_lines": [
+            "2026-10-10T20:37:34.4259861Z ##[error]Process completed with exit code 1."
+          ]
+        },
+        {
+          "id": 114307902636,
+          "name": "Backend / postgres",
+          "status": "completed",
+          "conclusion": "failure",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/job/114307902636",
+          "started_at": "2026-10-10T20:37:13Z",
+          "completed_at": "2026-10-10T20:37:35Z",
+          "wall_seconds": 22.0,
+          "evidence_classification": "FAILED_OBSERVED",
+          "failed_or_cancelled_steps": [
+            "Require every execution job including original File TCP gate"
+          ],
+          "skipped_steps": [
+            "Download this attempt's exact backend shard receipts",
+            "Download this attempt's exact original TCP receipts",
+            "Validate provenance and create byte-identical aggregation copies",
+            "Require exact complete collection and successful outcomes in both profiles",
+            "Upload complete collected-coverage proof",
+            "Post Run actions/setup-python@v5.6.0"
+          ],
+          "log": {
+            "path": "job-114307902636.log",
+            "present": true,
+            "bytes": 17073,
+            "sha256": "cb41ab350028995e36204f2251210f743598f0edb3c75051e34a1e109422ce75"
+          },
+          "error_lines": [
+            "2026-10-10T20:37:33.5189833Z ##[error]Process completed with exit code 1."
+          ]
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11681925132,
+          "name": "backend-postgres-shard-1-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe-attempt-1",
+          "size_in_bytes": 708299,
+          "digest": "sha256:fba658c75ed6cbe5f12a73b0d0d632845a2fcfe3570fea14292e0ceaf2110de3",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11681925132",
+          "downloaded": true,
+          "junit": {
+            "backend.xml": {
+              "tests": 5704,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 1961,
+              "passed": 3743
+            },
+            "coverage-harness.xml": {
+              "tests": 174,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 174
+            }
+          },
+          "coverage": {
+            "schema_version": 1,
+            "scope": "backend",
+            "backend": "postgres",
+            "shard": {
+              "index": 1,
+              "count": 2
+            },
+            "inventory_digest": "8528c2dbc8d54180eb187ec24b0c828833cd17029a33a12e48b92fe3d56f95c8",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "backend.xml",
+            "inventory_count": 11417,
+            "assigned_count": 5704,
+            "collection_error_count": 0,
+            "validation_error_count": 0,
+            "junit_present": true,
+            "raw_events_are_not_final_test_counts": true
+          }
+        },
+        {
+          "id": 11681130687,
+          "name": "backend-file-shard-0-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe-attempt-1",
+          "size_in_bytes": 543029,
+          "digest": "sha256:97c3685afe0133ecab69de60dde36f32c0780f5e8ee32ea29b1f2a06592067bf",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11681130687",
+          "downloaded": true,
+          "junit": {
+            "coverage-harness.xml": {
+              "tests": 174,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 174
+            }
+          },
+          "coverage": {
+            "schema_version": 1,
+            "scope": "backend",
+            "backend": "file",
+            "shard": {
+              "index": 0,
+              "count": 1
+            },
+            "inventory_digest": "8528c2dbc8d54180eb187ec24b0c828833cd17029a33a12e48b92fe3d56f95c8",
+            "pytest_exitstatus": null,
+            "complete": false,
+            "junit_filename": "backend.xml",
+            "inventory_count": 11417,
+            "assigned_count": 11417,
+            "collection_error_count": 0,
+            "validation_error_count": 0,
+            "junit_present": false,
+            "raw_events_are_not_final_test_counts": true
+          }
+        },
+        {
+          "id": 11680904502,
+          "name": "backend-postgres-shard-0-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe-attempt-1",
+          "size_in_bytes": 398990,
+          "digest": "sha256:d6d4cc704a920e7615dab1a7b053edd8d904e9b0254da7621cd0c18b252be26e",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11680904502",
+          "downloaded": true,
+          "junit": {
+            "coverage-harness.xml": {
+              "tests": 174,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 174
+            }
+          },
+          "coverage": {
+            "schema_version": 1,
+            "scope": "backend",
+            "backend": "postgres",
+            "shard": {
+              "index": 0,
+              "count": 2
+            },
+            "inventory_digest": "8528c2dbc8d54180eb187ec24b0c828833cd17029a33a12e48b92fe3d56f95c8",
+            "pytest_exitstatus": null,
+            "complete": false,
+            "junit_filename": "backend.xml",
+            "inventory_count": 11417,
+            "assigned_count": 5713,
+            "collection_error_count": 0,
+            "validation_error_count": 0,
+            "junit_present": false,
+            "raw_events_are_not_final_test_counts": true
+          }
+        },
+        {
+          "id": 11680811028,
+          "name": "windows-acceptance-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+          "size_in_bytes": 163781731,
+          "digest": "sha256:740e2d436007fff53e9876afe97cfc3922370f2d27a4c31ebd5543482e4db1ad",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11680811028",
+          "downloaded": false,
+          "boundary": "WINDOWS_BINARY_NOT_DOWNLOADED"
+        },
+        {
+          "id": 11680706213,
+          "name": "v2-independent-media-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe-attempt-1",
+          "size_in_bytes": 8688414,
+          "digest": "sha256:bc2a8a03911a57af5d500c497edfdaad1d629bc6a1c68f0b2bd5f6019c6a790a",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11680706213",
+          "downloaded": true,
+          "junit": {
+            "v2-independent-live.xml": {
+              "tests": 17,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 17
+            },
+            "v2-independent-live/junit.xml": {
+              "tests": 17,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 17
+            }
+          }
+        },
+        {
+          "id": 11680647635,
+          "name": "frontend-png-2-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+          "size_in_bytes": 15749550,
+          "digest": "sha256:aab7ec0816c63e58f6b2e2bebe1074e2846bddcb557c8552e1761234aa010b77",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11680647635",
+          "downloaded": false,
+          "boundary": "LARGE_PNG_LEFT_REMOTE"
+        },
+        {
+          "id": 11680626373,
+          "name": "windows-native-receipts-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+          "size_in_bytes": 582880,
+          "digest": "sha256:7eaaab80113207fb14a6d60abc3e1bfb7ab01417a68575f1818daa9bda0dfb8a",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11680626373",
+          "downloaded": true,
+          "junit": {},
+          "native_smoke": {
+            "kind": "native-windows-base-smoke",
+            "status": "PASS",
+            "public_release": false,
+            "interactive_desktop": "NOT_RUN",
+            "user_acceptance": "NOT_RUN",
+            "command_count": 11,
+            "command_statuses": {
+              "PASS": 11
+            }
+          }
+        },
+        {
+          "id": 11680587625,
+          "name": "frontend-compact-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+          "size_in_bytes": 795539,
+          "digest": "sha256:025ca9b677ce552cb4c3cb711796f668303b1752ad4d7853983fed6bf0340206",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11680587625",
+          "downloaded": true,
+          "junit": {
+            "receipts/export-browser.xml": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 1
+            },
+            "receipts/functional-surface-browser.xml": {
+              "tests": 9,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 9
+            },
+            "receipts/geometry.xml": {
+              "tests": 9,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 9
+            },
+            "receipts/frontend.xml": {
+              "tests": 2436,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 8,
+              "passed": 2428
+            },
+            "receipts/business.xml": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 2
+            },
+            "receipts/r4-ux.xml": {
+              "tests": 63,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 63
+            },
+            "receipts/experimental.xml": {
+              "tests": 7,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 7
+            },
+            "receipts/branch-surface-browser.xml": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 1
+            }
+          }
+        },
+        {
+          "id": 11680572731,
+          "name": "frontend-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+          "size_in_bytes": 40867902,
+          "digest": "sha256:5b994f6c255d716fd7808cc1c564800ba69496c19e74b8395b3368159b16b9a8",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11680572731",
+          "downloaded": false,
+          "boundary": "DUPLICATE_FRONTEND_FULL_PAYLOAD_NOT_DOWNLOADED"
+        },
+        {
+          "id": 11680537809,
+          "name": "frontend-png-1-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+          "size_in_bytes": 24265529,
+          "digest": "sha256:897c7a9019e7298e2fb84c96d118791f1f66bdb5c45104554887dad02f046fac",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11680537809",
+          "downloaded": false,
+          "boundary": "LARGE_PNG_LEFT_REMOTE"
+        },
+        {
+          "id": 11680421674,
+          "name": "windows-host-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+          "size_in_bytes": 698623,
+          "digest": "sha256:ea00ff170c20e17869724513387da2839e21f110735f71489e20cb74c97e22fb",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11680421674",
+          "downloaded": false,
+          "boundary": "WINDOWS_BINARY_NOT_DOWNLOADED"
+        },
+        {
+          "id": 11679838636,
+          "name": "backend-tcp-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe-attempt-1",
+          "size_in_bytes": 175614,
+          "digest": "sha256:47fbff3e944e7509f90634a9166c644857eb6ffb8dfd4e1a1be0d69fe76deda1",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11679838636",
+          "downloaded": true,
+          "junit": {
+            "tcp-harness.xml": {
+              "tests": 110,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 110
+            },
+            "sync-tcp.xml": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 2
+            }
+          }
+        },
+        {
+          "id": 11679774651,
+          "name": "v2-creative-browser-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe-attempt-1",
+          "size_in_bytes": 28769010,
+          "digest": "sha256:f20eb0cc175ee56516ec0fa15520b69dbf6be16f76056a7aafae7f6871531c44",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743645/artifacts/11679774651",
+          "downloaded": true,
+          "junit": {
+            "receipts/v2-creative-workbench.xml": {
+              "tests": 8,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0,
+              "passed": 8
+            },
+            "receipts/v2-creative-live.xml": {
+              "tests": 11,
+              "failures": 0,
+              "errors": 2,
+              "skipped": 0,
+              "passed": 9
+            },
+            "receipts/v2-creative-live/junit.xml": {
+              "tests": 11,
+              "failures": 0,
+              "errors": 2,
+              "skipped": 0,
+              "passed": 9
+            }
+          }
+        }
+      ],
+      "metadata": {
+        "run": "run-38080743645-terminal.json",
+        "jobs_and_steps": "run-38080743645-jobs-terminal.json",
+        "artifacts": "run-38080743645-artifacts-terminal.json"
+      }
+    },
+    {
+      "id": 38080738340,
+      "name": "Local Interop V1",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T19:40:35Z",
+      "updated_at": "2026-10-10T19:49:55Z",
+      "head_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738340",
+      "expected_workflow_checkout_event_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+      "jobs": [
+        {
+          "id": 114296945915,
+          "name": "Protocol and local transport / file",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738340/job/114296945915",
+          "started_at": "2026-10-10T19:40:37Z",
+          "completed_at": "2026-10-10T19:41:31Z",
+          "wall_seconds": 54.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [
+            "Initialize disposable PostgreSQL contracts"
+          ],
+          "log": {
+            "path": "job-114296945915.log",
+            "present": true,
+            "bytes": 78557,
+            "sha256": "f10f9b1f3acf53576edf4853d5dc0b89670f3b4a3940ec1348af0055193c3c95"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296945987,
+          "name": "Protocol and local transport / postgres",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738340/job/114296945987",
+          "started_at": "2026-10-10T19:40:37Z",
+          "completed_at": "2026-10-10T19:49:54Z",
+          "wall_seconds": 557.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296945987.log",
+            "present": true,
+            "bytes": 95391,
+            "sha256": "62401564b43e49dbb82108e4be39329f4dd3b4eb05f7c1ab5efe83b00bb61a88"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296946150,
+          "name": "Windows current-user pipe reference (MOCK_ONLY)",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738340/job/114296946150",
+          "started_at": "2026-10-10T19:40:37Z",
+          "completed_at": "2026-10-10T19:41:44Z",
+          "wall_seconds": 67.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296946150.log",
+            "present": true,
+            "bytes": 24238,
+            "sha256": "07dfc13bcadae39ce07d909d86967cb95ad404b73a46e4a1f819140e32adeeea"
+          },
+          "error_lines": []
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11680133884,
+          "name": "local-interop-postgres-899d40df5273413d987f9ee98d41a7405ed16d0a",
+          "size_in_bytes": 41514,
+          "digest": "sha256:ed47f5103ce3e5d9dedfbbe674e9a55c9d0f8bd8a23ef49db7220b6ef873d84e",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738340/artifacts/11680133884",
+          "downloaded": true,
+          "junit": {
+            "local-interop.xml": {
+              "tests": 413,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 68,
+              "passed": 345
+            }
+          },
+          "coverage": {
+            "schema_version": 1,
+            "scope": "interop",
+            "backend": "postgres",
+            "shard": {
+              "index": 0,
+              "count": 1
+            },
+            "inventory_digest": "f568d79a6dddc66a51350e0d575e62e46e1baab861e90f8df91343a1ea478632",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "local-interop.xml",
+            "inventory_count": 413,
+            "assigned_count": 413,
+            "collection_error_count": 0,
+            "validation_error_count": 0,
+            "junit_present": true,
+            "raw_events_are_not_final_test_counts": true
+          },
+          "interop": {
+            "schema_version": 1,
+            "scope": "interop",
+            "status": "complete",
+            "identity": {
+              "checked_out_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+              "source_tree": "01e338ea26b120f364919a94bc42ad14feb9d448",
+              "event_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+              "run_id": "38080738340",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "5274119f03e054ee71d35eb39fcf00dd65454efd555d0d4c66501c96eb52a608",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "unique_collected_per_profile": 413,
+            "profiles": {
+              "postgres": {
+                "collected": 413,
+                "passed": 345,
+                "skipped": 68,
+                "shards": 1
+              }
+            },
+            "external_gates": {},
+            "evidence": "complete collected backend coverage; not monolithic PostgreSQL interaction equivalence"
+          }
+        },
+        {
+          "id": 11680003164,
+          "name": "local-interop-file-899d40df5273413d987f9ee98d41a7405ed16d0a",
+          "size_in_bytes": 41499,
+          "digest": "sha256:48f8f9fea5e068dba599f9d09211c48b38381ffaa57c2d5cabaee2999f87eadf",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738340/artifacts/11680003164",
+          "downloaded": true,
+          "junit": {
+            "local-interop.xml": {
+              "tests": 413,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 68,
+              "passed": 345
+            }
+          },
+          "coverage": {
+            "schema_version": 1,
+            "scope": "interop",
+            "backend": "file",
+            "shard": {
+              "index": 0,
+              "count": 1
+            },
+            "inventory_digest": "f568d79a6dddc66a51350e0d575e62e46e1baab861e90f8df91343a1ea478632",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "local-interop.xml",
+            "inventory_count": 413,
+            "assigned_count": 413,
+            "collection_error_count": 0,
+            "validation_error_count": 0,
+            "junit_present": true,
+            "raw_events_are_not_final_test_counts": true
+          },
+          "interop": {
+            "schema_version": 1,
+            "scope": "interop",
+            "status": "complete",
+            "identity": {
+              "checked_out_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+              "source_tree": "01e338ea26b120f364919a94bc42ad14feb9d448",
+              "event_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+              "run_id": "38080738340",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "5274119f03e054ee71d35eb39fcf00dd65454efd555d0d4c66501c96eb52a608",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "unique_collected_per_profile": 413,
+            "profiles": {
+              "file": {
+                "collected": 413,
+                "passed": 345,
+                "skipped": 68,
+                "shards": 1
+              }
+            },
+            "external_gates": {},
+            "evidence": "complete collected backend coverage; not monolithic PostgreSQL interaction equivalence"
+          }
+        },
+        {
+          "id": 11679863474,
+          "name": "named-pipe-reference-899d40df5273413d987f9ee98d41a7405ed16d0a",
+          "size_in_bytes": 1763,
+          "digest": "sha256:7b6703b9e0f43a6146faf900c850c2bb523a43f3c71ec56da8c7b20d1983703c",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080738340/artifacts/11679863474",
+          "downloaded": true,
+          "junit": {}
+        }
+      ],
+      "metadata": {
+        "run": "run-38080738340-terminal.json",
+        "jobs_and_steps": "run-38080738340-jobs-terminal.json",
+        "artifacts": "run-38080738340-artifacts-terminal.json"
+      }
+    },
+    {
+      "id": 38080743613,
+      "name": "Local Interop V1",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T19:40:40Z",
+      "updated_at": "2026-10-10T19:53:42Z",
+      "head_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743613",
+      "expected_workflow_checkout_event_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+      "jobs": [
+        {
+          "id": 114296960823,
+          "name": "Windows current-user pipe reference (MOCK_ONLY)",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743613/job/114296960823",
+          "started_at": "2026-10-10T19:40:43Z",
+          "completed_at": "2026-10-10T19:42:04Z",
+          "wall_seconds": 81.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296960823.log",
+            "present": true,
+            "bytes": 25743,
+            "sha256": "b2d2b6b80b88db5f1fd44c43b987e394e919b6c49808d2a6c1fb745f3e5fb2f0"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296960954,
+          "name": "Protocol and local transport / file",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743613/job/114296960954",
+          "started_at": "2026-10-10T19:40:42Z",
+          "completed_at": "2026-10-10T19:41:52Z",
+          "wall_seconds": 70.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [
+            "Initialize disposable PostgreSQL contracts"
+          ],
+          "log": {
+            "path": "job-114296960954.log",
+            "present": true,
+            "bytes": 79466,
+            "sha256": "c2031a69d662089200e7554d3073dcdeb159c45e831b5dcb4bb04bec55b7c2b9"
+          },
+          "error_lines": []
+        },
+        {
+          "id": 114296960975,
+          "name": "Protocol and local transport / postgres",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743613/job/114296960975",
+          "started_at": "2026-10-10T19:40:43Z",
+          "completed_at": "2026-10-10T19:53:41Z",
+          "wall_seconds": 778.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296960975.log",
+            "present": true,
+            "bytes": 96698,
+            "sha256": "581fee8bd99c4528b8411b7d7bdaec4977d1aa353ca91a2212ac68cb5ae288e8"
+          },
+          "error_lines": []
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11680339074,
+          "name": "local-interop-postgres-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+          "size_in_bytes": 41540,
+          "digest": "sha256:de7b15e1ddbe6a59199b34d40f8e2b7e6481c7fc03b60c37f45a74859beaf04e",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743613/artifacts/11680339074",
+          "downloaded": true,
+          "junit": {
+            "local-interop.xml": {
+              "tests": 413,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 68,
+              "passed": 345
+            }
+          },
+          "coverage": {
+            "schema_version": 1,
+            "scope": "interop",
+            "backend": "postgres",
+            "shard": {
+              "index": 0,
+              "count": 1
+            },
+            "inventory_digest": "f568d79a6dddc66a51350e0d575e62e46e1baab861e90f8df91343a1ea478632",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "local-interop.xml",
+            "inventory_count": 413,
+            "assigned_count": 413,
+            "collection_error_count": 0,
+            "validation_error_count": 0,
+            "junit_present": true,
+            "raw_events_are_not_final_test_counts": true
+          },
+          "interop": {
+            "schema_version": 1,
+            "scope": "interop",
+            "status": "complete",
+            "identity": {
+              "checked_out_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+              "source_tree": "01e338ea26b120f364919a94bc42ad14feb9d448",
+              "event_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+              "run_id": "38080743613",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "5274119f03e054ee71d35eb39fcf00dd65454efd555d0d4c66501c96eb52a608",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "unique_collected_per_profile": 413,
+            "profiles": {
+              "postgres": {
+                "collected": 413,
+                "passed": 345,
+                "skipped": 68,
+                "shards": 1
+              }
+            },
+            "external_gates": {},
+            "evidence": "complete collected backend coverage; not monolithic PostgreSQL interaction equivalence"
+          }
+        },
+        {
+          "id": 11680207965,
+          "name": "local-interop-file-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+          "size_in_bytes": 41523,
+          "digest": "sha256:3cf84d4a030b83d0f15842fb1f0e323b8bb5d069e85a0213b25870bd6f7a096d",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743613/artifacts/11680207965",
+          "downloaded": true,
+          "junit": {
+            "local-interop.xml": {
+              "tests": 413,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 68,
+              "passed": 345
+            }
+          },
+          "coverage": {
+            "schema_version": 1,
+            "scope": "interop",
+            "backend": "file",
+            "shard": {
+              "index": 0,
+              "count": 1
+            },
+            "inventory_digest": "f568d79a6dddc66a51350e0d575e62e46e1baab861e90f8df91343a1ea478632",
+            "pytest_exitstatus": 0,
+            "complete": true,
+            "junit_filename": "local-interop.xml",
+            "inventory_count": 413,
+            "assigned_count": 413,
+            "collection_error_count": 0,
+            "validation_error_count": 0,
+            "junit_present": true,
+            "raw_events_are_not_final_test_counts": true
+          },
+          "interop": {
+            "schema_version": 1,
+            "scope": "interop",
+            "status": "complete",
+            "identity": {
+              "checked_out_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+              "source_tree": "01e338ea26b120f364919a94bc42ad14feb9d448",
+              "event_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+              "run_id": "38080743613",
+              "run_attempt": "1",
+              "repository": "1785235376-blip/AI-Novel-Studio",
+              "python_version": "3.12.9",
+              "platform": "linux",
+              "source_manifest_sha256": "5274119f03e054ee71d35eb39fcf00dd65454efd555d0d4c66501c96eb52a608",
+              "dependency_digest": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e"
+            },
+            "unique_collected_per_profile": 413,
+            "profiles": {
+              "file": {
+                "collected": 413,
+                "passed": 345,
+                "skipped": 68,
+                "shards": 1
+              }
+            },
+            "external_gates": {},
+            "evidence": "complete collected backend coverage; not monolithic PostgreSQL interaction equivalence"
+          }
+        },
+        {
+          "id": 11679723985,
+          "name": "named-pipe-reference-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+          "size_in_bytes": 1761,
+          "digest": "sha256:b9b6c211bc129d194933b612fe9ce4cc163899ff15273d0d114e2f88991d06cc",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743613/artifacts/11679723985",
+          "downloaded": true,
+          "junit": {}
+        }
+      ],
+      "metadata": {
+        "run": "run-38080743613-terminal.json",
+        "jobs_and_steps": "run-38080743613-jobs-terminal.json",
+        "artifacts": "run-38080743613-artifacts-terminal.json"
+      }
+    },
+    {
+      "id": 38080743597,
+      "name": "Shared R123 evidence",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "run_attempt": 1,
+      "created_at": "2026-10-10T19:40:40Z",
+      "updated_at": "2026-10-10T19:41:37Z",
+      "head_sha": "899d40df5273413d987f9ee98d41a7405ed16d0a",
+      "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743597",
+      "expected_workflow_checkout_event_sha": "d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+      "jobs": [
+        {
+          "id": 114296960625,
+          "name": "Original c6f2126 RED / Python 3.12.9",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743597/job/114296960625",
+          "started_at": "2026-10-10T19:40:42Z",
+          "completed_at": "2026-10-10T19:41:36Z",
+          "wall_seconds": 54.0,
+          "evidence_classification": "PASSED_WITH_RECORDED_SCOPE",
+          "failed_or_cancelled_steps": [],
+          "skipped_steps": [],
+          "log": {
+            "path": "job-114296960625.log",
+            "present": true,
+            "bytes": 50162,
+            "sha256": "5b28507f599b0918a96dec3189a461a326e7a9b5dacba70522a2fb8f9c1bbf4a"
+          },
+          "error_lines": []
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 11679708940,
+          "name": "shared-r123-baseline-red-d059cf2cc3aa17e16ec77e7ed1c9edb1f4e45cfe",
+          "size_in_bytes": 4964,
+          "digest": "sha256:2dedc9d4aac6b1148e7893b1e2911e0f9da0e38b1cc01d6f2fa66a7c664767a8",
+          "expired": false,
+          "url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38080743597/artifacts/11679708940",
+          "downloaded": true,
+          "junit": {},
+          "baseline_red": {
+            "baseline_sha": "c6f2126115b52e17839d48efea091dc21ec08c61",
+            "baseline_tree": "eb80a9fa5f5aa6b8c2cbd0e1e67f7b7a48ac522f",
+            "result": "ALL_THREE_KNOWN_DEFECTS_REPRODUCED_RED",
+            "scripts_exit_zero_is_not_pass": true
+          }
+        }
+      ],
+      "metadata": {
+        "run": "run-38080743597-terminal.json",
+        "jobs_and_steps": "run-38080743597-jobs-terminal.json",
+        "artifacts": "run-38080743597-artifacts-terminal.json"
+      }
+    }
+  ],
+  "full_source_acceptance": false,
+  "independent_audit": "BLOCKED_HISTORICAL_NOT_PERFORMED_BY_COLLECTOR",
+  "mutations": {
+    "source": false,
+    "index": false,
+    "workflow": false,
+    "rerun": false,
+    "cancel": false,
+    "push": false,
+    "pr": false
+  },
+  "all_original_runs_terminal": true,
+  "status": "TERMINAL_FAILED_OBSERVED",
+  "evidence_integrity": {
+    "artifact_count": 23,
+    "zip_bytes": 81309866,
+    "member_count": 585,
+    "all_sizes_and_digests_match": true,
+    "all_zip_crc_pass": true,
+    "windows_binaries_downloaded": false,
+    "manifest": "artifact-integrity.json",
+    "trace_manifest": "trace-integrity.json",
+    "job_log_count": 29
+  },
+  "boundaries": [
+    "Complete source acceptance remains false; incomplete and failing suites are not replaced by local or Interop subsets.",
+    "File 1 shard / PostgreSQL 2 shards, original 20/55-minute limits, assertions, skips and strict joins are unchanged.",
+    "Cache hit/miss and timing observations do not establish causal speed benefits.",
+    "Creative browser two 180-second selectOption failures remain original FAILED_OBSERVED even when geometry and HTTP-only tests pass.",
+    "Local source-map bf51a4b0518e0fa0b7e25ad3fd00486799b845e87d6464cc9c5e9efca8764798 with 1756 sources: File183/145skip, PG117/91skip, UI2428/8oldskip, infrastructure324, build/token52, HTTP1 are separate focused results. First new fixture TypeScript failure retained.",
+    "Historical c491 local PostgreSQL16 failures and zero-job Cloud failure, and e6ff incomplete File/failed PostgreSQL settling remain FAILED_OBSERVED; none is reclassified capacity-only.",
+    "Local Chromium socket EPERM remains a local limit; hosted browser outcomes are separate.",
+    "R123 green workflow reproduces all three known defects RED on c6f2126, not current-source passing R123 audit.",
+    "Independent security review remains historically BLOCKED; this collector is read-only evidence work, not an independent audit.",
+    "No historical denied artifact 11615127270/11618169199 was requested. Check-suite annotation endpoint remains allowlist-blocked and was not retried or rerouted.",
+    "Windows package smoke is not interactive desktop, user acceptance, installer, signing, release or real-model acceptance.",
+    "Current push PostgreSQL shard0 also records a failed settling call before cancellation; this is distinct from historical e6ff evidence and cannot be classified capacity-only."
+  ],
+  "discovery": {
+    "run_count": 5,
+    "all_attempts": 1,
+    "collection": "runs-terminal.json"
+  },
+  "backend_execution_observations": [
+    {
+      "run_id": 38080738263,
+      "event": "push",
+      "artifact_id": 11681660865,
+      "backend": "postgres",
+      "shard": {
+        "index": 0,
+        "count": 2
+      },
+      "inventory": 11417,
+      "assigned": 5713,
+      "complete": false,
+      "junit_present": false,
+      "phase_outcomes": {
+        "setup/skipped": 1824,
+        "teardown/passed": 5446,
+        "setup/passed": 3622,
+        "call/passed": 3621,
+        "call/failed": 1
+      },
+      "failed_events": [
+        {
+          "nodeid": "tests/test_v2_graph_text_assets.py::test_manual_refresh_completion_boundary_requires_archive_before_review[postgres-settling]",
+          "when": "call",
+          "outcome": "failed",
+          "wasxfail": false,
+          "skip_reason": null
+        }
+      ],
+      "last_event": {
+        "nodeid": "tests/test_v2_model_requirements_api.py::test_advisory_routes_still_require_every_flag_and_acceptance_override[file-/api/v1-author_context_inspector_v2]",
+        "when": "teardown",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "classification": "CANCELLED / INCOMPLETE_HOSTED_CI",
+      "additional_classification": "FAILED_OBSERVED_CALL",
+      "traceback_boundary": "No final pytest traceback/JUnit generated before cancellation; failed node proven by original phase event."
+    },
+    {
+      "run_id": 38080738263,
+      "event": "push",
+      "artifact_id": 11681438504,
+      "backend": "postgres",
+      "shard": {
+        "index": 1,
+        "count": 2
+      },
+      "inventory": 11417,
+      "assigned": 5704,
+      "complete": true,
+      "junit_present": true,
+      "phase_outcomes": {
+        "setup/passed": 3743,
+        "call/passed": 3743,
+        "teardown/passed": 5704,
+        "setup/skipped": 1961
+      },
+      "failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api]",
+        "when": "teardown",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "classification": "COMPLETE_SHARD_PASS",
+      "traceback_boundary": null
+    },
+    {
+      "run_id": 38080738263,
+      "event": "push",
+      "artifact_id": 11680273331,
+      "backend": "file",
+      "shard": {
+        "index": 0,
+        "count": 1
+      },
+      "inventory": 11417,
+      "assigned": 11417,
+      "complete": false,
+      "junit_present": false,
+      "phase_outcomes": {
+        "setup/passed": 6114,
+        "call/passed": 6113,
+        "teardown/passed": 9329,
+        "setup/skipped": 3216
+      },
+      "failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_v2_ai_execution_runtime.py::test_unsettled_or_nonzero_original_ledger_cannot_promote_model_output[file-SETTLED-1]",
+        "when": "setup",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "classification": "CANCELLED / INCOMPLETE_HOSTED_CI",
+      "traceback_boundary": null
+    },
+    {
+      "run_id": 38080743645,
+      "event": "pull_request",
+      "artifact_id": 11681925132,
+      "backend": "postgres",
+      "shard": {
+        "index": 1,
+        "count": 2
+      },
+      "inventory": 11417,
+      "assigned": 5704,
+      "complete": true,
+      "junit_present": true,
+      "phase_outcomes": {
+        "setup/passed": 3743,
+        "call/passed": 3743,
+        "teardown/passed": 5704,
+        "setup/skipped": 1961
+      },
+      "failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_writer_room_comment_authority_seam.py::test_original_comment_callback_rechecks_real_membership_after_source_read_before_commit[postgres-/api]",
+        "when": "teardown",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "classification": "COMPLETE_SHARD_PASS",
+      "traceback_boundary": null
+    },
+    {
+      "run_id": 38080743645,
+      "event": "pull_request",
+      "artifact_id": 11681130687,
+      "backend": "file",
+      "shard": {
+        "index": 0,
+        "count": 1
+      },
+      "inventory": 11417,
+      "assigned": 11417,
+      "complete": false,
+      "junit_present": false,
+      "phase_outcomes": {
+        "setup/passed": 6535,
+        "call/passed": 6534,
+        "teardown/passed": 9952,
+        "setup/skipped": 3418
+      },
+      "failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_v2_creative_workflows.py::test_model_restart_loses_execution_authority_and_never_replays[file-/api]",
+        "when": "setup",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "classification": "CANCELLED / INCOMPLETE_HOSTED_CI",
+      "traceback_boundary": null
+    },
+    {
+      "run_id": 38080743645,
+      "event": "pull_request",
+      "artifact_id": 11680904502,
+      "backend": "postgres",
+      "shard": {
+        "index": 0,
+        "count": 2
+      },
+      "inventory": 11417,
+      "assigned": 5713,
+      "complete": false,
+      "junit_present": false,
+      "phase_outcomes": {
+        "setup/skipped": 1879,
+        "teardown/passed": 5663,
+        "setup/passed": 3785,
+        "call/passed": 3784
+      },
+      "failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_v2_text_execution_receipts.py::test_new_contract_cannot_be_stripped_or_source_version_rewritten[postgres-binding_marker]",
+        "when": "setup",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "classification": "CANCELLED / INCOMPLETE_HOSTED_CI",
+      "traceback_boundary": null
+    },
+    {
+      "run_id": 38080738340,
+      "event": "push",
+      "artifact_id": 11680133884,
+      "backend": "postgres",
+      "shard": {
+        "index": 0,
+        "count": 1
+      },
+      "inventory": 413,
+      "assigned": 413,
+      "complete": true,
+      "junit_present": true,
+      "phase_outcomes": {
+        "setup/passed": 345,
+        "call/passed": 345,
+        "teardown/passed": 413,
+        "setup/skipped": 68
+      },
+      "failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_local_interop_tcp.py::test_real_diagnostics_rejects_missing_capsule_and_source_content",
+        "when": "teardown",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "classification": "COMPLETE_SHARD_PASS",
+      "traceback_boundary": null
+    },
+    {
+      "run_id": 38080738340,
+      "event": "push",
+      "artifact_id": 11680003164,
+      "backend": "file",
+      "shard": {
+        "index": 0,
+        "count": 1
+      },
+      "inventory": 413,
+      "assigned": 413,
+      "complete": true,
+      "junit_present": true,
+      "phase_outcomes": {
+        "setup/passed": 345,
+        "call/passed": 345,
+        "teardown/passed": 413,
+        "setup/skipped": 68
+      },
+      "failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_local_interop_tcp.py::test_real_diagnostics_rejects_missing_capsule_and_source_content",
+        "when": "teardown",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "classification": "COMPLETE_SHARD_PASS",
+      "traceback_boundary": null
+    },
+    {
+      "run_id": 38080743613,
+      "event": "pull_request",
+      "artifact_id": 11680339074,
+      "backend": "postgres",
+      "shard": {
+        "index": 0,
+        "count": 1
+      },
+      "inventory": 413,
+      "assigned": 413,
+      "complete": true,
+      "junit_present": true,
+      "phase_outcomes": {
+        "setup/passed": 345,
+        "call/passed": 345,
+        "teardown/passed": 413,
+        "setup/skipped": 68
+      },
+      "failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_local_interop_tcp.py::test_real_diagnostics_rejects_missing_capsule_and_source_content",
+        "when": "teardown",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "classification": "COMPLETE_SHARD_PASS",
+      "traceback_boundary": null
+    },
+    {
+      "run_id": 38080743613,
+      "event": "pull_request",
+      "artifact_id": 11680207965,
+      "backend": "file",
+      "shard": {
+        "index": 0,
+        "count": 1
+      },
+      "inventory": 413,
+      "assigned": 413,
+      "complete": true,
+      "junit_present": true,
+      "phase_outcomes": {
+        "setup/passed": 345,
+        "call/passed": 345,
+        "teardown/passed": 413,
+        "setup/skipped": 68
+      },
+      "failed_events": [],
+      "last_event": {
+        "nodeid": "tests/test_local_interop_tcp.py::test_real_diagnostics_rejects_missing_capsule_and_source_content",
+        "when": "teardown",
+        "outcome": "passed",
+        "wasxfail": false,
+        "skip_reason": null
+      },
+      "classification": "COMPLETE_SHARD_PASS",
+      "traceback_boundary": null
+    }
+  ],
+  "scope_classification": "FAILED_OBSERVED Creative browser plus push PostgreSQL settling call; incomplete File and PG0 tracked separately",
+  "source_verification": "source-verification.json"
+}

@@ -949,3 +949,36 @@ loader failure with zero jobs. Official actionlint reproduced the original
 invalid job-env runner contexts and accepts the corrected workflow. Original
 frozen commands, assertions, skip policy, budgets and strict joins remain.
 Historical FAILED_OBSERVED and incomplete hosted coverage are retained.
+
+## 43. Source-aware chapter adaptation (TEXT-13, first bounded slice)
+
+Status: **PARTIAL**. One saved chapter or an exact selected substring can produce
+an actor-private, version-bound proposal through the original local ModelRouter,
+AuthorPreparer, ModelBroker and JobManager. Strict stable-ID scenes and a linked
+scene-split/visualization/dialogue/omission/inference report require human review
+before creating a separate screenplay v1. API aliases, existing workspace UI,
+source/privacy/incarnation/actor/CAS fences and bounded fault-injection tests are
+implemented. No automatic manuscript/Canon edit or second registry/queue.
+
+AssetLibrary archival/restart convergence and multi-chapter ranges remain
+incomplete in this first slice. Mock transport verifies owner composition, not
+real model quality. See [the adaptation report](MILESTONE_M4_ADAPTATION_REPORT.md)
+and [contract](docs/v2/source-aware-adaptation.md) for exact tests and remaining
+work. Two new-path terminal-publication/admission-cancellation races were
+reproduced before fixing; their red receipts remain.
+
+The two observed 899d Creative browser failures are corrected at the product
+accessible-label boundary, with original browser assertions and deadlines kept.
+New SHA hosted verification is still required. Both 899d full File cancellations,
+other FAILED_OBSERVED history, strict joins and independent-audit BLOCKED persist.
+B's opt-in compact catalog snapshot excludes only historical delivery evidence;
+default full mode and byte-identical output checks remain documented.
+
+Final-source selected File and fresh PostgreSQL each pass **238 / 237 profile
+skips**, including 58 adaptation cases per backend; full UI **2,439 / 8 original
+skips**, original build and 52-file token guard pass. Captured shared Host
+principal/binding-generation checks close a deterministic six-case ABA failure;
+Host-less UI remains usable and unsupported collaboration-only model access
+fails closed. New real adaptation inference/Asset archival are not claimed.
+899d push PG0 also retains an observed original settling failed call without
+final traceback, in addition to its cancellation; this is not only capacity.

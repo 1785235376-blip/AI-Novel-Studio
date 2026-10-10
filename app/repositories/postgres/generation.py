@@ -39,6 +39,8 @@ class PostgresGenerationRepository:
             binding = graph_job_binding(item)
             novel_uuid = self._graph_owner(session, item, binding) if binding is not None else None
             iid=external_uuid(item["id"]);row=session.get(GenerationJobModel,iid);chapter_uuid=None
+            if binding is None and row is not None and graph_job_binding(self._payload(row)) is not None:
+                raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
             if binding is None and item.get("novel_id"):novel_uuid=novel_or_raise(session,item["novel_id"]).id
             if binding is not None and row is not None:
                 check_graph_job_update(self._payload(row), item)

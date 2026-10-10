@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="9" failures="0" errors="0" time="3.426">
+    <testsuite name="src/creative/CreativeSelectLabels.test.tsx" timestamp="2026-10-10T20:02:35.173Z" hostname="7abb01f187ba" tests="3" failures="0" errors="0" skipped="0" time="0.136816123">
+        <testcase classname="src/creative/CreativeSelectLabels.test.tsx" name="gives SCREENPLAY export selection an exact name independent of option text" time="0.101077928">
+        </testcase>
+        <testcase classname="src/creative/CreativeSelectLabels.test.tsx" name="gives SCRIPT export selection an exact name independent of option text" time="0.010720222">
+        </testcase>
+        <testcase classname="src/creative/CreativeSelectLabels.test.tsx" name="gives Script purpose an exact name independent of translated option labels" time="0.024030007">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/creative/SourceAdaptationPanel.test.tsx" timestamp="2026-10-10T20:02:35.175Z" hostname="7abb01f187ba" tests="6" failures="0" errors="0" skipped="0" time="0.431347553">
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="requires explicit source and exact input review and never exposes synthetic routes as real models" time="0.205957869">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="keeps edited scenes and difference notes until separately reviewed, then opens only the returned screenplay" time="0.094055507">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="preserves review edits after an uncertain write and does not automatically retry" time="0.094398111">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="ignores a late response after scope disposal" time="0.015624855">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="purges protected contents on 401 without reusing another identity" time="0.006957101">
+        </testcase>
+        <testcase classname="src/creative/SourceAdaptationPanel.test.tsx" name="purges protected contents on 403 without reusing another identity" time="0.013405342">
+        </testcase>
+    </testsuite>
+</testsuites>

@@ -19,7 +19,7 @@ from ..file_project_lifecycle import project_operation
 from ..storage import atomic_write
 
 COLLECTIONS = ("creative_documents_v2", "creative_director_proposals_v2", "creative_project_preferences_v2",
-               "creative_graph_definitions_v2", "creative_graph_runs_v2")
+               "creative_graph_definitions_v2", "creative_graph_runs_v2", "creative_adaptation_proposals_v2")
 BINDING = "project_incarnation"
 MAX_MARKER_BYTES = 256
 

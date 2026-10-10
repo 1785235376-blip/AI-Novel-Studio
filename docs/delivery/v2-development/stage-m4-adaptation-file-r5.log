@@ -1,0 +1,74 @@
+..ss..............ssssssssssssss..ss..ssFFss..ss........ssssssss..ss..ss [ 94%]
+..ss                                                                     [100%]
+=================================== FAILURES ===================================
+______ test_private_routes_require_host_and_exact_actor_scope[file-/api] _______
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7f3b910501a0>, prefix='/api', base='/api/novels/r3-mount...rs={'X-Session-Token': 'viewer-af6de42292a94cf08fb6926cadb1d628', 'X-Branch-ID': 'b-af6de42292a94cf08fb6926cadb1d628'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3b91051550>
+
+    def test_private_routes_require_host_and_exact_actor_scope(creative_model, monkeypatch):
+        e = creative_model
+        assert e.client.get(e.creative_base + "/adaptation-proposals").status_code == 401
+        e = scoped(e, monkeypatch)
+>       row, calls = ready(e, monkeypatch)
+                     ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:41: in ready
+    row = create(e)
+          ^^^^^^^^^
+tests/test_v2_source_adaptation.py:24: in create
+    return checked(e.client.post(e.creative_base + "/adaptation-proposals", headers=e.headers, json={
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [404 Not Found]>, status = 201
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_NOT_FOUND"},"code":"EXPERIMENTAL_NOT_FOUND","message":"EXPERIMENTAL_NOT_FOUND","details":{"code":"EXPERIMENTAL_NOT_FOUND"},"request_id":"8ed50ff2-76ab-4fef-80d2-7e7a42b3c17c"}
+E       assert 404 == 201
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_____ test_private_routes_require_host_and_exact_actor_scope[file-/api/v1] _____
+
+creative_model = namespace(client=<starlette.testclient.TestClient object at 0x7f3b90f66ab0>, prefix='/api/v1', base='/api/v1/novels/r3...rs={'X-Session-Token': 'viewer-75d9f6ad5138475e835dd774fdb3b493', 'X-Branch-ID': 'b-75d9f6ad5138475e835dd774fdb3b493'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3b90f676b0>
+
+    def test_private_routes_require_host_and_exact_actor_scope(creative_model, monkeypatch):
+        e = creative_model
+        assert e.client.get(e.creative_base + "/adaptation-proposals").status_code == 401
+        e = scoped(e, monkeypatch)
+>       row, calls = ready(e, monkeypatch)
+                     ^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_source_adaptation.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_source_adaptation.py:41: in ready
+    row = create(e)
+          ^^^^^^^^^
+tests/test_v2_source_adaptation.py:24: in create
+    return checked(e.client.post(e.creative_base + "/adaptation-proposals", headers=e.headers, json={
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [404 Not Found]>, status = 201
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"EXPERIMENTAL_NOT_FOUND"},"code":"EXPERIMENTAL_NOT_FOUND","message":"EXPERIMENTAL_NOT_FOUND","details":{"code":"EXPERIMENTAL_NOT_FOUND"},"request_id":"c5b9f4c1-3ce2-43e1-8a5e-b9a1065fb97c"}
+E       assert 404 == 201
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-adaptation-file-r5.xml -
+=========================== short test summary info ============================
+FAILED tests/test_v2_source_adaptation.py::test_private_routes_require_host_and_exact_actor_scope[file-/api]
+FAILED tests/test_v2_source_adaptation.py::test_private_routes_require_host_and_exact_actor_scope[file-/api/v1]
+2 failed, 36 passed, 38 skipped, 1 warning in 41.95s

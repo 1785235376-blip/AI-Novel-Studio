@@ -75,3 +75,5 @@
 /* The V2 entry belongs to chapter scroll flow, above the anchored feature launcher. */
 .creative-workbench-entry{padding:var(--space-2) 0}
 .creative-workbench-entry>.ui-button{width:100%}
+
+.creative-adaptation-slot{flex:0 1 auto;max-height:calc(var(--space-12)*8);overflow:auto}

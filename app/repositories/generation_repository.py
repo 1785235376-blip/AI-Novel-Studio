@@ -12,6 +12,29 @@ class GenerationProjectIdentityError(ValueError):
 
 
 def graph_job_binding(item):
+    # Keep the existing project-owner persistence fence for a source-bound
+    # Creative proposal as well. This is not a synthetic Graph identity.
+    if item.get("adaptation_binding") is not None or item.get("experimental_origin") == "creative_adaptation_model":
+        from ..creative.adaptation_models import AdaptationJobBinding
+        try:
+            binding = AdaptationJobBinding.model_validate(item.get("adaptation_binding")).model_dump()
+            from ..experimental.store import ExperimentalStore
+            ExperimentalStore.key(item["novel_id"], binding["scope"])
+            if binding["scope"].get("mode") == "collaboration":
+                from ..services.branch_manuscript_service import experimental_scope
+                if (item.get("actor_id") != binding["actor_id"]
+                        or experimental_scope(item.get("scope") or {}) != binding["scope"]):
+                    raise ValueError("different adaptation authority")
+            elif item.get("scope") is not None or item.get("actor_id") is not None:
+                raise ValueError("unexpected local author authority")
+            if (item.get("experimental_origin") != "creative_adaptation_model" or item.get("operation") != "brainstorm"
+                    or item.get("chapter_id") != binding["chapter_id"] or item.get("graph_binding") is not None
+                    or item.get("novel_id") != binding["project_id"]
+                    or str(UUID(item["id"])) != item["id"]):
+                raise ValueError("invalid adaptation job")
+        except (ValueError, TypeError, KeyError, AttributeError):
+            raise GenerationProjectIdentityError("GENERATION_ADAPTATION_BINDING_INVALID") from None
+        return binding
     graph = (item.get("graph_binding") is not None or item.get("operation") == "graph_text"
              or item.get("experimental_origin") == "creative_graph_model")
     if not graph:
@@ -33,7 +56,7 @@ def graph_job_binding(item):
 def check_graph_job_update(previous, item):
     if previous is not None and (graph_job_binding(previous) is None or any(
             previous.get(key) != item.get(key) for key in
-            ("novel_id", "actor_id", "scope", "graph_binding", "expected_request_digest"))):
+            ("novel_id", "actor_id", "scope", "graph_binding", "adaptation_binding", "expected_request_digest"))):
         raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
 
 
@@ -69,6 +92,10 @@ class GenerationRepository:
     def save(self,item:dict):
         binding = graph_job_binding(item)
         if binding is None:
+            path = self.root / f"{item['id']}.json"
+            previous = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+            if previous is not None and graph_job_binding(previous) is not None:
+                raise GenerationProjectIdentityError("GENERATION_GRAPH_JOB_BINDING_CHANGED")
             atomic_write(self.root/f"{item['id']}.json",json.dumps(item,ensure_ascii=False,indent=2))
             return
         with self._graph_owner(item, binding):

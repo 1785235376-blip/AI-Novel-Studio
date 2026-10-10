@@ -1,6 +1,6 @@
 from __future__ import annotations
 import difflib,json,threading,uuid,time
-from dataclasses import dataclass,field,asdict
+from dataclasses import dataclass,field,asdict,replace
 from datetime import datetime,timezone
 from .agents import agent_runner
 from .author_request import AUTHOR_ROLES, build_author_request, request_digest, saved_source_matches, chapter_digest, automatic_context_allowed
@@ -55,10 +55,13 @@ class Job:
     execution_mode:str|None=None
     provider_reference_id:str|None=None
     route_decisions:list=field(default_factory=list)
+    adaptation_binding:dict|None=None
+    author_preparation_guard:object=field(default=None,repr=False)
     graph_binding:dict|None=None
     prepared_text_invocation:object=field(default=None,repr=False)
     def public(self):
         result = {k:getattr(self,k) for k in ("id","operation","novel_id","chapter_id","instruction","profile","source","requested_provider","requested_model","style","status","output","error","error_code","provider","model","issues","latency_ms","base_chapter_version","variant_group_id","variant_index","actor_id","session_id","client_id","workspace_id","scope","scope_type","scope_id","correlation_id","context_snapshot_id","created_at","updated_at","creation_records","usage","usage_status","execution_mode","provider_reference_id","route_decisions")}
+        if self.adaptation_binding is not None: result["adaptation_binding"] = dict(self.adaptation_binding)
         if self.graph_binding is not None: result["graph_binding"] = dict(self.graph_binding)
         if self.generation_max_output_bytes is not None or self.generation_deadline is not None:
             result.update(generation_max_output_bytes=self.generation_max_output_bytes, generation_deadline=self.generation_deadline)
@@ -88,6 +91,7 @@ class Job:
 # These stamps are set by trusted server coordinators, never from GenerateIn or
 # an unvalidated payload. Intrinsic receipt fields retain older-job fencing.
 GENERATION_ORIGINS = {
+    "creative_adaptation_model": frozenset({"narrative_production_v2", "author_context_inspector_v2", "model_broker_v2"}),
     "creative_graph_model": frozenset({"ai_execution_v2", "narrative_production_v2", "author_context_inspector_v2", "model_broker_v2"}),
     "narrative_task_model": frozenset({"narrative_production_v2", "author_context_inspector_v2", "model_broker_v2"}),
     "creative_director_model": frozenset({"narrative_production_v2", "author_context_inspector_v2", "model_broker_v2"}),
@@ -120,6 +124,9 @@ def generation_required_features(job):
     if getattr(job, "graph_binding", None) is not None or getattr(job, "operation", None) == "graph_text":
         if origin != "creative_graph_model": raise ValueError("GENERATION_GRAPH_ORIGIN_REQUIRED")
         required.update(GENERATION_ORIGINS["creative_graph_model"])
+    if getattr(job, "adaptation_binding", None) is not None:
+        if origin != "creative_adaptation_model": raise ValueError("GENERATION_ADAPTATION_ORIGIN_REQUIRED")
+        required.update(GENERATION_ORIGINS["creative_adaptation_model"])
     if getattr(job, "expected_request_digest", None): required.update(GENERATION_ORIGINS["author_context"])
     if getattr(job, "character_viewpoint", None) is not None or getattr(job, "character_context_resolver", None) is not None:
         required.update(GENERATION_ORIGINS["character_author"])
@@ -149,6 +156,14 @@ def generation_content_available(job):
     if not required: return True
     from .experimental.flags import enabled_flags
     if not required.issubset(enabled_flags()): return False
+    if getattr(job, "experimental_origin", None) == "creative_adaptation_model":
+        if job.status in {"FAILED", "CANCELLED", "REJECTED", "ACCEPTED", "ACCEPTING", "ACCEPTANCE_UNCERTAIN"}:
+            return False
+        if not callable(getattr(job, "author_preparation_guard", None)): return False
+        try:
+            from .repositories.generation_repository import graph_job_binding
+            graph_job_binding(job.public())
+        except Exception: return False
     if getattr(job, "experimental_origin", None) == "creative_graph_model":
         if job.status in {"FAILED", "CANCELLED", "REJECTED", "ACCEPTED", "ACCEPTING", "ACCEPTANCE_UNCERTAIN"}:
             return False
@@ -157,7 +172,7 @@ def generation_content_available(job):
         if type(invocation) is not PreparedTextInvocation: return False
         try: invocation.validate_job(job)
         except Exception: return False
-    if getattr(job, "experimental_origin", None) in {"creative_director_model", "narrative_task_model", "creative_graph_model"}:
+    if getattr(job, "experimental_origin", None) in {"creative_director_model", "narrative_task_model", "creative_graph_model", "creative_adaptation_model"}:
         # V2 model drafts keep the live originating authority through reads and
         # every emitted chunk. Restart never reconstructs this trusted closure.
         guard = getattr(job, "request_authorization", None)
@@ -226,7 +241,8 @@ def validate_generation_bounds(job):
 
 
 def check_generation_bounds(job, *, delta="", completion_text=None):
-    if (getattr(job, "experimental_origin", None) in {"creative_director_model", "narrative_task_model", "creative_graph_model"}
+    if ((getattr(job, "experimental_origin", None) in {"creative_director_model", "narrative_task_model", "creative_graph_model", "creative_adaptation_model"}
+            or getattr(job, "adaptation_binding", None) is not None)
             and not job.cancelled.is_set() and not generation_content_available(job)):
         job.generation_bound_failure = "GENERATION_AUTHORITY_REVOKED"
         job.output = ""
@@ -254,7 +270,7 @@ def check_generation_bounds(job, *, delta="", completion_text=None):
 
 
 class JobManager:
-    transient_fields={"prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
+    transient_fields={"author_preparation_guard", "prepared_text_invocation", "cancelled", "condition", "request_authorization", "author_context_resolver", "character_context_resolver", "before_dispatch", "on_terminal", "_terminal_hook_called"}
     terminal={"COMPLETED","FAILED","CANCELLED","ACCEPTED","REJECTED","ACCEPTING","ACCEPTANCE_UNCERTAIN"}
     def __init__(self,generations=None,chapters=None,contexts=None,canon=None,memory_extractor=None,snapshot_required=None,collaboration_updates=None):
         if generations is None and repo is not None and repo is not getattr(repositories.novels, "backend", None):
@@ -436,6 +452,8 @@ class JobManager:
         if job.status != "PREPARED": raise ValueError("GENERATION_JOB_NOT_PREPARED")
         if job.graph_binding is not None or job.operation == "graph_text":
             self._guard_graph_request(job)
+        if job.adaptation_binding is not None or job.experimental_origin == "creative_adaptation_model":
+            if not generation_content_available(job): raise ValueError("ADAPTATION_LIVE_AUTHORITY_REQUIRED")
         validate_generation_bounds(job)
         job._generation_bounds = (job.generation_max_output_bytes, job.generation_deadline)
         if job.expected_request_digest and not callable(job.request_authorization):
@@ -475,7 +493,7 @@ class JobManager:
             try: self._persist(job)
             except Exception as exc:
                 from .repositories.generation_repository import GenerationProjectIdentityError
-                if (job.experimental_origin != "creative_graph_model"
+                if (job.experimental_origin not in {"creative_graph_model", "creative_adaptation_model"}
                         or not isinstance(exc, GenerationProjectIdentityError)
                         or job.status not in self.terminal):
                     raise
@@ -570,6 +588,15 @@ class JobManager:
             dispatch_guard=lambda: self._guard_author_request(job, route, dispatch=True))
         if job.expected_request_digest and request_digest(request, job, cloud) != job.expected_request_digest:
             raise ModelRuntimeError(RuntimeErrorCode.INVALID_REQUEST, "预检内容、来源或授权已改变，请重新检查后生成。")
+        if job.author_preparation_guard is not None:
+            if job.experimental_origin != "creative_adaptation_model" or not callable(job.author_preparation_guard):
+                raise ValueError("ADAPTATION_PREPARATION_GUARD_INVALID")
+            from .model_center.discovery_bridge import LocalTextAdapter
+            # As in PreparedTextInvocation, only the real local adapter has a
+            # separate preparation/dispatch boundary. Synthetic legacy text
+            # retains TextModelNode's original final-hop dispatch guard.
+            if type(runtime.provider_registry.resolve(request.provider_id)) is LocalTextAdapter:
+                request = replace(request, preparation_guard=job.author_preparation_guard)
         return chapter, dict(request.context), request
 
     def _guard_author_request(self, job, route, *, dispatch=False):
@@ -621,7 +648,7 @@ class JobManager:
                 # A lost settlement never releases a reservation or triggers replay.
                 # Author drafts retain review material. Graph proposals cannot
                 # publish any text without successful accounting.
-                if job.experimental_origin == "creative_graph_model": job.output = ""
+                if job.experimental_origin in {"creative_graph_model", "creative_adaptation_model"}: job.output = ""
                 job.terminal_hook_status = "FAILED_RECONCILIATION_REQUIRED"
                 if job.status == "COMPLETED" or job.status not in self.terminal:
                     job.status = "FAILED"
@@ -629,7 +656,7 @@ class JobManager:
                 job.error = "模型任务已结束，但用量结算未确认。请核对调度记录，不要自动重试。"
             try: self._persist(job)
             except Exception:
-                if job.experimental_origin == "creative_graph_model": job.output = ""
+                if job.experimental_origin in {"creative_graph_model", "creative_adaptation_model"}: job.output = ""
                 job.terminal_hook_status = "PERSISTENCE_UNCERTAIN_RECONCILIATION_REQUIRED"
                 if job.status == "COMPLETED": job.status = "FAILED"
                 if job.error_code != "GENERATION_TERMINAL_PERSISTENCE_UNCERTAIN":
@@ -645,6 +672,7 @@ class JobManager:
                 if job.cancelled.is_set(): self._cancel_execution(job); return
                 job.status="GENERATING";self._emit(job)
             graph_job = job.experimental_origin == "creative_graph_model"
+            isolated_proposal = graph_job or job.experimental_origin == "creative_adaptation_model"
             if graph_job:
                 role, context = "graph_text", {}
                 routes = [Route(job.requested_provider, job.requested_model)]
@@ -690,13 +718,14 @@ class JobManager:
                             if event.event_type=="generation.failed":raise ModelRuntimeError(event.error_code or RuntimeErrorCode.GENERATION_FAILED,"生成失败，请审核已有输出后重试")
                             if graph_job:
                                 self._guard_graph_request(job)
+                            if isolated_proposal:
                                 if event.job_id != job.id:
                                     raise ValueError("GRAPH_MODEL_EVENT_BINDING_CHANGED")
                             if event.event_type=="generation.delta" and event.delta:
                                 check_generation_bounds(job, delta=event.delta)
                                 self._emit(job,event.delta)
                             if event.event_type=="generation.completed":
-                                if graph_job and (event.response is None or not event.response.text.strip()
+                                if isolated_proposal and (event.response is None or not event.response.text.strip()
                                         or event.response.text != job.output or event.response.finish_reason != "completed"):
                                     raise ValueError("GRAPH_MODEL_COMPLETION_INVALID")
                                 check_generation_bounds(job, completion_text=event.response.text if event.response else None)
@@ -731,7 +760,7 @@ class JobManager:
                     if job.dispatch_hooks_required or callable(job.on_terminal):
                         self._persist(job)
                     self._finish_terminal_hook(job)
-                    if graph_job and not generation_content_available(job):
+                    if (graph_job or job.experimental_origin == "creative_adaptation_model") and not generation_content_available(job):
                         job.output = ""; job.status = "FAILED"
                         if job.terminal_hook_status == "COMPLETED":
                             job.error_code = "GENERATION_AUTHORITY_REVOKED"
@@ -742,7 +771,7 @@ class JobManager:
                     # receipt is durable. Keep the separate execution outcome
                     # for once-only billing, but block review on this executor.
                     job.status = "FAILED"
-                    if graph_job: job.output = ""
+                    if graph_job or job.experimental_origin == "creative_adaptation_model": job.output = ""
                     job.error_code = "GENERATION_TERMINAL_PERSISTENCE_UNCERTAIN"
                     job.error = "生成已结束，但完成记录未能确认保存。请检查任务记录，不要自动重试或采用。"
                     try: self._persist(job)
@@ -762,7 +791,7 @@ class JobManager:
                 if isinstance(exc,ModelRuntimeError):safe_error=exc.safe_message;error_code=exc.code.value
                 elif isinstance(exc,RuntimeError) and "snapshot" in str(exc).casefold():safe_error="Context snapshot failed";error_code="CONTEXT_SNAPSHOT_FAILED"
                 else:safe_error="生成失败，请稍后重试";error_code=RuntimeErrorCode.GENERATION_FAILED.value
-                if job.experimental_origin == "creative_graph_model": job.output = ""
+                if job.experimental_origin in {"creative_graph_model", "creative_adaptation_model"}: job.output = ""
                 job.latency_ms=int((time.monotonic()-started)*1000);job.status="FAILED";job.execution_outcome=job.execution_outcome or "FAILED";job.error=safe_error;job.error_code=error_code;self._emit(job)
                 runtime_log.write(generation_id=job.id,novel_id=job.novel_id,chapter_id=job.chapter_id,status=job.status,error=error_code,latency_ms=job.latency_ms)
         finally:
@@ -776,7 +805,7 @@ class JobManager:
         with job.condition:
             if job.status not in self.terminal:
                 job.status = "CANCELLED"
-                if job.experimental_origin == "creative_graph_model": job.output = ""
+                if job.experimental_origin in {"creative_graph_model", "creative_adaptation_model"}: job.output = ""
                 job.execution_outcome = "CANCELLED"
                 self._emit(job)
 

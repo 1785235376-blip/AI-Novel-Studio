@@ -661,7 +661,8 @@ from ..creative.api import create_creative_router
 creative_service = CreativeService(store, legacy_api.novel_service, legacy_api.chapter_service)
 creative_service.configure_generation(model_broker_service, author_preparer, legacy_api.jobs)
 router.include_router(create_creative_router(creative_service, authorize, require_flag,
-    require_host_session=require_inspection_host_session))
+    require_host_session=require_inspection_host_session,
+    model_host_authority=lambda request, token: creative_model_host_authority(request, token)))
 
 from ..creative.workspace import IndependentWorkspaceService
 from ..creative.workspace_api import create_independent_workspace_router

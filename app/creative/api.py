@@ -1,6 +1,6 @@
 """Explicit opt-in Creative Layer routes over the existing authority resolver."""
 from typing import Literal
-from fastapi import APIRouter, Header, HTTPException, Query, Response
+from fastapi import APIRouter, Header, HTTPException, Query, Request, Response
 
 from ..experimental.flags import enabled_flags
 from ..experimental.production_lineage_api import PrivateProductionRoute, api_call
@@ -10,10 +10,12 @@ from .models import (CreativeDocumentIn, CreativeDocumentUpdate, CreativeDocumen
                      DirectorProposalIn, DirectorProposalReview, DirectorModelPreview,
                      DirectorModelDispatch, ProposalAction, MODES, USER_MODES, LEGACY_MODES)
 
+from .adaptation_models import AdaptationIn, AdaptationReview, AdaptationPreview
+
 FLAG = "narrative_production_v2"
 
 
-def create_creative_router(service, authorize, require_flag, *, require_host_session=None):
+def create_creative_router(service, authorize, require_flag, *, require_host_session=None, model_host_authority=None):
     router = APIRouter(prefix="/novels/{nid}/experimental/creative", tags=["Creative Layer V2"],
                        route_class=PrivateProductionRoute)
 
@@ -45,8 +47,17 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
             return result
         return api_call(operation)
 
+    def capture_adaptation_host(request, token):
+        if model_host_authority is None:
+            raise HTTPException(403, {"code": "CREATIVE_MODEL_HOST_REQUIRED"})
+        authority = model_host_authority(request, token)
+        if not authority.principal:
+            raise HTTPException(403, {"code": "CREATIVE_MODEL_HOST_BINDING_REQUIRED"})
+        authority.guard()
+        return authority
+
     @router.get("/capabilities")
-    def capabilities(nid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+    def capabilities(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         def operation():
             actor, scope = access(nid, x_session_token, x_branch_id, "domain.read", gated=False)
             enabled = FLAG in enabled_flags()
@@ -64,6 +75,16 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
                 result.update(user_modes=list(USER_MODES), mode_aliases={"VIDEO_PLANNING": "PRODUCTION"},
                     director_proposals=True, proposal_generation="RULE_ASSISTED_WITH_OPTIONAL_REVIEWED_LOCAL_MODEL")
                 result["document_type_stages"] = {"SCRIPT": "SCREENPLAY"}
+                result["source_adaptation"] = "HOST_SESSION_REQUIRED"
+                if require_host_session is not None:
+                    try:
+                        authority = capture_adaptation_host(request, x_session_token)
+                        require_host_session(x_session_token)
+                        authority.guard()
+                        result["source_adaptation"] = "REVIEWED_LOCAL_MODEL"
+                    except HTTPException as exc:
+                        if exc.status_code not in {401, 403}:
+                            raise
             return result
         return api_call(operation)
 
@@ -155,16 +176,19 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
         return invoke(nid, x_session_token, x_branch_id, "domain.write",
                       lambda actor, scope, guard: service.proposals.create(nid, scope, actor, body, guard=guard))
 
-    def model_call(nid, token, branch, method, rid=None, body=None):
+    def model_call(nid, token, branch, method, rid=None, body=None, *, adaptation=False, request=None):
         def operation(actor, scope, guard):
-            generation = service.proposals.generation
+            generation = (service.adaptations if adaptation else service.proposals).generation
             if generation is None:
                 raise HTTPException(409, {"code": "CREATIVE_MODEL_NOT_CONFIGURED"})
             if require_host_session is None:
                 raise HTTPException(409, {"code": "CREATIVE_MODEL_HOST_AUTHORITY_REQUIRED"})
+            authority = capture_adaptation_host(request, token) if adaptation else None
             def model_guard():
                 guard()
                 require_host_session(token)
+                if authority is not None:
+                    authority.guard()
             ctx = ReadContext(nid, scope, actor, token, branch)
             model_guard()
             try:
@@ -207,5 +231,65 @@ def create_creative_router(service, authorize, require_flag, *, require_host_ses
     @router.post("/director-proposals/{rid}/refresh")
     def refresh_model(nid: str, rid: str, body: ProposalAction, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
         return model_call(nid, x_session_token, x_branch_id, "refresh", rid, body)
+
+    def invoke_adaptation(request, nid, token, branch, permission, callback):
+        def operation(actor, scope, guard):
+            if require_host_session is None:
+                raise HTTPException(409, {"code": "CREATIVE_MODEL_HOST_AUTHORITY_REQUIRED"})
+            authority = capture_adaptation_host(request, token)
+            def private_guard():
+                guard()
+                require_host_session(token)
+                authority.guard()
+            private_guard()
+            try:
+                result = callback(actor, scope, private_guard)
+            except Exception:
+                private_guard()
+                raise
+            private_guard()
+            return result
+        return invoke(nid, token, branch, permission, operation)
+
+    @router.get("/adaptation-proposals")
+    def adaptations(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke_adaptation(request, nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: {"items": service.adaptations.list(nid, scope, actor)})
+
+    @router.post("/adaptation-proposals", status_code=201)
+    def create_adaptation(nid: str, request: Request, body: AdaptationIn, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke_adaptation(request, nid, x_session_token, x_branch_id, "domain.write",
+                      lambda actor, scope, guard: service.adaptations.create(nid, scope, actor, body, guard=guard))
+
+    @router.get("/adaptation-proposals/model-routes")
+    def adaptation_routes(nid: str, request: Request, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return model_call(nid, x_session_token, x_branch_id, "catalog", adaptation=True, request=request)
+
+    @router.get("/adaptation-proposals/{rid}")
+    def adaptation(nid: str, request: Request, rid: str, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke_adaptation(request, nid, x_session_token, x_branch_id, "domain.read",
+                      lambda actor, scope, guard: service.adaptations.get(nid, scope, actor, rid))
+
+    @router.post("/adaptation-proposals/{rid}/preview")
+    def preview_adaptation(nid: str, request: Request, rid: str, body: AdaptationPreview, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return model_call(nid, x_session_token, x_branch_id, "preview", rid, body, adaptation=True, request=request)
+
+    @router.post("/adaptation-proposals/{rid}/dispatch")
+    def dispatch_adaptation(nid: str, request: Request, rid: str, body: DirectorModelDispatch, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return model_call(nid, x_session_token, x_branch_id, "dispatch", rid, body, adaptation=True, request=request)
+
+    @router.post("/adaptation-proposals/{rid}/refresh")
+    def refresh_adaptation(nid: str, request: Request, rid: str, body: ProposalAction, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return model_call(nid, x_session_token, x_branch_id, "refresh", rid, body, adaptation=True, request=request)
+
+    @router.post("/adaptation-proposals/{rid}/review")
+    def review_adaptation(nid: str, request: Request, rid: str, body: AdaptationReview, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke_adaptation(request, nid, x_session_token, x_branch_id, "domain.write",
+                      lambda actor, scope, guard: service.adaptations.review(nid, scope, actor, rid, body, guard=guard))
+
+    @router.post("/adaptation-proposals/{rid}/cancel")
+    def cancel_adaptation(nid: str, request: Request, rid: str, body: ProposalAction, x_session_token: str | None = Header(None), x_branch_id: str | None = Header(None)):
+        return invoke_adaptation(request, nid, x_session_token, x_branch_id, "domain.write",
+                      lambda actor, scope, guard: service.adaptations.cancel(nid, scope, actor, rid, body, guard=guard))
 
     return router

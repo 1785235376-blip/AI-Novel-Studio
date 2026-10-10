@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="3" failures="3" errors="0" time="1.709">
+    <testsuite name="src/creative/CreativeSelectLabels.test.tsx" timestamp="2026-10-10T19:59:10.379Z" hostname="7abb01f187ba" tests="3" failures="3" errors="0" skipped="0" time="0.152024854">
+        <testcase classname="src/creative/CreativeSelectLabels.test.tsx" name="gives SCREENPLAY export selection an exact name independent of option text" time="0.100952455">
+            <failure message="expected null to be &apos;剧本导出格式&apos; // Object.is equality" type="AssertionError">
+AssertionError: expected null to be &apos;剧本导出格式&apos; // Object.is equality
+
+- Expected: 
+&quot;剧本导出格式&quot;
+
++ Received: 
+null
+
+ ❯ src/creative/CreativeSelectLabels.test.tsx:14:67
+            </failure>
+        </testcase>
+        <testcase classname="src/creative/CreativeSelectLabels.test.tsx" name="gives SCRIPT export selection an exact name independent of option text" time="0.018991033">
+            <failure message="expected null to be &apos;脚本导出格式&apos; // Object.is equality" type="AssertionError">
+AssertionError: expected null to be &apos;脚本导出格式&apos; // Object.is equality
+
+- Expected: 
+&quot;脚本导出格式&quot;
+
++ Received: 
+null
+
+ ❯ src/creative/CreativeSelectLabels.test.tsx:14:67
+            </failure>
+        </testcase>
+        <testcase classname="src/creative/CreativeSelectLabels.test.tsx" name="gives Script purpose an exact name independent of translated option labels" time="0.030896628">
+            <failure message="expected null to be &apos;脚本用途&apos; // Object.is equality" type="AssertionError">
+AssertionError: expected null to be &apos;脚本用途&apos; // Object.is equality
+
+- Expected: 
+&quot;脚本用途&quot;
+
++ Received: 
+null
+
+ ❯ src/creative/CreativeSelectLabels.test.tsx:20:67
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

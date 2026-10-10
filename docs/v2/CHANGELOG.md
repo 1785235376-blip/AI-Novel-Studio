@@ -43,3 +43,24 @@ These are development stages on `feature/v2-narrative-platform`, not releases.
 - Integrate B's reproduced Actions context correction; preserve the original
   zero-job workflow failure and all earlier failed observations.
 - Graph reuse, model-assisted Script and full M4 acceptance remain partial.
+
+## 2026-10-10 — M4 Text: source-aware screenplay adaptation, first slice
+
+- Add exact saved-chapter/selection proposals, original local route preview and
+  dispatch, stable scene/difference-report contracts and explicit human adoption
+  into a separate Creative screenplay version.
+- Reuse original actor/source/incarnation/CAS and Job/Broker owners; nonblocking
+  terminal publication verification and undispatched admission cleanup close
+  two reproducible new-path races without changing old assertions/time limits.
+- Correct two product select accessible names diagnosed from original hosted
+  traces; preserve the failed runs and additive regression red evidence.
+- Integrate optional staged compact API catalog snapshot with default full
+  behavior unchanged. Asset archival, multi-chapter scope and quality acceptance
+  remain partial; exact verification is in the checkpoint report.
+- Capture the original Host principal/binding generation for private adaptation
+  operations and late callbacks; six pre-fix token-ABA failures are retained.
+  Host-less manual Creative editing remains available. Preserve nonpackaged
+  collaboration-only rejection instead of granting a fixture synthetic Host.
+- Selected final File/PostgreSQL each 238 passed / 237 profile skips; full UI
+  2,439 passed / 8 old skips. Full hosted acceptance remains pending/incomplete,
+  including the newly retained 899d PG failed-call observation.

@@ -24,7 +24,7 @@ export type VideoSegment = { shot_id: string; duration_seconds: number; note: st
 export type VideoPlan = { frame_rate: number; width: number; height: number; notes: string; segments: VideoSegment[] };
 export type CreativeInput = { mode: CreativeMode; title: string; source_chapter_ids: string[]; source_independent: boolean; scenes: CreativeScene[]; director_notes: DirectorSceneNote[]; shots: CreativeShot[]; video_plan: VideoPlan | null; script?: ScriptContent | null };
 export type CreativeDocument = CreativeInput & { id: string; version: number; status: string; created_at: string; updated_at: string; actor_id: string; source_evidence: Record<string, unknown>; source_documents?: Record<string, { version: number; digest: string }> };
-export type CreativeCapabilities = { enabled: boolean; modes: CreativeMode[]; can_mutate: boolean };
+export type CreativeCapabilities = { enabled: boolean; modes: CreativeMode[]; can_mutate: boolean; source_adaptation?: string };
 export type CreativeAsset = { id: string; filename: string; kind: string; media_type: string; size: number };
 export type CreativeReferences = { characters: { id: string; name: string }[]; locations: { id: string; name: string }[]; story_routes: { id: string; name: string }[] };
 export const modeForDocument = (mode: CreativeMode): WorkspaceMode => mode === 'VIDEO_PLANNING' ? 'PRODUCTION' : mode === 'SCRIPT' ? 'SCREENPLAY' : mode;
