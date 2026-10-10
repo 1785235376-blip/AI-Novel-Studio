@@ -1,0 +1,12 @@
+{
+  ".github/ci/tcp_evidence.py": "b024a733c97a35a8ebfbd6a421ab305d43195599dfc761ab393ee3cac9ba8fd3",
+  ".github/ci/test_tcp_evidence.py": "704f1c2db9963384ba4fcca3a09fedb79885fade9fa6cdbfb9eeac422b88ceac",
+  ".github/workflows/cloud-ci.yml": "af56e14096d91ae65edf0a99d74285c53db0bc729b4fe212197324cf242f744c",
+  ".github/ci/suite_coverage.py": "570892af0975c125868710e250eb7f30cc5e51ba7cbef9429a3b0f8f10238da7",
+  ".github/ci/coverage_reconcile.py": "f097904d51cc21cb6f1ce8dcc688f692cf89bdd473f3952605eba3b1ae02e66a",
+  ".github/ci/postgres_gate.py": "d18ee804595ab98f8aec4c25745a7961e65a36755e318c8f4f257663b4358a8c",
+  ".github/ci/prepare.sh": "1acd01e7f251dbd5c92af5f139ef026a820f2f412d15d248cdd7a62b80deb76d",
+  "tests/test_r5_offline_sync_tcp.py": "46cbe9c0b7cc2a6c0d7a57d0d1a970c8732466fb061480eae8f2209f48ae890e",
+  ".github/ci/coverage_manifest.json.gz": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  ".github/ci/coverage_manifest_v2.json.gz": "df72d854d942b0759b9d02229c33523bb1dd11470dd95c5c12a405a73c9a66ab"
+}

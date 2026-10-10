@@ -1,0 +1,16 @@
+{
+  "raw_backslash_bytes_present": true,
+  "zip_sha256": "4c5700e1d5ea2e3becd93567e4564aec34952e5b941bce6af08e4163791dfa86",
+  "entries": [
+    {
+      "filename": "good/file",
+      "orig_filename": "good/file"
+    },
+    {
+      "filename": "dir/escape",
+      "orig_filename": "dir\\escape"
+    }
+  ],
+  "raw_malicious_entry_rejected": true,
+  "reason": "Unsafe archive path: dir/escape"
+}

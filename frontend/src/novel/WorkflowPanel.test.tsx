@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { api } from "../api";
 import { FOCUS_FAILED_TASKS_EVENT, TASK_SUMMARY_EVENT } from "../ui/taskSummary";
 import { WorkflowPanel } from "./WorkflowPanel";
 
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 it("publishes loaded workflow runs and focuses their real workspace", async () => {
   vi.spyOn(api, "workflows").mockResolvedValue({
@@ -38,4 +38,19 @@ it("publishes loaded workflow runs and focuses their real workspace", async () =
     expect(document.activeElement).toBe(screen.getByLabelText("工作流运行记录")),
   );
   window.removeEventListener(TASK_SUMMARY_EVENT, listener);
+});
+
+it("creates a bounded recipe and exposes reject beside real approval", async () => {
+  vi.spyOn(api, "workflows").mockResolvedValue({items:[{id:"recipe-flow",title:"资料审核",status:"ACTIVE"}]});
+  vi.spyOn(api,"workflowRuns").mockResolvedValue({items:[{id:"recipe-run",status:"WAITING_APPROVAL",node_states:{review:{status:"WAITING_APPROVAL",output:null}}}]});
+  const create=vi.spyOn(api,"createWorkflowRecipe").mockResolvedValue({});
+  const reject=vi.spyOn(api,"rejectWorkflowNode").mockResolvedValue({});
+  render(<WorkflowPanel novelId="novel-1" />);
+  fireEvent.change(screen.getByLabelText("模板"),{target:{value:"recipe:import_knowledge"}});
+  fireEvent.click(screen.getByRole("button",{name:"创建工作流"}));
+  await waitFor(()=>expect(create).toHaveBeenCalledWith("import_knowledge","novel-1",undefined));
+  fireEvent.click(await screen.findByRole("button",{name:"查看运行"}));
+  fireEvent.click(await screen.findByRole("button",{name:"拒绝并停止"}));
+  await waitFor(()=>expect(reject).toHaveBeenCalledWith("recipe-run","review"));
+  expect(screen.getByLabelText("运行 recipe-run 结果")).toBeTruthy();
 });

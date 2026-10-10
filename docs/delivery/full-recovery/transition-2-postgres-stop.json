@@ -1,0 +1,17 @@
+{
+  "boundary": "Only two verified task-owned transition PostgreSQL pytest process groups interrupted; no user/prod service targeted",
+  "source_commit": "3efa0393861c0dcddab7bd74e6d12e5ec483e7b1",
+  "reason": "Frozen V1 hosted checker requires source restoration before final full validation",
+  "processes": [
+    {
+      "pid": 6147,
+      "signal": "SIGINT",
+      "verified_owned_command": "/tmp/ai-novel-full-recovery-j3hg2js6/venv/bin/python -m pytest -p postgres_gate -p suite_coverage -p no:cacheprovider --basetemp=/tmp/ai-novel-full-recovery-j3hg2js6/final-pg-sandbox-0/pytest -q -ra --tb=short --ci-scope=backend --ci-shard-index=0 --ci-shard-count=2 --ci-coverage-dir=/tmp/ai-novel-full-recovery-j3hg2js6/final-backend-receipts/postgres-shard-0 --junitxml=/tmp/ai-novel-full-recovery-j3hg2js6/final-backend-receipts/postgres-shard-0/backend.xml "
+    },
+    {
+      "pid": 6148,
+      "already_exited": true
+    }
+  ],
+  "coverage_claim": "TRANSITION_2_INCOMPLETE, not final coverage"
+}

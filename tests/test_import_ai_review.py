@@ -42,7 +42,7 @@ def test_import_ai_review_replaces_draft_but_does_not_accept_entities(monkeypatc
         novel, review = _import_pending(client)
         result = client.post(
             f"/api/novels/{novel['id']}/import/knowledge-base/review/{review['id']}/ai-analyze",
-            json={"provider_id": "deepseek", "model_id": "deepseek-chat"},
+            json={"provider_id": "deepseek", "model_id": "deepseek-chat", "allow_cloud_excerpt": True},
         )
         assert result.status_code == 200
         saved = result.json()["review"]
@@ -70,7 +70,7 @@ def test_import_ai_review_keeps_local_draft_when_model_output_is_invalid(monkeyp
         client = TestClient(app)
         novel, review = _import_pending(client)
         before = review["candidates"]
-        result = client.post(f"/api/novels/{novel['id']}/import/knowledge-base/review/{review['id']}/ai-analyze", json={})
+        result = client.post(f"/api/novels/{novel['id']}/import/knowledge-base/review/{review['id']}/ai-analyze", json={"allow_cloud_excerpt": True})
         assert result.status_code == 422
         persisted = client.get(f"/api/novels/{novel['id']}/import/knowledge-base/review/{review['id']}").json()
         assert persisted["candidates"] == before
@@ -100,7 +100,7 @@ def test_manual_chapter_can_create_scoped_ai_knowledge_review(monkeypatch, tmp_p
         assert prepared.status_code == 201
         review = prepared.json()
         assert review["source_format"] == "chapter"
-        result = client.post(f"/api/novels/{novel['id']}/import/knowledge-base/review/{review['id']}/ai-analyze", json={})
+        result = client.post(f"/api/novels/{novel['id']}/import/knowledge-base/review/{review['id']}/ai-analyze", json={"allow_cloud_excerpt": True})
         assert result.status_code == 200
         assert result.json()["analysis"]["chapter_count"] == 1
         assert "手写人物走进旧车站" in captured["prompt"]

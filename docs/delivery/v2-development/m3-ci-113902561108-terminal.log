@@ -1,0 +1,965 @@
+﻿2026-10-09T15:52:22.1219561Z Current runner version: '2.337.0'
+2026-10-09T15:52:22.1494912Z ##[group]Runner Image Provisioner
+2026-10-09T15:52:22.1496017Z Hosted Compute Agent
+2026-10-09T15:52:22.1496605Z Version: 20261002.596
+2026-10-09T15:52:22.1497225Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-09T15:52:22.1497978Z Build Date: 2026-10-02T22:28:27Z
+2026-10-09T15:52:22.1498614Z Worker ID: {3a7631b7-4243-4f87-902b-c5527f6bda32}
+2026-10-09T15:52:22.1499267Z Region: westus
+2026-10-09T15:52:22.1499777Z Cloud: Azure
+2026-10-09T15:52:22.1500260Z ##[endgroup]
+2026-10-09T15:52:22.1501612Z ##[group]Operating System
+2026-10-09T15:52:22.1502257Z Microsoft Windows Server 2022
+2026-10-09T15:52:22.1502851Z 10.0.20348
+2026-10-09T15:52:22.1503310Z Datacenter
+2026-10-09T15:52:22.1503818Z ##[endgroup]
+2026-10-09T15:52:22.1504317Z ##[group]Runner Image
+2026-10-09T15:52:22.1504914Z Image: windows-2022
+2026-10-09T15:52:22.1505423Z Version: 20261004.326.1
+2026-10-09T15:52:22.1506901Z Included Software: https://github.com/actions/runner-images/blob/win22/20261004.326/images/windows/Windows2022-Readme.md
+2026-10-09T15:52:22.1508389Z Image Release: https://github.com/actions/runner-images/releases/tag/win22%2F20261004.326
+2026-10-09T15:52:22.1509342Z ##[endgroup]
+2026-10-09T15:52:22.1510410Z ##[group]GITHUB_TOKEN Permissions
+2026-10-09T15:52:22.1512418Z Contents: read
+2026-10-09T15:52:22.1512984Z Metadata: read
+2026-10-09T15:52:22.1513512Z ##[endgroup]
+2026-10-09T15:52:22.1515827Z Secret source: Actions
+2026-10-09T15:52:22.1516735Z Cache mode: write
+2026-10-09T15:52:22.1517421Z Prepare workflow directory
+2026-10-09T15:52:22.2793309Z Prepare all required actions
+2026-10-09T15:52:22.2847234Z Getting action download info
+2026-10-09T15:52:22.7938575Z Download action repository 'actions/checkout@v4.2.2' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2026-10-09T15:52:23.0198988Z Download action repository 'actions/setup-python@v5.6.0' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-09T15:52:23.4887650Z Download action repository 'actions/setup-node@v4.4.0' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-10-09T15:52:23.8403306Z Download action repository 'actions/setup-dotnet@v4' (SHA:67a3573c9a986a3f9c594539f4ab511d57bb3ce9)
+2026-10-09T15:52:24.4714584Z Download action repository 'actions/upload-artifact@v4.6.2' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-09T15:52:25.0822707Z Complete job name: Windows / Fresh base and acceptance package
+2026-10-09T15:52:25.2723101Z ##[group]Run actions/checkout@v4.2.2
+2026-10-09T15:52:25.2725843Z with:
+2026-10-09T15:52:25.2726649Z   persist-credentials: false
+2026-10-09T15:52:25.2728518Z   repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T15:52:25.2737013Z   token: ***
+2026-10-09T15:52:25.2737802Z   ssh-strict: true
+2026-10-09T15:52:25.2738598Z   ssh-user: git
+2026-10-09T15:52:25.2764847Z   clean: true
+2026-10-09T15:52:25.2765848Z   sparse-checkout-cone-mode: true
+2026-10-09T15:52:25.2766838Z   fetch-depth: 1
+2026-10-09T15:52:25.2767628Z   fetch-tags: false
+2026-10-09T15:52:25.2768481Z   show-progress: true
+2026-10-09T15:52:25.2769290Z   lfs: false
+2026-10-09T15:52:25.2770035Z   submodules: false
+2026-10-09T15:52:25.2770847Z   set-safe-directory: true
+2026-10-09T15:52:25.2772183Z env:
+2026-10-09T15:52:25.2772905Z   MOCK_PROVIDER: true
+2026-10-09T15:52:25.2773737Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:52:25.2774589Z   ENABLE_CLOUD: false
+2026-10-09T15:52:25.2775491Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:52:25.2776548Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:52:25.2777637Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:52:25.2778532Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:52:25.2779342Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:52:25.2780195Z ##[endgroup]
+2026-10-09T15:52:25.4284160Z Syncing repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T15:52:25.4288292Z ##[group]Getting Git version info
+2026-10-09T15:52:25.4290156Z Working directory is 'D:\a\AI-Novel-Studio\AI-Novel-Studio'
+2026-10-09T15:52:25.5766132Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-09T15:52:26.2398641Z git version 2.56.0.windows.1
+2026-10-09T15:52:26.2452976Z ##[endgroup]
+2026-10-09T15:52:26.2476616Z Temporarily overriding HOME='D:\a\_temp\2ac1dfab-08ee-44b0-bddb-8b8df38afe90' before making global git config changes
+2026-10-09T15:52:26.2479489Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T15:52:26.2489969Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\AI-Novel-Studio\AI-Novel-Studio
+2026-10-09T15:52:26.3808512Z Deleting the contents of 'D:\a\AI-Novel-Studio\AI-Novel-Studio'
+2026-10-09T15:52:26.3814548Z ##[group]Initializing the repository
+2026-10-09T15:52:26.3824075Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\AI-Novel-Studio\AI-Novel-Studio
+2026-10-09T15:52:26.6227159Z Initialized empty Git repository in D:/a/AI-Novel-Studio/AI-Novel-Studio/.git/
+2026-10-09T15:52:26.6284423Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T15:52:26.7442259Z ##[endgroup]
+2026-10-09T15:52:26.7442862Z ##[group]Disabling automatic garbage collection
+2026-10-09T15:52:26.7457252Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-10-09T15:52:26.7794472Z ##[endgroup]
+2026-10-09T15:52:26.7794944Z ##[group]Setting up auth
+2026-10-09T15:52:26.7819468Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:52:26.8171746Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-09T15:52:29.4108841Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:52:29.4421150Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-09T15:52:29.9492630Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-09T15:52:29.9828777Z ##[endgroup]
+2026-10-09T15:52:29.9829550Z ##[group]Fetching the repository
+2026-10-09T15:52:29.9845913Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +02a3f6e9908f785a308a4605e362f8876aed4d8b:refs/remotes/pull/47/merge
+2026-10-09T15:52:35.9235577Z From https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T15:52:35.9271446Z  * [new ref]         02a3f6e9908f785a308a4605e362f8876aed4d8b -> pull/47/merge
+2026-10-09T15:52:35.9273326Z ##[endgroup]
+2026-10-09T15:52:35.9273877Z ##[group]Determining the checkout info
+2026-10-09T15:52:35.9275229Z ##[endgroup]
+2026-10-09T15:52:35.9290821Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-10-09T15:52:35.9741238Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-10-09T15:52:36.0030901Z ##[group]Checking out the ref
+2026-10-09T15:52:36.0039955Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/47/merge
+2026-10-09T15:52:37.0401883Z Updating files:  43% (1619/3681)
+2026-10-09T15:52:37.0790178Z Updating files:  44% (1620/3681)
+2026-10-09T15:52:37.0913520Z Updating files:  45% (1657/3681)
+2026-10-09T15:52:37.1037433Z Updating files:  46% (1694/3681)
+2026-10-09T15:52:37.1116875Z Updating files:  47% (1731/3681)
+2026-10-09T15:52:37.1258704Z Updating files:  48% (1767/3681)
+2026-10-09T15:52:37.1361480Z Updating files:  49% (1804/3681)
+2026-10-09T15:52:37.1555396Z Updating files:  50% (1841/3681)
+2026-10-09T15:52:37.1690102Z Updating files:  51% (1878/3681)
+2026-10-09T15:52:37.1771978Z Updating files:  52% (1915/3681)
+2026-10-09T15:52:37.1884321Z Updating files:  53% (1951/3681)
+2026-10-09T15:52:37.1984455Z Updating files:  54% (1988/3681)
+2026-10-09T15:52:37.2084319Z Updating files:  55% (2025/3681)
+2026-10-09T15:52:37.2236579Z Updating files:  56% (2062/3681)
+2026-10-09T15:52:37.2343211Z Updating files:  57% (2099/3681)
+2026-10-09T15:52:37.2575602Z Updating files:  58% (2135/3681)
+2026-10-09T15:52:37.2637089Z Updating files:  59% (2172/3681)
+2026-10-09T15:52:37.2726826Z Updating files:  60% (2209/3681)
+2026-10-09T15:52:37.2795381Z Updating files:  61% (2246/3681)
+2026-10-09T15:52:37.2863326Z Updating files:  62% (2283/3681)
+2026-10-09T15:52:37.2936265Z Updating files:  63% (2320/3681)
+2026-10-09T15:52:37.3025818Z Updating files:  64% (2356/3681)
+2026-10-09T15:52:37.3101146Z Updating files:  65% (2393/3681)
+2026-10-09T15:52:37.3177204Z Updating files:  66% (2430/3681)
+2026-10-09T15:52:37.3262400Z Updating files:  67% (2467/3681)
+2026-10-09T15:52:37.3343142Z Updating files:  68% (2504/3681)
+2026-10-09T15:52:37.3410821Z Updating files:  69% (2540/3681)
+2026-10-09T15:52:37.3479567Z Updating files:  70% (2577/3681)
+2026-10-09T15:52:37.3553692Z Updating files:  71% (2614/3681)
+2026-10-09T15:52:37.3624048Z Updating files:  72% (2651/3681)
+2026-10-09T15:52:37.3694385Z Updating files:  73% (2688/3681)
+2026-10-09T15:52:37.3765617Z Updating files:  74% (2724/3681)
+2026-10-09T15:52:37.3832483Z Updating files:  75% (2761/3681)
+2026-10-09T15:52:37.3893331Z Updating files:  76% (2798/3681)
+2026-10-09T15:52:37.3967659Z Updating files:  77% (2835/3681)
+2026-10-09T15:52:37.4028772Z Updating files:  78% (2872/3681)
+2026-10-09T15:52:37.4102147Z Updating files:  79% (2908/3681)
+2026-10-09T15:52:37.4179781Z Updating files:  80% (2945/3681)
+2026-10-09T15:52:37.4269245Z Updating files:  81% (2982/3681)
+2026-10-09T15:52:37.4335015Z Updating files:  82% (3019/3681)
+2026-10-09T15:52:37.4400129Z Updating files:  83% (3056/3681)
+2026-10-09T15:52:37.4463149Z Updating files:  84% (3093/3681)
+2026-10-09T15:52:37.4534325Z Updating files:  85% (3129/3681)
+2026-10-09T15:52:37.4606480Z Updating files:  86% (3166/3681)
+2026-10-09T15:52:37.4671691Z Updating files:  87% (3203/3681)
+2026-10-09T15:52:37.4736211Z Updating files:  88% (3240/3681)
+2026-10-09T15:52:37.4802948Z Updating files:  89% (3277/3681)
+2026-10-09T15:52:37.4878607Z Updating files:  90% (3313/3681)
+2026-10-09T15:52:37.4943082Z Updating files:  91% (3350/3681)
+2026-10-09T15:52:37.5009650Z Updating files:  92% (3387/3681)
+2026-10-09T15:52:37.5081145Z Updating files:  93% (3424/3681)
+2026-10-09T15:52:37.5149267Z Updating files:  94% (3461/3681)
+2026-10-09T15:52:37.5225428Z Updating files:  95% (3497/3681)
+2026-10-09T15:52:37.5303580Z Updating files:  96% (3534/3681)
+2026-10-09T15:52:37.5381554Z Updating files:  97% (3571/3681)
+2026-10-09T15:52:37.5506281Z Updating files:  98% (3608/3681)
+2026-10-09T15:52:37.5590251Z Updating files:  99% (3645/3681)
+2026-10-09T15:52:37.5590798Z Updating files: 100% (3681/3681)
+2026-10-09T15:52:37.5591241Z Updating files: 100% (3681/3681), done.
+2026-10-09T15:52:37.5712611Z Note: switching to 'refs/remotes/pull/47/merge'.
+2026-10-09T15:52:37.5713041Z 
+2026-10-09T15:52:37.5713373Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-09T15:52:37.5714120Z changes and commit them, and you can discard any commits you make in this
+2026-10-09T15:52:37.5714839Z state without impacting any branches by switching back to a branch.
+2026-10-09T15:52:37.5715303Z 
+2026-10-09T15:52:37.5715637Z If you want to create a new branch to retain commits you create, you may
+2026-10-09T15:52:37.5716194Z do so (now or later) by using -c with the switch command. Example:
+2026-10-09T15:52:37.5716435Z 
+2026-10-09T15:52:37.5716567Z   git switch -c <new-branch-name>
+2026-10-09T15:52:37.5716755Z 
+2026-10-09T15:52:37.5716848Z Or undo this operation with:
+2026-10-09T15:52:37.5717012Z 
+2026-10-09T15:52:37.5717086Z   git switch -
+2026-10-09T15:52:37.5717204Z 
+2026-10-09T15:52:37.5717402Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-09T15:52:37.5717995Z 
+2026-10-09T15:52:37.5718340Z HEAD is now at 02a3f6e Merge 9851bdd2d692df983664bc8f4597fbc05c0e2ceb into fed2404c8e30b44061b7139dced45b7f3301601c
+2026-10-09T15:52:37.5838303Z ##[endgroup]
+2026-10-09T15:52:37.6234675Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-10-09T15:52:37.6511304Z 02a3f6e9908f785a308a4605e362f8876aed4d8b
+2026-10-09T15:52:37.6550361Z ##[group]Removing auth
+2026-10-09T15:52:37.6559763Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:52:37.6873969Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-09T15:52:38.2239459Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:52:38.2549318Z http.https://github.com/.extraheader
+2026-10-09T15:52:38.2590642Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-10-09T15:52:38.2934752Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-09T15:52:38.8317744Z ##[endgroup]
+2026-10-09T15:52:38.8693090Z ##[group]Run actions/setup-python@v5.6.0
+2026-10-09T15:52:38.8693439Z with:
+2026-10-09T15:52:38.8693627Z   python-version: 3.12.9
+2026-10-09T15:52:38.8693856Z   check-latest: false
+2026-10-09T15:52:38.8696737Z   token: ***
+2026-10-09T15:52:38.8696943Z   update-environment: true
+2026-10-09T15:52:38.8697167Z   allow-prereleases: false
+2026-10-09T15:52:38.8697372Z   freethreaded: false
+2026-10-09T15:52:38.8697550Z env:
+2026-10-09T15:52:38.8697706Z   MOCK_PROVIDER: true
+2026-10-09T15:52:38.8697918Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:52:38.8698111Z   ENABLE_CLOUD: false
+2026-10-09T15:52:38.8698302Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:52:38.8698564Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:52:38.8698839Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:52:38.8699053Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:52:38.8699235Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:52:38.8699432Z ##[endgroup]
+2026-10-09T15:52:39.0328513Z ##[group]Installed versions
+2026-10-09T15:52:39.0330080Z Version 3.12.9 was not found in the local cache
+2026-10-09T15:52:39.0481256Z (node:3108) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:52:39.0482471Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:52:39.8150241Z Version 3.12.9 is available for downloading
+2026-10-09T15:52:39.8158123Z Download from "https://github.com/actions/python-versions/releases/download/3.12.9-13149478207/python-3.12.9-win32-x64.zip"
+2026-10-09T15:52:40.1761009Z Extract downloaded archive
+2026-10-09T15:52:40.2923356Z [command]"C:\Program Files\PowerShell\7\pwsh.exe" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command "$ErrorActionPreference = 'Stop' ; try { Add-Type -AssemblyName System.IO.Compression.ZipFile } catch { } ; try { [System.IO.Compression.ZipFile]::ExtractToDirectory('D:\a\_temp\python-3.12.9-win32-x64.zip', 'D:\a\_temp\0ecee266-4f14-47fe-8878-0a36990fc996', $true) } catch { if (($_.Exception.GetType().FullName -eq 'System.Management.Automation.MethodException') -or ($_.Exception.GetType().FullName -eq 'System.Management.Automation.RuntimeException') ){ Expand-Archive -LiteralPath 'D:\a\_temp\python-3.12.9-win32-x64.zip' -DestinationPath 'D:\a\_temp\0ecee266-4f14-47fe-8878-0a36990fc996' -Force } else { throw $_ } } ;"
+2026-10-09T15:52:40.7879828Z Execute installation script
+2026-10-09T15:52:45.2450204Z Check if Python hostedtoolcache folder exist...
+2026-10-09T15:52:45.2451844Z 
+2026-10-09T15:52:45.2665326Z Check if current Python version is installed...
+2026-10-09T15:52:45.2666008Z 
+2026-10-09T15:52:45.2946596Z Python3.12 (x64) was found in C:\hostedtoolcache\windows\Python...
+2026-10-09T15:52:45.2947114Z 
+2026-10-09T15:52:45.3390840Z Deleting C:\hostedtoolcache\windows\Python\3.12.10\x64...
+2026-10-09T15:52:45.3391349Z 
+2026-10-09T15:52:50.3368176Z VERBOSE: Performing the operation "Remove File" on target "C:\hostedtoolcache\windows\Python\3.12.10\x64.complete".
+2026-10-09T15:52:50.3369476Z 
+2026-10-09T15:52:50.3378609Z Remove registry entries for Python 3.12(x64)...
+2026-10-09T15:52:50.3380729Z 
+2026-10-09T15:52:50.8936656Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:50.8938140Z HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products\06D3A4FE35A979641AD83
+2026-10-09T15:52:50.8939089Z D53F358456E".
+2026-10-09T15:52:50.8939267Z 
+2026-10-09T15:52:50.8965858Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:50.8967278Z HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products\3661A0DCD2CDDB1498FA1
+2026-10-09T15:52:50.8968012Z E80E9488122".
+2026-10-09T15:52:50.8968127Z 
+2026-10-09T15:52:50.8988155Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:50.8992084Z HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products\3865845730FE6E14FB121
+2026-10-09T15:52:50.8992978Z D94614945C8".
+2026-10-09T15:52:50.8993158Z 
+2026-10-09T15:52:50.9018520Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:50.9019662Z HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products\795B21EDFB4DB1B4FBF55
+2026-10-09T15:52:50.9020342Z CEC14FADBCF".
+2026-10-09T15:52:50.9020467Z 
+2026-10-09T15:52:50.9036574Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:50.9037703Z HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products\8843FD815422B2340A32A
+2026-10-09T15:52:50.9038614Z 30AC5A2008C".
+2026-10-09T15:52:50.9038787Z 
+2026-10-09T15:52:50.9063332Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:50.9064156Z HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products\D3908510908FB5544992D
+2026-10-09T15:52:50.9064979Z 6614A5B1D81".
+2026-10-09T15:52:50.9065170Z 
+2026-10-09T15:52:50.9084367Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:50.9085475Z HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products\FA171F1012F1E534EB4EC
+2026-10-09T15:52:50.9086400Z F4C63C098C6".
+2026-10-09T15:52:50.9086581Z 
+2026-10-09T15:52:50.9102737Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:50.9104130Z HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Products\FE9C90D9C75AA2247BA9C
+2026-10-09T15:52:50.9105064Z C29029756A3".
+2026-10-09T15:52:50.9105247Z 
+2026-10-09T15:52:50.9294025Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:50.9294903Z HKEY_CLASSES_ROOT\Installer\Products\06D3A4FE35A979641AD83D53F358456E".
+2026-10-09T15:52:50.9295345Z 
+2026-10-09T15:52:50.9706010Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:50.9706847Z HKEY_CLASSES_ROOT\Installer\Products\3661A0DCD2CDDB1498FA1E80E9488122".
+2026-10-09T15:52:50.9707562Z 
+2026-10-09T15:52:50.9739670Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:50.9740208Z HKEY_CLASSES_ROOT\Installer\Products\3865845730FE6E14FB121D94614945C8".
+2026-10-09T15:52:50.9741108Z 
+2026-10-09T15:52:51.0076261Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.0077200Z HKEY_CLASSES_ROOT\Installer\Products\795B21EDFB4DB1B4FBF55CEC14FADBCF".
+2026-10-09T15:52:51.0079450Z 
+2026-10-09T15:52:51.0193019Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.0194068Z HKEY_CLASSES_ROOT\Installer\Products\8843FD815422B2340A32A30AC5A2008C".
+2026-10-09T15:52:51.0194539Z 
+2026-10-09T15:52:51.0740362Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.0741204Z HKEY_CLASSES_ROOT\Installer\Products\D3908510908FB5544992D6614A5B1D81".
+2026-10-09T15:52:51.0741675Z 
+2026-10-09T15:52:51.0983541Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.0984297Z HKEY_CLASSES_ROOT\Installer\Products\FA171F1012F1E534EB4ECF4C63C098C6".
+2026-10-09T15:52:51.0984602Z 
+2026-10-09T15:52:51.1030688Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.1031716Z HKEY_CLASSES_ROOT\Installer\Products\FE9C90D9C75AA2247BA9CC29029756A3".
+2026-10-09T15:52:51.1032170Z 
+2026-10-09T15:52:51.1168728Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.1170101Z HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\{0158093D-F809-455B-9429-6D16A4B5D118}".
+2026-10-09T15:52:51.1170621Z 
+2026-10-09T15:52:51.1185329Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.1185963Z HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\{01F171AF-1F21-435E-BEE4-FCC4360C896C}".
+2026-10-09T15:52:51.1186921Z 
+2026-10-09T15:52:51.1247660Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.1248648Z HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\{18DF3488-2245-432B-A023-3AA05C2A00C8}".
+2026-10-09T15:52:51.1249109Z 
+2026-10-09T15:52:51.1397618Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.1399029Z HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\{75485683-EF03-41E6-BF21-D1491694548C}".
+2026-10-09T15:52:51.1399800Z 
+2026-10-09T15:52:51.1467694Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.1469261Z HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\{9D09C9EF-A57C-422A-B79A-CC922079653A}".
+2026-10-09T15:52:51.1470046Z 
+2026-10-09T15:52:51.1575098Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.1575794Z HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\{CD0A1663-DC2D-41BD-89AF-E1089E841822}".
+2026-10-09T15:52:51.1576899Z 
+2026-10-09T15:52:51.1630168Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.1631640Z HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\{DE12B597-D4BF-4B1B-BF5F-C5CE41AFBDFC}".
+2026-10-09T15:52:51.1632361Z 
+2026-10-09T15:52:51.1667146Z VERBOSE: Performing the operation "Remove Key" on target "Item: 
+2026-10-09T15:52:51.1667776Z HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\{EF4A3D60-9A53-4697-A18D-D3353F8554E6}".
+2026-10-09T15:52:51.1668925Z 
+2026-10-09T15:52:51.2537702Z Create Python 3.12.9 folder in C:\hostedtoolcache\windows\Python
+2026-10-09T15:52:51.2538977Z 
+2026-10-09T15:52:51.2632130Z Copy Python binaries to C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:52:51.2632726Z 
+2026-10-09T15:52:51.2745554Z Install Python 3.12.9 in C:\hostedtoolcache\windows\Python...
+2026-10-09T15:52:51.2746481Z 
+2026-10-09T15:53:22.4087800Z Create python3 symlink
+2026-10-09T15:53:22.4088328Z 
+2026-10-09T15:53:22.4715797Z 
+2026-10-09T15:53:22.4717359Z 
+2026-10-09T15:53:22.4721632Z Directory: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:53:22.4722455Z 
+2026-10-09T15:53:22.4723121Z 
+2026-10-09T15:53:22.4738048Z Mode                 LastWriteTime         Length Name
+2026-10-09T15:53:22.4744346Z ----                 -------------         ------ ----
+2026-10-09T15:53:22.4761041Z -a---l         10/9/2026   3:53 PM              0 python3.exe
+2026-10-09T15:53:22.4771405Z Install and upgrade Pip
+2026-10-09T15:53:22.4775971Z 
+2026-10-09T15:53:25.2392536Z Looking in links: c:\Users\RUNNER~1\AppData\Local\Temp\tmppslmg9z4
+2026-10-09T15:53:25.2400261Z Requirement already satisfied: pip in c:\hostedtoolcache\windows\python\3.12.9\x64\lib\site-packages (24.3.1)
+2026-10-09T15:53:26.9165643Z Collecting pip
+2026-10-09T15:53:26.9284842Z Downloading pip-26.2.1-py3-none-any.whl.metadata (4.6 kB)
+2026-10-09T15:53:26.9518498Z Downloading pip-26.2.1-py3-none-any.whl (1.8 MB)
+2026-10-09T15:53:26.9906961Z 
+2026-10-09T15:53:26.9908616Z ---------------------------------------- 1.8/1.8 MB
+2026-10-09T15:53:26.9909143Z 50.1 MB/s eta 0:00:00
+2026-10-09T15:53:26.9910512Z 
+2026-10-09T15:53:27.0243102Z Installing collected packages: pip
+2026-10-09T15:53:27.0243523Z Attempting uninstall: pip
+2026-10-09T15:53:27.0273836Z Found existing installation: pip 24.3.1
+2026-10-09T15:53:27.1232506Z Uninstalling pip-24.3.1:
+2026-10-09T15:53:27.1421855Z Successfully uninstalled pip-24.3.1
+2026-10-09T15:53:29.3422529Z Successfully installed pip-26.2.1
+2026-10-09T15:53:29.6532019Z Create complete file
+2026-10-09T15:53:29.6532350Z 
+2026-10-09T15:53:29.6553529Z 
+2026-10-09T15:53:29.6553596Z 
+2026-10-09T15:53:29.7063201Z Successfully set up CPython (3.12.9)
+2026-10-09T15:53:29.7063924Z ##[endgroup]
+2026-10-09T15:53:29.7391401Z ##[group]Run actions/setup-node@v4.4.0
+2026-10-09T15:53:29.7391747Z with:
+2026-10-09T15:53:29.7391930Z   node-version: 22.14.0
+2026-10-09T15:53:29.7392134Z   always-auth: false
+2026-10-09T15:53:29.7392329Z   check-latest: false
+2026-10-09T15:53:29.7395251Z   token: ***
+2026-10-09T15:53:29.7395449Z env:
+2026-10-09T15:53:29.7395618Z   MOCK_PROVIDER: true
+2026-10-09T15:53:29.7395826Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:53:29.7396042Z   ENABLE_CLOUD: false
+2026-10-09T15:53:29.7396253Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:53:29.7396523Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:53:29.7396812Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:53:29.7397032Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:53:29.7397243Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:53:29.7397528Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:53:29.7398023Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.9\x64/lib/pkgconfig
+2026-10-09T15:53:29.7398500Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:53:29.7398899Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:53:29.7399277Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:53:29.7399582Z ##[endgroup]
+2026-10-09T15:53:29.9164001Z Attempting to download 22.14.0...
+2026-10-09T15:53:29.9335378Z (node:4656) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:53:29.9336637Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:53:30.7223487Z Acquiring 22.14.0 - x64 from https://github.com/actions/node-versions/releases/download/22.14.0-13265982013/node-22.14.0-win32-x64.7z
+2026-10-09T15:53:31.3392922Z Extracting ...
+2026-10-09T15:53:33.2028583Z Adding to the cache ...
+2026-10-09T15:53:38.1887771Z ##[group]Environment details
+2026-10-09T15:53:39.6437671Z node: v22.14.0
+2026-10-09T15:53:39.6438095Z npm: 10.9.2
+2026-10-09T15:53:39.6438395Z yarn: 1.22.22
+2026-10-09T15:53:39.6439066Z ##[endgroup]
+2026-10-09T15:53:39.6726179Z ##[group]Run actions/setup-dotnet@v4
+2026-10-09T15:53:39.6726522Z with:
+2026-10-09T15:53:39.6726716Z   dotnet-version: 8.0.424
+2026-10-09T15:53:39.6726939Z   cache: false
+2026-10-09T15:53:39.6727110Z env:
+2026-10-09T15:53:39.6727277Z   MOCK_PROVIDER: true
+2026-10-09T15:53:39.6727482Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:53:39.6727710Z   ENABLE_CLOUD: false
+2026-10-09T15:53:39.6727912Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:53:39.6728185Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:53:39.6728480Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:53:39.6728705Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:53:39.6729129Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:53:39.6729424Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:53:39.6729868Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.9\x64/lib/pkgconfig
+2026-10-09T15:53:39.6730303Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:53:39.6730752Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:53:39.6731144Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:53:39.6731457Z ##[endgroup]
+2026-10-09T15:53:39.8429190Z (node:5824) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:53:39.8430589Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:53:39.9419113Z [command]"C:\Program Files\PowerShell\7\pwsh.exe" -NoLogo -Sta -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command & 'D:\a\_actions\actions\setup-dotnet\v4\externals\install-dotnet.ps1' -SkipNonVersionedFiles -Runtime dotnet -Channel LTS
+2026-10-09T15:53:41.2245526Z dotnet-install: .NET Core Runtime with version '10.0.12' is already installed.
+2026-10-09T15:53:41.3795583Z [command]"C:\Program Files\PowerShell\7\pwsh.exe" -NoLogo -Sta -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command & 'D:\a\_actions\actions\setup-dotnet\v4\externals\install-dotnet.ps1' -SkipNonVersionedFiles -Version 8.0.424
+2026-10-09T15:53:47.6295774Z dotnet-install: Downloaded file https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.424/dotnet-sdk-8.0.424-win-x64.zip size is 285090820 bytes.
+2026-10-09T15:53:47.6307538Z dotnet-install: Either downloaded or local package size can not be measured. One of them may be corrupted.
+2026-10-09T15:53:47.6360838Z dotnet-install: Extracting the archive.
+2026-10-09T15:54:06.8125562Z dotnet-install: Note that the script does not ensure your Windows version is supported during the installation.
+2026-10-09T15:54:06.8130667Z dotnet-install: To check the list of supported versions, go to https://learn.microsoft.com/dotnet/core/install/windows#supported-versions
+2026-10-09T15:54:06.8138347Z dotnet-install: Installed version is 8.0.424
+2026-10-09T15:54:06.8144821Z dotnet-install: Installation finished
+2026-10-09T15:54:06.8797292Z ##[group]Run if ((dotnet --version).Trim() -ne '8.0.424') { throw 'Wrong .NET SDK selected' }
+2026-10-09T15:54:06.8797985Z [36;1mif ((dotnet --version).Trim() -ne '8.0.424') { throw 'Wrong .NET SDK selected' }[0m
+2026-10-09T15:54:06.8798490Z [36;1m$sandbox = Join-Path $env:RUNNER_TEMP 'r2-complete-package'[0m
+2026-10-09T15:54:06.8799087Z [36;1mNew-Item -ItemType Directory -Force -Path $sandbox, "$sandbox/receipts", "$sandbox/data" | Out-Null[0m
+2026-10-09T15:54:06.8799695Z [36;1m"R2_PACKAGE_ROOT=$sandbox" | Out-File $env:GITHUB_ENV -Append -Encoding utf8[0m
+2026-10-09T15:54:06.8800219Z [36;1m"NOVEL_DATA_PATH=$sandbox/data" | Out-File $env:GITHUB_ENV -Append -Encoding utf8[0m
+2026-10-09T15:54:06.8800751Z [36;1m"STORAGE_BACKEND=file" | Out-File $env:GITHUB_ENV -Append -Encoding utf8[0m
+2026-10-09T15:54:06.8801271Z [36;1m"PROJECT_ROOT=$env:GITHUB_WORKSPACE" | Out-File $env:GITHUB_ENV -Append -Encoding utf8[0m
+2026-10-09T15:54:06.8801919Z [36;1m"checked_out_sha=$(git rev-parse HEAD)" | Out-File "$sandbox/receipts/revision.txt" -Encoding utf8[0m
+2026-10-09T15:54:06.8802561Z [36;1m"sdk=$(dotnet --version)" | Out-File "$sandbox/receipts/revision.txt" -Append -Encoding utf8[0m
+2026-10-09T15:54:06.8803473Z [36;1m"scope=Fresh native base smoke; interactive DesktopHost/IME/install/upgrade/signing/user acceptance NOT_RUN" | Out-File "$sandbox/receipts/revision.txt" -Append -Encoding utf8[0m
+2026-10-09T15:54:06.8856127Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-09T15:54:06.8856502Z env:
+2026-10-09T15:54:06.8856687Z   MOCK_PROVIDER: true
+2026-10-09T15:54:06.8856905Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:54:06.8857150Z   ENABLE_CLOUD: false
+2026-10-09T15:54:06.8857611Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:54:06.8857909Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:54:06.8858223Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:54:06.8858467Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:54:06.8858686Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:54:06.8859004Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:54:06.8859489Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.9\x64/lib/pkgconfig
+2026-10-09T15:54:06.8859968Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:54:06.8860403Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:54:06.8860845Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:54:06.8861208Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-09T15:54:06.8861469Z ##[endgroup]
+2026-10-09T15:54:10.0305493Z ##[group]Run python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild]'
+2026-10-09T15:54:10.0306287Z [36;1mpython -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild]'[0m
+2026-10-09T15:54:10.0306782Z [36;1mif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }[0m
+2026-10-09T15:54:10.0307105Z [36;1mnpm install --global pnpm@10.6.5[0m
+2026-10-09T15:54:10.0307419Z [36;1mif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }[0m
+2026-10-09T15:54:10.0307761Z [36;1mpnpm --dir frontend install --frozen-lockfile[0m
+2026-10-09T15:54:10.0308058Z [36;1mexit $LASTEXITCODE[0m
+2026-10-09T15:54:10.0348388Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-09T15:54:10.0348731Z env:
+2026-10-09T15:54:10.0348909Z   MOCK_PROVIDER: true
+2026-10-09T15:54:10.0349108Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:54:10.0349312Z   ENABLE_CLOUD: false
+2026-10-09T15:54:10.0349518Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:54:10.0349835Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:54:10.0350117Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:54:10.0350346Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:54:10.0350528Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:54:10.0350808Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:54:10.0351232Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.9\x64/lib/pkgconfig
+2026-10-09T15:54:10.0351660Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:54:10.0352057Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:54:10.0352440Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:54:10.0352764Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-09T15:54:10.0353044Z   R2_PACKAGE_ROOT: D:\a\_temp\r2-complete-package
+2026-10-09T15:54:10.0353367Z   NOVEL_DATA_PATH: D:\a\_temp\r2-complete-package/data
+2026-10-09T15:54:10.0353649Z   STORAGE_BACKEND: file
+2026-10-09T15:54:10.0353892Z   PROJECT_ROOT: D:\a\AI-Novel-Studio\AI-Novel-Studio
+2026-10-09T15:54:10.0354164Z ##[endgroup]
+2026-10-09T15:54:11.4055659Z Obtaining file:///D:/a/AI-Novel-Studio/AI-Novel-Studio
+2026-10-09T15:54:11.4091325Z   Installing build dependencies: started
+2026-10-09T15:54:13.8155606Z   Installing build dependencies: finished with status 'done'
+2026-10-09T15:54:13.8173447Z   Checking if build backend supports build_editable: started
+2026-10-09T15:54:14.2434547Z   Checking if build backend supports build_editable: finished with status 'done'
+2026-10-09T15:54:14.2459396Z   Getting requirements to build editable: started
+2026-10-09T15:54:14.9332073Z   Getting requirements to build editable: finished with status 'done'
+2026-10-09T15:54:14.9364428Z   Preparing editable metadata (pyproject.toml): started
+2026-10-09T15:54:15.6261739Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+2026-10-09T15:54:15.9586412Z Collecting fastapi<1,>=0.115 (from ai-novel-studio==0.7.0)
+2026-10-09T15:54:16.1075004Z   Downloading fastapi-0.142.2-py3-none-any.whl.metadata (27 kB)
+2026-10-09T15:54:16.3075088Z Collecting uvicorn<1,>=0.30 (from ai-novel-studio==0.7.0)
+2026-10-09T15:54:16.3123050Z   Downloading uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-09T15:54:16.3589027Z Collecting psycopg<4,>=3.2 (from psycopg[binary]<4,>=3.2->ai-novel-studio==0.7.0)
+2026-10-09T15:54:16.3631244Z   Downloading psycopg-3.3.6-py3-none-any.whl.metadata (4.4 kB)
+2026-10-09T15:54:16.7194351Z Collecting sqlalchemy<3,>=2.0 (from ai-novel-studio==0.7.0)
+2026-10-09T15:54:16.7268571Z   Downloading sqlalchemy-2.1.3-cp312-cp312-win_amd64.whl.metadata (9.9 kB)
+2026-10-09T15:54:16.7774521Z Collecting httpx<1,>=0.27 (from ai-novel-studio==0.7.0)
+2026-10-09T15:54:16.7838002Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2026-10-09T15:54:16.8319992Z Collecting pydantic-settings<3,>=2.6 (from ai-novel-studio==0.7.0)
+2026-10-09T15:54:16.8392279Z   Downloading pydantic_settings-2.15.0-py3-none-any.whl.metadata (3.9 kB)
+2026-10-09T15:54:16.9825629Z Collecting reportlab<5,>=4.0 (from ai-novel-studio==0.7.0)
+2026-10-09T15:54:16.9946481Z   Downloading reportlab-4.5.1-py3-none-any.whl.metadata (1.7 kB)
+2026-10-09T15:54:17.0500280Z Collecting pypdf==6.19.0 (from ai-novel-studio==0.7.0)
+2026-10-09T15:54:17.0545673Z   Downloading pypdf-6.19.0-py3-none-any.whl.metadata (7.5 kB)
+2026-10-09T15:54:17.1137169Z Collecting jsonschema<5,>=4.18 (from ai-novel-studio==0.7.0)
+2026-10-09T15:54:17.1186949Z   Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+2026-10-09T15:54:17.1802104Z Collecting pytest<9,>=8 (from ai-novel-studio==0.7.0)
+2026-10-09T15:54:17.1857518Z   Downloading pytest-8.4.2-py3-none-any.whl.metadata (7.7 kB)
+2026-10-09T15:54:17.3789138Z Collecting fonttools==4.59.1 (from ai-novel-studio==0.7.0)
+2026-10-09T15:54:17.3937543Z   Downloading fonttools-4.59.1-cp312-cp312-win_amd64.whl.metadata (111 kB)
+2026-10-09T15:54:17.4739724Z Collecting starlette>=0.46.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:54:17.4792359Z   Downloading starlette-1.7.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-09T15:54:17.7646627Z Collecting pydantic>=2.9.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:54:17.7695610Z   Downloading pydantic-2.13.5-py3-none-any.whl.metadata (110 kB)
+2026-10-09T15:54:17.8310297Z Collecting typing-extensions>=4.8.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:54:17.8362760Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-10-09T15:54:17.8818088Z Collecting typing-inspection>=0.4.2 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:54:17.8896860Z   Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+2026-10-09T15:54:17.9340438Z Collecting annotated-doc>=0.0.2 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:54:17.9402407Z   Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+2026-10-09T15:54:17.9961847Z Collecting opentelemetry-api>=1.44.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:54:18.0014642Z   Downloading opentelemetry_api-1.45.0-py3-none-any.whl.metadata (1.4 kB)
+2026-10-09T15:54:18.0484256Z Collecting anyio (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T15:54:18.0531910Z   Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+2026-10-09T15:54:18.1092172Z Collecting certifi (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T15:54:18.1151193Z   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+2026-10-09T15:54:18.1638039Z Collecting httpcore==1.* (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T15:54:18.1682842Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2026-10-09T15:54:18.2163483Z Collecting idna (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T15:54:18.2210971Z   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+2026-10-09T15:54:18.2738553Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T15:54:18.2783984Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2026-10-09T15:54:18.3320182Z Collecting attrs>=22.2.0 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-09T15:54:18.3358291Z   Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+2026-10-09T15:54:18.3986866Z Collecting jsonschema-specifications>=2023.03.6 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-09T15:54:18.4034520Z   Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+2026-10-09T15:54:18.4534718Z Collecting referencing>=0.28.4 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-09T15:54:18.4572653Z   Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+2026-10-09T15:54:18.7661025Z Collecting rpds-py>=0.25.0 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-09T15:54:18.7704137Z   Downloading rpds_py-2026.9.1-cp312-cp312-win_amd64.whl.metadata (4.2 kB)
+2026-10-09T15:54:18.8194660Z Collecting tzdata (from psycopg<4,>=3.2->psycopg[binary]<4,>=3.2->ai-novel-studio==0.7.0)
+2026-10-09T15:54:18.8238101Z   Downloading tzdata-2026.5-py2.py3-none-any.whl.metadata (1.4 kB)
+2026-10-09T15:54:19.0243911Z Collecting psycopg-binary==3.3.6 (from psycopg[binary]<4,>=3.2->ai-novel-studio==0.7.0)
+2026-10-09T15:54:19.0283376Z   Downloading psycopg_binary-3.3.6-cp312-cp312-win_amd64.whl.metadata (2.8 kB)
+2026-10-09T15:54:19.5930014Z Collecting python-dotenv>=0.21.0 (from pydantic-settings<3,>=2.6->ai-novel-studio==0.7.0)
+2026-10-09T15:54:19.5974876Z   Downloading python_dotenv-1.2.4-py3-none-any.whl.metadata (29 kB)
+2026-10-09T15:54:19.6438990Z Collecting colorama>=0.4 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T15:54:19.6482662Z   Downloading colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+2026-10-09T15:54:19.6940522Z Collecting iniconfig>=1 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T15:54:19.6999490Z   Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-09T15:54:19.7534176Z Collecting packaging>=20 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T15:54:19.7583514Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-10-09T15:54:19.8041441Z Collecting pluggy<2,>=1.5 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T15:54:19.8080621Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+2026-10-09T15:54:19.8555035Z Collecting pygments>=2.7.2 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T15:54:19.8597422Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-09T15:54:20.0906244Z Collecting pillow>=9.0.0 (from reportlab<5,>=4.0->ai-novel-studio==0.7.0)
+2026-10-09T15:54:20.0969808Z   Downloading pillow-12.3.0-cp312-cp312-win_amd64.whl.metadata (9.3 kB)
+2026-10-09T15:54:20.2682186Z Collecting charset-normalizer (from reportlab<5,>=4.0->ai-novel-studio==0.7.0)
+2026-10-09T15:54:20.2734748Z   Downloading charset_normalizer-3.5.2-cp312-cp312-win_amd64.whl.metadata (47 kB)
+2026-10-09T15:54:20.3247826Z Collecting click>=7.0 (from uvicorn<1,>=0.30->ai-novel-studio==0.7.0)
+2026-10-09T15:54:20.3285125Z   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+2026-10-09T15:54:20.3771410Z Collecting annotated-types>=0.6.0 (from pydantic>=2.9.0->fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:54:20.3810837Z   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+2026-10-09T15:54:21.1437931Z Collecting pydantic-core==2.46.5 (from pydantic>=2.9.0->fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T15:54:21.1477360Z   Downloading pydantic_core-2.46.5-cp312-cp312-win_amd64.whl.metadata (6.7 kB)
+2026-10-09T15:54:21.1873897Z Downloading fonttools-4.59.1-cp312-cp312-win_amd64.whl (2.3 MB)
+2026-10-09T15:54:21.2444847Z    ---------------------------------------- 2.3/2.3 MB 42.3 MB/s  0:00:00
+2026-10-09T15:54:21.2493938Z Downloading pypdf-6.19.0-py3-none-any.whl (395 kB)
+2026-10-09T15:54:21.2762874Z Downloading fastapi-0.142.2-py3-none-any.whl (144 kB)
+2026-10-09T15:54:21.3010121Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+2026-10-09T15:54:21.3236468Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+2026-10-09T15:54:21.3472526Z Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+2026-10-09T15:54:21.3672909Z Downloading psycopg-3.3.6-py3-none-any.whl (215 kB)
+2026-10-09T15:54:21.3945287Z Downloading psycopg_binary-3.3.6-cp312-cp312-win_amd64.whl (3.7 MB)
+2026-10-09T15:54:21.4459241Z    ---------------------------------------- 3.7/3.7 MB 72.3 MB/s  0:00:00
+2026-10-09T15:54:21.4503212Z Downloading pydantic_settings-2.15.0-py3-none-any.whl (69 kB)
+2026-10-09T15:54:21.4716649Z Downloading pytest-8.4.2-py3-none-any.whl (365 kB)
+2026-10-09T15:54:21.4930778Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+2026-10-09T15:54:21.5172267Z Downloading reportlab-4.5.1-py3-none-any.whl (2.0 MB)
+2026-10-09T15:54:21.5496949Z    ---------------------------------------- 2.0/2.0 MB 54.7 MB/s  0:00:00
+2026-10-09T15:54:21.5543406Z Downloading sqlalchemy-2.1.3-cp312-cp312-win_amd64.whl (2.4 MB)
+2026-10-09T15:54:21.5991453Z    ---------------------------------------- 2.4/2.4 MB 46.1 MB/s  0:00:00
+2026-10-09T15:54:21.6036293Z Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
+2026-10-09T15:54:21.6258882Z Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+2026-10-09T15:54:21.6474050Z Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+2026-10-09T15:54:21.6665869Z Downloading click-8.5.0-py3-none-any.whl (125 kB)
+2026-10-09T15:54:21.6875256Z Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+2026-10-09T15:54:21.7124138Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+2026-10-09T15:54:21.7353363Z Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+2026-10-09T15:54:21.7564336Z Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+2026-10-09T15:54:21.7818013Z Downloading opentelemetry_api-1.45.0-py3-none-any.whl (60 kB)
+2026-10-09T15:54:21.8051740Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+2026-10-09T15:54:21.8286068Z Downloading pillow-12.3.0-cp312-cp312-win_amd64.whl (7.2 MB)
+2026-10-09T15:54:21.9274787Z    ---------------------------------------- 7.2/7.2 MB 74.1 MB/s  0:00:00
+2026-10-09T15:54:22.0944291Z Downloading pydantic-2.13.5-py3-none-any.whl (472 kB)
+2026-10-09T15:54:22.1192677Z Downloading pydantic_core-2.46.5-cp312-cp312-win_amd64.whl (2.0 MB)
+2026-10-09T15:54:22.1570288Z    ---------------------------------------- 2.0/2.0 MB 55.7 MB/s  0:00:00
+2026-10-09T15:54:22.1618828Z Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+2026-10-09T15:54:22.1840853Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+2026-10-09T15:54:22.2170534Z    ---------------------------------------- 1.3/1.3 MB 31.9 MB/s  0:00:00
+2026-10-09T15:54:22.2218490Z Downloading python_dotenv-1.2.4-py3-none-any.whl (23 kB)
+2026-10-09T15:54:22.2447800Z Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+2026-10-09T15:54:22.2751461Z Downloading rpds_py-2026.9.1-cp312-cp312-win_amd64.whl (222 kB)
+2026-10-09T15:54:22.2964413Z Downloading starlette-1.7.0-py3-none-any.whl (78 kB)
+2026-10-09T15:54:22.3176194Z Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+2026-10-09T15:54:22.3408353Z Downloading idna-3.20-py3-none-any.whl (69 kB)
+2026-10-09T15:54:22.3659473Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-10-09T15:54:22.3880755Z Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+2026-10-09T15:54:22.4087092Z Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+2026-10-09T15:54:22.4328357Z Downloading charset_normalizer-3.5.2-cp312-cp312-win_amd64.whl (207 kB)
+2026-10-09T15:54:22.4562738Z Downloading tzdata-2026.5-py2.py3-none-any.whl (347 kB)
+2026-10-09T15:54:22.6405706Z Building wheels for collected packages: ai-novel-studio
+2026-10-09T15:54:22.6479701Z   Building editable for ai-novel-studio (pyproject.toml): started
+2026-10-09T15:54:23.5357044Z   Building editable for ai-novel-studio (pyproject.toml): finished with status 'done'
+2026-10-09T15:54:23.5392595Z   Created wheel for ai-novel-studio: filename=ai_novel_studio-0.7.0-0.editable-py3-none-any.whl size=3169 sha256=d0b74dc082c37195439e7e5981cf698a8d46c9a6800dd3619cee737d8f0c920e
+2026-10-09T15:54:23.5394667Z   Stored in directory: C:\Users\runneradmin\AppData\Local\Temp\pip-ephem-wheel-cache-_0exutjz\wheels\bc\96\d9\23bbbf472cce62cc5daf428b8cf5c693a6d54b50fcbdee6f2d
+2026-10-09T15:54:23.5419718Z Successfully built ai-novel-studio
+2026-10-09T15:54:23.6373638Z Installing collected packages: tzdata, typing-extensions, rpds-py, python-dotenv, pypdf, pygments, psycopg-binary, pluggy, pillow, packaging, iniconfig, idna, h11, fonttools, colorama, click, charset-normalizer, certifi, attrs, annotated-types, annotated-doc, uvicorn, typing-inspection, sqlalchemy, reportlab, referencing, pytest, pydantic-core, psycopg, opentelemetry-api, httpcore, anyio, starlette, pydantic, jsonschema-specifications, httpx, pydantic-settings, jsonschema, fastapi, ai-novel-studio
+2026-10-09T15:54:37.2091128Z 
+2026-10-09T15:54:37.2136096Z Successfully installed ai-novel-studio-0.7.0 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 attrs-26.1.0 certifi-2026.7.22 charset-normalizer-3.5.2 click-8.5.0 colorama-0.4.6 fastapi-0.142.2 fonttools-4.59.1 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.20 iniconfig-2.3.0 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 opentelemetry-api-1.45.0 packaging-26.3 pillow-12.3.0 pluggy-1.6.0 psycopg-3.3.6 psycopg-binary-3.3.6 pydantic-2.13.5 pydantic-core-2.46.5 pydantic-settings-2.15.0 pygments-2.21.0 pypdf-6.19.0 pytest-8.4.2 python-dotenv-1.2.4 referencing-0.37.0 reportlab-4.5.1 rpds-py-2026.9.1 sqlalchemy-2.1.3 starlette-1.7.0 typing-extensions-4.16.0 typing-inspection-0.4.4 tzdata-2026.5 uvicorn-0.54.0
+2026-10-09T15:54:46.5915125Z 
+2026-10-09T15:54:46.5915852Z added 1 package in 9s
+2026-10-09T15:54:46.5916198Z 
+2026-10-09T15:54:46.5916452Z 1 package is looking for funding
+2026-10-09T15:54:46.5916767Z   run `npm fund` for details
+2026-10-09T15:54:48.8452134Z Lockfile is up to date, resolution step is skipped
+2026-10-09T15:54:48.9035608Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-10-09T15:54:48.9581910Z Packages: +249
+2026-10-09T15:54:48.9582895Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-10-09T15:54:49.9052480Z Progress: resolved 249, reused 0, downloaded 67, added 20
+2026-10-09T15:54:50.9057049Z Progress: resolved 249, reused 0, downloaded 137, added 45
+2026-10-09T15:54:51.9076957Z Progress: resolved 249, reused 0, downloaded 219, added 72
+2026-10-09T15:54:52.9171364Z Progress: resolved 249, reused 0, downloaded 249, added 248
+2026-10-09T15:54:53.0393527Z Progress: resolved 249, reused 0, downloaded 249, added 249, done
+2026-10-09T15:54:53.2090090Z .../esbuild@0.25.12/node_modules/esbuild postinstall$ node install.js
+2026-10-09T15:54:53.2097866Z .../esbuild@0.21.5/node_modules/esbuild postinstall$ node install.js
+2026-10-09T15:54:53.3650886Z .../esbuild@0.21.5/node_modules/esbuild postinstall: Done
+2026-10-09T15:54:53.3674691Z .../esbuild@0.25.12/node_modules/esbuild postinstall: Done
+2026-10-09T15:54:53.4378379Z 
+2026-10-09T15:54:53.4378872Z dependencies:
+2026-10-09T15:54:53.4379400Z + @tanstack/react-query 5.101.4
+2026-10-09T15:54:53.4379977Z + @tiptap/extension-placeholder 2.27.2
+2026-10-09T15:54:53.4380432Z + @tiptap/react 2.27.2
+2026-10-09T15:54:53.4380795Z + @tiptap/starter-kit 2.27.2
+2026-10-09T15:54:53.4381178Z + lucide-react 0.468.0
+2026-10-09T15:54:53.4381517Z + react 18.3.1
+2026-10-09T15:54:53.4381839Z + react-dom 18.3.1
+2026-10-09T15:54:53.4382071Z + zustand 5.0.14
+2026-10-09T15:54:53.4382191Z 
+2026-10-09T15:54:53.4382270Z devDependencies:
+2026-10-09T15:54:53.4382498Z + @playwright/test 1.62.1
+2026-10-09T15:54:53.4382772Z + @testing-library/react 16.3.2
+2026-10-09T15:54:53.4383018Z + @types/node 22.13.10
+2026-10-09T15:54:53.4383247Z + @types/react 18.3.31
+2026-10-09T15:54:53.4383475Z + @types/react-dom 18.3.7
+2026-10-09T15:54:53.4383716Z + @vitejs/plugin-react 4.7.0
+2026-10-09T15:54:53.4383947Z + fountain-js 1.2.4
+2026-10-09T15:54:53.4384135Z + jsdom 25.0.1
+2026-10-09T15:54:53.4384341Z + typescript 5.9.3
+2026-10-09T15:54:53.4384522Z + vite 6.4.3
+2026-10-09T15:54:53.4384687Z + vitest 2.1.9
+2026-10-09T15:54:53.4385079Z 
+2026-10-09T15:54:53.4617631Z Done in 5.2s using pnpm v10.6.5
+2026-10-09T15:54:53.5232137Z ##[group]Run python scripts/prepare_windows_base.py --output "$env:R2_PACKAGE_ROOT/base" --cache "$env:R2_PACKAGE_ROOT/inputs" 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/prepare-base.log"
+2026-10-09T15:54:53.5233534Z [36;1mpython scripts/prepare_windows_base.py --output "$env:R2_PACKAGE_ROOT/base" --cache "$env:R2_PACKAGE_ROOT/inputs" 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/prepare-base.log"[0m
+2026-10-09T15:54:53.5234337Z [36;1mif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }[0m
+2026-10-09T15:54:53.5234931Z [36;1mpython scripts/prepare_pdf_font.py --output "$env:R2_PACKAGE_ROOT/fonts" > "$env:R2_PACKAGE_ROOT/receipts/font-manifest.json"[0m
+2026-10-09T15:54:53.5235474Z [36;1mexit $LASTEXITCODE[0m
+2026-10-09T15:54:53.5278444Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-09T15:54:53.5278795Z env:
+2026-10-09T15:54:53.5278975Z   MOCK_PROVIDER: true
+2026-10-09T15:54:53.5279197Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:54:53.5279451Z   ENABLE_CLOUD: false
+2026-10-09T15:54:53.5279660Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:54:53.5279925Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:54:53.5280202Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:54:53.5280410Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:54:53.5280590Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:54:53.5280867Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:54:53.5281296Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.9\x64/lib/pkgconfig
+2026-10-09T15:54:53.5281725Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:54:53.5282113Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:54:53.5282502Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:54:53.5282831Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-09T15:54:53.5283109Z   R2_PACKAGE_ROOT: D:\a\_temp\r2-complete-package
+2026-10-09T15:54:53.5283441Z   NOVEL_DATA_PATH: D:\a\_temp\r2-complete-package/data
+2026-10-09T15:54:53.5283728Z   STORAGE_BACKEND: file
+2026-10-09T15:54:53.5283966Z   PROJECT_ROOT: D:\a\AI-Novel-Studio\AI-Novel-Studio
+2026-10-09T15:54:53.5284244Z ##[endgroup]
+2026-10-09T15:55:06.4965337Z Looking in links: d:\a\_temp\r2-complete-package\inputs\wheels
+2026-10-09T15:55:06.5180287Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\annotated_doc-0.0.5-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 3))
+2026-10-09T15:55:06.5216674Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\annotated_types-0.8.0-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 4))
+2026-10-09T15:55:06.5253399Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\anyio-4.15.1-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 5))
+2026-10-09T15:55:06.5302611Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\attrs-26.1.0-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 6))
+2026-10-09T15:55:06.5336107Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\certifi-2026.7.22-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 7))
+2026-10-09T15:55:06.5371549Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\charset_normalizer-3.5.2-cp312-cp312-win_amd64.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 8))
+2026-10-09T15:55:06.5433106Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\click-8.5.0-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 9))
+2026-10-09T15:55:06.5468458Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\colorama-0.4.6-py2.py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 10))
+2026-10-09T15:55:06.5518103Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\fastapi-0.142.2-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 11))
+2026-10-09T15:55:06.5612421Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\h11-0.16.0-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 12))
+2026-10-09T15:55:06.5653134Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\httpcore-1.0.9-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 13))
+2026-10-09T15:55:06.5708797Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\httpx-0.28.1-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 14))
+2026-10-09T15:55:06.5755296Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\idna-3.20-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 15))
+2026-10-09T15:55:06.5800111Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\jsonschema-4.26.0-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 16))
+2026-10-09T15:55:06.5864864Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\jsonschema_specifications-2025.9.1-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 17))
+2026-10-09T15:55:06.5903089Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\opentelemetry_api-1.45.0-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 18))
+2026-10-09T15:55:06.5941370Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\pillow-12.3.0-cp312-cp312-win_amd64.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 19))
+2026-10-09T15:55:06.6155039Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\psycopg-3.3.6-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 20))
+2026-10-09T15:55:06.6221836Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\psycopg_binary-3.3.6-cp312-cp312-win_amd64.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 21))
+2026-10-09T15:55:06.6329881Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\pydantic-2.13.5-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 22))
+2026-10-09T15:55:06.6414074Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\pydantic_settings-2.15.0-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 23))
+2026-10-09T15:55:06.6458132Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\pydantic_core-2.46.5-cp312-cp312-win_amd64.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 24))
+2026-10-09T15:55:06.6535470Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\pypdf-6.19.0-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 25))
+2026-10-09T15:55:06.6600083Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\python_dotenv-1.2.4-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 26))
+2026-10-09T15:55:06.6657589Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\referencing-0.37.0-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 27))
+2026-10-09T15:55:06.6692899Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\reportlab-4.5.1-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 28))
+2026-10-09T15:55:06.6781186Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\rpds_py-2026.9.1-cp312-cp312-win_amd64.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 29))
+2026-10-09T15:55:06.6818649Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\sqlalchemy-2.1.3-cp312-cp312-win_amd64.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 30))
+2026-10-09T15:55:06.6963177Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\starlette-1.7.0-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 31))
+2026-10-09T15:55:06.7005384Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\typing_inspection-0.4.4-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 32))
+2026-10-09T15:55:06.7037314Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\typing_extensions-4.16.0-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 33))
+2026-10-09T15:55:06.7080754Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\tzdata-2026.3-py2.py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 34))
+2026-10-09T15:55:06.7202233Z Processing D:\a\_temp\r2-complete-package\inputs\wheels\uvicorn-0.54.0-py3-none-any.whl (from -r D:\a\AI-Novel-Studio\AI-Novel-Studio\packaging\requirements-windows.lock.txt (line 35))
+2026-10-09T15:55:06.7576400Z Installing collected packages: uvicorn, tzdata, typing-inspection, typing_extensions, starlette, SQLAlchemy, rpds-py, reportlab, referencing, python-dotenv, pypdf, pydantic-settings, pydantic_core, pydantic, psycopg-binary, psycopg, pillow, opentelemetry-api, jsonschema-specifications, jsonschema, idna, httpx, httpcore, h11, fastapi, colorama, click, charset-normalizer, certifi, attrs, anyio, annotated-types, annotated-doc
+2026-10-09T15:55:09.4808063Z 
+2026-10-09T15:55:09.4846613Z Successfully installed SQLAlchemy-2.1.3 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 attrs-26.1.0 certifi-2026.7.22 charset-normalizer-3.5.2 click-8.5.0 colorama-0.4.6 fastapi-0.142.2 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.20 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 opentelemetry-api-1.45.0 pillow-12.3.0 psycopg-3.3.6 psycopg-binary-3.3.6 pydantic-2.13.5 pydantic-settings-2.15.0 pydantic_core-2.46.5 pypdf-6.19.0 python-dotenv-1.2.4 referencing-0.37.0 reportlab-4.5.1 rpds-py-2026.9.1 starlette-1.7.0 typing-inspection-0.4.4 typing_extensions-4.16.0 tzdata-2026.3 uvicorn-0.54.0
+2026-10-09T15:55:15.6840877Z {"base_application": "D:\\a\\_temp\\r2-complete-package\\base", "files": 5087, "native_runtime_verification": "NOT_RUN"}
+2026-10-09T15:55:37.5277252Z ##[group]Run ./scripts/package_windows_acceptance.ps1 -BaseApplication "$env:R2_PACKAGE_ROOT/base" -OutputRoot "$env:R2_PACKAGE_ROOT/package" -HostPublishDirectory "$env:R2_PACKAGE_ROOT/host" -DotnetPath (Get-Command dotnet).Source -NodePath (Get-Command node).Source -ViteCliPath (Join-Path $PWD 'frontend/node_modules/vite/bin/vite.js') -VerifiedFontDirectory "$env:R2_PACKAGE_ROOT/fonts" -SkipIExpress 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/package.log"
+2026-10-09T15:55:37.5280614Z [36;1m./scripts/package_windows_acceptance.ps1 -BaseApplication "$env:R2_PACKAGE_ROOT/base" -OutputRoot "$env:R2_PACKAGE_ROOT/package" -HostPublishDirectory "$env:R2_PACKAGE_ROOT/host" -DotnetPath (Get-Command dotnet).Source -NodePath (Get-Command node).Source -ViteCliPath (Join-Path $PWD 'frontend/node_modules/vite/bin/vite.js') -VerifiedFontDirectory "$env:R2_PACKAGE_ROOT/fonts" -SkipIExpress 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/package.log"[0m
+2026-10-09T15:55:37.5282631Z [36;1mif (-not $?) { throw 'Acceptance package build failed' }[0m
+2026-10-09T15:55:37.5325835Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-09T15:55:37.5326178Z env:
+2026-10-09T15:55:37.5326364Z   MOCK_PROVIDER: true
+2026-10-09T15:55:37.5326574Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:55:37.5326976Z   ENABLE_CLOUD: false
+2026-10-09T15:55:37.5327177Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:55:37.5327440Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:55:37.5327720Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:55:37.5327938Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:55:37.5328118Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:55:37.5328396Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:55:37.5328846Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.9\x64/lib/pkgconfig
+2026-10-09T15:55:37.5329302Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:55:37.5329708Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:55:37.5330094Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:55:37.5330416Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-09T15:55:37.5330695Z   R2_PACKAGE_ROOT: D:\a\_temp\r2-complete-package
+2026-10-09T15:55:37.5331015Z   NOVEL_DATA_PATH: D:\a\_temp\r2-complete-package/data
+2026-10-09T15:55:37.5331302Z   STORAGE_BACKEND: file
+2026-10-09T15:55:37.5331544Z   PROJECT_ROOT: D:\a\AI-Novel-Studio\AI-Novel-Studio
+2026-10-09T15:55:37.5331827Z ##[endgroup]
+2026-10-09T15:55:38.8726314Z [36mvite v6.4.3 [32mbuilding for production...[36m[39m
+2026-10-09T15:55:38.9441788Z transforming...
+2026-10-09T15:55:45.4381168Z [32m✓[39m 2022 modules transformed.
+2026-10-09T15:55:45.8822164Z rendering chunks...
+2026-10-09T15:55:46.2959285Z computing gzip size...
+2026-10-09T15:55:46.3385076Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[32mindex.html                                 [39m[1m[2m  0.33 kB[22m[1m[22m[2m │ gzip:   0.19 kB[22m
+2026-10-09T15:55:46.3391532Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[35massets/LocalTutorIntegration-Bg9pZcT3.css  [39m[1m[2m  2.93 kB[22m[1m[22m[2m │ gzip:   0.82 kB[22m
+2026-10-09T15:55:46.3397080Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[35massets/style-6MlQLGa4.css                  [39m[1m[2m  3.79 kB[22m[1m[22m[2m │ gzip:   1.39 kB[22m
+2026-10-09T15:55:46.3403156Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[35massets/ExperimentalWorkbench-kya-NcdA.css  [39m[1m[2m  4.16 kB[22m[1m[22m[2m │ gzip:   1.07 kB[22m
+2026-10-09T15:55:46.3409049Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[35massets/index-Cj-tLRQ5.css                  [39m[1m[2m 32.29 kB[22m[1m[22m[2m │ gzip:   5.90 kB[22m
+2026-10-09T15:55:46.3421129Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[35massets/App-CBUsR16K.css                    [39m[1m[2m145.14 kB[22m[1m[22m[2m │ gzip:  19.39 kB[22m
+2026-10-09T15:55:46.3423671Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[36massets/Health-CwfnUxca.js                  [39m[1m[2m  0.99 kB[22m[1m[22m[2m │ gzip:   0.57 kB[22m
+2026-10-09T15:55:46.3426218Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[36massets/index-BmgbTfIz.js                   [39m[1m[2m 30.15 kB[22m[1m[22m[2m │ gzip:  10.01 kB[22m
+2026-10-09T15:55:46.3428901Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[36massets/LocalTutorIntegration-DhHySxkr.js   [39m[1m[2m 42.44 kB[22m[1m[22m[2m │ gzip:  13.79 kB[22m
+2026-10-09T15:55:46.3431329Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[36massets/style-DvIiTJnl.js                   [39m[1m[2m 45.00 kB[22m[1m[22m[2m │ gzip:   8.38 kB[22m
+2026-10-09T15:55:46.3434282Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[36massets/query-vendor-CUnTvSIi.js            [39m[1m[2m 45.60 kB[22m[1m[22m[2m │ gzip:  13.56 kB[22m
+2026-10-09T15:55:46.3453831Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[36massets/react-vendor-D3pO_op5.js            [39m[1m[2m142.98 kB[22m[1m[22m[2m │ gzip:  45.80 kB[22m
+2026-10-09T15:55:46.3457930Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[36massets/editor-vendor-WoPbGn4i.js           [39m[1m[2m307.09 kB[22m[1m[22m[2m │ gzip:  93.11 kB[22m
+2026-10-09T15:55:46.3460626Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[36massets/ExperimentalWorkbench-C5QZQU5u.js   [39m[1m[33m628.01 kB[39m[22m[2m │ gzip: 183.51 kB[22m
+2026-10-09T15:55:46.3463170Z [2m../../../_temp/r2-complete-package/package/frontend-build/dist/[22m[36massets/App-CG86oqiS.js                     [39m[1m[33m900.90 kB[39m[22m[2m │ gzip: 264.64 kB[22m
+2026-10-09T15:55:46.4216683Z [31;1m[33m[0m
+2026-10-09T15:55:46.4249176Z [31;1m(!) Some chunks are larger than 500 kB after minification. Consider:[0m
+2026-10-09T15:55:46.4259844Z [31;1m- Using dynamic import() to code-split the application[0m
+2026-10-09T15:55:46.4269047Z [31;1m- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks[0m
+2026-10-09T15:55:46.4280578Z [31;1m- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m[0m
+2026-10-09T15:55:46.4281795Z [32m✓ built in 7.44s[39m
+2026-10-09T15:55:49.6140195Z   Determining projects to restore...
+2026-10-09T15:55:57.7362454Z   Restored D:\a\AI-Novel-Studio\AI-Novel-Studio\desktop-host\AI.NovelStudio.DesktopHost\AI.NovelStudio.DesktopHost.csproj (in 7.71 sec).
+2026-10-09T15:56:05.4620998Z   AI.NovelStudio.DesktopHost -> D:\a\AI-Novel-Studio\AI-Novel-Studio\desktop-host\AI.NovelStudio.DesktopHost\bin\Release\net8.0-windows\win-x64\AI-Novel-Studio.DesktopHost.dll
+2026-10-09T15:56:05.9997636Z   AI.NovelStudio.DesktopHost -> D:\a\_temp\r2-complete-package\host\
+2026-10-09T15:56:10.7982702Z APPLICATION_STAGED D:\a\_temp\r2-complete-package\package\Application
+2026-10-09T15:56:10.7984457Z DESKTOPHOST_DLL_SHA256 50A9CD58951FB3A41328FC14FFE347FF1BC15C11747EBBB9674CFCABC7205725
+2026-10-09T15:56:10.7985836Z PROVENANCE_MANIFEST D:\a\_temp\r2-complete-package\package\desktophost-provenance.json
+2026-10-09T15:56:10.7988447Z APPLICATION_PROVENANCE_MANIFEST D:\a\_temp\r2-complete-package\package\application-provenance.json
+2026-10-09T15:56:26.9399632Z ACCEPTANCE_PACKAGE_ROOT D:\a\_temp\r2-complete-package\package\Package
+2026-10-09T15:56:26.9401305Z ACCEPTANCE_ZIP D:\a\_temp\r2-complete-package\package\AI-Novel-Studio-Windows-DesktopHost-acceptance.zip
+2026-10-09T15:56:26.9405243Z ACCEPTANCE_MANIFEST D:\a\_temp\r2-complete-package\package\acceptance-package-manifest.json
+2026-10-09T15:56:26.9809448Z ##[group]Run python scripts/verify_windows_base.py --base "$env:R2_PACKAGE_ROOT/package/Application" --work-root "$env:R2_PACKAGE_ROOT/native-smoke" 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/native-smoke.log"
+2026-10-09T15:56:26.9811024Z [36;1mpython scripts/verify_windows_base.py --base "$env:R2_PACKAGE_ROOT/package/Application" --work-root "$env:R2_PACKAGE_ROOT/native-smoke" 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/native-smoke.log"[0m
+2026-10-09T15:56:26.9811881Z [36;1mexit $LASTEXITCODE[0m
+2026-10-09T15:56:26.9853360Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-09T15:56:26.9853742Z env:
+2026-10-09T15:56:26.9853936Z   MOCK_PROVIDER: true
+2026-10-09T15:56:26.9854154Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:56:26.9854363Z   ENABLE_CLOUD: false
+2026-10-09T15:56:26.9854574Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:56:26.9854838Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:56:26.9855187Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:56:26.9855410Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:56:26.9855599Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:56:26.9855893Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:56:26.9856336Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.9\x64/lib/pkgconfig
+2026-10-09T15:56:26.9856785Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:56:26.9857401Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:56:26.9857804Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:56:26.9858135Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-09T15:56:26.9858418Z   R2_PACKAGE_ROOT: D:\a\_temp\r2-complete-package
+2026-10-09T15:56:26.9858744Z   NOVEL_DATA_PATH: D:\a\_temp\r2-complete-package/data
+2026-10-09T15:56:26.9859033Z   STORAGE_BACKEND: file
+2026-10-09T15:56:26.9859278Z   PROJECT_ROOT: D:\a\AI-Novel-Studio\AI-Novel-Studio
+2026-10-09T15:56:26.9859557Z ##[endgroup]
+2026-10-09T15:56:27.4268882Z NATIVE_BASE_PROGRESS {"files": 5087, "stage": "inventory_start"}
+2026-10-09T15:56:33.5306770Z NATIVE_BASE_PROGRESS {"files": 5087, "stage": "inventory_complete"}
+2026-10-09T15:56:33.5309005Z NATIVE_BASE_PROGRESS {"executable": "python.exe", "number": 1, "stage": "command_start"}
+2026-10-09T15:56:36.1614993Z NATIVE_BASE_PROGRESS {"executable": "python.exe", "exit_code": 0, "number": 1, "stage": "command_complete"}
+2026-10-09T15:56:36.1777899Z NATIVE_BASE_PROGRESS {"executable": "postgres.exe", "number": 2, "stage": "command_start"}
+2026-10-09T15:56:36.2375878Z NATIVE_BASE_PROGRESS {"executable": "postgres.exe", "exit_code": 0, "number": 2, "stage": "command_complete"}
+2026-10-09T15:56:36.2386574Z NATIVE_BASE_PROGRESS {"executable": "initdb.exe", "number": 3, "stage": "command_start"}
+2026-10-09T15:56:37.7043596Z NATIVE_BASE_PROGRESS {"executable": "initdb.exe", "exit_code": 0, "number": 3, "stage": "command_complete"}
+2026-10-09T15:56:37.7055590Z NATIVE_BASE_PROGRESS {"executable": "pg_ctl.exe", "number": 4, "stage": "command_start"}
+2026-10-09T15:56:37.8595276Z NATIVE_BASE_PROGRESS {"executable": "pg_ctl.exe", "exit_code": 0, "number": 4, "stage": "command_complete"}
+2026-10-09T15:56:37.8610874Z NATIVE_BASE_PROGRESS {"executable": "psql.exe", "number": 5, "stage": "command_start"}
+2026-10-09T15:56:37.9328641Z NATIVE_BASE_PROGRESS {"executable": "psql.exe", "exit_code": 0, "number": 5, "stage": "command_complete"}
+2026-10-09T15:56:37.9336898Z NATIVE_BASE_PROGRESS {"executable": "pg_dump.exe", "number": 6, "stage": "command_start"}
+2026-10-09T15:56:38.0606715Z NATIVE_BASE_PROGRESS {"executable": "pg_dump.exe", "exit_code": 0, "number": 6, "stage": "command_complete"}
+2026-10-09T15:56:38.0616674Z NATIVE_BASE_PROGRESS {"executable": "createdb.exe", "number": 7, "stage": "command_start"}
+2026-10-09T15:56:38.2076771Z NATIVE_BASE_PROGRESS {"executable": "createdb.exe", "exit_code": 0, "number": 7, "stage": "command_complete"}
+2026-10-09T15:56:38.2082237Z NATIVE_BASE_PROGRESS {"executable": "pg_restore.exe", "number": 8, "stage": "command_start"}
+2026-10-09T15:56:38.2842312Z NATIVE_BASE_PROGRESS {"executable": "pg_restore.exe", "exit_code": 0, "number": 8, "stage": "command_complete"}
+2026-10-09T15:56:38.2849485Z NATIVE_BASE_PROGRESS {"executable": "psql.exe", "number": 9, "stage": "command_start"}
+2026-10-09T15:56:38.3385055Z NATIVE_BASE_PROGRESS {"executable": "psql.exe", "exit_code": 0, "number": 9, "stage": "command_complete"}
+2026-10-09T15:56:38.3396256Z NATIVE_BASE_PROGRESS {"executable": "python.exe", "number": 10, "stage": "command_start"}
+2026-10-09T15:56:44.6223865Z NATIVE_BASE_PROGRESS {"executable": "python.exe", "exit_code": 0, "number": 10, "stage": "command_complete"}
+2026-10-09T15:56:44.6232833Z NATIVE_BASE_PROGRESS {"executable": "pg_ctl.exe", "number": 11, "stage": "command_start"}
+2026-10-09T15:56:44.8606813Z NATIVE_BASE_PROGRESS {"executable": "pg_ctl.exe", "exit_code": 0, "number": 11, "stage": "command_complete"}
+2026-10-09T15:56:44.8636520Z {"kind": "native-windows-base-smoke", "status": "PASS", "public_release": false, "interactive_desktop": "NOT_RUN", "user_acceptance": "NOT_RUN", "python": {"python": [3, 12, 9], "isolated": 1, "psycopg_impl": "binary", "packages": {"annotated-doc": "0.0.5", "annotated-types": "0.8.0", "anyio": "4.15.1", "attrs": "26.1.0", "certifi": "2026.7.22", "charset-normalizer": "3.5.2", "click": "8.5.0", "colorama": "0.4.6", "fastapi": "0.142.2", "h11": "0.16.0", "httpcore": "1.0.9", "httpx": "0.28.1", "idna": "3.20", "jsonschema": "4.26.0", "jsonschema-specifications": "2025.9.1", "opentelemetry-api": "1.45.0", "pillow": "12.3.0", "psycopg": "3.3.6", "psycopg-binary": "3.3.6", "pydantic": "2.13.5", "pydantic-settings": "2.15.0", "pydantic_core": "2.46.5", "pypdf": "6.19.0", "python-dotenv": "1.2.4", "referencing": "0.37.0", "reportlab": "4.5.1", "rpds-py": "2026.9.1", "SQLAlchemy": "2.1.3", "starlette": "1.7.0", "typing-inspection": "0.4.4", "typing_extensions": "4.16.0", "tzdata": "2026.3", "uvicorn": "0.54.0"}}, "vc_runtime": {"msvcp140.dll": {"location": "C:\\Windows\\System32\\msvcp140.dll", "sha256": "7c26614e1d733892c2deac7e245ce115504b1d80592dd0a01b08e3e5a55f89ca"}, "vcruntime140.dll": {"location": "C:\\Windows\\System32\\vcruntime140.dll", "sha256": "d1f4225df2cd877dbf130d5668a021dce3f94118455ff5ec952061c30afc9ce7"}}, "postgres_version": "postgres (PostgreSQL) 16.15", "pgcrypto": "PASS", "custom_dump_restore": "PASS", "utf8_roundtrip": "PASS", "packaged_app_import": "PASS"}
+2026-10-09T15:56:44.9146694Z ##[group]Run actions/upload-artifact@v4.6.2
+2026-10-09T15:56:44.9147052Z with:
+2026-10-09T15:56:44.9147375Z   name: windows-native-receipts-02a3f6e9908f785a308a4605e362f8876aed4d8b
+2026-10-09T15:56:44.9148819Z   path: D:\a\_temp\r2-complete-package/receipts
+D:\a\_temp\r2-complete-package/base/base-input-provenance.json
+D:\a\_temp\r2-complete-package/package/*.json
+D:\a\_temp\r2-complete-package/package/*.txt
+D:\a\_temp\r2-complete-package/native-smoke/native-base-smoke.json
+D:\a\_temp\r2-complete-package/native-smoke/command-logs
+
+2026-10-09T15:56:44.9150090Z   if-no-files-found: error
+2026-10-09T15:56:44.9150315Z   retention-days: 14
+2026-10-09T15:56:44.9150519Z   compression-level: 6
+2026-10-09T15:56:44.9150719Z   overwrite: false
+2026-10-09T15:56:44.9150918Z   include-hidden-files: false
+2026-10-09T15:56:44.9151141Z env:
+2026-10-09T15:56:44.9151315Z   MOCK_PROVIDER: true
+2026-10-09T15:56:44.9151512Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:56:44.9151761Z   ENABLE_CLOUD: false
+2026-10-09T15:56:44.9151972Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:56:44.9152238Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:56:44.9152526Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:56:44.9152744Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:56:44.9152942Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:56:44.9153232Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:56:44.9153698Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.9\x64/lib/pkgconfig
+2026-10-09T15:56:44.9154147Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:56:44.9154542Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:56:44.9154943Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:56:44.9155277Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-09T15:56:44.9155565Z   R2_PACKAGE_ROOT: D:\a\_temp\r2-complete-package
+2026-10-09T15:56:44.9155906Z   NOVEL_DATA_PATH: D:\a\_temp\r2-complete-package/data
+2026-10-09T15:56:44.9156208Z   STORAGE_BACKEND: file
+2026-10-09T15:56:44.9156451Z   PROJECT_ROOT: D:\a\AI-Novel-Studio\AI-Novel-Studio
+2026-10-09T15:56:44.9156781Z ##[endgroup]
+2026-10-09T15:56:45.1092494Z (node:3928) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:56:45.1093348Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:56:45.1334180Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-10-09T15:56:45.1339821Z The least common ancestor is D:\a\_temp\r2-complete-package. This will be the root directory of the artifact
+2026-10-09T15:56:45.1340829Z With the provided path, there will be 35 files uploaded
+2026-10-09T15:56:45.1349360Z Artifact name is valid!
+2026-10-09T15:56:45.1351845Z Root directory input is valid!
+2026-10-09T15:56:45.5615827Z Beginning upload of artifact content to blob storage
+2026-10-09T15:56:45.6673701Z (node:3928) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-09T15:56:46.2306338Z Uploaded bytes 581956
+2026-10-09T15:56:46.3056330Z Finished uploading artifact content to blob storage!
+2026-10-09T15:56:46.3057395Z SHA256 digest of uploaded artifact zip is 53f86551911a1f5b3c670f0ead8069733d465a08f7de97b3860248061fd241ad
+2026-10-09T15:56:46.3059514Z Finalizing artifact upload
+2026-10-09T15:56:46.5912040Z Artifact windows-native-receipts-02a3f6e9908f785a308a4605e362f8876aed4d8b.zip successfully finalized. Artifact ID 11628265407
+2026-10-09T15:56:46.5913970Z Artifact windows-native-receipts-02a3f6e9908f785a308a4605e362f8876aed4d8b has been successfully uploaded! Final size is 581956 bytes. Artifact ID is 11628265407
+2026-10-09T15:56:46.5924533Z Artifact download URL: https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37954826041/artifacts/11628265407
+2026-10-09T15:56:46.6179079Z ##[group]Run actions/upload-artifact@v4.6.2
+2026-10-09T15:56:46.6179464Z with:
+2026-10-09T15:56:46.6179766Z   name: windows-acceptance-02a3f6e9908f785a308a4605e362f8876aed4d8b
+2026-10-09T15:56:46.6181041Z   path: D:\a\_temp\r2-complete-package/receipts
+D:\a\_temp\r2-complete-package/base/base-input-provenance.json
+D:\a\_temp\r2-complete-package/package/*.json
+D:\a\_temp\r2-complete-package/package/*.txt
+D:\a\_temp\r2-complete-package/package/*.zip
+D:\a\_temp\r2-complete-package/native-smoke/native-base-smoke.json
+
+2026-10-09T15:56:46.6182203Z   if-no-files-found: error
+2026-10-09T15:56:46.6182446Z   retention-days: 14
+2026-10-09T15:56:46.6182646Z   compression-level: 6
+2026-10-09T15:56:46.6182846Z   overwrite: false
+2026-10-09T15:56:46.6183052Z   include-hidden-files: false
+2026-10-09T15:56:46.6183277Z env:
+2026-10-09T15:56:46.6183443Z   MOCK_PROVIDER: true
+2026-10-09T15:56:46.6183640Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T15:56:46.6183870Z   ENABLE_CLOUD: false
+2026-10-09T15:56:46.6184112Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T15:56:46.6184394Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T15:56:46.6184683Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T15:56:46.6184906Z   HF_HUB_OFFLINE: 1
+2026-10-09T15:56:46.6185108Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T15:56:46.6185397Z   pythonLocation: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:56:46.6185832Z   PKG_CONFIG_PATH: C:\hostedtoolcache\windows\Python\3.12.9\x64/lib/pkgconfig
+2026-10-09T15:56:46.6186280Z   Python_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:56:46.6186681Z   Python2_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:56:46.6187070Z   Python3_ROOT_DIR: C:\hostedtoolcache\windows\Python\3.12.9\x64
+2026-10-09T15:56:46.6187403Z   DOTNET_ROOT: C:\Program Files\dotnet
+2026-10-09T15:56:46.6187694Z   R2_PACKAGE_ROOT: D:\a\_temp\r2-complete-package
+2026-10-09T15:56:46.6188021Z   NOVEL_DATA_PATH: D:\a\_temp\r2-complete-package/data
+2026-10-09T15:56:46.6188321Z   STORAGE_BACKEND: file
+2026-10-09T15:56:46.6188566Z   PROJECT_ROOT: D:\a\AI-Novel-Studio\AI-Novel-Studio
+2026-10-09T15:56:46.6188859Z ##[endgroup]
+2026-10-09T15:56:46.8143493Z (node:1304) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:56:46.8144334Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:56:46.8268017Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-10-09T15:56:46.8272393Z The least common ancestor is D:\a\_temp\r2-complete-package. This will be the root directory of the artifact
+2026-10-09T15:56:46.8273210Z With the provided path, there will be 14 files uploaded
+2026-10-09T15:56:46.8278232Z Artifact name is valid!
+2026-10-09T15:56:46.8280025Z Root directory input is valid!
+2026-10-09T15:56:47.2242930Z Beginning upload of artifact content to blob storage
+2026-10-09T15:56:47.5557009Z (node:1304) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-09T15:56:48.8260580Z Uploaded bytes 8388608
+2026-10-09T15:56:48.8931004Z Uploaded bytes 16777216
+2026-10-09T15:56:49.1679102Z Uploaded bytes 25165824
+2026-10-09T15:56:49.2663600Z Uploaded bytes 33554432
+2026-10-09T15:56:49.3156289Z Uploaded bytes 41943040
+2026-10-09T15:56:49.4963190Z Uploaded bytes 50331648
+2026-10-09T15:56:49.6078686Z Uploaded bytes 58720256
+2026-10-09T15:56:49.9086873Z Uploaded bytes 67108864
+2026-10-09T15:56:50.0843657Z Uploaded bytes 75497472
+2026-10-09T15:56:50.3282593Z Uploaded bytes 83886080
+2026-10-09T15:56:50.5670813Z Uploaded bytes 92274688
+2026-10-09T15:56:50.8601258Z Uploaded bytes 100663296
+2026-10-09T15:56:51.1358054Z Uploaded bytes 109051904
+2026-10-09T15:56:51.4142651Z Uploaded bytes 117440512
+2026-10-09T15:56:51.6843817Z Uploaded bytes 125829120
+2026-10-09T15:56:51.9926109Z Uploaded bytes 134217728
+2026-10-09T15:56:52.2360250Z Uploaded bytes 142606336
+2026-10-09T15:56:52.4981358Z Uploaded bytes 150994944
+2026-10-09T15:56:52.7723700Z Uploaded bytes 159383552
+2026-10-09T15:56:52.9315606Z Uploaded bytes 163714402
+2026-10-09T15:56:53.0068383Z Finished uploading artifact content to blob storage!
+2026-10-09T15:56:53.0073267Z SHA256 digest of uploaded artifact zip is 1a6aa756ccde99e1987570a8348ccbb77441f277355a2ba519ef80495bdf6015
+2026-10-09T15:56:53.0075886Z Finalizing artifact upload
+2026-10-09T15:56:53.4820708Z Artifact windows-acceptance-02a3f6e9908f785a308a4605e362f8876aed4d8b.zip successfully finalized. Artifact ID 11627344105
+2026-10-09T15:56:53.4822302Z Artifact windows-acceptance-02a3f6e9908f785a308a4605e362f8876aed4d8b has been successfully uploaded! Final size is 163714402 bytes. Artifact ID is 11627344105
+2026-10-09T15:56:53.4835007Z Artifact download URL: https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37954826041/artifacts/11627344105
+2026-10-09T15:56:53.5162686Z Post job cleanup.
+2026-10-09T15:56:53.6653042Z (node:2488) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:56:53.6654577Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:56:53.6903239Z Post job cleanup.
+2026-10-09T15:56:53.8380834Z (node:6308) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:56:53.8381907Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:56:53.8664718Z Post job cleanup.
+2026-10-09T15:56:54.0214589Z (node:1068) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T15:56:54.0215447Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T15:56:54.0512744Z Post job cleanup.
+2026-10-09T15:56:54.2653244Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-09T15:56:54.3008157Z git version 2.56.0.windows.1
+2026-10-09T15:56:54.3072698Z Temporarily overriding HOME='D:\a\_temp\8f0a71a1-08e0-470c-b0b8-c985fff7d4a7' before making global git config changes
+2026-10-09T15:56:54.3073797Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T15:56:54.3085594Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\AI-Novel-Studio\AI-Novel-Studio
+2026-10-09T15:56:54.3416838Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T15:56:54.3730206Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-09T15:56:54.9133985Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T15:56:54.9437860Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-09T15:56:55.4663611Z Cleaning up orphan processes
+2026-10-09T15:56:55.5307229Z Terminate orphan process: pid (6668) (dotnet)
+2026-10-09T15:56:55.5504825Z Terminate orphan process: pid (7652) (conhost)
+2026-10-09T15:56:55.5526850Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4.2.2, actions/setup-dotnet@v4, actions/setup-node@v4.4.0, actions/setup-python@v5.6.0, actions/upload-artifact@v4.6.2. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

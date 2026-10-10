@@ -1,0 +1,105 @@
+.........................................................FFFF......F.... [ 92%]
+......                                                                   [100%]
+=================================== FAILURES ===================================
+___ test_catalog_registry_key_mismatch_cannot_duplicate_requirement_identity ___
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-7/test_catalog_registry_key_mism0')
+
+    def test_catalog_registry_key_mismatch_cannot_duplicate_requirement_identity(tmp_path):
+        svc = service(tmp_path); svc.center.models['alias'] = svc.center.models['flux2-dev']
+        report = scan(svc)['workflow_prerequisites']
+>       assert report['definition_status'] == 'MALFORMED'
+E       AssertionError: assert 'COMPLETE' == 'MALFORMED'
+E         
+E         - MALFORMED
+E         + COMPLETE
+
+tests/test_v2_discovery_prerequisites.py:309: AssertionError
+_ test_adapter_declaration_dimensions_also_bind_existing_scope_digest[family] __
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-7/test_adapter_declaration_dimen0')
+field = 'family'
+
+    @pytest.mark.parametrize('field', ['family', 'capability'])
+    def test_adapter_declaration_dimensions_also_bind_existing_scope_digest(tmp_path, field):
+        svc = service(tmp_path); preview = svc.preview_scan_scope(False, 'host', lambda: None)
+        svc.workflow_adapters[0][field] = 'DIFFERENT'
+>       with pytest.raises(ValueError, match='LOCAL_AI_SCOPE_STALE'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_discovery_prerequisites.py:318: Failed
+_ test_adapter_declaration_dimensions_also_bind_existing_scope_digest[capability] _
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-7/test_adapter_declaration_dimen1')
+field = 'capability'
+
+    @pytest.mark.parametrize('field', ['family', 'capability'])
+    def test_adapter_declaration_dimensions_also_bind_existing_scope_digest(tmp_path, field):
+        svc = service(tmp_path); preview = svc.preview_scan_scope(False, 'host', lambda: None)
+        svc.workflow_adapters[0][field] = 'DIFFERENT'
+>       with pytest.raises(ValueError, match='LOCAL_AI_SCOPE_STALE'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_v2_discovery_prerequisites.py:318: Failed
+____ test_ambiguous_runtime_ids_do_not_create_duplicate_or_cross_bound_rows ____
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-7/test_ambiguous_runtime_ids_do_0')
+
+    def test_ambiguous_runtime_ids_do_not_create_duplicate_or_cross_bound_rows(tmp_path):
+        from app.model_center.discovery_prerequisites import prerequisite_template
+        svc = service(tmp_path)
+        duplicate = [{'id': 'ambiguous', 'type': 'COMFYUI'}, {'id': 'ambiguous', 'type': 'COMFYUI'}]
+        report = prerequisite_template(duplicate, svc.workflow_adapters, [], 'COMPLETE')
+>       assert report['definition_status'] == 'MALFORMED'
+E       AssertionError: assert 'COMPLETE' == 'MALFORMED'
+E         
+E         - MALFORMED
+E         + COMPLETE
+
+tests/test_v2_discovery_prerequisites.py:328: AssertionError
+_____ test_catalog_iteration_stops_at_bound_without_copying_large_registry _____
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-7/test_catalog_iteration_stops_a0')
+
+    def test_catalog_iteration_stops_at_bound_without_copying_large_registry(tmp_path):
+        from app.model_center.discovery_prerequisites import catalog_requirements, MAX_CATALOG_MODELS
+        svc = service(tmp_path); model = svc.center.models['flux2-dev']
+        class BoundedRegistry(dict):
+            def items(self):
+                for i in range(MAX_CATALOG_MODELS): yield f'm{i}', replace(model, id=f'm{i}')
+                raise AssertionError('must not traverse beyond the catalogue bound')
+            def values(self):
+                raise AssertionError('must verify registry key/id and iterate bounded items')
+            def __len__(self): return 1000000
+>       rows, _, status = catalog_requirements(BoundedRegistry(), svc.center.components)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_discovery_prerequisites.py:379: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/model_center/discovery_prerequisites.py:44: in catalog_requirements
+    for model in islice(models.values(), MAX_CATALOG_MODELS):
+                        ^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = {}
+
+    def values(self):
+>       raise AssertionError('must verify registry key/id and iterate bounded items')
+E       AssertionError: must verify registry key/id and iterate bounded items
+
+tests/test_v2_discovery_prerequisites.py:377: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_discovery_prerequisites.py::test_catalog_registry_key_mismatch_cannot_duplicate_requirement_identity
+FAILED tests/test_v2_discovery_prerequisites.py::test_adapter_declaration_dimensions_also_bind_existing_scope_digest[family]
+FAILED tests/test_v2_discovery_prerequisites.py::test_adapter_declaration_dimensions_also_bind_existing_scope_digest[capability]
+FAILED tests/test_v2_discovery_prerequisites.py::test_ambiguous_runtime_ids_do_not_create_duplicate_or_cross_bound_rows
+FAILED tests/test_v2_discovery_prerequisites.py::test_catalog_iteration_stops_at_bound_without_copying_large_registry
+5 failed, 73 passed, 1 warning in 11.04s

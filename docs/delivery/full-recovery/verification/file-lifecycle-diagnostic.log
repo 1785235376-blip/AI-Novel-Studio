@@ -1,0 +1,33 @@
+FFFF                                                                     [100%]
+================================== FAILURES ===================================
+___ test_cross_process_lifecycle_and_version_cas[held_get-delete-expected0] ___
+tests\test_file_project_lifecycle.py:189: in test_cross_process_lifecycle_and_version_cas
+    assert second.is_alive()
+E   AssertionError: assert False
+E    +  where False = is_alive()
+E    +    where is_alive = <SpawnProcess name='SpawnProcess-2' pid=31448 parent=15804 stopped exitcode=0>.is_alive
+__ test_cross_process_lifecycle_and_version_cas[held_save-delete-expected1] ___
+tests\test_file_project_lifecycle.py:189: in test_cross_process_lifecycle_and_version_cas
+    assert second.is_alive()
+E   AssertionError: assert False
+E    +  where False = is_alive()
+E    +    where is_alive = <SpawnProcess name='SpawnProcess-4' pid=36360 parent=15804 stopped exitcode=0>.is_alive
+__ test_cross_process_lifecycle_and_version_cas[held_delete-save-expected2] ___
+tests\test_file_project_lifecycle.py:189: in test_cross_process_lifecycle_and_version_cas
+    assert second.is_alive()
+E   AssertionError: assert False
+E    +  where False = is_alive()
+E    +    where is_alive = <SpawnProcess name='SpawnProcess-6' pid=42112 parent=15804 stopped exitcode=0>.is_alive
+___ test_cross_process_lifecycle_and_version_cas[held_save-save-expected3] ____
+tests\test_file_project_lifecycle.py:189: in test_cross_process_lifecycle_and_version_cas
+    assert second.is_alive()
+E   AssertionError: assert False
+E    +  where False = is_alive()
+E    +    where is_alive = <SpawnProcess name='SpawnProcess-8' pid=39668 parent=15804 stopped exitcode=0>.is_alive
+- generated xml file: D:\С˵\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\verification\file-lifecycle-diagnostic.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_file_project_lifecycle.py::test_cross_process_lifecycle_and_version_cas[held_get-delete-expected0]
+FAILED tests/test_file_project_lifecycle.py::test_cross_process_lifecycle_and_version_cas[held_save-delete-expected1]
+FAILED tests/test_file_project_lifecycle.py::test_cross_process_lifecycle_and_version_cas[held_delete-save-expected2]
+FAILED tests/test_file_project_lifecycle.py::test_cross_process_lifecycle_and_version_cas[held_save-save-expected3]
+4 failed in 5.00s

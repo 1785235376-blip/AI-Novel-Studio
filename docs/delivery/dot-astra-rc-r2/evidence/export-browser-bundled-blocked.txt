@@ -1,0 +1,40 @@
+ISOLATED_TEST_ROOT=/workspace/scratch/b8734129d01d/r2-test.0DQzsQ
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+[WebServer] INFO:     Started server process [40]
+[WebServer] INFO:     Waiting for application startup.
+[WebServer] INFO:     Application startup complete.
+[WebServer] INFO:     Uvicorn running on http://127.0.0.1:8018 (Press CTRL+C to quit)
+[WebServer] (node:43) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:61) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › tests/e2e/export-recovery.spec.ts:4:1 › create, close, reopen, rediscover identical snapshot and download; isolate user and branch (1ms)
+
+
+  1) [chromium] › tests/e2e/export-recovery.spec.ts:4:1 › create, close, reopen, rediscover identical snapshot and download; isolate user and branch
+
+    Error: browserType.launch: Executable doesn't exist at /workspace/scratch/b8734129d01d/r2-test.0DQzsQ/cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/export-recovery-create-clo-63c78-oad-isolate-user-and-branch-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/export-recovery-create-clo-63c78-oad-isolate-user-and-branch-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/export-recovery-create-clo-63c78-oad-isolate-user-and-branch-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests/e2e/export-recovery.spec.ts:4:1 › create, close, reopen, rediscover identical snapshot and download; isolate user and branch

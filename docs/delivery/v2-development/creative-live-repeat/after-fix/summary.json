@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "test_boundary": "Real HTTP through Vite to uvicorn with File persistence; no browser fixture or inference",
+  "unchanged_command": "node node_modules/@playwright/test/cli.js test --config playwright.v2-live.config.ts --grep \"real HTTP\" --repeat-each=2",
+  "expected": 6,
+  "unexpected": 0,
+  "skipped": 0,
+  "source_hashes": [
+    "dbbf62ee540feed65c69e7cd1a16d732220c240b0b016b868de24e91bfc14a36  frontend/playwright.v2-live.config.ts",
+    "732794dde5a1e64734578956dcbb061f15d6ef3110f87b07cf7a71a07927336d  frontend/tests/e2e/v2-creative-live.spec.ts"
+  ],
+  "historical_failing_repeat": ".runtime/v2-live-isolation-check/run.log",
+  "cleanup_contract": "Only exact successful201 IDs from this test; DELETE204 empty body; inventories empty before/after; same title-derived IDs reused on repeat",
+  "postgres_used": false,
+  "browser_rerun": false
+}

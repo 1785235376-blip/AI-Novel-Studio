@@ -6,6 +6,7 @@ from .context_snapshot_service import ContextSnapshotService
 from ..narrative_context import NarrativeContextBuilder
 from ..context_policy import ContextPolicy,ContextPolicyItem,ContextSourceType
 from ..context_pack_v2 import ContextPackV2Builder
+from ..privacy import merge_privacy
 
 
 class ContextService:
@@ -21,28 +22,55 @@ class ContextService:
         self.context_policy_token_budget=settings.context_policy_token_budget if context_policy_token_budget is None else context_policy_token_budget
         self.enable_context_pack_v2=settings.enable_context_pack_v2 if enable_context_pack_v2 is None else enable_context_pack_v2
 
+    def _sources(self, novel_id):
+        sources = dict(self.novels.get_context_sources(novel_id))
+        if self.lore:
+            rules = []
+            for proposal in self.lore.repository.list_proposals(novel_id, "APPROVED"):
+                if proposal.get("proposal_type") != "WORLD_RULE":
+                    continue
+                relations = self.lore.repository.list_proposal_evidence(proposal["id"])
+                evidence = [self.lore.repository.get_evidence(row["evidence_id"]) for row in relations]
+                if not evidence or any(row.get("status") != "ACTIVE" or row.get("novel_id") != novel_id for row in evidence):
+                    continue
+                payload = dict(proposal.get("approved_payload") or {})
+                policies = [row.get("privacy") for row in evidence]
+                if "privacy_level" in payload: policies.append(payload["privacy_level"])
+                rules.append({"id": proposal["id"], "payload": payload, "privacy_level": merge_privacy(*policies),
+                              "status": "APPROVED", "evidence_ids": [row["id"] for row in evidence]})
+            sources["world_rules"] = rules
+        return sources
+
     def _attach_context_pack_v2(self,result,cloud=False,instruction=""):
         if not self.enable_context_pack_v2:return result
         state=result.get("current_story_state",{})
         candidates=ContextPackV2Builder.extract_candidates(
-            characters=[{"id":str(x),"content":x} for x in state.get("active_characters",[])],
+            characters=[{**row,"character_ids":[str(row["id"])]} for row in result.get("characters",[]) if row.get("id")],
             lore=[entry for section in result.get("lore_memory",{}).values() if isinstance(section,list) for entry in section],
-            timeline=state.get("timeline",[]),
-            recent_chapters=[{"id":f"{result.get('novel_id')}:{result.get('chapter')}","content":state,"chapter_number":result.get("chapter")}],
+            timeline=result.get("timeline") or state.get("timeline",[]),
+            recent_chapters=[{"id":result.get("chapter_id") or f"{result.get('novel_id')}:{result.get('chapter')}","content":state,"chapter_number":result.get("chapter")}],
         )
         result["context_pack_v2"]=ContextPackV2Builder(self.context_policy_token_budget).build(candidates,enabled=True,cloud=cloud,query=instruction,character_ids=state.get("active_characters",[]),current_chapter=result.get("chapter")).model_dump(mode="json")
         return result
 
-    def _narrative_context(self,base,novel_id,chapter_number):
+    def _narrative_context(self,base,novel_id,chapter_number,cloud=False):
         if not self.enable_narrative_context or self.narrative_repository is None:return None
-        chapter=self.chapters.get(f"{novel_id}:{chapter_number}");active=base.get("current_story_state",{}).get("active_characters",[])
-        return NarrativeContextBuilder(self.narrative_repository,self.narrative_token_budget).build(novel_id,chapter["id"],chapter["version"],active)
+        chapter=self.chapters.get(base.get("chapter_id") or f"{novel_id}:{chapter_number}");active=base.get("current_story_state",{}).get("active_characters",[])
+        return NarrativeContextBuilder(self.narrative_repository,self.narrative_token_budget).build(novel_id,chapter["id"],chapter["version"],active,cloud=cloud)
 
     def _context_policy(self,base,narrative=None,lore_memory=None,cloud=False):
         if not self.enable_lore_context and not self.enable_narrative_context:return None
-        policy=ContextPolicy(self.context_policy_token_budget);project=base["novel_id"];chapter_id=f"{project}:{base['chapter']}";chapter=self.chapters.get(chapter_id);chapter_version_id=f"{chapter_id}:v{chapter['version']}";items=[]
+        policy=ContextPolicy(self.context_policy_token_budget);project=base["novel_id"];chapter_id=base.get("chapter_id") or f"{project}:{base['chapter']}";chapter=self.chapters.get(chapter_id);chapter_id=chapter["id"];chapter_version_id=f"{chapter_id}:v{chapter['version']}";items=[]
         state=base.get("current_story_state",{})
         if state:items.append(ContextPolicyItem(metadata=policy.metadata(ContextSourceType.ACCEPTED_CHAPTER,chapter_id,project,chapter_version_id=chapter_version_id,selection_reasons=["CURRENT_CHAPTER"],fact_key="accepted_chapter_state"),value=state))
+        for section,source_type in (("canon",ContextSourceType.CANON),("world_rules",ContextSourceType.CANON),("timeline",ContextSourceType.TIMELINE)):
+            for index,row in enumerate(base.get(section,[])):
+                if not isinstance(row,dict):continue
+                source_id=str(row.get("id") or f"{section}:{index}")
+                items.append(ContextPolicyItem(metadata=policy.metadata(source_type,source_id,project,
+                    locality=row.get("privacy_level","LOCAL_ONLY"),evidence_ids=row.get("evidence_ids",[]),
+                    selection_reasons=["APPROVED_WORLD_RULE" if section=="world_rules" else "PROJECT_"+section.upper()],
+                    fact_key=row.get("fact_key")),value=row))
         if lore_memory is not None:
             for section in ("short_memory","medium_memory","long_memory"):
                 for index,memory in enumerate(lore_memory.get(section,[])):
@@ -53,15 +81,34 @@ class ContextService:
             for finding in narrative.get("findings",[]):items.append(ContextPolicyItem(metadata=policy.metadata(ContextSourceType.NARRATIVE_FINDING,finding["finding_id"],project,chapter_version_id=finding.get("chapter_version_id"),evidence_ids=finding.get("evidence_ids",[]),selection_reasons=[finding["selection_reason"]]),value=finding))
         return policy.apply(items,cloud)
 
-    def build_envelope(self, novel_id, chapter_number, instruction="", cloud=False, operation=""):
-        base = build_context_from_sources(
-            self.novels.get_context_sources(novel_id), novel_id, chapter_number, instruction, cloud
-        )
+    def _chapter_reference(self, novel_id, chapter_number, chapter_id):
+        if chapter_id is None:
+            # Numeric context extents can describe an unwritten next chapter.
+            # They are never upgraded into a typed identity by display number.
+            return chapter_number, None
+        # Reject foreign scope before File reads can lazily migrate its source.
+        if not isinstance(chapter_id, str) or ":" not in chapter_id or chapter_id.rsplit(":", 1)[0] != novel_id:
+            raise FileNotFoundError(chapter_id)
+        chapter = self.chapters.get(chapter_id)
+        if chapter["novel_id"] != novel_id:
+            raise FileNotFoundError(chapter_id)
+        return chapter["number"], chapter["id"] if ":~" in chapter["id"] else None
+
+    def build_envelope(self, novel_id, chapter_number, instruction="", cloud=False, operation="", *, chapter_id=None):
+        chapter_number, chapter_id = self._chapter_reference(novel_id, chapter_number, chapter_id)
+        sources = self._sources(novel_id)
+        base = build_context_from_sources(sources, novel_id, chapter_number, instruction, cloud)
+        if chapter_id is not None:base["chapter_id"] = chapter_id
         if not self.lore:return None
+        # Selection and omission auditing are local. Selecting only from the
+        # already filtered base would hide relevant restricted-memory decisions.
+        selection_base = build_context_from_sources(sources, novel_id, chapter_number, instruction, False) if cloud else base
+        if chapter_id is not None:selection_base["chapter_id"] = chapter_id
         envelope=LoreContextBuilder(self.lore).build(
-            base, chapter_number, cloud, instruction=instruction, operation=operation
+            selection_base, chapter_number, cloud, instruction=instruction, operation=operation
         )
-        envelope.narrative_context=self._narrative_context(base,novel_id,chapter_number);envelope.context_policy=self._context_policy(base,envelope.narrative_context.model_dump(mode="json") if envelope.narrative_context else None,envelope.lore_memory.model_dump(mode="json") if self.enable_lore_context else None,cloud);return envelope
+        envelope.base_context = base
+        envelope.narrative_context=self._narrative_context(base,novel_id,chapter_number,cloud);envelope.context_policy=self._context_policy(base,envelope.narrative_context.model_dump(mode="json") if envelope.narrative_context else None,envelope.lore_memory.model_dump(mode="json") if self.enable_lore_context else None,cloud);return envelope
 
     def context_from_envelope(self, envelope: ContextEnvelope | None, base: dict | None = None, cloud=False, instruction=""):
         if envelope is None:
@@ -72,14 +119,16 @@ class ContextService:
         if envelope.context_policy is not None:result["context_policy"]=envelope.context_policy.model_dump(mode="json")
         return self._attach_context_pack_v2(result,cloud,instruction)
 
-    def build(self, novel_id, chapter_number, instruction="", cloud=False, operation=""):
-        envelope = self.build_envelope(novel_id, chapter_number, instruction, cloud, operation)
+    def build(self, novel_id, chapter_number, instruction="", cloud=False, operation="", *, chapter_id=None):
+        chapter_number, chapter_id = self._chapter_reference(novel_id, chapter_number, chapter_id)
+        envelope = self.build_envelope(novel_id, chapter_number, instruction, cloud, operation, chapter_id=chapter_id)
         if envelope is not None:
             return self.context_from_envelope(envelope,cloud=cloud,instruction=instruction)
         base=build_context_from_sources(
-            self.novels.get_context_sources(novel_id), novel_id, chapter_number, instruction, cloud
+            self._sources(novel_id), novel_id, chapter_number, instruction, cloud
         )
-        narrative=self._narrative_context(base,novel_id,chapter_number)
+        if chapter_id is not None:base["chapter_id"] = chapter_id
+        narrative=self._narrative_context(base,novel_id,chapter_number,cloud)
         narrative_data=narrative.model_dump(mode="json") if narrative is not None else None;policy=self._context_policy(base,narrative_data,None,cloud);result=dict(base)
         if narrative_data is not None:result["narrative_context"]=narrative_data
         if policy is not None:result["context_policy"]=policy.model_dump(mode="json")
@@ -87,7 +136,7 @@ class ContextService:
 
     def for_chapter(self, chapter_id, instruction="", cloud=False, operation=""):
         chapter = self.chapters.get(chapter_id)
-        return self.build(chapter["novel_id"], chapter["number"], instruction, cloud, operation)
+        return self.build(chapter["novel_id"], chapter["number"], instruction, cloud, operation, chapter_id=chapter["id"])
 
     def save_snapshot(self, chapter_id, chapter_version, context, prompt_version, model, **metadata):
         if not self.lore:

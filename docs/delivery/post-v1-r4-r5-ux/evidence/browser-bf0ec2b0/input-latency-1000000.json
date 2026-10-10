@@ -1,0 +1,219 @@
+{
+  "size_han": 1000000,
+  "chapter_count": 12,
+  "active_chapter_han": 83334,
+  "content_sha256": "4656b9f0ca8a4f7cb90f2fcb0e71ee87185bfd2f1e1ca82d67d8f8041fc79bfd",
+  "method": "Trusted Chromium beforeinput to second requestAnimationFrame after input; rendering opportunity proxy, not OS/physical-display latency",
+  "warmup_count": 3,
+  "sample_count": 30,
+  "percentile": "nearest rank ceil(p*n)",
+  "samples": [
+    {
+      "duration_ms": 45.59999999997672,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 45.699999999953434,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 44.89999999990687,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 55.29999999993015,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 48,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 44.70000000006985,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 47.10000000009313,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 46.5,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 47.699999999953434,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 45.300000000046566,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 45.90000000002328,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 44.199999999953434,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 46.40000000002328,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 46.09999999997672,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 45.90000000002328,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 43.5,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 43.59999999997672,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 46.59999999997672,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 46.20000000006985,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 45.199999999953434,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 43.70000000006985,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 42.699999999953434,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 45.09999999997672,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 43.20000000006985,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 44.29999999993015,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 45.300000000046566,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 46.59999999997672,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 45.5,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 45.699999999953434,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 43.89999999990687,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    }
+  ],
+  "warmups": [
+    {
+      "duration_ms": 135.5,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 53,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    },
+    {
+      "duration_ms": 50.09999999997672,
+      "trusted": true,
+      "input_type": "insertText",
+      "composing": false
+    }
+  ],
+  "p50_ms": 45.5,
+  "p95_ms": 48,
+  "target_ms": 100,
+  "target_status": "PASS",
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.7922.34 Safari/537.36",
+  "editor_replacements": 0,
+  "whole_project_resident": "API fixture; editor opens one chapter, not the entire novel"
+}

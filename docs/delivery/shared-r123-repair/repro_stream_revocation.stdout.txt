@@ -1,0 +1,11 @@
+{
+  "source": "c6f2126115b52e17839d48efea091dc21ec08c61",
+  "python": "3.12.14",
+  "scope": "Original API StreamingResponse iterator and membership/session services, synthetic File job",
+  "result": {
+    "initial_stream_chunk": "data: {\"job_id\": \"audit-stream-job\", \"status\": \"GENERATING\", \"chunk\": \"BEFORE_REVOCATION\", \"provider\": null, \"model\": null, \"error\": null, \"error_code\": null}\n\n",
+    "new_read_after_revocation": 401,
+    "existing_stream_after_revocation": "STOPPED",
+    "post_revocation_output_disclosed": false
+  }
+}

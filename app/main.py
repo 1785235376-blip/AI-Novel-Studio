@@ -6,8 +6,10 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from . import __version__
 from .config import settings
-from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service
+from .dependencies import context_service,collaboration_read_service,collaboration_admin_service,packaged_bootstrap_registry,packaged_initial_workspace_provisioner,trusted_session_resolver,harness_process_service,model_center_service,local_ai_discovery
 from .model_center.api import create_model_center_router
+from .model_center.discovery_api import PRIVATE_HEADERS as DISCOVERY_PRIVATE_HEADERS, create_local_discovery_router
+from .model_center.discovery_authority import resolve_discovery_authority
 from .collaboration_api import create_collaboration_router
 from .collaboration_admin import create_collaboration_admin_router
 from .packaging.bootstrap_api import create_packaged_bootstrap_router
@@ -46,9 +48,28 @@ def _model_center_mutation_authorization(token: str | None) -> dict:
     return {"can_mutate": can_mutate, "mutation_auth_mode": mode}
 
 
+def _local_discovery_host_authority(request: Request, token: str | None):
+    return resolve_discovery_authority(request, token,
+        settings_getter=lambda: settings, resolver_getter=lambda: trusted_session_resolver,
+        bootstrap_getter=lambda: packaged_bootstrap_registry.current())
+
+
 @asynccontextmanager
 async def app_lifespan(_app):
+    from .dependencies import agent_job_service
+    agent_job_service.recover_interrupted()
+    from .dependencies import local_interop_host
+    try:
+        await local_interop_host.app_start()
+    except Exception:  # noqa: BLE001 - optional bridge cannot block app startup
+        # Optional bridge startup must never take down the writing application.
+        local_interop_host.closed = True
     yield
+    try:
+        await local_interop_host.lifecycle.shutdown(timeout=1.0)
+    except Exception:  # noqa: BLE001 - optional bridge cannot block app shutdown
+        # Lifecycle failure does not stop the remaining product shutdown owners.
+        local_interop_host.closed = True
     harness_process_service.stop()
     model_center_service.lifecycle.stop_all()
 
@@ -63,6 +84,16 @@ async def request_id_middleware(request: Request, call_next):
     response.headers["X-Request-ID"] = request_id
     return response
 
+from .revision_constraints import RevisionConstraintError
+
+
+@app.exception_handler(RevisionConstraintError)
+async def revision_constraint_error(request: Request, exc: RevisionConstraintError):
+    return JSONResponse(status_code=409, content={"code": exc.code,
+        "message": "段落已锁定或锁定依据已变化。请核对后明确解锁，再采用 AI 修改。",
+        "details": {}, "request_id": getattr(request.state, "request_id", "")})
+
+
 @app.exception_handler(HTTPException)
 async def unified_http_error(request: Request, exc: HTTPException):
     detail = exc.detail
@@ -75,7 +106,7 @@ async def unified_http_error(request: Request, exc: HTTPException):
         message = str(detail)
         details = {}
     request_id = getattr(request.state, "request_id", "")
-    return JSONResponse(status_code=exc.status_code, content={"detail": detail, "code": code, "message": message, "details": details, "request_id": request_id}, headers={"X-Request-ID": request_id})
+    return JSONResponse(status_code=exc.status_code, content={"detail": detail, "code": code, "message": message, "details": details, "request_id": request_id}, headers={**{key: value for key, value in (exc.headers or {}).items() if key.lower() != "x-request-id"}, "X-Request-ID": request_id})
 
 def _normalized_api_path(path: str) -> str:
     """Use the legacy path shape for middleware checks on the v1 alias."""
@@ -155,6 +186,14 @@ async def collaboration_fail_closed(request,call_next):
                 return JSONResponse({"detail": {"code": "INVALID_SESSION"}}, status_code=401)
         return await call_next(request)
 
+    if normalized_request_path.startswith("/api/local-interop/"):
+        # Every interop endpoint independently requires a live trusted session,
+        # IPv4 loopback, explicit opt-in and exact scoped project authority.
+        return await call_next(request)
+    if normalized_request_path.startswith("/api/model-center/local-ai"):
+        # Every endpoint has the same trusted Host/session dependency; do not
+        # make discovery anonymous via the legacy collaboration allowlist.
+        return await call_next(request)
     if collaboration:
         path=request.url.path; normalized_path=_normalized_api_path(path); method=request.method
         # V1 metadata capabilities are available to the collaboration runtime
@@ -162,8 +201,29 @@ async def collaboration_fail_closed(request,call_next):
         # expanded allowlist from turning research/plugin/workflow records into
         # anonymous development endpoints.  Packaged mode has already applied
         # its stronger bootstrap-issued session gate above.
+        if (re.fullmatch(r"/api/novels/[^/]+/visual-memory(?:/[^/]+)?", normalized_path)
+                or normalized_path == "/api/memory"
+                or re.fullmatch(r"/api/assets/[^/]+/derivatives", normalized_path)):
+            return JSONResponse({"detail": {"code": "LEGACY_MEDIA_SCOPE_UNAVAILABLE", "message": "请使用当前分支的视觉参考与资产管理入口。"}}, status_code=501)
         capability_route = any(re.fullmatch(pattern, normalized_path) is not None for pattern in (
             r"/api/novels/[^/]+/overview",
+            r"/api/novels/[^/]+/text-runtime-diagnostics",
+            r"/api/novels/[^/]+/planning-runs(?:/[^/]+(?:/cancel|/candidates/[^/]+/save-draft)?)?",
+            r"/api/novels/[^/]+/creation-reference-data",
+            r"/api/novels/[^/]+/chapters/[^/]+/privacy",
+            r"/api/workflows/recipes(?:/[^/]+)?",
+            r"/api/workflow-runs/[^/]+/nodes/[^/]+/(?:approve|reject|trigger-agent)",
+            r"/api/agent-queue(?:/[^/]+/[^/]+/(?:execute|sync))?",
+            r"/api/plugin-packages/(?:install|[^/]+(?:/rollback)?)",
+            r"/api/novels/[^/]+/screenplays/[^/]+/video-assemblies",
+            r"/api/novels/[^/]+/screenplays/[^/]+/motion-tasks/[^/]+/privacy",
+            r"/api/novels/[^/]+/image-jobs(?:/[^/]+/(?:execute|cancel|retry|accept))?",
+            r"/api/novels/[^/]+/audiobook/chapters/[^/]+/(?:export|queue-segments)",
+            r"/api/novels/[^/]+/asset-trash",
+            r"/api/novels/[^/]+/assets/[^/]+/(?:restore|references)",
+            r"/api/novels/[^/]+/visual-references(?:/[^/]+(?:/approve)?)?",
+            r"/api/novels/[^/]+/visual-reference-search",
+            r"/api/novels/[^/]+/(?:creation-records|review-threads)(?:/[^/]+(?:/[^/]+)?)?",
             r"/api/novels/[^/]+/research(?:/[^/]+)?",
             r"/api/research",
             r"/api/novels/[^/]+/continuity/scan-chapter",
@@ -209,7 +269,8 @@ async def collaboration_fail_closed(request,call_next):
             re.fullmatch(r"/api/chapters/[^/]+",normalized_path) is not None and method=="PUT" or
             re.fullmatch(r"/api/chapters/[^/]+",normalized_path) is not None and method=="DELETE" or
             re.fullmatch(r"/api/chapters/[^/]+/(?:rename|archive|restore-archive|history/\d+/restore)",normalized_path) is not None and method=="POST" or
-            re.fullmatch(r"/api/generate/[^/]+",normalized_path) is not None and method=="POST" or
+            re.fullmatch(r"/api/generate/[^/]+(?:/variants)?",normalized_path) is not None and method=="POST" or
+            re.fullmatch(r"/api/generation-groups/[^/]+",normalized_path) is not None and method=="GET" or
             normalized_path=="/api/agent/chat" and method=="POST" or
             normalized_path in {"/api/user-preferences","/api/user-preferences-enabled","/api/user-preferences-share-enabled","/api/harness-enabled"} and method in {"GET","PUT"} or
             normalized_path=="/api/harness/status" and method=="GET" or
@@ -217,8 +278,8 @@ async def collaboration_fail_closed(request,call_next):
             normalized_path in {"/api/harness/process","/api/harness/process/start","/api/harness/process/stop"} and method in {"GET","POST"} or
             re.fullmatch(r"/api/user-preferences/[^/]+",normalized_path) is not None and method in {"PUT","DELETE"} or
             re.fullmatch(r"/api/generation/[^/]+(?:/events)?",normalized_path) is not None and method=="GET" or
-            re.fullmatch(r"/api/generation/[^/]+/(?:cancel|accept|reject)",normalized_path) is not None and method=="POST" or
-            re.fullmatch(r"/api/exports",normalized_path) is not None and method=="POST" or
+            re.fullmatch(r"/api/generation/[^/]+/(?:cancel|accept|reject|retry)",normalized_path) is not None and method=="POST" or
+            re.fullmatch(r"/api/exports",normalized_path) is not None and method in {"GET", "POST"} or
             re.fullmatch(r"/api/exports/[^/]+/(?:cancel|retry)",normalized_path) is not None and method=="POST" or
             re.fullmatch(r"/api/exports/[^/]+(?:/download)?",normalized_path) is not None and method=="GET" or
             re.fullmatch(r"/api/novels/[^/]+/export",normalized_path) is not None and method=="GET" or
@@ -244,6 +305,38 @@ async def collaboration_fail_closed(request,call_next):
             re.fullmatch(r"/api/novels/[^/]+/knowledge-base/review",normalized_path) is not None and method=="POST" or
             re.fullmatch(r"/api/novels/[^/]+/chapters/[^/]+/knowledge-base/review",normalized_path) is not None and method=="POST" or
             capability_route and method in {"GET","POST","PUT","PATCH","DELETE"}))
+        # New routes are admitted only behind server-owned opt-in. Domain
+        # routers still require exact project/branch authorization and flags.
+        from .experimental.flags import enabled_flags
+        experimental_path = re.fullmatch(r"/api/novels/[^/]+/experimental/.+", normalized_path) is not None
+        if (normalized_path == "/api/experimental/features" and method == "GET") or (experimental_path and enabled_flags() and method in {"GET", "POST", "PUT", "PATCH", "DELETE"}):
+            allowed = True
+        first_use_route = ((normalized_path == "/api/experimental/first-use/sample" and method in {"GET", "POST"})
+                           or (normalized_path == "/api/experimental/first-use/sample/recover" and method == "POST"))
+        if first_use_route and 'workspace_tools_v2' in enabled_flags():
+            allowed = True
+        from .creative.workspace_api import is_independent_studio_route
+        if 'narrative_production_v2' in enabled_flags() and is_independent_studio_route(method, normalized_path):
+            allowed = True
+        finding_review_route = (
+            method == 'GET' and re.fullmatch(
+                r'/api/projects/[^/]+/(?:continuity|narrative)/review-findings(?:/[^/]+(?:/(?:history|evidence))?)?',
+                normalized_path) is not None
+        ) or (
+            method == 'POST' and re.fullmatch(
+                r'/api/projects/[^/]+/(?:continuity|narrative)/(?:review-checks|review-findings/[^/]+/review)',
+                normalized_path) is not None
+        )
+        if finding_review_route and 'finding_review_v1' in enabled_flags():
+            allowed = True
+        pending_canon_review_route = (
+            method == 'GET' and re.fullmatch(r'/api/projects/[^/]+/pending-canon/review', normalized_path) is not None
+        ) or (
+            method == 'POST' and re.fullmatch(
+                r'/api/projects/[^/]+/pending-canon/[^/]+/(?:preview|review|recover|cancel-recovery)', normalized_path) is not None
+        )
+        if pending_canon_review_route and 'finding_review_v1' in enabled_flags():
+            allowed = True
         if not allowed:
             return JSONResponse({"detail":{"code":"COLLABORATION_ROUTE_NOT_ENABLED"}},status_code=501)
         public_metadata = (
@@ -262,8 +355,22 @@ async def collaboration_fail_closed(request,call_next):
 app.add_middleware(CORSMiddleware,allow_origins=[settings.frontend_origin],allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 app.include_router(api_router, prefix="/api")
 app.include_router(api_router, prefix="/api/v1")
+from .experimental.api import router as experimental_router
+app.include_router(experimental_router, prefix="/api")
+app.include_router(experimental_router, prefix="/api/v1")
 app.include_router(create_model_center_router(model_center_service, mutation_authorization=_model_center_mutation_authorization))
 app.include_router(create_model_center_router(model_center_service, prefix="/api/v1/model-center", mutation_authorization=_model_center_mutation_authorization))
+@app.middleware("http")
+async def local_discovery_private_cache(request: Request, call_next):
+    response = await call_next(request)
+    path = _normalized_api_path(request.url.path)
+    if path == "/api/model-center/local-ai" or path.startswith("/api/model-center/local-ai/"):
+        response.headers.update(DISCOVERY_PRIVATE_HEADERS)
+    return response
+
+
+app.include_router(create_local_discovery_router(local_ai_discovery, host_authorization=_local_discovery_host_authority))
+app.include_router(create_local_discovery_router(local_ai_discovery, prefix="/api/v1/model-center/local-ai", host_authorization=_local_discovery_host_authority))
 app.include_router(create_collaboration_router(collaboration_read_service))
 app.include_router(create_collaboration_router(collaboration_read_service, prefix="/api/v1/collaboration"))
 app.include_router(create_collaboration_admin_router(collaboration_admin_service))
@@ -277,17 +384,32 @@ app.include_router(create_packaged_bootstrap_router(
     initial_workspace_provisioner=packaged_initial_workspace_provisioner,
     prefix="/api/v1/packaged",
 ))
-class ContextRequest(BaseModel): novel_id:str; chapter:int; instruction:str; cloud:bool=False
+class ContextRequest(BaseModel): novel_id:str; chapter:int; instruction:str; cloud:bool=False; chapter_id:str|None=None
 
 @app.get("/health")
 def health(): return {"status":"ok","version":__version__,"profile":settings.profile}
 @app.get("/novels")
-def novels():
+def novels(request: Request):
+    if settings.enable_collaboration_runtime or settings.enable_packaged_runtime:
+        from .api import novels as authorized_novels
+        return [{"id": row["id"]} for row in authorized_novels(request.headers.get("X-Session-Token"))]
     root=settings.data_path()/"novels"; return [{"id":p.name} for p in root.iterdir() if p.is_dir()] if root.exists() else []
 @app.post("/context-packs")
-def context_pack(req:ContextRequest):
-    try: return context_service.build(req.novel_id,req.chapter,req.instruction,req.cloud)
+def context_pack(req:ContextRequest, request: Request):
+    from .api import _require_shared_project
+    _require_shared_project(req.novel_id, request.headers.get("X-Session-Token"),
+                            "domain.read", request.headers.get("X-Branch-ID"))
+    try:
+        if req.chapter_id is not None:
+            return context_service.build(req.novel_id,req.chapter,req.instruction,req.cloud,chapter_id=req.chapter_id)
+        return context_service.build(req.novel_id,req.chapter,req.instruction,req.cloud)
+    except FileNotFoundError as exc: raise HTTPException(404 if req.chapter_id is not None else 400,str(exc)) from exc
     except Exception as exc: raise HTTPException(400,str(exc)) from exc
+
+from .dependencies import local_interop_host
+from .local_interop.api import create_local_interop_router
+app.include_router(create_local_interop_router(local_interop_host))
+app.include_router(create_local_interop_router(local_interop_host, prefix="/api/v1/local-interop"))
 
 if settings.enable_packaged_runtime:
     mount_packaged_frontend(app, Path(os.environ.get("PACKAGED_FRONTEND_DIST", "")))

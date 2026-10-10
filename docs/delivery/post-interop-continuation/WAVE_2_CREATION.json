@@ -1,0 +1,350 @@
+{
+  "schema_version": 1,
+  "wave": 2,
+  "implementation_model": "Astra",
+  "original_starting_sha": "e58c72b04182cd374af092314386b90f8250a173",
+  "recovered_published_sha": "4d736c0d14bdcd12d0ad3cc7146553971654620b",
+  "reconstruction_date": "2026-10-06",
+  "historical_review": "BLOCKED",
+  "historical_PR39_status": "F00 INTEGRATED;39 PARTIAL unchanged",
+  "features": [
+    {
+      "originalFeatureID": "A01",
+      "feature_flag": "story_simulator_v2",
+      "product_status": "PARTIAL",
+      "slice_status": "IMPLEMENTED",
+      "delta": "Scene/mind receipt, per-step applied hypothetical deltas, safe version history; existing local-model and Proposal-only lifecycle retained",
+      "quality_boundary": "Real model/literary/native/GPU acceptance NOT_RUN; not full product acceptance"
+    },
+    {
+      "originalFeatureID": "A02",
+      "feature_flag": "style_dna_v2",
+      "product_status": "PARTIAL",
+      "slice_status": "IMPLEMENTED",
+      "delta": "Independent source-local deterministic metrics plus explicit registered-local, exact-range Model Opinion job/review lifecycle",
+      "quality_boundary": "Real model/literary/native/GPU acceptance NOT_RUN; not full product acceptance"
+    },
+    {
+      "originalFeatureID": "A03",
+      "feature_flag": "narrative_quality_judge_v2",
+      "product_status": "PARTIAL",
+      "slice_status": "IMPLEMENTED",
+      "delta": "Accept/Intentional evidence-bound dedup, reopening and original Writer Room task creation/retained target",
+      "quality_boundary": "Real model/literary/native/GPU acceptance NOT_RUN; not full product acceptance"
+    },
+    {
+      "originalFeatureID": "A04",
+      "feature_flag": "temporal_story_graph_v2",
+      "product_status": "PARTIAL",
+      "slice_status": "IMPLEMENTED",
+      "delta": "Original Scene identity/order/source/ancestor fences and requested relation/object types; live transaction authority",
+      "quality_boundary": "Real model/literary/native/GPU acceptance NOT_RUN; not full product acceptance"
+    },
+    {
+      "originalFeatureID": "A05",
+      "feature_flag": "character_mind_v2",
+      "product_status": "PARTIAL",
+      "slice_status": "IMPLEMENTED",
+      "delta": "Relationship state, unknown/future exclusion, stale forget tombstones and exact-scene original character authoring",
+      "quality_boundary": "Real model/literary/native/GPU acceptance NOT_RUN; not full product acceptance"
+    },
+    {
+      "originalFeatureID": "A11",
+      "feature_flag": "revision_intelligence_v2",
+      "product_status": "PARTIAL",
+      "slice_status": "IMPLEMENTED",
+      "delta": "Original history A/B diff, exact evidence/imported interpretations, separately executed Model-derived opinion jobs and explicit metadata-only review",
+      "quality_boundary": "Real model/literary/native/GPU acceptance NOT_RUN; not full product acceptance"
+    },
+    {
+      "originalFeatureID": "U05",
+      "feature_flag": "selection_assistant_v2",
+      "product_status": "PARTIAL",
+      "slice_status": "IMPLEMENTED",
+      "delta": "Existing exact selection/locks/partial acceptance/CAS preserved; global UX remains the existing UX owner",
+      "quality_boundary": "Real model/literary/native/GPU acceptance NOT_RUN; not full product acceptance"
+    }
+  ],
+  "changed_files": [
+    {
+      "path": "app/experimental/character_author_context.py",
+      "sha256": "8ab58d124a70f69c91b4b564703c1109d10671847e126e3264e5b03c1f77c5a3"
+    },
+    {
+      "path": "app/experimental/narrative_judge.py",
+      "sha256": "fd5899475b8e88f3046e51a3a07fbf465e61db1ee24f32f739ef3217b1450634"
+    },
+    {
+      "path": "app/experimental/narrative_judge_api.py",
+      "sha256": "026fa976a00f9c004236a5042353b092d103e15b064ec360029780f36fcb2bdc"
+    },
+    {
+      "path": "app/experimental/narrative_judge_model.py",
+      "sha256": "20e6790fb7f6cedcc1f9abaa756bd1f323211c88d487cdb5d8c7228eeea8f2a8"
+    },
+    {
+      "path": "app/experimental/revision_intelligence.py",
+      "sha256": "1d4d5f975274dbb2bbc8276448fc6301098925bd195b2354948127772b420bbe"
+    },
+    {
+      "path": "app/experimental/revision_intelligence_api.py",
+      "sha256": "224fe40fd6730c561280e1650bc7938e2e78c7c36f695f5e9c20b084d2d695f2"
+    },
+    {
+      "path": "app/experimental/revision_intelligence_model.py",
+      "sha256": "34eb4d9a9eb61ae86d450c16675d7086ed395f192c5b577e449cb8888f0e3f8f"
+    },
+    {
+      "path": "app/experimental/story_graph.py",
+      "sha256": "d50c058b7c754e6d9f82f2c271020b393ebd85179610909ba8cf8e41e815be35"
+    },
+    {
+      "path": "app/experimental/story_graph_api.py",
+      "sha256": "eaf34f5c479c422fe9c859d5db242d158e8c4e2e53134e961f60ef08814390fe"
+    },
+    {
+      "path": "app/experimental/story_simulator.py",
+      "sha256": "700fb47420fa027a7d4d1db923fdf69cfdecf956a14b6b23da2e8d9952348524"
+    },
+    {
+      "path": "app/experimental/story_simulator_model.py",
+      "sha256": "3a00495eceae20a2b9658c714bda036aa9b44e01d9af8ccc4f8fd938915915f9"
+    },
+    {
+      "path": "app/experimental/style_analysis.py",
+      "sha256": "151c2b870ca038a76bb005048185bce195be2945f1641d9c20c6e62230250685"
+    },
+    {
+      "path": "app/experimental/style_analysis_api.py",
+      "sha256": "89fe890de899b35a7f43f8dc2f6012cc5903380db6c2e004503b1411c49ee2a1"
+    },
+    {
+      "path": "app/experimental/style_analysis_model.py",
+      "sha256": "928ea0d9c5da3c4ad7367c8b687352123deaa1508b10a7ad4fbb45634e4f1151"
+    },
+    {
+      "path": "app/experimental/world.py",
+      "sha256": "278e38fbcd6984fcf6ebcbfd83433e007aee891f2a37c31c85c3a81da7f3506f"
+    },
+    {
+      "path": "frontend/src/experimental/NarrativeJudgeContinuationPanels.test.tsx",
+      "sha256": "8be98cff55337b69e5ffbad97d63d10392310585463923d10ab04286ea29c7d2"
+    },
+    {
+      "path": "frontend/src/experimental/NarrativeJudgePanel.tsx",
+      "sha256": "a50b06d5206b0599c3021bded9931e213c31edcceb3c33a1ffc072412264bfdf"
+    },
+    {
+      "path": "frontend/src/experimental/NarrativeJudgeRevisionTaskPanel.tsx",
+      "sha256": "3c6557a45c1f0833d1c0a6053ecf6b39a99567ac37fab25bdd7743c1cff6ce32"
+    },
+    {
+      "path": "frontend/src/experimental/RevisionComparisonModelPanel.test.tsx",
+      "sha256": "afc38704b5af79369fe74dd4fed35988d76e97ba9f583e32dcadb724fcaf50a4"
+    },
+    {
+      "path": "frontend/src/experimental/RevisionComparisonModelPanel.tsx",
+      "sha256": "50e21259a73ccd4ba41e34227ba35de5e9a1afa7b385a72a07dc03112b247997"
+    },
+    {
+      "path": "frontend/src/experimental/RevisionIntelligencePanel.test.tsx",
+      "sha256": "5f31da2c65918489089184285e1dbb63446f2614b68f3fe877e4c4fe1adc9a20"
+    },
+    {
+      "path": "frontend/src/experimental/RevisionIntelligencePanel.tsx",
+      "sha256": "d9db54b4112c5a278cb1fc25dbbf50fea361c11c9128c72753fb7dfa000ef825"
+    },
+    {
+      "path": "frontend/src/experimental/StoryGraphPanel.test.tsx",
+      "sha256": "1516d1ee9e31ee251ac191fb4d6540e915e0cd76cbb096f824b2a91a60e28ec7"
+    },
+    {
+      "path": "frontend/src/experimental/StoryGraphPanel.tsx",
+      "sha256": "244585ba22b36d245f550d1b471845482cecb2e0cd2b3d4eb7ed9ae263773cda"
+    },
+    {
+      "path": "frontend/src/experimental/StorySimulatorPanel.test.tsx",
+      "sha256": "c9e50d46275dd39baf98b684630c0a83e89f2fa1d84e1e68dfcf58e3c14099aa"
+    },
+    {
+      "path": "frontend/src/experimental/StorySimulatorPanel.tsx",
+      "sha256": "a0c3d6017eb372d8ee6fff2230007a2b0f51173007a477beb08296f5f61d1a8c"
+    },
+    {
+      "path": "frontend/src/experimental/StyleAnalysisModelPanel.test.tsx",
+      "sha256": "aa74c545377a2d495cb838eca1be2d3e905ee65e348a430fd1bc31894aaee797"
+    },
+    {
+      "path": "frontend/src/experimental/StyleAnalysisModelPanel.tsx",
+      "sha256": "da503c1a50b46569aa3e4643b9294f0105a37a28e0580f1bcf9298fc5b924a61"
+    },
+    {
+      "path": "frontend/src/experimental/StyleAnalysisPanel.tsx",
+      "sha256": "68f608f2668dc13f88cf68cc291234903ee0cd473f2c7c47b98a29e9f8b7f380"
+    },
+    {
+      "path": "frontend/src/experimental/revisionIntelligenceClient.ts",
+      "sha256": "f0e7fa0fc9802113c2088aa0c901cdbb76d0253ae157ee6a988ade63453765e4"
+    },
+    {
+      "path": "frontend/src/experimental/storySimulatorClient.ts",
+      "sha256": "5f45dd7b81d9ce25fb6bc4244ae2ea993ae288c8892d350fc940b6eb2c72fb7f"
+    },
+    {
+      "path": "frontend/src/experimental/styleReviewClient.ts",
+      "sha256": "44aef871c15cacf6a39b12e1f85c25c47b4cfd4f49fd38990ff4a4af65140f3d"
+    },
+    {
+      "path": "frontend/tests/e2e/r4-post-interop-creation.spec.ts",
+      "sha256": "a789dbd42096d61d8dcedc0f0f1267004e3c581b69725c09c962e079e35a4b68"
+    },
+    {
+      "path": "frontend/tests/e2e/r4-post-interop-style-judge.spec.ts",
+      "sha256": "1b9f7b63f267fe8ced9cb0273a83fedd273183c8499c537f6418f75487ad9f83"
+    },
+    {
+      "path": "frontend/tests/e2e/r4-post-interop-style-model.spec.ts",
+      "sha256": "1df66e0290a2f6cfdebfc9704a50bbfa04273b847a6ea76dc6ef0a8bc5f4a6bf"
+    },
+    {
+      "path": "tests/test_post_interop_creation_mounted.py",
+      "sha256": "5dd69da2662bf7ecf0e4af7b26bcd89920d6a7b9318831f7c18420d42fbb81fc"
+    },
+    {
+      "path": "tests/test_post_interop_creation_tasks.py",
+      "sha256": "7e6f581387dbf764378992a6992d120ef44aa159abbb6e4d6bb1f9c027313331"
+    },
+    {
+      "path": "tests/test_post_interop_creation_upgrade.py",
+      "sha256": "637deb174d905067557f49ecbc0c3be2f5fa4656abcbca5a4552ab137eee51af"
+    },
+    {
+      "path": "tests/test_post_interop_revision_compare.py",
+      "sha256": "61cfc371da26555de684102db73ed87b85d3c562a5d4aeacac63731c4612fb50"
+    },
+    {
+      "path": "tests/test_post_interop_revision_model.py",
+      "sha256": "1455e548d318e8bf0eaddca4127231d3dca52655c7a0d4d54b3e197dde38b262"
+    },
+    {
+      "path": "tests/test_post_interop_scene_mind.py",
+      "sha256": "617e8fae4150486f7fed9e3da11aa4b46a42baacf1e962b7e08b5d2e3c41bad8"
+    },
+    {
+      "path": "tests/test_post_interop_style_judge.py",
+      "sha256": "33c1d47ae8707ede2ce122f208d0ee5291776d5c09d29ea2f862382e67546f60"
+    },
+    {
+      "path": "tests/test_post_interop_style_judge_mounted.py",
+      "sha256": "6428562a1f41a6b8fec569e6c17dcda1884cdece17c27847df4099bbae795a1f"
+    },
+    {
+      "path": "tests/test_post_interop_style_model.py",
+      "sha256": "0437255a2a14bef9418b990d42a7797346e77af6dbf1274af2157bd44492396c"
+    }
+  ],
+  "shared_hooks": [
+    "app/experimental/api.py router/WriterRoom composition",
+    "app/jobs.py original origins and exact-origin whole-accept fence",
+    "app/providers.py labelled synthetic protocol hooks",
+    "app/experimental/author_context_api.py optional scene binding",
+    "app/experimental/ux.py and workspace_task_owners.py original-job owner navigation",
+    "frontend/src/experimental/ExperimentalWorkbench.tsx owner requestedJobId forwarding",
+    "Wave1 App/authorContextClient exact scene forwarding"
+  ],
+  "storage": {
+    "schema_version": 1,
+    "sql_migrations": [],
+    "new_collection": "revision_comparisons",
+    "source_authority": "Original ChapterService history",
+    "upgrade": "Old fieldless graph/mind, old revision proposals, old STYLE receipts and Judge threads retain identity/history; no read migration",
+    "downgrade": "Disable experiments and restore matching verified isolated source/metadata/review-sidecar checkpoint; old code may ignore new scene fences or reject new categories."
+  },
+  "tests": [
+    {
+      "layer": "Recovered core File/unit",
+      "status": "PASS",
+      "passed": 99,
+      "deselected": 94,
+      "failed": 0,
+      "seconds": 5.52,
+      "command": "python -m pytest -q tests/test_post_interop_scene_mind.py tests/test_post_interop_revision_compare.py tests/test_post_interop_creation_upgrade.py tests/test_r4_story_graph.py tests/test_r4_revision_intelligence.py tests/test_r3_world.py -m 'not postgres_backend_only' --disable-warnings --maxfail=1"
+    },
+    {
+      "layer": "Recovered combined Wave2 File/API/model-contract suite",
+      "status": "PASS",
+      "passed": 417,
+      "deselected": 388,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 124.17,
+      "source_scope": "Final owned server source, including unbounded original Scene position ordering regression; 23 named files"
+    },
+    {
+      "layer": "Owned Python syntax",
+      "status": "PASS"
+    },
+    {
+      "layer": "UI design tokens",
+      "status": "PASS",
+      "command": "node scripts/check_ui_design_tokens.mjs",
+      "checked_files": 42
+    },
+    {
+      "layer": "Whitespace",
+      "status": "PASS",
+      "command": "git diff --check"
+    },
+    {
+      "layer": "Recovered frontend",
+      "status": "PASS",
+      "reason": "Locked frontend dependencies were subsequently restored successfully. These are fresh results from reconstructed source; browser runtime remains a separate hosted gate.",
+      "react_passed": 71,
+      "react_test_files": 8,
+      "typescript": "PASS",
+      "build": "PASS",
+      "build_warning": "App664.40kB and ExperimentalWorkbench625.24kB minified exceed500kB; warning retained"
+    },
+    {
+      "layer": "Real PostgreSQL",
+      "status": "NOT_RUN",
+      "reason": "Marked inherited fixtures retained; hosted disposable database required."
+    },
+    {
+      "layer": "Original model-task exact-owner navigation",
+      "status": "PASS",
+      "passed": 4,
+      "deselected": 4,
+      "failed": 0,
+      "seconds": 4.79,
+      "command": "python -m pytest -q tests/test_post_interop_creation_tasks.py -m 'not postgres_backend_only' --disable-warnings --maxfail=1"
+    },
+    {
+      "layer": "Hosted browser collection only",
+      "status": "CONTRACT_COLLECTED",
+      "tests": 6,
+      "files": 3,
+      "command": "frontend/node_modules/.bin/playwright test --config frontend/playwright.r4.config.ts r4-post-interop-creation.spec.ts r4-post-interop-style-judge.spec.ts r4-post-interop-style-model.spec.ts --list",
+      "runtime": "NOT_RUN"
+    }
+  ],
+  "browser_journeys": {
+    "count": 6,
+    "files": [
+      "frontend/tests/e2e/r4-post-interop-creation.spec.ts",
+      "frontend/tests/e2e/r4-post-interop-style-judge.spec.ts",
+      "frontend/tests/e2e/r4-post-interop-style-model.spec.ts"
+    ],
+    "runtime": "NOT_RUN",
+    "mocked_business_responses": false,
+    "model_quality": "SYNTHETIC_PROTOCOL_ONLY where mock runtime explicitly selected"
+  },
+  "no_paid_api": true,
+  "no_real_manuscript": true,
+  "no_gpu": true,
+  "automatic_manuscript_or_canon_writes": false,
+  "prior_executor_results": "Historical only; superseded by reconstructed-source verification. Do not aggregate prior pass counts.",
+  "task_owner_integration": "Verified original job IDs route to style_model_job / revision_model_job with original chapter+version; missing/disabled targets never become generic manuscript acceptance.",
+  "ownership_correction": "Wave5 r4-post-interop-extended-creation.spec.ts was accidentally matched by the report file-inventory glob; removed from this owned inventory without editing the Wave5 file. The explicit Wave2 browser count remains six across the three declared files.",
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts."
+}

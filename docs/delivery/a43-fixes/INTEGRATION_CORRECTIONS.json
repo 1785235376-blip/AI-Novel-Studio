@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "kind": "PRESERVED_FAILED_INTEGRATION_CHECKPOINTS_NOT_FINAL_PASS",
+  "local_full": {
+    "source_tree": "a4f9dbeec37886b6ef53a77a0fa74357d97df543",
+    "python": "3.12.14",
+    "tests": 7826,
+    "passed": 5275,
+    "skipped": 2524,
+    "failed": 27,
+    "errors": 0,
+    "original_order_one_process": true,
+    "outer_cap_seconds": 1200,
+    "tracked_files_unchanged": 2213,
+    "tcp": {
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "pytest_seconds": 26.24,
+      "wall_seconds": 28.30112788599945,
+      "outer_cap_seconds": 300
+    },
+    "original_nodes": {
+      "tests": 7492,
+      "passed": 5084,
+      "skipped": 2381,
+      "failed": 27
+    },
+    "new_a43_nodes": {
+      "tests": 334,
+      "passed": 191,
+      "skipped": 143,
+      "all_skips": "opposite PostgreSQL profile"
+    },
+    "original_receipt_sha256": "bf1f749b3f9f0082c965689e6b7782c9957ec6ea07e35a62824405be9774143e",
+    "failures": [
+      {
+        "class": "tests.test_file_project_lifecycle",
+        "name": "test_audited_call_after_delete_cannot_restore_stale_snapshot",
+        "message": "KeyError: 'id'"
+      },
+      {
+        "class": "tests.test_r4_portable_batches",
+        "name": "test_portable_real_round_trip_new_ids_missing_media_and_original_history[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_batches",
+        "name": "test_missing_media_retains_manuscript_and_explicit_digest_relink[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_batches",
+        "name": "test_relink_same_name_mismatch_requires_explicit_replace_and_stale_denied[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_batches",
+        "name": "test_cache_preview_cleanup_preserves_assets_history_trash_and_regenerates[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_batches",
+        "name": "test_digest_member_tamper_credentials_and_extra_fields_rejected[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_batches",
+        "name": "test_portable_missing_restoration_readable_and_asset_escape_fails[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_batches",
+        "name": "test_media_flag_revocation_hides_only_dependent_batch_and_export_cache[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_batches",
+        "name": "test_xml_and_html_disguised_as_digest_valid_media_never_decode_or_execute[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_batches_mounted",
+        "name": "test_relink_original_chapter_cas_conflict_is_sanitized_and_preserves_recovery[file-/api]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_batches_mounted",
+        "name": "test_relink_original_chapter_cas_conflict_is_sanitized_and_preserves_recovery[file-/api/v1]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_missing_digest_survives_restore_restart_second_export_and_exact_relink[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_restored_missing_digest_is_actor_project_and_current_reference_scoped[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_relink_report_freezes_hashes_chapter_versions_and_detects_current_change[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_relink_report_source_privacy_change_blocks_even_when_chapter_version_stays[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_relink_original_authority_change_blocks_before_any_new_asset[file-digest]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_relink_original_authority_change_blocks_before_any_new_asset[file-reappeared]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_relink_report_cannot_expose_now_hidden_asset_metadata[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_partial_relink_retains_report_originals_and_measured_recovery_input[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_storage_measures_original_history_and_owned_inputs_without_deleting_them[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_mounted_relink_report_and_original_changed_conflict_stay_public_safe[file-/api]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_mounted_relink_report_and_original_changed_conflict_stay_public_safe[file-/api/v1]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_unknown_digest_needs_explicit_choice_and_older_record_requires_new_preflight[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r4_portable_maintenance",
+        "name": "test_original_reference_is_rechecked_at_actual_chapter_write_boundary[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r5_project_forks",
+        "name": "test_asset_license_id_map_provenance_and_unsupported_cross_reference[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r5_project_forks",
+        "name": "test_media_digest_or_source_version_drift_blocks_fork_and_compare[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      },
+      {
+        "class": "tests.test_r5_project_forks",
+        "name": "test_catalog_missing_media_does_not_block_unrelated_selected_chapters[file]",
+        "message": "app.document.DocumentProjectionError: unsupported document node"
+      }
+    ],
+    "lifecycle_status": "Root-cause fix landed before published de92; full a4f snapshot is earlier and stayed unchanged.",
+    "media_status": "26 original existing audio-node assertions exposed a projection whitelist regression; source compatibility correction is required, no original assertions changed."
+  },
+  "hosted_postgres_initialization": {
+    "source_sha": "de92f5756ba8a789243d5a970ee865307a36e596",
+    "tree": "0fe450d3cedc4b2cdea9266ae874c115d5d3dd40",
+    "push_run": 37542050732,
+    "pr_run": 37542056139,
+    "diagnosed_job": 112537132250,
+    "python": "3.12.9",
+    "postgres": "16.15",
+    "test_execution": "NOT_RUN: initialization failed before collection/execution",
+    "migration": "020_stable_chapter_identity.sql",
+    "error_type": "psycopg.errors.DatatypeMismatch",
+    "error_message": "column \"chapter_id\" is of type uuid but expression is of type text",
+    "query_fragment": "SELECT DISTINCT aliases.novel_id, aliases.number::INTEGER, NULL, 'DELETED', 'LEGACY_REFERENCE'",
+    "cause": "DISTINCT resolves the untyped NULL select item as text before insertion into the UUID column.",
+    "correction": "Use explicit NULL::UUID in the dynamic reference inventory SELECT; preserve UUID column type and all original constraints.",
+    "raw_official_log_sha256": "fd670a2051e65f7650f13007f519e9afc81d775b682a0b78c02bb514a8fd273f",
+    "raw_log_publication": "NOT_PUBLISHED: only this minimal non-sensitive error/query context is published."
+  },
+  "verification_boundary": "These failures are retained. Correction on a new exact source must pass the unchanged full gates; no rerun of an unchanged failed source substitutes for a fix. F00/39 PARTIAL, blocked historical review and real-environment boundaries are unchanged."
+}

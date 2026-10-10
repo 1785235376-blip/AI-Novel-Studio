@@ -1,0 +1,111 @@
+...........................F............................................ [ 51%]
+....................................................................     [100%]
+=================================== FAILURES ===================================
+_ test_asset_review_commit_rechecks_sealed_receipt_after_original_workflow_commit[file] _
+
+model_rig = namespace(nid='v2-independent-3a2999ea91b546fe88c2b1baefe748ab', scope={'mode': 'local', 'novel_id': 'v2-independent-3...[<threading.Event at 0x7f5c628253a0: unset>], active=True, guard=<function configure.<locals>.guard at 0x7f5c6299bc40>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5c62826ae0>
+
+    def test_asset_review_commit_rechecks_sealed_receipt_after_original_workflow_commit(model_rig, monkeypatch):
+        e = model_rig; spy_transport(e, monkeypatch)
+        sent, _ = dispatch_asset(e)
+        waiting = current(e, sent)
+        original = e.assets.review_text_result
+        def corrupt(*args, **kwargs):
+            asset = assets(e)[0]
+            asset[PRIVATE_FIELD]["prompt"] = "changed between validation and asset review"
+            e.assets._write_meta(asset)
+            return original(*args, **kwargs)
+        monkeypatch.setattr(e.assets, "review_text_result", corrupt)
+        with pytest.raises(ValueError, match="RECEIPT_CHANGED"):
+>           approve(e, waiting)
+
+tests/test_v2_text_execution_receipts.py:301: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_graph_text_assets.py:36: in approve
+    return action(e, row, "approve", node_id=row["review"]["node_id"],
+tests/test_v2_ai_execution_runtime.py:147: in action
+    return e.graphs.action(e.nid, e.scope, e.actor, row["id"], name,
+app/creative/graph.py:316: in action
+    result = self.model_runtime.text_assets.decorate(nid, scope, actor, rid, guard, result)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/text_assets.py:346: in decorate
+    result["asset_output"] = self.project(nid, scope, actor, rid, guard)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/creative/text_assets.py:319: in project
+    asset = self.assets.review_text_result(asset["id"], actor_id=actor, branch_id=scope.get("branch_id"),
+tests/test_v2_text_execution_receipts.py:295: in corrupt
+    asset = assets(e)[0]
+            ^^^^^^^^^
+tests/test_v2_graph_text_assets.py:31: in assets
+    with e.service._asset_scope(e.nid, e.scope):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+app/creative/workspace.py:115: in _asset_scope
+    with self.assets.project_scope(nid, scope.get("branch_id"), lambda: self.store.owner_lease(nid), scope_key=key):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:137: in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.services.asset_library_service.AssetLibraryService object at 0x7f5c62824c50>
+novel_id = 'v2-independent-3a2999ea91b546fe88c2b1baefe748ab', branch_id = None
+owner_lease = <function IndependentWorkspaceService._asset_scope.<locals>.<lambda> at 0x7f5c62998360>
+
+    @contextmanager
+    def project_scope(self, novel_id: str, branch_id: str | None, owner_lease, *, scope_key: str):
+        """Lease the existing owner for new, incarnation-bound studio assets.
+    
+        This is a server-only adapter, not a client-supplied identity. The
+        callable must hold the original project owner's lifecycle lease and
+        yield its actual incarnation. Acquire asset -> owner, matching the
+        established lineage guard's order. Never open a scope-document write
+        transaction inside this lease. The old unbound asset contract remains
+        unchanged outside it; neither side silently adopts the other's data.
+        """
+        self._identifier(novel_id, "novel_id")
+        if branch_id is not None:
+            self._identifier(branch_id, "branch_id")
+        if not isinstance(scope_key, str) or not re.fullmatch(r"[a-f0-9]{64}", scope_key):
+            raise ValueError("ASSET_PROJECT_SCOPE_INVALID")
+        if getattr(self._scope, "binding", None) is not None:
+>           raise ValueError("ASSET_PROJECT_SCOPE_NESTED")
+E           ValueError: ASSET_PROJECT_SCOPE_NESTED
+
+app/services/asset_library_service.py:96: ValueError
+
+During handling of the above exception, another exception occurred:
+
+model_rig = namespace(nid='v2-independent-3a2999ea91b546fe88c2b1baefe748ab', scope={'mode': 'local', 'novel_id': 'v2-independent-3...[<threading.Event at 0x7f5c628253a0: unset>], active=True, guard=<function configure.<locals>.guard at 0x7f5c6299bc40>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f5c62826ae0>
+
+    def test_asset_review_commit_rechecks_sealed_receipt_after_original_workflow_commit(model_rig, monkeypatch):
+        e = model_rig; spy_transport(e, monkeypatch)
+        sent, _ = dispatch_asset(e)
+        waiting = current(e, sent)
+        original = e.assets.review_text_result
+        def corrupt(*args, **kwargs):
+            asset = assets(e)[0]
+            asset[PRIVATE_FIELD]["prompt"] = "changed between validation and asset review"
+            e.assets._write_meta(asset)
+            return original(*args, **kwargs)
+        monkeypatch.setattr(e.assets, "review_text_result", corrupt)
+>       with pytest.raises(ValueError, match="RECEIPT_CHANGED"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E        Regex: 'RECEIPT_CHANGED'
+E        Input: 'ASSET_PROJECT_SCOPE_NESTED'
+
+tests/test_v2_text_execution_receipts.py:300: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_text_execution_receipts.py::test_asset_review_commit_rechecks_sealed_receipt_after_original_workflow_commit[file]
+1 failed, 139 passed, 96 deselected, 1 warning in 78.50s (0:01:18)

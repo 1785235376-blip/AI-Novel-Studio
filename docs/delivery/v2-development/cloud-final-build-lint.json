@@ -1,0 +1,13 @@
+{
+  "recorded_utc": "2026-10-09T05:57:37.424868+00:00",
+  "status": "PASS",
+  "exit_code": 0,
+  "head": "d444901ab8e65a7296b559c890d758fc2e0dd10e",
+  "command": "git diff --check && node frontend/node_modules/typescript/bin/tsc --noEmit -p frontend/tsconfig.json && npm --prefix frontend run build && npm --prefix frontend run lint",
+  "output_capture": "Initial and final streamed command output retained; no before-source snapshot captured by this direct command. Full frontend snapshot receipt is separate.",
+  "log": "docs/delivery/v2-development/cloud-final-build-lint.log",
+  "log_sha256": "5f771f79e4446f825e3acbc03dc17a978a02983caeb8ba93b7e4c163fea2725c",
+  "warnings": [
+    "Vite existing large-chunk warning: experimental workbench647.28KB and App775.04KB; no warning suppression or npm upgrade."
+  ]
+}

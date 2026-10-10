@@ -1,0 +1,17 @@
+ISOLATED_TEST_ROOT=/workspace/scratch/b8734129d01d/r2-test.hsCke8
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/ai-novel-r2/frontend
+
+ ✓ tests/uiContracts.test.ts (5 tests) 4ms
+ ✓ src/collaborationGuards.test.ts (7 tests) 5ms
+ ✓ src/generationRecovery.test.ts (2 tests) 3ms
+ ✓ src/RevisionPanel.test.tsx (4 tests) 77ms
+ ✓ src/App.test.tsx (12 tests) 8ms
+ ✓ src/AppRevisionHistory.test.tsx (19 tests) 725ms
+
+ Test Files  6 passed (6)
+      Tests  49 passed (49)
+   Start at  00:55:08
+   Duration  2.87s (transform 2.26s, setup 0ms, collect 3.81s, tests 823ms, environment 1.05s, prepare 403ms)
+
+JUNIT report written to /workspace/scratch/b8734129d01d/ai-novel-r2/docs/delivery/dot-astra-rc-r2/evidence/revision-history.xml

@@ -16,6 +16,7 @@ import {
   api,
   apiErrorView,
   createNovelKnowledgeReview,
+  getCollaborationContext,
   setCollaborationContext,
 } from "../api";
 import { Button, EmptyState, IconButton, Panel } from "../ui/primitives";
@@ -29,12 +30,17 @@ import {
   type ImportRecovery,
 } from "./importRecovery";
 import "./novel.css";
+import { FirstUsePanel } from "./FirstUsePanel";
+import { BlankProjectEntry } from '../creative/BlankProjectEntry';
+import { studioClient } from '../creative/studioClient';
 
 type Props = {
   initialToken: string;
   onEnter: (token: string, scope: Scope) => void;
   localHome?: ReactNode;
   packagedHost?: boolean;
+  onOpenLocalSample?: (id: string) => void;
+  independentStudioEnabled?: boolean;
 };
 type EntryMode = "PERSONAL" | "TEAM";
 type PackagedStage = "LAUNCH" | "WORKSPACE" | "NOVELS";
@@ -43,7 +49,9 @@ export function EntryExperience({
   initialToken,
   onEnter,
   localHome,
+  onOpenLocalSample,
   packagedHost = false,
+  independentStudioEnabled = false,
 }: Props) {
   const [token, setToken] = useState(initialToken),
     [workspaces, setWorkspaces] = useState<AdminWorkspace[]>([]),
@@ -56,8 +64,34 @@ export function EntryExperience({
     [deleteTarget,setDeleteTarget]=useState<WorkspaceNavigationPath>(),
     [mode, setMode] = useState<EntryMode>(),
     [stage, setStage] = useState<PackagedStage>("LAUNCH");
+  const localHomeRef = useRef<HTMLDivElement>(null), importRef = useRef<HTMLDivElement>(null);
   const projectTitleRef = useRef<HTMLInputElement>(null),
     personalCreateRef = useRef<Promise<AdminWorkspace | undefined>>();
+  const entryIdentity = useRef('');
+  const entryAlive = useRef(true);
+  useEffect(() => { entryAlive.current = true; return () => { entryAlive.current = false; }; }, []);
+  entryIdentity.current = JSON.stringify([token, workspace?.id, independentStudioEnabled]);
+  async function createBlankProject(title: string) {
+    if (!workspace || !independentStudioEnabled) throw new Error('请先选择已有权限的创作空间。');
+    const identity = entryIdentity.current, selectedWorkspace = workspace.id, selectedToken = token.trim();
+    const capturedContext = { sessionToken: selectedToken };
+    const authority = () => { const value = getCollaborationContext(); return JSON.stringify([value.sessionToken, value.actor?.id, value.scope]); };
+    const originalAuthority = authority();
+    const current = () => entryAlive.current && entryIdentity.current === identity && authority() === originalAuthority;
+    // The established admin owner and eligible_paths remain the only source of
+    // shared scope. Never call the local blank-project route from this branch.
+    const created = await api.adminCreateProject(selectedWorkspace, title, '', capturedContext);
+    if (!current()) throw new Error('创作空间已改变。项目已保留，请从原空间重新打开。');
+    const navigation = await api.adminWorkspaceNavigation(selectedWorkspace, capturedContext);
+    if (!current()) throw new Error('创作空间已改变。项目已保留，请重新选择。');
+    setPaths(navigation.eligible_paths);
+    const path = navigation.eligible_paths.find(item => item.project_id === created.id);
+    if (!path) throw new Error('项目已创建，但当前身份没有可用创作分支。请核对权限后从项目列表打开。');
+    const selectedScope = { workspaceId: path.workspace_id, projectId: path.project_id, storylineId: path.storyline_id, branchId: path.branch_id };
+    await studioClient(created.id, { sessionToken: selectedToken, scope: selectedScope }).activate();
+    if (!current()) throw new Error('项目已保存，当前空间已改变。请从原空间重新打开。');
+    enter(path, selectedToken);
+  }
 
   async function deleteProject(){
     if(!workspace||!deleteTarget)return;
@@ -490,7 +524,9 @@ export function EntryExperience({
             >
               {loading ? "正在创建…" : "新建小说"}
             </Button>
-            <NovelImportPanel onConfirm={importProject} />
+            <div ref={importRef}><NovelImportPanel onConfirm={importProject} /></div>
+            {independentStudioEnabled && <BlankProjectEntry createProject={createBlankProject} />}
+            <FirstUsePanel sessionToken={token.trim()} workspaceId={workspace!.id} onOpenScoped={enter} onChooseWriting={focusCreate} onChooseImport={() => importRef.current?.querySelector<HTMLInputElement>('input[type="file"]')?.click()} />
           </aside>
         </div>
         {deleteTarget&&<div className="novel-dialog-backdrop" role="presentation"><section className="novel-dialog" role="alertdialog" aria-modal="true" aria-labelledby="delete-novel-heading"><h2 id="delete-novel-heading">永久删除“{deleteTarget.project_name||"未命名小说"}”？</h2><p>小说正文、资料库、生成记录和关联资产都将被永久删除，此操作无法撤销。</p><div className="novel-actions"><Button disabled={loading} onClick={()=>setDeleteTarget(undefined)}>取消</Button><Button variant="danger" loading={loading} onClick={()=>void deleteProject()}>永久删除小说</Button></div></section></div>}
@@ -585,7 +621,10 @@ export function EntryExperience({
           </div>
         </Panel>
       )}
-      {!initialToken && localHome}
+      {workspace && <FirstUsePanel sessionToken={token.trim()} workspaceId={workspace.id} onOpenScoped={enter} />}
+      {workspace && independentStudioEnabled && <BlankProjectEntry createProject={createBlankProject} />}
+      {!initialToken && !workspace && <FirstUsePanel sessionToken="" onOpenLocal={onOpenLocalSample} onChooseWriting={() => localHomeRef.current?.querySelector<HTMLInputElement>('input[aria-label="小说名称"]')?.focus()} onChooseImport={() => localHomeRef.current?.querySelector<HTMLInputElement>('input[type="file"]')?.click()} />}
+      {!initialToken && <div ref={localHomeRef}>{localHome}</div>}
     </main>
   );
 }

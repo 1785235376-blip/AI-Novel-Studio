@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-09T04:59:02.013430+00:00",
+  "runtime": "actual PostgreSQL server process in dot cloud; server and tests share one command lifecycle",
+  "version": "PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+  "endpoint": "127.0.0.1:55432/v2_creative_tests",
+  "probe_sql": "SELECT version(),current_database(),host(inet_server_addr()),inet_server_port(),1",
+  "probe_result": {
+    "version": "PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "database": "v2_creative_tests",
+    "host": "127.0.0.1",
+    "port": 55432,
+    "one": 1
+  },
+  "public_table_count": 51,
+  "listen_addresses": "127.0.0.1",
+  "unix_socket_directories": "",
+  "credentials": "none; disposable loopback-only synthetic database using local trust authentication",
+  "os_install_performed": false,
+  "user_pc_used": false,
+  "runtime_root": ".runtime/postgresql",
+  "packages": [
+    {
+      "url": "https://deb.debian.org/debian/pool/main/p/postgresql-17/postgresql-17_17.11-0+deb13u1_amd64.deb",
+      "sha256": "d2ce1ddffafa783f9acda4c92c86fc21e8288bff3782d739294f14fa797d7886"
+    },
+    {
+      "url": "https://deb.debian.org/debian/pool/main/p/postgresql-17/postgresql-client-17_17.11-0+deb13u1_amd64.deb",
+      "sha256": "9d8558f8dd57c8e92e218a20698383575d53742ca3f9e7c2b7fe5f246d5216ae"
+    }
+  ]
+}

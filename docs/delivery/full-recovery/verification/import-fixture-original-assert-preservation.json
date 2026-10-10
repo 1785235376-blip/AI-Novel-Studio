@@ -1,0 +1,10 @@
+{
+  "boundary": "Root authorized precise scoped fixture correction; assertions/strict guards preserved",
+  "assert_count": 49,
+  "all_original_assert_ast_equal": true,
+  "three_original_strict_guards_byte_equal": {
+    ".github/ci/suite_coverage.py": true,
+    ".github/ci/coverage_reconcile.py": true,
+    ".github/ci/postgres_gate.py": true
+  }
+}

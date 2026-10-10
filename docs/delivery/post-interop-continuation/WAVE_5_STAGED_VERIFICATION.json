@@ -1,0 +1,26 @@
+{
+  "kind": "INVENTORY_REVIEW_NOT_EXECUTION",
+  "previous_nodes": 7306,
+  "current_nodes": 7484,
+  "changed_source_files": [],
+  "old_skip_counts": {
+    "file": 2035,
+    "postgres": 2059
+  },
+  "manifest_sha256": "851c36b0a4b8752ab5116f4edee2cc2b70b1750af6ae9cebc541e2c003a36a7e",
+  "added_node_count": 178,
+  "stage": "Wave5 and exact original model-task reopening",
+  "tested_code_tree": "ba7265a3a4dcf0d411799974570979414df2d70d",
+  "typescript": "PASS",
+  "design_tokens": "PASS",
+  "complete_frontend": {
+    "passed": 1259,
+    "inherited_opt_in_skipped": 8
+  },
+  "focused_backend": {
+    "passed": 101,
+    "postgres_deselected": 77
+  },
+  "full_final_source_hosted_ci": "PENDING",
+  "full_local_file": "SEPARATE_EXECUTION_RECEIPT_REQUIRED_NOT_CLAIMED_HERE"
+}

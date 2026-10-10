@@ -1,0 +1,75 @@
+{
+  "receipt_version": 1,
+  "scope": "Post-interop Style restart fixture correction",
+  "failure_evidence": {
+    "source_sha": "daaebf871f646dd78632c8ee144ef3cba17f35b6",
+    "cloud_push_run_id": 37504912645,
+    "cloud_pull_request_run_id": 37504919485,
+    "verified_push_artifact_id": 11431714898,
+    "artifact_zip_sha256": "d01aa999caac95d7795b82958351430b5575d90d8700d27d0ffc87105a37d666",
+    "failed_node": "tests/test_post_interop_style_model.py::test_style_restart_uses_original_job_without_admitting_untrusted_persisted_output[postgres-/api/v1]",
+    "observed_failure": "The original Style job ID matched; global restarted.jobs contained 2 jobs while the test expected 1.",
+    "extra_record_signature": {
+      "provider": "deepseek",
+      "model": "deepseek-chat",
+      "status": "FAILED",
+      "error_code": "TEXT_PROVIDER_NOT_CONFIGURED"
+    },
+    "attribution": "The same shard previously executed test_packaged_generation_fails_closed_without_text_provider, which persists and retains a record with that signature. Attribution is supported by source and execution order, but is not proven by ID because the failure representation truncates the extra record ID.",
+    "verified_pull_request_artifact_id": 11432857833,
+    "pull_request_artifact_zip_sha256": "4e12183cb3f8c1ee6b0b2fdb0fa210483525e254d1fcd0ee5462ec5eb77e4404",
+    "pull_request_checked_out_sha": "d2ee00fca8702ce067daf3ee96f7de9a3e0f7e78",
+    "both_artifact_failure_nodes_verified": true
+  },
+  "patch": {
+    "base_sha": "55e18e2d15f2c2b93175c7b73750fe91eab7ff96",
+    "file": "tests/test_post_interop_style_model.py",
+    "file_sha256": "e5e26a62ea8ce464094bf92d9709241262abd639bf73a357899671198adab76d",
+    "runtime_changed": false,
+    "new_test_nodes": 0,
+    "existing_node_names_and_parameters_changed": false,
+    "explanation": "JobManager restores all records returned by GenerationService.load_all. PostgreSQL queries the database-wide generation_jobs table; the File fixture uses a separate directory. Resetting the mounted manager jobs map does not clear PostgreSQL persistence. A global singleton expectation therefore does not express the no-replay requirement.",
+    "assertions": [
+      "Snapshot every pre-existing persisted record and add a declared unrelated terminal fixture without calling its provider.",
+      "Require exactly the original Style job and the declared fixture as new persisted IDs; preserve every prior record.",
+      "Capture the completed Style receipt under its original terminal-publication condition and verify exact restored public state.",
+      "Require UNKNOWN_NO_AUTOMATIC_REPLAY and no model assessments after restart loses transient authorization.",
+      "Fail on any repeated author preparation or job start; require the original job ID on repeated dispatch.",
+      "Conserve the entire hydrated job map, persisted record map and original broker ledger after refresh and repeated dispatch."
+    ],
+    "cleanup": "The declared record belongs to the existing unique mounted project. Unchanged teardown removes only that owned project and its records; no pre-existing unrelated record is deleted."
+  },
+  "validation": {
+    "focused_command": "python -m pytest tests/test_post_interop_style_model.py -m 'not postgres_backend_only' -q",
+    "command_scope": "Exact pytest arguments executed with the existing isolated Python interpreter through the isolated runner. Machine-specific interpreter path, runner location and log redirection are omitted from this publishable receipt.",
+    "passed": 41,
+    "deselected_postgresql_cases": 32,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 15.09,
+    "diff_check": "PASS",
+    "test_definition_inventory": "17 unchanged test functions; unchanged parametrization and fixtures; zero node growth.",
+    "real_postgresql_execution": "NOT_RUN locally; hosted exact-source PostgreSQL verification required.",
+    "exact_staged_code_tree": "a3443d17be4586c63830ebc91832638f5499f28f",
+    "two_complete_collections": {
+      "kind": "INVENTORY_REVIEW_NOT_EXECUTION",
+      "previous_nodes": 7492,
+      "current_nodes": 7492,
+      "added_nodes": [],
+      "changed_source_files": [
+        {
+          "path": "tests/test_post_interop_style_model.py",
+          "before_sha256": "0a78798407641d4c94688bfe19237d19d13c4bda9de039e2d1d1fc08c406a478",
+          "after_sha256": "e5e26a62ea8ce464094bf92d9709241262abd639bf73a357899671198adab76d"
+        }
+      ],
+      "old_skip_counts": {
+        "file": 2035,
+        "postgres": 2059
+      },
+      "manifest_sha256": "8fe261d1673680476d9d3bc4a1a4d290a657d29f3f6be133ddabe1d48a438d95"
+    },
+    "final_hosted": "PENDING_SUCCESSOR_EXACT_SOURCE"
+  },
+  "historical_boundary": "Ordinary new-scope fixture regression only. Historical frozen evidence, PARTIAL labels and blocked independent review are unchanged."
+}

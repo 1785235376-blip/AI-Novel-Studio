@@ -1,0 +1,15 @@
+{
+  "version": "8.0.424",
+  "metadata_url": "https://builds.dotnet.microsoft.com/dotnet/release-metadata/8.0/releases.json",
+  "archive_url": "https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.424/dotnet-sdk-8.0.424-win-x64.zip",
+  "official_sha512": "1787ab90635c2950672ed7c6507b000e1b212ea7d9a22fcef37061344d37c64d4c4eda12b8742601eff5b45c8736485b31c55613892f240c300190e4e88a58b0",
+  "actual_sha512": "1787ab90635c2950672ed7c6507b000e1b212ea7d9a22fcef37061344d37c64d4c4eda12b8742601eff5b45c8736485b31c55613892f240c300190e4e88a58b0",
+  "archive_size": 285090820,
+  "zip_crc_verified": true,
+  "archive_members": 5140,
+  "archive_path": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\dotnet-sdk-8.0.424-win-x64.zip",
+  "sdk_root": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\dotnet-sdk-8.0.424",
+  "sdk_listing": "8.0.424 [D:\\??\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\dotnet-sdk-8.0.424\\sdk]",
+  "system_installation_modified": false,
+  "product_build_performed": false
+}

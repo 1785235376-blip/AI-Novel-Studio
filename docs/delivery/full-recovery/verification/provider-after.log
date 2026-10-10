@@ -1,0 +1,20 @@
+..........................F.............                                 [100%]
+================================== FAILURES ===================================
+____________ test_agent_context_cloud_filters_all_domain_sections _____________
+tests\test_r2_provider_execution.py:74: in test_agent_context_cloud_filters_all_domain_sections
+    context=AgentContextService(novels,chapters,None).build("planner","n",1,cloud=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\services\agent_context_service.py:36: in build
+    if section=="writing_context":payload[section]=self.context.build(novel_id,chapter_number,instruction,cloud,operation=agent_id,chapter_id=chapter["id"])
+                                                   ^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'NoneType' object has no attribute 'build'
+============================== warnings summary ===============================
+tests/test_r2_provider_execution.py::test_ollama_stream_requires_terminal_record_and_preserves_usage
+  D:\С˵\AI-Novel-Studio-Latest-Product\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: D:\С˵\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\verification\provider-after.xml -
+=========================== short test summary info ===========================
+FAILED tests/test_r2_provider_execution.py::test_agent_context_cloud_filters_all_domain_sections
+1 failed, 39 passed, 1 warning in 4.48s

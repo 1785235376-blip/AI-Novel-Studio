@@ -1,0 +1,534 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/ui/LocalAiDiscovery.test.tsx (24 tests) 1278ms
+ ✓ src/novel/StoryCoreRecordVersionEditor.test.tsx (59 tests) 4293ms
+ ✓ src/experimental/WorkspaceToolsPanel.test.tsx (30 tests) 5580ms
+   ✓ real workspace tools UI > saves explicit chapter metadata and note with CAS, never manuscript or token 494ms
+   ✓ real workspace tools UI > shows stale recovery choice and never jumps until explicit current-version approval 466ms
+   ✓ real workspace tools UI > discards pending search and action responses after A → B → A scope changes 393ms
+   ✓ real workspace tools UI > supports keyboard search results and only exposes enabled safe scenario navigation 472ms
+   ✓ keeps the newest safe command instead of a delayed search jump 359ms
+   ✓ deduplicates repeated resolves and only honors the reopened search request 667ms
+   ✓ captures actual split visibility and keeps search/task filters across section changes and remount 389ms
+ ✓ src/experimental/StyleReviewPanels.test.tsx (16 tests) 3203ms
+   ✓ reads without running analysis, requires explicit preview/review/use, and validates the receipt again 488ms
+   ✓ rejects a changed use receipt and does not invoke the generation callback 311ms
+ ✓ src/experimental/StorySimulatorPanel.test.tsx (14 tests) 9630ms
+   ✓ reads only on opening; builds explicit bounded manual inputs with captured authority and normalized fact lines 1583ms
+   ✓ compares violations and hypotheses, saves only REVIEW once and navigates to the existing planning authority 697ms
+   ✓ advances explicitly, cancels explicitly, and stops offering expansion after cancellation 672ms
+   ✓ hides stale routes, receipts and actions instead of showing old knowledge 320ms
+   ✓ preserves editable drafts on failure and requires recovery before retry 1071ms
+   ✓ ignores late context from an old session/branch and drops its saved inputs on scope switch 347ms
+   ✓ invalidates source-bound context immediately when the active chapter revision advances 519ms
+   ✓ recovers persisted manual inputs only by explicit action and requires renewed context review 339ms
+   ✓ previews exact local character request, dispatches once with consent, then manually selects checked candidate 1079ms
+   ✓ model cancellation and unknown admission never offer automatic replay or candidate adoption 463ms
+   ✓ ignores late model preview from a replaced scope and never preserves its consent 619ms
+   ✓ changing selected model route clears consent and fences a previously reviewed request 655ms
+   ✓ invalidates scene context receipts and sends selected original scene with separate mind claims 1117ms
+ ✓ src/ui/LocalAiWorkflowPrerequisites.test.tsx (66 tests) 3211ms
+   ✓ read-only same-scan workflow prerequisite evidence > distinguishes observed, not observed and unknown without installing or verifying a model 359ms
+   ✓ read-only same-scan workflow prerequisite evidence > pages the bounded workflow and component declarations locally without probes 328ms
+ ✓ src/AuditGenerationScope.test.tsx (28 tests) 4138ms
+   ✓ AUDIT fences a late generation creation response after chapter navigation 551ms
+   ✓ fences in-flight stream recovery polling after navigation 322ms
+   ✓ retains completed candidate output for reopening instead of deleting it at stream completion 321ms
+   ✓ fences delayed variant creation and poll callbacks across chapters 309ms
+ ✓ src/creative/CreativeWorkspace.test.tsx (29 tests) 10192ms
+   ✓ creative workspace protected manuscript and request boundaries > stops at capability discovery when the server feature is disabled 377ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved SCREENPLAY when its stage is selected before the initial reads finish 675ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved PRODUCTION when its stage is selected before the initial reads finish 1073ms
+   ✓ creative workspace protected manuscript and request boundaries > recovers saved VIDEO_PLANNING when its stage is selected before the initial reads finish 385ms
+   ✓ creative workspace protected manuscript and request boundaries > initializes only the latest selected stage after a delayed successful empty list 381ms
+   ✓ creative workspace protected manuscript and request boundaries > keeps an explicit new document, including an untouched draft, across stage and source changes 347ms
+   ✓ creative workspace protected manuscript and request boundaries > reloads saved content after confirmed discard and immediate workbench reopen 601ms
+   ✓ creative workspace protected manuscript and request boundaries > does not replace a blocked dirty draft when a recovery reread discovers its uncertain creation 431ms
+   ✓ creative workspace protected manuscript and request boundaries > exposes all five keyboard-accessible modes while the manuscript stays mounted 502ms
+   ✓ creative workspace protected manuscript and request boundaries > creates once, saves again with the returned version, and preserves captured identity 423ms
+   ✓ creative workspace protected manuscript and request boundaries > preserves and locks the local draft after uncertain status 409 329ms
+   ✓ creative workspace protected manuscript and request boundaries > cancels navigation without losing edits and requires explicit discard before exiting 356ms
+   ✓ creative workspace protected manuscript and request boundaries > ignores a late mutation receipt from the previous scope and captures the new branch 381ms
+   ✓ creative workspace protected manuscript and request boundaries > does not expose late history from a document after switching modes 313ms
+   ✓ creative workspace protected manuscript and request boundaries > requires explicit server-version adoption and preserves the draft when adoption is cancelled 668ms
+   ✓ creative workspace protected manuscript and request boundaries > reorders storyboard shots without replacing their identities and saves their new sequence 409ms
+ ✓ src/experimental/OfflineSyncPanel.test.tsx (11 tests) 3605ms
+   ✓ defaults to no selection, no mutation or external transport, and explicit selected chapter queue 814ms
+   ✓ outbox preview requires copy acknowledgement, reuses same envelope and cleans up local file on revocation 559ms
+   ✓ keeps Unicode pasted input after failed receive, never auto applies, and invalidates preview when target changes 304ms
+   ✓ shows three-way conflict, requires renewed preview and acknowledgement before original apply 366ms
+   ✓ withdraws one chapter only after versioned preview, clears cached file and blocks its pending review 387ms
+   ✓ adds only a freshly reviewed baseline and invalidates preview when selection changes 313ms
+ ✓ src/ui/LocalAiModelFiles.test.tsx (20 tests) 1980ms
+   ✓ V2 same-scan model file observations > shows Safetensors without claiming no models or runtime absence, and reads no additional endpoint 347ms
+   ✓ bounds 2000 observations to local pages without extra reads and resets the page on scan replacement 650ms
+ ✓ src/ui/ModelCenter.test.tsx (10 tests) 737ms
+ ✓ src/experimental/DeclarativeTemplatePanels.test.tsx (8 tests) 3766ms
+   ✓ opens both panels read-only in StrictMode with original authority headers and no auto execution 505ms
+   ✓ uses real form contracts, explicit graph check and version-bound creation before separate execute and review 1030ms
+   ✓ invalidates graph preflight on edits, never lists browser invented tools, and preserves input on rejected save 509ms
+   ✓ previews installs favorites copies edits compares and reverts without running a workflow or overwriting instantiated work 458ms
+   ✓ requires a separate exact model preview confirmation and never auto dispatches or approves a deferred model node 653ms
+   ✓ late model preview cannot restore data after the captured client scope changes 373ms
+ ✓ src/interop/LocalTutorIntegration.test.tsx (70 tests) 14870ms
+   ✓ does not discover, load context or connect at Studio startup 637ms
+   ✓ defaults content unchecked, previews metadata only and sends only after confirmation 419ms
+   ✓ allows only explicitly chosen bounded additional chapters, no automatic project content fetch 359ms
+   ✓ invalidates preview when metadata selection changes and keeps source choices mutually exclusive 591ms
+   ✓ disables the bridge immediately during a pending request and suppresses its late response 328ms
+   ✓ connect and one-shot Ask leave ongoing events OFF until a separate preview and confirmation 355ms
+   ✓ previews exact chosen ongoing fields and displays the acknowledged allowlist 307ms
+   ✓ explicit stop clears grant and queued events without silently resuming 440ms
+   ✓ diagnostic preview pauses ongoing sharing before omissions and never resumes it after sending 540ms
+   ✓ changing source version invalidates a standing grant and requires new consent 330ms
+   ✓ reconnect leaves ongoing sharing unchecked even after a previously active grant 498ms
+   ✓ explicitly cancelling an event preview invalidates its server receipt 328ms
+   ✓ keeps failed disconnect UNKNOWN with a retry and no false stopped claim 353ms
+   ✓ master OFF failure remains UNKNOWN and checked until an acknowledged retry resolves it 302ms
+   ✓ a stale permission receipt cannot change the current session or claim revocation 328ms
+   ✓ refresh confirms an out-of-band standing revoke without ever silently restoring a grant 564ms
+ ✓ src/AppWorkspaceResume.test.tsx (33 tests) 9125ms
+   ✓ reopens the saved chapter through current authority and applies original reading/split state only after explicit restore 527ms
+   ✓ does not reopen after chapter A to B to A while current authority is being verified 312ms
+   ✓ opens another authorized project only after original inventory and exact chapter version revalidation 482ms
+   ✓ refuses cross-project search navigation while manuscript is dirty 452ms
+   ✓ drops a delayed cross-project source when the author types during revalidation 511ms
+   ✓ does not navigate to a search project removed from the refreshed original inventory 541ms
+   ✓ opens the exact revision model owner with its original chapter after authoritative verification 735ms
+   ✓ refuses a revision-owner chapter switch when the manuscript has unsaved work 495ms
+   ✓ rejects a mismatched original revision job and never falls back to another draft 698ms
+   ✓ drops delayed revision-owner navigation after new typing or scope change 769ms
+   ✓ does not open a delayed revision source after its feature is revoked 451ms
+ ✓ src/AppRevisionHistory.test.tsx (23 tests) 3453ms
+   ✓ routes restore through actual App hydration without overwriting a newer dirty buffer 756ms
+ ✓ src/experimental/WritingFocusPanel.test.tsx (13 tests) 3679ms
+   ✓ U04 actual writing focus controls > loads under StrictMode, applies prose preferences and persists versioned personal settings 568ms
+   ✓ U04 actual writing focus controls > preserves preference changes before initial loading and after conflict refresh 348ms
+   ✓ U04 actual writing focus controls > pins only source identity and revision, preserving unrelated unsaved typography 380ms
+   ✓ U04 actual writing focus controls > keeps inspiration input on save failure and only saves on explicit action 549ms
+   ✓ U04 actual writing focus controls > requires selected target, reviewed preview and explicit copy; never approves the proposal 388ms
+   ✓ U04 actual writing focus controls > invalidates copy preview when field changes and on stale response 557ms
+ ✓ src/creative/GraphRunPanel.test.tsx (19 tests) 1625ms
+ ✓ src/novel/PluginManagerPanel.test.tsx (15 tests) 2471ms
+   ✓ reviews requested permissions before manifest activation 316ms
+   ✓ labels publisher as unverified and shows declarative execution mode 502ms
+ ✓ src/creative/GraphModelExecutionPanel.test.tsx (18 tests) 3860ms
+   ✓ explicit local graph model execution UI > does no automatic capability read, route choice, preview, dispatch or result refresh 409ms
+   ✓ explicit local graph model execution UI > dispatches only once using current run CAS and the explicitly reviewed preview digest 367ms
+   ✓ explicit local graph model execution UI > requires separate explicit synthetic consent and never labels a mock as real inference verification 970ms
+   ✓ explicit local graph model execution UI > treats an invalid HTTP-200 dispatch projection as an uncertain commit and requires reconciliation 308ms
+ ✓ src/AppDraftRecovery.test.tsx (21 tests) 5879ms
+   ✓ keeps flag-off controls unchanged and starts no recovery unload listener 973ms
+   ✓ keeps newer typing dirty through a delayed save, coalesces repeated clicks and rebases only after acknowledgement 319ms
+   ✓ suppresses autosave and manual submit throughout composition and submits after it ends 1691ms
+   ✓ labels browser-offline drafts honestly and permits an explicit reachable local-backend save 1276ms
+ ✓ src/ui/AppShell.test.tsx (19 tests) 710ms
+ ✓ src/ui/LocalAiDiscoveryConsent.test.tsx (23 tests) 2414ms
+   ✓ V2 Local AI scan consent > never scans on mount; previews actual backend scope then confirms once without registration or inference 386ms
+   ✓ discloses all registered-model safety inspections without truncating the backend scope 831ms
+ ✓ src/experimental/RevisionIntelligencePanel.test.tsx (10 tests) 2634ms
+   ✓ captures original PM selection, previews two accepted blocks, and requires explicit confirmation 1201ms
+   ✓ compares real-version pins and explicitly labels imported model interpretations 344ms
+ ✓ src/experimental/ModelBrokerPanel.test.tsx (9 tests) 2950ms
+   ✓ captures actual scoped route preview and requires exact author receipt plus review before existing job dispatch 1033ms
+   ✓ invalidates prior authorization and sends the exact reviewed material scope 762ms
+ ✓ src/novel/ImageGenerationPanel.test.tsx (10 tests) 971ms
+ ✓ src/experimental/ExperimentalWorkbench.test.tsx (14 tests) 2204ms
+   ✓ default-off Experimental UI > keeps the inherited launcher unchanged without opt-in 509ms
+ ✓ src/novel/StoryRecordVersionEditor.test.tsx (14 tests) 1202ms
+ ✓ src/experimental/ProductionLineagePanel.test.tsx (11 tests) 1929ms
+   ✓ ProductionLineagePanel real API actions > shows relationship graph, known impact and saves explicit versioned declaration 531ms
+   ✓ ProductionLineagePanel real API actions > preserves draft after conflict and exposes explicit reload recovery 484ms
+ ✓ src/experimental/InteractiveStoryPanel.test.tsx (11 tests) 4537ms
+   ✓ authors Unicode choices and typed variables then saves exact original IDs and scope 886ms
+   ✓ actually plays server-returned choices to an ending, and resets bounded state 679ms
+   ✓ preserves unsaved draft and beforeunload protection after a CAS conflict 436ms
+   ✓ requires exact review preview and drops receipt when edited 597ms
+   ✓ does not leak late private playback or mutations after a client scope change in StrictMode 310ms
+   ✓ requires explicit loss acknowledgment before ZIP generation and revokes object URL 440ms
+   ✓ explicit source rebind requires a current preview, then restores text only as draft 419ms
+ ✓ src/AppAuthorTaskNavigation.test.tsx (10 tests) 3103ms
+   ✓ opens the exact original text job without broker or recovery flags, generation or acceptance 756ms
+   ✓ drops a lookup dismissed inside the child task surface without parent navigation 597ms
+ ✓ src/novel/AuthorRequestPreviewPanel.test.tsx (11 tests) 2100ms
+   ✓ request removals and exact variant mapping > sends real scope controls, clears stale receipts and disables dependent reference pins 423ms
+   ✓ request removals and exact variant mapping > reviews every variant once and passes its exact group, digest and job mapping 497ms
+   ✓ request removals and exact variant mapping > does not offer generic retries for review-bound or unknown variant requests 353ms
+ ✓ src/creative/GraphCanvas.test.tsx (25 tests) 2805ms
+   ✓ controlled typed graph canvas > uses accessible node buttons, explicit typed port labels and edge descriptions 542ms
+   ✓ controlled typed graph canvas > discards a gesture when a different controlled definition arrives 310ms
+ ✓ src/creative/IndependentStudioGraphWorkspace.test.tsx (9 tests) 4948ms
+   ✓ independent studio graph content integration > promotes only an explicitly added model node to schema 2 and does not preview or dispatch while editing 989ms
+   ✓ independent studio graph content integration > keeps graphs lazy until an explicit content choice, with unchanged eight shell modules 337ms
+   ✓ independent studio graph content integration > saves an empty disconnected definition through the scoped owner and reopens it without creating a run 856ms
+   ✓ independent studio graph content integration > allows optional Director removal and bounded undo without adding a chapter or starting a job 813ms
+   ✓ independent studio graph content integration > retains the CAS-conflicted draft until an explicit checked adoption of the separately fetched server version 466ms
+   ✓ independent studio graph content integration > protects unsaved graph input when leaving the graph content or fixed module switcher 466ms
+   ✓ independent studio graph content integration > clears private graph draft after authoritative access denial and rejects a late scope response 565ms
+ ✓ src/creative/ProviderTaskMatchPanel.test.tsx (16 tests) 1960ms
+   ✓ explicit advisory provider and requirement panel > never reads on mount or chooses a route after a catalog read 313ms
+   ✓ explicit advisory provider and requirement panel > keeps explicit synthetic matching consent separate and resets it on task or route changes 429ms
+ ✓ src/experimental/WriterRoomPanel.test.tsx (9 tests) 2485ms
+   ✓ renders actual task progress and responsible change-request round trip without domain approval 1299ms
+   ✓ preserves current Unicode edit on 409 and resolves persisted candidates against fresh expected version 346ms
+ ✓ src/experimental/ReaderSessionPanels.test.tsx (9 tests) 2249ms
+   ✓ U11 real client request contracts > offers contiguous reader, TOC keyboard focus and codepoint-exact server-validated jump 462ms
+   ✓ U11 real client request contracts > submits bounded literal rule configuration and status-only preflight with no editor content 579ms
+   ✓ U11 real client request contracts > keeps annotation on permission failure and rejects stale source navigation 669ms
+ ✓ src/novel/ResearchPanel.test.tsx (14 tests) 1905ms
+   ✓ research panel > shows author and source URL as non-clickable local reference text 352ms
+   ✓ research panel > creates with the complete current payload including author and URL 679ms
+ ✓ src/experimental/MultilingualEditionsPanel.test.tsx (10 tests) 3090ms
+   ✓ manual bilingual save→review→exact acceptance with RTL and no model calls 866ms
+   ✓ preserves unsaved Unicode draft on conflict and explicitly restores saved value 308ms
+   ✓ invalidates acceptance receipt immediately when the draft changes 798ms
+ ✓ src/experimental/SafeBatchesPanel.test.tsx (10 tests) 1314ms
+   ✓ mount and preflight never execute and request exact chosen chapter with hard zero budget 415ms
+ ✓ src/manualPromptConsent.test.tsx (17 tests) 1340ms
+ ✓ src/novel/ScreenplayPanel.test.tsx (17 tests) 1684ms
+ ✓ src/experimental/StoryGraphPanel.test.tsx (8 tests) 2184ms
+   ✓ creates a typed relation with selected real IDs, no raw JSON form 447ms
+   ✓ uses explicit knowledge changes and marks uninferred motives as hypotheses 321ms
+   ✓ does not request psychology or offer knowledge mutations when the mind flag is off 425ms
+   ✓ hands off the exact visible character/chapter and exposes explicit local-only opt-out 369ms
+ ✓ src/experimental/ResearchLibraryPanel.test.tsx (10 tests) 3098ms
+   ✓ only reads saved local sources on mount; no fetch, parse, search or model execution 619ms
+   ✓ keeps original input on stale-source conflict and requires fresh citation selection 316ms
+   ✓ source deletion sends current version only after explicit acknowledgement 462ms
+   ✓ ignores delayed old-scope citation results after switching project 397ms
+ ✓ src/creative/AIDirectorPanel.test.tsx (10 tests) 895ms
+   ✓ AI director local proposal and explicit review > honestly prepares local rules without model calls and requires reviewed edited output before adoption 333ms
+ ✓ src/experimental/Wave5TemplatesSdkComics.test.tsx (4 tests) 1046ms
+   ✓ combines legacy and extended catalogs, filters exact types and copies Agent to original definition without execution 416ms
+   ✓ Agent runtime and capability requirements persist alongside finite input/output schemas, never granting a runtime 337ms
+ ✓ src/experimental/ComicLayoutsPanel.test.tsx (8 tests) 1425ms
+   ✓ mount is read-only; hand-edited numeric geometry reuses original source IDs and supports undo 447ms
+   ✓ approves only displayed current pixels with exact digest and downloads only the approved version 316ms
+ ✓ src/creative/StudioSelectLabels.test.tsx (4 tests) 1768ms
+   ✓ stable exact names for Studio selects with populated options > keeps relationship, reference-kind and target names stable through selection and saving 428ms
+   ✓ stable exact names for Studio selects with populated options > keeps saved-graph, node, asset and port names stable while editing the real graph hook 1167ms
+ ✓ src/creative/AssetRelationshipsPanel.test.tsx (11 tests) 1663ms
+   ✓ optional descriptive asset relationships > lists chapter and screenplay references without copying content or creating records 595ms
+ ✓ src/creative/GraphTextAssetPanel.test.tsx (13 tests) 1745ms
+   ✓ same-confirmation automatic private TextAsset archival > discloses archival beside the original confirmation and submits one dispatch without another step 947ms
+ ✓ src/experimental/ProjectForksPanel.test.tsx (6 tests) 575ms
+ ✓ src/experimental/ModelTaskReopen.test.tsx (16 tests) 2800ms
+   ✓ 'simulator' reopens the exact receipt, handles missing/back and never replays 1285ms
+ ✓ src/novel/ExportPanel.test.tsx (12 tests) 2196ms
+   ✓ ExportPanel industry formats > submits Fountain 剧本 through the authenticated durable queue 305ms
+   ✓ ExportPanel industry formats > downloads only returned artifact bytes and disables repeated download clicks 410ms
+ ✓ src/experimental/VoiceSubtitlePanels.test.tsx (7 tests) 1526ms
+   ✓ captures actor/branch and reviewed text with literal pronunciation without unsolicited generation 314ms
+   ✓ caption request preserves exact integer ticks, edits, and no fake waveform 406ms
+ ✓ src/creative/IndependentStudioWorkspace.test.tsx (8 tests) 2100ms
+   ✓ independent studio original owner integration > imports once and saves source provenance without chapters, models, or the legacy asset API 482ms
+   ✓ independent studio original owner integration > retains uploaded v1 after a declaration failure and retries only the declaration 482ms
+   ✓ independent studio original owner integration > rejects a delayed file read after the selected project changes 384ms
+ ✓ src/experimental/StyleAnalysisModelPanel.test.tsx (7 tests) 483ms
+ ✓ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx (14 tests) 2639ms
+   ✓ all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=false) 1683ms
+   ✓ all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=true) 481ms
+ ↓ src/experimental/ExperimentalWorkbench.http.test.tsx (6 tests | 6 skipped)
+ ✓ src/experimental/LanguageTranslationPanel.test.tsx (5 tests) 2057ms
+   ✓ exact preview, explicit single dispatch, original recovery and separate adopt consent 477ms
+   ✓ adoption updates visible saved draft while requiring separate submit and review 1293ms
+ ✓ src/experimental/ChangeImpactPanel.test.tsx (8 tests) 1454ms
+   ✓ ChangeImpactPanel explicit scoped actions > shows exact/unknown evidence and preflights only explicitly selected nodes, never auto executes 547ms
+   ✓ ChangeImpactPanel explicit scoped actions > blocks unsupported and locked selections, shows empty state and honest unsupported preflight 508ms
+ ✓ src/experimental/NarrativeJudgeContinuationPanels.test.tsx (6 tests) 552ms
+ ✓ src/experimental/StructuredForksPanel.test.tsx (7 tests) 816ms
+   ✓ keeps structured sources behind the existing panel disclosure, with no eager extra data fetch 312ms
+ ✓ src/creative/IndependentStudioReadFences.test.tsx (7 tests) 2910ms
+   ✓ independent asset read fences and truthful capability labels > locks mutation inputs during explicit refresh and preserves the next draft after the read finishes 1033ms
+   ✓ independent asset read fences and truthful capability labels > ignores delayed recovery after the author explicitly selects a different asset and starts a draft 824ms
+   ✓ independent asset read fences and truthful capability labels > labels review-only authority accurately while asset files remain readonly 301ms
+ ✓ src/novel/AIPlanningPanel.project.test.tsx (11 tests) 920ms
+ ✓ src/novel/LocalHostSessionPanel.test.tsx (9 tests) 760ms
+ ✓ src/novel/PluginInspector.test.tsx (8 tests) 505ms
+ ✓ src/novel/EntryExperience.test.tsx (10 tests) 1472ms
+   ✓ EntryExperience > keeps the legacy connection entry available outside packaged mode 309ms
+ ✓ src/experimental/StructuredSearchNavigation.test.tsx (12 tests) 2937ms
+   ✓ resolves organization with its exact original owner and original ID 572ms
+   ✓ resolves rule with its exact original owner and original ID 354ms
+   ✓ resolves story_graph with its exact original owner and original ID 361ms
+   ✓ resolves asset with its exact original owner and original ID 597ms
+   ✓ resolves workflow with its exact original owner and original ID 369ms
+ ✓ src/AppBrokerRecovery.test.tsx (4 tests) 1160ms
+   ✓ opens an existing broker job only after fresh authorization and retains original review actions 615ms
+   ✓ navigates to the authorized job chapter and keeps the previous unsaved manuscript 329ms
+ ✓ src/experimental/BranchManuscriptPanel.test.tsx (6 tests) 1183ms
+   ✓ keeps branch inbox entries read-only and exposes their original panel contract 474ms
+ ✓ src/novel/FirstUsePanel.test.tsx (8 tests) 510ms
+ ✓ src/novel/AiWritingPanel.test.tsx (12 tests) 1343ms
+   ✓ AI writing product flow > shows selected DeepSeek as unconfigured without enabling generation or exposing credentials 598ms
+ ✓ src/novel/MultimodalDirectorWorkspace.test.tsx (11 tests) 1736ms
+   ✓ MultimodalDirectorWorkspace > emits updated prop asset constraints 563ms
+ ✓ src/creative/IndependentStudioRelationships.test.tsx (5 tests) 3185ms
+   ✓ studio relationship ownership and draft integration > keeps a relationship draft across navigation attempts and prevents other asset mutations 1061ms
+   ✓ studio relationship ownership and draft integration > saves through the original asset owner and refreshes the source version without copying a target 996ms
+   ✓ studio relationship ownership and draft integration > preserves CAS-conflicted input and source version until an explicit reload 478ms
+   ✓ studio relationship ownership and draft integration > clears selected private content when saving the relationship is revoked 356ms
+ ✓ src/novel/AgentTeamPanel.selectionBoundary.test.tsx (7 tests) 630ms
+ ✓ src/experimental/WorkspaceInteractionPanel.test.tsx (13 tests) 560ms
+ ✓ src/novel/WorkflowScopeGuards.test.tsx (20 tests) 1031ms
+ ✓ src/interop/client.test.ts (10 tests) 30ms
+ ✓ src/experimental/AdapterReceiptProjection.test.tsx (8 tests) 964ms
+   ✓ formal-only adapter receipt surfaces > does not manufacture an exact source-open action for research_analysis or its aggregate review task 345ms
+ ✓ src/experimental/MediaPanel.continuation.test.tsx (6 tests) 1986ms
+   ✓ uses original project character and screenplay/shot choices, including source CAS 1124ms
+ ✓ src/experimental/NarrativeJudgeModelPanel.test.tsx (6 tests) 377ms
+ ✓ src/novel/AuthorSourcePicker.test.tsx (5 tests) 871ms
+   ✓ never resurrects source pins after switching project authority and returning 450ms
+ ✓ src/experimental/MediaPanel.recovery.test.tsx (7 tests) 1358ms
+   ✓ media promotion checkpoint recovery > makes interrupted cover approval recoverable with Inbox disabled, only after explicit action 413ms
+ ✓ src/AppStorySourceNavigation.test.tsx (9 tests) 1753ms
+   ✓ reads the exact chapter through original authority before normal App hydration 409ms
+   ✓ blocks source navigation for dirty using existing manuscript state 392ms
+ ✓ src/AIEnvironmentSummaryOwner.test.tsx (8 tests) 392ms
+ ✓ src/experimental/PortableProjectsPanel.maintenance.test.tsx (5 tests) 702ms
+   ✓ shows original and candidate hashes plus exact affected versions before explicit replacement consent 325ms
+ ✓ src/experimental/WorkspaceSearch.test.tsx (6 tests) 3585ms
+   ✓ sends scoped filters, pages and a safe rebuild through the captured client 1224ms
+   ✓ cancels server work, drops late bodies/counts/suggestions, and permits retry 385ms
+   ✓ withholds source text and autocomplete after a revoked refresh or resolve 640ms
+   ✓ does not search unfinished IME composition and submits the completed Chinese text 711ms
+   ✓ invalidates a pending cross-project source jump on filter change 327ms
+ ✓ src/WorkspaceAdminPanel.test.tsx (6 tests) 437ms
+ ✓ src/novel/PendingCanonReviewPanel.test.tsx (7 tests) 881ms
+   ✓ original Canon review surface > requires human review, closes without write, and deduplicates clicks with exact CAS evidence 383ms
+ ✓ src/novel/StoryRecordLifecycle.test.tsx (20 tests) 2204ms
+   ✓ foreshadowing commit and restart lifecycle > disables real fields throughout SAVE and cache settlement, then persists an immediate edit before restart 326ms
+ ✓ src/experimental/WorkflowInspectionPanel.test.tsx (6 tests) 550ms
+ ✓ src/novel/ScreenplayPanel.revision.test.tsx (5 tests) 762ms
+   ✓ edits the real structured scene fields and preserves source provenance 392ms
+ ✓ src/novel/AiContextPreviewPanel.test.tsx (6 tests) 365ms
+ ✓ src/creative/IndependentStudioSequentialImport.test.tsx (2 tests) 1550ms
+   ✓ independent studio sequential import readiness > does not advertise readiness at lineage completion while the asset list refresh is still pending, then imports the next file once 1332ms
+ ✓ src/experimental/PortableProjectsPanel.test.tsx (5 tests) 683ms
+ ✓ src/localAiDiscoveryConsentApi.test.ts (20 tests) 60ms
+ ✓ src/ui/LocalAiBrowserJourneyContracts.test.tsx (4 tests) 940ms
+   ✓ additive M3 browser journeys follow existing product state > returns from CONTROL through the existing NOVEL tab before opening feature navigation: files reload 326ms
+   ✓ additive M3 browser journeys follow existing product state > returns from CONTROL through the existing NOVEL tab before opening feature navigation: legacy revoked-host rebind 313ms
+ ✓ src/AIEnvironmentSummary.test.tsx (7 tests) 361ms
+ ✓ src/novel/EntryExperience.studio.test.tsx (6 tests) 488ms
+ ✓ src/experimental/EmbeddingPanel.continuation.test.tsx (5 tests) 1058ms
+   ✓ picks a scoped real research source without raw IDs and does not simulate embeddings 335ms
+ ✓ src/AppAdaptationNavigation.test.tsx (12 tests) 1280ms
+   ✓ opens exact original proposal/task/revision without switching manuscript or executing work 316ms
+ ✓ src/novel/ExportPanel.scope.test.tsx (13 tests) 2499ms
+   ✓ ExportPanel scope isolation > discards a late creation after a project change 564ms
+ ✓ src/novel/FindingReviewPanel.test.tsx (5 tests) 633ms
+   ✓ source-bound finding review > requires reason and human confirmation, cancellation writes nothing, and submits exact CAS tokens 312ms
+ ✓ src/creative/AIDirectorFastReceipt.test.tsx (3 tests) 504ms
+   ✓ director proposal activation after a fast receipt > keeps one native double-click bound to its first proposal through edited human review 311ms
+ ✓ src/experimental/RegisteredMediaPanel.test.tsx (4 tests) 1540ms
+   ✓ selects a registered original image route and queues exactly one seeded task without inference 425ms
+   ✓ requires a fresh quote before real-local execution and keeps cancellation available 337ms
+   ✓ discards a late quote after a changed client scope 599ms
+ ✓ src/creative/graphCanvasGeometry.test.ts (9 tests) 58ms
+ ✓ src/ConflictDialog.test.tsx (6 tests) 96ms
+ ✓ src/localAiDiscoveryLegacyOwner.test.ts (14 tests) 37ms
+ ✓ src/novel/AdaptationPanel.test.tsx (6 tests) 644ms
+ ✓ src/novel/AIPlanningPanel.test.tsx (6 tests) 443ms
+ ✓ src/novel/AudiobookManifestPanel.test.tsx (4 tests) 427ms
+ ✓ src/experimental/RevisionComparisonModelPanel.test.tsx (4 tests) 309ms
+ ✓ src/novel/VideoTimeline.test.tsx (12 tests) 574ms
+ ✓ src/novel/AuthorSourceItems.test.tsx (4 tests) 251ms
+ ✓ src/novel/AdaptationLifecycleControls.test.tsx (4 tests) 1266ms
+   ✓ keeps exact control labels independent of prefilled textarea text 638ms
+ ✓ src/novel/CharacterAuthorPanel.test.tsx (3 tests) 1179ms
+   ✓ excludes source/style/plan before requesting character preview and disables unsupported operations 858ms
+ ✓ src/novel/AiWritingVariants.test.tsx (6 tests) 685ms
+ ✓ src/experimental/DirectorPanel.test.tsx (3 tests) 837ms
+   ✓ mount is read-only and manual candidate save keeps original source versions 518ms
+ ✓ src/creative/DirectorModelControls.test.tsx (3 tests) 347ms
+ ✓ src/workspaceSelection.v2.test.ts (10 tests) 15ms
+ ✓ src/experimental/TimelineExchangePanel.test.tsx (4 tests) 481ms
+ ✓ src/novel/ExportPanel.recovery.test.tsx (4 tests) 1175ms
+   ✓ rediscovers the same durable job and snapshot after full remount and downloads it 677ms
+ ✓ src/drafts.test.ts (6 tests) 67ms
+ ✓ src/interop/DesktopIntegrationDetails.test.tsx (19 tests) 606ms
+ ✓ src/experimental/PlanningPanel.recovery.test.tsx (2 tests) 1255ms
+   ✓ planning same-node version recovery > retains local edits after external change and only rebases through an explicit action 806ms
+   ✓ planning same-node version recovery > retains local edits after proposal approval and only rebases through an explicit action 447ms
+ ✓ src/ui/AppShell.projectNoun.test.tsx (12 tests) 283ms
+ ✓ src/WorkspaceManagement.test.tsx (5 tests) 206ms
+ ✓ src/novel/AgentTeamPanel.additional.test.tsx (5 tests) 448ms
+ ✓ src/experimental/TranslationMemoryPanel.test.tsx (4 tests) 239ms
+ ✓ src/Editor.anchor.test.tsx (3 tests) 298ms
+ ✓ src/novel/NovelImportPanel.test.tsx (3 tests) 261ms
+ ✓ src/novel/MotionTaskWorkspace.test.tsx (5 tests) 257ms
+ ✓ src/ui/MediaProviderSettings.test.tsx (3 tests) 208ms
+ ✓ src/RevisionPanel.test.tsx (4 tests) 150ms
+ ✓ src/ui/FeatureLauncher.test.tsx (5 tests) 626ms
+ ✓ src/novel/VisualReferencePanel.test.tsx (3 tests) 726ms
+   ✓ stores a draft and requires a separate version-bound approval 496ms
+ ✓ src/AppProjectStory.test.tsx (4 tests) 1766ms
+   ✓ opens and saves world settings through the project owner before a first chapter exists 620ms
+   ✓ the actual App navigation opens the project Story database without requiring a chapter 767ms
+ ✓ src/experimental/SharedUniversePanel.test.tsx (3 tests) 433ms
+ ✓ src/novel/ImageInfiniteCanvas.test.tsx (6 tests) 336ms
+ ✓ src/novel/ChapterTree.accessibility.test.tsx (5 tests) 433ms
+ ✓ src/experimental/ResearchLibraryPanel.continuation.test.tsx (3 tests) 1266ms
+   ✓ replaces original file bytes against the selected source version 515ms
+   ✓ requires explicit review to restore a historical source as a new private version 591ms
+ ✓ src/ui/ModelCenterLegacyOwner.test.tsx (4 tests) 421ms
+ ✓ src/novel/VisualTextWorkflow.test.tsx (3 tests) 285ms
+ ✓ src/creative/ProductionTimeline.test.tsx (4 tests) 614ms
+   ✓ production timeline structured planning > reorders full segments without changing shot identity, timing, or notes 400ms
+ ✓ src/Editor.recovery.test.tsx (4 tests) 305ms
+ ✓ src/novel/ChapterTree.test.tsx (5 tests) 410ms
+ ✓ src/experimental/TaskOwnerNavigation.continuation.test.tsx (4 tests) 252ms
+ ✓ src/localHostSession.test.ts (6 tests) 20ms
+ ✓ src/novel/useMultimodalWorkspacePersistence.test.ts (7 tests) 72ms
+ ✓ src/novel/DirectorShotList.test.tsx (6 tests) 612ms
+   ✓ DirectorShotList > updates the matching shot without mutating other shots 488ms
+ ✓ src/PermissionManagement.test.tsx (3 tests) 159ms
+ ✓ src/novel/CreationWorkbenchPanel.test.tsx (4 tests) 337ms
+ ✓ src/ui/ModelCenterOnboarding.test.tsx (3 tests) 272ms
+ ✓ src/AppWritingGoalRecovery.test.tsx (4 tests) 602ms
+   ✓ keeps the actual App editor and save path usable with malformed writing-goal data 0 416ms
+ ✓ src/novel/WorldTimelineView.test.tsx (3 tests) 249ms
+ ✓ src/experimental/ExperimentalWorkbench.continuation.test.tsx (5 tests) 218ms
+ ✓ src/novel/A43ChapterIdentity.test.tsx (2 tests) 207ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 483ms
+   ✓ Panel native section props contract > renders the existing section, header, actions and children contract 439ms
+ ✓ src/novel/AssetLibraryPanel.test.tsx (4 tests) 755ms
+   ✓ publishes the selected real asset to the workspace inspector 442ms
+ ✓ src/Editor.a43-rich.test.tsx (3 tests) 505ms
+   ✓ A43 preserves all StarterKit rich nodes and shares exact Python editor-text projection 311ms
+ ✓ src/ui/SaveControls.test.tsx (5 tests) 75ms
+ ✓ src/novel/AgentTeamPanel.test.tsx (2 tests) 317ms
+ ✓ src/novel/SourcePrivacyControl.test.tsx (2 tests) 210ms
+ ✓ src/novel/WorkflowPanel.test.tsx (2 tests) 465ms
+ ✓ src/novel/WorldRelationshipGraph.test.tsx (4 tests) 236ms
+ ✓ src/novel/ChapterTree.lifecycle.test.tsx (5 tests) 603ms
+ ✓ src/novel/WorldBuildingDashboard.test.tsx (4 tests) 285ms
+ ✓ src/novel/SpeechSynthesisPanel.test.tsx (3 tests) 287ms
+ ✓ src/experimental/VoiceDirectionPanel.continuation.test.tsx (3 tests) 244ms
+ ✓ src/RevisionHistory.independent-audit.test.tsx (3 tests) 202ms
+ ✓ src/AuditColdStorage.test.ts (4 tests) 76ms
+ ✓ src/novel/GenerationWorkflowTimeline.test.tsx (7 tests) 160ms
+ ✓ src/experimental/EmbeddingPanel.hybrid.test.tsx (2 tests) 325ms
+ ✓ src/AppWorldSummary.test.tsx (3 tests) 588ms
+   ✓ shows and edits the same world_summary owner used by an adopted model proposal 369ms
+ ✓ src/experimental/DeferredExperimentalWorkbench.test.tsx (2 tests) 340ms
+ ✓ src/novel/ImageQueuePanel.test.tsx (2 tests) 280ms
+ ✓ src/ui/ModuleWorkspaceRoutes.test.tsx (7 tests) 428ms
+ ✓ src/creative/AssetRelationshipsRedaction.test.tsx (1 test) 351ms
+   ✓ clears details of a target omitted by a fresh authorized index while preserving authored reason 349ms
+ ✓ src/StorySearchNavigation.test.tsx (1 test) 129ms
+ ✓ src/novel/ContinuityCheckPanel.test.tsx (2 tests) 278ms
+ ✓ src/experimental/InboxPanel.findings.test.tsx (2 tests) 432ms
+   ✓ filters original finding/Canon domains and honestly presents formal navigation metadata without generic approval 348ms
+ ✓ src/novel/DirectorShotCard.test.tsx (4 tests) 288ms
+ ✓ src/localAiDiscoveryApi.test.ts (3 tests) 30ms
+ ✓ src/experimental/ModelBenchmarkPanel.continuation.test.tsx (1 test) 363ms
+   ✓ keeps catalog claims distinct and requires explicit bounded user-verification review 362ms
+ ✓ src/experimental/ProductionLineagePanel.continuation.test.tsx (2 tests) 437ms
+   ✓ preserves the existing determinism label and keeps synthetic boundaries explicit (false) 318ms
+ ✓ src/novel/AgentQueuePanel.test.tsx (2 tests) 367ms
+   ✓ publishes agent queue failures and focuses the matching task 303ms
+ ✓ src/novel/RuntimeDiagnostics.test.tsx (3 tests) 177ms
+ ✓ src/novel/ScreenplayPipelinePanel.test.tsx (3 tests) 371ms
+ ✓ src/novel/AudioGenerationPanel.test.tsx (2 tests) 310ms
+ ✓ src/novel/AuthorRequestControls.test.tsx (2 tests) 182ms
+ ✓ src/ui/taskSummary.test.ts (4 tests) 16ms
+ ✓ src/ui/AiControlCenter.test.tsx (1 test) 185ms
+ ✓ src/novel/GenerationRecoveryPicker.test.tsx (2 tests) 370ms
+   ✓ pages retained task identifiers five at a time and requires an explicit reopen 355ms
+ ✓ src/experimental/shared.test.tsx (2 tests) 141ms
+ ✓ src/novel/VideoTaskInspector.test.tsx (3 tests) 388ms
+ ✓ src/interop/entryScopeReview.test.tsx (1 test) 432ms
+   ✓ does not import the dialog initially and discards its pending load across a project switch 431ms
+ ✓ src/generationRecovery.test.ts (3 tests) 11ms
+ ✓ src/novel/NovelOverviewPanel.test.tsx (1 test) 98ms
+ ✓ src/novel/StoryPlanningWorkspace.test.tsx (2 tests) 215ms
+ ✓ src/interop/entry.test.tsx (1 test) 173ms
+ ✓ src/experimental/InteractiveStoryHistory.test.tsx (1 test) 172ms
+ ✓ src/workspaceSelection.test.ts (3 tests) 5ms
+ ✓ src/novel/AssetInspector.test.tsx (2 tests) 148ms
+ ✓ src/novel/MotionPrivacyPanel.test.tsx (1 test) 178ms
+ ✓ src/creative/BlankProjectEntry.test.tsx (2 tests) 195ms
+ ✓ src/novel/AgentActivityCenter.test.tsx (2 tests) 358ms
+ ✓ src/localAiEnvironmentApi.test.ts (2 tests) 12ms
+ ✓ src/novel/ConstraintImportPreview.test.tsx (2 tests) 98ms
+ ✓ src/ui/AuthorTerminology.test.tsx (2 tests) 45ms
+ ✓ src/novel/VideoAssemblyPanel.test.tsx (1 test) 241ms
+ ✓ src/novel/SceneEditor.test.tsx (1 test) 202ms
+ ✓ src/novel/AgentResultReview.test.tsx (2 tests) 175ms
+ ✓ src/experimental/revisionLocks.test.ts (2 tests) 94ms
+ ✓ src/novel/ScreenplayPanel.motion-binding.test.ts (2 tests) 8ms
+ ✓ src/experimental/WorldPanel.test.tsx (1 test) 217ms
+ ✓ src/novel/ForeshadowingEditor.test.tsx (1 test) 144ms
+ ✓ src/novel/useMultimodalBindingManifest.test.ts (2 tests) 23ms
+ ✓ src/novel/StoryDatabase.test.tsx (2 tests) 212ms
+ ✓ src/novel/TimelineEditor.test.tsx (1 test) 198ms
+ ✓ src/novel/RelationshipEditor.test.tsx (1 test) 421ms
+   ✓ relationship editor > creates a typed relationship between two characters 418ms
+ ✓ src/novel/ImageTaskInspector.test.tsx (2 tests) 304ms
+ ✓ src/novel/StoryRecordNavigation.test.tsx (2 tests) 562ms
+   ✓ Story browser navigation uses the actual launcher accessible names > selects Story when story is initially active 418ms
+ ✓ src/novel/VisualContextPanel.test.tsx (2 tests) 117ms
+ ✓ src/novel/OutlineEditor.test.tsx (1 test) 181ms
+ ✓ src/novel/AudioTaskInspector.test.tsx (2 tests) 132ms
+ ✓ src/novel/WorkflowPanel.independent-audit.test.tsx (1 test) 89ms
+ ✓ src/ui/CapabilityRoadmapPanel.test.tsx (1 test) 88ms
+ ✓ src/novel/CharacterEditor.test.tsx (1 test) 244ms
+ ✓ src/novel/StoryRouteEditor.test.tsx (1 test) 216ms
+ ✓ src/novel/VolumeEditor.test.tsx (1 test) 208ms
+ ✓ src/novel/WorkflowInspector.test.tsx (2 tests) 91ms
+ ✓ src/ui/CapabilityStatusCenter.test.tsx (1 test) 75ms
+ ✓ src/novel/LocationEditor.test.tsx (1 test) 148ms
+ ✓ src/novel/DirectorVoiceToolbar.test.tsx (1 test) 41ms
+ ✓ tests/r3FixtureLifecycle.test.ts (17 tests) 28ms
+ ✓ src/creative/studioGraphClient.test.ts (48 tests) 52ms
+ ✓ src/creative/studioClient.test.ts (38 tests) 62ms
+ ✓ src/creative/studioRelationshipsClient.test.ts (58 tests) 66ms
+ ↓ tests/localInteropRealHost.test.ts (2 tests | 2 skipped)
+ ✓ src/creative/graphDraft.test.ts (39 tests) 14ms
+ ✓ src/novel/BindingManifestPanel.test.tsx (1 test) 45ms
+ ✓ src/novel/WorldSummaryEditor.test.tsx (1 test) 119ms
+ ✓ src/creative/studioGraphModelClient.test.ts (36 tests) 47ms
+ ✓ src/creative/studioStorageAdmissionClient.test.ts (44 tests) 51ms
+ ✓ src/creative/studioGraphTextAssetClient.test.ts (57 tests) 95ms
+ ✓ src/creative/studioProviderClient.test.ts (62 tests) 77ms
+ ✓ src/creative/client.test.ts (11 tests) 23ms
+ ✓ src/interop/ChapterWireIdentity.test.ts (3 tests) 84ms
+ ✓ src/experimental/api.test.ts (5 tests) 51ms
+ ✓ tests/workspaceResumeLayout.test.ts (5 tests) 11ms
+ ✓ src/collaborationGuards.test.ts (7 tests) 12ms
+ ✓ src/contracts.test.ts (7 tests) 28ms
+ ✓ src/packagedHost.test.ts (7 tests) 8ms
+ ✓ src/e2eDatabaseContract.test.ts (20 tests) 930ms
+   ✓ E2E database environment contract > keeps the DSN out of Playwright commands and scopes each child environment 858ms
+ ✓ src/productLanguage.test.ts (4 tests) 4ms
+ ✓ src/novel/AdaptationRouteMatching.test.ts (1 test) 7ms
+ ✓ tests/localInteropLayout.test.ts (3 tests) 10ms
+ ✓ src/ui/FeatureLauncher.css.test.ts (3 tests) 4ms
+ ✓ src/experimental/api.surface-flags.test.ts (4 tests) 10ms
+ ✓ src/novel/ChapterTree.css.test.ts (4 tests) 3ms
+ ✓ src/novel/firstUseClient.test.ts (2 tests) 6ms
+ ✓ src/creative/CreativeWorkbenchEntry.test.ts (2 tests) 6ms
+ ✓ tests/writingGoalLayout.test.ts (4 tests) 4ms
+ ✓ src/novel/findingReviewClient.test.ts (2 tests) 9ms
+ ✓ tests/uiContracts.test.ts (5 tests) 5ms
+ ✓ src/novel/importRecovery.test.ts (2 tests) 7ms
+ ✓ src/Editor.typography.test.ts (3 tests) 4ms
+ ✓ src/ui/scopeLabels.test.ts (4 tests) 4ms
+ ✓ src/planningProjectApi.test.ts (1 test) 9ms
+ ✓ src/creative/adminStudioContext.test.ts (1 test) 8ms
+ ✓ src/sourcePrivacyApi.test.ts (1 test) 4ms
+ ✓ src/creative/ProductionTimeline.css.test.ts (1 test) 4ms
+ ✓ src/experimental/writingFocus.layout.test.ts (1 test) 5ms
+ ✓ src/novel/MotionTaskBatchControls.test.ts (1 test) 3ms
+ ✓ src/novel/FountainParser.test.ts (21 tests) 1887ms
+ ✓ src/generationVariants.test.ts (7 tests) 6ms
+ ✓ src/App.test.tsx (12 tests) 12ms
+
+ Test Files  274 passed | 2 skipped (276)
+      Tests  2313 passed | 8 skipped (2321)
+   Start at  04:13:47
+   Duration  100.30s (transform 27.88s, setup 0ms, collect 157.72s, tests 271.57s, environment 214.51s, prepare 42.44s)
+

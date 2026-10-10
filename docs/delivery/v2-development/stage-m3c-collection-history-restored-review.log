@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-09T18:13:46.278422+00:00",
+  "status": "INVENTORY_ONLY",
+  "tests_executed": false,
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "collection_exit_code": 0,
+  "collected_nodes": 10469,
+  "baseline_nodes": 9151,
+  "new_nodes": 1318,
+  "baseline_nodes_preserved_in_order": true,
+  "historical_skips_unchanged": true,
+  "baseline_test_migrations": [
+    {
+      "path": "tests/test_windows_portable_entry.py",
+      "commit": "1b7ff50a7e64742916bc64730df884cea819b379",
+      "frozen_sha256": "d100e27589fb45cb921c13a82a83a911485fef1c0ed82a1e50eb5efc94f24799",
+      "v2_baseline_sha256": "9f0d2d5f78a44e54a0fcc00925dc6d67038060408d3bd44753461ca57152fe1f",
+      "delta": "Add -B before -I in the fixed launcher expectation only; all other bytes preserved",
+      "purpose": "Reconcile the preexisting V2 isolation baseline, not a historical audit approval"
+    }
+  ]
+}

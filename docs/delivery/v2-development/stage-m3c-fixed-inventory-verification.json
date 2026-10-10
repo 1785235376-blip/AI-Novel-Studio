@@ -1,0 +1,196 @@
+{
+  "utc": "2026-10-09T18:16:00.231936+00:00",
+  "status": "VERIFIED_SOURCE_AND_INVENTORY_ONLY",
+  "tests_executed": false,
+  "parent_head": "c386b0608ae92d18c351b5cb6e367380808a45cf",
+  "previous_v2_nodes": 10380,
+  "current_v2_nodes": 10469,
+  "added_nodes": [
+    "tests/test_v2_discovery_prerequisite_browser_fixture.py::test_default_fixture_payload_and_receipt_remain_unchanged_without_opt_in",
+    "tests/test_v2_discovery_prerequisite_browser_fixture.py::test_explicit_seed_only_adds_tiny_metadata_to_existing_owners_without_scanning",
+    "tests/test_v2_discovery_prerequisite_browser_fixture.py::test_seeded_object_info_is_closed_copied_and_other_probes_are_unchanged",
+    "tests/test_v2_discovery_prerequisite_browser_fixture.py::test_prerequisite_seed_never_replaces_existing_state[active]",
+    "tests/test_v2_discovery_prerequisite_browser_fixture.py::test_prerequisite_seed_never_replaces_existing_state[revoked]",
+    "tests/test_v2_discovery_prerequisite_browser_fixture.py::test_prerequisite_seed_never_replaces_existing_state[existing_model]",
+    "tests/test_v2_discovery_prerequisite_browser_fixture.py::test_prerequisite_seed_never_replaces_existing_state[existing_component]",
+    "tests/test_v2_discovery_prerequisite_browser_fixture.py::test_prerequisite_seed_never_replaces_existing_state[repeat]",
+    "tests/test_v2_discovery_prerequisite_browser_fixture.py::test_mounted_seed_preserves_authority_scan_and_readonly_evidence[enabled]",
+    "tests/test_v2_discovery_prerequisite_browser_fixture.py::test_mounted_seed_preserves_authority_scan_and_readonly_evidence[default-off]",
+    "tests/test_v2_discovery_prerequisite_browser_fixture.py::test_mounted_seed_preserves_authority_scan_and_readonly_evidence[acceptance]",
+    "tests/test_v2_discovery_prerequisites.py::test_same_scan_complete_nodes_and_loader_are_advertisements_not_readiness",
+    "tests/test_v2_discovery_prerequisites.py::test_valid_complete_absence_is_scoped_not_observed[index]",
+    "tests/test_v2_discovery_prerequisites.py::test_valid_complete_absence_is_scoped_not_observed[options]",
+    "tests/test_v2_discovery_prerequisites.py::test_valid_complete_absence_is_scoped_not_observed[missing_node]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[None]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad1]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[private malformed payload]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad3]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad4]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad5]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad6]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad7]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad8]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad9]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad10]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad11]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad12]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad13]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_or_incomplete_evidence_never_reports_absence[bad14]",
+    "tests/test_v2_discovery_prerequisites.py::test_bounded_object_info_does_not_claim_negative_evidence[nodes]",
+    "tests/test_v2_discovery_prerequisites.py::test_bounded_object_info_does_not_claim_negative_evidence[options]",
+    "tests/test_v2_discovery_prerequisites.py::test_bounded_object_info_does_not_claim_negative_evidence[fields]",
+    "tests/test_v2_discovery_prerequisites.py::test_bounded_object_info_does_not_claim_negative_evidence[groups]",
+    "tests/test_v2_discovery_prerequisites.py::test_unavailable_evidence_differs_from_valid_empty_index",
+    "tests/test_v2_discovery_prerequisites.py::test_exact_loader_binding_excludes_other_nodes_fields_and_old_scans",
+    "tests/test_v2_discovery_prerequisites.py::test_catalog_components_never_infer_installed_status_from_names_or_indexes",
+    "tests/test_v2_discovery_prerequisites.py::test_definition_drift_invalidates_existing_consent_without_starting_probe[adapter]",
+    "tests/test_v2_discovery_prerequisites.py::test_definition_drift_invalidates_existing_consent_without_starting_probe[component]",
+    "tests/test_v2_discovery_prerequisites.py::test_definition_drift_invalidates_existing_consent_without_starting_probe[requirement]",
+    "tests/test_v2_discovery_prerequisites.py::test_running_cancelled_and_unstarted_workflows_stay_unknown",
+    "tests/test_v2_discovery_prerequisites.py::test_projection_never_recomputes_from_live_catalog_and_returns_copies",
+    "tests/test_v2_discovery_prerequisites.py::test_default_off_acceptance_and_older_scans_do_not_gain_prerequisites[True]",
+    "tests/test_v2_discovery_prerequisites.py::test_default_off_acceptance_and_older_scans_do_not_gain_prerequisites[False]",
+    "tests/test_v2_discovery_prerequisites.py::test_duplicate_json_keys_are_rejected_by_original_probe_client[/object_info]",
+    "tests/test_v2_discovery_prerequisites.py::test_duplicate_json_keys_are_rejected_by_original_probe_client[/api/tags]",
+    "tests/test_v2_discovery_prerequisites.py::test_duplicate_json_keys_are_rejected_by_original_probe_client[/v1/models]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_catalog_model_does_not_abort_original_scan[None]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_catalog_model_does_not_abort_original_scan[bad1]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_catalog_model_does_not_abort_original_scan[bad2]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_catalog_model_does_not_abort_original_scan[invalid]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_component_collection_stays_unknown[True]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_component_collection_stays_unknown[component-id]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_component_collection_stays_unknown[bad2]",
+    "tests/test_v2_discovery_prerequisites.py::test_duplicate_component_requirements_are_reported_once_with_malformed_status",
+    "tests/test_v2_discovery_prerequisites.py::test_definition_limits_are_disclosed_without_unbounded_materialization[models]",
+    "tests/test_v2_discovery_prerequisites.py::test_definition_limits_are_disclosed_without_unbounded_materialization[requirements]",
+    "tests/test_v2_discovery_prerequisites.py::test_definition_limits_are_disclosed_without_unbounded_materialization[adapters]",
+    "tests/test_v2_discovery_prerequisites.py::test_definition_limits_are_disclosed_without_unbounded_materialization[required_nodes]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_component_definition_does_not_become_installed_or_abort[None]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_component_definition_does_not_become_installed_or_abort[bad1]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_component_definition_does_not_become_installed_or_abort[bad2]",
+    "tests/test_v2_discovery_prerequisites.py::test_invalid_system_stats_cannot_certify_complete_workflow_evidence",
+    "tests/test_v2_discovery_prerequisites.py::test_invalid_json_transport_is_explicit_malformed_evidence[{]",
+    "tests/test_v2_discovery_prerequisites.py::test_invalid_json_transport_is_explicit_malformed_evidence[{\"x\":NaN}]",
+    "tests/test_v2_discovery_prerequisites.py::test_invalid_json_transport_is_explicit_malformed_evidence[{\"a\":{},\"a\":{}}]",
+    "tests/test_v2_discovery_prerequisites.py::test_invalid_json_transport_is_explicit_malformed_evidence[\\xff]",
+    "tests/test_v2_discovery_prerequisites.py::test_deadline_after_object_info_returns_does_not_certify_absence",
+    "tests/test_v2_discovery_prerequisites.py::test_catalog_registry_key_mismatch_cannot_duplicate_requirement_identity",
+    "tests/test_v2_discovery_prerequisites.py::test_adapter_declaration_dimensions_also_bind_existing_scope_digest[family]",
+    "tests/test_v2_discovery_prerequisites.py::test_adapter_declaration_dimensions_also_bind_existing_scope_digest[capability]",
+    "tests/test_v2_discovery_prerequisites.py::test_ambiguous_runtime_ids_do_not_create_duplicate_or_cross_bound_rows",
+    "tests/test_v2_discovery_prerequisites.py::test_admission_captures_original_definitions_and_never_reads_new_owner_values",
+    "tests/test_v2_discovery_prerequisites.py::test_cancellation_after_valid_comfy_evidence_clears_all_positive_observations",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_adapter_declarations_remain_unknown[None]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_adapter_declarations_remain_unknown[bad1]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_adapter_declarations_remain_unknown[bad2]",
+    "tests/test_v2_discovery_prerequisites.py::test_malformed_adapter_declarations_remain_unknown[bad3]",
+    "tests/test_v2_discovery_prerequisites.py::test_catalog_iteration_stops_at_bound_without_copying_large_registry",
+    "tests/test_v2_discovery_prerequisites_api.py::test_mounted_projections_read_identical_same_scan_prerequisites_without_io[/api]",
+    "tests/test_v2_discovery_prerequisites_api.py::test_mounted_projections_read_identical_same_scan_prerequisites_without_io[/api/v1]",
+    "tests/test_v2_discovery_prerequisites_api.py::test_revocation_denies_cached_prerequisites_even_after_feature_disabled[True-/api]",
+    "tests/test_v2_discovery_prerequisites_api.py::test_revocation_denies_cached_prerequisites_even_after_feature_disabled[True-/api/v1]",
+    "tests/test_v2_discovery_prerequisites_api.py::test_revocation_denies_cached_prerequisites_even_after_feature_disabled[False-/api]",
+    "tests/test_v2_discovery_prerequisites_api.py::test_revocation_denies_cached_prerequisites_even_after_feature_disabled[False-/api/v1]",
+    "tests/test_v2_discovery_prerequisites_api.py::test_untrusted_request_cannot_read_or_trigger_prerequisite_evidence[/api]",
+    "tests/test_v2_discovery_prerequisites_api.py::test_untrusted_request_cannot_read_or_trigger_prerequisite_evidence[/api/v1]",
+    "tests/test_v2_discovery_prerequisites_api.py::test_default_off_and_acceptance_original_http_scan_omit_extension[True]",
+    "tests/test_v2_discovery_prerequisites_api.py::test_default_off_and_acceptance_original_http_scan_omit_extension[False]"
+  ],
+  "all_previous_ordered_nodes_preserved": true,
+  "exact_historical_skip_policy_unchanged": true,
+  "external_gates_unchanged": true,
+  "source_digest_errors": [],
+  "manifest_bound_inputs": 1758,
+  "runner_bound_inputs": 1696,
+  "runner_map_sha256": "51d94d044042f0d3ef8c07c336ded58aa24cd8257eb5a86766abb577ad53be16",
+  "unchanged_from_parent": {
+    "tests/test_*.py": {
+      "tracked_count": 440,
+      "unchanged": true
+    },
+    "frontend/src/*.test.*": {
+      "tracked_count": 262,
+      "unchanged": true
+    },
+    "frontend/tests/**": {
+      "tracked_count": 94,
+      "unchanged": true
+    },
+    ".github/ci/*.py": {
+      "tracked_count": 13,
+      "unchanged": true
+    },
+    ".github/workflows/*": {
+      "tracked_count": 5,
+      "unchanged": true
+    },
+    "scripts/*": {
+      "tracked_count": 119,
+      "unchanged": true
+    },
+    "frontend/playwright.v2-live.config.ts": {
+      "tracked_count": 1,
+      "unchanged": true
+    },
+    "frontend/src/ui/AppShell.tsx": {
+      "tracked_count": 1,
+      "unchanged": true
+    },
+    "frontend/src/ui/primitives.tsx": {
+      "tracked_count": 1,
+      "unchanged": true
+    },
+    "frontend/src/ui/tokens.css": {
+      "tracked_count": 1,
+      "unchanged": true
+    },
+    "contracts/local-interop/v1/*": {
+      "tracked_count": 33,
+      "unchanged": true
+    },
+    "database/migrations/*": {
+      "tracked_count": 20,
+      "unchanged": true
+    },
+    ".github/ci/coverage_manifest.json.gz": {
+      "tracked_count": 1,
+      "unchanged": true
+    }
+  },
+  "approved_m3b_fixture_exceptions": [
+    "frontend/tests/e2e/v2-local-ai-files-live.spec.ts",
+    "frontend/tests/e2e/v2-local-ai-legacy-host-live.spec.ts"
+  ],
+  "fixture_exception_proof": "m3b-hosted-journey-preservation.json",
+  "original_fixture_functions_unchanged": [
+    "self_check",
+    "self_check_files",
+    "self_check_legacy_host",
+    "model_mutation_forbidden",
+    "hardware",
+    "require_path",
+    "forbid_launch",
+    "seed_model_metadata",
+    "install",
+    "revoke_current_host",
+    "seed_metadata"
+  ],
+  "original_and_additive_browser_inventory": {
+    "original": 7,
+    "prior_additive": 14,
+    "current_additive": 15,
+    "prior_order_preserved": true,
+    "added": [
+      "[m3-consent-chromium] \u203a v2-local-ai-prerequisites-live.spec.ts \u203a M3 prerequisites original File HTTP UI separates advertisements and unknown catalogue requirements"
+    ]
+  },
+  "catalog_receipt": "catalog-76cd5cabb56e.json",
+  "catalog_sha256": {
+    "API_CATALOG.json": "7f66ba1d5714134df46c4efc7b21158d5faec21a4f365c68cb1cb5a5474456b6",
+    "API_CATALOG.md": "83fb47d32402635bff090df940c573ed29e1a1c3828aa9e3fa3cc2f6627dea00",
+    "API_CATALOG_DETAIL.json.gz": "1f38daaa4644e257cc8f5fcf233a43f7a1fe4f4eb47895b13e0a60ac9faeb2dc",
+    "API_OPENAPI.json.gz": "a2eb4deb1b3717cca0c0fa987ad2a793d182ab4ae24d0b5e13f834a135f8de84"
+  },
+  "v2_manifest_sha256": "338aa1cbef190db30d4829cd78604ffd25340294e61ad492a8bcc3cf3522627c",
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262"
+}

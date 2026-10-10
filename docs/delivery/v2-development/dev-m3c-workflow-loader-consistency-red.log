@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ❯ src/ui/LocalAiWorkflowPrerequisites.test.tsx (66 tests | 1 failed | 41 skipped) 830ms
+   × workflow prerequisite semantic evidence validation > rejects contradictory or duplicate prerequisite evidence {"workflows":[{"runtime_id":"comfy-a","adapter_id":"adapter-a","display_name":"图像工作流 A","evidence_status":"COMPLETE","nodes":[{"node_class":"CheckpointLoaderSimple","observation":"not_observed"}],"loader":{"node_class":"CheckpointLoaderSimple","input_field":"ckpt_name","observation":"observed","advertised_count":2,"candidate_ids":["candidate-a"]},"metadata_status":"NOT_VERIFIED","inference_status":"NOT_RUN"}]} 44ms
+     → expected '工作流前置条件观察仅展示本次后端主机扫描已有的节点与加载器广告信息。本次未…' to contain '观察数据无法确认'
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 24 passed | 41 skipped (66)
+   Start at  11:05:27
+   Duration  2.78s (transform 558ms, setup 0ms, collect 810ms, tests 830ms, environment 584ms, prepare 164ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/ui/LocalAiWorkflowPrerequisites.test.tsx > workflow prerequisite semantic evidence validation > rejects contradictory or duplicate prerequisite evidence {"workflows":[{"runtime_id":"comfy-a","adapter_id":"adapter-a","display_name":"图像工作流 A","evidence_status":"COMPLETE","nodes":[{"node_class":"CheckpointLoaderSimple","observation":"not_observed"}],"loader":{"node_class":"CheckpointLoaderSimple","input_field":"ckpt_name","observation":"observed","advertised_count":2,"candidate_ids":["candidate-a"]},"metadata_status":"NOT_VERIFIED","inference_status":"NOT_RUN"}]}
+AssertionError: expected '工作流前置条件观察仅展示本次后端主机扫描已有的节点与加载器广告信息。本次未…' to contain '观察数据无法确认'
+
+Expected: "观察数据无法确认"
+Received: "工作流前置条件观察仅展示本次后端主机扫描已有的节点与加载器广告信息。本次未观察到不等于未安装；已观察到不代表权重完整、组件兼容或模型可运行。元数据验证：NOT_VERIFIED · 实际生成：NOT_RUN。查看、展开与翻页不会发起检测或生成，也不会改变模型接入状态。1–1 / 1 条工作流观察图像工作流 A有界响应已检查（COMPLETE）Runtime：comfy-a · Adapter：adapter-a元数据验证：NOT_VERIFIED · 实际生成：NOT_RUN查看所需节点（1）CheckpointLoaderSimple · 本次未观察到（not_observed）加载器：CheckpointLoaderSimple.ckpt_name · 已观察到（observed）服务广告条目：2；广告信息不验证模型文件。可对应同次 Runtime 候选：0；候选关联不验证组件身份。部分候选引用无法对应本次 Runtime，对应关联仍未知。目录模型的组件需求声明以下来自现有 Model Center 目录声明，不表示这些组件已安装或属于上述工作流；尚无组件身份与本次扫描的对应证据。目录组件声明（1）1–1 / 1 条组件声明目录模型 A（catalog-image） · catalog-vae · VAE · 未知（unknown）组件身份无对应证据 · 元数据验证：NOT_VERIFIED · 实际生成：NOT_RUN"
+
+ ❯ src/ui/LocalAiWorkflowPrerequisites.test.tsx:220:40
+    218|   ])('rejects contradictory or duplicate prerequisite evidence %j', as…
+    219|     currentSnapshot = snapshot(scan({workflow_prerequisites: report(in…
+    220|     expect(evidenceView().textContent).toContain('观察数据无法确认'); …
+       |                                        ^
+    221|   });
+    222|   it.each(([
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

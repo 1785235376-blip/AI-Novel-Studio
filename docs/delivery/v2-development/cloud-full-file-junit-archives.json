@@ -1,0 +1,23 @@
+{
+  "archives": [
+    {
+      "raw_path": "docs/delivery/v2-development/cloud-backend-full-file-stable.xml",
+      "published_path": "docs/delivery/v2-development/cloud-backend-full-file-stable.xml.gz",
+      "raw_sha256": "08ed755ca5e601dbbbc523e400d1a076c60d8cdaa80f8c23defe195c12f3c4d5",
+      "gzip_sha256": "bc290c500a38b29ee9a59a5cdb79db07a648de4a89c2fbf0a434572dc81b175d",
+      "raw_bytes": 7254310,
+      "gzip_bytes": 160333,
+      "lossless": true
+    },
+    {
+      "raw_path": "docs/delivery/v2-development/cloud-backend-full-file-final.xml",
+      "published_path": "docs/delivery/v2-development/cloud-backend-full-file-final.xml.gz",
+      "raw_sha256": "0c34357a21ddafcf7e655e7e86e830e0759ad4de15876a78edd17239f6150054",
+      "gzip_sha256": "e06a50f8f2789786c3448e7b2be8eeec5e15d9190b05ea9606e61710399da6c2",
+      "raw_bytes": 7253900,
+      "gzip_bytes": 160180,
+      "lossless": true
+    }
+  ],
+  "boundary": "Raw original JUnit evidence preserved byte-for-byte by gzip; original local files were not altered."
+}

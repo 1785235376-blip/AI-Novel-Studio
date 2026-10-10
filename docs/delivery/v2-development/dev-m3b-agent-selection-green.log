@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/novel/AgentTeamPanel.selectionBoundary.test.tsx (7 tests) 171ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  09:24:46
+   Duration  1.05s (transform 152ms, setup 0ms, collect 310ms, tests 171ms, environment 317ms, prepare 67ms)
+

@@ -1,0 +1,100 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_ test_verified_external_llama_enters_unchanged_local_invocation_gate[configured-text-alias] _
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/llama-locality-before/pytest/test_verified_external_llama_e0')
+alias = 'configured-text-alias'
+
+    @pytest.mark.parametrize("alias", ["configured-text-alias", ""])
+    def test_verified_external_llama_enters_unchanged_local_invocation_gate(tmp_path, alias):
+        svc, host, candidate, config, _ = llama_fixture(tmp_path, alias=alias)
+        enabled = enable(svc, candidate)
+        # Regression: before locality evidence, the original invocation rejected this
+        # registered, licensed and enabled llama with GRAPH_VERIFIED_LOCAL_MODEL_REQUIRED.
+>       invocation = LocalModelInvocation(host, candidate["provider_id"], candidate["id"])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_llama_locality_validation.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/model_execution.py:82: in __init__
+    self.validate()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.model_execution.LocalModelInvocation object at 0x7eff8739ac60>
+
+    def validate(self):
+        from .model_center.discovery_bridge import LocalTextAdapter
+        from .providers import MockProvider
+        from .config import settings
+        current = self.runtime.provider_registry.resolve(self.provider_id)
+        model = self.runtime.model_registry.resolve(self.provider_id, self.model_id, Modality.TEXT)
+        if current is not self._provider or model != self._model:
+            raise ValueError("GRAPH_LOCAL_ROUTE_CHANGED")
+        if self.runtime.is_remote_text_provider(self.provider_id):
+            raise ValueError("GRAPH_LOCAL_ONLY")
+        synthetic = type(current) is LegacyTextProviderAdapter and type(current.provider) is MockProvider
+        if synthetic:
+            if not self.synthetic_allowed or settings.enable_packaged_runtime:
+                raise ValueError("GRAPH_SYNTHETIC_NOT_AUTHORIZED")
+        elif type(current) is LocalTextAdapter:
+            candidate = current.bridge.guard(current.candidate["id"])
+            if (candidate["id"] != self.model_id or candidate.get("source_locality") != "LOCAL_VERIFIED"
+                    or not candidate.get("model_evidence_fingerprint")):
+>               raise ValueError("GRAPH_VERIFIED_LOCAL_MODEL_REQUIRED")
+E               ValueError: GRAPH_VERIFIED_LOCAL_MODEL_REQUIRED
+
+app/model_execution.py:102: ValueError
+____ test_verified_external_llama_enters_unchanged_local_invocation_gate[] _____
+
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/llama-locality-before/pytest/test_verified_external_llama_e1')
+alias = ''
+
+    @pytest.mark.parametrize("alias", ["configured-text-alias", ""])
+    def test_verified_external_llama_enters_unchanged_local_invocation_gate(tmp_path, alias):
+        svc, host, candidate, config, _ = llama_fixture(tmp_path, alias=alias)
+        enabled = enable(svc, candidate)
+        # Regression: before locality evidence, the original invocation rejected this
+        # registered, licensed and enabled llama with GRAPH_VERIFIED_LOCAL_MODEL_REQUIRED.
+>       invocation = LocalModelInvocation(host, candidate["provider_id"], candidate["id"])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_llama_locality_validation.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/model_execution.py:82: in __init__
+    self.validate()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.model_execution.LocalModelInvocation object at 0x7eff87399c10>
+
+    def validate(self):
+        from .model_center.discovery_bridge import LocalTextAdapter
+        from .providers import MockProvider
+        from .config import settings
+        current = self.runtime.provider_registry.resolve(self.provider_id)
+        model = self.runtime.model_registry.resolve(self.provider_id, self.model_id, Modality.TEXT)
+        if current is not self._provider or model != self._model:
+            raise ValueError("GRAPH_LOCAL_ROUTE_CHANGED")
+        if self.runtime.is_remote_text_provider(self.provider_id):
+            raise ValueError("GRAPH_LOCAL_ONLY")
+        synthetic = type(current) is LegacyTextProviderAdapter and type(current.provider) is MockProvider
+        if synthetic:
+            if not self.synthetic_allowed or settings.enable_packaged_runtime:
+                raise ValueError("GRAPH_SYNTHETIC_NOT_AUTHORIZED")
+        elif type(current) is LocalTextAdapter:
+            candidate = current.bridge.guard(current.candidate["id"])
+            if (candidate["id"] != self.model_id or candidate.get("source_locality") != "LOCAL_VERIFIED"
+                    or not candidate.get("model_evidence_fingerprint")):
+>               raise ValueError("GRAPH_VERIFIED_LOCAL_MODEL_REQUIRED")
+E               ValueError: GRAPH_VERIFIED_LOCAL_MODEL_REQUIRED
+
+app/model_execution.py:102: ValueError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_llama_locality_validation.py::test_verified_external_llama_enters_unchanged_local_invocation_gate[configured-text-alias]
+FAILED tests/test_v2_llama_locality_validation.py::test_verified_external_llama_enters_unchanged_local_invocation_gate[]
+2 failed, 1 warning in 4.73s

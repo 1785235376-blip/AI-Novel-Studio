@@ -1,0 +1,185 @@
+............F...............FF..FF.F.F..............................     [100%]
+=================================== FAILURES ===================================
+_ test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-timeout] _
+
+model_rig = namespace(nid='v2-independent-5821b3cc2da0493cbc2ce527bd9320c7', scope={'mode': 'local', 'novel_id': 'v2-independent-5...s=[<threading.Event at 0x7f4dd316e540: set>], active=True, guard=<function configure.<locals>.guard at 0x7f4dd314ed40>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4dd3a2ccb0>
+mutation = 'timeout'
+
+    @pytest.mark.parametrize("mutation", ["revoke", "flag", "cancel", "timeout", "replace_project"])
+    def test_late_mock_output_is_discarded_after_authority_or_deadline_change(model_rig, monkeypatch, mutation):
+        e = model_rig; entered, release = spy_transport(e, monkeypatch, blocked=True)
+        row = dispatch(e, preview(e, admit(e)))
+        job = e.manager.get(row["model_runtime"]["execution"]["job_id"])
+        try:
+            assert entered.wait(3)
+            if mutation == "revoke": e.active = False
+            elif mutation == "flag": monkeypatch.setenv("EXPERIMENTAL_FEATURES", FLAGS.replace("ai_execution_v2,", ""))
+            elif mutation == "cancel":
+                row = action(e, current(e, row), "cancel")
+                assert job.cancelled.is_set()
+            elif mutation == "timeout":
+                with e.graphs.store.transaction(e.nid, e.scope) as state:
+                    state["collections"][e.graphs.RUNS][row["id"]]["started_at"] = "2000-01-01T00:00:00+00:00"
+            else:
+                e.novels.delete(e.nid)
+                e.create_project("Recreated same public slug", e.nid)
+        finally: release.set()
+        wait_job(e, job)
+>       assert job.status in {"FAILED", "CANCELLED"}, job.public()
+E       AssertionError: {'actor_id': 'local-studio-author', 'base_chapter_digest': None, 'base_chapter_version': None, 'chapter_id': None, ...}
+E       assert 'COMPLETED' in {'CANCELLED', 'FAILED'}
+E        +  where 'COMPLETED' = Job(id='8e634edc-f065-459a-814d-618ca0060981', operation='graph_text', novel_id='v2-independent-5821b3cc2da0493cbc2ce5...a8ae6f967690e000c6796d225e5', 'route_fingerprint': 'cdbfd6539c1bbbe65a0fd8bdf2e1971defd5a069e99b933ba80030fe41687e69'}).status
+
+tests/test_v2_ai_execution_runtime.py:295: AssertionError
+_____ test_model_routes_require_real_host_session_in_local_mode[file-/api] _____
+
+ai_client = namespace(client=<starlette.testclient.TestClient object at 0x7f4dd0a3b9b0>, prefix='/api', base='/api/novels/r3-mount...st='m4-host-df8a1031bc754e6da9891fa4d61e5022', headers={'X-Session-Token': 'm4-host-df8a1031bc754e6da9891fa4d61e5022'})
+
+    def test_model_routes_require_real_host_session_in_local_mode(ai_client):
+        e = ai_client
+        for headers in ({}, {"X-Session-Token": "not-trusted"}):
+            response = e.client.get(e.graph_base + "/model-capabilities", headers=headers)
+            assert response.status_code == 401
+>           assert response.json()["detail"]["code"] == "SESSION_REQUIRED"
+E           AssertionError: assert 'INVALID_SESSION' == 'SESSION_REQUIRED'
+E             
+E             - SESSION_REQUIRED
+E             + INVALID_SESSION
+
+tests/test_v2_ai_execution_api.py:83: AssertionError
+___ test_model_routes_require_real_host_session_in_local_mode[file-/api/v1] ____
+
+ai_client = namespace(client=<starlette.testclient.TestClient object at 0x7f4dc3e5ed50>, prefix='/api/v1', base='/api/v1/novels/r3...st='m4-host-c5d45b7863d14f3f90b51e648ad9bd99', headers={'X-Session-Token': 'm4-host-c5d45b7863d14f3f90b51e648ad9bd99'})
+
+    def test_model_routes_require_real_host_session_in_local_mode(ai_client):
+        e = ai_client
+        for headers in ({}, {"X-Session-Token": "not-trusted"}):
+            response = e.client.get(e.graph_base + "/model-capabilities", headers=headers)
+            assert response.status_code == 401
+>           assert response.json()["detail"]["code"] == "SESSION_REQUIRED"
+E           AssertionError: assert 'INVALID_SESSION' == 'SESSION_REQUIRED'
+E             
+E             - SESSION_REQUIRED
+E             + INVALID_SESSION
+
+tests/test_v2_ai_execution_api.py:83: AssertionError
+_____ test_scoped_actor_branch_revocation_and_review_permission[file-/api] _____
+
+ai_client = namespace(client=<starlette.testclient.TestClient object at 0x7f4dc3fbfaa0>, prefix='/api', base='/api/novels/r3-mount...rs={'X-Session-Token': 'viewer-7c288486f7244498885937c840fd134a', 'X-Branch-ID': 'b-7c288486f7244498885937c840fd134a'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4dd09db9e0>
+
+    def test_scoped_actor_branch_revocation_and_review_permission(ai_client, monkeypatch):
+        e = scoped(ai_client, monkeypatch); spy_transport(e, monkeypatch)
+>       row, path = ready(e)
+                    ^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:104: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_api.py:27: in ready
+    graph = create(e, headers=headers, value=definition(text="private-m4-source"))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_graph_api.py:35: in create
+    return checked(e.client.post(base or e.graph_base, headers=headers, json={
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [403 Forbidden]>, status = 201
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE"},"code":"LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE","message":"LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE","details":{"code":"LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE"},"request_id":"0ac81ca5-b887-426d-b359-b5daf35e8f0b"}
+E       assert 403 == 201
+E        +  where 403 = <Response [403 Forbidden]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+___ test_scoped_actor_branch_revocation_and_review_permission[file-/api/v1] ____
+
+ai_client = namespace(client=<starlette.testclient.TestClient object at 0x7f4dd04bb9b0>, prefix='/api/v1', base='/api/v1/novels/r3...rs={'X-Session-Token': 'viewer-294c9d822f2146bfac8663a42e5b4199', 'X-Branch-ID': 'b-294c9d822f2146bfac8663a42e5b4199'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4dd1a99a00>
+
+    def test_scoped_actor_branch_revocation_and_review_permission(ai_client, monkeypatch):
+        e = scoped(ai_client, monkeypatch); spy_transport(e, monkeypatch)
+>       row, path = ready(e)
+                    ^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:104: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_api.py:27: in ready
+    graph = create(e, headers=headers, value=definition(text="private-m4-source"))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_v2_creative_graph_api.py:35: in create
+    return checked(e.client.post(base or e.graph_base, headers=headers, json={
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = <Response [403 Forbidden]>, status = 201
+
+    def checked(response, status=200):
+>       assert response.status_code == status, response.text
+E       AssertionError: {"detail":{"code":"LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE"},"code":"LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE","message":"LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE","details":{"code":"LOCAL_AI_HOST_AUTHORITY_UNAVAILABLE"},"request_id":"8fc162df-310b-422d-941b-73f19939259f"}
+E       assert 403 == 201
+E        +  where 403 = <Response [403 Forbidden]>.status_code
+
+tests/test_r3_mounted_contracts.py:61: AssertionError
+_ test_late_host_revocation_masks_model_preview_and_private_errors[file-/api-True] _
+
+ai_client = namespace(client=<starlette.testclient.TestClient object at 0x7f4dd316f3e0>, prefix='/api', base='/api/novels/r3-mount...st='m4-host-39ae2a93417846ebbe2cbcafcf5f03f9', headers={'X-Session-Token': 'm4-host-39ae2a93417846ebbe2cbcafcf5f03f9'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4dd310c590>
+private_error = True
+
+    @pytest.mark.parametrize("private_error", [False, True])
+    def test_late_host_revocation_masks_model_preview_and_private_errors(ai_client, monkeypatch, private_error):
+        e = ai_client
+        row, path = ready(e)
+        original = e.models.preview
+        def revoke(*args, **kwargs):
+            result = original(*args, **kwargs)
+            e.sessions.revoke(e.host)
+            if private_error: raise ValueError("private-m4-provider-error")
+            return result
+        monkeypatch.setattr(e.models, "preview", revoke)
+        response = e.client.post(path + "/model/preview", headers=e.headers, json={
+            "expected_version": row["version"], "route_id": e.route["route_id"], "allow_synthetic": True})
+>       assert response.status_code == 401
+E       assert 422 == 401
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_v2_ai_execution_api.py:136: AssertionError
+_ test_late_host_revocation_masks_model_preview_and_private_errors[file-/api/v1-True] _
+
+ai_client = namespace(client=<starlette.testclient.TestClient object at 0x7f4dd09f9d60>, prefix='/api/v1', base='/api/v1/novels/r3...st='m4-host-b62a163cb4224a1084c0d3edb7354546', headers={'X-Session-Token': 'm4-host-b62a163cb4224a1084c0d3edb7354546'})
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4dd09f9550>
+private_error = True
+
+    @pytest.mark.parametrize("private_error", [False, True])
+    def test_late_host_revocation_masks_model_preview_and_private_errors(ai_client, monkeypatch, private_error):
+        e = ai_client
+        row, path = ready(e)
+        original = e.models.preview
+        def revoke(*args, **kwargs):
+            result = original(*args, **kwargs)
+            e.sessions.revoke(e.host)
+            if private_error: raise ValueError("private-m4-provider-error")
+            return result
+        monkeypatch.setattr(e.models, "preview", revoke)
+        response = e.client.post(path + "/model/preview", headers=e.headers, json={
+            "expected_version": row["version"], "route_id": e.route["route_id"], "allow_synthetic": True})
+>       assert response.status_code == 401
+E       assert 422 == 401
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_v2_ai_execution_api.py:136: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_ai_execution_runtime.py::test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-timeout]
+FAILED tests/test_v2_ai_execution_api.py::test_model_routes_require_real_host_session_in_local_mode[file-/api]
+FAILED tests/test_v2_ai_execution_api.py::test_model_routes_require_real_host_session_in_local_mode[file-/api/v1]
+FAILED tests/test_v2_ai_execution_api.py::test_scoped_actor_branch_revocation_and_review_permission[file-/api]
+FAILED tests/test_v2_ai_execution_api.py::test_scoped_actor_branch_revocation_and_review_permission[file-/api/v1]
+FAILED tests/test_v2_ai_execution_api.py::test_late_host_revocation_masks_model_preview_and_private_errors[file-/api-True]
+FAILED tests/test_v2_ai_execution_api.py::test_late_host_revocation_masks_model_preview_and_private_errors[file-/api/v1-True]
+7 failed, 61 passed, 49 deselected, 1 warning in 29.65s

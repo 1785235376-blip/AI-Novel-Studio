@@ -3,6 +3,8 @@ import {Activity,FileText,Play,RefreshCw,Settings2,ShieldAlert,Square,X} from 'l
 import {ApiError,api,type ModelCenterModel,type ModelCenterPipeline,type ModelCenterRuntime,type ModelCenterRuntimeConfiguration,type RuntimeCapabilitySnapshot,type RuntimeDiagnostics} from '../api';
 import {Badge,Button,EmptyState,Panel,StatusMessage} from './primitives';
 import './ModelCenter.css';
+import {LocalAiDiscovery, type LocalAiOnboardingOwner} from './LocalAiDiscovery';
+import {useLocalAiOwnerKey} from '../localAiDiscoveryOwner';
 
 const authCodes=['SESSION_REQUIRED','INVALID_SESSION'];
 
@@ -41,7 +43,12 @@ function logArrays(payload:{stdout?:string[]|null;stderr?:string[]|null}|null|un
  return {stdout:Array.isArray(payload?.stdout)?payload.stdout:[],stderr:Array.isArray(payload?.stderr)?payload.stderr:[]};
 }
 
-export function ModelCenter(){
+export function ModelCenter({onboarding}: {onboarding?: LocalAiOnboardingOwner} = {}){
+ const identity=useLocalAiOwnerKey(onboarding);
+ return <ModelCenterContent key={identity} onboarding={onboarding}/>;
+}
+function ModelCenterContent({onboarding}: {onboarding?: LocalAiOnboardingOwner}){
+ const [discoveryRevision,setDiscoveryRevision]=useState(0);
  const [models,setModels]=useState<ModelCenterModel[]>([]),[runtimes,setRuntimes]=useState<ModelCenterRuntime[]>([]),[pipelines,setPipelines]=useState<ModelCenterPipeline[]>([]),[canMutate,setCanMutate]=useState(false),[loading,setLoading]=useState(true),[error,setError]=useState(''),[busy,setBusy]=useState('');
  const [selected,setSelected]=useState(''),[configuration,setConfiguration]=useState<ModelCenterRuntimeConfiguration>(),[diagnostics,setDiagnostics]=useState<RuntimeDiagnostics>(),[snapshot,setSnapshot]=useState<RuntimeCapabilitySnapshot>(),[logs,setLogs]=useState<{stdout:string[];stderr:string[]}>(),[editing,setEditing]=useState(false);
  const mounted=useRef(true),requestGeneration=useRef(0);
@@ -50,12 +57,13 @@ export function ModelCenter(){
  useEffect(()=>{mounted.current=true;void refresh();return()=>{mounted.current=false;requestGeneration.current++}},[]);
  const action=async(id:string,kind:'validate'|'start'|'stop')=>{if(!canMutate)return;setBusy(`${id}:${kind}`);setError('');try{if(kind==='validate')await api.modelCenterValidateRuntime(id);else if(kind==='start')await api.modelCenterStartRuntime(id);else await api.modelCenterStopRuntime(id);if(mounted.current)await refresh()}catch(caught){if(mounted.current){if(caught instanceof ApiError&&authCodes.includes(caught.problem.code))expire();else setError(caught instanceof ApiError?caught.problem.code:'运行时操作未完成。')}}finally{if(mounted.current)setBusy('')}};
  const openEdit=async(id:string)=>{if(!canMutate)return;setBusy(`${id}:edit`);try{setConfiguration(await api.modelCenterRuntimeConfiguration(id));setEditing(true)}catch(caught){if(caught instanceof ApiError&&authCodes.includes(caught.problem.code))expire();else setError('运行时配置读取失败。')}finally{setBusy('')}};
- const save=async(event:React.FormEvent)=>{event.preventDefault();if(!configuration||!canMutate)return;setBusy(`${configuration.id}:save`);try{await api.modelCenterUpdateRuntimeConfiguration(configuration.id,mutationPayload(configuration));setEditing(false);await refresh()}catch(caught){if(caught instanceof ApiError&&authCodes.includes(caught.problem.code))expire();else setError(caught instanceof ApiError?caught.problem.code:'运行时配置保存失败。')}finally{setBusy('')}};
+ const save=async(event:React.FormEvent)=>{event.preventDefault();if(!configuration||!canMutate)return;setBusy(`${configuration.id}:save`);try{await api.modelCenterUpdateRuntimeConfiguration(configuration.id,mutationPayload(configuration));if(onboarding)setDiscoveryRevision(value=>value+1);setEditing(false);await refresh()}catch(caught){if(caught instanceof ApiError&&authCodes.includes(caught.problem.code))expire();else setError(caught instanceof ApiError?caught.problem.code:'运行时配置保存失败。')}finally{setBusy('')}};
  const inspect=async(id:string)=>{if(!canMutate)return;setBusy(`${id}:inspect`);try{const [d,c,l]=await Promise.all([api.modelCenterRuntimeDiagnostics(id),api.modelCenterRuntimeCapabilities(id),api.modelCenterRuntimeLogs(id)]);setDiagnostics(d);setSnapshot(c);setLogs(logArrays(l));setSelected(id)}catch(caught){if(caught instanceof ApiError&&authCodes.includes(caught.problem.code))expire();else setError('运行时诊断读取失败。')}finally{setBusy('')}};
  const runtimeTone=(state?:string):'success'|'warning'|'error'|'neutral'=>state==='RUNNING'||state==='EXTERNAL'?'success':state==='STARTING'||state==='DEGRADED'?'warning':state==='FAILED'?'error':'neutral';
  const field=(key:keyof ModelCenterRuntimeConfiguration,label:string,type='text')=><label>{label}<input type={type} value={String(configuration?.[key]??'')} onChange={event=>setConfiguration(current=>current?{...current,[key]:type==='number'?Number(event.target.value):event.target.value}:current)}/></label>;
  return <div className="model-center">
   {error&&<StatusMessage tone="error">{error}</StatusMessage>}
+  <LocalAiDiscovery onboarding={onboarding} scopeRevision={discoveryRevision} canMutate={canMutate} onRegistryChange={()=>void refresh()}/>
   <Panel title="Model Center" actions={<Button variant="ghost" onClick={()=>void refresh()} disabled={loading}><RefreshCw aria-hidden="true"/>刷新</Button>}>
    {loading?<div role="status">正在读取模型注册表…</div>:!models.length?<EmptyState title="暂无模型" detail="注册本地模型后会显示在这里。"/>:<div className="model-center__models">{models.map(model=><article key={model.id}><header><div><strong>{model.display_name}</strong><small>{model.runtime_type}</small></div><Badge tone={model.status==='READY'?'success':model.status==='INCOMPATIBLE'?'error':'warning'}>{model.status}</Badge></header><div className="model-center__capabilities">{model.capabilities.map(item=><Badge key={item}>{item}</Badge>)}</div><dl><div><dt>验证</dt><dd>{model.verified?'Current Verified':model.historically_validated?'Historical Validation / Verified Baseline':'未完成推理验证'}</dd></div><div><dt>硬件</dt><dd>{model.hardware_profile_details[0]?.gpu_name||'未记录'}</dd></div></dl></article>)}</div>}
   </Panel>

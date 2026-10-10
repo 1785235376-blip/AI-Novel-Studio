@@ -362,3 +362,45 @@ describe("AppShell command actions", () => {
     act(() => root.unmount());
   });
 });
+
+describe('R4 optional global-search consumer', () => {
+  it('uses the supplied current search action and ignores composing shortcuts', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host), open = vi.fn();
+    const props = { module: 'NOVEL' as const, onModuleChange: vi.fn(), scope: { workspace: '', project: '', storyline: '', branch: '' }, actor: 'author', sidebar: null, main: 'Editor', inspector: null, status: 'Saved' };
+    act(() => root.render(<AppShell {...props} onGlobalSearch={open} />));
+    act(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, isComposing: true })));
+    expect(open).not.toHaveBeenCalled();
+    act(() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true })));
+    expect(open).toHaveBeenCalledTimes(1);
+    const updated = vi.fn();
+    act(() => root.render(<AppShell {...props} onGlobalSearch={updated} />));
+    act(() => host.querySelector<HTMLButtonElement>('[aria-label="打开全局命令"]')!.click());
+    expect(updated).toHaveBeenCalledTimes(1);
+    expect(open).toHaveBeenCalledTimes(1);
+    act(() => root.unmount());
+  });
+  it('mounts safely when browser layout storage is unavailable', () => {
+    host = document.createElement('div'); document.body.append(host);
+    const root = createRoot(host), blocked = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new DOMException('Denied', 'SecurityError'); });
+    try {
+      expect(() => act(() => root.render(<AppShell module="NOVEL" onModuleChange={vi.fn()} scope={{ workspace: '', project: '', storyline: '', branch: '' }} actor="author" sidebar={null} main="Editor" inspector={null} status="Saved" />))).not.toThrow();
+      expect(host.textContent).toContain('Editor');
+      act(() => root.unmount());
+    } finally { blocked.mockRestore(); }
+  });
+});
+it('U04 focus reuses inspector collapse while retaining editor and save errors', () => {
+  host = document.createElement('div'); document.body.append(host);
+  const root = createRoot(host), exit = vi.fn();
+  const props = { module: 'NOVEL' as const, onModuleChange: vi.fn(), scope: { workspace: '', project: '', storyline: '', branch: '' }, actor: 'author', sidebar: 'Chapters', main: 'Same editor', inspector: 'Same assistance', status: 'Save failed: draft retained', onExitFocus: exit };
+  act(() => root.render(<AppShell {...props} focusMode />));
+  expect(host.querySelector('#workspace-inspector')?.getAttribute('aria-hidden')).toBe('true');
+  expect(host.textContent).toContain('Same editor'); expect(host.textContent).toContain('Save failed: draft retained');
+  act(() => host.querySelector<HTMLButtonElement>('.inspector-edge-toggle')!.click());
+  expect(exit).toHaveBeenCalledTimes(1);
+  act(() => root.render(<AppShell {...props} focusMode={false} />));
+  expect(host.querySelector('#workspace-inspector')?.getAttribute('aria-hidden')).toBe('false');
+  expect(host.textContent).toContain('Same assistance');
+  act(() => root.unmount());
+});

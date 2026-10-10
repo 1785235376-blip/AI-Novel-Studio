@@ -1,0 +1,20 @@
+{
+  "head": "93daeb977d9fd238ffda7be3d9c566fd3768dc27",
+  "files": {
+    "package/acceptance-package-manifest.json": "1188f181c61919c28878813ed6777f16f089374ad829a822d9951c116d71081e",
+    "base/base-input-provenance.json": "c64a25060af42ce303dc87a84252e05e2dcce7f37143400b329d22056f69a9a7",
+    "package/application-provenance.json": "e16c7028a190cb31b2fb0de1a990a974321c672e1a62f1cb0dec9ef88042a138",
+    "package/desktophost-provenance.json": "c70f25a8b9de6aaddae9c4ed959142af0e1551927cccf1817d6a103546160918",
+    "package/desktophost-source-manifest.json": "497b86fbc326374366d8f728a2f695efd5896745ae42b28c0206eec76a936deb",
+    "package/desktophost-publish-manifest.json": "d3d4434bd3211e9d3aa7a937409ea91985ef0827e184a797503df7c5a262b2f3"
+  },
+  "source_comparison": {
+    "backend_files": 232,
+    "desktophost_files": 3,
+    "transformation": "Windows checkout LF -> CRLF",
+    "unexpected": 0,
+    "note": "The actual package hashes match Windows-checkout source, not literal LF Git blob bytes."
+  },
+  "package_inventory_files": 5625,
+  "base_inventory_files": 4876
+}

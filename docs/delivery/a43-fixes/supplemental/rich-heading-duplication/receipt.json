@@ -1,0 +1,351 @@
+{
+  "kind": "A43_DUPLICATE_RICH_HEADING_TEXT_AND_STRUCTURE_CORRECTION",
+  "baseline_commit": "1d9b88ac36b1d75c06544e3aa69c3ab308164120",
+  "baseline_tree": "7ad139d78404f3f1bf81e67e66dd4b78e16ffc45",
+  "python": "3.12.14",
+  "layer": "isolated real File repositories and original services/API aliases/export queue; actual PostgreSQL reserved for hosted CI",
+  "before_reproduction": "File loses later-line text; File and PG-facing helper flatten marks/hardBreaks. PG-facing helper probe is explicitly synthetic, not PG integration.",
+  "formal_red": {
+    "tests": 36,
+    "failures": 18,
+    "errors": 0,
+    "skipped": 18,
+    "passed": 0
+  },
+  "focused_green_including_original_and_new": {
+    "tests": 314,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 128,
+    "passed": 186
+  },
+  "new_inventory_count": 36,
+  "new_inventory": [
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_preserves_rich_heading_runs_breaks_later_text_and_history[file-mixed-marks]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_preserves_rich_heading_runs_breaks_later_text_and_history[file-hard-break]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_preserves_rich_heading_runs_breaks_later_text_and_history[file-literal-lf]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_preserves_rich_heading_runs_breaks_later_text_and_history[file-literal-crlf]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_preserves_rich_heading_runs_breaks_later_text_and_history[file-split-marks-lf]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_preserves_rich_heading_runs_breaks_later_text_and_history[file-run-ends-with-lf]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_preserves_rich_heading_runs_breaks_later_text_and_history[postgres-mixed-marks]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_preserves_rich_heading_runs_breaks_later_text_and_history[postgres-hard-break]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_preserves_rich_heading_runs_breaks_later_text_and_history[postgres-literal-lf]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_preserves_rich_heading_runs_breaks_later_text_and_history[postgres-literal-crlf]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_preserves_rich_heading_runs_breaks_later_text_and_history[postgres-split-marks-lf]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_preserves_rich_heading_runs_breaks_later_text_and_history[postgres-run-ends-with-lf]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api-mixed-marks]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api-hard-break]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api-literal-lf]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api-literal-crlf]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api-split-marks-lf]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api-run-ends-with-lf]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api/v1-mixed-marks]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api/v1-hard-break]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api/v1-literal-lf]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api/v1-literal-crlf]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api/v1-split-marks-lf]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[file-/api/v1-run-ends-with-lf]",
+      "before": "failed",
+      "after": "passed"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api-mixed-marks]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api-hard-break]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api-literal-lf]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api-literal-crlf]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api-split-marks-lf]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api-run-ends-with-lf]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api/v1-mixed-marks]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api/v1-hard-break]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api/v1-literal-lf]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api/v1-literal-crlf]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api/v1-split-marks-lf]",
+      "before": "skipped",
+      "after": "skipped"
+    },
+    {
+      "class": "tests.test_a43_duplicate_heading",
+      "name": "test_duplicate_api_and_original_queue_export_preserve_rich_h1[postgres-/api/v1-run-ends-with-lf]",
+      "before": "skipped",
+      "after": "skipped"
+    }
+  ],
+  "source_sha256": {
+    "app/document.py": {
+      "before": "a4076f0188bf7b9f9171d4fa9ecbfeb2fa9310b6d4c7dfa7267c36add077a36e",
+      "after": "70ecdf6f175cada0f0bcbcf0dfc1d7aa7a419895263741154dc4f0e7717d4f49"
+    },
+    "app/repositories/chapter_repository.py": {
+      "before": "7a19fc85d9a127094559e857d2ff650bc491abf82dc42060c6e45ed422f0c522",
+      "after": "fbe3054032838f2d3eab141177817fb72c6a7c48d117fbe9f5e61ffe4bd720e1"
+    },
+    "app/repositories/postgres/chapter.py": {
+      "before": "5676d88e918076a0e1e909d8aeb79d36cd23752e7578e9513720c18b030570e6",
+      "after": "73f6ff4de4ebc14a39cf2a01063c9e6d1529681512643a58e1eda1b8823b47de"
+    }
+  },
+  "new_test": {
+    "path": "tests/test_a43_duplicate_heading.py",
+    "sha256": "4adf9e62a7b03722db7de8ca0906d77053583b81062c6afd65efde715e3264eb",
+    "same_file_executed_for_red_and_green": true
+  },
+  "unchanged_tests": [
+    {
+      "path": "tests/test_chapter_markdown_contract.py",
+      "sha256": "33e60764275fe1e0b73526725ea861a41d160853d74b6151a9f5676df0ab630d",
+      "unchanged_from_audited_ad1a90d": true
+    },
+    {
+      "path": "tests/test_stability_v04.py",
+      "sha256": "735056932430bc0a07a3d81b880fba6c170fe298343443f7855ab44c145f1f77",
+      "unchanged_from_audited_ad1a90d": true
+    },
+    {
+      "path": "tests/test_docx_export.py",
+      "sha256": "7ca97f5ab192a90258c9841975a2ebb472e6e0f80991e974a99fc536ddf8051b",
+      "unchanged_from_audited_ad1a90d": true
+    },
+    {
+      "path": "tests/test_pdf_export.py",
+      "sha256": "569f3ea17f784c0a70f3d5f3ed41488961d63a2ffcd14c4ab0cd6b373004dbf0",
+      "unchanged_from_audited_ad1a90d": true
+    },
+    {
+      "path": "tests/test_r4_portable_batches.py",
+      "sha256": "99cbbd5f4d534622a5cde1ffecf2c83e4be17e063510f7ec0073ce37f4dc4c76",
+      "unchanged_from_audited_ad1a90d": true
+    },
+    {
+      "path": "tests/test_r4_portable_batches_mounted.py",
+      "sha256": "6f475f2a3975c78098f47139c732a4ec52921a4065a107e043862057ebe3bdc3",
+      "unchanged_from_audited_ad1a90d": true
+    },
+    {
+      "path": "tests/test_r4_portable_maintenance.py",
+      "sha256": "7b88eec788a7eda97c475b4d7aa677eb1e874f5bdd2d545b4548c51c5e679da0",
+      "unchanged_from_audited_ad1a90d": true
+    },
+    {
+      "path": "tests/test_r5_project_forks.py",
+      "sha256": "8ac99e13a23f9289ced9453e764fc60223c4525a1286b8d88596c24a8e378a40",
+      "unchanged_from_audited_ad1a90d": true
+    },
+    {
+      "path": "tests/test_a43_rich_document.py",
+      "sha256": "fc75e35365adcdde89ae3c5531c317de63d924067aefe1385e7fa2412de7e45f",
+      "unchanged_from_pre_correction_1d9b88ac": true
+    },
+    {
+      "path": "tests/test_a43_known_document_nodes.py",
+      "sha256": "638cfcc459612447afeecf07e057babb05b95618cdf28fad0e41f894d2656a7a",
+      "unchanged_from_pre_correction_1d9b88ac": true
+    }
+  ],
+  "rename_and_pg_metadata_rules": "UNCHANGED",
+  "limitations": "No actual PostgreSQL execution locally, no full-suite pass or native/model acceptance claimed; overlapping focused suites must not be summed.",
+  "files": {
+    "current-reproduction.json": {
+      "bytes": 8394,
+      "sha256": "68472e79785a6c94a8bcd8ea1dab31cfdef71786a0cc957289bb9b17d120aad4"
+    },
+    "heading-focused-green.log": {
+      "bytes": 1756,
+      "sha256": "049f65234a6ea597f6768f2e048ae11cbb6834c97975a9ef07681ed29e9d9679"
+    },
+    "heading-focused-green.xml": {
+      "bytes": 86175,
+      "sha256": "c92298d91f91b6c57ea88e98802c7b9f72a225e1c4efc2449d4c78e05cfcaa55"
+    },
+    "heading-initial-red.log": {
+      "bytes": 50069,
+      "sha256": "c09bfd05f8fabbd9220ba71a216af516ad246541cfb5ab38484b5cdc66f3dcde"
+    },
+    "heading-initial-red.xml": {
+      "bytes": 70139,
+      "sha256": "f14c9cd358e895eadd9d497661c4db1f7377368f83a9b1f789648099a8fcc5b3"
+    },
+    "heading-red.log": {
+      "bytes": 50069,
+      "sha256": "8a4229336479834c012b0287dbabb72d0a421529db939488e0cdd8840361942b"
+    },
+    "heading-red.xml": {
+      "bytes": 70139,
+      "sha256": "badcad285b48c912048867f35865e4270a5d16cc3f9e5039216b824616d18ee7"
+    }
+  },
+  "raw_log_policy": "Full raw logs remain private; recorded hashes are retained. JUnit is deterministic gzip; public executor metadata redaction is recorded separately.",
+  "test_finalization": {
+    "red_executions": 2,
+    "reason": "Before product edits, only the new export assertions were corrected to include EPUB headings and compare complete source/copy text after newline/paragraph normalization, accommodating the unchanged PG title labels. Both RED runs failed earlier at exact copied-document equality. No pre-existing assertion changed.",
+    "final_red_and_green_test_sha256": "4adf9e62a7b03722db7de8ca0906d77053583b81062c6afd65efde715e3264eb",
+    "same_final_test_bytes": true
+  }
+}

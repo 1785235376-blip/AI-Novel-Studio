@@ -1,0 +1,488 @@
+{
+  "stage": "02-world",
+  "status": "PASS",
+  "seconds": 7.937,
+  "evidence": {
+    "proposal": {
+      "id": "30ad5a45-ab3c-40b8-9922-5d7f2dc5c3f2",
+      "novel_id": "6402cc47",
+      "scope": {
+        "mode": "local",
+        "novel_id": "6402cc47"
+      },
+      "actor_id": "local-author",
+      "version": 4,
+      "status": "READY",
+      "request": {
+        "kind": "WORLD",
+        "mode": "MODEL",
+        "sources": [],
+        "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+        "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+        "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+        "candidate_count": 1,
+        "timeout_seconds": 180
+      },
+      "sources": [],
+      "candidates": [
+        {
+          "id": "61960a8d-7a54-5847-85f0-54d6735b6a4d",
+          "record": {
+            "kind": "WORLD",
+            "title": "废城回声 · 完整产品验收",
+            "description": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+            "instructions": "",
+            "acts": [],
+            "conflict": "",
+            "climax": "",
+            "ending": "",
+            "rules": [],
+            "character_ids": [],
+            "location_ids": [],
+            "chapter_ids": [],
+            "related_record_ids": [],
+            "story_route_id": null,
+            "privacy_level": "LOCAL_ONLY",
+            "world_summary": "故事发生在一个被未知力量瞬间抹去的巨型都市“新伊甸”。城市如今只剩下钢筋水泥的骨架和弥漫的酸雨，被称为“废城”。空气中漂浮着未消散的纳米尘埃，它们既是维持城市残骸不立即坍塌的粘合剂，也是记录城市毁灭前最后时刻数据的载体。社会结构已崩塌，幸存者生活在地下掩体或废墟顶层，依靠回收旧时代的科技苟延残喘。核心冲突围绕着一份被加密的“毁灭日志”展开，主角作为唯一的失忆者，其记忆碎片与日志内容逐渐重合，揭示出他并非无辜的受害者，而是启动城市自毁程序的“清道夫”。",
+            "world_rules": [
+              {
+                "statement": "城市毁灭并非由单一武器造成，而是由遍布城市的‘净化协议’纳米机器人自主执行，它们将有机物质转化为无害的无机尘埃。",
+                "forbidden_terms": []
+              },
+              {
+                "statement": "废城中的酸雨含有高浓度的记忆抑制因子，长期暴露会导致居民出现短暂的失忆或人格解离。",
+                "forbidden_terms": []
+              },
+              {
+                "statement": "城市核心的‘黑匣子’是唯一能读取完整毁灭日志的终端，但激活它需要特定的生物密钥（即主角的血液或脑波）。",
+                "forbidden_terms": []
+              },
+              {
+                "statement": "在废城，‘过去’被视为禁忌，因为大多数幸存者认为毁灭是某种神圣的救赎，试图挖掘真相会被视为亵渎。",
+                "forbidden_terms": []
+              },
+              {
+                "statement": "纳米尘埃在特定频率的声波下会重组，短暂恢复城市局部的功能（如照明、重力），但随即再次崩溃。",
+                "forbidden_terms": []
+              }
+            ],
+            "locations": [
+              {
+                "name": "中央尖塔废墟",
+                "description": "曾经是新伊甸的行政中心和城市大脑所在地。现在是一座高达千米的破碎玻璃柱，内部充满了闪烁的故障灯光和漂浮的纳米尘埃风暴。这里是所有数据的源头，也是主角最终必须面对真相的地方。",
+                "rules": "进入尖塔需要穿戴防酸雨服，否则皮肤会迅速腐蚀。",
+                "atmosphere": "压抑、神圣而恐怖，伴随着电流的滋滋声和回声。"
+              },
+              {
+                "name": "下层掩体‘静默区’",
+                "description": "位于城市地下的巨大避难所，居住着绝大多数幸存者。这里没有窗户，只有模拟的星空投影。人们在这里互相隐瞒身份，严禁提及‘上面’发生了什么。",
+                "rules": "禁止讨论‘净化协议’，禁止展示任何带有旧时代标志的物品。",
+                "atmosphere": "沉闷、拥挤、充满猜忌和压抑的恐惧。"
+              },
+              {
+                "name": "记忆回廊",
+                "description": "城市边缘的一片区域，这里的纳米尘埃浓度异常高，偶尔会形成短暂的幻象，重现城市毁灭前的繁华景象。主角在这里第一次看到了自己的模糊影像。",
+                "rules": "长时间停留会导致严重的精神错乱，分不清现实与幻象。",
+                "atmosphere": "迷幻、美丽却令人不安，充满破碎的光影。"
+              }
+            ],
+            "characters": [],
+            "outline": null
+          },
+          "evidence": [],
+          "record_id": null,
+          "status": "DRAFT",
+          "analysis_source": "AI_SUGGESTION",
+          "source_provenance": {
+            "kind": "USER_PREMISE_AND_PROJECT_CONTEXT",
+            "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+            "project_context_hash": "cdc24bd493b3e57e5011ff5a6eb1da8269ebc4e798cde1f29184da41df566c0a"
+          }
+        }
+      ],
+      "findings": [],
+      "created_at": "2026-10-07T09:46:59.496247+00:00",
+      "updated_at": "2026-10-07T09:47:06.929012+00:00",
+      "error": null,
+      "error_code": null,
+      "usage": {
+        "input_tokens": 1956,
+        "output_tokens": 776,
+        "total_tokens": 2732
+      },
+      "usage_status": "REPORTED",
+      "execution_mode": "real",
+      "project_context_hash": "cdc24bd493b3e57e5011ff5a6eb1da8269ebc4e798cde1f29184da41df566c0a",
+      "project_context_snapshot": {
+        "project": {
+          "id": "6402cc47",
+          "title": "废城回声 · 完整产品验收",
+          "genre": "悬疑科幻",
+          "privacy_level": "LOCAL_ONLY"
+        },
+        "world": {},
+        "outline": {},
+        "characters": [],
+        "locations": [],
+        "world_rules": []
+      },
+      "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+      "applied": false,
+      "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+      "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+      "provider_reference_id": null
+    },
+    "application": {
+      "run": {
+        "id": "30ad5a45-ab3c-40b8-9922-5d7f2dc5c3f2",
+        "novel_id": "6402cc47",
+        "scope": {
+          "mode": "local",
+          "novel_id": "6402cc47"
+        },
+        "actor_id": "local-author",
+        "version": 15,
+        "status": "READY",
+        "request": {
+          "kind": "WORLD",
+          "mode": "MODEL",
+          "sources": [],
+          "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+          "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+          "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+          "candidate_count": 1,
+          "timeout_seconds": 180
+        },
+        "sources": [],
+        "candidates": [
+          {
+            "id": "61960a8d-7a54-5847-85f0-54d6735b6a4d",
+            "record": {
+              "kind": "WORLD",
+              "title": "废城回声 · 完整产品验收",
+              "description": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+              "instructions": "",
+              "acts": [],
+              "conflict": "",
+              "climax": "",
+              "ending": "",
+              "rules": [],
+              "character_ids": [],
+              "location_ids": [],
+              "chapter_ids": [],
+              "related_record_ids": [],
+              "story_route_id": null,
+              "privacy_level": "LOCAL_ONLY",
+              "world_summary": "故事发生在一个被未知力量瞬间抹去的巨型都市“新伊甸”。城市如今只剩下钢筋水泥的骨架和弥漫的酸雨，被称为“废城”。空气中漂浮着未消散的纳米尘埃，它们既是维持城市残骸不立即坍塌的粘合剂，也是记录城市毁灭前最后时刻数据的载体。社会结构已崩塌，幸存者生活在地下掩体或废墟顶层，依靠回收旧时代的科技苟延残喘。核心冲突围绕着一份被加密的“毁灭日志”展开，主角作为唯一的失忆者，其记忆碎片与日志内容逐渐重合，揭示出他并非无辜的受害者，而是启动城市自毁程序的“清道夫”。",
+              "world_rules": [
+                {
+                  "statement": "城市毁灭并非由单一武器造成，而是由遍布城市的‘净化协议’纳米机器人自主执行，它们将有机物质转化为无害的无机尘埃。",
+                  "forbidden_terms": []
+                },
+                {
+                  "statement": "废城中的酸雨含有高浓度的记忆抑制因子，长期暴露会导致居民出现短暂的失忆或人格解离。",
+                  "forbidden_terms": []
+                },
+                {
+                  "statement": "城市核心的‘黑匣子’是唯一能读取完整毁灭日志的终端，但激活它需要特定的生物密钥（即主角的血液或脑波）。",
+                  "forbidden_terms": []
+                },
+                {
+                  "statement": "在废城，‘过去’被视为禁忌，因为大多数幸存者认为毁灭是某种神圣的救赎，试图挖掘真相会被视为亵渎。",
+                  "forbidden_terms": []
+                },
+                {
+                  "statement": "纳米尘埃在特定频率的声波下会重组，短暂恢复城市局部的功能（如照明、重力），但随即再次崩溃。",
+                  "forbidden_terms": []
+                }
+              ],
+              "locations": [
+                {
+                  "name": "中央尖塔废墟",
+                  "description": "曾经是新伊甸的行政中心和城市大脑所在地。现在是一座高达千米的破碎玻璃柱，内部充满了闪烁的故障灯光和漂浮的纳米尘埃风暴。这里是所有数据的源头，也是主角最终必须面对真相的地方。",
+                  "rules": "进入尖塔需要穿戴防酸雨服，否则皮肤会迅速腐蚀。",
+                  "atmosphere": "压抑、神圣而恐怖，伴随着电流的滋滋声和回声。"
+                },
+                {
+                  "name": "下层掩体‘静默区’",
+                  "description": "位于城市地下的巨大避难所，居住着绝大多数幸存者。这里没有窗户，只有模拟的星空投影。人们在这里互相隐瞒身份，严禁提及‘上面’发生了什么。",
+                  "rules": "禁止讨论‘净化协议’，禁止展示任何带有旧时代标志的物品。",
+                  "atmosphere": "沉闷、拥挤、充满猜忌和压抑的恐惧。"
+                },
+                {
+                  "name": "记忆回廊",
+                  "description": "城市边缘的一片区域，这里的纳米尘埃浓度异常高，偶尔会形成短暂的幻象，重现城市毁灭前的繁华景象。主角在这里第一次看到了自己的模糊影像。",
+                  "rules": "长时间停留会导致严重的精神错乱，分不清现实与幻象。",
+                  "atmosphere": "迷幻、美丽却令人不安，充满破碎的光影。"
+                }
+              ],
+              "characters": [],
+              "outline": null
+            },
+            "evidence": [],
+            "record_id": null,
+            "status": "APPLIED",
+            "analysis_source": "AI_SUGGESTION",
+            "source_provenance": {
+              "kind": "USER_PREMISE_AND_PROJECT_CONTEXT",
+              "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+              "project_context_hash": "cdc24bd493b3e57e5011ff5a6eb1da8269ebc4e798cde1f29184da41df566c0a"
+            },
+            "applied_by": "local-author",
+            "applied_at": "2026-10-07T09:47:07.351460+00:00"
+          }
+        ],
+        "findings": [],
+        "created_at": "2026-10-07T09:46:59.496247+00:00",
+        "updated_at": "2026-10-07T09:47:07.351460+00:00",
+        "error": null,
+        "error_code": null,
+        "usage": {
+          "input_tokens": 1956,
+          "output_tokens": 776,
+          "total_tokens": 2732
+        },
+        "usage_status": "REPORTED",
+        "execution_mode": "real",
+        "project_context_hash": "cdc24bd493b3e57e5011ff5a6eb1da8269ebc4e798cde1f29184da41df566c0a",
+        "project_context_snapshot": {
+          "project": {
+            "id": "6402cc47",
+            "title": "废城回声 · 完整产品验收",
+            "genre": "悬疑科幻",
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "world": {},
+          "outline": {},
+          "characters": [],
+          "locations": [],
+          "world_rules": []
+        },
+        "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+        "applied": true,
+        "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+        "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+        "provider_reference_id": null,
+        "application": {
+          "status": "APPLIED",
+          "candidate_id": "61960a8d-7a54-5847-85f0-54d6735b6a4d",
+          "actor_id": "local-author",
+          "receipts": {
+            "world_summary": {
+              "id": "6402cc47",
+              "title": "废城回声 · 完整产品验收",
+              "genre": "悬疑科幻",
+              "status": "Writing",
+              "created_at": "2026-10-07T09:46:59.182633+00:00",
+              "updated_at": "2026-10-07T09:47:07.015880+00:00",
+              "world_summary": "故事发生在一个被未知力量瞬间抹去的巨型都市“新伊甸”。城市如今只剩下钢筋水泥的骨架和弥漫的酸雨，被称为“废城”。空气中漂浮着未消散的纳米尘埃，它们既是维持城市残骸不立即坍塌的粘合剂，也是记录城市毁灭前最后时刻数据的载体。社会结构已崩塌，幸存者生活在地下掩体或废墟顶层，依靠回收旧时代的科技苟延残喘。核心冲突围绕着一份被加密的“毁灭日志”展开，主角作为唯一的失忆者，其记忆碎片与日志内容逐渐重合，揭示出他并非无辜的受害者，而是启动城市自毁程序的“清道夫”。",
+              "world_summary_privacy_level": "LOCAL_ONLY"
+            },
+            "location:0": {
+              "location_type": "",
+              "description": "曾经是新伊甸的行政中心和城市大脑所在地。现在是一座高达千米的破碎玻璃柱，内部充满了闪烁的故障灯光和漂浮的纳米尘埃风暴。这里是所有数据的源头，也是主角最终必须面对真相的地方。",
+              "rules": "进入尖塔需要穿戴防酸雨服，否则皮肤会迅速腐蚀。",
+              "atmosphere": "压抑、神圣而恐怖，伴随着电流的滋滋声和回声。",
+              "status": "ACTIVE",
+              "name": "中央尖塔废墟",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "8dfe346a-82a6-5cbe-b475-0b08feeff64a"
+            },
+            "location:1": {
+              "location_type": "",
+              "description": "位于城市地下的巨大避难所，居住着绝大多数幸存者。这里没有窗户，只有模拟的星空投影。人们在这里互相隐瞒身份，严禁提及‘上面’发生了什么。",
+              "rules": "禁止讨论‘净化协议’，禁止展示任何带有旧时代标志的物品。",
+              "atmosphere": "沉闷、拥挤、充满猜忌和压抑的恐惧。",
+              "status": "ACTIVE",
+              "name": "下层掩体‘静默区’",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "84a7cce1-b803-5f12-926e-cf6c4486f4fe"
+            },
+            "location:2": {
+              "location_type": "",
+              "description": "城市边缘的一片区域，这里的纳米尘埃浓度异常高，偶尔会形成短暂的幻象，重现城市毁灭前的繁华景象。主角在这里第一次看到了自己的模糊影像。",
+              "rules": "长时间停留会导致严重的精神错乱，分不清现实与幻象。",
+              "atmosphere": "迷幻、美丽却令人不安，充满破碎的光影。",
+              "status": "ACTIVE",
+              "name": "记忆回廊",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "285be529-e2ed-566f-88ab-1e7f41d8c0b1"
+            },
+            "world-rule:0": {
+              "schema_version": 1,
+              "id": "0a868155-997f-53b5-99c8-0b1c8c5e2c82",
+              "novel_id": "6402cc47",
+              "proposal_type": "WORLD_RULE",
+              "payload": {
+                "statement": "城市毁灭并非由单一武器造成，而是由遍布城市的‘净化协议’纳米机器人自主执行，它们将有机物质转化为无害的无机尘埃。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "approved_payload": {
+                "statement": "城市毁灭并非由单一武器造成，而是由遍布城市的‘净化协议’纳米机器人自主执行，它们将有机物质转化为无害的无机尘埃。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "status": "APPROVED",
+              "source_chapter_id": null,
+              "source_version": null,
+              "agent_name": "plot_planner",
+              "generation_job_id": null,
+              "confidence": null,
+              "reviewed_by": "local-author",
+              "reviewed_at": "2026-10-07T09:47:07.138696Z",
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:47:07.127475Z",
+              "updated_at": "2026-10-07T09:47:07.138696Z"
+            },
+            "world-rule:1": {
+              "schema_version": 1,
+              "id": "061053a3-a020-503c-8de5-fe025a767e34",
+              "novel_id": "6402cc47",
+              "proposal_type": "WORLD_RULE",
+              "payload": {
+                "statement": "废城中的酸雨含有高浓度的记忆抑制因子，长期暴露会导致居民出现短暂的失忆或人格解离。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "approved_payload": {
+                "statement": "废城中的酸雨含有高浓度的记忆抑制因子，长期暴露会导致居民出现短暂的失忆或人格解离。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "status": "APPROVED",
+              "source_chapter_id": null,
+              "source_version": null,
+              "agent_name": "plot_planner",
+              "generation_job_id": null,
+              "confidence": null,
+              "reviewed_by": "local-author",
+              "reviewed_at": "2026-10-07T09:47:07.183081Z",
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:47:07.170767Z",
+              "updated_at": "2026-10-07T09:47:07.183081Z"
+            },
+            "world-rule:2": {
+              "schema_version": 1,
+              "id": "64198e30-4b85-560c-95cf-f1dc2ffbbd8c",
+              "novel_id": "6402cc47",
+              "proposal_type": "WORLD_RULE",
+              "payload": {
+                "statement": "城市核心的‘黑匣子’是唯一能读取完整毁灭日志的终端，但激活它需要特定的生物密钥（即主角的血液或脑波）。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "approved_payload": {
+                "statement": "城市核心的‘黑匣子’是唯一能读取完整毁灭日志的终端，但激活它需要特定的生物密钥（即主角的血液或脑波）。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "status": "APPROVED",
+              "source_chapter_id": null,
+              "source_version": null,
+              "agent_name": "plot_planner",
+              "generation_job_id": null,
+              "confidence": null,
+              "reviewed_by": "local-author",
+              "reviewed_at": "2026-10-07T09:47:07.230406Z",
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:47:07.218734Z",
+              "updated_at": "2026-10-07T09:47:07.230406Z"
+            },
+            "world-rule:3": {
+              "schema_version": 1,
+              "id": "073caaf9-a30b-5acc-99b4-d3c7428e4345",
+              "novel_id": "6402cc47",
+              "proposal_type": "WORLD_RULE",
+              "payload": {
+                "statement": "在废城，‘过去’被视为禁忌，因为大多数幸存者认为毁灭是某种神圣的救赎，试图挖掘真相会被视为亵渎。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "approved_payload": {
+                "statement": "在废城，‘过去’被视为禁忌，因为大多数幸存者认为毁灭是某种神圣的救赎，试图挖掘真相会被视为亵渎。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "status": "APPROVED",
+              "source_chapter_id": null,
+              "source_version": null,
+              "agent_name": "plot_planner",
+              "generation_job_id": null,
+              "confidence": null,
+              "reviewed_by": "local-author",
+              "reviewed_at": "2026-10-07T09:47:07.280438Z",
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:47:07.268861Z",
+              "updated_at": "2026-10-07T09:47:07.280438Z"
+            },
+            "world-rule:4": {
+              "schema_version": 1,
+              "id": "c49b0597-6367-546b-b5cc-c58980064284",
+              "novel_id": "6402cc47",
+              "proposal_type": "WORLD_RULE",
+              "payload": {
+                "statement": "纳米尘埃在特定频率的声波下会重组，短暂恢复城市局部的功能（如照明、重力），但随即再次崩溃。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "approved_payload": {
+                "statement": "纳米尘埃在特定频率的声波下会重组，短暂恢复城市局部的功能（如照明、重力），但随即再次崩溃。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "status": "APPROVED",
+              "source_chapter_id": null,
+              "source_version": null,
+              "agent_name": "plot_planner",
+              "generation_job_id": null,
+              "confidence": null,
+              "reviewed_by": "local-author",
+              "reviewed_at": "2026-10-07T09:47:07.329510Z",
+              "rejection_reason": null,
+              "created_at": "2026-10-07T09:47:07.317765Z",
+              "updated_at": "2026-10-07T09:47:07.329510Z"
+            }
+          },
+          "started_at": "2026-10-07T09:47:06.989356+00:00",
+          "project_context_hash": "ba2621cbae533c7202d326dcdb6837f039a6c940e34c8b30570c33cdb91ad9ef",
+          "completed_at": "2026-10-07T09:47:07.351460+00:00",
+          "applied": {
+            "world_summary": "故事发生在一个被未知力量瞬间抹去的巨型都市“新伊甸”。城市如今只剩下钢筋水泥的骨架和弥漫的酸雨，被称为“废城”。空气中漂浮着未消散的纳米尘埃，它们既是维持城市残骸不立即坍塌的粘合剂，也是记录城市毁灭前最后时刻数据的载体。社会结构已崩塌，幸存者生活在地下掩体或废墟顶层，依靠回收旧时代的科技苟延残喘。核心冲突围绕着一份被加密的“毁灭日志”展开，主角作为唯一的失忆者，其记忆碎片与日志内容逐渐重合，揭示出他并非无辜的受害者，而是启动城市自毁程序的“清道夫”。",
+            "world_rule_ids": [
+              "0a868155-997f-53b5-99c8-0b1c8c5e2c82",
+              "061053a3-a020-503c-8de5-fe025a767e34",
+              "64198e30-4b85-560c-95cf-f1dc2ffbbd8c",
+              "073caaf9-a30b-5acc-99b4-d3c7428e4345",
+              "c49b0597-6367-546b-b5cc-c58980064284"
+            ],
+            "location_ids": [
+              "8dfe346a-82a6-5cbe-b475-0b08feeff64a",
+              "84a7cce1-b803-5f12-926e-cf6c4486f4fe",
+              "285be529-e2ed-566f-88ab-1e7f41d8c0b1"
+            ],
+            "character_ids": [],
+            "outline": null
+          }
+        }
+      },
+      "applied": {
+        "world_summary": "故事发生在一个被未知力量瞬间抹去的巨型都市“新伊甸”。城市如今只剩下钢筋水泥的骨架和弥漫的酸雨，被称为“废城”。空气中漂浮着未消散的纳米尘埃，它们既是维持城市残骸不立即坍塌的粘合剂，也是记录城市毁灭前最后时刻数据的载体。社会结构已崩塌，幸存者生活在地下掩体或废墟顶层，依靠回收旧时代的科技苟延残喘。核心冲突围绕着一份被加密的“毁灭日志”展开，主角作为唯一的失忆者，其记忆碎片与日志内容逐渐重合，揭示出他并非无辜的受害者，而是启动城市自毁程序的“清道夫”。",
+        "world_rule_ids": [
+          "0a868155-997f-53b5-99c8-0b1c8c5e2c82",
+          "061053a3-a020-503c-8de5-fe025a767e34",
+          "64198e30-4b85-560c-95cf-f1dc2ffbbd8c",
+          "073caaf9-a30b-5acc-99b4-d3c7428e4345",
+          "c49b0597-6367-546b-b5cc-c58980064284"
+        ],
+        "location_ids": [
+          "8dfe346a-82a6-5cbe-b475-0b08feeff64a",
+          "84a7cce1-b803-5f12-926e-cf6c4486f4fe",
+          "285be529-e2ed-566f-88ab-1e7f41d8c0b1"
+        ],
+        "character_ids": [],
+        "outline": null
+      }
+    }
+  }
+}

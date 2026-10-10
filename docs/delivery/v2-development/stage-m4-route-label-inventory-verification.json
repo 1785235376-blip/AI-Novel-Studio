@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-10T08:14:10.462464+00:00",
+  "status": "INVENTORY_AND_UNCHANGED_OWNER_SOURCE_VERIFIED",
+  "not_test_execution": true,
+  "parent": "a880c22509091e1f085a06ad6ef0360cedce57c5",
+  "manifest_sha256": "706912e6df88fee3366e0b797a8ac315d1f07b995f9185f52edd15c2be5fcd62",
+  "unchanged_product_nodes": 10727,
+  "exact_old_order_skips_external_gates": true,
+  "only_changed_bound_inputs": [
+    "frontend/src/creative/GraphModelExecutionPanel.test.tsx",
+    "frontend/src/creative/GraphModelExecutionPanel.tsx"
+  ],
+  "all_current_bound_source_hashes_verified": true,
+  "unchanged_backend_test_workflow_runner_inputs": 1017,
+  "catalog_byte_identical_to_parent": [
+    "API_CATALOG.json",
+    "API_CATALOG.md",
+    "API_CATALOG_DETAIL.json.gz",
+    "API_OPENAPI.json.gz"
+  ],
+  "frozen_v1_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "boundary": "Only new M4 select accessible name and one additive UI regression. Earlier source-bound File/PG results remain earlier execution evidence, not a new full-tree run. Actual new browser E2E remains pending. Historical independent audit BLOCKED unchanged."
+}

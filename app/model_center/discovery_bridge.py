@@ -1,0 +1,280 @@
+"""Explicit-enable bridge to the application's existing text/image registries.
+
+Discovery/enable never calls generation or starts processes. The live guard is
+checked again by the adapter at dispatch, so disabled registrations cannot route.
+"""
+from __future__ import annotations
+
+import threading
+import time
+import json
+from dataclasses import replace
+from urllib.parse import urlsplit
+
+from ..asset_providers import Automatic1111ImageProvider, ComfyUIImageProvider
+from ..model_runtime import (GenerationEvent, GenerationUsage, ModelDescriptor, ModelRuntimeError, Modality,
+    ProviderDescriptor, RuntimeErrorCode, TextGenerationResponse)
+from .discovery_probes import LocalProbeClient, ProbeFailure, ollama_token_counts
+from .discovery_types import LocalRuntimeInput, local_endpoint
+from .domain import Capability, RuntimeDefinition, RuntimeManagement, RuntimeType
+from .runtime_profiles import resynthesize_runtime_argv
+
+
+def _llama_grammar_schema(value):
+    """Keep shape/refs/enums; enforce numeric/length bounds on the host.
+
+    Large bounded strings expand into thousands of grammar repetitions on
+    llama.cpp. This wire projection avoids its grammar compiler capacity limit;
+    the original complete schema remains mandatory for response validation.
+    """
+    if isinstance(value, dict):
+        return {key: _llama_grammar_schema(item) for key, item in value.items()
+                if key not in {'minLength', 'maxLength', 'minItems', 'maxItems', 'minimum', 'maximum'}}
+    if isinstance(value, list):
+        return [_llama_grammar_schema(item) for item in value]
+    return value
+
+
+class _LocalImageTransport:
+    def __init__(self, endpoint): self.endpoint = local_endpoint(endpoint)
+    def _request(self, method, url, **kwargs):
+        import httpx
+        # All dynamic ComfyUI paths remain on the same already-approved origin.
+        parsed, origin = urlsplit(url), urlsplit(self.endpoint)
+        if (parsed.scheme, parsed.netloc) != (origin.scheme, origin.netloc) or parsed.username or parsed.password:
+            raise ValueError('LOCAL_AI_DESTINATION_REJECTED')
+        with httpx.Client(trust_env=False, follow_redirects=False, timeout=kwargs.pop('timeout', 30)) as client:
+            with client.stream(method, url, **kwargs) as response:
+                if response.is_redirect: raise ValueError('LOCAL_AI_REDIRECT_REJECTED')
+                body = bytearray()
+                for chunk in response.iter_bytes():
+                    body.extend(chunk)
+                    if len(body) > 64 * 1024 * 1024: raise ValueError('LOCAL_AI_RESPONSE_TOO_LARGE')
+                return httpx.Response(response.status_code, headers=response.headers, content=bytes(body), request=response.request)
+    def get(self, url, **kwargs): return self._request('GET', url, **kwargs)
+    def post(self, url, **kwargs): return self._request('POST', url, **kwargs)
+
+
+class LocalTextAdapter:
+    def __init__(self, bridge, candidate):
+        self.bridge, self.candidate = bridge, candidate
+        self.provider_id = candidate['provider_id']
+        self.client = LocalProbeClient(timeout=120)
+        self.execution_lock = threading.Lock()
+
+    def health_check(self):
+        try:
+            self.bridge.guard(self.candidate['id'])
+            config = self.candidate['runtime_config']
+            if config['management'] == 'MANAGED': return bool(config.get('executable'))
+            path = '/api/tags' if config['type'] == 'OLLAMA' else '/v1/models'
+            self.bridge.service.client.json(config['endpoint'], path)
+            return True
+        except (ValueError, KeyError, ModelRuntimeError): return False
+
+    def generate_text(self, request):
+        with self.execution_lock:
+            candidate = self.bridge.guard(self.candidate['id'])
+            if request.preparation_guard is not None:
+                # Reauthorize after waiting for the execution lock and before
+                # preparation can launch a managed runtime. Keep this guarded
+                # branch on a snapshot: later in-place mutation cannot upgrade
+                # an external-only invocation into managed process startup.
+                from copy import deepcopy
+                candidate = deepcopy(candidate)
+                request.preparation_guard()
+                # Prepared requests currently authorize external services only.
+                # Also check the captured config: the callback may observe a
+                # newer registry candidate than this adapter's initial read.
+                if candidate.get('runtime_config', {}).get('management') != 'EXTERNAL':
+                    raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION,
+                                            '已准备的任务仅允许已验证的外部本地服务')
+            config = candidate['runtime_config']
+            if request.structured_output_schema is not None and config['type'] != 'LLAMA_CPP':
+                raise ModelRuntimeError(RuntimeErrorCode.CAPABILITY_NOT_SUPPORTED, '当前本地接口不支持结构化输出')
+            if request.cancellation and request.cancellation.is_set():
+                raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, '已停止生成')
+            managed = None
+            started = time.monotonic()
+            try:
+                if config['type'] == 'LLAMA_CPP' and config['management'] == 'MANAGED':
+                    try: self.bridge.service.check_model_dispatch(candidate)
+                    except ValueError as exc:
+                        raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, '本地模型证据已变化，请重新验证') from exc
+                    managed = self.bridge.launch_on_demand(candidate)
+                self.bridge.guard(candidate['id'])
+                try: self.bridge.service.check_model_dispatch(candidate)
+                except ValueError as exc:
+                    raise ModelRuntimeError(RuntimeErrorCode.INVALID_CONFIGURATION, '本地模型来源或版本已变化，请重新验证后启用') from exc
+                self.bridge.guard(candidate['id'])
+                # Waiting for a managed process is preparation, not dispatch.
+                # Re-authorize after startup and reject cancellation before any prompt leaves.
+                if request.dispatch_guard is not None:
+                    request.dispatch_guard()
+                if request.cancellation and request.cancellation.is_set():
+                    raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, '已停止生成')
+                authorized = self.bridge.guard(candidate['id'])
+                if authorized.get('enabled_at') != candidate.get('enabled_at'):
+                    raise ModelRuntimeError(RuntimeErrorCode.MODEL_DISABLED, '本地模型授权已变化，请重新提交任务')
+                if config['type'] == 'OLLAMA':
+                    options = {}
+                    if request.parameters.temperature is not None: options['temperature'] = request.parameters.temperature
+                    if request.parameters.max_output_tokens is not None: options['num_predict'] = request.parameters.max_output_tokens
+                    if request.parameters.stop_sequences: options['stop'] = list(request.parameters.stop_sequences)
+                    body = {'model': candidate['model_name'], 'prompt': request.prompt, 'stream': False, 'options': options}
+                    if request.system_instruction: body['system'] = request.system_instruction
+                    data = self.client.json(config['endpoint'], '/api/generate', body=body)
+                    if not isinstance(data, dict) or data.get('done') is not True or data.get('error'):
+                        raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED, '本地模型未返回完成标记')
+                    text = data.get('response')
+                    input_count, output_count = ollama_token_counts(data)
+                    usage = (GenerationUsage(input_count, output_count, input_count + output_count if input_count is not None and output_count is not None else None)
+                             if input_count is not None or output_count is not None else None)
+                else:
+                    messages = [{'role':'user', 'content':request.prompt}]
+                    if request.system_instruction: messages.insert(0, {'role':'system', 'content':request.system_instruction})
+                    body = {'model': config.get('model_id') or candidate['model_name'], 'messages': messages, 'stream': False}
+                    if request.parameters.temperature is not None: body['temperature'] = request.parameters.temperature
+                    if request.parameters.max_output_tokens is not None: body['max_tokens'] = request.parameters.max_output_tokens
+                    if request.parameters.stop_sequences: body['stop'] = list(request.parameters.stop_sequences)
+                    if request.structured_output_schema is not None:
+                        body['response_format'] = {'type': 'json_object', 'schema': _llama_grammar_schema(request.structured_output_schema)}
+                    path = '/chat/completions' if config['endpoint'].endswith('/v1') else '/v1/chat/completions'
+                    data = self.client.json(config['endpoint'], path, body=body)
+                    finish = (data.get('choices') or [{}])[0].get('finish_reason')
+                    if finish in {'length', 'content_filter'}:
+                        raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED, '本地模型输出未完整结束，请检查上下文容量或输出预算')
+                    text = ((data.get('choices') or [{}])[0].get('message') or {}).get('content')
+                    if request.structured_output_schema is not None:
+                        from jsonschema import validate, ValidationError, SchemaError
+                        try:
+                            validate(json.loads(text), dict(request.structured_output_schema))
+                        except (ValueError, TypeError, ValidationError, SchemaError) as exc:
+                            raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED, '本地模型输出未满足完整结构化契约') from exc
+                    measured = data.get('usage')
+                    usage = None
+                    if isinstance(measured, dict):
+                        def count(key):
+                            value = measured.get(key)
+                            return value if type(value) is int and value >= 0 else None
+                        inputs, outputs, total = count('prompt_tokens'), count('completion_tokens'), count('total_tokens')
+                        if inputs is not None or outputs is not None or total is not None:
+                            usage = GenerationUsage(inputs, outputs, total)
+                if request.cancellation and request.cancellation.is_set():
+                    raise ModelRuntimeError(RuntimeErrorCode.CANCELLED, '已停止生成')
+                if not isinstance(text, str) or not text.strip():
+                    raise ModelRuntimeError(RuntimeErrorCode.GENERATION_FAILED, '本地模型未返回正文')
+                return TextGenerationResponse(text, 'completed', request.provider_id, request.model_id, usage,
+                    int((time.monotonic()-started)*1000), execution_mode='real')
+            except ProbeFailure as exc:
+                raise ModelRuntimeError(RuntimeErrorCode.PROVIDER_UNAVAILABLE, '本地模型暂时不可用', retryable=True) from exc
+            finally:
+                if managed: self.bridge.service.center.lifecycle.stop(managed)
+
+    def stream_text(self, request):
+        # Buffered stream protocol: one final delta, never advertised as live token streaming.
+        yield GenerationEvent('generation.started', request.job_id)
+        response = self.generate_text(request)
+        yield GenerationEvent('generation.delta', request.job_id, delta=response.text)
+        yield GenerationEvent('generation.completed', request.job_id, response=response)
+
+
+class LocalImageAdapter:
+    def __init__(self, bridge, candidate):
+        self.bridge, self.candidate = bridge, candidate
+        self.endpoint = candidate['runtime_config']['endpoint']
+        self.default_model = candidate['id']
+        cls = Automatic1111ImageProvider if candidate['runtime_type'] == 'AUTOMATIC1111' else ComfyUIImageProvider
+        self.delegate = cls(_LocalImageTransport(self.endpoint), self.endpoint)
+    def health_check(self):
+        try: self.bridge.guard(self.candidate['id']); return self.delegate.health_check()
+        except (ValueError, KeyError, ModelRuntimeError): return False
+    def generate(self, request):
+        candidate = self.bridge.guard(self.candidate['id'])
+        self.bridge.service.check_model_dispatch(candidate)
+        current = self.bridge.guard(candidate['id'])
+        if current.get('enabled_at') != candidate.get('enabled_at'): raise ValueError('LOCAL_AI_CONFIGURATION_CHANGED')
+        if request.model_id not in {'', candidate['id'], candidate['model_name']}:
+            raise ValueError('LOCAL_AI_MODEL_MISMATCH')
+        if request.dispatch_guard is not None:
+            request.dispatch_guard()
+        # Metadata validation can block; recheck enablement after its caller's
+        # current source/budget guard and immediately before inference.
+        current = self.bridge.guard(candidate['id'])
+        if current.get('enabled_at') != candidate.get('enabled_at'): raise ValueError('LOCAL_AI_CONFIGURATION_CHANGED')
+        result = self.delegate.generate(replace(request, model_id=candidate['model_name']))
+        return replace(result, model_id=candidate['id'])
+
+
+class LocalDiscoveryBridge:
+    def __init__(self, service, runtime, asset_registry):
+        self.service, self.runtime, self.asset_registry = service, runtime, asset_registry
+        self.launch_lock = threading.RLock()
+        # Reuse already-saved legacy runtime endpoints without probing them.
+        # Non-loopback historical configurations are excluded, never broadened.
+        providers = getattr(runtime, 'providers', {})
+        ollama = providers.get('ollama')
+        sources = []
+        if ollama is not None:
+            sources.append(('configured-ollama', 'Saved Ollama', 'OLLAMA', getattr(ollama, 'base_url', '')))
+        for identifier, adapter in asset_registry._providers.items():
+            if isinstance(adapter, ComfyUIImageProvider): kind = 'COMFYUI'
+            elif isinstance(adapter, Automatic1111ImageProvider): kind = 'AUTOMATIC1111'
+            else: continue
+            sources.append(('configured-' + identifier, identifier, kind, getattr(adapter, 'endpoint', '')))
+        for identifier, name, kind, endpoint in sources:
+            try:
+                config = LocalRuntimeInput(name=name, type=kind, endpoint=endpoint)
+                service.configured_runtime_sources.append({'id': identifier, **config.model_dump()})
+            except ValueError: continue
+
+    def guard(self, identifier):
+        with self.service.lock:
+            candidate = self.service.registrations.get(identifier)
+            if not candidate or not candidate.get('enabled') or not candidate.get('enable_eligible'):
+                raise ModelRuntimeError(RuntimeErrorCode.MODEL_DISABLED, '本地模型尚未启用或需要重新验证')
+            return candidate
+
+    def __call__(self, candidate):
+        provider_id = candidate['provider_id']
+        enabled = bool(candidate.get('enabled'))
+        if 'TEXT' in candidate.get('verified_capabilities', []) or self.runtime.model_registry.contains(provider_id, candidate['id']):
+            adapter = LocalTextAdapter(self, candidate)
+            self.runtime.provider_registry.register(ProviderDescriptor(provider_id, candidate['display_name'], 'local',
+                frozenset({Modality.TEXT}), enabled, enabled, 'metadata_validated_inference_not_run' if enabled else 'disabled'), adapter, replace=True)
+            self.runtime.model_registry.register(ModelDescriptor(candidate['id'], provider_id, candidate['display_name'],
+                Modality.TEXT, frozenset({'generate', 'stream', 'buffered_stream'}), candidate['runtime_config'].get('context_size'),
+                structured_output=candidate['runtime_type']=='LLAMA_CPP', streaming=True, enabled=enabled), replace=True)
+        if enabled and 'IMAGE' in candidate['verified_capabilities']:
+            if candidate['runtime_type'] not in {'COMFYUI','AUTOMATIC1111'}:
+                raise ValueError('LOCAL_AI_IMAGE_ADAPTER_REQUIRED')
+            self.asset_registry.register(provider_id, LocalImageAdapter(self, candidate))
+        else:
+            self.asset_registry.unregister(provider_id)
+
+    def launch_on_demand(self, candidate):
+        config = candidate['runtime_config']
+        center = self.service.center
+        runtime_id = 'local-managed-' + candidate['id']
+        with self.launch_lock:
+            if any(process.poll() is None for process in center.lifecycle._owned.values()):
+                raise ModelRuntimeError(RuntimeErrorCode.PROVIDER_UNAVAILABLE, '已有托管模型运行，请先停止后重试')
+            parsed = urlsplit(config['endpoint'])
+            definition = RuntimeDefinition(runtime_id, RuntimeType.LLAMA_CPP, executable=config['executable'],
+                base_url=config['endpoint'], bind_address=parsed.hostname or '127.0.0.1', port=parsed.port,
+                health_endpoint='/v1/models', capabilities=(Capability.TEXT,), provider_adapter='OPENAI_COMPATIBLE_TEXT',
+                management=RuntimeManagement.MANAGED, model_path=candidate['local_path'],
+                context_size=config['context_size'], gpu_layers=config['gpu_layers'], threads=config.get('threads'), batch_size=config.get('batch_size'))
+            definition = resynthesize_runtime_argv(definition)
+            center.runtimes[runtime_id] = definition
+            center.lifecycle.start(definition)
+        try:
+            deadline = time.monotonic() + 30
+            while time.monotonic() < deadline:
+                self.guard(candidate['id'])
+                if center.lifecycle.health(definition).http_reachable: return runtime_id
+                time.sleep(.25)
+            raise ModelRuntimeError(RuntimeErrorCode.TIMEOUT, '本地运行时启动超时', retryable=True)
+        except Exception:
+            center.lifecycle.stop(runtime_id)
+            raise

@@ -1,0 +1,26 @@
+Listing tests:
+  [v2-live-chromium] › v2-creative-live.spec.ts:111:1 › real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript
+  [v2-live-chromium] › v2-creative-live.spec.ts:206:1 › real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals
+  [v2-live-chromium] › v2-creative-live.spec.ts:236:1 › real File V2 scope and stale-write fencing keeps the browser draft and rejects foreign sources
+  [v2-live-chromium] › v2-creative-live.spec.ts:282:1 › real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript
+  [v2-live-chromium] › v2-creative-live.spec.ts:346:1 › real HTTP File V2 scope, cancel and stale source fences remain authoritative
+  [v1-chromium] › v2-creative-live.spec.ts:267:1 › V1 default-off backend and browser never expose the V2 workbench or accept creative writes
+  [v1-chromium] › v2-creative-live.spec.ts:379:1 › real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes
+Total: 7 tests in 1 file
+Listing tests:
+  [v2-live-chromium] › v2-asset-relationships-live.spec.ts:41:1 › real File optional asset relationships persist, protect targets and remove explicitly with no chapter prerequisite
+  [v2-live-chromium] › v2-independent-graph-live.spec.ts:35:1 › real independent typed graph saves empty and disconnected drafts, reopens, and reviews an original local workflow without model calls
+  [v2-live-chromium] › v2-independent-studio-live.spec.ts:88:1 › real File independent studio imports, persists, reopens and exports an image with no chapters or model mutation
+  [v2-live-chromium] › v2-independent-studio-live.spec.ts:207:1 › real File independent VIDEO imports, decodes, reopens and exports original bytes without chapters or director
+  [v1-chromium] › v2-independent-graph-live.spec.ts:106:3 › default-off: independent graph remains unavailable without its server gate
+  [v1-chromium] › v2-independent-studio-live.spec.ts:281:1 › default-off independent studio entry is absent and neutral project writes are rejected
+  [v1-acceptance-chromium] › v2-independent-graph-live.spec.ts:106:3 › acceptance-mode: independent graph remains unavailable without its server gate
+  [v1-acceptance-chromium] › v2-independent-studio-live.spec.ts:285:1 › acceptance-mode independent studio stays absent despite an enabled narrative feature setting
+  [m3-consent-chromium] › v2-local-ai-consent-live.spec.ts:48:1 › M3 enabled original File HTTP UI reviews synthetic host scope before explicit confirmation
+  [m3-consent-chromium] › v2-local-ai-files-live.spec.ts:47:1 › M3 files original File HTTP UI reuses observed metadata without claiming inference
+  [m3-consent-chromium] › v2-local-ai-prerequisites-live.spec.ts:59:1 › M3 prerequisites original File HTTP UI separates advertisements and unknown catalogue requirements
+  [m3-default-off-chromium] › v2-local-ai-consent-live.spec.ts:82:62 › M3 default-off keeps original UI and rejects new onboarding routes without probes
+  [m3-default-off-chromium] › v2-local-ai-legacy-host-live.spec.ts:48:65 › M3 legacy default-off uses verified host for explicit scan and clears revoked private state
+  [m3-acceptance-chromium] › v2-local-ai-consent-live.spec.ts:82:62 › M3 acceptance-mode keeps original UI and rejects new onboarding routes without probes
+  [m3-acceptance-chromium] › v2-local-ai-legacy-host-live.spec.ts:48:65 › M3 legacy acceptance-mode uses verified host for explicit scan and clears revoked private state
+Total: 15 tests in 7 files

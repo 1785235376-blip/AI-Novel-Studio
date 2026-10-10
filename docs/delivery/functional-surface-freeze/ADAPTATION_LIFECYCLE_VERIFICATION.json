@@ -1,0 +1,95 @@
+{
+  "feature": "adaptation_lifecycle_v1",
+  "status": "PARTIAL",
+  "owner": "Original NovelRepository.adaptation_proposals and existing manuscript authorities",
+  "source_sha_at_verification": "f25f08bd978a01aa32ecb713871b1a70ce1732ce",
+  "working_tree_changes_included": true,
+  "python": {
+    "status": "PASSED",
+    "results": {
+      "collected": 58,
+      "passed": 37,
+      "skipped": 21,
+      "failed": 0,
+      "errors": 0
+    },
+    "files": [
+      "tests/test_phase7_adaptation.py",
+      "tests/test_phase7_adaptation_authorization.py",
+      "tests/test_surface_adaptation_lifecycle.py",
+      "tests/test_surface_adaptation_api.py",
+      "tests/test_surface_adaptation_projection.py"
+    ]
+  },
+  "frontend": {
+    "status": "PASSED",
+    "passed": 62,
+    "files": 7,
+    "new_test_cases": 21,
+    "retained_regression_cases": 41
+  },
+  "typescript": {
+    "status": "PASSED",
+    "command": "tsc --noEmit"
+  },
+  "browser": {
+    "execution": "NOT_RUN",
+    "collection": "PASSED",
+    "configuration": "frontend/playwright.surface.config.ts",
+    "spec": "frontend/tests/e2e/surface-freeze-adaptation.spec.ts",
+    "reason": "Local Chromium socket launch denied in this environment; no retry or alternate browser route. Hosted Chromium required.",
+    "geometry_viewports": [
+      [
+        1366,
+        768
+      ],
+      [
+        1440,
+        900
+      ],
+      [
+        1920,
+        1080
+      ]
+    ]
+  },
+  "postgresql": {
+    "execution": "NOT_RUN_LOCAL",
+    "contract_cases": 21,
+    "reason": "No disposable PostgreSQL configured locally. Existing backend selection skips marked PostgreSQL cases in File runs. Hosted disposable PostgreSQL required; no SQLite substitute."
+  },
+  "model_execution": {
+    "real": "NOT_CONFIGURED",
+    "synthetic": "MOCK_ONLY",
+    "quality": "NOT_RUN",
+    "original_job_manager_integration": "NOT_CONFIGURED",
+    "paid_calls": 0
+  },
+  "recovery": {
+    "clean_checkpoint_resume": "CONTRACT_VERIFIED",
+    "late_result_cancellation_fence": "CONTRACT_VERIFIED",
+    "known_apply_receipt_reconciliation": "CONTRACT_VERIFIED",
+    "unknown_creation_write": "OPERATOR_RECONCILIATION_REQUIRED_NO_REPLAY"
+  },
+  "original_test_preservation": "ADAPTATION_FIXTURE_EXCEPTION.json",
+  "source_sha256": {
+    "app/services/adaptation_service.py": "2ac6124cffab0d6cdcae0d851b61aeaf61c83d97e5f99d34021e7db0b8225242",
+    "app/repositories/adaptation_versions.py": "367d2fa1eab2f1cb8470131b3a4c3ca8609b695ff4e8d34f9cab701556e0add3",
+    "app/adaptation_api.py": "7c72a5e89780d1bbf0bf4cec46ec077a44457f5ffda3205d200a6f0db716047c",
+    "app/experimental/adaptation_projection.py": "dbc51d4bbf0f44b0defb57d7f9a19491d4abf9f18645c13f6241e1600682e91e",
+    "app/application/persistence.py": "7d77e380f8fbf84928ade130c4c022469636a62bbe7fd4e89c1e42c44c50c3a4",
+    "frontend/src/novel/AdaptationPanel.tsx": "bff95e9be2979d70de6320cf99dffc79b72640bc578cdab10731babc4f7934a9",
+    "frontend/src/novel/adaptation.css": "4d65cd1dbfd97ed74d63158c2b215e277b2779f4def788f23fbab729fb1b124c",
+    "frontend/src/novel/PipelineStatusPanel.tsx": "cffe857a56ce36598bba66e23aaf4065793ced6fae25547a193badc03ee3c03c",
+    "frontend/src/novel/ScreenplayPipelinePanel.tsx": "0450a61af9a3fe0282e7640ec12561af922a2de0da1cc3fcacc71d819d4b52aa",
+    "frontend/src/AppAdaptationNavigation.test.tsx": "ba8b8c4221d2dab24a60485d98a7e9cd9742d7894af52b4238d1996ab7b831e1",
+    "frontend/src/novel/AdaptationPanel.test.tsx": "18f71b549829c995ca084d5659b9654901abc5780b0f9a426e613315bcbdd337",
+    "frontend/src/novel/ScreenplayPipelinePanel.test.tsx": "e49e0e2b795410d335302488e8eeadc32f02a5e32fd287ffb2758784202babb7",
+    "frontend/tests/e2e/surface-freeze-adaptation.spec.ts": "86173cf1bdf40222931ee4ac092790910f37fb7488f5a3a2f1b55d8f31e22936",
+    "tests/test_surface_adaptation_api.py": "8207e136aea60820dae864f4f393c01f5b4db65d3b6fc80e948a9d0abdfd0dcb",
+    "tests/test_surface_adaptation_lifecycle.py": "6a12cf5b377237d510531fe09d3cf819ed6d8f1309c1dfd5e704728b0f1cb7a0",
+    "tests/test_surface_adaptation_projection.py": "540b9cf86e4cb0297397e6fba63b5dbcece7435483c327b40ef4efc23d80577a",
+    "tests/test_phase7_adaptation_authorization.py": "afaf87eae08a712245e87f5d2a43414b006c7f20c5df63ce3e78b00f7e742a0a"
+  },
+  "evidence_publication": "Sanitized counts and source hashes only; raw synthetic run logs are not published."
+}

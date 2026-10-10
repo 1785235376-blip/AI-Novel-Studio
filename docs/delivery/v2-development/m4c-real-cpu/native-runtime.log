@@ -1,0 +1,13 @@
+0.00.028.687 I srv  llama_server: initializing ...
+0.00.028.723 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.028.845 I srv  init_listene: The UI is disabled
+0.00.028.851 I srv  init_listene: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable
+0.00.028.963 W srv  llama_server: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)
+0.00.032.122 I srv    load_model: loading model '/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/m4c/models/qwen2.5-0.5b-instruct-q4_k_m.gguf'
+0.00.654.648 W load: control-looking token: 128247 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden
+0.00.834.490 I cmn          init: llama threadpool init, n_threads = 2
+0.00.931.848 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 2048, kv_unified = 'false'
+0.00.931.956 W srv          init: --cache-idle-slots requires --cache-ram, disabling
+0.00.937.154 I srv  llama_server: model loaded
+0.00.937.187 I srv  llama_server: listening on http://127.0.0.1:18080
+0.01.001.174 I srv    operator(): operator(): cleaning up before exit...

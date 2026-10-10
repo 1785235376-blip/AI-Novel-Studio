@@ -1,0 +1,289 @@
+{
+  "schema_version": 1,
+  "status": "FUNCTIONAL_SURFACE_CONTRACT",
+  "top_level_modules_added": [],
+  "shared_states": {
+    "LOADING": "Disable duplicate commands; retain original request ID/body and captured scope/version.",
+    "EMPTY": "No participants, devices or manifests; never fabricate active people from membership.",
+    "ERROR": "Show bounded error code; preserve local input and explicit retry/recovery path.",
+    "UNAUTHORIZED": "Stop push and clear cached source/cursor content; server re-resolves current authority.",
+    "DISABLED": "Server-owned runtime flag/dependencies off; direct routes fail closed before parsing input.",
+    "NOT_CONFIGURED": "Production realtime/cloud/encryption and branch sync are unavailable; no fake success.",
+    "PARTIAL": "Functional engineering and synthetic local transport only, no production deployment claim.",
+    "CONFLICT": "Show preserved intent/current version; strict CAS, no silent rebase or last-write-wins.",
+    "REVIEW": "Explicit prepare/apply or original inbox diff3 review; no automatic manuscript reconciliation.",
+    "RECOVERY": "Inspect uncertain outcomes; adopt exact evidence or close without replay; never automatic retry."
+  },
+  "surfaces": [
+    {
+      "id": "realtime-collaboration",
+      "module": "Collaboration",
+      "entry": "Existing WriterRoom panel; formal Realtime inspector contract",
+      "owner": "WriterRoomService.realtime / original mainline or BranchManuscriptService authority",
+      "flag": "realtime_collaboration_v1",
+      "dependencies": [
+        "writer_room_v2",
+        "branch_manuscript_v1",
+        "unified_review_inbox"
+      ],
+      "components": [
+        "AdapterStatus",
+        "ParticipantList",
+        "LeaseState",
+        "CursorSelectionInspector",
+        "VersionedEditReview",
+        "ConflictCandidates",
+        "RecoveryActions"
+      ],
+      "api_prefix": "/api[/v1]/novels/{nid}/experimental/writer-room/realtime",
+      "apis": [
+        {
+          "method": "GET",
+          "path": "",
+          "purpose": "contract and adapter state"
+        },
+        {
+          "method": "GET",
+          "path": "/participants",
+          "purpose": "snapshot only"
+        },
+        {
+          "method": "POST",
+          "path": "/participants",
+          "body": "JoinIn"
+        },
+        {
+          "method": "POST",
+          "path": "/participants/{rid}/actions",
+          "body": "ParticipantActionIn"
+        },
+        {
+          "method": "PUT",
+          "path": "/participants/{rid}/cursor",
+          "body": "CursorIn"
+        },
+        {
+          "method": "POST",
+          "path": "/operations",
+          "body": "EditIn"
+        },
+        {
+          "method": "GET",
+          "path": "/operations/{rid}",
+          "purpose": "authorized preserved intent"
+        },
+        {
+          "method": "POST",
+          "path": "/operations/{rid}/actions",
+          "body": "OperationIn"
+        }
+      ],
+      "permissions": {
+        "read": "domain.read + active trusted session/current membership",
+        "edit": "domain.write + participant session owner",
+        "revoke_other": "domain.review",
+        "read_other_intent": "domain.review"
+      },
+      "scope": [
+        "workspace",
+        "project",
+        "storyline",
+        "branch",
+        "session",
+        "chapter"
+      ],
+      "versions": [
+        "participant CAS",
+        "source document version+digest",
+        "operation CAS",
+        "lease server epoch"
+      ],
+      "participant_states": [
+        "ACTIVE",
+        "EXPIRED",
+        "DISCONNECTED",
+        "LEFT",
+        "REVOKED"
+      ],
+      "operation_states": [
+        "PREPARED",
+        "CONFLICT",
+        "CLAIMED",
+        "APPLIED",
+        "CANCELLED",
+        "UNKNOWN",
+        "ADOPTED",
+        "CLOSED_WITHOUT_REPLAY"
+      ],
+      "actions": [
+        "join",
+        "heartbeat",
+        "cursor/selection update",
+        "disconnect",
+        "reconnect",
+        "leave",
+        "revoke",
+        "prepare edit",
+        "apply",
+        "cancel",
+        "inspect recovery",
+        "adopt",
+        "close without replay"
+      ],
+      "navigation": [
+        "Exact authoritative branch/mainline chapter",
+        "Original chapter history",
+        "Writer-room assignments/comments",
+        "Operation conflict/recovery"
+      ],
+      "engineering_invariants": [
+        "Synthetic actual callback push; HTTP list is snapshot only",
+        "No OT/CRDT claim",
+        "No mainline branch fallback",
+        "Atomic branch manuscript+journal transaction",
+        "External mainline UNKNOWN cannot replay",
+        "Revision locks and source visibility enforced",
+        "Restart disconnects leases/subscriptions"
+      ]
+    },
+    {
+      "id": "production-sync",
+      "module": "Collaboration",
+      "entry": "Existing OfflineSync panel; formal Production Sync inspector contract",
+      "owner": "OfflineSyncService.production / original offline outbox/inbox",
+      "flag": "production_sync_v1",
+      "dependencies": [
+        "offline_sync_v2",
+        "project_forks_v2"
+      ],
+      "components": [
+        "DeviceIdentity",
+        "ManifestInspector",
+        "ObjectMetadata",
+        "RichDeltaReview",
+        "TransferCheckpoint",
+        "RevocationState",
+        "OriginalInboxNavigation"
+      ],
+      "api_prefix": "/api[/v1]/novels/{nid}/experimental/offline-sync/production",
+      "apis": [
+        {
+          "method": "GET",
+          "path": "",
+          "purpose": "capability and missing configuration"
+        },
+        {
+          "method": "GET",
+          "path": "/records",
+          "purpose": "content-free record summaries"
+        },
+        {
+          "method": "POST",
+          "path": "/devices",
+          "body": "DeviceIn"
+        },
+        {
+          "method": "POST",
+          "path": "/devices/{rid}/revoke",
+          "body": "VersionIn"
+        },
+        {
+          "method": "POST",
+          "path": "/manifests",
+          "body": "ManifestIn"
+        },
+        {
+          "method": "GET",
+          "path": "/manifests/{rid}",
+          "purpose": "permission-aware exact delta evidence"
+        },
+        {
+          "method": "POST",
+          "path": "/transfers",
+          "body": "TransferIn"
+        },
+        {
+          "method": "POST",
+          "path": "/transfers/{rid}/actions",
+          "body": "TransferActionIn"
+        }
+      ],
+      "permissions": {
+        "read": "Original host session + domain.read",
+        "write": "Original host session + domain.review",
+        "records": "actor-owned local scope"
+      },
+      "scope": [
+        "project",
+        "explicit local channel",
+        "selected chapter",
+        "actor",
+        "device identity epoch"
+      ],
+      "branch_scope": "NOT_CONFIGURED; reject collaboration branches rather than read mainline",
+      "versions": [
+        "channel CAS",
+        "manifest parent version/digest",
+        "source version/digest",
+        "device epoch",
+        "transfer CAS",
+        "original outbox/inbox versions"
+      ],
+      "device_states": [
+        "ACTIVE",
+        "REVOKED"
+      ],
+      "transfer_states": [
+        "PREPARED",
+        "RUNNING",
+        "PAUSED",
+        "COMPLETED",
+        "CANCELLED",
+        "REVOKED"
+      ],
+      "actions": [
+        "register device",
+        "revoke device",
+        "seal manifest",
+        "inspect rich delta",
+        "prepare selected transfer",
+        "dispatch configured synthetic adapter",
+        "cancel",
+        "resume after worker lease",
+        "open original inbox review"
+      ],
+      "navigation": [
+        "Original offline channel selection",
+        "Existing outbox",
+        "Original inbox diff3 review",
+        "Authoritative chapter/history",
+        "Transfer receipt checkpoint"
+      ],
+      "engineering_invariants": [
+        "No arbitrary URL/credentials/executable adapter input",
+        "No production cloud or encryption claim",
+        "Manifest deltas reconstruct exactly; wire remains existing snapshot v1",
+        "30-second worker lease; explicit resume",
+        "Durable original ACK before secondary checkpoint",
+        "Device/channel/source/session/flag rechecked",
+        "Delivery never applies manuscript",
+        "Received copies cannot be recalled"
+      ]
+    }
+  ],
+  "opus_visual_scope": [
+    "DS-v1.0 panel arrangement within existing Collaboration",
+    "Accessible controls and status presentation",
+    "Inspector typography and labels"
+  ],
+  "opus_protected_behavior": [
+    "Original manuscript owners",
+    "Current permission/branch/source boundaries",
+    "Version+digest CAS",
+    "Strict bounded input",
+    "Review/apply/cancel/recovery semantics",
+    "No automatic uncertain-write replay",
+    "Runtime verification labels",
+    "Frozen PoemSeed Local Interop 1.0"
+  ]
+}

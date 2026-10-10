@@ -3,11 +3,14 @@ name = "ai-novel-studio"
 version = "0.7.0"
 description = "Local-first hybrid AI novel production service"
 requires-python = ">=3.11"
-dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1", "psycopg[binary]>=3.2,<4", "sqlalchemy>=2.0,<3", "httpx>=0.27,<1", "pydantic-settings>=2.6,<3", "reportlab>=4.0,<5"]
+dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1", "psycopg[binary]>=3.2,<4", "sqlalchemy>=2.0,<3", "httpx>=0.27,<1", "pydantic-settings>=2.6,<3", "reportlab>=4.0,<5", "pypdf==6.19.0", "jsonschema>=4.18,<5"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8,<9"]
+dev = ["pytest>=8,<9", "jsonschema>=4.18,<5"]
 vault = ["keyring>=25,<26"]
+fontbuild = ["fonttools==4.59.1"]
+otio = ["opentimelineio==0.18.1"]
+comic = ["Pillow==12.3.0", "fonttools==4.59.1"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
@@ -20,5 +23,8 @@ markers = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["app*"]
+include = ["app*", "local_interop_protocol*", "local_interop_desktop*"]
 exclude = ["tests*", "frontend*", "novel_data*", "prompts*", "workflows*"]
+
+[tool.setuptools.data-files]
+"contracts/local-interop/v1" = ["contracts/local-interop/v1/*.json", "contracts/local-interop/v1/*.ts", "contracts/local-interop/v1/*.rs", "contracts/local-interop/v1/*.md"]

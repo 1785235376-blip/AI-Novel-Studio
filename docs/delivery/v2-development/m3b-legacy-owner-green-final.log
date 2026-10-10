@@ -1,0 +1,22 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ✓ src/localAiDiscoveryConsentApi.test.ts (20 tests) 27ms
+ ✓ src/localAiDiscoveryLegacyOwner.test.ts (14 tests) 30ms
+ ✓ src/ui/ModelCenter.test.tsx (10 tests) 444ms
+ ✓ src/ui/ModelCenterLegacyOwner.test.tsx (4 tests) 441ms
+ ✓ src/ui/LocalAiDiscovery.test.tsx (24 tests) 509ms
+ ✓ src/ui/LocalAiModelFiles.test.tsx (20 tests) 817ms
+ ✓ src/localHostSession.test.ts (6 tests) 15ms
+ ✓ src/ui/ModelCenterOnboarding.test.tsx (3 tests) 169ms
+ ✓ src/localAiDiscoveryApi.test.ts (3 tests) 9ms
+ ✓ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx (14 tests) 1269ms
+   ✓ all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=false) 764ms
+ ✓ src/ui/LocalAiDiscoveryConsent.test.tsx (23 tests) 1464ms
+   ✓ discloses all registered-model safety inspections without truncating the backend scope 310ms
+
+ Test Files  11 passed (11)
+      Tests  141 passed (141)
+   Start at  09:28:39
+   Duration  2.65s (transform 814ms, setup 0ms, collect 2.98s, tests 5.19s, environment 5.45s, prepare 1.00s)
+

@@ -1,0 +1,581 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.independent-live.config.ts",
+      "--list"
+    ],
+    "configFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/playwright.independent-live.config.ts",
+    "rootDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4-final1-inventory-independent",
+      "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-browser-collection-final1-independent-artifacts/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4-final1-inventory-independent",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "v2-live-chromium",
+        "name": "v2-live-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-(independent-studio|asset-relationships)-live\\.spec\\.ts/",
+          "/v2-independent-graph-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-browser-collection-final1-independent-artifacts/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4-final1-inventory-independent",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "v1-chromium",
+        "name": "v1-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-(independent-studio|asset-relationships)-live\\.spec\\.ts/",
+          "/v2-independent-graph-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-browser-collection-final1-independent-artifacts/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4-final1-inventory-independent",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "v1-acceptance-chromium",
+        "name": "v1-acceptance-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-(independent-studio|asset-relationships)-live\\.spec\\.ts/",
+          "/v2-independent-graph-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-browser-collection-final1-independent-artifacts/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4-final1-inventory-independent",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "m3-consent-chromium",
+        "name": "m3-consent-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-local-ai-consent-live\\.spec\\.ts/",
+          "/v2-local-ai-files-live\\.spec\\.ts/",
+          "/v2-local-ai-prerequisites-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-browser-collection-final1-independent-artifacts/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4-final1-inventory-independent",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "m3-default-off-chromium",
+        "name": "m3-default-off-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-local-ai-consent-live\\.spec\\.ts/",
+          "/v2-local-ai-legacy-host-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-browser-collection-final1-independent-artifacts/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4-final1-inventory-independent",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "m3-acceptance-chromium",
+        "name": "m3-acceptance-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-local-ai-consent-live\\.spec\\.ts/",
+          "/v2-local-ai-legacy-host-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-browser-collection-final1-independent-artifacts/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4-final1-inventory-independent",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "m4-text-execution-chromium",
+        "name": "m4-text-execution-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-ai-execution-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-browser-collection-final1-independent-artifacts/junit.xml"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-browser-collection-final1-independent-artifacts/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "v2-asset-relationships-live.spec.ts",
+      "file": "v2-asset-relationships-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real File optional asset relationships persist, protect targets and remove explicitly with no chapter prerequisite",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d3dc649f5aa9e545672a-b5cc4b78ba045c5cafe7",
+          "file": "v2-asset-relationships-live.spec.ts",
+          "line": 41,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "v2-independent-graph-live.spec.ts",
+      "file": "v2-independent-graph-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real independent typed graph saves empty and disconnected drafts, reopens, and reviews an original local workflow without model calls",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d3e313306ef70a7f0f24-f3b518a5d0917725e63e",
+          "file": "v2-independent-graph-live.spec.ts",
+          "line": 35,
+          "column": 1
+        },
+        {
+          "title": "default-off: independent graph remains unavailable without its server gate",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v1-chromium",
+              "projectName": "v1-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d3e313306ef70a7f0f24-48318f7a00be8b4f18df",
+          "file": "v2-independent-graph-live.spec.ts",
+          "line": 106,
+          "column": 3
+        },
+        {
+          "title": "acceptance-mode: independent graph remains unavailable without its server gate",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v1-acceptance-chromium",
+              "projectName": "v1-acceptance-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "d3e313306ef70a7f0f24-0ae4b7312382ed35e066",
+          "file": "v2-independent-graph-live.spec.ts",
+          "line": 106,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "title": "v2-independent-studio-live.spec.ts",
+      "file": "v2-independent-studio-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real File independent studio imports, persists, reopens and exports an image with no chapters or model mutation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "94244f89a3cb547c226a-8e6d225c6e4f8eb25841",
+          "file": "v2-independent-studio-live.spec.ts",
+          "line": 88,
+          "column": 1
+        },
+        {
+          "title": "real File independent VIDEO imports, decodes, reopens and exports original bytes without chapters or director",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "94244f89a3cb547c226a-e8809d725f31c4a37a82",
+          "file": "v2-independent-studio-live.spec.ts",
+          "line": 207,
+          "column": 1
+        },
+        {
+          "title": "default-off independent studio entry is absent and neutral project writes are rejected",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v1-chromium",
+              "projectName": "v1-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "94244f89a3cb547c226a-068eeda949406680ebc5",
+          "file": "v2-independent-studio-live.spec.ts",
+          "line": 281,
+          "column": 1
+        },
+        {
+          "title": "acceptance-mode independent studio stays absent despite an enabled narrative feature setting",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v1-acceptance-chromium",
+              "projectName": "v1-acceptance-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "94244f89a3cb547c226a-f405fe41b3d451f7445d",
+          "file": "v2-independent-studio-live.spec.ts",
+          "line": 285,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "v2-local-ai-consent-live.spec.ts",
+      "file": "v2-local-ai-consent-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "M3 enabled original File HTTP UI reviews synthetic host scope before explicit confirmation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "m3-consent-chromium",
+              "projectName": "m3-consent-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "661644ff1bfe76ba115a-43986bb3434c70faffb0",
+          "file": "v2-local-ai-consent-live.spec.ts",
+          "line": 48,
+          "column": 1
+        },
+        {
+          "title": "M3 default-off keeps original UI and rejects new onboarding routes without probes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "m3-default-off-chromium",
+              "projectName": "m3-default-off-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "661644ff1bfe76ba115a-53980df3a295d4469ab4",
+          "file": "v2-local-ai-consent-live.spec.ts",
+          "line": 82,
+          "column": 62
+        },
+        {
+          "title": "M3 acceptance-mode keeps original UI and rejects new onboarding routes without probes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "m3-acceptance-chromium",
+              "projectName": "m3-acceptance-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "661644ff1bfe76ba115a-9559ac6bf5c46955d5d4",
+          "file": "v2-local-ai-consent-live.spec.ts",
+          "line": 82,
+          "column": 62
+        }
+      ]
+    },
+    {
+      "title": "v2-local-ai-files-live.spec.ts",
+      "file": "v2-local-ai-files-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "M3 files original File HTTP UI reuses observed metadata without claiming inference",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "m3-consent-chromium",
+              "projectName": "m3-consent-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "70192697db3ebe995f14-70c3259fff55a446d1f8",
+          "file": "v2-local-ai-files-live.spec.ts",
+          "line": 47,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "v2-local-ai-prerequisites-live.spec.ts",
+      "file": "v2-local-ai-prerequisites-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "M3 prerequisites original File HTTP UI separates advertisements and unknown catalogue requirements",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "m3-consent-chromium",
+              "projectName": "m3-consent-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "b0589f00f41ef33d437c-86ed2928630cf87389b9",
+          "file": "v2-local-ai-prerequisites-live.spec.ts",
+          "line": 59,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "v2-local-ai-legacy-host-live.spec.ts",
+      "file": "v2-local-ai-legacy-host-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "M3 legacy default-off uses verified host for explicit scan and clears revoked private state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "m3-default-off-chromium",
+              "projectName": "m3-default-off-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "adaae3afd47d25fa943c-c7e63c02c799d2d510a4",
+          "file": "v2-local-ai-legacy-host-live.spec.ts",
+          "line": 48,
+          "column": 65
+        },
+        {
+          "title": "M3 legacy acceptance-mode uses verified host for explicit scan and clears revoked private state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "m3-acceptance-chromium",
+              "projectName": "m3-acceptance-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "adaae3afd47d25fa943c-18530018adb3864bfac4",
+          "file": "v2-local-ai-legacy-host-live.spec.ts",
+          "line": 48,
+          "column": 65
+        }
+      ]
+    },
+    {
+      "title": "v2-ai-execution-live.spec.ts",
+      "file": "v2-ai-execution-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "M4 original File HTTP UI explicitly dispatches one built-in mock graph task, reviews, reopens, cancels and revokes without replay",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "m4-text-execution-chromium",
+              "projectName": "m4-text-execution-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "a584f1e34904b1359230-67d30558111cd7b451e2",
+          "file": "v2-ai-execution-live.spec.ts",
+          "line": 45,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-10T06:03:43.182Z",
+    "duration": 161.702,
+    "expected": 0,
+    "skipped": 16,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

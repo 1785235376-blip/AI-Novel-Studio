@@ -15,6 +15,8 @@ from ..repositories.chapter_repository import VersionConflict, _file_save_lock
 from ..repositories.postgres.common import chapter_or_raise, novel_or_raise
 from ..repositories.postgres.models import ChapterModel, DocumentVersionModel
 from ..storage import atomic_write
+from ..file_project_lifecycle import project_operation
+from .. import chapter_identity
 from .audit_service import AuditService
 
 
@@ -39,6 +41,8 @@ class PostgresAtomicChapterAuditPort:
             novel, chapter = chapter_or_raise(session, chapter_id)
             old_document = chapter.document or markdown_to_document("")
             old_updated_at = chapter.updated_at
+            from ..revision_constraints import preserve_revision_constraints
+            document = preserve_revision_constraints(old_document, document, source)
             markdown = document_to_markdown(document)
             title = chapter.title
             if document.get("content") and document["content"][0].get("type") == "heading":
@@ -72,19 +76,7 @@ class PostgresAtomicChapterAuditPort:
     def create_chapter_with_audit(self, project_id, title, operator, audit_event_factory):
         database = self.repository.database
         with database.session() as session:
-            novel = novel_or_raise(session, project_id)
-            session.execute(text("SELECT pg_advisory_xact_lock(hashtextextended(:key,0))"),
-                            {"key": f"chapter-create:{project_id}"})
-            number = (session.scalar(select(func.max(ChapterModel.chapter_number)).where(
-                ChapterModel.novel_id == novel.id)) or 0) + 1
-            markdown = f"# {title}\n"
-            chapter = ChapterModel(
-                novel_id=novel.id, chapter_number=number, title=title,
-                markdown_path=f"chapters/chapter-{number:04d}.md",
-                content_hash=hashlib.sha256(markdown.encode()).hexdigest(),
-                document=markdown_to_document(markdown), version=1,
-            )
-            session.add(chapter); session.flush()
+            novel, chapter = self.repository._create_in_session(session, project_id, {"title": title})
             created = self.repository._external(novel, chapter)
             event = audit_event_factory(created)
             session.execute(text(
@@ -147,9 +139,10 @@ class FileAtomicChapterAuditPort:
         del operator
         root = self.repository.backend.novels / project_id
         lock_path = root / "chapter_order.json"
-        with self.authorization.lock, _file_save_lock(lock_path):
-            current = self.repository.list(project_id)
-            number = max((row["number"] for row in current), default=0) + 1
+        # Validate the caller's project component before deriving any path or
+        # lazily initializing identity metadata.
+        with self.authorization.lock, project_operation(self.repository.backend.data, project_id):
+            number = chapter_identity.next_number(root)
             markdown_path = root / "chapters" / f"chapter-{number:04d}.md"
             package_path = root / "documents" / f"chapter-{number:04d}.json"
             snapshot = self._capture([markdown_path, package_path, lock_path, self.authorization.path])
@@ -197,9 +190,19 @@ class AtomicPathMutationPort:
     def _event(self, actor, action, target_type, target_id, scope):
         return self.audit.build(actor, action, target_type, target_id, scope)
 
-    def create_project(self, workspace_id, title, genre, actor):
+    def create_project(self, workspace_id, title, genre, actor, *, project_id=None, storyline_id=None, branch_id=None):
         from ..authorization import AuthorizationScope, ScopeKind
-        project_id, storyline_id, branch_id = str(uuid4()), str(uuid4()), str(uuid4())
+        from uuid import UUID
+        # Only trusted coordinators reserve these identifiers; public creation
+        # request models do not expose them. Validate before building any path.
+        reserved = (project_id, storyline_id, branch_id)
+        if any(value is not None and (not isinstance(value, str) or str(UUID(value)) != value) for value in reserved):
+            raise ValueError("PROJECT_RESERVATION_ID_INVALID")
+        project_id, storyline_id, branch_id = (value or str(uuid4()) for value in reserved)
+        for kind, identity in (("storylines", storyline_id), ("branches", branch_id)):
+            try: self.scopes.get(kind, identity)
+            except (KeyError, FileNotFoundError): pass
+            else: raise FileExistsError(identity)
         scope = AuthorizationScope(ScopeKind.PROJECT, workspace_id, project_id)
         event = self._event(actor,"PROJECT_CREATED","Project",project_id,scope)
         if self.postgres:
@@ -213,16 +216,26 @@ class AtomicPathMutationPort:
                 session.execute(text("INSERT INTO storyline_branches(id,payload,revision) VALUES (:id,CAST(:v AS jsonb),0)"),{"id":branch_id,"v":json.dumps(br)})
                 session.execute(text("INSERT INTO authorization_audit_events(id,payload) VALUES (:id,CAST(:v AS jsonb))"),{"id":event["id"],"v":json.dumps(event)})
             return {"id":project_id,"title":title,"genre":genre}
-        root=self.novels.backend.data;novel_root=self.novels.backend.novels/project_id;paths=[self.scopes.path,self.authorization.path]
-        before={p:(p.read_bytes() if p.exists() else None) for p in paths}
-        try:
-            created=self.novels.create({"id":project_id,"title":title,"genre":genre});self.scopes.link_project(project_id,workspace_id)
-            self.scopes.create("storylines",{"id":storyline_id,"workspace_id":workspace_id,"project_id":project_id,"name":"Default Storyline","description":""})
-            self.scopes.create("branches",{"id":branch_id,"workspace_id":workspace_id,"project_id":project_id,"storyline_id":storyline_id,"name":"main","parent_branch_id":None,"revision":0});self.audit.append(event);return created
-        except Exception:
-            if novel_root.exists():shutil.rmtree(novel_root)
-            for p,v in before.items(): p.unlink(missing_ok=True) if v is None else atomic_write(p,v.decode("utf-8"))
-            raise
+        # Match audited chapter operations: authorization, then project.
+        from ..repositories.file.mutation_coordinator import workspace_mutation
+        with self.authorization.lock, workspace_mutation(self.novels.backend.data, "reserved-project-creation"), project_operation(self.novels.backend.data, project_id, require_exists=False):
+            root=self.novels.backend.data;novel_root=self.novels.backend.novels/project_id;paths=[self.scopes.path,self.authorization.path]
+            # A replay or colliding reservation is not this operation's data.
+            # Reject before the rollback block can remove an existing project.
+            if novel_root.exists(): raise FileExistsError(project_id)
+            for kind, identity in (("storylines", storyline_id), ("branches", branch_id)):
+                try: self.scopes.get(kind, identity)
+                except (KeyError, FileNotFoundError): pass
+                else: raise FileExistsError(identity)
+            before={p:(p.read_bytes() if p.exists() else None) for p in paths}
+            try:
+                created=self.novels.create({"id":project_id,"title":title,"genre":genre});self.scopes.link_project(project_id,workspace_id)
+                self.scopes.create("storylines",{"id":storyline_id,"workspace_id":workspace_id,"project_id":project_id,"name":"Default Storyline","description":""})
+                self.scopes.create("branches",{"id":branch_id,"workspace_id":workspace_id,"project_id":project_id,"storyline_id":storyline_id,"name":"main","parent_branch_id":None,"revision":0});self.audit.append(event);return created
+            except Exception:
+                if novel_root.exists():shutil.rmtree(novel_root)
+                for p,v in before.items(): p.unlink(missing_ok=True) if v is None else atomic_write(p,v.decode("utf-8"))
+                raise
 
     def delete_project(self, workspace_id, project_id, actor):
         from ..authorization import AuthorizationScope, ScopeKind
@@ -242,27 +255,29 @@ class AtomicPathMutationPort:
                 session.delete(novel)
                 session.execute(text("INSERT INTO authorization_audit_events(id,payload) VALUES (:id,CAST(:v AS jsonb))"), {"id": event["id"], "v": json.dumps(event)})
             return
-        novel_root = self.novels.backend.novels / project_id
-        if not novel_root.exists():
-            raise FileNotFoundError(project_id)
-        paths = [self.scopes.path, self.authorization.path]
-        before = {path: (path.read_bytes() if path.exists() else None) for path in paths}
-        backup = novel_root.with_name(f".{novel_root.name}.delete-backup-{uuid4()}")
-        try:
-            novel_root.rename(backup)
-            data = self.scopes._read()
-            data["project_workspaces"] = [row for row in data["project_workspaces"] if row["id"] != project_id]
-            data["storylines"] = [row for row in data["storylines"] if row.get("project_id") != project_id]
-            data["branches"] = [row for row in data["branches"] if row.get("project_id") != project_id]
-            self.scopes._write(data)
-            self.audit.append(event)
-            shutil.rmtree(backup)
-        except Exception:
-            if backup.exists() and not novel_root.exists():
-                backup.rename(novel_root)
-            for path, value in before.items():
-                path.unlink(missing_ok=True) if value is None else atomic_write(path, value.decode("utf-8"))
-            raise
+        # Cover the rename, audit, cleanup and compensating rollback together.
+        with self.authorization.lock, project_operation(self.novels.backend.data, project_id):
+            novel_root = self.novels.backend.novels / project_id
+            if not novel_root.exists():
+                raise FileNotFoundError(project_id)
+            paths = [self.scopes.path, self.authorization.path]
+            before = {path: (path.read_bytes() if path.exists() else None) for path in paths}
+            backup = novel_root.with_name(f".{novel_root.name}.delete-backup-{uuid4()}")
+            try:
+                novel_root.rename(backup)
+                data = self.scopes._read()
+                data["project_workspaces"] = [row for row in data["project_workspaces"] if row["id"] != project_id]
+                data["storylines"] = [row for row in data["storylines"] if row.get("project_id") != project_id]
+                data["branches"] = [row for row in data["branches"] if row.get("project_id") != project_id]
+                self.scopes._write(data)
+                self.audit.append(event)
+                shutil.rmtree(backup)
+            except Exception:
+                if backup.exists() and not novel_root.exists():
+                    backup.rename(novel_root)
+                for path, value in before.items():
+                    path.unlink(missing_ok=True) if value is None else atomic_write(path, value.decode("utf-8"))
+                raise
 
     def _create_scope_item(self, kind, item, actor, scope):
         action="STORYLINE_CREATED" if kind=="storylines" else "BRANCH_CREATED";target=action.split("_")[0].title();event=self._event(actor,action,target,item["id"],scope)

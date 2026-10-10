@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { api } from "../api";
 import { FOCUS_FAILED_TASKS_EVENT, TASK_SUMMARY_EVENT } from "../ui/taskSummary";
 import { AgentQueuePanel } from "./AgentQueuePanel";
 
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 it("publishes agent queue failures and focuses the matching task", async () => {
   vi.spyOn(api, "agentQueue").mockResolvedValue({
@@ -36,4 +36,13 @@ it("publishes agent queue failures and focuses the matching task", async () => {
     ),
   );
   window.removeEventListener(TASK_SUMMARY_EVENT, listener);
+});
+
+it("requires a selected model and offers no fake-success control", async () => {
+  vi.spyOn(api,"agentQueue").mockResolvedValue({items:[{run_id:"queued-run",node_id:"writer",agent_role:"writer",status:"QUEUED"}]});
+  render(<AgentQueuePanel novelId="novel-1" />);
+  const execute=await screen.findByRole("button",{name:"执行所选模型"});
+  expect((execute as HTMLButtonElement).disabled).toBe(true);
+  expect(screen.queryByRole("button",{name:"标记成功"})).toBeNull();
+  expect(screen.queryByRole("button",{name:"标记失败"})).toBeNull();
 });

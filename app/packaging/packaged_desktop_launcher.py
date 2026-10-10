@@ -72,7 +72,17 @@ def main() -> int:
             if runtime.check_for_child_crash() is not None:
                 return 2
             time.sleep(0.25)
-        return 0 if stopping else 2
+        if stopping:
+            return 0
+        # A normal UI Close exits DesktopHost with zero without signalling the
+        # Python launcher. Still check the services: a concurrent backend/PG
+        # failure must not be hidden by the window's successful exit.
+        if runtime.check_for_child_crash() is not None:
+            return 2
+        assert host.process is not None
+        host_exit_code = host.process.poll()
+        print("DESKTOP_HOST_EXIT " + json.dumps({"exit_code": host_exit_code}), flush=True)
+        return 0 if host_exit_code == 0 else 2
     finally:
         if host is not None:
             host.block_actions()

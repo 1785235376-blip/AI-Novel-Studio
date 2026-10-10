@@ -68,7 +68,7 @@ describe("AI Context Preview", () => {
     vi.spyOn(api, "worldRules").mockResolvedValue({ items: [{ id: "rule-1", text: "不可逆时间" }], storage: "file" });
     renderPreview();
     fireEvent.click(screen.getByRole("button", { name: "刷新上下文" }));
-    expect(await screen.findByText("已同步")).toBeTruthy();
+    expect(await screen.findByText("资料已读取")).toBeTruthy();
     await waitFor(() => expect(contextCall).toHaveBeenCalledWith("writer", "novel-1", 3, "", "local"));
     expect(screen.getByText("当前章节")).toBeTruthy();
     expect(screen.getByText("当前写作目标")).toBeTruthy();
@@ -100,7 +100,7 @@ describe("AI Context Preview", () => {
     vi.spyOn(api, "worldRules").mockResolvedValue({ items: [], storage: "file" });
     renderPreview();
     fireEvent.click(screen.getByRole("button", { name: "刷新上下文" }));
-    expect(await screen.findByText("已同步")).toBeTruthy();
+    expect(await screen.findByText("资料已读取")).toBeTruthy();
     expect(screen.getAllByText("无相关数据").length).toBeGreaterThan(2);
     expect(screen.getAllByText("未配置").length).toBeGreaterThanOrEqual(2);
     expect(screen.queryByText("示例地点")).toBeNull();
@@ -111,7 +111,7 @@ describe("AI Context Preview", () => {
     renderPreview();
     fireEvent.click(screen.getByRole("button", { name: "刷新上下文" }));
     expect(await screen.findByText("没有读取上下文的权限")).toBeTruthy();
-    expect(screen.queryByText("已同步")).toBeNull();
+    expect(screen.queryByText("资料已读取")).toBeNull();
     expect(screen.queryByText("当前人物状态")).toBeNull();
   });
 
@@ -124,4 +124,15 @@ describe("AI Context Preview", () => {
     fireEvent.click(screen.getByRole("button", { name: "刷新上下文" }));
     await waitFor(() => expect(contextCall).toHaveBeenCalledWith("editor", "novel-1", 3, "保持节奏", "cloud"));
   });
+});
+
+it('labels independently queried sources as supporting and makes no request-fidelity claim', async () => {
+  vi.spyOn(api, 'agentContext').mockResolvedValue(context({ sections: { writing_context: { chapter: 3 } } }));
+  vi.spyOn(api, 'writingGoal').mockResolvedValue({ target_words: 10 } as any);
+  vi.spyOn(api, 'resource').mockResolvedValue([{ fact: 'supporting-only' }]);
+  vi.spyOn(api, 'worldRules').mockResolvedValue({ items: [{ text: 'supporting' }], storage: 'file' });
+  renderPreview(); fireEvent.click(screen.getByRole('button', { name: '刷新上下文' }));
+  await screen.findByText('资料已读取');
+  expect(screen.getByText(/不是最终发送预览/)).toBeTruthy();
+  expect(screen.getAllByText('辅助查询资料；未证明会进入本次生成请求。').length).toBeGreaterThanOrEqual(2);
 });

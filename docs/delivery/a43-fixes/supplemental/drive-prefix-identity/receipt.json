@@ -1,0 +1,40 @@
+{
+  "baseline_commit": "d80e4dc0429c219948e66abf2a8994cc706f3227",
+  "source_guard_was_unchanged_before_red": true,
+  "new_test_nodes": 11,
+  "layer": "Supplemental local Linux File/guard checks and non-native PureWindowsPath lexical semantics; native Windows NOT_RUN",
+  "counts": {
+    "d80-red": {
+      "tests": 11,
+      "failed": 6,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 5
+    },
+    "guard-green": {
+      "tests": 313,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 124,
+      "passed": 189
+    }
+  },
+  "commands": {
+    "red": "HOME=${TEST_HOME} XDG_DATA_HOME=${TEST_XDG} NOVEL_DATA_PATH=${TEST_DATA} PROJECT_ROOT=\"$PWD\" PROMPT_PATH=\"$PWD/prompts\" STORAGE_BACKEND=file MOCK_PROVIDER=true CREDENTIAL_VAULT_BACKEND=memory ${TEST_VENV}/bin/python -m pytest tests/test_a43_drive_prefix_identity.py -q --junitxml=${PRIVATE_DRIVE_EVIDENCE}/d80-red.xml > ${PRIVATE_DRIVE_EVIDENCE}/d80-red.log 2>&1",
+    "green": "HOME=${TEST_HOME} XDG_DATA_HOME=${TEST_XDG} NOVEL_DATA_PATH=${TEST_DATA} PROJECT_ROOT=\"$PWD\" PROMPT_PATH=\"$PWD/prompts\" STORAGE_BACKEND=file MOCK_PROVIDER=true CREDENTIAL_VAULT_BACKEND=memory ${TEST_VENV}/bin/python -m pytest tests/test_a43_drive_prefix_identity.py tests/test_file_project_lifecycle.py tests/test_a43_file_identity.py tests/test_a43_identity_references.py tests/test_a43_context_identity.py -q --junitxml=${PRIVATE_DRIVE_EVIDENCE}/guard-green.xml > ${PRIVATE_DRIVE_EVIDENCE}/guard-green.log 2>&1"
+  },
+  "changed_sources": {
+    "app/file_project_lifecycle.py": "75d23e972b8302e3a711c75ba950a96cccc301f59ba580bfb8efc5dd4e121c62",
+    "tests/test_a43_drive_prefix_identity.py": "d35717820a0d78377c43e2aa5718b5ff57fc52702cc6292e1de078e498f9ac74"
+  },
+  "raw_receipts": {
+    "guard-green.xml": "865500b533c702e7ec4ae61f668ac5e3c4c02dd1417e18297a2c6eb2c50a33f1",
+    "guard-green.log": "a60d0cf30771d8abafb23637101fdc4020e998171bba8c04e40545771021c72d",
+    "d80-red.log": "9d304fd21d1e8cc770593814d58b1eb2cb1a80d81418cb31702d69bf11778a31",
+    "d80-red.xml": "ad7f1d1be2380f439aa33020fb8d4c49e44b79cb1d8489a3c1963409c45b86a7"
+  },
+  "compatibility": "Application slug-generated IDs and original ordinary/dot legacy IDs remain supported. Drive-qualified literal POSIX legacy directory IDs are now rejected. No project rename/mutation, workflow change, timeout change, PG behavior edit or running-CI intervention.",
+  "kind": "FILE_PROJECT_DRIVE_PREFIX_GUARD_RED_GREEN_NOT_NATIVE_WINDOWS",
+  "python": "3.12.14",
+  "public_policy": "Raw logs stay private. Public selected JUnit is encoded with explicit executor metadata-only redaction; original and public digests are separate."
+}

@@ -1,0 +1,27 @@
+.......F................................................................ [ 72%]
+...........................                                              [100%]
+=================================== FAILURES ===================================
+_________ test_oversized_receipt_does_not_change_legacy_opt_out[file] __________
+
+model_rig = namespace(nid='v2-independent-ee22f05a7ff64c3ea6bcb9aa01ac0ac7', scope={'mode': 'local', 'novel_id': 'v2-independent-e...[<threading.Event at 0x7f252411e540: unset>], active=True, guard=<function configure.<locals>.guard at 0x7f2524269800>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f252411ff20>
+
+    def test_oversized_receipt_does_not_change_legacy_opt_out(model_rig, monkeypatch):
+        e = model_rig; spy_transport(e, monkeypatch)
+        row = preview(e, admit(e, create_graph(e, escaped_definition(7800))))
+        assert encoded_bytes(budget_fixture(e, row)) > 64_000
+        result, job = complete(e, row, archive_result=False)
+>       assert not result["stale"] and result["review"]["draft"]["text"] == job.output
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_v2_text_execution_admission.py:125: TypeError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_text_execution_admission.py::test_oversized_receipt_does_not_change_legacy_opt_out[file]
+1 failed, 98 passed, 98 deselected, 1 warning in 96.60s (0:01:36)

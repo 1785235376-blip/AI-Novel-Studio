@@ -1,0 +1,136 @@
+{
+  "scope": "Supplemental local File test evidence; not actual PostgreSQL verification",
+  "python": "3.12.14",
+  "working_directory": "${SOURCE_ROOT}",
+  "focused_nodes": [
+    "tests/test_a43_detached_generation_acceptance.py",
+    "tests/test_a43_identity_references.py",
+    "tests/test_shared_generation_terminal_protocol.py",
+    "tests/test_r4_generation_origin_guards.py",
+    "tests/test_r4_generation_origin_regression.py",
+    "tests/test_generation_idempotency_contracts.py",
+    "tests/test_generation_restart_recovery.py",
+    "tests/test_generation_snapshot_runtime_v056.py",
+    "tests/test_generation_variants_phase3.py",
+    "tests/test_jobs_v03.py"
+  ],
+  "local_safety_red": {
+    "passed": 1,
+    "failed": 1,
+    "files": [
+      "detached-accept-red.txt",
+      "detached-accept-red.xml"
+    ]
+  },
+  "runs": [
+    {
+      "name": "first-neighbor-run",
+      "environment": {
+        "STORAGE_BACKEND": "file",
+        "MOCK_PROVIDER": "true",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "HOME": "${INHERITED_HOME} (inherited, not overridden)",
+        "XDG_DATA_HOME": "${FIRST_TEST_RUNTIME}",
+        "NOVEL_DATA_PATH": "${FIRST_TEST_RUNTIME}/data",
+        "PROJECT_ROOT": "${FIRST_TEST_RUNTIME}",
+        "PROMPT_PATH": "unset (defaults to prompts relative to PROJECT_ROOT)"
+      },
+      "result": {
+        "passed": 234,
+        "failed": 91,
+        "skipped": 294,
+        "errors": 0
+      },
+      "files": [
+        "detached-accept-neighbors.txt",
+        "detached-accept-neighbors.xml"
+      ],
+      "interpretation": "Harness resource-root mistake: the temporary PROJECT_ROOT had no prompt resources. Retained in full; not classified as a product regression.",
+      "exact_command": "XDG_DATA_HOME=${FIRST_TEST_RUNTIME} NOVEL_DATA_PATH=${FIRST_TEST_RUNTIME}/data PROJECT_ROOT=${FIRST_TEST_RUNTIME} STORAGE_BACKEND=file MOCK_PROVIDER=true CREDENTIAL_VAULT_BACKEND=memory ${TEST_VENV}/bin/python -m pytest tests/test_a43_detached_generation_acceptance.py tests/test_a43_identity_references.py tests/test_shared_generation_terminal_protocol.py tests/test_r4_generation_origin_guards.py tests/test_r4_generation_origin_regression.py tests/test_generation_idempotency_contracts.py tests/test_generation_restart_recovery.py tests/test_generation_snapshot_runtime_v056.py tests/test_generation_variants_phase3.py tests/test_jobs_v03.py -q --junitxml=artifacts/a43/local/detached-accept-neighbors.xml > artifacts/a43/local/detached-accept-neighbors.txt 2>&1; tail -60 artifacts/a43/local/detached-accept-neighbors.txt; git diff --check"
+    },
+    {
+      "name": "corrected-resource-root-neighbor-run",
+      "environment": {
+        "STORAGE_BACKEND": "file",
+        "MOCK_PROVIDER": "true",
+        "CREDENTIAL_VAULT_BACKEND": "memory",
+        "HOME": "${INHERITED_HOME} (inherited, not overridden)",
+        "XDG_DATA_HOME": "${CORRECTED_TEST_RUNTIME}",
+        "NOVEL_DATA_PATH": "${CORRECTED_TEST_RUNTIME}/data",
+        "PROJECT_ROOT": "${SOURCE_ROOT}",
+        "PROMPT_PATH": "${SOURCE_ROOT}/prompts"
+      },
+      "result": {
+        "passed": 325,
+        "failed": 0,
+        "skipped": 294,
+        "errors": 0
+      },
+      "files": [
+        "detached-accept-neighbors-v2.txt",
+        "detached-accept-neighbors-v2.xml"
+      ],
+      "interpretation": "Same focused node selection; canonical checkout and prompt resource roots. XDG/data paths remained isolated and were fresh for this run. HOME was inherited in both runs; no claim of a separately isolated HOME. No runtime source edits by this worker between the two neighbor runs.",
+      "exact_command": "XDG_DATA_HOME=${CORRECTED_TEST_RUNTIME} NOVEL_DATA_PATH=${CORRECTED_TEST_RUNTIME}/data PROJECT_ROOT=\"$PWD\" PROMPT_PATH=\"$PWD/prompts\" STORAGE_BACKEND=file MOCK_PROVIDER=true CREDENTIAL_VAULT_BACKEND=memory ${TEST_VENV}/bin/python -m pytest tests/test_a43_detached_generation_acceptance.py tests/test_a43_identity_references.py tests/test_shared_generation_terminal_protocol.py tests/test_r4_generation_origin_guards.py tests/test_r4_generation_origin_regression.py tests/test_generation_idempotency_contracts.py tests/test_generation_restart_recovery.py tests/test_generation_snapshot_runtime_v056.py tests/test_generation_variants_phase3.py tests/test_jobs_v03.py -q --junitxml=artifacts/a43/local/detached-accept-neighbors-v2.xml > artifacts/a43/local/detached-accept-neighbors-v2.txt 2>&1; tail -60 artifacts/a43/local/detached-accept-neighbors-v2.txt; git diff --check"
+    }
+  ],
+  "runner": "${TEST_VENV}/bin/python",
+  "arguments": [
+    "-m",
+    "pytest",
+    "tests/test_a43_detached_generation_acceptance.py",
+    "tests/test_a43_identity_references.py",
+    "tests/test_shared_generation_terminal_protocol.py",
+    "tests/test_r4_generation_origin_guards.py",
+    "tests/test_r4_generation_origin_regression.py",
+    "tests/test_generation_idempotency_contracts.py",
+    "tests/test_generation_restart_recovery.py",
+    "tests/test_generation_snapshot_runtime_v056.py",
+    "tests/test_generation_variants_phase3.py",
+    "tests/test_jobs_v03.py",
+    "-q",
+    "--junitxml=<corresponding file>"
+  ],
+  "current_jobs_sha256": "76cb4a0d6e7c47c64e124a0380030242271806fa1e9e74c09f6cef28ef9576fc",
+  "new_test_sha256": "3caf71f667f5140e9524936d4a851355e3c17400f84f378c73819e3cb3e22f51",
+  "kind": "SUPPLEMENTAL_FILE_SOURCE_PRIORITY_CORRECTION_NOT_POSTGRES_PASS",
+  "motivation": {
+    "actual_pg_run": 37543798053,
+    "source_sha": "1d9b88ac36b1d75c06544e3aa69c3ab308164120",
+    "source_tree": "7ad139d78404f3f1bf81e67e66dd4b78e16ffc45",
+    "failed_variants": 12,
+    "assertion": "Deleted original chapter must produce404/409, not incomplete-draft400; original assertion retained."
+  },
+  "before_jobs_sha256": "f17f062f717d7b67956737ff1ff480edaf77698d14c8a1c7ab09a2e1f7c17c30",
+  "private_original_files": {
+    "detached-accept-environment.json": {
+      "bytes": 5577,
+      "sha256": "bf76dc9da334db0a450d1c8afee5984789ee77c0c0f03a585be22228eb63eb0c"
+    },
+    "detached-accept-neighbors-v2.txt": {
+      "bytes": 1407,
+      "sha256": "57d031a2fc84d7dfc4e54b8c785b5a16c90723d47a9562768b4b2cbc28d3a037"
+    },
+    "detached-accept-neighbors-v2.xml": {
+      "bytes": 204673,
+      "sha256": "89e2b36e1c220340ffee141a04226f9b13eef8865651d73f3e2074df1648821b"
+    },
+    "detached-accept-neighbors.txt": {
+      "bytes": 1296772,
+      "sha256": "4f44a91d79081f2c9b4af57c990bbfd82e5ef58015e8f05a47a19221ae604ec9"
+    },
+    "detached-accept-neighbors.xml": {
+      "bytes": 1501546,
+      "sha256": "f33370dc6b0f4dc4e7119f3af0bbb6f3065bd9f55ae0e389bee69d4e19a5eeb5"
+    },
+    "detached-accept-red.txt": {
+      "bytes": 3755,
+      "sha256": "948dce5939dac91baca61564be79889c036e8e056919d0a30f86773749c31880"
+    },
+    "detached-accept-red.xml": {
+      "bytes": 4294,
+      "sha256": "e0a3d36fac811518a2e0a881638121744d4b4e06dce6248f4393929559d8d064"
+    }
+  },
+  "public_policy": "Full raw logs and the resource-root misconfiguration traceback remain private. Their original hashes are retained. Only selected original safety/corrected JUnit are encoded; executor metadata redaction is recorded separately."
+}

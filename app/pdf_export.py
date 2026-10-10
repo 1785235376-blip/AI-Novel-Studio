@@ -25,6 +25,8 @@ import threading
 from pathlib import Path
 from typing import Iterable, Mapping
 
+from .document import chapter_body_text
+
 
 class PDFExportError(RuntimeError):
     """A safe, user-facing PDF export failure.
@@ -179,14 +181,37 @@ def pdf_font_status() -> dict[str, object]:
     }
 
 
+def _assert_pdf_characters(values, *, font_name=None, embedded=False):
+    """Fail before producing an artifact if the selected font drops glyphs.
+
+    The CID fallback uses a UCS-2 CMap and cannot represent astral text. For a
+    selected embedded TrueType font, check its actual character-to-glyph table.
+    No manuscript fragments or local font paths are exposed in the error.
+    """
+    glyphs = None
+    if embedded:
+        from reportlab.pdfbase import pdfmetrics
+        glyphs = pdfmetrics.getFont(font_name).face.charToGlyph
+    unsupported = any(
+        ord(char) > 0xFFFF if glyphs is None else not glyphs.get(ord(char))
+        for value in values for char in str(value) if not char.isspace()
+    )
+    if unsupported:
+        raise PDFExportError(
+            "PDF_UNSUPPORTED_CHARACTERS",
+            "当前 PDF 字体不能完整表示正文字符，请使用包含所需字符的字体或导出 DOCX/EPUB。",
+            details={"font_mode": "embedded" if embedded else "cid-fallback"},
+        )
+
+
 def _pdf_hex_text(value: object) -> bytes:
     """Encode text for the PDF ``UniGB-UCS2-H`` CMap."""
 
     text = _clean_text(value).replace("\r\n", "\n").replace("\r", "\n")
-    # The built-in Adobe GB CMap is UCS-2.  Replace astral code points with a
-    # visible placeholder instead of writing an invalid odd-length string.
-    text = "".join(char if ord(char) <= 0xFFFF else "□" for char in text)
-    return text.encode("utf-16-be", "replace").hex().encode("ascii")
+    # This CMap cannot represent astral characters; never replace manuscript
+    # text with a placeholder in a successful artifact.
+    _assert_pdf_characters([text])
+    return text.encode("utf-16-be").hex().encode("ascii")
 
 
 def _fallback_line_width(text: str, font_size: float) -> float:
@@ -274,6 +299,7 @@ def _novel_to_pdf_cid_fallback(
     clean_title = _clean_text(title).strip() or "AI Novel Studio"
     clean_version = _clean_text(version).strip()
     normalized = _normalise_chapters(chapters)
+    _assert_pdf_characters([clean_title, clean_version] + [value for chapter in normalized for value in chapter.values()])
     page_width, page_height = 595.28, 841.89  # A4 points
     left, right, top, bottom = 62.36, 62.36, 62.36, 56.69
     content_width = page_width - left - right
@@ -390,7 +416,7 @@ def _normalise_chapters(chapters: Iterable[Mapping[str, object]] | None) -> list
         if not isinstance(item, Mapping):
             continue
         title = _clean_text(item.get("title", "")).strip()
-        content = _clean_text(item.get("content", ""))
+        content = _clean_text(chapter_body_text(item))
         result.append({"title": title, "content": content})
     return result
 
@@ -462,6 +488,8 @@ def novel_to_pdf(
     clean_title = _clean_text(title).strip() or "AI Novel Studio"
     clean_version = _clean_text(version).strip()
     normalized = _normalise_chapters(chapters)
+    _assert_pdf_characters([clean_title, clean_version] + [value for chapter in normalized for value in chapter.values()],
+                           font_name=font_name, embedded=embedded)
 
     if progress_callback:
         progress_callback(35, "准备 PDF 排版")

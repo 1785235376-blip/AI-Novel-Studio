@@ -1,0 +1,14 @@
+<testsuites id="" name="" tests="5" failures="0" skipped="0" errors="0" time="12.108546">
+<testsuite name="creative-workbench.spec.ts" timestamp="2026-10-09T08:01:14.085Z" hostname="chromium" tests="5" failures="0" skipped="0" time="10.714" errors="0">
+<testcase name="V2 remains off with no creative API requests" classname="creative-workbench.spec.ts" time="3.39">
+</testcase>
+<testcase name="keyboard stages and cancelled exit preserve unsaved creative content" classname="creative-workbench.spec.ts" time="1.854">
+</testcase>
+<testcase name="V2 shared-shell geometry 1366x768" classname="creative-workbench.spec.ts" time="1.693">
+</testcase>
+<testcase name="V2 shared-shell geometry 1440x900" classname="creative-workbench.spec.ts" time="1.694">
+</testcase>
+<testcase name="V2 shared-shell geometry 1920x1080" classname="creative-workbench.spec.ts" time="2.083">
+</testcase>
+</testsuite>
+</testsuites>

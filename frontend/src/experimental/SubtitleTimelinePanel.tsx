@@ -1,0 +1,48 @@
+import { useMemo, useState } from 'react';
+import { Badge, Button, EmptyState, Panel, StatusMessage } from '../ui/primitives';
+import type { ExperimentalClient } from './api';
+import { Details, ErrorMessage, Field, ResourceState, useResource } from './shared';
+import { useReviewAction } from './styleReviewClient';
+import { voiceSubtitleClient, downloadCaption, type CaptionCue, type CaptionTrack, type AudioPlan } from './voiceSubtitleClient';
+let identity=0;
+const newCue=():CaptionCue=>({id:crypto.randomUUID(),start_tick:0,end_tick:1000,text:'',segment_id:null,overlap_reason:''});
+export function SubtitleTimelinePanel(props:{client:ExperimentalClient;onOpenAudiobook?:()=>void}) {const key=useMemo(()=>++identity,[props.client]);return <SubtitleContent key={key} {...props}/>;}
+function SubtitleContent({client,onOpenAudiobook}:{client:ExperimentalClient;onOpenAudiobook?:()=>void}) {
+ const api=useMemo(()=>voiceSubtitleClient(client),[client]);const catalog=useResource(s=>api.captionCatalog(s),[api]);const records=useResource(s=>api.tracks(s),[api]);const action=useReviewAction();
+ const [asset,setAsset]=useState(''),[plan,setPlan]=useState(''),[title,setTitle]=useState('字幕'),[rate,setRate]=useState('1000/1');
+ const available=!catalog.loading&&!catalog.error&&!!catalog.data;
+ const refresh=()=>{catalog.reload();records.reload();};
+ return <section className="experimental-section" aria-label="字幕时间轴"><div className="experimental-actions"><h3>字幕时间轴</h3><Button disabled={action.busy||catalog.loading||records.loading} onClick={refresh}>刷新字幕来源与记录</Button>{onOpenAudiobook&&<Button onClick={onOpenAudiobook}>打开原有声书审核</Button>}</div>
+ <StatusMessage>人工时间标记，可编辑整数 tick。媒体时长来自实测；只有 PCM16 WAV 显示实际采样波形。自动 ASR / 音素或逐字对齐、字幕压制均未配置。</StatusMessage>
+ <ResourceState loading={catalog.loading} error={catalog.error}/>{!!action.error&&<ErrorMessage error={action.error}/>}<p role="status">{action.notice}</p>
+ <Panel title="绑定现有媒体创建字幕版本"><Field label="字幕标题"><input value={title} onChange={e=>setTitle(e.target.value)}/></Field><Field label="字幕绑定媒体"><select disabled={!available||action.busy} value={asset} onChange={e=>setAsset(e.target.value)}><option value="">选择原资产库的音频 / 视频</option>{available&&catalog.data!.assets.map(a=><option key={a.id} value={a.id}>{a.filename} · v{a.version}</option>)}</select></Field>
+ <Field label="字幕说话人来源计划"><select disabled={!available||action.busy} value={plan} onChange={e=>setPlan(e.target.value)}><option value="">不关联说话人</option>{available&&catalog.data!.plans.filter(p=>!p.stale).map(p=><option key={p.id} value={p.id}>{p.title} · v{p.version}</option>)}</select></Field>
+ <Field label="字幕时间基准"><select value={rate} disabled={action.busy} onChange={e=>setRate(e.target.value)}><option value="1000/1">1000 tick/秒（毫秒）</option><option value="24/1">24 帧/秒</option><option value="24000/1001">24000/1001 帧/秒</option><option value="30000/1001">30000/1001 帧/秒</option></select></Field>
+ <Button disabled={action.busy||!available||!asset||!title.trim()} onClick={()=>void action.run(async current=>{const [numerator,denominator]=rate.split('/').map(Number);const selected=catalog.data!.plans.find(p=>p.id===plan);await api.createTrack({asset_id:asset,title,plan_id:plan||null,expected_plan_version:selected?.version??null,timebase:{numerator,denominator},cues:[],language:'zh'});if(current())records.reload();},'字幕草稿已绑定实测媒体，等待填写人工时间标记')}>创建字幕草稿</Button>
+ {available&&!catalog.data!.assets.length&&<EmptyState title="暂无可绑定媒体" detail="先在原资产库导入或批准音频 / 视频。这里不会制造时长或假波形。"/>}</Panel>
+ <ResourceState loading={records.loading} error={records.error}/>{!records.loading&&!records.error&&!records.data?.items.length&&<EmptyState title="还没有字幕版本" detail="选择实际媒体建立字幕，再逐条编辑时间和文本。"/>}
+ {records.data?.items.map(row=><CaptionEditor key={row.id} client={client} current={row} plans={catalog.data?.plans||[]} available={!records.loading&&!records.error&&available} refresh={records.reload}/>)}
+ <StatusMessage>导出支持纯文本 SRT / WebVTT，毫秒量化向下取整并进行实际文件读回校验。目标字幕软件显示：NOT_RUN。字幕元数据导出不会渲染媒体。</StatusMessage>
+ </section>;
+}
+function CaptionEditor({client,current,plans,available,refresh}:{client:ExperimentalClient;current:CaptionTrack;plans:AudioPlan[];available:boolean;refresh:()=>void}) {
+ const api=useMemo(()=>voiceSubtitleClient(client),[client]);const action=useReviewAction();const [captured,setCaptured]=useState(current),[cues,setCues]=useState(current.cues||[]),[split,setSplit]=useState<Record<string,{tick:string;left:string;right:string}>>({});
+ const changed=current.version!==captured.version, dirty=JSON.stringify(cues)!==JSON.stringify(captured.cues);const unavailable=!available||action.busy||current.stale||changed;
+ const plan=plans.find(p=>p.id===current.plan_id);
+ const edit=(index:number,key:keyof CaptionCue,value:any)=>setCues(old=>old.map((r,i)=>i===index?{...r,[key]:value}:r));
+ const accept=(row:CaptionTrack)=>{setCaptured(row);setCues(row.cues);setSplit({});refresh();};
+ const waveform=current.media?.waveform;
+ if(current.stale)return <Panel title="字幕来源已变化"><StatusMessage tone="warning">媒体、说话人或原文已变化。旧字幕和波形已隐藏，导出已停止；请按当前来源创建新字幕版本。</StatusMessage></Panel>;
+ return <Panel title={`${current.title} · v${current.version}`}><Badge>人工时间标记 · {current.timebase.numerator}/{current.timebase.denominator} tick/秒</Badge><p>实测媒体：{current.media.duration_seconds.numerator}/{current.media.duration_seconds.denominator} 秒</p>
+ {changed&&<StatusMessage tone="warning">字幕版本已变化，本地编辑仍保留。请检查并载入当前版本后继续。</StatusMessage>}{!!action.error&&<ErrorMessage error={action.error}/>}<p role="status">{action.notice}</p>
+ <Button disabled={action.busy} onClick={()=>{setCaptured(current);setCues(current.cues);setSplit({});}}>载入当前字幕并替换本地输入</Button>
+ {waveform?.status==='MEASURED_PCM16_PEAKS'&&waveform.peaks?<details className="experimental-details"><summary>实测 PCM16 波形</summary><svg role="img" aria-label="实际音频采样峰值波形" viewBox={`0 0 ${waveform.peaks.length} 100`} width="100%" height="100" preserveAspectRatio="none"><path stroke="currentColor" fill="none" d={waveform.peaks.map((p,i)=>`M${i} ${50-p*50}V${50+p*50}`).join(' ')}/></svg><p>峰值包络；不是语音或单词对齐。</p></details>:<p>此媒体无可用实测波形，仍可人工编辑时间。</p>}
+ <ol aria-label="字幕轨道预览">{cues.map(c=><li key={c.id}>{c.start_tick} → {c.end_tick} tick · {c.segment_id?current.speakers?.[c.segment_id]?.name||'说话人待刷新':'无说话人标签'} · {c.text}</li>)}</ol>
+ {cues.map((cue,index)=><article className="experimental-record" key={cue.id}><h4>字幕 {index+1}</h4><div className="experimental-grid"><Field label={`字幕 ${index+1} 开始 tick`}><input type="number" min={0} disabled={unavailable} value={cue.start_tick} onChange={e=>edit(index,'start_tick',Number(e.target.value))}/></Field><Field label={`字幕 ${index+1} 结束 tick`}><input type="number" min={1} disabled={unavailable} value={cue.end_tick} onChange={e=>edit(index,'end_tick',Number(e.target.value))}/></Field></div>
+ <Field label={`字幕 ${index+1} 文本`}><textarea disabled={unavailable} value={cue.text} onChange={e=>edit(index,'text',e.target.value)}/></Field><Field label={`字幕 ${index+1} 说话人片段`}><select disabled={unavailable||!plan} value={cue.segment_id||''} onChange={e=>edit(index,'segment_id',e.target.value||null)}><option value="">无说话人标签</option>{plan?.segments?.map(s=><option key={s.id} value={s.id}>{s.character_id||'未分配'} · {s.text.slice(0,40)}</option>)}</select></Field>
+ <Field label={`字幕 ${index+1} 有意重叠说明`}><input disabled={unavailable} value={cue.overlap_reason} onChange={e=>edit(index,'overlap_reason',e.target.value)}/></Field><Button disabled={unavailable} onClick={()=>setCues(old=>old.filter(c=>c.id!==cue.id))}>删除本地字幕行 {index+1}</Button>
+ <details className="experimental-details"><summary>拆分 / 合并字幕 {index+1}</summary><p>先保存现有编辑；拆分点和左右文本需人工指定。</p><Field label={`字幕 ${index+1} 拆分 tick`}><input type="number" value={split[cue.id]?.tick||''} onChange={e=>setSplit(old=>({...old,[cue.id]:{...(old[cue.id]||{tick:'',left:'',right:''}),tick:e.target.value}}))}/></Field><Field label={`字幕 ${index+1} 拆分左文`}><textarea value={split[cue.id]?.left||''} onChange={e=>setSplit(old=>({...old,[cue.id]:{...(old[cue.id]||{tick:'',left:'',right:''}),left:e.target.value}}))}/></Field><Field label={`字幕 ${index+1} 拆分右文`}><textarea value={split[cue.id]?.right||''} onChange={e=>setSplit(old=>({...old,[cue.id]:{...(old[cue.id]||{tick:'',left:'',right:''}),right:e.target.value}}))}/></Field>
+ <Button disabled={unavailable||dirty||!split[cue.id]?.left||!split[cue.id]?.right} onClick={()=>void action.run(async isCurrent=>{const value=split[cue.id];const row=await api.split(captured,cue,Number(value.tick),value.left,value.right);if(isCurrent())accept(row);},'字幕已按人工时间点拆分')}>拆分字幕 {index+1}</Button><Button disabled={unavailable||dirty||index===cues.length-1} onClick={()=>void action.run(async isCurrent=>{const row=await api.merge(captured,cue,cues[index+1]);if(isCurrent())accept(row);},'相邻同说话人字幕已合并')}>合并下一条字幕</Button></details></article>)}
+ <div className="experimental-actions"><Button disabled={unavailable} onClick={()=>setCues(old=>[...old,newCue()])}>添加人工字幕行</Button><Button disabled={unavailable||!dirty} onClick={()=>void action.run(async isCurrent=>{const row=await api.saveCues(captured,cues);if(isCurrent())accept(row);},'字幕已保存；来源版本和媒体绑定保持校验')}>保存字幕版本</Button>{(['srt','vtt'] as const).map(format=><Button key={format} disabled={unavailable||dirty||!cues.length} onClick={()=>void action.run(async isCurrent=>{const blob=await api.download(captured,format);if(isCurrent())downloadCaption(blob,`captions-${captured.id}.${format}`);},'字幕文件已通过读回检查并准备下载')}>下载 {format.toUpperCase()}</Button>)}</div>
+ {!!current.warnings?.length&&<Details label="读速 / 行长提示（未经语言校准的启发式）" value={current.warnings}/>}</Panel>;
+}

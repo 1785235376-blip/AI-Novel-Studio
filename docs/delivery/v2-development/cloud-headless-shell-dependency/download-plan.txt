@@ -1,0 +1,10 @@
+Chrome Headless Shell 151.0.7922.34 (playwright chromium-headless-shell v1234)
+  Install location:    /workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-headless-shell/cache/chromium_headless_shell-1234
+  Download url:        https://cdn.playwright.dev/builds/cft/151.0.7922.34/linux64/chrome-headless-shell-linux64.zip
+
+FFmpeg (playwright ffmpeg v1011)
+  Install location:    /workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-headless-shell/cache/ffmpeg-1011
+  Download url:        https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+  Download fallback 1: https://playwright.download.prss.microsoft.com/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+  Download fallback 2: https://cdn.playwright.dev/builds/ffmpeg/1011/ffmpeg-linux.zip
+

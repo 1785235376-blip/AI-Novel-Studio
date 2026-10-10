@@ -1,0 +1,146 @@
+{
+  "utc": "2026-10-09T08:35:46.954365+00:00",
+  "status": "INVENTORY_ONLY",
+  "tests_executed": false,
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "collection_stdout": "{\"collection_exit_code\": 0, \"collected_nodes\": 9449, \"collection_errors\": 0, \"tests_executed\": false}\n",
+  "collection_stderr": "",
+  "collection_exit_code": 0,
+  "collected_nodes": 9449,
+  "baseline_nodes": 9151,
+  "source_changes": [
+    {
+      "path": "API_CATALOG.json",
+      "before_sha256": "29e3174319c3d118096b9caee8407212c5f2e079f03a981fc3db0c74f08b9bdf",
+      "after_sha256": "c8f2a914152e3fa04ab5df778a251c39c3e4a34c69116949dd0176690982159c"
+    },
+    {
+      "path": "API_CATALOG.md",
+      "before_sha256": "22bc00bcd0c84c9a71c5d5d6826f673ac6fe6175f1138bb976059730f34cf448",
+      "after_sha256": "631582097b3108fc883ff11f363529b4e665d9130f16b046dafbaaae1d0f3f46"
+    },
+    {
+      "path": "API_CATALOG_DETAIL.json.gz",
+      "before_sha256": "8005546e39ded22d4031f70b0a4caa7a22f2774428beda6a3d9fa2c029cd547a",
+      "after_sha256": "4156bb588b4b4a24993e8b0fb438816a14d3e2b5a95e9d93e9904b6fcfaa2e61"
+    },
+    {
+      "path": "API_OPENAPI.json.gz",
+      "before_sha256": "ca1bfa328ff32262722c3bee5d219c237c54b3b7ea3b1a6cd8c577cf3ae45341",
+      "after_sha256": "89ee8aac3107c6dedbbca3eab5532e01adff92f3902a45c069553bb080d69a13"
+    },
+    {
+      "path": "app/api.py",
+      "before_sha256": "a5a5d9472ea3ca9ff579ca2d744a5a6b158ff1cef3e092eadcaa67566cf98beb",
+      "after_sha256": "dc1e94ba8ae214e4d2bd65540482072c177de40157ee656556bf20c8d71334fc"
+    },
+    {
+      "path": "app/experimental/api.py",
+      "before_sha256": "ac377f41a0e7847fdbe0c049cf2315c2dffad9317b20d800897b43b31b6da7be",
+      "after_sha256": "d35410689402c6f3c3a7d8f80658dd264299b04a24b741b998bb9d6d77d42e40"
+    },
+    {
+      "path": "app/experimental/flags.py",
+      "before_sha256": "f321466a41e380c0be9d9f8912695d3e82fa4736fe7c50315e89ea667b357aa1",
+      "after_sha256": "b4d6b18d7c0c14bacf8ad2f6584d94f7623f0d64d35a455d532ffd64b9e5fcda"
+    },
+    {
+      "path": "app/experimental/model_broker.py",
+      "before_sha256": "c7c8aff2708fa80b740b206be5e7acf2cdd6156079613295dc59821db7650e55",
+      "after_sha256": "b74a67ac7413dadc9fd81a24a71a605320e6b35461bfafc77ff5582bd73eff70"
+    },
+    {
+      "path": "app/experimental/model_broker_api.py",
+      "before_sha256": "19df4dd5fad766cef98193f3b87c386315d6fe6d2f40a8376651842ff4083f74",
+      "after_sha256": "9c68cc383f7d21d6068ac8155a86badea6f6bab0cd867b7bb95db54aa7a826a4"
+    },
+    {
+      "path": "app/jobs.py",
+      "before_sha256": "c16b85236171c188ac529ebc560b1b3be79caa124d791a2a245eeb32222e2794",
+      "after_sha256": "80b972b06fd234fb87ad9ee0565539b94f7094a6323f015b283c60299226481e"
+    },
+    {
+      "path": "app/model_center/discovery.py",
+      "before_sha256": "ffc235b8a7c44608ff014bf36dfef79e08773f1457ca83b5f71429d84c1d67a2",
+      "after_sha256": "af3c5eaf9cc17efdb3fac4deca2313bd9d5b425229186b77a23bbf49dd3eb3b0"
+    },
+    {
+      "path": "app/model_center/discovery_api.py",
+      "before_sha256": "d20a75fed9c517c96d768239c25261bba0c879fcdf0ca42931089f6f4b498493",
+      "after_sha256": "788994267fe97ad183df3a346056c471cbd0d07fb5bc4343b29aa226f9e53f20"
+    },
+    {
+      "path": "app/model_center/discovery_probes.py",
+      "before_sha256": "57cd65d95b3f483844a20e34c8da18d62bda4acd7c81bd3291e2cdbe956dfe93",
+      "after_sha256": "3b77f1bd223a8d76b8cfa6f44735cb932739a3d683ab28a27f2430bde4ba4f13"
+    },
+    {
+      "path": "app/model_center/discovery_types.py",
+      "before_sha256": "0be88512eeb4a45ade7328b8e008e49c89bf8d5ca01b62053f8763677280dca2",
+      "after_sha256": "abaee0886657318690286f2ffec5e6f5f95a3159274e4c32b21bb0080c24488d"
+    },
+    {
+      "path": "app/packaging/packaged_desktop_launcher.py",
+      "before_sha256": "f16f72f0585cc43ad92227b16add0ac8c8e2847baaa96b4c8eacea1b92acba54",
+      "after_sha256": "712870eff8f10998c44a5b980e7fbb0fbe502d97dcd51185053d20f5d20b5ea5"
+    },
+    {
+      "path": "app/packaging/packaged_processes.py",
+      "before_sha256": "c01be1b6f38ef5dc2bd1ec9a718a975fe7ebade48a97b505774da4485da9397c",
+      "after_sha256": "4fbdc2ab89cc3fe61941531b59487b8e10eea38281a1b339e81591e33d494f59"
+    },
+    {
+      "path": "app/packaging/postgres_migrations.py",
+      "before_sha256": "00d5fc573dc5610aee0d371d665b6a1cf1f1b1c0300ac02c2ac023b0b12b617e",
+      "after_sha256": "5a85e98353ac6266e4bcce85b89facf901a9a39cff4ef8f3c7a4a4ad84e1e60d"
+    },
+    {
+      "path": "app/services/ai_planning_service.py",
+      "before_sha256": "fb248818d356416a1c371572cdba84b712fb3bf027b61c654698b51d14e62fbb",
+      "after_sha256": "1b7f2b06bd62ae4d378ca1809a6003b6db1e1b5b3d449f88b2b929c8dad8c9fa"
+    },
+    {
+      "path": "app/structured_log.py",
+      "before_sha256": "83dfd3fe772e5b2c1d0238321acec8bf6b190eac611c5d1653dd18c01a2c9def",
+      "after_sha256": "05185e38aa5f8b7caf2fb8a3b9b96c9de44f76a415308ad3f074e9973cc3723f"
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "before_sha256": "8fadd014afaacf3ff402697b7275196cfed9ecef45685d8d3262c1207d3dfcc8",
+      "after_sha256": "1fae2abd0e1a1e49bd1395b4b281d9dcff9b2a2e02b2553acfb34381f34b0203"
+    },
+    {
+      "path": "frontend/src/localAiDiscoveryApi.ts",
+      "before_sha256": "3053366c867aaf27e1e693c3b1c479e24634db96f8f6369dbb3f1e61b8c6e564",
+      "after_sha256": "6da464d63b4e62986af6a7c694e5bf499f3034a413d6b893c57483209c920461"
+    },
+    {
+      "path": "scripts/installer/Launch-AI-Novel-Studio.ps1",
+      "before_sha256": "cffd5ab1eb16ccda9dea22c2221da0343f96aaf6ef44eb7a86552a525333b244",
+      "after_sha256": "7f32caad61c404426a05ec36a7d18cfbcdf7c98c44edc32e458b3d977f90ef6e"
+    },
+    {
+      "path": "scripts/package_windows_acceptance.ps1",
+      "before_sha256": "43744b577bc73d7d8a9659203ac916ef067c1e5e5bf25f6cbb4bb145a623bb6e",
+      "after_sha256": "dce014e04c757b4049ce45426f23fc1a4087ace81cfae9797c97caa0ab481e6c"
+    },
+    {
+      "path": "tests/test_windows_portable_entry.py",
+      "before_sha256": "d100e27589fb45cb921c13a82a83a911485fef1c0ed82a1e50eb5efc94f24799",
+      "after_sha256": "9f0d2d5f78a44e54a0fcc00925dc6d67038060408d3bd44753461ca57152fe1f"
+    }
+  ],
+  "new_nodes": 298,
+  "baseline_nodes_preserved_in_order": true,
+  "historical_skips_unchanged": true,
+  "baseline_test_migrations": [
+    {
+      "path": "tests/test_windows_portable_entry.py",
+      "commit": "1b7ff50a7e64742916bc64730df884cea819b379",
+      "frozen_sha256": "d100e27589fb45cb921c13a82a83a911485fef1c0ed82a1e50eb5efc94f24799",
+      "v2_baseline_sha256": "9f0d2d5f78a44e54a0fcc00925dc6d67038060408d3bd44753461ca57152fe1f",
+      "delta": "Add -B before -I in the fixed launcher expectation only; all other bytes preserved",
+      "purpose": "Reconcile the preexisting V2 isolation baseline, not a historical audit approval"
+    }
+  ]
+}

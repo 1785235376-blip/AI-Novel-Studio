@@ -1,0 +1,1756 @@
+From 106adad45a9c049b29c061e2ba8f8024304efbfb Mon Sep 17 00:00:00 2001
+From: 1785235376-blip <1785235376@qq.com>
+Date: Sat, 29 Aug 2026 10:20:57 +0000
+Subject: [PATCH 1/5] feat: add windows appcontainer sandbox prototype
+
+Host-owned Test Worker can be launched via spawn_sandboxed_host_test_worker()
+inside a real Windows AppContainer (ctypes, CapabilityCount=0, unique
+per-run profile, staged runtime copy, staging-only ACL). Job Object is
+resource containment only. Non-Windows and any launch failure raise
+fail-closed SandboxError and never fall back to spawn_host_test_worker().
+
+This is not third-party plugin execution. execution_supported stays false.
+Real Windows TokenIsAppContainer proof remains REQUIRED / NOT RUN.
+---
+ app/plugin_test_worker.py            | 178 ++++++-
+ app/plugin_test_worker_supervisor.py |  82 +++-
+ app/plugin_worker_process.py         |  57 ++-
+ app/plugin_worker_protocol.py        |  14 +
+ app/plugin_worker_sandbox_errors.py  |  24 +
+ app/plugin_worker_windows_api.py     | 678 +++++++++++++++++++++++++++
+ app/plugin_worker_windows_sandbox.py | 480 +++++++++++++++++++
+ 7 files changed, 1486 insertions(+), 27 deletions(-)
+ create mode 100644 app/plugin_worker_sandbox_errors.py
+ create mode 100644 app/plugin_worker_windows_api.py
+ create mode 100644 app/plugin_worker_windows_sandbox.py
+
+diff --git a/app/plugin_test_worker.py b/app/plugin_test_worker.py
+index e4197dc..9983594 100644
+--- a/app/plugin_test_worker.py
++++ b/app/plugin_test_worker.py
+@@ -1,8 +1,11 @@
+ """Host-owned Test Worker process (Phase 2A).
+ 
+ Fixed operations only. Not a plugin, not extensible, not a command runner.
+-Does not read the database, vault, providers, plugin packages, or network.
+-Does not eval/exec/import user modules. Child processes are prohibited.
++Does not read the database, vault, providers, plugin packages, or arbitrary
++network. Does not eval/exec/import user modules. Generic child processes are
++prohibited. Fixed sandbox probes (read/write/token/loopback/child) exist only
++for Host-owned Phase 2B tests and never accept arbitrary paths, URLs, or
++commands.
+ 
+ Run only via the frozen supervisor spawn:
+ `python -I -S -u <absolute-host-owned-bootstrap>`.
+@@ -36,6 +39,13 @@ from app.plugin_worker_protocol import (
+     OPERATION_EMIT_OVERSIZED_FRAME_FOR_TEST,
+     OPERATION_EMIT_TRUNCATED_FRAME_FOR_TEST,
+     OPERATION_PING,
++    OPERATION_PROBE_ALLOWED_READ,
++    OPERATION_PROBE_ALLOWED_WRITE,
++    OPERATION_PROBE_CHILD_PROCESS,
++    OPERATION_PROBE_FORBIDDEN_HOST_READ,
++    OPERATION_PROBE_FORBIDDEN_HOST_WRITE,
++    OPERATION_PROBE_NETWORK,
++    OPERATION_PROBE_TOKEN_IDENTITY,
+     OPERATION_RETURN_FIXED_RESULT,
+     OPERATION_SLEEP,
+     PLUGIN_WORKER_PROTOCOL_VERSION,
+@@ -224,6 +234,163 @@ def _handle_subprocess(message: dict[str, Any]) -> None:
+     )
+ 
+ 
++def _sandbox_env(name: str) -> str:
++    value = os.environ.get(name, "")
++    return value if isinstance(value, str) else ""
++
++
++def _result(message: dict[str, Any], operation: str, output: dict[str, Any]) -> None:
++    _write_envelope(MESSAGE_JOB_RESULT, {"operation": operation, "output": output}, **_job_ids(message))
++
++
++def _handle_probe_allowed_read(message: dict[str, Any]) -> None:
++    path = os.path.join(_sandbox_env("ANS_SANDBOX_IN"), "input.txt")
++    ok = False
++    text = ""
++    try:
++        with open(path, "r", encoding="utf-8") as handle:
++            text = handle.read(64)
++        ok = text == "SANDBOX_INPUT_OK"
++    except OSError:
++        ok = False
++        text = ""
++    _result(message, OPERATION_PROBE_ALLOWED_READ, {"ok": ok, "matched": text == "SANDBOX_INPUT_OK"})
++
++
++def _handle_probe_allowed_write(message: dict[str, Any]) -> None:
++    out_path = os.path.join(_sandbox_env("ANS_SANDBOX_OUT"), "output.txt")
++    in_path = os.path.join(_sandbox_env("ANS_SANDBOX_IN"), "should_fail.txt")
++    tmp_path = os.path.join(_sandbox_env("ANS_SANDBOX_TMP"), "tmp.txt")
++    out_ok = False
++    in_denied = False
++    tmp_ok = False
++    try:
++        with open(out_path, "w", encoding="utf-8") as handle:
++            handle.write("SANDBOX_OUTPUT_OK")
++        out_ok = True
++    except OSError:
++        out_ok = False
++    try:
++        with open(in_path, "w", encoding="utf-8") as handle:
++            handle.write("SHOULD_NOT_LAND")
++        in_denied = False
++    except OSError:
++        in_denied = True
++    try:
++        with open(tmp_path, "w", encoding="utf-8") as handle:
++            handle.write("SANDBOX_TMP_OK")
++        tmp_ok = True
++    except OSError:
++        tmp_ok = False
++    _result(
++        message,
++        OPERATION_PROBE_ALLOWED_WRITE,
++        {"output_ok": out_ok, "input_write_denied": in_denied, "tmp_ok": tmp_ok},
++    )
++
++
++def _handle_probe_forbidden_read(message: dict[str, Any]) -> None:
++    path = _sandbox_env("ANS_PROBE_FORBIDDEN_READ")
++    denied = True
++    leaked = False
++    try:
++        with open(path, "r", encoding="utf-8") as handle:
++            data = handle.read(4096)
++        denied = False
++        leaked = bool(data)
++    except OSError:
++        denied = True
++        leaked = False
++    _result(message, OPERATION_PROBE_FORBIDDEN_HOST_READ, {"denied": denied, "secret_leaked": leaked})
++
++
++def _handle_probe_forbidden_write(message: dict[str, Any]) -> None:
++    path = _sandbox_env("ANS_PROBE_FORBIDDEN_WRITE")
++    denied = True
++    try:
++        with open(path, "w", encoding="utf-8") as handle:
++            handle.write("PWNED")
++        denied = False
++    except OSError:
++        denied = True
++    _result(message, OPERATION_PROBE_FORBIDDEN_HOST_WRITE, {"denied": denied})
++
++
++def _handle_probe_network(message: dict[str, Any]) -> None:
++    denied = True
++    raw = _sandbox_env("ANS_PROBE_LOOPBACK_PORT")
++    try:
++        port = int(raw)
++        if 0 < port < 65536:
++            import socket
++
++            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
++            sock.settimeout(0.4)
++            try:
++                sock.connect(("127.0.0.1", port))
++                denied = False
++            except OSError:
++                denied = True
++            finally:
++                sock.close()
++    except (ValueError, OSError):
++        denied = True
++    _result(message, OPERATION_PROBE_NETWORK, {"denied": denied, "loopback": True})
++
++
++def _handle_probe_child(message: dict[str, Any]) -> None:
++    denied = True
++    try:
++        pid = os.spawnv(os.P_NOWAIT, sys.executable, (sys.executable, "-c", "raise SystemExit(0)"))
++        denied = False
++        if isinstance(pid, int) and pid > 0:
++            try:
++                os.waitpid(pid, os.WNOHANG if hasattr(os, "WNOHANG") else 0)
++            except OSError:
++                pass
++    except OSError:
++        denied = True
++    _result(message, OPERATION_PROBE_CHILD_PROCESS, {"denied": denied})
++
++
++def _handle_probe_token(message: dict[str, Any]) -> None:
++    is_appcontainer = False
++    sid_present = False
++    if sys.platform == "win32":
++        try:
++            import ctypes
++            from ctypes import wintypes
++
++            advapi32 = ctypes.WinDLL("advapi32", use_last_error=True)
++            kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
++            token = wintypes.HANDLE()
++            TOKEN_QUERY = 0x0008
++            if advapi32.OpenProcessToken(kernel32.GetCurrentProcess(), TOKEN_QUERY, ctypes.byref(token)):
++                value = wintypes.DWORD()
++                needed = wintypes.DWORD()
++                TokenIsAppContainer = 19
++                TokenAppContainerSid = 31
++                if advapi32.GetTokenInformation(
++                    token, TokenIsAppContainer, ctypes.byref(value), ctypes.sizeof(value), ctypes.byref(needed)
++                ):
++                    is_appcontainer = int(value.value) != 0
++                needed = wintypes.DWORD(0)
++                advapi32.GetTokenInformation(token, TokenAppContainerSid, None, 0, ctypes.byref(needed))
++                if needed.value:
++                    buf = ctypes.create_string_buffer(needed.value)
++                    if advapi32.GetTokenInformation(token, TokenAppContainerSid, buf, needed, ctypes.byref(needed)):
++                        sid_present = True
++                kernel32.CloseHandle(token)
++        except Exception:
++            is_appcontainer = False
++            sid_present = False
++    _result(
++        message,
++        OPERATION_PROBE_TOKEN_IDENTITY,
++        {"is_appcontainer": is_appcontainer, "appcontainer_sid_present": sid_present},
++    )
++
++
+ _OPERATIONS: dict[str, Callable[[dict[str, Any]], None]] = {
+     OPERATION_PING: _handle_ping,
+     OPERATION_ECHO_SAFE: _handle_echo,
+@@ -234,6 +401,13 @@ _OPERATIONS: dict[str, Callable[[dict[str, Any]], None]] = {
+     OPERATION_EMIT_OVERSIZED_FRAME_FOR_TEST: _handle_oversized,
+     OPERATION_EMIT_TRUNCATED_FRAME_FOR_TEST: _handle_truncated,
+     OPERATION_ATTEMPT_SUBPROCESS_FOR_TEST: _handle_subprocess,
++    OPERATION_PROBE_ALLOWED_READ: _handle_probe_allowed_read,
++    OPERATION_PROBE_ALLOWED_WRITE: _handle_probe_allowed_write,
++    OPERATION_PROBE_FORBIDDEN_HOST_READ: _handle_probe_forbidden_read,
++    OPERATION_PROBE_FORBIDDEN_HOST_WRITE: _handle_probe_forbidden_write,
++    OPERATION_PROBE_NETWORK: _handle_probe_network,
++    OPERATION_PROBE_CHILD_PROCESS: _handle_probe_child,
++    OPERATION_PROBE_TOKEN_IDENTITY: _handle_probe_token,
+ }
+ 
+ 
+diff --git a/app/plugin_test_worker_supervisor.py b/app/plugin_test_worker_supervisor.py
+index b0d5aad..f20ab46 100644
+--- a/app/plugin_test_worker_supervisor.py
++++ b/app/plugin_test_worker_supervisor.py
+@@ -1,8 +1,12 @@
+-"""Host-owned Test Worker supervisor prototype (Phase 2A).
++"""Host-owned Test Worker supervisor prototype (Phase 2A / 2B).
+ 
+-Narrow API: start_test_worker / run_test_job / cancel_test_job /
+-shutdown_test_worker. Not a command runner, not a plugin executor, not a
+-Capability Broker. Production startup must not import or activate this module.
++Narrow API: start_test_worker / start_sandboxed_test_worker / run_test_job /
++cancel_test_job / shutdown_test_worker. Not a command runner, not a plugin
++executor, not a Capability Broker. Production startup must not import or
++activate this module.
++
++`start_sandboxed_test_worker` is the Phase 2B AppContainer path. It is
++fail-closed and never falls back to the unsandboxed spawn.
+ 
+ Spawning this worker does not set execution_supported=true. Third-party plugin
+ code execution remains disabled.
+@@ -23,6 +27,7 @@ from app.plugin_worker_process import (
+     drain_stderr_bounded,
+     owned_alive_pids,
+     spawn_host_test_worker,
++    spawn_sandboxed_host_test_worker,
+     terminate_owned_worker,
+ )
+ from app.plugin_worker_protocol import (
+@@ -104,6 +109,7 @@ class WorkerSession:
+     lifecycle: ExecutionLifecycleState = ExecutionLifecycleState.CREATED
+     stderr: bytearray = field(default_factory=bytearray)
+     output_bytes: int = 0
++    sandbox: Any | None = None
+     _events: Queue = field(default_factory=Queue)
+     _closed: bool = False
+     _lock: threading.Lock = field(default_factory=threading.Lock)
+@@ -117,18 +123,12 @@ class HostTestWorkerSupervisor:
+     """Prototype supervisor. Host-owned test worker only."""
+ 
+     handshake_timeout_s: float = 2.0
++    sandbox_handshake_timeout_s: float = 30.0
+ 
+     def start_test_worker(self) -> WorkerSession:
+         owned = spawn_host_test_worker()
+         session = WorkerSession(owned=owned, session_nonce=new_session_nonce(), state="HANDSHAKING")
+-        threading.Thread(target=self._read_stdout, args=(session,), name=f"test-worker-stdout-{owned.pid}", daemon=True).start()
+-        threading.Thread(
+-            target=drain_stderr_bounded,
+-            args=(owned.stderr, session.stderr),
+-            kwargs={"limit": MAX_STDERR_BYTES},
+-            name=f"test-worker-stderr-{owned.pid}",
+-            daemon=True,
+-        ).start()
++        self._start_io_threads(session)
+         try:
+             self._handshake(session)
+         except Exception:
+@@ -136,6 +136,23 @@ class HostTestWorkerSupervisor:
+             raise
+         return session
+ 
++    def start_sandboxed_test_worker(self) -> WorkerSession:
++        """AppContainer spawn. Fail-closed. Never falls back to unsandboxed spawn."""
++        launch = spawn_sandboxed_host_test_worker()
++        session = WorkerSession(
++            owned=launch.owned,
++            session_nonce=new_session_nonce(),
++            state="HANDSHAKING",
++            sandbox=launch,
++        )
++        self._start_io_threads(session)
++        try:
++            self._handshake(session, timeout_s=self.sandbox_handshake_timeout_s)
++        except Exception:
++            self.shutdown_test_worker(session)
++            raise
++        return session
++
+     def run_test_job(self, session: WorkerSession, spec: HostTestJobSpec) -> HostTestJobOutcome:
+         self._require_ready(session)
+         with session._lock:
+@@ -169,6 +186,7 @@ class HostTestWorkerSupervisor:
+     def shutdown_test_worker(self, session: WorkerSession) -> None:
+         with session._lock:
+             if session._closed:
++                self._close_sandbox(session)
+                 return
+             session._closed = True
+         try:
+@@ -179,13 +197,45 @@ class HostTestWorkerSupervisor:
+                 except Exception:
+                     pass
+         finally:
+-            terminate_owned_worker(session.owned)
++            self._release_session(session)
+             with session._lock:
+                 session.state = "SHUTDOWN"
+ 
+     def retry_test_job(self, job: PluginExecutionJob) -> PluginExecutionJob:
+         return begin_retry(job)
+ 
++    def _start_io_threads(self, session: WorkerSession) -> None:
++        threading.Thread(
++            target=self._read_stdout,
++            args=(session,),
++            name=f"test-worker-stdout-{session.owned.pid}",
++            daemon=True,
++        ).start()
++        threading.Thread(
++            target=drain_stderr_bounded,
++            args=(session.owned.stderr, session.stderr),
++            kwargs={"limit": MAX_STDERR_BYTES},
++            name=f"test-worker-stderr-{session.owned.pid}",
++            daemon=True,
++        ).start()
++
++    def _close_sandbox(self, session: WorkerSession) -> None:
++        sandbox = session.sandbox
++        if sandbox is None:
++            return
++        session.sandbox = None
++        close = getattr(sandbox, "close", None)
++        if close is None:
++            return
++        try:
++            close()
++        except Exception:
++            return
++
++    def _release_session(self, session: WorkerSession) -> None:
++        terminate_owned_worker(session.owned)
++        self._close_sandbox(session)
++
+     def _wait_then_cancel(self, session: WorkerSession, cancel_after_ms: int) -> None:
+         deadline = time.monotonic() + (cancel_after_ms / 1000.0)
+         while time.monotonic() < deadline:
+@@ -197,13 +247,13 @@ class HostTestWorkerSupervisor:
+         if session.owned.poll() is None and session._events.empty():
+             self.cancel_test_job(session)
+ 
+-    def _handshake(self, session: WorkerSession) -> None:
++    def _handshake(self, session: WorkerSession, *, timeout_s: float | None = None) -> None:
+         hello = build_envelope(
+             MESSAGE_HELLO,
+             {"worker_identity": HOST_TEST_WORKER_IDENTITY, "session_nonce": session.session_nonce},
+         )
+         self._write(session, encode_frame(hello))
+-        event = self._wait_event(session, timeout_s=self.handshake_timeout_s)
++        event = self._wait_event(session, timeout_s=timeout_s if timeout_s is not None else self.handshake_timeout_s)
+         if event is None:
+             raise ProtocolError(REASON_HANDSHAKE_TIMEOUT)
+         kind, payload = event
+@@ -337,10 +387,10 @@ class HostTestWorkerSupervisor:
+         return self._outcome(session, accepted=accepted, reason=reason, result=result)
+ 
+     def _kill(self, session: WorkerSession) -> None:
+-        terminate_owned_worker(session.owned)
+         with session._lock:
+             session._closed = True
+             session.state = "SHUTDOWN"
++        self._release_session(session)
+ 
+     def _require_ready(self, session: WorkerSession) -> None:
+         if session.state != "READY" or session.owned.poll() is not None:
+diff --git a/app/plugin_worker_process.py b/app/plugin_worker_process.py
+index 4c450fc..8c56788 100644
+--- a/app/plugin_worker_process.py
++++ b/app/plugin_worker_process.py
+@@ -9,6 +9,10 @@ PYTHONPATH) let attacker-controlled `sitecustomize` / stdlib shadows execute
+ in the child. This adapter now uses isolated interpreter flags (`-I -S`) and
+ an explicit environment allowlist. That is Python startup isolation, not an
+ OS sandbox.
++
++Phase 2B adds `spawn_sandboxed_host_test_worker()` for a Windows AppContainer
++prototype. That helper is fail-closed, takes no executable/args/env/cwd, and
++never falls back to this unsandboxed spawn.
+ """
+ 
+ from __future__ import annotations
+@@ -18,8 +22,9 @@ import signal
+ import subprocess
+ import sys
+ import threading
++from collections.abc import Mapping
+ from pathlib import Path
+-from typing import IO
++from typing import IO, Any
+ 
+ from app.plugin_worker_protocol import MAX_STDERR_BYTES
+ 
+@@ -90,7 +95,7 @@ def _copy_allowlisted(source: Mapping[str, str], names: tuple[str, ...]) -> dict
+ class OwnedWorkerProcess:
+     """Ownership-aware wrapper around one host-owned test worker Popen."""
+ 
+-    def __init__(self, proc: subprocess.Popen[bytes]):
++    def __init__(self, proc: Any):
+         self.proc = proc
+         self.pid = int(proc.pid)
+         with _OWNED_LOCK:
+@@ -147,6 +152,26 @@ def spawn_host_test_worker() -> OwnedWorkerProcess:
+     return OwnedWorkerProcess(proc)
+ 
+ 
++def spawn_sandboxed_host_test_worker() -> Any:
++    """Frozen Host-owned AppContainer spawn. No executable/args/env/cwd.
++
++    Fail-closed on non-Windows and on any sandbox setup failure. This function
++    never falls back to `spawn_host_test_worker()`.
++    """
++    from app.plugin_worker_sandbox_errors import (
++        REASON_WINDOWS_SANDBOX_UNAVAILABLE,
++        SandboxError,
++    )
++
++    if sys.platform != "win32":
++        raise SandboxError(REASON_WINDOWS_SANDBOX_UNAVAILABLE)
++    from app.plugin_worker_windows_sandbox import (
++        spawn_sandboxed_host_test_worker as _spawn_windows,
++    )
++
++    return _spawn_windows()
++
++
+ def terminate_owned_worker(owned: OwnedWorkerProcess, *, grace_s: float = 0.4) -> None:
+     proc = owned.proc
+     if proc.poll() is None:
+@@ -172,36 +197,50 @@ def drain_stderr_bounded(stream: IO[bytes], sink: bytearray, *, limit: int = MAX
+         return
+ 
+ 
+-def _terminate_tree(proc: subprocess.Popen[bytes], *, grace_s: float) -> None:
+-    if os.name == "posix":
++def _terminate_tree(proc: Any, *, grace_s: float) -> None:
++    if os.name == "posix" and hasattr(os, "killpg") and hasattr(proc, "pid"):
+         try:
+             os.killpg(proc.pid, signal.SIGTERM)
+         except ProcessLookupError:
+             return
++        except OSError:
++            if hasattr(proc, "terminate"):
++                proc.terminate()
++            else:
++                return
+         try:
+             proc.wait(timeout=grace_s)
+             return
+         except subprocess.TimeoutExpired:
+             pass
++        except Exception:
++            pass
+         try:
+             os.killpg(proc.pid, signal.SIGKILL)
+         except ProcessLookupError:
+             return
++        except OSError:
++            if hasattr(proc, "kill"):
++                proc.kill()
++            else:
++                return
+         try:
+             proc.wait(timeout=1.0)
+-        except subprocess.TimeoutExpired:
++        except (subprocess.TimeoutExpired, Exception):
+             return
+         return
+-    proc.terminate()
++    if hasattr(proc, "terminate"):
++        proc.terminate()
+     try:
+         proc.wait(timeout=grace_s)
+         return
+-    except subprocess.TimeoutExpired:
++    except (subprocess.TimeoutExpired, Exception):
+         pass
+-    proc.kill()
++    if hasattr(proc, "kill"):
++        proc.kill()
+     try:
+         proc.wait(timeout=1.0)
+-    except subprocess.TimeoutExpired:
++    except (subprocess.TimeoutExpired, Exception):
+         return
+ 
+ 
+diff --git a/app/plugin_worker_protocol.py b/app/plugin_worker_protocol.py
+index 74a9d20..7ca409c 100644
+--- a/app/plugin_worker_protocol.py
++++ b/app/plugin_worker_protocol.py
+@@ -64,6 +64,13 @@ OPERATION_EMIT_MALFORMED_FRAME_FOR_TEST = "EMIT_MALFORMED_FRAME_FOR_TEST"
+ OPERATION_EMIT_OVERSIZED_FRAME_FOR_TEST = "EMIT_OVERSIZED_FRAME_FOR_TEST"
+ OPERATION_EMIT_TRUNCATED_FRAME_FOR_TEST = "EMIT_TRUNCATED_FRAME_FOR_TEST"
+ OPERATION_ATTEMPT_SUBPROCESS_FOR_TEST = "ATTEMPT_SUBPROCESS_FOR_TEST"
++OPERATION_PROBE_ALLOWED_READ = "PROBE_ALLOWED_READ"
++OPERATION_PROBE_ALLOWED_WRITE = "PROBE_ALLOWED_WRITE"
++OPERATION_PROBE_FORBIDDEN_HOST_READ = "PROBE_FORBIDDEN_HOST_READ"
++OPERATION_PROBE_FORBIDDEN_HOST_WRITE = "PROBE_FORBIDDEN_HOST_WRITE"
++OPERATION_PROBE_NETWORK = "PROBE_NETWORK"
++OPERATION_PROBE_CHILD_PROCESS = "PROBE_CHILD_PROCESS"
++OPERATION_PROBE_TOKEN_IDENTITY = "PROBE_TOKEN_IDENTITY"
+ 
+ WORKER_OPERATIONS = frozenset({
+     OPERATION_PING,
+@@ -75,6 +82,13 @@ WORKER_OPERATIONS = frozenset({
+     OPERATION_EMIT_OVERSIZED_FRAME_FOR_TEST,
+     OPERATION_EMIT_TRUNCATED_FRAME_FOR_TEST,
+     OPERATION_ATTEMPT_SUBPROCESS_FOR_TEST,
++    OPERATION_PROBE_ALLOWED_READ,
++    OPERATION_PROBE_ALLOWED_WRITE,
++    OPERATION_PROBE_FORBIDDEN_HOST_READ,
++    OPERATION_PROBE_FORBIDDEN_HOST_WRITE,
++    OPERATION_PROBE_NETWORK,
++    OPERATION_PROBE_CHILD_PROCESS,
++    OPERATION_PROBE_TOKEN_IDENTITY,
+ })
+ 
+ PAYLOAD_KEYS: dict[str, frozenset[str]] = {
+diff --git a/app/plugin_worker_sandbox_errors.py b/app/plugin_worker_sandbox_errors.py
+new file mode 100644
+index 0000000..54cc957
+--- /dev/null
++++ b/app/plugin_worker_sandbox_errors.py
+@@ -0,0 +1,24 @@
++"""Stable reason codes for the Phase 2B Windows sandbox prototype."""
++
++from __future__ import annotations
++
++
++REASON_WINDOWS_SANDBOX_UNAVAILABLE = "WINDOWS_SANDBOX_UNAVAILABLE"
++REASON_SANDBOX_PROFILE_CREATE_FAILED = "SANDBOX_PROFILE_CREATE_FAILED"
++REASON_SANDBOX_SID_FAILED = "SANDBOX_SID_FAILED"
++REASON_SANDBOX_ACL_FAILED = "SANDBOX_ACL_FAILED"
++REASON_SANDBOX_LAUNCH_FAILED = "SANDBOX_LAUNCH_FAILED"
++REASON_SANDBOX_TOKEN_VERIFICATION_FAILED = "SANDBOX_TOKEN_VERIFICATION_FAILED"
++REASON_SANDBOX_JOB_ASSIGNMENT_FAILED = "SANDBOX_JOB_ASSIGNMENT_FAILED"
++REASON_SANDBOX_STAGING_FAILED = "SANDBOX_STAGING_FAILED"
++REASON_PYTHON_APPCONTAINER_COMPATIBILITY_BLOCKED = "PYTHON_APPCONTAINER_COMPATIBILITY_BLOCKED"
++
++PROCESS_MEMORY_LIMIT_BYTES = 512 * 1024 * 1024
++
++
++class SandboxError(RuntimeError):
++    def __init__(self, code: str, *, winerr: int | None = None):
++        self.code = code
++        self.winerr = winerr
++        extra = f" winerr={winerr}" if winerr else ""
++        super().__init__(f"{code}{extra}")
+diff --git a/app/plugin_worker_windows_api.py b/app/plugin_worker_windows_api.py
+new file mode 100644
+index 0000000..73370d8
+--- /dev/null
++++ b/app/plugin_worker_windows_api.py
+@@ -0,0 +1,678 @@
++"""ctypes bindings for the Phase 2B AppContainer launcher.
++
++Imported only on Windows launch. Job Object here is resource containment,
++not a security sandbox. No pywin32.
++"""
++
++from __future__ import annotations
++
++import os
++import sys
++from typing import IO, Any, Callable
++
++from app.plugin_worker_sandbox_errors import (
++    PROCESS_MEMORY_LIMIT_BYTES,
++    REASON_SANDBOX_ACL_FAILED,
++    REASON_SANDBOX_JOB_ASSIGNMENT_FAILED,
++    REASON_SANDBOX_LAUNCH_FAILED,
++    REASON_SANDBOX_PROFILE_CREATE_FAILED,
++    REASON_SANDBOX_TOKEN_VERIFICATION_FAILED,
++    SandboxError,
++)
++
++
++class WinProcess:
++    """Popen-shaped wrapper around a CreateProcess AppContainer child."""
++
++    def __init__(
++        self,
++        pid: int,
++        stdin: IO[bytes],
++        stdout: IO[bytes],
++        stderr: IO[bytes],
++        wait: Callable[..., int],
++        terminate: Callable[[], None],
++        poll: Callable[[], int | None],
++    ):
++        self.pid = pid
++        self.stdin = stdin
++        self.stdout = stdout
++        self.stderr = stderr
++        self._wait = wait
++        self._terminate = terminate
++        self._poll = poll
++
++    def poll(self) -> int | None:
++        return self._poll()
++
++    def wait(self, timeout: float | None = None) -> int:
++        return self._wait(timeout)
++
++    def terminate(self) -> None:
++        self._terminate()
++
++    def kill(self) -> None:
++        self._terminate()
++
++
++class Win32:
++    PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES = 0x00020009
++    EXTENDED_STARTUPINFO_PRESENT = 0x00080000
++    CREATE_SUSPENDED = 0x00000004
++    CREATE_UNICODE_ENVIRONMENT = 0x00000400
++    CREATE_NO_WINDOW = 0x08000000
++    STARTF_USESTDHANDLES = 0x00000100
++    STARTF_USESHOWWINDOW = 0x00000001
++    HANDLE_FLAG_INHERIT = 0x00000001
++    TOKEN_QUERY = 0x0008
++    TokenUser = 1
++    TokenIsAppContainer = 19
++    TokenAppContainerSid = 31
++    JobObjectExtendedLimitInformation = 9
++    JOB_OBJECT_LIMIT_ACTIVE_PROCESS = 0x00000008
++    JOB_OBJECT_LIMIT_PROCESS_MEMORY = 0x00000100
++    JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000
++    SE_FILE_OBJECT = 1
++    DACL_SECURITY_INFORMATION = 0x00000004
++    PROTECTED_DACL_SECURITY_INFORMATION = 0x80000000
++    GRANT_ACCESS = 1
++    TRUSTEE_IS_SID = 0
++    TRUSTEE_IS_USER = 1
++    SUB_CONTAINERS_AND_OBJECTS_INHERIT = 0x3
++    FILE_GENERIC_READ = 0x120089
++    FILE_GENERIC_WRITE = 0x120116
++    FILE_GENERIC_EXECUTE = 0x1200A0
++    FILE_ALL_ACCESS = 0x1F01FF
++    DELETE = 0x00010000
++    WAIT_OBJECT_0 = 0
++    WAIT_TIMEOUT = 0x102
++    S_OK = 0
++
++    def __init__(self) -> None:
++        if sys.platform != "win32":
++            raise SandboxError("WINDOWS_SANDBOX_UNAVAILABLE")
++        import ctypes
++        from ctypes import wintypes
++
++        self.ctypes = ctypes
++        self.wintypes = wintypes
++        self.kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
++        self.advapi32 = ctypes.WinDLL("advapi32", use_last_error=True)
++        self.userenv = ctypes.WinDLL("userenv", use_last_error=True)
++        self._define_structs()
++        self._bind()
++
++    def _define_structs(self) -> None:
++        ctypes = self.ctypes
++        wintypes = self.wintypes
++
++        class SECURITY_ATTRIBUTES(ctypes.Structure):
++            _fields_ = [
++                ("nLength", wintypes.DWORD),
++                ("lpSecurityDescriptor", wintypes.LPVOID),
++                ("bInheritHandle", wintypes.BOOL),
++            ]
++
++        class STARTUPINFOW(ctypes.Structure):
++            _fields_ = [
++                ("cb", wintypes.DWORD),
++                ("lpReserved", wintypes.LPWSTR),
++                ("lpDesktop", wintypes.LPWSTR),
++                ("lpTitle", wintypes.LPWSTR),
++                ("dwX", wintypes.DWORD),
++                ("dwY", wintypes.DWORD),
++                ("dwXSize", wintypes.DWORD),
++                ("dwYSize", wintypes.DWORD),
++                ("dwXCountChars", wintypes.DWORD),
++                ("dwYCountChars", wintypes.DWORD),
++                ("dwFillAttribute", wintypes.DWORD),
++                ("dwFlags", wintypes.DWORD),
++                ("wShowWindow", wintypes.WORD),
++                ("cbReserved2", wintypes.WORD),
++                ("lpReserved2", ctypes.POINTER(ctypes.c_byte)),
++                ("hStdInput", wintypes.HANDLE),
++                ("hStdOutput", wintypes.HANDLE),
++                ("hStdError", wintypes.HANDLE),
++            ]
++
++        class STARTUPINFOEXW(ctypes.Structure):
++            _fields_ = [
++                ("StartupInfo", STARTUPINFOW),
++                ("lpAttributeList", wintypes.LPVOID),
++            ]
++
++        class PROCESS_INFORMATION(ctypes.Structure):
++            _fields_ = [
++                ("hProcess", wintypes.HANDLE),
++                ("hThread", wintypes.HANDLE),
++                ("dwProcessId", wintypes.DWORD),
++                ("dwThreadId", wintypes.DWORD),
++            ]
++
++        class SID_AND_ATTRIBUTES(ctypes.Structure):
++            _fields_ = [("Sid", wintypes.LPVOID), ("Attributes", wintypes.DWORD)]
++
++        class SECURITY_CAPABILITIES(ctypes.Structure):
++            _fields_ = [
++                ("AppContainerSid", wintypes.LPVOID),
++                ("Capabilities", ctypes.POINTER(SID_AND_ATTRIBUTES)),
++                ("CapabilityCount", wintypes.DWORD),
++                ("Reserved", wintypes.DWORD),
++            ]
++
++        class TRUSTEE_W(ctypes.Structure):
++            _fields_ = [
++                ("pMultipleTrustee", wintypes.LPVOID),
++                ("MultipleTrusteeOperation", ctypes.c_int),
++                ("TrusteeForm", ctypes.c_int),
++                ("TrusteeType", ctypes.c_int),
++                ("ptstrName", wintypes.LPVOID),
++            ]
++
++        class EXPLICIT_ACCESS_W(ctypes.Structure):
++            _fields_ = [
++                ("grfAccessPermissions", wintypes.DWORD),
++                ("grfAccessMode", ctypes.c_int),
++                ("grfInheritance", wintypes.DWORD),
++                ("Trustee", TRUSTEE_W),
++            ]
++
++        class IO_COUNTERS(ctypes.Structure):
++            _fields_ = [
++                ("ReadOperationCount", ctypes.c_ulonglong),
++                ("WriteOperationCount", ctypes.c_ulonglong),
++                ("OtherOperationCount", ctypes.c_ulonglong),
++                ("ReadTransferCount", ctypes.c_ulonglong),
++                ("WriteTransferCount", ctypes.c_ulonglong),
++                ("OtherTransferCount", ctypes.c_ulonglong),
++            ]
++
++        class BASIC_LIMIT_INFORMATION(ctypes.Structure):
++            _fields_ = [
++                ("PerProcessUserTimeLimit", ctypes.c_longlong),
++                ("PerJobUserTimeLimit", ctypes.c_longlong),
++                ("LimitFlags", wintypes.DWORD),
++                ("MinimumWorkingSetSize", ctypes.c_size_t),
++                ("MaximumWorkingSetSize", ctypes.c_size_t),
++                ("ActiveProcessLimit", wintypes.DWORD),
++                ("Affinity", ctypes.c_size_t),
++                ("PriorityClass", wintypes.DWORD),
++                ("SchedulingClass", wintypes.DWORD),
++            ]
++
++        class EXTENDED_LIMIT_INFORMATION(ctypes.Structure):
++            _fields_ = [
++                ("BasicLimitInformation", BASIC_LIMIT_INFORMATION),
++                ("IoInfo", IO_COUNTERS),
++                ("ProcessMemoryLimit", ctypes.c_size_t),
++                ("JobMemoryLimit", ctypes.c_size_t),
++                ("PeakProcessMemoryUsed", ctypes.c_size_t),
++                ("PeakJobMemoryUsed", ctypes.c_size_t),
++            ]
++
++        class TOKEN_USER(ctypes.Structure):
++            _fields_ = [("User", SID_AND_ATTRIBUTES)]
++
++        self.SECURITY_ATTRIBUTES = SECURITY_ATTRIBUTES
++        self.STARTUPINFOEXW = STARTUPINFOEXW
++        self.PROCESS_INFORMATION = PROCESS_INFORMATION
++        self.SECURITY_CAPABILITIES = SECURITY_CAPABILITIES
++        self.EXPLICIT_ACCESS_W = EXPLICIT_ACCESS_W
++        self.EXTENDED_LIMIT_INFORMATION = EXTENDED_LIMIT_INFORMATION
++        self.TOKEN_USER = TOKEN_USER
++
++    def _bind(self) -> None:
++        ctypes = self.ctypes
++        wintypes = self.wintypes
++        k = self.kernel32
++        k.CreatePipe.argtypes = [
++            ctypes.POINTER(wintypes.HANDLE),
++            ctypes.POINTER(wintypes.HANDLE),
++            ctypes.c_void_p,
++            wintypes.DWORD,
++        ]
++        k.CreatePipe.restype = wintypes.BOOL
++        k.SetHandleInformation.argtypes = [wintypes.HANDLE, wintypes.DWORD, wintypes.DWORD]
++        k.SetHandleInformation.restype = wintypes.BOOL
++        k.CloseHandle.argtypes = [wintypes.HANDLE]
++        k.CloseHandle.restype = wintypes.BOOL
++        k.CreateProcessW.argtypes = [
++            wintypes.LPCWSTR,
++            wintypes.LPWSTR,
++            ctypes.c_void_p,
++            ctypes.c_void_p,
++            wintypes.BOOL,
++            wintypes.DWORD,
++            wintypes.LPVOID,
++            wintypes.LPCWSTR,
++            ctypes.c_void_p,
++            ctypes.c_void_p,
++        ]
++        k.CreateProcessW.restype = wintypes.BOOL
++        k.ResumeThread.argtypes = [wintypes.HANDLE]
++        k.ResumeThread.restype = wintypes.DWORD
++        k.TerminateProcess.argtypes = [wintypes.HANDLE, wintypes.UINT]
++        k.TerminateProcess.restype = wintypes.BOOL
++        k.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
++        k.WaitForSingleObject.restype = wintypes.DWORD
++        k.GetExitCodeProcess.argtypes = [wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD)]
++        k.GetExitCodeProcess.restype = wintypes.BOOL
++        k.CreateJobObjectW.argtypes = [ctypes.c_void_p, wintypes.LPCWSTR]
++        k.CreateJobObjectW.restype = wintypes.HANDLE
++        k.SetInformationJobObject.argtypes = [
++            wintypes.HANDLE,
++            ctypes.c_int,
++            ctypes.c_void_p,
++            wintypes.DWORD,
++        ]
++        k.SetInformationJobObject.restype = wintypes.BOOL
++        k.AssignProcessToJobObject.argtypes = [wintypes.HANDLE, wintypes.HANDLE]
++        k.AssignProcessToJobObject.restype = wintypes.BOOL
++        k.InitializeProcThreadAttributeList.argtypes = [
++            ctypes.c_void_p,
++            wintypes.DWORD,
++            wintypes.DWORD,
++            ctypes.POINTER(ctypes.c_size_t),
++        ]
++        k.InitializeProcThreadAttributeList.restype = wintypes.BOOL
++        k.UpdateProcThreadAttribute.argtypes = [
++            ctypes.c_void_p,
++            wintypes.DWORD,
++            ctypes.c_size_t,
++            ctypes.c_void_p,
++            ctypes.c_size_t,
++            ctypes.c_void_p,
++            ctypes.POINTER(ctypes.c_size_t),
++        ]
++        k.UpdateProcThreadAttribute.restype = wintypes.BOOL
++        k.DeleteProcThreadAttributeList.argtypes = [ctypes.c_void_p]
++        k.DeleteProcThreadAttributeList.restype = None
++        k.GetCurrentProcess.restype = wintypes.HANDLE
++        k.LocalFree.argtypes = [wintypes.HLOCAL]
++        k.LocalFree.restype = wintypes.HLOCAL
++        a = self.advapi32
++        a.OpenProcessToken.argtypes = [
++            wintypes.HANDLE,
++            wintypes.DWORD,
++            ctypes.POINTER(wintypes.HANDLE),
++        ]
++        a.OpenProcessToken.restype = wintypes.BOOL
++        a.GetTokenInformation.restype = wintypes.BOOL
++        a.FreeSid.argtypes = [ctypes.c_void_p]
++        a.FreeSid.restype = wintypes.LPVOID
++        a.SetEntriesInAclW.argtypes = [
++            wintypes.ULONG,
++            ctypes.c_void_p,
++            ctypes.c_void_p,
++            ctypes.POINTER(ctypes.c_void_p),
++        ]
++        a.SetEntriesInAclW.restype = wintypes.DWORD
++        a.SetNamedSecurityInfoW.argtypes = [
++            wintypes.LPCWSTR,
++            ctypes.c_int,
++            wintypes.DWORD,
++            ctypes.c_void_p,
++            ctypes.c_void_p,
++            ctypes.c_void_p,
++            ctypes.c_void_p,
++        ]
++        a.SetNamedSecurityInfoW.restype = wintypes.DWORD
++        self.userenv.CreateAppContainerProfile.argtypes = [
++            wintypes.LPCWSTR,
++            wintypes.LPCWSTR,
++            wintypes.LPCWSTR,
++            ctypes.c_void_p,
++            wintypes.DWORD,
++            ctypes.POINTER(ctypes.c_void_p),
++        ]
++        self.userenv.CreateAppContainerProfile.restype = ctypes.HRESULT
++        self.userenv.DeriveAppContainerSidFromAppContainerName.argtypes = [
++            wintypes.LPCWSTR,
++            ctypes.POINTER(ctypes.c_void_p),
++        ]
++        self.userenv.DeriveAppContainerSidFromAppContainerName.restype = ctypes.HRESULT
++        self.userenv.DeleteAppContainerProfile.argtypes = [wintypes.LPCWSTR]
++        self.userenv.DeleteAppContainerProfile.restype = ctypes.HRESULT
++
++    def _winerr(self) -> int:
++        return int(self.ctypes.get_last_error())
++
++    def create_or_derive_profile(self, name: str) -> Any:
++        ctypes = self.ctypes
++        sid = ctypes.c_void_p()
++        hr = self.userenv.CreateAppContainerProfile(name, name, name, None, 0, ctypes.byref(sid))
++        if hr == self.S_OK and sid.value:
++            return sid
++        if sid.value:
++            try:
++                self.free_sid(sid)
++            except Exception:
++                pass
++        sid = ctypes.c_void_p()
++        hr2 = self.userenv.DeriveAppContainerSidFromAppContainerName(name, ctypes.byref(sid))
++        if hr2 == self.S_OK and sid.value:
++            return sid
++        raise SandboxError(REASON_SANDBOX_PROFILE_CREATE_FAILED, winerr=int(hr2 or hr))
++
++    def delete_profile(self, name: str) -> None:
++        self.userenv.DeleteAppContainerProfile(name)
++
++    def free_sid(self, sid: Any) -> None:
++        if sid and getattr(sid, "value", None):
++            self.advapi32.FreeSid(sid)
++
++    def current_user_sid(self) -> Any:
++        ctypes = self.ctypes
++        wintypes = self.wintypes
++        token = wintypes.HANDLE()
++        if not self.advapi32.OpenProcessToken(self.kernel32.GetCurrentProcess(), self.TOKEN_QUERY, ctypes.byref(token)):
++            raise SandboxError(REASON_SANDBOX_ACL_FAILED, winerr=self._winerr())
++        try:
++            needed = wintypes.DWORD(0)
++            self.advapi32.GetTokenInformation(token, self.TokenUser, None, 0, ctypes.byref(needed))
++            buf = ctypes.create_string_buffer(needed.value or 1)
++            if not self.advapi32.GetTokenInformation(token, self.TokenUser, buf, needed, ctypes.byref(needed)):
++                raise SandboxError(REASON_SANDBOX_ACL_FAILED, winerr=self._winerr())
++            user = self.TOKEN_USER.from_buffer(buf)
++            # Keep buf alive by attaching it to the SID pointer object.
++            sid = ctypes.c_void_p(user.User.Sid)
++            sid._buffer = buf  # type: ignore[attr-defined]
++            return sid
++        finally:
++            self.close_handle(int(token.value) if token.value else 0)
++
++    def grant_appcontainer_acl(self, path: str, sid: Any, *, execute: bool, write: bool) -> None:
++        ctypes = self.ctypes
++        access = self.FILE_GENERIC_READ
++        if execute:
++            access |= self.FILE_GENERIC_EXECUTE
++        if write:
++            access |= self.FILE_GENERIC_WRITE | self.DELETE
++        host_sid = self.current_user_sid()
++        entries = (self.EXPLICIT_ACCESS_W * 2)()
++        entries[0].grfAccessPermissions = self.FILE_ALL_ACCESS
++        entries[0].grfAccessMode = self.GRANT_ACCESS
++        entries[0].grfInheritance = self.SUB_CONTAINERS_AND_OBJECTS_INHERIT
++        entries[0].Trustee.TrusteeForm = self.TRUSTEE_IS_SID
++        entries[0].Trustee.TrusteeType = self.TRUSTEE_IS_USER
++        entries[0].Trustee.ptstrName = host_sid
++        entries[1].grfAccessPermissions = access
++        entries[1].grfAccessMode = self.GRANT_ACCESS
++        entries[1].grfInheritance = self.SUB_CONTAINERS_AND_OBJECTS_INHERIT
++        entries[1].Trustee.TrusteeForm = self.TRUSTEE_IS_SID
++        entries[1].Trustee.TrusteeType = self.TRUSTEE_IS_USER
++        entries[1].Trustee.ptstrName = sid
++        new_acl = ctypes.c_void_p()
++        status = self.advapi32.SetEntriesInAclW(2, entries, None, ctypes.byref(new_acl))
++        if status != 0 or not new_acl:
++            raise SandboxError(REASON_SANDBOX_ACL_FAILED, winerr=status)
++        try:
++            named = self.advapi32.SetNamedSecurityInfoW(
++                path,
++                self.SE_FILE_OBJECT,
++                self.DACL_SECURITY_INFORMATION | self.PROTECTED_DACL_SECURITY_INFORMATION,
++                None,
++                None,
++                new_acl,
++                None,
++            )
++            if named != 0:
++                raise SandboxError(REASON_SANDBOX_ACL_FAILED, winerr=named)
++        finally:
++            self.kernel32.LocalFree(new_acl)
++
++    def create_stdio_pipes(self) -> dict[str, int]:
++        ctypes = self.ctypes
++        sa = self.SECURITY_ATTRIBUTES()
++        sa.nLength = ctypes.sizeof(sa)
++        sa.bInheritHandle = True
++        sa.lpSecurityDescriptor = None
++
++        def _pipe() -> tuple[int, int]:
++            read = self.wintypes.HANDLE()
++            write = self.wintypes.HANDLE()
++            if not self.kernel32.CreatePipe(ctypes.byref(read), ctypes.byref(write), ctypes.byref(sa), 0):
++                raise SandboxError(REASON_SANDBOX_LAUNCH_FAILED, winerr=self._winerr())
++            return int(read.value), int(write.value)
++
++        stdin_r, stdin_w = _pipe()
++        stdout_r, stdout_w = _pipe()
++        stderr_r, stderr_w = _pipe()
++        for handle in (stdin_w, stdout_r, stderr_r):
++            if not self.kernel32.SetHandleInformation(handle, self.HANDLE_FLAG_INHERIT, 0):
++                raise SandboxError(REASON_SANDBOX_LAUNCH_FAILED, winerr=self._winerr())
++        return {
++            "stdin_r": stdin_r,
++            "stdin_w": stdin_w,
++            "stdout_r": stdout_r,
++            "stdout_w": stdout_w,
++            "stderr_r": stderr_r,
++            "stderr_w": stderr_w,
++        }
++
++    def create_job_object(self) -> tuple[int, bool]:
++        ctypes = self.ctypes
++        handle = self.kernel32.CreateJobObjectW(None, None)
++        if not handle:
++            raise SandboxError(REASON_SANDBOX_JOB_ASSIGNMENT_FAILED, winerr=self._winerr())
++        job = int(handle)
++        memory_ready = True
++        limits = self.EXTENDED_LIMIT_INFORMATION()
++        limits.BasicLimitInformation.LimitFlags = (
++            self.JOB_OBJECT_LIMIT_ACTIVE_PROCESS
++            | self.JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
++            | self.JOB_OBJECT_LIMIT_PROCESS_MEMORY
++        )
++        limits.BasicLimitInformation.ActiveProcessLimit = 1
++        limits.ProcessMemoryLimit = PROCESS_MEMORY_LIMIT_BYTES
++        ok = self.kernel32.SetInformationJobObject(
++            job, self.JobObjectExtendedLimitInformation, ctypes.byref(limits), ctypes.sizeof(limits)
++        )
++        if not ok:
++            memory_ready = False
++            limits = self.EXTENDED_LIMIT_INFORMATION()
++            limits.BasicLimitInformation.LimitFlags = (
++                self.JOB_OBJECT_LIMIT_ACTIVE_PROCESS | self.JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
++            )
++            limits.BasicLimitInformation.ActiveProcessLimit = 1
++            ok = self.kernel32.SetInformationJobObject(
++                job, self.JobObjectExtendedLimitInformation, ctypes.byref(limits), ctypes.sizeof(limits)
++            )
++            if not ok:
++                self.close_handle(job)
++                raise SandboxError(REASON_SANDBOX_JOB_ASSIGNMENT_FAILED, winerr=self._winerr())
++        return job, memory_ready
++
++    def create_appcontainer_process(
++        self,
++        *,
++        application: str,
++        cmdline: str,
++        cwd: str,
++        env: dict[str, str],
++        sid: Any,
++        pipes: dict[str, int],
++    ) -> tuple[Any, dict[str, Any]]:
++        ctypes = self.ctypes
++        wintypes = self.wintypes
++        caps = self.SECURITY_CAPABILITIES()
++        caps.AppContainerSid = sid
++        caps.Capabilities = None
++        caps.CapabilityCount = 0
++        caps.Reserved = 0
++        size = ctypes.c_size_t(0)
++        self.kernel32.InitializeProcThreadAttributeList(None, 1, 0, ctypes.byref(size))
++        if size.value == 0:
++            raise SandboxError(REASON_SANDBOX_LAUNCH_FAILED, winerr=self._winerr())
++        buf = ctypes.create_string_buffer(size.value)
++        if not self.kernel32.InitializeProcThreadAttributeList(buf, 1, 0, ctypes.byref(size)):
++            raise SandboxError(REASON_SANDBOX_LAUNCH_FAILED, winerr=self._winerr())
++        attr_state = {"buf": buf, "initialized": True, "caps": caps}
++        try:
++            if not self.kernel32.UpdateProcThreadAttribute(
++                buf,
++                0,
++                self.PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES,
++                ctypes.byref(caps),
++                ctypes.sizeof(caps),
++                None,
++                None,
++            ):
++                raise SandboxError(REASON_SANDBOX_LAUNCH_FAILED, winerr=self._winerr())
++            siex = self.STARTUPINFOEXW()
++            siex.StartupInfo.cb = ctypes.sizeof(siex)
++            siex.StartupInfo.dwFlags = self.STARTF_USESTDHANDLES | self.STARTF_USESHOWWINDOW
++            siex.StartupInfo.hStdInput = pipes["stdin_r"]
++            siex.StartupInfo.hStdOutput = pipes["stdout_w"]
++            siex.StartupInfo.hStdError = pipes["stderr_w"]
++            siex.lpAttributeList = ctypes.cast(buf, wintypes.LPVOID)
++            env_block = self._env_block(env)
++            pi = self.PROCESS_INFORMATION()
++            flags = (
++                self.EXTENDED_STARTUPINFO_PRESENT
++                | self.CREATE_SUSPENDED
++                | self.CREATE_UNICODE_ENVIRONMENT
++                | self.CREATE_NO_WINDOW
++            )
++            command = ctypes.create_unicode_buffer(cmdline)
++            ok = self.kernel32.CreateProcessW(
++                application,
++                command,
++                None,
++                None,
++                True,
++                flags,
++                env_block,
++                cwd,
++                ctypes.byref(siex),
++                ctypes.byref(pi),
++            )
++            if not ok:
++                raise SandboxError(REASON_SANDBOX_LAUNCH_FAILED, winerr=self._winerr())
++            for key in ("stdin_r", "stdout_w", "stderr_w"):
++                self.close_handle(pipes[key])
++                pipes.pop(key, None)
++            attr_state["env_block"] = env_block
++            attr_state["command"] = command
++            return pi, attr_state
++        except Exception:
++            self.free_attribute_list(attr_state)
++            raise
++
++    def assign_to_job(self, job: int, h_process: Any) -> None:
++        if not self.kernel32.AssignProcessToJobObject(job, h_process):
++            raise SandboxError(REASON_SANDBOX_JOB_ASSIGNMENT_FAILED, winerr=self._winerr())
++
++    def verify_process_is_appcontainer(self, h_process: Any) -> tuple[bool, bool]:
++        ctypes = self.ctypes
++        wintypes = self.wintypes
++        token = wintypes.HANDLE()
++        if not self.advapi32.OpenProcessToken(h_process, self.TOKEN_QUERY, ctypes.byref(token)):
++            raise SandboxError(REASON_SANDBOX_TOKEN_VERIFICATION_FAILED, winerr=self._winerr())
++        try:
++            value = wintypes.DWORD()
++            needed = wintypes.DWORD()
++            ok = self.advapi32.GetTokenInformation(
++                token, self.TokenIsAppContainer, ctypes.byref(value), ctypes.sizeof(value), ctypes.byref(needed)
++            )
++            if not ok:
++                raise SandboxError(REASON_SANDBOX_TOKEN_VERIFICATION_FAILED, winerr=self._winerr())
++            is_ac = int(value.value) != 0
++            sid_present = False
++            needed = wintypes.DWORD(0)
++            self.advapi32.GetTokenInformation(token, self.TokenAppContainerSid, None, 0, ctypes.byref(needed))
++            if needed.value:
++                buf = ctypes.create_string_buffer(needed.value)
++                if self.advapi32.GetTokenInformation(
++                    token, self.TokenAppContainerSid, buf, needed, ctypes.byref(needed)
++                ):
++                    sid_present = True
++            return is_ac, sid_present
++        finally:
++            self.close_handle(int(token.value) if token.value else 0)
++
++    def resume_thread(self, h_thread: Any) -> None:
++        if self.kernel32.ResumeThread(h_thread) == 0xFFFFFFFF:
++            raise SandboxError(REASON_SANDBOX_LAUNCH_FAILED, winerr=self._winerr())
++
++    def terminate_process(self, h_process: Any) -> None:
++        if h_process:
++            self.kernel32.TerminateProcess(h_process, 1)
++
++    def wait_process(self, h_process: Any, timeout_ms: int) -> None:
++        self.kernel32.WaitForSingleObject(h_process, timeout_ms)
++
++    def close_handle(self, handle: int) -> None:
++        if handle:
++            self.kernel32.CloseHandle(handle)
++
++    def free_attribute_list(self, attr_state: dict[str, Any]) -> None:
++        buf = attr_state.get("buf")
++        if buf is not None and attr_state.get("initialized"):
++            try:
++                self.kernel32.DeleteProcThreadAttributeList(buf)
++            except Exception:
++                pass
++            attr_state["initialized"] = False
++
++    def quote_args(self, args: list[str]) -> str:
++        parts: list[str] = []
++        for arg in args:
++            if not arg or any(ch in arg for ch in ' \t"'):
++                parts.append('"' + arg.replace('"', '\\"') + '"')
++            else:
++                parts.append(arg)
++        return " ".join(parts)
++
++    def _env_block(self, env: dict[str, str]) -> Any:
++        text = "".join(f"{key}={value}\0" for key, value in env.items()) + "\0"
++        return self.ctypes.create_unicode_buffer(text)
++
++    def wrap_process(self, proc_info: Any, pipes: dict[str, int]) -> WinProcess:
++        import msvcrt
++
++        stdin_fd = msvcrt.open_osfhandle(pipes["stdin_w"], os.O_WRONLY)
++        stdout_fd = msvcrt.open_osfhandle(pipes["stdout_r"], os.O_RDONLY)
++        stderr_fd = msvcrt.open_osfhandle(pipes["stderr_r"], os.O_RDONLY)
++        pipes.pop("stdin_w", None)
++        pipes.pop("stdout_r", None)
++        pipes.pop("stderr_r", None)
++        stdin = os.fdopen(stdin_fd, "wb", buffering=0)
++        stdout = os.fdopen(stdout_fd, "rb", buffering=0)
++        stderr = os.fdopen(stderr_fd, "rb", buffering=0)
++        h_process = proc_info.hProcess
++        exit_holder: dict[str, int | None] = {"code": None}
++
++        def poll() -> int | None:
++            if exit_holder["code"] is not None:
++                return exit_holder["code"]
++            wait = self.kernel32.WaitForSingleObject(h_process, 0)
++            if wait == self.WAIT_OBJECT_0:
++                code = self.wintypes.DWORD()
++                if self.kernel32.GetExitCodeProcess(h_process, self.ctypes.byref(code)):
++                    exit_holder["code"] = int(code.value)
++                    return exit_holder["code"]
++            return None
++
++        def wait(timeout: float | None = None) -> int:
++            ms = 0xFFFFFFFF if timeout is None else max(0, int(timeout * 1000))
++            wait_rc = self.kernel32.WaitForSingleObject(h_process, ms)
++            if wait_rc == self.WAIT_TIMEOUT:
++                raise TimeoutError("SANDBOX_WAIT_TIMEOUT")
++            code = self.wintypes.DWORD()
++            self.kernel32.GetExitCodeProcess(h_process, self.ctypes.byref(code))
++            exit_holder["code"] = int(code.value)
++            return int(code.value)
++
++        def terminate() -> None:
++            self.terminate_process(h_process)
++
++        return WinProcess(
++            pid=int(proc_info.dwProcessId),
++            stdin=stdin,
++            stdout=stdout,
++            stderr=stderr,
++            wait=wait,
++            terminate=terminate,
++            poll=poll,
++        )
+diff --git a/app/plugin_worker_windows_sandbox.py b/app/plugin_worker_windows_sandbox.py
+new file mode 100644
+index 0000000..8bb97f2
+--- /dev/null
++++ b/app/plugin_worker_windows_sandbox.py
+@@ -0,0 +1,480 @@
++"""Windows AppContainer prototype for the Host-owned Test Worker.
++
++Phase 2B adds a real OS security boundary around the existing Host-owned
++test worker. It is not third-party plugin execution, not a generic spawn
++API, and not a Job-Object-as-sandbox claim.
++
++Non-Windows: raise WINDOWS_SANDBOX_UNAVAILABLE. Never fall back to an
++unsandboxed process.
++
++Windows: CreateAppContainerProfile + PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES.
++Network capabilities are none. Job Object is resource / process-tree
++containment only (KILL_ON_JOB_CLOSE, ActiveProcessLimit=1).
++
++ACL changes are confined to the per-run staging directory. This module
++never modifies the Python installation, repo root, user profile, or
++system policy.
++
++The Python runtime is *copied* into staging. Hardlinks are forbidden:
++ACLing a hardlink would mutate the original installation.
++"""
++
++from __future__ import annotations
++
++import os
++import shutil
++import socket
++import sys
++import threading
++import uuid
++from dataclasses import dataclass, field
++from pathlib import Path
++from typing import Any, Callable
++
++from app.plugin_worker_process import (
++    OwnedWorkerProcess,
++    build_host_test_worker_environment,
++    host_owned_root,
++)
++from app.plugin_worker_sandbox_errors import (
++    PROCESS_MEMORY_LIMIT_BYTES,
++    REASON_PYTHON_APPCONTAINER_COMPATIBILITY_BLOCKED,
++    REASON_SANDBOX_ACL_FAILED,
++    REASON_SANDBOX_JOB_ASSIGNMENT_FAILED,
++    REASON_SANDBOX_LAUNCH_FAILED,
++    REASON_SANDBOX_PROFILE_CREATE_FAILED,
++    REASON_SANDBOX_SID_FAILED,
++    REASON_SANDBOX_STAGING_FAILED,
++    REASON_SANDBOX_TOKEN_VERIFICATION_FAILED,
++    REASON_WINDOWS_SANDBOX_UNAVAILABLE,
++    SandboxError,
++)
++
++__all__ = (
++    "PROCESS_MEMORY_LIMIT_BYTES",
++    "REASON_PYTHON_APPCONTAINER_COMPATIBILITY_BLOCKED",
++    "REASON_SANDBOX_ACL_FAILED",
++    "REASON_SANDBOX_JOB_ASSIGNMENT_FAILED",
++    "REASON_SANDBOX_LAUNCH_FAILED",
++    "REASON_SANDBOX_PROFILE_CREATE_FAILED",
++    "REASON_SANDBOX_SID_FAILED",
++    "REASON_SANDBOX_STAGING_FAILED",
++    "REASON_SANDBOX_TOKEN_VERIFICATION_FAILED",
++    "REASON_WINDOWS_SANDBOX_UNAVAILABLE",
++    "STAGED_WORKER_FILES",
++    "SandboxError",
++    "SandboxLaunch",
++    "live_appcontainer_profiles",
++    "live_job_handles",
++    "live_staging_directories",
++    "spawn_sandboxed_host_test_worker",
++)
++
++PROFILE_NAME_PREFIX = "AI-Novel-Studio.TestWorker."
++STAGED_WORKER_FILES = (
++    "plugin_test_worker_bootstrap.py",
++    "plugin_test_worker.py",
++    "plugin_worker_protocol.py",
++)
++LIB_EXCLUDE = frozenset({
++    "test",
++    "tests",
++    "idlelib",
++    "turtledemo",
++    "tkinter",
++    "ensurepip",
++    "venv",
++    "distutils",
++    "site-packages",
++})
++ENV_SANDBOX_IN = "ANS_SANDBOX_IN"
++ENV_SANDBOX_OUT = "ANS_SANDBOX_OUT"
++ENV_SANDBOX_TMP = "ANS_SANDBOX_TMP"
++ENV_FORBIDDEN_READ = "ANS_PROBE_FORBIDDEN_READ"
++ENV_FORBIDDEN_WRITE = "ANS_PROBE_FORBIDDEN_WRITE"
++ENV_LOOPBACK_PORT = "ANS_PROBE_LOOPBACK_PORT"
++
++_LIVE_LOCK = threading.Lock()
++_LIVE_PROFILES: set[str] = set()
++_LIVE_STAGING: set[str] = set()
++_LIVE_JOBS: set[int] = set()
++
++
++@dataclass
++class SandboxLaunch:
++    owned: OwnedWorkerProcess
++    profile_name: str
++    staging_root: Path
++    app_dir: Path
++    runtime_dir: Path
++    in_dir: Path
++    out_dir: Path
++    tmp_dir: Path
++    host_sentinel_dir: Path
++    forbidden_read_path: Path
++    forbidden_write_path: Path
++    input_path: Path
++    appcontainer_sid_present: bool
++    token_is_appcontainer: bool
++    staged_file_count: int
++    staged_bytes: int
++    memory_limit_bytes: int | None
++    memory_limit_ready: bool
++    loopback_port: int
++    job_handle: int | None
++    _cleanup: Callable[[], None] = field(repr=False)
++    _closed: bool = False
++
++    def close(self) -> None:
++        if self._closed:
++            return
++        self._closed = True
++        self._cleanup()
++
++
++def live_appcontainer_profiles() -> tuple[str, ...]:
++    with _LIVE_LOCK:
++        return tuple(sorted(_LIVE_PROFILES))
++
++
++def live_staging_directories() -> tuple[str, ...]:
++    with _LIVE_LOCK:
++        return tuple(sorted(_LIVE_STAGING))
++
++
++def live_job_handles() -> tuple[int, ...]:
++    with _LIVE_LOCK:
++        return tuple(sorted(_LIVE_JOBS))
++
++
++def spawn_sandboxed_host_test_worker() -> SandboxLaunch:
++    """Frozen Host-owned AppContainer spawn. No executable/args/env/cwd parameters."""
++    if sys.platform != "win32":
++        raise SandboxError(REASON_WINDOWS_SANDBOX_UNAVAILABLE)
++    return _launch_windows_appcontainer()
++
++
++def _require_windows() -> None:
++    if sys.platform != "win32":
++        raise SandboxError(REASON_WINDOWS_SANDBOX_UNAVAILABLE)
++
++
++def _launch_windows_appcontainer() -> SandboxLaunch:
++    _require_windows()
++    from app.plugin_worker_windows_api import Win32
++
++    win = Win32()
++    run_id = uuid.uuid4().hex
++    profile_name = PROFILE_NAME_PREFIX + run_id[:16]
++    root = host_owned_root()
++    staging_root = root / ".runtime" / "plugin-sandbox" / run_id / "staging"
++    host_sentinel_dir = root / ".runtime" / "plugin-sandbox" / run_id / "host"
++    sid = None
++    job = None
++    attr_state: dict[str, Any] = {}
++    proc_info = None
++    pipes: dict[str, int] = {}
++    listener: socket.socket | None = None
++    registered_profile = False
++    registered_staging = False
++
++    def cleanup() -> None:
++        _cleanup_launch(
++            win,
++            proc_info=proc_info,
++            job=job,
++            attr_state=attr_state,
++            pipes=pipes,
++            sid=sid,
++            profile_name=profile_name,
++            registered_profile=registered_profile,
++            staging_root=staging_root,
++            host_sentinel_dir=host_sentinel_dir,
++            registered_staging=registered_staging,
++            listener=listener,
++        )
++
++    try:
++        staging_root.mkdir(parents=True, exist_ok=False)
++        host_sentinel_dir.mkdir(parents=True, exist_ok=False)
++        with _LIVE_LOCK:
++            _LIVE_STAGING.add(str(staging_root))
++        registered_staging = True
++
++        app_dir = staging_root / "app"
++        runtime_dir = staging_root / "runtime"
++        in_dir = staging_root / "in"
++        out_dir = staging_root / "out"
++        tmp_dir = staging_root / "tmp"
++        for folder in (app_dir, runtime_dir, in_dir, out_dir, tmp_dir):
++            folder.mkdir()
++
++        _stage_worker_code(app_dir)
++        staged_files, staged_bytes = _stage_python_runtime(runtime_dir)
++        worker_count, worker_bytes = _count_tree(app_dir)
++        staged_files += worker_count
++        staged_bytes += worker_bytes
++
++        input_path = in_dir / "input.txt"
++        input_path.write_text("SANDBOX_INPUT_OK", encoding="utf-8")
++        forbidden_read_path = host_sentinel_dir / "forbidden_read.txt"
++        forbidden_write_path = host_sentinel_dir / "forbidden_write.txt"
++        forbidden_read_path.write_text(uuid.uuid4().hex, encoding="utf-8")
++        forbidden_write_path.write_text("UNCHANGED", encoding="utf-8")
++
++        listener, loopback_port = _bind_loopback()
++
++        sid = win.create_or_derive_profile(profile_name)
++        with _LIVE_LOCK:
++            _LIVE_PROFILES.add(profile_name)
++        registered_profile = True
++
++        # ACL only these staging paths. Never repo root, user profile, or the
++        # original Python installation. host_sentinel_dir is intentionally omitted.
++        win.grant_appcontainer_acl(str(staging_root), sid, execute=True, write=False)
++        win.grant_appcontainer_acl(str(runtime_dir), sid, execute=True, write=False)
++        win.grant_appcontainer_acl(str(app_dir), sid, execute=True, write=False)
++        win.grant_appcontainer_acl(str(in_dir), sid, execute=False, write=False)
++        win.grant_appcontainer_acl(str(out_dir), sid, execute=False, write=True)
++        win.grant_appcontainer_acl(str(tmp_dir), sid, execute=False, write=True)
++
++        python_exe = runtime_dir / "python.exe"
++        bootstrap = app_dir / "plugin_test_worker_bootstrap.py"
++        if not python_exe.is_file() or not bootstrap.is_file():
++            raise SandboxError(REASON_SANDBOX_STAGING_FAILED)
++
++        env = _sandbox_environment(
++            in_dir=in_dir,
++            out_dir=out_dir,
++            tmp_dir=tmp_dir,
++            forbidden_read=forbidden_read_path,
++            forbidden_write=forbidden_write_path,
++            loopback_port=loopback_port,
++        )
++        pipes = win.create_stdio_pipes()
++        job, memory_ready = win.create_job_object()
++        with _LIVE_LOCK:
++            if job:
++                _LIVE_JOBS.add(int(job))
++
++        cmdline = win.quote_args([str(python_exe), "-I", "-S", "-u", str(bootstrap)])
++        proc_info, attr_state = win.create_appcontainer_process(
++            application=str(python_exe),
++            cmdline=cmdline,
++            cwd=str(staging_root),
++            env=env,
++            sid=sid,
++            pipes=pipes,
++        )
++        win.assign_to_job(job, proc_info.hProcess)
++        token_is_appcontainer, sid_present = win.verify_process_is_appcontainer(proc_info.hProcess)
++        if not token_is_appcontainer:
++            win.terminate_process(proc_info.hProcess)
++            raise SandboxError(REASON_SANDBOX_TOKEN_VERIFICATION_FAILED)
++        win.resume_thread(proc_info.hThread)
++        try:
++            win.close_handle(int(proc_info.hThread) if proc_info.hThread else 0)
++        except Exception:
++            pass
++        proc_info.hThread = None
++
++        owned = OwnedWorkerProcess(win.wrap_process(proc_info, pipes))
++        return SandboxLaunch(
++            owned=owned,
++            profile_name=profile_name,
++            staging_root=staging_root,
++            app_dir=app_dir,
++            runtime_dir=runtime_dir,
++            in_dir=in_dir,
++            out_dir=out_dir,
++            tmp_dir=tmp_dir,
++            host_sentinel_dir=host_sentinel_dir,
++            forbidden_read_path=forbidden_read_path,
++            forbidden_write_path=forbidden_write_path,
++            input_path=input_path,
++            appcontainer_sid_present=sid_present,
++            token_is_appcontainer=token_is_appcontainer,
++            staged_file_count=staged_files,
++            staged_bytes=staged_bytes,
++            memory_limit_bytes=PROCESS_MEMORY_LIMIT_BYTES if memory_ready else None,
++            memory_limit_ready=memory_ready,
++            loopback_port=loopback_port,
++            job_handle=int(job) if job else None,
++            _cleanup=cleanup,
++        )
++    except Exception:
++        cleanup()
++        raise
++
++
++def _stage_worker_code(app_dir: Path) -> None:
++    src_app = Path(__file__).resolve().parent
++    for name in STAGED_WORKER_FILES:
++        src = src_app / name
++        if src.name != name or not src.is_file():
++            raise SandboxError(REASON_SANDBOX_STAGING_FAILED)
++        shutil.copy2(src, app_dir / name)
++    (app_dir / "__init__.py").write_text("# host-owned staged worker package\n", encoding="utf-8")
++
++
++def _stage_python_runtime(dest: Path) -> tuple[int, int]:
++    """Copy interpreter + stdlib into staging. Never hardlink (ACL would leak)."""
++    prefix = Path(getattr(sys, "base_prefix", sys.prefix))
++    src_exe = Path(getattr(sys, "base_executable", "") or sys.executable)
++    if not src_exe.is_file():
++        src_exe = prefix / "python.exe"
++    if not src_exe.is_file():
++        raise SandboxError(REASON_PYTHON_APPCONTAINER_COMPATIBILITY_BLOCKED)
++    try:
++        shutil.copy2(src_exe, dest / "python.exe")
++        for pattern in ("python*.dll", "vcruntime*.dll", "ucrtbase.dll", "python*.zip"):
++            for item in prefix.glob(pattern):
++                if item.is_file():
++                    shutil.copy2(item, dest / item.name)
++        lib = prefix / "Lib"
++        if lib.is_dir():
++            _copy_tree(lib, dest / "Lib", exclude=LIB_EXCLUDE)
++        dlls = prefix / "DLLs"
++        if dlls.is_dir():
++            _copy_tree(dlls, dest / "DLLs", exclude=frozenset())
++    except OSError as exc:
++        raise SandboxError(REASON_PYTHON_APPCONTAINER_COMPATIBILITY_BLOCKED) from exc
++    if not (dest / "python.exe").is_file():
++        raise SandboxError(REASON_PYTHON_APPCONTAINER_COMPATIBILITY_BLOCKED)
++    return _count_tree(dest)
++
++
++def _copy_tree(src: Path, dst: Path, *, exclude: frozenset[str]) -> None:
++    dst.mkdir(parents=True, exist_ok=True)
++    for entry in src.iterdir():
++        if entry.name in exclude or entry.name == "__pycache__":
++            continue
++        target = dst / entry.name
++        if entry.is_dir():
++            _copy_tree(entry, target, exclude=exclude)
++        elif entry.is_file():
++            shutil.copy2(entry, target)
++
++
++def _count_tree(root: Path) -> tuple[int, int]:
++    count = 0
++    size = 0
++    for dirpath, dirnames, filenames in os.walk(root):
++        dirnames[:] = [name for name in dirnames if name != "__pycache__"]
++        for name in filenames:
++            path = Path(dirpath) / name
++            try:
++                size += path.stat().st_size
++            except OSError:
++                continue
++            count += 1
++    return count, size
++
++
++def _sandbox_environment(
++    *,
++    in_dir: Path,
++    out_dir: Path,
++    tmp_dir: Path,
++    forbidden_read: Path,
++    forbidden_write: Path,
++    loopback_port: int,
++) -> dict[str, str]:
++    env = build_host_test_worker_environment()
++    env["TEMP"] = str(tmp_dir)
++    env["TMP"] = str(tmp_dir)
++    env[ENV_SANDBOX_IN] = str(in_dir)
++    env[ENV_SANDBOX_OUT] = str(out_dir)
++    env[ENV_SANDBOX_TMP] = str(tmp_dir)
++    env[ENV_FORBIDDEN_READ] = str(forbidden_read)
++    env[ENV_FORBIDDEN_WRITE] = str(forbidden_write)
++    env[ENV_LOOPBACK_PORT] = str(loopback_port)
++    leaked = [key for key in env if key.upper().startswith("PYTHON")]
++    if leaked:
++        raise SandboxError(REASON_SANDBOX_LAUNCH_FAILED)
++    return env
++
++
++def _bind_loopback() -> tuple[socket.socket, int]:
++    listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
++    listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
++    listener.bind(("127.0.0.1", 0))
++    listener.listen(1)
++    listener.settimeout(0.1)
++    port = int(listener.getsockname()[1])
++    return listener, port
++
++
++def _cleanup_launch(
++    win: Any,
++    *,
++    proc_info: Any,
++    job: Any,
++    attr_state: dict[str, Any],
++    pipes: dict[str, int],
++    sid: Any,
++    profile_name: str,
++    registered_profile: bool,
++    staging_root: Path,
++    host_sentinel_dir: Path,
++    registered_staging: bool,
++    listener: socket.socket | None,
++) -> None:
++    if proc_info is not None:
++        try:
++            win.terminate_process(proc_info.hProcess)
++            win.wait_process(proc_info.hProcess, 1000)
++        except Exception:
++            pass
++        try:
++            if proc_info.hThread:
++                win.close_handle(proc_info.hThread)
++        except Exception:
++            pass
++        try:
++            if proc_info.hProcess:
++                win.close_handle(proc_info.hProcess)
++        except Exception:
++            pass
++    if job:
++        try:
++            win.close_handle(job)
++        except Exception:
++            pass
++        with _LIVE_LOCK:
++            _LIVE_JOBS.discard(int(job))
++    try:
++        win.free_attribute_list(attr_state)
++    except Exception:
++        pass
++    for handle in list(pipes.values()):
++        try:
++            win.close_handle(handle)
++        except Exception:
++            pass
++    if listener is not None:
++        try:
++            listener.close()
++        except OSError:
++            pass
++    if sid is not None:
++        try:
++            win.free_sid(sid)
++        except Exception:
++            pass
++    if registered_profile:
++        try:
++            win.delete_profile(profile_name)
++        except Exception:
++            pass
++        with _LIVE_LOCK:
++            _LIVE_PROFILES.discard(profile_name)
++    parent = staging_root.parent if staging_root.exists() else host_sentinel_dir.parent
++    try:
++        if parent.exists():
++            shutil.rmtree(parent, ignore_errors=True)
++    except OSError:
++        pass
++    if registered_staging:
++        with _LIVE_LOCK:
++            _LIVE_STAGING.discard(str(staging_root))
+-- 
+2.55.0.windows.2
+

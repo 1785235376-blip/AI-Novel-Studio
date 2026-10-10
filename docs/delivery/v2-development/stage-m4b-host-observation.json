@@ -1,0 +1,19 @@
+{
+  "checked_at": "2026-10-10T10:29:52.366185+00:00",
+  "source": "current dot cloud bounded passive executable/socket inspection",
+  "executables": {
+    "ollama": null,
+    "llama-server": null,
+    "lms": null,
+    "nvidia-smi": null
+  },
+  "loopback_ports": {
+    "11434": "NO_CONNECTION",
+    "1234": "NO_CONNECTION",
+    "8080": "NO_CONNECTION",
+    "8081": "NO_CONNECTION",
+    "8188": "NO_CONNECTION"
+  },
+  "inference": "NOT_RUN",
+  "install_or_start": false
+}

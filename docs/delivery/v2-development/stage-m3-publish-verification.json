@@ -1,0 +1,117 @@
+{
+  "utc": "2026-10-09T15:46:57.393195+00:00",
+  "status": "VERIFIED_BEFORE_PUBLISH",
+  "parent_head": "99c43b6892038233c390be2ae61acb669163d0b5",
+  "source_input_count": 1677,
+  "source_map_sha256": "964ad4a0c317f43d65e2aa8793d6f87b5e6630b977ee269803c42c6248fd143f",
+  "checks": [
+    {
+      "receipt": "docs/delivery/v2-development/stage-m3-fresh-owner-file.json",
+      "receipt_sha256": "591782386c9f376945777b7957cd69ecefc5b364c39914c14791c643e55a86c8",
+      "log": "docs/delivery/v2-development/stage-m3-fresh-owner-file.log",
+      "log_sha256": "0f3b07907279d7934bd315ce65b3167547e4e711fbe99f6aff4be0434297ad7c",
+      "status": "PASS",
+      "finished_utc": "2026-10-09T15:37:12.027353+00:00",
+      "tests_executed": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m3-fresh-owner-postgres.json",
+      "receipt_sha256": "35d053ee8a0c4d25ae54a5dd656cb09829f4c305d3090f3a9e5b2ac0fd187bec",
+      "log": "docs/delivery/v2-development/stage-m3-fresh-owner-postgres.log",
+      "log_sha256": "170f67d1a287e8f7b65d354e3d0cd6182c1016d9dc8be2628770e26d8f387e31",
+      "status": "PASS",
+      "finished_utc": "2026-10-09T15:45:46.692991+00:00",
+      "tests_executed": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m3-fresh-full-frontend.json",
+      "receipt_sha256": "2345797df0502228bf1ca8c4598f53abd16c77185500bf61e80e2469e49c4220",
+      "log": "docs/delivery/v2-development/stage-m3-fresh-full-frontend.log",
+      "log_sha256": "59a3ff5e5a1ce8ffda79d83521d0a468ed8d07717024f84967c0c6feb4a2c9a3",
+      "status": "PASS",
+      "finished_utc": "2026-10-09T15:33:01.209885+00:00",
+      "tests_executed": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m3-fresh-build.json",
+      "receipt_sha256": "73a6a8649ad135f1a6c54e0ae58a5eba575f7bc9e31b9bd4ac6cc8c818963996",
+      "log": "docs/delivery/v2-development/stage-m3-fresh-build.log",
+      "log_sha256": "d1a35ed03e5f43273b5fd06419b839f96ae80a571d1a37019ddbff3d6d2c647e",
+      "status": "PASS",
+      "finished_utc": "2026-10-09T15:32:36.630162+00:00",
+      "tests_executed": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m3-fresh-infrastructure-catalog.json",
+      "receipt_sha256": "e1c4aa37401001e43dafc428dd299d38f227c4313d5fab06b21a7648d274d097",
+      "log": "docs/delivery/v2-development/stage-m3-fresh-infrastructure-catalog.log",
+      "log_sha256": "716994e5aa39e8d949623205d5576510db86d3edc97221b963fb7605af912276",
+      "status": "PASS",
+      "finished_utc": "2026-10-09T15:33:03.225739+00:00",
+      "tests_executed": true
+    },
+    {
+      "receipt": "docs/delivery/v2-development/stage-m3-fresh-browser-collection.json",
+      "receipt_sha256": "0947b313277b795bec2c888dc2cee67ef87fab85ffe66a70228478be187d1a16",
+      "log": "docs/delivery/v2-development/stage-m3-fresh-browser-collection.log",
+      "log_sha256": "85c09419fdacd9d1ba607c160a6a59e9dfe385a5c0206fefbedd9f423a19fd60",
+      "status": "PASS",
+      "finished_utc": "2026-10-09T15:32:47.757755+00:00",
+      "tests_executed": false
+    }
+  ],
+  "postgres_runtime_receipt": "docs/delivery/v2-development/stage-m3-fresh-owner-postgres-postgres-runtime.json",
+  "postgres_runtime_sha256": "52f877ea4a2947a81ac0acc590b17463c28cb1a7e8051783903bda79fcf23f3b",
+  "postgres_database": "v2_m3_owner_20261009",
+  "postgres_database_oid": 32129,
+  "postgres_migrations_verified": 20,
+  "postgres_empty_before_migrations": true,
+  "postgres_original_and_new_databases_preserved": true,
+  "unchanged_from_parent": {
+    "tests": {
+      "tracked_files": 475,
+      "all_unchanged": true
+    },
+    "frontend/tests": {
+      "tracked_files": 93,
+      "all_unchanged": true
+    },
+    ".github/workflows": {
+      "tracked_files": 5,
+      "all_unchanged": true
+    },
+    ".github/ci/coverage_manifest.json.gz": {
+      "tracked_files": 1,
+      "all_unchanged": true
+    },
+    "frontend/playwright.v2-live.config.ts": {
+      "tracked_files": 1,
+      "all_unchanged": true
+    },
+    "frontend/src/ui/tokens.css": {
+      "tracked_files": 1,
+      "all_unchanged": true
+    },
+    "frontend/src/ui/primitives.tsx": {
+      "tracked_files": 1,
+      "all_unchanged": true
+    },
+    "frontend/src/ui/AppShell.tsx": {
+      "tracked_files": 1,
+      "all_unchanged": true
+    }
+  },
+  "catalog_sha256": {
+    "API_CATALOG.json": "32a9cc56e9284a6b4f7cbfd4c0e23233f32b0474ab294c553cd22491f87dd6d3",
+    "API_CATALOG.md": "eb76d0240a0a52714f58f1fc226152be583710a4545de08cb5b0106c3b9fbbef",
+    "API_CATALOG_DETAIL.json.gz": "28b2bf8860f34aa78bc0cc8bfe38912812b1934a10796aeb765bf6008b844fc7",
+    "API_OPENAPI.json.gz": "93f5284767b03708cc38e1115c275397b8b318abb6d436489b8185864900b888"
+  },
+  "v2_manifest_sha256": "bc15318b92cae0ee7a3c581321de95f3577c684b0ced26daf9f7228ccda57715",
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "backend_scope": "Complete selected 53-file owner regression on File and real PostgreSQL; not all-product execution",
+  "browser_scope": "Collection only, original 7 + independent 11; hosted execution pending",
+  "windows_gpu_inference": "NOT_RUN; user Windows acceptance LOCAL_REQUIRED",
+  "historical_failures": "First PG 2 FAIL and M2 hosted failures retained; no rerun-to-green or historical audit reassignment",
+  "protected_shell_scope": "AppShell.tsx owns the protected shell components; original tokens and primitives.tsx unchanged"
+}

@@ -1,0 +1,721 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/ui/LocalAiWorkflowPrerequisites.test.tsx (40 tests) 1542ms
+
+ Test Files  1 passed (1)
+      Tests  40 passed (40)
+   Start at  11:00:57
+   Duration  3.86s (transform 651ms, setup 0ms, collect 949ms, tests 1.54s, environment 716ms, prepare 164ms)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > distinguishes observed, not observed and unknown without installing or verifying a model
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > distinguishes observed, not observed and unknown without installing or verifying a model
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > labels catalog component declarations as unbound unknowns independently of workflow observations
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > labels catalog component declarations as unbound unknowns independently of workflow observations
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > keeps historical missing evidence undefined unknown rather than an empty complete result
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > keeps historical missing evidence undefined unknown rather than an empty complete result
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > keeps historical missing evidence null unknown rather than an empty complete result
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > keeps historical missing evidence null unknown rather than an empty complete result
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"schema_version":2}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"schema_version":2}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"scan_id":"old-scan"}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"scan_id":"old-scan"}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"scan_status":"PARTIAL"}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"scan_status":"PARTIAL"}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"definition_status":"READY"}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"definition_status":"READY"}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"workflows":null}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"workflows":null}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"components":null}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"components":null}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"workflows":[{"runtime_id":"comfy-a","adapter_id":"adapter-a","display_name":"图像工作流 A","evidence_status":"COMPLETE","nodes":[null],"loader":{"node_class":"CheckpointLoaderSimple","input_field":"ckpt_name","observation":"observed","advertised_count":2,"candidate_ids":["candidate-a"]},"metadata_status":"NOT_VERIFIED","inference_status":"NOT_RUN"}]}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"workflows":[{"runtime_id":"comfy-a","adapter_id":"adapter-a","display_name":"图像工作流 A","evidence_status":"COMPLETE","nodes":[null],"loader":{"node_class":"CheckpointLoaderSimple","input_field":"ckpt_name","observation":"observed","advertised_count":2,"candidate_ids":["candidate-a"]},"metadata_status":"NOT_VERIFIED","inference_status":"NOT_RUN"}]}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"workflows":[{"runtime_id":"comfy-a","adapter_id":"adapter-a","display_name":"图像工作流 A","evidence_status":"COMPLETE","nodes":[{"node_class":"CheckpointLoaderSimple","observation":"observed"},{"node_class":"KSampler","observation":"not_observed"},{"node_class":"SaveImage","observation":"unknown"}],"loader":{"node_class":"CheckpointLoaderSimple","input_field":"ckpt_name","observation":"observed","advertised_count":-1,"candidate_ids":["candidate-a"]},"metadata_status":"NOT_VERIFIED","inference_status":"NOT_RUN"}]}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"workflows":[{"runtime_id":"comfy-a","adapter_id":"adapter-a","display_name":"图像工作流 A","evidence_status":"COMPLETE","nodes":[{"node_class":"CheckpointLoaderSimple","observation":"observed"},{"node_class":"KSampler","observation":"not_observed"},{"node_class":"SaveImage","observation":"unknown"}],"loader":{"node_class":"CheckpointLoaderSimple","input_field":"ckpt_name","observation":"observed","advertised_count":-1,"candidate_ids":["candidate-a"]},"metadata_status":"NOT_VERIFIED","inference_status":"NOT_RUN"}]}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"workflows":[{"runtime_id":"comfy-a","adapter_id":"adapter-a","display_name":"图像工作流 A","evidence_status":"COMPLETE","nodes":[{"node_class":"CheckpointLoaderSimple","observation":"observed"},{"node_class":"KSampler","observation":"not_observed"},{"node_class":"SaveImage","observation":"unknown"}],"loader":{"node_class":"CheckpointLoaderSimple","input_field":"ckpt_name","observation":"observed","advertised_count":2,"candidate_ids":["candidate-a"]},"metadata_status":"VERIFIED","inference_status":"NOT_RUN"}]}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"workflows":[{"runtime_id":"comfy-a","adapter_id":"adapter-a","display_name":"图像工作流 A","evidence_status":"COMPLETE","nodes":[{"node_class":"CheckpointLoaderSimple","observation":"observed"},{"node_class":"KSampler","observation":"not_observed"},{"node_class":"SaveImage","observation":"unknown"}],"loader":{"node_class":"CheckpointLoaderSimple","input_field":"ckpt_name","observation":"observed","advertised_count":2,"candidate_ids":["candidate-a"]},"metadata_status":"VERIFIED","inference_status":"NOT_RUN"}]}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"workflows":[{"runtime_id":"comfy-a","adapter_id":"adapter-a","display_name":"图像工作流 A","evidence_status":"COMPLETE","nodes":[{"node_class":"CheckpointLoaderSimple","observation":"observed"},{"node_class":"KSampler","observation":"not_observed"},{"node_class":"SaveImage","observation":"unknown"}],"loader":{"node_class":"CheckpointLoaderSimple","input_field":"ckpt_name","observation":"observed","advertised_count":2,"candidate_ids":["candidate-a"]},"metadata_status":"NOT_VERIFIED","inference_status":"PASS"}]}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"workflows":[{"runtime_id":"comfy-a","adapter_id":"adapter-a","display_name":"图像工作流 A","evidence_status":"COMPLETE","nodes":[{"node_class":"CheckpointLoaderSimple","observation":"observed"},{"node_class":"KSampler","observation":"not_observed"},{"node_class":"SaveImage","observation":"unknown"}],"loader":{"node_class":"CheckpointLoaderSimple","input_field":"ckpt_name","observation":"observed","advertised_count":2,"candidate_ids":["candidate-a"]},"metadata_status":"NOT_VERIFIED","inference_status":"PASS"}]}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"components":[{"model_id":"catalog-image","model_display_name":"目录模型 A","component_id":"catalog-vae","component_type":"VAE","observation":"observed","reason":"NO_COMPONENT_IDENTITY_EVIDENCE","metadata_status":"NOT_VERIFIED","inference_status":"NOT_RUN"}]}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > fails closed for unsupported, mismatched or malformed evidence {"components":[{"model_id":"catalog-image","model_display_name":"目录模型 A","component_id":"catalog-vae","component_type":"VAE","observation":"observed","reason":"NO_COMPONENT_IDENTITY_EVIDENCE","metadata_status":"NOT_VERIFIED","inference_status":"NOT_RUN"}]}
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > does not turn UNAVAILABLE evidence into a negative or positive observation
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > does not turn UNAVAILABLE evidence into a negative or positive observation
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > does not turn MALFORMED evidence into a negative or positive observation
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > does not turn MALFORMED evidence into a negative or positive observation
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > does not turn BOUNDED evidence into a negative or positive observation
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > does not turn BOUNDED evidence into a negative or positive observation
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > does not turn CANCELLED evidence into a negative or positive observation
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > does not turn CANCELLED evidence into a negative or positive observation
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > does not turn NOT_SCANNED evidence into a negative or positive observation
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > does not turn NOT_SCANNED evidence into a negative or positive observation
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > keeps a complete empty loader enumeration distinct from unavailable evidence
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > keeps a complete empty loader enumeration distinct from unavailable evidence
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > labels the overall RUNNING scan separately and suppresses cancelled claims
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > labels the overall PARTIAL scan separately and suppresses cancelled claims
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > labels the overall PARTIAL scan separately and suppresses cancelled claims
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > labels the overall CANCELLED scan separately and suppresses cancelled claims
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > labels the overall CANCELLED scan separately and suppresses cancelled claims
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > keeps BOUNDED requirement definitions explicitly incomplete
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > keeps BOUNDED requirement definitions explicitly incomplete
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > keeps MALFORMED requirement definitions explicitly incomplete
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > keeps MALFORMED requirement definitions explicitly incomplete
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > does not mistake an empty list for no prerequisites or a complete installation
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > does not mistake an empty list for no prerequisites or a complete installation
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > associates only exact same-scan ComfyUI runtime candidate IDs without promoting registration evidence
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > associates only exact same-scan ComfyUI runtime candidate IDs without promoting registration evidence
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > pages the bounded workflow and component declarations locally without probes
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > pages the bounded workflow and component declarations locally without probes
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > rejects a workflows payload beyond the declared bounds
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > rejects a workflows payload beyond the declared bounds
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > rejects a components payload beyond the declared bounds
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > rejects a components payload beyond the declared bounds
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > masks observations after uncertain mutation and replaces evidence on explicit recovery
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > masks observations after uncertain mutation and replaces evidence on explicit recovery
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > masks observations after uncertain mutation and replaces evidence on explicit recovery
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > masks observations after uncertain mutation and replaces evidence on explicit recovery
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > masks observations after uncertain mutation and replaces evidence on explicit recovery
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > masks observations after uncertain mutation and replaces evidence on explicit recovery
+Warning: Encountered two children with the same key, `next-scan`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > masks observations after uncertain mutation and replaces evidence on explicit recovery
+Warning: Encountered two children with the same key, `next-scan`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > clears all prerequisite data after an observed 401 denial
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > clears all prerequisite data after an observed 403 denial
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > rejects late observations after permission owner changes
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > rejects late observations after permission owner changes
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > rejects late observations after project owner changes
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > rejects late observations after project owner changes
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > rejects late observations after session owner changes
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > uses current poll evidence rather than the older hardware-refresh snapshot and keeps collapse read-only
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > uses current poll evidence rather than the older hardware-refresh snapshot and keeps collapse read-only
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > uses current poll evidence rather than the older hardware-refresh snapshot and keeps collapse read-only
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+
+stderr | src/ui/LocalAiWorkflowPrerequisites.test.tsx > read-only same-scan workflow prerequisite evidence > uses current poll evidence rather than the older hardware-refresh snapshot and keeps collapse read-only
+Warning: Encountered two children with the same key, `scan-prerequisites`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at section
+    at Panel (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/primitives.tsx:36:18)
+    at LocalAiDiscoveryContent (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:565:36)
+    at LocalAiDiscoveryOwner (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:319:70)
+    at LocalAiDiscovery (/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/src/ui/LocalAiDiscovery.tsx:310:67)
+

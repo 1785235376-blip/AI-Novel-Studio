@@ -1,0 +1,31 @@
+.local-tutor-backdrop { z-index: var(--z-dialog); }
+.local-tutor-dialog { display: flex; flex-direction: column; width: min(calc(var(--layout-workspace-min) + var(--layout-inspector-width)), calc(100vw - var(--space-8))); max-height: calc(100vh - var(--space-8)); background: var(--color-bg-surface); border: var(--border-default); border-radius: var(--radius-lg); box-shadow: var(--shadow-dialog); color: var(--color-text-primary); font-family: var(--font-ui); }
+.local-tutor-header, .local-tutor-footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-4); flex-shrink: 0; }
+.local-tutor-header { border-bottom: var(--border-default); }
+.local-tutor-header h2, .local-tutor-header p { margin: 0; }
+.local-tutor-header p { color: var(--color-text-secondary); margin-top: var(--space-1); }
+.local-tutor-tabs, .local-tutor-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-3) var(--space-4); }
+.local-tutor-tabs [aria-pressed="true"] { background: var(--color-selection-bg); border-color: var(--color-selection-border); }
+.local-tutor-scroll { overflow: auto; min-height: 0; padding: 0 var(--space-4) var(--space-4); display: grid; gap: var(--space-3); }
+.local-tutor-scroll .ui-panel { padding: var(--space-3); min-width: 0; }
+.local-tutor-choice { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) 0; }
+.local-tutor-choice input { width: auto; flex-shrink: 0; }
+.local-tutor-boundary { display: flex; align-items: flex-start; gap: var(--space-2); color: var(--color-text-secondary); }
+.local-tutor-connect { display: grid; gap: var(--space-2); }
+.local-tutor-connect label { display: grid; gap: var(--space-1); }
+.local-tutor-connect input { width: 100%; box-sizing: border-box; }
+.local-tutor-content-choices { border-top: var(--border-default); padding-top: var(--space-2); margin-top: var(--space-2); }
+.local-tutor-preview { white-space: pre-wrap; overflow-wrap: anywhere; max-height: calc(var(--layout-inspector-width)); overflow: auto; font-family: var(--font-mono); background: var(--color-bg-subtle); border: var(--border-default); border-radius: var(--radius-sm); padding: var(--space-3); }
+.local-tutor-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.local-tutor-facts { display: grid; gap: var(--space-2); }
+.local-tutor-facts > div { display: flex; gap: var(--space-3); }
+.local-tutor-facts dt { color: var(--color-text-secondary); }
+.local-tutor-facts dd { margin: 0; overflow-wrap: anywhere; }
+.local-tutor-footer { border-top: var(--border-default); }
+.local-tutor-scroll li { margin-bottom: var(--space-2); overflow-wrap: anywhere; }
+.local-tutor-scroll :focus-visible { outline: var(--border-strong); box-shadow: var(--focus-ring); }
+.local-tutor-permissions { padding: 0; margin: 0; list-style: none; }
+.local-tutor-permissions > li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding: var(--space-2) 0; border-bottom: var(--border-default); }
+.local-tutor-permissions > li > div { flex: 1; min-width: 0; }
+.local-tutor-permissions p { margin: var(--space-1) 0; color: var(--color-text-secondary); }
+.local-tutor-stages { padding-inline-start: var(--space-4); }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Check, FileSearch, FileUp } from "lucide-react";
-import { aiAnalyzeImportReview, api, apiErrorView, createChapterKnowledgeReview, createNovelKnowledgeReview, type ImportReview, type Novel } from "../api";
+import { aiAnalyzeImportReview, api, apiErrorView, createChapterKnowledgeReview, createNovelKnowledgeReview, type ImportReview, type Novel, type CollaborationContext } from "../api";
+import {useStudio} from "../store";
 import { Badge, Button, EmptyState, Panel } from "../ui/primitives";
 import "./NovelImportPanel.css";
 
@@ -14,7 +15,7 @@ type ImportPreview = {
 };
 type Candidate = Record<string, unknown>;
 type CandidateGroups = Record<string, Candidate[]>;
-type ReviewState = {novel:Novel; candidates:CandidateGroups; selected:Record<string,boolean[]>; reviewId?:string; analysis?:ImportReview['analysis']; scope:'chapter'|'project'; chapterId?:string};
+type ReviewState = {version:number;novel:Novel; candidates:CandidateGroups; selected:Record<string,boolean[]>; reviewId?:string; analysis?:ImportReview['analysis']; scope:'chapter'|'project'; chapterId?:string};
 type ImportStage="SELECT"|"PARSING"|"PREVIEW"|"IMPORTING"|"REVIEW";
 export type NovelImportSource={format:"txt"|"markdown"|"json"|"docx"|"word"|"pdf";content:string;contentBase64?:string;name:string};
 export type NovelImportPlan={format:string;title:string;chapters:{number:number;title:string;content:string}[]};
@@ -31,7 +32,9 @@ export function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId, novelTitle }: { onImported?: (novel: Novel) => void; onConfirm?: (source:NovelImportSource,preview:ImportPreview,plan:NovelImportPlan,report:(message:string)=>void)=>Promise<void>; novelId?:string; chapterId?:string; novelTitle?:string }) {
+export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId, novelTitle, requestContext }: { requestContext?:CollaborationContext; onImported?: (novel: Novel) => void; onConfirm?: (source:NovelImportSource,preview:ImportPreview,plan:NovelImportPlan,report:(message:string)=>void)=>Promise<void>; novelId?:string; chapterId?:string; novelTitle?:string }) {
+  const selectedModel=useStudio(state=>state.textModel);
+  const [allowCloudExcerpt,setAllowCloudExcerpt]=useState(false);
   const [source, setSource] = useState<NovelImportSource>();
   const [preview, setPreview] = useState<ImportPreview>();
   const [plan, setPlan] = useState<NovelImportPlan>();
@@ -48,14 +51,14 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId, no
   function reviewState(record:ImportReview, fallbackTitle=preview?.title, fallbackScope:ReviewState['scope']='project'):ReviewState{
     const candidates=(record.candidates||{}) as CandidateGroups;
     const selected=record.selected||Object.fromEntries(Object.entries(candidates).map(([kind,items])=>[kind,items.map(()=>false)]));
-    return {novel:{id:record.novel_id,title:record.title||fallbackTitle||novelTitle||'当前小说',genre:'',chapter_count:0,word_count:0,status:'ACTIVE'},candidates,selected,reviewId:record.id,analysis:record.analysis,scope:(record.scope==='chapter'||record.scope==='project'?record.scope:fallbackScope),chapterId:record.chapter_id||chapterId};
+    return {version:record.version||1,novel:{id:record.novel_id,title:record.title||fallbackTitle||novelTitle||'当前小说',genre:'',chapter_count:0,word_count:0,status:'ACTIVE'},candidates,selected,reviewId:record.id,analysis:record.analysis,scope:(record.scope==='chapter'||record.scope==='project'?record.scope:fallbackScope),chapterId:record.chapter_id||chapterId};
   }
   useEffect(()=>{
     let active=true;
     setReview(undefined);
     if(!novelId){setPendingError(undefined);setPendingLoading(false);return()=>{active=false}};
     const interaction=interactionRef.current;setPendingLoading(true);setPendingError(undefined);
-    void api.importReviewList(novelId).then(result=>{if(active&&interaction===interactionRef.current&&result.pending){setReview(current=>current||reviewState(result.pending!));setStage("REVIEW")}}).catch(reason=>{if(active&&interaction===interactionRef.current)setPendingError(reason)}).finally(()=>{if(active)setPendingLoading(false)});
+    void api.importReviewList(novelId,undefined,requestContext).then(result=>{if(active&&interaction===interactionRef.current&&result.pending){setReview(current=>current||reviewState(result.pending!));setStage("REVIEW")}}).catch(reason=>{if(active&&interaction===interactionRef.current)setPendingError(reason)}).finally(()=>{if(active)setPendingLoading(false)});
     return()=>{active=false};
   },[novelId]);
 
@@ -93,6 +96,7 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId, no
         const groups=(persisted?.selected || Object.fromEntries(Object.entries(candidates).filter(([,items])=>Array.isArray(items)&&items.length).map(([kind,items])=>[kind,items.map(()=>false)]))) as Record<string,boolean[]>;
         if(result.novel && Object.keys(groups).length) {
           setReview({
+            version:persisted?.version||1,
             novel:result.novel,
             candidates,
             selected:groups,
@@ -118,8 +122,8 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId, no
     if(!novelId)return;
     interactionRef.current+=1;setBusy(true);setError(undefined);setAiReviewError(undefined);
     try{
-      const record=scope==="chapter"&&chapterId?await createChapterKnowledgeReview(novelId,chapterId):await createNovelKnowledgeReview(novelId);
-      setReview(reviewState(record, undefined, scope));setStage("REVIEW");setStatus(scope==="chapter"?"已建立当前章节审查任务，可调用 AI 提取资料候选。":"已建立整本小说审查任务，可调用 AI 提取资料候选。");
+      const record=scope==="chapter"&&chapterId?await createChapterKnowledgeReview(novelId,chapterId,requestContext):await createNovelKnowledgeReview(novelId,requestContext);
+      setReview(reviewState(record, undefined, scope));setStage("REVIEW");setStatus(scope==="chapter"?"已从当前章节提取本地候选，可直接审核或选择模型复核。":"已按章节提取本地候选，可直接审核或选择模型复核。");
     }catch(reason){setError(reason)}finally{setBusy(false)}
   }
 
@@ -128,7 +132,7 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId, no
     setBusy(true);setError(undefined);
     try {
       const selected=decision==='ACCEPTED'?Object.fromEntries(Object.entries(review.candidates).map(([kind,items])=>[kind,items.filter((_,index)=>review.selected[kind]?.[index])]).filter(([,items])=>items.length)):{};
-      await api.reviewImportKnowledge(review.novel.id,decision,selected,{reviewId:review.reviewId,selected:review.selected});
+      await api.reviewImportKnowledge(review.novel.id,decision,selected,{reviewId:review.reviewId,selected:review.selected,expectedVersion:review.version},requestContext);
       setReview(undefined);setStage("SELECT");setStatus(decision==='ACCEPTED'?"知识库候选已审核并写入所选条目。":decision==='SKIPPED'?"已标记跳过，未写入知识库实体。":"已拒绝本次知识库候选，未写入实体。");onImported?.(review.novel);
     } catch(reason) { setError(reason); }
     finally { setBusy(false); }
@@ -155,7 +159,7 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId, no
     if(!review?.reviewId)return;
     setBusy(true);setError(undefined);
     try{
-      const saved=await api.updateImportReview(review.novel.id,review.reviewId,review.candidates,review.selected);
+      const saved=await api.updateImportReview(review.novel.id,review.reviewId,review.candidates,review.selected,review.version,requestContext);
       setReview({...review,...reviewState(saved, review.novel.title, review.scope),novel:review.novel});
       setStatus("候选修改与勾选状态已保存，可稍后继续审核。");
     }catch(reason){setError(reason)}finally{setBusy(false)}
@@ -165,7 +169,7 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId, no
     if(!review?.reviewId)return;
     setBusy(true);setError(undefined);setAiReviewError(undefined);setStatus("AI 正在阅读章节并复核资料库候选…");
     try{
-      const result=await aiAnalyzeImportReview(review.novel.id,review.reviewId);
+      const result=await aiAnalyzeImportReview(review.novel.id,review.reviewId,selectedModel?.providerId,selectedModel?.modelId,allowCloudExcerpt,requestContext);
       setReview({...review,...reviewState(result.review, review.novel.title, review.scope),novel:review.novel});
       setStatus(`AI 已审查 ${result.analysis.chapter_count||0} 个章节片段，请逐项确认后再写入资料库。`);
     }catch(reason){setAiReviewError(reason);setStatus("AI 审查未完成，已保留原有本地分析候选。")}finally{setBusy(false)}
@@ -196,6 +200,7 @@ export function NovelImportPanel({ onImported, onConfirm, novelId, chapterId, no
     </div>}
     {pendingLoading&&<p className="novel-help" role="status">正在恢复待审核的知识库候选…</p>}
     {Boolean(pendingError)&&<ImportError error={pendingError} fallback="无法恢复待审核的知识库候选。"/>}
+    {review&&<label><input type="checkbox" checked={allowCloudExcerpt} onChange={e=>setAllowCloudExcerpt(e.target.checked)} disabled={busy}/>允许所选云模型接收本次有限章节节选（含正文）；存在限制外发的资料时仍只允许本地分析。</label>}
     {Boolean(aiReviewError)&&<ImportError error={aiReviewError} fallback="AI 阅读审查失败，本地候选已保留。"/>}
     {review && <KnowledgeReviewPanel review={review} busy={busy} onAiReview={()=>void runAiReview()} onToggle={toggleCandidate} onEdit={editCandidate} onSelectAll={selectAllCandidates} onSave={()=>void saveReviewDraft()} onAccept={()=>void submitReview("ACCEPTED")} onReject={()=>void submitReview("REJECTED")} onSkip={()=>void submitReview("SKIPPED")} />}
   </Panel>;

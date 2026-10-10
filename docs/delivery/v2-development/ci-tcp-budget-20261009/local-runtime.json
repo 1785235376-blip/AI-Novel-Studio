@@ -1,0 +1,10 @@
+{
+  "execution_environment": "owned dot cloud checkout, not hosted GitHub execution",
+  "python_executable": "/workspace/scratch/b8734129d01d/AI-Novel-Studio/.venv/bin/python",
+  "python_version": "3.12.14",
+  "platform": "linux",
+  "installed_packages_sha256": "74cf563c7bc414940db61b6c9e84d500b0507b0b559590452b040b57a5738b12",
+  "constraints_sha256": "fb6f9ade2d88f097b3d1c77f38c07276d773fb4b377ae412194f10805e92b97e",
+  "constraints_validation": "all exact constraints matched; no local package installation or upgrade performed",
+  "github_execution_identity": "NOT_CLAIMED"
+}

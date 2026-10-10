@@ -1,0 +1,743 @@
+name: Cloud CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloud-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Hosted Linux and Windows checks. Synthetic data; no production credentials or model calls.
+env:
+  MOCK_PROVIDER: 'true'
+  MOCK_STREAM_DELAY_MS: '0'
+  ENABLE_CLOUD: 'false'
+  CREDENTIAL_VAULT_BACKEND: memory
+  CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: 'true'
+  PYTHONDONTWRITEBYTECODE: '1'
+  HF_HUB_OFFLINE: '1'
+  TRANSFORMERS_OFFLINE: '1'
+
+jobs:
+  backend-execution:
+    name: Backend execution / ${{ matrix.backend }} / shard ${{ matrix.shard_index }}
+    runs-on: ubuntu-24.04
+    # File retains one original-order process. PostgreSQL uses two explicit
+    # deterministic node-ID shards; complete unfiltered collection, outcomes,
+    # JUnit identities and the unchanged strict PG gate are reconciled below.
+    # Every shard retains the original finite capacity limits.
+    timeout-minutes: ${{ matrix.backend == 'postgres' && 55 || 20 }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - backend: file
+            shard_index: 0
+            shard_count: 1
+          - backend: postgres
+            shard_index: 0
+            shard_count: 2
+          - backend: postgres
+            shard_index: 1
+            shard_count: 2
+    services:
+      postgres:
+        image: ${{ matrix.backend == 'postgres' && 'postgres:16-alpine' || '' }}
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci-ephemeral-only
+          POSTGRES_DB: novel_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci -d novel_ci"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Prepare isolated checkout and receipt
+        run: bash .github/ci/prepare.sh backend-${{ matrix.backend }}-shard-${{ matrix.shard_index }}
+      - name: Keep V2 backend state inside its owned checkout
+        run: |
+          runtime="$CI_PROJECT/.runtime/ci-backend"
+          mkdir -p "$runtime"/{home,config,cache,data,state,tmp,appdata,localappdata}
+          {
+            echo "CI_V2_RUNTIME=$runtime"
+            echo "HOME=$runtime/home"
+            echo "USERPROFILE=$runtime/home"
+            echo "APPDATA=$runtime/appdata"
+            echo "LOCALAPPDATA=$runtime/localappdata"
+            echo "XDG_CONFIG_HOME=$runtime/config"
+            echo "XDG_CACHE_HOME=$runtime/cache"
+            echo "XDG_DATA_HOME=$runtime/data"
+            echo "XDG_STATE_HOME=$runtime/state"
+            echo "TMPDIR=$runtime/tmp"
+            echo "TMP=$runtime/tmp"
+            echo "TEMP=$runtime/tmp"
+            echo "NOVEL_DATA_PATH=$runtime/data/novels"
+            echo "BACKUP_PATH=$runtime/data/backups"
+            echo "DATABASE_BACKUP_PATH=$runtime/data/database-backups"
+            echo "KNOWLEDGE_SOURCE_PATH=$runtime/data/novels"
+          } >> "$GITHUB_ENV"
+      - name: Install backend dependencies
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
+          python -m pip check
+          python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+      - name: Install real media decoding and assembly tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          ffmpeg -version > "$CI_RECEIPTS/ffmpeg-version.txt"
+          ffprobe -version > "$CI_RECEIPTS/ffprobe-version.txt"
+          python -c "import shutil; assert shutil.which('ffmpeg') and shutil.which('ffprobe')"
+      - name: Install matching PostgreSQL recovery tools
+        if: matrix.backend == 'postgres'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-16
+          echo "/usr/lib/postgresql/16/bin" >> "$GITHUB_PATH"
+      - name: Initialize disposable PostgreSQL
+        if: matrix.backend == 'postgres'
+        working-directory: ${{ env.CI_PROJECT }}
+        env:
+          DATABASE_URL: postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/novel_ci
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          import psycopg
+          with psycopg.connect(os.environ['DATABASE_URL'], autocommit=True) as connection:
+              assert connection.execute('SELECT 1').fetchone() == (1,)
+              for migration in sorted(Path('database/migrations').glob('*.sql')):
+                  connection.execute(migration.read_text(encoding='utf-8'))
+                  print('Applied', migration.name)
+          PY
+      - name: Prepare pinned OFL CJK font and receipt
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python scripts/prepare_pdf_font.py --output "$CI_SANDBOX/fonts" > "$CI_RECEIPTS/font-manifest.json"
+          echo "R2_TEST_FONT_FILE=$CI_SANDBOX/fonts/NotoSansSC-Regular.ttf" >> "$GITHUB_ENV"
+      - name: Fail-closed coverage infrastructure self-tests
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/coverage-selftest" -q \
+            .github/ci/test_suite_coverage.py .github/ci/test_coverage_reconcile.py \
+            .github/ci/test_v2_manifest_extension.py .github/ci/test_v2_check_runner.py \
+            .github/ci/test_v2_browser_job.py \
+            --junitxml="$CI_RECEIPTS/coverage-harness.xml"
+      - name: Complete backend collection / assigned shard execution
+        working-directory: ${{ env.CI_PROJECT }}
+        env:
+          STORAGE_BACKEND: ${{ matrix.backend }}
+          DATABASE_URL: ${{ matrix.backend == 'postgres' && 'postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/novel_ci' || '' }}
+          TEST_POSTGRES_DATABASE_URL: ${{ matrix.backend == 'postgres' && 'postgresql://ci:ci-ephemeral-only@127.0.0.1:5432/novel_ci' || '' }}
+        run: |
+          set -o pipefail
+          PYTHONPATH="$CI_PROJECT/.github/ci:$CI_PROJECT" python -m pytest -p postgres_gate -p suite_coverage -p no:cacheprovider --basetemp="$CI_V2_RUNTIME/pytest" -q -ra --tb=short \
+            --ci-coverage-manifest=.github/ci/coverage_manifest_v2.json.gz \
+            --ci-scope=backend --ci-shard-index=${{ matrix.shard_index }} --ci-shard-count=${{ matrix.shard_count }} \
+            --ci-coverage-dir="$CI_RECEIPTS" --junitxml="$CI_RECEIPTS/backend.xml" 2>&1 | tee "$CI_RECEIPTS/backend.log"
+      - name: Summarize exact revision and test counts
+        if: always() && env.CI_RECEIPTS != ''
+        run: python .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Upload backend receipts
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: backend-${{ matrix.backend }}-shard-${{ matrix.shard_index }}-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: ${{ env.CI_RECEIPTS }}
+          if-no-files-found: error
+          retention-days: 14
+
+
+  backend-tcp:
+    name: Backend execution / original File TCP
+    runs-on: ubuntu-24.04
+    # Independent finite budget: do not consume File's original 20-minute cap.
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Prepare isolated checkout and receipt
+        run: bash .github/ci/prepare.sh backend-tcp
+      - name: Install identical pinned backend dependencies
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
+          python -m pip check
+          python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+      - name: Fail-closed TCP evidence and joiner self-tests
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/tcp-selftest" -q .github/ci/test_tcp_evidence.py --junitxml="$CI_RECEIPTS/tcp-harness.xml"
+      - name: Original two-process loopback tests and fail-closed provenance
+        working-directory: ${{ env.CI_PROJECT }}
+        env:
+          RUN_B10_TCP_SYNC_TEST: '1'
+          STORAGE_BACKEND: file
+        run: |
+          python .github/ci/tcp_evidence.py run \
+            --manifest .github/ci/coverage_manifest_v2.json.gz \
+            --constraints .github/ci/python-constraints.txt --source-root "$CI_PROJECT" \
+            --receipts "$CI_RECEIPTS" --basetemp "$CI_SANDBOX/sync-tcp-pytest"
+      - name: Summarize exact revision and test counts
+        if: always() && env.CI_RECEIPTS != ''
+        run: python .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Upload original TCP receipts unchanged
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: backend-tcp-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: ${{ env.CI_RECEIPTS }}
+          if-no-files-found: error
+          retention-days: 14
+
+  backend:
+    # Preserve both existing required-check names. Each independently checks
+    # all three full shards AND the original TCP job, rejecting partial coverage.
+    name: Backend / ${{ matrix.backend }}
+    needs: [backend-execution, backend-tcp]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [file, postgres]
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Require every execution job including original File TCP gate
+        env:
+          EXECUTION_RESULT: ${{ needs.backend-execution.result }}
+          TCP_RESULT: ${{ needs.backend-tcp.result }}
+        run: |
+          test "$EXECUTION_RESULT" = success
+          test "$TCP_RESULT" = success
+      - name: Download this attempt's exact backend shard receipts
+        uses: actions/download-artifact@v4.3.0
+        with:
+          pattern: backend-*-shard-*-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: backend-receipts
+          merge-multiple: false
+      - name: Download this attempt's exact original TCP receipts
+        uses: actions/download-artifact@v4.3.0
+        with:
+          name: backend-tcp-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: tcp-receipts
+      - name: Validate provenance and create byte-identical aggregation copies
+        env:
+          EXECUTION_RESULT: ${{ needs.backend-execution.result }}
+          TCP_RESULT: ${{ needs.backend-tcp.result }}
+        run: |
+          python .github/ci/tcp_evidence.py join \
+            --manifest .github/ci/coverage_manifest_v2.json.gz \
+            --constraints .github/ci/python-constraints.txt --source-root "$PWD" \
+            --backend-dir backend-receipts --tcp-dir tcp-receipts \
+            --output-dir joined-backend-receipts --report tcp-join.json \
+            --execution-result "$EXECUTION_RESULT" --tcp-result "$TCP_RESULT" \
+            --expected-checked-out-sha "$(git rev-parse HEAD)" --expected-source-tree "$(git rev-parse HEAD^{tree})" \
+            --expected-event-sha "$GITHUB_SHA" --expected-run-id "$GITHUB_RUN_ID" \
+            --expected-run-attempt "$GITHUB_RUN_ATTEMPT" --expected-repository "$GITHUB_REPOSITORY"
+      - name: Require exact complete collection and successful outcomes in both profiles
+        run: |
+          python .github/ci/coverage_reconcile.py \
+            --manifest .github/ci/coverage_manifest_v2.json.gz --scope backend \
+            --receipts-dir joined-backend-receipts --expected-shards file=1 postgres=2 \
+            --expected-sha "$(git rev-parse HEAD)" --expected-tree "$(git rev-parse HEAD^{tree})" \
+            --expected-event-sha "$GITHUB_SHA" --expected-run "$GITHUB_RUN_ID" \
+            --expected-attempt "$GITHUB_RUN_ATTEMPT" --expected-repository "$GITHUB_REPOSITORY" \
+            --constraints .github/ci/python-constraints.txt --source-root "$PWD" \
+            --output backend-coverage.json
+          cat backend-coverage.json >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload complete collected-coverage proof
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: backend-coverage-${{ matrix.backend }}-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: |
+            backend-coverage.json
+            tcp-join.json
+          if-no-files-found: error
+          retention-days: 14
+
+  frontend:
+    name: Frontend / unit-type-build-tokens
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: '22.14.0'
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Prepare isolated checkout and receipt
+        run: bash .github/ci/prepare.sh frontend
+      - name: Install locked frontend dependencies
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          npm install --global pnpm@10.6.5
+          pnpm install --frozen-lockfile
+          { node --version; pnpm --version; sha256sum pnpm-lock.yaml; } > "$CI_RECEIPTS/frontend-tools.txt"
+      - name: Frontend unit suite
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          pnpm test --reporter=default --reporter=junit --outputFile="$CI_RECEIPTS/frontend.xml" 2>&1 | tee "$CI_RECEIPTS/frontend.log"
+      - name: Type check and production build
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee "$CI_RECEIPTS/frontend-build.log"
+      - name: Design-token lint
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          pnpm lint 2>&1 | tee "$CI_RECEIPTS/design-tokens.log"
+      - name: Install Chromium for geometry checks
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Browser geometry (no golden updates)
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          PLAYWRIGHT_JUNIT_OUTPUT_FILE: ${{ env.CI_RECEIPTS }}/geometry.xml
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.visual.config.ts \
+            --grep 'shell geometry|compact desktop|Local AI' --update-snapshots=none \
+            --reporter=list,junit 2>&1 | tee "$CI_RECEIPTS/geometry.log"
+      - name: Install isolated backend for business browser journeys
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}
+        run: python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
+      - name: Local Interop actual TypeScript client and independent peer
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          INTEROP_PYTHON: python
+          LOCAL_INTEROP_REAL_HOST_TEST: '1'
+        run: |
+          set -o pipefail
+          pnpm exec vitest run tests/localInteropRealHost.test.ts --pool=forks --maxWorkers=1 --minWorkers=1 2>&1 | tee "$CI_RECEIPTS/local-interop-client.log"
+      - name: Local Interop real-process browser journeys (MOCK_ONLY)
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          INTEROP_PYTHON: python
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.interop.config.ts 2>&1 | tee "$CI_RECEIPTS/local-interop-browser.log"
+      - name: Business browser journeys (synthetic data; explicit mock boundary)
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.r2.config.ts 2>&1 | tee "$CI_RECEIPTS/business.log"
+      - name: Install real media validators for experimental browser workflows
+        if: success() || failure()
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          ffmpeg -version > "$CI_RECEIPTS/browser-ffmpeg-version.txt"
+          ffprobe -version > "$CI_RECEIPTS/browser-ffprobe-version.txt"
+          python -c "import shutil; assert shutil.which('ffmpeg') and shutil.which('ffprobe')"
+      - name: Experimental R3 business journeys and default-off regression
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          R3_PYTHON: python
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.experimental.config.ts 2>&1 | tee "$CI_RECEIPTS/experimental-browser.log"
+      - name: Prepare reviewed-layout CJK font for browser journeys
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python scripts/prepare_pdf_font.py --output "$CI_SANDBOX/browser-fonts" > "$CI_RECEIPTS/browser-font-manifest.json"
+          echo "AI_NOVEL_STUDIO_PDF_FONT=$CI_SANDBOX/browser-fonts/NotoSansSC-Regular.ttf" >> "$GITHUB_ENV"
+      - name: R4 writing recovery and workspace journeys
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          R4_PYTHON: python
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.r4.config.ts 2>&1 | tee "$CI_RECEIPTS/r4-ux-browser.log"
+      - name: Export recovery browser isolation and screenshots
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          PLAYWRIGHT_JUNIT_OUTPUT_FILE: ${{ env.CI_RECEIPTS }}/export-browser.xml
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.export.config.ts --reporter=list,junit 2>&1 | tee "$CI_RECEIPTS/export-browser.log"
+      - name: Functional surface browser journeys
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          SURFACE_PYTHON: python
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.surface.config.ts 2>&1 | tee "$CI_RECEIPTS/functional-surface-browser.log"
+      - name: Branch manuscript two-client browser journeys
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          SURFACE_PYTHON: python
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.branch-surface.config.ts 2>&1 | tee "$CI_RECEIPTS/branch-surface-browser.log"
+      - name: Summarize exact revision and test counts
+        if: always() && env.CI_RECEIPTS != ''
+        run: python3 .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Prepare bounded original PNG evidence
+        id: screenshots
+        if: always() && env.CI_RECEIPTS != ''
+        run: python3 .github/ci/screenshots.py --root "$CI_PROJECT/frontend/test-results" --output "$CI_RECEIPTS/png-evidence" --source "${{ github.sha }}"
+      - name: Upload source-labelled PNG evidence part 1
+        if: always() && steps.screenshots.outputs.part_1 == 'true'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-png-1-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}/png-evidence/part-1
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload source-labelled PNG evidence part 2
+        if: always() && steps.screenshots.outputs.part_2 == 'true'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-png-2-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}/png-evidence/part-2
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload source-labelled PNG evidence part 3
+        if: always() && steps.screenshots.outputs.part_3 == 'true'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-png-3-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}/png-evidence/part-3
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload source-labelled PNG evidence part 4
+        if: always() && steps.screenshots.outputs.part_4 == 'true'
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-png-4-${{ github.sha }}
+          path: ${{ env.CI_RECEIPTS }}/png-evidence/part-4
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload compact frontend evidence
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-compact-${{ github.sha }}
+          path: |
+            ${{ env.CI_RECEIPTS }}
+            ${{ env.CI_PROJECT }}/frontend/test-results/**/*.json
+            ${{ env.CI_PROJECT }}/frontend/test-results/**/error-context.md
+            !${{ env.CI_RECEIPTS }}/png-evidence/**
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload frontend receipts
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: frontend-${{ github.sha }}
+          path: |
+            ${{ env.CI_RECEIPTS }}
+            ${{ env.CI_PROJECT }}/frontend/test-results
+            !${{ env.CI_RECEIPTS }}/png-evidence/**
+          if-no-files-found: error
+          retention-days: 14
+
+  v2-creative-browser:
+    # Keep additive V2 journeys independent of the unchanged legacy frontend
+    # budget. Both suites must pass; neither masks failure or updates goldens.
+    name: V2 / Creative live workflows and geometry
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: '22.14.0'
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Prepare isolated checkout and receipt
+        run: bash .github/ci/prepare.sh v2-creative-browser
+      - name: Install locked V2 browser dependencies
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          npm install --global pnpm@10.6.5
+          pnpm install --frozen-lockfile
+          { node --version; pnpm --version; sha256sum pnpm-lock.yaml; } > "$CI_RECEIPTS/frontend-tools.txt"
+          pnpm exec playwright install --with-deps chromium
+      - name: Install isolated backend for real File and HTTP journeys
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
+          python -m pip check
+          python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+      - name: V2 live creative workflows (real File and HTTP; mock providers)
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          V2_PYTHON=python CI_RECEIPTS="$CI_RECEIPTS/v2-creative-live" pnpm exec playwright test --config playwright.v2-live.config.ts 2>&1 | tee "$CI_RECEIPTS/v2-creative-live.log"
+      - name: V2 keyboard recovery and fixture geometry (no golden updates)
+        if: success() || failure()
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        env:
+          PLAYWRIGHT_JUNIT_OUTPUT_FILE: ${{ env.CI_RECEIPTS }}/v2-creative-workbench.xml
+        run: |
+          set -o pipefail
+          pnpm exec playwright test --config playwright.creative.config.ts --update-snapshots=none --reporter=list,junit 2>&1 | tee "$CI_RECEIPTS/v2-creative-workbench.log"
+      - name: Summarize exact revision and test counts
+        if: always() && env.CI_RECEIPTS != ''
+        run: |
+          if [ -f "$CI_RECEIPTS/v2-creative-live/junit.xml" ]; then
+            cp "$CI_RECEIPTS/v2-creative-live/junit.xml" "$CI_RECEIPTS/v2-creative-live.xml"
+          fi
+          python3 .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Upload V2 browser receipts and unchanged failure evidence
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: v2-creative-browser-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: |
+            ${{ env.CI_RECEIPTS }}
+            ${{ env.CI_PROJECT }}/frontend/test-results/creative-workbench
+          if-no-files-found: error
+          retention-days: 14
+
+  v2-independent-media:
+    # Explicit additive media prerequisites; original V2 and frontend jobs stay
+    # byte-identical. This job cannot substitute for either protected check.
+    name: V2 / Independent studio live media
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: '22.14.0'
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - name: Prepare isolated checkout and receipt
+        run: bash .github/ci/prepare.sh v2-independent-media
+      - name: Install locked V2 browser dependencies
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          npm install --global pnpm@10.6.5
+          pnpm install --frozen-lockfile
+          { node --version; pnpm --version; sha256sum pnpm-lock.yaml; } > "$CI_RECEIPTS/frontend-tools.txt"
+          pnpm exec playwright install --with-deps chromium
+      - name: Install isolated backend for real File and HTTP journeys
+        working-directory: ${{ env.CI_PROJECT }}
+        run: |
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
+          python -m pip check
+          python -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"
+      - name: Install and record explicit independent-media decoders
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg
+          ffmpeg -version > "$CI_RECEIPTS/ffmpeg-version.txt"
+          ffprobe -version > "$CI_RECEIPTS/ffprobe-version.txt"
+          dpkg-query -W ffmpeg > "$CI_RECEIPTS/media-package-provenance.txt"
+      - name: Independent studios live media (real File and HTTP; mock providers)
+        working-directory: ${{ env.CI_PROJECT }}/frontend
+        run: |
+          set -o pipefail
+          V2_PYTHON=python CI_RECEIPTS="$CI_RECEIPTS/v2-independent-live" pnpm exec playwright test --config playwright.independent-live.config.ts 2>&1 | tee "$CI_RECEIPTS/v2-independent-live.log"
+      - name: Summarize exact revision and test counts
+        if: always() && env.CI_RECEIPTS != ''
+        run: |
+          if [ -f "$CI_RECEIPTS/v2-independent-live/junit.xml" ]; then
+            cp "$CI_RECEIPTS/v2-independent-live/junit.xml" "$CI_RECEIPTS/v2-independent-live.xml"
+          fi
+          python3 .github/ci/receipt.py "$CI_RECEIPTS"
+      - name: Upload independent-media receipts and first failure evidence
+        if: always() && env.CI_RECEIPTS != ''
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: v2-independent-media-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: |
+            ${{ env.CI_RECEIPTS }}
+          if-no-files-found: error
+          retention-days: 14
+
+  windows-host:
+    name: Windows / Host compile and native contracts
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.424'
+      - name: Prepare isolated Windows runtime and receipt
+        shell: pwsh
+        run: |
+          $sandbox = Join-Path $env:RUNNER_TEMP 'novel-r2-native'
+          New-Item -ItemType Directory -Force -Path $sandbox, "$sandbox/data", "$sandbox/receipts", "$sandbox/host" | Out-Null
+          "NOVEL_DATA_PATH=$sandbox/data" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "PROJECT_ROOT=$env:GITHUB_WORKSPACE" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "STORAGE_BACKEND=file" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "CI_RECEIPTS=$sandbox/receipts" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "R2_HOST_OUTPUT=$sandbox/host" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "checked_out_sha=$(git rev-parse HEAD)" | Out-File "$sandbox/receipts/revision.txt" -Encoding utf8
+          "platform=Windows hosted runner; interactive DesktopHost/WebView2/user acceptance NOT_RUN" | Out-File "$sandbox/receipts/revision.txt" -Append -Encoding utf8
+      - name: Install pinned Python runtime dependencies
+        run: python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild]'
+      - name: Compile fresh DesktopHost WinExe
+        shell: pwsh
+        run: |
+          if ((dotnet --version).Trim() -ne '8.0.424') { throw 'Wrong .NET SDK selected' }
+          dotnet --version | Out-File "$env:CI_RECEIPTS/dotnet-sdk.txt" -Encoding utf8
+          dotnet publish desktop-host/AI.NovelStudio.DesktopHost/AI.NovelStudio.DesktopHost.csproj -c Release -r win-x64 --self-contained false -o "$env:R2_HOST_OUTPUT" 2>&1 | Tee-Object "$env:CI_RECEIPTS/host-build.log"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-ChildItem "$env:R2_HOST_OUTPUT" -File -Recurse | Get-FileHash -Algorithm SHA256 | ForEach-Object { "$($_.Hash)  $([IO.Path]::GetRelativePath($env:R2_HOST_OUTPUT, $_.Path))" } | Out-File "$env:CI_RECEIPTS/host-sha256.txt" -Encoding utf8
+      - name: Windows native and packaging contracts (not window acceptance)
+        shell: pwsh
+        run: |
+          python -m pytest -q -ra --tb=short tests/test_runtime_ownership_foundation_v070.py tests/test_webview2_host_contract_v070.py tests/test_packaged_process_factory_v070.py tests/test_packaged_local_session_bootstrap_v070.py tests/test_packaged_desktop_bridge_v070.py tests/test_packaged_postgres_migrations_v070.py tests/test_windows_packaging_host_provenance_v070.py --junitxml="$env:CI_RECEIPTS/windows.xml" 2>&1 | Tee-Object "$env:CI_RECEIPTS/windows-tests.log"
+          exit $LASTEXITCODE
+      - name: V2 Windows environment fixture contracts (no GPU or inference acceptance)
+        shell: pwsh
+        run: |
+          python scripts/run_v2_checks.py cloud-windows-v2-environment-contracts -- python -m pytest -q -ra --tb=short -p no:cacheprovider --basetemp=.runtime/v2-checks/cloud-windows-v2-environment-contracts/pytest tests/test_local_ai_environment_v2.py::test_common_roots_are_fixed_scoped_windows_locations tests/test_local_ai_environment_v2.py::test_system_component_presence_is_not_a_driver_or_inference_claim tests/test_local_ai_environment_v2.py::test_environment_get_is_session_protected_and_never_scans --junitxml="$env:CI_RECEIPTS/windows-v2-environment.xml"
+          $testExit = $LASTEXITCODE
+          Copy-Item docs/delivery/v2-development/cloud-windows-v2-environment-contracts.* "$env:CI_RECEIPTS/"
+          exit $testExit
+      - name: Upload internal Host build and receipts
+        if: always()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: windows-host-${{ github.sha }}
+          path: |
+            ${{ env.CI_RECEIPTS }}
+            ${{ env.R2_HOST_OUTPUT }}
+          if-no-files-found: error
+          retention-days: 14
+
+  windows-package:
+    name: Windows / Fresh base and acceptance package
+    runs-on: windows-2022
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12.9'
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: '22.14.0'
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.424'
+      - name: Prepare isolated package paths and actual SDK receipt
+        shell: pwsh
+        run: |
+          if ((dotnet --version).Trim() -ne '8.0.424') { throw 'Wrong .NET SDK selected' }
+          $sandbox = Join-Path $env:RUNNER_TEMP 'r2-complete-package'
+          New-Item -ItemType Directory -Force -Path $sandbox, "$sandbox/receipts", "$sandbox/data" | Out-Null
+          "R2_PACKAGE_ROOT=$sandbox" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "NOVEL_DATA_PATH=$sandbox/data" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "STORAGE_BACKEND=file" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "PROJECT_ROOT=$env:GITHUB_WORKSPACE" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          "checked_out_sha=$(git rev-parse HEAD)" | Out-File "$sandbox/receipts/revision.txt" -Encoding utf8
+          "sdk=$(dotnet --version)" | Out-File "$sandbox/receipts/revision.txt" -Append -Encoding utf8
+          "scope=Fresh native base smoke; interactive DesktopHost/IME/install/upgrade/signing/user acceptance NOT_RUN" | Out-File "$sandbox/receipts/revision.txt" -Append -Encoding utf8
+      - name: Install locked source build tools
+        shell: pwsh
+        run: |
+          python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild]'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm install --global pnpm@10.6.5
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          pnpm --dir frontend install --frozen-lockfile
+          exit $LASTEXITCODE
+      - name: Assemble official pinned base and OFL font
+        shell: pwsh
+        run: |
+          python scripts/prepare_windows_base.py --output "$env:R2_PACKAGE_ROOT/base" --cache "$env:R2_PACKAGE_ROOT/inputs" 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/prepare-base.log"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/prepare_pdf_font.py --output "$env:R2_PACKAGE_ROOT/fonts" > "$env:R2_PACKAGE_ROOT/receipts/font-manifest.json"
+          exit $LASTEXITCODE
+      - name: Build self-contained Host and unsigned internal acceptance package
+        shell: pwsh
+        run: |
+          ./scripts/package_windows_acceptance.ps1 -BaseApplication "$env:R2_PACKAGE_ROOT/base" -OutputRoot "$env:R2_PACKAGE_ROOT/package" -HostPublishDirectory "$env:R2_PACKAGE_ROOT/host" -DotnetPath (Get-Command dotnet).Source -NodePath (Get-Command node).Source -ViteCliPath (Join-Path $PWD 'frontend/node_modules/vite/bin/vite.js') -VerifiedFontDirectory "$env:R2_PACKAGE_ROOT/fonts" -SkipIExpress 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/package.log"
+          if (-not $?) { throw 'Acceptance package build failed' }
+      - name: Native embedded Python and PostgreSQL UTF-8 recovery smoke
+        shell: pwsh
+        run: |
+          python scripts/verify_windows_base.py --base "$env:R2_PACKAGE_ROOT/package/Application" --work-root "$env:R2_PACKAGE_ROOT/native-smoke" 2>&1 | Tee-Object "$env:R2_PACKAGE_ROOT/receipts/native-smoke.log"
+          exit $LASTEXITCODE
+      - name: Upload bounded native package receipts
+        if: always()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: windows-native-receipts-${{ github.sha }}
+          path: |
+            ${{ env.R2_PACKAGE_ROOT }}/receipts
+            ${{ env.R2_PACKAGE_ROOT }}/base/base-input-provenance.json
+            ${{ env.R2_PACKAGE_ROOT }}/package/*.json
+            ${{ env.R2_PACKAGE_ROOT }}/package/*.txt
+            ${{ env.R2_PACKAGE_ROOT }}/native-smoke/native-base-smoke.json
+            ${{ env.R2_PACKAGE_ROOT }}/native-smoke/command-logs
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload internal package and provenance (not a Release)
+        if: always()
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: windows-acceptance-${{ github.sha }}
+          path: |
+            ${{ env.R2_PACKAGE_ROOT }}/receipts
+            ${{ env.R2_PACKAGE_ROOT }}/base/base-input-provenance.json
+            ${{ env.R2_PACKAGE_ROOT }}/package/*.json
+            ${{ env.R2_PACKAGE_ROOT }}/package/*.txt
+            ${{ env.R2_PACKAGE_ROOT }}/package/*.zip
+            ${{ env.R2_PACKAGE_ROOT }}/native-smoke/native-base-smoke.json
+          if-no-files-found: error
+          retention-days: 14

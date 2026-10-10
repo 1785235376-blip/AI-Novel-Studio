@@ -1,0 +1,20 @@
+{
+  "status": "SOURCE_AND_INVENTORY_VERIFIED_NOT_EXECUTION",
+  "previous_head": "99e3c636bc59f45f5faa4b7af84b80981f1ec2e5",
+  "v2_manifest_sha256": "0093adc97d202dbb4bae5328226485c06d01daa2d58363e1d02f933ce7d82c1e",
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "source_hashes_checked": 1659,
+  "source_errors": [],
+  "previous_nodes": 9449,
+  "current_nodes": 9449,
+  "product_nodes_identical_in_order": true,
+  "skip_and_external_gate_maps_unchanged": true,
+  "application_and_catalog_sources_unchanged": true,
+  "changed_source_paths": [
+    "frontend/src/creative/CreativeWorkspace.test.tsx",
+    "frontend/src/creative/CreativeWorkspace.tsx",
+    "frontend/src/creative/ProductionTimeline.css.test.ts",
+    "frontend/src/creative/creative.css",
+    "frontend/tests/visual/creative-workbench.spec.ts"
+  ]
+}

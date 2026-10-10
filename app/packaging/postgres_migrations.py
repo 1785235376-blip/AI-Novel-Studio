@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Iterable
@@ -26,7 +27,11 @@ class PackagedMigration:
     @classmethod
     def from_file(cls, migration_id: str, name: str, path: Path) -> "PackagedMigration":
         sql = path.read_text(encoding="utf-8").strip()
-        if not sql or "BEGIN" in sql.upper() or "COMMIT" in sql.upper():
+        # Anonymous PL/pgSQL blocks are transaction-neutral. Ignore quoted
+        # function bodies/strings/comments when rejecting top-level control.
+        unquoted = re.sub(r"(?s)\$(?P<tag>[A-Za-z_][A-Za-z0-9_]*|)\$.*?\$(?P=tag)\$", " ", sql)
+        unquoted = re.sub(r"'(?:''|[^'])*'|--[^\n]*|/\*.*?\*/", " ", unquoted, flags=re.S)
+        if not sql or re.search(r"\b(?:BEGIN|COMMIT|ROLLBACK|START\s+TRANSACTION)\b", unquoted, re.I):
             raise PackagedMigrationError("packaged migration must contain transaction-neutral SQL")
         return cls(migration_id, name, sql, hashlib.sha256(sql.encode("utf-8")).hexdigest())
 
@@ -37,10 +42,31 @@ def baseline_checksum() -> str:
     ).encode("ascii")).hexdigest()
 
 
-def load_packaged_migrations(migrations: Path) -> tuple[PackagedMigration, ...]:
-    return (PackagedMigration.from_file(
+def load_packaged_migrations(migrations: Path, *, include_experimental: bool = False) -> tuple[PackagedMigration, ...]:
+    baseline = (PackagedMigration.from_file(
         "0001_chapter_archive_state", "chapter archive state",
         migrations / "017_chapter_archive_state.sql",
+    ), PackagedMigration.from_file(
+        "0002_context_privacy", "durable fail-closed context privacy",
+        migrations / "018_context_privacy.sql",
+    ))
+    if not include_experimental:
+        return baseline
+    return baseline + (PackagedMigration.from_file(
+        "0003_experimental_scope_documents", "default-off experimental scope metadata",
+        migrations / "019_experimental_scope_documents.sql",
+    ),)
+
+
+def load_identity_migrations(migrations: Path) -> tuple[PackagedMigration, ...]:
+    """Mandatory shared safety upgrades, independent of the feature registry.
+
+    load_packaged_migrations retains its historical feature-registry API.
+    Every default runtime runner applies this additional chain, including V1.
+    """
+    return (PackagedMigration.from_file(
+        "0004_stable_chapter_identity", "immutable chapter identity and independent order",
+        migrations / "020_stable_chapter_identity.sql",
     ),)
 
 
@@ -216,6 +242,24 @@ def readiness_sql(migrations: Iterable[PackagedMigration]) -> str:
         (migration.migration_id, migration.checksum) for migration in migrations
     )]
     values = _values(tuple(checks))
+    identity_ready = ""
+    if any(item[0] == "0004_stable_chapter_identity" for item in checks):
+        identity_ready = """
+  IF to_regclass('public.chapter_identities') IS NULL
+     OR NOT EXISTS (SELECT 1 FROM information_schema.columns
+                    WHERE table_schema='public' AND table_name='chapters'
+                      AND column_name='public_token' AND udt_name='text')
+     OR NOT EXISTS (SELECT 1 FROM information_schema.columns
+                    WHERE table_schema='public' AND table_name='novels'
+                      AND column_name='chapter_identity_provenance' AND udt_name='text' AND is_nullable='NO')
+     OR NOT EXISTS (SELECT 1 FROM information_schema.columns
+                    WHERE table_schema='public' AND table_name='chapters'
+                      AND column_name='sort_order' AND udt_name='int4')
+     OR NOT EXISTS (SELECT 1 FROM information_schema.columns
+                    WHERE table_schema='public' AND table_name='chapters'
+                      AND column_name='identity_status' AND udt_name='text' AND is_nullable='NO')
+  THEN RAISE EXCEPTION 'chapter identity schema is not ready'; END IF;
+"""
     return f"""
 BEGIN;
 {_lock_sql()}
@@ -232,6 +276,7 @@ BEGIN
       AND udt_name='bool' AND is_nullable='NO'
       AND column_default IN ('false','false::boolean')
   ) THEN RAISE EXCEPTION 'chapter archive schema is not ready'; END IF;
+{identity_ready}
 END
 $migration$;
 COMMIT;
@@ -244,8 +289,15 @@ class PackagedPostgresMigrationRunner:
         execute_sql: Callable[[str], object],
         log: Callable[[str], None] | None = None,
         migrations: tuple[PackagedMigration, ...] | None = None,
+        include_experimental: bool | None = None,
     ):
-        self.migrations = migrations or load_packaged_migrations(migrations_path)
+        from ..experimental.flags import enabled_flags
+        # The packaged launcher and its backend can have different feature
+        # environments. The owner must select the schema required by the child
+        # before that child starts; ambient launcher opt-ins remain the default.
+        include_experimental = bool(enabled_flags()) if include_experimental is None else include_experimental
+        self.migrations = migrations or load_packaged_migrations(migrations_path, include_experimental=include_experimental)
+        self.identity_migrations = () if migrations is not None else load_identity_migrations(migrations_path)
         self.execute_sql = execute_sql
         self.log = log or (lambda _message: None)
 
@@ -255,11 +307,12 @@ class PackagedPostgresMigrationRunner:
             self.execute_sql(baseline_adoption_sql())
             self.log("packaged migration baseline ready")
             previous = BASELINE_ID
-            for migration in self.migrations:
+            required_migrations = self.migrations + self.identity_migrations
+            for migration in required_migrations:
                 self.log(f"packaged migration verify/apply {migration.migration_id}")
                 self.execute_sql(migration_apply_sql(migration, previous))
                 previous = migration.migration_id
-            self.execute_sql(readiness_sql(self.migrations))
+            self.execute_sql(readiness_sql(required_migrations))
         except Exception as exc:
             self.log(f"packaged migration failed: {type(exc).__name__}")
             raise PackagedMigrationError(MIGRATION_FAILURE) from exc

@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_registry_is_stable_and_checksummed():
     migrations = load_packaged_migrations(ROOT / "database" / "migrations")
-    assert [item.migration_id for item in migrations] == ["0001_chapter_archive_state"]
+    assert [item.migration_id for item in migrations] == ["0001_chapter_archive_state", "0002_context_privacy"]
     assert len(migrations[0].checksum) == 64
     assert len(baseline_checksum()) == 64
     assert "is_archived" in migrations[0].sql

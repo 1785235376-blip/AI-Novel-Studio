@@ -1,0 +1,16 @@
+825b3caf40f6f7f617e5350fd1efcfe86533a003	build: pin frontend toolchain and record verified R2 baseline
+78920f2f9435a9c1d5625479c37b0948c1db5b51	fix: preserve privacy across storage and verified recovery
+e8ebfccdce0678cac15c632d640ac57bd822b93f	feat: enforce controlled model dispatch and durable workflow execution
+ff34bf87979e2c4dc39681b3d91069979bca06a7	feat: add scoped reviewed media queues and recoverable assets
+c6e8c07d8786da24c3e265561cece80c4bf5b73b	feat: persist reviewed author plans and version-anchored collaboration
+db3212c3f1418557e3ab0152e8c3c0c8ee27ef97	build: verify CJK font provenance and expand release candidate gates
+40464f656aa1437e5b56969212ea801eccfcafc0	feat: recover frozen exports and version screenplay edits
+16b65c10ada1670ac57891054ffe4571fa463491	feat: integrate reviewed planning and fail-closed release candidate workflows
+90f4369b7367579b7aaeb00d4d25f21171353753	fix: close independent dispatch and acceptance gaps and integrate local AI discovery
+4e7ca3d3bfcf9908fee7d3a6e80a3d1243b9238a	fix: prove Ollama locality and close discovery activation races
+2200238e8d549074573c2a1a298b74dc9be14780	build: produce verified Windows inputs and close remaining runtime guards
+55a9082dbd3655c39a9b23bd4da19fedb3373072	fix: refresh revision history safely and dispose agent timers
+13723e23c5b1738c1deeaebf5ac4b50771db741b	fix: preserve pending revision queries during StrictMode replay
+5a3a14f60afd28aad48ee15a992426d38af4739d	test: wait for hydrated navigation after browser reload
+93daeb977d9fd238ffda7be3d9c566fd3768dc27	build: bound native smoke process capture and preserve diagnostic receipts
+98b7d53c3193765e792e5a756fff02a87b5948b8	ui: stack writing goal fields within the inspector

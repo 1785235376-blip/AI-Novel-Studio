@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "boundary": "Separate Python process reopens actual File stores after uvicorn shutdown; no browser and no inference",
+  "document_modes": [
+    "DIRECTOR",
+    "PRODUCTION",
+    "SCREENPLAY",
+    "STORYBOARD"
+  ],
+  "production_version": 3,
+  "history_versions": [
+    1,
+    2,
+    3
+  ],
+  "manuscript_unchanged": true,
+  "manuscript_version": 1,
+  "storage_backend": "file"
+}

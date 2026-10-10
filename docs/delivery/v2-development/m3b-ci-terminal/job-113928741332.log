@@ -1,0 +1,1391 @@
+﻿2026-10-09T16:55:12.8524739Z Current runner version: '2.337.0'
+2026-10-09T16:55:12.8544598Z ##[group]Runner Image Provisioner
+2026-10-09T16:55:12.8545367Z Hosted Compute Agent
+2026-10-09T16:55:12.8545847Z Version: 20261002.596
+2026-10-09T16:55:12.8546394Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-09T16:55:12.8547080Z Build Date: 2026-10-02T22:28:27Z
+2026-10-09T16:55:12.8547628Z Worker ID: {f3aaad41-b7a3-44af-981d-9e6d90dc017b}
+2026-10-09T16:55:12.8548337Z Region: mexicocentral
+2026-10-09T16:55:12.8548816Z Cloud: Azure
+2026-10-09T16:55:12.8549293Z ##[endgroup]
+2026-10-09T16:55:12.8550781Z ##[group]Operating System
+2026-10-09T16:55:12.8551314Z Ubuntu
+2026-10-09T16:55:12.8551812Z 24.04.5
+2026-10-09T16:55:12.8552242Z LTS
+2026-10-09T16:55:12.8552666Z ##[endgroup]
+2026-10-09T16:55:12.8553200Z ##[group]Runner Image
+2026-10-09T16:55:12.8553773Z Image: ubuntu-24.04
+2026-10-09T16:55:12.8554293Z Version: 20261004.327.1
+2026-10-09T16:55:12.8555332Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-09T16:55:12.8556646Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-09T16:55:12.8557443Z ##[endgroup]
+2026-10-09T16:55:12.8558361Z ##[group]GITHUB_TOKEN Permissions
+2026-10-09T16:55:12.8560162Z Contents: read
+2026-10-09T16:55:12.8560736Z Metadata: read
+2026-10-09T16:55:12.8561234Z ##[endgroup]
+2026-10-09T16:55:12.8562841Z Secret source: Actions
+2026-10-09T16:55:12.8563713Z Cache mode: write
+2026-10-09T16:55:12.8564255Z Prepare workflow directory
+2026-10-09T16:55:12.9259040Z The service 'postgres' will not be started because the container definition has an empty image.
+2026-10-09T16:55:12.9283129Z Prepare all required actions
+2026-10-09T16:55:12.9322666Z Getting action download info
+2026-10-09T16:55:13.2093500Z Download action repository 'actions/checkout@v4.2.2' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2026-10-09T16:55:13.6937657Z Download action repository 'actions/setup-python@v5.6.0' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-09T16:55:13.7854303Z Download action repository 'actions/upload-artifact@v4.6.2' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-09T16:55:13.9929917Z Complete job name: Backend execution / file / shard 0
+2026-10-09T16:55:14.0513500Z ##[group]Run actions/checkout@v4.2.2
+2026-10-09T16:55:14.0514157Z with:
+2026-10-09T16:55:14.0514509Z   persist-credentials: false
+2026-10-09T16:55:14.0514942Z   repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T16:55:14.0517984Z   token: ***
+2026-10-09T16:55:14.0518327Z   ssh-strict: true
+2026-10-09T16:55:14.0518672Z   ssh-user: git
+2026-10-09T16:55:14.0519006Z   clean: true
+2026-10-09T16:55:14.0519349Z   sparse-checkout-cone-mode: true
+2026-10-09T16:55:14.0519971Z   fetch-depth: 1
+2026-10-09T16:55:14.0520310Z   fetch-tags: false
+2026-10-09T16:55:14.0520669Z   show-progress: true
+2026-10-09T16:55:14.0521018Z   lfs: false
+2026-10-09T16:55:14.0521341Z   submodules: false
+2026-10-09T16:55:14.0521690Z   set-safe-directory: true
+2026-10-09T16:55:14.0522252Z env:
+2026-10-09T16:55:14.0522568Z   MOCK_PROVIDER: true
+2026-10-09T16:55:14.0522924Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:55:14.0523285Z   ENABLE_CLOUD: false
+2026-10-09T16:55:14.0523642Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:55:14.0524112Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:55:14.0524576Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:55:14.0524958Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:55:14.0525300Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:55:14.0525659Z ##[endgroup]
+2026-10-09T16:55:14.1329941Z Syncing repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T16:55:14.1331972Z ##[group]Getting Git version info
+2026-10-09T16:55:14.1332919Z Working directory is '/home/runner/work/AI-Novel-Studio/AI-Novel-Studio'
+2026-10-09T16:55:14.1334359Z [command]/usr/bin/git version
+2026-10-09T16:55:14.1411077Z git version 2.55.0
+2026-10-09T16:55:14.1432100Z ##[endgroup]
+2026-10-09T16:55:14.1438543Z Temporarily overriding HOME='/home/runner/work/_temp/2d8e9847-c69e-4ffb-bb2e-d9e3186c34c7' before making global git config changes
+2026-10-09T16:55:14.1449804Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T16:55:14.1451464Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AI-Novel-Studio/AI-Novel-Studio
+2026-10-09T16:55:14.1484107Z Deleting the contents of '/home/runner/work/AI-Novel-Studio/AI-Novel-Studio'
+2026-10-09T16:55:14.1486810Z ##[group]Initializing the repository
+2026-10-09T16:55:14.1489864Z [command]/usr/bin/git init /home/runner/work/AI-Novel-Studio/AI-Novel-Studio
+2026-10-09T16:55:14.1597206Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-09T16:55:14.1598434Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-09T16:55:14.1599823Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-09T16:55:14.1600759Z hint: call:
+2026-10-09T16:55:14.1601238Z hint:
+2026-10-09T16:55:14.1601833Z hint: 	git config --global init.defaultBranch <name>
+2026-10-09T16:55:14.1604654Z hint:
+2026-10-09T16:55:14.1605609Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-09T16:55:14.1606965Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-09T16:55:14.1608148Z hint:
+2026-10-09T16:55:14.1608839Z hint: 	git branch -m <name>
+2026-10-09T16:55:14.1609853Z hint:
+2026-10-09T16:55:14.1611103Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-09T16:55:14.1612485Z Initialized empty Git repository in /home/runner/work/AI-Novel-Studio/AI-Novel-Studio/.git/
+2026-10-09T16:55:14.1614761Z [command]/usr/bin/git remote add origin https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T16:55:14.1726276Z ##[endgroup]
+2026-10-09T16:55:14.1726917Z ##[group]Disabling automatic garbage collection
+2026-10-09T16:55:14.1727554Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-09T16:55:14.1729525Z ##[endgroup]
+2026-10-09T16:55:14.1730490Z ##[group]Setting up auth
+2026-10-09T16:55:14.1731268Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T16:55:14.1757566Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T16:55:14.2073987Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T16:55:14.2105396Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T16:55:14.2295509Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-09T16:55:14.2331641Z ##[endgroup]
+2026-10-09T16:55:14.2332269Z ##[group]Fetching the repository
+2026-10-09T16:55:14.2339290Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +ec342fe9b69ba45d850d971ce2e15d1b12046096:refs/remotes/pull/47/merge
+2026-10-09T16:55:21.1014269Z From https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T16:55:21.1015133Z  * [new ref]         ec342fe9b69ba45d850d971ce2e15d1b12046096 -> pull/47/merge
+2026-10-09T16:55:21.1018682Z ##[endgroup]
+2026-10-09T16:55:21.1019271Z ##[group]Determining the checkout info
+2026-10-09T16:55:21.1021684Z ##[endgroup]
+2026-10-09T16:55:21.1063778Z [command]/usr/bin/git sparse-checkout disable
+2026-10-09T16:55:21.1110286Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-09T16:55:21.1140256Z ##[group]Checking out the ref
+2026-10-09T16:55:21.1144210Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/47/merge
+2026-10-09T16:55:21.6850556Z Note: switching to 'refs/remotes/pull/47/merge'.
+2026-10-09T16:55:21.6850982Z 
+2026-10-09T16:55:21.6851208Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-09T16:55:21.6851950Z changes and commit them, and you can discard any commits you make in this
+2026-10-09T16:55:21.6852437Z state without impacting any branches by switching back to a branch.
+2026-10-09T16:55:21.6852722Z 
+2026-10-09T16:55:21.6852936Z If you want to create a new branch to retain commits you create, you may
+2026-10-09T16:55:21.6853362Z do so (now or later) by using -c with the switch command. Example:
+2026-10-09T16:55:21.6853578Z 
+2026-10-09T16:55:21.6853702Z   git switch -c <new-branch-name>
+2026-10-09T16:55:21.6853879Z 
+2026-10-09T16:55:21.6854005Z Or undo this operation with:
+2026-10-09T16:55:21.6854168Z 
+2026-10-09T16:55:21.6854281Z   git switch -
+2026-10-09T16:55:21.6854424Z 
+2026-10-09T16:55:21.6854637Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-09T16:55:21.6854911Z 
+2026-10-09T16:55:21.6855228Z HEAD is now at ec342fe Merge c386b0608ae92d18c351b5cb6e367380808a45cf into fed2404c8e30b44061b7139dced45b7f3301601c
+2026-10-09T16:55:21.6908264Z ##[endgroup]
+2026-10-09T16:55:21.6951515Z [command]/usr/bin/git log -1 --format=%H
+2026-10-09T16:55:21.6974253Z ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T16:55:21.6981902Z ##[group]Removing auth
+2026-10-09T16:55:21.6984860Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T16:55:21.7011894Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T16:55:21.7200219Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T16:55:21.7752240Z http.https://github.com/.extraheader
+2026-10-09T16:55:21.7757700Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-09T16:55:21.7790663Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T16:55:21.7978846Z ##[endgroup]
+2026-10-09T16:55:21.8179250Z ##[group]Run actions/setup-python@v5.6.0
+2026-10-09T16:55:21.8179541Z with:
+2026-10-09T16:55:21.8179962Z   python-version: 3.12.9
+2026-10-09T16:55:21.8180194Z   check-latest: false
+2026-10-09T16:55:21.8182244Z   token: ***
+2026-10-09T16:55:21.8182457Z   update-environment: true
+2026-10-09T16:55:21.8182701Z   allow-prereleases: false
+2026-10-09T16:55:21.8182934Z   freethreaded: false
+2026-10-09T16:55:21.8183141Z env:
+2026-10-09T16:55:21.8183330Z   MOCK_PROVIDER: true
+2026-10-09T16:55:21.8183539Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:55:21.8183767Z   ENABLE_CLOUD: false
+2026-10-09T16:55:21.8183999Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:55:21.8184268Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:55:21.8184551Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:55:21.8184784Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:55:21.8184993Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:55:21.8185234Z ##[endgroup]
+2026-10-09T16:55:21.9207565Z ##[group]Installed versions
+2026-10-09T16:55:21.9222314Z Version 3.12.9 was not found in the local cache
+2026-10-09T16:55:21.9306076Z (node:2125) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T16:55:21.9306836Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T16:55:23.1280682Z Version 3.12.9 is available for downloading
+2026-10-09T16:55:23.1281545Z Download from "https://github.com/actions/python-versions/releases/download/3.12.9-13149478207/python-3.12.9-linux-24.04-x64.tar.gz"
+2026-10-09T16:55:23.8126142Z Extract downloaded archive
+2026-10-09T16:55:23.8228628Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/053eeb41-110f-420f-9b98-f44df9991899 -f /home/runner/work/_temp/083749c9-907a-439c-88f2-abde745afbca
+2026-10-09T16:55:25.5483798Z Execute installation script
+2026-10-09T16:55:25.5564435Z Check if Python hostedtoolcache folder exist...
+2026-10-09T16:55:25.5564910Z Create Python 3.12.9 folder
+2026-10-09T16:55:25.5576472Z Copy Python binaries to hostedtoolcache folder
+2026-10-09T16:55:25.9458519Z Create additional symlinks (Required for the UsePythonVersion Azure Pipelines task and the setup-python GitHub Action)
+2026-10-09T16:55:25.9493648Z Upgrading pip...
+2026-10-09T16:55:28.0665788Z Looking in links: /tmp/tmp14q0cs4s
+2026-10-09T16:55:28.0667822Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages (24.3.1)
+2026-10-09T16:55:29.3278438Z Collecting pip
+2026-10-09T16:55:29.3545020Z Downloading pip-26.2.1-py3-none-any.whl.metadata (4.6 kB)
+2026-10-09T16:55:29.6070268Z Downloading pip-26.2.1-py3-none-any.whl (1.8 MB)
+2026-10-09T16:55:29.6835942Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 26.9 MB/s eta 0:00:00
+2026-10-09T16:55:29.6836371Z 
+2026-10-09T16:55:29.7075641Z Installing collected packages: pip
+2026-10-09T16:55:29.7076256Z Attempting uninstall: pip
+2026-10-09T16:55:29.7092460Z Found existing installation: pip 24.3.1
+2026-10-09T16:55:29.7352947Z Uninstalling pip-24.3.1:
+2026-10-09T16:55:29.7395726Z Successfully uninstalled pip-24.3.1
+2026-10-09T16:55:30.5054167Z Successfully installed pip-26.2.1
+2026-10-09T16:55:30.5480300Z Create complete file
+2026-10-09T16:55:30.5511296Z Successfully set up CPython (3.12.9)
+2026-10-09T16:55:30.5512464Z ##[endgroup]
+2026-10-09T16:55:30.5715517Z ##[group]Run bash .github/ci/prepare.sh backend-file-shard-0
+2026-10-09T16:55:30.5715948Z [36;1mbash .github/ci/prepare.sh backend-file-shard-0[0m
+2026-10-09T16:55:30.5937447Z shell: /usr/bin/bash -e {0}
+2026-10-09T16:55:30.5937726Z env:
+2026-10-09T16:55:30.5937912Z   MOCK_PROVIDER: true
+2026-10-09T16:55:30.5938125Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:55:30.5938316Z   ENABLE_CLOUD: false
+2026-10-09T16:55:30.5938512Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:55:30.5938755Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:55:30.5939029Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:55:30.5939234Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:55:30.5939408Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:55:30.5939897Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:30.5940283Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T16:55:30.5940629Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:30.5940973Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:30.5941272Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:30.5941569Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T16:55:30.5941829Z ##[endgroup]
+2026-10-09T16:55:31.3587763Z ##[group]Run runtime="$CI_PROJECT/.runtime/ci-backend"
+2026-10-09T16:55:31.3588259Z [36;1mruntime="$CI_PROJECT/.runtime/ci-backend"[0m
+2026-10-09T16:55:31.3588836Z [36;1mmkdir -p "$runtime"/{home,config,cache,data,state,tmp,appdata,localappdata}[0m
+2026-10-09T16:55:31.3589379Z [36;1m{[0m
+2026-10-09T16:55:31.3589812Z [36;1m  echo "CI_V2_RUNTIME=$runtime"[0m
+2026-10-09T16:55:31.3590156Z [36;1m  echo "HOME=$runtime/home"[0m
+2026-10-09T16:55:31.3590497Z [36;1m  echo "USERPROFILE=$runtime/home"[0m
+2026-10-09T16:55:31.3590888Z [36;1m  echo "APPDATA=$runtime/appdata"[0m
+2026-10-09T16:55:31.3591274Z [36;1m  echo "LOCALAPPDATA=$runtime/localappdata"[0m
+2026-10-09T16:55:31.3591671Z [36;1m  echo "XDG_CONFIG_HOME=$runtime/config"[0m
+2026-10-09T16:55:31.3592051Z [36;1m  echo "XDG_CACHE_HOME=$runtime/cache"[0m
+2026-10-09T16:55:31.3592416Z [36;1m  echo "XDG_DATA_HOME=$runtime/data"[0m
+2026-10-09T16:55:31.3592781Z [36;1m  echo "XDG_STATE_HOME=$runtime/state"[0m
+2026-10-09T16:55:31.3593193Z [36;1m  echo "TMPDIR=$runtime/tmp"[0m
+2026-10-09T16:55:31.3593526Z [36;1m  echo "TMP=$runtime/tmp"[0m
+2026-10-09T16:55:31.3593798Z [36;1m  echo "TEMP=$runtime/tmp"[0m
+2026-10-09T16:55:31.3594040Z [36;1m  echo "NOVEL_DATA_PATH=$runtime/data/novels"[0m
+2026-10-09T16:55:31.3594464Z [36;1m  echo "BACKUP_PATH=$runtime/data/backups"[0m
+2026-10-09T16:55:31.3594777Z [36;1m  echo "DATABASE_BACKUP_PATH=$runtime/data/database-backups"[0m
+2026-10-09T16:55:31.3595114Z [36;1m  echo "KNOWLEDGE_SOURCE_PATH=$runtime/data/novels"[0m
+2026-10-09T16:55:31.3595381Z [36;1m} >> "$GITHUB_ENV"[0m
+2026-10-09T16:55:31.3653847Z shell: /usr/bin/bash -e {0}
+2026-10-09T16:55:31.3654066Z env:
+2026-10-09T16:55:31.3654233Z   MOCK_PROVIDER: true
+2026-10-09T16:55:31.3654420Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:55:31.3654603Z   ENABLE_CLOUD: false
+2026-10-09T16:55:31.3654787Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:55:31.3655020Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:55:31.3655272Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:55:31.3655471Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:55:31.3655651Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:55:31.3655891Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:31.3656225Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T16:55:31.3656580Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:31.3656877Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:31.3657171Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:31.3657460Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T16:55:31.3657783Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T16:55:31.3658090Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T16:55:31.3658429Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS
+2026-10-09T16:55:31.3658844Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T16:55:31.3659286Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/receipts
+2026-10-09T16:55:31.3659873Z   HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/home
+2026-10-09T16:55:31.3660267Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/home
+2026-10-09T16:55:31.3660673Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/appdata
+2026-10-09T16:55:31.3661105Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/localappdata
+2026-10-09T16:55:31.3661542Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/config
+2026-10-09T16:55:31.3661970Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/cache
+2026-10-09T16:55:31.3662375Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/data
+2026-10-09T16:55:31.3662956Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/state
+2026-10-09T16:55:31.3663351Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/tmp
+2026-10-09T16:55:31.3663716Z   TMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/tmp
+2026-10-09T16:55:31.3664081Z   TEMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/tmp
+2026-10-09T16:55:31.3664472Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T16:55:31.3664915Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/data/novels
+2026-10-09T16:55:31.3665355Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/data/backups
+2026-10-09T16:55:31.3665842Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/data/database-backups
+2026-10-09T16:55:31.3666361Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/data/novels
+2026-10-09T16:55:31.3666722Z ##[endgroup]
+2026-10-09T16:55:31.4086713Z ##[group]Run python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
+2026-10-09T16:55:31.4087322Z [36;1mpython -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'[0m
+2026-10-09T16:55:31.4087733Z [36;1mpython -m pip check[0m
+2026-10-09T16:55:31.4088203Z [36;1mpython -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"[0m
+2026-10-09T16:55:31.4142663Z shell: /usr/bin/bash -e {0}
+2026-10-09T16:55:31.4142873Z env:
+2026-10-09T16:55:31.4143039Z   MOCK_PROVIDER: true
+2026-10-09T16:55:31.4143226Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:55:31.4143410Z   ENABLE_CLOUD: false
+2026-10-09T16:55:31.4143593Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:55:31.4143838Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:55:31.4144085Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:55:31.4144284Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:55:31.4144455Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:55:31.4144723Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:31.4145065Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T16:55:31.4145393Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:31.4145686Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:31.4145979Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:31.4146266Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T16:55:31.4146564Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T16:55:31.4165405Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T16:55:31.4165828Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS
+2026-10-09T16:55:31.4166284Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T16:55:31.4166720Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/receipts
+2026-10-09T16:55:31.4167246Z   HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T16:55:31.4167813Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T16:55:31.4168367Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/appdata
+2026-10-09T16:55:31.4168954Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/localappdata
+2026-10-09T16:55:31.4169544Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/config
+2026-10-09T16:55:31.4170340Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/cache
+2026-10-09T16:55:31.4170909Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data
+2026-10-09T16:55:31.4171463Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/state
+2026-10-09T16:55:31.4172001Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T16:55:31.4172513Z   TMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T16:55:31.4173017Z   TEMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T16:55:31.4173724Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T16:55:31.4174282Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T16:55:31.4174927Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/backups
+2026-10-09T16:55:31.4175830Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/database-backups
+2026-10-09T16:55:31.4176512Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T16:55:31.4177147Z   CI_V2_RUNTIME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend
+2026-10-09T16:55:31.4177665Z ##[endgroup]
+2026-10-09T16:55:32.4161239Z Obtaining file:///home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T16:55:32.4175254Z   Installing build dependencies: started
+2026-10-09T16:55:33.3946455Z   Installing build dependencies: finished with status 'done'
+2026-10-09T16:55:33.3951635Z   Checking if build backend supports build_editable: started
+2026-10-09T16:55:33.9644578Z   Checking if build backend supports build_editable: finished with status 'done'
+2026-10-09T16:55:33.9650670Z   Getting requirements to build editable: started
+2026-10-09T16:55:34.7203825Z   Getting requirements to build editable: finished with status 'done'
+2026-10-09T16:55:34.7211663Z   Preparing editable metadata (pyproject.toml): started
+2026-10-09T16:55:35.4558488Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+2026-10-09T16:55:35.5773982Z Collecting fastapi<1,>=0.115 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:35.6140877Z   Downloading fastapi-0.142.2-py3-none-any.whl.metadata (27 kB)
+2026-10-09T16:55:35.9187199Z Collecting uvicorn<1,>=0.30 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:35.9212129Z   Downloading uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-09T16:55:36.3055971Z Collecting psycopg<4,>=3.2 (from psycopg[binary]<4,>=3.2->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.3080231Z   Downloading psycopg-3.3.6-py3-none-any.whl.metadata (4.4 kB)
+2026-10-09T16:55:36.8131417Z Collecting sqlalchemy<3,>=2.0 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.8164032Z   Downloading sqlalchemy-2.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.7 kB)
+2026-10-09T16:55:37.4125945Z Collecting httpx<1,>=0.27 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:37.4149989Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2026-10-09T16:55:37.8417856Z Collecting pydantic-settings<3,>=2.6 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:37.8442386Z   Downloading pydantic_settings-2.15.0-py3-none-any.whl.metadata (3.9 kB)
+2026-10-09T16:55:38.4253747Z Collecting reportlab<5,>=4.0 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:38.4279080Z   Downloading reportlab-4.5.1-py3-none-any.whl.metadata (1.7 kB)
+2026-10-09T16:55:38.5848785Z Collecting pypdf==6.19.0 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:38.5872328Z   Downloading pypdf-6.19.0-py3-none-any.whl.metadata (7.5 kB)
+2026-10-09T16:55:38.9047414Z Collecting jsonschema<5,>=4.18 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:38.9070970Z   Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+2026-10-09T16:55:39.0464238Z Collecting pytest<9,>=8 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.0488504Z   Downloading pytest-8.4.2-py3-none-any.whl.metadata (7.7 kB)
+2026-10-09T16:55:39.1977069Z Collecting fonttools==4.59.1 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.2013629Z   Downloading fonttools-4.59.1-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl.metadata (108 kB)
+2026-10-09T16:55:39.3684364Z Collecting opentimelineio==0.18.1 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.3715702Z   Downloading opentimelineio-0.18.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+2026-10-09T16:55:39.6153077Z Collecting Pillow==12.3.0 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.6178501Z   Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
+2026-10-09T16:55:39.6366487Z Collecting starlette>=0.46.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.6388278Z   Downloading starlette-1.7.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-09T16:55:39.7085806Z Collecting pydantic>=2.9.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.7110725Z   Downloading pydantic-2.13.5-py3-none-any.whl.metadata (110 kB)
+2026-10-09T16:55:39.7251178Z Collecting typing-extensions>=4.8.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.7274826Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-10-09T16:55:39.7473467Z Collecting typing-inspection>=0.4.2 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.7496719Z   Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+2026-10-09T16:55:39.7585348Z Collecting annotated-doc>=0.0.2 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.7606667Z   Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+2026-10-09T16:55:39.7729021Z Collecting opentelemetry-api>=1.44.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.7753039Z   Downloading opentelemetry_api-1.45.0-py3-none-any.whl.metadata (1.4 kB)
+2026-10-09T16:55:39.7873888Z Collecting anyio (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.7896251Z   Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+2026-10-09T16:55:39.8013225Z Collecting certifi (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.8035067Z   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+2026-10-09T16:55:39.8138685Z Collecting httpcore==1.* (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.8160926Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2026-10-09T16:55:39.8260832Z Collecting idna (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.8281949Z   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+2026-10-09T16:55:39.8371883Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.8393480Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2026-10-09T16:55:39.8488757Z Collecting attrs>=22.2.0 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.8511513Z   Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+2026-10-09T16:55:39.8597577Z Collecting jsonschema-specifications>=2023.03.6 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.8619381Z   Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+2026-10-09T16:55:39.8757370Z Collecting referencing>=0.28.4 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-09T16:55:39.8779303Z   Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+2026-10-09T16:55:40.0713543Z Collecting rpds-py>=0.25.0 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-09T16:55:40.0739239Z   Downloading rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+2026-10-09T16:55:40.2022150Z Collecting psycopg-binary==3.3.6 (from psycopg[binary]<4,>=3.2->ai-novel-studio==0.7.0)
+2026-10-09T16:55:40.2047349Z   Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
+2026-10-09T16:55:40.2168103Z Collecting python-dotenv>=0.21.0 (from pydantic-settings<3,>=2.6->ai-novel-studio==0.7.0)
+2026-10-09T16:55:40.2190590Z   Downloading python_dotenv-1.2.4-py3-none-any.whl.metadata (29 kB)
+2026-10-09T16:55:40.2304822Z Collecting iniconfig>=1 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T16:55:40.2326790Z   Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-09T16:55:40.2429129Z Collecting packaging>=20 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T16:55:40.2453021Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-10-09T16:55:40.2537651Z Collecting pluggy<2,>=1.5 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T16:55:40.2558941Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+2026-10-09T16:55:40.2680445Z Collecting pygments>=2.7.2 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T16:55:40.2702548Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-09T16:55:40.3531393Z Collecting charset-normalizer (from reportlab<5,>=4.0->ai-novel-studio==0.7.0)
+2026-10-09T16:55:40.3557116Z   Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+2026-10-09T16:55:40.3701956Z Collecting click>=7.0 (from uvicorn<1,>=0.30->ai-novel-studio==0.7.0)
+2026-10-09T16:55:40.3723772Z   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+2026-10-09T16:55:40.3843274Z Collecting annotated-types>=0.6.0 (from pydantic>=2.9.0->fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:40.3865462Z   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+2026-10-09T16:55:40.8718472Z Collecting pydantic-core==2.46.5 (from pydantic>=2.9.0->fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:40.8749388Z   Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+2026-10-09T16:55:40.8906747Z Downloading fonttools-4.59.1-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl (4.9 MB)
+2026-10-09T16:55:40.9610130Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.9/4.9 MB 69.2 MB/s  0:00:00
+2026-10-09T16:55:40.9641932Z Downloading opentimelineio-0.18.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (842 kB)
+2026-10-09T16:55:40.9687554Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 842.8/842.8 kB 209.9 MB/s  0:00:00
+2026-10-09T16:55:40.9715015Z Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)
+2026-10-09T16:55:41.0404886Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.9/6.9 MB 99.6 MB/s  0:00:00
+2026-10-09T16:55:41.0441455Z Downloading pypdf-6.19.0-py3-none-any.whl (395 kB)
+2026-10-09T16:55:41.0485641Z Downloading fastapi-0.142.2-py3-none-any.whl (144 kB)
+2026-10-09T16:55:41.0525446Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+2026-10-09T16:55:41.0562199Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+2026-10-09T16:55:41.0597967Z Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+2026-10-09T16:55:41.0635298Z Downloading psycopg-3.3.6-py3-none-any.whl (215 kB)
+2026-10-09T16:55:41.0675338Z Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.2 MB)
+2026-10-09T16:55:41.1037335Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 148.5 MB/s  0:00:00
+2026-10-09T16:55:41.1061470Z Downloading pydantic_settings-2.15.0-py3-none-any.whl (69 kB)
+2026-10-09T16:55:41.1100050Z Downloading pytest-8.4.2-py3-none-any.whl (365 kB)
+2026-10-09T16:55:41.1153595Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+2026-10-09T16:55:41.1200043Z Downloading reportlab-4.5.1-py3-none-any.whl (2.0 MB)
+2026-10-09T16:55:41.1262308Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 367.3 MB/s  0:00:00
+2026-10-09T16:55:41.1294782Z Downloading sqlalchemy-2.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (4.7 MB)
+2026-10-09T16:55:41.1590781Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 158.2 MB/s  0:00:00
+2026-10-09T16:55:41.1613959Z Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
+2026-10-09T16:55:41.1650492Z Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+2026-10-09T16:55:41.1685075Z Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+2026-10-09T16:55:41.1721431Z Downloading click-8.5.0-py3-none-any.whl (125 kB)
+2026-10-09T16:55:41.1760168Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+2026-10-09T16:55:41.1795548Z Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+2026-10-09T16:55:41.1830121Z Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+2026-10-09T16:55:41.1865773Z Downloading opentelemetry_api-1.45.0-py3-none-any.whl (60 kB)
+2026-10-09T16:55:41.1902877Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+2026-10-09T16:55:41.1939967Z Downloading pydantic-2.13.5-py3-none-any.whl (472 kB)
+2026-10-09T16:55:41.1984027Z Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+2026-10-09T16:55:41.2131136Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 139.5 MB/s  0:00:00
+2026-10-09T16:55:41.2154950Z Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+2026-10-09T16:55:41.2190648Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+2026-10-09T16:55:41.2239326Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 305.4 MB/s  0:00:00
+2026-10-09T16:55:41.2261682Z Downloading python_dotenv-1.2.4-py3-none-any.whl (23 kB)
+2026-10-09T16:55:41.2296383Z Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+2026-10-09T16:55:41.2331711Z Downloading rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (371 kB)
+2026-10-09T16:55:41.2373530Z Downloading starlette-1.7.0-py3-none-any.whl (78 kB)
+2026-10-09T16:55:41.2409406Z Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+2026-10-09T16:55:41.2448290Z Downloading idna-3.20-py3-none-any.whl (69 kB)
+2026-10-09T16:55:41.2486779Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-10-09T16:55:41.2522742Z Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+2026-10-09T16:55:41.2557425Z Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+2026-10-09T16:55:41.2596111Z Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (257 kB)
+2026-10-09T16:55:41.3595411Z Building wheels for collected packages: ai-novel-studio
+2026-10-09T16:55:41.3602060Z   Building editable for ai-novel-studio (pyproject.toml): started
+2026-10-09T16:55:42.1480189Z   Building editable for ai-novel-studio (pyproject.toml): finished with status 'done'
+2026-10-09T16:55:42.1484729Z   Created wheel for ai-novel-studio: filename=ai_novel_studio-0.7.0-0.editable-py3-none-any.whl size=3193 sha256=cc571e4280d1e200fdbb363d5b94c7507a0d5c5e67b70ddc494bd386250c4bf7
+2026-10-09T16:55:42.1486505Z   Stored in directory: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp/pip-ephem-wheel-cache-82s61c3s/wheels/92/6e/bd/3930efdfc97021b93364a2a7bb4694eee08cf9ee9bdbe2f586
+2026-10-09T16:55:42.1499291Z Successfully built ai-novel-studio
+2026-10-09T16:55:42.2276502Z Installing collected packages: typing-extensions, rpds-py, python-dotenv, pypdf, pygments, psycopg-binary, pluggy, Pillow, packaging, opentimelineio, iniconfig, idna, h11, fonttools, click, charset-normalizer, certifi, attrs, annotated-types, annotated-doc, uvicorn, typing-inspection, sqlalchemy, reportlab, referencing, pytest, pydantic-core, psycopg, opentelemetry-api, httpcore, anyio, starlette, pydantic, jsonschema-specifications, httpx, pydantic-settings, jsonschema, fastapi, ai-novel-studio
+2026-10-09T16:55:49.1485547Z 
+2026-10-09T16:55:49.1513328Z Successfully installed Pillow-12.3.0 ai-novel-studio-0.7.0 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 attrs-26.1.0 certifi-2026.7.22 charset-normalizer-3.5.2 click-8.5.0 fastapi-0.142.2 fonttools-4.59.1 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.20 iniconfig-2.3.0 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 opentelemetry-api-1.45.0 opentimelineio-0.18.1 packaging-26.3 pluggy-1.6.0 psycopg-3.3.6 psycopg-binary-3.3.6 pydantic-2.13.5 pydantic-core-2.46.5 pydantic-settings-2.15.0 pygments-2.21.0 pypdf-6.19.0 pytest-8.4.2 python-dotenv-1.2.4 referencing-0.37.0 reportlab-4.5.1 rpds-py-2026.9.1 sqlalchemy-2.1.3 starlette-1.7.0 typing-extensions-4.16.0 typing-inspection-0.4.4 uvicorn-0.54.0
+2026-10-09T16:55:49.8566606Z No broken requirements found.
+2026-10-09T16:55:51.0211422Z ##[group]Run sudo apt-get update
+2026-10-09T16:55:51.0211700Z [36;1msudo apt-get update[0m
+2026-10-09T16:55:51.0211977Z [36;1msudo apt-get install -y --no-install-recommends ffmpeg[0m
+2026-10-09T16:55:51.0212337Z [36;1mffmpeg -version > "$CI_RECEIPTS/ffmpeg-version.txt"[0m
+2026-10-09T16:55:51.0212658Z [36;1mffprobe -version > "$CI_RECEIPTS/ffprobe-version.txt"[0m
+2026-10-09T16:55:51.0213047Z [36;1mpython -c "import shutil; assert shutil.which('ffmpeg') and shutil.which('ffprobe')"[0m
+2026-10-09T16:55:51.0268449Z shell: /usr/bin/bash -e {0}
+2026-10-09T16:55:51.0268657Z env:
+2026-10-09T16:55:51.0268822Z   MOCK_PROVIDER: true
+2026-10-09T16:55:51.0269014Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:55:51.0269197Z   ENABLE_CLOUD: false
+2026-10-09T16:55:51.0269386Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:55:51.0269809Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:55:51.0270242Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:55:51.0270438Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:55:51.0270647Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:55:51.0270884Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:51.0271213Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T16:55:51.0271532Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:51.0271818Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:51.0272106Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:51.0272405Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T16:55:51.0272713Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T16:55:51.0273001Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T16:55:51.0273336Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS
+2026-10-09T16:55:51.0273769Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T16:55:51.0274200Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/receipts
+2026-10-09T16:55:51.0274682Z   HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T16:55:51.0275232Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T16:55:51.0275782Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/appdata
+2026-10-09T16:55:51.0276366Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/localappdata
+2026-10-09T16:55:51.0276957Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/config
+2026-10-09T16:55:51.0277537Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/cache
+2026-10-09T16:55:51.0278135Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data
+2026-10-09T16:55:51.0278686Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/state
+2026-10-09T16:55:51.0279218Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T16:55:51.0279947Z   TMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T16:55:51.0280449Z   TEMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T16:55:51.0280908Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T16:55:51.0281420Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T16:55:51.0282012Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/backups
+2026-10-09T16:55:51.0282820Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/database-backups
+2026-10-09T16:55:51.0283499Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T16:55:51.0284083Z   CI_V2_RUNTIME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend
+2026-10-09T16:55:51.0284449Z ##[endgroup]
+2026-10-09T16:55:51.1180732Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-09T16:55:51.1431840Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-10-09T16:55:51.1783469Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-10-09T16:55:51.1990846Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-10-09T16:55:51.2032948Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [531 kB]
+2026-10-09T16:55:51.2170643Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [475 kB]
+2026-10-09T16:55:51.2209074Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main all Packages [640 B]
+2026-10-09T16:55:51.2250476Z Get:10 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.3 kB]
+2026-10-09T16:55:51.2776674Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-10-09T16:55:51.3173513Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-10-09T16:55:51.3602580Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1375 kB]
+2026-10-09T16:55:51.5567623Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [306 kB]
+2026-10-09T16:55:51.6160508Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1702 kB]
+2026-10-09T16:55:51.9106152Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [342 kB]
+2026-10-09T16:55:51.9699242Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1761 kB]
+2026-10-09T16:55:52.2652416Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [401 kB]
+2026-10-09T16:55:52.3435214Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [55.0 kB]
+2026-10-09T16:55:52.3634410Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+2026-10-09T16:55:52.3833299Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1121 kB]
+2026-10-09T16:55:52.5800135Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [228 kB]
+2026-10-09T16:55:52.6839908Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1220 kB]
+2026-10-09T16:55:52.8809865Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [245 kB]
+2026-10-09T16:55:52.9208659Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1669 kB]
+2026-10-09T16:55:53.1962832Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [383 kB]
+2026-10-09T16:55:53.2750290Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [49.8 kB]
+2026-10-09T16:55:53.2949577Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [12.4 kB]
+2026-10-09T16:55:59.2702095Z Fetched 12.3 MB in 2s (5481 kB/s)
+2026-10-09T16:55:59.9074584Z Reading package lists...
+2026-10-09T16:55:59.9335811Z Reading package lists...
+2026-10-09T16:56:00.0889512Z Building dependency tree...
+2026-10-09T16:56:00.0895629Z Reading state information...
+2026-10-09T16:56:00.2136768Z The following additional packages will be installed:
+2026-10-09T16:56:00.2137395Z   libass9 libasyncns0 libavc1394-0 libavcodec60 libavdevice60 libavfilter9
+2026-10-09T16:56:00.2138017Z   libavformat60 libavutil58 libblas3 libbluray2 libbs2b0 libcaca0
+2026-10-09T16:56:00.2139150Z   libcdio-cdda2t64 libcdio-paranoia2t64 libcdio19t64 libchromaprint1 libcjson1
+2026-10-09T16:56:00.2139563Z   libcodec2-1.2 libdav1d7 libdc1394-25 libdecor-0-0 libflac12t64 libflite1
+2026-10-09T16:56:00.2140226Z   libgme0 libgsm1 libhwy1t64 libiec61883-0 libjack-jackd2-0 libjxl0.7
+2026-10-09T16:56:00.2140838Z   liblapack3 liblilv-0-0 libmbedcrypto7t64 libmp3lame0 libmpg123-0t64
+2026-10-09T16:56:00.2141411Z   libmysofa1 libopenal-data libopenal1 libopenmpt0t64 libopus0 libplacebo338
+2026-10-09T16:56:00.2141811Z   libpocketsphinx3 libpostproc57 libpulse0 librav1e0 libraw1394-11 librist4
+2026-10-09T16:56:00.2142221Z   librsvg2-2 librubberband2 libsamplerate0 libsdl2-2.0-0 libserd-0-0 libshine3
+2026-10-09T16:56:00.2142616Z   libsndfile1 libsndio7.0 libsord-0-0 libsoxr0 libspeex1 libsphinxbase3t64
+2026-10-09T16:56:00.2142980Z   libsratom-0-0 libsrt1.5-gnutls libssh-gcrypt-4 libsvtav1enc1d1
+2026-10-09T16:56:00.2143345Z   libswresample4 libswscale7 libtheora0 libtwolame0 libudfread0 libunibreak5
+2026-10-09T16:56:00.2143916Z   libva-drm2 libva-x11-2 libva2 libvdpau1 libvidstab1.1 libvorbisenc2 libvpl2
+2026-10-09T16:56:00.2144311Z   libvpx9 libx264-164 libx265-199 libxcb-shape0 libxv1 libxvidcore4 libzimg2
+2026-10-09T16:56:00.2144653Z   libzix-0-0 libzvbi-common libzvbi0t64 ocl-icd-libopencl1
+2026-10-09T16:56:00.2145075Z Suggested packages:
+2026-10-09T16:56:00.2145485Z   ffmpeg-doc libcuda1 libnvcuvid1 libnvidia-encode1 libbluray-bdj jackd2
+2026-10-09T16:56:00.2146112Z   libportaudio2 opus-tools pulseaudio libraw1394-doc librsvg2-bin serdi sndiod
+2026-10-09T16:56:00.2146434Z   sordi speex opencl-icd
+2026-10-09T16:56:00.2146627Z Recommended packages:
+2026-10-09T16:56:00.2146873Z   libaacs0 default-libdecor-0-plugin-1 | libdecor-0-plugin-1
+2026-10-09T16:56:00.2147212Z   pocketsphinx-en-us librsvg2-common va-driver-all | va-driver
+2026-10-09T16:56:00.2147524Z   vdpau-driver-all | vdpau-driver
+2026-10-09T16:56:00.2485977Z The following NEW packages will be installed:
+2026-10-09T16:56:00.2486527Z   ffmpeg libass9 libasyncns0 libavc1394-0 libavcodec60 libavdevice60
+2026-10-09T16:56:00.2487130Z   libavfilter9 libavformat60 libavutil58 libblas3 libbluray2 libbs2b0 libcaca0
+2026-10-09T16:56:00.2487779Z   libcdio-cdda2t64 libcdio-paranoia2t64 libcdio19t64 libchromaprint1 libcjson1
+2026-10-09T16:56:00.2488462Z   libcodec2-1.2 libdav1d7 libdc1394-25 libdecor-0-0 libflac12t64 libflite1
+2026-10-09T16:56:00.2489042Z   libgme0 libgsm1 libhwy1t64 libiec61883-0 libjack-jackd2-0 libjxl0.7
+2026-10-09T16:56:00.2489557Z   liblapack3 liblilv-0-0 libmbedcrypto7t64 libmp3lame0 libmpg123-0t64
+2026-10-09T16:56:00.2490253Z   libmysofa1 libopenal-data libopenal1 libopenmpt0t64 libopus0 libplacebo338
+2026-10-09T16:56:00.2490823Z   libpocketsphinx3 libpostproc57 libpulse0 librav1e0 libraw1394-11 librist4
+2026-10-09T16:56:00.2491481Z   librsvg2-2 librubberband2 libsamplerate0 libsdl2-2.0-0 libserd-0-0 libshine3
+2026-10-09T16:56:00.2492120Z   libsndfile1 libsndio7.0 libsord-0-0 libsoxr0 libspeex1 libsphinxbase3t64
+2026-10-09T16:56:00.2492734Z   libsratom-0-0 libsrt1.5-gnutls libssh-gcrypt-4 libsvtav1enc1d1
+2026-10-09T16:56:00.2493330Z   libswresample4 libswscale7 libtheora0 libtwolame0 libudfread0 libunibreak5
+2026-10-09T16:56:00.2493982Z   libva-drm2 libva-x11-2 libva2 libvdpau1 libvidstab1.1 libvorbisenc2 libvpl2
+2026-10-09T16:56:00.2494599Z   libvpx9 libx264-164 libx265-199 libxcb-shape0 libxv1 libxvidcore4 libzimg2
+2026-10-09T16:56:00.2500382Z   libzix-0-0 libzvbi-common libzvbi0t64 ocl-icd-libopencl1
+2026-10-09T16:56:00.2659437Z 0 upgraded, 87 newly installed, 0 to remove and 23 not upgraded.
+2026-10-09T16:56:00.2660247Z Need to get 62.8 MB of archives.
+2026-10-09T16:56:00.2660691Z After this operation, 173 MB of additional disk space will be used.
+2026-10-09T16:56:00.2661232Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-10-09T16:56:00.4671883Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libva2 amd64 2.20.0-2ubuntu0.2 [66.4 kB]
+2026-10-09T16:56:01.1789314Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libva-drm2 amd64 2.20.0-2ubuntu0.2 [7124 B]
+2026-10-09T16:56:01.5390721Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libva-x11-2 amd64 2.20.0-2ubuntu0.2 [12.0 kB]
+2026-10-09T16:56:01.9163078Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libvdpau1 amd64 1.5-2build1 [27.8 kB]
+2026-10-09T16:56:02.3669567Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libvpl2 amd64 2023.3.0-1build1 [99.8 kB]
+2026-10-09T16:56:03.4980085Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 ocl-icd-libopencl1 amd64 2.3.2-1build1 [38.5 kB]
+2026-10-09T16:56:04.0280734Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavutil58 amd64 7:6.1.1-3ubuntu5 [401 kB]
+2026-10-09T16:56:07.4493828Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libcodec2-1.2 amd64 1.2.0-2build1 [8998 kB]
+2026-10-09T16:57:30.0947226Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libdav1d7 amd64 1.4.1-1build1 [604 kB]
+2026-10-09T16:57:36.0190948Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libgsm1 amd64 1.0.22-1build1 [27.8 kB]
+2026-10-09T16:57:36.5203038Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libhwy1t64 amd64 1.0.7-8.1build1 [584 kB]
+2026-10-09T16:57:42.0577109Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 libjxl0.7 amd64 0.7.0-10.2ubuntu6.1 [1001 kB]
+2026-10-09T16:57:52.2577227Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libmp3lame0 amd64 3.100-6build1 [142 kB]
+2026-10-09T16:57:53.7815265Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libopus0 amd64 1.4-1build1 [208 kB]
+2026-10-09T16:57:56.2686369Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 librav1e0 amd64 0.7.1-2 [1022 kB]
+2026-10-09T16:58:06.1231648Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 librsvg2-2 amd64 2.58.0+dfsg-1ubuntu0.1 [2141 kB]
+2026-10-09T16:58:24.9986651Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libshine3 amd64 3.1.1-2build1 [23.2 kB]
+2026-10-09T16:58:25.4476114Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libspeex1 amd64 1.2.1-2ubuntu2.24.04.1 [59.6 kB]
+2026-10-09T16:58:26.1821688Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsvtav1enc1d1 amd64 1.7.0+dfsg-2build1 [2425 kB]
+2026-10-09T16:58:47.8972523Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsoxr0 amd64 0.1.3-4build3 [80.0 kB]
+2026-10-09T16:58:48.6914853Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libswresample4 amd64 7:6.1.1-3ubuntu5 [63.8 kB]
+2026-10-09T16:58:49.4003200Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libtheora0 amd64 1.1.1+dfsg.1-16.1build3 [211 kB]
+2026-10-09T16:58:51.2716265Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libtwolame0 amd64 0.4.0-2build3 [52.3 kB]
+2026-10-09T16:58:51.8323091Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libvorbisenc2 amd64 1.3.7-1build3 [80.8 kB]
+2026-10-09T16:58:52.6642003Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libvpx9 amd64 1.14.0-1ubuntu2.3 [1143 kB]
+2026-10-09T16:59:00.9921431Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libx264-164 amd64 2:0.164.3108+git31e19f9-1 [604 kB]
+2026-10-09T16:59:05.3119885Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libx265-199 amd64 3.5-2build1 [1226 kB]
+2026-10-09T16:59:14.4225929Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libxvidcore4 amd64 2:1.3.7-1build1 [219 kB]
+2026-10-09T16:59:16.2926516Z Get:30 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzvbi-common all 0.2.42-2 [42.4 kB]
+2026-10-09T16:59:16.9400606Z Get:31 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzvbi0t64 amd64 0.2.42-2 [261 kB]
+2026-10-09T16:59:19.0903416Z Get:32 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavcodec60 amd64 7:6.1.1-3ubuntu5 [5851 kB]
+2026-10-09T17:01:18.4980101Z Get:33 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libraw1394-11 amd64 2.1.2-2build3 [26.2 kB]
+2026-10-09T17:01:18.8799572Z Get:34 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libavc1394-0 amd64 0.5.4-5build3 [15.4 kB]
+2026-10-09T17:01:19.1801473Z Get:35 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libunibreak5 amd64 5.1-2build1 [25.0 kB]
+2026-10-09T17:01:19.5764491Z Get:36 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libass9 amd64 1:0.17.1-2build1 [104 kB]
+2026-10-09T17:01:20.8611725Z Get:37 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libudfread0 amd64 1.1.2-1build1 [19.0 kB]
+2026-10-09T17:01:21.1994824Z Get:38 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libbluray2 amd64 1:1.3.4-1build1 [159 kB]
+2026-10-09T17:01:22.5595943Z Get:39 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libchromaprint1 amd64 1.5.1-5 [30.5 kB]
+2026-10-09T17:01:22.9478421Z Get:40 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libgme0 amd64 0.6.3-7build1 [134 kB]
+2026-10-09T17:01:23.9986368Z Get:41 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libmpg123-0t64 amd64 1.32.5-1ubuntu1.1 [169 kB]
+2026-10-09T17:01:25.4221257Z Get:42 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libopenmpt0t64 amd64 0.7.3-1.1build3 [647 kB]
+2026-10-09T17:01:30.5029457Z Get:43 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libcjson1 amd64 1.7.17-1 [24.8 kB]
+2026-10-09T17:01:30.8921285Z Get:44 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmbedcrypto7t64 amd64 2.28.8-1 [209 kB]
+2026-10-09T17:01:32.5773536Z Get:45 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 librist4 amd64 0.2.10+dfsg-2 [74.9 kB]
+2026-10-09T17:01:33.3258373Z Get:46 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsrt1.5-gnutls amd64 1.5.3-1build2 [316 kB]
+2026-10-09T17:01:36.2996986Z Get:47 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libssh-gcrypt-4 amd64 0.10.6-2ubuntu0.5 [226 kB]
+2026-10-09T17:01:38.1298682Z Get:48 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavformat60 amd64 7:6.1.1-3ubuntu5 [1153 kB]
+2026-10-09T17:01:47.5407735Z Get:49 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libbs2b0 amd64 3.1.0+dfsg-7build1 [10.6 kB]
+2026-10-09T17:01:47.9063829Z Get:50 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libflite1 amd64 2.2-6build3 [13.6 MB]
+2026-10-09T17:03:49.7923528Z Get:51 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libserd-0-0 amd64 0.32.2-1 [43.6 kB]
+2026-10-09T17:03:50.2957212Z Get:52 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzix-0-0 amd64 0.4.2-2build1 [23.6 kB]
+2026-10-09T17:03:50.7515758Z Get:53 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsord-0-0 amd64 0.16.16-2build1 [15.8 kB]
+2026-10-09T17:03:51.0597785Z Get:54 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsratom-0-0 amd64 0.6.16-1build1 [17.3 kB]
+2026-10-09T17:03:51.4136888Z Get:55 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 liblilv-0-0 amd64 0.24.22-1build1 [41.0 kB]
+2026-10-09T17:03:51.9096377Z Get:56 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libmysofa1 amd64 1.3.2+dfsg-2ubuntu2 [1158 kB]
+2026-10-09T17:04:00.4001701Z Get:57 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libplacebo338 amd64 6.338.2-2build1 [2654 kB]
+2026-10-09T17:04:19.6734239Z Get:58 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libblas3 amd64 3.12.0-3build1.1 [238 kB]
+2026-10-09T17:04:21.8127568Z Get:59 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 liblapack3 amd64 3.12.0-3build1.1 [2646 kB]
+2026-10-09T17:04:42.8416453Z Get:60 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libasyncns0 amd64 0.8-6build4 [11.3 kB]
+2026-10-09T17:04:43.1104594Z Get:61 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libflac12t64 amd64 1.4.3+ds-2.1ubuntu2 [197 kB]
+2026-10-09T17:04:44.7690244Z Get:62 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libsndfile1 amd64 1.2.2-1ubuntu5.24.04.1 [209 kB]
+2026-10-09T17:04:46.6042143Z Get:63 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libpulse0 amd64 1:16.1+dfsg1-2ubuntu10.1 [292 kB]
+2026-10-09T17:04:49.0322644Z Get:64 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsphinxbase3t64 amd64 0.8+5prealpha+1-17build2 [126 kB]
+2026-10-09T17:04:50.1156381Z Get:65 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libpocketsphinx3 amd64 0.8.0+real5prealpha+1-15ubuntu5 [133 kB]
+2026-10-09T17:04:51.2926438Z Get:66 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libpostproc57 amd64 7:6.1.1-3ubuntu5 [49.9 kB]
+2026-10-09T17:04:52.1099266Z Get:67 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libsamplerate0 amd64 0.2.2-4build1 [1344 kB]
+2026-10-09T17:05:02.0845848Z Get:68 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 librubberband2 amd64 3.3.0+dfsg-2build1 [130 kB]
+2026-10-09T17:05:03.1964882Z Get:69 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libswscale7 amd64 7:6.1.1-3ubuntu5 [193 kB]
+2026-10-09T17:05:04.8432596Z Get:70 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libvidstab1.1 amd64 1.1.0-2build1 [38.5 kB]
+2026-10-09T17:05:05.3169070Z Get:71 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libzimg2 amd64 3.0.5+ds1-1build1 [254 kB]
+2026-10-09T17:05:07.2848010Z Get:72 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavfilter9 amd64 7:6.1.1-3ubuntu5 [4235 kB]
+2026-10-09T17:05:37.2027178Z Get:73 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libcaca0 amd64 0.99.beta20-4ubuntu0.2 [209 kB]
+2026-10-09T17:05:38.8668762Z Get:74 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libcdio19t64 amd64 2.1.0-4.1ubuntu1.2 [62.4 kB]
+2026-10-09T17:05:39.5726128Z Get:75 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libcdio-cdda2t64 amd64 10.2+2.0.1-1.1build2 [16.5 kB]
+2026-10-09T17:05:39.9120013Z Get:76 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libcdio-paranoia2t64 amd64 10.2+2.0.1-1.1build2 [16.6 kB]
+2026-10-09T17:05:40.2572870Z Get:77 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libdc1394-25 amd64 2.2.6-4build1 [90.1 kB]
+2026-10-09T17:05:41.1378990Z Get:78 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libiec61883-0 amd64 1.2.0-6build1 [24.5 kB]
+2026-10-09T17:05:41.5782694Z Get:79 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libjack-jackd2-0 amd64 1.9.21~dfsg-3ubuntu3 [289 kB]
+2026-10-09T17:05:43.9787857Z Get:80 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libopenal-data all 1:1.23.1-4build1 [161 kB]
+2026-10-09T17:05:45.4802580Z Get:81 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libsndio7.0 amd64 1.9.0-0.3build3 [29.6 kB]
+2026-10-09T17:05:45.9121799Z Get:82 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libopenal1 amd64 1:1.23.1-4build1 [540 kB]
+2026-10-09T17:05:50.0436457Z Get:83 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libdecor-0-0 amd64 0.2.2-1build2 [16.5 kB]
+2026-10-09T17:05:50.4935853Z Get:84 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libsdl2-2.0-0 amd64 2.30.0+dfsg-1ubuntu3.1 [686 kB]
+2026-10-09T17:05:56.5834128Z Get:85 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libxcb-shape0 amd64 1.15-1ubuntu2 [6100 B]
+2026-10-09T17:05:56.9125055Z Get:86 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 libxv1 amd64 2:1.0.11-1.1build1 [10.7 kB]
+2026-10-09T17:05:57.2588030Z Get:87 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 libavdevice60 amd64 7:6.1.1-3ubuntu5 [82.3 kB]
+2026-10-09T17:05:58.2718531Z Get:88 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 ffmpeg amd64 7:6.1.1-3ubuntu5 [1879 kB]
+2026-10-09T17:06:14.2514177Z Fetched 62.8 MB in 10min 14s (102 kB/s)
+2026-10-09T17:06:14.2702629Z Selecting previously unselected package libva2:amd64.
+2026-10-09T17:06:14.2940688Z (Reading database ... 
+2026-10-09T17:06:14.2941145Z (Reading database ... 5%
+2026-10-09T17:06:14.2941704Z (Reading database ... 10%
+2026-10-09T17:06:14.2942018Z (Reading database ... 15%
+2026-10-09T17:06:14.2942340Z (Reading database ... 20%
+2026-10-09T17:06:14.2942677Z (Reading database ... 25%
+2026-10-09T17:06:14.2943019Z (Reading database ... 30%
+2026-10-09T17:06:14.2943361Z (Reading database ... 35%
+2026-10-09T17:06:14.2943691Z (Reading database ... 40%
+2026-10-09T17:06:14.2944150Z (Reading database ... 45%
+2026-10-09T17:06:14.2944538Z (Reading database ... 50%
+2026-10-09T17:06:14.2982433Z (Reading database ... 55%
+2026-10-09T17:06:14.4102186Z (Reading database ... 60%
+2026-10-09T17:06:14.6033707Z (Reading database ... 65%
+2026-10-09T17:06:14.8039591Z (Reading database ... 70%
+2026-10-09T17:06:15.0080927Z (Reading database ... 75%
+2026-10-09T17:06:15.1506096Z (Reading database ... 80%
+2026-10-09T17:06:15.3542014Z (Reading database ... 85%
+2026-10-09T17:06:15.5448016Z (Reading database ... 90%
+2026-10-09T17:06:15.7108480Z (Reading database ... 95%
+2026-10-09T17:06:15.7109115Z (Reading database ... 100%
+2026-10-09T17:06:15.7109412Z (Reading database ... 203191 files and directories currently installed.)
+2026-10-09T17:06:15.7147934Z Preparing to unpack .../00-libva2_2.20.0-2ubuntu0.2_amd64.deb ...
+2026-10-09T17:06:15.7173136Z Unpacking libva2:amd64 (2.20.0-2ubuntu0.2) ...
+2026-10-09T17:06:15.7354699Z Selecting previously unselected package libva-drm2:amd64.
+2026-10-09T17:06:15.7456540Z Preparing to unpack .../01-libva-drm2_2.20.0-2ubuntu0.2_amd64.deb ...
+2026-10-09T17:06:15.7462830Z Unpacking libva-drm2:amd64 (2.20.0-2ubuntu0.2) ...
+2026-10-09T17:06:15.7664290Z Selecting previously unselected package libva-x11-2:amd64.
+2026-10-09T17:06:15.7764061Z Preparing to unpack .../02-libva-x11-2_2.20.0-2ubuntu0.2_amd64.deb ...
+2026-10-09T17:06:15.7769214Z Unpacking libva-x11-2:amd64 (2.20.0-2ubuntu0.2) ...
+2026-10-09T17:06:15.7928346Z Selecting previously unselected package libvdpau1:amd64.
+2026-10-09T17:06:15.8029889Z Preparing to unpack .../03-libvdpau1_1.5-2build1_amd64.deb ...
+2026-10-09T17:06:15.8035202Z Unpacking libvdpau1:amd64 (1.5-2build1) ...
+2026-10-09T17:06:15.8199191Z Selecting previously unselected package libvpl2.
+2026-10-09T17:06:15.8299982Z Preparing to unpack .../04-libvpl2_2023.3.0-1build1_amd64.deb ...
+2026-10-09T17:06:15.8305279Z Unpacking libvpl2 (2023.3.0-1build1) ...
+2026-10-09T17:06:15.8474246Z Selecting previously unselected package ocl-icd-libopencl1:amd64.
+2026-10-09T17:06:15.8576477Z Preparing to unpack .../05-ocl-icd-libopencl1_2.3.2-1build1_amd64.deb ...
+2026-10-09T17:06:15.8582049Z Unpacking ocl-icd-libopencl1:amd64 (2.3.2-1build1) ...
+2026-10-09T17:06:15.8773949Z Selecting previously unselected package libavutil58:amd64.
+2026-10-09T17:06:15.8876422Z Preparing to unpack .../06-libavutil58_7%3a6.1.1-3ubuntu5_amd64.deb ...
+2026-10-09T17:06:15.8882042Z Unpacking libavutil58:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:15.9076080Z Selecting previously unselected package libcodec2-1.2:amd64.
+2026-10-09T17:06:15.9177747Z Preparing to unpack .../07-libcodec2-1.2_1.2.0-2build1_amd64.deb ...
+2026-10-09T17:06:15.9183291Z Unpacking libcodec2-1.2:amd64 (1.2.0-2build1) ...
+2026-10-09T17:06:16.0509424Z Selecting previously unselected package libdav1d7:amd64.
+2026-10-09T17:06:16.0618924Z Preparing to unpack .../08-libdav1d7_1.4.1-1build1_amd64.deb ...
+2026-10-09T17:06:16.0625000Z Unpacking libdav1d7:amd64 (1.4.1-1build1) ...
+2026-10-09T17:06:16.0840144Z Selecting previously unselected package libgsm1:amd64.
+2026-10-09T17:06:16.0942647Z Preparing to unpack .../09-libgsm1_1.0.22-1build1_amd64.deb ...
+2026-10-09T17:06:16.0952696Z Unpacking libgsm1:amd64 (1.0.22-1build1) ...
+2026-10-09T17:06:16.1169022Z Selecting previously unselected package libhwy1t64:amd64.
+2026-10-09T17:06:16.1272065Z Preparing to unpack .../10-libhwy1t64_1.0.7-8.1build1_amd64.deb ...
+2026-10-09T17:06:16.1277982Z Unpacking libhwy1t64:amd64 (1.0.7-8.1build1) ...
+2026-10-09T17:06:16.1583781Z Selecting previously unselected package libjxl0.7:amd64.
+2026-10-09T17:06:16.1690111Z Preparing to unpack .../11-libjxl0.7_0.7.0-10.2ubuntu6.1_amd64.deb ...
+2026-10-09T17:06:16.1696617Z Unpacking libjxl0.7:amd64 (0.7.0-10.2ubuntu6.1) ...
+2026-10-09T17:06:16.2036553Z Selecting previously unselected package libmp3lame0:amd64.
+2026-10-09T17:06:16.2143805Z Preparing to unpack .../12-libmp3lame0_3.100-6build1_amd64.deb ...
+2026-10-09T17:06:16.2150755Z Unpacking libmp3lame0:amd64 (3.100-6build1) ...
+2026-10-09T17:06:16.2323298Z Selecting previously unselected package libopus0:amd64.
+2026-10-09T17:06:16.2427675Z Preparing to unpack .../13-libopus0_1.4-1build1_amd64.deb ...
+2026-10-09T17:06:16.2433654Z Unpacking libopus0:amd64 (1.4-1build1) ...
+2026-10-09T17:06:16.3285895Z Selecting previously unselected package librav1e0:amd64.
+2026-10-09T17:06:16.3395017Z Preparing to unpack .../14-librav1e0_0.7.1-2_amd64.deb ...
+2026-10-09T17:06:16.3400500Z Unpacking librav1e0:amd64 (0.7.1-2) ...
+2026-10-09T17:06:16.3750800Z Selecting previously unselected package librsvg2-2:amd64.
+2026-10-09T17:06:16.3858456Z Preparing to unpack .../15-librsvg2-2_2.58.0+dfsg-1ubuntu0.1_amd64.deb ...
+2026-10-09T17:06:16.3864135Z Unpacking librsvg2-2:amd64 (2.58.0+dfsg-1ubuntu0.1) ...
+2026-10-09T17:06:16.5625828Z Selecting previously unselected package libshine3:amd64.
+2026-10-09T17:06:16.5736019Z Preparing to unpack .../16-libshine3_3.1.1-2build1_amd64.deb ...
+2026-10-09T17:06:16.5742028Z Unpacking libshine3:amd64 (3.1.1-2build1) ...
+2026-10-09T17:06:16.5899426Z Selecting previously unselected package libspeex1:amd64.
+2026-10-09T17:06:16.6003073Z Preparing to unpack .../17-libspeex1_1.2.1-2ubuntu2.24.04.1_amd64.deb ...
+2026-10-09T17:06:16.6008952Z Unpacking libspeex1:amd64 (1.2.1-2ubuntu2.24.04.1) ...
+2026-10-09T17:06:16.7730156Z Selecting previously unselected package libsvtav1enc1d1:amd64.
+2026-10-09T17:06:16.7843369Z Preparing to unpack .../18-libsvtav1enc1d1_1.7.0+dfsg-2build1_amd64.deb ...
+2026-10-09T17:06:16.7849783Z Unpacking libsvtav1enc1d1:amd64 (1.7.0+dfsg-2build1) ...
+2026-10-09T17:06:16.9863008Z Selecting previously unselected package libsoxr0:amd64.
+2026-10-09T17:06:16.9973062Z Preparing to unpack .../19-libsoxr0_0.1.3-4build3_amd64.deb ...
+2026-10-09T17:06:16.9978960Z Unpacking libsoxr0:amd64 (0.1.3-4build3) ...
+2026-10-09T17:06:17.2233976Z Selecting previously unselected package libswresample4:amd64.
+2026-10-09T17:06:17.2348157Z Preparing to unpack .../20-libswresample4_7%3a6.1.1-3ubuntu5_amd64.deb ...
+2026-10-09T17:06:17.2354461Z Unpacking libswresample4:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:17.2580755Z Selecting previously unselected package libtheora0:amd64.
+2026-10-09T17:06:17.2685045Z Preparing to unpack .../21-libtheora0_1.1.1+dfsg.1-16.1build3_amd64.deb ...
+2026-10-09T17:06:17.2691009Z Unpacking libtheora0:amd64 (1.1.1+dfsg.1-16.1build3) ...
+2026-10-09T17:06:17.2876668Z Selecting previously unselected package libtwolame0:amd64.
+2026-10-09T17:06:17.2979086Z Preparing to unpack .../22-libtwolame0_0.4.0-2build3_amd64.deb ...
+2026-10-09T17:06:17.2985780Z Unpacking libtwolame0:amd64 (0.4.0-2build3) ...
+2026-10-09T17:06:17.3150399Z Selecting previously unselected package libvorbisenc2:amd64.
+2026-10-09T17:06:17.3252128Z Preparing to unpack .../23-libvorbisenc2_1.3.7-1build3_amd64.deb ...
+2026-10-09T17:06:17.3257840Z Unpacking libvorbisenc2:amd64 (1.3.7-1build3) ...
+2026-10-09T17:06:17.3478164Z Selecting previously unselected package libvpx9:amd64.
+2026-10-09T17:06:17.3582650Z Preparing to unpack .../24-libvpx9_1.14.0-1ubuntu2.3_amd64.deb ...
+2026-10-09T17:06:17.3588311Z Unpacking libvpx9:amd64 (1.14.0-1ubuntu2.3) ...
+2026-10-09T17:06:17.3896758Z Selecting previously unselected package libx264-164:amd64.
+2026-10-09T17:06:17.4003847Z Preparing to unpack .../25-libx264-164_2%3a0.164.3108+git31e19f9-1_amd64.deb ...
+2026-10-09T17:06:17.4009325Z Unpacking libx264-164:amd64 (2:0.164.3108+git31e19f9-1) ...
+2026-10-09T17:06:17.4268272Z Selecting previously unselected package libx265-199:amd64.
+2026-10-09T17:06:17.4373842Z Preparing to unpack .../26-libx265-199_3.5-2build1_amd64.deb ...
+2026-10-09T17:06:17.4379817Z Unpacking libx265-199:amd64 (3.5-2build1) ...
+2026-10-09T17:06:17.5557759Z Selecting previously unselected package libxvidcore4:amd64.
+2026-10-09T17:06:17.5668065Z Preparing to unpack .../27-libxvidcore4_2%3a1.3.7-1build1_amd64.deb ...
+2026-10-09T17:06:17.5674687Z Unpacking libxvidcore4:amd64 (2:1.3.7-1build1) ...
+2026-10-09T17:06:17.5848612Z Selecting previously unselected package libzvbi-common.
+2026-10-09T17:06:17.5950116Z Preparing to unpack .../28-libzvbi-common_0.2.42-2_all.deb ...
+2026-10-09T17:06:17.5955878Z Unpacking libzvbi-common (0.2.42-2) ...
+2026-10-09T17:06:17.6177367Z Selecting previously unselected package libzvbi0t64:amd64.
+2026-10-09T17:06:17.6279708Z Preparing to unpack .../29-libzvbi0t64_0.2.42-2_amd64.deb ...
+2026-10-09T17:06:17.6285965Z Unpacking libzvbi0t64:amd64 (0.2.42-2) ...
+2026-10-09T17:06:17.6473305Z Selecting previously unselected package libavcodec60:amd64.
+2026-10-09T17:06:17.6576046Z Preparing to unpack .../30-libavcodec60_7%3a6.1.1-3ubuntu5_amd64.deb ...
+2026-10-09T17:06:17.6581377Z Unpacking libavcodec60:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:17.8009939Z Selecting previously unselected package libraw1394-11:amd64.
+2026-10-09T17:06:17.8119897Z Preparing to unpack .../31-libraw1394-11_2.1.2-2build3_amd64.deb ...
+2026-10-09T17:06:17.8126208Z Unpacking libraw1394-11:amd64 (2.1.2-2build3) ...
+2026-10-09T17:06:17.8288938Z Selecting previously unselected package libavc1394-0:amd64.
+2026-10-09T17:06:17.8391375Z Preparing to unpack .../32-libavc1394-0_0.5.4-5build3_amd64.deb ...
+2026-10-09T17:06:17.8397892Z Unpacking libavc1394-0:amd64 (0.5.4-5build3) ...
+2026-10-09T17:06:17.8557006Z Selecting previously unselected package libunibreak5:amd64.
+2026-10-09T17:06:17.8655997Z Preparing to unpack .../33-libunibreak5_5.1-2build1_amd64.deb ...
+2026-10-09T17:06:17.8662121Z Unpacking libunibreak5:amd64 (5.1-2build1) ...
+2026-10-09T17:06:17.8849899Z Selecting previously unselected package libass9:amd64.
+2026-10-09T17:06:17.8949934Z Preparing to unpack .../34-libass9_1%3a0.17.1-2build1_amd64.deb ...
+2026-10-09T17:06:17.8956157Z Unpacking libass9:amd64 (1:0.17.1-2build1) ...
+2026-10-09T17:06:17.9124380Z Selecting previously unselected package libudfread0:amd64.
+2026-10-09T17:06:17.9224991Z Preparing to unpack .../35-libudfread0_1.1.2-1build1_amd64.deb ...
+2026-10-09T17:06:17.9231126Z Unpacking libudfread0:amd64 (1.1.2-1build1) ...
+2026-10-09T17:06:17.9423500Z Selecting previously unselected package libbluray2:amd64.
+2026-10-09T17:06:17.9526185Z Preparing to unpack .../36-libbluray2_1%3a1.3.4-1build1_amd64.deb ...
+2026-10-09T17:06:17.9531634Z Unpacking libbluray2:amd64 (1:1.3.4-1build1) ...
+2026-10-09T17:06:18.0424963Z Selecting previously unselected package libchromaprint1:amd64.
+2026-10-09T17:06:18.0534973Z Preparing to unpack .../37-libchromaprint1_1.5.1-5_amd64.deb ...
+2026-10-09T17:06:18.0541564Z Unpacking libchromaprint1:amd64 (1.5.1-5) ...
+2026-10-09T17:06:18.0716095Z Selecting previously unselected package libgme0:amd64.
+2026-10-09T17:06:18.0818080Z Preparing to unpack .../38-libgme0_0.6.3-7build1_amd64.deb ...
+2026-10-09T17:06:18.0824166Z Unpacking libgme0:amd64 (0.6.3-7build1) ...
+2026-10-09T17:06:18.0994427Z Selecting previously unselected package libmpg123-0t64:amd64.
+2026-10-09T17:06:18.1094518Z Preparing to unpack .../39-libmpg123-0t64_1.32.5-1ubuntu1.1_amd64.deb ...
+2026-10-09T17:06:18.1100510Z Unpacking libmpg123-0t64:amd64 (1.32.5-1ubuntu1.1) ...
+2026-10-09T17:06:18.1277479Z Selecting previously unselected package libopenmpt0t64:amd64.
+2026-10-09T17:06:18.1381667Z Preparing to unpack .../40-libopenmpt0t64_0.7.3-1.1build3_amd64.deb ...
+2026-10-09T17:06:18.1388395Z Unpacking libopenmpt0t64:amd64 (0.7.3-1.1build3) ...
+2026-10-09T17:06:18.1603955Z Selecting previously unselected package libcjson1:amd64.
+2026-10-09T17:06:18.1707241Z Preparing to unpack .../41-libcjson1_1.7.17-1_amd64.deb ...
+2026-10-09T17:06:18.1713181Z Unpacking libcjson1:amd64 (1.7.17-1) ...
+2026-10-09T17:06:18.1876749Z Selecting previously unselected package libmbedcrypto7t64:amd64.
+2026-10-09T17:06:18.1979267Z Preparing to unpack .../42-libmbedcrypto7t64_2.28.8-1_amd64.deb ...
+2026-10-09T17:06:18.1985399Z Unpacking libmbedcrypto7t64:amd64 (2.28.8-1) ...
+2026-10-09T17:06:18.2824547Z Selecting previously unselected package librist4:amd64.
+2026-10-09T17:06:18.2932992Z Preparing to unpack .../43-librist4_0.2.10+dfsg-2_amd64.deb ...
+2026-10-09T17:06:18.2939942Z Unpacking librist4:amd64 (0.2.10+dfsg-2) ...
+2026-10-09T17:06:18.3106155Z Selecting previously unselected package libsrt1.5-gnutls:amd64.
+2026-10-09T17:06:18.3208260Z Preparing to unpack .../44-libsrt1.5-gnutls_1.5.3-1build2_amd64.deb ...
+2026-10-09T17:06:18.3213145Z Unpacking libsrt1.5-gnutls:amd64 (1.5.3-1build2) ...
+2026-10-09T17:06:18.3401288Z Selecting previously unselected package libssh-gcrypt-4:amd64.
+2026-10-09T17:06:18.3503951Z Preparing to unpack .../45-libssh-gcrypt-4_0.10.6-2ubuntu0.5_amd64.deb ...
+2026-10-09T17:06:18.3509446Z Unpacking libssh-gcrypt-4:amd64 (0.10.6-2ubuntu0.5) ...
+2026-10-09T17:06:18.4268602Z Selecting previously unselected package libavformat60:amd64.
+2026-10-09T17:06:18.4383505Z Preparing to unpack .../46-libavformat60_7%3a6.1.1-3ubuntu5_amd64.deb ...
+2026-10-09T17:06:18.4389558Z Unpacking libavformat60:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:18.6519250Z Selecting previously unselected package libbs2b0:amd64.
+2026-10-09T17:06:18.6633012Z Preparing to unpack .../47-libbs2b0_3.1.0+dfsg-7build1_amd64.deb ...
+2026-10-09T17:06:18.6638853Z Unpacking libbs2b0:amd64 (3.1.0+dfsg-7build1) ...
+2026-10-09T17:06:18.6823617Z Selecting previously unselected package libflite1:amd64.
+2026-10-09T17:06:18.6927581Z Preparing to unpack .../48-libflite1_2.2-6build3_amd64.deb ...
+2026-10-09T17:06:18.7499141Z Unpacking libflite1:amd64 (2.2-6build3) ...
+2026-10-09T17:06:18.9025979Z Selecting previously unselected package libserd-0-0:amd64.
+2026-10-09T17:06:18.9135951Z Preparing to unpack .../49-libserd-0-0_0.32.2-1_amd64.deb ...
+2026-10-09T17:06:18.9141791Z Unpacking libserd-0-0:amd64 (0.32.2-1) ...
+2026-10-09T17:06:18.9307832Z Selecting previously unselected package libzix-0-0:amd64.
+2026-10-09T17:06:18.9413620Z Preparing to unpack .../50-libzix-0-0_0.4.2-2build1_amd64.deb ...
+2026-10-09T17:06:18.9419868Z Unpacking libzix-0-0:amd64 (0.4.2-2build1) ...
+2026-10-09T17:06:18.9582422Z Selecting previously unselected package libsord-0-0:amd64.
+2026-10-09T17:06:18.9683860Z Preparing to unpack .../51-libsord-0-0_0.16.16-2build1_amd64.deb ...
+2026-10-09T17:06:18.9689271Z Unpacking libsord-0-0:amd64 (0.16.16-2build1) ...
+2026-10-09T17:06:18.9850926Z Selecting previously unselected package libsratom-0-0:amd64.
+2026-10-09T17:06:18.9951036Z Preparing to unpack .../52-libsratom-0-0_0.6.16-1build1_amd64.deb ...
+2026-10-09T17:06:18.9957227Z Unpacking libsratom-0-0:amd64 (0.6.16-1build1) ...
+2026-10-09T17:06:19.0118799Z Selecting previously unselected package liblilv-0-0:amd64.
+2026-10-09T17:06:19.0218004Z Preparing to unpack .../53-liblilv-0-0_0.24.22-1build1_amd64.deb ...
+2026-10-09T17:06:19.0223995Z Unpacking liblilv-0-0:amd64 (0.24.22-1build1) ...
+2026-10-09T17:06:19.0387719Z Selecting previously unselected package libmysofa1:amd64.
+2026-10-09T17:06:19.0489199Z Preparing to unpack .../54-libmysofa1_1.3.2+dfsg-2ubuntu2_amd64.deb ...
+2026-10-09T17:06:19.0495163Z Unpacking libmysofa1:amd64 (1.3.2+dfsg-2ubuntu2) ...
+2026-10-09T17:06:19.3312012Z Selecting previously unselected package libplacebo338:amd64.
+2026-10-09T17:06:19.3422751Z Preparing to unpack .../55-libplacebo338_6.338.2-2build1_amd64.deb ...
+2026-10-09T17:06:19.3428387Z Unpacking libplacebo338:amd64 (6.338.2-2build1) ...
+2026-10-09T17:06:19.4186342Z Selecting previously unselected package libblas3:amd64.
+2026-10-09T17:06:19.4296842Z Preparing to unpack .../56-libblas3_3.12.0-3build1.1_amd64.deb ...
+2026-10-09T17:06:19.4322772Z Unpacking libblas3:amd64 (3.12.0-3build1.1) ...
+2026-10-09T17:06:19.4513344Z Selecting previously unselected package liblapack3:amd64.
+2026-10-09T17:06:19.4620013Z Preparing to unpack .../57-liblapack3_3.12.0-3build1.1_amd64.deb ...
+2026-10-09T17:06:19.4644130Z Unpacking liblapack3:amd64 (3.12.0-3build1.1) ...
+2026-10-09T17:06:19.8043761Z Selecting previously unselected package libasyncns0:amd64.
+2026-10-09T17:06:19.8157501Z Preparing to unpack .../58-libasyncns0_0.8-6build4_amd64.deb ...
+2026-10-09T17:06:19.8172035Z Unpacking libasyncns0:amd64 (0.8-6build4) ...
+2026-10-09T17:06:19.8339071Z Selecting previously unselected package libflac12t64:amd64.
+2026-10-09T17:06:19.8441978Z Preparing to unpack .../59-libflac12t64_1.4.3+ds-2.1ubuntu2_amd64.deb ...
+2026-10-09T17:06:19.8447483Z Unpacking libflac12t64:amd64 (1.4.3+ds-2.1ubuntu2) ...
+2026-10-09T17:06:19.8622240Z Selecting previously unselected package libsndfile1:amd64.
+2026-10-09T17:06:19.8722255Z Preparing to unpack .../60-libsndfile1_1.2.2-1ubuntu5.24.04.1_amd64.deb ...
+2026-10-09T17:06:19.8727857Z Unpacking libsndfile1:amd64 (1.2.2-1ubuntu5.24.04.1) ...
+2026-10-09T17:06:19.8917172Z Selecting previously unselected package libpulse0:amd64.
+2026-10-09T17:06:19.9020229Z Preparing to unpack .../61-libpulse0_1%3a16.1+dfsg1-2ubuntu10.1_amd64.deb ...
+2026-10-09T17:06:19.9074096Z Unpacking libpulse0:amd64 (1:16.1+dfsg1-2ubuntu10.1) ...
+2026-10-09T17:06:19.9267496Z Selecting previously unselected package libsphinxbase3t64:amd64.
+2026-10-09T17:06:19.9371382Z Preparing to unpack .../62-libsphinxbase3t64_0.8+5prealpha+1-17build2_amd64.deb ...
+2026-10-09T17:06:19.9377140Z Unpacking libsphinxbase3t64:amd64 (0.8+5prealpha+1-17build2) ...
+2026-10-09T17:06:19.9546516Z Selecting previously unselected package libpocketsphinx3:amd64.
+2026-10-09T17:06:19.9650483Z Preparing to unpack .../63-libpocketsphinx3_0.8.0+real5prealpha+1-15ubuntu5_amd64.deb ...
+2026-10-09T17:06:19.9655654Z Unpacking libpocketsphinx3:amd64 (0.8.0+real5prealpha+1-15ubuntu5) ...
+2026-10-09T17:06:19.9826182Z Selecting previously unselected package libpostproc57:amd64.
+2026-10-09T17:06:19.9928625Z Preparing to unpack .../64-libpostproc57_7%3a6.1.1-3ubuntu5_amd64.deb ...
+2026-10-09T17:06:19.9934135Z Unpacking libpostproc57:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:20.0099033Z Selecting previously unselected package libsamplerate0:amd64.
+2026-10-09T17:06:20.0201197Z Preparing to unpack .../65-libsamplerate0_0.2.2-4build1_amd64.deb ...
+2026-10-09T17:06:20.0207268Z Unpacking libsamplerate0:amd64 (0.2.2-4build1) ...
+2026-10-09T17:06:20.0409001Z Selecting previously unselected package librubberband2:amd64.
+2026-10-09T17:06:20.0513664Z Preparing to unpack .../66-librubberband2_3.3.0+dfsg-2build1_amd64.deb ...
+2026-10-09T17:06:20.0519209Z Unpacking librubberband2:amd64 (3.3.0+dfsg-2build1) ...
+2026-10-09T17:06:20.0688673Z Selecting previously unselected package libswscale7:amd64.
+2026-10-09T17:06:20.0791379Z Preparing to unpack .../67-libswscale7_7%3a6.1.1-3ubuntu5_amd64.deb ...
+2026-10-09T17:06:20.0797695Z Unpacking libswscale7:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:20.0975988Z Selecting previously unselected package libvidstab1.1:amd64.
+2026-10-09T17:06:20.1079987Z Preparing to unpack .../68-libvidstab1.1_1.1.0-2build1_amd64.deb ...
+2026-10-09T17:06:20.1085837Z Unpacking libvidstab1.1:amd64 (1.1.0-2build1) ...
+2026-10-09T17:06:20.1246133Z Selecting previously unselected package libzimg2:amd64.
+2026-10-09T17:06:20.1348703Z Preparing to unpack .../69-libzimg2_3.0.5+ds1-1build1_amd64.deb ...
+2026-10-09T17:06:20.1354103Z Unpacking libzimg2:amd64 (3.0.5+ds1-1build1) ...
+2026-10-09T17:06:20.1543553Z Selecting previously unselected package libavfilter9:amd64.
+2026-10-09T17:06:20.1647177Z Preparing to unpack .../70-libavfilter9_7%3a6.1.1-3ubuntu5_amd64.deb ...
+2026-10-09T17:06:20.1653159Z Unpacking libavfilter9:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:20.2748114Z Selecting previously unselected package libcaca0:amd64.
+2026-10-09T17:06:20.2858250Z Preparing to unpack .../71-libcaca0_0.99.beta20-4ubuntu0.2_amd64.deb ...
+2026-10-09T17:06:20.2864065Z Unpacking libcaca0:amd64 (0.99.beta20-4ubuntu0.2) ...
+2026-10-09T17:06:20.3058203Z Selecting previously unselected package libcdio19t64:amd64.
+2026-10-09T17:06:20.3160233Z Preparing to unpack .../72-libcdio19t64_2.1.0-4.1ubuntu1.2_amd64.deb ...
+2026-10-09T17:06:20.3166380Z Unpacking libcdio19t64:amd64 (2.1.0-4.1ubuntu1.2) ...
+2026-10-09T17:06:20.3332148Z Selecting previously unselected package libcdio-cdda2t64:amd64.
+2026-10-09T17:06:20.3433766Z Preparing to unpack .../73-libcdio-cdda2t64_10.2+2.0.1-1.1build2_amd64.deb ...
+2026-10-09T17:06:20.3439223Z Unpacking libcdio-cdda2t64:amd64 (10.2+2.0.1-1.1build2) ...
+2026-10-09T17:06:20.3599102Z Selecting previously unselected package libcdio-paranoia2t64:amd64.
+2026-10-09T17:06:20.3700615Z Preparing to unpack .../74-libcdio-paranoia2t64_10.2+2.0.1-1.1build2_amd64.deb ...
+2026-10-09T17:06:20.3706230Z Unpacking libcdio-paranoia2t64:amd64 (10.2+2.0.1-1.1build2) ...
+2026-10-09T17:06:20.3868851Z Selecting previously unselected package libdc1394-25:amd64.
+2026-10-09T17:06:20.3971657Z Preparing to unpack .../75-libdc1394-25_2.2.6-4build1_amd64.deb ...
+2026-10-09T17:06:20.3977410Z Unpacking libdc1394-25:amd64 (2.2.6-4build1) ...
+2026-10-09T17:06:20.4143651Z Selecting previously unselected package libiec61883-0:amd64.
+2026-10-09T17:06:20.4245273Z Preparing to unpack .../76-libiec61883-0_1.2.0-6build1_amd64.deb ...
+2026-10-09T17:06:20.4251114Z Unpacking libiec61883-0:amd64 (1.2.0-6build1) ...
+2026-10-09T17:06:20.4410507Z Selecting previously unselected package libjack-jackd2-0:amd64.
+2026-10-09T17:06:20.4511250Z Preparing to unpack .../77-libjack-jackd2-0_1.9.21~dfsg-3ubuntu3_amd64.deb ...
+2026-10-09T17:06:20.4518255Z Unpacking libjack-jackd2-0:amd64 (1.9.21~dfsg-3ubuntu3) ...
+2026-10-09T17:06:20.4708090Z Selecting previously unselected package libopenal-data.
+2026-10-09T17:06:20.4811399Z Preparing to unpack .../78-libopenal-data_1%3a1.23.1-4build1_all.deb ...
+2026-10-09T17:06:20.4819214Z Unpacking libopenal-data (1:1.23.1-4build1) ...
+2026-10-09T17:06:20.4996187Z Selecting previously unselected package libsndio7.0:amd64.
+2026-10-09T17:06:20.5099571Z Preparing to unpack .../79-libsndio7.0_1.9.0-0.3build3_amd64.deb ...
+2026-10-09T17:06:20.5106069Z Unpacking libsndio7.0:amd64 (1.9.0-0.3build3) ...
+2026-10-09T17:06:20.5269894Z Selecting previously unselected package libopenal1:amd64.
+2026-10-09T17:06:20.5370873Z Preparing to unpack .../80-libopenal1_1%3a1.23.1-4build1_amd64.deb ...
+2026-10-09T17:06:20.5840219Z Unpacking libopenal1:amd64 (1:1.23.1-4build1) ...
+2026-10-09T17:06:20.6062060Z Selecting previously unselected package libdecor-0-0:amd64.
+2026-10-09T17:06:20.6170106Z Preparing to unpack .../81-libdecor-0-0_0.2.2-1build2_amd64.deb ...
+2026-10-09T17:06:20.6175910Z Unpacking libdecor-0-0:amd64 (0.2.2-1build2) ...
+2026-10-09T17:06:20.6418603Z Selecting previously unselected package libsdl2-2.0-0:amd64.
+2026-10-09T17:06:20.6525685Z Preparing to unpack .../82-libsdl2-2.0-0_2.30.0+dfsg-1ubuntu3.1_amd64.deb ...
+2026-10-09T17:06:20.6532513Z Unpacking libsdl2-2.0-0:amd64 (2.30.0+dfsg-1ubuntu3.1) ...
+2026-10-09T17:06:20.7509028Z Selecting previously unselected package libxcb-shape0:amd64.
+2026-10-09T17:06:20.7619886Z Preparing to unpack .../83-libxcb-shape0_1.15-1ubuntu2_amd64.deb ...
+2026-10-09T17:06:20.7626411Z Unpacking libxcb-shape0:amd64 (1.15-1ubuntu2) ...
+2026-10-09T17:06:20.7787108Z Selecting previously unselected package libxv1:amd64.
+2026-10-09T17:06:20.7891163Z Preparing to unpack .../84-libxv1_2%3a1.0.11-1.1build1_amd64.deb ...
+2026-10-09T17:06:20.7897057Z Unpacking libxv1:amd64 (2:1.0.11-1.1build1) ...
+2026-10-09T17:06:20.8057806Z Selecting previously unselected package libavdevice60:amd64.
+2026-10-09T17:06:20.8163120Z Preparing to unpack .../85-libavdevice60_7%3a6.1.1-3ubuntu5_amd64.deb ...
+2026-10-09T17:06:20.8168762Z Unpacking libavdevice60:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:20.8329539Z Selecting previously unselected package ffmpeg.
+2026-10-09T17:06:20.8435792Z Preparing to unpack .../86-ffmpeg_7%3a6.1.1-3ubuntu5_amd64.deb ...
+2026-10-09T17:06:20.8475737Z Unpacking ffmpeg (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:20.8963197Z Setting up libgme0:amd64 (0.6.3-7build1) ...
+2026-10-09T17:06:20.8980168Z Setting up libchromaprint1:amd64 (1.5.1-5) ...
+2026-10-09T17:06:20.8995080Z Setting up libssh-gcrypt-4:amd64 (0.10.6-2ubuntu0.5) ...
+2026-10-09T17:06:20.9011232Z Setting up libhwy1t64:amd64 (1.0.7-8.1build1) ...
+2026-10-09T17:06:20.9025308Z Setting up libudfread0:amd64 (1.1.2-1build1) ...
+2026-10-09T17:06:20.9041457Z Setting up libraw1394-11:amd64 (2.1.2-2build3) ...
+2026-10-09T17:06:20.9053937Z Setting up libspeex1:amd64 (1.2.1-2ubuntu2.24.04.1) ...
+2026-10-09T17:06:20.9068947Z Setting up libshine3:amd64 (3.1.1-2build1) ...
+2026-10-09T17:06:20.9081520Z Setting up libcaca0:amd64 (0.99.beta20-4ubuntu0.2) ...
+2026-10-09T17:06:20.9094188Z Setting up libvpl2 (2023.3.0-1build1) ...
+2026-10-09T17:06:20.9110087Z Setting up libx264-164:amd64 (2:0.164.3108+git31e19f9-1) ...
+2026-10-09T17:06:20.9124463Z Setting up libtwolame0:amd64 (0.4.0-2build3) ...
+2026-10-09T17:06:20.9138105Z Setting up libmbedcrypto7t64:amd64 (2.28.8-1) ...
+2026-10-09T17:06:20.9153835Z Setting up libgsm1:amd64 (1.0.22-1build1) ...
+2026-10-09T17:06:20.9168613Z Setting up libsoxr0:amd64 (0.1.3-4build3) ...
+2026-10-09T17:06:20.9183831Z Setting up libzix-0-0:amd64 (0.4.2-2build1) ...
+2026-10-09T17:06:20.9196636Z Setting up libcodec2-1.2:amd64 (1.2.0-2build1) ...
+2026-10-09T17:06:20.9209495Z Setting up libmysofa1:amd64 (1.3.2+dfsg-2ubuntu2) ...
+2026-10-09T17:06:20.9223771Z Setting up libxcb-shape0:amd64 (1.15-1ubuntu2) ...
+2026-10-09T17:06:20.9236476Z Setting up libcdio19t64:amd64 (2.1.0-4.1ubuntu1.2) ...
+2026-10-09T17:06:20.9249842Z Setting up libsvtav1enc1d1:amd64 (1.7.0+dfsg-2build1) ...
+2026-10-09T17:06:20.9264639Z Setting up libmpg123-0t64:amd64 (1.32.5-1ubuntu1.1) ...
+2026-10-09T17:06:20.9278110Z Setting up libcjson1:amd64 (1.7.17-1) ...
+2026-10-09T17:06:20.9292651Z Setting up libxvidcore4:amd64 (2:1.3.7-1build1) ...
+2026-10-09T17:06:20.9305604Z Setting up librav1e0:amd64 (0.7.1-2) ...
+2026-10-09T17:06:20.9318768Z Setting up libcdio-cdda2t64:amd64 (10.2+2.0.1-1.1build2) ...
+2026-10-09T17:06:20.9333720Z Setting up librist4:amd64 (0.2.10+dfsg-2) ...
+2026-10-09T17:06:20.9346590Z Setting up librsvg2-2:amd64 (2.58.0+dfsg-1ubuntu0.1) ...
+2026-10-09T17:06:20.9361177Z Setting up libblas3:amd64 (3.12.0-3build1.1) ...
+2026-10-09T17:06:20.9412035Z update-alternatives: using /usr/lib/x86_64-linux-gnu/blas/libblas.so.3 to provide /usr/lib/x86_64-linux-gnu/libblas.so.3 (libblas.so.3-x86_64-linux-gnu) in auto mode
+2026-10-09T17:06:20.9423831Z Setting up libplacebo338:amd64 (6.338.2-2build1) ...
+2026-10-09T17:06:20.9443679Z Setting up libva2:amd64 (2.20.0-2ubuntu0.2) ...
+2026-10-09T17:06:20.9458506Z Setting up libopus0:amd64 (1.4-1build1) ...
+2026-10-09T17:06:20.9472742Z Setting up libcdio-paranoia2t64:amd64 (10.2+2.0.1-1.1build2) ...
+2026-10-09T17:06:20.9487692Z Setting up libdc1394-25:amd64 (2.2.6-4build1) ...
+2026-10-09T17:06:20.9501171Z Setting up libxv1:amd64 (2:1.0.11-1.1build1) ...
+2026-10-09T17:06:20.9515618Z Setting up libunibreak5:amd64 (5.1-2build1) ...
+2026-10-09T17:06:20.9529151Z Setting up libjxl0.7:amd64 (0.7.0-10.2ubuntu6.1) ...
+2026-10-09T17:06:20.9542289Z Setting up libx265-199:amd64 (3.5-2build1) ...
+2026-10-09T17:06:20.9556852Z Setting up libsndio7.0:amd64 (1.9.0-0.3build3) ...
+2026-10-09T17:06:20.9569552Z Setting up libvidstab1.1:amd64 (1.1.0-2build1) ...
+2026-10-09T17:06:20.9584447Z Setting up libvpx9:amd64 (1.14.0-1ubuntu2.3) ...
+2026-10-09T17:06:20.9598239Z Setting up libsrt1.5-gnutls:amd64 (1.5.3-1build2) ...
+2026-10-09T17:06:20.9611149Z Setting up libflite1:amd64 (2.2-6build3) ...
+2026-10-09T17:06:20.9625730Z Setting up libdav1d7:amd64 (1.4.1-1build1) ...
+2026-10-09T17:06:20.9639080Z Setting up libva-drm2:amd64 (2.20.0-2ubuntu0.2) ...
+2026-10-09T17:06:20.9653836Z Setting up ocl-icd-libopencl1:amd64 (2.3.2-1build1) ...
+2026-10-09T17:06:20.9666894Z Setting up libasyncns0:amd64 (0.8-6build4) ...
+2026-10-09T17:06:20.9680162Z Setting up libvdpau1:amd64 (1.5-2build1) ...
+2026-10-09T17:06:20.9700142Z Setting up libbs2b0:amd64 (3.1.0+dfsg-7build1) ...
+2026-10-09T17:06:20.9713588Z Setting up libtheora0:amd64 (1.1.1+dfsg.1-16.1build3) ...
+2026-10-09T17:06:20.9728296Z Setting up libdecor-0-0:amd64 (0.2.2-1build2) ...
+2026-10-09T17:06:20.9741273Z Setting up libzimg2:amd64 (3.0.5+ds1-1build1) ...
+2026-10-09T17:06:20.9755692Z Setting up libopenal-data (1:1.23.1-4build1) ...
+2026-10-09T17:06:20.9775747Z Setting up libflac12t64:amd64 (1.4.3+ds-2.1ubuntu2) ...
+2026-10-09T17:06:20.9789139Z Setting up libbluray2:amd64 (1:1.3.4-1build1) ...
+2026-10-09T17:06:20.9803546Z Setting up libsamplerate0:amd64 (0.2.2-4build1) ...
+2026-10-09T17:06:20.9817106Z Setting up libva-x11-2:amd64 (2.20.0-2ubuntu0.2) ...
+2026-10-09T17:06:20.9832043Z Setting up libopenmpt0t64:amd64 (0.7.3-1.1build3) ...
+2026-10-09T17:06:20.9845049Z Setting up libzvbi-common (0.2.42-2) ...
+2026-10-09T17:06:20.9858390Z Setting up libmp3lame0:amd64 (3.100-6build1) ...
+2026-10-09T17:06:20.9873169Z Setting up libvorbisenc2:amd64 (1.3.7-1build3) ...
+2026-10-09T17:06:20.9886811Z Setting up libiec61883-0:amd64 (1.2.0-6build1) ...
+2026-10-09T17:06:20.9901191Z Setting up libserd-0-0:amd64 (0.32.2-1) ...
+2026-10-09T17:06:20.9915314Z Setting up libavc1394-0:amd64 (0.5.4-5build3) ...
+2026-10-09T17:06:20.9928570Z Setting up liblapack3:amd64 (3.12.0-3build1.1) ...
+2026-10-09T17:06:20.9979044Z update-alternatives: using /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3 to provide /usr/lib/x86_64-linux-gnu/liblapack.so.3 (liblapack.so.3-x86_64-linux-gnu) in auto mode
+2026-10-09T17:06:20.9990812Z Setting up libzvbi0t64:amd64 (0.2.42-2) ...
+2026-10-09T17:06:21.0012777Z Setting up libavutil58:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:21.0026404Z Setting up libopenal1:amd64 (1:1.23.1-4build1) ...
+2026-10-09T17:06:21.0040284Z Setting up libass9:amd64 (1:0.17.1-2build1) ...
+2026-10-09T17:06:21.0055086Z Setting up libswresample4:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:21.0069137Z Setting up libavcodec60:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:21.0085403Z Setting up librubberband2:amd64 (3.3.0+dfsg-2build1) ...
+2026-10-09T17:06:21.0099586Z Setting up libjack-jackd2-0:amd64 (1.9.21~dfsg-3ubuntu3) ...
+2026-10-09T17:06:21.0113562Z Setting up libsord-0-0:amd64 (0.16.16-2build1) ...
+2026-10-09T17:06:21.0128711Z Setting up libpostproc57:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:21.0143870Z Setting up libsratom-0-0:amd64 (0.6.16-1build1) ...
+2026-10-09T17:06:21.0158543Z Setting up libsndfile1:amd64 (1.2.2-1ubuntu5.24.04.1) ...
+2026-10-09T17:06:21.0172282Z Setting up liblilv-0-0:amd64 (0.24.22-1build1) ...
+2026-10-09T17:06:21.0186666Z Setting up libswscale7:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:21.0202435Z Setting up libpulse0:amd64 (1:16.1+dfsg1-2ubuntu10.1) ...
+2026-10-09T17:06:21.0259451Z Setting up libavformat60:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:21.0276537Z Setting up libsphinxbase3t64:amd64 (0.8+5prealpha+1-17build2) ...
+2026-10-09T17:06:21.0293379Z Setting up libsdl2-2.0-0:amd64 (2.30.0+dfsg-1ubuntu3.1) ...
+2026-10-09T17:06:21.0671349Z Setting up libpocketsphinx3:amd64 (0.8.0+real5prealpha+1-15ubuntu5) ...
+2026-10-09T17:06:21.0685148Z Setting up libavfilter9:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:21.0701291Z Setting up libavdevice60:amd64 (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:21.0715263Z Setting up ffmpeg (7:6.1.1-3ubuntu5) ...
+2026-10-09T17:06:21.0735001Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-10-09T17:06:21.0753697Z Not building database; man-db/auto-update is not 'true'.
+2026-10-09T17:06:21.0762123Z Processing triggers for libc-bin (2.39-0ubuntu8.9) ...
+2026-10-09T17:06:21.8507873Z 
+2026-10-09T17:06:21.8508541Z Running kernel seems to be up-to-date.
+2026-10-09T17:06:21.8508768Z 
+2026-10-09T17:06:21.8508858Z No services need to be restarted.
+2026-10-09T17:06:21.8509004Z 
+2026-10-09T17:06:21.8509088Z No containers need to be restarted.
+2026-10-09T17:06:21.8509240Z 
+2026-10-09T17:06:21.8509343Z No user sessions are running outdated binaries.
+2026-10-09T17:06:21.8509510Z 
+2026-10-09T17:06:21.8509971Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-10-09T17:06:22.8025157Z ##[group]Run python scripts/prepare_pdf_font.py --output "$CI_SANDBOX/fonts" > "$CI_RECEIPTS/font-manifest.json"
+2026-10-09T17:06:22.8025765Z [36;1mpython scripts/prepare_pdf_font.py --output "$CI_SANDBOX/fonts" > "$CI_RECEIPTS/font-manifest.json"[0m
+2026-10-09T17:06:22.8026290Z [36;1mecho "R2_TEST_FONT_FILE=$CI_SANDBOX/fonts/NotoSansSC-Regular.ttf" >> "$GITHUB_ENV"[0m
+2026-10-09T17:06:22.8082141Z shell: /usr/bin/bash -e {0}
+2026-10-09T17:06:22.8082338Z env:
+2026-10-09T17:06:22.8082496Z   MOCK_PROVIDER: true
+2026-10-09T17:06:22.8082672Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T17:06:22.8082851Z   ENABLE_CLOUD: false
+2026-10-09T17:06:22.8083030Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T17:06:22.8083263Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T17:06:22.8083508Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T17:06:22.8083699Z   HF_HUB_OFFLINE: 1
+2026-10-09T17:06:22.8083864Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T17:06:22.8084129Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:06:22.8084454Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T17:06:22.8084769Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:06:22.8085055Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:06:22.8085496Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:06:22.8085779Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T17:06:22.8086074Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T17:06:22.8086364Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T17:06:22.8086696Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS
+2026-10-09T17:06:22.8087121Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T17:06:22.8087541Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/receipts
+2026-10-09T17:06:22.8088014Z   HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T17:06:22.8088557Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T17:06:22.8089102Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/appdata
+2026-10-09T17:06:22.8090116Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/localappdata
+2026-10-09T17:06:22.8090715Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/config
+2026-10-09T17:06:22.8091271Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/cache
+2026-10-09T17:06:22.8091822Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data
+2026-10-09T17:06:22.8092366Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/state
+2026-10-09T17:06:22.8092904Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:06:22.8093408Z   TMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:06:22.8093906Z   TEMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:06:22.8094361Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T17:06:22.8094869Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T17:06:22.8095449Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/backups
+2026-10-09T17:06:22.8096080Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/database-backups
+2026-10-09T17:06:22.8096883Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T17:06:22.8097465Z   CI_V2_RUNTIME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend
+2026-10-09T17:06:22.8097836Z ##[endgroup]
+2026-10-09T17:06:38.3453177Z ##[group]Run python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/coverage-selftest" -q \
+2026-10-09T17:06:38.3453725Z [36;1mpython -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/coverage-selftest" -q \[0m
+2026-10-09T17:06:38.3454188Z [36;1m  .github/ci/test_suite_coverage.py .github/ci/test_coverage_reconcile.py \[0m
+2026-10-09T17:06:38.3454609Z [36;1m  .github/ci/test_v2_manifest_extension.py .github/ci/test_v2_check_runner.py \[0m
+2026-10-09T17:06:38.3454945Z [36;1m  .github/ci/test_v2_browser_job.py \[0m
+2026-10-09T17:06:38.3455213Z [36;1m  --junitxml="$CI_RECEIPTS/coverage-harness.xml"[0m
+2026-10-09T17:06:38.3509503Z shell: /usr/bin/bash -e {0}
+2026-10-09T17:06:38.3509859Z env:
+2026-10-09T17:06:38.3510020Z   MOCK_PROVIDER: true
+2026-10-09T17:06:38.3510212Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T17:06:38.3510397Z   ENABLE_CLOUD: false
+2026-10-09T17:06:38.3510594Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T17:06:38.3511018Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T17:06:38.3511263Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T17:06:38.3511456Z   HF_HUB_OFFLINE: 1
+2026-10-09T17:06:38.3511623Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T17:06:38.3511851Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:06:38.3512182Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T17:06:38.3512497Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:06:38.3512785Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:06:38.3513071Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:06:38.3513359Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T17:06:38.3513655Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T17:06:38.3513943Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T17:06:38.3514274Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS
+2026-10-09T17:06:38.3514681Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T17:06:38.3515095Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/receipts
+2026-10-09T17:06:38.3515567Z   HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T17:06:38.3516095Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T17:06:38.3516638Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/appdata
+2026-10-09T17:06:38.3517204Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/localappdata
+2026-10-09T17:06:38.3517778Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/config
+2026-10-09T17:06:38.3518339Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/cache
+2026-10-09T17:06:38.3518889Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data
+2026-10-09T17:06:38.3519447Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/state
+2026-10-09T17:06:38.3520178Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:06:38.3520694Z   TMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:06:38.3521191Z   TEMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:06:38.3521670Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T17:06:38.3522183Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T17:06:38.3522930Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/backups
+2026-10-09T17:06:38.3523572Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/database-backups
+2026-10-09T17:06:38.3524224Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T17:06:38.3524802Z   CI_V2_RUNTIME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend
+2026-10-09T17:06:38.3525340Z   R2_TEST_FONT_FILE: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/fonts/NotoSansSC-Regular.ttf
+2026-10-09T17:06:38.3525712Z ##[endgroup]
+2026-10-09T17:06:47.3422985Z ........................................................................ [ 41%]
+2026-10-09T17:06:47.5894786Z ........................................................................ [ 82%]
+2026-10-09T17:06:49.4029293Z ..............................                                           [100%]
+2026-10-09T17:06:49.4030442Z - generated xml file: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/receipts/coverage-harness.xml -
+2026-10-09T17:06:49.4030928Z 174 passed in 10.31s
+2026-10-09T17:06:49.4355636Z ##[group]Run set -o pipefail
+2026-10-09T17:06:49.4356012Z [36;1mset -o pipefail[0m
+2026-10-09T17:06:49.4356918Z [36;1mPYTHONPATH="$CI_PROJECT/.github/ci:$CI_PROJECT" python -m pytest -p postgres_gate -p suite_coverage -p no:cacheprovider --basetemp="$CI_V2_RUNTIME/pytest" -q -ra --tb=short \[0m
+2026-10-09T17:06:49.4358073Z [36;1m  --ci-coverage-manifest=.github/ci/coverage_manifest_v2.json.gz \[0m
+2026-10-09T17:06:49.4358654Z [36;1m  --ci-scope=backend --ci-shard-index=0 --ci-shard-count=1 \[0m
+2026-10-09T17:06:49.4359446Z [36;1m  --ci-coverage-dir="$CI_RECEIPTS" --junitxml="$CI_RECEIPTS/backend.xml" 2>&1 | tee "$CI_RECEIPTS/backend.log"[0m
+2026-10-09T17:06:49.4436775Z shell: /usr/bin/bash -e {0}
+2026-10-09T17:06:49.4437109Z env:
+2026-10-09T17:06:49.4437352Z   MOCK_PROVIDER: true
+2026-10-09T17:06:49.4437637Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T17:06:49.4437927Z   ENABLE_CLOUD: false
+2026-10-09T17:06:49.4438216Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T17:06:49.4438629Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T17:06:49.4439019Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T17:06:49.4439325Z   HF_HUB_OFFLINE: 1
+2026-10-09T17:06:49.4439584Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T17:06:49.4440139Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:06:49.4440677Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T17:06:49.4441204Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:06:49.4441680Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:06:49.4442153Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:06:49.4442626Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T17:06:49.4443123Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T17:06:49.4443611Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T17:06:49.4444197Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS
+2026-10-09T17:06:49.4444886Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T17:06:49.4445601Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/receipts
+2026-10-09T17:06:49.4446394Z   HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T17:06:49.4447315Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T17:06:49.4448241Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/appdata
+2026-10-09T17:06:49.4449233Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/localappdata
+2026-10-09T17:06:49.4450438Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/config
+2026-10-09T17:06:49.4451447Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/cache
+2026-10-09T17:06:49.4452404Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data
+2026-10-09T17:06:49.4453340Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/state
+2026-10-09T17:06:49.4454279Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:06:49.4455142Z   TMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:06:49.4455995Z   TEMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:06:49.4457059Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T17:06:49.4457935Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T17:06:49.4459152Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/backups
+2026-10-09T17:06:49.4460543Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/database-backups
+2026-10-09T17:06:49.4461700Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T17:06:49.4462693Z   CI_V2_RUNTIME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend
+2026-10-09T17:06:49.4463658Z   R2_TEST_FONT_FILE: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/fonts/NotoSansSC-Regular.ttf
+2026-10-09T17:06:49.4464325Z   STORAGE_BACKEND: file
+2026-10-09T17:06:49.4464606Z   DATABASE_URL: 
+2026-10-09T17:06:49.4464879Z   TEST_POSTGRES_DATABASE_URL: 
+2026-10-09T17:06:49.4465178Z ##[endgroup]
+2026-10-09T17:07:15.3573582Z ..ss..ss..ss....ssss..ss.....ssss...........................ssssss...... [  0%]
+2026-10-09T17:07:21.9619845Z ......ssssssssssss..........................sss....ssss....ssss....ssss. [  1%]
+2026-10-09T17:07:25.3195652Z ...ssss....ssss....ssss....ssss....ssss....ssss....ssss....ssss....ssss. [  2%]
+2026-10-09T17:07:29.3662929Z ...ssss....ssss....ssss....ssss....ssss....ssss....ssss....ssss....ssss. [  2%]
+2026-10-09T17:07:31.8979419Z ...ssss....ssss....ssss....ssss....ssss....ssss.................sss...ss [  3%]
+2026-10-09T17:07:40.3897978Z s...............ssssss........s.s.......ssssss....ss..s.s...sss.s....... [  4%]
+2026-10-09T17:07:43.7585596Z ........................................................................ [  4%]
+2026-10-09T17:07:44.5748614Z ....................................s................................... [  5%]
+2026-10-09T17:07:45.2387238Z ..............s.s.......ss.............................................. [  6%]
+2026-10-09T17:07:45.3685793Z ...........................s............................................ [  6%]
+2026-10-09T17:07:55.5782040Z ........................................................................ [  7%]
+2026-10-09T17:08:02.2295264Z ..................................................ss.................... [  8%]
+2026-10-09T17:08:06.7899860Z ................s....................................................... [  9%]
+2026-10-09T17:08:07.1914061Z ........................................................................ [  9%]
+2026-10-09T17:08:11.9110027Z ........................................................................ [ 10%]
+2026-10-09T17:08:14.4605288Z ........................................................................ [ 11%]
+2026-10-09T17:08:15.5635964Z ........................................................................ [ 11%]
+2026-10-09T17:08:15.6588324Z ........................................................................ [ 12%]
+2026-10-09T17:08:18.6828747Z ..........................s........ss.s................................. [ 13%]
+2026-10-09T17:08:22.5349220Z .............................s.........sssssssss.s..s.s.s.s.s...sss..s.s [ 13%]
+2026-10-09T17:08:27.9299271Z .s.s...sss......ssssss.s.s.s.s.........s.s..s....ssss.s.s.s.s.s....ssss. [ 14%]
+2026-10-09T17:08:36.9846369Z s.s.s......ssssss.s.s.s...................ss......ssss.................. [ 15%]
+2026-10-09T17:08:46.1129382Z ........................................................................ [ 15%]
+2026-10-09T17:08:47.4204168Z ........................................................................ [ 16%]
+2026-10-09T17:08:47.6989791Z ........................................................................ [ 17%]
+2026-10-09T17:08:48.4414674Z ........................................................................ [ 18%]
+2026-10-09T17:08:51.7886405Z ........................................................................ [ 18%]
+2026-10-09T17:08:59.6180119Z ........................................................................ [ 19%]
+2026-10-09T17:09:02.3027908Z ........................................................................ [ 20%]
+2026-10-09T17:09:02.7003576Z ........................................................................ [ 20%]
+2026-10-09T17:09:12.5341040Z ........................................................................ [ 21%]
+2026-10-09T17:09:15.3006916Z ........................................................................ [ 22%]
+2026-10-09T17:09:20.7430442Z ..ss..ss....ssss......ssssss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss [ 22%]
+2026-10-09T17:09:24.4380318Z ..ss..ss..ss....ssss.s.s.s.s.s..ss....ssss.s..ss..ss..ss......ssssss..ss [ 23%]
+2026-10-09T17:09:34.7917782Z ..ss..ss.s.s.s..s.s.s.s.s.s..s..s.s.s...ss.s..ss.s.s..ss...sss.s.......s [ 24%]
+2026-10-09T17:09:48.4222018Z ssssss....ssss.s.s.s.s.s.s..ss..ss........ss..ss..ss..ss..ss..ss..ss..ss [ 24%]
+2026-10-09T17:09:56.7520519Z ..s.s.s.s.s.......sssssss.s.s.s.s.s.s..ss.s.s.s....ssss.s.s.s.s..ss..ss. [ 25%]
+2026-10-09T17:10:05.9240910Z .ss..ss..ss.s.s.s.s.s.s.s.s.s.s..ss..ss..ss..ss...ss.........ss......sss [ 26%]
+2026-10-09T17:10:14.8957874Z sss..ss..ss..ss..ss..ss..ss....ssss..ss..ss.........ssssssss..ss.s.s.s.s [ 27%]
+2026-10-09T17:10:20.9088823Z .s..................s.s.s.s.....sssss.s.s.s........s.s.s.s.s.s.s.s.s.s.s [ 27%]
+2026-10-09T17:10:23.1030865Z .s....ssss..........ssssssssss.s.s.......s..s.s......ssssss.s.s.s..ss..s [ 28%]
+2026-10-09T17:10:27.8398997Z s..ss..ss..ss..ss..ss..ss..ss..ss..ss....ssss...............s....ssss..s [ 29%]
+2026-10-09T17:10:29.6837850Z s..ss....ssss....ssss..ss....ssss..ss..ss..ss..ss....ssss............... [ 29%]
+2026-10-09T17:10:29.8062917Z ........................................................................ [ 30%]
+2026-10-09T17:10:31.1906124Z ........s............................................................... [ 31%]
+2026-10-09T17:10:35.2596927Z ............................ssssssss.................................... [ 31%]
+2026-10-09T17:10:36.6675137Z ...........................ss........................................... [ 32%]
+2026-10-09T17:10:37.8568108Z ........................................................................ [ 33%]
+2026-10-09T17:10:40.5911603Z ........................................................................ [ 33%]
+2026-10-09T17:10:40.8904852Z ................................sss..................................... [ 34%]
+2026-10-09T17:10:43.9810495Z .........................s.s.s.s.s..s.s.s.s.s.s.s.s.s.s....ssss.s.s.s.s. [ 35%]
+2026-10-09T17:10:48.4528667Z .s.s.....s.s.s.s.s.s.s.s.s.s.s.s.s.s.s...sss.s.s.s.s.s..........s.s.s.s. [ 36%]
+2026-10-09T17:10:53.0441652Z s.s.s.s.s..s..ss..ss..ss..ss..ss..ss..ss..ss..ss.s.s.s.s.s.s.s.s.s.s.... [ 36%]
+2026-10-09T17:10:55.6746388Z ..ssss.s.........sssssssss.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s [ 37%]
+2026-10-09T17:10:57.3817768Z .....................................................................ss. [ 38%]
+2026-10-09T17:11:00.8093931Z .ss..ss..ss..ss..ss..ss..ss...............ss..ss..ss..ss..ss..ss..ss..ss [ 38%]
+2026-10-09T17:11:33.3662697Z ..ss..ss..........ssssssss.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s..ss..ss..ss [ 39%]
+2026-10-09T17:12:09.4668571Z ..ss..ss..ss.......ss..ss..ss..ss.....s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s..s [ 40%]
+2026-10-09T17:12:11.7697984Z s..ss.s.s.....sssss.....sssss.s.s.s.........sssssssss.s...sss.s.s.s.s.s. [ 40%]
+2026-10-09T17:12:15.6712742Z s....ssss..s.s.s.s.s.s.s.s.s.s..ss..ss..ss......ssssss..ss..ss..ss..ss.. [ 41%]
+2026-10-09T17:12:21.6185421Z ss..ss..ss..ss..ss....ssss..ss..ss..ss..ss..ss..ss................ssssss [ 42%]
+2026-10-09T17:12:28.3161004Z ssssssssss..ss..ss..ss..ss..ss..ss..ss..ss....ssss..ss.s.s.s.s.s.s.s.s.s [ 43%]
+2026-10-09T17:12:40.3714868Z .s...ss..ss..ss.........ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss.. [ 43%]
+2026-10-09T17:12:43.9625497Z ......................s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s..ss..s [ 44%]
+2026-10-09T17:12:53.7087603Z s..ss..ss..ss..ss..ss..ss...........s.s.s.s.s.s.s............s.s.s.s.s.s [ 45%]
+2026-10-09T17:13:06.0374115Z .s.s.s.s.s.s.s.s.s.s.s.s.s..ss..ss..ss..ss......ssssss..ss..ss..ss..ss.. [ 45%]
+2026-10-09T17:13:20.2536816Z ss.s.s.s.s..ss.s.s.s.s..ss.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s [ 46%]
+2026-10-09T17:13:31.3352935Z .s..ss..ss..ss..ss..ss..ss.s.s.s.s.s.s.s.s.s.s.s.s..s.s.s.s.s.s...s.s.s. [ 47%]
+2026-10-09T17:13:47.8995382Z s.s.s.s.s.s.s.s..ss.....................................s.s.s..ss.s.s.s. [ 47%]
+2026-10-09T17:13:51.5393722Z s.s.s.s.s.s.s..ss..ss..ss....ssss......ssssss.s.s....ssss.s......s.s.s.s [ 48%]
+2026-10-09T17:13:56.3165513Z .s.s.s.s.s.s.s.s.s.s.s.s.s.s.s..ss..ss..ss.s....ssss....ssss....ssss.s.s [ 49%]
+2026-10-09T17:13:59.2569281Z .s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s..ss..ss..ss..ss..ss.s.s.s.s........ [ 49%]
+2026-10-09T17:14:35.1385409Z ssssssss.s....ssss.s.s.s.s.s.s..ss..ss..................ssssssssssssssss [ 50%]
+2026-10-09T17:15:26.1939367Z ##[error]The operation was canceled.
+2026-10-09T17:15:26.1983027Z ##[group]Run python .github/ci/receipt.py "$CI_RECEIPTS"
+2026-10-09T17:15:26.1983356Z [36;1mpython .github/ci/receipt.py "$CI_RECEIPTS"[0m
+2026-10-09T17:15:26.2044453Z shell: /usr/bin/bash -e {0}
+2026-10-09T17:15:26.2044767Z env:
+2026-10-09T17:15:26.2045023Z   MOCK_PROVIDER: true
+2026-10-09T17:15:26.2045311Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T17:15:26.2045603Z   ENABLE_CLOUD: false
+2026-10-09T17:15:26.2045894Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T17:15:26.2046266Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T17:15:26.2046659Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T17:15:26.2046973Z   HF_HUB_OFFLINE: 1
+2026-10-09T17:15:26.2047238Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T17:15:26.2047608Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:15:26.2048173Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T17:15:26.2048724Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:15:26.2049255Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:15:26.2049915Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:15:26.2050400Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T17:15:26.2050860Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T17:15:26.2051268Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T17:15:26.2051664Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS
+2026-10-09T17:15:26.2052342Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T17:15:26.2053068Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/receipts
+2026-10-09T17:15:26.2053897Z   HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T17:15:26.2054853Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T17:15:26.2055829Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/appdata
+2026-10-09T17:15:26.2056804Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/localappdata
+2026-10-09T17:15:26.2057565Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/config
+2026-10-09T17:15:26.2058214Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/cache
+2026-10-09T17:15:26.2058790Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data
+2026-10-09T17:15:26.2059491Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/state
+2026-10-09T17:15:26.2060316Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:15:26.2060821Z   TMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:15:26.2061525Z   TEMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:15:26.2061991Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T17:15:26.2062502Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T17:15:26.2063092Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/backups
+2026-10-09T17:15:26.2063719Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/database-backups
+2026-10-09T17:15:26.2064365Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T17:15:26.2065073Z   CI_V2_RUNTIME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend
+2026-10-09T17:15:26.2065625Z   R2_TEST_FONT_FILE: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/fonts/NotoSansSC-Regular.ttf
+2026-10-09T17:15:26.2066001Z ##[endgroup]
+2026-10-09T17:15:26.2586887Z {
+2026-10-09T17:15:26.2588526Z   "revision": "checked_out_sha=ec342fe9b69ba45d850d971ce2e15d1b12046096\nevent_sha=ec342fe9b69ba45d850d971ce2e15d1b12046096\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37962541363\njob=backend-file-shard-0\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+2026-10-09T17:15:26.2590307Z   "test_reports": {
+2026-10-09T17:15:26.2590586Z     "coverage-harness.xml": {
+2026-10-09T17:15:26.2590888Z       "tests": 174,
+2026-10-09T17:15:26.2591212Z       "failures": 0,
+2026-10-09T17:15:26.2591470Z       "errors": 0,
+2026-10-09T17:15:26.2591784Z       "skipped": 0
+2026-10-09T17:15:26.2592037Z     }
+2026-10-09T17:15:26.2592303Z   },
+2026-10-09T17:15:26.2592579Z   "report_status": "RECORDED",
+2026-10-09T17:15:26.2593051Z   "native_windows_host_appcontainer_installer": "NOT RUN",
+2026-10-09T17:15:26.2593582Z   "real_model_and_paid_provider_execution": "NOT RUN"
+2026-10-09T17:15:26.2594013Z }
+2026-10-09T17:15:26.2594145Z 
+2026-10-09T17:15:26.2691765Z ##[group]Run actions/upload-artifact@v4.6.2
+2026-10-09T17:15:26.2692000Z with:
+2026-10-09T17:15:26.2692294Z   name: backend-file-shard-0-ec342fe9b69ba45d850d971ce2e15d1b12046096-attempt-1
+2026-10-09T17:15:26.2692733Z   path: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/receipts
+2026-10-09T17:15:26.2693046Z   if-no-files-found: error
+2026-10-09T17:15:26.2693233Z   retention-days: 14
+2026-10-09T17:15:26.2693407Z   compression-level: 6
+2026-10-09T17:15:26.2693587Z   overwrite: false
+2026-10-09T17:15:26.2693760Z   include-hidden-files: false
+2026-10-09T17:15:26.2693945Z env:
+2026-10-09T17:15:26.2694093Z   MOCK_PROVIDER: true
+2026-10-09T17:15:26.2694268Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T17:15:26.2694444Z   ENABLE_CLOUD: false
+2026-10-09T17:15:26.2694633Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T17:15:26.2694858Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T17:15:26.2695093Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T17:15:26.2695315Z   HF_HUB_OFFLINE: 1
+2026-10-09T17:15:26.2695485Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T17:15:26.2695713Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:15:26.2696044Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T17:15:26.2696361Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:15:26.2696657Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:15:26.2696944Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T17:15:26.2697236Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T17:15:26.2697535Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T17:15:26.2697825Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T17:15:26.2698324Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS
+2026-10-09T17:15:26.2698727Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T17:15:26.2699148Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/receipts
+2026-10-09T17:15:26.2699798Z   HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T17:15:26.2700355Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/home
+2026-10-09T17:15:26.2700926Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/appdata
+2026-10-09T17:15:26.2701510Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/localappdata
+2026-10-09T17:15:26.2702097Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/config
+2026-10-09T17:15:26.2702689Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/cache
+2026-10-09T17:15:26.2703257Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data
+2026-10-09T17:15:26.2703842Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/state
+2026-10-09T17:15:26.2704392Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:15:26.2704904Z   TMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:15:26.2705405Z   TEMP: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/tmp
+2026-10-09T17:15:26.2705874Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project
+2026-10-09T17:15:26.2706396Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T17:15:26.2706990Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/backups
+2026-10-09T17:15:26.2707762Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/database-backups
+2026-10-09T17:15:26.2708429Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend/data/novels
+2026-10-09T17:15:26.2709012Z   CI_V2_RUNTIME: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/project/.runtime/ci-backend
+2026-10-09T17:15:26.2709555Z   R2_TEST_FONT_FILE: /home/runner/work/_temp/novel-ci-backend-file-shard-0.Kwj4iS/fonts/NotoSansSC-Regular.ttf
+2026-10-09T17:15:26.2710097Z ##[endgroup]
+2026-10-09T17:15:26.4303600Z (node:24533) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T17:15:26.4304186Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T17:15:26.4352119Z With the provided path, there will be 10 files uploaded
+2026-10-09T17:15:26.4356138Z Artifact name is valid!
+2026-10-09T17:15:26.4357398Z Root directory input is valid!
+2026-10-09T17:15:26.7663360Z Beginning upload of artifact content to blob storage
+2026-10-09T17:15:26.9448603Z (node:24533) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-09T17:15:27.3399085Z Uploaded bytes 431007
+2026-10-09T17:15:27.3992073Z Finished uploading artifact content to blob storage!
+2026-10-09T17:15:27.3992876Z SHA256 digest of uploaded artifact zip is 300bf84d513d97df1e2d0bb39c7e94a1eb9562a305fc7870ea717e66e355cbf9
+2026-10-09T17:15:27.3993451Z Finalizing artifact upload
+2026-10-09T17:15:27.6813185Z Artifact backend-file-shard-0-ec342fe9b69ba45d850d971ce2e15d1b12046096-attempt-1.zip successfully finalized. Artifact ID 11632099760
+2026-10-09T17:15:27.6814970Z Artifact backend-file-shard-0-ec342fe9b69ba45d850d971ce2e15d1b12046096-attempt-1 has been successfully uploaded! Final size is 431007 bytes. Artifact ID is 11632099760
+2026-10-09T17:15:27.6816182Z Artifact download URL: https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37962541363/artifacts/11632099760
+2026-10-09T17:15:27.7015101Z Post job cleanup.
+2026-10-09T17:15:27.7740251Z [command]/usr/bin/git version
+2026-10-09T17:15:27.7778532Z git version 2.55.0
+2026-10-09T17:15:27.7810647Z Temporarily overriding HOME='/home/runner/work/_temp/3df33ad0-9961-403f-8c0e-0d02f5127a88' before making global git config changes
+2026-10-09T17:15:27.7811972Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T17:15:27.7815417Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AI-Novel-Studio/AI-Novel-Studio
+2026-10-09T17:15:27.7870509Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T17:15:27.7896625Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T17:15:27.8158772Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T17:15:27.8193722Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T17:15:27.8641909Z Cleaning up orphan processes
+2026-10-09T17:15:27.8874977Z Terminate orphan process: pid (3682) (python)
+2026-10-09T17:15:27.8899204Z Terminate orphan process: pid (3683) (tee)
+2026-10-09T17:15:27.8930013Z Terminate orphan process: pid (6745) (python)
+2026-10-09T17:15:27.8951296Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4.2.2, actions/setup-python@v5.6.0, actions/upload-artifact@v4.6.2. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

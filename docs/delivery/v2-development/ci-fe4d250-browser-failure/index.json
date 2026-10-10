@@ -1,0 +1,109 @@
+{
+  "source_branch_sha": "fe4d2505ade9a161689313dea50555408ba4b511",
+  "pr_merge_sha": "57503d7e354224398124211f8656fbbd0bb1ba40",
+  "pr_run_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37896402142",
+  "push_run_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37896395116",
+  "pr_frontend_job": 113708635918,
+  "push_frontend_job": 113708614316,
+  "downloaded_pr_compact_artifact": 11601313226,
+  "downloaded_zip_sha256": "34ff2268548e00dede2ae46aa1031b9f5370407df4ce6b6cf481ebe007ec3dbf",
+  "archive_sha256": "c72b9ee3efb5f71879f069d92d65d20b0a75cb11f1a74deedae267c2acf15269",
+  "files": {
+    "job-logs/frontend-pr-113708635918.log": {
+      "bytes": 309108,
+      "sha256": "aa9e1f3c3ab82d9914ed2341b0447d083dedf49d37fd2dd98aa2cf5594b91a41"
+    },
+    "job-logs/frontend-push-113708614316.log": {
+      "bytes": 310796,
+      "sha256": "94997efd7143cb0d04e544f754b3e6aa9c8ed194626d5fe6a6c5095067fb65bb"
+    },
+    "receipts/r4-ux-browser.log": {
+      "bytes": 9523,
+      "sha256": "25b5dbc8a2f1bade95e65988eb6657114759960e384a56f8a038eaa88a81ad9e"
+    },
+    "receipts/revision.txt": {
+      "bytes": 272,
+      "sha256": "f41e2bec280e0215d5070cfb0b2fa1c71c709dd8c42f7a2c1c33e73bf20c360a"
+    },
+    "receipts/summary.json": {
+      "bytes": 1017,
+      "sha256": "a73911c2035805467b28a9f3585690461af04176b3d39439bbc69502d99bc3bf"
+    },
+    "receipts/v2-creative-live/default-off-backend.log": {
+      "bytes": 1585,
+      "sha256": "3f20f9fb8986671ccb3c21fb2534ae2819009654bf5bc478dababc88c38ba1e1"
+    },
+    "receipts/v2-creative-live/default-off-vite.log": {
+      "bytes": 159,
+      "sha256": "a4a374438516dccd86b55b1ea0837ba3102dcb1ea650985d3978eeb2bc225878"
+    },
+    "receipts/v2-creative-live/enabled-backend.log": {
+      "bytes": 20163,
+      "sha256": "a73ee3cec248ea019257aa969298b154ffc466ecdc280c09b98b3888c05a5a6b"
+    },
+    "receipts/v2-creative-live/enabled-vite.log": {
+      "bytes": 159,
+      "sha256": "d2bf9c2d3fc99160d8116d305c95d410a33e8981f0a863c7983195469ac01405"
+    },
+    "receipts/v2-creative-live/junit.xml": {
+      "bytes": 14429,
+      "sha256": "c5252520a81b3eb840fe7f7fe31ae91268be20cbf50e03a3ef10e202627bea19"
+    },
+    "receipts/v2-creative-live/results.json": {
+      "bytes": 38114,
+      "sha256": "8fb9c4e53f715fec271dc159b2b7dff856f05dadd32d5678339de0f0396747d6"
+    },
+    "receipts/v2-creative-live/test-results/v2-creative-live-real-File-55744-and-rejects-foreign-sources-v2-live-chromium/error-context.md": {
+      "bytes": 22084,
+      "sha256": "84d8cbfce56a4a9e2bd44be582af45bb9c44f4b482a0d871f1e4b861f096c6f2"
+    },
+    "receipts/v2-creative-live/test-results/v2-creative-live-real-File-55744-and-rejects-foreign-sources-v2-live-chromium/test-failed-1.png": {
+      "bytes": 151906,
+      "sha256": "6cdffaf550edcf24ee79bfebc78efaa1acb4ce8607d2447838bc9a14ea7a18d5"
+    },
+    "receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/error-context.md": {
+      "bytes": 24321,
+      "sha256": "ceffaffefc728e4e3b981b19ff98eaa41a36964e476e14e866436d8510465ea9"
+    },
+    "receipts/v2-creative-live/test-results/v2-creative-live-real-File-81609-ore-preserve-the-manuscript-v2-live-chromium/test-failed-1.png": {
+      "bytes": 152044,
+      "sha256": "a54bafd94c15e51167f24ceaa014418627dbc1610ecc76605f49b8ba6cb7e62e"
+    },
+    "receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/error-context.md": {
+      "bytes": 21809,
+      "sha256": "a9247b0ccb3060e78a5ebd7b9e37947089f3af330f4af1065130b17fd0822377"
+    },
+    "receipts/v2-creative-live/test-results/v2-creative-live-real-File-946d5-pted-or-cancelled-proposals-v2-live-chromium/test-failed-1.png": {
+      "bytes": 151906,
+      "sha256": "6cdffaf550edcf24ee79bfebc78efaa1acb4ce8607d2447838bc9a14ea7a18d5"
+    },
+    "receipts/v2-creative-live.log": {
+      "bytes": 12436,
+      "sha256": "cfd1c8e53a3e18d3bad021768748c25afa67a67d76f5ed009b073a42e9ca62cd"
+    },
+    "receipts/v2-creative-workbench.log": {
+      "bytes": 17262,
+      "sha256": "0d47ac929710a0c1603f5847020342eac6ad627b4bcfee46c3f967cba65e350b"
+    },
+    "receipts/v2-creative-workbench.xml": {
+      "bytes": 18841,
+      "sha256": "4ed689f7e6677d455aa315de8bbaa107f6f398ee0714567595452651299e3a20"
+    }
+  },
+  "status": "FAILED_PRESERVED",
+  "v2_live": {
+    "passed": 4,
+    "failed": 3
+  },
+  "v2_mocked_workbench": {
+    "passed": 1,
+    "failed": 4
+  },
+  "legacy_frontend_outer_timeout_minutes": 25,
+  "legacy_frontend_later_suites": "NOT_REACHED: export recovery, functional surface, branch manuscript. R4 was interrupted by the job cap.",
+  "confirmed_causes": [
+    "V2 entry at the bottom of the chapter sidebar was occluded by the existing FeatureLauncher toggle. Normal click timed out.",
+    "Live tests shared a server without project teardown; later tests met an auto-selected existing project instead of the empty-library creation form."
+  ],
+  "native_double_click_conclusion": "NOT_EXERCISED: failures occurred before those interactions. No speculative double-click fix or weakened gesture assertions."
+}

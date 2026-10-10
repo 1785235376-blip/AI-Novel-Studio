@@ -1,0 +1,33 @@
+{
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "head_sha": "1d1b9756cedf9daf04dc1123f043e8d555b164c1",
+  "head_tree": "aca2a09f096b461e99a9636a2761e6df9eacc596",
+  "checkout_sha": "5fbe1dccd8f06d44fa8a79cc80288466e6cdd627",
+  "checkout_tree_matches_head": true,
+  "run_id": 37363904465,
+  "original_job_id": 111944532731,
+  "artifact_id": 11367854059,
+  "artifact_zip_sha256": "54b482940fdea930831971cc76bdd6a32369e04809b4eee3c9e05a29ddea45ea",
+  "tests": 4453,
+  "passed": 3411,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 1042,
+  "explicit_postgres_parameter_cases": 1009,
+  "explicit_postgres_parameter_failures_or_skips": 0,
+  "marked_postgres_skip_gate": "PASSED; unchanged postgres_gate plugin rejects any skipped marked contract",
+  "skip_reasons": {
+    "File-backend implementation contract; covered by the default/File full suite": 1033,
+    "manual Windows Credential Manager integration only": 1,
+    "Migration 004 is intentionally absent in Phase 1": 1,
+    "real Windows native acceptance": 1,
+    "explicit real-loopback subprocess gate; not an in-process substitute": 1,
+    "Windows named mutex contract": 1,
+    "Windows exclusive loopback port reservation is not executed on this platform. Missing socket.SO_EXCLUSIVEADDRUSE AttributeError on Linux is an implementation accident, not a documented unsupported-platform contract.": 1,
+    "Windows Job Object contract": 2,
+    "Windows process identity contract": 1
+  },
+  "platform": "Linux hosted real PostgreSQL 16 service",
+  "real_models": "NOT_RUN",
+  "interactive_windows": "NOT_RUN"
+}

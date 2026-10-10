@@ -1,0 +1,42 @@
+{
+  "configured_original_outer_postgres_job_minutes": 30,
+  "successor_outer_postgres_job_minutes": 45,
+  "expected_marked_postgres_before": 1344,
+  "expected_marked_postgres_now": 1982,
+  "new_marked_postgres": 638,
+  "unchanged": [
+    "per-test timeouts",
+    "all original/new test assertions",
+    "all test commands and full suite collection",
+    "strict postgres_gate no-skips enforcement",
+    "other job timeouts",
+    "runtime/frontend/tests/dependencies"
+  ],
+  "source_code_and_test_tree": "identical to94e74; only CI outer cap and evidence documentation changed",
+  "classification": "Both jobs were cancelled at their finite30-minute job boundary while tests still progressed. GitHub conclusion remains cancelled; no completed PostgreSQL test result is asserted.",
+  "runs": [
+    {
+      "run_id": 37404939835,
+      "run_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37404939835",
+      "event": "push",
+      "source_sha": "94e74f79d6eb3bff23d86682774fc19bd1d05144",
+      "conclusion": "cancelled",
+      "elapsed_seconds": 1821.0,
+      "last_observed_progress_percent": 94,
+      "completed_pytest_summary": false,
+      "official_receipt_report_status": "NOT RUN / NO TEST REPORT"
+    },
+    {
+      "run_id": 37404944099,
+      "run_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37404944099",
+      "event": "pull_request",
+      "source_sha": "94e74f79d6eb3bff23d86682774fc19bd1d05144",
+      "conclusion": "cancelled",
+      "elapsed_seconds": 1819.0,
+      "last_observed_progress_percent": 87,
+      "completed_pytest_summary": false,
+      "official_receipt_report_status": "NOT RUN / NO TEST REPORT"
+    }
+  ],
+  "raw_hosted_logs": "Retained privately; not uploaded to the public repository."
+}

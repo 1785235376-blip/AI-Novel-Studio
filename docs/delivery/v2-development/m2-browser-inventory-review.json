@@ -1,0 +1,23 @@
+{
+  "utc": "2026-10-09T14:00:44.842945+00:00",
+  "status": "INVENTORY_ONLY",
+  "browser_launched": false,
+  "original_live": 7,
+  "m1_moved_media": 5,
+  "m2_added_graph": 3,
+  "independent_total": 8,
+  "all_prior_12_preserved": true,
+  "no_duplicate_between_jobs": true,
+  "original_order_preserved": true,
+  "files": {
+    "docs/delivery/v2-development/m2-browser-inventory-original.txt": "1c719e856152246229e97aed90af018d94128850c09cec81eac30cea189485dd",
+    "docs/delivery/v2-development/m2-browser-inventory-independent.txt": "d92ef16d6dcef6f97aa46218e122c7d987fe4b839c51e4c5dd084b8929dd21b4",
+    "frontend/playwright.v2-live.config.ts": "dbbf62ee540feed65c69e7cd1a16d732220c240b0b016b868de24e91bfc14a36",
+    "frontend/playwright.independent-live.config.ts": "eb5249548c7f507519853a13825c98166cb59e6253197efad5088339b1b71278"
+  },
+  "new_cases": [
+    "[v2-live-chromium] \u203a v2-independent-graph-live.spec.ts \u203a real independent typed graph saves empty and disconnected drafts, reopens, and reviews an original local workflow without model calls",
+    "[v1-chromium] \u203a v2-independent-graph-live.spec.ts \u203a default-off: independent graph remains unavailable without its server gate",
+    "[v1-acceptance-chromium] \u203a v2-independent-graph-live.spec.ts \u203a acceptance-mode: independent graph remains unavailable without its server gate"
+  ]
+}

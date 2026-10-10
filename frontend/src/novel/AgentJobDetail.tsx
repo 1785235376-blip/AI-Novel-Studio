@@ -1,9 +1,11 @@
 import {useQuery} from '@tanstack/react-query';
 import {api} from '../api';
 import {Badge,EmptyState,Panel} from '../ui/primitives';
+import {useLocalHostSession} from '../localHostSession';
 
 export function AgentJobDetail({jobId}:{jobId?:string}){
-  const query=useQuery({queryKey:['agent-job-detail',jobId],queryFn:()=>api.agentJob(jobId!),enabled:!!jobId,retry:false});
+  const localHostEpoch=useLocalHostSession(value=>value.epoch);
+  const query=useQuery({queryKey:['agent-job-detail',localHostEpoch,jobId],queryFn:()=>api.agentJob(jobId!),enabled:!!jobId,retry:false});
   if(!jobId)return <EmptyState title="未选择任务" detail="从历史列表选择一个 Agent Job。"/>;
   if(query.isLoading)return <Panel title="任务详情"><p role="status">正在加载任务详情…</p></Panel>;
   if(query.error)return <Panel title="任务详情"><p className="novel-error" role="alert">无法加载任务详情</p></Panel>;

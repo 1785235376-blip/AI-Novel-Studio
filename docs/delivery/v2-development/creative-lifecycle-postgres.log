@@ -1,0 +1,353 @@
+s.EsFEs.sFEsFEsss...s.s.s.s.s.s.s.sssssss.......s.s.s.s.s.s.sss...s..ss. [ 35%]
+.sss...sssss.....s.s.s.s.s.s.s.s.s.ss..ssssssssssssss..............ss..s [ 74%]
+s..ss..ss..ss..ss..ss..ss..ss..s.s.s.ssssss......                        [100%]
+==================================== ERRORS ====================================
+_ ERROR at teardown of test_same_title_recreate_preserves_history_but_never_revives_it[postgres] _
+
+request = <SubRequest 'rig' for <Function test_same_title_recreate_preserves_history_but_never_revives_it[postgres]>>
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-checks/creative-lifecycle-postgres/pytest/test_same_title_recreate_prese0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+        assert tmp_path.resolve().is_relative_to(root / ".runtime")
+        backend = request.param
+        url = TEST_URL if backend == "postgres" else ""
+        bundle = create_repository_bundle(Settings(storage_backend=backend, database_url=url, novel_data=tmp_path), data_root=tmp_path)
+        novels, chapters = NovelService(bundle.novels, bundle.chapters), ChapterService(bundle.chapters)
+        nid = novels.create({"id": "v2-foundation-" + uuid4().hex, "title": "Synthetic source"})["id"]
+        chapter = chapters.create(nid, {"title": "One", "content": "A visitor remembers the ruined city."})
+        store = ExperimentalStore(tmp_path, backend, url)
+        yield SimpleNamespace(nid=nid, scope={"mode": "local", "novel_id": nid}, actor="local-author",
+                               novels=novels, chapters=chapters, chapter=chapters.get(chapter["id"]),
+                               store=store, service=CreativeService(store, novels, chapters), root=tmp_path,
+                               backend=backend, url=url)
+        if backend == "postgres":
+            try:
+                with store._connect() as connection:
+                    connection.execute("DELETE FROM experimental_scope_documents WHERE novel_id = %s", (nid,))
+>               novels.delete(nid)
+
+tests/test_v2_creative_foundation.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/services/novel_service.py:46: in delete
+    def delete(self,nid):return self.novels.delete(nid)
+                                ^^^^^^^^^^^^^^^^^^^^^^^
+app/runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/postgres/novel.py:107: in delete
+    model = novel_or_raise(session, novel_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+session = <sqlalchemy.orm.session.Session object at 0x7f974cc1fad0>
+slug = 'v2-foundation-5f095b4bdb7c4ca2918c052593fcaceb', for_update = False
+
+    def novel_or_raise(session, slug: str, for_update: bool = False) -> NovelModel:
+        statement = select(NovelModel).where(NovelModel.slug == slug)
+        model = session.scalar(statement.with_for_update() if for_update else statement)
+        if model is None:
+>           raise FileNotFoundError(slug)
+E           FileNotFoundError: v2-foundation-5f095b4bdb7c4ca2918c052593fcaceb
+
+app/repositories/postgres/common.py:29: FileNotFoundError
+_ ERROR at teardown of test_recreation_is_project_and_branch_bounded_with_unrelated_data_intact[postgres] _
+
+request = <SubRequest 'rig' for <Function test_recreation_is_project_and_branch_bounded_with_unrelated_data_intact[postgres]>>
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-checks/creative-lifecycle-postgres/pytest/test_recreation_is_project_and0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+        assert tmp_path.resolve().is_relative_to(root / ".runtime")
+        backend = request.param
+        url = TEST_URL if backend == "postgres" else ""
+        bundle = create_repository_bundle(Settings(storage_backend=backend, database_url=url, novel_data=tmp_path), data_root=tmp_path)
+        novels, chapters = NovelService(bundle.novels, bundle.chapters), ChapterService(bundle.chapters)
+        nid = novels.create({"id": "v2-foundation-" + uuid4().hex, "title": "Synthetic source"})["id"]
+        chapter = chapters.create(nid, {"title": "One", "content": "A visitor remembers the ruined city."})
+        store = ExperimentalStore(tmp_path, backend, url)
+        yield SimpleNamespace(nid=nid, scope={"mode": "local", "novel_id": nid}, actor="local-author",
+                               novels=novels, chapters=chapters, chapter=chapters.get(chapter["id"]),
+                               store=store, service=CreativeService(store, novels, chapters), root=tmp_path,
+                               backend=backend, url=url)
+        if backend == "postgres":
+            try:
+                with store._connect() as connection:
+                    connection.execute("DELETE FROM experimental_scope_documents WHERE novel_id = %s", (nid,))
+>               novels.delete(nid)
+
+tests/test_v2_creative_foundation.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/services/novel_service.py:46: in delete
+    def delete(self,nid):return self.novels.delete(nid)
+                                ^^^^^^^^^^^^^^^^^^^^^^^
+app/runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/postgres/novel.py:107: in delete
+    model = novel_or_raise(session, novel_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+session = <sqlalchemy.orm.session.Session object at 0x7f974cc1fad0>
+slug = 'v2-foundation-36505d3cf6ab49628974c824502abecf', for_update = False
+
+    def novel_or_raise(session, slug: str, for_update: bool = False) -> NovelModel:
+        statement = select(NovelModel).where(NovelModel.slug == slug)
+        model = session.scalar(statement.with_for_update() if for_update else statement)
+        if model is None:
+>           raise FileNotFoundError(slug)
+E           FileNotFoundError: v2-foundation-36505d3cf6ab49628974c824502abecf
+
+app/repositories/postgres/common.py:29: FileNotFoundError
+_ ERROR at teardown of test_delete_waits_for_inflight_commit_then_recreated_owner_is_empty[postgres] _
+
+request = <SubRequest 'rig' for <Function test_delete_waits_for_inflight_commit_then_recreated_owner_is_empty[postgres]>>
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-checks/creative-lifecycle-postgres/pytest/test_delete_waits_for_inflight0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+        assert tmp_path.resolve().is_relative_to(root / ".runtime")
+        backend = request.param
+        url = TEST_URL if backend == "postgres" else ""
+        bundle = create_repository_bundle(Settings(storage_backend=backend, database_url=url, novel_data=tmp_path), data_root=tmp_path)
+        novels, chapters = NovelService(bundle.novels, bundle.chapters), ChapterService(bundle.chapters)
+        nid = novels.create({"id": "v2-foundation-" + uuid4().hex, "title": "Synthetic source"})["id"]
+        chapter = chapters.create(nid, {"title": "One", "content": "A visitor remembers the ruined city."})
+        store = ExperimentalStore(tmp_path, backend, url)
+        yield SimpleNamespace(nid=nid, scope={"mode": "local", "novel_id": nid}, actor="local-author",
+                               novels=novels, chapters=chapters, chapter=chapters.get(chapter["id"]),
+                               store=store, service=CreativeService(store, novels, chapters), root=tmp_path,
+                               backend=backend, url=url)
+        if backend == "postgres":
+            try:
+                with store._connect() as connection:
+                    connection.execute("DELETE FROM experimental_scope_documents WHERE novel_id = %s", (nid,))
+>               novels.delete(nid)
+
+tests/test_v2_creative_foundation.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/services/novel_service.py:46: in delete
+    def delete(self,nid):return self.novels.delete(nid)
+                                ^^^^^^^^^^^^^^^^^^^^^^^
+app/runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/postgres/novel.py:107: in delete
+    model = novel_or_raise(session, novel_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+session = <sqlalchemy.orm.session.Session object at 0x7f974c847890>
+slug = 'v2-foundation-ff1e8b8339364253adb1ac2ed9051220', for_update = False
+
+    def novel_or_raise(session, slug: str, for_update: bool = False) -> NovelModel:
+        statement = select(NovelModel).where(NovelModel.slug == slug)
+        model = session.scalar(statement.with_for_update() if for_update else statement)
+        if model is None:
+>           raise FileNotFoundError(slug)
+E           FileNotFoundError: v2-foundation-ff1e8b8339364253adb1ac2ed9051220
+
+app/repositories/postgres/common.py:29: FileNotFoundError
+_ ERROR at teardown of test_recreated_api_cannot_read_or_mutate_old_assets_or_bypass_authority[postgres] _
+
+request = <SubRequest 'rig' for <Function test_recreated_api_cannot_read_or_mutate_old_assets_or_bypass_authority[postgres]>>
+tmp_path = PosixPath('/workspace/scratch/b8734129d01d/AI-Novel-Studio/.runtime/v2-checks/creative-lifecycle-postgres/pytest/test_recreated_api_cannot_read0')
+
+    @pytest.fixture(params=[pytest.param("file", marks=pytest.mark.file_backend_only),
+                           pytest.param("postgres", marks=pytest.mark.postgres_backend_only)])
+    def rig(request, tmp_path):
+        from app.config import Settings
+        from app.creative.service import CreativeService
+        from app.experimental.store import ExperimentalStore
+        from app.repositories.factory import create_repository_bundle
+        from app.services import NovelService, ChapterService
+        root = Path(__file__).resolve().parents[1]
+        assert Path(os.environ["PROJECT_ROOT"]).resolve() == root
+        for key in ("LOCALAPPDATA", "NOVEL_DATA_PATH"):
+            assert Path(os.environ[key]).resolve().is_relative_to(root / ".runtime")
+        assert tmp_path.resolve().is_relative_to(root / ".runtime")
+        backend = request.param
+        url = TEST_URL if backend == "postgres" else ""
+        bundle = create_repository_bundle(Settings(storage_backend=backend, database_url=url, novel_data=tmp_path), data_root=tmp_path)
+        novels, chapters = NovelService(bundle.novels, bundle.chapters), ChapterService(bundle.chapters)
+        nid = novels.create({"id": "v2-foundation-" + uuid4().hex, "title": "Synthetic source"})["id"]
+        chapter = chapters.create(nid, {"title": "One", "content": "A visitor remembers the ruined city."})
+        store = ExperimentalStore(tmp_path, backend, url)
+        yield SimpleNamespace(nid=nid, scope={"mode": "local", "novel_id": nid}, actor="local-author",
+                               novels=novels, chapters=chapters, chapter=chapters.get(chapter["id"]),
+                               store=store, service=CreativeService(store, novels, chapters), root=tmp_path,
+                               backend=backend, url=url)
+        if backend == "postgres":
+            try:
+                with store._connect() as connection:
+                    connection.execute("DELETE FROM experimental_scope_documents WHERE novel_id = %s", (nid,))
+>               novels.delete(nid)
+
+tests/test_v2_creative_foundation.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+app/services/novel_service.py:46: in delete
+    def delete(self,nid):return self.novels.delete(nid)
+                                ^^^^^^^^^^^^^^^^^^^^^^^
+app/runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+app/repositories/postgres/novel.py:107: in delete
+    model = novel_or_raise(session, novel_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+session = <sqlalchemy.orm.session.Session object at 0x7f974c866780>
+slug = 'v2-foundation-78baf9c01e6d490981378a8db1b9b2ba', for_update = False
+
+    def novel_or_raise(session, slug: str, for_update: bool = False) -> NovelModel:
+        statement = select(NovelModel).where(NovelModel.slug == slug)
+        model = session.scalar(statement.with_for_update() if for_update else statement)
+        if model is None:
+>           raise FileNotFoundError(slug)
+E           FileNotFoundError: v2-foundation-78baf9c01e6d490981378a8db1b9b2ba
+
+app/repositories/postgres/common.py:29: FileNotFoundError
+=================================== FAILURES ===================================
+_ test_recreation_is_project_and_branch_bounded_with_unrelated_data_intact[postgres] _
+
+rig = namespace(nid='v2-foundation-36505d3cf6ab49628974c824502abecf', scope={'mode': 'local', 'novel_id': 'v2-foundation-365...t/test_recreation_is_project_and0'), backend='postgres', url='postgresql://postgres@127.0.0.1:55432/v2_creative_tests')
+
+    def test_recreation_is_project_and_branch_bounded_with_unrelated_data_intact(rig):
+>       recreate(rig)
+
+tests/test_v2_creative_project_lifecycle.py:86: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_creative_project_lifecycle.py:20: in recreate
+    novel = rig.novels.create({"title": TITLE})
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.repositories.postgres.novel.PostgresNovelRepository object at 0x7f974cb65280>
+payload = {'title': 'V2 identical title lifecycle'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+>               raise FileExistsError(novel_slug)
+E               FileExistsError: v2-identical-title-lifecycle
+
+app/repositories/postgres/novel.py:76: FileExistsError
+_ test_delete_waits_for_inflight_commit_then_recreated_owner_is_empty[postgres] _
+
+rig = namespace(nid='v2-foundation-ff1e8b8339364253adb1ac2ed9051220', scope={'mode': 'local', 'novel_id': 'v2-foundation-ff1...t/test_delete_waits_for_inflight0'), backend='postgres', url='postgresql://postgres@127.0.0.1:55432/v2_creative_tests')
+
+    def test_delete_waits_for_inflight_commit_then_recreated_owner_is_empty(rig):
+>       recreate(rig)
+
+tests/test_v2_creative_project_lifecycle.py:134: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_creative_project_lifecycle.py:20: in recreate
+    novel = rig.novels.create({"title": TITLE})
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.repositories.postgres.novel.PostgresNovelRepository object at 0x7f974c8474d0>
+payload = {'title': 'V2 identical title lifecycle'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+>               raise FileExistsError(novel_slug)
+E               FileExistsError: v2-identical-title-lifecycle
+
+app/repositories/postgres/novel.py:76: FileExistsError
+_ test_recreated_api_cannot_read_or_mutate_old_assets_or_bypass_authority[postgres] _
+
+rig = namespace(nid='v2-foundation-78baf9c01e6d490981378a8db1b9b2ba', scope={'mode': 'local', 'novel_id': 'v2-foundation-78b...t/test_recreated_api_cannot_read0'), backend='postgres', url='postgresql://postgres@127.0.0.1:55432/v2_creative_tests')
+client = <starlette.testclient.TestClient object at 0x7f974c83a000>
+
+    def test_recreated_api_cannot_read_or_mutate_old_assets_or_bypass_authority(rig, client):
+>       recreate(rig)
+
+tests/test_v2_creative_project_lifecycle.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_creative_project_lifecycle.py:20: in recreate
+    novel = rig.novels.create({"title": TITLE})
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/services/novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app/runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.repositories.postgres.novel.PostgresNovelRepository object at 0x7f974cb2a840>
+payload = {'title': 'V2 identical title lifecycle'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+>               raise FileExistsError(novel_slug)
+E               FileExistsError: v2-identical-title-lifecycle
+
+app/repositories/postgres/novel.py:76: FileExistsError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_creative_project_lifecycle.py::test_recreation_is_project_and_branch_bounded_with_unrelated_data_intact[postgres]
+FAILED tests/test_v2_creative_project_lifecycle.py::test_delete_waits_for_inflight_commit_then_recreated_owner_is_empty[postgres]
+FAILED tests/test_v2_creative_project_lifecycle.py::test_recreated_api_cannot_read_or_mutate_old_assets_or_bypass_authority[postgres]
+ERROR tests/test_v2_creative_project_lifecycle.py::test_same_title_recreate_preserves_history_but_never_revives_it[postgres]
+ERROR tests/test_v2_creative_project_lifecycle.py::test_recreation_is_project_and_branch_bounded_with_unrelated_data_intact[postgres]
+ERROR tests/test_v2_creative_project_lifecycle.py::test_delete_waits_for_inflight_commit_then_recreated_owner_is_empty[postgres]
+ERROR tests/test_v2_creative_project_lifecycle.py::test_recreated_api_cannot_read_or_mutate_old_assets_or_bypass_authority[postgres]
+3 failed, 92 passed, 94 skipped, 1 warning, 4 errors in 128.37s (0:02:08)

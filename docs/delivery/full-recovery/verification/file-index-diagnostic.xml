@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="2.178" timestamp="2026-10-07T17:40:53.487029+08:00" hostname="冢"><testcase classname="tests.test_asset_lifecycle_r2" name="test_approved_reference_index_is_persisted_lexical_with_provenance" time="1.579"><failure message="UnicodeDecodeError: 'gbk' codec can't decode byte 0x91 in position 1805: illegal multibyte sequence">tests\test_asset_lifecycle_r2.py:141: in test_approved_reference_index_is_persisted_lexical_with_provenance
+    assert json.loads(index_files[0].read_text())["postings"]["silver"][memory["id"]] &gt; 0
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1059: in read_text
+    return f.read()
+           ^^^^^^^^
+E   UnicodeDecodeError: 'gbk' codec can't decode byte 0x91 in position 1805: illegal multibyte sequence</failure></testcase><testcase classname="tests.test_asset_lifecycle_r2" name="test_index_cache_tampering_rebuilds_from_authority" time="0.056"><failure message="UnicodeDecodeError: 'gbk' codec can't decode byte 0x91 in position 1809: illegal multibyte sequence">tests\test_asset_lifecycle_r2.py:186: in test_index_cache_tampering_rebuilds_from_authority
+    cached = json.loads(path.read_text())
+                        ^^^^^^^^^^^^^^^^
+C:\Users\admin\AppData\Local\Programs\Python\Python311\Lib\pathlib.py:1059: in read_text
+    return f.read()
+           ^^^^^^^^
+E   UnicodeDecodeError: 'gbk' codec can't decode byte 0x91 in position 1809: illegal multibyte sequence</failure></testcase></testsuite></testsuites>

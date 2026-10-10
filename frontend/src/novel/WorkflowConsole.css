@@ -6,3 +6,6 @@
 .workflow-console>p .ui-button,.agent-queue-console__list>p .ui-button{margin-left:auto}
 .agent-queue-console__list>p .ui-button~.ui-button{margin-left:0}
 @media(max-width:720px){.workflow-console>p,.agent-queue-console__list>p{align-items:stretch;flex-direction:column}.workflow-console>p .ui-button,.agent-queue-console__list>p .ui-button{width:100%;margin-left:0}}
+
+.workflow-console__run{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-2);padding:var(--space-2) 0;border-top:var(--border-default)}
+.workflow-console__run details{flex-basis:100%;min-width:0}.workflow-console__run textarea{box-sizing:border-box;width:100%;font-family:var(--font-mono)}

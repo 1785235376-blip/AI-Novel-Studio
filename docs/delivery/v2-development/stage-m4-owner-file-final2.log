@@ -1,0 +1,82 @@
+..............................s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s. [  1%]
+s..........................ss..ss..ss..ss..ss..ss..ss..ss..ss........... [  3%]
+.............................................................sssssssssss [  5%]
+sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss........... [  7%]
+.............................................................sssssssssss [  9%]
+sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss........... [ 11%]
+.........................ssssssssssssssssssssssssssssssssssss........... [ 13%]
+.ssssssssssss............ssssssssssss............ssssssssssss........... [ 15%]
+.ssssssssssss..ss....................................................... [ 17%]
+..................ssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 18%]
+ssssssssssssssssss............ssssssssssss.............................. [ 20%]
+......ssssssssssssssssssssssssssssssssssss............ssssssssssss...... [ 22%]
+..........................................ssssssssssssssssssssssssssssss [ 24%]
+ssssssssssssssssss............ssssssssssss.............................. [ 26%]
+ssssssssssssssssssssssssssssss......ssssss..ss..ss..ss....ssss..ss..ss.. [ 28%]
+ss..ss..ss..ss............ssssssssssss.................................. [ 30%]
+................................ssssssssssssssssssssssssssssssssssssssss [ 32%]
+ssssssssssssssssssssssssss..................ssssssssssssssssss..ss...... [ 34%]
+..ssssssss....ssss............ssssssssssss......ssssss..ss..ss..ss..ss.. [ 36%]
+ss..........ssssssssss........ssssssss..ss.............................. [ 37%]
+sss.s.s.s.s.s.s.s.......sssssss.s.s.s.s.s.s...sss.s...ss.s.s.s.s.s.s.s.s [ 39%]
+.........sss.....sssss.s.s.s.s.s.s.s.s.s..ss..............ssssssssssssss [ 41%]
+..ss..ss..ss..ss..ss..ss..ss..ss..ss.s.s.s......ssssss.s...sss.s.s.s.s.s [ 43%]
+.......sssssss.........sssssssss.s.s.s.s.............sssssssssssss.....s [ 45%]
+ssss.s.s.s..ss.s.s.s.s.....sssss.s.s.s..ss.s.s.s.s.s.s.s.s.s.......sssss [ 47%]
+ss..ss....ssss..ss..ss..ss..ss....ssss..ss..ss..ss..ss........ssssssss.. [ 49%]
+.....sssssss...sss..ss.s.s..........ssssssssss..ss.s..ss...sss.s.s.s.... [ 51%]
+.....sssssssss.s.s.s.s..ss..ss..ss..ss.s...sss.s.s...sss.s..ss..ss...... [ 53%]
+.........s.s........ssssssss.s.s.s.s..........ssssssssss.s.s.s.s.s.s...s [ 55%]
+.s.s..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss [ 56%]
+..ss..........ss..ss.................................................... [ 58%]
+........................................................................ [ 60%]
+........................................................................ [ 62%]
+.......................................................................s [ 64%]
+.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s............ [ 66%]
+.sssssssssssss..ss....ssss..ss..ss....ssss..ss..ss..ss.................. [ 68%]
+........................................................................ [ 70%]
+........................................................................ [ 72%]
+........................................................................ [ 74%]
+........................................................................ [ 75%]
+........................................................................ [ 77%]
+....s................................................................... [ 79%]
+........................................................................ [ 81%]
+........................................................................ [ 83%]
+........................................................................ [ 85%]
+........................................................................ [ 87%]
+....s.s.s.s.....sssss.....sssss.s.s.s.s....ssss.s.s.s..ss.s.s..ss....... [ 89%]
+...ssssssssss..ss..ss..ss....ssss..ss..ss..ss..ss..ss..ss..ss..ss....... [ 91%]
+................ssss.s.s.s.s...sss.............s.s....ssss.s.s..s....... [ 93%]
+........................................................................ [ 94%]
+...ss......F.....................................................sssssss [ 96%]
+sssssssss..ss..ss..ss..ss..ss..ss..ss..ss....ssss..ss.......sssssss.s.s. [ 98%]
+s.s.s.s..s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s                         [100%]
+=================================== FAILURES ===================================
+_______________ test_variant_jobs_can_be_cancelled_independently _______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb013b624e0>
+
+    def test_variant_jobs_can_be_cancelled_independently(monkeypatch):
+        from app.api import jobs
+        class Item:
+            def __init__(self,jid,status):self.id=jid;self.status=status
+            def public(self):return {"id":self.id,"status":self.status}
+        items={"working-a":Item("working-a","GENERATING"),"working-b":Item("working-b","GENERATING")}
+        def cancel(jid):items[jid].status="CANCELLED";return items[jid]
+        monkeypatch.setattr(jobs,"cancel",cancel)
+        client=TestClient(app)
+>       assert client.post("/api/generation/working-a/cancel").json()["status"]=="CANCELLED"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'status'
+
+tests/test_generation_variants_phase3.py:140: KeyError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-owner-file-final2.xml -
+=========================== short test summary info ============================
+FAILED tests/test_generation_variants_phase3.py::test_variant_jobs_can_be_cancelled_independently
+1 failed, 2532 passed, 1259 skipped, 1 warning in 563.82s (0:09:23)

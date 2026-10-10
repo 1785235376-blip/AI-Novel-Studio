@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-09T13:41:00Z",
+  "status": "INVENTORY_ONLY",
+  "tests_executed": false,
+  "browser_launched": false,
+  "prior_count": 12,
+  "original_live_count": 7,
+  "independent_media_count": 5,
+  "exact_union": true,
+  "overlap": [],
+  "prior": [
+    "[v2-live-chromium] \u203a v2-asset-relationships-live.spec.ts \u203a real File optional asset relationships persist, protect targets and remove explicitly with no chapter prerequisite",
+    "[v2-live-chromium] \u203a v2-creative-live.spec.ts \u203a real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript",
+    "[v2-live-chromium] \u203a v2-creative-live.spec.ts \u203a real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals",
+    "[v2-live-chromium] \u203a v2-creative-live.spec.ts \u203a real File V2 scope and stale-write fencing keeps the browser draft and rejects foreign sources",
+    "[v2-live-chromium] \u203a v2-creative-live.spec.ts \u203a real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript",
+    "[v2-live-chromium] \u203a v2-creative-live.spec.ts \u203a real HTTP File V2 scope, cancel and stale source fences remain authoritative",
+    "[v2-live-chromium] \u203a v2-independent-studio-live.spec.ts \u203a real File independent studio imports, persists, reopens and exports an image with no chapters or model mutation",
+    "[v2-live-chromium] \u203a v2-independent-studio-live.spec.ts \u203a real File independent VIDEO imports, decodes, reopens and exports original bytes without chapters or director",
+    "[v1-chromium] \u203a v2-creative-live.spec.ts \u203a V1 default-off backend and browser never expose the V2 workbench or accept creative writes",
+    "[v1-chromium] \u203a v2-creative-live.spec.ts \u203a real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes",
+    "[v1-chromium] \u203a v2-independent-studio-live.spec.ts \u203a default-off independent studio entry is absent and neutral project writes are rejected",
+    "[v1-acceptance-chromium] \u203a v2-independent-studio-live.spec.ts \u203a acceptance-mode independent studio stays absent despite an enabled narrative feature setting"
+  ],
+  "original_live": [
+    "[v2-live-chromium] \u203a v2-creative-live.spec.ts \u203a real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript",
+    "[v2-live-chromium] \u203a v2-creative-live.spec.ts \u203a real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals",
+    "[v2-live-chromium] \u203a v2-creative-live.spec.ts \u203a real File V2 scope and stale-write fencing keeps the browser draft and rejects foreign sources",
+    "[v2-live-chromium] \u203a v2-creative-live.spec.ts \u203a real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript",
+    "[v2-live-chromium] \u203a v2-creative-live.spec.ts \u203a real HTTP File V2 scope, cancel and stale source fences remain authoritative",
+    "[v1-chromium] \u203a v2-creative-live.spec.ts \u203a V1 default-off backend and browser never expose the V2 workbench or accept creative writes",
+    "[v1-chromium] \u203a v2-creative-live.spec.ts \u203a real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes"
+  ],
+  "independent_media": [
+    "[v2-live-chromium] \u203a v2-asset-relationships-live.spec.ts \u203a real File optional asset relationships persist, protect targets and remove explicitly with no chapter prerequisite",
+    "[v2-live-chromium] \u203a v2-independent-studio-live.spec.ts \u203a real File independent studio imports, persists, reopens and exports an image with no chapters or model mutation",
+    "[v2-live-chromium] \u203a v2-independent-studio-live.spec.ts \u203a real File independent VIDEO imports, decodes, reopens and exports original bytes without chapters or director",
+    "[v1-chromium] \u203a v2-independent-studio-live.spec.ts \u203a default-off independent studio entry is absent and neutral project writes are rejected",
+    "[v1-acceptance-chromium] \u203a v2-independent-studio-live.spec.ts \u203a acceptance-mode independent studio stays absent despite an enabled narrative feature setting"
+  ],
+  "original_config_sha256": "dbbf62ee540feed65c69e7cd1a16d732220c240b0b016b868de24e91bfc14a36",
+  "original_config_matches_M0": true,
+  "command": "node node_modules/@playwright/test/cli.js test --config <before|v2-live|independent-live> --list",
+  "preflight_tool_failures": [
+    "First output redirection target was not created; no tests collected.",
+    "Ambient pnpm11.25 rejected project pnpm10.6.5 engine; no install/test completion. Used existing locked Playwright CLI directly; no dependency changes."
+  ]
+}

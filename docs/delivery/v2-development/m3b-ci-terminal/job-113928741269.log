@@ -1,0 +1,615 @@
+﻿2026-10-09T16:55:12.7587244Z Current runner version: '2.337.0'
+2026-10-09T16:55:12.7608566Z ##[group]Runner Image Provisioner
+2026-10-09T16:55:12.7609377Z Hosted Compute Agent
+2026-10-09T16:55:12.7609933Z Version: 20261002.596
+2026-10-09T16:55:12.7610676Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-09T16:55:12.7611339Z Build Date: 2026-10-02T22:28:27Z
+2026-10-09T16:55:12.7611919Z Worker ID: {4a7dfe90-adea-4587-ba06-f2c7ce72119e}
+2026-10-09T16:55:12.7612543Z Region: westus3
+2026-10-09T16:55:12.7613006Z Cloud: Azure
+2026-10-09T16:55:12.7613452Z ##[endgroup]
+2026-10-09T16:55:12.7614848Z ##[group]Operating System
+2026-10-09T16:55:12.7615395Z Ubuntu
+2026-10-09T16:55:12.7615821Z 24.04.5
+2026-10-09T16:55:12.7616358Z LTS
+2026-10-09T16:55:12.7616779Z ##[endgroup]
+2026-10-09T16:55:12.7617274Z ##[group]Runner Image
+2026-10-09T16:55:12.7617811Z Image: ubuntu-24.04
+2026-10-09T16:55:12.7618294Z Version: 20261004.327.1
+2026-10-09T16:55:12.7619389Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-09T16:55:12.7620855Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-09T16:55:12.7621687Z ##[endgroup]
+2026-10-09T16:55:12.7622639Z ##[group]GITHUB_TOKEN Permissions
+2026-10-09T16:55:12.7624135Z Contents: read
+2026-10-09T16:55:12.7624603Z Metadata: read
+2026-10-09T16:55:12.7625156Z ##[endgroup]
+2026-10-09T16:55:12.7626833Z Secret source: Actions
+2026-10-09T16:55:12.7627679Z Cache mode: write
+2026-10-09T16:55:12.7628240Z Prepare workflow directory
+2026-10-09T16:55:12.7945178Z Prepare all required actions
+2026-10-09T16:55:12.7986061Z Getting action download info
+2026-10-09T16:55:13.0919360Z Download action repository 'actions/checkout@v4.2.2' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2026-10-09T16:55:13.1886476Z Download action repository 'actions/setup-python@v5.6.0' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-09T16:55:13.3078203Z Download action repository 'actions/upload-artifact@v4.6.2' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-09T16:55:13.6214545Z Complete job name: Backend execution / original File TCP
+2026-10-09T16:55:13.6821403Z ##[group]Run actions/checkout@v4.2.2
+2026-10-09T16:55:13.6822088Z with:
+2026-10-09T16:55:13.6822437Z   persist-credentials: false
+2026-10-09T16:55:13.6822879Z   repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T16:55:13.6825935Z   token: ***
+2026-10-09T16:55:13.6826283Z   ssh-strict: true
+2026-10-09T16:55:13.6826635Z   ssh-user: git
+2026-10-09T16:55:13.6826968Z   clean: true
+2026-10-09T16:55:13.6827318Z   sparse-checkout-cone-mode: true
+2026-10-09T16:55:13.6827733Z   fetch-depth: 1
+2026-10-09T16:55:13.6828071Z   fetch-tags: false
+2026-10-09T16:55:13.6828423Z   show-progress: true
+2026-10-09T16:55:13.6828770Z   lfs: false
+2026-10-09T16:55:13.6829096Z   submodules: false
+2026-10-09T16:55:13.6829457Z   set-safe-directory: true
+2026-10-09T16:55:13.6829939Z env:
+2026-10-09T16:55:13.6830449Z   MOCK_PROVIDER: true
+2026-10-09T16:55:13.6830828Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:55:13.6831222Z   ENABLE_CLOUD: false
+2026-10-09T16:55:13.6831588Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:55:13.6832059Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:55:13.6832530Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:55:13.6832912Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:55:13.6833260Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:55:13.6833622Z ##[endgroup]
+2026-10-09T16:55:13.7676131Z Syncing repository: 1785235376-blip/AI-Novel-Studio
+2026-10-09T16:55:13.7678226Z ##[group]Getting Git version info
+2026-10-09T16:55:13.7679174Z Working directory is '/home/runner/work/AI-Novel-Studio/AI-Novel-Studio'
+2026-10-09T16:55:13.7680674Z [command]/usr/bin/git version
+2026-10-09T16:55:13.7709826Z git version 2.55.0
+2026-10-09T16:55:13.7725097Z ##[endgroup]
+2026-10-09T16:55:13.7736451Z Temporarily overriding HOME='/home/runner/work/_temp/536d34d5-bd24-4bc2-99c4-af7024fafa41' before making global git config changes
+2026-10-09T16:55:13.7738268Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T16:55:13.7741303Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AI-Novel-Studio/AI-Novel-Studio
+2026-10-09T16:55:13.7807670Z Deleting the contents of '/home/runner/work/AI-Novel-Studio/AI-Novel-Studio'
+2026-10-09T16:55:13.7810805Z ##[group]Initializing the repository
+2026-10-09T16:55:13.7814467Z [command]/usr/bin/git init /home/runner/work/AI-Novel-Studio/AI-Novel-Studio
+2026-10-09T16:55:13.7888564Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-09T16:55:13.7889760Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-09T16:55:13.7890639Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-09T16:55:13.7891244Z hint: call:
+2026-10-09T16:55:13.7891571Z hint:
+2026-10-09T16:55:13.7891974Z hint: 	git config --global init.defaultBranch <name>
+2026-10-09T16:55:13.7892474Z hint:
+2026-10-09T16:55:13.7892930Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-09T16:55:13.7893695Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-09T16:55:13.7894267Z hint:
+2026-10-09T16:55:13.7894598Z hint: 	git branch -m <name>
+2026-10-09T16:55:13.7894971Z hint:
+2026-10-09T16:55:13.7895460Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-09T16:55:13.7900384Z Initialized empty Git repository in /home/runner/work/AI-Novel-Studio/AI-Novel-Studio/.git/
+2026-10-09T16:55:13.7909004Z [command]/usr/bin/git remote add origin https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T16:55:13.7967666Z ##[endgroup]
+2026-10-09T16:55:13.7968728Z ##[group]Disabling automatic garbage collection
+2026-10-09T16:55:13.7971562Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-09T16:55:13.8002090Z ##[endgroup]
+2026-10-09T16:55:13.8003003Z ##[group]Setting up auth
+2026-10-09T16:55:13.8008366Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T16:55:13.8040479Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T16:55:13.8505673Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T16:55:13.8541299Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T16:55:13.8738438Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-09T16:55:13.8776393Z ##[endgroup]
+2026-10-09T16:55:13.8777355Z ##[group]Fetching the repository
+2026-10-09T16:55:13.8785327Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +ec342fe9b69ba45d850d971ce2e15d1b12046096:refs/remotes/pull/47/merge
+2026-10-09T16:55:19.0076581Z From https://github.com/1785235376-blip/AI-Novel-Studio
+2026-10-09T16:55:19.0078381Z  * [new ref]         ec342fe9b69ba45d850d971ce2e15d1b12046096 -> pull/47/merge
+2026-10-09T16:55:19.0081997Z ##[endgroup]
+2026-10-09T16:55:19.0083287Z ##[group]Determining the checkout info
+2026-10-09T16:55:19.0084771Z ##[endgroup]
+2026-10-09T16:55:19.0096346Z [command]/usr/bin/git sparse-checkout disable
+2026-10-09T16:55:19.0141179Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-09T16:55:19.0169648Z ##[group]Checking out the ref
+2026-10-09T16:55:19.0172661Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/47/merge
+2026-10-09T16:55:19.5974370Z Note: switching to 'refs/remotes/pull/47/merge'.
+2026-10-09T16:55:19.5974969Z 
+2026-10-09T16:55:19.5975332Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-09T16:55:19.5976150Z changes and commit them, and you can discard any commits you make in this
+2026-10-09T16:55:19.5977255Z state without impacting any branches by switching back to a branch.
+2026-10-09T16:55:19.5977664Z 
+2026-10-09T16:55:19.5977957Z If you want to create a new branch to retain commits you create, you may
+2026-10-09T16:55:19.5978477Z do so (now or later) by using -c with the switch command. Example:
+2026-10-09T16:55:19.5978704Z 
+2026-10-09T16:55:19.5978824Z   git switch -c <new-branch-name>
+2026-10-09T16:55:19.5978986Z 
+2026-10-09T16:55:19.5979132Z Or undo this operation with:
+2026-10-09T16:55:19.5979319Z 
+2026-10-09T16:55:19.5979422Z   git switch -
+2026-10-09T16:55:19.5979568Z 
+2026-10-09T16:55:19.5979801Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-09T16:55:19.5980275Z 
+2026-10-09T16:55:19.5980572Z HEAD is now at ec342fe Merge c386b0608ae92d18c351b5cb6e367380808a45cf into fed2404c8e30b44061b7139dced45b7f3301601c
+2026-10-09T16:55:19.5982044Z ##[endgroup]
+2026-10-09T16:55:19.6007330Z [command]/usr/bin/git log -1 --format=%H
+2026-10-09T16:55:19.6031225Z ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T16:55:19.6038903Z ##[group]Removing auth
+2026-10-09T16:55:19.6041941Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T16:55:19.6068849Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T16:55:19.6258343Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T16:55:19.6283261Z http.https://github.com/.extraheader
+2026-10-09T16:55:19.6288557Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-09T16:55:19.6318090Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T16:55:19.6505215Z ##[endgroup]
+2026-10-09T16:55:19.6719417Z ##[group]Run actions/setup-python@v5.6.0
+2026-10-09T16:55:19.6719719Z with:
+2026-10-09T16:55:19.6719931Z   python-version: 3.12.9
+2026-10-09T16:55:19.6720395Z   check-latest: false
+2026-10-09T16:55:19.6722322Z   token: ***
+2026-10-09T16:55:19.6722545Z   update-environment: true
+2026-10-09T16:55:19.6722787Z   allow-prereleases: false
+2026-10-09T16:55:19.6723019Z   freethreaded: false
+2026-10-09T16:55:19.6723230Z env:
+2026-10-09T16:55:19.6723426Z   MOCK_PROVIDER: true
+2026-10-09T16:55:19.6723645Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:55:19.6723870Z   ENABLE_CLOUD: false
+2026-10-09T16:55:19.6724097Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:55:19.6724368Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:55:19.6724658Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:55:19.6724891Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:55:19.6725105Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:55:19.6725328Z ##[endgroup]
+2026-10-09T16:55:19.7766372Z ##[group]Installed versions
+2026-10-09T16:55:19.7781132Z Version 3.12.9 was not found in the local cache
+2026-10-09T16:55:19.7878890Z (node:2121) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T16:55:19.7879830Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T16:55:20.9566360Z Version 3.12.9 is available for downloading
+2026-10-09T16:55:20.9567650Z Download from "https://github.com/actions/python-versions/releases/download/3.12.9-13149478207/python-3.12.9-linux-24.04-x64.tar.gz"
+2026-10-09T16:55:21.6069816Z Extract downloaded archive
+2026-10-09T16:55:21.6169496Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/14008c9f-3385-41d3-a808-aebda4f98dc1 -f /home/runner/work/_temp/f5ddc034-7e0b-4de6-a9f0-0608ed61a835
+2026-10-09T16:55:23.3637092Z Execute installation script
+2026-10-09T16:55:23.3719470Z Check if Python hostedtoolcache folder exist...
+2026-10-09T16:55:23.3720344Z Create Python 3.12.9 folder
+2026-10-09T16:55:23.3732957Z Copy Python binaries to hostedtoolcache folder
+2026-10-09T16:55:23.7585062Z Create additional symlinks (Required for the UsePythonVersion Azure Pipelines task and the setup-python GitHub Action)
+2026-10-09T16:55:23.7621108Z Upgrading pip...
+2026-10-09T16:55:25.8138982Z Looking in links: /tmp/tmp3ikjq2u_
+2026-10-09T16:55:25.8141537Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.12.9/x64/lib/python3.12/site-packages (24.3.1)
+2026-10-09T16:55:27.0886066Z Collecting pip
+2026-10-09T16:55:27.1180219Z Downloading pip-26.2.1-py3-none-any.whl.metadata (4.6 kB)
+2026-10-09T16:55:27.1244710Z Downloading pip-26.2.1-py3-none-any.whl (1.8 MB)
+2026-10-09T16:55:27.4109830Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 5.7 MB/s eta 0:00:00
+2026-10-09T16:55:27.4110413Z 
+2026-10-09T16:55:27.4290783Z Installing collected packages: pip
+2026-10-09T16:55:27.4301211Z Attempting uninstall: pip
+2026-10-09T16:55:27.4309929Z Found existing installation: pip 24.3.1
+2026-10-09T16:55:27.4566065Z Uninstalling pip-24.3.1:
+2026-10-09T16:55:27.4609504Z Successfully uninstalled pip-24.3.1
+2026-10-09T16:55:28.3027518Z Successfully installed pip-26.2.1
+2026-10-09T16:55:28.3444229Z Create complete file
+2026-10-09T16:55:28.3476229Z Successfully set up CPython (3.12.9)
+2026-10-09T16:55:28.3476884Z ##[endgroup]
+2026-10-09T16:55:28.3676617Z ##[group]Run bash .github/ci/prepare.sh backend-tcp
+2026-10-09T16:55:28.3676988Z [36;1mbash .github/ci/prepare.sh backend-tcp[0m
+2026-10-09T16:55:28.5297987Z shell: /usr/bin/bash -e {0}
+2026-10-09T16:55:28.5298310Z env:
+2026-10-09T16:55:28.5298522Z   MOCK_PROVIDER: true
+2026-10-09T16:55:28.5298758Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:55:28.5298943Z   ENABLE_CLOUD: false
+2026-10-09T16:55:28.5299140Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:55:28.5299374Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:55:28.5299623Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:55:28.5299820Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:55:28.5299991Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:55:28.5300499Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:28.5300870Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T16:55:28.5301198Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:28.5301561Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:28.5301861Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:28.5302156Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T16:55:28.5302419Z ##[endgroup]
+2026-10-09T16:55:29.2393512Z ##[group]Run python -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'
+2026-10-09T16:55:29.2394459Z [36;1mpython -m pip install -c .github/ci/python-constraints.txt -e '.[dev,fontbuild,otio,comic]'[0m
+2026-10-09T16:55:29.2395077Z [36;1mpython -m pip check[0m
+2026-10-09T16:55:29.2395554Z [36;1mpython -m pip freeze --exclude-editable > "$CI_RECEIPTS/python-packages.txt"[0m
+2026-10-09T16:55:29.2460765Z shell: /usr/bin/bash -e {0}
+2026-10-09T16:55:29.2460975Z env:
+2026-10-09T16:55:29.2461139Z   MOCK_PROVIDER: true
+2026-10-09T16:55:29.2461334Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:55:29.2461526Z   ENABLE_CLOUD: false
+2026-10-09T16:55:29.2461716Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:55:29.2461950Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:55:29.2462198Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:55:29.2462402Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:55:29.2462583Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:55:29.2462869Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:29.2463204Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T16:55:29.2463525Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:29.2463813Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:29.2464099Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:29.2464538Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T16:55:29.2464838Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T16:55:29.2465124Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T16:55:29.2465434Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc
+2026-10-09T16:55:29.2465778Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/project
+2026-10-09T16:55:29.2466142Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/receipts
+2026-10-09T16:55:29.2466488Z   HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/home
+2026-10-09T16:55:29.2466822Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/home
+2026-10-09T16:55:29.2467167Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/appdata
+2026-10-09T16:55:29.2467548Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/localappdata
+2026-10-09T16:55:29.2467949Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/config
+2026-10-09T16:55:29.2468332Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/cache
+2026-10-09T16:55:29.2468695Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data
+2026-10-09T16:55:29.2469055Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/state
+2026-10-09T16:55:29.2469400Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:55:29.2469721Z   TMP: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:55:29.2470185Z   TEMP: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:55:29.2470581Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/project
+2026-10-09T16:55:29.2470968Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/novels
+2026-10-09T16:55:29.2471361Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/backups
+2026-10-09T16:55:29.2471790Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/database-backups
+2026-10-09T16:55:29.2472255Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/novels
+2026-10-09T16:55:29.2472583Z ##[endgroup]
+2026-10-09T16:55:30.5037357Z Obtaining file:///home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/project
+2026-10-09T16:55:30.5051128Z   Installing build dependencies: started
+2026-10-09T16:55:32.9103787Z   Installing build dependencies: finished with status 'done'
+2026-10-09T16:55:32.9108737Z   Checking if build backend supports build_editable: started
+2026-10-09T16:55:33.4749216Z   Checking if build backend supports build_editable: finished with status 'done'
+2026-10-09T16:55:33.4755639Z   Getting requirements to build editable: started
+2026-10-09T16:55:34.2222295Z   Getting requirements to build editable: finished with status 'done'
+2026-10-09T16:55:34.2229469Z   Preparing editable metadata (pyproject.toml): started
+2026-10-09T16:55:34.9827557Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+2026-10-09T16:55:35.1162915Z Collecting fastapi<1,>=0.115 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:35.1774204Z   Downloading fastapi-0.142.2-py3-none-any.whl.metadata (27 kB)
+2026-10-09T16:55:35.2571230Z Collecting uvicorn<1,>=0.30 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:35.2670883Z   Downloading uvicorn-0.54.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-09T16:55:35.3208304Z Collecting psycopg<4,>=3.2 (from psycopg[binary]<4,>=3.2->ai-novel-studio==0.7.0)
+2026-10-09T16:55:35.3306609Z   Downloading psycopg-3.3.6-py3-none-any.whl.metadata (4.4 kB)
+2026-10-09T16:55:35.5827319Z Collecting sqlalchemy<3,>=2.0 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:35.5929464Z   Downloading sqlalchemy-2.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (9.7 kB)
+2026-10-09T16:55:35.7719461Z Collecting httpx<1,>=0.27 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:35.7816976Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2026-10-09T16:55:35.7929531Z Collecting pydantic-settings<3,>=2.6 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:35.8027209Z   Downloading pydantic_settings-2.15.0-py3-none-any.whl.metadata (3.9 kB)
+2026-10-09T16:55:35.8705778Z Collecting reportlab<5,>=4.0 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:35.8805265Z   Downloading reportlab-4.5.1-py3-none-any.whl.metadata (1.7 kB)
+2026-10-09T16:55:35.8948170Z Collecting pypdf==6.19.0 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:35.9049150Z   Downloading pypdf-6.19.0-py3-none-any.whl.metadata (7.5 kB)
+2026-10-09T16:55:35.9220652Z Collecting jsonschema<5,>=4.18 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:35.9319315Z   Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+2026-10-09T16:55:35.9519329Z Collecting pytest<9,>=8 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:35.9618508Z   Downloading pytest-8.4.2-py3-none-any.whl.metadata (7.7 kB)
+2026-10-09T16:55:36.0792517Z Collecting fonttools==4.59.1 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.0907911Z   Downloading fonttools-4.59.1-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl.metadata (108 kB)
+2026-10-09T16:55:36.1434986Z Collecting opentimelineio==0.18.1 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.1543648Z   Downloading opentimelineio-0.18.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+2026-10-09T16:55:36.2821591Z Collecting Pillow==12.3.0 (from ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.2921574Z   Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
+2026-10-09T16:55:36.3145466Z Collecting starlette>=0.46.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.3244390Z   Downloading starlette-1.7.0-py3-none-any.whl.metadata (6.6 kB)
+2026-10-09T16:55:36.5031657Z Collecting pydantic>=2.9.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.5132327Z   Downloading pydantic-2.13.5-py3-none-any.whl.metadata (110 kB)
+2026-10-09T16:55:36.5285451Z Collecting typing-extensions>=4.8.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.5385131Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-10-09T16:55:36.5467938Z Collecting typing-inspection>=0.4.2 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.5568112Z   Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+2026-10-09T16:55:36.5646455Z Collecting annotated-doc>=0.0.2 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.5746642Z   Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+2026-10-09T16:55:36.5876336Z Collecting opentelemetry-api>=1.44.0 (from fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.5976386Z   Downloading opentelemetry_api-1.45.0-py3-none-any.whl.metadata (1.4 kB)
+2026-10-09T16:55:36.6102972Z Collecting anyio (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.6200800Z   Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+2026-10-09T16:55:36.6318792Z Collecting certifi (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.6415927Z   Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+2026-10-09T16:55:36.6711572Z Collecting httpcore==1.* (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.6810424Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2026-10-09T16:55:36.6917362Z Collecting idna (from httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.7015395Z   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+2026-10-09T16:55:36.7120967Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.27->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.7217282Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2026-10-09T16:55:36.7317369Z Collecting attrs>=22.2.0 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.7415333Z   Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+2026-10-09T16:55:36.7637123Z Collecting jsonschema-specifications>=2023.03.6 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.7737477Z   Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+2026-10-09T16:55:36.7881431Z Collecting referencing>=0.28.4 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.7979205Z   Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+2026-10-09T16:55:36.9769110Z Collecting rpds-py>=0.25.0 (from jsonschema<5,>=4.18->ai-novel-studio==0.7.0)
+2026-10-09T16:55:36.9870864Z   Downloading rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+2026-10-09T16:55:37.1194177Z Collecting psycopg-binary==3.3.6 (from psycopg[binary]<4,>=3.2->ai-novel-studio==0.7.0)
+2026-10-09T16:55:37.1295406Z   Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
+2026-10-09T16:55:37.1421740Z Collecting python-dotenv>=0.21.0 (from pydantic-settings<3,>=2.6->ai-novel-studio==0.7.0)
+2026-10-09T16:55:37.1519267Z   Downloading python_dotenv-1.2.4-py3-none-any.whl.metadata (29 kB)
+2026-10-09T16:55:37.1622579Z Collecting iniconfig>=1 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T16:55:37.1720319Z   Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-09T16:55:37.1825116Z Collecting packaging>=20 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T16:55:37.1922911Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-10-09T16:55:37.2017808Z Collecting pluggy<2,>=1.5 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T16:55:37.2115420Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+2026-10-09T16:55:37.2237455Z Collecting pygments>=2.7.2 (from pytest<9,>=8->ai-novel-studio==0.7.0)
+2026-10-09T16:55:37.2334926Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-09T16:55:37.3178904Z Collecting charset-normalizer (from reportlab<5,>=4.0->ai-novel-studio==0.7.0)
+2026-10-09T16:55:37.3280328Z   Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+2026-10-09T16:55:37.3629607Z Collecting click>=7.0 (from uvicorn<1,>=0.30->ai-novel-studio==0.7.0)
+2026-10-09T16:55:37.3727712Z   Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+2026-10-09T16:55:38.1728034Z Collecting annotated-types>=0.6.0 (from pydantic>=2.9.0->fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:38.1827804Z   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+2026-10-09T16:55:38.9329652Z Collecting pydantic-core==2.46.5 (from pydantic>=2.9.0->fastapi<1,>=0.115->ai-novel-studio==0.7.0)
+2026-10-09T16:55:38.9430903Z   Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+2026-10-09T16:55:38.9664686Z Downloading fonttools-4.59.1-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl (4.9 MB)
+2026-10-09T16:55:39.1084783Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.9/4.9 MB 35.4 MB/s  0:00:00
+2026-10-09T16:55:39.1197825Z Downloading opentimelineio-0.18.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (842 kB)
+2026-10-09T16:55:39.3362433Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 842.8/842.8 kB 2.7 MB/s  0:00:00
+2026-10-09T16:55:39.3462087Z Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)
+2026-10-09T16:55:39.4003441Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.9/6.9 MB 127.7 MB/s  0:00:00
+2026-10-09T16:55:39.4104494Z Downloading pypdf-6.19.0-py3-none-any.whl (395 kB)
+2026-10-09T16:55:39.4483957Z Downloading fastapi-0.142.2-py3-none-any.whl (144 kB)
+2026-10-09T16:55:39.5333032Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+2026-10-09T16:55:39.5447848Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+2026-10-09T16:55:39.5913169Z Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+2026-10-09T16:55:39.6028425Z Downloading psycopg-3.3.6-py3-none-any.whl (215 kB)
+2026-10-09T16:55:39.6144616Z Downloading psycopg_binary-3.3.6-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.2 MB)
+2026-10-09T16:55:39.7134503Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 51.4 MB/s  0:00:00
+2026-10-09T16:55:39.7236208Z Downloading pydantic_settings-2.15.0-py3-none-any.whl (69 kB)
+2026-10-09T16:55:39.7351889Z Downloading pytest-8.4.2-py3-none-any.whl (365 kB)
+2026-10-09T16:55:39.7784890Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+2026-10-09T16:55:39.7899008Z Downloading reportlab-4.5.1-py3-none-any.whl (2.0 MB)
+2026-10-09T16:55:39.8162370Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 70.2 MB/s  0:00:00
+2026-10-09T16:55:39.8260286Z Downloading sqlalchemy-2.1.3-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (4.7 MB)
+2026-10-09T16:55:39.8739838Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 96.9 MB/s  0:00:00
+2026-10-09T16:55:39.8838407Z Downloading uvicorn-0.54.0-py3-none-any.whl (87 kB)
+2026-10-09T16:55:39.9188896Z Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+2026-10-09T16:55:39.9301783Z Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+2026-10-09T16:55:39.9414513Z Downloading click-8.5.0-py3-none-any.whl (125 kB)
+2026-10-09T16:55:39.9528811Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+2026-10-09T16:55:39.9908848Z Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+2026-10-09T16:55:40.0018503Z Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+2026-10-09T16:55:40.1055113Z Downloading opentelemetry_api-1.45.0-py3-none-any.whl (60 kB)
+2026-10-09T16:55:40.1295394Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+2026-10-09T16:55:40.1455312Z Downloading pydantic-2.13.5-py3-none-any.whl (472 kB)
+2026-10-09T16:55:40.1583373Z Downloading pydantic_core-2.46.5-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+2026-10-09T16:55:40.1718209Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 153.3 MB/s  0:00:00
+2026-10-09T16:55:40.1814670Z Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+2026-10-09T16:55:40.1926295Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+2026-10-09T16:55:40.2014714Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 136.1 MB/s  0:00:00
+2026-10-09T16:55:40.2111505Z Downloading python_dotenv-1.2.4-py3-none-any.whl (23 kB)
+2026-10-09T16:55:40.2460674Z Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+2026-10-09T16:55:40.2571749Z Downloading rpds_py-2026.9.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (371 kB)
+2026-10-09T16:55:40.3388904Z Downloading starlette-1.7.0-py3-none-any.whl (78 kB)
+2026-10-09T16:55:40.3529703Z Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+2026-10-09T16:55:40.3642835Z Downloading idna-3.20-py3-none-any.whl (69 kB)
+2026-10-09T16:55:40.4324194Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-10-09T16:55:40.4435769Z Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+2026-10-09T16:55:40.4546895Z Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+2026-10-09T16:55:40.5679887Z Downloading charset_normalizer-3.5.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (257 kB)
+2026-10-09T16:55:40.6678947Z Building wheels for collected packages: ai-novel-studio
+2026-10-09T16:55:40.6685428Z   Building editable for ai-novel-studio (pyproject.toml): started
+2026-10-09T16:55:41.4485096Z   Building editable for ai-novel-studio (pyproject.toml): finished with status 'done'
+2026-10-09T16:55:41.4489375Z   Created wheel for ai-novel-studio: filename=ai_novel_studio-0.7.0-0.editable-py3-none-any.whl size=3185 sha256=4e1e13ddcff3f9b0c1f0e49be9b57d16e5978257ef4a9a71b434111cb8bae404
+2026-10-09T16:55:41.4490862Z   Stored in directory: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp/pip-ephem-wheel-cache-92yov4vh/wheels/3b/10/a6/f74d8ee2821ce7571e5da41432491d956f1b5cd00c3fcb0cd5
+2026-10-09T16:55:41.4502920Z Successfully built ai-novel-studio
+2026-10-09T16:55:41.5279441Z Installing collected packages: typing-extensions, rpds-py, python-dotenv, pypdf, pygments, psycopg-binary, pluggy, Pillow, packaging, opentimelineio, iniconfig, idna, h11, fonttools, click, charset-normalizer, certifi, attrs, annotated-types, annotated-doc, uvicorn, typing-inspection, sqlalchemy, reportlab, referencing, pytest, pydantic-core, psycopg, opentelemetry-api, httpcore, anyio, starlette, pydantic, jsonschema-specifications, httpx, pydantic-settings, jsonschema, fastapi, ai-novel-studio
+2026-10-09T16:55:47.6019602Z 
+2026-10-09T16:55:47.6048313Z Successfully installed Pillow-12.3.0 ai-novel-studio-0.7.0 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 attrs-26.1.0 certifi-2026.7.22 charset-normalizer-3.5.2 click-8.5.0 fastapi-0.142.2 fonttools-4.59.1 h11-0.16.0 httpcore-1.0.9 httpx-0.28.1 idna-3.20 iniconfig-2.3.0 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 opentelemetry-api-1.45.0 opentimelineio-0.18.1 packaging-26.3 pluggy-1.6.0 psycopg-3.3.6 psycopg-binary-3.3.6 pydantic-2.13.5 pydantic-core-2.46.5 pydantic-settings-2.15.0 pygments-2.21.0 pypdf-6.19.0 pytest-8.4.2 python-dotenv-1.2.4 referencing-0.37.0 reportlab-4.5.1 rpds-py-2026.9.1 sqlalchemy-2.1.3 starlette-1.7.0 typing-extensions-4.16.0 typing-inspection-0.4.4 uvicorn-0.54.0
+2026-10-09T16:55:48.2657578Z No broken requirements found.
+2026-10-09T16:55:49.7819945Z ##[group]Run python -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/tcp-selftest" -q .github/ci/test_tcp_evidence.py --junitxml="$CI_RECEIPTS/tcp-harness.xml"
+2026-10-09T16:55:49.7820983Z [36;1mpython -m pytest -p no:cacheprovider --basetemp="$CI_SANDBOX/tcp-selftest" -q .github/ci/test_tcp_evidence.py --junitxml="$CI_RECEIPTS/tcp-harness.xml"[0m
+2026-10-09T16:55:49.7877439Z shell: /usr/bin/bash -e {0}
+2026-10-09T16:55:49.7877654Z env:
+2026-10-09T16:55:49.7877818Z   MOCK_PROVIDER: true
+2026-10-09T16:55:49.7878004Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:55:49.7878190Z   ENABLE_CLOUD: false
+2026-10-09T16:55:49.7878375Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:55:49.7878613Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:55:49.7878866Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:55:49.7879077Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:55:49.7879248Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:55:49.7879481Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:49.7879844Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T16:55:49.7880417Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:49.7880728Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:49.7881023Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:49.7881317Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T16:55:49.7881619Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T16:55:49.7881911Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T16:55:49.7882221Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc
+2026-10-09T16:55:49.7882565Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/project
+2026-10-09T16:55:49.7882944Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/receipts
+2026-10-09T16:55:49.7883290Z   HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/home
+2026-10-09T16:55:49.7883625Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/home
+2026-10-09T16:55:49.7883974Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/appdata
+2026-10-09T16:55:49.7884351Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/localappdata
+2026-10-09T16:55:49.7884746Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/config
+2026-10-09T16:55:49.7885114Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/cache
+2026-10-09T16:55:49.7885471Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data
+2026-10-09T16:55:49.7885831Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/state
+2026-10-09T16:55:49.7886173Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:55:49.7886644Z   TMP: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:55:49.7886950Z   TEMP: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:55:49.7887295Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/project
+2026-10-09T16:55:49.7887681Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/novels
+2026-10-09T16:55:49.7888075Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/backups
+2026-10-09T16:55:49.7888510Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/database-backups
+2026-10-09T16:55:49.7888964Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/novels
+2026-10-09T16:55:49.7889292Z ##[endgroup]
+2026-10-09T16:55:50.9704748Z ........................................................................ [ 70%]
+2026-10-09T16:55:53.2340395Z ..............................                                           [100%]
+2026-10-09T16:55:53.2341185Z - generated xml file: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/receipts/tcp-harness.xml -
+2026-10-09T16:55:53.2341806Z 102 passed in 2.70s
+2026-10-09T16:55:53.2649383Z ##[group]Run python .github/ci/tcp_evidence.py run \
+2026-10-09T16:55:53.2649711Z [36;1mpython .github/ci/tcp_evidence.py run \[0m
+2026-10-09T16:55:53.2650016Z [36;1m  --manifest .github/ci/coverage_manifest_v2.json.gz \[0m
+2026-10-09T16:55:53.2650610Z [36;1m  --constraints .github/ci/python-constraints.txt --source-root "$CI_PROJECT" \[0m
+2026-10-09T16:55:53.2651065Z [36;1m  --receipts "$CI_RECEIPTS" --basetemp "$CI_SANDBOX/sync-tcp-pytest"[0m
+2026-10-09T16:55:53.2707631Z shell: /usr/bin/bash -e {0}
+2026-10-09T16:55:53.2707838Z env:
+2026-10-09T16:55:53.2708001Z   MOCK_PROVIDER: true
+2026-10-09T16:55:53.2708188Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:55:53.2708376Z   ENABLE_CLOUD: false
+2026-10-09T16:55:53.2708595Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:55:53.2708826Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:55:53.2709096Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:55:53.2709301Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:55:53.2709517Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:55:53.2709754Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:53.2710244Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T16:55:53.2710573Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:53.2710865Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:53.2711157Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:55:53.2711450Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T16:55:53.2711747Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T16:55:53.2712034Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T16:55:53.2712339Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc
+2026-10-09T16:55:53.2712703Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/project
+2026-10-09T16:55:53.2713074Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/receipts
+2026-10-09T16:55:53.2713429Z   HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/home
+2026-10-09T16:55:53.2713762Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/home
+2026-10-09T16:55:53.2714109Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/appdata
+2026-10-09T16:55:53.2714491Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/localappdata
+2026-10-09T16:55:53.2714880Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/config
+2026-10-09T16:55:53.2715246Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/cache
+2026-10-09T16:55:53.2715606Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data
+2026-10-09T16:55:53.2715958Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/state
+2026-10-09T16:55:53.2716455Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:55:53.2716772Z   TMP: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:55:53.2717085Z   TEMP: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:55:53.2717433Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/project
+2026-10-09T16:55:53.2717817Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/novels
+2026-10-09T16:55:53.2718208Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/backups
+2026-10-09T16:55:53.2718636Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/database-backups
+2026-10-09T16:55:53.2719091Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/novels
+2026-10-09T16:55:53.2719417Z   RUN_B10_TCP_SYNC_TEST: 1
+2026-10-09T16:55:53.2719608Z   STORAGE_BACKEND: file
+2026-10-09T16:55:53.2719793Z ##[endgroup]
+2026-10-09T16:56:30.6724232Z ..                                                                       [100%]
+2026-10-09T16:56:30.6725190Z - generated xml file: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/receipts/sync-tcp.xml -
+2026-10-09T16:56:30.6725720Z 2 passed in 33.42s
+2026-10-09T16:56:30.6890241Z ##[group]Run python .github/ci/receipt.py "$CI_RECEIPTS"
+2026-10-09T16:56:30.6890600Z [36;1mpython .github/ci/receipt.py "$CI_RECEIPTS"[0m
+2026-10-09T16:56:30.6945780Z shell: /usr/bin/bash -e {0}
+2026-10-09T16:56:30.6945985Z env:
+2026-10-09T16:56:30.6946146Z   MOCK_PROVIDER: true
+2026-10-09T16:56:30.6946328Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:56:30.6946509Z   ENABLE_CLOUD: false
+2026-10-09T16:56:30.6946702Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:56:30.6946941Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:56:30.6947179Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:56:30.6947378Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:56:30.6947549Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:56:30.6947784Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:56:30.6948118Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T16:56:30.6948435Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:56:30.6948754Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:56:30.6949043Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:56:30.6949331Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T16:56:30.6949631Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T16:56:30.6949928Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T16:56:30.6950425Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc
+2026-10-09T16:56:30.6950784Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/project
+2026-10-09T16:56:30.6951153Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/receipts
+2026-10-09T16:56:30.6951506Z   HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/home
+2026-10-09T16:56:30.6951863Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/home
+2026-10-09T16:56:30.6952209Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/appdata
+2026-10-09T16:56:30.6952584Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/localappdata
+2026-10-09T16:56:30.6952980Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/config
+2026-10-09T16:56:30.6953352Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/cache
+2026-10-09T16:56:30.6953721Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data
+2026-10-09T16:56:30.6954074Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/state
+2026-10-09T16:56:30.6954413Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:56:30.6954729Z   TMP: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:56:30.6955034Z   TEMP: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:56:30.6955531Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/project
+2026-10-09T16:56:30.6955927Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/novels
+2026-10-09T16:56:30.6956329Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/backups
+2026-10-09T16:56:30.6956765Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/database-backups
+2026-10-09T16:56:30.6957228Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/novels
+2026-10-09T16:56:30.6957550Z ##[endgroup]
+2026-10-09T16:56:30.8235058Z {
+2026-10-09T16:56:30.8236527Z   "revision": "checked_out_sha=ec342fe9b69ba45d850d971ce2e15d1b12046096\nevent_sha=ec342fe9b69ba45d850d971ce2e15d1b12046096\nrun_url=https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37962541363\njob=backend-tcp\nplatform=Linux; native Windows host/AppContainer/installer=NOT RUN\n",
+2026-10-09T16:56:30.8239024Z   "test_reports": {
+2026-10-09T16:56:30.8239307Z     "sync-tcp.xml": {
+2026-10-09T16:56:30.8239583Z       "tests": 2,
+2026-10-09T16:56:30.8239842Z       "failures": 0,
+2026-10-09T16:56:30.8240295Z       "errors": 0,
+2026-10-09T16:56:30.8240818Z       "skipped": 0
+2026-10-09T16:56:30.8241079Z     },
+2026-10-09T16:56:30.8241336Z     "tcp-harness.xml": {
+2026-10-09T16:56:30.8241634Z       "tests": 102,
+2026-10-09T16:56:30.8241899Z       "failures": 0,
+2026-10-09T16:56:30.8242161Z       "errors": 0,
+2026-10-09T16:56:30.8242425Z       "skipped": 0
+2026-10-09T16:56:30.8242658Z     }
+2026-10-09T16:56:30.8242862Z   },
+2026-10-09T16:56:30.8243094Z   "report_status": "RECORDED",
+2026-10-09T16:56:30.8243479Z   "native_windows_host_appcontainer_installer": "NOT RUN",
+2026-10-09T16:56:30.8243923Z   "real_model_and_paid_provider_execution": "NOT RUN"
+2026-10-09T16:56:30.8244246Z }
+2026-10-09T16:56:30.8244359Z 
+2026-10-09T16:56:30.8361586Z ##[group]Run actions/upload-artifact@v4.6.2
+2026-10-09T16:56:30.8361851Z with:
+2026-10-09T16:56:30.8362104Z   name: backend-tcp-ec342fe9b69ba45d850d971ce2e15d1b12046096-attempt-1
+2026-10-09T16:56:30.8362480Z   path: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/receipts
+2026-10-09T16:56:30.8362766Z   if-no-files-found: error
+2026-10-09T16:56:30.8362959Z   retention-days: 14
+2026-10-09T16:56:30.8363137Z   compression-level: 6
+2026-10-09T16:56:30.8363324Z   overwrite: false
+2026-10-09T16:56:30.8363502Z   include-hidden-files: false
+2026-10-09T16:56:30.8363693Z env:
+2026-10-09T16:56:30.8363849Z   MOCK_PROVIDER: true
+2026-10-09T16:56:30.8364032Z   MOCK_STREAM_DELAY_MS: 0
+2026-10-09T16:56:30.8364212Z   ENABLE_CLOUD: false
+2026-10-09T16:56:30.8364395Z   CREDENTIAL_VAULT_BACKEND: memory
+2026-10-09T16:56:30.8364629Z   CREDENTIAL_VAULT_ALLOW_MEMORY_FALLBACK: true
+2026-10-09T16:56:30.8364866Z   PYTHONDONTWRITEBYTECODE: 1
+2026-10-09T16:56:30.8365057Z   HF_HUB_OFFLINE: 1
+2026-10-09T16:56:30.8365263Z   TRANSFORMERS_OFFLINE: 1
+2026-10-09T16:56:30.8365492Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:56:30.8365818Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib/pkgconfig
+2026-10-09T16:56:30.8366130Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:56:30.8366414Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:56:30.8366696Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.9/x64
+2026-10-09T16:56:30.8366977Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.9/x64/lib
+2026-10-09T16:56:30.8367275Z   CI_COVERAGE_SHA: ec342fe9b69ba45d850d971ce2e15d1b12046096
+2026-10-09T16:56:30.8367561Z   CI_COVERAGE_TREE: 2ec6365e1f1f183f029c9f0a94d040d134e22b47
+2026-10-09T16:56:30.8367865Z   CI_SANDBOX: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc
+2026-10-09T16:56:30.8368207Z   CI_PROJECT: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/project
+2026-10-09T16:56:30.8368581Z   CI_RECEIPTS: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/receipts
+2026-10-09T16:56:30.8368935Z   HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/home
+2026-10-09T16:56:30.8369447Z   USERPROFILE: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/home
+2026-10-09T16:56:30.8369799Z   APPDATA: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/appdata
+2026-10-09T16:56:30.8370408Z   LOCALAPPDATA: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/localappdata
+2026-10-09T16:56:30.8370801Z   XDG_CONFIG_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/config
+2026-10-09T16:56:30.8371169Z   XDG_CACHE_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/cache
+2026-10-09T16:56:30.8371522Z   XDG_DATA_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data
+2026-10-09T16:56:30.8371874Z   XDG_STATE_HOME: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/state
+2026-10-09T16:56:30.8372212Z   TMPDIR: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:56:30.8372534Z   TMP: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:56:30.8372849Z   TEMP: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/tmp
+2026-10-09T16:56:30.8373193Z   PROJECT_ROOT: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/project
+2026-10-09T16:56:30.8373573Z   NOVEL_DATA_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/novels
+2026-10-09T16:56:30.8373965Z   BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/backups
+2026-10-09T16:56:30.8374393Z   DATABASE_BACKUP_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/database-backups
+2026-10-09T16:56:30.8374857Z   KNOWLEDGE_SOURCE_PATH: /home/runner/work/_temp/novel-ci-backend-tcp.nOjGFc/data/novels
+2026-10-09T16:56:30.8375179Z ##[endgroup]
+2026-10-09T16:56:30.9690857Z (node:2333) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T16:56:30.9692080Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T16:56:30.9781567Z With the provided path, there will be 7 files uploaded
+2026-10-09T16:56:30.9782257Z Artifact name is valid!
+2026-10-09T16:56:30.9782582Z Root directory input is valid!
+2026-10-09T16:56:31.3109441Z Beginning upload of artifact content to blob storage
+2026-10-09T16:56:31.3433292Z (node:2333) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-09T16:56:31.6795166Z Uploaded bytes 168841
+2026-10-09T16:56:31.7373285Z Finished uploading artifact content to blob storage!
+2026-10-09T16:56:31.7374431Z SHA256 digest of uploaded artifact zip is bc7ecf691b2dd10a3f26b47feeb5b82f6b3180a38b68cd125aa6d3f81b382050
+2026-10-09T16:56:31.7375345Z Finalizing artifact upload
+2026-10-09T16:56:32.0223881Z Artifact backend-tcp-ec342fe9b69ba45d850d971ce2e15d1b12046096-attempt-1.zip successfully finalized. Artifact ID 11632676264
+2026-10-09T16:56:32.0225062Z Artifact backend-tcp-ec342fe9b69ba45d850d971ce2e15d1b12046096-attempt-1 has been successfully uploaded! Final size is 168841 bytes. Artifact ID is 11632676264
+2026-10-09T16:56:32.0229181Z Artifact download URL: https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/37962541363/artifacts/11632676264
+2026-10-09T16:56:32.0376555Z Post job cleanup.
+2026-10-09T16:56:32.1375301Z (node:2345) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-09T16:56:32.1376205Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-09T16:56:32.1512728Z Post job cleanup.
+2026-10-09T16:56:32.2310923Z [command]/usr/bin/git version
+2026-10-09T16:56:32.2348838Z git version 2.55.0
+2026-10-09T16:56:32.2405173Z Temporarily overriding HOME='/home/runner/work/_temp/93938049-2162-458a-adbb-e974d7171373' before making global git config changes
+2026-10-09T16:56:32.2406373Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-09T16:56:32.2409921Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/AI-Novel-Studio/AI-Novel-Studio
+2026-10-09T16:56:32.2501038Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-09T16:56:32.2502773Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-09T16:56:32.2809584Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-09T16:56:32.2850420Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-09T16:56:32.3302413Z Cleaning up orphan processes
+2026-10-09T16:56:32.3562683Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4.2.2, actions/setup-python@v5.6.0, actions/upload-artifact@v4.6.2. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

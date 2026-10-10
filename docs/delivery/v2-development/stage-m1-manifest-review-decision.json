@@ -1,0 +1,44 @@
+{
+  "review_utc": "2026-10-09T13:00:00Z",
+  "baseline_head": "0df2640c4c1a2d3052bb0a84d14445744d04046f",
+  "status": "EXPLICIT_ADDITIVE_INVENTORY_REVIEW_NOT_TEST_PASS",
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "prior_v2_nodes": 9449,
+  "collected_nodes": 9809,
+  "new_nodes_since_prior_v2": 360,
+  "new_nodes_by_file": {
+    "tests/test_v2_asset_relationships.py": 112,
+    "tests/test_v2_independent_workspace.py": 150,
+    "tests/test_v2_independent_workspace_api.py": 68,
+    "tests/test_v2_storage_admission.py": 28,
+    "tests/test_v2_studio_ci.py": 2
+  },
+  "prior_v2_nodes_preserved_in_order": true,
+  "original_test_and_gate_diff_from_M0": [],
+  "reviewed_changes": [
+    "New strict independent project/asset/relationships/storage routes and data contracts, original owner binding and visibility extension.",
+    "Original lineage impact projection made optional only for the new lock-safe adapter; legacy default unchanged.",
+    "Exact gated collaboration route admission; no authorization grants from intent.",
+    "Approved optional ContextBar noun, default V1 markup preserved; feature UI adapters retain original owner APIs.",
+    "Original Director proposal button multi-click fix demonstrated by unchanged deterministic red/green test.",
+    "V2-only browser FFmpeg prerequisite added to existing install block; legacy frontend job, budgets, old tests and goldens unchanged.",
+    "API catalog regenerated from staged backend with 34 new operations, zero removed; source-catalog checks passed."
+  ],
+  "historical_skip_policy_unchanged": true,
+  "only_historical_test_migration": [
+    {
+      "path": "tests/test_windows_portable_entry.py",
+      "commit": "1b7ff50a7e64742916bc64730df884cea819b379",
+      "frozen_sha256": "d100e27589fb45cb921c13a82a83a911485fef1c0ed82a1e50eb5efc94f24799",
+      "v2_baseline_sha256": "9f0d2d5f78a44e54a0fcc00925dc6d67038060408d3bd44753461ca57152fe1f",
+      "delta": "Add -B before -I in the fixed launcher expectation only; all other bytes preserved",
+      "purpose": "Reconcile the preexisting V2 isolation baseline, not a historical audit approval"
+    }
+  ],
+  "selected_owner_regression_classifications": {
+    "both": 57,
+    "file": 987,
+    "postgres": 954
+  },
+  "skip_interpretation": "File skipped exactly the 954 PostgreSQL-classified nodes; PostgreSQL skipped exactly the 987 File-classified nodes. File command separately ran 3 infrastructure checks."
+}

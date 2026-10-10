@@ -1,0 +1,12 @@
+Fs                                                                       [100%]
+=================================== FAILURES ===================================
+____ test_provider_change_after_asset_validation_cannot_commit_review[file] ____
+tests/test_v2_graph_text_assets.py:247: in test_provider_change_after_asset_validation_cannot_commit_review
+    assert raw(e, sent)['status'] == 'WAITING_APPROVAL'
+E   AssertionError: assert 'SUCCEEDED' == 'WAITING_APPROVAL'
+E     
+E     - WAITING_APPROVAL
+E     + SUCCEEDED
+=========================== short test summary info ============================
+FAILED tests/test_v2_graph_text_assets.py::test_provider_change_after_asset_validation_cannot_commit_review[file]
+1 failed, 1 skipped, 24 deselected in 6.17s

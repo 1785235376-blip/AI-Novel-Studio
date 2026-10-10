@@ -1,0 +1,118 @@
+{
+  "baseline": "ef79251fdc1a9b17f5733a28ee97afc525b73d7f",
+  "boundary": "Unchanged original owner byte budgets, pre-inference rejection, diagnostic failures preserved; selected tests and one separately measured owned real CPU case. No source/hosted-CI aggregation across revisions.",
+  "files": {
+    "final-summary.json": {
+      "bytes": 1513,
+      "sha256": "a1a6819ccfdc4b40e6f6033f51cdd1adba952f8c1606a481c6a76ba51ea8548e"
+    },
+    "focused-file-final.json": {
+      "bytes": 402368,
+      "sha256": "f02467392fcbeb46abf478900e3ff88993926815da9eaaa90fd4ac6351048fd3"
+    },
+    "focused-file-final.log": {
+      "bytes": 730,
+      "sha256": "26d1976e1a43c2a0e86d440ca5f4c05f2753baca7bdc7ebe850cad8cebda1092"
+    },
+    "focused-file-r1.json": {
+      "bytes": 402365,
+      "sha256": "235363e62e9b1cc88c32f97c79d2817b53505acdd7e7bfce398abd820d676bb5"
+    },
+    "focused-file-r1.log": {
+      "bytes": 2027,
+      "sha256": "c9d7f4a3aed7f3cc7b1d93321a34cb41ac3588362e59e95b69306c356358bc20"
+    },
+    "green-admission.json": {
+      "bytes": 402101,
+      "sha256": "38fce3b348df0edc8745e650035d1265a8696e0e0688ef0d73699e4b25200376"
+    },
+    "green-admission.log": {
+      "bytes": 95,
+      "sha256": "0a1e66bc03ccfba20b6474ac610bd14c490f891e5847cfc34b46cdb3228b9c2b"
+    },
+    "initdb-final1.log": {
+      "bytes": 898,
+      "sha256": "69cb11b4fb6f25c2a3a472933ac55def0aa2ab2f8c7e1356e74e89d824526f68"
+    },
+    "real-attempt-1/acceptance.json": {
+      "bytes": 2766,
+      "sha256": "72f56e759d6b49df75b2be738281f22ed6b20978ec6909861558ccc879a458bd"
+    },
+    "real-attempt-1/actual-model-output.txt": {
+      "bytes": 73,
+      "sha256": "7af33c97dcc62c3a21e16ba5806806ca48b9a21dd47168f5ef083f39ef1baf1a"
+    },
+    "real-attempt-1/api-transcript.json": {
+      "bytes": 130705,
+      "sha256": "e9204b7c71202a1d624aea79173d11822662c1972ee3ebe2076a9fc488e41cac"
+    },
+    "real-attempt-1/application.log": {
+      "bytes": 2088,
+      "sha256": "d57d33b663db1a6b42e99ff79aa9347d88f12fd4a17292e0ee4fd84c6c28877e"
+    },
+    "real-attempt-1/approved-asset.json": {
+      "bytes": 3829,
+      "sha256": "be7ee1b699c1e7eeb93dd8d5c50d38abd0f268ad3736bdc94990ca5ebd2cc63d"
+    },
+    "real-attempt-1/draft-asset.json": {
+      "bytes": 3826,
+      "sha256": "ca54438b718056e658ade2fdd56a0afca4adcd80a9e77a9bf967866ac1e01461"
+    },
+    "real-attempt-1/native-models.json": {
+      "bytes": 1214,
+      "sha256": "ffea91ca2e246a74e4f2c83b37e67ddd2d6dbb64dd24cceb479a17f8702f24b7"
+    },
+    "real-attempt-1/native-props.json": {
+      "bytes": 5152,
+      "sha256": "875ee3c19545539d53da9cc9158fa55cdc57e37c28a476aba354b1bdf9af55ab"
+    },
+    "real-attempt-1/native-runtime.log": {
+      "bytes": 1813,
+      "sha256": "255de58e7dea7601493f00ba6797797711b364084f58cbe2cbcd933adc47e911"
+    },
+    "real-attempt-1/original-job.json": {
+      "bytes": 2728,
+      "sha256": "4a234e4330dedd5311fa6aa4f6f33a3c23ea58062f20d20f7576c7ae27e1f155"
+    },
+    "real-attempt-1/source-after.json": {
+      "bytes": 200956,
+      "sha256": "fc9e0aa32a3a98932cc3fc98fbdd77d45dc0667ad07f0ab296a8267b196b0df9"
+    },
+    "real-attempt-1/source-before.json": {
+      "bytes": 200956,
+      "sha256": "fc9e0aa32a3a98932cc3fc98fbdd77d45dc0667ad07f0ab296a8267b196b0df9"
+    },
+    "red-admission-r2.json": {
+      "bytes": 402102,
+      "sha256": "64d7683bc557441d71515f3f30b9ac7ec8bc97cca509b2cfaa80521c053254a9"
+    },
+    "red-admission-r2.log": {
+      "bytes": 6343,
+      "sha256": "55b0b33cc0ad7dd1855b21069f8f463311ffacb377bd938d80b05aee722fd1c9"
+    },
+    "red-admission.json": {
+      "bytes": 402099,
+      "sha256": "068426e0ac5887d0c2ab804ca11a1df08f2a0feba4b24c3c933cf5490cef1481"
+    },
+    "red-admission.log": {
+      "bytes": 5212,
+      "sha256": "3d2a93efa78b53ef53bdab030fa29e912b52d4d4703af7ca5b13c62af494763f"
+    },
+    "red-published-baseline.json": {
+      "bytes": 402108,
+      "sha256": "41be0add424ba27728b913e9c6d2acacfe482467cd5d7a086815b5cc6bac4308"
+    },
+    "red-published-baseline.log": {
+      "bytes": 6343,
+      "sha256": "67ac98f969ed3943722bf957cb399d62c7e183d9e8796e296648b68f9344ac53"
+    },
+    "run_scratch.py": {
+      "bytes": 1574,
+      "sha256": "8402e5b4b06644f55877a1da5d5e2a40c1c70c4f51c0a4f583692e6ab7431587"
+    },
+    "test_receipt_size_admission.py": {
+      "bytes": 4448,
+      "sha256": "96f7e2dc55ccb61118621a551ab5b1e375f10381d60520fe31b5dad64c422e4f"
+    }
+  }
+}

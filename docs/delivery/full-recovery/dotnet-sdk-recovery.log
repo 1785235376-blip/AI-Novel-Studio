@@ -1,0 +1,5 @@
+Official pinned SDK metadata selected; downloading archive
+Traceback (most recent call last):
+  File "D:\С˵\AI-Novel-Studio-Latest-Product\docs\delivery\full-recovery\recover_approved_dotnet_sdk.py", line 37, in <module>
+    raise ValueError("downloaded SDK SHA512 differs from official metadata; no extraction performed")
+ValueError: downloaded SDK SHA512 differs from official metadata; no extraction performed

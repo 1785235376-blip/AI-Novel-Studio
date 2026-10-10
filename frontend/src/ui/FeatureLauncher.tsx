@@ -22,6 +22,7 @@ export interface FeatureGroupDefinition {
  */
 export const FEATURE_GROUPS:readonly FeatureGroupDefinition[]=[
   {id:'create',label:'创作',icon:<PenLine aria-hidden="true"/>,items:[
+    {id:'creation',label:'创作方案与风格',icon:<PenLine aria-hidden="true"/>},
     {id:'story',label:'故事资料库',icon:<BookOpen aria-hidden="true"/>},
     {id:'overview',label:'概览',icon:<LayoutDashboard aria-hidden="true"/>},
     {id:'history',label:'版本历史',icon:<History aria-hidden="true"/>},
@@ -37,6 +38,7 @@ export const FEATURE_GROUPS:readonly FeatureGroupDefinition[]=[
     {id:'research',label:'研究资料',icon:<BookMarked aria-hidden="true"/>},
   ]},
   {id:'collaboration',label:'协作',icon:<UsersRound aria-hidden="true"/>,items:[
+    {id:'comments',label:'评论与审核',icon:<ClipboardList aria-hidden="true"/>},
     {id:'agents',label:'Agent 团队',icon:<Users aria-hidden="true"/>},
     {id:'members',label:'团队成员',icon:<UsersRound aria-hidden="true"/>},
     {id:'permissions',label:'权限设置',icon:<Shield aria-hidden="true"/>},
@@ -57,6 +59,7 @@ interface FeatureLauncherProps {
   expandedGroups:Readonly<Record<string,boolean>>;
   onSelect:(id:string)=>void;
   onToggleGroup:(id:string)=>void;
+  extraGroups?:readonly FeatureGroupDefinition[];
 }
 
 function focusableElements(root:HTMLElement|null){
@@ -65,13 +68,14 @@ function focusableElements(root:HTMLElement|null){
     : [];
 }
 
-export function FeatureLauncher({selectedId,expandedGroups,onSelect,onToggleGroup}:FeatureLauncherProps){
+export function FeatureLauncher({selectedId,expandedGroups,onSelect,onToggleGroup,extraGroups=[]}:FeatureLauncherProps){
   const [open,setOpen]=useState(false);
   const launcherRef=useRef<HTMLDivElement>(null);
   const overlayRef=useRef<HTMLElement>(null);
   const toggleRef=useRef<HTMLButtonElement>(null);
   const wasOpen=useRef(false);
-  const activeGroup=FEATURE_GROUPS.find(group=>group.items.some(item=>item.id===selectedId));
+  const groups=[...FEATURE_GROUPS,...extraGroups];
+  const activeGroup=groups.find(group=>group.items.some(item=>item.id===selectedId));
   const activeItem=activeGroup?.items.find(item=>item.id===selectedId);
 
   const openLauncher=()=>{
@@ -158,7 +162,7 @@ export function FeatureLauncher({selectedId,expandedGroups,onSelect,onToggleGrou
         <span>{activeItem?`当前：${activeItem.label}`:'选择一个功能'}</span>
       </header>
       <div className="feature-launcher__scroll">
-        {FEATURE_GROUPS.map(group=>{
+        {groups.map(group=>{
           const expanded=!!expandedGroups[group.id];
           const active=activeGroup?.id===group.id;
           const groupItemsId=`feature-group-items-${group.id}`;

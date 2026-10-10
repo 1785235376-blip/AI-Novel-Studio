@@ -1,0 +1,7 @@
+{
+  "source_and_document_diff_check_exit": 0,
+  "whole_staged_diff_check_exit": 2,
+  "reason": "Original pytest failure/native/build logs retain their emitted whitespace and final blank lines. No source or document whitespace error. Raw evidence bytes are not rewritten.",
+  "raw_check_output_sha256": "fe8ee4f5d15e047c81025b35770dadf36a7959e20c37145d743cc8cc84936f58",
+  "raw_evidence_preserved": true
+}

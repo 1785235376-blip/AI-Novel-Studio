@@ -1,0 +1,92 @@
+{
+  "utc": "2026-10-09T16:38:14.287664+00:00",
+  "status": "VERIFIED_SOURCE_AND_INVENTORY_ONLY",
+  "tests_executed": false,
+  "parent_head": "9851bdd2d692df983664bc8f4597fbc05c0e2ceb",
+  "previous_v2_nodes": 10362,
+  "current_v2_nodes": 10380,
+  "added_nodes": [
+    "tests/test_v2_discovery_file_browser_fixture.py::test_explicit_fixture_seed_contains_only_fixed_tiny_metadata_and_never_scans",
+    "tests/test_v2_discovery_file_browser_fixture.py::test_seed_refuses_to_replace_preexisting_metadata",
+    "tests/test_v2_discovery_file_browser_fixture.py::test_seed_refuses_active_scan_and_revoked_guard_without_writing",
+    "tests/test_v2_discovery_file_browser_fixture.py::test_repeated_seed_preserves_first_files_and_receipt",
+    "tests/test_v2_discovery_file_browser_fixture.py::test_real_mounted_fixture_seed_and_explicit_scan_keep_metadata_inference_separate[enabled]",
+    "tests/test_v2_discovery_file_browser_fixture.py::test_real_mounted_fixture_seed_and_explicit_scan_keep_metadata_inference_separate[default-off]",
+    "tests/test_v2_discovery_file_browser_fixture.py::test_real_mounted_fixture_seed_and_explicit_scan_keep_metadata_inference_separate[acceptance]",
+    "tests/test_v2_discovery_file_projection.py::test_snapshot_status_and_environment_project_one_scan_without_new_reads[/api]",
+    "tests/test_v2_discovery_file_projection.py::test_snapshot_status_and_environment_project_one_scan_without_new_reads[/api/v1]",
+    "tests/test_v2_discovery_file_projection.py::test_projection_copies_cannot_mutate_original_file_or_binding_evidence",
+    "tests/test_v2_discovery_file_projection.py::test_same_filename_paths_keep_distinct_observation_and_candidate_ids",
+    "tests/test_v2_discovery_file_projection.py::test_changed_file_is_not_reinspected_until_another_explicit_scan",
+    "tests/test_v2_discovery_file_projection.py::test_revoke_blocks_actual_cached_file_paths_even_after_flag_is_disabled[/api-True]",
+    "tests/test_v2_discovery_file_projection.py::test_revoke_blocks_actual_cached_file_paths_even_after_flag_is_disabled[/api-False]",
+    "tests/test_v2_discovery_file_projection.py::test_revoke_blocks_actual_cached_file_paths_even_after_flag_is_disabled[/api/v1-True]",
+    "tests/test_v2_discovery_file_projection.py::test_revoke_blocks_actual_cached_file_paths_even_after_flag_is_disabled[/api/v1-False]",
+    "tests/test_v2_legacy_discovery_http_fixture.py::test_legacy_actual_host_http_scan_revoke_and_other_existing_host_session[False]",
+    "tests/test_v2_legacy_discovery_http_fixture.py::test_legacy_actual_host_http_scan_revoke_and_other_existing_host_session[True]"
+  ],
+  "all_previous_ordered_nodes_preserved": true,
+  "exact_historical_skip_policy_unchanged": true,
+  "external_gates_unchanged": true,
+  "source_digest_errors": [],
+  "unchanged_from_parent": {
+    "tests/test_*.py": {
+      "tracked_count": 437,
+      "unchanged": true
+    },
+    "frontend/src/*.test.*": {
+      "tracked_count": 257,
+      "unchanged": true
+    },
+    "frontend/src/**/*.test.*": {
+      "tracked_count": 214,
+      "unchanged": true
+    },
+    "frontend/tests/**": {
+      "tracked_count": 94,
+      "unchanged": true
+    },
+    ".github/ci/*.py": {
+      "tracked_count": 13,
+      "unchanged": true
+    },
+    ".github/workflows/*": {
+      "tracked_count": 5,
+      "unchanged": true
+    },
+    "frontend/playwright.v2-live.config.ts": {
+      "tracked_count": 1,
+      "unchanged": true
+    },
+    "frontend/src/ui/AppShell.tsx": {
+      "tracked_count": 1,
+      "unchanged": true
+    },
+    "frontend/src/ui/primitives.tsx": {
+      "tracked_count": 1,
+      "unchanged": true
+    },
+    "frontend/src/ui/tokens.css": {
+      "tracked_count": 1,
+      "unchanged": true
+    },
+    ".github/ci/coverage_manifest.json.gz": {
+      "tracked_count": 1,
+      "unchanged": true
+    }
+  },
+  "original_fixture_self_check_source_unchanged": true,
+  "original_and_new_browser_inventory": {
+    "old": 18,
+    "current": 21,
+    "old_order_preserved": true,
+    "added": [
+      "[m3-consent-chromium] › v2-local-ai-files-live.spec.ts › M3 files original File HTTP UI reuses observed metadata without claiming inference",
+      "[m3-default-off-chromium] › v2-local-ai-legacy-host-live.spec.ts › M3 legacy default-off uses verified host for explicit scan and clears revoked private state",
+      "[m3-acceptance-chromium] › v2-local-ai-legacy-host-live.spec.ts › M3 legacy acceptance-mode uses verified host for explicit scan and clears revoked private state"
+    ]
+  },
+  "catalog_receipt": "catalog-9c6ce5e2c3b4.json",
+  "v2_manifest_sha256": "904bb2488f729857af98ef7abccacf90f664aea53eb49a48f8262f764141b522",
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262"
+}

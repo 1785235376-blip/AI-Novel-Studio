@@ -1,0 +1,210 @@
+{
+  "layer": "REAL_POSTGRESQL_16_ORIGINAL_REPOSITORY_SYNTHETIC_MANUSCRIPT",
+  "python": "3.12.9",
+  "server_version": "PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+  "server_version_num": 160015,
+  "before": {
+    "id": "a43-real-pg-7467b5b0480a48b9ae88cc7b467042c6:1",
+    "novel_id": "a43-real-pg-7467b5b0480a48b9ae88cc7b467042c6",
+    "number": 1,
+    "volume": 1,
+    "title": "A",
+    "word_count": 24,
+    "status": "Draft",
+    "content": "# A\n\nA-MANUSCRIPT-SYNTHETIC\n\n",
+    "version": 1,
+    "document": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "heading",
+          "attrs": {
+            "level": 1
+          },
+          "content": [
+            {
+              "text": "A",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "text": "A-MANUSCRIPT-SYNTHETIC",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    "is_archived": false,
+    "updated_at": "2026-10-06T22:03:28.004753+00:00"
+  },
+  "other": {
+    "id": "a43-real-pg-7467b5b0480a48b9ae88cc7b467042c6:2",
+    "novel_id": "a43-real-pg-7467b5b0480a48b9ae88cc7b467042c6",
+    "number": 2,
+    "volume": 1,
+    "title": "B",
+    "word_count": 24,
+    "status": "Draft",
+    "content": "# B\n\nB-MANUSCRIPT-SYNTHETIC\n\n",
+    "version": 1,
+    "document": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "heading",
+          "attrs": {
+            "level": 1
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "B"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "type": "text",
+              "text": "B-MANUSCRIPT-SYNTHETIC"
+            }
+          ]
+        }
+      ]
+    },
+    "is_archived": false,
+    "updated_at": "2026-10-06T22:03:28.007853+00:00"
+  },
+  "before_rows": [
+    {
+      "uuid": "7d8b88ae-701f-467c-a712-b7c8dc5bf9a5",
+      "number": 1,
+      "version": 1,
+      "title": "A"
+    },
+    {
+      "uuid": "47a67631-cc33-4294-abfc-e7f12e711034",
+      "number": 2,
+      "version": 1,
+      "title": "B"
+    }
+  ],
+  "returned_order": [
+    "a43-real-pg-7467b5b0480a48b9ae88cc7b467042c6:1",
+    "a43-real-pg-7467b5b0480a48b9ae88cc7b467042c6:2"
+  ],
+  "move_exception": null,
+  "after": {
+    "id": "a43-real-pg-7467b5b0480a48b9ae88cc7b467042c6:1",
+    "novel_id": "a43-real-pg-7467b5b0480a48b9ae88cc7b467042c6",
+    "number": 1,
+    "volume": 1,
+    "title": "B",
+    "word_count": 24,
+    "status": "Draft",
+    "content": "# B\n\nB-MANUSCRIPT-SYNTHETIC\n\n",
+    "version": 1,
+    "document": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "heading",
+          "attrs": {
+            "level": 1
+          },
+          "content": [
+            {
+              "text": "B",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "text": "B-MANUSCRIPT-SYNTHETIC",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    "is_archived": false,
+    "updated_at": "2026-10-06T22:03:28.007853+00:00"
+  },
+  "after_rows": [
+    {
+      "uuid": "47a67631-cc33-4294-abfc-e7f12e711034",
+      "number": 1,
+      "version": 1,
+      "title": "B"
+    },
+    {
+      "uuid": "7d8b88ae-701f-467c-a712-b7c8dc5bf9a5",
+      "number": 2,
+      "version": 1,
+      "title": "A"
+    }
+  ],
+  "same_id_and_version_now_different_document": true,
+  "old_id_version_save": {
+    "id": "a43-real-pg-7467b5b0480a48b9ae88cc7b467042c6:1",
+    "novel_id": "a43-real-pg-7467b5b0480a48b9ae88cc7b467042c6",
+    "number": 1,
+    "volume": 1,
+    "title": "A",
+    "word_count": 24,
+    "status": "Draft",
+    "content": "# A\n\nA-MANUSCRIPT-SYNTHETIC\n\n",
+    "version": 2,
+    "document": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "heading",
+          "attrs": {
+            "level": 1
+          },
+          "content": [
+            {
+              "text": "A",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "content": [
+            {
+              "text": "A-MANUSCRIPT-SYNTHETIC",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    "is_archived": false,
+    "updated_at": "2026-10-06T22:03:28.024146+00:00"
+  },
+  "after_old_save_rows": [
+    {
+      "uuid": "47a67631-cc33-4294-abfc-e7f12e711034",
+      "number": 1,
+      "version": 2,
+      "title": "A"
+    },
+    {
+      "uuid": "7d8b88ae-701f-467c-a712-b7c8dc5bf9a5",
+      "number": 2,
+      "version": 1,
+      "title": "A"
+    }
+  ]
+}

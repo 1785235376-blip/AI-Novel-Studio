@@ -1,0 +1,33 @@
+{
+  "review_utc": "2026-10-09T13:18:00Z",
+  "status": "EXPLICIT_ADDITIVE_REVIEW_NOT_EXECUTION",
+  "prior_review": "stage-m1-manifest-review-decision.json",
+  "previous_working_manifest_nodes": 9809,
+  "collected_nodes": 9823,
+  "prior_published_nodes_preserved_in_order": true,
+  "previous_working_nodes_preserved_in_order": true,
+  "new_nodes_since_previous_review": [
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-True]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-False]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-0]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file--1]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-1]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-1.0]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[file-None]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[postgres-True]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[postgres-False]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[postgres-0]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[postgres--1]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[postgres-1]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[postgres-1.0]",
+    "tests/test_v2_independent_workspace.py::test_new_studio_rejects_corrupt_original_asset_version_without_mutating_owner[postgres-None]"
+  ],
+  "new_node_classifications": {
+    "file": 7,
+    "postgres": 7
+  },
+  "protected_test_and_gate_diff_from_M0": [],
+  "reviewed_source_delta": "Only V2 workspace._row rejects corrupt version metadata: exact int excluding bool and strictly positive. Legacy original AssetLibraryService legitimate counter paths unchanged. Same new regression body observed RED then focused File and actual PostgreSQL PASS. API catalog regenerated for new source fingerprint.",
+  "review_script_note": "Initial ad-hoc node-name assertion used wrong test prefix and failed before writing a review file. Actual returned 14 node names were inspected and the ad-hoc assertion corrected; no test or coverage assertion changed.",
+  "frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262"
+}

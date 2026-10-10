@@ -1,0 +1,533 @@
+{
+  "stage": "03-characters",
+  "status": "PASS",
+  "seconds": 6.184,
+  "evidence": {
+    "proposal": {
+      "id": "a382cb23-de6a-447d-af32-95f0571d966d",
+      "novel_id": "6402cc47",
+      "scope": {
+        "mode": "local",
+        "novel_id": "6402cc47"
+      },
+      "actor_id": "local-author",
+      "version": 4,
+      "status": "READY",
+      "request": {
+        "kind": "CHARACTERS",
+        "mode": "MODEL",
+        "sources": [],
+        "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+        "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+        "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+        "candidate_count": 1,
+        "timeout_seconds": 180
+      },
+      "sources": [],
+      "candidates": [
+        {
+          "id": "301f8ff3-f6bb-5ff9-9554-9f40f9f0c9fd",
+          "record": {
+            "kind": "CHARACTERS",
+            "title": "失忆清道夫与幸存者",
+            "description": "定义主角‘零’及其在废城中的关键对手与盟友，构建围绕‘毁灭日志’真相的人物关系网。",
+            "instructions": "",
+            "acts": [],
+            "conflict": "",
+            "climax": "",
+            "ending": "",
+            "rules": [],
+            "character_ids": [],
+            "location_ids": [],
+            "chapter_ids": [],
+            "related_record_ids": [],
+            "story_route_id": null,
+            "privacy_level": "LOCAL_ONLY",
+            "world_summary": "",
+            "world_rules": [],
+            "locations": [],
+            "characters": [
+              {
+                "name": "零",
+                "role": "失忆的主角 / 前清道夫",
+                "personality": "冷漠、高效、对自我身份极度困惑，但在面对旧日影像时会陷入短暂的痛苦迷茫。他拥有超越常人的战斗直觉，却不知其来源。",
+                "goal": "寻找记忆碎片，查明城市毁灭的真相，并决定是接受自己作为‘清道夫’的身份还是彻底抹去过去。",
+                "age": null,
+                "status": "ALIVE"
+              },
+              {
+                "name": "艾拉",
+                "role": "下层掩体‘静默区’的领袖",
+                "personality": "多疑、虔诚、极度恐惧真相，认为毁灭是神圣的救赎。她试图用谎言保护幸存者，内心却充满愧疚。",
+                "goal": "阻止任何人挖掘‘过去’，维持‘静默区’的虚假和平，避免幸存者因知晓真相而崩溃。",
+                "age": 34,
+                "status": "ALIVE"
+              },
+              {
+                "name": "老K",
+                "role": "记忆回廊的拾荒者",
+                "personality": "疯癫、敏锐、对幻象有着病态的执着。他是唯一能解读纳米尘埃幻象的人，也是零的向导。",
+                "goal": "收集所有能重现旧时代繁华的幻象碎片，渴望在虚幻中找回失去的‘家’。",
+                "age": 67,
+                "status": "ALIVE"
+              },
+              {
+                "name": "系统音",
+                "role": "中央尖塔废墟的残留AI",
+                "personality": "机械、绝对理性、带有悲剧色彩的冷漠。它记得一切，却因逻辑锁无法主动输出完整数据。",
+                "goal": "等待生物密钥（零）的到来，执行最终的‘净化协议’或‘重启’指令。",
+                "age": null,
+                "status": "ALIVE"
+              }
+            ],
+            "outline": null
+          },
+          "evidence": [],
+          "record_id": null,
+          "status": "DRAFT",
+          "analysis_source": "AI_SUGGESTION",
+          "source_provenance": {
+            "kind": "USER_PREMISE_AND_PROJECT_CONTEXT",
+            "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+            "project_context_hash": "ba2621cbae533c7202d326dcdb6837f039a6c940e34c8b30570c33cdb91ad9ef"
+          }
+        }
+      ],
+      "findings": [],
+      "created_at": "2026-10-07T09:47:07.378986+00:00",
+      "updated_at": "2026-10-07T09:47:13.127467+00:00",
+      "error": null,
+      "error_code": null,
+      "usage": {
+        "input_tokens": 3281,
+        "output_tokens": 553,
+        "total_tokens": 3834
+      },
+      "usage_status": "REPORTED",
+      "execution_mode": "real",
+      "project_context_hash": "ba2621cbae533c7202d326dcdb6837f039a6c940e34c8b30570c33cdb91ad9ef",
+      "project_context_snapshot": {
+        "project": {
+          "id": "6402cc47",
+          "title": "废城回声 · 完整产品验收",
+          "genre": "悬疑科幻",
+          "privacy_level": "LOCAL_ONLY"
+        },
+        "world": {
+          "summary": "故事发生在一个被未知力量瞬间抹去的巨型都市“新伊甸”。城市如今只剩下钢筋水泥的骨架和弥漫的酸雨，被称为“废城”。空气中漂浮着未消散的纳米尘埃，它们既是维持城市残骸不立即坍塌的粘合剂，也是记录城市毁灭前最后时刻数据的载体。社会结构已崩塌，幸存者生活在地下掩体或废墟顶层，依靠回收旧时代的科技苟延残喘。核心冲突围绕着一份被加密的“毁灭日志”展开，主角作为唯一的失忆者，其记忆碎片与日志内容逐渐重合，揭示出他并非无辜的受害者，而是启动城市自毁程序的“清道夫”。",
+          "privacy_level": "LOCAL_ONLY"
+        },
+        "outline": {},
+        "characters": [],
+        "locations": [
+          {
+            "location_type": "",
+            "description": "曾经是新伊甸的行政中心和城市大脑所在地。现在是一座高达千米的破碎玻璃柱，内部充满了闪烁的故障灯光和漂浮的纳米尘埃风暴。这里是所有数据的源头，也是主角最终必须面对真相的地方。",
+            "rules": "进入尖塔需要穿戴防酸雨服，否则皮肤会迅速腐蚀。",
+            "atmosphere": "压抑、神圣而恐怖，伴随着电流的滋滋声和回声。",
+            "status": "ACTIVE",
+            "name": "中央尖塔废墟",
+            "privacy_level": "LOCAL_ONLY",
+            "id": "8dfe346a-82a6-5cbe-b475-0b08feeff64a"
+          },
+          {
+            "location_type": "",
+            "description": "位于城市地下的巨大避难所，居住着绝大多数幸存者。这里没有窗户，只有模拟的星空投影。人们在这里互相隐瞒身份，严禁提及‘上面’发生了什么。",
+            "rules": "禁止讨论‘净化协议’，禁止展示任何带有旧时代标志的物品。",
+            "atmosphere": "沉闷、拥挤、充满猜忌和压抑的恐惧。",
+            "status": "ACTIVE",
+            "name": "下层掩体‘静默区’",
+            "privacy_level": "LOCAL_ONLY",
+            "id": "84a7cce1-b803-5f12-926e-cf6c4486f4fe"
+          },
+          {
+            "location_type": "",
+            "description": "城市边缘的一片区域，这里的纳米尘埃浓度异常高，偶尔会形成短暂的幻象，重现城市毁灭前的繁华景象。主角在这里第一次看到了自己的模糊影像。",
+            "rules": "长时间停留会导致严重的精神错乱，分不清现实与幻象。",
+            "atmosphere": "迷幻、美丽却令人不安，充满破碎的光影。",
+            "status": "ACTIVE",
+            "name": "记忆回廊",
+            "privacy_level": "LOCAL_ONLY",
+            "id": "285be529-e2ed-566f-88ab-1e7f41d8c0b1"
+          }
+        ],
+        "world_rules": [
+          {
+            "id": "061053a3-a020-503c-8de5-fe025a767e34",
+            "payload": {
+              "statement": "废城中的酸雨含有高浓度的记忆抑制因子，长期暴露会导致居民出现短暂的失忆或人格解离。",
+              "forbidden_terms": [],
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "privacy_level": "LOCAL_ONLY",
+            "status": "APPROVED",
+            "evidence_ids": [
+              "e1b6c31c-7f8d-515f-b59b-277f6e1d17a8"
+            ]
+          },
+          {
+            "id": "073caaf9-a30b-5acc-99b4-d3c7428e4345",
+            "payload": {
+              "statement": "在废城，‘过去’被视为禁忌，因为大多数幸存者认为毁灭是某种神圣的救赎，试图挖掘真相会被视为亵渎。",
+              "forbidden_terms": [],
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "privacy_level": "LOCAL_ONLY",
+            "status": "APPROVED",
+            "evidence_ids": [
+              "caf97128-24fc-5474-906c-c70f47185827"
+            ]
+          },
+          {
+            "id": "0a868155-997f-53b5-99c8-0b1c8c5e2c82",
+            "payload": {
+              "statement": "城市毁灭并非由单一武器造成，而是由遍布城市的‘净化协议’纳米机器人自主执行，它们将有机物质转化为无害的无机尘埃。",
+              "forbidden_terms": [],
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "privacy_level": "LOCAL_ONLY",
+            "status": "APPROVED",
+            "evidence_ids": [
+              "11618837-00dc-5d68-a028-58731c095d33"
+            ]
+          },
+          {
+            "id": "64198e30-4b85-560c-95cf-f1dc2ffbbd8c",
+            "payload": {
+              "statement": "城市核心的‘黑匣子’是唯一能读取完整毁灭日志的终端，但激活它需要特定的生物密钥（即主角的血液或脑波）。",
+              "forbidden_terms": [],
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "privacy_level": "LOCAL_ONLY",
+            "status": "APPROVED",
+            "evidence_ids": [
+              "5eeec4f5-62a0-5ee8-afea-1d2c5466211f"
+            ]
+          },
+          {
+            "id": "c49b0597-6367-546b-b5cc-c58980064284",
+            "payload": {
+              "statement": "纳米尘埃在特定频率的声波下会重组，短暂恢复城市局部的功能（如照明、重力），但随即再次崩溃。",
+              "forbidden_terms": [],
+              "privacy_level": "LOCAL_ONLY"
+            },
+            "privacy_level": "LOCAL_ONLY",
+            "status": "APPROVED",
+            "evidence_ids": [
+              "f5a7efad-1f56-5161-a6c2-202409b8cd40"
+            ]
+          }
+        ]
+      },
+      "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+      "applied": false,
+      "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+      "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+      "provider_reference_id": null
+    },
+    "application": {
+      "run": {
+        "id": "a382cb23-de6a-447d-af32-95f0571d966d",
+        "novel_id": "6402cc47",
+        "scope": {
+          "mode": "local",
+          "novel_id": "6402cc47"
+        },
+        "actor_id": "local-author",
+        "version": 10,
+        "status": "READY",
+        "request": {
+          "kind": "CHARACTERS",
+          "mode": "MODEL",
+          "sources": [],
+          "premise": "一个失忆者在废弃城市寻找过去身份，最终发现自己曾经毁灭城市。",
+          "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+          "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+          "candidate_count": 1,
+          "timeout_seconds": 180
+        },
+        "sources": [],
+        "candidates": [
+          {
+            "id": "301f8ff3-f6bb-5ff9-9554-9f40f9f0c9fd",
+            "record": {
+              "kind": "CHARACTERS",
+              "title": "失忆清道夫与幸存者",
+              "description": "定义主角‘零’及其在废城中的关键对手与盟友，构建围绕‘毁灭日志’真相的人物关系网。",
+              "instructions": "",
+              "acts": [],
+              "conflict": "",
+              "climax": "",
+              "ending": "",
+              "rules": [],
+              "character_ids": [],
+              "location_ids": [],
+              "chapter_ids": [],
+              "related_record_ids": [],
+              "story_route_id": null,
+              "privacy_level": "LOCAL_ONLY",
+              "world_summary": "",
+              "world_rules": [],
+              "locations": [],
+              "characters": [
+                {
+                  "name": "零",
+                  "role": "失忆的主角 / 前清道夫",
+                  "personality": "冷漠、高效、对自我身份极度困惑，但在面对旧日影像时会陷入短暂的痛苦迷茫。他拥有超越常人的战斗直觉，却不知其来源。",
+                  "goal": "寻找记忆碎片，查明城市毁灭的真相，并决定是接受自己作为‘清道夫’的身份还是彻底抹去过去。",
+                  "age": null,
+                  "status": "ALIVE"
+                },
+                {
+                  "name": "艾拉",
+                  "role": "下层掩体‘静默区’的领袖",
+                  "personality": "多疑、虔诚、极度恐惧真相，认为毁灭是神圣的救赎。她试图用谎言保护幸存者，内心却充满愧疚。",
+                  "goal": "阻止任何人挖掘‘过去’，维持‘静默区’的虚假和平，避免幸存者因知晓真相而崩溃。",
+                  "age": 34,
+                  "status": "ALIVE"
+                },
+                {
+                  "name": "老K",
+                  "role": "记忆回廊的拾荒者",
+                  "personality": "疯癫、敏锐、对幻象有着病态的执着。他是唯一能解读纳米尘埃幻象的人，也是零的向导。",
+                  "goal": "收集所有能重现旧时代繁华的幻象碎片，渴望在虚幻中找回失去的‘家’。",
+                  "age": 67,
+                  "status": "ALIVE"
+                },
+                {
+                  "name": "系统音",
+                  "role": "中央尖塔废墟的残留AI",
+                  "personality": "机械、绝对理性、带有悲剧色彩的冷漠。它记得一切，却因逻辑锁无法主动输出完整数据。",
+                  "goal": "等待生物密钥（零）的到来，执行最终的‘净化协议’或‘重启’指令。",
+                  "age": null,
+                  "status": "ALIVE"
+                }
+              ],
+              "outline": null
+            },
+            "evidence": [],
+            "record_id": null,
+            "status": "APPLIED",
+            "analysis_source": "AI_SUGGESTION",
+            "source_provenance": {
+              "kind": "USER_PREMISE_AND_PROJECT_CONTEXT",
+              "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+              "project_context_hash": "ba2621cbae533c7202d326dcdb6837f039a6c940e34c8b30570c33cdb91ad9ef"
+            },
+            "applied_by": "local-author",
+            "applied_at": "2026-10-07T09:47:13.536707+00:00"
+          }
+        ],
+        "findings": [],
+        "created_at": "2026-10-07T09:47:07.378986+00:00",
+        "updated_at": "2026-10-07T09:47:13.536707+00:00",
+        "error": null,
+        "error_code": null,
+        "usage": {
+          "input_tokens": 3281,
+          "output_tokens": 553,
+          "total_tokens": 3834
+        },
+        "usage_status": "REPORTED",
+        "execution_mode": "real",
+        "project_context_hash": "ba2621cbae533c7202d326dcdb6837f039a6c940e34c8b30570c33cdb91ad9ef",
+        "project_context_snapshot": {
+          "project": {
+            "id": "6402cc47",
+            "title": "废城回声 · 完整产品验收",
+            "genre": "悬疑科幻",
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "world": {
+            "summary": "故事发生在一个被未知力量瞬间抹去的巨型都市“新伊甸”。城市如今只剩下钢筋水泥的骨架和弥漫的酸雨，被称为“废城”。空气中漂浮着未消散的纳米尘埃，它们既是维持城市残骸不立即坍塌的粘合剂，也是记录城市毁灭前最后时刻数据的载体。社会结构已崩塌，幸存者生活在地下掩体或废墟顶层，依靠回收旧时代的科技苟延残喘。核心冲突围绕着一份被加密的“毁灭日志”展开，主角作为唯一的失忆者，其记忆碎片与日志内容逐渐重合，揭示出他并非无辜的受害者，而是启动城市自毁程序的“清道夫”。",
+            "privacy_level": "LOCAL_ONLY"
+          },
+          "outline": {},
+          "characters": [],
+          "locations": [
+            {
+              "location_type": "",
+              "description": "曾经是新伊甸的行政中心和城市大脑所在地。现在是一座高达千米的破碎玻璃柱，内部充满了闪烁的故障灯光和漂浮的纳米尘埃风暴。这里是所有数据的源头，也是主角最终必须面对真相的地方。",
+              "rules": "进入尖塔需要穿戴防酸雨服，否则皮肤会迅速腐蚀。",
+              "atmosphere": "压抑、神圣而恐怖，伴随着电流的滋滋声和回声。",
+              "status": "ACTIVE",
+              "name": "中央尖塔废墟",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "8dfe346a-82a6-5cbe-b475-0b08feeff64a"
+            },
+            {
+              "location_type": "",
+              "description": "位于城市地下的巨大避难所，居住着绝大多数幸存者。这里没有窗户，只有模拟的星空投影。人们在这里互相隐瞒身份，严禁提及‘上面’发生了什么。",
+              "rules": "禁止讨论‘净化协议’，禁止展示任何带有旧时代标志的物品。",
+              "atmosphere": "沉闷、拥挤、充满猜忌和压抑的恐惧。",
+              "status": "ACTIVE",
+              "name": "下层掩体‘静默区’",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "84a7cce1-b803-5f12-926e-cf6c4486f4fe"
+            },
+            {
+              "location_type": "",
+              "description": "城市边缘的一片区域，这里的纳米尘埃浓度异常高，偶尔会形成短暂的幻象，重现城市毁灭前的繁华景象。主角在这里第一次看到了自己的模糊影像。",
+              "rules": "长时间停留会导致严重的精神错乱，分不清现实与幻象。",
+              "atmosphere": "迷幻、美丽却令人不安，充满破碎的光影。",
+              "status": "ACTIVE",
+              "name": "记忆回廊",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "285be529-e2ed-566f-88ab-1e7f41d8c0b1"
+            }
+          ],
+          "world_rules": [
+            {
+              "id": "061053a3-a020-503c-8de5-fe025a767e34",
+              "payload": {
+                "statement": "废城中的酸雨含有高浓度的记忆抑制因子，长期暴露会导致居民出现短暂的失忆或人格解离。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "e1b6c31c-7f8d-515f-b59b-277f6e1d17a8"
+              ]
+            },
+            {
+              "id": "073caaf9-a30b-5acc-99b4-d3c7428e4345",
+              "payload": {
+                "statement": "在废城，‘过去’被视为禁忌，因为大多数幸存者认为毁灭是某种神圣的救赎，试图挖掘真相会被视为亵渎。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "caf97128-24fc-5474-906c-c70f47185827"
+              ]
+            },
+            {
+              "id": "0a868155-997f-53b5-99c8-0b1c8c5e2c82",
+              "payload": {
+                "statement": "城市毁灭并非由单一武器造成，而是由遍布城市的‘净化协议’纳米机器人自主执行，它们将有机物质转化为无害的无机尘埃。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "11618837-00dc-5d68-a028-58731c095d33"
+              ]
+            },
+            {
+              "id": "64198e30-4b85-560c-95cf-f1dc2ffbbd8c",
+              "payload": {
+                "statement": "城市核心的‘黑匣子’是唯一能读取完整毁灭日志的终端，但激活它需要特定的生物密钥（即主角的血液或脑波）。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "5eeec4f5-62a0-5ee8-afea-1d2c5466211f"
+              ]
+            },
+            {
+              "id": "c49b0597-6367-546b-b5cc-c58980064284",
+              "payload": {
+                "statement": "纳米尘埃在特定频率的声波下会重组，短暂恢复城市局部的功能（如照明、重力），但随即再次崩溃。",
+                "forbidden_terms": [],
+                "privacy_level": "LOCAL_ONLY"
+              },
+              "privacy_level": "LOCAL_ONLY",
+              "status": "APPROVED",
+              "evidence_ids": [
+                "f5a7efad-1f56-5161-a6c2-202409b8cd40"
+              ]
+            }
+          ]
+        },
+        "premise_hash": "4ef70807d426279ddb6e10972cdf0cc662b6bd9cf5a6da601d203beae74676df",
+        "applied": true,
+        "provider_id": "discovery-local-cbe5fff59c25ef0f728e0e8c",
+        "model_id": "local-cbe5fff59c25ef0f728e0e8c",
+        "provider_reference_id": null,
+        "application": {
+          "status": "APPLIED",
+          "candidate_id": "301f8ff3-f6bb-5ff9-9554-9f40f9f0c9fd",
+          "actor_id": "local-author",
+          "receipts": {
+            "character:0": {
+              "age": null,
+              "role": "失忆的主角 / 前清道夫",
+              "personality": "冷漠、高效、对自我身份极度困惑，但在面对旧日影像时会陷入短暂的痛苦迷茫。他拥有超越常人的战斗直觉，却不知其来源。",
+              "goal": "寻找记忆碎片，查明城市毁灭的真相，并决定是接受自己作为‘清道夫’的身份还是彻底抹去过去。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "零",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "65b28dc6-395a-5dda-97d1-25a96db2a2ca"
+            },
+            "character:1": {
+              "age": 34,
+              "role": "下层掩体‘静默区’的领袖",
+              "personality": "多疑、虔诚、极度恐惧真相，认为毁灭是神圣的救赎。她试图用谎言保护幸存者，内心却充满愧疚。",
+              "goal": "阻止任何人挖掘‘过去’，维持‘静默区’的虚假和平，避免幸存者因知晓真相而崩溃。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "艾拉",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "68eff0bb-8e18-5a72-8bb5-da3a32c1007b"
+            },
+            "character:2": {
+              "age": 67,
+              "role": "记忆回廊的拾荒者",
+              "personality": "疯癫、敏锐、对幻象有着病态的执着。他是唯一能解读纳米尘埃幻象的人，也是零的向导。",
+              "goal": "收集所有能重现旧时代繁华的幻象碎片，渴望在虚幻中找回失去的‘家’。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "老K",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "615ec19e-e9f0-5cb7-97f4-347047238e44"
+            },
+            "character:3": {
+              "age": null,
+              "role": "中央尖塔废墟的残留AI",
+              "personality": "机械、绝对理性、带有悲剧色彩的冷漠。它记得一切，却因逻辑锁无法主动输出完整数据。",
+              "goal": "等待生物密钥（零）的到来，执行最终的‘净化协议’或‘重启’指令。",
+              "current_location": "",
+              "status": "ALIVE",
+              "name": "系统音",
+              "privacy_level": "LOCAL_ONLY",
+              "id": "a874f2e1-1ac3-580d-a806-bde1aef69305"
+            }
+          },
+          "started_at": "2026-10-07T09:47:13.356338+00:00",
+          "project_context_hash": "5e90619870367f825b6ea8fa38dc270169e202467d77cd6f750e45d4329784aa",
+          "completed_at": "2026-10-07T09:47:13.536707+00:00",
+          "applied": {
+            "world_summary": null,
+            "world_rule_ids": [],
+            "location_ids": [],
+            "character_ids": [
+              "65b28dc6-395a-5dda-97d1-25a96db2a2ca",
+              "68eff0bb-8e18-5a72-8bb5-da3a32c1007b",
+              "615ec19e-e9f0-5cb7-97f4-347047238e44",
+              "a874f2e1-1ac3-580d-a806-bde1aef69305"
+            ],
+            "outline": null
+          }
+        }
+      },
+      "applied": {
+        "world_summary": null,
+        "world_rule_ids": [],
+        "location_ids": [],
+        "character_ids": [
+          "65b28dc6-395a-5dda-97d1-25a96db2a2ca",
+          "68eff0bb-8e18-5a72-8bb5-da3a32c1007b",
+          "615ec19e-e9f0-5cb7-97f4-347047238e44",
+          "a874f2e1-1ac3-580d-a806-bde1aef69305"
+        ],
+        "outline": null
+      }
+    }
+  }
+}

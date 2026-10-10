@@ -1,0 +1,40 @@
+{
+  "kind": "EXPLICIT_NEW_TEST_MEASUREMENT_SOURCE_CORRECTION_AND_ADDITIVE_INVENTORY",
+  "previous_manifest_sha256": "bb0efbd666113b84792ad8b4fbf378e59607d105adafd1a07ffebc52bc30b803",
+  "previous_nodes": 7911,
+  "current_nodes": 7919,
+  "added_nodes": 8,
+  "changed_new_test_source": [
+    {
+      "path": "tests/test_a43_rich_document.py",
+      "before_sha256": "fc75e35365adcdde89ae3c5531c317de63d924067aefe1385e7fa2412de7e45f",
+      "after_sha256": "7425bfd8b017de1bf89954914b0c10df6d325d8267e5cb4f4a6b0827a75c4238",
+      "reason": "Only the newly added DOCX measurement helper now preserves structural w:br/w:tab; every test/fixture/module AST outside that helper is unchanged. Eight independent OOXML regressions establish RED/GREEN. No product change and no original assertion weakened."
+    }
+  ],
+  "all_original_7492_nodes_and392_manifest_source_hashes_unchanged": true,
+  "skip_maps_unchanged": true,
+  "collection": "TWO_IDENTICAL_COMPLETE_COLLECTIONS_NOT_EXECUTION",
+  "manifest_sha256": "24e70bafc05b8073e65250d028cdba3a9ca7b4435f96bb19a27c3d0c09a70e55",
+  "added_node_ids": [
+    "tests/test_a43_docx_text_measurement.py::test_docx_measurement_preserves_structural_breaks_and_tabs[break-between-runs]",
+    "tests/test_a43_docx_text_measurement.py::test_docx_measurement_preserves_structural_breaks_and_tabs[break-inside-run]",
+    "tests/test_a43_docx_text_measurement.py::test_docx_measurement_preserves_structural_breaks_and_tabs[repeated-breaks-and-empty-paragraph]",
+    "tests/test_a43_docx_text_measurement.py::test_docx_measurement_preserves_structural_breaks_and_tabs[tab-and-marked-runs]",
+    "tests/test_a43_docx_text_measurement.py::test_pg_shaped_multiline_title_is_intact_in_product_docx_and_measurement[literal-lf]",
+    "tests/test_a43_docx_text_measurement.py::test_pg_shaped_multiline_title_is_intact_in_product_docx_and_measurement[literal-crlf]",
+    "tests/test_a43_docx_text_measurement.py::test_pg_shaped_multiline_title_is_intact_in_product_docx_and_measurement[split-marks-lf]",
+    "tests/test_a43_docx_text_measurement.py::test_pg_shaped_multiline_title_is_intact_in_product_docx_and_measurement[run-ends-with-lf]"
+  ],
+  "new_node_backend_classification": {
+    "tests/test_a43_docx_text_measurement.py::test_docx_measurement_preserves_structural_breaks_and_tabs[break-between-runs]": "both",
+    "tests/test_a43_docx_text_measurement.py::test_docx_measurement_preserves_structural_breaks_and_tabs[break-inside-run]": "both",
+    "tests/test_a43_docx_text_measurement.py::test_docx_measurement_preserves_structural_breaks_and_tabs[repeated-breaks-and-empty-paragraph]": "both",
+    "tests/test_a43_docx_text_measurement.py::test_docx_measurement_preserves_structural_breaks_and_tabs[tab-and-marked-runs]": "both",
+    "tests/test_a43_docx_text_measurement.py::test_pg_shaped_multiline_title_is_intact_in_product_docx_and_measurement[literal-lf]": "both",
+    "tests/test_a43_docx_text_measurement.py::test_pg_shaped_multiline_title_is_intact_in_product_docx_and_measurement[literal-crlf]": "both",
+    "tests/test_a43_docx_text_measurement.py::test_pg_shaped_multiline_title_is_intact_in_product_docx_and_measurement[split-marks-lf]": "both",
+    "tests/test_a43_docx_text_measurement.py::test_pg_shaped_multiline_title_is_intact_in_product_docx_and_measurement[run-ends-with-lf]": "both"
+  },
+  "source_files": 403
+}

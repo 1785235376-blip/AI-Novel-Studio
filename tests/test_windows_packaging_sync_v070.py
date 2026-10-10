@@ -31,6 +31,23 @@ def test_formal_application_stages_explicit_current_backend_inventory():
     assert "Assert-InventoriesMatch $backendSourceInventory $backendStageInventory 'Backend'" in source
 
 
+def test_formal_application_stages_and_inventories_both_interop_packages():
+    source = _source()
+    for name in ("local_interop_protocol", "local_interop_desktop"):
+        assert (
+            f"Copy-ProductTree (Join-Path $projectRoot '{name}') "
+            f"(Join-Path $stagedBackend '{name}') @('.py')"
+        ) in source
+    assert (
+        "foreach ($name in @('app', 'local_interop_protocol', 'local_interop_desktop', "
+        "'config', 'prompts', 'workflows'))"
+    ) in source
+    assert (
+        "$extensions = if ($name -in @('app', 'local_interop_protocol', "
+        "'local_interop_desktop')) { @('.py') } else { @() }"
+    ) in source
+
+
 def test_formal_application_fails_closed_and_records_all_product_components():
     source = _source()
     assert "--list-sdks" in source
@@ -44,8 +61,11 @@ def test_formal_application_fails_closed_and_records_all_product_components():
     assert "frontend = [ordered]@{" in source
     assert "backend = [ordered]@{" in source
     assert "desktophost = [ordered]@{" in source
-    assert "CPython 3.12.10 x64" in source
-    assert "PostgreSQL 16.4 x64" in source
+    assert "python_runtime = (& (Join-Path $baseApplicationPath" in source
+    assert "postgresql_runtime = (& (Join-Path $baseApplicationPath" in source
+    assert "--version)" in source
+    assert "font_inventory = $fontInventory" in source
+    assert "Complete pinned OFL license is required" in source
     assert "dotnet_executable = $dotnetExecutable" in source
     assert "dotnet_sdk_version = $sdkVersion" in source
     assert "dotnet_sdk_base_path = $sdkBasePath" in source

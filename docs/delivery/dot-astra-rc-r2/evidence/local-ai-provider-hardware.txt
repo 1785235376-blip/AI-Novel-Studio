@@ -1,0 +1,9 @@
+ISOLATED_TEST_ROOT=/workspace/scratch/b8734129d01d/r2-test.2wwmBb
+........................................................................ [ 27%]
+...........................................s............................ [ 54%]
+........................................................................ [ 81%]
+................................................                         [100%]
+- generated xml file: /workspace/scratch/b8734129d01d/ai-novel-r2/docs/delivery/dot-astra-rc-r2/evidence/local-ai-provider-hardware.xml -
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_provider_runtime_v2_host_hardware_inventory.py:407: real Windows native acceptance
+263 passed, 1 skipped, 1 warning in 12.86s

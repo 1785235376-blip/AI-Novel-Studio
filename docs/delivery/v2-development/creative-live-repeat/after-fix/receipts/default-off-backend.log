@@ -1,0 +1,19 @@
+INFO:     Started server process [45]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8018 (Press CTRL+C to quit)
+INFO:     127.0.0.1:43012 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43014 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43024 - "POST /api/novels HTTP/1.1" 201 Created
+INFO:     127.0.0.1:43038 - "GET /api/novels/http-default-off-fixture/experimental/creative/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38780 - "GET /api/novels/http-default-off-fixture/experimental/creative/documents HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38794 - "POST /api/novels/http-default-off-fixture/experimental/creative/documents HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38804 - "DELETE /api/novels/http-default-off-fixture HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:38808 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38818 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38820 - "POST /api/novels HTTP/1.1" 201 Created
+INFO:     127.0.0.1:38834 - "GET /api/novels/http-default-off-fixture/experimental/creative/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38850 - "GET /api/novels/http-default-off-fixture/experimental/creative/documents HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38860 - "POST /api/novels/http-default-off-fixture/experimental/creative/documents HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:38868 - "DELETE /api/novels/http-default-off-fixture HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:38880 - "GET /api/novels HTTP/1.1" 200 OK

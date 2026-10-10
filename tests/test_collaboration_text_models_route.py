@@ -112,7 +112,8 @@ def test_collaboration_catalog_uses_mock_backed_deepseek_only_in_mock_mode(monke
     assert response.status_code == 200
     deepseek = [item for item in response.json()["items"] if item["provider_id"] == "deepseek"]
     assert deepseek and all(item["available"] for item in deepseek)
-    assert all(set(item) == {"provider_id", "model_id", "display_name", "available"} for item in deepseek)
+    assert all(item["execution_mode"] == "mock_standin" and "模拟测试" in item["display_name"] for item in deepseek)
+    assert all(set(item) == {"provider_id", "model_id", "display_name", "available", "execution_mode"} for item in deepseek)
     assert "api_key" not in response.text.casefold() and "authorization" not in response.text.casefold()
     assert isolated_vault[0].calls == {"set": 0, "resolve": 0, "clear": 0}
 
@@ -153,7 +154,8 @@ def test_health_then_text_models_preserves_mock_standin_runtime(monkeypatch, iso
     assert models.status_code == 200
     deepseek_models = [item for item in models.json()["items"] if item["provider_id"] == "deepseek"]
     assert deepseek_models and all(item["available"] for item in deepseek_models)
-    assert all(set(item) == {"provider_id", "model_id", "display_name", "available"} for item in deepseek_models)
+    assert all(item["execution_mode"] == "mock_standin" and "模拟测试" in item["display_name"] for item in deepseek_models)
+    assert all(set(item) == {"provider_id", "model_id", "display_name", "available", "execution_mode"} for item in deepseek_models)
     assert diagnostics.state is TextRuntimeState.READY
     assert value.provider_registry.resolve("deepseek") is adapter
     assert isolated_vault[0].calls == {"set": 0, "resolve": 0, "clear": 0}

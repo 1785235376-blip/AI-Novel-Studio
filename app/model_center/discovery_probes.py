@@ -1,0 +1,334 @@
+"""Bounded, non-generating probes. All HTTP destinations are numeric loopback."""
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import platform
+import re
+import struct
+import time
+import urllib.request
+from pathlib import Path
+from threading import Event
+from typing import Any
+
+from .discovery_types import local_endpoint, safe_local_path
+from .service import _runtime_probe_opener
+
+MAX_RESPONSE_BYTES = 4 * 1024 * 1024
+MAX_MODELS = 512
+MAX_FILES = 2000
+MAX_ENTRIES = 5000
+MAX_DEPTH = 3
+
+
+class ProbeFailure(ValueError):
+    pass
+
+
+class LocalProbeClient:
+    def __init__(self, timeout: float = 2.0):
+        self.timeout = timeout
+        self.max_response_bytes = MAX_RESPONSE_BYTES
+        self.open = _runtime_probe_opener().open
+
+    def json(self, endpoint: str, path: str, *, body: dict | None = None) -> Any:
+        endpoint = local_endpoint(endpoint)
+        if not path.startswith('/') or path.startswith('//') or any(c in path for c in '?%#\\') or '..' in path.split('/'):
+            raise ProbeFailure('LOCAL_AI_PROBE_PATH_REJECTED')
+        request = urllib.request.Request(endpoint + path, data=json.dumps(body).encode() if body is not None else None,
+                                         headers={'Content-Type': 'application/json', 'Accept': 'application/json'})
+        try:
+            with self.open(request, timeout=self.timeout) as response:
+                if not 200 <= response.status < 300:
+                    raise ProbeFailure('LOCAL_AI_HTTP_UNAVAILABLE')
+                deadline = time.monotonic() + self.timeout
+                chunks = bytearray()
+                read = getattr(response, 'read1', response.read)
+                while True:
+                    if time.monotonic() >= deadline:
+                        raise ProbeFailure('LOCAL_AI_PROBE_TIMEOUT')
+                    block = read(min(65536, self.max_response_bytes + 1 - len(chunks)))
+                    if not block: break
+                    chunks.extend(block)
+                    if len(chunks) > self.max_response_bytes:
+                        raise ProbeFailure('LOCAL_AI_RESPONSE_TOO_LARGE')
+                payload = bytes(chunks)
+                def reject_constant(_value): raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                def unique_pairs(pairs):
+                    value = {}
+                    for key, item in pairs:
+                        if key in value: raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                        value[key] = item
+                    return value
+                try:
+                    result = json.loads(payload, parse_constant=reject_constant, object_pairs_hook=unique_pairs)
+                except (ValueError, UnicodeError, RecursionError) as exc:
+                    raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE') from exc
+                if not isinstance(result, (dict, list)):
+                    raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                return result
+        except ProbeFailure:
+            raise
+        except TimeoutError as exc:
+            raise ProbeFailure('LOCAL_AI_PROBE_TIMEOUT') from exc
+        except Exception as exc:
+            raise ProbeFailure('LOCAL_AI_PROBE_UNAVAILABLE') from exc
+
+
+def candidate_id(runtime_type: str, endpoint: str, model_name: str, local_path: str = '') -> str:
+    value = json.dumps([runtime_type, local_endpoint(endpoint), os.path.normcase(local_path) if local_path else model_name], ensure_ascii=False)
+    return 'local-' + hashlib.sha256(value.encode()).hexdigest()[:24]
+
+
+def infer_family(name: str) -> tuple[str, list[str]]:
+    """Display declarations only. Naming alone never creates verified capability."""
+    normalized = name.casefold().replace('\\', '/')
+    for pattern, family, modality in (
+        (r'qwen[-_. ]?image', 'QWEN_IMAGE', 'IMAGE'), (r'minimax[-_. ]?h3', 'MINIMAX_H3', 'VIDEO'),
+        (r'seedvr2', 'SEEDVR2', 'RESTORATION'), (r'rife', 'RIFE', 'INTERPOLATION'),
+        (r'z[-_. ]?image', 'ZIMAGE', 'IMAGE'), (r'flux', 'FLUX', 'IMAGE'),
+        (r'wan(?=\d|[_ .-]|$)', 'WAN', 'VIDEO'), (r'ltx', 'LTX', 'VIDEO'), (r'qwen', 'QWEN', 'TEXT'),
+        (r'stable[-_. ]?diffusion', 'STABLE_DIFFUSION', 'IMAGE'), (r'sdxl', 'STABLE_DIFFUSION', 'IMAGE'),
+    ):
+        if re.search(r'(?<![a-z])' + pattern, normalized):
+            return family, [modality]
+    return 'UNKNOWN', []
+
+
+def gguf_metadata(path: Path, *, cancel=None, max_bytes=None) -> dict:
+    """Header and limited metadata only: never tensor contents or whole model hashes."""
+    result = {'file_exists': False, 'header_valid': False, 'metadata_complete': False}
+    try:
+        if cancel is not None and cancel.is_set(): return result
+        safe_local_path(str(path))
+        if not path.is_file() or path.suffix.casefold() != '.gguf':
+            return result
+        from .discovery_environment import _metadata_bytes
+        data, facts = _metadata_bytes(path, 256 * 1024 if max_bytes is None else max_bytes, cancel=cancel)
+        result.update(file_exists=True, size=facts.st_size, modified_ns=facts.st_mtime_ns)
+        if len(data) < 24 or data[:4] != b'GGUF':
+            return result
+        version, tensors, count = struct.unpack_from('<IQQ', data, 4)
+        if version not in {2, 3} or not 0 < tensors < 10_000_000 or count > 100_000:
+            return result
+        result.update(header_valid=True, gguf_version=version, tensor_count=tensors)
+        offset = 24
+        def take(n):
+            nonlocal offset
+            if n < 0 or offset + n > len(data):
+                raise ValueError('bounded metadata limit')
+            value = data[offset:offset+n]; offset += n
+            return value
+        def string():
+            length = struct.unpack('<Q', take(8))[0]
+            if length > 65536: raise ValueError('string limit')
+            return take(length).decode('utf-8')
+        def value(kind, depth=0):
+            if depth > 1: raise ValueError('array nesting')
+            formats = {0:'B',1:'b',2:'H',3:'h',4:'I',5:'i',6:'f',7:'?',10:'Q',11:'q',12:'d'}
+            if kind in formats:
+                fmt = '<' + formats[kind]; return struct.unpack(fmt, take(struct.calcsize(fmt)))[0]
+            if kind == 8: return string()
+            if kind == 9:
+                subtype, length = struct.unpack('<IQ', take(12))
+                if length > 4096: raise ValueError('array limit')
+                for _ in range(length): value(subtype, depth+1)
+                return None
+            raise ValueError('unknown type')
+        for _ in range(min(count, 256)):
+            key = string(); item = value(struct.unpack('<I', take(4))[0])
+            if key in {'general.architecture', 'general.name', 'general.file_type'} or key.endswith('.context_length'):
+                result[key] = item
+        result['metadata_complete'] = count <= 256
+    except (OSError, ValueError, struct.error, UnicodeError):
+        pass
+    return result
+
+
+def scan_gguf_roots(roots: list[str], cancel: Event, deadline: float):
+    entries = files = 0
+    for root in roots:
+        try:
+            base = Path(safe_local_path(root))
+            stack = [(base, 0)]
+            while stack and not cancel.is_set() and time.monotonic() < deadline:
+                directory, depth = stack.pop()
+                from .discovery_environment import _scoped_scandir
+                with _scoped_scandir(directory, cancel) as children:
+                    for item in children:
+                        entries += 1
+                        if entries > MAX_ENTRIES or files >= MAX_FILES or cancel.is_set() or time.monotonic() >= deadline:
+                            return
+                        if item.is_symlink() or (getattr(item.stat(follow_symlinks=False), 'st_file_attributes', 0) & 0x400):
+                            continue
+                        if item.is_dir(follow_symlinks=False) and depth < MAX_DEPTH:
+                            stack.append((directory / item.name, depth+1))
+                        elif item.is_file(follow_symlinks=False) and item.name.casefold().endswith('.gguf'):
+                            files += 1
+                            yield directory / item.name
+        except (OSError, ValueError):
+            continue
+
+
+def host_hardware(*, cancel=None) -> dict:
+    if cancel is not None and cancel.is_set(): raise ProbeFailure('LOCAL_AI_CANCELLED')
+    # platform.processor() may execute uname on POSIX; discovery stays passive.
+    result = {'platform': platform.system(), 'architecture': platform.machine(), 'cpu': platform.machine(),
+              'ram_bytes': None, 'logical_cpu_count': os.cpu_count(), 'gpus': [], 'status': 'NOT_VERIFIED', 'notes': []}
+    from .discovery_environment import windows_acceleration_components
+    result.update(windows_acceleration_components(cancel=cancel))
+    if cancel is not None and cancel.is_set(): raise ProbeFailure('LOCAL_AI_CANCELLED')
+    if platform.system() == 'Windows':
+        try:
+            from ..provider_runtime_v2_host_hardware_inventory import WindowsHostHardwareProbe
+            facts = WindowsHostHardwareProbe().collect()
+            result['ram_bytes'] = facts.physical_ram_bytes
+            result['gpus'] = [{'vendor': {0x10DE:'NVIDIA',0x1002:'AMD',0x8086:'INTEL'}.get(g.pci_vendor_id, 'UNKNOWN'),
+                               'name': getattr(g, 'name', '') or 'NOT_VERIFIED', 'dedicated_vram_bytes': g.dedicated_vram_bytes} for g in facts.gpus or ()]
+            result['status'] = 'DETECTED' if facts.gpus is not None else 'PARTIAL'
+            if facts.gpus is None: result['notes'].append('WINDOWS_GPU_INVENTORY_UNAVAILABLE')
+        except Exception:
+            result['notes'].append('HOST_HARDWARE_UNAVAILABLE')
+    else:
+        try: result['ram_bytes'] = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
+        except (ValueError, OSError, AttributeError): pass
+        result['notes'].append('WINDOWS_GPU_INVENTORY_NOT_RUN')
+    return result
+
+
+def executable_metadata(path_value: str, *, cancel=None) -> dict:
+    """Passive filesystem/Windows version-resource metadata, never --version."""
+    result = {'executable_exists': False, 'version': None, 'version_source': 'NOT_VERIFIED', 'cuda_status': 'NOT_VERIFIED'}
+    if not path_value or (cancel is not None and cancel.is_set()): return result
+    try:
+        path = Path(safe_local_path(path_value))
+        if not path.is_file(): return result
+        result['executable_exists'] = True
+        result['executable_size'] = path.stat().st_size
+        # CUDA DLL presence is a component hint, not proof of a functional CUDA device.
+        from itertools import islice
+        safe_local_path(str(path.parent))
+        if cancel is not None and cancel.is_set(): return result
+        from .discovery_environment import _scoped_scandir
+        with _scoped_scandir(path.parent, cancel) as children:
+            for sibling in islice(children, 256):
+                if cancel is not None and cancel.is_set(): return result
+                if sibling.name.casefold().startswith('ggml-cuda') and Path(sibling.name).suffix.casefold() == '.dll' and not sibling.is_symlink():
+                    result['cuda_status'] = 'COMPONENT_FOUND_NOT_VERIFIED'; break
+        if cancel is not None and cancel.is_set(): return result
+        if platform.system() == 'Windows':
+            import ctypes
+            from ctypes import wintypes
+            version = ctypes.WinDLL('version', use_last_error=True)
+            size_function = version.GetFileVersionInfoSizeW
+            size_function.argtypes = [wintypes.LPCWSTR, ctypes.POINTER(wintypes.DWORD)]
+            size_function.restype = wintypes.DWORD
+            ignored = wintypes.DWORD()
+            if cancel is not None and cancel.is_set(): return result
+            safe_local_path(str(path))
+            size = size_function(str(path), ctypes.byref(ignored))
+            if not 0 < size <= 1024 * 1024: return result
+            data = ctypes.create_string_buffer(size)
+            get = version.GetFileVersionInfoW
+            get.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD, ctypes.c_void_p]
+            get.restype = wintypes.BOOL
+            if cancel is not None and cancel.is_set(): return result
+            safe_local_path(str(path))
+            if not get(str(path), 0, size, data): return result
+            query = version.VerQueryValueW
+            query.argtypes = [ctypes.c_void_p, wintypes.LPCWSTR, ctypes.POINTER(ctypes.c_void_p), ctypes.POINTER(wintypes.UINT)]
+            query.restype = wintypes.BOOL
+            pointer, length = ctypes.c_void_p(), wintypes.UINT()
+            if query(data, '\\', ctypes.byref(pointer), ctypes.byref(length)) and length.value >= 52:
+                fields = ctypes.cast(pointer, ctypes.POINTER(wintypes.DWORD))
+                if fields[0] == 0xFEEF04BD:
+                    high, low = fields[2], fields[3]
+                    result.update(version=f'{high >> 16}.{high & 65535}.{low >> 16}.{low & 65535}', version_source='WINDOWS_FILE_VERSION_RESOURCE')
+    except (OSError, ValueError, AttributeError):
+        pass
+    return result
+
+
+def ollama_remote_declaration(metadata: Any) -> str:
+    """Optional official remote fields are omitted for local models, not a locality proof.
+
+    https://github.com/ollama/ollama/blob/main/api/types.go
+    ListModelResponse / ShowResponse both expose remote_model and remote_host.
+    """
+    if not isinstance(metadata, dict): return 'NOT_VERIFIED'
+    for key in ('remote_model', 'remote_host'):
+        if key not in metadata: continue
+        value = metadata[key]
+        if not isinstance(value, str) or (value and not value.strip()): return 'NOT_VERIFIED'
+        if value: return 'REMOTE'
+    return 'NO_REMOTE_DECLARATION'
+
+
+def ollama_locality_evidence(tag: Any, show: Any) -> dict:
+    """Require positive local weight metadata; neither endpoint nor name proves locality."""
+    tag_state, show_state = ollama_remote_declaration(tag), ollama_remote_declaration(show)
+    result = {'source_locality': 'NOT_VERIFIED', 'reported_capabilities': [], 'locality_fingerprint': None,
+              'locality_blockers': ['OLLAMA_LOCALITY_UNVERIFIED']}
+    if isinstance(tag, dict):
+        result.update({key: tag[key] for key in ('digest', 'size', 'details', 'remote_model', 'remote_host') if key in tag})
+    if isinstance(show, dict):
+        result.update({'show_' + key: show[key] for key in ('remote_model', 'remote_host') if key in show})
+    if 'REMOTE' in (tag_state, show_state):
+        result.update(source_locality='REMOTE', locality_blockers=['OLLAMA_REMOTE_MODEL_BLOCKED'])
+        return result
+    if tag_state != 'NO_REMOTE_DECLARATION' or show_state != 'NO_REMOTE_DECLARATION': return result
+    capabilities = show.get('capabilities')
+    tag_details, show_details, model_info = tag.get('details'), show.get('details'), show.get('model_info')
+    if (not isinstance(capabilities, list) or not capabilities or not all(isinstance(item, str) for item in capabilities) or
+        not isinstance(tag.get('digest'), str) or not re.fullmatch(r'(?:sha256:)?[a-fA-F0-9]{64}', tag['digest']) or
+        type(tag.get('size')) is not int or tag['size'] <= 0 or
+        not isinstance(tag_details, dict) or str(tag_details.get('format', '')).casefold() != 'gguf' or
+        not isinstance(show_details, dict) or str(show_details.get('format', '')).casefold() != 'gguf' or
+        not isinstance(model_info, dict) or not isinstance(model_info.get('general.architecture'), str) or
+        not model_info['general.architecture'].strip()):
+        return result
+    proof = {'digest': tag['digest'].removeprefix('sha256:').lower(), 'size': tag['size'],
+             'tag_details': tag_details, 'show_details': show_details, 'architecture': model_info['general.architecture'],
+             'capabilities': sorted(set(capabilities)), 'remote_model': '', 'remote_host': ''}
+    result.update(source_locality='LOCAL_VERIFIED', reported_capabilities=capabilities[:32],
+                  locality_fingerprint=hashlib.sha256(json.dumps(proof, sort_keys=True).encode()).hexdigest(),
+                  model_architecture=model_info['general.architecture'], locality_blockers=[])
+    return result
+
+
+def read_ollama_local_metadata(client, endpoint: str, model_name: str, enumerate_models, *, cancel=None) -> dict:
+    """One common strict proof for discovery and every legacy Ollama prompt leaf."""
+    endpoint = local_endpoint(endpoint)
+    def read(path, *, body=None):
+        if cancel is not None and cancel.is_set(): raise ProbeFailure('LOCAL_AI_CANCELLED')
+        value = client.json(endpoint, path, body=body)
+        if cancel is not None and cancel.is_set(): raise ProbeFailure('LOCAL_AI_CANCELLED')
+        return value
+    def tag():
+        rows = enumerate_models(read_json=read, include_details=True, strict=True)
+        matches = [item for item in rows if item.get('name') == model_name]
+        return matches[0] if len(matches) == 1 else None
+    try:
+        before = tag()
+        if ollama_remote_declaration(before) == 'REMOTE': return ollama_locality_evidence(before, None)
+        show = read('/api/show', body={'model': model_name, 'verbose': False})
+        checked = ollama_locality_evidence(before, show)
+        if checked['source_locality'] != 'LOCAL_VERIFIED': return checked
+        after_checked = ollama_locality_evidence(tag(), show)
+        if after_checked['source_locality'] != 'LOCAL_VERIFIED': return after_checked
+        if checked['locality_fingerprint'] != after_checked['locality_fingerprint']:
+            after_checked.update(source_locality='NOT_VERIFIED', locality_fingerprint=None,
+                                 reported_capabilities=[], locality_blockers=['OLLAMA_IDENTITY_CHANGED'])
+        return after_checked
+    except (ProbeFailure, ValueError, TypeError, KeyError):
+        return ollama_locality_evidence(None, None)
+
+
+def ollama_token_counts(payload: dict) -> tuple[int | None, int | None]:
+    """Missing, negative, boolean or malformed counters are unknown, never zero."""
+    def count(key):
+        value = payload.get(key)
+        return value if type(value) is int and value >= 0 else None
+    return count('prompt_eval_count'), count('eval_count')

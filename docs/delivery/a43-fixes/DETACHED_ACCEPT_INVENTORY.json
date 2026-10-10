@@ -1,0 +1,25 @@
+{
+  "kind": "EXPLICIT_A43_INVENTORY_REVIEW_NOT_EXECUTION",
+  "starting_sha": "ad1a90dced36208c63bfd65f5e1d918d4a4f7695",
+  "previous_manifest_sha256": "7681a4d1e570871f4ad60609437890c323ade9c8ea53212c946bc8ee87045e69",
+  "previous_nodes": 7898,
+  "collected_count": 7900,
+  "added_this_checkpoint": 2,
+  "original_source_digests_unchanged": true,
+  "original_relative_node_order_unchanged": true,
+  "original_skip_maps_unchanged": true,
+  "evidence": "TWO_IDENTICAL_COMPLETE_COLLECTIONS_NOT_TEST_EXECUTION",
+  "added_nodes": [
+    "tests/test_a43_detached_generation_acceptance.py::test_accept_resolves_original_source_before_rejecting_stale_durable_status[False]",
+    "tests/test_a43_detached_generation_acceptance.py::test_accept_resolves_original_source_before_rejecting_stale_durable_status[True]"
+  ],
+  "new_node_backend_classification": {
+    "tests/test_a43_detached_generation_acceptance.py::test_accept_resolves_original_source_before_rejecting_stale_durable_status[False]": "file",
+    "tests/test_a43_detached_generation_acceptance.py::test_accept_resolves_original_source_before_rejecting_stale_durable_status[True]": "file"
+  },
+  "old_skip_counts": {
+    "file": 2035,
+    "postgres": 2059
+  },
+  "manifest_sha256": "dfe8e7583a45205e3f666495e63eb5cf36d7c952af8a06fe531b3ad5d2da1f2b"
+}

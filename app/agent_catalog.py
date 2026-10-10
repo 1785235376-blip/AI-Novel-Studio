@@ -11,6 +11,20 @@ AGENTS = (
     {"id":"artist","name":"美术 Agent","description":"规划人物、地点、道具和分镜的视觉需求，不直接调用未启用的图片运行时。","prompt_role":"world_keeper","tools":["characters.read","locations.read","visual_brief.propose"],"output_schema":"visual_brief","requires_approval":True},
 )
 
+# Preserve the original v1 six-role catalog and its clients. These additional
+# executable roles share the same original context/job/runtime authority.
+ADDITIONAL_AGENTS = (
+    {"id":"reviewer","name":"审核 Agent","description":"依据当前作品上下文审核章节并提出可追踪问题。","prompt_role":"continuity_reviewer","tools":["context.read","chapter.read","continuity.check"],"output_schema":"continuity_findings","requires_approval":False},
+    {"id":"verifier","name":"核验 Agent","description":"核验人物状态、时间与已批准世界规则，区分有证据事实和推断。","prompt_role":"verifier","tools":["context.read","chapter.read","canon.read","continuity.check"],"output_schema":"verification_findings","requires_approval":False},
+)
+
+
+def resolve_agent(agent_id):
+    agent = next((item for item in (*AGENTS, *ADDITIONAL_AGENTS) if item["id"] == agent_id), None)
+    if agent is None: raise KeyError(agent_id)
+    return agent
+
 
 def public_agent_catalog() -> dict:
-    return {"catalog_version":AGENT_CATALOG_VERSION,"agents":[dict(item) for item in AGENTS]}
+    return {"catalog_version":AGENT_CATALOG_VERSION,"agents":[dict(item) for item in AGENTS],
+            "additional_agents":[dict(item) for item in ADDITIONAL_AGENTS]}

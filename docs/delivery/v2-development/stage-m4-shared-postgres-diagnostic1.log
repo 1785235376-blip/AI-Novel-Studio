@@ -1,0 +1,14 @@
+.........sss...sssss.....s.s.s.s.s.s.s.s.s.ss..ssssssssssssss........... [ 19%]
+...ss..ss..ss..ss..ss..ss..ss..ss..ss..s.s.s.ssssss......s.s.s.s.sssss.. [ 38%]
+...sssss.....s.s.s.s.ssss....s.s.s.ss..s.s.s.ss..ssssssssss..........ss. [ 57%]
+.ss..ss..ssss....ss..ss..ss..ss..ss..ss..ss..ss..ss..ss................. [ 77%]
+....ssss....s.s.s.s.sss....s.s.ssss....s.s.ss........................... [ 96%]
+..............                                                           [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-shared-postgres-diagnostic1.xml -
+221 passed, 153 skipped, 1 warning in 425.19s (0:07:05)

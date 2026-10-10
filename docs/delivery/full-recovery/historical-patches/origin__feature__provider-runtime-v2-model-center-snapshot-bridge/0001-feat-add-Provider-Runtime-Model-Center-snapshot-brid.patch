@@ -1,0 +1,1020 @@
+From 797d183e5954857337672d8f34897140a1491fa3 Mon Sep 17 00:00:00 2001
+From: 1785235376-blip <1785235376@qq.com>
+Date: Mon, 31 Aug 2026 02:30:58 +0000
+Subject: [PATCH] feat: add Provider Runtime Model Center snapshot bridge
+
+Read-only 2.1A adapter from authoritative Model Center facts to
+Provider Runtime 2.0 snapshots. Identities that are not already
+registry UUIDs fail closed; no hashing, credential resolution,
+Vault access, runtime start/stop, or Plugin/Team Compute mapping.
+---
+ ...provider_runtime_v2_model_center_bridge.py | 453 ++++++++++++++++++
+ ...runtime_v2_model_center_snapshot_bridge.md | 133 +++++
+ ...provider_runtime_v2_model_center_bridge.py | 395 +++++++++++++++
+ 3 files changed, 981 insertions(+)
+ create mode 100644 app/provider_runtime_v2_model_center_bridge.py
+ create mode 100644 docs/provider_runtime_v2_model_center_snapshot_bridge.md
+ create mode 100644 tests/test_provider_runtime_v2_model_center_bridge.py
+
+diff --git a/app/provider_runtime_v2_model_center_bridge.py b/app/provider_runtime_v2_model_center_bridge.py
+new file mode 100644
+index 0000000..2c69b64
+--- /dev/null
++++ b/app/provider_runtime_v2_model_center_bridge.py
+@@ -0,0 +1,453 @@
++"""Read-only Model Center -> Provider Runtime 2.0 snapshot bridge.
++
++This module normalizes already-resident Model Center facts into Provider Runtime
++2.0 snapshot types. It does not execute models, start or stop runtimes, resolve
++credentials, touch Vault, probe the network, spawn subprocesses, or mutate
++Model Center / Provider Runtime contracts.
++
++Identity rule: RouteIdentity requires registry UUIDs. Model Center currently
++exposes string slugs (model/runtime ids), adapter names (provider_adapter), and
++no ExecutionNodeIdentity. This bridge never hashes those strings into UUIDs and
++never mints random identities. Missing identities fail closed: candidates,
++hardware snapshots, and credentials are empty.
++"""
++from __future__ import annotations
++
++import ipaddress
++from enum import Enum
++from typing import Any, Literal, Mapping
++from uuid import UUID
++
++from app.provider_runtime_v2_contracts import (
++    AssetType,
++    Availability,
++    CandidateDescriptor,
++    Contract,
++    CredentialAvailability,
++    HardwareSnapshot,
++    Location,
++    Modality,
++)
++
++BRIDGE_VERSION = "2.1A-snapshot-1"
++_LOOPBACK_LITERALS = frozenset({"127.0.0.1", "::1"})
++_MODEL_NOT_INSTALLED = frozenset({
++    "NOT_INSTALLED", "MISSING_COMPONENT", "RUNTIME_REQUIRED", "LICENSE_REQUIRED",
++})
++_MAPPED_MODALITIES = {
++    "TEXT": Modality.TEXT,
++    "IMAGE": Modality.IMAGE,
++    "VIDEO": Modality.VIDEO,
++    "TTS": Modality.TTS,
++    "AUDIO": Modality.AUDIO,
++    "EMBEDDING": Modality.EMBEDDING,
++}
++_MODALITY_ASSETS = {
++    Modality.TEXT: AssetType.TEXT,
++    Modality.IMAGE: AssetType.IMAGE,
++    Modality.VIDEO: AssetType.VIDEO,
++    Modality.TTS: AssetType.AUDIO,
++    Modality.AUDIO: AssetType.AUDIO,
++}
++_OVERRIDE_TRUST_KEYS = frozenset({
++    "trusted", "authorized", "healthy", "compatible", "installed", "reachable",
++    "configured", "plugin_trust", "plugin_verified", "verified", "trust_decision",
++    "execution_supported",
++})
++_OVERRIDE_CREDENTIAL_KEYS = frozenset({
++    "credential", "credentials", "api_key", "token", "secret", "vault", "password",
++    "credential_handle",
++})
++_OVERRIDE_TEAM_KEYS = frozenset({
++    "team_compute", "same_user_node", "workspace_node", "cloud", "location",
++    "execution_fabric", "execution_node_id", "execution_node",
++})
++_UNAVAILABLE = Availability(
++    configured=False, installed=False, healthy=False,
++    reachable=False, authorized=False, compatible=False,
++)
++
++
++class SnapshotReason(str, Enum):
++    MISSING_PROVIDER_IDENTITY = "MISSING_PROVIDER_IDENTITY"
++    MISSING_MODEL_IDENTITY = "MISSING_MODEL_IDENTITY"
++    MISSING_RUNTIME_IDENTITY = "MISSING_RUNTIME_IDENTITY"
++    MISSING_EXECUTION_NODE_IDENTITY = "MISSING_EXECUTION_NODE_IDENTITY"
++    UNKNOWN_CAPABILITY = "UNKNOWN_CAPABILITY"
++    MISSING_HARDWARE_FACT = "MISSING_HARDWARE_FACT"
++    RUNTIME_NOT_CONFIGURED = "RUNTIME_NOT_CONFIGURED"
++    RUNTIME_NOT_INSTALLED = "RUNTIME_NOT_INSTALLED"
++    RUNTIME_UNHEALTHY = "RUNTIME_UNHEALTHY"
++    RUNTIME_UNREACHABLE = "RUNTIME_UNREACHABLE"
++    RUNTIME_UNAUTHORIZED = "RUNTIME_UNAUTHORIZED"
++    RUNTIME_INCOMPATIBLE = "RUNTIME_INCOMPATIBLE"
++    UNSUPPORTED_MODALITY = "UNSUPPORTED_MODALITY"
++    UNTRUSTED_CALLER_OVERRIDE = "UNTRUSTED_CALLER_OVERRIDE"
++    CREDENTIAL_RESOLUTION_FORBIDDEN = "CREDENTIAL_RESOLUTION_FORBIDDEN"
++    PLUGIN_TRUST_SUBSTITUTION_FORBIDDEN = "PLUGIN_TRUST_SUBSTITUTION_FORBIDDEN"
++    TEAM_COMPUTE_SUBSTITUTION_FORBIDDEN = "TEAM_COMPUTE_SUBSTITUTION_FORBIDDEN"
++    UNSUPPORTED_LOCATION = "UNSUPPORTED_LOCATION"
++
++
++class ModelCenterModelFact(Contract):
++    registry_id: str
++    runtime_type: str
++    status: str
++    capabilities: tuple[str, ...] = ()
++    family: str = ""
++    quantization: str = ""
++    context_tokens: int | None = None
++
++
++class ModelCenterRuntimeFact(Contract):
++    registry_id: str
++    runtime_type: str
++    status: str = "CONFIGURED"
++    provider_adapter: str = ""
++    management: str = "MANAGED"
++    bind_address: str = ""
++    capabilities: tuple[str, ...] = ()
++    context_size: int | None = None
++
++
++class ModelCenterInstanceFact(Contract):
++    runtime_registry_id: str
++    state: str = "STOPPED"
++    process_alive: bool = False
++    http_reachable: bool = False
++
++
++class ModelCenterHardwareFact(Contract):
++    profile_id: str
++    model_registry_id: str
++    vram_required: int | None = None
++    ram_required: int | None = None
++    context: int | None = None
++    tested: bool = False
++
++
++class ModelCenterFactSource(Contract):
++    """Sanitized, immutable Model Center facts. No processes, paths, env, or secrets."""
++    models: tuple[ModelCenterModelFact, ...]
++    runtimes: tuple[ModelCenterRuntimeFact, ...]
++    instances: tuple[ModelCenterInstanceFact, ...] = ()
++    hardware_profiles: tuple[ModelCenterHardwareFact, ...] = ()
++
++
++class SnapshotRejection(Contract):
++    reasons: tuple[SnapshotReason, ...]
++    model_registry_id: str | None = None
++    runtime_registry_id: str | None = None
++    availability: Availability = _UNAVAILABLE
++    location: Location | None = None
++    mapped_modalities: frozenset[Modality] = frozenset()
++    unknown_capabilities: frozenset[str] = frozenset()
++    input_asset_types: frozenset[AssetType] = frozenset()
++    output_asset_types: frozenset[AssetType] = frozenset()
++
++
++class ProviderRuntimeSnapshotBundle(Contract):
++    bridge_version: Literal["2.1A-snapshot-1"] = BRIDGE_VERSION
++    candidates: tuple[CandidateDescriptor, ...] = ()
++    hardware: tuple[HardwareSnapshot, ...] = ()
++    credentials: tuple[CredentialAvailability, ...] = ()
++    rejections: tuple[SnapshotRejection, ...] = ()
++
++
++def capture_model_center_facts(service: Any) -> ModelCenterFactSource:
++    """Copy already-resident Model Center registry/instance facts. No I/O."""
++    raw_profiles = getattr(service, "profiles", {}) or {}
++    profile_items = tuple(raw_profiles.values()) if isinstance(raw_profiles, dict) else tuple(raw_profiles)
++    context_by_model: dict[str, int] = {}
++    hardware = []
++    for profile in profile_items:
++        model_id = str(getattr(profile, "model_id", "") or "")
++        context = getattr(profile, "context", None)
++        hardware.append(ModelCenterHardwareFact(
++            profile_id=str(getattr(profile, "id", "") or ""),
++            model_registry_id=model_id,
++            vram_required=getattr(profile, "vram_required", None),
++            ram_required=getattr(profile, "ram_required", None),
++            context=context if isinstance(context, int) else None,
++            tested=bool(getattr(profile, "tested", False)),
++        ))
++        if model_id and isinstance(context, int) and context > 0 and model_id not in context_by_model:
++            context_by_model[model_id] = context
++    models = []
++    raw_models = getattr(service, "models", {}) or {}
++    model_items = tuple(raw_models.values()) if isinstance(raw_models, dict) else tuple(raw_models)
++    for model in model_items:
++        registry_id = str(getattr(model, "id", "") or "")
++        capabilities = tuple(str(item) for item in (getattr(model, "capabilities", ()) or ()))
++        models.append(ModelCenterModelFact(
++            registry_id=registry_id,
++            runtime_type=str(getattr(model, "runtime_type", "") or ""),
++            status=str(getattr(model, "status", "") or ""),
++            capabilities=capabilities,
++            family=str(getattr(model, "family", "") or ""),
++            quantization=str(getattr(model, "quantization", "") or ""),
++            context_tokens=context_by_model.get(registry_id),
++        ))
++    runtimes = []
++    raw_runtimes = getattr(service, "runtimes", {}) or {}
++    runtime_items = tuple(raw_runtimes.values()) if isinstance(raw_runtimes, dict) else tuple(raw_runtimes)
++    for runtime in runtime_items:
++        context_size = getattr(runtime, "context_size", None)
++        runtimes.append(ModelCenterRuntimeFact(
++            registry_id=str(getattr(runtime, "id", "") or ""),
++            runtime_type=str(getattr(runtime, "runtime_type", "") or ""),
++            status=str(getattr(runtime, "status", "") or ""),
++            provider_adapter=str(getattr(runtime, "provider_adapter", "") or ""),
++            management=str(getattr(runtime, "management", "") or ""),
++            bind_address=str(getattr(runtime, "bind_address", "") or ""),
++            capabilities=tuple(str(item) for item in (getattr(runtime, "capabilities", ()) or ())),
++            context_size=context_size if isinstance(context_size, int) else None,
++        ))
++    instances = []
++    lifecycle = getattr(service, "lifecycle", None)
++    stored = getattr(lifecycle, "instances", {}) if lifecycle is not None else {}
++    for runtime_id, instance in (stored or {}).items():
++        instances.append(ModelCenterInstanceFact(
++            runtime_registry_id=str(runtime_id),
++            state=str(getattr(instance, "state", "") or ""),
++            process_alive=bool(getattr(instance, "process_alive", False)),
++            http_reachable=bool(getattr(instance, "http_reachable", False)),
++        ))
++    return ModelCenterFactSource(
++        models=tuple(sorted(models, key=lambda item: item.registry_id)),
++        runtimes=tuple(sorted(runtimes, key=lambda item: item.registry_id)),
++        instances=tuple(sorted(instances, key=lambda item: item.runtime_registry_id)),
++        hardware_profiles=tuple(sorted(hardware, key=lambda item: (item.model_registry_id, item.profile_id))),
++    )
++
++
++def _registry_uuid(value: str) -> UUID | None:
++    text = (value or "").strip()
++    if not text or any(mark in text for mark in ("/", "\\", "://", " ", "\n")):
++        return None
++    try:
++        parsed = UUID(text)
++    except (ValueError, AttributeError, TypeError):
++        return None
++    return parsed
++
++
++def _loopback_location(bind_address: str) -> Location | None:
++    text = (bind_address or "").strip()
++    if text in _LOOPBACK_LITERALS:
++        return Location.DEVICE
++    try:
++        if ipaddress.ip_address(text).is_loopback:
++            return Location.DEVICE
++    except ValueError:
++        return None
++    return None
++
++
++def _capabilities(declared: tuple[str, ...]) -> tuple[frozenset[Modality], frozenset[str], frozenset[AssetType]]:
++    mapped: set[Modality] = set()
++    unknown: set[str] = set()
++    for item in declared:
++        name = str(item)
++        modality = _MAPPED_MODALITIES.get(name)
++        if modality is None:
++            unknown.add(name)
++        else:
++            mapped.add(modality)
++    assets = frozenset(_MODALITY_ASSETS[item] for item in mapped if item in _MODALITY_ASSETS)
++    return frozenset(mapped), frozenset(unknown), assets
++
++
++def _availability(model: ModelCenterModelFact, runtime: ModelCenterRuntimeFact, instance: ModelCenterInstanceFact | None) -> Availability:
++    configured = runtime.status == "CONFIGURED"
++    model_installed = bool(model.status) and model.status not in _MODEL_NOT_INSTALLED
++    if instance is None:
++        runtime_installed = False
++        healthy = False
++        reachable = False
++    else:
++        runtime_installed = instance.process_alive or instance.http_reachable
++        reachable = instance.http_reachable
++        if instance.state == "EXTERNAL":
++            healthy = instance.http_reachable
++        else:
++            healthy = instance.state == "RUNNING" and instance.process_alive
++    return Availability(
++        configured=configured,
++        installed=model_installed and runtime_installed,
++        healthy=healthy,
++        reachable=reachable,
++        authorized=False,
++        compatible=False,
++    )
++
++
++def _override_reasons(overrides: Mapping[str, Any] | None) -> tuple[SnapshotReason, ...]:
++    if not overrides:
++        return ()
++    keys = {str(key).casefold() for key in overrides}
++    reasons = [SnapshotReason.UNTRUSTED_CALLER_OVERRIDE]
++    if keys & {item.casefold() for item in _OVERRIDE_CREDENTIAL_KEYS}:
++        reasons.append(SnapshotReason.CREDENTIAL_RESOLUTION_FORBIDDEN)
++    if keys & {item.casefold() for item in _OVERRIDE_TRUST_KEYS}:
++        reasons.append(SnapshotReason.PLUGIN_TRUST_SUBSTITUTION_FORBIDDEN)
++    if keys & {item.casefold() for item in _OVERRIDE_TEAM_KEYS}:
++        reasons.append(SnapshotReason.TEAM_COMPUTE_SUBSTITUTION_FORBIDDEN)
++    return tuple(dict.fromkeys(reasons))
++
++
++def _route_reasons(
++    model: ModelCenterModelFact,
++    runtime: ModelCenterRuntimeFact,
++    availability: Availability,
++    location: Location | None,
++    mapped: frozenset[Modality],
++    unknown: frozenset[str],
++) -> tuple[SnapshotReason, ...]:
++    reasons: list[SnapshotReason] = []
++    if _registry_uuid(runtime.provider_adapter) is None:
++        reasons.append(SnapshotReason.MISSING_PROVIDER_IDENTITY)
++    if _registry_uuid(model.registry_id) is None:
++        reasons.append(SnapshotReason.MISSING_MODEL_IDENTITY)
++    if _registry_uuid(runtime.registry_id) is None:
++        reasons.append(SnapshotReason.MISSING_RUNTIME_IDENTITY)
++    reasons.append(SnapshotReason.MISSING_EXECUTION_NODE_IDENTITY)
++    reasons.append(SnapshotReason.MISSING_HARDWARE_FACT)
++    if not availability.configured:
++        reasons.append(SnapshotReason.RUNTIME_NOT_CONFIGURED)
++    if not availability.installed:
++        reasons.append(SnapshotReason.RUNTIME_NOT_INSTALLED)
++    if not availability.healthy:
++        reasons.append(SnapshotReason.RUNTIME_UNHEALTHY)
++    if not availability.reachable:
++        reasons.append(SnapshotReason.RUNTIME_UNREACHABLE)
++    reasons.append(SnapshotReason.RUNTIME_UNAUTHORIZED)
++    reasons.append(SnapshotReason.RUNTIME_INCOMPATIBLE)
++    if unknown:
++        reasons.append(SnapshotReason.UNKNOWN_CAPABILITY)
++    if not mapped:
++        reasons.append(SnapshotReason.UNSUPPORTED_MODALITY)
++    if location is None:
++        reasons.append(SnapshotReason.UNSUPPORTED_LOCATION)
++    elif location != Location.DEVICE:
++        reasons.append(SnapshotReason.TEAM_COMPUTE_SUBSTITUTION_FORBIDDEN)
++        reasons.append(SnapshotReason.UNSUPPORTED_LOCATION)
++    return tuple(dict.fromkeys(reasons))
++
++
++def build_provider_runtime_snapshots(
++    source: ModelCenterFactSource,
++    caller_overrides: Mapping[str, Any] | None = None,
++) -> ProviderRuntimeSnapshotBundle:
++    """Pure normalization. Identical facts yield identical snapshots."""
++    override_reasons = _override_reasons(caller_overrides)
++    if override_reasons:
++        return ProviderRuntimeSnapshotBundle(rejections=(SnapshotRejection(reasons=override_reasons),))
++    instances = {item.runtime_registry_id: item for item in source.instances}
++    rejections: list[SnapshotRejection] = []
++    used_runtimes: set[str] = set()
++    for model in source.models:
++        matches = tuple(item for item in source.runtimes if item.runtime_type == model.runtime_type)
++        if not matches:
++            mapped, unknown, assets = _capabilities(model.capabilities)
++            availability = Availability(
++                configured=False, installed=False, healthy=False,
++                reachable=False, authorized=False, compatible=False,
++            )
++            reasons = [
++                SnapshotReason.MISSING_PROVIDER_IDENTITY,
++                SnapshotReason.MISSING_MODEL_IDENTITY if _registry_uuid(model.registry_id) is None else SnapshotReason.MISSING_RUNTIME_IDENTITY,
++                SnapshotReason.MISSING_RUNTIME_IDENTITY,
++                SnapshotReason.MISSING_EXECUTION_NODE_IDENTITY,
++                SnapshotReason.MISSING_HARDWARE_FACT,
++                SnapshotReason.RUNTIME_NOT_CONFIGURED,
++                SnapshotReason.RUNTIME_NOT_INSTALLED,
++                SnapshotReason.RUNTIME_UNHEALTHY,
++                SnapshotReason.RUNTIME_UNREACHABLE,
++                SnapshotReason.RUNTIME_UNAUTHORIZED,
++                SnapshotReason.RUNTIME_INCOMPATIBLE,
++            ]
++            if unknown:
++                reasons.append(SnapshotReason.UNKNOWN_CAPABILITY)
++            if not mapped:
++                reasons.append(SnapshotReason.UNSUPPORTED_MODALITY)
++            rejections.append(SnapshotRejection(
++                reasons=tuple(dict.fromkeys(reasons)),
++                model_registry_id=model.registry_id,
++                availability=availability,
++                mapped_modalities=mapped,
++                unknown_capabilities=unknown,
++                input_asset_types=assets,
++                output_asset_types=assets,
++            ))
++            continue
++        for runtime in matches:
++            used_runtimes.add(runtime.registry_id)
++            instance = instances.get(runtime.registry_id)
++            availability = _availability(model, runtime, instance)
++            location = _loopback_location(runtime.bind_address)
++            declared = model.capabilities or runtime.capabilities
++            mapped, unknown, assets = _capabilities(declared)
++            rejections.append(SnapshotRejection(
++                reasons=_route_reasons(model, runtime, availability, location, mapped, unknown),
++                model_registry_id=model.registry_id,
++                runtime_registry_id=runtime.registry_id,
++                availability=availability,
++                location=location,
++                mapped_modalities=mapped,
++                unknown_capabilities=unknown,
++                input_asset_types=assets,
++                output_asset_types=assets,
++            ))
++    for runtime in source.runtimes:
++        if runtime.registry_id in used_runtimes:
++            continue
++        location = _loopback_location(runtime.bind_address)
++        mapped, unknown, assets = _capabilities(runtime.capabilities)
++        availability = Availability(
++            configured=runtime.status == "CONFIGURED",
++            installed=False, healthy=False, reachable=False,
++            authorized=False, compatible=False,
++        )
++        reasons = _route_reasons(
++            ModelCenterModelFact(registry_id="", runtime_type=runtime.runtime_type, status="NOT_INSTALLED"),
++            runtime, availability, location, mapped, unknown,
++        )
++        rejections.append(SnapshotRejection(
++            reasons=reasons,
++            runtime_registry_id=runtime.registry_id,
++            availability=availability,
++            location=location,
++            mapped_modalities=mapped,
++            unknown_capabilities=unknown,
++            input_asset_types=assets,
++            output_asset_types=assets,
++        ))
++    ordered = tuple(sorted(
++        rejections,
++        key=lambda item: (item.model_registry_id or "", item.runtime_registry_id or "", item.reasons),
++    ))
++    return ProviderRuntimeSnapshotBundle(rejections=ordered)
++
++
++class ModelCenterSnapshotBridge:
++    @staticmethod
++    def build(
++        source: ModelCenterFactSource,
++        caller_overrides: Mapping[str, Any] | None = None,
++    ) -> ProviderRuntimeSnapshotBundle:
++        return build_provider_runtime_snapshots(source, caller_overrides=caller_overrides)
++
++    @staticmethod
++    def capture(service: Any) -> ModelCenterFactSource:
++        return capture_model_center_facts(service)
++
++    @staticmethod
++    def from_model_center(
++        service: Any,
++        caller_overrides: Mapping[str, Any] | None = None,
++    ) -> ProviderRuntimeSnapshotBundle:
++        return build_provider_runtime_snapshots(
++            capture_model_center_facts(service),
++            caller_overrides=caller_overrides,
++        )
+diff --git a/docs/provider_runtime_v2_model_center_snapshot_bridge.md b/docs/provider_runtime_v2_model_center_snapshot_bridge.md
+new file mode 100644
+index 0000000..42ffa11
+--- /dev/null
++++ b/docs/provider_runtime_v2_model_center_snapshot_bridge.md
+@@ -0,0 +1,133 @@
++# Provider Runtime 2.1A: Model Center snapshot bridge
++
++This phase is a **read-only** adapter. It copies already-resident Model Center
++registry and instance facts into Provider Runtime 2.0 snapshot types. It does
++not execute `ProviderRoutingDecision`, start or stop runtimes, download models,
++resolve credentials, read Vault, perform provider HTTP, spawn subprocesses,
++change database schema, or touch the frontend.
++
++Existing Provider Runtime 2.0 modules remain frozen:
++
++- `app/provider_runtime_v2_contracts.py`
++- `app/provider_routing_policy_v2.py`
++
++Existing Model Center Phase 2A behavior is not changed.
++
++## Architecture
++
++```text
++Model Center authoritative in-memory state
++        |
++        v
++capture_model_center_facts()     # no probe, start, stop, or I/O
++        |
++        v
++ModelCenterFactSource            # sanitized, frozen, no paths/env/secrets
++        |
++        v
++build_provider_runtime_snapshots()
++        |
++        v
++ProviderRuntimeSnapshotBundle
++    candidates:  always empty in 2.1A
++    hardware:    always empty in 2.1A
++    credentials: always empty in 2.1A
++    rejections:  normalized fail-closed reasons + availability projections
++        |
++        v
++existing pure evaluate_routing()   # never ALLOW on 2.1A output
++```
++
++The bridge owns normalization. Caller-supplied `trusted=true`,
++`authorized=true`, `healthy=true`, `compatible=true`, credential values,
++Plugin Trust VERIFIED, Team Compute locations, and execution-node overrides
++are rejected as untrusted.
++
++## Identity foundation (blocked, not invented)
++
++Provider Runtime 2.0 `RouteIdentity` requires four registry UUIDs:
++
++| Contract | Current Model Center representation | Sufficient for RouteIdentity? |
++| --- | --- | --- |
++| ProviderIdentity | `RuntimeDefinition.provider_adapter` string (`OPENAI_COMPATIBLE_TEXT`, `COMFYUI_ASSET`) | No |
++| ModelIdentity | `ModelDefinition.id` slug (`qwen36-27b-q4km`) | No |
++| RuntimeIdentity | `RuntimeDefinition.id` slug (`llama-cpp-local`) | No |
++| ExecutionNodeIdentity | **no field** | No |
++
++Hardware/capability UUID facts are also absent:
++
++| Provider Runtime fact | Current Model Center representation |
++| --- | --- |
++| `runtime_family_id` | `RuntimeType` enum string (`LLAMA_CPP`, `COMFYUI`) |
++| `architecture_id` | component architecture strings (`QWEN3`, `RIFE49`), not host ISA |
++| `gpu_vendor_id` | marketing GPU name (`RTX 5080`), often with **no VRAM/RAM numbers** |
++| `quantization_id` | string (`Q4_K_M`) |
++
++This phase **does not**:
++
++- generate random UUIDs
++- UUID5/hash slugs, display names, paths, or URLs
++- invent an execution-node identity for the local device
++- treat adapter names as provider registry IDs
++
++If a future Model Center record already stores a canonical UUID in
++`registry_id` / `provider_adapter`, the bridge will recognize it as a UUID
++and omit the corresponding `MISSING_*_IDENTITY` reason. Execution-node and
++hardware UUID facts still do not exist on current Model Center types, so
++**2.1A never emits `CandidateDescriptor` or `HardwareSnapshot`**.
++
++## Location, capability, availability
++
++- Location is `DEVICE` only for loopback IP literals (`127.0.0.1`, `::1`).
++  `localhost` (needs DNS), wildcard, LAN, and public binds fail closed.
++  SAME_USER_NODE, WORKSPACE_NODE, and CLOUD are not mapped.
++- Modalities map only when Model Center declares an overlapping value:
++  TEXT, IMAGE, VIDEO, TTS, AUDIO, EMBEDDING. VISION, RERANK, RESTORATION,
++  and INTERPOLATION remain unknown. Names such as `qwen` / `comfyui` are
++  not capabilities. EMBEDDING does not guess `VECTOR` assets.
++- Availability dimensions stay distinct. `authorized` is always false
++  (this phase does not invent Provider authorization). `compatible` is
++  always false (no UUID architecture/vendor/VRAM/RAM host snapshot).
++  Installed requires already-resident instance liveness/reachability;
++  the bridge does not probe files or HTTP.
++
++## Security boundary
++
++| Action | Count |
++| --- | --- |
++| Real model calls | 0 |
++| Provider network requests | 0 |
++| Credential / Vault access | 0 |
++| Subprocess created by the bridge | 0 |
++| Runtime start / stop | 0 |
++| Model download / install | 0 |
++| Plugin / Team Compute execution | 0 |
++| Database schema / migrations | 0 |
++| Frontend changes | 0 |
++
++`evaluate_routing()` over a 2.1A bundle cannot return `ALLOW`.
++
++## Predecessor task
++
++Minimal identity foundation required before a later phase may emit
++ALLOW-capable routes:
++
++1. Stable registry UUIDs on Model Center for provider, model, runtime, and
++   the local execution node (not derived from slugs, paths, or URLs).
++2. Registry UUIDs for runtime family, host architecture, GPU vendor, and
++   quantization, plus host VRAM/RAM in MiB.
++3. A Provider authorization fact distinct from runtime presence, health,
++   Plugin VERIFIED, and `candidate.trusted`.
++4. Authoritative local cost/latency policy if those estimates are required
++   for routing (unknown cost is excluded by 2.0, not assumed free).
++
++Do not hash current slugs as a workaround.
++
++## Verification
++
++Run `tests/test_provider_runtime_v2_model_center_bridge.py` with pytest.
++The local autouse fixture shadows the root fixture so Vault/runtime are
++not initialized. Tests cover missing identities, unknown capabilities,
++each availability dimension, location fail-closed, untrusted overrides,
++no credential/Plugin Trust/Team Compute substitution, capture sanitization,
++determinism, and a dynamic I/O + UUID-minting trap.
+diff --git a/tests/test_provider_runtime_v2_model_center_bridge.py b/tests/test_provider_runtime_v2_model_center_bridge.py
+new file mode 100644
+index 0000000..0e32441
+--- /dev/null
++++ b/tests/test_provider_runtime_v2_model_center_bridge.py
+@@ -0,0 +1,395 @@
++import ast
++import json
++from pathlib import Path
++from uuid import UUID
++
++import pytest
++
++from app.provider_runtime_v2_contracts import *
++from app.provider_routing_policy_v2 import evaluate_routing
++from app.provider_runtime_v2_model_center_bridge import (
++    BRIDGE_VERSION,
++    ModelCenterFactSource,
++    ModelCenterHardwareFact,
++    ModelCenterInstanceFact,
++    ModelCenterModelFact,
++    ModelCenterRuntimeFact,
++    ModelCenterSnapshotBridge,
++    ProviderRuntimeSnapshotBundle,
++    SnapshotReason,
++    build_provider_runtime_snapshots,
++    capture_model_center_facts,
++)
++
++
++@pytest.fixture(autouse=True)
++def restore_global_settings():
++    """Bridge tests do not initialize app runtime or Vault."""
++    yield
++
++
++def uid(n):
++    return UUID(int=n)
++
++
++def facts(
++    model_status="READY",
++    runtime_status="CONFIGURED",
++    state=None,
++    process_alive=False,
++    http_reachable=False,
++    bind="127.0.0.1",
++    caps=("TEXT",),
++    runtime_type="LLAMA_CPP",
++    model_id="qwen36-27b-q4km",
++    runtime_id="llama-cpp-local",
++    provider="OPENAI_COMPATIBLE_TEXT",
++    family="QWEN3.6",
++):
++    instances = ()
++    if state is not None:
++        instances = (ModelCenterInstanceFact(
++            runtime_registry_id=runtime_id, state=state,
++            process_alive=process_alive, http_reachable=http_reachable,
++        ),)
++    return ModelCenterFactSource(
++        models=(ModelCenterModelFact(
++            registry_id=model_id, runtime_type=runtime_type, status=model_status,
++            capabilities=caps, family=family,
++        ),),
++        runtimes=(ModelCenterRuntimeFact(
++            registry_id=runtime_id, runtime_type=runtime_type, status=runtime_status,
++            provider_adapter=provider, bind_address=bind,
++        ),),
++        instances=instances,
++        hardware_profiles=(ModelCenterHardwareFact(
++            profile_id="profile-1", model_registry_id=model_id, tested=True,
++        ),),
++    )
++
++
++def bundle_of(**kwargs):
++    return ModelCenterSnapshotBridge.build(facts(**kwargs))
++
++
++def rejection_of(**kwargs):
++    bundle = bundle_of(**kwargs)
++    assert len(bundle.rejections) == 1
++    return bundle.rejections[0]
++
++
++def routing_request():
++    return ProviderRoutingRequest(
++        modality=Modality.TEXT, workspace_id=uid(100), user_id=uid(101),
++        local_node=ExecutionNodeIdentity(execution_node_id=uid(1)),
++        privacy=PrivacyPolicy.DEVICE_ONLY,
++    )
++
++
++def assert_non_routable(bundle):
++    assert bundle.candidates == ()
++    assert bundle.hardware == ()
++    assert bundle.credentials == ()
++    decision = evaluate_routing(
++        routing_request(), bundle.candidates, bundle.credentials, bundle.hardware,
++    )
++    assert decision.decision != Decision.ALLOW
++    assert decision.identity is None
++    assert decision.credential_handle is None
++
++
++def test_default_model_center_never_emits_route_identity():
++    from app.model_center.service import create_default_model_center
++    bundle = ModelCenterSnapshotBridge.from_model_center(create_default_model_center())
++    assert bundle.bridge_version == BRIDGE_VERSION
++    assert_non_routable(bundle)
++    reasons = {reason for item in bundle.rejections for reason in item.reasons}
++    assert SnapshotReason.MISSING_PROVIDER_IDENTITY in reasons
++    assert SnapshotReason.MISSING_MODEL_IDENTITY in reasons
++    assert SnapshotReason.MISSING_RUNTIME_IDENTITY in reasons
++    assert SnapshotReason.MISSING_EXECUTION_NODE_IDENTITY in reasons
++    assert SnapshotReason.MISSING_HARDWARE_FACT in reasons
++    assert SnapshotReason.RUNTIME_UNAUTHORIZED in reasons
++    qwen = next(item for item in bundle.rejections if item.model_registry_id == "qwen36-27b-q4km")
++    assert qwen.runtime_registry_id == "llama-cpp-local"
++    assert qwen.location == Location.DEVICE
++    assert qwen.mapped_modalities == frozenset({Modality.TEXT})
++    assert qwen.availability.authorized is False
++    assert qwen.availability.compatible is False
++    assert qwen.availability.configured is True
++    assert qwen.availability.installed is False
++
++
++@pytest.mark.parametrize("field,value", [
++    ("model_id", "qwen36-27b-q4km"),
++    ("runtime_id", "llama-cpp-local"),
++    ("provider", "OPENAI_COMPATIBLE_TEXT"),
++    ("model_id", "Qwen 3.6 Display"),
++    ("runtime_id", "/usr/bin/llama-server"),
++    ("provider", "http://127.0.0.1:8081"),
++    ("model_id", "flux2-klein-4b-fp8"),
++    ("runtime_id", "comfyui-local"),
++])
++def test_string_slugs_names_paths_and_urls_are_not_identities(field, value):
++    item = rejection_of(**{field: value})
++    assert SnapshotReason.MISSING_EXECUTION_NODE_IDENTITY in item.reasons
++    if field == "model_id":
++        assert SnapshotReason.MISSING_MODEL_IDENTITY in item.reasons
++    if field == "runtime_id":
++        assert SnapshotReason.MISSING_RUNTIME_IDENTITY in item.reasons
++    if field == "provider":
++        assert SnapshotReason.MISSING_PROVIDER_IDENTITY in item.reasons
++    assert_non_routable(bundle_of(**{field: value}))
++
++
++def test_uuid_shaped_registry_ids_still_lack_execution_node_and_hardware():
++    model_id = str(uid(11))
++    runtime_id = str(uid(12))
++    provider = str(uid(13))
++    item = rejection_of(model_id=model_id, runtime_id=runtime_id, provider=provider)
++    assert SnapshotReason.MISSING_MODEL_IDENTITY not in item.reasons
++    assert SnapshotReason.MISSING_RUNTIME_IDENTITY not in item.reasons
++    assert SnapshotReason.MISSING_PROVIDER_IDENTITY not in item.reasons
++    assert SnapshotReason.MISSING_EXECUTION_NODE_IDENTITY in item.reasons
++    assert SnapshotReason.MISSING_HARDWARE_FACT in item.reasons
++    assert_non_routable(bundle_of(model_id=model_id, runtime_id=runtime_id, provider=provider))
++
++
++def test_missing_execution_node_identity_is_structural():
++    source = facts()
++    assert not hasattr(source, "execution_node_id")
++    assert "execution_node" not in ModelCenterFactSource.model_fields
++    assert all(SnapshotReason.MISSING_EXECUTION_NODE_IDENTITY in item.reasons for item in bundle_of().rejections)
++
++
++@pytest.mark.parametrize("caps,mapped,unknown,assets,expect_unknown,expect_unsupported", [
++    (("TEXT",), {Modality.TEXT}, frozenset(), {AssetType.TEXT}, False, False),
++    (("IMAGE",), {Modality.IMAGE}, frozenset(), {AssetType.IMAGE}, False, False),
++    (("VIDEO",), {Modality.VIDEO}, frozenset(), {AssetType.VIDEO}, False, False),
++    (("TTS",), {Modality.TTS}, frozenset(), {AssetType.AUDIO}, False, False),
++    (("AUDIO",), {Modality.AUDIO}, frozenset(), {AssetType.AUDIO}, False, False),
++    (("EMBEDDING",), {Modality.EMBEDDING}, frozenset(), frozenset(), False, False),
++    (("RESTORATION",), frozenset(), {"RESTORATION"}, frozenset(), True, True),
++    (("INTERPOLATION",), frozenset(), {"INTERPOLATION"}, frozenset(), True, True),
++    (("VISION",), frozenset(), {"VISION"}, frozenset(), True, True),
++    (("RERANK",), frozenset(), {"RERANK"}, frozenset(), True, True),
++    (("TEXT", "VISION"), {Modality.TEXT}, {"VISION"}, {AssetType.TEXT}, True, False),
++    ((), frozenset(), frozenset(), frozenset(), False, True),
++])
++def test_capability_normalization_does_not_guess(caps, mapped, unknown, assets, expect_unknown, expect_unsupported):
++    item = rejection_of(caps=caps, family="qwen")
++    assert item.mapped_modalities == frozenset(mapped)
++    assert item.unknown_capabilities == frozenset(unknown)
++    assert item.input_asset_types == frozenset(assets)
++    assert item.output_asset_types == frozenset(assets)
++    assert (SnapshotReason.UNKNOWN_CAPABILITY in item.reasons) is expect_unknown
++    assert (SnapshotReason.UNSUPPORTED_MODALITY in item.reasons) is expect_unsupported
++
++
++def test_family_or_runtime_name_is_not_a_capability():
++    item = rejection_of(caps=(), family="qwen", runtime_id="llama-cpp-local")
++    assert item.mapped_modalities == frozenset()
++    assert SnapshotReason.UNSUPPORTED_MODALITY in item.reasons
++
++
++@pytest.mark.parametrize("status,installed", [
++    ("NOT_INSTALLED", False),
++    ("MISSING_COMPONENT", False),
++    ("RUNTIME_REQUIRED", False),
++    ("LICENSE_REQUIRED", False),
++    ("READY", False),
++    ("DISCOVERED", False),
++    ("DEGRADED", False),
++])
++def test_catalog_status_without_instance_is_not_runtime_installed(status, installed):
++    item = rejection_of(model_status=status)
++    assert item.availability.installed is installed
++    assert SnapshotReason.RUNTIME_NOT_INSTALLED in item.reasons
++
++
++def test_availability_dimensions_stay_distinct():
++    running = rejection_of(state="RUNNING", process_alive=True, http_reachable=True)
++    assert running.availability.configured is True
++    assert running.availability.installed is True
++    assert running.availability.healthy is True
++    assert running.availability.reachable is True
++    assert running.availability.authorized is False
++    assert running.availability.compatible is False
++    assert SnapshotReason.RUNTIME_UNAUTHORIZED in running.reasons
++    assert SnapshotReason.RUNTIME_INCOMPATIBLE in running.reasons
++    stopped = rejection_of(state="STOPPED", process_alive=False, http_reachable=False)
++    assert stopped.availability.installed is False
++    assert stopped.availability.healthy is False
++    assert stopped.availability.reachable is False
++    unreachable = rejection_of(state="RUNNING", process_alive=True, http_reachable=False)
++    assert unreachable.availability.healthy is True
++    assert unreachable.availability.reachable is False
++    assert SnapshotReason.RUNTIME_UNREACHABLE in unreachable.reasons
++    external = rejection_of(state="EXTERNAL", process_alive=False, http_reachable=True)
++    assert external.availability.healthy is True
++    assert external.availability.reachable is True
++    assert external.availability.installed is True
++
++
++def test_runtime_not_configured_unhealthy_and_incompatible():
++    pending = rejection_of(runtime_status="PENDING")
++    assert pending.availability.configured is False
++    assert SnapshotReason.RUNTIME_NOT_CONFIGURED in pending.reasons
++    failed = rejection_of(state="FAILED", process_alive=False, http_reachable=False)
++    assert failed.availability.healthy is False
++    assert SnapshotReason.RUNTIME_UNHEALTHY in failed.reasons
++    assert SnapshotReason.RUNTIME_INCOMPATIBLE in failed.reasons
++    assert SnapshotReason.MISSING_HARDWARE_FACT in failed.reasons
++
++
++def test_hardware_numbers_without_uuid_architecture_remain_non_routable():
++    source = facts()
++    source = ModelCenterFactSource(
++        models=source.models, runtimes=source.runtimes, instances=source.instances,
++        hardware_profiles=(ModelCenterHardwareFact(
++            profile_id="qwen36-rtx5080-8k", model_registry_id="qwen36-27b-q4km",
++            vram_required=16, ram_required=32, context=8192, tested=True,
++        ),),
++    )
++    bundle = build_provider_runtime_snapshots(source)
++    assert bundle.hardware == ()
++    assert SnapshotReason.MISSING_HARDWARE_FACT in bundle.rejections[0].reasons
++    assert_non_routable(bundle)
++
++
++@pytest.mark.parametrize("bind,location", [
++    ("127.0.0.1", Location.DEVICE),
++    ("::1", Location.DEVICE),
++    ("localhost", None),
++    ("0.0.0.0", None),
++    ("192.168.1.10", None),
++    ("10.0.0.5", None),
++    ("8.8.8.8", None),
++    ("", None),
++])
++def test_location_is_device_only_for_loopback_literals(bind, location):
++    item = rejection_of(bind=bind)
++    assert item.location == location
++    if location is None:
++        assert SnapshotReason.UNSUPPORTED_LOCATION in item.reasons
++    assert SnapshotReason.TEAM_COMPUTE_SUBSTITUTION_FORBIDDEN not in item.reasons or location is None
++    assert_non_routable(bundle_of(bind=bind))
++
++
++@pytest.mark.parametrize("overrides,extra", [
++    ({"trusted": True}, SnapshotReason.PLUGIN_TRUST_SUBSTITUTION_FORBIDDEN),
++    ({"authorized": True}, SnapshotReason.PLUGIN_TRUST_SUBSTITUTION_FORBIDDEN),
++    ({"healthy": True, "compatible": True}, SnapshotReason.PLUGIN_TRUST_SUBSTITUTION_FORBIDDEN),
++    ({"plugin_verified": True}, SnapshotReason.PLUGIN_TRUST_SUBSTITUTION_FORBIDDEN),
++    ({"verified": True}, SnapshotReason.PLUGIN_TRUST_SUBSTITUTION_FORBIDDEN),
++    ({"credential": "secret"}, SnapshotReason.CREDENTIAL_RESOLUTION_FORBIDDEN),
++    ({"api_key": "sk-test"}, SnapshotReason.CREDENTIAL_RESOLUTION_FORBIDDEN),
++    ({"vault": True}, SnapshotReason.CREDENTIAL_RESOLUTION_FORBIDDEN),
++    ({"team_compute": True}, SnapshotReason.TEAM_COMPUTE_SUBSTITUTION_FORBIDDEN),
++    ({"location": "CLOUD"}, SnapshotReason.TEAM_COMPUTE_SUBSTITUTION_FORBIDDEN),
++    ({"execution_node_id": str(uid(1))}, SnapshotReason.TEAM_COMPUTE_SUBSTITUTION_FORBIDDEN),
++])
++def test_caller_overrides_are_rejected(overrides, extra):
++    bundle = build_provider_runtime_snapshots(facts(), caller_overrides=overrides)
++    assert_non_routable(bundle)
++    reasons = bundle.rejections[0].reasons
++    assert SnapshotReason.UNTRUSTED_CALLER_OVERRIDE in reasons
++    assert extra in reasons
++    assert all(item.availability.authorized is False for item in bundle.rejections)
++
++
++def test_no_credential_resolution_or_plugin_trust_substitution():
++    bundle = bundle_of(state="RUNNING", process_alive=True, http_reachable=True)
++    assert bundle.credentials == ()
++    assert all(item.availability.authorized is False for item in bundle.rejections)
++    dumped = json.loads(bundle.model_dump_json())
++    blob = json.dumps(dumped)
++    for forbidden in ("api_key", "password", "secret", "token", "executable", "launch_arguments"):
++        assert forbidden not in bundle.model_dump()
++    assert "sk-" not in blob
++
++
++def test_capture_omits_executables_secrets_and_process_objects():
++    from app.model_center.service import create_default_model_center
++    source = capture_model_center_facts(create_default_model_center())
++    dumped = source.model_dump()
++    blob = json.dumps(dumped)
++    for forbidden in ("executable", "environment", "launch_arguments", "model_path",
++                      "working_directory", "base_url", "process_id", "api_key", "secret"):
++        assert forbidden not in blob
++    assert {item.registry_id for item in source.runtimes} == {"comfyui-local", "llama-cpp-local"}
++    assert "qwen36-27b-q4km" in {item.registry_id for item in source.models}
++
++
++def test_deterministic_and_immutable():
++    source = facts()
++    first = build_provider_runtime_snapshots(source)
++    second = build_provider_runtime_snapshots(source)
++    assert first == second
++    with pytest.raises(Exception):
++        first.candidates = (first.candidates[0] if first.candidates else None,)
++    roundtrip = ProviderRuntimeSnapshotBundle.model_validate_json(first.model_dump_json())
++    assert roundtrip == first
++
++
++def test_bridge_has_no_io_or_identity_minting(monkeypatch):
++    import builtins
++    import hashlib
++    import io
++    import os
++    import pathlib
++    import socket
++    import subprocess
++    import uuid as uuid_mod
++    source = facts()
++    def forbidden(*args, **kwargs):
++        raise AssertionError("bridge attempted I/O or identity minting")
++    with monkeypatch.context() as patch:
++        for obj, name in (
++            (builtins, "open"), (io, "open"), (os, "open"), (os, "system"),
++            (pathlib.Path, "open"), (socket, "socket"), (socket, "create_connection"),
++            (subprocess, "Popen"), (subprocess, "run"),
++            (uuid_mod, "uuid1"), (uuid_mod, "uuid3"), (uuid_mod, "uuid4"), (uuid_mod, "uuid5"),
++            (hashlib, "md5"), (hashlib, "sha1"), (hashlib, "sha256"),
++        ):
++            patch.setattr(obj, name, forbidden)
++        bundle = build_provider_runtime_snapshots(source)
++        assert_non_routable(bundle)
++
++
++def test_bridge_module_imports_stay_pure():
++    root = Path(__file__).resolve().parents[1]
++    tree = ast.parse((root / "app" / "provider_runtime_v2_model_center_bridge.py").read_text())
++    permitted = {
++        "__future__", "enum", "typing", "uuid", "ipaddress",
++        "app.provider_runtime_v2_contracts",
++    }
++    forbidden_modules = {
++        "subprocess", "socket", "hashlib", "requests", "httpx", "urllib",
++        "app.credential_vault", "app.plugin_trust_contracts", "app.plugin_runtime_contracts",
++        "app.model_center.service",
++    }
++    for node in ast.walk(tree):
++        if isinstance(node, ast.ImportFrom):
++            assert node.module in permitted
++            assert node.module not in forbidden_modules
++        if isinstance(node, ast.Import):
++            assert all(alias.name in permitted for alias in node.names)
++        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
++            if isinstance(node.func.value, ast.Name) and node.func.value.id == "uuid":
++                assert node.func.attr not in {"uuid1", "uuid3", "uuid4", "uuid5"}
++        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
++            assert node.func.id not in {"open", "exec", "eval", "__import__", "compile"}
++
++
++def test_existing_provider_runtime_contracts_are_untouched():
++    root = Path(__file__).resolve().parents[1]
++    for name in ("provider_runtime_v2_contracts.py", "provider_routing_policy_v2.py"):
++        tree = ast.parse((root / "app" / name).read_text())
++        modules = {
++            node.module for node in ast.walk(tree)
++            if isinstance(node, ast.ImportFrom)
++        }
++        assert "app.provider_runtime_v2_model_center_bridge" not in modules
++        assert "app.model_center" not in modules
++        assert "app.model_center.service" not in modules
+-- 
+2.55.0.windows.2
+

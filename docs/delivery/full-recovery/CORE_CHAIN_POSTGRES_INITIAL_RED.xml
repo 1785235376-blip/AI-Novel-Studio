@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="10" failures="0" skipped="1" tests="15" time="3.920" timestamp="2026-10-07T17:29:30.040270+08:00" hostname="冢"><testcase classname="tests.test_full_recovery_core_chain" name="test_seed_world_characters_outline_use_original_owners_and_context" time="2.408" /><testcase classname="tests.test_full_recovery_core_chain" name="test_startup_schema_requires_seed_and_does_not_replace_old_source_requirements" time="0.000" /><testcase classname="tests.test_full_recovery_core_chain" name="test_startup_context_drift_before_dispatch_prevents_model_call" time="0.070"><error message="failed on setup with &quot;FileExistsError: recovery-core&quot;">tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-13/test_startup_context_drift_bef0')
+
+    @pytest.fixture
+    def core(tmp_path):
+        bundle = create_repository_bundle(data_root=tmp_path)
+        novels, chapters, lore = NovelService(bundle.novels,bundle.chapters), ChapterService(bundle.chapters), LoreService(bundle.lore)
+&gt;       nid = novels.create({"id":"recovery-core","title":"废城之忆"})["id"]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_full_recovery_core_chain.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.repositories.postgres.novel.PostgresNovelRepository object at 0x00000198D4F8FED0&gt;
+payload = {'id': 'recovery-core', 'title': '废城之忆'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+&gt;               raise FileExistsError(novel_slug)
+E               FileExistsError: recovery-core
+
+app\repositories\postgres\novel.py:76: FileExistsError</error></testcase><testcase classname="tests.test_full_recovery_core_chain" name="test_startup_context_drift_after_review_blocks_application" time="0.073"><error message="failed on setup with &quot;FileExistsError: recovery-core&quot;">tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-13/test_startup_context_drift_aft0')
+
+    @pytest.fixture
+    def core(tmp_path):
+        bundle = create_repository_bundle(data_root=tmp_path)
+        novels, chapters, lore = NovelService(bundle.novels,bundle.chapters), ChapterService(bundle.chapters), LoreService(bundle.lore)
+&gt;       nid = novels.create({"id":"recovery-core","title":"废城之忆"})["id"]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_full_recovery_core_chain.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.repositories.postgres.novel.PostgresNovelRepository object at 0x00000198D19D7C90&gt;
+payload = {'id': 'recovery-core', 'title': '废城之忆'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+&gt;               raise FileExistsError(novel_slug)
+E               FileExistsError: recovery-core
+
+app\repositories\postgres\novel.py:76: FileExistsError</error></testcase><testcase classname="tests.test_full_recovery_core_chain" name="test_startup_model_schema_failure_and_mock_cannot_apply" time="0.055"><error message="failed on setup with &quot;FileExistsError: recovery-core&quot;">tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-13/test_startup_model_schema_fail0')
+
+    @pytest.fixture
+    def core(tmp_path):
+        bundle = create_repository_bundle(data_root=tmp_path)
+        novels, chapters, lore = NovelService(bundle.novels,bundle.chapters), ChapterService(bundle.chapters), LoreService(bundle.lore)
+&gt;       nid = novels.create({"id":"recovery-core","title":"废城之忆"})["id"]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_full_recovery_core_chain.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.repositories.postgres.novel.PostgresNovelRepository object at 0x00000198D65B0A90&gt;
+payload = {'id': 'recovery-core', 'title': '废城之忆'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+&gt;               raise FileExistsError(novel_slug)
+E               FileExistsError: recovery-core
+
+app\repositories\postgres\novel.py:76: FileExistsError</error></testcase><testcase classname="tests.test_full_recovery_core_chain" name="test_partial_application_retains_receipts_and_explicit_retry_does_not_duplicate" time="0.071"><error message="failed on setup with &quot;FileExistsError: recovery-core&quot;">tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-13/test_partial_application_retai0')
+
+    @pytest.fixture
+    def core(tmp_path):
+        bundle = create_repository_bundle(data_root=tmp_path)
+        novels, chapters, lore = NovelService(bundle.novels,bundle.chapters), ChapterService(bundle.chapters), LoreService(bundle.lore)
+&gt;       nid = novels.create({"id":"recovery-core","title":"废城之忆"})["id"]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_full_recovery_core_chain.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.repositories.postgres.novel.PostgresNovelRepository object at 0x00000198D661B250&gt;
+payload = {'id': 'recovery-core', 'title': '废城之忆'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+&gt;               raise FileExistsError(novel_slug)
+E               FileExistsError: recovery-core
+
+app\repositories\postgres\novel.py:76: FileExistsError</error></testcase><testcase classname="tests.test_full_recovery_core_chain" name="test_native_outline_digest_cas_and_run_version_cas_reject_stale_write" time="0.067"><error message="failed on setup with &quot;FileExistsError: recovery-core&quot;">tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-13/test_native_outline_digest_cas0')
+
+    @pytest.fixture
+    def core(tmp_path):
+        bundle = create_repository_bundle(data_root=tmp_path)
+        novels, chapters, lore = NovelService(bundle.novels,bundle.chapters), ChapterService(bundle.chapters), LoreService(bundle.lore)
+&gt;       nid = novels.create({"id":"recovery-core","title":"废城之忆"})["id"]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_full_recovery_core_chain.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.repositories.postgres.novel.PostgresNovelRepository object at 0x00000198D6812510&gt;
+payload = {'id': 'recovery-core', 'title': '废城之忆'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+&gt;               raise FileExistsError(novel_slug)
+E               FileExistsError: recovery-core
+
+app\repositories\postgres\novel.py:76: FileExistsError</error></testcase><testcase classname="tests.test_full_recovery_core_chain" name="test_cloud_startup_context_does_not_send_unapproved_original_domain_data" time="0.058"><error message="failed on setup with &quot;FileExistsError: recovery-core&quot;">tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-13/test_cloud_startup_context_doe0')
+
+    @pytest.fixture
+    def core(tmp_path):
+        bundle = create_repository_bundle(data_root=tmp_path)
+        novels, chapters, lore = NovelService(bundle.novels,bundle.chapters), ChapterService(bundle.chapters), LoreService(bundle.lore)
+&gt;       nid = novels.create({"id":"recovery-core","title":"废城之忆"})["id"]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_full_recovery_core_chain.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.repositories.postgres.novel.PostgresNovelRepository object at 0x00000198D67D9250&gt;
+payload = {'id': 'recovery-core', 'title': '废城之忆'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+&gt;               raise FileExistsError(novel_slug)
+E               FileExistsError: recovery-core
+
+app\repositories\postgres\novel.py:76: FileExistsError</error></testcase><testcase classname="tests.test_full_recovery_core_chain" name="test_reviewer_verifier_are_executable_and_receive_source_bound_prose" time="0.056"><error message="failed on setup with &quot;FileExistsError: recovery-core&quot;">tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-13/test_reviewer_verifier_are_exe0')
+
+    @pytest.fixture
+    def core(tmp_path):
+        bundle = create_repository_bundle(data_root=tmp_path)
+        novels, chapters, lore = NovelService(bundle.novels,bundle.chapters), ChapterService(bundle.chapters), LoreService(bundle.lore)
+&gt;       nid = novels.create({"id":"recovery-core","title":"废城之忆"})["id"]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_full_recovery_core_chain.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.repositories.postgres.novel.PostgresNovelRepository object at 0x00000198D4820790&gt;
+payload = {'id': 'recovery-core', 'title': '废城之忆'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+&gt;               raise FileExistsError(novel_slug)
+E               FileExistsError: recovery-core
+
+app\repositories\postgres\novel.py:76: FileExistsError</error></testcase><testcase classname="tests.test_full_recovery_core_chain" name="test_non_writer_preserves_approved_continuity_without_exposing_legacy_raw_contract" time="0.000" /><testcase classname="tests.test_full_recovery_core_chain" name="test_generation_review_includes_character_world_and_timeline_conflicts" time="0.000" /><testcase classname="tests.test_full_recovery_core_chain" name="test_empty_new_relationship_collection_preserves_existing_legacy_state" time="0.000"><skipped type="pytest.skip" message="File-backend implementation contract; covered by the default/File full suite">D:\小说\AI-Novel-Studio-Latest-Product\tests\test_full_recovery_core_chain.py:216: File-backend implementation contract; covered by the default/File full suite</skipped></testcase><testcase classname="tests.test_full_recovery_core_chain" name="test_completed_generation_persists_the_actual_three_domain_checks" time="0.054"><error message="failed on setup with &quot;FileExistsError: recovery-core&quot;">tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-13/test_completed_generation_pers0')
+
+    @pytest.fixture
+    def core(tmp_path):
+        bundle = create_repository_bundle(data_root=tmp_path)
+        novels, chapters, lore = NovelService(bundle.novels,bundle.chapters), ChapterService(bundle.chapters), LoreService(bundle.lore)
+&gt;       nid = novels.create({"id":"recovery-core","title":"废城之忆"})["id"]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_full_recovery_core_chain.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.repositories.postgres.novel.PostgresNovelRepository object at 0x00000198D6609950&gt;
+payload = {'id': 'recovery-core', 'title': '废城之忆'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+&gt;               raise FileExistsError(novel_slug)
+E               FileExistsError: recovery-core
+
+app\repositories\postgres\novel.py:76: FileExistsError</error></testcase><testcase classname="tests.test_full_recovery_core_chain" name="test_accepting_generated_next_chapter_enqueues_its_actual_version" time="0.068"><error message="failed on setup with &quot;FileExistsError: recovery-core&quot;">tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-13/test_accepting_generated_next_0')
+
+    @pytest.fixture
+    def core(tmp_path):
+        bundle = create_repository_bundle(data_root=tmp_path)
+        novels, chapters, lore = NovelService(bundle.novels,bundle.chapters), ChapterService(bundle.chapters), LoreService(bundle.lore)
+&gt;       nid = novels.create({"id":"recovery-core","title":"废城之忆"})["id"]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_full_recovery_core_chain.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.repositories.postgres.novel.PostgresNovelRepository object at 0x00000198D6802250&gt;
+payload = {'id': 'recovery-core', 'title': '废城之忆'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+&gt;               raise FileExistsError(novel_slug)
+E               FileExistsError: recovery-core
+
+app\repositories\postgres\novel.py:76: FileExistsError</error></testcase><testcase classname="tests.test_full_recovery_core_chain" name="test_memory_rejects_fabricated_quote_before_any_proposal_is_written" time="0.060"><error message="failed on setup with &quot;FileExistsError: recovery-core&quot;">tmp_path = WindowsPath('C:/Windows/Temp/pytest-of-admin/pytest-13/test_memory_rejects_fabricated0')
+
+    @pytest.fixture
+    def core(tmp_path):
+        bundle = create_repository_bundle(data_root=tmp_path)
+        novels, chapters, lore = NovelService(bundle.novels,bundle.chapters), ChapterService(bundle.chapters), LoreService(bundle.lore)
+&gt;       nid = novels.create({"id":"recovery-core","title":"废城之忆"})["id"]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_full_recovery_core_chain.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+app\services\novel_service.py:29: in create
+    def create(self,payload):return self.novels.create(payload)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+app\runtime_events.py:70: in call
+    result = method(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;app.repositories.postgres.novel.PostgresNovelRepository object at 0x00000198D6789110&gt;
+payload = {'id': 'recovery-core', 'title': '废城之忆'}
+
+    @committed_change("PROJECT")
+    def create(self, payload):
+        novel_slug = slug(payload.get("id") or payload["title"])
+        with self.database.session() as session:
+            if session.scalar(select(NovelModel.id).where(NovelModel.slug == novel_slug)):
+&gt;               raise FileExistsError(novel_slug)
+E               FileExistsError: recovery-core
+
+app\repositories\postgres\novel.py:76: FileExistsError</error></testcase></testsuite></testsuites>

@@ -1,0 +1,133 @@
+{
+  "kind": "read-only diagnosis; not a replacement validation result",
+  "created_utc": "2026-10-09T16:12:08.519315+00:00",
+  "head": "9851bdd2d692df983664bc8f4597fbc05c0e2ceb",
+  "original_result": {
+    "receipt": "stage-m3b-full-frontend.json",
+    "receipt_sha256": "5b502f99e31f20901c5d87662558b0e697bd441b6e1878a37858d3d83db5fae9",
+    "log": "stage-m3b-full-frontend.log",
+    "log_sha256": "66c804962a43b336de7ffd4f5df0bb7ed6d6184b2360363c0cd9d2580ad63bb2",
+    "status": "FAIL",
+    "started_utc": "2026-10-09T16:05:51.436500+00:00",
+    "finished_utc": "2026-10-09T16:07:00.212436+00:00",
+    "sources_changed_during_check": false,
+    "test_files": "1 failed; 261 passed; 2 skipped",
+    "tests": "1 failed; 2000 passed; 8 skipped",
+    "duration_seconds": 68.31,
+    "failed_test_duration_ms": 1063
+  },
+  "first_failure": {
+    "test": "frontend/src/novel/AgentTeamPanel.additional.test.tsx:29:93",
+    "name": "shows additional roles when there are no legacy roles and chooses a registered default",
+    "assertion": "await waitFor(() => expect(create).toHaveBeenCalledWith(expect.objectContaining({agent_id:'verifier'})))",
+    "expected_agent_id": "verifier",
+    "actual_agent_id": "planner",
+    "actual_create_calls": 1,
+    "prior_assertion": "line 28 already observed select.value equal to verifier",
+    "dom_at_timeout": "one verifier option; verifier description; job VALIDATED",
+    "classification": "incorrect request role; not missing invocation or insufficient wait"
+  },
+  "focused_diagnostic": {
+    "receipt": "dev-m3b-agent-panel-diagnostic.json",
+    "log": "dev-m3b-agent-panel-diagnostic.log",
+    "status": "PASS",
+    "tests": "5 passed",
+    "duration_seconds": 1.13,
+    "started_utc": "2026-10-09T16:09:16.031752+00:00",
+    "finished_utc": "2026-10-09T16:09:17.499407+00:00",
+    "sources_changed_during_check": false,
+    "execution_count": 1,
+    "interpretation": "Scheduling-dependent manifestation; pass does not erase full-suite failure."
+  },
+  "source_identity": {
+    "frontend/src/novel/AgentTeamPanel.additional.test.tsx": {
+      "sha256": "929afebb75f34bbda928ad73e056447289b860edce48eddbd127593e8f85ab53",
+      "full_before_equals_after": true,
+      "diagnostic_before_equals_original": true,
+      "diagnostic_after_equals_original": true,
+      "current_equals_original": true,
+      "matches_published_head_verified": true
+    },
+    "frontend/src/novel/AgentTeamPanel.tsx": {
+      "sha256": "657a036affa3682a1e7363273cfebe3f705c74de8f4f0bc406a4bf8318386635",
+      "full_before_equals_after": true,
+      "diagnostic_before_equals_original": true,
+      "diagnostic_after_equals_original": true,
+      "current_equals_original": true,
+      "matches_published_head_verified": true
+    },
+    "frontend/src/api.ts": {
+      "sha256": "507861d3e2c4a4846825a1f59a0c01f139b1e662bc31bc6f17d40d1727195e1e",
+      "full_before_equals_after": true,
+      "diagnostic_before_equals_original": true,
+      "diagnostic_after_equals_original": true,
+      "current_equals_original": true,
+      "matches_published_head_verified": true
+    },
+    "frontend/src/localHostSession.ts": {
+      "sha256": "0fd6e62146077f1180a47d73639f6055148835e079f7c2a71f2ac7b9a0f34907",
+      "full_before_equals_after": true,
+      "diagnostic_before_equals_original": true,
+      "diagnostic_after_equals_original": true,
+      "current_equals_original": true,
+      "matches_published_head_verified": true
+    },
+    "frontend/src/store.ts": {
+      "sha256": "5cae319687eb3e56d5313479d08553700d7dc94ec36ebf2402ed9281bf46c572",
+      "full_before_equals_after": true,
+      "diagnostic_before_equals_original": true,
+      "diagnostic_after_equals_original": true,
+      "current_equals_original": true,
+      "matches_published_head_verified": true
+    },
+    "frontend/vite.config.ts": {
+      "sha256": "870f3b91acd3e5154eceeff4ac7a6d6fb79abd2c0ca4ed95ee8e75dfc34279b9",
+      "full_before_equals_after": true,
+      "diagnostic_before_equals_original": true,
+      "diagnostic_after_equals_original": true,
+      "current_equals_original": true,
+      "matches_published_head_verified": true
+    },
+    "frontend/pnpm-lock.yaml": {
+      "sha256": "1caf25e7cc3d1d11be011c2ca14cd26720a0b93857c17d7c68d15fb041cd1d6f",
+      "full_before_equals_after": true,
+      "diagnostic_before_equals_original": true,
+      "diagnostic_after_equals_original": true,
+      "current_equals_original": true,
+      "matches_published_head_verified": true
+    },
+    "scripts/run_v2_checks.py": {
+      "sha256": "539f04a8f4774ac0fb437521ca7f9fb8bc352e90140c394724bc38c1f0305f54",
+      "full_before_equals_after": true,
+      "diagnostic_before_equals_original": true,
+      "diagnostic_after_equals_original": true,
+      "current_equals_original": true,
+      "matches_published_head_verified": true
+    }
+  },
+  "root_cause_evidence": [
+    "AgentTeamPanel.tsx:330 initializes agentId=planner; :334 derives registered roles; :335-337 repairs invalid ID only in passive useEffect.",
+    "AgentTeamPanel.tsx:440 renders the raw controlled value; :425 finds description using that raw value; :493-498 leaves launch enabled and invokes create.mutate() without variables; :342 submits the closed-over raw agentId.",
+    "Installed React DOM development source :2133-2154 explicitly selects the first enabled option when no option matches the controlled value. A verifier DOM selection therefore does not establish verifier state.",
+    "Installed TanStack React Query 5.101.4 useMutation.ts:30-40 initializes MutationObserver with render options then updates options in passive useEffect; :55-56 forwards explicit mutate variables.",
+    "Installed query-core mutation.ts:222 awaits optional onMutate even when absent; mutationObserver.ts:91-92 may update options of a pending mutation. Exact event ordering in the original failure was not traced."
+  ],
+  "new_module_influence": {
+    "direct_import_path_found": false,
+    "details": "AgentTeamPanel local import closure is api, store, localHostSession, packagedHost, LocalHostSessionPanel, AgentResultReview, AgentJobDetail and UI primitives; none imports localAiDiscoveryApi, LocalAiDiscovery or LocalAiModelFiles. The discovery API change is type-only. Vitest installed defaults isolate=true and pool=forks; project config does not disable them. No direct shared-runtime contamination is supported. Added file may affect suite scheduling, but CPU attribution is not established."
+  },
+  "recommended_product_correction": [
+    "Derive one registered selected role synchronously: match requested agentId, otherwise first catalog role. Use that selected ID and description for rendered UI immediately.",
+    "Pass that displayed selected ID explicitly to create.mutate and consume the mutation variable for api.createAgentJob agent_id; do not depend on passive option closure refresh.",
+    "Existing normalization effect may remain to persist fallback preference, but cannot be the correctness boundary. Preserve original tests, waits, timeouts, resource limits and session safeguards."
+  ],
+  "deterministic_regression_design": [
+    "Preseed a real QueryClient creative-agent-catalog query with only verifier; render AgentTeamPanel through real React and TanStack.",
+    "An outer useLayoutEffect records the first usable commit select value and task help description, then clicks launch. Old code definitely exposes verifier select with missing role description before its passive normalization; fixed code must display verifier and its description together.",
+    "Also assert the actual API create request uses verifier, with exactly one creation and start. Caveat: microtask/passive ordering may repair the old request before its mutation callback runs, so do not call wrong-ID reproduction deterministic until observed.",
+    "Optionally record real MutationCache.onMutate variables to verify the visible role identity is explicitly snapshotted at submission. Do not mock useEffect or expand wait/resource limits.",
+    "Add catalog replacement coverage for an old selected role absent from the new catalog, alongside retained original additional-role tests."
+  ],
+  "changes_made": "Only new diagnostic runner log/receipt and this analysis evidence; no source/test/config edits, installations, browser or Git mutations.",
+  "remaining_uncertainty": "The original failure conclusively submitted planner, and source establishes the DOM/state and passive-mutation mismatch. The precise original interleaving is not instrumented. Proposed new regression has not been run while source is frozen."
+}

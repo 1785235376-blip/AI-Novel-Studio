@@ -1,0 +1,79 @@
+{
+  "stage": "M4-B additive real-owner browser acceptance preparation",
+  "recorded_at": "2026-10-10T10:56:49.169990+00:00",
+  "head": "09883fb7fe35b241f97ea7fe0a3e292178441935",
+  "fixture_tests": {
+    "status": "PASS",
+    "passed": 29,
+    "scope": "New M4-B plus unchanged original M4 fixture suite",
+    "log": "stage-m4b-browser-fixtures.log"
+  },
+  "actual_mounted_self_check": {
+    "status": "PASS",
+    "wire": "stage-m4b-browser-self-check-wire.json",
+    "mock_calls": 1,
+    "asset_creations": 1,
+    "draft_asset_version": 1,
+    "approved_asset_version": 2,
+    "review_metadata_faults": 1,
+    "fault_http_status": 500,
+    "recovery": "ORIGINAL_GET",
+    "identical_reads_no_duplicate": true,
+    "host_revocation": "PASS",
+    "original_manual_refresh_same_asset": true,
+    "fault_observed_original_asset": {
+      "version": 1,
+      "state": "DRAFT"
+    }
+  },
+  "strict_frontend_wire_validation": {
+    "status": "PASS",
+    "passed": 8,
+    "log": "/tmp/m4b-provider-ui/wire-replay-green.out"
+  },
+  "browser_collection": {
+    "status": "PASS",
+    "total_tests": 17,
+    "total_files": 9,
+    "original_tests": 16,
+    "new_tests": 1,
+    "log": "stage-m4b-browser-collection.log"
+  },
+  "browser_execution": "NOT_RUN",
+  "browser_reason": "Previously confirmed local Chromium EPERM; no retry or bypass attempted",
+  "screenshots_and_geometry": {
+    "status": "NOT_RUN",
+    "declared_viewports": [
+      [
+        1366,
+        768
+      ],
+      [
+        1440,
+        900
+      ],
+      [
+        1920,
+        1080
+      ]
+    ],
+    "declared_screenshots": 6,
+    "required_execution": "Hosted CI"
+  },
+  "typescript_check": "PASS",
+  "python_compile": "PASS",
+  "diff_check": "PASS",
+  "original_fixtures_tests_config_and_historical_evidence_preserved": true,
+  "real_inference": "NOT_RUN",
+  "postgres": "NOT_RUN",
+  "audit_status": "Historical BLOCKED; no independent audit performed",
+  "source_sha256": {
+    "tests/v2_model_assets_browser_server.py": "2c7283592af6db4168ba0d12805e0554f795134548f0fabb6c9be8588b439774",
+    "tests/test_v2_model_assets_browser_fixture.py": "b9b5955172b79c205445a1c86938f102698bc56d5047ccf92289cfb14cdbef72",
+    "frontend/tests/e2e/v2-model-assets-live.spec.ts": "1f6d3a6621497ee2ad8ccd00a98d3db2d399faf594b60fbff853bbfbe324fcd3",
+    "frontend/playwright.independent-live.config.ts": "8e0224c0462fb68ec2fd9087cd57c809048e57468019af480e23d370be4ccfd7"
+  },
+  "wire_sha256": "c8fc944e76a0bd99b96de7bc5cf891091fdb483a73c7472f1c8c0c988e3d6b42",
+  "source_last_modified_at": "2026-10-10T10:55:55.947865+00:00",
+  "source_frozen_at": "2026-10-10T10:56:49.169990+00:00"
+}

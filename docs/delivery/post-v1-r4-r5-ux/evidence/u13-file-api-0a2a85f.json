@@ -1,0 +1,3801 @@
+{
+  "schema": "r4-u13-performance-v1",
+  "started_at_utc": "2026-10-05T15:35:05.895630+00:00",
+  "source_before": {
+    "commit": "0a2a85f4ec04218bbd6cc33b2363b71a52cd2b95",
+    "python_source_sha256": "56ee935709c008a294b14c05d947cf24f67bf156151b6d1a40d1dca1e8a1e31e",
+    "dirty_paths": []
+  },
+  "environment": {
+    "os": "Linux",
+    "architecture": "x86_64",
+    "python": "3.12.14",
+    "logical_cpus": 9,
+    "dependencies": {
+      "fastapi": "0.142.2",
+      "starlette": "1.7.0",
+      "httpx": "0.28.1",
+      "pydantic": "2.13.5"
+    }
+  },
+  "method": {
+    "sizes_han": [
+      100000,
+      500000,
+      1000000
+    ],
+    "chapters_per_project": 12,
+    "warmups": 3,
+    "samples": 30,
+    "query_cycle": [
+      "星桥灯塔",
+      "阿澄",
+      "旧信",
+      "月港",
+      "不存在的线索",
+      ".*"
+    ],
+    "percentile": "nearest rank ceil(p*n), all measured samples retained",
+    "clock": "perf_counter_ns; real monotonic wall clock",
+    "worker_timeout_seconds": 300,
+    "rss": "separate process for each size/mode; peak includes imports and fixture construction",
+    "cold_start": "fresh process/import/cache; OS filesystem cache is not flushed",
+    "model_calls": "No model/generation endpoints; cloud/fallback off, memory vault, no inherited credentials, network audit denied",
+    "synthetic_limit": "Repetitive original data; not representative of every literary corpus",
+    "cleanup": "Only TemporaryDirectory created by this invocation; no existing profile paths accepted"
+  },
+  "runs": [
+    {
+      "size_han": 100000,
+      "flags": "ALL_OFF",
+      "status": "REAL_RUNTIME_VERIFIED",
+      "cold_app_import_ms": 2091.46911,
+      "memory_after_import": {
+        "rss_bytes": 105529344,
+        "peak_rss_bytes": 105529344,
+        "source": "Linux /proc/self/status VmRSS/VmHWM"
+      },
+      "startup_heavy_modules": [],
+      "network": {
+        "blocked_connect_attempts": 0
+      },
+      "model_quality": "NOT_RUN",
+      "model_execution_requested": false,
+      "api_transport": "FastAPI TestClient in-process; real mounted app/File storage, no TCP latency",
+      "fixture": {
+        "schema": "r4-original-synthetic-v1",
+        "han_characters": 100000,
+        "provenance": "Original deterministic synthetic prose; no imported books or generated model output.",
+        "branch_boundary": "Two legacy story-route planning records; not collaboration branch manuscripts.",
+        "chapter_count": 12,
+        "character_count": 3,
+        "story_route_count": 2,
+        "content_sha256": "ffe18acacc2ddfda7f450662cbb94e887425212d2f8ecd6f2e845936e1c5b482"
+      },
+      "lifespan_start_ms": 17.406781,
+      "chapter_creation": {
+        "sample_count": 12,
+        "p50_ms": 4.782206,
+        "p95_ms": 7.454768,
+        "max_ms": 7.454768,
+        "http_errors": 0,
+        "misses": 0,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 3.978536,
+            "status": 201,
+            "response_bytes": 28588
+          },
+          {
+            "duration_ms": 3.130319,
+            "status": 201,
+            "response_bytes": 28588
+          },
+          {
+            "duration_ms": 3.504964,
+            "status": 201,
+            "response_bytes": 28588
+          },
+          {
+            "duration_ms": 4.162368,
+            "status": 201,
+            "response_bytes": 28591
+          },
+          {
+            "duration_ms": 3.868663,
+            "status": 201,
+            "response_bytes": 28600
+          },
+          {
+            "duration_ms": 6.084116,
+            "status": 201,
+            "response_bytes": 28603
+          },
+          {
+            "duration_ms": 4.782206,
+            "status": 201,
+            "response_bytes": 28602
+          },
+          {
+            "duration_ms": 5.834035,
+            "status": 201,
+            "response_bytes": 28593
+          },
+          {
+            "duration_ms": 6.775585,
+            "status": 201,
+            "response_bytes": 28585
+          },
+          {
+            "duration_ms": 6.16126,
+            "status": 201,
+            "response_bytes": 28587
+          },
+          {
+            "duration_ms": 6.360146,
+            "status": 201,
+            "response_bytes": 28587
+          },
+          {
+            "duration_ms": 7.454768,
+            "status": 201,
+            "response_bytes": 28590
+          }
+        ]
+      },
+      "chapter_list_api": {
+        "duration_ms": 44.428368,
+        "status": 200,
+        "response_bytes": 343259
+      },
+      "persisted_han_characters": 100000,
+      "chapter_list_json_encoding": {
+        "duration_ms": 0.490187,
+        "bytes": 343259,
+        "method": "stdlib JSON encode of loaded API list; not isolated FastAPI serializer"
+      },
+      "flags_off_chapter_open": {
+        "sample_count": 30,
+        "p50_ms": 4.321354,
+        "p95_ms": 5.356838,
+        "max_ms": 5.449375,
+        "http_errors": 0,
+        "misses": 0,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 4.854995,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.974241,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 5.257076,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 5.449375,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.773003,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 5.356838,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.913281,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.351874,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 5.012868,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.264259,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 3.777087,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 3.95472,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.530444,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.183389,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.095263,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.035055,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.894423,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 5.127849,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.517644,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.458017,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 3.843506,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 3.685812,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.107997,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.249498,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.137942,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.355905,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.018395,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.321354,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 4.111102,
+            "status": 200,
+            "response_bytes": 57223
+          },
+          {
+            "duration_ms": 3.939027,
+            "status": 200,
+            "response_bytes": 57223
+          }
+        ]
+      },
+      "flags_off_gate": {
+        "http_status": 404,
+        "index_scope_count": 0
+      },
+      "memory_after_measurement": {
+        "rss_bytes": 124989440,
+        "peak_rss_bytes": 124989440,
+        "source": "Linux /proc/self/status VmRSS/VmHWM"
+      },
+      "owned_fixture_disk_bytes": 693716,
+      "browser_input_latency": "NOT_RUN: separate browser test required",
+      "windows_ime_screen_reader_native_zoom": "NOT_RUN",
+      "owned_fixture_removed": true
+    },
+    {
+      "size_han": 100000,
+      "flags": "workspace_tools_v2",
+      "status": "REAL_RUNTIME_VERIFIED",
+      "cold_app_import_ms": 1939.73867,
+      "memory_after_import": {
+        "rss_bytes": 102588416,
+        "peak_rss_bytes": 102588416,
+        "source": "Linux /proc/self/status VmRSS/VmHWM"
+      },
+      "startup_heavy_modules": [],
+      "network": {
+        "blocked_connect_attempts": 0
+      },
+      "model_quality": "NOT_RUN",
+      "model_execution_requested": false,
+      "api_transport": "FastAPI TestClient in-process; real mounted app/File storage, no TCP latency",
+      "fixture": {
+        "schema": "r4-original-synthetic-v1",
+        "han_characters": 100000,
+        "provenance": "Original deterministic synthetic prose; no imported books or generated model output.",
+        "branch_boundary": "Two legacy story-route planning records; not collaboration branch manuscripts.",
+        "chapter_count": 12,
+        "character_count": 3,
+        "story_route_count": 2,
+        "content_sha256": "ffe18acacc2ddfda7f450662cbb94e887425212d2f8ecd6f2e845936e1c5b482"
+      },
+      "lifespan_start_ms": 13.055344,
+      "chapter_creation": {
+        "sample_count": 12,
+        "p50_ms": 5.401998,
+        "p95_ms": 9.523438,
+        "max_ms": 9.523438,
+        "http_errors": 0,
+        "misses": 0,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 4.186066,
+            "status": 201,
+            "response_bytes": 28588
+          },
+          {
+            "duration_ms": 3.850808,
+            "status": 201,
+            "response_bytes": 28588
+          },
+          {
+            "duration_ms": 4.217322,
+            "status": 201,
+            "response_bytes": 28588
+          },
+          {
+            "duration_ms": 4.82306,
+            "status": 201,
+            "response_bytes": 28591
+          },
+          {
+            "duration_ms": 5.401998,
+            "status": 201,
+            "response_bytes": 28600
+          },
+          {
+            "duration_ms": 5.083446,
+            "status": 201,
+            "response_bytes": 28603
+          },
+          {
+            "duration_ms": 9.523438,
+            "status": 201,
+            "response_bytes": 28602
+          },
+          {
+            "duration_ms": 6.005914,
+            "status": 201,
+            "response_bytes": 28593
+          },
+          {
+            "duration_ms": 6.015337,
+            "status": 201,
+            "response_bytes": 28585
+          },
+          {
+            "duration_ms": 6.009159,
+            "status": 201,
+            "response_bytes": 28587
+          },
+          {
+            "duration_ms": 7.225341,
+            "status": 201,
+            "response_bytes": 28587
+          },
+          {
+            "duration_ms": 7.719554,
+            "status": 201,
+            "response_bytes": 28590
+          }
+        ]
+      },
+      "chapter_list_api": {
+        "duration_ms": 46.500054,
+        "status": 200,
+        "response_bytes": 343259
+      },
+      "persisted_han_characters": 100000,
+      "chapter_list_json_encoding": {
+        "duration_ms": 0.387534,
+        "bytes": 343259,
+        "method": "stdlib JSON encode of loaded API list; not isolated FastAPI serializer"
+      },
+      "cold_search": {
+        "duration_ms": 739.353696,
+        "status": 200,
+        "response_bytes": 9284,
+        "item_count": 12,
+        "updated_documents": 17,
+        "truncated": false,
+        "model_called": false
+      },
+      "warm_search": {
+        "sample_count": 30,
+        "p50_ms": 43.344555,
+        "p95_ms": 49.496789,
+        "max_ms": 54.517101,
+        "http_errors": 0,
+        "misses": 10,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 41.607337,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 41.412359,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 41.324738,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 44.016286,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 45.05261,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 40.92109,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 42.820133,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 44.11374,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 45.489497,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 41.99407,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 42.208408,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 47.656197,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 45.091253,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 49.496789,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 48.619345,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 48.180936,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 43.344555,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 54.517101,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 44.14407,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 47.938977,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 38.405133,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 40.665061,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 41.286442,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 39.884715,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 41.849997,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 46.98953,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 41.340952,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 45.102404,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 47.97473,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 40.230988,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          }
+        ],
+        "warmup_samples": [
+          {
+            "duration_ms": 45.326624,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 47.013755,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 42.060662,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          }
+        ]
+      },
+      "search_target": {
+        "target_ms": 500,
+        "status": "PASS"
+      },
+      "chapter_list_service": {
+        "sample_count": 30,
+        "p50_ms": 33.788215,
+        "p95_ms": 41.492115,
+        "max_ms": 44.595275,
+        "http_errors": 0,
+        "misses": 0,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 32.884124
+          },
+          {
+            "duration_ms": 32.655266
+          },
+          {
+            "duration_ms": 35.296093
+          },
+          {
+            "duration_ms": 32.525132
+          },
+          {
+            "duration_ms": 35.765734
+          },
+          {
+            "duration_ms": 30.460575
+          },
+          {
+            "duration_ms": 33.214794
+          },
+          {
+            "duration_ms": 38.123341
+          },
+          {
+            "duration_ms": 32.387509
+          },
+          {
+            "duration_ms": 30.99757
+          },
+          {
+            "duration_ms": 31.858926
+          },
+          {
+            "duration_ms": 33.152683
+          },
+          {
+            "duration_ms": 37.029886
+          },
+          {
+            "duration_ms": 33.421561
+          },
+          {
+            "duration_ms": 36.446786
+          },
+          {
+            "duration_ms": 44.595275
+          },
+          {
+            "duration_ms": 32.313269
+          },
+          {
+            "duration_ms": 30.853495
+          },
+          {
+            "duration_ms": 31.766769
+          },
+          {
+            "duration_ms": 31.856412
+          },
+          {
+            "duration_ms": 38.505658
+          },
+          {
+            "duration_ms": 38.277129
+          },
+          {
+            "duration_ms": 36.144538
+          },
+          {
+            "duration_ms": 35.802621
+          },
+          {
+            "duration_ms": 36.131669
+          },
+          {
+            "duration_ms": 33.789983
+          },
+          {
+            "duration_ms": 41.492115
+          },
+          {
+            "duration_ms": 33.788215
+          },
+          {
+            "duration_ms": 40.395349
+          },
+          {
+            "duration_ms": 37.617541
+          }
+        ]
+      },
+      "direct_search_service": {
+        "sample_count": 30,
+        "p50_ms": 36.775419,
+        "p95_ms": 43.0669,
+        "max_ms": 43.502175,
+        "http_errors": 0,
+        "misses": 10,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 36.74161,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 34.488021,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 36.929537,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 36.775419,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 36.442656,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 35.640808,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 34.612414,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 35.627048,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 35.146415,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 37.8696,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 36.04692,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 33.575169,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 37.347995,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 39.726027,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 37.588108,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 39.328773,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 32.59755,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 32.864075,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 35.648664,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 38.160392,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 39.936539,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 35.826246,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 37.793197,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 41.834853,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 43.0669,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 43.502175,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 36.129386,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 38.476514,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 36.980007,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 38.952997,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          }
+        ]
+      },
+      "single_chapter_update_search": {
+        "duration_ms": 43.369573,
+        "status": 200,
+        "response_bytes": 564,
+        "item_count": 1,
+        "updated_documents": 1,
+        "truncated": false,
+        "model_called": false
+      },
+      "incremental_cache_contract": {
+        "status": "PASS",
+        "boundary": "Derived search documents reused; each query still reads and hashes authorized source chapters."
+      },
+      "archive_invalidation": {
+        "duration_ms": 39.021553,
+        "status": 200,
+        "response_bytes": 141,
+        "item_count": 0,
+        "updated_documents": 0,
+        "truncated": false,
+        "model_called": false
+      },
+      "task_history": {
+        "created_then_cancelled_count": 240,
+        "setup_ms": 2231.153187,
+        "executed_tasks": 0,
+        "pages": [
+          {
+            "duration_ms": 15.255664,
+            "status": 200,
+            "response_bytes": 126464,
+            "item_count": 100,
+            "updated_documents": null,
+            "truncated": null,
+            "model_called": null,
+            "has_more": true,
+            "total": 240
+          },
+          {
+            "duration_ms": 13.894476,
+            "status": 200,
+            "response_bytes": 126464,
+            "item_count": 100,
+            "updated_documents": null,
+            "truncated": null,
+            "model_called": null,
+            "has_more": true,
+            "total": 240
+          },
+          {
+            "duration_ms": 10.420948,
+            "status": 200,
+            "response_bytes": 50625,
+            "item_count": 40,
+            "updated_documents": null,
+            "truncated": null,
+            "model_called": null,
+            "has_more": false,
+            "total": 240
+          }
+        ],
+        "workspace_projection": {
+          "sample_count": 30,
+          "p50_ms": 13.979252,
+          "p95_ms": 18.51786,
+          "max_ms": 18.530468,
+          "http_errors": 0,
+          "misses": 0,
+          "truncated_samples": 30,
+          "samples": [
+            {
+              "duration_ms": 12.639926,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.506771,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.289949,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.118446,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 18.51786,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 15.044421,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.615483,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 16.185602,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 16.407021,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.357,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.592719,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 15.352147,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 15.996162,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.792284,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.167718,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 14.019321,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.780307,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 12.678594,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 14.359476,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 15.759581,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 15.656348,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 14.503449,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.862439,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.543736,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.854997,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 14.340017,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 16.94613,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 13.979252,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 17.026198,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            },
+            {
+              "duration_ms": 18.530468,
+              "status": 200,
+              "response_bytes": 46107,
+              "item_count": 100,
+              "updated_documents": null,
+              "truncated": true,
+              "model_called": null
+            }
+          ]
+        },
+        "boundary": "240 real queued/cancelled File records; workspace shows capped page and truncation. No worker/model execution or virtual-list claim."
+      },
+      "memory_after_measurement": {
+        "rss_bytes": 126402560,
+        "peak_rss_bytes": 126402560,
+        "source": "Linux /proc/self/status VmRSS/VmHWM"
+      },
+      "owned_fixture_disk_bytes": 1112708,
+      "browser_input_latency": "NOT_RUN: separate browser test required",
+      "windows_ime_screen_reader_native_zoom": "NOT_RUN",
+      "owned_fixture_removed": true
+    },
+    {
+      "size_han": 500000,
+      "flags": "ALL_OFF",
+      "status": "REAL_RUNTIME_VERIFIED",
+      "cold_app_import_ms": 1935.345617,
+      "memory_after_import": {
+        "rss_bytes": 102764544,
+        "peak_rss_bytes": 102764544,
+        "source": "Linux /proc/self/status VmRSS/VmHWM"
+      },
+      "startup_heavy_modules": [],
+      "network": {
+        "blocked_connect_attempts": 0
+      },
+      "model_quality": "NOT_RUN",
+      "model_execution_requested": false,
+      "api_transport": "FastAPI TestClient in-process; real mounted app/File storage, no TCP latency",
+      "fixture": {
+        "schema": "r4-original-synthetic-v1",
+        "han_characters": 500000,
+        "provenance": "Original deterministic synthetic prose; no imported books or generated model output.",
+        "branch_boundary": "Two legacy story-route planning records; not collaboration branch manuscripts.",
+        "chapter_count": 12,
+        "character_count": 3,
+        "story_route_count": 2,
+        "content_sha256": "c610e70c5a4bf0214a991ecc45fd3e30bb3e6bac9598368dbd0d9ad80131ae71"
+      },
+      "lifespan_start_ms": 10.072298,
+      "chapter_creation": {
+        "sample_count": 12,
+        "p50_ms": 12.701565,
+        "p95_ms": 26.198719,
+        "max_ms": 26.198719,
+        "http_errors": 0,
+        "misses": 0,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 4.766554,
+            "status": 201,
+            "response_bytes": 142105
+          },
+          {
+            "duration_ms": 6.453474,
+            "status": 201,
+            "response_bytes": 142105
+          },
+          {
+            "duration_ms": 7.011452,
+            "status": 201,
+            "response_bytes": 142114
+          },
+          {
+            "duration_ms": 8.909044,
+            "status": 201,
+            "response_bytes": 142123
+          },
+          {
+            "duration_ms": 10.398001,
+            "status": 201,
+            "response_bytes": 142128
+          },
+          {
+            "duration_ms": 12.701565,
+            "status": 201,
+            "response_bytes": 142128
+          },
+          {
+            "duration_ms": 13.948623,
+            "status": 201,
+            "response_bytes": 142125
+          },
+          {
+            "duration_ms": 16.909322,
+            "status": 201,
+            "response_bytes": 142113
+          },
+          {
+            "duration_ms": 22.218349,
+            "status": 201,
+            "response_bytes": 142102
+          },
+          {
+            "duration_ms": 22.267012,
+            "status": 201,
+            "response_bytes": 142104
+          },
+          {
+            "duration_ms": 24.002348,
+            "status": 201,
+            "response_bytes": 142113
+          },
+          {
+            "duration_ms": 26.198719,
+            "status": 201,
+            "response_bytes": 142122
+          }
+        ]
+      },
+      "chapter_list_api": {
+        "duration_ms": 174.785104,
+        "status": 200,
+        "response_bytes": 1705539
+      },
+      "persisted_han_characters": 500000,
+      "chapter_list_json_encoding": {
+        "duration_ms": 2.466967,
+        "bytes": 1705539,
+        "method": "stdlib JSON encode of loaded API list; not isolated FastAPI serializer"
+      },
+      "flags_off_chapter_open": {
+        "sample_count": 30,
+        "p50_ms": 13.969103,
+        "p95_ms": 17.962868,
+        "max_ms": 20.7743,
+        "http_errors": 0,
+        "misses": 0,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 15.304727,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 13.564273,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 13.525646,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 14.723581,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 14.757112,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 13.65991,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 13.668057,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 14.439641,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 12.861793,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 13.346365,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 13.822636,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 13.964536,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 15.320051,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 16.225322,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 17.962868,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 17.674494,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 16.565351,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 15.184184,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 15.439122,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 15.250993,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 20.7743,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 17.289084,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 13.436954,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 12.830085,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 13.845771,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 13.031514,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 12.55636,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 13.969103,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 14.303639,
+            "status": 200,
+            "response_bytes": 284256
+          },
+          {
+            "duration_ms": 12.73226,
+            "status": 200,
+            "response_bytes": 284256
+          }
+        ]
+      },
+      "flags_off_gate": {
+        "http_status": 404,
+        "index_scope_count": 0
+      },
+      "memory_after_measurement": {
+        "rss_bytes": 128577536,
+        "peak_rss_bytes": 128577536,
+        "source": "Linux /proc/self/status VmRSS/VmHWM"
+      },
+      "owned_fixture_disk_bytes": 3416366,
+      "browser_input_latency": "NOT_RUN: separate browser test required",
+      "windows_ime_screen_reader_native_zoom": "NOT_RUN",
+      "owned_fixture_removed": true
+    },
+    {
+      "size_han": 500000,
+      "flags": "workspace_tools_v2",
+      "status": "REAL_RUNTIME_VERIFIED",
+      "cold_app_import_ms": 1961.508418,
+      "memory_after_import": {
+        "rss_bytes": 103157760,
+        "peak_rss_bytes": 103157760,
+        "source": "Linux /proc/self/status VmRSS/VmHWM"
+      },
+      "startup_heavy_modules": [],
+      "network": {
+        "blocked_connect_attempts": 0
+      },
+      "model_quality": "NOT_RUN",
+      "model_execution_requested": false,
+      "api_transport": "FastAPI TestClient in-process; real mounted app/File storage, no TCP latency",
+      "fixture": {
+        "schema": "r4-original-synthetic-v1",
+        "han_characters": 500000,
+        "provenance": "Original deterministic synthetic prose; no imported books or generated model output.",
+        "branch_boundary": "Two legacy story-route planning records; not collaboration branch manuscripts.",
+        "chapter_count": 12,
+        "character_count": 3,
+        "story_route_count": 2,
+        "content_sha256": "c610e70c5a4bf0214a991ecc45fd3e30bb3e6bac9598368dbd0d9ad80131ae71"
+      },
+      "lifespan_start_ms": 16.036382,
+      "chapter_creation": {
+        "sample_count": 12,
+        "p50_ms": 13.482662,
+        "p95_ms": 23.632174,
+        "max_ms": 23.632174,
+        "http_errors": 0,
+        "misses": 0,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 5.510888,
+            "status": 201,
+            "response_bytes": 142105
+          },
+          {
+            "duration_ms": 5.741299,
+            "status": 201,
+            "response_bytes": 142105
+          },
+          {
+            "duration_ms": 7.101975,
+            "status": 201,
+            "response_bytes": 142114
+          },
+          {
+            "duration_ms": 9.747481,
+            "status": 201,
+            "response_bytes": 142123
+          },
+          {
+            "duration_ms": 12.25018,
+            "status": 201,
+            "response_bytes": 142128
+          },
+          {
+            "duration_ms": 13.482662,
+            "status": 201,
+            "response_bytes": 142128
+          },
+          {
+            "duration_ms": 16.94927,
+            "status": 201,
+            "response_bytes": 142125
+          },
+          {
+            "duration_ms": 16.691157,
+            "status": 201,
+            "response_bytes": 142113
+          },
+          {
+            "duration_ms": 23.300404,
+            "status": 201,
+            "response_bytes": 142102
+          },
+          {
+            "duration_ms": 23.632174,
+            "status": 201,
+            "response_bytes": 142104
+          },
+          {
+            "duration_ms": 22.573546,
+            "status": 201,
+            "response_bytes": 142113
+          },
+          {
+            "duration_ms": 22.812319,
+            "status": 201,
+            "response_bytes": 142122
+          }
+        ]
+      },
+      "chapter_list_api": {
+        "duration_ms": 172.258688,
+        "status": 200,
+        "response_bytes": 1705539
+      },
+      "persisted_han_characters": 500000,
+      "chapter_list_json_encoding": {
+        "duration_ms": 2.634345,
+        "bytes": 1705539,
+        "method": "stdlib JSON encode of loaded API list; not isolated FastAPI serializer"
+      },
+      "cold_search": {
+        "duration_ms": 738.196666,
+        "status": 200,
+        "response_bytes": 9284,
+        "item_count": 12,
+        "updated_documents": 17,
+        "truncated": false,
+        "model_called": false
+      },
+      "warm_search": {
+        "sample_count": 30,
+        "p50_ms": 158.634773,
+        "p95_ms": 193.129147,
+        "max_ms": 210.958554,
+        "http_errors": 0,
+        "misses": 10,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 175.364091,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 210.958554,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 158.634773,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 167.485885,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 154.504572,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 163.818464,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 158.115499,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 157.705687,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 154.123121,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 163.063369,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 157.19839,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 165.33081,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 153.555184,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 150.515368,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 158.61176,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 180.100313,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 155.542666,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 188.138465,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 174.805194,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 152.195518,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 177.09628,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 161.74222,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 148.001432,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 150.493346,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 167.135129,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 159.195781,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 155.311267,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 193.129147,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 157.878027,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 161.941421,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          }
+        ],
+        "warmup_samples": [
+          {
+            "duration_ms": 162.271715,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 166.889049,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 185.366678,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          }
+        ]
+      },
+      "search_target": {
+        "target_ms": 500,
+        "status": "PASS"
+      },
+      "chapter_list_service": {
+        "sample_count": 30,
+        "p50_ms": 141.566322,
+        "p95_ms": 157.488596,
+        "max_ms": 169.425489,
+        "http_errors": 0,
+        "misses": 0,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 141.566322
+          },
+          {
+            "duration_ms": 147.144641
+          },
+          {
+            "duration_ms": 152.428234
+          },
+          {
+            "duration_ms": 157.488596
+          },
+          {
+            "duration_ms": 150.553129
+          },
+          {
+            "duration_ms": 148.876699
+          },
+          {
+            "duration_ms": 146.011112
+          },
+          {
+            "duration_ms": 169.425489
+          },
+          {
+            "duration_ms": 139.092944
+          },
+          {
+            "duration_ms": 138.996793
+          },
+          {
+            "duration_ms": 148.587153
+          },
+          {
+            "duration_ms": 144.367476
+          },
+          {
+            "duration_ms": 137.99627
+          },
+          {
+            "duration_ms": 133.935859
+          },
+          {
+            "duration_ms": 145.300459
+          },
+          {
+            "duration_ms": 136.308998
+          },
+          {
+            "duration_ms": 140.471679
+          },
+          {
+            "duration_ms": 147.83012
+          },
+          {
+            "duration_ms": 137.541055
+          },
+          {
+            "duration_ms": 137.074153
+          },
+          {
+            "duration_ms": 139.474005
+          },
+          {
+            "duration_ms": 147.725785
+          },
+          {
+            "duration_ms": 137.167792
+          },
+          {
+            "duration_ms": 142.520267
+          },
+          {
+            "duration_ms": 143.57083
+          },
+          {
+            "duration_ms": 148.957431
+          },
+          {
+            "duration_ms": 141.071259
+          },
+          {
+            "duration_ms": 139.734477
+          },
+          {
+            "duration_ms": 137.41266
+          },
+          {
+            "duration_ms": 136.288786
+          }
+        ]
+      },
+      "direct_search_service": {
+        "sample_count": 30,
+        "p50_ms": 147.799962,
+        "p95_ms": 165.635387,
+        "max_ms": 182.456405,
+        "http_errors": 0,
+        "misses": 10,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 149.991422,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 147.799962,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 182.456405,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 160.277359,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 146.945591,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 153.87609,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 163.154544,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 152.214717,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 143.445409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 145.005352,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 140.214008,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 141.387678,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 149.845849,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 163.85163,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 147.94492,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 152.475528,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 141.765409,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 140.595845,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 144.858394,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 147.401514,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 134.94781,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 165.041568,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 145.505334,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 148.850007,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 140.810182,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 150.944387,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 144.952724,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 148.088823,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 145.104293,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 165.635387,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          }
+        ]
+      },
+      "single_chapter_update_search": {
+        "duration_ms": 163.112197,
+        "status": 200,
+        "response_bytes": 565,
+        "item_count": 1,
+        "updated_documents": 1,
+        "truncated": false,
+        "model_called": false
+      },
+      "incremental_cache_contract": {
+        "status": "PASS",
+        "boundary": "Derived search documents reused; each query still reads and hashes authorized source chapters."
+      },
+      "archive_invalidation": {
+        "duration_ms": 144.891938,
+        "status": 200,
+        "response_bytes": 141,
+        "item_count": 0,
+        "updated_documents": 0,
+        "truncated": false,
+        "model_called": false
+      },
+      "memory_after_measurement": {
+        "rss_bytes": 132456448,
+        "peak_rss_bytes": 132456448,
+        "source": "Linux /proc/self/status VmRSS/VmHWM"
+      },
+      "owned_fixture_disk_bytes": 3559114,
+      "browser_input_latency": "NOT_RUN: separate browser test required",
+      "windows_ime_screen_reader_native_zoom": "NOT_RUN",
+      "owned_fixture_removed": true
+    },
+    {
+      "size_han": 1000000,
+      "flags": "ALL_OFF",
+      "status": "REAL_RUNTIME_VERIFIED",
+      "cold_app_import_ms": 1874.784806,
+      "memory_after_import": {
+        "rss_bytes": 103124992,
+        "peak_rss_bytes": 103124992,
+        "source": "Linux /proc/self/status VmRSS/VmHWM"
+      },
+      "startup_heavy_modules": [],
+      "network": {
+        "blocked_connect_attempts": 0
+      },
+      "model_quality": "NOT_RUN",
+      "model_execution_requested": false,
+      "api_transport": "FastAPI TestClient in-process; real mounted app/File storage, no TCP latency",
+      "fixture": {
+        "schema": "r4-original-synthetic-v1",
+        "han_characters": 1000000,
+        "provenance": "Original deterministic synthetic prose; no imported books or generated model output.",
+        "branch_boundary": "Two legacy story-route planning records; not collaboration branch manuscripts.",
+        "chapter_count": 12,
+        "character_count": 3,
+        "story_route_count": 2,
+        "content_sha256": "4656b9f0ca8a4f7cb90f2fcb0e71ee87185bfd2f1e1ca82d67d8f8041fc79bfd"
+      },
+      "lifespan_start_ms": 9.926846,
+      "chapter_creation": {
+        "sample_count": 12,
+        "p50_ms": 23.604651,
+        "p95_ms": 41.933012,
+        "max_ms": 41.933012,
+        "http_errors": 0,
+        "misses": 0,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 6.659232,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 9.881799,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 13.609805,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 15.654967,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 18.136916,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 23.604651,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 24.516554,
+            "status": 201,
+            "response_bytes": 284027
+          },
+          {
+            "duration_ms": 28.248566,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 32.050761,
+            "status": 201,
+            "response_bytes": 284015
+          },
+          {
+            "duration_ms": 34.364181,
+            "status": 201,
+            "response_bytes": 284017
+          },
+          {
+            "duration_ms": 39.487936,
+            "status": 201,
+            "response_bytes": 284017
+          },
+          {
+            "duration_ms": 41.933012,
+            "status": 201,
+            "response_bytes": 284017
+          }
+        ]
+      },
+      "chapter_list_api": {
+        "duration_ms": 266.833052,
+        "status": 200,
+        "response_bytes": 3408376
+      },
+      "persisted_han_characters": 1000000,
+      "chapter_list_json_encoding": {
+        "duration_ms": 5.03916,
+        "bytes": 3408376,
+        "method": "stdlib JSON encode of loaded API list; not isolated FastAPI serializer"
+      },
+      "flags_off_chapter_open": {
+        "sample_count": 30,
+        "p50_ms": 25.035002,
+        "p95_ms": 27.379147,
+        "max_ms": 27.477922,
+        "http_errors": 0,
+        "misses": 0,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 27.379147,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 25.753477,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 27.119782,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 24.490224,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 24.85191,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 24.106044,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 25.162882,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 25.031336,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 25.1149,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 24.834775,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 26.458502,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 25.306935,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 24.531135,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 24.999198,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 24.10932,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 25.035002,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 27.477922,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 27.102972,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 25.319884,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 25.195289,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 27.196205,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 24.215877,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 25.57426,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 26.106821,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 24.180244,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 23.280992,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 24.030964,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 24.715137,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 25.984809,
+            "status": 200,
+            "response_bytes": 568082
+          },
+          {
+            "duration_ms": 22.917483,
+            "status": 200,
+            "response_bytes": 568082
+          }
+        ]
+      },
+      "flags_off_gate": {
+        "http_status": 404,
+        "index_scope_count": 0
+      },
+      "memory_after_measurement": {
+        "rss_bytes": 141217792,
+        "peak_rss_bytes": 141217792,
+        "source": "Linux /proc/self/status VmRSS/VmHWM"
+      },
+      "owned_fixture_disk_bytes": 6819680,
+      "browser_input_latency": "NOT_RUN: separate browser test required",
+      "windows_ime_screen_reader_native_zoom": "NOT_RUN",
+      "owned_fixture_removed": true
+    },
+    {
+      "size_han": 1000000,
+      "flags": "workspace_tools_v2",
+      "status": "REAL_RUNTIME_VERIFIED",
+      "cold_app_import_ms": 1917.159362,
+      "memory_after_import": {
+        "rss_bytes": 102621184,
+        "peak_rss_bytes": 102621184,
+        "source": "Linux /proc/self/status VmRSS/VmHWM"
+      },
+      "startup_heavy_modules": [],
+      "network": {
+        "blocked_connect_attempts": 0
+      },
+      "model_quality": "NOT_RUN",
+      "model_execution_requested": false,
+      "api_transport": "FastAPI TestClient in-process; real mounted app/File storage, no TCP latency",
+      "fixture": {
+        "schema": "r4-original-synthetic-v1",
+        "han_characters": 1000000,
+        "provenance": "Original deterministic synthetic prose; no imported books or generated model output.",
+        "branch_boundary": "Two legacy story-route planning records; not collaboration branch manuscripts.",
+        "chapter_count": 12,
+        "character_count": 3,
+        "story_route_count": 2,
+        "content_sha256": "4656b9f0ca8a4f7cb90f2fcb0e71ee87185bfd2f1e1ca82d67d8f8041fc79bfd"
+      },
+      "lifespan_start_ms": 10.640143,
+      "chapter_creation": {
+        "sample_count": 12,
+        "p50_ms": 22.485192,
+        "p95_ms": 42.853977,
+        "max_ms": 42.853977,
+        "http_errors": 0,
+        "misses": 0,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 7.118272,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 11.059299,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 13.490418,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 17.199366,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 19.253051,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 22.485192,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 25.860766,
+            "status": 201,
+            "response_bytes": 284027
+          },
+          {
+            "duration_ms": 29.133468,
+            "status": 201,
+            "response_bytes": 284018
+          },
+          {
+            "duration_ms": 32.844899,
+            "status": 201,
+            "response_bytes": 284015
+          },
+          {
+            "duration_ms": 38.800998,
+            "status": 201,
+            "response_bytes": 284017
+          },
+          {
+            "duration_ms": 39.621785,
+            "status": 201,
+            "response_bytes": 284017
+          },
+          {
+            "duration_ms": 42.853977,
+            "status": 201,
+            "response_bytes": 284017
+          }
+        ]
+      },
+      "chapter_list_api": {
+        "duration_ms": 272.386243,
+        "status": 200,
+        "response_bytes": 3408376
+      },
+      "persisted_han_characters": 1000000,
+      "chapter_list_json_encoding": {
+        "duration_ms": 4.496345,
+        "bytes": 3408376,
+        "method": "stdlib JSON encode of loaded API list; not isolated FastAPI serializer"
+      },
+      "cold_search": {
+        "duration_ms": 788.284256,
+        "status": 200,
+        "response_bytes": 9284,
+        "item_count": 12,
+        "updated_documents": 17,
+        "truncated": false,
+        "model_called": false
+      },
+      "warm_search": {
+        "sample_count": 30,
+        "p50_ms": 289.621037,
+        "p95_ms": 314.919122,
+        "max_ms": 317.950135,
+        "http_errors": 0,
+        "misses": 10,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 270.885294,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 269.315706,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 277.178063,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 280.305028,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 279.257375,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 280.970808,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 281.677032,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 276.773087,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 280.163087,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 296.043107,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 295.921777,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 298.259312,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 302.481681,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 293.431375,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 282.254282,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 285.715683,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 291.521054,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 283.339546,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 298.973971,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 303.465219,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 292.432615,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 311.061135,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 289.621037,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 281.006768,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 278.115346,
+            "status": 200,
+            "response_bytes": 9409,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "月港",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 295.514527,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "不存在的线索",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 317.950135,
+            "status": 200,
+            "response_bytes": 141,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": ".*",
+            "expected_outcome": "MISS",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 310.428486,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 302.814759,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 314.919122,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          }
+        ],
+        "warmup_samples": [
+          {
+            "duration_ms": 273.931479,
+            "status": 200,
+            "response_bytes": 9283,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "星桥灯塔",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 272.19138,
+            "status": 200,
+            "response_bytes": 9365,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "阿澄",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          },
+          {
+            "duration_ms": 272.615619,
+            "status": 200,
+            "response_bytes": 9486,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false,
+            "model_called": false,
+            "query": "旧信",
+            "expected_outcome": "HIT",
+            "outcome_matches_expectation": true
+          }
+        ]
+      },
+      "search_target": {
+        "target_ms": 500,
+        "status": "PASS"
+      },
+      "chapter_list_service": {
+        "sample_count": 30,
+        "p50_ms": 261.233531,
+        "p95_ms": 360.242655,
+        "max_ms": 363.450344,
+        "http_errors": 0,
+        "misses": 0,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 289.066079
+          },
+          {
+            "duration_ms": 264.170605
+          },
+          {
+            "duration_ms": 261.233531
+          },
+          {
+            "duration_ms": 291.504774
+          },
+          {
+            "duration_ms": 285.902509
+          },
+          {
+            "duration_ms": 300.726259
+          },
+          {
+            "duration_ms": 252.596098
+          },
+          {
+            "duration_ms": 254.64156
+          },
+          {
+            "duration_ms": 250.584865
+          },
+          {
+            "duration_ms": 253.56618
+          },
+          {
+            "duration_ms": 250.867299
+          },
+          {
+            "duration_ms": 303.330622
+          },
+          {
+            "duration_ms": 294.214153
+          },
+          {
+            "duration_ms": 363.450344
+          },
+          {
+            "duration_ms": 360.242655
+          },
+          {
+            "duration_ms": 268.704119
+          },
+          {
+            "duration_ms": 283.281277
+          },
+          {
+            "duration_ms": 271.178357
+          },
+          {
+            "duration_ms": 257.494633
+          },
+          {
+            "duration_ms": 262.894096
+          },
+          {
+            "duration_ms": 260.962063
+          },
+          {
+            "duration_ms": 257.68876
+          },
+          {
+            "duration_ms": 258.294968
+          },
+          {
+            "duration_ms": 254.561424
+          },
+          {
+            "duration_ms": 260.713904
+          },
+          {
+            "duration_ms": 254.068183
+          },
+          {
+            "duration_ms": 258.018698
+          },
+          {
+            "duration_ms": 269.374031
+          },
+          {
+            "duration_ms": 252.683981
+          },
+          {
+            "duration_ms": 266.414584
+          }
+        ]
+      },
+      "direct_search_service": {
+        "sample_count": 30,
+        "p50_ms": 269.700094,
+        "p95_ms": 350.610361,
+        "max_ms": 371.19266,
+        "http_errors": 0,
+        "misses": 10,
+        "truncated_samples": 0,
+        "samples": [
+          {
+            "duration_ms": 303.333829,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 264.652079,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 287.279171,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 311.293613,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 295.389823,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 281.975498,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 264.922103,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 271.110893,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 261.067899,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 260.632213,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 267.975058,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 298.65092,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 350.610361,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 371.19266,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 306.784722,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 302.772329,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 293.795913,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 263.013784,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 268.008147,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 275.347968,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 269.700094,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 274.686787,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 267.524399,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 267.761811,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 265.392149,
+            "item_count": 12,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 272.331084,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 264.985747,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 267.027162,
+            "item_count": 13,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 266.201658,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          },
+          {
+            "duration_ms": 262.604697,
+            "item_count": 0,
+            "updated_documents": 0,
+            "truncated": false
+          }
+        ]
+      },
+      "single_chapter_update_search": {
+        "duration_ms": 300.981233,
+        "status": 200,
+        "response_bytes": 564,
+        "item_count": 1,
+        "updated_documents": 1,
+        "truncated": false,
+        "model_called": false
+      },
+      "incremental_cache_contract": {
+        "status": "PASS",
+        "boundary": "Derived search documents reused; each query still reads and hashes authorized source chapters."
+      },
+      "archive_invalidation": {
+        "duration_ms": 258.81229,
+        "status": 200,
+        "response_bytes": 141,
+        "item_count": 0,
+        "updated_documents": 0,
+        "truncated": false,
+        "model_called": false
+      },
+      "memory_after_measurement": {
+        "rss_bytes": 147148800,
+        "peak_rss_bytes": 147148800,
+        "source": "Linux /proc/self/status VmRSS/VmHWM"
+      },
+      "owned_fixture_disk_bytes": 7104341,
+      "browser_input_latency": "NOT_RUN: separate browser test required",
+      "windows_ime_screen_reader_native_zoom": "NOT_RUN",
+      "owned_fixture_removed": true
+    }
+  ],
+  "source_after": {
+    "commit": "0a2a85f4ec04218bbd6cc33b2363b71a52cd2b95",
+    "python_source_sha256": "56ee935709c008a294b14c05d947cf24f67bf156151b6d1a40d1dca1e8a1e31e",
+    "dirty_paths": []
+  },
+  "source_stable": true,
+  "status": "MEASURED"
+}

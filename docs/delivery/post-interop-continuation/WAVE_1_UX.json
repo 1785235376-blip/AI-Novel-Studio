@@ -1,0 +1,222 @@
+{
+  "wave": 1,
+  "checkpoint": "original-owner UX continuation",
+  "starting_sha": "e58c72b04182cd374af092314386b90f8250a173",
+  "documentation_baseline": "8ed7afd9a66dce226468532feead14f3a172796c",
+  "source_scope": "Uncommitted Wave1 owned files in shared integration worktree; final SHA and hosted results belong to published revision receipt.",
+  "features": [
+    {
+      "id": "U01",
+      "status": "PARTIAL",
+      "implementation": "INTEGRATED",
+      "verification": "CONTRACT_VERIFIED",
+      "delta": "Original Review Inbox capture/reopen joins existing private pending-task references.",
+      "remaining": "Native crash/power-loss acceptance and unsupported branch manuscript adapters."
+    },
+    {
+      "id": "U02",
+      "status": "PARTIAL",
+      "implementation": "INTEGRATED",
+      "verification": "CONTRACT_VERIFIED",
+      "delta": "Corrupt draft raw-byte recovery gate/export and honest browser-offline autosave/manual-save behavior.",
+      "remaining": "Browser storage clearing, inaccessible storage and OS power-loss cannot be guaranteed recoverable."
+    },
+    {
+      "id": "U03",
+      "status": "PARTIAL",
+      "implementation": "INTEGRATED",
+      "verification": "CONTRACT_VERIFIED",
+      "delta": "Original novel/volume/scene/timeline/review search and precise story record navigation; full source digest changes stale the receipt.",
+      "remaining": "Universal organization/rule/StoryGraph/asset/workflow-definition search remains incomplete; literal search is not vector retrieval."
+    },
+    {
+      "id": "U05",
+      "status": "PARTIAL",
+      "implementation": "INTEGRATED",
+      "verification": "CONTRACT_VERIFIED",
+      "delta": "Retained existing original-CAS selection revision path, regression-covered App integration.",
+      "remaining": "Further revision work is Wave2; real model quality NOT_RUN."
+    },
+    {
+      "id": "U07",
+      "status": "PARTIAL",
+      "implementation": "INTEGRATED",
+      "verification": "CONTRACT_VERIFIED",
+      "delta": "Original-owner cancellation receipt, missing audio/video/review projections and owner-ID navigation, route evidence and action limits.",
+      "remaining": "Retry/resume/review remain explicit owning surfaces; fee data UNKNOWN; some model-owned historical candidates lack exact subrecord focusing."
+    },
+    {
+      "id": "U08",
+      "status": "PARTIAL",
+      "implementation": "INTEGRATED",
+      "verification": "CONTRACT_VERIFIED",
+      "delta": "Scene identity is carried by the frontend author preview; the matching optional server scene validation is integrated with Wave2.",
+      "remaining": "Assigned next slice: explicit Research/Canon/StoryGraph add/pin/exclude through existing request owner. Not complete in this checkpoint."
+    },
+    {
+      "id": "U09",
+      "status": "PARTIAL",
+      "implementation": "INTEGRATED",
+      "verification": "CONTRACT_VERIFIED",
+      "delta": "Actionable mapped Model Center diagnostics without install/upgrade/launch or invented memory figures.",
+      "remaining": "Actual runtime, GPU, model quality and Windows acceptance LOCAL_REQUIRED/NOT_RUN."
+    },
+    {
+      "id": "U12",
+      "status": "PARTIAL",
+      "implementation": "INTEGRATED",
+      "verification": "CONTRACT_VERIFIED",
+      "delta": "Reauthorize task/diagnostic/history responses and sanitize source cancellation CAS payloads.",
+      "remaining": "Allowlisted bounded diagnostics, not arbitrary logs; export stays manual/local."
+    }
+  ],
+  "owned_changed_files": [
+    "app/experimental/author_task_projection.py",
+    "app/experimental/ux.py",
+    "app/experimental/ux_api.py",
+    "app/experimental/workspace_task_owners.py",
+    "frontend/src/App.tsx",
+    "frontend/src/AppDraftRecovery.test.tsx",
+    "frontend/src/StorySearchNavigation.test.tsx",
+    "frontend/src/drafts.ts",
+    "frontend/src/drafts.test.ts",
+    "frontend/src/experimental/ImportPanel.tsx",
+    "frontend/src/experimental/InboxPanel.tsx",
+    "frontend/src/experimental/TeamsPanel.tsx",
+    "frontend/src/experimental/WorkspaceSearch.tsx",
+    "frontend/src/experimental/WorkspaceToolsPanel.tsx",
+    "frontend/src/experimental/WorkspaceToolsPanel.test.tsx",
+    "frontend/src/experimental/TaskOwnerNavigation.continuation.test.tsx",
+    "frontend/src/experimental/uxClient.ts",
+    "frontend/src/novel/AgentTeamPanel.tsx",
+    "frontend/src/novel/AiWritingPanel.tsx",
+    "frontend/src/novel/AudiobookManifestPanel.tsx",
+    "frontend/src/novel/CharacterAuthorPanel.test.tsx",
+    "frontend/src/novel/ExportPanel.tsx",
+    "frontend/src/novel/ImageQueuePanel.tsx",
+    "frontend/src/novel/WorkflowPanel.tsx",
+    "frontend/src/novel/authorContextClient.ts",
+    "frontend/src/ui/LocalAiDiscovery.tsx",
+    "frontend/src/ui/LocalAiDiscovery.test.tsx",
+    "frontend/src/ui/SaveControls.tsx",
+    "frontend/tests/e2e/r4-continuation-workspace.spec.ts",
+    "tests/test_post_interop_workspace_ux.py",
+    "docs/delivery/post-interop-continuation/WAVE_1_UX.md",
+    "docs/delivery/post-interop-continuation/WAVE_1_UX.json"
+  ],
+  "shared_integration_files": {
+    "app/experimental/api.py": "Original task cancellation and task-reader composition, extended by later source/context waves.",
+    "frontend/src/experimental/ExperimentalWorkbench.tsx": "Original Import/Teams/Inbox task pointers in Wave1; Media/Voice/Audiobook in Wave4; exact original model-job pointers completed in Wave5."
+  },
+  "owned_runtime_sha256": {
+    "app/experimental/author_task_projection.py": "e51afc4f3221d82bc1b4f0a4ba0ea0b6075cfca6a95f2f07a1998e9f6305eef9",
+    "app/experimental/ux.py": "c4857f7add4980e7ace9f11713a6f78ec8217fbc3a613db47b399a5ac9a99b78",
+    "app/experimental/ux_api.py": "fe1d06ea91dac2a2263e20afdbe5031da989591d86c98ec66b8ada7deac5ac97",
+    "app/experimental/workspace_task_owners.py": "8b5306892df70dec2c74f2858df69681b307e6978a212891be6b70fe449f9e74",
+    "frontend/src/App.tsx": "e81c06907312149e6bf947e0713e4d02b6998ba0372e41c7cce9ba337dff9453",
+    "frontend/src/drafts.ts": "efc0c40da130edfa11741b59a351cf4ba9a9f271e59009ff4f5d052fc1d9462d",
+    "frontend/src/experimental/ImportPanel.tsx": "a32f73a7741ccce9f74ef5889bd7150d120b26ce9450c0be8790a32a8085eb6a",
+    "frontend/src/experimental/InboxPanel.tsx": "6c1baf9073b3bd89586011ee21bec1dd5eb0c7f5f7664907dccc8ba0724e11ac",
+    "frontend/src/experimental/TeamsPanel.tsx": "72476eab9067c145197d7c2f7e33cc122bca7bdeb9b131fac5cb93021bb4248a",
+    "frontend/src/experimental/WorkspaceSearch.tsx": "994d4570f1ee4554369f1d94b4212329a0e3299085e3c477a626e70b0589a059",
+    "frontend/src/experimental/WorkspaceToolsPanel.tsx": "f43a5e53c6d6d7a1b01cd11f7ea88c2bc2d83de33d1b3c707b9774292ef3cf57",
+    "frontend/src/experimental/uxClient.ts": "e221f1dc0e70b7665d88077224a60623e98ffcd9527e150f27dc11ce537d69fb",
+    "frontend/src/novel/AgentTeamPanel.tsx": "4ebb46006fc30e592810efcd7dfab733e7820d4ec2a9f9042be6a18351f60720",
+    "frontend/src/novel/AiWritingPanel.tsx": "4031529820f1e407a614004d1a8fdd1d7f632422648f1881aee7d6811af8a5ee",
+    "frontend/src/novel/AudiobookManifestPanel.tsx": "000f8a50e340001a8ed60278e93c9bdf40b600e646113e6e6248b693367a3ba1",
+    "frontend/src/novel/ExportPanel.tsx": "6488f136354e2d304ae83f061410e00393dea185581cc11e86503ddf8776e79b",
+    "frontend/src/novel/ImageQueuePanel.tsx": "61e9233ee2f797eee0637b179bf2a6f255b4bc290aaa1fb70268bc3903e7bf63",
+    "frontend/src/novel/WorkflowPanel.tsx": "fe71e171975abfcb40073e10a6d1e07c5eb832efc9524a22318e4d8be5e113df",
+    "frontend/src/novel/authorContextClient.ts": "2a64cc2461ba50e1139743c9e213264fc76c31f5a84f8814b82b72c241569576",
+    "frontend/src/ui/LocalAiDiscovery.tsx": "3d30315afe21c08577b338f9de25496726e29f205ed0dc770671aef723662c75",
+    "frontend/src/ui/SaveControls.tsx": "036d069eafd8a5d15494238a832fda5e91ae5d0c87ab3b729c827fea8ae8f7ae"
+  },
+  "api": [
+    "POST /novels/{nid}/experimental/workspace/tasks/{authority}/{task_id}/cancel: expected_revision only; project writer and original owner; current source recheck; no execution/retry",
+    "GET/POST existing workspace search: additive novel/volume/scene/timeline/review kinds",
+    "GET original workspace tasks: additive safe model identity, route evidence, action limits, revision and owner pointers"
+  ],
+  "task_authorities": {
+    "author_generation": "Original JobManager origin-gated cancel; terminal/settlement preserved",
+    "semantic_import": "Original version-CAS transition",
+    "agent_team": "Original scoped/versioned transition; callback generation fencing",
+    "media": "Original transition; safe_batch requires origin coordinator",
+    "agents": "Original trusted-session owner route; QUEUED/WORKING",
+    "workflows": "Original owner-bound workflow transition",
+    "exports": "Original export cancellation/result service",
+    "images": "Original image queue transition",
+    "voice_direction": "Original actor/scope/origin-bound audio queue",
+    "audio_tts": "Original ordinary audiobook queue; no duplicate experimental voice",
+    "motion": "Original screenplay task/provider cancellation",
+    "review_inbox": "Read/open original domain item; no generic mutation",
+    "audiobook": "Read/open existing plan; not a fabricated executor"
+  },
+  "persistence": {
+    "schema_changes": "None. Existing owner stores and JSON workspace fields; no historical migration edits.",
+    "file": "Actual new mounted API suite executed",
+    "postgres": "Same original PG fixture variants authored; execution NOT_RUN locally, hosted lane pending",
+    "upgrade": "Existing valid draft keys, valid legacy payloads and workspace metadata remain readable; task/navigation fields additive. No data copied to a new authority."
+  },
+  "verification": [
+    {
+      "command": "r2-run.sh python -m pytest -q tests/test_post_interop_workspace_ux.py -m file_backend_only --disable-warnings",
+      "result": "PASS",
+      "passed": 20,
+      "deselected_pg": 20,
+      "source": "All current new mounted cases, /api and /api/v1; original File queues, synthetic data only."
+    },
+    {
+      "command": "r2-run.sh python -m pytest -q tests/test_r4_workspace_tools.py tests/test_r4_workspace_resume.py tests/test_r4_workspace_resume_mounted.py tests/test_r4_mounted_workspaces.py tests/test_r4_incremental_search.py tests/test_r4_incremental_search_mounted.py tests/test_r4_author_task_projection.py tests/test_post_interop_workspace_ux.py -m \"not postgres_backend_only\" --disable-warnings",
+      "result": "PASS",
+      "passed": 92,
+      "deselected_pg": 89,
+      "source": "Earlier current checkpoint before two additional mounted test functions; preserve this scope, not final-suite count."
+    },
+    {
+      "command": "r2-run.sh sh -c \"cd frontend && npx tsc -b --pretty false && npx vitest run <15 focused owned/inherited suites> --maxWorkers=2 --minWorkers=2\"",
+      "result": "PASS",
+      "passed": 167,
+      "suites": 15,
+      "source": "Focused save/workspace/task/context/owner UI suites; before later two navigation suite files and one diagnostics test."
+    },
+    {
+      "command": "r2-run.sh sh -c \"cd frontend && npx vitest run src/experimental/TaskOwnerNavigation.continuation.test.tsx src/StorySearchNavigation.test.tsx --maxWorkers=2 --minWorkers=2\"",
+      "result": "PASS",
+      "passed": 5,
+      "suites": 2
+    },
+    {
+      "command": "r2-run.sh sh -c \"cd frontend && npx playwright test --config playwright.r4.config.ts --list r4-continuation-workspace.spec.ts\"",
+      "result": "COLLECTED",
+      "cases": 3,
+      "execution": "NOT_RUN locally; inherited platform Chromium denial was not retried"
+    },
+    {
+      "command": "frontend npm run lint",
+      "result": "PASS",
+      "details": "UI token guard PASS, 42 files in its configured guard scope"
+    },
+    {
+      "command": "Focused LocalAiDiscovery/AppShell/ModuleWorkspaceRoutes/WorkflowPanel Vitest",
+      "result": "PASS",
+      "passed": 52,
+      "suites": 4
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "count_note": "Verification commands overlap; do not add their pass counts into a unique total.",
+  "acceptance_boundaries": {
+    "local_browser": "BLOCKED: prior platform launch denial, not retried",
+    "hosted_browser": "Pending inherited CI; 3 new actual browser journeys authored",
+    "postgres": "NOT_RUN locally; hosted original-PG lane required",
+    "real_models": "NOT_RUN",
+    "windows_gpu_comfyui_h3": "LOCAL_REQUIRED / NOT_RUN",
+    "paid_cloud": "NOT_RUN, not called",
+    "historical_independent_audit": "Unchanged; no restart or new claim"
+  },
+  "opus_handoff": "See WAVE_1_UX.md; shared tokens/shell retained, explicit recovery/cancel/source/permission/privacy fences are protected.",
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts."
+}

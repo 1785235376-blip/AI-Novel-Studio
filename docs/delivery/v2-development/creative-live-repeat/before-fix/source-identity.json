@@ -1,0 +1,38 @@
+{
+  "commit_base": "fe4d2505ade9a161689313dea50555408ba4b511",
+  "command": "node node_modules/@playwright/test/cli.js test --config playwright.v2-live.config.ts --grep \"real HTTP\" --repeat-each=2",
+  "run_start": "2026-10-09T07:28:32.327Z",
+  "duration_ms": 17582.712,
+  "passed": 4,
+  "failed": 2,
+  "skipped": 0,
+  "verification_boundary": "HTTP/File only through real Vite and uvicorn; synthetic data; no browser rendering or model inference",
+  "captured_at": "2026-10-09T07:41:24.481248+00:00",
+  "sources": {
+    "frontend/playwright.v2-live.config.ts": {
+      "sha256": "dbbf62ee540feed65c69e7cd1a16d732220c240b0b016b868de24e91bfc14a36",
+      "file_modified_at": "2026-10-09T04:59:53.464853+00:00",
+      "basis": "Current file; live test/config unchanged since original isolation patch"
+    },
+    "frontend/tests/e2e/v2-creative-live.spec.ts": {
+      "sha256": "732794dde5a1e64734578956dcbb061f15d6ef3110f87b07cf7a71a07927336d",
+      "file_modified_at": "2026-10-09T07:28:12.260048+00:00",
+      "basis": "Current file; live test/config unchanged since original isolation patch"
+    },
+    "app/creative/service.py": {
+      "state": "present",
+      "sha256": "47cdc4899be8c13e30f283622b9645bc2d6e9a3340ccd84aeb0489d98ce7797d",
+      "basis": "Pre-fix backend blob from fe4d2505ade9a161689313dea50555408ba4b511; no backend edits existed at original repeat run"
+    },
+    "app/creative/proposals.py": {
+      "state": "present",
+      "sha256": "ba15fa5d7d7b7a161f160fed71e864ca656d46ea6225738c7efd687593a82ac4",
+      "basis": "Pre-fix backend blob from fe4d2505ade9a161689313dea50555408ba4b511; no backend edits existed at original repeat run"
+    },
+    "app/creative/project_store.py": {
+      "state": "absent",
+      "sha256": null,
+      "basis": "Pre-fix backend blob from fe4d2505ade9a161689313dea50555408ba4b511; no backend edits existed at original repeat run"
+    }
+  }
+}

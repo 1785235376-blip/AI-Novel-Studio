@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Integer, Text, UniqueConstraint
+from sqlalchemy import CheckConstraint, Boolean, DateTime, Enum, ForeignKey, Integer, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -30,6 +30,7 @@ class NovelModel(Base):
     __tablename__ = "novels"
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     slug: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
+    chapter_identity_provenance: Mapped[str] = mapped_column(Text, nullable=False, default="ALLOCATED")
     title: Mapped[str] = mapped_column(Text, nullable=False)
     metadata_json: Mapped[dict] = mapped_column("metadata", JSONB, nullable=False, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
@@ -44,7 +45,7 @@ class LocationModel(Base):
     slug: Mapped[str] = mapped_column(Text, nullable=False)
     name: Mapped[str] = mapped_column(Text, nullable=False)
     facts: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
-    privacy: Mapped[str] = mapped_column(privacy_level, nullable=False, default="CLOUD_ALLOWED")
+    privacy: Mapped[str] = mapped_column(privacy_level, nullable=False, default="LOCAL_ONLY")
 
 
 class CharacterModel(Base):
@@ -58,7 +59,7 @@ class CharacterModel(Base):
     life_status: Mapped[str] = mapped_column(Text, nullable=False, default="ALIVE")
     current_location_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("locations.id", ondelete="SET NULL"))
     facts: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
-    privacy: Mapped[str] = mapped_column(privacy_level, nullable=False, default="CLOUD_ALLOWED")
+    privacy: Mapped[str] = mapped_column(privacy_level, nullable=False, default="LOCAL_ONLY")
 
 
 class RelationshipStateModel(Base):
@@ -80,7 +81,7 @@ class CanonModel(Base):
     entity_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
     fact_key: Mapped[str] = mapped_column(Text, nullable=False)
     fact_value: Mapped[dict] = mapped_column(JSONB, nullable=False)
-    privacy: Mapped[str] = mapped_column(privacy_level, nullable=False, default="CLOUD_ALLOWED")
+    privacy: Mapped[str] = mapped_column(privacy_level, nullable=False, default="LOCAL_ONLY")
     source: Mapped[str] = mapped_column(Text, nullable=False)
     approved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
 
@@ -104,11 +105,16 @@ class TimelineModel(Base):
     location_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("locations.id", ondelete="SET NULL"))
     title: Mapped[str] = mapped_column(Text, nullable=False)
     details: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
-    privacy: Mapped[str] = mapped_column(privacy_level, nullable=False, default="CLOUD_ALLOWED")
+    privacy: Mapped[str] = mapped_column(privacy_level, nullable=False, default="LOCAL_ONLY")
 
 
 class ForeshadowingModel(Base):
     __tablename__ = "foreshadowing"
+    __table_args__ = (CheckConstraint(
+        "details ? 'privacy_level' AND jsonb_typeof(details->'privacy_level') = 'string' "
+        "AND details->>'privacy_level' IN ('LOCAL_ONLY','CLOUD_ALLOWED','REDACT_BEFORE_CLOUD')",
+        name="foreshadowing_privacy_policy_valid",
+    ),)
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     novel_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("novels.id", ondelete="CASCADE"), nullable=False)
     title: Mapped[str] = mapped_column(Text, nullable=False)
@@ -131,10 +137,14 @@ class SecretModel(Base):
 
 class ChapterModel(Base):
     __tablename__ = "chapters"
-    __table_args__ = (UniqueConstraint("novel_id", "chapter_number"),)
+    __table_args__ = (UniqueConstraint("novel_id", "chapter_number"), UniqueConstraint("novel_id", "public_token"))
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     novel_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("novels.id", ondelete="CASCADE"), nullable=False)
+    # Immutable public numeric identity. Reordering changes only sort_order.
     chapter_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    public_token: Mapped[str | None] = mapped_column(Text)
+    sort_order: Mapped[int | None] = mapped_column(Integer)
+    identity_status: Mapped[str] = mapped_column(Text, nullable=False, default="ACTIVE")
     title: Mapped[str | None] = mapped_column(Text)
     markdown_path: Mapped[str] = mapped_column(Text, nullable=False)
     content_hash: Mapped[str | None] = mapped_column(Text)
@@ -144,6 +154,19 @@ class ChapterModel(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
     document: Mapped[dict | None] = mapped_column(JSONB)
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+
+
+class ChapterIdentityModel(Base):
+    """Persistent reservations survive chapter deletion and server restart."""
+    __tablename__ = "chapter_identities"
+    __table_args__ = (UniqueConstraint("novel_id", "public_token"),)
+    novel_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("novels.id", ondelete="CASCADE"), primary_key=True)
+    chapter_number: Mapped[int] = mapped_column(Integer, primary_key=True)
+    # Deliberately no chapter FK: retain the old UUID after chapter deletion.
+    chapter_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    public_token: Mapped[str | None] = mapped_column(Text)
+    state: Mapped[str] = mapped_column(Text, nullable=False, default="ACTIVE")
+    provenance: Mapped[str] = mapped_column(Text, nullable=False, default="ALLOCATED")
 
 
 class ChapterSummaryModel(Base):

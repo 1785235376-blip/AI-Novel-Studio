@@ -1,0 +1,1547 @@
+FFFFFFFFFFFFFFFFEEEEEEEEEEEEEEEEEEEEEE...................FFFFF.FF...     [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_mounted_real_worker_review_preserves_existing_chapter_and_canon[file-/api] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34c2a2d50>, prefix='/api', base='/api/novels/r3-mount...ive=True, guard=<function configure.<locals>.guard at 0x7fd34b567060>, host='m4-host-3ceff968dad747aeab6e4491b7a01d8a')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c1edfa0>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-3ceff968dad747aeab6e4491b7a01d8a', client_id='client-m4-host-3ceff968dad747aeab6e4491b7a01d8a', actor_id='m4-host-3ceff968dad747aeab6e4491b7a01d8a', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_mounted_real_worker_review_preserves_existing_chapter_and_canon[file-/api/v1] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34c124aa0>, prefix='/api/v1', base='/api/v1/novels/r3...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a6ffc40>, host='m4-host-a4e7b09e253d46f7a6ddcf769042e988')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c33b4a0>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-a4e7b09e253d46f7a6ddcf769042e988', client_id='client-m4-host-a4e7b09e253d46f7a6ddcf769042e988', actor_id='m4-host-a4e7b09e253d46f7a6ddcf769042e988', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_every_model_route_requires_all_flags_and_acceptance_override[file-/api-ai_execution_v2] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34b5d2d50>, prefix='/api', base='/api/novels/r3-mount...ive=True, guard=<function configure.<locals>.guard at 0x7fd351667880>, host='m4-host-89a0dc77cda04fc3aadb821bba403c44')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c1ee2a0>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-89a0dc77cda04fc3aadb821bba403c44', client_id='client-m4-host-89a0dc77cda04fc3aadb821bba403c44', actor_id='m4-host-89a0dc77cda04fc3aadb821bba403c44', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_every_model_route_requires_all_flags_and_acceptance_override[file-/api-narrative_production_v2] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34b4fba40>, prefix='/api', base='/api/novels/r3-mount...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a749580>, host='m4-host-0c0fe461b8a04f289f0ab976b81eb19a')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34b6851c0>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-0c0fe461b8a04f289f0ab976b81eb19a', client_id='client-m4-host-0c0fe461b8a04f289f0ab976b81eb19a', actor_id='m4-host-0c0fe461b8a04f289f0ab976b81eb19a', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_every_model_route_requires_all_flags_and_acceptance_override[file-/api-model_broker_v2] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a73e840>, prefix='/api', base='/api/novels/r3-mount...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a74a2a0>, host='m4-host-0119aa8136944ebba5e50b69bd63a42d')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a73d9d0>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-0119aa8136944ebba5e50b69bd63a42d', client_id='client-m4-host-0119aa8136944ebba5e50b69bd63a42d', actor_id='m4-host-0119aa8136944ebba5e50b69bd63a42d', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_every_model_route_requires_all_flags_and_acceptance_override[file-/api-author_context_inspector_v2] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a76ee70>, prefix='/api', base='/api/novels/r3-mount...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a748180>, host='m4-host-2607d896262b4177858ac216579f3cf6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a7228a0>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-2607d896262b4177858ac216579f3cf6', client_id='client-m4-host-2607d896262b4177858ac216579f3cf6', actor_id='m4-host-2607d896262b4177858ac216579f3cf6', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_every_model_route_requires_all_flags_and_acceptance_override[file-/api-acceptance] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a5d4a40>, prefix='/api', base='/api/novels/r3-mount...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a74a3e0>, host='m4-host-6c903db1daa24ab8b27842d8a310d0d8')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a5d6ae0>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-6c903db1daa24ab8b27842d8a310d0d8', client_id='client-m4-host-6c903db1daa24ab8b27842d8a310d0d8', actor_id='m4-host-6c903db1daa24ab8b27842d8a310d0d8', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_every_model_route_requires_all_flags_and_acceptance_override[file-/api/v1-ai_execution_v2] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34c1ef380>, prefix='/api/v1', base='/api/v1/novels/r3...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a748720>, host='m4-host-a22dcc0f7bae4cae8685e51159abb64a')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34b608710>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-a22dcc0f7bae4cae8685e51159abb64a', client_id='client-m4-host-a22dcc0f7bae4cae8685e51159abb64a', actor_id='m4-host-a22dcc0f7bae4cae8685e51159abb64a', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_every_model_route_requires_all_flags_and_acceptance_override[file-/api/v1-narrative_production_v2] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a8d67e0>, prefix='/api/v1', base='/api/v1/novels/r3...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a749080>, host='m4-host-0835e13aaa204cd7b5ab39af7fe499ac')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a76c5c0>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-0835e13aaa204cd7b5ab39af7fe499ac', client_id='client-m4-host-0835e13aaa204cd7b5ab39af7fe499ac', actor_id='m4-host-0835e13aaa204cd7b5ab39af7fe499ac', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_every_model_route_requires_all_flags_and_acceptance_override[file-/api/v1-model_broker_v2] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a5d5a30>, prefix='/api/v1', base='/api/v1/novels/r3...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a601620>, host='m4-host-6d10cbaf0a944bbdbb6838e5efe98e77')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a7234d0>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-6d10cbaf0a944bbdbb6838e5efe98e77', client_id='client-m4-host-6d10cbaf0a944bbdbb6838e5efe98e77', actor_id='m4-host-6d10cbaf0a944bbdbb6838e5efe98e77', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_every_model_route_requires_all_flags_and_acceptance_override[file-/api/v1-author_context_inspector_v2] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a73e6c0>, prefix='/api/v1', base='/api/v1/novels/r3...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a749ee0>, host='m4-host-1d425ebb657a4f8bbb75a8dbd3b69e40')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a73d790>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-1d425ebb657a4f8bbb75a8dbd3b69e40', client_id='client-m4-host-1d425ebb657a4f8bbb75a8dbd3b69e40', actor_id='m4-host-1d425ebb657a4f8bbb75a8dbd3b69e40', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_every_model_route_requires_all_flags_and_acceptance_override[file-/api/v1-acceptance] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a723860>, prefix='/api/v1', base='/api/v1/novels/r3...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a7553a0>, host='m4-host-44554c5ea46d4ce493fd11256a032d9d')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a723b30>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-44554c5ea46d4ce493fd11256a032d9d', client_id='client-m4-host-44554c5ea46d4ce493fd11256a032d9d', actor_id='m4-host-44554c5ea46d4ce493fd11256a032d9d', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_model_routes_require_real_host_session_in_local_mode[file-/api] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a76fad0>, prefix='/api', base='/api/novels/r3-mount...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a7540e0>, host='m4-host-5d95bb83fd904b50af3f71559756a611')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a76f590>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-5d95bb83fd904b50af3f71559756a611', client_id='client-m4-host-5d95bb83fd904b50af3f71559756a611', actor_id='m4-host-5d95bb83fd904b50af3f71559756a611', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_model_routes_require_real_host_session_in_local_mode[file-/api/v1] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34c1ec4a0>, prefix='/api/v1', base='/api/v1/novels/r3...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a757380>, host='m4-host-3f2112650cc24ad6bf2dc6add9b41a60')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a73e0c0>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-3f2112650cc24ad6bf2dc6add9b41a60', client_id='client-m4-host-3f2112650cc24ad6bf2dc6add9b41a60', actor_id='m4-host-3f2112650cc24ad6bf2dc6add9b41a60', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_mounted_exact_preview_cas_unknown_fields_and_no_output_injection[file-/api] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a73d460>, prefix='/api', base='/api/novels/r3-mount...ive=True, guard=<function configure.<locals>.guard at 0x7fd34b565940>, host='m4-host-3d4fddd927984786b5661290480dbc2d')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a5d5850>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-3d4fddd927984786b5661290480dbc2d', client_id='client-m4-host-3d4fddd927984786b5661290480dbc2d', actor_id='m4-host-3d4fddd927984786b5661290480dbc2d', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_mounted_exact_preview_cas_unknown_fields_and_no_output_injection[file-/api/v1] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a5d6cf0>, prefix='/api/v1', base='/api/v1/novels/r3...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a755760>, host='m4-host-32a788fe79884c0ebbff065e1177f5d6')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a5d75c0>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-32a788fe79884c0ebbff065e1177f5d6', client_id='client-m4-host-32a788fe79884c0ebbff065e1177f5d6', actor_id='m4-host-32a788fe79884c0ebbff065e1177f5d6', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_scoped_actor_branch_revocation_and_review_permission[file-/api] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a73c9b0>, prefix='/api', base='/api/novels/r3-mount...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a754360>, host='m4-host-c83f07d3ac9a4352bf1ae86251751816')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a722f30>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-c83f07d3ac9a4352bf1ae86251751816', client_id='client-m4-host-c83f07d3ac9a4352bf1ae86251751816', actor_id='m4-host-c83f07d3ac9a4352bf1ae86251751816', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_scoped_actor_branch_revocation_and_review_permission[file-/api/v1] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a76eed0>, prefix='/api/v1', base='/api/v1/novels/r3...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a755a80>, host='m4-host-1d3281a16d194d2686efdd8e557b6686')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a73d760>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-1d3281a16d194d2686efdd8e557b6686', client_id='client-m4-host-1d3281a16d194d2686efdd8e557b6686', actor_id='m4-host-1d3281a16d194d2686efdd8e557b6686', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_late_host_revocation_masks_model_preview_and_private_errors[file-/api-False] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a57cc50>, prefix='/api', base='/api/novels/r3-mount...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a7482c0>, host='m4-host-146ca5cd2a394091938336140ad4bb11')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a57cd70>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-146ca5cd2a394091938336140ad4bb11', client_id='client-m4-host-146ca5cd2a394091938336140ad4bb11', actor_id='m4-host-146ca5cd2a394091938336140ad4bb11', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_late_host_revocation_masks_model_preview_and_private_errors[file-/api-True] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a723fe0>, prefix='/api', base='/api/novels/r3-mount...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a755760>, host='m4-host-3b6b611fefd5420c8f1d5ad9fba37fed')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a671760>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-3b6b611fefd5420c8f1d5ad9fba37fed', client_id='client-m4-host-3b6b611fefd5420c8f1d5ad9fba37fed', actor_id='m4-host-3b6b611fefd5420c8f1d5ad9fba37fed', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_late_host_revocation_masks_model_preview_and_private_errors[file-/api/v1-False] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a5bb860>, prefix='/api/v1', base='/api/v1/novels/r3...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a757060>, host='m4-host-e91226fe37ac4aa1b847fb02b1555792')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a5ba150>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-e91226fe37ac4aa1b847fb02b1555792', client_id='client-m4-host-e91226fe37ac4aa1b847fb02b1555792', actor_id='m4-host-e91226fe37ac4aa1b847fb02b1555792', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+_ ERROR at setup of test_late_host_revocation_masks_model_preview_and_private_errors[file-/api/v1-True] _
+
+graph_client = namespace(client=<starlette.testclient.TestClient object at 0x7fd34a76e480>, prefix='/api/v1', base='/api/v1/novels/r3...ive=True, guard=<function configure.<locals>.guard at 0x7fd34a755620>, host='m4-host-54022cd154fd434b970a0ef976f2fc70')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a76e4b0>
+
+    @pytest.fixture
+    def ai_client(graph_client, monkeypatch):
+        e = configure(graph_client, monkeypatch, graph_client.graphs)
+        e.host = "m4-host-" + uuid4().hex
+>       e.sessions.register(e.host, SessionContext("session-" + e.host, "client-" + e.host, e.host, None))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_api.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<string>:8: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = SessionContext(session_id='session-m4-host-54022cd154fd434b970a0ef976f2fc70', client_id='client-m4-host-54022cd154fd434b970a0ef976f2fc70', actor_id='m4-host-54022cd154fd434b970a0ef976f2fc70', workspace_id=None, correlation_id=None)
+
+    def __post_init__(self) -> None:
+>       if not all((self.session_id.strip(), self.client_id.strip(), self.actor_id.strip(), self.workspace_id.strip())):
+                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'strip'
+
+app/actor_context.py:15: AttributeError
+=================================== FAILURES ===================================
+__ test_real_original_worker_once_only_exact_review_no_chapter_or_canon[file] __
+
+model_rig = namespace(nid='v2-independent-48e3ba37d33b449a87a46d817951c8b7', scope={'mode': 'local', 'novel_id': 'v2-independent-4...[<threading.Event at 0x7fd34c66a5a0: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c343920>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c3eca10>
+
+    def test_real_original_worker_once_only_exact_review_no_chapter_or_canon(model_rig, monkeypatch):
+        e = model_rig; spy_transport(e, monkeypatch)
+>       row = admit(e)
+              ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:175: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c34b7a0>
+nid = 'v2-independent-48e3ba37d33b449a87a46d817951c8b7'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-48e3ba37d33b449a87a46d817951c8b7'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-95212e73cec441309b76ee91250acb73'}
+guard = <function configure.<locals>.guard at 0x7fd34c343920>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_ test_workflow_claim_precedes_job_persistence_and_slow_io_is_outside_scope[file] _
+
+model_rig = namespace(nid='v2-independent-8e0903325fe74c04b9eeb82644a4e63f', scope={'mode': 'local', 'novel_id': 'v2-independent-8...HETIC_PROTOCOL_ONLY'}, calls=[], releases=[], active=True, guard=<function configure.<locals>.guard at 0x7fd34c19ee80>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c33af60>
+
+    def test_workflow_claim_precedes_job_persistence_and_slow_io_is_outside_scope(model_rig, monkeypatch):
+        e = model_rig
+>       row = preview(e, admit(e))
+                         ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:204: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c34b5c0>
+nid = 'v2-independent-8e0903325fe74c04b9eeb82644a4e63f'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-8e0903325fe74c04b9eeb82644a4e63f'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-daaba815fd5649a2aed5d20d2e8dd07c'}
+guard = <function configure.<locals>.guard at 0x7fd34c19ee80>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_______ test_wrong_preview_and_stale_cas_never_admit_original_job[file] ________
+
+model_rig = namespace(nid='v2-independent-a775467a9a594314a6555c67be688bc2', scope={'mode': 'local', 'novel_id': 'v2-independent-a...[<threading.Event at 0x7fd34c356db0: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c1f65c0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c34b440>
+
+    def test_wrong_preview_and_stale_cas_never_admit_original_job(model_rig, monkeypatch):
+        e = model_rig; spy_transport(e, monkeypatch)
+>       row = preview(e, admit(e))
+                         ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:233: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c34a990>
+nid = 'v2-independent-a775467a9a594314a6555c67be688bc2'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-a775467a9a594314a6555c67be688bc2'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-9f4582b3976448c7952c2c8a565a5e20'}
+guard = <function configure.<locals>.guard at 0x7fd34c1f65c0>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_______ test_concurrent_dispatch_claims_one_job_and_never_replays[file] ________
+
+model_rig = namespace(nid='v2-independent-b0ea0339e54c40548890c7fc5ee038de', scope={'mode': 'local', 'novel_id': 'v2-independent-b...[<threading.Event at 0x7fd34c33a960: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c1f51c0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c34a570>
+
+    def test_concurrent_dispatch_claims_one_job_and_never_replays(model_rig, monkeypatch):
+        e = model_rig; entered, release = spy_transport(e, monkeypatch, blocked=True)
+>       row = preview(e, admit(e))
+                         ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:243: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c356a80>
+nid = 'v2-independent-b0ea0339e54c40548890c7fc5ee038de'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-b0ea0339e54c40548890c7fc5ee038de'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-439638032176476fb603cefd7ad2de66'}
+guard = <function configure.<locals>.guard at 0x7fd34c1f51c0>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+______ test_preview_authority_changes_block_before_inference[file-actor] _______
+
+model_rig = namespace(nid='v2-independent-c797a355817d4360999adc3ea98f231f', scope={'mode': 'local', 'novel_id': 'v2-independent-c...[<threading.Event at 0x7fd34c356450: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c1f56c0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c355880>
+mutation = 'actor'
+
+    @pytest.mark.parametrize("mutation", ["actor", "scope", "definition", "revoke", "flag"])
+    def test_preview_authority_changes_block_before_inference(model_rig, monkeypatch, mutation):
+        e = model_rig; spy_transport(e, monkeypatch)
+>       row = preview(e, admit(e)); actor, scope = e.actor, deepcopy(e.scope)
+                         ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:261: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c357560>
+nid = 'v2-independent-c797a355817d4360999adc3ea98f231f'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-c797a355817d4360999adc3ea98f231f'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-61e0cba56a3c49fc8fa1d0d84043f018'}
+guard = <function configure.<locals>.guard at 0x7fd34c1f56c0>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+______ test_preview_authority_changes_block_before_inference[file-scope] _______
+
+model_rig = namespace(nid='v2-independent-900ae871c69542c2bb05a79bb226b23f', scope={'mode': 'local', 'novel_id': 'v2-independent-9...[<threading.Event at 0x7fd34c354740: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c1f6160>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c33ad50>
+mutation = 'scope'
+
+    @pytest.mark.parametrize("mutation", ["actor", "scope", "definition", "revoke", "flag"])
+    def test_preview_authority_changes_block_before_inference(model_rig, monkeypatch, mutation):
+        e = model_rig; spy_transport(e, monkeypatch)
+>       row = preview(e, admit(e)); actor, scope = e.actor, deepcopy(e.scope)
+                         ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:261: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c354f20>
+nid = 'v2-independent-900ae871c69542c2bb05a79bb226b23f'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-900ae871c69542c2bb05a79bb226b23f'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-1bab347632b24b32ae80bc5bb47cb92b'}
+guard = <function configure.<locals>.guard at 0x7fd34c1f6160>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+____ test_preview_authority_changes_block_before_inference[file-definition] ____
+
+model_rig = namespace(nid='v2-independent-c3dfdd00cb9248ac89ca414fb06c73c5', scope={'mode': 'local', 'novel_id': 'v2-independent-c...[<threading.Event at 0x7fd34c3498b0: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c1f5b20>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c349a90>
+mutation = 'definition'
+
+    @pytest.mark.parametrize("mutation", ["actor", "scope", "definition", "revoke", "flag"])
+    def test_preview_authority_changes_block_before_inference(model_rig, monkeypatch, mutation):
+        e = model_rig; spy_transport(e, monkeypatch)
+>       row = preview(e, admit(e)); actor, scope = e.actor, deepcopy(e.scope)
+                         ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:261: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c355670>
+nid = 'v2-independent-c3dfdd00cb9248ac89ca414fb06c73c5'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-c3dfdd00cb9248ac89ca414fb06c73c5'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-e44f4f9ac7a0406c9a81822b5a569190'}
+guard = <function configure.<locals>.guard at 0x7fd34c1f5b20>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+______ test_preview_authority_changes_block_before_inference[file-revoke] ______
+
+model_rig = namespace(nid='v2-independent-acd7d1ec8f294f0e9dc6276cf6ae1aaf', scope={'mode': 'local', 'novel_id': 'v2-independent-a...[<threading.Event at 0x7fd34c33b9b0: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c1f6ca0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c356d50>
+mutation = 'revoke'
+
+    @pytest.mark.parametrize("mutation", ["actor", "scope", "definition", "revoke", "flag"])
+    def test_preview_authority_changes_block_before_inference(model_rig, monkeypatch, mutation):
+        e = model_rig; spy_transport(e, monkeypatch)
+>       row = preview(e, admit(e)); actor, scope = e.actor, deepcopy(e.scope)
+                         ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:261: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c3694c0>
+nid = 'v2-independent-acd7d1ec8f294f0e9dc6276cf6ae1aaf'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-acd7d1ec8f294f0e9dc6276cf6ae1aaf'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-63577b3cbbad45da907d3b26ce8822fe'}
+guard = <function configure.<locals>.guard at 0x7fd34c1f6ca0>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_______ test_preview_authority_changes_block_before_inference[file-flag] _______
+
+model_rig = namespace(nid='v2-independent-be7bb648d16b45b3a8f0ba69f5442f65', scope={'mode': 'local', 'novel_id': 'v2-independent-b...[<threading.Event at 0x7fd34c368aa0: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c1f7420>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c368d10>
+mutation = 'flag'
+
+    @pytest.mark.parametrize("mutation", ["actor", "scope", "definition", "revoke", "flag"])
+    def test_preview_authority_changes_block_before_inference(model_rig, monkeypatch, mutation):
+        e = model_rig; spy_transport(e, monkeypatch)
+>       row = preview(e, admit(e)); actor, scope = e.actor, deepcopy(e.scope)
+                         ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:261: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c348d70>
+nid = 'v2-independent-be7bb648d16b45b3a8f0ba69f5442f65'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-be7bb648d16b45b3a8f0ba69f5442f65'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-e00e2d0acb9b484f8f65d1523c40492b'}
+guard = <function configure.<locals>.guard at 0x7fd34c1f7420>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_ test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-revoke] _
+
+model_rig = namespace(nid='v2-independent-602fc9e7ccd54007b9b84c80a82b3c03', scope={'mode': 'local', 'novel_id': 'v2-independent-6...[<threading.Event at 0x7fd34c36bdd0: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c1f6340>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c349c10>
+mutation = 'revoke'
+
+    @pytest.mark.parametrize("mutation", ["revoke", "flag", "cancel", "timeout", "replace_project"])
+    def test_late_mock_output_is_discarded_after_authority_or_deadline_change(model_rig, monkeypatch, mutation):
+        e = model_rig; entered, release = spy_transport(e, monkeypatch, blocked=True)
+>       row = dispatch(e, preview(e, admit(e)))
+                                     ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:278: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c354350>
+nid = 'v2-independent-602fc9e7ccd54007b9b84c80a82b3c03'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-602fc9e7ccd54007b9b84c80a82b3c03'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-221144f2fa6e4339b8dca445e3d2dd41'}
+guard = <function configure.<locals>.guard at 0x7fd34c1f6340>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_ test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-flag] _
+
+model_rig = namespace(nid='v2-independent-f89c730a6787496dab48bc8c7023d553', scope={'mode': 'local', 'novel_id': 'v2-independent-f...[<threading.Event at 0x7fd34c368710: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c1f68e0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c354740>
+mutation = 'flag'
+
+    @pytest.mark.parametrize("mutation", ["revoke", "flag", "cancel", "timeout", "replace_project"])
+    def test_late_mock_output_is_discarded_after_authority_or_deadline_change(model_rig, monkeypatch, mutation):
+        e = model_rig; entered, release = spy_transport(e, monkeypatch, blocked=True)
+>       row = dispatch(e, preview(e, admit(e)))
+                                     ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:278: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c36a120>
+nid = 'v2-independent-f89c730a6787496dab48bc8c7023d553'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-f89c730a6787496dab48bc8c7023d553'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-e3d7e42930b74eab895511ad3a3fb314'}
+guard = <function configure.<locals>.guard at 0x7fd34c1f68e0>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_ test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-cancel] _
+
+model_rig = namespace(nid='v2-independent-ea290f3064124b3da40b17664e0ff0ad', scope={'mode': 'local', 'novel_id': 'v2-independent-e...[<threading.Event at 0x7fd34c186540: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c19ff60>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c36b260>
+mutation = 'cancel'
+
+    @pytest.mark.parametrize("mutation", ["revoke", "flag", "cancel", "timeout", "replace_project"])
+    def test_late_mock_output_is_discarded_after_authority_or_deadline_change(model_rig, monkeypatch, mutation):
+        e = model_rig; entered, release = spy_transport(e, monkeypatch, blocked=True)
+>       row = dispatch(e, preview(e, admit(e)))
+                                     ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:278: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c185af0>
+nid = 'v2-independent-ea290f3064124b3da40b17664e0ff0ad'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-ea290f3064124b3da40b17664e0ff0ad'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-53a43d0807244bf88af0dca79b1bee14'}
+guard = <function configure.<locals>.guard at 0x7fd34c19ff60>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_ test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-timeout] _
+
+model_rig = namespace(nid='v2-independent-cf69543519d14db1851df472f49e577a', scope={'mode': 'local', 'novel_id': 'v2-independent-c...[<threading.Event at 0x7fd34c187d10: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c1f7a60>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c184650>
+mutation = 'timeout'
+
+    @pytest.mark.parametrize("mutation", ["revoke", "flag", "cancel", "timeout", "replace_project"])
+    def test_late_mock_output_is_discarded_after_authority_or_deadline_change(model_rig, monkeypatch, mutation):
+        e = model_rig; entered, release = spy_transport(e, monkeypatch, blocked=True)
+>       row = dispatch(e, preview(e, admit(e)))
+                                     ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:278: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c357800>
+nid = 'v2-independent-cf69543519d14db1851df472f49e577a'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-cf69543519d14db1851df472f49e577a'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-5a577d9d737c49c188a1b3f5a255e14a'}
+guard = <function configure.<locals>.guard at 0x7fd34c1f7a60>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_ test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-replace_project] _
+
+model_rig = namespace(nid='v2-independent-313a79cf26024a219560c7286bfa63fd', scope={'mode': 'local', 'novel_id': 'v2-independent-3...[<threading.Event at 0x7fd34c1850d0: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c235760>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c355340>
+mutation = 'replace_project'
+
+    @pytest.mark.parametrize("mutation", ["revoke", "flag", "cancel", "timeout", "replace_project"])
+    def test_late_mock_output_is_discarded_after_authority_or_deadline_change(model_rig, monkeypatch, mutation):
+        e = model_rig; entered, release = spy_transport(e, monkeypatch, blocked=True)
+>       row = dispatch(e, preview(e, admit(e)))
+                                     ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:278: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c1869f0>
+nid = 'v2-independent-313a79cf26024a219560c7286bfa63fd'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-313a79cf26024a219560c7286bfa63fd'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-ece73725049a46b98130f01c501670b9'}
+guard = <function configure.<locals>.guard at 0x7fd34c235760>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_______ test_original_job_restart_cannot_promote_output_or_replay[file] ________
+
+model_rig = namespace(nid='v2-independent-71e19a9ffcd24ff09bc5334b95a50176', scope={'mode': 'local', 'novel_id': 'v2-independent-7...[<threading.Event at 0x7fd34c34bec0: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c237920>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c184a70>
+
+    def test_original_job_restart_cannot_promote_output_or_replay(model_rig, monkeypatch):
+        e = model_rig; spy_transport(e, monkeypatch)
+>       row = dispatch(e, preview(e, admit(e)))
+                                     ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:311: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c36be60>
+nid = 'v2-independent-71e19a9ffcd24ff09bc5334b95a50176'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-71e19a9ffcd24ff09bc5334b95a50176'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-2e1cca5b9edc4fe38f35f1a144fa096d'}
+guard = <function configure.<locals>.guard at 0x7fd34c237920>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_ test_lost_start_receipt_retains_claim_and_never_creates_replacement_job[file] _
+
+model_rig = namespace(nid='v2-independent-f79f7ef6c32340b2911d175991c6eac6', scope={'mode': 'local', 'novel_id': 'v2-independent-f...[<threading.Event at 0x7fd34c186600: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34c234180>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34c357fe0>
+
+    def test_lost_start_receipt_retains_claim_and_never_creates_replacement_job(model_rig, monkeypatch):
+        e = model_rig; spy_transport(e, monkeypatch)
+>       row = preview(e, admit(e))
+                         ^^^^^^^^
+
+tests/test_v2_ai_execution_runtime.py:330: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c1ec9e0>
+nid = 'v2-independent-f79f7ef6c32340b2911d175991c6eac6'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-f79f7ef6c32340b2911d175991c6eac6'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-775eb89cb0684eecb4109152a26fc4b7'}
+guard = <function configure.<locals>.guard at 0x7fd34c234180>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_ test_every_model_flag_is_explicit_and_missing_flag_keeps_old_catalog[file-ai_execution_v2] _
+
+model_rig = namespace(nid='v2-independent-9a9d3fcc2d5a47aba17d1f0be25a1ff3', scope={'mode': 'local', 'novel_id': 'v2-independent-9...HETIC_PROTOCOL_ONLY'}, calls=[], releases=[], active=True, guard=<function configure.<locals>.guard at 0x7fd34a6fdee0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a7239b0>
+missing = 'ai_execution_v2'
+
+    @pytest.mark.parametrize("missing", FLAGS.split(","))
+    def test_every_model_flag_is_explicit_and_missing_flag_keeps_old_catalog(model_rig, monkeypatch, missing):
+        e = model_rig
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", ",".join(flag for flag in FLAGS.split(",") if flag != missing))
+        catalog = e.graphs.catalog(e.nid, e.scope, e.actor)
+        assert len(catalog["definitions"]) == 7
+        assert catalog["capabilities"]["model_execution"] is False
+        from fastapi import HTTPException
+>       with pytest.raises(HTTPException) as caught: create_graph(e)
+                                                     ^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_contracts.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34a57edb0>
+nid = 'v2-independent-9a9d3fcc2d5a47aba17d1f0be25a1ff3'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-9a9d3fcc2d5a47aba17d1f0be25a1ff3'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-e77c4185dfbb4699910a876dc034a015'}
+guard = <function configure.<locals>.guard at 0x7fd34a6fdee0>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_ test_every_model_flag_is_explicit_and_missing_flag_keeps_old_catalog[file-narrative_production_v2] _
+
+model_rig = namespace(nid='v2-independent-51af6d48200b40ec97e73f76f9426a82', scope={'mode': 'local', 'novel_id': 'v2-independent-5...HETIC_PROTOCOL_ONLY'}, calls=[], releases=[], active=True, guard=<function configure.<locals>.guard at 0x7fd34a74aa20>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a57e1e0>
+missing = 'narrative_production_v2'
+
+    @pytest.mark.parametrize("missing", FLAGS.split(","))
+    def test_every_model_flag_is_explicit_and_missing_flag_keeps_old_catalog(model_rig, monkeypatch, missing):
+        e = model_rig
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", ",".join(flag for flag in FLAGS.split(",") if flag != missing))
+        catalog = e.graphs.catalog(e.nid, e.scope, e.actor)
+        assert len(catalog["definitions"]) == 7
+        assert catalog["capabilities"]["model_execution"] is False
+        from fastapi import HTTPException
+>       with pytest.raises(HTTPException) as caught: create_graph(e)
+                                                     ^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_contracts.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c34aa50>
+nid = 'v2-independent-51af6d48200b40ec97e73f76f9426a82'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-51af6d48200b40ec97e73f76f9426a82'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-f37fe9b822ff424faafd741dbdcf8854'}
+guard = <function configure.<locals>.guard at 0x7fd34a74aa20>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_ test_every_model_flag_is_explicit_and_missing_flag_keeps_old_catalog[file-model_broker_v2] _
+
+model_rig = namespace(nid='v2-independent-c2270a4effc84eb1b4cd2daefb3771e2', scope={'mode': 'local', 'novel_id': 'v2-independent-c...HETIC_PROTOCOL_ONLY'}, calls=[], releases=[], active=True, guard=<function configure.<locals>.guard at 0x7fd34a756fc0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a73f140>
+missing = 'model_broker_v2'
+
+    @pytest.mark.parametrize("missing", FLAGS.split(","))
+    def test_every_model_flag_is_explicit_and_missing_flag_keeps_old_catalog(model_rig, monkeypatch, missing):
+        e = model_rig
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", ",".join(flag for flag in FLAGS.split(",") if flag != missing))
+        catalog = e.graphs.catalog(e.nid, e.scope, e.actor)
+        assert len(catalog["definitions"]) == 7
+        assert catalog["capabilities"]["model_execution"] is False
+        from fastapi import HTTPException
+>       with pytest.raises(HTTPException) as caught: create_graph(e)
+                                                     ^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_contracts.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34a73f350>
+nid = 'v2-independent-c2270a4effc84eb1b4cd2daefb3771e2'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-c2270a4effc84eb1b4cd2daefb3771e2'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-4f08e1b912ad4551ab805770fdad703f'}
+guard = <function configure.<locals>.guard at 0x7fd34a756fc0>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_ test_every_model_flag_is_explicit_and_missing_flag_keeps_old_catalog[file-author_context_inspector_v2] _
+
+model_rig = namespace(nid='v2-independent-deda9350935a450b91469141c00d9a13', scope={'mode': 'local', 'novel_id': 'v2-independent-d...HETIC_PROTOCOL_ONLY'}, calls=[], releases=[], active=True, guard=<function configure.<locals>.guard at 0x7fd34a756ca0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a73f380>
+missing = 'author_context_inspector_v2'
+
+    @pytest.mark.parametrize("missing", FLAGS.split(","))
+    def test_every_model_flag_is_explicit_and_missing_flag_keeps_old_catalog(model_rig, monkeypatch, missing):
+        e = model_rig
+        monkeypatch.setenv("EXPERIMENTAL_FEATURES", ",".join(flag for flag in FLAGS.split(",") if flag != missing))
+        catalog = e.graphs.catalog(e.nid, e.scope, e.actor)
+        assert len(catalog["definitions"]) == 7
+        assert catalog["capabilities"]["model_execution"] is False
+        from fastapi import HTTPException
+>       with pytest.raises(HTTPException) as caught: create_graph(e)
+                                                     ^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_contracts.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34c185070>
+nid = 'v2-independent-deda9350935a450b91469141c00d9a13'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-deda9350935a450b91469141c00d9a13'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-2fb0cef31700441aad15d0eb4c7d7871'}
+guard = <function configure.<locals>.guard at 0x7fd34a756ca0>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_________ test_single_model_with_mandatory_selected_human_review[file] _________
+
+model_rig = namespace(nid='v2-independent-10ff7644c653427fae7b2bc7102c4c91', scope={'mode': 'local', 'novel_id': 'v2-independent-1...HETIC_PROTOCOL_ONLY'}, calls=[], releases=[], active=True, guard=<function configure.<locals>.guard at 0x7fd34a7572e0>)
+
+    def test_single_model_with_mandatory_selected_human_review(model_rig):
+        e = model_rig
+        values = [(definition(review=False), "CREATIVE_MODEL_HUMAN_REVIEW_REQUIRED")]
+        duplicate = definition()
+        duplicate["nodes"] += [{"id": "Generate2", "definition_id": "text_generate"},
+                               {"id": "Review2", "definition_id": "human_review"}]
+        duplicate["edges"] += [
+            {"id": "Source2", "source_node_id": "Input", "source_port": "text", "target_node_id": "Generate2", "target_port": "text"},
+            {"id": "Check2", "source_node_id": "Generate2", "source_port": "draft", "target_node_id": "Review2", "target_port": "draft"}]
+        values.append((duplicate, "CREATIVE_MODEL_SINGLE_NODE_REQUIRED"))
+        for value, code in values:
+>           graph = create_graph(e, value)
+                    ^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_v2_ai_execution_contracts.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34a76f410>
+nid = 'v2-independent-10ff7644c653427fae7b2bc7102c4c91'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-10ff7644c653427fae7b2bc7102c4c91'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera..., 'max_output_tokens': 128}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-794d498d83124e95aeeaad7dc10ff899'}
+guard = <function configure.<locals>.guard at 0x7fd34a7572e0>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...'target_port': 'text'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_______ test_unknown_price_is_blocked_at_preview_without_inference[file] _______
+
+model_rig = namespace(nid='v2-independent-c8fed121b3d047de97e7104ead50a7ac', scope={'mode': 'local', 'novel_id': 'v2-independent-c...[<threading.Event at 0x7fd34a5d6690: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34a5f1620>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a76e630>
+
+    def test_unknown_price_is_blocked_at_preview_without_inference(model_rig, monkeypatch):
+        e = model_rig; spy_transport(e, monkeypatch)
+        monkeypatch.setattr(e.broker, "_price", lambda *_: None)
+        routes = e.models.catalog(e.nid, e.scope, e.actor, e.guard)["routes"]
+        mock = next(route for route in routes if route["provider_id"] == "mock")
+        assert not mock["available"] and "KNOWN_ZERO_PRICE_REQUIRED" in mock["reasons"]
+>       row = preview(e, admit(e))
+                         ^^^^^^^^
+
+tests/test_v2_ai_execution_contracts.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34a5bb1d0>
+nid = 'v2-independent-c8fed121b3d047de97e7104ead50a7ac'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-c8fed121b3d047de97e7104ead50a7ac'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-4ae925480f7b490883a7b745bd657cf8'}
+guard = <function configure.<locals>.guard at 0x7fd34a5f1620>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+_ test_synthetic_needs_reviewed_opt_in_and_remote_descriptor_is_blocked[file] __
+
+model_rig = namespace(nid='v2-independent-4b3d662a3ca94aa7a4edec95a4753856', scope={'mode': 'local', 'novel_id': 'v2-independent-4...[<threading.Event at 0x7fd34a5b9580: unset>], active=True, guard=<function configure.<locals>.guard at 0x7fd34a757740>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd34a5b9100>
+
+    def test_synthetic_needs_reviewed_opt_in_and_remote_descriptor_is_blocked(model_rig, monkeypatch):
+        e = model_rig; spy_transport(e, monkeypatch)
+>       row = preview(e, admit(e), allow_synthetic=False)
+                         ^^^^^^^^
+
+tests/test_v2_ai_execution_contracts.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_v2_ai_execution_runtime.py:106: in admit
+    graph = graph or create_graph(e)
+                     ^^^^^^^^^^^^^^^
+tests/test_v2_ai_execution_runtime.py:101: in create_graph
+    return e.graphs.create(e.nid, e.scope, e.actor, {"request_id": "graph-" + uuid4().hex,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <app.creative.graph.CreativeGraphService object at 0x7fd34a76dd60>
+nid = 'v2-independent-4b3d662a3ca94aa7a4edec95a4753856'
+scope = {'mode': 'local', 'novel_id': 'v2-independent-4b3d662a3ca94aa7a4edec95a4753856'}
+actor = 'local-studio-author'
+value = {'definition': {'edges': [{'id': 'Source', 'source_node_id': 'Input', 'source_port': 'text', 'target_node_id': 'Genera... 'Review', 'parameters': {}}], 'title': 'Bounded model graph'}, 'request_id': 'graph-347e87ad30d947f9911cf8643fbe4cb8'}
+guard = <function configure.<locals>.guard at 0x7fd34a757740>
+
+    def create(self, nid, scope, actor, value, guard=lambda: None):
+>       body = GraphCreate.model_validate(value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       pydantic_core._pydantic_core.ValidationError: 2 validation errors for GraphCreate
+E       definition.function-after[validate_graph(), GraphInput].nodes.1.definition_id
+E         Input should be 'text_input', 'text_reference', 'draft_prepare', 'manual_transform', 'director_note', 'human_review' or 'asset_reference' [type=literal_error, input_value='text_generate', input_type=str]
+E           For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+E       definition.function-after[validate_graph(), GraphModelInput].schema_version
+E         Field required [type=missing, input_value={'title': 'Bounded model ...target_port': 'draft'}]}, input_type=dict]
+E           For further information visit https://errors.pydantic.dev/2.13/v/missing
+
+app/creative/graph.py:179: ValidationError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_v2_ai_execution_runtime.py::test_real_original_worker_once_only_exact_review_no_chapter_or_canon[file]
+FAILED tests/test_v2_ai_execution_runtime.py::test_workflow_claim_precedes_job_persistence_and_slow_io_is_outside_scope[file]
+FAILED tests/test_v2_ai_execution_runtime.py::test_wrong_preview_and_stale_cas_never_admit_original_job[file]
+FAILED tests/test_v2_ai_execution_runtime.py::test_concurrent_dispatch_claims_one_job_and_never_replays[file]
+FAILED tests/test_v2_ai_execution_runtime.py::test_preview_authority_changes_block_before_inference[file-actor]
+FAILED tests/test_v2_ai_execution_runtime.py::test_preview_authority_changes_block_before_inference[file-scope]
+FAILED tests/test_v2_ai_execution_runtime.py::test_preview_authority_changes_block_before_inference[file-definition]
+FAILED tests/test_v2_ai_execution_runtime.py::test_preview_authority_changes_block_before_inference[file-revoke]
+FAILED tests/test_v2_ai_execution_runtime.py::test_preview_authority_changes_block_before_inference[file-flag]
+FAILED tests/test_v2_ai_execution_runtime.py::test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-revoke]
+FAILED tests/test_v2_ai_execution_runtime.py::test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-flag]
+FAILED tests/test_v2_ai_execution_runtime.py::test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-cancel]
+FAILED tests/test_v2_ai_execution_runtime.py::test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-timeout]
+FAILED tests/test_v2_ai_execution_runtime.py::test_late_mock_output_is_discarded_after_authority_or_deadline_change[file-replace_project]
+FAILED tests/test_v2_ai_execution_runtime.py::test_original_job_restart_cannot_promote_output_or_replay[file]
+FAILED tests/test_v2_ai_execution_runtime.py::test_lost_start_receipt_retains_claim_and_never_creates_replacement_job[file]
+FAILED tests/test_v2_ai_execution_contracts.py::test_every_model_flag_is_explicit_and_missing_flag_keeps_old_catalog[file-ai_execution_v2]
+FAILED tests/test_v2_ai_execution_contracts.py::test_every_model_flag_is_explicit_and_missing_flag_keeps_old_catalog[file-narrative_production_v2]
+FAILED tests/test_v2_ai_execution_contracts.py::test_every_model_flag_is_explicit_and_missing_flag_keeps_old_catalog[file-model_broker_v2]
+FAILED tests/test_v2_ai_execution_contracts.py::test_every_model_flag_is_explicit_and_missing_flag_keeps_old_catalog[file-author_context_inspector_v2]
+FAILED tests/test_v2_ai_execution_contracts.py::test_single_model_with_mandatory_selected_human_review[file]
+FAILED tests/test_v2_ai_execution_contracts.py::test_unknown_price_is_blocked_at_preview_without_inference[file]
+FAILED tests/test_v2_ai_execution_contracts.py::test_synthetic_needs_reviewed_opt_in_and_remote_descriptor_is_blocked[file]
+ERROR tests/test_v2_ai_execution_api.py::test_mounted_real_worker_review_preserves_existing_chapter_and_canon[file-/api]
+ERROR tests/test_v2_ai_execution_api.py::test_mounted_real_worker_review_preserves_existing_chapter_and_canon[file-/api/v1]
+ERROR tests/test_v2_ai_execution_api.py::test_every_model_route_requires_all_flags_and_acceptance_override[file-/api-ai_execution_v2]
+ERROR tests/test_v2_ai_execution_api.py::test_every_model_route_requires_all_flags_and_acceptance_override[file-/api-narrative_production_v2]
+ERROR tests/test_v2_ai_execution_api.py::test_every_model_route_requires_all_flags_and_acceptance_override[file-/api-model_broker_v2]
+ERROR tests/test_v2_ai_execution_api.py::test_every_model_route_requires_all_flags_and_acceptance_override[file-/api-author_context_inspector_v2]
+ERROR tests/test_v2_ai_execution_api.py::test_every_model_route_requires_all_flags_and_acceptance_override[file-/api-acceptance]
+ERROR tests/test_v2_ai_execution_api.py::test_every_model_route_requires_all_flags_and_acceptance_override[file-/api/v1-ai_execution_v2]
+ERROR tests/test_v2_ai_execution_api.py::test_every_model_route_requires_all_flags_and_acceptance_override[file-/api/v1-narrative_production_v2]
+ERROR tests/test_v2_ai_execution_api.py::test_every_model_route_requires_all_flags_and_acceptance_override[file-/api/v1-model_broker_v2]
+ERROR tests/test_v2_ai_execution_api.py::test_every_model_route_requires_all_flags_and_acceptance_override[file-/api/v1-author_context_inspector_v2]
+ERROR tests/test_v2_ai_execution_api.py::test_every_model_route_requires_all_flags_and_acceptance_override[file-/api/v1-acceptance]
+ERROR tests/test_v2_ai_execution_api.py::test_model_routes_require_real_host_session_in_local_mode[file-/api]
+ERROR tests/test_v2_ai_execution_api.py::test_model_routes_require_real_host_session_in_local_mode[file-/api/v1]
+ERROR tests/test_v2_ai_execution_api.py::test_mounted_exact_preview_cas_unknown_fields_and_no_output_injection[file-/api]
+ERROR tests/test_v2_ai_execution_api.py::test_mounted_exact_preview_cas_unknown_fields_and_no_output_injection[file-/api/v1]
+ERROR tests/test_v2_ai_execution_api.py::test_scoped_actor_branch_revocation_and_review_permission[file-/api]
+ERROR tests/test_v2_ai_execution_api.py::test_scoped_actor_branch_revocation_and_review_permission[file-/api/v1]
+ERROR tests/test_v2_ai_execution_api.py::test_late_host_revocation_masks_model_preview_and_private_errors[file-/api-False]
+ERROR tests/test_v2_ai_execution_api.py::test_late_host_revocation_masks_model_preview_and_private_errors[file-/api-True]
+ERROR tests/test_v2_ai_execution_api.py::test_late_host_revocation_masks_model_preview_and_private_errors[file-/api/v1-False]
+ERROR tests/test_v2_ai_execution_api.py::test_late_host_revocation_masks_model_preview_and_private_errors[file-/api/v1-True]
+23 failed, 23 passed, 49 deselected, 1 warning, 22 errors in 10.41s

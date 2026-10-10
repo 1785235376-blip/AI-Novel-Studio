@@ -1,0 +1,92 @@
+.............................s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s [  2%]
+.........................ss..ss..ss..ss..ss..ss..ss..ss..ss..sssssssssss [  4%]
+sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss........... [  6%]
+.............................................................sssssssssss [  9%]
+sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss........... [ 11%]
+.............................................................sssssssssss [ 13%]
+sssssssssssssssssssssssss....................................sssssssssss [ 15%]
+s............ssssssssssss............ssssssssssss............sssssssssss [ 18%]
+s............ss...ssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 20%]
+ssssssssssssssssss...................................................... [ 22%]
+..................ssssssssssss............ssssssssssssssssssssssssssssss [ 24%]
+ssssss....................................ssssssssssss............ssssss [ 27%]
+ssssssssssssssssssssssssssssssssssssssssss.............................. [ 29%]
+..................ssssssssssss............ssssssssssssssssssssssssssssss [ 31%]
+..............................ssssss......ss..ss..ss..ssss....ss..ss..ss [ 33%]
+..ss..ss..ss..ssssssssssss............ssssssssssssssssssssssssssssssssss [ 36%]
+ssssssssssssssssssssssssssssssss........................................ [ 38%]
+..........................ssssssssssssssssss..................ss..ssssss [ 40%]
+ss........ssss....ssssssssssss............ssssss......ss..ss..ss..ss..ss [ 43%]
+..ssssssssss..........ssssssss........ss..ssssssssssssssssssssssssssssss [ 45%]
+...s.s.s.s.s.s.s.sssssss.......s.s.s.s.s.s.sss...s..ss..s.s.s.s.s.s.s.s. [ 47%]
+sssssssss...sssss.....s.s.s.s.s.s.s.s.s.ss..ssssssssssssss.............. [ 49%]
+ss..ss..ss..ss..ss..ss..ss..ss..ss..s.s.s.ssssss......s.sss...s.s.s.s.s. [ 52%]
+sssssss.......sssssssss.........s.s.s.s.sssssssssssss.............sssss. [ 54%]
+....s.s.s.ss..s.s.s.s.sssss.....s.s.s.ss..s.s.s.s.s.s.s.s.s.sssssss..... [ 56%]
+..ss..ssss....ss..ss..ss..ss..ssss....ss..ss..ss..ss..ssssssss........ss [ 58%]
+sssss.......sss...ss..s.s.ssssssssss..........ss..s.ss..sss...s.s.s.ssss [ 61%]
+sssss.........s.s.s.s.ss..ss..ss..ss..s.sss...s.s.sss...s.ss..ss........ [ 63%]
+...FF...s.s.ssssssss........s.s.s.s.ssssssssss..........s.s.s.s.s.s...s. [ 65%]
+s.s.ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss.. [ 67%]
+ss..........ss..ss...................................................... [ 70%]
+........................................................................ [ 72%]
+........................................................................ [ 74%]
+......................................................................s. [ 76%]
+s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.ssssssssssss [ 79%]
+s.............ss..ssss....ss..ss..ssss....ss..ss..ss.................... [ 81%]
+........................................................................ [ 83%]
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 92%]
+....s................................................................... [ 95%]
+........................................................................ [ 97%]
+........................................................................ [ 99%]
+.............                                                            [100%]
+=================================== FAILURES ===================================
+___________ test_workflow_api_requires_session_and_hides_other_owner ___________
+
+    def test_workflow_api_requires_session_and_hides_other_owner():
+        from uuid import uuid4
+        from fastapi.testclient import TestClient
+        from app.main import app
+        from app.dependencies import trusted_session_resolver
+        from app.actor_context import SessionContext
+        client=TestClient(app)
+        assert client.get('/api/workflows').status_code==401
+        token='workflow-'+str(uuid4());other='workflow-'+str(uuid4())
+        trusted_session_resolver.register(token,SessionContext('session','client','writer-'+token,'workspace'))
+        trusted_session_resolver.register(other,SessionContext('other-session','client','reader-'+other,'workspace'))
+        novel=client.post('/api/novels',json={'title':'Synthetic workflow owner'}).json()
+>       response=client.post('/api/workflows/recipes/import_knowledge',json={'novel_id':novel['id']},headers={'X-Session-Token':token})
+                                                                                        ^^^^^^^^^^^
+E       KeyError: 'id'
+
+tests/test_r2_workflow_execution.py:81: KeyError
+________ test_direct_agent_jobs_do_not_bypass_workflow_owner_isolation _________
+
+    def test_direct_agent_jobs_do_not_bypass_workflow_owner_isolation():
+        from uuid import uuid4
+        from fastapi.testclient import TestClient
+        from app.main import app
+        from app.dependencies import trusted_session_resolver
+        from app.actor_context import SessionContext
+        client=TestClient(app)
+        tokens=['agent-owner-'+str(uuid4()),'agent-outsider-'+str(uuid4())]
+        for token in tokens:trusted_session_resolver.register(token,SessionContext(token,'client',token,'workspace'))
+        novel=client.post('/api/novels',json={'title':'Synthetic agent isolation'}).json()
+>       client.post('/api/novels/'+novel['id']+'/chapters',json={'title':'Synthetic','content':'Synthetic'})
+                                   ^^^^^^^^^^^
+E       KeyError: 'id'
+
+tests/test_r2_workflow_execution.py:103: KeyError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_r2_workflow_execution.py::test_workflow_api_requires_session_and_hides_other_owner
+FAILED tests/test_r2_workflow_execution.py::test_direct_agent_jobs_do_not_bypass_workflow_owner_isolation
+2 failed, 2047 passed, 1132 skipped, 1 warning in 811.97s (0:13:31)

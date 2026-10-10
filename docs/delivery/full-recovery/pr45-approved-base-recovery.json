@@ -1,0 +1,15 @@
+{
+  "baseline_pr45_sha": "665817243cad59eef0d4140f17c2ea644f46971e",
+  "artifact_id": 11469458461,
+  "outer_sha256": "c0f8e9541a43599de6066161935ac131fb1ddc5257a314604b0e84c395ddf4ed",
+  "inner_sha256": "8ca36a7b00ad3b6d7639f96a58dc3f04c87c2064284a17b58f788c79dbc1c736",
+  "original_base_inventory_files_verified": 4876,
+  "application": "D:\\\u5c0f\u8bf4\\AI-Novel-Studio-Latest-Product\\.runtime\\full-recovery\\pr45-approved-application\\Application",
+  "python": [
+    3,
+    12,
+    9
+  ],
+  "new_candidate": false,
+  "purpose": "Exact original approved build material; current source/dependency extension/fresh build remain separate"
+}

@@ -57,8 +57,10 @@ if ([string]::IsNullOrWhiteSpace($local) -or [string]::IsNullOrWhiteSpace($profi
 # The packaged launcher is the only supported DesktopHost entry point.  It
 # starts the local PostgreSQL/backend pair, establishes the one-shot session,
 # and then owns the WebView2 host process.  No provider secret is read here.
+# -B keeps runtime imports from mutating the installed Application payload;
+# -I deliberately ignores Python environment hints, so this must be an option.
 $launcherArgs = @(
-    '-I', '-m', 'app.packaging.packaged_desktop_launcher',
+    '-B', '-I', '-m', 'app.packaging.packaged_desktop_launcher',
     '--application-root', $application,
     '--local-app-data', $local,
     '--user-profile', $profile

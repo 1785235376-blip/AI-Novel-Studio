@@ -1,0 +1,253 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.v2-live.config.ts",
+      "--list"
+    ],
+    "configFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/playwright.v2-live.config.ts",
+    "rootDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4-route-label-inventory-original1",
+      "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-route-label-browser-collection-original1-artifacts/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4-route-label-inventory-original1",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "v2-live-chromium",
+        "name": "v2-live-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-creative-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-route-label-browser-collection-original1-artifacts/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "v2LiveRuntime": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-live-browser/m4-route-label-inventory-original1",
+          "verification": "Synthetic fixture; real File and HTTP; browser success requires Chromium to launch."
+        },
+        "id": "v1-chromium",
+        "name": "v1-chromium",
+        "testDir": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/v2-creative-live\\.spec\\.ts/"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-route-label-browser-collection-original1-artifacts/junit.xml"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/docs/delivery/v2-development/stage-m4-route-label-browser-collection-original1-artifacts/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "v2-creative-live.spec.ts",
+      "file": "v2-creative-live.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "real File V2 authoring: reviewed direction, ordered storyboard, production history and restore preserve the manuscript",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-072b7f78308d6223f073",
+          "file": "v2-creative-live.spec.ts",
+          "line": 111,
+          "column": 1
+        },
+        {
+          "title": "real File V2 cancel and navigation retain dirty drafts without duplicating accepted or cancelled proposals",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-40d5dfded221add74dc7",
+          "file": "v2-creative-live.spec.ts",
+          "line": 206,
+          "column": 1
+        },
+        {
+          "title": "real File V2 scope and stale-write fencing keeps the browser draft and rejects foreign sources",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-10181042a927215ee465",
+          "file": "v2-creative-live.spec.ts",
+          "line": 236,
+          "column": 1
+        },
+        {
+          "title": "real HTTP File V2 lifecycle persists reviewed direction, order, history and restored content with unchanged manuscript",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-1e070ac283621e75b30b",
+          "file": "v2-creative-live.spec.ts",
+          "line": 282,
+          "column": 1
+        },
+        {
+          "title": "real HTTP File V2 scope, cancel and stale source fences remain authoritative",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v2-live-chromium",
+              "projectName": "v2-live-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-8e13202c7684f91556e9",
+          "file": "v2-creative-live.spec.ts",
+          "line": 346,
+          "column": 1
+        },
+        {
+          "title": "V1 default-off backend and browser never expose the V2 workbench or accept creative writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v1-chromium",
+              "projectName": "v1-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-47445c522eb6152c78bd",
+          "file": "v2-creative-live.spec.ts",
+          "line": 267,
+          "column": 1
+        },
+        {
+          "title": "real HTTP default-off gate advertises disabled capabilities and rejects creative reads and writes",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "v1-chromium",
+              "projectName": "v1-chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "4149c412f9291b8bf6ea-4f3549875235122bf681",
+          "file": "v2-creative-live.spec.ts",
+          "line": 379,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-10T08:07:59.426Z",
+    "duration": 135.88699999999994,
+    "expected": 0,
+    "skipped": 7,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

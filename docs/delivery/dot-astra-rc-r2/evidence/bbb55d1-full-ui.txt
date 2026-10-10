@@ -1,0 +1,127 @@
+
+> ai-novel-studio-ui@0.7.0 test /workspace/scratch/b8734129d01d/ai-novel-r2/frontend
+> vitest run --run --reporter\=default --reporter\=junit --outputFile\=/workspace/scratch/b8734129d01d/r2-browser-fix-ui.xml
+
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/ai-novel-r2/frontend
+
+ ✓ src/ui/ModelCenter.test.tsx (10 tests) 230ms
+ ✓ src/ui/AppShell.test.tsx (16 tests) 339ms
+ ✓ src/ui/LocalAiDiscovery.test.tsx (23 tests) 457ms
+ ✓ src/novel/ResearchPanel.test.tsx (14 tests) 781ms
+ ✓ src/novel/ScreenplayPanel.test.tsx (17 tests) 992ms
+ ✓ src/novel/PluginManagerPanel.test.tsx (15 tests) 1083ms
+ ✓ src/manualPromptConsent.test.tsx (17 tests) 1064ms
+   ✓ vision sends default denial and resets explicit consent on either text or reference edits 301ms
+ ✓ src/novel/PluginInspector.test.tsx (8 tests) 324ms
+ ✓ src/novel/EntryExperience.test.tsx (10 tests) 707ms
+ ✓ src/novel/MultimodalDirectorWorkspace.test.tsx (11 tests) 810ms
+ ✓ src/novel/WorkflowScopeGuards.test.tsx (20 tests) 638ms
+ ✓ src/novel/AiWritingPanel.test.tsx (12 tests) 618ms
+ ✓ src/novel/ExportPanel.test.tsx (12 tests) 1444ms
+ ✓ src/novel/ImageGenerationPanel.test.tsx (7 tests) 459ms
+ ✓ src/WorkspaceAdminPanel.test.tsx (6 tests) 316ms
+ ✓ src/AppRevisionHistory.test.tsx (19 tests) 1428ms
+   ✓ refreshes mounted history when the server chapter advances from v2 to v3 347ms
+ ✓ src/novel/AiContextPreviewPanel.test.tsx (5 tests) 197ms
+ ✓ src/ConflictDialog.test.tsx (6 tests) 98ms
+ ✓ src/novel/ScreenplayPanel.revision.test.tsx (5 tests) 596ms
+ ✓ src/novel/AIPlanningPanel.test.tsx (6 tests) 325ms
+ ✓ src/novel/AudiobookManifestPanel.test.tsx (4 tests) 376ms
+ ✓ src/novel/VideoTimeline.test.tsx (12 tests) 260ms
+ ✓ src/novel/AiWritingVariants.test.tsx (6 tests) 333ms
+ ✓ src/novel/ExportPanel.scope.test.tsx (13 tests) 1308ms
+ ✓ src/novel/MotionTaskWorkspace.test.tsx (5 tests) 161ms
+ ✓ src/WorkspaceManagement.test.tsx (5 tests) 111ms
+ ✓ src/ui/MediaProviderSettings.test.tsx (3 tests) 137ms
+ ✓ src/novel/NovelImportPanel.test.tsx (3 tests) 162ms
+ ✓ src/novel/VisualReferencePanel.test.tsx (3 tests) 281ms
+ ✓ src/novel/ExportPanel.recovery.test.tsx (4 tests) 901ms
+   ✓ rediscovers the same durable job and snapshot after full remount and downloads it 583ms
+ ✓ src/RevisionPanel.test.tsx (4 tests) 90ms
+ ✓ src/novel/VisualTextWorkflow.test.tsx (3 tests) 139ms
+ ✓ src/ui/FeatureLauncher.test.tsx (5 tests) 486ms
+ ✓ src/novel/ImageInfiniteCanvas.test.tsx (6 tests) 223ms
+ ✓ src/novel/useMultimodalWorkspacePersistence.test.ts (7 tests) 24ms
+ ✓ src/novel/ChapterTree.test.tsx (5 tests) 312ms
+ ✓ src/novel/DirectorShotList.test.tsx (6 tests) 309ms
+ ✓ src/PermissionManagement.test.tsx (3 tests) 83ms
+ ✓ src/novel/CreationWorkbenchPanel.test.tsx (4 tests) 202ms
+ ✓ src/novel/WorldTimelineView.test.tsx (3 tests) 151ms
+ ✓ src/ui/primitives.test.tsx (4 tests) 138ms
+ ✓ src/novel/AssetLibraryPanel.test.tsx (4 tests) 275ms
+ ✓ src/ui/SaveControls.test.tsx (5 tests) 59ms
+ ✓ src/novel/AgentTeamPanel.test.tsx (2 tests) 143ms
+ ✓ src/novel/SourcePrivacyControl.test.tsx (2 tests) 137ms
+ ✓ src/novel/ChapterTree.lifecycle.test.tsx (5 tests) 290ms
+ ✓ src/novel/WorldRelationshipGraph.test.tsx (4 tests) 152ms
+ ✓ src/novel/SpeechSynthesisPanel.test.tsx (3 tests) 209ms
+ ✓ src/novel/WorldBuildingDashboard.test.tsx (4 tests) 209ms
+ ✓ src/novel/WorkflowPanel.test.tsx (2 tests) 379ms
+ ✓ src/novel/GenerationWorkflowTimeline.test.tsx (7 tests) 126ms
+ ✓ src/novel/ImageQueuePanel.test.tsx (2 tests) 219ms
+ ✓ src/novel/ContinuityCheckPanel.test.tsx (2 tests) 196ms
+ ✓ src/localAiDiscoveryApi.test.ts (3 tests) 10ms
+ ✓ src/ui/ModuleWorkspaceRoutes.test.tsx (7 tests) 324ms
+ ✓ src/novel/DirectorShotCard.test.tsx (4 tests) 190ms
+ ✓ src/novel/AgentQueuePanel.test.tsx (2 tests) 217ms
+ ✓ src/novel/RuntimeDiagnostics.test.tsx (3 tests) 150ms
+ ✓ src/novel/AudioGenerationPanel.test.tsx (2 tests) 247ms
+ ✓ src/ui/taskSummary.test.ts (4 tests) 6ms
+ ✓ src/ui/AiControlCenter.test.tsx (1 test) 152ms
+ ✓ src/novel/NovelOverviewPanel.test.tsx (1 test) 90ms
+ ✓ src/novel/VideoTaskInspector.test.tsx (3 tests) 123ms
+ ✓ src/novel/StoryPlanningWorkspace.test.tsx (2 tests) 143ms
+ ✓ src/novel/AgentActivityCenter.test.tsx (2 tests) 184ms
+ ✓ src/novel/AssetInspector.test.tsx (2 tests) 111ms
+ ✓ src/novel/ConstraintImportPreview.test.tsx (2 tests) 83ms
+ ✓ src/ui/AuthorTerminology.test.tsx (2 tests) 30ms
+ ✓ src/novel/MotionPrivacyPanel.test.tsx (1 test) 150ms
+ ✓ src/novel/VideoAssemblyPanel.test.tsx (1 test) 119ms
+ ✓ src/novel/SceneEditor.test.tsx (1 test) 167ms
+ ✓ src/novel/AgentResultReview.test.tsx (2 tests) 123ms
+ ✓ src/novel/ScreenplayPanel.motion-binding.test.ts (2 tests) 9ms
+ ✓ src/novel/ForeshadowingEditor.test.tsx (1 test) 145ms
+ ✓ src/novel/StoryDatabase.test.tsx (2 tests) 80ms
+ ✓ src/novel/useMultimodalBindingManifest.test.ts (2 tests) 25ms
+ ✓ src/novel/ImageTaskInspector.test.tsx (2 tests) 130ms
+ ✓ src/novel/RelationshipEditor.test.tsx (1 test) 119ms
+ ✓ src/novel/VisualContextPanel.test.tsx (2 tests) 113ms
+ ✓ src/novel/TimelineEditor.test.tsx (1 test) 108ms
+ ✓ src/novel/OutlineEditor.test.tsx (1 test) 123ms
+ ✓ src/novel/AudioTaskInspector.test.tsx (2 tests) 71ms
+ ✓ src/novel/WorkflowPanel.independent-audit.test.tsx (1 test) 71ms
+ ✓ src/novel/StoryRouteEditor.test.tsx (1 test) 103ms
+ ✓ src/novel/CharacterEditor.test.tsx (1 test) 103ms
+ ✓ src/generationRecovery.test.ts (2 tests) 5ms
+ ✓ src/ui/CapabilityRoadmapPanel.test.tsx (1 test) 88ms
+ ✓ src/novel/VolumeEditor.test.tsx (1 test) 141ms
+ ✓ src/ui/CapabilityStatusCenter.test.tsx (1 test) 41ms
+ ✓ src/novel/WorkflowInspector.test.tsx (2 tests) 63ms
+ ✓ src/novel/LocationEditor.test.tsx (1 test) 99ms
+ ✓ src/novel/DirectorVoiceToolbar.test.tsx (1 test) 24ms
+ ✓ src/collaborationGuards.test.ts (7 tests) 4ms
+ ✓ src/novel/BindingManifestPanel.test.tsx (1 test) 28ms
+ ✓ src/novel/WorldSummaryEditor.test.tsx (1 test) 70ms
+ ✓ src/e2eDatabaseContract.test.ts (20 tests) 464ms
+   ✓ E2E database environment contract > keeps the DSN out of Playwright commands and scopes each child environment 411ms
+ ✓ src/contracts.test.ts (7 tests) 16ms
+ ✓ src/packagedHost.test.ts (7 tests) 11ms
+ ✓ src/productLanguage.test.ts (4 tests) 5ms
+ ✓ src/ui/FeatureLauncher.css.test.ts (3 tests) 3ms
+ ✓ src/novel/ChapterTree.css.test.ts (4 tests) 3ms
+ ✓ tests/uiContracts.test.ts (5 tests) 3ms
+ ✓ src/Editor.typography.test.ts (3 tests) 3ms
+ ✓ src/novel/importRecovery.test.ts (2 tests) 5ms
+ ✓ src/sourcePrivacyApi.test.ts (1 test) 5ms
+ ✓ src/novel/MotionTaskBatchControls.test.ts (1 test) 2ms
+ ✓ src/novel/FountainParser.test.ts (21 tests) 1134ms
+ ✓ src/generationVariants.test.ts (7 tests) 4ms
+ ✓ src/App.test.tsx (12 tests) 11ms
+
+ Test Files  109 passed (109)
+      Tests  568 passed (568)
+   Start at  00:59:00
+   Duration  16.84s (transform 5.29s, setup 0ms, collect 26.78s, tests 27.54s, environment 43.29s, prepare 8.23s)
+
+JUNIT report written to /workspace/scratch/b8734129d01d/r2-browser-fix-ui.xml

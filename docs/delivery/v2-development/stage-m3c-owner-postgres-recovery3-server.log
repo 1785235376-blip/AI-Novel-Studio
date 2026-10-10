@@ -1,0 +1,17 @@
+2026-10-10 03:58:00.732 UTC [24] LOG:  starting PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+2026-10-10 03:58:00.732 UTC [24] LOG:  listening on IPv4 address "127.0.0.1", port 55435
+2026-10-10 03:58:00.735 UTC [27] LOG:  database system was shut down at 2026-10-10 03:58:00 UTC
+2026-10-10 03:58:00.739 UTC [24] LOG:  database system is ready to accept connections
+2026-10-10 04:03:00.835 UTC [25] LOG:  checkpoint starting: time
+2026-10-10 04:06:19.206 UTC [25] LOG:  checkpoint complete: wrote 1990 buffers (48.6%); 0 WAL file(s) added, 0 removed, 1 recycled; write=198.368 s, sync=0.003 s, total=198.372 s; sync files=609, longest=0.001 s, average=0.001 s; distance=17118 kB, estimate=17118 kB; lsn=0/2D24D00, redo lsn=0/25C25C8
+2026-10-10 04:08:00.305 UTC [25] LOG:  checkpoint starting: time
+2026-10-10 04:09:38.600 UTC [25] LOG:  checkpoint complete: wrote 983 buffers (24.0%); 0 WAL file(s) added, 0 removed, 1 recycled; write=98.294 s, sync=0.001 s, total=98.295 s; sync files=107, longest=0.001 s, average=0.000 s; distance=11258 kB, estimate=16532 kB; lsn=0/38DE760, redo lsn=0/30C1118
+2026-10-10 04:13:00.697 UTC [25] LOG:  checkpoint starting: time
+2026-10-10 04:14:29.173 UTC [25] LOG:  checkpoint complete: wrote 340 buffers (8.3%); 0 WAL file(s) added, 0 removed, 1 recycled; write=88.473 s, sync=0.001 s, total=88.476 s; sync files=101, longest=0.001 s, average=0.001 s; distance=21491 kB, estimate=21491 kB; lsn=0/46753A8, redo lsn=0/45BDE18
+2026-10-10 04:15:46.871 UTC [24] LOG:  received fast shutdown request
+2026-10-10 04:15:46.872 UTC [24] LOG:  aborting any active transactions
+2026-10-10 04:15:46.882 UTC [24] LOG:  background worker "logical replication launcher" (PID 30) exited with exit code 1
+2026-10-10 04:15:46.882 UTC [25] LOG:  shutting down
+2026-10-10 04:15:46.882 UTC [25] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 04:15:46.886 UTC [25] LOG:  checkpoint complete: wrote 81 buffers (2.0%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.001 s, total=0.005 s; sync files=38, longest=0.001 s, average=0.001 s; distance=733 kB, estimate=19415 kB; lsn=0/4675458, redo lsn=0/4675458
+2026-10-10 04:15:46.897 UTC [24] LOG:  database system is shut down

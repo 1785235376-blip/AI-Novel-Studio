@@ -1,0 +1,5 @@
+/* Existing Adaptation surface only: contain evidence IDs and form fields. */
+.novel-adaptation-panel,.novel-adaptation-panel article,.novel-adaptation-panel details,.novel-adaptation-panel li{min-width:0;overflow-wrap:anywhere}
+.novel-adaptation-panel label{display:grid;gap:var(--space-1);min-width:0}
+.novel-adaptation-panel input,.novel-adaptation-panel textarea,.novel-adaptation-panel select{min-width:0;max-width:100%;width:100%;box-sizing:border-box}
+.novel-adaptation-panel header{flex-wrap:wrap}

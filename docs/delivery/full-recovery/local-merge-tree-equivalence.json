@@ -1,0 +1,20 @@
+{
+  "status": "NO_ADDITIONAL_IMPLEMENTATION",
+  "local_branches_checked": 6,
+  "all_local_branch_heads_are_pr45_ancestors": true,
+  "detached_worktree_merge_commits": [
+    {
+      "local_commit": "cd16ffe89b7aa6c22ba2e7f24a16e5a0669b7c04",
+      "github_merge_commit": "d5ed9cc1a5e29a159a9193eb6a54515bdab94fe3",
+      "original_pr": 33,
+      "identical_tree": "4583ca62c81af638a81e5982e3912427518bde7b"
+    },
+    {
+      "local_commit": "9fe50cbe795b73e09b5f52ad598804013d10badf",
+      "github_merge_commit": "5b4897d0b170ec104f533e7c5af38ebbcab63e1e",
+      "original_pr": 34,
+      "identical_tree": "2b8c5ec1576ad3bd7687cd420d0641b492c4ff87"
+    }
+  ],
+  "explanation": "The two extra --all commits are historical detached worktree trial merges with trees identical to the already-integrated GitHub merge commits; they do not contain lost source changes. No worktree or branch was changed."
+}

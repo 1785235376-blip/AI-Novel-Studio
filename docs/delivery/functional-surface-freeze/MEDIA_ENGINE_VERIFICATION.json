@@ -1,0 +1,53 @@
+{
+  "scope": "Media and engine adapter supplemental implementation verification",
+  "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
+  "source_hashes": {
+    "app/experimental/audiobook.py": "822155147b635156fcca184155b80846a7c39efde5b025df7688337d98c63115",
+    "app/experimental/comic_layouts.py": "ed166d965d677350963454936c74bb2f44ac68fcc1671618fa76944aeb2dff96",
+    "app/experimental/director.py": "0eefa7c984244d83d0e17cc1427cc2a25dea6f720133d036c6fd4a14745c3f49",
+    "app/experimental/interactive_story.py": "886cd80355f1a080d61bcdea00307ec0119dc88edf18456a54ab529f6441b6fd",
+    "app/experimental/media.py": "6e9f66e5f278d4e8dc3ebf59739a4ee1693ed295a25cde0d968d8574c70d9aac",
+    "app/experimental/multilingual_editions.py": "a7c5c1db905462ed41d9e3c89465f6e9b407c8fd902b556b6c2d255ebde010f1",
+    "app/experimental/production_lineage.py": "2f11c0846d4c616f18f336d003b2467294c8483e4190575443d2fa9327dc5483",
+    "app/experimental/subtitle_processing.py": "c82a20a2b4d00bd05572bb4353c5ad3f64c0d676b19a05d8a0429d9e81152e6b",
+    "app/experimental/subtitle_timeline.py": "fd80eeaa2cceec3f10799a15b92da1f1341e3d1770086ea06563f16c6bdd6de1",
+    "app/experimental/subtitle_timeline_api.py": "62bf0f254a7342048426949f86ec66e7862be6c69b3e19544d58b16743ca6a01",
+    "tests/test_surface_freeze_media_engine_adapters.py": "e7807687310ceb036e6efe52d173f589e32856fb6c430b85cf0faab7715278bf"
+  },
+  "runs": [
+    {
+      "name": "expanded_media_engine_regression",
+      "passed": 366,
+      "skipped": 1,
+      "deselected": 314,
+      "skip_reason": "Existing pinned OFL font unavailable locally; hosted gate provides it"
+    },
+    {
+      "name": "explicit_source_scope_regression",
+      "passed": 96,
+      "skipped": 0,
+      "deselected": 90
+    },
+    {
+      "name": "final_new_surface_tests",
+      "passed": 34,
+      "skipped": 0,
+      "deselected": 33
+    }
+  ],
+  "verification": {
+    "local_file": "CONTRACT_VERIFIED",
+    "synthetic_adapters": "MOCK_ONLY",
+    "real_postgresql": "NOT_RUN_LOCALLY_HOSTED_GATE_REQUIRED",
+    "asr_alignment_model_admission": "NOT_CONFIGURED",
+    "real_models_gpu": "NOT_RUN",
+    "godot_runtime": "NOT_RUN_TARGET_IMPORTER_REQUIRED",
+    "renpy_runtime": "NOT_RUN",
+    "historical_independent_audit": "BLOCKED_NOT_RETRIED",
+    "third_party_executable_plugins": "DENY_ALL"
+  },
+  "publication": "Parent-owned; worker did not commit, push, merge, release or deploy",
+  "original_tests_changed": false,
+  "migrations_changed": false,
+  "historical_interop_changed": false
+}

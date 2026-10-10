@@ -1,0 +1,19 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> ai-novel-studio-ui@0.7.0 test
+> vitest run --run src/novel/ScreenplayPanel.test.tsx src/novel/ScreenplayPanel.revision.test.tsx src/novel/ExportPanel.test.tsx src/novel/ExportPanel.scope.test.tsx src/novel/ExportPanel.recovery.test.tsx src/novel/FountainParser.test.ts
+
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/ai-novel-r2/frontend
+
+ ✓ src/novel/ScreenplayPanel.revision.test.tsx (5 tests) 408ms
+ ✓ src/novel/ExportPanel.recovery.test.tsx (4 tests) 496ms
+ ✓ src/novel/FountainParser.test.ts (21 tests) 1290ms
+ ✓ src/novel/ScreenplayPanel.test.tsx (17 tests) 746ms
+ ✓ src/novel/ExportPanel.test.tsx (12 tests) 949ms
+ ✓ src/novel/ExportPanel.scope.test.tsx (13 tests) 1046ms
+
+ Test Files  6 passed (6)
+      Tests  72 passed (72)
+   Start at  22:38:49
+   Duration  1.99s (transform 349ms, setup 0ms, collect 1.73s, tests 4.94s, environment 1.69s, prepare 390ms)

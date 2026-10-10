@@ -1,0 +1,2475 @@
+{
+  "schema_version": 2,
+  "phase": "ALL_WAVES_SCOPED_IMPLEMENTATION_RECONCILED_FINAL_HOSTED_CI_PENDING",
+  "model": "gpt-6-astra",
+  "repository": "1785235376-blip/AI-Novel-Studio",
+  "branch": "work/post-interop-r4-r5-ux-continuation",
+  "base_branch": "work/local-interop-desktop-prep",
+  "starting_sha": "e58c72b04182cd374af092314386b90f8250a173",
+  "baseline_verified_at_utc": "2026-10-06T15:02:39Z",
+  "historical_matrix_unchanged": true,
+  "historical_independent_review": "BLOCKED_NOT_RESTARTED",
+  "protocol_manifest_sha256": "77c1f82f0aec0ef385d95cacf6fe04530b83fb62d2403bc7341cbe6bf19c858c",
+  "packages": [
+    {
+      "id": "F00",
+      "name": "Foundation, reuse and dependency registry",
+      "wave": 0,
+      "historical_pr39_status": "INTEGRATED",
+      "current_status": "INTEGRATED",
+      "implementation_label": "INTEGRATED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "All 40 packages, seven waves, nine inherited gaps, explicit flags/dependencies and runtime descriptions.",
+      "sources": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py"
+      ],
+      "inherited_remaining_scope": "Independent follow-up review is platform-BLOCKED and not retried. No release/merge decision; documentation-only successor requires exact CI readback.",
+      "continuation_delta": "Existing scope-atomic metadata, exact feature dependencies, source/authorization/terminal fences and expanded reviewed test inventory remain the foundation. The new branch and current matrix preserve frozen PR37–42 evidence and Interop1.0.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/flags.py",
+        "app/experimental/store.py",
+        "app/experimental/api.py",
+        "app/experimental/capabilities.py",
+        ".github/ci/coverage_manifest.json.gz"
+      ],
+      "current_remaining_scope": "No merge/release/production approval. Final exact-head full File, PostgreSQL, browser and Windows gates pending; historical independent audit remains BLOCKED. Old pre-fix R123 reproduction failure is retained, not rewritten.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED_INVARIANTS_AND_INVENTORY",
+        "react": "SOURCE_SPECIFIC_STAGED_UNIT_GATES; NOT_FINAL_HEAD",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+        "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "active_gaps": [],
+      "truth_labels": [
+        "INTEGRATED",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U02",
+      "name": "Loss-resistant editing and visible save state",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Durability receipts, volatile draft fallback, backend acknowledgement validation, conflict preservation, local export, scoped generation observers and task recovery chooser.",
+      "sources": [
+        "frontend/src/drafts.ts",
+        "frontend/src/App.tsx",
+        "frontend/src/Editor.tsx",
+        "frontend/src/ui/SaveControls.tsx",
+        "app/autosave/durable.py"
+      ],
+      "inherited_remaining_scope": "Native OS power-loss and Windows interactive validation are NOT_RUN; never-persisted input cannot be guaranteed recoverable.",
+      "continuation_delta": "Corrupt local drafts retain recoverable bytes and require an explicit export/recovery choice. Offline saves do not claim backend persistence; existing durable receipts, CAS conflict drafts and version restore remain authoritative.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 1,
+          "delta": "Corrupt draft raw-byte recovery gate/export and honest browser-offline autosave/manual-save behavior.",
+          "remaining": "Browser storage clearing, inaccessible storage and OS power-loss cannot be guaranteed recoverable.",
+          "verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "frontend/src/drafts.ts",
+        "frontend/src/App.tsx",
+        "frontend/src/ui/SaveControls.tsx",
+        "app/autosave/durable.py"
+      ],
+      "current_remaining_scope": "Browser storage clearing, inaccessible storage, never-persisted keystrokes and real power-loss/native Windows acceptance remain outside the verified contract.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NARROW_D18_WORKSPACE_JOURNEY_PASS_BEFORE_SUPERSESSION_CANCELLATION; FINAL_HOSTED_PENDING",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "frontend/src/AppDraftRecovery.test.tsx",
+        "frontend/src/drafts.test.ts",
+        "tests/test_post_interop_workspace_ux.py"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U01",
+      "name": "Resume the previous workspace",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Actor/scope-private original workspace capture and current-authority reopen: exact chapter/anchor, saved filters, original preference/reference pointers, unresolved original task IDs; local last-project hint verified against fresh original inventory with missing/corrupt recovery and dirty-buffer fences.",
+      "sources": [
+        "frontend/src/store.ts",
+        "frontend/src/novel/EntryExperience.tsx",
+        "frontend/src/App.tsx",
+        "app/experimental/ux.py",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Browser storage can be cleared; fallback is explicit project selection plus the server workspace. Unsupported branch manuscript adapters remain fail-closed. Functional save/reopen/export and viewport/action-hit verification passed at bf0ec2b0; native desktop acceptance is separate.",
+      "continuation_delta": "Resume retains current-authority project/chapter/location/reference/split/draft pointers and original unfinished task/Review Inbox IDs; restoration never dispatches a model.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 1,
+          "delta": "Original Review Inbox capture/reopen joins existing private pending-task references.",
+          "remaining": "Native crash/power-loss acceptance and unsupported branch manuscript adapters.",
+          "verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/ux.py",
+        "frontend/src/store.ts",
+        "frontend/src/App.tsx",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx"
+      ],
+      "current_remaining_scope": "Missing/cleared browser storage requires explicit project selection; unavailable branch-manuscript sources fail closed. Exact reopen has focused contract verification; final browser acceptance is pending.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+      ],
+      "test_sources": [
+        "tests/test_r4_workspace_resume.py",
+        "tests/test_r4_workspace_resume_mounted.py",
+        "tests/test_post_interop_workspace_ux.py",
+        "tests/test_post_interop_task_reopen.py",
+        "frontend/src/experimental/ModelTaskReopen.test.tsx",
+        "frontend/tests/e2e/r4-model-task-reopen.spec.ts"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U03",
+      "name": "Search, commands and recents",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Storage-manifest incremental chapter reads, bounded current-chapter/project/20 authorized-project search, filters/Chinese aliases/paging/cancel/rebuild, current-authority counts and version-resolved navigation; original small structured/task authorities reread.",
+      "sources": [
+        "frontend/src/ui/FeatureLauncher.tsx",
+        "app/services/visual_memory_index.py",
+        "app/lore/context_view.py",
+        "app/experimental/ux.py",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Cache bounded to 8 scopes, 2M characters/2000 records and 50 results per page. Collaboration branch manuscript storage is not implemented; no base-source fallback. Hosted incremental/search journeys and real PG passed at 4e476ce.",
+      "continuation_delta": "Search now spans original novel/chapter/volume/Scene/character-alias/location/organization/rule/timeline/foreshadowing/graph/asset/workflow/task/review records with current source receipts and exact owner navigation.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 1,
+          "delta": "Original novel/volume/scene/timeline/review search and precise story record navigation; full source digest changes stale the receipt.",
+          "remaining": "Universal organization/rule/StoryGraph/asset/workflow-definition search remains incomplete; literal search is not vector retrieval.",
+          "verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING"
+        },
+        {
+          "wave": 1,
+          "refinement": true,
+          "delta": "Original organization/rule/graph/asset/workflow-definition search with exact scoped owner navigation and source revision fences.",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/ux.py",
+        "app/experimental/search_sources.py",
+        "frontend/src/experimental/WorkspaceSearch.tsx",
+        "frontend/src/App.tsx",
+        "frontend/src/ui/FeatureLauncher.tsx"
+      ],
+      "current_remaining_scope": "Literal search is not semantic retrieval. Result/cache/page limits and current permissions apply. Collaboration IDs cannot substitute for absent branch-manuscript storage; final browser journey pending.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NARROW_D18_WORKSPACE_JOURNEY_PASS_BEFORE_SUPERSESSION_CANCELLATION; FINAL_HOSTED_PENDING",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_SEARCH_REFINEMENT.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_structured_search.py",
+        "tests/test_post_interop_workspace_ux.py",
+        "frontend/src/experimental/StructuredSearchNavigation.test.tsx",
+        "frontend/tests/e2e/r4-structured-search.spec.ts"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U07",
+      "name": "Unified task center and honest progress",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Read-only original task authorities, honest stages, filters, private diagnostic export; exact original author-job projection and scoped Draft/Diff/Accept navigation without a second executor. Feature-owned simulator/judge/translation/declarative jobs reopen their owning review panels, not generic manuscript acceptance.",
+      "sources": [
+        "app/jobs.py",
+        "app/application/task_service.py",
+        "frontend/src/ui/taskSummary.ts",
+        "frontend/src/novel/AgentActivityCenter.tsx",
+        "app/experimental/ux.py",
+        "app/experimental/api.py"
+      ],
+      "inherited_remaining_scope": "Original task projection and exact original Draft/Diff recovery passed hosted execution. Universal domain-specific deep links/retries remain bounded by each original authority.",
+      "continuation_delta": "Original Generation/Import/Agent/Workflow/Image/Video/Audio/TTS/Export/analysis/review owners are projected into one task center with honest stages, errors, available cancellation, original IDs and owner-level retry/review navigation. Cost/progress remain unknown where the owner supplies no measurement.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 1,
+          "delta": "Original-owner cancellation receipt, missing audio/video/review projections and owner-ID navigation, route evidence and action limits.",
+          "remaining": "Retry/resume/review remain explicit owning surfaces; fee data UNKNOWN; some model-owned historical candidates lack exact subrecord focusing.",
+          "verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING"
+        },
+        {
+          "wave": 1,
+          "refinement": true,
+          "delta": "Original style/revision model jobs reopen exact source analysis/comparison by original job ID, no automatic replay.",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/ux.py",
+        "app/experimental/author_task_projection.py",
+        "app/experimental/workspace_task_owners.py",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx",
+        "frontend/src/experimental/ExperimentalWorkbench.tsx"
+      ],
+      "current_remaining_scope": "Retry/resume is never a generic replay. Exact style/revision model links are verified; simulator/Judge/translation/declarative exact subrecord reopen now has focused contract verification, with final browser acceptance pending. Synchronous operations are not fabricated background jobs.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NARROW_D18_WORKSPACE_JOURNEY_PASS_BEFORE_SUPERSESSION_CANCELLATION; FINAL_HOSTED_PENDING",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_workspace_ux.py",
+        "tests/test_post_interop_creation_tasks.py",
+        "frontend/src/experimental/TaskOwnerNavigation.continuation.test.tsx",
+        "tests/test_post_interop_task_reopen.py",
+        "frontend/src/experimental/ModelTaskReopen.test.tsx",
+        "frontend/tests/e2e/r4-model-task-reopen.spec.ts"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U08",
+      "name": "Context and privacy inspector",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "One preview/final request authority with exact per-record source digests and exclusions, explicit STYLE/PLOT pins, conservative removal of potentially derived context, UI receipt invalidation and original local variants.",
+      "sources": [
+        "frontend/src/novel/AiContextPreviewPanel.tsx",
+        "app/services/agent_context_service.py",
+        "app/services/context_snapshot_service.py",
+        "app/source_privacy.py",
+        "app/author_request.py",
+        "app/experimental/author_context_api.py",
+        "frontend/src/novel/AuthorRequestPreviewPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Anonymous automatic source bundles cannot be decomposed and remain whole-bundle controls. Independent duplicate user/manuscript text is not semantic DLP. Cloud/budgeted variant group admission remains unavailable; real inference quality NOT_RUN.",
+      "continuation_delta": "Pointer-only Chapter/Canon/StoryGraph/Research add, pin, exclude and budget controls resolve original records into the actual request preview and repeat source/flag/privacy/authority checks at dispatch and persisted-result reads. Provider/model/cloud destination and clipping remain visible.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 1,
+          "delta": "Scene identity is carried by the frontend author preview; the matching optional server scene validation is integrated with Wave2.",
+          "remaining": "Assigned next slice: explicit Research/Canon/StoryGraph add/pin/exclude through existing request owner. Not complete in this checkpoint.",
+          "verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING"
+        },
+        {
+          "wave": 1,
+          "refinement": true,
+          "delta": "Pointer-only Chapter/Canon/StoryGraph/Research add/pin/exclude picker; actual preview/final dispatch resolve originals; persisted output hides after source/flag/privacy revocation and restart.",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/author_context_sources.py",
+        "app/author_request.py",
+        "app/experimental/author_context_api.py",
+        "app/jobs.py",
+        "frontend/src/novel/AuthorSourceItems.tsx",
+        "frontend/src/novel/AuthorRequestPreviewPanel.tsx"
+      ],
+      "current_remaining_scope": "Research is LOCAL_ONLY. Character-only author mode rejects author-only additions. Anonymous derived bundles use conservative whole-bundle exclusion; duplicated prose is not semantic DLP. Unsupported branch sources and cloud/budgeted variant groups remain unavailable.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "PRIOR_D18_SELECTOR_TIMEOUT; EXACT_SELECTOR_AND_READINESS_TEST_FIX_VERIFIED_IN_SOURCE; FINAL_HOSTED_PENDING",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_REFINEMENT.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_author_added_sources.py",
+        "frontend/src/novel/AuthorSourcePicker.test.tsx",
+        "frontend/tests/e2e/r4-author-added-sources.spec.ts"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U09",
+      "name": "Local AI diagnostic and setup guidance",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Passive bounded imported Comfy API workflow inspection, existing metadata/registry comparison, honest blockers and explicit redacted report save/download.",
+      "sources": [
+        "app/model_center/discovery.py",
+        "app/model_center/discovery_probes.py",
+        "frontend/src/ui/LocalAiDiscovery.tsx",
+        "app/experimental/media.py",
+        "app/experimental/local_ai_inspection.py",
+        "frontend/src/experimental/WorkflowInspectionPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Unregistered runtime families stay ADAPTER_REQUIRED. No imported workflow execution or local environment modification; real GPU and model/runtime acceptance are NOT_RUN.",
+      "continuation_delta": "Existing Detect/Validate/Register/Enable/Launch owners expose readable runtime, endpoint, missing model/component/node/workflow, adapter, license and memory-risk diagnostics without guessing GPU figures or changing software automatically.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 1,
+          "delta": "Actionable mapped Model Center diagnostics without install/upgrade/launch or invented memory figures.",
+          "remaining": "Actual runtime, GPU, model quality and Windows acceptance LOCAL_REQUIRED/NOT_RUN.",
+          "verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/model_center/discovery.py",
+        "app/model_center/discovery_probes.py",
+        "app/experimental/local_ai_inspection.py",
+        "frontend/src/ui/LocalAiDiscovery.tsx",
+        "frontend/src/experimental/WorkflowInspectionPanel.tsx"
+      ],
+      "current_remaining_scope": "Actual hardware/runtime/model validation remains LOCAL_REQUIRED/NOT_RUN. No automatic ComfyUI/Torch/CUDA/driver upgrade or unknown-node installation; unsupported families retain ADAPTER_REQUIRED.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "frontend/src/ui/LocalAiDiscovery.test.tsx",
+        "tests/test_local_ai_discovery.py",
+        "tests/test_local_ai_discovery_egress.py"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U12",
+      "name": "Actionable errors and private diagnostic export",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Explicit allowlisted diagnosis preview, selected sections, state-bound local export, sanitized task status and actionable version/session errors.",
+      "sources": [
+        "app/structured_log.py",
+        "app/runtime_diagnostics.py",
+        "frontend/src/api.ts",
+        "frontend/src/novel/RuntimeDiagnostics.tsx",
+        "app/experimental/ux.py",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Diagnostic coverage is allowlisted and bounded, not complete cross-module event coverage. Export is explicit/local; no automatic upload.",
+      "continuation_delta": "Task/diagnostic/history reads reauthorize at response boundaries; cancellation CAS errors avoid leaking original private content. Existing structured diagnostics remain bounded and user-exported.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 1,
+          "delta": "Reauthorize task/diagnostic/history responses and sanitize source cancellation CAS payloads.",
+          "remaining": "Allowlisted bounded diagnostics, not arbitrary logs; export stays manual/local.",
+          "verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/ux.py",
+        "app/experimental/ux_api.py",
+        "app/runtime_diagnostics.py",
+        "frontend/src/novel/RuntimeDiagnostics.tsx",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx"
+      ],
+      "current_remaining_scope": "The allowlist is not complete telemetry; no automatic upload or unbounded raw-log exposure.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_workspace_ux.py"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U04",
+      "name": "Focus, reference split and inspiration",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Saved typography, focus, readonly split references, chapter bookmarks, private inspiration and reviewed planning copy; original-CAS paragraph locks shared with A11/U05.",
+      "sources": [
+        "frontend/src/Editor.tsx",
+        "frontend/src/App.tsx",
+        "frontend/src/novel/ResearchPanel.tsx",
+        "app/experimental/writing_focus.py",
+        "frontend/src/experimental/WritingFocusPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Persistent paragraph locks and restored original reference/preference pointers are implemented; native input remains NOT_RUN. Unsupported branch manuscript adapters fail closed.",
+      "continuation_delta": "Existing focus/editor and pinned reference split continue through original workspace pointers; persistent paragraph locks and exact references remain usable with the new resume/context paths.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/writing_focus.py",
+        "frontend/src/experimental/WritingFocusPanel.tsx",
+        "frontend/src/Editor.tsx",
+        "frontend/src/App.tsx"
+      ],
+      "current_remaining_scope": "No separate new focus engine. Native input and absent branch-manuscript adapters remain separate acceptance boundaries.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_r4_workspace_resume.py"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U10",
+      "name": "Scenario onboarding and progressive disclosure",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Skippable five-scenario guide and real isolated no-key synthetic project through original local/scoped authorities; durable partial receipts, explicit recovery/open, original editor/save/reopen/TXT export guide and currently enabled-tool discovery.",
+      "sources": [
+        "frontend/src/novel/EntryExperience.tsx",
+        "frontend/src/ui/FeatureLauncher.tsx",
+        "frontend/src/ui/LocalAiDiscovery.tsx",
+        "frontend/src/experimental/WorkspaceToolsPanel.tsx"
+      ],
+      "inherited_remaining_scope": "One sample per actor/workspace. Original create without a returned receipt stays UNKNOWN rather than being replayed; confirmed partial projects remain available for manual recovery. Functional save/reopen/export and viewport/action-hit verification passed at bf0ec2b0; native desktop acceptance is separate.",
+      "continuation_delta": "Existing first-use/sample creation and progressive feature disclosure remain intact; continuation adds actionable unavailable/empty/recovery states in the original workspace.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/first_use.py",
+        "frontend/src/novel/EntryExperience.tsx",
+        "frontend/src/ui/FeatureLauncher.tsx"
+      ],
+      "current_remaining_scope": "No new isolated first-use File/API acceptance is claimed by this continuation slice. Original create-without-receipt stays UNKNOWN and is not replayed; native first-run/installer acceptance remains NOT_RUN.",
+      "verification_layers": {
+        "local_file_api": "NOT_RUN_ISOLATED_CONTINUATION_JOURNEY",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U13",
+      "name": "Chinese input, accessibility and scale",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Actual 100k/500k/1m File/API processes plus hosted Chromium input-render and search samples, composition/Unicode, keyboard and CSS-zoom matrix; lazy experimental workbench.",
+      "sources": [
+        "frontend/src/Editor.tsx",
+        "frontend/tests/visual",
+        "scripts"
+      ],
+      "inherited_remaining_scope": "Source-specific Linux rendering/search measurements retained; visible-editor geometry and action targets passed hosted execution. Native Windows, physical latency, screen reader and OS zoom remain NOT_RUN.",
+      "continuation_delta": "Consumers reuse the existing shell, shared controls, tokens, labelled fields, keyboard/dirty-draft contracts and authored three-viewport browser checks; no final visual redesign.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "frontend/src/Editor.tsx",
+        "frontend/src/ui/AppShell.tsx",
+        "frontend/src/ui/tokens.css",
+        "frontend/tests/visual",
+        "docs/ui/design_system.md"
+      ],
+      "current_remaining_scope": "React/jsdom and token checks do not verify physical input latency, native Windows IME, screen readers, multi-monitor or OS zoom. Historical Chromium scale/geometry receipts remain source-specific; final hosted screenshots pending.",
+      "verification_layers": {
+        "local_file_api": "NOT_RUN_ISOLATED_CONTINUATION_JOURNEY",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "A04",
+      "name": "Temporal semantic story graph",
+      "wave": 2,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Typed temporal relations over existing IDs and world review, perspective filtering, persisted affected-index updates and evidence/version checks.",
+      "sources": [
+        "app/experimental/world.py",
+        "app/experimental/planning.py",
+        "app/experimental/imports.py",
+        "app/experimental/story_graph.py",
+        "frontend/src/experimental/StoryGraphPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Deterministic reviewed relations, not universal semantic understanding; branch manuscript source adapter remains unavailable.",
+      "continuation_delta": "Original typed graph adds OBJECT and requested knows/believes/belongs_to/hates/trusts/related_to/appears_in relations with explicit temporal Scene identity, original order/ancestor/source fences and transaction reauthorization.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 2,
+          "delta": "Original Scene identity/order/source/ancestor fences and requested relation/object types; live transaction authority",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/world.py",
+        "app/experimental/story_graph.py",
+        "app/experimental/story_graph_api.py",
+        "frontend/src/experimental/StoryGraphPanel.tsx"
+      ],
+      "current_remaining_scope": "Reviewed deterministic relations are not universal semantic inference. Uncertain/future/cross-parent scene states are excluded; absent branch manuscript authority remains unavailable.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_scene_mind.py",
+        "tests/test_post_interop_creation_mounted.py",
+        "tests/test_post_interop_creation_upgrade.py"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "A05",
+      "name": "Character knowledge and mind state",
+      "wave": 2,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Character-only continue/brainstorm preview and final adapter request; original user instruction only, no automatic manuscript tail, selection, omniscient context or derived STYLE/plan; final authority/source/LOCAL_ONLY fences.",
+      "sources": [
+        "app/experimental/world.py",
+        "app/lore/context_intelligence.py",
+        "app/services/agent_context_service.py",
+        "app/experimental/story_graph.py",
+        "frontend/src/experimental/StoryGraphPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Character-only continue/brainstorm uses reviewed local-only knowledge. Advanced character selection/rewrite and actual model-quality evaluation remain unavailable or unverified.",
+      "continuation_delta": "Character context separates author/world facts, knowledge, belief/false belief, secrets, goals, fears, values, emotion, intent and relationship state at Chapter/Scene time; forget tombstones prevent stale knowledge from reappearing.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 2,
+          "delta": "Relationship state, unknown/future exclusion, stale forget tombstones and exact-scene original character authoring",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/story_graph.py",
+        "app/experimental/character_author_context.py",
+        "app/experimental/author_context_api.py",
+        "frontend/src/experimental/StoryGraphPanel.tsx",
+        "frontend/src/novel/AiWritingPanel.tsx"
+      ],
+      "current_remaining_scope": "Only the supported original character-author operations are available; unrestricted character-selection rewriting and real literary/POV quality are not verified. Author-only research/graph additions cannot enter character-only mode.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_scene_mind.py",
+        "tests/test_r4_character_author_context.py",
+        "frontend/src/novel/CharacterAuthorPanel.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "A06",
+      "name": "Explainable model broker",
+      "wave": 3,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Registered TEXT, IMAGE and AUDIO candidates, current quote/request receipts, original executor admission, atomic reservations/settlement and honest unknown holds; explicit zero-price local media batch admission.",
+      "sources": [
+        "app/provider_runtime_v2_routing_service.py",
+        "app/provider_routing_policy_v2.py",
+        "app/model_center/service.py",
+        "app/experimental/provider_profiles.py"
+      ],
+      "inherited_remaining_scope": "No fabricated quality ranking. Actual configured-model quality and paid-billing acceptance remain NOT_RUN. Optional cloud execution remains explicitly restricted.",
+      "continuation_delta": "Original Broker supports Local/Quality/Cost/Speed/Privacy/Balanced/Custom policy aliases with explicit fallback preapproval, license/privacy/context/availability constraints, current route identities and original budget/admission fences.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 3,
+          "delta": "Privacy/Balanced policy and explicit cloud-fallback/license admission controls over existing broker routes and unknown-cost accounting.",
+          "verification": "FRESH_RECOVERED_FOCUSED_BACKEND_PASS_FULL_FINAL_SOURCE_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/model_broker.py",
+        "app/experimental/model_broker_api.py",
+        "app/experimental/provider_profiles.py",
+        "app/model_center/service.py",
+        "frontend/src/experimental/ModelBrokerPanel.tsx"
+      ],
+      "current_remaining_scope": "Unknown quality is not ranked as measured quality; unknown cost/hardware stays unknown. Local-only feature coordinators do not become paid-cloud execution merely because broker candidate policy exists. Real billing/model performance NOT_RUN.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_3_MODELS_RESEARCH.json",
+        "docs/delivery/post-interop-continuation/WAVE_3_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave3_broker.py",
+        "tests/test_r4_broker_cancel_dispatch.py",
+        "frontend/src/experimental/ModelBrokerPanel.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "A07",
+      "name": "Model benchmark and capability evidence",
+      "wave": 3,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Bounded registered text and supported original-local IMAGE benchmarks with original job/output receipts, current registration/config/model evidence, decoded dimensions, actual measured latency and budget admission; preference evidence remains separate.",
+      "sources": [
+        "app/model_center/discovery.py",
+        "app/model_center/runtime_profiles.py",
+        "tests/test_r4_registered_local_media.py"
+      ],
+      "inherited_remaining_scope": "VIDEO_WORKFLOW lacks equivalent proven-local current broker admission and remains explicit import-only. Missing hardware/usage/cold-start measurements are unknown; real GPU/model quality remains NOT_RUN.",
+      "continuation_delta": "Model profiles separate catalog claims, detection, contract tests, local benchmark observations and explicit version/output-bound human review, retaining original runtime/model identities.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 3,
+          "delta": "Capability profiles distinguish catalog/detected/contract/local execution; explicit current-evidence human verification cannot promote imported evidence.",
+          "verification": "FRESH_RECOVERED_FOCUSED_BACKEND_PASS_FULL_FINAL_SOURCE_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/model_benchmark.py",
+        "app/experimental/model_benchmark_api.py",
+        "app/model_center/discovery.py",
+        "frontend/src/experimental/ModelBenchmarkPanel.tsx"
+      ],
+      "current_remaining_scope": "Human review never manufactures quality scores, throughput, VRAM, memory or failure-rate measurements. Real GPU/quality benchmarks and unsupported video workflow admission remain NOT_RUN/adapter-bound.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_3_MODELS_RESEARCH.json",
+        "docs/delivery/post-interop-continuation/WAVE_3_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave3_broker.py",
+        "frontend/src/experimental/ModelBenchmarkPanel.continuation.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "A09",
+      "name": "Asset lineage and derived relationships",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Existing asset DAG and metadata reused for scoped lineage view, versioned declarations, cycle/parent drift/deletion detection, exact impact records, legacy OFF/V1 projection hiding.",
+      "sources": [
+        "app/services/asset_library_service.py",
+        "app/experimental/media.py",
+        "app/services/export_resource_snapshot.py"
+      ],
+      "inherited_remaining_scope": "Only recorded dependency evidence is known; unmapped dependencies and license judgements remain unknown.",
+      "continuation_delta": "Original Asset Library/DAG projects observed provider/model/adapter/workflow/seed/time/prompt digest and Scene/Shot/input/parent evidence. Approved comic appearance references reuse those assets and source digests.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 3,
+          "delta": "Existing vector records now reference original Research/asset source digests with atomic invalidation; semantic quality remains unverified.",
+          "verification": "FRESH_RECOVERED_FOCUSED_BACKEND_PASS_FULL_FINAL_SOURCE_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/services/asset_library_service.py",
+        "app/experimental/production_lineage.py",
+        "app/experimental/media.py",
+        "frontend/src/experimental/ProductionLineagePanel.tsx"
+      ],
+      "current_remaining_scope": "Only actually recorded dependency edges/hashes/licenses are known; missing historical provenance and legal judgments are not invented. Real visual embedding/provider quality remains separate.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_media_continuation.py",
+        "tests/test_r4_production_lineage.py",
+        "tests/test_post_interop_wave5_templates_sdk_comics.py"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "A13",
+      "name": "Production manifest and controlled replay",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Real media manifests with observed original local registration/runtime/model metadata, supported seed and parameters, source/current quote validation, new original replay tasks and origin-bound selected-refresh capture; synthetic byte equality remains separately labeled.",
+      "sources": [
+        "app/jobs.py",
+        "app/services/asset_library_service.py",
+        "app/experimental/media.py",
+        "tests/test_r4_registered_local_media.py"
+      ],
+      "inherited_remaining_scope": "Trusted original model hash is used only when observed; absent/historical hashes remain unknown and block exact reconstruction. A seed never promises GPU byte equality. Cloud replay coordinator remains optional unimplemented.",
+      "continuation_delta": "Production manifest separates Traceable, current Replayable preflight, unassessed approximate reproduction, synthetic-only deterministic fixtures and actual byte-comparison evidence; original execution/review owns replay.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/production_lineage.py",
+        "app/experimental/media.py",
+        "frontend/src/experimental/ProductionLineagePanel.tsx"
+      ],
+      "current_remaining_scope": "Missing model hashes/environment/usage remain unknown; a seed never guarantees GPU byte identity. Cloud replay coordinator, real model reproducibility and hardware acceptance remain unimplemented/unverified.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_media_continuation.py",
+        "tests/test_r4_production_mounted.py"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "U06",
+      "name": "Change impact and selective refresh",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Selected recorded COVER/STORYBOARD refresh through original synthetic or supported registered-local image workflow, fresh original source preparation/quote, current registration/source fences, locked-result preservation and pending asset review.",
+      "sources": [
+        "app/experimental/common.py",
+        "app/services/asset_library_service.py",
+        "app/experimental/audiobook.py",
+        "tests/test_r4_registered_local_media.py"
+      ],
+      "inherited_remaining_scope": "Audio/subtitle/video nodes are not generically executable via image refresh. Unknown upstream money usage requires explicit original ledger reconciliation; no fake zero actual cost.",
+      "continuation_delta": "Original Cover/Storyboard workflows gain source pickers, typography-aware briefs/revisions, source-version comparison, cancel/late-result fences and selective fresh requests. Known missing-character errors mark both briefs and generated candidates stale without hiding unrelated work.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/media.py",
+        "app/experimental/media_api.py",
+        "app/experimental/change_impact.py",
+        "frontend/src/experimental/MediaPanel.tsx",
+        "frontend/src/experimental/ChangeImpactPanel.tsx"
+      ],
+      "current_remaining_scope": "Stale queue/approval remains denied; unknown config/permission errors propagate. Removed character references require restoring the source or a new brief. Image refresh is not a generic audio/video executor; real art quality and unknown upstream monetary settlement remain separate.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_media_visibility.py",
+        "tests/test_post_interop_media_continuation.py",
+        "frontend/src/experimental/MediaPanel.continuation.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "A02",
+      "name": "Style metrics and drift",
+      "wave": 2,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Existing STYLE records reused; explicit Chinese/English source ranges, reproducible metrics and chapter drift, approved rule/profile editing, fresh preview and handoff to original writing inputs.",
+      "sources": [
+        "app/services/creation_workbench_service.py",
+        "frontend/src/novel/CreationWorkbenchPanel.tsx"
+      ],
+      "inherited_remaining_scope": "No calibrated quality probabilities or real-model interpretation. Additional language metrics need separately defined methods.",
+      "continuation_delta": "Style Profile measures source-local sentence/paragraph length, quoted dialogue share, lexical repetition/high-frequency units, punctuation and lexical POV cues; separately reviewed model opinions use exact selected source ranges and original jobs.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 2,
+          "delta": "Independent source-local deterministic metrics plus explicit registered-local, exact-range Model Opinion job/review lifecycle",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/style_analysis.py",
+        "app/experimental/style_analysis_model.py",
+        "frontend/src/experimental/StyleAnalysisPanel.tsx",
+        "frontend/src/experimental/StyleAnalysisModelPanel.tsx"
+      ],
+      "current_remaining_scope": "Description/sensory semantic ratios and narrative distance/tone/rhythm/humor/imagery are not calibrated deterministic facts. Lexical POV cues are not full POV classification; actual model judgments/quality NOT_RUN.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_style_judge.py",
+        "tests/test_post_interop_style_model.py",
+        "frontend/src/experimental/StyleAnalysisModelPanel.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "A03",
+      "name": "Evidence-based narrative judge",
+      "wave": 2,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Versioned deterministic findings plus separately selected local-model opinion jobs through original author/broker/job authorities; exact source/rubric/evidence preview, strict quote validation, original review_threads, durable cancellation/recovery and advisory-only results.",
+      "sources": [
+        "app/experimental/world.py",
+        "app/lore/continuity.py",
+        "app/services/narrative_finding_service.py",
+        "app/experimental/narrative_judge_model.py",
+        "docs/r4_registered_judge_execution.md"
+      ],
+      "inherited_remaining_scope": "One bounded model job per rule run, 18k-character input, 32KiB output and120s deadline. Independence remains UNVERIFIED; actual literary quality is NOT_RUN.",
+      "continuation_delta": "Evidence-bound Judge findings support accept/ignore/intentional review, unchanged-evidence intentional dedup and reopen, plus real original WriterRoom revision-task creation with retained exact review target.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 2,
+          "delta": "Accept/Intentional evidence-bound dedup, reopening and original Writer Room task creation/retained target",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/narrative_judge.py",
+        "app/experimental/narrative_judge_model.py",
+        "app/experimental/writer_room.py",
+        "frontend/src/experimental/NarrativeJudgePanel.tsx",
+        "frontend/src/experimental/NarrativeJudgeRevisionTaskPanel.tsx"
+      ],
+      "current_remaining_scope": "Model-derived advice remains separately labelled; model independence and literary quality are NOT_RUN. Task-center exact model-opinion reopening has focused contract verification; domain approval never automatically applies prose/Canon.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_style_judge_mounted.py",
+        "tests/test_post_interop_style_model.py",
+        "frontend/src/experimental/NarrativeJudgeContinuationPanels.test.tsx",
+        "tests/test_post_interop_task_reopen.py",
+        "frontend/src/experimental/ModelTaskReopen.test.tsx",
+        "frontend/tests/e2e/r4-model-task-reopen.spec.ts"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "A01",
+      "name": "Bounded story simulation",
+      "wave": 2,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Original deterministic simulator plus explicit registered-local model preview/consent/job dispatch, bounded schema/evidence/step/branch checks, original A05 character-only context, durable recovery/cancel and explicit candidate selection into existing planning review.",
+      "sources": [
+        "app/experimental/planning.py",
+        "app/experimental/world.py",
+        "app/experimental/story_simulator_model.py",
+        "docs/r4_story_simulator_model_execution.md"
+      ],
+      "inherited_remaining_scope": "No automatic Canon/manuscript write or factual future probability. Local registered route/configuration and known zero rates are required; model/GPU quality remains NOT_RUN.",
+      "continuation_delta": "Simulator uses current scene/mind/world/Canon/knowledge/constraints and retains per-step hypothetical state deltas, consequences, risks, version history and bounded alternate routes; generated results stay proposals.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 2,
+          "delta": "Scene/mind receipt, per-step applied hypothetical deltas, safe version history; existing local-model and Proposal-only lifecycle retained",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/story_simulator.py",
+        "app/experimental/story_simulator_model.py",
+        "frontend/src/experimental/StorySimulatorPanel.tsx"
+      ],
+      "current_remaining_scope": "Deterministic kernel outcomes are not factual future probabilities. Real local model/GPU/literary quality NOT_RUN; exact model-task reopening has focused contract verification; final browser acceptance is pending. No automatic manuscript or Canon write.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_scene_mind.py",
+        "tests/test_post_interop_creation_mounted.py",
+        "tests/test_r4_story_simulator_model.py",
+        "tests/test_post_interop_task_reopen.py",
+        "frontend/src/experimental/ModelTaskReopen.test.tsx",
+        "frontend/tests/e2e/r4-model-task-reopen.spec.ts"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "A10",
+      "name": "Layered research library",
+      "wave": 3,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Bounded TXT/MD/DOCX/PDF/image sources, exact paragraph/page citations, local search/notes, explicit safe web fetch, source revocation and reviewed setting drafts using existing world authority.",
+      "sources": [
+        "frontend/src/novel/ResearchPanel.tsx",
+        "app/import_parsers.py",
+        "app/services/memory_service.py",
+        "app/experimental/imports.py"
+      ],
+      "inherited_remaining_scope": "OCR/vector/vision adapters absent; actual public-web compatibility and native Windows containment are not verified.",
+      "continuation_delta": "Research retains source/citation/version/import-time/digest, TXT/Markdown/DOCX/PDF extraction and explicit bounded web-capture interface, image metadata, replacement/history/PRIVATE restore, notes and citation repair. Separate Embeddings owner offers scoped real-vector lifecycle over original sources.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 3,
+          "delta": "Research file replacement/history/private restore/export and note edit/delete/citation repair; original-source vector picker and real guarded registered-local embedding adapter.",
+          "verification": "FRESH_RECOVERED_FOCUSED_BACKEND_PASS_FULL_FINAL_SOURCE_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/research_library.py",
+        "app/experimental/research_extract.py",
+        "app/experimental/embeddings.py",
+        "app/experimental/research_library_api.py",
+        "frontend/src/experimental/ResearchLibraryPanel.tsx",
+        "frontend/src/experimental/EmbeddingPanel.tsx"
+      ],
+      "current_remaining_scope": "Research remains LOCAL_ONLY and never automatically becomes Canon or character context. OCR/vision/image embedding are NOT_CONFIGURED; no keyword-as-vector fallback. Actual Ollama inference/semantic quality and broad public-web compatibility NOT_RUN; loopback transport tests use synthetic vectors.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_3_MODELS_RESEARCH.json",
+        "docs/delivery/post-interop-continuation/WAVE_3_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave3_research.py",
+        "tests/test_post_interop_wave3_embedding_adapter.py",
+        "tests/test_post_interop_embedding_feature_isolation.py",
+        "frontend/src/experimental/EmbeddingPanel.continuation.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "narrow_real_verification": "Original File/citation/history and actual loopback HTTP vector transport against a synthetic vector server; actual Ollama/image/semantic inference NOT_RUN"
+    },
+    {
+      "id": "A11",
+      "name": "Revision intelligence and partial changes",
+      "wave": 2,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Exact ProseMirror/Unicode block anchors, preview/selected accept/reject, original CAS/history, partial remainder re-review, persistent paragraph locks with drift/empty recovery.",
+      "sources": [
+        "app/document_revision.py",
+        "app/repositories/screenplay_versions.py",
+        "app/services/chapter_service.py",
+        "frontend/src/RevisionPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Branch-isolated manuscript writing remains unavailable; local original-CAS partial changes are implemented. Model quality is NOT_RUN.",
+      "continuation_delta": "Version A/B comparison binds original ChapterService history and separates deterministic text/source evidence, imported semantic declarations and executed Model-derived interpretations. Existing partial selection acceptance, locks and original CAS remain unchanged.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 2,
+          "delta": "Original history A/B diff, exact evidence/imported interpretations, separately executed Model-derived opinion jobs and explicit metadata-only review",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/revision_intelligence.py",
+        "app/experimental/revision_intelligence_model.py",
+        "app/experimental/revision_intelligence_api.py",
+        "frontend/src/experimental/RevisionIntelligencePanel.tsx",
+        "frontend/src/experimental/RevisionComparisonModelPanel.tsx"
+      ],
+      "current_remaining_scope": "Semantic interpretations are evidence-backed opinions, not automatic factual proof or edits. No branch-manuscript fallback. Real model quality NOT_RUN; original local partial-write authority only.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_revision_compare.py",
+        "tests/test_post_interop_revision_model.py",
+        "tests/test_r4_revision_intelligence.py",
+        "frontend/src/experimental/RevisionComparisonModelPanel.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "U05",
+      "name": "Selection assistant and partial accept",
+      "wave": 1,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Original author preview/dispatch with trusted exact selection receipt and partial-only job origin; legacy accept is forbidden; reviewed original-CAS path preserves untouched blocks.",
+      "sources": [
+        "frontend/src/novel/AiWritingPanel.tsx",
+        "app/services/generation_service.py",
+        "frontend/src/Editor.tsx"
+      ],
+      "inherited_remaining_scope": "Actual model quality and native input are NOT_RUN; branch manuscript sources fail closed.",
+      "continuation_delta": "Selection operations continue to use the exact saved range/version, reviewed candidate comparison and segmented original-CAS acceptance; stale candidates cannot overwrite new prose and paragraph locks remain enforced.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "continuation_waves": [
+        {
+          "wave": 1,
+          "delta": "Retained existing original-CAS selection revision path, regression-covered App integration.",
+          "remaining": "Further revision work is Wave2; real model quality NOT_RUN.",
+          "verification": "LOCAL_FOCUSED_CONTRACTS_PASS_FINAL_SOURCE_CI_PENDING"
+        },
+        {
+          "wave": 2,
+          "delta": "Existing exact selection/locks/partial acceptance/CAS preserved; global UX remains the existing UX owner",
+          "verification": "FRESH_FOCUSED_EXECUTION_FINAL_SOURCE_CI_PENDING"
+        }
+      ],
+      "current_owners": [
+        "app/experimental/revision_intelligence.py",
+        "app/services/generation_service.py",
+        "frontend/src/Editor.tsx",
+        "frontend/src/novel/AiWritingPanel.tsx"
+      ],
+      "current_remaining_scope": "Real output quality/native selection/IME acceptance NOT_RUN. Branch source adapters remain unavailable; no generic whole-manuscript adoption for feature-owned model jobs.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_r4_revision_intelligence.py",
+        "tests/test_post_interop_revision_compare.py",
+        "frontend/src/experimental/RevisionIntelligencePanel.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U11",
+      "name": "Reading, proofreading and publishing checks",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Continuous authorized saved-chapter reader, keyboard TOC, exact quote navigation, private annotations, literal proof rules/ignored reasons and read-only TXT/MD/DOCX/EPUB/PDF preflight linked to original immutable export.",
+      "sources": [
+        "frontend/src/novel/ExportPanel.tsx",
+        "app/services/export_job_service.py",
+        "app/release_readiness.py",
+        "app/experimental/reader_preflight.py",
+        "frontend/src/experimental/ReaderPreflightPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Native target reader/layout and full typography validation remain separate from deterministic preflight and internal reader.",
+      "continuation_delta": "Existing read/proof/publishing preflight and original export controls remain the authority; no separate publishing or reader state was introduced.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/reader_preflight.py",
+        "app/services/export_job_service.py",
+        "frontend/src/experimental/ReaderPreflightPanel.tsx",
+        "frontend/src/novel/ExportPanel.tsx"
+      ],
+      "current_remaining_scope": "No new isolated full reader/typography acceptance is claimed. Native readers, layout, accessibility and target publishing quality require actual target evidence; final full regression pending.",
+      "verification_layers": {
+        "local_file_api": "NOT_RUN_ISOLATED_CONTINUATION_JOURNEY",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U15",
+      "name": "Writing goals and controlled notices",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Original project goals plus optional actor-scoped sessions/checklists/stopping notes, persisted-event recap and deduplicated task-center notices; explicit timezone reminders live only while the panel is mounted.",
+      "sources": [
+        "frontend/src/novel/NovelOverviewPanel.tsx",
+        "frontend/src/ui/taskSummary.ts",
+        "app/services/v1_capability_service.py",
+        "app/experimental/writing_sessions.py",
+        "frontend/src/experimental/WritingSessionPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Reminders occur only while the task center is open; no OS/background/external notification claim.",
+      "continuation_delta": "Original writing goals, session counters and controlled in-app notices remain unchanged; U15 is not a template-library or onboarding ID.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/writing_sessions.py",
+        "frontend/src/experimental/WritingSessionPanel.tsx",
+        "frontend/src/novel/NovelOverviewPanel.tsx"
+      ],
+      "current_remaining_scope": "No Wave5-specific U15 closure claim. Notices are in-app only while the supported surface is active; no OS/background/external notification service. Final full regression pending.",
+      "verification_layers": {
+        "local_file_api": "NOT_RUN_ISOLATED_CONTINUATION_JOURNEY",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "A08",
+      "name": "Camera grammar and scene direction",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Versioned shot direction over original screenplay/shot IDs, bounded geometry/axis checks with insufficient-evidence states, deliberate override reasons and explicit original shot review.",
+      "sources": [
+        "app/services/screenplay_service.py",
+        "frontend/src/novel/DirectorShotCard.tsx",
+        "app/experimental/director.py",
+        "frontend/src/experimental/DirectorPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Manual reviewed shot direction is implemented; real visual/model production quality is NOT_RUN.",
+      "continuation_delta": "Existing Scene→Shot→Storyboard/Motion/Video proposals gain optional shot function/focus intent and transparent same-scene rhythm/repeated-framing/declared-direction review suggestions.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/director.py",
+        "app/services/screenplay_service.py",
+        "frontend/src/experimental/DirectorPanel.tsx",
+        "frontend/src/novel/DirectorShotCard.tsx"
+      ],
+      "current_remaining_scope": "Grammar checks use declared metadata, not visual proof of cinematic quality or the 180-degree rule. Manual review remains required; real generated motion/video/model quality NOT_RUN.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_media_continuation.py",
+        "tests/test_r4_director.py",
+        "frontend/src/experimental/DirectorPanel.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "A12",
+      "name": "OTIO and NLE exchange",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Supported OTIO clip/track/gap/transition/media-reference import/export using rational time, actual official parser round-trip, loss reports and new-output export without changing external projects.",
+      "sources": [
+        "app/industry_export_formats.py",
+        "app/services/export_job_service.py",
+        "app/services/video_assembly_service.py",
+        "app/experimental/timeline_exchange.py",
+        "frontend/src/experimental/TimelineExchangePanel.tsx"
+      ],
+      "inherited_remaining_scope": "Official OTIO parser executes; target NLE applications and interoperability acceptance remain NOT_RUN.",
+      "continuation_delta": "Official OTIO parser contracts preserve tracks/clips/rational timing, media and supported transitions while distinguishing timeline start from source in/out and independent audio/video timing; unknown camera/action/dialogue/sound metadata produces losses/warnings.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/timeline_exchange.py",
+        "app/industry_export_formats.py",
+        "frontend/src/experimental/TimelineExchangePanel.tsx"
+      ],
+      "current_remaining_scope": "Actual Resolve/Premiere/other NLE import/export acceptance remains NOT_RUN. Supported OTIO syntax is not universal target compatibility; media availability and unsupported metadata remain explicit.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_media_continuation.py",
+        "tests/test_r4_timeline_exchange.py",
+        "tests/test_r4_director_exchange_mounted.py"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "narrow_real_verification": "Real official OTIO parsing or measured synthetic fixture WAV/frame processing as applicable; no target NLE, ASR, speech-quality or word-alignment claim"
+    },
+    {
+      "id": "B03",
+      "name": "Voice direction and speaker attribution",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Segment speaker/voice/emotion/rate/pause editing, original approved TTS queue and selected redo, measured frame-based per-segment pause/reorder assembly using existing PCM mixer, explicit WAV candidate preview/download and original asset review.",
+      "sources": [
+        "app/experimental/audiobook.py",
+        "frontend/src/experimental/AudiobookPanel.tsx",
+        "app/audio_production_store.py",
+        "app/experimental/voice_direction.py",
+        "frontend/src/experimental/VoiceDirectionPanel.tsx",
+        "tests/test_r5_pause_aware_audio.py",
+        "frontend/tests/e2e/r4-pause-aware-audio.spec.ts"
+      ],
+      "inherited_remaining_scope": "Real voice/TTS quality, cloned-reference voice consent, ASR/phoneme alignment and cloud-budgeted coordinator remain unavailable/unverified. Legacy bindings retain measured millisecond precision until rebound.",
+      "continuation_delta": "Original voice mapping, dialogue attribution, emotion/style and audio/TTS queues retain human review; unknown speakers are NEEDS_REVIEW. Measured WAV frames, pauses/order and bounded PCM mixing produce source-versioned segment timing.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/audiobook.py",
+        "app/experimental/voice_direction.py",
+        "app/audio_production_store.py",
+        "frontend/src/experimental/AudiobookPanel.tsx",
+        "frontend/src/experimental/VoiceDirectionPanel.tsx"
+      ],
+      "current_remaining_scope": "Measured fixture audio is not real voice quality. ASR/forced word/phoneme alignment, precise lip sync and reference-voice consent/execution remain NOT_CONFIGURED/NOT_RUN. Synchronous bounded mix is not a fabricated durable task.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_media_continuation.py",
+        "tests/test_r5_voice_subtitles.py",
+        "frontend/src/experimental/VoiceDirectionPanel.continuation.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim",
+      "narrow_real_verification": "Real official OTIO parsing or measured synthetic fixture WAV/frame processing as applicable; no target NLE, ASR, speech-quality or word-alignment claim"
+    },
+    {
+      "id": "B04",
+      "name": "Subtitle editing and timeline",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Version-bound manual/measured subtitle cues, character labels and SRT/WebVTT export with order/duration/overlap/reading checks; changed media invalidates prior alignment.",
+      "sources": [
+        "app/industry_export_formats.py",
+        "app/services/audiobook_service.py",
+        "app/experimental/audiobook.py",
+        "app/experimental/subtitle_timeline.py",
+        "frontend/src/experimental/SubtitleTimelinePanel.tsx"
+      ],
+      "inherited_remaining_scope": "ASR/forced alignment, subtitle burn-in and target subtitle applications are not implemented/verified.",
+      "continuation_delta": "Original manual/measured subtitle cue editing and SRT/WebVTT export retain version/overlap/order checks; upstream frame evidence is shown, stale timing views and misleading partial endpoints are suppressed.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/subtitle_timeline.py",
+        "app/experimental/voice_direction.py",
+        "frontend/src/experimental/SubtitleTimelinePanel.tsx"
+      ],
+      "current_remaining_scope": "No ASR/word alignment model means exact speech-word timestamps are not claimed. Burn-in, subtitle applications and professional typography remain unimplemented/unverified.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_r5_voice_subtitles.py",
+        "tests/test_r5_voice_subtitles_mounted.py",
+        "frontend/src/experimental/VoiceSubtitlePanels.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "narrow_real_verification": "Real official OTIO parsing or measured synthetic fixture WAV/frame processing as applicable; no target NLE, ASR, speech-quality or word-alignment claim"
+    },
+    {
+      "id": "U14",
+      "name": "Portable project, relink and safe cleanup",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Portable selected manuscript/media export and reviewed restore; retained expected missing-media digests, restart/re-export/relink verification, current-source conflicts and exact candidate/original hashes; authorized storage/history diagnostics.",
+      "sources": [
+        "app/backup_restore.py",
+        "app/services/export_resource_snapshot.py",
+        "app/services/asset_library_service.py",
+        "app/experimental/portable_projects.py",
+        "frontend/src/experimental/PortableProjectsPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Selected portable subset is not complete project backup; original backup remains authoritative for full history/Canon. Collaboration restore unsupported. Actual native packaging/large user archives remain acceptance gates.",
+      "continuation_delta": "Existing original-authority selected portable export/import, relink/storage-health and recovery journal remain; continuation verifies their shared media/version boundaries without a second asset/project store.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/portable_projects.py",
+        "app/backup_restore.py",
+        "app/services/asset_library_service.py",
+        "frontend/src/experimental/PortableProjectsPanel.tsx"
+      ],
+      "current_remaining_scope": "Selected portable bundles are not full-history/Canon backups. Collaboration restore, large real archives, native packaging and user upgrade/uninstall retention remain separate gates.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_r4_portable_batches.py",
+        "tests/test_r4_production_mounted.py"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "U16",
+      "name": "Safe batch preflight",
+      "wave": 4,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Reviewed proof/export, registered IMAGE and approved/queued AUDIO batches through original broker/executors; known-zero current quotes, durable approval/admission/settlement, no unknown replay, versioned presets and satisfied-result reuse.",
+      "sources": [
+        "app/workflow.py",
+        "app/experimental/inbox.py",
+        "app/services/asset_task_worker.py",
+        "app/experimental/safe_batches.py",
+        "frontend/src/experimental/SafeBatchesPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Paid/unknown-price routes are held or unavailable; no cloud execution, voice-quality or GPU claim. Unknown settlement remains an explicit reconciliation state.",
+      "continuation_delta": "Existing batch preflight and original owner admission continue through current source/configuration/budget/approval/settlement checks, without generic background replay or implicit route upgrades.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/safe_batches.py",
+        "app/experimental/safe_batch_contracts.py",
+        "frontend/src/experimental/SafeBatchesPanel.tsx"
+      ],
+      "current_remaining_scope": "Paid/unknown-price routes are held or unavailable; unknown cost stays unreconciled. Real cloud/model/GPU/voice quality and arbitrary adapter families are not verified.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+        "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_r4_batch_admission.py",
+        "tests/test_r4_portable_batches.py"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "B01",
+      "name": "Declarative template library",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Eight versioned original local declarative templates with type/dependencies/licence, preview/copy/favourite/update comparison/rollback; real planning/workflow instances plus editable supported briefs and safe batch presets.",
+      "sources": [
+        "app/experimental/planning.py",
+        "app/experimental/teams.py",
+        "app/workflow_recipes.py",
+        "app/plugin_package_manager.py",
+        "app/experimental/template_library.py",
+        "frontend/src/experimental/TemplateLibraryPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Eight versioned local templates. Planning/workflow use real original records; other categories remain editable briefs. Remote market/sync disabled. ",
+      "continuation_delta": "Nine legacy local starters remain compatible; five additive Novel/Genre/World/Agent/Story Structure starters use strict version/compatibility/no-grant manifests, readonly import and independent project copies. Agent copies instantiate the original reviewed definition.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/template_library.py",
+        "app/experimental/declarative_agents.py",
+        "frontend/src/experimental/TemplateLibraryPanel.tsx"
+      ],
+      "current_remaining_scope": "Most creative brief types are editable declarations rather than automatic manuscript/Canon construction. Marketplace, remote catalog sync and executable installation remain absent.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_TEMPLATES_SDK_COMICS.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave5_templates_sdk_comics.py",
+        "frontend/src/experimental/Wave5TemplatesSdkComics.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "B02",
+      "name": "Custom agents and workflow SDK",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Form-defined rooted declarative DAG with branching/join preflight, one registered bounded local-model agent task, original Workflow and JobManager execution, broker reservation, exact source/schema/role receipts and mandatory manual-review terminal.",
+      "sources": [
+        "app/experimental/teams.py",
+        "app/workflow.py",
+        "app/workflow_api.py",
+        "app/plugin_capability_policy.py",
+        "app/experimental/declarative_agents.py",
+        "frontend/src/experimental/DeclarativeAgentsPanel.tsx",
+        "app/experimental/declarative_model.py",
+        "docs/delivery/post-v1-r4-r5-ux/B02_BOUND_MODEL_RECEIPT.md"
+      ],
+      "inherited_remaining_scope": "Only registered allowlisted data nodes; no executable plugin, dynamic import or arbitrary tool authority. LOCAL_ONLY known-zero configured route required; model quality NOT_RUN.",
+      "continuation_delta": "Agent role/prompt/input/output/capability/runtime/review declarations and rooted Workflow dependencies/human gates retain original JobManager execution, retry/cancel bounds and schema/authority checks; SDK only runs shipped trusted adapters.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/declarative_agents.py",
+        "app/experimental/declarative_model.py",
+        "app/experimental/declarative_adapter_sdk.py",
+        "frontend/src/experimental/DeclarativeAgentsPanel.tsx"
+      ],
+      "current_remaining_scope": "Executable third-party plugins remain DENY_ALL. Local known-zero configured route only; real model quality NOT_RUN. Exact task-center model-run reopening has focused contract verification; final browser acceptance is pending.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_TEMPLATES_SDK_COMICS.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave5_templates_sdk_comics.py",
+        "tests/test_r5_declarative_model.py",
+        "tests/test_r5_declarative_job_bounds.py",
+        "tests/test_post_interop_task_reopen.py",
+        "frontend/src/experimental/ModelTaskReopen.test.tsx",
+        "frontend/tests/e2e/r4-model-task-reopen.spec.ts"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "B05",
+      "name": "Multilingual revisions and terminology",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Independent language-edition drafts with selected-segment translation preview/consent, current approved glossary/aliases/style, original local-model/broker/job dispatch, bounded output and explicit CAS adoption before existing paragraph review.",
+      "sources": [
+        "app/services/chapter_service.py",
+        "app/document_revision.py",
+        "app/experimental/store.py",
+        "app/experimental/multilingual_editions.py",
+        "frontend/src/experimental/MultilingualEditionsPanel.tsx",
+        "app/experimental/multilingual_translation.py",
+        "docs/r5_multilingual_translation_execution.md"
+      ],
+      "inherited_remaining_scope": "No auto-retranslation after source edits. Current source/edition/price/route receipts required; unknown jobs are not replayed. Actual translation/RTL/font/target-language quality acceptance remains source-specific NOT_RUN.",
+      "continuation_delta": "Independent source-linked editions add accepted exact Translation Memory, place/world terms, explicit preferred-term locks and current-source historical restore. Reuse always creates a draft. Locked Anna correctly tolerates nested Ann while standalone/mixed aliases remain rejected.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/multilingual_editions.py",
+        "app/experimental/multilingual_translation.py",
+        "frontend/src/experimental/MultilingualEditionsPanel.tsx",
+        "frontend/src/experimental/TranslationMemoryPanel.tsx"
+      ],
+      "current_remaining_scope": "Literal missing/term checks are not semantic translation-quality/omission proof. No automatic retranslation or silent replay. Real language/RTL/font acceptance NOT_RUN; exact translation-job reopening has focused contract verification; final browser acceptance is pending.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json",
+        "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_translation_memory.py",
+        "tests/test_post_interop_extended_mounted.py",
+        "tests/test_r5_multilingual_translation.py",
+        "frontend/src/experimental/TranslationMemoryPanel.test.tsx",
+        "tests/test_post_interop_task_reopen.py",
+        "frontend/src/experimental/ModelTaskReopen.test.tsx",
+        "frontend/tests/e2e/r4-model-task-reopen.spec.ts"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim"
+    },
+    {
+      "id": "B06",
+      "name": "Comic and Webtoon layouts",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Reviewed page/Webtoon layouts over original approved images, reading-order/bubble/safe-area/glyph checks, local undo/redo and the same actual raster bytes for preview and segmented PNG ZIP export.",
+      "sources": [
+        "frontend/src/novel/ImageInfiniteCanvas.tsx",
+        "app/services/asset_library_service.py",
+        "app/experimental/comic_layouts.py",
+        "frontend/src/experimental/ComicLayoutsPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Actual approved-image raster and CJK preview/export browser loop passed at 4e476ce. Model art quality and external production typography acceptance remain NOT_RUN.",
+      "continuation_delta": "Distinct comic/Webtoon panels retain order/bubbles/Scene linkage and deterministic vertical/page raster export. Image briefs and approved character appearance assets carry original version/hash/privacy and export lineage.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/comic_layouts.py",
+        "app/services/asset_library_service.py",
+        "frontend/src/experimental/ComicLayoutsPanel.tsx"
+      ],
+      "current_remaining_scope": "Synthetic approved PNG/CJK raster contracts do not verify model art quality, arbitrary scripts/fonts or professional print/Webtoon production acceptance. No automatic generation from a brief.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_TEMPLATES_SDK_COMICS.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_wave5_templates_sdk_comics.py",
+        "tests/test_r5_comic_layouts.py",
+        "frontend/src/experimental/Wave5TemplatesSdkComics.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ],
+      "model_or_synthetic_boundary": "MOCK_ONLY or injected transport/schema fixtures where a model is exercised; no quality claim",
+      "narrow_real_verification": "Approved synthetic image bytes, pinned CJK raster preview/export through the real deterministic renderer; model art quality and browser/native layout are separate"
+    },
+    {
+      "id": "B07",
+      "name": "Interactive narrative export",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Versioned two-ending interactive story graph, reachability/cycle/variable checks, manual preview and supported neutral/RenPy text-menu export with source/media/loss manifests; no arbitrary script execution.",
+      "sources": [
+        "app/experimental/planning.py",
+        "frontend/src/novel/StoryRouteEditor.test.tsx",
+        "app/experimental/interactive_story.py",
+        "frontend/src/experimental/InteractiveStoryPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Bounded two-ending stories with neutral/RenPy text-menu export. Media references are manifests, not deployed assets; external engine runtime NOT_RUN.",
+      "continuation_delta": "Original planning-node adaptations retain typed choices/conditions/variables/routes/endings and bounded reachability/reference checks, explicit playback/review/export; source-current history can restore a new draft and archived/private linked entities are withheld.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/interactive_story.py",
+        "app/experimental/planning.py",
+        "frontend/src/experimental/InteractiveStoryPanel.tsx",
+        "frontend/src/experimental/InteractiveStoryHistory.tsx"
+      ],
+      "current_remaining_scope": "Bounded analysis is not an unbounded graph proof. RenPy text/menu and engine-neutral JSON export do not execute/deploy engines or media. Actual RenPy/Godot runtime NOT_RUN.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_interactive_history.py",
+        "tests/test_r5_interactive_story.py",
+        "tests/test_post_interop_extended_mounted.py"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "B08",
+      "name": "Writer room and team review",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Current-member async assignments, responsible reviewer/change requests, retained two-client conflicts, original version comments, current-authority notices and explicitly selected read-only review packages.",
+      "sources": [
+        "app/collaboration.py",
+        "app/collaboration_api.py",
+        "app/experimental/inbox.py",
+        "app/services/creation_workbench_service.py",
+        "app/experimental/writer_room.py",
+        "frontend/src/experimental/WriterRoomPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Asynchronous assignment/comment/review packages implemented; real-time co-editing and branch manuscript reader are unavailable. ",
+      "continuation_delta": "Asynchronous comments/review/assignments/change requests and branch-aware original review targets remain. The explicit Presence interface reports NOT_CONFIGURED, empty occupants and no realtime claim.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/writer_room.py",
+        "app/services/creation_workbench_service.py",
+        "app/experimental/inbox.py",
+        "frontend/src/experimental/WriterRoomPanel.tsx"
+      ],
+      "current_remaining_scope": "No realtime co-editing, presence transport, invitation or permission grant. Finishing a room task cannot approve/apply original manuscript/Canon/assets; branch manuscript source remains unavailable.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_r5_writer_room_mounted.py",
+        "tests/test_post_interop_extended_mounted.py",
+        "frontend/src/experimental/WriterRoomPanel.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "B09",
+      "name": "Project fork and merge",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Owned local-project manuscript forks with reviewed CAS merges, plus original character/location/relationship field-level merge attached to the same owned manuscript fork; exact endpoint closure, tombstones and partial checkpoints.",
+      "sources": [
+        "app/collaboration.py",
+        "app/document_revision.py",
+        "app/repositories/scoped_narrative.py",
+        "app/experimental/project_forks.py",
+        "frontend/src/experimental/ProjectForksPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Collaboration branch IDs have no branch-manuscript repository/writer authority. No substitution of base manuscript, new parallel manuscript store or arbitrary target-project merge. Unsupported entity domains remain explicit.",
+      "continuation_delta": "Original project/structured Fork→Compare→Conflict→Human Merge remains; Shared Universe adds immutable selected original Character/Location/Organization/Rule/Timeline snapshots and explicit per-work Main/Sequel/Prequel/Side Story CAS pins, history, release and readonly incoming references.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/project_forks.py",
+        "app/experimental/structured_forks.py",
+        "app/experimental/world.py",
+        "frontend/src/experimental/ProjectForksPanel.tsx",
+        "frontend/src/experimental/SharedUniversePanel.tsx"
+      ],
+      "current_remaining_scope": "Snapshots never mutate another work or become a second Canon; source edits do not repin. Current source/target deletion/archive/privacy/permission loss withholds old content. Local owner sharing only; bounded incoming scan; no implicit model-context injection or branch-manuscript fallback.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_post_interop_shared_universe.py",
+        "tests/test_r5_project_forks.py",
+        "tests/test_r5_structured_forks.py",
+        "frontend/src/experimental/SharedUniversePanel.test.tsx"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    },
+    {
+      "id": "B10",
+      "name": "Offline synchronization foundation",
+      "wave": 5,
+      "historical_pr39_status": "PARTIAL",
+      "current_status": "PARTIAL",
+      "implementation_label": "IMPLEMENTED",
+      "current_verification": "CONTRACT_VERIFIED",
+      "inherited_scope": "Manual portable local exchange using exact source evidence, selection addition/withdrawal preview, current authority and independent-process conflicts, original manuscript CAS and pure source reads.",
+      "sources": [
+        "app/collaboration.py",
+        "app/backup_restore.py",
+        "app/experimental/store.py",
+        "app/experimental/offline_sync.py",
+        "frontend/src/experimental/OfflineSyncPanel.tsx"
+      ],
+      "inherited_remaining_scope": "Automatic/cloud transport and real collaboration-branch manuscript sync require a distinct supported source authority/transport. No silent fallback or cross-domain inference.",
+      "continuation_delta": "Existing manual local exchange/outbox/inbox, selected-source CAS and restart/recovery remain in original stores; original offline-sync suites were re-executed in the extended-creation regression.",
+      "real_model_verification": "NOT_RUN",
+      "native_acceptance": "LOCAL_REQUIRED",
+      "current_owners": [
+        "app/experimental/offline_sync.py",
+        "app/experimental/portable_projects.py",
+        "frontend/src/experimental/OfflineSyncPanel.tsx"
+      ],
+      "current_remaining_scope": "No automatic cloud transport, production realtime synchronization or missing collaboration-branch manuscript authority. Manual local exchange is not a second task/model/manuscript system.",
+      "verification_layers": {
+        "local_file_api": "CONTRACT_VERIFIED",
+        "react": "CONTRACT_VERIFIED_SOURCE_SPECIFIC_UNIT_FIXTURES",
+        "postgres": "NOT_RUN_LOCAL; FINAL_HOSTED_PENDING",
+        "browser": "NOT_RUN_CURRENT_HOSTED_JOURNEY; AUTHORED_NOT_EXECUTED",
+        "real_model": "NOT_RUN",
+        "native_or_target_acceptance": "LOCAL_REQUIRED_NOT_RUN"
+      },
+      "evidence": [
+        "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+        "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+      ],
+      "test_sources": [
+        "tests/test_r5_offline_sync.py",
+        "tests/test_r5_offline_sync_mounted.py"
+      ],
+      "active_gaps": [],
+      "truth_labels": [
+        "PARTIAL",
+        "IMPLEMENTED",
+        "CONTRACT_VERIFIED",
+        "NOT_RUN",
+        "LOCAL_REQUIRED"
+      ]
+    }
+  ],
+  "additional_scope_mappings": {
+    "visual_semantic_embedding": [
+      "A10",
+      "A09",
+      "A04"
+    ],
+    "embedding_model_evidence_support": [
+      "A06",
+      "A07"
+    ],
+    "shared_universe_version_pinning": [
+      "A04",
+      "B09"
+    ],
+    "cover_storyboard_generation": [
+      "A08",
+      "A09",
+      "A13",
+      "U06"
+    ],
+    "original_U15": "Writing goals and controlled notices; no template-ID alias"
+  },
+  "reconciled_at_utc": "2026-10-06T16:55:00Z",
+  "scope_note": "Current original-owner implementation and source-specific local contracts. No final-head CI totals or product acceptance inferred.",
+  "status_totals": {
+    "INTEGRATED": 1,
+    "PARTIAL": 39
+  },
+  "final_hosted_verification": {
+    "state": "PENDING_FINAL_PUBLISHED_SOURCE",
+    "file": "PENDING",
+    "postgres": "PENDING_REAL_SERVICE",
+    "react": "PENDING_FINAL_SOURCE",
+    "browser": "PENDING_HOSTED_EXECUTION",
+    "windows_build": "PENDING_FINAL_SOURCE",
+    "windows_native_contracts": "PENDING_FINAL_SOURCE",
+    "windows_package_smoke": "PENDING_FINAL_SOURCE",
+    "native_windows_interactive": "LOCAL_REQUIRED_NOT_RUN_USER_MACHINE_ACCEPTANCE",
+    "real_models_gpu_asr_nle": "NOT_RUN",
+    "counts": null
+  },
+  "evidence_catalog": {
+    "foundation": [
+      "POST_INTEROP_R4_R5_CONTINUATION_REPORT.md",
+      "docs/delivery/post-interop-continuation/COMPATIBILITY_AND_ROLLBACK.md",
+      "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json",
+      "docs/delivery/post-interop-continuation/BROWSER_CORRECTION_RECEIPT.json"
+    ],
+    "ux": [
+      "docs/delivery/post-interop-continuation/WAVE_1_UX.json",
+      "docs/delivery/post-interop-continuation/WAVE_1_STAGED_VERIFICATION.json"
+    ],
+    "context": [
+      "docs/delivery/post-interop-continuation/WAVE_1_REFINEMENT.json",
+      "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+    ],
+    "search": [
+      "docs/delivery/post-interop-continuation/WAVE_1_SEARCH_REFINEMENT.json",
+      "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+    ],
+    "creation": [
+      "docs/delivery/post-interop-continuation/WAVE_2_CREATION.json",
+      "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+    ],
+    "research": [
+      "docs/delivery/post-interop-continuation/WAVE_3_MODELS_RESEARCH.json",
+      "docs/delivery/post-interop-continuation/WAVE_3_STAGED_VERIFICATION.json"
+    ],
+    "media": [
+      "docs/delivery/post-interop-continuation/WAVE_4_MEDIA_DELTA.json",
+      "docs/delivery/post-interop-continuation/WAVE_4_STAGED_VERIFICATION.json"
+    ],
+    "extended": [
+      "docs/delivery/post-interop-continuation/WAVE_5_EXTENDED.json",
+      "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+    ],
+    "declarative": [
+      "docs/delivery/post-interop-continuation/WAVE_5_TEMPLATES_SDK_COMICS.json",
+      "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json"
+    ],
+    "inherited_ui": [
+      "docs/delivery/post-interop-continuation/WAVE_2_STAGED_VERIFICATION.json"
+    ]
+  },
+  "active_followup": {
+    "state": "CONTRACT_VERIFIED",
+    "ids": [
+      "U01",
+      "U07",
+      "A01",
+      "A03",
+      "B02",
+      "B05"
+    ],
+    "scope": "Exact original simulator/Judge/translation/declarative model-task reopen verified by58 File/API and113 React cases. No dispatch/replay; stale simulator targets unavailable; translation lookup bounded to latest50 editions and50 runs each; exact receipt read-only until explicit dirty-guarded segment open. Final hosted browser/PG remains pending.",
+    "evidence": [
+      "docs/delivery/post-interop-continuation/WAVE_1_TASK_REOPEN.json"
+    ],
+    "test_sources": [
+      "tests/test_post_interop_task_reopen.py",
+      "frontend/src/experimental/ModelTaskReopen.test.tsx",
+      "frontend/tests/e2e/r4-model-task-reopen.spec.ts"
+    ]
+  },
+  "prior_hosted_observations": {
+    "source": "d18e874",
+    "feature_ids": [
+      "U02",
+      "U03",
+      "U07"
+    ],
+    "new_workspace_journeys_passed": 3,
+    "u08_added_source_journey": "D18_SELECTOR_TIMEOUT_SOURCE_TEST_FIXED_FINAL_HOSTED_PENDING",
+    "overall_run": "SUPERSEDED_CANCELLED_NOT_WHOLE_R4_PASS",
+    "exact_final_source_acceptance": false,
+    "official_ci_url": null
+  },
+  "latest_staged_checkpoint": {
+    "source_tree": "ba7265a3a4dcf0d411799974570979414df2d70d",
+    "evidence": "docs/delivery/post-interop-continuation/WAVE_5_STAGED_VERIFICATION.json",
+    "frontend_passed": 1259,
+    "inherited_opt_in_skipped": 8,
+    "typescript": "PASS",
+    "token_guard": "PASS",
+    "focused_backend_passed": 101,
+    "postgres_deselected": 77,
+    "ordered_inventory_nodes": 7484,
+    "added_above_PR42": 685,
+    "collections": 2,
+    "old_skip_maps": "UNCHANGED",
+    "acceptance": "SOURCE_SPECIFIC_STAGED_CHECKPOINT_NOT_FINAL_HOSTED_RESULT"
+  },
+  "hosted_browser_correction": {
+    "state": "SOURCE_FIXED_FRESH_LOCAL_CONTRACTS_FINAL_HOSTED_PENDING",
+    "prior_head": "dedb813bb297bb5fb95bac55440a71913b54ed10",
+    "prior_pr_run": 37498190450,
+    "completed_failures_before_cancellation": 7,
+    "receipt": "docs/delivery/post-interop-continuation/BROWSER_CORRECTION_RECEIPT.json",
+    "application_delta": "Restore inherited production determinism label; backend/API unchanged",
+    "fixture_delta": "Original GET version/Markdown baselines, exact saved Unicode offsets, required original asset project query",
+    "new_backend_cases": 8,
+    "complete_reviewed_inventory": 7492,
+    "previous_checkpoint_inventory": 7484,
+    "historical_assertions_and_skips": "UNCHANGED",
+    "additional_c12_r4": {
+      "passed": 49,
+      "failures": 10,
+      "errors": 4,
+      "total": 63,
+      "u08": "PASS",
+      "new_wave5_fixture": "PROXY_MATCH_AND_OWNED_CLEANUP_FIXED_HOSTED_PENDING"
+    },
+    "strict_profile_fixture": "29 new opposite-profile reason defects corrected with unchanged original guards and counts; no applicable-PG skip introduced"
+  },
+  "api_catalog": "docs/delivery/post-interop-continuation/API_CATALOG.json",
+  "async_fixture_acceptance": {
+    "state": "SOURCE_FIXED_FRESH_FOCUSED_PASS_FINAL_HOSTED_PENDING",
+    "receipt": "docs/delivery/post-interop-continuation/ASYNC_FIXTURE_STABILIZATION.json",
+    "runtime_change": false,
+    "inherited_fixture_changes": [
+      "tests/test_local_interop_tcp.py",
+      "frontend/src/novel/ImageGenerationPanel.test.tsx"
+    ],
+    "original_assertions_skip_maps_and_deadlines": "PRESERVED",
+    "historical_image_status_interleaving": "UNVERIFIED",
+    "large_judge_trace": "NOT_INSPECTED_TOOL_SIZE_LIMIT",
+    "backend_inventory": 7492
+  }
+}

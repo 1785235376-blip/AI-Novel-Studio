@@ -1,0 +1,742 @@
+{
+  "protocol": "PoemSeed Local Interop 1.0",
+  "manifest_sha256": "77c1f82f0aec0ef385d95cacf6fe04530b83fb62d2403bc7341cbe6bf19c858c",
+  "scope": "Desktop integration preparation; never a real QingJian Desktop completion claim",
+  "source_baselines": {
+    "Creative Studio": "bcd60afb96cc69bdfd81db619cb0121d8712f074",
+    "QingJian": "7f5cc4252a9c1ab078e0ace509a4d12012c1dc76"
+  },
+  "historical_independent_review": "BLOCKED; not resumed, replaced or closed by this implementation",
+  "requirements": [
+    {
+      "section": 1,
+      "requirement": "一、当前基线",
+      "status": "DONE",
+      "evidence": [
+        "Git baseline/branch receipt",
+        "DESKTOP_INTEGRATION_ADAPTER_GUIDE.md"
+      ],
+      "remaining_boundary": "New branches start at the exact frozen PR heads; historical branches remain untouched. Final remote SHA/CI evidence is supplied by the Draft PR receipt."
+    },
+    {
+      "section": 2,
+      "requirement": "二、冻结协议",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "contracts/local-interop/v1/parity-manifest.json",
+        "scripts/check_desktop_integration.py"
+      ],
+      "remaining_boundary": "Protocol 1.0 and all 37 shared files remain frozen. A 1.1-only peer is not accepted until a future protocol extension exists; peers advertising both 1.0/1.1 can select 1.0."
+    },
+    {
+      "section": 3,
+      "requirement": "三、本轮建立正式 Desktop Integration Layer",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/transport.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "SDK and injectable platform boundary are callable; real two-product Windows composition remains LOCAL_REQUIRED."
+    },
+    {
+      "section": 4,
+      "requirement": "四、InteropTransport",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/transport.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "SDK and injectable platform boundary are callable; real two-product Windows composition remains LOCAL_REQUIRED."
+    },
+    {
+      "section": 5,
+      "requirement": "五、Transport State Machine",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/transport.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "SDK and injectable platform boundary are callable; real two-product Windows composition remains LOCAL_REQUIRED."
+    },
+    {
+      "section": 6,
+      "requirement": "六、NamedPipeTransport Interface",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes",
+        "interop-reference/PoemSeed.LocalInterop.Pipes"
+      ],
+      "remaining_boundary": "Callable Windows library and same-user transport CI are distinct from real Desktop integration. Actual two-product and hostile cross-user execution remain LOCAL_REQUIRED/NOT_RUN."
+    },
+    {
+      "section": 7,
+      "requirement": "七、Named Pipe Security Boundary",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "native/local_interop_desktop/PoemSeed.LocalInterop.Pipes",
+        "interop-reference/PoemSeed.LocalInterop.Pipes"
+      ],
+      "remaining_boundary": "Callable Windows library and same-user transport CI are distinct from real Desktop integration. Actual two-product and hostile cross-user execution remain LOCAL_REQUIRED/NOT_RUN."
+    },
+    {
+      "section": 8,
+      "requirement": "八、Peer Attestation Interface",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/identity.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Synthetic facts test production policy only. Actual signed executables, installation registry, approved upgrade and connected-handle evidence remain LOCAL_REQUIRED. Trust approval never restores an old session or grant."
+    },
+    {
+      "section": 9,
+      "requirement": "九、Peer Trust Store",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/identity.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Synthetic facts test production policy only. Actual signed executables, installation registry, approved upgrade and connected-handle evidence remain LOCAL_REQUIRED. Trust approval never restores an old session or grant."
+    },
+    {
+      "section": 10,
+      "requirement": "十、Peer Discovery",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/identity.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Synthetic facts test production policy only. Actual signed executables, installation registry, approved upgrade and connected-handle evidence remain LOCAL_REQUIRED. Trust approval never restores an old session or grant."
+    },
+    {
+      "section": 11,
+      "requirement": "十一、Desktop Runtime Adapter",
+      "status": "PARTIAL",
+      "evidence": [
+        "app/local_interop",
+        "server/local_interop",
+        "local_interop_desktop/providers.py"
+      ],
+      "remaining_boundary": "Studio reads existing owners; private Tutor reference is callable. Actual QingJian Desktop owners and composition remain LOCAL_REQUIRED; no shadow business database."
+    },
+    {
+      "section": 12,
+      "requirement": "十二、ContextProvider Adapter",
+      "status": "PARTIAL",
+      "evidence": [
+        "app/local_interop",
+        "server/local_interop",
+        "local_interop_desktop/providers.py"
+      ],
+      "remaining_boundary": "Studio reads existing owners; private Tutor reference is callable. Actual QingJian Desktop owners and composition remain LOCAL_REQUIRED; no shadow business database."
+    },
+    {
+      "section": 13,
+      "requirement": "十三、Tutor Desktop Context Adapter",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/providers.py",
+        "server/local_interop",
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md"
+      ],
+      "remaining_boundary": "Private Cloud/reference adapters and existing Context V2 contracts are available. Real Recall Gate, ContextAssembler, Memory Gate, Tutor, Verifier and local Case DB wiring remain LOCAL_REQUIRED. No automatic memory or Cloud Case write."
+    },
+    {
+      "section": 14,
+      "requirement": "十四、Memory Write Boundary",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/providers.py",
+        "server/local_interop",
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md"
+      ],
+      "remaining_boundary": "Private Cloud/reference adapters and existing Context V2 contracts are available. Real Recall Gate, ContextAssembler, Memory Gate, Tutor, Verifier and local Case DB wiring remain LOCAL_REQUIRED. No automatic memory or Cloud Case write."
+    },
+    {
+      "section": 15,
+      "requirement": "十五、EventSource Adapter",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/events.py",
+        "app/local_interop",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Registered direct source hooks and explicit bounded polling fallback retain provenance; not every native product producer exists here. Per-subscriber revoke is independent and reconnect never restores a grant."
+    },
+    {
+      "section": 16,
+      "requirement": "十六、Event Source Registry",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/events.py",
+        "app/local_interop",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Registered direct source hooks and explicit bounded polling fallback retain provenance; not every native product producer exists here. Per-subscriber revoke is independent and reconnect never restores a grant."
+    },
+    {
+      "section": 17,
+      "requirement": "十七、Event Lifecycle",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/events.py",
+        "app/local_interop",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Registered direct source hooks and explicit bounded polling fallback retain provenance; not every native product producer exists here. Per-subscriber revoke is independent and reconnect never restores a grant."
+    },
+    {
+      "section": 18,
+      "requirement": "十八、Application Lifecycle Adapter",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/lifecycle.py",
+        "local_interop_desktop/transport.py",
+        "app/local_interop"
+      ],
+      "remaining_boundary": "Volatile state, bounded shutdown, current owner/project/version checks and late-delivery fences are exercised. Actual desktop OS sleep/crash/shutdown and an unreachable peer remain LOCAL_REQUIRED; received data cannot be recalled."
+    },
+    {
+      "section": 19,
+      "requirement": "十九、Graceful Shutdown",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/lifecycle.py",
+        "local_interop_desktop/transport.py",
+        "app/local_interop"
+      ],
+      "remaining_boundary": "Volatile state, bounded shutdown, current owner/project/version checks and late-delivery fences are exercised. Actual desktop OS sleep/crash/shutdown and an unreachable peer remain LOCAL_REQUIRED; received data cannot be recalled."
+    },
+    {
+      "section": 20,
+      "requirement": "二十、Crash Recovery",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/lifecycle.py",
+        "local_interop_desktop/transport.py",
+        "app/local_interop"
+      ],
+      "remaining_boundary": "Volatile state, bounded shutdown, current owner/project/version checks and late-delivery fences are exercised. Actual desktop OS sleep/crash/shutdown and an unreachable peer remain LOCAL_REQUIRED; received data cannot be recalled."
+    },
+    {
+      "section": 21,
+      "requirement": "二十一、Tutor Adapter",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/providers.py",
+        "server/local_interop",
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md"
+      ],
+      "remaining_boundary": "Private Cloud/reference adapters and existing Context V2 contracts are available. Real Recall Gate, ContextAssembler, Memory Gate, Tutor, Verifier and local Case DB wiring remain LOCAL_REQUIRED. No automatic memory or Cloud Case write."
+    },
+    {
+      "section": 22,
+      "requirement": "二十二、Verifier Adapter",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/providers.py",
+        "server/local_interop",
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md"
+      ],
+      "remaining_boundary": "Private Cloud/reference adapters and existing Context V2 contracts are available. Real Recall Gate, ContextAssembler, Memory Gate, Tutor, Verifier and local Case DB wiring remain LOCAL_REQUIRED. No automatic memory or Cloud Case write."
+    },
+    {
+      "section": 23,
+      "requirement": "二十三、Verifier Recheck",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/providers.py",
+        "server/local_interop",
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md"
+      ],
+      "remaining_boundary": "Private Cloud/reference adapters and existing Context V2 contracts are available. Real Recall Gate, ContextAssembler, Memory Gate, Tutor, Verifier and local Case DB wiring remain LOCAL_REQUIRED. No automatic memory or Cloud Case write."
+    },
+    {
+      "section": 24,
+      "requirement": "二十四、Case Gate Adapter",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/providers.py",
+        "server/local_interop",
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md"
+      ],
+      "remaining_boundary": "Private Cloud/reference adapters and existing Context V2 contracts are available. Real Recall Gate, ContextAssembler, Memory Gate, Tutor, Verifier and local Case DB wiring remain LOCAL_REQUIRED. No automatic memory or Cloud Case write."
+    },
+    {
+      "section": 25,
+      "requirement": "二十五、Model Registry Provider",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/providers.py",
+        "app/local_interop/provider.py"
+      ],
+      "remaining_boundary": "Studio uses its Model Center owner. Cache is metadata-only and reports STALE. Real QingJian Model Scheduler mapping remains LOCAL_REQUIRED; no directory scan, credential sharing or model execution."
+    },
+    {
+      "section": 26,
+      "requirement": "二十六、Model Registry Cache",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/providers.py",
+        "app/local_interop/provider.py"
+      ],
+      "remaining_boundary": "Studio uses its Model Center owner. Cache is metadata-only and reports STALE. Real QingJian Model Scheduler mapping remains LOCAL_REQUIRED; no directory scan, credential sharing or model execution."
+    },
+    {
+      "section": 27,
+      "requirement": "二十七、Handoff Handler",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/providers.py",
+        "app/local_interop"
+      ],
+      "remaining_boundary": "Semantic handoff and local single-use user-presence gate are prepared. OS URI registration and actual Desktop navigation remain LOCAL_REQUIRED; advice does not execute a handoff. Exact Studio export/workflow task-ID navigation remains PARTIAL pending existing owner UI selection ports; fail-closed HANDOFF_TARGET_NOT_FOUND, while generation task and OPEN_FEATURE navigation work."
+    },
+    {
+      "section": 28,
+      "requirement": "二十八、User Presence Gate",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/providers.py",
+        "app/local_interop"
+      ],
+      "remaining_boundary": "Semantic handoff and local single-use user-presence gate are prepared. OS URI registration and actual Desktop navigation remain LOCAL_REQUIRED; advice does not execute a handoff."
+    },
+    {
+      "section": 29,
+      "requirement": "二十九、Desktop Notification Adapter",
+      "status": "LOCAL_REQUIRED",
+      "evidence": [
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md",
+        "DESKTOP_INTEROP_ACCEPTANCE_MATRIX.json"
+      ],
+      "remaining_boundary": "Actual native notification, signed trust, installation registration, real Memory Gate, process crash and user-machine acceptance are absent and not inferred from CI."
+    },
+    {
+      "section": 30,
+      "requirement": "三十、UI State Model",
+      "status": "PARTIAL",
+      "evidence": [
+        "frontend/src/interop",
+        "app/local_interop",
+        "local_interop_desktop/diagnostics.py"
+      ],
+      "remaining_boundary": "Studio presents formal state, details, independent permissions, emergency revoke and health. The self-declared HTTP reference must not be presented as a production-authenticated Desktop."
+    },
+    {
+      "section": 31,
+      "requirement": "三十一、Connection Detail UI",
+      "status": "PARTIAL",
+      "evidence": [
+        "frontend/src/interop",
+        "app/local_interop",
+        "local_interop_desktop/diagnostics.py"
+      ],
+      "remaining_boundary": "Studio presents formal state, details, independent permissions, emergency revoke and health. The self-declared HTTP reference must not be presented as a production-authenticated Desktop."
+    },
+    {
+      "section": 32,
+      "requirement": "三十二、Permission Center",
+      "status": "PARTIAL",
+      "evidence": [
+        "frontend/src/interop",
+        "app/local_interop",
+        "local_interop_desktop/diagnostics.py"
+      ],
+      "remaining_boundary": "Studio presents formal state, details, independent permissions, emergency revoke and health. The self-declared HTTP reference must not be presented as a production-authenticated Desktop."
+    },
+    {
+      "section": 33,
+      "requirement": "三十三、Emergency Disconnect",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/lifecycle.py",
+        "local_interop_desktop/transport.py",
+        "app/local_interop"
+      ],
+      "remaining_boundary": "Volatile state, bounded shutdown, current owner/project/version checks and late-delivery fences are exercised. Actual desktop OS sleep/crash/shutdown and an unreachable peer remain LOCAL_REQUIRED; received data cannot be recalled."
+    },
+    {
+      "section": 34,
+      "requirement": "三十四、Interop Health",
+      "status": "PARTIAL",
+      "evidence": [
+        "frontend/src/interop",
+        "app/local_interop",
+        "local_interop_desktop/diagnostics.py"
+      ],
+      "remaining_boundary": "Studio presents formal state, details, independent permissions, emergency revoke and health. The self-declared HTTP reference must not be presented as a production-authenticated Desktop."
+    },
+    {
+      "section": 35,
+      "requirement": "三十五、Diagnostics for Interop",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/diagnostics.py",
+        "local_interop_desktop/identity.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Allowlisted diagnostics/audit/trust metadata exclude source text, credentials and private paths. Explicit content consent remains product-owned and is not granted by connection."
+    },
+    {
+      "section": 36,
+      "requirement": "三十六、Structured Audit",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/diagnostics.py",
+        "local_interop_desktop/identity.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Allowlisted diagnostics/audit/trust metadata exclude source text, credentials and private paths. Explicit content consent remains product-owned and is not granted by connection."
+    },
+    {
+      "section": 37,
+      "requirement": "三十七、Acceptance Harness",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/acceptance.py",
+        "DESKTOP_INTEROP_ACCEPTANCE_MATRIX.json",
+        "tests/test_local_interop_desktop_acceptance.py"
+      ],
+      "remaining_boundary": "Runnable A01–A24 harness records contract/synthetic outcomes separately from native evidence. A21 is NOT_RUN without a distinct Windows user; no real Desktop pass is fabricated."
+    },
+    {
+      "section": 38,
+      "requirement": "三十八、Synthetic Tutor 保留",
+      "status": "MOCK_ONLY",
+      "evidence": [
+        "local_interop_desktop/testing.py",
+        "app/local_interop/synthetic_tutor.py",
+        "server/local_interop/synthetic_studio.py"
+      ],
+      "remaining_boundary": "Synthetic peers run only explicit test/reference composition and never enter production trust. No model or real manuscript is used."
+    },
+    {
+      "section": 39,
+      "requirement": "三十九、Synthetic Studio 保留",
+      "status": "MOCK_ONLY",
+      "evidence": [
+        "local_interop_desktop/testing.py",
+        "app/local_interop/synthetic_tutor.py",
+        "server/local_interop/synthetic_studio.py"
+      ],
+      "remaining_boundary": "Synthetic peers run only explicit test/reference composition and never enter production trust. No model or real manuscript is used."
+    },
+    {
+      "section": 40,
+      "requirement": "四十、Acceptance Scenario Manifest",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/acceptance.py",
+        "DESKTOP_INTEROP_ACCEPTANCE_MATRIX.json",
+        "tests/test_local_interop_desktop_acceptance.py"
+      ],
+      "remaining_boundary": "Runnable A01–A24 harness records contract/synthetic outcomes separately from native evidence. A21 is NOT_RUN without a distinct Windows user; no real Desktop pass is fabricated."
+    },
+    {
+      "section": 41,
+      "requirement": "四十一、Windows 多用户攻击测试预留",
+      "status": "NOT_RUN",
+      "evidence": [
+        "native/local_interop_desktop",
+        "DESKTOP_INTEROP_ACCEPTANCE_MATRIX.json"
+      ],
+      "remaining_boundary": "Distinct-user Windows probe is prepared but has not run under two genuinely different OS identities. Same-user tests do not satisfy it."
+    },
+    {
+      "section": 42,
+      "requirement": "四十二、Fake Product Identity Test",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/identity.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Synthetic facts test production policy only. Actual signed executables, installation registry, approved upgrade and connected-handle evidence remain LOCAL_REQUIRED. Trust approval never restores an old session or grant."
+    },
+    {
+      "section": 43,
+      "requirement": "四十三、Version Compatibility Harness",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "contracts/local-interop/v1/parity-manifest.json",
+        "scripts/check_desktop_integration.py"
+      ],
+      "remaining_boundary": "Protocol 1.0 and all 37 shared files remain frozen. A 1.1-only peer is not accepted until a future protocol extension exists; peers advertising both 1.0/1.1 can select 1.0."
+    },
+    {
+      "section": 44,
+      "requirement": "四十四、Product Upgrade",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/identity.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Synthetic facts test production policy only. Actual signed executables, installation registry, approved upgrade and connected-handle evidence remain LOCAL_REQUIRED. Trust approval never restores an old session or grant."
+    },
+    {
+      "section": 45,
+      "requirement": "四十五、Trust Downgrade",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/identity.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Synthetic facts test production policy only. Actual signed executables, installation registry, approved upgrade and connected-handle evidence remain LOCAL_REQUIRED. Trust approval never restores an old session or grant."
+    },
+    {
+      "section": 46,
+      "requirement": "四十六、Performance Budget",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/events.py",
+        "local_interop_desktop/transport.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Deterministic queue/coalescing/idle-backoff/timeout budgets are tested. Real user-machine CPU and product-startup latency remain NOT_RUN."
+    },
+    {
+      "section": 47,
+      "requirement": "四十七、Bundle / Startup",
+      "status": "PARTIAL",
+      "evidence": [
+        "frontend/src/interop",
+        "DESKTOP_INTEGRATION_ADAPTER_GUIDE.md"
+      ],
+      "remaining_boundary": "Production build initial/deferred byte measurements are reported separately. Real user-machine startup impact is NOT_RUN, not inferred from bundle bytes."
+    },
+    {
+      "section": 48,
+      "requirement": "四十八、Feature Flag",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "app/experimental/flags.py",
+        "local_interop_desktop/transport.py",
+        "server/local_interop"
+      ],
+      "remaining_boundary": "Each product owns its config and credentials. Flag defaults OFF and V1_ACCEPTANCE_MODE forces OFF. Test harness requires explicit mock mode and does not enable a production feature."
+    },
+    {
+      "section": 49,
+      "requirement": "四十九、Config Ownership",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "app/experimental/flags.py",
+        "local_interop_desktop/transport.py",
+        "server/local_interop"
+      ],
+      "remaining_boundary": "Each product owns its config and credentials. Flag defaults OFF and V1_ACCEPTANCE_MODE forces OFF. Test harness requires explicit mock mode and does not enable a production feature."
+    },
+    {
+      "section": 50,
+      "requirement": "五十、Credential Isolation Test",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/diagnostics.py",
+        "local_interop_desktop/identity.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Allowlisted diagnostics/audit/trust metadata exclude source text, credentials and private paths. Explicit content consent remains product-owned and is not granted by connection."
+    },
+    {
+      "section": 51,
+      "requirement": "五十一、Context Privacy Tests",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/diagnostics.py",
+        "local_interop_desktop/identity.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Allowlisted diagnostics/audit/trust metadata exclude source text, credentials and private paths. Explicit content consent remains product-owned and is not granted by connection."
+    },
+    {
+      "section": 52,
+      "requirement": "五十二、Revocation Regression",
+      "status": "PARTIAL",
+      "evidence": [
+        "local_interop_desktop/events.py",
+        "app/local_interop",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "Registered direct source hooks and explicit bounded polling fallback retain provenance; not every native product producer exists here. Per-subscriber revoke is independent and reconnect never restores a grant."
+    },
+    {
+      "section": 53,
+      "requirement": "五十三、Stale Response Regression",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/lifecycle.py",
+        "local_interop_desktop/transport.py",
+        "app/local_interop"
+      ],
+      "remaining_boundary": "Volatile state, bounded shutdown, current owner/project/version checks and late-delivery fences are exercised. Actual desktop OS sleep/crash/shutdown and an unreachable peer remain LOCAL_REQUIRED; received data cannot be recalled."
+    },
+    {
+      "section": 54,
+      "requirement": "五十四、Project Switch Regression",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/lifecycle.py",
+        "local_interop_desktop/transport.py",
+        "app/local_interop"
+      ],
+      "remaining_boundary": "Volatile state, bounded shutdown, current owner/project/version checks and late-delivery fences are exercised. Actual desktop OS sleep/crash/shutdown and an unreachable peer remain LOCAL_REQUIRED; received data cannot be recalled."
+    },
+    {
+      "section": 55,
+      "requirement": "五十五、Version Switch Regression",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/lifecycle.py",
+        "local_interop_desktop/transport.py",
+        "app/local_interop"
+      ],
+      "remaining_boundary": "Volatile state, bounded shutdown, current owner/project/version checks and late-delivery fences are exercised. Actual desktop OS sleep/crash/shutdown and an unreachable peer remain LOCAL_REQUIRED; received data cannot be recalled."
+    },
+    {
+      "section": 56,
+      "requirement": "五十六、App Restart Regression",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/lifecycle.py",
+        "local_interop_desktop/transport.py",
+        "app/local_interop"
+      ],
+      "remaining_boundary": "Volatile state, bounded shutdown, current owner/project/version checks and late-delivery fences are exercised. Actual desktop OS sleep/crash/shutdown and an unreachable peer remain LOCAL_REQUIRED; received data cannot be recalled."
+    },
+    {
+      "section": 57,
+      "requirement": "五十七、Desktop Integration SDK",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "local_interop_desktop/transport.py",
+        "tests/test_local_interop_desktop_core.py"
+      ],
+      "remaining_boundary": "SDK and injectable platform boundary are callable; real two-product Windows composition remains LOCAL_REQUIRED."
+    },
+    {
+      "section": 58,
+      "requirement": "五十八、Adapter Documentation",
+      "status": "DONE",
+      "evidence": [
+        "DESKTOP_INTEGRATION_ADAPTER_GUIDE.md",
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md",
+        "DESKTOP_INTEROP_ACCEPTANCE_MATRIX.md"
+      ],
+      "remaining_boundary": "Integration ports and mapping order are documented. Inspect actual Desktop source before naming paths or replacing existing owners; Beta remains OFF until real acceptance."
+    },
+    {
+      "section": 59,
+      "requirement": "五十九、Desktop Source Mapping Checklist",
+      "status": "DONE",
+      "evidence": [
+        "DESKTOP_INTEGRATION_ADAPTER_GUIDE.md",
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md",
+        "DESKTOP_INTEROP_ACCEPTANCE_MATRIX.md"
+      ],
+      "remaining_boundary": "Integration ports and mapping order are documented. Inspect actual Desktop source before naming paths or replacing existing owners; Beta remains OFF until real acceptance."
+    },
+    {
+      "section": 60,
+      "requirement": "六十、未来接入步骤",
+      "status": "DONE",
+      "evidence": [
+        "DESKTOP_INTEGRATION_ADAPTER_GUIDE.md",
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md",
+        "DESKTOP_INTEROP_ACCEPTANCE_MATRIX.md"
+      ],
+      "remaining_boundary": "Integration ports and mapping order are documented. Inspect actual Desktop source before naming paths or replacing existing owners; Beta remains OFF until real acceptance."
+    },
+    {
+      "section": 61,
+      "requirement": "六十一、禁止事项",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "contracts/local-interop/v1/parity-manifest.json",
+        "scripts/check_desktop_integration.py"
+      ],
+      "remaining_boundary": "Protocol 1.0 and all 37 shared files remain frozen. A 1.1-only peer is not accepted until a future protocol extension exists; peers advertising both 1.0/1.1 can select 1.0."
+    },
+    {
+      "section": 62,
+      "requirement": "六十二、Git 工作方式",
+      "status": "DONE",
+      "evidence": [
+        "Git baseline/branch receipt",
+        "DESKTOP_INTEGRATION_ADAPTER_GUIDE.md"
+      ],
+      "remaining_boundary": "New branches start at the exact frozen PR heads; historical branches remain untouched. Final remote SHA/CI evidence is supplied by the Draft PR receipt."
+    },
+    {
+      "section": 63,
+      "requirement": "六十三、现有冻结内容",
+      "status": "DONE",
+      "evidence": [
+        "Git baseline/branch receipt",
+        "DESKTOP_INTEGRATION_ADAPTER_GUIDE.md"
+      ],
+      "remaining_boundary": "New branches start at the exact frozen PR heads; historical branches remain untouched. Final remote SHA/CI evidence is supplied by the Draft PR receipt."
+    },
+    {
+      "section": 64,
+      "requirement": "六十四、测试最低要求",
+      "status": "PARTIAL",
+      "evidence": [
+        "DESKTOP_INTEGRATION_READINESS_MATRIX.json",
+        "Draft PR exact-head CI receipt"
+      ],
+      "remaining_boundary": "All applicable original plus new CI is required. This source matrix is intentionally pre-final-CI; final metadata-only PR receipt lists exact SHA, tree, counts, failures and remaining gaps without a docs-only retest loop."
+    },
+    {
+      "section": 65,
+      "requirement": "六十五、真实环境边界",
+      "status": "LOCAL_REQUIRED",
+      "evidence": [
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md",
+        "DESKTOP_INTEROP_ACCEPTANCE_MATRIX.json"
+      ],
+      "remaining_boundary": "Actual native notification, signed trust, installation registration, real Memory Gate, process crash and user-machine acceptance are absent and not inferred from CI."
+    },
+    {
+      "section": 66,
+      "requirement": "六十六、最终交付报告",
+      "status": "PARTIAL",
+      "evidence": [
+        "DESKTOP_INTEGRATION_READINESS_MATRIX.json",
+        "Draft PR exact-head CI receipt"
+      ],
+      "remaining_boundary": "All applicable original plus new CI is required. This source matrix is intentionally pre-final-CI; final metadata-only PR receipt lists exact SHA, tree, counts, failures and remaining gaps without a docs-only retest loop."
+    },
+    {
+      "section": 67,
+      "requirement": "六十七、最终目标",
+      "status": "DONE",
+      "evidence": [
+        "DESKTOP_INTEGRATION_ADAPTER_GUIDE.md",
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md",
+        "DESKTOP_INTEROP_ACCEPTANCE_MATRIX.md"
+      ],
+      "remaining_boundary": "Integration ports and mapping order are documented. Inspect actual Desktop source before naming paths or replacing existing owners; Beta remains OFF until real acceptance."
+    },
+    {
+      "section": 68,
+      "requirement": "六十八、本轮最核心的六项交付",
+      "status": "DONE",
+      "evidence": [
+        "DESKTOP_INTEGRATION_ADAPTER_GUIDE.md",
+        "QINGJIAN_DESKTOP_MAPPING_CHECKLIST.md",
+        "DESKTOP_INTEROP_ACCEPTANCE_MATRIX.md"
+      ],
+      "remaining_boundary": "Integration ports and mapping order are documented. Inspect actual Desktop source before naming paths or replacing existing owners; Beta remains OFF until real acceptance."
+    },
+    {
+      "section": 69,
+      "requirement": "六十九、最终原则",
+      "status": "CONTRACT_VERIFIED",
+      "evidence": [
+        "contracts/local-interop/v1/parity-manifest.json",
+        "scripts/check_desktop_integration.py"
+      ],
+      "remaining_boundary": "Protocol 1.0 and all 37 shared files remain frozen. A 1.1-only peer is not accepted until a future protocol extension exists; peers advertising both 1.0/1.1 can select 1.0."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+INFO:     Started server process [3303]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8018 (Press CTRL+C to quit)
+INFO:     127.0.0.1:52692 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52802 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52806 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52808 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52828 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52830 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52814 - "GET /api/text-models HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52850 - "GET /api/experimental/features HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52846 - "POST /api/novels HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52854 - "GET /api/novels/v1-gate-synthetic-fixture/experimental/creative/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52858 - "GET /api/novels/v1-gate-synthetic-fixture/experimental/creative/documents HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52866 - "POST /api/novels/v1-gate-synthetic-fixture/experimental/creative/documents HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52868 - "DELETE /api/novels/v1-gate-synthetic-fixture HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:52876 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52892 - "GET /api/novels HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52904 - "POST /api/novels HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52918 - "GET /api/novels/http-default-off-fixture/experimental/creative/capabilities HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52922 - "GET /api/novels/http-default-off-fixture/experimental/creative/documents HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52936 - "POST /api/novels/http-default-off-fixture/experimental/creative/documents HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:52940 - "DELETE /api/novels/http-default-off-fixture HTTP/1.1" 204 No Content
+INFO:     127.0.0.1:52946 - "GET /api/novels HTTP/1.1" 200 OK

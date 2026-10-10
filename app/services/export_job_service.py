@@ -12,6 +12,8 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from ..industry_export_formats import IndustryExportError
+from ..pdf_export import PDFExportError
 from ..storage import atomic_write
 
 
@@ -54,7 +56,8 @@ class _ExportCancelled(RuntimeError):
 class ExportJobService:
     """Durable, local-first export queue with bounded background workers."""
 
-    SUPPORTED = {"json", "txt", "text", "markdown", "md", "docx", "word", "pdf", "epub", "screenplay", "shot-list", "storyboard"}
+    SUPPORTED = {"json", "txt", "text", "markdown", "md", "docx", "word", "pdf", "epub", "screenplay", "shot-list", "storyboard", "screenplay-fountain", "screenplay-standard", "screenplay-docx"}
+    SUPPORTED |= {"screenplay-package", "shot-list-package", "storyboard-package"}
     STATUSES = frozenset({"queued", "running", "succeeded", "failed", "cancelled"})
     MEDIA_TYPES = {
         "json": "application/json",
@@ -64,8 +67,13 @@ class ExportJobService:
         "pdf": "application/pdf",
         "epub": "application/epub+zip",
         "screenplay": "text/markdown",
+        "screenplay-fountain": "text/x-fountain",
+        "screenplay-docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "shot-list": "text/csv",
         "storyboard": "text/markdown",
+        "screenplay-package": "application/zip",
+        "shot-list-package": "application/zip",
+        "storyboard-package": "application/zip",
     }
     EXTENSIONS = {
         "json": "json",
@@ -75,8 +83,13 @@ class ExportJobService:
         "pdf": "pdf",
         "epub": "epub",
         "screenplay": "md",
+        "screenplay-fountain": "fountain",
+        "screenplay-docx": "docx",
         "shot-list": "csv",
         "storyboard": "md",
+        "screenplay-package": "zip",
+        "shot-list-package": "zip",
+        "storyboard-package": "zip",
     }
     IDEMPOTENCY_TTL = timedelta(hours=24)
     MAX_RESULT_BYTES = 64 * 1024 * 1024
@@ -244,11 +257,12 @@ class ExportJobService:
         if fmt not in self.SUPPORTED:
             raise ValueError("unsupported export format")
         fmt = "markdown" if fmt == "md" else ("txt" if fmt == "text" else ("docx" if fmt == "word" else fmt))
+        fmt = "screenplay-fountain" if fmt == "screenplay-standard" else fmt
         with self._lock:
             jobs = self._read()
             if idempotency_key:
                 for item in jobs.values():
-                    if isinstance(item, dict) and item.get("novel_id") == novel_id and item.get("idempotency_key") == idempotency_key and self._is_idempotency_fresh(item):
+                    if isinstance(item, dict) and item.get("novel_id") == novel_id and item.get("idempotency_key") == idempotency_key and item.get("permission_context") == permission_context and self._is_idempotency_fresh(item):
                         return self._normalise_job(item)
             attempt = 1
             if retry_of:
@@ -258,7 +272,7 @@ class ExportJobService:
                         attempt = max(1, int(source.get("attempt", 1) or 1) + 1)
                     except (TypeError, ValueError):
                         attempt = 2
-            snapshot = self._capture_snapshot(novel_id, fmt)
+            snapshot = self._capture_snapshot(novel_id, fmt, permission_context=permission_context)
             resource_manifest = snapshot.get("resource_manifest", {}) if isinstance(snapshot, dict) else {}
             job = {
                 "id": str(uuid.uuid4()), "novel_id": novel_id, "format": fmt,
@@ -278,7 +292,7 @@ class ExportJobService:
         self._submit(job["id"])
         return self._normalise_job(job)
 
-    def _capture_snapshot(self, novel_id: str, format: str):
+    def _capture_snapshot(self, novel_id: str, format: str, *, permission_context: dict | None = None):
         """Call an optional snapshot provider while preserving old adapters."""
         if self.snapshotter is None:
             return None
@@ -286,17 +300,16 @@ class ExportJobService:
             parameters = inspect.signature(self.snapshotter).parameters
         except (TypeError, ValueError):
             parameters = {}
-        try:
-            if "format" in parameters or any(p.kind is inspect.Parameter.VAR_KEYWORD for p in parameters.values()):
-                snapshot = self.snapshotter(novel_id, format=format)
-            elif len(parameters) >= 2:
-                snapshot = self.snapshotter(novel_id, format)
-            else:
-                snapshot = self.snapshotter(novel_id)
-        except TypeError:
-            # A legacy test adapter may reject keyword arguments despite a
-            # broad signature; retry only with positional arguments.
-            snapshot = self.snapshotter(novel_id, format)
+        kwargs = {}
+        accepts_kwargs = any(p.kind is inspect.Parameter.VAR_KEYWORD for p in parameters.values())
+        if "permission_context" in parameters or accepts_kwargs:
+            kwargs["permission_context"] = permission_context
+        if "format" in parameters or accepts_kwargs:
+            snapshot = self.snapshotter(novel_id, format=format, **kwargs)
+        elif len(parameters) >= 2:
+            snapshot = self.snapshotter(novel_id, format, **kwargs)
+        else:
+            snapshot = self.snapshotter(novel_id, **kwargs)
         if snapshot is None:
             return None
         if not isinstance(snapshot, dict):
@@ -311,6 +324,46 @@ class ExportJobService:
             if not isinstance(job, dict):
                 raise ExportJobResultInvalid("export job record is invalid")
             return self._normalise_job(job)
+
+    @staticmethod
+    def public(job: dict) -> dict:
+        """Lifecycle/provenance only; snapshots and binary bodies stay local."""
+        item = {key: value for key, value in job.items() if key not in {"snapshot", "idempotency_key", "artifact"}}
+        snapshot = job.get("snapshot")
+        if isinstance(snapshot, dict):
+            item["source_versions"] = snapshot.get("source_versions", {})
+            item["captured_at"] = snapshot.get("captured_at")
+        result = item.get("result")
+        if isinstance(result, dict):
+            item["result"] = {key: value for key, value in result.items() if key not in {"content", "content_base64"}}
+        return item
+
+    def list(self, novel_id: str, *, permission_context: dict, status: str | None = None,
+             limit: int = 50, offset: int = 0, authorize=None) -> dict:
+        """Exact owner/scope history, with no secret session identifier saved."""
+        if status is not None and status not in self.STATUSES:
+            raise ValueError("invalid export status filter")
+        if not 1 <= limit <= 100 or offset < 0:
+            raise ValueError("invalid export history page")
+        scope_keys = ("mode", "novel_id", "workspace_id", "storyline_id", "branch_id", "actor_id")
+        with self._lock:
+            rows = []
+            for raw in self._read().values():
+                if not isinstance(raw, dict) or raw.get("novel_id") != novel_id:
+                    continue
+                context = raw.get("permission_context")
+                if not isinstance(context, dict) or any(context.get(key) != permission_context.get(key) for key in scope_keys):
+                    continue
+                if status and raw.get("status") != status:
+                    continue
+                rows.append(self._normalise_job(raw))
+        # Source ownership can be stricter than a historical permission label.
+        # Filter before pagination so denied records contribute no count/hint.
+        if authorize is not None:
+            rows = [row for row in rows if authorize(row)]
+        rows.sort(key=lambda row: (str(row.get("created_at", "")), str(row.get("id", ""))), reverse=True)
+        page = rows[offset:offset + limit]
+        return {"items": [self.public(row) for row in page], "next_offset": offset + limit if len(rows) > offset + limit else None}
 
     def _set_progress(self, job_id: str, progress: object, message: str | None = None) -> bool:
         try:
@@ -430,12 +483,17 @@ class ExportJobService:
                 target = (self.artifact_root / str(artifact["path"])).resolve()
                 if target.parent != root:
                     raise ExportJobResultInvalid("export artifact path is invalid")
-                content_bytes = target.read_bytes()
+                if target.stat().st_size > self.MAX_RESULT_BYTES:
+                    raise ExportJobResultInvalid("export artifact exceeds the 64 MiB limit")
+                with target.open("rb") as stream:
+                    content_bytes = stream.read(self.MAX_RESULT_BYTES + 1)
                 if len(content_bytes) > self.MAX_RESULT_BYTES:
                     raise ExportJobResultInvalid("export artifact exceeds the 64 MiB limit")
                 expected_hash = str(artifact.get("sha256") or "")
                 if expected_hash and hashlib.sha256(content_bytes).hexdigest() != expected_hash:
                     raise ExportJobResultInvalid("export artifact checksum mismatch")
+                if artifact.get("size") is not None and artifact["size"] != len(content_bytes):
+                    raise ExportJobResultInvalid("export artifact size mismatch")
             except FileNotFoundError:
                 content_bytes = None
         if content_bytes is None:
@@ -470,19 +528,10 @@ class ExportJobService:
             kwargs["progress_callback"] = progress_callback
         elif "progress" in parameters:
             kwargs["progress"] = progress_callback
-        if kwargs:
-            try:
-                return self.exporter(job["novel_id"], job["format"], **kwargs)
-            except TypeError:
-                # Preserve compatibility with adapters that expose a broad
-                # signature but reject one optional keyword internally.
-                kwargs.pop("snapshot", None)
-                if kwargs:
-                    try:
-                        return self.exporter(job["novel_id"], job["format"], **kwargs)
-                    except TypeError:
-                        pass
-        return self.exporter(job["novel_id"], job["format"])
+        # The signature decides compatibility before invocation. A renderer's
+        # TypeError is a real failure; retrying without snapshot could silently
+        # export subsequently edited live data instead of the captured body.
+        return self.exporter(job["novel_id"], job["format"], **kwargs)
 
     @staticmethod
     def _result_bytes(result: dict) -> bytes:
@@ -493,6 +542,8 @@ class ExportJobService:
         if encoded is not None:
             if not isinstance(encoded, str) or result.get("content_encoding", "base64") != "base64":
                 raise ExportJobResultInvalid("export result encoding is invalid")
+            if len(encoded) > ((ExportJobService.MAX_RESULT_BYTES + 2) // 3) * 4:
+                raise ExportJobResultInvalid("export result exceeds the 64 MiB limit")
             try:
                 content_bytes = base64.b64decode(encoded.encode("ascii"), validate=True)
             except (ValueError, UnicodeEncodeError, binascii.Error) as exc:
@@ -610,6 +661,8 @@ class ExportJobService:
         try:
             report(10, "准备导出")
             result = self._serialise_result(self._invoke_exporter(job, report))
+            # Never publish a success state for a renderer with no usable file.
+            self._result_bytes(result)
             if cancel_event.is_set():
                 self._mark_cancelled_from_worker(job_id)
                 return
@@ -625,7 +678,10 @@ class ExportJobService:
                 if isinstance(current, dict) and (cancel_event.is_set() or str(current.get("status", "")).lower() == "cancelled"):
                     self._mark_cancelled_from_worker(job_id)
                     return
-            update = {"status": "failed", "result": None, "error": {"code": "EXPORT_FAILED", "message": str(exc)}, "progress_message": "失败", "finished_at": _now(), "updated_at": _now()}
+            error = {"code": "EXPORT_FAILED", "message": str(exc)}
+            if isinstance(exc, (IndustryExportError, PDFExportError)):
+                error.update(code=exc.code, details=exc.details)
+            update = {"status": "failed", "result": None, "error": error, "progress_message": "失败", "finished_at": _now(), "updated_at": _now()}
         with self._lock:
             jobs = self._read()
             job = jobs.get(job_id)

@@ -1,0 +1,91 @@
+Using Python 3.12.3 environment at: /tmp/ai-novel-full-recovery-j3hg2js6/venv
+Resolved 39 packages in 4.33s
+   Building ai-novel-studio @ file:///tmp/ai-novel-full-recovery-j3hg2js6/project
+      Built ai-novel-studio @ file:///tmp/ai-novel-full-recovery-j3hg2js6/project
+Prepared 1 package in 10.46s
+warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+         If the cache and target directories are on different filesystems, hardlinking may not be supported.
+         If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.
+Installed 39 packages in 1.32s
+ + ai-novel-studio==0.7.0 (from file:///tmp/ai-novel-full-recovery-j3hg2js6/project)
+ + annotated-doc==0.0.5
+ + annotated-types==0.8.0
+ + anyio==4.15.1
+ + attrs==26.1.0
+ + certifi==2026.7.22
+ + charset-normalizer==3.5.2
+ + click==8.5.0
+ + fastapi==0.142.2
+ + fonttools==4.59.1
+ + h11==0.16.0
+ + httpcore==1.0.9
+ + httpx==0.28.1
+ + idna==3.20
+ + iniconfig==2.3.0
+ + jsonschema==4.26.0
+ + jsonschema-specifications==2025.9.1
+ + opentelemetry-api==1.45.0
+ + opentimelineio==0.18.1
+ + packaging==26.3
+ + pillow==12.3.0
+ + pluggy==1.6.0
+ + psycopg==3.3.6
+ + psycopg-binary==3.3.6
+ + pydantic==2.13.5
+ + pydantic-core==2.46.5
+ + pydantic-settings==2.15.0
+ + pygments==2.21.0
+ + pypdf==6.19.0
+ + pytest==8.4.2
+ + python-dotenv==1.2.4
+ + referencing==0.37.0
+ + reportlab==4.5.1
+ + rpds-py==2026.9.1
+ + sqlalchemy==2.1.3
+ + starlette==1.7.0
+ + typing-extensions==4.16.0
+ + typing-inspection==0.4.4
+ + uvicorn==0.54.0
+Using Python 3.12.3 environment at: /tmp/ai-novel-full-recovery-j3hg2js6/venv
+Checked 39 packages in 17ms
+All installed packages are compatible
+Using Python 3.12.3 environment at: /tmp/ai-novel-full-recovery-j3hg2js6/venv
+-e file:///tmp/ai-novel-full-recovery-j3hg2js6/project
+annotated-doc==0.0.5
+annotated-types==0.8.0
+anyio==4.15.1
+attrs==26.1.0
+certifi==2026.7.22
+charset-normalizer==3.5.2
+click==8.5.0
+fastapi==0.142.2
+fonttools==4.59.1
+h11==0.16.0
+httpcore==1.0.9
+httpx==0.28.1
+idna==3.20
+iniconfig==2.3.0
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+opentelemetry-api==1.45.0
+opentimelineio==0.18.1
+packaging==26.3
+pillow==12.3.0
+pluggy==1.6.0
+psycopg==3.3.6
+psycopg-binary==3.3.6
+pydantic==2.13.5
+pydantic-core==2.46.5
+pydantic-settings==2.15.0
+pygments==2.21.0
+pypdf==6.19.0
+pytest==8.4.2
+python-dotenv==1.2.4
+referencing==0.37.0
+reportlab==4.5.1
+rpds-py==2026.9.1
+sqlalchemy==2.1.3
+starlette==1.7.0
+typing-extensions==4.16.0
+typing-inspection==0.4.4
+uvicorn==0.54.0

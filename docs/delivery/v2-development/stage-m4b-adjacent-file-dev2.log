@@ -1,0 +1,19 @@
+.......................ssss.s.s.s.s...sss..s.s.s.s.....sssss.....sssss.s [  8%]
+.s.s..s....ssss.s.s.s..ss.s.s.s..ss..........ssssssssss..ss..ss..ss....s [ 17%]
+sss..ss..ss..ss..ss..ss..ss..ss..ss..ss..ss............................. [ 26%]
+..............s...sss.s.s.s.s.s.......sssssss.........sssssssss.s.s.s.s. [ 35%]
+............sssssssssssss.....sssss.s.s.s..ss.s.s.s.s.....sssss.s.s.s..s [ 44%]
+s.s.s.s.s.s.s.s.s.s.......sssssss.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s.s. [ 53%]
+s.............sssssssssssss..ss....ssss..ss..ss....ssss..ss..ss..ss..... [ 62%]
+........................................................................ [ 71%]
+.ss..ss....ssss....ssss......................ssssssssssssssssssssss..... [ 80%]
+.....ssssssssss..ss....ssss..ss..s.s....ssss..ss..ss......ssssss.s...... [ 89%]
+.......sssssssssssss.s.s..ss.s.s.s.s.s..ss.s..ss.s.s.s.s.s..ss.......... [ 98%]
+ssssssssss..ss                                                           [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+473 passed, 333 skipped, 1 warning in 116.04s (0:01:56)

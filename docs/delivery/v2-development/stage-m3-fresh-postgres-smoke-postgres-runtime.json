@@ -1,0 +1,221 @@
+{
+  "utc": "2026-10-09T15:30:27.013395+00:00",
+  "database_mode": "fresh",
+  "database": "v2_m3_isolation_smoke_20261009",
+  "database_created": true,
+  "database_retained": true,
+  "database_existed_before": false,
+  "data_path": ".runtime/postgresql/data",
+  "boundary": "real disposable PostgreSQL; loopback only; no model calls",
+  "migration_status": "applied",
+  "migrations": [
+    {
+      "order": 1,
+      "path": "database/migrations/001_initial.sql",
+      "sha256": "d3334d778faa8d44445d736ea2627eb46eec82882eb95f285763aa061c78992b",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.229436+00:00",
+      "finished_utc": "2026-10-09T15:30:27.252157+00:00"
+    },
+    {
+      "order": 2,
+      "path": "database/migrations/002_runtime_jobs.sql",
+      "sha256": "94e65bdb4f23c8c879cf24e69deff5e7d59bab46f03e161bf7419ee1307a5f7c",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.252183+00:00",
+      "finished_utc": "2026-10-09T15:30:27.254404+00:00"
+    },
+    {
+      "order": 3,
+      "path": "database/migrations/003_document_versions.sql",
+      "sha256": "bba56a9a044c3417e4b5b89d0dc588688b9d3ca5b06baff1934ff2d6e1af4cf3",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.254414+00:00",
+      "finished_utc": "2026-10-09T15:30:27.256041+00:00"
+    },
+    {
+      "order": 4,
+      "path": "database/migrations/004_lore_foundation.sql",
+      "sha256": "f0cc1ea52bc25c81e9945acc518845892a22587dd319a34e47fcbed298ac06db",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.256047+00:00",
+      "finished_utc": "2026-10-09T15:30:27.261602+00:00"
+    },
+    {
+      "order": 5,
+      "path": "database/migrations/005_lore_memory.sql",
+      "sha256": "d146b164e8605dd5e7393ffd802233fd6e26c2d13fb6e85b7addd37709bd03eb",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.261614+00:00",
+      "finished_utc": "2026-10-09T15:30:27.265524+00:00"
+    },
+    {
+      "order": 6,
+      "path": "database/migrations/006_context_intelligence.sql",
+      "sha256": "9826128087fc0b795cea757fe35b496d9d6c5e0f1f470d578d847c7e07dc0135",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.266298+00:00",
+      "finished_utc": "2026-10-09T15:30:27.269673+00:00"
+    },
+    {
+      "order": 7,
+      "path": "database/migrations/007_continuity_foundations.sql",
+      "sha256": "5df731aa25b682e9259d76e460f39de6b3f899af6e9900531fb5c29999058258",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.269682+00:00",
+      "finished_utc": "2026-10-09T15:30:27.274460+00:00"
+    },
+    {
+      "order": 8,
+      "path": "database/migrations/008_narrative_state.sql",
+      "sha256": "df2c573fe10c639f328f1a7c40ed2dee3bcea742477fb08986588ea8e55a347f",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.274467+00:00",
+      "finished_utc": "2026-10-09T15:30:27.276779+00:00"
+    },
+    {
+      "order": 9,
+      "path": "database/migrations/009_narrative_findings.sql",
+      "sha256": "c8224093e78e43db664d72fae7cb5fe06ea0c02037981f85bf62eb96e6a5e497",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.276806+00:00",
+      "finished_utc": "2026-10-09T15:30:27.279270+00:00"
+    },
+    {
+      "order": 10,
+      "path": "database/migrations/010_narrative_progress.sql",
+      "sha256": "618f951e62b8a785c0d95923c2ecc76f29fd875dc2fd822dbf390636c7a29cb0",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.279277+00:00",
+      "finished_utc": "2026-10-09T15:30:27.281454+00:00"
+    },
+    {
+      "order": 11,
+      "path": "database/migrations/011_narrative_change_proposals.sql",
+      "sha256": "d2fc3bc480386f1e06f06ff21d402f58243c2d4088ffb5c2cce9252d090deabb",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.281459+00:00",
+      "finished_utc": "2026-10-09T15:30:27.282478+00:00"
+    },
+    {
+      "order": 12,
+      "path": "database/migrations/012_collaboration_scope_foundation.sql",
+      "sha256": "8c667dcb1c9e979dadb3ae825490fb93ff4ff4e1e4909b8a16cedab7f6f8eb6a",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.282484+00:00",
+      "finished_utc": "2026-10-09T15:30:27.292603+00:00"
+    },
+    {
+      "order": 13,
+      "path": "database/migrations/013_branch_revision_optimistic_concurrency.sql",
+      "sha256": "22f5f6d587c1a02dcf03463e5c475d49de422570b4b53d2255da70a54b154a63",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.292620+00:00",
+      "finished_utc": "2026-10-09T15:30:27.293215+00:00"
+    },
+    {
+      "order": 14,
+      "path": "database/migrations/014_scope_authorization_foundation.sql",
+      "sha256": "df7542e807795b796cb28cafe92b1100066de674cdc051fcb31016f1aa88391d",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.293221+00:00",
+      "finished_utc": "2026-10-09T15:30:27.295469+00:00"
+    },
+    {
+      "order": 15,
+      "path": "database/migrations/015_collaboration_runtime_foundation.sql",
+      "sha256": "6537a71d64f2704478687cd09ce5b5be37010d97c4078afd51f0f2e50ae71ff7",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.295479+00:00",
+      "finished_utc": "2026-10-09T15:30:27.300285+00:00"
+    },
+    {
+      "order": 16,
+      "path": "database/migrations/016_generation_snapshot_ownership.sql",
+      "sha256": "491d68db5bc4a913a1df9417e41066d02b96e9dc34953318dcb136df9c62045e",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.300312+00:00",
+      "finished_utc": "2026-10-09T15:30:27.301652+00:00"
+    },
+    {
+      "order": 17,
+      "path": "database/migrations/017_chapter_archive_state.sql",
+      "sha256": "76e02760828f51c3e649708bc4155a3f0a4187966635400b21cb0d56dc3fe09b",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.301658+00:00",
+      "finished_utc": "2026-10-09T15:30:27.301929+00:00"
+    },
+    {
+      "order": 18,
+      "path": "database/migrations/018_context_privacy.sql",
+      "sha256": "e2e6c2c45a07b9593c5e4ff9400d3eb0e4bad6096ea0aaadb1bba691df3bb5b1",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.301933+00:00",
+      "finished_utc": "2026-10-09T15:30:27.303166+00:00"
+    },
+    {
+      "order": 19,
+      "path": "database/migrations/019_experimental_scope_documents.sql",
+      "sha256": "eb3516c8f802e51efa523950807795ea9400bf91f62e9191d1c726a5cb10ffaf",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.303172+00:00",
+      "finished_utc": "2026-10-09T15:30:27.304237+00:00"
+    },
+    {
+      "order": 20,
+      "path": "database/migrations/020_stable_chapter_identity.sql",
+      "sha256": "92774a1b26f4e79056e7f0d5d3fedf76b77887a109de7a1251bd6b16081722f7",
+      "status": "applied",
+      "started_utc": "2026-10-09T15:30:27.304242+00:00",
+      "finished_utc": "2026-10-09T15:30:27.345280+00:00"
+    }
+  ],
+  "harness_timeouts": {
+    "connect_seconds": 5,
+    "statement_ms": 60000,
+    "lock_ms": 5000
+  },
+  "status": "PASS",
+  "checks_exit_code": 0,
+  "server_stop": "stopped",
+  "startup_ownership": "confirmed",
+  "cleanup_status": "completed",
+  "maintenance_identity": {
+    "version": "PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "endpoint": "127.0.0.1:55432/postgres",
+    "database_oid": 5,
+    "database_user": "postgres",
+    "probe_sql": "SELECT version(), current_database(), host(inet_server_addr()), inet_server_port(), 1, (SELECT oid::bigint FROM pg_catalog.pg_database WHERE datname = current_database()), current_user",
+    "probe_result": [
+      "PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+      "postgres",
+      "127.0.0.1",
+      55432,
+      1,
+      5,
+      "postgres"
+    ]
+  },
+  "database_created_utc": "2026-10-09T15:30:27.222495+00:00",
+  "version": "PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+  "endpoint": "127.0.0.1:55432/v2_m3_isolation_smoke_20261009",
+  "database_oid": 31259,
+  "database_user": "postgres",
+  "probe_sql": "SELECT version(), current_database(), host(inet_server_addr()), inet_server_port(), 1, (SELECT oid::bigint FROM pg_catalog.pg_database WHERE datname = current_database()), current_user",
+  "probe_result": [
+    "PostgreSQL 17.11 (Debian 17.11-0+deb13u1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+    "v2_m3_isolation_smoke_20261009",
+    "127.0.0.1",
+    55432,
+    1,
+    31259,
+    "postgres"
+  ],
+  "empty_before_migrations": {
+    "sql": "SELECT 'relation', n.nspname, c.relname\nFROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\nWHERE n.nspname NOT IN ('pg_catalog', 'information_schema') AND left(n.nspname, 3) <> 'pg_'\nUNION ALL\nSELECT 'routine', n.nspname, p.proname\nFROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace\nWHERE n.nspname NOT IN ('pg_catalog', 'information_schema') AND left(n.nspname, 3) <> 'pg_'\nUNION ALL\nSELECT 'type', n.nspname, t.typname\nFROM pg_catalog.pg_type t JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace\nWHERE n.nspname NOT IN ('pg_catalog', 'information_schema') AND left(n.nspname, 3) <> 'pg_'\nUNION ALL\nSELECT 'schema', '', nspname FROM pg_catalog.pg_namespace\nWHERE nspname NOT IN ('pg_catalog', 'information_schema', 'public') AND left(nspname, 3) <> 'pg_'\nUNION ALL\nSELECT 'extension', '', extname FROM pg_catalog.pg_extension WHERE extname <> 'plpgsql'\nORDER BY 1, 2, 3",
+    "objects": [],
+    "object_count": 0,
+    "is_empty": true
+  },
+  "finished_utc": "2026-10-09T15:30:33.918811+00:00"
+}

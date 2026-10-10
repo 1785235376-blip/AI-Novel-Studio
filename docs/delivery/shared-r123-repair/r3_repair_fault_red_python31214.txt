@@ -1,0 +1,80 @@
+R3 repair-in-progress fault evidence, 2026-10-06 UTC; supplemental Python 3.12.14 / isolated File storage.
+These failures were found while implementing the repair, after the original baseline RED. They are not represented as untouched c6f2126 results.
+
+=== Recovery snapshot race before fresh locked reread ===
+F
+=================================== FAILURES ===================================
+_ test_recovery_snapshot_cannot_overwrite_newer_durable_terminal[file-/api-COMPLETED] _
+
+terminal_app = namespace(client=<starlette.testclient.TestClient object at 0x7f19a58ec530>, prefix='/api', base='/api/novels/r3-mount...ction terminal_app.<locals>.start at 0x7f19a471e480>, reopen=<function terminal_app.<locals>.reopen at 0x7f19a471e3e0>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f19a54b93d0>
+terminal = 'COMPLETED'
+
+    @pytest.mark.parametrize('terminal', ['COMPLETED', 'REJECTED', 'ACCEPTED', 'ACCEPTANCE_UNCERTAIN', 'CANCELLED'])
+    def test_recovery_snapshot_cannot_overwrite_newer_durable_terminal(terminal_app, monkeypatch, terminal):
+        e = terminal_app; job = e.prepare(); job.status = 'GENERATING'; job.output = 'Full synthetic output'
+        e.manager._persist(job)
+        stale_snapshot = copy.deepcopy(e.manager.persistence.get(job.id))
+        job.status = terminal; e.manager._persist(job)
+        monkeypatch.setattr(e.manager.persistence, 'load_all', lambda: [stale_snapshot])
+        restored = e.reopen().get(job.id)
+>       assert restored.status == e.manager.persistence.get(job.id)['status'] == terminal
+E       AssertionError: assert 'FAILED' == 'COMPLETED'
+E         
+E         - COMPLETED
+E         + FAILED
+
+tests/test_shared_generation_terminal_protocol.py:353: AssertionError
+=============================== warnings summary ===============================
+../ai-novel-r2-venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/ai-novel-r2-venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_shared_generation_terminal_protocol.py::test_recovery_snapshot_cannot_overwrite_newer_durable_terminal[file-/api-COMPLETED]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 252 deselected, 1 warning in 2.76s
+
+=== Unpublished completion before uncertainty guard ===
+F
+=================================== FAILURES ===================================
+_ test_unpublished_completion_fails_closed_and_never_becomes_reviewable[file-/api-first_completion_write-False] _
+
+terminal_app = namespace(client=<starlette.testclient.TestClient object at 0x7f3cd4837200>, prefix='/api', base='/api/novels/r3-mount...ction terminal_app.<locals>.start at 0x7f3cd393ef20>, reopen=<function terminal_app.<locals>.reopen at 0x7f3cd393f240>)
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f3cd4913110>
+accounted = False, failure = 'first_completion_write'
+
+    @pytest.mark.parametrize('accounted', [False, True])
+    @pytest.mark.parametrize('failure', ['first_completion_write', 'persistent_outage'])
+    def test_unpublished_completion_fails_closed_and_never_becomes_reviewable(terminal_app, monkeypatch, accounted, failure):
+        e = terminal_app; job = e.prepare(); calls = []; writes_failed = []
+        if accounted:
+            job.before_dispatch = lambda: None
+            job.on_terminal = lambda: calls.append(job.execution_outcome)
+        original = e.manager._persist
+        def persist(value):
+            if (not writes_failed and value.public()['status'] in {'COMPLETED', 'SETTLING'}) or (writes_failed and failure == 'persistent_outage'):
+                writes_failed.append(value.public()['status'])
+                raise OSError('Synthetic terminal publication outage')
+            return original(value)
+        monkeypatch.setattr(e.manager, '_persist', persist)
+        e.start(job); e.release_first.set(); e.release_last.set(); e.release_completed.set(); assert e.stopped.wait(5)
+        assert writes_failed
+>       assert job.status == 'FAILED'
+E       AssertionError: assert 'COMPLETED' == 'FAILED'
+E         
+E         - FAILED
+E         + COMPLETED
+
+tests/test_shared_generation_terminal_protocol.py:373: AssertionError
+=============================== warnings summary ===============================
+../ai-novel-r2-venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/b8734129d01d/ai-novel-r2-venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_shared_generation_terminal_protocol.py::test_unpublished_completion_fails_closed_and_never_becomes_reviewable[file-/api-first_completion_write-False]
+!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!
+1 failed, 272 deselected, 1 warning in 2.63s

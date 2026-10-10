@@ -1,0 +1,65 @@
+{
+  "baseline": "bcd60afb96cc69bdfd81db619cb0121d8712f074",
+  "files": [
+    {
+      "file": "App-Deys37l6.css",
+      "bytes": 126330,
+      "gzip_bytes": 16739
+    },
+    {
+      "file": "App-DwefnLEZ.js",
+      "bytes": 676395,
+      "gzip_bytes": 194318
+    },
+    {
+      "file": "ExperimentalWorkbench-CG1D2KJY.js",
+      "bytes": 543431,
+      "gzip_bytes": 159877
+    },
+    {
+      "file": "ExperimentalWorkbench-Cb-g06tN.css",
+      "bytes": 3887,
+      "gzip_bytes": 993
+    },
+    {
+      "file": "Health-CfEoxRqJ.js",
+      "bytes": 961,
+      "gzip_bytes": 551
+    },
+    {
+      "file": "editor-vendor-WoPbGn4i.js",
+      "bytes": 307091,
+      "gzip_bytes": 93106
+    },
+    {
+      "file": "index-Cj-tLRQ5.css",
+      "bytes": 32292,
+      "gzip_bytes": 5899
+    },
+    {
+      "file": "index-R-5JBqpH.js",
+      "bytes": 30102,
+      "gzip_bytes": 9979
+    },
+    {
+      "file": "query-vendor-CUnTvSIi.js",
+      "bytes": 45602,
+      "gzip_bytes": 13563
+    },
+    {
+      "file": "react-vendor-D3pO_op5.js",
+      "bytes": 142976,
+      "gzip_bytes": 45803
+    },
+    {
+      "file": "style-6MlQLGa4.css",
+      "bytes": 3788,
+      "gzip_bytes": 1388
+    },
+    {
+      "file": "style-Ci1yqfxq.js",
+      "bytes": 42422,
+      "gzip_bytes": 7488
+    }
+  ]
+}

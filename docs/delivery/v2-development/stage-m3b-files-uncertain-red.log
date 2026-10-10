@@ -1,0 +1,30 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio/frontend
+
+ ❯ src/ui/LocalAiModelFiles.test.tsx (20 tests | 1 failed | 19 skipped) 134ms
+   × does not present stale verified registration evidence as current while state is uncertain 133ms
+     → expected 'same-model.safetensorsSAFETENSORS文件大小…' not to contain '关联记录报告实际生成已验证'
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 19 skipped (20)
+   Start at  09:00:55
+   Duration  962ms (transform 191ms, setup 0ms, collect 304ms, tests 134ms, environment 325ms, prepare 59ms)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/ui/LocalAiModelFiles.test.tsx > does not present stale verified registration evidence as current while state is uncertain
+AssertionError: expected 'same-model.safetensorsSAFETENSORS文件大小…' not to contain '关联记录报告实际生成已验证'
+
+Expected: "关联记录报告实际生成已验证"
+Received: "same-model.safetensorsSAFETENSORS文件大小8.0 KiB（8192 bytes）元数据检查有界元数据结构检查通过；未验证权重内容或可运行性模型族 / 能力（名称推断提示）STABLE_DIFFUSION · IMAGE；仅为名称提示，能力未验证文件观察的实际生成验证NOT_RUN · 文件观察未执行生成测试LLAMA_CPP · runtime-a · same-model注册状态待确认关联记录报告实际生成已验证；文件观察本身未执行生成路由授权与实际生成验证分别记录；启用不会立即加载模型，后续接入仍需原有验证与确认。高级：查看文件路径与身份文件路径/private/models/same-model.safetensors来源目录已配置目录 · /private/models路径身份 ID（非内容哈希）path-identity-a"
+
+ ❯ src/ui/LocalAiModelFiles.test.tsx:197:41
+    195|   await act(async () => {fireEvent.click(screen.getByRole('button', {n…
+    196|   expect(observation().textContent).toContain('注册状态待确认');
+    197|   expect(observation().textContent).not.toContain('关联记录报告实际生…
+       |                                         ^
+    198| });
+    199| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

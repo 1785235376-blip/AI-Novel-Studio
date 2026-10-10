@@ -1,0 +1,838 @@
+EEEEEEEEEEEEEEEEEE                                                       [100%]
+=================================== ERRORS ====================================
+_ ERROR at setup of test_explicit_local_host_validation_uses_existing_actor_registry_without_echoing_credentials[/api/local-session] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000013E85487D90>
+
+    @pytest.fixture
+    def local_client(monkeypatch):
+>       monkeypatch.setattr(settings, 'enable_collaboration_runtime', False)
+
+tests\test_local_host_session_recovery.py:12: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_explicit_local_host_validation_uses_existing_actor_registry_without_echoing_credentials[/api/local-session] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x0000013E856DD760>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv\Lib\site-packages\_pytest\runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\_pytest\runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\logging.py:858: in pytest_runtest_teardown
+    yield
+.venv\Lib\site-packages\_pytest\capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv\Lib\site-packages\_pytest\runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv\Lib\site-packages\_pytest\runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\runner.py:546: in teardown_exact
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\fixtures.py:1058: in finish
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv\Lib\site-packages\_pytest\monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv\Lib\site-packages\_pytest\monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_explicit_local_host_validation_uses_existing_actor_registry_without_echoing_credentials[/api/v1/local-session] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000013E85C30050>
+
+    @pytest.fixture
+    def local_client(monkeypatch):
+>       monkeypatch.setattr(settings, 'enable_collaboration_runtime', False)
+
+tests\test_local_host_session_recovery.py:12: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_explicit_local_host_validation_uses_existing_actor_registry_without_echoing_credentials[/api/v1/local-session] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x0000013E8571A840>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv\Lib\site-packages\_pytest\runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\_pytest\runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\logging.py:858: in pytest_runtest_teardown
+    yield
+.venv\Lib\site-packages\_pytest\capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv\Lib\site-packages\_pytest\runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv\Lib\site-packages\_pytest\runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\runner.py:546: in teardown_exact
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\fixtures.py:1058: in finish
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv\Lib\site-packages\_pytest\monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv\Lib\site-packages\_pytest\monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_local_host_binding_rejects_absent_or_unregistered_tokens[] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000013E85457810>
+
+    @pytest.fixture
+    def local_client(monkeypatch):
+>       monkeypatch.setattr(settings, 'enable_collaboration_runtime', False)
+
+tests\test_local_host_session_recovery.py:12: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_local_host_binding_rejects_absent_or_unregistered_tokens[] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x0000013E8539C860>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv\Lib\site-packages\_pytest\runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\_pytest\runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\logging.py:858: in pytest_runtest_teardown
+    yield
+.venv\Lib\site-packages\_pytest\capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv\Lib\site-packages\_pytest\runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv\Lib\site-packages\_pytest\runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\runner.py:546: in teardown_exact
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\fixtures.py:1058: in finish
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv\Lib\site-packages\_pytest\monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv\Lib\site-packages\_pytest\monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_local_host_binding_rejects_absent_or_unregistered_tokens[invalid-opaque-credential] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000013E85F74650>
+
+    @pytest.fixture
+    def local_client(monkeypatch):
+>       monkeypatch.setattr(settings, 'enable_collaboration_runtime', False)
+
+tests\test_local_host_session_recovery.py:12: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_local_host_binding_rejects_absent_or_unregistered_tokens[invalid-opaque-credential] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x0000013E856DE200>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv\Lib\site-packages\_pytest\runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\_pytest\runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\logging.py:858: in pytest_runtest_teardown
+    yield
+.venv\Lib\site-packages\_pytest\capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv\Lib\site-packages\_pytest\runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv\Lib\site-packages\_pytest\runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\runner.py:546: in teardown_exact
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\fixtures.py:1058: in finish
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv\Lib\site-packages\_pytest\monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv\Lib\site-packages\_pytest\monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_______ ERROR at setup of test_local_host_binding_rejects_wrong_origin ________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000013E854F6890>
+
+    @pytest.fixture
+    def local_client(monkeypatch):
+>       monkeypatch.setattr(settings, 'enable_collaboration_runtime', False)
+
+tests\test_local_host_session_recovery.py:12: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+______ ERROR at teardown of test_local_host_binding_rejects_wrong_origin ______
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x0000013EFEAC0860>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv\Lib\site-packages\_pytest\runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\_pytest\runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\logging.py:858: in pytest_runtest_teardown
+    yield
+.venv\Lib\site-packages\_pytest\capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv\Lib\site-packages\_pytest\runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv\Lib\site-packages\_pytest\runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\runner.py:546: in teardown_exact
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\fixtures.py:1058: in finish
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv\Lib\site-packages\_pytest\monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv\Lib\site-packages\_pytest\monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_local_host_binding_keeps_remote_development_requests_denied _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000013E85F77150>
+
+    @pytest.fixture
+    def local_client(monkeypatch):
+>       monkeypatch.setattr(settings, 'enable_collaboration_runtime', False)
+
+tests\test_local_host_session_recovery.py:12: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_local_host_binding_keeps_remote_development_requests_denied _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x0000013EFEAC1080>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv\Lib\site-packages\_pytest\runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\_pytest\runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\logging.py:858: in pytest_runtest_teardown
+    yield
+.venv\Lib\site-packages\_pytest\capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv\Lib\site-packages\_pytest\runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv\Lib\site-packages\_pytest\runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\runner.py:546: in teardown_exact
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\fixtures.py:1058: in finish
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv\Lib\site-packages\_pytest\monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv\Lib\site-packages\_pytest\monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_local_host_endpoint_never_falls_back_across_collaboration_or_packaged_boundaries[enable_collaboration_runtime] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000013E85952290>
+
+    @pytest.fixture
+    def local_client(monkeypatch):
+>       monkeypatch.setattr(settings, 'enable_collaboration_runtime', False)
+
+tests\test_local_host_session_recovery.py:12: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_local_host_endpoint_never_falls_back_across_collaboration_or_packaged_boundaries[enable_collaboration_runtime] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x0000013E8571AA20>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv\Lib\site-packages\_pytest\runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\_pytest\runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\logging.py:858: in pytest_runtest_teardown
+    yield
+.venv\Lib\site-packages\_pytest\capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv\Lib\site-packages\_pytest\runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv\Lib\site-packages\_pytest\runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\runner.py:546: in teardown_exact
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\fixtures.py:1058: in finish
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv\Lib\site-packages\_pytest\monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv\Lib\site-packages\_pytest\monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_local_host_endpoint_never_falls_back_across_collaboration_or_packaged_boundaries[enable_packaged_runtime] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000013E858F4B90>
+
+    @pytest.fixture
+    def local_client(monkeypatch):
+>       monkeypatch.setattr(settings, 'enable_collaboration_runtime', False)
+
+tests\test_local_host_session_recovery.py:12: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_local_host_endpoint_never_falls_back_across_collaboration_or_packaged_boundaries[enable_packaged_runtime] _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x0000013E856DE0C0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv\Lib\site-packages\_pytest\runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\_pytest\runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\logging.py:858: in pytest_runtest_teardown
+    yield
+.venv\Lib\site-packages\_pytest\capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv\Lib\site-packages\_pytest\runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv\Lib\site-packages\_pytest\runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\runner.py:546: in teardown_exact
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\fixtures.py:1058: in finish
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv\Lib\site-packages\_pytest\monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv\Lib\site-packages\_pytest\monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at setup of test_revoked_local_token_is_rejected_by_existing_resolver _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000013E85A8AA10>
+
+    @pytest.fixture
+    def local_client(monkeypatch):
+>       monkeypatch.setattr(settings, 'enable_collaboration_runtime', False)
+
+tests\test_local_host_session_recovery.py:12: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+_ ERROR at teardown of test_revoked_local_token_is_rejected_by_existing_resolver _
+
+cls = <class '_pytest.runner.CallInfo'>
+func = <function call_and_report.<locals>.<lambda> at 0x0000013EFEAC11C0>
+when = 'teardown'
+reraise = (<class '_pytest.outcomes.Exit'>, <class 'KeyboardInterrupt'>)
+
+    @classmethod
+    def from_call(
+        cls,
+        func: Callable[[], TResult],
+        when: Literal["collect", "setup", "call", "teardown"],
+        reraise: type[BaseException] | tuple[type[BaseException], ...] | None = None,
+    ) -> CallInfo[TResult]:
+        """Call func, wrapping the result in a CallInfo.
+    
+        :param func:
+            The function to call. Called without arguments.
+        :type func: Callable[[], _pytest.runner.TResult]
+        :param when:
+            The phase in which the function is called.
+        :param reraise:
+            Exception or exceptions that shall propagate if raised by the
+            function, instead of being wrapped in the CallInfo.
+        """
+        excinfo = None
+        instant = timing.Instant()
+        try:
+>           result: TResult | None = func()
+                                     ^^^^^^
+
+.venv\Lib\site-packages\_pytest\runner.py:344: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+.venv\Lib\site-packages\_pytest\runner.py:246: in <lambda>
+    lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_hooks.py:512: in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\pluggy\_manager.py:120: in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv\Lib\site-packages\_pytest\logging.py:858: in pytest_runtest_teardown
+    yield
+.venv\Lib\site-packages\_pytest\capture.py:905: in pytest_runtest_teardown
+    return (yield)
+            ^^^^^
+.venv\Lib\site-packages\_pytest\runner.py:193: in pytest_runtest_teardown
+    item.session._setupstate.teardown_exact(nextitem)
+.venv\Lib\site-packages\_pytest\runner.py:557: in teardown_exact
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\runner.py:546: in teardown_exact
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:1069: in finish
+    raise exceptions[0]
+.venv\Lib\site-packages\_pytest\fixtures.py:1058: in finish
+    fin()
+.venv\Lib\site-packages\_pytest\fixtures.py:939: in _teardown_yield_fixture
+    next(it)
+.venv\Lib\site-packages\_pytest\monkeypatch.py:57: in monkeypatch
+    mpatch.undo()
+.venv\Lib\site-packages\_pytest\monkeypatch.py:394: in undo
+    setattr(obj, name, value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = Settings(root=WindowsPath('D:/С˵/AI-Novel-Studio-Latest-Product'), novel_data=WindowsPath('novel_data'), profile='HYBR...edential_vault_backend='auto', credential_vault_service='AI-Novel-Studio', credential_vault_allow_memory_fallback=True)
+name = 'enable_collaboration_runtime', value = False
+
+>   ???
+E   dataclasses.FrozenInstanceError: cannot assign to field 'enable_collaboration_runtime'
+
+<string>:4: FrozenInstanceError
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  D:\С˵\AI-Novel-Studio-Latest-Product\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+ERROR tests/test_local_host_session_recovery.py::test_explicit_local_host_validation_uses_existing_actor_registry_without_echoing_credentials[/api/local-session]
+ERROR tests/test_local_host_session_recovery.py::test_explicit_local_host_validation_uses_existing_actor_registry_without_echoing_credentials[/api/local-session]
+ERROR tests/test_local_host_session_recovery.py::test_explicit_local_host_validation_uses_existing_actor_registry_without_echoing_credentials[/api/v1/local-session]
+ERROR tests/test_local_host_session_recovery.py::test_explicit_local_host_validation_uses_existing_actor_registry_without_echoing_credentials[/api/v1/local-session]
+ERROR tests/test_local_host_session_recovery.py::test_local_host_binding_rejects_absent_or_unregistered_tokens[]
+ERROR tests/test_local_host_session_recovery.py::test_local_host_binding_rejects_absent_or_unregistered_tokens[]
+ERROR tests/test_local_host_session_recovery.py::test_local_host_binding_rejects_absent_or_unregistered_tokens[invalid-opaque-credential]
+ERROR tests/test_local_host_session_recovery.py::test_local_host_binding_rejects_absent_or_unregistered_tokens[invalid-opaque-credential]
+ERROR tests/test_local_host_session_recovery.py::test_local_host_binding_rejects_wrong_origin
+ERROR tests/test_local_host_session_recovery.py::test_local_host_binding_rejects_wrong_origin
+ERROR tests/test_local_host_session_recovery.py::test_local_host_binding_keeps_remote_development_requests_denied
+ERROR tests/test_local_host_session_recovery.py::test_local_host_binding_keeps_remote_development_requests_denied
+ERROR tests/test_local_host_session_recovery.py::test_local_host_endpoint_never_falls_back_across_collaboration_or_packaged_boundaries[enable_collaboration_runtime]
+ERROR tests/test_local_host_session_recovery.py::test_local_host_endpoint_never_falls_back_across_collaboration_or_packaged_boundaries[enable_collaboration_runtime]
+ERROR tests/test_local_host_session_recovery.py::test_local_host_endpoint_never_falls_back_across_collaboration_or_packaged_boundaries[enable_packaged_runtime]
+ERROR tests/test_local_host_session_recovery.py::test_local_host_endpoint_never_falls_back_across_collaboration_or_packaged_boundaries[enable_packaged_runtime]
+ERROR tests/test_local_host_session_recovery.py::test_revoked_local_token_is_rejected_by_existing_resolver
+ERROR tests/test_local_host_session_recovery.py::test_revoked_local_token_is_rejected_by_existing_resolver
+1 warning, 18 errors in 3.95s

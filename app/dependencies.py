@@ -103,6 +103,11 @@ def refresh_asset_provider(provider_id: str) -> bool:
         return False
     return True
 
+from .model_center.discovery import LocalDiscoveryService
+from .model_center.discovery_bridge import LocalDiscoveryBridge
+local_ai_discovery=LocalDiscoveryService(model_center_service, settings.data_path()/"model-center"/"local-discovery.json")
+local_ai_discovery.route_bridge=LocalDiscoveryBridge(local_ai_discovery, runtime, asset_provider_registry)
+
 screenplay_service=ScreenplayService(repositories.novels,repositories.chapters,asset_provider_registry)
 def refresh_video_provider(provider_id: str, endpoint: str, model_id: str, requires_credential: bool = True) -> bool:
     if provider_id == 'deterministic' or not endpoint or (requires_credential and not credential_vault.has(provider_id)):
@@ -118,8 +123,8 @@ asset_task_worker=AssetTaskWorker(screenplay_service)
 asset_library_service=AssetLibraryService(settings.data_path())
 import_review_service=ImportReviewService(settings.data_path())
 
-def _export_snapshot(novel_id: str, format: str):
-    return novel_service.export_snapshot(novel_id, asset_library=asset_library_service, format=format)
+def _export_snapshot(novel_id: str, format: str, permission_context: dict | None = None):
+    return novel_service.export_snapshot(novel_id, asset_library=asset_library_service, format=format, permission_context=permission_context)
 
 export_job_service=ExportJobService(
     settings.data_path(),
@@ -127,6 +132,14 @@ export_job_service=ExportJobService(
     snapshotter=_export_snapshot,
 )
 chapter_service=ChapterService(repositories.chapters)
+from .experimental.store import ExperimentalStore
+from .services.branch_manuscript_service import BranchManuscriptService
+branch_manuscript_service = BranchManuscriptService(
+    ExperimentalStore(settings.data_path(), settings.storage_backend, settings.database_url),
+    novel_service, chapter_service)
+chapter_service.branch_authority = branch_manuscript_service.for_scope
+novel_service.branch_authority = branch_manuscript_service.for_scope
+adaptation_service.branch_authority = branch_manuscript_service.for_scope
 memory_service=MemoryService(repositories.lore)
 user_preference_service=UserPreferenceService(settings.data_path())
 harness_process_service=HarnessProcessService()
@@ -154,12 +167,14 @@ narrative_state_service=NarrativeStateService(repositories.narrative,repositorie
 narrative_finding_service=NarrativeFindingService(repositories.narrative)
 narrative_proposal_service=NarrativeProposalService(repositories.narrative,narrative_state_service)
 collaboration_scope_service=CollaborationScopeService(repositories.scope,repositories.novels)
+branch_manuscript_service.scopes = collaboration_scope_service
 authorization_service=AuthorizationService(repositories.authorization,collaboration_scope_service)
 identity_service=IdentityService(repositories.identity,collaboration_scope_service)
 membership_authorization_service=MembershipAuthorizationService(identity_service,authorization_service)
 audit_service=AuditService(repositories.authorization)
 atomic_chapter_audit_port=create_atomic_chapter_audit_port(repositories.chapters,repositories.authorization)
 collaboration_application_service=CollaborationApplicationService(membership_authorization_service,atomic_chapter_audit_port,audit_service)
+collaboration_application_service.branch_manuscripts = branch_manuscript_service
 trusted_session_resolver=create_runtime_session_resolver(
     packaged_runtime=settings.enable_packaged_runtime,
     dev_sessions_json=settings.collaboration_dev_sessions_json,
@@ -195,6 +210,7 @@ collaboration_read_service=CollaborationReadService(
     visual_workflows=VisualTextWorkflowAdapter(runtime.provider_registry, runtime.model_registry),
     runtime_diagnostics=TextRuntimeDiagnosticsAdapter(runtime.provider_registry, runtime.model_registry),
 )
+collaboration_read_service.branch_manuscripts = branch_manuscript_service
 collaboration_admin_service=CollaborationAdminService(
     sessions=trusted_session_resolver,
     identity=identity_service,
@@ -212,3 +228,19 @@ memory_agent_service=MemoryAgentRunner(repositories.novels,repositories.chapters
 def create_provider_runtime_snapshot():
     """Build the read-only Provider Runtime snapshot from Host-owned services."""
     return _create_provider_runtime_snapshot()
+
+# The interop Host is passive at construction and disabled by default.
+from .local_interop.provider import InteropContextProvider
+from .local_interop.host import LocalInteropHost
+
+def _interop_jobs():
+    from .jobs import jobs
+    return jobs
+
+local_interop_host = LocalInteropHost(InteropContextProvider(
+    collaboration_read_service, model_center=model_center_service, jobs=_interop_jobs,
+    export_jobs=export_job_service,
+    # get_workflow_run() can mutate timeout state. This owner-level read-only
+    # projection intentionally does not call it or advance the workflow.
+    workflow_reader=lambda task_id: v1_capability_service._get("workflow_runs", task_id),
+))

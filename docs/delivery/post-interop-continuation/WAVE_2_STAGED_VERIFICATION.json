@@ -1,0 +1,32 @@
+{
+  "kind": "INVENTORY_REVIEW_NOT_EXECUTION",
+  "previous_nodes": 6890,
+  "current_nodes": 7262,
+  "changed_source_files": [
+    {
+      "path": "tests/test_post_interop_workspace_ux.py",
+      "before_sha256": "92d05987bd9d344bb58aafa2b463414362ba148fd03310971471ad6ea7ba5f99",
+      "after_sha256": "ada95c114e397bb643f1082a31aef3230315e349818ab5069a6f6520e2d16f9b"
+    }
+  ],
+  "old_skip_counts": {
+    "file": 2035,
+    "postgres": 2059
+  },
+  "manifest_sha256": "63d5c65080a3d20556ba491ffe780ec36bdafc9e4f550ecde96515306976aa4b",
+  "added_node_count": 372,
+  "stage": "Wave2 plus core UX refinements",
+  "tested_code_tree": "04c0cd285757fb04d8917d95828421ad7a76c963",
+  "typescript": "PASS",
+  "complete_frontend": {
+    "passed": 1222,
+    "inherited_opt_in_skipped": 8
+  },
+  "focused_backend": {
+    "passed": 214,
+    "postgres_deselected": 198
+  },
+  "historical_assertions": "unchanged; only continuation-owned workspace suite gains new origin cases",
+  "full_final_source_hosted_ci": "PENDING",
+  "public_receipt_note": "Commands are normalized for an isolated test environment. Raw operational logs and local recovery paths are not public artifacts."
+}
