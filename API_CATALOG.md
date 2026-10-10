@@ -432,7 +432,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/projects/{nid}/studio/graphs` | `app/creative/graph_api.py:118` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/projects/{nid}/studio/graphs/catalog` | `app/creative/graph_api.py:113` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/projects/{nid}/studio/graphs/model-capabilities` | `app/creative/graph_api.py:89` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/projects/{nid}/studio/graphs/provider-contracts` | `app/creative/graph_api.py:93` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/projects/{nid}/studio/graphs/provider-contracts` | `app/creative/graph_api.py:93` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/projects/{nid}/studio/graphs/{gid}` | `app/creative/graph_api.py:129` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/projects/{nid}/studio/graphs/{gid}/runs` | `app/creative/graph_api.py:147` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/projects/{nid}/studio/preferences` | `app/creative/workspace_api.py:108` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -845,7 +845,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | GET | `/api/v1/projects/{nid}/studio/graphs` | `app/creative/graph_api.py:118` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/projects/{nid}/studio/graphs/catalog` | `app/creative/graph_api.py:113` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/projects/{nid}/studio/graphs/model-capabilities` | `app/creative/graph_api.py:89` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| GET | `/api/v1/projects/{nid}/studio/graphs/provider-contracts` | `app/creative/graph_api.py:93` | FULL_RECOVERY_ADDED_ROUTE |
+| GET | `/api/v1/projects/{nid}/studio/graphs/provider-contracts` | `app/creative/graph_api.py:93` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/projects/{nid}/studio/graphs/{gid}` | `app/creative/graph_api.py:129` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/projects/{nid}/studio/graphs/{gid}/runs` | `app/creative/graph_api.py:147` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | GET | `/api/v1/projects/{nid}/studio/preferences` | `app/creative/workspace_api.py:108` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1390,7 +1390,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/projects/{nid}/studio/graph-runs/{rid}/reject` | `app/creative/graph_api.py:168` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/graph-runs/{rid}/resume` | `app/creative/graph_api.py:168` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/graphs` | `app/creative/graph_api.py:123` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/projects/{nid}/studio/graphs/model-match` | `app/creative/graph_api.py:97` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/projects/{nid}/studio/graphs/model-match` | `app/creative/graph_api.py:97` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/graphs/{gid}/preflight` | `app/creative/graph_api.py:141` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{nid}/studio/graphs/{gid}/runs` | `app/creative/graph_api.py:153` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/projects/{project_id}/continuity/checks` | `app/api.py:2943` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |
@@ -1898,7 +1898,7 @@ The complete operation/schema/owner graph is retained in API_CATALOG_DETAIL.json
 | POST | `/api/v1/projects/{nid}/studio/graph-runs/{rid}/reject` | `app/creative/graph_api.py:168` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/graph-runs/{rid}/resume` | `app/creative/graph_api.py:168` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/graphs` | `app/creative/graph_api.py:123` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
-| POST | `/api/v1/projects/{nid}/studio/graphs/model-match` | `app/creative/graph_api.py:97` | FULL_RECOVERY_ADDED_ROUTE |
+| POST | `/api/v1/projects/{nid}/studio/graphs/model-match` | `app/creative/graph_api.py:97` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/graphs/{gid}/preflight` | `app/creative/graph_api.py:141` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{nid}/studio/graphs/{gid}/runs` | `app/creative/graph_api.py:153` | FULL_RECOVERY_ADDED_ROUTE, FULL_RECOVERY_SOURCE_REBOUND |
 | POST | `/api/v1/projects/{project_id}/continuity/checks` | `app/api.py:2943` | UNCHANGED_DECLARED_SURFACE, FULL_RECOVERY_SOURCE_REBOUND |

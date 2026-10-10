@@ -1,6 +1,7 @@
 """M4-B real-owner text archival; provider output is built-in synthetic only."""
 from copy import deepcopy
 from hashlib import sha256
+from threading import Event
 
 import pytest
 
@@ -356,3 +357,75 @@ def test_settled_ledger_must_confirm_completed_job_before_archival(model_rig, mo
     result = current(e, sent)
     assert result['asset_output']['state'] == 'INCOMPLETE' and result['review'] is None
     assert not assets(e) and len(e.calls) == 1
+
+
+@pytest.mark.parametrize("arrival", ["completed", "settling"])
+def test_manual_refresh_completion_boundary_requires_archive_before_review(model_rig, monkeypatch, arrival):
+    from test_v2_ai_execution_runtime import dispatch, refresh
+    e = model_rig; entered, release = spy_transport(e, monkeypatch, blocked=True)
+    sent = dispatch(e, preview(e, admit(e)), archive_result=True)
+    job = e.manager.get(sent["model_runtime"]["execution"]["job_id"])
+    settlement_entered, settlement_release = Event(), Event()
+    e.releases.append(settlement_release)
+    original_settle = job.on_terminal
+    def settle():
+        settlement_entered.set()
+        assert settlement_release.wait(6), "fixture settlement release missing"
+        original_settle()
+    if arrival == "settling":
+        job.on_terminal = settle
+    before_chapters = deepcopy(e.chapters.list(e.nid))
+    try:
+        assert entered.wait(3)
+        pending = refresh(e, sent)
+        assert pending["asset_output"]["state"] == "PENDING" and not pending["stale"]
+        original_refresh = e.models._refresh
+        def finish_between_observations(*args, **kwargs):
+            # The outer archival precheck has observed GENERATING. Let the
+            # original worker reach its real terminal boundary before _refresh.
+            assert job.status == "GENERATING"
+            release.set()
+            if arrival == "settling":
+                assert settlement_entered.wait(3)
+                assert job.public()["status"] == "SETTLING"
+            else:
+                e.calls[0]["worker"].join(8)
+                assert not e.calls[0]["worker"].is_alive()
+                assert job.status == job.terminal_hook_status == "COMPLETED"
+            return original_refresh(*args, **kwargs)
+        with monkeypatch.context() as boundary:
+            boundary.setattr(e.models, "_refresh", finish_between_observations)
+            pending = refresh(e, pending)
+        # A completed provider receipt is not archival authority. No typed
+        # result or review transition may be persisted through the legacy path.
+        assert pending["status"] == "RUNNING" and not pending["stale"]
+        assert pending["review"] is None and pending["asset_output"]["state"] == "PENDING"
+        assert pending["node_states"]["Generate"]["output"] is None
+        assert raw(e, sent)["node_states"]["Generate"]["status"] == "WORKING"
+        assert "Generate" not in raw(e, sent)["typed_outputs"] and not assets(e)
+        if arrival == "settling":
+            # A second explicit refresh can observe the active terminal hook
+            # itself; it must remain refreshable rather than look stale/failed.
+            pending = refresh(e, pending)
+            assert pending["status"] == "RUNNING" and not pending["stale"]
+            assert pending["asset_output"]["state"] == "PENDING" and pending["review"] is None
+            with monkeypatch.context() as unavailable:
+                unavailable.setattr(job, "request_authorization", None)
+                masked = refresh(e, pending)
+            assert masked["stale"] and masked["asset_output"]["state"] == "INCOMPLETE"
+            assert masked["review"] is None and all(node["output"] is None for node in masked["node_states"].values())
+            assert raw(e, sent)["status"] == "RUNNING" and not assets(e)
+    finally:
+        release.set(); settlement_release.set()
+        e.calls[0]["worker"].join(8)
+        assert not e.calls[0]["worker"].is_alive()
+    assert job.status == job.terminal_hook_status == "COMPLETED"
+    waiting = refresh(e, pending)
+    assert waiting["status"] == "WAITING_APPROVAL" and not waiting["stale"]
+    assert waiting["review"]["draft"]["text"] == job.output
+    receipt = waiting["asset_output"]
+    assert receipt["state"] == "DRAFT" and receipt["version"] == 1
+    assert receipt["source"]["job_id"] == job.id and receipt["sha256"] == sha256(job.output.encode()).hexdigest()
+    assert refresh(e, waiting) == waiting
+    assert len(e.calls) == len(owned_jobs(e)) == len(assets(e)) == 1
+    assert e.chapters.list(e.nid) == before_chapters and not waiting["applied"]

@@ -427,8 +427,13 @@ class CreativeGraphNodeRuntime:
             except KeyError:
                 job = None
             if job and job.status == "COMPLETED" and job.terminal_hook_status != "COMPLETED":
-                return self.text_assets.masked(self.service.executor.view(nid, scope, actor, row, guard),
-                    "TERMINAL_ACCOUNTING_RECONCILIATION_REQUIRED")
+                # Only the original live owner can still be settling. Restored
+                # or uncertain terminal receipts keep the masked boundary.
+                live_settling = (job.terminal_hook_status is None and job.prepared_text_invocation is not None
+                    and callable(job.request_authorization) and callable(job.before_dispatch) and callable(job.on_terminal))
+                if not live_settling:
+                    return self.text_assets.masked(self.service.executor.view(nid, scope, actor, row, guard),
+                        "TERMINAL_ACCOUNTING_RECONCILIATION_REQUIRED")
             if job and job.status == "COMPLETED" and job.terminal_hook_status == "COMPLETED":
                 with self.text_assets.phase(nid, scope, actor, rid, guard, create=row["status"] == "RUNNING"):
                     result = self._refresh(nid, scope, actor, rid, value, guard)
@@ -471,6 +476,13 @@ class CreativeGraphNodeRuntime:
             host = _ScopedOriginalWorkflowHost(stored, current)
             timed = host.get_workflow_run(rid)
             if timed["status"] == "RUNNING" and public and public["status"] in {"COMPLETED", "FAILED", "CANCELLED"}:
+                if public["status"] == "COMPLETED" and self.text_assets.enabled(stored) and not archive_authority:
+                    # Completion can arrive after refresh's archival precheck.
+                    # Keep the current run refreshable until a later request
+                    # establishes its asset phase outside this transaction;
+                    # live dispatch consent cannot substitute for that proof.
+                    current()
+                    return self.service.executor.view(nid, scope, actor, stored, current, state)
                 success = not restored and public["status"] == "COMPLETED" and job.terminal_hook_status == "COMPLETED" and bool(ledger and ledger["dispatched"]) and settled
                 output = None
                 if success:

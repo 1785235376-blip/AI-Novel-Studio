@@ -279,7 +279,7 @@ def test_result_rejects_mutated_transient_request_and_keeps_system_input_in_dige
 
 
 @pytest.mark.parametrize("stamp", ["not-a-timestamp", "2026-01-01T00:00:00", None,
-    (datetime.now(timezone.utc) + timedelta(days=1)).isoformat()])
+    pytest.param((datetime.now(timezone.utc) + timedelta(days=1)).isoformat(), id="future_utc")])
 def test_normalized_result_rejects_invalid_naive_or_future_request_timestamps(stamp):
     value = request(); envelope = ProviderExecutionRequest("TEXT_GENERATION", value, created_at=stamp)
     response = TextGenerationResponse("Draft", "completed", value.provider_id, value.model_id)

@@ -1,6 +1,6 @@
 # M4-B Provider contracts and reviewed text assets
 
-**Bounded text checkpoint, PARTIAL. Corrected-source selected regression is verified; commit publication and exact new-SHA full hosted CI are pending.**
+**Bounded text checkpoint, PARTIAL. Initial M4-B a1eb536 is published. Its first hosted CI exposed an unstable new parameter ID and a manual-refresh archival race. Both narrow corrections are implemented; final-source File/new-PostgreSQL neighbor regression is verified. Corrected-SHA hosted execution remains pending.**
 
 The user-defined M4 AI Execution Layer scope continues from verified local and
 remote `09883fb7fe35b241f97ea7fe0a3e292178441935` on
@@ -168,3 +168,93 @@ API execution, image/video generation, measured GPU fit/global scheduling,
 editable text-content versions and user-machine acceptance are not completed.
 No V1 frozen source, original CI timeout/skip/assertion/hash policy, Interop
 protocol or QingJian source is changed. No main merge, release or deployment.
+
+## Hosted collection correction after a1eb536
+
+Initial M4-B commit `a1eb536de906bc87999fad8f5b3328f84c9252e5` was
+published on the feature branch with 158 files. The original backend collection
+gate rejected its inventory before product execution: a new future-timestamp
+case used `datetime.now() + one day` as an automatically generated parameter ID.
+The hosted 11,071-node list differed at exactly one position (10739), solely
+because collection happened later. The failed source, logs and artifact are
+retained; the earlier selected regression never established full-suite acceptance.
+
+The correction gives only that new parameter an explicit `future_utc` ID. Its
+actual future time value and rejection assertion remain unchanged. No production
+code, original test, timeout, skip, V1 frozen hash or coverage gate changes. The
+separate V2 inventory was regenerated through the original fail-closed generator.
+
+Corrected runner source (1,733 inputs):
+`0393024d699c1ef7e5e95e584e0847c44e011db2acd7046957ae2da58599f19b`.
+Corrected manifest SHA256:
+`05556ea87c8c8122608d8d0ec723b142a8686f7ed1505849690fa2dd1d97b7e9`.
+Two independent full collections with different hash seeds each produce the
+identical ordered 11,071-node inventory and backend classifications, preserving
+all 10,728 M4-A nodes in order and exact historical skips/gates. This is inventory
+proof, not product execution. The entire provider module passes 76 tests and
+unchanged infrastructure passes 279 on the corrected source. See the
+[collection proof](docs/delivery/v2-development/stage-m4b-stable-node-collection-proof.json)
+and its adjacent reproducible verification script. Exact corrected-SHA hosted
+File 1 / PostgreSQL 2 execution and strict joins remain required.
+
+## First hosted CI and manual-refresh consistency correction
+
+All five initial `a1eb536` workflows completed naturally, attempt 1, with
+**29 jobs: 17 success, 12 failure, 0 cancelled**. Each push/PR Cloud event has
+three collection-gate failures, two prerequisite-failed strict joins (reconciliation
+not reached), and one failed original M4 live browser case. No run was cancelled
+or rerun. Original creative browser 7+8, frontend 2,313 unit passes/8 original
+skips and remaining original business journeys, Interop and limited hosted
+Windows checks passed in both events. The shared fixed-source R123 workflow
+succeeded by actually reproducing all three known historical defects as red;
+this does not certify the current source or overturn earlier R123 failures.
+
+The additive browser inventory executed **16 passed / 1 failed** in each event.
+The new M4-B flow passed: one original Mock call, one private asset, one injected
+review-metadata failure, original GET/reopen recovery to APPROVED v2, no model
+replay/cloud calls/chapters; both matching and asset geometry passed all three
+viewports. The failed case was the unchanged original M4 manual-refresh flow.
+Its trace shows WAITING_APPROVAL / RESULT_REVIEW with asset PENDING and no review
+shown because the safety view correctly marked the inconsistent result stale.
+
+The production cause is completion between refresh's two observations. An
+archival dispatch could reach legacy success processing without current asset
+phase authority. The narrow runtime correction defers completed output until
+a later authorized refresh establishes that phase outside the transaction.
+Only the exact original bound live job retaining its nonpersistent prepared
+invocation and all original callbacks may remain refreshable during unsettled
+accounting. Restored, missing-authority or otherwise uncertain completion remains
+masked INCOMPLETE, with no accepted output/asset/review. Original FAILED/CANCELLED
+handling remains unchanged. No second state owner, automatic model retry, UI
+workaround or relaxed browser assertion/180-second limit was added.
+
+Two deterministic completion/settling barrier regressions failed before repair
+and passed afterward. The two M4-B asset modules then passed 39 File tests,
+including both mounted aliases and existing storage-failure/revoke/source-change/
+cancel/restored-accounting boundaries. Eleven original terminal/cancellation
+cases also passed. Existing fence cases were rerun, not newly invented. Original
+browser spec and fixture remain byte-identical. The final 18-file selection passes **File 558 / 354 profile skips** in 172.42
+seconds and **new PostgreSQL 552 / 360 profile skips** in 532.89 seconds. The
+new database began with zero objects, applied all 20 original migrations and
+stopped normally with its data retained. These are same-final-source receipts;
+earlier source results are not substituted.
+
+Final correction source (1,733 inputs): `b1589462aa97198dec5a91d5285dc4fab8ac9a607d6159f5e69f183a2e9f1968`.
+The regenerated inventory is **11,079 nodes** (eight additional fixture-profile
+regressions, original M4-A nodes/order/skips/gates unchanged), SHA256
+`7f6a1a9b2ffd23ff3a27a9f3819aa185cc51307479f185b7a535b965e75cdaf5`.
+API count remains **2,123**, with no operations added or removed by these fixes.
+
+The first hosted attempt is retained in the [terminal summary](docs/delivery/v2-development/stage-m4b-a1eb-hosted-terminal.json)
+and [compact evidence ZIP](docs/delivery/v2-development/stage-m4b-a1eb-hosted-evidence.zip).
+The compact packet preserves all 29 decoded logs, all six collection-failure
+receipts, source identities, original failed trace/network text and screenshots,
+and successful M4-B owner/geometry receipts. It does not contain a fully playable
+trace or all large original artifacts; the full original traces and complete
+portable evidence remain preserved for the final downloadable delivery.
+
+Final-source validation also passes unchanged infrastructure **279 tests** and
+two independent full **11,079-node** collections with exact ordered IDs and
+backend classifications. The [final publication proof](docs/delivery/v2-development/stage-m4b-ci-corrections-publish-verification.json)
+binds all final selected results to the same source map and confirms fresh-PG
+normal shutdown. Full corrected-SHA hosted execution remains pending.
