@@ -1,0 +1,17 @@
+{
+  "staged_tree": "b7e1605713fdd9ae4138cdb1f74ceee72306862a",
+  "utc": "2026-10-10T19:32:31.926790+00:00",
+  "command": [
+    "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.venv/bin/python",
+    "-B",
+    "scripts/refresh_product_api_catalog.py"
+  ],
+  "cwd": "/workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/.runtime/v2-staged/fcb58160050449c8bd81ab6c280a45dc",
+  "exit_code": 0,
+  "sha256": {
+    "API_CATALOG.json": "430016a6d122883fa2feaa9ef608d2c1e61f748a54b27ee13104094a96c4b62b",
+    "API_CATALOG.md": "7b9f92f8e61d24b8379ad9ea97e9e1955bfdccb394bbe102a456c6f17f821fd0",
+    "API_CATALOG_DETAIL.json.gz": "1a6468ddee1f12f3fdf9bf3f5beeffd9cac218cec690fb3a9505e40886212382",
+    "API_OPENAPI.json.gz": "94975c158776dab790e1dc4bfef5cfe1123526f635e804da8dbd72ae5ff9b1cc"
+  }
+}

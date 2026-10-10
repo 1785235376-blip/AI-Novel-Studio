@@ -8,6 +8,7 @@ export type DirectorModelPreview = { preview_digest: string; execution_available
 export type DirectorProposal = { id: string; version: number; status: string; source_document_id: string; source_version: number; title: string; director_notes: DirectorSceneNote[]; output_digest: string; provenance: { model_called?: boolean; [key: string]: unknown }; model_preview?: DirectorModelPreview | null; model_execution?: { job_id: string; status: string; model_called: boolean; receipt_state: string; usage_state: string; failure_code?: string } | null };
 export type CreativeHistory = { document_id: string; current_version: number; items: CreativeDocument[] };
 export type ScreenplayExportFormat = 'fountain' | 'docx' | 'markdown';
+export type ScriptExportFormat = 'txt' | 'docx' | 'markdown';
 export type ScreenplayDownload = { blob: Blob; filename: string; documentVersion: number; documentDigest: string; sha256: string };
 export function creativeClient(novelId: string, context: CollaborationContext) {
   // Capture a complete origin. No request may borrow a later session or branch.
@@ -32,11 +33,11 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
   async function request<T>(url: string, method = 'GET', body?: unknown, signal?: AbortSignal): Promise<T> {
     return (await responseFor(url, method, body, signal)).json() as Promise<T>;
   }
-  async function screenplayExport(source: CreativeDocument, format: ScreenplayExportFormat, signal?: AbortSignal): Promise<ScreenplayDownload> {
-    const formats = { fountain: ['text/x-fountain', 'fountain'], docx: ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'], markdown: ['text/markdown', 'md'] };
+  async function verifiedTextExport(source: CreativeDocument, format: string, kind: 'SCREENPLAY' | 'SCRIPT', signal?: AbortSignal): Promise<ScreenplayDownload> {
+    const formats: Record<string, [string, string]> = { ...(kind === 'SCREENPLAY' ? { fountain: ['text/x-fountain', 'fountain'] as [string, string] } : { txt: ['text/plain', 'txt'] as [string, string] }), docx: ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'], markdown: ['text/markdown', 'md'] };
     const invalid = () => new ApiError({ status: 502, code: 'CREATIVE_EXPORT_RECEIPT_INVALID', message: '导出文件与当前版本不一致或校验失败。未下载文件，请重新核对已保存版本。' });
-    if (source.mode !== 'SCREENPLAY' || !formats[format] || !Number.isSafeInteger(source.version) || source.version < 1) throw invalid();
-    const response = await responseFor(`${base}/documents/${encodeURIComponent(source.id)}/screenplay-export?format=${format}&expected_version=${source.version}`, 'GET', undefined, signal);
+    if (source.mode !== kind || !formats[format] || !Number.isSafeInteger(source.version) || source.version < 1) throw invalid();
+    const response = await responseFor(`${base}/documents/${encodeURIComponent(source.id)}/${kind === 'SCRIPT' ? 'script' : 'screenplay'}-export?format=${format}&expected_version=${source.version}`, 'GET', undefined, signal);
     const [mime, extension] = formats[format];
     const digest = response.headers.get('X-Creative-Document-Digest') || '', hash = response.headers.get('X-Content-SHA256') || '';
     if (response.headers.get('X-Creative-Document-Version') !== String(source.version) || !/^[a-f0-9]{64}$/.test(digest) || !/^[a-f0-9]{64}$/.test(hash)
@@ -47,7 +48,7 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
     if (!bytes.byteLength || bytes.byteLength > 8_000_000 || signal?.aborted) throw invalid();
     const actual = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))).map(value => value.toString(16).padStart(2, '0')).join('');
     if (actual !== hash || signal?.aborted) throw invalid();
-    return { blob: new Blob([bytes], { type: mime }), filename: `creative-screenplay-v${source.version}.${extension}`, documentVersion: source.version, documentDigest: digest, sha256: hash };
+    return { blob: new Blob([bytes], { type: mime }), filename: `creative-${kind === 'SCRIPT' ? 'script' : 'screenplay'}-v${source.version}.${extension}`, documentVersion: source.version, documentDigest: digest, sha256: hash };
   }
   return {
     capabilities: (signal?: AbortSignal) => request<CreativeCapabilities>(`${base}/capabilities`, 'GET', undefined, signal),
@@ -59,7 +60,8 @@ export function creativeClient(novelId: string, context: CollaborationContext) {
     restore: (source: CreativeDocument, restoreVersion: number) => request<CreativeDocument>(`${base}/documents/${encodeURIComponent(source.id)}/restore`, 'POST', { expected_version: source.version, restore_version: restoreVersion }),
     history: (id: string, signal?: AbortSignal) => request<CreativeHistory>(`${base}/documents/${encodeURIComponent(id)}/history`, 'GET', undefined, signal),
     export: (id: string) => request<{ document: CreativeDocument; document_digest: string; format: string; boundary: string }>(`${base}/documents/${encodeURIComponent(id)}/export`),
-    screenplayExport,
+    screenplayExport: (source: CreativeDocument, format: ScreenplayExportFormat, signal?: AbortSignal) => verifiedTextExport(source, format, 'SCREENPLAY', signal),
+    scriptExport: (source: CreativeDocument, format: ScriptExportFormat, signal?: AbortSignal) => verifiedTextExport(source, format, 'SCRIPT', signal),
     references: (signal?: AbortSignal) => request<CreativeReferences>(`${root}/creation-reference-data`, 'GET', undefined, signal),
     assets: (signal?: AbortSignal) => request<CreativeAsset[]>(`${root}/assets`, 'GET', undefined, signal),
     modelRoutes: (signal?: AbortSignal) => request<{ items: DirectorModelRoute[] }>(`${base}/director-proposals/model-routes`, 'GET', undefined, signal),

@@ -1,0 +1,8 @@
+
+Running 1 test using 1 worker
+
+  ✓  1 [v2-live-chromium] › frontend/tests/e2e/v2-creative-live.spec.ts:509:1 › real HTTP generic Script persists exact text and CAS history without a manuscript (2.0s)
+
+  1 passed (15.1s)
+(node:9441) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

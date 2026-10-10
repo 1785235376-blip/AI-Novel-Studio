@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "baseline_published_source": "c491d1b0227a877eaa5bad7651ed22ba67463439",
+  "private_parent": "79f2f1ef748857508cdbe77c97200aa779fdfa0c",
+  "validator": {
+    "name": "actionlint",
+    "version": "1.7.12",
+    "release_url": "https://github.com/rhysd/actionlint/releases/tag/v1.7.12",
+    "archive_sha256": "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8",
+    "archive_digest_verified_before_execution": true,
+    "executable_sha256": "c872d6db8c6bf83a8eaa704fc93999f027d55dffbc63b8a6abdccb47df5f4cd4",
+    "flags": [
+      "-oneline"
+    ],
+    "optional_checks_disabled": false
+  },
+  "original_workflow_sha256": "bb466caf3142b27688ab03dcbea3ab35578ddf7c6cea36a7c8c86e0c909b739c",
+  "corrected_workflow_sha256": "32a07a303603e477bc036d8b874c604c912225c0d2fd17574ec8be2f231c8077",
+  "original_validation": {
+    "exit_code": 1,
+    "errors": 2,
+    "locations": [
+      "33:26",
+      "179:26"
+    ],
+    "diagnostic": "context runner is not allowed in jobs.<job_id>.env"
+  },
+  "corrected_validation": {
+    "exit_code": 0,
+    "diagnostics": []
+  },
+  "root_cause_reference": "https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#context-availability",
+  "test_result": {
+    "new_cache_regressions": 8,
+    "all_infrastructure_passed": 324,
+    "product_tests_executed": false
+  },
+  "hosted_corrected_workflow": "NOT_RUN_AT_LOCAL_CHECKPOINT",
+  "frozen_v1_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262"
+}

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "27c509461de13a928b149e6c28f50b9aa9e8abbb7b94cb0464e751b2974536f1",
+  "application_source_fingerprint_sha256": "bc55e518080688aad9cb872ee712f4a91f41dd71aae0c1b02d8cae60af8036fa",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -48,17 +48,18 @@
     "app/creation_workbench_api.py": "28d4cb80ef1f45374ceda4bb0d5513be3fc0aea471d3ca8f0738ac8543429879",
     "app/creative/__init__.py": "22e9cdc335f433a18299dd63f82c0b68ca05af9e9cd0570b20baecac2624d0c4",
     "app/creative/ai_execution.py": "72aa5cef0c096d79ba36b39d34905c71af17ba3fbba2a6aebc60bfdc5e8b25dc",
-    "app/creative/api.py": "2236d395fc43ab4699a3c26811ac297075bfe395da41b8d5c792ec20213cb670",
+    "app/creative/api.py": "13dce918d61a19d95cc010aa4ea1d5d19ce440cd7cf1d7939cb07f471289c4ed",
     "app/creative/generation.py": "e34616fbfd7b686615f3b0eab674e7f2f988650471850ef7fc5285774a0a2d61",
     "app/creative/graph.py": "81256acae939e87ed5893c58af58eeca2d36a69966cdd71ff83e0da17c891781",
     "app/creative/graph_api.py": "242e2407af3a18ad5746f78f02ec84bdfa82aa33401729f26d94274cd7393019",
     "app/creative/graph_execution.py": "0c5b48f3f51d6bc624a2bc73068e4656d000c8ba1c14de3f75823472d3713d49",
     "app/creative/graph_models.py": "8fe7e9c62b88e149c597331b069f5ad121a25ce546ada19c6085d79437b451fd",
-    "app/creative/models.py": "4b27d20080c6d8c6f141e9cfe8d3381f6ed4b3ef1d8009e08fcc30a5464723d6",
+    "app/creative/models.py": "3a11215e442a1ca53e5784221e3ecb797eda1b110f415a346ea0e3e3bafe2a7a",
     "app/creative/project_store.py": "09837edb952accb066f9e656d4b2b1ab05d727b27c5e27aca443d28d36848198",
     "app/creative/proposals.py": "4e8b93d2408b214165b01beda496b9dfbfee2b0bd400c414b2794da20262fd96",
     "app/creative/screenplay_export.py": "87b8d460cbdd111756e64900aefffff271f7463bd6d5811bd6720d70fda0a384",
-    "app/creative/service.py": "abcf878e162d1ef596e140e1e5999aa8d754fec18eefcd172070ccb3d51e2c8a",
+    "app/creative/script_export.py": "d94eb8dc9d55d27aaf83f0fb1d97c9e20a102830692f9b1d8111ae4bcd91a144",
+    "app/creative/service.py": "df7cbb813faa4811bb0771d54e845c0032eacc9069a5c5cc69cd12c9a001290e",
     "app/creative/storage_admission.py": "055cc172c00063f9dad333e7d4815174bd3c3e6b8f3af742a548c4427f0acf86",
     "app/creative/text_assets.py": "e486476bf435ed23da619818ca523d59b6cd77271e09d1abd101cbd5f815897b",
     "app/creative/text_execution_receipt.py": "3797c24bfec8d499558bb0f2a1fc6d5ff78911d06b8ee6a6c46c4b20a582df65",
@@ -394,9 +395,9 @@
     "app/workflow_recipes.py": "81c159fbb51535439f4e5bcd9348c008ab8849d451426c8f67f11cf6f7dd78e7"
   },
   "summary": {
-    "added": 292,
+    "added": 294,
     "changed_contract": 24,
-    "current_method_paths": 2125,
+    "current_method_paths": 2127,
     "direct_implementation_changed": 1034,
     "removed": 0,
     "starting_method_paths": 1833
@@ -413,7 +414,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "22ec92a91e186239470b836637c41354f8ae456380b61058ee6749ad89bd765a",
+    "sha256": "1a6468ddee1f12f3fdf9bf3f5beeffd9cac218cec690fb3a9505e40886212382",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -2553,9 +2554,21 @@
       "operation_id": "screenplay_export_api_novels__nid__experimental_creative_documents__rid__screenplay_export_get",
       "owner_ref": "6cd00ee665a5b49304fd6889b8bdacb7beea6e6f8f616cbdd585b90b1c7f06c5",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "47739b145c53caaf36da63cca77a652385de7a9f71f37db58dfdfdfbe109fe82",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/novels/{nid}/experimental/creative/documents/{rid}/script-export",
+      "operation_id": "script_export_api_novels__nid__experimental_creative_documents__rid__script_export_get",
+      "owner_ref": "9aaad7662666968b888e6b2979d4e6803dcfb97ff65c5a4715ca178796fb7f46",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "ef7e589e1259300c1f181fb095512f2e413a48fc4a51fa8558fb593cc2f4c32f",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -7521,9 +7534,21 @@
       "operation_id": "screenplay_export_api_v1_novels__nid__experimental_creative_documents__rid__screenplay_export_get",
       "owner_ref": "6cd00ee665a5b49304fd6889b8bdacb7beea6e6f8f616cbdd585b90b1c7f06c5",
       "changes": [
-        "FULL_RECOVERY_ADDED_ROUTE"
+        "FULL_RECOVERY_ADDED_ROUTE",
+        "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "a4462537e0b76ed02dad02e9e0893a78fe002fca473246dd721909a837d5a31e",
+      "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/novels/{nid}/experimental/creative/documents/{rid}/script-export",
+      "operation_id": "script_export_api_v1_novels__nid__experimental_creative_documents__rid__script_export_get",
+      "owner_ref": "9aaad7662666968b888e6b2979d4e6803dcfb97ff65c5a4715ca178796fb7f46",
+      "changes": [
+        "FULL_RECOVERY_ADDED_ROUTE"
+      ],
+      "operation_sha256": "6bbaa270b10a368d1b467b6cb25915d2f902cb28a6eb48a1691560b5b887a11a",
       "schema_graph_sha256": "a259556130e1de449c5b4d920c1237346c4d6e8b7f6021ceca039e3599ac2449"
     },
     {
@@ -13051,7 +13076,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "40fae695cae3956b47ce22da851c2228e75e800a810dcbd780c20244cb36725b",
-      "schema_graph_sha256": "c7182866e7743fd3dd1d9eda7f12f38702006f246c9b1afb2fba87a80a81a1d9"
+      "schema_graph_sha256": "36e77d003b79fe867ce3b091033e09aec7169460a36ca5e88e98d5c5bb3a6f3b"
     },
     {
       "method": "POST",
@@ -19156,7 +19181,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "22617f45287f7a21df564a8984080533dd2f15b1624c6995ce95ffa18c331dc8",
-      "schema_graph_sha256": "c7182866e7743fd3dd1d9eda7f12f38702006f246c9b1afb2fba87a80a81a1d9"
+      "schema_graph_sha256": "36e77d003b79fe867ce3b091033e09aec7169460a36ca5e88e98d5c5bb3a6f3b"
     },
     {
       "method": "POST",
@@ -24103,7 +24128,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "d1211ee1c44c8757877f03f6bde100ccd4e9f52fdcea141e9a04bfa6210b75a3",
-      "schema_graph_sha256": "9700bd0292341d48390595cc79b6c3eebf808dfc6c9c6d266ef9dbecf213141d"
+      "schema_graph_sha256": "39e4365b2d5402ad713f3eeab6939cefe6790d8c8055b4296b2996b62015498f"
     },
     {
       "method": "PUT",
@@ -25149,7 +25174,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "c70ac95ea89c2a4b231b0a11e7165f59fd31d893e95622ce771bf75f1d8974ab",
-      "schema_graph_sha256": "9700bd0292341d48390595cc79b6c3eebf808dfc6c9c6d266ef9dbecf213141d"
+      "schema_graph_sha256": "39e4365b2d5402ad713f3eeab6939cefe6790d8c8055b4296b2996b62015498f"
     },
     {
       "method": "PUT",

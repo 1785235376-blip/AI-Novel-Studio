@@ -476,3 +476,43 @@ test('real HTTP chapterless screenplay format bytes preserve the saved owner and
   expect((await read(request, `${base}/documents`)).items).toEqual([row]);
   await info.attach('http-export-receipts', { body: JSON.stringify({ verification: 'Real HTTP/File; browser launch is separate', receipts, model_called: false }), contentType: 'application/json' });
 });
+
+test('real File standalone generic Script edits, reopens, restores and exports without chapters', async ({page, request}, info) => {
+  ownedPages.set(request,page);await page.goto('/');
+  await page.getByPlaceholder('小说名称').fill('通用脚本独立合成验收');
+  const creating=page.waitForResponse(response=>response.url().endsWith('/api/novels')&&response.request().method()==='POST');
+  await page.getByRole('button',{name:'创建小说',exact:true}).click();const created=await creating;expect(created.status()).toBe(201);
+  const novel=await created.json();rememberNovel(request,novel);const base=creative(novel.id),body='  播客合成开场。\n\n保留独立创作的空行。\n';
+  await page.getByRole('button',{name:'打开 V2 创作工作台',exact:true}).click();await stage(page,'剧本').click();
+  await page.getByRole('button',{name:'新建独立通用脚本',exact:true}).click();
+  await canvas(page).getByLabel('文档标题',{exact:true}).fill('独立播客稿');await canvas(page).getByLabel('脚本用途',{exact:true}).selectOption('PODCAST');await canvas(page).getByLabel('通用脚本内容',{exact:true}).fill(body);
+  const first=await save(page,base);expect(first.mode).toBe('SCRIPT');expect(first.source_chapter_ids).toEqual([]);expect(first.script).toEqual({purpose:'PODCAST',body});
+  await page.reload();await page.getByRole('button',{name:'打开 V2 创作工作台',exact:true}).click();await stage(page,'剧本').click();await expect(canvas(page).getByLabel('通用脚本内容',{exact:true})).toHaveValue(body);
+  await canvas(page).getByLabel('通用脚本内容',{exact:true}).fill('第二稿，仅修改独立脚本。');const second=await save(page,base,first);expect(second.version).toBe(2);
+  await canvas(page).getByRole('button',{name:'历史',exact:true}).click();const history=page.getByRole('region',{name:'创作文档历史',exact:true});
+  await history.getByText('v1 · 独立播客稿',{exact:true}).click();await history.getByLabel('已核对 v1 的完整内容；恢复会新建当前版本',{exact:true}).check();
+  const third=await mutate(page,`${base}/documents/${first.id}/restore`,'POST',()=>history.getByRole('button',{name:'恢复 v1 为新版本',exact:true}).click());expect(third.version).toBe(3);expect(third.script.body).toBe(body);
+  const panel=page.getByRole('region',{name:'通用脚本文本格式导出',exact:true}),receipts:Row[]=[];
+  for(const [format,extension] of [['txt','txt'],['markdown','md'],['docx','docx']]) {
+    await panel.getByLabel('脚本导出格式',{exact:true}).selectOption(format);
+    const responseEvent=page.waitForResponse(response=>new URL(response.url()).pathname===`${base}/documents/${first.id}/script-export`),downloadEvent=page.waitForEvent('download');
+    await panel.getByRole('button',{name:'导出脚本文本',exact:true}).click();const [response,download]=await Promise.all([responseEvent,downloadEvent]);expect(response.status()).toBe(200);expect(download.suggestedFilename()).toBe(`creative-script-v3.${extension}`);
+    const path=info.outputPath(`generic-script.${extension}`);await download.saveAs(path);const bytes=await readFile(path),sha256=createHash('sha256').update(bytes).digest('hex');expect(sha256).toBe(response.headers()['x-content-sha256']);expect(response.headers()['x-creative-document-version']).toBe('3');
+    if(format!=='docx')expect(bytes.toString('utf8')).toBe(body);else expect(bytes.subarray(0,2).toString()).toBe('PK');receipts.push({format,sha256,bytes:bytes.length});await info.attach(`script-${format}`,{path,contentType:response.headers()['content-type'].split(';')[0]});
+  }
+  for(const [width,height] of [[1366,768],[1440,900],[1920,1080]]) {await page.setViewportSize({width,height});const geometry=await page.locator('.creative-workspace').evaluate(element=>({client:element.clientWidth,scroll:element.scrollWidth,body:document.documentElement.scrollWidth,viewport:innerWidth}));expect(geometry.scroll).toBeLessThanOrEqual(geometry.client+1);expect(geometry.body).toBeLessThanOrEqual(geometry.viewport+1);await capture(page,info,`generic-script-${width}x${height}`);}
+  expect((await read(request,`${base}/documents/${first.id}/history`)).items.map((row:Row)=>row.version)).toEqual([1,2,3]);expect(await read(request,`/api/novels/${novel.id}/chapters`)).toEqual([]);expect((await read(request,`${base}/documents`)).items).toEqual([third]);
+  await canvas(page).getByLabel('通用脚本内容',{exact:true}).fill('保留在当前页的未保存草稿');await expect(panel.getByRole('button',{name:'导出脚本文本',exact:true})).toBeDisabled();
+  await info.attach('generic-script-receipt',{body:JSON.stringify({novel_id:novel.id,document_id:first.id,versions:[1,2,3],chapterless:true,model_called:false,receipts}),contentType:'application/json'});
+});
+
+test('real HTTP generic Script persists exact text and CAS history without a manuscript', async ({request},info) => {
+  const novel=await write(request,'/api/novels',{title:'通用脚本 HTTP 合成验收'}),base=creative(novel.id),body='  原始通用脚本。\n\n结尾保留换行。\n';
+  const input={mode:'SCRIPT',title:'独立广告稿',source_independent:true,script:{purpose:'ADVERTISEMENT',body}},first=await write(request,`${base}/documents`,input);
+  const updated=await request.put(`${base}/documents/${first.id}`,{data:{...input,expected_version:1,script:{purpose:'ADVERTISEMENT',body:'第二稿'}}});expect(updated.status()).toBe(200);
+  expect((await request.put(`${base}/documents/${first.id}`,{data:{...input,expected_version:1}})).status()).toBe(409);
+  const restored=await write(request,`${base}/documents/${first.id}/restore`,{expected_version:2,restore_version:1});expect(restored.script).toEqual(input.script);expect(restored.version).toBe(3);
+  const receipts:Row[]=[];for(const format of ['txt','markdown','docx']) {const response=await request.get(`${base}/documents/${first.id}/script-export`,{params:{format,expected_version:3}});expect(response.status()).toBe(200);const bytes=await response.body(),sha256=createHash('sha256').update(bytes).digest('hex');expect(response.headers()['x-content-sha256']).toBe(sha256);expect(response.headers()['cache-control']).toBe('no-store');if(format!=='docx')expect(bytes.toString('utf8')).toBe(body);else expect(bytes.subarray(0,2).toString()).toBe('PK');receipts.push({format,sha256,bytes:bytes.length});}
+  expect((await read(request,`${base}/documents/${first.id}/history`)).items.map((row:Row)=>row.version)).toEqual([1,2,3]);expect((await read(request,`${base}/documents/${first.id}/export`)).document.script).toEqual(input.script);expect(await read(request,`/api/novels/${novel.id}/chapters`)).toEqual([]);expect((await read(request,`${base}/documents`)).items).toEqual([restored]);
+  await info.attach('http-generic-script-receipt',{body:JSON.stringify({verification:'Real HTTP/File only; browser launch is separate',versions:[1,2,3],model_called:false,receipts}),contentType:'application/json'});
+});

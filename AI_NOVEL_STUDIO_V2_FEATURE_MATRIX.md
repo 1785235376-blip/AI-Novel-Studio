@@ -928,3 +928,24 @@ TEXT-17 generic Script and TEXT-13 real structured adaptation remain subsequent
 roadmap work. Historical M4-C hosted failed call and incomplete File execution
 remain INCOMPLETE_HOSTED_CI + FAILED_OBSERVED; B's bounded cache/diagnostic work
 cannot reclassify them as only capacity or completed coverage.
+
+## 42. Append-only generic Script and CI-context correction
+
+TEXT-17 now has a bounded manual authored-text contract on the original Creative
+owner: seven purposes, no chapter prerequisite, immutable document kind,
+version/CAS/history/restore, scope/privacy/incarnation fences, a dedicated text
+editor inside the existing Screenplay stage, and TXT/Markdown/DOCX plus original
+JSON export. Exact body bytes are preserved; unsupported DOCX text fails
+explicitly. Existing five workspace stages and novel professional editor remain.
+
+Status is **IMPLEMENTED_WITH_ACCEPTANCE_PARTIAL**. Graph source reuse and
+model-assisted generic Script proposals are still incomplete. Source-aware
+TEXT-13 adaptation follows separately; this manual slice does not claim model
+quality or complete M4 acceptance. [Stage report](MILESTONE_M4_SCRIPT_REPORT.md)
+and [API/UI contract](docs/v2/creative-generic-script.md) carry exact evidence.
+
+B's cache workflow initialization was corrected after the actual c491 Cloud
+loader failure with zero jobs. Official actionlint reproduced the original
+invalid job-env runner contexts and accepts the corrected workflow. Original
+frozen commands, assertions, skip policy, budgets and strict joins remain.
+Historical FAILED_OBSERVED and incomplete hosted coverage are retained.

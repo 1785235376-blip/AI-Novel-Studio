@@ -10,8 +10,8 @@ from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-CreativeMode = Literal["SCREENPLAY", "DIRECTOR", "STORYBOARD", "PRODUCTION", "VIDEO_PLANNING"]
-MODES = ("SCREENPLAY", "DIRECTOR", "STORYBOARD", "PRODUCTION", "VIDEO_PLANNING")
+CreativeMode = Literal["SCREENPLAY", "DIRECTOR", "STORYBOARD", "PRODUCTION", "VIDEO_PLANNING", "SCRIPT"]
+MODES = ("SCREENPLAY", "DIRECTOR", "STORYBOARD", "PRODUCTION", "VIDEO_PLANNING", "SCRIPT")
 USER_MODES = ("NOVEL", "SCREENPLAY", "DIRECTOR", "STORYBOARD", "PRODUCTION")
 LEGACY_MODES = ("SCREENPLAY", "STORYBOARD", "VIDEO_PLANNING")
 Identifier = Annotated[str, Field(min_length=1, max_length=240, strict=True)]
@@ -99,6 +99,18 @@ class VideoPlan(StrictCreativeModel):
     segments: list[VideoSegment] = Field(default_factory=list, max_length=200)
 
 
+class ScriptContent(StrictCreativeModel):
+    """Neutral authored text; no scene, chapter or model execution is implied."""
+    purpose: Literal["CUSTOM", "ADVERTISEMENT", "MV_NARRATION", "PODCAST", "GAME_DIALOGUE", "PRESENTATION", "SHORT_VIDEO"] = "CUSTOM"
+    body: str = Field(min_length=1, max_length=64000, strict=True)
+
+    @model_validator(mode="after")
+    def nonblank(self):
+        if not self.body.strip():
+            raise ValueError("CREATIVE_SCRIPT_BODY_REQUIRED")
+        return self
+
+
 class CreativeDocumentIn(StrictCreativeModel):
     mode: CreativeMode
     title: str = Field(min_length=1, max_length=240, strict=True)
@@ -108,11 +120,17 @@ class CreativeDocumentIn(StrictCreativeModel):
     shots: list[ShotCard] = Field(default_factory=list, max_length=200)
     director_notes: list[DirectorSceneNote] = Field(default_factory=list, max_length=200)
     video_plan: VideoPlan | None = None
+    script: ScriptContent | None = None
 
     @model_validator(mode="after")
     def linked_structure(self):
         if not self.title.strip():
             raise ValueError("CREATIVE_TITLE_REQUIRED")
+        if self.mode == "SCRIPT":
+            if self.script is None or self.scenes or self.shots or self.director_notes or self.video_plan is not None:
+                raise ValueError("CREATIVE_SCRIPT_FIELDS_INVALID")
+        elif self.script is not None:
+            raise ValueError("CREATIVE_SCRIPT_MODE_REQUIRED")
         if len(set(self.source_chapter_ids)) != len(self.source_chapter_ids):
             raise ValueError("CREATIVE_DUPLICATE_SOURCE")
         if len({scene.id for scene in self.scenes}) != len(self.scenes) or len({scene.sequence for scene in self.scenes}) != len(self.scenes):

@@ -1,0 +1,16 @@
+{
+  "id": 38078421006,
+  "head_sha": "c491d1b0227a877eaa5bad7651ed22ba67463439",
+  "event": "push",
+  "run_attempt": 1,
+  "status": "completed",
+  "conclusion": "failure",
+  "created_at": "2026-10-10T19:05:39Z",
+  "updated_at": "2026-10-10T19:05:39Z",
+  "name": ".github/workflows/cloud-ci.yml",
+  "path": ".github/workflows/cloud-ci.yml",
+  "html_url": "https://github.com/1785235376-blip/AI-Novel-Studio/actions/runs/38078421006",
+  "jobs": [],
+  "jobs_source": "github.fetch_workflow_run_jobs(38078421006) returned an empty jobs array",
+  "server_annotation_status": "NOT_READ: check-suite endpoint is outside connector URL allowlist; no alternate route attempted after rejection"
+}

@@ -32,3 +32,14 @@ These are development stages on `feature/v2-narrative-platform`, not releases.
   M3-B browser cases; preserve original test and CI boundaries.
 - Retain M3-B exact-event CI failures and cloud recovery evidence. Current
   verification and remaining PARTIAL gates: [M3-C report](../../MILESTONE_M3C_REPORT.md).
+
+## 2026-10-10 — M4 Text: neutral authored Script
+
+- Add SCRIPT to the original Creative document contract, seven purposes,
+  standalone text editing in Screenplay, existing versions/history/restore,
+  and authenticated exact-body TXT/Markdown/DOCX downloads.
+- Keep chapterless authoring, no automatic manuscript mutation, existing
+  authority/CAS/privacy/incarnation and late-result boundaries.
+- Integrate B's reproduced Actions context correction; preserve the original
+  zero-job workflow failure and all earlier failed observations.
+- Graph reuse, model-assisted Script and full M4 acceptance remain partial.

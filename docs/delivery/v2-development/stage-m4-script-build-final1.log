@@ -1,0 +1,11 @@
+frontend/src/creative/GenericScriptWorkspace.test.tsx(38,51): error TS18048: 'init' is possibly 'undefined'.
+frontend/src/creative/GenericScriptWorkspace.test.tsx(39,83): error TS2532: Object is possibly 'undefined'.
+frontend/src/creative/GenericScriptWorkspace.test.tsx(48,44): error TS18048: 'init' is possibly 'undefined'.
+frontend/src/creative/GenericScriptWorkspace.test.tsx(61,48): error TS18048: 'init' is possibly 'undefined'.
+frontend/src/creative/GenericScriptWorkspace.test.tsx(61,145): error TS2532: Object is possibly 'undefined'.
+frontend/src/creative/GenericScriptWorkspace.test.tsx(65,255): error TS18048: 'init' is possibly 'undefined'.
+frontend/src/creative/GenericScriptWorkspace.test.tsx(72,61): error TS18048: 'init' is possibly 'undefined'.
+frontend/src/creative/scriptExportClient.test.ts(14,158): error TS2345: Argument of type '{}' is not assignable to parameter of type 'CollaborationContext'.
+  Property 'sessionToken' is missing in type '{}' but required in type 'CollaborationContext'.
+frontend/src/creative/scriptExportClient.test.ts(15,328): error TS2345: Argument of type '{}' is not assignable to parameter of type 'CollaborationContext'.
+  Property 'sessionToken' is missing in type '{}' but required in type 'CollaborationContext'.

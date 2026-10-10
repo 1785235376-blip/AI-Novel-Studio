@@ -24,7 +24,8 @@ def job(name):
 @pytest.mark.parametrize("name", ["backend-execution", "backend-tcp"])
 def test_cache_is_download_only_and_keyed_by_all_python_dependencies(name):
     source = job(name)
-    assert "PIP_CACHE_DIR: ${{ runner.temp }}/novel-pip-download-cache" in source
+    assert 'printf \'PIP_CACHE_DIR=%s/novel-pip-download-cache\\n\' "$RUNNER_TEMP" >> "$GITHUB_ENV"' in source
+    assert source.index("Select isolated pip download cache") < source.index("actions/setup-python@")
     assert "cache: pip" in source
     assert "cache-dependency-path: |\n            pyproject.toml\n            .github/ci/python-constraints.txt" in source
     assert "cache-hit" not in source  # A hit never bypasses installation or tests.
@@ -61,3 +62,40 @@ def test_cache_checks_execute_in_existing_independent_tcp_budget():
     assert "timeout-minutes: 10" in source
     assert "continue-on-error" not in source
     assert ".github/ci/test_backend_dependency_cache.py" not in job("backend-execution")
+
+
+@pytest.mark.parametrize("name", ["backend-execution", "backend-tcp"])
+def test_cache_location_is_not_evaluated_in_unsupported_job_context(name):
+    # GitHub Context availability excludes runner from jobs.<job_id>.env.
+    # These tests are narrow regressions, not a substitute for actionlint or
+    # the hosted workflow loader. The original invalid workflow is retained.
+    source = job(name)
+    before_steps = source.split("    steps:\n", 1)[0]
+    assert "${{ runner." not in before_steps
+    assert "PIP_CACHE_DIR:" not in before_steps
+    assert "${{ runner.temp }}" not in source
+
+
+@pytest.mark.parametrize("name", ["backend-execution", "backend-tcp"])
+def test_cache_selection_shell_emits_one_stable_path_for_later_steps(tmp_path, name):
+    source = job(name)
+    match = re.search(
+        r"      - name: Select isolated pip download cache\n        run: \|\n((?:          .*\n)+)",
+        source,
+    )
+    assert match
+    command = "\n".join(line[10:] for line in match.group(1).splitlines())
+    runner_temp = tmp_path / "runner with spaces"
+    runner_temp.mkdir()
+    github_env = tmp_path / "github-env"
+    env = {**os.environ, "RUNNER_TEMP": str(runner_temp), "GITHUB_ENV": str(github_env)}
+    result = subprocess.run(["bash", "-euo", "pipefail", "-c", command], env=env, capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    assert github_env.read_text() == f"PIP_CACHE_DIR={runner_temp}/novel-pip-download-cache\n"
+    key, value = github_env.read_text().strip().split("=", 1)
+    result = subprocess.run(
+        [sys.executable, "-m", "pip", "cache", "dir"],
+        env={**env, key: value, "HOME": str(tmp_path / "new-home"), "PIP_CONFIG_FILE": os.devnull},
+        capture_output=True, text=True, check=True,
+    )
+    assert Path(result.stdout.strip()) == runner_temp / "novel-pip-download-cache"

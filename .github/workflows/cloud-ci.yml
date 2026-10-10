@@ -27,10 +27,6 @@ jobs:
   backend-execution:
     name: Backend execution / ${{ matrix.backend }} / shard ${{ matrix.shard_index }}
     runs-on: ubuntu-24.04
-    # Cache downloaded packages only, outside the isolated application HOME.
-    # Reinstall and validate dependencies on every run, including cache hits.
-    env:
-      PIP_CACHE_DIR: ${{ runner.temp }}/novel-pip-download-cache
     # File retains one original-order process. PostgreSQL uses two explicit
     # deterministic node-ID shards; complete unfiltered collection, outcomes,
     # JUnit identities and the unchanged strict PG gate are reconciled below.
@@ -65,6 +61,10 @@ jobs:
       - uses: actions/checkout@v4.2.2
         with:
           persist-credentials: false
+      - name: Select isolated pip download cache
+        run: |
+          test -n "$RUNNER_TEMP"
+          printf 'PIP_CACHE_DIR=%s/novel-pip-download-cache\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.12.9'
@@ -173,16 +173,16 @@ jobs:
   backend-tcp:
     name: Backend execution / original File TCP
     runs-on: ubuntu-24.04
-    # Cache downloaded packages only, outside the isolated application HOME.
-    # Reinstall and validate dependencies on every run, including cache hits.
-    env:
-      PIP_CACHE_DIR: ${{ runner.temp }}/novel-pip-download-cache
     # Independent finite budget: do not consume File's original 20-minute cap.
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4.2.2
         with:
           persist-credentials: false
+      - name: Select isolated pip download cache
+        run: |
+          test -n "$RUNNER_TEMP"
+          printf 'PIP_CACHE_DIR=%s/novel-pip-download-cache\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.12.9'
