@@ -1,0 +1,95 @@
+{
+  "utc": "2026-10-09T18:58:00.728561+00:00",
+  "status": "INCOMPLETE_EXECUTION_SESSION_LOST",
+  "original_session_id": 49161,
+  "resume_tool_error": "write_stdin failed: Unknown process id 49161",
+  "test_started_utc": "2026-10-09T18:07:20Z",
+  "no_final_test_receipt": true,
+  "no_final_test_log": true,
+  "test_exit_code": null,
+  "passed": null,
+  "failed": null,
+  "skipped": null,
+  "runtime_receipt_preserved": "stage-m3c-owner-postgres-postgres-runtime.json",
+  "runtime_receipt_sha256": "ccb560333cef1b4d1598fa65030a1f43d57b3a06d2dd2467a6824c0279dd758b",
+  "runtime_status": "checking",
+  "database_oid": 17253,
+  "original_empty_database_and_migrations_proven": true,
+  "normal_shutdown": "NOT_PROVEN",
+  "server_log": "stage-m3c-owner-postgres-incomplete-server.log",
+  "server_log_sha256": "97cb91e0e913622cf704baf2b5771741d3e4587ad35f5d4bb776334bd602e24a",
+  "last_fixture_activity": [
+    {
+      "utc": "2026-10-09T18:32:23.977007+00:00",
+      "owned_fixture_directory": "test_runtime_rejects_lookalike7"
+    },
+    {
+      "utc": "2026-10-09T18:32:23.973516+00:00",
+      "owned_fixture_directory": "test_runtime_rejects_lookalike6"
+    },
+    {
+      "utc": "2026-10-09T18:32:23.970824+00:00",
+      "owned_fixture_directory": "test_runtime_rejects_lookalike5"
+    },
+    {
+      "utc": "2026-10-09T18:32:23.968223+00:00",
+      "owned_fixture_directory": "test_runtime_rejects_lookalike4"
+    },
+    {
+      "utc": "2026-10-09T18:32:23.965245+00:00",
+      "owned_fixture_directory": "test_runtime_rejects_lookalike3"
+    },
+    {
+      "utc": "2026-10-09T18:32:23.962554+00:00",
+      "owned_fixture_directory": "test_runtime_rejects_lookalike2"
+    },
+    {
+      "utc": "2026-10-09T18:32:23.959314+00:00",
+      "owned_fixture_directory": "test_runtime_rejects_lookalike1"
+    },
+    {
+      "utc": "2026-10-09T18:32:23.956374+00:00",
+      "owned_fixture_directory": "test_runtime_rejects_lookalike0"
+    }
+  ],
+  "fixture_activity_not_pass_evidence": true,
+  "current_process_check": "No pytest/run_v2/postgres rows returned from the current execution process namespace",
+  "process_lifecycle_cause": "NOT_ESTABLISHED; no exit status available; original session cannot be resumed",
+  "data_and_stale_pidfile_preserved": true,
+  "no_restart_or_repeat_test": true,
+  "source_count": 1696,
+  "source_map_sha256": "51d94d044042f0d3ef8c07c336ded58aa24cd8257eb5a86766abb577ad53be16",
+  "completed_receipts_preserved": [
+    {
+      "receipt": "stage-m3c-owner-file.json",
+      "status": "PASS",
+      "sha256": "cd64d013d4b3ef270a62abc80ac87000d3ff925d4e74377ab44d6c50f87e8019",
+      "source_map_matches": true
+    },
+    {
+      "receipt": "stage-m3c-full-frontend.json",
+      "status": "PASS",
+      "sha256": "64d8a910b7358e224cf64b63f3bc0747a9dca7b21558250da5d3767a588c55a9",
+      "source_map_matches": true
+    },
+    {
+      "receipt": "stage-m3c-build.json",
+      "status": "PASS",
+      "sha256": "9e054957c3135c8f672183a18083692daf19831cb074c5a217c97350a25fcadc",
+      "source_map_matches": true
+    },
+    {
+      "receipt": "stage-m3c-final-manifest-catalog.json",
+      "status": "PASS",
+      "sha256": "d9be5a04a3de8cf729d5c409e48583b2695a5e00bab5b1aa56282ca51c7bf95b",
+      "source_map_matches": true
+    },
+    {
+      "receipt": "stage-m3c-browser-collection.json",
+      "status": "PASS",
+      "sha256": "7996f1b4bd2f1fb4f9cc13423c36c0de69b20f7a5b8d3f2ace1deb1967e59df9",
+      "source_map_matches": true
+    }
+  ],
+  "publication": "Not yet published; feature HEAD remains c386b0608ae92d18c351b5cb6e367380808a45cf"
+}

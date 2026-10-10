@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+from contextlib import nullcontext
 import hashlib
 import json
 import os
@@ -49,6 +50,7 @@ class SyntheticDiscoveryFixture:
         self.calls, self.blocked = [], []
         self.hardware_calls = self.launch_attempts = 0
         self.metadata_fixtures = []
+        self.prerequisite_fixture = None
 
     def json(self, endpoint, path, *, body=None):
         with self.lock:
@@ -56,6 +58,8 @@ class SyntheticDiscoveryFixture:
                 self.blocked.append("UNAPPROVED_PROBE")
                 raise AssertionError("SYNTHETIC_FIXTURE_UNAPPROVED_PROBE")
             self.calls.append({"endpoint": endpoint, "path": path, "method": "GET", "body": None})
+            if self.prerequisite_fixture and (endpoint, path) == ("http://127.0.0.1:8188", "/object_info"):
+                return copy.deepcopy(self.prerequisite_fixture["object_info"])
             return copy.deepcopy(self.payloads[(endpoint, path)])
 
     def hardware(self):
@@ -111,6 +115,36 @@ class SyntheticDiscoveryFixture:
                     "sha256": hashlib.sha256(payload).hexdigest()})
             return copy.deepcopy(self.metadata_fixtures)
 
+    def seed_workflow_prerequisites(self, discovery, guard):
+        """One opt-in advertisement and catalogue declaration; never installed weights."""
+        from app.model_center.domain import Capability, ModelComponentDefinition, ModelDefinition, RuntimeType
+        model_id = "synthetic-prerequisite-catalogue-only"
+        component_id = "synthetic-prerequisite-text-encoder"
+        object_info = {
+            "CheckpointLoaderSimple": {"input": {"required": {
+                "ckpt_name": [["synthetic-prerequisite-sdxl.safetensors"]]}}},
+            "KSampler": {}, "EmptyLatentImage": {}, "CLIPTextEncode": {}, "VAEDecode": {},
+        }
+        encoded = json.dumps(object_info, sort_keys=True, separators=(",", ":")).encode()
+        declaration = ModelDefinition(model_id, "Synthetic catalogue requirement", "SYNTHETIC", "FIXTURE", "1",
+            (Capability.IMAGE,), RuntimeType.COMFYUI, "SYNTHETIC_METADATA_ONLY", components=(component_id,))
+        component = ModelComponentDefinition(component_id, "TEXT_ENCODER", "SYNTHETIC", "FIXTURE",
+            "SYNTHETIC", "1", "SYNTHETIC_METADATA_ONLY", "UNKNOWN")
+        with getattr(discovery.center, "_config_lock", nullcontext()), self.lock, discovery.lock:
+            guard()
+            if discovery.scan and discovery.scan["status"] == "RUNNING":
+                raise ValueError("SYNTHETIC_FIXTURE_SCAN_ACTIVE")
+            if self.prerequisite_fixture or model_id in discovery.center.models or component_id in discovery.center.components:
+                raise ValueError("SYNTHETIC_FIXTURE_PREREQUISITES_ALREADY_EXISTS")
+            result = {"fixture": "workflow-prerequisites-only-v1", "catalogue_model_id": model_id,
+                "catalogue_component_id": component_id, "object_info_bytes": len(encoded),
+                "object_info_sha256": hashlib.sha256(encoded).hexdigest()}
+            guard()
+            discovery.center.models[model_id] = declaration
+            discovery.center.components[component_id] = component
+            self.prerequisite_fixture = {"object_info": object_info, "receipt": result}
+            return copy.deepcopy(result)
+
     def install(self, discovery):
         # Reuse the mounted product owner; do not construct a replacement registry.
         with discovery.lock:
@@ -133,6 +167,8 @@ class SyntheticDiscoveryFixture:
                     "scan_id": discovery.scan["id"] if discovery.scan else None,
                     "scan_status": discovery.scan["status"] if discovery.scan else None,
                     "synthetic_metadata_fixtures": copy.deepcopy(self.metadata_fixtures),
+                    **({"synthetic_prerequisite_fixture": copy.deepcopy(self.prerequisite_fixture["receipt"])}
+                       if self.prerequisite_fixture else {}),
                     "inference_status": "NOT_RUN", "windows_acceptance": "NOT_RUN", "model_weights_loaded": False}
 
 
@@ -235,6 +271,29 @@ def application(root: Path, *, delay_seconds=1.25):
             raise HTTPException(409, str(exc))
         from fastapi.responses import JSONResponse
         return JSONResponse({"synthetic": True, "metadata_fixtures": rows, "model_weights_loaded": False},
+            status_code=201, headers={"Cache-Control": "no-store", "Pragma": "no-cache"})
+
+    @main.app.post("/api/__tests__/v2-discovery-fixture/seed-prerequisites")
+    async def seed_prerequisites(request: Request):
+        if request.headers.get("X-Session-Token") != FIXTURE_TOKEN:
+            raise HTTPException(401)
+        authority = main._local_discovery_host_authority(request, FIXTURE_TOKEN)
+        authority.guard()
+        from app.experimental.flags import enabled_flags
+        if "narrative_production_v2" not in enabled_flags():
+            raise HTTPException(404)
+        try:
+            payload = await request.json()
+        except ValueError:
+            raise HTTPException(422)
+        if payload != {"fixture": "workflow-prerequisites-only-v1", "confirmed": True} or type(payload.get("confirmed")) is not bool:
+            raise HTTPException(422)
+        try:
+            result = fixture.seed_workflow_prerequisites(main.local_ai_discovery, authority.guard)
+        except ValueError as exc:
+            raise HTTPException(409, str(exc))
+        from fastapi.responses import JSONResponse
+        return JSONResponse({"synthetic": True, "prerequisite_fixture": result, "model_weights_loaded": False},
             status_code=201, headers={"Cache-Control": "no-store", "Pragma": "no-cache"})
 
     return main.app, fixture
@@ -349,16 +408,105 @@ def self_check_legacy_host(app, fixture):
         print(json.dumps(result, sort_keys=True))
 
 
+def self_check_prerequisites(app, fixture):
+    """Original mounted host/scan owner, synthetic advertisements only; no browser."""
+    from fastapi.testclient import TestClient
+    from app import main
+    from app.experimental.flags import enabled_flags
+    headers = {"X-Session-Token": FIXTURE_TOKEN}
+    second = {"X-Session-Token": SECOND_FIXTURE_TOKEN}
+    root = "/api/model-center/local-ai"
+    seed_path = "/api/__tests__/v2-discovery-fixture/seed-prerequisites"
+    payload = {"fixture": "workflow-prerequisites-only-v1", "confirmed": True}
+    with TestClient(app) as client:
+        assert client.post(seed_path, json=payload).status_code == 401
+        assert client.post(seed_path, headers=second, json=payload).status_code == 401
+        if "narrative_production_v2" not in enabled_flags():
+            assert client.post(seed_path, headers=headers, json=payload).status_code == 404
+            assert fixture.prerequisite_fixture is None
+            print(json.dumps(fixture.receipt(main.local_ai_discovery), sort_keys=True))
+            return
+
+        def explicit_scan():
+            preview = client.get(root + "/onboarding/scan-scope?include_common_model_dirs=false", headers=headers)
+            assert preview.status_code == 200, preview.text
+            job = client.post(root + "/onboarding/scan", headers=headers,
+                json={"scope_digest": preview.json()["scope_digest"], "confirmed": True})
+            assert job.status_code == 202, job.text
+            deadline = time.monotonic() + 5
+            while main.local_ai_discovery.get_scan(job.json()["id"])["status"] == "RUNNING" and time.monotonic() < deadline:
+                time.sleep(.005)
+            report = client.get(root + "/environment", headers=headers)
+            assert report.status_code == 200 and report.json()["status"] == "COMPLETED", report.text
+            assert report.json()["scan_id"] == job.json()["id"]
+            return report.json()
+
+        before = explicit_scan()
+        assert before["workflow_prerequisites"]["components"] == []
+        assert all(node["observation"] == "not_observed" for node in before["workflow_prerequisites"]["workflows"][0]["nodes"])
+        retained = fixture.receipt(main.local_ai_discovery)
+        for invalid in ({}, [], {**payload, "confirmed": 1}, {**payload, "object_info": {}}, {**payload, "path": "unapproved"}):
+            assert client.post(seed_path, headers=headers, json=invalid).status_code == 422
+        seeded = client.post(seed_path, headers=headers, json=payload)
+        assert seeded.status_code == 201, seeded.text
+        assert seeded.headers["Cache-Control"] == "no-store"
+        assert client.post(seed_path, headers=headers, json=payload).status_code == 409
+        after_seed = fixture.receipt(main.local_ai_discovery)
+        assert {key: value for key, value in after_seed.items() if key != "synthetic_prerequisite_fixture"} == retained
+        assert client.get(root + "/environment", headers=headers).json() == before
+        after = explicit_scan()
+        observed = after["workflow_prerequisites"]
+        assert observed["schema_version"] == 1 and observed["scan_id"] == after["scan_id"]
+        assert observed["scan_status"] == "COMPLETED" and after["scan_id"] != before["scan_id"]
+        assert len(observed["workflows"]) == 1
+        row = observed["workflows"][0]
+        assert row["adapter_id"] == "comfy-sd-checkpoint-v1" and row["evidence_status"] == "COMPLETE"
+        assert {node["node_class"]: node["observation"] for node in row["nodes"]} == {
+            "CheckpointLoaderSimple": "observed", "KSampler": "observed", "EmptyLatentImage": "observed",
+            "CLIPTextEncode": "observed", "VAEDecode": "observed", "SaveImage": "not_observed"}
+        assert row["loader"]["observation"] == "observed" and row["loader"]["advertised_count"] == 1
+        snapshot = client.get(root, headers=headers).json()
+        candidate = next(item for item in snapshot["scan"]["candidates"] if item["model_name"] == "synthetic-prerequisite-sdxl.safetensors")
+        assert row["loader"]["candidate_ids"] == [candidate["id"]]
+        assert not candidate["enabled"] and not candidate["verified"]
+        assert len(observed["components"]) == 1
+        component = observed["components"][0]
+        assert component["model_id"] == "synthetic-prerequisite-catalogue-only"
+        assert component["component_id"] == "synthetic-prerequisite-text-encoder"
+        assert component["observation"] == "unknown" and component["reason"] == "NO_COMPONENT_IDENTITY_EVIDENCE"
+        assert row["metadata_status"] == component["metadata_status"] == "NOT_VERIFIED"
+        assert row["inference_status"] == component["inference_status"] == after["inference_status"] == "NOT_RUN"
+        assert snapshot["scan"]["workflow_prerequisites"] == observed
+        assert client.get(root + "/scan/" + after["scan_id"], headers=headers).json()["workflow_prerequisites"] == observed
+        terminal = fixture.receipt(main.local_ai_discovery)
+        copied = client.get(root + "/environment", headers=headers).json()
+        copied["workflow_prerequisites"]["workflows"].clear()
+        assert client.get(root + "/environment", headers=headers).json() == after
+        assert fixture.receipt(main.local_ai_discovery) == terminal
+        revoke = client.post("/api/__tests__/v2-discovery-fixture/revoke-current-host", headers=headers, json={"confirmed": True})
+        assert revoke.status_code == 204
+        assert client.post(seed_path, headers=headers, json=payload).status_code == 401
+        assert client.get(root + "/environment", headers=headers).status_code == 401
+        assert client.post(root + "/onboarding/scan", headers=headers,
+            json={"scope_digest": "a" * 64, "confirmed": True}).status_code == 401
+        assert client.get(root + "/environment", headers=second).json() == after
+        assert fixture.receipt(main.local_ai_discovery) == terminal
+        print(json.dumps(terminal, sort_keys=True))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=8027)
     parser.add_argument("--self-check", action="store_true")
     parser.add_argument("--self-check-files", action="store_true")
     parser.add_argument("--self-check-legacy-host", action="store_true")
+    parser.add_argument("--self-check-prerequisites", action="store_true")
     args = parser.parse_args()
     root = Path(os.environ["V2_DISCOVERY_FIXTURE_ROOT"])
-    app, fixture = application(root, delay_seconds=0 if args.self_check or args.self_check_files or args.self_check_legacy_host else 1.25)
-    if args.self_check_legacy_host:
+    app, fixture = application(root, delay_seconds=0 if args.self_check or args.self_check_files or args.self_check_legacy_host or args.self_check_prerequisites else 1.25)
+    if args.self_check_prerequisites:
+        self_check_prerequisites(app, fixture)
+    elif args.self_check_legacy_host:
         self_check_legacy_host(app, fixture)
     elif args.self_check_files:
         self_check_files(app, fixture)

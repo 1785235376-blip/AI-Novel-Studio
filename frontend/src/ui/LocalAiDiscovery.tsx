@@ -10,6 +10,7 @@ import {
 } from '../localAiDiscoveryApi';
 import {Badge, Button, EmptyState, Panel, StatusMessage} from './primitives';
 import {LocalAiModelFiles} from './LocalAiModelFiles';
+import {LocalAiWorkflowPrerequisites} from './LocalAiWorkflowPrerequisites';
 import './LocalAiDiscovery.css';
 
 const SCANNING = new Set(['QUEUED', 'RUNNING', 'SCANNING', 'CANCELLING']);
@@ -403,6 +404,7 @@ function LocalAiDiscoveryContent({canMutate = false, onRegistryChange, v2, isCur
       {snapshot && <Hardware value={snapshot.hardware}/>}
       {!!runtimeMap.size && <section className="local-ai__section" aria-label="发现的 Runtime"><h3>本地 Runtime（{runtimeMap.size}）</h3><div className="local-ai__list">{Array.from(runtimeMap.values()).map(runtime => <article key={runtime.id} aria-label={runtime.name || runtime.id}><header><strong>{runtime.name || runtime.id}</strong><Badge tone={tone(runtime.status || 'NOT_VERIFIED')}>{runtime.status || 'NOT_VERIFIED'}</Badge></header><p>{runtime.type || runtime.runtime_type} · {runtime.management || 'EXTERNAL'}</p><p>地址：{runtime.endpoint || '未配置'} · 版本：{runtime.version || '未检测'}</p><p>运行状态：{runtime.status === 'RUNNING' ? '正在运行' : runtime.status === 'NOT_FOUND' ? '未发现运行服务' : '未确认'}</p>{runtime.executable_exists !== undefined && <p>Executable：{runtime.executable_exists ? '已找到' : '未找到'} · CUDA：{runtime.cuda_status || '未验证'}</p>}{runtime.notes?.map((note, index) => <p key={index}>{note}{localAiDiagnostic(note) ? `：${localAiDiagnostic(note)}` : ''}</p>)}<Button disabled={controlsLocked} onClick={() => editRuntime(runtime)}>配置 Runtime</Button></article>)}</div></section>}
       {showFileObservations && scan && <LocalAiModelFiles key={scan.id} scan={scan} registrations={registrations} stateUncertain={stateUncertain}/>}
+      {showFileObservations && scan && <LocalAiWorkflowPrerequisites key={`workflow:${scan.id}`} scan={scan} stateUncertain={stateUncertain}/>}
       {v2 && scan && !showFileObservations && <p className="local-ai__muted">此扫描未提供 V2 文件观察字段；候选列表不能代表文件或索引清单。</p>}
       {!loading && !models.length && (!v2 || !!snapshot) && <EmptyState title={showFileObservations ? '尚无可接入候选' : scan ? '尚未发现模型' : '尚未开始扫描'} detail={showFileObservations ? '文件或索引观察不等于可运行候选。Runtime 绑定仍未知时，可核对已有服务后明确预览并检测；可继续手动创作。' : v2 ? '未配置或未发现可用模型时，可继续手动创作。可先预览已有服务；自定义路径与端口仅用于高级配置。' : '可跳过检测，也可添加 Runtime 或模型目录后主动扫描。未安装的 Runtime 不影响应用使用。'}/>}
       {GROUPS.map(group => {const rows = models.filter(row => groupOf(row.model) === group); return rows.length ? <section className="local-ai__section" key={group} aria-label={group}><h3>{group}（{rows.length}）</h3><div className="local-ai__list">{rows.map(({model, registration}) => {const current = registration || model; return <article key={model.id} aria-label={`${model.display_name} ${model.local === false ? "非本地来源" : "本地模型"}`}>

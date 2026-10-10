@@ -22,6 +22,8 @@ from uuid import uuid4
 from .discovery_probes import LocalProbeClient, ProbeFailure, candidate_id, executable_metadata, gguf_metadata, host_hardware, infer_family, scan_gguf_roots, ollama_remote_declaration, ollama_locality_evidence, read_ollama_local_metadata
 from .discovery_types import AIEnvironmentReport, DiscoverySettingsInput, LocalRuntimeInput, RegistrationInput, safe_local_path
 from .discovery_environment import environment_roots, scan_environment_files
+from .discovery_prerequisites import (catalog_requirements, prerequisite_template, observe_object_info,
+    unknown_observations, failed_evidence_status)
 from .discovery_scope import (PREVIEW_LIMIT, PREVIEW_TTL_SECONDS, SCAN_BUDGET_SECONDS, PLANNING_BUDGET_SECONDS,
     ScopeCancellation, build_plan, fingerprint, require_guard, planning_check, planning_lock)
 from .domain import Capability, ModelDefinition, ModelStatus, RuntimeDefinition, RuntimeManagement, RuntimeType
@@ -165,6 +167,7 @@ class LocalDiscoveryService:
             return AIEnvironmentReport(scan_id=job.get('id'), status=job.get('status', 'NOT_SCANNED'),
                 started_at=job.get('started_at'), finished_at=job.get('finished_at'), hardware=copy.deepcopy(self.hardware),
                 services=services, model_files=copy.deepcopy(job.get('model_files', [])),
+                workflow_prerequisites=copy.deepcopy(job.get('workflow_prerequisites')),
                 roots=copy.deepcopy(job.get('roots', [])), errors=copy.deepcopy(job.get('errors', []))).model_dump()
 
     def _runtimes(self, *, center_runtimes=None, settings=None, configured_sources=None, environment=None, plan_check=None):
@@ -207,6 +210,7 @@ class LocalDiscoveryService:
         # resulting immutable inputs, not live owners, are passed to the worker.
         with planning_lock(getattr(self.center, '_config_lock', None), guard, deadline):
             center_runtimes = copy.deepcopy(list(self.center.runtimes.values()))
+            component_rows, component_identity, definition_status = catalog_requirements(self.center.models, self.center.components)
         with planning_lock(self.lock, guard, deadline):
             settings = copy.deepcopy(self.settings)
             sources = copy.deepcopy(self.configured_runtime_sources)
@@ -218,6 +222,10 @@ class LocalDiscoveryService:
                               response_bytes=getattr(self.client, 'max_response_bytes', 4 * 1024 * 1024), registrations=self.registrations, guard=guard, deadline=deadline)
             plan['adapter_identity'] = {'client': id(self.client), 'hardware_probe': id(self.hardware_probe)}
             plan['configured_sources'] = sources
+            plan['workflow_definition_identity'] = []
+            plan['prerequisite_template'] = prerequisite_template(runtimes, self.workflow_adapters, component_rows,
+                definition_status, identities=plan['workflow_definition_identity'])
+            plan['component_definition_identity'] = component_identity
             check()
             return plan
 
@@ -300,6 +308,8 @@ class LocalDiscoveryService:
                    'started_at': now(), 'finished_at': None, 'environment_schema_version': 2,
                    'model_files': [], 'roots': copy.deepcopy(expected['roots']),
                    'consent': {'scope_digest': scope_digest, 'confirmed_at': now(), 'execution_scope': 'BACKEND_HOST'}}
+            job['workflow_prerequisites'] = {'schema_version': 1, 'scan_id': job['id'], 'scan_status': 'RUNNING',
+                                           **copy.deepcopy(expected['prerequisite_template'])}
             self.hardware = {'status': 'NOT_VERIFIED', 'notes': ['SCAN_PENDING'], 'gpus': []}
             self.cancel_event, self.scan, row['scan_id'] = cancel, job, job['id']
             try:
@@ -308,6 +318,7 @@ class LocalDiscoveryService:
             except Exception:
                 cancel.set()
                 job.update(status='CANCELLED', finished_at=now())
+                self._finish_prerequisites(job)
                 job['errors'].append({'code': 'LOCAL_AI_SCAN_FAILED'})
             return copy.deepcopy(job)
 
@@ -325,6 +336,8 @@ class LocalDiscoveryService:
     def _start_scan(self, *, legacy_guard=None):
         with getattr(self.center, '_config_lock', nullcontext()):
             center_runtimes = copy.deepcopy(list(self.center.runtimes.values()))
+            component_rows, _, definition_status = (catalog_requirements(self.center.models, self.center.components)
+                if self._environment_enabled() else ([], [], 'COMPLETE'))
         with self.lock:
             environment = self._environment_enabled()
             if legacy_guard is not None:
@@ -342,6 +355,9 @@ class LocalDiscoveryService:
                     self.settings['scan_roots'], self.settings.get('include_common_model_dirs', True)))
             self.scan = job
             runtimes, roots = copy.deepcopy(self._runtimes(environment=environment, center_runtimes=center_runtimes)), list(self.settings['scan_roots'])
+            if environment:
+                job['workflow_prerequisites'] = {'schema_version': 1, 'scan_id': job['id'], 'scan_status': 'RUNNING',
+                    **prerequisite_template(runtimes, self.workflow_adapters, component_rows, definition_status)}
             threading.Thread(target=self._scan, args=(job, runtimes, roots, self.cancel_event), daemon=True, name='local-ai-discovery').start()
             return copy.deepcopy(job)
 
@@ -377,13 +393,21 @@ class LocalDiscoveryService:
             for runtime in runtimes:
                 if cancel.is_set() or time.monotonic() >= deadline: break
                 try:
-                    report, found = self._probe(runtime, cancel, deadline=deadline)
+                    prerequisites = [row for row in job.get('workflow_prerequisites', {}).get('workflows', [])
+                                     if row['runtime_id'] == runtime['id']]
+                    report, found = self._probe(runtime, cancel, deadline=deadline, prerequisites=prerequisites)
                 except Exception:
                     report = {key: runtime[key] for key in ('id', 'name', 'type', 'endpoint', 'management')}
                     report.update(status='NOT_FOUND', version=None, notes=['LOCAL_AI_PROBE_INVALID'])
+                    report['_prerequisite_observations'] = unknown_observations(prerequisites, 'MALFORMED')
                     found = []
                 with self.lock:
                     if isinstance(cancel, ScopeCancellation) and cancel.is_set(): break
+                    observations = report.pop('_prerequisite_observations', [])
+                    if 'workflow_prerequisites' in job:
+                        updates = {(row['runtime_id'], row['adapter_id']): row for row in observations}
+                        job['workflow_prerequisites']['workflows'] = [updates.get((row['runtime_id'], row['adapter_id']), row)
+                            for row in job['workflow_prerequisites']['workflows']]
                     job['runtimes'].append(report)
                     self._reconcile_detected_runtime(runtime, report, found,
                         cancel=cancel if isinstance(cancel, ScopeCancellation) else None, deadline=deadline)
@@ -435,6 +459,18 @@ class LocalDiscoveryService:
                     job['errors'].append({'code': cancel.reason})
                 job['status'] = 'CANCELLED' if cancel.is_set() else ('PARTIAL' if job['errors'] else 'COMPLETED')
                 job['finished_at'] = now()
+                self._finish_prerequisites(job)
+
+    @staticmethod
+    def _finish_prerequisites(job):
+        report = job.get('workflow_prerequisites')
+        if report is None: return
+        report['scan_status'] = job['status']
+        if job['status'] == 'CANCELLED':
+            report['workflows'] = unknown_observations(report['workflows'], 'CANCELLED')
+        elif any(error.get('code') == 'LOCAL_AI_SCAN_BUDGET_REACHED' for error in job['errors']):
+            report['workflows'] = [unknown_observations([row], 'BOUNDED')[0]
+                                  if row['evidence_status'] == 'NOT_SCANNED' else row for row in report['workflows']]
 
     def _candidate(self, runtime, name, *, local_path='', evidence=None, family_hint=''):
         evidence = evidence or {}
@@ -458,10 +494,14 @@ class LocalDiscoveryService:
             'license_status': 'REVIEW_REQUIRED', 'license_confirmed': False, 'workflow_adapter_id': '', 'enable_eligible': False,
             'enable_blockers': ['VALIDATION_REQUIRED']}
 
-    def _probe(self, runtime, cancel, *, deadline=None):
+    def _probe(self, runtime, cancel, *, deadline=None, prerequisites=None):
         report = {key: runtime[key] for key in ('id', 'name', 'type', 'endpoint', 'management')}
         report.update(status='NOT_FOUND', version=None, notes=[])
         found = []
+        prerequisites = prerequisites or []
+        prerequisite_info = None
+        prerequisite_received = False
+        prerequisite_failure = 'UNAVAILABLE'
         def get(path):
             if cancel.is_set(): raise ProbeFailure('LOCAL_AI_CANCELLED')
             if deadline is not None and time.monotonic() >= deadline: raise ProbeFailure('LOCAL_AI_SCAN_BUDGET_REACHED')
@@ -494,6 +534,7 @@ class LocalDiscoveryService:
                     report['notes'].append('RUNTIME_VERSION_NOT_AVAILABLE')
             elif kind == 'COMFYUI':
                 stats = get('/system_stats'); info = get('/object_info')
+                prerequisite_info, prerequisite_received = info, True
                 if not isinstance(stats, dict) or not isinstance(info, dict): raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
                 report['version'] = str((stats.get('system') if isinstance(stats.get('system'), dict) else {}).get('comfyui_version') or '')[:100] or None
                 nodes = sorted(str(key) for key in info)[:4096]
@@ -566,6 +607,12 @@ class LocalDiscoveryService:
         except (ProbeFailure, ValueError, OSError, TypeError, AttributeError) as exc:
             report['notes'].append(str(exc) if isinstance(exc, ProbeFailure) else 'LOCAL_AI_PROBE_INVALID')
             report['status'] = 'CANCELLED' if cancel.is_set() else 'NOT_FOUND'
+            prerequisite_failure = failed_evidence_status(report['notes'][-1])
+        if prerequisites:
+            report['_prerequisite_observations'] = (unknown_observations(prerequisites, 'CANCELLED') if cancel.is_set()
+                else unknown_observations(prerequisites, 'BOUNDED') if deadline is not None and time.monotonic() >= deadline
+                else observe_object_info(prerequisites, prerequisite_info, found) if prerequisite_received and report['status'] == 'RUNNING'
+                else unknown_observations(prerequisites, prerequisite_failure))
         return report, found
 
     def _find(self, identifier):

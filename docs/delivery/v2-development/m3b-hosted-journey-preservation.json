@@ -1,0 +1,12 @@
+{
+  "base_commit": "c386b0608ae92d18c351b5cb6e367380808a45cf",
+  "checks": {
+    "frontend/tests/e2e/v2-local-ai-files-live.spec.ts": true,
+    "frontend/tests/e2e/v2-local-ai-legacy-host-live.spec.ts": true,
+    "original_m3a_consent_unchanged": true,
+    "original_browser_config_unchanged": true,
+    "original_workflows_unchanged": true
+  },
+  "result": "PASS",
+  "scope": "Only explicit NOVEL prerequisite, exact completed-state label, additive COMPLETED assertion and comments differ. Original remaining bytes are identical."
+}

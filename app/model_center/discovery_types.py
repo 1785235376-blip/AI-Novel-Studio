@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import ipaddress
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 from urllib.parse import urlsplit, urlunsplit
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -207,6 +207,54 @@ class EnvironmentScanLimits(BaseModel):
     max_metadata_bytes: int = 256 * 1024
 
 
+class PrerequisiteNodeObservation(BaseModel):
+    model_config = ConfigDict(extra='forbid', strict=True)
+    node_class: str = Field(min_length=1, max_length=256)
+    observation: Literal['observed', 'not_observed', 'unknown'] = 'unknown'
+
+
+class PrerequisiteLoaderObservation(PrerequisiteNodeObservation):
+    input_field: str = Field(min_length=1, max_length=256)
+    advertised_count: int | None = Field(default=None, ge=0, le=512)
+    candidate_ids: list[Annotated[str, Field(min_length=1, max_length=256)]] = Field(default_factory=list, max_length=512)
+
+
+class WorkflowPrerequisiteObservation(BaseModel):
+    """Advertisements from one explicit scan, never readiness or route authority."""
+    model_config = ConfigDict(extra='forbid', strict=True)
+    runtime_id: str = Field(min_length=1, max_length=256)
+    adapter_id: str = Field(min_length=1, max_length=100)
+    display_name: str = Field(min_length=1, max_length=256)
+    evidence_status: Literal['COMPLETE', 'UNAVAILABLE', 'MALFORMED', 'BOUNDED', 'CANCELLED', 'NOT_SCANNED'] = 'NOT_SCANNED'
+    nodes: list[PrerequisiteNodeObservation] = Field(max_length=64)
+    loader: PrerequisiteLoaderObservation
+    metadata_status: Literal['NOT_VERIFIED'] = 'NOT_VERIFIED'
+    inference_status: Literal['NOT_RUN'] = 'NOT_RUN'
+
+
+class CatalogComponentRequirement(BaseModel):
+    """Existing catalogue declarations have no installed-component identity proof."""
+    model_config = ConfigDict(extra='forbid', strict=True)
+    model_id: str = Field(min_length=1, max_length=256)
+    model_display_name: str = Field(min_length=1, max_length=256)
+    component_id: str = Field(min_length=1, max_length=256)
+    component_type: str | None = Field(default=None, min_length=1, max_length=256)
+    observation: Literal['unknown'] = 'unknown'
+    reason: Literal['NO_COMPONENT_IDENTITY_EVIDENCE', 'COMPONENT_DEFINITION_UNAVAILABLE']
+    metadata_status: Literal['NOT_VERIFIED'] = 'NOT_VERIFIED'
+    inference_status: Literal['NOT_RUN'] = 'NOT_RUN'
+
+
+class WorkflowPrerequisiteReport(BaseModel):
+    model_config = ConfigDict(extra='forbid', strict=True)
+    schema_version: Literal[1] = 1
+    scan_id: str = Field(min_length=1, max_length=64)
+    scan_status: Literal['RUNNING', 'COMPLETED', 'PARTIAL', 'CANCELLED']
+    definition_status: Literal['COMPLETE', 'BOUNDED', 'MALFORMED'] = 'COMPLETE'
+    workflows: list[WorkflowPrerequisiteObservation] = Field(default_factory=list, max_length=320)
+    components: list[CatalogComponentRequirement] = Field(default_factory=list, max_length=512)
+
+
 class AIEnvironmentReport(BaseModel):
     """Host-session-only display contract; cannot serve as routing authority."""
     model_config = ConfigDict(extra='forbid')
@@ -221,6 +269,7 @@ class AIEnvironmentReport(BaseModel):
     hardware: EnvironmentHardware = Field(default_factory=EnvironmentHardware)
     services: list[EnvironmentService] = Field(default_factory=list)
     model_files: list[EnvironmentModelFile] = Field(default_factory=list)
+    workflow_prerequisites: WorkflowPrerequisiteReport | None = None
     roots: list[EnvironmentScanRoot] = Field(default_factory=list)
     errors: list[EnvironmentError] = Field(default_factory=list)
     limits: EnvironmentScanLimits = Field(default_factory=EnvironmentScanLimits)

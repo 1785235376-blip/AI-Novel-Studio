@@ -1,0 +1,4 @@
+frontend/src/ui/LocalAiWorkflowPrerequisites.test.tsx(145,31): error TS2322: Type 'WorkflowPrerequisiteEvidence[] | WorkflowComponentDeclaration[]' is not assignable to type 'WorkflowPrerequisiteEvidence[] & WorkflowComponentDeclaration[]'.
+  Type 'WorkflowPrerequisiteEvidence[]' is not assignable to type 'WorkflowPrerequisiteEvidence[] & WorkflowComponentDeclaration[]'.
+    Type 'WorkflowPrerequisiteEvidence[]' is not assignable to type 'WorkflowComponentDeclaration[]'.
+      Type 'WorkflowPrerequisiteEvidence' is missing the following properties from type 'WorkflowComponentDeclaration': model_id, model_display_name, component_id, component_type, and 2 more.

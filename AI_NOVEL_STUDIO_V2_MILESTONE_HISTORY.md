@@ -492,3 +492,35 @@ normal PG stop. Written inventory is 10,380, not full-product execution. Older
 [M3-A hosted CI](MILESTONE_M3B_REPORT.md#6-terminal-published-m3-a-hosted-record-separate-from-m3-b)
 is terminal full-Cloud FAIL: File cancellation blocks mandatory joins despite
 all four passing PG shards. New M3-B hosted/browser acceptance remains pending.
+
+## 11. M3-C workflow-prerequisite continuation — 2026-10-09
+
+Parent is published M3-B `c386b0608ae92d18c351b5cb6e367380808a45cf`, tree
+`2ec6365e1f1f183f029c9f0a94d040d134e22b47`. [M3-C report](MILESTONE_M3C_REPORT.md)
+contains current source-bound execution results and retained failures. Its
+publication SHA/tree will be bound by PR 47 after commit. Full M3 remains PARTIAL.
+
+The replacement cloud workspace recovered all 1,688 published source digests,
+restored locked dependencies and verified a fresh real PostgreSQL 17.11 lifecycle.
+M3-B terminal CI is preserved separately: both Cloud events FAIL, File incomplete,
+strict joins NOT_REACHED after failed execution prerequisites, independent media
+11 PASS / 3 FAIL; push frontend later groups incomplete while PR completed them.
+Two additive M3-B journey assumptions were corrected with deterministic mounted
+regressions, without altering product UI, original M3-A tests or time/skip policy.
+
+M3-C reads existing scan node/loader advertisements and separate unknown catalogue
+component requirements. It does not complete installed-component compatibility,
+inference, install/API workflows or user Windows acceptance. No merge/release.
+
+Current-source frontend is 2,110 PASS / 8 existing skips; type/build and 52-file
+token guard pass. Final File owner selection is 2,216 PASS / 1,099 existing
+profile skips. The latest recovery completes the same selected real-PG range:
+2,183 PASS / 1,132 existing profile skips, 1056.58 seconds, unchanged
+1,696-input source map. Its new empty database, all 20 original migrations,
+normal shutdown and retained data are verified. Both earlier session-lost attempts
+remain INCOMPLETE with no final counts or proven normal shutdown; their separate
+databases, runtime receipts and logs are preserved. See the
+[recovery verification](docs/delivery/v2-development/stage-m3c-owner-recovery-verification.json).
+These selected checks are not full-product hosted CI or browser acceptance.
+The separately generated 10,469-node V2 inventory retains all 10,380 prior nodes
+and adds 89; original frozen manifests and strict CI gates are unchanged.

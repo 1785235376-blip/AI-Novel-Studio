@@ -282,3 +282,25 @@ The [final source-bound checks](MILESTONE_M3B_REPORT.md#12-corrected-source-free
 include real PostgreSQL 17.11, fresh database OID 36708, 20 original migrations
 and verified normal shutdown. Selected-owner success does not complete real
 model, full-product/browser, install/API or user Windows acceptance.
+
+## 10. M3-C same-scan prerequisites, no readiness promotion
+
+The [M3-C extension](MILESTONE_M3C_REPORT.md) captures existing Model Center
+component requirements and workflow adapter declarations inside the original
+consent plan. It consumes only the ComfyUI responses already returned by the
+explicit bounded worker. Read projections never initiate probes or file reads.
+
+- Nodes and loader advertisements use observed / not_observed / unknown. Only a
+  structurally valid bounded response supplies negative evidence; unavailable,
+  malformed, over-budget and cancelled observations stay unknown.
+- Catalogue component declarations remain distinct from workflow/runtime
+  observations. Names, model indexes, catalogue READY status and historical
+  validation receipts do not prove an installed component.
+- Metadata is NOT_VERIFIED; inference is NOT_RUN. No Enable, routing, runtime
+  launch, download, model weight, paid provider or identity authority is added.
+- Same-scan identity, feature gates, owner invalidation and host revocation
+  remain with existing owners. UI paging/expansion is local display only.
+
+This improves visibility for LM-09 without claiming full component compatibility.
+Full Diffusers manifest validation, content deduplication, measured hardware,
+installation/download choices and optional API consent/budgets remain future work.

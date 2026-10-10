@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-09T18:17:59.544042+00:00",
+  "status": "VERIFIED_FINAL_GENERATED_INPUTS",
+  "execution_receipt": "stage-m3c-final-manifest-catalog.json",
+  "execution_log_sha256": "36559a34ddde0f93d8c2a6f4f716211ba4e46569db563e93bcb4689b77083dea",
+  "generated_before_check": true,
+  "catalog_digest_errors": [],
+  "manifest_matches_extension": true,
+  "source_map_unchanged": true,
+  "evidence_scope": "Original 279 catalogue/infrastructure checks after final catalogue and V2 manifest generation; does not claim all-product execution."
+}

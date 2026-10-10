@@ -817,3 +817,23 @@ The [final local M3-B ledger](MILESTONE_M3B_REPORT.md#12-corrected-source-freeze
 now includes matching 56-file File/real-PG passes. Written 10,380-node and 7+14
 browser inventories remain inventory only. No additional feature status or
 GATE-M3 status is promoted by these results.
+
+## 36. Append-only M3-C prerequisite-observation delta
+
+[M3-C report](MILESTONE_M3C_REPORT.md) records the same-scan extension and its own
+verification identity. **MODEL-05 and MODEL-09 remain PARTIAL**: exact ComfyUI
+workflow node/loader advertisements now distinguish observed, not_observed and
+unknown, while the original catalogue's component requirements remain unknown
+without identity evidence. Valid bounded absence is not machine-wide absence;
+complete response inspection is not component integrity or inference.
+
+**MODEL-01 / MODEL-07 remain preserved**: original Model Center/discovery/consent
+owners, registration, enablement and routing remain authoritative. The read-only
+view introduces no second inventory, scan, install or model action. MODEL-06
+content deduplication, complete compatibility, hardware profiles, install/API
+workflows and GATE-M3 remain partial. Actual Windows/inference remain NOT_RUN.
+
+[M3-B terminal CI](docs/delivery/v2-development/m3b-ci-terminal.json) retains both
+Cloud FAIL outcomes, incomplete File execution and failed strict joins, plus
+11-pass/3-fail independent media. Its new fixture correction has separate
+source-contract evidence; neither old CI nor collection validates M3-C.

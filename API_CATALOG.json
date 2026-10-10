@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "COMPLETE_MOUNTED_SOURCE_CATALOG_NOT_TEST_VERDICT",
   "starting_sha": "6dc09ffc71ba47b6730df491186bfce429f0721a",
-  "application_source_fingerprint_sha256": "6a6bfbc80bf2ee2f5d6f536f6d038cf43ec25c92ec357b5aee768a04dbfa83e7",
+  "application_source_fingerprint_sha256": "8d53cebe4c7e3d2840e90b6df4d44c3c0c65aacd34dec045a853bdf58aa1403c",
   "application_python_source_hashes": {
     "app/__init__.py": "45a00d19b46ee5efaf7a1c17235f907b68203cf7ecd5341a663d3bd8975b2e4e",
     "app/actor_context.py": "e4d09242ce7650d0123d7b000026f0344d412048ee0eb1e0f213b89e773a59dc",
@@ -216,15 +216,16 @@
     "app/migrate_file_to_postgres.py": "f1607b0ee9bba1de64c092cb080cb1fdf5e140626a8ad2bc520523467821f818",
     "app/model_center/__init__.py": "034f5d7bcdc5a548765d66dfe6442411e8680b3f761e6c38f310b475c3a8ac0b",
     "app/model_center/api.py": "001094aea2c2191348ff6b17d1ace8098fd9de2817e6d1bb9657566d353622c1",
-    "app/model_center/discovery.py": "eb4fa6affecada8bf046aea15783e14527c3cfd53a308de718ec7b5f1d593460",
+    "app/model_center/discovery.py": "8f60f57a47a640b3e33d3b0db424d8a01aca1853cf775e567bac38b94705cf42",
     "app/model_center/discovery_api.py": "9e1f85d34a9e7df8d0e3faeace6cbbb82c5fa7129a522240a50a3cb2e75b51f6",
     "app/model_center/discovery_authority.py": "752a810dad0001d4239516a4e76ae08dfd0f5a74e0fffe15236a6fe125c605c9",
     "app/model_center/discovery_bridge.py": "cdb91ddee41252ec5dfd4ee3b9afa74c171dbff4f16534e4ff67aeb376d5a3e5",
     "app/model_center/discovery_environment.py": "eef9b1c4f0910ad9468b1e5fb6a54a8a6814a7a28dcd9bc4d2ee6b07f57d07c6",
     "app/model_center/discovery_onboarding_types.py": "51b65d835b8414220d4790417a97889410914a488b9df04382c9952d53f12cce",
-    "app/model_center/discovery_probes.py": "b8430890a7bbae1422106089932d5f2ea748becbf28c18f67370aabf5b1c1448",
+    "app/model_center/discovery_prerequisites.py": "8e9f6910e0ad39e4ec46602278f3cb7de5501a180937e92271bd06a5668dfd80",
+    "app/model_center/discovery_probes.py": "83f6763e585823c965d8c8744f75320bcb589bb174ce54f54d49c5cd30658bd7",
     "app/model_center/discovery_scope.py": "afdbd1268c6a9322396efbeb8a6fbb82f86f395d82b2e6b24776d7a65ba4c321",
-    "app/model_center/discovery_types.py": "abaee0886657318690286f2ffec5e6f5f95a3159274e4c32b21bb0080c24488d",
+    "app/model_center/discovery_types.py": "fdc6810dd5f248864af4ae6899553cec55e1438da8de51d7275e8bb41720aa87",
     "app/model_center/domain.py": "5d413844f4282ede2c212abe9938d97bbf378956e158011f7bef308896176fc9",
     "app/model_center/runtime_profiles.py": "e47f7bc7f05f025563bf4a35fda8311b2d3509a4d1e73e3dbd4c8026f3ce61f8",
     "app/model_center/service.py": "1aaf758a05f8188759371919aad7dd2ed1bd95c0d1f7d4cff5c98388cb124362",
@@ -406,7 +407,7 @@
   "removed_method_paths": [],
   "detail": {
     "path": "API_CATALOG_DETAIL.json.gz",
-    "sha256": "37ed9d83263d4d476b1e596db946bbf026a9aae9de6f8b3e9f8e9c6a60400607",
+    "sha256": "1f38daaa4644e257cc8f5fcf233a43f7a1fe4f4eb47895b13e0a60ac9faeb2dc",
     "encoding": "gzip canonical UTF-8 JSON",
     "contains": [
       "complete operation parameters/request bodies/responses/schema graphs",
@@ -1709,7 +1710,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "cda3c70f250e191a19adb64d5da1edd2fd9d670bed8bf2f63ac8657cf96b876b",
-      "schema_graph_sha256": "5b142e60618727700612217e1873640051a5bcc3d064802d0092783840c28ff9"
+      "schema_graph_sha256": "42dbbcf9b25f50baf49885276a52b1a2dfa1f6b0ecd5207b67787ddf1ab9a0db"
     },
     {
       "method": "GET",
@@ -6642,7 +6643,7 @@
         "FULL_RECOVERY_SOURCE_REBOUND"
       ],
       "operation_sha256": "fbbe30bbd5baa3c15ae05b6650e09f0e451145438b031ac5f630bc1ae70b8b1e",
-      "schema_graph_sha256": "5b142e60618727700612217e1873640051a5bcc3d064802d0092783840c28ff9"
+      "schema_graph_sha256": "42dbbcf9b25f50baf49885276a52b1a2dfa1f6b0ecd5207b67787ddf1ab9a0db"
     },
     {
       "method": "GET",

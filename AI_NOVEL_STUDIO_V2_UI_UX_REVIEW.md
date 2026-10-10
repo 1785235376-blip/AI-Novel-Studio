@@ -430,3 +430,18 @@ these local checks still do not establish browser or screenshot acceptance.
 now includes the matching selected File/PG results and normal PG stop. This does
 not raise the 7+14 browser collection to execution or visual approval. Older
 M3-A's actual 11-case hosted pass covers only its earlier source.
+
+## M3-C read-only prerequisite view — implementation evidence only
+
+The [M3-C report](MILESTONE_M3C_REPORT.md) records the current source and tests.
+The new content consumer reuses Model Center's existing section/list primitives,
+DS-v1 tokens and owner lifecycle. Twenty-row local pages and collapsed node /
+catalogue details bound visible density. It distinguishes service advertisements
+from component declarations, and masks uncertain/cancelled positive evidence.
+No protected AppShell, navigation position, shared primitive or token changes.
+
+Unit, typecheck, token and collection results do not constitute native browser,
+screenshot or visual approval. The authored hosted journey covers three existing
+desktop geometries, explicit scan, same-scan display, reload/rebind and revocation;
+its actual outcome must be recorded for the newly published SHA. No inaccessible
+artifact or historical screenshot is substituted for new visual evidence.

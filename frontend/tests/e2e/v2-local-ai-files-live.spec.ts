@@ -16,6 +16,8 @@ async function body<T>(response: Pick<APIResponse, 'ok' | 'status' | 'text' | 'j
 const receipt = async (request: APIRequestContext) => body<FixtureReceipt>(await request.get('/api/__tests__/v2-discovery-fixture', {headers}));
 
 async function bindHostAndOpenModels(page: Page) {
+  // Feature navigation belongs to NOVEL, including after a CONTROL reload.
+  await page.getByRole('tablist', {name: '创作模块', exact: true}).getByRole('tab', {name: '小说', exact: true}).click();
   await page.getByRole('button', {name: '打开功能导航', exact: true}).click();
   const navigation = page.getByRole('navigation', {name: '功能面板导航', exact: true});
   const group = navigation.locator('.feature-group__header').filter({hasText: '协作'});
@@ -79,11 +81,13 @@ test('M3 files original File HTTP UI reuses observed metadata without claiming i
   if (created.status() === 201) {const row = await created.json(); if (typeof row.id === 'string' && row.id) owned.get(request)!.add(row.id);}
   expect(created.status()).toBe(201); expect(owned.get(request)!.size).toBe(1);
   await bindHostAndOpenModels(page);
-  await expect(page.getByRole('button', {name: '预览 AI 检测范围', exact: true})).toBeEnabled();
+  // The original consent journey's completed scan is intentionally retained.
+  await expect(page.getByText('COMPLETED', {exact: true})).toBeVisible();
+  await expect(page.getByRole('button', {name: '重新预览检测范围', exact: true})).toBeEnabled();
   expect((await receipt(request)).hardware_calls).toBe(before.hardware_calls);
   expect(mutations).toEqual([]);
   const consent = page.getByRole('region', {name: '确认后端主机检测范围', exact: true});
-  await page.getByRole('button', {name: '预览 AI 检测范围', exact: true}).click();
+  await page.getByRole('button', {name: '重新预览检测范围', exact: true}).click();
   await expect(consent.getByRole('checkbox')).not.toBeChecked();
   const previewing = page.waitForResponse(value => new URL(value.url()).pathname === `${root}/onboarding/scan-scope`
     && new URL(value.url()).searchParams.get('include_common_model_dirs') === 'true');

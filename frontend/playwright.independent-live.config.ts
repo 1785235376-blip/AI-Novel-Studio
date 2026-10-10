@@ -74,7 +74,7 @@ export default defineConfig({
     { name: 'v1-acceptance-chromium', grep: /acceptance-mode/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5179' } },
     // The new file follows the original consent file in this same serial,
     // single-worker project. No project dependency phase reorders old suites.
-    { name: 'm3-consent-chromium', testMatch: [/v2-local-ai-consent-live\.spec\.ts/, /v2-local-ai-files-live\.spec\.ts/], grep: /M3 enabled|M3 files/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5187' } },
+    { name: 'm3-consent-chromium', testMatch: [/v2-local-ai-consent-live\.spec\.ts/, /v2-local-ai-files-live\.spec\.ts/, /v2-local-ai-prerequisites-live\.spec\.ts/], grep: /M3 enabled|M3 files|M3 prerequisites/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5187' } },
     { name: 'm3-default-off-chromium', testMatch: [/v2-local-ai-consent-live\.spec\.ts/, /v2-local-ai-legacy-host-live\.spec\.ts/], grep: /M3 (?:legacy )?default-off/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5188' } },
     { name: 'm3-acceptance-chromium', testMatch: [/v2-local-ai-consent-live\.spec\.ts/, /v2-local-ai-legacy-host-live\.spec\.ts/], grep: /M3 (?:legacy )?acceptance-mode/, use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, baseURL: 'http://127.0.0.1:5189' } },
   ],

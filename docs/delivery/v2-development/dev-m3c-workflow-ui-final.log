@@ -1,0 +1,26 @@
+
+ RUN  v2.1.9 /workspace/scratch/b8734129d01d/AI-Novel-Studio-cloud/frontend
+
+ ✓ src/localAiDiscoveryConsentApi.test.ts (20 tests) 37ms
+ ✓ src/localAiDiscoveryApi.test.ts (3 tests) 50ms
+ ✓ src/localAiDiscoveryLegacyOwner.test.ts (14 tests) 85ms
+ ✓ src/ui/LocalAiDiscovery.test.tsx (24 tests) 1659ms
+ ✓ src/localAiEnvironmentApi.test.ts (2 tests) 40ms
+ ✓ src/ui/LocalAiModelFiles.test.tsx (20 tests) 2501ms
+   ✓ V2 same-scan model file observations > shows Safetensors without claiming no models or runtime absence, and reads no additional endpoint 347ms
+   ✓ bounds 2000 observations to local pages without extra reads and resets the page on scan replacement 521ms
+ ✓ src/ui/LocalAiWorkflowPrerequisites.test.tsx (40 tests) 2877ms
+   ✓ read-only same-scan workflow prerequisite evidence > distinguishes observed, not observed and unknown without installing or verifying a model 595ms
+   ✓ read-only same-scan workflow prerequisite evidence > labels catalog component declarations as unbound unknowns independently of workflow observations 444ms
+ ✓ src/ui/LocalAiDiscoveryLegacyOwner.test.tsx (14 tests) 3051ms
+   ✓ all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=false) 2035ms
+   ✓ all-mode discovery private view ownership > purges snapshot and copied forms on each observed denial (V2=true) 609ms
+ ✓ src/ui/LocalAiDiscoveryConsent.test.tsx (23 tests) 3264ms
+   ✓ V2 Local AI scan consent > never scans on mount; previews actual backend scope then confirms once without registration or inference 1094ms
+   ✓ discloses all registered-model safety inspections without truncating the backend scope 535ms
+
+ Test Files  9 passed (9)
+      Tests  160 passed (160)
+   Start at  11:02:28
+   Duration  8.21s (transform 2.30s, setup 0ms, collect 10.69s, tests 13.56s, environment 13.90s, prepare 3.18s)
+

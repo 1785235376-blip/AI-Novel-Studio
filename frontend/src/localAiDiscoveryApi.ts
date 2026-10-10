@@ -57,6 +57,40 @@ export type LocalModelCandidate = {
   workflow_adapter_id?: string | null;
 };
 export type LocalModelRegistration = LocalModelCandidate & {enabled: boolean; candidate_id?: string};
+/** Read-only evidence from the same explicitly authorized V2 scan. These
+ * observations do not grant registration, compatibility, or routing authority. */
+export type WorkflowPrerequisiteObservation = 'observed' | 'not_observed' | 'unknown';
+export type WorkflowPrerequisiteEvidence = {
+  runtime_id: string;
+  adapter_id: string;
+  display_name: string;
+  evidence_status: 'COMPLETE' | 'UNAVAILABLE' | 'MALFORMED' | 'BOUNDED' | 'CANCELLED' | 'NOT_SCANNED';
+  nodes: {node_class: string; observation: WorkflowPrerequisiteObservation}[];
+  loader: {
+    node_class: string; input_field: string; observation: WorkflowPrerequisiteObservation;
+    advertised_count: number | null; candidate_ids: string[];
+  };
+  metadata_status: 'NOT_VERIFIED';
+  inference_status: 'NOT_RUN';
+};
+export type WorkflowComponentDeclaration = {
+  model_id: string;
+  model_display_name: string;
+  component_id: string;
+  component_type: string | null;
+  observation: 'unknown';
+  reason: 'NO_COMPONENT_IDENTITY_EVIDENCE' | 'COMPONENT_DEFINITION_UNAVAILABLE';
+  metadata_status: 'NOT_VERIFIED';
+  inference_status: 'NOT_RUN';
+};
+export type WorkflowPrerequisiteReport = {
+  schema_version: 1;
+  scan_id: string;
+  scan_status: 'RUNNING' | 'COMPLETED' | 'PARTIAL' | 'CANCELLED';
+  definition_status: 'COMPLETE' | 'BOUNDED' | 'MALFORMED';
+  workflows: WorkflowPrerequisiteEvidence[];
+  components: WorkflowComponentDeclaration[];
+};
 export type LocalDiscoveryScan = {
   id: string;
   status: string;
@@ -69,6 +103,7 @@ export type LocalDiscoveryScan = {
   environment_schema_version?: number;
   model_files?: EnvironmentModelFile[];
   roots?: AIEnvironmentReport['roots'];
+  workflow_prerequisites?: WorkflowPrerequisiteReport | null;
 };
 export type LocalDiscoverySettings = {scan_roots: string[]; runtimes: LocalRuntime[]; include_common_model_dirs?: boolean};
 export type HardwareComponentEvidence = {
@@ -119,6 +154,7 @@ export type AIEnvironmentReport = {
     candidate_ids: string[]; inference_verified: false;
   }[];
   model_files: EnvironmentModelFile[];
+  workflow_prerequisites?: WorkflowPrerequisiteReport | null;
   roots: {
     path: string; source: 'CONFIGURED' | 'COMMON';
     status: 'PENDING' | 'SCANNED' | 'NOT_FOUND' | 'UNREADABLE' | 'REJECTED' | 'BOUNDED' | 'CANCELLED';

@@ -55,8 +55,17 @@ class LocalProbeClient:
                     if len(chunks) > self.max_response_bytes:
                         raise ProbeFailure('LOCAL_AI_RESPONSE_TOO_LARGE')
                 payload = bytes(chunks)
-                def reject_constant(_value): raise ValueError('non-finite JSON')
-                result = json.loads(payload, parse_constant=reject_constant)
+                def reject_constant(_value): raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                def unique_pairs(pairs):
+                    value = {}
+                    for key, item in pairs:
+                        if key in value: raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
+                        value[key] = item
+                    return value
+                try:
+                    result = json.loads(payload, parse_constant=reject_constant, object_pairs_hook=unique_pairs)
+                except (ValueError, UnicodeError, RecursionError) as exc:
+                    raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE') from exc
                 if not isinstance(result, (dict, list)):
                     raise ProbeFailure('LOCAL_AI_INVALID_RESPONSE')
                 return result

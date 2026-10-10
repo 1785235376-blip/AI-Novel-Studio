@@ -12,6 +12,8 @@ async function body<T>(response: Pick<APIResponse, 'ok' | 'status' | 'text' | 'j
 const receipt = async (request: APIRequestContext, token = FIRST) => body<Receipt>(await request.get('/api/__tests__/v2-discovery-fixture', {headers: {'X-Session-Token': token}}));
 
 async function bindAndOpen(page: Page, token: string, actor: string) {
+  // Revocation leaves us in CONTROL; the existing Agent entry is in NOVEL.
+  await page.getByRole('tablist', {name: '创作模块', exact: true}).getByRole('tab', {name: '小说', exact: true}).click();
   await page.getByRole('button', {name: '打开功能导航', exact: true}).click();
   const navigation = page.getByRole('navigation', {name: '功能面板导航', exact: true});
   const group = navigation.locator('.feature-group__header').filter({hasText: '协作'});

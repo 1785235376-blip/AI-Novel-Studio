@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-09T17:04:20.939840+00:00",
+  "status": "SOURCE_RECOVERED_TOOL_REBUILD_PENDING",
+  "head": "c386b0608ae92d18c351b5cb6e367380808a45cf",
+  "tree": "2ec6365e1f1f183f029c9f0a94d040d134e22b47",
+  "source_input_count": 1688,
+  "source_map_sha256": "95f58c348feba6c15182e1b584e37c0370ff3e3e319b56443ff7cd08cd4aa7c6",
+  "prior_workspace_directory_missing": true,
+  "prior_tests_finished_before_recovery": true,
+  "old_postgres_data_not_available_in_new_workspace": true,
+  "prior_results_and_evidence_committed": true,
+  "bulk_clone_exit_code": 0,
+  "initial_partial_checkout_stopped_after_bulk_verification": 130,
+  "partial_checkout_note": "Owned non-test restore interrupted after complete verified bulk clone; Proxy CONNECT aborted is the cancellation output, not an access denial. No test interrupted.",
+  "new_environment": {
+    "os": "Debian GNU/Linux13",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "node": "v24.19.0"
+  },
+  "taskpack_files": [
+    {
+      "name": "AI_NOVEL_STUDIO_V2_MASTER_ROADMAP(1).txt",
+      "bytes": 71777,
+      "sha256": "c4a8892d1c4a3b1398cc5a5496610294be31bf9c245d59be10f8f570991f7b74"
+    },
+    {
+      "name": "DOT_V2_START_INSTRUCTIONS(1).txt",
+      "bytes": 2945,
+      "sha256": "a18f4770c2946f81676774713f12183f5848af45216a121e57d28a86e7b22f6d"
+    }
+  ],
+  "tests_executed_during_recovery": false,
+  "old_results_not_relabelled_as_new_environment": true
+}
