@@ -894,3 +894,19 @@ acceptance case. Other model families, quality, real-model browser flows,
 Windows/GPU and full hosted CI remain separately qualified in the report.
 API/Image/Video/global scheduling remain reserved or partial. The historical
 M4-B File-capacity cancellations and independent-review BLOCKED are preserved.
+
+## 40. Append-only M4-C receipt admission boundary
+
+The [admission follow-up](MILESTONE_M4C_ADMISSION_REPORT.md) continues the same
+bounded text-execution scope from published `ef79251f`. New receipt-bearing
+requests now pass both existing JSON-byte budgets before the original Job is
+prepared. Actual serialization, shared passive builders and owner-proven maximum
+forms prevent heavily escaped prompts from generating an unarchivable result.
+No prompt is truncated, old limit increased, original assertion relaxed, or
+existing output migrated/replayed. Normal dispatch gains no extra user step.
+
+Same-source selected File and fresh PostgreSQL regressions each pass 233 tests;
+a separate owned llama.cpp/Qwen CPU recheck again yields one private asset v1→v2
+without manuscript apply. These results do not substitute for full exact-SHA CI
+or broaden the prior case into quality/all-model/Windows/GPU certification.
+Historical capacity failures and independent-review BLOCKED remain distinct.

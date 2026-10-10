@@ -10,8 +10,10 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 from collections import OrderedDict
 from copy import deepcopy
+from datetime import datetime, timezone
 from hashlib import sha256
 from threading import Lock
+from uuid import UUID
 import time
 
 from ..experimental.common import StaleSourceError, check_version
@@ -19,7 +21,7 @@ from ..experimental.store import canonical
 from .graph_models import validate_output_ports
 from .project_store import BINDING
 from .text_execution_receipt import (CONTRACT as EXECUTION_CONTRACT, PRIVATE_FIELD,
-    model_evidence, public_receipt, request_payload, validate_receipt)
+    public_receipt, receipt_payload, request_payload, validate_receipt)
 
 CONTRACT = "creative-graph-text-asset/1"
 _phase = ContextVar("graph_text_asset_read_authority", default=None)
@@ -135,19 +137,49 @@ class GraphTextAssets:
             raise ValueError("CREATIVE_TEXT_ASSET_IDENTITY_AMBIGUOUS")
         return matches[0] if matches else None
 
-    def _origin(self, row, job):
+    def _origin_payload(self, row, *, source_run_version, job_id, output_digest, produced_at):
         node = self.runtime.node(row)
+        return {"schema_version": 1, "contract": CONTRACT, "graph_id": row["graph_id"],
+            "graph_version": row["graph_version"], "graph_digest": row["graph_digest"], "run_id": row["id"],
+            "source_run_version": source_run_version, "model_node_id": node["id"],
+            "job_id": job_id, "input_digest": row["model_preview"]["input_digest"],
+            "output_digest": output_digest, "preview_digest": row["model_preview"]["preview_digest"],
+            "produced_at": produced_at}
+
+    def validate_admission(self, row, route, source_run_version):
+        """Use the actual archival encoders before any original Job is prepared.
+
+        Only not-yet-created owner values need sizing stand-ins: JobManager
+        emits str(uuid.uuid4()); request/output digests and ModelBroker's
+        reservation key are SHA-256 hex; common.change_row stamps settlement
+        with datetime.now(timezone.utc).isoformat(). datetime.max provides its
+        longest possible UTC encoding (including six fractional digits).
+        Every other value is the exact reviewed input/current route. These
+        transient bytes grant no authority and are never persisted as evidence.
+        """
+        data = b"x"
+        job_id = str(UUID(int=0))
+        digest = sha256(data).hexdigest()
+        origin = self._origin_payload(row, source_run_version=source_run_version, job_id=job_id,
+            output_digest=digest, produced_at=datetime.max.replace(tzinfo=timezone.utc).isoformat())
+        receipt = receipt_payload(row["model_preview"], self.runtime.node(row), route, origin,
+            execution_mode="mock_standin" if route["synthetic"] else "real",
+            request_digest=digest, settlement_id=digest)
+        initial = self.assets.text_result_metadata(source_receipt=origin, source_job_id=job_id,
+            provider_id=route["provider_id"], model_id=route["model_id"], parameters=self._parameters(row),
+            execution_receipt=receipt)
+        # Keep both original limits/errors: receipt first, then the complete
+        # containing initial metadata (which repeats source/model/parameters).
+        self.assets._text_initial(initial, data)
+
+    def _origin(self, row, job):
         # JobManager's final notification legitimately changes job.updated_at
         # after its durable terminal hook. Use the original once-only completed
         # settlement's time, not that mutable notification timestamp.
         ledger = self.runtime.broker.get(row["novel_id"], row["scope"], self.runtime.broker.LEDGER,
             row["model_execution"]["reservation_id"])
-        return {"schema_version": 1, "contract": CONTRACT, "graph_id": row["graph_id"],
-            "graph_version": row["graph_version"], "graph_digest": row["graph_digest"], "run_id": row["id"],
-            "source_run_version": row["model_asset_intent"]["source_run_version"], "model_node_id": node["id"],
-            "job_id": job.id, "input_digest": row["model_preview"]["input_digest"],
-            "output_digest": sha256(job.output.encode()).hexdigest(), "preview_digest": row["model_preview"]["preview_digest"],
-            "produced_at": ledger["updated_at"]}
+        return self._origin_payload(row, source_run_version=row["model_asset_intent"]["source_run_version"],
+            job_id=job.id, output_digest=sha256(job.output.encode()).hexdigest(), produced_at=ledger["updated_at"])
 
     def _execution_receipt(self, row, job, origin):
         """Verify passive provenance against the original durable owners.
@@ -167,7 +199,6 @@ class GraphTextAssets:
             preview["broker_preview_id"])
         check_version(decision, preview["broker_preview_version"])
         chosen = decision.get("chosen") or {}
-        identity = chosen.get("identity") or {}
         ledger = self.runtime.broker.get(row["novel_id"], row["scope"], self.runtime.broker.LEDGER,
             row["model_execution"]["reservation_id"])
         if (decision.get("created_by") != row["created_by"] or decision.get("novel_id") != row["novel_id"]
@@ -180,15 +211,8 @@ class GraphTextAssets:
                 or ledger.get("route_fingerprint") != chosen.get("fingerprint")
                 or any(ledger.get(key) != chosen.get(key) for key in ("route_id", "provider_id", "model_id"))):
             raise StaleSourceError("CREATIVE_TEXT_EXECUTION_ROUTE_CHANGED")
-        value = {"schema_version": 1, "contract": EXECUTION_CONTRACT,
-            "prompt": payload["prompt"], "prompt_sha256": sha256(payload["prompt"].encode()).hexdigest(),
-            "provider_id": job.provider, "model_id": job.model,
-            "route_id": chosen["route_id"], "route_fingerprint": chosen["fingerprint"],
-            "route_identity": deepcopy(identity), "model_evidence": model_evidence(identity),
-            "parameters": payload["parameters"], "execution_mode": job.execution_mode,
-            "request_digest": job.expected_request_digest, "workflow": deepcopy(origin),
-            "terminal": {"status": "COMPLETED", "settlement_id": ledger["id"], "settled_at": ledger["updated_at"]},
-            "quality_verification": "NOT_RUN"}
+        value = receipt_payload(preview, self.runtime.node(row), chosen, origin,
+            execution_mode=job.execution_mode, request_digest=job.expected_request_digest, settlement_id=ledger["id"])
         return validate_receipt(value, source=origin, provider_id=job.provider, model_id=job.model,
             parameters=self._parameters(row))
 

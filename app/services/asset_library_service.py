@@ -333,6 +333,14 @@ class AssetLibraryService:
             raise ValueError("TEXT_RESULT_METADATA_LIMIT")
         return copy.deepcopy(initial)
 
+    @staticmethod
+    def text_result_metadata(*, source_receipt, provider_id, model_id, source_job_id, parameters,
+                             execution_receipt=None):
+        """The complete initial metadata shape, shared with pre-inference admission."""
+        return {"_text_result_origin": source_receipt, "source_job_id": source_job_id,
+            "provider_id": provider_id, "model_id": model_id, "parameters": parameters,
+            **({"_text_execution_receipt": execution_receipt} if execution_receipt is not None else {})}
+
     def create_text_result(self, novel_id, filename, text, *, source_receipt, provider_id, model_id,
                            source_job_id, parameters, idempotency_key, branch_id, owner_actor_id,
                            required_features, guard, execution_receipt=None):
@@ -353,9 +361,8 @@ class AssetLibraryService:
         return self.create(novel_id, filename, base64.b64encode(data).decode("ascii"), "text/plain", "text",
             idempotency_key, branch_id=branch_id, owner_actor_id=owner_actor_id,
             required_features=required_features, guard=guard,
-            _initial_text_result={"_text_result_origin": source_receipt, "source_job_id": source_job_id,
-                "provider_id": provider_id, "model_id": model_id, "parameters": parameters,
-                **({"_text_execution_receipt": execution_receipt} if execution_receipt is not None else {})})
+            _initial_text_result=self.text_result_metadata(source_receipt=source_receipt, source_job_id=source_job_id,
+                provider_id=provider_id, model_id=model_id, parameters=parameters, execution_receipt=execution_receipt))
 
     def review_text_result(self, asset_id, *, actor_id, branch_id, expected_version, output_digest,
                            status, review_receipt, guard, execution_receipt=None):

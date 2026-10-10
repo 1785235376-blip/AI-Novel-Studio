@@ -53,6 +53,25 @@ def model_evidence(identity):
         "runtime_version": identity.get("runtime_version")}
 
 
+def receipt_payload(preview, node, chosen, origin, *, execution_mode, request_digest, settlement_id):
+    """One passive shape for admission sizing and verified terminal evidence.
+
+    This builds data only. Callers must retain the original owner checks; a
+    sizing payload is never persisted or exposed as a completed execution.
+    """
+    payload = request_payload(preview, node)
+    identity = chosen.get("identity") or {}
+    return {"schema_version": 1, "contract": CONTRACT,
+        "prompt": payload["prompt"], "prompt_sha256": sha256(payload["prompt"].encode()).hexdigest(),
+        "provider_id": chosen["provider_id"], "model_id": chosen["model_id"],
+        "route_id": chosen["route_id"], "route_fingerprint": chosen["fingerprint"],
+        "route_identity": deepcopy(identity), "model_evidence": model_evidence(identity),
+        "parameters": payload["parameters"], "execution_mode": execution_mode,
+        "request_digest": request_digest, "workflow": deepcopy(origin),
+        "terminal": {"status": "COMPLETED", "settlement_id": settlement_id, "settled_at": origin["produced_at"]},
+        "quality_verification": "NOT_RUN"}
+
+
 def validate_receipt(value, *, source, provider_id, model_id, parameters):
     """Structural and digest checks at the existing asset-owner boundary.
 

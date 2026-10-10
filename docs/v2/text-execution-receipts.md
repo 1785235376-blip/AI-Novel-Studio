@@ -53,6 +53,30 @@ text-result metadata are capped at 64,000 bytes. Legacy metadata retains its
 16,000-byte cap. A receipt is immutable across the existing draft-to-approved or
 draft-to-rejected asset version transition.
 
+### Admission byte budget
+
+New receipt-bearing dispatches validate the actual JSON-encoded receipt and its
+complete initial asset metadata after the existing route/permission policy and
+before the original JobManager prepares a Job. Prompt UTF-8 length alone is not
+sufficient: JSON escaping can increase the stored byte count a second time.
+The same payload builders and original asset validators serve admission and
+terminal archival, retaining both existing 64,000-byte limits and error codes.
+
+The preview, prompt, node, route identity and source version are exact. Values
+not yet emitted by their owners use proven maximum encoded forms solely for
+sizing: the original UUID Job ID, SHA-256 digests/reservation key, and the longest
+UTC `datetime.isoformat()` settlement timestamp. These transient values are
+never persisted, exposed as successful evidence, or used to grant authority.
+Actual execution replaces all of them with the original durable owner values.
+
+An oversized receipt returns the original HTTP 422 `EXPERIMENTAL_INVALID` with
+`TEXT_EXECUTION_RECEIPT_INVALID`; metadata-only overflow retains
+`TEXT_RESULT_METADATA_LIMIT`. It creates no Job, reservation, generation or
+asset and does not change the run. No prompt is truncated and no original input,
+metadata, timeout or legacy opt-out limit is increased. Existing completed
+oversized Jobs, if any, retain their output and INCOMPLETE state: this check does
+not silently migrate, discard or replay them.
+
 The terminal time is the once-only settled broker ledger's `updated_at`, not the
 Job's notification timestamp. The original JobManager can legitimately emit a
 later terminal notification without changing historical execution provenance.
@@ -118,7 +142,8 @@ attempt, retaining the existing cooldown, source lease and two-phase recovery.
 Neither a missing receipt, failed asset write, process restart nor an uncertain
 terminal hook schedules/replays inference or replaces the original Job.
 
-Dedicated backend coverage: `tests/test_v2_text_execution_receipts.py`.
+Dedicated backend coverage: `tests/test_v2_text_execution_receipts.py` and
+`tests/test_v2_text_execution_admission.py`.
 This uses the real existing owners with built-in Mock execution explicitly
 labelled synthetic. Its historical/corruption fixtures seed only owned test
 storage; they do not bypass production save invariants. It covers exact/large

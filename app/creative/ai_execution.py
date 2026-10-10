@@ -342,6 +342,8 @@ class CreativeGraphNodeRuntime:
         asset_intent = {"contract": "creative-graph-text-asset/1", "job_id": None,
             "source_run_version": body.expected_version + 1, "preview_digest": preview["preview_digest"],
             "execution_receipt_contract": RECEIPT_CONTRACT} if body.archive_result else None
+        if asset_intent is not None:
+            self.text_assets.validate_admission(row, route, asset_intent["source_run_version"])
         binding = {"graph_id": row["graph_id"], "graph_version": row["graph_version"], "run_id": rid,
             "node_id": node["id"], "project_incarnation": incarnation, "input_digest": input_digest,
             "reviewed_preview_digest": body.reviewed_preview_digest, "route_fingerprint": route["fingerprint"]}

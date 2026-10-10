@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-10T16:23:49.031988+00:00",
+  "status": "INVENTORY_ONLY",
+  "first_receipt": "stage-m4c-size-collection-final2.json",
+  "second_receipt": "stage-m4c-size-collection-final3.json",
+  "first_nodes": 11321,
+  "second_nodes": 11321,
+  "ordered_nodes_and_classifications_identical": true,
+  "collection_classifications_sha256": "147a66ec727937819b98faa3018a7ab8ca855ff00fbc2975deb675a78215097f",
+  "previous_m4c_nodes": 11293,
+  "added_nodes": 28,
+  "v1_frozen_manifest_sha256": "6457dd4cae85adee42486ef503fdb1cdabcdaf6eb9667eff3e2e97d05d040262",
+  "tests_executed": false,
+  "earlier_attempt": "stage-m4c-size-collection-final1.json retained REJECTED: API catalog regeneration overlapped complete-source inventory; product runner source map remained stable"
+}
